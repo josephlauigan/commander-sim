@@ -511,7 +511,7 @@
 1x Lotusguard Disciple (dft)
 1x Loxodon Surveyor (dft)
 2x Lumaret's Favor (sos)
-1x Luminous Bonds (rix)
+2x Luminous Bonds (rix)
 1x Mabel, Bitter Recluse (fra)
 2x Mabel, Valley Hero (fra)
 1x Madame Web, Clairvoyant (spm)

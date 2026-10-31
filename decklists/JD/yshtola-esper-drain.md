@@ -66,8 +66,8 @@ The second opponent dies too if they're at 12. Debt to the Deathless is the best
 ### Keep the table off you
 
 Y'shtola is a 2/4 and the deck wins slowly. The table's creature decks are the main danger, so deal with attackers early.
-- **Pillowfort:** Propaganda taxes every attacker {2}. Cast it early against creature decks.
-- **Locks:** Arrest, Prison Sentence, Luminous Bonds and Bound in Silence shut down threats (and each triggers Y'shtola as you cast it).
+- **Pillowfort:** Propaganda taxes every attacker {2}, and **Sphere of Safety** ({4}{W}) taxes every attacker {X}, X being the number of enchantments you control (the deck runs 16). Cast them early against creature decks.
+- **Locks:** Arrest, Prison Sentence and Bound in Silence shut down threats (and each triggers Y'shtola as you cast it).
 - **Removal:** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Your Fate Ends Here, Skyclave Apparition, Prayer of Binding, Memory Trap, Static Net, The Eternal Wanderer.
 - **Wipes:** Austere Command and Farewell. Massacre Wurm is a one-sided sweeper of small creatures that drains 2 for each one that dies.
 - **Counters:** Dovin's Veto stops a removal spell aimed at Y'shtola. Force of Will counters any spell (a wipe, a combo piece, a Craterhoof): cast it for {3}{U}{U}, or for free by paying 1 life and exiling a blue card from your hand. Either way it is a mana value 5 noncreature spell, so it triggers Y'shtola, and the life paid counts toward her "4 life lost" draw.
@@ -87,7 +87,7 @@ The damage comes mostly from Y'shtola's and Ill-Gotten Inheritance's triggers, t
 
 ### Weak spots and how to play around them
 
-- **Creature decks (big attackers).** The deck loses almost always to combat. Land Propaganda early, lock or remove the biggest threat, and keep Austere Command, Farewell or Massacre Wurm for the wide boards.
+- **Creature decks (big attackers).** The deck loses almost always to combat. Land Propaganda or Sphere of Safety early, lock or remove the biggest threat, and keep Austere Command, Farewell or Massacre Wurm for the wide boards.
 - **Fast combo decks.** The drain is too slow to race a deck that wins on turn 4 to 6; hold Dovin's Veto, Force of Will and Memory Trap / Static Net for the key piece, and Notion Thief or Mystic Remora to slow their draws.
 - **Removal on Y'shtola.** Keep Restoration Angel, Lightning Greaves, Champion's Helm, Teferi's Protection, Dovin's Veto or Force of Will up while she is the engine.
 - **Cheap spells.** Spells of mana value 1 or 2 (Fatal Push, Path to Exile, Dovin's Veto) are good cards but don't trigger her: don't cast them if they cost a trigger.
@@ -112,7 +112,7 @@ The damage comes mostly from Y'shtola's and Ill-Gotten Inheritance's triggers, t
 - **Mystic Remora** early, for cards off the table's spells;
 - **a lock Aura** on the biggest threat. A fetched Aura isn't cast and doesn't target, so it goes around hexproof and ward.
 
-Zur can find Arrest, Bound in Silence, Luminous Bonds, Memory Trap, Mystic Remora, Necropotence, Prison Sentence, Propaganda and Rhystic Study. (Zur's enchantment is put onto the battlefield, not cast, so it doesn't trigger Y'shtola.)
+Zur can find Arrest, Bound in Silence, Memory Trap, Mystic Remora, Necropotence, Prison Sentence, Propaganda and Rhystic Study. (Zur's enchantment is put onto the battlefield, not cast, so it doesn't trigger Y'shtola.)
 
 **Notion Thief + Deep Analysis.** Target an opponent with Deep Analysis while Notion Thief is out and you draw the cards; its flashback ({1}{U}, 3 life) is a second Y'shtola trigger.
 
@@ -148,7 +148,7 @@ Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, t
 - **Counterspells (two):** Dovin's Veto, Force of Will.
 - **Spot removal spells (six):** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Your Fate Ends Here.
 - **Removal on permanents:** Skyclave Apparition, Hostage Taker, Prayer of Binding, Static Net, Memory Trap, The Eternal Wanderer, Massacre Wurm.
-- **Removal Auras (four):** Arrest, Prison Sentence, Luminous Bonds, Bound in Silence.
+- **Removal Auras (three):** Arrest, Prison Sentence, Bound in Silence.
 - **Theft:** Bribery.
 - **Board wipes (two):** Austere Command, Farewell.
 - **Protection:** Teferi's Protection.
@@ -177,7 +177,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Planeswalkers (1).** The Eternal Wanderer
 
-**Enchantments (16).** Arrest, Bound in Silence, Ill-Gotten Inheritance, Luminous Bonds, Memory Trap, Mystic Remora, Necropotence, Polluted Bonds, Prayer of Binding, Prison Sentence, Propaganda, Rhystic Study, Sanguine Bond, Smothering Tithe, Static Net, Teleportation Circle
+**Enchantments (16).** Arrest, Bound in Silence, Ill-Gotten Inheritance, Memory Trap, Mystic Remora, Necropotence, Polluted Bonds, Prayer of Binding, Prison Sentence, Propaganda, Rhystic Study, Sanguine Bond, Smothering Tithe, Sphere of Safety, Static Net, Teleportation Circle
 
 **Artifacts (7).** Arcane Signet, Champion's Helm, Chromatic Lantern, Coalition Relic, Lightning Greaves, Sol Ring, Talisman of Progress
 
@@ -226,7 +226,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Idyllic Tutor
 1 Ill-Gotten Inheritance
 1 Lightning Greaves
-1 Luminous Bonds
 1 Marauding Blight-Priest
 1 Marsh Flats
 1 Massacre Wurm
@@ -251,6 +250,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Skyclave Apparition
 1 Smothering Tithe
 1 Sol Ring
+1 Sphere of Safety
 1 Static Net
 1 Talisman of Progress
 1 Teferi's Protection
