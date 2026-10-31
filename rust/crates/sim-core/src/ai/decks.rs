@@ -35,7 +35,7 @@ pub fn loose(g: &Game, e: PermId, p: PlayerId) -> bool {
 pub fn bomb_on_bf(g: &Game, p: PlayerId) -> bool {
     g.player(p).perms.iter().any(|&m| {
         let x = g.perm(m);
-        !x.phased && x.cd.is_some_and(|c| super::seph::sbomb(g, c) >= super::seph::BOMB_BOARD)
+        !x.phased && x.cd.is_some_and(|c| super::reanimate::sbomb(g, c) >= super::reanimate::BOMB_BOARD)
     })
 }
 
@@ -49,7 +49,6 @@ fn has_static(g: &Game, c: CardId, kind: &str) -> bool {
 pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let v = match g.player(p).key {
         "sauron" => sauron_prio(g, p, c),
-        "seph" => super::seph::seph_prio(g, p, c),
         "veyran" => super::veyran::veyran_prio(g, p, c),
         "yshtola" => crate::impls::yshtola::yshtola_prio(g, p, c) as i32,
         "galadriel" => crate::impls::galadriel::galadriel_prio(g, p, c),
@@ -647,7 +646,7 @@ pub fn flute_pick(g: &Game, p: PlayerId) -> Option<(CardId, f64)> {
                 v = v.max(2.5);
             }
             if t.has(Tag::Sac) {
-                v = v.max(if ql.key == "seph" { 3.5 } else { 1.0 });
+                v = v.max(1.0);
             }
             if t.has(Tag::Clamp)
                 || t.has(Tag::Archivist)
@@ -675,9 +674,6 @@ pub fn flute_pick(g: &Game, p: PlayerId) -> Option<(CardId, f64)> {
             let d = g.db.get(g.perm(l).card());
             if d.tag(Tag::Passage) && army_of(g, q).is_some() {
                 add(d.id, 3.0);
-            }
-            if d.tag(Tag::Desert) && g.player(p).key == "seph" {
-                add(d.id, 5.0);
             }
         }
     }
@@ -723,7 +719,6 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
     let first = |ns: &[&str]| -> Option<CardId> { ns.iter().filter_map(|n| g.db.id(n)).find(|c| okn.contains(c)) };
     let pl = g.player(p);
     match pl.key {
-        "seph" => super::seph::seph_tutor_target(g, p).and_then(|n| g.db.id(n)).filter(|c| okn.contains(c)),
         "yshtola" => crate::impls::yshtola::tutor_pick(g, p, kind, &okn),
         "cloud" if matches!(kind, "ae" | "art") => crate::impls::cloud::tutor_pick(g, p, &okn),
         "kraum" | "thrasios" => crate::impls::tymna_cards::tutor_pick(g, p, kind, &okn),
@@ -1018,7 +1013,6 @@ fn mode_hit(g: &Game, modes: &[Sym], m: PermId) -> bool {
 /// can be recast), and a reanimator's bombs count less unless exiled
 pub fn wipe_loss(g: &Game, q: PlayerId, kind: &str, caster: PlayerId) -> f64 {
     let rule = WipeRule::new(g, caster, kind);
-    let rean = g.player(q).key == "seph" && has_rean_access(g, q);
     let mut loss = 0.0;
     for &m in &g.player(q).perms {
         let x = g.perm(m);
@@ -1028,10 +1022,6 @@ pub fn wipe_loss(g: &Game, q: PlayerId, kind: &str, caster: PlayerId) -> f64 {
         let mut v = pval(g, m);
         if matches!(kind, "rift" | "evac" | "rebuke") && !x.token {
             v *= 0.5;
-        }
-        if rean && x.cd.is_some_and(|c| g.db.get(c).bomb != 0) && !matches!(kind, "exile" | "rift" | "evac" | "rebuke")
-        {
-            v *= 0.4;
         }
         loss += v;
     }
@@ -1092,7 +1082,6 @@ pub fn wipe_eval(g: &Game, p: PlayerId, kind: &str) -> (f64, f64, Option<PlayerI
         biggest = Some(b);
         x = epow(g, b);
     }
-    let rean = g.player(p).key == "seph" && has_rean_access(g, p);
     let (mut ol, mut ml) = (0.0, 0.0);
     for &q in &alive {
         for &m in &g.player(q).perms {
@@ -1116,9 +1105,6 @@ pub fn wipe_eval(g: &Game, p: PlayerId, kind: &str) -> (f64, f64, Option<PlayerI
                 v *= 0.5; // bounced cards can be recast
             }
             if q == p {
-                if rean && pm.cd.is_some_and(|c| g.db.get(c).bomb != 0) && kind != "exile" {
-                    v *= 0.4;
-                }
                 if pm.army && g.player(p).key == "sauron" && !has(g, p, Tag::Ozolith) {
                     v *= 3.0; // the deck is one big Army: a sweep that kills it (Nibelheim Aflame) costs the plan, not a body
                 }
@@ -1226,7 +1212,6 @@ pub fn protect_response(
     }
     if g.humans.get(owner).is_some()
         || !is_main(g.player(owner).key)
-        || g.player(owner).key == "seph"
         || silenced(g, owner)
         || !g.perm(m).on_bf
     {
@@ -1272,17 +1257,12 @@ fn protect_main(
     }
     let v = pval(g, m);
     if silenced(g, owner) {
-        // Conqueror's Flail: only non-spell responses (Sephiroth's free sacrifice outlets)
-        if key == "seph" {
-            return super::seph::protect_silenced(g, owner, m, kind, v);
-        }
         return Ok(false);
     }
     if key == "cloud" && crate::impls::bulk_white::white_protect(g, owner, m, kind, actor, spell)? {
         return Ok(true); // Patriot, Shardmage's Rescue, Cho-Manno's Blessing, Ultimate Magic: Holy
     }
     match key {
-        "seph" => super::seph::protect(g, owner, m, kind, v),
         "veyran" => super::veyran::protect(g, owner, m, kind, actor, spell),
         "sauron" => {
             if g.perm(m).army || v >= 5.0 {
@@ -1333,6 +1313,25 @@ fn protect_main(
 }
 
 /// ais.wipe_response: q's answer to a board wipe about to hit it: 'all' (everything saved), 'indes', or none
+/// the wipe will kill these anyway: sacrifice them to an outlet first (the free ones; a paid one too for a deck with
+/// the `paid_outlets` plan knob), the least worth keeping first
+fn sac_doomed(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> Res {
+    if matches!(kind, "rift" | "evac" | "rebuke" | "vandal") {
+        return Ok(());
+    }
+    let rule = WipeRule::new(g, caster, kind);
+    let mut doomed: Vec<PermId> = g
+        .player(q)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| g.is_creature(m) && !g.perm(m).phased && rule.hits(g, m, q))
+        .collect();
+    doomed.sort_by(|&a, &b| crate::engine::zones::sac_worth(g, a).total_cmp(&crate::engine::zones::sac_worth(g, b)));
+    crate::cardcode::sac_before_wipe(g, q, &doomed)?;
+    Ok(())
+}
+
 pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> Res<Option<Sym>> {
     crate::impls::tymna_cards::darien_wipe(g, q, kind, caster)?; // King Darien: tokens survive a destroy sweeper
     if q == caster || silenced(g, q) || g.humans.get(q).is_some() {
@@ -1346,7 +1345,11 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
             return Ok(Some(r)); // Ultimate Magic: Holy
         }
         crate::impls::t12_lightpaws::wipe_response(g, q, kind, caster)?; // --- Tiers 1/2 (lightpaws): Flickerform
-        return pool::wipe_response(g, q, kind, caster);
+        let r = pool::wipe_response(g, q, kind, caster)?;
+        if r.is_none() && crate::impls::common::paid_outlets_on(g, q) {
+            sac_doomed(g, q, kind, caster)?; // --- ghave: unprotected: Ghave's {1} outlet (and the free ones) first
+        }
+        return Ok(r);
     }
     if key == "yshtola" {
         return crate::impls::yshtola::yshtola_wipe_response(g, q, kind, caster);
@@ -1367,30 +1370,14 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     if matches!(key, "galadriel" | "yshtola") {
         return Ok(None);
     }
-    if key != "seph"
-        && !g.marchesa_on // (her return counts the creatures that die together)
-        && !matches!(kind, "rift" | "evac" | "rebuke" | "vandal")
+    if !g.marchesa_on // (her return counts the creatures that die together)
         && !crate::cardcode::outlets_of(g, q).is_empty()
     {
-        // the wipe will kill these anyway: sacrifice them to a free outlet first
-        let rule = WipeRule::new(g, caster, kind);
-        let mut doomed: Vec<PermId> = g
-            .player(q)
-            .perms
-            .iter()
-            .copied()
-            .filter(|&m| g.is_creature(m) && !g.perm(m).phased && rule.hits(g, m, q))
-            .collect();
-        doomed
-            .sort_by(|&a, &b| crate::engine::zones::sac_worth(g, a).total_cmp(&crate::engine::zones::sac_worth(g, b)));
-        crate::cardcode::sac_before_wipe(g, q, &doomed)?;
+        sac_doomed(g, q, kind, caster)?;
     }
     let loss = wipe_loss(g, q, kind, caster);
     if loss < 6.0 {
         return Ok(None);
-    }
-    if key == "seph" {
-        return super::seph::wipe_response(g, q, kind, loss);
     }
     if key == "sauron"
         && let Some(a) = army_of(g, q)

@@ -13,7 +13,7 @@
 //! [ai]
 //! planner = false        # --- ai-planner: the Tier 6 line planner off (the step 1 AI; env PLANNER=0 too)
 //! [cthresh]
-//! seph = 6               # one of your decks' counter threshold
+//! ghave = 6              # one of your decks' counter threshold
 //! [search]               # the look-ahead's knobs (no effect with --ai adaptive)
 //! combo_w = 12.0
 //! [style.kinnan-bonder-mana-combo]
@@ -317,7 +317,7 @@ mod tests {
     use super::*;
     use sim_core::settings::{AiMode, Profile};
 
-    const DECKS: [&str; 3] = ["seph", "kinnan-bonder-mana-combo", "sisay-legends-toolbox"];
+    const DECKS: [&str; 3] = ["ghave", "kinnan-bonder-mana-combo", "sisay-legends-toolbox"];
 
     fn p(s: &str) -> Result<Knobs, String> {
         parse(s, "k.toml", &DECKS)
@@ -348,13 +348,13 @@ mod tests {
     #[test]
     fn a_complete_file_is_read_and_applied() {
         let k = p("tier = \"t6\"\nnote = \"x\"\n[table]\ntemp_scale = 0.8\ncthresh_default = 5\ninstant_extra = 1\n\
-                   [cthresh]\nseph = 7\n[search]\ncombo_w = 10\ntop_k = 4\n\
+                   [cthresh]\nghave = 7\n[search]\ncombo_w = 10\ntop_k = 4\n\
                    [style.kinnan-bonder-mana-combo]\naggression = 0.9\n[fit]\nloss = 1.5\n")
         .unwrap();
         let mut st = Settings::new(Profile::Loose, AiMode::Adaptive, 1.0);
         k.apply(&mut st);
         assert_eq!((st.temp_scale, st.cthresh_default, st.instant_extra), (0.8, 5, 1));
-        assert_eq!(st.counter_threshold("seph"), Some(7));
+        assert_eq!(st.counter_threshold("ghave"), Some(7));
         assert_eq!((st.search.combo_w, st.search.top_k), (10.0, 4));
         let base = sim_core::ai::base_style("kinnan-bonder-mana-combo");
         let s = st.styles["kinnan-bonder-mana-combo"];
@@ -380,8 +380,8 @@ mod tests {
             ("[table]\ninstant_extra = 1.5\n", "whole number"),
             ("[table]\ncthresh_default = 99\n", "outside"),
             ("[style.nobody]\ntemp = 1\n", "not a deck"),
-            ("[style.seph]\nboldness = 1\n", "unknown key `boldness`"),
-            ("[style.seph]\naggression = 1.5\n", "outside"),
+            ("[style.ghave]\nboldness = 1\n", "unknown key `boldness`"),
+            ("[style.ghave]\naggression = 1.5\n", "outside"),
             ("[cthresh]\nnobody = 6\n", "not a deck"),
             ("[search]\ndepth = 3\n", "unknown key `depth`"),
             ("x = [", "not valid TOML"),

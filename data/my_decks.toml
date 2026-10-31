@@ -1,11 +1,11 @@
 # Your decks: the deck key, its file under decklists/, the name the logs use, the commander the simulator
 # plays and the colour identity of the seat, and `tiers`: the opponent tiers it is simulated against (matched power; see CLAUDE.md "Opponent tiers"). Extracted once from the old Python code; this file is now the source.
 
-[seph]
-file = "JD/sephiroth-phyrexian-reanimator.md"
-name = "Sephiroth"
-commander = "Atraxa, Grand Unifier"
-ident = "WUBG"
+[ghave]
+file = "JD/ghave-abzan-aristocrats.md"
+name = "Ghave"
+commander = "Ghave, Guru of Spores"
+ident = "WBG"
 tiers = ["t3", "t4"]
 
 [veyran]

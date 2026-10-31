@@ -41,7 +41,7 @@ shell command that starts with `python`, `python3`, `pip`, `pipx` or `uv`, in ev
 
 Each of JD's decks is simulated only against the opponent tiers listed for it in `data/my_decks.toml` (`tiers = [...]`,
 also exported to `data/decks.json`): yshtola, thrasios and urdragon t5 (band 1; urdragon 10/30);
-sheoldred, sauron and seph t3-t4 (band 2); kefka t3 (band 3); cloud and veyran t1-t3 (band 4);
+sheoldred, sauron and ghave t3-t4 (band 2; ghave 10/30: Seph's seat); kefka t3 (band 3); cloud and veyran t1-t3 (band 4);
 karn t4-t5 (10/20); thanos t6 (cEDH, 10/30: Scion's seat); alela and galadriel t1 (Avery's).
 `--pool all`, `--all-decks`, `--analyze`,
 swap runs and `searchtest` use only those tiers; `--deck X --pool tN` outside them is refused. Report averages over

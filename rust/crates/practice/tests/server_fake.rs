@@ -229,22 +229,22 @@ fn a_game_through_the_routes() {
     let (st, _, b) = call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "nope", "tier": "t1"})));
     assert_eq!(
         (st, b["error"].as_str()),
-        (400, Some("deck: one of seph, veyran, sauron, yshtola, galadriel, alela, kefka, sheoldred, cloud, thrasios, karn, thanos, urdragon"))
+        (400, Some("deck: one of ghave, veyran, sauron, yshtola, galadriel, alela, kefka, sheoldred, cloud, thrasios, karn, thanos, urdragon"))
     );
     assert_eq!(
-        call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "seph", "tier": "t9"}))).2["error"],
+        call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "ghave", "tier": "t9"}))).2["error"],
         "tier: one of t0, t1, t2, t3, t4, t5, t6"
     );
     assert_eq!(
-        call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "seph", "tier": "t1", "autopass": "x"}))).2["error"],
+        call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "ghave", "tier": "t1", "autopass": "x"}))).2["error"],
         "autopass: one of respond, stack, all"
     );
     assert_eq!(
-        call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "seph", "tier": "t1", "seat": "2"}))).2["error"],
+        call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "ghave", "tier": "t1", "seat": "2"}))).2["error"],
         "seat: 1 to 4"
     );
     assert_eq!(
-        call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "seph", "tier": "t1", "two": true}))).0,
+        call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "ghave", "tier": "t1", "two": true}))).0,
         409
     );
     let mut s = TcpStream::connect(("127.0.0.1", p)).unwrap();
@@ -253,25 +253,25 @@ fn a_game_through_the_routes() {
     s.read_to_string(&mut raw).unwrap();
     assert!(raw.starts_with("HTTP/1.1 400") && raw.contains("the request body is not JSON"));
 
-    let (st, _, b) = call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "seph", "tier": "t1"})));
+    let (st, _, b) = call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "ghave", "tier": "t1"})));
     assert_eq!((st, b["ok"].clone(), b["seed"].clone()), (200, json!(true), json!(7)));
     let fake = r.f.0.lock().unwrap()[0].clone();
     wait_for(|| *fake.started.lock().unwrap());
     // my seat: the cookie names it; the request's view moved into views
     wait_for(|| call(p, "GET", "/api/state", Some("me"), None).2["pending"].is_object());
     let (_, _, state) = call(p, "GET", "/api/state", Some("me"), None);
-    assert_eq!(state["game"]["you"], "seph");
+    assert_eq!(state["game"]["you"], "ghave");
     assert_eq!(state["view"], json!({"turn": 1}));
     let pend = &state["pending"];
     assert_eq!((pend["who"].clone(), pend["request"]["data"].clone()), (json!("Me"), json!({"x": 1})));
     // another browser on this computer is the host: it plays the first seat; busy never shows for it
-    assert_eq!(call(p, "GET", "/api/state", Some("other"), None).2["game"]["you"], "seph");
+    assert_eq!(call(p, "GET", "/api/state", Some("other"), None).2["game"]["you"], "ghave");
     // a stale id is refused, the right one is taken once
     let id = pend["id"].clone();
     let (st, _, b) = call(p, "POST", "/api/answer", Some("me"), Some(&json!({"id": 999, "answer": 1})));
     assert_eq!((st, b["error"].as_str()), (409, Some("That decision has already been answered.")));
     assert_eq!(call(p, "POST", "/api/answer", Some("me"), Some(&json!({"id": id, "answer": {"pass": true}}))).0, 200);
-    assert_eq!(fake.answers.lock().unwrap().clone(), vec![("seph".to_string(), json!({"pass": true}))]);
+    assert_eq!(fake.answers.lock().unwrap().clone(), vec![("ghave".to_string(), json!({"pass": true}))]);
     assert_eq!(call(p, "POST", "/api/answer", Some("me"), Some(&json!({"id": id, "answer": 2}))).0, 409);
     assert_eq!(call(p, "POST", "/api/undo", Some("me"), Some(&json!({"n": 1}))).2["error"], "Nothing to undo yet.");
     assert_eq!(call(p, "POST", "/api/autopass", Some("me"), Some(&json!({"mode": "all"}))).0, 200);
@@ -285,7 +285,7 @@ fn a_game_through_the_routes() {
     let (st, _, b) = call(p, "POST", "/api/save", Some("me"), None);
     assert_eq!(st, 200);
     let name = b["name"].as_str().unwrap().to_string();
-    assert!(name.ends_with("-seph-t1-7.json"), "{name}");
+    assert!(name.ends_with("-ghave-t1-7.json"), "{name}");
     let (_, _, l) = call(p, "GET", "/api/saves", None, None);
     assert_eq!((l["saves"][0]["name"].clone(), l["saves"][0]["round"].clone()), (json!(name), json!(2)));
     assert_eq!(
@@ -298,7 +298,7 @@ fn a_game_through_the_routes() {
     // autosave: a one-player game waiting on you saves itself; quitting removes it
     wait_for(|| r.saves.join("autosave.json").is_file());
     let (_, _, l) = call(p, "GET", "/api/saves", None, None);
-    assert_eq!(l["autosave"]["deck"], "seph");
+    assert_eq!(l["autosave"]["deck"], "ghave");
     assert_eq!(l["saves"].as_array().unwrap().len(), 1);
     assert_eq!(call(p, "POST", "/api/quit", None, None).0, 200);
     assert!(!r.saves.join("autosave.json").exists());
@@ -309,7 +309,7 @@ fn a_game_through_the_routes() {
 fn events_stream_and_reconnect() {
     let r = rig("sse", false);
     let p = r.h.port;
-    call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "seph", "tier": "t1", "images": false})));
+    call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "ghave", "tier": "t1", "images": false})));
     let fake = r.f.0.lock().unwrap()[0].clone();
     wait_for(|| *fake.started.lock().unwrap());
     fake.push(json!({"kind": "log", "text": "one", "view": {"turn": 2}}));
@@ -408,21 +408,21 @@ fn lobby_and_join_with_lan() {
     let r = rig("lan", true);
     let p = r.h.port;
     let (st, _, b) =
-        call(p, "POST", "/api/new", Some("host"), Some(&json!({"deck": "seph", "tier": "t1", "two": true})));
+        call(p, "POST", "/api/new", Some("host"), Some(&json!({"deck": "ghave", "tier": "t1", "two": true})));
     assert_eq!(st, 200);
     let code = b["code"].as_str().unwrap().to_string();
     assert_eq!(code.len(), 6);
     let (_, _, s) = call(p, "GET", "/api/state", Some("host"), None);
-    assert_eq!((s["lobby"]["deck"].clone(), s["lobby"]["code"].clone()), (json!("seph"), json!(code)));
+    assert_eq!((s["lobby"]["deck"].clone(), s["lobby"]["code"].clone()), (json!("ghave"), json!(code)));
     let join = |cookie: &str, code: &str, deck: &str| {
         call(p, "POST", "/api/join", Some(cookie), Some(&json!({"code": code, "deck": deck}))).2
     };
     assert_eq!(join("guest", "000000x", "veyran")["error"], "That code is not right: the host's screen shows it.");
-    assert_eq!(join("guest", &code, "seph")["error"], "The host plays that deck: pick another.");
+    assert_eq!(join("guest", &code, "ghave")["error"], "The host plays that deck: pick another.");
     assert_eq!(join("host", &code, "veyran")["error"], "This browser is the host's: join from the other computer.");
     assert_eq!(
         join("guest", &code, "bogus")["error"],
-        "deck: one of seph, veyran, sauron, yshtola, galadriel, alela, kefka, sheoldred, cloud, thrasios, karn, thanos, urdragon"
+        "deck: one of ghave, veyran, sauron, yshtola, galadriel, alela, kefka, sheoldred, cloud, thrasios, karn, thanos, urdragon"
     );
     assert_eq!(join("guest", &code, "veyran")["ok"], true);
     assert_eq!(join("guest", &code, "veyran")["error"], "There is no game waiting for a second player.");

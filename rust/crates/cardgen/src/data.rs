@@ -165,7 +165,7 @@ pub fn load_overrides(p: &Project) -> Result<Vec<(String, Entry)>, String> {
 #[derive(Debug, Clone)]
 pub struct MyDeck {
     pub key: String,
-    /// the deck file under decklists/ ("JD/sephiroth-phyrexian-reanimator.md")
+    /// the deck file under decklists/ ("JD/ghave-abzan-aristocrats.md")
     pub file: String,
     /// the name logs use
     pub name: String,

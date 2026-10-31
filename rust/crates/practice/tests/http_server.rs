@@ -220,7 +220,7 @@ fn test_options() {
     let d = r.json();
     let mut decks: Vec<&str> = d["decks"].as_array().unwrap().iter().map(|x| x["key"].as_str().unwrap()).collect();
     decks.sort();
-    assert_eq!(decks, ["alela", "cloud", "galadriel", "karn", "kefka", "sauron", "seph", "sheoldred", "thanos", "thrasios", "urdragon", "veyran", "yshtola"]);
+    assert_eq!(decks, ["alela", "cloud", "galadriel", "ghave", "karn", "kefka", "sauron", "sheoldred", "thanos", "thrasios", "urdragon", "veyran", "yshtola"]);
     let tiers: Vec<&str> = d["tiers"].as_array().unwrap().iter().map(|x| x["key"].as_str().unwrap()).collect();
     assert_eq!(tiers, ["t0", "t1", "t2", "t3", "t4", "t5", "t6"]);
     assert_eq!(d["tiers"][2]["decks"].as_array().unwrap().len(), 5);
@@ -237,14 +237,14 @@ fn test_bad_new_game() {
     let r = c.post("/api/new", json!({"deck": "nobody", "tier": "t1"}));
     assert_eq!(r.status, 400);
     assert!(r.error().starts_with("deck: one of"), "{}", r.error());
-    let r = c.post("/api/new", json!({"deck": "seph", "tier": "t9"}));
+    let r = c.post("/api/new", json!({"deck": "ghave", "tier": "t9"}));
     assert_eq!((r.status, r.error().starts_with("tier: one of")), (400, true));
-    let r = c.post("/api/new", json!({"deck": "seph", "tier": "t1", "opponents": ["isshin"], "images": false}));
+    let r = c.post("/api/new", json!({"deck": "ghave", "tier": "t1", "opponents": ["isshin"], "images": false}));
     assert_eq!(r.status, 400);
     assert!(r.error().contains("pick three"), "{}", r.error());
-    assert_eq!(c.post("/api/new", json!({"deck": "seph", "tier": "t1", "seat": "first"})).status, 400);
-    assert_eq!(c.post("/api/new", json!({"deck": "seph", "tier": "t1", "opponents": "isshin"})).status, 400);
-    let r = c.post("/api/new", json!({"deck": "seph", "tier": "t1", "seats": [1, 2]}));
+    assert_eq!(c.post("/api/new", json!({"deck": "ghave", "tier": "t1", "seat": "first"})).status, 400);
+    assert_eq!(c.post("/api/new", json!({"deck": "ghave", "tier": "t1", "opponents": "isshin"})).status, 400);
+    let r = c.post("/api/new", json!({"deck": "ghave", "tier": "t1", "seats": [1, 2]}));
     assert_eq!((r.status, r.error()), (400, "seats: four deck keys in turn order".to_string()));
 }
 

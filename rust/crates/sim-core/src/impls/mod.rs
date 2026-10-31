@@ -16,6 +16,7 @@ pub mod galadriel;
 pub mod garland;
 pub mod garland_cards;
 pub mod karn_cards;
+pub mod ghave; // --- ghave: Ghave, Guru of Spores (enters with counters, the deck's loops in the combo catalogue)
 pub mod sephfs;
 pub mod sephfs_cards;
 pub mod kefka;

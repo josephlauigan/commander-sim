@@ -2,8 +2,8 @@
 //! without Python. Measure one of your decks against the opponent pools (decklists/pool/), or compare a list
 //! change with paired runs.
 //!
-//!     commander-sim --deck seph --pool t3 --games 1500
-//!     commander-sim --deck seph --pool t3 --swap "Blood Artist=>Grim Tutor"
+//!     commander-sim --deck ghave --pool t3 --games 1500
+//!     commander-sim --deck ghave --pool t3 --swap "Blood Artist=>Grim Tutor"
 //!     commander-sim --all-decks --pool all --profile loose
 //!
 //! Baseline = the deck list in decklists/<owner>/. Same seeds are used for baseline and variant, so the comparison

@@ -282,7 +282,7 @@ pub fn veyran_boots(g: &mut Game, p: PlayerId) -> Res<bool> {
         }
     }
     let Some(&e) = eq.first() else { return Ok(false) };
-    let cost = super::seph::boots_cost(g, e);
+    let cost = if crate::engine::values::card_name(g, e) == Some("Lightning Greaves") { 0 } else { 1 }; // Swiftfoot Boots: {1}
     if !can_pay(g, p, cost, "", false) {
         return Ok(false);
     }

@@ -120,6 +120,7 @@ pub fn all() -> &'static [&'static Combo] {
             .chain(super::cc_brago::COMBOS.iter()) // --- casual combos (brago)
             .chain(super::cc_teysa::COMBOS.iter()) // --- casual combos (teysa)
             .chain(super::t6_combos_scion::COMBOS.iter()) // --- scion
+            .chain(super::ghave::COMBOS.iter()) // --- ghave
             .collect()
     });
     &ALL
