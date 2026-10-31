@@ -1,0 +1,66 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
+# policy (ai/plans.rs `config`). JD's Sheoldred, the Apocalypse deck (mono-B draw punisher, key `sheoldred`, tiers
+# t3-t4). Written in Phase 4 PR 7 from its hand AI, played when AI_HAND is off: `sheoldred::sheoldred_prio` and
+# `pkg2_prio` (the prio rules, rescaled under 90), `sheoldred_protect` / `sheoldred_hold` (the holds).
+# No lines: the hand AI has no tutor wish list (its tutors take the highest-priority card, which the prio rules give).
+# Left out (the schema can't express it): Phyrexian Delver's reanimation target, Soul Enervation's kill check, the
+# Memory Jar / Necrosquito / Rooftop Assassin / Seizan rules; the equip plays (`sheoldred_special`: Darksteel Plate /
+# Boots onto Sheoldred first, the Beckoner's warp); Toxic Deluge's cap (`deluge_cap`); the draw-punisher plays
+# (lesson / deal / atlas / peer options); Ad Nauseam in main 2; the hold's value by removal risk and the hexproof check.
+deck = "sheoldred"
+default = "plan"
+
+# Sheoldred as early as the mana allows
+[commander]
+prio = 90
+
+# Cast priorities (was sheoldred_prio): rocks first while she is not out (she comes a turn sooner); the draw tolls
+# (Underworld Dreams, Fate Unraveler) high; Howling Mine only with a toll out; Darksteel Plate onto her; the
+# protection instants held (cast by the protect hook)
+[[prio]]
+cards = ["Arcane Signet", "Fellwar Stone"]
+when = ["not commander-out"]
+value = 88
+
+[[prio]]
+cards = ["Underworld Dreams"]
+value = 86
+
+[[prio]]
+cards = ["Fate Unraveler"]
+value = 84
+
+[[prio]]
+cards = ["Howling Mine"]
+when = ["commander-out", "out:Underworld Dreams", "out:Fate Unraveler"]
+value = 70
+else = 0
+
+[[prio]]
+cards = ["Darksteel Plate"]
+when = ["commander-out"]
+value = 78
+
+[[prio]]
+cards = ["Masterful Flourish", "Battle-Rage Blessing"]
+value = 0
+
+[[prio]]
+cards = ["Perigee Beckoner"]
+value = 52
+
+[[prio]]
+cards = ["Ambition's Cost"]
+when = ["life<=6"]
+value = 0
+
+# indestructible for Sheoldred against destroy / damage removal; mana kept up while she is out
+[[hold]]
+card = "Masterful Flourish"
+protects = ["commander"]
+mana = true
+
+[[hold]]
+card = "Battle-Rage Blessing"
+protects = ["commander"]
+mana = true

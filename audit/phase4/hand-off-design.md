@@ -85,11 +85,12 @@ Sites are `file:function`. "(key)" means the site reads the key through `hand_ke
 - Deck AI: `deck_prio` -> `sauron_prio`; `tutor_pick_named` -> `sauron_tutor`; `protect_main` (sauron arm);
   `wipe_response` (sauron arm), `sauron_grounds_response`; `wipe_eval` (the Army without Ozolith); `archivist_worth`;
   `special_options` -> `sauron_options` (equip, Helm, Archivist, Monolith untaps); `brain::hold_value` (counter
-  shell); `stack.rs` pitch choice (`sauron_pitch_keep`); `combat.rs` Aggravated Assault extra combat choice;
+  shell); `stack.rs` pitch choice (`sauron_pitch_keep`);
   `sheoldred.rs` `cost_options` / `cost_plan` (host = the Army); `mine.rs` `breach_line` (runs the line without the
   pieces check), `galadriel::choose_type` / `mine::territory_type` (Orc), `legends.rs` territory type; `yshtola.rs`
   `x_option` (the drain X spell as a main-phase play); `threats.rs` `copy_worth`.
-- Card code: `threats::torment_options` (Torment of Hailfire's only cast path; shared with Tergrid); `mine.rs`
+- Card code: `combat.rs` Sword + Aggravated Assault extra combats (the line exists only there);
+  `threats::torment_options` (Torment of Hailfire's only cast path; shared with Tergrid); `mine.rs`
   `army_power_snapshot` (report).
 - Table reads: `brain.rs` situation (Sword + Assault), `engine/values::threat` (+10), `reanimate.rs` (Mother of
   Runes against Sauron), `cast.rs` commander importance.
