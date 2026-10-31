@@ -19,3 +19,26 @@ Scratch: `/tmp/claude-1000/-home-joseph-projects/61d4d38b-9b1e-4bc1-8845-ec4ae3a
 - [x] 3. `AI_RULES`: all level (results section 3).
 - [~] 4. `AI_HAND`: q4 running (log q4.log).
 - [ ] 5. Results table.
+
+# Stage 2: evaluation refit, style fit, pool check, JD's decks remeasured
+
+Brief: `rust/agents/recal-2.md`. Results: `audit/recal/stage2-2026-11-01.md`. Base = `overnight-stack` at 37fd6b90
+(origin/main + #191 + #193), defaults, `--jobs 22`, loose. Scratch:
+`/tmp/claude-1000/-home-joseph-projects/61d4d38b-9b1e-4bc1-8845-ec4ae3a757af/scratchpad/recal2/`:
+
+- `bin/commander-sim-old` (37fd6b90, the current model), `bin/eval_train`; later `bin/commander-sim-new` (the same
+  source with the refitted `data/eval/model.toml`, nothing else).
+- `lib.sh` (sourced): `arm NAME BIN "K=V ..."|- ARGS...` = one capped sim at `--jobs 22` into `runs/NAME.txt` (`.rc`,
+  `.err`, `.cpu`), run from the worktree, every `AI_*` unset first, skipped when already done with rc=0 (queues rerun
+  to resume). `half.sh`, `pair.sh`, `dp.sh`, `names.sh` as in stage 1. `loss.awk`: a `--realism` scorecard's pass
+  count and the `--fit` loss.
+- `score/`: a scratch crate (path dependency on sim-core, not in the repo): `score/target/release/evalscore DATA
+  MODEL.toml...` scores models on the held-out (seed % 5 == 0) recorded positions, weighted as `eval_train` does.
+- Queues: `q1.sh` (recording), ... each logging to `qN.log`, ending "qN all done".
+
+## Stage 2 state
+
+- [~] 1. Evaluation refit: q1 (recording t1-t5, old binary, defaults) started 16:05 10/31.
+- [ ] 2. Style fit t0-t6.
+- [ ] 3. Pool check.
+- [ ] 4. JD's decks remeasured.
