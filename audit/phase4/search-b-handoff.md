@@ -21,6 +21,12 @@ Brief: `rust/agents/phase4-search-b.md`. Design: `audit/phase4/search-design.md`
   to the heuristic), protection 0.1, wipes 0.1.
 - PR 5's arms (binary D) can't be reused: its worktree is gone and the data changed since (the origin/main merge),
   so D run here fails on a moved decklist. Every reference arm is rerun with b1.
+- Jobs: 12 until 2026-10-30 ~22:40, then 8 (coordinator: three agents share the machine; `sim.sh` defaults to 8, cargo
+  `-j 8`). Done at 12: survey `M/`, Stage A `A/`, `X/t2-old`, `X/t2-B-ref`. The ablation arms after them run at 8, and
+  `abl3.sh` reruns t2-old and t2-B-ref at 8 (`X/*-j8.txt`), so every ablation pair is at one `--jobs` (and checks
+  that the output doesn't depend on it). Every Stage B arm runs at 8.
+- PR 5 (#179) is merged into main: this branch targets main. Not merged into this branch (main's later data would
+  change the base the arms are paired against).
 - [ ] Stage B, Stage C, final checks.
 
 ## Gotchas
