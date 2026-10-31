@@ -20,7 +20,7 @@ search cost line and diagnostics on `OUT.err`; `half.sh OLD NEW "Name;Name"`; `p
   machine). The output does not depend on `--jobs`: base and ISMCTS t1 300 games at 12 = at 22 byte for byte
   (`A/t1-base-j12.txt`, `A/t1-onB-j12.txt`), so the 22-job identity checks above stand. Every Stage B arm uses 12, so
   games/s compare like with like (they are not comparable with the 22-job numbers in the design's cost table).
-- [~] Stage B, first run (binary B = cfbd9ec3; arms moved to `B1/`): t1 half A -3.2 [-8.5, +2.1], half B -3.6
+- [x] Stage B, first run (binary B = cfbd9ec3; arms moved to `B1/`): t1 half A -3.2 [-8.5, +2.1], half B -3.6
   [-7.2, +0.0], steps a game 229k -> 181k / 172k. Both lean down, so the queue was stopped after t2-old (the
   `AI_SEARCH=0` arms are config-free: `B/t1-old`, `B/t2-old` are reused). Suspect: the clear-leader stop and the pick
   could overrule the top play on 2 shared copies (a 1-df t-test). Fix 3868adee (binary C): 6 shared copies against
@@ -40,3 +40,31 @@ search cost line and diagnostics on `OUT.err`; `half.sh OLD NEW "Name;Name"`; `p
 - `pgrep -f X` inside an `until` loop matches the loop itself: wait on output text.
 - `gen` is a reserved word in edition 2024.
 - The search cost goes to stderr so the report stays byte-identical; `OUT.err` has it.
+
+## Stage B results (2000 games per arm, seeds 500000-501999, loose, look-ahead; all 15 arms rc=0)
+
+Binary D (02b729d2). The half's summed share of the decisive games its decks sat in, `AI_SEARCH=0` against
+`AI_SEARCH=<half's keys>` (one shared old arm per tier); Wald 95% CIs, the decks' variances summed. Level = the CI
+includes 0. Cost per arm, the whole table (all seats; only the half's seats search by ISMCTS): playout steps a game,
+look-ahead decisions a game, games/s and CPU seconds (user+sys) for the 2000 games at 22 jobs. The t1 and t2 old arms
+first ran at 12 jobs on a shared machine; their speed is from a rerun at 22 (`Bs/`, output byte-identical).
+
+| tier | half | old (95% CI) | ISMCTS (95% CI) | ISMCTS - old (95% CI) | steps/game old / ISMCTS | decisions/game | g/s old / ISMCTS | CPU s old / ISMCTS | verdict |
+|---|---|---|---|---|---|---|---|---|---|
+| t1 | A (Isshin, Light-Paws, Teysa) | 91.0% [87.2, 94.8] | 91.7% [87.9, 95.5] | +0.7 [-4.6, +6.0] | 228,753 / 208,913 (-9%) | 73.0 / 65.6 | 3.39 / 3.57 | 11,570 / 10,639 | level |
+| t1 | B (Lathril, Tatyova) | 34.1% [31.5, 36.7] | 32.3% [29.7, 34.9] | -1.8 [-5.5, +1.9] | 228,753 / 204,871 (-10%) | 73.0 / 69.1 | 3.39 / 4.16 | 11,570 / 9,996 | level |
+| t2 | A (Brago, Lord Windgrace, Sythis) | 84.3% [80.6, 88.0] | 81.6% [77.9, 85.3] | -2.7 [-7.9, +2.5] | 393,538 / 298,566 (-24%) | 104.4 / 95.4 | 1.95 / 2.61 | 21,686 / 15,998 | level |
+| t2 | B (Kaalia, Meren) | 40.9% [38.1, 43.7] | 39.2% [36.4, 42.0] | -1.7 [-5.7, +2.3] | 393,538 / 371,881 (-6%) | 104.4 / 99.1 | 1.95 / 1.92 | 21,686 / 21,595 | level |
+| t3 | A (Atraxa, Korvold, Tergrid) | 76.6% [73.0, 80.2] | 74.9% [71.3, 78.5] | -1.7 [-6.8, +3.4] | 163,089 / 144,888 (-11%) | 67.1 / 58.6 | 6.75 / 5.91 | 5,472 / 4,969 | level |
+| t3 | B (Aurelia, Marwyn) | 48.4% [45.4, 51.4] | 50.8% [47.8, 53.8] | +2.4 [-1.8, +6.6] | 163,089 / 152,349 (-7%) | 67.1 / 63.2 | 6.75 / 5.87 | 5,472 / 5,146 | level |
+| t4 | A (Chulane, Krenko, Yuriko) | 64.7% [61.2, 68.2] | 63.4% [60.0, 66.8] | -1.3 [-6.2, +3.6] | 202,728 / 181,984 (-10%) | 69.1 / 65.3 | 3.60 / 4.76 | 10,036 / 9,096 | level |
+| t4 | B (Edgar Markov, Prosper) | 60.5% [57.5, 63.5] | 58.5% [55.5, 61.5] | -2.0 [-6.3, +2.3] | 202,728 / 191,018 (-6%) | 69.1 / 65.8 | 3.60 / 4.43 | 10,036 / 9,568 | level |
+| t5 | A (Kinnan, Urza, Zur) | 79.8% [76.1, 83.5] | 78.4% [74.7, 82.1] | -1.4 [-6.6, +3.8] | 172,093 / 157,278 (-9%) | 68.2 / 66.8 | 6.19 / 6.50 | 6,995 / 6,623 | level |
+| t5 | B (Miirym, Yawgmoth) | 45.0% [42.1, 47.9] | 46.0% [43.1, 48.9] | +1.0 [-3.1, +5.1] | 172,093 / 162,972 (-5%) | 68.2 / 66.7 | 6.19 / 6.43 | 6,995 / 6,615 | level |
+
+- Every pair is level, but 7 of 10 deltas are below 0 (mean -0.85 points): ISMCTS is at best level, not better.
+- Deck level (`pair.sh`, `stageB-decks.txt`): one ISMCTS deck's own CI excludes 0, Meren (t2 B) -3.7 [-6.3, -1.1];
+  Korvold (t3 B, an old-arm tablemate) -3.8 [-6.3, -1.3] as Aurelia and Marwyn rose. No ISMCTS deck's CI is above 0.
+- Cost: steps a game fall 5-24% on the table with 2-3 of the 5 decks on ISMCTS, CPU 0-26% (t2 A the most).
+  Wall-clock games/s is noisy (the last slow games of a run set it; t3's ISMCTS arms read slower while their CPU
+  time is 6-9% lower). The full-table cost (every seat on ISMCTS) is in the final checks below.
