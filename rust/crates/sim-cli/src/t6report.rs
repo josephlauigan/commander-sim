@@ -551,6 +551,8 @@ mod tests {
             cast: vec![],
             lost: vec![],
             cast_turns: vec![],
+            search_cost: Default::default(),
+            generic: false,
         }
     }
 

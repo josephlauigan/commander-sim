@@ -433,6 +433,24 @@ impl Perm {
 }
 
 // ------------------------------------------------------------------ players
+// --- phase4-search
+/// a seat's look-ahead cost in one game, by kind (`MAIN`, `ATTACK`, `COUNTER`): decisions searched and the engine
+/// steps their playouts took, and the playouts; `policy` counts the decisions the search's stakes test left to the policy
+#[derive(Debug, Clone, Copy, Default, PartialEq)]
+pub struct SearchCost {
+    pub n: [u32; 3],
+    pub steps: [u64; 3],
+    pub policy: [u32; 3],
+    /// playouts the searched decisions ran
+    pub playouts: [u64; 3],
+}
+
+impl SearchCost {
+    pub const MAIN: usize = 0;
+    pub const ATTACK: usize = 1;
+    pub const COUNTER: usize = 2;
+}
+
 #[derive(Debug, Clone, PartialEq)]
 pub struct Player {
     pub id: PlayerId,
@@ -501,6 +519,8 @@ pub struct Player {
     pub t6: bool,
     /// this player's own turn count when it last dealt damage to an opponent
     pub hit_turn: i32,
+    /// --- phase4-search: the look-ahead's cost for this seat: decisions and playout steps by kind (`SearchCost`)
+    pub search_cost: SearchCost,
     /// Lightning, Army of One: (its controller, that player's turn count when it connected); all damage to this player and their
     /// permanents is doubled until that controller's next turn begins (see `engine::life::stagger_mult`)
     pub stagger: Option<(PlayerId, u32)>,
@@ -785,6 +805,7 @@ impl Player {
             death_kind: "",
             t6: crate::t6stats::is_t6_key(key),
             hit_turn: -1,
+            search_cost: SearchCost::default(), // --- phase4-search
             stagger: None,
             lost_turn: None,
             gained_turn: None,

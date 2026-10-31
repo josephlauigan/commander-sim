@@ -8,6 +8,7 @@
 1 Burnished Hart (brr) 71
 1 Cityscape Leveler (bro) 363
 1 Coalition Relic (fut) 161
+1 Conjurer's Closet (inr) 441
 1 Darksteel Citadel (brc) 180
 1 Darksteel Forge (dst) 110
 1 Duplicant (ema) 220
@@ -33,7 +34,6 @@
 1 Meteor Golem (sld) 285
 1 Mind Stone (wth) 153
 1 Mirrorworks (brc) 149
-1 Mishra's Bauble (brr) 97
 1 Mishra's Factory (atq) 80d
 1 Mishra's Foundry (bro) 378
 1 Mishra's Self-Replicator (plst) DOM-223

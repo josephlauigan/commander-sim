@@ -68,6 +68,7 @@ Deck file `decklists/JD/karn-colorless-artifacts.md`; not in the simulator.
 
 ### Changes
 
+- **2026-10-30.** Out: Mishra's Bauble. In: Conjurer's Closet. Karn: Conjurer's Closet (from the retired Seph/Atraxa deck, 10/30) in for Mishra's Bauble. JD's choice, not simulated.
 - **2026-10-20.** Added. A colourless artifact-ramp deck built around Karn's upkeep mana, with every Urza and Mishra
   card that fits the plan (the Tron lands, Urza's Saga, Cave, Workshop and Factory, Mishra's Workshop, Factory and
   Foundry, both Baubles, Karn, Scion of Urza and others). All 99 checked Commander-legal and colourless on Scryfall.
@@ -79,6 +80,7 @@ Deck key `kefka`, `decklists/JD/kefka-grixis-discard.md`.
 
 ### Changes
 
+- **2026-10-30.** Out: Sleight of Hand. In: Glimpse the Unthinkable. Kefka: Glimpse the Unthinkable (from the retired Seph/Atraxa deck, 10/30) in for Sleight of Hand. JD's choice, not simulated.
 - **2026-10-30.** Out: Rank Rat. In: Price of Progress. JD's swap (10/30), not simulated: Rank Rat -> Price of Progress (with Kefka flipped, each opponent's life loss on your turn draws you that many cards). Price of Progress is unmodeled.
 - **2026-10-27.** Out: Rhystic Study. In: Stinkweed Imp. JD's choice (2026-10-27), not simulated: Rhystic Study goes to Seph/Atraxa; Stinkweed Imp (binder) takes the slot: discard fodder that dredges back. Two Game Changers, still Bracket 4 (the two-card win).
 - **2026-10-19.** Out: Hallway Heckler. In: Kuja, Genome Sorcerer // Trance Kuja, Fate Defied. Out: Hallway Heckler. In: Kuja, Genome Sorcerer. JD approved 10/19: +2.2 at T3 (30.2% -> 32.5%, ±2.4; 2,000 paired games, look-ahead, loose; audit/kefka/2026-10-19-kuja/). Kuja's Wizard tokens double the deck's burn damage (2.7 -> 5.7 per game).
@@ -115,6 +117,7 @@ Deck key `sauron`, `decklists/JD/sauron-grixis-amass.md`.
 
 ### Changes
 
+- **2026-10-30.** Out: Crumbling Necropolis, Frostboil Snarl, Izzet Boilerworks. In: Underground River, Underground Sea, Watery Grave. Sauron: lands from the retired Seph/Atraxa deck (10/30). In: Underground Sea, Watery Grave, Underground River. Out: Izzet Boilerworks, Crumbling Necropolis, Frostboil Snarl. JD's choice, not simulated.
 - **2026-10-30.** Out: Aggravated Assault, Go for the Throat, Urabrask, Heretic Praetor, Vraska, Betrayal's Sting. In: Baleful Mastery, Faerie Mastermind, Mana Drain, Torment of Hailfire. JD's swaps (10/30), not simulated: Aggravated Assault -> Torment of Hailfire, Go for the Throat -> Baleful Mastery, Urabrask, Heretic Praetor -> Faerie Mastermind, Vraska, Betrayal's Sting -> Mana Drain.
 - **2026-10-18.** Out: Spell Pierce. In: Urza, Lord High Artificer. Matched to the physical deck (JD's list, 2026-10-18): Urza, Lord High Artificer in for Spell Pierce (tested +0.5, noise, on branch adnaus).
 - **2026-10-18.** Out: Slaughter Pact. In: Force of Will. Band calibration 10/18 (JD approved): Slaughter Pact=>Force of Will
@@ -204,6 +207,7 @@ Deck key `seph`, `decklists/JD/sephiroth-phyrexian-reanimator.md`. (Sephiroth, t
 
 ### Changes
 
+- **2026-10-30.** Rebuilt as Ghave, Guru of Spores (JD, 10/30): new doc `decklists/JD/ghave-abzan-aristocrats.md`. The cards that leave went to other decks: Atraxa, Gifts Ungiven, Swan Song, Tundra, Tropical Island and Hallowed Fountain to Tymna/Thrasios; Rhystic Study, Displacer Kitten and Teleportation Circle to Y'shtola; Glimpse the Unthinkable to Kefka; Arcane Denial to Veyran; Conjurer's Closet to Karn; Underground Sea, Watery Grave and Underground River to Sauron; Muldrotha and Buried Alive to the binder. This list stays the simulator's `seph` seat until Ghave replaces it. No list change.
 - **2026-10-27.** Out: Arcane Sanctum, Ash Barrens, Brushland, Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Hinterland Harbor, Isolated Chapel, Sunpetal Grove, Treno, Dark City, Woodland Cemetery, Yavimaya Coast. In: Bayou, Flooded Strand, Godless Shrine, Marsh Flats, Misty Rainforest, Polluted Delta, Savannah, Scrubland, Tropical Island, Tundra, Underground Sea, Verdant Catacombs, Windswept Heath. Mana upgrade (JD): 13 slow, conditional and basic-fetch lands out for the six original duals, the six on-colour fetches and Godless Shrine. JD's choice, not simulated.
 - **2026-10-27.** Out: Assassin's Trophy, Diabolic Tutor, Galadriel's Dismissal, Harmonize, Hornet Queen, Melira, Sylvok Outcast, Mind Stone, Momentary Blink, Tireless Tracker, Unburial Rites, Zulaport Cutthroat. In: Crucible of Worlds, Dark Ritual, Dread Return, Glimpse the Unthinkable, Grave Researcher // Reanimate, Living Death, Phyrexian Altar, Phyrexian Tower, Rhystic Study, Rune-Scarred Demon, Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel, Vampiric Tutor. JD's choice (2026-10-27), not simulated: Sephiroth FS is retired and nine of its cards come here (Sephiroth, Fabled SOLDIER, Vampiric Tutor, Grave Researcher // Reanimate, Living Death, Rune-Scarred Demon, Dark Ritual, Phyrexian Altar, Dread Return, Phyrexian Tower); Rhystic Study comes from Kefka; Crucible of Worlds and Glimpse the Unthinkable are buys. Zulaport Cutthroat goes to Sheoldred, Galadriel's Dismissal to Cloud, Assassin's Trophy to Tymna/Thrasios; with Melira out the deck has three loops. Five Game Changers, still Bracket 4.
 - **2026-10-24.** Out: Flickering Hound. In: Open the Armory. Flickering Hound -> Open the Armory (JD's choice, 2026-10-24). The Hound moves to Tymna/Thrasios. Open the Armory ({1}{W}) finds Animate Dead, Skullclamp or Nim Deathmantle. It's a second copy (Cloud keeps its own), so it's a buy. Not simulated.
@@ -456,6 +460,7 @@ Deck key `veyran`, `decklists/JD/veyran-izzet-spellslinger.md`.
 
 ### Changes
 
+- **2026-10-30.** Out: Spell Pierce. In: Arcane Denial. Veyran: Arcane Denial (from the retired Seph/Atraxa deck, 10/30) in for Spell Pierce. JD's choice, not simulated.
 - **2026-10-30.** Out: Aetherflux Reservoir, Talrand, Sky Summoner, Visions of Beyond. In: Birgi, God of Storytelling, Firebrand Archer, Frantic Search. JD's swaps (10/30), not simulated: Aetherflux Reservoir -> Firebrand Archer, Talrand, Sky Summoner -> Birgi, God of Storytelling, Visions of Beyond -> Frantic Search.
 - **2026-10-18.** Out: Evacuation, Venser, Shaper Savant. In: Consecrated Sphinx, Mystical Tutor. Band calibration 10/18 (JD approved): Evacuation=>Consecrated Sphinx;Venser, Shaper Savant=>Mystical Tutor
 - **2026-10-13.** Out: Jeska's Will. In: Flux Channeler. JD's choice: Jeska's Will moves to Kefka; Flux Channeler (from Sauron) takes the slot. Measured -2.1 over all tiers (T1 -3.9, T2 -4.5, T3 -0.4, T4 -0.9, T5 -0.8; look-ahead, loose, 1,000 paired games per tier; `audit/sauron/2026-10-12-weakness/sofi-veyran/`). No Game Changers left. The deck lost some big-turn fuel (Jeska's Will gave four to seven mana and three more spells for one card) and gained a cheap Wizard body with a proliferate trigger.
@@ -551,6 +556,8 @@ Deck key `yshtola`, `decklists/JD/yshtola-esper-drain.md`.
 
 ### Changes
 
+- **2026-10-30.** Out: Encrust, Night's Whisper, Windborn Muse. In: Displacer Kitten, Rhystic Study, Teleportation Circle. Y'shtola: cards from the retired Seph/Atraxa deck (rebuilt as Ghave, 10/30). In: Rhystic Study, Teleportation Circle, Displacer Kitten. Out: Night's Whisper, Encrust, Windborn Muse. JD's choice, not simulated.
+- **2026-10-30.** Out: nothing. In: Urborg, Tomb of Yawgmoth. Y'shtola: Urborg, Tomb of Yawgmoth in for a Swamp (every land taps for black).
 - **2026-10-28.** Out: Plains (8 -> 7). In: Serra's Sanctum. JD's choice, not simulated: taps for {W} per enchantment, and the deck has 15, removal Auras on opponents' creatures included. Not yet owned; the Y'shtola printings file is unchanged.
 - **2026-10-27.** Out: Evolving Wilds, Exotic Orchard, Fabled Passage, Glacial Fortress, Isolated Chapel, Prairie Stream, Shattered Sanctum, Spire of Industry, Terramorphic Expanse. In: Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Polluted Delta, Scrubland, Tundra, Underground Sea, Watery Grave. Mana upgrade (JD): 9 slow, conditional and basic-fetch lands out for three original duals, three shocks and three fetches. JD's choice, not simulated.
 - **2026-10-19.** Out: Curiosity. In: Orcish Bowmasters. Curiosity -> Orcish Bowmasters: +2.5 at T5 (loose, 2,000 games per list, noise ±2.3), the first Y'shtola swap past the noise. Bowmasters is cast in 81% of the games it is drawn (Curiosity 68%), damage +2.3 a game, plan online +2.4 points; the ping and the Orc Army pick off fast decks' mana creatures. JD buys a second copy (the Sauron copy stays).
@@ -713,6 +720,7 @@ Deck key `thrasios`, `decklists/JD/tymna-thrasios-partners.md`.
 
 ### Changes
 
+- **2026-10-30.** Out: Dark Endurance, Exotic Orchard, Port Town, Sunblast Angel, Unclaimed Territory, Witherbloom Charm. In: Atraxa, Grand Unifier, Gifts Ungiven, Hallowed Fountain, Swan Song, Tropical Island, Tundra. Tymna/Thrasios: cards from the retired Seph/Atraxa deck (rebuilt as Ghave, 10/30). In: Atraxa, Grand Unifier, Gifts Ungiven, Swan Song, Tundra, Tropical Island, Hallowed Fountain. Out: Sunblast Angel, Witherbloom Charm, Dark Endurance, Port Town, Unclaimed Territory, Exotic Orchard. JD's choice, not simulated.
 - **2026-10-30.** Out: Assassin's Trophy, Shield of Kaldra. In: Disenchant, Smothering Tithe. JD's swaps (10/30), not simulated: Assassin's Trophy -> Disenchant, Shield of Kaldra -> Smothering Tithe (2 Game Changers, still Bracket 3).
 - **2026-10-27.** Out: Disenchant. In: Assassin's Trophy. JD's choice (2026-10-27), not simulated: Assassin's Trophy (from Seph/Atraxa) for Disenchant.
 - **2026-10-24.** Out: Avenge. In: Flickering Hound. Avenge -> Flickering Hound (JD's choice, 2026-10-24; the Hound moves over from Seph/Atraxa). Avenge was stuck in hand in 75% of the games it was drawn (10/19 analysis, T5) and a wipe that hits the deck's own 30 creatures; Austere Command stays as the reset. The Hound flickers a creature on every creature cast: Sunblast Angel, Grave Titan, Sun Titan, Coiling Oracle. Not simulated.
@@ -738,3 +746,11 @@ Deck key `thanos`, `decklists/JD/thanos-five-colour-turbo.md`. Simulated against
 
 - **2026-10-30.** Into the simulator (JD, 10/30): deck key `thanos` takes Scion's seat at t6, its plan file and its tests; Thanos's power-up modeled (impls/t6_thanos.rs). The Scion list moved to `decklists/pool/retired/` (a test seat only). No list change.
 - **2026-10-30.** New deck (JD, 10/30): the Scion v1 cEDH list (`decklists/JD/scion-ur-dragon-turbo.md`) with Thanos, the Mad Titan as commander. Out: Scion of the Ur-Dragon, Ancient Copper Dragon, Korvold, Fae-Cursed King, Prismari, the Inspiration (copy targets for Scion, dead without him). In: Fierce Guardianship, Deflecting Swat, Deadly Rollick (free while you control your commander). Not simulated; the Scion deck stays as the baseline.
+
+## Ghave, Guru of Spores — Abzan Aristocrats
+
+`decklists/JD/ghave-abzan-aristocrats.md`. Not in the simulator yet (it will take the `seph` seat, t3–t4).
+
+### Changes
+
+- **2026-10-30.** New deck (JD, 10/30): the Seph/Atraxa reanimator rebuilt around Ghave, Guru of Spores (W/B/G). Out: Atraxa, Grand Unifier (the old commander), Displacer Kitten, Arcane Denial, Swan Song, Gifts Ungiven, Rhystic Study, Glimpse the Unthinkable, Muldrotha, the Gravetide, Teleportation Circle, Conjurer's Closet, Buried Alive, Underground River, Underground Sea, Watery Grave, Tropical Island, Hallowed Fountain, Tundra, 2 Island. In: Ghave, Guru of Spores (commander), Yawgmoth, Thran Physician, Worldly Tutor, Cathars' Crusade, Cruel Celebrant, Pitiless Plunderer, Sylvan Library, Heroic Intervention, Doubling Season, Zulaport Cutthroat, Eladamri's Call, Gaea's Cradle, Indatha Triome, Woodland Cemetery, Isolated Chapel, Sunpetal Grove, Brushland, Llanowar Wastes, Sandsteppe Citadel (proxies where JD doesn't own them). Ghave + an altar + Cathars' Crusade or Doubling Season are four new infinite combos; the Mikaeus and Nim Deathmantle loops stay. 5 Game Changers (Demonic Tutor, Vampiric Tutor, Worldly Tutor, Aura Shards, Gaea's Cradle). Not simulated.

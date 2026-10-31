@@ -48,7 +48,7 @@ Karn costs five. With a Sol Ring, Mishra's Workshop, Ancient Tomb or the Tron la
 | **Urza's Factory** | {7}, {T}: a 2/2 Assembly-Worker. A late-game mana sink for Karn's mana and the Tron lands. |
 | **Mishra's Workshop** | {C}{C}{C} for artifact spells. With a one-drop artifact it can cast Karn on turn 2. |
 | **Mishra's Factory, Mishra's Foundry** | Lands that become 2/2 artifact creatures: they block, survive creature wipes and count as artifacts while animated. |
-| **Mishra's Bauble, Urza's Bauble** | Free artifacts: {C} a turn for Karn while they stay out, a card when you sacrifice them. |
+| **Urza's Bauble** | A free artifact: {C} a turn for Karn while it stays out, a card when you sacrifice it. |
 | **Karn, Scion of Urza** | Card advantage every turn, or a Construct token. |
 | **Urza's Tome** | {3}: draw. Exile an artifact or legendary card from your graveyard to skip the discard. |
 | **Urza's Blueprints** | A card every turn; Karn's mana can pay its echo. |
@@ -163,7 +163,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Creatures (17).** Blightsteel Colossus, Burnished Hart, Cityscape Leveler, Duplicant, Hangarback Walker, Kuldotha Forgemaster, Liberator Urza's Battlethopter, Meteor Golem, Mishra's Self-Replicator, Myr Battlesphere, Platinum Angel, Solemn Simulacrum, Steel Hellkite, Steel Overseer, Triplicate Titan, Walking Ballista, Wurmcoil Engine
 
-**Artifacts (42).** Basalt Monolith, Batterskull, Coalition Relic, Darksteel Forge, Endless Atlas, Everflowing Chalice, Expedition Map, Gilded Lotus, Grim Monolith, Hedron Archive, Lightning Greaves, Liquimetal Torque, Mana Vault, Mazemind Tome, Mind Stone, Mirrorworks, Mishra's Bauble, Mox Opal, Mystic Forge, Nevinyrral's Disk, Oblivion Stone, Pithing Needle, Portal to Phyrexia, Ratchet Bomb, Rings of Brighthearth, Sculpting Steel, Skullclamp, Sol Ring, Soul-Guide Lantern, Spine of Ish Sah, Staff of Domination, Swiftfoot Boots, The Mightstone and Weakstone, The One Ring, Thought Vessel, Thran Dynamo, Unstable Obelisk, Urza's Bauble, Urza's Blueprints, Urza's Tome, Wayfarer's Bauble, Worn Powerstone
+**Artifacts (42).** Basalt Monolith, Batterskull, Coalition Relic, Conjurer's Closet, Darksteel Forge, Endless Atlas, Everflowing Chalice, Expedition Map, Gilded Lotus, Grim Monolith, Hedron Archive, Lightning Greaves, Liquimetal Torque, Mana Vault, Mazemind Tome, Mind Stone, Mirrorworks, Mox Opal, Mystic Forge, Nevinyrral's Disk, Oblivion Stone, Pithing Needle, Portal to Phyrexia, Ratchet Bomb, Rings of Brighthearth, Sculpting Steel, Skullclamp, Sol Ring, Soul-Guide Lantern, Spine of Ish Sah, Staff of Domination, Swiftfoot Boots, The Mightstone and Weakstone, The One Ring, Thought Vessel, Thran Dynamo, Unstable Obelisk, Urza's Bauble, Urza's Blueprints, Urza's Tome, Wayfarer's Bauble, Worn Powerstone
 
 **Sorceries (1).** All Is Dust
 
@@ -182,6 +182,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Burnished Hart
 1 Cityscape Leveler
 1 Coalition Relic
+1 Conjurer's Closet
 1 Darksteel Citadel
 1 Darksteel Forge
 1 Duplicant
@@ -207,7 +208,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Meteor Golem
 1 Mind Stone
 1 Mirrorworks
-1 Mishra's Bauble
 1 Mishra's Factory
 1 Mishra's Foundry
 1 Mishra's Self-Replicator
