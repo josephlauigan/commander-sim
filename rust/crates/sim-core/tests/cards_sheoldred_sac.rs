@@ -155,6 +155,7 @@ fn no_outlet_use_without_a_payoff_or_a_reason() {
 
 #[test]
 fn the_commander_and_sephiroth_are_never_fodder() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     perm(&mut g, P0, "Phyrexian Altar");
     perm(&mut g, P0, SEPH);
@@ -200,6 +201,7 @@ fn the_ai_sacrifices_its_spare_fodder_until_sephiroth_flips() {
 // ------------------------------------------------------------------ a creature that dies anyway
 #[test]
 fn a_creature_that_is_about_to_die_goes_to_an_outlet_that_gains_something() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     let f = perm(&mut g, P0, "Carrion Feeder");
     let c = perm(&mut g, P0, "Common Crook");
@@ -221,6 +223,7 @@ fn the_commander_is_not_sacrificed_in_response() {
 
 #[test]
 fn altar_mana_is_only_worth_a_sacrifice_in_response_when_a_spell_waits_on_it() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Swamp", 3, false);
     perm(&mut g, P0, "Phyrexian Altar");
@@ -232,6 +235,7 @@ fn altar_mana_is_only_worth_a_sacrifice_in_response_when_a_spell_waits_on_it() {
 
 #[test]
 fn a_wipe_finds_the_outlets_sacrificing_what_it_kills() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game4();
     perm(&mut g, P0, SEPH);
     let f = perm(&mut g, P0, "Carrion Feeder");
@@ -264,6 +268,7 @@ fn carnage_altar_pays_three_and_a_creature_for_a_card() {
 
 #[test]
 fn carnage_altar_never_eats_the_commander_or_a_payoff() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Swamp", 3, false);
     perm(&mut g, P0, "Carnage Altar");

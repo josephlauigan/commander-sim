@@ -1,0 +1,158 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
+# policy (ai/plans.rs `config`). JD's Sauron, the Dark Lord deck (Grixis: the Orc Army amasses off the opponents'
+# spells, gets through with Whispersilk Cloak / Rogue's Passage and grows on The Ozolith; Bowmasters, Sheoldred and
+# the X drains close). Written in Phase 4 PR 7 from its hand AI, which runs when AI_HAND is on: ai/decks.rs
+# `sauron_prio` (with impls/threats.rs `sauron_extra_prio`), `sauron_tutor` (the tutor wish list) and the sauron arm
+# of `protect_main` (Not of This World).
+# Left out (the schema can't express it): anything that reads the Army token (its power, whether it exists or has
+# connected: `army_of`, the `army_hit` milestone), so the tutor rules use Sauron on the battlefield and lands + rocks
+# instead; `sauron_options` (equip, Helm, Archivist, Monolith untaps), the wipe responses, the Force of Will pitch
+# choice, the Army cost host, `copy_worth`, the Orc type choice; the Game Changer priority helpers (Sphinx, Necro,
+# Breach), which keep the generic priority.
+deck = "sauron"
+default = "plan"
+# card engines the tutors want once no line wants a card (sauron_tutor's tail)
+engines = ["The Ozolith", "Inexorable Tide", "Whispersilk Cloak"]
+
+# Sauron (seven mana) is the plan: 85 once castable
+[commander]
+prio = 85
+
+# win lines, best first: the tutors want the first missing piece of the closest one
+[[line]]
+name = "an Orc Army that gets through"
+kind = "combat"
+pieces = [["Sauron, the Dark Lord", "Dreadhorde Invasion", "Lazotep Reaver"], ["Whispersilk Cloak", "Rogue's Passage"]]
+
+[[line]]
+name = "Orcish Bowmasters + Jace's Archivist (the wheel pings)"
+kind = "value"
+pieces = [["Orcish Bowmasters"], ["Jace's Archivist"]]
+
+# Tutor wishes (sauron_tutor), best score first, ahead of the lines' pieces
+# a slow start with no mana: Sol Ring
+[[wish]]
+cards = ["Sol Ring"]
+when = ["lands+rocks<=4 & turn<=6"]
+score = 90
+
+# start the Army before Sauron lands
+[[wish]]
+cards = ["Dreadhorde Invasion", "Lazotep Reaver"]
+when = ["not commander-out & turn<=5"]
+score = 85
+
+# insurance before the Army is committed to
+[[wish]]
+cards = ["The Ozolith"]
+when = ["commander-out"]
+score = 80
+
+# the wheel is the payoff
+[[wish]]
+cards = ["Jace's Archivist"]
+when = ["out:Orcish Bowmasters"]
+score = 75
+
+# close the game with the mana for it
+[[wish]]
+cards = ["Exsanguinate", "Comet Storm", "Torment of Hailfire"]
+when = ["lands+rocks>=8"]
+score = 70
+
+# protection for the swing (free with a 7-power creature)
+[[wish]]
+cards = ["Not of This World"]
+when = ["commander-out"]
+score = 65
+
+[[wish]]
+cards = ["Barad-dûr"]
+when = ["hand-size<=1 & lands>=7"]
+score = 60
+
+[[wish]]
+cards = ["The Ozolith", "Inexorable Tide", "Whispersilk Cloak", "Exsanguinate", "Not of This World"]
+score = 40
+
+# Cast priorities (sauron_prio), the first rule selecting a card decides
+[[prio]]
+commander = true
+value = 85
+
+# rocks early, not late
+[[prio]]
+cards = ["Sol Ring", "Arcane Signet", "Chromatic Lantern", "Dimir Signet", "Fellwar Stone", "Mind Stone",
+    "Rakdos Signet", "Relic of Legends", "Talisman of Creativity", "Talisman of Dominance", "Talisman of Indulgence"]
+when = ["turn<=5"]
+value = 80
+else = 40
+
+# sauron_extra_prio: the Army starters, early
+[[prio]]
+cards = ["Dreadhorde Invasion"]
+when = ["turn<=4"]
+value = 70
+else = 52
+
+[[prio]]
+cards = ["Lazotep Reaver"]
+when = ["turn<=4"]
+value = 67
+else = 46
+
+[[prio]]
+cards = ["Mauhúr, Uruk-hai Captain"]
+value = 63
+
+[[prio]]
+cards = ["Orcish Bowmasters"]
+value = 62
+
+[[prio]]
+cards = ["Sheoldred, the Apocalypse", "Diabolic Intent", "Diabolic Tutor", "Ringsight"]
+value = 60
+
+[[prio]]
+cards = ["Whispersilk Cloak"]
+value = 57
+
+[[prio]]
+cards = ["Inexorable Tide", "Call of the Ring"]
+value = 55
+
+[[prio]]
+cards = ["Kaervek the Merciless"]
+value = 54
+
+# Jace's Archivist: only with a wheel payoff out
+[[prio]]
+cards = ["Jace's Archivist"]
+when = ["out:Orcish Bowmasters", "out:Sheoldred, the Apocalypse"]
+value = 50
+else = 20
+
+# Lightning Greaves is for Sauron himself (never the Army)
+[[prio]]
+cards = ["Lightning Greaves"]
+when = ["commander-out", "commander-zone & lands+rocks>=7"]
+value = 50
+else = 25
+
+[[prio]]
+cards = ["The Ozolith"]
+value = 45
+
+[[prio]]
+cards = ["War Machine, Avenging Arsenal"]
+value = 45
+
+# the X drains have their own cast options (Torment's card code, the drain X option)
+[[prio]]
+cards = ["Exsanguinate", "Torment of Hailfire"]
+value = 0
+
+# Not of This World: held to counter removal at Sauron (protect_main), free with a 7-power creature
+[[hold]]
+card = "Not of This World"
+protects = ["commander", "Sheoldred, the Apocalypse"]

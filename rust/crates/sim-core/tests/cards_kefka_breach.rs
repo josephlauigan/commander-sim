@@ -37,6 +37,7 @@ fn has_line(g: &mut Game) -> bool {
 
 #[test]
 fn kefka_runs_the_line_and_mills_the_table_out() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = board(5, 4, 10, 8);
     lands(&mut g, P0, "Mountain", 2, false);
     hand(&mut g, P0, &["Underworld Breach", "Brain Freeze", "Dark Ritual", "Lotus Petal"]);
@@ -60,6 +61,7 @@ fn kefka_without_enough_mana_does_not_offer_the_line() {
 
 #[test]
 fn kefka_holds_the_line_cards_while_breach_is_reachable() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = board(5, 4, 30, 8);
     hand(&mut g, P0, &["Underworld Breach", "Brain Freeze", "Dark Ritual", "Lotus Petal"]);
     for n in ["Underworld Breach", "Brain Freeze", "Dark Ritual", "Lotus Petal"] {
@@ -76,6 +78,7 @@ fn kefka_holds_the_line_cards_while_breach_is_reachable() {
 
 #[test]
 fn kefka_without_a_storm_card_uses_breach_as_before() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = board(4, 4, 30, 0);
     hand(&mut g, P0, &["Underworld Breach", "Dark Ritual"]);
     perm(&mut g, P1, "Eternal Witness");
@@ -102,6 +105,7 @@ fn kefka_does_not_discard_the_pieces_the_line_waits_for() {
 
 #[test]
 fn diabolic_tutor_fetches_the_missing_half_of_the_line() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = board(5, 4, 30, 0);
     let bf = card(&g, "Brain Freeze");
     let ub = card(&g, "Underworld Breach");

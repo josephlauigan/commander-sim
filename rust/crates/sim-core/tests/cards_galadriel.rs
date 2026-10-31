@@ -195,6 +195,7 @@ fn kindred_discovery_names_a_type() {
 
 #[test]
 fn sauron_still_names_orc() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["sauron", "veyran"]);
     let kd = perm(&mut g, P0, "Kindred Discovery");
     assert_eq!(gal::ctype(&g, kd), Some("orc"));
@@ -513,6 +514,7 @@ fn galadriel_casts_the_engine_first() {
 
 #[test]
 fn galadriel_abduction_wants_a_real_threat() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["galadriel", "sauron"]);
     let ab = card(&g, "Abduction");
     assert_eq!(decks::deck_prio(&g, P0, ab), 0);
@@ -523,6 +525,7 @@ fn galadriel_abduction_wants_a_real_threat() {
 
 #[test]
 fn unbreakable_formation_saves_a_key_creature_from_destroy() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["galadriel", "sauron"]);
     let m = perm(&mut g, P0, "Grave Titan");
     lands(&mut g, P0, "Plains", 3, false);
@@ -548,6 +551,7 @@ fn eerie_interlude_answers_exile() {
 
 #[test]
 fn wipe_answers_indestructible_against_destroy() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["galadriel", "sauron"]);
     perm(&mut g, P0, "Grave Titan");
     let q = perm(&mut g, P0, "Jhovall Queen");
@@ -560,6 +564,7 @@ fn wipe_answers_indestructible_against_destroy() {
 
 #[test]
 fn ballista_squad_shoots_an_attacker() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["sauron", "galadriel"]);
     let (s, p) = (P0, P1);
     perm(&mut g, p, "Ballista Squad");

@@ -1,0 +1,64 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
+# policy (ai/plans.rs `config`). JD's Kefka, Court Mage deck (Grixis discard, key `kefka`, tier t3). Written in Phase 4
+# PR 7 from its hand AI, played when AI_HAND is off: `ai::decks::kefka_wish` and `kefka::tutor_win_piece` (the lines),
+# `kefka::kefka_prio` (the prio rules), `mine::veyran_protect` (the holds).
+# Left out (the schema can't express it): Kefka flipped (Ruler of Ruin is the same card name, so the Crawler held at 0
+# while its mandatory loop would deck us, `loop_safe` / `niv_safe` / `loop_guard`, and the flip's {8} timing,
+# `flip_utility`); `breach_hold_prio` (Breach, the storm cards and the rituals kept for the Breach turn) and Breach's
+# own gate (two escape candidates and five mana); Mystical Tutor's storm-card pick; the discard choice
+# (`discard_choice`: the madness / mayhem / graveyard cards binned first); Triskelion's rule (not in the list); the
+# Crawler / Niv-Mizzet order by library size.
+deck = "kefka"
+default = "plan"
+
+# win lines, best first: the tutors want the first missing piece of the closest one
+# the two-card win: Kefka (flipped, or out with {8} within reach) and a draw-trigger engine
+[[line]]
+name = "Kefka + Psychosis Crawler / Niv-Mizzet"
+kind = "drain"
+pieces = [["Kefka, Court Mage // Kefka, Ruler of Ruin"], ["Psychosis Crawler", "Niv-Mizzet, the Firemind"]]
+when = ["commander-out & lands+rocks>=7"]
+
+# the Breach line: Breach, a storm card, a ritual / Yawgmoth's Will
+[[line]]
+name = "Underworld Breach + a storm card + a ritual"
+kind = "combo"
+pieces = [["Underworld Breach"], ["Brain Freeze", "Grapeshot"], ["Dark Ritual", "Lotus Petal", "Yawgmoth's Will"]]
+
+# Cast priorities (was kefka_prio): the draw-trigger engines, sooner with Kefka out (every discard and loot draw pings
+# the table); Fiery Emancipation triples their pings; Bribery for a bomb; the mayhem / graveyard cards kept in hand to
+# be discarded to Kefka's trigger; Rapturous Moment as a free filter with two other spells in hand
+[[prio]]
+cards = ["Psychosis Crawler", "Niv-Mizzet, the Firemind"]
+when = ["commander-out"]
+value = 84
+else = 70
+
+[[prio]]
+cards = ["Fiery Emancipation"]
+when = ["have:Psychosis Crawler", "have:Niv-Mizzet, the Firemind"]
+value = 78
+else = 45
+
+[[prio]]
+cards = ["Bribery"]
+value = 62
+
+[[prio]]
+cards = ["Scarlet Spider, Kaine", "Demonic Embrace"]
+when = ["commander-out"]
+value = 0
+
+[[prio]]
+cards = ["Rapturous Moment"]
+when = ["nonland>=3"]
+value = 58
+
+# protection for Kefka and the engines against targeted removal (veyran_protect: Swat redirects, Slip phases out)
+[[hold]]
+card = "Deflecting Swat"
+protects = ["commander", "Psychosis Crawler", "Niv-Mizzet, the Firemind"]
+
+[[hold]]
+card = "Slip Out the Back"
+protects = ["commander", "Psychosis Crawler", "Niv-Mizzet, the Firemind"]

@@ -161,6 +161,7 @@ fn torment_ai_casts_it_for_a_kill_and_not_early_otherwise() {
 // ---------------------------------------------------------------- Exsanguinate in Sauron's deck
 #[test]
 fn exsanguinate_sauron_casts_it_to_finish() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Swamp", 7, false);
     let c = hand(&mut g, P0, &["Exsanguinate"])[0];
@@ -176,6 +177,7 @@ fn exsanguinate_sauron_casts_it_to_finish() {
 // ---------------------------------------------------------------- Dualcaster Mage
 #[test]
 fn dualcaster_mage_copies_a_big_drain_and_keeps_x() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Swamp", 6, false);
     lands(&mut g, P0, "Mountain", 8, false);

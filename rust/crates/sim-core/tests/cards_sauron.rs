@@ -98,6 +98,7 @@ fn rhystic_study() {
 
 #[test]
 fn champions_helm_goes_on_a_legend() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     // "Equipped creature gets +2/+2. As long as equipped creature is legendary, it has hexproof. Equip {1}"
     let mut g = table(&["sauron", "veyran"]);
     lands(&mut g, P0, "Island", 3, false);
@@ -237,6 +238,7 @@ fn brush_off_is_cheaper_against_instants_and_sorceries() {
 
 #[test]
 fn sauron_values_consecrated_sphinx() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     // its priority follows what it will draw: two per opponent draw, so three opponents make it the better card,
     // and it's worth less with one opponent left
     let mut g = table(&["sauron", "veyran", "veyran", "veyran"]);

@@ -50,7 +50,7 @@ pub fn is_t6(g: &Game, p: PlayerId) -> bool {
 
 macro_rules! dispatch {
     ($g:expr, $p:expr, $f:ident($($a:expr),*)) => {
-        match $g.player($p).key {
+        match crate::ai::hand_key($g, $p) { // --- phase4-hand-off: AI_HAND
             "dack-fayden-white-stax" => dack::$f($g, $p $(, $a)*),
             "godo" => godo::$f($g, $p $(, $a)*),
             _ => None,
