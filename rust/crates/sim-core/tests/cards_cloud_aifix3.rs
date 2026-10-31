@@ -28,6 +28,7 @@ fn wear(g: &mut Game, gear: &str) -> sim_core::ids::PermId {
 
 #[test]
 fn sworded_cloud_attacks_into_a_small_blocker() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     let cl = wear(&mut g, "Sword of Fire and Ice");
     token(&mut g, P1, 1);
@@ -68,6 +69,7 @@ fn other_decks_are_not_forced() {
 // ---- F2: Stormfront Riders spares an equipped Cloud
 #[test]
 fn riders_does_not_return_an_equipped_cloud() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     let cl = wear(&mut g, "Sword of Fire and Ice");
     let duelist = perm(&mut g, P0, "Kor Duelist");
@@ -115,6 +117,7 @@ fn feast_and_famine_comes_before_hearth_and_home_once_a_sword_is_out() {
 
 #[test]
 fn feast_and_famine_first_with_a_clogged_hand() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     swords_library(&mut g);
     // truly clogged: 7+ cards (a turn-2 hand of 5-6 is not, ai-audit cv)
@@ -136,6 +139,7 @@ fn to_gy(g: &mut Game, names: &[&str]) {
 
 #[test]
 fn unfinished_business_is_cast_on_a_creature_and_its_equipment() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Plains", 5, false);
     to_gy(&mut g, &["Kor Duelist", "Sword of Fire and Ice"]);

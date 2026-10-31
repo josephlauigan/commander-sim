@@ -80,7 +80,11 @@ fn effective() -> &'static std::collections::HashMap<&'static str, DeckConfig> {
             super::plan_data::all()
                 .iter()
                 .filter(|(k, _)| {
-                    super::plan_data::plan_on(k, hand_config(k).is_some() || crate::impls::t6_plans::has_hand(k))
+                    super::plan_data::plan_on(
+                        k,
+                        (hand_config(k).is_some() || crate::impls::t6_plans::has_hand(k))
+                            && !super::HAND_OFF_PLANS.contains(k), // --- phase4-hand-off: AI_HAND decides
+                    )
                 })
                 .map(|(k, l)| {
                     let mut c = l.cfg;
@@ -103,13 +107,13 @@ fn effective() -> &'static std::collections::HashMap<&'static str, DeckConfig> {
 
 /// --- phase4-plans: the deck plays from its plan file
 pub fn plays_plan(key: &str) -> bool {
-    effective().contains_key(key)
+    effective().contains_key(key) && !super::plan_unread(key) // --- phase4-hand-off
 }
 
 /// the deck's configuration (an empty one for a deck without an entry): from its plan file when that is on, else
 /// its hand entry
 pub fn config(key: &str) -> &'static DeckConfig {
-    if let Some(c) = effective().get(key) {
+    if let Some(c) = effective().get(key).filter(|_| !super::plan_unread(key)) {
         return c;
     }
     hand_config(key).unwrap_or(&NONE)
@@ -128,7 +132,7 @@ pub fn wish_raw(g: &Game, p: PlayerId) -> Vec<CardId> {
 
 /// pool_ai.wish_list (your decks have none)
 pub fn wish_list(g: &Game, p: PlayerId) -> Vec<CardId> {
-    if super::is_main(g.player(p).key) {
+    if super::is_main(super::hand_key(g, p)) {
         return vec![];
     }
     wish_raw(g, p)
@@ -348,7 +352,7 @@ pub fn adnaus_cast_now(g: &Game, p: PlayerId) -> bool {
     let room = (adnaus_hand_cap(g, p) + 1).saturating_sub(g.player(p).hand.len());
     // the sheoldred deck taps out on its own turn, so it never holds 5 mana for the opposing end step; its own second
     // main phase (everything better already cast) is when the mana is idle
-    if g.player(p).key == "sheoldred" && g.active == Some(p) && g.step == crate::state::Step::Main2 && room >= 4 {
+    if super::hand_key(g, p) == "sheoldred" && g.active == Some(p) && g.step == crate::state::Step::Main2 && room >= 4 {
         return true;
     }
     g.active != Some(p) && room >= 4

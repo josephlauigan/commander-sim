@@ -13,6 +13,7 @@
 //! game's look-ahead decisions instead of searching again) comes with phase 9.
 
 pub use super::tape::{LAST_SCORES, Tape, TapeEntry, TapeSlot};
+use super::hand_key; // --- phase4-hand-off
 use super::tape::{Taped, taped};
 use super::{act, brain};
 use crate::flow::{Res, Stop};
@@ -633,7 +634,7 @@ fn rollout_vals(
 fn deck_extras(g: &Game, p: PlayerId, opts: &[Opt], keyed: &[(usize, &str, usize)]) -> Vec<f64> {
     keyed
         .iter()
-        .map(|kk| match g.player(p).key {
+        .map(|kk| match hand_key(g, p) {
             "karn" => crate::impls::karn::search_bonus(g, p, &opts[kk.0]),
             "cloud" => crate::impls::cloud::search_bonus(g, p, &opts[kk.0]),
             _ => 0.0,
@@ -802,7 +803,7 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
             best = k;
         }
     }
-    if g.player(p).key == "karn" {
+    if hand_key(g, p) == "karn" {
         for (k, kk) in keyed.iter().enumerate() {
             scores[k] += crate::impls::karn::search_bonus(g, p, &opts[kk.0]) * g.settings.search.rollouts as f64;
         }
@@ -813,7 +814,7 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
             }
         }
     }
-    if g.player(p).key == "cloud" {
+    if hand_key(g, p) == "cloud" {
         for (k, kk) in keyed.iter().enumerate() {
             scores[k] += crate::impls::cloud::search_bonus(g, p, &opts[kk.0]) * g.settings.search.rollouts as f64;
         }
@@ -849,7 +850,7 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
         && keyed[best].0 != top_u
         && let Some(ti) = keyed.iter().position(|kk| kk.0 == top_u)
     {
-        let extra = |k: usize| match g.player(p).key {
+        let extra = |k: usize| match hand_key(g, p) {
             "karn" => crate::impls::karn::search_bonus(g, p, &opts[keyed[k].0]),
             "cloud" => crate::impls::cloud::search_bonus(g, p, &opts[keyed[k].0]),
             _ => 0.0,
@@ -1076,7 +1077,7 @@ fn choose_attack_inner(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
             best = k;
         }
     }
-    if !super::is_main(g.player(p).key) {
+    if !super::is_main(hand_key(g, p)) {
         best = attack_on_near_tie(&cands, &scores, g.settings.search.rollouts as f64, best); // --- casual speed
     }
     let (d, how) = cands[best];

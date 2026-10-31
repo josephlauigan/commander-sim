@@ -2,6 +2,7 @@
 //! `cards/impl/*.py` that the engine calls by name (Blood Moon, Plaza of Heroes, regeneration, Treasures ...).
 //! The engine calls these exactly where the Python does; each delegates to the ported card code (`impls/*`, `ai/*`).
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use crate::engine::repl;
 use crate::engine::hooks;
 use crate::flow::Res;
@@ -650,7 +651,7 @@ pub fn defend_hooks(
             f(g, c, p, atk, d, assign)?;
         }
     }
-    let dk = g.player(d).key;
+    let dk = hand_key(g, d);
     if dk == "veyran" {
         // your instant-speed answers to an attack (Aetherize)
         for c in g.player(d).hand.clone() {
@@ -684,7 +685,7 @@ pub fn defend_hooks(
             }
         }
     }
-    if !crate::ai::is_main(g.player(p).key) {
+    if !crate::ai::is_main(hand_key(g, p)) {
         ninjutsu(g, p, atk, d, assign)?;
     }
     Ok(())

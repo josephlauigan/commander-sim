@@ -182,6 +182,7 @@ fn urza_workshop_counts_urza_lands_with_three_artifacts() {
 
 #[test]
 fn mishras_factory_animates_as_an_artifact_creature() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Mishra's Factory", 1, false);
     lands(&mut g, P0, "Wastes", 2, false);
@@ -216,6 +217,7 @@ fn karn_prio_casts_him_first_and_holds_the_sweepers() {
 
 #[test]
 fn the_land_searches_take_the_missing_tron_piece_then_wastes() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Urza's Mine", 1, false);
     let names = ["Wastes", "Urza's Tower", "Urza's Power Plant", "Mishra's Workshop"];
@@ -233,6 +235,7 @@ fn the_land_searches_take_the_missing_tron_piece_then_wastes() {
 
 #[test]
 fn the_baubles_stay_out_while_karn_is_coming() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     hand(&mut g, P0, &["Sol Ring", "Mind Stone"]);
     assert!(karn::hold_ability(&g, P0, "Mishra's Bauble"), "Karn is in the command zone");

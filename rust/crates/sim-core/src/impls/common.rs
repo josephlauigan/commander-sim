@@ -8,6 +8,7 @@
 //! grants). Phase 6: the rest (pillowfort taxes, stax pieces, the four planeswalkers, Urza's Saga, Walking Ballista,
 //! graveyard hate, proliferate, the dynamic mana cards ...), registered by `register_phase6`.
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::{CardDb, CardDef, Colors, Types};
 use crate::engine::pool::Kind;
 use crate::engine::cast::{cast_card, castable, on_cast};
@@ -946,7 +947,7 @@ pub fn outlet_gain(g: &Game, p: PlayerId, o: PermId) -> f64 {
 /// common.aristocrat_options: sacrifice fodder when the death triggers are worth more than the creature, or are
 /// lethal (or an outlet's own mana is needed now)
 pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    let main = crate::ai::is_main(g.player(p).key);
+    let main = crate::ai::is_main(hand_key(g, p));
     let outs = outlets(g, p);
     if outs.is_empty() {
         return Ok(vec![]);
@@ -1008,7 +1009,7 @@ pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<
 pub fn sac_in_response(g: &mut Game, p: PlayerId, m: PermId, kind: Sym) -> Res<bool> {
     let paid = paid_outlets_on(g, p); // --- ghave
     let dying =
-        (crate::ai::is_main(g.player(p).key) || paid) && (matches!(kind, "destroy" | "wipe") || kind.starts_with("dmg"));
+        (crate::ai::is_main(hand_key(g, p)) || paid) && (matches!(kind, "destroy" | "wipe") || kind.starts_with("dmg"));
     if !g.is_creature(m) || !(dying || matches!(kind, "exile" | "bounce" | "tuck")) || g.perm(m).is_cmd {
         return Ok(false);
     }
@@ -3134,7 +3135,7 @@ fn ballista_ping(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     let lethal = os.iter().copied().find(|&q| g.player(q).life <= plus);
     // the thrasios seat (Rust only): any X/1 creature worth a card (a mana dork, a hatebear) is worth a counter, but the
     // last counter is kept (the Ballista dies with it) unless the target is a real card
-    let thr = g.player(p).key == "thrasios";
+    let thr = hand_key(g, p) == "thrasios";
     let tg = os.iter().flat_map(|&q| g.player(q).perms.iter().copied()).find(|&m| {
         let v = pval(g, m);
         let dork = g.perm(m).cd.is_some_and(|c| g.db.get(c).tags.has(Tag::Dork));

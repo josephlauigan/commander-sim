@@ -1,0 +1,101 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
+# policy (ai/plans.rs `config`). JD's Tymna the Weaver + Thrasios, Triton Hero deck (Bant + black partners, key
+# `thrasios`, tier t5). Written in Phase 4 PR 7 from its hand AI, played when AI_HAND is off: `tymna_partners::
+# partner_prio` / `combo_prio` (the prio rules), `combo_piece` / `tymna_cards::tutor_pick` (the line),
+# `protection_held` (the hold). The line is the catalogue's "Power Artifact / Rings of Brighthearth + Monolith" as this
+# deck plays it: the outlet is Walking Ballista or Thrasios on the battlefield (`combo_piece`).
+# Left out (the schema can't express it): the tutor's other branches (a land below five lands, a sweeper when behind
+# on board, a finisher when ahead, the cheapest evasive creature); the evasive-creature rule's count against the
+# opponents (approximated by the creatures out); Ballista's mana gates (approximated by the lands); Baird's and
+# Lagrella's board reads; the attack spread, `commander_first`, `thrasios_sink`, the combat tricks and Ballista's
+# counter targets.
+deck = "thrasios"
+default = "plan"
+
+# win lines: the tutors want the first missing piece
+[[line]]
+name = "Basalt Monolith + Rings of Brighthearth + a mana sink"
+kind = "combo"
+pieces = [["Basalt Monolith"], ["Rings of Brighthearth"], ["Walking Ballista", "bf:Thrasios, Triton Hero"]]
+
+# Cast priorities (was partner_prio): Tymna as soon as she can be cast, Thrasios turn 2 (3 less per tax); one-mana
+# ramp, then two-mana ramp (early turns); the combo pieces; cheap evasive creatures for Tymna's draw
+[[prio]]
+cards = ["Tymna the Weaver"]
+value = 90
+per_tax = -3
+
+[[prio]]
+cards = ["Thrasios, Triton Hero"]
+value = 86
+per_tax = -3
+
+[[prio]]
+cards = ["Avacyn's Pilgrim"]
+when = ["turn<=5"]
+value = 89
+
+[[prio]]
+cards = ["Arcane Signet", "Fellwar Stone", "Orzhov Signet", "Talisman of Curiosity", "Talisman of Unity", "Faeburrow Elder"]
+when = ["turn<=3"]
+value = 87
+
+[[prio]]
+cards = ["Arcane Signet", "Fellwar Stone", "Orzhov Signet", "Talisman of Curiosity", "Talisman of Unity", "Faeburrow Elder"]
+when = ["turn<=5"]
+value = 83
+
+[[prio]]
+cards = ["Basalt Monolith"]
+when = ["turn<=5"]
+value = 82
+else = 74
+
+[[prio]]
+cards = ["Rings of Brighthearth"]
+when = ["have:Basalt Monolith"]
+value = 72
+else = 38
+
+# the Ballista is the kill once Basalt and Rings are held: not cast as a body
+[[prio]]
+cards = ["Walking Ballista"]
+when = ["have:Basalt Monolith & have:Rings of Brighthearth & lands<8"]
+value = 0
+
+[[prio]]
+cards = ["Walking Ballista"]
+when = ["lands>=6"]
+value = 56
+
+[[prio]]
+cards = ["Walking Ballista"]
+when = ["lands>=4"]
+value = 50
+else = 0
+
+[[prio]]
+cards = ["Bastion Protector"]
+when = ["out:Tymna the Weaver & out:Thrasios, Triton Hero"]
+value = 74
+else = 40
+
+[[prio]]
+creature = true
+flying = true
+max_mv = 4
+when = ["creatures<3"]
+value = 78
+else = 66
+
+[[prio]]
+cards = ["Conqueror's Flail", "Helm of Kaldra"]
+when = ["creatures>=1"]
+value = 58
+else = 25
+
+# Blossoming Defense kept for a commander (or a creature worth 4) under removal
+[[hold]]
+card = "Blossoming Defense"
+protects = ["commander", "Tymna the Weaver", "Thrasios, Triton Hero"]
+mana = true

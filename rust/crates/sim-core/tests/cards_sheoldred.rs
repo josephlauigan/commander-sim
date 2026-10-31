@@ -651,6 +651,7 @@ fn deadly_dispute_sacrifices_draws_two_and_makes_a_treasure() {
 // ------------------------------------------------------------------ Part 2: Memory Jar in a sheoldred game
 #[test]
 fn memory_jar_is_cracked_at_once_with_sheoldred_out_and_by_its_own_rule_without() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     g.active = Some(P0);
     let jar = perm(&mut g, P0, "Memory Jar");
@@ -668,6 +669,7 @@ fn memory_jar_is_cracked_at_once_with_sheoldred_out_and_by_its_own_rule_without(
 
 #[test]
 fn toxic_deluge_takes_x_so_sheoldred_survives_and_pays_the_life() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     let sheo = perm(&mut g, P0, SHEO);
     let big = perm(&mut g, P1, "Gravblade Heavy");
@@ -755,6 +757,7 @@ fn a_protection_instant_answers_destroy_removal_aimed_at_sheoldred_but_not_exile
 
 #[test]
 fn a_real_destroy_spell_at_sheoldred_is_answered_in_play() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Swamp", 2, false);
     let sheo = perm(&mut g, P0, SHEO);
@@ -873,6 +876,7 @@ fn painful_lesson_draws_two_then_loses_two() {
 
 #[test]
 fn the_ai_aims_painful_lesson_at_the_weakest_opponent_with_sheoldred_and_at_itself_without() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Swamp", 3, false);
     let c = hand(&mut g, P0, &["Painful Lesson"])[0];
@@ -894,6 +898,7 @@ fn the_ai_aims_painful_lesson_at_the_weakest_opponent_with_sheoldred_and_at_itse
 
 #[test]
 fn the_ai_casts_dark_deal_only_with_sheoldred_out_and_many_opposing_cards() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Swamp", 3, false);
     let c = hand(&mut g, P0, &["Dark Deal"])[0];
@@ -993,6 +998,7 @@ fn howling_mine_draws_an_extra_card_in_every_players_draw_step_while_untapped() 
 
 #[test]
 fn every_opponent_draw_the_new_cards_cause_fires_sheoldred_dreams_and_fate_unraveler() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["sheoldred", "veyran"]);
     perm(&mut g, P0, SHEO);
     perm(&mut g, P0, "Underworld Dreams");
@@ -1047,6 +1053,7 @@ fn fate_unraveler_pings_only_opponents_that_draw() {
 
 #[test]
 fn temple_bell_draws_for_every_player_and_the_ai_taps_it_only_with_a_punisher() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game3();
     let bell = perm(&mut g, P0, BELL);
     assert!(perm_opts(&mut g, bell, P0, None).is_empty(), "no draw punisher: leave it");
@@ -1087,6 +1094,7 @@ fn peer_into_the_abyss_draws_half_the_library_and_loses_half_the_life_rounding_u
 
 #[test]
 fn the_ai_aims_peer_into_the_abyss_at_the_opponent_it_kills_and_otherwise_mostly_holds_it() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Swamp", 8, false);
     let c = hand(&mut g, P0, &[PEER])[0];
@@ -1108,6 +1116,7 @@ fn the_ai_aims_peer_into_the_abyss_at_the_opponent_it_kills_and_otherwise_mostly
 
 #[test]
 fn geier_reach_sanitarium_taps_for_colourless_and_loots_everyone() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     let sani = lands(&mut g, P0, GEIER, 1, false)[0];
     assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 1);
@@ -1139,6 +1148,7 @@ fn charge(g: &Game, m: PermId) -> i64 {
 
 #[test]
 fn otherworld_atlas_stores_counters_then_makes_each_player_draw_that_many() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     // no punisher: a counter at the end of an opponent's turn, never in our own turn
     let mut g = game();
     let atlas = perm(&mut g, P0, ATLAS);
@@ -1182,6 +1192,7 @@ fn otherworld_atlas_stores_counters_then_makes_each_player_draw_that_many() {
 
 #[test]
 fn mikokoro_taps_for_colourless_and_makes_each_player_draw() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     let miko = lands(&mut g, P0, MIKOKORO, 1, false)[0];
     assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 1);
@@ -1340,6 +1351,7 @@ fn read_the_bones_scries_draws_two_and_loses_two() {
 
 #[test]
 fn exsanguinate_drains_x_and_the_sheoldred_ai_casts_it_to_finish() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Swamp", 5, false);
     let c = hand(&mut g, P0, &["Exsanguinate"])[0];
