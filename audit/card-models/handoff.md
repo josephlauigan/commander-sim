@@ -1,0 +1,147 @@
+# Card models, part 1: handoff
+
+Brief: `rust/agents/card-models-1.md`. Branch `card-models-1`. Tests for JD's cards: `rust/crates/sim-core/tests/cards_jd_models.rs`.
+
+## JD's Partial and Unmodeled cards (cardgen audit --mine, 10-30, before this PR)
+
+| Deck | Card | Status before | What is missing | Oracle text |
+| --- | --- | --- | --- | --- |
+| yshtola | Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal | Partial | **all of its card code was dead**: legends.rs registered it as "Venat, Heart of Hydaelyn", a name not in cards.json (the list spells the full DFC name), and the override was keyed the same way. Y'shtola ran it as a 3/3 with the compiled draw trigger (no once-a-turn limit), no Sundering, no Hydaelyn | Whenever you cast a legendary spell, draw a card. This ability triggers only once each turn. Hero's Sundering — {7}, {T}: Exile target nonland permanent. Transform Venat. Activate only as a sorcery. // Indestructible. Blessing of Light — At the beginning of combat on your turn, put a +1/+1 counter on another target creature you control. Until your next turn, it gains indestructible. If that creature is legendary, draw a card. |
+| seph | Glimpse the Unthinkable | Unmodeled | nothing compiled ("ten" is not a number word the parser knows); the AI never casts it | Target player mills ten cards. |
+| sauron | Baleful Mastery | Partial | the alternative cost {1}{B} (an opponent draws a card) | You may pay {1}{B} rather than pay this spell's mana cost. If the {1}{B} cost was paid, an opponent draws a card. Exile target creature or planeswalker. |
+| kefka | Price of Progress | Unmodeled | nothing compiled | Price of Progress deals damage to each player equal to twice the number of nonbasic lands that player controls. |
+| cloud | Buster Sword | Partial | the free cast of a spell with MV <= the damage | Equipped creature gets +3/+2. Whenever equipped creature deals combat damage to a player, draw a card, then you may cast a spell from your hand with mana value less than or equal to that damage without paying its mana cost. Equip {2} |
+| karn | Treasure Vault | Partial | the {X}{X}, {T}, sacrifice: X Treasures ability (no {X} activation cost in the ability language) | {T}: Add {C}. {X}{X}, {T}, Sacrifice this land: Create X Treasure tokens. |
+| thanos | Gemstone Caverns | Partial | the opening-hand clause | If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand. {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color. |
+| thanos | Orim's Chant | Partial | the kicker and "creatures can't attack"; the AI never casts it | Kicker {W}. Target player can't cast spells this turn. If this spell was kicked, creatures can't attack this turn. |
+| thanos | Redirect Lightning | Partial | changing the target of an ability | As an additional cost to cast this spell, pay 5 life or pay {2}. Change the target of target spell or ability with a single target. |
+| thanos | Shifting Woodland | Partial | modelled as a token copy (enter triggers fire wrongly), creature cards only | This land enters tapped unless you control a Forest. {T}: Add {G}. Delirium — {2}{G}{G}: This land becomes a copy of target permanent card in your graveyard until end of turn. Activate only if there are four or more card types among cards in your graveyard. |
+| thanos | Tinder Wall | Partial | {R}, sacrifice: 2 damage to the creature it blocks | Defender. Sacrifice this creature: Add {R}{R}. {R}, Sacrifice this creature: It deals 2 damage to target creature it's blocking. |
+| urdragon | Dragonlord Ojutai | Partial | body only: hexproof while untapped, the combat-damage dig | Flying. Dragonlord Ojutai has hexproof as long as it's untapped. Whenever Dragonlord Ojutai deals combat damage to a player, look at the top three cards of your library. Put one of them into your hand and the rest on the bottom of your library in any order. |
+| urdragon | Nicol Bolas, the Ravager | Partial | the flip into Nicol Bolas, the Arisen | Flying. When Nicol Bolas enters, each opponent discards a card. {4}{U}{B}{R}: Exile Nicol Bolas, then return him to the battlefield transformed under his owner's control. Activate only as a sorcery. // +2: Draw two cards. −3: 10 damage to target creature or planeswalker. −4: Put target creature or planeswalker card from a graveyard onto the battlefield under your control. −12: Exile all but the bottom card of target player's library. |
+| urdragon | Peter Parker's Camera | Partial | copying activated abilities; new targets | This artifact enters with three film counters on it. {2}, {T}, Remove a film counter from this artifact: Copy target activated or triggered ability you control. You may choose new targets for the copy. |
+
+## The pool (cardgen audit, 10-30)
+
+Partial 63 slots, Unmodeled 2, mostly Tier 6 (dack 13, rograkh-thrasios 12, sisay 9, kinnan-bonder 7, atraxa-infect 7+2
+Unmodeled, kraum-tymna 6, rograkh-silas 4, prosper 2, kinnan, miirym, tergrid 1 each). Not ranked yet.
+
+## Done
+
+- Venat (yshtola): card code registered under the full name (`impls/legends.rs` VENAT), override re-keyed. Full.
+- Glimpse the Unthinkable (now kefka, see below; the first seph-only model was reverted). Was: `fill=glimpse`; the fill plan (FILLERS, after Entomb,
+  Buried Alive, Unmarked Grave) casts it, `ai::seph_fill_resolve` mills the caster ten. Full (card-audit.md row).
+- Price of Progress (kefka): parser rule + `that_player_nonbasic_lands` per-player count (dsl/mod.rs
+  `per_player_n`), valued in `value_of`. Full.
+- Baleful Mastery (sauron): `impls/card_models.rs` altcost slot + resolve. Full.
+- Orim's Chant (thanos): `combat::combat` reads `t6_stax::attack_lock`; human kicker (`human/specs.rs` Ask::Kick).
+  Full (the AI never kicks: no defensive use yet).
+- Treasure Vault (karn): the language's `{X}` activation cost (`Cost.x`, parse_cost; `pay_ability_cost` picks the
+  largest X; `ability_options` values X and counts no mana cost at the end-of-turn window). Full. Also gives Crypt
+  Rats and Fiend Artisan a real X cost (they ran X as a free 3 before).
+- Dragonlord Ojutai (urdragon): card_models.rs grant_kw + combat_damage dig. Full.
+- Gemstone Caverns (thanos): card_models.rs `caverns_opening`, called by `turn::setup_game` after mulligans. Full
+  (a person in practice mode is not asked).
+- Buster Sword (cloud): card_models.rs combat_damage (draw + free spell; `t0_stella::free_worth`/`free_cast` made
+  pub(crate)); the compiled draw trigger dropped by a dsl override. Full.
+- Nicol Bolas, the Ravager (urdragon): the flip (card_models.rs options hook) enters the DFC entry
+  "Nicol Bolas, the Ravager // Nicol Bolas, the Arisen", made a 7-loyalty walker by its override (loyalty dsl; new
+  effect `exile_library` for the -12; cardgen now applies an override's `loyalty` to any card). **Approximate**: an
+  Arisen that leaves is a planeswalker card in the graveyard, not the creature front.
+- Tinder Wall (thanos): blocks slot, {R} + sacrifice for 2 damage to the attacker it blocks (AI: toughness <= 2 and
+  pval >= 2, so not for a vanilla token). Full.
+
+## Left (JD's decks), in order
+
+1. Peter Parker's Camera (urdragon): copying activated abilities (stack::copy_trigger copies triggers only); new
+   targets. Needs an "ability on the stack" object for activated abilities (engine/stack.rs).
+2. Shifting Woodland (thanos): a real "becomes a copy of a permanent card until end of turn" on the land itself (now
+   a token copy whose enter triggers fire wrongly; creature cards only). Needs a copy layer for a permanent.
+3. Redirect Lightning (thanos): changing the target of an ability (now spells only, in the removal-response hook).
+   Needs abilities with targets on the stack.
+
+## The pool's Partial and Unmodeled cards, ranked
+
+No report prints per-card drawn counts for outside decks (only `--swap` does, for the swapped cards), so the rank is
+the number of pool decks that play the card (every card of a 99 is about equally likely to be drawn; tutor targets
+more). All but a few are in Tier 6 (Thanos's tier); the rest are in Tier 3 (Atraxa, Tergrid) and Tiers 4/5
+(Prosper, Kinnan, Miirym). The full notes: `cardgen audit --deck <key>`.
+
+| Rank | Card | Decks |
+| --- | --- | --- |
+| 1 | City of Traitors: **done** (turn::play_land_card runs its check for every played land) | 3 (t6) |
+| 2 | Wan Shi Tong, Librarian; Rain of Filth; Mnemonic Betrayal; Invasion of Ikoria // Zilortha; Hidden Strings; Flesh Duplicate | 2 (t6) |
+| 2 | Magda, Brazen Outlaw | 2 (t4 prosper, t6) |
+| 9 | the other 40 (one deck each) | 1 |
+
+Only City of Traitors was modelled in this PR (JD's cards took the time); the rest is open, in this order.
+
+
+## Before / after runs (void: see the coordinator section)
+
+Baseline: origin/main's binary (copied to the scratch dir) with origin/main's cards.json / decks.json via
+`COMMANDER_SIM_DATA`, `--deck X --pool all --games 2000 --seed 500000 --jobs 12`. Outputs in the scratch dir
+`runs/base-<deck>.txt`.
+
+## Gotchas
+
+- `r.card(db, NAME)` under `if db.id(NAME).is_some()` silently skips a card whose name is spelled differently in the
+  data (Venat). A double-faced card in a deck list is in cards.json under the list's spelling.
+- testkit `hand`/`perm` take the card out of the library: measure library sizes after taking.
+
+## Coordinator changes (10-30) and the state of step 5
+
+- The ghave-deck PR (branch `ghave-deck`, worktree `/home/joseph/projects/mtg_sims/wt-ghave`) retires `seph` and
+  moves cards between JD's decks. **Deck sims are on hold until the coordinator says it is in main.** The baseline
+  runs started earlier (yshtola, seph, sauron, kefka on the old lists) were stopped and are void.
+- Glimpse the Unthinkable moves to Kefka: the seph-only `fill=glimpse` model is reverted; the card compiles and the
+  interpreter's `mill_target` / `mill_value` (dsl/mod.rs) choose and price the target. Grinding Station shares it.
+- The cards coming into JD's decks: on the ghave branch's data, `cardgen audit --mine` (this branch's binary) shows
+  none of Atraxa, Gifts Ungiven, Swan Song, Rhystic Study, Teleportation Circle, Displacer Kitten, Arcane Denial,
+  Conjurer's Closet as not Full; their new decks' priorities are above 0 (Gifts 72, Atraxa 66 in thrasios; Kitten 40,
+  Rhystic 60, Teleportation Circle in yshtola; Conjurer's Closet in karn: test
+  `the_moved_flicker_engines_get_cast_by_their_new_decks`).
+
+### To do once ghave-deck is in main
+
+1. `git merge origin/main`; on conflicts in data/cards.json, data/decks.json or tests/fixtures/my_decks_parsed.json
+   take either side and regenerate (`cardgen export`; `cardgen deck` for the fixture), never hand-merge.
+2. `cardgen audit --mine`; add any card that is not Full to the table above.
+3. Step 5: the baseline is origin/main (build it in a scratch copy, or `git stash`-free: a temporary worktree at
+   origin/main, removed after), then this branch, each deck with a changed card on its own tiers:
+   `commander-sim --deck X --pool all --games 2000 --seed 500000 --jobs 12` (one at a time, rc=0). Decks: yshtola
+   (Venat), kefka (Price of Progress, Glimpse), sauron (Baleful Mastery), cloud (Buster Sword), karn (Treasure
+   Vault), urdragon (Ojutai, Bolas), thanos (Orim's Chant, Gemstone Caverns, Tinder Wall; and the t6 pool's City of
+   Traitors: run thanos once without and once with commit 5df4413b to separate it). Scripts that did this:
+   scratch dir `run-base.sh` / `run-after.sh` (COMMANDER_SIM_DATA points a frozen binary at frozen data).
+4. Update `audit/<deck>/FINDINGS.md` for each (model status, the number and why it moved).
+
+## 10-31: no sims (JD) — what moved, for Phase 4's recalibration
+
+JD: no sims of any kind until Phase 4's recalibration, so step 5 is cancelled. The runs that had started (yshtola,
+kefka, sauron, urdragon; both arms) were stopped or are void, and no FINDINGS numbers were written. Merged origin/main
+19af564c (ghave-deck) on 10-30 and regenerated the data files.
+
+Every card or rule this branch changed, and who plays it (data/decks.json after the merge):
+
+| Change | JD decks (their tiers) | Pool decks |
+| --- | --- | --- |
+| Venat, Heart of Hydaelyn // Hydaelyn (its card code was dead before) | yshtola (t5) | - |
+| Glimpse the Unthinkable (compiled; AI picks who mills) | kefka (t3); seph (t3-t4) until ghave-wire retires it | - |
+| Price of Progress | kefka (t3) | - |
+| Baleful Mastery ({1}{B} alternative cost) | sauron (t3-t4) | - |
+| Orim's Chant (attack lock when kicked; a person's kicker) | thanos (t6) | t6 dack-fayden, kraum-tymna |
+| Treasure Vault ({X}{X} ability now used) | karn (t4-t5) | t4 prosper, t5 kinnan-simic |
+| Dragonlord Ojutai | urdragon (t5) | - |
+| Nicol Bolas, the Ravager (the flip) | urdragon (t5) | - |
+| Gemstone Caverns (opening hand) | thanos (t6) | **all six t6 decks** |
+| Tinder Wall | thanos (t6) | - |
+| Buster Sword | cloud (t1-t3) | - |
+| City of Traitors (sacrificed by any played land) | - | t6 dack-fayden, kraum-tymna, rograkh-silas |
+| {X} activation cost (Crypt Rats, Fiend Artisan get a real X) | - | t2 meren (Fiend Artisan); Crypt Rats in no current list |
+| "target player mills N" target choice (Grinding Station) | kefka via Glimpse | t6 rograkh-silas |
+| token multiplier saturates instead of overflowing (repl::token_mult; seen at t5) | any | any |
+
+So the tiers whose games changed: t1-t3 (Buster Sword via cloud; t2 meren), t3-t4 (sauron, kefka), t4-t5 (karn,
+prosper, kinnan-simic), t5 (yshtola, urdragon), and t6 (thanos and every t6 deck: Gemstone Caverns, plus Orim's
+Chant and City of Traitors).

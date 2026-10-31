@@ -1,4 +1,4 @@
-//! The     executeard ability language's interpreter (Python's `cards/dsl.py`): compiled abilities (`model.rs`) run by the
+//! The card ability language's interpreter (Python's `cards/dsl.py`): compiled abilities (`model.rs`) run by the
 //! engine. Hand-tagged cards keep the engine's own code; both kinds play together in one game.
 //!
 //!   - `fire`: triggered abilities (enters, dies, attacks, cast, draw, upkeep ...), put on the stack as known triggers
@@ -70,6 +70,8 @@ thread_local! {
     static X_FALLBACKS: std::cell::Cell<u32> = const { std::cell::Cell::new(0) };
     /// the mana value of the permanent the last paid ability cost sacrificed (0 if none): `activate` hands it to the ability
     static LAST_SAC_MV: std::cell::Cell<i32> = const { std::cell::Cell::new(0) };
+    /// the X the last paid ability cost with an {X} chose (0 if none): `activate` hands it to the effects
+    static LAST_X: std::cell::Cell<i32> = const { std::cell::Cell::new(0) };
     /// --- ghave: the creature an ability's "sacrifice a creature" cost takes (`activate_sacrificing`), not the AI's pick
     static FORCED_FODDER: std::cell::Cell<Option<PermId>> = const { std::cell::Cell::new(None) };
 }
@@ -533,6 +535,52 @@ fn ask_may(g: &mut Game, p: PlayerId, e: &Effect, src: Option<PermId>, spell: Op
     crate::human::choices::yes_no(g, p, &format!("{what}: {does}?"))
 }
 
+/// a count read for each player an effect reaches, not for its controller ("equal to the number of nonbasic lands that
+/// player controls", Price of Progress)
+fn per_player_n(e: &Effect) -> Option<fn(&Game, PlayerId) -> i32> {
+    match &e.n {
+        Some(Num::Name(s)) if s == "that_player_nonbasic_lands" => Some(nonbasic_lands),
+        _ => None,
+    }
+}
+
+fn nonbasic_lands(g: &Game, q: PlayerId) -> i32 {
+    g.player(q).lands.iter().filter(|&&m| g.perm(m).cd.is_some_and(|c| !g.db.get(c).basic)).count() as i32
+}
+
+/// p has a use for its own graveyard now: a reanimation spell or Yawgmoth's Will in hand, or a graveyard engine out
+fn gy_payoff(g: &Game, p: PlayerId) -> bool {
+    let pl = g.player(p);
+    pl.hand.iter().any(|&c| g.db.get(c).tag(Tag::Rean) || g.db.get(c).tag(Tag::Yawg))
+        || pl.perms.iter().any(|&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Rean)))
+}
+
+/// "Target player mills N cards" (Glimpse the Unthinkable): the AI mills itself when its graveyard pays off now,
+/// else the opponent closest to milling out (a library of N or fewer: that player loses at the next draw), else the
+/// one it fears most
+fn mill_target(g: &Game, p: PlayerId, k: i32) -> Option<PlayerId> {
+    if gy_payoff(g, p) && g.player(p).library.len() as i32 > k + 5 {
+        return Some(p);
+    }
+    let opps: Vec<PlayerId> =
+        g.opps(p).filter(|&q| !crate::engine::values::player_hexproof(g, q)).collect();
+    if let Some(q) = min_by(&opps, |q| g.player(q).library.len() as f64).filter(|&q| g.player(q).library.len() as i32 <= k)
+    {
+        return Some(q);
+    }
+    max_by(&opps, |q| threat(g, p, q))
+}
+
+/// what "target player mills N" is worth to p now (value_of)
+fn mill_value(g: &Game, p: PlayerId, k: i32) -> f64 {
+    match mill_target(g, p, k) {
+        Some(q) if q == p => 0.25 * k as f64,
+        Some(q) if g.player(q).library.len() as i32 <= k => 15.0,
+        Some(_) => 0.05 * k as f64,
+        None => 0.0,
+    }
+}
+
 fn sel_or_empty(s: &Option<Sel>) -> Sel {
     s.clone().unwrap_or_default()
 }
@@ -617,6 +665,15 @@ fn run(
                         lose_life(g, p, dmg, Some(p), kind, None)?;
                     } else if let Some(q) = min_by(&opps, |q| g.player(q).life as f64) {
                         lose_life(g, q, dmg, Some(p), kind, None)?;
+                    }
+                }
+                Some("player") if per_player_n(e).is_some() => {
+                    // each player takes its own count, you too (Price of Progress)
+                    for q in players(g, p, Some(to.who.as_deref().unwrap_or("each_player")), ctx) {
+                        let k = per_player_n(e).map_or(0, |f| f(g, q)) * e.mult.unwrap_or(1);
+                        if k > 0 {
+                            lose_life(g, q, k, Some(p), kind, None)?;
+                        }
                     }
                 }
                 Some("player") => {
@@ -878,9 +935,26 @@ fn run(
             }
         }
         "mill" => {
-            for q in players(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx) {
+            let qs = if e.who.as_deref() == Some("target_player") {
+                mill_target(g, p, n(g, ctx)).into_iter().collect()
+            } else {
+                players(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx)
+            };
+            for q in qs {
                 let k = n(g, ctx);
                 zones::mill(g, q, k.max(0) as usize)?;
+            }
+        }
+        "exile_library" => {
+            // "exile all but the bottom card of target player's library" (Nicol Bolas, the Arisen)
+            for q in players(g, p, Some(e.who.as_deref().unwrap_or("target_player")), ctx) {
+                let lib = std::mem::take(&mut g.player_mut(q).library);
+                let mut it = lib.into_iter();
+                let bottom = it.next();
+                for c in it {
+                    g.player_mut(q).exile.push(c);
+                }
+                g.player_mut(q).library.extend(bottom);
             }
         }
         "sacrifice" => {
@@ -1760,6 +1834,7 @@ fn eff_value(kind: &str) -> f64 {
         "ring_tempt" => 0.8, // --- Tiers 4/5 (winota)
         "add_mana" => 0.5,
         "mill" => 0.1,
+        "exile_library" => 8.0, // a library of one card: that player is out at the next draw but one
         _ => 0.3,
     }
 }
@@ -1791,6 +1866,15 @@ pub fn value_of(g: &Game, p: PlayerId, effects: &[Effect], spell: Option<CardId>
                         let ms = select(g, p, &sel, true, &DslCtx::default(), None, spell);
                         v +=
                             ms.iter().map(|&m| pval(g, m) * if g.perm(m).owner != p { 1.0 } else { -1.2 }).psum() / 2.0;
+                    }
+                    Some("player") if d == "damage" && per_player_n(e).is_some() => {
+                        // each player's own count, yours against you; an opponent it kills is worth a lot
+                        let f = per_player_n(e).unwrap();
+                        let k = |q: PlayerId| (f(g, q) * e.mult.unwrap_or(1)) as f64;
+                        for q in g.opps(p) {
+                            v += 0.6 * k(q) + if k(q) >= g.player(q).life as f64 { 20.0 } else { 0.0 };
+                        }
+                        v -= 0.9 * k(p) + if k(p) >= g.player(p).life as f64 { 100.0 } else { 0.0 };
                     }
                     Some("player") | Some("any_target") if d == "damage" => {
                         v += 0.6
@@ -1841,6 +1925,7 @@ pub fn value_of(g: &Game, p: PlayerId, effects: &[Effect], spell: Option<CardId>
                 v += 0.3 + 1.2 * n.min((lands - left.max(0.0)).max(0.0));
             }
             "discard" => v += if e.who.as_deref() != Some("you") { 0.8 } else { -0.5 },
+            "mill" if e.who.as_deref() == Some("target_player") => v += mill_value(g, p, n as i32),
             "modal" => {
                 let mut ms: Vec<f64> = e.modes.iter().map(|m| value_of(g, p, m, spell)).collect();
                 ms.sort_by(|a, b| b.total_cmp(a));
@@ -1957,11 +2042,20 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
     // Phase 3: a land whose ability costs {T} can't also tap for the mana that pays it
     let land = g.player(p).lands.contains(&src);
     let land_tap = land && cost.tap == Some(true);
-    let payable = if land_tap {
-        crate::impls::lands::can_pay_without(g, p, src, gn, &pips)
-    } else {
-        can_pay(g, p, gn, &pips, false)
+    let can = |g: &mut Game, n: u32| {
+        if land_tap { crate::impls::lands::can_pay_without(g, p, src, n, &pips) } else { can_pay(g, p, n, &pips, false) }
     };
+    let mut gn = gn;
+    if let Some(k) = cost.x.filter(|&k| k > 0) {
+        // an {X} cost: the largest X the mana pays (at least 1: X = 0 does nothing worth a card)
+        let xv = (1..=30u32).take_while(|&x| can(&mut *g, gn + k * x)).last().unwrap_or(0);
+        if xv == 0 {
+            return Ok(false);
+        }
+        gn += k * xv;
+        LAST_X.with(|c| c.set(xv as i32));
+    }
+    let payable = can(g, gn);
     if !payable {
         return Ok(false);
     }
@@ -2008,6 +2102,20 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
         }
     }
     Ok(true)
+}
+
+/// an effect with its "X" amounts read as the X paid (for valuing an {X} ability before it is activated)
+fn x_paid(mut e: Effect, x: i32) -> Effect {
+    let fix = |n: &mut Option<Num>| {
+        if matches!(n, Some(Num::Name(s)) if s == "X") {
+            *n = Some(Num::Int(x));
+        }
+    };
+    fix(&mut e.n);
+    fix(&mut e.pow);
+    fix(&mut e.tgh);
+    e.modes = e.modes.into_iter().map(|m| m.into_iter().map(|f| x_paid(f, x)).collect()).collect();
+    e
 }
 
 /// (round, player): activated abilities count per round per player, loyalty once per round (Python's (g.round, p.key))
@@ -2073,6 +2181,17 @@ pub fn ability_options(g: &mut Game, p: PlayerId, sorcery_ok: bool) -> Res<Vec<c
                     if !pay_ability_cost(g, p, src, cost, true)? {
                         continue;
                     }
+                    // an {X} cost: valued at the X the mana pays now; at the end of the turn before yours the mana
+                    // would go unused, so only the fixed part of the cost counts
+                    let xv = if cost.x.is_some() { LAST_X.with(|c| c.take()) } else { 0 };
+                    let with_x: Vec<Effect>;
+                    let effects: &[Effect] = if xv > 0 {
+                        with_x = effects.iter().cloned().map(|e| x_paid(e, xv)).collect();
+                        &with_x
+                    } else {
+                        effects
+                    };
+                    let x_cost = if sorcery_ok { 0.25 * (cost.x.unwrap_or(0) as i32 * xv) as f64 } else { 0.0 };
                     let mut cost_v: f64 = 0.25
                         * cost
                             .mana
@@ -2084,6 +2203,7 @@ pub fn ability_options(g: &mut Game, p: PlayerId, sorcery_ok: bool) -> Res<Vec<c
                     if cost.sac.as_deref() == Some("self") {
                         cost_v += 1.5;
                     }
+                    cost_v += x_cost;
                     if cost.other.as_deref() == Some(REMOVE_PLUS_COST) {
                         cost_v += 0.6; // --- ghave: the counter is a point of power and toughness
                     }
@@ -2151,7 +2271,9 @@ fn cost_text(cost: &model::Cost) -> String {
     let mut parts = vec![];
     if let Some(m) = cost.mana.as_deref() {
         let (gn, pips) = crate::engine::cast::parse_cost(m);
-        let mut s = if gn > 0 || pips.is_empty() { format!("{{{gn}}}") } else { String::new() };
+        let xs = "{X}".repeat(cost.x.unwrap_or(0) as usize);
+        let mut s = if gn > 0 || (pips.is_empty() && xs.is_empty()) { format!("{{{gn}}}") } else { String::new() };
+        s.insert_str(0, &xs);
         for ch in pips.chars() {
             s.push_str(&format!("{{{ch}}}"));
         }
@@ -2198,6 +2320,7 @@ pub fn activate(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool> {
         return Ok(false);
     }
     let sacrificed_mv = LAST_SAC_MV.with(|c| c.take()); // before the stack window runs other costs
+    let paid_x = if cost.x.is_some() { LAST_X.with(|c| c.take()) } else { 0 };
     let stamp = round_stamp(g, p);
     let e = g.player_mut(p).act_uses.entry((src, idx)).or_insert((stamp, 0));
     *e = if e.0 == stamp { (stamp, e.1 + 1) } else { (stamp, 1) };
@@ -2208,6 +2331,9 @@ pub fn activate(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool> {
         return Ok(true); // countered (mana abilities skip the stack)
     }
     let mut dctx = DslCtx { sacrificed_mv, ..DslCtx::base() };
+    if cost.x.is_some() {
+        (dctx.x, dctx.x_default) = (paid_x, false);
+    }
     execute(g, p, effects, Some(src), &mut dctx, None, 0)?;
     Ok(true)
 }

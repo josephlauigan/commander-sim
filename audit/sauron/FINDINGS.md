@@ -64,3 +64,7 @@ it's a wash: not adopted, Urza stays.
 |---|---|---|---|
 | Urza, Lord High Artificer => Spell Pierce | +0.3 (31.5% -> 31.8%, ±2.6) | -1.2 (31.9% -> 30.7%, ±2.5) | Noise both tiers (10/19 gave +0.5/+1.2). Urza is cast in 68% of his draws (round 8.2); Spell Pierce in 63%. The plan comes online slightly less without Urza (-2.8 / -1.3 points, inside noise). |
 **Reading it:** Urza is neither needed nor a drag in Sauron; with Tymna/Thrasios not wanting him either, he stays.
+
+## 2026-10-31: card models (branch card-models-1; no sims until Phase 4 recalibration)
+
+Baleful Mastery: Partial -> Full (the {1}{B} alternative cost, an opponent draws; the AI uses it only when it can't pay {3}{B}). No new number yet.

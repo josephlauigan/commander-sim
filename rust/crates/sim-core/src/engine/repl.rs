@@ -571,7 +571,7 @@ pub fn token_mult(g: &Game, p: PlayerId) -> u32 {
             && q == p
             && !g.perm(src).neutered
         {
-            k *= multiplier.unwrap_or(2).max(1) as u32;
+            k = k.saturating_mul(multiplier.unwrap_or(2).max(1) as u32); // (many copies of a doubler: no overflow)
         }
     }
     k

@@ -51,8 +51,9 @@ pub(crate) fn traitors_check(g: &mut Game, p: PlayerId, l: PermId) -> Res {
 
 // ================================================================== Gemstone Caverns
 /// **Gemstone Caverns**: {T}: Add {C}; with a luck counter on it, one mana of any colour instead. The opening-hand
-/// clause (begin the game with it on the battlefield with a luck counter, exiling a card) needs the engine: see
-/// engine-needs-lands.md. The luck counter is `DataKey::Counters` (an Int) on the land.
+/// clause (begin the game with it on the battlefield with a luck counter, exiling a card) is
+/// `card_models::caverns_opening`, run by `turn::setup_game`. The luck counter is `DataKey::Counters` (an Int) on
+/// the land.
 fn caverns_cols(g: &Game, p: PlayerId, l: PermId) -> Colors {
     if g.perm(l).data.int(DataKey::Counters) > 0 { g.player(p).ident } else { Colors::NONE }
 }

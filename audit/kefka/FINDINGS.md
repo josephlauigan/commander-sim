@@ -103,3 +103,7 @@ the physical deck (Bitter Triumph, now Decorum Dissertation): one card different
   cheap body whose copied ability only matters with one of those creatures out.
 Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big downgrade.
 **JD's decision (10/18):** Marvin in for Feed the Swarm (applied to the list); Oppression not added.
+
+## 2026-10-31: card models (branch card-models-1; no sims until Phase 4 recalibration)
+
+Price of Progress: Unmodeled -> Full (damage to each player for its nonbasic lands; the AI casts it when the opponents lose more). Glimpse the Unthinkable (new from Seph): Full (mills itself with Yawgmoth's Will or a reanimation spell in hand, else an opponent it can mill out). No new number yet.

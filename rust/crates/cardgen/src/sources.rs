@@ -144,6 +144,9 @@ fn apply_override(base: &Cd, spec: &Entry) -> Cd {
     cd.ward = base.ward;
     cd.game_changer = base.game_changer;
     cd.start_loyalty = base.start_loyalty.clone();
+    if let Some(l) = &spec.loyalty {
+        cd.start_loyalty = Some(l.clone()); // an override's loyalty (a back face made a planeswalker)
+    }
     cd.subtypes = base.subtypes.clone();
     if let Some(k) = &spec.kws {
         cd.kws = k.iter().cloned().collect();

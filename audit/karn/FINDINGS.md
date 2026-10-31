@@ -41,3 +41,7 @@ seed 77) explains it.
 - **Win turn 12-14 for every deck in the sim:** possibly a simulator-wide pace issue (see JD's question, 10/20), not
   specific to Karn. Being investigated.
 - **Tiers not set:** `data/my_decks.toml` has placeholder t3-t4.
+
+## 2026-10-31: card models (branch card-models-1; no sims until Phase 4 recalibration)
+
+Treasure Vault: Partial -> Full (the {X}{X} ability, used at the end of the turn before Karn's own or for a large X). No new number yet.

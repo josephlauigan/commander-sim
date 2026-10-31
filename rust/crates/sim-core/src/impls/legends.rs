@@ -493,7 +493,7 @@ fn shalai_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 }
 
 // ------------------------------------------------------------------ Venat, Heart of Hydaelyn // Hydaelyn (10-09)
-const VENAT: &str = "Venat, Heart of Hydaelyn";
+const VENAT: &str = "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal"; // the name Y'shtola's list uses
 
 fn hydaelyn(g: &Game, m: PermId) -> bool {
     g.perm(m).data.truthy(DataKey::Hydaelyn)
@@ -1942,7 +1942,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.options = Some(shalai_counters);
     c.pval = Some(6.0); // opponents' removal goes to her once she shields the rest
     if db.id(VENAT).is_some() {
-        // Venat is not in data/cards.json (no list runs it; Python only knows it once its card data is fetched)
+        // the card data spells Venat by its full double-faced name; until 10-30 this said "Venat, Heart of
+        // Hydaelyn", which is not in data/cards.json: none of this was registered and Y'shtola ran Venat as its
+        // compiled draw trigger only
         let c = r.card(db, VENAT)?;
         c.cast = Some(venat_draw);
         c.options = Some(sundering);

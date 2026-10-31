@@ -51,3 +51,7 @@ Swat and Deadly Rollick (`decklists/JD/thanos-five-colour-turbo.md`). Thanos too
 
 ## Tested
 No swaps yet.
+
+## 2026-10-31: card models (branch card-models-1; no sims until Phase 4 recalibration)
+
+Orim's Chant, Gemstone Caverns, Tinder Wall: Partial -> Full (the kicked attack lock; begin the game with Caverns when not first, also for every t6 opponent; the blocking sacrifice). Still Partial: Redirect Lightning, Shifting Woodland. No new number yet.

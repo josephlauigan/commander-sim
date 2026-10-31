@@ -5385,7 +5385,7 @@ dsl = []
 status = "Full"
 note = "in response to a blue or black counterspell: your spells can't be countered this turn, draw a card"
 
-["Venat, Heart of Hydaelyn"]
+["Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal"]
 tags = "leg wizard pow=3 tgh=3"
 kws = []
 dsl = []
@@ -8709,12 +8709,12 @@ status = "Full"
 note = "{T}: any colour of the identity; whenever it becomes tapped it deals 1 damage to you (t6_lands.rs brass_tap)"
 
 ["City of Traitors"]
-status = "Partial"
-note = "{T}: {C}{C} (amt=2); when you play another land it is sacrificed (t6_lands.rs: a land_etb check on every land that has no land_etb of its own; Bojuka Bog, Urza's Saga, Mortuary Mire, Mystic Sanctuary, Mosswort Bridge, Windbrisk and Alela's hub land do not run it, see engine-needs-lands.md); Partial (lead): those lands should sacrifice it too, needs an engine you-played-a-land hook"
+status = "Full"
+note = "{T}: {C}{C} (amt=2); when you play another land it is sacrificed: t6_lands.rs traitors_check, the land_etb of every land without one of its own, and turn::play_land_card runs it for every played land (Bojuka Bog, Urza's Saga and the other lands with an enters ability of their own too)"
 
 ["Gemstone Caverns"]
-status = "Partial"
-note = "{T}: {C}, any colour with a luck counter (t6_lands.rs); the opening-hand clause (start on the battlefield with a luck counter when not the starting player, exile a card) is not modeled"
+status = "Full"
+note = "{T}: {C}, any colour with a luck counter (t6_lands.rs); the opening-hand clause (impls/card_models.rs caverns_opening, after the mulligans): a seat that is not the starting player (seat 0) begins with it on the battlefield with a luck counter and exiles a card from its hand; the AI always does it and exiles the card it would bottom in a mulligan. A person in practice mode is not asked"
 
 ["Abstergo Entertainment"]
 status = "Full"
@@ -9004,8 +9004,8 @@ status = "Full"
 note = "opponents can't cast spells this turn: the engine cast lock (LockKind::AllSpells) on each opponent, flash creatures included (castable, cast_card); the AI never casts it (priority 0, deck plan's call)"
 
 ["Orim's Chant"]
-status = "Partial"
-note = "target player can't cast spells this turn (the engine cast lock, LockKind::AllSpells); missing: the kicker (a cost choice) and 'creatures can't attack' (a kicked resolve sets t6_stax::attack_lock, nothing reads it); the AI never casts it"
+status = "Full"
+note = "target player can't cast spells this turn (the engine cast lock, LockKind::AllSpells); kicked ({W} more), creatures can't attack this turn (combat::combat reads t6_stax::attack_lock: no attackers for anyone). A person is asked for the kicker; the AI casts it unkicked, on its own turn before a winning line (t6_table::protect_before_go), and never kicks it (stopping an opponent's attack is not an AI use yet)"
 
 ["Mandate of Peace"]
 status = "Partial"
@@ -9980,9 +9980,9 @@ paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Ph
 paths_ok = "compiled: the channel ability, never offered from the battlefield (dsl::ability_options skips a land's ability with a discard cost and no {T}), and no card code channels it from the hand (not modeled); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Treasure Vault"]
-dsl = []
-status = "Partial"
-note = "{T}: {C}. Its {X}{X}, {T}, sacrifice: X Treasures is not used by the AI: the ability language has no {X} activation cost (the compiled ability lost the {X}{X} and made 3 for free); practice mode has it (human/karn.rs)"
+status = "Full"
+note = "compiled: {T}: {C} (its c=C tag); {X}{X}, {T}, sacrifice it: X Treasures (the ability language's {X} activation cost: X is the most the other mana pays). The AI uses it at the end of the turn before its own (the mana would go unused) when the Treasures are worth the land, or in a main phase only for a large X; practice mode has its own (human/karn.rs)"
+paths_ok = "compiled: the activated ability; card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Hanweir Battlements"]
 paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
@@ -10136,3 +10136,48 @@ paths_ok = "compiled: the counter when you gain life; card code: flying, vigilan
 
 ["Weaver of Harmony"]
 paths_ok = "compiled: the +1/+1 for other enchantment creatures; card code: the copied draw trigger (t12_kaalia_sythis.rs)"
+
+["Price of Progress"]
+status = "Full"
+note = "compiled: damage to each player (its caster too) equal to twice the nonbasic lands that player controls (the count is read for each player). The AI values it by the opponents' damage less its own, and highly when it kills"
+
+["Baleful Mastery"]
+status = "Full"
+note = "compiled: exile target creature or planeswalker. Card code (impls/card_models.rs): the alternative cost {1}{B} (altcost slot); paid that way, an opponent (the least threatening) draws a card as it resolves, before the exile. The AI pays {1}{B} only when {3}{B} can't be paid"
+paths_ok = "compiled: the exile; card code: the resolve slot draws the opponent's card when {1}{B} was paid, then runs the compiled spell itself (dsl::resolve_spell)"
+
+["Dragonlord Ojutai"]
+status = "Full"
+note = "5/4 flying (tags); card code (impls/card_models.rs): hexproof while untapped (grant_kw), and on combat damage to a player it looks at the top three, one to hand (the AI keeps the card worth most; a person picks), the rest to the bottom"
+
+["Buster Sword"]
+dsl = [{ type = "static", static = "equip_bonus", pow = 3, tgh = 2 }, { type = "static", static = "equip_cost", mana = 2 }]
+status = "Full"
+note = "compiled: equipped creature gets +3/+2, equip {2}. Card code (impls/card_models.rs): when the equipped creature deals combat damage to a player, draw a card, then cast a spell from hand with mana value up to that damage free (the AI takes a permanent, or an instant or sorcery worth casting free, highest mana value first; a person picks or declines)"
+paths_ok = "compiled: the +3/+2 and equip {2}; card code: the combat-damage draw and free spell (card_models.rs buster_hit)"
+
+["Nicol Bolas, the Ravager"]
+status = "Approximate"
+note = "4/4 flying; compiled: when he enters, each opponent discards a card. Card code (impls/card_models.rs): {4}{U}{B}{R}, as a sorcery: exile him and return him transformed (the AI does it in its main phase when it can pay): he comes back as the card data's double-faced entry, Nicol Bolas, the Arisen. Left out: the Arisen that leaves the battlefield is a planeswalker card in the graveyard, not the creature front"
+
+["Nicol Bolas, the Ravager // Nicol Bolas, the Arisen"]
+types = "P"
+tags = "leg"
+loyalty = "7"
+dsl = [
+  { type = "loyalty", loyalty = 2, effects = [{ do = "draw", n = 2, who = "you" }] },
+  { type = "loyalty", loyalty = -3, effects = [{ do = "damage", n = 10, to = { sel = "target", filter = { type = "cp" } } }] },
+  { type = "loyalty", loyalty = -4, effects = [{ do = "reanimate", from = "any", filter = { type = "cp" } }] },
+  { type = "loyalty", loyalty = -12, effects = [{ do = "exile_library", who = "target_player" }] },
+]
+status = "Full"
+note = "the back face of Nicol Bolas, the Ravager (JD's list plays the front; card_models.rs enters this card when he transforms): a 7-loyalty planeswalker. +2: draw two; -3: 10 damage to target creature or planeswalker; -4: a creature or planeswalker card from any graveyard onto the battlefield under your control; -12: exile all but the bottom card of target player's library (exile_library)"
+
+["Tinder Wall"]
+status = "Full"
+note = "0/3 defender; compiled: sacrifice it: {R}{R}. Card code (impls/card_models.rs blocks slot): {R}, sacrifice it: 2 damage to the creature it blocks (the AI does it when that attacker has 2 toughness or less and is worth killing; a person is asked); the attacker stays blocked"
+paths_ok = "compiled: the {R}{R} mana ability; card code: the blocking sacrifice for 2 damage (card_models.rs tinder_blocks)"
+
+["Glimpse the Unthinkable"]
+status = "Full"
+note = "compiled: target player mills ten cards. The AI's target (dsl mill_target): itself when its graveyard pays off now (a reanimation spell or Yawgmoth's Will in hand, a reanimation permanent out) and its library keeps 15 or more, else the opponent it would mill out, else the one it fears most; it is worth casting mostly in those first two cases"

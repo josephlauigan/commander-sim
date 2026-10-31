@@ -9170,10 +9170,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "You may pay {1}{B} rather than pay ~'s mana cost.",
-    "If the {1}{B} cost was paid, an opponent draws a card."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -17038,18 +17035,6 @@
      "tgh": 2
     },
     {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "event": "combat_damage",
-     "source": "equipped"
-    },
-    {
      "type": "static",
      "static": "equip_cost",
      "mana": 2
@@ -17066,10 +17051,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever equipped creature deals combat damage to a player, draw a card, then you may cast a spell from your hand with mana value less than or equal to that damage without paying its mana cost.   [partly: cast a spell from your hand with mana value less than or equal to that damage without paying its mana cost]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -21955,9 +21938,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When you play another land, sacrifice ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -26427,7 +26408,9 @@
    "dsl": [
     {
      "type": "activated",
-     "cost": {},
+     "cost": {
+      "x": 1
+     },
      "effects": [
       {
        "do": "damage",
@@ -33734,10 +33717,7 @@
    "identity": "UW",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "~ has hexproof as long as it's untapped.",
-    "Whenever ~ deals combat damage to a player, look at the top three cards of your library. Put one of them into your hand and the rest on the bottom of your library in any order."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -43697,6 +43677,7 @@
      "type": "activated",
      "cost": {
       "mana": "B",
+      "x": 1,
       "tap": true,
       "sac": "creature"
      },
@@ -48345,9 +48326,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "If this card is in your opening hand and you're not the starting player, you may begin the game with ~ on the battlefield with a luck counter on it. If you do, exile a card from your hand."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -50434,7 +50413,18 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "mill",
+       "n": 10,
+       "who": "target_player"
+      }
+     ]
+    }
+   ],
    "start_loyalty": null,
    "kws": [
     "mill"
@@ -50444,10 +50434,8 @@
    "ward": 0,
    "identity": "BU",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "Target player mills ten cards."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -84526,32 +84514,68 @@
   },
   {
    "name": "Nicol Bolas, the Ravager // Nicol Bolas, the Arisen",
-   "types": "C",
+   "types": "P",
    "generic": 1,
    "pips": "UBR",
    "tags": {
-    "leg": true,
-    "pow": "4",
-    "fly": true
+    "leg": true
    },
-   "pow": 4,
-   "tgh": 4,
+   "pow": 0,
+   "tgh": 0,
    "bomb": 0,
    "dsl": [
     {
-     "type": "triggered",
+     "type": "loyalty",
+     "loyalty": 2,
      "effects": [
       {
-       "do": "discard",
-       "n": 1,
-       "who": "each_opponent"
+       "do": "draw",
+       "n": 2,
+       "who": "you"
       }
-     ],
-     "event": "etb",
-     "source": "self"
+     ]
+    },
+    {
+     "type": "loyalty",
+     "loyalty": -3,
+     "effects": [
+      {
+       "do": "damage",
+       "n": 10,
+       "to": {
+        "sel": "target",
+        "filter": {
+         "type": "cp"
+        }
+       }
+      }
+     ]
+    },
+    {
+     "type": "loyalty",
+     "loyalty": -4,
+     "effects": [
+      {
+       "do": "reanimate",
+       "from": "any",
+       "filter": {
+        "type": "cp"
+       }
+      }
+     ]
+    },
+    {
+     "type": "loyalty",
+     "loyalty": -12,
+     "effects": [
+      {
+       "do": "exile_library",
+       "who": "target_player"
+      }
+     ]
     }
    ],
-   "start_loyalty": null,
+   "start_loyalty": "7",
    "kws": [
     "flying",
     "transform"
@@ -84564,14 +84588,12 @@
    "ward": 0,
    "identity": "BRU",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "{4}{U}{B}{R}: Exile ~, then return him to the battlefield transformed under his owner's control. Activate only as a sorcery."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
-    "creature": true,
+    "creature": false,
     "instant": false,
     "sorcery": false,
     "perm": true
@@ -87640,9 +87662,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Target player can't cast spells this turn. If ~ was kicked, creatures can't attack this turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -93319,7 +93339,22 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "damage",
+       "n": "that_player_nonbasic_lands",
+       "mult": 2,
+       "to": {
+        "sel": "player",
+        "who": "each_player"
+       }
+      }
+     ]
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -93327,10 +93362,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "~ deals damage to each player equal to twice the number of nonbasic lands that player controls."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -129333,9 +129366,7 @@
    "identity": "GR",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{R}, Sacrifice ~: It deals 2 damage to target creature it's blocking."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -130971,7 +131002,24 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "x": 2,
+      "tap": true,
+      "sac": "self"
+     },
+     "effects": [
+      {
+       "do": "treasure",
+       "n": "X"
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
    "start_loyalty": null,
    "kws": [
     "treasure"
@@ -130981,7 +131029,7 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "pool",
+   "source": "scryfall+dsl",
    "unparsed": [],
    "derived": {
     "cmc": 0,
@@ -136158,33 +136206,15 @@
    "tags": {
     "leg": true,
     "wizard": true,
-    "pow": "3"
+    "pow": "3",
+    "tgh": "3"
    },
    "pow": 3,
    "tgh": 3,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "draw",
-       "n": 1,
-       "who": "you"
-      }
-     ],
-     "event": "cast",
-     "who": "you",
-     "spell": "legendary",
-     "nth": null
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
-   "kws": [
-    "blessing of light",
-    "indestructible",
-    "transform"
-   ],
+   "kws": [],
    "subtypes": [
     "elder",
     "wizard"
@@ -136193,11 +136223,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever you cast a legendary spell, draw a card. This ability triggers only once each turn.   [partly: this ability triggers only once each turn]",
-    "Hero's Sundering — {7}, {T}: Exile target nonland permanent. Transform ~. Activate only as a sorcery."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,

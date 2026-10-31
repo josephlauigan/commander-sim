@@ -105,6 +105,8 @@ pub struct Effect {
 #[serde(deny_unknown_fields)]
 pub struct Cost {
     pub mana: Option<String>,
+    /// "{X}" in the mana cost, this many times ({X}{X}: 2); the effects' "X" is the X paid (Treasure Vault)
+    pub x: Option<u32>,
     pub tap: Option<bool>,
     /// 'self', or a permanent kind to sacrifice
     pub sac: Option<String>,

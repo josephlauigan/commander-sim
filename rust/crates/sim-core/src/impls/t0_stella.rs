@@ -112,7 +112,7 @@ fn commander_casts(g: &Game, p: PlayerId) -> i32 {
 
 /// A spell the AI is happy to cast or copy for free: its worth, or None for counterspells, spells that need a
 /// target nobody offers, board wipes, and spells with choices this code doesn't make.
-fn free_worth(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
+pub(crate) fn free_worth(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
     let d = g.db.get(c);
     let t = &d.tags;
     const SKIP: [Tag; 10] = [
@@ -144,7 +144,7 @@ fn free_worth(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
 
 /// cast card c (already out of its zone) without paying its mana cost; `exile_after`: exiled instead of going to the
 /// graveyard
-fn free_cast(g: &mut Game, p: PlayerId, c: CardId, exile_after: bool) -> Res<bool> {
+pub(crate) fn free_cast(g: &mut Game, p: PlayerId, c: CardId, exile_after: bool) -> Res<bool> {
     g.last_x = 0; // X is 0
     let ctx = Ctx { exile_after, ..spell_targets(g, p, c, None) };
     crate::glog!(g, "    {} casts {} without paying its mana cost", pname(g, p), cname(g, c));
