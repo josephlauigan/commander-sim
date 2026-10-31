@@ -168,3 +168,31 @@ fn a_wipe_response_saves_the_key_permanent() {
     assert!(g.perm(big).on_bf, "the 10/10 survives (phased out): {c:?} {:?}", g.player(P3).hand);
     assert_eq!(g.player(P3).search_cost.n[SearchCost::WIPE], 1);
 }
+
+/// With nothing set, part (b) is off: no search, no decision seed taken (so later decisions' seeds are PR 5's), no
+/// cost booked; the knobs this PR added default to PR 5's behaviour
+#[test]
+fn off_by_default_is_pr5() {
+    assert!(std::env::var("AI_SEARCH_B").is_err(), "the test expects AI_SEARCH_B unset");
+    let (mut g, atk, heur) = swarm();
+    ismcts::force_b(None);
+    let n0 = g.search_n;
+    assert!(ismcts::choose_blocks(&mut g, P0, &atk, P3, &[], &heur).is_none());
+    assert_eq!(g.search_n, n0);
+    assert_eq!(g.player(P3).search_cost.n, [0; 6]);
+    assert_eq!(g.player(P3).search_cost.policy, [0; 6]);
+    // protection: the heuristic answers (here it holds: a token is not worth protecting to it), no search
+    let (mut g, big, _) = protection(10);
+    ismcts::force_b(None);
+    let n0 = g.search_n;
+    let r = ai::protect_response(&mut g, P3, big, "destroy", Some(P0), None).unwrap();
+    assert_eq!(r, !has_intervention(&g));
+    assert_eq!((g.search_n, g.search_work), (n0, 0));
+    assert_eq!(g.player(P3).search_cost.n, [0; 6]);
+    // the ablation knobs: no opponent nodes; attack and counter plans get PR 5's first playouts
+    let k = ismcts::knobs();
+    if std::env::var("AI_SEARCH_OPP").is_err() && std::env::var("AI_SEARCH_ATK_MIN").is_err() {
+        assert!(!k.opp);
+        assert_eq!(k.atk_min, k.min_visits);
+    }
+}

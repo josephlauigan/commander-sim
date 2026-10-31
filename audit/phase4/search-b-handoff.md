@@ -13,7 +13,7 @@ Brief: `rust/agents/phase4-search-b.md`. Design: `audit/phase4/search-design.md`
 - [x] Code (a0a547ff): `ismcts.rs` part (b) (switch `AI_SEARCH_B`, `choose_blocks` / `choose_protect` / `choose_wipe`,
   `block_plans`, survey `note*`), `search::playout_with` / `play_on_resume`, splits `combat::resolve_blocks`,
   `removal::apply_removal_rest`, `removal::wipe_victim` / `wipe_finish` / `WIPE_CTX`, `pool::protect_cands` etc.
-  Tests `tests/ismcts_b.rs` (7).
+  Tests `tests/ismcts_b.rs` (8, incl. `off_by_default_is_pr5`).
 - [~] The lean (`abl.sh`, `X/`): old, ref (PR 5's ISMCTS) and `WIDEN=0.25` done on t2 half B; Meren's decisions
   from the old and ref arms' `AI_SEARCH_DIAG` (`srd.sh ERR KEY`). `ATK_MIN=6` killed by JD's order, `OPP=1`, `MIN=6`
   and the 8-job reruns of old / ref (`abl2-4.sh`) not run. Results: design doc, "Results so far". CPU s (2000 games):
@@ -41,3 +41,14 @@ Brief: `rust/agents/phase4-search-b.md`. Design: `audit/phase4/search-design.md`
 - `cargo build -p sim-cli --example X` / `--test X` builds only that target: build `-p sim-cli` alone and `cmp`.
 - `pgrep -f` inside an `until` loop matches the loop itself: wait on output text.
 - `testkit::token(g, p, 0)` makes no token: make a 1/1 and set `pow`.
+
+## Final checks (2026-10-31, no sims)
+
+- `cargo build --release --all-targets -j 8`: 0 warnings. `cargo test --release --no-fail-fast -j 8`: 3717 passed,
+  0 failed (one fix to the new off-by-default test after the full run, then `ismcts` + `ismcts_b` rerun: 13 passed).
+  `cardgen validate`: all decks passed.
+- Off by default, by reading: `choose_blocks` / `choose_protect` / `choose_wipe` return before any side effect when
+  `AI_SEARCH_B` is unset (`on_b` checks the switch before `search::enabled`, which books stats); the survey counters
+  write only `SearchCost` (stderr); the splits (`resolve_blocks`, `apply_removal_rest`, `wipe_victim` / `wipe_finish`,
+  `play_rounds`, `pool::protect_cands` / `wipe_cands`) move code without changing it (Stage A sims passed on them);
+  `atk_min` defaults to `min_visits`; `opp` off leaves `tree_pick` returning None for opponents as before.
