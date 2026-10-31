@@ -7,8 +7,8 @@
 //!   if he entered this turn. Zero is even.)"
 //!
 //! Deathtouch and lifelink are the card's keywords. The power-up is an activated ability with no timing restriction:
-//! the AI uses it in its main phase or at the end-of-turn window, once per game per player (the brief's rule: one
-//! power-up a game, even if Thanos leaves and comes back). On the turn Thanos entered the cost is {C}{U}{G}; {C} is
+//! the AI uses it in its main phase or at the end-of-turn window, once per Thanos object: a Thanos that leaves and
+//! comes back (a blink, a recast) is a new object and may power up again (rule 113.7). On the turn Thanos entered the cost is {C}{U}{G}; {C} is
 //! colourless mana (Sol Ring, Ancient Tomb), not generic (`mana::plan_pay`). The parity is chosen as the ability
 //! resolves: the one whose destroyed creatures are worth the most to the opponents against what they cost its
 //! controller (`parity_swing`), nothing hard-coded. Left out: a token's mana value is 0 (a token copy really has the
@@ -28,8 +28,12 @@ use crate::sym::intern;
 
 pub const THANOS: &str = "Thanos, the Mad Titan";
 
-/// the player stat that records the power-up was used (once per game)
+/// the owner's stat (one per permanent id) holding the `born` stamp of the Thanos object that powered up
 const USED: &str = "thanos|powerup";
+
+fn used_key(m: PermId) -> crate::sym::Sym {
+    intern(&format!("{USED}|{m:?}"))
+}
 
 fn live(g: &Game, m: PermId) -> bool {
     g.perm(m).on_bf && !g.perm(m).phased
@@ -50,9 +54,10 @@ pub fn cost(g: &Game, m: PermId) -> (u32, &'static str) {
     if entered_this_turn(g, m) { (0, "CUG") } else { (0, "CWUBRG") }
 }
 
-/// p has used a power-up this game
-pub fn used(g: &Game, p: PlayerId) -> bool {
-    g.player(p).stats.get(&intern(USED)).copied().unwrap_or(0) > 0
+/// this Thanos object (permanent m since it last entered) has used its power-up
+pub fn used(g: &Game, m: PermId) -> bool {
+    let p = g.perm(m).owner;
+    g.player(p).stats.get(&used_key(m)).copied() == Some(g.perm(m).born as i64)
 }
 
 /// the creatures the power-up destroys for this parity (`even`: mana value 0, 2, 4, ...), Thanos left out
@@ -89,10 +94,10 @@ pub fn best_parity(g: &Game, p: PlayerId, src: PermId) -> (bool, f64) {
     if o > e { (false, o) } else { (true, e) }
 }
 
-/// the AI's power-up: once per game, with its cost payable, when the better parity destroys more of the opponents'
+/// the AI's power-up: once per Thanos object, with its cost payable, when the better parity destroys more of the opponents'
 /// value than of its own (in the main phase, or at the end-of-turn window when Thanos didn't enter this turn)
 fn thanos_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if crate::human::is_human(g, p) || g.perm(src).owner != p || !live(g, src) || used(g, p) {
+    if crate::human::is_human(g, p) || g.perm(src).owner != p || !live(g, src) || used(g, src) {
         return Ok(vec![]);
     }
     let fresh = entered_this_turn(g, src);
@@ -119,14 +124,16 @@ fn thanos_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Re
 
 /// pay and activate; the parity is chosen as it resolves
 pub fn thanos_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !live(g, src) || used(g, p) {
+    if !live(g, src) || used(g, src) {
         return Ok(false);
     }
     let (gn, pips) = cost(g, src);
     if !can_pay(g, p, gn, pips, false) || !pay(g, p, gn, pips, false)? {
         return Ok(false);
     }
-    g.player_mut(p).stat(intern(USED), 1);
+    let born = g.perm(src).born as i64;
+    let o = g.perm(src).owner;
+    g.player_mut(o).stats.insert(used_key(src), born);
     if !ability_window(g, p, Some(src), "power-up", None, None)? {
         return Ok(true);
     }

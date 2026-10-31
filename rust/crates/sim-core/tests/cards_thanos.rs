@@ -8,6 +8,7 @@ use sim_core::engine::removal;
 use sim_core::engine::stack::free_counter;
 use sim_core::engine::values::commander_out;
 use sim_core::ids::{PermId, PlayerId};
+use sim_core::impls::t2;
 use sim_core::impls::t6_thanos::{self, THANOS};
 use sim_core::state::Game;
 use sim_core::testkit::*;
@@ -102,19 +103,29 @@ fn the_cost_is_cug_the_turn_he_entered_and_c_needs_colourless_mana() {
 }
 
 #[test]
-fn the_power_up_is_used_once_per_game() {
+fn the_power_up_is_once_per_thanos_object_and_a_blink_resets_it() {
     let mut g = tbl();
     let t = thanos(&mut g, true);
     lands(&mut g, P0, "Ancient Tomb", 2, false);
     lands(&mut g, P0, "Tropical Island", 4, false);
     let ab = perm(&mut g, P1, "Grand Abolisher");
-    assert!(!t6_thanos::used(&g, P0));
+    assert!(!t6_thanos::used(&g, t));
     assert!(t6_thanos::thanos_go(&mut g, t, P0, 0).unwrap());
-    assert!(t6_thanos::used(&g, P0));
+    assert!(t6_thanos::used(&g, t));
     assert!(!live(&g, ab));
     assert_eq!(g.perm(t).plus, 2);
     assert!(!t6_thanos::thanos_go(&mut g, t, P0, 0).unwrap(), "a second activation is refused");
     assert_eq!(g.perm(t).plus, 2);
+    // blinked, he is a new object (rule 113.7): no counters, entered this turn, and the power-up is his again
+    let n = t2::blink(&mut g, P0, t).unwrap().expect("Thanos returns");
+    assert!(!t6_thanos::used(&g, n), "the returned Thanos has not powered up");
+    assert_eq!(t6_thanos::cost(&g, n), (0, "CUG"));
+    assert_eq!(g.perm(n).plus, 0);
+    lands(&mut g, P0, "Ancient Tomb", 1, false);
+    lands(&mut g, P0, "Tropical Island", 2, false);
+    assert!(t6_thanos::thanos_go(&mut g, n, P0, 0).unwrap(), "the blinked Thanos powers up again");
+    assert!(t6_thanos::used(&g, n));
+    assert!(!t6_thanos::thanos_go(&mut g, n, P0, 0).unwrap(), "but only once");
 }
 
 // ======================================================== free while you control a commander

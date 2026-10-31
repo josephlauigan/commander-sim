@@ -39,8 +39,9 @@ Swat and Deadly Rollick (`decklists/JD/thanos-five-colour-turbo.md`). Thanos too
   - He takes two +1/+1 counters, then each other creature with mana value of the chosen parity is destroyed (0 is
     even).
   - The AI picks the parity from the board: the opponents' value destroyed against 1.2 times its own.
-  - Approximations: the ability is once per game per player rather than once per Thanos object, and a token's mana
-    value is 0.
+  - Once per Thanos object: a blinked or recast Thanos is a new object (rule 113.7) and may power up again, at the
+    reduced cost on the turn he returns (fixed 2026-10-30; the sim numbers above predate it).
+  - Approximation: a token's mana value is 0.
 - **Fierce Guardianship, Deflecting Swat, Deadly Rollick: Full.** Each is free only with a commander on the
   battlefield.
 - **Partial:** Orim's Chant, Redirect Lightning, Tinder Wall, Gemstone Caverns, Shifting Woodland.
