@@ -863,7 +863,7 @@ fn hopesinger(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     }
     let t = &d.tags;
     let targets_creature = (t.has(Tag::Rem)
-        && matches!(t.str(Tag::Tgt).unwrap_or("c"), "c" | "cp" | "cap" | "ce" | "ac" | "cna"))
+        && matches!(t.str(Tag::Tgt).unwrap_or("c"), "c" | "cp" | "cap" | "ce" | "cep" | "ac" | "cna"))
         || matches!(
             &*d.name,
             "Daydream" | "Ray of Command" | "Spite // Malice" | "Multiply by Zero" | "Fatehold Charm"

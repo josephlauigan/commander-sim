@@ -8671,9 +8671,10 @@ status = "Full"
 note = "three choices: +3/-3 on the opposing creatures worth the most per choice (two or three choices for a bigger creature, toughness 0 dies), then each left over exiles and returns tapped a different own permanent with an enters effect worth 3 or more, else makes a 1/1 Eldrazi Scion; cast when an opposing creature of toughness 3 or less can be killed (the {C}{C} in the cost is paid as any two mana)"
 
 ["Get Lost"]
+tags = "rem=destroy tgt=cep"
 paths_ok = "the hand-written resolve does the card; the compiled spell, destroy target creature only (no enchantment or planeswalker, no Maps), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
-status = "Partial"
-note = "destroys the targeted opposing creature (the AI aims it at creatures), or the best opposing enchantment or planeswalker when no creature is chosen; missing: the two Map tokens its controller creates (no noncreature artifact tokens or Map explore in the engine), and the AI never aims it at an enchantment or planeswalker (target-type code)"
+status = "Approximate"
+note = "destroy target creature, enchantment, or planeswalker: the engine's removal aims it at any of the three (target kind cep, card-models-3), and with no target chosen it takes the best opposing enchantment or planeswalker; left out: the two Map tokens its controller creates (the engine has no Map tokens or explore from them), a small gift to the opponent"
 
 ["Erode"]
 paths_ok = "the hand-written resolve does the card; the compiled spell, the destroy only (no basic land for its controller), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
@@ -9008,12 +9009,12 @@ status = "Full"
 note = "target player can't cast spells this turn (the engine cast lock, LockKind::AllSpells); kicked ({W} more), creatures can't attack this turn (combat::combat reads t6_stax::attack_lock: no attackers for anyone). A person is asked for the kicker; the AI casts it unkicked, on its own turn before a winning line (t6_table::protect_before_go), and never kicks it (stopping an opponent's attack is not an AI use yet)"
 
 ["Mandate of Peace"]
-status = "Partial"
-note = "opponents can't cast spells this turn (the engine cast lock, LockKind::AllSpells); 'end the combat phase' is real; missing: 'cast only during combat' is not enforced for a card in hand; the AI never casts it"
+status = "Full"
+note = "cast only during combat (cast::castable via card_models3::cast_restricted: creatures are attacking); your opponents can't cast spells this turn (the engine cast lock, LockKind::AllSpells); 'end the combat phase' is real (Game::end_combat: no combat damage, attackers and blockers leave combat; later combat phases still happen). The AI holding it casts it once blockers are declared against an attack that would be lethal or deal half its life (10 or more) (card_models3::mandate_defend, card-models-3); it is cast while nothing else is on the stack, so the stack exile does not come up"
 
 ["Angel's Grace"]
-status = "Partial"
-note = "split second is real (while it is on the stack nobody can cast spells, activate non-mana abilities or respond: cast::split_second_up); missing: 'can't lose' and the damage floor (resolving sets t6_stax::grace_active, nothing reads it: later feature); the AI never casts it"
+status = "Approximate"
+note = "split second is real (while it is on the stack nobody can cast spells, activate non-mana abilities or respond: cast::split_second_up). A Tier 6 seat holding it with {W} open casts it when it would lose (a lethal state, or an opponent's drain or damage win: zones::last_chance; ai::t6_table::grace_save), which stands in for casting it in response; then it can't lose this turn (check_state, last_chance) and damage can't take its life total below 1 until end of turn (life::lose_life, card-models-3). Approximation: an opponent's alternate win (Thassa's Oracle, Revel in Riches) still ends the game (the win code, ai/mod.rs, is not touched)"
 
 ["Blind Obedience"]
 status = "Partial"
@@ -10198,3 +10199,31 @@ note = "flying, toxic 1 (compiled); when you proliferate, it returns from your g
 ["Norn's Decree"]
 status = "Full"
 note = "whenever one or more creatures an opponent controls deal combat damage to you, that opponent gets a poison counter (once per combat and opponent); whenever a player attacks a poisoned player, the attacking player draws a card (card_models2.rs)"
+
+["Astral Cornucopia"]
+tags = "rock=1:A"
+dsl = []
+status = "Full"
+note = "{X}{X}{X}: the AI casts it in its main phase for the largest X its mana pays (X >= 1; a hand option, never at X = 0), and it enters with X charge counters (Doubling Season and the like apply); {T}: X mana of one colour, X = its charge counters, which proliferate adds to (card_models3.rs, card-models-3). A person's cast through the normal path is X = 0"
+
+["Innkeeper's Talent"]
+dsl = []
+status = "Full"
+note = "a Class (card_models3.rs, card-models-3). Level 1: at the beginning of combat on your turn, a +1/+1 counter on target creature you control (the AI: an infect or toxic creature first, then the most power). Level 2 ({G}, as a sorcery; the AI once a permanent of its has counters): permanents you control with counters on them have ward {1} (cardcode::aura_ward). Level 3 ({3}{G}, whenever it can pay): the counters you put on a permanent or player are doubled (repl::counters, with the actor's doublers: +1/+1, loyalty, charge, poison)"
+
+["Ganax, Astral Hunter"]
+status = "Full"
+note = "flying 3/4; whenever Ganax or another Dragon you control enters, a Treasure (compiled). Choose a Background matters only for a commander: in the 99 it does nothing"
+
+["Venerated Rotpriest"]
+status = "Full"
+note = "1/2 toxic 1 (compiled); whenever a creature you control becomes the target of a spell (any player's spell, as it is cast: cast::cast_card -> card_models3::spell_targeted, card-models-3), target opponent gets a poison counter (the AI: the opponent closest to ten)"
+
+["Ajani, Sleeper Agent"]
+dsl = []
+status = "Full"
+note = "loyalty 4 (compleated: the engine pays {G/W/P} with mana, so it enters with all four); +1: reveal the top card, a creature or planeswalker card to hand, else the AI bottoms it unless it is worth 4 or a land it needs; -3: three +1/+1 counters, all on the best infect or toxic creature, else one each on the three with the most power, and they gain vigilance until end of turn; -6: the emblem 'whenever you cast a creature or planeswalker spell, target opponent gets two poison counters' (rules::emblem_cast; card_models3.rs, card-models-3)"
+
+["Ixhel, Scion of Atraxa"]
+status = "Full"
+note = "flying, vigilance, toxic 2 (compiled); corrupted: at the beginning of your end step each opponent with three or more poison counters exiles their top card face down, and you may play it for as long as it stays exiled with mana of any type (held in your hand as a card taken from them, yshtola::take_card; card_models3::ixhel_end, card-models-3)"

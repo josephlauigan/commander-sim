@@ -459,6 +459,7 @@ pub fn emblem_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
         }
     }
     crate::impls::t12_lathril::tyvar_emblem_cast(g, p, c)?; // --- Tiers 1/2 (lathril): Tyvar Kell's emblem
+    crate::impls::card_models3::ajani_emblem_cast(g, p, c)?; // --- card-models-3: Ajani, Sleeper Agent
     Ok(())
 }
 

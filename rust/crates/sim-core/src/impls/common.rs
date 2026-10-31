@@ -2893,6 +2893,12 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
             if x.plus > 0 {
                 repl::put_counters(g, p, m, 1); // the counters step: Doubling Season, Hardened Scales, Vorinclex
             }
+            // --- card-models-3: charge counters on a nonland permanent (Astral Cornucopia, Otherworld Atlas)
+            let charge = g.perm(m).data.int(DataKey::Charge);
+            if charge > 0 {
+                let k = repl::counters(g, p, On::Perm(m), Ctr::Other, 1, Path::ALL) as i64;
+                g.perm_mut(m).data.set(DataKey::Charge, Val::Int(charge + k));
+            }
             if card_is(g, m, Types::PLANESWALKER)
                 && let Some(l) = g.perm(m).loyalty
             {

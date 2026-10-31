@@ -451,6 +451,7 @@ pub fn aura_ward(g: &Game, m: PermId) -> u32 {
         + crate::impls::t0_stella::boots_ward(g, m)
         + crate::impls::t45_urdragon::rith_ward(g, m) // --- Tiers 4/5 (urdragon): Rith, Liberated Primeval
         + crate::impls::t12_lightpaws::ward(g, m) // --- Tiers 1/2 (lightpaws): Chains of Custody, Thran Power Suit
+        + crate::impls::card_models3::innkeeper_ward(g, m) // --- card-models-3: Innkeeper's Talent, level 2
 }
 
 /// rules.removal_taxes (Terror of the Peaks, Phyrexian Obliterator): false stops the removal

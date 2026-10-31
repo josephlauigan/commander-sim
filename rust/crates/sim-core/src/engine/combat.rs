@@ -623,6 +623,10 @@ pub fn resolve_blocks(
     let to_walker =
         if crate::human::is_human(g, p) { g.human_walker_atk.clone() } else { walker_attacks(g, p, &atk, d, &assign) };
     cardcode::defend_hooks(g, p, &mut atk, d, &mut assign)?; // Aetherize, Yawgmoth, Kor Haven, ninjutsu ...
+    if g.end_combat {
+        g.blocking.clear();
+        return Ok(vec![]); // --- card-models-3: Mandate of Peace, cast once the blockers were declared
+    }
     crate::impls::tymna_partners::combat_trick(g, p, &atk, &assign)?; // thrasios, kraum: Blossoming Defense, Dark Endurance
     if g.humans.any() {
         step_priority(g, "blockers", Some(d), &atk)?; // practice mode: the declare blockers step's priority
