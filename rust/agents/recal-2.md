@@ -1,9 +1,9 @@
 # Brief: recalibration, stage 2: evaluation refit, style fit, pool check, JD's decks remeasured
 
 You work in the git worktree `/home/joseph/projects/mtg_sims/commander-sim/.claude/worktrees/overnight-stack` on
-branch `overnight-stack`: origin/main + #185 rules + #186 hand AI + card models 2 and 3 + the new switch defaults
-(`recal-defaults`: `AI_SEARCH_B`, `AI_SEARCH_OPP` and `AI_RULES` on; hand AI on only for yshtola, sheoldred, cloud and
-dack). Run every command from there. Read `CLAUDE.md`, `rust/agents/RULES.md`, `documents/realism.md`,
+branch `overnight-stack`: origin/main (Phase 4, card models 2 and 3, the 10/31 deck swaps for cloud, yshtola and
+ghave) + #191 (switch defaults: `AI_SEARCH_B`, `AI_SEARCH_OPP` and `AI_RULES` on) + #193 (Dack flip fix; hand AI on
+only for yshtola, sheoldred and cloud). Run every command from there. Read `CLAUDE.md`, `rust/agents/RULES.md`, `documents/realism.md`,
 `audit/phase4/eval-handoff.md` and `audit/recal/pairs-2026-10-31.md` first: memory cap, no Python, loose profile,
 opponent tiers.
 
@@ -34,7 +34,8 @@ comparison uses the same binary and `--jobs`. Base = this branch's defaults (no 
    (as the CLI allows; say how it was run). Report every flagged deck.
 4. **JD's decks remeasured:** every deck in `data/decks.json` `mine`, on each of its own tiers only, 2000 games,
    seeds 500000-501999, defaults (and the tier's knobs file if it held). Report each deck's win rate per tier and its
-   average over its tiers, next to the last numbers in its `audit/<deck>/FINDINGS.md` (say which build those were).
+   average over its tiers, next to the last numbers in its `audit/<deck>/FINDINGS.md` (say which build those were; cloud, yshtola and ghave changed lists on 10/31, so their old numbers are
+   from older lists).
    Add one dated line to each deck's FINDINGS.md with the new number and the build.
 
 ## Rules
