@@ -75,6 +75,7 @@ fn mulligan_follows_the_mana() {
 
 #[test]
 fn silence_goes_first_then_dack() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     // scenario 1: 6 mana with WW + 1, Silence and Chant in hand, a blue opponent with open mana
     let mut g = opening(&["Silence", "Orim's Chant", "Reprieve"]);
     lands(&mut g, P0, "Plains", 5, false);
@@ -89,6 +90,7 @@ fn silence_goes_first_then_dack() {
 
 #[test]
 fn no_protection_and_open_blue_mana_means_a_stax_piece() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     // scenario 2: two opponents with open blue mana, no protection: Dack waits, Defense Grid is cast
     let mut g = opening(&["Defense Grid", "Trinisphere"]);
     six_mana(&mut g);

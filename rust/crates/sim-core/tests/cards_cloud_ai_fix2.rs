@@ -76,6 +76,7 @@ fn tutor_takes_a_big_piece_with_ardenn_out() {
 
 #[test]
 fn enlightened_tutor_uses_the_same_pick() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     set_library(
         &mut g,
@@ -97,6 +98,7 @@ fn cast_labels(g: &mut Game) -> Vec<String> {
 
 #[test]
 fn equipment_is_held_without_a_carrier() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Plains", 3, false);
     hand(&mut g, P0, &["Sword of Fire and Ice", "Mind Stone"]);
@@ -164,6 +166,7 @@ fn plaza_needs_three_other_mana() {
 
 #[test]
 fn formation_answers_a_destroy_wipe() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     for n in ["Unbreakable Formation", "Rootborn Defenses"] {
         let mut g = game();
         lands(&mut g, P0, "Plains", 3, false);
@@ -267,6 +270,7 @@ fn sauron_table() -> Game {
 // ---- fix 5: no ping-pong
 #[test]
 fn worn_equipment_moves_only_to_a_clearly_better_holder() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Plains", 4, false);
     let cl = perm(&mut g, P0, CLOUD);
@@ -284,6 +288,7 @@ fn worn_equipment_moves_only_to_a_clearly_better_holder() {
 // ---- fix 6: mulligan
 #[test]
 fn cloud_keeps_only_playable_hands() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let (mut kept, mut sent_back) = (0, 0);
     for seed in 0..300u64 {
         let mut g = table(&["cloud", "seph"]);
