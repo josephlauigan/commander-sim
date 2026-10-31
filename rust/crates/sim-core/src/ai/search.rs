@@ -21,7 +21,7 @@ use crate::ids::{CardId, PlayerId};
 use crate::pysum::PySum;
 use crate::rng::Rng;
 use crate::settings::AiMode;
-use crate::state::{Game, Step};
+use crate::state::{Game, SearchCost, Step};
 use crate::sym::Sym;
 use crate::tag::Tag;
 use std::cell::RefCell;
@@ -47,7 +47,7 @@ pub fn stats() -> Stats {
     STATS.with(|s| s.borrow().clone())
 }
 
-fn stat(f: impl FnOnce(&mut Stats)) {
+pub(crate) fn stat(f: impl FnOnce(&mut Stats)) {
     STATS.with(|s| f(&mut s.borrow_mut()));
 }
 
@@ -77,11 +77,30 @@ pub fn enabled(g: &mut Game, p: PlayerId) -> bool {
 }
 
 /// search._decision_seed: a new decision in game g, and its random seed
-fn decision_seed(g: &mut Game, parts: &str) -> u64 {
+pub(crate) fn decision_seed(g: &mut Game, parts: &str) -> u64 {
     stat(|x| x.decisions += 1);
     g.search_n += 1;
     let name = format!("search:{}:{}:{parts}", g.search_n, g.round);
     Rng::named(&name).next_u64() >> 16
+}
+
+// --- phase4-search
+/// `f` is one look-ahead decision of p's (of `kind`): its decision and the playout steps it took go to p's
+/// `SearchCost` (only read by the reports: play is unchanged)
+pub(crate) fn booked<T>(g: &mut Game, p: PlayerId, kind: usize, f: impl FnOnce(&mut Game) -> T) -> T {
+    let (n0, w0, k0) = (g.search_n, g.search_work, stats().playouts);
+    let r = f(g);
+    let (dn, dw) = (g.search_n > n0, g.search_work - w0);
+    let c = &mut g.player_mut(p).search_cost;
+    c.n[kind] += dn as u32;
+    c.steps[kind] += dw;
+    c.playouts[kind] += stats().playouts - k0;
+    r
+}
+
+/// --- phase4-search: the per-decision diagnostic (`AI_SEARCH_DIAG`) is on for p's decisions
+fn diag_for(g: &Game, p: PlayerId) -> bool {
+    super::ismcts::diag_on() && super::values::generic_deck(g, p)
 }
 
 // ------------------------------------------------------------------ copying a game
@@ -594,7 +613,14 @@ fn find(opts: &[Opt], label: &str, n: usize) -> Option<usize> {
 /// In a practice game the result is recorded on the game's tape, or taken off it when the game is being replayed.
 pub fn choose(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<usize> {
     if g.search_tape.0.is_none() {
-        return choose_inner(g, p, post, opts);
+        let st = diag_for(g, p).then(|| super::ismcts::stakes(g, p, opts)); // --- phase4-search: stats only
+        let w0 = g.search_work;
+        let r = booked(g, p, SearchCost::MAIN, |g| choose_inner(g, p, post, opts));
+        if let (Some(s), Some(i)) = (st, r) {
+            let top = (0..opts.len()).fold(0, |b, k| if opts[k].utility > opts[b].utility { k } else { b });
+            super::ismcts::diag(g, p, "main", &s, i != top, g.search_work - w0);
+        }
+        return r;
     }
     if !opts.iter().any(|o| o.act.is_some()) {
         return None;
@@ -619,6 +645,9 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
     let mut real: Vec<usize> = (0..opts.len()).filter(|&i| opts[i].act.is_some()).collect();
     if real.is_empty() {
         return None;
+    }
+    if super::ismcts::on(g, p) {
+        return super::ismcts::choose_main(g, p, post, opts); // --- phase4-search
     }
     if let Some(i) = crate::impls::tymna_partners::commander_first(g, p, opts) {
         return Some(i); // thrasios, kraum: the commander comes down when it is the best play (no search)
@@ -832,7 +861,7 @@ pub fn playout_main(g: &mut Game, p: PlayerId, post: bool, label: &str, n: usize
 
 /// --- ai-eval: `playout_main`, and whether the playout kept the mana up for `hold` (`kept_up`) when p's turn ended
 #[allow(clippy::too_many_arguments)]
-fn playout_main_kept(
+pub(crate) fn playout_main_kept(
     g: &mut Game,
     p: PlayerId,
     post: bool,
@@ -893,7 +922,13 @@ fn play_on_after_phase(g2: &mut Game, p2: PlayerId, hold: Option<CardId>, kept: 
 /// search.choose_attack: at the first combat of p's turn: (defender, 'filtered' | 'all' | 'none') by look-ahead
 pub fn choose_attack(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
     if g.search_tape.0.is_none() {
-        return choose_attack_inner(g, p);
+        let st = diag_for(g, p).then(|| (super::ismcts::stakes(g, p, &[]), brain::choose_defender(&mut clone(g), p)));
+        let w0 = g.search_work;
+        let r = booked(g, p, SearchCost::ATTACK, |g| choose_attack_inner(g, p));
+        if let (Some((s, d)), Some(plan)) = (st, r) {
+            super::ismcts::diag(g, p, "attack", &s, plan != (d, "filtered"), g.search_work - w0); // --- phase4-search
+        }
+        return r;
     }
     if g.opps(p).next().is_none() {
         return None;
@@ -929,13 +964,15 @@ pub fn attack_on_near_tie(cands: &[(PlayerId, Sym)], scores: &[f64], rollouts: f
     }
 }
 
-fn choose_attack_inner(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
+/// the attack plans the look-ahead tries: filtered and all-out at each opponent it may attack, and none (empty: no
+/// opponent to attack)
+pub(crate) fn attack_cands(g: &mut Game, p: PlayerId) -> Vec<(PlayerId, Sym)> {
     let mut opps: Vec<PlayerId> = g.opps(p).collect();
     if g.player(p).key == crate::impls::garland::KEY {
         opps = crate::impls::garland::attack_targets(g, p, opps); // never the monarch while we hold a steal
     }
     if opps.is_empty() {
-        return None;
+        return vec![];
     }
     let mut cands: Vec<(PlayerId, Sym)> = vec![];
     for &q in &opps {
@@ -943,6 +980,17 @@ fn choose_attack_inner(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
         cands.push((q, "all"));
     }
     cands.push((opps[0], "none"));
+    cands
+}
+
+fn choose_attack_inner(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
+    if super::ismcts::on(g, p) {
+        return super::ismcts::choose_attack(g, p); // --- phase4-search
+    }
+    let cands = attack_cands(g, p);
+    if cands.is_empty() {
+        return None;
+    }
     let parts = format!("{}:atk", g.player(p).key);
     let base_seed = decision_seed(g, &parts);
     let mut scores = vec![0.0; cands.len()];
@@ -994,7 +1042,13 @@ pub fn playout_attack(g: &mut Game, p: PlayerId, c: (PlayerId, Sym), base_seed: 
 /// by look-ahead to the end of q's next turn
 pub fn choose_counter(g: &mut Game, q: PlayerId, p: PlayerId, c: CardId) -> bool {
     if g.search_tape.0.is_none() {
-        return choose_counter_inner(g, q, p, c);
+        let st = diag_for(g, q).then(|| super::ismcts::stakes(g, q, &[]));
+        let w0 = g.search_work;
+        let r = booked(g, q, SearchCost::COUNTER, |g| choose_counter_inner(g, q, p, c));
+        if let Some(s) = st {
+            super::ismcts::diag(g, q, "counter", &s, r, g.search_work - w0); // --- phase4-search: "changed" = countered
+        }
+        return r;
     }
     let (res, replayed) = taped(g, "counter", |g| Taped::Counter(choose_counter_inner(g, q, p, c)));
     if replayed {
@@ -1005,53 +1059,68 @@ pub fn choose_counter(g: &mut Game, q: PlayerId, p: PlayerId, c: CardId) -> bool
 }
 
 fn choose_counter_inner(g: &mut Game, q: PlayerId, p: PlayerId, c: CardId) -> bool {
-    use crate::engine::stack::{cast_counter, counter_side_effects, pick_counter, settle_stack};
+    if super::ismcts::on(g, q) {
+        return super::ismcts::choose_counter(g, q, p, c); // --- phase4-search
+    }
     let parts = format!("{}:ctr", g.player(q).key);
     let base_seed = decision_seed(g, &parts);
     let mut scores = [0.0, 0.0]; // [counter, don't]
-    let idx = g.stack.len().checked_sub(1); // the spell in question is on top of the stack
     for r in 0..g.settings.search.rollouts as u64 {
         for (k, counter) in [true, false].into_iter().enumerate() {
-            let (mut g2, w0) = playout_copy(g, q, base_seed, r);
-            let res = (|| -> Res<bool> {
-                let it2 = idx.filter(|&i| i < g2.stack.len()).map(|i| g2.stack[i].id);
-                if counter {
-                    let Some(ctr) = pick_counter(&g2, q, c) else { return Ok(false) };
-                    if !cast_counter(&mut g2, q, ctr, Some(c))? {
-                        return Ok(false);
-                    }
-                    counter_side_effects(&mut g2, q, p, ctr)?;
-                    if &*g2.db.get(ctr).name == "Mana Drain" {
-                        let n = g2.db.get(c).cmc;
-                        g2.player_mut(q).drain_mana += n;
-                    }
-                    if let Some(id) = it2
-                        && let Some(it) = g2.stack.iter_mut().find(|it| it.id == id)
-                    {
-                        it.countered = true;
-                    }
-                }
-                settle_stack(&mut g2)?; // the rest of the stack resolves, no more responses
-                if !g2.over {
-                    play_on(&mut g2, q, Some(p))?;
-                }
-                Ok(true)
-            })();
-            let cut = match res {
-                Ok(false) => {
-                    scores[k] -= 50.0;
-                    continue;
-                }
-                Ok(true) => false,
-                Err(Stop::OutOfWork) => true,
-                Err(Stop::Probe(pr)) => panic!("a trigger probe escaped a playout: {pr:?}"),
-                Err(Stop::Cancelled) => panic!("a person was asked inside a playout"),
-            };
-            scores[k] += evaluate(&g2, q);
-            done(g, &g2, w0, cut);
+            scores[k] += playout_counter(g, q, p, c, counter, base_seed, r);
         }
     }
     scores[0] > scores[1]
+}
+
+/// one playout of q's counter decision on p's spell c (the top of the stack): countered or not. The score of the
+/// position it reaches (a counter that can't be cast: -50).
+pub(crate) fn playout_counter(
+    g: &mut Game,
+    q: PlayerId,
+    p: PlayerId,
+    c: CardId,
+    counter: bool,
+    base_seed: u64,
+    r: u64,
+) -> f64 {
+    use crate::engine::stack::{cast_counter, counter_side_effects, pick_counter, settle_stack};
+    let idx = g.stack.len().checked_sub(1); // the spell in question is on top of the stack
+    let (mut g2, w0) = playout_copy(g, q, base_seed, r);
+    let res = (|| -> Res<bool> {
+        let it2 = idx.filter(|&i| i < g2.stack.len()).map(|i| g2.stack[i].id);
+        if counter {
+            let Some(ctr) = pick_counter(&g2, q, c) else { return Ok(false) };
+            if !cast_counter(&mut g2, q, ctr, Some(c))? {
+                return Ok(false);
+            }
+            counter_side_effects(&mut g2, q, p, ctr)?;
+            if &*g2.db.get(ctr).name == "Mana Drain" {
+                let n = g2.db.get(c).cmc;
+                g2.player_mut(q).drain_mana += n;
+            }
+            if let Some(id) = it2
+                && let Some(it) = g2.stack.iter_mut().find(|it| it.id == id)
+            {
+                it.countered = true;
+            }
+        }
+        settle_stack(&mut g2)?; // the rest of the stack resolves, no more responses
+        if !g2.over {
+            play_on(&mut g2, q, Some(p))?;
+        }
+        Ok(true)
+    })();
+    let cut = match res {
+        Ok(false) => return -50.0,
+        Ok(true) => false,
+        Err(Stop::OutOfWork) => true,
+        Err(Stop::Probe(pr)) => panic!("a trigger probe escaped a playout: {pr:?}"),
+        Err(Stop::Cancelled) => panic!("a person was asked inside a playout"),
+    };
+    let v = evaluate(&g2, q);
+    done(g, &g2, w0, cut);
+    v
 }
 
 // --- ai-eval

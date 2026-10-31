@@ -278,6 +278,47 @@ pub fn render(m: &BTreeMap<&'static str, Measured>, targets: &Targets) -> (Strin
 }
 
 /// --realism: refuse a bad command or targets file before playing, then play, score and print
+// --- phase4-search
+/// the look-ahead's cost per game: decisions searched and playout steps, by kind (main / attack / counter), over
+/// every seat and over the generic-policy seats, and the decisions the stakes test left to the policy
+pub fn search_cost_line(games: &[GameOut]) -> String {
+    let n = games.len().max(1) as f64;
+    let (mut all, mut gs) = (sim_core::state::SearchCost::default(), sim_core::state::SearchCost::default());
+    for p in games.iter().flat_map(|g| &g.players) {
+        for t in [&mut all].into_iter().chain(p.generic.then_some(&mut gs)) {
+            for k in 0..3 {
+                t.n[k] += p.search_cost.n[k];
+                t.steps[k] += p.search_cost.steps[k];
+                t.policy[k] += p.search_cost.policy[k];
+                t.playouts[k] += p.search_cost.playouts[k];
+            }
+        }
+    }
+    let part = |c: &sim_core::state::SearchCost| {
+        let d: Vec<String> = c.n.iter().map(|&x| format!("{:.1}", x as f64 / n)).collect();
+        let s: Vec<String> = c.steps.iter().map(|&x| format!("{:.0}", x as f64 / n)).collect();
+        let q: Vec<String> = c.policy.iter().map(|&x| format!("{:.1}", x as f64 / n)).collect();
+        let o: Vec<String> = c.playouts.iter().map(|&x| format!("{:.0}", x as f64 / n)).collect();
+        format!(
+            "decisions {:.1} ({}), steps {:.0} ({}), policy {:.1} ({}), playouts {:.0} ({})",
+            c.n.iter().sum::<u32>() as f64 / n,
+            d.join("/"),
+            c.steps.iter().sum::<u64>() as f64 / n,
+            s.join("/"),
+            c.policy.iter().sum::<u32>() as f64 / n,
+            q.join("/"),
+            c.playouts.iter().sum::<u64>() as f64 / n,
+            o.join("/")
+        )
+    };
+    format!(
+        "Search cost per game (main/attack/counter), {} games: all seats {}; generic seats {}",
+        games.len(),
+        part(&all),
+        part(&gs)
+    )
+}
+
 pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
     let tier = match a.pool.as_deref() {
         Some(t) if TIERS.contains(&t) => t,
@@ -337,6 +378,7 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
             .map(|(k, w, d)| format!("{} {:.1}% of {d}", sim.name_of(k), 100.0 * *w as f64 / (*d).max(1) as f64))
             .collect();
         println!("Each deck's share of the decisive games it sat in: {}", per.join("; "));
+        eprintln!("{}", search_cost_line(&games)); // --- phase4-search: on stderr, so the report stays as it was
         // --- ai-flow: the card and mana flow of the Tier 6 decks (only Tier 6 players keep the counters)
         let mut fl = crate::flow::FlowTally::default();
         for g in &games {

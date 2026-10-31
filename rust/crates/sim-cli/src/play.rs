@@ -32,6 +32,9 @@ pub struct PlayerOut {
     pub lost: Vec<(String, u32)>,
     /// the own-turn count at which each cast card was first cast (with the card lists)
     pub cast_turns: Vec<(String, u32)>,
+    /// --- phase4-search: the look-ahead's cost for this seat, and whether it is a generic-policy deck
+    pub search_cost: sim_core::state::SearchCost,
+    pub generic: bool,
 }
 
 impl PlayerOut {
@@ -86,6 +89,8 @@ impl GameOut {
                     } else {
                         vec![]
                     },
+                    search_cost: p.search_cost,
+                    generic: sim_core::ai::values::generic_deck(g, p.id),
                 })
                 .collect(),
             log: g.log.clone(),
