@@ -69,12 +69,12 @@ more). All but a few are in Tier 6 (Thanos's tier); the rest are in Tier 3 (Atra
 
 | Rank | Card | Decks |
 | --- | --- | --- |
-| 1 | City of Traitors | 3 (t6) |
+| 1 | City of Traitors: **done** (turn::play_land_card runs its check for every played land) | 3 (t6) |
 | 2 | Wan Shi Tong, Librarian; Rain of Filth; Mnemonic Betrayal; Invasion of Ikoria // Zilortha; Hidden Strings; Flesh Duplicate | 2 (t6) |
 | 2 | Magda, Brazen Outlaw | 2 (t4 prosper, t6) |
 | 9 | the other 40 (one deck each) | 1 |
 
-None was modelled in this PR (JD's cards took the time): the pool step is open, in this order.
+Only City of Traitors was modelled in this PR (JD's cards took the time); the rest is open, in this order.
 
 
 ## Before / after runs
