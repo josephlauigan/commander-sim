@@ -328,6 +328,8 @@ impl Sim {
 
 thread_local! {
     static IN_GAME: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+    // --- thanos: where the last in-game panic happened (file:line), for the error message
+    static WHERE: std::cell::RefCell<String> = const { std::cell::RefCell::new(String::new()) };
 }
 
 /// The panic hook: quiet inside a game (the error is reported at the end of the run), the usual message elsewhere.
@@ -336,6 +338,8 @@ pub fn install_panic_hook() {
     std::panic::set_hook(Box::new(move |info| {
         if !IN_GAME.get() {
             default(info);
+        } else if let Some(l) = info.location() {
+            WHERE.with(|w| *w.borrow_mut() = format!("{}:{}", l.file(), l.line()));
         }
     }));
 }
@@ -351,6 +355,7 @@ pub fn catch_game<T>(f: impl FnOnce() -> T) -> Result<T, String> {
             .map(|s| s.to_string())
             .or_else(|| e.downcast_ref::<String>().cloned())
             .unwrap_or_else(|| "unknown panic".into());
-        format!("panic: {msg}")
+        let at = WHERE.with(|w| std::mem::take(&mut *w.borrow_mut()));
+        if at.is_empty() { format!("panic: {msg}") } else { format!("panic: {msg} (at {at})") }
     })
 }

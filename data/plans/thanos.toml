@@ -1,15 +1,22 @@
 # Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs through the
-# Tier 6 plan slots (impls/t6_plans.rs). JD's Scion of the Ur-Dragon turbo deck: fast mana, rituals and dorks into
-# Thassa's Oracle + Demonic Consultation / Tainted Pact or Underworld Breach + Lion's Eye Diamond + Brain Freeze.
-# Scion's Dragon choice is card code (t6_scion.rs), not this plan.
+# Tier 6 plan slots (impls/t6_plans.rs). JD's Thanos, the Mad Titan turbo deck (Scion's seat and plan since 2026-10-30;
+# the list is Scion v1 minus Scion's three Dragons, plus Fierce Guardianship, Deflecting Swat and Deadly Rollick): fast
+# mana, rituals and dorks into Thassa's Oracle + Demonic Consultation / Tainted Pact or Underworld Breach + Lion's Eye
+# Diamond + Brain Freeze. Thanos's power-up (a parity wipe) is card code (impls/t6_thanos.rs), not this plan.
 #
-# Only the keep rule has an opinion (was impls/t6_plan_scion.rs keep, the Rograkh/Silas turbo rule with this list's
-# rituals, tutors, payoffs and engines; PROVISIONAL until JD decides the mulligans, D11). Cast priority, wish list,
-# hold-up and go-now leave every decision to the shared Tier 6 table rules and the generic AI.
-# Paired test (t6, --deck scion, 2000 games): byte-identical to the hand code (Scion 30.1%, CI 28.1-32.1, both arms):
-# t6_plan_scion.rs deleted.
-deck = "scion"
+# Only the keep rule has an opinion (was Scion's, the Rograkh/Silas turbo rule with this list's rituals, tutors,
+# payoffs and engines; PROVISIONAL until JD decides the mulligans, D11). Cast priority, wish list, hold-up and go-now
+# leave every decision to the shared Tier 6 table rules and the generic AI.
+# Scion's paired test (t6, --deck scion, 2000 games): byte-identical to the hand code (Scion 30.1%, CI 28.1-32.1).
+deck = "thanos"
 default = "plan"
+
+# Scion's style (was ai::T6_JD_STYLES): the default temperature and aggression, less caution than the pool's 0.5, so
+# it spends its mana on its plan instead of passing with a counterspell up
+[style]
+temp = 1.0
+aggression = 0.6
+caution = 0.35
 
 [sets]
 tutors = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Enlightened Tutor", "Imperial Seal", "Gamble", "Diabolic Intent", "Beseech the Mirror", "Intuition", "Demonic Consultation", "Tainted Pact", "Crop Rotation"]

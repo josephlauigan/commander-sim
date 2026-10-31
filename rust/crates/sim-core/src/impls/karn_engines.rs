@@ -952,6 +952,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Batterskull")?;
     c.etb = Some(skull_etb);
     c.options = Some(skull_options);
+    if db.id("Kaldra Compleat").is_some() {
+        r.card(db, "Kaldra Compleat")?.etb = Some(skull_etb); // --- urdragon: living weapon, as Batterskull's
+    }
     r.card(db, "Liquimetal Torque")?.options = Some(torque_options);
     r.card(db, "Staff of Domination")?.options = Some(staff_options);
     Ok(())

@@ -2,11 +2,11 @@
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
   "fetched": "2026-10-30",
-  "deck": "scion",
+  "deck": "thanos",
   "commanders": [
-    "Scion of the Ur-Dragon"
+    "Thanos, the Mad Titan"
   ],
-  "request_sha256": "db02ac7337b4c7008a831c77f7b3422e1b9b6e9b2e11ce8de22a01b8f465894b",
+  "request_sha256": "c451ecb46daf91b7da7b0a7ed62100af673c4f5ad19333fa4f8c534d899dc2ca",
   "identity": "WUBRG",
   "included": [
     {
@@ -33,7 +33,7 @@
       "mana": "{U}{U}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 149999
+      "popularity": 150057
     },
     {
       "id": "1295-3093",
@@ -59,7 +59,7 @@
       "mana": "{1}{U}{U}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 131950
+      "popularity": 131986
     },
     {
       "id": "1368-1414-4856",
@@ -93,7 +93,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 118447
+      "popularity": 118525
     },
     {
       "id": "1368-3518-4856",
@@ -127,7 +127,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 96133
+      "popularity": 96196
     }
   ],
   "included_by_changing_commanders": [],
@@ -158,7 +158,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 364272,
+      "popularity": 364475,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -193,7 +193,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 88410,
+      "popularity": 88455,
       "missing": [
         "Wheel of Fortune"
       ]
@@ -224,7 +224,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 78094,
+      "popularity": 78146,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -256,7 +256,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 46618,
+      "popularity": 46631,
       "missing": [
         "Peer into the Abyss"
       ]
@@ -288,7 +288,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 41064,
+      "popularity": 41094,
       "missing": [
         "Grinding Station"
       ]
@@ -317,43 +317,9 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 37844,
+      "popularity": 37881,
       "missing": [
         "Tidespout Tyrant"
-      ]
-    },
-    {
-      "id": "778-3750",
-      "cards": [
-        {
-          "name": "Ancient Copper Dragon",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Aggravated Assault",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite colored mana",
-        "Near-infinite combat damage",
-        "Near-infinite Treasure tokens",
-        "Near-infinite combat phases",
-        "Near-infinite untap of creatures you control",
-        "Near-infinite mana creatures you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "Ancient Copper Dragon cannot be blocked by an opponent.",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 31278,
-      "missing": [
-        "Aggravated Assault"
       ]
     },
     {
@@ -382,7 +348,7 @@
       "mana": "{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 29978,
+      "popularity": 29987,
       "missing": [
         "Retraction Helix"
       ]
@@ -418,7 +384,7 @@
       "mana": "{1}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 29557,
+      "popularity": 29565,
       "missing": [
         "Retraction Helix"
       ]
@@ -450,7 +416,7 @@
       "mana": "{3}{R}",
       "bracket": "S",
       "legal": true,
-      "popularity": 27594,
+      "popularity": 27599,
       "missing": [
         "Haze of Rage"
       ]
@@ -487,7 +453,7 @@
       "mana": "{2}{R}",
       "bracket": "P",
       "legal": true,
-      "popularity": 26030,
+      "popularity": 26038,
       "missing": [
         "Wheel of Fortune"
       ]
@@ -516,7 +482,7 @@
       "mana": "{12}{W}{W}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 25629,
+      "popularity": 25660,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -552,7 +518,7 @@
       "mana": "{1}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 22471,
+      "popularity": 22478,
       "missing": [
         "Retraction Helix"
       ]
@@ -589,7 +555,7 @@
       "mana": "{3}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 17147,
+      "popularity": 17184,
       "missing": [
         "Mirrormade"
       ]
@@ -620,7 +586,7 @@
       "mana": "{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 16819,
+      "popularity": 16817,
       "missing": [
         "Banishing Knack"
       ]
@@ -656,7 +622,7 @@
       "mana": "{1}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 16555,
+      "popularity": 16552,
       "missing": [
         "Banishing Knack"
       ]
@@ -685,7 +651,7 @@
       "mana": "{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 14645,
+      "popularity": 14647,
       "missing": [
         "Laboratory Maniac"
       ]
@@ -714,7 +680,7 @@
       "mana": "{U}{U}{B}{B}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 14610,
+      "popularity": 14607,
       "missing": [
         "Doomsday"
       ]
@@ -743,7 +709,7 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 13995,
+      "popularity": 14003,
       "missing": [
         "Tidespout Tyrant"
       ]
@@ -781,7 +747,7 @@
       "mana": "{3}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 13572,
+      "popularity": 13590,
       "missing": [
         "Kinnan, Bonder Prodigy"
       ]
@@ -818,7 +784,7 @@
       "mana": "{3}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 12727,
+      "popularity": 12758,
       "missing": [
         "Copy Enchantment"
       ]
@@ -849,7 +815,7 @@
       "mana": "{8}{U}{U}{U}{U}{U}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 12668,
+      "popularity": 12672,
       "missing": [
         "Enter the Infinite"
       ]
@@ -885,7 +851,7 @@
       "mana": "{1}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 12663,
+      "popularity": 12660,
       "missing": [
         "Banishing Knack"
       ]
@@ -914,7 +880,7 @@
       "mana": "{G}{U}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 10398,
+      "popularity": 10397,
       "missing": [
         "Hermit Druid"
       ]
@@ -951,38 +917,9 @@
       "mana": "{3}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 9986,
+      "popularity": 10014,
       "missing": [
         "Clever Impersonator"
-      ]
-    },
-    {
-      "id": "2836-3093",
-      "cards": [
-        {
-          "name": "Tainted Pact",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Laboratory Maniac",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Win the game"
-      ],
-      "requires": [],
-      "prerequisites": "No two cards in library share a name. You have a way to draw a card.",
-      "mana": "{1}{B}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 9645,
-      "missing": [
-        "Laboratory Maniac"
       ]
     },
     {
@@ -1009,9 +946,38 @@
       "mana": "{13}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 9642,
+      "popularity": 9658,
       "missing": [
         "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "2836-3093",
+      "cards": [
+        {
+          "name": "Tainted Pact",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Laboratory Maniac",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "No two cards in library share a name. You have a way to draw a card.",
+      "mana": "{1}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9647,
+      "missing": [
+        "Laboratory Maniac"
       ]
     },
     {
@@ -1040,7 +1006,7 @@
       "mana": "{2}{R}{R}",
       "bracket": "S",
       "legal": true,
-      "popularity": 9600,
+      "popularity": 9606,
       "missing": [
         "Fury Storm"
       ]
@@ -1069,7 +1035,7 @@
       "mana": "{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 9511,
+      "popularity": 9512,
       "missing": [
         "Jace, Wielder of Mysteries"
       ]
@@ -1098,7 +1064,7 @@
       "mana": "{5}{U}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 9289,
+      "popularity": 9310,
       "missing": [
         "Leveler"
       ]
@@ -1136,7 +1102,7 @@
       "mana": "{1}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 8724,
+      "popularity": 8737,
       "missing": [
         "Training Grounds"
       ]
@@ -1173,7 +1139,7 @@
       "mana": "{2}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 8427,
+      "popularity": 8426,
       "missing": [
         "Windfall"
       ]
@@ -1200,36 +1166,9 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 8374,
+      "popularity": 8378,
       "missing": [
         "Stasis"
-      ]
-    },
-    {
-      "id": "5940-7683",
-      "cards": [
-        {
-          "name": "Prismari, the Inspiration",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Return the Favor",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
-      "mana": "{1}{R}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 7746,
-      "missing": [
-        "Return the Favor"
       ]
     },
     {
@@ -1256,7 +1195,7 @@
       "mana": "{12}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7437,
+      "popularity": 7463,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -1285,7 +1224,7 @@
       "mana": "{1}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 7050,
+      "popularity": 7051,
       "missing": [
         "Jace, Wielder of Mysteries"
       ]
@@ -1315,7 +1254,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 6668,
+      "popularity": 6655,
       "missing": [
         "Auriok Salvagers"
       ]
@@ -1353,7 +1292,7 @@
       "mana": "{1}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 5903,
+      "popularity": 5910,
       "missing": [
         "Biomancer's Familiar"
       ]
@@ -1383,7 +1322,7 @@
       "mana": "{4}{R}",
       "bracket": "S",
       "legal": true,
-      "popularity": 5542,
+      "popularity": 5553,
       "missing": [
         "Path of the Pyromancer"
       ]
@@ -1414,7 +1353,7 @@
       "mana": "{1}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 5526,
+      "popularity": 5531,
       "missing": [
         "Chain of Smog"
       ]
@@ -1443,7 +1382,7 @@
       "mana": "{U}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 4262,
+      "popularity": 4277,
       "missing": [
         "Thought Lash"
       ]
@@ -1472,7 +1411,7 @@
       "mana": "{1}{U}{U}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 3694,
+      "popularity": 3708,
       "missing": [
         "Paradigm Shift"
       ]
@@ -1505,63 +1444,9 @@
       "mana": "{R}",
       "bracket": "P",
       "legal": true,
-      "popularity": 3621,
+      "popularity": 3623,
       "missing": [
         "Burning Inquiry"
-      ]
-    },
-    {
-      "id": "3368-7683",
-      "cards": [
-        {
-          "name": "Prismari, the Inspiration",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reiterate",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
-      "mana": "{1}{R}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 3147,
-      "missing": [
-        "Reiterate"
-      ]
-    },
-    {
-      "id": "5026-7683",
-      "cards": [
-        {
-          "name": "Prismari, the Inspiration",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reverberate",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
-      "mana": "{R}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2883,
-      "missing": [
-        "Reverberate"
       ]
     },
     {
@@ -1588,36 +1473,9 @@
       "mana": "{6}{W} each turn",
       "bracket": "P",
       "legal": true,
-      "popularity": 2629,
+      "popularity": 2637,
       "missing": [
         "Approach of the Second Sun"
-      ]
-    },
-    {
-      "id": "60-7683",
-      "cards": [
-        {
-          "name": "Prismari, the Inspiration",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Expansion // Explosion",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
-      "mana": "{U/R}{U/R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2361,
-      "missing": [
-        "Expansion // Explosion"
       ]
     },
     {
@@ -1644,7 +1502,7 @@
       "mana": "{12}{W}{W}{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2039,
+      "popularity": 2043,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -1673,7 +1531,7 @@
       "mana": "{1}{U}{U}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 2035,
+      "popularity": 2037,
       "missing": [
         "Divining Witch"
       ]
@@ -1711,7 +1569,7 @@
       "mana": "{3}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 1984,
+      "popularity": 1987,
       "missing": [
         "Goldspan Dragon"
       ]
@@ -1749,36 +1607,9 @@
       "mana": "{1}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 1947,
+      "popularity": 1952,
       "missing": [
         "Zirda, the Dawnwaker"
-      ]
-    },
-    {
-      "id": "4285-7683",
-      "cards": [
-        {
-          "name": "Prismari, the Inspiration",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Increasing Vengeance",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
-      "mana": "{R}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1928,
-      "missing": [
-        "Increasing Vengeance"
       ]
     },
     {
@@ -1806,36 +1637,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1821,
+      "popularity": 1822,
       "missing": [
         "Requiem Monolith"
-      ]
-    },
-    {
-      "id": "5938-7683",
-      "cards": [
-        {
-          "name": "Prismari, the Inspiration",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Flare of Duplication",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
-      "mana": "{1}{R}{R} at most",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1662,
-      "missing": [
-        "Flare of Duplication"
       ]
     },
     {
@@ -1870,7 +1674,7 @@
       "mana": "{3}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 1459,
+      "popularity": 1455,
       "missing": [
         "Estrid's Invocation"
       ]
@@ -1899,7 +1703,7 @@
       "mana": "{13}{W}{W}{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1287,
+      "popularity": 1290,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -1928,7 +1732,7 @@
       "mana": "{U}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 1241,
+      "popularity": 1246,
       "missing": [
         "Mirror of Fate"
       ]
@@ -1965,7 +1769,7 @@
       "mana": "{3}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 1100,
+      "popularity": 1099,
       "missing": [
         "Court of Vantress"
       ]
@@ -1992,7 +1796,7 @@
       "mana": "{U} plus enough mana to cast the instant or sorcery card",
       "bracket": "E",
       "legal": true,
-      "popularity": 1027,
+      "popularity": 1028,
       "missing": [
         "Guile"
       ]
@@ -2021,7 +1825,7 @@
       "mana": "{U}{U} and six {B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 979,
+      "popularity": 983,
       "missing": [
         "Doomsday Excruciator"
       ]
@@ -2050,36 +1854,9 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 978,
+      "popularity": 979,
       "missing": [
         "Near-Death Experience"
-      ]
-    },
-    {
-      "id": "1534-7683",
-      "cards": [
-        {
-          "name": "Prismari, the Inspiration",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Twincast",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
-      "mana": "{U}{U}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 909,
-      "missing": [
-        "Twincast"
       ]
     },
     {
@@ -2114,7 +1891,7 @@
       "mana": "{3}{R}{R}",
       "bracket": "P",
       "legal": true,
-      "popularity": 885,
+      "popularity": 886,
       "missing": [
         "Reforge the Soul"
       ]
@@ -2151,7 +1928,7 @@
       "mana": "{3}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 780,
+      "popularity": 781,
       "missing": [
         "Krark-Clan Ironworks"
       ]
@@ -2211,7 +1988,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 767,
+      "popularity": 770,
       "missing": [
         "Cool but Rude"
       ]
@@ -2238,7 +2015,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 726,
+      "popularity": 725,
       "missing": [
         "Ashiok, Wicked Manipulator"
       ]
@@ -2267,7 +2044,7 @@
       "mana": "{4}{U}{U}{U}{B} the first turn, with {3}{U}{U}{U} each extra turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 672,
+      "popularity": 671,
       "missing": [
         "Timestream Navigator"
       ]
@@ -2296,7 +2073,7 @@
       "mana": "{U}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 611,
+      "popularity": 612,
       "missing": [
         "Phyrexian Devourer"
       ]
@@ -2333,9 +2110,38 @@
       "mana": "{5}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 579,
+      "popularity": 580,
       "missing": [
         "Mirage Mirror"
+      ]
+    },
+    {
+      "id": "742-8266",
+      "cards": [
+        {
+          "name": "Fblthp, Impossibly Lost",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You control a creature that doesn't have summoning sickness and that cannot be blocked by an opponent.",
+      "mana": "{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 521,
+      "missing": [
+        "Fblthp, Impossibly Lost"
       ]
     },
     {
@@ -2377,35 +2183,6 @@
       ]
     },
     {
-      "id": "742-8266",
-      "cards": [
-        {
-          "name": "Fblthp, Impossibly Lost",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Demonic Consultation",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Win the game"
-      ],
-      "requires": [],
-      "prerequisites": "You control a creature that doesn't have summoning sickness and that cannot be blocked by an opponent.",
-      "mana": "{B}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 510,
-      "missing": [
-        "Fblthp, Impossibly Lost"
-      ]
-    },
-    {
       "id": "184-4682-5921",
       "cards": [
         {
@@ -2437,46 +2214,9 @@
       "mana": "{3}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 480,
+      "popularity": 479,
       "missing": [
         "Mirror Room // Fractured Realm"
-      ]
-    },
-    {
-      "id": "966-5195-7683",
-      "cards": [
-        {
-          "name": "Prismari, the Inspiration",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Storm-Kiln Artist",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Unsubstantiate",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite Treasure tokens",
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "You have another nonland card in hand with the mana to cast it and applicable targets if needed.",
-      "mana": "{1}{U}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 438,
-      "missing": [
-        "Unsubstantiate"
       ]
     },
     {
@@ -2545,101 +2285,9 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 413,
+      "popularity": 414,
       "missing": [
         "Mizzix of the Izmagnus"
-      ]
-    },
-    {
-      "id": "3491-5195-7683",
-      "cards": [
-        {
-          "name": "Prismari, the Inspiration",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Storm-Kiln Artist",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Remand",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite card draw",
-        "Near-infinite Treasure tokens",
-        "Near-infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "You have another nonland card in hand with the mana to cast it and applicable targets if needed.",
-      "mana": "{1}{U}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 402,
-      "missing": [
-        "Remand"
-      ]
-    },
-    {
-      "id": "109-7683",
-      "cards": [
-        {
-          "name": "Prismari, the Inspiration",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Fork",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
-      "mana": "{R}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 375,
-      "missing": [
-        "Fork"
-      ]
-    },
-    {
-      "id": "5941-7683",
-      "cards": [
-        {
-          "name": "Prismari, the Inspiration",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Wild Ricochet",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
-      "mana": "{2}{R}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 311,
-      "missing": [
-        "Wild Ricochet"
       ]
     },
     {
@@ -2672,7 +2320,7 @@
       "mana": "{1}{G}",
       "bracket": "P",
       "legal": true,
-      "popularity": 231,
+      "popularity": 229,
       "missing": [
         "Malevolent Rumble"
       ]
@@ -2707,33 +2355,6 @@
       ]
     },
     {
-      "id": "469-7683",
-      "cards": [
-        {
-          "name": "Prismari, the Inspiration",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Insidious Will",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
-      "mana": "{2}{U}{U}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 165,
-      "missing": [
-        "Insidious Will"
-      ]
-    },
-    {
       "id": "3718-5195",
       "cards": [
         {
@@ -2762,33 +2383,6 @@
       "popularity": 150,
       "missing": [
         "Chain of Acid"
-      ]
-    },
-    {
-      "id": "46-7683",
-      "cards": [
-        {
-          "name": "Prismari, the Inspiration",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Refuse // Cooperate",
-          "zones": [
-            "G"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have another instant or sorcery card in hand with the mana to cast it and applicable target(s) if needed.",
-      "mana": "{2}{U}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 113,
-      "missing": [
-        "Refuse // Cooperate"
       ]
     },
     {
@@ -2897,43 +2491,6 @@
       "popularity": 49,
       "missing": [
         "Glimpse the Unthinkable"
-      ]
-    },
-    {
-      "id": "5195-7683-7910",
-      "cards": [
-        {
-          "name": "Prismari, the Inspiration",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Storm-Kiln Artist",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Bilbo's Gambit",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite Treasure tokens",
-        "Infinite artifact tokens",
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "You have another nonland card in hand with the mana to cast it and applicable targets if needed.",
-      "mana": "{1}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 42,
-      "missing": [
-        "Bilbo's Gambit"
       ]
     },
     {

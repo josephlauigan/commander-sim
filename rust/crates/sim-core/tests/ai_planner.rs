@@ -14,7 +14,7 @@ const P0: PlayerId = PlayerId(0);
 /// the scion seat against three inert goldfish seats (they never cast), its hand emptied, a library of Islands
 fn scion_goldfish() -> Game {
     let mut g =
-        table(&["scion", "kraum-tymna-blue-breach-midrange", "dack-fayden-white-stax", "kinnan-bonder-mana-combo"]);
+        table(&["thanos", "kraum-tymna-blue-breach-midrange", "dack-fayden-white-stax", "kinnan-bonder-mana-combo"]);
     for i in 1..4 {
         let q = PlayerId(i);
         let wastes: Vec<_> = (0..60).map(|_| card(&g, "Wastes")).collect();
@@ -212,7 +212,7 @@ fn planner_off_is_the_step_one_ai() {
 #[test]
 fn with_a_counter_visible_and_go_ok_false_the_planner_does_not_go() {
     let mut g =
-        table(&["scion", "kraum-tymna-blue-breach-midrange", "rograkh-silas-turbo-breach", "kinnan-bonder-mana-combo"]);
+        table(&["thanos", "kraum-tymna-blue-breach-midrange", "rograkh-silas-turbo-breach", "kinnan-bonder-mana-combo"]);
     g.log = Some(vec![]);
     for i in 1..4 {
         let q = PlayerId(i);

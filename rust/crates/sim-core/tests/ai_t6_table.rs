@@ -45,11 +45,11 @@ fn go(g: &mut Game) {
 }
 
 #[test]
-fn the_gate_is_the_eight_tier_6_keys() {
+fn the_gate_is_the_nine_tier_6_keys() {
     for k in t6_plans::T6_KEYS {
         assert!(t6_plans::is_t6_key(k));
     }
-    assert_eq!(t6_plans::T6_KEYS.len(), 8); // the six pool decks, godo (a test seat) and scion
+    assert_eq!(t6_plans::T6_KEYS.len(), 9); // the six pool decks, godo and scion (test seats) and thanos
     for k in ["seph", "sauron", "yshtola", "cloud", "kefka"] {
         assert!(!t6_plans::is_t6_key(k));
     }

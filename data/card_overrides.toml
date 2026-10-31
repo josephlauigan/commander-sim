@@ -9646,6 +9646,32 @@ dsl = [] # the compiled search put any permanent card into the graveyard: card c
 ["Haven of the Spirit Dragon"]
 dsl = [] # the compiled return took any creature card: card code returns a Dragon
 
+# --- thanos / urdragon (rust/agents/thanos-urdragon.md)
+["Thanos, the Mad Titan"]
+tags = "leg pow=4 tgh=4 dt lifelink"
+dsl = []
+status = "Approximate"
+note = "deathtouch, lifelink; hand-written power-up (impls/t6_thanos.rs): {C}{W}{U}{B}{R}{G}, or {C}{U}{G} the turn he entered ({C} is colourless mana only), no timing restriction: two +1/+1 counters, then each other creature of the chosen parity (0 is even) is destroyed at once. The AI chooses the parity as it resolves (opponents' value lost against 1.2 times its own) and uses it in its main phase or at the end-of-turn window when that swing is worth it. Left out: once per game per player rather than per Thanos object, and a token's mana value is 0 (a token copy's is the copied card's)"
+
+["Kindred Dominance"]
+tags = "wipe=dominance"
+dsl = []
+status = "Full"
+note = "sorcery wipe (impls/sweepers.rs): the creature type is chosen as it resolves, the one that costs the caster least (opposing value destroyed minus 1.2 times its own; Maskwood Nexus makes the caster's creatures every type); every creature not of that type is destroyed"
+
+["Kaldra Compleat"]
+paths_ok = "compiled: +5/+5, first strike, trample, indestructible, haste and equip {7}; card code: living weapon's Germ on entering (karn_engines.rs, Batterskull's)"
+dsl = [
+  { type = "static", static = "equip_bonus", pow = 5, tgh = 5 },
+  { type = "static", static = "equip_keyword", keyword = "first strike" },
+  { type = "static", static = "equip_keyword", keyword = "trample" },
+  { type = "static", static = "equip_keyword", keyword = "indestructible" },
+  { type = "static", static = "equip_keyword", keyword = "haste" },
+  { type = "static", static = "equip_cost", mana = 7 },
+]
+status = "Approximate"
+note = "indestructible Equipment; living weapon: a 0/0 black Phyrexian Germ enters and Kaldra attaches to it (karn_engines.rs, as Batterskull); equipped creature gets +5/+5, first strike, trample, indestructible and haste; equip {7}. Left out: the equipped creature exiling a creature it deals combat damage to"
+
 # --- Tiers 1/2 (isshin): hand-written in rust/crates/sim-core/src/impls/t12_isshin.rs (status notes in data/audit.toml)
 ["Otharri, Suns' Glory"]
 dsl = [] # the compiled attack made one Rebel with no experience counter; the trigger and the graveyard return are card code

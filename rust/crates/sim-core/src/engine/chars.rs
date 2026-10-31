@@ -287,7 +287,7 @@ pub fn power(g: &Game, m: PermId) -> i32 {
     if norn_vs(g, p) {
         v -= 2;
     }
-    v += pt_changes(g, m).0;
+    v = v.saturating_add(pt_changes(g, m).0); // --- urdragon: Thrakkus doublings can pass i32
     v -= crate::impls::blue_cards::weakened(g, m); // Mouth of the Storm
     let pl = g.player(p);
     let cre = is_creature(g, m);
