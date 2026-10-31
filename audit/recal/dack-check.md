@@ -4,7 +4,7 @@ Brief: `rust/agents/recal-dack-check.md`. Finding checked: `pairs-2026-10-31.md`
 games 38.4% with the hand AI off (generic policy + `data/plans/dack-fayden-white-stax.toml`), 24.5% with
 `AI_HAND=dack-fayden-white-stax`, -13.9 [-17.4, -10.4].
 
-All runs: branch `overnight-stack` (built from 13b76a04, then f35d1978 for the fix), `--pool t6 --games 2000 --seed
+All runs: branch `overnight-stack` (built from 13b76a04 before the fix, then from f35d1978 with it), `--pool t6 --games 2000 --seed
 500000`, loose, `--jobs 22`, under the 24G cap, rc=0 on every one. Raw output:
 `/tmp/claude-1000/-home-joseph-projects/61d4d38b-9b1e-4bc1-8845-ec4ae3a757af/scratchpad/dack-check/runs/`.
 
@@ -82,4 +82,36 @@ shortcut won) and passes after. Full `cargo test --release`: 3807 passed, 0 fail
 
 ## Re-run on this branch after the fix (same seeds)
 
-(filled in below)
+`--realism --pool t6`, 2000 games, seeds 500000-501999, binary from f35d1978 (rc=0 both; `re-fix-base.txt`,
+`re-fix-ha.txt`). Share of the decisive games each deck sat in:
+
+| deck | hand AI off | hand AI on (Dack) | on - off (95% CI) |
+|---|---|---|---|
+| **Dack Fayden** | **27.3%** (was 38.4) | **14.9%** (was 24.5) | **-12.4 [-15.5, -9.3]** (was -13.9) |
+| Kinnan | 22.3% | 25.7% | +3.4 |
+| Kraum/Tymna | 28.8% | 32.6% | +3.8 |
+| Rograkh/Silas | 19.5% | 21.2% | +1.7 |
+| Rograkh/Thrasios | 21.3% | 21.2% | -0.1 |
+| Sisay | 30.8% | 34.5% | +3.7 |
+| deck win spread (target 0-8) | **11.3** (was 20.3) | 19.7 | |
+
+The `--calibrate within` T6 report on the same games (`cw-fix-base.txt`, `cw-fix-ha.txt`): first-flip wins went from
+457 to 271 with the hand AI off and from 239 to 100 with it on. So 41% and 58% of the old flip wins came from a
+library the traces don't cover. The hand AI arm loses the larger share because it flips later, after drawing more of
+the seven. Dack's win share (seated): 27.6% off, 15.5% on; median win round 5 and 9.
+
+So the fix takes about 11 points off Dack in the default arm and brings Tier 6's spread from 20.3 to 11.3. Dack is no
+longer the outlier: Sisay is at the top with 30.8% and Rograkh/Silas at the bottom with 19.5%. The hand AI gap
+stays at -12.4: the hand AI's Dack hold is a handicap with or without the bug.
+
+## What follows
+
+- Leave the hand AI off for Dack, as the default already has it. No switch changed here. Its `dack_bar` /
+  `table_risk` hold is the handicap. If the hand AI is ever wanted back, the bar needs recalibrating against the
+  table's real counter rate first.
+- The fix is conservative: a flip where the missing creature is already on Dack's side of the battlefield (Preston or
+  Felidar cast from hand, SPEC.md's "deploy Preston first") no longer gets the shortcut. It may still win through the
+  board combos. Tracing those cases (one of the seven already on the battlefield, or in hand with the mana to cast it)
+  would show whether some should come back.
+- The plan file's keep rule ships 53% of hands, against the hand AI's 41%. It leaves out the "two mana and three cheap
+  plays" keep. That is worth about 3 points, inside the noise here. A plan-schema count of cheap cards would close it.
