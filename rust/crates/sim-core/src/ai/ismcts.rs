@@ -161,6 +161,9 @@ pub struct Knobs {
     /// --- phase4-search-b (an ablation knob): the playouts every attack plan and counter choice gets before UCB
     /// (`AI_SEARCH_ATK_MIN`; default `min_visits`)
     pub atk_min: u32,
+    /// --- phase4-search-b (an ablation knob): an opponent's first main-phase choice in a playout is a tree node too,
+    /// chosen against the decider (UCB on the decider's value negated) (`AI_SEARCH_OPP=1`)
+    pub opp: bool,
 }
 
 fn env_or<T: std::str::FromStr>(key: &str, d: T) -> T {
@@ -193,6 +196,7 @@ fn env_knobs() -> &'static Knobs {
         close: env_or("AI_SEARCH_CLOSE", CLOSE),
         pairs: env_or("AI_SEARCH_PAIRS", PAIRS),
         atk_min: env_or("AI_SEARCH_ATK_MIN", env_or("AI_SEARCH_MIN", MIN_VISITS)),
+        opp: matches!(std::env::var("AI_SEARCH_OPP").ok().as_deref(), Some("1")),
     })
 }
 
@@ -256,6 +260,8 @@ struct Tree {
     path: Vec<usize>,
     depth: usize,
     expanded: bool,
+    /// this playout has had its opponent node (`Knobs::opp`)
+    opp_done: bool,
     knobs: Knobs,
     top_k: usize,
 }
@@ -287,7 +293,8 @@ pub fn tree_pick(g: &Game, p: PlayerId, opts: &[Opt]) -> Option<usize> {
     TREE.with(|t| {
         let mut t = t.borrow_mut();
         let tr = t.as_mut()?;
-        if tr.seat != p {
+        let opp = tr.seat != p;
+        if opp && (!tr.knobs.opp || tr.opp_done) {
             return None;
         }
         let cur = tr.cur?;
@@ -326,10 +333,14 @@ pub fn tree_pick(g: &Game, p: PlayerId, opts: &[Opt]) -> Option<usize> {
             let ucb = |k: usize| {
                 let n = &tr.nodes[k];
                 let v = n.visits.max(1) as f64;
-                n.sum / v + c * ((n.avail.max(1) as f64).ln() / v).sqrt()
+                let m = if opp { -n.sum / v } else { n.sum / v };
+                m + c * ((n.avail.max(1) as f64).ln() / v).sqrt()
             };
             *have.iter().reduce(|a, b| if ucb(b.1) > ucb(a.1) { b } else { a })?
         };
+        if opp {
+            tr.opp_done = true;
+        }
         tr.path.push(k);
         tr.cur = Some(k);
         tr.depth += 1;
@@ -382,7 +393,17 @@ pub fn search_root(
     let top_k = g.settings.search.top_k;
     TREE.with(|t| {
         *t.borrow_mut() =
-            Some(Tree { seat: p, nodes, cur: None, path: vec![], depth: 0, expanded: false, knobs: kn, top_k })
+            Some(Tree {
+                seat: p,
+                nodes,
+                cur: None,
+                path: vec![],
+                depth: 0,
+                expanded: false,
+                opp_done: false,
+                knobs: kn,
+                top_k,
+            })
     });
     let w0 = g.search_work;
     let mut vals: Vec<Vec<f64>> = vec![vec![]; nk];
@@ -412,6 +433,7 @@ pub fn search_root(
                 tr.path = vec![k + 1];
                 tr.depth = 1;
                 tr.expanded = false;
+                tr.opp_done = false;
             }
         });
         let v = play(g, k, n[k] as u64);
