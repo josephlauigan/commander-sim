@@ -13,7 +13,6 @@
 1 Command Tower (frc) 22
 1 Cost of Brilliance (sos) 77
 1 Counterspell (wc97) jk77
-1 Crumbling Necropolis (ddh) 74
 1 Cyclonic Rift (soa) 14
 1 Diabolic Intent (fca) 34
 1 Diabolic Tutor (kld) 75
@@ -27,7 +26,6 @@
 1 Fellwar Stone (4ed) 319
 1 Force of Will (dmr) 418
 1 Foreboding Ruins (voc) 174
-1 Frostboil Snarl (msc) 246
 1 Grave Titan (ecc) 74
 1 Haunted Ridge (fra) 398
 1 Inexorable Tide (som) 35
@@ -35,7 +33,6 @@
 1 Inferno Titan (cmm) 235
 1 Iron Man, Armored Avenger (msc) 33
 5 Island (2ed) 291
-1 Izzet Boilerworks (c20) 283
 1 Jace's Archivist (sld) 2515
 1 Kaervek the Merciless (2x2) 236
 1 Lazotep Reaver (war) 96
@@ -73,9 +70,11 @@
 1 Terminate (dmc) 172
 1 The Ozolith (iko) 237
 1 Treno, Dark City (fin) 290
+1 Underground River (dkm) 41
 1 Undermine (scd) 254
 1 Urza, Lord High Artificer (fca) 5
 1 Vandalblast (fic) 298
 1 Vision, Synthezoid Avenger (msc) 119
 1 War Machine, Avenging Arsenal (msc) 63
+1 Watery Grave (grn) 259
 1 Whispersilk Cloak (m10) 221

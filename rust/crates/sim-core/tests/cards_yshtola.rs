@@ -708,7 +708,9 @@ fn the_cards_of_her_list_her_rules_dont_name() {
         "Generous Gift",
         "Go for the Throat",
         "Path to Exile",
+        "Rhystic Study",
         "Teferi's Protection",
+        "Teleportation Circle",
         "Your Fate Ends Here",
     ];
     assert_eq!(unnamed, want);

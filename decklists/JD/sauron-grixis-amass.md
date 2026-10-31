@@ -185,12 +185,12 @@ The list is exactly 100 cards. 35 lands (17 nonbasic, 5 Island, 7 Mountain, 6 Sw
 
 | Measure | Count | Note |
 | --- | --- | --- |
-| Blue lands | 16 | 5 Island plus the U duals, Crumbling Necropolis, Command Tower, Exotic Orchard, Path of Ancestry, Treno |
-| Black lands | 16 | 6 Swamp plus Barad-dûr, Blood Crypt, Drowned Catacomb, Foreboding Ruins, Haunted Ridge, Treno, and the any-colour lands |
-| Red lands | 19 | 7 Mountain plus the R duals, Haunted Ridge, Izzet Boilerworks, and the any-colour lands |
+| Blue lands | 16 | 5 Island plus the U duals, Command Tower, Exotic Orchard, Path of Ancestry, Treno |
+| Black lands | 18 | 6 Swamp plus Barad-dûr, Blood Crypt, Drowned Catacomb, Underground Sea, Watery Grave, Underground River, Foreboding Ruins, Haunted Ridge, Treno, and the any-colour lands |
+| Red lands | 16 | 7 Mountain plus the R duals, Haunted Ridge, and the any-colour lands |
 | Colorless-only lands | 2 | Rogue's Passage, Scavenger Grounds |
 
-Dual lands: the shocklands Blood Crypt and Steam Vents; the check lands Drowned Catacomb and Sulfur Falls; Shivan Reef (a painland); Frostboil Snarl and Foreboding Ruins (reveal a matching land or enter tapped); Haunted Ridge; and the tapped lands Crumbling Necropolis (all three colours), Izzet Boilerworks (bounces a land), Treno, Dark City and Path of Ancestry.
+Dual lands: the original dual Underground Sea; the shocklands Blood Crypt, Steam Vents and Watery Grave; the check lands Drowned Catacomb and Sulfur Falls; the painlands Shivan Reef and Underground River; Foreboding Ruins (reveal a matching land or enter tapped); Haunted Ridge; and the tapped lands Treno, Dark City and Path of Ancestry.
 
 **Interaction.** Six pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Baleful Mastery, Infernal Grasp, Terminate and Chaos Warp) plus Noxious Gearhulk; six counters (Mana Drain, Counterspell, Arcane Denial, Undermine, Force of Will and **Disdainful Stroke**, which costs only {1}{U} against anything with mana value 4 or more); Not of This World to protect a permanent; two symmetric resets in Nibelheim Aflame and Cyclonic Rift; five one-sided sweepers or sweeper-like cards (Massacre Wurm, Ral and the Implicit Maze, Inferno Titan, Chandra's Ignition, Comet Storm); and Vandalblast for artifact-heavy tables.
 
@@ -238,7 +238,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Instants and sorceries (27).** Arcane Denial, Baleful Mastery, Bitter Triumph, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chandra's Ignition, Chaos Warp, Comet Storm, Cost of Brilliance, Counterspell, Cyclonic Rift, Diabolic Intent, Diabolic Tutor, Disdainful Stroke, Exsanguinate, Fact or Fiction, Force of Will, Infernal Grasp, Mana Drain, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Terminate, Torment of Hailfire, Undermine, Vandalblast
 
-**Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Crumbling Necropolis, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Frostboil Snarl, Haunted Ridge, Izzet Boilerworks, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, 5 Island, 7 Mountain, 6 Swamp
+**Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Haunted Ridge, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, Underground River, Underground Sea, Watery Grave, 5 Island, 7 Mountain, 6 Swamp
 
 Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when you need the land half.
 
@@ -261,7 +261,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Command Tower
 1 Cost of Brilliance
 1 Counterspell
-1 Crumbling Necropolis
 1 Cyclonic Rift
 1 Diabolic Intent
 1 Diabolic Tutor
@@ -276,14 +275,12 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Fellwar Stone
 1 Force of Will
 1 Foreboding Ruins
-1 Frostboil Snarl
 1 Grave Titan
 1 Haunted Ridge
 1 Inexorable Tide
 1 Infernal Grasp
 1 Inferno Titan
 1 Iron Man, Armored Avenger
-1 Izzet Boilerworks
 1 Jace's Archivist
 1 Kaervek the Merciless
 1 Lazotep Reaver
@@ -321,11 +318,14 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 The Ozolith
 1 Torment of Hailfire
 1 Treno, Dark City
+1 Underground River
+1 Underground Sea
 1 Undermine
 1 Urza, Lord High Artificer
 1 Vandalblast
 1 Vision, Synthezoid Avenger
 1 War Machine, Avenging Arsenal
+1 Watery Grave
 1 Whispersilk Cloak
 5 Island
 7 Mountain
