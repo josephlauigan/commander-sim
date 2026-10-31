@@ -10136,3 +10136,7 @@ paths_ok = "compiled: the counter when you gain life; card code: flying, vigilan
 
 ["Weaver of Harmony"]
 paths_ok = "compiled: the +1/+1 for other enchantment creatures; card code: the copied draw trigger (t12_kaalia_sythis.rs)"
+
+["Price of Progress"]
+status = "Full"
+note = "compiled: damage to each player (its caster too) equal to twice the nonbasic lands that player controls (the count is read for each player). The AI values it by the opponents' damage less its own, and highly when it kills"

@@ -638,7 +638,7 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         },
     ),
     (
-        r"^(each opponent|target opponent|target player|each player|you|that player) (discards?|mills?) (a|one|two|three|x|\d+) cards?$",
+        r"^(each opponent|target opponent|target player|each player|you|that player) (discards?|mills?) (a|one|two|three|four|five|six|seven|eight|nine|ten|x|\d+) cards?$",
         |m| {
             Some(eff(
                 obj! {"do" => if m.gs(2).contains("discard") { "discard" } else { "mill" }, "n" => n_(m.gs(3)), "who" => who(m.gs(1))},
@@ -797,6 +797,15 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
                 obj! {"sel" => "player", "who" => who(t)}
             };
             Some(eff(obj! {"do" => "damage", "n" => n, "to" => to}))
+        },
+    ),
+    // "~ deals damage to each player equal to twice the number of nonbasic lands that player controls" (Price of
+    // Progress): each player, you too, takes its own count
+    (
+        r"^~ deals damage to each player equal to twice the number of nonbasic lands that player controls$",
+        |_| {
+            let to = obj! {"sel" => "player", "who" => "each_player"};
+            Some(eff(obj! {"do" => "damage", "n" => "that_player_nonbasic_lands", "mult" => 2, "to" => to}))
         },
     ),
     // "add {R} for each Goblin on the battlefield" (Brightstone Ritual): a count of creatures only (not Rousing

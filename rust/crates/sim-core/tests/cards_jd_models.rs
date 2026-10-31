@@ -145,3 +145,35 @@ fn glimpse_waits_without_a_way_to_reanimate() {
     let _ = sim_core::ai::seph::seph_fill(&mut g, P0).unwrap();
     assert_eq!(g.player(P0).library.len(), lib);
 }
+
+// ======================================================== Kefka: Price of Progress
+/// Kefka at a t3 table
+fn kefka_table() -> Game {
+    table(&["kefka", "korvold-jund-sacrifice", "atraxa-infect"])
+}
+
+#[test]
+fn price_of_progress_hits_each_player_for_twice_their_nonbasics() {
+    let mut g = kefka_table();
+    lands(&mut g, P0, "Steam Vents", 1, false);
+    lands(&mut g, P0, "Island", 2, false);
+    lands(&mut g, P1, "Overgrown Tomb", 3, false);
+    lands(&mut g, P2, "Forest", 4, false);
+    let life: Vec<i32> = [P0, P1, P2].iter().map(|&q| g.player(q).life).collect();
+    let c = hand(&mut g, P0, &["Price of Progress"])[0];
+    cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
+    let after: Vec<i32> = [P0, P1, P2].iter().map(|&q| g.player(q).life).collect();
+    assert_eq!(after, vec![life[0] - 2, life[1] - 6, life[2]]);
+}
+
+#[test]
+fn price_of_progress_is_worth_casting_only_when_the_opponents_pay_more() {
+    let mut g = kefka_table();
+    let c = card(&g, "Price of Progress");
+    lands(&mut g, P1, "Overgrown Tomb", 4, false);
+    lands(&mut g, P2, "Breeding Pool", 3, false);
+    let good = sim_core::dsl::card_value(&g, P0, c);
+    lands(&mut g, P0, "Steam Vents", 6, false);
+    let bad = sim_core::dsl::card_value(&g, P0, c);
+    assert!(good > 3.0 && bad < good, "{good} {bad}");
+}

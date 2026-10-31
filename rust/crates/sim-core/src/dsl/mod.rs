@@ -528,6 +528,19 @@ fn ask_may(g: &mut Game, p: PlayerId, e: &Effect, src: Option<PermId>, spell: Op
     crate::human::choices::yes_no(g, p, &format!("{what}: {does}?"))
 }
 
+/// a count read for each player an effect reaches, not for its controller ("equal to the number of nonbasic lands that
+/// player controls", Price of Progress)
+fn per_player_n(e: &Effect) -> Option<fn(&Game, PlayerId) -> i32> {
+    match &e.n {
+        Some(Num::Name(s)) if s == "that_player_nonbasic_lands" => Some(nonbasic_lands),
+        _ => None,
+    }
+}
+
+fn nonbasic_lands(g: &Game, q: PlayerId) -> i32 {
+    g.player(q).lands.iter().filter(|&&m| g.perm(m).cd.is_some_and(|c| !g.db.get(c).basic)).count() as i32
+}
+
 fn sel_or_empty(s: &Option<Sel>) -> Sel {
     s.clone().unwrap_or_default()
 }
@@ -612,6 +625,15 @@ fn run(
                         lose_life(g, p, dmg, Some(p), kind, None)?;
                     } else if let Some(q) = min_by(&opps, |q| g.player(q).life as f64) {
                         lose_life(g, q, dmg, Some(p), kind, None)?;
+                    }
+                }
+                Some("player") if per_player_n(e).is_some() => {
+                    // each player takes its own count, you too (Price of Progress)
+                    for q in players(g, p, Some(to.who.as_deref().unwrap_or("each_player")), ctx) {
+                        let k = per_player_n(e).map_or(0, |f| f(g, q)) * e.mult.unwrap_or(1);
+                        if k > 0 {
+                            lose_life(g, q, k, Some(p), kind, None)?;
+                        }
                     }
                 }
                 Some("player") => {
@@ -1786,6 +1808,15 @@ pub fn value_of(g: &Game, p: PlayerId, effects: &[Effect], spell: Option<CardId>
                         let ms = select(g, p, &sel, true, &DslCtx::default(), None, spell);
                         v +=
                             ms.iter().map(|&m| pval(g, m) * if g.perm(m).owner != p { 1.0 } else { -1.2 }).psum() / 2.0;
+                    }
+                    Some("player") if d == "damage" && per_player_n(e).is_some() => {
+                        // each player's own count, yours against you; an opponent it kills is worth a lot
+                        let f = per_player_n(e).unwrap();
+                        let k = |q: PlayerId| (f(g, q) * e.mult.unwrap_or(1)) as f64;
+                        for q in g.opps(p) {
+                            v += 0.6 * k(q) + if k(q) >= g.player(q).life as f64 { 20.0 } else { 0.0 };
+                        }
+                        v -= 0.9 * k(p) + if k(p) >= g.player(p).life as f64 { 100.0 } else { 0.0 };
                     }
                     Some("player") | Some("any_target") if d == "damage" => {
                         v += 0.6

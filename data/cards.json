@@ -93223,7 +93223,22 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "damage",
+       "n": "that_player_nonbasic_lands",
+       "mult": 2,
+       "to": {
+        "sel": "player",
+        "who": "each_player"
+       }
+      }
+     ]
+    }
+   ],
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -93231,10 +93246,8 @@
    "ward": 0,
    "identity": "R",
    "game_changer": false,
-   "source": "scryfall",
-   "unparsed": [
-    "~ deals damage to each player equal to twice the number of nonbasic lands that player controls."
-   ],
+   "source": "scryfall+dsl",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
