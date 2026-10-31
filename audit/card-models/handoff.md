@@ -29,7 +29,7 @@ Unmodeled, kraum-tymna 6, rograkh-silas 4, prosper 2, kinnan, miirym, tergrid 1 
 ## Done
 
 - Venat (yshtola): card code registered under the full name (`impls/legends.rs` VENAT), override re-keyed. Full.
-- Glimpse the Unthinkable (seph): `fill=glimpse` (carddb.txt); the fill plan (`ai/seph.rs` FILLERS, after Entomb,
+- Glimpse the Unthinkable (now kefka, see below; the first seph-only model was reverted). Was: `fill=glimpse`; the fill plan (FILLERS, after Entomb,
   Buried Alive, Unmarked Grave) casts it, `ai::seph_fill_resolve` mills the caster ten. Full (card-audit.md row).
 - Price of Progress (kefka): parser rule + `that_player_nonbasic_lands` per-player count (dsl/mod.rs
   `per_player_n`), valued in `value_of`. Full.
@@ -77,7 +77,7 @@ more). All but a few are in Tier 6 (Thanos's tier); the rest are in Tier 3 (Atra
 Only City of Traitors was modelled in this PR (JD's cards took the time); the rest is open, in this order.
 
 
-## Before / after runs
+## Before / after runs (void: see the coordinator section)
 
 Baseline: origin/main's binary (copied to the scratch dir) with origin/main's cards.json / decks.json via
 `COMMANDER_SIM_DATA`, `--deck X --pool all --games 2000 --seed 500000 --jobs 12`. Outputs in the scratch dir
@@ -88,3 +88,30 @@ Baseline: origin/main's binary (copied to the scratch dir) with origin/main's ca
 - `r.card(db, NAME)` under `if db.id(NAME).is_some()` silently skips a card whose name is spelled differently in the
   data (Venat). A double-faced card in a deck list is in cards.json under the list's spelling.
 - testkit `hand`/`perm` take the card out of the library: measure library sizes after taking.
+
+## Coordinator changes (10-30) and the state of step 5
+
+- The ghave-deck PR (branch `ghave-deck`, worktree `/home/joseph/projects/mtg_sims/wt-ghave`) retires `seph` and
+  moves cards between JD's decks. **Deck sims are on hold until the coordinator says it is in main.** The baseline
+  runs started earlier (yshtola, seph, sauron, kefka on the old lists) were stopped and are void.
+- Glimpse the Unthinkable moves to Kefka: the seph-only `fill=glimpse` model is reverted; the card compiles and the
+  interpreter's `mill_target` / `mill_value` (dsl/mod.rs) choose and price the target. Grinding Station shares it.
+- The cards coming into JD's decks: on the ghave branch's data, `cardgen audit --mine` (this branch's binary) shows
+  none of Atraxa, Gifts Ungiven, Swan Song, Rhystic Study, Teleportation Circle, Displacer Kitten, Arcane Denial,
+  Conjurer's Closet as not Full; their new decks' priorities are above 0 (Gifts 72, Atraxa 66 in thrasios; Kitten 40,
+  Rhystic 60, Teleportation Circle in yshtola; Conjurer's Closet in karn: test
+  `the_moved_flicker_engines_get_cast_by_their_new_decks`).
+
+### To do once ghave-deck is in main
+
+1. `git merge origin/main`; on conflicts in data/cards.json, data/decks.json or tests/fixtures/my_decks_parsed.json
+   take either side and regenerate (`cardgen export`; `cardgen deck` for the fixture), never hand-merge.
+2. `cardgen audit --mine`; add any card that is not Full to the table above.
+3. Step 5: the baseline is origin/main (build it in a scratch copy, or `git stash`-free: a temporary worktree at
+   origin/main, removed after), then this branch, each deck with a changed card on its own tiers:
+   `commander-sim --deck X --pool all --games 2000 --seed 500000 --jobs 12` (one at a time, rc=0). Decks: yshtola
+   (Venat), kefka (Price of Progress, Glimpse), sauron (Baleful Mastery), cloud (Buster Sword), karn (Treasure
+   Vault), urdragon (Ojutai, Bolas), thanos (Orim's Chant, Gemstone Caverns, Tinder Wall; and the t6 pool's City of
+   Traitors: run thanos once without and once with commit 5df4413b to separate it). Scripts that did this:
+   scratch dir `run-base.sh` / `run-after.sh` (COMMANDER_SIM_DATA points a frozen binary at frozen data).
+4. Update `audit/<deck>/FINDINGS.md` for each (model status, the number and why it moved).

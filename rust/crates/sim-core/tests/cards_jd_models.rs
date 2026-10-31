@@ -460,3 +460,19 @@ fn glimpse_without_a_payoff_is_barely_worth_a_card() {
     let c = hand(&mut g, P0, &["Glimpse the Unthinkable"])[0];
     assert!(sim_core::dsl::card_value(&g, P0, c) < 1.0);
 }
+
+// ======================================================== cards moving into JD's decks with ghave-deck (10-30)
+#[test]
+fn the_moved_flicker_engines_get_cast_by_their_new_decks() {
+    for (deck, name, table_keys) in [
+        ("yshtola", "Teleportation Circle", ["yshtola", "zur-esper-enchantment-control", "miirym-temur-dragons"]),
+        ("karn", "Conjurer's Closet", ["karn", "chulane-bant-value-combo", "yuriko-dimir-ninjas"]),
+    ] {
+        let mut g = table(&table_keys);
+        g.active = Some(P0);
+        perm(&mut g, P0, "Solemn Simulacrum"); // an enters ability worth flickering
+        let c = hand(&mut g, P0, &[name])[0];
+        let v = sim_core::ai::decks::deck_prio(&g, P0, c);
+        assert!(v > 0, "{deck} never casts {name}");
+    }
+}
