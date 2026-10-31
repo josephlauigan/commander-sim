@@ -104,6 +104,15 @@ fn retired_decks() -> Vec<RawDeck> {
             "WUBRG",
             include_str!("../../../../decklists/pool/retired/scion-ur-dragon-turbo.md"),
         ),
+        // --- ghave: JD's Seph/Atraxa deck, retired 2026-10-30 (Ghave took its seat): the tests of its card code
+        // (the loops in impls::mine, the reanimation spells, Sephiroth's cards) still seat it with its real list
+        listed(
+            "seph",
+            "Sephiroth",
+            "Atraxa, Grand Unifier",
+            "WUBG",
+            include_str!("../../../../decklists/pool/retired/sephiroth-phyrexian-reanimator.md"),
+        ),
     ]
 }
 

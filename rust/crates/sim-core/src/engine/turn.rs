@@ -118,12 +118,6 @@ fn tag_cols(g: &Game, p: PlayerId, cd: CardId) -> crate::cards::Colors {
 
 /// p plays its best land from hand (or the graveyard with Yawgmoth's Will / Muldrotha). Python's `play_land`.
 pub fn play_land(g: &mut Game, p: PlayerId) -> Res {
-    if g.player(p).key == "seph" {
-        ai::seph::tracker_first(g, p)?; // Tireless Tracker first: the land drop is a Clue
-        if g.over || !g.player(p).alive {
-            return Ok(());
-        }
-    }
     // --- ai-planner: a Tier 6 deck's land drop (and a fetch land's land) is the planner's when it changes what the
     // deck's plan reaches; otherwise the usual choice below
     if ai::planner::applies(g, p)
@@ -796,14 +790,6 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
         crate::human::choices::discard_to_hand_size(g, p, 7)?; // a person discards to hand size themselves
     }
     while !human && held(g).len() > 7 && !nomax(g) {
-        if g.player(p).key == "seph" {
-            let bombs: Vec<CardId> =
-                g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).creature && g.db.get(c).bomb >= 6).collect();
-            if let Some(c) = max_by(&bombs, |c| g.db.get(c).bomb as f64) {
-                discard_cards(g, p, &[c])?;
-                continue;
-            }
-        }
         g.tick()?; // each discard can set off triggers (Tergrid): count it
         let h = held(g);
         // --- ai-fix: G: keep the line's pieces, the lands and protection it needs and what it can cast soonest (it
@@ -813,9 +799,6 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
         discard_cards(g, p, &[c])?;
     }
     g.player_mut(p).last_turn_end = g.enter_no; // Premature Burial: what entered since this turn ended
-    if g.player(p).key == "seph" {
-        ai::seph_end_milestones(g, p);
-    }
     Ok(())
 }
 
@@ -1019,7 +1002,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
         // Necropotence: skip your draw step
     } else if loam_dredge(g, p)? || cardcode::dakmor_dredge(g, p)? || cardcode::skip_draw(g, p) {
         // Life from the Loam, Dakmor Salvage dredged; Solitary Confinement
-    } else if !(g.player(p).key == "seph" && ai::seph_dredge(g, p)?) {
+    } else {
         if crate::human::is_human(g, p) {
             if !crate::human::cards::dredge(g, p)? {
                 draw(g, p, 1, true)?;

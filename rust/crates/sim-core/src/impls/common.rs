@@ -2365,9 +2365,6 @@ pub fn gy_worth(g: &Game, owner_: PlayerId, q: PlayerId) -> f64 {
     }) {
         v += 3.0;
     }
-    if g.player(q).key == "seph" {
-        v += 3.0;
-    }
     if g.player(q).hand.iter().any(|&c| g.db.get(c).tag(Tag::Rean))
         || g.player(q).gy.iter().any(|&c| g.db.get(c).tag(Tag::Rean))
     {

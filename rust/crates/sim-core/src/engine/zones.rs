@@ -195,7 +195,7 @@ pub fn amass(g: &mut Game, p: PlayerId, n: i32) -> Res {
 pub fn token_color(key: &str) -> Colors {
     Colors::from_letters(match key {
         "najeela" | "galadriel" | "yshtola" => "W",
-        "seph" | "sauron" => "B",
+        "sauron" => "B",
         "veyran" => "R",
         "alela" => "U",
         _ => "",
