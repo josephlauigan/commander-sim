@@ -179,6 +179,14 @@ pub enum DataKey {
     Vanish,
     /// --- card-models-2: Shifting Woodland is a copy of a permanent card until end of turn (its own card is in `phys`)
     WoodlandCopy,
+    /// --- card-models-3: the cipher cards encoded on this creature (a list of `Val::Card`; `card_models3::cipher_hit`)
+    Cipher,
+    /// --- card-models-3: a battle's defense counters (`card_models3::battle_enter`)
+    Defense,
+    /// --- card-models-3: the player protecting a battle (a Siege: the opponent its controller chose)
+    Protector,
+    /// --- card-models-3: the "becomes tapped" watchers that last saw this permanent untapped (`card_models3::newly_tapped`)
+    TapArmed,
     /// Wall of Junk blocked this combat: it returns to its owner's hand at end of combat
     WallBlocked,
     TapOnReturn,

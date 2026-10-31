@@ -38,6 +38,7 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
                 "cp" => is_c || ty.has(Types::PLANESWALKER),
                 "cap" => is_c || ty.has(Types::ARTIFACT) || ty.has(Types::PLANESWALKER),
                 "ce" => is_c || ty.has(Types::ENCHANTMENT),
+                "cep" => is_c || ty.has(Types::ENCHANTMENT) || ty.has(Types::PLANESWALKER), // --- card-models-3: Get Lost
                 "nl" | "p" | "blue" => true,
                 "a" => ty.has(Types::ARTIFACT),
                 "cna" => is_c && !ty.has(Types::ARTIFACT),

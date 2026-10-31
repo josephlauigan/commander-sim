@@ -13,7 +13,8 @@
 //! - Drift of Phantasms: Transmute {1}{U}{U} as a hand option (sorcery speed); defender, flying and the 0/5 body are data.
 //! - Emrakul, the Promised End: costs {1} less per card type in your graveyard (`self_cost`); control of an opponent's turn, the extra turn and protection from instants are engine needs.
 //! - Silas Renn: the combat damage trigger marks the best artifact card in the graveyard for the turn (a per-player turn flag); an option casts it from the graveyard in a main phase.
-//! - Hidden Strings: untaps two of its own tapped mana sources (else taps down two opposing creatures); cipher is an engine need.
+//! - Hidden Strings: untaps two of its own tapped mana sources (else taps down two opposing creatures); cipher
+//!   (card_models3::cipher_encode / cipher_hit).
 //! - Valley Floodcaller: the cast trigger pumps and untaps its Birds, Frogs, Otters and Rats; the noncreature flash is `static_flash`.
 
 use crate::cards::{CardDb, Colors, Types};
@@ -541,8 +542,14 @@ fn strings_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 
 /// Hidden Strings: you may tap or untap target permanent, then you may tap or untap another target permanent. The
 /// AI untaps two of its own tapped mana sources; with none tapped it taps down the two best untapped creatures
-/// opponents control. Cipher (encoding the card on a creature, a free copy on combat damage) is an engine need.
-fn strings_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+/// opponents control. Cipher: then it is encoded on the creature likeliest to connect (`card_models3::cipher_encode`).
+fn strings_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
+    strings_effect(g, p)?;
+    Ok(crate::impls::card_models3::cipher_encode(g, p, c, ctx))
+}
+
+/// the tap / untap half of Hidden Strings
+fn strings_effect(g: &mut Game, p: PlayerId) -> Res {
     let mine = tapped_mana_sources(g, p);
     if !mine.is_empty() {
         for (m, l) in mine.into_iter().take(2) {
@@ -556,7 +563,7 @@ fn strings_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym
             }
         }
         g.bf_ver += 1;
-        return Ok("gy");
+        return Ok(());
     }
     let mut theirs: Vec<PermId> = g
         .opps(p)
@@ -568,7 +575,7 @@ fn strings_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym
         g.perm_mut(m).tapped = true;
         crate::glog!(g, "    Hidden Strings taps {}", g.perm(m).name);
     }
-    Ok("gy")
+    Ok(())
 }
 
 

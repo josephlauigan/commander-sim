@@ -153,6 +153,8 @@ fn target_kind(phrase: &str) -> Option<&'static str> {
         "nl"
     } else if p.contains("artifact, creature, or planeswalker") || p.contains("artifact or creature") {
         "cap"
+    } else if p.contains("creature, enchantment, or planeswalker") {
+        "cep" // --- card-models-3: Get Lost
     } else if p.contains("creature or planeswalker") {
         "cp"
     } else if p.contains("creature or enchantment") {

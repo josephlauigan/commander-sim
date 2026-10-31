@@ -49,6 +49,12 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
     if damage && crate::impls::tymna_cards::unlife_infect(g, p, n) {
         return Ok(()); // Phyrexian Unlife at 0 or less life: the damage is dealt as poison counters
     }
+    // --- card-models-3: Angel's Grace: damage that would reduce p's life total to less than 1 reduces it to 1
+    let n = if damage && n > 0 && crate::impls::t6_stax::grace_active(g, p) {
+        n.min((g.player(p).life - 1).max(0))
+    } else {
+        n
+    };
     crate::impls::t45_krenko::speed_up(g, p); // --- Tiers 4/5 (krenko): an opponent of the active player lost life
     let st = g.turn_stamp();
     let pl = g.player_mut(p);

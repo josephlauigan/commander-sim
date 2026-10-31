@@ -2156,25 +2156,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "loyalty",
-     "loyalty": -3,
-     "effects": [
-      {
-       "do": "grant",
-       "keyword": "vigilance",
-       "what": {
-        "sel": "all",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        }
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": "4",
    "kws": [
     "compleated"
@@ -2186,15 +2168,8 @@
    "ward": 0,
    "identity": "GW",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Compleated",
-    "reveal the top card of your library",
-    "if it's a creature or planeswalker card, put it into your hand",
-    "otherwise, you may put it on the bottom of your library",
-    "distribute three +1/+1 counters among up to three target creatures",
-    "you get an emblem with \"whenever you cast a creature or planeswalker spell, target opponent gets two poison counters.\""
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -7094,17 +7069,13 @@
    "types": "A",
    "generic": 0,
    "pips": "",
-   "tags": {},
+   "tags": {
+    "rock": "1:A"
+   },
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "note",
-     "text": "~ enters with x charge counters on it"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [],
@@ -7112,10 +7083,8 @@
    "ward": 0,
    "identity": "",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "{T}: Choose a color. Add one mana of that color for each charge counter on ~."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": false,
@@ -47979,9 +47948,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Choose a Background"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -48753,7 +48720,7 @@
    "pips": "W",
    "tags": {
     "rem": "destroy",
-    "tgt": "c"
+    "tgt": "cep"
    },
    "pow": 0,
    "tgh": 0,
@@ -48784,10 +48751,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Destroy target creature, enchantment, or planeswalker. Its controller creates two Map tokens.   [partly: its controller creates two map tokens]"
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -58210,10 +58175,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "You may tap or untap target permanent, then you may tap or untap another target permanent.",
-    "Cipher"
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -62525,27 +62487,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "triggered",
-     "effects": [
-      {
-       "do": "counters",
-       "n": 1,
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature",
-         "controller": "you"
-        },
-        "upto": false
-       }
-      }
-     ],
-     "event": "upkeep",
-     "who": "you"
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -62555,13 +62497,8 @@
    "ward": 1,
    "identity": "G",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "{G}: Level 2",
-    "Permanents you control with counters on them have ward {1}.",
-    "{3}{G}: Level 3",
-    "If you would put one or more counters on a permanent or player, put twice that many of each of those kinds of counters on that permanent or player instead."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -63890,9 +63827,7 @@
    "identity": "BGW",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Corrupted — At the beginning of your end step, each opponent who has three or more poison counters exiles the top card of their library face down. You may look at and play those cards for as long as they remain exiled, and you may spend mana as though it were mana of any color to cast those spells."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -75501,11 +75436,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Cast ~ only during combat.",
-    "Your opponents can't cast spells this turn.",
-    "End the combat phase."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -88752,19 +88683,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "static",
-     "static": "anthem",
-     "filter": {
-      "type": "creature",
-      "controller": "you",
-      "other": false
-     },
-     "pow": 1,
-     "tgh": 1
-    }
-   ],
+   "dsl": null,
    "start_loyalty": null,
    "kws": [],
    "subtypes": [
@@ -88774,13 +88693,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "Spells your opponents cast during your turn cost {1} more to cast.",
-    "{2}{W}: Level 2",
-    "{4}{W}: Level 3",
-    "Whenever you attack, until end of turn, target attacking creature gets +1/+1 for each other attacking creature and gains double strike."
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -136255,9 +136169,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Whenever a creature you control becomes the target of a spell, target opponent gets a poison counter."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
