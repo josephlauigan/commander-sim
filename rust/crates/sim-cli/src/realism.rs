@@ -279,21 +279,26 @@ pub fn render(m: &BTreeMap<&'static str, Measured>, targets: &Targets) -> (Strin
 
 /// --realism: refuse a bad command or targets file before playing, then play, score and print
 // --- phase4-search
-/// the look-ahead's cost per game: decisions searched and playout steps, by kind (main / attack / counter), over
-/// every seat and over the generic-policy seats, and the decisions the stakes test left to the policy
+/// the look-ahead's cost per game: decisions searched and playout steps, by kind (main / attack / counter / block /
+/// protect / wipe), over every seat and over the generic-policy seats, and the decisions the stakes test left to the
+/// policy; then (phase4-search-b) how often the generic seats' blocks, protection and wipe responses came up
 pub fn search_cost_line(games: &[GameOut]) -> String {
     let n = games.len().max(1) as f64;
     let (mut all, mut gs) = (sim_core::state::SearchCost::default(), sim_core::state::SearchCost::default());
     for p in games.iter().flat_map(|g| &g.players) {
         for t in [&mut all].into_iter().chain(p.generic.then_some(&mut gs)) {
-            for k in 0..3 {
+            for k in 0..6 {
                 t.n[k] += p.search_cost.n[k];
                 t.steps[k] += p.search_cost.steps[k];
                 t.policy[k] += p.search_cost.policy[k];
                 t.playouts[k] += p.search_cost.playouts[k];
+                t.seen[k] += p.search_cost.seen[k];
+                t.hot[k] += p.search_cost.hot[k];
+                t.acted[k] += p.search_cost.acted[k];
             }
         }
     }
+    let per = |x: &[u32]| x.iter().map(|&x| format!("{:.2}", x as f64 / n)).collect::<Vec<_>>().join("/");
     let part = |c: &sim_core::state::SearchCost| {
         let d: Vec<String> = c.n.iter().map(|&x| format!("{:.1}", x as f64 / n)).collect();
         let s: Vec<String> = c.steps.iter().map(|&x| format!("{:.0}", x as f64 / n)).collect();
@@ -312,10 +317,14 @@ pub fn search_cost_line(games: &[GameOut]) -> String {
         )
     };
     format!(
-        "Search cost per game (main/attack/counter), {} games: all seats {}; generic seats {}",
+        "Search cost per game (main/attack/counter/block/protect/wipe), {} games: all seats {}; generic seats {}\n\
+         Generic seats' blocks / protection / wipe responses per game: seen {}, hot {}, acted {}",
         games.len(),
         part(&all),
-        part(&gs)
+        part(&gs),
+        per(&gs.seen[3..]),
+        per(&gs.hot[3..]),
+        per(&gs.acted[3..])
     )
 }
 

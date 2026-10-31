@@ -486,7 +486,7 @@ pub fn resolve_combat(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId, un
 }
 
 /// how many of d's creatures block, from the AI's rules: kill and survive, trade, chump (Python's inline blocks)
-fn ai_blocks(
+pub fn ai_blocks(
     g: &Game,
     p: PlayerId,
     atk: &[PermId],
@@ -573,11 +573,11 @@ fn resolve_combat_inner(
     if g.end_combat {
         return Ok(vec![]); // Mandate of Peace: the combat phase ended
     }
-    let mut atk: Vec<PermId> = atk.iter().copied().filter(|&m| g.perm(m).on_bf && g.perm(m).owner == p).collect();
+    let atk: Vec<PermId> = atk.iter().copied().filter(|&m| g.perm(m).on_bf && g.perm(m).owner == p).collect();
     if g.over || !g.player(d).alive {
         return Ok(vec![]);
     }
-    let mut assign = if crate::goldfish::is_inert(g, d) {
+    let assign = if crate::goldfish::is_inert(g, d) {
         vec![] // --- scion: an inert goldfish seat never blocks
     } else if crate::human::is_human(g, d) {
         crate::human::combat::human_blocks(g, p, &atk, d, unbl)? // the person declares blockers
@@ -585,9 +585,27 @@ fn resolve_combat_inner(
         let mut rng = std::mem::replace(&mut g.rng, crate::rng::Rng::from_u64(0));
         let mut assign = ai_blocks(g, p, &atk, d, unbl, &mut rng);
         g.rng = rng;
+        crate::ai::ismcts::note_blocks(g, &atk, d, unbl, &assign); // --- phase4-search-b: the survey
+        if let Some(a2) = crate::ai::ismcts::choose_blocks(g, p, &atk, d, unbl, &assign) {
+            assign = a2; // --- phase4-search-b: blocks by search (AI_SEARCH_B)
+        }
         crate::impls::cloud::force_blocks(g, d, &atk, unbl, &mut assign); // Magitek Scythe: must be blocked if able
         assign
     };
+    resolve_blocks(g, p, atk, d, assign, tot)
+}
+
+/// --- phase4-search-b: p's attack on d once d's blocks are declared (`assign`): the blocks' card code, then
+/// combat damage (the second half of `resolve_combat_inner`, also a block playout's start). Returns the attackers that
+/// connected.
+pub fn resolve_blocks(
+    g: &mut Game,
+    p: PlayerId,
+    mut atk: Vec<PermId>,
+    d: PlayerId,
+    mut assign: Vec<(PermId, PermId)>,
+    tot: &mut i32,
+) -> Res<Vec<PermId>> {
     cardcode::blocks_hooks(g, p, &atk, d, &mut assign)?; // card code that changes blocks
     for &(a, b) in &assign.clone() {
         // flanking: a blocker without flanking gets -1/-1

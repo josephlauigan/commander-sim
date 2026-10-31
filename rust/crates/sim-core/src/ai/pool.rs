@@ -1233,18 +1233,17 @@ pub(crate) fn worth_whole_board(g: &Game, owner: PlayerId, m: PermId) -> bool {
     board > 0.0 && pval(g, m) >= 0.4 * board
 }
 
-/// pool_ai.protect: targeted removal is aimed at owner's permanent m: respond if it's worth it
-pub fn protect(
-    g: &mut Game,
+/// the protectors owner could use now that would save m from targeted removal `kind`, cheapest first: (rank, protector
+/// index, its source permanent). `heur`: with the heuristic's own limit (Teferi's Protection on one targeted removal
+/// only for the commander or 40% of the board)
+fn protect_cands(
+    g: &Game,
     owner: PlayerId,
     m: PermId,
     kind: Sym,
-    _actor: Option<PlayerId>,
     spell: Option<CardId>,
-) -> Res<bool> {
-    if !worth_protecting(g, owner, m) {
-        return crate::cardcode::sac_in_response(g, owner, m, kind);
-    }
+    heur: bool,
+) -> Vec<(u32, usize, Option<PermId>)> {
     let mut cands: Vec<(u32, usize, Option<PermId>)> = vec![];
     for (i, src) in protector_options(g, owner, Some(m)) {
         let (name, wh, _, how, scope, _) = PROTECTORS[i];
@@ -1257,7 +1256,7 @@ pub fn protect(
         if !saves(g, how, kind, Some(m), spell, true) {
             continue;
         }
-        if name == "Teferi's Protection" && !worth_whole_board(g, owner, m) {
+        if heur && name == "Teferi's Protection" && !worth_whole_board(g, owner, m) {
             continue; // kept for wipes and lethal
         }
         if !crate::impls::t45_winota::lena_saves(g, name, src, m) {
@@ -1272,27 +1271,151 @@ pub fn protect(
         cands.push((rank, i, src));
     }
     cands.sort_by_key(|x| x.0);
-    for (_, i, src) in cands {
-        if use_protector(g, owner, i, src)? {
-            let (name, _, _, how, _, _) = PROTECTORS[i];
-            if name == "Teferi's Protection" {
-                teferis_protection(g, owner);
-            } else if how == How::Phase {
-                for x in g.player(owner).perms.clone() {
-                    g.perm_mut(x).phased = true;
-                }
-            } else if how == How::Blink && g.perm(m).on_bf && g.perm(m).owner == owner {
-                let (cd, orig, is_cmd) = (g.perm(m).cd, g.perm(m).orig, g.perm(m).is_cmd);
-                leave(g, m)?;
-                if let Some(cd) = cd {
-                    let n = enter(g, owner, cd, Enter { orig: Some(orig), ..Enter::default() })?;
-                    g.perm_mut(n).is_cmd = is_cmd;
-                }
+    cands
+}
+
+/// use protector i (from src) to save owner's permanent m from targeted removal: true if it was used
+fn protect_with(g: &mut Game, owner: PlayerId, m: PermId, i: usize, src: Option<PermId>) -> Res<bool> {
+    if !use_protector(g, owner, i, src)? {
+        return Ok(false);
+    }
+    let (name, _, _, how, _, _) = PROTECTORS[i];
+    if name == "Teferi's Protection" {
+        teferis_protection(g, owner);
+    } else if how == How::Phase {
+        for x in g.player(owner).perms.clone() {
+            g.perm_mut(x).phased = true;
+        }
+    } else if how == How::Blink && g.perm(m).on_bf && g.perm(m).owner == owner {
+        let (cd, orig, is_cmd) = (g.perm(m).cd, g.perm(m).orig, g.perm(m).is_cmd);
+        leave(g, m)?;
+        if let Some(cd) = cd {
+            let n = enter(g, owner, cd, Enter { orig: Some(orig), ..Enter::default() })?;
+            g.perm_mut(n).is_cmd = is_cmd;
+        }
+    }
+    Ok(true)
+}
+
+/// --- phase4-search-b: the protection decision's options for the search: (label, protector index, source), the
+/// protectors that would save m (the heuristic's limit off), at most `k`, cheapest first
+pub fn protect_options(
+    g: &Game,
+    owner: PlayerId,
+    m: PermId,
+    kind: Sym,
+    spell: Option<CardId>,
+    k: usize,
+) -> Vec<(String, usize, Option<PermId>)> {
+    protect_cands(g, owner, m, kind, spell, false)
+        .into_iter()
+        .take(k)
+        .map(|(_, i, src)| (format!("prot:{}:{:?}", PROTECTORS[i].0, src.map(|s| s.0)), i, src))
+        .collect()
+}
+
+/// --- phase4-search-b: the heuristic's protection decision, without using it: the protector it would try first
+/// (None: it would let the removal resolve)
+pub fn protect_heuristic(
+    g: &Game,
+    owner: PlayerId,
+    m: PermId,
+    kind: Sym,
+    spell: Option<CardId>,
+) -> Option<(usize, Option<PermId>)> {
+    if !worth_protecting(g, owner, m) {
+        return None;
+    }
+    protect_cands(g, owner, m, kind, spell, true).first().map(|x| (x.1, x.2))
+}
+
+/// --- phase4-search-b: one option of the protection decision in a look-ahead copy: protector i from src
+pub fn protect_play(g: &mut Game, owner: PlayerId, m: PermId, i: usize, src: Option<PermId>) -> Res<bool> {
+    protect_with(g, owner, m, i, src)
+}
+
+/// pool_ai.protect: targeted removal is aimed at owner's permanent m: respond if it's worth it
+pub fn protect(
+    g: &mut Game,
+    owner: PlayerId,
+    m: PermId,
+    kind: Sym,
+    _actor: Option<PlayerId>,
+    spell: Option<CardId>,
+) -> Res<bool> {
+    let note = super::ismcts::noting(g, owner); // --- phase4-search-b: how often it comes up
+    if note {
+        let hot = !protect_cands(g, owner, m, kind, spell, false).is_empty();
+        super::ismcts::note(g, owner, crate::state::SearchCost::PROTECT, hot, false);
+    }
+    if let Some(r) = super::ismcts::choose_protect(g, owner, m, kind, _actor, spell)? {
+        return Ok(r); // --- phase4-search-b: searched (AI_SEARCH_B)
+    }
+    if !worth_protecting(g, owner, m) {
+        return crate::cardcode::sac_in_response(g, owner, m, kind);
+    }
+    for (_, i, src) in protect_cands(g, owner, m, kind, spell, true) {
+        if protect_with(g, owner, m, i, src)? {
+            if note {
+                super::ismcts::note(g, owner, crate::state::SearchCost::PROTECT, false, true);
             }
             return Ok(true);
         }
     }
     crate::cardcode::sac_in_response(g, owner, m, kind)
+}
+
+/// the protectors q could use now that would save its board from a wipe of `kind`, in the heuristic's order (those
+/// that sacrifice themselves first); Lena's and Ainok's own rules are checked when they are used
+fn wipe_cands(g: &Game, q: PlayerId, kind: Sym) -> Vec<(usize, Option<PermId>)> {
+    let mut opts = protector_options(g, q, None);
+    opts.sort_by_key(|&(i, _)| PROTECTORS[i].1 != Where::BfSac);
+    opts.retain(|&(i, _)| {
+        let (_, _, _, how, scope, _) = PROTECTORS[i];
+        !matches!(scope, Scope::One | Scope::Selfish) && saves(g, how, kind, None, None, false)
+    });
+    opts
+}
+
+/// use protector i (from src) against a wipe: its answer ('all', 'indes'), None if it wasn't used
+fn wipe_with(g: &mut Game, q: PlayerId, i: usize, src: Option<PermId>) -> Res<Option<Sym>> {
+    if !use_protector(g, q, i, src)? {
+        return Ok(None);
+    }
+    let (name, _, _, how, _, _) = PROTECTORS[i];
+    if name == "Teferi's Protection" {
+        teferis_protection(g, q);
+        return Ok(Some("all"));
+    }
+    if how == How::Phase {
+        for x in g.player(q).perms.clone() {
+            g.perm_mut(x).phased = true;
+        }
+        return Ok(Some("all"));
+    }
+    Ok(Some("indes"))
+}
+
+/// --- phase4-search-b: the wipe response's options for the search: (label, protector index, source), the
+/// board-wide protectors that would save q's board (not Lena, whose save is her own rule), at most `k`
+pub fn wipe_options(g: &Game, q: PlayerId, kind: Sym, k: usize) -> Vec<(String, usize, Option<PermId>)> {
+    wipe_cands(g, q, kind)
+        .into_iter()
+        .filter(|&(i, _)| PROTECTORS[i].0 != "Lena, Selfless Champion")
+        .take(k)
+        .map(|(i, src)| (format!("wipe:{}:{:?}", PROTECTORS[i].0, src.map(|s| s.0)), i, src))
+        .collect()
+}
+
+/// --- phase4-search-b: would the heuristic use protector i against a wipe (Ainok Strike Leader only when the tokens
+/// carry the board)
+pub fn wipe_heuristic_takes(g: &Game, q: PlayerId, i: usize) -> bool {
+    PROTECTORS[i].3 != How::TokenIndes || crate::impls::t0_zurgo::tokens_carry_board(g, q)
+}
+
+/// --- phase4-search-b: one option of the wipe response in a look-ahead copy: protector i from src
+pub fn wipe_play(g: &mut Game, q: PlayerId, i: usize, src: Option<PermId>) -> Res<Option<Sym>> {
+    wipe_with(g, q, i, src)
 }
 
 /// pool_ai.wipe_response: a board wipe is about to hit q: 'all' (everything saved), 'indes', or None
@@ -1301,37 +1424,39 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     if loss < 6.0 {
         return Ok(None);
     }
+    let note = super::ismcts::noting(g, q); // --- phase4-search-b: how often it comes up
+    if note {
+        let charm = g.player(q).hand.iter().any(|&c| &*g.db.get(c).name == "Golgari Charm");
+        let hot = !wipe_cands(g, q, kind).is_empty() || charm;
+        super::ismcts::note(g, q, crate::state::SearchCost::WIPE, hot, false);
+    }
+    let r = wipe_heuristic(g, q, kind, caster)?;
+    if note && r.is_some() {
+        super::ismcts::note(g, q, crate::state::SearchCost::WIPE, false, true);
+    }
+    Ok(r)
+}
+
+fn wipe_heuristic(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> Res<Option<Sym>> {
+    if let Some(r) = super::ismcts::choose_wipe(g, q, kind, caster)? {
+        return Ok(r); // --- phase4-search-b: searched (AI_SEARCH_B)
+    }
     if kind == "destroy" && crate::cardcode::regen_wipe(g, q)? {
         return Ok(Some("indes"));
     }
-    let mut opts = protector_options(g, q, None);
-    opts.sort_by_key(|&(i, _)| PROTECTORS[i].1 != Where::BfSac);
-    for (i, src) in opts {
-        let (name, _, _, how, scope, _) = PROTECTORS[i];
-        if matches!(scope, Scope::One | Scope::Selfish) || !saves(g, how, kind, None, None, false) {
-            continue;
-        }
+    for (i, src) in wipe_cands(g, q, kind) {
+        let name = PROTECTORS[i].0;
         if let Some(saved) = crate::impls::t45_winota::lena_wipe(g, q, name, src, kind)? {
             if saved {
                 return Ok(None); // --- Tiers 4/5 (winota): Lena made the small creatures indestructible
             }
             continue;
         }
-        if how == How::TokenIndes && !crate::impls::t0_zurgo::tokens_carry_board(g, q) {
+        if PROTECTORS[i].3 == How::TokenIndes && !crate::impls::t0_zurgo::tokens_carry_board(g, q) {
             continue; // only the tokens would live
         }
-        if use_protector(g, q, i, src)? {
-            if name == "Teferi's Protection" {
-                teferis_protection(g, q);
-                return Ok(Some("all"));
-            }
-            if how == How::Phase {
-                for x in g.player(q).perms.clone() {
-                    g.perm_mut(x).phased = true;
-                }
-                return Ok(Some("all"));
-            }
-            return Ok(Some("indes"));
+        if let Some(r) = wipe_with(g, q, i, src)? {
+            return Ok(Some(r));
         }
     }
     Ok(None)

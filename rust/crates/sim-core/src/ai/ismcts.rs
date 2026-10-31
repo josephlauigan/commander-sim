@@ -7,7 +7,7 @@
 
 use crate::engine::values::epow;
 use crate::hooks::{Action, Opt};
-use crate::ids::{CardId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Game, SearchCost};
 use crate::sym::Sym;
 use std::cell::RefCell;
@@ -158,6 +158,12 @@ pub struct Knobs {
     /// the fewest shared copies on which the search may overrule the policy's top play, or call a leader clear
     /// (`AI_SEARCH_PAIRS`; today's margin has 6 at the least)
     pub pairs: usize,
+    /// --- phase4-search-b (an ablation knob): the playouts every attack plan and counter choice gets before UCB
+    /// (`AI_SEARCH_ATK_MIN`; default `min_visits`)
+    pub atk_min: u32,
+    /// --- phase4-search-b (an ablation knob): an opponent's first main-phase choice in a playout is a tree node too,
+    /// chosen against the decider (UCB on the decider's value negated) (`AI_SEARCH_OPP=1`)
+    pub opp: bool,
 }
 
 fn env_or<T: std::str::FromStr>(key: &str, d: T) -> T {
@@ -189,6 +195,8 @@ fn env_knobs() -> &'static Knobs {
         gate: !matches!(std::env::var("AI_SEARCH_GATE").ok().as_deref(), Some("0")),
         close: env_or("AI_SEARCH_CLOSE", CLOSE),
         pairs: env_or("AI_SEARCH_PAIRS", PAIRS),
+        atk_min: env_or("AI_SEARCH_ATK_MIN", env_or("AI_SEARCH_MIN", MIN_VISITS)),
+        opp: matches!(std::env::var("AI_SEARCH_OPP").ok().as_deref(), Some("1")),
     })
 }
 
@@ -252,6 +260,8 @@ struct Tree {
     path: Vec<usize>,
     depth: usize,
     expanded: bool,
+    /// this playout has had its opponent node (`Knobs::opp`)
+    opp_done: bool,
     knobs: Knobs,
     top_k: usize,
 }
@@ -283,7 +293,8 @@ pub fn tree_pick(g: &Game, p: PlayerId, opts: &[Opt]) -> Option<usize> {
     TREE.with(|t| {
         let mut t = t.borrow_mut();
         let tr = t.as_mut()?;
-        if tr.seat != p {
+        let opp = tr.seat != p;
+        if opp && (!tr.knobs.opp || tr.opp_done) {
             return None;
         }
         let cur = tr.cur?;
@@ -322,10 +333,14 @@ pub fn tree_pick(g: &Game, p: PlayerId, opts: &[Opt]) -> Option<usize> {
             let ucb = |k: usize| {
                 let n = &tr.nodes[k];
                 let v = n.visits.max(1) as f64;
-                n.sum / v + c * ((n.avail.max(1) as f64).ln() / v).sqrt()
+                let m = if opp { -n.sum / v } else { n.sum / v };
+                m + c * ((n.avail.max(1) as f64).ln() / v).sqrt()
             };
             *have.iter().reduce(|a, b| if ucb(b.1) > ucb(a.1) { b } else { a })?
         };
+        if opp {
+            tr.opp_done = true;
+        }
         tr.path.push(k);
         tr.cur = Some(k);
         tr.depth += 1;
@@ -368,16 +383,27 @@ pub fn search_root(
     ti: Option<usize>,
     z: f64,
     cap: u32,
+    min_visits: u32,
     mut play: impl FnMut(&mut Game, usize, u64) -> f64,
 ) -> Searched {
-    let kn = knobs();
+    let kn = Knobs { min_visits, ..knobs() };
     let nk = keys.len();
     let mut nodes = vec![Node { key: (String::new(), 0), visits: 0, avail: 0, sum: 0.0, kids: (1..=nk).collect() }];
     nodes.extend(keys.into_iter().map(|key| Node { key, visits: 0, avail: 0, sum: 0.0, kids: vec![] }));
     let top_k = g.settings.search.top_k;
     TREE.with(|t| {
         *t.borrow_mut() =
-            Some(Tree { seat: p, nodes, cur: None, path: vec![], depth: 0, expanded: false, knobs: kn, top_k })
+            Some(Tree {
+                seat: p,
+                nodes,
+                cur: None,
+                path: vec![],
+                depth: 0,
+                expanded: false,
+                opp_done: false,
+                knobs: kn,
+                top_k,
+            })
     });
     let w0 = g.search_work;
     let mut vals: Vec<Vec<f64>> = vec![vec![]; nk];
@@ -407,6 +433,7 @@ pub fn search_root(
                 tr.path = vec![k + 1];
                 tr.depth = 1;
                 tr.expanded = false;
+                tr.opp_done = false;
             }
         });
         let v = play(g, k, n[k] as u64);
@@ -488,7 +515,7 @@ pub fn choose_main(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Optio
     let ti = cands.iter().position(|c| c.0 == top_u);
     let z = super::search::margin_z(&g.settings.search);
     let keys: Vec<(String, usize)> = cands.iter().map(|c| c.1.clone()).collect();
-    let s = search_root(g, p, keys, ti, z, kn.max_visits, |g, k, r| {
+    let s = search_root(g, p, keys, ti, z, kn.max_visits, kn.min_visits, |g, k, r| {
         let (i, (label, n)) = (&cands[k].0, &cands[k].1);
         let (v, kept) = playout_main_kept(g, p, post, label, *n, base_seed, r, hold.map(|h| h.0));
         let extra = if v < WIN_FLOOR {
@@ -529,8 +556,9 @@ pub fn choose_attack(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
     let keys: Vec<(String, usize)> = cands.iter().map(|c| (format!("atk:{}:{}", c.0.0, c.1), 0)).collect();
     let z = super::search::margin_z(&g.settings.search);
     let cap = g.settings.search.rollouts; // today's count at most: an attack's plans are many and close
-    let s =
-        search_root(g, p, keys, None, z, cap, |g, k, r| super::search::playout_attack(g, p, cands[k], base_seed, r));
+    let s = search_root(g, p, keys, None, z, cap, knobs().atk_min, |g, k, r| {
+        super::search::playout_attack(g, p, cands[k], base_seed, r)
+    });
     let means: Vec<f64> = s.vals.iter().map(|v| mean(v)).collect();
     let mut best = leader(&s.vals);
     if !super::is_main(g.player(p).key) {
@@ -548,8 +576,425 @@ pub fn choose_counter(g: &mut Game, q: PlayerId, p: PlayerId, c: CardId) -> bool
     let keys = vec![("ctr:yes".to_string(), 0), ("ctr:no".to_string(), 0)];
     let cap = g.settings.search.rollouts; // today's count at most
     let z = super::search::margin_z(&g.settings.search);
-    let s = search_root(g, q, keys, None, z, cap, |g, k, r| {
+    let s = search_root(g, q, keys, None, z, cap, knobs().atk_min, |g, k, r| {
         super::search::playout_counter(g, q, p, c, k == 0, base_seed, r)
     });
     mean(&s.vals[0]) > mean(&s.vals[1])
+}
+
+// ------------------------------------------------------------------ part (b): blocks, protection, wipe responses
+// --- phase4-search-b (`audit/phase4/search-design.md`, "Part (b)")
+
+/// does p's block / protection / wipe decision here count in the survey? (a generic-policy seat in the real game of
+/// a look-ahead run)
+pub fn noting(g: &Game, p: PlayerId) -> bool {
+    !g.in_search && g.settings.ai == crate::settings::AiMode::Lookahead && super::values::generic_deck(g, p)
+}
+
+/// count one decision of `kind` for p's survey: came up (`hot` false, `acted` false), or its stakes, or the
+/// heuristic acting
+pub fn note(g: &mut Game, p: PlayerId, kind: usize, hot: bool, acted: bool) {
+    let c = &mut g.player_mut(p).search_cost;
+    if acted {
+        c.acted[kind] += 1;
+    } else {
+        c.seen[kind] += 1;
+        c.hot[kind] += hot as u32;
+    }
+}
+
+/// the damage p's attackers `atk` deal d with these blocks (double strike twice; the blocked deal none)
+pub fn unblocked_damage(g: &Game, atk: &[PermId], assign: &[(PermId, PermId)]) -> i32 {
+    use crate::engine::combat::double_strike;
+    atk.iter()
+        .filter(|&&a| g.perm(a).on_bf && !assign.iter().any(|x| x.0 == a))
+        .map(|&a| epow(g, a).max(0) * if double_strike(g, a) { 2 } else { 1 })
+        .sum()
+}
+
+/// the survey of d's blocks against p's attack: seen when one of d's untapped creatures can block an attacker, hot
+/// when the attack reaches half d's life, acted when the heuristic's blocks still leave lethal
+pub fn note_blocks(g: &mut Game, atk: &[PermId], d: PlayerId, unbl: &[PermId], assign: &[(PermId, PermId)]) {
+    if !noting(g, d) {
+        return;
+    }
+    let can = atk.iter().any(|&a| {
+        !unbl.contains(&a)
+            && g.perm(a).on_bf
+            && g.player(d).perms.iter().any(|&b| {
+                g.is_creature(b)
+                    && !g.perm(b).tapped
+                    && !g.perm(b).phased
+                    && crate::engine::combat::can_block(g, b, a)
+            })
+    });
+    if !can {
+        return;
+    }
+    let life = g.player(d).life;
+    let hot = 2 * unblocked_damage(g, atk, &[]) >= life;
+    note(g, d, SearchCost::BLOCK, hot, false);
+    if unblocked_damage(g, atk, assign) >= life {
+        note(g, d, SearchCost::BLOCK, false, true);
+    }
+}
+
+// ---- the switch
+fn mode_b() -> &'static Mode {
+    static M: OnceLock<Mode> = OnceLock::new();
+    M.get_or_init(|| parse_mode_b(std::env::var("AI_SEARCH_B").ok().as_deref()))
+}
+
+/// `AI_SEARCH_B`: unset or `0` PR 5's behaviour (the heuristic blocks, protects and answers wipes), `1` the search
+/// for every generic-policy deck on ISMCTS, `a,b` for those keys
+fn parse_mode_b(v: Option<&str>) -> Mode {
+    match v.map(str::trim) {
+        None | Some("") | Some("0") => Mode::Off,
+        Some("1") => Mode::All,
+        Some(list) => Mode::Keys(list.split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect()),
+    }
+}
+
+thread_local! {
+    static FORCE_B: std::cell::Cell<Option<bool>> = const { std::cell::Cell::new(None) };
+}
+
+/// for tests: part (b)'s searches on or off on this thread, whatever `AI_SEARCH_B` says (None: back to it)
+pub fn force_b(on: Option<bool>) {
+    FORCE_B.with(|f| f.set(on));
+}
+
+/// does p decide its blocks, protection and wipe responses by search here? (a generic-policy deck on ISMCTS, in the
+/// real game, the look-ahead on and within its per-game caps)
+fn on_b(g: &mut Game, p: PlayerId) -> bool {
+    let want = match FORCE_B.with(|f| f.get()) {
+        Some(f) => f,
+        None => match mode_b() {
+            Mode::Off => false,
+            Mode::All => true,
+            Mode::Keys(k) => k.iter().any(|x| x == g.player(p).key),
+        },
+    };
+    want && !g.in_search && on(g, p) && g.humans.get(p).is_none() && super::search::enabled(g, p)
+}
+
+/// the fraction of the defender's life the attack must reach (unblocked) for its blocks to be searched
+/// (`AI_SEARCH_B_BLOCK`)
+pub const BLOCK_STAKES: f64 = 0.5;
+
+fn block_stakes() -> f64 {
+    static B: OnceLock<f64> = OnceLock::new();
+    *B.get_or_init(|| env_or("AI_SEARCH_B_BLOCK", BLOCK_STAKES))
+}
+
+/// the root search of a part (b) decision of p's: candidates `keys`, the heuristic's choice `ti`; each candidate at
+/// most `rollouts` playouts (today's count, as attacks and counters), within the budget. The pick is held to the
+/// margin against the heuristic's choice on `pairs` shared copies.
+fn search_b(
+    g: &mut Game,
+    p: PlayerId,
+    kind: usize,
+    tag: &str,
+    keys: Vec<(String, usize)>,
+    ti: usize,
+    mut play: impl FnMut(&mut Game, usize, u64, u64) -> f64,
+) -> usize {
+    let parts = format!("{}:{tag}", g.player(p).key);
+    let kn = knobs();
+    super::search::booked(g, p, kind, |g| {
+        let base_seed = super::search::decision_seed(g, &parts);
+        let z = super::search::margin_z(&g.settings.search);
+        let cap = g.settings.search.rollouts;
+        let s = search_root(g, p, keys, Some(ti), z, cap, kn.min_visits, |g, k, r| play(g, k, base_seed, r));
+        pick(&s.vals, Some(ti), z, kn.pairs)
+    })
+}
+
+// ---- blocks
+/// the block plans the search tries for d against p's attack `atk` (`unbl`: can't be blocked), the heuristic's
+/// first: (label, blocks). Dropped when equal to an earlier plan. Menace attackers are blocked only as the heuristic
+/// blocks them; the engine has one blocker an attacker, so no double blocks.
+pub fn block_plans(
+    g: &Game,
+    p: PlayerId,
+    atk: &[PermId],
+    d: PlayerId,
+    unbl: &[PermId],
+    heur: &[(PermId, PermId)],
+) -> Vec<(String, Vec<(PermId, PermId)>)> {
+    use crate::engine::combat::{can_block, fiery, kw};
+    use crate::engine::values::{etgh, pval};
+    let blockers: Vec<PermId> = g
+        .player(d)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&b| g.is_creature(b) && !g.perm(b).tapped && !g.perm(b).phased)
+        .collect();
+    let (fd, fp) = (fiery(g, d), fiery(g, p));
+    let kills = |b: PermId, a: PermId| epow(g, b) * fd >= etgh(g, a) || g.perm(b).dt;
+    let dies = |b: PermId, a: PermId| epow(g, a) * fp >= etgh(g, b) || g.perm(a).dt;
+    let mut order: Vec<PermId> = atk
+        .iter()
+        .copied()
+        .filter(|&a| g.perm(a).on_bf && !unbl.contains(&a) && !kw(g, a, "menace"))
+        .collect();
+    order.sort_by_key(|&a| -epow(g, a));
+    let cheapest = |c: Vec<PermId>| -> Option<PermId> {
+        c.into_iter().min_by(|&x, &y| pval(g, x).total_cmp(&pval(g, y)))
+    };
+    let free = |used: &[(PermId, PermId)], a: PermId, f: &dyn Fn(PermId) -> bool| -> Option<PermId> {
+        cheapest(
+            blockers
+                .iter()
+                .copied()
+                .filter(|&b| !used.iter().any(|x| x.1 == b) && can_block(g, b, a) && f(b))
+                .collect(),
+        )
+    };
+    let blocked = |used: &[(PermId, PermId)], a: PermId| used.iter().any(|x| x.0 == a);
+    // kill-and-survive blocks only
+    let mut good = vec![];
+    for &a in &order {
+        if let Some(b) = free(&good, a, &|b| kills(b, a) && !dies(b, a)) {
+            good.push((a, b));
+        }
+    }
+    // every attacker blocked: kill-and-survive, else a trade, else a chump
+    let mut all = good.clone();
+    for &a in &order {
+        if blocked(&all, a) || epow(g, a) <= 0 {
+            continue;
+        }
+        if let Some(b) = free(&all, a, &|b| kills(b, a)).or_else(|| free(&all, a, &|_| true)) {
+            all.push((a, b));
+        }
+    }
+    // the heuristic's blocks, then chumps on the biggest attackers left until the rest is not lethal
+    let mut live = heur.to_vec();
+    let life = g.player(d).life;
+    for &a in &order {
+        if unblocked_damage(g, atk, &live) < life {
+            break;
+        }
+        if blocked(&live, a) {
+            continue;
+        }
+        if let Some(b) = free(&live, a, &|_| true) {
+            live.push((a, b));
+        }
+    }
+    let mut out: Vec<(String, Vec<(PermId, PermId)>)> = vec![];
+    let norm = |v: &[(PermId, PermId)]| {
+        let mut v = v.to_vec();
+        v.sort_by_key(|x| (x.0.0, x.1.0));
+        v
+    };
+    for (label, plan) in
+        [("blk:heur", heur.to_vec()), ("blk:none", vec![]), ("blk:good", good), ("blk:live", live), ("blk:all", all)]
+    {
+        if out.iter().all(|x| norm(&x.1) != norm(&plan)) {
+            out.push((label.to_string(), plan));
+        }
+    }
+    out
+}
+
+/// d's blocks against p's attack by search (None: the heuristic's `heur` stand): searched when the attack, unblocked,
+/// reaches `AI_SEARCH_B_BLOCK` of d's life and there is another plan to try
+pub fn choose_blocks(
+    g: &mut Game,
+    p: PlayerId,
+    atk: &[PermId],
+    d: PlayerId,
+    unbl: &[PermId],
+    heur: &[(PermId, PermId)],
+) -> Option<Vec<(PermId, PermId)>> {
+    if !on_b(g, d) {
+        return None;
+    }
+    let incoming = unblocked_damage(g, atk, &[]);
+    if (incoming as f64) < block_stakes() * g.player(d).life as f64 {
+        policy(g, d, SearchCost::BLOCK);
+        return None;
+    }
+    let plans = block_plans(g, p, atk, d, unbl, heur);
+    if plans.len() < 2 {
+        policy(g, d, SearchCost::BLOCK);
+        return None;
+    }
+    let keys = plans.iter().map(|x| (x.0.clone(), 0)).collect();
+    let atk = atk.to_vec();
+    let best = search_b(g, d, SearchCost::BLOCK, "blk", keys, 0, |g, k, seed, r| {
+        let plan = plans[k].1.clone();
+        let atk = atk.clone();
+        super::search::playout_with(g, d, seed, r, |g2| {
+            let atk2: Vec<PermId> =
+                atk.iter().copied().filter(|&m| g2.perm(m).on_bf && g2.perm(m).owner == p).collect();
+            let mut tot = 0;
+            crate::engine::combat::resolve_blocks(g2, p, atk2, d, plan, &mut tot)?;
+            // the end of this combat (later defenders of a split attack and extra combats are not played)
+            crate::impls::t0_zurgo::end_of_combat(g2, p)?;
+            g2.in_combat.clear();
+            g2.end_combat = false;
+            g2.blocking.clear();
+            let pl = g2.player_mut(p);
+            pl.haste_all = false;
+            pl.trample = false;
+            pl.pump = 0;
+            g2.step = crate::state::Step::Combat; // resumes at the second main phase
+            Ok(true)
+        })
+    });
+    if best != 0 {
+        super::search::stat(|x| x.changed += 1);
+        crate::glog!(g, "      [{} blocks by search: {}]", g.player(d).name, plans[best].0);
+    }
+    Some(plans[best].1.clone())
+}
+
+// ---- protection
+/// owner's protection of m from actor's targeted removal `kind` by search: Some(true) protected, Some(false) let it
+/// resolve, None not searched (the heuristic decides). Searched when a protector would save m.
+pub fn choose_protect(
+    g: &mut Game,
+    owner: PlayerId,
+    m: PermId,
+    kind: Sym,
+    actor: Option<PlayerId>,
+    spell: Option<CardId>,
+) -> crate::flow::Res<Option<bool>> {
+    if actor == Some(owner) || !on_b(g, owner) {
+        return Ok(None);
+    }
+    let opts = super::pool::protect_options(g, owner, m, kind, spell, 3);
+    if opts.is_empty() {
+        return Ok(None);
+    }
+    let heur = super::pool::protect_heuristic(g, owner, m, kind, spell);
+    let ti = heur.and_then(|h| opts.iter().position(|o| (o.1, o.2) == h)).map_or(0, |i| i + 1);
+    let mut keys = vec![("prot:none".to_string(), 0)];
+    keys.extend(opts.iter().map(|o| (o.0.clone(), 0)));
+    let best = search_b(g, owner, SearchCost::PROTECT, "prot", keys, ti, |g, k, seed, r| {
+        let opt = (k > 0).then(|| (opts[k - 1].1, opts[k - 1].2));
+        super::search::playout_with(g, owner, seed, r, |g2| {
+            if !g2.perm(m).on_bf {
+                return Ok(true);
+            }
+            match opt {
+                Some((i, src)) => super::pool::protect_play(g2, owner, m, i, src),
+                None => {
+                    crate::cardcode::sac_in_response(g2, owner, m, kind)?;
+                    crate::engine::removal::apply_removal_rest(g2, actor, m, kind, spell)?;
+                    Ok(true)
+                }
+            }
+        })
+    });
+    if best != ti {
+        super::search::stat(|x| x.changed += 1);
+    }
+    if best == 0 {
+        if heur.is_some() {
+            crate::glog!(g, "      [{} holds its protection by search]", g.player(owner).name);
+        }
+        return Ok(Some(crate::cardcode::sac_in_response(g, owner, m, kind)?));
+    }
+    let (_, i, src) = opts[best - 1];
+    if super::pool::protect_play(g, owner, m, i, src)? {
+        return Ok(Some(true));
+    }
+    Ok(None) // it couldn't be used after all: the heuristic decides
+}
+
+// ---- wipe responses
+/// q's answer to a wipe of `kind` by search: Some(answer) searched, None not searched (the heuristic decides).
+/// Searched when a board-wide protector (or Golgari Charm's regeneration) would save q's board, inside an ordinary
+/// wipe (`removal::apply_wipe_inner`; the three sweepers of `impls::sweepers` keep the heuristic).
+pub fn choose_wipe(
+    g: &mut Game,
+    q: PlayerId,
+    kind: Sym,
+    caster: PlayerId,
+) -> crate::flow::Res<Option<Option<Sym>>> {
+    use crate::engine::removal::{WIPE_CTX, wipe_finish, wipe_victim};
+    let Some(ctx) = WIPE_CTX.with(|w| w.borrow().clone()).filter(|c| c.kind == kind && c.caster == caster) else {
+        return Ok(None);
+    };
+    if !on_b(g, q) {
+        return Ok(None);
+    }
+    if g.player(q).perms.iter().any(|&x| g.perm(x).cd.is_some_and(|c| &*g.db.get(c).name == "Lena, Selfless Champion"))
+    {
+        return Ok(None); // Lena's own rule: the heuristic
+    }
+    let regen = kind == "destroy" && g.player(q).hand.iter().any(|&c| &*g.db.get(c).name == "Golgari Charm");
+    let opts = super::pool::wipe_options(g, q, kind, 3);
+    if opts.is_empty() && !regen {
+        return Ok(None);
+    }
+    // options: 0 none, then regeneration, then the protectors
+    let mut keys = vec![("wipe:none".to_string(), 0)];
+    if regen {
+        keys.push(("wipe:regen".to_string(), 0));
+    }
+    keys.extend(opts.iter().map(|o| (o.0.clone(), 0)));
+    let off = 1 + regen as usize;
+    let ti = if regen {
+        1
+    } else {
+        opts.iter()
+            .position(|o| super::pool::wipe_heuristic_takes(g, q, o.1))
+            .map_or(0, |i| i + off)
+    };
+    let best = search_b(g, q, SearchCost::WIPE, "wipe", keys, ti, |g, k, seed, r| {
+        let ctx = ctx.clone();
+        let opt = (k >= off).then(|| (opts[k - off].1, opts[k - off].2));
+        super::search::playout_with(g, q, seed, r, |g2| {
+            let prot = if k == 0 {
+                None
+            } else if regen && k == 1 {
+                if !crate::cardcode::regen_wipe(g2, q)? {
+                    return Ok(false);
+                }
+                Some("indes")
+            } else {
+                let (i, src) = opt.unwrap();
+                match super::pool::wipe_play(g2, q, i, src)? {
+                    Some(r) => Some(r),
+                    None => return Ok(false),
+                }
+            };
+            wipe_victim(g2, caster, kind, q, prot, &ctx.modes, ctx.deluge_x)?;
+            for &v in &ctx.rest {
+                if g2.over {
+                    return Ok(true);
+                }
+                let pv = super::wipe_response(g2, v, kind, caster)?;
+                wipe_victim(g2, caster, kind, v, pv, &ctx.modes, ctx.deluge_x)?;
+            }
+            wipe_finish(g2, kind, &ctx.modes)?;
+            Ok(true)
+        })
+    });
+    if best != ti {
+        super::search::stat(|x| x.changed += 1);
+    }
+    if best == 0 {
+        if ti != 0 {
+            crate::glog!(g, "      [{} holds its wipe protection by search]", g.player(q).name);
+        }
+        return Ok(Some(None));
+    }
+    if regen && best == 1 {
+        if crate::cardcode::regen_wipe(g, q)? {
+            return Ok(Some(Some("indes")));
+        }
+        return Ok(None);
+    }
+    let (_, i, src) = opts[best - off];
+    match super::pool::wipe_play(g, q, i, src)? {
+        Some(r) => Ok(Some(Some(r))),
+        None => Ok(None),
+    }
 }

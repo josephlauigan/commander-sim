@@ -434,21 +434,33 @@ impl Perm {
 
 // ------------------------------------------------------------------ players
 // --- phase4-search
-/// a seat's look-ahead cost in one game, by kind (`MAIN`, `ATTACK`, `COUNTER`): decisions searched and the engine
-/// steps their playouts took, and the playouts; `policy` counts the decisions the search's stakes test left to the policy
+/// a seat's look-ahead cost in one game, by kind (`MAIN`, `ATTACK`, `COUNTER`, and phase4-search-b's `BLOCK`,
+/// `PROTECT`, `WIPE`): decisions searched and the engine steps their playouts took, and the playouts; `policy` counts
+/// the decisions the search's stakes test left to the policy
 #[derive(Debug, Clone, Copy, Default, PartialEq)]
 pub struct SearchCost {
-    pub n: [u32; 3],
-    pub steps: [u64; 3],
-    pub policy: [u32; 3],
+    pub n: [u32; 6],
+    pub steps: [u64; 6],
+    pub policy: [u32; 6],
     /// playouts the searched decisions ran
-    pub playouts: [u64; 3],
+    pub playouts: [u64; 6],
+    /// --- phase4-search-b: blocks, protection and wipe responses of a generic-policy seat in the real game: the times
+    /// each came up (`seen`: blockers able to block; targeted removal aimed at its permanent; a wipe costing it 6+
+    /// value), with something at stake (`hot`: the attack reaches half its life; a protector that would save the
+    /// permanent; one that would save the board) and the heuristic's answer acting (`acted`: the blocks leave lethal;
+    /// a protector used; a wipe answered)
+    pub seen: [u32; 6],
+    pub hot: [u32; 6],
+    pub acted: [u32; 6],
 }
 
 impl SearchCost {
     pub const MAIN: usize = 0;
     pub const ATTACK: usize = 1;
     pub const COUNTER: usize = 2;
+    pub const BLOCK: usize = 3;
+    pub const PROTECT: usize = 4;
+    pub const WIPE: usize = 5;
 }
 
 #[derive(Debug, Clone, PartialEq)]
