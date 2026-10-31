@@ -1,6 +1,7 @@
 //! Phase 4 PR 7: each deck's hand-written AI behind `AI_HAND` (`audit/phase4/hand-off-design.md`). With the switch
-//! off (the default) a switchable deck decides through the generic policy and its plan file; with it on, its hand
-//! AI's entry points answer as before. JD's decks are seated with their own tiers only.
+//! off (the default for every switchable deck outside `ai::HAND_KEEP` since the recalibration's stage 1) a switchable
+//! deck decides through the generic policy and its plan file; with it on, its hand AI's entry points answer as before.
+//! JD's decks are seated with their own tiers only.
 
 use sim_core::ai::{self, decks, plans, pool, values};
 use sim_core::hooks::{Action, Opt};
@@ -58,11 +59,22 @@ fn check_jd_deck(key: &'static str, t: &str, hand_prio: Prio) {
 }
 
 #[test]
-fn the_switch_defaults_off_and_leaves_other_decks_alone() {
-    // no AI_HAND in the test environment: every switchable deck is off
+fn the_switch_defaults_to_the_kept_decks_and_leaves_other_decks_alone() {
+    // the stage 1 defaults (audit/recal/pairs-2026-10-31.md section 4): unset or empty, the hand AI on for exactly
+    // HAND_KEEP; 0 off for every switchable deck; 1 all; a key list those keys
+    assert_eq!(ai::HAND_KEEP, ["yshtola", "sheoldred", "cloud", "dack-fayden-white-stax"]);
+    for k in ai::HAND_DECKS {
+        let keep = ai::HAND_KEEP.contains(&k);
+        assert_eq!(ai::hand_switch_wants(None, k), keep, "unset: {k}");
+        assert_eq!(ai::hand_switch_wants(Some(""), k), keep, "empty: {k}");
+        assert!(!ai::hand_switch_wants(Some("0"), k), "0: {k} off");
+        assert!(ai::hand_switch_wants(Some("1"), k), "1: {k} on");
+        assert_eq!(ai::hand_switch_wants(Some("veyran, karn"), k), matches!(k, "veyran" | "karn"), "a list: {k}");
+    }
+    // no AI_HAND in the test environment: the kept decks play their hand AI, every other switchable deck is off
     if std::env::var("AI_HAND").is_err() {
         for k in ai::HAND_DECKS {
-            assert!(!ai::hand_ai_key(k), "{k}");
+            assert_eq!(ai::hand_ai_key(k), ai::HAND_KEEP.contains(&k), "{k}");
         }
     }
     let _on = ai::force_hand(Some(true));
@@ -76,6 +88,21 @@ fn the_switch_defaults_off_and_leaves_other_decks_alone() {
         }
     }
     assert!(ai::hand_ai_key("veyran"), "the guard puts the previous value back");
+}
+
+/// with nothing forced, a kept deck is not a generic-policy deck and its plan file is not read; a deck switched off
+/// by default is one and reads its plan file (values::generic_deck and plans::plays_plan follow hand_ai_key)
+#[test]
+fn the_default_reaches_generic_deck_and_the_plan_files() {
+    if std::env::var("AI_HAND").is_ok() {
+        return;
+    }
+    let g = seated("cloud", "t1");
+    assert!(ai::hand_ai(&g, P) && !values::generic_deck(&g, P), "cloud: its hand AI by default");
+    assert!(!plans::plays_plan("cloud"));
+    let g = seated("veyran", "t1");
+    assert!(!ai::hand_ai(&g, P) && values::generic_deck(&g, P), "veyran: the generic policy by default");
+    assert!(plans::plays_plan("veyran"));
 }
 
 #[test]
