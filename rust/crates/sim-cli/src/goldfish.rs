@@ -533,7 +533,7 @@ mod tests {
     fn the_deck_keys_are_yours_and_the_tier_6_pool() {
         let sim = sim();
         assert_eq!(deck_keys(&sim, "t6").unwrap().len(), 6);
-        assert_eq!(deck_keys(&sim, "seph,t6,seph").unwrap().len(), 7);
+        assert_eq!(deck_keys(&sim, "ghave,t6,ghave").unwrap().len(), 7);
         assert!(deck_keys(&sim, "krenko-mono-red-goblins").is_err());
         assert!(deck_keys(&sim, "").is_err());
     }

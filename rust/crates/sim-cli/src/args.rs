@@ -195,7 +195,7 @@ pub fn help() -> String {
           Partial, Unmodeled) and up to 5 of its Unmodeled and Partial cards, commander and engine cards first; \
           the opponent tiers of a --deck run get one summed line each. It is read from the card data once per run \
           and plays no game.\n";
-    s += "\nExamples\n  commander-sim --deck sauron --pool t2 --profile loose --games 960\n  commander-sim --deck seph \
+    s += "\nExamples\n  commander-sim --deck sauron --pool t2 --profile loose --games 960\n  commander-sim --deck ghave \
           --pool t4 --swap \"Blood Artist=>Grim Tutor\"\n  commander-sim --all-decks --pool all --profile loose\n  commander-sim --goldfish thanos,t6 --games 2000   (each deck alone against three inert seats)\n  commander-sim --deck yshtola --pool t1 --any-tier   (only when asked: t1 is outside Y'shtola's tiers)\n";
     s
 }
@@ -368,10 +368,10 @@ mod tests {
         assert_eq!(a.pool.as_deref(), Some("t1"));
         assert_eq!(a.profiles, ["loose"]);
         assert_eq!((a.games, a.seed, a.jobs, a.ai.as_str(), a.temp), (960, 500000, 22, "lookahead", 1.0));
-        let a = p("--deck seph --pool t3 --n 200").unwrap();
+        let a = p("--deck ghave --pool t3 --n 200").unwrap();
         assert_eq!(a.games, 200);
         assert_eq!(a.profiles, ["loose"]); // the default (JD 2026-10-19)
-        let a = p("--deck seph --pool t3 --profiles conservative,loose").unwrap();
+        let a = p("--deck ghave --pool t3 --profiles conservative,loose").unwrap();
         assert_eq!(a.profiles, ["conservative", "loose"]);
         let a = p("--calibrate within").unwrap();
         assert_eq!(a.games, 1500);

@@ -61,7 +61,7 @@ cardgen validate                                                        # check 
 
 `commander-sim --help` lists every option (`rust/crates/sim-cli/src/args.rs`). The ones that matter most:
 
-- `--deck`: `seph`, `veyran`, `sauron`, `galadriel`, `yshtola`, `alela`, `kefka`, `sheoldred`, `cloud`,
+- `--deck`: `ghave`, `veyran`, `sauron`, `galadriel`, `yshtola`, `alela`, `kefka`, `sheoldred`, `cloud`,
   `thrasios`, `karn`, `thanos` or `urdragon`.
 - `--pool`: `t0` to `t6`, or `all` (the deck's own tiers). Each deck plays only its own tiers (`data/my_decks.toml`);
   `--any-tier` lifts that, only when JD asks.
@@ -97,7 +97,7 @@ the same opponents and draws.
 | JD's decks | Tiers |
 | --- | --- |
 | yshtola, thrasios, urdragon | t5 |
-| sheoldred, sauron, seph | t3-t4 |
+| sheoldred, sauron, ghave | t3-t4 |
 | kefka | t3 |
 | cloud, veyran | t1-t3 |
 | karn | t4-t5 |

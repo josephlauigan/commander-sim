@@ -1,0 +1,82 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
+# policy (ai/plans.rs `config`). JD's Ghave, Guru of Spores deck (decklists/JD/ghave-abzan-aristocrats.md, Bracket 4,
+# tiers t3-t4, Seph's seat since 2026-10-30). No deck AI is hand-written: Ghave's two abilities are compiled from the
+# Oracle text (the ability language), Ghave's five counters and the loops are card code (impls/ghave.rs: the loops are
+# combo-catalogue entries, `combo_options` offers them and the tutors want their pieces).
+deck = "ghave"
+default = "plan"
+# card engines the tutors want once no line wants a card
+engines = ["Skullclamp", "Grave Pact", "Phyrexian Arena"]
+
+# Seph's style (was ai::MAIN_STYLES): the pool's temperature, a little more aggression and caution than the pool
+[style]
+temp = 1.0
+aggression = 0.55
+caution = 0.6
+
+# Ghave costs five and is cheap to recast: cast him early, best with a death payoff out
+[commander]
+prio = 78
+turn = 3
+
+# sacrifice through Ghave's {1} outlet in response to removal and before a wipe (common::sac_in_response)
+[knobs]
+paid_outlets = true
+
+[sets]
+payoffs = ["Blood Artist", "Zulaport Cutthroat", "Cruel Celebrant", "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel"]
+doublers = ["Cathars' Crusade", "Doubling Season"]
+altars = ["Ashnod's Altar", "Phyrexian Altar"]
+
+# win lines, best first: the tutors want the first missing piece of the closest one
+[[line]]
+name = "Ghave + an altar + Cathars' Crusade / Doubling Season + a death payoff"
+combo = "Ghave + an altar + Cathars' Crusade / Doubling Season + a death payoff"
+
+[[line]]
+name = "Ghave + Ashnod's Altar + Cathars' Crusade / Doubling Season + Triskelion"
+combo = "Ghave + Ashnod's Altar + Cathars' Crusade / Doubling Season + Triskelion"
+
+[[line]]
+name = "Mikaeus + Triskelion"
+combo = "Mikaeus + Triskelion"
+
+[[line]]
+name = "Mikaeus + Kitchen Finks + a free outlet + a death payoff"
+combo = "Mikaeus + Kitchen Finks + a free outlet + a death payoff"
+
+[[line]]
+name = "Nim Deathmantle + Ashnod's Altar + Grave Titan + a death payoff"
+combo = "Nim Deathmantle + Ashnod's Altar + Grave Titan + a death payoff"
+
+[[line]]
+name = "Kitchen Finks + Cathars' Crusade + a free outlet + a death payoff"
+combo = "Kitchen Finks + Cathars' Crusade + a free outlet + a death payoff"
+
+# Cast priorities: the commander sooner once a death payoff is out; the loop pieces next to Ghave; a death payoff
+# ahead of the rest once Ghave is out
+[[prio]]
+commander = true
+when = ["drain-payoff"]
+value = 84
+else = 70
+
+[[prio]]
+cards = ["Cathars' Crusade", "Doubling Season", "Ashnod's Altar", "Phyrexian Altar"]
+when = ["out:Ghave, Guru of Spores"]
+value = 80
+else = 55
+
+[[prio]]
+cards = ["Blood Artist", "Zulaport Cutthroat", "Cruel Celebrant", "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel"]
+when = ["not drain-payoff"]
+value = 78
+
+# protection held for the combo turn, not cast proactively
+[[hold]]
+card = "Heroic Intervention"
+protects = ["commander", "Cathars' Crusade", "Doubling Season", "Ashnod's Altar", "Phyrexian Altar"]
+
+# keep two to five lands
+[mulligan]
+lands = [2, 5]

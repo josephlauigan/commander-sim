@@ -72,7 +72,12 @@ thread_local! {
     static LAST_SAC_MV: std::cell::Cell<i32> = const { std::cell::Cell::new(0) };
     /// the X the last paid ability cost with an {X} chose (0 if none): `activate` hands it to the effects
     static LAST_X: std::cell::Cell<i32> = const { std::cell::Cell::new(0) };
+    /// --- ghave: the creature an ability's "sacrifice a creature" cost takes (`activate_sacrificing`), not the AI's pick
+    static FORCED_FODDER: std::cell::Cell<Option<PermId>> = const { std::cell::Cell::new(None) };
 }
+
+/// --- ghave: the compiled cost text of Ghave, Guru of Spores's first ability (cardgen keeps it as `other`)
+pub const REMOVE_PLUS_COST: &str = "remove a +1/+1 counter from a creature you control";
 
 /// Reads and clears this thread's count of "X" amounts that ran as the stand-in 3. Cardgen's audit flags the cards
 /// that can do it (a bare "X" amount on a card with no {X}); tests over whole games assert it stays zero.
@@ -2011,10 +2016,27 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
                             && !crate::impls::common::is_payoff(g, m)))
             })
             .collect();
-        let Some(f0) = min_by(&fods, |m| pval(g, m)) else { return Ok(false) };
+        // --- ghave: a response sacrifices the creature it is saving (`activate_sacrificing`)
+        let forced = FORCED_FODDER.with(|c| c.get()).filter(|&m| m != src && matches(g, p, m, Some(&f), None));
+        let Some(f0) = forced.or_else(|| min_by(&fods, |m| pval(g, m))) else { return Ok(false) };
         fod = Some(f0);
     }
-    if cost.other.is_some() || cost.tap_other.is_some() || cost.energy.is_some() {
+    // --- ghave: "remove a +1/+1 counter from a creature you control" (Ghave, Guru of Spores): the counter comes off
+    // the creature that misses it least (the most counters, one that survives it; a token before a card)
+    let mut ctr_from = None;
+    if cost.other.as_deref() == Some(REMOVE_PLUS_COST) {
+        let cands: Vec<PermId> = g
+            .player(p)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| g.is_creature(m) && !g.perm(m).phased && g.perm(m).plus > 0 && etgh(g, m) > 1)
+            .collect();
+        let Some(m) = max_by(&cands, |m| g.perm(m).plus as f64 + if g.perm(m).token { 0.5 } else { 0.0 }) else {
+            return Ok(false);
+        };
+        ctr_from = Some(m);
+    } else if cost.other.is_some() || cost.tap_other.is_some() || cost.energy.is_some() {
         return Ok(false);
     }
     // Phase 3: a land whose ability costs {T} can't also tap for the mana that pays it
@@ -2064,6 +2086,9 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
             }
             None => crate::engine::cast::discard_worst(g, p, k)?,
         }
+    }
+    if let Some(m) = ctr_from {
+        g.perm_mut(m).plus -= 1;
     }
     LAST_SAC_MV.with(|c| c.set(fod.and_then(|f| g.perm(f).cd).map_or(0, |c| g.db.get(c).cmc as i32)));
     if let Some(f) = fod {
@@ -2179,6 +2204,9 @@ pub fn ability_options(g: &mut Game, p: PlayerId, sorcery_ok: bool) -> Res<Vec<c
                         cost_v += 1.5;
                     }
                     cost_v += x_cost;
+                    if cost.other.as_deref() == Some(REMOVE_PLUS_COST) {
+                        cost_v += 0.6; // --- ghave: the counter is a point of power and toughness
+                    }
                     let mut u = value_of(g, p, effects, None) - cost_v;
                     if let Some(mn) = ai_min {
                         u = u.max(*mn); // card data can insist the AI uses it
@@ -2308,6 +2336,50 @@ pub fn activate(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool> {
     }
     execute(g, p, effects, Some(src), &mut dctx, None, 0)?;
     Ok(true)
+}
+
+/// --- ghave: p's compiled "{N}, sacrifice a creature: ..." ability that can sacrifice `m` now (Ghave, Guru of Spores):
+/// a paid sacrifice outlet for the answers to removal and wipes (`common::sac_in_response`, `sac_before_wipe`), which
+/// otherwise know only the free outlets. Mana-only costs; not m's own ability.
+pub fn paid_outlet(g: &Game, p: PlayerId, m: PermId) -> Option<(PermId, u16)> {
+    if !active(g) {
+        return None;
+    }
+    for &src in &g.player(p).perms {
+        let x = g.perm(src);
+        let Some(cd) = x.cd else { continue };
+        if src == m || x.phased || !g.db.get(cd).has_dsl() || crate::engine::values::stopped(g, &g.db.get(cd).name) {
+            continue;
+        }
+        if crate::cardcode::ability_locked(g, src, p) {
+            continue;
+        }
+        for (i, a) in abilities(g, cd).iter().enumerate() {
+            let Ability::Activated { cost, sorcery, .. } = a else { continue };
+            let plain = cost.tap.is_none_or(|t| !t)
+                && cost.life.is_none()
+                && cost.discard.is_none()
+                && cost.other.is_none()
+                && cost.tap_other.is_none()
+                && cost.energy.is_none();
+            if *sorcery == Some(true) || !plain || cost.sac.as_deref() != Some("creature") {
+                continue;
+            }
+            let (gn, pips) = cost.mana.as_deref().map(crate::engine::cast::parse_cost).unwrap_or((0, String::new()));
+            if can_pay(g, p, gn, &pips, false) {
+                return Some((src, i as u16));
+            }
+        }
+    }
+    None
+}
+
+/// --- ghave: p activates src's compiled ability idx sacrificing `m` for its cost (the creature a response saves)
+pub fn activate_sacrificing(g: &mut Game, p: PlayerId, src: PermId, idx: u16, m: PermId) -> Res<bool> {
+    FORCED_FODDER.with(|c| c.set(Some(m)));
+    let r = activate(g, p, src, idx);
+    FORCED_FODDER.with(|c| c.set(None));
+    r
 }
 
 /// p uses planeswalker src's loyalty ability idx

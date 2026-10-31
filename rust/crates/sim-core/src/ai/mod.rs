@@ -24,7 +24,7 @@ pub mod plans;
 pub mod planner; // --- ai-planner
 pub mod pool;
 pub mod search;
-pub mod seph;
+pub mod reanimate;
 pub mod t6_table;
 pub mod tape;
 pub mod topdeck;
@@ -57,8 +57,7 @@ const fn st(temp: f64, aggression: f64, caution: f64) -> Style {
 }
 
 /// brain.STYLE: your decks (their keys are also ais.MAIN, the decks with hand-written plans)
-const MAIN_STYLES: [(&str, Style); 12] = [
-    ("seph", st(1.0, 0.55, 0.60)),
+const MAIN_STYLES: [(&str, Style); 11] = [
     ("veyran", st(1.0, 0.40, 0.80)),
     ("sauron", st(1.0, 0.55, 0.75)),
     ("galadriel", st(1.0, 0.70, 0.55)),
@@ -83,7 +82,7 @@ pub fn is_main(key: &str) -> bool {
 pub fn jd_deck(key: &str) -> bool {
     matches!(
         key,
-        "seph" | "veyran" | "sauron" | "yshtola" | "kefka" | "omnath" | "sheoldred" | "cloud" | "thrasios" | "sephfs" | "karn"
+        "veyran" | "sauron" | "yshtola" | "kefka" | "omnath" | "sheoldred" | "cloud" | "thrasios" | "sephfs" | "karn"
     )
 }
 
@@ -449,8 +448,8 @@ pub fn seph_fill_resolve(g: &mut Game, p: PlayerId, kind: Sym, _ctx: &Ctx) -> Re
     if crate::human::is_human(g, p) {
         return crate::human::choices::fill(g, p, kind);
     }
-    let need = seph::fill_pieces(g, p);
-    let mut bombs: Vec<CardId> = seph::fill_targets(g, p);
+    let need = reanimate::fill_pieces(g, p);
+    let mut bombs: Vec<CardId> = reanimate::fill_targets(g, p);
     let val: Vec<f64> = bombs.iter().map(|&c| if need.contains(&c) { -100.0 } else { -seph_bval(g, p, c) }).collect();
     let mut keyed: Vec<(f64, CardId)> = val.into_iter().zip(bombs.iter().copied()).collect();
     keyed.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap_or(std::cmp::Ordering::Equal)); // stable, as Python's sorted
@@ -714,7 +713,7 @@ pub fn tide_response(
 
 /// ais.seph_bval (Sephiroth's reanimation target value)
 pub fn seph_bval(g: &Game, p: PlayerId, c: CardId) -> f64 {
-    seph::seph_bval(g, p, c)
+    reanimate::bval(g, p, c)
 }
 
 /// ais.note_bomb: a bomb landed (the reports, and Sephiroth's plan turn)
@@ -738,19 +737,9 @@ pub fn note_bomb(g: &mut Game, p: PlayerId, c: CardId, was_removed: bool) {
     }
 }
 
-/// ais.seph_dredge (Sephiroth dredges instead of drawing)
-pub fn seph_dredge(g: &mut Game, p: PlayerId) -> Res<bool> {
-    seph::seph_dredge(g, p)
-}
-
 /// ais.engine_payoff (Veyran's engine is online)
 pub fn engine_payoff(g: &Game, p: PlayerId) -> bool {
     veyran::engine_payoff(g, p)
-}
-
-/// ais.end_step's Sephiroth milestones (reports)
-pub fn seph_end_milestones(g: &mut Game, p: PlayerId) {
-    seph::end_milestones(g, p)
 }
 
 /// the ability language's search choice (dsl.py's search): for any card, ais.tutor_pick; for a card type, your

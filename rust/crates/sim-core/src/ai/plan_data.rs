@@ -58,6 +58,9 @@ pub struct Knobs {
     pub top_pref: Option<String>,
     /// a card-code permanent's default cast priority (default 55)
     pub hooked_prio: Option<i32>,
+    /// --- ghave: answer removal and wipes by sacrificing through a paid outlet too ({1}, sacrifice a creature:
+    /// Ghave), not only the free ones (`common::sac_in_response`, `sac_before_wipe`)
+    pub paid_outlets: Option<bool>,
 }
 
 /// a win line: a catalogue combo (`combos::all()` name), or pieces (groups of card names, one card of each group
@@ -861,6 +864,7 @@ pub fn load(stem: &str, text: &str) -> Result<Loaded, String> {
         aura_host: plan.knobs.aura_host.as_deref().map(leak),
         top_pref: plan.knobs.top_pref.as_deref().map(leak),
         hooked_prio: plan.knobs.hooked_prio,
+        paid_outlets: plan.knobs.paid_outlets.unwrap_or(false),
     };
     let sets = plan.sets.values().cloned().collect();
     Ok(Loaded {

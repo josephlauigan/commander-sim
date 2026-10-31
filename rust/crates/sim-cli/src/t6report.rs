@@ -545,7 +545,6 @@ mod tests {
             killer: None,
             stats: HashMap::new(),
             milestone: HashMap::new(),
-            first_bomb: None,
             death_kind: "",
             seen: vec![],
             cast: vec![],
