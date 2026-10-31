@@ -698,6 +698,7 @@ pub fn ninjutsu(g: &mut Game, p: PlayerId, atk: &mut Vec<PermId>, d: PlayerId, a
 /// partials.insight_draw (Hunter's Insight) and rules.emblem_combat (Vraska's and Kaito's emblems) on combat damage
 pub fn combat_damage_cards(g: &mut Game, p: PlayerId, a: PermId, d: PlayerId, dmg: i32) -> Res {
     crate::impls::partials::insight_draw(g, p, a, dmg)?;
+    crate::impls::card_models3::cipher_hit(g, p, a)?; // --- card-models-3: cipher (Hidden Strings)
     if !g.player(p).emblems.is_empty() {
         crate::impls::rules::emblem_combat(g, p, a, d, dmg)?;
     }

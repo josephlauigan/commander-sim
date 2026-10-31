@@ -569,7 +569,7 @@ pub fn woodland_revert(g: &mut Game) {
 }
 
 // ================================================================== Invasion of Ikoria // Zilortha, Apex of Ikoria
-const IKORIA: &str = "Invasion of Ikoria // Zilortha, Apex of Ikoria";
+pub const IKORIA: &str = "Invasion of Ikoria // Zilortha, Apex of Ikoria";
 
 /// the non-Human creature card with mana value X or less the AI finds, in the library or the graveyard: the deck's
 /// wish list first, else the most useful (card worth, then mana value). The bool is true for a library card.
@@ -601,10 +601,14 @@ pub fn ikoria_pick(g: &Game, p: PlayerId, x: i32) -> Option<(CardId, bool)> {
 
 /// {X}{G}{G}. When this Siege enters, search your library and/or graveyard for a non-Human creature card with mana
 /// value X or less and put it onto the battlefield; shuffle if you searched the library. X is all the spare mana.
-/// The Siege is a battle that stays on the battlefield and can be attacked; the engine has no battles, so the card
-/// goes to the graveyard (engine need: battles, Zilortha's back face).
-fn ikoria_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+/// The Siege enters first, a battle with 6 defense counters that an opponent protects (`card_models3::battle_enter`;
+/// attacked through `combat::walker_attacks`, defeated: Zilortha, Apex of Ikoria).
+fn ikoria_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     let x = ctx.x.max(0);
+    let battle = ctx.owner.is_none_or(|o| o == p);
+    if battle {
+        super::card_models3::battle_enter(g, p, c, 6)?;
+    }
     if let Some((c, lib)) = ikoria_pick(g, p, x) {
         if lib {
             remove_card(&mut g.player_mut(p).library, c);
@@ -618,7 +622,7 @@ fn ikoria_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> 
     } else if g.player(p).library.len() > 1 {
         shuffle_library(g, p); // a failed search of the library still shuffles
     }
-    Ok(intern("gy"))
+    Ok(intern(if battle { "handled" } else { "gy" }))
 }
 
 /// cast with enough mana for a two-drop: X = spare mana
