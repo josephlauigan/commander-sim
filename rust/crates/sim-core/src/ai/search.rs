@@ -185,7 +185,6 @@ pub fn play_on(g2: &mut Game, p2: PlayerId, active: Option<PlayerId>) -> Res {
 
 /// `play_on`, calling `turn_end` once the active player's turn (and its extra turns) is over
 fn play_on_with(g2: &mut Game, p2: PlayerId, active: Option<PlayerId>, turn_end: impl FnOnce(&Game)) -> Res {
-    const STOP_ROUNDS: u32 = 20;
     let act = active.unwrap_or(p2);
     if !g2.stack.is_empty() || !g2.trig_queue.is_empty() {
         crate::engine::stack::settle_stack(g2)?; // copied mid-stack: finish it first
@@ -196,6 +195,35 @@ fn play_on_with(g2: &mut Game, p2: PlayerId, active: Option<PlayerId>, turn_end:
         crate::engine::turn::run_extra_turns(g2)?;
     }
     turn_end(g2); // --- ai-eval
+    play_rounds(g2, p2, act)
+}
+
+/// --- phase4-search-b: a copy whose decision came inside a step of the active player's turn (a block, a
+/// protection, a wipe response): settle the stack, finish the turn from the step after the one in progress where
+/// re-running it would repeat it (the draw, the combat, the end step), then everyone's turns as `play_on`
+pub(crate) fn play_on_resume(g2: &mut Game, p2: PlayerId) -> Res {
+    let act = g2.active.unwrap_or(p2);
+    if !g2.stack.is_empty() || !g2.trig_queue.is_empty() {
+        crate::engine::stack::settle_stack(g2)?;
+    }
+    let next = match g2.step {
+        Step::Start | Step::Main1 => Some(Step::Main1),
+        Step::Combat | Step::Main2 => Some(Step::Main2),
+        Step::End => None,
+    };
+    if let Some(st) = next
+        && g2.player(act).alive
+        && !g2.over
+    {
+        crate::engine::turn::continue_turn(g2, act, st)?;
+        crate::engine::turn::run_extra_turns(g2)?;
+    }
+    play_rounds(g2, p2, act)
+}
+
+/// everyone's turns after act's until the end of p2's next turn (`horizon` of p2's turns)
+fn play_rounds(g2: &mut Game, p2: PlayerId, act: PlayerId) -> Res {
+    const STOP_ROUNDS: u32 = 20;
     let n = g2.players.len();
     let mut k = act.index();
     let mut left = g2.settings.search.horizon;
@@ -435,6 +463,41 @@ pub fn hold_bonus(g: &Game, p: PlayerId, o: &Opt) -> f64 {
     }
     let s = brain::Situation::new(g, p);
     w * brain::hold_value(g, p, &s).1.max(0.0)
+}
+
+// --- phase4-search-b
+/// one playout of a decision of me's made inside a step (a block, a protection, a wipe response): `make` makes the
+/// option in the copy (false: it can't be made there, -50), then the copy plays on (`play_on_resume`) and is scored
+pub(crate) fn playout_with(
+    g: &mut Game,
+    me: PlayerId,
+    base_seed: u64,
+    r: u64,
+    make: impl FnOnce(&mut Game) -> Res<bool>,
+) -> f64 {
+    let (mut g2, w0) = playout_copy(g, me, base_seed, r);
+    let res = (|| -> Res<bool> {
+        if !make(&mut g2)? {
+            return Ok(false);
+        }
+        if !g2.over {
+            play_on_resume(&mut g2, me)?;
+        }
+        Ok(true)
+    })();
+    let cut = match res {
+        Ok(false) => {
+            done(g, &g2, w0, false);
+            return -50.0;
+        }
+        Ok(true) => false,
+        Err(Stop::OutOfWork) => true,
+        Err(Stop::Probe(pr)) => panic!("a trigger probe escaped a playout: {pr:?}"),
+        Err(Stop::Cancelled) => panic!("a person was asked inside a playout"),
+    };
+    let v = evaluate(&g2, me);
+    done(g, &g2, w0, cut);
+    v
 }
 
 // --- ai-eval

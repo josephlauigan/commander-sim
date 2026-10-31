@@ -181,6 +181,13 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
         crate::glog!(g, "    {} protects {}", g.player(owner).name, g.perm(m).name);
         return Ok(());
     }
+    apply_removal_rest(g, actor, m, kind, spell)
+}
+
+/// --- phase4-search-b: actor's removal of m once its owner has not protected it: ward, then the removal itself (the
+/// second half of `apply_removal`, also a protection playout's "let it resolve")
+pub fn apply_removal_rest(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: Sym, spell: Option<CardId>) -> Res {
+    let owner = g.perm(m).owner;
     if !g.perm(m).on_bf {
         return Ok(());
     }
@@ -469,15 +476,51 @@ fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, 
     if kind == "vandal" {
         victims = g.opps(p).collect();
     }
-    let destroyish = ["destroy", "dmg13", "austere", "nib", "austere2", "vandal"];
-    for q in victims {
+    for (i, &q) in victims.iter().enumerate() {
         if g.over {
             return Ok(());
         }
+        // --- phase4-search-b: what the wipe response's search needs to play the rest of the wipe in a copy
+        WIPE_CTX.with(|w| {
+            *w.borrow_mut() =
+                Some(WipeCtx { caster: p, kind, modes: modes.clone(), deluge_x, rest: victims[i + 1..].to_vec() })
+        });
         let prot = ai::wipe_response(g, q, kind, p)?;
-        if prot == Some("all") {
-            continue;
-        }
+        WIPE_CTX.with(|w| *w.borrow_mut() = None);
+        wipe_victim(g, p, kind, q, prot, &modes, deluge_x)?;
+    }
+    wipe_finish(g, kind, &modes)
+}
+
+/// --- phase4-search-b: a wipe of p's in progress (`apply_wipe_inner`), while one victim decides its response: the
+/// wipe's modes and X, and the victims still to come
+#[derive(Clone)]
+pub struct WipeCtx {
+    pub caster: PlayerId,
+    pub kind: Sym,
+    pub modes: Vec<Sym>,
+    pub deluge_x: Option<i32>,
+    pub rest: Vec<PlayerId>,
+}
+
+thread_local! {
+    pub static WIPE_CTX: std::cell::RefCell<Option<WipeCtx>> = const { std::cell::RefCell::new(None) };
+}
+
+/// p's wipe of `kind` hits q's permanents, q having answered `prot` ('all', 'indes' or none)
+pub fn wipe_victim(
+    g: &mut Game,
+    p: PlayerId,
+    kind: Sym,
+    q: PlayerId,
+    prot: Option<Sym>,
+    modes: &[Sym],
+    deluge_x: Option<i32>,
+) -> Res {
+    let destroyish = ["destroy", "dmg13", "austere", "nib", "austere2", "vandal"];
+    if prot == Some("all") {
+        return Ok(());
+    }
         let (mut biggest, mut x_dmg) = (None, 0);
         if kind == "nib" {
             let cr: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m)).collect();
@@ -548,7 +591,11 @@ fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, 
                 crate::glog!(g, "      {} ({}) is removed by the wipe ({})", wiped, g.player(q).name, kind);
             }
         }
-    }
+    Ok(())
+}
+
+/// the end of a wipe: Farewell's graveyards, then state-based actions
+pub fn wipe_finish(g: &mut Game, kind: Sym, modes: &[Sym]) -> Res {
     if kind == "farewell" && modes.contains(&"gy") {
         // Farewell: exile all graveyards
         for q in &mut g.players {
