@@ -599,8 +599,45 @@ pub fn wan_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+/// --- card-models-2: p searched its library (`tutors::shuffle_library`, the shuffle after a search, as Archivist of
+/// Oghma): every Wan Shi Tong of p's opponents has one more search to answer, at the next state checks (`wan_sba`)
+pub fn searched(g: &mut Game, p: PlayerId) {
+    if g.hooks.is_empty() {
+        return;
+    }
+    let tongs: Vec<PermId> = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.iter().copied())
+        .filter(|&m| live(g, m) && !g.perm(m).neutered && card_name(g, m) == Some(WAN_SHI_TONG))
+        .collect();
+    for m in tongs {
+        let n = g.perm(m).data.int(crate::state::DataKey::T45Search);
+        g.perm_mut(m).data.set(crate::state::DataKey::T45Search, crate::state::Val::Int(n + 1));
+    }
+}
+
+/// Wan Shi Tong's searches still to answer: a trigger each ("put a +1/+1 counter on Wan Shi Tong and draw a card")
+fn wan_sba(g: &mut Game, src: Src) -> Res {
+    let n = g.perm(src).data.int(crate::state::DataKey::T45Search);
+    if n == 0 {
+        return Ok(());
+    }
+    g.perm_mut(src).data.remove(crate::state::DataKey::T45Search);
+    for _ in 0..n {
+        if !live(g, src) {
+            break;
+        }
+        let o = owner(g, src);
+        if trigger_window(g, o, Some(src), "+1/+1 counter and draw a card", None)? && live(g, src) {
+            repl::put_plus(g, src, 1);
+            draw(g, o, 1, false)?;
+        }
+    }
+    Ok(())
+}
+
 /// Whenever an opponent searches their library, put a +1/+1 counter on Wan Shi Tong and draw a card. The engine has no
-/// "searches" event: every search by `searcher` has to call this (engine-needs-legends2.md).
+/// "searches" event of its own: a direct call (the tests); the games use `searched` and `wan_sba` (card-models-2).
 pub fn wan_shi_tong_searched(g: &mut Game, searcher: PlayerId) -> Res {
     let tongs: Vec<PermId> = g
         .opps(searcher)
@@ -630,6 +667,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, WAN_SHI_TONG)?;
     c.hand_options = Some(wan_options);
     c.prio = Some(wan_prio); // never cast with X = 0
+    c.sba = Some(wan_sba); // --- card-models-2: the searches of opponents (`searched`)
     r.card(db, SKYTURTLE)?.hand_options = Some(turtle_options);
     let c = r.card(db, LEGOLAS)?;
     c.resolve = Some(legolas_resolve);

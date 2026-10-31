@@ -1097,6 +1097,9 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
         if let Some(s) = e.add_subtype.or(e.only_subtype) {
             x.ttypes.push(s);
         }
+        if e.vanishing > 0 {
+            x.data.set(DataKey::Vanish, crate::state::Val::Int(e.vanishing as i64)); // --- card-models-2
+        }
     }
     x.on_bf = true;
     if has_dsl {

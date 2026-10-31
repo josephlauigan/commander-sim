@@ -53,7 +53,7 @@ fn borne_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
 /// Mnemonic Betrayal: exile every opponent's graveyard; p may cast spells from among those cards this turn with mana
 /// of any type (the cards are held in p's hand like Opposition Agent's, `yshtola::take_card`, and listed in
 /// `impulse` so the end step clears what was not cast); Betrayal itself is exiled.
-/// Missing: what remains goes back to its owner's graveyard (the end-step cleanup exiles it with p's own impulse cards).
+/// At the beginning of the next end step the cards not cast go back to their owners' graveyards (`betrayal_return`).
 fn betrayal_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     for q in g.opps(p).collect::<Vec<_>>() {
         let gy = std::mem::take(&mut g.player_mut(q).gy);
@@ -64,6 +64,7 @@ fn betrayal_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sy
             } else {
                 crate::impls::yshtola::take_card(g, p, c, q, "Mnemonic Betrayal");
                 g.player_mut(p).impulse.push(c);
+                g.player_mut(p).betrayed.push(c); // --- card-models-2
             }
         }
         crate::glog!(g, "    Mnemonic Betrayal exiles {} card(s) from {}'s graveyard", n, g.player(q).name);
@@ -575,4 +576,28 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Borne Upon a Wind")?.resolve = Some(borne_resolve);
     r.card(db, "Mnemonic Betrayal")?.resolve = Some(betrayal_resolve);
     Ok(())
+}
+
+/// --- card-models-2: Mnemonic Betrayal's "At the beginning of the next end step, if any of those cards remain exiled,
+/// return them to their owners' graveyards": called by the end step (`turn.rs`) before the turn's impulse cards are
+/// cleared, for every player who took cards with it
+pub fn betrayal_return(g: &mut Game) {
+    for i in 0..g.players.len() {
+        let p = PlayerId(i as u8);
+        let taken = std::mem::take(&mut g.player_mut(p).betrayed);
+        let mut back = 0;
+        for c in taken {
+            let pl = g.player_mut(p);
+            let Some(k) = pl.hand.iter().position(|&x| x == c) else { continue }; // cast (or gone) already
+            pl.hand.remove(k);
+            pl.impulse.retain(|&x| x != c);
+            pl.agent_ids.retain(|&x| x != c);
+            let owner = pl.stolen.swap_remove(&c).unwrap_or(p);
+            g.player_mut(owner).gy.push(c);
+            back += 1;
+        }
+        if back > 0 {
+            crate::glog!(g, "    Mnemonic Betrayal: {back} card(s) go back to their owners' graveyards");
+        }
+    }
 }

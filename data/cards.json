@@ -109242,9 +109242,7 @@
    "identity": "G",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Delirium — {2}{G}{G}: ~ becomes a copy of target permanent card in your graveyard until end of turn. Activate only if there are four or more card types among cards in your graveyard."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,

@@ -8564,8 +8564,8 @@ status = "Full"
 note = "a token copy of the best nonland permanent (any controller's), which stays; the AI casts it on its own permanent with flash (opponent's turn or end of turn) when the copy is worth 4 or more; flashback {4}{U}{U}"
 
 ["Peter Parker's Camera"]
-status = "Partial"
-note = "enters with three film counters; {2}, {T}, remove a counter: the AI copies its own important (importance 6+) triggered ability on the stack (stack::copy_trigger, t6_copies::camera_copy): the copy can be countered and its effect runs before the original (Godo: the copy fetches Hammer of Nazahn, the original Helm of the Host). Missing: copying activated abilities and choosing new targets"
+status = "Approximate"
+note = "enters with three film counters; {2}, {T}, remove a counter: copy target activated or triggered ability you control (stack::copy_trigger, t6_copies::camera_copy): the copy can be countered and resolves before the original, choosing its targets anew (the AI's best). The AI copies its own important (importance 6+) triggered ability (Godo: the copy fetches Hammer of Nazahn, the original Helm of the Host) and its own compiled activated or loyalty ability worth stack::CAMERA_WORTH (a tutor: Fauna Shaman). Approximation: the copyable abilities are the triggers and the compiled activated and loyalty abilities (stack::ability_window_ex); a hand-written activated ability (card code calling stack::ability_window) cannot be copied"
 
 ["Volatile Stormdrake"]
 status = "Partial"
@@ -8636,8 +8636,8 @@ status = "Approximate"
 note = "{T}, pay 4 life, sacrifice (sorcery speed, life above 15): takes an opponent's nonland cards as Opposition Agent does (any-type mana), the AI casts what it can at once and the rest go home; the owner draws for each spell played; lands stay in the hand and are never played (rust/agents/engine-needs-mana.md)"
 
 ["Redirect Lightning"]
-status = "Partial"
-note = "answers removal aimed at the owner's key permanent in the removal-response hook (every deck holding it): pays {R} and {2} (or {R} and 5 life when short of mana and above 10 life) and aims the spell at the caster's best permanent; missing: it cannot change the target of an ability"
+status = "Approximate"
+note = "additional cost {2} or 5 life ({R} and {2}, or {R} and 5 life when short of mana and above 10 life). Changes the target of: a removal spell aimed at the owner's key permanent (worth 4, or a commander), to the caster's best permanent (the removal-response hook, every deck holding it); an opponent's ability on the stack aimed at its key permanent, to the best legal permanent of its opponents (t6_redirects::redirect_ability: compiled activated, loyalty and triggered removal with a single target, aimed as it goes on the stack, dsl::aim / retarget_ok); a counterspell aimed at its important spell, to another opponent's spell on the stack the counter can hit (redirect_counter). It goes on the stack and can be countered. Approximation: a hand-written ability (card code) has no target on the stack, so it cannot be redirected"
 
 ["Ricochet Trap"]
 status = "Full"
@@ -8867,8 +8867,8 @@ status = "Full"
 note = "an opponent's noncreature spell makes you a Food; a creature's combat damage to you sacrifices a Food; two untapped Foods tap for one mana of any colour (a source worth one mana per pair; the tapped Foods are counted on the Merchant and untap at your upkeep, the Merchant itself is not tapped). Approximation: the engine keeps Foods as a count, so a tapped Food can still be eaten with {2},{T}, sacrifice (t6_green2)"
 
 ["Shifting Woodland"]
-status = "Partial"
-note = "enters tapped unless you control a Forest, {T}: {G}; delirium {2}{G}{G} (four card types in your graveyard): the AI has it become a copy of the best creature card there (Oboro Breezecaller first) in its first main phase; missing: it is modelled as the land tapped plus a temporary token copy (exiled at the end step), so the copy's enters triggers wrongly fire and only creature cards are chosen"
+status = "Full"
+note = "enters tapped unless you control a Forest, {T}: {G}; delirium {2}{G}{G} (four card types in your graveyard): the land itself becomes a copy of target permanent card in your graveyard until end of turn (alela::set_face: no enter triggers; a nonland copy leaves the lands, so a creature copy attacks and makes no {G}; back at the next turn, t6_green2::woodland_revert). The AI copies the best creature card (Oboro Breezecaller first), else an artifact or enchantment worth 20, in its first main phase, paying with its other lands"
 
 ["Invasion of Ikoria // Zilortha, Apex of Ikoria"]
 tags = "xtutor reach"
