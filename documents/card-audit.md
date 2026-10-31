@@ -47,7 +47,6 @@ scry/surveil/card selection count as nothing or as plain draws, and planeswalker
 | Fabled Passage | Modeled | tags: `c=A f` |
 | Farewell | Approximate | chooses modes by net value: creatures always, artifacts/enchantments when it gains; never graveyards |
 | Glacial Fortress | Modeled | tags: `c=WU ck` |
-| Glimpse the Unthinkable | Modeled | tags: `fill=glimpse`: the graveyard-fill plan casts it (after Entomb, Buried Alive and Unmarked Grave) with a bomb to bin and a way to use it; it mills ten cards. The AI always targets itself; a person picks the player |
 | Grave Titan | Modeled | tags: `bomb=7 pow=6 dt titan` |
 | Gray Merchant of Asphodel | Modeled | tags: `bomb=4 pow=2 gray` |
 | Grisly Salvage | Approximate | always takes a land; bombs in the five go to the graveyard |

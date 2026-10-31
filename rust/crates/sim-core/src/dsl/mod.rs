@@ -543,6 +543,39 @@ fn nonbasic_lands(g: &Game, q: PlayerId) -> i32 {
     g.player(q).lands.iter().filter(|&&m| g.perm(m).cd.is_some_and(|c| !g.db.get(c).basic)).count() as i32
 }
 
+/// p has a use for its own graveyard now: a reanimation spell or Yawgmoth's Will in hand, or a graveyard engine out
+fn gy_payoff(g: &Game, p: PlayerId) -> bool {
+    let pl = g.player(p);
+    pl.hand.iter().any(|&c| g.db.get(c).tag(Tag::Rean) || g.db.get(c).tag(Tag::Yawg))
+        || pl.perms.iter().any(|&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Rean)))
+}
+
+/// "Target player mills N cards" (Glimpse the Unthinkable): the AI mills itself when its graveyard pays off now,
+/// else the opponent closest to milling out (a library of N or fewer: that player loses at the next draw), else the
+/// one it fears most
+fn mill_target(g: &Game, p: PlayerId, k: i32) -> Option<PlayerId> {
+    if gy_payoff(g, p) && g.player(p).library.len() as i32 > k + 5 {
+        return Some(p);
+    }
+    let opps: Vec<PlayerId> =
+        g.opps(p).filter(|&q| !crate::engine::values::player_hexproof(g, q)).collect();
+    if let Some(q) = min_by(&opps, |q| g.player(q).library.len() as f64).filter(|&q| g.player(q).library.len() as i32 <= k)
+    {
+        return Some(q);
+    }
+    max_by(&opps, |q| threat(g, p, q))
+}
+
+/// what "target player mills N" is worth to p now (value_of)
+fn mill_value(g: &Game, p: PlayerId, k: i32) -> f64 {
+    match mill_target(g, p, k) {
+        Some(q) if q == p => 0.25 * k as f64,
+        Some(q) if g.player(q).library.len() as i32 <= k => 15.0,
+        Some(_) => 0.05 * k as f64,
+        None => 0.0,
+    }
+}
+
 fn sel_or_empty(s: &Option<Sel>) -> Sel {
     s.clone().unwrap_or_default()
 }
@@ -897,7 +930,12 @@ fn run(
             }
         }
         "mill" => {
-            for q in players(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx) {
+            let qs = if e.who.as_deref() == Some("target_player") {
+                mill_target(g, p, n(g, ctx)).into_iter().collect()
+            } else {
+                players(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx)
+            };
+            for q in qs {
                 let k = n(g, ctx);
                 zones::mill(g, q, k.max(0) as usize)?;
             }
@@ -1882,6 +1920,7 @@ pub fn value_of(g: &Game, p: PlayerId, effects: &[Effect], spell: Option<CardId>
                 v += 0.3 + 1.2 * n.min((lands - left.max(0.0)).max(0.0));
             }
             "discard" => v += if e.who.as_deref() != Some("you") { 0.8 } else { -0.5 },
+            "mill" if e.who.as_deref() == Some("target_player") => v += mill_value(g, p, n as i32),
             "modal" => {
                 let mut ms: Vec<f64> = e.modes.iter().map(|m| value_of(g, p, m, spell)).collect();
                 ms.sort_by(|a, b| b.total_cmp(a));

@@ -10177,3 +10177,7 @@ note = "the back face of Nicol Bolas, the Ravager (JD's list plays the front; ca
 status = "Full"
 note = "0/3 defender; compiled: sacrifice it: {R}{R}. Card code (impls/card_models.rs blocks slot): {R}, sacrifice it: 2 damage to the creature it blocks (the AI does it when that attacker has 2 toughness or less and is worth killing; a person is asked); the attacker stays blocked"
 paths_ok = "compiled: the {R}{R} mana ability; card code: the blocking sacrifice for 2 damage (card_models.rs tinder_blocks)"
+
+["Glimpse the Unthinkable"]
+status = "Full"
+note = "compiled: target player mills ten cards. The AI's target (dsl mill_target): itself when its graveyard pays off now (a reanimation spell or Yawgmoth's Will in hand, a reanimation permanent out) and its library keeps 15 or more, else the opponent it would mill out, else the one it fears most; it is worth casting mostly in those first two cases"

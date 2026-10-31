@@ -322,7 +322,7 @@ fn payable_in_hand(g: &Game, p: PlayerId, pred: impl Fn(CardId) -> bool) -> bool
     g.player(p).hand.iter().any(|&c| pred(c) && can_pay(g, p, g.db.get(c).generic, &g.db.get(c).pips, false))
 }
 
-const FILLERS: [&str; 5] = ["Entomb", "Buried Alive", "Unmarked Grave", "Glimpse the Unthinkable", "Grisly Salvage"];
+const FILLERS: [&str; 4] = ["Entomb", "Buried Alive", "Unmarked Grave", "Grisly Salvage"];
 
 /// brain.special_options for Sephiroth: the loops, reanimation, Yawgmoth's Will, Tortured Existence, filling the
 /// graveyard, tutors, Insatiable Avarice, hardcasting a bomb, Trophy on Scavenger Grounds, Skullclamp, Deadly Dispute,
@@ -540,8 +540,7 @@ fn fill_go(g: &mut Game, p: PlayerId, _arg: i64) -> Res<bool> {
     seph_fill(g, p)
 }
 
-/// ais.seph_fill: Entomb, Buried Alive, Unmarked Grave, Glimpse the Unthinkable or Grisly Salvage, with a bomb to
-/// bin and a way to use it
+/// ais.seph_fill: Entomb, Buried Alive, Unmarked Grave or Grisly Salvage, with a bomb to bin and a way to use it
 pub fn seph_fill(g: &mut Game, p: PlayerId) -> Res<bool> {
     if own_bomb_in_gy(g, p) {
         return Ok(false);

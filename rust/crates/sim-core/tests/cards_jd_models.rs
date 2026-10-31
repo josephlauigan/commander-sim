@@ -113,39 +113,6 @@ fn hydaelyn_blesses_a_legend_at_combat_and_draws() {
     assert_eq!(g.perm(gonti).plus, 1);
 }
 
-// ======================================================== Sephiroth: Glimpse the Unthinkable
-/// Sephiroth at a t3 table
-fn seph_table() -> Game {
-    table(&["seph", "korvold-jund-sacrifice", "tergrid-mono-black-disruption"])
-}
-
-#[test]
-fn glimpse_fills_the_graveyard_when_the_plan_wants_it() {
-    let mut g = seph_table();
-    g.active = Some(P0);
-    g.player_mut(P0).hand.clear();
-    let glimpse = hand(&mut g, P0, &["Glimpse the Unthinkable", "Animate Dead"])[0];
-    lands(&mut g, P0, "Watery Grave", 2, false);
-    let (lib, gy) = (g.player(P0).library.len(), g.player(P0).gy.len());
-    assert!(sim_core::ai::seph::seph_fill(&mut g, P0).unwrap());
-    let pl = g.player(P0);
-    assert!(!pl.hand.contains(&glimpse));
-    assert_eq!(pl.library.len(), lib - 10);
-    assert_eq!(pl.gy.len(), gy + 11, "ten milled cards and Glimpse itself");
-}
-
-#[test]
-fn glimpse_waits_without_a_way_to_reanimate() {
-    let mut g = seph_table();
-    g.active = Some(P0);
-    g.player_mut(P0).hand.clear();
-    hand(&mut g, P0, &["Glimpse the Unthinkable"]);
-    lands(&mut g, P0, "Watery Grave", 2, false);
-    let lib = g.player(P0).library.len();
-    let _ = sim_core::ai::seph::seph_fill(&mut g, P0).unwrap();
-    assert_eq!(g.player(P0).library.len(), lib);
-}
-
 // ======================================================== Kefka: Price of Progress
 /// Kefka at a t3 table
 fn kefka_table() -> Game {
@@ -458,4 +425,38 @@ fn city_of_traitors_goes_when_a_land_with_its_own_enters_ability_is_played() {
     sim_core::engine::turn::play_land_card(&mut g, P0, bog, "hand").unwrap();
     assert!(!g.perm(city).on_bf, "sacrificed");
     assert!(g.player(P0).lands.iter().any(|&m| g.perm(m).cd == Some(bog)));
+}
+
+// ======================================================== Kefka: Glimpse the Unthinkable (from the Seph list, 10-30)
+#[test]
+fn glimpse_mills_kefka_itself_with_yawgmoths_will_in_hand() {
+    let mut g = kefka_table();
+    g.active = Some(P0);
+    g.player_mut(P0).hand.clear();
+    let cs = hand(&mut g, P0, &["Glimpse the Unthinkable", "Yawgmoth's Will"]);
+    let (lib, gy) = (g.player(P0).library.len(), g.player(P0).gy.len());
+    assert!(sim_core::dsl::card_value(&g, P0, cs[0]) >= 2.0);
+    cast::cast_card(&mut g, P0, cs[0], "hand", Ctx::default()).unwrap();
+    assert_eq!(g.player(P0).library.len(), lib - 10);
+    assert_eq!(g.player(P0).gy.len(), gy + 11, "ten milled and Glimpse itself");
+}
+
+#[test]
+fn glimpse_mills_out_an_opponent_with_ten_cards_left() {
+    let mut g = kefka_table();
+    g.active = Some(P0);
+    g.player_mut(P0).hand.clear();
+    g.player_mut(P2).library.truncate(9);
+    let c = hand(&mut g, P0, &["Glimpse the Unthinkable"])[0];
+    assert!(sim_core::dsl::card_value(&g, P0, c) >= 9.0);
+    cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
+    assert!(g.player(P2).library.is_empty());
+}
+
+#[test]
+fn glimpse_without_a_payoff_is_barely_worth_a_card() {
+    let mut g = kefka_table();
+    g.player_mut(P0).hand.clear();
+    let c = hand(&mut g, P0, &["Glimpse the Unthinkable"])[0];
+    assert!(sim_core::dsl::card_value(&g, P0, c) < 1.0);
 }

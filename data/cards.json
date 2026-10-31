@@ -50315,21 +50315,32 @@
    "types": "S",
    "generic": 0,
    "pips": "UB",
-   "tags": {
-    "fill": "glimpse"
-   },
+   "tags": {},
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": null,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "mill",
+       "n": 10,
+       "who": "target_player"
+      }
+     ]
+    }
+   ],
    "start_loyalty": null,
-   "kws": [],
+   "kws": [
+    "mill"
+   ],
    "subtypes": [],
    "protfrom": "",
    "ward": 0,
-   "identity": null,
-   "game_changer": null,
-   "source": "manual",
+   "identity": "BU",
+   "game_changer": false,
+   "source": "scryfall+dsl",
    "unparsed": [],
    "derived": {
     "cmc": 2,
