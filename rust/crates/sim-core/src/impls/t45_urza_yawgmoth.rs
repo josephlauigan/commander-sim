@@ -48,6 +48,7 @@
 //! Urza or Sol Ring and free artifacts cast between each other; Reassembling Skeleton / Gravecrawler + Pitiless
 //! Plunderer + an altar or Warren Soultrader + a death payoff.
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use crate::ai::brain::{Situation, card_utility, do_cast_with};
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, grants_flash};
@@ -539,7 +540,7 @@ fn epow_card(g: &Game, c: CardId) -> i32 {
 }
 
 fn entomb_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if crate::ai::is_main(g.player(p).key) || crate::human::is_human(g, p) {
+    if crate::ai::is_main(hand_key(g, p)) || crate::human::is_human(g, p) {
         return Ok(vec![]);
     }
     let (cg, cp) = cost_of(g, p, c);
@@ -568,7 +569,7 @@ fn entomb_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 }
 
 fn entomb_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
-    if crate::ai::is_main(g.player(p).key) || crate::human::is_human(g, p) {
+    if crate::ai::is_main(hand_key(g, p)) || crate::human::is_human(g, p) {
         crate::ai::seph_fill_resolve(g, p, intern("entomb"), ctx)?; // JD's decks: their own Entomb plan
         return Ok(intern("gy"));
     }

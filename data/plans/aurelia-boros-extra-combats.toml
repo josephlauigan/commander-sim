@@ -1,0 +1,38 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md) for aurelia-boros-extra-combats (Tier 3), written in Phase 4 PR 7
+# from its hand AI: impls/t3_lines.rs `helm_options` (Helm of the Host goes on Aurelia, else Combat Celebrant, before
+# combat). Read only with the hand AI off (AI_HAND).
+# The card code stays as code (t3_lines.rs `soff_prio` / `soff_options`, `assault_prio`, `assault_again`): Sword of
+# Feast and Famine's and Sword of the Animist's equips and Aggravated Assault's extra combats. The priorities below
+# repeat that code's values (Sword 60; Assault 58 with the Sword around, else 45), so they change nothing.
+# Left out: equip targets are not in the schema (Helm on Aurelia / Celebrant, the Sword on the likeliest attacker), so
+# with the hand AI off `helm_options` no longer steers Helm and the generic equip choice decides. The lines below are
+# for the tutors and the combat plan only; the Helm combats are played out by the engine (a combat win, not a combo).
+deck = "aurelia-boros-extra-combats"
+default = "plan"
+
+[key_cards]
+"Sword of Feast and Famine" = 60
+
+# win lines, best first: Helm of the Host on Aurelia (the commander in the command zone counts as held) or on Combat
+# Celebrant: each combat's hasty copy adds another combat; then Aggravated Assault with the Sword connecting (the
+# untapped lands pay for the next combat)
+[[line]]
+name = "Helm of the Host on Aurelia or Combat Celebrant"
+kind = "combat"
+pieces = [["Helm of the Host"], ["Aurelia, the Warleader", "Combat Celebrant"]]
+
+[[line]]
+name = "Aggravated Assault + Sword of Feast and Famine"
+kind = "combat"
+pieces = [["Aggravated Assault"], ["Sword of Feast and Famine"]]
+
+[[prio]]
+cards = ["Aggravated Assault"]
+when = ["have:Sword of Feast and Famine"]
+value = 58
+else = 45
+
+# the combat pieces are worth protecting (the commander already is)
+[[hold]]
+card = "Teferi's Protection"
+protects = ["commander", "Helm of the Host", "Sword of Feast and Famine", "Aggravated Assault"]

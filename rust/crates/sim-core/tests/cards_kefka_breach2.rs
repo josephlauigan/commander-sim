@@ -37,6 +37,7 @@ fn run_line(g: &mut Game) {
 
 #[test]
 fn grapeshot_burns_the_table_out_in_the_line() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = board(3, 3, 1, 40, 8);
     g.player_mut(P1).life = 4;
     hand(&mut g, P0, &["Underworld Breach", "Grapeshot", "Dark Ritual", "Lotus Petal"]);
@@ -46,6 +47,7 @@ fn grapeshot_burns_the_table_out_in_the_line() {
 
 #[test]
 fn cabal_ritual_pays_for_the_line() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     // Cabal Ritual's {B}{B}{B} pays Brain Freeze's generic cost and adds storm
     let mut g = board(1, 1, 3, 9, 8);
     hand(&mut g, P0, &["Underworld Breach", "Brain Freeze", "Cabal Ritual"]);
@@ -61,6 +63,7 @@ fn cabal_ritual_pays_for_the_line() {
 
 #[test]
 fn jeskas_will_adds_red_for_the_opponents_hand_in_the_line() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = board(1, 2, 3, 9, 8);
     let island = card(&g, "Island");
     g.player_mut(P1).hand = vec![island; 6];
@@ -74,6 +77,7 @@ fn jeskas_will_adds_red_for_the_opponents_hand_in_the_line() {
 
 #[test]
 fn gamble_tutors_breach_and_is_cast_for_it() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = board(3, 3, 1, 40, 0);
     let ub = card(&g, "Underworld Breach");
     let bf = card(&g, "Brain Freeze");

@@ -643,6 +643,9 @@ pub struct Player {
     /// --- ai-fix: B: the cards p put on top of its library itself (Vampiric Tutor, Imperial Seal, Mystical Tutor,
     /// Enlightened Tutor), top last: p knows them until the library is shuffled or they are drawn (`tutors::known_top`)
     pub known_top: Vec<CardId>,
+    /// --- phase4-rules: the cards a tutor of this player's found, with the turn number (`ai::rules::mark_tutored`;
+    /// empty while `AI_RULES` has the tutored guard off; it is on by default)
+    pub tutored: Vec<(CardId, u32)>,
     /// --- ai-planner: the card the line planner chose for the tutor being cast (`ai::planner`); a tutor takes it
     /// when it meets the tutor's own restriction, else picks as usual. Set only around the planner's cast
     pub plan_tutor: Option<CardId>,
@@ -872,6 +875,7 @@ impl Player {
             delayed_draws: 0,
             to_top: false,
             known_top: vec![], // --- ai-fix: B
+            tutored: vec![], // --- phase4-rules
             plan_tutor: None, // --- ai-planner
             last_turn_end: 0,
             gy_start: vec![],

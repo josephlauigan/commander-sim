@@ -162,7 +162,7 @@ pub struct Knobs {
     /// (`AI_SEARCH_ATK_MIN`; default `min_visits`)
     pub atk_min: u32,
     /// --- phase4-search-b (an ablation knob): an opponent's first main-phase choice in a playout is a tree node too,
-    /// chosen against the decider (UCB on the decider's value negated) (`AI_SEARCH_OPP=1`)
+    /// chosen against the decider (UCB on the decider's value negated) (`AI_SEARCH_OPP`: on unless `0`, `parse_opp`)
     pub opp: bool,
 }
 
@@ -196,8 +196,15 @@ fn env_knobs() -> &'static Knobs {
         close: env_or("AI_SEARCH_CLOSE", CLOSE),
         pairs: env_or("AI_SEARCH_PAIRS", PAIRS),
         atk_min: env_or("AI_SEARCH_ATK_MIN", env_or("AI_SEARCH_MIN", MIN_VISITS)),
-        opp: matches!(std::env::var("AI_SEARCH_OPP").ok().as_deref(), Some("1")),
+        opp: parse_opp(std::env::var("AI_SEARCH_OPP").ok().as_deref()),
     })
+}
+
+/// `AI_SEARCH_OPP`: unset, empty or `1` the opponent nodes on (the default since the stage 1 paired tests: level with
+/// PR 5's ISMCTS on both halves tried, +1.5 t2 B and +0.3 t1 B, 7% cheaper on t1, `audit/recal/pairs-2026-10-31.md`
+/// section 2); `0` (or any other value, as before) off
+pub fn parse_opp(v: Option<&str>) -> bool {
+    matches!(v.map(str::trim), None | Some("") | Some("1"))
 }
 
 thread_local! {
@@ -645,12 +652,13 @@ fn mode_b() -> &'static Mode {
     M.get_or_init(|| parse_mode_b(std::env::var("AI_SEARCH_B").ok().as_deref()))
 }
 
-/// `AI_SEARCH_B`: unset or `0` PR 5's behaviour (the heuristic blocks, protects and answers wipes), `1` the search
-/// for every generic-policy deck on ISMCTS, `a,b` for those keys
+/// `AI_SEARCH_B`: unset, empty or `1` the search for every generic-policy deck on ISMCTS (the default since the stage
+/// 1 paired tests: all ten halves t1-t5 level, mean +0.49, CPU +0.0% to +3.7%, `audit/recal/pairs-2026-10-31.md`
+/// section 2); `0` PR 5's behaviour (the heuristic blocks, protects and answers wipes); `a,b` for those keys
 fn parse_mode_b(v: Option<&str>) -> Mode {
     match v.map(str::trim) {
-        None | Some("") | Some("0") => Mode::Off,
-        Some("1") => Mode::All,
+        Some("0") => Mode::Off,
+        None | Some("") | Some("1") => Mode::All,
         Some(list) => Mode::Keys(list.split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect()),
     }
 }
@@ -664,16 +672,25 @@ pub fn force_b(on: Option<bool>) {
     FORCE_B.with(|f| f.set(on));
 }
 
+/// does the switch `AI_SEARCH_B` read as `v` turn part (b)'s searches on for deck `key`? (`parse_mode_b`)
+pub fn search_b_wants(v: Option<&str>, key: &str) -> bool {
+    mode_wants(&parse_mode_b(v), key)
+}
+
+fn mode_wants(m: &Mode, key: &str) -> bool {
+    match m {
+        Mode::Off => false,
+        Mode::All => true,
+        Mode::Keys(k) => k.iter().any(|x| x == key),
+    }
+}
+
 /// does p decide its blocks, protection and wipe responses by search here? (a generic-policy deck on ISMCTS, in the
 /// real game, the look-ahead on and within its per-game caps)
 fn on_b(g: &mut Game, p: PlayerId) -> bool {
     let want = match FORCE_B.with(|f| f.get()) {
         Some(f) => f,
-        None => match mode_b() {
-            Mode::Off => false,
-            Mode::All => true,
-            Mode::Keys(k) => k.iter().any(|x| x == g.player(p).key),
-        },
+        None => mode_wants(mode_b(), g.player(p).key),
     };
     want && !g.in_search && on(g, p) && g.humans.get(p).is_none() && super::search::enabled(g, p)
 }

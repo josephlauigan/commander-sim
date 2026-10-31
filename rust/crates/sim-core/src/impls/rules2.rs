@@ -1143,6 +1143,7 @@ fn wishclaw_search(g: &mut Game, p: PlayerId) -> Res {
             remove_card(&mut g.player_mut(p).library, x);
             g.player_mut(p).hand.push(x);
             g.player_mut(p).stat("tutored", 1);
+            crate::ai::rules::mark_tutored(g, p, x); // --- phase4-rules
             shuffle_library(g, p);
             crate::glog!(g, "    {} tutors {} (Wishclaw Talisman)", pname(g, p), g.db.get(x).name);
             return Ok(());

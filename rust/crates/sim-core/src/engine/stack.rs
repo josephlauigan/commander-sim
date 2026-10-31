@@ -5,6 +5,7 @@
 //! find out whether it really triggers, then pushed, then run for real top first: its `trigger_window` gives every
 //! player priority on it and says whether it was countered.
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use crate::ai;
 use crate::engine::altcost;
 use crate::engine::cast::discard_worst;
@@ -664,7 +665,7 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
         return Ok(());
     }
     let nc = hand.iter().filter(|&&x| g.db.get(x).tag(Tag::Ctr)).count();
-    if g.player(q).key == "veyran" && has(g, q, Tag::Veyran) {
+    if hand_key(g, q) == "veyran" && has(g, q, Tag::Veyran) {
         val += 1.5; // every counter is also a doubled magecraft trigger
     }
     let key = g.player(q).key;
@@ -798,6 +799,9 @@ pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
     for &ctr in &g.player(q).hand {
         let d = g.db.get(ctr);
         let t = &d.tags;
+        if !crate::ai::rules::followup_ok(g, q, ctr) {
+            continue; // --- phase4-rules: a Pact whose upkeep (with every debt owed) can't be paid
+        }
         if &*d.name == "Venser, Shaper Savant"
             && g.settings.counter_threshold(g.player(q).key).is_none()
             && !t.has(Tag::Ctr)
@@ -898,7 +902,7 @@ pub fn pay_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>
     }
     let pitch = |g: &mut Game, blues: Vec<CardId>| -> Res {
         // the least useful blue card (a person picks: play/cards.pick_blue)
-        let sauron = g.player(q).key == "sauron";
+        let sauron = hand_key(g, q) == "sauron";
         let mut x = crate::engine::zones::min_by(&blues, |c| {
             let w = crate::engine::tutors::card_worth(g, q, c, false);
             if sauron { w + crate::ai::decks::sauron_pitch_keep(g, q, c) } else { w }
@@ -1192,7 +1196,7 @@ pub fn step_priority(g: &mut Game, step: &str, defender: Option<PlayerId>, attac
             crate::human::human::step_priority(g, q, step, defender, attackers)?;
         } else if step == "attackers" && Some(q) == defender {
             ai::attack_response(g, q, a, attackers)?;
-        } else if step == "combat" && q != a && g.player(q).key == "galadriel" {
+        } else if step == "combat" && q != a && hand_key(g, q) == "galadriel" {
             crate::cardcode::galadriel_precombat(g, q)?; // tap the attacker it fears (Errant Doomsayers, Whipcorder)
         }
         if step == "combat" && q != a && !g.hooks.is_empty() && !crate::human::is_human(g, q) {
@@ -1206,7 +1210,7 @@ pub fn step_priority(g: &mut Game, step: &str, defender: Option<PlayerId>, attac
 /// they cannot. 1.0 for everything else (other decks keep the old behaviour).
 pub fn soft_counter_factor(g: &Game, q: PlayerId, caster: PlayerId, ctr: CardId) -> f64 {
     let soft = g.db.get(ctr).tags.int(Tag::Soft).unwrap_or(0);
-    if g.player(q).key == "kefka" && soft > 0 && crate::engine::mana::total_mana(g, caster, false) >= soft as u32 {
+    if hand_key(g, q) == "kefka" && soft > 0 && crate::engine::mana::total_mana(g, caster, false) >= soft as u32 {
         0.3
     } else {
         1.0

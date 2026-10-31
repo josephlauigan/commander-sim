@@ -216,6 +216,7 @@ fn debt_to_the_deathless() {
 
 #[test]
 fn the_ai_casts_an_x_drain_for_the_kill() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = three();
     lands(&mut g, P0, "Swamp", 6, false);
     let c = hand(&mut g, P0, &["Exsanguinate"])[0];
@@ -454,6 +455,7 @@ fn plea_for_guidance_finds_two_enchantments() {
 
 #[test]
 fn take_up_the_shield_saves_yshtola() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = two();
     let m = ysh(&mut g, P0);
     lands(&mut g, P0, "Plains", 2, false);
@@ -478,6 +480,7 @@ fn take_up_the_shield_as_a_spell() {
 
 #[test]
 fn zur_in_the_99_fetches_for_this_deck() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = two();
     let y = ysh(&mut g, P0);
     let z = perm(&mut g, P0, "Zur the Enchanter");
@@ -527,6 +530,7 @@ fn zurs_fetch_values_for_this_deck() {
 
 #[test]
 fn yshtola_doesnt_chump_block_unless_it_would_kill_you() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["veyran", "yshtola"]);
     let m = ysh(&mut g, P1);
     let big = perm(&mut g, P0, "Grave Titan");
@@ -543,6 +547,7 @@ fn yshtola_doesnt_chump_block_unless_it_would_kill_you() {
 // ======================================================== the AI
 #[test]
 fn a_spell_that_triggers_yshtola_ranks_higher() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = three();
     let c = card(&g, "Read the Bones");
     let before = ysh_mod::yshtola_prio(&g, P0, c);
@@ -572,6 +577,7 @@ fn idyllic_tutor_uses_the_wish_list() {
 
 #[test]
 fn tutors_find_the_finisher_when_it_kills() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = three();
     lands(&mut g, P0, "Swamp", 9, false);
     g.player_mut(P1).life = 6;
@@ -582,6 +588,7 @@ fn tutors_find_the_finisher_when_it_kills() {
 
 #[test]
 fn the_x_drain_is_a_main_phase_play() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = three();
     lands(&mut g, P0, "Swamp", 6, false);
     hand(&mut g, P0, &["Exsanguinate"]);
@@ -614,6 +621,7 @@ fn hostage_taker_priority_from_its_target() {
 
 #[test]
 fn champions_helm_goes_on_yshtola() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = two();
     let helm = perm(&mut g, P0, "Champion's Helm");
     let y = ysh(&mut g, P0);
@@ -637,6 +645,7 @@ fn champions_helm_is_yshtolas_alone() {
 
 #[test]
 fn the_wipe_answer_is_zurs() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     // Y'shtola has no wipe answer in hand: no response; with Clever Concealment her creatures phase out
     let mut g = two();
     let y = ysh(&mut g, P0);

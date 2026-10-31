@@ -495,7 +495,7 @@ fn copy_worth(g: &Game, p: PlayerId, spell: CardId) -> f64 {
     };
     match &*d.name {
         "Exsanguinate" | TORMENT => {
-            if g.cur_cast.as_ref().is_some_and(|c| c.0 == spell && g.player(p).key == "sauron") {
+            if g.cur_cast.as_ref().is_some_and(|c| c.0 == spell && crate::ai::hand_key(g, p) == "sauron") {
                 x as f64 * 2.0
             } else {
                 0.0

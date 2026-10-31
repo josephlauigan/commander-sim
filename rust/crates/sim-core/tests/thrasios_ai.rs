@@ -33,6 +33,7 @@ fn in_gy(g: &Game, p: PlayerId, name: &str) -> bool {
 // ---------------------------------------------------------------- Blossoming Defense
 #[test]
 fn blossoming_defense_saves_tymna_from_targeted_removal() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = tbl();
     let t = tymna(&mut g);
     lands(&mut g, P0, "Forest", 1, false);
@@ -61,6 +62,7 @@ fn blossoming_defense_needs_its_green_mana_and_is_not_cast_against_an_edict() {
 
 #[test]
 fn the_thrasios_seat_casts_blossoming_defense_to_save_a_commander() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["thrasios", "seph", "veyran"]);
     let t = perm(&mut g, P0, TYMNA);
     g.perm_mut(t).is_cmd = true;
@@ -72,6 +74,7 @@ fn the_thrasios_seat_casts_blossoming_defense_to_save_a_commander() {
 
 #[test]
 fn mana_is_held_for_the_protection_spells_while_a_commander_is_out() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = tbl();
     let ids = hand(&mut g, P0, &["Blossoming Defense", "Dark Endurance", "Swords to Plowshares"]);
     assert!(!tymna_partners::protection_held(&g, P0, ids[0]), "nothing to protect yet");
@@ -90,6 +93,7 @@ fn blocked_tymna(g: &mut Game, blocker_power: i32) -> (PermId, PermId) {
 
 #[test]
 fn a_blocked_tymna_that_would_die_gets_blossoming_defense() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = tbl();
     lands(&mut g, P0, "Forest", 1, false);
     hand(&mut g, P0, &["Blossoming Defense"]);
@@ -101,6 +105,7 @@ fn a_blocked_tymna_that_would_die_gets_blossoming_defense() {
 
 #[test]
 fn a_blocked_tymna_gets_dark_endurance_when_the_blocker_is_too_big_for_blossoming_defense() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = tbl();
     lands(&mut g, P0, "Forest", 1, false);
     lands(&mut g, P0, "Swamp", 2, false);
@@ -161,6 +166,7 @@ fn lib_ids(g: &Game) -> Vec<CardId> {
 
 #[test]
 fn a_tutor_fetches_the_missing_third_piece_of_the_combo() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = tbl();
     perm(&mut g, P0, "Basalt Monolith");
     hand(&mut g, P0, &["Rings of Brighthearth"]);
@@ -186,6 +192,7 @@ fn a_tutor_fetches_the_missing_third_piece_of_the_combo() {
 // ---------------------------------------------------------------- Thrasios's sink
 #[test]
 fn thrasios_ability_is_found_among_the_options_and_left_out_of_the_search() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let g = tbl();
     let opts = vec![
         Opt { utility: 1.0, label: "Swords to Plowshares".into(), act: None },
@@ -199,6 +206,7 @@ fn thrasios_ability_is_found_among_the_options_and_left_out_of_the_search() {
 // ---------------------------------------------------------------- Dark Endurance against a sweeper
 #[test]
 fn dark_endurance_keeps_the_commander_out_of_a_destroy_sweeper() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = tbl();
     let t = tymna(&mut g);
     lands(&mut g, P0, "Swamp", 2, false);

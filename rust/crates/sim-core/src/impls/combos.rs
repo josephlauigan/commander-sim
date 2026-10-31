@@ -8,6 +8,7 @@
 //! combo decks get tutor wish lists for their missing pieces. search.deck_combos and search.combo_progress (the
 //! look-ahead's reading of a combo in the making) are here too.
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use crate::engine::repl;
 use crate::ai::plans::DRAIN_PAYOFFS;
 use crate::cards::CardDb;
@@ -706,7 +707,7 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
     if g.player(p).t6 && post.is_some() {
         t6_measure(g, p); // Tier 6 speed measurement: stats only
     }
-    let key = g.player(p).key;
+    let key = hand_key(g, p);
     if post.is_none() || (crate::ai::is_main(key) && key != "karn") {
         return Ok(vec![]); // g.combo_decks: the outside decks (and the Karn deck: Basalt Monolith + Rings of Brighthearth)
     }
@@ -751,7 +752,7 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
 /// offer (a piece held, not gone for this turn, the Tier 6 table's `go_ok`). None if no line needs it. A ritual that is
 /// itself a piece of the line, or one of its casts, doesn't count.
 pub fn line_enabled_by(g: &Game, p: PlayerId, r: CardId, after: &[crate::engine::mana::Unit]) -> Option<f64> {
-    let key = g.player(p).key;
+    let key = hand_key(g, p);
     if crate::ai::is_main(key) && key != "karn" {
         return None; // JD's decks run their lines from their own code (`combo_options` offers them none)
     }
@@ -1497,6 +1498,17 @@ fn lines_of(g: &Game, q: PlayerId) -> std::rc::Rc<Vec<usize>> {
     let v = std::rc::Rc::new(v);
     CACHE.with(|c| c.borrow_mut().insert(key, v.clone()));
     v
+}
+
+// --- phase4-rules
+/// the piece groups of each of q's catalogued lines (`lines_of`, quiet markers left out) that has a group naming this
+/// card (the combo guard, `ai::rules::combo_ok`)
+pub fn deck_lines_with(g: &Game, q: PlayerId, name: &str) -> Vec<&'static [&'static [&'static str]]> {
+    lines_of(g, q)
+        .iter()
+        .map(|&i| real_groups(all()[i]))
+        .filter(|grps| grps.iter().any(|grp| grp.contains(&name)))
+        .collect()
 }
 
 /// how many answerable steps the line has: its declared steps that are not plain permanents, else its spells to cast
