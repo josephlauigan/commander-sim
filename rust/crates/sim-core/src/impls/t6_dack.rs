@@ -514,7 +514,7 @@ fn seven_index(g: &Game, c: CardId) -> Option<usize> {
 
 /// Records the first Dack flip of this turn when it is exactly three of the seven: which three, and which creature the
 /// next flip would leave in the library (the top three creature cards of the shuffled library are the next flip; the
-/// fourth is left; none if the library doesn't hold exactly the other four). `t6_combos_t6` decides from it.
+/// fourth is left). Only when the library holds the other four, the case the traces cover. `t6_combos_t6` decides from it.
 fn record_first_flip(g: &mut Game, p: PlayerId, found: &[CardId]) {
     let stamp = (g.round as f64) * 8.0 + g.active.map_or(0.0, |a| a.0 as f64);
     let (kf, ks) = (intern(FLIP_KEY), intern(FLIP_STAMP_KEY));
@@ -536,7 +536,15 @@ fn record_first_flip(g: &mut Game, p: PlayerId, found: &[CardId]) {
         .filter(|&&c| g.db.get(c).creature)
         .map(|&c| seven_index(g, c).unwrap_or(7))
         .collect();
-    let left = if creatures.len() == 4 && creatures.iter().all(|&i| i < 7) { creatures[3] as u32 + 1 } else { 0 };
+    // dack-check (2026-10-31): every trace (flips-*.md) has the four creatures outside the pile in the library, where
+    // the second flip takes them. With one of them drawn, cast, in the graveyard or exiled, no trace covers the pile
+    // (pile 19 without Felidar in the library has no loop at all), so no shortcut: the engine has played the flip, the
+    // game goes on and the board combos still see what is really there. Before, such a flip was recorded with "none
+    // left" and the table's "wins whatever the second flip is" piles (and, with a flicker spell, 23 and 26-35) won.
+    if creatures.len() != 4 || creatures.iter().any(|&i| i >= 7) {
+        return;
+    }
+    let left = creatures[3] as u32 + 1;
     g.player_mut(p).grudge.insert(kf, f64::from(bits | (left << 7)));
     g.player_mut(p).grudge.insert(ks, stamp);
 }

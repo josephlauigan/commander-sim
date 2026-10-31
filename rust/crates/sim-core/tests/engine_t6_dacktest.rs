@@ -313,3 +313,36 @@ fn a_flicker_spell_wins_pile_23_that_loses_without_one() {
         assert!(g.player(P0).gy.contains(&card(&g, spell)), "the spell was cast");
     }
 }
+
+// ============================================================ 5. the traces cover a full library only (dack-check, 2026-10-31)
+/// the library: `top_first` creatures on top, then the rest of the seven but `missing`, then lands; `missing` goes to
+/// the graveyard
+fn stack_without(g: &mut Game, top_first: &[usize], missing: usize) {
+    stack(g, top_first);
+    let gone = card(g, SEVEN[missing]);
+    g.player_mut(P0).library.retain(|&c| c != gone);
+    g.player_mut(P0).gy.push(gone);
+}
+
+/// Every trace (flips-*.md) assumes the four creatures not in the pile are all still in the library: the second flip
+/// takes them. With one of them gone the "wins whatever the second flip is" piles have no traced line (pile 19,
+/// Preston + Abdel + Werefox, loops Felidar through Preston with a Solar token: no Felidar in the library, no loop),
+/// so the shortcut must not call the turn won.
+#[test]
+fn a_pile_is_not_a_win_when_a_piece_its_trace_flips_next_is_not_in_the_library() {
+    for seed in 0..4 {
+        // pile 19 with all four others in the library: the table's win
+        let mut g = four(seed);
+        stack(&mut g, &[PR, AB, WF]);
+        assert!(dack_then_combo(&mut g), "seed {seed}: full library, the shortcut is ready");
+        assert_eq!(g.winner, Some(P0), "seed {seed}: pile 19 wins with the four others to flip");
+
+        // the same pile with Felidar Guardian in the graveyard: no traced line, no shortcut win
+        for missing in [FE, SO] {
+            let mut g = four(seed);
+            stack_without(&mut g, &[PR, AB, WF], missing);
+            assert!(!dack_then_combo(&mut g), "seed {seed}: {} not in the library, no shortcut", SEVEN[missing]);
+            assert_eq!(g.winner, None, "seed {seed}: {} gone", SEVEN[missing]);
+        }
+    }
+}
