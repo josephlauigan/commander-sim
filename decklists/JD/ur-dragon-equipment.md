@@ -70,8 +70,8 @@ untap all other creatures you control and add a combat. With Helm on it:
 2. The token attacks and exerts: everything else untaps, and there is another combat.
 3. The new combat begins, Helm makes another fresh token, and it repeats.
 
-It costs half of Godo, but it doesn't fetch Helm. Find Helm with Stoneforge Mystic, Steelshaper's Gift, Enlightened
-Tutor, Gilgamesh or Inventors' Fair, and attach it the same ways as above. Worldly Tutor finds Celebrant; Imperial
+It costs half of Godo, but it doesn't fetch Helm. Find Helm with Stoneforge Mystic, Steelshaper's Gift, Open the
+Armory, Enlightened Tutor, Gilgamesh or Inventors' Fair, and attach it the same ways as above. Worldly Tutor finds Celebrant; Imperial
 Recruiter can't (power 4). It is a 4/1, so cast it the turn you go off.
 
 ### Gilgamesh and the Samurai
@@ -110,13 +110,13 @@ own that aren't on the battlefield.*
 | **Lightning Greaves, Swiftfoot Boots** | Haste and protection. |
 
 Support: **Puresteel Paladin** (equip {0} with metalcraft, a card per Equipment), **Sigarda's Aid** (flash Equipment,
-attach on entering), **Brass Squire** (attach for free), **Stoneforge Mystic**, **Steelshaper's Gift** and
-**Enlightened Tutor** (find Equipment), **Inventors' Fair** (finds Helm with three artifacts).
+attach on entering), **Brass Squire** (attach for free), **Stoneforge Mystic**, **Steelshaper's Gift**, **Open the
+Armory** ({1}{W}, an Aura or Equipment to hand) and **Enlightened Tutor** (find Equipment), **Inventors' Fair** (finds Helm with three artifacts).
 
 ### Dragons
 
-- **Hasty:** Glorybringer (exert for 4 to a creature), Thundermaw Hellkite (taps every opposing flier), Smaug the
-  Magnificent (a Treasure each upkeep, damage equal to your Treasures on attack), Goldspan Dragon (Treasures that make
+- **Hasty:** Glorybringer (exert for 4 to a creature), Thundermaw Hellkite (taps every opposing flier), Goldspan
+  Dragon (Treasures that make
   two mana).
 - **Engines:** Terror of the Peaks (damage equal to each creature's power as it enters; spells that target it cost 3
   life), Nicol Bolas, the Ravager (each
@@ -181,7 +181,7 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 ## Decklist by type (100)
 **Commander (1).** The Ur-Dragon
 
-**Creatures (21).** Birds of Paradise, Brass Squire, Combat Celebrant, Dragonlord Ojutai, Dualcaster Mage, Gilgamesh Master-at-Arms, Glorybringer, Godo Bandit Warlord, Goldspan Dragon, Grand Abolisher, Imperial Recruiter, Jaxis the Troublemaker, Kura the Boundless Sky, Llanowar Elves, Nicol Bolas the Ravager, Paradise Druid, Puresteel Paladin, Smaug the Magnificent, Stoneforge Mystic, Terror of the Peaks, Thundermaw Hellkite
+**Creatures (20).** Birds of Paradise, Brass Squire, Combat Celebrant, Dragonlord Ojutai, Dualcaster Mage, Gilgamesh Master-at-Arms, Glorybringer, Godo Bandit Warlord, Goldspan Dragon, Grand Abolisher, Imperial Recruiter, Jaxis the Troublemaker, Kura the Boundless Sky, Llanowar Elves, Nicol Bolas the Ravager, Paradise Druid, Puresteel Paladin, Stoneforge Mystic, Terror of the Peaks, Thundermaw Hellkite
 
 **Planeswalkers (1).** Wrenn and Six
 
@@ -189,7 +189,7 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 
 **Artifacts (20).** Chrome Mox, Conqueror's Flail, Embercleave, Grim Monolith, Hammer of Nazahn, Helm of the Host, Kaldra Compleat, Lightning Greaves, Lotus Petal, Mana Vault, Maskwood Nexus, Mox Diamond, Peter Parker's Camera, Shadowspear, Sol Ring, Sting the Glinting Dagger, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, The One Ring
 
-**Sorceries (8).** Decimate, Demonic Tutor, Imperial Seal, Kindred Dominance, Nature's Lore, Rampant Growth, Steelshaper's Gift, Twinflame
+**Sorceries (9).** Decimate, Demonic Tutor, Imperial Seal, Kindred Dominance, Nature's Lore, Open the Armory, Rampant Growth, Steelshaper's Gift, Twinflame
 
 **Instants (11).** Chaos Warp, Cyclonic Rift, Enlightened Tutor, Force of Negation, Force of Will, Mana Drain, Pact of Negation, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
 
@@ -252,6 +252,7 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 1 Mox Diamond
 1 Nature's Lore
 1 Nicol Bolas, the Ravager
+1 Open the Armory
 1 Overgrown Tomb
 1 Pact of Negation
 1 Paradise Druid
@@ -265,7 +266,6 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 1 Scrubland
 1 Shadowspear
 1 Sigarda's Aid
-1 Smaug the Magnificent
 1 Smothering Tithe
 1 Sol Ring
 1 Steam Vents

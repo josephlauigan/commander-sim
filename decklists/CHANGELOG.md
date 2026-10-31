@@ -736,6 +736,7 @@ Deck key `urdragon`, `decklists/JD/ur-dragon-equipment.md`. Simulated against Ti
 
 ### Changes
 
+- **2026-10-31.** Out: Smaug the Magnificent. In: Open the Armory. Out: Smaug the Magnificent (to bulk). In: Open the Armory (from Ghave). JD's choice (10/31), not simulated: another two-mana way to find Helm of the Host (or Hammer, Kaldra Compleat), as the combo came online in only 9.3% of t5 games; Smaug was a six-drop value Dragon outside every combo.
 - **2026-10-30.** Into the simulator (JD, 10/30): deck key `urdragon`, tier t5, played from its plan file (`data/plans/urdragon.toml`: the Godo + Helm of the Host lines, Combat Celebrant + Helm, Dualcaster Mage + Twinflame). Kindred Dominance and Kaldra Compleat's living weapon modeled. No list change.
 - **2026-10-28.** Out: Garruk's Uprising, Hellkite Tyrant. In: Combat Celebrant (proxy), Smothering Tithe (proxy). JD's choice, not simulated: Celebrant is a second Helm of the Host infinite-combat creature at three mana (each fresh hasty token exerts, untaps the team and adds a combat); Tithe's Treasures pay for Godo and the equip and turn on Puresteel Paladin's metalcraft. 17 Game Changers.
 - **2026-10-28.** Out: Godless Shrine (a proxy). In: Gaea's Cradle (proxy). JD's choice, not simulated: taps for {G} per creature; the white-black pair loses least (Scrubland, Marsh Flats and the five-colour lands stay). The Forest stays for Rampant Growth. 16 Game Changers.
