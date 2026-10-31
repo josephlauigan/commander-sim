@@ -1,5 +1,8 @@
 # Phase 4, PR 7: each deck's hand-written AI behind a switch, off by default (design)
 
+Default since the recalibration's stage 1 (`audit/recal/pairs-2026-10-31.md` section 4): on for four decks, see "The
+switch".
+
 Brief: `rust/agents/phase4-hand-off.md`. JD's decision (2026-10-31): with no sims, every deck's hand-written AI goes
 behind a switch that defaults to the generic policy now; it is deleted later, deck by deck, after the recalibration's
 on/off paired test for that deck. Nothing is deleted in this PR.
@@ -19,7 +22,10 @@ on/off paired test for that deck. Nothing is deleted in this PR.
 
 ## The switch
 
-`AI_HAND` (env): unset, empty or `0` = every switchable deck plays the generic policy (**the default**); `1` = every
+`AI_HAND` (env): unset or empty = **the default**, the hand AI on for `ai::HAND_KEEP` only (yshtola, sheoldred,
+cloud, dack-fayden-white-stax) and the generic policy for every other switchable deck (set from the stage 1 paired
+tests, `audit/recal/pairs-2026-10-31.md` section 4: yshtola +4.1, sheoldred +1.9, cloud +6.6; Dack is held on pending
+a check of its -13.9); `0` = every switchable deck plays the generic policy (this PR's default until then); `1` = every
 deck's hand AI as before this PR; a comma-separated list of deck keys = only those keep their hand AI (the paired test
 of one deck with the rest of its tier unchanged). A thread-local override (`ai::force_hand`, a guard that restores the
 previous value on drop) forces it on or off in a test, as `ai/ismcts.rs` does with `FORCE`.
