@@ -275,6 +275,7 @@ mod tests {
 
     #[test]
     fn a_card_the_deck_ranks_positive_does_not() {
+        let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
         let s = sim();
         let out = s.mine["kefka"].iter().find(|c| s.engine.db.id(c).is_some_and(|i| !s.engine.db.get(i).land)).unwrap().clone();
         // Psychosis Crawler: Kefka's own rule ranks it (kefka_prio), so no warning

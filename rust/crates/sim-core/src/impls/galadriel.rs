@@ -20,6 +20,7 @@
 //! (marchesa.best_steal / steal, zur.guildmage_target / rootborn, t2.blink / blink_value) are re-exported at the end
 //! of this file.
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use super::partials::at_once;
 use crate::engine::mana::restr_ok;
 use crate::engine::pool::Restr;
@@ -175,7 +176,7 @@ pub fn choose_type(g: &Game, p: PlayerId, what: &str) -> Res<Sym> {
         if ts.is_empty() {
             ts.push("human");
         }
-        if g.player(p).key == "sauron" && !ts.contains(&"orc") {
+        if hand_key(g, p) == "sauron" && !ts.contains(&"orc") {
             ts.insert(0, "orc");
         }
         let n = |t: Sym| counts.iter().find(|x| x.0 == t).map_or(0, |x| x.1);
@@ -184,7 +185,7 @@ pub fn choose_type(g: &Game, p: PlayerId, what: &str) -> Res<Sym> {
         let k = choices::choose_one(g, p, "choose", &format!("{what}: choose a creature type"), &labels)?;
         return Ok(ts[k]);
     }
-    if g.player(p).key == "sauron" {
+    if hand_key(g, p) == "sauron" {
         return Ok("orc");
     }
     let mut on_bf: Vec<(Sym, i32)> = vec![];

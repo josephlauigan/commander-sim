@@ -1,0 +1,171 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
+# policy (ai/plans.rs `config`). JD's Veyran, Voice of Duality spellslinger deck (izzet magecraft: Veyran doubles the
+# triggers of the pingers, token makers and card-draw creatures). Written in Phase 4 PR 7 from its hand AI, which runs
+# when AI_HAND is on: ai/veyran.rs `veyran_prio` (cast priorities, `greaves_prio`, `engine_creature_prio`,
+# `triple_triad_prio`), `is_wish` (Mystical Tutor / Solve the Equation), `recruit_wish` (Imperial Recruiter) and the
+# veyran arm of ai/decks.rs `tutor_pick_named` (Fabricate: Lightning Greaves first).
+# Left out (the schema can't express it): the magecraft bonus for instants and sorceries (brain::card_utility), the
+# main-phase options (`veyran::options`: Mizzix's Mastery overload, equip Boots), the protection response
+# (`veyran::protect`: Return the Favor / Deflecting Swat, none in the list now), the counter value bonus (stack.rs),
+# the token chump rule; rule values that read the hand's spells (`spells_in_hand`), total mana (Triple Triad,
+# Galvanic Iteration, Breach), the storm count or an opponent at 15 life are fixed or approximated by lands + rocks;
+# Firesinger, Flashback, Reenact and the draw spells keep the generic priority.
+deck = "veyran"
+default = "plan"
+# card engines the tutors want once no line wants a card
+engines = ["Storm-Kiln Artist", "Archmage Emeritus", "Murmuring Mystic", "Birgi, God of Storytelling"]
+
+# Veyran (three mana) is the engine: cast at 70, under the rocks and Greaves
+[commander]
+prio = 70
+
+[sets]
+# veyran::payoff: what turns each spell into damage
+payoffs = ["Guttersnipe", "Kessig Flamebreather", "Firebrand Archer", "Ral, Storm Conduit", "Rite of the Dragoncaller"]
+# the spell-token makers (Recruiter's second pick)
+tokens = ["Young Pyromancer", "Third Path Iconoclast"]
+# veyran::engine_payoff: anything that gets value from each spell
+engine = ["Guttersnipe", "Kessig Flamebreather", "Firebrand Archer", "Ral, Storm Conduit", "Rite of the Dragoncaller",
+    "Young Pyromancer", "Third Path Iconoclast", "Murmuring Mystic", "Archmage Emeritus", "Storm-Kiln Artist"]
+
+# win lines, best first: Veyran doubling a per-spell payoff
+[[line]]
+name = "Veyran + a spell-cast pinger"
+kind = "drain"
+pieces = [["Veyran, Voice of Duality"], ["Guttersnipe", "Kessig Flamebreather", "Firebrand Archer", "Ral, Storm Conduit"]]
+
+[[line]]
+name = "Veyran + a spell-token maker"
+kind = "combat"
+pieces = [["Veyran, Voice of Duality"], ["Young Pyromancer", "Third Path Iconoclast", "Rite of the Dragoncaller"]]
+
+# Tutor wishes (is_wish, recruit_wish, tutor_pick_named), best score first, ahead of the lines' pieces.
+# Fabricate: Lightning Greaves while none is held
+[[wish]]
+cards = ["Lightning Greaves"]
+when = ["not have:Lightning Greaves"]
+score = 90
+
+# Mystical Tutor / Solve the Equation: a wipe when the table out-boards Veyran (opp power 12+), with the mana for it
+[[wish]]
+cards = ["Blasphemous Act"]
+when = ["opp-power>=12"]
+score = 85
+
+[[wish]]
+cards = ["Splatter Technique"]
+when = ["opp-power>=12 & lands+rocks>=4"]
+score = 84
+
+[[wish]]
+cards = ["River's Rebuke"]
+when = ["opp-power>=12 & lands+rocks>=5"]
+score = 83
+
+# Crackle with Power with a payoff out and seven mana
+[[wish]]
+cards = ["Crackle with Power"]
+when = ["bf:payoffs>=1 & lands+rocks>=6"]
+score = 80
+
+# a counter only with no counter held, mana to hold it and a hand worth protecting
+[[wish]]
+cards = ["Counterspell"]
+when = ["counters<1 & lands+rocks>=3 & hand-size>=3"]
+score = 75
+
+# Imperial Recruiter: a pinger while none is held, then a token maker, then the mana and card engines
+[[wish]]
+cards = ["Guttersnipe", "Kessig Flamebreather"]
+when = ["hand:payoffs+bf:payoffs<1"]
+score = 72
+
+[[wish]]
+cards = ["Young Pyromancer", "Third Path Iconoclast"]
+when = ["hand:tokens+bf:tokens<1"]
+score = 70
+
+[[wish]]
+cards = ["Guttersnipe", "Kessig Flamebreather", "Young Pyromancer", "Third Path Iconoclast"]
+score = 50
+
+[[wish]]
+cards = ["Storm-Kiln Artist", "Archmage Emeritus"]
+score = 48
+
+# else a cantrip
+[[wish]]
+cards = ["Stock Up", "Flow State", "Quick Study", "Mystic Confluence", "Crackle with Power"]
+score = 40
+
+# Cast priorities (veyran_prio), the first rule selecting a card decides
+[[prio]]
+commander = true
+value = 70
+
+# rocks early, not late
+[[prio]]
+cards = ["Sol Ring", "Arcane Signet", "Fellwar Stone"]
+when = ["turn<=5"]
+value = 80
+else = 40
+
+# greaves_prio: before (or with) Veyran; after the commander is gone for good, 50
+[[prio]]
+cards = ["Lightning Greaves"]
+when = ["commander-zone", "have:Veyran, Voice of Duality"]
+value = 75
+else = 50
+
+[[prio]]
+cards = ["Imperial Recruiter"]
+value = 73
+
+[[prio]]
+cards = ["Guttersnipe", "Kessig Flamebreather", "Firebrand Archer", "Ral, Storm Conduit"]
+value = 72
+
+[[prio]]
+cards = ["Young Pyromancer", "Third Path Iconoclast"]
+value = 71
+
+[[prio]]
+cards = ["Storm-Kiln Artist"]
+value = 70
+
+[[prio]]
+cards = ["Birgi, God of Storytelling"]
+value = 69
+
+[[prio]]
+cards = ["Fiery Emancipation"]
+when = ["creatures>=1"]
+value = 64
+else = 40
+
+[[prio]]
+cards = ["Rite of the Dragoncaller"]
+value = 60
+
+[[prio]]
+cards = ["Archmage Emeritus", "Murmuring Mystic"]
+value = 58
+
+[[prio]]
+cards = ["Thousand-Year Storm"]
+value = 57
+
+# attack tax: 52 + the table's power (at most 18), approximated in two steps
+[[prio]]
+cards = ["Propaganda"]
+when = ["opp-power>=12"]
+value = 68
+else = 56
+
+# engine_creature_prio: the trigger multipliers, more with an engine out (the hand's spell count is not read)
+[[prio]]
+cards = ["Harmonic Prodigy", "Alania, Divergent Storm", "Docent of Perfection // Final Iteration", "Niv-Mizzet, Parun",
+    "Eris, Roar of the Storm", "Flux Channeler"]
+when = ["bf:engine>=1"]
+value = 56
+else = 50

@@ -1020,6 +1020,7 @@ fn ai_skullclamps_a_faerie_and_other_x1s_with_spare_mana() {
 
 #[test]
 fn ai_does_not_clamp_under_angelic_shield_and_saves_a_creature_with_it() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = alela_table();
     alela_out(&mut g, P0);
     lands(&mut g, P0, "Plains", 1, false);
@@ -1067,6 +1068,7 @@ fn ai_activates_crystal_chimes_with_two_enchantments_in_the_graveyard() {
 
 #[test]
 fn ai_moves_lightning_greaves_off_alela_before_an_aura_that_wants_her() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = alela_table();
     let al = alela_out(&mut g, P0);
     g.player_mut(P0).cmd_in_zone = false;

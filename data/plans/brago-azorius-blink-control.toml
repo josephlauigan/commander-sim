@@ -1,0 +1,25 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md) for brago-azorius-blink-control (Tier 2), written in Phase 4 PR 7
+# from its hand AI: impls/cc_brago.rs `hold` / `cloudshift_hold` (read by ai/brain.rs card_utility) and the deck's
+# combo lines (cc_brago.rs `COMBOS`, t12_brago_meren.rs `COMBOS`). Read only with the hand AI off (AI_HAND).
+# The deck wins through unbounded mana and Agent of Treachery blinked until it has every permanent.
+# Left out: `cloudshift_hold`'s second clause (hold Cloudshift while no own creature's enter effect is worth repeating,
+# `mine::blink_worth` < 3): no plan quantity reads a creature's blink value. The hold here is a cast priority of 0
+# (not cast proactively), not brain.rs's card-utility hold. The combos' ready checks and steps stay as code.
+deck = "brago-azorius-blink-control"
+default = "plan"
+
+# win lines, best first: the Kitten loop (any of three flicker spells, Drake or Faeries), then the Flicker loop
+[[line]]
+name = "Displacer Kitten + Archaeomancer + Peregrine Drake or Cloud of Faeries + a flicker spell (+ Agent of Treachery)"
+combo = "Displacer Kitten + Archaeomancer + Peregrine Drake or Cloud of Faeries + a flicker spell (+ Agent of Treachery)"
+
+[[line]]
+name = "Peregrine Drake + Archaeomancer + Ghostly Flicker (+ Agent of Treachery)"
+combo = "Peregrine Drake + Archaeomancer + Ghostly Flicker (+ Agent of Treachery)"
+
+# Cloudshift waits for the Kitten loop: kept while Displacer Kitten and Archaeomancer are both in hand or on the
+# battlefield (cloudshift_hold's first clause); otherwise the generic priority decides
+[[prio]]
+cards = ["Cloudshift"]
+when = ["have:Displacer Kitten & have:Archaeomancer"]
+value = 0

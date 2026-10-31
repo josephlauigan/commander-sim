@@ -135,7 +135,11 @@ fn helm_host(g: &Game, p: PlayerId) -> Option<(PermId, PermId, u32)> {
 /// 69% combat, 21% commander damage, 4% combo). Helm already on Celebrant is `combos::BASE`'s line. The generic equip
 /// choice (flying, power) put it on any creature.
 fn helm_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false) || !aurelia(g, p) || g.perm(src).owner != p || !live(g, src) || g.player(p).combat_no > 0 {
+    if post != Some(false) || !aurelia(g, p) || !crate::ai::hand_ai(g, p) // --- phase4-hand-off
+        || g.perm(src).owner != p
+        || !live(g, src)
+        || g.player(p).combat_no > 0
+    {
         return Ok(vec![]);
     }
     let Some((helm, host, cost)) = helm_host(g, p) else { return Ok(vec![]) };

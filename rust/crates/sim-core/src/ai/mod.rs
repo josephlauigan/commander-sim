@@ -86,6 +86,112 @@ pub fn jd_deck(key: &str) -> bool {
     )
 }
 
+// --- phase4-hand-off: each deck's hand-written AI behind one switch (`audit/phase4/hand-off-design.md`)
+/// the live decks whose hand-written AI is switchable (`AI_HAND`); every other key keeps whatever it has
+pub const HAND_DECKS: [&str; 14] = [
+    "veyran",
+    "sauron",
+    "yshtola",
+    "galadriel",
+    "alela",
+    "kefka",
+    "sheoldred",
+    "cloud",
+    "karn",
+    "thrasios",
+    "brago-azorius-blink-control",
+    "aurelia-boros-extra-combats",
+    "sisay-legends-toolbox",
+    "dack-fayden-white-stax",
+];
+
+/// the switchable decks whose plan file was written in this PR: read only with the hand AI off
+pub const HAND_OFF_PLANS: [&str; 13] = [
+    "veyran",
+    "sauron",
+    "yshtola",
+    "galadriel",
+    "alela",
+    "kefka",
+    "sheoldred",
+    "cloud",
+    "karn",
+    "thrasios",
+    "brago-azorius-blink-control",
+    "aurelia-boros-extra-combats",
+    "dack-fayden-white-stax",
+];
+
+enum HandMode {
+    Off,
+    All,
+    Keys(Vec<String>),
+}
+
+fn hand_mode() -> &'static HandMode {
+    static M: std::sync::OnceLock<HandMode> = std::sync::OnceLock::new();
+    M.get_or_init(|| match std::env::var("AI_HAND").ok().as_deref().map(str::trim) {
+        None | Some("") | Some("0") => HandMode::Off,
+        Some("1") => HandMode::All,
+        Some(list) => {
+            HandMode::Keys(list.split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect())
+        }
+    })
+}
+
+thread_local! {
+    static HAND_FORCE: std::cell::Cell<Option<bool>> = const { std::cell::Cell::new(None) };
+}
+
+/// for tests: the hand AI on (`Some(true)`) or off for every switchable deck on this thread, whatever `AI_HAND` says
+/// (None: back to `AI_HAND`); the guard puts the previous value back when dropped
+#[must_use]
+pub fn force_hand(on: Option<bool>) -> HandGuard {
+    HandGuard(HAND_FORCE.with(|f| f.replace(on)))
+}
+
+/// restores the previous `force_hand` value on drop
+pub struct HandGuard(Option<bool>);
+
+impl Drop for HandGuard {
+    fn drop(&mut self) {
+        HAND_FORCE.with(|f| f.set(self.0));
+    }
+}
+
+/// does this deck play its hand-written AI? A switchable deck: as `AI_HAND` (or `force_hand`) says, off by default;
+/// any other key: yes (the pool decks have nothing to switch; the retired test seats keep theirs)
+pub fn hand_ai_key(key: &str) -> bool {
+    if !HAND_DECKS.contains(&key) {
+        return true;
+    }
+    if let Some(f) = HAND_FORCE.with(|f| f.get()) {
+        return f;
+    }
+    match hand_mode() {
+        HandMode::Off => false,
+        HandMode::All => true,
+        HandMode::Keys(k) => k.iter().any(|x| x == key),
+    }
+}
+
+/// does seat p play its deck's hand-written AI?
+pub fn hand_ai(g: &Game, p: PlayerId) -> bool {
+    hand_ai_key(g.player(p).key)
+}
+
+/// p's deck key for the deck-AI sites: the key while its hand AI is on, "" while it is off (so every `match` and
+/// `is_main` on it falls through to the generic policy)
+pub fn hand_key(g: &Game, p: PlayerId) -> crate::sym::Sym {
+    let k = g.player(p).key;
+    if hand_ai_key(k) { k } else { "" }
+}
+
+/// a plan file written for the hand-off that is not read now (its deck plays its hand AI)
+pub fn plan_unread(key: &str) -> bool {
+    HAND_OFF_PLANS.contains(&key) && hand_ai_key(key)
+}
+
 /// brain.style: the run's style for this deck (`Settings::styles`), else its built-in one
 pub fn style(g: &Game, key: &str) -> Style {
     match g.settings.styles.get(key) {
@@ -333,7 +439,7 @@ pub fn spell_importance(g: &Game, p: PlayerId, c: CardId) -> f64 {
 
 /// the cards an outside deck keeps when discarding: combo pieces and its wish list (engine.discard_worst)
 pub fn discard_keep(g: &Game, p: PlayerId) -> Vec<CardId> {
-    if is_main(g.player(p).key) {
+    if is_main(hand_key(g, p)) {
         return vec![];
     }
     let mut keep = crate::cardcode::combo_pieces(g);
@@ -429,7 +535,7 @@ pub fn protect_response(
 
 /// ais.wipe_modes (Farewell, Austere Command's modes)
 pub fn wipe_modes(g: &Game, p: PlayerId, kind: Sym) -> Vec<Sym> {
-    if g.player(p).key == "cloud" {
+    if hand_key(g, p) == "cloud" {
         return crate::impls::cloud::wipe_modes(g, p, kind); // gated on the deck key (ai-audit cv)
     }
     decks::wipe_modes(g, p, kind)
@@ -571,10 +677,10 @@ pub fn filter_attackers(g: &mut Game, p: PlayerId, atk: Vec<PermId>) -> Vec<Perm
 
 /// pool_ai.attack_filter (an outside deck's own attack rules)
 pub fn attack_filter(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -> Vec<PermId> {
-    if g.player(p).key == "cloud" {
+    if hand_key(g, p) == "cloud" {
         return crate::impls::cloud::attack_filter(g, p, atk, d);
     }
-    if is_main(g.player(p).key) {
+    if is_main(hand_key(g, p)) {
         return atk;
     }
     pool::attack_filter(g, p, atk, d)
@@ -754,7 +860,7 @@ pub fn dsl_search_pick(g: &Game, p: PlayerId, f: &crate::dsl::model::Filter, can
         return Some(c); // the karn deck: the Tron piece it lacks
     }
     if ty.is_none() || ty == Some("any") {
-        if g.player(p).key == "kefka" && decks::deck_has_storm(g, p) {
+        if hand_key(g, p) == "kefka" && decks::deck_has_storm(g, p) {
             let wish = decks::kefka_wish(g, p);
             return wish.iter().find_map(|n| g.db.id(n).filter(|c| cands.contains(c))); // Grim Servant: the wish list within its devotion limit
         }
@@ -768,7 +874,7 @@ pub fn dsl_search_pick(g: &Game, p: PlayerId, f: &crate::dsl::model::Filter, can
         Some("ae") => Some("ae"),
         _ => None,
     };
-    let key = g.player(p).key;
+    let key = hand_key(g, p);
     if let Some(k) = kind
         && is_main(key)
         && let Some(nm) = decks::tutor_pick_named(g, p, k)

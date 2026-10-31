@@ -5,6 +5,7 @@
 //! Several cards here came with the retired candidate decks (glissa, gix, yawgmoth), whose card code was deleted while
 //! their `Full` verdicts stayed in the overrides; they are modeled here again, keyed by card name.
 
+use crate::ai::hand_key; // --- phase4-hand-off
 use crate::engine::repl;
 use crate::engine::pool::Kind;
 use crate::ai::pool::generic_prio;
@@ -166,9 +167,9 @@ fn cost_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
         return Ok(vec![]);
     }
     let host = crate::engine::values::army_of(g, p)
-        .filter(|&m| g.player(p).key == "sauron" && live_creature(g, m))
+        .filter(|&m| hand_key(g, p) == "sauron" && live_creature(g, m))
         .or_else(|| best_creature(g, p));
-    if g.player(p).key == "sauron"
+    if hand_key(g, p) == "sauron"
         && !sheoldred_out(g, p)
         && crate::engine::values::has(g, p, crate::tag::Tag::Bowmasters)
     {
@@ -216,7 +217,7 @@ fn cost_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         k => PlayerId((k - 1) as u8),
     };
     let host = crate::engine::values::army_of(g, p)
-        .filter(|&m| g.player(p).key == "sauron" && live_creature(g, m))
+        .filter(|&m| hand_key(g, p) == "sauron" && live_creature(g, m))
         .or_else(|| best_creature(g, p));
     crate::ai::brain::do_cast_with(g, p, c, None, Ctx { face: Some(face), host, ..Ctx::default() })
 }
@@ -1762,7 +1763,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 /// the largest X a -X/-X sweep (Toxic Deluge) may take while p's Sheoldred is out: her toughness minus one, and never
 /// more than the life it would leave p with. None: no limit (the sheoldred deck without her out, or any other deck).
 pub fn deluge_cap(g: &Game, p: PlayerId) -> Option<i32> {
-    if g.player(p).key != "sheoldred" || !sheoldred_out(g, p) {
+    if hand_key(g, p) != "sheoldred" || !sheoldred_out(g, p) {
         return None;
     }
     let sheo = my_creatures(g, p).into_iter().filter(|&m| sheoldred_card(g, m)).map(|m| etgh(g, m)).min()?;
@@ -1808,7 +1809,7 @@ fn lesson_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> 
 }
 
 fn lesson_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.player(p).key != "sheoldred" || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
+    if hand_key(g, p) != "sheoldred" || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
         return Ok(vec![]);
     }
     if let Some(q) = drain_target(g, p, 2) {
@@ -1869,7 +1870,7 @@ fn opp_hand_total(g: &Game, p: PlayerId) -> usize {
 }
 
 fn deal_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.player(p).key != "sheoldred" || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
+    if hand_key(g, p) != "sheoldred" || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
         return Ok(vec![]);
     }
     // each card an opponent redraws costs them 2; keep it for when they hold plenty and we hold little
@@ -1979,7 +1980,7 @@ fn bell_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 /// tap the Bell / use the Sanitarium or Mikokoro: only while a draw punisher is out, at the end of an opponent's turn
 /// (post: None), or in a main phase when it kills. None: don't.
 fn punish_window_utility(g: &Game, p: PlayerId, post: Option<bool>) -> Option<f64> {
-    if g.player(p).key != "sheoldred" || human(g, p) || draw_toll(g, p) == 0 || g.player(p).library.len() < 4 {
+    if hand_key(g, p) != "sheoldred" || human(g, p) || draw_toll(g, p) == 0 || g.player(p).library.len() < 4 {
         return None;
     }
     match post {
@@ -2031,7 +2032,7 @@ fn atlas_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     if owner(g, src) != p || !x.on_bf || x.tapped || x.phased || x.neutered {
         return Ok(vec![]);
     }
-    if g.player(p).key != "sheoldred" || human(g, p) {
+    if hand_key(g, p) != "sheoldred" || human(g, p) {
         return Ok(vec![]);
     }
     let k = x.data.int(DataKey::Charge);
@@ -2144,7 +2145,7 @@ fn peer_kills(g: &Game, q: PlayerId, toll: i32) -> bool {
 }
 
 fn peer_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.player(p).key != "sheoldred" || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
+    if hand_key(g, p) != "sheoldred" || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
         return Ok(vec![]);
     }
     let toll = draw_toll(g, p);

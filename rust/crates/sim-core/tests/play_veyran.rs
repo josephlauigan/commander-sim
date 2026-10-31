@@ -44,6 +44,7 @@ fn crackle_one_target_is_enough() {
 
 #[test]
 fn mizzixs_mastery_your_target() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["veyran", "seph"]);
     hand(&mut g, P0, &["Mizzix's Mastery"]);
     let qs = gy_push(&mut g, P0, "Quick Study");

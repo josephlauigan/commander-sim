@@ -113,6 +113,7 @@ fn cast_hand_existing(g: &mut Game, c: CardId) {
 
 #[test]
 fn ad_nauseam_for_sheoldred_also_goes_off_in_its_own_second_main() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     use sim_core::ai::plans;
     use sim_core::state::Step;
     let mut g = table(&["sheoldred", "seph"]);
@@ -138,6 +139,7 @@ fn memory_jar_waits_for_a_punisher() {
 
 #[test]
 fn dark_deal_is_allowed_with_three_other_cards() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     use sim_core::hooks::Action;
     let mut g = table(&["sheoldred", "seph"]);
     perm(&mut g, P0, "Sheoldred, the Apocalypse");

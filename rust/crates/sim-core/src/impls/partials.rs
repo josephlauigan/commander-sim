@@ -1140,7 +1140,7 @@ pub fn tidebinder_response(g: &mut Game, p: PlayerId, m: PermId) -> Res<bool> {
         if g.humans.get(q).is_some() {
             continue; // a person casts their own Tidebinder (tide_etb_you)
         }
-        if q == p || !g.player(q).alive || crate::ai::is_main(g.player(q).key) {
+        if q == p || !g.player(q).alive || crate::ai::is_main(crate::ai::hand_key(g, q)) {
             continue;
         }
         let Some(c) = g.player(q).hand.iter().copied().find(|&x| &*g.db.get(x).name == "Tishana's Tidebinder") else {

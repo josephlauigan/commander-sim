@@ -1,0 +1,185 @@
+# Deck plan (Phase 4, audit/phase4/plans-design.md) for dack-fayden-white-stax (Tier 6, cEDH), written in Phase 4
+# PR 7 from its hand AI: impls/t6_plan_dack.rs (`prio`, `wish`, `keep`, `hold_up`, `go_now`; SPEC:
+# audit/t6/dack-fayden-white-stax/SPEC.md). Read through the Tier 6 plan slots (`plan_data::t6`) only with the hand
+# AI off (AI_HAND). A combo deck with a stax fallback: fast mana first, Silence / Orim's Chant before Dack, Dack's
+# first flip (the catalogue's 35 piles), lock pieces against the table, removal and wipes held for a real threat.
+#
+# Left out (no plan quantity for them; audit/phase4/plans-handoff.md): Dack's own cast priority (`protected`: every
+# opponent spell-locked; `table_risk` against the per-round `dack_bar`, Angel's Grace / Reprieve / Bilbo's Gambit
+# discount, the flip pool left, archenemy >= 6) and so the Dack-waits-for-Silence 0; Chalice of the Void's priority
+# and wish (`chalice_net`: opponents' hands and libraries by mana value); Cursed Totem's (`creature_table`: the
+# opponents' deck creature share) and Defense Grid's (`counters_likely`) priorities and wish bumps; Vexing Bauble /
+# Void Mirror's 64 against free-spell tables and 28 otherwise (`free_spell_table`: opponents' deck tags; only their 0
+# with free plays in hand is here); Vanquish the Horde / Sunscour (opponents' creature total); the banishers' "an
+# opponent with three creatures" threat. Approximations: total mana (`total_mana` >= Dack's cost + the protection)
+# is read as lands + mana-perms - tax >= 7; the keep rule's "spells" (cards neither land nor mana piece) as
+# nonland - makers; its "two mana and three cheap plays" keep is left out (no cheap-card count).
+deck = "dack-fayden-white-stax"
+default = "plan"
+
+[sets]
+# fast mana that comes down before any tax piece
+fast = ["Sol Ring", "Mana Vault", "Chrome Mox", "Mox Diamond", "Mox Opal", "Grim Monolith", "Basalt Monolith", "Arcane Signet", "Fellwar Stone", "The Mind Stone"]
+# free / zero-mana plays that Trinisphere, Bauble and Void Mirror would hit (and Sol Ring)
+free_plays = ["Lotus Petal", "Lion's Eye Diamond", "Mox Diamond", "Chrome Mox", "Sol Ring"]
+# the casting-protection spells cast before Dack
+pre = ["Silence", "Orim's Chant"]
+# sources of white (the commander needs WW)
+white = ["Plains", "Snow-Covered Plains", "Ancient Den", "Command Tower", "Emergence Zone", "Eiganjo, Seat of the Empire", "Remote Farm", "Ruins of Trokair", "Petrified Hamlet", "Chrome Mox", "Mox Diamond", "Arcane Signet", "Fellwar Stone", "Lotus Petal", "Pearl Medallion", "Mox Opal", "Ancient Tomb", "City of Traitors"]
+
+# ------------------------------------------------------------------ cast priority (0-100; 0 keeps it in hand)
+# protection before the cast: while Dack waits in the command zone, with the mana for both (approximated)
+[[prio]]
+cards = ["Silence", "Orim's Chant"]
+when = ["commander-zone & lands+mana-perms - tax>=7"]
+value = 96
+else = 0
+
+# held (Grace is cast by the lethal-damage check)
+[[prio]]
+cards = ["Angel's Grace", "Abeyance"]
+value = 0
+
+[[prio]]
+cards = ["Sol Ring", "Mana Vault", "Chrome Mox", "Mox Diamond", "Mox Opal", "Grim Monolith", "Basalt Monolith", "Arcane Signet", "Fellwar Stone", "The Mind Stone"]
+value = 90
+
+# taxes that hit our own cheap plays come after the fast mana and the protection
+[[prio]]
+cards = ["Trinisphere"]
+when = ["hand:free_plays>=1", "hand:fast>=1", "commander-zone & hand:pre>=1 & lands+mana-perms - tax>=7"]
+value = 0
+
+[[prio]]
+cards = ["Trinisphere"]
+when = ["commander-zone & hand:pre=0"]
+value = 66
+else = 48
+
+[[prio]]
+cards = ["Vexing Bauble", "Void Mirror"]
+when = ["hand:free_plays>=1"]
+value = 0
+
+# one noncreature spell each: not on a turn that holds the protection
+[[prio]]
+cards = ["Deafening Silence"]
+when = ["commander-zone & hand:pre>=1"]
+value = 0
+else = 66
+
+[[prio]]
+cards = ["Smothering Tithe"]
+when = ["turn<=4"]
+value = 70
+else = 52
+
+# the banishers are removal (and the flip's pool): held for a real threat
+[[prio]]
+cards = ["Fiend Hunter", "All-Fates Stalker"]
+when = ["archenemy-max>=3", "round>=6"]
+value = 68
+else = 0
+
+# ------------------------------------------------------------------ tutor targets (Enlightened Tutor), best first
+# short of Dack's mana: the fast mana
+[[wish]]
+cards = ["Sol Ring"]
+when = ["lands+mana-perms - tax<6"]
+score = 20.0
+
+[[wish]]
+cards = ["Mana Vault"]
+when = ["lands+mana-perms - tax<6"]
+score = 19.0
+
+[[wish]]
+cards = ["Grim Monolith"]
+when = ["lands+mana-perms - tax<6"]
+score = 18.0
+
+[[wish]]
+cards = ["Chrome Mox"]
+when = ["lands+mana-perms - tax<6"]
+score = 17.0
+
+# Dack waiting without Silence / Chant: the closest protection the tutor reaches
+[[wish]]
+cards = ["Deafening Silence"]
+when = ["commander-zone & hand:pre=0"]
+score = 16.0
+
+# the standing order
+[[wish]]
+cards = ["Deafening Silence"]
+score = 10.0
+
+[[wish]]
+cards = ["Defense Grid"]
+score = 9.0
+
+[[wish]]
+cards = ["Chalice of the Void"]
+score = 8.0
+
+[[wish]]
+cards = ["Smothering Tithe"]
+score = 7.0
+
+[[wish]]
+cards = ["Trinisphere"]
+score = 6.0
+
+[[wish]]
+cards = ["Static Prison"]
+score = 5.0
+
+[[wish]]
+cards = ["Cursed Totem"]
+score = 4.0
+
+[[wish]]
+cards = ["Void Mirror"]
+score = 3.0
+
+[[wish]]
+cards = ["Sol Ring"]
+score = 2.0
+
+[[wish]]
+cards = ["Mana Vault"]
+score = 1.0
+
+# ------------------------------------------------------------------ mulligan
+# keep a hand that makes about 6 mana with white by turn 3-4 and has something to do: no land, six or more lands, no
+# spells, and no white source without 6 mana ship; a 1-lander needs a white source, the one-lander mana and two
+# spells; otherwise three mana keeps
+[mulligan]
+otherwise = false
+
+[[mulligan.rule]]
+when = ["hand-lands=0", "hand-lands>=6", "nonland - makers<=0", "hand:white=0 & eff<6"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands=1 & hand:white>=1 & eff>=one-lander & nonland - makers>=2"]
+keep = true
+
+[[mulligan.rule]]
+when = ["hand-lands=1"]
+keep = false
+
+[[mulligan.rule]]
+when = ["eff>=3"]
+keep = true
+
+# ------------------------------------------------------------------ hold-up and go-now
+# the first turns are for developing
+[[hold_up]]
+when = ["turn<=3"]
+value = -2.0
+
+# Dack's first flip has resolved and the line is in the table: go
+[[go_now]]
+combos = ["Dack Fayden: the first flip"]
+go = true

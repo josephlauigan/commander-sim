@@ -353,6 +353,7 @@ fn probe_m_immediate_shield() {
 /// equip plan; Magitek Scythe attaches on entering only, its Equip {2} is not modeled).
 #[test]
 fn bug_helm_feast_and_famine_and_scythe_have_no_equip_option() {
+    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     for n in ["Champion's Helm", "Sword of Feast and Famine", "Magitek Scythe"] {
         let mut g = game();
         cloud_board(&mut g, 9);
