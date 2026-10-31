@@ -8,14 +8,19 @@ Brief: `rust/agents/phase4-search-b.md`. Design: `audit/phase4/search-design.md`
 
 ## State
 
-- [ ] Survey (`survey.sh`, `M/`): base vs m, 300 games t1-t5.
-- [ ] Design (Part (b) in the design doc).
-- [ ] Code: `ismcts.rs` part (b) (switch `AI_SEARCH_B`, `choose_blocks` / `choose_protect` / `choose_wipe`,
+- [x] Survey (`survey.sh`, `M/`): m = base byte for byte on t1-t5 (300 games, all rc=0); numbers in the design doc.
+- [x] Design (2f0d8ba4).
+- [x] Code (a0a547ff): `ismcts.rs` part (b) (switch `AI_SEARCH_B`, `choose_blocks` / `choose_protect` / `choose_wipe`,
   `block_plans`, survey `note*`), `search::playout_with` / `play_on_resume`, splits `combat::resolve_blocks`,
   `removal::apply_removal_rest`, `removal::wipe_victim` / `wipe_finish` / `WIPE_CTX`, `pool::protect_cands` etc.
   Tests `tests/ismcts_b.rs` (7).
 - [ ] The lean: Meren diagnostic (`meren.sh`, `X/meren-*.txt`), ablations on t2 half B.
-- [ ] Stage A (`stageA.sh`, `A/`).
+- [x] Stage A (`stageA.sh`, `A/`, binary b1 = a0a547ff): `AI_SEARCH_B` unset = base byte for byte on t1, t2, t4, t5 (300
+  games, rc=0); `AI_SEARCH_B=1` twice on t1 = the same stdout and stderr (play changes against base). Full table with
+  every seat on part (b), t1: 180,885 playout steps a game vs 174,366 (+3.7%); blocks searched 2.1 a game (13.2 left
+  to the heuristic), protection 0.1, wipes 0.1.
+- PR 5's arms (binary D) can't be reused: its worktree is gone and the data changed since (the origin/main merge),
+  so D run here fails on a moved decklist. Every reference arm is rerun with b1.
 - [ ] Stage B, Stage C, final checks.
 
 ## Gotchas
