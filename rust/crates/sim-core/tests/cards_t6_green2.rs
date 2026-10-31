@@ -464,7 +464,7 @@ fn ikoria_respects_the_mana_value_limit() {
     g.player_mut(P0).library.extend(&h);
     ikoria_cast(&mut g, 1); // Oboro is mana value 2
     assert!(on_bf(&g, P0, "Oboro Breezecaller").is_none());
-    assert!(in_gy(&g, P0, IKORIA));
+    assert!(!in_gy(&g, P0, IKORIA) && on_bf(&g, P0, IKORIA).is_some(), "the Siege stays as a battle (card-models-3)");
 }
 
 #[test]
@@ -476,5 +476,5 @@ fn ikoria_can_take_the_creature_from_the_graveyard() {
     ikoria_cast(&mut g, 2);
     assert!(on_bf(&g, P0, "Oboro Breezecaller").is_some());
     assert!(!in_gy(&g, P0, "Oboro Breezecaller"));
-    assert!(in_gy(&g, P0, IKORIA), "the battle is not modelled: the card goes to the graveyard");
+    assert!(on_bf(&g, P0, IKORIA).is_some(), "the battle stays on the battlefield (card-models-3)");
 }
