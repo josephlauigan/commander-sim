@@ -34608,10 +34608,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Vanishing 2",
-    "Whenever a player casts their second spell each turn, proliferate."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -45237,9 +45234,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "You may have ~ enter as a copy of any creature on the battlefield, except it has vanishing 3 if that creature doesn't have vanishing."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -80222,10 +80217,7 @@
    "identity": "BU",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Exile all opponents' graveyards. You may cast spells from among those cards this turn, and mana of any type can be spent to cast them. At the beginning of the next end step, if any of those cards remain exiled, return them to their owners' graveyards.   [partly: cast spells from among those cards this turn, and mana of any type can be spent to cast them; at the beginning of the next end step, if any of those cards remain exiled, return them to their owners' graveyards]",
-    "Exile ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -85504,10 +85496,7 @@
    "identity": "W",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever one or more creatures an opponent controls deal combat damage to you, that opponent gets a poison counter.",
-    "Whenever a player attacks, if one or more players being attacked are poisoned, the attacking player draws a card."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -95922,9 +95911,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Until end of turn, lands you control gain \"Sacrifice ~: Add {B}.\""
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,
@@ -111724,9 +111711,7 @@
    "identity": "B",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{B}{B}: Regenerate ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -138214,9 +138199,7 @@
    "identity": "BU",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "When you proliferate, return ~ from your graveyard to your hand."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -138919,10 +138902,7 @@
    "identity": "U",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ enters, put X +1/+1 counters on him. Then draw half X cards, rounded down.",
-    "Whenever an opponent searches their library, put a +1/+1 counter on ~ and draw a card."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,

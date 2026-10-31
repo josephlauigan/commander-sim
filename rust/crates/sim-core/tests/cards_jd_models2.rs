@@ -283,7 +283,7 @@ fn the_camera_is_not_used_without_mana_for_it() {
     assert!(!g.perm(cam).tapped);
 }
 
-// ======================================================== the pool: Wan Shi Tong, Librarian (t6 kinnan-bonder, rograkh-thrasios)
+// ======================================================== the pool: Wan Shi Tong (t6 kinnan-bonder, rograkh-thrasios)
 #[test]
 fn wan_shi_tong_answers_an_opponents_real_search() {
     let mut g = table(&["rograkh-thrasios-creature-combo", "sisay-legends-toolbox", "kinnan-bonder-mana-combo"]);
@@ -306,7 +306,7 @@ fn wan_shi_tong_answers_an_opponents_real_search() {
     assert_eq!(sim_core::engine::values::epow(&g, w), p + 1);
 }
 
-// ======================================================== the pool: Flesh Duplicate (t6 kinnan-bonder, rograkh-thrasios)
+// ===================================================== the pool: Flesh Duplicate (t6 kinnan-bonder, rograkh-thrasios)
 #[test]
 fn flesh_duplicate_copies_with_vanishing_three() {
     let mut g = table(&["rograkh-thrasios-creature-combo", "sisay-legends-toolbox", "kinnan-bonder-mana-combo"]);
@@ -374,4 +374,123 @@ fn mnemonic_betrayal_returns_the_uncast_cards_to_their_owners_graveyards() {
     assert!(!g.player(P0).hand.contains(&theirs[0]));
     assert!(g.player(P1).gy.contains(&theirs[0]), "back in its owner's graveyard");
     assert!(!g.player(P0).stolen.contains_key(&theirs[0]));
+}
+
+// ======================================================== the pool: Rain of Filth (t6 kraum-tymna, rograkh-silas)
+#[test]
+fn rain_of_filth_lets_lands_be_sacrificed_for_black_mana() {
+    let mut g = table(&["kraum-tymna-blue-breach-midrange", "sisay-legends-toolbox", "kinnan-bonder-mana-combo"]);
+    g.active = Some(P0);
+    quiet_hands(&mut g);
+    let sw = lands(&mut g, P0, "Swamp", 1, false);
+    lands(&mut g, P0, "Island", 3, true); // tapped: only the sacrifice gets mana out of them
+    let rain = hand(&mut g, P0, &["Rain of Filth"])[0];
+    assert!(!sim_core::engine::mana::can_pay(&g, P0, 0, "BB", false));
+    assert!(sim_core::engine::cast::cast_card(&mut g, P0, rain, "hand", sim_core::state::Ctx::default()).unwrap());
+    assert!(sim_core::impls::t6_blue::rain_of_filth_active(&g, P0));
+    assert!(!g.perm(sw[0]).tapped, "(cast_card leaves the payment to its caller)");
+    assert!(sim_core::engine::mana::pay(&mut g, P0, 0, "B", false).unwrap());
+    assert!(g.perm(sw[0]).tapped, "the Swamp is tapped, not sacrificed, for the first {{B}}");
+    assert!(sim_core::engine::mana::can_pay(&g, P0, 2, "BB", false), "four tapped lands: {{B}} each");
+    assert!(!sim_core::engine::mana::can_pay(&g, P0, 3, "BB", false));
+    assert!(sim_core::engine::mana::pay(&mut g, P0, 0, "BB", false).unwrap());
+    assert_eq!(g.player(P0).lands.len(), 2, "two of the four lands sacrificed");
+    assert_eq!(g.player(P0).gy.iter().filter(|&&c| g.db.get(c).land).count(), 2);
+}
+
+#[test]
+fn lands_are_sacrificed_only_when_other_mana_runs_out() {
+    let mut g = table(&["kraum-tymna-blue-breach-midrange", "sisay-legends-toolbox", "kinnan-bonder-mana-combo"]);
+    g.active = Some(P0);
+    quiet_hands(&mut g);
+    lands(&mut g, P0, "Swamp", 3, false);
+    let rain = hand(&mut g, P0, &["Rain of Filth"])[0];
+    assert!(sim_core::engine::cast::cast_card(&mut g, P0, rain, "hand", sim_core::state::Ctx::default()).unwrap());
+    assert!(sim_core::engine::mana::pay(&mut g, P0, 1, "B", false).unwrap());
+    assert_eq!(g.player(P0).lands.len(), 3, "the two untapped Swamps tapped, none sacrificed");
+}
+
+#[test]
+fn the_ai_casts_rain_of_filth_for_a_card_it_could_not_pay_for() {
+    let mut g = table(&["kraum-tymna-blue-breach-midrange", "sisay-legends-toolbox", "kinnan-bonder-mana-combo"]);
+    g.active = Some(P0);
+    quiet_hands(&mut g);
+    lands(&mut g, P0, "Swamp", 3, false);
+    let rain = hand(&mut g, P0, &["Rain of Filth"])[0];
+    let big = hand(&mut g, P0, &["Ad Nauseam"])[0];
+    let pr = sim_core::ai::pool::generic_prio(&g, P0, big);
+    assert!(pr >= 50, "Ad Nauseam's priority: {pr}");
+    assert_eq!(sim_core::impls::t6_blue::rain_enables(&mut g, P0, rain), Some(big), "{{3}}{{B}}{{B}}: 2 + 3 lands");
+    g.player_mut(P0).hand.retain(|&c| c != big);
+    assert_eq!(sim_core::impls::t6_blue::rain_enables(&mut g, P0, rain), None, "nothing to enable");
+}
+
+// ======================================================== the pool: atraxa-infect (t3)
+fn atraxa_table() -> Game {
+    let mut g = table(&["atraxa-infect", "tergrid-mono-black-disruption", "sisay-legends-toolbox"]);
+    g.active = Some(P0);
+    quiet_hands(&mut g);
+    g
+}
+
+#[test]
+fn skithiryx_regenerates_for_two_black() {
+    let mut g = atraxa_table();
+    let s = perm(&mut g, P0, "Skithiryx, the Blight Dragon");
+    lands(&mut g, P0, "Swamp", 2, false);
+    sim_core::engine::zones::die(&mut g, s, "destroy").unwrap();
+    assert!(g.perm(s).on_bf, "regenerated");
+    assert!(g.perm(s).tapped, "regeneration taps it");
+    sim_core::engine::zones::die(&mut g, s, "destroy").unwrap();
+    assert!(!g.perm(s).on_bf, "no {{B}}{{B}} left");
+}
+
+#[test]
+fn dreamtide_whale_vanishes_and_proliferates_on_second_spells() {
+    let mut g = atraxa_table();
+    let w = perm(&mut g, P0, "Dreamtide Whale");
+    assert_eq!(g.perm(w).data.int(sim_core::state::DataKey::Vanish), 2, "vanishing 2");
+    let mite = perm(&mut g, P0, "Llanowar Elves");
+    sim_core::engine::repl::put_plus(&mut g, mite, 1);
+    g.player_mut(P1).poison = 1;
+    for (i, name) in ["Opt", "Brainstorm"].iter().enumerate() {
+        let c = hand(&mut g, P1, &[name])[0];
+        g.active = Some(P1);
+        lands(&mut g, P1, "Island", 1, false);
+        sim_core::engine::cast::cast_card(&mut g, P1, c, "hand", sim_core::state::Ctx::default()).unwrap();
+        let want = if i == 0 { 1 } else { 2 };
+        assert_eq!(g.player(P1).poison, want, "proliferate on the second spell only");
+    }
+    assert_eq!(g.perm(mite).plus, 2);
+    sim_core::impls::t6_copies::vanishing_upkeep(&mut g, P0).unwrap();
+    sim_core::impls::t6_copies::vanishing_upkeep(&mut g, P0).unwrap();
+    assert!(!g.perm(w).on_bf, "two upkeeps: sacrificed");
+}
+
+#[test]
+fn voidwing_hybrid_returns_when_you_proliferate() {
+    let mut g = atraxa_table();
+    let v = fill_gy(&mut g, P0, &["Voidwing Hybrid"])[0];
+    sim_core::impls::common::proliferate(&mut g, P0, 1).unwrap();
+    assert!(g.player(P0).hand.contains(&v) && !g.player(P0).gy.contains(&v));
+}
+
+#[test]
+fn norns_decree_poisons_attackers_and_draws_for_attacks_on_the_poisoned() {
+    let mut g = atraxa_table();
+    let d = perm(&mut g, P0, "Norn's Decree");
+    let f = g.registry.get(card(&g, "Norn's Decree")).unwrap();
+    let (dmg, atk) = (f.combat_damage.unwrap(), f.attack.unwrap());
+    let a = perm(&mut g, P1, "Llanowar Elves");
+    dmg(&mut g, d, P1, a, P0, 1).unwrap();
+    dmg(&mut g, d, P1, a, P0, 1).unwrap();
+    assert_eq!(g.player(P1).poison, 1, "one poison counter per combat, not per creature");
+    dmg(&mut g, d, P0, a, PlayerId(2), 1).unwrap();
+    assert_eq!(g.player(P0).poison, 0, "damage to someone else: nothing");
+    let h = g.player(P1).hand.len();
+    atk(&mut g, d, P1, &[a], PlayerId(2)).unwrap();
+    assert_eq!(g.player(P1).hand.len(), h, "attacking an unpoisoned player: no draw");
+    g.player_mut(PlayerId(2)).poison = 1;
+    atk(&mut g, d, P1, &[a], PlayerId(2)).unwrap();
+    assert_eq!(g.player(P1).hand.len(), h + 1, "the attacking player draws");
 }

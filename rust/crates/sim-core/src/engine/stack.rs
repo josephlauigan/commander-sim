@@ -426,8 +426,8 @@ fn run_copy(g: &mut Game, t: &Trigger) -> Res {
     r
 }
 
-/// --- card-models-2: can stack item `it` be copied: a triggered ability the engine can run again (its `Trigger`), or an
-/// activated ability of the ability language (`ctx.dsl_ab`, put there by `ability_window_ex`, whose caller resolves
+/// --- card-models-2: can stack item `it` be copied: a triggered ability the engine can run again (its `Trigger`), or
+/// an activated ability of the ability language (`ctx.dsl_ab`, put there by `ability_window_ex`, whose caller resolves
 /// the copies)
 pub fn copyable(it: &StackItem) -> bool {
     match it.kind {
