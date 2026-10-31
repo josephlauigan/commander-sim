@@ -152,11 +152,19 @@ fn resolve_batch(g: &mut Game, batch: Vec<Trigger>) -> Res {
         let id = next_id(g);
         let card = t.src.and_then(|m| g.perm(m).cd);
         let name = format!("{}: {}", src_name(g, t.src), t.name.unwrap_or("trigger"));
+        // --- card-models-2: a compiled trigger with a single target is aimed as it goes on the stack
+        let (target, dsl_ab) = match &t.act {
+            TrigAct::Dsl { p, src, card, idx, ctx } if ctx.target.is_none() => {
+                (crate::dsl::aim(g, *p, *card, *idx, Some(*src)), Some((*card, *idx)))
+            }
+            TrigAct::Dsl { card, idx, .. } => (None, Some((*card, *idx))),
+            _ => (None, None),
+        };
         g.stack.push(StackItem {
             id,
             controller: t.controller,
             card,
-            ctx: Ctx { source: t.src, trigger: Some(Box::new(t.clone())), ..Ctx::default() },
+            ctx: Ctx { source: t.src, trigger: Some(Box::new(t.clone())), target, dsl_ab, ..Ctx::default() },
             zone: "trigger",
             imp: t.imp.unwrap_or(3.0),
             aff: vec![],
@@ -183,12 +191,23 @@ fn resolve_batch(g: &mut Game, batch: Vec<Trigger>) -> Res {
             priority(g, id, first)?;
             let copies = take_copies(g, id);
             let countered = item(g, id).is_some_and(|it| it.countered);
+            let aimed = item(g, id).and_then(|it| it.ctx.target);
             remove_item(g, id);
             for _ in 0..copies {
-                run_copy(g, &t)?; // Camera copies resolve before the original
+                run_copy(g, &t)?; // Camera copies resolve before the original (choosing targets anew)
             }
             if !countered {
-                call(g, &t)?;
+                // --- card-models-2: the target it was aimed at as it went on the stack (or was changed to)
+                match (&t.act, aimed) {
+                    (TrigAct::Dsl { p, src, card, idx, ctx }, Some(a)) => {
+                        if g.perm(a).on_bf {
+                            let ctx = Box::new(crate::dsl::DslCtx { target: Some(a), ..(**ctx).clone() });
+                            let act = TrigAct::Dsl { p: *p, src: *src, card: *card, idx: *idx, ctx };
+                            call(g, &Trigger { act, ..t.clone() })?;
+                        } // its only target is gone: it does nothing
+                    }
+                    _ => call(g, &t)?,
+                }
             }
             continue;
         }
@@ -351,8 +370,9 @@ pub fn spell_item(g: &mut Game, p: PlayerId, c: CardId, ctx: Ctx, imp: f64) -> S
 /// cards the AI uses to counter abilities
 pub const ABILITY_ANSWERS: [&str; 2] = ["Tishana's Tidebinder", "Azorius Guildmage"];
 
-/// flash cards the AI casts from its hand to counter an ability (Ertai Resurrected, Louisoix's Sacrifice)
-pub const ABILITY_ANSWERS_HAND: [&str; 2] = ["Ertai Resurrected", "Louisoix's Sacrifice"];
+/// flash cards the AI casts from its hand to counter an ability (Ertai Resurrected, Louisoix's Sacrifice), or to change
+/// its target (--- card-models-2: Redirect Lightning)
+pub const ABILITY_ANSWERS_HAND: [&str; 3] = ["Ertai Resurrected", "Louisoix's Sacrifice", "Redirect Lightning"];
 
 /// Could anyone answer an ability of p's (a person at the table, or an opponent with an ability counter)? When nobody
 /// could, an ability resolves without a round of priority, which keeps simulations fast.
@@ -374,6 +394,10 @@ pub fn abilities_answered(g: &Game, p: Option<PlayerId>) -> bool {
             .any(|&m| !g.perm(m).phased && g.perm(m).cd.is_some_and(|c| ABILITY_ANSWERS.contains(&&*g.db.get(c).name)))
     })
 }
+
+/// --- card-models-2: the AI copies its own activated ability with the Camera when the ability is worth this much
+/// (`dsl::ability_worth`: a tutor is 3)
+pub const CAMERA_WORTH: f64 = 3.0;
 
 /// p has an untapped Peter Parker's Camera with a film counter left
 pub fn camera_ready(g: &Game, p: PlayerId) -> bool {
@@ -403,18 +427,32 @@ fn run_copy(g: &mut Game, t: &Trigger) -> Res {
     r
 }
 
-/// q copies the triggered ability of theirs on top of the stack (item `id`): the copy goes on the stack above it, players
-/// may respond (counter it), and if it resolves the trigger's effect runs once more before the original resolves.
+/// --- card-models-2: can stack item `it` be copied: a triggered ability the engine can run again (its `Trigger`), or
+/// an activated ability of the ability language (`ctx.dsl_ab`, put there by `ability_window_ex`, whose caller resolves
+/// the copies)
+pub fn copyable(it: &StackItem) -> bool {
+    match it.kind {
+        StackKind::Trigger => it.ctx.trigger.is_some(),
+        StackKind::Ability => it.ctx.dsl_ab.is_some(),
+        StackKind::Spell => false,
+    }
+}
+
+/// q copies the triggered or activated ability of theirs on top of the stack (item `id`, `copyable`): the copy goes
+/// on the stack above it, players may respond (counter it), and if it resolves the effect runs once more before the
+/// original resolves.
 /// True if the copy resolved. The copy cannot be copied again.
 pub fn copy_trigger(g: &mut Game, q: PlayerId, id: u32) -> Res<bool> {
     let Some(orig) = item(g, id).cloned() else { return Ok(false) };
-    if orig.ctx.trigger.is_none() || orig.kind != StackKind::Trigger {
+    if !copyable(&orig) {
         return Ok(false);
     }
     let mut cp = orig;
     cp.id = g.stack_pushes + 1; // stack_window counts the push
     cp.name = format!("copy of {}", cp.name);
     cp.ctx.trigger = None;
+    cp.ctx.dsl_ab = None; // the copy cannot be copied again
+    cp.ctx.target = None; // its targets are chosen anew as it resolves
     cp.passed = vec![];
     cp.countered = false;
     cp.controller = q;
@@ -455,6 +493,50 @@ pub fn ability_window(
     stack_window(g, p, it)
 }
 
+/// --- card-models-2: how an ability put on the stack by `ability_window_ex` left it
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct AbilityRes {
+    /// it was not countered: the caller applies its effect
+    pub resolves: bool,
+    /// its single target as it resolves (changed on the stack by Redirect Lightning), as given if it had none
+    pub target: Option<PermId>,
+    /// copies of it that resolved before it (Peter Parker's Camera): the caller applies the effect once for each
+    /// first, choosing new targets
+    pub copies: usize,
+}
+
+/// --- card-models-2: `ability_window` for an ability the caller can resolve again and re-aim: `ctx` carries its
+/// single `target` and `dsl_ab` (the ability language's abilities: `dsl::activate`, `dsl::use_loyalty`). While it is
+/// on the stack its target may be changed and it may be copied; the result says how it left.
+pub fn ability_window_ex(
+    g: &mut Game,
+    p: PlayerId,
+    src: Option<PermId>,
+    name: &str,
+    imp: Option<f64>,
+    ctx: Ctx,
+) -> Res<AbilityRes> {
+    let target = ctx.target;
+    let flow = src.and_then(|m| g.perm(m).cd);
+    crate::t6stats::flow_source(g, p, flow);
+    if let Some(m) = src
+        && crate::impls::combos::normal_play_window(g, p, m)?
+    {
+        return Ok(AbilityRes { resolves: false, target, copies: 0 });
+    }
+    if g.over || !abilities_answered(g, Some(p)) {
+        return Ok(AbilityRes { resolves: true, target, copies: 0 });
+    }
+    let imp = imp.unwrap_or_else(|| 3.0 + src.filter(|&m| g.perm(m).on_bf).map_or(0.0, |m| 0.5 * pval(g, m)));
+    let card = src.and_then(|m| g.perm(m).cd);
+    let full = format!("{}: {name}", src_name(g, src));
+    let ctx = Ctx { source: src, ..ctx };
+    let it = new_item(g, p, card, ctx, "ability", imp, StackKind::Ability, full);
+    let out = stack_window_item(g, p, it)?;
+    let copies = take_copies(g, out.id);
+    Ok(AbilityRes { resolves: !out.countered, target: out.ctx.target, copies })
+}
+
 /// ability_window for an ability whose source is a card, not a permanent (a land's ability, a card in hand or the
 /// graveyard): Python's `ability_window(g, p, L.cd, ...)`
 pub fn ability_window_card(
@@ -478,6 +560,9 @@ pub fn ability_window_card(
 /// pay equip {n} for equipment e onto m; it attaches if the ability resolves and both are still there
 pub fn equip_to(g: &mut Game, p: PlayerId, e: PermId, m: PermId, n: u32) -> Res<bool> {
     pay(g, p, n, "", false)?;
+    if crate::impls::t6_copies::image_targeted(g, m)? && !g.perm(m).on_bf {
+        return Ok(true); // --- card-models-2: a Phantasmal Image targeted by the equip
+    }
     let name = format!("equip to {}", g.perm(m).name);
     if ability_window(g, p, Some(e), &name, None, Some(m))? && g.perm(m).on_bf && g.perm(e).on_bf {
         g.perm_mut(e).attached = Some(m);
@@ -622,6 +707,19 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
         crate::cardcode::copy_ability(g, q, top_id)?;
         return Ok(());
     }
+    if top.controller == q
+        && top.kind == StackKind::Ability
+        && !top.passed.contains(&q)
+        && let Some((cd, idx)) = top.ctx.dsl_ab
+        && camera_ready(g, q)
+        && crate::dsl::ability_worth(g, q, cd, idx) >= CAMERA_WORTH
+    {
+        // --- card-models-2: q's own valuable activated ability (a tutor ...): the Camera copies it
+        let top_id = top.id;
+        g.stack.last_mut().unwrap().passed.push(q);
+        crate::impls::t6_copies::camera_copy(g, q, top_id)?;
+        return Ok(());
+    }
     if top.controller == q || top.passed.contains(&q) {
         return Ok(());
     }
@@ -630,6 +728,12 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
     let top = g.stack.last().unwrap().clone();
     if top.kind != StackKind::Spell {
         // an ability (or trigger): Azorius Guildmage, Tishana's Tidebinder
+        // --- card-models-2: an ability aimed at q's permanent: Redirect Lightning turns it on its controller's own
+        if top.ctx.target.is_some_and(|t| g.perm(t).owner == q)
+            && crate::impls::t6_redirects::redirect_ability(g, q, top_id)?
+        {
+            return Ok(());
+        }
         if top.imp >= 6.0 {
             crate::cardcode::answer_ability(g, q, top_id)?;
         }
@@ -641,6 +745,10 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
         && crate::impls::t6_counters::stack_response(g, q, top_id)?
     {
         return Ok(()); // Misdirection, Commandeer, Sudden Substitution
+    }
+    // --- card-models-2: a counterspell aimed at q's important spell: Redirect Lightning turns it on another spell
+    if top.ctx.counter.is_some() && crate::impls::t6_redirects::redirect_counter(g, q, top_id)? {
+        return Ok(());
     }
     if !hand.iter().any(|&x| g.db.get(x).tag(Tag::Ctr) || &*g.db.get(x).name == "Venser, Shaper Savant") {
         return Ok(()); // nothing to respond with
@@ -978,11 +1086,12 @@ pub fn cast_counter_spell(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -
         StackKind::Spell,
         name,
     );
-    if stack_window(g, q, it)? {
+    let out = stack_window_item(g, q, it)?; // --- card-models-2: its target may have been changed (Redirect Lightning)
+    if !out.countered {
         if spree {
             crate::impls::bulk_blue::spirit_token(g, q)?;
         }
-        resolve_counter(g, q, ctr, target)?;
+        resolve_counter(g, q, ctr, out.ctx.counter.unwrap_or(target))?;
         if g.db.get(ctr).creature {
             // Mystic Snake / Venser: the counter is a creature
             g.skip_etb = &*g.db.get(ctr).name == "Venser, Shaper Savant";

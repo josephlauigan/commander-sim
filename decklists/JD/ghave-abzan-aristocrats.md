@@ -66,17 +66,24 @@ altar. **Karn's Bastion** ({4}, {T}: proliferate) and Yawgmoth add counters too.
 ### Reanimation
 
 The Seph package stays as the fast start: **Entomb**, **Stitcher's Supplier** and **Tortured Existence** put creatures
-in the graveyard; **Reanimate**, **Grave Researcher // Reanimate**, **Animate Dead**, **Necromancy**, **Victimize** and
+in the graveyard; **Reanimate**, **Grave Researcher // Reanimate**, **Animate Dead**, **Necromancy** and
 **Dread Return** bring them back. Targets: Archon of Cruelty, Grave Titan, Rune-Scarred Demon (tutor on entry), both
 Sheoldreds, both Elesh Norns, Summon: Bahamut. **Living Death** and **Yawgmoth's Will** are the big turns.
-**Victimize** and **Dread Return**'s flashback (sacrifice three creatures) want the Saprolings.
+**Dread Return**'s flashback (sacrifice three creatures) wants the Saprolings.
 
 ### Protection
 
 **Grand Abolisher** stops opponents casting spells or using creature, artifact and enchantment abilities during your
 turn. **Heroic Intervention** ({1}{G}: your permanents gain hexproof and indestructible until end of turn) answers a
-wipe or targeted removal on the combo turn. **Ephemerate** and **Restoration Angel** blink a creature in response to
+wipe or targeted removal on the combo turn. **Galadriel's Dismissal** ({W}, instant) phases Ghave out in response to removal;
+kicked ({2}{W} more) it phases out every creature you control, an answer to a wipe (phased-out creatures can't be
+sacrificed, so cast it before the loop, not during it). **Ephemerate** and **Restoration Angel** blink a creature in response to
 removal. **Kitchen Finks** and Mikaeus's undying creatures come back from a wipe.
+
+**Elspeth Tirel** ({3}{W}{W}, planeswalker; JD's copy is the Secret Lair Miku, Divine Diva): +2 gains a life for each
+creature you control; −2 makes three 1/1 Soldiers, blockers against go-wide decks and fodder for the altars; −5
+destroys every other permanent except lands and tokens. The Saprolings and Soldiers survive the −5, but Ghave, the
+altars and the enchantments don't, so it is a reset for when the table is ahead.
 
 ### Removal
 
@@ -92,7 +99,7 @@ edicts. Resets: Toxic Deluge, Austere Command, Living Death. Bojuka Bog exiles a
 - **Torpor Orb** (creatures entering don't cause abilities to trigger) stops Cathars' Crusade, Aura Shards and the
   enter triggers of Archon, Grave Titan and Rune-Scarred Demon. Doubling Season is a replacement effect, so loops 3 and
   4 still work under it.
-- **Wipes.** Ghave dies to them, so keep Heroic Intervention up on the turn you go for it, and keep a payoff in hand.
+- **Wipes.** Ghave dies to them, so keep Heroic Intervention or Galadriel's Dismissal up on the turn you go for it, and keep a payoff in hand.
 - **Fast combo decks.** No counterspells now; Grand Abolisher, the tutors and a fast loop are the answer.
 
 ## Key lines
@@ -145,8 +152,8 @@ Ghave is not a free outlet ({1} per sacrifice), so he doesn't finish loop 6 alon
   counters on one creature for a lethal attack.
 - **Grave Pact:** each loop also empties their boards.
 
-**Protect the combo turn.** Resolve **Grand Abolisher** first, and hold **Heroic Intervention** for a wipe or removal
-in response.
+**Protect the combo turn.** Resolve **Grand Abolisher** first, and hold **Heroic Intervention** or **Galadriel's Dismissal** for a
+wipe or removal in response.
 
 **Openings.**
 - Turn 1: Stitcher's Supplier, Entomb, Birds of Paradise or Sol Ring. Turn 2: a payoff or a rock. Turn 3 or 4: Ghave.
@@ -158,9 +165,8 @@ reanimation start. Don't keep one-landers.
 
 ## Tutor targets by board state
 
-Six tutors: **Demonic Tutor** (any card), **Vampiric Tutor** (any card, to the top), **Worldly Tutor** (a creature, to
-the top), **Eladamri's Call** (a creature, to hand, instant), **Open the Armory** (an Aura or Equipment: Animate Dead,
-Necromancy, Skullclamp, Nim Deathmantle) and **Rune-Scarred Demon** (any card when it enters).
+Five tutors: **Demonic Tutor** (any card), **Vampiric Tutor** (any card, to the top), **Worldly Tutor** (a creature, to
+the top), **Eladamri's Call** (a creature, to hand, instant) and **Rune-Scarred Demon** (any card when it enters).
 
 - **Ghave and an altar out → tutor Cathars' Crusade or Doubling Season** (Demonic or Vampiric).
 - **Ghave and Crusade or Season out → tutor the altar.**
@@ -187,8 +193,8 @@ Phyrexian Tower. **Crucible of Worlds** replays the fetch lands and Strip Mine.
 Apocalypse (gain life per draw).
 
 **Interaction.** Swords to Plowshares, Path to Exile, Anguished Unmaking, Summon: Bahamut, Aura Shards, Grave Pact;
-Toxic Deluge, Austere Command and Living Death as resets; Grand Abolisher, Heroic Intervention, Ephemerate and
-Restoration Angel as protection.
+Toxic Deluge, Austere Command, Living Death and Elspeth Tirel's −5 as resets; Grand Abolisher, Heroic Intervention,
+Galadriel's Dismissal, Ephemerate and Restoration Angel as protection.
 
 ## Bracket and Rule 0
 
@@ -216,11 +222,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (10).** Altar of Dementia, Arcane Signet, Ashnod's Altar, Chromatic Lantern, Crucible of Worlds, Nim Deathmantle, Phyrexian Altar, Skullclamp, Sol Ring, Talisman of Hierarchy
 
-**Sorceries (9).** Austere Command, Demonic Tutor, Dread Return, Living Death, Open the Armory, Reanimate, Toxic Deluge, Victimize, Yawgmoth's Will
+**Sorceries (7).** Austere Command, Demonic Tutor, Dread Return, Living Death, Reanimate, Toxic Deluge, Yawgmoth's Will
 
-**Instants (10).** Anguished Unmaking, Dark Ritual, Eladamri's Call, Entomb, Ephemerate, Heroic Intervention, Path to Exile, Swords to Plowshares, Vampiric Tutor, Worldly Tutor
+**Instants (11).** Anguished Unmaking, Dark Ritual, Eladamri's Call, Entomb, Ephemerate, Galadriel's Dismissal, Heroic Intervention, Path to Exile, Swords to Plowshares, Vampiric Tutor, Worldly Tutor
 
 **Lands (37).** Bayou, Bojuka Bog, Brushland, Caves of Koilos, Command Tower, Flooded Strand, Gaea's Cradle, Godless Shrine, Indatha Triome, Isolated Chapel, Karn's Bastion, Llanowar Wastes, Marsh Flats, Misty Rainforest, Overgrown Tomb, Phyrexian Tower, Polluted Delta, Sandsteppe Citadel, Savannah, Scrubland, Strip Mine, Sunpetal Grove, Temple Garden, Verdant Catacombs, Windswept Heath, Woodland Cemetery, 5 Swamp, 3 Forest, 3 Plains
+
+**Planeswalkers (1).** Elspeth Tirel
 
 ## Import list (100)
 
@@ -251,10 +259,12 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Eladamri's Call
 1 Elesh Norn, Grand Cenobite
 1 Elesh Norn, Mother of Machines
+1 Elspeth Tirel
 1 Entomb
 1 Ephemerate
 1 Flooded Strand
 1 Gaea's Cradle
+1 Galadriel's Dismissal
 1 Ghave, Guru of Spores
 1 Godless Shrine
 1 Grand Abolisher
@@ -273,7 +283,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Misty Rainforest
 1 Necromancy
 1 Nim Deathmantle
-1 Open the Armory
 1 Overgrown Tomb
 1 Path to Exile
 1 Phyrexian Altar
@@ -306,13 +315,12 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Triskelion
 1 Vampiric Tutor
 1 Verdant Catacombs
-1 Victimize
 1 Viscera Seer
 1 Windswept Heath
 1 Woodland Cemetery
 1 Worldly Tutor
-1 Yawgmoth, Thran Physician
 1 Yawgmoth's Will
+1 Yawgmoth, Thran Physician
 1 Zulaport Cutthroat
 3 Forest
 3 Plains

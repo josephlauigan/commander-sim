@@ -688,7 +688,14 @@ pub fn last_chance(g: &mut Game, q: PlayerId) -> Res<bool> {
     }
     Ok(g.player(q).life_locked
         || cast_teferis_protection(g, q, 9.0)?
-        || crate::impls::t45_winota::flare_last_chance(g, q)?) // --- Tiers 4/5 (winota): Flare of Fortitude
+        || crate::impls::t45_winota::flare_last_chance(g, q)? // --- Tiers 4/5 (winota): Flare of Fortitude
+        || grace_last_chance(g, q)?) // --- card-models-3: Angel's Grace (can't lose this turn)
+}
+
+/// Angel's Grace in force for q this turn, or cast now (a Tier 6 seat holding it with {W} open): q can't lose
+fn grace_last_chance(g: &mut Game, q: PlayerId) -> Res<bool> {
+    use crate::impls::t6_stax::grace_active;
+    Ok(grace_active(g, q) || (crate::impls::t6_plans::is_t6(g, q) && crate::ai::t6_table::grace_save(g, q)))
 }
 
 // ------------------------------------------------------------------ dying
@@ -1096,6 +1103,9 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
         x.sick = x.sick && !e.haste;
         if let Some(s) = e.add_subtype.or(e.only_subtype) {
             x.ttypes.push(s);
+        }
+        if e.vanishing > 0 {
+            x.data.set(DataKey::Vanish, crate::state::Val::Int(e.vanishing as i64)); // --- card-models-2
         }
     }
     x.on_bf = true;

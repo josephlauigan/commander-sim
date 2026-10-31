@@ -37,7 +37,6 @@
 7 Island (trk) 320
 1 Isolated Chapel (soc) 382
 1 Lightning Greaves (2xm) 360
-1 Luminous Bonds (rix) 12
 1 Marauding Blight-Priest (znr) 112
 1 Massacre Wurm (m21) 316
 1 Memory Trap (fra) 15
@@ -61,6 +60,7 @@
 1 Skyclave Apparition (soc) 173
 1 Smothering Tithe (cmm) 693
 1 Sol Ring (m3c) 305
+1 Sphere of Safety (dsc) 104
 1 Spire of Industry (brc) 203
 1 Static Net (bro) 27
 9 Swamp (trk) 321

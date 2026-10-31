@@ -13,6 +13,8 @@ Deck key `cloud`, `decklists/JD/cloud-midgar-equipment.md`.
 
 ### Changes
 
+- **2026-10-31.** Out: Galadriel's Dismissal. In: Teferi's Protection. Out: Galadriel's Dismissal (to Ghave). In: Teferi's Protection. JD's choice (10/31), not simulated: protects Cloud, his Equipment and the board from a wipe, exile or a lethal attack; 3 Game Changers, still Bracket 3.
+- **2026-10-31.** Out: Sphere of Safety. In: Forge Anew. Out: Sphere of Safety (to Y'shtola). In: Forge Anew. JD's choice (10/31), not simulated: a free equip each turn, instant-speed equips on your turn, and an Equipment back from the graveyard; Sphere taxed only about {3} per attacker with three enchantments and was stuck in hand 42% of the games it was drawn.
 - **2026-10-27.** Out: Wall of Omens. In: Galadriel's Dismissal. JD's choice (2026-10-27), not simulated: Galadriel's Dismissal (from Seph/Atraxa) for Wall of Omens: {W} instant protection for Cloud and his Equipment.
 - **2026-10-25.** Out: Wrecking Ball Arm. In: Buster Sword. JD's choice (10/25): Buster Sword is a cheaper Equipment (cast {3}, equip {2}) that gives +3/+2 and draws a card on each hit, with a free spell up to the damage dealt. Not simulated; the free-cast part isn't modeled yet.
 - **2026-10-18.** Out: Citizen's Arrest, Hero's Blade. In: Andúril, Narsil Reforged, Stroke of Midnight. Citizen's Arrest -> Stroke of Midnight: -1.4 over T1-T3 (instant answer to any nonland permanent). Hero's Blade -> Andúril, Narsil Reforged: -0.3 over T1-T3 (a +1/+1 counter on every creature each swing).
@@ -558,6 +560,7 @@ Deck key `yshtola`, `decklists/JD/yshtola-esper-drain.md`.
 
 ### Changes
 
+- **2026-10-31.** Out: Luminous Bonds. In: Sphere of Safety. Out: Luminous Bonds. In: Sphere of Safety (from Cloud). JD's choice (10/31), not simulated: with 16 enchantments Sphere taxes every attacker about {6}-{10}, one tax for the whole table; Luminous Bonds had one of her lowest win rates when cast.
 - **2026-10-30.** Out: Encrust, Night's Whisper, Windborn Muse. In: Displacer Kitten, Rhystic Study, Teleportation Circle. Y'shtola: cards from the retired Seph/Atraxa deck (rebuilt as Ghave, 10/30). In: Rhystic Study, Teleportation Circle, Displacer Kitten. Out: Night's Whisper, Encrust, Windborn Muse. JD's choice, not simulated.
 - **2026-10-30.** Out: nothing. In: Urborg, Tomb of Yawgmoth. Y'shtola: Urborg, Tomb of Yawgmoth in for a Swamp (every land taps for black).
 - **2026-10-28.** Out: Plains (8 -> 7). In: Serra's Sanctum. JD's choice, not simulated: taps for {W} per enchantment, and the deck has 15, removal Auras on opponents' creatures included. Not yet owned; the Y'shtola printings file is unchanged.
@@ -755,6 +758,7 @@ Deck key `ghave`, `decklists/JD/ghave-abzan-aristocrats.md`, tiers t3-t4 (Seph's
 
 ### Changes
 
+- **2026-10-31.** Out: Open the Armory, Victimize. In: Elspeth Tirel, Galadriel's Dismissal. Out: Victimize, Open the Armory. In: Galadriel's Dismissal (from Cloud), Elspeth Tirel (JD's Miku, Divine Diva). JD's choice (10/31), not simulated: Ghave dies to wipes and to go-wide combat before its loop; Dismissal protects the combo turn for {W}, Elspeth's Soldiers block and feed the altars, and her -5 keeps the tokens. Victimize and Open the Armory were often held with no target.
 - **2026-10-30.** New deck (JD, 10/30): the Seph/Atraxa reanimator rebuilt around Ghave, Guru of Spores (W/B/G). Out: Atraxa, Grand Unifier (the old commander), Displacer Kitten, Arcane Denial, Swan Song, Gifts Ungiven, Rhystic Study, Glimpse the Unthinkable, Muldrotha, the Gravetide, Teleportation Circle, Conjurer's Closet, Buried Alive, Underground River, Underground Sea, Watery Grave, Tropical Island, Hallowed Fountain, Tundra, 2 Island. In: Ghave, Guru of Spores (commander), Yawgmoth, Thran Physician, Worldly Tutor, Cathars' Crusade, Cruel Celebrant, Pitiless Plunderer, Sylvan Library, Heroic Intervention, Doubling Season, Zulaport Cutthroat, Eladamri's Call, Gaea's Cradle, Indatha Triome, Woodland Cemetery, Isolated Chapel, Sunpetal Grove, Brushland, Llanowar Wastes, Sandsteppe Citadel (proxies where JD doesn't own them). Ghave + an altar + Cathars' Crusade or Doubling Season are four new infinite combos; the Mikaeus and Nim Deathmantle loops stay. 5 Game Changers (Demonic Tutor, Vampiric Tutor, Worldly Tutor, Aura Shards, Gaea's Cradle). Not simulated.
 
 ### Results

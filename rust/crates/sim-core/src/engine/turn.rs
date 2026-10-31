@@ -536,6 +536,7 @@ pub fn upkeep(g: &mut Game, p: PlayerId) -> Res {
         fire_trigger(g, Event::Upkeep, Call::Player { p })?;
     }
     cardcode::gy_upkeep(g)?;
+    crate::impls::t6_copies::vanishing_upkeep(g, p)?; // --- card-models-2: vanishing (Flesh Duplicate)
     for m in g.player(p).perms.clone() {
         let x = g.perm(m);
         let Some(c) = x.cd else { continue };
@@ -746,6 +747,7 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
         }
     }
     g.player_mut(p).impulse_long = keep;
+    crate::impls::t6_blue::betrayal_return(g); // --- card-models-2: Mnemonic Betrayal's cards go back
     // "you may play it this turn" ends with this turn, whoever was given it (an opponent's impulse on p's turn too):
     // the unplayed cards go back to exile (Jeska's Will: unplayed exiled cards stay in exile)
     for q in (0..g.players.len()).map(|i| PlayerId(i as u8)) {
@@ -901,6 +903,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     }
     crate::impls::alela::mirror_revert(g)?; // Mirage Mirror: copies end with the previous turn
     crate::impls::t6_scion::copy_revert(g); // --- scion: Scion of the Ur-Dragon's copy ends with the turn (cleanup)
+    crate::impls::t6_green2::woodland_revert(g); // --- card-models-2: Shifting Woodland is a land again
     for q in &mut g.players {
         q.gy_start = q.gy.clone(); // what was there before this turn
         q.mana.clear(); // the pools empty between turns (mana kept "until end of turn" too)

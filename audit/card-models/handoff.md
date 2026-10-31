@@ -145,3 +145,150 @@ Every card or rule this branch changed, and who plays it (data/decks.json after 
 So the tiers whose games changed: t1-t3 (Buster Sword via cloud; t2 meren), t3-t4 (sauron, kefka), t4-t5 (karn,
 prosper, kinnan-simic), t5 (yshtola, urdragon), and t6 (thanos and every t6 deck: Gemstone Caverns, plus Orim's
 Chant and City of Traitors).
+
+# Card models, part 2 (10-31): handoff
+
+Brief: `rust/agents/card-models-2.md`. Branch `card-models-2`. Tests: `rust/crates/sim-core/tests/cards_jd_models2.rs`.
+No sims were run (JD: cargo tests only).
+
+## Features added (engine / ability language)
+
+- **Abilities as stack objects** (`engine/stack.rs`): `ability_window_ex` puts an ability on the stack with its
+  `Ctx` (`target`, and `dsl_ab`: the compiled ability's card and index) and returns `AbilityRes` (resolves, its
+  target as it left the stack, the copies that resolved). `dsl::activate` and `dsl::use_loyalty` use it.
+  - **Single targets** (`dsl::aim`, `dsl::single_target`): a compiled activated, loyalty or triggered ability whose only
+    targeted effect is removal (destroy / exile / bounce / tuck / damage to "target ...") chooses its target as it goes
+    on the stack (the AI; a person still picks as it resolves). If that target is gone when it resolves, it does
+    nothing (before: it picked a new target at resolution). Triggers are aimed only on the stack path (when someone
+    could respond); `dsl::retarget_ok` says whether another permanent is a legal new target.
+  - **Copies** (`stack::copyable`, `copy_trigger`): an ability item with `dsl_ab` can be copied like a trigger; the
+    copy resolves first and chooses its targets anew.
+  - **Counterspells re-aimed**: `cast_counter_spell` resolves the counter against its target as it left the stack.
+  - `stack::ai_respond`: an opponent's ability aimed at q's permanent -> `t6_redirects::redirect_ability`; a
+    counterspell aimed at q's important spell -> `t6_redirects::redirect_counter`; q's own compiled activated ability
+    worth `CAMERA_WORTH` (3, a tutor) -> `t6_copies::camera_copy`. Redirect Lightning joined `ABILITY_ANSWERS_HAND`
+    (abilities go on the stack when a player holds it).
+- **A permanent becomes a copy and back** (Shifting Woodland): `t6_green2::woodland_become` / `woodland_revert`
+  (`DataKey::WoodlandCopy`, `alela::set_face`), a nonland copy moves from `lands` to `perms` and back at the next turn.
+- **Vanishing** (`CopyExc::vanishing`, `DataKey::Vanish`, `t6_copies::vanishing_upkeep` from `turn::upkeep`).
+- **Search event for Wan Shi Tong** (`tutors::shuffle_library` -> `t6_legends2::searched`, answered in `wan_sba`).
+- **Becomes-the-target** for Phantasmal Image (`t6_copies::image_targeted`: `apply_removal` unless edict/wipe, equip).
+- **Delayed end-step return** (Mnemonic Betrayal: `Player::betrayed`, `t6_blue::betrayal_return`).
+- **Sacrifice-a-land mana** (`mana::Source::SacLand`, Rain of Filth; `plan_pay` spends it last, like Treasure).
+- New card code file `impls/card_models2.rs` (Skithiryx, Dreamtide Whale, Voidwing Hybrid, Norn's Decree).
+
+## Cards changed (old -> new status), who plays them
+
+| Card | Old | New | JD decks (tiers) | Pool decks |
+| --- | --- | --- | --- | --- |
+| Shifting Woodland | Partial | Full | thanos (t6) | t6 rograkh-thrasios |
+| Redirect Lightning | Partial | Approximate (hand-written abilities have no stack target) | thanos (t6) | t6 sisay |
+| Peter Parker's Camera | Partial | Approximate (hand-written activated abilities can't be copied) | urdragon (t5) | - |
+| Wan Shi Tong, Librarian | Partial | Full | - | t6 kinnan-bonder, rograkh-thrasios |
+| Flesh Duplicate | Partial | Full | - | t6 kinnan-bonder, rograkh-thrasios |
+| Phantasmal Image | Partial | Approximate (a non-removal spell or ability aimed at it doesn't sacrifice it) | - | t6 rograkh-thrasios |
+| Mnemonic Betrayal | Partial | Full | - | t6 kraum-tymna, rograkh-silas |
+| Rain of Filth | Partial | Full (the AI now casts it) | - | t6 kraum-tymna, rograkh-silas |
+| Skithiryx, the Blight Dragon | Partial | Full | - | t3 atraxa-infect |
+| Dreamtide Whale | Partial | Full | - | t3 atraxa-infect |
+| Voidwing Hybrid | Partial | Full | - | t3 atraxa-infect |
+| Norn's Decree | Unmodeled | Full | - | t3 atraxa-infect |
+
+Engine changes that touch every deck (for the recalibration): every compiled single-target removal ability now
+fizzles when its target is gone by resolution (all tiers); abilities go on the stack whenever a seat holds Redirect
+Lightning (thanos and t6 sisay games). So the tiers whose games changed: t3 (atraxa-infect), t5 (urdragon's Camera),
+t6 (thanos and five of the six t6 decks), plus a small all-tier effect from the fizzle rule.
+
+## Left (pool), in rank order
+
+- Hidden Strings (2 t6): cipher (encode on a creature, cast a copy on combat damage) - an engine need.
+- Invasion of Ikoria (2 t6): battles - an engine need.
+- Magda, Brazen Outlaw (t4 prosper, t6 sisay): a general "becomes tapped" event (tap costs, effects).
+- One deck each (Partial unless noted): Aclazotz, Agatha's Soul Cauldron, Ajani Sleeper Agent, All-Fates Stalker,
+  Angel's Grace, Astral Cornucopia (Unmodeled: needs an X cast for an artifact and a per-counter rock), Bilbo's
+  Gambit, Biomancer's Familiar, Deadpool, Derevi, Exhibition Tidecaller, Ganax, Get Lost, Imposter Mech, Innkeeper's
+  Talent, Ixhel, Mandate of Peace, Paladin Class, Petrified Hamlet, Shang-Chi, Soul Partition, Sowing Mycospawn,
+  Spider-Woman, Springheart Nantuko, Teferi Who Slows the Sunset, Tezzeret Cruel Captain, The Mycosynth Gardens,
+  Training Grounds, Venerated Rotpriest, Vibrance, Volatile Stormdrake. `cardgen audit --deck <key>` has the notes.
+- Redirect Lightning / Camera to Full: hand-written card code that calls `ability_window` would have to move to
+  `ability_window_ex` (with its target) to be redirectable or copyable.
+
+## Gotchas
+
+- `perl -0pi -e 's|...|...|'` with `|` inside the pattern (closures `|e|`) silently mangles the file: use another
+  delimiter or the Edit tool.
+- `cast_card` doesn't pay the spell's cost (the caller does).
+- Eternal Witness is 2/2 in data/cards.json (Oracle 2/1): not touched.
+
+# Card models, part 3 (10-31): handoff
+
+Brief: `rust/agents/card-models-3.md`. Branch `card-models-3`. Tests: `rust/crates/sim-core/tests/cards_models3.rs`.
+Card code: `rust/crates/sim-core/src/impls/card_models3.rs`. No sims were run (cargo tests only).
+
+## Features added (engine / general)
+
+- **Cipher** (`card_models3::cipher_encode` / `cipher_hit`): a cipher spell's resolve ends with `cipher_encode`, which
+  exiles it encoded on the creature likeliest to connect (`DataKey::Cipher` on the creature); `cardcode::
+  combat_damage_cards` calls `cipher_hit`, which casts a copy free (`cast::cast_spell_copy`, `Ctx::mode` =
+  `cipher_copy` so the copy is not encoded again).
+- **Battles** (`card_models3::battle_enter`, `battles_for`, `battle_damage`, `protector`; `DataKey::Defense`,
+  `DataKey::Protector`): a battle enters as a noncreature permanent with defense counters and a protector (the
+  opponent with the fewest creatures; re-chosen if that player leaves). `combat::walker_attacks` sends unblocked
+  attackers at the Sieges the defending player protects (before planeswalkers); `resolve_blocks` removes defense; at 0
+  it is defeated, exiled, and (Invasion of Ikoria) cast transformed free as Zilortha, Apex of Ikoria (8/8 reach;
+  `zilortha_unblocked`: non-Humans assign combat damage as though unblocked).
+- **Becomes tapped** (`card_models3::newly_tapped` / `tapped_now`, `DataKey::TapArmed`): a watcher reads, at state
+  checks (`hooks::fire_sba`), which of its permanents it saw untapped are tapped now; the mana and attack events
+  report at once and disarm. A permanent that entered tapped never triggers it.
+- **Becomes the target of a spell** (`card_models3::spell_targeted`, from `cast::cast_card` as any spell is cast).
+- **Card timing restriction** (`card_models3::cast_restricted`, read by `cast::castable`): Mandate of Peace.
+- **Removal target kind `cep`** (creature, enchantment or planeswalker): engine/removal.rs, human/legal.rs, alela.rs,
+  cardgen autotag.
+- **Proliferate adds charge counters on nonland permanents** (common::proliferate): Astral Cornucopia, Otherworld
+  Atlas (sheoldred plays the Atlas but has no proliferate).
+- **Angel's Grace's damage floor** (life::lose_life) and **can't lose against a drain/damage win** (zones::last_chance).
+- **Counter doubling by the actor** (repl::counters / vorinclex_mods): Innkeeper's Talent level 3.
+- Hand-written walker (common::walker): Ajani, Sleeper Agent; its emblem in rules::emblem_cast.
+
+## Cards changed (old -> new status), who plays them
+
+| Card | Old | New | Decks (tiers) |
+| --- | --- | --- | --- |
+| Hidden Strings | Partial | Full (cipher) | t6 kinnan-bonder, rograkh-thrasios |
+| Invasion of Ikoria // Zilortha | Partial | Approximate (battle + Zilortha; see note) | t6 kinnan-bonder, rograkh-thrasios |
+| Magda, Brazen Outlaw | Partial | Full (becomes-tapped event) | t4 prosper, t6 sisay |
+| Astral Cornucopia | Unmodeled | Full (X cast as a hand option, charge counters, proliferate) | t3 atraxa-infect |
+| Angel's Grace | Partial | Approximate (an opponent's alternate win still ends the game: ai/mod.rs `win` is off limits) | t6 dack-fayden |
+| Paladin Class | Partial | Full (level 2 anthem, level-gated; the compiled anthem, on from level 1, is dropped) | t6 dack-fayden |
+| Mandate of Peace | Partial | Full (only during combat; the AI casts it against a lethal / half-life attack) | t6 dack-fayden |
+| Get Lost | Partial | Approximate (any of the three targets; no Map tokens) | t6 dack-fayden |
+| Innkeeper's Talent | Partial | Full (combat counter, levels 2 and 3) | t3 atraxa-infect |
+| Venerated Rotpriest | Partial | Full | t3 atraxa-infect |
+| Ajani, Sleeper Agent | Partial | Full | t3 atraxa-infect |
+| Ixhel, Scion of Atraxa | Partial | Full | t3 atraxa-infect |
+| Ganax, Astral Hunter | Partial | Full (status only: Choose a Background does nothing in the 99) | t5 miirym |
+
+No JD deck plays any of these cards. Tiers whose games changed: t3 (atraxa-infect: six cards, charge-counter
+proliferate, Innkeeper doubling), t4 (prosper's Magda), t5 (miirym: status only, no behaviour change), t6 (sisay's
+Magda, dack-fayden's four, kinnan-bonder and rograkh-thrasios's Hidden Strings and Ikoria). All tiers: a spell aimed
+at a creature now checks for Venerated Rotpriest (no effect without it); `castable` checks the Mandate restriction.
+
+## Left (pool), in rank order
+
+- Single-deck, still Partial: Aclazotz (t3 tergrid: the attack discard/draw, the land-discard Bat, the dies ->
+  Temple of the Dead land and back), Agatha's Soul Cauldron, All-Fates Stalker (warp from exile), Bilbo's Gambit
+  (gift), Biomancer's Familiar / Training Grounds (the discount on hand-written creature abilities), Deadpool (text
+  box exchange), Derevi (command-zone ability), Exhibition Tidecaller (mana-spent total), Imposter Mech (vehicles),
+  Petrified Hamlet (name ban), Shang-Chi (restricted mana), Soul Partition (play from exile, tax), Sowing Mycospawn
+  (kicker), Spider-Woman (Food/Clue enter tapped), Springheart Nantuko (bestow), Teferi Who Slows the Sunset (-7
+  emblem), Tezzeret Cruel Captain (-7 emblem), The Mycosynth Gardens (copy an artifact), Vibrance (hybrid cost on a
+  normal cast), Volatile Stormdrake (hexproof from abilities only).
+- Step 2 of the brief (Redirect Lightning / Peter Parker's Camera: hand-written single-target abilities through
+  `ability_window_ex`) was not reached.
+
+## Gotchas
+
+- `cast::cast_card` doesn't pay; `cast_spell_copy` removes the resolved copy from the graveyard/exile it went to.
+- A battle is a permanent whose card is a sorcery in the data (types "S"): `is_creature` is false, it sits in `perms`.
+- Hooks fire only for hooked permanents: `newly_tapped` and `innkeeper_doublings` bail out when `g.hooks` is empty.
+- The 10-31 rules file (rust/agents/RULES.md) is the old porting one; the brief's checks are the ones that apply.

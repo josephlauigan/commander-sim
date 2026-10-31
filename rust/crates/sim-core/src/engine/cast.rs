@@ -272,6 +272,9 @@ pub fn castable(g: &Game, p: PlayerId, c: CardId, zone: &str) -> bool {
     if crate::impls::t0_giada::cast_locked(g, p, c) {
         return false; // Serra Avenger: not on your first three turns
     }
+    if crate::impls::card_models3::cast_restricted(g, c) {
+        return false; // --- card-models-3: Mandate of Peace: only during combat
+    }
     if spell_locked(g, p, c) || (g.locks_used && split_second_up(g)) {
         return false;
     }
@@ -853,6 +856,7 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
     let mut fin: Option<StackItem> = None; // the item as it left the stack (stolen, re-aimed)
     let r = (|| -> Res<Option<(bool, Option<CardId>, Ctx)>> {
         on_cast(g, p, c)?;
+        crate::impls::card_models3::spell_targeted(g, &ctx)?; // --- card-models-3: becomes the target of a spell
         if g.over || !g.player(p).alive {
             return Ok(None);
         }

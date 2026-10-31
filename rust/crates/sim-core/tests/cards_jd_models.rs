@@ -340,6 +340,8 @@ fn buster_sword_draws_then_casts_a_spell_up_to_the_damage_free() {
     g.perm_mut(s).attached = Some(a);
     let cs = hand(&mut g, P0, &["Sol Ring", "Swords to Plowshares"]);
     let big = token(&mut g, P0, 9); // (a second attacker without the Sword: no trigger)
+    let plains = ids(&g, &["Plains"])[0];
+    g.player_mut(P0).library.push(plains); // the draw is a land, so Sol Ring is the free cast
     let lib = g.player(P0).library.len();
     let dmg = values::epow(&g, a);
     assert_eq!(dmg, 5, "+3/+2");
