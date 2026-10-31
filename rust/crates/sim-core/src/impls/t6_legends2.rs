@@ -77,6 +77,7 @@ fn magda_as(g: &mut Game, _p: PlayerId, _m: PermId) -> Res {
 /// whenever a Dwarf you control becomes tapped for mana (the mana-tapped event): a Treasure
 fn magda_mana(g: &mut Game, src: Src, p: PlayerId, m: PermId, _n: u32) -> Res {
     if live(g, src) && owner(g, src) == p && owner(g, m) == p && is_dwarf(g, m) {
+        super::card_models3::tapped_now(g, src, m);
         add_treasure(g, p, 1)?;
         crate::glog!(g, "    {} makes a Treasure ({} tapped)", g.perm(src).name, g.perm(m).name);
     }
@@ -89,10 +90,30 @@ fn magda_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerI
         return Ok(vec![]);
     }
     let k = atk.iter().filter(|&&m| owner(g, m) == p && g.perm(m).tapped && is_dwarf(g, m)).count();
+    let dw: Vec<PermId> = atk.iter().copied().filter(|&m| owner(g, m) == p && is_dwarf(g, m)).collect();
+    for m in dw {
+        super::card_models3::tapped_now(g, src, m);
+    }
     if k > 0 && trigger_window(g, p, Some(src), &format!("create {k} Treasure"), None)? {
         add_treasure(g, p, k as i32)?;
     }
     Ok(vec![])
+}
+
+/// whenever a Dwarf you control becomes tapped some other way (a tap cost, convoke, an effect, an opponent's tapper):
+/// the general "becomes tapped" event, read at state checks (`card_models3::newly_tapped`; card-models-3)
+fn magda_sba(g: &mut Game, src: Src) -> Res {
+    if !live(g, src) {
+        return Ok(());
+    }
+    let p = owner(g, src);
+    let dwarves: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| live(g, m) && is_dwarf(g, m)).collect();
+    let k = super::card_models3::newly_tapped(g, src, &dwarves).len();
+    if k > 0 && trigger_window(g, p, Some(src), &format!("create {k} Treasure"), None)? {
+        add_treasure(g, p, k as i32)?;
+        crate::glog!(g, "    {} makes {k} Treasure (a Dwarf became tapped)", g.perm(src).name);
+    }
+    Ok(())
 }
 
 /// the artifact or Dragon card Magda fetches: the best by worth
@@ -681,6 +702,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, MAGDA)?;
     c.as_enters = Some(magda_as);
     c.mana_tapped = Some(magda_mana);
+    c.sba = Some(magda_sba);
     c.attack = Some(magda_attack);
     at_once(c, Event::Attack, false);
     c.options = Some(magda_options);
