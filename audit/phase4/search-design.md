@@ -250,3 +250,43 @@ look-ahead), paired against PR 5's arms with the same binary and env: slower wid
 (`AI_SEARCH_WIDEN`); attack plans and counter choices with all their 6 playouts before UCB (`AI_SEARCH_ATK_MIN=6`: PR 5
 gives a plan 2 and can stop on a "clear" leader after 2 shared copies, and picks the leader by its mean however few
 its playouts); and a decision-by-decision look at Meren's games (`AI_SEARCH_DIAG`). Results in the handoff.
+
+### Results so far, and what is left (JD, 2026-10-31: no sims of any kind until Phase 4's recalibration)
+
+**Ablations on t2 half B** (Kaalia, Meren on ISMCTS, the rest on the old look-ahead; 2000 games, seeds
+500000-501999, binary b1 = a0a547ff with `AI_SEARCH_B` unset; old = `AI_SEARCH=0`):
+
+| arm | half B (95% CI) | vs old | vs PR 5's ISMCTS (ref) | Meren vs old | steps / game (table) |
+|---|---|---|---|---|---|
+| old (`AI_SEARCH=0`, 12 jobs) | 40.9% [38.1, 43.7] | | | 17.9% | 393,538 |
+| ref: PR 5's ISMCTS (12 jobs) | 39.2% [36.4, 42.0] | -1.7 [-5.7, +2.3] | | -3.7 [-6.3, -1.1] | 371,881 |
+| `AI_SEARCH_WIDEN=0.25` (8 jobs) | 38.1% [35.3, 40.9] | -2.8 [-6.8, +1.2] | -1.1 [-5.0, +2.8] | -2.3 [-4.9, +0.3] | 371,876 |
+| `AI_SEARCH_ATK_MIN=6` | killed (JD) | | | | |
+| `AI_SEARCH_OPP=1` (opponent nodes) | not run | | | | |
+| `AI_SEARCH_MIN=6` (old allocation) | not run | | | | |
+
+- The ref arm reproduces PR 5's Stage B arm exactly (Meren 17.9% to 14.2%, Kaalia 23.0% to 25.0%, half -1.7): the
+  data changes since PR 5 do not touch t2.
+- Slower widening does not help (-1.1 against PR 5's ISMCTS, inside the noise): not kept.
+- Meren's decisions (`AI_SEARCH_DIAG`, 2000 games each arm): main-phase decisions 14.4 a game on the old look-ahead,
+  departing from the policy's top play 19.6% of the time at 3,733 playout steps a decision; on ISMCTS 14.1 a game,
+  departing 14.5% at 2,626 steps (with two or more real options: 25.6% vs 19.6%). Attacks: 3.7 vs 3.2 a game,
+  departing 68% vs 71%. So ISMCTS overrules Meren's policy a quarter less often in the main phase, on 30% fewer
+  steps: the lean looks like lost main-phase look-ahead (the early stops and the 6-shared-copies rule against the
+  policy's top play), not a worse tree. Kaalia shows the same shift (13.2% to 9.8%) and gained. The `AI_SEARCH_MIN=6`
+  arm (every root candidate 6 playouts before UCB, as the old look-ahead allocated) tests that directly.
+- The `--trace` of games where the arms differ was not done.
+
+**Stage A** (before the no-sims order): `AI_SEARCH_B` unset = PR 5's head byte for byte on t1, t2, t4, t5 (300
+games); `AI_SEARCH_B=1` twice on t1 = the same output. The later `AI_SEARCH_OPP` / `AI_SEARCH_ATK_MIN` knobs are
+default-off by code reading and `tests/ismcts_b.rs::off_by_default_is_pr5` (no sim).
+
+**Stage B and C: not run.** Part (b) stays behind `AI_SEARCH_B`, default off; PR 5's ISMCTS stays the default.
+
+**To run at recalibration** (2000 games an arm, seeds 500000-501999, loose, look-ahead, one `--jobs` for all arms):
+1. Stage B, each tier t1-t5: PR 5's head (no env) against `AI_SEARCH_B=<half A keys>` and `AI_SEARCH_B=<half B
+   keys>` (the values-handoff halves); half share deltas with CIs, games/s, CPU seconds, playout steps a game.
+2. The lean, t2 half B against `t2-old` / `t2-B-ref`: `AI_SEARCH_ATK_MIN=6`, `AI_SEARCH_OPP=1`, `AI_SEARCH_MIN=6`;
+   whichever helps, again on t1 half B (Lathril, Tatyova).
+3. Stage C from 1: `AI_SEARCH_B` on by default where level or better at about 10% more cost or less; then with no
+   env the head = the chosen arm byte for byte on each tier (300 games); `all_decks adaptive 3` / `lookahead 1`.

@@ -14,7 +14,10 @@ Brief: `rust/agents/phase4-search-b.md`. Design: `audit/phase4/search-design.md`
   `block_plans`, survey `note*`), `search::playout_with` / `play_on_resume`, splits `combat::resolve_blocks`,
   `removal::apply_removal_rest`, `removal::wipe_victim` / `wipe_finish` / `WIPE_CTX`, `pool::protect_cands` etc.
   Tests `tests/ismcts_b.rs` (7).
-- [ ] The lean: Meren diagnostic (`meren.sh`, `X/meren-*.txt`), ablations on t2 half B.
+- [~] The lean (`abl.sh`, `X/`): old, ref (PR 5's ISMCTS) and `WIDEN=0.25` done on t2 half B; Meren's decisions
+  from the old and ref arms' `AI_SEARCH_DIAG` (`srd.sh ERR KEY`). `ATK_MIN=6` killed by JD's order, `OPP=1`, `MIN=6`
+  and the 8-job reruns of old / ref (`abl2-4.sh`) not run. Results: design doc, "Results so far". CPU s (2000 games):
+  old 20,883, ref 21,459, widen 19,094 (the last at 8 jobs on a busier machine).
 - [x] Stage A (`stageA.sh`, `A/`, binary b1 = a0a547ff): `AI_SEARCH_B` unset = base byte for byte on t1, t2, t4, t5 (300
   games, rc=0); `AI_SEARCH_B=1` twice on t1 = the same stdout and stderr (play changes against base). Full table with
   every seat on part (b), t1: 180,885 playout steps a game vs 174,366 (+3.7%); blocks searched 2.1 a game (13.2 left
@@ -27,7 +30,11 @@ Brief: `rust/agents/phase4-search-b.md`. Design: `audit/phase4/search-design.md`
   that the output doesn't depend on it). Every Stage B arm runs at 8.
 - PR 5 (#179) is merged into main: this branch targets main. Not merged into this branch (main's later data would
   change the base the arms are paired against).
-- [ ] Stage B, Stage C, final checks.
+- [ ] Stage B, Stage C: **not run (JD, 2026-10-31: no sims of any kind until Phase 4's recalibration)**. Part (b)
+  stays behind `AI_SEARCH_B`, default off; `AI_SEARCH_OPP` default off. The runs to make at recalibration are listed
+  at the end of the design doc; `stageB.sh` (resumable; `BIN`, `EXTRA`) runs item 1.
+- [x] Final checks (no sims): `cargo build --release --all-targets -j 8`, `cargo test --release --no-fail-fast -j 8`,
+  `cardgen validate` (results in the report). `all_decks adaptive 3` / `lookahead 1`: not run (they are sims).
 
 ## Gotchas
 
