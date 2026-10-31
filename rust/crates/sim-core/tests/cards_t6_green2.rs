@@ -411,8 +411,9 @@ fn woodland_becomes_a_copy_of_oboro_with_delirium() {
     assert_eq!(opts.len(), 1);
     assert!(sim_core::ai::act::perform(&mut g, P0, opts[0].act.as_ref().unwrap()).unwrap());
     let copy = on_bf(&g, P0, "Oboro Breezecaller").expect("a copy of Oboro");
-    assert!(g.perm(copy).temp && !g.perm(copy).sick, "until end of turn, and not summoning sick");
-    assert!(g.perm(l).tapped, "the land is the creature: no mana from it as a land");
+    assert_eq!(copy, l, "the land itself is the copy (card-models-2)");
+    assert!(!g.perm(copy).sick, "the land was there before this turn");
+    assert!(!g.player(P0).lands.contains(&l), "a creature now, not a land");
     assert!(in_gy(&g, P0, "Oboro Breezecaller"), "the card stays in the graveyard");
 }
 

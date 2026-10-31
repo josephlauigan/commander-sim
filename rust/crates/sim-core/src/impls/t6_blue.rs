@@ -6,7 +6,7 @@
 //! - Mnemonic Betrayal: opponents' graveyards are exiled and their nonland cards held in hand (any mana type) for the turn.
 //! - Timetwister: every player's hand and graveyard shuffled into their library, then seven cards drawn.
 //! - Demonic Counsel: a Demon search, or any card with delirium (four card types in the graveyard).
-//! - Rain of Filth: sets the one-turn flag (`rain_of_filth_active`); the sacrifice-a-land mana source is an engine need.
+//! - Rain of Filth: sets the one-turn flag (`rain_of_filth_active`); `mana::Source::SacLand` is the lands' {B}.
 //! - Sevinne's Reclamation: the best permanent card of mana value 3 or less returns; from the graveyard it is copied.
 //! - Exhibition Tidecaller: Opus on the cast hook; the old compiled mill-3 trigger is removed (dsl = []).
 //! - Voice of Victory: Mobilize 2 on its attack hook (the tokens carry `EotSac`); opponents' casts refused on its controller's turn (`can_cast`).
@@ -53,7 +53,7 @@ fn borne_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
 /// Mnemonic Betrayal: exile every opponent's graveyard; p may cast spells from among those cards this turn with mana
 /// of any type (the cards are held in p's hand like Opposition Agent's, `yshtola::take_card`, and listed in
 /// `impulse` so the end step clears what was not cast); Betrayal itself is exiled.
-/// Missing: what remains goes back to its owner's graveyard (the end-step cleanup exiles it with p's own impulse cards).
+/// At the beginning of the next end step the cards not cast go back to their owners' graveyards (`betrayal_return`).
 fn betrayal_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     for q in g.opps(p).collect::<Vec<_>>() {
         let gy = std::mem::take(&mut g.player_mut(q).gy);
@@ -64,6 +64,7 @@ fn betrayal_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sy
             } else {
                 crate::impls::yshtola::take_card(g, p, c, q, "Mnemonic Betrayal");
                 g.player_mut(p).impulse.push(c);
+                g.player_mut(p).betrayed.push(c); // --- card-models-2
             }
         }
         crate::glog!(g, "    Mnemonic Betrayal exiles {} card(s) from {}'s graveyard", n, g.player(q).name);
@@ -146,18 +147,65 @@ fn counsel_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym
 const RAIN_FLAG: &str = "rain_of_filth";
 
 /// have p's lands "Sacrifice this land: Add {B}" until end of turn (Rain of Filth)? The mana code (`total_mana`, the
-/// unit list `pay` uses) should add one {B} unit per land p controls, tapped or not, paid by sacrificing the land.
+/// unit list `pay` uses) adds one {B} unit per land p controls, tapped or not, paid by sacrificing the land.
 pub fn rain_of_filth_active(g: &Game, p: PlayerId) -> bool {
     g.player(p).flag_turn.get(RAIN_FLAG) == Some(&g.turn_stamp())
 }
 
 /// Rain of Filth: until end of turn, lands you control gain "Sacrifice this land: Add {B}" (sets the turn flag; the
-/// engine has no sacrifice-a-land mana source yet)
+/// lands' {B} is `mana::Source::SacLand`)
 fn rain_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     set_turn_flag(g, p, RAIN_FLAG);
     Ok("gy")
 }
 
+
+/// --- card-models-2: the card in p's hand Rain of Filth would let p cast now: one worth casting (the deck's priority
+/// 50 or more) that p can't pay for, but could with the lands' {B} (Rain's own {B} paid first)
+pub fn rain_enables(g: &mut Game, p: PlayerId, rain: CardId) -> Option<CardId> {
+    if rain_of_filth_active(g, p) || g.player(p).lands.is_empty() {
+        return None;
+    }
+    let hand: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&c| c != rain && !g.db.get(c).land).collect();
+    let mut best: Option<(CardId, i32)> = None;
+    for c in hand {
+        let (gn, pips) = cost_of(g, p, c);
+        if can_pay(g, p, gn, &pips, false) || !castable(g, p, c, "hand") {
+            continue;
+        }
+        let pr = crate::ai::pool::generic_prio(g, p, c);
+        if pr < 50 || best.is_some_and(|b| b.1 >= pr) {
+            continue;
+        }
+        set_turn_flag(g, p, RAIN_FLAG);
+        let ok = can_pay(g, p, gn, &format!("{pips}B"), false);
+        g.player_mut(p).flag_turn.swap_remove(RAIN_FLAG);
+        if ok {
+            best = Some((c, pr));
+        }
+    }
+    best.map(|b| b.0)
+}
+
+/// --- card-models-2: the AI casts Rain of Filth in its main phase when it turns its lands into the mana for a card
+/// worth casting it can't pay for otherwise (`rain_enables`); then that card is cast as usual, the lands' {B} paid
+/// last (`mana::Source::SacLand`)
+fn rain_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_none() || g.active != Some(p) || !castable(g, p, c, "hand") || !can_pay(g, p, 0, "B", false) {
+        return Ok(vec![]);
+    }
+    let Some(t) = rain_enables(g, p, c) else { return Ok(vec![]) };
+    Ok(vec![Opt {
+        utility: 4.0,
+        label: format!("Rain of Filth for {}", g.db.get(t).name),
+        act: Some(Action::Cast { card: c, zone: None }),
+    }])
+}
+
+/// the AI casts Rain of Filth only through `rain_options`
+fn rain_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
+    0
+}
 
 // ================================================================== Sevinne's Reclamation
 /// the permanent card with mana value 3 or less in p's graveyard the AI returns: creatures by power, then other
@@ -571,10 +619,37 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.can_cast = Some(voice_can_cast);
     r.card(db, "Exhibition Tidecaller")?.cast = Some(tidecaller_cast);
     r.card(db, "Sevinne's Reclamation")?.resolve = Some(reclamation_resolve);
-    r.card(db, "Rain of Filth")?.resolve = Some(rain_resolve);
+    let c = r.card(db, "Rain of Filth")?;
+    c.resolve = Some(rain_resolve);
+    c.hand_options = Some(rain_options); // --- card-models-2
+    c.prio = Some(rain_prio);
     r.card(db, "Demonic Counsel")?.resolve = Some(counsel_resolve);
     r.card(db, "Timetwister")?.resolve = Some(timetwister_resolve);
     r.card(db, "Borne Upon a Wind")?.resolve = Some(borne_resolve);
     r.card(db, "Mnemonic Betrayal")?.resolve = Some(betrayal_resolve);
     Ok(())
+}
+
+/// --- card-models-2: Mnemonic Betrayal's "At the beginning of the next end step, if any of those cards remain exiled,
+/// return them to their owners' graveyards": called by the end step (`turn.rs`) before the turn's impulse cards are
+/// cleared, for every player who took cards with it
+pub fn betrayal_return(g: &mut Game) {
+    for i in 0..g.players.len() {
+        let p = PlayerId(i as u8);
+        let taken = std::mem::take(&mut g.player_mut(p).betrayed);
+        let mut back = 0;
+        for c in taken {
+            let pl = g.player_mut(p);
+            let Some(k) = pl.hand.iter().position(|&x| x == c) else { continue }; // cast (or gone) already
+            pl.hand.remove(k);
+            pl.impulse.retain(|&x| x != c);
+            pl.agent_ids.retain(|&x| x != c);
+            let owner = pl.stolen.swap_remove(&c).unwrap_or(p);
+            g.player_mut(owner).gy.push(c);
+            back += 1;
+        }
+        if back > 0 {
+            crate::glog!(g, "    Mnemonic Betrayal: {back} card(s) go back to their owners' graveyards");
+        }
+    }
 }

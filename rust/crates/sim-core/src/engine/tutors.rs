@@ -70,6 +70,7 @@ pub fn shuffle_library(g: &mut Game, p: PlayerId) {
     g.player_mut(p).library = lib;
     g.player_mut(p).known_top.clear(); // --- ai-fix: B: a shuffle ends what p knew of its top cards
     crate::impls::t45_heliod_zur::searched(g, p); // --- Tiers 4/5 (heliod-zur): Archivist of Oghma
+    crate::impls::t6_legends2::searched(g, p); // --- card-models-2: Wan Shi Tong, Librarian
 }
 
 // --- ai-fix: B

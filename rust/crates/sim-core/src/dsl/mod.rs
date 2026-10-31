@@ -2329,14 +2329,29 @@ pub fn activate(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool> {
     let e = g.player_mut(p).act_uses.entry((src, idx)).or_insert((stamp, 0));
     *e = if e.0 == stamp { (stamp, e.1 + 1) } else { (stamp, 1) };
     crate::glog!(g, "  {} activates {}", g.player(p).name, g.perm(src).name);
-    if !effects.iter().all(|e| e.kind == "add_mana")
-        && !crate::engine::stack::ability_window(g, p, Some(src), "ability", None, None)?
-    {
-        return Ok(true); // countered (mana abilities skip the stack)
-    }
     let mut dctx = DslCtx { sacrificed_mv, ..DslCtx::base() };
     if cost.x.is_some() {
         (dctx.x, dctx.x_default) = (paid_x, false);
+    }
+    if !effects.iter().all(|e| e.kind == "add_mana") {
+        // --- card-models-2: on the stack as an object: its single target is chosen now (and may be changed), and a
+        // copy of it (Peter Parker's Camera) resolves first, choosing its targets anew. Mana abilities skip the stack.
+        let aimed = aim(g, p, cd, idx, Some(src));
+        let ctx = Ctx { target: aimed, dsl_ab: Some((cd, idx)), ..Ctx::default() };
+        let r = crate::engine::stack::ability_window_ex(g, p, Some(src), "ability", None, ctx)?;
+        for _ in 0..r.copies {
+            let mut copy = DslCtx { target: None, ..dctx.clone() };
+            execute(g, p, effects, Some(src), &mut copy, None, 0)?;
+        }
+        if !r.resolves {
+            return Ok(true); // countered
+        }
+        if aimed.is_some() {
+            if r.target.is_none_or(|t| !g.perm(t).on_bf) {
+                return Ok(true); // its only target is gone: it does nothing
+            }
+            dctx.target = r.target;
+        }
     }
     execute(g, p, effects, Some(src), &mut dctx, None, 0)?;
     Ok(true)
@@ -2404,10 +2419,20 @@ pub fn use_loyalty(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool
     x.loyalty_used = Some(stamp);
     x.loyalty = Some(x.loyalty.unwrap_or(0) + loyalty);
     crate::glog!(g, "  {} uses {} ({:+})", g.player(p).name, g.perm(src).name, loyalty);
-    if !crate::engine::stack::ability_window(g, p, Some(src), &format!("{loyalty:+}"), None, None)? {
+    // --- card-models-2: a stack object like `activate`'s (single target, copies)
+    let aimed = aim(g, p, cd, idx, Some(src));
+    let ctx = Ctx { target: aimed, dsl_ab: Some((cd, idx)), ..Ctx::default() };
+    let r = crate::engine::stack::ability_window_ex(g, p, Some(src), &format!("{loyalty:+}"), None, ctx)?;
+    for _ in 0..r.copies {
+        execute(g, p, effects, Some(src), &mut DslCtx::base(), None, 0)?;
+    }
+    if !r.resolves {
         return Ok(true);
     }
-    execute(g, p, effects, Some(src), &mut DslCtx::base(), None, 0)?;
+    let mut dctx = DslCtx { target: r.target.filter(|_| aimed.is_some()), ..DslCtx::base() };
+    if aimed.is_none() || r.target.is_some_and(|t| g.perm(t).on_bf) {
+        execute(g, p, effects, Some(src), &mut dctx, None, 0)?;
+    }
     if g.perm(src).loyalty.unwrap_or(0) <= 0 && g.perm(src).on_bf {
         zones::leave(g, src)?;
         g.player_mut(p).gy.push(cd);
@@ -2454,6 +2479,7 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
                     && !g.perm(m).noatk
                     && !untargetable(g, m)
                     && x.attached != Some(m)
+                    && !crate::impls::t6_copies::is_image(g, m) // --- card-models-2
             })
             .collect();
         let base = n;
@@ -2512,6 +2538,9 @@ pub fn equip(g: &mut Game, p: PlayerId, src: PermId, target: PermId, n: u32) -> 
     }
     pay(g, p, n, "", false)?;
     crate::glog!(g, "  {} equips {} to {}", g.player(p).name, g.perm(src).name, g.perm(target).name);
+    if crate::impls::t6_copies::image_targeted(g, target)? && !g.perm(target).on_bf {
+        return Ok(true); // --- card-models-2: a Phantasmal Image targeted by the equip
+    }
     let name = format!("equip to {}", g.perm(target).name);
     if crate::engine::stack::ability_window(g, p, Some(src), &name, None, Some(target))?
         && g.perm(target).on_bf
@@ -2587,4 +2616,82 @@ pub fn opp_enters_tapped(g: &Game, p: PlayerId, m: Option<PermId>) -> bool {
         && statics(g, "enters_tapped").any(|(q, src, ab, i)| {
             matches!(&ab[i], Ability::Static { who, .. } if who.as_deref() == Some("opponents")) && q != p && src != m
         })
+}
+
+// ------------------------------------------------------------------ --- card-models-2: abilities on the stack
+/// the selection of the one effect of `effects` that targets a permanent, when it is removal (destroy, exile, bounce,
+/// tuck, damage to "target ...") and no other effect at the top level targets anything: an ability "with a single
+/// target", whose target is chosen as it goes on the stack (and can be changed there: Redirect Lightning)
+fn single_target(effects: &[Effect]) -> Option<&Sel> {
+    single_target_of(effects)
+}
+
+/// the selection an effect targets with, if any ("target ...", "any target", a player)
+fn effect_target(e: &Effect) -> Option<&Sel> {
+    let what = e.what.as_ref().filter(|s| matches!(s.sel.as_deref(), Some("target" | "any_target")));
+    let to = match &e.to {
+        Some(To::Sel(s)) if matches!(s.sel.as_deref(), Some("target" | "any_target" | "player")) => Some(&**s),
+        _ => None,
+    };
+    what.or(to)
+}
+
+fn single_target_of(effects: &[Effect]) -> Option<&Sel> {
+    let mut found = None;
+    for e in effects {
+        let Some(s) = effect_target(e) else { continue };
+        if found.is_some() {
+            return None; // two targets
+        }
+        let removal = matches!(e.kind.as_str(), "destroy" | "exile" | "bounce" | "tuck" | "damage");
+        if !removal || s.sel.as_deref() != Some("target") {
+            return None; // not removal, or "any target" / a player (chosen as it resolves)
+        }
+        found = Some(s);
+    }
+    found
+}
+
+/// the effects of compiled ability `idx` of card `cd` (an activated, loyalty or triggered ability)
+fn ability_effects(g: &Game, cd: CardId, idx: u16) -> Option<Vec<Effect>> {
+    match abilities(g, cd).get(idx as usize)? {
+        Ability::Activated { effects, .. } | Ability::Triggered { effects, .. } | Ability::Loyalty { effects, .. } => {
+            Some(effects.clone())
+        }
+        _ => None,
+    }
+}
+
+/// the permanent the AI's ability `idx` of card `cd` targets as it goes on the stack (from `src`), if it is removal
+/// with a single target (None for a person, who chooses as it resolves, and for anything else)
+pub fn aim(g: &Game, p: PlayerId, cd: CardId, idx: u16, src: Option<PermId>) -> Option<PermId> {
+    if crate::human::is_human(g, p) {
+        return None;
+    }
+    let effects = ability_effects(g, cd, idx)?;
+    let sel = single_target(&effects)?;
+    choose_target(g, p, sel, true, &DslCtx::base(), src, None)
+}
+
+/// could the single target of the ability on the stack `it` (`ctx.dsl_ab`) be changed to permanent `new`: a legal
+/// target for it (its filter, from its controller's side; hexproof and protection stop an opponent's ability)
+pub fn retarget_ok(g: &Game, it: &crate::state::StackItem, new: PermId) -> bool {
+    let Some((cd, idx)) = it.ctx.dsl_ab else { return false };
+    let Some(effects) = ability_effects(g, cd, idx) else { return false };
+    let Some(sel) = single_target(&effects) else { return false };
+    let (p, src) = (it.controller, it.ctx.source);
+    let x = g.perm(new);
+    if it.ctx.target == Some(new) || !x.on_bf || x.phased || !matches(g, p, new, sel.filter.as_ref(), src) {
+        return false;
+    }
+    let cols = src_colors(g, src, None);
+    x.owner == p
+        || !(untargetable(g, new)
+            || protected_from(g, new, cols)
+            || crate::impls::tymna_cards::hexproof_from(g, new, cols))
+}
+
+/// what the AI thinks compiled ability `idx` of card `cd` is worth to p (`value_of` its effects): the Camera's test
+pub fn ability_worth(g: &Game, p: PlayerId, cd: CardId, idx: u16) -> f64 {
+    ability_effects(g, cd, idx).map_or(0.0, |e| value_of(g, p, &e, None))
 }

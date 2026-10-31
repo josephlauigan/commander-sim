@@ -127,6 +127,8 @@ fn clone_exc(name: &str) -> CopyExc {
         "Phantasmal Image" => CopyExc { add_subtype: Some("illusion"), ..CopyExc::default() },
         // --- Tiers 4/5 (yuriko): "except it's a Ninja in addition to its other creature types"
         "Sakashima's Student" => CopyExc { add_subtype: Some("ninja"), ..CopyExc::default() },
+        // --- card-models-2: "except it has vanishing 3 if that creature doesn't have vanishing" (no card here has it)
+        "Flesh Duplicate" => CopyExc { vanishing: 3, ..CopyExc::default() },
         _ => CopyExc::default(),
     }
 }
@@ -400,10 +402,13 @@ fn camera_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 }
 
 /// {2}, {T}, remove a film counter: copy target activated or triggered ability you control. The AI uses it on its own
-/// important triggered ability on top of the stack (`stack::ai_respond`, importance 6 or more): the copy goes on the
+/// important triggered ability on top of the stack (`stack::ai_respond`, importance 6 or more), and (card-models-2) on
+/// its own activated ability of the ability language worth `stack::CAMERA_WORTH` (a tutor): the copy goes on the
 /// stack (it can be countered), and its effect runs once more before the original resolves (`stack::copy_trigger`).
-/// The abilities that can be copied are the hook-run triggers (a stack item with its `Trigger`, e.g. Godo's enters);
-/// the copies make no new choices of targets. Returns true if a copy resolved.
+/// The abilities that can be copied (`stack::copyable`): triggers the engine can run again (a stack item with its
+/// `Trigger`: hook-run, e.g. Godo's enters, and compiled ones) and the compiled activated and loyalty abilities
+/// (`stack::ability_window_ex`). The copy chooses its targets anew as it resolves (the AI's best choice: "you may
+/// choose new targets for the copy"). Returns true if a copy resolved.
 pub fn camera_copy(g: &mut Game, q: PlayerId, item: u32) -> Res<bool> {
     let Some(cam) = g.player(q).perms.iter().copied().find(|&m| {
         let x = g.perm(m);
@@ -417,7 +422,7 @@ pub fn camera_copy(g: &mut Game, q: PlayerId, item: u32) -> Res<bool> {
         return Ok(false);
     };
     let Some(it) = g.stack.iter().find(|x| x.id == item).cloned() else { return Ok(false) };
-    if it.controller != q || it.countered || it.ctx.trigger.is_none() || !can_pay(g, q, 2, "", false) {
+    if it.controller != q || it.countered || !crate::engine::stack::copyable(&it) || !can_pay(g, q, 2, "", false) {
         return Ok(false);
     }
     pay(g, q, 2, "", false)?;
@@ -426,7 +431,8 @@ pub fn camera_copy(g: &mut Game, q: PlayerId, item: u32) -> Res<bool> {
     g.perm_mut(cam).data.set(DataKey::Counters, Val::Int(n - 1));
     crate::glog!(g, "    {} activates Peter Parker's Camera: copies {}", g.player(q).name, it.name);
     // the ability itself is on the stack too: if it is countered, nothing is copied
-    if !crate::engine::stack::ability_window(g, q, Some(cam), "copy target triggered ability", Some(3.0), None)? {
+    let name = "copy target activated or triggered ability";
+    if !crate::engine::stack::ability_window(g, q, Some(cam), name, Some(3.0), None)? {
         return Ok(false);
     }
     crate::engine::stack::copy_trigger(g, q, item)
@@ -515,4 +521,59 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Volatile Stormdrake")?;
     c.etb = Some(stormdrake_etb);
     Ok(())
+}
+
+// ------------------------------------------------------------------ --- card-models-2: vanishing
+/// Vanishing (a copy's exception, `CopyExc::vanishing`: Flesh Duplicate): at the beginning of p's upkeep, a time
+/// counter comes off each of p's permanents with vanishing; when the last is removed, p sacrifices it. Called by
+/// `turn::upkeep` (the copy has the copied card's hooks, not Flesh Duplicate's).
+pub fn vanishing_upkeep(g: &mut Game, p: PlayerId) -> Res {
+    let ms: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| g.perm(m).on_bf && !g.perm(m).phased && g.perm(m).exc.vanishing > 0)
+        .collect();
+    for m in ms {
+        if g.over || !g.perm(m).on_bf || g.perm(m).owner != p || g.perm(m).data.int(DataKey::Vanish) <= 0 {
+            continue;
+        }
+        if !crate::engine::stack::trigger_window(g, p, Some(m), "remove a time counter", Some(1.0))? || !g.perm(m).on_bf
+        {
+            continue;
+        }
+        let n = g.perm(m).data.int(DataKey::Vanish) - 1;
+        g.perm_mut(m).data.set(DataKey::Vanish, Val::Int(n.max(0)));
+        if n <= 0 {
+            crate::glog!(g, "    {}: the last time counter is removed (vanishing)", g.perm(m).name);
+            die(g, m, "sac")?;
+        }
+    }
+    Ok(())
+}
+
+// ------------------------------------------------------------------ --- card-models-2: Phantasmal Image
+/// "When this creature becomes the target of a spell or ability, sacrifice it.": m (a Phantasmal Image, as a copy:
+/// its card is in `phys`) became the target of a spell or ability; the trigger goes on the stack and its controller
+/// sacrifices it. True if it was an Image (whether or not the trigger was countered). Called where the engine aims
+/// at a permanent: targeted removal (`removal::apply_removal`), an ability aimed as it goes on the stack, equip.
+pub fn image_targeted(g: &mut Game, m: PermId) -> Res<bool> {
+    let x = g.perm(m);
+    if !x.on_bf || x.neutered || x.phys.is_none_or(|c| name_of(g, c) != "Phantasmal Image") {
+        return Ok(false);
+    }
+    let o = x.owner;
+    if crate::engine::stack::trigger_window(g, o, Some(m), "sacrifice it (it became a target)", Some(2.0))?
+        && g.perm(m).on_bf
+    {
+        crate::glog!(g, "    {} sacrifices {} (Phantasmal Image became a target)", g.player(o).name, g.perm(m).name);
+        die(g, m, "sac")?;
+    }
+    Ok(true)
+}
+
+/// m is a Phantasmal Image (as a copy): targeting it sacrifices it, so the AI never equips it
+pub fn is_image(g: &Game, m: PermId) -> bool {
+    g.perm(m).phys.is_some_and(|c| name_of(g, c) == "Phantasmal Image") && !g.perm(m).neutered
 }

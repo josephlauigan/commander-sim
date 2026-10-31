@@ -20,6 +20,7 @@ use crate::hooks::{Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::Ctx;
 use crate::state::Game;
+use crate::state::StackKind;
 use crate::sym::Sym;
 
 fn cname(g: &Game, c: CardId) -> &str {
@@ -142,6 +143,117 @@ pub fn blue_spell_this_turn(g: &Game, p: PlayerId) -> bool {
         Some((st, cs)) if *st == g.turn_stamp() => cs.iter().any(|&c| g.db.get(c).pips.contains('U')),
         _ => false,
     })
+}
+
+// ================================================================== --- card-models-2: a spell or ability on the stack
+const REDIRECT: &str = "Redirect Lightning";
+
+/// q holds Redirect Lightning and can pay for it: the card
+fn redirect_held(g: &Game, q: PlayerId) -> Option<CardId> {
+    let c = g.db.id(REDIRECT).filter(|c| g.player(q).hand.contains(c))?;
+    (crate::engine::cast::castable(g, q, c, "hand") && redirect_lightning_life(g, q).is_some()).then_some(c)
+}
+
+/// q casts Redirect Lightning (card c) at stack item `id`: the additional cost (5 life or {2}) and {R} are paid, the
+/// cast is counted and the spell goes on the stack above the item, where it can be countered. True if it resolves
+/// (the caller then changes the item's target); the card is in the graveyard either way.
+fn cast_redirect(g: &mut Game, q: PlayerId, c: CardId, id: u32) -> Res<bool> {
+    let Some(life) = redirect_lightning_life(g, q) else { return Ok(false) };
+    if life {
+        pay(g, q, 0, "R", false)?;
+        lose_life(g, q, 5, Some(q), "other", None)?;
+    } else {
+        pay(g, q, 2, "R", false)?;
+    }
+    remove_card(&mut g.player_mut(q).hand, c);
+    let pl = g.player_mut(q);
+    pl.spells_this_turn += 1;
+    pl.cast_names.insert(c);
+    pl.stat("spells_cast", 1);
+    on_cast(g, q, c)?;
+    let name = g.stack.iter().find(|x| x.id == id).map_or(String::new(), |x| x.name.clone());
+    crate::glog!(g, "    {} casts {REDIRECT} at {name}", pname(g, q));
+    let ok = !g.over && crate::engine::stack::counter_window(g, q, c, 6.0, vec![])?;
+    g.player_mut(q).gy.push(c);
+    g.stack_pushes += 1; // q acted: the exchange of responses goes another round (`stack::priority`)
+    Ok(ok && !g.over && g.stack.iter().any(|x| x.id == id && !x.countered))
+}
+
+/// "Change the target of target spell or ability with a single target", on an opponent's ability on the stack (item
+/// `id`) aimed at q's permanent: an activated, loyalty or triggered ability of the ability language whose only target
+/// is a permanent it removes (`dsl::aim`; `ctx.dsl_ab`). The AI casts Redirect Lightning when the permanent is worth
+/// protecting (worth 4, or a commander) and the ability can legally be aimed at another permanent: the best one of
+/// q's opponents (`dsl::retarget_ok`: its filter, hexproof and protection). True if it was cast.
+pub fn redirect_ability(g: &mut Game, q: PlayerId, id: u32) -> Res<bool> {
+    let Some(c) = redirect_held(g, q) else { return Ok(false) };
+    if crate::engine::values::silenced(g, q) || crate::human::is_human(g, q) {
+        return Ok(false);
+    }
+    let Some(it) = g.stack.iter().find(|x| x.id == id).cloned() else { return Ok(false) };
+    let Some(t) = it.ctx.target else { return Ok(false) };
+    if it.kind == StackKind::Spell || it.controller == q || it.countered || it.ctx.dsl_ab.is_none() {
+        return Ok(false);
+    }
+    if g.perm(t).owner != q || !g.perm(t).on_bf || (pval(g, t) < 4.0 && !g.perm(t).is_cmd) {
+        return Ok(false);
+    }
+    let cands: Vec<PermId> = g
+        .opps(q)
+        .flat_map(|o| g.player(o).perms.iter().chain(g.player(o).lands.iter()).copied().collect::<Vec<_>>())
+        .filter(|&x| crate::dsl::retarget_ok(g, &it, x))
+        .collect();
+    let Some(n) = max_by(&cands, |x| pval(g, x)) else { return Ok(false) };
+    if !cast_redirect(g, q, c, id)? || !g.perm(n).on_bf {
+        return Ok(true);
+    }
+    crate::glog!(g, "    {}: {} now targets {}", REDIRECT, it.name, g.perm(n).name);
+    if let Some(x) = g.stack.iter_mut().find(|x| x.id == id) {
+        x.ctx.target = Some(n);
+    }
+    Ok(true)
+}
+
+/// Redirect Lightning on an opponent's counterspell (stack item `id`) aimed at q's important spell (importance 6 or
+/// more): the counterspell is aimed at another spell on the stack it could counter, the most important one of q's
+/// opponents' (never q's own). False, nothing cast, when there is no such spell.
+pub fn redirect_counter(g: &mut Game, q: PlayerId, id: u32) -> Res<bool> {
+    let Some(c) = redirect_held(g, q) else { return Ok(false) };
+    if crate::engine::values::silenced(g, q) || crate::human::is_human(g, q) {
+        return Ok(false);
+    }
+    let Some(it) = g.stack.iter().find(|x| x.id == id).cloned() else { return Ok(false) };
+    let (Some(ctr), Some(aim)) = (it.card, it.ctx.counter) else { return Ok(false) };
+    if it.kind != StackKind::Spell || it.controller == q || it.countered {
+        return Ok(false);
+    }
+    let Some(mine) = g.stack.iter().find(|x| x.id == aim) else { return Ok(false) };
+    if mine.controller != q || mine.imp < 6.0 || mine.countered {
+        return Ok(false);
+    }
+    let alt: Vec<(u32, f64)> = g
+        .stack
+        .iter()
+        .filter(|x| {
+            x.id != id
+                && x.id != aim
+                && x.kind == StackKind::Spell
+                && x.controller != q
+                && !x.countered
+                && x.card.is_some_and(|s| crate::engine::stack::counter_ok(g, ctr, s))
+                && crate::engine::stack::counterable(g, x)
+        })
+        .map(|x| (x.id, x.value_to(q).max(x.imp)))
+        .collect();
+    let Some(&(n, _)) = alt.iter().max_by(|a, b| a.1.total_cmp(&b.1)) else { return Ok(false) };
+    if !cast_redirect(g, q, c, id)? {
+        return Ok(true);
+    }
+    let to = g.stack.iter().find(|x| x.id == n).map_or(String::new(), |x| x.name.clone());
+    crate::glog!(g, "    {}: {} now targets {}", REDIRECT, cname(g, ctr), to);
+    if let Some(x) = g.stack.iter_mut().find(|x| x.id == id) {
+        x.ctx.counter = Some(n);
+    }
+    Ok(true)
 }
 
 // ================================================================== Untimely Malfunction

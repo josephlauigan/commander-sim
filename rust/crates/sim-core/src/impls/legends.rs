@@ -1225,7 +1225,8 @@ fn caparocti(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) 
 }
 
 /// jodah._regen: pay the regeneration cost (the AI always does when it can)
-fn regen(g: &mut Game, m: PermId, gn: u32, pips: &str) -> Res<bool> {
+/// (pub(crate) for card-models-2: Skithiryx)
+pub(crate) fn regen(g: &mut Game, m: PermId, gn: u32, pips: &str) -> Res<bool> {
     let p = owner(g, m);
     if !can_pay(g, p, gn, pips, false) {
         return Ok(false);

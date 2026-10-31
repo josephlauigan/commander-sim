@@ -34,6 +34,8 @@ pub enum Source {
     Quirion(PermId, PermId),
     /// Wirewood Symbiote (the first) returns an Elf (the third) to hand to untap mana creature `dork` (the second): 'WS'
     Symbiote(PermId, PermId, PermId),
+    /// --- card-models-2: Rain of Filth's "Sacrifice this land: Add {B}" (a land of p's, tapped or not), used last
+    SacLand(PermId),
 }
 
 impl Source {
@@ -222,6 +224,12 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
             u.push(Unit { src: Source::Perm(m), cols: ident, amt: 1 });
         }
     }
+    if crate::impls::t6_blue::rain_of_filth_active(g, p) {
+        // --- card-models-2: Rain of Filth: every land p controls, tapped or not, can be sacrificed for {B}
+        for &l in &pl.lands {
+            u.push(Unit { src: Source::SacLand(l), cols: Colors::from_letters("B"), amt: 1 });
+        }
+    }
     let tre = if no_art_mana { 0 } else { pl.live_treasures() };
     let bonus = if hooked { hooks::total_count(g, Event::TreasureBonus, p) } else { 0 };
     // one unit per Treasure, at most 1000: a doubling loop (Miirym t5: Thrakkus copies doubling the power of Old
@@ -363,6 +371,11 @@ const WUBRG: [char; 5] = ['W', 'U', 'B', 'R', 'G'];
 
 /// How many of each unit pay `generic` + `pips` (None if they can't), and which coloured pips each paid for.
 /// Python's `plan_pay`, with the same tie-breaking (the first best unit wins).
+/// a unit paid with only when nothing else can: a Treasure, a land sacrificed (Rain of Filth)
+fn last_resort(s: Source) -> bool {
+    matches!(s, Source::Treasure | Source::SacLand(_))
+}
+
 pub fn plan_pay(g: &Game, u: &[Unit], generic: u32, pips: &str) -> Option<(Vec<u32>, Vec<String>)> {
     let mut rem: Vec<u32> = u.iter().map(|w| w.amt).collect();
     let mut used = vec![0u32; u.len()];
@@ -375,7 +388,7 @@ pub fn plan_pay(g: &Game, u: &[Unit], generic: u32, pips: &str) -> Option<(Vec<u
         let mut best: Option<(usize, (bool, u32))> = None;
         for (i, w) in u.iter().enumerate() {
             if rem[i] > 0 && fits(w, c) {
-                let k = (w.src == Source::Treasure, w.cols.count());
+                let k = (last_resort(w.src), w.cols.count());
                 if best.is_none_or(|b| k < b.1) {
                     best = Some((i, k));
                 }
@@ -400,7 +413,7 @@ pub fn plan_pay(g: &Game, u: &[Unit], generic: u32, pips: &str) -> Option<(Vec<u
             }
             let waste = if used[i] > 0 { 0 } else { rem[i].saturating_sub(need) };
             let scarce = avail.iter().filter(|(c, _)| w.cols.has(*c)).map(|x| x.1).min().unwrap_or(0);
-            let k = (!restricted_float(w.src), w.src == Source::Treasure, is_pain(g, w.src), waste, w.cols.count(), -(scarce as i64));
+            let k = (!restricted_float(w.src), last_resort(w.src), is_pain(g, w.src), waste, w.cols.count(), -(scarce as i64));
             if best.is_none_or(|b| k < b.1) {
                 best = Some((i, k));
             }
@@ -516,6 +529,12 @@ pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res 
             }
         }
         Source::Pool(k) => g.player_mut(p).mana.take(k, n),
+        Source::SacLand(l) => {
+            if g.player(p).lands.contains(&l) {
+                crate::glog!(g, "    {} sacrifices {} for {{B}} (Rain of Filth)", g.player(p).name, g.perm(l).name);
+                crate::impls::lands::sac_land(g, p, l)?;
+            }
+        }
         Source::Scion(_) | Source::HandCard(_) | Source::Quirion(..) | Source::Symbiote(..) => {
             cardcode::special_unit_paid(g, p, w)?
         }
