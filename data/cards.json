@@ -21938,9 +21938,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When you play another land, sacrifice ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,

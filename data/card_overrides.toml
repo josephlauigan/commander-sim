@@ -8709,8 +8709,8 @@ status = "Full"
 note = "{T}: any colour of the identity; whenever it becomes tapped it deals 1 damage to you (t6_lands.rs brass_tap)"
 
 ["City of Traitors"]
-status = "Partial"
-note = "{T}: {C}{C} (amt=2); when you play another land it is sacrificed (t6_lands.rs: a land_etb check on every land that has no land_etb of its own; Bojuka Bog, Urza's Saga, Mortuary Mire, Mystic Sanctuary, Mosswort Bridge, Windbrisk and Alela's hub land do not run it, see engine-needs-lands.md); Partial (lead): those lands should sacrifice it too, needs an engine you-played-a-land hook"
+status = "Full"
+note = "{T}: {C}{C} (amt=2); when you play another land it is sacrificed: t6_lands.rs traitors_check, the land_etb of every land without one of its own, and turn::play_land_card runs it for every played land (Bojuka Bog, Urza's Saga and the other lands with an enters ability of their own too)"
 
 ["Gemstone Caverns"]
 status = "Full"

@@ -258,6 +258,9 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
     let pl = g.player_mut(p);
     pl.land_turn = pl.turns as i32;
     cardcode::land_etb(g, p, l)?; // CI.LAND_ETB (Bojuka Bog ...)
+    // City of Traitors: "when you play another land", whatever that land does as it enters (a land with an enters
+    // ability of its own skipped the check; doing it twice is harmless: the first sacrifices the City)
+    crate::impls::t6_lands::traitors_check(g, p, l)?;
     g.player_mut(p).lands_played += 1;
     crate::gf_audit::land_played(g, p); // --- ai-audit
     crate::glog!(g, "  {} {} {}", g.player(p).name, how, g.db.get(c).name);

@@ -447,3 +447,15 @@ fn tinder_wall_keeps_itself_against_a_big_attacker() {
     f(&mut g, w, P1, &[a], P0, &mut assign).unwrap();
     assert!(g.perm(w).on_bf);
 }
+
+// ======================================================== the pool: City of Traitors (Tier 6)
+#[test]
+fn city_of_traitors_goes_when_a_land_with_its_own_enters_ability_is_played() {
+    let mut g = thanos_table();
+    g.active = Some(P0);
+    let city = lands(&mut g, P0, "City of Traitors", 1, false)[0];
+    let bog = hand(&mut g, P0, &["Bojuka Bog"])[0];
+    sim_core::engine::turn::play_land_card(&mut g, P0, bog, "hand").unwrap();
+    assert!(!g.perm(city).on_bf, "sacrificed");
+    assert!(g.player(P0).lands.iter().any(|&m| g.perm(m).cd == Some(bog)));
+}
