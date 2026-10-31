@@ -13,6 +13,7 @@ Deck key `cloud`, `decklists/JD/cloud-midgar-equipment.md`.
 
 ### Changes
 
+- **2026-10-31.** Out: Sphere of Safety. In: Forge Anew. Out: Sphere of Safety (to Y'shtola). In: Forge Anew. JD's choice (10/31), not simulated: a free equip each turn, instant-speed equips on your turn, and an Equipment back from the graveyard; Sphere taxed only about {3} per attacker with three enchantments and was stuck in hand 42% of the games it was drawn.
 - **2026-10-27.** Out: Wall of Omens. In: Galadriel's Dismissal. JD's choice (2026-10-27), not simulated: Galadriel's Dismissal (from Seph/Atraxa) for Wall of Omens: {W} instant protection for Cloud and his Equipment.
 - **2026-10-25.** Out: Wrecking Ball Arm. In: Buster Sword. JD's choice (10/25): Buster Sword is a cheaper Equipment (cast {3}, equip {2}) that gives +3/+2 and draws a card on each hit, with a free spell up to the damage dealt. Not simulated; the free-cast part isn't modeled yet.
 - **2026-10-18.** Out: Citizen's Arrest, Hero's Blade. In: Andúril, Narsil Reforged, Stroke of Midnight. Citizen's Arrest -> Stroke of Midnight: -1.4 over T1-T3 (instant answer to any nonland permanent). Hero's Blade -> Andúril, Narsil Reforged: -0.3 over T1-T3 (a +1/+1 counter on every creature each swing).
@@ -558,6 +559,7 @@ Deck key `yshtola`, `decklists/JD/yshtola-esper-drain.md`.
 
 ### Changes
 
+- **2026-10-31.** Out: Luminous Bonds. In: Sphere of Safety. Out: Luminous Bonds. In: Sphere of Safety (from Cloud). JD's choice (10/31), not simulated: with 16 enchantments Sphere taxes every attacker about {6}-{10}, one tax for the whole table; Luminous Bonds had one of her lowest win rates when cast.
 - **2026-10-30.** Out: Encrust, Night's Whisper, Windborn Muse. In: Displacer Kitten, Rhystic Study, Teleportation Circle. Y'shtola: cards from the retired Seph/Atraxa deck (rebuilt as Ghave, 10/30). In: Rhystic Study, Teleportation Circle, Displacer Kitten. Out: Night's Whisper, Encrust, Windborn Muse. JD's choice, not simulated.
 - **2026-10-30.** Out: nothing. In: Urborg, Tomb of Yawgmoth. Y'shtola: Urborg, Tomb of Yawgmoth in for a Swamp (every land taps for black).
 - **2026-10-28.** Out: Plains (8 -> 7). In: Serra's Sanctum. JD's choice, not simulated: taps for {W} per enchantment, and the deck has 15, removal Auras on opponents' creatures included. Not yet owned; the Y'shtola printings file is unchanged.
