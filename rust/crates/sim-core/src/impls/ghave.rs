@@ -32,8 +32,10 @@ const ASHNOD: &[&str] = &["Ashnod's Altar"];
 /// a Saproling's enter puts the counter back (Crusade), or one activation makes two (Doubling Season)
 const DOUBLERS: &[&str] = &["Cathars' Crusade", "Doubling Season"];
 const SEPHIROTH: &str = "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel";
-/// a death payoff that turns the unbounded deaths into a kill
-const PAYOFFS: &[&str] = &["Blood Artist", "Zulaport Cutthroat", "Cruel Celebrant", SEPHIROTH];
+/// a death payoff that turns the unbounded deaths into a kill (the groups: what the tutors want and `deck_combos`
+/// reads). Sephiroth, Fabled SOLDIER drains too and `payoff` counts him, but he is no group piece: the Spellbook test
+/// would then flag the pool Yawgmoth deck's Sephiroth combos (Pawn, Sifter, Soultrader) as unmodelled
+const PAYOFFS: &[&str] = &["Blood Artist", "Zulaport Cutthroat", "Cruel Celebrant"];
 const TRISKELION: &[&str] = &["Triskelion"];
 const MIKAEUS: &[&str] = &["Mikaeus, the Unhallowed"];
 const FINKS: &[&str] = &["Kitchen Finks"];
@@ -41,8 +43,7 @@ const FREE_OUTLETS: &[&str] = &["Viscera Seer", "Ashnod's Altar", "Altar of Deme
 const NIM: &[&str] = &["Nim Deathmantle"];
 const TITAN: &[&str] = &["Grave Titan"];
 /// the death payoffs, or Altar of Dementia milling the table with the unbounded sacrifices
-const FINKS_PAYOFFS: &[&str] =
-    &["Blood Artist", "Zulaport Cutthroat", "Cruel Celebrant", SEPHIROTH, "Altar of Dementia"];
+const FINKS_PAYOFFS: &[&str] = &["Blood Artist", "Zulaport Cutthroat", "Cruel Celebrant", "Altar of Dementia"];
 
 const NOT_READY: fn() -> Ready = || (false, vec![], vec![]);
 

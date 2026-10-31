@@ -24,7 +24,6 @@ pub struct PlayerOut {
     pub killer: Option<usize>,
     pub stats: HashMap<Sym, i64>,
     pub milestone: HashMap<Sym, u32>,
-    pub first_bomb: Option<u32>,
     pub death_kind: Sym,
     /// cards seen (drawn, tutored, the opening hand) and cast, by name; permanents removed by opponents
     pub seen: Vec<String>,
@@ -73,7 +72,6 @@ impl GameOut {
                     killer: p.killer.map(|k| k.0 as usize),
                     stats: p.stats.iter().map(|(k, v)| (*k, *v)).collect(),
                     milestone: p.milestone.iter().map(|(k, v)| (*k, *v)).collect(),
-                    first_bomb: p.first_bomb,
                     death_kind: p.death_kind,
                     seen: if with_cards { names(&mut p.seen.iter().copied()) } else { vec![] },
                     cast: if with_cards { names(&mut p.cast_names.iter().copied()) } else { vec![] },

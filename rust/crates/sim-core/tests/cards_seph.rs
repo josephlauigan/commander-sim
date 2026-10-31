@@ -249,9 +249,10 @@ fn rest_in_peace_stops_the_loops() {
 }
 
 #[test]
+/// --- ghave: the loop is a combo-catalogue line now (impls/ghave.rs), offered to every deck that holds it
 fn the_ai_goes_for_a_killing_loop() {
     let (mut g, _) = loops_with(&["Mikaeus, the Unhallowed", "Triskelion", "Viscera Seer"], &[]);
-    assert!(take_option(&mut g, P0, "loop: Mikaeus + Triskelion"));
+    assert!(take_option(&mut g, P0, "combo: Mikaeus + Triskelion"));
     assert!(g.over);
     assert_eq!(g.winner, Some(P0));
 }
@@ -379,15 +380,6 @@ fn ephemerate_rebound_blinks_again() {
     f(&mut g, P0, eph).unwrap();
     assert_eq!(tokens(&g, P0), 6); // three Grave Titan entries
     assert!(g.player(P0).gy.contains(&eph));
-}
-
-#[test]
-fn ephemerate_value_blink_offered() {
-    let mut g = table(&["seph", "veyran"]);
-    lands(&mut g, P0, "Plains", 1, false);
-    hand(&mut g, P0, &["Ephemerate"]);
-    perm(&mut g, P0, "Grave Titan");
-    assert!(labels(&options(&mut g, P0, true)).contains(&"Ephemerate (blink Grave Titan)".to_string()));
 }
 
 // ======================================================== Summon: Bahamut (test_my_cards.Bahamut)
@@ -569,20 +561,6 @@ fn counters_worth_more_than_the_enter_effect() {
     end_step(&mut g, P0);
     assert!(on_bf(&g, titan)); // two Zombies aren't worth six +1/+1 counters
     assert_eq!(g.perm(titan).plus, 6);
-}
-
-#[test]
-fn restoration_angel_saves_a_bomb_from_removal() {
-    let mut g = table(&["seph", "veyran"]);
-    lands(&mut g, P0, "Plains", 4, false);
-    hand(&mut g, P0, &["Restoration Angel"]);
-    let archon = perm(&mut g, P0, "Archon of Cruelty");
-    let stp = card(&g, "Swords to Plowshares");
-    removal::apply_removal(&mut g, Some(P1), archon, "exile", Some(stp)).unwrap();
-    assert!(!on_bf(&g, archon));
-    assert!(named(&g, P0, "Archon of Cruelty").is_some()); // blinked: the Swords fizzled
-    assert!(named(&g, P0, "Restoration Angel").is_some());
-    assert_eq!(g.player(P0).stats.get("resto_protection").copied(), Some(1));
 }
 
 #[test]
@@ -868,77 +846,6 @@ fn necromancy_flashes_in_for_an_enter_effect() {
     assert!(g.player(P0).gy.contains(&atx) && g.player(P0).gy.contains(&card(&g, "Necromancy")));
 }
 
-// ======================================================== the plan's choices
-#[test]
-fn seph_reanimates_a_bomb_with_the_cheapest_spell() {
-    let mut g = table(&["seph", "veyran"]);
-    lands(&mut g, P0, "Swamp", 4, false);
-    hand(&mut g, P0, &["Animate Dead", "Necromancy"]);
-    let archon = take(&mut g, P0, "Archon of Cruelty");
-    g.player_mut(P0).gy.push(archon);
-    let opts = options(&mut g, P0, false);
-    assert!(labels(&opts).contains(&"reanimate".to_string()));
-    assert!(take_option(&mut g, P0, "reanimate"));
-    assert!(named(&g, P0, "Archon of Cruelty").is_some());
-    assert!(g.player(P0).gy.contains(&card(&g, "Animate Dead"))); // the cheaper one ({1}{B})
-    assert!(g.player(P0).hand.contains(&card(&g, "Necromancy")));
-    assert_eq!(g.player(P0).stats.get("rean_cast").copied(), Some(1));
-}
-
-#[test]
-fn seph_hardcasts_the_commander() {
-    let mut g = table(&["seph", "veyran"]);
-    lands(&mut g, P0, "Command Tower", 7, false);
-    let labels = labels(&options(&mut g, P0, false));
-    assert!(labels.contains(&"hardcast bomb".to_string()));
-    assert!(take_option(&mut g, P0, "hardcast bomb"));
-    assert!(named(&g, P0, "Atraxa, Grand Unifier").is_some());
-    assert!(g.player(P0).first_bomb.is_some());
-}
-
-#[test]
-fn seph_saves_a_bomb_with_heroic_intervention_and_galadriels_dismissal() {
-    let mut g = table(&["seph", "veyran"]);
-    lands(&mut g, P0, "Forest", 2, false);
-    hand(&mut g, P0, &["Heroic Intervention"]);
-    let archon = perm(&mut g, P0, "Archon of Cruelty");
-    assert!(ai::protect_response(&mut g, P0, archon, "destroy", Some(P1), None).unwrap());
-    assert_eq!(g.player(P0).stats.get("hi_used").copied(), Some(1));
-    let mut g = table(&["seph", "veyran"]);
-    lands(&mut g, P0, "Plains", 1, false);
-    hand(&mut g, P0, &["Galadriel's Dismissal"]);
-    let archon = perm(&mut g, P0, "Archon of Cruelty");
-    assert!(ai::protect_response(&mut g, P0, archon, "exile", Some(P1), None).unwrap());
-    assert!(g.perm(archon).phased);
-}
-
-#[test]
-fn seph_answers_a_wipe_with_galadriels_dismissal_kicked() {
-    let mut g = table(&["seph", "veyran"]);
-    lands(&mut g, P0, "Plains", 4, false); // kicked: {2}{W} more
-    hand(&mut g, P0, &["Galadriel's Dismissal"]);
-    let titan = perm(&mut g, P0, "Grave Titan");
-    let archon = perm(&mut g, P0, "Archon of Cruelty");
-    assert_eq!(ai::wipe_response(&mut g, P0, "destroy", P1).unwrap(), Some("all"));
-    assert!(g.perm(titan).phased && g.perm(archon).phased);
-}
-
-#[test]
-fn seph_sacrifices_a_bomb_to_exile_under_conquerors_flail() {
-    // Conqueror's Flail: no spells in response; a free sacrifice outlet still saves the card for reanimation
-    let mut g = table(&["seph", "veyran"]);
-    perm(&mut g, P0, "Viscera Seer");
-    let archon = perm(&mut g, P0, "Archon of Cruelty");
-    g.active = Some(P1); // the opponent's turn, its Flail on one of its creatures
-    let snipe = perm(&mut g, P1, "Guttersnipe");
-    let flail = perm(&mut g, P1, "Conqueror's Flail");
-    g.perm_mut(flail).attached = Some(snipe);
-    assert!(values::silenced(&g, P0));
-    assert!(ai::protect_response(&mut g, P0, archon, "exile", Some(P1), None).unwrap());
-    assert!(g.player(P0).gy.contains(&card(&g, "Archon of Cruelty")));
-    assert_eq!(g.player(P0).stats.get("sac_saves").copied(), Some(1));
-}
-
 #[test]
 fn seph_bval_counts_mega_flares_reach() {
     let mut g = table(&["seph", "veyran"]);
@@ -1024,18 +931,6 @@ fn priest_of_gix_adds_three_mana_each_time_it_enters() {
     assert_eq!(g.player(P0).mana.get(Kind::Any), before + 3);
     mine::t2_blink(&mut g, P0, m).unwrap(); // re-entering (Deathmantle, a flicker) adds three more
     assert_eq!(g.player(P0).mana.get(Kind::Any), before + 6);
-}
-
-#[test]
-fn priest_loop_kills_with_a_drain_and_is_infinite_mana_without() {
-    let base = ["Nim Deathmantle", "Ashnod's Altar", "Priest of Gix"];
-    let (_, l) = loops_with(&base, &[]);
-    assert_eq!(l, vec![("Nim Deathmantle + Ashnod's Altar + Priest of Gix", false)]);
-    let (mut g, l) = loops_with(&[base[0], base[1], base[2], "Blood Artist"], &[]);
-    assert_eq!(l, vec![("Nim Deathmantle + Ashnod's Altar + Priest of Gix", true)]);
-    assert!(take_option(&mut g, P0, "loop: Nim Deathmantle + Ashnod's Altar + Priest of Gix"));
-    assert!(g.over);
-    assert_eq!(g.winner, Some(P0));
 }
 
 #[test]

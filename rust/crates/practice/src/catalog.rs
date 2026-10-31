@@ -373,10 +373,10 @@ mod tests {
 
     #[test]
     fn results_table() {
-        let t = "### 0d. Look-ahead\n| Deck | T1 | T2 | T3 | T4 | T5 |\n| Sephiroth | 39.7% (a) | 51.2% | 38.5% | 33.9% | 22.2% |\n\
-                 | Sephiroth | 1% | 1% | 1% | 1% | 1% |\n| Alela | 10% | 20% | x | 1% | 2% |\n## next\n| Najeela | 1% | 1% | 1% | 1% | 1% |\n";
+        let t = "### 0d. Look-ahead\n| Deck | T1 | T2 | T3 | T4 | T5 |\n| Ghave | 39.7% (a) | 51.2% | 38.5% | 33.9% | 22.2% |\n\
+                 | Ghave | 1% | 1% | 1% | 1% | 1% |\n| Alela | 10% | 20% | x | 1% | 2% |\n## next\n| Najeela | 1% | 1% | 1% | 1% | 1% |\n";
         let r = win_rates(t);
-        assert_eq!(r["seph"], vec![39.7, 51.2, 38.5, 33.9, 22.2]);
+        assert_eq!(r["ghave"], vec![39.7, 51.2, 38.5, 33.9, 22.2]);
         assert!(!r.contains_key("alela") && !r.contains_key("najeela"));
     }
 }

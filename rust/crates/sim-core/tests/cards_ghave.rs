@@ -162,7 +162,10 @@ fn the_ghave_line_needs_a_counter_and_working_abilities() {
         perm(&mut g, P0, n);
     }
     assert!(combos::ready(&g, P0, i));
-    g.perm_mut(gh).plus = 0; // (as if shrunk; he'd be dead, but the check is the counters)
+    for m in g.player(P0).perms.clone() {
+        g.perm_mut(m).plus = 0; // (as if shrunk: Ghave would be dead, but the check is the counters; Crusade put
+        // one on Zulaport too)
+    }
     assert!(!combos::ready(&g, P0, i), "no +1/+1 counter to remove for the first Saproling");
     g.perm_mut(gh).plus = 3;
     perm(&mut g, P1, "Rest in Peace");
