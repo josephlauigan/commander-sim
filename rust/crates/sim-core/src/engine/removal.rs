@@ -173,6 +173,9 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
         crate::impls::bites::becomes_target(g, m, a)?; // Tenured Concocter: "becomes the target of ... an opponent controls"
         crate::impls::green_cards::becomes_target(g, m, a)?; // Cactarantula
     }
+    if !matches!(&*kind, "edict" | "wipe") && crate::impls::t6_copies::image_targeted(g, m)? && !g.perm(m).on_bf {
+        return Ok(()); // --- card-models-2: a Phantasmal Image that became the target is sacrificed
+    }
     if (kind == "destroy" || kind.starts_with("dmg")) && indestructible(g, m) {
         crate::glog!(g, "    {} ({}) is indestructible", g.perm(m).name, g.player(owner).name);
         return Ok(());

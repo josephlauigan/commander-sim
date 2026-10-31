@@ -8536,12 +8536,12 @@ status = "Full"
 note = "{X}{U}: the AI picks the cheapest X that reaches the best creature (mana value at most the mana spent, X+1; copy worth 3 or more); it enters as a copy of it, except it is a Bird in addition and has flying; the card goes to the graveyard as Mockingbird"
 
 ["Phantasmal Image"]
-status = "Partial"
-note = "enters as a copy of the best creature, except it is an Illusion in addition (printed 0/0, no stand-in); missing: 'when this becomes the target of a spell or ability, sacrifice it' (needs the becomes-target event)"
+status = "Approximate"
+note = "enters as a copy of the best creature, except it is an Illusion in addition (printed 0/0, no stand-in); when it becomes the target of a spell or ability it is sacrificed (t6_copies::image_targeted, a trigger: targeted removal of any kind, equip; the AI never equips it). Approximation: a spell or ability that targets it without removing it (a pump, an Aura) does not make it be sacrificed (card-models-2)"
 
 ["Flesh Duplicate"]
-status = "Partial"
-note = "enters as a copy of the best creature (printed 0/0, no stand-in); missing: vanishing 3 (the copy lasts as long as the creature would)"
+status = "Full"
+note = "enters as a copy of the best creature (printed 0/0, no stand-in), except it has vanishing 3 (CopyExc::vanishing: three time counters, one off at each of your upkeeps, sacrificed when the last goes, t6_copies::vanishing_upkeep; card-models-2). No card in the pool has vanishing of its own to keep"
 
 ["Copy Artifact"]
 status = "Full"
@@ -8564,8 +8564,8 @@ status = "Full"
 note = "a token copy of the best nonland permanent (any controller's), which stays; the AI casts it on its own permanent with flash (opponent's turn or end of turn) when the copy is worth 4 or more; flashback {4}{U}{U}"
 
 ["Peter Parker's Camera"]
-status = "Partial"
-note = "enters with three film counters; {2}, {T}, remove a counter: the AI copies its own important (importance 6+) triggered ability on the stack (stack::copy_trigger, t6_copies::camera_copy): the copy can be countered and its effect runs before the original (Godo: the copy fetches Hammer of Nazahn, the original Helm of the Host). Missing: copying activated abilities and choosing new targets"
+status = "Approximate"
+note = "enters with three film counters; {2}, {T}, remove a counter: copy target activated or triggered ability you control (stack::copy_trigger, t6_copies::camera_copy): the copy can be countered and resolves before the original, choosing its targets anew (the AI's best). The AI copies its own important (importance 6+) triggered ability (Godo: the copy fetches Hammer of Nazahn, the original Helm of the Host) and its own compiled activated or loyalty ability worth stack::CAMERA_WORTH (a tutor: Fauna Shaman). Approximation: the copyable abilities are the triggers and the compiled activated and loyalty abilities (stack::ability_window_ex); a hand-written activated ability (card code calling stack::ability_window) cannot be copied"
 
 ["Volatile Stormdrake"]
 status = "Partial"
@@ -8636,8 +8636,8 @@ status = "Approximate"
 note = "{T}, pay 4 life, sacrifice (sorcery speed, life above 15): takes an opponent's nonland cards as Opposition Agent does (any-type mana), the AI casts what it can at once and the rest go home; the owner draws for each spell played; lands stay in the hand and are never played (rust/agents/engine-needs-mana.md)"
 
 ["Redirect Lightning"]
-status = "Partial"
-note = "answers removal aimed at the owner's key permanent in the removal-response hook (every deck holding it): pays {R} and {2} (or {R} and 5 life when short of mana and above 10 life) and aims the spell at the caster's best permanent; missing: it cannot change the target of an ability"
+status = "Approximate"
+note = "additional cost {2} or 5 life ({R} and {2}, or {R} and 5 life when short of mana and above 10 life). Changes the target of: a removal spell aimed at the owner's key permanent (worth 4, or a commander), to the caster's best permanent (the removal-response hook, every deck holding it); an opponent's ability on the stack aimed at its key permanent, to the best legal permanent of its opponents (t6_redirects::redirect_ability: compiled activated, loyalty and triggered removal with a single target, aimed as it goes on the stack, dsl::aim / retarget_ok); a counterspell aimed at its important spell, to another opponent's spell on the stack the counter can hit (redirect_counter). It goes on the stack and can be countered. Approximation: a hand-written ability (card code) has no target on the stack, so it cannot be redirected"
 
 ["Ricochet Trap"]
 status = "Full"
@@ -8867,8 +8867,8 @@ status = "Full"
 note = "an opponent's noncreature spell makes you a Food; a creature's combat damage to you sacrifices a Food; two untapped Foods tap for one mana of any colour (a source worth one mana per pair; the tapped Foods are counted on the Merchant and untap at your upkeep, the Merchant itself is not tapped). Approximation: the engine keeps Foods as a count, so a tapped Food can still be eaten with {2},{T}, sacrifice (t6_green2)"
 
 ["Shifting Woodland"]
-status = "Partial"
-note = "enters tapped unless you control a Forest, {T}: {G}; delirium {2}{G}{G} (four card types in your graveyard): the AI has it become a copy of the best creature card there (Oboro Breezecaller first) in its first main phase; missing: it is modelled as the land tapped plus a temporary token copy (exiled at the end step), so the copy's enters triggers wrongly fire and only creature cards are chosen"
+status = "Full"
+note = "enters tapped unless you control a Forest, {T}: {G}; delirium {2}{G}{G} (four card types in your graveyard): the land itself becomes a copy of target permanent card in your graveyard until end of turn (alela::set_face: no enter triggers; a nonland copy leaves the lands, so a creature copy attacks and makes no {G}; back at the next turn, t6_green2::woodland_revert). The AI copies the best creature card (Oboro Breezecaller first), else an artifact or enchantment worth 20, in its first main phase, paying with its other lands"
 
 ["Invasion of Ikoria // Zilortha, Apex of Ikoria"]
 tags = "xtutor reach"
@@ -8913,8 +8913,8 @@ status = "Full"
 note = "6/5 flying, ward {2} (card data); both channels from the hand through hand_options, in a main phase: {2}{G} returns the best graveyard card worth 40+ (only when the turtle itself can't be cast), {1}{U} bounces the opponents' best creature worth 5+ (t6_legends2.rs). The data's old battlefield 'discard' abilities are dropped"
 
 ["Wan Shi Tong, Librarian"]
-status = "Partial"
-note = "flash, flying, vigilance 1/1; cast with X by a hand option in the end-of-turn window for all spare mana (X = mana - 2, 2 or more): X +1/+1 counters, then draw half X; the AI never casts it for X = 0 (t6_legends2.rs). The opponent-searches trigger (a counter and a card) is written (wan_shi_tong_searched, tested) but the engine has no search event to call it (engine-needs-legends2.md)"
+status = "Full"
+note = "flash, flying, vigilance 1/1; cast with X by a hand option in the end-of-turn window for all spare mana (X = mana - 2, 2 or more): X +1/+1 counters, then draw half X; the AI never casts it for X = 0 (t6_legends2.rs). Whenever an opponent searches their library (tutors::shuffle_library, the shuffle after a search, as Archivist of Oghma): a +1/+1 counter and a card, at the next state checks (t6_legends2::searched, wan_sba; card-models-2)"
 
 ["Fiend Hunter"]
 dsl = []
@@ -9081,8 +9081,8 @@ note = "draws a card and lets the caster cast spells this turn as though they ha
 
 ["Mnemonic Betrayal"]
 paths_ok = "the hand-written resolve does the card; the compiled spell, exile every graveyard (not only opponents', no casting them, no return), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
-status = "Partial"
-note = "exiles all opponents' graveyards, exiles itself, and lets the caster cast the nonland cards from among them this turn with mana of any type (held in hand like Opposition Agent's cards, goes to the owner's graveyard when cast); missing: cards left uncast should return to their owners' graveyards at the next end step, but the end-step clean-up exiles them (engine need: delayed end-step return)"
+status = "Full"
+note = "exiles all opponents' graveyards, exiles itself, and lets the caster cast the nonland cards from among them this turn with mana of any type (held in hand like Opposition Agent's cards, goes to the owner's graveyard when cast); at the beginning of the next end step the cards not cast go back to their owners' graveyards (t6_blue::betrayal_return; card-models-2)"
 
 ["Timetwister"]
 paths_ok = "the hand-written resolve does the card; the compiled spell, you draw seven only (no shuffle, the others draw nothing), never resolves and stays as the AI's value of the card (dsl::card_value) until the AI phase"
@@ -9095,8 +9095,8 @@ status = "Full"
 note = "searches for the Demon with the most worth, or any card (the deck's tutor pick) with delirium (4+ card types in the graveyard), then shuffles (t6_blue.rs, tested)"
 
 ["Rain of Filth"]
-status = "Partial"
-note = "resolving sets the caster's one-turn flag (t6_blue::rain_of_filth_active); missing: the lands' 'Sacrifice this land: Add {B}' mana ability (engine need: a sacrifice-a-land mana source), so the AI never casts it"
+status = "Full"
+note = "until end of turn, lands you control gain 'Sacrifice this land: Add {B}' (t6_blue::rain_of_filth_active; mana::Source::SacLand: a {B} unit for each of your lands, tapped or not, spent only when nothing else can pay, the land sacrificed). The AI casts it in its main phase when the lands' {B} pays for a card in hand worth casting (priority 50+) it could not pay for otherwise (t6_blue::rain_enables; card-models-2)"
 
 ["Sevinne's Reclamation"]
 status = "Full"
@@ -10181,3 +10181,20 @@ paths_ok = "compiled: the {R}{R} mana ability; card code: the blocking sacrifice
 ["Glimpse the Unthinkable"]
 status = "Full"
 note = "compiled: target player mills ten cards. The AI's target (dsl mill_target): itself when its graveyard pays off now (a reanimation spell or Yawgmoth's Will in hand, a reanimation permanent out) and its library keeps 15 or more, else the opponent it would mill out, else the one it fears most; it is worth casting mostly in those first two cases"
+
+["Skithiryx, the Blight Dragon"]
+paths_ok = "the compiled {B}: haste and the card code's {B}{B}: regenerate are different abilities"
+status = "Full"
+note = "flying, infect 4/4; {B}: haste (compiled); {B}{B}: regenerate (card_models2.rs self_regen: the AI pays when it is destroyed and can)"
+
+["Dreamtide Whale"]
+status = "Full"
+note = "7/6 body; vanishing 2 (two time counters, t6_copies::vanishing_upkeep); whenever a player casts their second spell each turn, proliferate (card_models2.rs)"
+
+["Voidwing Hybrid"]
+status = "Full"
+note = "flying, toxic 1 (compiled); when you proliferate, it returns from your graveyard to your hand (card_models2::voidwing_return, called by common::proliferate)"
+
+["Norn's Decree"]
+status = "Full"
+note = "whenever one or more creatures an opponent controls deal combat damage to you, that opponent gets a poison counter (once per combat and opponent); whenever a player attacks a poisoned player, the attacking player draws a card (card_models2.rs)"

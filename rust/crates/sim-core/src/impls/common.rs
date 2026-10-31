@@ -2961,6 +2961,7 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
         if g.dsl_on {
             crate::dsl::fire(g, "proliferate", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
         }
+        crate::impls::card_models2::voidwing_return(g, p)?; // --- card-models-2: from the graveyard
     }
     Ok(())
 }
