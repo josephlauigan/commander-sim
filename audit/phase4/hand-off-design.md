@@ -23,9 +23,9 @@ on/off paired test for that deck. Nothing is deleted in this PR.
 ## The switch
 
 `AI_HAND` (env): unset or empty = **the default**, the hand AI on for `ai::HAND_KEEP` only (yshtola, sheoldred,
-cloud, dack-fayden-white-stax) and the generic policy for every other switchable deck (set from the stage 1 paired
-tests, `audit/recal/pairs-2026-10-31.md` section 4: yshtola +4.1, sheoldred +1.9, cloud +6.6; Dack is held on pending
-a check of its -13.9); `0` = every switchable deck plays the generic policy (this PR's default until then); `1` = every
+cloud) and the generic policy for every other switchable deck (set from the stage 1 paired
+tests, `audit/recal/pairs-2026-10-31.md` section 4: yshtola +4.1, sheoldred +1.9, cloud +6.6; Dack off since
+its check, `audit/recal/dack-check.md`: its hand AI held Dack until about round 6, -12.4 on Tier 6); `0` = every switchable deck plays the generic policy (this PR's default until then); `1` = every
 deck's hand AI as before this PR; a comma-separated list of deck keys = only those keep their hand AI (the paired test
 of one deck with the rest of its tier unchanged). A thread-local override (`ai::force_hand`, a guard that restores the
 previous value on drop) forces it on or off in a test, as `ai/ismcts.rs` does with `FORCE`.

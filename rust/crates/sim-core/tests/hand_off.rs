@@ -62,7 +62,7 @@ fn check_jd_deck(key: &'static str, t: &str, hand_prio: Prio) {
 fn the_switch_defaults_to_the_kept_decks_and_leaves_other_decks_alone() {
     // the stage 1 defaults (audit/recal/pairs-2026-10-31.md section 4): unset or empty, the hand AI on for exactly
     // HAND_KEEP; 0 off for every switchable deck; 1 all; a key list those keys
-    assert_eq!(ai::HAND_KEEP, ["yshtola", "sheoldred", "cloud", "dack-fayden-white-stax"]);
+    assert_eq!(ai::HAND_KEEP, ["yshtola", "sheoldred", "cloud"]);
     for k in ai::HAND_DECKS {
         let keep = ai::HAND_KEEP.contains(&k);
         assert_eq!(ai::hand_switch_wants(None, k), keep, "unset: {k}");
