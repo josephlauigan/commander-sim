@@ -1006,7 +1006,9 @@ pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<
 /// ("destroy", damage): sacrifice it for value instead. A creature that dies anyway only goes when an outlet gives
 /// something by itself.
 pub fn sac_in_response(g: &mut Game, p: PlayerId, m: PermId, kind: Sym) -> Res<bool> {
-    let dying = crate::ai::is_main(g.player(p).key) && (matches!(kind, "destroy" | "wipe") || kind.starts_with("dmg"));
+    let paid = paid_outlets_on(g, p); // --- ghave
+    let dying =
+        (crate::ai::is_main(g.player(p).key) || paid) && (matches!(kind, "destroy" | "wipe") || kind.starts_with("dmg"));
     if !g.is_creature(m) || !(dying || matches!(kind, "exile" | "bounce" | "tuck")) || g.perm(m).is_cmd {
         return Ok(false);
     }
@@ -1014,15 +1016,23 @@ pub fn sac_in_response(g: &mut Game, p: PlayerId, m: PermId, kind: Sym) -> Res<b
         return Ok(false); // a person's creature is not sacrificed for them
     }
     let outs: Vec<PermId> = outlets(g, p).into_iter().filter(|&o| o != m).collect();
-    let o = if dying {
-        let Some(&o) = outs.iter().find(|&&o| outlet_gain(g, p, o) > 0.0) else { return Ok(false) };
-        o
-    } else {
-        let Some(&o) = outs.first() else { return Ok(false) };
-        o
-    };
-    sac_through(g, p, o, m)?;
-    Ok(true)
+    let o = if dying { outs.iter().copied().find(|&o| outlet_gain(g, p, o) > 0.0) } else { outs.first().copied() };
+    if let Some(o) = o {
+        sac_through(g, p, o, m)?;
+        return Ok(true);
+    }
+    // --- ghave: no free outlet that gives something: a paid one ({1}, sacrifice a creature: a +1/+1 counter) gives
+    // its own effect, and the death triggers
+    if paid && let Some((src, idx)) = crate::dsl::paid_outlet(g, p, m) {
+        crate::glog!(g, "  {} sacrifices {} to {} in response", player_name(g, p), name_of(g, m), name_of(g, src));
+        return crate::dsl::activate_sacrificing(g, p, src, idx, m);
+    }
+    Ok(false)
+}
+
+/// --- ghave: p's deck answers removal and wipes through paid sacrifice outlets too (plan knob `paid_outlets`)
+pub fn paid_outlets_on(g: &Game, p: PlayerId) -> bool {
+    crate::ai::plans::config(g.player(p).key).paid_outlets
 }
 
 /// a wipe of `kind` is about to hit q: sacrifice what it will kill through q's free outlets first (q's commander and
@@ -1036,6 +1046,14 @@ pub fn sac_before_wipe(g: &mut Game, q: PlayerId, victims: &[PermId]) -> Res<usi
         let outs: Vec<PermId> = outlets(g, q).into_iter().filter(|&o| o != m).collect();
         let Some(&o) = outs.iter().max_by(|&&a, &&b| outlet_gain(g, q, a).partial_cmp(&outlet_gain(g, q, b)).unwrap())
         else {
+            // --- ghave: a paid outlet (Ghave's {1}) while the mana lasts
+            if paid_outlets_on(g, q)
+                && let Some((src, idx)) = crate::dsl::paid_outlet(g, q, m)
+                && crate::dsl::activate_sacrificing(g, q, src, idx, m)?
+            {
+                n += 1;
+                continue;
+            }
             break;
         };
         sac_through(g, q, o, m)?;

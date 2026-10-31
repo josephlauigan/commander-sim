@@ -60,7 +60,12 @@ pub fn fill_pieces(g: &Game, p: PlayerId) -> Vec<CardId> {
     if need.is_empty() {
         return vec![];
     }
-    g.player(p).library.iter().copied().filter(|&c| g.db.get(c).creature && need.contains(&&*g.db.get(c).name)).collect()
+    g.player(p)
+        .library
+        .iter()
+        .copied()
+        .filter(|&c| g.db.get(c).creature && need.contains(&&*g.db.get(c).name))
+        .collect()
 }
 
 /// what a graveyard-filling spell may bin: the missing loop pieces, then every bomb

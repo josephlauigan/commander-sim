@@ -20,3 +20,21 @@
 | practice `catalog.rs`, `session/setup.rs` | renamed |
 | cardgen `data.rs` | doc comment only |
 | `data/spellbook/seph.json` | -> see below |
+| `data/spellbook/seph.json` | deleted; `data/spellbook/ghave.json` fetched (scripts/spellbook-fetch.sh ghave; the script now follows the API's `next` pages: Ghave's almost-included list passes 1000). Combo data by Commander Spellbook, https://commanderspellbook.com |
+| tests seating `seph` | card tests keep seating the retired `seph` list (testkit); tests of Seph's hand AI deleted (cards_seph.rs: 10, cards_audit_seph.rs: 5); helper tests retargeted to `ai::reanimate` |
+
+## Ghave modelling (done)
+- Card check: all 92 unique names legal in Commander, colour identity within W/B/G (scryfall_cache.json); `cardgen audit --mine`: ghave 0 not Full (but Ghave's abilities were not usable before this branch: see below).
+- Ghave's abilities: compiled (cardgen DSL). New in the ability language: the cost `other = "remove a +1/+1 counter from a creature you control"` (dsl::pay_ability_cost: the creature with the most counters that survives losing one); before, any `other` cost refused to pay, so the Saproling ability never ran.
+- "Enters with five +1/+1 counters": impls/ghave.rs `enters_with`, added in zones::enter (any entry; Doubling Season 10).
+- Paid sacrifice outlet in responses: `dsl::paid_outlet` / `activate_sacrificing`; common::sac_in_response and sac_before_wipe use it for a deck with plan knob `knobs.paid_outlets = true` (only ghave), so pool decks are unchanged. decks.rs `sac_doomed` (the main decks' wipe sacrifice, factored out) runs for such a deck after pool::wipe_response finds no protection.
+- Combo catalogue (impls/ghave.rs COMBOS, chained last in combos::all): Ghave + altar + Crusade/DS + payoff; Ghave + Ashnod + Crusade/DS + Triskelion; Mikaeus + Triskelion; Mikaeus + Finks + free outlet + payoff; Nim + Ashnod + Grave Titan + payoff; Finks + Crusade + free outlet + payoff (mine.rs `loops_now`: seph_loops without the key gate).
+- Plan file data/plans/ghave.toml (style = Seph's, commander prio/turn, the six lines, prio rules, Heroic Intervention hold, mulligan 2-5 lands).
+
+## Next
+1. Build, fix tests, `cargo test --release --no-fail-fast -j 8`, warnings.
+2. cardgen export/validate. 3. Sims (ghave t3/t4/goldfish; seph baseline numbers in scratchpad). 4. FINDINGS.md, CHANGELOG sim line.
+
+## Gotchas
+- Two other agents share the machine: --jobs 8 / -j 8, one sim at a time.
+- Baseline Seph sims ran from a data snapshot (COMMANDER_SIM_ROOT) with the binary built before the rename.

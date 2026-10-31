@@ -1,6 +1,6 @@
 # Ghave, Guru of Spores — Abzan Aristocrats
 
-The Seph/Atraxa reanimator (`decklists/JD/sephiroth-phyrexian-reanimator.md`) rebuilt around Ghave, Guru of Spores (JD's
+The Seph/Atraxa reanimator (`decklists/pool/retired/sephiroth-phyrexian-reanimator.md`) rebuilt around Ghave, Guru of Spores (JD's
 choice, 10/30). The blue cards are out and the deck leans into sacrifice: Ghave makes Saprolings out of +1/+1 counters
 and counters out of creatures, so he is a sacrifice outlet and a combo piece from the command zone. The reanimation
 package stays as the fast start. Not simulated yet.
@@ -9,7 +9,7 @@ package stays as the fast start. Not simulated yet.
 |---|---|
 | **Commander** | Ghave, Guru of Spores ({2}{W}{B}{G}, 0/0 that enters with five +1/+1 counters, white-black-green) |
 | **Bracket** | 4 (5 Game Changers: Demonic Tutor, Vampiric Tutor, Worldly Tutor, Aura Shards, Gaea's Cradle; the tutorable infinite combos also put it in Bracket 4) |
-| **Simulator** | not in the simulator yet (the `seph` seat still plays the Atraxa list) |
+| **Simulator** | deck key `ghave`, tiers t3-t4 (Seph's seat since 2026-10-30); plays from `data/plans/ghave.toml` |
 
 ## Strategy
 

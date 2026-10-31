@@ -4,7 +4,7 @@ The history of the decks in `decklists/JD/` and `decklists/Avery/`: every change
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Cloud, Karn, Kefka, Sauron, Seph/Atraxa, Sheoldred, Thanos, Tymna/Thrasios, Ur-Dragon, Veyran, Y'shtola.
+JD's decks: Cloud, Ghave, Karn, Kefka, Sauron, Sheoldred, Thanos, Tymna/Thrasios, Ur-Dragon, Veyran, Y'shtola.
 Avery's decks: Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
@@ -203,7 +203,9 @@ Deck key `sephfs` (removed), `decklists/JD/sephiroth-fs-wipe-steal.md` (moved to
 
 ## Sephiroth, the Savior — Phyrexian Reanimator
 
-Deck key `seph`, `decklists/JD/sephiroth-phyrexian-reanimator.md`. (Sephiroth, the Savior is the Final Fantasy printing of Atraxa, Grand Unifier; the import list uses the Atraxa name. Not the Sephiroth FS deck, key `sephfs`.)
+**Retired 2026-10-30 (JD): Ghave, Guru of Spores took its `ghave` seat (t3-t4).** The list is kept in `decklists/pool/retired/sephiroth-phyrexian-reanimator.md` so the Rust tests of its card code can seat it (`testkit::retired_decks`, key `seph`); its hand-written AI (`ai/seph.rs`) was removed. The entries below are the deck's history.
+
+Deck key `seph` (until 2026-10-30), `decklists/JD/sephiroth-phyrexian-reanimator.md`. (Sephiroth, the Savior is the Final Fantasy printing of Atraxa, Grand Unifier; the import list uses the Atraxa name. Not the Sephiroth FS deck, key `sephfs`.)
 
 ### Changes
 
@@ -749,7 +751,7 @@ Deck key `thanos`, `decklists/JD/thanos-five-colour-turbo.md`. Simulated against
 
 ## Ghave, Guru of Spores — Abzan Aristocrats
 
-`decklists/JD/ghave-abzan-aristocrats.md`. Not in the simulator yet (it will take the `seph` seat, t3–t4).
+Deck key `ghave`, `decklists/JD/ghave-abzan-aristocrats.md`, tiers t3-t4 (Seph's seat since 2026-10-30).
 
 ### Changes
 

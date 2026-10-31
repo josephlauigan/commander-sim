@@ -4105,7 +4105,16 @@ pub(crate) fn loops_blocked(g: &Game, p: PlayerId) -> bool {
 
 /// mine.seph_loops: the loops p can run now: (loop index, key permanents, kills)
 pub fn seph_loops(g: &Game, p: PlayerId) -> Vec<(usize, Vec<PermId>, bool)> {
-    if g.player(p).key != "seph" || loops_blocked(g, p) {
+    if g.player(p).key != "seph" {
+        return vec![];
+    }
+    loops_now(g, p)
+}
+
+/// --- ghave: the loops any deck can run now (the combo catalogue's entries in impls/ghave.rs): (loop index, key
+/// permanents, kills)
+pub fn loops_now(g: &Game, p: PlayerId) -> Vec<(usize, Vec<PermId>, bool)> {
+    if loops_blocked(g, p) {
         return vec![];
     }
     let names = names_bf(g, p);

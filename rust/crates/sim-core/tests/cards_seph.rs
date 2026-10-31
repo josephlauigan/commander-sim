@@ -8,7 +8,7 @@
 //! Flickering Hound, Restoration Angel's enter trigger: t2.rs), Ephemerate's rebound (common.rs), Karn's Bastion and
 //! proliferate (lands.rs, common.rs), and Marchesa (marchesa.rs).
 
-use sim_core::ai::{self, act, brain, decks, seph};
+use sim_core::ai::{self, act, brain, decks};
 use sim_core::engine::pool::Kind;
 use sim_core::engine::{cast, combat, hooks, life, removal, turn, values, zones};
 use sim_core::hooks::{Call, Event, Opt};
@@ -281,24 +281,11 @@ fn aura_shards_clears_artifacts_and_enchantments() {
 }
 
 #[test]
-fn tutors_find_the_last_piece() {
-    let (g, _) = loops_with(&["Mikaeus, the Unhallowed", "Viscera Seer"], &[]);
-    assert_eq!(seph::seph_tutor_target(&g, P0), Some("Triskelion"));
-}
-
-#[test]
 fn reanimation_takes_the_last_piece() {
     let (mut g, _) = loops_with(&["Melira, Sylvok Outcast", "Viscera Seer", "Blood Artist"], &[]);
     let finks = take(&mut g, P0, "Kitchen Finks");
     g.player_mut(P0).gy.push(finks);
     assert_eq!(decks::rean_targets(&g, P0, "animate")[0].1, finks);
-}
-
-#[test]
-fn a_piece_that_completes_a_loop_is_cast_first() {
-    let (mut g, _) = loops_with(&["Mikaeus, the Unhallowed", "Viscera Seer"], &[]);
-    let t = hand(&mut g, P0, &["Triskelion"])[0];
-    assert_eq!(seph::seph_prio(&g, P0, t), 85);
 }
 
 #[test]
@@ -350,22 +337,6 @@ fn teferis_protection_against_a_wipe() {
     perm(&mut g, P1, "Archon of Cruelty");
     assert_eq!(ai::wipe_response(&mut g, P1, "destroy", P0).unwrap(), Some("all"));
     assert!(g.player(P1).life_locked);
-}
-
-#[test]
-fn sephiroth_casts_necropotence_while_healthy() {
-    // Necropotence keeps life above what the table could hit you for (necro_floor: the biggest opposing board plus 6,
-    // at least 10); it's cast only when the life above that floor buys two or more cards
-    let mut g = table(&["seph", "veyran"]);
-    let necro = card(&g, "Necropotence");
-    assert!(seph::seph_prio(&g, P0, necro) > 0);
-    g.player_mut(P0).life = 11;
-    assert_eq!(seph::seph_prio(&g, P0, necro), 0);
-    g.player_mut(P0).life = 30;
-    for _ in 0..3 {
-        perm(&mut g, P1, "Grave Titan");
-    }
-    assert_eq!(seph::seph_prio(&g, P0, necro), 0); // three Titans: the floor is above 30
 }
 
 // ======================================================== Ephemerate (test_my_cards.NewCards)
@@ -485,21 +456,6 @@ fn mega_flare_kills() {
 }
 
 #[test]
-fn reanimated_at_chapter_one() {
-    let mut g = table(&["seph", "veyran"]);
-    let vey = perm(&mut g, P1, "Veyran, Voice of Duality");
-    lands(&mut g, P0, "Swamp", 2, false);
-    hand(&mut g, P0, &["Animate Dead"]);
-    let titan = take(&mut g, P0, "Grave Titan");
-    let bah = take(&mut g, P0, B);
-    g.player_mut(P0).gy.extend([titan, bah]);
-    assert_eq!(decks::rean_targets(&g, P0, "animate")[0].1, bah); // above Grave Titan
-    assert!(seph::seph_reanimate(&mut g, P0).unwrap());
-    assert_eq!(lore(&g, named(&g, P0, B).unwrap()), 1);
-    assert!(!on_bf(&g, vey));
-}
-
-#[test]
 fn entomb_target() {
     let mut g = table(&["seph", "veyran"]);
     perm(&mut g, P0, "Sol Ring");
@@ -552,18 +508,6 @@ fn no_blink_before_a_lethal_mega_flare() {
     main1(&mut g, P0, 2);
     perm(&mut g, P1, "Veyran, Voice of Duality");
     assert_eq!(mine::blink_worth(&g, P0, b), 0.0);
-}
-
-#[test]
-fn hardcast_needs_nine_mana() {
-    let mut g = table(&["seph", "veyran"]);
-    g.player_mut(P0).cmd_in_zone = false;
-    hand(&mut g, P0, &[B]);
-    lands(&mut g, P0, "Swamp", 8, false);
-    assert!(!seph::seph_hardcast(&mut g, P0).unwrap());
-    lands(&mut g, P0, "Swamp", 1, false);
-    assert!(seph::seph_hardcast(&mut g, P0).unwrap());
-    assert_eq!(lore(&g, named(&g, P0, B).unwrap()), 1);
 }
 
 // ======================================================== the flicker package (test_my_cards.SephFlicker)
@@ -703,26 +647,6 @@ fn flickering_hound_flickers_on_your_creature_casts() {
     assert!(named(&g, P0, "Archon of Cruelty").is_some());
     assert!(on_bf(&g, hound)); // never itself
     assert_eq!(g.player(P0).stats.get("flicker Flickering Hound").copied(), Some(1));
-}
-
-#[test]
-fn flicker_priorities() {
-    let mut g = table(&["seph", "veyran"]);
-    let (circle, resto, closet) =
-        (card(&g, "Teleportation Circle"), card(&g, "Restoration Angel"), card(&g, "Conjurer's Closet"));
-    assert_eq!(seph::seph_prio(&g, P0, circle), 30);
-    assert_eq!(seph::seph_prio(&g, P0, closet), 30);
-    perm(&mut g, P0, "Archon of Cruelty");
-    assert_eq!(seph::seph_prio(&g, P0, closet), 50); // a creature worth flickering
-    assert_eq!(seph::seph_prio(&g, P0, circle), 50);
-    assert_eq!(seph::seph_prio(&g, P0, resto), 0); // your own turn: wait for the end of an opponent's
-    g.active = Some(P1);
-    assert_eq!(seph::seph_prio(&g, P0, resto), 30 + 6 * 5);
-    let mut g2 = table(&["seph", "veyran"]);
-    g2.active = Some(P1);
-    assert_eq!(seph::seph_prio(&g2, P0, resto), 25); // nothing to blink: a 3/4 flash flier
-    perm(&mut g2, P0, "Sheoldred, Whispering One");
-    assert_eq!(seph::seph_prio(&g2, P0, resto), 0); // held to protect the bomb
 }
 
 #[test]
@@ -962,34 +886,6 @@ fn seph_reanimates_a_bomb_with_the_cheapest_spell() {
 }
 
 #[test]
-fn seph_fills_the_graveyard_before_reanimating() {
-    let mut g = table(&["seph", "veyran"]);
-    lands(&mut g, P0, "Swamp", 3, false);
-    hand(&mut g, P0, &["Entomb", "Animate Dead"]);
-    let labels = labels(&options(&mut g, P0, false));
-    assert!(labels.contains(&"fill graveyard".to_string()));
-    assert!(take_option(&mut g, P0, "fill graveyard"));
-    assert!(seph::own_bomb_in_gy(&g, P0));
-}
-
-#[test]
-fn seph_tutors_for_what_the_plan_misses() {
-    let mut g = table(&["seph", "veyran"]);
-    // a reanimation spell but nothing to reanimate: Entomb first
-    hand(&mut g, P0, &["Animate Dead"]);
-    assert_eq!(seph::seph_tutor_target(&g, P0), Some("Entomb"));
-    // a bomb in the graveyard but no spell: the reanimation spells
-    let mut g = table(&["seph", "veyran"]);
-    let archon = take(&mut g, P0, "Archon of Cruelty");
-    g.player_mut(P0).gy.push(archon);
-    assert_eq!(seph::seph_tutor_target(&g, P0), Some("Reanimate")); // life above 22
-    g.player_mut(P0).life = 20;
-    assert_eq!(seph::seph_tutor_target(&g, P0), Some("Animate Dead"));
-    // the tutor picks it
-    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "Animate Dead")));
-}
-
-#[test]
 fn seph_hardcasts_the_commander() {
     let mut g = table(&["seph", "veyran"]);
     lands(&mut g, P0, "Command Tower", 7, false);
@@ -998,19 +894,6 @@ fn seph_hardcasts_the_commander() {
     assert!(take_option(&mut g, P0, "hardcast bomb"));
     assert!(named(&g, P0, "Atraxa, Grand Unifier").is_some());
     assert!(g.player(P0).first_bomb.is_some());
-}
-
-#[test]
-fn seph_dredges_with_a_reanimation_spell_and_no_bomb() {
-    let mut g = table(&["seph", "veyran"]);
-    let imp = take(&mut g, P0, "Stinkweed Imp");
-    g.player_mut(P0).gy.push(imp);
-    assert!(!ai::seph_dredge(&mut g, P0).unwrap()); // no way to reanimate: draw
-    hand(&mut g, P0, &["Animate Dead"]);
-    let lib = g.player(P0).library.len();
-    assert!(ai::seph_dredge(&mut g, P0).unwrap());
-    assert!(g.player(P0).hand.contains(&imp));
-    assert_eq!(g.player(P0).library.len(), lib - 5);
 }
 
 #[test]
@@ -1057,25 +940,12 @@ fn seph_sacrifices_a_bomb_to_exile_under_conquerors_flail() {
 }
 
 #[test]
-fn seph_milestones_at_the_end_step() {
-    let mut g = table(&["seph", "veyran"]);
-    perm(&mut g, P0, "Archon of Cruelty");
-    lands(&mut g, P0, "Island", 2, false);
-    hand(&mut g, P0, &["Counterspell"]);
-    ai::seph_end_milestones(&mut g, P0);
-    let ms = &g.player(P0).milestone;
-    assert_eq!(ms.get("bomb_by").copied(), Some(1));
-    assert_eq!(ms.get("int_up:1").copied(), Some(1));
-    assert_eq!(ms.get("int_held:1").copied(), Some(1));
-}
-
-#[test]
 fn seph_bval_counts_mega_flares_reach() {
     let mut g = table(&["seph", "veyran"]);
     let b = card(&g, B);
-    assert_eq!(seph::seph_bval(&g, P0, b), 8.0);
+    assert_eq!(ai::reanimate::bval(&g, P0, b), 8.0);
     perm(&mut g, P0, "Grave Titan"); // 6 mana value: +0.4
-    assert!((seph::seph_bval(&g, P0, b) - 8.4).abs() < 1e-9);
+    assert!((ai::reanimate::bval(&g, P0, b) - 8.4).abs() < 1e-9);
 }
 
 #[test]

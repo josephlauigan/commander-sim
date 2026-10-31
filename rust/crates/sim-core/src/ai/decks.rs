@@ -1313,6 +1313,25 @@ fn protect_main(
 }
 
 /// ais.wipe_response: q's answer to a board wipe about to hit it: 'all' (everything saved), 'indes', or none
+/// the wipe will kill these anyway: sacrifice them to an outlet first (the free ones; a paid one too for a deck with
+/// the `paid_outlets` plan knob), the least worth keeping first
+fn sac_doomed(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> Res {
+    if matches!(kind, "rift" | "evac" | "rebuke" | "vandal") {
+        return Ok(());
+    }
+    let rule = WipeRule::new(g, caster, kind);
+    let mut doomed: Vec<PermId> = g
+        .player(q)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| g.is_creature(m) && !g.perm(m).phased && rule.hits(g, m, q))
+        .collect();
+    doomed.sort_by(|&a, &b| crate::engine::zones::sac_worth(g, a).total_cmp(&crate::engine::zones::sac_worth(g, b)));
+    crate::cardcode::sac_before_wipe(g, q, &doomed)?;
+    Ok(())
+}
+
 pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> Res<Option<Sym>> {
     crate::impls::tymna_cards::darien_wipe(g, q, kind, caster)?; // King Darien: tokens survive a destroy sweeper
     if q == caster || silenced(g, q) || g.humans.get(q).is_some() {
@@ -1326,7 +1345,11 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
             return Ok(Some(r)); // Ultimate Magic: Holy
         }
         crate::impls::t12_lightpaws::wipe_response(g, q, kind, caster)?; // --- Tiers 1/2 (lightpaws): Flickerform
-        return pool::wipe_response(g, q, kind, caster);
+        let r = pool::wipe_response(g, q, kind, caster)?;
+        if r.is_none() && crate::impls::common::paid_outlets_on(g, q) {
+            sac_doomed(g, q, kind, caster)?; // --- ghave: unprotected: Ghave's {1} outlet (and the free ones) first
+        }
+        return Ok(r);
     }
     if key == "yshtola" {
         return crate::impls::yshtola::yshtola_wipe_response(g, q, kind, caster);
@@ -1348,21 +1371,9 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
         return Ok(None);
     }
     if !g.marchesa_on // (her return counts the creatures that die together)
-        && !matches!(kind, "rift" | "evac" | "rebuke" | "vandal")
         && !crate::cardcode::outlets_of(g, q).is_empty()
     {
-        // the wipe will kill these anyway: sacrifice them to a free outlet first
-        let rule = WipeRule::new(g, caster, kind);
-        let mut doomed: Vec<PermId> = g
-            .player(q)
-            .perms
-            .iter()
-            .copied()
-            .filter(|&m| g.is_creature(m) && !g.perm(m).phased && rule.hits(g, m, q))
-            .collect();
-        doomed
-            .sort_by(|&a, &b| crate::engine::zones::sac_worth(g, a).total_cmp(&crate::engine::zones::sac_worth(g, b)));
-        crate::cardcode::sac_before_wipe(g, q, &doomed)?;
+        sac_doomed(g, q, kind, caster)?;
     }
     let loss = wipe_loss(g, q, kind, caster);
     if loss < 6.0 {
