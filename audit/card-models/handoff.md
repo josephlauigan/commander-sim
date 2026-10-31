@@ -44,13 +44,38 @@ Unmodeled, kraum-tymna 6, rograkh-silas 4, prosper 2, kinnan, miirym, tergrid 1 
   (a person in practice mode is not asked).
 - Buster Sword (cloud): card_models.rs combat_damage (draw + free spell; `t0_stella::free_worth`/`free_cast` made
   pub(crate)); the compiled draw trigger dropped by a dsl override. Full.
+- Nicol Bolas, the Ravager (urdragon): the flip (card_models.rs options hook) enters the DFC entry
+  "Nicol Bolas, the Ravager // Nicol Bolas, the Arisen", made a 7-loyalty walker by its override (loyalty dsl; new
+  effect `exile_library` for the -12; cardgen now applies an override's `loyalty` to any card). **Approximate**: an
+  Arisen that leaves is a planeswalker card in the graveyard, not the creature front.
+- Tinder Wall (thanos): blocks slot, {R} + sacrifice for 2 damage to the attacker it blocks (AI: toughness <= 2 and
+  pval >= 2, so not for a vanilla token). Full.
 
-## Next (in order)
+## Left (JD's decks), in order
 
-Nicol Bolas, the Ravager (flip: needs a creature-to-planeswalker transform; idea: the DFC entry
-"Nicol Bolas, the Ravager // Nicol Bolas, the Arisen" as the back face via an override with types P, loyalty 7 and
-loyalty dsl, entered by an options hook on the front), Peter Parker's Camera (copy activated abilities), Tinder Wall
-(the blocking sacrifice), Shifting Woodland (a real copy), Redirect Lightning (retarget abilities). Then the pool.
+1. Peter Parker's Camera (urdragon): copying activated abilities (stack::copy_trigger copies triggers only); new
+   targets. Needs an "ability on the stack" object for activated abilities (engine/stack.rs).
+2. Shifting Woodland (thanos): a real "becomes a copy of a permanent card until end of turn" on the land itself (now
+   a token copy whose enter triggers fire wrongly; creature cards only). Needs a copy layer for a permanent.
+3. Redirect Lightning (thanos): changing the target of an ability (now spells only, in the removal-response hook).
+   Needs abilities with targets on the stack.
+
+## The pool's Partial and Unmodeled cards, ranked
+
+No report prints per-card drawn counts for outside decks (only `--swap` does, for the swapped cards), so the rank is
+the number of pool decks that play the card (every card of a 99 is about equally likely to be drawn; tutor targets
+more). All but a few are in Tier 6 (Thanos's tier); the rest are in Tier 3 (Atraxa, Tergrid) and Tiers 4/5
+(Prosper, Kinnan, Miirym). The full notes: `cardgen audit --deck <key>`.
+
+| Rank | Card | Decks |
+| --- | --- | --- |
+| 1 | City of Traitors | 3 (t6) |
+| 2 | Wan Shi Tong, Librarian; Rain of Filth; Mnemonic Betrayal; Invasion of Ikoria // Zilortha; Hidden Strings; Flesh Duplicate | 2 (t6) |
+| 2 | Magda, Brazen Outlaw | 2 (t4 prosper, t6) |
+| 9 | the other 40 (one deck each) | 1 |
+
+None was modelled in this PR (JD's cards took the time): the pool step is open, in this order.
+
 
 ## Before / after runs
 
