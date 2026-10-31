@@ -8713,8 +8713,8 @@ status = "Partial"
 note = "{T}: {C}{C} (amt=2); when you play another land it is sacrificed (t6_lands.rs: a land_etb check on every land that has no land_etb of its own; Bojuka Bog, Urza's Saga, Mortuary Mire, Mystic Sanctuary, Mosswort Bridge, Windbrisk and Alela's hub land do not run it, see engine-needs-lands.md); Partial (lead): those lands should sacrifice it too, needs an engine you-played-a-land hook"
 
 ["Gemstone Caverns"]
-status = "Partial"
-note = "{T}: {C}, any colour with a luck counter (t6_lands.rs); the opening-hand clause (start on the battlefield with a luck counter when not the starting player, exile a card) is not modeled"
+status = "Full"
+note = "{T}: {C}, any colour with a luck counter (t6_lands.rs); the opening-hand clause (impls/card_models.rs caverns_opening, after the mulligans): a seat that is not the starting player (seat 0) begins with it on the battlefield with a luck counter and exiles a card from its hand; the AI always does it and exiles the card it would bottom in a mulligan. A person in practice mode is not asked"
 
 ["Abstergo Entertainment"]
 status = "Full"
@@ -9980,9 +9980,9 @@ paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Ph
 paths_ok = "compiled: the channel ability, never offered from the battlefield (dsl::ability_options skips a land's ability with a discard cost and no {T}), and no card code channels it from the hand (not modeled); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Treasure Vault"]
-dsl = []
-status = "Partial"
-note = "{T}: {C}. Its {X}{X}, {T}, sacrifice: X Treasures is not used by the AI: the ability language has no {X} activation cost (the compiled ability lost the {X}{X} and made 3 for free); practice mode has it (human/karn.rs)"
+status = "Full"
+note = "compiled: {T}: {C} (its c=C tag); {X}{X}, {T}, sacrifice it: X Treasures (the ability language's {X} activation cost: X is the most the other mana pays). The AI uses it at the end of the turn before its own (the mana would go unused) when the Treasures are worth the land, or in a main phase only for a large X; practice mode has its own (human/karn.rs)"
+paths_ok = "compiled: the activated ability; card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
 
 ["Hanweir Battlements"]
 paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
@@ -10144,3 +10144,14 @@ note = "compiled: damage to each player (its caster too) equal to twice the nonb
 ["Baleful Mastery"]
 status = "Full"
 note = "compiled: exile target creature or planeswalker. Card code (impls/card_models.rs): the alternative cost {1}{B} (altcost slot); paid that way, an opponent (the least threatening) draws a card as it resolves, before the exile. The AI pays {1}{B} only when {3}{B} can't be paid"
+paths_ok = "compiled: the exile; card code: the resolve slot draws the opponent's card when {1}{B} was paid, then runs the compiled spell itself (dsl::resolve_spell)"
+
+["Dragonlord Ojutai"]
+status = "Full"
+note = "5/4 flying (tags); card code (impls/card_models.rs): hexproof while untapped (grant_kw), and on combat damage to a player it looks at the top three, one to hand (the AI keeps the card worth most; a person picks), the rest to the bottom"
+
+["Buster Sword"]
+dsl = [{ type = "static", static = "equip_bonus", pow = 3, tgh = 2 }, { type = "static", static = "equip_cost", mana = 2 }]
+status = "Full"
+note = "compiled: equipped creature gets +3/+2, equip {2}. Card code (impls/card_models.rs): when the equipped creature deals combat damage to a player, draw a card, then cast a spell from hand with mana value up to that damage free (the AI takes a permanent, or an instant or sorcery worth casting free, highest mana value first; a person picks or declines)"
+paths_ok = "compiled: the +3/+2 and equip {2}; card code: the combat-damage draw and free spell (card_models.rs buster_hit)"

@@ -28,13 +28,29 @@ Unmodeled, kraum-tymna 6, rograkh-silas 4, prosper 2, kinnan, miirym, tergrid 1 
 
 ## Done
 
-- Venat: card code registered under the full name (`impls/legends.rs` VENAT), override re-keyed; status Full (its note
-  was already the full Oracle). Tests: 4 in cards_jd_models.rs.
+- Venat (yshtola): card code registered under the full name (`impls/legends.rs` VENAT), override re-keyed. Full.
+- Glimpse the Unthinkable (seph): `fill=glimpse` (carddb.txt); the fill plan (`ai/seph.rs` FILLERS, after Entomb,
+  Buried Alive, Unmarked Grave) casts it, `ai::seph_fill_resolve` mills the caster ten. Full (card-audit.md row).
+- Price of Progress (kefka): parser rule + `that_player_nonbasic_lands` per-player count (dsl/mod.rs
+  `per_player_n`), valued in `value_of`. Full.
+- Baleful Mastery (sauron): `impls/card_models.rs` altcost slot + resolve. Full.
+- Orim's Chant (thanos): `combat::combat` reads `t6_stax::attack_lock`; human kicker (`human/specs.rs` Ask::Kick).
+  Full (the AI never kicks: no defensive use yet).
+- Treasure Vault (karn): the language's `{X}` activation cost (`Cost.x`, parse_cost; `pay_ability_cost` picks the
+  largest X; `ability_options` values X and counts no mana cost at the end-of-turn window). Full. Also gives Crypt
+  Rats and Fiend Artisan a real X cost (they ran X as a free 3 before).
+- Dragonlord Ojutai (urdragon): card_models.rs grant_kw + combat_damage dig. Full.
+- Gemstone Caverns (thanos): card_models.rs `caverns_opening`, called by `turn::setup_game` after mulligans. Full
+  (a person in practice mode is not asked).
+- Buster Sword (cloud): card_models.rs combat_damage (draw + free spell; `t0_stella::free_worth`/`free_cast` made
+  pub(crate)); the compiled draw trigger dropped by a dsl override. Full.
 
 ## Next (in order)
 
-Glimpse (seph, `fill=glimpse` + seph fill plan), Price of Progress, Baleful Mastery, Orim's Chant, Treasure Vault,
-Tinder Wall, Ojutai, Gemstone Caverns, Buster Sword, Bolas, Camera, Shifting Woodland, Redirect Lightning.
+Nicol Bolas, the Ravager (flip: needs a creature-to-planeswalker transform; idea: the DFC entry
+"Nicol Bolas, the Ravager // Nicol Bolas, the Arisen" as the back face via an override with types P, loyalty 7 and
+loyalty dsl, entered by an options hook on the front), Peter Parker's Camera (copy activated abilities), Tinder Wall
+(the blocking sacrifice), Shifting Woodland (a real copy), Redirect Lightning (retarget abilities). Then the pool.
 
 ## Before / after runs
 

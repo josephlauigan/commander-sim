@@ -249,3 +249,136 @@ fn kicked_orims_chant_stops_every_attack_this_turn() {
     sim_core::engine::combat::combat(&mut g, P1).unwrap();
     assert_eq!(life, [P0, P2].iter().map(|&q| g.player(q).life).collect::<Vec<_>>());
 }
+
+// ======================================================== Karn: Treasure Vault ({X} activation cost)
+/// Karn at a t4 table
+fn karn_table() -> Game {
+    table(&["karn", "chulane-bant-value-combo", "yuriko-dimir-ninjas"])
+}
+
+fn treasures(g: &Game, p: PlayerId) -> u32 {
+    g.player(p).treasures
+}
+
+fn vault_options(g: &mut Game, vault: PermId, sorcery_ok: bool) -> Vec<Opt> {
+    let o = sim_core::dsl::ability_options(g, P0, sorcery_ok).unwrap();
+    o.into_iter().filter(|o| matches!(o.act, Some(sim_core::hooks::Action::Dsl { src, .. }) if src == vault)).collect()
+}
+
+#[test]
+fn treasure_vault_pays_x_twice_for_x_treasures() {
+    let mut g = karn_table();
+    g.active = Some(P0);
+    let v = lands(&mut g, P0, "Treasure Vault", 1, false)[0];
+    lands(&mut g, P0, "Wastes", 5, false);
+    let o = vault_options(&mut g, v, true);
+    assert_eq!(o.len(), 1);
+    assert!(run(&mut g, P0, &o[0]));
+    assert_eq!(treasures(&g, P0), 2, "five other mana pays X = 2");
+    assert!(!g.perm(v).on_bf, "sacrificed");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&m| !g.perm(m).tapped).count(), 1);
+}
+
+#[test]
+fn treasure_vault_waits_for_the_end_of_the_turn_before_its_own() {
+    let mut g = karn_table();
+    g.active = Some(P1);
+    let v = lands(&mut g, P0, "Treasure Vault", 1, false)[0];
+    lands(&mut g, P0, "Wastes", 6, false);
+    let main = vault_options(&mut g, v, true);
+    let eot = vault_options(&mut g, v, false);
+    assert!(main[0].utility < 0.0, "in a main phase three Treasures don't pay for six mana and a land");
+    assert!(eot[0].utility > 0.0, "with the mana going unused they do");
+}
+
+#[test]
+fn treasure_vault_needs_two_mana_for_x_one() {
+    let mut g = karn_table();
+    let v = lands(&mut g, P0, "Treasure Vault", 1, false)[0];
+    lands(&mut g, P0, "Wastes", 1, false);
+    assert!(vault_options(&mut g, v, false).is_empty());
+}
+
+// ======================================================== The Ur-Dragon: Dragonlord Ojutai
+/// The Ur-Dragon at a t5 table
+fn urdragon_table() -> Game {
+    table(&["urdragon", "kinnan-simic-mana-combo", "urza-mono-blue-artifacts"])
+}
+
+#[test]
+fn ojutai_has_hexproof_only_while_untapped() {
+    let mut g = urdragon_table();
+    let o = perm(&mut g, P0, "Dragonlord Ojutai");
+    assert!(values::untargetable(&g, o));
+    g.perm_mut(o).tapped = true;
+    assert!(!values::untargetable(&g, o));
+}
+
+#[test]
+fn ojutai_digs_three_on_combat_damage() {
+    let mut g = urdragon_table();
+    g.active = Some(P0);
+    let o = perm(&mut g, P0, "Dragonlord Ojutai");
+    let top = ids(&g, &["Island", "Sol Ring", "Forest"]);
+    for &c in &top {
+        let lib = &mut g.player_mut(P0).library;
+        lib.retain(|&x| x != c);
+        lib.push(c); // the last is the top
+    }
+    let (hand, lib) = (g.player(P0).hand.len(), g.player(P0).library.len());
+    g.perm_mut(o).tapped = true;
+    sim_core::engine::combat::resolve_combat(&mut g, P0, &[o], P1, &[o]).unwrap();
+    let pl = g.player(P0);
+    assert_eq!(pl.hand.len(), hand + 1);
+    assert_eq!(pl.library.len(), lib - 1);
+    assert!(pl.hand.contains(&top[1]), "Sol Ring is the one worth most");
+    assert!(pl.library[..2].contains(&top[0]) && pl.library[..2].contains(&top[2]), "the rest on the bottom");
+}
+
+// ======================================================== Thanos: Gemstone Caverns
+#[test]
+fn gemstone_caverns_begins_on_the_battlefield_when_not_starting() {
+    let mut g = table(&["kraum-tymna-blue-breach-midrange", "thanos", "sisay-legends-toolbox"]);
+    let c = hand(&mut g, P1, &["Gemstone Caverns", "Sol Ring", "Island"])[0];
+    let (hand, exiled) = (g.player(P1).hand.len(), g.player(P1).exile.cards().len());
+    sim_core::impls::card_models::caverns_opening(&mut g, P1);
+    let pl = g.player(P1);
+    assert!(!pl.hand.contains(&c));
+    assert_eq!((pl.hand.len(), pl.exile.cards().len()), (hand - 2, exiled + 1), "a card exiled from the hand");
+    let l = *pl.lands.iter().find(|&&m| g.perm(m).cd == Some(c)).expect("on the battlefield");
+    assert_eq!(g.perm(l).data.int(sim_core::state::DataKey::Counters), 1, "a luck counter: any colour");
+}
+
+#[test]
+fn gemstone_caverns_stays_in_the_starting_players_hand() {
+    let mut g = table(&["thanos", "kraum-tymna-blue-breach-midrange", "sisay-legends-toolbox"]);
+    let c = hand(&mut g, P0, &["Gemstone Caverns"])[0];
+    sim_core::impls::card_models::caverns_opening(&mut g, P0);
+    assert!(g.player(P0).hand.contains(&c));
+}
+
+// ======================================================== Cloud: Buster Sword
+/// Cloud at a t1 table
+fn cloud_table() -> Game {
+    table(&["cloud", "isshin-mardu-attack-triggers", "teysa-orzhov-aristocrats"])
+}
+
+#[test]
+fn buster_sword_draws_then_casts_a_spell_up_to_the_damage_free() {
+    let mut g = cloud_table();
+    g.active = Some(P0);
+    g.player_mut(P0).hand.clear();
+    let a = token(&mut g, P0, 2);
+    let s = perm(&mut g, P0, "Buster Sword");
+    g.perm_mut(s).attached = Some(a);
+    let cs = hand(&mut g, P0, &["Sol Ring", "Swords to Plowshares"]);
+    let big = token(&mut g, P0, 9); // (a second attacker without the Sword: no trigger)
+    let lib = g.player(P0).library.len();
+    let dmg = values::epow(&g, a);
+    assert_eq!(dmg, 5, "+3/+2");
+    sim_core::engine::combat::resolve_combat(&mut g, P0, &[a, big], P1, &[a, big]).unwrap();
+    let pl = g.player(P0);
+    assert_eq!(pl.library.len(), lib - 1, "one card drawn");
+    assert!(!pl.hand.contains(&cs[0]), "Sol Ring cast free");
+    assert!(pl.perms.iter().any(|&m| g.perm(m).cd == Some(cs[0])));
+}

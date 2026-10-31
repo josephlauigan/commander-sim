@@ -1273,6 +1273,7 @@ pub fn setup_game_for(
             continue;
         }
         mulligan(&mut g, p, &mut r);
+        crate::impls::card_models::caverns_opening(&mut g, p); // Gemstone Caverns: not the starting player
         let hand = g.player(p).hand.clone();
         g.player_mut(p).seen.extend(hand);
     }
