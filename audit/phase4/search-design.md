@@ -153,3 +153,100 @@ Tatyova; the table's steps a game, all seats; today's 228,753):
 
 Level on t1-t5 in both halves (`search-handoff.md`): ISMCTS is the default for generic-policy decks; `AI_SEARCH=0`
 keeps today's. The switch's default changed accordingly (unset = ISMCTS).
+
+## Part (b): blocks, protection and wipe responses (PR 5b)
+
+Brief: `rust/agents/phase4-search-b.md`. Branch `phase4-search-b` (on PR 5). Handoff: `audit/phase4/search-b-handoff.md`.
+
+### Where the three decisions are made today
+
+- **Blocks**: `engine::combat::ai_blocks`, inside `resolve_combat_inner` (after the declare-attackers priority). One
+  blocker an attacker (the engine has no double blocks; a menace attacker takes two, only the first fights). Per
+  attacker, biggest first: the cheapest blocker that kills it and survives; else a trade when the attacker is worth
+  at least the cheapest trading blocker; else a spare token chump (Veyran); else, for a 2+ power attacker, a chump at
+  random with `chump_prob` (a sigmoid of the incoming damage over life, 50% at 35%). A 1-power attacker is never
+  chumped. Lethal combat damage after blocks fires `last_chance` (Teferi's Protection) only.
+- **Protection**: `engine::removal::apply_removal` asks `ai::protect_response` before the removal lands. For a
+  generic-policy deck that is `decks::protect_main`: a few deck hooks first (Light-Paws' Auras, Chulane/Kinnan's
+  Spellskite, Tergrid's Malakir Rebirth, the partners' white spells), then `pool::protect`: if `worth_protecting`
+  (pval 4+, the commander, a key card) the cheapest saving entry of `PROTECTORS` (tapping permanents, then cards,
+  then self-sacrificing ones; Teferi's Protection only for the commander or 40% of the board), else a sacrifice in
+  response (`sac_in_response`).
+- **Wipe responses**: `removal::apply_wipe_inner` asks `ai::wipe_response` for each victim in turn before the wipe
+  hits its board (the three sweepers of `impls::sweepers` do the same). For a generic deck: `pool::wipe_response`:
+  nothing if the wipe costs under 6 value (`wipe_loss`), else Golgari Charm's regeneration for a destroy wipe, else
+  the first board-wide `PROTECTORS` entry that saves (self-sacrificing ones first; Ainok only when the tokens carry
+  the board).
+
+### How often they come up (PR 5's head, 300 games a tier, seeds 500000-500299, loose, look-ahead)
+
+The survey counters (`SearchCost::BLOCK` / `PROTECT` / `WIPE`, fields `seen` / `hot` / `acted`, printed on stderr
+after the cost line) count the generic seats' decisions in the real game; the counter binary's stdout = PR 5's head
+byte for byte on t1-t5 (all rc=0). Per game, all generic seats together:
+
+| tier | blocks: seen / attack reaches half the life / heuristic's blocks leave lethal | protection: targeted removal at a generic seat / a protector would save it / one used | wipes: wipe costs 6+ / a protector would save / one used |
+|---|---|---|---|
+| t1 | 8.10 / 2.03 / 0.87 | 4.57 / 0.09 / 0.01 | 0.85 / 0.07 / 0.03 |
+| t2 | 7.42 / 1.97 / 0.77 | 12.01 / 1.32 / 0.28 | 2.59 / 0.20 / 0.07 |
+| t3 | 6.25 / 1.66 / 0.55 | 2.66 / 0.25 / 0.05 | 0.85 / 0.05 / 0.03 |
+| t4 | 6.68 / 1.81 / 0.77 | 3.56 / 0.24 / 0.05 | 0.76 / 0.03 / 0.01 |
+| t5 | 4.49 / 0.75 / 0.22 | 3.71 / 0.07 / 0.03 | 1.15 / 0.01 / 0.01 |
+
+- Blocks are the only one of the three with volume: 4.5-8 a game, about a quarter of them against an attack that
+  reaches half the defender's life, and the heuristic's blocks leave lethal through 0.2-0.9 times a game (some of
+  those are unavoidable). For scale, a game has 57-88 main / attack / counter decisions.
+- Protection with a real option is rare except on t2 (1.3 a game: Brago and Sythis' tables, Teferi's Protection and
+  blink), and the heuristic uses it a quarter of those times; elsewhere 0.07-0.25 a game.
+- Wipe responses with an option: 0.01-0.2 a game. Their effect on a tier's win rate can only be small.
+
+### The design
+
+All three are searched only for a generic-policy deck on ISMCTS (`ismcts::on`), in the real game, with the
+look-ahead on and within its per-game caps (`search::enabled`), behind `AI_SEARCH_B` (unset or `0`: PR 5's
+behaviour; `1` every such deck; a key list). A decision is a root search (`search_root`, PR 5's): the candidates
+get 2 playouts each on shared copies, then UCB, at most 6 playouts a candidate (`rollouts`, as attacks and
+counters, for cost) and the 6,000-step budget, early stopping as PR 5's. The pick is held to the margin against the
+heuristic's own answer on 6 shared copies (`AI_SEARCH_PAIRS`): the search overrules the heuristic only on evidence.
+Below the root the decider's later main-phase choices are tree nodes as in PR 5. Leaves: `search::evaluate`.
+
+**Playing on from inside a step.** These decisions come in the middle of a combat or a spell's resolution, which a
+copy can't resume. Each is split where the decision is made so a copy can play the rest of it:
+`combat::resolve_blocks` (from the blocks' card code to combat damage), `removal::apply_removal_rest` (ward and the
+removal itself), `removal::wipe_victim` / `wipe_finish` (the wipe on one victim's board, then Farewell's graveyards
+and state-based actions; the wipe's modes, X and the victims still to come are read from `WIPE_CTX`, set by
+`apply_wipe_inner` around each response). The real game calls the same halves, so play is unchanged when the search
+is off. After the option, the copy finishes what is left of the decision (the combat's damage; the removal; the wipe
+on this and the later victims, who answer by the heuristic), then `search::play_on_resume`: the stack settles and the
+active player's turn goes on from the step after the one in progress where re-running it would repeat it (a combat
+resumes at the second main phase; the end step goes to the next turn), then everyone's turns to the end of the
+decider's next turn. Lost in the copy: the rest of the spell that dealt the removal or wipe, later defenders of a
+split attack and extra combats. They are the same for every candidate, so the comparison stays paired.
+
+**Blocks** (`ismcts::choose_blocks`, `block_plans`). Candidates, duplicates dropped: the heuristic's blocks; no
+blocks; kill-and-survive blocks only; the heuristic's blocks plus chumps on the biggest attackers left until the rest
+is not lethal; every attacker blocked (kill-and-survive, else a trade, else a chump). Menace attackers are blocked only
+as the heuristic blocks them. Stakes: searched when the attack, unblocked, reaches half the defender's life
+(`AI_SEARCH_B_BLOCK`, 0.5: 0.75-2 decisions a game) and there is a second plan; else the heuristic's blocks stand.
+Kept out: double blocks (the engine has none), blocks for planeswalkers.
+
+**Protection** (`ismcts::choose_protect`). Searched when one of the `PROTECTORS` entries would save the target
+(0.07-1.3 a game). Candidates: let it resolve (with the heuristic's sacrifice in response) and up to 3 saving
+protectors, cheapest first, without the heuristic's own limits (`worth_protecting`, Teferi's Protection's 40%): the
+search decides whether the target is worth it, which is the "key permanent targeted" test. The deck hooks before
+`pool::protect` (Light-Paws, Chulane/Kinnan, Tergrid, the partners) keep the heuristic.
+
+**Wipe responses** (`ismcts::choose_wipe`). Searched when a board-wide protector or Golgari Charm would save
+something from a wipe costing 6+ value, inside an ordinary wipe (the three `impls::sweepers` keep the heuristic, as
+does a board with Lena). Candidates: no answer, regeneration, up to 3 protectors.
+
+**Cost.** Blocks are the bulk: 0.75-2 searched a game at up to 5 candidates x 6 playouts within 6,000 steps, i.e.
+about 2-5% of PR 5's 140k-270k playout steps a game when every seat searches; protection and wipes add well under
+1%. Inside the 10% the brief allows.
+
+### The lean (PR 5's Stage B: 7 of 10 pairs down, mean -0.85; Meren -3.7)
+
+Ablations first, each a 2000-game arm on t2 half B (Kaalia, Meren; ISMCTS for the half, the rest on the old
+look-ahead), paired against PR 5's arms with the same binary and env: slower widening below the root
+(`AI_SEARCH_WIDEN`); attack plans and counter choices with all their 6 playouts before UCB (`AI_SEARCH_ATK_MIN=6`: PR 5
+gives a plan 2 and can stop on a "clear" leader after 2 shared copies, and picks the leader by its mean however few
+its playouts); and a decision-by-decision look at Meren's games (`AI_SEARCH_DIAG`). Results in the handoff.
