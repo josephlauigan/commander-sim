@@ -8,7 +8,7 @@ another carrier, to survive.
 | | |
 |---|---|
 | **Commander** | Cloud, Midgar Mercenary ({W}{W}, 2/1, white) |
-| **Bracket** | 3 (2 Game Changers: Smothering Tithe, Enlightened Tutor) |
+| **Bracket** | 3 (3 Game Changers: Smothering Tithe, Enlightened Tutor, Teferi's Protection) |
 | **Simulator** | deck key `cloud`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -110,10 +110,10 @@ that creature indestructible.
   creature), Grand Abolisher (opponents can't cast spells or activate abilities of artifacts, creatures or enchantments
   during your turn), Plaza of Heroes ({3}, exile it: a legendary creature gains hexproof and indestructible),
   Bastion Protector (commander creatures get +2/+2 and indestructible).
-- **Answer in response.** **Galadriel's Dismissal** ({W}, instant) phases Cloud out in response to removal; his
-  Equipment phases out with him and comes back still attached at your next turn.
-- **Protect the team.** Kicked ({2}{W} more), Galadriel's Dismissal phases out every creature you control, an answer
-  to a board wipe. Elspeth, Sun's Champion makes three 1/1 Soldiers each turn (+1) as a wall of blockers and carriers; her -3 destroys creatures with
+- **Answer in response.** **Teferi's Protection** ({2}{W}, instant): until your next turn your life total can't
+  change, you have protection from everything, and every permanent you control phases out. Cloud keeps his Equipment
+  attached through removal, a board wipe or a lethal attack, and it all comes back at your next turn.
+- **Protect the team.** Elspeth, Sun's Champion makes three 1/1 Soldiers each turn (+1) as a wall of blockers and carriers; her -3 destroys creatures with
   power 4 or greater, so use it only when Cloud is not carrying a big Equipment.
 
 ### Removal
@@ -149,7 +149,7 @@ that creature indestructible.
 ## Key lines
 
 - **Turn 2 Cloud:** search a Sword or Champion's Helm; turn three cast and equip it and attack with protection up
-  (Swiftfoot Boots, Giver of Runes or Galadriel's Dismissal).
+  (Swiftfoot Boots, Giver of Runes or Teferi's Protection).
 - **Best opening:** Sol Ring on turn one, Cloud on turn two, then cast and equip a Sword on turn three.
 - **Mulligan:** keep hands with two lands (or a land and Sol Ring) and a play of two mana or less. Throw back hands that
   can not make {W}{W} by turn three.
@@ -157,7 +157,7 @@ that creature indestructible.
   and a Sword, attach all, and attack.
 - **Winds of Abandon:** {1}{W} exiles one creature that is not yours (its controller fetches a basic land); at six mana
   overload it ({4}{W}{W}) to exile every creature you do not control, a one-sided wipe that leaves your Equipment and carriers.
-- **Removal in response to an equip:** have Giver of Runes, Zack Fair, Galadriel's Dismissal or Swiftfoot Boots ready.
+- **Removal in response to an equip:** have Giver of Runes, Zack Fair, Teferi's Protection or Swiftfoot Boots ready.
 
 ## Tutor targets by board state
 
@@ -180,7 +180,7 @@ Apparition, Winds of Abandon, Austere Command, Elspeth, Sun's Champion and Disen
 
 ## Bracket and Rule 0
 
-**Bracket 3,** with two Game Changers: **Smothering Tithe** and **Enlightened Tutor**. The deck has no combo that wins
+**Bracket 3,** with three Game Changers: **Smothering Tithe**, **Enlightened Tutor** and **Teferi's Protection**. The deck has no combo that wins
 on its own. Tell the table before the game that:
 
 - the deck has two tutors (Cloud and Enlightened Tutor) but no game-winning combo;
@@ -198,7 +198,7 @@ on its own. Tell the table before the game that:
 
 **Sorceries (7).** Austere Command, Day of Judgment, Fumigate, Lay Down Arms, Open the Armory, Winds of Abandon, Wrath of God
 
-**Instants (7).** Akroma's Will, Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Galadriel's Dismissal, Stand Up for Yourself, Stroke of Midnight
+**Instants (7).** Akroma's Will, Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Stand Up for Yourself, Stroke of Midnight, Teferi's Protection
 
 **Lands (33).** Ash Barrens, Evolving Wilds, Path of Ancestry, Plaza of Heroes, Terminal Moraine, 28 Plains
 
@@ -242,7 +242,6 @@ on its own. Tell the table before the game that:
 1 Forge Anew
 1 Forum Familiar
 1 Fumigate
-1 Galadriel's Dismissal
 1 Giver of Runes
 1 Grand Abolisher
 1 Helitrooper
@@ -272,6 +271,7 @@ on its own. Tell the table before the game that:
 1 Sword of Fire and Ice
 1 Sword of Hearth and Home
 1 Sword of Kaldra
+1 Teferi's Protection
 1 Terminal Moraine
 1 Thalia, the Survivor
 1 Thought Vessel
