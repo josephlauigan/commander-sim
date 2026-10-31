@@ -10172,3 +10172,8 @@ dsl = [
 ]
 status = "Full"
 note = "the back face of Nicol Bolas, the Ravager (JD's list plays the front; card_models.rs enters this card when he transforms): a 7-loyalty planeswalker. +2: draw two; -3: 10 damage to target creature or planeswalker; -4: a creature or planeswalker card from any graveyard onto the battlefield under your control; -12: exile all but the bottom card of target player's library (exile_library)"
+
+["Tinder Wall"]
+status = "Full"
+note = "0/3 defender; compiled: sacrifice it: {R}{R}. Card code (impls/card_models.rs blocks slot): {R}, sacrifice it: 2 damage to the creature it blocks (the AI does it when that attacker has 2 toughness or less and is worth killing; a person is asked); the attacker stays blocked"
+paths_ok = "compiled: the {R}{R} mana ability; card code: the blocking sacrifice for 2 damage (card_models.rs tinder_blocks)"

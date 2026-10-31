@@ -417,3 +417,33 @@ fn the_arisen_ultimate_leaves_one_card() {
     assert!(run(&mut g, P0, ult));
     assert!([P1, P2].iter().any(|&q| g.player(q).library.len() == 1));
 }
+
+// ======================================================== Thanos: Tinder Wall
+#[test]
+fn tinder_wall_burns_the_small_attacker_it_blocks() {
+    let mut g = thanos_table();
+    g.active = Some(P1);
+    let w = perm(&mut g, P0, "Tinder Wall");
+    lands(&mut g, P0, "Mountain", 1, false);
+    let a = perm(&mut g, P1, "Dark Confidant");
+    let life = g.player(P0).life;
+    let mut assign: sim_core::hooks::Assign = vec![(a, w)];
+    let f = g.registry.get(card(&g, "Tinder Wall")).unwrap().blocks.unwrap();
+    f(&mut g, w, P1, &[a], P0, &mut assign).unwrap();
+    assert!(!g.perm(w).on_bf, "sacrificed");
+    assert!(!g.perm(a).on_bf, "2 damage killed the 2/2");
+    assert_eq!(g.player(P0).life, life);
+}
+
+#[test]
+fn tinder_wall_keeps_itself_against_a_big_attacker() {
+    let mut g = thanos_table();
+    g.active = Some(P1);
+    let w = perm(&mut g, P0, "Tinder Wall");
+    lands(&mut g, P0, "Mountain", 1, false);
+    let a = token(&mut g, P1, 5);
+    let mut assign: sim_core::hooks::Assign = vec![(a, w)];
+    let f = g.registry.get(card(&g, "Tinder Wall")).unwrap().blocks.unwrap();
+    f(&mut g, w, P1, &[a], P0, &mut assign).unwrap();
+    assert!(g.perm(w).on_bf);
+}

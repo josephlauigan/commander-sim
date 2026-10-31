@@ -5,11 +5,11 @@ use crate::cards::CardDb;
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
-use crate::engine::values::threat;
+use crate::engine::values::{etgh, indestructible, pval, threat, untargetable};
 use crate::engine::zones::Enter;
 use crate::engine::zones::{draw, min_by};
 use crate::flow::Res;
-use crate::hooks::{Action, AltCost, Opt, Registry, Src};
+use crate::hooks::{Action, AltCost, Assign, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::{Sym, intern};
@@ -221,6 +221,41 @@ fn bolas_flip(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     crate::glog!(g, "    Nicol Bolas, the Arisen enters with 7 loyalty");
     Ok(true)
 }
+
+// ------------------------------------------------------------------ Tinder Wall (Thanos)
+const TINDER: &str = "Tinder Wall";
+
+/// "{R}, Sacrifice this creature: It deals 2 damage to target creature it's blocking." Once blocks are declared: the
+/// AI pays {R} when the attacker it blocks has 2 toughness or less and is worth killing (a person is asked). The
+/// attacker stays blocked. (The other ability, sacrifice: {R}{R}, is compiled.)
+fn tinder_blocks(g: &mut Game, src: Src, _p: PlayerId, _atk: &[PermId], d: PlayerId, assign: &mut Assign) -> Res {
+    if g.perm(src).owner != d || !g.perm(src).on_bf {
+        return Ok(());
+    }
+    let Some(&(a, _)) = assign.iter().find(|x| x.1 == src) else { return Ok(()) };
+    if !g.perm(a).on_bf || !can_pay(g, d, 0, "R", false) || untargetable(g, a) {
+        return Ok(());
+    }
+    let go = if crate::human::is_human(g, d) {
+        let pr = format!("Tinder Wall: pay {{R}} and sacrifice it for 2 damage to {}?", g.perm(a).name);
+        let labels = vec!["yes".to_string(), "no".to_string()];
+        crate::human::choices::choose(g, d, "choose", &pr, &labels, None, None)? == Some(0)
+    } else {
+        etgh(g, a) <= 2 && !indestructible(g, a) && pval(g, a) >= 2.0
+    };
+    if !go {
+        return Ok(());
+    }
+    pay(g, d, 0, "R", false)?;
+    let cd = g.perm(src).cd;
+    crate::engine::zones::die(g, src, "sac")?;
+    g.player_mut(d).stat("jr_tinder_wall", 1);
+    if ability_window(g, d, None, "Tinder Wall: 2 damage to the creature it blocks", None, Some(a))? && g.perm(a).on_bf
+    {
+        crate::engine::removal::apply_removal(g, Some(d), a, "dmg2", cd)?;
+    }
+    Ok(())
+}
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, BALEFUL)?;
@@ -231,5 +266,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.combat_damage = Some(ojutai_hit);
     r.card(db, BUSTER)?.combat_damage = Some(buster_hit);
     r.card(db, RAVAGER)?.options = Some(bolas_options);
+    r.card(db, TINDER)?.blocks = Some(tinder_blocks);
     Ok(())
 }
