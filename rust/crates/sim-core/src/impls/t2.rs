@@ -1181,6 +1181,7 @@ fn survival_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
         pl.hand.push(want);
         shuffle_library(g, p);
         g.player_mut(p).stat("tutored", 1);
+        crate::ai::rules::mark_tutored(g, p, want); // --- phase4-rules
     }
     Ok(true)
 }

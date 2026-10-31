@@ -87,7 +87,9 @@ pub fn scry(g: &mut Game, p: PlayerId, n: i32, surveil: bool) -> Res {
         return crate::human::choices::scry(g, p, n as usize, surveil);
     }
     let top = look(g, p, n as usize);
-    let (keep, rest): (Vec<CardId>, Vec<CardId>) = top.into_iter().partition(|&c| desire(g, p, c) >= KEEP);
+    // --- phase4-rules: a card a tutor just put on top stays there
+    let (keep, rest): (Vec<CardId>, Vec<CardId>) =
+        top.into_iter().partition(|&c| desire(g, p, c) >= KEEP || super::rules::tutored(g, p, c));
     let pl = g.player_mut(p);
     if surveil {
         pl.gy.extend(rest.iter().copied());

@@ -25,6 +25,7 @@ pub mod planner; // --- ai-planner
 pub mod pool;
 pub mod search;
 pub mod reanimate;
+pub mod rules; // --- phase4-rules
 pub mod t6_table;
 pub mod tape;
 pub mod topdeck;
@@ -360,6 +361,9 @@ pub const CLEANUP_PROTECTION: usize = 2;
 /// ranks lowest. With an opponent's Tergrid out, an instant or sorcery outside the keepers goes before a permanent
 /// card Tergrid would take.
 pub fn cleanup_discard(g: &Game, p: PlayerId, hand: &[CardId]) -> CardId {
+    if let Some(h) = rules::spare_tutored(g, p, hand) {
+        return cleanup_discard(g, p, &h); // --- phase4-rules: the cards just tutored are kept
+    }
     use crate::engine::mana::cost_of;
     use crate::tag::Tag;
     let pl = g.player(p);

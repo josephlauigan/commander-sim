@@ -155,6 +155,7 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
             Choice::Behold(b) => crate::impls::t12_lathril::behold_pay(g, p, c, b)?,
             Choice::Discard => {
                 let others: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&x| x != c).collect();
+                let others = crate::ai::rules::spare_tutored(g, p, &others).unwrap_or(others); // --- phase4-rules
                 let lands: Vec<CardId> = others.iter().copied().filter(|&x| g.db.get(x).land).collect();
                 let spells: Vec<CardId> = others.iter().copied().filter(|&x| !g.db.get(x).land).collect();
                 let x = if lands.len() > 2 || spells.is_empty() {
@@ -621,6 +622,7 @@ pub fn discard_worst(g: &mut Game, p: PlayerId, n: u32) -> Res {
             return Ok(());
         }
         let hand = g.player(p).hand.clone();
+        let hand = ai::rules::spare_tutored(g, p, &hand).unwrap_or(hand); // --- phase4-rules: not a card just tutored
         // Tergrid, God of Fright takes a discarded permanent card: an instant or sorcery goes first, else the cheapest
         if g.opps(p).any(|q| crate::engine::values::has(g, q, crate::tag::Tag::Tergrid)) {
             let spells: Vec<CardId> = hand.iter().copied().filter(|&x| !g.db.get(x).perm && !g.db.get(x).land).collect();

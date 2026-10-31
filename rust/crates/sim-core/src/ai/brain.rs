@@ -1253,6 +1253,7 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
         opts.extend(crate::dsl::ability_options(g, p, true)?);
     }
     opts.extend(hook_options(g, p, &s, Some(post))?);
+    super::rules::filter_options(g, p, &mut opts)?; // --- phase4-rules
     gandalf_hold(g, p, &s, &mut opts);
     let mut stop_u = if hold_card.is_some() { hold_v } else { -3.0 };
     if let Some(u) = crate::impls::t6_plans::hold_up(g, p) {
@@ -1617,6 +1618,7 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
             }
         }
         let mut opts = overload_rift(g, p, opts);
+        super::rules::filter_options(g, p, &mut opts)?; // --- phase4-rules
         if opts.is_empty() {
             return Ok(());
         }

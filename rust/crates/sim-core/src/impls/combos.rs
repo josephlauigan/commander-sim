@@ -1499,6 +1499,17 @@ fn lines_of(g: &Game, q: PlayerId) -> std::rc::Rc<Vec<usize>> {
     v
 }
 
+// --- phase4-rules
+/// the piece groups of each of q's catalogued lines (`lines_of`, quiet markers left out) that has a group naming this
+/// card (the combo guard, `ai::rules::combo_ok`)
+pub fn deck_lines_with(g: &Game, q: PlayerId, name: &str) -> Vec<&'static [&'static [&'static str]]> {
+    lines_of(g, q)
+        .iter()
+        .map(|&i| real_groups(all()[i]))
+        .filter(|grps| grps.iter().any(|grp| grp.contains(&name)))
+        .collect()
+}
+
 /// how many answerable steps the line has: its declared steps that are not plain permanents, else its spells to cast
 pub fn answerable_steps(cmb: &Combo, casts: &[CardId]) -> usize {
     if cmb.steps.is_empty() {

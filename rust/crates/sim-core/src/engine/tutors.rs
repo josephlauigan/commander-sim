@@ -59,6 +59,7 @@ pub fn tutor(g: &mut Game, p: PlayerId, kind: &str) -> Res {
         &format!("    {} tutors a card", g.player(p).name),
         &format!("    {} tutors {}", g.player(p).name, g.db.get(c).name),
     );
+    crate::ai::rules::mark_tutored(g, p, c); // --- phase4-rules
     shuffle_library(g, p);
     Ok(())
 }
@@ -284,6 +285,9 @@ fn finish_pile(
         }
     }
     g.player_mut(p).stat("tutored", 1);
+    for &c in pile.iter().filter(|c| hand.contains(c)) {
+        crate::ai::rules::mark_tutored(g, p, c); // --- phase4-rules
+    }
     if shuffle {
         shuffle_library(g, p);
     }
@@ -443,6 +447,7 @@ pub fn tutor_to_top(g: &mut Game, p: PlayerId, kind: &str, life: i32) -> Res {
     }
     shuffle_library(g, p);
     put_known_top(g, p, c); // --- ai-fix: B: p knows the card it put there
+    crate::ai::rules::mark_tutored(g, p, c); // --- phase4-rules
     let pl = g.player_mut(p);
     pl.stat("tutored", 1);
     g.log_secret(
