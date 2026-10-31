@@ -95,4 +95,102 @@ Manamorphose (makes mana, draws), Ad Nauseam (draws) and the tutors (Consultatio
 One module, `ai/rules.rs`. Each guard is one function, called from as few places as possible; every guard first
 asks `rules::on(g, p, guard)`, which with `AI_RULES` unset returns false before it reads the game.
 
-(Filled in with the code: section 2 below is current as of the final commit.)
+### 2a. Follow-up: `followup_ok(g, p, c)` (+ the compiled-cost dry run in `filter_options`)
+
+A card is refused when:
+
+- **its upkeep payment can't be made**: `upkeep_due` reads it from the card data (`pactpay = "<cost>"`, or the
+  `pact` flag: Pact of Negation's `{3}{U}{U}`), and `next_upkeep_affordable` adds every debt p already owes (each
+  `Player::pacts` at `{3}{U}{U}`, each `pact_debts` entry). **The next upkeep's mana**: a copy of the game with every
+  land and permanent of p's untapped and no longer summoning-sick, then `mana::can_pay` on the copy (so colours,
+  `{C}`-only lands, mana rocks and dorks, Treasures all count as the engine counts them). Not counted: the land drop
+  (the upkeep comes before it), mana from cards in hand, rituals; not subtracted: a source p might lose before then
+  (an opponent's removal), mana spent at instant speed in between. This game is not touched.
+- **a tagged discard cost has nothing to discard** (`discard1`: Big Score; another card in hand is needed);
+- **a tagged sacrifice cost has nothing to sacrifice** (`needsac`: `brain::spare_creature`);
+- **a compiled additional cost can't be paid** (`cast::additional_cost(.., dry = true)`; menu options only, as the
+  counter pick has no `&mut Game`).
+
+Called from: `ai/rules.rs::filter_options` (over Cast, Removal, Wipe, Face and Crackle options), hooked once at the
+end of `brain::main_options` and once in `brain::end_of_turn_window`; and `engine/stack.rs::pick_counter` (one
+`continue`), which is where Pact of Negation is chosen. The existing checks stay (the guard only adds refusals).
+
+### 2b. Tutored: `mark_tutored`, `tutored`, `spare_tutored`
+
+- **Mark** (`Player::tutored`: card and turn number, the turn number being the sum of every player's `turns`, so
+  extra turns count): `engine/tutors.rs::tutor` (to hand), `tutor_to_top`, `finish_pile` (the cards kept), the
+  compiled search (`dsl/mod.rs`, unless it puts the card onto the battlefield or into the graveyard), and the
+  hand-written tutors that put a card in hand (`impls/t6_blue.rs` Demonic Counsel and transmute, `t1.rs`'s shared
+  search, `t2.rs`, `rules2.rs` Wishclaw Talisman). A mark lasts this turn and the next (`now - mark <= 1`).
+- **Use**: `spare_tutored(g, p, cands)` returns the candidates without the marked cards when some are marked and some
+  are not (None otherwise: the choice is as today, so with only tutored cards to choose from one still goes). Hooked
+  where p chooses: `ai::cleanup_discard` (hand size), `cast::discard_worst` (discard effects, Big Score, looting),
+  `kefka::discard_n` (Kefka's own discard), `cast::additional_cost`'s discard choice; `topdeck::scry` keeps a marked
+  card on top (scry to the bottom, surveil to the graveyard).
+- Card ids are per name: a mark on a basic land covers every copy of it (singleton decks: no other card is affected).
+- Not covered: whole-hand wheels (no choice), mills of the top N (no choice), hand-written discard choices inside
+  single cards' code other than Kefka's.
+
+### 2c. Combo: `combo_ok(g, p, c)`
+
+- A **spent piece** (`spent_piece`): an instant or sorcery in a group of one of p's catalogued lines
+  (`combos::deck_lines_with`: the lines whose every group is in p's deck, quiet markers left out) that draws no card
+  (`brain::draws_cards`), makes no net mana (`mana::ritual_net`) and is not a tutor (`planner::tutor_rule`). Those
+  three dig for the missing piece themselves, so casting them is not a wasted start. By the card data the spent
+  pieces are Dramatic Reversal, Demonic Consultation, Tainted Pact, Brain Freeze and the copy spells of the Dualcaster
+  line; Manamorphose and Ad Nauseam are exempt (mana / draw).
+- Refused when no line of c's can be finished: each other group must be **held** (in hand, on the battlefield or
+  among the lands, a commander in the command zone, a card p put on top of its library) or **findable**: a tutor in
+  p's hand (not c) whose cost p can pay now, whose `planner::tutor_targets` (the restriction it resolves with) include
+  a card of that group in the library. One tutor counts for one group.
+- Permanent pieces are not guarded: they wait on the battlefield (a development play, not a lost card). Hooked in
+  `filter_options` with the follow-up guard.
+
+## 3. The switch
+
+`AI_RULES`: unset, empty or `0` = no guard (today's play, the default); `1` = all three; a list of names
+(`followup`, `tutored`, `combo`, comma-separated) = those. `AI_RULES_DECKS=a,b` (optional) limits the guards to the
+players of those decks: one half of a paired test. People (practice mode) are never guarded. Each guard's first step
+is `rules::on`, which reads the mask before anything else, so with the switch unset every hook returns before it
+reads the game, changes it or draws a random number: `filter_options` returns at once, `followup_ok` and `combo_ok`
+return true, `mark_tutored` does nothing (`Player::tutored` stays empty), `tutored` is false and `spare_tutored` None.
+Tests force the guards on one thread with `rules::force(Some(mask))` (as `ai/ismcts.rs`'s `FORCE`). When a guard
+drops a menu option it counts `rules|followup` or `rules|combo` in the player's stats.
+
+## 4. Tests (`rust/crates/sim-core/tests/rules_guards.rs`, 14)
+
+- switch: parsing (unset / `0` / `1` / names; an unknown name panics); default off on the test thread.
+- follow-up: Pact of Negation with two Islands is not picked as a counter (today: picked); with five tapped Islands it
+  is; with a Pact already owed five are not enough (today: five lands pass); a Slaughter Pact debt counts with it;
+  Diabolic Intent and Culling the Weak with no creature are filtered (switch off: kept), and offered once a creature
+  is there; Big Score alone in hand is not on the menu (today: it is), and is once another card is in hand.
+- tutored: hand-size discard keeps the marked card (switch off: today's pick, which was that card); `discard_worst`
+  the same; with only the tutored card to choose it goes; a mark lasts one more turn, then ends; the engine's tutor
+  marks what it finds (and marks nothing with the switch off); surveil keeps a card tutored to the top (today: binned).
+- combo: Tainted Pact with Thassa's Oracle in the library and no tutor is refused (switch off: allowed); with Demonic
+  Tutor in hand but no mana, still refused; with the mana for it, allowed; with the Oracle in hand, allowed; a card
+  outside the lines and a permanent piece are never refused.
+
+## 5. For the recalibration after Phase 4 (no sims now)
+
+Binary: this branch's `commander-sim`, built once. First an identity check: `AI_RULES` unset against the base binary
+(origin/main before this PR), `--realism --pool tN --games 300` on t1-t5, byte for byte (the hooks must change
+nothing with the switch off).
+
+1. **Generic decks, the half-tier method** (`audit/phase4/values-handoff.md`: the same halves, fixed before any run;
+   2000 games per arm, seeds 500000-501999, loose): per tier t1-t5, one shared old arm (`AI_RULES=0`) and two arms
+   with `AI_RULES=1 AI_RULES_DECKS=<the half's keys>`; read each half's summed share of the decisive games with
+   `half.sh OLD NEW "Name;Name"` and each deck with `audit/phase4/pair.sh OLD NEW`. Level = the CI includes 0.
+2. **JD's decks on their own tiers** (`data/my_decks.toml`), one deck at a time: `--deck <key> --pool <tier>`,
+   `AI_RULES=0` against `AI_RULES=1 AI_RULES_DECKS=<key>`, 2000 games, same seeds; report the average over the deck's
+   own tiers. The decks the guards reach most: urdragon (t5: Pact of Negation, Demonic Tutor, Dualcaster + Twinflame),
+   thanos (t6: Pact of Negation, Tainted Pact, Demonic Consultation, Thassa's Oracle), kefka (t3: discard choices),
+   sheoldred (t3-t4: Demonic Tutor), ghave (t3-t4).
+3. **Per guard**, if a pair moves: rerun that pair with one guard at a time (`AI_RULES=followup` / `tutored` /
+   `combo`) to find which one did it.
+
+How to read them: the guards only remove options, so a loss means a refused play was better than the guard thinks
+(look at `rules|followup` / `rules|combo` counts in the stats, and in a traced game the turn a Pact was held or a
+discard kept). Expect level for most decks (the patterns are rare); gains, if any, on the Pact decks (a lost game to a
+missed upkeep) and the tutor-heavy decks at hand size. If level everywhere: make `1` the default for generic decks
+(as values and search did), keep `0` as the measurement arm.
