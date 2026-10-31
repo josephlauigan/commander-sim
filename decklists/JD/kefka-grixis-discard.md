@@ -173,7 +173,7 @@ Whisper** is a plain two-card draw.
 
 - **Lands:** 36 (12 nonbasic + 24 basic)
 - **Mana:** 3 rocks (Arcane Signet, Sisay's Ring, Lotus Petal), Dark Ritual, Jeska's Will, Treasure makers and burst cards.  Yawgmoth's Will replays Dark Ritual and Lotus Petal from the graveyard.
-- **Card draw:** Kefka, Night's Whisper, Decorum Dissertation (a free draw-two each turn after the first cast), Skullclamp, Niv-Mizzet (taps to draw), Marvin, Murderous Mimic (a 2-mana 2/2 that has the activated abilities of your other creatures: it copies Niv-Mizzet's draw, Fangtail's ping, Blightspeaker and Rummaging Goblin), the looters, and the cheap digging spells Expressive Iteration (look at three: one to hand, one to the bottom, one exiled and playable this turn) and Sleight of Hand (look at two, one to hand). **Tutors:** Diabolic Tutor, Profane Tutor (suspended), Grim Servant (devotion to black). **Graveyard:** Underworld Breach, Yawgmoth's Will.
+- **Card draw:** Kefka, Night's Whisper, Decorum Dissertation (a free draw-two each turn after the first cast), Skullclamp, Niv-Mizzet (taps to draw), Marvin, Murderous Mimic (a 2-mana 2/2 that has the activated abilities of your other creatures: it copies Niv-Mizzet's draw, Fangtail's ping, Blightspeaker and Rummaging Goblin), the looters, and the cheap digging spell Expressive Iteration (look at three: one to hand, one to the bottom, one exiled and playable this turn). **Glimpse the Unthinkable** ({U}{B}: target player mills ten) fills your graveyard for Underworld Breach and Yawgmoth's Will, or points at an opponent to start the mill-out that Brain Freeze finishes. **Tutors:** Diabolic Tutor, Profane Tutor (suspended), Grim Servant (devotion to black). **Graveyard:** Underworld Breach, Yawgmoth's Will.
 - **Interaction:** Lightning Bolt, Pongify, Reality Shift, Extinguish the Light, Deadly Embrace, Contract Killing, Chaos Warp; counters Arcane Denial and Mana Leak, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; one-sided sweeper Massacre Wurm.
 - **Protection:** Lightning Greaves (haste), Deflecting Swat (free while you control a commander: redirects a removal spell or counter) and Slip Out the Back ({U}: phases a creature out).
 
@@ -200,7 +200,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (5).** Arcane Signet, Lightning Greaves, Lotus Petal, Sisay's Ring, Skullclamp
 
-**Sorceries (15).** Bribery, Contract Killing, Deadly Embrace, Decorum Dissertation, Diabolic Tutor, Expressive Iteration, Grab the Prize, Grapeshot, Jeska's Will, Night's Whisper, Profane Tutor, Rapturous Moment, Seize the Spoils, Sleight of Hand, Yawgmoth's Will
+**Sorceries (15).** Bribery, Contract Killing, Deadly Embrace, Decorum Dissertation, Diabolic Tutor, Expressive Iteration, Glimpse the Unthinkable, Grab the Prize, Grapeshot, Jeska's Will, Night's Whisper, Profane Tutor, Rapturous Moment, Seize the Spoils, Yawgmoth's Will
 
 **Instants (15).** Arcane Denial, Big Score, Brain Freeze, Chaos Warp, Dark Ritual, Deflecting Swat, Extinguish the Light, Lightning Bolt, Mana Leak, Pongify, Price of Progress, Reality Shift, Slip Out the Back, Thrill of Possibility, Twinned Vision
 
@@ -235,6 +235,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Fiery Emancipation
 1 Garrison Excavator
 1 Gemstone Mine
+1 Glimpse the Unthinkable
 1 Grab the Prize
 1 Grapeshot
 1 Grim Servant
@@ -268,7 +269,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Sisay's Ring
 1 Skullclamp
 1 Skullport Merchant
-1 Sleight of Hand
 1 Slip Out the Back
 1 Sneering Shadewriter
 1 Spirebluff Canal

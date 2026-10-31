@@ -10,7 +10,7 @@ use std::path::{Path, PathBuf};
 
 /// your decks: key -> (owner folder in decklists/, file), as deck_files.FILES
 pub const FILES: [(&str, &str, &str); 13] = [
-    ("seph", "JD", "sephiroth-phyrexian-reanimator.md"),
+    ("ghave", "JD", "ghave-abzan-aristocrats.md"),
     ("veyran", "JD", "veyran-izzet-spellslinger.md"),
     ("sauron", "JD", "sauron-grixis-amass.md"),
     ("yshtola", "JD", "yshtola-esper-drain.md"),
@@ -26,7 +26,7 @@ pub const FILES: [(&str, &str, &str); 13] = [
 ];
 
 /// compare.KEYS / poolmode.MINE: your decks, in the order --all-decks runs them
-pub const MINE: [&str; 13] = ["seph", "veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "sheoldred", "cloud", "thrasios", "karn", "thanos", "urdragon"];
+pub const MINE: [&str; 13] = ["ghave", "veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "sheoldred", "cloud", "thrasios", "karn", "thanos", "urdragon"];
 
 pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 

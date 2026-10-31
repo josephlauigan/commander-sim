@@ -39,8 +39,8 @@ pub const METRICS: [Metric; 28] = [
     m("protection", "Protection used (HI/sac/Tidebinder/counter-war)", "Resilience", true, None),
     m("threats_lost", "Your key permanents removed by opponents", "Resilience", false, None),
     m("countered", "Your spells countered", "Resilience", false, None),
-    m("recovered", "Removed bombs brought back", "Resilience", true, Some("seph")),
-    m("bombs_landed", "Bombs put on the battlefield", "Threat & pressure", true, Some("seph")),
+    m("recovered", "Removed bombs brought back", "Resilience", true, Some("ghave")),
+    m("bombs_landed", "Bombs put on the battlefield", "Threat & pressure", true, Some("ghave")),
     m("dmg_dealt", "Damage dealt to opponents per game", "Threat & pressure", true, None),
     m("dmg_combat", "  ...of which combat damage", "Threat & pressure", true, None),
     m("dmg_burn", "  ...of which magecraft / burn", "Threat & pressure", true, None),
@@ -54,7 +54,6 @@ pub const METRICS: [Metric; 28] = [
 /// compare.PLAN: what "the game plan came online" means for each deck
 pub fn plan_text(deck: &str) -> &'static str {
     match deck {
-        "seph" => "first 6+ power bomb on the battlefield",
         "veyran" => "Veyran + a magecraft payoff on the battlefield",
         "sauron" => "first combat damage to a player by an Army",
         "galadriel" => "first Alliance trigger from Galadriel",
@@ -65,7 +64,7 @@ pub fn plan_text(deck: &str) -> &'static str {
         "sephfs" => "Sephiroth flipped (the fourth drain of a turn)",
         "cloud" => "first attack by an equipped Cloud",
         "karn" => "Karn first adds mana at upkeep",
-        "thanos" | "urdragon" => "first combo attempt",
+        "thanos" | "urdragon" | "ghave" => "first combo attempt",
         "thrasios" | "kraum" => "first Tymna draw, or the infinite-mana combo going off",
         "najeela" => "first WUBRG extra combat",
         _ => "",
@@ -91,7 +90,6 @@ fn axis_note(axis: &str) -> &'static str {
 pub fn plan_turn(me: &PlayerOut, deck: &str) -> Option<u32> {
     let ms = |k: &str| me.milestone.get(k).copied();
     let t = match deck {
-        "seph" => me.first_bomb,
         "veyran" => ms("engine"),
         "najeela" => ms("act"),
         "sauron" => ms("army_hit"),

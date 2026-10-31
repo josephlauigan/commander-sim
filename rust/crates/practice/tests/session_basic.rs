@@ -22,7 +22,7 @@ fn settings_are_checked() {
     let e = engine();
     let mut o = opts("adaptive");
     o.deck = "nobody".into();
-    assert!(Session::new(o).err().unwrap().starts_with("unknown deck \"nobody\": one of seph"));
+    assert!(Session::new(o).err().unwrap().starts_with("unknown deck \"nobody\": one of ghave"));
     let mut o = opts("adaptive");
     o.tier = "t9".into();
     assert!(Session::new(o).err().unwrap().starts_with("unknown tier \"t9\""));

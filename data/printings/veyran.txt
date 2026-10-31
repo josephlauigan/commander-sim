@@ -1,6 +1,7 @@
 1 Abrade (soa) 37
 1 Alania, Divergent Storm (blb) 327
 1 An Offer You Can't Refuse (fdn) 160
+1 Arcane Denial (all) 22a
 1 Arcane Signet (soc) 127
 1 Archmage Emeritus (stx) 37
 1 Ash Barrens (tmc) 60
@@ -63,7 +64,6 @@
 1 Sol Ring (3ed) 274
 1 Solve the Equation (sld) 886
 1 Spectacle Summit (sos) 262
-1 Spell Pierce (soa) 23
 1 Splatter Technique (sos) 231
 1 Stock Up (soa) 24
 1 Storm-Kiln Artist (cmm) 260

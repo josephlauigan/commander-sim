@@ -71,8 +71,24 @@ for key in "${keys[@]}"; do
     break
   done
   if [[ "$code" != 200 ]]; then echo "$key: HTTP $code" >&2; head -c 500 "$tmp/resp.json" >&2; exit 1; fi
-  if [[ "$(jq -r '.next' "$tmp/resp.json")" != null ]]; then
-    echo "$key: the response has a next page; raise the limit" >&2; exit 1
+  # more than one page (Ghave finds over a thousand combos): fetch the next pages, 2 s apart, and merge the results
+  pages=("$tmp/resp.json")
+  next="$(jq -r '.next' "$tmp/resp.json")"
+  while [[ "$next" != null ]]; do
+    sleep 2
+    n=${#pages[@]}
+    code="$(curl -sS -A "$ua" -H 'Content-Type: application/json' -X POST --data @"$tmp/req.json" \
+      -o "$tmp/resp$n.json" -w '%{http_code}' "$next")"
+    if [[ "$code" != 200 ]]; then echo "$key: HTTP $code on page $((n + 1))" >&2; exit 1; fi
+    pages+=("$tmp/resp$n.json")
+    next="$(jq -r '.next' "$tmp/resp$n.json")"
+  done
+  if [[ ${#pages[@]} -gt 1 ]]; then
+    jq -s '{results: {identity: .[0].results.identity,
+                      included: map(.results.included[]),
+                      includedByChangingCommanders: map(.results.includedByChangingCommanders[]),
+                      almostIncluded: map(.results.almostIncluded[])}}' "${pages[@]}" >"$tmp/merged.json"
+    mv "$tmp/merged.json" "$tmp/resp.json"
   fi
   jq --arg key "$key" --arg hash "$hash" --arg date "$(date -u +%Y-%m-%d)" --slurpfile req "$tmp/req.json" "$compact"'
     ($req[0] | [.commanders[].card, .main[].card]) as $deck

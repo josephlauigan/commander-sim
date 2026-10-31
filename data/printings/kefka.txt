@@ -68,7 +68,6 @@
 1 Sisay's Ring (vis) 154
 1 Skullclamp (fic) 355
 1 Skullport Merchant (afr) 120
-1 Sleight of Hand (soa) 22
 1 Slip Out the Back (snc) 62
 1 Sneering Shadewriter (sos) 101
 1 Spirebluff Canal (kld) 249

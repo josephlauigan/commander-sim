@@ -242,9 +242,6 @@ fn hold_of(g: &Game, p: PlayerId, s: &Situation, held: &[CardId]) -> (Option<Car
         let n = held.iter().filter(|&&x| g.db.get(x).tag(Tag::Ctr)).count();
         v = v.max(1.5 + 2.5 * caution * n.min(2) as f64);
     }
-    if pl.key == "seph" && decks::bomb_on_bf(g, p) {
-        v += 2.0 * removal_risk(g, p) + 1.0;
-    }
     if s.turn <= 2 {
         v -= 2.0;
     }
@@ -574,10 +571,7 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
         }
         die(g, f, "sac")?;
     }
-    let ok = cast_card(g, p, c, cast_zone, ctx)?; // from the graveyard: exiled after
-    if g.player(p).key == "seph" && ok && (c == g.player(p).cmd || d.bomb >= 4) {
-        super::note_bomb(g, p, c, false);
-    }
+    cast_card(g, p, c, cast_zone, ctx)?; // from the graveyard: exiled after
     Ok(true)
 }
 
@@ -987,7 +981,6 @@ pub fn cast_wipe(g: &mut Game, p: PlayerId, c: CardId, victim: Option<PlayerId>)
 pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> Res<Vec<Opt>> {
     match g.player(p).key {
         "sauron" => decks::sauron_options(g, p, s, post),
-        "seph" => super::seph::options(g, p, s, post),
         "veyran" => super::veyran::options(g, p, s, post),
         "kefka" => crate::impls::kefka::kefka_options(g, p, post),
         "omnath" => crate::impls::titania::titania_special(g, p, post),
@@ -1138,7 +1131,7 @@ pub fn hook_options(g: &mut Game, p: PlayerId, s: &Situation, post: Option<bool>
     } else if g.player(p).perms.iter().any(|&m| {
         let x = g.perm(m);
         !x.phased && x.cd.is_some_and(|c| &*g.db.get(c).name == "Grave Pact")
-    }) || (key != "seph" && !crate::cardcode::outlets_of(g, p).is_empty())
+    }) || !crate::cardcode::outlets_of(g, p).is_empty()
     {
         o.extend(crate::cardcode::aristocrat_options(g, p, post)?); // Grave Pact: sacrifice for edicts
     }

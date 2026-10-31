@@ -291,11 +291,6 @@ pub fn apply_removal_rest(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind
     if pval(g, m) >= 5.0 {
         g.player_mut(owner).stat("threats_lost", 1);
     }
-    if g.player(owner).key == "seph" && g.perm(m).cd.is_some_and(|c| g.db.get(c).bomb != 0) {
-        g.player_mut(owner).stat("bomb_removed", 1);
-        let k: String = kind.chars().take(5).collect();
-        g.player_mut(owner).stat(intern(&format!("bomb_removed_{k}")), 1);
-    }
     let (power, mv, tgh) = (epow(g, m), g.perm(m).cd.map_or(0, |c| g.db.get(c).cmc), g.perm(m).tgh);
     let st = spell.map(|s| g.db.get(s).tags.clone()).unwrap_or_default();
     if st.has(Tag::Exiledie) && (kind == "destroy" || kind.starts_with("dmg") || kind.starts_with("shrink")) {

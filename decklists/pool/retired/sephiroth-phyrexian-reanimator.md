@@ -1,5 +1,10 @@
 # Sephiroth, the Savior — Phyrexian Reanimator
 
+> **Rebuilt as Ghave (JD, 2026-10-30).** The physical deck is now `decklists/JD/ghave-abzan-aristocrats.md`; the cards
+> that left went to Tymna/Thrasios, Y'shtola, Kefka, Veyran, Karn and Sauron (see the CHANGELOG). Retired on 2026-10-30:
+> Ghave took the simulator seat (key `ghave`, t3-t4). The list is kept here only so the Rust tests of its card code can
+> seat it (`testkit::retired_decks`, key `seph`); it is not a pool deck and is never drawn.
+
 Fill the graveyard, cheat a Phyrexian bomb onto the battlefield three or four turns before anyone can cast one, and drain the table through sacrifice loops while the Praetors make the board unplayable. When the pieces line up, an infinite loop ends the game on the spot. The deck is weak to graveyard hate and to a fast combo deck that goes first.
 
 Sephiroth, the Savior is the Final Fantasy printing of Atraxa, Grand Unifier, and appears under that name in the import list. (This is the Seph/Atraxa deck, key `seph`. Sephiroth, Fabled SOLDIER, a different card, is in the 99.)

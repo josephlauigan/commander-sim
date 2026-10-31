@@ -12,7 +12,7 @@ use std::path::{Path, PathBuf};
 pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 /// the decks the setup screen offers, in the order of data/my_decks.toml (error messages list them so)
 pub const MY_DECKS: [&str; 13] = [
-    "seph",
+    "ghave",
     "veyran",
     "sauron",
     "yshtola",
@@ -119,7 +119,7 @@ pub fn win_rates(text: &str) -> BTreeMap<String, Vec<f64>> {
         }
         let cells: Vec<&str> = line.trim().trim_matches('|').split('|').map(str::trim).collect();
         let key = match cells[0].to_lowercase().as_str() {
-            "sephiroth" => "seph",
+            "ghave" => "ghave",
             "veyran" => "veyran",
             "sauron" => "sauron",
             "galadriel" => "galadriel",
@@ -373,10 +373,10 @@ mod tests {
 
     #[test]
     fn results_table() {
-        let t = "### 0d. Look-ahead\n| Deck | T1 | T2 | T3 | T4 | T5 |\n| Sephiroth | 39.7% (a) | 51.2% | 38.5% | 33.9% | 22.2% |\n\
-                 | Sephiroth | 1% | 1% | 1% | 1% | 1% |\n| Alela | 10% | 20% | x | 1% | 2% |\n## next\n| Najeela | 1% | 1% | 1% | 1% | 1% |\n";
+        let t = "### 0d. Look-ahead\n| Deck | T1 | T2 | T3 | T4 | T5 |\n| Ghave | 39.7% (a) | 51.2% | 38.5% | 33.9% | 22.2% |\n\
+                 | Ghave | 1% | 1% | 1% | 1% | 1% |\n| Alela | 10% | 20% | x | 1% | 2% |\n## next\n| Najeela | 1% | 1% | 1% | 1% | 1% |\n";
         let r = win_rates(t);
-        assert_eq!(r["seph"], vec![39.7, 51.2, 38.5, 33.9, 22.2]);
+        assert_eq!(r["ghave"], vec![39.7, 51.2, 38.5, 33.9, 22.2]);
         assert!(!r.contains_key("alela") && !r.contains_key("najeela"));
     }
 }

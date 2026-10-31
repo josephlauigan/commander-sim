@@ -155,8 +155,8 @@ fn sauron_t4() {
     play("sauron", "t4", 2);
 }
 #[test]
-fn seph_t3() {
-    play("seph", "t3", 1);
+fn ghave_t3() {
+    play("ghave", "t3", 1);
 }
 #[test]
 fn veyran_t1() {
@@ -175,6 +175,6 @@ fn alela_t3() {
     play("alela", "t3", 2);
 }
 #[test]
-fn seph_t4() {
-    play("seph", "t4", 2);
+fn ghave_t4() {
+    play("ghave", "t4", 2);
 }

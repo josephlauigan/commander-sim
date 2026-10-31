@@ -1028,9 +1028,6 @@ pub fn resolve_counter(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -> R
     if &*g.db.get(ctr).name == "Mana Drain" {
         g.player_mut(q).drain_mana += g.db.get(c).cmc;
     }
-    if g.player(p).key == "seph" {
-        g.player_mut(p).stat("seph_spell_countered", 1);
-    }
     g.player_mut(p).stat("spells_countered", 1);
     g.last_counter = Some(ctr);
     crate::t6stats::counter_hit(g, q, ctr, p);

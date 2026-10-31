@@ -705,16 +705,12 @@ pub fn spell_imp(g: &Game, p: PlayerId, c: CardId, ctx: &Ctx) -> (f64, Vec<(Play
     let key = g.player(p).key;
     if g.player(p).is_commander(c) {
         let v = match key {
-            "seph" => 8.0,
             "veyran" => 5.0,
             "sauron" | "najeela" => 6.0,
             "galadriel" | "yshtola" | "alela" | "kefka" | "omnath" | "sheoldred" | "cloud" | "karn" => 7.0,
             _ => CMD_IMP,
         };
         return (v, vec![]);
-    }
-    if d.bomb != 0 && key == "seph" {
-        return (d.bomb as f64, vec![]);
     }
     let pair = |other: Tag| if has(g, p, other) { 9.0 } else { 4.0 };
     if t.has(Tag::Vkitten) {

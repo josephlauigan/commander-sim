@@ -3,6 +3,7 @@
 1 Arcane Signet (p30m) 1P
 1 Archon of Absolution (eld) 3
 1 Assassin's Trophy (2x2) 372
+1 Atraxa, Grand Unifier (fca) 49
 1 Austere Command (brc) 69
 1 Avacyn's Pilgrim (isd) 170
 1 Aven Mindcensor (clb) 688
@@ -20,7 +21,6 @@
 1 Command Tower (pip) 259
 1 Conqueror's Flail (fic) 340
 1 Crawlspace (ulg) 123
-1 Dark Endurance (eoe) 93
 1 Darksteel Mutation (cmm) 623
 1 Dauthi Voidwalker (tdc) 176
 1 Deathcap Glade (sos) 253
@@ -29,7 +29,6 @@
 1 Drowned Catacomb (m11) 224
 1 Elenda, the Dusk Rose (2x2) 377
 1 Elspeth, Sun's Champion (ths) 9
-1 Exotic Orchard (ltc) 307
 1 Fact or Fiction (cmm) 631
 1 Faeburrow Elder (plst) ELD-190
 1 Falcon and Redwing (msc) 14
@@ -39,8 +38,10 @@
 1 Forest (mdd) 301
 1 Forest (mdd) 301
 1 Ghostly Prison (soc) 146
+1 Gifts Ungiven (2x2) 347
 1 Glacial Fortress (msc) 248
 1 Grave Titan (pdp12) 2
+1 Hallowed Fountain (rtr) 241
 1 Helm of Kaldra (plst) 5DN-131
 1 Hero of Bladehold (mbs) 8
 1 Island (mdd) 294
@@ -66,7 +67,6 @@
 1 Plains (mdd) 292
 1 Plains (mdd) 292
 1 Plains (mdd) 292
-1 Port Town (msc) 256
 1 Propaganda (plst) C16-94
 1 Resplendent Angel (lci) 32
 1 Restoration Angel (khc) 31
@@ -75,7 +75,6 @@
 1 Skyclave Apparition (m3c) 172
 1 Sphinx of New Prahv (rvr) 227
 1 Sun Titan (afc) 73
-1 Sunblast Angel (ddi) 21
 1 Sunpetal Grove (ltc) 336
 1 Swamp (mdd) 296
 1 Swamp (mdd) 296
@@ -83,18 +82,17 @@
 1 Swamp (mdd) 296
 1 Swamp (mdd) 296
 1 Swamp (mdd) 296
+1 Swan Song (sld) 1591
 1 Swords to Plowshares (ice) 54
 1 Talisman of Curiosity (pip) 245
 1 Talisman of Unity (mrd) 257
 1 The Wasp, Winsome Avenger (msc) 39
 1 Thrasios, Triton Hero (fca) 58
 1 Tymna the Weaver (fca) 18
-1 Unclaimed Territory (msc) 275
 1 Underground River (wc98) bs362
 1 Undergrowth Stadium (cmr) 359
 1 Vampire Nighthawk (m13) 112
 1 Walking Ballista (sld) 58
 1 Windborn Muse (lgn) 28
-1 Witherbloom Charm (sos) 244
 1 Worldly Tutor (dmr) 442
 1 Yavimaya Coast (c21) 409

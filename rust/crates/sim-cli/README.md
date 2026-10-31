@@ -17,9 +17,9 @@ cargo build --release -p sim-cli          # -> rust/target/release/commander-sim
 commander-sim --deck sauron --pool all                          # one of your decks against its own tiers
 commander-sim --deck sauron --pool t3 --swap "Spell Pierce=>Negate"   # paired A/B: the list and the swap, same seeds
 commander-sim --all-decks --pool all                            # every deck of yours, each against its own tiers
-commander-sim --deck seph --pool t3 --analyze                   # how it wins and loses, plan timing, card report
-commander-sim --deck seph --pool t3 --trace 12                  # play-by-play of one game (seed offset 12)
-commander-sim --deck seph --cards                               # the cards, their tags, source and unmodeled text
+commander-sim --deck ghave --pool t3 --analyze                   # how it wins and loses, plan timing, card report
+commander-sim --deck ghave --pool t3 --trace 12                  # play-by-play of one game (seed offset 12)
+commander-sim --deck ghave --cards                               # the cards, their tags, source and unmodeled text
 commander-sim --calibrate within --pool t6 --games 2000         # pool balance; Tier 6 adds a per-deck speed report
 commander-sim --realism --pool t6 --games 2200                  # the realism scorecard (documents/realism.md)
 commander-sim --realism --pool t6 --knobs FILE                  # the same with AI knobs from a file

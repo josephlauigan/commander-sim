@@ -145,16 +145,16 @@ fn test_the_lobby_and_joining() {
     assert!(st["lobby"].get("code").is_none()); // the friend needs it from the host
     assert_eq!(st["lobby"]["deck"], "sauron");
     let wrong = if code != "000000" { "000000" } else { "111111" };
-    assert_eq!(join(&mut friend, wrong, "seph"), 409);
+    assert_eq!(join(&mut friend, wrong, "ghave"), 409);
     assert_eq!(join(&mut friend, &code, "sauron"), 409);
-    assert_eq!(join(&mut host, &code, "seph"), 409);
-    assert_eq!(join(&mut friend, &code, "seph"), 200);
+    assert_eq!(join(&mut host, &code, "ghave"), 409);
+    assert_eq!(join(&mut friend, &code, "ghave"), 200);
     let a = host.get("/api/state");
     let b = friend.get("/api/state");
-    assert_eq!((a["game"]["you"].as_str(), b["game"]["you"].as_str()), (Some("sauron"), Some("seph")));
+    assert_eq!((a["game"]["you"].as_str(), b["game"]["you"].as_str()), (Some("sauron"), Some("ghave")));
     let mut humans: Vec<&str> = a["game"]["humans"].as_array().unwrap().iter().map(|x| x.as_str().unwrap()).collect();
     humans.sort();
-    assert_eq!(humans, ["sauron", "seph"]);
+    assert_eq!(humans, ["ghave", "sauron"]);
     assert_eq!(friend.post("/api/new", json!({"deck": "veyran", "tier": "t2"})).status, 403);
     assert_eq!(friend.post("/api/quit", json!({})).status, 403);
     assert_eq!(friend.post("/api/save", json!({})).status, 403);
@@ -173,7 +173,7 @@ fn test_joining_when_nothing_waits() {
     let mut host = Browser::new(s.client());
     let mut friend = Browser::new(s.remote_client().unwrap());
     host.post("/api/quit", json!({}));
-    let r = friend.post("/api/join", json!({"code": "123456", "deck": "seph"}));
+    let r = friend.post("/api/join", json!({"code": "123456", "deck": "ghave"}));
     assert_eq!(r.status, 409);
     assert_eq!(r.error(), "There is no game waiting for a second player.");
 }
@@ -182,7 +182,7 @@ fn test_joining_when_nothing_waits() {
 fn test_each_seat_sees_its_own_game() {
     let s = lan!();
     let (mut host, mut friend, code) = open_table(&s);
-    join(&mut friend, &code, "seph");
+    join(&mut friend, &code, "ghave");
     let played = Arc::new(Mutex::new(Vec::new()));
     host.listen(played.clone());
     friend.listen(played);
@@ -193,7 +193,7 @@ fn test_each_seat_sees_its_own_game() {
     host.stop.store(true, Ordering::Relaxed);
     friend.stop.store(true, Ordering::Relaxed);
     host.post("/api/quit", json!({}));
-    for (b, me) in [(&host, "sauron"), (&friend, "seph")] {
+    for (b, me) in [(&host, "sauron"), (&friend, "ghave")] {
         let evs = b.events.lock().unwrap();
         let reqs: Vec<&Value> = evs.iter().filter(|e| e["kind"] == "request").collect();
         assert!(!reqs.is_empty());
@@ -219,7 +219,7 @@ fn test_each_seat_sees_its_own_game() {
 fn test_hint_is_for_the_seat_deciding() {
     let s = lan!();
     let (mut host, mut friend, code) = open_table(&s);
-    join(&mut friend, &code, "seph");
+    join(&mut friend, &code, "ghave");
     host.auto.store(false, Ordering::Relaxed);
     friend.auto.store(false, Ordering::Relaxed);
     let played = Arc::new(Mutex::new(Vec::new()));
@@ -257,7 +257,7 @@ fn test_hint_is_for_the_seat_deciding() {
 fn test_undo_needs_the_other_persons_ok() {
     let s = lan!();
     let (mut host, mut friend, code) = open_table(&s);
-    join(&mut friend, &code, "seph");
+    join(&mut friend, &code, "ghave");
     let played = Arc::new(Mutex::new(Vec::new()));
     host.auto.store(false, Ordering::Relaxed);
     friend.auto.store(false, Ordering::Relaxed);
@@ -306,7 +306,7 @@ fn test_undo_needs_the_other_persons_ok() {
 fn test_a_saved_two_player_game_waits_for_the_friend() {
     let s = lan!();
     let (mut host, mut friend, code) = open_table(&s);
-    join(&mut friend, &code, "seph");
+    join(&mut friend, &code, "ghave");
     let played = Arc::new(Mutex::new(Vec::new()));
     host.listen(played.clone());
     friend.listen(played);
@@ -328,7 +328,7 @@ fn test_a_saved_two_player_game_waits_for_the_friend() {
     }));
     assert_eq!(r.status, 200, "{}", String::from_utf8_lossy(&r.body));
     let name = r.json()["name"].as_str().unwrap().to_string();
-    assert!(name.contains("+seph"), "{name}");
+    assert!(name.contains("+ghave"), "{name}");
     host.stop.store(true, Ordering::Relaxed);
     friend.stop.store(true, Ordering::Relaxed);
     drop((hq, fq));
@@ -339,11 +339,11 @@ fn test_a_saved_two_player_game_waits_for_the_friend() {
     let lb = friend.get("/api/state")["lobby"].clone();
     assert_eq!(
         (lb["deck"].as_str(), lb["partner"].as_str(), lb["loaded"].as_bool()),
-        (Some("sauron"), Some("seph"), Some(true))
+        (Some("sauron"), Some("ghave"), Some(true))
     );
     assert_eq!(join(&mut friend, &code2, "veyran"), 409);
-    assert_eq!(join(&mut friend, &code2, "seph"), 200);
-    assert_eq!(friend.get("/api/state")["game"]["you"], "seph");
+    assert_eq!(join(&mut friend, &code2, "ghave"), 200);
+    assert_eq!(friend.get("/api/state")["game"]["you"], "ghave");
     host.post("/api/quit", json!({}));
     s.remove_save(&name);
 }
