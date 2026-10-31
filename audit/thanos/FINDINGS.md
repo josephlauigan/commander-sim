@@ -7,6 +7,8 @@ Swat and Deadly Rollick (`decklists/JD/thanos-five-colour-turbo.md`). Thanos too
 ## Result (loose, 2000 games, seeds 500000-501999)
 - **t6: 29.6% (CI 27.6-31.6).** Scion's last result was 30.1% (CI 28.1-32.1) on the same seeds; the two are within
   noise.
+- **After the power-up fix (once per Thanos object, 2026-10-30): t6 30.8% (CI 28.8-32.8)**, same seeds; within noise of
+  29.6%. Thassa's Oracle lines 79% of wins.
 - **Goldfish:** median kill turn 11 (mean 11.1); 35.2% of kills come by turn 8; 82% of kills held protection.
 
 ## How it wins
@@ -40,7 +42,7 @@ Swat and Deadly Rollick (`decklists/JD/thanos-five-colour-turbo.md`). Thanos too
     even).
   - The AI picks the parity from the board: the opponents' value destroyed against 1.2 times its own.
   - Once per Thanos object: a blinked or recast Thanos is a new object (rule 113.7) and may power up again, at the
-    reduced cost on the turn he returns (fixed 2026-10-30; the sim numbers above predate it).
+    reduced cost on the turn he returns (fixed 2026-10-30).
   - Approximation: a token's mana value is 0.
 - **Fierce Guardianship, Deflecting Swat, Deadly Rollick: Full.** Each is free only with a commander on the
   battlefield.
