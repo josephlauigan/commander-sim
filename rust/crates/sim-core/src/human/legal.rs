@@ -307,6 +307,7 @@ fn tgt_ok(g: &Game, kind: &str, m: PermId) -> bool {
         "cp" => cr || pw,
         "cap" => cr || a || pw,
         "ce" => cr || e,
+        "cep" => cr || e || pw, // --- card-models-3: Get Lost
         "nl" | "p" => true,
         "a" => a,
         "cna" => cr && !a,
@@ -598,6 +599,7 @@ pub fn what(kind: &str) -> &'static str {
         "cp" => "creature or planeswalker",
         "cap" => "creature, artifact or planeswalker",
         "ce" => "creature or enchantment",
+        "cep" => "creature, enchantment or planeswalker",
         "nl" => "nonland permanent",
         "p" => "permanent",
         "a" => "artifact",

@@ -77,6 +77,7 @@ fn magda_as(g: &mut Game, _p: PlayerId, _m: PermId) -> Res {
 /// whenever a Dwarf you control becomes tapped for mana (the mana-tapped event): a Treasure
 fn magda_mana(g: &mut Game, src: Src, p: PlayerId, m: PermId, _n: u32) -> Res {
     if live(g, src) && owner(g, src) == p && owner(g, m) == p && is_dwarf(g, m) {
+        super::card_models3::tapped_now(g, src, m);
         add_treasure(g, p, 1)?;
         crate::glog!(g, "    {} makes a Treasure ({} tapped)", g.perm(src).name, g.perm(m).name);
     }
@@ -89,10 +90,30 @@ fn magda_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerI
         return Ok(vec![]);
     }
     let k = atk.iter().filter(|&&m| owner(g, m) == p && g.perm(m).tapped && is_dwarf(g, m)).count();
+    let dw: Vec<PermId> = atk.iter().copied().filter(|&m| owner(g, m) == p && is_dwarf(g, m)).collect();
+    for m in dw {
+        super::card_models3::tapped_now(g, src, m);
+    }
     if k > 0 && trigger_window(g, p, Some(src), &format!("create {k} Treasure"), None)? {
         add_treasure(g, p, k as i32)?;
     }
     Ok(vec![])
+}
+
+/// whenever a Dwarf you control becomes tapped some other way (a tap cost, convoke, an effect, an opponent's tapper):
+/// the general "becomes tapped" event, read at state checks (`card_models3::newly_tapped`; card-models-3)
+fn magda_sba(g: &mut Game, src: Src) -> Res {
+    if !live(g, src) {
+        return Ok(());
+    }
+    let p = owner(g, src);
+    let dwarves: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| live(g, m) && is_dwarf(g, m)).collect();
+    let k = super::card_models3::newly_tapped(g, src, &dwarves).len();
+    if k > 0 && trigger_window(g, p, Some(src), &format!("create {k} Treasure"), None)? {
+        add_treasure(g, p, k as i32)?;
+        crate::glog!(g, "    {} makes {k} Treasure (a Dwarf became tapped)", g.perm(src).name);
+    }
+    Ok(())
 }
 
 /// the artifact or Dragon card Magda fetches: the best by worth
@@ -599,8 +620,45 @@ pub fn wan_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+/// --- card-models-2: p searched its library (`tutors::shuffle_library`, the shuffle after a search, as Archivist of
+/// Oghma): every Wan Shi Tong of p's opponents has one more search to answer, at the next state checks (`wan_sba`)
+pub fn searched(g: &mut Game, p: PlayerId) {
+    if g.hooks.is_empty() {
+        return;
+    }
+    let tongs: Vec<PermId> = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.iter().copied())
+        .filter(|&m| live(g, m) && !g.perm(m).neutered && card_name(g, m) == Some(WAN_SHI_TONG))
+        .collect();
+    for m in tongs {
+        let n = g.perm(m).data.int(crate::state::DataKey::T45Search);
+        g.perm_mut(m).data.set(crate::state::DataKey::T45Search, crate::state::Val::Int(n + 1));
+    }
+}
+
+/// Wan Shi Tong's searches still to answer: a trigger each ("put a +1/+1 counter on Wan Shi Tong and draw a card")
+fn wan_sba(g: &mut Game, src: Src) -> Res {
+    let n = g.perm(src).data.int(crate::state::DataKey::T45Search);
+    if n == 0 {
+        return Ok(());
+    }
+    g.perm_mut(src).data.remove(crate::state::DataKey::T45Search);
+    for _ in 0..n {
+        if !live(g, src) {
+            break;
+        }
+        let o = owner(g, src);
+        if trigger_window(g, o, Some(src), "+1/+1 counter and draw a card", None)? && live(g, src) {
+            repl::put_plus(g, src, 1);
+            draw(g, o, 1, false)?;
+        }
+    }
+    Ok(())
+}
+
 /// Whenever an opponent searches their library, put a +1/+1 counter on Wan Shi Tong and draw a card. The engine has no
-/// "searches" event: every search by `searcher` has to call this (engine-needs-legends2.md).
+/// "searches" event of its own: a direct call (the tests); the games use `searched` and `wan_sba` (card-models-2).
 pub fn wan_shi_tong_searched(g: &mut Game, searcher: PlayerId) -> Res {
     let tongs: Vec<PermId> = g
         .opps(searcher)
@@ -630,6 +688,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, WAN_SHI_TONG)?;
     c.hand_options = Some(wan_options);
     c.prio = Some(wan_prio); // never cast with X = 0
+    c.sba = Some(wan_sba); // --- card-models-2: the searches of opponents (`searched`)
     r.card(db, SKYTURTLE)?.hand_options = Some(turtle_options);
     let c = r.card(db, LEGOLAS)?;
     c.resolve = Some(legolas_resolve);
@@ -643,6 +702,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, MAGDA)?;
     c.as_enters = Some(magda_as);
     c.mana_tapped = Some(magda_mana);
+    c.sba = Some(magda_sba);
     c.attack = Some(magda_attack);
     at_once(c, Event::Attack, false);
     c.options = Some(magda_options);

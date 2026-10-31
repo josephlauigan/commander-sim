@@ -623,6 +623,10 @@ pub fn resolve_blocks(
     let to_walker =
         if crate::human::is_human(g, p) { g.human_walker_atk.clone() } else { walker_attacks(g, p, &atk, d, &assign) };
     cardcode::defend_hooks(g, p, &mut atk, d, &mut assign)?; // Aetherize, Yawgmoth, Kor Haven, ninjutsu ...
+    if g.end_combat {
+        g.blocking.clear();
+        return Ok(vec![]); // --- card-models-3: Mandate of Peace, cast once the blockers were declared
+    }
     crate::impls::tymna_partners::combat_trick(g, p, &atk, &assign)?; // thrasios, kraum: Blossoming Defense, Dark Endurance
     if g.humans.any() {
         step_priority(g, "blockers", Some(d), &atk)?; // practice mode: the declare blockers step's priority
@@ -709,6 +713,13 @@ pub fn resolve_blocks(
                         b_dies = false;
                     }
                     let dmg = if tr { (ap_raw - bt).max(0) * fs } else { 0 };
+                    // --- card-models-3: Zilortha, Apex of Ikoria: a non-Human may assign its damage as though unblocked
+                    let dmg = if crate::impls::card_models3::zilortha_unblocked(g, p, a, b, b_dies) {
+                        b_dies = false;
+                        ap
+                    } else {
+                        dmg
+                    };
                     if ap > 0 && cardcode::kaldra_exile(g, a, b)? {
                         b_dies = false; // Sword of Kaldra: exiles what it damages
                     }
@@ -777,6 +788,15 @@ pub fn resolve_blocks(
                     let name = g.perm(w).name;
                     *g.player_mut(d).lost_names.entry(name).or_insert(0) += 1;
                 }
+                dmg = 0;
+            }
+            if dmg > 0
+                && let Some(&(_, w)) = to_walker.iter().find(|x| x.0 == a)
+                && g.perm(w).on_bf
+                && g.perm(w).owner == p
+                && crate::impls::card_models3::defense(g, w) > 0
+            {
+                crate::impls::card_models3::battle_damage(g, p, a, w, dmg)?; // --- card-models-3: a battle
                 dmg = 0;
             }
             if dmg > 0 && crate::human::is_human(g, p) && to_walker.iter().any(|x| x.0 == a) {
@@ -940,7 +960,8 @@ pub fn walker_attacks(
                 && g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(Types::PLANESWALKER))
         })
         .collect();
-    if ws.is_empty() {
+    let battles = crate::impls::card_models3::battles_for(g, p, d); // --- card-models-3: the Sieges d protects
+    if ws.is_empty() && battles.is_empty() {
         return vec![];
     }
     let mut free: Vec<PermId> = atk
@@ -961,11 +982,14 @@ pub fn walker_attacks(
     order.sort_by(|&a, &b| {
         (cardcode::ult_pressure(g, b), pval(g, b)).partial_cmp(&(cardcode::ult_pressure(g, a), pval(g, a))).unwrap()
     });
+    let order: Vec<PermId> = battles.iter().copied().chain(order).collect(); // a battle first: defeating it pays off
     for w in order {
-        if pval(g, w) < 4.0 && cardcode::ult_pressure(g, w) < 0.6 {
+        let battle = battles.contains(&w);
+        if !battle && pval(g, w) < 4.0 && cardcode::ult_pressure(g, w) < 0.6 {
             continue;
         }
-        let mut need = g.perm(w).loyalty.unwrap_or(0);
+        let mut need =
+            if battle { crate::impls::card_models3::defense(g, w) } else { g.perm(w).loyalty.unwrap_or(0) };
         let wanderer = card_name(g, w) == Some("The Eternal Wanderer"); // no more than one creature can attack it
         let mut cap = if wanderer { 1 } else { 99 };
         let mut avail: Vec<PermId> = free.iter().copied().filter(|a| !out.iter().any(|x| x.0 == *a)).collect();

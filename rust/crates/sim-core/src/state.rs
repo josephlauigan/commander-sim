@@ -175,6 +175,18 @@ pub enum DataKey {
     MirageMirror,
     /// --- scion: Scion of the Ur-Dragon is a copy of a Dragon until end of turn (its own card is in `phys`)
     ScionCopy,
+    /// --- card-models-2: time counters of a permanent with vanishing (`t6_copies::vanishing_upkeep`)
+    Vanish,
+    /// --- card-models-2: Shifting Woodland is a copy of a permanent card until end of turn (its own card is in `phys`)
+    WoodlandCopy,
+    /// --- card-models-3: the cipher cards encoded on this creature (a list of `Val::Card`; `card_models3::cipher_hit`)
+    Cipher,
+    /// --- card-models-3: a battle's defense counters (`card_models3::battle_enter`)
+    Defense,
+    /// --- card-models-3: the player protecting a battle (a Siege: the opponent its controller chose)
+    Protector,
+    /// --- card-models-3: the "becomes tapped" watchers that last saw this permanent untapped (`card_models3::newly_tapped`)
+    TapArmed,
     /// Wall of Junk blocked this combat: it returns to its owner's hand at end of combat
     WallBlocked,
     TapOnReturn,
@@ -357,6 +369,8 @@ pub struct CopyExc {
     pub haste: bool,
     /// it is not legendary (Helm of the Host)
     pub not_legendary: bool,
+    /// --- card-models-2: it has vanishing N (Flesh Duplicate: 3): it enters with N time counters (`DataKey::Vanish`)
+    pub vanishing: u8,
 }
 
 /// An "enters as a copy of" replacement: the card that is copied, and the exceptions.
@@ -554,6 +568,9 @@ pub struct Player {
     pub emblems: Vec<Sym>,
     /// cards taken with Opposition Agent (castable with mana of any type)
     pub agent_ids: Vec<CardId>,
+    /// --- card-models-2: cards taken with Mnemonic Betrayal: at the next end step those not cast go back to their
+    /// owners' graveyards (`t6_blue::betrayal_return`)
+    pub betrayed: Vec<CardId>,
     /// the last turn a permanent of this player's left the battlefield (revolt)
     pub left_turn: Option<TurnStamp>,
     /// the last turn a card left this player's graveyard (Living History)
@@ -828,6 +845,7 @@ impl Player {
             speed_rose: None,
             emblems: vec![],
             agent_ids: vec![],
+            betrayed: vec![],
             left_turn: None,
             gy_left: None,
             nc_dmg_this: false,
@@ -1061,6 +1079,9 @@ pub struct Ctx {
     pub perms: Vec<PermId>,
     pub faces: Vec<PlayerId>,
     pub cards: Vec<CardId>,
+    /// --- card-models-2: an ability on the stack that the ability language runs: its card and ability index (a
+    /// copy of it can be resolved again, Peter Parker's Camera; its single `target` can be changed, Redirect Lightning)
+    pub dsl_ab: Option<(CardId, u16)>,
 }
 
 /// A spell or ability on the stack (Python's `StackItem`).

@@ -142,6 +142,9 @@ pub fn vorinclex(g: &Game, actor: PlayerId, n: i32) -> i32 {
 }
 
 fn vorinclex_mods(g: &Game, actor: PlayerId, mods: &mut Mods) {
+    for _ in 0..crate::impls::card_models3::innkeeper_doublings(g, actor) {
+        mods.push(Mod::Double, "Innkeeper's Talent"); // --- card-models-3
+    }
     for pl in &g.players {
         for &y in &pl.perms {
             if is(g, y, ReplFx::Vorinclex) && src_on(g, y) {
@@ -435,6 +438,9 @@ pub fn counters(g: &Game, actor: PlayerId, on: On, kind: Ctr, n: i32, path: Path
     if path.has(Path::VORINCLEX) {
         for (m, src) in vor.as_slice().iter().zip(vor.src.iter()) {
             mods.push(*m, src);
+        }
+        for _ in 0..crate::impls::card_models3::innkeeper_doublings(g, actor) {
+            mods.push(Mod::Double, "Innkeeper's Talent"); // --- card-models-3: level 3, the counters you put
         }
     }
     ordered(g, o, kind, n, &mods)

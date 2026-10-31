@@ -21,7 +21,7 @@ use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::turn::land_enters_tapped;
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::zones::{
-    Enter, die, discard_cards, draw, enter, enter_token_copy, make_artifact_tokens, max_by, min_by,
+    Enter, die, discard_cards, draw, enter, make_artifact_tokens, max_by, min_by,
 };
 use crate::engine::zones::{landfall, searchable};
 use crate::flow::Res;
@@ -428,35 +428,41 @@ pub fn delirium(g: &Game, p: PlayerId) -> bool {
     types.count_ones() >= 4
 }
 
+/// can Shifting Woodland become a copy of card c (a permanent card in p's graveyard): any permanent card but a
+/// planeswalker (no loyalty counters: it would die at once), a battle or an Aura (nothing to enchant), and not a legend
+/// p already controls (the legend rule would take one)
+pub fn woodland_can_copy(g: &Game, p: PlayerId, c: CardId) -> bool {
+    let d = g.db.get(c);
+    d.perm
+        && !d.types.has(Types::PLANESWALKER)
+        && !d.has_subtype("aura")
+        && !d.has_subtype("siege")
+        && !(d.tag(Tag::Leg)
+            && g.player(p)
+                .perms
+                .iter()
+                .chain(g.player(p).lands.iter())
+                .any(|&m| g.perm(m).on_bf && g.perm(m).cd.is_some_and(|x| g.db.get(x).name == d.name)))
+}
+
 /// the permanent card in p's graveyard the AI has Shifting Woodland copy: the best creature card (Oboro Breezecaller
-/// first: recursion for the Cradle line), not a legend p already controls
+/// first: recursion for the Cradle line), else the best artifact or enchantment card; never a land card (copying one
+/// gives up the {2}{G}{G} for one more land at best)
 pub fn woodland_pick(g: &Game, p: PlayerId) -> Option<CardId> {
-    let cands: Vec<CardId> = g
-        .player(p)
-        .gy
-        .iter()
-        .copied()
-        .filter(|&c| {
-            let d = g.db.get(c);
-            d.creature
-                && !(d.tag(Tag::Leg)
-                    && g.player(p)
-                        .perms
-                        .iter()
-                        .any(|&m| g.perm(m).on_bf && g.perm(m).cd.is_some_and(|x| g.db.get(x).name == d.name)))
-        })
-        .collect();
+    let cands: Vec<CardId> =
+        g.player(p).gy.iter().copied().filter(|&c| !g.db.get(c).land && woodland_can_copy(g, p, c)).collect();
     max_by(&cands, |c| {
         let d = g.db.get(c);
         let oboro = if &*d.name == "Oboro Breezecaller" { 100.0 } else { 0.0 };
-        oboro + card_worth(g, p, c, true) + d.cmc as f64
+        let creature = if d.creature { 10.0 } else { 0.0 };
+        oboro + creature + card_worth(g, p, c, true) + d.cmc as f64
     })
 }
 
 /// Delirium {2}{G}{G}: this land becomes a copy of target permanent card in your graveyard until end of turn. The AI
-/// does it in its first main phase when the delirium is there, the mana is spare and a creature card is worth copying.
+/// does it in its first main phase when the delirium is there, the mana is spare and a card is worth copying.
 fn woodland_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false) || g.active != Some(p) || !g.player(p).lands.contains(&l) || g.perm(l).tapped {
+    if post != Some(false) || g.active != Some(p) || !g.player(p).lands.contains(&l) {
         return Ok(vec![]);
     }
     if !delirium(g, p) || !can_pay(g, p, 2, "GG", false) {
@@ -473,6 +479,14 @@ fn woodland_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) ->
     }])
 }
 
+/// {2}{G}{G} can be paid without tapping the Woodland itself (it is about to stop being a land that makes {G})
+fn can_pay_besides(g: &mut Game, p: PlayerId, l: PermId) -> bool {
+    let was = std::mem::replace(&mut g.perm_mut(l).tapped, true);
+    let ok = can_pay(g, p, 2, "GG", false);
+    g.perm_mut(l).tapped = was;
+    ok
+}
+
 fn woodland_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (l, t) = (PermId((arg >> 32) as u32), CardId((arg & 0xffff_ffff) as u16));
     if !g.player(p).lands.contains(&l)
@@ -482,28 +496,80 @@ fn woodland_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     {
         return Ok(false);
     }
-    pay(g, p, 2, "GG", false)?;
-    if !ability_window(g, p, None, &format!("Shifting Woodland becomes a copy of {}", cname(g, t)), Some(3.0), None)? {
+    // the Woodland's own {G} is not spent on it when other mana can pay (the AI keeps the copy untapped)
+    let was = g.perm(l).tapped;
+    if !was && can_pay_besides(g, p, l) {
+        g.perm_mut(l).tapped = true;
+        pay(g, p, 2, "GG", false)?;
+        g.perm_mut(l).tapped = false;
+    } else {
+        pay(g, p, 2, "GG", false)?;
+    }
+    let label = format!("Shifting Woodland becomes a copy of {}", cname(g, t));
+    if !ability_window(g, p, Some(l), &label, Some(3.0), None)? {
         return Ok(true);
     }
-    if !g.player(p).lands.contains(&l) || !g.player(p).gy.contains(&t) {
-        return Ok(true);
-    }
-    // the land is the creature now: it makes no mana as a land; it has been under its controller's control all along
-    g.perm_mut(l).tapped = true;
-    crate::glog!(g, "  {} Shifting Woodland becomes a copy of {}", pname(g, p), cname(g, t));
-    if let Some(m) = enter_token_copy(g, p, t)?
-        && g.perm(m).on_bf
-    {
-        let x = g.perm_mut(m);
-        x.sick = false;
-        x.temp = true; // gone at the end step: the land is a land again
-    }
+    woodland_become(g, p, l, t);
     Ok(true)
 }
 
+/// Shifting Woodland (land l of p's) becomes a copy of permanent card t from p's graveyard until end of turn, if both
+/// are still there (else the ability does nothing). The permanent itself changes (`alela::set_face`): no enter
+/// triggers, the same permanent with its counters and tapped state; the card stays in the graveyard. A copy of a
+/// nonland card is no longer a land: it leaves `lands` for `perms` (a creature copy can attack, is counted as a
+/// creature, makes no {G}); it is summoning sick only if the Woodland came under p's control this turn. True if it
+/// became the copy.
+pub fn woodland_become(g: &mut Game, p: PlayerId, l: PermId, t: CardId) -> bool {
+    if !g.player(p).lands.contains(&l) || !g.perm(l).on_bf || !g.player(p).gy.contains(&t) {
+        return false;
+    }
+    if !woodland_can_copy(g, p, t) {
+        return false;
+    }
+    let own = g.perm(l).cd;
+    let new_this_turn = g.player(p).land_turn == g.player(p).turns as i32 && g.player(p).lands.last() == Some(&l);
+    crate::glog!(g, "  {} Shifting Woodland becomes a copy of {}", pname(g, p), cname(g, t));
+    crate::impls::alela::set_face(g, l, t);
+    let x = g.perm_mut(l);
+    x.phys = own;
+    x.data.set(DataKey::WoodlandCopy, Val::Bool(true));
+    if !g.db.get(t).land {
+        g.player_mut(p).lands.retain(|&x| x != l);
+        g.player_mut(p).perms.push(l);
+        g.perm_mut(l).sick = new_this_turn;
+    }
+    g.bf_ver += 1;
+    true
+}
+
+/// engine/turn.rs, at the start of every turn: a Shifting Woodland copy ends ("until end of turn"): the permanent is
+/// the Woodland again, a land (back in its controller's `lands`)
+pub fn woodland_revert(g: &mut Game) {
+    for i in 0..g.perms.len() {
+        let m = PermId(i as u32);
+        if !g.perm(m).data.truthy(DataKey::WoodlandCopy) {
+            continue;
+        }
+        g.perm_mut(m).data.remove(DataKey::WoodlandCopy);
+        if !g.perm(m).on_bf {
+            continue;
+        }
+        let Some(own) = g.perm(m).phys else { continue };
+        crate::impls::alela::set_face(g, m, own);
+        let o = g.perm(m).owner;
+        let x = g.perm_mut(m);
+        x.phys = None;
+        x.sick = false;
+        if !g.player(o).lands.contains(&m) {
+            g.player_mut(o).perms.retain(|&x| x != m);
+            g.player_mut(o).lands.push(m);
+        }
+        g.bf_ver += 1;
+    }
+}
+
 // ================================================================== Invasion of Ikoria // Zilortha, Apex of Ikoria
-const IKORIA: &str = "Invasion of Ikoria // Zilortha, Apex of Ikoria";
+pub const IKORIA: &str = "Invasion of Ikoria // Zilortha, Apex of Ikoria";
 
 /// the non-Human creature card with mana value X or less the AI finds, in the library or the graveyard: the deck's
 /// wish list first, else the most useful (card worth, then mana value). The bool is true for a library card.
@@ -535,10 +601,14 @@ pub fn ikoria_pick(g: &Game, p: PlayerId, x: i32) -> Option<(CardId, bool)> {
 
 /// {X}{G}{G}. When this Siege enters, search your library and/or graveyard for a non-Human creature card with mana
 /// value X or less and put it onto the battlefield; shuffle if you searched the library. X is all the spare mana.
-/// The Siege is a battle that stays on the battlefield and can be attacked; the engine has no battles, so the card
-/// goes to the graveyard (engine need: battles, Zilortha's back face).
-fn ikoria_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+/// The Siege enters first, a battle with 6 defense counters that an opponent protects (`card_models3::battle_enter`;
+/// attacked through `combat::walker_attacks`, defeated: Zilortha, Apex of Ikoria).
+fn ikoria_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     let x = ctx.x.max(0);
+    let battle = ctx.owner.is_none_or(|o| o == p);
+    if battle {
+        super::card_models3::battle_enter(g, p, c, 6)?;
+    }
     if let Some((c, lib)) = ikoria_pick(g, p, x) {
         if lib {
             remove_card(&mut g.player_mut(p).library, c);
@@ -552,7 +622,7 @@ fn ikoria_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> 
     } else if g.player(p).library.len() > 1 {
         shuffle_library(g, p); // a failed search of the library still shuffles
     }
-    Ok(intern("gy"))
+    Ok(intern(if battle { "handled" } else { "gy" }))
 }
 
 /// cast with enough mana for a two-drop: X = spare mana

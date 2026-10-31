@@ -123,9 +123,9 @@ pub fn grace_floor(g: &Game, p: PlayerId, life_after: i32) -> i32 {
 }
 
 /// **Angel's Grace** ({W} instant, split second): you can't lose the game this turn, your opponents can't win this
-/// turn, and damage can't take you below 1 life this turn. Split second is real (the card's keyword: `cast::split_second_up`). Partial: resolving it sets the turn flag
-/// (`grace_active`, `grace_floor`) but the engine does not read it yet ("can't lose" is a later feature)
-/// (engine-needs-stax.md). The AI never casts it (priority 0): a card that does nothing today is not worth casting.
+/// turn, and damage can't take you below 1 life this turn. Split second is real (the card's keyword: `cast::split_second_up`). Resolving it sets the turn flag
+/// `grace_active`, which `check_state`, `zones::last_chance` and `life::lose_life` (the damage floor) read
+/// (card-models-3). The AI casts it only when it would lose (`ai::t6_table::grace_save`; priority 0 otherwise).
 fn grace_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     set_flag(g, p, "stax_grace");
     crate::glog!(g, "    {} can't lose the game this turn (Angel's Grace)", pname(g, p));

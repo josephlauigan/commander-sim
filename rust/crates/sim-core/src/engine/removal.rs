@@ -38,6 +38,7 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
                 "cp" => is_c || ty.has(Types::PLANESWALKER),
                 "cap" => is_c || ty.has(Types::ARTIFACT) || ty.has(Types::PLANESWALKER),
                 "ce" => is_c || ty.has(Types::ENCHANTMENT),
+                "cep" => is_c || ty.has(Types::ENCHANTMENT) || ty.has(Types::PLANESWALKER), // --- card-models-3: Get Lost
                 "nl" | "p" | "blue" => true,
                 "a" => ty.has(Types::ARTIFACT),
                 "cna" => is_c && !ty.has(Types::ARTIFACT),
@@ -172,6 +173,9 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
     if let Some(a) = actor.filter(|&a| a != owner) {
         crate::impls::bites::becomes_target(g, m, a)?; // Tenured Concocter: "becomes the target of ... an opponent controls"
         crate::impls::green_cards::becomes_target(g, m, a)?; // Cactarantula
+    }
+    if !matches!(&*kind, "edict" | "wipe") && crate::impls::t6_copies::image_targeted(g, m)? && !g.perm(m).on_bf {
+        return Ok(()); // --- card-models-2: a Phantasmal Image that became the target is sacrificed
     }
     if (kind == "destroy" || kind.starts_with("dmg")) && indestructible(g, m) {
         crate::glog!(g, "    {} ({}) is indestructible", g.perm(m).name, g.player(owner).name);

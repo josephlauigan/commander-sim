@@ -8,7 +8,7 @@
 //! - Preston, the Vanisher: Illusion token copies of creatures that entered without being cast; the five-Illusion exile.
 //! - Dack Fayden, Helping Hand: the flip, shuffle, donation and goad.
 //! - Gideon of the Trials: the walker framework (+1 prevent via Dovin's lock, 0 animate, 0 emblem).
-//! - Paladin Class: the tax, level-ups and the level 3 attack trigger (the level 2 anthem is an engine need).
+//! - Paladin Class: the tax, level-ups, the level 2 anthem (`paladin_pt`) and the level 3 attack trigger.
 //!
 //!
 //! The banishers' enter hooks read "you" from the enter call's `p` (the player the creature entered under), not from
@@ -672,9 +672,28 @@ fn paladin_level_up(g: &mut Game, src: PermId, p: PlayerId, level: i64) -> Res<b
     pay(g, p, generic, "W", false)?;
     if ability_window(g, p, Some(src), &format!("level {level}"), None, None)? && g.perm(src).on_bf {
         g.perm_mut(src).data.set(DataKey::Level, Val::Int(level));
+        g.selfpt = true; // the Level 2 anthem (paladin_pt)
         crate::glog!(g, "  {} levels Paladin Class to {level}", pname(g, p));
     }
     Ok(true)
+}
+
+/// Level 2: creatures you control get +1/+1 (one per Paladin Class of level 2 or more), read from `creature_pt` while
+/// `g.selfpt` is on (card-models-3)
+fn paladin_pt(g: &Game, m: PermId) -> (i32, i32) {
+    if !g.is_creature(m) {
+        return (0, 0);
+    }
+    let o = g.perm(m).owner;
+    let n = g
+        .player(o)
+        .perms
+        .iter()
+        .filter(|&&y| {
+            g.perm(y).on_bf && !g.perm(y).phased && crate::engine::values::card_name(g, y) == Some("Paladin Class") && paladin_level(g, y) >= 2
+        })
+        .count() as i32;
+    (n, n)
 }
 
 /// Level 3: whenever you attack, until end of turn target attacking creature gets +1/+1 for each other attacking
@@ -779,6 +798,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.cost = Some(paladin_tax);
     c.options = Some(paladin_options);
     c.attack = Some(paladin_attack);
+    r.creature_pt.push(paladin_pt);
     walker(r, db, "Gideon of the Trials", &GIDEON)?;
     r.card(db, "Gideon of the Trials")?.end_step = Some(gideon_end);
     let c = r.card(db, "Preston, the Vanisher")?;
