@@ -37041,6 +37041,92 @@
    "spell_prio": false
   },
   {
+   "name": "Elspeth Tirel",
+   "types": "P",
+   "generic": 3,
+   "pips": "WW",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "loyalty",
+     "loyalty": 2,
+     "effects": [
+      {
+       "do": "gain_life",
+       "n": "creatures_you_control",
+       "who": "you",
+       "mult": 1
+      }
+     ]
+    },
+    {
+     "type": "loyalty",
+     "loyalty": -2,
+     "effects": [
+      {
+       "do": "token",
+       "n": 3,
+       "pow": 1,
+       "tgh": 1,
+       "keywords": [],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "soldier"
+       ],
+       "color": "W"
+      }
+     ]
+    },
+    {
+     "type": "loyalty",
+     "loyalty": -5,
+     "effects": [
+      {
+       "do": "destroy",
+       "what": {
+        "sel": "all",
+        "filter": {
+         "type": "land",
+         "other": true
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "start_loyalty": "4",
+   "kws": [],
+   "subtypes": [
+    "elspeth"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Elspeth, Sun's Champion",
    "types": "P",
    "generic": 4,
