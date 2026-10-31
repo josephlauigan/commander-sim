@@ -149,7 +149,9 @@ pub struct Knobs {
     pub max_visits: u32,
     /// the stakes test (`AI_SEARCH_GATE=0`: every decision is searched)
     pub gate: bool,
-    /// the stakes test's close call: the policy's top two real options within this much utility
+    /// the stakes test's close call: the policy's top two real options within this much utility. Default: no
+    /// limit, so every decision with two or more real options is searched (t1 half B, 2000 games: a limit of 0.5
+    /// cost 2 points, -3.7 [-7.3, -0.1], against -1.8 [-5.5, +1.9] with none, at the same steps)
     pub close: f64,
     /// the fewest shared copies on which the search may overrule the policy's top play, or call a leader clear
     /// (`AI_SEARCH_PAIRS`; today's margin has 6 at the least)
@@ -170,7 +172,7 @@ pub const DEPTH: usize = 3;
 pub const WIDEN: f64 = 0.5;
 pub const MIN_VISITS: u32 = 2;
 pub const MAX_VISITS: u32 = 24;
-pub const CLOSE: f64 = 0.5;
+pub const CLOSE: f64 = f64::INFINITY;
 pub const PAIRS: usize = 6;
 
 fn env_knobs() -> &'static Knobs {
