@@ -1,0 +1,100 @@
+1 Ancient Tomb (plst) TMP-315
+1 Badlands (cei) 278
+1 Bayou (ced) 279
+1 Birds of Paradise (blc) 81
+1 Blood Crypt (ecl) 349
+1 Bloodstained Mire (mh3) 352
+1 Brass Squire (mbs) 101
+1 Breeding Pool (unf) 286
+1 Cavern of Souls (ltc) 362
+1 Chaos Warp (pw24) 7
+1 Chrome Mox (2xm) 358
+1 City of Brass (2x2) 403
+1 Combat Celebrant (trc) 281
+1 Command Tower (mic) 170
+1 Conqueror's Flail (sld) 1571
+1 Cyclonic Rift (2xm) 339
+1 Decimate (sld) 140
+1 Demonic Tutor (sld) 1856
+1 Dragonlord Ojutai (slc) 2015
+1 Dualcaster Mage (jmp) 313
+1 Embercleave (eld) 359
+1 Enlightened Tutor (dmr) 412
+1 Flooded Strand (mh3) 353
+1 Force of Negation (2x2) 346
+1 Force of Will (2xm) 340
+1 Forest (sos) 271
+1 Gaea's Cradle (usg) 321
+1 Gilgamesh, Master-at-Arms (fin) 338
+1 Glorybringer (akh) 134
+1 Godo, Bandit Warlord (fca) 13
+1 Goldspan Dragon (sld) 1780
+1 Grand Abolisher (cmm) 625
+1 Grim Monolith (ulg) 126
+1 Hallowed Fountain (unf) 277
+1 Hammer of Nazahn (cmm) 606
+1 Helm of the Host (brr) 82
+1 Imperial Recruiter (mh2) 314
+1 Imperial Seal (2x2) 354
+1 Inventors' Fair (sld) 1735
+1 Jaxis, the Troublemaker (snc) 461
+1 Kaldra Compleat (pspl) 2
+1 Kindred Dominance (cmm) 640
+1 Kura, the Boundless Sky (neo) 200
+1 Lightning Greaves (sld) 99
+1 Llanowar Elves (3ed) 211
+1 Lotus Petal (plst) TMP-294
+1 Mana Confluence (sld) 1012a
+1 Mana Drain (2x2) 348
+1 Mana Vault (ced) 260
+1 Marsh Flats (spg) 115
+1 Maskwood Nexus (sld) 1904
+1 Misty Rainforest (spg) 111
+1 Mox Diamond (sth) 138
+1 Nature's Lore (fic) 311
+1 Nicol Bolas, the Ravager (sld) 1158
+1 Open the Armory (sld) 2089
+1 Overgrown Tomb (rvr) 296
+1 Pact of Negation (ltc) 523
+1 Paradise Druid (pwar) 171
+1 Peter Parker's Camera (spm) 171
+1 Plateau (ced) 280
+1 Polluted Delta (mh3) 356
+1 Puresteel Paladin (cmm) 627
+1 Rampant Growth (fic) 313
+1 Rhystic Study (pcy) 45
+1 Sacred Foundry (unf) 285
+1 Scrubland (cei) 282
+1 Shadowspear (ltc) 353
+1 Sigarda's Aid (sld) 731
+1 Smothering Tithe (cmm) 57
+1 Sol Ring (cmm) 703
+1 Steam Vents (unf) 283
+1 Steelshaper's Gift (5dn) 19
+1 Sting, the Glinting Dagger (ltr) 409
+1 Stomping Ground (rvr) 299
+1 Stoneforge Mystic (2xm) 337
+1 Swiftfoot Boots (fic) 361
+1 Sword of Feast and Famine (2xm) 364
+1 Sword of Fire and Ice (2xm) 365
+1 Swords to Plowshares (pf25) 12
+1 Sylvan Library (spg) 155
+1 Taiga (cei) 283
+1 Teferi's Protection (mar) 51
+1 Temple Garden (unf) 281
+1 Terror of the Peaks (pspl) 1
+1 The One Ring (ltr) 451
+1 The Ur-Dragon (sld) 11
+1 Thundermaw Hellkite (scd) 164
+1 Tropical Island (cei) 284
+1 Tundra (ced) 285
+1 Twinflame (2x2) 455
+1 Underground Sea (ced) 286
+1 Vampiric Tutor (soa) 100
+1 Verdant Catacombs (spg) 113
+1 Volcanic Island (ced) 287
+1 Watery Grave (rvr) 301
+1 Windswept Heath (mh3) 360
+1 Wooded Foothills (mh3) 361
+1 Worldly Tutor (dmr) 442
+1 Wrenn and Six (2x2) 334
