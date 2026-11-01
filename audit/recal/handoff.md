@@ -38,7 +38,7 @@ Brief: `rust/agents/recal-2.md`. Results: `audit/recal/stage2-2026-11-01.md`. Ba
 
 ## Stage 2 state
 
-- [~] 1. Evaluation refit: q1 recording done 17:32 (1h27), training done (results section 1; raw data deleted); q2 (half pairs, `halves2.sh` reads them) started 17:35.
-- [ ] 2. Style fit t0-t6.
+- [x] 1. Evaluation refit (16:05-20:00, 3h55): refitted model committed (9f0b47f1; `recal2/model-new.toml`, old one `recal2/model-old.toml`); one test fails with it (results, section 1), coordinator told. Binary for steps 2+: `bin/commander-sim-final` -> `commander-sim-new`.
+- [~] 2. Style fit t0-t6: `q3.sh` (fit, then the check, per tier; prints "tN check: ..." lines with `loss.awk`). Started 20:00.
 - [ ] 3. Pool check.
 - [ ] 4. JD's decks remeasured: ON HOLD (coordinator, 10/31 18:30): hand back after step 3; the coordinator merges origin/main (urdragon #194, kefka, sauron, thrasios #195 list changes) first and sends step 4 with a rebuilt binary. Don't merge main.
