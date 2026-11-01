@@ -2451,17 +2451,25 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
         let x = g.perm(src);
         let Some(cd) = x.cd else { continue };
         let d = g.db.get(cd);
-        if !d.has_dsl() || d.tags.str(Tag::Prot) == Some("boots") {
+        // --- plan-files-3: a plan's equip for Equipment whose equip is card code only (Champion's Helm)
+        let extra = if d.has_dsl() { None } else { crate::ai::plan_data::equip_extra(g, p, &d.name) };
+        if (!d.has_dsl() && extra.is_none()) || d.tags.str(Tag::Prot) == Some("boots") {
             continue;
         }
-        let Some(n) = d.abilities.iter().find_map(|a| match a {
-            Ability::Static { kind, mana, .. } if kind == "equip_cost" => Some(mana.unwrap_or(2)),
-            _ => None,
-        }) else {
+        let Some(n) = d
+            .abilities
+            .iter()
+            .find_map(|a| match a {
+                Ability::Static { kind, mana, .. } if kind == "equip_cost" => Some(mana.unwrap_or(2)),
+                _ => None,
+            })
+            .or(extra.map(|x| x[0]))
+        else {
             continue;
         };
         if x.attached.is_some_and(|t| g.perm(t).on_bf && g.perm(t).owner == p && !g.perm(t).phased)
             && !crate::impls::cloud::wants_move(g, p, src)
+            && !crate::ai::plan_data::equip_moves(g, p, src)
         {
             continue;
         }
@@ -2496,6 +2504,7 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
             (if y.army { 3.0 } else { 0.0 }) + if flies { 2.0 } else { 0.0 } + 0.3 * epow(g, m) as f64
                 - if y.sick { 1.0 } else { 0.0 }
                 + crate::impls::cloud::holder_bonus(g, p, m)
+                + crate::ai::plan_data::equip_holder_bonus(g, p, m)
                 + crate::impls::tymna_cards::equip_holder_value(g, p, src, m)
         };
         let best = max_by(&cands, score).unwrap();
@@ -2513,7 +2522,8 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
                 Ability::Static { kind, pow, .. } if kind == "equip_bonus" => *pow,
                 _ => None,
             })
-            .sum();
+            .sum::<i32>()
+            + extra.map_or(0, |x| x[1] as i32);
         let trig = d
             .abilities
             .iter()
@@ -2521,6 +2531,7 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
             .count();
         let u = 2.5 + 0.5 * bonus as f64 + 2.0 * trig as f64 - 0.3 * n as f64
             + crate::impls::cloud::equip_utility_bonus(g, p, src, best)
+            + crate::ai::plan_data::equip_utility(g, p, best)
             + crate::impls::tymna_cards::equip_utility_value(g, p, src, best);
         out.push(Opt {
             utility: u,

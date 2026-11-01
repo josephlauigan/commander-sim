@@ -710,7 +710,8 @@ pub fn attack_filter(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -
     if is_main(hand_key(g, p)) {
         return atk;
     }
-    pool::attack_filter(g, p, atk, d)
+    let atk = pool::attack_filter(g, p, atk, d);
+    plan_data::stay_home(g, p, atk, d) // --- plan-files-3: the plan's stay-home rules (none: unchanged)
 }
 
 /// the attack plan at the first combat of p's turn: (defender, 'filtered' | 'all' | 'none'). A look-ahead copy

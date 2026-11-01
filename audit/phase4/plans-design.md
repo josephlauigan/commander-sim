@@ -154,3 +154,32 @@ Each is loader-validated (a bad file is refused with its name and reason) and un
 - **Tier 6 decks**: the five plan slots (`t6_plans.rs`) read the plan file when it is on (`plan_data::t6`); the
   file's wish/prio do not also feed the generic `DeckConfig` path (the shared fallbacks stay). `t6_plans::HAND` lists
   the decks that still have a hand plan file.
+
+## plan-files-3 (2026-11-01): schema features for the cloud, yshtola and sheoldred plan files
+
+For the plan files that are to replace the three hand AIs kept by the recalibration (`audit/<deck>/plan-file-
+2026-11-01.md`). Each is loader-validated and unit-tested in `tests/plan_files_3.rs`; only those three files use them,
+and those files are read only with their hand AI off, so the default play of every deck is unchanged.
+
+- **Equipment holder** (`[equip] holder = "commander", bonus, utility, move, extra`), read by `dsl::equip_options`:
+  the commander's score among the equip targets gets `bonus` (default 20), an equip onto it `utility` (default 0),
+  Equipment worn by another of the deck's creatures moves onto it (`move`, default true; still only past the move
+  margin), and `extra = { "<card>" = [cost, power] }` gives the equip of an Equipment whose equip is card code only
+  (Champion's Helm, Sword of Feast and Famine): its cost, and the +N power the equip's utility counts (cost at most 10).
+- **Card plays** (`plays = [cards]`): card-code plays written for a JD deck's hand AI (gated on its key) that the
+  generic policy offers for this deck too: the X drains' main-phase cast (`yshtola::x_option`: Exsanguinate, Debt to
+  the Deathless), and sheoldred's Dark Deal, Peer into the Abyss, Painful Lesson, Otherworld Atlas, Temple Bell and the
+  draw lands (`plan_data::plays`; the gates read it next to the deck key).
+- **Stay home** (`[[stay_home]] when`), read by `ai::attack_filter` (after the pool's filter) and the look-ahead's
+  all-out attack (`combat.rs`): the commander leaves the attack when a rule's condition holds, read for that attack.
+  New atoms and quantities (they read the commander being rated in an attack, else p's first on the battlefield):
+  `commander-indestructible`, `cmd-power`, `cmd-blockers` (the defender's untapped creatures that can block it; no
+  defender: every opponent's), `cmd-killers` (of those, the ones that would kill it: power at least its toughness, not
+  out-struck by its first strike; 0 while indestructible), `cmd-wears:<set>` (Equipment of the set on it), `atk-power`
+  (the attack's total power) and `def-life` (the defender's life; no defender: the lowest opponent's).
+- **Priority added** (`[[prio_add]]`, the selectors and fields of `[[prio]]`): the first rule selecting a card whose
+  condition holds adds its value to the card's cast priority, whatever gave it (a prio rule, a key card, the generic
+  priority), when that is above 0 (`pool::generic_prio`). Y'shtola's cast trigger on the MV 3+ noncreature spells.
+- **Knobs**: `commander_chumps_to_live = true` (the commander chump-blocks only when the attack would otherwise kill,
+  `combat.rs`); `adnaus_main2 = true` (Ad Nauseam also in the deck's own second main phase with room for four cards,
+  `plans::adnaus_cast_now`).

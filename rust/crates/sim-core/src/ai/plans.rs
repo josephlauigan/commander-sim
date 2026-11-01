@@ -352,7 +352,12 @@ pub fn adnaus_cast_now(g: &Game, p: PlayerId) -> bool {
     let room = (adnaus_hand_cap(g, p) + 1).saturating_sub(g.player(p).hand.len());
     // the sheoldred deck taps out on its own turn, so it never holds 5 mana for the opposing end step; its own second
     // main phase (everything better already cast) is when the mana is idle
-    if super::hand_key(g, p) == "sheoldred" && g.active == Some(p) && g.step == crate::state::Step::Main2 && room >= 4 {
+    // --- plan-files-3: or a plan's `adnaus_main2`
+    if (super::hand_key(g, p) == "sheoldred" || super::plan_data::adnaus_main2(g, p))
+        && g.active == Some(p)
+        && g.step == crate::state::Step::Main2
+        && room >= 4
+    {
         return true;
     }
     g.active != Some(p) && room >= 4
