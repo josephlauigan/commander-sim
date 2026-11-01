@@ -41,4 +41,4 @@ Brief: `rust/agents/recal-2.md`. Results: `audit/recal/stage2-2026-11-01.md`. Ba
 - [~] 1. Evaluation refit: q1 recording done 17:32 (1h27), training done (results section 1; raw data deleted); q2 (half pairs, `halves2.sh` reads them) started 17:35.
 - [ ] 2. Style fit t0-t6.
 - [ ] 3. Pool check.
-- [ ] 4. JD's decks remeasured.
+- [ ] 4. JD's decks remeasured: ON HOLD (coordinator, 10/31 18:30): hand back after step 3; the coordinator merges origin/main (urdragon #194, kefka, sauron, thrasios #195 list changes) first and sends step 4 with a rebuilt binary. Don't merge main.
