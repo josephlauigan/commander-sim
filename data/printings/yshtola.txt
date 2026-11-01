@@ -2,7 +2,7 @@
 1 Anguished Unmaking (pip) 209
 1 Arcane Signet (lcc) 104
 1 Arrest (mmq) 4
-1 Austere Command (brc) 69
+1 Austere Command (spg) 160
 1 Bound in Silence (tsr) 10
 1 Bribery (sld) 1786
 1 Cast Away Doubt (fra) 51
@@ -11,69 +11,71 @@
 1 Chromatic Lantern (drc) 53
 1 Coalition Relic (fut) 161
 1 Command Tower (sld) 1697
-1 Consecrated Sphinx (sld) 2028
+1 Consecrated Sphinx (sld) 1657
 1 Dark Petition (sch) 19
 1 Debt to the Deathless (rvr) 364
 1 Deep Analysis (dmr) 46
 1 Diabolic Tutor (sld) 1592
+1 Displacer Kitten (clb) 63
 1 Dovin's Veto (p30a) 27
-1 Encrust (m15) 53
 1 Esper Sentinel (mh2) 328
-1 Evolving Wilds (dbl) 530
-1 Exotic Orchard (brc) 185
 1 Exsanguinate (cmm) 638
-1 Fabled Passage (tmc) 67
 1 Farewell (neo) 436
 1 Fatal Push (fca) 9
+1 Flooded Strand (mh3) 353
 1 Force of Will (dmr) 418
 1 Generous Gift (cmr) 620
-1 Glacial Fortress (fic) 400
 1 Go for the Throat (j25) 447
+1 Godless Shrine (rvr) 294
 1 Gonti, Lord of Luxury (plst) KLD-84
 1 Grand Arbiter Augustin IV (2x2) 379
+1 Hallowed Fountain (clu) 277
 1 Hostage Taker (lcc) 271
 1 Idyllic Tutor (thb) 24
 1 Ill-Gotten Inheritance (rvr) 77
 7 Island (trk) 320
-1 Isolated Chapel (soc) 382
 1 Lightning Greaves (2xm) 360
 1 Marauding Blight-Priest (znr) 112
+1 Marsh Flats (mh2) 476
 1 Massacre Wurm (m21) 316
 1 Memory Trap (fra) 15
 1 Mystic Remora (dmr) 420
 1 Mystical Tutor (dmr) 421
 1 Necropotence (wot) 74
-1 Night's Whisper (plst) EMA-100
 1 Notion Thief (spg) 36
 1 Orcish Bowmasters (hoc) 19
 1 Path to Exile (ss2) 3
-8 Plains (trk) 318
+7 Plains (trk) 318
 1 Polluted Bonds (wot) 75
-1 Prairie Stream (msc) 257
+1 Polluted Delta (mh3) 356
 1 Prayer of Binding (dmu) 28
 1 Prison Sentence (bro) 21
-1 Propaganda (m3c) 191
+1 Propaganda (tmp) 80
 1 Read the Bones (cmm) 182
 1 Restoration Angel (2x2) 421
+1 Rhystic Study (pcy) 45
 1 Sanguine Bond (tsr) 330
-1 Shattered Sanctum (sos) 260
+1 Scrubland (cei) 282
+1 Serra's Sanctum (usg) 325
 1 Skyclave Apparition (soc) 173
-1 Smothering Tithe (cmm) 693
+1 Smothering Tithe (2x2) 423
 1 Sol Ring (m3c) 305
-1 Sphere of Safety (dsc) 104
-1 Spire of Industry (brc) 203
+1 Sphere of Safety (sld) 588
 1 Static Net (bro) 27
-9 Swamp (trk) 321
+8 Swamp (trk) 321
 1 Talisman of Progress (msc) 221
 1 Teferi's Protection (sta) 74
-1 Terramorphic Expanse (ltc) 337
+1 Teleportation Circle (afr) 39
 1 Tezzeret's Gambit (plst) NPH-47
 1 The Eternal Wanderer (one) 335
 1 Thief of Sanity (otc) 243
+1 Tundra (ced) 285
 1 Underground River (wc98) bs362
+1 Underground Sea (cei) 286
 1 Urborg Syphon-Mage (dmr) 106
+1 Urborg, Tomb of Yawgmoth (ltc) 375
 1 Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal (fin) 329
-1 Windborn Muse (dmr) 415
+1 Watery Grave (rvr) 301
 1 Y'shtola, Night's Blessed (fic) 207
 1 Your Fate Ends Here (fra) 24
 1 Zur the Enchanter (dmr) 374
