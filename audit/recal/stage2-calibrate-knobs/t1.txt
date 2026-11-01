@@ -1,0 +1,25 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t1 Isshin        100 cards: Full 82, Full-auto 11, Approximate 7, Partial 0, Unmodeled 0
+  t1 Lathril       100 cards: Full 78, Full-auto 16, Approximate 6, Partial 0, Unmodeled 0
+  t1 Light-Paws    100 cards: Full 89, Full-auto 9, Approximate 2, Partial 0, Unmodeled 0
+  t1 Tatyova       100 cards: Full 75, Full-auto 24, Approximate 1, Partial 0, Unmodeled 0
+  t1 Teysa Karlov  100 cards: Full 80, Full-auto 18, Approximate 2, Partial 0, Unmodeled 0
+
+
+=== Within-tier balance [loose, n=1500 games per tier; each deck is seated in ~80%] ===
+  Tier 1 (High B2 / Low B3): avg game 10.1 rounds, timeouts 1.1%
+    Isshin                        24.1% (21.8-26.6)  [0.0 pts from round-cap wins]
+    Lathril                       19.6% (17.5-22.0)  [0.3 pts from round-cap wins]
+    Light-Paws                    46.3% (43.5-49.1)  HIGH  [0.3 pts from round-cap wins]
+    Tatyova                       16.8% (14.8-19.1)  [0.1 pts from round-cap wins]
+    Teysa Karlov                  18.2% (16.1-20.4)  [0.6 pts from round-cap wins]
+
+=== Tier ordering: each deck alone against three decks of the tier below [loose, n=1500] ===
+  Tier 1 (High B2 / Low B3) into Tier 0 (Bracket 2 precons): 30.1% overall
+    Isshin                        32.0% (29.7-34.4)
+    Lathril                       21.3% (19.3-23.5)  (not above 25%)
+    Light-Paws                    48.5% (46.0-51.1)
+    Tatyova                       18.1% (16.2-20.1)  (not above 25%)
+    Teysa Karlov                  30.5% (28.3-32.9)
+
+(2442s total)
