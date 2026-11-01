@@ -1789,7 +1789,7 @@ fn lesson_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> 
 }
 
 fn lesson_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if hand_key(g, p) != "sheoldred" || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
+    if !plays_it(g, p, name_of(g, c)) || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
         return Ok(vec![]);
     }
     if let Some(q) = drain_target(g, p, 2) {
@@ -1850,7 +1850,7 @@ fn opp_hand_total(g: &Game, p: PlayerId) -> usize {
 }
 
 fn deal_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if hand_key(g, p) != "sheoldred" || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
+    if !plays_it(g, p, name_of(g, c)) || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
         return Ok(vec![]);
     }
     // each card an opponent redraws costs them 2; keep it for when they hold plenty and we hold little
@@ -1959,8 +1959,8 @@ fn bell_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 
 /// tap the Bell / use the Sanitarium or Mikokoro: only while a draw punisher is out, at the end of an opponent's turn
 /// (post: None), or in a main phase when it kills. None: don't.
-fn punish_window_utility(g: &Game, p: PlayerId, post: Option<bool>) -> Option<f64> {
-    if hand_key(g, p) != "sheoldred" || human(g, p) || draw_toll(g, p) == 0 || g.player(p).library.len() < 4 {
+fn punish_window_utility(g: &Game, p: PlayerId, post: Option<bool>, card: &str) -> Option<f64> {
+    if !plays_it(g, p, card) || human(g, p) || draw_toll(g, p) == 0 || g.player(p).library.len() < 4 {
         return None;
     }
     match post {
@@ -1975,7 +1975,7 @@ fn bell_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
     if owner(g, src) != p || !x.on_bf || x.tapped || x.phased || x.neutered {
         return Ok(vec![]);
     }
-    let Some(u) = punish_window_utility(g, p, post) else { return Ok(vec![]) };
+    let Some(u) = punish_window_utility(g, p, post, g.perm(src).name) else { return Ok(vec![]) };
     Ok(vec![Opt {
         utility: u,
         label: "Temple Bell: each player draws".into(),
@@ -2012,7 +2012,7 @@ fn atlas_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     if owner(g, src) != p || !x.on_bf || x.tapped || x.phased || x.neutered {
         return Ok(vec![]);
     }
-    if hand_key(g, p) != "sheoldred" || human(g, p) {
+    if !plays_it(g, p, g.perm(src).name) || human(g, p) {
         return Ok(vec![]);
     }
     let k = x.data.int(DataKey::Charge);
@@ -2021,7 +2021,8 @@ fn atlas_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     let safe = g.player(p).library.len() as i64 >= k + 4;
     if k > 0 && safe && (k >= 2 || kills) {
         if let Some(u) =
-            punish_window_utility(g, p, post).or(if kills && g.active == Some(p) { Some(7.0) } else { None })
+            punish_window_utility(g, p, post, g.perm(src).name)
+                .or(if kills && g.active == Some(p) { Some(7.0) } else { None })
         {
             return Ok(vec![Opt {
                 utility: u,
@@ -2065,7 +2066,7 @@ fn draw_land_options(
     if g.perm(l).tapped || !g.player(p).lands.contains(&l) {
         return Ok(vec![]);
     }
-    let Some(u) = punish_window_utility(g, p, post) else { return Ok(vec![]) };
+    let Some(u) = punish_window_utility(g, p, post, g.perm(l).name) else { return Ok(vec![]) };
     if !can_pay_without(g, p, l, 2, "") {
         return Ok(vec![]);
     }
@@ -2125,7 +2126,7 @@ fn peer_kills(g: &Game, q: PlayerId, toll: i32) -> bool {
 }
 
 fn peer_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if hand_key(g, p) != "sheoldred" || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
+    if !plays_it(g, p, name_of(g, c)) || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
         return Ok(vec![]);
     }
     let toll = draw_toll(g, p);
@@ -2502,4 +2503,10 @@ fn register_seph(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.self_pt = Some(seph_pt);
     c.grant_kw = Some(seph_kw);
     Ok(())
+}
+
+/// --- plan-files-3: the sheoldred deck's hand AI makes this card's play, or the generic policy does for a plan whose
+/// `plays` list it (the draw punishers' activations, Dark Deal, Peer into the Abyss)
+fn plays_it(g: &Game, p: PlayerId, card: &str) -> bool {
+    hand_key(g, p) == "sheoldred" || crate::ai::plan_data::plays(g, p, card)
 }

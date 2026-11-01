@@ -526,7 +526,10 @@ pub fn ai_blocks(
                 continue; // the damage is prevented anyway: no chump blocks
             } else if ap >= 2 && rng.random() < ai::chump_prob(g, d, incoming) {
                 let mut cs = cands.clone();
-                if hand_key(g, d) == "yshtola" && incoming < g.player(d).life {
+                // --- plan-files-3: or a plan's `commander_chumps_to_live`
+                if (hand_key(g, d) == "yshtola" || crate::ai::plan_data::commander_chumps_to_live(g, d))
+                    && incoming < g.player(d).life
+                {
                     cs.retain(|&x| !g.perm(x).is_cmd); // Y'shtola is the engine: she chumps only to live
                     if cs.is_empty() {
                         continue;
@@ -1129,7 +1132,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                 let all_atk = if hand_key(g, p) == "cloud" {
                     crate::impls::cloud::all_out_trim(g, p, all_atk, d)
                 } else {
-                    all_atk
+                    crate::ai::plan_data::stay_home(g, p, all_atk, d) // --- plan-files-3 (no rules: unchanged)
                 };
                 vec![(d, all_atk)] // everything at one player
             } else {

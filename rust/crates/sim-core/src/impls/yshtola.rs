@@ -346,7 +346,8 @@ fn x_option(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec
     if post.is_none()
         || g.active != Some(p)
         || !hand_has(g, p, c)
-        || !matches!(hand_key(g, p), "yshtola" | "sheoldred")
+        || (!matches!(hand_key(g, p), "yshtola" | "sheoldred")
+            && !crate::ai::plan_data::plays(g, p, &g.db.get(c).name)) // --- plan-files-3: a plan's `plays`
     {
         return Ok(vec![]);
     }

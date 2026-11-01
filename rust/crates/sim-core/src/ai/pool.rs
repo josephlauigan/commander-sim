@@ -92,6 +92,12 @@ fn creatures_of(g: &Game, p: PlayerId) -> usize {
 /// pool_ai.generic_prio: a 0-90 cast priority from what the card is tagged to do. 0: not cast proactively (held
 /// interaction, or no tags: the heuristic AI then falls back to the ability language's value estimate).
 pub fn generic_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    let v = generic_prio_base(g, p, c);
+    // --- plan-files-3: a plan's `prio_add` rules on top of a priority above 0 (no rule: unchanged)
+    if v > 0 { v + super::plan_data::prio_add(g, p, c) as i32 } else { v }
+}
+
+fn generic_prio_base(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let pl = g.player(p);
     let d = g.db.get(c);
     let t = &d.tags;
