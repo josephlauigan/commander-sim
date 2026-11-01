@@ -1,7 +1,9 @@
+1 An Offer You Can't Refuse (fdn) 160
 1 Arcane Signet (p30m) 1P
 1 Barad-dûr (ltr) 425
 1 Bitter Triumph (soa) 26
 1 Blood Crypt (ecl) 349
+1 Bloodchief's Thirst (znr) 388
 1 Bloodsoaked Insight // Sanguine Morass (mh3) 252
 1 Call of the Ring (ltr) 355
 1 Chandra's Ignition (plst) ORI-137
@@ -37,7 +39,7 @@
 1 Massacre Wurm (moc) 256
 1 Mauhúr, Uruk-hai Captain (ltr) 214
 1 Mind Stone (dmr) 385
-7 Mountain (2ed) 298
+6 Mountain (2ed) 298
 1 Mystic Confluence (tsr) 312
 1 Nibelheim Aflame (fin) 339
 1 Night's Whisper (sld) 207
@@ -49,7 +51,6 @@
 1 Rakdos Signet (gk2) 76
 1 Ral and the Implicit Maze (mh3) 132
 1 Ringsight (ltr) 220
-1 River's Rebuke (fdn) 595
 1 Rogue's Passage (ddm) 77
 1 Sauron, the Dark Lord (ltr) 821
 1 Sauron, the Necromancer (ltr) 310
@@ -59,6 +60,7 @@
 1 Sheoldred, the Apocalypse (pdmu) 107p
 1 Shivan Reef (m15) 246
 1 Slip Out the Back (snc) 62
+1 Sokenzan, Crucible of Defiance (neo) 415
 1 Sol Ring (fic) 357
 1 Steam Vents (pgrn) 257p
 1 Sulfur Falls (frc) 84
@@ -71,7 +73,6 @@
 1 The Ozolith (iko) 237
 1 Treno, Dark City (fin) 290
 1 Underground River (dkm) 41
-1 Undermine (scd) 254
 1 Urza, Lord High Artificer (fca) 5
 1 Vandalblast (fic) 298
 1 Vision, Synthezoid Avenger (msc) 119

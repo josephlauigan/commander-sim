@@ -138,14 +138,14 @@ Talismans of Creativity, Dominance and Indulgence, and Chromatic Lantern. **Urza
 Construct that grows with every artifact you control and taps your non-mana artifacts (The Ozolith, Lightning Greaves,
 Whispersilk Cloak, the Construct itself) for {U}; the rocks already make mana, so he adds little there. Late, {5}
 exiles the top card of your library, which you may play free this turn. Spot removal: **Bitter Triumph**,
-**Baleful Mastery**, **Infernal Grasp**, **Terminate** and **Chaos
+**Bloodchief's Thirst**, **Baleful Mastery**, **Infernal Grasp**, **Terminate** and **Chaos
 Warp**. Counters: **Mana Drain** (the countered spell's mana value comes back as {C} on your next main phase: put it
-toward Sauron, a Titan or a big X spell), **Counterspell**, **Undermine** (the countered spell's controller loses 3 life),
+toward Sauron, a Titan or a big X spell), **Counterspell**, **An Offer You Can't Refuse** ({U}: counter a noncreature spell; its controller gets two Treasures, which
+help them cast more spells, and every spell they cast grows the Army),
 **Mystic Confluence** (three modes in any mix: counter unless they pay {3}, bounce a creature, draw a card) and **Force of
 Will** (counter anything: exile a blue card from hand and pay 1 life, or pay {3}{U}{U}; the deck has plenty of blue cards
 to pitch, but it costs two cards, so keep it for a spell that would end the game or wreck the Army).
-**River's Rebuke** ({4}{U}{U}) returns every nonland permanent one player controls to hand: the answer to the board
-that outclasses the Army. **Jin-Gitaxias, Progress Tyrant** ({5}{U}{U}) copies your first artifact, instant or sorcery
+**Jin-Gitaxias, Progress Tyrant** ({5}{U}{U}) copies your first artifact, instant or sorcery
 each turn and counters each opponent's first one, which slows the combo tables. **Propaganda** taxes every attacker {2}.
 Protection for Sauron and the Army: **Not of This World**, **Deflecting Swat** (free while you control your commander:
 redirect a removal spell or counter) and **Slip Out the Back** ({U}: phase it out with a +1/+1 counter; the counters
@@ -161,7 +161,7 @@ Wurm, Ral or Inferno Titan clear blockers first.
 
 ### Weak spots and how to play around them
 - **Big creature decks.** The deck loses mostly to combat. Land Propaganda, Talrand's Drakes and the one-sided
-  sweepers early, keep Counterspell and Mystic Confluence for the threats, and River's Rebuke for a board you can't fight.
+  sweepers early, and keep Counterspell and Mystic Confluence for the threats.
 - **Spot removal on the Army.** Play The Ozolith first and do not overcommit counters to one body; Not of This World, Slip
   Out the Back, Deflecting Swat, Lightning Greaves and Whispersilk Cloak can protect it.
 - **Your own sweepers.** Nibelheim Aflame and Chandra's Ignition hit your other creatures, so use them when the
@@ -185,18 +185,18 @@ Wurm, Ral or Inferno Titan clear blockers first.
 
 ## Mana and consistency
 
-The list is exactly 100 cards. 35 lands (17 nonbasic, 5 Island, 7 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 36 when you need the land half. Ten rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone (any colour an opponent's land could produce), Dimir Signet, Rakdos Signet, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, and Chromatic Lantern. Urza, Lord High Artificer adds {U} from the non-mana artifacts.
+The list is exactly 100 cards. 35 lands (18 nonbasic, 5 Island, 6 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 36 when you need the land half. Ten rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone (any colour an opponent's land could produce), Dimir Signet, Rakdos Signet, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, and Chromatic Lantern. Urza, Lord High Artificer adds {U} from the non-mana artifacts.
 
 | Measure | Count | Note |
 | --- | --- | --- |
 | Blue lands | 16 | 5 Island plus the U duals, Command Tower, Exotic Orchard, Path of Ancestry, Treno |
 | Black lands | 18 | 6 Swamp plus Barad-dûr, Blood Crypt, Drowned Catacomb, Underground Sea, Watery Grave, Underground River, Foreboding Ruins, Haunted Ridge, Treno, and the any-colour lands |
-| Red lands | 16 | 7 Mountain plus the R duals, Haunted Ridge, and the any-colour lands |
+| Red lands | 16 | 6 Mountain, Sokenzan, plus the R duals, Haunted Ridge, and the any-colour lands |
 | Colorless-only lands | 2 | Rogue's Passage, Scavenger Grounds |
 
-Dual lands: the original dual Underground Sea; the shocklands Blood Crypt, Steam Vents and Watery Grave; the check lands Drowned Catacomb and Sulfur Falls; the painlands Shivan Reef and Underground River; Foreboding Ruins (reveal a matching land or enter tapped); Haunted Ridge; and the tapped lands Treno, Dark City and Path of Ancestry.
+Dual lands: the original dual Underground Sea; the shocklands Blood Crypt, Steam Vents and Watery Grave; the check lands Drowned Catacomb and Sulfur Falls; the painlands Shivan Reef and Underground River; Foreboding Ruins (reveal a matching land or enter tapped); Haunted Ridge; and the tapped lands Treno, Dark City and Path of Ancestry. **Sokenzan, Crucible of Defiance** taps for {R} like a Mountain; late, channel it ({3}{R}, discard it) for two hasty 1/1 Spirits at instant speed.
 
-**Interaction.** Five pieces of spot removal (Bitter Triumph, Baleful Mastery, Infernal Grasp, Terminate and Chaos Warp) plus Noxious Gearhulk; five counters (Mana Drain, Counterspell, Undermine, Force of Will and **Mystic Confluence**) plus Jin-Gitaxias; Not of This World, Deflecting Swat and Slip Out the Back to protect Sauron and the Army; River's Rebuke to bounce one player's board; Propaganda against attackers; two symmetric resets in Nibelheim Aflame and Cyclonic Rift; five one-sided sweepers or sweeper-like cards (Massacre Wurm, Ral and the Implicit Maze, Inferno Titan, Chandra's Ignition, Comet Storm); and Vandalblast for artifact-heavy tables.
+**Interaction.** Six pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Baleful Mastery, Infernal Grasp, Terminate and Chaos Warp) plus Noxious Gearhulk; five counters (Mana Drain, Counterspell, An Offer You Can't Refuse, Force of Will and **Mystic Confluence**) plus Jin-Gitaxias; Not of This World, Deflecting Swat and Slip Out the Back to protect Sauron and the Army; Propaganda against attackers; two symmetric resets in Nibelheim Aflame and Cyclonic Rift; five one-sided sweepers or sweeper-like cards (Massacre Wurm, Ral and the Implicit Maze, Inferno Titan, Chandra's Ignition, Comet Storm); and Vandalblast for artifact-heavy tables.
 
 ## Tutor targets by board state
 
@@ -240,20 +240,22 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (13).** Arcane Signet, Chromatic Lantern, Dimir Signet, Fellwar Stone, Lightning Greaves, Mind Stone, Rakdos Signet, Sol Ring, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, The Ozolith, Whispersilk Cloak
 
-**Instants and sorceries (27).** Baleful Mastery, Bitter Triumph, Bloodsoaked Insight // Sanguine Morass, Chandra's Ignition, Chaos Warp, Comet Storm, Counterspell, Cyclonic Rift, Deflecting Swat, Diabolic Intent, Diabolic Tutor, Exsanguinate, Fact or Fiction, Force of Will, Infernal Grasp, Mana Drain, Mystic Confluence, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, River's Rebuke, Slip Out the Back, Terminate, Torment of Hailfire, Undermine, Vandalblast
+**Instants and sorceries (27).** An Offer You Can't Refuse, Baleful Mastery, Bitter Triumph, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chandra's Ignition, Chaos Warp, Comet Storm, Counterspell, Cyclonic Rift, Deflecting Swat, Diabolic Intent, Diabolic Tutor, Exsanguinate, Fact or Fiction, Force of Will, Infernal Grasp, Mana Drain, Mystic Confluence, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slip Out the Back, Terminate, Torment of Hailfire, Vandalblast
 
-**Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Haunted Ridge, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Steam Vents, Sulfur Falls, Treno Dark City, Underground River, Underground Sea, Watery Grave, 5 Island, 7 Mountain, 6 Swamp
+**Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Haunted Ridge, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Sokenzan Crucible of Defiance, Steam Vents, Sulfur Falls, Treno Dark City, Underground River, Underground Sea, Watery Grave, 5 Island, 6 Mountain, 6 Swamp
 
 Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when you need the land half.
 
 ## Import list (100)
 
 ```
+1 An Offer You Can't Refuse
 1 Arcane Signet
 1 Baleful Mastery
 1 Barad-dûr
 1 Bitter Triumph
 1 Blood Crypt
+1 Bloodchief's Thirst
 1 Bloodsoaked Insight // Sanguine Morass
 1 Call of the Ring
 1 Chandra's Ignition
@@ -301,7 +303,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Rakdos Signet
 1 Ral and the Implicit Maze
 1 Ringsight
-1 River's Rebuke
 1 Rogue's Passage
 1 Sauron, the Dark Lord
 1 Sauron, the Necromancer
@@ -311,6 +312,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Sheoldred, the Apocalypse
 1 Shivan Reef
 1 Slip Out the Back
+1 Sokenzan, Crucible of Defiance
 1 Sol Ring
 1 Steam Vents
 1 Sulfur Falls
@@ -324,7 +326,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Treno, Dark City
 1 Underground River
 1 Underground Sea
-1 Undermine
 1 Urza, Lord High Artificer
 1 Vandalblast
 1 Vision, Synthezoid Avenger
@@ -332,6 +333,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Watery Grave
 1 Whispersilk Cloak
 5 Island
-7 Mountain
+6 Mountain
 6 Swamp
 ```
