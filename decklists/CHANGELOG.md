@@ -298,6 +298,7 @@ Deck key `sheoldred`, `decklists/JD/sheoldred-mono-black.md`.
 
 ### Changes
 
+- **2026-11-01.** Out: Masterful Flourish. In: Diabolic Tutor. JD's actual list (11/01): Diabolic Tutor (from bulk) for Masterful Flourish (to bulk). Not simulated.
 - **2026-10-27.** Out: Painful Lesson. In: Grave Titan. JD's choice (2026-10-27), not simulated: Grave Titan (the retired Sephiroth FS deck's copy, from bulk) for Painful Lesson: a six-drop that makes two 2/2 Zombies on entering and attacking, blockers that protect the life total and bodies for the sacrifice outlets.
 - **2026-10-27.** Out: Charcoal Diamond, Crawlspace, Melancholic Poet, Read the Bones, Skyscanner, Ulna Alley Shopkeep. In: Bolas's Citadel, Call of the Ring, Demonic Tutor, Gray Merchant of Asphodel, The One Ring, Zulaport Cutthroat. JD's choice (2026-10-27), not simulated: from the retired Sephiroth FS deck, The One Ring, Demonic Tutor, Gray Merchant of Asphodel, Call of the Ring and Bolas's Citadel; Zulaport Cutthroat from Seph/Atraxa. Four Game Changers (Ad Nauseam, The One Ring, Demonic Tutor, Bolas's Citadel): Bracket 3 -> Bracket 4.
 - **2026-10-25.** Out: Stir Up Trouble. In: Ob Nixilis, the Fallen. JD's choice (10/25): Stir Up Trouble had the lowest win rate when cast at T3 and T4. Ob Nixilis drains 3 per land drop. Not simulated; the landfall ability isn't modeled yet (body only).

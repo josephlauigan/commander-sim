@@ -30,7 +30,7 @@ bring her back (see "Protect her") before you start making the table draw.
 - **Turns 4-6:** Sheoldred on turn 3 or 4. Once she is out, equip protection first, then start the draw engines.
 - **Late game:** keep the engines running, drain with the creatures, and finish with Exsanguinate or
   Peer into the Abyss. If Sheoldred dies, recast her, or return her with Phyrexian Delver (see "Recursion").
-  Demonic Tutor finds whichever of the two you need.
+  Demonic Tutor or Diabolic Tutor finds whichever of the two you need.
 
 ### Punish their draws
 Sheoldred (2 life a card), **Underworld Dreams** and **Fate Unraveler** (1 damage a card each) stack: with all three
@@ -93,11 +93,11 @@ sacrifice-cost removal, and each one that dies drains with Blood Artist and Zula
 - **Swiftfoot Boots** (hexproof and haste, equip {1}) and **Darksteel Plate** (indestructible, equip {2}): equip one
   as soon as Sheoldred lands. Boots stop targeted removal; the Plate stops destroy effects and damage, but not exile
   or -X/-X.
-- **Masterful Flourish** ({B}, indestructible) and **Battle-Rage Blessing** (deathtouch and indestructible): hold one up
+- **Battle-Rage Blessing** (deathtouch and indestructible): hold it up
   for a destroy effect or a bad block.
 - **Perigee Beckoner**: when it enters, another creature of yours gets +2/+0 and returns if it dies this turn. Cast it
   on Sheoldred before she attacks or blocks into a risk; warp ({1}{B}) lets you reuse it later.
-- **Recursion** (below) is the backup when protection isn't there, and **Demonic Tutor** ({1}{B}) finds Sheoldred
+- **Recursion** (below) is the backup when protection isn't there, and **Demonic Tutor** ({1}{B}) or **Diabolic Tutor** ({2}{B}{B}) finds Sheoldred
   again if she was exiled or shuffled away.
 
 ### Remove threats
@@ -167,8 +167,8 @@ and Bolas's Citadel are the bigger artifacts you cast once the rocks are out.
 - **Without her:** removal, Underworld Dreams, Fate Unraveler and the drain creatures (Blood Artist, Al Bhed Salvagers,
   Sneering Shadewriter, Screeching Soulbreaker, Gray Merchant, Zulaport Cutthroat) keep the pressure on until she
   comes back; hold the symmetric draw cards.
-- **The kill:** Peer into the Abyss on an opponent with Sheoldred out, or Exsanguinate for the table. Demonic Tutor
-  finds Peer into the Abyss once she is safe.
+- **The kill:** Peer into the Abyss on an opponent with Sheoldred out, or Exsanguinate for the table. Demonic Tutor or
+  Diabolic Tutor finds Peer into the Abyss once she is safe.
 - **Mulligan:** keep hands with two or three lands, a rock and a creature or a draw spell; send back hands with no
   black source.
 
@@ -176,9 +176,9 @@ and Bolas's Citadel are the bigger artifacts you cast once the rocks are out.
 
 36 lands: 32 Swamp, Command Tower (makes black here), and three colorless lands that draw cards: Bonders' Enclave,
 Mikokoro, Center of the Sea and Geier Reach Sanitarium. That is 33 black sources. Ramp: five mana artifacts (Arcane
-Signet, Fellwar Stone, Mind Stone, Commander's Sphere, Potioner's Trove) plus Undercity Dire Rat. Tutor: Demonic
-Tutor.
-Interaction: 12 removal spells, 4 protection cards (Swiftfoot Boots, Darksteel Plate, Masterful Flourish, Battle-Rage
+Signet, Fellwar Stone, Mind Stone, Commander's Sphere, Potioner's Trove) plus Undercity Dire Rat. Tutors: Demonic
+Tutor and Diabolic Tutor.
+Interaction: 12 removal spells, 3 protection cards (Swiftfoot Boots, Darksteel Plate, Battle-Rage
 Blessing) and Perigee Beckoner.
 
 ## Bracket and Rule 0
@@ -200,9 +200,9 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Artifacts (13).** Arcane Signet, Bolas's Citadel, Carnage Altar, Commander's Sphere, Darksteel Plate, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Otherworld Atlas, Potioner's Trove, Swiftfoot Boots, The One Ring
 
-**Sorceries (11).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Demonic Tutor, Exsanguinate, Invoke Despair, Lethal Throwdown, Peer into the Abyss, Silence the Echo, Syphon Mind
+**Sorceries (12).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Demonic Tutor, Diabolic Tutor, Exsanguinate, Invoke Despair, Lethal Throwdown, Peer into the Abyss, Silence the Echo, Syphon Mind
 
-**Instants (12).** Ad Nauseam, Battle-Rage Blessing, Deadly Dispute, Disembowel, Foolish Fate, Last Gasp, Masterful Flourish, Overkill, Sephiroth's Intervention, Terror, Vanquish the Weak, Wander Off
+**Instants (11).** Ad Nauseam, Battle-Rage Blessing, Deadly Dispute, Disembowel, Foolish Fate, Last Gasp, Overkill, Sephiroth's Intervention, Terror, Vanquish the Weak, Wander Off
 
 ## Import list (100)
 
@@ -227,6 +227,7 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Darksteel Plate
 1 Deadly Dispute
 1 Demonic Tutor
+1 Diabolic Tutor
 1 Disembowel
 1 Exsanguinate
 1 Fate Unraveler
@@ -242,7 +243,6 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Last Gasp
 1 Leech Collector // Bloodletting
 1 Lethal Throwdown
-1 Masterful Flourish
 1 Memory Jar
 1 Mikokoro, Center of the Sea
 1 Mind Stone

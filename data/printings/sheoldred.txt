@@ -33,7 +33,6 @@
 1 Last Gasp (fra) 56
 1 Leech Collector // Bloodletting (sos) 88
 1 Lethal Throwdown (mh3) 99
-1 Masterful Flourish (sos) 89
 1 Memory Jar (ulg) 129
 1 Mikokoro, Center of the Sea (dmc) 217
 1 Mind Stone (dmr) 385
