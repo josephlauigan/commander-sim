@@ -1,0 +1,38 @@
+
+=== Fit: Tier 5 (High B4) [loose, lookahead AI, 500 games a candidate, seeds 500000-500499] ===
+knobs (5): temp, aggression, caution, cthresh_default, instant_extra
+built-in values: loss 12.66
+  generation  1: best so far 5.15, this generation 8.78 (mean 17.27), step 0.312
+  generation  2: best so far 5.15, this generation 7.77 (mean 17.49), step 0.304
+  generation  3: best so far 5.15, this generation 5.93 (mean 16.36), step 0.268
+  generation  4: best so far 2.17, this generation 2.43 (mean 15.91), step 0.265
+  generation  5: best so far 2.17, this generation 8.43 (mean 15.50), step 0.284
+  generation  6: best so far 2.10, this generation 2.10 (mean 14.19), step 0.271
+  generation  7: best so far 2.10, this generation 5.01 (mean 14.94), step 0.260
+  generation  8: best so far 2.10, this generation 4.80 (mean 14.71), step 0.231
+
+  statistic                                          built-in        best      target       band
+  seat 1 share of decisive games                         28.5        30.6        31.8  30.3-33.3 
+  seat 2 share of decisive games                         26.3        27.8        27.8  26.3-29.3 
+  seat 3 share of decisive games                         24.2        23.4        22.4  20.9-23.9 
+  seat 4 share of decisive games                         21.0        18.2        18.0  16.5-19.5 
+  median round of a decisive win                          8.0         8.0         7.0   6.0-8.0  
+  loss: built-in 12.66, best 2.10
+
+  best knobs:
+    temp                                           0.737  (built-in 1.000)
+    aggression                                     0.032  (built-in 0.600)
+    caution                                        0.680  (built-in 0.500)
+    cthresh_default                                4.000  (built-in 6.000)
+    instant_extra                                  0.000  (built-in 0.000)
+
+wrote /home/joseph/projects/mtg_sims/commander-sim/.claude/worktrees/overnight-stack/audit/realism/fit/t5-shared-lookahead-2026-11-01.toml (run it with --knobs; confirm with --realism and more games)
+
+WARNING: 31 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 500341  panic: attempt to add with overflow (at /rustc/b940084d7eb6a299eb4bfeb8e34901bc051e7ac4/library/core/src/iter/traits/accum.rs:206)
+   seed 500020  panic: attempt to add with overflow (at /rustc/b940084d7eb6a299eb4bfeb8e34901bc051e7ac4/library/core/src/iter/traits/accum.rs:206)
+   seed 500341  panic: attempt to add with overflow (at /rustc/b940084d7eb6a299eb4bfeb8e34901bc051e7ac4/library/core/src/iter/traits/accum.rs:206)
+   seed 500341  panic: attempt to add with overflow (at /rustc/b940084d7eb6a299eb4bfeb8e34901bc051e7ac4/library/core/src/iter/traits/accum.rs:206)
+   seed 500324  panic: attempt to add with overflow (at crates/sim-core/src/engine/zones.rs:1917)
+  Please send me that output so I can fix the cause.

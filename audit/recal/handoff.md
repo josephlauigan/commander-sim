@@ -39,6 +39,6 @@ Brief: `rust/agents/recal-2.md`. Results: `audit/recal/stage2-2026-11-01.md`. Ba
 ## Stage 2 state
 
 - [x] 1. Evaluation refit (16:05-20:00, 3h55): refitted model NOT adopted (coordinator: no measurable gain, fails ismcts_b protection_is_held_for_a_low_value_target); committed 9f0b47f1 and reverted; the file is kept in `recal2/model-new.toml` (old: `model-old.toml`). Binary for steps 2+: `bin/commander-sim-final` = rebuilt from the reverted tree (current model).
-- [~] 2. Style fit t0-t6: q3 done 19:56-22:18 (2h22): held t1 t2 t3 t4 t6, not t0 t5 (results section 2). q4 (look-ahead refit, 500 games x 8 gens, then the check) on t0, t5 started 22:20 (chain34.sh); log q4.log.
-- [ ] 3. Pool check.
+- [x] 2. Style fit t0-t6 (7h): held t1 t2 t3 t4 t6 (adaptive files), t5 (look-ahead refit file); t0 built-in (neither held). Results section 2.
+- [~] 3. Pool check: `q5.sh` (chained by chain45.sh after q4): `cal-base` = `--calibrate all --games 1500 --seed 500000` (defaults), then `cal-knobs-tN` = `--calibrate all --pool tN --knobs <file>` per held tier. Started 01:56 MST 11/01.
 - [ ] 4. JD's decks remeasured: ON HOLD (coordinator, 10/31 18:30): hand back after step 3; the coordinator merges origin/main (urdragon #194, kefka, sauron, thrasios #195 list changes) first and sends step 4 with a rebuilt binary. Don't merge main.
