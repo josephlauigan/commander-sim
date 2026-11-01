@@ -2444,7 +2444,11 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
         let Some(cd) = x.cd else { continue };
         let d = g.db.get(cd);
         // --- plan-files-3: a plan's equip for Equipment whose equip is card code only (Champion's Helm)
-        let extra = if d.has_dsl() { None } else { crate::ai::plan_data::equip_extra(g, p, &d.name) };
+        let extra = if d.has_dsl() {
+            None
+        } else {
+            crate::ai::plan_data::equip_extra(g, p, &d.name).or_else(|| manual_equip(g, p, &d.tags))
+        };
         if (!d.has_dsl() && extra.is_none()) || d.tags.str(Tag::Prot) == Some("boots") {
             continue;
         }
@@ -2532,6 +2536,24 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
         });
     }
     out
+}
+
+/// --- generic-paths (2026-11-01): the equip of an Equipment whose card has no compiled equip ability, only its tag:
+/// [cost, the +N power the equip's utility counts], as printed (practice mode's table, `human::legal::equip_cost`):
+/// the Swords {2} (Sword of Feast and Famine +2/+2), Conqueror's Flail {2} (+1/+1 a colour, counted as one), Sword
+/// of the Animist {2} (+1/+1), Nim Deathmantle {4} (+2/+2). Their equip was a deck's hand AI only (Sauron's Army
+/// equips, the kraum seat's Flail, Cloud's), so no other deck ever equipped them. Not for a seat whose own hand AI
+/// equips them (the kept decks, the kraum test seat); Whispersilk Cloak and the Boots are the pool's
+/// (`pool::special_options`), Champion's Helm a plan's `[equip] extra`.
+fn manual_equip(g: &Game, p: PlayerId, t: &crate::cards::Tags) -> Option<[u32; 2]> {
+    let k = crate::ai::hand_key(g, p);
+    if crate::ai::HAND_DECKS.contains(&k) || k == "kraum" {
+        return None;
+    }
+    [(Tag::Sword, 2, 2), (Tag::Flail, 2, 1), (Tag::Animist, 2, 1), (Tag::Nim, 4, 2)]
+        .into_iter()
+        .find(|&(tag, _, _)| t.has(tag))
+        .map(|(_, cost, pow)| [cost, pow])
 }
 
 /// equip src to target for {n}

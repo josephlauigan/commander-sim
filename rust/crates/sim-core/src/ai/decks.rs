@@ -1115,8 +1115,8 @@ pub fn breach_keep_bonus(g: &Game, p: PlayerId, c: CardId) -> f64 {
 }
 
 /// Any deck holding a redirect card (Redirect Lightning, Ricochet Trap, Untimely Malfunction, Deflecting Swat) turns
-/// removal aimed at its key permanent on the caster's own best permanent. Veyran and Kefka run Swat in their own
-/// `protect` (after their other options), so they only get the three here.
+/// removal aimed at its key permanent on the caster's own best permanent. (Veyran and Kefka ran Swat in their own
+/// `protect`, deleted with their hand AI on 2026-11-01; --- generic-paths: every deck gets it here now.)
 fn redirect_response(
     g: &mut Game,
     owner: PlayerId,
@@ -1132,7 +1132,7 @@ fn redirect_response(
     let holds = |n: &str| g.db.id(n).is_some_and(|c| hand.contains(&c));
     let (cards, swat) = (
         holds("Redirect Lightning") || holds("Ricochet Trap") || holds("Untimely Malfunction"),
-        holds("Deflecting Swat") && !matches!(g.player(owner).key, "veyran" | "kefka"),
+        holds("Deflecting Swat"),
     );
     if cards && crate::impls::t6_redirects::redirect_removal(g, owner, m, kind, actor, spell)? {
         return Ok(true);

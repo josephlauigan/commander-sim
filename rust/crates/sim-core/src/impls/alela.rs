@@ -1962,11 +1962,46 @@ fn chimes_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 
 // ------------------------------------------------------------------ Angelic Shield (the AI's save)
 // ------------------------------------------------------------------ Lightning Greaves
-/// Lightning Greaves' options slot: none. The Alela deck's hand AI moved the Greaves off Alela for its own Aura; it was
-/// deleted on 2026-11-01 (`audit/phase4/hand-off-design.md`, "Deleted"). The slot stays registered: it is the card's
-/// only code, and opponents rate a card with an options hook as an engine (`pool::card_threat_value`).
-fn greaves_options(_g: &mut Game, _src: Src, _p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    Ok(vec![])
+/// Lightning Greaves gives its creature shroud, so p's own Aura (or Daydream) can't target it. When the hand holds one
+/// that wants the creature wearing the Greaves, move the Greaves (equip {0}) to p's best other creature first, before
+/// combat on p's turn. --- generic-paths (2026-11-01): it was the Alela deck's hand AI (for Alela only), deleted with
+/// it; any deck and any wearer now (`audit/phase4/generic-paths-2026-11-01.md`).
+fn greaves_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if g.perm(src).owner != p || post != Some(false) || g.active != Some(p) || human_of(g, p).is_some() {
+        return Ok(vec![]);
+    }
+    let Some(w) = g.perm(src).attached.filter(|&w| on_bf(g, w) && controls(g, p, w)) else { return Ok(vec![]) };
+    let wants = g.player(p).hand.iter().any(|&c| {
+        let aura_here = super::common::aura_spec(g, c).is_some_and(|s| {
+            s.target == "own" && s.host_pick.is_none() && super::common::own_host(g, p, s, None) == Some(w)
+        });
+        let daydream = &*g.db.get(c).name == "Daydream" && daydream_target(g, p) == Some(w);
+        (aura_here || daydream) && castable(g, p, c, "hand")
+    });
+    if !wants {
+        return Ok(vec![]);
+    }
+    let others: Vec<PermId> = creatures(g, p).into_iter().filter(|&m| m != w).collect();
+    let Some(to) = max_by(&others, |m| pval(g, m)) else { return Ok(vec![]) };
+    Ok(vec![ability(
+        3.0,
+        format!("Lightning Greaves off {}, onto {}", name_of(g, w), name_of(g, to)),
+        src,
+        greaves_go,
+        to.0 as i64,
+    )])
+}
+
+fn greaves_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let to = PermId(arg as u32);
+    if !controls(g, p, src) || !on_bf(g, to) || g.perm(to).owner != p {
+        return Ok(false);
+    }
+    crate::glog!(g, "  {} moves Lightning Greaves to {} (for an Aura)", pname(g, p), name_of(g, to));
+    if ability_window(g, p, Some(src), "equip {0}", None, Some(to))? && on_bf(g, to) {
+        g.perm_mut(src).attached = Some(to);
+    }
+    Ok(true)
 }
 
 // ================================================================== registry

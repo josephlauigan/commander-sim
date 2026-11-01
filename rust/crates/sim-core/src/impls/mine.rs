@@ -4,7 +4,6 @@
 //! through `cardcode.rs`. Also ais.py's `breach_gc_options` (Breach escapes, Panoptic Mirror, Lion's Eye Diamond,
 //! Bolas's Citadel), which every deck reaches.
 
-use crate::ai::hand_key; // --- phase4-hand-off
 use super::lands::{can_pay_without, pay_without};
 use crate::engine::mana::restr_ok;
 use crate::engine::pool::Restr;
@@ -3685,12 +3684,19 @@ pub fn ephemerate_cast(g: &mut Game, p: PlayerId, m: PermId, why: &str) -> Res<b
     Ok(true)
 }
 
+/// --- generic-paths: a Tier 6 seat (its flicker spells start its combo lines)
+fn t6(g: &Game, p: PlayerId) -> bool {
+    crate::impls::t6_plans::is_t6(g, p)
+}
+
 /// instant {W}: blinks your creature, in response to targeted removal (the spell fizzles) or for its enter effect;
 /// rebound: cast again free at your next upkeep on the best enter-effect creature. Your decks: blink the creature with
 /// the best enters-the-battlefield effect (Archon of Cruelty, Grave Titan); kept in hand while it is the only
-/// protection for a bomb
+/// protection for a bomb. --- generic-paths (2026-11-01): any deck but Tier 6 (its combo lines start with the
+/// flicker spells, `t6_combos_t6`). It was gated to JD's decks with their hand AI on, none of which holds it, so no
+/// deck had a value play for it (t2's `value_blink` is replaced by this one).
 fn ephemerate_value(g: &mut Game, c: CardId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    if !crate::ai::is_main(hand_key(g, p)) || !g.player(p).hand.contains(&c) || !can_pay(g, p, 0, "W", false) {
+    if crate::human::is_human(g, p) || t6(g, p) || !g.player(p).hand.contains(&c) || !can_pay(g, p, 0, "W", false) {
         return Ok(vec![]);
     }
     let cands: Vec<(f64, PermId)> = g
@@ -3769,11 +3775,11 @@ pub fn momentary_blink_cast(g: &mut Game, p: PlayerId, m: PermId, why: &str) -> 
 }
 
 /// Momentary Blink for value: blink the creature with the best enters-the-battlefield effect (one blink, then the
-/// flashback). Kept in hand while a bomb is out and it is the protection.
+/// flashback). Kept in hand while a bomb is out and it is the protection. --- generic-paths: any deck, as Ephemerate.
 fn momentary_blink_value(g: &mut Game, c: CardId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
     let from_hand = g.player(p).hand.contains(&c);
     let (gn, pips) = if from_hand { (1, "W") } else { (3, "U") };
-    if !crate::ai::is_main(hand_key(g, p)) || !can_pay(g, p, gn, pips, false) {
+    if crate::human::is_human(g, p) || t6(g, p) || !can_pay(g, p, gn, pips, false) {
         return Ok(vec![]);
     }
     let cands: Vec<(f64, PermId)> = g
