@@ -13,16 +13,17 @@
 //! - **Tron** (Urza's Mine / Power-Plant / Tower: 2 / 2 / 3 with all three, else 1) and Urza's Workshop (metalcraft:
 //!   {C} for each Urza's land with three artifacts, else {C}): `dyn_mana_land` slots.
 //! - **Mishra's Factory / Foundry** are creature lands (`lands::animate`, a token standing in for the land) that are
-//!   also artifacts while animated; the AI animates one to attack when the way is open.
-//! - **The plan** (`karn_prio`, the Bauble hold, the Tron land choice, the land searches, the Factory blocks) was the
-//!   deck's hand AI, deleted on 2026-11-01 (`audit/phase4/hand-off-design.md`, "Deleted"). `search_bonus` stays: the
-//!   look-ahead (`ai/search.rs`, out of that change's scope) still names it under a "karn" key it never sees now.
+//!   also artifacts while animated; the AI animates one to attack when the way is open, and one to block a dangerous
+//!   attack (`block_response`, from `brain::attack_response`; any deck since generic-paths, 2026-11-01).
+//! - **The plan** (`karn_prio`, the Bauble hold, the Tron land choice, the land searches) was the deck's hand AI,
+//!   deleted on 2026-11-01 (`audit/phase4/hand-off-design.md`, "Deleted"). `search_bonus` stays: the look-ahead
+//!   (`ai/search.rs`, out of that change's scope) still names it under a "karn" key it never sees now.
 
 use crate::cards::{CardDb, Types};
 use crate::engine::mana::total_mana;
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::trigger_window;
-use crate::engine::values::{etgh, pval, untargetable};
+use crate::engine::values::{epow, etgh, pval, untargetable};
 use crate::engine::zones::draw;
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -210,6 +211,39 @@ pub(crate) fn animate(g: &mut Game, p: PlayerId, l: PermId) -> PermId {
     x.ttypes.push("artifact");
     x.ttypes.push("assembly-worker");
     m
+}
+
+/// --- generic-paths (2026-11-01): d is attacked by p: animate untapped Factories and Foundries to block when the
+/// attack is dangerous (40% of d's life, or 4+ at 12 life or less), one per attacker that no creature can meet, paid
+/// with d's other mana. It was the karn deck's hand AI (`brain::attack_response`), deleted with it; any deck now.
+pub fn block_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Res<bool> {
+    let manland = |g: &Game, l: PermId| MANLANDS.iter().any(|m| m.0 == land_name(g, l));
+    if crate::human::is_human(g, d) || !g.player(d).lands.iter().any(|&l| manland(g, l)) {
+        return Ok(false);
+    }
+    let incoming: i32 = atk.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).owner == p).map(|&m| epow(g, m)).sum();
+    let life = g.player(d).life;
+    if (incoming as f64) < life as f64 * 0.4 && !(life <= 12 && incoming >= 4) {
+        return Ok(false);
+    }
+    let mut done = false;
+    let mut blockers = g.player(d).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).tapped).count();
+    for l in g.player(d).lands.clone() {
+        if blockers >= atk.len() {
+            break;
+        }
+        if !MANLANDS.iter().any(|m| m.0 == land_name(g, l)) || g.perm(l).tapped {
+            continue;
+        }
+        let cost = cost_of_land(g, l);
+        if !super::lands::pay_without(g, d, l, cost, "")? {
+            continue;
+        }
+        animate(g, d, l);
+        blockers += 1;
+        done = true;
+    }
+    Ok(done)
 }
 
 /// {1} / {2}: animate to attack when the way is open and mana is to spare (before combat)

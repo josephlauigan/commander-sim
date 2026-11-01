@@ -1294,6 +1294,9 @@ pub fn step_priority(g: &mut Game, step: &str, defender: Option<PlayerId>, attac
             crate::human::human::step_priority(g, q, step, defender, attackers)?;
         } else if step == "attackers" && Some(q) == defender {
             ai::attack_response(g, q, a, attackers)?;
+        } else if step == "combat" && q != a {
+            // --- generic-paths: tap the attacker q fears (Errant Doomsayers, Whipcorder), any deck
+            crate::impls::galadriel::precombat(g, q)?;
         }
         if step == "combat" && q != a && !g.hooks.is_empty() && !crate::human::is_human(g, q) {
             crate::cardcode::opposition_precombat(g, q)?; // Opposition: tap the attackers down

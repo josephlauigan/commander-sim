@@ -835,6 +835,125 @@ fn tapper_use(g: &mut Game, p: PlayerId, src: PermId, t: PermId, gen_: u32, pips
     Ok(true)
 }
 
+// --- generic-paths (2026-11-01): the answers to an attack and the taps before another player's combat, for any
+// deck holding the cards. They were the galadriel deck's hand AI (`brain::attack_response`, `stack::step_priority`),
+// deleted with it, which left these cards no way to be used on another player's turn
+// (`audit/phase4/generic-paths-2026-11-01.md`).
+
+/// Errant Doomsayers and Whipcorder, before another player's combat (q is not the active player): tap the creature
+/// of the active player that would attack hardest (power 3 or more, able to attack now; Doomsayers: toughness 2 or
+/// less). Each tapper is used once, if its cost can be paid.
+pub fn precombat(g: &mut Game, q: PlayerId) -> Res {
+    let Some(a) = g.active else { return Ok(()) };
+    if a == q {
+        return Ok(());
+    }
+    let tappers: Vec<PermId> = g
+        .player(q)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| card_name(g, m).is_some_and(|n| tapper_cost(n).is_some()))
+        .collect();
+    for src in tappers {
+        let name = name_of(g, src);
+        let (gen_, pips) = tapper_cost(name).unwrap();
+        if !searcher_ok(g, q, src) || !can_pay(g, q, gen_, pips, false) {
+            continue;
+        }
+        let tough = if name == "Errant Doomsayers" { 2 } else { 99 };
+        let cands: Vec<PermId> = g
+            .player(a)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| {
+                let x = g.perm(m);
+                g.is_creature(m)
+                    && !x.tapped
+                    && !x.phased
+                    && !untargetable(g, m)
+                    && etgh(g, m) <= tough
+                    && epow(g, m) >= 3
+                    && (!x.sick || crate::engine::combat::has_haste(g, m))
+            })
+            .collect();
+        let Some(t) = max_by(&cands, |m| epow(g, m) as f64) else { continue };
+        tapper_use(g, q, src, t, gen_, pips)?;
+    }
+    Ok(())
+}
+
+/// an answer to an attack from one of d's permanents
+#[derive(Debug, Clone, Copy)]
+pub enum Answer {
+    /// Ballista Squad: X damage to an attacker (X its toughness)
+    Ballista { src: PermId, a: PermId, x: u32 },
+    /// Lawbringer / Lightbringer: exile a red / black attacker
+    Bringer { src: PermId, a: PermId },
+}
+
+/// d is attacked by p with `atk`: the answers d's permanents give (Ballista Squad kills an attacker it can pay the X
+/// for; Lawbringer and Lightbringer exile a red or black one), each with its worth (the attacker's value and power)
+pub fn attack_answers(g: &Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Vec<(f64, Answer)> {
+    let mut out = vec![];
+    let w = Colors::from_letters("W");
+    for &src in &g.player(d).perms {
+        if g.perm(src).cd.is_none() || !searcher_ok(g, d, src) {
+            continue;
+        }
+        let n = name_of(g, src);
+        if n == "Ballista Squad" {
+            let have = total_mana(g, d, false) as i32 - 1;
+            for &a in atk {
+                if !controls(g, p, a) || untargetable(g, a) || protected_from(g, a, w) || repl::no_damage(g, a) {
+                    continue;
+                }
+                let x = etgh(g, a);
+                if x > have || crate::engine::values::indestructible(g, a) {
+                    continue;
+                }
+                let v = pval(g, a) + 0.3 * epow(g, a) as f64 - 0.4 * x as f64;
+                out.push((v, Answer::Ballista { src, a, x: x.max(0) as u32 }));
+            }
+        } else if n == "Lawbringer" || n == "Lightbringer" {
+            let col = if n == "Lawbringer" { 'R' } else { 'B' };
+            for &a in atk {
+                if controls(g, p, a) && colors_of(g, a).has(col) && !untargetable(g, a) && !protected_from(g, a, w) {
+                    out.push((pval(g, a) + 0.3 * epow(g, a) as f64 - 1.0, Answer::Bringer { src, a }));
+                }
+            }
+        }
+    }
+    out
+}
+
+/// use answer `a` (d's): true if it was used
+pub fn answer(g: &mut Game, d: PlayerId, a: Answer) -> Res<bool> {
+    match a {
+        Answer::Ballista { src, a, x } => ballista_use(g, d, src, a, x),
+        Answer::Bringer { src, a } => bringer_use(g, d, src, a),
+    }
+}
+
+/// Ballista Squad: {X}{W}, {T}: X damage to target attacking or blocking creature
+fn ballista_use(g: &mut Game, p: PlayerId, src: PermId, t: PermId, x: u32) -> Res<bool> {
+    if !searcher_ok(g, p, src) || !on_bf(g, t) || !can_pay(g, p, x, "W", false) {
+        return Ok(false);
+    }
+    pay(g, p, x, "W", false)?;
+    g.perm_mut(src).tapped = true;
+    crate::glog!(g, "  {} activates Ballista Squad: {x} damage to {}", pname(g, p), name_of(g, t));
+    if ability_window(g, p, Some(src), &format!("{x} damage to {}", name_of(g, t)), Some(5.0), Some(t))?
+        && on_bf(g, t)
+        && !repl::no_damage(g, t)
+        && etgh(g, t) <= x as i32
+    {
+        apply_removal(g, Some(p), t, &format!("dmg{x}"), None)?;
+    }
+    Ok(true)
+}
+
 /// galadriel.vanguard_blocks (CI.vanguard_blocks): after combat damage, each Defiant Vanguard that blocked destroys
 /// itself and the attacker
 pub fn vanguard_blocks(g: &mut Game, assign: &[(PermId, PermId)]) -> Res {

@@ -292,7 +292,7 @@ pub fn commander_first(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Opt
 /// Underworld Breach for the kraum seat ({1}{R}, gone at the end step), so it is cast only when a card in the graveyard can be escaped
 /// with the mana that is left (its cost plus the {1}{R}), 4+ cards in the graveyard (the three exiled and the card itself).
 /// `generic_prio` gave it 0, so it sat in the hand in every game. The escape options are `breach_gc_options`.
-fn breach_prio(g: &Game, p: PlayerId) -> i32 {
+pub fn breach_prio(g: &Game, p: PlayerId) -> i32 {
     if g.active != Some(p) {
         return 0;
     }

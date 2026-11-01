@@ -62,7 +62,10 @@ fn only_the_three_plan_files_use_the_new_features_and_only_with_the_hand_ai_off(
             || !p.prio_add.is_empty()
             || p.knobs.commander_chumps_to_live.is_some()
             || p.knobs.adnaus_main2.is_some();
-        assert_eq!(uses, matches!(*k, "cloud" | "yshtola" | "sheoldred"), "{k}");
+        // --- generic-paths (2026-11-01): sauron's plan lists Exsanguinate in `plays` (its hand AI is deleted, so its
+        // plan file is always read: that changes its default play, on purpose)
+        let sauron_plays = *k == "sauron" && p.plays == ["Exsanguinate"];
+        assert_eq!(uses, matches!(*k, "cloud" | "yshtola" | "sheoldred") || sauron_plays, "{k}");
     }
     for (key, t) in [("cloud", "t1"), ("yshtola", "t5"), ("sheoldred", "t3")] {
         let g = seated(key, t);
