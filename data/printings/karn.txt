@@ -4,12 +4,12 @@
 1 Batterskull (2xm) 356
 1 Blightsteel Colossus (2xm) 357
 1 Bonders' Enclave (iko) 363
-1 Buried Ruin (brc) 177
+1 Buried Ruin (m12) 224
 1 Burnished Hart (brr) 71
-1 Cityscape Leveler (bro) 363
+1 Cityscape Leveler (prm) 105858
 1 Coalition Relic (fut) 161
 1 Conjurer's Closet (inr) 441
-1 Darksteel Citadel (brc) 180
+1 Darksteel Citadel (sld) 608
 1 Darksteel Forge (dst) 110
 1 Duplicant (ema) 220
 1 Endless Atlas (40k) 237
@@ -20,13 +20,13 @@
 1 Grim Monolith (ulg) 126
 1 Hangarback Walker (plg20) 2
 1 Inventors' Fair (kld) 247
-1 Karn, Legacy Reforged (mat) 99
 1 Karn Liberated (2xm) 333
-1 Karn, Scion of Urza (med) RA1
-1 Karn, the Great Creator (blc) 73
+1 Karn, Legacy Reforged (mat) 149
+1 Karn, Scion of Urza (sld) 1419
+1 Karn, the Great Creator (war) 1
 1 Kuldotha Forgemaster (som) 169
 1 Liberator, Urza's Battlethopter (bro) 364
-1 Lightning Greaves (ltc) 281
+1 Lightning Greaves (sld) 1992
 1 Liquimetal Torque (brc) 145
 1 Mana Vault (ced) 260
 1 Mazemind Tome (brr) 93
@@ -59,6 +59,7 @@
 1 Steel Hellkite (brc) 163
 1 Steel Overseer (brc) 164
 1 Swiftfoot Boots (brr) 121
+1 Tezzeret, Cruel Captain (eoe) 2
 1 The Mightstone and Weakstone (bro) 238
 1 The One Ring (hoc) 44
 1 Thought Vessel (sld) 2561
@@ -80,7 +81,7 @@
 1 Urza's Workshop (brc) 51
 1 Walking Ballista (sld) 58
 1 War Room (cmr) 716
-14 Wastes (tsr) 410
+14 Wastes (plg25) 2
 1 Wayfarer's Bauble (5dn) 165
 1 Worn Powerstone (usg) 318
 1 Wurmcoil Engine (sld) 1661
