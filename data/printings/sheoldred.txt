@@ -2,9 +2,9 @@
 1 Ad Nauseam (soa) 25
 1 Al Bhed Salvagers (fin) 88
 1 Ambition's Cost (c15) 113
-1 Arcane Signet (msc) 191
+1 Arcane Signet (soc) 127
 1 Battle-Rage Blessing (dmu) 80
-1 Blood Artist (ema) 81
+1 Blood Artist (2x2) 352
 1 Bolas's Citadel (plg21) 3
 1 Bonders' Enclave (fic) 376
 1 Burrog Banemaker (sos) 75
@@ -16,12 +16,13 @@
 1 Cost of Brilliance (sos) 77
 1 Dark Deal (frf) 66
 1 Darksteel Plate (fic) 342
-1 Deadly Dispute (j25) 115
-1 Demonic Tutor (ddc) 49
+1 Deadly Dispute (sld) 2091
+1 Demonic Tutor (plst) DDC-49
+1 Diabolic Tutor (sld) 721
 1 Disembowel (rvr) 74
-1 Exsanguinate (plst) CMM-156
+1 Exsanguinate (som) 61
 1 Fate Unraveler (bng) 68
-1 Fellwar Stone (msc) 285
+1 Fellwar Stone (cmm) 657
 1 Fetid Imp (m21) 98
 1 Foolish Fate (sos) 83
 1 Geier Reach Sanitarium (emn) 203
@@ -33,11 +34,11 @@
 1 Last Gasp (fra) 56
 1 Leech Collector // Bloodletting (sos) 88
 1 Lethal Throwdown (mh3) 99
-1 Masterful Flourish (sos) 89
 1 Memory Jar (ulg) 129
 1 Mikokoro, Center of the Sea (dmc) 217
 1 Mind Stone (dmr) 385
 1 Necrosquito (one) 100
+1 Ob Nixilis, the Fallen (slc) 15
 1 Otherworld Atlas (avr) 219
 1 Overkill (fin) 109
 1 Peer into the Abyss (plst) M21-117
@@ -55,38 +56,7 @@
 1 Silence the Echo (fra) 66
 1 Sneering Shadewriter (sos) 101
 1 Soul Enervation (mkm) 106
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
+32 Swamp (mdd) 296
 1 Swiftfoot Boots (brr) 121
 1 Syphon Mind (scd) 111
 1 Terror (dmr) 103
@@ -96,4 +66,4 @@
 1 Vanquish the Weak (xln) 127
 1 Vault Plunderer (otj) 114
 1 Wander Off (sos) 104
-1 Zulaport Cutthroat (soc) 233
+1 Zulaport Cutthroat (sld) 1982

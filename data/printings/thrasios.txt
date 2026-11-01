@@ -2,7 +2,6 @@
 1 Arcane Denial (all) 22b
 1 Arcane Signet (p30m) 1P
 1 Archon of Absolution (eld) 3
-1 Assassin's Trophy (2x2) 372
 1 Atraxa, Grand Unifier (fca) 49
 1 Austere Command (brc) 69
 1 Avacyn's Pilgrim (isd) 170
@@ -13,7 +12,7 @@
 1 Bastion Protector (msc) 122
 1 Bite Down (dmu) 155
 1 Blossoming Defense (kld) 146
-1 Breeding Pool (eoe) 251
+1 Breeding Pool (unf) 286
 1 Brushland (bro) 259
 1 Caves of Koilos (drc) 148
 1 Cecil, Dark Knight (fin) 525
@@ -24,8 +23,9 @@
 1 Darksteel Mutation (cmm) 623
 1 Dauthi Voidwalker (tdc) 176
 1 Deathcap Glade (sos) 253
-1 Diabolic Tutor (sld) 1592
+1 Diabolic Tutor (sld) 721
 1 Disdainful Stroke (soa) 147
+1 Disenchant (ath) 5
 1 Dragonlord Dromoka (2x2) 376
 1 Drowned Catacomb (m11) 224
 1 Elenda, the Dusk Rose (2x2) 377
@@ -35,23 +35,16 @@
 1 Falcon and Redwing (msc) 14
 1 Fellwar Stone (cmm) 657
 1 Flickering Hound (fra) 7
-1 Forest (mdd) 301
-1 Forest (mdd) 301
-1 Forest (mdd) 301
+3 Forest (mdd) 301
 1 Ghostly Prison (soc) 146
 1 Gifts Ungiven (2x2) 347
 1 Glacial Fortress (msc) 248
-1 Grave Titan (pdp12) 2
-1 Hallowed Fountain (rtr) 241
+1 Grave Titan (sld) 2188
+1 Hallowed Fountain (rvr) 280
 1 Hero of Bladehold (mbs) 8
-1 Island (mdd) 294
-1 Island (mdd) 294
-1 Island (mdd) 294
-1 Island (mdd) 294
-1 Island (mdd) 294
-1 Island (mdd) 294
+6 Island (mdd) 294
 1 Isolated Chapel (isd) 242
-1 Lightning Greaves (cmm) 398
+1 Lightning Greaves (2xm) 360
 1 Llanowar Wastes (c19) 258
 1 Lyra Dawnbringer (dmr) 413
 1 Memory Trap (fra) 15
@@ -60,39 +53,30 @@
 1 Orzhov Signet (drc) 134
 1 Paradox Surveyor (sos) 208
 1 Path to Exile (blc) 147
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
+7 Plains (mdd) 292
 1 Propaganda (plst) C16-94
 1 Resplendent Angel (lci) 32
 1 Restoration Angel (khc) 31
 1 Rings of Brighthearth (ltc) 352
-1 Shield of Kaldra (dst) 139
 1 Skyclave Apparition (m3c) 172
+1 Smothering Tithe (cmm) 57
 1 Sphinx of New Prahv (rvr) 227
 1 Sun Titan (afc) 73
 1 Sunpetal Grove (ltc) 336
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swan Song (sld) 1591
+6 Swamp (mdd) 296
+1 Swan Song (sld) 2829
 1 Swords to Plowshares (ice) 54
 1 Talisman of Curiosity (pip) 245
 1 Talisman of Unity (mrd) 257
 1 The Wasp, Winsome Avenger (msc) 39
 1 Thrasios, Triton Hero (fca) 58
+1 Tropical Island (cei) 284
+1 Tundra (cei) 285
 1 Tymna the Weaver (fca) 18
 1 Underground River (wc98) bs362
-1 Undergrowth Stadium (cmr) 359
+1 Undergrowth Stadium (cmm) 666
 1 Vampire Nighthawk (m13) 112
 1 Walking Ballista (sld) 58
-1 Windborn Muse (lgn) 28
+1 Windborn Muse (dmr) 415
 1 Worldly Tutor (dmr) 442
 1 Yavimaya Coast (c21) 409

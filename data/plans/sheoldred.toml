@@ -59,7 +59,7 @@ when = ["commander-out"]
 value = 78
 
 [[prio]]
-cards = ["Masterful Flourish", "Battle-Rage Blessing"]
+cards = ["Battle-Rage Blessing"]
 value = 0
 
 [[prio]]
@@ -72,11 +72,6 @@ when = ["life<=6"]
 value = 0
 
 # indestructible for Sheoldred against destroy / damage removal; mana kept up while she is out
-[[hold]]
-card = "Masterful Flourish"
-protects = ["commander"]
-mana = true
-
 [[hold]]
 card = "Battle-Rage Blessing"
 protects = ["commander"]

@@ -70,6 +70,7 @@ Deck file `decklists/JD/karn-colorless-artifacts.md`; not in the simulator.
 
 ### Changes
 
+- **2026-11-01.** Out: Hedron Archive. In: Tezzeret, Cruel Captain. JD's actual list (11/01): the repo list brought in line with the physical deck. Not simulated.
 - **2026-10-30.** Out: Mishra's Bauble. In: Conjurer's Closet. Karn: Conjurer's Closet (from the retired Seph/Atraxa deck, 10/30) in for Mishra's Bauble. JD's choice, not simulated.
 - **2026-10-20.** Added. A colourless artifact-ramp deck built around Karn's upkeep mana, with every Urza and Mishra
   card that fits the plan (the Tron lands, Urza's Saga, Cave, Workshop and Factory, Mishra's Workshop, Factory and
@@ -297,6 +298,7 @@ Deck key `sheoldred`, `decklists/JD/sheoldred-mono-black.md`.
 
 ### Changes
 
+- **2026-11-01.** Out: Masterful Flourish. In: Diabolic Tutor. JD's actual list (11/01): Diabolic Tutor (from bulk) for Masterful Flourish (to bulk). Not simulated.
 - **2026-10-27.** Out: Painful Lesson. In: Grave Titan. JD's choice (2026-10-27), not simulated: Grave Titan (the retired Sephiroth FS deck's copy, from bulk) for Painful Lesson: a six-drop that makes two 2/2 Zombies on entering and attacking, blockers that protect the life total and bodies for the sacrifice outlets.
 - **2026-10-27.** Out: Charcoal Diamond, Crawlspace, Melancholic Poet, Read the Bones, Skyscanner, Ulna Alley Shopkeep. In: Bolas's Citadel, Call of the Ring, Demonic Tutor, Gray Merchant of Asphodel, The One Ring, Zulaport Cutthroat. JD's choice (2026-10-27), not simulated: from the retired Sephiroth FS deck, The One Ring, Demonic Tutor, Gray Merchant of Asphodel, Call of the Ring and Bolas's Citadel; Zulaport Cutthroat from Seph/Atraxa. Four Game Changers (Ad Nauseam, The One Ring, Demonic Tutor, Bolas's Citadel): Bracket 3 -> Bracket 4.
 - **2026-10-25.** Out: Stir Up Trouble. In: Ob Nixilis, the Fallen. JD's choice (10/25): Stir Up Trouble had the lowest win rate when cast at T3 and T4. Ob Nixilis drains 3 per land drop. Not simulated; the landfall ability isn't modeled yet (body only).
@@ -753,6 +755,7 @@ Deck key `thanos`, `decklists/JD/thanos-five-colour-turbo.md`. Simulated against
 
 ### Changes
 
+- **2026-11-01.** Out: An Offer You Can't Refuse, Arcane Signet, City of Brass, Crop Rotation, Deadly Rollick, Deathrite Shaman, Emergence Zone, Faerie Mastermind, Final Fortune, Flash Photography, Ignoble Hierarch, Misdirection, Redirect Lightning, Sevinne's Reclamation, Shifting Woodland, Smothering Tithe, Starting Town, Storm-Kiln Artist, Tarnished Citadel, Tataru Taru, The Cabbage Merchant, Tinder Wall. In: Ad Nauseam, Cavern of Souls, Desperate Ritual, Dragonlord Dromoka, Eladamri's Call, Gitaxian Probe, Grand Abolisher, Grim Monolith, Grim Tutor, Into the Flood Maw, Jeska's Will, Merchant Scroll, Otawara, Soaring City, Red Elemental Blast, Seething Song, Snapback, Sylvan Library, Taiga, Teferi, Time Raveler, Voice of Victory, Wooded Foothills, Worldly Tutor. JD's actual list (11/01): the repo list brought in line with the physical deck. Not simulated.
 - **2026-10-30.** Into the simulator (JD, 10/30): deck key `thanos` takes Scion's seat at t6, its plan file and its tests; Thanos's power-up modeled (impls/t6_thanos.rs). The Scion list moved to `decklists/pool/retired/` (a test seat only). No list change.
 - **2026-10-30.** New deck (JD, 10/30): the Scion v1 cEDH list (`decklists/JD/scion-ur-dragon-turbo.md`) with Thanos, the Mad Titan as commander. Out: Scion of the Ur-Dragon, Ancient Copper Dragon, Korvold, Fae-Cursed King, Prismari, the Inspiration (copy targets for Scion, dead without him). In: Fierce Guardianship, Deflecting Swat, Deadly Rollick (free while you control your commander). Not simulated; the Scion deck stays as the baseline.
 
