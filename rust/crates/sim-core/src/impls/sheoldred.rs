@@ -166,25 +166,7 @@ fn cost_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
     if human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
         return Ok(vec![]);
     }
-    let host = crate::engine::values::army_of(g, p)
-        .filter(|&m| hand_key(g, p) == "sauron" && live_creature(g, m))
-        .or_else(|| best_creature(g, p));
-    if hand_key(g, p) == "sauron"
-        && !sheoldred_out(g, p)
-        && crate::engine::values::has(g, p, crate::tag::Tag::Bowmasters)
-    {
-        // Orcish Bowmasters out: each card an opponent draws pings it and amasses 1, so two cards are four counters on the Army
-        let opps: Vec<PlayerId> = g.opps(p).filter(|&q| g.player(q).alive && g.player(q).library.len() > 2).collect();
-        if let Some(q) = min_by(&opps, |q| g.player(q).life as f64)
-            && g.player(p).life > 6
-        {
-            return Ok(vec![Opt {
-                utility: 4.8,
-                label: format!("Cost of Brilliance ({} draws two, Bowmasters pings)", g.player(q).name),
-                act: Some(Action::Plan { f: cost_plan, arg: c.0 as i64 | (((q.0 as i64) + 1) << 16) }),
-            }]);
-        }
-    }
+    let host = best_creature(g, p);
     if let Some(q) = drain_target(g, p, 2) {
         // each card they draw costs them 2 life, and the spell 2 more: six in all
         let u = 5.0 + if g.player(q).life <= 6 { 3.0 } else { 0.0 } + if host.is_some() { 0.3 } else { 0.0 };
@@ -216,9 +198,7 @@ fn cost_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         0 => p,
         k => PlayerId((k - 1) as u8),
     };
-    let host = crate::engine::values::army_of(g, p)
-        .filter(|&m| hand_key(g, p) == "sauron" && live_creature(g, m))
-        .or_else(|| best_creature(g, p));
+    let host = best_creature(g, p);
     crate::ai::brain::do_cast_with(g, p, c, None, Ctx { face: Some(face), host, ..Ctx::default() })
 }
 

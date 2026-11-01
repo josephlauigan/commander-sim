@@ -20,22 +20,20 @@
 //! (marchesa.best_steal / steal, zur.guildmage_target / rootborn, t2.blink / blink_value) are re-exported at the end
 //! of this file.
 
-use crate::ai::hand_key; // --- phase4-hand-off
 use super::partials::at_once;
 use crate::engine::mana::restr_ok;
 use crate::engine::pool::Restr;
 use crate::engine::pool::Kind;
 use crate::engine::repl;
-use crate::ai::decks::{pay_card, protect_response};
+use crate::ai::decks::protect_response;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::cast_card;
-use crate::engine::combat::has_haste;
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{
-    ALL_TYPES, card_name, colors_of, epow, etgh, has_type, indestructible, maskwood as maskwood_on,
+    ALL_TYPES, card_name, colors_of, epow, etgh, has_type, maskwood as maskwood_on,
     once_per_turn, protected_from, pval, subtypes, untargetable,
 };
 use crate::engine::zones::{
@@ -45,7 +43,6 @@ use crate::flow::Res;
 use crate::human::{cards, choices, human_of};
 use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::pysum::PySum;
 use crate::state::{Ctx, DataKey, Game, Step, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -162,8 +159,8 @@ fn type_counts(g: &Game, p: PlayerId) -> Vec<(Sym, i32)> {
     n
 }
 
-/// galadriel.choose_type: the creature type a permanent names as it enters: the AI names its deck's main type (Orc
-/// for Sauron's Kindred Discovery). A person chooses.
+/// galadriel.choose_type: the creature type a permanent names as it enters: the AI names its deck's main type. A person
+/// chooses.
 pub fn choose_type(g: &Game, p: PlayerId, what: &str) -> Res<Sym> {
     let counts = type_counts(g, p);
     if human_of(g, p).is_some() {
@@ -176,17 +173,11 @@ pub fn choose_type(g: &Game, p: PlayerId, what: &str) -> Res<Sym> {
         if ts.is_empty() {
             ts.push("human");
         }
-        if hand_key(g, p) == "sauron" && !ts.contains(&"orc") {
-            ts.insert(0, "orc");
-        }
         let n = |t: Sym| counts.iter().find(|x| x.0 == t).map_or(0, |x| x.1);
         let labels: Vec<String> =
             ts.iter().map(|&t| format!("{} ({} of your creature cards)", title(t), n(t))).collect();
         let k = choices::choose_one(g, p, "choose", &format!("{what}: choose a creature type"), &labels)?;
         return Ok(ts[k]);
-    }
-    if hand_key(g, p) == "sauron" {
-        return Ok("orc");
     }
     let mut on_bf: Vec<(Sym, i32)> = vec![];
     for &m in &g.player(p).perms {
@@ -844,116 +835,6 @@ fn tapper_use(g: &mut Game, p: PlayerId, src: PermId, t: PermId, gen_: u32, pips
     Ok(true)
 }
 
-/// galadriel.precombat (CI.galadriel_precombat): q (the AI) at the beginning of another player's combat: tap their
-/// best attacker with a tapper
-pub fn precombat(g: &mut Game, q: PlayerId) -> Res {
-    let Some(a) = g.active else { return Ok(()) };
-    let tappers: Vec<PermId> = g
-        .player(q)
-        .perms
-        .iter()
-        .copied()
-        .filter(|&m| card_name(g, m).is_some_and(|n| tapper_cost(n).is_some()))
-        .collect();
-    for src in tappers {
-        let name = name_of(g, src);
-        let (gen_, pips) = tapper_cost(name).unwrap();
-        if !searcher_ok(g, q, src) || !can_pay(g, q, gen_, pips, false) {
-            continue;
-        }
-        let tough = if name == "Errant Doomsayers" { 2 } else { 99 };
-        let cands: Vec<PermId> = g
-            .player(a)
-            .perms
-            .iter()
-            .copied()
-            .filter(|&m| {
-                let x = g.perm(m);
-                g.is_creature(m)
-                    && !x.tapped
-                    && !x.phased
-                    && !untargetable(g, m)
-                    && etgh(g, m) <= tough
-                    && epow(g, m) >= 3
-                    && (!x.sick || has_haste(g, m))
-            })
-            .collect();
-        let Some(t) = max_by(&cands, |m| epow(g, m) as f64) else { continue };
-        tapper_use(g, q, src, t, gen_, pips)?;
-    }
-    Ok(())
-}
-
-/// One of the answers galadriel.attack_answers lists (Python's closures)
-#[derive(Debug, Clone, Copy)]
-pub enum Answer {
-    /// Ballista Squad: X damage to an attacker
-    Ballista { src: PermId, a: PermId, x: u32 },
-    /// Lawbringer / Lightbringer: exile an attacker
-    Bringer { src: PermId, a: PermId },
-}
-
-/// galadriel.attack_answers (CI.galadriel_attack_answers): d (the AI) is attacked by p: its permanents' answers
-/// [(value, answer)]: Ballista Squad, Lawbringer, Lightbringer
-pub fn attack_answers(g: &Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Vec<(f64, Answer)> {
-    let mut out = vec![];
-    let w = Colors::from_letters("W");
-    for &src in &g.player(d).perms {
-        if g.perm(src).cd.is_none() || !searcher_ok(g, d, src) {
-            continue;
-        }
-        let n = name_of(g, src);
-        if n == "Ballista Squad" {
-            let have = total_mana(g, d, false) as i32 - 1;
-            for &a in atk {
-                if !controls(g, p, a) || untargetable(g, a) || protected_from(g, a, w) || repl::no_damage(g, a) {
-                    continue;
-                }
-                let x = etgh(g, a);
-                if x > have || indestructible(g, a) {
-                    continue;
-                }
-                let v = pval(g, a) + 0.3 * epow(g, a) as f64 - 0.4 * x as f64;
-                out.push((v, Answer::Ballista { src, a, x: x.max(0) as u32 }));
-            }
-        } else if n == "Lawbringer" || n == "Lightbringer" {
-            let col = if n == "Lawbringer" { 'R' } else { 'B' };
-            for &a in atk {
-                if controls(g, p, a) && colors_of(g, a).has(col) && !untargetable(g, a) && !protected_from(g, a, w) {
-                    out.push((pval(g, a) + 0.3 * epow(g, a) as f64 - 1.0, Answer::Bringer { src, a }));
-                }
-            }
-        }
-    }
-    out
-}
-
-/// make an answer from attack_answers
-pub fn answer(g: &mut Game, d: PlayerId, a: Answer) -> Res<bool> {
-    match a {
-        Answer::Ballista { src, a, x } => ballista_use(g, d, src, a, x),
-        Answer::Bringer { src, a } => bringer_use(g, d, src, a),
-    }
-}
-
-/// Ballista Squad: {X}{W}, {T}: X damage to target attacking or blocking creature (the AI kills an attacker)
-fn ballista_use(g: &mut Game, p: PlayerId, src: PermId, t: PermId, x: u32) -> Res<bool> {
-    if !searcher_ok(g, p, src) || !on_bf(g, t) || !can_pay(g, p, x, "W", false) {
-        return Ok(false);
-    }
-    pay(g, p, x, "W", false)?;
-    g.perm_mut(src).tapped = true;
-    crate::glog!(g, "  {} activates Ballista Squad: {x} damage to {}", pname(g, p), name_of(g, t));
-    if ability_window(g, p, Some(src), &format!("{x} damage to {}", name_of(g, t)), Some(5.0), Some(t))?
-        && on_bf(g, t)
-        && !repl::no_damage(g, t)
-        && etgh(g, t) <= x as i32
-    {
-        apply_removal(g, Some(p), t, &format!("dmg{x}"), None)?;
-    }
-    Ok(true)
-}
-
 /// galadriel.vanguard_blocks (CI.vanguard_blocks): after combat damage, each Defiant Vanguard that blocked destroys
 /// itself and the attacker
 pub fn vanguard_blocks(g: &mut Game, assign: &[(PermId, PermId)]) -> Res {
@@ -1563,19 +1444,6 @@ pub fn formation(g: &mut Game, p: PlayerId, addendum: bool) {
     );
 }
 
-/// galadriel.make_a_stand: your creatures get +1/+0 and indestructible
-pub fn make_a_stand(g: &mut Game, p: PlayerId) {
-    for m in g.player(p).perms.clone() {
-        if g.is_creature(m) && !g.perm(m).phased {
-            add_kw(g, m, "indestructible");
-        }
-        if g.is_creature(m) {
-            g.perm_mut(m).eot_pt.0 += 1;
-        }
-    }
-    crate::glog!(g, "    {}'s creatures get +1/+0 and indestructible", pname(g, p));
-}
-
 // ================================================================== mana
 /// galadriel._elves: the Elf creatures p controls
 fn elves(g: &Game, p: PlayerId) -> u32 {
@@ -1619,207 +1487,7 @@ fn drum_tap(g: &mut Game, p: PlayerId, _m: PermId, _used: u32) -> Res {
 }
 
 // ================================================================== the AI: cast priorities
-const INDES: [&str; 3] = ["Unbreakable Formation", "Make a Stand", "Rootborn Defenses"];
-
-/// galadriel.galadriel_prio: the deck's cast priority (0-90)
-pub fn galadriel_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let d = g.db.get(c);
-    let t = &d.tags;
-    let n = &*d.name;
-    let pl = g.player(p);
-    let gal = named(g, p, "Galadriel, Light of Valinor");
-    let cre = pl.perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count();
-    if c == pl.cmd {
-        return if pl.turns >= 3 { 84 } else { 66 };
-    }
-    if t.has(Tag::Ctr) || INDES.contains(&n) || n == "Eerie Interlude" {
-        return 0; // held for their window
-    }
-    if t.has(Tag::Remora) {
-        return if pl.turns <= 4 { 66 } else { 0 }; // Mystic Remora: only early, while upkeep is cheap
-    }
-    if (t.has(Tag::Rem) || t.has(Tag::Wipe)) && !d.perm {
-        return 0; // removal and wipes: through their own decisions
-    }
-    if t.has(Tag::Rock) || t.has(Tag::Dork) || n == "Springleaf Drum" {
-        return if pl.turns <= 5 { 82 } else { 30 };
-    }
-    if t.has(Tag::Lr) || n == "Farhaven Elf" || n == "Shared Roots" {
-        return if pl.turns <= 5 { 78 } else { 25 };
-    }
-    if n == "Elvish Archdruid" {
-        return if pl.turns <= 5 { 76 } else { 45 };
-    }
-    if n == LIN {
-        return 74;
-    }
-    if searcher(n).is_some() {
-        // the engine: first, while none is out
-        let out = pl.perms.iter().any(|&m| card_name(g, m).is_some_and(|x| searcher(x).is_some() || x == LIN));
-        let base = match n {
-            "Ramosian Commander" => 66,
-            "Ramosian Captain" => 64,
-            "Defiant Vanguard" => 60,
-            "Ramosian Lieutenant" => 62,
-            _ => 63,
-        };
-        return base + if out { 0 } else { 10 };
-    }
-    if n == "Cathars' Crusade" || n == "Panharmonicon" {
-        return if cre >= 2 || gal.is_some() { 72 } else { 50 };
-    }
-    if matches!(
-        n,
-        "Kindred Discovery"
-            | "Vanquisher's Banner"
-            | "Tocasia's Welcome"
-            | "Beast Whisperer"
-            | "Welcoming Vampire"
-            | "Mentor of the Meek"
-    ) {
-        return 70;
-    }
-    if matches!(n, "Door of Destinies" | "Patchwork Banner" | "Maskwood Nexus") {
-        return 58;
-    }
-    match n {
-        "Mangara, the Diplomat" => return 56,
-        "Adeline, Resplendent Cathar" => return 73,
-        "Recruiter of the Guard" => return 65,
-        "Abduction" => {
-            return match best_steal(g, p, Some(c)) {
-                Some(b) if pval(g, b) >= 3.0 => 80.min((40.0 + 6.0 * pval(g, b)) as i32),
-                _ => 0,
-            };
-        }
-        "Bribery" => return 68,
-        "Crackdown" => {
-            let theirs = g
-                .opps(p)
-                .flat_map(|q| g.player(q).perms.iter().copied())
-                .filter(|&m| g.is_creature(m) && crackdown_holds(g, m))
-                .count();
-            let mine = pl.perms.iter().filter(|&&m| g.is_creature(m) && crackdown_holds(g, m)).count();
-            return if theirs >= mine + 2 { 55 } else { 0 };
-        }
-        "Flicker" => {
-            return match flicker_target(g, p) {
-                Some(b) if etb_worth(g, p, b) >= 3.0 => 45,
-                _ => 0,
-            };
-        }
-        "Shamanic Revelation" => return if cre >= 4 { 60 } else { 15 },
-        "Planar Genesis" => return if pl.turns <= 6 { 52 } else { 44 }, // a land or a card; nothing to wait for
-        "Elspeth, Sun's Champion" => return 66,
-        "Reya Dawnbringer" => return 50,
-        _ => {}
-    }
-    if t.has(Tag::Tokatk) {
-        return 70;
-    }
-    if d.creature {
-        return 48;
-    }
-    if t.has(Tag::Draw) && (d.instant || d.sorcery) {
-        return 46;
-    }
-    40
-}
-
 // ================================================================== the AI: protection and wipes
-/// galadriel._cast_protect: cast an indestructible spell in response
-fn cast_protect(g: &mut Game, owner: PlayerId, c: CardId) -> Res<bool> {
-    match &*g.db.get(c).name {
-        "Unbreakable Formation" => {
-            if !pay_card(g, owner, c, 0)? {
-                return Ok(false);
-            }
-            formation(g, owner, false);
-            Ok(true)
-        }
-        "Make a Stand" => {
-            if !pay_card(g, owner, c, 0)? {
-                return Ok(false);
-            }
-            make_a_stand(g, owner);
-            Ok(true)
-        }
-        "Rootborn Defenses" => {
-            if !pay_card(g, owner, c, 0)? {
-                return Ok(false);
-            }
-            rootborn(g, owner)?;
-            Ok(true)
-        }
-        _ => Ok(false),
-    }
-}
-
-/// galadriel.galadriel_protect (CI.galadriel_protect): removal at a key creature: indestructible (Unbreakable
-/// Formation, Make a Stand, Rootborn Defenses) against destroy and damage, or Eerie Interlude (it returns at the end
-/// step) against anything
-pub fn galadriel_protect(
-    g: &mut Game,
-    owner: PlayerId,
-    m: PermId,
-    kind: Sym,
-    _actor: Option<PlayerId>,
-    _spell: Option<CardId>,
-) -> Res<bool> {
-    if !g.is_creature(m) || pval(g, m) < 4.0 {
-        return Ok(false);
-    }
-    let destroyish = kind == "destroy" || kind.starts_with("dmg");
-    for c in g.player(owner).hand.clone() {
-        let d = g.db.get(c);
-        if INDES.contains(&&*d.name) && destroyish && can_pay(g, owner, d.generic, &d.pips, false) {
-            return cast_protect(g, owner, c);
-        }
-    }
-    for c in g.player(owner).hand.clone() {
-        let d = g.db.get(c);
-        if &*d.name == "Eerie Interlude" && !g.perm(m).token && can_pay(g, owner, d.generic, &d.pips, false) {
-            if !pay_card(g, owner, c, 0)? {
-                return Ok(false);
-            }
-            interlude(g, owner, &[m])?;
-            return Ok(true);
-        }
-    }
-    Ok(false)
-}
-
-/// galadriel.galadriel_wipe_response (CI.galadriel_wipe_response): indestructible against a destroy or damage wipe,
-/// else Eerie Interlude on every nontoken creature
-pub fn galadriel_wipe_response(g: &mut Game, q: PlayerId, kind: Sym) -> Res<Option<Sym>> {
-    let all = matches!(kind, "rift" | "rebuke");
-    let loss = g.player(q).perms.iter().filter(|&&m| g.is_creature(m) || all).map(|&m| pval(g, m)).psum();
-    if loss < 6.0 {
-        return Ok(None);
-    }
-    if matches!(kind, "destroy" | "dmg13" | "austere" | "nib") {
-        for c in g.player(q).hand.clone() {
-            let d = g.db.get(c);
-            if INDES.contains(&&*d.name) && can_pay(g, q, d.generic, &d.pips, false) {
-                return Ok(if cast_protect(g, q, c)? { Some("indes") } else { None });
-            }
-        }
-    }
-    for c in g.player(q).hand.clone() {
-        let d = g.db.get(c);
-        if &*d.name == "Eerie Interlude" && can_pay(g, q, d.generic, &d.pips, false) {
-            if !pay_card(g, q, c, 0)? {
-                return Ok(None);
-            }
-            let ms: Vec<PermId> =
-                g.player(q).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).token).collect();
-            interlude(g, q, &ms)?;
-            return Ok(None);
-        }
-    }
-    Ok(None)
-}
-
 // ============================================================= Mirror Entity, Whipcorder's morph, Elspeth's emblem
 /// galadriel.mirror: Mirror Entity: until end of turn your creatures have base power and toughness X/X and every
 /// creature type (practice mode's activation, play/cards.py: phase 9 calls it)
@@ -1880,7 +1548,6 @@ pub fn elspeth_emblem(g: &mut Game, p: PlayerId) {
 
 pub use super::marchesa::{best_steal, steal};
 pub use super::zur::guildmage_target;
-use super::zur::rootborn;
 
 pub use super::t2::blink;
 

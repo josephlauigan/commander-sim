@@ -7,7 +7,7 @@
 //! Secluded Courtyard mana in a person's pool): practice mode comes with phase 9. Mirror Entity and the morph are
 //! checked here through their effects (`mirror`, `enter_face_down`, `turn_face_up`) instead.
 
-use sim_core::ai::{act, brain, decks};
+use sim_core::ai::{act, decks};
 use sim_core::engine::pool::Kind;
 use sim_core::engine::{cast, combat, mana, removal, turn, values, zones};
 use sim_core::hooks::{Action, Opt};
@@ -191,14 +191,6 @@ fn kindred_discovery_names_a_type() {
     let n = g.player(P0).hand.len();
     perm(&mut g, P0, "Ramosian Sergeant"); // a Human Rebel
     assert_eq!(g.player(P0).hand.len(), n + 1);
-}
-
-#[test]
-fn sauron_still_names_orc() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table(&["sauron", "veyran"]);
-    let kd = perm(&mut g, P0, "Kindred Discovery");
-    assert_eq!(gal::ctype(&g, kd), Some("orc"));
 }
 
 #[test]
@@ -510,82 +502,6 @@ fn galadriel_casts_the_engine_first() {
     assert_eq!(decks::deck_prio(&g, P0, pan), 50, "one creature, no Galadriel");
     perm(&mut g, P0, "Llanowar Elves");
     assert_eq!(decks::deck_prio(&g, P0, pan), 72);
-}
-
-#[test]
-fn galadriel_abduction_wants_a_real_threat() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table(&["galadriel", "sauron"]);
-    let ab = card(&g, "Abduction");
-    assert_eq!(decks::deck_prio(&g, P0, ab), 0);
-    let t = perm(&mut g, P1, "Grave Titan");
-    let v = values::pval(&g, t);
-    assert_eq!(decks::deck_prio(&g, P0, ab), 80.min((40.0 + 6.0 * v) as i32));
-}
-
-#[test]
-fn unbreakable_formation_saves_a_key_creature_from_destroy() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table(&["galadriel", "sauron"]);
-    let m = perm(&mut g, P0, "Grave Titan");
-    lands(&mut g, P0, "Plains", 3, false);
-    hand(&mut g, P0, &["Unbreakable Formation"]);
-    assert!(values::pval(&g, m) >= 4.0);
-    assert!(!decks::protect_response(&mut g, P0, m, "exile", Some(P1), None).unwrap(), "not against exile");
-    assert!(decks::protect_response(&mut g, P0, m, "destroy", Some(P1), None).unwrap());
-    assert!(values::indestructible(&g, m));
-}
-
-#[test]
-fn eerie_interlude_answers_exile() {
-    let mut g = table(&["galadriel", "sauron"]);
-    let t = perm(&mut g, P0, "Grave Titan");
-    lands(&mut g, P0, "Plains", 3, false);
-    hand(&mut g, P0, &["Eerie Interlude"]);
-    assert!(gal::galadriel_protect(&mut g, P0, t, "exile", Some(P1), None).unwrap());
-    assert!(!g.perm(t).on_bf);
-    assert_eq!(g.eot_returns.len(), 1);
-    turn::end_step(&mut g, P0).unwrap();
-    assert!(named(&g, P0, "Grave Titan").is_some(), "back at the end step");
-}
-
-#[test]
-fn wipe_answers_indestructible_against_destroy() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table(&["galadriel", "sauron"]);
-    perm(&mut g, P0, "Grave Titan");
-    let q = perm(&mut g, P0, "Jhovall Queen");
-    lands(&mut g, P0, "Plains", 3, false);
-    hand(&mut g, P0, &["Unbreakable Formation"]);
-    assert_eq!(decks::wipe_response(&mut g, P0, "exile", P1).unwrap(), None, "no Eerie Interlude to cast");
-    assert_eq!(decks::wipe_response(&mut g, P0, "destroy", P1).unwrap(), Some("indes"));
-    assert!(values::indestructible(&g, q));
-}
-
-#[test]
-fn ballista_squad_shoots_an_attacker() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table(&["sauron", "galadriel"]);
-    let (s, p) = (P0, P1);
-    perm(&mut g, p, "Ballista Squad");
-    lands(&mut g, p, "Plains", 8, false);
-    let t = perm(&mut g, s, "Grave Titan");
-    let a = gal::attack_answers(&g, p, s, &[t]);
-    assert_eq!(a.len(), 1);
-    assert!(brain::attack_response(&mut g, p, s, &[t]).unwrap());
-    assert!(!g.perm(t).on_bf);
-    assert_eq!(g.player(p).stats.get("attack_removal"), Some(&1));
-}
-
-#[test]
-fn tappers_tap_the_attacker_before_an_opponents_combat() {
-    let mut g = table(&["sauron", "galadriel"]);
-    let (s, p) = (P0, P1);
-    perm(&mut g, p, "Whipcorder");
-    lands(&mut g, p, "Plains", 1, false);
-    let t = perm(&mut g, s, "Grave Titan");
-    gal::precombat(&mut g, p).unwrap();
-    assert!(g.perm(t).tapped);
 }
 
 #[test]

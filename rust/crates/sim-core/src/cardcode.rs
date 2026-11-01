@@ -637,7 +637,7 @@ pub fn blocks_hooks(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId, assi
     Ok(())
 }
 
-/// After blocks (ais.py): cards in the attacker's hand ('hand_blocks'); your Veyran's Aetherize; an outside
+/// After blocks (ais.py): cards in the attacker's hand ('hand_blocks'); an outside
 /// defender's 'defend' hooks (Yawgmoth), hand answers ('hand_defend') and lands ('land_defend'); an outside attacker's
 /// ninjutsu.
 pub fn defend_hooks(
@@ -652,18 +652,7 @@ pub fn defend_hooks(
             f(g, c, p, atk, d, assign)?;
         }
     }
-    let dk = hand_key(g, d);
-    if dk == "veyran" {
-        // your instant-speed answers to an attack (Aetherize)
-        for c in g.player(d).hand.clone() {
-            if &*g.db.get(c).name == "Aetherize"
-                && let Some(f) = imp_of(g, c).and_then(|i| i.hand_defend)
-            {
-                f(g, c, d, p, atk, assign)?;
-            }
-        }
-    }
-    if !crate::ai::is_main(dk) {
+    if !crate::ai::is_main(hand_key(g, d)) {
         if !g.hooks.is_empty() {
             for (src, imp) in hooks::hooked(g, Event::Defend) {
                 (imp.defend.unwrap())(g, src, d, p, atk, assign)?;
@@ -838,11 +827,6 @@ pub fn necro_deliver(g: &mut Game, p: PlayerId) -> Res {
 /// ais.necro_pay
 pub fn necro_pay(g: &mut Game, p: PlayerId) -> Res {
     crate::ai::decks::necro_pay(g, p, None)
-}
-
-/// galadriel.precombat (CI.galadriel_precombat): Galadriel's tappers before another player's combat
-pub fn galadriel_precombat(g: &mut Game, q: PlayerId) -> Res {
-    crate::impls::galadriel::precombat(g, q)
 }
 
 /// alela.opposition_precombat (CI.opposition_precombat): Opposition's taps before another player's combat
@@ -1037,11 +1021,6 @@ pub fn land_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Op
 /// ais.breach_gc_options: Underworld Breach escapes, Panoptic Mirror imprints, Lion's Eye Diamond, Bolas's Citadel
 pub fn breach_gc_options(g: &mut Game, p: PlayerId) -> Res<Vec<Opt>> {
     crate::impls::mine::breach_gc_options(g, p)
-}
-
-/// mine.breach_options: Sauron's Underworld Breach line
-pub fn breach_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
-    crate::impls::mine::breach_options(g, p, post)
 }
 
 /// mine.loop_need: the cards that complete one of Sephiroth's loops (with what is on p's battlefield)

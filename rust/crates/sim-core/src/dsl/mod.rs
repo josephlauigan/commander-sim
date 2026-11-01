@@ -654,16 +654,11 @@ fn run(
                         .collect();
                     let best = max_by(&tg, |m| pval(g, m));
                     let lethal: Vec<PlayerId> = opps.iter().copied().filter(|&q| g.player(q).life <= eff).collect();
-                    // Kefka flipped with a draw-trigger engine out and a library too short for its loop: no face pings
-                    let guard = crate::impls::kefka::loop_guard(g, p);
                     if let Some(&q) = lethal.first() {
                         lose_life(g, q, dmg, Some(p), kind, None)?;
-                    } else if let Some(b) = best.filter(|&b| guard || pval(g, b) >= 3.0) {
+                    } else if let Some(b) = best.filter(|&b| pval(g, b) >= 3.0) {
                         snapshot(g, b, ctx);
                         apply_removal(g, Some(p), b, &format!("dmg{dmg}"), spell)?;
-                    } else if guard {
-                        // the trigger is mandatory and an opponent's face would start the loop: ping yourself
-                        lose_life(g, p, dmg, Some(p), kind, None)?;
                     } else if let Some(q) = min_by(&opps, |q| g.player(q).life as f64) {
                         lose_life(g, q, dmg, Some(p), kind, None)?;
                     }
@@ -1302,15 +1297,13 @@ fn search(g: &mut Game, p: PlayerId, e: &Effect) -> Res {
     };
     let tapped = e.tapped == Some(true);
     for _ in 0..k {
-        // the karn deck's nonbasic land searches (Expedition Map, Urza's Cave) take the land it wants (`karn::search_pick`)
-        let karn_pick = f.basic == Some(false) && crate::impls::karn::is_deck(hand_key(g, p));
-        if f.kind.as_deref() == Some("land") && to == "battlefield" && !karn_pick {
+        if f.kind.as_deref() == Some("land") && to == "battlefield" {
             zones::land_ramp(g, p, 1, tapped)?;
             continue;
         }
         // a basic land to hand; "a land card" (Sylvan Scrying) takes any land through the pick below (it took a basic
         // only, so a land tutor never found Gaea's Cradle)
-        if f.kind.as_deref() == Some("land") && to == "hand" && !karn_pick && f.basic == Some(true) {
+        if f.kind.as_deref() == Some("land") && to == "hand" && f.basic == Some(true) {
             zones::land_to_hand(g, p)?;
             continue;
         }
@@ -2158,12 +2151,11 @@ pub fn ability_options(g: &mut Game, p: PlayerId, sorcery_ok: bool) -> Res<Vec<c
             continue;
         }
         let name = g.db.get(cd).name.to_string();
-        let held = crate::impls::karn::hold_ability(g, p, &name); // the karn deck keeps its Baubles
         let land = g.db.get(cd).land;
         for (i, a) in abilities(g, cd).iter().enumerate() {
             match a {
                 Ability::Activated { cost, effects, sorcery, once, ai_min } => {
-                    if held || (land && channel(cost)) {
+                    if land && channel(cost) {
                         continue; // a land's channel ability is used from the hand
                     }
                     if *sorcery == Some(true) && !sorcery_ok {

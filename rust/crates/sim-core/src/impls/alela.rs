@@ -2,8 +2,8 @@
 //!
 //! - Alela: flying, deathtouch, lifelink; other creatures you control with flying get +1/+0 (a compiled anthem);
 //!   whenever you cast an artifact or enchantment spell, create a 1/1 blue Faerie creature token with flying.
-//! - The AI: the outside decks' generic priorities (it shares their generic plays), plus the Faerie each artifact or
-//!   enchantment makes while Alela is out (more with Wispdrinker Vampire draining and Tetsuko Umezawa unblocking them).
+//! - The AI: the generic policy and `data/plans/alela.toml` (the deck's hand AI, `alela_prio`, its protection answers
+//!   and the Greaves move, was deleted on 2026-11-01: `audit/phase4/hand-off-design.md`, "Deleted").
 //! - The 99's cards that need code: the Jace token (empower Jace: Keeper of the Quiet Hour, Plan for All Outcomes,
 //!   Fatehold Charm), Opposition, Karmic Justice, Static Prison and Aether Hub (energy), Spite // Malice, Muddle the
 //!   Mixture's transmute, Ray of Command, the flier payoffs (Plumecreed Mentor, Pileated Provisioner, Jackdaw Savior,
@@ -15,8 +15,8 @@
 //! for t2.blink / blink_value and marchesa.best_steal / steal in `galadriel.rs`.
 
 use super::common::{
-    AURA, AuraSpec, WalkerAb, allowed, aura, aura_spec, best_opp_creature, best_opp_nonland, oring_exile, oring_return,
-    own_host, round_stamp, uses, walker,
+    AURA, AuraSpec, WalkerAb, allowed, aura, best_opp_creature, best_opp_nonland, oring_exile, oring_return,
+    round_stamp, uses, walker,
 };
 use super::galadriel::{best_steal, blink, blink_value, steal};
 use super::partials::at_once;
@@ -177,36 +177,6 @@ fn alela_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 }
 
 // ================================================================== the AI
-/// alela.faerie_bonus: what one more Faerie is worth to p now (on the 0-90 priority scale): a 2/1 flier with Alela
-/// out, more with Wispdrinker Vampire (each one drains the table) and Tetsuko Umezawa (each one is unblockable)
-pub fn faerie_bonus(g: &Game, p: PlayerId) -> i32 {
-    if alela_perm(g, p).is_none() {
-        return 0;
-    }
-    let has = |n: &str| named(g, p).iter().any(|&m| card_name(g, m) == Some(n));
-    10 + if has("Wispdrinker Vampire") { 6 } else { 0 } + if has("Tetsuko Umezawa, Fugitive") { 4 } else { 0 }
-}
-
-/// alela.alela_prio: the outside decks' generic priority, plus a Faerie for each artifact or enchantment spell while
-/// Alela is out
-pub fn alela_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let mut v = crate::ai::pool::generic_prio(g, p, c);
-    let d = g.db.get(c);
-    if c == g.player(p).cmd {
-        return v.max(85);
-    }
-    if v == 0 && d.has_dsl() {
-        v = (crate::dsl::card_value(g, p, c) * 10.0) as i32; // untagged: its value
-    }
-    if v == 0 && d.tag(Tag::Landfall2) {
-        v = if g.player(p).turns <= 6 { 50 } else { 30 }; // Felidar Retreat: a 2/2 Cat for each land still to come
-    }
-    if v != 0 && !d.land && (d.types.has(Types::ARTIFACT) || d.types.has(Types::ENCHANTMENT)) {
-        v += faerie_bonus(g, p);
-    }
-    v.min(90)
-}
-
 // ================================================================== the 99
 /// alela._counter_nonflier: +1/+1 counter on target creature you control without flying (Plumecreed Mentor,
 /// Pileated Provisioner)
@@ -1991,72 +1961,12 @@ fn chimes_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 }
 
 // ------------------------------------------------------------------ Angelic Shield (the AI's save)
-/// Angelic Shield, "sacrifice: return target creature to its owner's hand": in response to removal aimed at one of
-/// your valuable creatures (not a token, which would be lost; not the commander, who can go to the command zone), the
-/// creature goes back to your hand and the removal fizzles. (Aimed at an opposing threat, the ability-language option
-/// of the card does the bouncing.)
-pub fn alela_protect(
-    g: &mut Game,
-    owner: PlayerId,
-    m: PermId,
-    kind: Sym,
-    _actor: Option<PlayerId>,
-    _spell: Option<CardId>,
-) -> Res<bool> {
-    let x = g.perm(m);
-    if !x.on_bf || x.token || x.is_cmd || !g.is_creature(m) || kind == "bounce" || pval(g, m) < 3.0 {
-        return Ok(false);
-    }
-    let Some(&shield) = named_as(g, owner, "Angelic Shield").first() else { return Ok(false) };
-    crate::glog!(g, "  {} sacrifices Angelic Shield: {} returns to hand", pname(g, owner), name_of(g, m));
-    die(g, shield, "sac")?;
-    if ability_window(g, owner, Some(shield), "return a creature to its owner's hand", None, Some(m))? && on_bf(g, m) {
-        bounce(g, m)?;
-    }
-    Ok(true)
-}
-
-// ------------------------------------------------------------------ Lightning Greaves (off Alela)
-/// Greaves on Alela gives her shroud, so the deck's own Aura (or Daydream) can't target her. When the hand holds one
-/// that wants Alela, the AI first moves the Greaves (equip {0}) to the best other creature.
-fn greaves_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.perm(src).owner != p || crate::ai::hand_key(g, p) != "alela" || post != Some(false) || g.active != Some(p) {
-        return Ok(vec![]);
-    }
-    let Some(am) = alela_perm(g, p) else { return Ok(vec![]) };
-    if g.perm(src).attached != Some(am) {
-        return Ok(vec![]);
-    }
-    let wants = g.player(p).hand.iter().any(|&c| {
-        let aura_here = aura_spec(g, c)
-            .is_some_and(|s| s.target == "own" && s.host_pick.is_none() && own_host(g, p, s, None) == Some(am));
-        let daydream = &*g.db.get(c).name == "Daydream" && daydream_target(g, p) == Some(am);
-        (aura_here || daydream) && castable(g, p, c, "hand")
-    });
-    if !wants {
-        return Ok(vec![]);
-    }
-    let others: Vec<PermId> = creatures(g, p).into_iter().filter(|&m| m != am).collect();
-    let Some(to) = max_by(&others, |m| pval(g, m)) else { return Ok(vec![]) };
-    Ok(vec![ability(
-        3.0,
-        format!("Lightning Greaves off Alela, onto {}", name_of(g, to)),
-        src,
-        greaves_go,
-        to.0 as i64,
-    )])
-}
-
-fn greaves_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
-    let to = PermId(arg as u32);
-    if !controls(g, p, src) || !on_bf(g, to) || g.perm(to).owner != p {
-        return Ok(false);
-    }
-    crate::glog!(g, "  {} moves Lightning Greaves to {} (Alela needs to be targetable)", pname(g, p), name_of(g, to));
-    if ability_window(g, p, Some(src), "equip {0}", None, Some(to))? && on_bf(g, to) {
-        g.perm_mut(src).attached = Some(to);
-    }
-    Ok(true)
+// ------------------------------------------------------------------ Lightning Greaves
+/// Lightning Greaves' options slot: none. The Alela deck's hand AI moved the Greaves off Alela for its own Aura; it was
+/// deleted on 2026-11-01 (`audit/phase4/hand-off-design.md`, "Deleted"). The slot stays registered: it is the card's
+/// only code, and opponents rate a card with an options hook as an engine (`pool::card_threat_value`).
+fn greaves_options(_g: &mut Game, _src: Src, _p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    Ok(vec![])
 }
 
 // ================================================================== registry
