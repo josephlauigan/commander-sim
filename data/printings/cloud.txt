@@ -1,6 +1,6 @@
 1 Adelbert Steiner (fin) 3
 1 Akroma's Will (m3c) 165
-1 Andúril, Narsil Reforged (ltc) 491
+1 Andúril, Narsil Reforged (hoc) 40
 1 Arcane Signet (fic) 333
 1 Archangel of Tithes (plst) ORI-4
 1 Archon of Absolution (plst) ELD-3
@@ -13,6 +13,7 @@
 1 Baird, Steward of Argive (dom) 4
 1 Balan, Wandering Knight (c17) 2
 1 Bastion Protector (fic) 233
+1 Buster Sword (fin) 351
 1 Champion's Helm (fic) 337
 1 Cid, Freeflier Pilot (fic) 13
 1 Cloud, Midgar Mercenary (fin) 375
@@ -29,6 +30,7 @@
 1 Fate of the Sun-Cryst (fin) 19
 1 Fellwar Stone (4ed) 319
 1 Fireshrieker (mrd) 171
+1 Forge Anew (sld) 7002
 1 Forum Familiar (mkm) 16
 1 Fumigate (pkld) 15p
 1 Giver of Runes (plst) MH1-13
@@ -45,34 +47,7 @@
 1 Open the Armory (sld) 2089
 1 Page, Loose Leaf (sos) 250
 1 Path of Ancestry (brc) 192
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
-1 Plains (mdd) 292
+28 Plains (mdd) 292
 1 Plaza of Heroes (msc) 255
 1 Puresteel Paladin (fic) 250
 1 Silverblade Paladin (avr) 36
@@ -82,16 +57,17 @@
 1 Solemn Simulacrum (brc) 161
 1 Sram, Senior Edificer (fca) 3
 1 Stand Up for Yourself (sos) 34
-1 Stroke of Midnight (frc) 35
+1 Stroke of Midnight (fca) 26
 1 Swiftfoot Boots (brr) 58
 1 Sword of Feast and Famine (2xm) 296
 1 Sword of Fire and Ice (2xm) 365
 1 Sword of Hearth and Home (mh2) 433
 1 Sword of Kaldra (mrd) 251
+1 Teferi's Protection (mar) 51
 1 Terminal Moraine (dmr) 259
 1 Thalia, the Survivor (fra) 205
 1 Thought Vessel (msc) 222
 1 Windborn Muse (dmr) 415
-1 Winds of Abandon (soa) 12
+1 Winds of Abandon (plst) MH1-37
 1 Wrath of God (dmr) 416
-1 Zack Fair (fin) 45
+1 Zack Fair (pmei) 2026-3
