@@ -3,7 +3,7 @@
 > **Taken apart (JD, 2026-10-31).** Veyran's spell engine moved into Kefka (`decklists/JD/kefka-grixis-discard.md`):
 > Veyran, Harmonic Prodigy, Guttersnipe, Kessig Flamebreather, Firebrand Archer, Young Pyromancer, Niv-Mizzet, Parun,
 > Frantic Search, Think Twice, Solve the Equation, Mystical Tutor, Birgi, Storm-Kiln Artist, Blazing Firesinger and four
-> lands. Mystic Confluence, Propaganda, An Offer You Can't Refuse and Sokenzan went to Sauron, Counterspell to Tymna/Thrasios. The rest goes
+> lands. Counterspell also went to Kefka; Mystic Confluence, Propaganda, An Offer You Can't Refuse and Sokenzan went to Sauron. The rest goes
 > to bulk; JD no longer owns Mizzix's Mastery. The list below is unchanged and stays the simulator's t1-t3 seat until
 > the deck is retired there.
 

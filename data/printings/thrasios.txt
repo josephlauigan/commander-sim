@@ -11,6 +11,7 @@
 1 Baneslayer Angel (m21) 6
 1 Basalt Monolith (3ed) 235
 1 Bastion Protector (msc) 122
+1 Bite Down (dmu) 155
 1 Blossoming Defense (kld) 146
 1 Breeding Pool (eoe) 251
 1 Brushland (bro) 259
@@ -19,7 +20,6 @@
 1 Coiling Oracle (rvr) 172
 1 Command Tower (pip) 259
 1 Conqueror's Flail (fic) 340
-1 Counterspell (pf26) 5
 1 Crawlspace (ulg) 123
 1 Darksteel Mutation (cmm) 623
 1 Dauthi Voidwalker (tdc) 176

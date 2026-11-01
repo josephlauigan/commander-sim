@@ -11,6 +11,7 @@
 1 Command Tower (sld) 7030
 1 Contract Killing (xln) 95
 1 Corroding Dragonstorm (tdm) 297
+1 Counterspell (pf26) 5
 1 Dark Ritual (fca) 8
 1 Deadly Embrace (fin) 557
 1 Decorum Dissertation (sos) 78

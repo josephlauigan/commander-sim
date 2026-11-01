@@ -73,7 +73,6 @@
 2x Bestial Incursion (fra)
 3x Biblioplex Tomekeeper (sos)
 1x Biomechan Engineer (eoe)
-1x Bite Down (dmu)
 1x Bitter Triumph
 2x Black Widow, Agile Avenger (msc)
 1x Blasphemous Act (soc)
