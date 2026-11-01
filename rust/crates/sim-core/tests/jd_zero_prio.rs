@@ -7,8 +7,8 @@ use sim_core::tag::Tag;
 use sim_core::ids::PlayerId;
 use sim_core::testkit::*;
 
-const JD: [&str; 10] =
-    ["seph", "veyran", "sauron", "yshtola", "kefka", "omnath", "sheoldred", "cloud", "thrasios", "sephfs"];
+/// the decks with their own priority functions (veyran, sauron, kefka and thrasios lost theirs on 2026-11-01)
+const JD: [&str; 6] = ["seph", "yshtola", "omnath", "sheoldred", "cloud", "sephfs"];
 
 #[test]
 fn a_held_zero_from_a_jd_deck_is_never_replaced_by_the_generic_value() {
