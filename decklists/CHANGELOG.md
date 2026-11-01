@@ -70,6 +70,7 @@ Deck file `decklists/JD/karn-colorless-artifacts.md`; not in the simulator.
 
 ### Changes
 
+- **2026-11-01.** Out: Hedron Archive. In: Tezzeret, Cruel Captain. JD's actual list (11/01): the repo list brought in line with the physical deck. Not simulated.
 - **2026-10-30.** Out: Mishra's Bauble. In: Conjurer's Closet. Karn: Conjurer's Closet (from the retired Seph/Atraxa deck, 10/30) in for Mishra's Bauble. JD's choice, not simulated.
 - **2026-10-20.** Added. A colourless artifact-ramp deck built around Karn's upkeep mana, with every Urza and Mishra
   card that fits the plan (the Tron lands, Urza's Saga, Cave, Workshop and Factory, Mishra's Workshop, Factory and
@@ -753,6 +754,7 @@ Deck key `thanos`, `decklists/JD/thanos-five-colour-turbo.md`. Simulated against
 
 ### Changes
 
+- **2026-11-01.** Out: An Offer You Can't Refuse, Arcane Signet, City of Brass, Crop Rotation, Deadly Rollick, Deathrite Shaman, Emergence Zone, Faerie Mastermind, Final Fortune, Flash Photography, Ignoble Hierarch, Misdirection, Redirect Lightning, Sevinne's Reclamation, Shifting Woodland, Smothering Tithe, Starting Town, Storm-Kiln Artist, Tarnished Citadel, Tataru Taru, The Cabbage Merchant, Tinder Wall. In: Ad Nauseam, Cavern of Souls, Desperate Ritual, Dragonlord Dromoka, Eladamri's Call, Gitaxian Probe, Grand Abolisher, Grim Monolith, Grim Tutor, Into the Flood Maw, Jeska's Will, Merchant Scroll, Otawara, Soaring City, Red Elemental Blast, Seething Song, Snapback, Sylvan Library, Taiga, Teferi, Time Raveler, Voice of Victory, Wooded Foothills, Worldly Tutor. JD's actual list (11/01): the repo list brought in line with the physical deck. Not simulated.
 - **2026-10-30.** Into the simulator (JD, 10/30): deck key `thanos` takes Scion's seat at t6, its plan file and its tests; Thanos's power-up modeled (impls/t6_thanos.rs). The Scion list moved to `decklists/pool/retired/` (a test seat only). No list change.
 - **2026-10-30.** New deck (JD, 10/30): the Scion v1 cEDH list (`decklists/JD/scion-ur-dragon-turbo.md`) with Thanos, the Mad Titan as commander. Out: Scion of the Ur-Dragon, Ancient Copper Dragon, Korvold, Fae-Cursed King, Prismari, the Inspiration (copy targets for Scion, dead without him). In: Fierce Guardianship, Deflecting Swat, Deadly Rollick (free while you control your commander). Not simulated; the Scion deck stays as the baseline.
 

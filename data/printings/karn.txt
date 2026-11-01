@@ -19,7 +19,6 @@
 1 Gilded Lotus (brr) 80
 1 Grim Monolith (ulg) 126
 1 Hangarback Walker (plg20) 2
-1 Hedron Archive (brc) 142
 1 Inventors' Fair (kld) 247
 1 Karn, Legacy Reforged (mat) 99
 1 Karn Liberated (2xm) 333
