@@ -42,3 +42,11 @@ Brief: `rust/agents/recal-2.md`. Results: `audit/recal/stage2-2026-11-01.md`. Ba
 - [x] 2. Style fit t0-t6 (7h): held t1 t2 t3 t4 t6 (adaptive files), t5 (look-ahead refit file); t0 built-in (neither held). Results section 2.
 - [x] 3. Pool check (02:37 crash; fix 3b63138f; reruns 02:44-09:52 MST): results section 3, outputs `audit/recal/stage2-calibrate-base.txt` and `stage2-calibrate-knobs/`.
 - [ ] 4. JD's decks remeasured: ON HOLD (coordinator, 10/31): handed back after step 3; the coordinator merges origin/main (urdragon #194, kefka, sauron, thrasios #195) and sends step 4 with a rebuilt binary. Knobs files to use per tier (if held): results section 2, "Recommended knobs per tier". Galadriel has no `audit/galadriel/FINDINGS.md` yet (decks.json tiers t1, t2; CLAUDE.md says t1).
+
+## Stage 2, steps 4-5 (coordinator, 11/01: on 7221712e = main #194 #195 + generic-paths)
+
+- Binary `recal2/bin/commander-sim-s4` (7221712e). `q7.sh`: every JD deck on its own tiers, 2000 games, seeds
+  500000-501999, defaults (`d-KEY-tN`); then the fitted knobs on t3 / t5 / t6 only (`k-KEY-tN`: t3-shared,
+  t5-shared-lookahead, t6-shared); then step 5, `AI_HAND=0` for yshtola t5, sheoldred t3-t4, cloud t1-t3 (`h0-KEY-tN`;
+  base = the `d-` run). Read with `dp.sh`. Thrasios t5 seed 500193 panics on main too (zones.rs ~1917): count it as the
+  run reports, don't fix. Galadriel t1-t2: create its FINDINGS.md.
