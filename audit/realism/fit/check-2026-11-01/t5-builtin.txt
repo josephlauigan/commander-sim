@@ -1,0 +1,18 @@
+=== Realism: Tier 5 (High B4) [loose, lookahead AI, 1998 games, seeds 900000-901999; 5 decks, 4 a pod] ===
+targets: data/realism/t5.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     29.4%     27.4-31.4   31.8%     30.3-33.3  FAIL
+  seat 2 share of decisive games (%)                     26.7%     24.8-28.7   27.8%     26.3-29.3  PASS
+  seat 3 share of decisive games (%)                     23.5%     21.7-25.4   22.4%     20.9-23.9  PASS
+  seat 4 share of decisive games (%)                     20.4%     18.7-22.2   18.0%     16.5-19.5  FAIL
+  median round of a decisive win (rounds)                  8.0       8.0-8.0     7.0           6-8  PASS
+  win round, 75th minus 25th percentile (rounds)           4.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                65.2%     63.1-67.3   37.9%     36.4-39.4  reference
+  wins by damage (combat or other) (%)                   30.7%     28.7-32.8   50.4%     48.9-51.9  reference
+  wins by commander damage (%)                            4.1%       3.3-5.0    9.6%      8.1-11.1  reference
+  wins by poison (%)                                      0.0%       0.0-0.2    2.2%       0.7-3.7  reference
+  deck win spread, best minus worst deck (pts)            18.1             -       -             -  no target
+  games over 15 rounds (round cap 20) (%)                 3.1%       2.4-4.0       -             -  no target
+  3 of 5 targets pass (3 statistics have no target yet; 4 reference values, not scored)
+Games: 1998, decisive 1993 (99.7%), round-cap timeouts 0.2%
+Each deck's share of the decisive games it sat in: Kinnan 35.1% of 1604; Miirym 26.7% of 1615; Urza 23.6% of 1592; Yawgmoth 17.0% of 1551; Zur the Enchanter 22.4% of 1610

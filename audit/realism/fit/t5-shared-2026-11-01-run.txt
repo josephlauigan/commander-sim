@@ -1,0 +1,45 @@
+
+=== Fit: Tier 5 (High B4) [loose, adaptive AI, 2000 games a candidate, seeds 500000-501999] ===
+knobs (5): temp, aggression, caution, cthresh_default, instant_extra
+built-in values: loss 25.36
+  generation  1: best so far 10.25, this generation 10.25 (mean 22.87), step 0.290
+  generation  2: best so far 9.13, this generation 9.13 (mean 18.68), step 0.267
+  generation  3: best so far 9.13, this generation 13.88 (mean 20.33), step 0.261
+  generation  4: best so far 8.55, this generation 9.07 (mean 14.45), step 0.280
+  generation  5: best so far 8.55, this generation 15.18 (mean 20.95), step 0.303
+  generation  6: best so far 8.55, this generation 13.87 (mean 19.14), step 0.288
+  generation  7: best so far 8.55, this generation 12.75 (mean 19.36), step 0.282
+  generation  8: best so far 6.61, this generation 8.45 (mean 15.13), step 0.261
+  generation  9: best so far 6.61, this generation 14.87 (mean 18.72), step 0.267
+  generation 10: best so far 6.61, this generation 7.43 (mean 14.89), step 0.234
+  generation 11: best so far 6.61, this generation 10.71 (mean 17.10), step 0.214
+  generation 12: best so far 6.61, this generation 11.24 (mean 15.48), step 0.194
+  generation 13: best so far 6.61, this generation 8.66 (mean 14.79), step 0.190
+  generation 14: best so far 6.61, this generation 7.57 (mean 16.43), step 0.203
+  generation 15: best so far 6.61, this generation 10.03 (mean 15.41), step 0.198
+
+  statistic                                          built-in        best      target       band
+  seat 1 share of decisive games                         27.6        31.5        31.8  30.3-33.3 
+  seat 2 share of decisive games                         25.5        26.0        27.8  26.3-29.3 
+  seat 3 share of decisive games                         24.1        23.1        22.4  20.9-23.9 
+  seat 4 share of decisive games                         22.7        19.4        18.0  16.5-19.5 
+  median round of a decisive win                          9.0         9.0         7.0   6.0-8.0  
+  loss: built-in 25.36, best 6.61
+
+  best knobs:
+    temp                                           1.166  (built-in 1.000)
+    aggression                                     0.016  (built-in 0.600)
+    caution                                        0.618  (built-in 0.500)
+    cthresh_default                                9.000  (built-in 6.000)
+    instant_extra                                  0.000  (built-in 0.000)
+
+wrote /home/joseph/projects/mtg_sims/commander-sim/.claude/worktrees/overnight-stack/audit/realism/fit/t5-shared-2026-11-01.toml (run it with --knobs; confirm with --realism and more games)
+
+WARNING: 18 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 501676  panic: attempt to add with overflow (at crates/sim-core/src/engine/zones.rs:1917)
+   seed 501632  panic: attempt to add with overflow (at /rustc/b940084d7eb6a299eb4bfeb8e34901bc051e7ac4/library/core/src/iter/traits/accum.rs:206)
+   seed 501270  panic: attempt to add with overflow (at /rustc/b940084d7eb6a299eb4bfeb8e34901bc051e7ac4/library/core/src/iter/traits/accum.rs:206)
+   seed 501270  panic: attempt to add with overflow (at crates/sim-core/src/engine/zones.rs:1917)
+   seed 501270  panic: attempt to add with overflow (at crates/sim-core/src/engine/zones.rs:1917)
+  Please send me that output so I can fix the cause.

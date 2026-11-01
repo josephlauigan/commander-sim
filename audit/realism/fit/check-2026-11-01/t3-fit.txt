@@ -1,0 +1,18 @@
+=== Realism: Tier 3 (High B3) [loose, lookahead AI, 2000 games, seeds 900000-901999; 5 decks, 4 a pod] ===
+targets: data/realism/t3.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     32.3%     30.3-34.4   32.3%     30.8-33.8  PASS
+  seat 2 share of decisive games (%)                     27.8%     25.9-29.9   27.7%     26.2-29.2  PASS
+  seat 3 share of decisive games (%)                     21.8%     20.1-23.7   22.0%     20.5-23.5  PASS
+  seat 4 share of decisive games (%)                     18.0%     16.4-19.8   18.0%     16.5-19.5  PASS
+  median round of a decisive win (rounds)                 10.0      9.0-10.0     8.0           7-9  FAIL
+  win round, 75th minus 25th percentile (rounds)           3.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                16.5%     14.9-18.1   16.5%         15-18  PASS
+  wins by damage (combat or other) (%)                   53.6%     51.4-55.8   59.8%     58.3-61.3  FAIL
+  wins by commander damage (%)                            9.4%      8.2-10.8   14.4%     12.9-15.9  FAIL
+  wins by poison (%)                                     20.5%     18.8-22.3    9.3%      7.8-10.8  FAIL
+  deck win spread, best minus worst deck (pts)            19.0             -       -             -  no target
+  games over 15 rounds (round cap 20) (%)                 4.2%       3.4-5.1       -             -  no target
+  5 of 9 targets pass (3 statistics have no target yet)
+Games: 2000, decisive 1993 (99.7%), round-cap timeouts 0.3%
+Each deck's share of the decisive games it sat in: Atraxa 28.2% of 1603; Aurelia 25.1% of 1616; Korvold 15.3% of 1591; Marwyn 22.0% of 1554; Tergrid 34.3% of 1608

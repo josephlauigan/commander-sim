@@ -1,0 +1,18 @@
+=== Realism: Tier 1 (High B2 / Low B3) [loose, lookahead AI, 2000 games, seeds 900000-901999; 5 decks, 4 a pod] ===
+targets: data/realism/t1.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     30.6%     28.6-32.6   31.3%     29.8-32.8  PASS
+  seat 2 share of decisive games (%)                     25.6%     23.7-27.5   26.9%     25.4-28.4  PASS
+  seat 3 share of decisive games (%)                     22.7%     20.9-24.6   22.9%     21.4-24.4  PASS
+  seat 4 share of decisive games (%)                     21.1%     19.4-23.0   18.9%     17.4-20.4  FAIL
+  median round of a decisive win (rounds)                 10.0      9.0-10.0     8.0           7-9  FAIL
+  win round, 75th minus 25th percentile (rounds)           4.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                 2.2%       1.7-3.0   11.3%      9.8-12.8  FAIL
+  wins by damage (combat or other) (%)                   63.1%     60.9-65.2   70.4%     68.9-71.9  FAIL
+  wins by commander damage (%)                           34.7%     32.6-36.8   18.1%     16.6-19.6  FAIL
+  wins by poison (%)                                      0.0%       0.0-0.2    0.2%         0-1.7  PASS
+  deck win spread, best minus worst deck (pts)            29.9             -       -             -  no target
+  games over 15 rounds (round cap 20) (%)                 4.8%       3.9-5.8       -             -  no target
+  4 of 9 targets pass (3 statistics have no target yet)
+Games: 2000, decisive 1991 (99.5%), round-cap timeouts 0.5%
+Each deck's share of the decisive games it sat in: Isshin 24.5% of 1601; Lathril 17.2% of 1615; Light-Paws 47.1% of 1592; Tatyova 17.2% of 1550; Teysa Karlov 18.9% of 1606
