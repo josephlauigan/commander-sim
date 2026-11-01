@@ -4,13 +4,15 @@ A Grixis (blue-black-red) discard-and-draw deck. Kefka makes every player discar
 type in the pile; the deck is full of cards that want to be discarded, so the symmetry costs you little. Once Kefka
 has flipped, every point of life the table loses on your turn is a card for you, and Psychosis Crawler or
 Niv-Mizzet, the Firemind turns that into a two-card win. A second plan, Underworld Breach with a storm count, kills
-from the graveyard. It is weak to graveyard hate, to fast pressure that kills you before the flip, and to wipes that
-take Kefka with them.
+from the graveyard. Since 10/31 the deck also carries Veyran's spell engine: pingers that hit every opponent whenever you
+cast a spell (Guttersnipe, Kessig Flamebreather, Firebrand Archer), doubled by Veyran and Harmonic Prodigy, so after the
+flip each cheap spell is a handful of cards. It is weak to graveyard hate, to fast pressure that kills you before the
+flip, and to wipes that take Kefka with them.
 
 | | |
 |---|---|
 | **Commander** | Kefka, Court Mage ({2}{U}{B}{R}, 4/5, Grixis) // Kefka, Ruler of Ruin (5/7 flying) |
-| **Bracket** | 4 (2 Game Changers: Jeska's Will, Underworld Breach; Bracket 4 for the Crawler/Niv two-card win, see Bracket and Rule 0) |
+| **Bracket** | 4 (3 Game Changers: Jeska's Will, Mystical Tutor, Underworld Breach; Bracket 4 for the Crawler/Niv two-card win, see Bracket and Rule 0) |
 | **Simulator** | deck key `kefka`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -29,14 +31,14 @@ survive to attack, so protect him (see Protection), and note that he is always a
 is removed.
 
 ### Game plan
-- **Turns 1 to 3.** Develop cheap looters and discard fodder (Rummaging Goblin, Sawblade Scamp, Blightspeaker),
-  play mana rocks (Arcane Signet, Sisay's Ring, Lotus Petal) and a land every turn.
+- **Turns 1 to 3.** Develop cheap looters and pingers (Rummaging Goblin, Blightspeaker, Harmonic Prodigy, Kessig
+  Flamebreather, Firebrand Archer, Young Pyromancer), play Arcane Signet or Lotus Petal and a land every turn.
   Keep the cards that want to be discarded in hand rather than playing them out.
 - **Turns 4 to 6.** Land Kefka (with Lightning Greaves for two triggers in one turn), keep attacking when it is
   safe, and use each trigger to bin madness, mayhem and graveyard-castable cards. Build toward {8}: Treasure,
   rocks, Dark Ritual and burst mana. Cast Psychosis Crawler early (Kefka's own draws and the looters ping the table with it); hold it only once Kefka has flipped and your library is not longer than the highest opponent life.
-- **Late game.** Flip, then cast pingers and one-shots in the same main phase so every point of life lost draws you
-  a card. Finish with the Crawler or Niv-Mizzet loop, or with the Breach and storm line.
+- **Late game.** Flip, then cast cheap spells with the pingers out, so every point of life lost draws you a card.
+  Finish with the Crawler or a Niv-Mizzet loop, or with the Breach and storm line.
 
 ### Cards that want to be discarded
 - **Scarlet Spider, Kaine** (mayhem: cast from the graveyard for {B/R} the turn you discard it), **Demonic Embrace**
@@ -57,7 +59,7 @@ is removed.
   trigger with no mana spent.
 
 ### Outlets and looting
-Rummaging Goblin, Thrill of Possibility, Grab the Prize (2 damage to each opponent if the discard
+Rummaging Goblin, Frantic Search (draw two, discard two, untap three lands: free), Grab the Prize (2 damage to each opponent if the discard
 isn't a land), Stadium Tidalmage, Alpharael, Rapturous Moment, Big Score and Seize the Spoils. They pick the right
 card to bin before Kefka's trigger and fix the hand after it. Rapturous Moment, Big Score and Seize the Spoils also
 make mana or Treasure toward the {8}. **Skullclamp** keeps the hand full between triggers.
@@ -65,51 +67,68 @@ make mana or Treasure toward the {8}. **Skullclamp** keeps the hand full between
 ### Kuja
 **Kuja, Genome Sorcerer** ({2}{B}{R}, 3/4) makes a tapped 0/1 Wizard at each of your end steps. Each token deals 1
 damage to each opponent whenever you cast a noncreature spell, so every discard outlet, ritual and Kefka spell burns
-the table. With four Wizards (Kefka and Niv-Mizzet count) he flips into Trance Kuja, Fate Defied, a 4/6 that doubles
-Wizard damage. Cast him before a spell-heavy turn.
+the table. With four Wizards (Kefka, both Niv-Mizzets, Veyran and Harmonic Prodigy count) he flips into Trance Kuja,
+Fate Defied, a 4/6 that doubles Wizard damage. His tokens are Wizards, so Harmonic Prodigy doubles their pings too.
+Cast him before a spell-heavy turn.
+
+### The spell engine (from Veyran, 10/31)
+- **Pingers:** **Guttersnipe** (2 damage to each opponent per instant or sorcery), **Kessig Flamebreather** and
+  **Firebrand Archer** (1 to each opponent per noncreature spell). **Young Pyromancer** makes a 1/1 per instant or
+  sorcery: blockers against the creature decks, and bodies for Skullclamp and Susurian Voidborn.
+- **Doublers:** **Veyran, Voice of Duality** makes every trigger caused by casting or copying an instant or sorcery
+  happen an extra time (the pingers, Young Pyromancer, Storm-Kiln Artist, Kuja's tokens). **Harmonic Prodigy** does the
+  same for every Shaman and Wizard trigger: Guttersnipe, Kessig, Young Pyromancer, Kuja's tokens, both Niv-Mizzets and
+  **Kefka himself**, enter and attack triggers and the flipped draw. They stack: with both out, Guttersnipe deals 6 to
+  each opponent per instant or sorcery, and after the flip that is 18 cards.
+- **Niv-Mizzet, Parun** ({U}{U}{U}{R}{R}{R}, can't be countered) draws a card whenever any player casts an instant or
+  sorcery and deals 1 damage per card you draw: the same loop as the Firemind with the flipped Kefka.
 
 ### Pressure on their hands
-**Cackling Fiend** makes every opponent discard a card when it enters. **Intellect Devourer**
+**Intellect Devourer**
 makes each opponent exile a card from hand and lets you play it, spending mana as though it were any colour.
 Opponents low on cards discard their best one to Kefka.
 
 ### Ramp and the {8}
-Treasure (Big Score, Seize the Spoils, Contract Killing, Skullport Merchant), the rocks (Arcane Signet, Sisay's Ring,
-Lotus Petal), **Dark Ritual**, **Jeska's Will** (red mana for each card in an opponent's hand, or exile the top three
+Treasure (Big Score, Seize the Spoils, Contract Killing, Skullport Merchant, and **Storm-Kiln Artist**: a Treasure per
+instant or sorcery), Arcane Signet and Lotus Petal, **Birgi, God of Storytelling** ({R} whenever you cast a spell),
+**Dark Ritual**, **Seething Song** (Blazing Firesinger's instant side), **Jeska's Will** (red mana for each card in an opponent's hand, or exile the top three
 cards and play them; with a commander on the battlefield you may do both) and the burst cards get you there:
 Rapturous Moment refunds five.
 
 ### Making them lose life
-- **Repeatable pings:** Sawblade Scamp, Viashino Fangtail, Blightspeaker, Screeching Soulbreaker, Susurian Voidborn
-  (each creature or artifact of yours that dies drains one opponent, and Treasure you crack counts).
-- **One-shots:** Shimmercreep (each opponent loses 3 with three colours on the battlefield), Sneering Shadewriter,
-  Corroding Dragonstorm, Grab the Prize, Lightning Bolt and Massacre Wurm (2 for each of their creatures that dies).
+- **On every spell:** Guttersnipe, Kessig Flamebreather, Firebrand Archer and Kuja's tokens (see The spell engine).
+- **Repeatable pings:** Blightspeaker, Susurian Voidborn (each creature or artifact of yours that dies drains one
+  opponent, and Treasure you crack counts).
+- **One-shots:** Corroding Dragonstorm, Grab the Prize, Lightning Bolt and Massacre Wurm (2 for each of their creatures
+  that dies).
 - **Price of Progress** ({1}{R}, instant) deals 2 damage to each player for each nonbasic land they control. Kefka runs
-  24 basics, so it costs you little, and on your turn with Kefka flipped each opponent's loss draws you that many cards:
+  20 basics, so it costs you little, and on your turn with Kefka flipped each opponent's loss draws you that many cards:
   three opponents with four nonbasics each is 24 damage and 24 cards. Not with Fiery Emancipation out unless it kills:
   tripled, it can draw you out of cards (see Key lines).
 - **Combat:** a flying 5/7 that hits for 5 draws you 5.
 
 ### Tutors
-**Diabolic Tutor**, **Profane Tutor** (suspended for {1}{B}, it finds any card two turns later) and **Grim Servant** (a card
-with mana value up to your devotion to black; you lose 3 life). They are the only tutors, so they are slow; use them to find the Crawler or Niv-Mizzet, Underworld Breach or Yawgmoth's
-Will, whichever the board needs.
+**Diabolic Tutor**, **Profane Tutor** (suspended for {1}{B}, it finds any card two turns later), **Mystical Tutor** ({U},
+instant: an instant or sorcery to the top) and **Solve the Equation** ({2}{U}: an instant or sorcery to your hand). Use
+Diabolic and Profane for the Crawler, Niv-Mizzet or Underworld Breach; Mystical and Solve for Brain Freeze, Grapeshot,
+Yawgmoth's Will or Jeska's Will, whichever the board needs.
 
 ### Removal, counters and wipes
-**Lightning Bolt**, **Pongify** (they get a 3/3 Ape), **Reality Shift** (they manifest the top
+**Lightning Bolt**, **Reality Shift** (they manifest the top
 card), **Extinguish the Light**, **Deadly Embrace**
 (draws a card for each creature that died this turn), **Contract Killing** (two Treasure) and **Chaos Warp**
 (the owner shuffles the permanent away and may get a permanent from the top of the library, so use it on the
-biggest threat). **Arcane Denial** counters a spell (its controller may draw up to two cards next upkeep, and you draw one) and **Mana Leak** ({1}{U}) counters a spell unless its controller pays {3}, which is usually a hard counter once the table is tapped out. **Massacre Wurm** is the sweeper: it kills the opponents' small creatures, and each one costs its controller 2 life.
+biggest threat). **Arcane Denial** counters a spell (its controller may draw up to two cards next upkeep, and you draw one) and **Counterspell** ({U}{U}) counters anything. **Massacre Wurm** is the sweeper: it kills the opponents' small creatures, and each one costs its controller 2 life.
 
 ### Protection
-**Lightning Greaves** gives haste and shroud with a free equip. **Deflecting Swat** is free while you control a
-commander and gives a spell or ability new targets, so it redirects removal or a counter. **Slip Out the Back**
-({U}) puts a +1/+1 counter on a creature and phases it out.
+**Lightning Greaves** gives haste and shroud with a free equip. **Counterspell** and **Arcane Denial** answer removal
+on the stack. **Mistrise Village** ({U}, {T}: your next spell this turn can't be countered) protects the storm turn.
 
 ### Graveyard and storm
 **Underworld Breach**, **Brain Freeze**, **Dark Ritual**, **Lotus Petal**, **Grapeshot** and **Yawgmoth's Will**
-(see Key lines).
+(see Key lines). **Think Twice** has flashback, so a discarded copy is still two casts and two rounds of pinger
+triggers. **Mystic Sanctuary** (enters untapped with three other Islands) puts an instant or sorcery from the graveyard
+back on top: Grapeshot, Brain Freeze or Frantic Search.
 
 ### How it wins
 **Psychosis Crawler + Kefka, Ruler of Ruin.** Each card you draw makes each opponent lose 1; each opponent's loss
@@ -121,7 +140,12 @@ casting early: Kefka's own draws and the looters ping the whole table with it.
 **Niv-Mizzet, the Firemind + Kefka, Ruler of Ruin.** Each card you draw deals 1 damage to any target; damage to an
 opponent on your turn draws you a card, which pings again. One ping hits one opponent, so the loop needs a library
 larger than the opponents' life added together, but you choose every target: when the library is short, aim the
-pings at creatures (or at yourself) and stop. Niv also taps to draw, which starts it.
+pings at creatures (or at yourself) and stop. Niv also taps to draw, which starts it. **Niv-Mizzet, Parun** runs the
+same loop, started by any instant or sorcery.
+
+**The spell turn after the flip.** With Guttersnipe (and Veyran or Harmonic Prodigy) out, each cheap instant or
+sorcery is several points of life lost by each opponent and that many cards for you: chain Frantic Search, Think
+Twice, Dark Ritual and the tutors into Grapeshot or Brain Freeze.
 
 **Fiery Emancipation** ({3}{R}{R}{R}) triples the damage your sources deal. With Psychosis Crawler or Niv-Mizzet each card
 you draw becomes 3 damage (to each opponent with the Crawler), so the flipped Kefka's loop needs a third of the
@@ -137,19 +161,15 @@ creature on your side, and one fewer in their deck. Pick the opponent whose deck
 
 **Underworld Breach + storm.** See Key lines. It is a mill, not a two-card infinite.
 
-**Jin-Gitaxias, Progress Tyrant** copies the first artifact, instant or sorcery you cast each turn (a second
-Diabolic Tutor, Night's Whisper or Lightning Bolt) and counters the first one each opponent casts. **Night's
-Whisper** is a plain two-card draw.
-
 ### Weak spots and how to play around them
 - **Graveyard hate** hurts Breach, Yawgmoth's Will and every cast-from-graveyard card. Without them, Kefka still
   draws and the Crawler loop still works.
-- **Removal before the flip.** Kefka is a 4/5 that has to attack or survive a turn cycle. Hold Deflecting Swat,
-  Slip Out the Back or Lightning Greaves mana, and remember he can be recast from the command zone.
+- **Removal before the flip.** Kefka is a 4/5 that has to attack or survive a turn cycle. Hold Counterspell or
+  Lightning Greaves mana, and remember he can be recast from the command zone.
 - **Short library.** Never start the Crawler or Niv loop without counting your library against the highest life total.
 - **Hand size.** Discard down to seven is the limit to watch after a flip turn.
 - **Fast pressure and large creatures.** You win late. Spend removal on the threats that would kill you first, and
-  use **Massacre Wurm** or Arcane Denial and Jin-Gitaxias to buy time.
+  use **Massacre Wurm**, Young Pyromancer's tokens or a counterspell to buy time.
 
 ## Key lines
 
@@ -171,21 +191,20 @@ Whisper** is a plain two-card draw.
 
 ## Mana and consistency
 
-- **Lands:** 36 (12 nonbasic + 24 basic)
-- **Mana:** 3 rocks (Arcane Signet, Sisay's Ring, Lotus Petal), Dark Ritual, Jeska's Will, Treasure makers and burst cards.  Yawgmoth's Will replays Dark Ritual and Lotus Petal from the graveyard.
-- **Card draw:** Kefka, Night's Whisper, Decorum Dissertation (a free draw-two each turn after the first cast), Skullclamp, Niv-Mizzet (taps to draw), Marvin, Murderous Mimic (a 2-mana 2/2 that has the activated abilities of your other creatures: it copies Niv-Mizzet's draw, Fangtail's ping, Blightspeaker and Rummaging Goblin), the looters, and the cheap digging spell Expressive Iteration (look at three: one to hand, one to the bottom, one exiled and playable this turn). **Glimpse the Unthinkable** ({U}{B}: target player mills ten) fills your graveyard for Underworld Breach and Yawgmoth's Will, or points at an opponent to start the mill-out that Brain Freeze finishes. **Tutors:** Diabolic Tutor, Profane Tutor (suspended), Grim Servant (devotion to black). **Graveyard:** Underworld Breach, Yawgmoth's Will.
-- **Interaction:** Lightning Bolt, Pongify, Reality Shift, Extinguish the Light, Deadly Embrace, Contract Killing, Chaos Warp; counters Arcane Denial and Mana Leak, plus Jin-Gitaxias countering each opponent's first artifact, instant or sorcery; one-sided sweeper Massacre Wurm.
-- **Protection:** Lightning Greaves (haste), Deflecting Swat (free while you control a commander: redirects a removal spell or counter) and Slip Out the Back ({U}: phases a creature out).
+- **Lands:** 36 (16 nonbasic + 20 basic)
+- **Mana:** Arcane Signet, Lotus Petal, Birgi, Storm-Kiln Artist, Dark Ritual, Seething Song, Jeska's Will, Treasure makers and burst cards. Yawgmoth's Will replays Dark Ritual and Lotus Petal from the graveyard. Basics: 8 Swamp, 7 Mountain, 5 Island; Mistrise Village enters untapped with a Mountain.
+- **Card draw:** Kefka, Frantic Search, Think Twice, Decorum Dissertation (a free draw-two each turn after the first cast), Skullclamp, Niv-Mizzet (taps to draw), Marvin, Murderous Mimic (a 2-mana 2/2 that has the activated abilities of your other creatures: it copies Niv-Mizzet's draw, Blightspeaker and Rummaging Goblin), the looters, and the cheap digging spell Expressive Iteration (look at three: one to hand, one to the bottom, one exiled and playable this turn). **Glimpse the Unthinkable** ({U}{B}: target player mills ten) fills your graveyard for Underworld Breach and Yawgmoth's Will, or points at an opponent to start the mill-out that Brain Freeze finishes. **Tutors:** Diabolic Tutor, Profane Tutor (suspended), Mystical Tutor, Solve the Equation. **Graveyard:** Underworld Breach, Yawgmoth's Will, Mystic Sanctuary.
+- **Interaction:** Lightning Bolt, Reality Shift, Extinguish the Light, Deadly Embrace, Contract Killing, Chaos Warp; counters Arcane Denial and Counterspell; one-sided sweeper Massacre Wurm.
+- **Protection:** Lightning Greaves (haste), the counterspells, and Mistrise Village (makes a spell uncounterable).
 
 ## Bracket and Rule 0
 
-**Bracket 4,** with two Game Changers: **Jeska's Will** and **Underworld Breach**. Two Game Changers alone would fit Bracket 3; the deck is Bracket 4 because of the two-card win. There is no two-card infinite combo, but Psychosis Crawler or Niv-Mizzet, the Firemind with the flipped Kefka is a two-card win: Kefka is always available from the command zone, so the deck only needs the Crawler or Niv, Kefka on the battlefield and {8} for the flip. Three tutors (Diabolic Tutor, Profane Tutor and Grim Servant). The Breach + Brain Freeze line is a second way to win, but it is a mill, not a two-card infinite: it needs the graveyard to fill first.
+**Bracket 4,** with three Game Changers: **Jeska's Will**, **Mystical Tutor** and **Underworld Breach**. Three Game Changers alone would fit Bracket 3; the deck is Bracket 4 because of the two-card win. There is no two-card infinite combo, but Psychosis Crawler or Niv-Mizzet, the Firemind with the flipped Kefka is a two-card win: Kefka is always available from the command zone, so the deck only needs the Crawler or Niv, Kefka on the battlefield and {8} for the flip. Four tutors (Diabolic Tutor, Profane Tutor, Mystical Tutor and Solve the Equation). Niv-Mizzet, Parun is a second Niv two-card win with the flipped Kefka. The Breach + Brain Freeze line is a second way to win, but it is a mill, not a two-card infinite: it needs the graveyard to fill first.
 
 Disclose before the game:
 - **Jeska's Will** and **Underworld Breach** (the Game Changers). Breach recasts the graveyard, so mention it as a combo enabler.
 - **The Crawler and Niv-Mizzet loops** with Kefka, Ruler of Ruin.
 - **The Breach + Brain Freeze line**, which can mill an opponent out in one turn (Dark Ritual, Lotus Petal and Grapeshot feed the storm count).
-- **Jin-Gitaxias, Progress Tyrant**, which counters the first artifact, instant or sorcery each opponent casts each turn.
 - **Symmetric discard** every time Kefka enters or attacks.
 
 Re-check the official list at https://commanderbrackets.com/faq before an event.
@@ -194,17 +213,17 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Kefka, Court Mage // Kefka, Ruler of Ruin
 
-**Creatures (24).** Alpharael Dreaming Acolyte, Blightspeaker, Cackling Fiend, Eternal Student, Garrison Excavator, Grim Servant, Intellect Devourer, Jin-Gitaxias Progress Tyrant, Kuja Genome Sorcerer // Trance Kuja Fate Defied, Marvin Murderous Mimic, Massacre Wurm, Niv-Mizzet the Firemind, Psychosis Crawler, Rummaging Goblin, Sawblade Scamp, Scarlet Spider Kaine, Screeching Soulbreaker, Shimmercreep, Skullport Merchant, Sneering Shadewriter, Stadium Tidalmage, Stinkweed Imp, Susurian Voidborn, Viashino Fangtail
+**Creatures (26).** Alpharael Dreaming Acolyte, Birgi God of Storytelling, Blazing Firesinger // Seething Song, Blightspeaker, Eternal Student, Firebrand Archer, Garrison Excavator, Guttersnipe, Harmonic Prodigy, Intellect Devourer, Kessig Flamebreather, Kuja Genome Sorcerer // Trance Kuja Fate Defied, Marvin Murderous Mimic, Massacre Wurm, Niv-Mizzet Parun, Niv-Mizzet the Firemind, Psychosis Crawler, Rummaging Goblin, Scarlet Spider Kaine, Skullport Merchant, Stadium Tidalmage, Stinkweed Imp, Storm-Kiln Artist, Susurian Voidborn, Veyran Voice of Duality, Young Pyromancer
 
 **Enchantments (4).** Corroding Dragonstorm, Demonic Embrace, Fiery Emancipation, Underworld Breach
 
-**Artifacts (5).** Arcane Signet, Lightning Greaves, Lotus Petal, Sisay's Ring, Skullclamp
+**Artifacts (4).** Arcane Signet, Lightning Greaves, Lotus Petal, Skullclamp
 
-**Sorceries (15).** Bribery, Contract Killing, Deadly Embrace, Decorum Dissertation, Diabolic Tutor, Expressive Iteration, Glimpse the Unthinkable, Grab the Prize, Grapeshot, Jeska's Will, Night's Whisper, Profane Tutor, Rapturous Moment, Seize the Spoils, Yawgmoth's Will
+**Sorceries (15).** Bribery, Contract Killing, Deadly Embrace, Decorum Dissertation, Diabolic Tutor, Expressive Iteration, Glimpse the Unthinkable, Grab the Prize, Grapeshot, Jeska's Will, Profane Tutor, Rapturous Moment, Seize the Spoils, Solve the Equation, Yawgmoth's Will
 
-**Instants (15).** Arcane Denial, Big Score, Brain Freeze, Chaos Warp, Dark Ritual, Deflecting Swat, Extinguish the Light, Lightning Bolt, Mana Leak, Pongify, Price of Progress, Reality Shift, Slip Out the Back, Thrill of Possibility, Twinned Vision
+**Instants (14).** Arcane Denial, Big Score, Brain Freeze, Chaos Warp, Counterspell, Dark Ritual, Extinguish the Light, Frantic Search, Lightning Bolt, Mystical Tutor, Price of Progress, Reality Shift, Think Twice, Twinned Vision
 
-**Lands (36).** Blood Crypt, Command Tower, Exotic Orchard, Gemstone Mine, Haunted Ridge, Shivan Reef, Spirebluff Canal, Steam Vents, Stormcarved Coast, Sulfur Falls, Sulfurous Springs, Underground River, 6 Island, 5 Mountain, 13 Swamp
+**Lands (36).** Blood Crypt, Command Tower, Exotic Orchard, Gemstone Mine, Haunted Ridge, Mistrise Village, Mystic Sanctuary, Scorched Geyser, Shivan Reef, Spirebluff Canal, Steam Vents, Stormcarved Coast, Sulfur Falls, Sulfurous Springs, Temple of Epiphany, Underground River, 5 Island, 7 Mountain, 8 Swamp
 
 ## Import list (100)
 
@@ -213,19 +232,20 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Arcane Denial
 1 Arcane Signet
 1 Big Score
+1 Birgi, God of Storytelling
+1 Blazing Firesinger // Seething Song
 1 Blightspeaker
 1 Blood Crypt
 1 Brain Freeze
 1 Bribery
-1 Cackling Fiend
 1 Chaos Warp
 1 Command Tower
 1 Contract Killing
 1 Corroding Dragonstorm
+1 Counterspell
 1 Dark Ritual
 1 Deadly Embrace
 1 Decorum Dissertation
-1 Deflecting Swat
 1 Demonic Embrace
 1 Diabolic Tutor
 1 Eternal Student
@@ -233,59 +253,62 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Expressive Iteration
 1 Extinguish the Light
 1 Fiery Emancipation
+1 Firebrand Archer
+1 Frantic Search
 1 Garrison Excavator
 1 Gemstone Mine
 1 Glimpse the Unthinkable
 1 Grab the Prize
 1 Grapeshot
-1 Grim Servant
+1 Guttersnipe
+1 Harmonic Prodigy
 1 Haunted Ridge
 1 Intellect Devourer
 1 Jeska's Will
-1 Jin-Gitaxias, Progress Tyrant
 1 Kefka, Court Mage // Kefka, Ruler of Ruin
+1 Kessig Flamebreather
 1 Kuja, Genome Sorcerer // Trance Kuja, Fate Defied
 1 Lightning Bolt
 1 Lightning Greaves
 1 Lotus Petal
-1 Mana Leak
 1 Marvin, Murderous Mimic
 1 Massacre Wurm
-1 Night's Whisper
+1 Mistrise Village
+1 Mystic Sanctuary
+1 Mystical Tutor
+1 Niv-Mizzet, Parun
 1 Niv-Mizzet, the Firemind
-1 Pongify
 1 Price of Progress
 1 Profane Tutor
 1 Psychosis Crawler
 1 Rapturous Moment
 1 Reality Shift
 1 Rummaging Goblin
-1 Sawblade Scamp
 1 Scarlet Spider, Kaine
-1 Screeching Soulbreaker
+1 Scorched Geyser
 1 Seize the Spoils
-1 Shimmercreep
 1 Shivan Reef
-1 Sisay's Ring
 1 Skullclamp
 1 Skullport Merchant
-1 Slip Out the Back
-1 Sneering Shadewriter
+1 Solve the Equation
 1 Spirebluff Canal
 1 Stadium Tidalmage
 1 Steam Vents
 1 Stinkweed Imp
+1 Storm-Kiln Artist
 1 Stormcarved Coast
 1 Sulfur Falls
 1 Sulfurous Springs
 1 Susurian Voidborn
-1 Thrill of Possibility
+1 Temple of Epiphany
+1 Think Twice
 1 Twinned Vision
 1 Underground River
 1 Underworld Breach
-1 Viashino Fangtail
+1 Veyran, Voice of Duality
 1 Yawgmoth's Will
-6 Island
-5 Mountain
-13 Swamp
+1 Young Pyromancer
+5 Island
+7 Mountain
+8 Swamp
 ```

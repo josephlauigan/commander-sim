@@ -25,6 +25,7 @@
 1 Dauthi Voidwalker (tdc) 176
 1 Deathcap Glade (sos) 253
 1 Diabolic Tutor (sld) 1592
+1 Disdainful Stroke (soa) 147
 1 Dragonlord Dromoka (2x2) 376
 1 Drowned Catacomb (m11) 224
 1 Elenda, the Dusk Rose (2x2) 377
@@ -42,7 +43,6 @@
 1 Glacial Fortress (msc) 248
 1 Grave Titan (pdp12) 2
 1 Hallowed Fountain (rtr) 241
-1 Helm of Kaldra (plst) 5DN-131
 1 Hero of Bladehold (mbs) 8
 1 Island (mdd) 294
 1 Island (mdd) 294

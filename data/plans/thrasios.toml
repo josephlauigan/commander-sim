@@ -89,7 +89,7 @@ value = 78
 else = 66
 
 [[prio]]
-cards = ["Conqueror's Flail", "Helm of Kaldra"]
+cards = ["Conqueror's Flail"]
 when = ["creatures>=1"]
 value = 58
 else = 25

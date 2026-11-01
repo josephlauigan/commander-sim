@@ -12,7 +12,7 @@
 deck = "sauron"
 default = "plan"
 # card engines the tutors want once no line wants a card (sauron_tutor's tail)
-engines = ["The Ozolith", "Inexorable Tide", "Whispersilk Cloak"]
+engines = ["The Ozolith", "Whispersilk Cloak"]
 
 # Sauron (seven mana) is the plan: 85 once castable
 [commander]
@@ -72,7 +72,7 @@ when = ["hand-size<=1 & lands>=7"]
 score = 60
 
 [[wish]]
-cards = ["The Ozolith", "Inexorable Tide", "Whispersilk Cloak", "Exsanguinate", "Not of This World"]
+cards = ["The Ozolith", "Whispersilk Cloak", "Exsanguinate", "Not of This World"]
 score = 40
 
 # Cast priorities (sauron_prio), the first rule selecting a card decides
@@ -83,7 +83,7 @@ value = 85
 # rocks early, not late
 [[prio]]
 cards = ["Sol Ring", "Arcane Signet", "Chromatic Lantern", "Dimir Signet", "Fellwar Stone", "Mind Stone",
-    "Rakdos Signet", "Relic of Legends", "Talisman of Creativity", "Talisman of Dominance", "Talisman of Indulgence"]
+    "Rakdos Signet", "Talisman of Creativity", "Talisman of Dominance", "Talisman of Indulgence"]
 when = ["turn<=5"]
 value = 80
 else = 40
@@ -118,7 +118,7 @@ cards = ["Whispersilk Cloak"]
 value = 57
 
 [[prio]]
-cards = ["Inexorable Tide", "Call of the Ring"]
+cards = ["Call of the Ring"]
 value = 55
 
 [[prio]]
@@ -156,3 +156,12 @@ value = 0
 [[hold]]
 card = "Not of This World"
 protects = ["commander", "Sheoldred, the Apocalypse"]
+
+# protection for Sauron against targeted removal (veyran_protect: Swat redirects, Slip phases out; from Kefka 10/31)
+[[hold]]
+card = "Deflecting Swat"
+protects = ["commander"]
+
+[[hold]]
+card = "Slip Out the Back"
+protects = ["commander"]

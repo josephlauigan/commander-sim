@@ -53,12 +53,3 @@ value = 0
 cards = ["Rapturous Moment"]
 when = ["nonland>=3"]
 value = 58
-
-# protection for Kefka and the engines against targeted removal (veyran_protect: Swat redirects, Slip phases out)
-[[hold]]
-card = "Deflecting Swat"
-protects = ["commander", "Psychosis Crawler", "Niv-Mizzet, the Firemind"]
-
-[[hold]]
-card = "Slip Out the Back"
-protects = ["commander", "Psychosis Crawler", "Niv-Mizzet, the Firemind"]

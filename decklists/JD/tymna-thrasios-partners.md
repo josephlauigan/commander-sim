@@ -91,7 +91,7 @@ mana for removal: an opponent who destroys Rings or the Monolith in response end
   blocker never comes.
 - **Diabolic Tutor** ({2}{B}{B}) fetches any card. Fetch Elspeth when behind, a Titan or Dromoka to close, or a piece of
   the combo.
-- **Helm of Kaldra** (equip {2}) gives first strike, trample and haste, and **Conqueror's Flail** gives +4/+4 with all four colours and stops opponents from casting spells
+- **Conqueror's Flail** gives +4/+4 with all four colours and stops opponents from casting spells
   on your turn.
 
 ### Tymna's attackers
@@ -108,8 +108,8 @@ opponents you can reach, keep enough back to block what the taxes let through, a
 
 **Swords to Plowshares** and **Path to Exile** (one mana), **Darksteel Mutation** (also answers a commander),
 **Skyclave Apparition**, **Bite Down** (a creature of yours deals damage equal to its power to one of theirs),
-**Memory Trap** and **Disenchant** ({1}{W}, instant: destroy an artifact or enchantment); **Elspeth** adds more. **Arcane Denial** and **Swan Song** ({U}: counter an enchantment, instant or sorcery; its
-controller gets a 2/2 Bird) are the counterspells, and **Aven
+**Memory Trap** and **Disenchant** ({1}{W}, instant: destroy an artifact or enchantment); **Elspeth** adds more. **Arcane Denial**, **Swan Song** ({U}: counter an enchantment, instant or sorcery; its
+controller gets a 2/2 Bird) and **Disdainful Stroke** ({1}{U}: counter a spell with mana value 4 or more) are the counterspells, and **Aven
 Mindcensor** (flash) blunts tutors and land searches. **Restoration Angel** (flash) blinks a creature out of removal and
 reuses an enters effect (a Titan, Skyclave Apparition, Atraxa). **Swan Song**, **Blossoming Defense** ({G}: +2/+2 and
 hexproof) and **Lightning Greaves** protect Tymna.
@@ -136,7 +136,7 @@ or the Basalt Monolith + Rings of Brighthearth loop into Walking Ballista, from 
 
 - **Fast decks.** The first four turns are slow; the taxes matter only from turn 4. Spend the first turns on mana and a
   blocker rather than holding up Tymna's draws.
-- **Combo and storm.** Aven Mindcensor, Arcane Denial and Memory Trap are the answers; a Dromoka on the battlefield
+- **Combo and storm.** Aven Mindcensor, Arcane Denial, Disdainful Stroke (the big pieces) and Memory Trap are the answers; a Dromoka on the battlefield
   stops anything cast on your turn.
 - **Wipes.** The defense is mostly enchantments and artifacts, which survive creature wipes; rebuild the attackers with
   the Titans and Elspeth.
@@ -190,11 +190,11 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
-**Artifacts (11).** Arcane Signet, Basalt Monolith, Conqueror's Flail, Crawlspace, Fellwar Stone, Helm of Kaldra, Lightning Greaves, Orzhov Signet, Rings of Brighthearth, Talisman of Curiosity, Talisman of Unity
+**Artifacts (10).** Arcane Signet, Basalt Monolith, Conqueror's Flail, Crawlspace, Fellwar Stone, Lightning Greaves, Orzhov Signet, Rings of Brighthearth, Talisman of Curiosity, Talisman of Unity
 
 **Enchantments (5).** Darksteel Mutation, Ghostly Prison, Memory Trap, Propaganda, Smothering Tithe
 
-**Instants (10).** Arcane Denial, Bite Down, Blossoming Defense, Disenchant, Fact or Fiction, Gifts Ungiven, Path to Exile, Swan Song, Swords to Plowshares, Worldly Tutor
+**Instants (11).** Arcane Denial, Bite Down, Blossoming Defense, Disdainful Stroke, Disenchant, Fact or Fiction, Gifts Ungiven, Path to Exile, Swan Song, Swords to Plowshares, Worldly Tutor
 
 **Sorceries (2).** Austere Command, Diabolic Tutor
 
@@ -229,6 +229,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Dauthi Voidwalker
 1 Deathcap Glade
 1 Diabolic Tutor
+1 Disdainful Stroke
 1 Disenchant
 1 Dragonlord Dromoka
 1 Drowned Catacomb
@@ -244,7 +245,6 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Glacial Fortress
 1 Grave Titan
 1 Hallowed Fountain
-1 Helm of Kaldra
 1 Hero of Bladehold
 1 Isolated Chapel
 1 Lightning Greaves
