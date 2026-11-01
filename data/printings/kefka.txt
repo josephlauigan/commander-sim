@@ -2,6 +2,7 @@
 1 Arcane Denial (msc) 147
 1 Arcane Signet (fic) 333
 1 Big Score (plst) SNC-102
+1 Birgi, God of Storytelling (khm) 123
 1 Blazing Firesinger // Seething Song (sos) 109
 1 Blightspeaker (tsr) 103
 1 Blood Crypt (rtr) 238
@@ -21,23 +22,22 @@
 1 Exotic Orchard (fic) 390
 1 Expressive Iteration (stx) 186
 1 Extinguish the Light (dmu) 94
-1 Fiery Emancipation (pm21) 143p
+1 Fiery Emancipation (wot) 42
+1 Firebrand Archer (fdn) 196
+1 Frantic Search (ulg) 32
 1 Garrison Excavator (sos) 116
 1 Gemstone Mine (plst) TSB-119
+1 Glimpse the Unthinkable (2x2) 378
 1 Grab the Prize (dsk) 138
 1 Grapeshot (tsr) 166
 1 Guttersnipe (pm19) 145
 1 Harmonic Prodigy (mh2) 132
 1 Haunted Ridge (fra) 180
 1 Intellect Devourer (clb) 132
-1 Island (mdd) 294
-1 Island (mdd) 294
-1 Island (mdd) 294
-1 Island (mdd) 294
-1 Island (mdd) 294
+5 Island (mdd) 294
 1 Jeska's Will (soa) 109
 1 Kefka, Court Mage // Kefka, Ruler of Ruin (fin) 322
-1 Kessig Flamebreather (vow) 164
+1 Kessig Flamebreather (plst) VOW-164
 1 Kuja, Genome Sorcerer // Trance Kuja, Fate Defied (fin) 399
 1 Lightning Bolt (3ed) 162
 1 Lightning Greaves (fic) 349
@@ -45,20 +45,14 @@
 1 Marvin, Murderous Mimic (dsk) 367
 1 Massacre Wurm (m21) 114
 1 Mistrise Village (tdm) 397
-1 Mountain (mdd) 298
-1 Mountain (mdd) 298
-1 Mountain (mdd) 298
-1 Mountain (mdd) 298
-1 Mountain (mdd) 298
-1 Mountain (rtr) 267
-1 Mountain (rtr) 267
+7 Mountain (mdd) 298
 1 Mystic Sanctuary (soc) 388
 1 Mystical Tutor (dmr) 421
-1 Niv-Mizzet, Parun (grn) 192
+1 Niv-Mizzet, Parun (rvr) 376
 1 Niv-Mizzet, the Firemind (p30a) 14
+1 Price of Progress (pd2) 18
 1 Profane Tutor (mh2) 401
 1 Psychosis Crawler (c15) 263
-1 Rank Rat (fra) 61
 1 Rapturous Moment (sos) 219
 1 Reality Shift (tdc) 163
 1 Rummaging Goblin (m13) 146
@@ -72,24 +66,18 @@
 1 Spirebluff Canal (kld) 249
 1 Stadium Tidalmage (sos) 232
 1 Steam Vents (rvr) 298
-1 Storm-Kiln Artist (cmm) 260
+1 Stinkweed Imp (sld) 2516
+1 Storm-Kiln Artist (soc) 255
 1 Stormcarved Coast (dbl) 532
 1 Sulfur Falls (isd) 248
 1 Sulfurous Springs (dmu) 381
 1 Susurian Voidborn (eoe) 118
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
-1 Swamp (mdd) 296
+8 Swamp (mdd) 296
 1 Temple of Epiphany (soc) 412
 1 Think Twice (tsr) 92
 1 Twinned Vision (fra) 157
 1 Underground River (wc98) bs362
 1 Underworld Breach (spg) 9
 1 Veyran, Voice of Duality (sld) 1915
-1 Yawgmoth's Will (wc99) js171
+1 Yawgmoth's Will (vma) 148
 1 Young Pyromancer (2x2) 364

@@ -565,8 +565,21 @@ pub fn enter_counters(g: &Game, p: PlayerId, m: PermId, loyalty: Option<i32>, pl
 }
 
 // ================================================================== tokens
-/// Tokens: how many tokens p makes when it would make n (Kaya, Geist Hunter; the compiled doublers)
+/// Tokens: how many tokens p makes when it would make n (Kaya, Geist Hunter; the compiled doublers), at most
+/// `MULT_CAP`. Each doubler applies in turn (616.1), so k of them make 2^k: Astral Dragon's token copies of Parallel
+/// Lives (with Miirym, Panharmonicon and Roaming Throne copying the Dragons) once gave a t5 seat 39, and 2^39
+/// saturated to u32::MAX, which callers' `as i32` read as -1: one Treasure became -1 Treasures and `note_tokens`
+/// overflowed (thrasios t5, seed 500193). Not a loop: a finite, exponential board.
 pub fn token_mult(g: &Game, p: PlayerId) -> u32 {
+    token_mult_raw(g, p).min(MULT_CAP)
+}
+
+/// the doublers' cap: `zones::TOKEN_CAP`, the battlefield's own (runaway token growth is already lethal). Past it
+/// every creation already fills the battlefield; it keeps `n * mult` inside i32 and the per-token loops
+/// (Powerstones, Zurgo's copies) short.
+pub const MULT_CAP: u32 = crate::engine::zones::TOKEN_CAP as u32;
+
+fn token_mult_raw(g: &Game, p: PlayerId) -> u32 {
     let kaya = crate::impls::t0_zurgo::kaya_mult(g, p); // Kaya, Geist Hunter -2: twice as many this turn
     if !crate::dsl::active(g) {
         return kaya;
@@ -585,7 +598,7 @@ pub fn token_mult(g: &Game, p: PlayerId) -> u32 {
 
 /// the tokens step: n tokens p would make
 pub fn tokens(g: &Game, p: PlayerId, n: u32) -> u32 {
-    n * token_mult(g, p)
+    n.saturating_mul(token_mult(g, p))
 }
 
 /// Academy Manufactor: p controls one

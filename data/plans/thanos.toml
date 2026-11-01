@@ -1,6 +1,6 @@
 # Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs through the
 # Tier 6 plan slots (impls/t6_plans.rs). JD's Thanos, the Mad Titan turbo deck (Scion's seat and plan since 2026-10-30;
-# the list is Scion v1 minus Scion's three Dragons, plus Fierce Guardianship, Deflecting Swat and Deadly Rollick): fast
+# the list is JD's physical deck since 2026-11-01, 22 cards changed from the Scion v1 base): fast
 # mana, rituals and dorks into Thassa's Oracle + Demonic Consultation / Tainted Pact or Underworld Breach + Lion's Eye
 # Diamond + Brain Freeze. Thanos's power-up (a parity wipe) is card code (impls/t6_thanos.rs), not this plan.
 #
@@ -19,19 +19,19 @@ aggression = 0.6
 caution = 0.35
 
 [sets]
-tutors = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Enlightened Tutor", "Imperial Seal", "Gamble", "Diabolic Intent", "Beseech the Mirror", "Intuition", "Demonic Consultation", "Tainted Pact", "Crop Rotation"]
-payoffs = ["Necropotence", "Underworld Breach", "Brain Freeze", "Final Fortune"]
+tutors = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Enlightened Tutor", "Worldly Tutor", "Imperial Seal", "Gamble", "Diabolic Intent", "Grim Tutor", "Merchant Scroll", "Eladamri's Call", "Beseech the Mirror", "Intuition", "Demonic Consultation", "Tainted Pact"]
+payoffs = ["Necropotence", "Ad Nauseam", "Underworld Breach", "Brain Freeze"]
 # an engine alone does not win: it counts as action only with fast mana
-engines = ["Rhystic Study", "Mystic Remora", "Esper Sentinel", "Smothering Tithe", "Tataru Taru"]
+engines = ["Rhystic Study", "Mystic Remora", "Esper Sentinel", "Sylvan Library"]
 # a tutor, a payoff or the Oracle
-action = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Enlightened Tutor", "Imperial Seal", "Gamble", "Diabolic Intent", "Beseech the Mirror", "Intuition", "Demonic Consultation", "Tainted Pact", "Crop Rotation", "Necropotence", "Underworld Breach", "Brain Freeze", "Final Fortune", "Thassa's Oracle"]
+action = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Enlightened Tutor", "Worldly Tutor", "Imperial Seal", "Gamble", "Diabolic Intent", "Grim Tutor", "Merchant Scroll", "Eladamri's Call", "Beseech the Mirror", "Intuition", "Demonic Consultation", "Tainted Pact", "Necropotence", "Ad Nauseam", "Underworld Breach", "Brain Freeze", "Thassa's Oracle"]
 
 # Fast mana and a plan beat land count: `fast` = the hand's mana pieces that count by turn 2 plus its rituals, `mana`
 # = what the hand makes by turn 2 plus its rituals (t6_keep::mana). A settled hand (2-4 lands after a mulligan) is kept.
 [mulligan]
 fast_mana = true
-# one-shot mana: rituals and spirit guides (Tinder Wall is a dork the mana count already sees)
-rituals = ["Dark Ritual", "Cabal Ritual", "Rite of Flame", "Manamorphose", "Elvish Spirit Guide", "Simian Spirit Guide"]
+# one-shot mana: rituals and spirit guides
+rituals = ["Dark Ritual", "Cabal Ritual", "Desperate Ritual", "Rite of Flame", "Seething Song", "Manamorphose", "Elvish Spirit Guide", "Simian Spirit Guide"]
 
 # ship all-land hands
 [[mulligan.rule]]

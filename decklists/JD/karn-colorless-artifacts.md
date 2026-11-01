@@ -81,7 +81,7 @@ Colourless is the deck's main defence: most wipes that hit coloured permanents o
 
 ### Card draw and tutors
 
-- **Draw engines:** Mystic Forge (cast artifacts and colourless spells from the top of your library), The One Ring, Urza's Blueprints, Karn, Scion of Urza, Staff of Domination ({5}: draw), Endless Atlas (needs three Wastes), Mazemind Tome, Urza's Tome, Skullclamp (on Construct, Myr and Thopter tokens), Hedron Archive, Mind Stone.
+- **Draw engines:** Mystic Forge (cast artifacts and colourless spells from the top of your library), The One Ring, Urza's Blueprints, Karn, Scion of Urza, Staff of Domination ({5}: draw), Endless Atlas (needs three Wastes), Mazemind Tome, Urza's Tome, Skullclamp (on Construct, Myr and Thopter tokens), Mind Stone. Tezzeret, Cruel Captain gains loyalty as artifacts enter; his 0 untaps a spent rock (a second use of Gilded Lotus, Grim Monolith or Basalt Monolith) and his −3 finds a 1-drop artifact (Sol Ring, Mana Vault, Mox Opal, Expedition Map).
 - **Draw lands:** War Room ({3}, {T}: draw a card; your commander has no colours, so it costs no life), Bonders' Enclave ({3}, {T}: draw while you control a creature with power 4 or more; Karn usually is).
 - **Tutors:** Urza's Saga (a {0}–{1} artifact), Expedition Map and Urza's Cave (any land), Inventors' Fair (any artifact, with three or more artifacts), Kuldotha Forgemaster (sacrifice three artifacts: any artifact onto the battlefield), Karn, the Great Creator (−2: an artifact from exile, or from outside the game if your table allows a sideboard).
 
@@ -139,7 +139,7 @@ The list is exactly 100 cards: Karn plus 99, singleton except 14 Wastes, all col
 
 **Curve.** Average mana value 3.8 over the 65 nonland cards: 13 at zero or one, 21 at two or three, 14 at four or five, 11 at six or seven, and six at eight or more (Ugin, the Spirit Dragon, Cityscape Leveler, Portal to Phyrexia, Darksteel Forge, Triplicate Titan, Blightsteel Colossus).
 
-**Card types.** 17 creatures, 42 noncreature artifacts, 5 planeswalkers, 1 sorcery, 34 lands, plus Karn. 61 of the 99 are artifacts (counting the two artifact lands), so Karn usually makes four or more mana by turn 5.
+**Card types.** 17 creatures, 41 noncreature artifacts, 6 planeswalkers, 1 sorcery, 34 lands, plus Karn. 60 of the 99 are artifacts (counting the two artifact lands), so Karn usually makes four or more mana by turn 5.
 
 **Redundancy.** Karn's mana comes from any artifact. Large threats come from many sources (nine finishers, two artifact tutors, Mystic Forge). Removal comes from nine spot answers and two one-sided wipes.
 
@@ -159,11 +159,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Karn, Legacy Reforged
 
-**Planeswalkers (5).** Karn Liberated, Karn Scion of Urza, Karn the Great Creator, Ugin the Ineffable, Ugin the Spirit Dragon
+**Planeswalkers (6).** Karn Liberated, Karn Scion of Urza, Karn the Great Creator, Tezzeret Cruel Captain, Ugin the Ineffable, Ugin the Spirit Dragon
 
 **Creatures (17).** Blightsteel Colossus, Burnished Hart, Cityscape Leveler, Duplicant, Hangarback Walker, Kuldotha Forgemaster, Liberator Urza's Battlethopter, Meteor Golem, Mishra's Self-Replicator, Myr Battlesphere, Platinum Angel, Solemn Simulacrum, Steel Hellkite, Steel Overseer, Triplicate Titan, Walking Ballista, Wurmcoil Engine
 
-**Artifacts (42).** Basalt Monolith, Batterskull, Coalition Relic, Conjurer's Closet, Darksteel Forge, Endless Atlas, Everflowing Chalice, Expedition Map, Gilded Lotus, Grim Monolith, Hedron Archive, Lightning Greaves, Liquimetal Torque, Mana Vault, Mazemind Tome, Mind Stone, Mirrorworks, Mox Opal, Mystic Forge, Nevinyrral's Disk, Oblivion Stone, Pithing Needle, Portal to Phyrexia, Ratchet Bomb, Rings of Brighthearth, Sculpting Steel, Skullclamp, Sol Ring, Soul-Guide Lantern, Spine of Ish Sah, Staff of Domination, Swiftfoot Boots, The Mightstone and Weakstone, The One Ring, Thought Vessel, Thran Dynamo, Unstable Obelisk, Urza's Bauble, Urza's Blueprints, Urza's Tome, Wayfarer's Bauble, Worn Powerstone
+**Artifacts (41).** Basalt Monolith, Batterskull, Coalition Relic, Conjurer's Closet, Darksteel Forge, Endless Atlas, Everflowing Chalice, Expedition Map, Gilded Lotus, Grim Monolith, Lightning Greaves, Liquimetal Torque, Mana Vault, Mazemind Tome, Mind Stone, Mirrorworks, Mox Opal, Mystic Forge, Nevinyrral's Disk, Oblivion Stone, Pithing Needle, Portal to Phyrexia, Ratchet Bomb, Rings of Brighthearth, Sculpting Steel, Skullclamp, Sol Ring, Soul-Guide Lantern, Spine of Ish Sah, Staff of Domination, Swiftfoot Boots, The Mightstone and Weakstone, The One Ring, Thought Vessel, Thran Dynamo, Unstable Obelisk, Urza's Bauble, Urza's Blueprints, Urza's Tome, Wayfarer's Bauble, Worn Powerstone
 
 **Sorceries (1).** All Is Dust
 
@@ -193,7 +193,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Gilded Lotus
 1 Grim Monolith
 1 Hangarback Walker
-1 Hedron Archive
 1 Inventors' Fair
 1 Karn, Legacy Reforged
 1 Karn Liberated
@@ -234,6 +233,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Steel Hellkite
 1 Steel Overseer
 1 Swiftfoot Boots
+1 Tezzeret, Cruel Captain
 1 The Mightstone and Weakstone
 1 The One Ring
 1 Thought Vessel

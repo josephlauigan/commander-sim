@@ -1748,7 +1748,8 @@ pub fn make_artifact_tokens_tapped(g: &mut Game, p: PlayerId, kind: Sym, n: i32,
     if n <= 0 {
         return Ok(());
     }
-    let n = n.saturating_mul(repl::token_mult(g, p) as i32);
+    // u32 then i32 a third of its range: Manufactor's three kinds still sum inside it (the doublers are capped)
+    let n = (n as u32).saturating_mul(repl::token_mult(g, p)).min(i32::MAX as u32 / 3) as i32;
     let manufactor = repl::manufactor(g, p);
     let kinds: Vec<Sym> = if manufactor { vec!["Treasure", "Food", "Clue"] } else { vec![kind] };
     let tap_all = repl::enters_tapped(g, p, None);
@@ -1759,8 +1760,8 @@ pub fn make_artifact_tokens_tapped(g: &mut Game, p: PlayerId, kind: Sym, n: i32,
                 pl.treasures = pl.treasures.saturating_add(n as u32);
                 pl.tapped_treasures = pl.tapped_treasures.saturating_add((tapped || tap_all) as u32 * n as u32);
             }
-            "Food" => pl.foods += n as u32,
-            _ => pl.clues += n as u32,
+            "Food" => pl.foods = pl.foods.saturating_add(n as u32),
+            _ => pl.clues = pl.clues.saturating_add(n as u32),
         }
     }
     note_tokens(g, p, (n * kinds.len() as i32) as u32);
@@ -1912,5 +1913,6 @@ pub fn agent_take(g: &mut Game, a: PlayerId, p: PlayerId, c: CardId) {
 pub fn note_tokens(g: &mut Game, p: PlayerId, k: u32) {
     let st = g.turn_stamp();
     let pl = g.player_mut(p);
-    pl.tok_made = if pl.tok_made.0 == Some(st) { (Some(st), pl.tok_made.1 + k) } else { (Some(st), k) };
+    // saturating: a safety net only (the doublers are capped, `repl::MULT_CAP`)
+    pl.tok_made = if pl.tok_made.0 == Some(st) { (Some(st), pl.tok_made.1.saturating_add(k)) } else { (Some(st), k) };
 }

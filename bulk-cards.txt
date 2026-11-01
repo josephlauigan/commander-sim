@@ -206,7 +206,6 @@
 1x Desert's Due (otj)
 1x Destroy Evil (msc)
 1x Devout Witness (mmq)
-1x Diabolic Tutor (sld)
 1x Diary of Dreams (sos)
 4x Dig Site Inventory (sos)
 1x Dimir Guildgate (rvr)
@@ -533,7 +532,7 @@
 1x Marchesa, the Black Rose (2x2)
 1x Martyr of Dusk (rix)
 1x Massacre Girl (war)
-1x Masterful Flourish
+2x Masterful Flourish (sos)
 1x Matterbending Mage (sos)
 1x Mechan Shieldmate (eoe)
 3x Medic's Kitesail (fra)
