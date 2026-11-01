@@ -685,6 +685,8 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
 /// brain.attack_response: d (the AI) is attacked: with priority in the declare attackers step, kill an attacker with
 /// instant removal when it's worth the card (a valuable creature, or the attack is dangerous)
 pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Res<bool> {
+    // --- generic-paths: Mishra's Factory and Foundry animate to block a dangerous attack (any deck)
+    crate::impls::karn::block_response(g, d, p, atk)?;
     if crate::impls::titania::is_deck(g.player(d).key) && crate::impls::titania::attack_fog(g, d, p, atk)? {
         return Ok(true);
     }
@@ -708,7 +710,9 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
                 && !(g.cast_checks() && !castable(g, d, c, "hand"))
         })
         .collect();
-    if rem.is_empty() || atk.is_empty() {
+    // --- generic-paths: the answers d's permanents give (Ballista Squad, Lawbringer, Lightbringer)
+    let answers = crate::impls::galadriel::attack_answers(g, d, p, atk);
+    if (rem.is_empty() && answers.is_empty()) || atk.is_empty() {
         return Ok(false);
     }
     let incoming: i32 = atk
@@ -747,6 +751,17 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
                 best = Some((v, c, m));
             }
         }
+    }
+    // --- generic-paths: a permanent's answer, when it is worth it and about as good as the best removal spell
+    if let Some(&(v2, a)) = answers.iter().fold(None, |b: Option<&(f64, _)>, x| match b {
+        Some(y) if y.0 >= x.0 => Some(y),
+        _ => Some(x),
+    }) && v2 + if danger { 3.0 } else { 0.0 } - 3.0 > 0.0
+        && best.is_none_or(|b| v2 >= b.0 - 1.0)
+        && crate::impls::galadriel::answer(g, d, a)?
+    {
+        g.player_mut(d).stat("attack_removal", 1);
+        return Ok(true);
     }
     let Some((v, c, m)) = best else { return Ok(false) };
     let caution = style(g, g.player(d).key).caution;
@@ -1054,6 +1069,7 @@ pub fn hook_options(g: &mut Game, p: PlayerId, s: &Situation, post: Option<bool>
         }
     }
     o.extend(crate::impls::bulk_white::face_up_options(g, p, post)?); // face-down creatures turned face up
+    o.extend(crate::impls::generic_paths::exile_options(g, p, post)?); // --- generic-paths: a warped Voidborn
     for c in g.player(p).hand.clone() {
         if let Some(f) = g.registry.get(c).and_then(|i| i.hand_options) {
             o.extend(f(g, c, p, post)?);
