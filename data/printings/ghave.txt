@@ -1,0 +1,92 @@
+1 Altar of Dementia (brr) 3
+1 Anguished Unmaking (soc) 293
+1 Animate Dead (4ed) 118
+1 Arcane Signet (lcc) 104
+1 Archon of Cruelty (pmh2) 75s
+1 Ashnod's Altar (chr) 92
+1 Aura Shards (inv) 233
+1 Austere Command (cmr) 12
+1 Bayou (ced) 279
+1 Birds of Paradise (dmr) 439
+1 Blood Artist (2x2) 352
+1 Bojuka Bog (soc) 363
+1 Brushland (plst) BRO-259
+1 Cathars' Crusade (inr) 483
+1 Caves of Koilos (dmu) 378
+1 Chromatic Lantern (fca) 61
+1 Command Tower (cmm) 659
+1 Crucible of Worlds (2x2) 393
+1 Cruel Celebrant (lcc) 267
+1 Dark Ritual (3ed) 99
+1 Demonic Tutor (cmm) 696
+1 Doubling Season (fdn) 428
+1 Dread Return (dmr) 302
+1 Eladamri's Call (pls) 106
+1 Elesh Norn, Grand Cenobite (sld) 811
+1 Elesh Norn, Mother of Machines (one) 416
+1 Elspeth Tirel (sld) 1585
+1 Entomb (dmr) 426
+1 Ephemerate (sta) 68
+1 Flooded Strand (mh3) 353
+3 Forest (2ed) 302
+1 Gaea's Cradle (olgc) 2022A
+1 Galadriel's Dismissal (hoc) 16
+1 Ghave, Guru of Spores (sld) 1137
+1 Godless Shrine (rvr) 294
+1 Grand Abolisher (cmm) 625
+1 Grave Pact (cmm) 639
+1 Grave Researcher // Reanimate (sos) 85
+1 Grave Titan (sld) 223
+1 Heroic Intervention (sld) 1872
+1 Indatha Triome (iko) 248
+1 Isolated Chapel (soc) 382
+1 Karn's Bastion (onc) 156
+1 Kitchen Finks (f09) 3
+1 Living Death (brb) 38
+1 Llanowar Wastes (soc) 383
+1 Marsh Flats (mh2) 476
+1 Mikaeus, the Unhallowed (cmm) 1061
+1 Misty Rainforest (spg) 111
+1 Necromancy (plst) VIS-64
+1 Nim Deathmantle (som) 188
+1 Overgrown Tomb (rtr) 243
+1 Path to Exile (cmm) 626
+1 Phyrexian Altar (2x2) 396
+1 Phyrexian Arena (pone) 104s
+1 Phyrexian Tower (sld) 208
+1 Pitiless Plunderer (spg) 5
+3 Plains (2ed) 288
+1 Polluted Delta (mh3) 356
+1 Reanimate (brb) 57
+1 Restoration Angel (j22) 233
+1 Rune-Scarred Demon (cmm) 521
+1 Sakura-Tribe Elder (soc) 285
+1 Sandsteppe Citadel (ltc) 327
+1 Savannah (ced) 281
+1 Scrubland (ced) 282
+1 Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel (fin) 382
+1 Sheoldred, the Apocalypse (pdmu) 107p
+1 Sheoldred, Whispering One (pnph) 73★
+1 Skullclamp (sld) 1663
+1 Sol Ring (sld) 2093
+1 Stitcher's Supplier (sld) 853
+1 Strip Mine (4ed) 363
+1 Summon: Bahamut (fin) 356
+1 Sunpetal Grove (fic) 432
+5 Swamp (2ed) 294
+1 Swords to Plowshares (ice) 54
+1 Sylvan Library (4ed) 273
+1 Talisman of Hierarchy (h1r) 36
+1 Temple Garden (rvr) 300
+1 Tortured Existence (plst) STH-74
+1 Toxic Deluge (2xm) 345
+1 Triskelion (dmr) 389
+1 Vampiric Tutor (soa) 100
+1 Verdant Catacombs (zne) 8
+1 Viscera Seer (soc) 229
+1 Windswept Heath (zne) 5
+1 Woodland Cemetery (soc) 424
+1 Worldly Tutor (dmr) 185
+1 Yawgmoth's Will (wc99) js171
+1 Yawgmoth, Thran Physician (fca) 11
+1 Zulaport Cutthroat (tsr) 337
