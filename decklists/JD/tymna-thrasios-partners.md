@@ -107,9 +107,9 @@ opponents you can reach, keep enough back to block what the taxes let through, a
 ### Removal and interaction
 
 **Swords to Plowshares** and **Path to Exile** (one mana), **Darksteel Mutation** (also answers a commander),
-**Skyclave Apparition**, **Bite Down** (a creature of yours deals damage equal to its power to one of theirs),
-**Memory Trap** and **Disenchant** ({1}{W}, instant: destroy an artifact or enchantment); **Elspeth** adds more. **Arcane Denial** and **Swan Song** ({U}: counter an enchantment, instant or sorcery; its
-controller gets a 2/2 Bird) are the counterspells, and **Aven
+**Skyclave Apparition**,
+**Memory Trap** and **Disenchant** ({1}{W}, instant: destroy an artifact or enchantment); **Elspeth** adds more. **Counterspell**, **Arcane Denial** and **Swan Song** ({U}: counter an enchantment, instant or sorcery;
+its controller gets a 2/2 Bird) are the counterspells, and **Aven
 Mindcensor** (flash) blunts tutors and land searches. **Restoration Angel** (flash) blinks a creature out of removal and
 reuses an enters effect (a Titan, Skyclave Apparition, Atraxa). **Swan Song**, **Blossoming Defense** ({G}: +2/+2 and
 hexproof) and **Lightning Greaves** protect Tymna.
@@ -194,7 +194,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Enchantments (5).** Darksteel Mutation, Ghostly Prison, Memory Trap, Propaganda, Smothering Tithe
 
-**Instants (10).** Arcane Denial, Bite Down, Blossoming Defense, Disenchant, Fact or Fiction, Gifts Ungiven, Path to Exile, Swan Song, Swords to Plowshares, Worldly Tutor
+**Instants (10).** Arcane Denial, Blossoming Defense, Counterspell, Disenchant, Fact or Fiction, Gifts Ungiven, Path to Exile, Swan Song, Swords to Plowshares, Worldly Tutor
 
 **Sorceries (2).** Austere Command, Diabolic Tutor
 
@@ -215,7 +215,6 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Baneslayer Angel
 1 Basalt Monolith
 1 Bastion Protector
-1 Bite Down
 1 Blossoming Defense
 1 Breeding Pool
 1 Brushland
@@ -224,6 +223,7 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Coiling Oracle
 1 Command Tower
 1 Conqueror's Flail
+1 Counterspell
 1 Crawlspace
 1 Darksteel Mutation
 1 Dauthi Voidwalker
