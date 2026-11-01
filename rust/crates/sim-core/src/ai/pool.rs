@@ -123,6 +123,11 @@ fn generic_prio_base(g: &Game, p: PlayerId, c: CardId) -> i32 {
             0
         };
     }
+    if t.has(Tag::Breach) && !d.creature && !crate::impls::t6_plans::is_t6(g, p) {
+        // --- generic-paths: Underworld Breach once a graveyard card can be escaped with the mana left (the kraum
+        // seat's rule; Kefka's hand AI had its own): it is sacrificed at the end step, so never for nothing
+        return crate::impls::tymna_partners::breach_prio(g, p);
+    }
     if super::values::on(g, p) {
         return derived_prio(g, p, c); // --- phase4-values
     }
@@ -1025,6 +1030,16 @@ enum How {
     Blink,
     HexproofIndes,
     Phase,
+    /// --- generic-paths: any targeted removal of a creature (it gains hexproof: Blossoming Defense, +2/+2)
+    Hexproof,
+    /// --- generic-paths: any targeted removal of a creature, which phases out (Slip Out the Back, a +1/+1 counter)
+    PhaseOne,
+    /// --- generic-paths: targeted removal other than a bounce, of a nontoken creature that is not a commander (it
+    /// can go to the command zone anyway), which returns to its owner's hand (Angelic Shield)
+    Bounce,
+    /// --- generic-paths: the creature (nontoken) is exiled until the next end step (Eerie Interlude): targeted removal
+    /// of it, or a wipe that hits creatures (every nontoken creature goes)
+    Interlude,
 }
 
 #[derive(Clone, Copy, PartialEq)]
@@ -1039,7 +1054,7 @@ enum Scope {
 type Protector = (&'static str, Where, Option<(u32, &'static str)>, How, Scope, bool);
 
 /// pool_ai.PROTECTORS, with the entries rules.py (Siren Stormtamer) and rules2.py (Cartel Aristocrat) add as they load
-const PROTECTORS: [Protector; 23] = [
+const PROTECTORS: [Protector; 31] = [
     ("Heroic Intervention", Where::Hand, Some((1, "G")), How::HexproofIndes, Scope::Perms, false),
     ("Teferi's Protection", Where::Hand, Some((2, "W")), How::Phase, Scope::Perms, false),
     ("Flawless Maneuver", Where::Hand, Some((2, "W")), How::Indes, Scope::Creatures, true),
@@ -1068,6 +1083,18 @@ const PROTECTORS: [Protector; 23] = [
     ("Lena, Selfless Champion", Where::BfSac, None, How::Indes, Scope::Creatures, false),
     // --- Tiers 1/2 (brago-meren): Ghostly Flicker blinks the creature (its second target is left out here)
     ("Ghostly Flicker", Where::Hand, Some((2, "U")), How::Blink, Scope::One, false),
+    // --- generic-paths (2026-11-01): the protection cards only a deleted hand AI used (galadriel: Formation, Make a
+    // Stand, Rootborn Defenses, Eerie Interlude; thrasios: Blossoming Defense; sauron: Slip Out the Back, Not of This
+    // World; alela: Angelic Shield), for any deck holding them (`audit/phase4/generic-paths-2026-11-01.md`)
+    ("Unbreakable Formation", Where::Hand, Some((2, "W")), How::Indes, Scope::Creatures, false),
+    ("Make a Stand", Where::Hand, Some((2, "W")), How::Indes, Scope::Creatures, false),
+    ("Rootborn Defenses", Where::Hand, Some((2, "W")), How::Indes, Scope::Creatures, false),
+    ("Blossoming Defense", Where::Hand, Some((0, "G")), How::Hexproof, Scope::One, false),
+    ("Slip Out the Back", Where::Hand, Some((0, "U")), How::PhaseOne, Scope::One, false),
+    // {7}, free against removal aimed at a creature of power 7 or more (`use_protector`)
+    ("Not of This World", Where::Hand, Some((7, "")), How::AllTargeted, Scope::One, false),
+    ("Angelic Shield", Where::BfSac, None, How::Bounce, Scope::One, false),
+    ("Eerie Interlude", Where::Hand, Some((2, "W")), How::Interlude, Scope::Creatures, false),
 ];
 
 const WIPE_INDES: [&str; 8] = ["destroy", "dmg13", "austere", "austere2", "nib", "vandal", "brutal", "ignite"];
@@ -1102,10 +1129,14 @@ fn saves(g: &Game, how: How, kind: &str, m: Option<PermId>, spell: Option<CardId
         How::TokenIndes => {
             if targeted { destroyish(kind) && m.is_some_and(|m| g.perm(m).token) } else { WIPE_INDES.contains(&kind) }
         }
+        // --- generic-paths: Eerie Interlude exiles every nontoken creature from a wipe that hits creatures
+        How::Interlude if !targeted => !matches!(kind, "vandal" | "evac"),
         _ if !targeted => false,
         How::AllTargeted => true,
-        How::Blink => m.is_some_and(|m| g.is_creature(m) && !g.perm(m).token),
+        How::Blink | How::Interlude => m.is_some_and(|m| g.is_creature(m) && !g.perm(m).token),
         How::Color => spell.is_some_and(|s| g.db.get(s).pips.chars().any(|ch| "WUBRG".contains(ch))),
+        How::Hexproof | How::PhaseOne => m.is_some_and(|m| g.is_creature(m)),
+        How::Bounce => kind != "bounce" && m.is_some_and(|m| g.is_creature(m) && !g.perm(m).token && !g.perm(m).is_cmd),
     }
 }
 
@@ -1138,7 +1169,7 @@ fn protector_options(g: &Game, p: PlayerId, m: Option<PermId>) -> Vec<(usize, Op
 }
 
 /// pool_ai._use: pay for and use protector i; true if it happened
-fn use_protector(g: &mut Game, p: PlayerId, i: usize, src: Option<PermId>) -> Res<bool> {
+fn use_protector(g: &mut Game, p: PlayerId, i: usize, src: Option<PermId>, m: Option<PermId>) -> Res<bool> {
     let (name, wh, cost, _, _, free_cmd) = PROTECTORS[i];
     match wh {
         Where::Hand => {
@@ -1148,7 +1179,9 @@ fn use_protector(g: &mut Game, p: PlayerId, i: usize, src: Option<PermId>) -> Re
             if !castable(g, p, c, "hand") {
                 return Ok(false);
             }
-            let free = free_cmd && commander_out(g, p);
+            // --- generic-paths: Not of This World costs {7} less against removal aimed at a creature of power 7+
+            let notw = name == "Not of This World" && m.is_some_and(|m| g.is_creature(m) && epow(g, m) >= 7);
+            let free = (free_cmd && commander_out(g, p)) || notw;
             let (cg, cp) = cost.unwrap();
             // --- Tiers 4/5 (winota): Flare of Fortitude's alternative cost, a nontoken white creature
             let fodder = if !free && !can_pay(g, p, cg, cp, false) {
@@ -1282,7 +1315,7 @@ fn protect_cands(
 
 /// use protector i (from src) to save owner's permanent m from targeted removal: true if it was used
 fn protect_with(g: &mut Game, owner: PlayerId, m: PermId, i: usize, src: Option<PermId>) -> Res<bool> {
-    if !use_protector(g, owner, i, src)? {
+    if !use_protector(g, owner, i, src, Some(m))? {
         return Ok(false);
     }
     let (name, _, _, how, _, _) = PROTECTORS[i];
@@ -1299,8 +1332,63 @@ fn protect_with(g: &mut Game, owner: PlayerId, m: PermId, i: usize, src: Option<
             let n = enter(g, owner, cd, Enter { orig: Some(orig), ..Enter::default() })?;
             g.perm_mut(n).is_cmd = is_cmd;
         }
+    } else {
+        protector_effect(g, owner, name, Some(m))?;
     }
     Ok(true)
+}
+
+/// --- generic-paths: what the protection cards added on 2026-11-01 do besides stopping the removal (m: the creature
+/// saved; None: a wipe, every creature): the Oracle effects that last past the response
+fn protector_effect(g: &mut Game, p: PlayerId, name: &str, m: Option<PermId>) -> Res {
+    let live = |g: &Game, x: PermId| g.perm(x).on_bf && !g.perm(x).phased && g.perm(x).owner == p;
+    let mine: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&x| g.is_creature(x) && live(g, x)).collect();
+    match name {
+        "Unbreakable Formation" => {
+            use crate::state::Step;
+            let addendum = g.active == Some(p) && matches!(g.step, Step::Main1 | Step::Main2);
+            crate::impls::galadriel::formation(g, p, addendum);
+        }
+        "Make a Stand" => {
+            for x in mine {
+                g.perm_mut(x).eot_pt.0 += 1;
+                if !g.perm(x).eot_kw.contains(&"indestructible") {
+                    g.perm_mut(x).eot_kw.push("indestructible");
+                }
+            }
+        }
+        "Rootborn Defenses" => crate::impls::zur::rootborn(g, p)?,
+        "Blossoming Defense" => {
+            if let Some(m) = m.filter(|&m| live(g, m)) {
+                g.perm_mut(m).eot_pt.0 += 2;
+                g.perm_mut(m).eot_pt.1 += 2;
+            }
+        }
+        "Slip Out the Back" => {
+            if let Some(m) = m.filter(|&m| live(g, m)) {
+                repl::put_plus(g, m, 1);
+                let worn: Vec<PermId> =
+                    g.player(p).perms.iter().copied().filter(|&x| g.perm(x).attached == Some(m)).collect();
+                for x in worn.into_iter().chain([m]) {
+                    g.perm_mut(x).phased = true;
+                }
+            }
+        }
+        "Angelic Shield" => {
+            if let Some(m) = m.filter(|&m| live(g, m)) {
+                crate::engine::zones::bounce(g, m)?;
+            }
+        }
+        "Eerie Interlude" => {
+            let ms: Vec<PermId> = match m {
+                Some(m) => vec![m],
+                None => mine.into_iter().filter(|&x| !g.perm(x).token).collect(),
+            };
+            crate::impls::galadriel::interlude(g, p, &ms)?;
+        }
+        _ => {}
+    }
+    Ok(())
 }
 
 /// --- phase4-search-b: the protection decision's options for the search: (label, protector index, source), the
@@ -1385,7 +1473,7 @@ fn wipe_cands(g: &Game, q: PlayerId, kind: Sym) -> Vec<(usize, Option<PermId>)> 
 
 /// use protector i (from src) against a wipe: its answer ('all', 'indes'), None if it wasn't used
 fn wipe_with(g: &mut Game, q: PlayerId, i: usize, src: Option<PermId>) -> Res<Option<Sym>> {
-    if !use_protector(g, q, i, src)? {
+    if !use_protector(g, q, i, src, None)? {
         return Ok(None);
     }
     let (name, _, _, how, _, _) = PROTECTORS[i];
@@ -1398,6 +1486,10 @@ fn wipe_with(g: &mut Game, q: PlayerId, i: usize, src: Option<PermId>) -> Res<Op
             g.perm_mut(x).phased = true;
         }
         return Ok(Some("all"));
+    }
+    protector_effect(g, q, name, None)?; // --- generic-paths
+    if how == How::Interlude {
+        return Ok(Some("interlude")); // the creatures are in exile: the wipe hits what is left
     }
     Ok(Some("indes"))
 }
