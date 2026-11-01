@@ -1,7 +1,6 @@
-//! tymna-fix: the AI problems the first thrasios / kraum run found (Lagrella, Witherbloom Charm, the protection
-//! spells, commanders skipping the search, Thrasios's mana sink).
+//! tymna-fix: Witherbloom Charm's modes (card rules). The AI fixes of the first thrasios run (Lagrella, the protection
+//! spells) went with the thrasios seat's hand AI on 2026-11-01.
 
-use sim_core::ai::decks::{deck_prio, protect_response, wipe_response};
 use sim_core::hooks::{Action, Opt};
 use sim_core::ids::PlayerId;
 use sim_core::state::{Ctx, Game};
@@ -16,19 +15,6 @@ fn tbl(key: &str) -> Game {
 
 fn on(g: &Game, m: sim_core::ids::PermId) -> bool {
     g.perm(m).on_bf
-}
-
-#[test]
-fn lagrella_is_cast_when_opponents_have_creatures_and_not_valued_zero() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    for key in ["thrasios"] {
-        let mut g = tbl(key);
-        let c = hand(&mut g, P0, &["Lagrella, the Magpie"])[0];
-        let empty = deck_prio(&g, P0, c);
-        assert!(empty > 0, "{key}: a body even without a target");
-        perm(&mut g, P1, "Lyra Dawnbringer");
-        assert!(deck_prio(&g, P0, c) > empty, "{key}: a target to exile raises it");
-    }
 }
 
 fn cast_charm(g: &mut Game, mode: i32, target: Option<sim_core::ids::PermId>) {
@@ -71,43 +57,3 @@ fn witherbloom_charm_is_offered_as_a_hand_play() {
     assert!(o.iter().all(|x| matches!(x.act, Some(Action::Plan { .. }))));
 }
 
-#[test]
-fn the_partner_decks_answer_removal_and_wipes_with_their_white_spells() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    for key in ["thrasios"] {
-        // Shardmage's Rescue: hexproof for a creature that targeted removal is aimed at
-        let mut g = tbl(key);
-        let tymna = perm(&mut g, P0, "Tymna the Weaver");
-        g.perm_mut(tymna).is_cmd = true;
-        lands(&mut g, P0, "Plains", 1, false);
-        hand(&mut g, P0, &["Shardmage's Rescue"]);
-        assert!(protect_response(&mut g, P0, tymna, "exile", Some(P1), None).unwrap(), "{key}: Rescue answers");
-        assert!(on_bf(&g, P0, "Shardmage's Rescue").is_some());
-
-        // Ultimate Magic: Holy: destroy removal on Tymna, and a destroy wipe
-        let mut g = tbl(key);
-        let tymna = perm(&mut g, P0, "Tymna the Weaver");
-        g.perm_mut(tymna).is_cmd = true;
-        lands(&mut g, P0, "Plains", 3, false);
-        hand(&mut g, P0, &["Ultimate Magic: Holy"]);
-        assert!(protect_response(&mut g, P0, tymna, "destroy", Some(P1), None).unwrap(), "{key}: Holy answers");
-        assert!(in_gy(&g, P0, "Ultimate Magic: Holy"));
-
-        let mut g = tbl(key);
-        for _ in 0..3 {
-            perm(&mut g, P0, "Lyra Dawnbringer");
-        }
-        lands(&mut g, P0, "Plains", 3, false);
-        hand(&mut g, P0, &["Ultimate Magic: Holy"]);
-        let r = wipe_response(&mut g, P0, "destroy", P1).unwrap();
-        assert_eq!(r, Some("indes"), "{key}: Holy saves the board from a wipe");
-    }
-}
-
-fn on_bf(g: &Game, p: PlayerId, name: &str) -> Option<sim_core::ids::PermId> {
-    g.player(p).perms.iter().copied().find(|&m| g.perm(m).on_bf && &*g.perm(m).name == name)
-}
-
-fn in_gy(g: &Game, p: PlayerId, name: &str) -> bool {
-    g.player(p).gy.iter().any(|&c| &*g.db.get(c).name == name)
-}

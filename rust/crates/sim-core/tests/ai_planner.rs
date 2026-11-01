@@ -236,35 +236,3 @@ fn with_a_counter_visible_and_go_ok_false_the_planner_does_not_go() {
     assert!(!log_has(&g, "[plan: combo:"));
 }
 
-/// A card the deck's plan slot keeps in hand (`t6_plans::prio` 0) is never the planner's play: Dack Fayden waits while
-/// three opponents hold counters with blue open, as the deck's plan says (casting it anyway made Dack win 41% of the
-/// Tier 6 table in the first measurement)
-#[test]
-fn the_plan_slot_keeps_a_card_in_hand_against_the_planner() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table(&[
-        "dack-fayden-white-stax",
-        "kraum-tymna-blue-breach-midrange",
-        "rograkh-silas-turbo-breach",
-        "kinnan-bonder-mana-combo",
-    ]);
-    for i in 1..4 {
-        let q = PlayerId(i);
-        let cs: Vec<_> = ["Force of Will", "Counterspell", "Swan Song", "Flusterstorm", "Mental Misstep"]
-            .iter()
-            .map(|n| take(&mut g, q, n))
-            .collect();
-        g.player_mut(q).hand = cs;
-        lands(&mut g, q, "Island", 3, false);
-    }
-    g.player_mut(P0).hand.clear();
-    g.player_mut(P0).turns = 3;
-    lands(&mut g, P0, "Plains", 6, false);
-    let dack = g.player(P0).cmd;
-    assert_eq!(sim_core::impls::t6_plans::prio(&g, P0, dack), Some(0.0), "the plan holds Dack");
-    let d = planner::decide(&mut g, P0).unwrap();
-    assert!(
-        !matches!(&d, planner::Decision::Play { step: Step::Cast(c), .. } if *c == dack),
-        "the planner casts Dack against the plan: {d:?}"
-    );
-}

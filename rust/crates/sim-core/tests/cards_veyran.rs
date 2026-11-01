@@ -5,8 +5,8 @@
 //! Not ported: a person's choices (practice mode: the rest of test_play_veyran.py, Alania's 'you choose').
 //! Twinflame and Thunderdrum Soloist are in no decklist now; their tests run anyway (the card code is ported).
 
-use sim_core::ai::{self, act, brain, decks, veyran};
-use sim_core::engine::{cast, combat, life, removal, turn, values};
+use sim_core::ai::{self, act, brain, decks};
+use sim_core::engine::{cast, combat, life, values};
 use sim_core::hooks::Opt;
 use sim_core::ids::{CardId, PermId, PlayerId};
 use sim_core::state::{Ctx, DataKey, Game, Val};
@@ -142,33 +142,11 @@ fn twinflame(n_lands: usize, creatures: &[&str], spells: &[&str]) -> (Game, Vec<
 const BURN: [&str; 2] = ["Lightning Bolt", "Burst Lightning"];
 
 #[test]
-fn twinflame_copies_with_haste_until_the_end_step() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let (mut g, opts) = twinflame(4, &["Guttersnipe", "Veyran, Voice of Duality"], &BURN);
-    act::perform(&mut g, P0, opts[0].act.as_ref().unwrap()).unwrap();
-    let copies = tokens(&g, P0);
-    assert_eq!(copies.iter().map(|&m| g.perm(m).name).collect::<Vec<_>>(), vec!["Guttersnipe"]);
-    assert!(!g.perm(copies[0]).sick); // haste
-    assert_eq!(tapped(&g, P0), 2); // {1}{R}: mana left for the burn spells
-    turn::end_step(&mut g, P0).unwrap();
-    assert!(tokens(&g, P0).is_empty()); // exiled at the end step
-}
-
-#[test]
 fn twinflame_strive_cost() {
     let (mut g, opts) = twinflame(8, &["Guttersnipe", "Kessig Flamebreather", "Thunderdrum Soloist"], &BURN);
     let o = find_opt(&opts, "Twinflame (2 targets)");
     act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap();
     assert_eq!(tapped(&g, P0), 5); // {1}{R} + {2}{R}
-}
-
-#[test]
-fn twinflame_skips_legends_and_idle_copies() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let (_, opts) = twinflame(4, &["Veyran, Voice of Duality"], &BURN);
-    assert!(opts.is_empty()); // a copy of a legend dies to the legend rule
-    let (_, opts) = twinflame(2, &["Guttersnipe"], &BURN);
-    assert!(opts.is_empty()); // no mana left to trigger the copy
 }
 
 #[test]
@@ -408,42 +386,6 @@ fn visions_of_beyond_draws_three_with_a_big_graveyard() {
 }
 
 #[test]
-fn deflecting_swat_turns_removal_back_on_its_caster() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    // "If you control a commander, you may cast this spell without paying its mana cost. You may choose new targets
-    //  for target spell or ability."
-    let mut g = table(&["veyran", "seph"]);
-    let archon = perm(&mut g, P1, "Archon of Cruelty"); // (first: its enter trigger would take Veyran)
-    let vey = perm(&mut g, P0, "Veyran, Voice of Duality");
-    g.perm_mut(vey).is_cmd = true;
-    g.player_mut(P0).cmd_in_zone = false;
-    hand(&mut g, P0, &["Deflecting Swat"]);
-    let stp = card(&g, "Swords to Plowshares");
-    removal::apply_removal(&mut g, Some(P1), vey, "exile", Some(stp)).unwrap();
-    assert!(g.perm(vey).on_bf);
-    assert!(!g.perm(archon).on_bf); // the Swords hit the caster's own Archon
-    assert!(g.player(P0).gy.contains(&card(&g, "Deflecting Swat")));
-}
-
-#[test]
-fn slip_out_the_back_saves_a_key_creature() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table(&["veyran", "seph"]);
-    lands(&mut g, P0, "Island", 1, false);
-    let vey = perm(&mut g, P0, "Veyran, Voice of Duality");
-    hand(&mut g, P0, &["Slip Out the Back"]);
-    let stp = card(&g, "Swords to Plowshares");
-    assert!(ai::protect_response(&mut g, P0, vey, "exile", Some(P1), Some(stp)).unwrap());
-    assert!(g.perm(vey).phased);
-    // a wipe isn't targeted: no answer
-    let mut g = table(&["veyran", "seph"]);
-    lands(&mut g, P0, "Island", 1, false);
-    let vey = perm(&mut g, P0, "Veyran, Voice of Duality");
-    hand(&mut g, P0, &["Slip Out the Back"]);
-    assert!(!ai::protect_response(&mut g, P0, vey, "wipe", Some(P1), Some(stp)).unwrap());
-}
-
-#[test]
 fn desolate_lighthouse_loots_at_the_end_of_an_opponents_turn() {
     let mut g = table(&["veyran", "seph"]);
     lands(&mut g, P0, "Desolate Lighthouse", 1, false);
@@ -495,54 +437,11 @@ fn fiery_emancipation_triples_damage() {
 
 // ======================================================== the plan's choices
 #[test]
-fn veyran_priorities() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
-    let prio = |g: &Game, n: &str| veyran::veyran_prio(g, P0, card(g, n));
-    assert_eq!(prio(&g, "Veyran, Voice of Duality"), 70);
-    assert_eq!(prio(&g, "Blazing Firesinger // Seething Song"), 48); // a body and a ritual, not the engine
-    assert_eq!(prio(&g, "Guttersnipe"), 72);
-    assert_eq!(prio(&g, "Thousand-Year Storm"), 57);
-    assert_eq!(prio(&g, "Fiery Emancipation"), 40);
-    perm(&mut g, P0, "Guttersnipe");
-    assert_eq!(prio(&g, "Fiery Emancipation"), 64); // with a pinger out
-    assert_eq!(prio(&g, "Propaganda"), 52); // no opposing creatures yet
-    perm(&mut g, P1, "Grave Titan");
-    assert_eq!(prio(&g, "Propaganda"), 52 + 10); // a 6/6 and two 2/2 Zombies
-    assert_eq!(decks::deck_prio(&g, P0, card(&g, "Guttersnipe")), 72);
-}
-
-#[test]
-fn veyran_fires_aetherflux_at_51_life() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table(&["veyran", "seph", "sauron"]);
-    perm(&mut g, P0, "Aetherflux Reservoir");
-    g.player_mut(P0).life = 51;
-    assert!(labels(&options(&mut g, P0, false)).contains(&"Aetherflux shot".to_string()));
-    assert!(veyran::aether_check(&mut g, P0).unwrap());
-    assert_eq!(g.player(P0).life, 1);
-    assert_eq!(g.player(P1).life.min(g.player(P2).life), -10);
-}
-
-#[test]
-fn recruiter_fetches_by_what_the_board_lacks() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let pick = |g: &Game| decks::tutor_pick(g, P0, "cre2").map(|c| g.db.get(c).name.to_string()).unwrap();
-    let mut g = table(&["veyran", "seph"]);
-    assert_eq!(pick(&g), "Guttersnipe", "no pinger: damage first");
-    perm(&mut g, P0, "Guttersnipe");
-    assert_eq!(pick(&g), "Young Pyromancer", "a pinger and no token maker: a board");
-    perm(&mut g, P0, "Young Pyromancer");
-    assert_eq!(pick(&g), "Storm-Kiln Artist", "both engines out: mana");
-    assert_ne!(pick(&g), "Blazing Firesinger // Seething Song");
-}
-
-#[test]
 fn veyran_engine_payoff_milestone() {
     let mut g = table(&["veyran", "seph"]);
     assert!(!ai::engine_payoff(&g, P0));
     perm(&mut g, P0, "Murmuring Mystic");
     assert!(ai::engine_payoff(&g, P0));
-    assert!(!veyran::payoff(&g, P0));
 }
 
 #[test]
@@ -554,50 +453,6 @@ fn whole_games_with_veyran_finish() {
 }
 
 // ======================================================== ai-audit cv: the audit's problems
-#[test]
-fn triple_triad_is_cast_with_an_engine_out() {
-    let mut g = table(&["veyran", "seph"]);
-    let tt = card(&g, "Triple Triad");
-    assert_eq!(veyran::veyran_prio(&g, P0, tt), 44, "no engine, no mana: low but not 0");
-    perm(&mut g, P0, "Guttersnipe");
-    lands(&mut g, P0, "Mountain", 6, false);
-    assert_eq!(veyran::veyran_prio(&g, P0, tt), 58);
-}
-
-#[test]
-fn lightning_greaves_comes_before_veyran() {
-    let g = table(&["veyran", "seph"]);
-    let greaves = veyran::veyran_prio(&g, P0, card(&g, "Lightning Greaves"));
-    let cmd = veyran::veyran_prio(&g, P0, g.player(P0).cmd);
-    assert!(greaves > cmd, "Greaves {greaves} must beat Veyran {cmd} while Veyran waits");
-}
-
-#[test]
-fn fabricate_fetches_greaves_first_then_aetherflux() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table(&["veyran", "seph"]);
-    g.player_mut(P0).library =
-        ["Aetherflux Reservoir", "Sol Ring", "Lightning Greaves"].iter().map(|n| card(&g, n)).collect();
-    let pick = |g: &Game| decks::tutor_pick(g, P0, "art").map(|c| g.db.get(c).name.to_string()).unwrap();
-    assert_eq!(pick(&g), "Lightning Greaves");
-    perm(&mut g, P0, "Lightning Greaves");
-    assert_eq!(pick(&g), "Aetherflux Reservoir");
-}
-
-#[test]
-fn engine_creatures_beat_cantrips_with_spells_in_hand() {
-    let mut g = table(&["veyran", "seph"]);
-    hand(&mut g, P0, &["Lightning Bolt", "Burst Lightning", "Counterspell"]);
-    for n in
-        ["Docent of Perfection // Final Iteration", "Alania, Divergent Storm", "Harmonic Prodigy", "Niv-Mizzet, Parun"]
-    {
-        let v = veyran::veyran_prio(&g, P0, card(&g, n));
-        assert!(v > 48, "{n} is {v}: it should sit above a draw spell (48)");
-    }
-    let generic = veyran::veyran_prio(&g, P0, card(&g, "Eris, Roar of the Storm"));
-    assert!(generic > 40);
-}
-
 #[test]
 fn mystical_tutor_finds_a_wipe_when_the_table_outboards_us() {
     let mut g = table(&["veyran", "seph"]);
@@ -611,32 +466,3 @@ fn mystical_tutor_finds_a_wipe_when_the_table_outboards_us() {
     assert_eq!(pick(&g), "Blasphemous Act");
 }
 
-#[test]
-fn solve_the_equation_needs_a_real_target() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table(&["veyran", "seph"]);
-    g.player_mut(P0).library = ["Stock Up", "Blasphemous Act"].iter().map(|n| card(&g, n)).collect();
-    hand(&mut g, P0, &["Lightning Bolt", "Burst Lightning", "Counterspell", "Island"]);
-    let solve = card(&g, "Solve the Equation");
-    assert_eq!(veyran::veyran_prio(&g, P0, solve), 0, "only Stock Up to find: not worth three mana");
-    lands(&mut g, P0, "Island", 6, false);
-    for _ in 0..4 {
-        perm(&mut g, P1, "Grave Titan");
-    }
-    assert_eq!(veyran::veyran_prio(&g, P0, solve), 40, "a wipe to find");
-}
-
-#[test]
-fn veyran_casts_underworld_breach_with_spells_to_escape() {
-    // 10/19: Veyran's priority had no Breach rule (0, never cast); now cast with two spells worth escaping and 5 mana
-    let mut g = table(&["veyran", "seph"]);
-    let b = hand(&mut g, P0, &["Underworld Breach"])[0];
-    lands(&mut g, P0, "Island", 3, false);
-    lands(&mut g, P0, "Mountain", 2, false);
-    assert_eq!(veyran::veyran_prio(&g, P0, b), 0, "empty graveyard: nothing to escape");
-    for n in ["Expressive Iteration", "Flow State", "Quick Study", "Stock Up"] {
-        let c = card(&g, n);
-        g.player_mut(P0).gy.push(c);
-    }
-    assert_eq!(veyran::veyran_prio(&g, P0, b), 56, "four draw spells in the graveyard and 5 mana");
-}

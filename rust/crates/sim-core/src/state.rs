@@ -1222,12 +1222,6 @@ pub struct Game {
     pub no_fang: bool,
     /// a permanent with compiled abilities has been on the battlefield (the interpreter is active)
     pub dsl_on: bool,
-    /// Jeska's Will always adds mana (the Underworld Breach line)
-    pub jeska_mana: bool,
-    /// the Breach line's dry run worked only without its setup casts (Laboratory Maniac, Birgi, Jeska's Will)
-    pub line_no_setup: bool,
-    /// the Breach line's dry run for a position: (its turn, the position's numbers, does it finish the table)
-    pub breach_dry: Option<(TurnStamp, Vec<u32>, bool)>,
     /// how deep the ability language's triggers are nested (MAX_DEPTH stops runaway chains)
     pub dsl_depth: u32,
     /// creatures with a power/toughness rule of their own (card code; Python's `g.selfpt`)
@@ -1462,9 +1456,6 @@ impl Game {
             marchesa_on: false,
             no_fang: false,
             dsl_on: false,
-            jeska_mana: false,
-            line_no_setup: false,
-            breach_dry: None,
             dsl_depth: 0,
             selfpt: false,
             blocking: vec![],

@@ -65,14 +65,6 @@ pub fn blockable(g: &Game, q: PlayerId, a: PermId) -> bool {
     untapped_creatures(g, q).any(|b| can_block(g, b, a))
 }
 
-/// Veyran's small creature tokens: the next spell replaces them, so they block freely
-pub fn spare_tokens(g: &Game, d: PlayerId, cands: &[PermId]) -> Vec<PermId> {
-    if hand_key(g, d) != "veyran" {
-        return vec![];
-    }
-    cands.iter().copied().filter(|&x| g.perm(x).token && !g.perm(x).army && epow(g, x) <= 2).collect()
-}
-
 pub fn can_block(g: &Game, b: PermId, a: PermId) -> bool {
     let (xb, xa) = (g.perm(b), g.perm(a));
     let cb = xb.cd.map(|c| g.db.get(c));
@@ -528,16 +520,16 @@ pub fn ai_blocks(
                 .copied()
                 .filter(|&b| epow(g, b) * fd >= at || g.perm(b).dt || card_name(g, b) == Some("Defiant Vanguard"))
                 .collect();
-            let spare = spare_tokens(g, d, &cands);
             if !trade.is_empty() && pval(g, a) >= trade.iter().map(|&x| pval(g, x)).fold(f64::INFINITY, f64::min) {
                 min_by(&trade, |x| pval(g, x)).unwrap()
             } else if shielded(g, d) {
                 continue; // the damage is prevented anyway: no chump blocks
-            } else if !spare.is_empty() && ap >= 2 && (ap * fp >= 3 || incoming * fp >= g.player(d).life / 5) {
-                min_by(&spare, |x| pval(g, x)).unwrap() // chump with a spare token
             } else if ap >= 2 && rng.random() < ai::chump_prob(g, d, incoming) {
                 let mut cs = cands.clone();
-                if hand_key(g, d) == "yshtola" && incoming < g.player(d).life {
+                // --- plan-files-3: or a plan's `commander_chumps_to_live`
+                if (hand_key(g, d) == "yshtola" || crate::ai::plan_data::commander_chumps_to_live(g, d))
+                    && incoming < g.player(d).life
+                {
                     cs.retain(|&x| !g.perm(x).is_cmd); // Y'shtola is the engine: she chumps only to live
                     if cs.is_empty() {
                         continue;
@@ -1140,7 +1132,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                 let all_atk = if hand_key(g, p) == "cloud" {
                     crate::impls::cloud::all_out_trim(g, p, all_atk, d)
                 } else {
-                    all_atk
+                    crate::ai::plan_data::stay_home(g, p, all_atk, d) // --- plan-files-3 (no rules: unchanged)
                 };
                 vec![(d, all_atk)] // everything at one player
             } else {

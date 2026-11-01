@@ -2,12 +2,11 @@
 //! SauronMarchesa. Each expectation comes from the card's Oracle text (quoted where the Python quotes it).
 //!
 //! Some tests use cards no current decklist runs (Witch-king, Bringer of Ruin; Brush Off; Grapeshot; Lion's Eye
-//! Diamond; Laboratory Maniac): they are still in the card database, and they check branches of the Breach line, so
-//! they run. SauronMarchesa runs with marchesa.py's card code (impls/marchesa.rs, ported with Jodah's deck in phase
-//! 6).
+//! Diamond; Laboratory Maniac): they are still in the card database, so they run (the Breach line's tests went with
+//! Sauron's hand AI on 2026-11-01). SauronMarchesa runs with marchesa.py's card code (impls/marchesa.rs, ported with
+//! Jodah's deck in phase 6).
 
-use sim_core::ai::{act, brain, decks};
-use sim_core::engine::pool::Kind;
+use sim_core::ai::{act, brain};
 use sim_core::engine::{cast, removal, stack, turn, values, zones};
 use sim_core::hooks::Opt;
 use sim_core::ids::{PermId, PlayerId};
@@ -94,21 +93,6 @@ fn rhystic_study() {
     perm(&mut g, P0, "Rhystic Study");
     on_cast(&mut g, P1, "Lightning Bolt"); // the caster has no mana to pay {1}
     assert_eq!(g.player(P0).hand.len(), 1);
-}
-
-#[test]
-fn champions_helm_goes_on_a_legend() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    // "Equipped creature gets +2/+2. As long as equipped creature is legendary, it has hexproof. Equip {1}"
-    let mut g = table(&["sauron", "veyran"]);
-    lands(&mut g, P0, "Island", 3, false);
-    let sauron = perm(&mut g, P0, "Sauron, the Dark Lord");
-    zones::amass(&mut g, P0, 3).unwrap();
-    perm(&mut g, P0, "Champion's Helm");
-    assert!(take_option(&mut g, P0, "equip Champion's Helm to Sauron, the Dark Lord")); // no Sword needed
-    assert_eq!(values::epow(&g, sauron), 9);
-    assert!(values::untargetable(&g, sauron));
-    assert_eq!(tapped_lands(&g, P0), 1);
 }
 
 #[test]
@@ -237,25 +221,6 @@ fn brush_off_is_cheaper_against_instants_and_sorceries() {
 }
 
 #[test]
-fn sauron_values_consecrated_sphinx() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    // its priority follows what it will draw: two per opponent draw, so three opponents make it the better card,
-    // and it's worth less with one opponent left
-    let mut g = table(&["sauron", "veyran", "veyran", "veyran"]);
-    lands(&mut g, P0, "Island", 5, false);
-    lands(&mut g, P0, "Swamp", 2, false);
-    hand(&mut g, P0, &["Consecrated Sphinx", "Night's Whisper"]);
-    let u = options(&mut g, P0);
-    assert!(utility(&u, "Consecrated Sphinx") > utility(&u, "Night's Whisper"));
-    let mut g1 = table(&["sauron", "veyran"]);
-    lands(&mut g1, P0, "Island", 5, false);
-    lands(&mut g1, P0, "Swamp", 2, false);
-    hand(&mut g1, P0, &["Consecrated Sphinx", "Night's Whisper"]);
-    let u1 = options(&mut g1, P0);
-    assert!(utility(&u1, "Consecrated Sphinx") < utility(&u, "Consecrated Sphinx"));
-}
-
-#[test]
 fn diabolic_intent_needs_a_creature_to_sacrifice() {
     // "As an additional cost to cast this spell, sacrifice a creature." It used to be free outside Sephiroth.
     let mut g = table(&["sauron", "veyran"]);
@@ -313,14 +278,6 @@ fn board(islands: usize, mountains: usize, opp_library: usize) -> Game {
     g
 }
 
-fn opp_libraries(g: &Game) -> Vec<usize> {
-    g.players[1..].iter().map(|q| q.library.len()).collect()
-}
-
-fn stat(g: &Game, p: PlayerId, name: &str) -> i64 {
-    g.player(p).stats.get(name).copied().unwrap_or(0)
-}
-
 #[test]
 fn brain_freeze_copies() {
     let mut g = board(2, 0, 20);
@@ -341,131 +298,6 @@ fn grapeshot_kills_the_lowest_life_first() {
 }
 
 #[test]
-fn the_line_waits_for_enough_mana() {
-    let mut g = board(6, 6, 20);
-    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze"]);
-    assert!(!mine::breach_line(&mut g, P0, false).unwrap()); // 12 mana: two opponents milled, not three
-    let mut g = board(8, 8, 20);
-    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze"]);
-    assert!(mine::breach_line(&mut g, P0, false).unwrap());
-    let mut g = board(4, 12, 20);
-    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze"]);
-    assert!(!mine::breach_line(&mut g, P0, false).unwrap()); // 16 mana, but only four blue for Brain Freeze
-}
-
-#[test]
-fn the_line_mills_the_table() {
-    let mut g = board(8, 8, 20);
-    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze"]);
-    assert!(mine::breach_line(&mut g, P0, true).unwrap());
-    assert_eq!(opp_libraries(&g), [0, 0, 0]);
-    assert!(stat(&g, P0, "breach_escapes") >= 5);
-}
-
-#[test]
-fn lotus_petal_makes_it_infinite() {
-    // each Petal escape ({0} plus three graveyard cards) makes one mana of any colour: the {U} for the next Brain
-    // Freeze, whose copies mill you for more fuel; from two blue sources it mills out the table
-    let mut g = board(2, 1, 60);
-    lands(&mut g, P0, "Swamp", 1, false);
-    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze", "Lotus Petal"]);
-    assert!(mine::breach_line(&mut g, P0, false).unwrap());
-    mine::breach_line(&mut g, P0, true).unwrap();
-    assert_eq!(opp_libraries(&g), [0, 0, 0]);
-}
-
-#[test]
-fn rituals_alone_run_out_of_blue() {
-    // Dark Ritual and Cabal Ritual make only black mana: storm grows, but each Brain Freeze still needs a real {U}
-    let mut g = board(3, 1, 60);
-    lands(&mut g, P0, "Swamp", 1, false);
-    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze", "Dark Ritual", "Cabal Ritual"]);
-    assert!(!mine::breach_line(&mut g, P0, false).unwrap());
-}
-
-#[test]
-fn lions_eye_diamond_makes_it_infinite() {
-    // each Diamond escape ({0} plus three graveyard cards) discards the hand and makes three blue: a whole Brain
-    // Freeze; from one Island and two Mountains it mills out the table, which the same lands alone can't
-    let mut g = board(1, 2, 60);
-    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze"]);
-    assert!(!mine::breach_line(&mut g, P0, false).unwrap());
-    let mut g = board(1, 2, 60);
-    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze", "Lion's Eye Diamond"]);
-    assert!(mine::breach_line(&mut g, P0, false).unwrap());
-    mine::breach_line(&mut g, P0, true).unwrap();
-    assert_eq!(opp_libraries(&g), [0, 0, 0]);
-    assert!(stat(&g, P0, "led_used") >= 2);
-}
-
-/// board(2, 2, 60) plus two Swamps, Sauron's library cut to 30
-fn labman_board() -> Game {
-    let mut g = board(2, 2, 60);
-    lands(&mut g, P0, "Swamp", 2, false);
-    g.player_mut(P0).library.truncate(30);
-    g
-}
-
-#[test]
-fn laboratory_maniac_mills_yourself_out() {
-    // with Laboratory Maniac out, every Brain Freeze copy mills you; Lotus Petal escapes pay each next Brain Freeze
-    // (the copies refill the graveyard), and an escaped Night's Whisper draws from the empty library to win.
-    // Milling three 60-card libraries from the same mana fails
-    let mut g = labman_board();
-    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze", "Lotus Petal", "Night's Whisper"]);
-    assert!(!mine::breach_line(&mut g, P0, false).unwrap());
-    let mut g = labman_board();
-    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze", "Lotus Petal", "Night's Whisper"]);
-    perm(&mut g, P0, "Laboratory Maniac");
-    assert!(mine::breach_line(&mut g, P0, false).unwrap());
-    mine::breach_line(&mut g, P0, true).unwrap();
-    assert_eq!(g.winner, Some(P0));
-}
-
-#[test]
-fn the_line_casts_laboratory_maniac_from_hand() {
-    let mut g = board(4, 2, 60);
-    lands(&mut g, P0, "Swamp", 2, false);
-    g.player_mut(P0).library.truncate(30);
-    hand(&mut g, P0, &["Laboratory Maniac", "Underworld Breach", "Brain Freeze", "Lotus Petal", "Night's Whisper"]);
-    assert!(mine::breach_line(&mut g, P0, false).unwrap());
-    mine::breach_line(&mut g, P0, true).unwrap();
-    assert_eq!(g.winner, Some(P0));
-}
-
-#[test]
-fn birgi_pays_for_each_brain_freeze() {
-    // Birgi adds {R} for each spell cast: with her out, a Petal escape makes the {U} and Birgi the {1}. Holding her
-    // in hand doesn't stop a line that works without casting her first (the dry run tries both)
-    const BIRGI: &str = "Birgi, God of Storytelling // Harnfel, Horn of Bounty";
-    let mut g = board(1, 2, 60);
-    perm(&mut g, P0, BIRGI);
-    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze", "Lotus Petal"]);
-    mine::breach_line(&mut g, P0, true).unwrap();
-    assert_eq!(opp_libraries(&g), [0, 0, 0]);
-    assert!(g.player(P0).mana.get(Kind::R) >= 5); // Birgi's spare red
-    let mut g = board(1, 2, 60);
-    hand(&mut g, P0, &[BIRGI, "Underworld Breach", "Brain Freeze", "Lotus Petal"]);
-    assert!(mine::breach_line(&mut g, P0, false).unwrap());
-}
-
-#[test]
-fn jeskas_will_never_spends_the_blue_brain_freeze_needs() {
-    // Jeska's Will makes red for each card in an opponent's hand, but paying for it can eat the Petal's {U}: the dry
-    // run falls back to the plain line, so holding it never stops a line that works without it
-    let mut g = board(0, 4, 60);
-    g.player_mut(P0).gy.clear();
-    let island = card(&g, "Island");
-    for q in 1..4 {
-        g.player_mut(PlayerId(q)).hand = vec![island; 7];
-    }
-    hand(&mut g, P0, &["Jeska's Will", "Underworld Breach", "Brain Freeze", "Lotus Petal"]);
-    assert!(mine::breach_line(&mut g, P0, false).unwrap());
-    mine::breach_line(&mut g, P0, true).unwrap();
-    assert_eq!(opp_libraries(&g), [0, 0, 0]);
-}
-
-#[test]
 fn laboratory_maniac_turns_an_empty_draw_into_a_win() {
     let mut g = table(&["sauron", "veyran"]);
     g.player_mut(P0).library.clear();
@@ -476,22 +308,6 @@ fn laboratory_maniac_turns_an_empty_draw_into_a_win() {
     perm(&mut g, P0, "Laboratory Maniac");
     zones::draw(&mut g, P0, 1, false).unwrap();
     assert_eq!(g.winner, Some(P0));
-}
-
-#[test]
-fn the_pieces_are_held_for_the_line() {
-    // (Python also checks Lion's Eye Diamond: see the test below)
-    let mut g = board(8, 8, 20);
-    let cs = hand(&mut g, P0, &["Brain Freeze", "Underworld Breach"]);
-    assert_eq!(decks::sauron_prio(&g, P0, cs[0]), 0);
-    assert_eq!(decks::sauron_prio(&g, P0, cs[1]), 0); // gc_prio_sauron
-}
-
-#[test]
-fn lions_eye_diamond_is_held_for_the_line() {
-    let mut g = board(8, 8, 20);
-    let led = hand(&mut g, P0, &["Brain Freeze", "Underworld Breach", "Lion's Eye Diamond"])[2];
-    assert_eq!(decks::sauron_prio(&g, P0, led), 0);
 }
 
 // ======================================================== SauronMarchesa
@@ -585,17 +401,6 @@ fn bloodsoaked_insight_takes_an_opponents_top_three() {
 // before the milled-out table drew)
 
 #[test]
-fn spare_brain_freeze_copies_never_mill_sauron() {
-    // three cards an opponent: the second Brain Freeze has four copies and the table needs one; three are spare
-    let mut g = board(8, 8, 3);
-    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze"]);
-    let before = g.player(P0).library.len();
-    assert!(mine::breach_line(&mut g, P0, true).unwrap());
-    assert_eq!(opp_libraries(&g), [0, 0, 0]);
-    assert_eq!(g.player(P0).library.len(), before);
-}
-
-#[test]
 fn sauron_wont_draw_four_from_a_short_library() {
     let mut g = table(&["sauron", "veyran"]);
     perm(&mut g, P0, "Sauron, the Dark Lord");
@@ -643,25 +448,6 @@ fn the_ring_bearer_stays_home_when_its_loot_would_deck_sauron() {
 // (a Python bug, fixed in Rust only: once every opponent's library was empty, the dry run still counted the line as
 // finishing the table, and the AI kept choosing the 15.0 "Underworld Breach line" option, which did nothing, until the
 // main phase's action cap)
-
-#[test]
-fn a_finished_breach_line_is_not_offered() {
-    let mut g = board(8, 8, 20);
-    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze"]);
-    let line = |g: &mut Game| mine::breach_options(g, P0, true).unwrap().len();
-    assert_eq!(line(&mut g), 1); // the table can be milled out
-    assert!(mine::breach_line(&mut g, P0, true).unwrap());
-    assert_eq!(opp_libraries(&g), [0, 0, 0]);
-    assert!(g.players[1..].iter().all(|q| q.alive)); // they lose on their own draws
-    assert!(!mine::breach_line(&mut g, P0, false).unwrap()); // nothing left to do
-    assert_eq!(line(&mut g), 0);
-    let opts = brain::main_options(&mut g, P0, true).unwrap();
-    assert!(!opts.iter().any(|o| o.label == "Underworld Breach line"));
-    // the same with Breach still in hand and the libraries already empty
-    let mut g = board(8, 8, 0);
-    hand(&mut g, P0, &["Underworld Breach", "Brain Freeze"]);
-    assert_eq!(line(&mut g), 0);
-}
 
 #[test]
 fn latulla_s_orders_destroys_an_artifact_when_its_creature_connects() {

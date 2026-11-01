@@ -2,7 +2,7 @@
 //! cards' Oracle text.
 
 use sim_core::hooks::{Action, Opt};
-use sim_core::ids::{PermId, PlayerId};
+use sim_core::ids::PlayerId;
 use sim_core::impls::{combos, t3_lines};
 use sim_core::state::Game;
 use sim_core::testkit::*;
@@ -30,48 +30,7 @@ fn idx(part: &str) -> usize {
     combos::combo_index(part).unwrap_or_else(|| panic!("no combo named like {part:?}"))
 }
 
-// ======================================================== Helm of the Host on Aurelia / Combat Celebrant
-fn helm_opts(g: &mut Game, helm: PermId, post: Option<bool>) -> Vec<Opt> {
-    let c = g.perm(helm).cd.unwrap();
-    let f = g.registry.get(c).unwrap().options.unwrap();
-    f(g, helm, P0, post).unwrap()
-}
-
-#[test]
-fn aurelia_puts_helm_of_the_host_on_aurelia_before_combat() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = tbl(AURELIA);
-    let helm = perm(&mut g, P0, "Helm of the Host");
-    let valk = perm(&mut g, P0, "Youthful Valkyrie");
-    let aurelia = perm(&mut g, P0, "Aurelia, the Warleader");
-    g.perm_mut(helm).attached = Some(valk);
-    lands(&mut g, P0, "Plains", 4, false);
-    assert!(helm_opts(&mut g, helm, Some(false)).is_empty(), "four mana: no equip {{5}}");
-    lands(&mut g, P0, "Plains", 1, false);
-    let o = helm_opts(&mut g, helm, Some(false));
-    assert_eq!(o.len(), 1);
-    match o[0].act {
-        Some(Action::Equip { target, n, .. }) => assert_eq!((target, n), (aurelia, 5)),
-        _ => panic!("expected an equip"),
-    }
-    assert!(helm_opts(&mut g, helm, Some(true)).is_empty(), "after combat the copy is a turn away");
-    g.perm_mut(helm).attached = Some(aurelia);
-    assert!(helm_opts(&mut g, helm, Some(false)).is_empty(), "already on Aurelia");
-}
-
-#[test]
-fn helm_goes_on_combat_celebrant_without_aurelia_and_only_for_the_aurelia_deck() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = tbl(AURELIA);
-    let helm = perm(&mut g, P0, "Helm of the Host");
-    let cel = perm(&mut g, P0, "Combat Celebrant");
-    lands(&mut g, P0, "Plains", 5, false);
-    let o = helm_opts(&mut g, helm, Some(false));
-    assert!(matches!(o[0].act, Some(Action::Equip { target, .. }) if target == cel));
-    g.player_mut(P0).key = "korvold-jund-sacrifice";
-    assert!(helm_opts(&mut g, helm, Some(false)).is_empty());
-}
-
+// ======================================================== Helm of the Host on Aurelia (the engine's line)
 #[test]
 fn helm_on_aurelia_makes_a_combat_per_copy() {
     // the engine's own line: each hasty copy of Aurelia attacks for the first time and adds a combat

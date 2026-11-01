@@ -1612,14 +1612,11 @@ fn purge(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Op
         .filter(|&m| g.perm(m).cd.is_some_and(|cd| can_pay(g, p, g.db.get(cd).cmc, "BR", false)))
         .collect();
     let Some(t) = max_by(&tg, |m| pval(g, m) + 0.2 * epow(g, m) as f64) else { return Ok(vec![]) };
-    // Kefka, Ruler of Ruin: the life lost on your turn draws that many cards, so the power it deals is card draw
-    let draws =
-        if hand_key(g, p) == "kefka" && crate::impls::kefka::flipped(g, p) { epow(g, t).clamp(0, 6) } else { 0 };
-    if pval(g, t) < 3.0 && draws < 2 {
+    if pval(g, t) < 3.0 {
         return Ok(vec![]);
     }
     let label = format!("Kaervek's Purge on {}", g.perm(t).name);
-    let u = pval(g, t) * 0.5 - 0.8 + 0.7 * draws as f64;
+    let u = pval(g, t) * 0.5 - 0.8;
     Ok(vec![plan(u, label, purge_go, pack(c.0 as u32, t.0))])
 }
 
@@ -1655,10 +1652,7 @@ fn profane(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<
     if post.is_none() || g.active != Some(p) || !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "B", false) {
         return Ok(vec![]);
     }
-    // Kefka: {1}{B} on an empty turn is the card's best use, so it waits only for a real 1-2 mana play
-    let cheap = g.player(p).hand.iter().any(|&x| x != c && !g.db.get(x).land && g.db.get(x).cmc <= 2);
-    let u = if hand_key(g, p) == "kefka" && !cheap { 4.0 } else { 2.2 };
-    Ok(vec![plan(u, "suspend Profane Tutor".into(), profane_go, c.0 as i64)])
+    Ok(vec![plan(2.2, "suspend Profane Tutor".into(), profane_go, c.0 as i64)])
 }
 
 fn profane_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
@@ -1875,12 +1869,9 @@ fn plaza_colors(g: &Game, p: PlayerId, _l: PermId) -> Colors {
 }
 
 /// mine.territory_type: the creature type Unclaimed Territory names as it enters: the one most of p's creature cards
-/// share (Sauron's deck names Orc). Python caches it on the player and the land; it is worked out each time here (the
+/// share. Python caches it on the player and the land; it is worked out each time here (the
 /// same answer unless p's cards change hands)
 pub fn territory_type(g: &Game, p: PlayerId) -> Sym {
-    if hand_key(g, p) == "sauron" {
-        return "orc"; // mine.TERRITORY_TYPE
-    }
     let pl = g.player(p);
     let perms = pl.perms.iter().filter_map(|&m| g.perm(m).cd);
     let cards =

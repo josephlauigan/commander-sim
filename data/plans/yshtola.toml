@@ -5,14 +5,23 @@
 # which runs when AI_HAND is on: impls/yshtola.rs `yshtola_prio` / `yshtola_named_prio` (cast priorities),
 # `tutor_pick` (the tutor wish list) and `yshtola_protect` (with zur::zur_protect: Restoration Angel; Teferi's
 # Protection before a wipe).
-# Left out (the schema can't express it): `trigger_bonus` (each MV 3+ noncreature spell's drain value, added to most
-# priorities), the lethal test for the X drains in `tutor_pick` (the X drains are wished for last here), the Zur lock targets, Hostage Taker / Skyclave / Massacre Wurm / Prayer of
-# Binding target values, Necropotence / Sphinx / Tithe / One Ring helpers (generic priority), the X-spell options,
-# Champion's Helm equip, the removal-target and chump rules in brain.rs / combat.rs.
+# 2026-11-01 (audit/yshtola/plan-file-2026-11-01.md): the X drains' main-phase cast (`plays`: was `x_option`, gated
+# on the hand AI), Champion's Helm on Y'shtola (`[equip]`: was `yshtola::helm`), her cast trigger's value on the MV 3+
+# noncreature spells (`[[prio_add]]`: was `trigger_bonus`, two steps here), and she chumps only to live (the knob: was
+# the combat.rs chump rule).
+# Left out (the schema can't express it): `trigger_bonus` exactly (by the opponents alive, Curiosity, a kill in
+# range, the fourth-life draw) and in the removal and wipe utilities; the lethal test for the X drains in
+# `tutor_pick` (the X drains are wished for last here); the Zur lock targets; Hostage Taker / Skyclave / Massacre
+# Wurm / Prayer of Binding target values; Necropotence / Sphinx / Tithe / One Ring helpers (generic priority); the
+# removal-target rules in brain.rs (`removal_adjust`, no sampling far below the best target); the wipe swing with
+# Teferi's Protection held up (`teferis_first`).
 deck = "yshtola"
 default = "plan"
 # card engines the tutors want once no line wants a card
 engines = ["Sanguine Bond", "Rhystic Study", "Necropotence"]
+# the X drains are cast by their own main-phase play (yshtola::x_drain_option: for a kill, or a big X late), which the
+# generic policy offers for this deck too
+plays = ["Exsanguinate", "Debt to the Deathless"]
 
 # Y'shtola costs four: cast her from turn 2 on, over everything
 [commander]
@@ -167,3 +176,28 @@ protects = ["commander"]
 [[hold]]
 card = "Teferi's Protection"
 protects = ["commander", "Sanguine Bond"]
+
+# --- 2026-11-01
+# she is the engine: she chump-blocks only when the attack would otherwise kill
+[knobs]
+commander_chumps_to_live = true
+
+# Champion's Helm (equip {1}, card code only) goes on Y'shtola (was yshtola::helm: 2.5 + 0.3 x her value)
+[equip]
+holder = "commander"
+utility = 1.5
+extra = { "Champion's Helm" = [1, 0] }
+
+# her cast trigger (2 to each opponent, 2 life) on a noncreature spell of mana value 3 or more, added to its priority
+# while she is out (was trigger_bonus: 4 x (1.5 x 2 per opponent drain + 1 with Bond), up to 20)
+[[prio_add]]
+creature = false
+min_mv = 3
+when = ["commander-out & (out:Sanguine Bond | out:Marauding Blight-Priest)"]
+value = 16
+
+[[prio_add]]
+creature = false
+min_mv = 3
+when = ["commander-out"]
+value = 12

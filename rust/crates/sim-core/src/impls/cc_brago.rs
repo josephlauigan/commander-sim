@@ -23,7 +23,6 @@ use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::combos::{Combo, Ready, Step, StepKind, no_src};
 use crate::state::{Ctx, Game};
 
-const DECK: &str = "brago-azorius-blink-control";
 const AGENT: &str = "Agent of Treachery";
 const ARCH: &str = "Archaeomancer";
 const DRAKE: &str = "Peregrine Drake";
@@ -258,33 +257,3 @@ pub static COMBOS: [Combo; 1] = [Combo {
     xcost: &[],
     steps: KITTEN_STEPS,
 }];
-
-// ------------------------------------------------------------------ Cloudshift
-/// in hand or p's own on the battlefield
-fn around(g: &Game, p: PlayerId, name: &str) -> bool {
-    held(g, p, name).is_some() || mine(g, p, name).is_some()
-}
-
-/// Cloudshift ({W}, exile target creature you control, then return it): a plain spell only on a creature whose enter
-/// effect is worth repeating (it needs a target: it used to be cast on an empty board), and kept for the loop while
-/// Displacer Kitten and Archaeomancer are both in hand or on the battlefield. (the brago deck only:
-/// `hold`, read by ai/brain.rs)
-fn cloudshift_hold(g: &Game, p: PlayerId) -> bool {
-    if around(g, p, KITTEN) && around(g, p, ARCH) {
-        return true;
-    }
-    let best = g
-        .player(p)
-        .perms
-        .iter()
-        .copied()
-        .filter(|&m| g.perm(m).on_bf && !g.perm(m).phased && g.perm(m).orig == p && g.is_creature(m))
-        .map(|m| crate::impls::mine::blink_worth(g, p, m))
-        .fold(0.0, f64::max);
-    best < 3.0
-}
-
-/// ai/brain.rs card_utility: the brago deck keeps c in hand for now
-pub fn hold(g: &Game, p: PlayerId, c: CardId) -> bool {
-    crate::ai::hand_key(g, p) == DECK && named(g, c, CLOUDSHIFT) && cloudshift_hold(g, p)
-}

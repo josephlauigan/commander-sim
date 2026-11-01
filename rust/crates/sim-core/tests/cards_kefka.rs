@@ -14,8 +14,6 @@ use sim_core::testkit::*;
 const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 const P2: PlayerId = PlayerId(2);
-const KEFKA: &str = "Kefka, Court Mage // Kefka, Ruler of Ruin";
-
 fn gy_has(g: &Game, p: PlayerId, name: &str) -> bool {
     g.player(p).gy.iter().any(|&c| &*g.db.get(c).name == name)
 }
@@ -590,8 +588,7 @@ fn susurian_voidborn_drains_for_each_treasure_cracked() {
 }
 
 #[test]
-fn susurian_voidborn_warp_is_cast_for_b_exiled_at_the_end_step_and_recast_later() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
+fn susurian_voidborn_warp_is_cast_for_b_and_exiled_at_the_end_step() {
     let mut g = table2();
     lands(&mut g, P0, "Swamp", 1, false);
     hand(&mut g, P0, &["Susurian Voidborn"]);
@@ -602,15 +599,7 @@ fn susurian_voidborn_warp_is_cast_for_b_exiled_at_the_end_step_and_recast_later(
     f(&mut g, m, P0).unwrap();
     assert!(!g.perm(m).on_bf);
     assert!(g.player(P0).exile.iter().any(|&c| &*g.db.get(c).name == "Susurian Voidborn"));
-    // not on the same turn
-    lands(&mut g, P0, "Swamp", 2, false);
-    assert!(!has_opt(&mut g, P0, "Susurian Voidborn (from exile)"));
-    g.round += 1;
-    lands(&mut g, P0, "Swamp", 0, false);
-    for &l in &g.player(P0).lands.clone() {
-        g.perm_mut(l).tapped = false;
-    }
-    assert!(has_opt(&mut g, P0, "Susurian Voidborn (from exile)"));
+    // (its recast from exile was the Kefka deck's hand AI, deleted on 2026-11-01)
 }
 
 #[test]
@@ -686,45 +675,6 @@ fn kefkas_wheel_for_the_kefka_deck_picks_a_new_type_after_the_opponents() {
 }
 
 #[test]
-fn the_flip_option_is_offered_at_eight_mana_and_ranks_with_the_plays_that_matter() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table2();
-    lands(&mut g, P0, "Swamp", 8, false);
-    perm(&mut g, P0, KEFKA);
-    let opts = opts_of(&mut g, P0, false);
-    let u = opts.iter().find(|o| o.label == "Kefka: {8}, transform").unwrap().utility;
-    assert!(u > 5.0 && u < 8.0, "{u}");
-}
-
-#[test]
-fn the_flip_with_the_crawler_out_waits_for_a_library_that_outlasts_the_table() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table2();
-    lands(&mut g, P0, "Swamp", 8, false);
-    perm(&mut g, P0, KEFKA);
-    hand(&mut g, P0, &["Island"]); // the Crawler is */* (cards in hand): with an empty hand it is a 0/0 and dies
-    perm(&mut g, P0, "Psychosis Crawler");
-    fill_library(&mut g, P0, 20); // the opponent has 40 life
-    assert!(!kefka::loop_safe(&g, P0));
-    assert!(!has_opt(&mut g, P0, "Kefka: {8}, transform"));
-    fill_library(&mut g, P0, 60);
-    assert!(kefka::loop_safe(&g, P0));
-    assert!(has_opt(&mut g, P0, "Kefka: {8}, transform"));
-}
-
-#[test]
-fn the_crawler_is_held_after_the_flip_when_the_loop_would_deck_us() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table2();
-    flipped_kefka(&mut g, P0);
-    let c = card(&g, "Psychosis Crawler");
-    fill_library(&mut g, P0, 20);
-    assert_eq!(decks::deck_prio(&g, P0, c), 0);
-    fill_library(&mut g, P0, 60);
-    assert!(decks::deck_prio(&g, P0, c) > 0);
-}
-
-#[test]
 fn the_crawler_loop_kills_the_table_when_the_library_is_long_enough() {
     let mut g = table(&["kefka", "veyran", "seph"]);
     flipped_kefka(&mut g, P0);
@@ -782,19 +732,6 @@ fn the_discard_choice_keeps_a_held_crawler() {
     fill_library(&mut g, P0, 10); // the loop is not safe: the Crawler's cast priority is 0
     let h = hand(&mut g, P0, &["Psychosis Crawler", "Forest"]);
     assert_eq!(kefka::discard_choice(&g, P0, &h, 0), Some(h[1]));
-}
-
-#[test]
-fn scarlet_spider_and_embrace_are_held_for_kefkas_trigger() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table2();
-    lands(&mut g, P0, "Mountain", 4, false);
-    lands(&mut g, P0, "Swamp", 4, false);
-    perm(&mut g, P0, KEFKA);
-    let sp = card(&g, "Scarlet Spider, Kaine");
-    assert_eq!(decks::deck_prio(&g, P0, sp), 0);
-    let g2 = table2();
-    assert!(decks::deck_prio(&g2, P0, card(&g2, "Scarlet Spider, Kaine")) > 0, "without Kefka it is a body");
 }
 
 // ------------------------------------------------------------------ Oppression
@@ -884,23 +821,3 @@ fn marvin_uses_nivs_draw_only_while_niv_is_out() {
     assert!(g.player(P1).life < life || g.player(P0).life < 40, "Fangtail's ping went somewhere");
 }
 
-#[test]
-fn marvin_is_cast_sooner_with_a_creature_to_copy_and_the_ai_taps_him() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table(&["kefka", "veyran"]);
-    fill_library(&mut g, P0, 10);
-    let c = card(&g, "Marvin, Murderous Mimic");
-    let bare = decks::deck_prio(&g, P0, c);
-    assert!(bare > 0);
-    perm(&mut g, P0, "Viashino Fangtail");
-    let with_pinger = decks::deck_prio(&g, P0, c);
-    assert!(with_pinger > bare);
-    perm(&mut g, P0, "Niv-Mizzet, the Firemind");
-    assert!(decks::deck_prio(&g, P0, c) > with_pinger, "Niv's draw is the best copy");
-    let marvin = perm(&mut g, P0, "Marvin, Murderous Mimic");
-    let o = opts_of(&mut g, P0, false);
-    assert!(
-        o.iter().any(|x| x.label.starts_with("Marvin copies") && matches!(x.act, Some(sim_core::hooks::Action::Ability { src, .. }) if src == marvin)),
-        "main options offer Marvin copied ability: {:?}", o.iter().map(|x| x.label.clone()).collect::<Vec<_>>()
-    );
-}

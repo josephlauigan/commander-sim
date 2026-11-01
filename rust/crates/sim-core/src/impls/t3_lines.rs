@@ -12,8 +12,8 @@
 //!
 //! Helm of the Host + Aurelia, the Warleader (or Combat Celebrant) is a line the engine plays itself: at the
 //! beginning of combat Helm makes a hasty, nonlegendary copy of the equipped creature, whose first attack (or exert)
-//! adds a combat, which makes another copy. The generic equip choice put Helm on any flier; the Aurelia deck now puts
-//! it on Aurelia before combat (`helm_options`). It is not a catalogued combo: the combats are played out, and the
+//! adds a combat, which makes another copy. The generic equip choice decides where Helm goes (the Aurelia deck's hand
+//! AI put it on Aurelia before combat until 2026-11-01). It is not a catalogued combo: the combats are played out, and the
 //! win is a combat win, as players log it (a catalogued line in a first version made Aurelia's wins 60% "combo"
 //! against Playgroup's 4%).
 //!
@@ -39,8 +39,6 @@ pub const AURELIA_KEY: &str = "aurelia-boros-extra-combats";
 pub const TERGRID_KEY: &str = "tergrid-mono-black-disruption";
 
 const HELM: &str = "Helm of the Host";
-const AURELIA: &str = "Aurelia, the Warleader";
-const CELEBRANT: &str = "Combat Celebrant";
 const SOFF: &str = "Sword of Feast and Famine";
 const ANIMIST: &str = "Sword of the Animist";
 const ASSAULT: &str = "Aggravated Assault";
@@ -110,47 +108,13 @@ fn dork_mana(g: &Game, p: PlayerId, m: PermId) -> u32 {
     crate::cardcode::dyn_mana_perm(g, p, m).unwrap_or(1)
 }
 
-// ================================================================== Helm of the Host on Aurelia / Combat Celebrant
-/// the creature Helm goes on: the one it is on already, else Aurelia, else Combat Celebrant; and the equip cost left
-fn helm_host(g: &Game, p: PlayerId) -> Option<(PermId, PermId, u32)> {
-    let helm = on_bf(g, p, HELM)?;
-    let hosts: Vec<PermId> = [AURELIA, CELEBRANT]
-        .iter()
-        .filter_map(|n| on_bf(g, p, n))
-        .filter(|&m| g.is_creature(m) && g.perm(m).owner == p)
-        .collect();
-    if let Some(&h) = hosts.iter().find(|&&m| g.perm(helm).attached == Some(m)) {
-        return Some((helm, h, 0));
-    }
-    let &h = hosts.first()?;
-    if stopped(g, HELM) {
-        return None; // Disruptor Flute: no equip
-    }
-    Some((helm, h, crate::impls::cloud::equip_cost(g, p, helm, h, 5)))
-}
-
-/// The Aurelia deck puts Helm of the Host on Aurelia (else Combat Celebrant) before combat: each combat's hasty copy
-/// attacks for the first time (or exerts) and adds another combat, which makes another copy. The engine plays the
-/// combats out (its cap is 200 phases), so the win is a combat win, as players log it (Playgroup: Aurelia's wins are
-/// 69% combat, 21% commander damage, 4% combo). Helm already on Celebrant is `combos::BASE`'s line. The generic equip
-/// choice (flying, power) put it on any creature.
-fn helm_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false) || !aurelia(g, p) || !crate::ai::hand_ai(g, p) // --- phase4-hand-off
-        || g.perm(src).owner != p
-        || !live(g, src)
-        || g.player(p).combat_no > 0
-    {
-        return Ok(vec![]);
-    }
-    let Some((helm, host, cost)) = helm_host(g, p) else { return Ok(vec![]) };
-    if helm != src || cost == 0 && g.perm(helm).attached == Some(host) || !can_pay(g, p, cost, "", false) {
-        return Ok(vec![]);
-    }
-    Ok(vec![Opt {
-        utility: 9.0,
-        label: format!("equip {HELM} to {}", g.perm(host).name),
-        act: Some(Action::Equip { src, target: host, n: cost }),
-    }])
+// ================================================================== Helm of the Host
+/// Helm of the Host's options slot: none. The Aurelia deck's hand AI put Helm on Aurelia (else Combat Celebrant)
+/// before combat; it was deleted on 2026-11-01 (`audit/phase4/hand-off-design.md`, "Deleted") and the generic equip
+/// choice decides. The slot stays registered: opponents rate a card with an options hook as an engine
+/// (`pool::card_threat_value`), so removing it would change how they value Helm.
+fn helm_options(_g: &mut Game, _src: Src, _p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    Ok(vec![])
 }
 
 // ================================================================== Chatterfang + Pitiless Plunderer

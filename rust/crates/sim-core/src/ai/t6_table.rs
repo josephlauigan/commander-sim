@@ -9,7 +9,6 @@
 //! - protection first: `protect_before_go` casts Silence / Orim's Chant before the line starts.
 //! - Angel's Grace: `grace_save` answers a lethal state when the card and {W} are there.
 
-use super::hand_key; // --- phase4-hand-off
 use crate::ai::brain::{open_mana, prob_holding};
 use crate::cards::Types;
 use crate::engine::mana::{can_pay, pay};
@@ -305,13 +304,6 @@ pub fn must_option(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<
                     // the look-ahead casts mana permanents itself now (eval-fix.md, Part 3: nothing lost without them)
                     continue;
                 }
-            }
-            // Sisay: a ready line (the table and the plan already said go) comes before one more fetch
-            Some(Action::Plan { .. }) if hand_key(g, p) == "sisay-legends-toolbox" && o.label.starts_with("combo: ") => 92.0,
-            Some(Action::Ability { .. })
-                if hand_key(g, p) == "sisay-legends-toolbox" && o.label.starts_with("Sisay: ") =>
-            {
-                91.0
             }
             _ => continue,
         };

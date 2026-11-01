@@ -1,11 +1,89 @@
 # Phase 4, PR 7: each deck's hand-written AI behind a switch, off by default (design)
 
-Default since the recalibration's stage 1 (`audit/recal/pairs-2026-10-31.md` section 4): on for four decks, see "The
-switch".
+Default since the recalibration's stage 1 (`audit/recal/pairs-2026-10-31.md` section 4): on for three decks, see "The
+switch". On 2026-11-01 the hand AI of the other eleven was deleted: see "Deleted" below; the survey further down
+describes the code as it was before.
 
 Brief: `rust/agents/phase4-hand-off.md`. JD's decision (2026-10-31): with no sims, every deck's hand-written AI goes
 behind a switch that defaults to the generic policy now; it is deleted later, deck by deck, after the recalibration's
 on/off paired test for that deck. Nothing is deleted in this PR.
+
+## Deleted (2026-11-01)
+
+Brief: `rust/agents/hand-ai-delete.md`. The eleven decks whose generic policy was level or better in the stage 1
+paired tests (`audit/recal/pairs-2026-10-31.md` section 4; Dack: `audit/recal/dack-check.md`) lost their hand-written
+AI: **veyran, sauron, galadriel, alela, kefka, karn, thrasios, brago-azorius-blink-control,
+aurelia-boros-extra-combats, sisay-legends-toolbox, dack-fayden-white-stax**. They play the generic policy and their
+plan file, exactly as they did on main with `AI_HAND` unset. yshtola, sheoldred and cloud keep theirs behind the
+switch (`ai::HAND_DECKS` = `ai::HAND_KEEP`), and every deck outside the old `HAND_DECKS` is untouched.
+
+The switch after the deletion:
+
+- `ai::HAND_DECKS` is the three kept decks; `HAND_OFF_PLANS` is gone (only Dack had hand code that its filter in
+  `plans::effective` mattered for); `plan_unread` reads `HAND_DECKS`.
+- `ai::HAND_DELETED` lists JD's seven (veyran, sauron, galadriel, alela, kefka, karn, thrasios): `hand_ai_key` answers
+  no for them whatever `AI_HAND` or `force_hand` say, so `hand_key` reads them as "" and every
+  `is_main(hand_key(..))` / `jd_deck(hand_key(..))` routing site takes the generic path, and `values::generic_deck`
+  counts them as generic decks. `is_main` and `jd_deck` themselves are unchanged: styles (`MAIN_STYLES`) and the
+  table reads (`g.player(p).key`) still name these decks. The pool's four need no entry (no routing site names them).
+- `AI_HAND=1` now means the three kept decks; a key list naming a deleted deck does nothing for it.
+
+What went, per deck (files; every site was one the switch gated, so with `AI_HAND` unset nothing reached it):
+
+- **veyran**: `ai/veyran.rs` (whole: `veyran_prio`, options, Boots, Aetherflux, Mizzix's Mastery, protect, wish
+  lists; `engine_payoff`, the milestone's test, moved to `ai::engine_payoff`); `brain::card_utility`'s magecraft bonus
+  and `veyran_sequence`; the tutor arm (`decks::tutor_pick_named`); the counter value (`stack.rs`); the spare-token
+  chumps (`combat::spare_tokens`); Aetherize in `cardcode::defend_hooks`.
+- **sauron**: `decks.rs` (`sauron_prio`, `sauron_options`, the Army equip, Champion's Helm, Jace's Archivist and
+  `archivist_worth`, `sauron_tutor`, `sauron_pitch_keep`, `sauron_grounds_response`, the protect and wipe arms, the
+  Army in `wipe_eval`); the Underworld Breach line (`mine.rs`: `breach_options`, `breach_line`, its dry run and
+  steps, and `cardcode::breach_options`; Sauron's and Kefka's options were its only callers), and with it
+  `Game::jeska_mana`, `line_no_setup`, `breach_dry`; `threats::sauron_extra_prio` and the X-drain copy value; the
+  Bowmasters Cost of Brilliance and the Army host (`sheoldred.rs`); the Orc type choice (`galadriel::choose_type`,
+  `mine::territory_type`, `legends::territory_type`); the counter-shell hold (`brain::hold_value`); the drain X spell
+  for the Sauron seat (`yshtola::x_option`).
+- **kefka**: `kefka.rs`'s plan (`kefka_prio`, `kefka_options`, `discard_n`, `flip_utility`, `loop_guard` /
+  `loop_safe` / `niv_safe`, `tutor_win_piece`, Yawgmoth's Will options), `kuja_prio`, `marvin_prio`; `kefka_wish`
+  and the storm arms (`decks.rs`, `ai::dsl_search_pick`); the wheel's own pile count (`mine::kefka_wheel`); the face
+  ping guard (`dsl/mod.rs`); the discard (`cast::discard_worst`); the soft-counter factor (`stack.rs`); Kaervek's
+  Purge and Profane Tutor utilities (`legends.rs`). Kefka's flip option keeps the generic timing it had.
+- **galadriel**: `galadriel.rs`'s plan (`galadriel_prio`, `galadriel_protect`, `galadriel_wipe_response`,
+  `attack_answers` / `answer` / `ballista_use`, `precombat`, Make a Stand, `cast_protect`); the arms in
+  `brain::attack_response`, `stack.rs` (pre-combat taps) and `cardcode::galadriel_precombat`.
+- **alela**: `alela_prio`, `faerie_bonus`, `alela_protect`; the Greaves move (`greaves_options` stays registered,
+  empty: it is Lightning Greaves' only code and `pool::card_threat_value` counts an options hook).
+- **karn**: `karn.rs`'s plan (`karn_prio`, `land_adjust`, `search_pick`, `block_response`, `hold_ability` and their
+  helpers) and its call sites (`engine::turn`, `ai::dsl_search_pick`, `dsl/mod.rs`, `brain::attack_response`).
+  `karn::search_bonus` stays: `ai/search.rs` (out of scope) still names it under a "karn" key `hand_key` never gives.
+- **thrasios**: the thrasios arms of `tymna_partners.rs` (`thrasios_prio`, the Basalt / Rings / Ballista priorities
+  and tutor pick, Blossoming Defense in `protection_held` and `combat_trick`) and `tymna_cards.rs`
+  (`blossom_protect`, the thrasios half of every kraum/thrasios gate, its land colours); the Ballista X/1 targets
+  (`common.rs`). The kraum seat (a retired test seat) keeps the shared code.
+- **brago**: `cc_brago::hold` (Cloudshift waits for the Kitten loop) and its `card_utility` call.
+- **aurelia**: the Helm of the Host equip (`t3_lines::helm_options` stays registered, empty, for
+  `card_threat_value`).
+- **sisay**: the table's Sisay-only rule (`t6_table::must_option`). Sisay's legend pick (`t6_plan_sisay::fetch`, read
+  by `legends::sisay_pick`) stays: it is the card's own choice, never gated by the switch.
+- **dack**: `impls/t6_plan_dack.rs` (whole) and its dispatch arm; `t6_plans::HAND` is `godo` alone.
+
+Kept (card code, not deciding): every card's resolution, triggers and costs, the Dack flip tables, Kefka's
+`discard_choice` (the looters' own choice), the Factory/Foundry animate option, Kefka's flip option, Torment of
+Hailfire's cast path, the Sword + Aggravated Assault extra combats, `combo_interrupted`.
+
+Cards whose only activation path was a deleted hand AI (unreachable on main by default since stage 1; candidates for
+a generic options hook if the decks want them): Ballista Squad, Lawbringer, Lightbringer, Errant Doomsayers and
+Whipcorder (Galadriel's answers and taps), Mishra's Factory / Foundry blocks (Karn), the Underworld Breach line
+(Sauron, Kefka), Jace's Archivist's wheel and the Army equips (Sauron), Blossoming Defense as a response (Thrasios),
+Susurian Voidborn's recast from exile and Yawgmoth's Will (Kefka), Mizzix's Mastery's mode choice (Veyran; practice
+mode offered it through the same options). Deflecting Swat and Slip Out the Back: `decks::redirect_response` still
+leaves them to the veyran and kefka seats' own (deleted) answers, so those two seats never cast them; this is how main
+plays with `AI_HAND` unset, and is left for a follow-up because changing it moves the defaults.
+
+Tests: every test that forced the hand AI on for one of the eleven, or called a deleted function, was deleted; where a
+test also checked a card's rules, that part stays with the hand AI off (Susurian Voidborn's warp,
+Mishra's Factory's animation, Gamble, Unclaimed Territory, Veyran's engine milestone). `tests/hand_off.rs` keeps the
+switch tests of the three kept decks and checks that the deleted decks play the generic policy and their plan files
+even with the hand AI forced on. `tests/tymna_ai.rs` went whole (it tested the thrasios seat's attack spread only).
 
 ## How a site is classed
 
@@ -36,7 +114,8 @@ seat's deck key when its hand AI is on and `""` when it is off; every deck-AI si
 switch off the site falls through to the generic branch it already had for the pool decks. Card-code sites keep
 `g.player(p).key`.
 
-The switchable decks (`ai::HAND_DECKS`) are the live decks with hand AI: JD's ten with deck code (veyran, sauron,
+The switchable decks (`ai::HAND_DECKS`) were the live decks with hand AI (since the deletion: yshtola, sheoldred and
+cloud only): JD's ten with deck code (veyran, sauron,
 yshtola, galadriel, alela, kefka, sheoldred, cloud, karn, thrasios) and the pool's four (brago, aurelia, sisay, dack).
 Every other key answers "on" (nothing to switch): the pool decks without hand AI, and the retired test seats whose hand
 AI stays as it is because no paired test of it is possible (sephfs, najeela, omnath / titania, garland, kraum, seph,

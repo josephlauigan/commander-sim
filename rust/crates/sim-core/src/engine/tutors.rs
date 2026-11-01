@@ -334,7 +334,7 @@ pub fn jeskas_will(g: &mut Game, p: PlayerId) -> Res {
     let need: i64 =
         g.player(p).hand.iter().filter(|&&x| !g.db.get(x).land).map(|&x| g.db.get(x).cmc as i64).sum::<i64>()
             - total_mana(g, p, false) as i64;
-    let mana = both || g.jeska_mana || (most >= 4 && need >= 3); // (the Breach line: always mana)
+    let mana = both || (most >= 4 && need >= 3);
     if mana {
         g.player_mut(p).mana.add(Kind::R, most);
         crate::glog!(g, "    Jeska's Will adds {} red mana", most);

@@ -17,7 +17,7 @@ use crate::engine::values::{card_name, has_type};
 use crate::engine::zones::{Tokens, make_tokens};
 use crate::flow::Res;
 use crate::hooks::{Registry, Src};
-use crate::ids::{CardId, PermId, PlayerId};
+use crate::ids::{PermId, PlayerId};
 use crate::state::{DataKey, Game, Val};
 
 pub const KUJA: &str = "Kuja, Genome Sorcerer // Trance Kuja, Fate Defied";
@@ -100,14 +100,6 @@ pub fn wizard_pings(g: &mut Game, p: PlayerId) -> Res {
         }
     }
     Ok(())
-}
-
-/// Kuja's cast priority in Kefka's deck: a 3/4 that makes a pinger every turn; sooner when Wizards are out already
-pub fn kuja_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
-    if &*g.db.get(c).name != KUJA {
-        return None;
-    }
-    Some(if wizards(g, p) >= 2 { 70 } else { 62 })
 }
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {

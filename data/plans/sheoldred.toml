@@ -3,16 +3,33 @@
 # t3-t4). Written in Phase 4 PR 7 from its hand AI, played when AI_HAND is off: `sheoldred::sheoldred_prio` and
 # `pkg2_prio` (the prio rules, rescaled under 90), `sheoldred_protect` / `sheoldred_hold` (the holds).
 # No lines: the hand AI has no tutor wish list (its tutors take the highest-priority card, which the prio rules give).
+# 2026-11-01 (audit/sheoldred/plan-file-2026-11-01.md): the card plays the hand AI gated on the deck (`plays`: the X
+# drain, Dark Deal, Peer into the Abyss, the Atlas, Geier Reach Sanitarium and Mikokoro), Ad Nauseam in her second
+# main phase (`knobs.adnaus_main2`), and Darksteel Plate on Sheoldred ahead of the other plays (`[equip]`: was
+# `sheoldred_special`'s equip).
 # Left out (the schema can't express it): Phyrexian Delver's reanimation target, Soul Enervation's kill check, the
-# Memory Jar / Necrosquito / Rooftop Assassin / Seizan rules; the equip plays (`sheoldred_special`: Darksteel Plate /
-# Boots onto Sheoldred first, the Beckoner's warp); Toxic Deluge's cap (`deluge_cap`); the draw-punisher plays
-# (lesson / deal / atlas / peer options); Ad Nauseam in main 2; the hold's value by removal risk and the hexproof check.
+# Memory Jar / Necrosquito / Rooftop Assassin / Seizan rules; the Beckoner's warp (`sheoldred_special`) and Seizan
+# taking the Helm; Toxic Deluge's cap (`deluge_cap`); the hold's value by removal risk and the hexproof check.
 deck = "sheoldred"
 default = "plan"
+# the card plays her hand AI made through card code (Exsanguinate's main-phase X cast, Dark Deal, Peer into the Abyss,
+# the Atlas, the draw lands), which the generic policy offers for this deck too
+plays = [
+    "Exsanguinate",
+    "Dark Deal",
+    "Peer into the Abyss",
+    "Otherworld Atlas",
+    "Geier Reach Sanitarium",
+    "Mikokoro, Center of the Sea",
+]
 
 # Sheoldred as early as the mana allows
 [commander]
 prio = 90
+
+# she taps out on her own turn: Ad Nauseam also in her second main phase (was the sheoldred arm of adnaus_cast_now)
+[knobs]
+adnaus_main2 = true
 
 # Cast priorities (was sheoldred_prio): rocks first while she is not out (she comes a turn sooner); the draw tolls
 # (Underworld Dreams, Fate Unraveler) high; Howling Mine only with a toll out; Darksteel Plate onto her; the
@@ -64,3 +81,9 @@ mana = true
 card = "Battle-Rage Blessing"
 protects = ["commander"]
 mana = true
+
+# --- 2026-11-01: Darksteel Plate onto Sheoldred ahead of every other play of the turn (was sheoldred_special: utility
+# 9 - 0.1 x the cost; here 2.5 - 0.3 x 2 + 7)
+[equip]
+holder = "commander"
+utility = 7.0

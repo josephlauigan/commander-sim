@@ -13,6 +13,10 @@ deck = "sauron"
 default = "plan"
 # card engines the tutors want once no line wants a card (sauron_tutor's tail)
 engines = ["The Ozolith", "Whispersilk Cloak"]
+# generic-paths (2026-11-01): Exsanguinate is cast by its own main-phase play (yshtola::x_drain_option: for a kill,
+# or a big X late), which the deleted hand AI offered for this deck (yshtola::x_option's sauron arm); the generic
+# policy offers it for this deck too. Without it the card was never cast (the X drains are never cast generically).
+plays = ["Exsanguinate"]
 
 # Sauron (seven mana) is the plan: 85 once castable
 [commander]

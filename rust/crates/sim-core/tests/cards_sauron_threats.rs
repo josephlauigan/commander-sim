@@ -1,8 +1,8 @@
 //! The Sauron speed and backup-win cards (src/impls/threats.rs), each against its Oracle text.
 
-use sim_core::ai::{brain, decks};
+use sim_core::ai::brain;
 use sim_core::engine::mana::total_mana;
-use sim_core::engine::{cast, turn, values, zones};
+use sim_core::engine::{turn, values, zones};
 use sim_core::hooks::{Action, Opt};
 use sim_core::ids::{CardId, PermId, PlayerId};
 use sim_core::state::{Ctx, Game};
@@ -159,37 +159,7 @@ fn torment_ai_casts_it_for_a_kill_and_not_early_otherwise() {
 }
 
 // ---------------------------------------------------------------- Exsanguinate in Sauron's deck
-#[test]
-fn exsanguinate_sauron_casts_it_to_finish() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = game();
-    lands(&mut g, P0, "Swamp", 7, false);
-    let c = hand(&mut g, P0, &["Exsanguinate"])[0];
-    g.player_mut(P1).life = 5;
-    g.player_mut(P2).life = 5;
-    let o = hand_opts(&mut g, c, Some(false));
-    assert_eq!(o.len(), 1);
-    assert!(run_plan(&mut g, &o[0]));
-    assert!(!g.player(P1).alive && !g.player(P2).alive);
-    assert!(g.player(P0).life >= 40 + 10);
-}
-
 // ---------------------------------------------------------------- Dualcaster Mage
-#[test]
-fn dualcaster_mage_copies_a_big_drain_and_keeps_x() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = game();
-    lands(&mut g, P0, "Swamp", 6, false);
-    lands(&mut g, P0, "Mountain", 8, false);
-    let dm = hand(&mut g, P0, &["Dualcaster Mage"])[0];
-    let ex = hand(&mut g, P0, &["Exsanguinate"])[0];
-    let l1 = g.player(P1).life;
-    sim_core::engine::mana::pay(&mut g, P0, 4, "BB", false).unwrap();
-    cast::cast_card(&mut g, P0, ex, "hand", Ctx { x: 4, ..Ctx::default() }).unwrap();
-    assert_eq!(g.player(P1).life, l1 - 8, "the spell and its copy, X = 4 each");
-    assert!(g.player(P0).perms.iter().any(|&m| g.perm(m).cd == Some(dm)), "Dualcaster Mage entered");
-}
-
 #[test]
 fn dualcaster_mage_is_a_flash_2_2_otherwise() {
     let g = game();
@@ -209,22 +179,6 @@ fn rocks_make_mana_for_sauron() {
     lands(&mut g, P1, "Forest", 1, false);
     perm(&mut g, P0, "Fellwar Stone");
     assert_eq!(total_mana(&g, P0, false), base + 3);
-}
-
-#[test]
-fn sauron_casts_the_early_amass_cards_after_rocks() {
-    let mut g = game();
-    g.player_mut(P0).turns = 2;
-    let prio = |g: &Game, n: &str| decks::sauron_prio(g, P0, card(g, n));
-    for n in ["Talisman of Indulgence", "Rakdos Signet", "Fellwar Stone"] {
-        hand(&mut g, P0, &[n]);
-        assert_eq!(prio(&g, n), 80);
-    }
-    assert!(prio(&g, "Dreadhorde Invasion") > prio(&g, "Lazotep Reaver"));
-    assert!(prio(&g, "Lazotep Reaver") > prio(&g, "Grim Initiate"));
-    assert!(prio(&g, "Grim Initiate") > 42, "above a plain creature");
-    assert!(prio(&g, "Dreadhorde Invasion") < 80);
-    assert_eq!(prio(&g, "Dualcaster Mage"), 0, "held for the combo or a spell to copy");
 }
 
 #[test]

@@ -29,50 +29,6 @@ fn kefka_holds_yawgmoths_will_into_an_empty_or_thin_graveyard() {
     assert!(!labels(&mut g, P0).iter().any(|l| l.starts_with("Yawgmoth's Will")), "one ritual is not a turn");
 }
 
-#[test]
-fn kefka_casts_yawgmoths_will_for_a_storm_card_and_replays_the_line() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table(&["kefka", "seph"]);
-    lands(&mut g, P0, "Swamp", 4, false);
-    hand(&mut g, P0, &["Yawgmoth's Will"]);
-    to_gy(&mut g, P0, &["Brain Freeze", "Dark Ritual", "Lotus Petal"]);
-    let o = brain::main_options(&mut g, P0, false).unwrap();
-    let w = o
-        .iter()
-        .find(|o| o.label.starts_with("Yawgmoth's Will"))
-        .expect("Will is offered with a storm card in the yard");
-    sim_core::ai::act::perform(&mut g, P0, w.act.as_ref().unwrap()).unwrap();
-    assert!(g.player(P0).yawg, "Will resolved");
-    let l = labels(&mut g, P0);
-    assert!(l.iter().any(|l| l.starts_with("Dark Ritual (Yawgmoth's Will)")), "{l:?}");
-}
-
-#[test]
-fn kefka_casts_yawgmoths_will_for_three_cheap_spells() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table(&["kefka", "seph"]);
-    lands(&mut g, P0, "Swamp", 7, false);
-    hand(&mut g, P0, &["Yawgmoth's Will"]);
-    to_gy(&mut g, P0, &["Duress", "Dark Ritual", "Lotus Petal"]);
-    assert!(labels(&mut g, P0).iter().any(|l| l.starts_with("Yawgmoth's Will")));
-}
-
-#[test]
-fn kefkas_mystical_tutor_finds_the_storm_card_for_a_waiting_breach() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    use sim_core::ai::decks::tutor_pick_named;
-    let mut g = table(&["kefka", "seph"]);
-    perm(&mut g, P0, "Underworld Breach");
-    let bf = g_card_ids(&mut g, &["Brain Freeze", "Grapeshot"]);
-    g.player_mut(P0).library.extend(bf);
-    let c = tutor_pick_named(&g, P0, "is").expect("a pick");
-    assert!(matches!(&*g.db.get(c).name, "Brain Freeze" | "Grapeshot"));
-}
-
-fn g_card_ids(g: &mut Game, names: &[&str]) -> Vec<sim_core::ids::CardId> {
-    names.iter().map(|n| card(g, n)).collect()
-}
-
 // ------------------------------------------------------------------ Veyran: Terror of the Peaks, Mirari
 const P1: PlayerId = PlayerId(1);
 
@@ -103,17 +59,6 @@ fn mirari_copies_burn_and_the_copy_counts_as_a_cast_for_magecraft() {
 }
 
 // ------------------------------------------------------------------ Sauron: Sheoldred, the Apocalypse
-#[test]
-fn jaces_archivist_wheel_is_worth_it_with_sheoldred_out() {
-    let mut g = table(&["sauron", "seph"]);
-    perm(&mut g, P0, "Jace's Archivist");
-    hand(&mut g, P0, &["Sol Ring", "Mana Vault", "Island"]);
-    hand(&mut g, P1, &["Forest", "Forest", "Forest"]);
-    assert!(!sim_core::ai::decks::archivist_worth(&g, P0), "no payoff: the wheel only helps the opponents");
-    perm(&mut g, P0, "Sheoldred, the Apocalypse");
-    assert!(sim_core::ai::decks::archivist_worth(&g, P0), "each opponent draw costs 2 life");
-}
-
 // ------------------------------------------------------------------ Titania: Kura, the Boundless Sky
 #[test]
 fn kura_dies_into_three_lands_while_there_are_land_drops_to_make() {

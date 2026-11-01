@@ -184,7 +184,6 @@ fn land_score(g: &Game, p: PlayerId, c: CardId, have: crate::cards::Colors) -> f
     let new_cols = "WUBRG".chars().filter(|&ch| cols.has(ch) && !have.has(ch)).count() as f64;
     let mut s = new_cols * 2.0 + if land_enters_tapped(g, p, c) { 0.0 } else { 3.0 };
     s += crate::impls::titania::land_adjust(g, p, c); // the titania deck: fetch lands while Titania is out or about to be
-    s += crate::impls::karn::land_adjust(g, p, c); // the karn deck: the missing Tron piece
     // --- casual speed: a bounceland with no other land to return returns itself (a lost land drop, every turn
     // it's chosen again), and Lotus Field with fewer than two others sacrifices itself: any other land goes first
     if t.has(Tag::Bounceland)

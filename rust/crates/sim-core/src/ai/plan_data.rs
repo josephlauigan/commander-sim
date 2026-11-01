@@ -7,7 +7,7 @@
 //! has hand code (`plans::CONFIG`) with that code; unset, each plan file's `default` decides ("hand" or "plan").
 
 use super::Style;
-use crate::ids::{CardId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::Game;
 use crate::tag::Tag;
 use indexmap::IndexMap;
@@ -61,6 +61,41 @@ pub struct Knobs {
     /// --- ghave: answer removal and wipes by sacrificing through a paid outlet too ({1}, sacrifice a creature:
     /// Ghave), not only the free ones (`common::sac_in_response`, `sac_before_wipe`)
     pub paid_outlets: Option<bool>,
+    /// --- plan-files-3: the commander chump-blocks only when the attack would otherwise kill (`combat.rs` blocks;
+    /// Y'shtola is the engine)
+    pub commander_chumps_to_live: Option<bool>,
+    /// --- plan-files-3: the deck taps out on its own turn: Ad Nauseam may also be cast in its own second main phase
+    /// (with room for four cards; `plans::adnaus_cast_now`)
+    pub adnaus_main2: Option<bool>,
+}
+
+/// --- plan-files-3: where the deck's Equipment goes (`dsl::equip_options`): the holder's score among the equip
+/// targets gets `bonus`, an equip onto it `utility`, worn Equipment moves onto it (`move`), and `extra` gives the equip
+/// of Equipment whose equip ability is card code only (Champion's Helm, Sword of Feast and Famine)
+#[derive(Debug, Clone, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Equip {
+    /// "commander": the deck's commander
+    pub holder: String,
+    /// added to the holder's score among the targets (default 20)
+    pub bonus: Option<f64>,
+    /// added to the utility of an equip onto the holder (default 0)
+    pub utility: Option<f64>,
+    /// Equipment worn by another of the deck's creatures moves onto the holder (default true)
+    #[serde(rename = "move")]
+    pub moves: Option<bool>,
+    /// Equipment with no compiled equip ability: name -> [equip cost, the +N power the utility counts]
+    #[serde(default)]
+    pub extra: IndexMap<String, [u32; 2]>,
+}
+
+/// --- plan-files-3: a rule keeping the commander out of an attack (`ai::attack_filter`, the look-ahead's all-out
+/// attack): the commander stays home when `when` holds, read for that attack (the `cmd-*`, `atk-power` and
+/// `def-life` quantities)
+#[derive(Debug, Clone, Default, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct StayHome {
+    pub when: Vec<String>,
 }
 
 /// a win line: a catalogue combo (`combos::all()` name), or pieces (groups of card names, one card of each group
@@ -274,6 +309,19 @@ pub struct Plan {
     #[serde(default)]
     pub go_now: Vec<GoNow>,
     pub mulligan: Option<Mulligan>,
+    /// --- plan-files-3: where the Equipment goes
+    pub equip: Option<Equip>,
+    /// --- plan-files-3: cards whose card-code plays were written for a JD deck's hand AI (the X drains' main-phase
+    /// cast, the draw punishers' activations) and that the generic policy offers too for this deck
+    #[serde(default)]
+    pub plays: Vec<String>,
+    /// --- plan-files-3: when the commander stays out of an attack
+    #[serde(default)]
+    pub stay_home: Vec<StayHome>,
+    /// --- plan-files-3: priority added to a card's cast priority (whatever rule or generic value gave it, when above
+    /// 0): the first rule selecting the card decides, as in `prio`
+    #[serde(default)]
+    pub prio_add: Vec<PrioRule>,
 }
 
 // ------------------------------------------------------------------ conditions
@@ -348,9 +396,28 @@ enum Q {
     Rocks,
     /// the cards in hand
     HandSize,
+    /// --- plan-files-3: the commander's power (the one being rated in an attack, else p's first on the battlefield;
+    /// 0 with none out)
+    CmdPower,
+    /// the defender's untapped creatures that can block the commander (no defender: every opponent's)
+    CmdBlockers,
+    /// of those, the ones that would kill it (power at least its toughness, not out-struck by its first strike; 0
+    /// while it is indestructible)
+    CmdKillers,
+    /// the attack's total power (attack rules)
+    AtkPower,
+    /// the defender's life (no defender: the lowest opponent's)
+    DefLife,
+    /// Equipment of this plan set (`[sets]`, by index) attached to the commander
+    CmdWears(usize),
 }
 
-const NUMS: [(&str, Q); 29] = [
+const NUMS: [(&str, Q); 34] = [
+    ("cmd-power", Q::CmdPower),
+    ("cmd-blockers", Q::CmdBlockers),
+    ("cmd-killers", Q::CmdKillers),
+    ("atk-power", Q::AtkPower),
+    ("def-life", Q::DefLife),
     ("opp-removal-up", Q::OppRemovalUp),
     ("card-tax", Q::CardTax),
     ("rocks", Q::Rocks),
@@ -415,6 +482,8 @@ enum Atom {
     Lib(String),
     /// --- phase4-cedh: a line of p's catalogue combos is ready to go (`combos::line_progress`)
     LineReady,
+    /// --- plan-files-3: the commander (see `Q::CmdPower`) is indestructible
+    CmdIndestructible,
     /// a sum of quantities compared with a number
     Num(Vec<(f64, Q)>, Cmp, Rhs),
     Not(Box<Atom>),
@@ -479,6 +548,7 @@ fn atom(s: &str, sets: &[&str]) -> Result<Atom, String> {
         "drain-payoff" => return Ok(Atom::DrainPayoff),
         "to-top" => return Ok(Atom::ToTop),
         "line-ready" => return Ok(Atom::LineReady),
+        "commander-indestructible" => return Ok(Atom::CmdIndestructible),
         _ => {}
     }
     for (op, c) in [(">=", Cmp::Ge), ("<=", Cmp::Le), (">", Cmp::Gt), ("<", Cmp::Lt), ("=", Cmp::Eq)] {
@@ -498,6 +568,8 @@ fn atom(s: &str, sets: &[&str]) -> Result<Atom, String> {
                     Q::Bf(set_ix(set)?)
                 } else if let Some(set) = k.strip_prefix("gy:") {
                     Q::Gy(set_ix(set)?)
+                } else if let Some(set) = k.strip_prefix("cmd-wears:") {
+                    Q::CmdWears(set_ix(set)?)
                 } else {
                     NUMS.iter().find(|n| n.0 == k).ok_or_else(|| format!("unknown quantity {k:?} in {s:?}"))?.1
                 };
@@ -518,6 +590,10 @@ fn atom(s: &str, sets: &[&str]) -> Result<Atom, String> {
 pub struct Cx<'a> {
     pub plan: Option<&'a Loaded>,
     pub card: Option<CardId>,
+    /// --- plan-files-3: an attack being read: its attackers, the defender and the commander it is about
+    pub atk: &'a [PermId],
+    pub def: Option<PlayerId>,
+    pub perm: Option<PermId>,
 }
 
 impl Cond {
@@ -569,6 +645,39 @@ fn hand_count(g: &Game, p: PlayerId, names: &[String]) -> usize {
 fn rituals(g: &Game, p: PlayerId, cx: Cx) -> f64 {
     let r = cx.plan.and_then(|l| l.plan.mulligan.as_ref()).map_or(&[][..], |m| &m.rituals[..]);
     hand_count(g, p, r) as f64
+}
+
+/// --- plan-files-3: the commander a condition reads: the one being rated, else p's first on the battlefield
+fn cmd_perm(g: &Game, p: PlayerId, cx: Cx) -> Option<PermId> {
+    cx.perm.or_else(|| {
+        g.player(p).perms.iter().copied().find(|&m| is_holder(g, p, m) && g.perm(m).on_bf && !g.perm(m).phased)
+    })
+}
+
+/// the defender's (else every opponent's) untapped creatures that can block m; `kill`: only those that would kill it
+/// (power at least its toughness, and m neither indestructible nor killing it first with first strike)
+fn cmd_blockers(g: &Game, p: PlayerId, m: PermId, cx: Cx, kill: bool) -> usize {
+    use crate::engine::combat::{can_block, first_strike};
+    use crate::engine::values::{epow, etgh, indestructible};
+    if kill && indestructible(g, m) {
+        return 0;
+    }
+    let defs: Vec<PlayerId> = match cx.def {
+        Some(d) => vec![d],
+        None => g.opps(p).collect(),
+    };
+    defs.iter()
+        .flat_map(|&q| g.player(q).perms.iter().copied())
+        .filter(|&b| {
+            let x = g.perm(b);
+            x.on_bf
+                && !x.phased
+                && g.is_creature(b)
+                && !x.tapped
+                && can_block(g, b, m)
+                && (!kill || (epow(g, b) >= etgh(g, m) && !(first_strike(g, m) && epow(g, m) >= etgh(g, b))))
+        })
+        .count()
 }
 
 fn quantity(g: &Game, p: PlayerId, q: Q, cx: Cx) -> f64 {
@@ -630,6 +739,24 @@ fn quantity(g: &Game, p: PlayerId, q: Q, cx: Cx) -> f64 {
             pl.perms.iter().filter(|&&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Rock))).count() as f64
         }
         Q::HandSize => hand.len() as f64,
+        Q::CmdPower => cmd_perm(g, p, cx).map_or(0, |m| crate::engine::values::epow(g, m)) as f64,
+        Q::CmdBlockers => cmd_perm(g, p, cx).map_or(0, |m| cmd_blockers(g, p, m, cx, false)) as f64,
+        Q::CmdKillers => cmd_perm(g, p, cx).map_or(0, |m| cmd_blockers(g, p, m, cx, true)) as f64,
+        Q::AtkPower => cx.atk.iter().map(|&m| crate::engine::values::epow(g, m)).sum::<i32>() as f64,
+        Q::DefLife => (match cx.def {
+            Some(d) => g.player(d).life,
+            None => g.opps(p).map(|q| g.player(q).life).min().unwrap_or(0),
+        }) as f64,
+        Q::CmdWears(i) => cx.plan.zip(cmd_perm(g, p, cx)).map_or(0, |(l, m)| {
+            pl.perms
+                .iter()
+                .filter(|&&e| {
+                    let x = g.perm(e);
+                    let named = |c: CardId| l.sets[i].iter().any(|n| *n == *name(g, c));
+                    x.on_bf && x.attached == Some(m) && x.cd.is_some_and(named)
+                })
+                .count()
+        }) as f64,
         Q::Gy(i) => {
             cx.plan.map_or(0, |l| pl.gy.iter().filter(|&&c| l.sets[i].iter().any(|n| *n == *name(g, c))).count()) as f64
         }
@@ -670,6 +797,7 @@ fn eval(g: &Game, p: PlayerId, a: &Atom, cx: Cx) -> bool {
         Atom::DrainPayoff => super::plans::drain_payoff(g, p).is_some(),
         Atom::ToTop => pl.to_top,
         Atom::LineReady => crate::impls::combos::line_progress(g, p).1,
+        Atom::CmdIndestructible => cmd_perm(g, p, cx).is_some_and(|m| crate::engine::values::indestructible(g, m)),
         Atom::Any(alts) => alts.iter().any(|all| all.iter().all(|a| eval(g, p, a, cx))),
         Atom::Out(n) => super::plans::on_bf(g, p, n).is_some(),
         Atom::OppOut(n) => g.opps(p).any(|q| super::plans::on_bf(g, q, n).is_some()),
@@ -720,6 +848,9 @@ pub struct Loaded {
     pub hold_up_when: Vec<Cond>,
     pub go_now_when: Vec<Cond>,
     pub mull_when: Vec<Cond>,
+    /// --- plan-files-3: the conditions of the stay-home and priority-add rules
+    pub stay_home_when: Vec<Cond>,
+    pub prio_add_when: Vec<Cond>,
     /// the `[sets]`, by index (`Q::Hand`)
     pub sets: Vec<Vec<String>>,
     /// the DeckConfig this plan stands for (hand functions filled in by `plans::config`)
@@ -782,25 +913,46 @@ pub fn load(stem: &str, text: &str) -> Result<Loaded, String> {
         lines.push((names, cond(&l.when, format!("line {:?}", l.name))?));
         all_groups.push(groups);
     }
-    let mut prio_when = vec![];
-    for (i, r) in plan.prio.iter().enumerate() {
-        let any_sel = !r.cards.is_empty()
-            || r.commander
-            || r.creature.is_some()
-            || r.flying.is_some()
-            || !r.subtypes.is_empty()
-            || r.min_mv.is_some()
-            || r.max_mv.is_some()
-            || r.next_of.is_some();
-        if !any_sel {
-            return Err(err(format!("prio rule {}: it selects no card", i + 1)));
+    let prio_rules = |rules: &[PrioRule], what: &str| -> Result<Vec<Cond>, String> {
+        let mut out = vec![];
+        for (i, r) in rules.iter().enumerate() {
+            let any_sel = !r.cards.is_empty()
+                || r.commander
+                || r.creature.is_some()
+                || r.flying.is_some()
+                || !r.subtypes.is_empty()
+                || r.min_mv.is_some()
+                || r.max_mv.is_some()
+                || r.next_of.is_some();
+            if !any_sel {
+                return Err(err(format!("{what} rule {}: it selects no card", i + 1)));
+            }
+            if let Some(n) = &r.next_of
+                && !plan.line.iter().any(|l| &l.name == n)
+            {
+                return Err(err(format!("{what} rule {}: next_of {n:?} is not a line", i + 1)));
+            }
+            out.push(cond(&r.when, format!("{what} rule {}", i + 1))?);
         }
-        if let Some(n) = &r.next_of
-            && !plan.line.iter().any(|l| &l.name == n)
-        {
-            return Err(err(format!("prio rule {}: next_of {n:?} is not a line", i + 1)));
+        Ok(out)
+    };
+    let prio_when = prio_rules(&plan.prio, "prio")?;
+    // --- plan-files-3
+    let prio_add_when = prio_rules(&plan.prio_add, "prio_add")?;
+    let mut stay_home_when = vec![];
+    for (i, r) in plan.stay_home.iter().enumerate() {
+        if r.when.is_empty() {
+            return Err(err(format!("stay_home rule {}: no when", i + 1)));
         }
-        prio_when.push(cond(&r.when, format!("prio rule {}", i + 1))?);
+        stay_home_when.push(cond(&r.when, format!("stay_home rule {}", i + 1))?);
+    }
+    if let Some(e) = &plan.equip {
+        if e.holder != "commander" {
+            return Err(err(format!("equip.holder {:?}: only \"commander\"", e.holder)));
+        }
+        if let Some((n, _)) = e.extra.iter().find(|(_, v)| v[0] > 10) {
+            return Err(err(format!("equip.extra {n:?}: an equip cost above 10")));
+        }
     }
     let mut wish_when = vec![];
     for (i, r) in plan.wish.iter().enumerate() {
@@ -876,6 +1028,8 @@ pub fn load(stem: &str, text: &str) -> Result<Loaded, String> {
         hold_up_when,
         go_now_when,
         mull_when,
+        stay_home_when,
+        prio_add_when,
         sets,
         cfg,
     })
@@ -946,7 +1100,7 @@ fn name(g: &Game, c: CardId) -> &str {
 /// in play, as a commander in the command zone, or on top of its library where p put it itself; a condition of the
 /// group that holds counts as the whole group
 fn group_held(g: &Game, p: PlayerId, grp: &Group, top: &[&str], l: &Loaded) -> usize {
-    if grp.conds.iter().any(|c| c.holds_cx(g, p, Cx { plan: Some(l), card: None })) {
+    if grp.conds.iter().any(|c| c.holds_cx(g, p, Cx { plan: Some(l), ..Cx::default() })) {
         return grp.need;
     }
     let pl = g.player(p);
@@ -1034,7 +1188,9 @@ fn rule_wants(l: &Loaded, g: &Game, p: PlayerId) -> Vec<CardId> {
             .wish
             .iter()
             .zip(&l.wish_when)
-            .find(|(r, w)| r.cards.iter().any(|x| x == n) && w.holds_cx(g, p, Cx { plan: Some(l), card: Some(c) }))
+            .find(|(r, w)| {
+                r.cards.iter().any(|x| x == n) && w.holds_cx(g, p, Cx { plan: Some(l), card: Some(c), ..Cx::default() })
+            })
             .map(|x| x.0);
         let Some(r) = r else { continue };
         let mut s = r.score;
@@ -1102,10 +1258,15 @@ pub fn derived_wish(g: &Game, p: PlayerId) -> Vec<CardId> {
 
 /// the plan's cast-priority rules for card c (see `PrioRule`), on the 0-100 scale
 pub fn prio_for(l: &Loaded, g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
+    rules_for(l, &l.plan.prio, &l.prio_when, g, p, c)
+}
+
+/// --- plan-files-3: the first of these priority rules selecting card c decides (`prio_for`, `prio_add`)
+fn rules_for(l: &Loaded, rules: &[PrioRule], whens: &[Cond], g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
     let pl = g.player(p);
     let d = g.db.get(c);
-    let cx = Cx { plan: Some(l), card: Some(c) };
-    for (r, when) in l.plan.prio.iter().zip(&l.prio_when) {
+    let cx = Cx { plan: Some(l), card: Some(c), ..Cx::default() };
+    for (r, when) in rules.iter().zip(whens) {
         let sel = (r.cards.is_empty() || r.cards.iter().any(|n| *n == *d.name))
             && (!r.commander || pl.is_commander(c))
             && r.creature.is_none_or(|v| d.creature == v)
@@ -1160,7 +1321,7 @@ pub fn keep_for(l: &Loaded, g: &Game, p: PlayerId) -> Option<bool> {
         return Some(true);
     }
     if !m.rule.is_empty() {
-        let cx = Cx { plan: Some(l), card: None };
+        let cx = Cx { plan: Some(l), ..Cx::default() };
         let row = m.rule.iter().zip(&l.mull_when).find(|(_, w)| w.holds_cx(g, p, cx));
         return Some(row.map_or(m.otherwise.unwrap_or(true), |r| r.0.keep));
     }
@@ -1184,19 +1345,89 @@ pub fn keeps_hand(g: &Game, p: PlayerId) -> Option<bool> {
 
 /// --- phase4-cedh: the hold-up utility of the plan (first rule that holds), None: no opinion
 pub fn hold_up_for(l: &Loaded, g: &Game, p: PlayerId) -> Option<f64> {
-    let cx = Cx { plan: Some(l), card: None };
+    let cx = Cx { plan: Some(l), ..Cx::default() };
     l.plan.hold_up.iter().zip(&l.hold_up_when).find(|(_, w)| w.holds_cx(g, p, cx)).and_then(|x| x.0.value)
 }
 
 /// --- phase4-cedh: the plan's go-now gate for this catalogue combo, None: the shared table check decides
 pub fn go_now_for(l: &Loaded, g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
-    let cx = Cx { plan: Some(l), card: None };
+    let cx = Cx { plan: Some(l), ..Cx::default() };
     l.plan
         .go_now
         .iter()
         .zip(&l.go_now_when)
         .find(|(r, w)| r.matches(combo) && w.holds_cx(g, p, cx))
         .and_then(|x| x.0.go)
+}
+
+// ------------------------------------------------------------------ plan-files-3: equip, plays, attacks, priority
+/// p's plan's equip section, while p plays from its plan
+pub fn equip_plan(g: &Game, p: PlayerId) -> Option<&'static Equip> {
+    active(g, p)?.plan.equip.as_ref()
+}
+
+/// m is the holder the plan's Equipment goes on: p's commander (cast as one, or its card put onto the battlefield)
+fn is_holder(g: &Game, p: PlayerId, m: PermId) -> bool {
+    let x = g.perm(m);
+    x.owner == p && (x.is_cmd || x.cd.is_some_and(|c| g.player(p).is_commander(c)))
+}
+
+/// what the plan adds to creature m's score as the target of an equip (0 without an equip section)
+pub fn equip_holder_bonus(g: &Game, p: PlayerId, m: PermId) -> f64 {
+    equip_plan(g, p).filter(|_| is_holder(g, p, m)).map_or(0.0, |e| e.bonus.unwrap_or(20.0))
+}
+
+/// what the plan adds to the utility of an equip onto m
+pub fn equip_utility(g: &Game, p: PlayerId, m: PermId) -> f64 {
+    equip_plan(g, p).filter(|_| is_holder(g, p, m)).map_or(0.0, |e| e.utility.unwrap_or(0.0))
+}
+
+/// Equipment e, worn by another of p's creatures, is to move onto the holder (out, and not wearing it)
+pub fn equip_moves(g: &Game, p: PlayerId, e: PermId) -> bool {
+    equip_plan(g, p).is_some_and(|q| q.moves.unwrap_or(true))
+        && g.player(p).perms.iter().any(|&m| {
+            let x = g.perm(m);
+            is_holder(g, p, m) && x.on_bf && !x.phased && g.is_creature(m) && g.perm(e).attached != Some(m)
+        })
+}
+
+/// the plan's equip for Equipment whose equip ability is card code only: [cost, the +N power the utility counts]
+pub fn equip_extra(g: &Game, p: PlayerId, card: &str) -> Option<[u32; 2]> {
+    equip_plan(g, p)?.extra.get(card).copied()
+}
+
+/// the generic policy offers this card's card-code plays for p (the plan's `plays`)
+pub fn plays(g: &Game, p: PlayerId, card: &str) -> bool {
+    active(g, p).is_some_and(|l| l.plan.plays.iter().any(|x| x == card))
+}
+
+/// the commander chump-blocks only to live (`knobs.commander_chumps_to_live`)
+pub fn commander_chumps_to_live(g: &Game, p: PlayerId) -> bool {
+    active(g, p).is_some_and(|l| l.plan.knobs.commander_chumps_to_live == Some(true))
+}
+
+/// Ad Nauseam in the deck's own second main phase too (`knobs.adnaus_main2`)
+pub fn adnaus_main2(g: &Game, p: PlayerId) -> bool {
+    active(g, p).is_some_and(|l| l.plan.knobs.adnaus_main2 == Some(true))
+}
+
+/// the attack `atk` at defender d without the commanders a stay-home rule keeps home
+pub fn stay_home(g: &mut Game, p: PlayerId, mut atk: Vec<PermId>, d: PlayerId) -> Vec<PermId> {
+    let Some(l) = active(g, p).filter(|l| !l.plan.stay_home.is_empty()) else { return atk };
+    let cmds: Vec<PermId> = atk.iter().copied().filter(|&m| is_holder(g, p, m)).collect();
+    for m in cmds {
+        let cx = Cx { plan: Some(l), atk: &atk, def: Some(d), perm: Some(m), ..Cx::default() };
+        if l.stay_home_when.iter().any(|w| w.holds_cx(g, p, cx)) {
+            crate::glog!(g, "      [{} keeps {} home: its plan's stay-home rule]", g.player(p).name, g.perm(m).name);
+            atk.retain(|&x| x != m);
+        }
+    }
+    atk
+}
+
+/// the plan's priority added to card c's cast priority (0 without a rule)
+pub fn prio_add(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    active(g, p).and_then(|l| rules_for(l, &l.plan.prio_add, &l.prio_add_when, g, p, c)).unwrap_or(0.0)
 }
 
 /// --- phase4-cedh: a Tier 6 deck playing from its plan file: the five plan slots (`t6_plans.rs`) read from it
@@ -1254,6 +1485,18 @@ pub fn named_cards(l: &Loaded) -> Vec<String> {
     }
     if let Some(m) = &p.mulligan {
         v.extend(m.rituals.iter().cloned());
+    }
+    // --- plan-files-3
+    if let Some(e) = &p.equip {
+        v.extend(e.extra.keys().cloned());
+    }
+    v.extend(p.plays.iter().cloned());
+    for (r, w) in p.prio_add.iter().zip(&l.prio_add_when) {
+        v.extend(r.cards.iter().cloned());
+        v.extend(w.names().map(String::from));
+    }
+    for w in &l.stay_home_when {
+        v.extend(w.names().map(String::from));
     }
     for h in &p.hold {
         v.push(h.card.clone());

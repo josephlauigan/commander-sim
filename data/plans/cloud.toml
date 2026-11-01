@@ -2,12 +2,15 @@
 # policy (ai/plans.rs `config`). JD's Cloud, Midgar Mercenary deck (mono-W Equipment voltron, key `cloud`, tiers
 # t1-t3). Written in Phase 4 PR 7 from its hand AI, played when AI_HAND is off: `cloud::cloud_prio` (the prio rules,
 # rescaled under 90), `cloud::tutor_pick` / `cloud_pick` (the line and the engines: the Swords first, then Champion's
-# Helm, Kaldra, Mask, the Hammer), `cloud::keep_hand` (the mulligan).
+# Helm, Kaldra, Mask, the Hammer), `cloud::keep_hand` (the mulligan). 2026-11-01 (audit/cloud/plan-file-2026-11-01.md):
+# the Equipment goes on Cloud (`[equip]`: was `holder_bonus`, `equip_utility_bonus`, `wants_move` and the Helm and
+# Sword of Feast and Famine equips of `cloud_special`), and Cloud stays home while nothing real is on him
+# (`[[stay_home]]`: was `keep_cloud_home`).
 # Left out (the schema can't express it): the tutor's mana fit (cast + equip within next turn's mana), its order by a
 # clogged hand / a Sword held / removal risk, the Kaldra set's third piece and the free-equip branch; the catch-up ramp
 # (Knight of the White Orchid, Loyal Warhound: an opponent with more lands); Andúril's rule; the protection responses
-# (`cloud_protect`, `white_protect`, `cloud_wipe_response`, wipe modes); the equip weights, attack filter, all-out trim,
-# `must_attack`, `strands_equipment`, `cloud_special`, Akroma's Will timing and `search_bonus`.
+# (`cloud_protect`, `white_protect`, `cloud_wipe_response`, wipe modes); the per-piece equip extras, `must_attack`,
+# `strands_equipment`, Akroma's Will timing and `search_bonus` (the look-ahead's, in ai/search.rs).
 deck = "cloud"
 default = "plan"
 # the Equipment the tutors want once a Sword is in hand or out
@@ -17,6 +20,8 @@ engines = ["Champion's Helm", "Sword of Kaldra", "Mask of Memory", "Colossus Ham
 equipment = ["Andúril, Narsil Reforged", "Buster Sword", "Champion's Helm", "Colossus Hammer", "Fireshrieker", "Mask of Memory", "Swiftfoot Boots", "Sword of Feast and Famine", "Sword of Fire and Ice", "Sword of Hearth and Home", "Sword of Kaldra"]
 # what makes a two-land hand a keep: a mana rock or a creature of mana value two or less
 keep2 = ["Arcane Signet", "Coalition Relic", "Fellwar Stone", "Mind Stone", "Sol Ring", "Thought Vessel", "Giver of Runes", "Zack Fair", "Knight of the White Orchid", "Loyal Warhound", "Puresteel Paladin", "Kor Outfitter", "Auriok Steelshaper", "Grand Abolisher", "Ardenn, Intrepid Archaeologist", "Page, Loose Leaf"]
+# the Equipment with a combat trigger Cloud doubles: wearing one, he attacks unless a blocker would kill him
+trigger_gear = ["Sword of Fire and Ice", "Sword of Hearth and Home", "Sword of Feast and Famine"]
 
 # Cloud doubles the Equipment's triggers: Cloud and a Sword
 [[line]]
@@ -137,3 +142,17 @@ keep = true
 [[mulligan.rule]]
 when = ["hand-lands=2 & hand:keep2>=1"]
 keep = true
+
+# Cloud wears the Equipment (was holder_bonus / equip_utility_bonus / wants_move: +20 to his score as a target, +4.5
+# to the equip's utility, worn pieces move onto him), and the two pieces whose equip is card code only (was
+# cloud_special: Champion's Helm {1} counted as +2, Sword of Feast and Famine {2} as +4)
+[equip]
+holder = "commander"
+bonus = 20
+utility = 4.5
+extra = { "Champion's Helm" = [1, 2], "Sword of Feast and Famine" = [2, 4] }
+
+# Cloud stays home (was keep_cloud_home) when a creature of the defender can block him, he has neither real size
+# (power 4) nor indestructible, the attack isn't lethal, and he wears no trigger Sword or a blocker would kill him
+[[stay_home]]
+when = ["cmd-blockers>=1 & cmd-power<4 & not commander-indestructible & atk-power - def-life<0 & (cmd-wears:trigger_gear=0 | cmd-killers>=1)"]

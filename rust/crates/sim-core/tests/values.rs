@@ -110,11 +110,12 @@ fn the_override_table_loads_and_refuses_rows_without_a_reason() {
     );
 }
 
-/// JD's decks and Tier 6 never read derived values (their own priority code stays)
+/// JD's decks with their hand AI and Tier 6 never read derived values (their own priority code stays)
 #[test]
 fn jd_decks_and_tier_6_are_never_on_derived_values() {
     let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let g = table(&["sheoldred", "sauron", "cloud", "karn"]);
+    // the decks that keep their hand AI (veyran, sauron, karn and the rest of the deleted ones are generic decks)
+    let g = table(&["sheoldred", "yshtola", "cloud", "omnath"]);
     for i in 0..4 {
         assert!(!values::generic_deck(&g, PlayerId(i)));
     }

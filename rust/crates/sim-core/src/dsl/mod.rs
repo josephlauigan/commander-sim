@@ -654,16 +654,11 @@ fn run(
                         .collect();
                     let best = max_by(&tg, |m| pval(g, m));
                     let lethal: Vec<PlayerId> = opps.iter().copied().filter(|&q| g.player(q).life <= eff).collect();
-                    // Kefka flipped with a draw-trigger engine out and a library too short for its loop: no face pings
-                    let guard = crate::impls::kefka::loop_guard(g, p);
                     if let Some(&q) = lethal.first() {
                         lose_life(g, q, dmg, Some(p), kind, None)?;
-                    } else if let Some(b) = best.filter(|&b| guard || pval(g, b) >= 3.0) {
+                    } else if let Some(b) = best.filter(|&b| pval(g, b) >= 3.0) {
                         snapshot(g, b, ctx);
                         apply_removal(g, Some(p), b, &format!("dmg{dmg}"), spell)?;
-                    } else if guard {
-                        // the trigger is mandatory and an opponent's face would start the loop: ping yourself
-                        lose_life(g, p, dmg, Some(p), kind, None)?;
                     } else if let Some(q) = min_by(&opps, |q| g.player(q).life as f64) {
                         lose_life(g, q, dmg, Some(p), kind, None)?;
                     }
@@ -1302,15 +1297,13 @@ fn search(g: &mut Game, p: PlayerId, e: &Effect) -> Res {
     };
     let tapped = e.tapped == Some(true);
     for _ in 0..k {
-        // the karn deck's nonbasic land searches (Expedition Map, Urza's Cave) take the land it wants (`karn::search_pick`)
-        let karn_pick = f.basic == Some(false) && crate::impls::karn::is_deck(hand_key(g, p));
-        if f.kind.as_deref() == Some("land") && to == "battlefield" && !karn_pick {
+        if f.kind.as_deref() == Some("land") && to == "battlefield" {
             zones::land_ramp(g, p, 1, tapped)?;
             continue;
         }
         // a basic land to hand; "a land card" (Sylvan Scrying) takes any land through the pick below (it took a basic
         // only, so a land tutor never found Gaea's Cradle)
-        if f.kind.as_deref() == Some("land") && to == "hand" && !karn_pick && f.basic == Some(true) {
+        if f.kind.as_deref() == Some("land") && to == "hand" && f.basic == Some(true) {
             zones::land_to_hand(g, p)?;
             continue;
         }
@@ -2158,12 +2151,11 @@ pub fn ability_options(g: &mut Game, p: PlayerId, sorcery_ok: bool) -> Res<Vec<c
             continue;
         }
         let name = g.db.get(cd).name.to_string();
-        let held = crate::impls::karn::hold_ability(g, p, &name); // the karn deck keeps its Baubles
         let land = g.db.get(cd).land;
         for (i, a) in abilities(g, cd).iter().enumerate() {
             match a {
                 Ability::Activated { cost, effects, sorcery, once, ai_min } => {
-                    if held || (land && channel(cost)) {
+                    if land && channel(cost) {
                         continue; // a land's channel ability is used from the hand
                     }
                     if *sorcery == Some(true) && !sorcery_ok {
@@ -2451,17 +2443,29 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
         let x = g.perm(src);
         let Some(cd) = x.cd else { continue };
         let d = g.db.get(cd);
-        if !d.has_dsl() || d.tags.str(Tag::Prot) == Some("boots") {
+        // --- plan-files-3: a plan's equip for Equipment whose equip is card code only (Champion's Helm)
+        let extra = if d.has_dsl() {
+            None
+        } else {
+            crate::ai::plan_data::equip_extra(g, p, &d.name).or_else(|| manual_equip(g, p, &d.tags))
+        };
+        if (!d.has_dsl() && extra.is_none()) || d.tags.str(Tag::Prot) == Some("boots") {
             continue;
         }
-        let Some(n) = d.abilities.iter().find_map(|a| match a {
-            Ability::Static { kind, mana, .. } if kind == "equip_cost" => Some(mana.unwrap_or(2)),
-            _ => None,
-        }) else {
+        let Some(n) = d
+            .abilities
+            .iter()
+            .find_map(|a| match a {
+                Ability::Static { kind, mana, .. } if kind == "equip_cost" => Some(mana.unwrap_or(2)),
+                _ => None,
+            })
+            .or(extra.map(|x| x[0]))
+        else {
             continue;
         };
         if x.attached.is_some_and(|t| g.perm(t).on_bf && g.perm(t).owner == p && !g.perm(t).phased)
             && !crate::impls::cloud::wants_move(g, p, src)
+            && !crate::ai::plan_data::equip_moves(g, p, src)
         {
             continue;
         }
@@ -2496,6 +2500,7 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
             (if y.army { 3.0 } else { 0.0 }) + if flies { 2.0 } else { 0.0 } + 0.3 * epow(g, m) as f64
                 - if y.sick { 1.0 } else { 0.0 }
                 + crate::impls::cloud::holder_bonus(g, p, m)
+                + crate::ai::plan_data::equip_holder_bonus(g, p, m)
                 + crate::impls::tymna_cards::equip_holder_value(g, p, src, m)
         };
         let best = max_by(&cands, score).unwrap();
@@ -2513,7 +2518,8 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
                 Ability::Static { kind, pow, .. } if kind == "equip_bonus" => *pow,
                 _ => None,
             })
-            .sum();
+            .sum::<i32>()
+            + extra.map_or(0, |x| x[1] as i32);
         let trig = d
             .abilities
             .iter()
@@ -2521,6 +2527,7 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
             .count();
         let u = 2.5 + 0.5 * bonus as f64 + 2.0 * trig as f64 - 0.3 * n as f64
             + crate::impls::cloud::equip_utility_bonus(g, p, src, best)
+            + crate::ai::plan_data::equip_utility(g, p, best)
             + crate::impls::tymna_cards::equip_utility_value(g, p, src, best);
         out.push(Opt {
             utility: u,
@@ -2529,6 +2536,24 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
         });
     }
     out
+}
+
+/// --- generic-paths (2026-11-01): the equip of an Equipment whose card has no compiled equip ability, only its tag:
+/// [cost, the +N power the equip's utility counts], as printed (practice mode's table, `human::legal::equip_cost`):
+/// the Swords {2} (Sword of Feast and Famine +2/+2), Conqueror's Flail {2} (+1/+1 a colour, counted as one), Sword
+/// of the Animist {2} (+1/+1), Nim Deathmantle {4} (+2/+2). Their equip was a deck's hand AI only (Sauron's Army
+/// equips, the kraum seat's Flail, Cloud's), so no other deck ever equipped them. Not for a seat whose own hand AI
+/// equips them (the kept decks, the kraum test seat); Whispersilk Cloak and the Boots are the pool's
+/// (`pool::special_options`), Champion's Helm a plan's `[equip] extra`.
+fn manual_equip(g: &Game, p: PlayerId, t: &crate::cards::Tags) -> Option<[u32; 2]> {
+    let k = crate::ai::hand_key(g, p);
+    if crate::ai::HAND_DECKS.contains(&k) || k == "kraum" {
+        return None;
+    }
+    [(Tag::Sword, 2, 2), (Tag::Flail, 2, 1), (Tag::Animist, 2, 1), (Tag::Nim, 4, 2)]
+        .into_iter()
+        .find(|&(tag, _, _)| t.has(tag))
+        .map(|(_, cost, pow)| [cost, pow])
 }
 
 /// equip src to target for {n}

@@ -43,21 +43,6 @@ fn crackle_one_target_is_enough() {
 }
 
 #[test]
-fn mizzixs_mastery_your_target() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table(&["veyran", "seph"]);
-    hand(&mut g, P0, &["Mizzix's Mastery"]);
-    let qs = gy_push(&mut g, P0, "Quick Study");
-    let bolt = gy_push(&mut g, P0, "Lightning Bolt");
-    pool(&mut g, P0, &[('R', 1), ('C', 3)]);
-    let n = g.player(P0).hand.len();
-    main(&mut g, P0, vec![cast_cast(), by_text("one target"), by_text("Quick Study")]);
-    assert_eq!(g.player(P0).hand.len(), n - 1 + 2);
-    assert!(g.player(P0).exile.contains(&qs));
-    assert!(g.player(P0).gy.contains(&bolt));
-}
-
-#[test]
 fn flashback_grants_flashback() {
     let mut g = table(&["veyran", "seph"]);
     hand(&mut g, P0, &["Flashback"]);

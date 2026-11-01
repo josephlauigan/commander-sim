@@ -1,5 +1,5 @@
 //! Kefka, Court Mage's deck (Grixis discard, key `kefka`): the cards the engine's tags and compiled abilities don't
-//! cover, the madness / mayhem / graveyard-casting mechanics, and the deck's AI plan.
+//! cover, the madness / mayhem / graveyard-casting mechanics, and the cards' own choices.
 //!
 //! - Mechanics: **madness** (`MADNESS`) and **mayhem** (`MAYHEM`) are tables by card name that the engine's discard
 //!   paths consult (`discarded`, called from `zones::discard_cards` / `discard_index`); any card can be added. Casting
@@ -7,8 +7,9 @@
 //!   zone `escape` (or `gy`: flashback exiles), which also reports the card leaving the graveyard (`gy_left`: Garrison
 //!   Excavator).
 //! - Cards: see the doc comment of each function; the audit verdicts are in data/card_overrides.toml.
-//! - The AI plan: `kefka_prio` (cast priorities), `discard_choice` (what to bin to Kefka's trigger and the looters),
-//!   `flip_utility` (when to pay {8}), `loop_safe` (the Psychosis Crawler loop), Decorum Dissertation's target.
+//! - The cards' own choices: `discard_choice` (what a looter here bins), Decorum Dissertation's target. The deck's
+//!   hand AI (`kefka_prio`, the flip timing, the Psychosis Crawler loop guard, its discard and wheel choices, the storm
+//!   wish) was deleted on 2026-11-01 (`audit/phase4/hand-off-design.md`, "Deleted").
 
 use super::common::{AURA, AuraSpec, aura};
 use crate::engine::pool::Kind;
@@ -16,7 +17,6 @@ use super::lands::sac_land;
 use super::partials::remove_card;
 use super::yshtola::take_card;
 use crate::engine::repl;
-use crate::ai::pool::generic_prio;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, copy_spell};
 use crate::engine::life::{check_state, gain, lose_life};
@@ -67,10 +67,6 @@ fn name_of(g: &Game, m: PermId) -> &str {
     g.perm(m).cd.map_or("", |c| &g.db.get(c).name)
 }
 
-fn is_kefka(g: &Game, p: PlayerId) -> bool {
-    crate::ai::hand_key(g, p) == "kefka"
-}
-
 // ------------------------------------------------------------------ kefka's state
 /// Kefka, Ruler of Ruin is on p's battlefield
 pub fn flipped(g: &Game, p: PlayerId) -> bool {
@@ -84,42 +80,8 @@ fn kefka_out(g: &Game, p: PlayerId) -> bool {
     g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && !g.perm(m).phased && name_of(g, m) == KEFKA)
 }
 
-fn crawler_out(g: &Game, p: PlayerId) -> bool {
-    g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && !g.perm(m).phased && name_of(g, m) == CRAWLER)
-}
-
-fn niv_out(g: &Game, p: PlayerId) -> bool {
-    g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && !g.perm(m).phased && name_of(g, m) == NIV)
-}
-
 fn alive_opps(g: &Game, p: PlayerId) -> Vec<PlayerId> {
     g.opps(p).filter(|&q| g.player(q).alive).collect()
-}
-
-/// **The Psychosis Crawler loop is safe to start**: every card drawn makes each opponent lose 1, and each loss draws
-/// a card with the flipped Kefka, so the loop runs until the table is dead or the library is. It kills the table only
-/// when the library holds more cards than the most healthy opponent has life (one draw takes 1 from every opponent,
-/// so the last one dies after that many draws). The brief says "the lowest opponent's life"; the highest is the safe
-/// reading, since a loop that kills some opponents and then draws the library out loses the game.
-pub fn loop_safe(g: &Game, p: PlayerId) -> bool {
-    let opps = alive_opps(g, p);
-    let Some(most) = opps.iter().map(|&q| g.player(q).life).max() else { return true };
-    g.player(p).library.len() as i32 > most + 1
-}
-
-/// **Niv-Mizzet, the Firemind with the flipped Kefka**: each card drawn is 1 damage to one target, each life lost on
-/// your turn draws a card, so pinging a face runs until the table is dead or the library is. One ping takes 1 life from
-/// one opponent, so the loop kills the table only when the library holds more cards than all their life together.
-pub fn niv_safe(g: &Game, p: PlayerId) -> bool {
-    let total: i32 = alive_opps(g, p).iter().map(|&q| g.player(q).life.max(0)).sum();
-    g.player(p).library.len() as i32 > total + 1
-}
-
-/// **Hold the face damage**: Kefka is flipped, a draw-trigger engine (the Crawler, Niv-Mizzet) is out and its mandatory
-/// loop would deck us. Damage that comes off a draw trigger then goes at a creature (or finishes a player) rather than
-/// at a player's face. Used by the engine's 'any target' damage for the kefka deck.
-pub fn loop_guard(g: &Game, p: PlayerId) -> bool {
-    is_kefka(g, p) && flipped(g, p) && ((crawler_out(g, p) && !loop_safe(g, p)) || (niv_out(g, p) && !niv_safe(g, p)))
 }
 
 // ------------------------------------------------------------------ the discard choice
@@ -180,17 +142,6 @@ pub fn discard_choice(g: &Game, p: PlayerId, hand: &[CardId], pile: u8) -> Optio
     };
     let cands: Vec<CardId> = hand.iter().copied().filter(|&c| !g.player(p).stolen.contains_key(&c)).collect();
     min_by(&cands, score)
-}
-
-/// engine.discard_worst for the Kefka deck: n discards by `discard_choice`
-pub fn discard_n(g: &mut Game, p: PlayerId, n: u32) -> Res {
-    for _ in 0..n {
-        let hand = g.player(p).hand.clone();
-        let hand = crate::ai::rules::spare_tutored(g, p, &hand).unwrap_or(hand); // --- phase4-rules
-        let Some(c) = discard_choice(g, p, &hand, 0) else { return Ok(()) };
-        discard_cards(g, p, &[c])?;
-    }
-    Ok(())
 }
 
 // ------------------------------------------------------------------ madness and mayhem
@@ -1275,41 +1226,6 @@ pub(crate) fn voidborn_warp(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-/// the warped Voidborn in exile: cast from there on a later turn, for its mana cost
-pub fn kefka_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
-    let mut out = vec![];
-    out.extend(crate::cardcode::breach_options(g, p, post)?);
-    out.extend(will_options(g, p));
-    if post.then_some(()).is_some() || true {
-        let st = g.turn_stamp();
-        let later = g.player(p).flag_turn.get(&intern("voidborn_warped")).is_none_or(|s| *s != st);
-        if later && let Some(c) = g.player(p).exile.iter().copied().find(|&c| cname(g, c) == VOIDBORN) {
-            let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
-            if can_pay(g, p, cg, &cp, false) && g.active == Some(p) {
-                out.push(Opt {
-                    utility: 4.5,
-                    label: "Susurian Voidborn (from exile)".into(),
-                    act: Some(Action::Plan { f: voidborn_from_exile, arg: c.0 as i64 }),
-                });
-            }
-        }
-    }
-    Ok(out)
-}
-
-fn voidborn_from_exile(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let c = CardId(arg as u16);
-    let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
-    if !g.player(p).exile.contains(&c) || !can_pay(g, p, cg, &cp, false) {
-        return Ok(false);
-    }
-    pay(g, p, cg, &cp, false)?;
-    g.player_mut(p).exile.take(c);
-    g.player_mut(p).flag_turn.shift_remove(&intern("voidborn_warped"));
-    cast_card(g, p, c, "lib", Ctx::default())?;
-    Ok(true)
-}
-
 /// **Corroding Dragonstorm**: when it enters, each opponent loses 2 life and you gain 2 life; surveil 2. When a Dragon
 /// you control enters, return it to its owner's hand. (No Dragon is in the deck; the clause works for a Dragon token
 /// or a Dragon taken from another deck.)
@@ -1430,90 +1346,6 @@ fn disintegrate_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
     0
 }
 
-/// kefka's cast priority: the generic priorities (plus the cards' own `prio` slots), Psychosis Crawler held while
-/// the loop with the flipped Kefka would deck us
-pub fn kefka_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let name = cname(g, c);
-    if name == CRAWLER || name == NIV {
-        // every card drawn costs the table life: Kefka's discard and loot draws ping it even before the flip
-        if flipped(g, p) {
-            // the Crawler's loop is mandatory; Niv's pings are aimed (loop_guard), so he is never held
-            return if name == NIV || loop_safe(g, p) { 80 } else { 0 };
-        }
-        return if kefka_out(g, p) { 84 } else { 70 };
-    }
-    if name == "Fiery Emancipation" {
-        // triple damage: every Crawler / Niv ping is 3 to each opponent, and the flipped Kefka draws off all of it
-        let pl = g.player(p);
-        let pinger = |n: &str| {
-            pl.perms.iter().any(|&m| crate::engine::values::card_name(g, m) == Some(n))
-                || pl.hand.iter().any(|&x| cname(g, x) == n)
-        };
-        return if pinger(CRAWLER) || pinger(NIV) || flipped(g, p) { 78 } else { 45 };
-    }
-    if name == "Bribery" {
-        // the best creature from an opponent's library: a bomb on Kefka's side (card code: galadriel.rs)
-        return 62;
-    }
-    if let Some(v) = crate::ai::decks::breach_hold_prio(g, p, c) {
-        return v; // the Breach line holds Breach, the storm cards and the rituals for itself
-    }
-    if name == "Underworld Breach" {
-        // the graveyard Kefka fills (discards, looting) is the fuel: escape what was binned, once there is mana for it
-        let k = crate::ai::decks::breach_candidates(g, p, false).len();
-        return if k >= 2 && total_mana(g, p, false) >= 5 { 56 } else { 0 };
-    }
-    if name == "Triskelion" {
-        // three pings: each one is a card once Kefka is flipped
-        return if flipped(g, p) {
-            74
-        } else if kefka_out(g, p) {
-            56
-        } else {
-            generic_prio(g, p, c)
-        };
-    }
-    if let Some(v) = crate::impls::newcards_b::marvin_prio(g, p, c) {
-        return v;
-    }
-    if let Some(v) = crate::impls::kuja::kuja_prio(g, p, c) {
-        return v;
-    }
-    if name == "Rapturous Moment" {
-        // draw three, discard two (Kefka's fodder) and five red mana back: a free filter whenever the hand can spend it
-        let others = g.player(p).hand.iter().filter(|&&x| x != c && !g.db.get(x).land).count();
-        return if others >= 2 { 58 } else { generic_prio(g, p, c) };
-    }
-    if (name == SCARLET_SPIDER || name == DEMONIC_EMBRACE) && kefka_out(g, p) && !flipped(g, p) {
-        return 0; // kept in hand to be discarded to Kefka's trigger (mayhem / the graveyard cast)
-    }
-    generic_prio(g, p, c)
-}
-
-/// when to pay {8} for Kefka's flip (the utility of the option): after the plays that matter, unless holding up
-/// interaction is clearly better; never starting the Crawler loop with a library that can't outlast the table
-pub fn flip_utility(g: &Game, p: PlayerId) -> Option<f64> {
-    if is_kefka(g, p) && crawler_out(g, p) && !loop_safe(g, p) {
-        return None;
-    }
-    if !is_kefka(g, p) {
-        return Some(3.0 + 0.5 * g.opps(p).count() as f64);
-    }
-    let mut u = 5.8 + 0.4 * g.opps(p).count() as f64;
-    // holding interaction (a counterspell or instant removal) with the mana it needs, and danger on the table
-    let held = g.player(p).hand.iter().any(|&c| {
-        let d = g.db.get(c);
-        d.instant && (d.tag(Tag::Ctr) || d.tag(Tag::Rem))
-    });
-    if held && total_mana(g, p, false) < 8 + 2 {
-        u -= 1.2;
-    }
-    if crawler_out(g, p) {
-        u += 2.0; // the flip turns the Crawler into the kill
-    }
-    Some(u)
-}
-
 // ------------------------------------------------------------------ registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, OPPRESSION)?;
@@ -1603,67 +1435,6 @@ fn disintegrate_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<
 }
 
 // ======================================================== Yawgmoth's Will (the Kefka storm/Breach package)
-const WILL: &str = "Yawgmoth's Will";
-
-/// is the graveyard worth replaying? Returns the option's utility: a storm card (Brain Freeze, Grapeshot) with the
-/// mana to cast it after the Will, or three cheap castable spells that fit in the mana left; never into an empty yard
-fn will_value(g: &Game, p: PlayerId) -> Option<f64> {
-    let pl = g.player(p);
-    if pl.yawg || g.active != Some(p) || !can_pay(g, p, 2, "B", false) {
-        return None;
-    }
-    let left = total_mana(g, p, false).saturating_sub(3);
-    let cost = |c: CardId| {
-        let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
-        cg + cp.chars().count() as u32
-    };
-    let rituals = pl
-        .gy
-        .iter()
-        .filter(|&&c| matches!(&*g.db.get(c).name, "Dark Ritual" | "Cabal Ritual" | "Lotus Petal" | "Jeska's Will"))
-        .count() as u32;
-    let storm = pl.gy.iter().any(|&c| matches!(&*g.db.get(c).name, "Brain Freeze" | "Grapeshot"));
-    if storm && left + 2 * rituals >= 2 {
-        return Some(7.0);
-    }
-    let mut costs: Vec<u32> = pl
-        .gy
-        .iter()
-        .filter(|&&c| {
-            let d = g.db.get(c);
-            !d.land && !d.tag(Tag::Rean) && !d.tag(Tag::Fill) && !d.tag(Tag::Yawg)
-        })
-        .map(|&c| cost(c))
-        .collect();
-    costs.sort_unstable();
-    (costs.len() >= 3 && costs.iter().take(3).sum::<u32>() <= left).then_some(5.0)
-}
-
-fn will_go(g: &mut Game, p: PlayerId, _arg: i64) -> Res<bool> {
-    let Some(w) = g.player(p).hand.iter().copied().find(|&c| cname(g, c) == WILL) else { return Ok(false) };
-    if will_value(g, p).is_none() {
-        return Ok(false);
-    }
-    pay(g, p, 2, "B", false)?;
-    cast_card(g, p, w, "hand", Ctx::default())?;
-    Ok(true)
-}
-
-/// Yawgmoth's Will for a deck that isn't built around it: only with a yard that pays for itself
-pub fn will_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
-    if !g.player(p).hand.iter().any(|&c| cname(g, c) == WILL) {
-        return vec![];
-    }
-    will_value(g, p)
-        .map(|u| Opt {
-            utility: u,
-            label: "Yawgmoth's Will (replay the graveyard)".into(),
-            act: Some(Action::Plan { f: will_go, arg: 0 }),
-        })
-        .into_iter()
-        .collect()
-}
-
 /// Brain Freeze or Grapeshot is in hand, graveyard or library (so Breach / Yawgmoth's Will still has a finisher)
 fn storm_card_left(g: &Game, p: PlayerId) -> bool {
     let pl = g.player(p);
@@ -1678,23 +1449,6 @@ fn storm_card_left(g: &Game, p: PlayerId) -> bool {
 fn is_protection(g: &Game, c: CardId) -> bool {
     cname(g, c) == "Deflecting Swat"
         || matches!(g.db.get(c).tags.str(Tag::Prot), Some("hi" | "phase" | "indes" | "blink"))
-}
-
-/// What the tutors fetch when the board wants the two-card win rather than the Breach line: Kefka is flipped, or is
-/// out with {8} within a land drop, and neither Psychosis Crawler nor Niv-Mizzet is in hand or on the battlefield.
-/// The Crawler first while the library outlasts the table's life (the loop is safe), else Niv-Mizzet.
-pub fn tutor_win_piece(g: &Game, p: PlayerId) -> Option<[&'static str; 2]> {
-    if !is_kefka(g, p) {
-        return None;
-    }
-    let pl = g.player(p);
-    let rocks = pl.perms.iter().filter(|&&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Rock))).count();
-    let ready = flipped(g, p) || (kefka_out(g, p) && pl.lands.len() + rocks >= 7);
-    let held = |n: &str| pl.hand.iter().any(|&c| cname(g, c) == n);
-    if !ready || crawler_out(g, p) || niv_out(g, p) || held(CRAWLER) || held(NIV) {
-        return None;
-    }
-    Some(if loop_safe(g, p) { [CRAWLER, NIV] } else { [NIV, CRAWLER] })
 }
 
 // ------------------------------------------------------------------ Oppression
