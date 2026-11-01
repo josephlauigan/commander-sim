@@ -213,7 +213,7 @@
 1x Diplomatic Relations (eoe)
 1x Director Nick Fury (msc)
 1x Discerning Peddler (otj)
-2x Disdainful Stroke (soa)
+1x Disdainful Stroke (soa)
 1x Disenchant (ath)
 1x Disintegrate (5ed)
 1x Dismantling Wave (msc)

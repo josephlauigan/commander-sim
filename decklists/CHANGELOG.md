@@ -727,6 +727,7 @@ Deck key `thrasios`, `decklists/JD/tymna-thrasios-partners.md`.
 
 ### Changes
 
+- **2026-10-31.** Out: Helm of Kaldra. In: Disdainful Stroke. JD (10/31), not simulated. In: Disdainful Stroke (from Sauron). Out: Helm of Kaldra (to the binder). A third counterspell against T5 combo's big pieces; Helm of Kaldra alone (no Sword or Shield of Kaldra in the deck) was only first strike, trample and haste.
 - **2026-10-30.** Out: Dark Endurance, Exotic Orchard, Port Town, Sunblast Angel, Unclaimed Territory, Witherbloom Charm. In: Atraxa, Grand Unifier, Gifts Ungiven, Hallowed Fountain, Swan Song, Tropical Island, Tundra. Tymna/Thrasios: cards from the retired Seph/Atraxa deck (rebuilt as Ghave, 10/30). In: Atraxa, Grand Unifier, Gifts Ungiven, Swan Song, Tundra, Tropical Island, Hallowed Fountain. Out: Sunblast Angel, Witherbloom Charm, Dark Endurance, Port Town, Unclaimed Territory, Exotic Orchard. JD's choice, not simulated.
 - **2026-10-30.** Out: Assassin's Trophy, Shield of Kaldra. In: Disenchant, Smothering Tithe. JD's swaps (10/30), not simulated: Assassin's Trophy -> Disenchant, Shield of Kaldra -> Smothering Tithe (2 Game Changers, still Bracket 3).
 - **2026-10-27.** Out: Disenchant. In: Assassin's Trophy. JD's choice (2026-10-27), not simulated: Assassin's Trophy (from Seph/Atraxa) for Disenchant.
