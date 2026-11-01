@@ -1,4 +1,5 @@
-//! Dack's plan slots (impls/t6_plan_dack.rs) on the decision scenarios of audit/t6/dack-fayden-white-stax/SPEC.md.
+//! Dack's plan slots (its plan file `data/plans/dack-fayden-white-stax.toml`, read through `impls/t6_plans.rs`; the hand
+//! plan `t6_plan_dack.rs` was deleted on 2026-11-01) on the decision scenarios of audit/t6/dack-fayden-white-stax/SPEC.md.
 
 use sim_core::ai::decks::deck_prio_f;
 use sim_core::ids::PlayerId;
@@ -21,10 +22,6 @@ fn opening(names: &[&str]) -> Game {
     g.player_mut(P0).hand.clear();
     hand(&mut g, P0, names);
     g
-}
-
-fn dack(g: &Game) -> sim_core::ids::CardId {
-    g.player(P0).cmd
 }
 
 /// six mana with WW for Dack: Plains x4 and Sol Ring and a Mox
@@ -71,39 +68,6 @@ fn mulligan_follows_the_mana() {
         "Defense Grid",
     ]);
     assert_eq!(t6_plans::keep(&g, P0), Some(false));
-}
-
-#[test]
-fn silence_goes_first_then_dack() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    // scenario 1: 6 mana with WW + 1, Silence and Chant in hand, a blue opponent with open mana
-    let mut g = opening(&["Silence", "Orim's Chant", "Reprieve"]);
-    lands(&mut g, P0, "Plains", 5, false);
-    perm(&mut g, P0, "Sol Ring");
-    lands(&mut g, PlayerId(1), "Island", 3, false);
-    hand(&mut g, PlayerId(1), &["Force of Will", "Counterspell"]);
-    let s = card(&g, "Silence");
-    let o = card(&g, "Orim's Chant");
-    assert_eq!(deck_prio_f(&g, P0, dack(&g)), 0.0, "protection comes before the cast");
-    assert!(deck_prio_f(&g, P0, s).max(deck_prio_f(&g, P0, o)) >= 90.0);
-}
-
-#[test]
-fn no_protection_and_open_blue_mana_means_a_stax_piece() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    // scenario 2: two opponents with open blue mana, no protection: Dack waits, Defense Grid is cast
-    let mut g = opening(&["Defense Grid", "Trinisphere"]);
-    six_mana(&mut g);
-    for i in [1, 2] {
-        lands(&mut g, PlayerId(i), "Island", 3, false);
-        hand(&mut g, PlayerId(i), &["Force of Will", "Counterspell", "Mana Drain"]);
-    }
-    assert_eq!(deck_prio_f(&g, P0, dack(&g)), 0.0);
-    assert!(deck_prio_f(&g, P0, card(&g, "Defense Grid")) > 60.0);
-    // a tapped-out table: Dack goes
-    let mut g = opening(&["Defense Grid"]);
-    six_mana(&mut g);
-    assert!(deck_prio_f(&g, P0, dack(&g)) >= 90.0);
 }
 
 #[test]

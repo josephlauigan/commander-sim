@@ -1,8 +1,8 @@
 //! Tier 6 table support: who is a Tier 6 player, and the plan slots the deck agents fill.
 //!
 //! SLOT CONTRACT. Each Tier 6 deck answers five slots. Since Phase 4 PR 2 they come from its plan file
-//! (`data/plans/<key>.toml`, read by `ai::plan_data::t6`); the decks still in `HAND` (Dack Fayden, which the plan schema
-//! cannot express, and the unseated `godo`) keep a hand file `impls/t6_plan_<name>.rs`, called through the dispatch
+//! (`data/plans/<key>.toml`, read by `ai::plan_data::t6`); the deck still in `HAND` (the unseated `godo`; Dack
+//! Fayden's was deleted on 2026-11-01) keeps a hand file `impls/t6_plan_<name>.rs`, called through the dispatch
 //! below (the only `match` on the deck key), and `AI_PLAN_DATA` picks between the two. Each returns `None` for "no
 //! opinion", and then the shared Tier 6 table rules (`ai/t6_table.rs`) and the generic AI decide, exactly as before.
 //!
@@ -22,7 +22,7 @@
 use crate::ids::{CardId, PlayerId};
 use crate::state::Game;
 
-use super::{t6_plan_dack as dack, t6_plan_godo as godo};
+use super::t6_plan_godo as godo;
 
 /// the nine Tier 6 deck keys: the six pool decks of `decklists/pool/t6-cedh/`, Godo (retired 2026-10-25, a test seat)
 /// and JD's Thanos (Scion, retired 2026-10-30, is a test seat)
@@ -51,7 +51,6 @@ pub fn is_t6(g: &Game, p: PlayerId) -> bool {
 macro_rules! dispatch {
     ($g:expr, $p:expr, $f:ident($($a:expr),*)) => {
         match crate::ai::hand_key($g, $p) { // --- phase4-hand-off: AI_HAND
-            "dack-fayden-white-stax" => dack::$f($g, $p $(, $a)*),
             "godo" => godo::$f($g, $p $(, $a)*),
             _ => None,
         }
@@ -60,8 +59,8 @@ macro_rules! dispatch {
 /// --- phase4-cedh: the Tier 6 decks that still have a hand plan file here (`AI_PLAN_DATA` picks between it and the
 /// deck's `data/plans/<key>.toml`); a deck whose hand file is deleted always plays from its plan file. Deleted after a
 /// level paired test: kinnan, kraum, rograkh-silas, rograkh-thrasios, scion, and sisay's five slots (its `fetch` stays
-/// in `t6_plan_sisay.rs`).
-pub const HAND: [&str; 2] = ["dack-fayden-white-stax", "godo"];
+/// in `t6_plan_sisay.rs`); Dack's `t6_plan_dack.rs` on 2026-11-01 (`audit/phase4/hand-off-design.md`, "Deleted").
+pub const HAND: [&str; 1] = ["godo"];
 
 pub fn has_hand(key: &str) -> bool {
     HAND.contains(&key)

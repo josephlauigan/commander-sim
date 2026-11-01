@@ -80,11 +80,7 @@ fn effective() -> &'static std::collections::HashMap<&'static str, DeckConfig> {
             super::plan_data::all()
                 .iter()
                 .filter(|(k, _)| {
-                    super::plan_data::plan_on(
-                        k,
-                        (hand_config(k).is_some() || crate::impls::t6_plans::has_hand(k))
-                            && !super::HAND_OFF_PLANS.contains(k), // --- phase4-hand-off: AI_HAND decides
-                    )
+                    super::plan_data::plan_on(k, hand_config(k).is_some() || crate::impls::t6_plans::has_hand(k))
                 })
                 .map(|(k, l)| {
                     let mut c = l.cfg;
