@@ -32,7 +32,6 @@ pub mod topdeck;
 pub mod ismcts; // --- phase4-search
 pub mod learned; // --- phase4-eval
 pub mod values; // --- phase4-values
-pub mod veyran;
 
 use crate::engine::repl;
 use crate::engine::values::epow;
@@ -849,9 +848,14 @@ pub fn note_bomb(g: &mut Game, p: PlayerId, c: CardId, was_removed: bool) {
     }
 }
 
-/// ais.engine_payoff (Veyran's engine is online)
+/// ais.engine_payoff: Veyran's engine is online (the 'engine online' milestone): a payoff that turns the spell loop
+/// into a win (ais.payoff: a pinger, Aetherflux, Dragoncaller) or anything else that gets value from each spell
 pub fn engine_payoff(g: &Game, p: PlayerId) -> bool {
-    veyran::engine_payoff(g, p)
+    use crate::engine::values::has;
+    use crate::tag::Tag;
+    [Tag::Ping, Tag::Aether, Tag::Dragoncaller, Tag::Mystic, Tag::Spelltok, Tag::Spelldraw, Tag::Kiln]
+        .iter()
+        .any(|&t| has(g, p, t))
 }
 
 /// the ability language's search choice (dsl.py's search): for any card, ais.tutor_pick; for a card type, your
@@ -862,14 +866,7 @@ pub fn dsl_search_pick(g: &Game, p: PlayerId, f: &crate::dsl::model::Filter, can
         return Some(c);
     }
     let ty = f.kind.as_deref();
-    if ty == Some("land") && let Some(c) = crate::impls::karn::search_pick(g, p, cands) {
-        return Some(c); // the karn deck: the Tron piece it lacks
-    }
     if ty.is_none() || ty == Some("any") {
-        if hand_key(g, p) == "kefka" && decks::deck_has_storm(g, p) {
-            let wish = decks::kefka_wish(g, p);
-            return wish.iter().find_map(|n| g.db.id(n).filter(|c| cands.contains(c))); // Grim Servant: the wish list within its devotion limit
-        }
         let nm = decks::tutor_pick(g, p, "any")?;
         return cands.iter().copied().find(|&c| c == nm);
     }

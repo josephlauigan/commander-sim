@@ -2,8 +2,7 @@
 //! targets, Disruptor Flute's name, the wipe evaluation and mode choice, and the answers to removal and wipes.
 
 use crate::ai::hand_key; // --- phase4-hand-off
-use super::brain::{Situation, removal_risk};
-use super::{is_main, plans, pool};
+use super::{is_main, pool};
 use crate::cards::Types;
 use crate::engine::cast::on_cast;
 use crate::engine::combat::blocked;
@@ -11,8 +10,8 @@ use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::legal_targets;
 use crate::engine::stack::{counter_window, equip_to};
 use crate::engine::tutors::card_worth;
-use crate::engine::values::{army_of, epow, equipped, etgh, find, has, pval, silenced, stopped, threat};
-use crate::engine::zones::{discard_cards, draw, max_by, searchable};
+use crate::engine::values::{army_of, epow, equipped, etgh, find, has, pval, silenced, threat};
+use crate::engine::zones::{max_by, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt};
 use crate::ids::{CardId, PermId, PlayerId};
@@ -26,12 +25,6 @@ fn in_hand_tag(g: &Game, p: PlayerId, t: Tag) -> bool {
     g.player(p).hand.iter().any(|&c| g.db.get(c).tag(t))
 }
 
-/// an Equipment not attached to one of p's creatures on the battlefield (Python: `e.attached is None or
-/// e.attached not in p.perms`)
-pub fn loose(g: &Game, e: PermId, p: PlayerId) -> bool {
-    g.perm(e).attached.is_none_or(|a| !g.perm(a).on_bf || g.perm(a).owner != p)
-}
-
 /// ais.bomb_on_bf
 pub fn bomb_on_bf(g: &Game, p: PlayerId) -> bool {
     g.player(p).perms.iter().any(|&m| {
@@ -40,26 +33,14 @@ pub fn bomb_on_bf(g: &Game, p: PlayerId) -> bool {
     })
 }
 
-/// a compiled ability: a static of this kind
-fn has_static(g: &Game, c: CardId, kind: &str) -> bool {
-    g.db.get(c).abilities.iter().any(|a| a.static_kind() == Some(kind))
-}
-
 // ------------------------------------------------------------------ cast priorities
 /// ais.deck_prio: the deck's cast priority for a card (0-90)
 pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let v = match hand_key(g, p) {
-        "sauron" => sauron_prio(g, p, c),
-        "veyran" => super::veyran::veyran_prio(g, p, c),
         "yshtola" => crate::impls::yshtola::yshtola_prio(g, p, c) as i32,
-        "galadriel" => crate::impls::galadriel::galadriel_prio(g, p, c),
-        "alela" => crate::impls::alela::alela_prio(g, p, c),
-        "kefka" => crate::impls::kefka::kefka_prio(g, p, c),
         "omnath" => crate::impls::titania::titania_prio(g, p, c),
         "sheoldred" => crate::impls::sheoldred::sheoldred_prio(g, p, c),
         "cloud" => crate::impls::cloud::cloud_prio(g, p, c),
-        "karn" => crate::impls::karn::karn_prio(g, p, c),
-        "thrasios" => crate::impls::tymna_partners::thrasios_prio(g, p, c),
         "kraum" => crate::impls::tymna_partners::kraum_prio(g, p, c),
         "garland" => crate::impls::garland::garland_prio(g, p, c),
         "sephfs" => crate::impls::sephfs::sephfs_prio(g, p, c),
@@ -84,186 +65,6 @@ pub fn deck_prio_f(g: &Game, p: PlayerId, c: CardId) -> f64 {
         "yshtola" => crate::impls::yshtola::yshtola_prio(g, p, c),
         _ => deck_prio(g, p, c) as f64,
     }
-}
-
-/// ais.sauron_prio
-pub fn sauron_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let pl = g.player(p);
-    let d = g.db.get(c);
-    let t = &d.tags;
-    if c == pl.cmd {
-        return 85;
-    }
-    if t.has(Tag::Storm) || t.has(Tag::Led) {
-        return 0; // Brain Freeze, Grapeshot, Lion's Eye Diamond: held for the Breach line
-    }
-    if t.has(Tag::Rock) {
-        return if pl.turns <= 5 { 80 } else { 40 };
-    }
-    if let Some(v) = crate::impls::threats::sauron_extra_prio(g, p, c) {
-        return v; // the speed and backup-win cards (amass creatures, Dreadhorde Invasion, Grishnákh, Dualcaster Mage)
-    }
-    if t.has(Tag::Rhystic) {
-        return plans::rhystic_prio(g, p, c);
-    }
-    if t.has(Tag::Remora) {
-        return if pl.turns <= 4 { 66 } else { 0 }; // only early, while upkeep is cheap
-    }
-    if t.has(Tag::Mauhur) {
-        return 63;
-    }
-    if t.has(Tag::Bowmasters) {
-        return 62;
-    }
-    if t.has(Tag::Sword) {
-        return 60;
-    }
-    match &*d.name {
-        "Andúril, Flame of the West" => return 57, // another Sword-like piece for the Army
-        "Palantír of Orthanc" => return if pl.turns <= 8 { 54 } else { 40 }, // card or damage every end step
-        "Lord of the Nazgûl" => {
-            // a Wraith per instant or sorcery still to come
-            let n = pl.hand.iter().filter(|&&x| g.db.get(x).instant || g.db.get(x).sorcery).count();
-            return if n >= 2 { 58 } else { 50 };
-        }
-        _ => {}
-    }
-    if compiled_sword(g, c) {
-        return 57; // compiled Swords (Fire and Ice, Hearth and Home)
-    }
-    if t.has(Tag::Assault) {
-        let evasion = has(g, p, Tag::Sword) || in_hand_tag(g, p, Tag::Sword) || has(g, p, Tag::Cloak);
-        return if evasion { 58 } else { 30 }; // the extra combats need an Army that connects (Cloak is the Sword of this list)
-    }
-    if t.has(Tag::Cloak) {
-        return 57;
-    }
-    if t.has(Tag::Prolif) {
-        return 55;
-    }
-    if t.has(Tag::Skate) {
-        return if army_of(g, p).is_some_and(|a| g.perm(a).plus >= 6) { 56 } else { 0 };
-    }
-    for (k, v) in [(Tag::Kaervek, 54), (Tag::Witchking, 52), (Tag::SheoA, 60), (Tag::Kefka, 55), (Tag::Eng, 50)] {
-        if t.has(k) {
-            return v;
-        }
-    }
-    if t.has(Tag::Archivist) {
-        return if has(g, p, Tag::Bowmasters) || has(g, p, Tag::SheoA) { 50 } else { 20 };
-    }
-    for (k, v) in [(Tag::Callring, 55), (Tag::Kindred, 50)] {
-        if t.has(k) {
-            return v;
-        }
-    }
-    if t.has(Tag::Recon) {
-        return 46;
-    }
-    if t.has(Tag::Vraska) {
-        return 52;
-    }
-    if t.has(Tag::Ralzarek) {
-        return 42;
-    }
-    if t.has(Tag::Helm) {
-        return if army_of(g, p).is_some() { 44 } else { 20 };
-    }
-    if t.has(Tag::Warmachine) {
-        return 45;
-    }
-    if t.str(Tag::Prot) == Some("boots") {
-        // Lightning Greaves: for Sauron himself (never the Army)
-        return if has(g, p, Tag::Sauron) || pl.cmd_in_zone && total_mana(g, p, false) >= 7 { 50 } else { 25 };
-    }
-    if t.has(Tag::Tut) {
-        return 60;
-    }
-    if &*d.name == "Gamble" {
-        return gamble_prio(g, p, c); // hand-written tutor: by the chance of keeping its card
-    }
-    if matches!(&*d.name, "Wheel of Fortune" | "Windfall" | "Reforge the Soul") {
-        // hand-written wheels: their own timing (hand nearly empty)
-        return g.registry.get(c).and_then(|i| i.prio).map_or(0, |f| f(g, p, c));
-    }
-    if &*d.name == "The One Ring" {
-        return plans::one_ring_prio(g, p, c);
-    }
-    if let Some(v) = gc_prio_sauron(g, p, c) {
-        return v;
-    }
-    if t.has(Tag::Draw) && (d.instant || d.sorcery) {
-        return 40;
-    }
-    for (k, v) in [(Tag::Flail, 56), (Tag::Erebos, 48), (Tag::Ozolith, 45), (Tag::Animist, 44)] {
-        if t.has(k) {
-            return v;
-        }
-    }
-    if t.has(Tag::Unearth) {
-        return if pl.gy.iter().any(|&x| g.db.get(x).creature && g.db.get(x).cmc <= 3) { 35 } else { 0 };
-    }
-    if t.has(Tag::Pwdiscard) {
-        return 38;
-    }
-    if d.creature {
-        return 42;
-    }
-    if d.perm && !t.has(Tag::Prot) {
-        return 10;
-    }
-    0
-}
-
-/// a compiled Sword: an equip cost, and a trigger when the equipped creature deals combat damage
-fn compiled_sword(g: &Game, c: CardId) -> bool {
-    use crate::dsl::model::Ability;
-    let d = g.db.get(c);
-    has_static(g, c, "equip_cost")
-        && d.abilities.iter().any(|a| {
-            matches!(a, Ability::Triggered { source, event, .. }
-                if source.as_deref() == Some("equipped") && event == "combat_damage")
-        })
-}
-
-/// ais.gc_prio_sauron: Sauron's priorities for Game Changer candidates (None: not one of them)
-fn gc_prio_sauron(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
-    let t = &g.db.get(c).tags;
-    Some(if t.has(Tag::Sphinx) {
-        sphinx_prio(g, p, c)
-    } else if t.has(Tag::Necro) {
-        necro_prio(g, p, c)
-    } else if t.has(Tag::Citadel) {
-        plans::citadel_prio(g, p, c)
-    } else if t.has(Tag::Tergrid) {
-        55
-    } else if t.has(Tag::Agent) {
-        plans::agent_prio(g, p, c)
-    } else if t.has(Tag::Braids) {
-        plans::braids_prio(g, p, c)
-    } else if t.has(Tag::Seal) {
-        58
-    } else if t.has(Tag::Adnaus) {
-        plans::adnaus_prio(g, p, c)
-    } else if t.has(Tag::Narset) {
-        50
-    } else if t.has(Tag::Breach) {
-        let pl = g.player(p);
-        if pl.hand.iter().chain(pl.gy.iter()).any(|&x| g.db.get(x).tag(Tag::Storm)) {
-            0 // held for the Breach line (breach_options)
-        } else {
-            let k = breach_candidates(g, p, false).len();
-            if k >= 2 && total_mana(g, p, false) >= 5 { 56 } else { 0 }
-        }
-    } else if t.has(Tag::Gifts) {
-        50
-    } else if t.has(Tag::Intuition) {
-        48
-    } else if t.has(Tag::Jeska) {
-        plans::jeska_prio(g, p, c)
-    } else {
-        return None;
-    })
 }
 
 /// t4.sphinx_prio: Consecrated Sphinx by the cards it will draw over the next three rounds, discounted with a hand
@@ -385,91 +186,6 @@ pub fn breach_candidates(g: &Game, p: PlayerId, need_mana: bool) -> Vec<(f64, Ca
 }
 
 // ------------------------------------------------------------------ Sauron's plays
-/// brain.special_options for Sauron: the Breach line, equipping the Army, Champion's Helm, Jace's Archivist
-pub fn sauron_options(g: &mut Game, p: PlayerId, _s: &Situation, post: bool) -> Res<Vec<Opt>> {
-    let mut o = crate::cardcode::breach_options(g, p, post)?;
-    if let Some(a) = army_of(g, p)
-        && !equipped(g, a, Tag::Cloak)
-        && can_pay(g, p, 2, "", false)
-    {
-        for tag in [Tag::Sword, Tag::Cloak] {
-            if !equipped(g, a, tag) && find(g, p, tag).iter().any(|&e| loose(g, e, p)) {
-                o.push(Opt {
-                    utility: 6.5,
-                    label: "equip the Army".into(),
-                    act: Some(Action::Plan { f: sauron_equip, arg: 0 }),
-                });
-                break;
-            }
-        }
-    }
-    let ht = if !find(g, p, Tag::Helm).is_empty() && can_pay(g, p, 1, "", false) { helm_target(g, p) } else { None };
-    if let Some(ht) = ht {
-        let leg = crate::cardcode::is_legendary(g, ht);
-        let u = 3.0 + if leg { 4.0 * removal_risk(g, p) + 0.2 * pval(g, ht) } else { 0.0 };
-        o.push(Opt {
-            utility: u,
-            label: format!("equip Champion's Helm to {}", g.perm(ht).name),
-            act: Some(Action::Plan { f: helm_equip, arg: ht.0 as i64 }),
-        });
-    }
-    if find(g, p, Tag::Archivist).iter().any(|&m| !g.perm(m).tapped && !g.perm(m).sick)
-        && archivist_worth(g, p)
-        && can_pay(g, p, 0, "U", false)
-    {
-        o.push(Opt {
-            utility: 5.0,
-            label: "Jace's Archivist wheel".into(),
-            act: Some(Action::Plan { f: sauron_archivist, arg: 0 }),
-        });
-    }
-    Ok(o)
-}
-
-/// ais.sauron_equip: the Army's Equipment in order: a Sword, Conqueror's Flail, Animist, then Whispersilk Cloak last
-pub fn sauron_equip(g: &mut Game, p: PlayerId, _arg: i64) -> Res<bool> {
-    let Some(a) = army_of(g, p) else { return Ok(false) };
-    if g.perm(a).phased {
-        return Ok(false);
-    }
-    for tag in [Tag::Sword, Tag::Flail, Tag::Animist, Tag::Cloak] {
-        if equipped(g, a, tag) {
-            continue;
-        }
-        let mut eq = vec![];
-        for e in find(g, p, tag) {
-            if g.perm(e).attached != Some(a) {
-                let n = g.perm(e).name;
-                if !blocked(g, p, n) {
-                    eq.push(e);
-                }
-            }
-        }
-        if eq.is_empty() {
-            continue;
-        }
-        if tag == Tag::Cloak {
-            if [Tag::Sword, Tag::Flail, Tag::Animist].iter().any(|&x| !find(g, p, x).is_empty() && !equipped(g, a, x)) {
-                continue;
-            }
-            let other = g.player(p).perms.iter().any(|&e| {
-                let x = g.perm(e);
-                x.cd.is_some_and(|c| has_static(g, c, "equip_cost")) && loose(g, e, p) && !stopped(g, x.name)
-            });
-            if other {
-                continue; // e.g. Sword of Hearth and Home goes on first
-            }
-        }
-        if equipped(g, a, Tag::Cloak) {
-            return Ok(false);
-        }
-        if can_pay(g, p, 2, "", false) {
-            return equip_to(g, p, eq[0], a, 2);
-        }
-    }
-    Ok(false)
-}
-
 /// ais.helm_target: where Champion's Helm should go: the most valuable legendary creature (the Army once it is the
 /// Ring-bearer), else the Army; None if it is already there
 pub fn helm_target(g: &Game, p: PlayerId) -> Option<PermId> {
@@ -501,54 +217,6 @@ pub fn helm_equip(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     crate::glog!(g, "  {} equips Champion's Helm to {}", g.player(p).name, g.perm(m).name);
     equip_to(g, p, h, m, 1)?;
-    Ok(true)
-}
-
-/// mine.archivist_worth: the wheel: with Orcish Bowmasters out (every opponent draw pings), or when your hand is
-/// much smaller
-pub fn archivist_worth(g: &Game, p: PlayerId) -> bool {
-    let most = g.players.iter().filter(|q| q.alive).map(|q| q.hand.len()).max().unwrap_or(0);
-    let sauron_payoff = hand_key(g, p) == "sauron"
-        && (has(g, p, Tag::Kaervek) || (has(g, p, Tag::Sauron) && g.player(p).hand.len() <= 2 && most >= 4)); // refilled opponents cast into Kaervek and Sauron
-    sauron_payoff || has(g, p, Tag::Bowmasters) || has(g, p, Tag::SheoA) || (g.player(p).hand.len() <= 1 && most >= 4) // Sheoldred: every opponent draw costs 2 life
-}
-
-/// ais.sauron_archivist: Jace's Archivist: everyone discards their hand and draws the largest hand size
-pub fn sauron_archivist(g: &mut Game, p: PlayerId, _arg: i64) -> Res<bool> {
-    if g.player(p).arch_t == Some(g.player(p).turns) {
-        return Ok(false);
-    }
-    let mut ar = None;
-    for m in find(g, p, Tag::Archivist) {
-        let x = g.perm(m);
-        if !x.sick && !x.tapped {
-            let n = x.name;
-            if !blocked(g, p, n) {
-                ar = Some(m);
-                break;
-            }
-        }
-    }
-    let Some(a) = ar else { return Ok(false) };
-    if !archivist_worth(g, p) || !can_pay(g, p, 0, "U", false) {
-        return Ok(false);
-    }
-    pay(g, p, 0, "U", false)?;
-    g.perm_mut(a).tapped = true;
-    let t = g.player(p).turns;
-    g.player_mut(p).arch_t = Some(t);
-    let n = g.players.iter().filter(|q| q.alive).map(|q| q.hand.len()).max().unwrap_or(0) as u32;
-    let alive: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
-    for &q in &alive {
-        let hand = g.player(q).hand.clone();
-        discard_cards(g, q, &hand)?;
-    }
-    for &q in &alive {
-        if g.player(q).alive {
-            draw(g, q, n, false)?;
-        }
-    }
-    crate::engine::life::check_state(g)?;
     Ok(true)
 }
 
@@ -717,42 +385,12 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
         k => tutor_ok(g, k, c),
     };
     let okn: Vec<CardId> = searchable(g, p).into_iter().filter(|&c| ok(c)).collect();
-    let first = |ns: &[&str]| -> Option<CardId> { ns.iter().filter_map(|n| g.db.id(n)).find(|c| okn.contains(c)) };
-    let pl = g.player(p);
     match hand_key(g, p) {
         "yshtola" => crate::impls::yshtola::tutor_pick(g, p, kind, &okn),
         "cloud" if matches!(kind, "ae" | "art") => crate::impls::cloud::tutor_pick(g, p, &okn),
-        "kraum" | "thrasios" => crate::impls::tymna_cards::tutor_pick(g, p, kind, &okn),
+        "kraum" => crate::impls::tymna_cards::tutor_pick(g, p, kind, &okn),
         "sephfs" => crate::impls::sephfs::tutor_pick(g, p, kind, &okn),
-        "veyran" => {
-            if kind == "art" {
-                // Lightning Greaves first (the engine is removed 1.8 times a game), then the rest
-                let greaves = ["Lightning Greaves", "Swiftfoot Boots"].iter().any(|n| {
-                    pl.hand.iter().any(|&x| &*g.db.get(x).name == *n)
-                        || pl.perms.iter().any(|&m| g.perm(m).on_bf && &*g.perm(m).name == *n)
-                });
-                let mut order = vec![];
-                if !greaves {
-                    order.push("Lightning Greaves");
-                }
-                order.extend(["Aetherflux Reservoir", "Sol Ring", "Fellwar Stone"]);
-                return first(&order);
-            }
-            if kind == "cre2" {
-                return first(&super::veyran::recruit_wish(g, p));
-            }
-            first(&super::veyran::is_wish(g, p))
-        }
-        "kefka" if kind == "any" && super::decks::deck_has_storm(g, p) => first(&kefka_wish(g, p)),
-        "kefka" if kind == "is" && super::decks::deck_has_storm(g, p) => {
-            // Mystical Tutor: the storm card for a Breach that waits for one (Breach itself is no instant or sorcery)
-            if breach_out(g, p) && !storm_held(g, p) {
-                return first(&["Brain Freeze", "Grapeshot"]);
-            }
-            None
-        }
         "omnath" if kind == "cre" => crate::impls::titania::worldly_pick(g, p, &okn),
-        "sauron" => sauron_tutor(g, p, &first),
         _ => None,
     }
 }
@@ -1106,9 +744,6 @@ pub fn wipe_eval(g: &Game, p: PlayerId, kind: &str) -> (f64, f64, Option<PlayerI
                 v *= 0.5; // bounced cards can be recast
             }
             if q == p {
-                if pm.army && hand_key(g, p) == "sauron" && !has(g, p, Tag::Ozolith) {
-                    v *= 3.0; // the deck is one big Army: a sweep that kills it (Nibelheim Aflame) costs the plan, not a body
-                }
                 ml += v;
             } else {
                 ol += v;
@@ -1246,7 +881,7 @@ fn protect_main(
         if crate::impls::t45_chulane_kinnan::protect(g, owner, m, kind, actor, spell)? {
             return Ok(true); // --- Tiers 4/5 (chulane-kinnan): Spellskite redirects, Nezahal exiles itself
         }
-        if matches!(key, "thrasios" | "kraum")
+        if key == "kraum"
             && crate::impls::bulk_white::white_protect(g, owner, m, kind, actor, spell)?
         {
             return Ok(true); // Shardmage's Rescue, Ultimate Magic: Holy for Tymna and the partners
@@ -1256,7 +891,6 @@ fn protect_main(
         }
         return pool::protect(g, owner, m, kind, actor, spell);
     }
-    let v = pval(g, m);
     if silenced(g, owner) {
         return Ok(false);
     }
@@ -1264,51 +898,10 @@ fn protect_main(
         return Ok(true); // Patriot, Shardmage's Rescue, Cho-Manno's Blessing, Ultimate Magic: Holy
     }
     match key {
-        "veyran" => super::veyran::protect(g, owner, m, kind, actor, spell),
-        "sauron" => {
-            if g.perm(m).army || v >= 5.0 {
-                let sl =
-                    g.player(owner).hand.iter().copied().find(|&c| g.db.get(c).tags.str(Tag::Prot) == Some("phase"));
-                if let Some(c) = sl
-                    && can_pay(g, owner, 0, "U", false)
-                {
-                    if pay_card(g, owner, c, 0)? {
-                        g.perm_mut(m).phased = true;
-                        return Ok(true);
-                    }
-                    return Ok(false);
-                }
-                let nw =
-                    g.player(owner).hand.iter().copied().find(|&c| g.db.get(c).tags.str(Tag::Prot) == Some("notw"));
-                if let Some(c) = nw {
-                    // Not of This World: free with a 7-power creature (the Army or Sauron)
-                    let free =
-                        g.player(owner).perms.iter().any(|&x| g.is_creature(x) && !g.perm(x).phased && epow(g, x) >= 7);
-                    if free || can_pay(g, owner, 7, "", false) {
-                        if !free {
-                            pay(g, owner, 7, "", false)?;
-                        }
-                        remove_from_hand(g, owner, c);
-                        let pl = g.player_mut(owner);
-                        pl.gy.push(c);
-                        pl.spells_this_turn += 1;
-                        pl.cast_names.insert(c);
-                        crate::glog!(g, "  {} casts {}", g.player(owner).name, g.db.get(c).name);
-                        on_cast(g, owner, c)?;
-                        return counter_window(g, owner, c, 6.0, vec![]);
-                    }
-                }
-            }
-            Ok(false)
-        }
         "yshtola" => crate::impls::yshtola::yshtola_protect(g, owner, m, kind, actor, spell),
-        "galadriel" => crate::impls::galadriel::galadriel_protect(g, owner, m, kind, actor, spell),
-        "alela" => crate::impls::alela::alela_protect(g, owner, m, kind, actor, spell),
         "omnath" => crate::impls::titania::titania_protect(g, owner, m, kind, actor, spell),
         "sheoldred" => crate::impls::sheoldred::sheoldred_protect(g, owner, m, kind, actor, spell),
         "cloud" => crate::impls::cloud::cloud_protect(g, owner, m, kind, actor, spell),
-        // Deflecting Swat and Slip Out the Back for Kefka, the same responses as Veyran's (a no-op without them)
-        "kefka" => crate::impls::mine::veyran_protect(g, owner, m, kind, actor, spell),
         _ => Ok(false),
     }
 }
@@ -1340,7 +933,7 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     }
     let key = hand_key(g, q);
     if !is_main(key) {
-        if matches!(key, "thrasios" | "kraum")
+        if key == "kraum"
             && let Some(r) = crate::impls::bulk_white::white_wipe_response(g, q, kind, caster)?
         {
             return Ok(Some(r)); // Ultimate Magic: Holy
@@ -1355,9 +948,6 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     if key == "yshtola" {
         return crate::impls::yshtola::yshtola_wipe_response(g, q, kind, caster);
     }
-    if key == "galadriel" {
-        return crate::impls::galadriel::galadriel_wipe_response(g, q, kind);
-    }
     if key == "cloud"
         && let Some(r) = crate::impls::bulk_white::white_wipe_response(g, q, kind, caster)?
     {
@@ -1368,9 +958,6 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     {
         return Ok(Some(r)); // Unbreakable Formation, Rootborn Defenses
     }
-    if matches!(key, "galadriel" | "yshtola") {
-        return Ok(None);
-    }
     if !g.marchesa_on // (her return counts the creatures that die together)
         && !crate::cardcode::outlets_of(g, q).is_empty()
     {
@@ -1380,53 +967,7 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
     if loss < 6.0 {
         return Ok(None);
     }
-    if key == "sauron"
-        && let Some(a) = army_of(g, q)
-    {
-        let sl = g.player(q).hand.iter().copied().find(|&c| g.db.get(c).tags.str(Tag::Prot) == Some("phase"));
-        if let Some(c) = sl
-            && can_pay(g, q, 0, "U", false)
-            && pay_card(g, q, c, 0)?
-        {
-            g.perm_mut(a).phased = true;
-        }
-    }
     Ok(None)
-}
-
-/// ais.sauron_grounds_response: Sauron exiles all graveyards (Scavenger Grounds) in response to seph's reanimation
-/// spell worth `value`. True if it did.
-pub fn sauron_grounds_response(g: &mut Game, seph: PlayerId, value: f64) -> Res<bool> {
-    for q in g.opps(seph).collect::<Vec<_>>() {
-        if hand_key(g, q) != "sauron" || value < 6.0 || g.humans.get(q).is_some() {
-            continue;
-        }
-        let gl = g.player(q).lands.iter().copied().find(|&l| {
-            let d = g.db.get(g.perm(l).card());
-            d.tag(Tag::Desert) && !g.perm(l).tapped && !stopped(g, &d.name)
-        });
-        let Some(l) = gl else { continue };
-        g.perm_mut(l).tapped = true;
-        if !can_pay(g, q, 2, "", false) || g.rng.random() > 0.9 {
-            g.perm_mut(l).tapped = false;
-            continue;
-        }
-        pay(g, q, 2, "", false)?;
-        let cd = g.perm(l).card();
-        crate::engine::turn::remove_land(g, q, l);
-        g.player_mut(q).gy.push(cd);
-        g.player_mut(q).stat("grounds_used", 1);
-        if !crate::engine::stack::ability_window(g, q, None, "exile all graveyards", Some(9.0), None)? {
-            return Ok(false);
-        }
-        for pl in g.players.iter_mut().filter(|x| x.alive) {
-            let gy = std::mem::take(&mut pl.gy);
-            pl.exile.extend(gy);
-        }
-        g.player_mut(seph).stat("grounds_hit", 1);
-        return Ok(true);
-    }
-    Ok(false)
 }
 
 /// ais.necro_pay: Necropotence, pay 1 life per card (exiled face down, to hand at this end step); keep life at the
@@ -1531,7 +1072,7 @@ pub fn braids_sacrifice(g: &mut Game, p: PlayerId) -> Res {
     Ok(())
 }
 
-// ------------------------------------------------------------------ the Breach line outside Sauron
+// ------------------------------------------------------------------ the Underworld Breach line's pieces
 /// a card of the Underworld Breach line other than Breach itself: a storm card (Brain Freeze, Grapeshot) or a ritual
 fn is_storm_card(g: &Game, c: CardId) -> bool {
     matches!(&*g.db.get(c).name, "Brain Freeze" | "Grapeshot")
@@ -1555,52 +1096,6 @@ pub fn storm_held(g: &Game, p: PlayerId) -> bool {
 /// the cheap test for the line: Breach out and a storm card in hand or graveyard
 pub fn breach_pieces(g: &Game, p: PlayerId) -> bool {
     breach_out(g, p) && storm_held(g, p)
-}
-
-/// a deck that carries the line's storm card (so its tutors and Breach plan for it)
-pub fn deck_has_storm(g: &Game, p: PlayerId) -> bool {
-    ["Brain Freeze", "Grapeshot"].iter().any(|n| g.db.id(n).is_some_and(|c| g.player(p).deck_names.contains(&c)))
-}
-
-/// Underworld Breach out, or still in the library
-pub fn breach_reachable(g: &Game, p: PlayerId) -> bool {
-    breach_out(g, p) || g.player(p).library.iter().any(|&c| g.db.get(c).tag(Tag::Breach))
-}
-
-/// casting this storm card now (Brain Freeze: three cards milled per copy; Grapeshot: a damage per copy) finishes an
-/// opponent
-fn storm_kills(g: &Game, p: PlayerId, c: CardId) -> bool {
-    let copies = g.players.iter().map(|q| crate::engine::cast::casts_this_turn(g, q.id)).sum::<i32>() + 1;
-    let freeze = &*g.db.get(c).name == "Brain Freeze";
-    g.opps(p).any(|q| {
-        let q = g.player(q);
-        q.alive && if freeze { q.library.len() as i64 <= 3 * copies as i64 } else { q.life <= copies }
-    })
-}
-
-/// the cast priority of a line card for a deck that isn't built around the line (Kefka): the storm cards wait for
-/// Breach, the rituals for Breach and a storm card, and Breach itself for a storm card; None when the line has no
-/// claim on the card (it keeps its usual priority, so a deck without the storm card plays Breach as before)
-pub fn breach_hold_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
-    if g.player(p).yawg {
-        return None; // Yawgmoth's Will is the storm turn: the line cards replayed from the graveyard are cast on their usual priority
-    }
-    let t = &g.db.get(c).tags;
-    if t.has(Tag::Breach) {
-        return storm_held(g, p).then_some(0);
-    }
-    if is_storm_card(g, c) {
-        // held while Breach is out or still reachable (in the library; a tutor in hand finds it there), unless casting
-        // it now kills an opponent
-        return (breach_reachable(g, p) && !storm_kills(g, p, c)).then_some(0);
-    }
-    if t.has(Tag::Led) {
-        return breach_out(g, p).then_some(0);
-    }
-    if is_ritual_card(g, c) {
-        return breach_pieces(g, p).then_some(0);
-    }
-    None
 }
 
 /// worth added to a line card's discard score: Breach, a storm card or a ritual that the other half of the line is
@@ -1662,89 +1157,3 @@ fn behind_on_board(g: &Game, p: PlayerId) -> bool {
     theirs >= pow(p) + 6
 }
 
-/// Sauron's tutors (Diabolic Tutor, Diabolic Intent: any card; Ringsight: any blue, black or red card), by what the
-/// board needs, in the order of the deck doc's "Tutor targets by board state". A candidate that the tutor cannot reach
-/// (a colourless card for Ringsight) is skipped by `first`, so the next need is served.
-fn sauron_tutor(g: &Game, p: PlayerId, first: &dyn Fn(&[&str]) -> Option<CardId>) -> Option<CardId> {
-    let pl = g.player(p);
-    let named = |c: CardId, n: &str| &*g.db.get(c).name == n;
-    // a card of this name in hand or on the battlefield
-    let have = |n: &str| {
-        pl.hand.iter().any(|&c| named(c, n))
-            || pl.perms.iter().any(|&m| g.perm(m).on_bf && g.perm(m).cd.is_some_and(|c| named(c, n)))
-    };
-    let army = army_of(g, p);
-    let apow = army.map_or(0, |a| epow(g, a));
-    let lands = pl.lands.len();
-    let rocks = pl.perms.iter().filter(|&&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Rock))).count();
-    let sources = lands + rocks;
-    let sauron_out = has(g, p, Tag::Sauron);
-    let evasion = have("Whispersilk Cloak") || have("Rogue's Passage");
-    let connecting = pl.milestone.contains_key("army_hit");
-    let mut line: Vec<&str> = vec![];
-    if sources <= 4 && pl.turns <= 6 && !have("Sol Ring") {
-        line.push("Sol Ring"); // slow start, no mana
-    }
-    if army.is_none() && !sauron_out && pl.turns <= 5 {
-        line.extend(["Dreadhorde Invasion", "Lazotep Reaver"]); // start the Army before Sauron lands
-    }
-    if !have("The Ozolith") && (apow >= 3 || sauron_out) {
-        line.push("The Ozolith"); // insurance before the Army is committed to
-    }
-    if has(g, p, Tag::Bowmasters) && !have("Jace's Archivist") {
-        line.push("Jace's Archivist"); // the wheel is the payoff
-    }
-    if connecting && sources >= 7 {
-        line.extend(["Exsanguinate", "Comet Storm", "Torment of Hailfire"]); // close the game
-    }
-    if apow >= 7 && !evasion {
-        line.extend(["Whispersilk Cloak", "Rogue's Passage"]); // a huge Army that cannot get through
-    }
-    if sources >= 8 {
-        line.push("Torment of Hailfire"); // no combat needed: a big X closes a table the Army can't reach
-    }
-    if (apow >= 7 || sauron_out) && !have("Not of This World") {
-        line.push("Not of This World"); // protection for the swing (free with a 7-power creature)
-    }
-    if pl.hand.len() <= 1 && lands >= 7 {
-        line.push("Barad-dûr"); // flooded and grinding
-    }
-    line.extend(["The Ozolith", "Inexorable Tide", "Whispersilk Cloak", "Exsanguinate", "Not of This World"]);
-    first(&line)
-}
-
-/// Force of Will pitches the blue card Sauron needs least: the engines and the Army's helpers stay (a creature that
-/// grows or protects the Army, the wheel), then the other counters; draw spells and the like go first.
-pub fn sauron_pitch_keep(g: &Game, p: PlayerId, c: CardId) -> f64 {
-    let d = g.db.get(c);
-    let t = &d.tags;
-    if t.has(Tag::Archivist) {
-        return if has(g, p, Tag::Bowmasters) { 120.0 } else { 80.0 };
-    }
-    if d.creature {
-        return 100.0; // Talrand, Iron Man, Sheoldred, Sephiroth, Vision: bodies the Army deck cannot spare
-    }
-    if t.has(Tag::Ctr) {
-        return 40.0;
-    }
-    0.0
-}
-
-/// Kefka's tutor wish list, in order: the two-card win when Kefka is ready for it and has neither piece (Crawler,
-/// Niv-Mizzet), then the Breach line's missing half (Breach, a storm card, a ritual / Will). Grim Servant reads the
-/// same list among the cards its devotion limit allows.
-pub fn kefka_wish(g: &Game, p: PlayerId) -> Vec<&'static str> {
-    let mut w: Vec<&'static str> = vec![];
-    if let Some(win) = crate::impls::kefka::tutor_win_piece(g, p) {
-        w.extend(win);
-    }
-    let st = storm_held(g, p);
-    if !breach_out(g, p) {
-        w.push("Underworld Breach");
-    }
-    if !st {
-        w.extend(["Brain Freeze", "Grapeshot"]);
-    }
-    w.extend(["Dark Ritual", "Lotus Petal", "Cabal Ritual", "Yawgmoth's Will"]);
-    w
-}

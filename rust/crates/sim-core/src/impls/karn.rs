@@ -1,5 +1,5 @@
 //! The karn deck (key `karn`, JD's colourless Urza and Mishra artifacts deck; decklists/JD/karn-colorless-artifacts.md):
-//! the commander, the restricted-mana lands, the Tron lands, the creature lands and the AI plan.
+//! the commander, the restricted-mana lands, the Tron lands, the creature lands and the look-ahead bonus.
 //!
 //! - **Karn, Legacy Reforged** (Full): power and toughness each equal the greatest mana value among the artifacts you
 //!   control (`karn_pt`, a bonus on top of the printed 1/1); at the beginning of your upkeep, {C} for each artifact you
@@ -13,18 +13,16 @@
 //! - **Tron** (Urza's Mine / Power-Plant / Tower: 2 / 2 / 3 with all three, else 1) and Urza's Workshop (metalcraft:
 //!   {C} for each Urza's land with three artifacts, else {C}): `dyn_mana_land` slots.
 //! - **Mishra's Factory / Foundry** are creature lands (`lands::animate`, a token standing in for the land) that are
-//!   also artifacts while animated; the AI animates one to attack when the way is open and to block a dangerous attack.
-//! - **The plan**: `karn_prio` (Karn first, cheap artifacts early, Greaves/Boots once Karn is out, the sweepers only when
-//!   behind or when the opponents' board is coloured), `hold_ability` (Baubles stay on the battlefield: each one is
-//!   an artifact, so one more {C} a turn), `land_adjust` (the missing Tron piece), `search_pick` (the land that
-//!   Expedition Map and Urza's Cave fetch).
+//!   also artifacts while animated; the AI animates one to attack when the way is open.
+//! - **The plan** (`karn_prio`, the Bauble hold, the Tron land choice, the land searches, the Factory blocks) was the
+//!   deck's hand AI, deleted on 2026-11-01 (`audit/phase4/hand-off-design.md`, "Deleted"). `search_bonus` stays: the
+//!   look-ahead (`ai/search.rs`, out of that change's scope) still names it under a "karn" key it never sees now.
 
-use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::{CardDb, Types};
 use crate::engine::mana::total_mana;
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::trigger_window;
-use crate::engine::values::{colors_of, epow, etgh, pval, untargetable};
+use crate::engine::values::{etgh, pval, untargetable};
 use crate::engine::zones::draw;
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -32,12 +30,6 @@ use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::Game;
 
 pub const KARN: &str = "Karn, Legacy Reforged";
-const KEY: &str = "karn";
-
-pub fn is_deck(key: &str) -> bool {
-    key == KEY
-}
-
 fn live(g: &Game, m: PermId) -> bool {
     let x = g.perm(m);
     x.on_bf && !x.phased
@@ -199,50 +191,6 @@ fn workshop_mana(g: &Game, p: PlayerId, _l: PermId) -> u32 {
     }
 }
 
-/// the Tron pieces p lacks
-fn missing_tron(g: &Game, p: PlayerId) -> Vec<&'static str> {
-    TRON.iter().copied().filter(|n| !has_land(g, p, n)).collect()
-}
-
-/// engine::turn::land_score: a Tron land is worth playing first while the set isn't whole (the land drop that
-/// completes it most of all); Urza's Workshop once the artifacts turn it on
-pub fn land_adjust(g: &Game, p: PlayerId, c: CardId) -> f64 {
-    if !is_deck(hand_key(g, p)) {
-        return 0.0;
-    }
-    let n = &*g.db.get(c).name;
-    if TRON.contains(&n) {
-        let have = TRON.iter().filter(|t| has_land(g, p, t)).count();
-        return if have == 2 { 8.0 } else { 3.0 };
-    }
-    if n == "Urza's Workshop" && artifacts(g, p) >= 3 {
-        return 3.0;
-    }
-    0.0
-}
-
-/// the land a search (Expedition Map, Urza's Cave) takes: the Tron piece the deck lacks, then a land that does
-/// something, else Wastes
-pub fn search_pick(g: &Game, p: PlayerId, cands: &[CardId]) -> Option<CardId> {
-    if !is_deck(hand_key(g, p)) {
-        return None;
-    }
-    let named = |n: &str| cands.iter().copied().find(|&c| &*g.db.get(c).name == n);
-    for n in missing_tron(g, p) {
-        if let Some(c) = named(n) {
-            return Some(c);
-        }
-    }
-    for n in ["Urza's Workshop", "Mishra's Workshop", "Mishra's Factory", "Mishra's Foundry", "Urza's Factory"] {
-        if !has_land(g, p, n)
-            && let Some(c) = named(n)
-        {
-            return Some(c);
-        }
-    }
-    named("Wastes").or_else(|| cands.iter().copied().find(|&c| g.db.get(c).land))
-}
-
 // ================================================================== Mishra's Factory and Mishra's Foundry
 /// (name, the cost to animate)
 const MANLANDS: [(&str, u32); 2] = [("Mishra's Factory", 1), ("Mishra's Foundry", 2)];
@@ -295,146 +243,7 @@ fn manland_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-/// `ai::brain::attack_response`: d (a karn seat) is attacked with priority in the declare attackers step: animate
-/// untapped Factories and Foundries (as many as the attackers call for) to block when the attack is dangerous.
-/// True if one was.
-pub fn block_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Res<bool> {
-    if !is_deck(hand_key(g, d)) {
-        return Ok(false);
-    }
-    let incoming: i32 = atk.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).owner == p).map(|&m| epow(g, m)).sum();
-    let life = g.player(d).life;
-    if (incoming as f64) < life as f64 * 0.4 && !(life <= 12 && incoming >= 4) {
-        return Ok(false);
-    }
-    let mut done = false;
-    let mut blockers = g.player(d).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).tapped).count();
-    for l in g.player(d).lands.clone() {
-        if blockers >= atk.len() {
-            break;
-        }
-        if !MANLANDS.iter().any(|m| m.0 == land_name(g, l)) || g.perm(l).tapped {
-            continue;
-        }
-        let cost = cost_of_land(g, l);
-        if !super::lands::pay_without(g, d, l, cost, "")? {
-            continue;
-        }
-        animate(g, d, l);
-        blockers += 1;
-        done = true;
-    }
-    Ok(done)
-}
-
 // ================================================================== the plan
-/// the opponents' permanents that are one or more colours (All Is Dust and Ugin hit these; Karn's list is colourless)
-fn coloured_opp_perms(g: &Game, p: PlayerId) -> usize {
-    g.opps(p)
-        .map(|q| g.player(q).perms.iter().filter(|&&m| live(g, m) && !colors_of(g, m).is_empty()).count())
-        .max()
-        .unwrap_or(0)
-}
-
-fn nonland_perms(g: &Game, q: PlayerId) -> usize {
-    g.player(q).perms.iter().filter(|&&m| live(g, m)).count()
-}
-
-/// the table is ahead of us: more permanents, or creatures that threaten a third of our life
-fn behind(g: &Game, p: PlayerId) -> bool {
-    let mine = nonland_perms(g, p);
-    let life = g.player(p).life;
-    g.opps(p).any(|q| {
-        let power: i32 =
-            g.player(q).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).map(|&m| epow(g, m)).sum();
-        nonland_perms(g, q) >= mine + 3 || power * 3 >= life
-    })
-}
-
-fn in_hand(g: &Game, p: PlayerId, name: &str) -> bool {
-    g.player(p).hand.iter().any(|&c| &*g.db.get(c).name == name)
-}
-
-/// Karn is out, or about to be cast
-fn karn_soon(g: &Game, p: PlayerId) -> bool {
-    karn_of(g, p).is_some() || g.player(p).cmd_in_zone || in_hand(g, p, KARN)
-}
-
-/// ais.deck_prio for the karn deck: its own order for the plan's cards, the generic priority for the rest (the cards'
-/// own priority slots, rocks, the commander)
-/// Can p win with the infinite-mana combo this turn: Basalt Monolith, Rings of Brighthearth and Walking Ballista each in
-/// hand or on the battlefield, and mana for the pieces still in hand plus Basalt's own {C}{C}{C} and the {2} the loop
-/// needs to start (Ballista is then cast with the infinite mana)
-pub fn combo_this_turn(g: &Game, p: PlayerId) -> bool {
-    let pl = g.player(p);
-    let in_hand = |n: &str| pl.hand.iter().any(|&c| &*g.db.get(c).name == n);
-    let out = |n: &str| pl.perms.iter().any(|&m| live(g, m) && g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == n));
-    let pieces = ["Basalt Monolith", "Rings of Brighthearth", "Walking Ballista"];
-    if !pieces.iter().all(|n| in_hand(n) || out(n)) {
-        return false;
-    }
-    let need =
-        5 + if in_hand("Basalt Monolith") { 3 } else { 0 } + if in_hand("Rings of Brighthearth") { 3 } else { 0 };
-    total_mana(g, p, false) >= need
-}
-
-pub fn karn_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let pl = g.player(p);
-    if c == pl.cmd {
-        if combo_this_turn(g, p) {
-            return 0; // Basalt Monolith + Rings of Brighthearth + Walking Ballista wins now: keep the mana for it
-        }
-        // as early as possible: well above anything else
-        return if pl.turns >= 1 { (130 - 3 * pl.tax as i32).max(70) } else { 0 };
-    }
-    let d = g.db.get(c);
-    let out = karn_of(g, p).is_some();
-    match &*d.name {
-        // Lightning Greaves / Swiftfoot Boots: with Karn (shroud / hexproof for the commander the table answers)
-        "Lightning Greaves" | "Swiftfoot Boots" => {
-            if out {
-                88
-            } else if karn_soon(g, p) {
-                44
-            } else {
-                30
-            }
-        }
-        // the sweepers take Karn and the artifacts too: when behind. All Is Dust and Ugin when the table is coloured
-        "Oblivion Stone" | "Nevinyrral's Disk" => {
-            if behind(g, p) && nonland_perms(g, p) <= 6 {
-                72
-            } else {
-                0
-            }
-        }
-        "All Is Dust" => {
-            if coloured_opp_perms(g, p) >= 4 || (behind(g, p) && coloured_opp_perms(g, p) >= 2) {
-                86
-            } else {
-                0
-            }
-        }
-        "Ugin, the Spirit Dragon" => {
-            if coloured_opp_perms(g, p) >= 4 || (behind(g, p) && coloured_opp_perms(g, p) >= 2) { 92 } else { 38 }
-        }
-        _ => {
-            let v = crate::ai::pool::generic_prio(g, p, c);
-            // cheap artifacts first: each one is another {C} from Karn every turn
-            if v > 0 && d.types.has(Types::ARTIFACT) && !d.land && d.cmc <= 2 { v.max(74) } else { v }
-        }
-    }
-}
-
-/// `dsl::ability_options`: the Baubles stay on the battlefield while Karn is out or coming (each is an artifact, so one
-/// more {C} for Karn's mana every turn), unless the hand has run dry
-pub fn hold_ability(g: &Game, p: PlayerId, card: &str) -> bool {
-    is_deck(hand_key(g, p))
-        && matches!(card, "Mishra's Bauble" | "Urza's Bauble" | "Wayfarer's Bauble")
-        && karn_soon(g, p)
-        && g.player(p).hand.len() >= 2
-}
-
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     if db.id(KARN).is_some() {
         let c = r.card(db, KARN)?;

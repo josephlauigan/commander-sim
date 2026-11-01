@@ -18,7 +18,7 @@
 //! - **Dualcaster Mage** (flash; enters: copy target instant or sorcery spell) is flashed in over a worthwhile spell
 //!   (an X drain or Torment of Hailfire at X >= 3, burn, draw; the copy keeps X). There is no combo detection (JD: no
 //!   infinite combos in Sauron); with no spell worth copying it is a plain 2/2 the AI casts late.
-//! - **Exsanguinate** is yshtola.rs's X drain (its option now also runs for the Sauron seat); Talisman of
+//! - **Exsanguinate** is yshtola.rs's X drain (its option ran for the Sauron seat until 2026-11-01); Talisman of
 //!   Indulgence, Rakdos Signet and Fellwar Stone are modeled elsewhere (mine.rs, the rock tags, mana.rs).
 
 use crate::engine::repl;
@@ -488,19 +488,8 @@ fn dualcaster_perm(g: &Game, p: PlayerId, cd: CardId) -> Option<PermId> {
 
 /// how much a copy of `spell` (cast by anyone) is worth to p
 fn copy_worth(g: &Game, p: PlayerId, spell: CardId) -> f64 {
-    let d = g.db.get(spell);
-    let x = match &g.cur_cast {
-        Some((cc, ctx, _)) if *cc == spell => ctx.x,
-        _ => 0,
-    };
-    match &*d.name {
-        "Exsanguinate" | TORMENT => {
-            if g.cur_cast.as_ref().is_some_and(|c| c.0 == spell && crate::ai::hand_key(g, p) == "sauron") {
-                x as f64 * 2.0
-            } else {
-                0.0
-            }
-        }
+    match &*g.db.get(spell).name {
+        "Exsanguinate" | TORMENT => 0.0, // Sauron's hand AI valued the copy of its own X drain (deleted 2026-11-01)
         _ => crate::impls::mine::spell_copy_value(g, p, spell),
     }
 }
@@ -536,56 +525,6 @@ fn dualcaster_copy_go(g: &mut Game, c: CardId, p: PlayerId, spell: CardId) -> Re
 }
 
 // ================================================================== Sauron's cast priorities
-/// ais.sauron_prio for the cards of this module (None: not one of them). The amass creatures and Dreadhorde Invasion are
-/// early plays (rocks, at 80, still go first); Grishnákh waits for a creature worth taking; Dualcaster Mage is
-/// held for a spell worth copying, and cast as a plain 2/2 only late.
-pub fn sauron_extra_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
-    let pl = g.player(p);
-    let early = pl.turns <= 4;
-    Some(match &*g.db.get(c).name {
-        INVASION => {
-            if early {
-                70
-            } else {
-                52
-            }
-        }
-        "Lazotep Reaver" => {
-            if early {
-                67
-            } else {
-                46
-            }
-        }
-        "Grim Initiate" => {
-            if early {
-                65
-            } else {
-                44
-            }
-        }
-        GRISHNAKH => {
-            // the Army it makes is 2 power (more on top of an existing one): a victim with power up to that
-            let pow = army_of(g, p).map_or(0, |a| epow(g, a)) + 2;
-            if grishnakh_victim(g, p, pow).is_some_and(|m| pval(g, m) >= 3.0) {
-                64
-            } else if early {
-                56
-            } else {
-                44
-            }
-        }
-        DUALCASTER => {
-            if pl.turns < 6 {
-                0
-            } else {
-                36
-            }
-        }
-        _ => return None,
-    })
-}
-
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, GRISHNAKH)?.etb = Some(grishnakh_etb);

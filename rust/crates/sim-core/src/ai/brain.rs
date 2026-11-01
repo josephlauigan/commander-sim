@@ -238,8 +238,8 @@ fn hold_of(g: &Game, p: PlayerId, s: &Situation, held: &[CardId]) -> (Option<Car
     let caution = style(g, pl.key).caution;
     let near = s.combo_near || s.cmdr_combo;
     let mut v = 1.0 + 3.0 * caution * (s.max_threat / 20.0).min(1.0) + 2.5 * near as i32 as f64;
-    if !is_main(hand_key(g, p)) || hand_key(g, p) == "sauron" {
-        // outside decks (and Sauron, a counter shell around one Army): three opponents will cast something worth answering this cycle
+    if !is_main(hand_key(g, p)) {
+        // outside decks: three opponents will cast something worth answering this cycle
         let n = held.iter().filter(|&&x| g.db.get(x).tag(Tag::Ctr)).count();
         v = v.max(1.5 + 2.5 * caution * n.min(2) as f64);
     }
@@ -345,25 +345,8 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     if pl.is_commander(c) && !pl.hand.contains(&c) {
         u -= 0.35 * pl.tax_of(c) as f64; // recasting gets pricier each time (no tax from hand)
     }
-    if (d.instant || d.sorcery) && hand_key(g, p) == "veyran" {
-        // each spell fires every magecraft payoff (doubled by Veyran): casting is value in itself
-        const PAY: [Tag; 7] =
-            [Tag::Ping, Tag::Dragoncaller, Tag::Mystic, Tag::Spelldraw, Tag::Aether, Tag::Spelltok, Tag::Kiln];
-        let n_pay = pl
-            .perms
-            .iter()
-            .filter(|&&m| {
-                let x = g.perm(m);
-                !x.phased && x.cd.is_some_and(|cd| PAY.iter().any(|&k| g.db.get(cd).tag(k)))
-            })
-            .count();
-        u += 0.9 * n_pay as f64 * if has(g, p, Tag::Veyran) { 2.0 } else { 1.0 };
-    }
     if (super::values::bomb_of(g, p, c) >= 5.0 || pl.is_commander(c) || base >= 70.0) && !d.land {
         u *= 1.0 - 0.35 * s.ctr_risk; // walking into open counter mana
-    }
-    if hand_key(g, p) == "veyran" && !pl.is_commander(c) {
-        u += veyran_sequence(g, p, c);
     }
     Some(u)
 }
@@ -407,33 +390,6 @@ pub fn ritual_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option
         }
     }
     best.map(|v| v - RITUAL_DISCOUNT)
-}
-
-/// brain.veyran_sequence: Veyran doubles every cast trigger, so a spell cast while Veyran waits in the command zone
-/// wastes half its value. On your own turn: with the mana for Veyran, cast Veyran before any instant or sorcery that
-/// isn't urgent; one land short, hold sorcery-speed card draw for next turn.
-fn veyran_sequence(g: &Game, p: PlayerId, c: CardId) -> f64 {
-    let pl = g.player(p);
-    let d = g.db.get(c);
-    if g.active != Some(p) || !pl.cmd_in_zone || !(d.instant || d.sorcery) {
-        return 0.0;
-    }
-    if pl.perms.iter().any(|&m| g.perm(m).cd == Some(pl.cmd) && !g.perm(m).phased) {
-        return 0.0;
-    }
-    const URGENT: [Tag; 7] = [Tag::Rem, Tag::Ctr, Tag::Wipe, Tag::Prot, Tag::Lr, Tag::Rock, Tag::Fastmana];
-    if URGENT.iter().any(|&k| d.tag(k)) || d.land {
-        return 0.0;
-    }
-    let (gn, pips) = cost_of(g, p, pl.cmd);
-    let (need, have) = (gn + pips.len() as u32, total_mana(g, p, false));
-    if have >= need {
-        return -4.0;
-    }
-    if have + 1 >= need && d.tag(Tag::Draw) && pl.hand.len() >= 3 && d.sorcery {
-        return -2.5;
-    }
-    0.0
 }
 
 // ------------------------------------------------------------------ generic executors
@@ -729,9 +685,6 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
 /// brain.attack_response: d (the AI) is attacked: with priority in the declare attackers step, kill an attacker with
 /// instant removal when it's worth the card (a valuable creature, or the attack is dangerous)
 pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Res<bool> {
-    if hand_key(g, d) == "karn" {
-        crate::impls::karn::block_response(g, d, p, atk)?; // Mishra's Factory and Foundry animate to block
-    }
     if crate::impls::titania::is_deck(g.player(d).key) && crate::impls::titania::attack_fog(g, d, p, atk)? {
         return Ok(true);
     }
@@ -755,10 +708,7 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
                 && !(g.cast_checks() && !castable(g, d, c, "hand"))
         })
         .collect();
-    // Galadriel's permanents' answers (Ballista Squad, Lawbringer, Lightbringer)
-    let answers =
-        if hand_key(g, d) == "galadriel" { crate::impls::galadriel::attack_answers(g, d, p, atk) } else { vec![] };
-    if (rem.is_empty() && answers.is_empty()) || atk.is_empty() {
+    if rem.is_empty() || atk.is_empty() {
         return Ok(false);
     }
     let incoming: i32 = atk
@@ -796,17 +746,6 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
             if best.is_none_or(|b| v > b.0) {
                 best = Some((v, c, m));
             }
-        }
-    }
-    if let Some(&(v2, a)) = answers.iter().fold(None, |b: Option<&(f64, _)>, x| match b {
-        Some(y) if y.0 >= x.0 => Some(y),
-        _ => Some(x),
-    }) && v2 + if danger { 3.0 } else { 0.0 } - 3.0 > 0.0
-        && best.is_none_or(|b| v2 >= b.0 - 1.0)
-    {
-        if crate::impls::galadriel::answer(g, d, a)? {
-            g.player_mut(d).stat("attack_removal", 1);
-            return Ok(true);
         }
     }
     let Some((v, c, m)) = best else { return Ok(false) };
@@ -976,15 +915,12 @@ pub fn cast_wipe(g: &mut Game, p: PlayerId, c: CardId, victim: Option<PlayerId>)
 // ------------------------------------------------------------------ deck-specific plays
 /// brain.special_options: the plays your decks' own plans add. Only legal plays are listed, so the distribution is
 /// over real choices.
-pub fn special_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool) -> Res<Vec<Opt>> {
+pub fn special_options(g: &mut Game, p: PlayerId, _s: &Situation, post: bool) -> Res<Vec<Opt>> {
     match hand_key(g, p) {
-        "sauron" => decks::sauron_options(g, p, s, post),
-        "veyran" => super::veyran::options(g, p, s, post),
-        "kefka" => crate::impls::kefka::kefka_options(g, p, post),
         "omnath" => crate::impls::titania::titania_special(g, p, post),
         "sheoldred" => crate::impls::sheoldred::sheoldred_special(g, p, post),
         "cloud" => crate::impls::cloud::cloud_special(g, p, post),
-        "kraum" | "thrasios" => crate::impls::tymna_cards::kraum_special(g, p, post),
+        "kraum" => crate::impls::tymna_cards::kraum_special(g, p, post),
         "sephfs" => crate::impls::sephfs::options(g, p, post),
         _ => Ok(vec![]),
     }
@@ -1099,7 +1035,7 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
 
 // ------------------------------------------------------------------ main phase
 /// your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
-const GENERIC_PLAYS: [&str; 8] = ["galadriel", "yshtola", "alela", "kefka", "omnath", "sheoldred", "cloud", "karn"];
+const GENERIC_PLAYS: [&str; 4] = ["yshtola", "omnath", "sheoldred", "cloud"];
 
 /// brain.hook_options: activated abilities of card code (battlefield, graveyard and hand), the outside decks' generic
 /// plays, land abilities and modeled combos. post None: the end-of-turn window.
