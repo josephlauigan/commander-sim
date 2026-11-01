@@ -151,27 +151,6 @@ pub fn partner_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
     None
 }
 
-/// Marvin's cast priority in Kefka's deck: a cheap body (52), much better when a creature whose {T} ability he copies
-/// is already out (72; Niv's draw 80)
-pub fn marvin_prio(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
-    if &*g.db.get(c).name != MARVIN {
-        return None;
-    }
-    let out = |n: &str| {
-        g.player(p).perms.iter().any(|&m| {
-            let x = g.perm(m);
-            x.on_bf && !x.phased && card_name(g, m) == Some(n)
-        })
-    };
-    Some(if out(COPIED[0]) {
-        80
-    } else if COPIED[1..].iter().any(|n| out(n)) {
-        72
-    } else {
-        52
-    })
-}
-
 /// choose_defender: a bonus for the opponent Lightning would connect with (no untapped creature of theirs can block it):
 /// its Stagger then doubles the rest of the attack, and the lifelink pays for it
 pub fn stagger_bonus(g: &Game, p: PlayerId, q: PlayerId) -> f64 {

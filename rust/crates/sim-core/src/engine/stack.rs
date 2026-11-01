@@ -5,7 +5,6 @@
 //! find out whether it really triggers, then pushed, then run for real top first: its `trigger_window` gives every
 //! player priority on it and says whether it was countered.
 
-use crate::ai::hand_key; // --- phase4-hand-off
 use crate::ai;
 use crate::engine::altcost;
 use crate::engine::cast::discard_worst;
@@ -13,7 +12,7 @@ use crate::engine::cast::{castable, on_cast};
 use crate::engine::hooks::run_hook;
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, pay};
-use crate::engine::values::{colors_of, commander_out, has, has_type, pval};
+use crate::engine::values::{colors_of, commander_out, has_type, pval};
 use crate::engine::zones::{Enter, Tokens, add_treasure, draw, enter, make_tokens};
 use crate::flow::{Probe, Res, Stop};
 use crate::hooks::{TrigAct, Trigger};
@@ -768,14 +767,11 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
         }
         return Ok(());
     }
-    let mut val = top.value_to(q);
+    let val = top.value_to(q);
     if val <= 0.0 && top.aff.is_empty() {
         return Ok(());
     }
     let nc = hand.iter().filter(|&&x| g.db.get(x).tag(Tag::Ctr)).count();
-    if hand_key(g, q) == "veyran" && has(g, q, Tag::Veyran) {
-        val += 1.5; // every counter is also a doubled magecraft trigger
-    }
     let key = g.player(q).key;
     let mut thr = match g.settings.counter_threshold(key) {
         Some(t) => t as f64,
@@ -785,9 +781,6 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
         return Ok(());
     }
     let pk = pick_counter(g, q, c);
-    if let Some(pk) = pk {
-        val *= soft_counter_factor(g, q, top.controller, pk);
-    }
     if let Some(pk) = pk {
         // Force of Will pitched (no mana for it): two cards for one
         let (cg, cp) = counter_cost(g, pk, Some(c), Some(q));
@@ -1010,12 +1003,8 @@ pub fn pay_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>
     }
     let pitch = |g: &mut Game, blues: Vec<CardId>| -> Res {
         // the least useful blue card (a person picks: play/cards.pick_blue)
-        let sauron = hand_key(g, q) == "sauron";
-        let mut x = crate::engine::zones::min_by(&blues, |c| {
-            let w = crate::engine::tutors::card_worth(g, q, c, false);
-            if sauron { w + crate::ai::decks::sauron_pitch_keep(g, q, c) } else { w }
-        })
-        .unwrap();
+        let mut x =
+            crate::engine::zones::min_by(&blues, |c| crate::engine::tutors::card_worth(g, q, c, false)).unwrap();
         if crate::human::is_human(g, q) {
             let what = g.db.get(ctr).name.to_string();
             x = crate::human::cards::pick_blue(g, q, &blues, &what)?;
@@ -1305,23 +1294,10 @@ pub fn step_priority(g: &mut Game, step: &str, defender: Option<PlayerId>, attac
             crate::human::human::step_priority(g, q, step, defender, attackers)?;
         } else if step == "attackers" && Some(q) == defender {
             ai::attack_response(g, q, a, attackers)?;
-        } else if step == "combat" && q != a && hand_key(g, q) == "galadriel" {
-            crate::cardcode::galadriel_precombat(g, q)?; // tap the attacker it fears (Errant Doomsayers, Whipcorder)
         }
         if step == "combat" && q != a && !g.hooks.is_empty() && !crate::human::is_human(g, q) {
             crate::cardcode::opposition_precombat(g, q)?; // Opposition: tap the attackers down
         }
     }
     Ok(())
-}
-
-/// Kefka's Mana Leak (a soft counter): into open mana the opponent just pays, so the counter is worth only the chance
-/// they cannot. 1.0 for everything else (other decks keep the old behaviour).
-pub fn soft_counter_factor(g: &Game, q: PlayerId, caster: PlayerId, ctr: CardId) -> f64 {
-    let soft = g.db.get(ctr).tags.int(Tag::Soft).unwrap_or(0);
-    if hand_key(g, q) == "kefka" && soft > 0 && crate::engine::mana::total_mana(g, caster, false) >= soft as u32 {
-        0.3
-    } else {
-        1.0
-    }
 }

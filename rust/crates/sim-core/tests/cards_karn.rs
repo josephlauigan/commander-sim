@@ -182,64 +182,19 @@ fn urza_workshop_counts_urza_lands_with_three_artifacts() {
 
 #[test]
 fn mishras_factory_animates_as_an_artifact_creature() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Mishra's Factory", 1, false);
     lands(&mut g, P0, "Wastes", 2, false);
     let l = g.player(P0).lands[0];
     let n_before = karn::artifacts(&g, P0);
+    // the land's own option (any deck's): {1}, animate to attack while the way is open
     let opts = sim_core::cardcode::land_options(&mut g, P0, Some(false)).unwrap();
-    let _ = opts; // (the animate option depends on an open attack; the block response below is the direct path)
-    let atk = token(&mut g, P1, 6);
-    g.player_mut(P0).life = 10;
-    assert!(karn::block_response(&mut g, P0, P1, &[atk]).unwrap());
+    let o = opts.iter().find(|o| o.label == "animate Mishra's Factory").expect("the animate option");
+    let Some(sim_core::hooks::Action::Plan { f, arg }) = o.act else { panic!("a plan") };
+    assert!(f(&mut g, P0, arg).unwrap());
     assert!(!g.player(P0).lands.contains(&l), "the land is a creature now");
     assert_eq!(karn::artifacts(&g, P0), n_before + 1, "an artifact while animated (Karn would count it)");
     let m = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).name == "Mishra's Factory").unwrap();
     assert_eq!((epow(&g, m), etgh(&g, m)), (2, 2));
 }
 
-#[test]
-fn karn_prio_casts_him_first_and_holds_the_sweepers() {
-    let mut g = game();
-    g.player_mut(P0).turns = 2;
-    let cmd = g.player(P0).cmd;
-    hand(&mut g, P0, &["Oblivion Stone", "All Is Dust", "Sol Ring", "Lightning Greaves"]);
-    let p = |g: &Game, n: &str| karn::karn_prio(g, P0, card(g, n));
-    assert!(karn::karn_prio(&g, P0, cmd) >= 100);
-    assert!(p(&g, "Sol Ring") >= 74);
-    assert_eq!(p(&g, "Oblivion Stone"), 0, "not while we're not behind");
-    assert_eq!(p(&g, "All Is Dust"), 0, "no coloured board to sweep");
-    assert!(p(&g, "Lightning Greaves") < 50, "Greaves wait for Karn");
-    perm(&mut g, P0, "Karn, Legacy Reforged");
-    assert!(p(&g, "Lightning Greaves") > 80);
-}
-
-#[test]
-fn the_land_searches_take_the_missing_tron_piece_then_wastes() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = game();
-    lands(&mut g, P0, "Urza's Mine", 1, false);
-    let names = ["Wastes", "Urza's Tower", "Urza's Power Plant", "Mishra's Workshop"];
-    let cands: Vec<_> = names.iter().map(|n| card(&g, n)).collect();
-    let pick = |g: &Game, c: &[sim_core::ids::CardId]| g.db.get(karn::search_pick(g, P0, c).unwrap()).name.to_string();
-    assert!(["Urza's Tower", "Urza's Power Plant"].contains(&pick(&g, &cands).as_str()), "a Tron piece first");
-    lands(&mut g, P0, "Urza's Tower", 1, false);
-    assert_eq!(pick(&g, &cands), "Urza's Power Plant");
-    lands(&mut g, P0, "Urza's Power Plant", 1, false);
-    assert_eq!(pick(&g, &cands), "Mishra's Workshop", "Tron whole: a land that does something");
-    assert_eq!(pick(&g, &cands[..1]), "Wastes");
-    // the other decks' searches are left alone
-    assert!(karn::search_pick(&table(&["seph", "karn"]), P0, &cands).is_none());
-}
-
-#[test]
-fn the_baubles_stay_out_while_karn_is_coming() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = game();
-    hand(&mut g, P0, &["Sol Ring", "Mind Stone"]);
-    assert!(karn::hold_ability(&g, P0, "Mishra's Bauble"), "Karn is in the command zone");
-    assert!(!karn::hold_ability(&g, P0, "Sol Ring"));
-    g.player_mut(P0).hand.clear();
-    assert!(!karn::hold_ability(&g, P0, "Mishra's Bauble"), "an empty hand digs");
-}

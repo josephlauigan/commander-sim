@@ -986,7 +986,6 @@ fn cast_rean(g: &mut Game, p: PlayerId, c: CardId, zone: &str, ctx: Ctx, flash_s
     }
     let value = ctx.rean_value;
     if !stack::counter_window(g, p, c, value, vec![])?
-        || crate::ai::decks::sauron_grounds_response(g, p, value)?
         || (!g.hooks.is_empty() && crate::cardcode::gy_response(g, p, value, src)?)
     {
         dest_push!(c);

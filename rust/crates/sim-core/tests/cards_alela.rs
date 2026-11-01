@@ -517,20 +517,6 @@ fn venser_minus_one_before_a_big_attack() {
 
 // ======================================================== the plan
 #[test]
-fn alela_adds_a_faerie_to_artifacts_and_enchantments() {
-    let mut g = table(&["alela", "veyran"]);
-    let stone = card(&g, "Mind Stone");
-    let base = decks::deck_prio(&g, P0, stone);
-    alela_out(&mut g, P0);
-    assert_eq!(decks::deck_prio(&g, P0, stone), 90.min(base + 10));
-    let ws = take(&mut g, P0, "Wispdrinker Vampire");
-    zones::enter(&mut g, P0, ws, zones::Enter::default()).unwrap();
-    assert_eq!(alela::faerie_bonus(&g, P0), 16);
-    let cmd = g.player(P0).cmd;
-    assert!(decks::deck_prio(&g, P0, cmd) >= 85);
-}
-
-#[test]
 fn card_prios_of_the_99() {
     let mut g = table(&["alela", "veyran"]);
     let op = card(&g, "Opposition");
@@ -1019,24 +1005,6 @@ fn ai_skullclamps_a_faerie_and_other_x1s_with_spare_mana() {
 }
 
 #[test]
-fn ai_does_not_clamp_under_angelic_shield_and_saves_a_creature_with_it() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = alela_table();
-    alela_out(&mut g, P0);
-    lands(&mut g, P0, "Plains", 1, false);
-    perm(&mut g, P0, "Skullclamp");
-    flier(&mut g, P0);
-    perm(&mut g, P0, "Angelic Shield");
-    assert!(!has_label(&hook_labels(&mut g, P0, Some(false)), "Skullclamp"), "+0/+1 makes the Faerie a 2/2");
-    // removal aimed at a valuable creature: the Shield bounces it
-    let angel = perm(&mut g, P0, "Serra Angel");
-    removal::apply_removal(&mut g, Some(P1), angel, "destroy", None).unwrap();
-    assert!(!g.perm(angel).on_bf);
-    assert!(g.player(P0).hand.contains(&card(&g, "Serra Angel")), "back in hand, not in the graveyard");
-    assert!(g.player(P0).gy.contains(&card(&g, "Angelic Shield")), "the Shield was sacrificed");
-}
-
-#[test]
 fn angelic_shield_is_not_spent_on_tokens_or_alela() {
     let mut g = alela_table();
     let al = alela_out(&mut g, P0);
@@ -1064,25 +1032,6 @@ fn ai_activates_crystal_chimes_with_two_enchantments_in_the_graveyard() {
     assert!(g.player(P0).hand.contains(&opp) && g.player(P0).hand.contains(&kj), "both back");
     assert!(g.player(P0).gy.contains(&card(&g, "Crystal Chimes")));
     assert_eq!(mana::total_mana(&g, P0, false), 0);
-}
-
-#[test]
-fn ai_moves_lightning_greaves_off_alela_before_an_aura_that_wants_her() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = alela_table();
-    let al = alela_out(&mut g, P0);
-    g.player_mut(P0).cmd_in_zone = false;
-    let gr = perm(&mut g, P0, "Lightning Greaves");
-    g.perm_mut(gr).attached = Some(al);
-    let angel = perm(&mut g, P0, "Serra Angel");
-    g.active = Some(P0);
-    assert!(!has_label(&hook_labels(&mut g, P0, Some(false)), "Lightning Greaves off"), "nothing in hand wants her");
-    hand(&mut g, P0, &["Unquestioned Authority"]);
-    let o = hook_labels(&mut g, P0, Some(false));
-    let mv = o.iter().find(|o| o.label.starts_with("Lightning Greaves off Alela")).expect("the AI moves the Greaves");
-    assert!(perform(&mut g, P0, mv));
-    assert_eq!(g.perm(gr).attached, Some(angel));
-    assert!(!values::untargetable(&g, al), "Alela can be enchanted again");
 }
 
 #[test]

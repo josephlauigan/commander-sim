@@ -3140,16 +3140,12 @@ fn ballista_ping(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     }
     let os = opps(g, p);
     let lethal = os.iter().copied().find(|&q| g.player(q).life <= plus);
-    // the thrasios seat (Rust only): any X/1 creature worth a card (a mana dork, a hatebear) is worth a counter, but the
-    // last counter is kept (the Ballista dies with it) unless the target is a real card
-    let thr = hand_key(g, p) == "thrasios";
     let tg = os.iter().flat_map(|&q| g.player(q).perms.iter().copied()).find(|&m| {
         let v = pval(g, m);
-        let dork = g.perm(m).cd.is_some_and(|c| g.db.get(c).tags.has(Tag::Dork));
         g.is_creature(m)
             && etgh(g, m) <= 1
             && !untargetable(g, m)
-            && (v >= 2.5 || (thr && (plus >= 2 || v >= 4.0) && (v >= 1.0 || dork)))
+            && v >= 2.5
     });
     if lethal.is_none() && tg.is_none() {
         return Ok(vec![]);

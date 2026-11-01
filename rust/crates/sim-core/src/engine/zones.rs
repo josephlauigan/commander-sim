@@ -16,8 +16,6 @@ use crate::state::{CopyExc, CopyOf, DataKey, Game, PermData, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;
 
-/// cards that win instead of losing when drawing from an empty library
-pub const LABMEN: [&str; 2] = ["Laboratory Maniac", "Jace, Wielder of Mysteries"];
 /// creature tokens per player; beyond this the board is lethal many times over and games crawl
 pub const TOKEN_CAP: usize = 250;
 /// undying / persist returns of one card in one turn; past that it stays dead

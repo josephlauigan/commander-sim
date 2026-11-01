@@ -275,14 +275,14 @@ mod tests {
 
     #[test]
     fn a_card_the_deck_ranks_positive_does_not() {
-        let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
+        // Sheoldred plays her hand AI by default (`ai::HAND_KEEP`; Kefka's was deleted on 2026-11-01)
         let s = sim();
-        let out = s.mine["kefka"].iter().find(|c| s.engine.db.id(c).is_some_and(|i| !s.engine.db.get(i).land)).unwrap().clone();
-        // Psychosis Crawler: Kefka's own rule ranks it (kefka_prio), so no warning
-        let crawler = rules(&s, "kefka", &out, "Psychosis Crawler", "t3");
-        assert!(!crawler.warns() && crawler.prio > 0 && crawler.deck_rule, "{crawler:?}");
-        assert!(crawler.line().ends_with("(deck rule)"), "{}", crawler.line());
-        let ring = rules(&s, "kefka", &out, "Sol Ring", "t3");
+        let out = s.mine["sheoldred"].iter().find(|c| s.engine.db.id(c).is_some_and(|i| !s.engine.db.get(i).land)).unwrap().clone();
+        // Underworld Dreams: Sheoldred's own rule ranks it (sheoldred_prio), so no warning
+        let dreams = rules(&s, "sheoldred", &out, "Underworld Dreams", "t3");
+        assert!(!dreams.warns() && dreams.prio > 0 && dreams.deck_rule, "{dreams:?}");
+        assert!(dreams.line().ends_with("(deck rule)"), "{}", dreams.line());
+        let ring = rules(&s, "sheoldred", &out, "Sol Ring", "t3");
         assert!(!ring.warns() && ring.prio > 0 && !ring.deck_rule, "{ring:?}");
         assert!(ring.line().ends_with("(generic)"));
     }

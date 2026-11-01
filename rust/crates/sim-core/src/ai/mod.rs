@@ -32,7 +32,6 @@ pub mod topdeck;
 pub mod ismcts; // --- phase4-search
 pub mod learned; // --- phase4-eval
 pub mod values; // --- phase4-values
-pub mod veyran;
 
 use crate::engine::repl;
 use crate::engine::values::epow;
@@ -88,45 +87,20 @@ pub fn jd_deck(key: &str) -> bool {
 }
 
 // --- phase4-hand-off: each deck's hand-written AI behind one switch (`audit/phase4/hand-off-design.md`)
-/// the live decks whose hand-written AI is switchable (`AI_HAND`); every other key keeps whatever it has
-pub const HAND_DECKS: [&str; 14] = [
-    "veyran",
-    "sauron",
-    "yshtola",
-    "galadriel",
-    "alela",
-    "kefka",
-    "sheoldred",
-    "cloud",
-    "karn",
-    "thrasios",
-    "brago-azorius-blink-control",
-    "aurelia-boros-extra-combats",
-    "sisay-legends-toolbox",
-    "dack-fayden-white-stax",
-];
+/// the live decks whose hand-written AI is switchable (`AI_HAND`); every other key keeps whatever it has. The hand AI
+/// of eleven more decks was deleted after the recalibration's paired tests (`audit/phase4/hand-off-design.md`,
+/// "Deleted"): they play the generic policy and their plan file (`HAND_DELETED`)
+pub const HAND_DECKS: [&str; 3] = ["yshtola", "sheoldred", "cloud"];
 
-/// the switchable decks whose plan file was written in this PR: read only with the hand AI off
-pub const HAND_OFF_PLANS: [&str; 13] = [
-    "veyran",
-    "sauron",
-    "yshtola",
-    "galadriel",
-    "alela",
-    "kefka",
-    "sheoldred",
-    "cloud",
-    "karn",
-    "thrasios",
-    "brago-azorius-blink-control",
-    "aurelia-boros-extra-combats",
-    "dack-fayden-white-stax",
-];
+/// JD's (and Avery's) decks whose hand-written AI was deleted (2026-11-01, `audit/phase4/hand-off-design.md`,
+/// "Deleted"): `is_main` / `jd_deck` still name them (styles, table reads), so `hand_key` reads them as "" and every
+/// `is_main(hand_key(..))` routing site takes the generic path; `values::generic_deck` counts them as generic decks.
+/// The pool's four (brago, aurelia, sisay, dack) need no entry: no routing site names a pool deck.
+pub const HAND_DELETED: [&str; 7] = ["veyran", "sauron", "galadriel", "alela", "kefka", "karn", "thrasios"];
 
 /// the switchable decks that play their hand-written AI when `AI_HAND` is unset: those whose hand AI beat the generic
 /// policy in the stage 1 paired tests (`audit/recal/pairs-2026-10-31.md` section 4: yshtola +4.1, sheoldred +1.9 over
-/// t3-t4, cloud +6.6 over t1-t3); every other switchable deck plays the generic policy and its plan file by default
-/// (Dack too: its hand AI held Dack until about round 6, -12.4 on Tier 6 after the flip fix, `audit/recal/dack-check.md`)
+/// t3-t4, cloud +6.6 over t1-t3); their plan files are read only with their hand AI off
 pub const HAND_KEEP: [&str; 3] = ["yshtola", "sheoldred", "cloud"];
 
 enum HandMode {
@@ -188,8 +162,12 @@ impl Drop for HandGuard {
 }
 
 /// does this deck play its hand-written AI? A switchable deck: as `AI_HAND` (or `force_hand`) says, by default on for
-/// `HAND_KEEP` only; any other key: yes (the pool decks have nothing to switch; the retired test seats keep theirs)
+/// `HAND_KEEP` only; a deck in `HAND_DELETED`: no (it has none); any other key: yes (the pool decks have nothing to
+/// switch; the retired test seats keep theirs)
 pub fn hand_ai_key(key: &str) -> bool {
+    if HAND_DELETED.contains(&key) {
+        return false;
+    }
     if !HAND_DECKS.contains(&key) {
         return true;
     }
@@ -204,16 +182,16 @@ pub fn hand_ai(g: &Game, p: PlayerId) -> bool {
     hand_ai_key(g.player(p).key)
 }
 
-/// p's deck key for the deck-AI sites: the key while its hand AI is on, "" while it is off (so every `match` and
-/// `is_main` on it falls through to the generic policy)
+/// p's deck key for the deck-AI sites: the key while its hand AI is on, "" while it is off or deleted (so every
+/// `match` and `is_main` on it falls through to the generic policy)
 pub fn hand_key(g: &Game, p: PlayerId) -> crate::sym::Sym {
     let k = g.player(p).key;
     if hand_ai_key(k) { k } else { "" }
 }
 
-/// a plan file written for the hand-off that is not read now (its deck plays its hand AI)
+/// a switchable deck's plan file that is not read now (its deck plays its hand AI)
 pub fn plan_unread(key: &str) -> bool {
-    HAND_OFF_PLANS.contains(&key) && hand_ai_key(key)
+    HAND_DECKS.contains(&key) && hand_ai_key(key)
 }
 
 /// brain.style: the run's style for this deck (`Settings::styles`), else its built-in one
@@ -870,9 +848,14 @@ pub fn note_bomb(g: &mut Game, p: PlayerId, c: CardId, was_removed: bool) {
     }
 }
 
-/// ais.engine_payoff (Veyran's engine is online)
+/// ais.engine_payoff: Veyran's engine is online (the 'engine online' milestone): a payoff that turns the spell loop
+/// into a win (ais.payoff: a pinger, Aetherflux, Dragoncaller) or anything else that gets value from each spell
 pub fn engine_payoff(g: &Game, p: PlayerId) -> bool {
-    veyran::engine_payoff(g, p)
+    use crate::engine::values::has;
+    use crate::tag::Tag;
+    [Tag::Ping, Tag::Aether, Tag::Dragoncaller, Tag::Mystic, Tag::Spelltok, Tag::Spelldraw, Tag::Kiln]
+        .iter()
+        .any(|&t| has(g, p, t))
 }
 
 /// the ability language's search choice (dsl.py's search): for any card, ais.tutor_pick; for a card type, your
@@ -883,14 +866,7 @@ pub fn dsl_search_pick(g: &Game, p: PlayerId, f: &crate::dsl::model::Filter, can
         return Some(c);
     }
     let ty = f.kind.as_deref();
-    if ty == Some("land") && let Some(c) = crate::impls::karn::search_pick(g, p, cands) {
-        return Some(c); // the karn deck: the Tron piece it lacks
-    }
     if ty.is_none() || ty == Some("any") {
-        if hand_key(g, p) == "kefka" && decks::deck_has_storm(g, p) {
-            let wish = decks::kefka_wish(g, p);
-            return wish.iter().find_map(|n| g.db.id(n).filter(|c| cands.contains(c))); // Grim Servant: the wish list within its devotion limit
-        }
         let nm = decks::tutor_pick(g, p, "any")?;
         return cands.iter().copied().find(|&c| c == nm);
     }
