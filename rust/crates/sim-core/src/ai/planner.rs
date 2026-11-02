@@ -170,6 +170,35 @@ pub fn tutor_rule(g: &Game, c: CardId) -> Option<TutorRule<'_>> {
     Some((dest, Box::new(move |x| crate::ai::decks::tutor_ok(g, k, x))))
 }
 
+/// --- t6-xtutor: the restriction of a creature X tutor (`Settings::xtutor`): Finale of Devastation, Chord of Calling and
+/// Nature's Rhythm take any creature, Green Sun's Zenith a green one, Invasion of Ikoria a non-Human. They put it onto
+/// the battlefield, and the planner pays X = its mana value (`Player::plan_x`), so the mana left stays for the line.
+/// (Finale's graveyard search is left out. Mind Twist, Reshape, Genesis Wave and Hydra, Walking Ballista: not creature
+/// tutors toward a line. Pile tutors, Intuition and Gifts Ungiven: an opponent chooses.)
+pub fn xtutor_rule(g: &Game, c: CardId) -> Option<Box<dyn Fn(CardId) -> bool + '_>> {
+    let d = g.db.get(c);
+    if !g.settings.xtutor || d.land || d.perm || !d.tag(Tag::Xtutor) {
+        return None;
+    }
+    let creature = |x: CardId| g.db.get(x).creature;
+    match &*d.name {
+        "Finale of Devastation" | "Chord of Calling" | "Nature's Rhythm" => Some(Box::new(creature)),
+        "Green Sun's Zenith" => Some(Box::new(move |x| creature(x) && g.db.get(x).pips.contains('G'))),
+        "Invasion of Ikoria // Zilortha, Apex of Ikoria" => {
+            Some(Box::new(move |x| creature(x) && !g.db.get(x).has_subtype("human")))
+        }
+        _ => None,
+    }
+}
+
+/// --- t6-xtutor: the X a planned tutor step pays (the mana value of the card it finds); 0 for any other play
+pub fn tutor_x(g: &Game, s: Step) -> u32 {
+    match s {
+        Step::Tutor(c, t) if xtutor_rule(g, c).is_some() => g.db.get(t).cmc,
+        _ => 0,
+    }
+}
+
 /// a card that makes mana for the planner: a ritual that nets mana, a rock, a Mox, Lotus Petal, or a mana creature
 fn mana_card(g: &Game, p: PlayerId, c: CardId) -> bool {
     let d = g.db.get(c);
@@ -233,7 +262,7 @@ fn land_drop_left(g: &Game, p: PlayerId) -> bool {
 /// `eot`: the end-of-turn window before p's turn: instants only.
 fn plays(g: &Game, p: PlayerId, known: &[CardId], eot: bool) -> Vec<Step> {
     let pl = g.player(p);
-    let castable_now = |c: CardId, zone: &str| -> bool {
+    let castable_at = |c: CardId, zone: &str, x: u32| -> bool {
         let d = g.db.get(c);
         if eot && !(d.instant || d.tag(Tag::Flash)) {
             return false;
@@ -247,8 +276,9 @@ fn plays(g: &Game, p: PlayerId, known: &[CardId], eot: bool) -> Vec<Step> {
         }
         let (gn, pips) = cost_of(g, p, c);
         let tax = if zone == "cmd" { pl.tax_of(c) } else { 0 };
-        can_pay(g, p, gn + tax, &pips, d.tag(Tag::Convoke))
+        can_pay(g, p, gn + tax + x, &pips, d.tag(Tag::Convoke))
     };
+    let castable_now = |c: CardId, zone: &str| castable_at(c, zone, 0);
     let hand: Vec<CardId> = pl.hand.iter().copied().filter(|c| known.contains(c)).collect();
     let tutors: Vec<(CardId, Dest, Vec<CardId>)> =
         hand.iter().filter_map(|&c| tutor_targets(g, p, c).map(|(d, t)| (c, d, t))).collect();
@@ -264,6 +294,31 @@ fn plays(g: &Game, p: PlayerId, known: &[CardId], eot: bool) -> Vec<Step> {
             let mut n = 0;
             for &t in pieces.iter().chain(mana.iter().take(MAX_MANA_TARGETS)) {
                 if n < MAX_TARGETS && legal.contains(&t) {
+                    out.push(Step::Tutor(*c, t));
+                    n += 1;
+                }
+            }
+        }
+    }
+    // --- t6-xtutor: the creature X tutors in hand, each for a wanted creature at X = its mana value; the search then
+    // keeps only the casts after which a line is reached, so the mana the line needs afterwards is never spent
+    let mut xtutors: Vec<(CardId, Vec<CardId>)> = vec![];
+    for &c in &hand {
+        if let Some(ok) = xtutor_rule(g, c) {
+            xtutors.push((c, crate::engine::zones::searchable(g, p).into_iter().filter(|&x| ok(x)).collect()));
+        }
+    }
+    if !xtutors.is_empty() {
+        let (pieces, mana) = tutor_wants(g, p, tutors.len() + xtutors.len());
+        let mut tried: Vec<&str> = vec![];
+        for (c, legal) in &xtutors {
+            if tried.contains(&name(g, *c)) {
+                continue;
+            }
+            tried.push(name(g, *c));
+            let mut n = 0;
+            for &t in pieces.iter().chain(mana.iter().take(MAX_MANA_TARGETS)) {
+                if n < MAX_TARGETS && legal.contains(&t) && castable_at(*c, "hand", g.db.get(t).cmc) {
                     out.push(Step::Tutor(*c, t));
                     n += 1;
                 }
@@ -333,9 +388,12 @@ pub fn perform(g: &mut Game, p: PlayerId, s: Step) -> Res<bool> {
     match s {
         Step::Cast(c) => act::perform(g, p, &Action::Cast { card: c, zone: None }),
         Step::Tutor(c, t) => {
+            let x = xtutor_rule(g, c).map(|_| g.db.get(t).cmc); // --- t6-xtutor: X = the card's mana value
             g.player_mut(p).plan_tutor = Some(t);
+            g.player_mut(p).plan_x = x;
             let r = act::perform(g, p, &Action::Cast { card: c, zone: None });
             g.player_mut(p).plan_tutor = None;
+            g.player_mut(p).plan_x = None;
             r
         }
         Step::Land(c) => play_land_plan(g, p, c.0 as i64),
@@ -347,6 +405,9 @@ pub fn perform(g: &mut Game, p: PlayerId, s: Step) -> Res<bool> {
 pub fn label(g: &Game, s: Step) -> String {
     match s {
         Step::Cast(c) => name(g, c).to_string(),
+        Step::Tutor(c, t) if xtutor_rule(g, c).is_some() => {
+            format!("{} for {} (X={})", name(g, c), name(g, t), g.db.get(t).cmc) // --- t6-xtutor
+        }
         Step::Tutor(c, t) => format!("{} for {}", name(g, c), name(g, t)),
         Step::Land(c) => format!("play {}", name(g, c)),
         Step::Go(i) => format!("combo: {}", combos::audit_name(i)),
@@ -718,8 +779,15 @@ pub fn eot_play(g: &mut Game, p: PlayerId) -> Res<Option<(Step, Vec<Step>, &'sta
 /// The main phase keeps the reserved tutor's mana up: an option is dropped when the tutor can't be paid for after it
 /// (a cast by its cost; any other play by making it on a copy), and the tutor itself is not cast now (the
 /// end-of-turn window casts it, for the planner's card).
-pub fn reserve(g: &mut Game, p: PlayerId, tutor: CardId, opts: Vec<crate::hooks::Opt>) -> Vec<crate::hooks::Opt> {
+pub fn reserve(
+    g: &mut Game,
+    p: PlayerId,
+    tutor: CardId,
+    x: u32,
+    opts: Vec<crate::hooks::Opt>,
+) -> Vec<crate::hooks::Opt> {
     let (tg, tp) = cost_of(g, p, tutor);
+    let tg = tg + x; // --- t6-xtutor: an X tutor also keeps its X (`tutor_x`; 0 for any other)
     let mut out = vec![];
     for o in opts {
         let keep = match &o.act {
@@ -727,7 +795,7 @@ pub fn reserve(g: &mut Game, p: PlayerId, tutor: CardId, opts: Vec<crate::hooks:
             Some(Action::Cast { card, .. }) if *card == tutor => false,
             Some(Action::Cast { card, .. }) => {
                 let (gn, pips) = crate::engine::mana::seq_cost(g, p, &[*card, tutor]);
-                can_pay(g, p, gn, &pips, false)
+                can_pay(g, p, gn + x, &pips, false)
             }
             Some(a) => {
                 let mut g2 = copy(g, p);

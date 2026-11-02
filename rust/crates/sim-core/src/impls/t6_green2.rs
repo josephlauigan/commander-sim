@@ -583,6 +583,13 @@ pub fn ikoria_pick(g: &Game, p: PlayerId, x: i32) -> Option<(CardId, bool)> {
     if cands.is_empty() {
         return None;
     }
+    // --- t6-xtutor: the line planner's card, when it meets the restriction
+    if g.settings.xtutor
+        && let Some(t) = g.player(p).plan_tutor
+        && let Some(&b) = cands.iter().find(|(c, _)| *c == t)
+    {
+        return Some(b);
+    }
     // Tier 6: the card that completes one of the deck's lines (Oboro) comes before the wish list's other creatures
     if super::t6_plans::is_t6(g, p) && !crate::human::is_human(g, p) {
         let held = super::t6_pieces::held_names(g, p);
