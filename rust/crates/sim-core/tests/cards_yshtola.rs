@@ -710,6 +710,7 @@ fn the_cards_of_her_list_her_rules_dont_name() {
     let want = [
         "Anguished Unmaking",
         "Austere Command",
+        "Conjurer's Closet",
         "Dovin's Veto",
         "Farewell",
         "Fatal Push",
