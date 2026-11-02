@@ -11,6 +11,7 @@
 1 Chromatic Lantern (drc) 53
 1 Coalition Relic (fut) 161
 1 Command Tower (sld) 1697
+1 Conjurer's Closet (inr) 321
 1 Consecrated Sphinx (sld) 1657
 1 Dark Petition (sch) 19
 1 Debt to the Deathless (rvr) 364

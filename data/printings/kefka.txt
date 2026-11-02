@@ -49,6 +49,7 @@
 1 Necromancy (plst) VIS-64
 1 Niv-Mizzet, Parun (rvr) 376
 1 Niv-Mizzet, the Firemind (p30a) 14
+1 Palantír of Orthanc (hoc) 45
 1 Price of Progress (pd2) 18
 1 Psychosis Crawler (c15) 263
 1 Reality Shift (tdc) 163
