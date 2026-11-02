@@ -18,7 +18,7 @@ fn drained(g: &Game, p: PlayerId) -> Vec<PlayerId> {
 // ------------------------------------------------------------------ test_stack.Stack
 #[test]
 fn a_counter_war_between_three_players() {
-    let mut g = table(&["sauron", "veyran", "seph"]);
+    let mut g = table(&["sauron", "cloud", "seph"]);
     let (s, v) = (P0, P1);
     let sheo = card(&g, "Sheoldred, the Apocalypse");
     hand(&mut g, v, &["Counterspell"]);
@@ -39,7 +39,7 @@ fn a_counter_war_between_three_players() {
 
 #[test]
 fn a_countered_counterspell_does_nothing() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let (s, v) = (P0, P1);
     let sheo = card(&g, "Sheoldred, the Apocalypse");
     let cs = card(&g, "Counterspell");
@@ -57,7 +57,7 @@ fn a_countered_counterspell_does_nothing() {
 
 #[test]
 fn the_stack_copies_with_the_game() {
-    let mut g = table(&["veyran", "sauron"]);
+    let mut g = table(&["kefka", "sauron"]);
     let snipe = card(&g, "Guttersnipe");
     let it = stack::spell_item(&mut g, P0, snipe, Ctx::default(), 5.0);
     g.stack.push(it);
@@ -73,7 +73,7 @@ fn the_stack_copies_with_the_game() {
 // ------------------------------------------------------------------ test_stack.Abilities
 #[test]
 fn no_window_when_nobody_could_answer() {
-    let mut g = table(&["veyran", "sauron"]);
+    let mut g = table(&["kefka", "sauron"]);
     let src = perm(&mut g, P0, "Triskelion");
     let n = g.stack_pushes;
     assert!(stack::ability_window(&mut g, P0, Some(src), "1 damage", Some(9.0), None).unwrap());
@@ -83,7 +83,7 @@ fn no_window_when_nobody_could_answer() {
 // ------------------------------------------------------------------ test_triggers.Triggers
 #[test]
 fn an_enters_trigger_waits_for_the_spell_to_finish() {
-    let mut g = table(&["seph", "veyran", "sauron"]);
+    let mut g = table(&["seph", "cloud", "sauron"]);
     g.resolving = 1; // a spell is resolving
     perm(&mut g, P0, "Archon of Cruelty");
     assert!(drained(&g, P0).is_empty());
@@ -95,7 +95,7 @@ fn an_enters_trigger_waits_for_the_spell_to_finish() {
 
 #[test]
 fn the_active_players_triggers_go_on_the_stack_first() {
-    let mut g = table(&["seph", "veyran", "sauron"]);
+    let mut g = table(&["seph", "cloud", "sauron"]);
     g.active = Some(P1);
     let t = |q| Trigger {
         controller: q,
@@ -112,7 +112,7 @@ fn the_active_players_triggers_go_on_the_stack_first() {
 
 #[test]
 fn a_copied_game_keeps_its_waiting_triggers() {
-    let mut g = table(&["seph", "veyran", "sauron"]);
+    let mut g = table(&["seph", "cloud", "sauron"]);
     g.resolving = 1;
     perm(&mut g, P0, "Archon of Cruelty"); // its trigger waits for the spell resolving
     let mut g2 = g.clone();
@@ -124,7 +124,7 @@ fn a_copied_game_keeps_its_waiting_triggers() {
 
 #[test]
 fn a_countered_trigger_moves_no_card() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let m = perm(&mut g, P0, "Grave Titan");
     let cd = g.perm(m).cd.unwrap();
     let mut it = stack::spell_item(&mut g, P0, cd, Ctx { source: Some(m), ..Ctx::default() }, 3.0);
@@ -140,7 +140,7 @@ fn a_countered_trigger_moves_no_card() {
 #[test]
 fn archons_trigger_drains_the_biggest_threat() {
     // not in the Python suite: the engine's own enters trigger (etb_once) end to end
-    let mut g = table(&["seph", "veyran", "sauron"]);
+    let mut g = table(&["seph", "cloud", "sauron"]);
     perm(&mut g, P2, "Grave Titan"); // Sauron's board is the threat
     let before = g.player(P2).life;
     let hand0 = g.player(P0).hand.len();

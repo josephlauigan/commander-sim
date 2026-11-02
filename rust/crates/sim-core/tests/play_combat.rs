@@ -32,7 +32,7 @@ fn alive(g: &Game, p: PlayerId, m: PermId) -> bool {
 // ---- Attacking
 #[test]
 fn who_can_attack() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let arch = perm(&mut g, P0, "Jace's Archivist"); // the AI never attacks with it; you may
     let new = perm(&mut g, P0, "Orcish Bowmasters");
     sick(&mut g, new, true);
@@ -46,7 +46,7 @@ fn who_can_attack() {
 
 #[test]
 fn attack_the_only_opponent() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let t = perm(&mut g, P0, "Grave Titan");
     let i = idx(&attack_candidates(&g, P0), &t);
     seat(&mut g, P0, vec![picks(&[i])]);
@@ -57,7 +57,7 @@ fn attack_the_only_opponent() {
 
 #[test]
 fn choose_the_defending_player() {
-    let mut g = table(&["sauron", "veyran", "seph"]);
+    let mut g = table(&["sauron", "cloud", "seph"]);
     perm(&mut g, P0, "Grave Titan");
     let h = seat(&mut g, P0, vec![picks(&[0]), pick(1)]);
     combat(&mut g, P0).unwrap();
@@ -68,7 +68,7 @@ fn choose_the_defending_player() {
 
 #[test]
 fn split_attackers_between_players() {
-    let mut g = table(&["sauron", "veyran", "seph"]);
+    let mut g = table(&["sauron", "cloud", "seph"]);
     let t = perm(&mut g, P0, "Grave Titan");
     let b = perm(&mut g, P0, "Orcish Bowmasters");
     let c = attack_candidates(&g, P0);
@@ -82,7 +82,7 @@ fn split_attackers_between_players() {
 
 #[test]
 fn split_to_one_player_is_one_attack() {
-    let mut g = table(&["sauron", "veyran", "seph"]);
+    let mut g = table(&["sauron", "cloud", "seph"]);
     let t = perm(&mut g, P0, "Grave Titan");
     let b = perm(&mut g, P0, "Orcish Bowmasters");
     let c = attack_candidates(&g, P0);
@@ -92,7 +92,7 @@ fn split_to_one_player_is_one_attack() {
 
 #[test]
 fn a_single_attacker_isnt_offered_a_split() {
-    let mut g = table(&["sauron", "veyran", "seph"]);
+    let mut g = table(&["sauron", "cloud", "seph"]);
     perm(&mut g, P0, "Grave Titan");
     let h = seat(&mut g, P0, vec![picks(&[0]), pick(0)]);
     human_attack(&mut g, P0, 1).unwrap();
@@ -101,7 +101,7 @@ fn a_single_attacker_isnt_offered_a_split() {
 
 #[test]
 fn no_attack() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let t = perm(&mut g, P0, "Grave Titan");
     seat(&mut g, P0, vec![picks(&[])]);
     combat(&mut g, P0).unwrap();
@@ -112,7 +112,7 @@ fn no_attack() {
 // ---- the AI's attackers may go at different players (split_attack)
 #[test]
 fn an_attacker_avoids_a_bad_block() {
-    let mut g = table(&["sauron", "veyran", "seph"]);
+    let mut g = table(&["sauron", "cloud", "seph"]);
     let a = perm(&mut g, P0, "Orcish Bowmasters"); // 1/1
     perm(&mut g, P1, "Grave Titan"); // Veyran's 6/6 would eat it
     sick(&mut g, a, false);
@@ -121,7 +121,7 @@ fn an_attacker_avoids_a_bad_block() {
 
 #[test]
 fn one_blocker_stops_only_one_attacker() {
-    let mut g = table(&["sauron", "veyran", "seph"]);
+    let mut g = table(&["sauron", "cloud", "seph"]);
     let a = perm(&mut g, P0, "Orcish Bowmasters");
     let b = perm(&mut g, P0, "Orcish Bowmasters");
     perm(&mut g, P1, "Niv-Mizzet, Parun"); // one blocker that eats a 1/1
@@ -132,7 +132,7 @@ fn one_blocker_stops_only_one_attacker() {
 
 #[test]
 fn finish_off_a_player_who_cant_block() {
-    let mut g = table(&["sauron", "veyran", "seph"]);
+    let mut g = table(&["sauron", "cloud", "seph"]);
     let t = perm(&mut g, P0, "Grave Titan");
     perm(&mut g, P1, "Grave Titan"); // Veyran can trade with it; Sephiroth has nothing
     g.player_mut(P2).life = 5;
@@ -141,14 +141,14 @@ fn finish_off_a_player_who_cant_block() {
 
 #[test]
 fn nothing_moves_without_a_reason() {
-    let mut g = table(&["sauron", "veyran", "seph"]);
+    let mut g = table(&["sauron", "cloud", "seph"]);
     let t = perm(&mut g, P0, "Grave Titan");
     assert_eq!(split_attack(&g, P0, P1, &[t], &[]), vec![(P1, vec![t])]);
 }
 
 #[test]
 fn the_ai_attacks_two_players_in_one_combat() {
-    let mut g = table(&["sauron", "veyran", "seph"]);
+    let mut g = table(&["sauron", "cloud", "seph"]);
     let t = perm(&mut g, P0, "Grave Titan");
     let b = perm(&mut g, P0, "Orcish Bowmasters");
     perm(&mut g, P2, "Grave Titan"); // Sephiroth can eat the Bowmasters
@@ -162,7 +162,7 @@ fn the_ai_attacks_two_players_in_one_combat() {
 // ---- Blocking
 #[test]
 fn block() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Grave Titan");
     let a = perm(&mut g, P1, "Guttersnipe");
     let h = seat(&mut g, P0, vec![pass(), pick(0)]);
@@ -176,7 +176,7 @@ fn block() {
 
 #[test]
 fn no_block() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Grave Titan");
     let a = perm(&mut g, P1, "Guttersnipe");
     seat(&mut g, P0, vec![pass(), cancel()]);
@@ -187,7 +187,7 @@ fn no_block() {
 
 #[test]
 fn unblockable_attackers_are_not_asked_about() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Grave Titan");
     let a = perm(&mut g, P1, "Guttersnipe");
     let h = seat(&mut g, P0, vec![pass()]);
@@ -201,7 +201,7 @@ fn unblockable_attackers_are_not_asked_about() {
 // ---- with a person at the browser, combat requests say where the creatures are, so the table can show them
 #[test]
 fn attackers_point_at_your_creatures() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let t = perm(&mut g, P0, "Grave Titan");
     let h = seat_live(&mut g, P0, vec![picks(&[0])]);
     let out = human_attack(&mut g, P0, 1).unwrap();
@@ -212,13 +212,13 @@ fn attackers_point_at_your_creatures() {
 
 #[test]
 fn blocks_show_the_attackers() {
-    let mut g = table(&["veyran", "sauron"]);
+    let mut g = table(&["kefka", "sauron"]);
     let a = perm(&mut g, P0, "Guttersnipe");
     let b = perm(&mut g, P1, "Orcish Bowmasters");
     let h = seat_live(&mut g, P1, vec![cancel()]);
     human_blocks(&mut g, P0, &[a], P1, &[]).unwrap();
     let d = h.asked()[0].data.clone();
-    let want = json!({"seat": "veyran", "perm": idx(&g.player(P0).perms, &a)});
+    let want = json!({"seat": "kefka", "perm": idx(&g.player(P0).perms, &a)});
     assert_eq!(d["attacker"], want);
     assert_eq!(d["attackers"], json!([want]));
     let mine = json!({"seat": "sauron", "perm": idx(&g.player(P1).perms, &b)});

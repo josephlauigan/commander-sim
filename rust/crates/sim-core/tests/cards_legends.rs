@@ -25,7 +25,7 @@ const P2: PlayerId = PlayerId(2);
 
 /// a table whose first seat plays Jodah, the Unifier (WUBRG) as its commander; the opponent is Veyran's deck
 fn jodah_table() -> Game {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     let c = card(&g, "Jodah, the Unifier");
     let p = g.player_mut(P0);
     p.cmd = c;
@@ -392,7 +392,7 @@ fn plaza_any_colour_for_legendary_spells_only() {
 // ======================================================== lands
 #[test]
 fn unclaimed_territory_names_the_commonest_creature_type() {
-    let mut g = table(&["winota-boros-humans-cheat", "veyran"]);
+    let mut g = table(&["winota-boros-humans-cheat", "cloud"]);
     assert_eq!(J::territory_type(&g, P0), "human"); // Winota's Humans
     for n in ["Unclaimed Territory", "Island", "Swamp"] {
         lands(&mut g, P0, n, 1, false);
@@ -609,7 +609,7 @@ fn feed_the_cycle_costs_1bb_and_answers_an_attack() {
 // ======================================================== Tymna the Weaver
 #[test]
 fn tymna_pays_a_life_per_opponent_hit() {
-    let mut g = table(&["galadriel", "veyran", "seph"]);
+    let mut g = table(&["galadriel", "cloud", "seph"]);
     let t = perm(&mut g, P0, "Tymna the Weaver");
     let a = token(&mut g, P0, 3);
     let n = g.player(P0).hand.len();
@@ -626,7 +626,7 @@ fn tymna_pays_a_life_per_opponent_hit() {
 
 #[test]
 fn tymna_keeps_low_life() {
-    let mut g = table(&["galadriel", "veyran", "seph"]);
+    let mut g = table(&["galadriel", "cloud", "seph"]);
     perm(&mut g, P0, "Tymna the Weaver");
     let a = token(&mut g, P0, 3);
     combat::resolve_combat(&mut g, P0, &[a], P1, &[]).unwrap();
@@ -641,7 +641,7 @@ const GARLAND: &str = "Garland, Royal Kidnapper";
 
 #[test]
 fn garland_crowns_the_opponent_with_the_best_creature_and_steals_it() {
-    let mut g = table(&["galadriel", "veyran", "seph"]);
+    let mut g = table(&["galadriel", "cloud", "seph"]);
     let lyra = perm(&mut g, P1, "Lyra Dawnbringer");
     let s = perm(&mut g, P2, "Solemn Simulacrum");
     assert_eq!(pt(&g, lyra), (5, 5));
@@ -656,7 +656,7 @@ fn garland_crowns_the_opponent_with_the_best_creature_and_steals_it() {
 
 #[test]
 fn garland_control_returns_when_that_opponent_loses_the_monarch() {
-    let mut g = table(&["galadriel", "veyran", "seph"]);
+    let mut g = table(&["galadriel", "cloud", "seph"]);
     let lyra = perm(&mut g, P1, "Lyra Dawnbringer");
     perm(&mut g, P0, GARLAND);
     let a = token(&mut g, P2, 2);
@@ -670,7 +670,7 @@ fn garland_control_returns_when_that_opponent_loses_the_monarch() {
 
 #[test]
 fn garland_an_opponent_taking_the_monarch_from_you_triggers_a_steal() {
-    let mut g = table(&["galadriel", "veyran", "seph"]);
+    let mut g = table(&["galadriel", "cloud", "seph"]);
     perm(&mut g, P0, GARLAND); // no creatures yet: nothing to take
     assert_eq!(g.monarch, Some(P1));
     sim_core::cardcode::become_monarch(&mut g, P0).unwrap(); // (you take it back: no trigger for you)
@@ -685,7 +685,7 @@ fn garland_an_opponent_taking_the_monarch_from_you_triggers_a_steal() {
 
 #[test]
 fn garland_stolen_creatures_cant_be_sacrificed() {
-    let mut g = table(&["galadriel", "veyran", "seph"]);
+    let mut g = table(&["galadriel", "cloud", "seph"]);
     let t = token(&mut g, P1, 1);
     let gar = perm(&mut g, P0, GARLAND);
     assert!(on(&g, P0, t));
@@ -703,7 +703,7 @@ fn garland_stolen_creatures_cant_be_sacrificed() {
 
 #[test]
 fn garland_the_steal_outlasts_garland_and_ends_with_the_owner() {
-    let mut g = table(&["galadriel", "veyran", "seph"]);
+    let mut g = table(&["galadriel", "cloud", "seph"]);
     let lyra = perm(&mut g, P1, "Lyra Dawnbringer");
     let gar = perm(&mut g, P0, GARLAND);
     zones::die(&mut g, gar, "destroy").unwrap();
@@ -719,7 +719,7 @@ const MARCHESA: &str = "Marchesa, the Black Rose";
 
 #[test]
 fn marchesa_dethrone_on_the_life_leader() {
-    let mut g = table(&["galadriel", "veyran", "sauron"]);
+    let mut g = table(&["galadriel", "cloud", "sauron"]);
     let a = perm(&mut g, P0, MARCHESA);
     let b = perm(&mut g, P0, "Burglar Rat");
     g.player_mut(P1).life = 41;

@@ -16,7 +16,7 @@ const P1: PlayerId = PlayerId(1);
 const P2: PlayerId = PlayerId(2);
 
 fn table3() -> Game {
-    table(&["yshtola", "veyran", "sauron"])
+    table(&["yshtola", "cloud", "sauron"])
 }
 
 /// your commander onto the battlefield, ready

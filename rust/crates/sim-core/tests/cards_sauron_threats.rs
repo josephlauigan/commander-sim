@@ -13,7 +13,7 @@ const P1: PlayerId = PlayerId(1);
 const P2: PlayerId = PlayerId(2);
 
 fn game() -> Game {
-    let mut g = table(&["sauron", "veyran", "seph"]);
+    let mut g = table(&["sauron", "cloud", "seph"]);
     g.active = Some(P0);
     g
 }
@@ -193,4 +193,26 @@ fn sauron_ai_plays_the_early_cards_on_turn_two() {
         "{:?}",
         opts.iter().map(|o| &o.label).collect::<Vec<_>>()
     );
+}
+
+/// Magecraft triggers on copying an instant or sorcery, and Dualcaster Mage's copy is its controller's: with Archmage
+/// Emeritus out, a deck without Veyran (The Ur-Dragon, which holds the Mage) draws one card for its copy of an
+/// opponent's Harmonize; Guttersnipe (magecraft on casting only) doesn't trigger on the copy.
+#[test]
+fn dualcasters_copy_triggers_magecraft_for_any_deck() {
+    let drawn = |emeritus: bool| {
+        let mut g = table(&["urdragon", "cloud"]);
+        lands(&mut g, P0, "Mountain", 3, false);
+        perm(&mut g, P0, if emeritus { "Archmage Emeritus" } else { "Guttersnipe" });
+        let life = g.player(P1).life;
+        let dc = hand(&mut g, P0, &["Dualcaster Mage"])[0];
+        let spell = hand(&mut g, P1, &["Harmonize"])[0];
+        let n = g.player(P0).hand.len();
+        sim_core::cardcode::hand_opp_cast(&mut g, P0, spell).unwrap();
+        assert!(g.player(P0).perms.iter().any(|&m| g.perm(m).cd == Some(dc)), "the Mage was flashed in");
+        assert_eq!(g.player(P1).life, life, "no ping for a copy");
+        g.player(P0).hand.len() + 1 - n // + the Mage that left the hand
+    };
+    assert_eq!(drawn(false), 3, "the copy draws three, Guttersnipe adds nothing");
+    assert_eq!(drawn(true), 4, "and Emeritus one for the copy: one trigger");
 }

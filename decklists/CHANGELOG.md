@@ -4,7 +4,8 @@ The history of the decks in `decklists/JD/` and `decklists/Avery/`: every change
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Cloud, Ghave, Karn, Kefka, Sauron, Sheoldred, Thanos, Tymna/Thrasios, Ur-Dragon, Veyran, Y'shtola.
+JD's decks: Cloud, Ghave, Karn, Kefka, Sauron, Sheoldred, Thanos, Tymna/Thrasios, Ur-Dragon, Y'shtola (Veyran retired
+2026-11-01).
 Avery's decks: Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
@@ -13,6 +14,7 @@ Deck key `cloud`, `decklists/JD/cloud-midgar-equipment.md`.
 
 ### Changes
 
+- **2026-11-01.** Out: Stand Up for Yourself. In: Judgment of Alexander. JD's choice (11/01), not simulated: Judgment of Alexander for Stand Up for Yourself. Defense is the deck's one proven lever; it's an instant that prevents all damage opponents' sources would deal to you this turn, and an equipped Cloud deals damage equal to his power to each creature whose damage was prevented, without wiping your own carriers. Judgment of Alexander is unmodeled.
 - **2026-10-31.** Out: Galadriel's Dismissal. In: Teferi's Protection. Out: Galadriel's Dismissal (to Ghave). In: Teferi's Protection. JD's choice (10/31), not simulated: protects Cloud, his Equipment and the board from a wipe, exile or a lethal attack; 3 Game Changers, still Bracket 3.
 - **2026-10-31.** Out: Sphere of Safety. In: Forge Anew. Out: Sphere of Safety (to Y'shtola). In: Forge Anew. JD's choice (10/31), not simulated: a free equip each turn, instant-speed equips on your turn, and an Equipment back from the graveyard; Sphere taxed only about {3} per attacker with three enchantments and was stuck in hand 42% of the games it was drawn.
 - **2026-10-27.** Out: Wall of Omens. In: Galadriel's Dismissal. JD's choice (2026-10-27), not simulated: Galadriel's Dismissal (from Seph/Atraxa) for Wall of Omens: {W} instant protection for Cloud and his Equipment.
@@ -83,6 +85,7 @@ Deck key `kefka`, `decklists/JD/kefka-grixis-discard.md`.
 
 ### Changes
 
+- **2026-11-01.** Out: Eternal Student. In: Palantír of Orthanc. JD's choice (11/01), not simulated: Palantír of Orthanc for Eternal Student. Scry 2 and a card or a drain at each of your end steps; the drain happens on your turn, so once Kefka has flipped the opponent's life loss draws you that many cards. Eternal Student was a 4-mana 3/2 whose only value was two fliers from the graveyard.
 - **2026-10-31.** Out: Cackling Fiend, Deflecting Swat, Grim Servant, Jin-Gitaxias, Progress Tyrant, Mana Leak, Night's Whisper, Pongify, Sawblade Scamp, Screeching Soulbreaker, Shimmercreep, Sisay's Ring, Slip Out the Back, Sneering Shadewriter, Thrill of Possibility, Viashino Fangtail. In: Birgi, God of Storytelling, Blazing Firesinger // Seething Song, Counterspell, Firebrand Archer, Frantic Search, Guttersnipe, Harmonic Prodigy, Kessig Flamebreather, Mistrise Village, Mystic Sanctuary, Mystical Tutor, Niv-Mizzet, Parun, Scorched Geyser, Solve the Equation, Storm-Kiln Artist, Temple of Epiphany, Think Twice, Veyran, Voice of Duality, Young Pyromancer. Veyran taken apart into Kefka (JD, 10/31), not simulated. In from Veyran: Veyran, Harmonic Prodigy, Guttersnipe, Kessig Flamebreather, Young Pyromancer, Niv-Mizzet, Parun (pingers: flipped Kefka draws a card per point of life lost on your turn, and Prodigy and Veyran double the triggers); Frantic Search, Think Twice, Solve the Equation, Mystical Tutor (free discards and tutors for the combo spells); Birgi, Storm-Kiln Artist, Blazing Firesinger, Firebrand Archer (the storm turn); Scorched Geyser, Temple of Epiphany, Mystic Sanctuary, Mistrise Village, 2 Mountain. Counterspell (from Veyran) for Pongify. Out to Sauron: Slip Out the Back, Deflecting Swat, Jin-Gitaxias. Out to bulk: the old pingers, Thrill of Possibility, Night's Whisper, Mana Leak, Grim Servant, Cackling Fiend, Sisay's Ring, Pongify, 5 Swamp, 1 Island.
 - **2026-10-30.** Out: Sleight of Hand. In: Glimpse the Unthinkable. Kefka: Glimpse the Unthinkable (from the retired Seph/Atraxa deck, 10/30) in for Sleight of Hand. JD's choice, not simulated.
 - **2026-10-30.** Out: Rank Rat. In: Price of Progress. JD's swap (10/30), not simulated: Rank Rat -> Price of Progress (with Kefka flipped, each opponent's life loss on your turn draws you that many cards). Price of Progress is unmodeled.
@@ -121,6 +124,7 @@ Deck key `sauron`, `decklists/JD/sauron-grixis-amass.md`.
 
 ### Changes
 
+- **2026-11-01.** Out: Ral and the Implicit Maze. In: Triple Triad. JD's choice (11/01), not simulated. Ral was the card most often stuck in hand (cast in 20-30% of the games it was drawn, t3-t5, 10/17 card report); Triple Triad is a six-mana upkeep engine whose "lesser mana value" clause rewards Sauron's top end, the heaviest curve of JD's red decks (3.28 average mana value, 16 cards at 5+). Triple Triad is modeled (Full), but the sim's AI has no cast priority for it yet, so a swap test would show it stuck in hand.
 - **2026-10-31.** Out: Arcane Denial, Cost of Brilliance, Disdainful Stroke, Inexorable Tide, Mountain, Relic of Legends, Undermine. In: An Offer You Can't Refuse, Deflecting Swat, Jin-Gitaxias, Progress Tyrant, Mystic Confluence, Propaganda, Slip Out the Back, Sokenzan, Crucible of Defiance. JD (10/31), not simulated. In: Deflecting Swat, Slip Out the Back, Jin-Gitaxias (from Kefka); Mystic Confluence, Propaganda, An Offer You Can't Refuse, Sokenzan (from Veyran). Out: Relic of Legends, Inexorable Tide, Disdainful Stroke, Arcane Denial (bottom five by win rate when cast), Cost of Brilliance, Undermine, a Mountain. An Offer's Treasures help opponents cast spells, which grows the Army. Protection for Sauron and the Army, a tax on attackers (T3 deaths are combat), and a counter/bounce/draw instant.
 - **2026-10-30.** Out: Crumbling Necropolis, Frostboil Snarl, Izzet Boilerworks. In: Underground River, Underground Sea, Watery Grave. Sauron: lands from the retired Seph/Atraxa deck (10/30). In: Underground Sea, Watery Grave, Underground River. Out: Izzet Boilerworks, Crumbling Necropolis, Frostboil Snarl. JD's choice, not simulated.
 - **2026-10-30.** Out: Aggravated Assault, Go for the Throat, Urabrask, Heretic Praetor, Vraska, Betrayal's Sting. In: Baleful Mastery, Faerie Mastermind, Mana Drain, Torment of Hailfire. JD's swaps (10/30), not simulated: Aggravated Assault -> Torment of Hailfire, Go for the Throat -> Baleful Mastery, Urabrask, Heretic Praetor -> Faerie Mastermind, Vraska, Betrayal's Sting -> Mana Drain.
@@ -464,10 +468,19 @@ Deck key `kraum` (removed), `decklists/JD/tymna-kraum-partners.md` (removed).
 
 ## Veyran, Voice of Duality — Izzet Spellslinger
 
-Deck key `veyran`, `decklists/JD/veyran-izzet-spellslinger.md`.
+**Retired 2026-11-01 (JD: "we should retire veyran").** The deck was taken apart on 2026-10-31: Veyran, Voice of
+Duality and the magecraft package went to Kefka, Mystic Confluence, Propaganda, An Offer You Can't Refuse and
+Sokenzan to Sauron (see their entries), the rest to bulk. The `veyran` key and its t1-t3 simulator seat are gone (Cloud
+keeps band 4); its plan file and Spellbook data were removed (its hand-written AI already was, 2026-11-01). The list
+is kept in `decklists/pool/retired/veyran-izzet-spellslinger.md` as history; no test seats it (the tests of its cards
+seat Kefka). The entries below are the deck's history.
+
+Deck key `veyran` (until 2026-11-01), `decklists/JD/veyran-izzet-spellslinger.md` (moved to `decklists/pool/retired/`).
 
 ### Changes
 
+- **2026-11-01.** Retired from the simulator (JD): the key left `data/my_decks.toml`, `data/decks.json` and the deck
+  guard fixture; the list moved to `decklists/pool/retired/`. No list change.
 - **2026-10-30.** Out: Spell Pierce. In: Arcane Denial. Veyran: Arcane Denial (from the retired Seph/Atraxa deck, 10/30) in for Spell Pierce. JD's choice, not simulated.
 - **2026-10-30.** Out: Aetherflux Reservoir, Talrand, Sky Summoner, Visions of Beyond. In: Birgi, God of Storytelling, Firebrand Archer, Frantic Search. JD's swaps (10/30), not simulated: Aetherflux Reservoir -> Firebrand Archer, Talrand, Sky Summoner -> Birgi, God of Storytelling, Visions of Beyond -> Frantic Search.
 - **2026-10-18.** Out: Evacuation, Venser, Shaper Savant. In: Consecrated Sphinx, Mystical Tutor. Band calibration 10/18 (JD approved): Evacuation=>Consecrated Sphinx;Venser, Shaper Savant=>Mystical Tutor
@@ -564,6 +577,7 @@ Deck key `yshtola`, `decklists/JD/yshtola-esper-drain.md`.
 
 ### Changes
 
+- **2026-11-01.** Out: Thief of Sanity. In: Conjurer's Closet. JD's choice (11/01), not simulated: Conjurer's Closet (JD's spare copy) for Thief of Sanity. A mana value 5 artifact, so casting it triggers Y'shtola, and each end step it re-buys an enters trigger (Orcish Bowmasters, Massacre Wurm, Gonti, Skyclave Apparition, Hostage Taker); Thief of Sanity had no enters trigger and needed to connect.
 - **2026-10-31.** Out: Luminous Bonds. In: Sphere of Safety. Out: Luminous Bonds. In: Sphere of Safety (from Cloud). JD's choice (10/31), not simulated: with 16 enchantments Sphere taxes every attacker about {6}-{10}, one tax for the whole table; Luminous Bonds had one of her lowest win rates when cast.
 - **2026-10-30.** Out: Encrust, Night's Whisper, Windborn Muse. In: Displacer Kitten, Rhystic Study, Teleportation Circle. Y'shtola: cards from the retired Seph/Atraxa deck (rebuilt as Ghave, 10/30). In: Rhystic Study, Teleportation Circle, Displacer Kitten. Out: Night's Whisper, Encrust, Windborn Muse. JD's choice, not simulated.
 - **2026-10-30.** Out: nothing. In: Urborg, Tomb of Yawgmoth. Y'shtola: Urborg, Tomb of Yawgmoth in for a Swamp (every land taps for black).

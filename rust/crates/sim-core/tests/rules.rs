@@ -13,7 +13,7 @@ const P2: PlayerId = PlayerId(2);
 // ------------------------------------------------------------------ Mana
 #[test]
 fn colours_must_match() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     lands(&mut g, P0, "Island", 2, false);
     lands(&mut g, P0, "Mountain", 1, false);
     assert!(mana::can_pay(&g, P0, 1, "UR", false));
@@ -24,7 +24,7 @@ fn colours_must_match() {
 
 #[test]
 fn paying_taps_the_sources() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     lands(&mut g, P0, "Island", 2, false);
     lands(&mut g, P0, "Mountain", 1, false);
     assert!(mana::pay(&mut g, P0, 0, "UU", false).unwrap());
@@ -35,14 +35,14 @@ fn paying_taps_the_sources() {
 
 #[test]
 fn sol_ring_makes_two() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     perm(&mut g, P0, "Sol Ring");
     assert_eq!(mana::total_mana(&g, P0, false), 2);
 }
 
 #[test]
 fn treasure_is_spent_last() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     lands(&mut g, P0, "Swamp", 1, false);
     zones::add_treasure(&mut g, P0, 1).unwrap();
     mana::pay(&mut g, P0, 1, "", false).unwrap();
@@ -52,11 +52,11 @@ fn treasure_is_spent_last() {
 
 #[test]
 fn talisman_hurts_only_for_coloured_mana() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Talisman of Hierarchy");
     mana::pay(&mut g, P0, 1, "", false).unwrap();
     assert_eq!(g.player(P0).life, 40);
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Talisman of Hierarchy");
     mana::pay(&mut g, P0, 0, "B", false).unwrap();
     assert_eq!(g.player(P0).life, 39);
@@ -64,7 +64,7 @@ fn talisman_hurts_only_for_coloured_mana() {
 
 #[test]
 fn commander_tax() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let cmd = g.player(P0).cmd;
     assert_eq!(mana::cost_of(&g, P0, cmd), (3, "GWUB".to_string())); // Atraxa, Grand Unifier
     g.player_mut(P0).tax = 4;
@@ -74,7 +74,7 @@ fn commander_tax() {
 // ------------------------------------------------------------------ StateChecks
 #[test]
 fn zero_life_eliminates() {
-    let mut g = table(&["seph", "veyran", "sauron"]);
+    let mut g = table(&["seph", "cloud", "sauron"]);
     g.player_mut(P1).life = 0;
     life::check_state(&mut g).unwrap();
     assert!(!g.player(P1).alive);
@@ -83,7 +83,7 @@ fn zero_life_eliminates() {
 
 #[test]
 fn twenty_one_commander_damage_eliminates() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     g.player_mut(P1).cmd_dmg[0] = 21;
     life::check_state(&mut g).unwrap();
     assert!(!g.player(P1).alive && g.over);
@@ -92,7 +92,7 @@ fn twenty_one_commander_damage_eliminates() {
 
 #[test]
 fn twenty_commander_damage_does_not() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     g.player_mut(P1).cmd_dmg[0] = 20;
     life::check_state(&mut g).unwrap();
     assert!(g.player(P1).alive);
@@ -100,7 +100,7 @@ fn twenty_commander_damage_does_not() {
 
 #[test]
 fn drawing_from_an_empty_library_loses() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     g.player_mut(P1).library.clear();
     zones::draw(&mut g, P1, 1, false).unwrap();
     life::check_state(&mut g).unwrap();
@@ -109,7 +109,7 @@ fn drawing_from_an_empty_library_loses() {
 
 #[test]
 fn ten_poison_counters_lose() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     g.player_mut(P1).poison = 10;
     life::check_state(&mut g).unwrap();
     assert!(!g.player(P1).alive);
@@ -118,7 +118,7 @@ fn ten_poison_counters_lose() {
 // ------------------------------------------------------------------ Counterspells
 #[test]
 fn what_each_counter_can_hit() {
-    let g = table(&["seph", "veyran"]);
+    let g = table(&["seph", "cloud"]);
     let c = |n| card(&g, n);
     let (titan, tutor, ring) = (c("Grave Titan"), c("Demonic Tutor"), c("Sol Ring"));
     assert!(stack::counter_ok(&g, c("Counterspell"), titan));
@@ -133,7 +133,7 @@ fn what_each_counter_can_hit() {
 
 #[test]
 fn a_counter_needs_its_mana() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     hand(&mut g, P0, &["Counterspell"]);
     let ls = lands(&mut g, P0, "Island", 2, false);
     let titan = card(&g, "Grave Titan");
@@ -144,7 +144,7 @@ fn a_counter_needs_its_mana() {
 
 #[test]
 fn force_of_will_exiles_a_blue_card_and_one_life() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let cs = hand(&mut g, P0, &["Force of Will", "Think Twice"]);
     let titan = card(&g, "Grave Titan");
     assert_eq!(stack::pick_counter(&g, P0, titan), Some(cs[0]));
@@ -178,7 +178,7 @@ fn path_gives_a_tapped_land() {
 
 #[test]
 fn bolt_kills_three_toughness_only() {
-    let mut g = table(&["veyran", "sauron"]);
+    let mut g = table(&["kefka", "sauron"]);
     let small = perm(&mut g, P1, "Jace's Archivist"); // 2/3
     let big = perm(&mut g, P1, "Hellkite Tyrant"); // 6/5
     let bolt = card(&g, "Lightning Bolt");
@@ -190,7 +190,7 @@ fn bolt_kills_three_toughness_only() {
 
 #[test]
 fn a_removed_token_leaves_no_card() {
-    let mut g = table(&["veyran", "sauron"]);
+    let mut g = table(&["kefka", "sauron"]);
     let t = token(&mut g, P1, 2);
     let pongify = card(&g, "Pongify");
     removal::apply_removal(&mut g, Some(P0), t, "destroy", Some(pongify)).unwrap();
@@ -235,13 +235,13 @@ fn teferis_protection_effects() {
 
 #[test]
 fn teferis_protection_survives_a_damage_combo_but_not_an_alternate_win() {
-    let mut g = table(&["sauron", "seph", "veyran"]);
+    let mut g = table(&["sauron", "seph", "cloud"]);
     let (r, s, v) = (P0, P1, P2);
     lands(&mut g, s, "Plains", 3, false);
     hand(&mut g, s, &["Teferi's Protection"]);
     sim_core::ai::win(&mut g, r, "combo", None).unwrap();
     assert!(g.player(s).alive && !g.player(v).alive && !g.over);
-    let mut g = table(&["sauron", "seph", "veyran"]);
+    let mut g = table(&["sauron", "seph", "cloud"]);
     lands(&mut g, s, "Plains", 3, false);
     hand(&mut g, s, &["Teferi's Protection"]);
     sim_core::ai::win(&mut g, r, "combo", Some(false)).unwrap(); // Thassa's Oracle, mill
@@ -259,7 +259,7 @@ fn teferis_protection_needs_its_mana() {
 // ------------------------------------------------------------------ test_game_changers.Mana
 #[test]
 fn ancient_tomb_is_not_tapped_when_it_would_kill_you() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     lands(&mut g, P0, "Ancient Tomb", 1, false);
     assert_eq!(mana::total_mana(&g, P0, false), 2);
     g.player_mut(P0).life = 2;
@@ -268,7 +268,7 @@ fn ancient_tomb_is_not_tapped_when_it_would_kill_you() {
 
 #[test]
 fn mox_diamond_put_onto_the_battlefield_still_needs_a_land() {
-    let mut g = table(&["kinnan-simic-mana-combo", "veyran"]);
+    let mut g = table(&["kinnan-simic-mana-combo", "cloud"]);
     let mox = card(&g, "Mox Diamond");
     zones::enter(&mut g, P0, mox, zones::Enter::default()).unwrap(); // Urza's Saga's chapter III, no land in hand
     assert!(!g.player(P0).perms.iter().any(|&m| g.perm(m).name == "Mox Diamond"));
@@ -278,7 +278,7 @@ fn mox_diamond_put_onto_the_battlefield_still_needs_a_land() {
 // ------------------------------------------------------------------ test_land_entry.LandEntersTriggers
 #[test]
 fn a_gain_land_gains_life_and_each_land_only_once() {
-    let mut g = table(&["yshtola", "veyran"]);
+    let mut g = table(&["yshtola", "cloud"]);
     let life0 = g.player(P0).life;
     let barrens = card(&g, "Scoured Barrens");
     g.add_land(P0, barrens, true); // PORT(M3): through ais.play_land_card
@@ -290,7 +290,7 @@ fn a_gain_land_gains_life_and_each_land_only_once() {
 #[test]
 fn a_pact_is_affordable_from_everything_untapped() {
     use sim_core::engine::cast::pact_affordable;
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let ls = lands(&mut g, P0, "Island", 5, true); // all tapped now
     assert!(pact_affordable(&g, P0, "3UU")); // Pact of Negation: everything untaps at the upkeep
     assert!(g.perm(ls[0]).tapped); // the real game is untouched
@@ -302,7 +302,7 @@ fn a_pact_is_affordable_from_everything_untapped() {
 #[test]
 fn kept_hands() {
     for seed in 0..40 {
-        let mut g = table(&["seph", "veyran"]);
+        let mut g = table(&["seph", "cloud"]);
         let mut r = sim_core::rng::Rng::from_u64(seed);
         sim_core::engine::turn::mulligan(&mut g, P0, &mut r);
         let pl = g.player(P0);
@@ -320,7 +320,7 @@ use sim_core::engine::combat;
 
 #[test]
 fn an_unblocked_commander_deals_commander_damage() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let w = perm(&mut g, P0, "Witch-king, Bringer of Ruin"); // 5/3 flying
     g.perm_mut(w).is_cmd = true;
     combat::resolve_combat(&mut g, P0, &[w], P1, &[]).unwrap();
@@ -330,7 +330,7 @@ fn an_unblocked_commander_deals_commander_damage() {
 
 #[test]
 fn flyers_need_flying_or_reach_to_block() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let blocker = perm(&mut g, P1, "Murmuring Mystic");
     let flyer = perm(&mut g, P0, "Witch-king, Bringer of Ruin");
     let ground = perm(&mut g, P0, "Grave Titan");
@@ -350,7 +350,7 @@ fn a_deathtouch_blocker_kills_a_big_attacker() {
 
 #[test]
 fn lifelink() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let a = perm(&mut g, P0, "Atraxa, Grand Unifier"); // 7/7 lifelink
     g.player_mut(P0).life = 30;
     combat::resolve_combat(&mut g, P0, &[a], P1, &[]).unwrap();

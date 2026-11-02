@@ -42,8 +42,7 @@ is removed.
 
 ### Cards that want to be discarded
 - **Scarlet Spider, Kaine** (mayhem: cast from the graveyard for {B/R} the turn you discard it), **Demonic Embrace**
-  (cast from the graveyard by paying 3 life and discarding another card), **Twinned Vision** (flashback draws two)
-  and **Eternal Student** (exile from the graveyard for two flying Inklings).
+  (cast from the graveyard by paying 3 life and discarding another card) and **Twinned Vision** (flashback draws two).
 - **Stinkweed Imp** ({2}{B}, a 1/2 flier that destroys any creature it deals combat damage to) has dredge 5: once it
   is in the graveyard, any draw, Kefka's included, can mill five cards instead and return it to your hand. Discard it
   again for Kefka; the milled cards feed Underworld Breach and Yawgmoth's Will. Dredge needs five cards left in the
@@ -213,11 +212,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Kefka, Court Mage // Kefka, Ruler of Ruin
 
-**Creatures (26).** Alpharael Dreaming Acolyte, Birgi God of Storytelling, Blazing Firesinger // Seething Song, Blightspeaker, Eternal Student, Firebrand Archer, Garrison Excavator, Guttersnipe, Harmonic Prodigy, Intellect Devourer, Kessig Flamebreather, Kuja Genome Sorcerer // Trance Kuja Fate Defied, Marvin Murderous Mimic, Massacre Wurm, Niv-Mizzet Parun, Niv-Mizzet the Firemind, Psychosis Crawler, Rummaging Goblin, Scarlet Spider Kaine, Skullport Merchant, Stadium Tidalmage, Stinkweed Imp, Storm-Kiln Artist, Susurian Voidborn, Veyran Voice of Duality, Young Pyromancer
+**Creatures (25).** Alpharael Dreaming Acolyte, Birgi God of Storytelling, Blazing Firesinger // Seething Song, Blightspeaker, Firebrand Archer, Garrison Excavator, Guttersnipe, Harmonic Prodigy, Intellect Devourer, Kessig Flamebreather, Kuja Genome Sorcerer // Trance Kuja Fate Defied, Marvin Murderous Mimic, Massacre Wurm, Niv-Mizzet Parun, Niv-Mizzet the Firemind, Psychosis Crawler, Rummaging Goblin, Scarlet Spider Kaine, Skullport Merchant, Stadium Tidalmage, Stinkweed Imp, Storm-Kiln Artist, Susurian Voidborn, Veyran Voice of Duality, Young Pyromancer
 
 **Enchantments (4).** Corroding Dragonstorm, Demonic Embrace, Fiery Emancipation, Underworld Breach
 
-**Artifacts (4).** Arcane Signet, Lightning Greaves, Lotus Petal, Skullclamp
+**Artifacts (5).** Arcane Signet, Lightning Greaves, Lotus Petal, Palantír of Orthanc, Skullclamp
 
 **Sorceries (15).** Bribery, Contract Killing, Deadly Embrace, Decorum Dissertation, Diabolic Tutor, Expressive Iteration, Glimpse the Unthinkable, Grab the Prize, Grapeshot, Jeska's Will, Profane Tutor, Rapturous Moment, Seize the Spoils, Solve the Equation, Yawgmoth's Will
 
@@ -248,7 +247,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Decorum Dissertation
 1 Demonic Embrace
 1 Diabolic Tutor
-1 Eternal Student
 1 Exotic Orchard
 1 Expressive Iteration
 1 Extinguish the Light
@@ -278,6 +276,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Mystical Tutor
 1 Niv-Mizzet, Parun
 1 Niv-Mizzet, the Firemind
+1 Palantír of Orthanc
 1 Price of Progress
 1 Profane Tutor
 1 Psychosis Crawler

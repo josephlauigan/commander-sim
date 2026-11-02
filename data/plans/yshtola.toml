@@ -143,10 +143,6 @@ cards = ["Dark Petition", "Diabolic Tutor", "Idyllic Tutor", "Mystical Tutor"]
 value = 52
 
 [[prio]]
-cards = ["Thief of Sanity"]
-value = 52
-
-[[prio]]
 cards = ["Mystic Remora"]
 when = ["turn<=4"]
 value = 40

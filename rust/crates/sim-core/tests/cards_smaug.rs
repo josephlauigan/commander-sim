@@ -13,7 +13,7 @@ const P2: PlayerId = PlayerId(2);
 const SMAUG: &str = "Smaug the Magnificent";
 
 fn tbl() -> Game {
-    table(&["galadriel", "veyran", "seph"])
+    table(&["galadriel", "cloud", "seph"])
 }
 
 fn lives(g: &Game) -> Vec<i32> {

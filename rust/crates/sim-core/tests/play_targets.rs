@@ -34,7 +34,7 @@ fn has_asked(h: &ScriptHuman, start: &str) -> bool {
 
 #[test]
 fn lethal_throwdown_asks_for_the_target_and_the_sacrifice() {
-    let mut g = table(&["sheoldred", "veyran"]);
+    let mut g = table(&["sheoldred", "cloud"]);
     hand(&mut g, P0, &["Lethal Throwdown"]);
     pool(&mut g, P0, &[('B', 2)]);
     let _keep = token(&mut g, P0, 1);
@@ -52,7 +52,7 @@ fn lethal_throwdown_asks_for_the_target_and_the_sacrifice() {
 
 #[test]
 fn splatter_technique_can_draw_four() {
-    let mut g = table(&["kefka", "veyran"]);
+    let mut g = table(&["kefka", "cloud"]);
     hand(&mut g, P0, &["Splatter Technique"]);
     pool(&mut g, P0, &[('U', 2), ('R', 2), ('C', 1)]);
     let mine = token(&mut g, P0, 1);
@@ -65,7 +65,7 @@ fn splatter_technique_can_draw_four() {
 
 #[test]
 fn comet_storm_takes_a_target_for_each_kick() {
-    let mut g = table(&["sauron", "veyran", "seph", "kefka"]);
+    let mut g = table(&["sauron", "cloud", "seph", "kefka"]);
     hand(&mut g, P0, &["Comet Storm"]);
     pool(&mut g, P0, &[('R', 2), ('C', 3)]);
     for p in [P1, P2, P3] {
@@ -93,7 +93,7 @@ fn comet_storm_takes_a_target_for_each_kick() {
 
 #[test]
 fn peer_into_the_abyss_can_target_an_opponent() {
-    let mut g = table(&["sheoldred", "veyran"]);
+    let mut g = table(&["sheoldred", "cloud"]);
     hand(&mut g, P0, &["Peer into the Abyss"]);
     pool(&mut g, P0, &[('B', 3), ('C', 4)]);
     let n1 = g.player(P1).name.to_string();
@@ -108,7 +108,7 @@ fn peer_into_the_abyss_can_target_an_opponent() {
 
 #[test]
 fn inferno_titan_divides_its_damage_point_by_point() {
-    let mut g = table(&["sheoldred", "veyran"]);
+    let mut g = table(&["sheoldred", "cloud"]);
     let a = token(&mut g, P1, 1);
     let b = token(&mut g, P1, 1);
     let n1 = g.player(P1).name.to_string();

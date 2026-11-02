@@ -21,7 +21,7 @@ fn logged(g: &mut Game, p: PlayerId) -> Vec<String> {
 
 #[test]
 fn pays_the_tax_from_untapped_lands() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P1, "Ghostly Prison");
     perm(&mut g, P0, "Grave Titan");
     lands(&mut g, P0, "Plains", 3, false);
@@ -36,7 +36,7 @@ fn pays_the_tax_from_untapped_lands() {
 #[test]
 fn a_small_attacker_is_yours_to_pay_for() {
     // the AI only pays for attackers with power at least the tax; a person decides
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P1, "Ghostly Prison");
     token(&mut g, P0, 1);
     lands(&mut g, P0, "Plains", 2, false);
@@ -47,7 +47,7 @@ fn a_small_attacker_is_yours_to_pay_for() {
 
 #[test]
 fn declining_the_tax_is_logged() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P1, "Ghostly Prison");
     let t = perm(&mut g, P0, "Grave Titan");
     lands(&mut g, P0, "Plains", 2, false);
@@ -61,7 +61,7 @@ fn declining_the_tax_is_logged() {
 
 #[test]
 fn no_mana_for_the_tax_is_logged() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P1, "Ghostly Prison");
     perm(&mut g, P0, "Grave Titan");
     let h = seat(&mut g, P0, vec![picks(&[0])]);
@@ -73,7 +73,7 @@ fn no_mana_for_the_tax_is_logged() {
 
 #[test]
 fn only_the_attackers_you_can_pay_for_attack() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P1, "Ghostly Prison");
     perm(&mut g, P0, "Grave Titan"); // 6/6
     token(&mut g, P0, 1);
@@ -88,7 +88,7 @@ fn only_the_attackers_you_can_pay_for_attack() {
 
 #[test]
 fn an_untaxed_opponent_needs_no_payment() {
-    let mut g = table(&["sauron", "veyran", "seph"]);
+    let mut g = table(&["sauron", "cloud", "seph"]);
     perm(&mut g, P1, "Ghostly Prison");
     perm(&mut g, P0, "Grave Titan");
     lands(&mut g, P0, "Plains", 2, false);

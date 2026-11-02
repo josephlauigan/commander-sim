@@ -113,7 +113,7 @@ fn one_winged_angel_attack_sacrifices_all_the_fodder_and_draws_that_many() {
 
 #[test]
 fn triple_triad_plays_your_card_and_the_cheaper_ones_free_and_keeps_ownership() {
-    let mut g = table(&["sheoldred", "seph", "veyran"]);
+    let mut g = table(&["sheoldred", "seph", "cloud"]);
     perm(&mut g, P0, "Triple Triad");
     let (sheo, ring, hoof) =
         (card(&g, "Sheoldred, the Apocalypse"), card(&g, "Sol Ring"), card(&g, "Craterhoof Behemoth"));

@@ -10,7 +10,7 @@ const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 
 fn kraum_tbl() -> Game {
-    table(&["thrasios", "galadriel", "veyran", "seph"])
+    table(&["thrasios", "galadriel", "cloud", "seph"])
 }
 
 fn on(g: &Game, m: PermId) -> bool {
@@ -38,7 +38,7 @@ fn dark_endurance_is_not_cast_against_exile_or_for_a_small_creature() {
 
 #[test]
 fn dark_endurance_is_only_for_the_tymna_partner_seats() {
-    let mut g = table(&["galadriel", "veyran", "seph", "sauron"]);
+    let mut g = table(&["galadriel", "cloud", "seph", "sauron"]);
     lands(&mut g, P0, "Swamp", 2, false);
     let t = perm(&mut g, P0, "Tymna the Weaver");
     g.perm_mut(t).is_cmd = true;
@@ -92,7 +92,7 @@ use sim_core::hooks::Action;
 use sim_core::impls::yshtola as ysh_mod;
 
 fn ysh_tbl() -> Game {
-    table(&["yshtola", "veyran", "sauron"])
+    table(&["yshtola", "cloud", "sauron"])
 }
 
 fn ysh_out(g: &mut Game, p: PlayerId) -> PermId {

@@ -1096,10 +1096,6 @@ fn step_main2(g: &mut Game, p: PlayerId) -> Res {
     ai::main(g, p, true)?;
     crate::gf_audit::main_end(g, p); // --- ai-audit
     crate::t6stats::mana_held(g, p);
-    if g.player(p).key == "veyran" && has(g, p, Tag::Veyran) && ai::engine_payoff(g, p) {
-        let t = g.player(p).turns;
-        g.player_mut(p).milestone.entry("engine").or_insert(t);
-    }
     Ok(())
 }
 

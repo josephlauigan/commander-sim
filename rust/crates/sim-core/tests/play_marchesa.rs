@@ -10,7 +10,7 @@ use sim_core::state::DataKey;
 // ------------------------------------------------------------------ Spells
 #[test]
 fn accursed_marauder_you_choose_your_sacrifice() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     hand(&mut g, P0, &["Accursed Marauder"]);
     let keep = perm(&mut g, P0, "Hellkite Tyrant");
     perm(&mut g, P1, "Guttersnipe");
@@ -23,7 +23,7 @@ fn accursed_marauder_you_choose_your_sacrifice() {
 // ------------------------------------------------------------------ Triggers
 #[test]
 fn mystic_remora_upkeep_declined() {
-    let mut g = table(&["yshtola", "veyran"]);
+    let mut g = table(&["yshtola", "cloud"]);
     let rm = perm(&mut g, P0, "Mystic Remora");
     pool(&mut g, P0, &[('C', 1)]);
     seat(&mut g, P0, vec![pick(1)]); // "pay {1}?" no
@@ -33,7 +33,7 @@ fn mystic_remora_upkeep_declined() {
 
 #[test]
 fn dredge_or_draw() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let imp = card(&g, "Stinkweed Imp");
     g.player_mut(P0).gy.push(imp);
     seat(&mut g, P0, vec![pick(0)]); // yes
@@ -45,7 +45,7 @@ fn dredge_or_draw() {
 // ------------------------------------------------------------------ Outlets
 #[test]
 fn carrion_feeder() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let f = perm(&mut g, P0, "Carrion Feeder");
     let r = perm(&mut g, P0, "Burglar Rat");
     main(&mut g, P0, vec![act(json!({"do": "use", "perm": 0})), pick(0), by_text("Burglar")]);
@@ -55,7 +55,7 @@ fn carrion_feeder() {
 
 #[test]
 fn ashnods_altar_makes_colourless() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Ashnod's Altar");
     perm(&mut g, P0, "Grave Titan");
     main(&mut g, P0, vec![act(json!({"do": "use", "perm": 0})), pick(0), by_text("Grave Titan")]);
@@ -66,7 +66,7 @@ fn ashnods_altar_makes_colourless() {
 
 #[test]
 fn coalition_relic_charge() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     let cr = perm(&mut g, P0, "Coalition Relic");
     main(&mut g, P0, vec![act(json!({"do": "use", "perm": 0})), pick(0)]);
     assert_eq!((g.perm(cr).data.int(DataKey::Charge), g.perm(cr).tapped), (1, true));
