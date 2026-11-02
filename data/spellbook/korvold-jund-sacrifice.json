@@ -6,7 +6,7 @@
   "commanders": [
     "Korvold, Fae-Cursed King"
   ],
-  "request_sha256": "2f8d3ecc0d9505df46610789e4e8ab64d9fdcdc8ff71714872ae38cc689924a9",
+  "request_sha256": "72932af0112868c73c12028a7c8974b0b68acfdac1f8af97453c358b6881a6d8",
   "identity": "BRG",
   "included": [
     {
@@ -406,154 +406,6 @@
       "bracket": "E",
       "legal": true,
       "popularity": 3768
-    },
-    {
-      "id": "1580-1829-4871-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vindictive Vampire",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite damage"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2440
-    },
-    {
-      "id": "323-1580-4871-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Falkenrath Noble",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2101
-    },
-    {
-      "id": "1829-3000-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vindictive Vampire",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite Treasure tokens",
-        "Infinite damage"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 534
-    },
-    {
-      "id": "323-3000-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Falkenrath Noble",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 460
     }
   ],
   "included_by_changing_commanders": [],
@@ -3506,6 +3358,47 @@
       ]
     },
     {
+      "id": "1580-1829-4871-5670",
+      "cards": [
+        {
+          "name": "Warren Soultrader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vindictive Vampire",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is 2 or higher.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2440,
+      "missing": [
+        "Vindictive Vampire"
+      ]
+    },
+    {
       "id": "301-317-2292",
       "cards": [
         {
@@ -3991,6 +3884,47 @@
       ]
     },
     {
+      "id": "323-1580-4871-5670",
+      "cards": [
+        {
+          "name": "Warren Soultrader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Falkenrath Noble",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is 2 or higher.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2101,
+      "missing": [
+        "Falkenrath Noble"
+      ]
+    },
+    {
       "id": "1385-2034-2308",
       "cards": [
         {
@@ -4386,42 +4320,6 @@
       "popularity": 1861,
       "missing": [
         "Scurry Oak"
-      ]
-    },
-    {
-      "id": "323-2577-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Gravecrawler",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Falkenrath Noble",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifegain triggers",
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1835,
-      "missing": [
-        "Gravecrawler"
       ]
     },
     {
@@ -4857,43 +4755,6 @@
       ]
     },
     {
-      "id": "323-2760-4279",
-      "cards": [
-        {
-          "name": "Yawgmoth, Thran Physician",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Nest of Scarabs",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Falkenrath Noble",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite card draw",
-        "Near-infinite lifegain triggers",
-        "Near-infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is at least 2.\nYou control at least one additional creature.\nThere is at least one other creature on the battlefield.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1479,
-      "missing": [
-        "Nest of Scarabs"
-      ]
-    },
-    {
       "id": "1531-1580-4871-5670",
       "cards": [
         {
@@ -4966,42 +4827,6 @@
       "popularity": 1473,
       "missing": [
         "Animation Module"
-      ]
-    },
-    {
-      "id": "1829-2577-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Gravecrawler",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vindictive Vampire",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite damage",
-        "Infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1412,
-      "missing": [
-        "Gravecrawler"
       ]
     },
     {
@@ -5208,43 +5033,6 @@
       "popularity": 1295,
       "missing": [
         "Dualcaster Mage"
-      ]
-    },
-    {
-      "id": "1829-2760-4279",
-      "cards": [
-        {
-          "name": "Yawgmoth, Thran Physician",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vindictive Vampire",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Nest of Scarabs",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite card draw",
-        "Near-infinite damage",
-        "Near-infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.\nAn opponent controls a creature.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1291,
-      "missing": [
-        "Nest of Scarabs"
       ]
     },
     {
@@ -5767,42 +5555,6 @@
       ]
     },
     {
-      "id": "323-5544-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Forsaken Miner",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Falkenrath Noble",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifegain triggers",
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is at least 2.",
-      "mana": "{B}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1054,
-      "missing": [
-        "Forsaken Miner"
-      ]
-    },
-    {
       "id": "1580-4871-5670-7286",
       "cards": [
         {
@@ -6285,43 +6037,6 @@
       "popularity": 804,
       "missing": [
         "Carnival of Souls"
-      ]
-    },
-    {
-      "id": "323-4050-5544",
-      "cards": [
-        {
-          "name": "Forsaken Miner",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Falkenrath Noble",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifegain triggers",
-        "Infinite lifegain",
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 801,
-      "missing": [
-        "Forsaken Miner"
       ]
     },
     {
@@ -7139,6 +6854,45 @@
       ]
     },
     {
+      "id": "1829-3000-5670",
+      "cards": [
+        {
+          "name": "Warren Soultrader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vindictive Vampire",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chatterfang, Squirrel General",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite lifegain triggers",
+        "Infinite Treasure tokens",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 534,
+      "missing": [
+        "Vindictive Vampire"
+      ]
+    },
+    {
       "id": "397-2292-4871",
       "cards": [
         {
@@ -7363,10 +7117,10 @@
       ]
     },
     {
-      "id": "323-6215",
+      "id": "323-3000-5670",
       "cards": [
         {
-          "name": "Tombstone Stairwell",
+          "name": "Warren Soultrader",
           "zones": [
             "B"
           ]
@@ -7376,21 +7130,29 @@
           "zones": [
             "B"
           ]
+        },
+        {
+          "name": "Chatterfang, Squirrel General",
+          "zones": [
+            "B"
+          ]
         }
       ],
       "results": [
-        "Near-infinite lifeloss",
-        "Near-infinite lifegain",
-        "Near-infinite lifegain triggers"
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite Treasure tokens"
       ],
       "requires": [],
-      "prerequisites": "",
+      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
       "mana": "",
-      "bracket": "R",
+      "bracket": "E",
       "legal": true,
       "popularity": 460,
       "missing": [
-        "Tombstone Stairwell"
+        "Falkenrath Noble"
       ]
     },
     {
@@ -7660,47 +7422,6 @@
       "popularity": 394,
       "missing": [
         "Stimulus Package"
-      ]
-    },
-    {
-      "id": "323-1263-4871-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Falkenrath Noble",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Bloodsoaked Champion",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher. You have attacked this turn.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 393,
-      "missing": [
-        "Bloodsoaked Champion"
       ]
     },
     {
@@ -8006,88 +7727,6 @@
       ]
     },
     {
-      "id": "323-2946-4871-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Falkenrath Noble",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cult Conscript",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher. A non-Skeleton creature has died under your control this turn.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 313,
-      "missing": [
-        "Cult Conscript"
-      ]
-    },
-    {
-      "id": "1263-1829-4871-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Bloodsoaked Champion",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vindictive Vampire",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite damage"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher. You have attacked this turn.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 308,
-      "missing": [
-        "Bloodsoaked Champion"
-      ]
-    },
-    {
       "id": "317-1475-2292",
       "cards": [
         {
@@ -8342,6 +7981,43 @@
       ]
     },
     {
+      "id": "222-2714-4050",
+      "cards": [
+        {
+          "name": "Slimefoot and Squee",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Siege-Gang Commander",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite creature tokens",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one Saproling.",
+      "mana": "{1}, plus either {B}, {R} or {G} available",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 282,
+      "missing": [
+        "Slimefoot and Squee"
+      ]
+    },
+    {
       "id": "317-1475-2034",
       "cards": [
         {
@@ -8379,47 +8055,6 @@
       ]
     },
     {
-      "id": "1829-2946-4871-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vindictive Vampire",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cult Conscript",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite damage"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher. A non-Skeleton creature has died under your control this turn.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 277,
-      "missing": [
-        "Cult Conscript"
-      ]
-    },
-    {
       "id": "5147-5191",
       "cards": [
         {
@@ -8444,43 +8079,6 @@
       "popularity": 267,
       "missing": [
         "Raptor Hatchling"
-      ]
-    },
-    {
-      "id": "323-2034-2308",
-      "cards": [
-        {
-          "name": "Trudge Garden",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ashnod's Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Falkenrath Noble",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifegain",
-        "Infinite lifegain triggers",
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to gain life.",
-      "mana": "{2}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 258,
-      "missing": [
-        "Trudge Garden"
       ]
     },
     {
@@ -8972,43 +8570,6 @@
       ]
     },
     {
-      "id": "323-2228-4279",
-      "cards": [
-        {
-          "name": "Yawgmoth, Thran Physician",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Falkenrath Noble",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Hapatra, Vizier of Poisons",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite card draw",
-        "Near-infinite lifegain triggers",
-        "Near-infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.\nAn opponent controls a creature.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 158,
-      "missing": [
-        "Hapatra, Vizier of Poisons"
-      ]
-    },
-    {
       "id": "1580-3220-4871-5147",
       "cards": [
         {
@@ -9190,43 +8751,6 @@
       ]
     },
     {
-      "id": "1829-2034-2308",
-      "cards": [
-        {
-          "name": "Trudge Garden",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ashnod's Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vindictive Vampire",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifegain",
-        "Infinite lifegain triggers",
-        "Infinite damage"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to gain life.",
-      "mana": "{2}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 134,
-      "missing": [
-        "Trudge Garden"
-      ]
-    },
-    {
       "id": "640-1580-4871-5670",
       "cards": [
         {
@@ -9403,43 +8927,6 @@
       "popularity": 121,
       "missing": [
         "Roaming Throne"
-      ]
-    },
-    {
-      "id": "323-1084-4279",
-      "cards": [
-        {
-          "name": "Yawgmoth, Thran Physician",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Falkenrath Noble",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Flourishing Defenses",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite card draw",
-        "Near-infinite lifegain triggers",
-        "Near-infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.\nAn opponent controls a creature.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 119,
-      "missing": [
-        "Flourishing Defenses"
       ]
     },
     {
@@ -10084,45 +9571,6 @@
       ]
     },
     {
-      "id": "323-5670-6291",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Falkenrath Noble",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Stridehangar Automaton",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens",
-        "Infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 65,
-      "missing": [
-        "Stridehangar Automaton"
-      ]
-    },
-    {
       "id": "443-1580-2292-4871",
       "cards": [
         {
@@ -10159,43 +9607,6 @@
       "popularity": 65,
       "missing": [
         "Magus of the Bridge"
-      ]
-    },
-    {
-      "id": "1829-2228-4279",
-      "cards": [
-        {
-          "name": "Yawgmoth, Thran Physician",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vindictive Vampire",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Hapatra, Vizier of Poisons",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite card draw",
-        "Near-infinite damage",
-        "Near-infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.\nAn opponent controls a creature.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 65,
-      "missing": [
-        "Hapatra, Vizier of Poisons"
       ]
     },
     {
@@ -10317,45 +9728,6 @@
       ]
     },
     {
-      "id": "1829-5670-6291",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vindictive Vampire",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Stridehangar Automaton",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite damage",
-        "Infinite lifegain triggers",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 53,
-      "missing": [
-        "Stridehangar Automaton"
-      ]
-    },
-    {
       "id": "3000-3330-5670",
       "cards": [
         {
@@ -10463,80 +9835,6 @@
       "popularity": 51,
       "missing": [
         "Ulasht, the Hate Seed"
-      ]
-    },
-    {
-      "id": "1829-4186-4279",
-      "cards": [
-        {
-          "name": "Yawgmoth, Thran Physician",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Scurry Oak",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vindictive Vampire",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw",
-        "Near-infinite damage",
-        "Near-infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least two additional creatures.\nScurry Oak has no +1/+1 counters on it.\nYour life total is at least 2.",
-      "mana": "{2}{B}{B}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 47,
-      "missing": [
-        "Scurry Oak"
-      ]
-    },
-    {
-      "id": "1084-1829-4279",
-      "cards": [
-        {
-          "name": "Yawgmoth, Thran Physician",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Flourishing Defenses",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vindictive Vampire",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite card draw",
-        "Near-infinite damage",
-        "Near-infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.\nAn opponent controls a creature.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 44,
-      "missing": [
-        "Flourishing Defenses"
       ]
     },
     {
@@ -10887,45 +10185,6 @@
       ]
     },
     {
-      "id": "323-5670-6705",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Falkenrath Noble",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Quina, Qu Gourmet",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 32,
-      "missing": [
-        "Quina, Qu Gourmet"
-      ]
-    },
-    {
       "id": "3284-4550-4871-5147",
       "cards": [
         {
@@ -10967,82 +10226,6 @@
       "popularity": 32,
       "missing": [
         "Zombie Infestation"
-      ]
-    },
-    {
-      "id": "323-4186-4279",
-      "cards": [
-        {
-          "name": "Yawgmoth, Thran Physician",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Scurry Oak",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Falkenrath Noble",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw",
-        "Near-infinite lifegain triggers",
-        "Near-infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least two additional creatures.\nScurry Oak has no +1/+1 counters on it.\nYour life total is at least 2.",
-      "mana": "{2}{B}{B}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 31,
-      "missing": [
-        "Scurry Oak"
-      ]
-    },
-    {
-      "id": "1829-5670-6705",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vindictive Vampire",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Quina, Qu Gourmet",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite damage",
-        "Infinite lifegain triggers",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 30,
-      "missing": [
-        "Quina, Qu Gourmet"
       ]
     },
     {
@@ -11775,42 +10958,6 @@
       "popularity": 2,
       "missing": [
         "Bridge from Below"
-      ]
-    },
-    {
-      "id": "323-397-5670",
-      "cards": [
-        {
-          "name": "Stimulus Package",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Falkenrath Noble",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifegain triggers",
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "You control an additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2,
-      "missing": [
-        "Stimulus Package"
       ]
     },
     {

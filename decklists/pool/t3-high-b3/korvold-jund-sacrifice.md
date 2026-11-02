@@ -15,7 +15,7 @@ A snowballing value engine that punishes letting the commander live a turn cycle
 ## At the table
 
 - **Plan:** Mana dorks and Sol Ring into Korvold, Fae-Cursed King, then a stream of sacrifice fodder: Treasure, Food, Clues and recursive creatures like Bloodghast and Reassembling Skeleton. Each sacrifice grows Korvold and draws a card.
-- **Wins by:** Drain from every sacrifice or death: Blood Artist, Falkenrath Noble, Vindictive Vampire, Syr Konrad, Zulaport Cutthroat, Mayhem Devil and Goblin Bombardment; Midnight Reaper, Dark Prophecy and Yawgmoth turn the deaths into cards. Late, Gravecrawler with Phyrexian Altar and another Zombie loops sacrifices into a kill.
+- **Wins by:** Drain from every sacrifice or death: Blood Artist, Syr Konrad, Zulaport Cutthroat, Mayhem Devil and Goblin Bombardment; Siege-Gang Commander adds fodder and damage, and Midnight Reaper, Dark Prophecy, Tireless Tracker and Yawgmoth turn the deaths into cards. Late, Gravecrawler with Phyrexian Altar and another Zombie loops sacrifices into a kill.
 - **Watch out for:** Korvold is a flying threat that draws a card every sacrifice, so kill him early. Watch for Gravecrawler and a Zombie with Phyrexian Altar. Grave Pact and Pernicious Deed punish boards of small creatures. Vampiric Tutor and Demonic Tutor find missing pieces.
 - **Interaction:** Terminate, Infernal Grasp, Vraska, Golgari Queen (a removal walker), Putrefy, Assassin's Trophy, Kolaghan's Command, Chaos Warp and Beast Within, plus Toxic Deluge and Pernicious Deed as sweepers. Heroic Intervention, Deflecting Swat and Swiftfoot Boots protect its pieces.
 
@@ -33,7 +33,7 @@ Korvold sac trigger (draw + counter); Treasure/Food/Clue tokens; Mayhem Devil / 
 
 **Commander (1).** Korvold, Fae-Cursed King
 
-**Creatures (33).** Academy Manufactor, Birds of Paradise, Blood Artist, Braids, Arisen Nightmare, Chatterfang, Squirrel General, Eternal Witness, Falkenrath Noble, Goldspan Dragon, Ignoble Hierarch, Impulsive Pilferer, Juri, Master of the Revue, Mahadi, Emporium Master, Marionette Apprentice, Mayhem Devil, Mazirek, Kraul Death Priest, Midnight Reaper, Mirkwood Bats, Old Gnawbone, Pitiless Plunderer, Professional Face-Breaker, Reassembling Skeleton, Ruthless Technomancer, Sakura-Tribe Elder, Smaug, Wicked Worm, Springbloom Druid, Syr Konrad, the Grim, Tireless Provisioner, Vindictive Vampire, Viscera Seer, Warren Soultrader, Yawgmoth, Thran Physician, Ziatora, the Incinerator, Zulaport Cutthroat
+**Creatures (33).** Academy Manufactor, Birds of Paradise, Blood Artist, Braids, Arisen Nightmare, Chatterfang, Squirrel General, Eternal Witness, Goldspan Dragon, Ignoble Hierarch, Impulsive Pilferer, Juri, Master of the Revue, Mahadi, Emporium Master, Marionette Apprentice, Mayhem Devil, Mazirek, Kraul Death Priest, Midnight Reaper, Mirkwood Bats, Old Gnawbone, Pitiless Plunderer, Professional Face-Breaker, Reassembling Skeleton, Ruthless Technomancer, Sakura-Tribe Elder, Siege-Gang Commander, Smaug, Wicked Worm, Springbloom Druid, Syr Konrad, the Grim, Tireless Provisioner, Tireless Tracker, Viscera Seer, Warren Soultrader, Yawgmoth, Thran Physician, Ziatora, the Incinerator, Zulaport Cutthroat
 
 **Enchantments (5).** Awakening Zone, Black Market Connections, Dark Prophecy, Goblin Bombardment, Revel in Riches
 
@@ -81,7 +81,6 @@ Korvold sac trigger (draw + counter); Treasure/Food/Clue tokens; Mayhem Devil / 
 1 Evolving Wilds
 1 Exotic Orchard
 1 Fabled Passage
-1 Falkenrath Noble
 1 Farseek
 1 Goblin Bombardment
 1 Goldspan Dragon
@@ -111,6 +110,7 @@ Korvold sac trigger (draw + counter); Treasure/Food/Clue tokens; Mayhem Devil / 
 1 Ruthless Technomancer
 1 Sakura-Tribe Elder
 1 Savage Lands
+1 Siege-Gang Commander
 1 Smaug, Wicked Worm
 1 Smoldering Marsh
 1 Sol Ring
@@ -122,12 +122,12 @@ Korvold sac trigger (draw + counter); Treasure/Food/Clue tokens; Mayhem Devil / 
 1 Terramorphic Expanse
 1 The Reaver Cleaver
 1 Tireless Provisioner
+1 Tireless Tracker
 1 Toxic Deluge
 1 Undergrowth Stadium
 1 Vampiric Tutor
 1 Verdant Catacombs
 1 Victimize
-1 Vindictive Vampire
 1 Viscera Seer
 1 Vraska, Golgari Queen
 1 Warren Soultrader
