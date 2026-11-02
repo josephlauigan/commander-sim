@@ -84,3 +84,7 @@ around 12 in one round, and 15 stays clear of that. Cast priority 70 at 16+ life
 Smoke result: 32.0% -> 32.0% (0.0, noise ±5.7). Why: drawn 28% of games, cast in 64% of those (Stir Up Trouble 79%),
 first cast round 6.3 vs 4.4: a 7-mana body that comes down later than the cheap spell it replaced; wins when cast
 33% vs 36%. Needs a full-size run before judging.
+
+## 2026-11-01: recalibration stage 2 remeasure
+
+Sheoldred, t3 / t4: **15.9% / 17.2%** (average 16.5%) with the hand AI on (default) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). `AI_HAND=0` (generic + plan file): 17.4 / 17.4, level (average delta -0.8 [-2.5, +0.8]). Stage 1, same seeds: 17.8 / 17.6 (hand AI on). The 10/18 AI audit numbers (31.9 / 31.6) are from an older build and list. Fitted t3 knobs: 18.7% (+2.8 [+0.5, +5.1]).
