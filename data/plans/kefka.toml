@@ -27,7 +27,7 @@ pieces = [["Underworld Breach"], ["Brain Freeze", "Grapeshot"], ["Dark Ritual", 
 
 # Cast priorities (was kefka_prio): the draw-trigger engines, sooner with Kefka out (every discard and loot draw pings
 # the table); Fiery Emancipation triples their pings; Bribery for a bomb; the mayhem / graveyard cards kept in hand to
-# be discarded to Kefka's trigger; Rapturous Moment as a free filter with two other spells in hand
+# be discarded to Kefka's trigger
 [[prio]]
 cards = ["Psychosis Crawler", "Niv-Mizzet, the Firemind"]
 when = ["commander-out"]
@@ -45,11 +45,6 @@ cards = ["Bribery"]
 value = 62
 
 [[prio]]
-cards = ["Scarlet Spider, Kaine", "Demonic Embrace"]
+cards = ["Scarlet Spider, Kaine"]
 when = ["commander-out"]
 value = 0
-
-[[prio]]
-cards = ["Rapturous Moment"]
-when = ["nonland>=3"]
-value = 58
