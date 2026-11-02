@@ -640,7 +640,7 @@ pub(crate) fn fair_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let cd = g.perm(l).card();
     crate::impls::lands::sac_land(g, p, l)?;
     if ability_window_card(g, p, cd, "search for an artifact", None, None)? {
-        crate::impls::t1::tutor_named(g, p, &|g, c| art_card(g, c), 1, "hand")?;
+        crate::impls::t1::tutor_named(g, p, &|g, c| art_card(g, c), 1, "hand", "Inventors' Fair")?;
     }
     Ok(true)
 }

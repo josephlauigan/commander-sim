@@ -596,7 +596,7 @@ fn prepared(g: &Game, m: PermId) -> Vec<PermAbility> {
             }
             _ => {
                 num = Some(2);
-                Box::new(move |g| crate::engine::tutors::tutor(g, p, "is"))
+                Box::new(move |g| crate::engine::tutors::tutor(g, p, "is", "Wild Idea"))
             }
         };
         super::mana::pay_from_pool(g, p, gn, pips);

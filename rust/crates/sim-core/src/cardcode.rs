@@ -288,7 +288,7 @@ pub fn veil_response(g: &mut Game, p: PlayerId, q: PlayerId, ctr: CardId) -> Res
 
 /// t1.tutor_named for Auras (Three Dreams): k Auras with different names to hand
 pub fn tutor_auras(g: &mut Game, p: PlayerId, k: usize) -> Res {
-    crate::impls::t1::tutor_named(g, p, &|g, c| g.db.get(c).has_subtype("aura"), k, "hand")?;
+    crate::impls::t1::tutor_named(g, p, &|g, c| g.db.get(c).has_subtype("aura"), k, "hand", "Three Dreams")?;
     Ok(())
 }
 

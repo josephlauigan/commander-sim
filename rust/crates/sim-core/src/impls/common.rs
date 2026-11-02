@@ -3208,7 +3208,8 @@ fn ballista_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 pub fn tutor_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let Some(pred) = tutor_pred(card_name(g, src)) else { return Ok(()) };
     if m == src && trigger_window(g, owner(g, src), Some(src), "search for a card", None)? {
-        super::t1::tutor_named(g, owner(g, src), &|g, c| pred(g.db.get(c)), 1, "hand")?;
+        let by = card_name(g, src).to_string();
+        super::t1::tutor_named(g, owner(g, src), &|g, c| pred(g.db.get(c)), 1, "hand", &by)?;
     }
     Ok(())
 }

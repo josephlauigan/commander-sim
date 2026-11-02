@@ -1092,10 +1092,11 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         cardcode::ring_tempt(g, p)?; // Ringsight: the Ring tempts you first
     }
     if let Some(k) = t.str(Tag::Tut) {
+        let by = g.db.get(c).name.to_string();
         if t.has(Tag::Top) {
-            tutor_to_top(g, p, k, 0)?; // Mystical Tutor: on top of the library
+            tutor_to_top(g, p, k, 0, &by)?; // Mystical Tutor: on top of the library
         } else {
-            tutor(g, p, k)?;
+            tutor(g, p, k, &by)?;
         }
     }
     if t.has(Tag::Gifts) {
@@ -1143,7 +1144,8 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         cardcode::tutor_auras(g, p, 3)?;
     }
     if t.has(Tag::Seal) {
-        tutor_to_top(g, p, "any", 2)?; // Imperial Seal / Vampiric Tutor: card on top, lose 2 life
+        let by = g.db.get(c).name.to_string();
+        tutor_to_top(g, p, "any", 2, &by)?; // Imperial Seal / Vampiric Tutor: card on top, lose 2 life
     }
     if t.has(Tag::Adnaus) {
         ad_nauseam(g, p, None)?;

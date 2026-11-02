@@ -50,7 +50,7 @@ fn edict() {
 fn tutor_finds_only_its_kind() {
     let mut g = table(&["sauron", "cloud"]);
     let h = seat(&mut g, P0, vec![pick(0)]);
-    tutors::tutor(&mut g, P0, "art").unwrap();
+    tutors::tutor(&mut g, P0, "art", "Fabricate").unwrap();
     let asked = h.asked();
     let ch = &asked[0].choices;
     for x in &ch[..ch.len() - 1] {
@@ -68,7 +68,7 @@ fn finding_nothing() {
     let mut g = table(&["sauron", "cloud"]);
     let n = g.player(P0).library.len();
     seat(&mut g, P0, vec![cancel()]);
-    tutors::tutor(&mut g, P0, "any").unwrap();
+    tutors::tutor(&mut g, P0, "any", "Demonic Tutor").unwrap();
     assert_eq!((g.player(P0).hand.len(), g.player(P0).library.len()), (0, n));
 }
 

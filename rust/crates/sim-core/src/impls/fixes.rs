@@ -393,7 +393,7 @@ fn decimate(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
 // ------------------------------------------------------------------ Gamble: tutor, then discard at random
 /// Full: tutor any card to hand, then discard a card at random
 fn gamble(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    tutor(g, p, "any")?;
+    tutor(g, p, "any", "Gamble")?;
     let rest: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&x| x != c).collect();
     if let Some(&x) = g.rng.choice(&rest) {
         let pl = g.player_mut(p);

@@ -12,8 +12,93 @@ use crate::pysum::PySum;
 use crate::state::Game;
 use crate::tag::Tag;
 
-/// p searches for a card of this kind and puts it in hand ('any', 'cre2', 'art' ...): the deck's AI picks
-pub fn tutor(g: &mut Game, p: PlayerId, kind: &str) -> Res {
+/// The tutors whose Oracle text reveals the card found ("search your library for ..., reveal it, ..."): the table
+/// sees it, so the log names it for everyone (`log_found`). `tests/reveal_tutors.rs` checks the list against the
+/// Scryfall cache and the decks.
+pub const REVEALS: &[&str] = &[
+    "Angel of the Ruins",
+    "Ash Barrens",
+    "Cloud, Midgar Mercenary",
+    "Cultivate",
+    "Demonic Counsel",
+    "Dizzy Spell",
+    "Drift of Phantasms",
+    "Eladamri's Call",
+    "Elvish Harbinger",
+    "Enlightened Tutor",
+    "Expedition Map",
+    "Fabricate",
+    "Fauna Shaman",
+    "Fierce Empath",
+    "Fighter Class",
+    "Forerunner of the Legion",
+    "Formidable Speaker",
+    "Gifts Ungiven",
+    "Goblin Matron",
+    "Goblin Recruiter",
+    "Heliod's Pilgrim",
+    "Higure, the Still Wind",
+    "Idyllic Tutor",
+    "Imperial Recruiter",
+    "Intuition",
+    "Inventors' Fair",
+    "Kodama's Reach",
+    "Kura, the Boundless Sky",
+    "Land Tax",
+    "Maelstrom of the Spirit Dragon",
+    "Merchant Scroll",
+    "Moon-Blessed Cleric",
+    "Moonsilver Key",
+    "Muddle the Mixture",
+    "Mystical Tutor",
+    "Open the Armory",
+    "Plea for Guidance",
+    "Ranger-Captain of Eos",
+    "Realms Uncharted",
+    "Recruiter of the Guard",
+    "Ringsight",
+    "Solve the Equation",
+    "Spellseeker",
+    "Steelshaper's Gift",
+    "Sterling Grove",
+    "Stoneforge Mystic",
+    "Strixhaven Skycoach",
+    "Sylvan Scrying",
+    "Tezzeret, Cruel Captain",
+    "Three Dreams",
+    "Tribute Mage",
+    "Trinket Mage",
+    "Trophy Mage",
+    "Vibrance",
+    "Weathered Wayfarer",
+    "Worldly Tutor",
+];
+
+/// the tutor card `by` reveals what it finds
+pub fn reveals(by: &str) -> bool {
+    REVEALS.contains(&by)
+}
+
+/// The log line for card c, which p tutored with the card `by` into their hand (`to` "hand") or on top of their
+/// library ("top"): where it went, and the card named for everyone when `by` reveals it, otherwise only for p.
+pub fn log_found(g: &mut Game, p: PlayerId, c: CardId, to: &str, by: &str) {
+    if g.log.is_none() && g.link.sink.is_none() {
+        return; // not traced: nothing to format
+    }
+    let (pn, cn) = (g.player(p).name, g.db.get(c).name.to_string());
+    let place = if to == "top" { "on top of their library" } else { "into their hand" };
+    if reveals(by) {
+        crate::glog!(g, "    {pn} reveals {cn} and puts it {place}");
+    } else if to == "top" {
+        g.log_secret(p, &format!("    {pn} puts a card {place}"), &format!("    {pn} puts {cn} {place}"));
+    } else {
+        g.log_secret(p, &format!("    {pn} tutors a card {place}"), &format!("    {pn} tutors {cn} {place}"));
+    }
+}
+
+/// p searches for a card of this kind and puts it in hand ('any', 'cre2', 'art' ...) with the card `by` (named in
+/// the log when it reveals the card): the deck's AI picks
+pub fn tutor(g: &mut Game, p: PlayerId, kind: &str, by: &str) -> Res {
     if crate::human::is_human(g, p) {
         let kind = kind.to_string();
         let found = crate::human::choices::search(
@@ -29,11 +114,7 @@ pub fn tutor(g: &mut Game, p: PlayerId, kind: &str) -> Res {
             pl.hand.push(c);
             pl.stat("tutored", 1);
             pl.seen.insert(c);
-            g.log_secret(
-                p,
-                &format!("    {} tutors a card", g.player(p).name),
-                &format!("    {} tutors {}", g.player(p).name, g.db.get(c).name),
-            );
+            log_found(g, p, c, "hand", by);
         }
         return Ok(());
     }
@@ -54,11 +135,7 @@ pub fn tutor(g: &mut Game, p: PlayerId, kind: &str) -> Res {
     pl.hand.push(c);
     pl.stat("tutored", 1);
     pl.seen.insert(c);
-    g.log_secret(
-        p,
-        &format!("    {} tutors a card", g.player(p).name),
-        &format!("    {} tutors {}", g.player(p).name, g.db.get(c).name),
-    );
+    log_found(g, p, c, "hand", by);
     crate::ai::rules::mark_tutored(g, p, c); // --- phase4-rules
     shuffle_library(g, p);
     Ok(())
@@ -408,7 +485,7 @@ pub fn chrome_imprint(g: &mut Game, p: PlayerId, m: PermId) -> Res {
 
 /// Search for a card of this kind and put it on top of your library (Vampiric Tutor and Imperial Seal: any card,
 /// 2 life; Mystical Tutor: an instant or sorcery, no life)
-pub fn tutor_to_top(g: &mut Game, p: PlayerId, kind: &str, life: i32) -> Res {
+pub fn tutor_to_top(g: &mut Game, p: PlayerId, kind: &str, life: i32, by: &str) -> Res {
     if crate::human::is_human(g, p) {
         let kind = kind.to_string();
         let prompt = "Search your library for a card to put on top";
@@ -427,6 +504,7 @@ pub fn tutor_to_top(g: &mut Game, p: PlayerId, kind: &str, life: i32) -> Res {
             let pl = g.player_mut(p);
             pl.library.push(c);
             pl.stat("tutored", 1);
+            log_found(g, p, c, "top", by);
         }
         return Ok(());
     }
@@ -451,11 +529,7 @@ pub fn tutor_to_top(g: &mut Game, p: PlayerId, kind: &str, life: i32) -> Res {
     crate::ai::rules::mark_tutored(g, p, c); // --- phase4-rules
     let pl = g.player_mut(p);
     pl.stat("tutored", 1);
-    g.log_secret(
-        p,
-        &format!("    {} puts a card on top of their library", g.player(p).name),
-        &format!("    {} puts {} on top of their library", g.player(p).name, g.db.get(c).name),
-    );
+    log_found(g, p, c, "top", by);
     Ok(())
 }
 

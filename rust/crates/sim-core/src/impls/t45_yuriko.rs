@@ -546,10 +546,10 @@ fn symmetry(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
         .iter()
         .copied()
         .min_by(|&a, &b| threat(g, p, a).partial_cmp(&threat(g, p, b)).unwrap_or(std::cmp::Ordering::Equal));
-    tutor_to_top(g, p, "any", 0)?;
+    tutor_to_top(g, p, "any", 0, "Scheming Symmetry")?;
     if let Some(q) = other {
         crate::glog!(g, "    {} also searches (Scheming Symmetry)", pname(g, q));
-        tutor_to_top(g, q, "any", 0)?;
+        tutor_to_top(g, q, "any", 0, "Scheming Symmetry")?;
     }
     Ok("gy")
 }

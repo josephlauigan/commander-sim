@@ -1376,7 +1376,7 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         crate::engine::tutors::chrome_imprint(g, p, m)?;
     }
     if t.has(Tag::Recruit) {
-        crate::engine::tutors::tutor(g, p, "cre2")?; // Imperial Recruiter: creature with power 2 or less
+        crate::engine::tutors::tutor(g, p, "cre2", "Imperial Recruiter")?; // Imperial Recruiter: creature with power 2 or less
     }
     if t.has(Tag::Titan) {
         make_tokens(g, p, Tokens { color: Some(Colors::from_letters("B")), ..Tokens::new(2, 2) })?;
@@ -1410,7 +1410,7 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         }
     }
     if t.has(Tag::Rsd) {
-        crate::engine::tutors::tutor(g, p, "any")?;
+        crate::engine::tutors::tutor(g, p, "any", "Rune-Scarred Demon")?;
     }
     if t.has(Tag::Witness) {
         ai::regrow(g, p, false)?;
@@ -1506,7 +1506,8 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     if scryfall {
         // generic enter effects of auto-tagged cards
         if let Some(k) = t.str(Tag::Tut) {
-            crate::engine::tutors::tutor(g, p, k)?;
+            let by = g.db.get(cd).name.to_string();
+            crate::engine::tutors::tutor(g, p, k, &by)?;
         }
         if let Some(n) = t.int(Tag::Treas) {
             add_treasure(g, p, n)?;
@@ -1694,11 +1695,13 @@ fn landfall_once(g: &mut Game, p: PlayerId) -> Res {
     cardcode::gy_landfall(g, p)
 }
 
-/// search for a basic land and put it into your hand
+/// search for a basic land and put it into your hand. Every such search in the pool reveals the land (landcycling,
+/// Land Tax, Cultivate, Strixhaven Skycoach), so the log names it for everyone
 pub fn land_to_hand(g: &mut Game, p: PlayerId) -> Res {
     if crate::human::is_human(g, p) {
         if let Some(c) = crate::human::choices::pick_basic(g, p, "Search for a basic land to put into your hand")? {
             g.player_mut(p).hand.push(c);
+            crate::glog!(g, "    {} reveals {} and puts it into their hand", g.player(p).name, g.db.get(c).name);
         }
         crate::human::choices::shuffle_library(g, p);
         return Ok(());
@@ -1710,7 +1713,10 @@ pub fn land_to_hand(g: &mut Game, p: PlayerId) -> Res {
         lib.remove(i);
         match agent_for(g, p) {
             Some(a) => agent_take(g, a, p, c),
-            None => g.player_mut(p).hand.push(c),
+            None => {
+                g.player_mut(p).hand.push(c);
+                crate::glog!(g, "    {} reveals {} and puts it into their hand", g.player(p).name, g.db.get(c).name);
+            }
         }
     }
     Ok(())

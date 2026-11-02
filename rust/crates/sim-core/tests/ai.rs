@@ -139,7 +139,7 @@ fn copies_never_search() {
 fn a_tutor_moves_one_card_from_library_to_hand() {
     let mut g = table(&["seph", "cloud"]);
     let lib = g.player(P0).library.clone();
-    tutors::tutor(&mut g, P0, "any").unwrap();
+    tutors::tutor(&mut g, P0, "any", "Demonic Tutor").unwrap();
     assert_eq!(g.player(P0).hand.len(), 1);
     assert_eq!(g.player(P0).library.len(), lib.len() - 1);
     assert!(lib.contains(&g.player(P0).hand[0]));

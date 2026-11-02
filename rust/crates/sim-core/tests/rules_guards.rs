@@ -251,11 +251,11 @@ fn a_mark_lasts_this_turn_and_last() {
 fn a_tutor_marks_the_card_it_finds() {
     let mut g = game(&T5);
     let mut g0 = g.clone();
-    sim_core::engine::tutors::tutor(&mut g0, P0, "any").unwrap();
+    sim_core::engine::tutors::tutor(&mut g0, P0, "any", "Demonic Tutor").unwrap();
     assert!(g0.player(P0).tutored.is_empty());
     with(ALL, || {
         let n = g.player(P0).hand.len();
-        sim_core::engine::tutors::tutor(&mut g, P0, "any").unwrap();
+        sim_core::engine::tutors::tutor(&mut g, P0, "any", "Demonic Tutor").unwrap();
         assert_eq!(g.player(P0).hand.len(), n + 1);
         let found = *g.player(P0).hand.last().unwrap();
         assert_eq!(g.player(P0).tutored.len(), 1);

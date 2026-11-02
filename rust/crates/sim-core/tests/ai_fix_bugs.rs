@@ -291,7 +291,7 @@ fn b_a_card_put_on_top_is_not_fetched_again() {
     let oracle = card(&g, "Thassa's Oracle");
     g.player_mut(P0).library.insert(0, oracle);
     assert_eq!(ai::tutor_pick(&g, P0, "any"), Some(oracle), "the Oracle is the missing piece");
-    sim_core::engine::tutors::tutor_to_top(&mut g, P0, "any", 2).unwrap();
+    sim_core::engine::tutors::tutor_to_top(&mut g, P0, "any", 2, "Vampiric Tutor").unwrap();
     assert_eq!(g.player(P0).library.last(), Some(&oracle));
     assert_eq!(sim_core::engine::tutors::known_top(&g, P0), vec![oracle]);
     assert_ne!(ai::tutor_pick(&g, P0, "any"), Some(oracle), "it is already on top");

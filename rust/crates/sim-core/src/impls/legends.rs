@@ -1694,7 +1694,7 @@ pub fn suspend_upkeep(g: &mut Game, p: PlayerId) -> Res {
 
 /// Profane Tutor: search for any card
 fn profane_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    tutor(g, p, "any")?;
+    tutor(g, p, "any", "Profane Tutor")?;
     Ok("gy")
 }
 

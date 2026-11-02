@@ -978,7 +978,7 @@ fn beseech(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
         })
         .collect();
     let before = g.player(p).hand.clone();
-    tutor(g, p, "any")?;
+    tutor(g, p, "any", "Beseech the Mirror")?;
     let new: Vec<CardId> = g.player(p).hand.iter().copied().filter(|x| !before.contains(x)).collect();
     if let (Some(m), Some(&x)) = (min_by(&fod, |m| pval(g, m)), new.first())
         && g.db.get(x).cmc <= 4
@@ -1145,11 +1145,11 @@ fn wishclaw_search(g: &mut Game, p: PlayerId) -> Res {
             g.player_mut(p).stat("tutored", 1);
             crate::ai::rules::mark_tutored(g, p, x); // --- phase4-rules
             shuffle_library(g, p);
-            crate::glog!(g, "    {} tutors {} (Wishclaw Talisman)", pname(g, p), g.db.get(x).name);
+            crate::engine::tutors::log_found(g, p, x, "hand", "Wishclaw Talisman");
             return Ok(());
         }
     }
-    tutor(g, p, "any")
+    tutor(g, p, "any", "Wishclaw Talisman")
 }
 
 fn wishclaw_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {

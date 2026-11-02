@@ -281,8 +281,9 @@ fn sai(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 fn mage_tutor(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let o = owner(g, src);
     if m == src && trigger_window(g, o, Some(src), "search for a card", None)? {
-        let cmc = if cname(g, src) == "Trophy Mage" { 3 } else { 2 };
-        super::t1::tutor_named(g, o, &|g, c| is_art_card(g, c) && g.db.get(c).cmc == cmc, 1, "hand")?;
+        let by = cname(g, src).to_string();
+        let cmc = if by == "Trophy Mage" { 3 } else { 2 };
+        super::t1::tutor_named(g, o, &|g, c| is_art_card(g, c) && g.db.get(c).cmc == cmc, 1, "hand", &by)?;
     }
     Ok(())
 }
@@ -402,7 +403,7 @@ fn seedborn(g: &mut Game, src: Src, p: PlayerId) -> Res {
 
 /// a creature on top of the library: the wish list first, cast at the end of the turn before yours
 fn worldly(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    tutor_to_top(g, p, "cre", 0)?;
+    tutor_to_top(g, p, "cre", 0, "Worldly Tutor")?;
     Ok("gy")
 }
 
@@ -854,7 +855,7 @@ fn traitor(g: &mut Game, c: CardId, p: PlayerId, _m: PermId) -> Res {
 /// Not registered: in Python rules2.py's Beseech the Mirror (its resolve and priority) replaces this one.
 #[allow(dead_code)]
 fn beseech(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    tutor(g, p, "any")?;
+    tutor(g, p, "any", "Beseech the Mirror")?;
     Ok("gy")
 }
 
@@ -878,7 +879,7 @@ fn wishclaw_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !ability_window(g, p, Some(src), "search for a card", Some(7.0), None)? {
         return Ok(true);
     }
-    tutor(g, p, "any")?;
+    tutor(g, p, "any", "Wishclaw Talisman")?;
     let opps: Vec<PlayerId> = g.opps(p).collect();
     let opp = max_by(&opps, |q| threat(g, p, q)).unwrap();
     g.player_mut(p).perms.retain(|&x| x != src);

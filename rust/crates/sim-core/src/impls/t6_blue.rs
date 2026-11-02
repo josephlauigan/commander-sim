@@ -109,7 +109,7 @@ fn timetwister_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res
 /// search takes the Demon the deck would value most (a card taken by Opposition Agent follows its rule).
 fn counsel_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     if crate::impls::t6_green2::delirium(g, p) {
-        tutor(g, p, "any")?;
+        tutor(g, p, "any", "")?; // with delirium the card isn't revealed
         return Ok("gy");
     }
     let is_demon = |g: &Game, c: CardId| g.db.get(c).has_subtype("demon");

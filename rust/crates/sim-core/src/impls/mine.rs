@@ -2248,7 +2248,7 @@ pub fn prepared_effect(g: &mut Game, p: PlayerId, effect: u8) -> Res {
             Ok(())
         }
         1 => draw(g, p, 3, false),
-        2 => crate::engine::tutors::tutor(g, p, "is"),
+        2 => crate::engine::tutors::tutor(g, p, "is", "Wild Idea"),
         _ => crate::engine::cast::bolt_something(g, p, 3),
     }
 }
