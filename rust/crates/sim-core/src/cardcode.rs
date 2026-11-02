@@ -998,6 +998,11 @@ pub fn combo_progress(g: &Game, q: PlayerId) -> f64 {
     crate::impls::combos::combo_progress(g, q)
 }
 
+/// `combo_progress` of q as `viewer` reads it (`combos::combo_progress_seen`)
+pub fn combo_progress_seen(g: &Game, viewer: PlayerId, q: PlayerId) -> f64 {
+    crate::impls::combos::combo_progress_seen(g, viewer, q)
+}
+
 /// combos.piece_threat: extra value of m if it's a piece of a combo its controller nearly has
 pub fn piece_threat(g: &Game, m: PermId) -> f64 {
     crate::impls::combos::piece_threat(g, m)
@@ -1112,8 +1117,3 @@ pub fn seph_flicker_worth(g: &Game, p: PlayerId, m: PermId) -> f64 {
     crate::impls::mine::flicker_worth(g, p, m)
 }
 
-/// zur.zur_fetch (CI.zur_fetch: Zur attacking in your Y'shtola deck searches for an enchantment with mana value 3 or
-/// less and puts it onto the battlefield)
-pub fn zur_fetch(g: &mut Game, src: PermId, p: PlayerId) -> Res {
-    crate::impls::zur::zur_fetch(g, src, p)
-}

@@ -50,7 +50,7 @@ pub fn is_t6(g: &Game, p: PlayerId) -> bool {
 
 macro_rules! dispatch {
     ($g:expr, $p:expr, $f:ident($($a:expr),*)) => {
-        match crate::ai::hand_key($g, $p) { // --- phase4-hand-off: AI_HAND
+        match crate::ai::hand_key($g, $p) { // --- phase4-hand-off
             "godo" => godo::$f($g, $p $(, $a)*),
             _ => None,
         }

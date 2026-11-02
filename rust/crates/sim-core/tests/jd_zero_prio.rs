@@ -7,12 +7,11 @@ use sim_core::tag::Tag;
 use sim_core::ids::PlayerId;
 use sim_core::testkit::*;
 
-/// the decks with their own priority functions (veyran, sauron, kefka and thrasios lost theirs on 2026-11-01)
-const JD: [&str; 6] = ["seph", "yshtola", "omnath", "sheoldred", "cloud", "sephfs"];
+/// the decks with their own priority functions (nine decks lost theirs, the last three on 2026-11-01)
+const JD: [&str; 3] = ["seph", "omnath", "sephfs"];
 
 #[test]
 fn a_held_zero_from_a_jd_deck_is_never_replaced_by_the_generic_value() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     for key in JD {
         let mut g = table(&[key, "sauron", "seph"]);
         let (mut held, mut kept) = (std::collections::BTreeSet::new(), std::collections::BTreeSet::new());
@@ -45,8 +44,7 @@ fn a_held_zero_from_a_jd_deck_is_never_replaced_by_the_generic_value() {
 
 #[test]
 fn the_answers_are_not_cast_proactively() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    for (key, name) in [("sheoldred", "Masterful Flourish"), ("sheoldred", "Battle-Rage Blessing"), ("omnath", "Blossoming Defense")] {
+    for (key, name) in [("omnath", "Blossoming Defense")] {
         let mut g = table(&[key, "sauron", "seph"]);
         let c = take(&mut g, PlayerId(0), name);
         g.player_mut(PlayerId(0)).hand.push(c);

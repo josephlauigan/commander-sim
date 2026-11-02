@@ -149,12 +149,12 @@ pub fn playout(g2: &Game, p: PlayerId, v: f64) {
 
 /// `search::strength`'s terms for p, then `evaluate`'s opponents' and dead terms (raw units, before the tanh)
 pub fn terms(g: &Game, p: PlayerId) -> [f64; 9] {
-    use super::search::strength;
+    use super::search::strength_seen;
     use crate::engine::values::{epow, pval};
     let pl = g.player(p);
     let live = || pl.perms.iter().copied().filter(|&m| !g.perm(m).phased);
     let opps: Vec<PlayerId> = g.opps(p).collect();
-    let mut so: Vec<f64> = opps.iter().map(|&q| strength(g, q)).collect();
+    let mut so: Vec<f64> = opps.iter().map(|&q| strength_seen(g, p, q)).collect();
     so.sort_by(|a, b| b.total_cmp(a));
     let opp = if so.is_empty() { 0.0 } else { -0.6 * so[0] - 0.4 * so.iter().sum::<f64>() / so.len() as f64 };
     let dead = g.players.iter().filter(|q| q.id != p && !q.alive).count() as f64;

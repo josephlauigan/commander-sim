@@ -1120,12 +1120,9 @@ fn step_end(g: &mut Game, p: PlayerId) -> Res {
 }
 
 // ------------------------------------------------------------------ a game
-/// the AI's keep rule for p's current hand: 2 to 5 lands (Cloud's deck has its own, `cloud::keep_hand`)
+/// the AI's keep rule for p's current hand: 2 to 5 lands
 pub fn keeps_hand(g: &Game, p: PlayerId) -> bool {
     let n = g.player(p).hand.iter().filter(|&&c| g.db.get(c).land).count();
-    if crate::ai::hand_key(g, p) == "cloud" {
-        return crate::impls::cloud::keep_hand(g, p);
-    }
     if let Some(k) = crate::impls::t6_plans::keep(g, p) {
         return k; // a Tier 6 deck's own keep rule
     }
@@ -1155,7 +1152,7 @@ pub fn bottom_pick(g: &Game, p: PlayerId) -> Option<CardId> {
     }
 }
 
-/// Python's `mulligan`: keep 2 to 5 lands (Cloud's deck has its own keep, `cloud::keep_hand`); after two mulligans, bottom one or two cards.
+/// Python's `mulligan`: keep 2 to 5 lands; after two mulligans, bottom one or two cards.
 pub fn mulligan(g: &mut Game, p: PlayerId, rng: &mut crate::rng::Rng) {
     let draw7 = |g: &mut Game, rng: &mut crate::rng::Rng| {
         let pl = g.player_mut(p);

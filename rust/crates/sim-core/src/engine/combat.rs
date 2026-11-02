@@ -527,10 +527,8 @@ pub fn ai_blocks(
             } else if ap >= 2 && rng.random() < ai::chump_prob(g, d, incoming) {
                 let mut cs = cands.clone();
                 // --- plan-files-3: or a plan's `commander_chumps_to_live`
-                if (hand_key(g, d) == "yshtola" || crate::ai::plan_data::commander_chumps_to_live(g, d))
-                    && incoming < g.player(d).life
-                {
-                    cs.retain(|&x| !g.perm(x).is_cmd); // Y'shtola is the engine: she chumps only to live
+                if crate::ai::plan_data::commander_chumps_to_live(g, d) && incoming < g.player(d).life {
+                    cs.retain(|&x| !g.perm(x).is_cmd); // a commander that is the engine chumps only to live
                     if cs.is_empty() {
                         continue;
                     }
@@ -1129,11 +1127,8 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                 None => ai::choose_defender(g, p),
             };
             let groups = if plan.is_some_and(|x| x.1 == "all") {
-                let all_atk = if hand_key(g, p) == "cloud" {
-                    crate::impls::cloud::all_out_trim(g, p, all_atk, d)
-                } else {
-                    crate::ai::plan_data::stay_home(g, p, all_atk, d) // --- plan-files-3 (no rules: unchanged)
-                };
+                // --- plan-files-3: the plan's stay-home rules (no rules: unchanged)
+                let all_atk = crate::ai::plan_data::stay_home(g, p, all_atk, d);
                 vec![(d, all_atk)] // everything at one player
             } else {
                 if ncomb == 1 {

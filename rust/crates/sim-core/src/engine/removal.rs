@@ -438,7 +438,7 @@ fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, 
         "rebuke" => ctx.victim.filter(|&v| g.player(v).alive).into_iter().collect(),
         _ => g.players.iter().filter(|q| q.alive).map(|q| q.id).collect(),
     };
-    let mut deluge_x = ctx.deluge_x;
+    let deluge_x = ctx.deluge_x;
     if kind == "minus" && card.is_some_and(|c| g.db.get(c).tag(Tag::Deluge)) {
         let x = match ctx.deluge_x {
             Some(x) => x, // practice mode: the person chose X
@@ -449,14 +449,7 @@ fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, 
                     .filter(|&m| g.is_creature(m))
                     .map(|m| etgh(g, m))
                     .collect();
-                let x = xs.iter().copied().max().unwrap_or(1).min(10); // Toxic Deluge: pay X life
-                match crate::impls::sheoldred::deluge_cap(g, p) {
-                    Some(cap) => {
-                        deluge_x = Some(x.min(cap)); // the sheoldred deck: -X/-X really is X, so Sheoldred survives
-                        x.min(cap)
-                    }
-                    None => x,
-                }
+                xs.iter().copied().max().unwrap_or(1).min(10) // Toxic Deluge: pay X life
             }
         };
         lose_life(g, p, x, Some(p), "other", None)?;

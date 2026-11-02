@@ -767,7 +767,8 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
         }
         return Ok(());
     }
-    let val = top.value_to(q);
+    let imp = imp_seen_by(g, q, &top);
+    let val = value_seen_by(g, q, &top);
     if val <= 0.0 && top.aff.is_empty() {
         return Ok(());
     }
@@ -814,7 +815,7 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
             }
         }
     }
-    if top.imp >= 6.0 && crate::cardcode::hullbreaker_counter(g, q, c)? {
+    if imp >= 6.0 && crate::cardcode::hullbreaker_counter(g, q, c)? {
         g.bounced_spell = true;
         if let Some(it) = g.stack.iter_mut().find(|it| it.id == top_id) {
             it.countered = true;
@@ -825,6 +826,27 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
         cast_counter_spell(g, q, ctr, top_id)?;
     }
     Ok(())
+}
+
+/// The importance of `it` as responder q reads it. A Tier 6 caster's Ad Nauseam is a win spell (8) to the Tier 6
+/// table only. A counterer of any other tier judges it by the generic rules, as it would anyone's (JD, 2026-11-01).
+/// Every other item: its own `imp`.
+pub fn imp_seen_by(g: &Game, q: PlayerId, it: &StackItem) -> f64 {
+    match it.card {
+        Some(c)
+            if it.kind == StackKind::Spell
+                && !crate::impls::t6_plans::is_t6(g, q)
+                && ai::pool::t6_win_spell(g, it.controller, c) =>
+        {
+            ai::combo_imp(g, it.controller, c).max(ai::pool::spell_importance_generic(g, it.controller, c))
+        }
+        _ => it.imp,
+    }
+}
+
+/// `StackItem::value_to(q)` with q's reading of the importance (`imp_seen_by`)
+pub fn value_seen_by(g: &Game, q: PlayerId, it: &StackItem) -> f64 {
+    it.aff.iter().find(|x| x.0 == q).map_or_else(|| imp_seen_by(g, q, it), |x| x.1)
 }
 
 // ------------------------------------------------------------------ counterspells

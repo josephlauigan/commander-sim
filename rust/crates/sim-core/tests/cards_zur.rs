@@ -1,5 +1,5 @@
 //! zur.py's card code (`impls/zur.rs`): the Auras that lock a permanent down, The Eternal Wanderer, Prayer of
-//! Binding, Rootborn Defenses, Azorius Guildmage's tap, Zur's untargeted Auras and the protection responses. Ported
+//! Binding, Rootborn Defenses and Azorius Guildmage's tap. Ported
 //! from the Python suite's tests/test_zur.py (the practice-mode tests wait for phase 9); the seat is the Y'shtola
 //! deck, which runs most of these cards.
 
@@ -113,45 +113,14 @@ fn no_target_no_aura() {
     assert!(!has_card_on_bf(&g, P0, "Bound in Silence"));
 }
 
-// ------------------------------------------------------------------ Zur's untargeted Auras
+// ------------------------------------------------------------------ activated abilities
 #[test]
-fn a_fetched_lock_aura_ignores_hexproof() {
-    let mut g = table3();
-    let z = perm(&mut g, P0, "Zur the Enchanter");
-    let big = perm(&mut g, P1, "Niv-Mizzet, Parun");
-    g.perm_mut(big).eot_kw.push("hexproof");
-    assert!(values::untargetable(&g, big));
-    assert_eq!(zur::lock_host(&g, P0, "Arrest", true, &[]), None, "a cast Arrest can't target it");
-    assert_eq!(zur::lock_host(&g, P0, "Arrest", false, &[]), Some(big));
-    let arrest = take(&mut g, P0, "Arrest");
-    zur::put_enchantment(&mut g, P0, arrest, z).unwrap();
-    assert!(cardcode::locked(&g, big, "pacify"));
-}
-
-#[test]
-fn an_aura_with_nothing_to_lock_goes_to_the_graveyard() {
-    let mut g = table3();
-    let z = perm(&mut g, P0, "Zur the Enchanter");
-    let bonds = take(&mut g, P0, "Luminous Bonds");
-    zur::put_enchantment(&mut g, P0, bonds, z).unwrap();
-    assert!(g.player(P0).gy.contains(&bonds));
-    assert!(!has_card_on_bf(&g, P0, "Luminous Bonds"));
-}
-
-#[test]
-fn lock_worth_by_kind() {
+fn activated_abilities_are_seen() {
     let mut g = table3();
     let rock = perm(&mut g, P1, "Sol Ring");
     let cr = perm(&mut g, P1, "Guttersnipe");
     assert!(zur::activated(&g, rock));
     assert!(!zur::activated(&g, cr));
-    assert_eq!(zur::lock_worth(&g, P0, rock, "pacify"), 0.0, "not a creature");
-    assert_eq!(zur::lock_worth(&g, P0, rock, "encrust"), 0.0, "a Sol Ring is worth 0 to remove (as in the Python)");
-    let v = values::pval(&g, cr);
-    let p = values::epow(&g, cr).min(4) as f64;
-    assert!((zur::lock_worth(&g, P0, cr, "arrest") - v * (0.55 + 0.08 * p)).abs() < 1e-9);
-    assert!((zur::lock_worth(&g, P0, cr, "arrest") - 2.84).abs() < 1e-9, "the Python's number");
-    assert_eq!(zur::lock_host(&g, P0, "Encrust", true, &[]), Some(cr));
 }
 
 // ------------------------------------------------------------------ the other cards
@@ -232,25 +201,11 @@ fn disenchant_targets() {
 }
 
 #[test]
-fn rootborn_defenses_against_a_wipe() {
+fn rootborn_defenses_populates_and_grants_indestructible() {
     let mut g = table3();
-    lands(&mut g, P0, "Plains", 3, false);
-    let y = cmd(&mut g, P0);
-    perm(&mut g, P0, "Restoration Angel");
-    hand(&mut g, P0, &["Rootborn Defenses"]);
-    assert_eq!(zur::zur_wipe_response(&mut g, P0, "destroy", P1).unwrap(), Some("indes"));
-    assert!(values::indestructible(&g, y));
-}
-
-#[test]
-fn rootborn_defenses_answers_removal_and_populates() {
-    let mut g = table3();
-    lands(&mut g, P0, "Plains", 3, false);
     let y = cmd(&mut g, P0);
     let t = token(&mut g, P0, 2);
-    hand(&mut g, P0, &["Rootborn Defenses"]);
-    assert_eq!(values::pval(&g, y), 4.0, "worth protecting (4 or more), as in the Python");
-    assert!(zur::zur_protect(&mut g, P0, y, "destroy", Some(P1), None).unwrap());
+    zur::rootborn(&mut g, P0).unwrap();
     assert!(values::indestructible(&g, y));
     let toks: Vec<PermId> = g.player(P0).perms.iter().copied().filter(|&m| g.perm(m).token).collect();
     assert_eq!(toks.len(), 2, "populate copied the token");

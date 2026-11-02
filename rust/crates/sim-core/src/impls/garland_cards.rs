@@ -35,8 +35,7 @@ fn ability(utility: f64, label: &str, src: PermId, f: crate::hooks::AbilityFn, a
 /// **Coerced to Kill** (Aura, {3}{U}{B}): you control enchanted creature; it has base power and toughness 1/1, has
 /// deathtouch and is an Assassin. `zur::lock_attach` calls `coerce_attach` once the Aura is on the battlefield: the
 /// creature changes sides (the same move as Garland's steal, but for good), and its old state is kept on the Aura.
-/// Leaving the battlefield (the Aura destroyed or exiled) gives the creature back to its owner as it was. The AI casts
-/// it on the best opposing creature (`zur::lock_host`, the same pick as the lock Auras).
+/// Leaving the battlefield (the Aura destroyed or exiled) gives the creature back to its owner as it was.
 pub fn coerce_attach(g: &mut Game, a: PermId, host: PermId) {
     let p = owner(g, a);
     let x = g.perm(host);

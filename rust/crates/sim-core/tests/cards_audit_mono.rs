@@ -3,7 +3,6 @@
 
 use sim_core::engine::{cast, mana};
 use sim_core::ids::{CardId, PermId, PlayerId};
-use sim_core::impls::sheoldred::sheoldred_prio;
 use sim_core::state::{Ctx, Game};
 use sim_core::tag::Tag;
 use sim_core::testkit::*;
@@ -54,36 +53,6 @@ fn rooftop_assassin_damage_mark_expires_with_the_turn() {
 }
 
 #[test]
-fn rooftop_assassin_is_cast_for_a_damaged_target() {
-    let mut g = table(&["sheoldred", "seph"]);
-    let c = hand(&mut g, P0, &["Rooftop Assassin"])[0];
-    let victim = perm(&mut g, P1, "Atraxa, Grand Unifier");
-    let idle = sheoldred_prio(&g, P0, c);
-    g.mark_damaged(victim);
-    assert!(sheoldred_prio(&g, P0, c) > idle + 20);
-}
-
-#[test]
-fn seizan_comes_down_for_underworld_dreams_without_sheoldred() {
-    let mut g = table(&["sheoldred", "seph"]);
-    let c = hand(&mut g, P0, &["Seizan, Perverter of Truth"])[0];
-    assert!(sheoldred_prio(&g, P0, c) < 60);
-    perm(&mut g, P0, "Underworld Dreams");
-    assert_eq!(sheoldred_prio(&g, P0, c), 80);
-}
-
-#[test]
-fn necrosquito_is_a_better_cast_with_sacrifice_fodder() {
-    let mut g = table(&["sheoldred", "seph"]);
-    let c = hand(&mut g, P0, &["Necrosquito"])[0];
-    let base = sheoldred_prio(&g, P0, c);
-    assert!(base >= 55, "not last among the four-drops, got {base}");
-    perm(&mut g, P0, "Carnage Altar");
-    token(&mut g, P0, 1);
-    assert!(sheoldred_prio(&g, P0, c) > base + 5);
-}
-
-#[test]
 fn silhana_starfletcher_taps_for_green() {
     let g = table(&["omnath", "seph"]);
     let d = g.db.get(card(&g, "Silhana Starfletcher"));
@@ -113,7 +82,6 @@ fn cast_hand_existing(g: &mut Game, c: CardId) {
 
 #[test]
 fn ad_nauseam_for_sheoldred_also_goes_off_in_its_own_second_main() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     use sim_core::ai::plans;
     use sim_core::state::Step;
     let mut g = table(&["sheoldred", "seph"]);
@@ -129,17 +97,7 @@ fn ad_nauseam_for_sheoldred_also_goes_off_in_its_own_second_main() {
 }
 
 #[test]
-fn memory_jar_waits_for_a_punisher() {
-    let mut g = table(&["sheoldred", "seph"]);
-    let c = hand(&mut g, P0, &["Memory Jar"])[0];
-    assert!(sheoldred_prio(&g, P0, c) < 45);
-    perm(&mut g, P0, "Sheoldred, the Apocalypse");
-    assert!(sheoldred_prio(&g, P0, c) > 80);
-}
-
-#[test]
 fn dark_deal_is_allowed_with_three_other_cards() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     use sim_core::hooks::Action;
     let mut g = table(&["sheoldred", "seph"]);
     perm(&mut g, P0, "Sheoldred, the Apocalypse");

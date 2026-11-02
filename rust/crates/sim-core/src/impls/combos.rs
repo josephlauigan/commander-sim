@@ -975,10 +975,17 @@ pub fn deck_combos(g: &Game, q: PlayerId) -> Vec<usize> {
 /// search.combo_progress: the share of q's closest combo that q holds (in hand, on the battlefield, or the
 /// commander in the command zone), squared: the last pieces count most. 0 for a deck without a modeled combo.
 pub fn combo_progress(g: &Game, q: PlayerId) -> f64 {
+    combo_progress_seen(g, q, q)
+}
+
+/// `combo_progress` of q as `viewer` reads it (in the look-ahead's evaluation, `viewer` is the player deciding).
+/// The Tier 6 reading (below) is a cEDH pod's: a Tier 6 viewer reads a Tier 6 player that way, itself included. A viewer
+/// of any other tier reads a Tier 6 player by the generic rule, as it reads anyone (JD, 2026-11-01).
+pub fn combo_progress_seen(g: &Game, viewer: PlayerId, q: PlayerId) -> f64 {
     // --- t6 quiet progress: a Tier 6 deck reads its quiet (stepped) lines too, by their real groups (`lines_of`), and
     // its land pieces on the battlefield (Gaea's Cradle). Other decks are unchanged (`deck_combos`). The generic
     // executor (`combo_options`) never reads this.
-    let t6 = crate::impls::t6_plans::is_t6(g, q);
+    let t6 = crate::impls::t6_plans::is_t6(g, q) && crate::impls::t6_plans::is_t6(g, viewer);
     let cmbs: Vec<usize> = if t6 { lines_of(g, q).to_vec() } else { deck_combos(g, q) };
     if cmbs.is_empty() {
         return 0.0;

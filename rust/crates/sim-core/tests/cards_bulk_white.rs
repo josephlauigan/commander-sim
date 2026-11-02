@@ -3,9 +3,10 @@
 
 use sim_core::ai::brain;
 use sim_core::engine::turn;
-use sim_core::engine::values::{epow, etgh, untargetable};
+use sim_core::engine::values::{epow, etgh, indestructible, untargetable};
 use sim_core::engine::{cast, zones};
 use sim_core::hooks::{Action, Opt};
+use sim_core::impls::bulk_white::{white_protect, white_wipe_response};
 use sim_core::ids::{CardId, PermId, PlayerId};
 use sim_core::state::{Ctx, Game};
 use sim_core::testkit::*;
@@ -330,14 +331,13 @@ fn shardmage_s_rescue_hexproof_ends_with_the_turn() {
 
 #[test]
 fn cho_manno_s_blessing_gives_protection_from_the_spells_colour() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     let cloud = perm(&mut g, P0, "Cloud, Midgar Mercenary");
     g.perm_mut(cloud).is_cmd = true;
     lands(&mut g, P0, "Plains", 2, false);
     hand(&mut g, P0, &["Cho-Manno's Blessing"]);
     let doom = take(&mut g, P1, "Bitter Triumph");
-    sim_core::engine::removal::apply_removal(&mut g, Some(P1), cloud, "destroy", Some(doom)).unwrap();
+    assert!(white_protect(&mut g, P0, cloud, "destroy", Some(P1), Some(doom)).unwrap());
     assert!(g.perm(cloud).on_bf);
     let aura = on_bf(&g, P0, "Cho-Manno's Blessing").unwrap();
     assert_eq!(g.perm(aura).attached, Some(cloud));
@@ -348,14 +348,13 @@ fn cho_manno_s_blessing_gives_protection_from_the_spells_colour() {
 
 #[test]
 fn patriot_gives_hexproof_in_response_to_removal() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     let _pat = perm(&mut g, P0, "Patriot, Shield Wielder");
     let cloud = perm(&mut g, P0, "Cloud, Midgar Mercenary");
     g.perm_mut(cloud).is_cmd = true;
     lands(&mut g, P0, "Plains", 2, false);
     let swords = take(&mut g, P1, "Swords to Plowshares");
-    sim_core::engine::removal::apply_removal(&mut g, Some(P1), cloud, "exile", Some(swords)).unwrap();
+    assert!(white_protect(&mut g, P0, cloud, "exile", Some(P1), Some(swords)).unwrap());
     assert!(g.perm(cloud).on_bf);
     assert!(g.perm(_pat).tapped);
     assert_eq!(epow(&g, cloud), 4, "+2/+0 until end of turn");
@@ -377,17 +376,14 @@ fn patriot_pumps_the_biggest_attacker_before_combat() {
 
 #[test]
 fn ultimate_magic_holy_saves_the_board_from_a_wrath() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     let a = perm(&mut g, P0, "Exalted Angel");
     let b = perm(&mut g, P0, "Helitrooper");
     let _c = perm(&mut g, P0, "Armory Automaton");
     lands(&mut g, P0, "Plains", 3, false);
     hand(&mut g, P0, &["Ultimate Magic: Holy"]);
-    let c = take(&mut g, P1, "Wrath of God");
-    g.player_mut(P1).hand.push(c);
-    cast::cast_card(&mut g, P1, c, "hand", Ctx::default()).unwrap();
-    assert!(g.perm(a).on_bf && g.perm(b).on_bf, "indestructible: both survive Wrath of God");
+    assert_eq!(white_wipe_response(&mut g, P0, "destroy", P1).unwrap(), Some("indes"));
+    assert!(indestructible(&g, a) && indestructible(&g, b), "indestructible: both survive a destroy wipe");
     assert!(in_gy(&g, P0, "Ultimate Magic: Holy"));
 }
 

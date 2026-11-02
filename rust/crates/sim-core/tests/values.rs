@@ -110,13 +110,12 @@ fn the_override_table_loads_and_refuses_rows_without_a_reason() {
     );
 }
 
-/// JD's decks with their hand AI and Tier 6 never read derived values (their own priority code stays)
+/// the decks that still have hand-written AI (Omnath, Sephiroth's seat) and Tier 6 never read derived values
+/// (their own priority code stays); every deck whose hand AI was deleted is a generic-policy deck
 #[test]
-fn jd_decks_and_tier_6_are_never_on_derived_values() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    // the decks that keep their hand AI (veyran, sauron, karn and the rest of the deleted ones are generic decks)
-    let g = table(&["sheoldred", "yshtola", "cloud", "omnath"]);
-    for i in 0..4 {
+fn decks_with_hand_ai_and_tier_6_are_never_on_derived_values() {
+    let g = table(&["omnath", "sephfs"]);
+    for i in 0..2 {
         assert!(!values::generic_deck(&g, PlayerId(i)));
     }
     let g = table(&tier("t6")[0..4]);
