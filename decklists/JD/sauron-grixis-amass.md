@@ -238,15 +238,15 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sauron, the Dark Lord
 
-**Creatures (20).** Faerie Mastermind, Grave Titan, Inferno Titan, Iron Man Armored Avenger, Jace's Archivist, Jin-Gitaxias Progress Tyrant, Kaervek the Merciless, Lazotep Reaver, Massacre Wurm, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sephiroth Planet's Heir, Sheoldred the Apocalypse, Talrand Sky Summoner, Urza Lord High Artificer, Vision Synthezoid Avenger, War Machine Avenging Arsenal
+**Creatures (19).** Faerie Mastermind, Grave Titan, Inferno Titan, Iron Man Armored Avenger, Jace's Archivist, Jin-Gitaxias Progress Tyrant, Lazotep Reaver, Massacre Wurm, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sephiroth Planet's Heir, Sheoldred the Apocalypse, Talrand Sky Summoner, Urza Lord High Artificer, Vision Synthezoid Avenger, War Machine Avenging Arsenal
 
-**Enchantments (4).** Call of the Ring, Dreadhorde Invasion, Propaganda, Triple Triad
+**Enchantments (5).** Call of the Ring, Dreadhorde Invasion, Phyrexian Arena, Propaganda, Triple Triad
 
 **Artifacts (13).** Arcane Signet, Chromatic Lantern, Dimir Signet, Fellwar Stone, Lightning Greaves, Mind Stone, Rakdos Signet, Sol Ring, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, The Ozolith, Whispersilk Cloak
 
 **Instants and sorceries (27).** An Offer You Can't Refuse, Baleful Mastery, Bitter Triumph, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chandra's Ignition, Chaos Warp, Comet Storm, Counterspell, Cyclonic Rift, Deflecting Swat, Diabolic Intent, Diabolic Tutor, Exsanguinate, Fact or Fiction, Force of Will, Infernal Grasp, Mana Drain, Mystic Confluence, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slip Out the Back, Terminate, Torment of Hailfire, Vandalblast
 
-**Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Haunted Ridge, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Sokenzan Crucible of Defiance, Steam Vents, Sulfur Falls, Treno Dark City, Underground River, Underground Sea, Watery Grave, 5 Island, 6 Mountain, 6 Swamp
+**Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Haunted Ridge, Karn's Bastion, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Sokenzan Crucible of Defiance, Steam Vents, Sulfur Falls, Treno Dark City, Underground River, Underground Sea, Watery Grave, 5 Island, 5 Mountain, 6 Swamp
 
 Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when you need the land half.
 
@@ -289,7 +289,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Iron Man, Armored Avenger
 1 Jace's Archivist
 1 Jin-Gitaxias, Progress Tyrant
-1 Kaervek the Merciless
+1 Karn's Bastion
 1 Lazotep Reaver
 1 Lightning Greaves
 1 Mana Drain
@@ -303,6 +303,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Noxious Gearhulk
 1 Orcish Bowmasters
 1 Path of Ancestry
+1 Phyrexian Arena
 1 Propaganda
 1 Rakdos Signet
 1 Ringsight
@@ -337,6 +338,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Watery Grave
 1 Whispersilk Cloak
 5 Island
-6 Mountain
+5 Mountain
 6 Swamp
 ```

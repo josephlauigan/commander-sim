@@ -212,15 +212,15 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Kefka, Court Mage // Kefka, Ruler of Ruin
 
-**Creatures (25).** Alpharael Dreaming Acolyte, Birgi God of Storytelling, Blazing Firesinger // Seething Song, Blightspeaker, Firebrand Archer, Garrison Excavator, Guttersnipe, Harmonic Prodigy, Intellect Devourer, Kessig Flamebreather, Kuja Genome Sorcerer // Trance Kuja Fate Defied, Marvin Murderous Mimic, Massacre Wurm, Niv-Mizzet Parun, Niv-Mizzet the Firemind, Psychosis Crawler, Rummaging Goblin, Scarlet Spider Kaine, Skullport Merchant, Stadium Tidalmage, Stinkweed Imp, Storm-Kiln Artist, Susurian Voidborn, Veyran Voice of Duality, Young Pyromancer
+**Creatures (27).** Alpharael Dreaming Acolyte, Archon of Cruelty, Birgi God of Storytelling, Blazing Firesinger // Seething Song, Blightspeaker, Firebrand Archer, Garrison Excavator, Guttersnipe, Harmonic Prodigy, Intellect Devourer, Kessig Flamebreather, Kuja Genome Sorcerer // Trance Kuja Fate Defied, Marvin Murderous Mimic, Massacre Wurm, Niv-Mizzet Parun, Niv-Mizzet the Firemind, Psychosis Crawler, Rummaging Goblin, Scarlet Spider Kaine, Sheoldred Whispering One, Skullport Merchant, Stadium Tidalmage, Stinkweed Imp, Storm-Kiln Artist, Susurian Voidborn, Veyran Voice of Duality, Young Pyromancer
 
-**Enchantments (4).** Corroding Dragonstorm, Demonic Embrace, Fiery Emancipation, Underworld Breach
+**Enchantments (5).** Animate Dead, Corroding Dragonstorm, Fiery Emancipation, Necromancy, Underworld Breach
 
-**Artifacts (5).** Arcane Signet, Lightning Greaves, Lotus Petal, Palantír of Orthanc, Skullclamp
+**Artifacts (4).** Arcane Signet, Lotus Petal, Palantír of Orthanc, Skullclamp
 
-**Sorceries (15).** Bribery, Contract Killing, Deadly Embrace, Decorum Dissertation, Diabolic Tutor, Expressive Iteration, Glimpse the Unthinkable, Grab the Prize, Grapeshot, Jeska's Will, Profane Tutor, Rapturous Moment, Seize the Spoils, Solve the Equation, Yawgmoth's Will
+**Sorceries (13).** Bribery, Contract Killing, Deadly Embrace, Decorum Dissertation, Diabolic Tutor, Expressive Iteration, Glimpse the Unthinkable, Grapeshot, Jeska's Will, Reanimate, Seize the Spoils, Solve the Equation, Yawgmoth's Will
 
-**Instants (14).** Arcane Denial, Big Score, Brain Freeze, Chaos Warp, Counterspell, Dark Ritual, Extinguish the Light, Frantic Search, Lightning Bolt, Mystical Tutor, Price of Progress, Reality Shift, Think Twice, Twinned Vision
+**Instants (14).** Big Score, Brain Freeze, Chaos Warp, Counterspell, Dark Ritual, Entomb, Extinguish the Light, Frantic Search, Lightning Bolt, Mystical Tutor, Price of Progress, Reality Shift, Think Twice, Twinned Vision
 
 **Lands (36).** Blood Crypt, Command Tower, Exotic Orchard, Gemstone Mine, Haunted Ridge, Mistrise Village, Mystic Sanctuary, Scorched Geyser, Shivan Reef, Spirebluff Canal, Steam Vents, Stormcarved Coast, Sulfur Falls, Sulfurous Springs, Temple of Epiphany, Underground River, 5 Island, 7 Mountain, 8 Swamp
 
@@ -228,8 +228,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 ```
 1 Alpharael, Dreaming Acolyte
-1 Arcane Denial
+1 Animate Dead
 1 Arcane Signet
+1 Archon of Cruelty
 1 Big Score
 1 Birgi, God of Storytelling
 1 Blazing Firesinger // Seething Song
@@ -245,8 +246,8 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Dark Ritual
 1 Deadly Embrace
 1 Decorum Dissertation
-1 Demonic Embrace
 1 Diabolic Tutor
+1 Entomb
 1 Exotic Orchard
 1 Expressive Iteration
 1 Extinguish the Light
@@ -256,7 +257,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Garrison Excavator
 1 Gemstone Mine
 1 Glimpse the Unthinkable
-1 Grab the Prize
 1 Grapeshot
 1 Guttersnipe
 1 Harmonic Prodigy
@@ -267,25 +267,25 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Kessig Flamebreather
 1 Kuja, Genome Sorcerer // Trance Kuja, Fate Defied
 1 Lightning Bolt
-1 Lightning Greaves
 1 Lotus Petal
 1 Marvin, Murderous Mimic
 1 Massacre Wurm
 1 Mistrise Village
 1 Mystic Sanctuary
 1 Mystical Tutor
+1 Necromancy
 1 Niv-Mizzet, Parun
 1 Niv-Mizzet, the Firemind
 1 Palantír of Orthanc
 1 Price of Progress
-1 Profane Tutor
 1 Psychosis Crawler
-1 Rapturous Moment
 1 Reality Shift
+1 Reanimate
 1 Rummaging Goblin
 1 Scarlet Spider, Kaine
 1 Scorched Geyser
 1 Seize the Spoils
+1 Sheoldred, Whispering One
 1 Shivan Reef
 1 Skullclamp
 1 Skullport Merchant

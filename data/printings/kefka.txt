@@ -1,6 +1,7 @@
 1 Alpharael, Dreaming Acolyte (eoe) 212
-1 Arcane Denial (msc) 147
+1 Animate Dead (4ed) 118
 1 Arcane Signet (fic) 333
+1 Archon of Cruelty (pmh2) 75s
 1 Big Score (plst) SNC-102
 1 Birgi, God of Storytelling (khm) 123
 1 Blazing Firesinger // Seething Song (sos) 109
@@ -16,9 +17,8 @@
 1 Dark Ritual (fca) 8
 1 Deadly Embrace (fin) 557
 1 Decorum Dissertation (sos) 78
-1 Demonic Embrace (m21) 95
 1 Diabolic Tutor (m14) 95
-1 Eternal Student (sos) 82
+1 Entomb (dmr) 426
 1 Exotic Orchard (fic) 390
 1 Expressive Iteration (stx) 186
 1 Extinguish the Light (dmu) 94
@@ -28,7 +28,6 @@
 1 Garrison Excavator (sos) 116
 1 Gemstone Mine (plst) TSB-119
 1 Glimpse the Unthinkable (2x2) 378
-1 Grab the Prize (dsk) 138
 1 Grapeshot (tsr) 166
 1 Guttersnipe (pm19) 145
 1 Harmonic Prodigy (mh2) 132
@@ -40,7 +39,6 @@
 1 Kessig Flamebreather (plst) VOW-164
 1 Kuja, Genome Sorcerer // Trance Kuja, Fate Defied (fin) 399
 1 Lightning Bolt (3ed) 162
-1 Lightning Greaves (fic) 349
 1 Lotus Petal (p30m) 2
 1 Marvin, Murderous Mimic (dsk) 367
 1 Massacre Wurm (m21) 114
@@ -48,17 +46,18 @@
 7 Mountain (mdd) 298
 1 Mystic Sanctuary (soc) 388
 1 Mystical Tutor (dmr) 421
+1 Necromancy (plst) VIS-64
 1 Niv-Mizzet, Parun (rvr) 376
 1 Niv-Mizzet, the Firemind (p30a) 14
 1 Price of Progress (pd2) 18
-1 Profane Tutor (mh2) 401
 1 Psychosis Crawler (c15) 263
-1 Rapturous Moment (sos) 219
 1 Reality Shift (tdc) 163
+1 Reanimate (brb) 57
 1 Rummaging Goblin (m13) 146
 1 Scarlet Spider, Kaine (spm) 143
 1 Scorched Geyser (msc) 264
 1 Seize the Spoils (sos) 129
+1 Sheoldred, Whispering One (pnph) 73★
 1 Shivan Reef (dmu) 380
 1 Skullclamp (fic) 355
 1 Skullport Merchant (afr) 120

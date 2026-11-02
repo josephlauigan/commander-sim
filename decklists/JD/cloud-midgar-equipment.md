@@ -197,11 +197,11 @@ on its own. Tell the table before the game that:
 
 **Enchantments (3).** Court of Ardenvale, Forge Anew, Smothering Tithe
 
-**Artifacts (18).** Andúril, Narsil Reforged, Arcane Signet, Buster Sword, Champion's Helm, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Mask of Memory, Mind Stone, Norn's Annex, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Sword of Kaldra, Thought Vessel
+**Artifacts (16).** Andúril, Narsil Reforged, Arcane Signet, Buster Sword, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Mask of Memory, Mind Stone, Norn's Annex, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Thought Vessel
 
 **Sorceries (7).** Austere Command, Day of Judgment, Fumigate, Lay Down Arms, Open the Armory, Winds of Abandon, Wrath of God
 
-**Instants (7).** Akroma's Will, Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Judgment of Alexander, Stroke of Midnight, Teferi's Protection
+**Instants (9).** Akroma's Will, Disenchant, Enlightened Tutor, Galadriel's Dismissal, Judgment of Alexander, Path to Exile, Stroke of Midnight, Swords to Plowshares, Teferi's Protection
 
 **Lands (33).** Ash Barrens, Evolving Wilds, Path of Ancestry, Plaza of Heroes, Terminal Moraine, 28 Plains
 
@@ -226,7 +226,6 @@ on its own. Tell the table before the game that:
 1 Balan, Wandering Knight
 1 Bastion Protector
 1 Buster Sword
-1 Champion's Helm
 1 Cid, Freeflier Pilot
 1 Cloud, Midgar Mercenary
 1 Coalition Relic
@@ -239,12 +238,12 @@ on its own. Tell the table before the game that:
 1 Enlightened Tutor
 1 Evolving Wilds
 1 Exalted Angel
-1 Fate of the Sun-Cryst
 1 Fellwar Stone
 1 Fireshrieker
 1 Forge Anew
 1 Forum Familiar
 1 Fumigate
+1 Galadriel's Dismissal
 1 Giver of Runes
 1 Grand Abolisher
 1 Helitrooper
@@ -260,6 +259,7 @@ on its own. Tell the table before the game that:
 1 Open the Armory
 1 Page, Loose Leaf
 1 Path of Ancestry
+1 Path to Exile
 1 Plaza of Heroes
 1 Puresteel Paladin
 1 Silverblade Paladin
@@ -273,7 +273,7 @@ on its own. Tell the table before the game that:
 1 Sword of Feast and Famine
 1 Sword of Fire and Ice
 1 Sword of Hearth and Home
-1 Sword of Kaldra
+1 Swords to Plowshares
 1 Teferi's Protection
 1 Terminal Moraine
 1 Thalia, the Survivor

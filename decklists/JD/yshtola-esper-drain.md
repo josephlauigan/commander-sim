@@ -173,17 +173,15 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Y'shtola, Night's Blessed
 
-**Creatures (15).** Consecrated Sphinx, Displacer Kitten, Esper Sentinel, Gonti, Lord of Luxury, Grand Arbiter Augustin IV, Hostage Taker, Marauding Blight-Priest, Massacre Wurm, Notion Thief, Orcish Bowmasters, Restoration Angel, Skyclave Apparition, Urborg Syphon-Mage, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal, Zur the Enchanter
-
-**Planeswalkers (1).** The Eternal Wanderer
+**Creatures (14).** Consecrated Sphinx, Displacer Kitten, Esper Sentinel, Grand Arbiter Augustin IV, Hostage Taker, Marauding Blight-Priest, Notion Thief, Orcish Bowmasters, Restoration Angel, Sheoldred, the Apocalypse, Skyclave Apparition, Urborg Syphon-Mage, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal, Zur the Enchanter
 
 **Enchantments (16).** Arrest, Bound in Silence, Ill-Gotten Inheritance, Memory Trap, Mystic Remora, Necropotence, Polluted Bonds, Prayer of Binding, Prison Sentence, Propaganda, Rhystic Study, Sanguine Bond, Smothering Tithe, Sphere of Safety, Static Net, Teleportation Circle
 
-**Artifacts (8).** Arcane Signet, Champion's Helm, Chromatic Lantern, Coalition Relic, Conjurer's Closet, Lightning Greaves, Sol Ring, Talisman of Progress
+**Artifacts (8).** Arcane Signet, Champion's Helm, Chromatic Lantern, Coalition Relic, Conjurer's Closet, Sol Ring, Talisman of Hierarchy, Talisman of Progress
 
-**Instants (10).** Anguished Unmaking, Dovin's Veto, Fatal Push, Force of Will, Generous Gift, Go for the Throat, Mystical Tutor, Path to Exile, Teferi's Protection, Your Fate Ends Here
+**Instants (11).** Anguished Unmaking, Dovin's Veto, Fatal Push, Force of Will, Generous Gift, Go for the Throat, Mystical Tutor, Path to Exile, Teferi's Protection, Vampiric Tutor, Your Fate Ends Here
 
-**Sorceries (12).** Austere Command, Bribery, Cast Away Doubt, Dark Petition, Debt to the Deathless, Deep Analysis, Diabolic Tutor, Exsanguinate, Farewell, Idyllic Tutor, Read the Bones, Tezzeret's Gambit
+**Sorceries (13).** Austere Command, Bribery, Cast Away Doubt, Dark Petition, Debt to the Deathless, Deep Analysis, Diabolic Tutor, Exsanguinate, Farewell, Idyllic Tutor, Read the Bones, Tezzeret's Gambit, Toxic Deluge
 
 **Lands (37).** Adarkar Wastes, Caves of Koilos, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Polluted Delta, Scrubland, Serra's Sanctum, Tundra, Underground River, Underground Sea, Urborg, Tomb of Yawgmoth, Watery Grave, 7 Plains, 7 Island, 8 Swamp
 
@@ -220,16 +218,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Generous Gift
 1 Go for the Throat
 1 Godless Shrine
-1 Gonti, Lord of Luxury
 1 Grand Arbiter Augustin IV
 1 Hallowed Fountain
 1 Hostage Taker
 1 Idyllic Tutor
 1 Ill-Gotten Inheritance
-1 Lightning Greaves
 1 Marauding Blight-Priest
 1 Marsh Flats
-1 Massacre Wurm
 1 Memory Trap
 1 Mystic Remora
 1 Mystical Tutor
@@ -248,21 +243,24 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Sanguine Bond
 1 Scrubland
 1 Serra's Sanctum
+1 Sheoldred, the Apocalypse
 1 Skyclave Apparition
 1 Smothering Tithe
 1 Sol Ring
 1 Sphere of Safety
 1 Static Net
+1 Talisman of Hierarchy
 1 Talisman of Progress
 1 Teferi's Protection
 1 Teleportation Circle
 1 Tezzeret's Gambit
-1 The Eternal Wanderer
+1 Toxic Deluge
 1 Tundra
 1 Underground River
 1 Underground Sea
 1 Urborg Syphon-Mage
 1 Urborg, Tomb of Yawgmoth
+1 Vampiric Tutor
 1 Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal
 1 Watery Grave
 1 Y'shtola, Night's Blessed

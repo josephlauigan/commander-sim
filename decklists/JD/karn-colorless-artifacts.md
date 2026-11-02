@@ -161,13 +161,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Planeswalkers (6).** Karn Liberated, Karn Scion of Urza, Karn the Great Creator, Tezzeret Cruel Captain, Ugin the Ineffable, Ugin the Spirit Dragon
 
-**Creatures (17).** Blightsteel Colossus, Burnished Hart, Cityscape Leveler, Duplicant, Hangarback Walker, Kuldotha Forgemaster, Liberator Urza's Battlethopter, Meteor Golem, Mishra's Self-Replicator, Myr Battlesphere, Platinum Angel, Solemn Simulacrum, Steel Hellkite, Steel Overseer, Triplicate Titan, Walking Ballista, Wurmcoil Engine
+**Creatures (18).** Blightsteel Colossus, Burnished Hart, Cityscape Leveler, Duplicant, Hangarback Walker, Kuldotha Forgemaster, Liberator Urza's Battlethopter, Meteor Golem, Mishra's Self-Replicator, Myr Battlesphere, Platinum Angel, Solemn Simulacrum, Steel Hellkite, Steel Overseer, Summon: Bahamut, Triplicate Titan, Walking Ballista, Wurmcoil Engine
 
-**Artifacts (41).** Basalt Monolith, Batterskull, Coalition Relic, Conjurer's Closet, Darksteel Forge, Endless Atlas, Everflowing Chalice, Expedition Map, Gilded Lotus, Grim Monolith, Lightning Greaves, Liquimetal Torque, Mana Vault, Mazemind Tome, Mind Stone, Mirrorworks, Mox Opal, Mystic Forge, Nevinyrral's Disk, Oblivion Stone, Pithing Needle, Portal to Phyrexia, Ratchet Bomb, Rings of Brighthearth, Sculpting Steel, Skullclamp, Sol Ring, Soul-Guide Lantern, Spine of Ish Sah, Staff of Domination, Swiftfoot Boots, The Mightstone and Weakstone, The One Ring, Thought Vessel, Thran Dynamo, Unstable Obelisk, Urza's Bauble, Urza's Blueprints, Urza's Tome, Wayfarer's Bauble, Worn Powerstone
+**Artifacts (40).** Basalt Monolith, Batterskull, Coalition Relic, Conjurer's Closet, Crucible of Worlds, Darksteel Forge, Endless Atlas, Expedition Map, Gilded Lotus, Grim Monolith, Lightning Greaves, Liquimetal Torque, Mana Vault, Mazemind Tome, Mind Stone, Mirrorworks, Mox Opal, Mystic Forge, Oblivion Stone, Pithing Needle, Portal to Phyrexia, Ratchet Bomb, Rings of Brighthearth, Sculpting Steel, Skullclamp, Sol Ring, Soul-Guide Lantern, Spine of Ish Sah, Staff of Domination, Swiftfoot Boots, The Mightstone and Weakstone, The One Ring, Thought Vessel, Thran Dynamo, Unstable Obelisk, Urza's Bauble, Urza's Blueprints, Urza's Tome, Wayfarer's Bauble, Worn Powerstone
 
 **Sorceries (1).** All Is Dust
 
-**Lands (34).** Ancient Tomb, Bonders' Enclave, Buried Ruin, Darksteel Citadel, Ghost Quarter, Inventors' Fair, Mishra's Factory, Mishra's Foundry, Mishra's Workshop, Reliquary Tower, Rogue's Passage, Treasure Vault, Urza's Cave, Urza's Factory, Urza's Mine, Urza's Power Plant, Urza's Saga, Urza's Tower, Urza's Workshop, War Room, 14 Wastes
+**Lands (34).** Ancient Tomb, Bonders' Enclave, Buried Ruin, Darksteel Citadel, Ghost Quarter, Inventors' Fair, Mishra's Factory, Mishra's Foundry, Mishra's Workshop, Reliquary Tower, Rogue's Passage, Strip Mine, Treasure Vault, Urza's Cave, Urza's Factory, Urza's Mine, Urza's Power Plant, Urza's Saga, Urza's Tower, Urza's Workshop, War Room, 13 Wastes
 
 ## Import list (100)
 
@@ -183,11 +183,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Cityscape Leveler
 1 Coalition Relic
 1 Conjurer's Closet
+1 Crucible of Worlds
 1 Darksteel Citadel
 1 Darksteel Forge
 1 Duplicant
 1 Endless Atlas
-1 Everflowing Chalice
 1 Expedition Map
 1 Ghost Quarter
 1 Gilded Lotus
@@ -214,7 +214,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Mox Opal
 1 Myr Battlesphere
 1 Mystic Forge
-1 Nevinyrral's Disk
 1 Oblivion Stone
 1 Pithing Needle
 1 Platinum Angel
@@ -232,6 +231,8 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Staff of Domination
 1 Steel Hellkite
 1 Steel Overseer
+1 Strip Mine
+1 Summon: Bahamut
 1 Swiftfoot Boots
 1 Tezzeret, Cruel Captain
 1 The Mightstone and Weakstone
@@ -258,5 +259,5 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Wayfarer's Bauble
 1 Worn Powerstone
 1 Wurmcoil Engine
-14 Wastes
+13 Wastes
 ```

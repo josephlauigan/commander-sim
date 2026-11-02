@@ -181,17 +181,17 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 ## Decklist by type (100)
 **Commander (1).** The Ur-Dragon
 
-**Creatures (20).** Birds of Paradise, Brass Squire, Combat Celebrant, Dragonlord Ojutai, Dualcaster Mage, Gilgamesh Master-at-Arms, Glorybringer, Godo Bandit Warlord, Goldspan Dragon, Grand Abolisher, Imperial Recruiter, Jaxis the Troublemaker, Kura the Boundless Sky, Llanowar Elves, Nicol Bolas the Ravager, Paradise Druid, Puresteel Paladin, Stoneforge Mystic, Terror of the Peaks, Thundermaw Hellkite
+**Creatures (21).** Birds of Paradise, Brass Squire, Combat Celebrant, Dragonlord Ojutai, Dualcaster Mage, Gilgamesh Master-at-Arms, Glorybringer, Godo Bandit Warlord, Goldspan Dragon, Grand Abolisher, Imperial Recruiter, Jaxis the Troublemaker, Kura the Boundless Sky, Llanowar Elves, Nicol Bolas the Ravager, Paradise Druid, Puresteel Paladin, Sakura-Tribe Elder, Stoneforge Mystic, Terror of the Peaks, Thundermaw Hellkite
 
 **Planeswalkers (1).** Wrenn and Six
 
 **Enchantments (4).** Rhystic Study, Sigarda's Aid, Smothering Tithe, Sylvan Library
 
-**Artifacts (20).** Chrome Mox, Conqueror's Flail, Embercleave, Grim Monolith, Hammer of Nazahn, Helm of the Host, Kaldra Compleat, Lightning Greaves, Lotus Petal, Mana Vault, Maskwood Nexus, Mox Diamond, Peter Parker's Camera, Shadowspear, Sol Ring, Sting the Glinting Dagger, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, The One Ring
+**Artifacts (20).** Arcane Signet, Chromatic Lantern, Chrome Mox, Embercleave, Grim Monolith, Hammer of Nazahn, Helm of the Host, Kaldra Compleat, Lightning Greaves, Lotus Petal, Mana Vault, Maskwood Nexus, Mox Diamond, Peter Parker's Camera, Shadowspear, Sol Ring, Sting the Glinting Dagger, Sword of Feast and Famine, Sword of Fire and Ice, The One Ring
 
 **Sorceries (9).** Decimate, Demonic Tutor, Imperial Seal, Kindred Dominance, Nature's Lore, Open the Armory, Rampant Growth, Steelshaper's Gift, Twinflame
 
-**Instants (11).** Chaos Warp, Cyclonic Rift, Enlightened Tutor, Force of Negation, Force of Will, Mana Drain, Pact of Negation, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
+**Instants (10).** Chaos Warp, Enlightened Tutor, Force of Negation, Force of Will, Mana Drain, Pact of Negation, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
 
 **Lands (34).** Ancient Tomb, Badlands, Bayou, Blood Crypt, Bloodstained Mire, Breeding Pool, Cavern of Souls, City of Brass, Command Tower, Flooded Strand, Gaea's Cradle, Hallowed Fountain, Inventors' Fair, Mana Confluence, Marsh Flats, Misty Rainforest, Overgrown Tomb, Plateau, Polluted Delta, Sacred Foundry, Scrubland, Steam Vents, Stomping Ground, Taiga, Temple Garden, Tropical Island, Tundra, Underground Sea, Verdant Catacombs, Volcanic Island, Watery Grave, Windswept Heath, Wooded Foothills, 1 Forest
 
@@ -199,6 +199,7 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 
 ```
 1 Ancient Tomb
+1 Arcane Signet
 1 Badlands
 1 Bayou
 1 Birds of Paradise
@@ -208,12 +209,11 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 1 Breeding Pool
 1 Cavern of Souls
 1 Chaos Warp
+1 Chromatic Lantern
 1 Chrome Mox
 1 City of Brass
 1 Combat Celebrant
 1 Command Tower
-1 Conqueror's Flail
-1 Cyclonic Rift
 1 Decimate
 1 Demonic Tutor
 1 Dragonlord Ojutai
@@ -263,6 +263,7 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 1 Rampant Growth
 1 Rhystic Study
 1 Sacred Foundry
+1 Sakura-Tribe Elder
 1 Scrubland
 1 Shadowspear
 1 Sigarda's Aid
@@ -273,7 +274,6 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 1 Sting, the Glinting Dagger
 1 Stomping Ground
 1 Stoneforge Mystic
-1 Swiftfoot Boots
 1 Sword of Feast and Famine
 1 Sword of Fire and Ice
 1 Swords to Plowshares

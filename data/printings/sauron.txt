@@ -35,14 +35,14 @@
 5 Island (2ed) 291
 1 Jace's Archivist (sld) 2515
 1 Jin-Gitaxias, Progress Tyrant (neo) 59
-1 Kaervek the Merciless (2x2) 236
+1 Karn's Bastion (onc) 156
 1 Lazotep Reaver (war) 96
 1 Lightning Greaves (sld) 1662
 1 Mana Drain (2x2) 348
 1 Massacre Wurm (moc) 256
 1 Mauhúr, Uruk-hai Captain (ltr) 214
 1 Mind Stone (dmr) 385
-6 Mountain (2ed) 298
+5 Mountain (2ed) 298
 1 Mystic Confluence (tsr) 312
 1 Nibelheim Aflame (fin) 339
 1 Night's Whisper (sld) 207
@@ -50,9 +50,9 @@
 1 Noxious Gearhulk (tdc) 191
 1 Orcish Bowmasters (ltr) 433
 1 Path of Ancestry (cmm) 661
+1 Phyrexian Arena (pone) 104s
 1 Propaganda (m3c) 191
 1 Rakdos Signet (gk2) 76
-1 Ral and the Implicit Maze (mh3) 132
 1 Ringsight (ltr) 220
 1 Rogue's Passage (ddm) 77
 1 Sauron, the Dark Lord (ltr) 821

@@ -186,28 +186,30 @@ Conqueror's Flail (no spells on your turn) before the game.
 
 **Commanders (2).** Tymna the Weaver, Thrasios, Triton Hero
 
-**Creatures (31).** Adeline, Resplendent Cathar, Archon of Absolution, Atraxa, Grand Unifier, Avacyn's Pilgrim, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Cecil, Dark Knight, Coiling Oracle, Dauthi Voidwalker, Dragonlord Dromoka, Elenda, the Dusk Rose, Faeburrow Elder, Falcon and Redwing, Flickering Hound, Grave Titan, Hero of Bladehold, Lyra Dawnbringer, Nightveil Predator, Nightwind Glider, Paradox Surveyor, Resplendent Angel, Restoration Angel, Skyclave Apparition, Sphinx of New Prahv, Sun Titan, The Wasp, Winsome Avenger, Vampire Nighthawk, Walking Ballista, Windborn Muse
+**Creatures (32).** Adeline, Resplendent Cathar, Archon of Absolution, Atraxa, Grand Unifier, Avacyn's Pilgrim, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Birds of Paradise, Cecil, Dark Knight, Coiling Oracle, Dauthi Voidwalker, Dragonlord Dromoka, Elenda, the Dusk Rose, Elesh Norn, Mother of Machines, Faeburrow Elder, Falcon and Redwing, Flickering Hound, Grand Abolisher, Grave Titan, Hero of Bladehold, Lyra Dawnbringer, Nightveil Predator, Resplendent Angel, Restoration Angel, Skyclave Apparition, Sphinx of New Prahv, Sun Titan, The Wasp, Winsome Avenger, Vampire Nighthawk, Walking Ballista, Windborn Muse
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
-**Artifacts (10).** Arcane Signet, Basalt Monolith, Conqueror's Flail, Crawlspace, Fellwar Stone, Lightning Greaves, Orzhov Signet, Rings of Brighthearth, Talisman of Curiosity, Talisman of Unity
+**Artifacts (7).** Arcane Signet, Basalt Monolith, Crawlspace, Lightning Greaves, Rings of Brighthearth, Sol Ring, Talisman of Curiosity
 
-**Enchantments (5).** Darksteel Mutation, Ghostly Prison, Memory Trap, Propaganda, Smothering Tithe
+**Enchantments (6).** Aura Shards, Darksteel Mutation, Ghostly Prison, Propaganda, Smothering Tithe, Sylvan Library
 
-**Instants (11).** Arcane Denial, Bite Down, Blossoming Defense, Disdainful Stroke, Disenchant, Fact or Fiction, Gifts Ungiven, Path to Exile, Swan Song, Swords to Plowshares, Worldly Tutor
+**Instants (10).** Anguished Unmaking, Arcane Denial, Disdainful Stroke, Ephemerate, Fact or Fiction, Gifts Ungiven, Path to Exile, Swan Song, Swords to Plowshares, Worldly Tutor
 
-**Sorceries (2).** Austere Command, Diabolic Tutor
+**Sorceries (3).** Austere Command, Demonic Tutor, Diabolic Tutor
 
-**Lands (38).** Breeding Pool, Brushland, Caves of Koilos, Command Tower, Deathcap Glade, Drowned Catacomb, Glacial Fortress, Hallowed Fountain, Isolated Chapel, Llanowar Wastes, Sunpetal Grove, Tropical Island, Tundra, Underground River, Undergrowth Stadium, Yavimaya Coast, 6 Island, 7 Plains, 6 Swamp, 3 Forest
+**Lands (39).** Bayou, Breeding Pool, Brushland, Caves of Koilos, Command Tower, Deathcap Glade, Drowned Catacomb, Flooded Strand, Gaea's Cradle, Glacial Fortress, Godless Shrine, Hallowed Fountain, Isolated Chapel, Llanowar Wastes, Marsh Flats, Misty Rainforest, Overgrown Tomb, Polluted Delta, Savannah, Scrubland, Sunpetal Grove, Temple Garden, Tropical Island, Tundra, Underground River, Undergrowth Stadium, Verdant Catacombs, Windswept Heath, Yavimaya Coast, 6 Island, 2 Plains, 1 Swamp, 1 Forest
 
 ## Import list (100)
 
 ```
 1 Adeline, Resplendent Cathar
+1 Anguished Unmaking
 1 Arcane Denial
 1 Arcane Signet
 1 Archon of Absolution
 1 Atraxa, Grand Unifier
+1 Aura Shards
 1 Austere Command
 1 Avacyn's Pilgrim
 1 Aven Mindcensor
@@ -215,34 +217,38 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Baneslayer Angel
 1 Basalt Monolith
 1 Bastion Protector
-1 Bite Down
-1 Blossoming Defense
+1 Bayou
+1 Birds of Paradise
 1 Breeding Pool
 1 Brushland
 1 Caves of Koilos
 1 Cecil, Dark Knight
 1 Coiling Oracle
 1 Command Tower
-1 Conqueror's Flail
 1 Crawlspace
 1 Darksteel Mutation
 1 Dauthi Voidwalker
 1 Deathcap Glade
+1 Demonic Tutor
 1 Diabolic Tutor
 1 Disdainful Stroke
-1 Disenchant
 1 Dragonlord Dromoka
 1 Drowned Catacomb
 1 Elenda, the Dusk Rose
+1 Elesh Norn, Mother of Machines
 1 Elspeth, Sun's Champion
+1 Ephemerate
 1 Fact or Fiction
 1 Faeburrow Elder
 1 Falcon and Redwing
-1 Fellwar Stone
 1 Flickering Hound
+1 Flooded Strand
+1 Gaea's Cradle
 1 Ghostly Prison
 1 Gifts Ungiven
 1 Glacial Fortress
+1 Godless Shrine
+1 Grand Abolisher
 1 Grave Titan
 1 Hallowed Fountain
 1 Hero of Bladehold
@@ -250,25 +256,29 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Lightning Greaves
 1 Llanowar Wastes
 1 Lyra Dawnbringer
-1 Memory Trap
+1 Marsh Flats
+1 Misty Rainforest
 1 Nightveil Predator
-1 Nightwind Glider
-1 Orzhov Signet
-1 Paradox Surveyor
+1 Overgrown Tomb
 1 Path to Exile
+1 Polluted Delta
 1 Propaganda
 1 Resplendent Angel
 1 Restoration Angel
 1 Rings of Brighthearth
+1 Savannah
+1 Scrubland
 1 Skyclave Apparition
 1 Smothering Tithe
+1 Sol Ring
 1 Sphinx of New Prahv
 1 Sun Titan
 1 Sunpetal Grove
 1 Swan Song
 1 Swords to Plowshares
+1 Sylvan Library
 1 Talisman of Curiosity
-1 Talisman of Unity
+1 Temple Garden
 1 The Wasp, Winsome Avenger
 1 Thrasios, Triton Hero
 1 Tropical Island
@@ -277,12 +287,14 @@ Conqueror's Flail (no spells on your turn) before the game.
 1 Underground River
 1 Undergrowth Stadium
 1 Vampire Nighthawk
+1 Verdant Catacombs
 1 Walking Ballista
 1 Windborn Muse
+1 Windswept Heath
 1 Worldly Tutor
 1 Yavimaya Coast
 6 Island
-7 Plains
-6 Swamp
-3 Forest
+2 Plains
+1 Swamp
+1 Forest
 ```

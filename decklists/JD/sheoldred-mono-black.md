@@ -192,17 +192,17 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Commander (1).** Sheoldred, the Apocalypse
 
-**Lands (36).** Bonders' Enclave, Command Tower, Geier Reach Sanitarium, Mikokoro Center of the Sea, 32 Swamp
+**Lands (36).** Bonders' Enclave, Command Tower, Geier Reach Sanitarium, Mikokoro Center of the Sea, Phyrexian Tower, 31 Swamp
 
-**Creatures (23).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Fetid Imp, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Necrosquito, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Seymour Flux, Sneering Shadewriter, Undercity Dire Rat, Vault Plunderer, Zulaport Cutthroat
+**Creatures (27).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Mikaeus the Unhallowed, Necrosquito, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Sephiroth Fabled SOLDIER // Sephiroth One-Winged Angel, Seymour Flux, Sneering Shadewriter, Triskelion, Undercity Dire Rat, Vault Plunderer, Viscera Seer, Yawgmoth Thran Physician, Zulaport Cutthroat
 
-**Enchantments (4).** Call of the Ring, Phyrexian Arena, Soul Enervation, Underworld Dreams
+**Enchantments (4).** Call of the Ring, Grave Pact, Phyrexian Arena, Underworld Dreams
 
-**Artifacts (13).** Arcane Signet, Bolas's Citadel, Carnage Altar, Commander's Sphere, Darksteel Plate, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Otherworld Atlas, Potioner's Trove, Swiftfoot Boots, The One Ring
+**Artifacts (12).** Arcane Signet, Ashnod's Altar, Bolas's Citadel, Darksteel Plate, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Otherworld Atlas, Skullclamp, Swiftfoot Boots, The One Ring
 
 **Sorceries (12).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Demonic Tutor, Diabolic Tutor, Exsanguinate, Invoke Despair, Lethal Throwdown, Peer into the Abyss, Silence the Echo, Syphon Mind
 
-**Instants (11).** Ad Nauseam, Battle-Rage Blessing, Deadly Dispute, Disembowel, Foolish Fate, Last Gasp, Overkill, Sephiroth's Intervention, Terror, Vanquish the Weak, Wander Off
+**Instants (8).** Ad Nauseam, Dark Ritual, Deadly Dispute, Foolish Fate, Overkill, Sephiroth's Intervention, Vanquish the Weak, Wander Off
 
 ## Import list (100)
 
@@ -212,38 +212,36 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Al Bhed Salvagers
 1 Ambition's Cost
 1 Arcane Signet
-1 Battle-Rage Blessing
+1 Ashnod's Altar
 1 Blood Artist
 1 Bolas's Citadel
 1 Bonders' Enclave
 1 Burrog Banemaker
 1 Call of the Ring
-1 Carnage Altar
 1 Cast Away Doubt
 1 Command Tower
-1 Commander's Sphere
 1 Cost of Brilliance
 1 Dark Deal
+1 Dark Ritual
 1 Darksteel Plate
 1 Deadly Dispute
 1 Demonic Tutor
 1 Diabolic Tutor
-1 Disembowel
 1 Exsanguinate
 1 Fate Unraveler
 1 Fellwar Stone
-1 Fetid Imp
 1 Foolish Fate
 1 Geier Reach Sanitarium
 1 Gix, Yawgmoth Praetor
+1 Grave Pact
 1 Grave Titan
 1 Gray Merchant of Asphodel
 1 Howling Mine
 1 Invoke Despair
-1 Last Gasp
 1 Leech Collector // Bloodletting
 1 Lethal Throwdown
 1 Memory Jar
+1 Mikaeus, the Unhallowed
 1 Mikokoro, Center of the Sea
 1 Mind Stone
 1 Necrosquito
@@ -255,25 +253,28 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Phyrexian Arena
 1 Phyrexian Delver
 1 Phyrexian Rager
-1 Potioner's Trove
+1 Phyrexian Tower
 1 Rooftop Assassin
 1 Screeching Soulbreaker
 1 Seizan, Perverter of Truth
 1 Sephiroth's Intervention
+1 Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel
 1 Seymour Flux
 1 Sheoldred, the Apocalypse
 1 Silence the Echo
+1 Skullclamp
 1 Sneering Shadewriter
-1 Soul Enervation
 1 Swiftfoot Boots
 1 Syphon Mind
-1 Terror
 1 The One Ring
+1 Triskelion
 1 Undercity Dire Rat
 1 Underworld Dreams
 1 Vanquish the Weak
 1 Vault Plunderer
+1 Viscera Seer
 1 Wander Off
+1 Yawgmoth, Thran Physician
 1 Zulaport Cutthroat
-32 Swamp
+31 Swamp
 ```
