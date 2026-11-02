@@ -54,8 +54,8 @@ turn sooner.
 **Jace's Archivist** turns Bowmasters into an Army engine. {U}, {T}: each player discards their hand and draws that
 many (the greatest number anyone discarded). Every card an opponent draws off it triggers Orcish Bowmasters: 1 damage
 and amass Orcs 1. Three opponents redrawing five cards each is about fifteen pings and fifteen counters, thirty with
-Mauhúr out. Iron Man adds a counter for each card *you* draw, and refilled opponents cast more spells into Sauron and
-Kaervek. Without Bowmasters it's just a symmetrical wheel that refuels the table, so hold the activation until a
+Mauhúr out. Iron Man adds a counter for each card *you* draw, and refilled opponents cast more spells into Sauron.
+Without Bowmasters it's just a symmetrical wheel that refuels the table, so hold the activation until a
 payoff is on board.
 
 **Sheoldred, the Apocalypse** ({2}{B}{B}, 4/5 deathtouch) gains you 2 life whenever you draw and costs each opponent
@@ -117,8 +117,8 @@ rocks, it finishes a table that the Army has already thinned or that is racing y
 big X either kills or strips their boards and hands, and it needs no combat, so it wins when the Army is walled or
 answered.
 
-**Two punishers on the same trigger.** Sauron amasses and **Kaervek the Merciless** throws a burn or removal bolt
-equal to the spell's mana value: both fire off the same event, an opponent casting a spell.
+**Karn's Bastion** ({4}, {T}: proliferate) is a land that grows the Army: each activation puts another +1/+1
+counter on it. **Phyrexian Arena** draws an extra card each upkeep for 1 life.
 
 **Sephiroth, Planet's Heir** ({4}{U}{B}, 4/4 vigilance): when he enters, opponents' creatures get −2/−2 until end of
 turn, which clears tokens, mana creatures and small blockers in front of the Army, and he gets a +1/+1 counter
@@ -127,7 +127,7 @@ him attack and still guard Sauron.
 
 **Triple Triad** ({3}{R}{R}{R} enchantment) is the late-game value engine: at the beginning of your upkeep each player
 exiles the top card of their library, and until end of turn you may play yours and every other exiled card with lower
-mana value free. The deck's top end (the Titans, Massacre Wurm, Kaervek, Sephiroth, Jin-Gitaxias) is what makes it
+mana value free. The deck's top end (the Titans, Massacre Wurm, Sephiroth, Jin-Gitaxias) is what makes it
 pay: flip one of them and you get it plus most of the table's cards for nothing. A land on top gets you only that land,
 so about one upkeep in three is a miss. Cast it when the board is stable, not into an open table.
 
@@ -213,7 +213,6 @@ Three tutors: **Diabolic Tutor** (any card to hand), **Diabolic Intent** (any ca
 - **Need to close the game → Ringsight for Exsanguinate or Comet Storm** once the Army is connecting.
 - **Need protection for the swing → Diabolic Tutor for Not of This World** (it needs a colourless-capable tutor; Ringsight can't find it).
 - **One problem creature → Ringsight for Infernal Grasp** (or Terminate for {B}{R} when the target is a creature and Grasp is not in hand).
-- **Pod is casting into you → Ringsight for Kaervek**.
 - **Behind on board / need the reset → Ringsight for Massacre Wurm or Inferno Titan**; Cyclonic Rift if it is the whole table. The Ozolith out helps if you cast Nibelheim Aflame or Chandra's Ignition.
 - **Slow start, no mana → Diabolic Tutor for Sol Ring.**
 - **Flooded and grinding → Diabolic Tutor for Barad-dûr.**
@@ -229,7 +228,7 @@ Bracket 3 by Game Changers, with **three**, the cap for the bracket: **Cyclonic 
 Disclose before the game:
 
 - **Cyclonic Rift**, **Orcish Bowmasters** and **Force of Will** (the three Game Changers).
-- **Sauron amasses off every spell an opponent casts**, and **Kaervek** punishes the same trigger.
+- **Sauron amasses off every spell an opponent casts.**
 - **Jace's Archivist** is a repeatable wheel; with Orcish Bowmasters out it hurts for every card they draw.
 
 Re-check the official list at https://commanderbrackets.com/faq before an event.

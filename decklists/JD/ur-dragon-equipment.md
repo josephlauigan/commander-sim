@@ -41,8 +41,8 @@ Ship hands with no acceleration.
 
 **Turns 3-5: the win turn.** Cast Godo with six mana (five with Maskwood Nexus out), plus Hammer of Nazahn already out,
 an untapped Brass Squire, Puresteel Paladin with metalcraft, Sigarda's Aid, or {5} to attach Helm. Hold Force of Will,
-Pact of Negation or Teferi's Protection for the response. Grand Abolisher on the battlefield, or Conqueror's Flail
-equipped first, means opponents can't cast spells during your turn at all.
+Pact of Negation or Teferi's Protection for the response. Grand Abolisher on the battlefield means
+opponents can't cast spells during your turn at all.
 
 **Late game.** If the combo is answered, the Dragons and Equipment win the long game: Terror of the Peaks, the hasty
 Dragons, Kaldra Compleat, and The Ur-Dragon's card draw.
@@ -55,7 +55,7 @@ creature, except it isn't legendary, and it gains haste. On Godo:
 1. Godo enters and fetches Helm. Attach it: free with Hammer of Nazahn or Sigarda's Aid out, free with Puresteel Paladin
    and three artifacts, by tapping Brass Squire, or by paying {5}.
 2. Beginning of combat: Helm makes a hasty token Godo. Its enter trigger fetches another Equipment (Hammer if it's
-   missing, otherwise Kaldra Compleat or Conqueror's Flail).
+   missing, otherwise Kaldra Compleat).
 3. The token attacks: untap it and all Samurai, and add a combat.
 4. The new combat begins, Helm makes another hasty token, and it repeats until the table is dead.
 
@@ -105,9 +105,8 @@ own that aren't on the battlefield.*
 | **Sword of Fire and Ice** | Protection from red and blue; 2 damage and a card on each hit. |
 | **Sword of Feast and Famine** | Protection from black and green; discard, and your lands untap. |
 | **Shadowspear** | Trample and lifelink; strips hexproof and indestructible from opponents' permanents. |
-| **Conqueror's Flail** | Opponents can't cast spells during your turn while it's equipped: protects the win turn. |
 | **Sting, the Glinting Dagger** | Haste, and untaps the equipped creature every combat. |
-| **Lightning Greaves, Swiftfoot Boots** | Haste and protection. |
+| **Lightning Greaves** | Haste and shroud. |
 
 Support: **Puresteel Paladin** (equip {0} with metalcraft, a card per Equipment), **Sigarda's Aid** (flash Equipment,
 attach on entering), **Brass Squire** (attach for free), **Stoneforge Mystic**, **Steelshaper's Gift**, **Open the
@@ -134,12 +133,12 @@ hasty 2/2s as you need. **Imperial Recruiter** finds Dualcaster or Godo (power 2
 
 - **Stack:** Force of Will, Force of Negation (noncreature spells; free on an opponent's turn), Pact of Negation, Mana Drain (the mana comes
   back on your next main phase: put it toward Godo).
-- **Removal:** Swords to Plowshares, Decimate, Chaos Warp, Cyclonic Rift.
+- **Removal:** Swords to Plowshares, Decimate, Chaos Warp.
 - **Board wipe:** **Kindred Dominance** ({5}{B}{B}, sorcery): name Dragon and every creature that isn't a Dragon is
   destroyed. With Maskwood Nexus out all your creatures are Dragons, so it is one-sided; without it, Godo, the mana
   creatures and the Paladins die too.
 - **Protection:** Grand Abolisher (opponents can't cast spells or activate abilities of artifacts, creatures or
-  enchantments during your turn), Teferi's Protection, Conqueror's Flail, Lightning Greaves, Swiftfoot Boots.
+  enchantments during your turn), Teferi's Protection, Lightning Greaves.
 
 ### Card flow
 
@@ -150,8 +149,8 @@ and the equip, and artifacts for Puresteel Paladin's metalcraft.
 ## Key lines
 
 - **Turn 1-2:** fast mana and a mana creature; Puresteel Paladin or Stoneforge Mystic.
-- **Godo turn:** six mana plus a way to attach Helm; Grand Abolisher down or Conqueror's Flail equipped first if you
-  have them.
+- **Godo turn:** six mana plus a way to attach Helm; Grand Abolisher down first if you
+  have it.
 - **Celebrant turn:** Helm already out (or found and attached) plus three mana for Combat Celebrant.
 - **Godo answered:** Camera or Jaxis copies Godo for a fresh trigger; otherwise switch to Celebrant, or Dualcaster and
   Twinflame.
@@ -173,9 +172,9 @@ on turns 1-2 with no creatures it makes nothing, so don't keep it as one of only
 
 ## Bracket and Rule 0
 
-Bracket 4: 17 Game Changers (Mana Vault, Grim Monolith, Chrome Mox, Mox Diamond, The One Ring, Rhystic Study,
+Bracket 4: 16 Game Changers (Mana Vault, Grim Monolith, Chrome Mox, Mox Diamond, The One Ring, Rhystic Study,
 Smothering Tithe, Enlightened Tutor, Demonic Tutor, Vampiric Tutor, Imperial Seal, Worldly Tutor, Force of Will,
-Cyclonic Rift, Teferi's Protection, Ancient Tomb, Gaea's Cradle) and two two-card infinite combos (Godo or Combat
+Teferi's Protection, Ancient Tomb, Gaea's Cradle) and two two-card infinite combos (Godo or Combat
 Celebrant plus Helm of the Host). Tell the table about the combos before the game.
 
 ## Decklist by type (100)

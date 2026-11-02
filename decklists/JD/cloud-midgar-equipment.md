@@ -28,11 +28,11 @@ of Cloud or an Equipment attached to it triggers, that ability triggers an addit
 
 ### Game plan
 - **Turns 1-2.** Cast Cloud on turn two ({W}{W}) or play a cheap mana rock (Sol Ring, Mind Stone, Arcane Signet) and
-  then Cloud. His search finds a cheap Sword or Champion's Helm. Cheap creatures (Zack Fair, Giver of
+  then Cloud. His search finds a cheap Sword. Cheap creatures (Zack Fair, Giver of
   Runes, Forum Familiar) are fine early plays.
 - **Turns 3-4.** Cast and equip a Sword (equip {2}) on Cloud and attack. Use the free-equip pieces (Ardenn, Kor
   Outfitter, Balan) to save mana, and keep protection up. Enlightened Tutor finds the next piece.
-- **Turns 5+.** Add the big Equipment (Sword of Kaldra, Colossus Hammer), Open the Armory (search for a Sword or any Aura or Equipment), and
+- **Turns 5+.** Add the big Equipment (Colossus Hammer), Open the Armory (search for a Sword or any Aura or Equipment), and
   the removal. If Cloud dies, a backup carrier takes the Swords.
 
 ### Ramp and mana
@@ -54,7 +54,7 @@ With Cloud equipped, these Equipment gain from the extra trigger:
 - **Buster Sword**: two triggers of draw a card, then cast a spell from your hand free with mana value up to that
   damage.
 
-The doubling does nothing useful for **Sword of Kaldra** (the second exile has no target left). **Champion's Helm**, **Swiftfoot Boots**,
+**Swiftfoot Boots**,
 **Colossus Hammer** and **Fireshrieker** have
 no triggers: they are plain bonuses (hexproof, double strike, +X/+X).
 
@@ -76,7 +76,7 @@ to blink them.
 - **Balan, Wandering Knight** moves every Equipment onto himself for {1}{W}; with two or more attached he has double
   strike.
 - **Puresteel Paladin** draws a card whenever an Equipment enters and, with three or more artifacts, gives your
-  Equipment equip {0}. This is what makes Colossus Hammer (equip {8}) and Sword of Kaldra (equip {4}) practical.
+  Equipment equip {0}. This is what makes Colossus Hammer (equip {8}) practical.
 - **Auriok Steelshaper** reduces equip costs by {1}, and gives Soldiers and Knights (Cloud is a Soldier) +1/+1 while
   it is equipped; **Helitrooper** makes equipping it cheaper by {2} and gives another attacker flying; **Cid, Freeflier
   Pilot** makes Equipment spells cost {1} less, flies on your turn and returns an Equipment from the graveyard.
@@ -94,7 +94,7 @@ that creature indestructible.
 - **Buster Sword** ({3}, equip {2}) gives +3/+2: Cloud is a 5/3. Each time he hits a player you draw a card, then may
   cast a spell from your hand free with mana value up to the damage dealt, so a 5-damage hit casts most of the deck,
   and getting the hand onto the battlefield is the deck's bottleneck.
-- **Sword of Kaldra** gives +5/+5 and exiles any creature it damages. **Colossus Hammer** gives +10/+10.
+- **Colossus Hammer** gives +10/+10.
 - **Andúril, Narsil Reforged** ({2}, equip {3}): whenever the equipped creature attacks, put a +1/+1 counter on each creature you control, or two with the city's blessing (ten or more permanents).
 - **Double strike** makes every combat hit count twice: Fireshrieker (equip {2}) gives it to the equipped creature, so
   Cloud with a Sword triggers it at first-strike and regular damage (four Sword triggers per attack with his doubling)
@@ -102,17 +102,18 @@ that creature indestructible.
   Cloud and he deals both Sword triggers and commander damage twice. Akroma's Will ({3}{W}, instant) gives your creatures flying, vigilance and
   double strike until end of turn; with a commander out you may also choose lifelink, indestructible and protection from
   each color.
-- **Champion's Helm** (+2/+2; hexproof on a legendary creature) and **Swiftfoot Boots** (hexproof and haste) both
-  protect and push.
+- **Swiftfoot Boots** (hexproof and haste) protects and pushes.
 
 ### Keeping Cloud alive
-- **Prevent.** Champion's Helm and Swiftfoot Boots (hexproof), Giver of Runes (protection from a colour for another
+- **Prevent.** Swiftfoot Boots (hexproof), Giver of Runes (protection from a colour for another
   creature), Grand Abolisher (opponents can't cast spells or activate abilities of artifacts, creatures or enchantments
   during your turn), Plaza of Heroes ({3}, exile it: a legendary creature gains hexproof and indestructible),
   Bastion Protector (commander creatures get +2/+2 and indestructible).
 - **Answer in response.** **Teferi's Protection** ({2}{W}, instant): until your next turn your life total can't
   change, you have protection from everything, and every permanent you control phases out. Cloud keeps his Equipment
   attached through removal, a board wipe or a lethal attack, and it all comes back at your next turn.
+  **Galadriel's Dismissal** ({W}, instant; kicker {2}{W}) phases Cloud out with his Equipment until your next turn,
+  so removal or a wipe misses both; kicked (targeting yourself), all your creatures phase out.
 - **Protect the team.** Elspeth, Sun's Champion makes three 1/1 Soldiers each turn (+1) as a wall of blockers and carriers; her -3 destroys creatures with
   power 4 or greater, so use it only when Cloud is not carrying a big Equipment.
 - **Judgment of Alexander** ({2}{W}, instant): prevents all damage that would be dealt to you this turn by sources your
@@ -135,7 +136,7 @@ that creature indestructible.
 
 ### How it wins
 - **Equipped Cloud connects.** A Sword of Fire and Ice on Cloud draws two cards and deals 4 damage; with Sword of Feast
-  and Famine the opponent discards two cards and your lands untap. Add Sword of Kaldra or Colossus Hammer for a
+  and Famine the opponent discards two cards and your lands untap. Add Colossus Hammer for a
   9/9 or larger attacker, or Buster Sword to cast a spell free with every hit.
 - **Wide Equipment.** Balan with two Equipment has double strike; Danitha makes every Equipment {1} cheaper, and
   **Sram, Senior Edificer** draws a card whenever you cast an Aura, Equipment or Vehicle spell.
@@ -151,12 +152,12 @@ that creature indestructible.
 
 ## Key lines
 
-- **Turn 2 Cloud:** search a Sword or Champion's Helm; turn three cast and equip it and attack with protection up
+- **Turn 2 Cloud:** search a Sword; turn three cast and equip it and attack with protection up
   (Swiftfoot Boots, Giver of Runes or Teferi's Protection).
 - **Best opening:** Sol Ring on turn one, Cloud on turn two, then cast and equip a Sword on turn three.
 - **Mulligan:** keep hands with two lands (or a land and Sol Ring) and a play of two mana or less. Throw back hands that
   can not make {W}{W} by turn three.
-- **Big turn:** Puresteel Paladin out and three artifacts means equip {0}: cast Colossus Hammer, Sword of Kaldra
+- **Big turn:** Puresteel Paladin out and three artifacts means equip {0}: cast Colossus Hammer
   and a Sword, attach all, and attack.
 - **Winds of Abandon:** {1}{W} exiles one creature that is not yours (its controller fetches a basic land); at six mana
   overload it ({4}{W}{W}) to exile every creature you do not control, a one-sided wipe that leaves your Equipment and carriers.
@@ -164,10 +165,10 @@ that creature indestructible.
 
 ## Tutor targets by board state
 
-- **Cloud's search, early:** a cheap Sword (Fire and Ice, Feast and Famine, Hearth and Home) or Champion's Helm.
-- **Cloud's search, Puresteel Paladin out:** Colossus Hammer or Sword of Kaldra.
+- **Cloud's search, early:** a cheap Sword (Fire and Ice, Feast and Famine, Hearth and Home).
+- **Cloud's search, Puresteel Paladin out:** Colossus Hammer.
 - **Cloud's search, a full hand to deploy:** Buster Sword (each hit casts a spell from hand free).
-- **Cloud's search, facing removal:** Swiftfoot Boots or Champion's Helm.
+- **Cloud's search, facing removal:** Swiftfoot Boots.
 - **Enlightened Tutor** (puts the card on top, so cast it at the end of an opponent's turn; it finds an artifact or
   enchantment): a Sword if you are missing one, Smothering Tithe when opponents draw a lot, Court of Ardenvale
   when you need card advantage, or Forge Anew to bring back an Equipment that was destroyed.
@@ -178,8 +179,8 @@ that creature indestructible.
 when you cast a creature that shares a type with Cloud), Plaza of Heroes and Terminal Moraine. Ramp: Sol Ring, Mind Stone,
 Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel, Page, Loose Leaf, Solemn Simulacrum, Knight of the
 White Orchid and Loyal Warhound. Card draw: Mask of Memory, Court of Ardenvale, Puresteel Paladin and the Swords.
-Interaction: Wrath of God, Day of Judgment, Fumigate, Archangel of Tithes, Archon of Absolution, Norn's Annex, Lay Down Arms, Judgment of Alexander, Stroke of Midnight, Fate of the Sun-Cryst, Skyclave
-Apparition, Winds of Abandon, Austere Command, Elspeth, Sun's Champion and Disenchant. 11 Equipment in the deck, so Cloud's search always finds one.
+Interaction: Wrath of God, Day of Judgment, Fumigate, Archangel of Tithes, Archon of Absolution, Norn's Annex, Lay Down Arms, Judgment of Alexander, Stroke of Midnight, Swords to Plowshares, Path to Exile, Skyclave
+Apparition, Winds of Abandon, Austere Command, Elspeth, Sun's Champion and Disenchant. 9 Equipment in the deck, so Cloud's search always finds one.
 
 ## Bracket and Rule 0
 

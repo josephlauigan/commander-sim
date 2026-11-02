@@ -5,7 +5,7 @@ Drain the table a little with every spell, then all at once. Y'shtola turns your
 | | |
 |---|---|
 | **Commander** | Y'shtola, Night's Blessed ({1}{W}{U}{B}, 2/4, vigilance; white-blue-black) |
-| **Bracket** | 4 (12 Game Changers: Necropotence, Notion Thief, Consecrated Sphinx, Smothering Tithe, Rhystic Study, Mystical Tutor, Grand Arbiter Augustin IV, Force of Will, Farewell, Teferi's Protection, Orcish Bowmasters, Serra's Sanctum) |
+| **Bracket** | 4 (13 Game Changers: Necropotence, Notion Thief, Consecrated Sphinx, Smothering Tithe, Rhystic Study, Mystical Tutor, Vampiric Tutor, Grand Arbiter Augustin IV, Force of Will, Farewell, Teferi's Protection, Orcish Bowmasters, Serra's Sanctum) |
 | **Simulator** | deck key `yshtola`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -18,7 +18,7 @@ Y'shtola, Night's Blessed ({1}{W}{U}{B}, 2/4, vigilance): *At the beginning of e
 
 **Her draw needs 4 life lost by one player in one turn.** One trigger is only 2 to each opponent, so a draw needs a second source in the same turn:
 - **Two triggers**, such as a removal spell on an opponent's turn plus your own main-phase spell, or two spells in one turn. Cheap instants with mana value 3 (Anguished Unmaking, Generous Gift, Your Fate Ends Here) on an opponent's turn are the easiest second trigger. Cast Away Doubt does it alone: its 2 damage plus her 2 is 4 to each opponent.
-- **One trigger plus a drain**, from Sanguine Bond, Blight-Priest, Ill-Gotten Inheritance or Urborg Syphon-Mage.
+- **One trigger plus a drain**, from Sanguine Bond, Blight-Priest, Ill-Gotten Inheritance or Urborg Syphon-Mage. **Sheoldred, the Apocalypse** adds 2 to each opponent's every draw and gains you 2 on yours.
 - **Your own life.** Any player counts, you included. Read the Bones costs 2, Anguished Unmaking 3, and Necropotence as much as you like.
 
 She checks at *every* end step, so instant-speed triggers on opponents' turns draw too. She is a 2/4, so she dies to a lot of removal: protect her (see below), and keep casting spells of mana value 3 or more every turn while she is out.
@@ -57,26 +57,26 @@ The second opponent dies too if they're at 12. Debt to the Deathless is the best
 
 **Mana, then cards.** The deck usually holds more spells than it can cast, so **Smothering Tithe** comes first: each opponent who draws without {2} to spare gives you a Treasure, and casting it triggers Y'shtola. **Consecrated Sphinx** draws two whenever an opponent draws; it's a creature, so it doesn't trigger her, and it's best cast when the hand is running low. **Necropotence** skips your draw step and turns life into cards (cast it with a healthy life total; the drains refill it; your maximum hand size is seven, so spend what you draw). **Mystic Remora** draws a card when an opponent casts a noncreature spell unless they pay {4}: pay its cumulative upkeep for a turn or two at most, then let it go. **Esper Sentinel** draws a card when an opponent casts their first noncreature spell each turn, unless they pay {X} (its power). **Notion Thief** (flash) turns each extra card an opponent draws into a card for you, and goes well with **Deep Analysis**: target an opponent with it while Notion Thief is out and you draw the cards; its flashback ({1}{U}, 3 life) is a second Y'shtola trigger. **Rhystic Study** ({2}{U}) draws a card whenever an opponent casts a spell unless they pay {1}, and casting it triggers Y'shtola. The other draw spells are Read the Bones and Tezzeret's Gambit.
 
-**Blink.** **Displacer Kitten** ({3}{U}) exiles and returns a nonland permanent you control whenever you cast a noncreature spell, and nearly every spell here is one: each lock, drain or draw spell also re-buys an enters trigger (Hostage Taker steals again, Skyclave Apparition exiles again, Gonti looks again, Esper Sentinel comes back fresh), or untaps a used rock. Don't blink Hostage Taker or Skyclave Apparition while the card they hold is one you want to keep exiled: the exiled card returns. **Teleportation Circle** ({3}{W}, an enchantment, so it triggers Y'shtola and counts for Serra's Sanctum) does the same to one creature or artifact at each of your end steps, and **Conjurer's Closet** ({5}, an artifact, so casting it triggers Y'shtola) to one creature. With the Circle and the Closet both out, two enters triggers come back every turn: Orcish Bowmasters pings and amasses again, Massacre Wurm sweeps and drains again, Gonti looks again.
+**Blink.** **Displacer Kitten** ({3}{U}) exiles and returns a nonland permanent you control whenever you cast a noncreature spell, and nearly every spell here is one: each lock, drain or draw spell also re-buys an enters trigger (Hostage Taker steals again, Skyclave Apparition exiles again, Esper Sentinel comes back fresh), or untaps a used rock. Don't blink Hostage Taker or Skyclave Apparition while the card they hold is one you want to keep exiled: the exiled card returns. **Teleportation Circle** ({3}{W}, an enchantment, so it triggers Y'shtola and counts for Serra's Sanctum) does the same to one creature or artifact at each of your end steps, and **Conjurer's Closet** ({5}, an artifact, so casting it triggers Y'shtola) to one creature. With the Circle and the Closet both out, two enters triggers come back every turn: Orcish Bowmasters pings and amasses again, Skyclave Apparition exiles again.
 
-**Take their cards.** Gonti, Lord of Luxury (the best of the top four of an opponent's library) and Hostage Taker (exiles their best creature or artifact: cast it before the Taker leaves the battlefield, or it goes back to its owner) let you cast an opponent's card with mana of any type. Bribery takes a creature outright. A stolen noncreature spell with mana value 3 or more triggers Y'shtola like your own.
+**Take their cards.** Hostage Taker (exiles their best creature or artifact: cast it before the Taker leaves the battlefield, or it goes back to its owner) lets you cast an opponent's card with mana of any type. Bribery takes a creature outright. A stolen noncreature spell with mana value 3 or more triggers Y'shtola like your own.
 
-**Discount.** Grand Arbiter Augustin IV makes your white and blue spells cost {1} less each (a white-and-blue spell {2} less) and the opponents' spells {1} more. **Venat, Heart of Hydaelyn** draws a card the first time each turn you cast a legendary spell (Y'shtola, Gonti, Augustin, Zur, The Eternal Wanderer); its {7} ability exiles a nonland permanent and flips it to Hydaelyn, the Mothercrystal, which gives another creature a +1/+1 counter and indestructible each turn (and draws a card if it is legendary, such as Y'shtola).
+**Discount.** Grand Arbiter Augustin IV makes your white and blue spells cost {1} less each (a white-and-blue spell {2} less) and the opponents' spells {1} more. **Venat, Heart of Hydaelyn** draws a card the first time each turn you cast a legendary spell (Y'shtola, Augustin, Zur, Sheoldred); its {7} ability exiles a nonland permanent and flips it to Hydaelyn, the Mothercrystal, which gives another creature a +1/+1 counter and indestructible each turn (and draws a card if it is legendary, such as Y'shtola).
 
 ### Keep the table off you
 
 Y'shtola is a 2/4 and the deck wins slowly. The table's creature decks are the main danger, so deal with attackers early.
 - **Pillowfort:** Propaganda taxes every attacker {2}, and **Sphere of Safety** ({4}{W}) taxes every attacker {X}, X being the number of enchantments you control (the deck runs 16). Cast them early against creature decks.
 - **Locks:** Arrest, Prison Sentence and Bound in Silence shut down threats (and each triggers Y'shtola as you cast it).
-- **Removal:** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Your Fate Ends Here, Skyclave Apparition, Prayer of Binding, Memory Trap, Static Net, The Eternal Wanderer.
-- **Wipes:** Austere Command and Farewell. Massacre Wurm is a one-sided sweeper of small creatures that drains 2 for each one that dies.
+- **Removal:** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Your Fate Ends Here, Skyclave Apparition, Prayer of Binding, Memory Trap, Static Net.
+- **Wipes:** Austere Command, Farewell and Toxic Deluge ({2}{B}: pay X life, all creatures get -X/-X until end of turn; a cheap answer to a wide board that also triggers Y'shtola).
 - **Counters:** Dovin's Veto stops a removal spell aimed at Y'shtola. Force of Will counters any spell (a wipe, a combo piece, a Craterhoof): cast it for {3}{U}{U}, or for free by paying 1 life and exiling a blue card from your hand. Either way it is a mana value 5 noncreature spell, so it triggers Y'shtola, and the life paid counts toward her "4 life lost" draw.
 
 **Farewell** ({4}{W}{W}, sorcery) exiles, as you choose, all artifacts, all creatures, all enchantments and/or all graveyards. It is the reset button for a board you are losing to, and a trigger for Y'shtola when you cast it. Choose carefully: creatures exiles Y'shtola, enchantments exiles your own locks, Sanguine Bond and Smothering Tithe, and graveyards is the answer to a reanimation deck. Cast Teferi's Protection first and your permanents phase out and survive the wipe (Y'shtola is phased out by then, so Farewell itself won't trigger her).
 
 ### Protect Y'shtola
 
-- **Equipment:** Lightning Greaves (shroud) and Champion's Helm (+2/+2, hexproof on a legend).
+- **Equipment:** Champion's Helm (+2/+2, hexproof on a legend).
 - **Restoration Angel:** flash, and blinks Y'shtola out of an exile or steal effect.
 - **Counterspells:** Dovin's Veto and Force of Will stop the removal spell itself.
 - **Teferi's Protection** ({2}{W}, instant): until your next turn your life total can't change, you have protection from everything, and all permanents you own phase out. It saves Y'shtola and the whole board from a wipe or a lethal attack, and its mana value 3 triggers her. While it lasts your life can't change, so you gain nothing and Sanguine Bond and the Blight-Priest don't fire: use it to survive a turn, not to win one.
@@ -87,9 +87,9 @@ The damage comes mostly from Y'shtola's and Ill-Gotten Inheritance's triggers, t
 
 ### Weak spots and how to play around them
 
-- **Creature decks (big attackers).** The deck loses almost always to combat. Land Propaganda or Sphere of Safety early, lock or remove the biggest threat, and keep Austere Command, Farewell or Massacre Wurm for the wide boards.
+- **Creature decks (big attackers).** The deck loses almost always to combat. Land Propaganda or Sphere of Safety early, lock or remove the biggest threat, and keep Austere Command, Farewell or Toxic Deluge for the wide boards.
 - **Fast combo decks.** The drain is too slow to race a deck that wins on turn 4 to 6; hold Dovin's Veto, Force of Will and Memory Trap / Static Net for the key piece, and Notion Thief or Mystic Remora to slow their draws.
-- **Removal on Y'shtola.** Keep Restoration Angel, Lightning Greaves, Champion's Helm, Teferi's Protection, Dovin's Veto or Force of Will up while she is the engine.
+- **Removal on Y'shtola.** Keep Restoration Angel, Champion's Helm, Teferi's Protection, Dovin's Veto or Force of Will up while she is the engine.
 - **Cheap spells.** Spells of mana value 1 or 2 (Fatal Push, Path to Exile, Dovin's Veto) are good cards but don't trigger her: don't cast them if they cost a trigger.
 - **Slow starts.** Expect to reach full power around turns 6 to 8; mulligan hands with no mana or no spell of mana value 3.
 
@@ -120,7 +120,7 @@ Zur can find Arrest, Bound in Silence, Memory Trap, Mystic Remora, Necropotence,
 
 The list is exactly 100 cards.
 
-37 lands (15 nonbasic, 7 Plains, 7 Island, 8 Swamp) plus five rocks: Sol Ring, Arcane Signet, Talisman of Progress, Chromatic Lantern, Coalition Relic. **Serra's Sanctum** taps for {W} per enchantment you control, and that includes the removal Auras on opponents' creatures (you control the Aura), so Arrest or Prison Sentence also adds a mana. With 16 enchantments it taps for three or more by the mid-game. **Urborg, Tomb of Yawgmoth** makes every land a Swamp in addition to its other types, so every land can tap for {B}: it fixes Necropotence and Massacre Wurm and replaces a basic Swamp at no cost (the fetches can't find it, but they still have 8 Swamps).
+37 lands (15 nonbasic, 7 Plains, 7 Island, 8 Swamp) plus six rocks: Sol Ring, Arcane Signet, Talisman of Progress, Talisman of Hierarchy, Chromatic Lantern, Coalition Relic. **Serra's Sanctum** taps for {W} per enchantment you control, and that includes the removal Auras on opponents' creatures (you control the Aura), so Arrest or Prison Sentence also adds a mana. With 16 enchantments it taps for three or more by the mid-game. **Urborg, Tomb of Yawgmoth** makes every land a Swamp in addition to its other types, so every land can tap for {B}: it fixes Necropotence and Massacre Wurm and replaces a basic Swamp at no cost (the fetches can't find it, but they still have 8 Swamps).
 
 | Measure | Count | Note |
 | --- | --- | --- |
@@ -131,7 +131,7 @@ The list is exactly 100 cards.
 | Always enter tapped | 0 | no land always enters tapped |
 | Sometimes enter tapped | 3 | the shocks (Hallowed Fountain, Watery Grave, Godless Shrine), unless you pay 2 life |
 
-Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, the X drains' {B}{B}), so it has the most sources. Blue has the fewest. Most blue spells cost a single {U}, and Bribery's {U}{U} is the exception. Each fetch finds the colour the hand is short of, and cracking one turns on Fatal Push's revolt (destroy a creature with mana value 4 or less).
+Black is the main colour (Necropotence's {B}{B}{B}, the X drains' {B}{B}), so it has the most sources. Blue has the fewest. Most blue spells cost a single {U}, and Bribery's {U}{U} is the exception. Each fetch finds the colour the hand is short of, and cracking one turns on Fatal Push's revolt (destroy a creature with mana value 4 or less).
 
 **Curve.** One-drops 7, two-drops 5, three-drops 23, four-drops 17 (counting Y'shtola), five 6, six 5. Average mana value about 3.3, with Exsanguinate and Debt counted at X = 0. It is a slow curve by design: Y'shtola pays you for mana value 3 and up.
 
@@ -141,13 +141,13 @@ Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, t
 - **Engines:** Necropotence, Consecrated Sphinx, Mystic Remora, Esper Sentinel, Notion Thief, and her own end-step draw (Orcish Bowmasters turns the opponents' extra draws into damage and Orcs).
 - **Mana:** Smothering Tithe's Treasures, on top of the rocks.
 - **Draw spells:** Read the Bones, Deep Analysis, Tezzeret's Gambit, Cast Away Doubt; Rhystic Study as the engine.
-- **Cards taken from opponents:** Gonti, Hostage Taker.
-- **Tutors:** Diabolic Tutor and Dark Petition (any card), Idyllic Tutor (an enchantment), Mystical Tutor (an instant or sorcery, to the top), and Zur's attacks.
+- **Cards taken from opponents:** Hostage Taker, Bribery.
+- **Tutors:** Diabolic Tutor, Dark Petition and Vampiric Tutor (any card; Vampiric puts it on top), Idyllic Tutor (an enchantment), Mystical Tutor (an instant or sorcery, to the top), and Zur's attacks.
 
 **Interaction.**
 - **Counterspells (two):** Dovin's Veto, Force of Will.
 - **Spot removal spells (six):** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Your Fate Ends Here.
-- **Removal on permanents:** Skyclave Apparition, Hostage Taker, Prayer of Binding, Static Net, Memory Trap, The Eternal Wanderer, Massacre Wurm.
+- **Removal on permanents:** Skyclave Apparition, Hostage Taker, Prayer of Binding, Static Net, Memory Trap.
 - **Removal Auras (three):** Arrest, Prison Sentence, Bound in Silence.
 - **Theft:** Bribery.
 - **Board wipes (two):** Austere Command, Farewell.
@@ -157,15 +157,15 @@ Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, t
 
 ## Bracket and Rule 0
 
-**Bracket 4,** with twelve Game Changers: **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Rhystic Study**, **Mystical Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell**, **Teferi's Protection**, **Orcish Bowmasters** and **Serra's Sanctum**. There are no infinite combos, no mass land destruction and no extra turns, so it's a Bracket 4 deck by its Game Changers, not by combos.
+**Bracket 4,** with thirteen Game Changers: **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Rhystic Study**, **Mystical Tutor**, **Vampiric Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell**, **Teferi's Protection**, **Orcish Bowmasters** and **Serra's Sanctum**. There are no infinite combos, no mass land destruction and no extra turns, so it's a Bracket 4 deck by its Game Changers, not by combos.
 
 Disclose before the game:
 
-- **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Rhystic Study**, **Mystical Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell**, **Teferi's Protection**, **Orcish Bowmasters** and **Serra's Sanctum** (the twelve Game Changers).
+- **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Rhystic Study**, **Mystical Tutor**, **Vampiric Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell**, **Teferi's Protection**, **Orcish Bowmasters** and **Serra's Sanctum** (the thirteen Game Changers).
 - **Free counterspell and board wipe:** Force of Will (pitch a blue card) and Farewell (exiles creatures, artifacts, enchantments and graveyards as you choose).
 - **Three tutors** (Diabolic Tutor, Dark Petition, Idyllic Tutor) plus Mystical Tutor, and Zur's enchantment search.
 - **The win is a drain:** Y'shtola pings the table on every big spell, and Exsanguinate or Debt to the Deathless with Sanguine Bond can take out two players in one turn.
-- **Theft:** Bribery, Hostage Taker and Gonti use opponents' cards.
+- **Theft:** Bribery and Hostage Taker use opponents' cards.
 
 Re-check the official list at https://commanderbrackets.com/faq before an event.
 
