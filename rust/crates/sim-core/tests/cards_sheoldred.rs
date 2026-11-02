@@ -650,37 +650,14 @@ fn deadly_dispute_sacrifices_draws_two_and_makes_a_treasure() {
 
 // ------------------------------------------------------------------ Part 2: Memory Jar in a sheoldred game
 #[test]
-fn memory_jar_is_cracked_at_once_with_sheoldred_out_and_by_its_own_rule_without() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
+fn memory_jar_follows_its_own_rule_even_with_sheoldred_out() {
     let mut g = game();
     g.active = Some(P0);
     let jar = perm(&mut g, P0, "Memory Jar");
     hand(&mut g, P0, &["Hullcarver", "Locust Spray", "Ribskiff", "Diary of Dreams", "Tome of Legends"]);
     assert!(perm_opts(&mut g, jar, P0, Some(false)).is_empty(), "five cards and no mana: Memory Jar's own rule says no");
     perm(&mut g, P0, SHEO);
-    let o = perm_opts(&mut g, jar, P0, Some(false));
-    assert_eq!(o.len(), 1, "with Sheoldred out it is cracked whatever the hand");
-    let (a, b) = (life(&g, P0), life(&g, P1));
-    assert!(run_plan(&mut g, P0, &o[0]));
-    assert!(!g.perm(jar).on_bf);
-    assert_eq!(life(&g, P1), b - 14, "seven cards at 2 life each");
-    assert_eq!(life(&g, P0), a + 14);
-}
-
-#[test]
-fn toxic_deluge_takes_x_so_sheoldred_survives_and_pays_the_life() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = game();
-    let sheo = perm(&mut g, P0, SHEO);
-    let big = perm(&mut g, P1, "Gravblade Heavy");
-    g.perm_mut(big).tgh = 9;
-    let small = perm(&mut g, P1, "Hullcarver");
-    let a = life(&g, P0);
-    cast_spell(&mut g, P0, "Toxic Deluge", Ctx::default());
-    assert!(g.perm(sheo).on_bf, "Sheoldred (toughness 5) survives X = 4");
-    assert!(!g.perm(small).on_bf, "the small creature dies");
-    assert!(g.perm(big).on_bf, "the 9-toughness one is out of reach at X = 4");
-    assert_eq!(life(&g, P0), a - 4, "X life is paid");
+    assert!(perm_opts(&mut g, jar, P0, Some(false)).is_empty(), "and Sheoldred out changes nothing");
 }
 
 #[test]
@@ -716,73 +693,6 @@ fn korlash_is_as_big_as_your_swamps_and_regenerates() {
 }
 
 // ------------------------------------------------------------------ the AI plan
-#[test]
-fn the_ai_equips_the_helm_and_the_plate_on_sheoldred_first() {
-    let mut g = game();
-    g.active = Some(P0);
-    lands(&mut g, P0, "Swamp", 3, false);
-    let sheo = perm(&mut g, P0, SHEO);
-    let helm = perm(&mut g, P0, "Champion's Helm");
-    let o = sim_core::impls::sheoldred::sheoldred_special(&mut g, P0, false).unwrap();
-    let eq = o.iter().find(|o| o.label.contains("Champion's Helm")).expect("equip offered");
-    assert!(eq.utility >= 8.0, "ahead of everything else");
-    assert!(run_plan(&mut g, P0, eq));
-    assert_eq!(g.perm(helm).attached, Some(sheo));
-    assert!(values::untargetable(&g, sheo), "legendary: hexproof from the Helm");
-    let plate = perm(&mut g, P0, "Darksteel Plate");
-    let o = sim_core::impls::sheoldred::sheoldred_special(&mut g, P0, false).unwrap();
-    let eq = o.iter().find(|o| o.label.contains("Darksteel Plate")).expect("plate offered");
-    assert!(run_plan(&mut g, P0, eq));
-    assert_eq!(g.perm(plate).attached, Some(sheo));
-    sim_core::engine::removal::apply_removal(&mut g, Some(P1), sheo, "destroy", None).unwrap();
-    assert!(g.perm(sheo).on_bf, "indestructible with the Plate");
-}
-
-#[test]
-fn a_protection_instant_answers_destroy_removal_aimed_at_sheoldred_but_not_exile() {
-    let mut g = game();
-    lands(&mut g, P0, "Swamp", 2, false);
-    let sheo = perm(&mut g, P0, SHEO);
-    hand(&mut g, P0, &["Dark Endurance"]);
-    let ex = sim_core::impls::sheoldred::sheoldred_protect(&mut g, P0, sheo, "exile", Some(P1), None).unwrap();
-    assert!(!ex, "indestructible does not stop exile");
-    assert!(in_hand(&g, P0, "Dark Endurance"));
-    let ok = sim_core::impls::sheoldred::sheoldred_protect(&mut g, P0, sheo, "destroy", Some(P1), None).unwrap();
-    assert!(ok);
-    assert!(in_gy(&g, P0, "Dark Endurance"));
-    sim_core::engine::removal::apply_removal(&mut g, Some(P1), sheo, "destroy", None).unwrap();
-    assert!(g.perm(sheo).on_bf, "indestructible until end of turn");
-    assert_eq!(values::epow(&g, sheo), 6, "Dark Endurance gives +2/+0");
-}
-
-#[test]
-fn a_real_destroy_spell_at_sheoldred_is_answered_in_play() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = game();
-    lands(&mut g, P0, "Swamp", 2, false);
-    let sheo = perm(&mut g, P0, SHEO);
-    hand(&mut g, P0, &["Masterful Flourish"]);
-    lands(&mut g, P1, "Swamp", 2, false);
-    let c = hand(&mut g, P1, &["Terror"])[0];
-    cast::cast_card(&mut g, P1, c, "hand", Ctx { target: Some(sheo), ..Ctx::default() }).unwrap();
-    assert!(g.perm(sheo).on_bf, "Masterful Flourish saved her");
-    assert!(in_gy(&g, P0, "Masterful Flourish"));
-}
-
-#[test]
-fn the_ai_holds_mana_for_a_protection_instant_and_rocks_come_before_creatures() {
-    let mut g = game();
-    perm(&mut g, P0, SHEO);
-    lands(&mut g, P0, "Swamp", 2, false);
-    hand(&mut g, P0, &["Battle-Rage Blessing"]);
-    let (c, v) = sim_core::impls::sheoldred::sheoldred_hold(&g, P0);
-    assert!(c.is_some() && v > 1.0);
-    let mut g = game();
-    let sig = hand(&mut g, P0, &["Arcane Signet", "Hullcarver"]);
-    let p = |g: &Game, c| sim_core::impls::sheoldred::sheoldred_prio(g, P0, c);
-    assert!(p(&g, sig[0]) > p(&g, sig[1]), "the rock goes first while Sheoldred is not out");
-}
-
 // ------------------------------------------------------------------ the upgrade package (swap-tested)
 const SEIZAN: &str = "Seizan, Perverter of Truth";
 
@@ -875,30 +785,7 @@ fn painful_lesson_draws_two_then_loses_two() {
 }
 
 #[test]
-fn the_ai_aims_painful_lesson_at_the_weakest_opponent_with_sheoldred_and_at_itself_without() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = game();
-    lands(&mut g, P0, "Swamp", 3, false);
-    let c = hand(&mut g, P0, &["Painful Lesson"])[0];
-    let o = card_opts(&mut g, c, P0, Some(false));
-    assert_eq!(o.len(), 1);
-    run_plan(&mut g, P0, &o[0]);
-    assert_eq!((life(&g, P0), life(&g, P1)), (38, 40));
-
-    let mut g = game3();
-    perm(&mut g, P0, SHEO);
-    lands(&mut g, P0, "Swamp", 3, false);
-    g.player_mut(P2).life = 20;
-    let c = hand(&mut g, P0, &["Painful Lesson"])[0];
-    let o = card_opts(&mut g, c, P0, Some(false));
-    run_plan(&mut g, P0, &o[0]);
-    assert_eq!(life(&g, P2), 20 - 4 - 2, "two Sheoldred triggers and the spell");
-    assert_eq!(life(&g, P1), 40);
-}
-
-#[test]
 fn the_ai_casts_dark_deal_only_with_sheoldred_out_and_many_opposing_cards() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Swamp", 3, false);
     let c = hand(&mut g, P0, &["Dark Deal"])[0];
@@ -909,45 +796,6 @@ fn the_ai_casts_dark_deal_only_with_sheoldred_out_and_many_opposing_cards() {
     assert_eq!(o.len(), 1);
     g.player_mut(P1).hand.truncate(3);
     assert!(card_opts(&mut g, c, P0, Some(false)).is_empty(), "too few opposing cards to matter");
-}
-
-#[test]
-fn the_ai_casts_underworld_dreams_early_and_seizan_only_with_sheoldred() {
-    let mut g = game();
-    let h = hand(&mut g, P0, &["Underworld Dreams", SEIZAN, "Sheoldred, the Apocalypse"]);
-    let p = |g: &Game, c| sim_core::impls::sheoldred::sheoldred_prio(g, P0, c);
-    assert!(p(&g, h[0]) > 80 && p(&g, h[0]) < p(&g, h[2]), "a high priority after Sheoldred");
-    assert_eq!(p(&g, h[1]), 0, "Seizan waits for Sheoldred");
-    perm(&mut g, P0, SHEO);
-    assert!(p(&g, h[1]) > 60);
-    let mut g = game();
-    let z = hand(&mut g, P0, &[SEIZAN])[0];
-    hand(&mut g, P1, &["Terror", "Terror", "Terror", "Terror", "Terror"]);
-    assert!(p(&g, z) > 0, "high life and far behind on cards");
-    g.player_mut(P0).life = 20;
-    assert_eq!(p(&g, z), 0);
-}
-
-#[test]
-fn champions_helm_goes_on_seizan_once_the_plate_protects_sheoldred() {
-    let mut g = game();
-    g.active = Some(P0);
-    lands(&mut g, P0, "Swamp", 4, false);
-    let sheo = perm(&mut g, P0, SHEO);
-    let z = perm(&mut g, P0, SEIZAN);
-    let helm = perm(&mut g, P0, "Champion's Helm");
-    let plate = perm(&mut g, P0, "Darksteel Plate");
-    let o = sim_core::impls::sheoldred::sheoldred_special(&mut g, P0, false).unwrap();
-    assert!(o.iter().any(|o| o.label.contains("Champion's Helm to Sheoldred")), "no Plate yet: Helm on her");
-    let eq = o.iter().find(|o| o.label.contains("Darksteel Plate")).unwrap();
-    assert!(run_plan(&mut g, P0, eq));
-    assert_eq!(g.perm(plate).attached, Some(sheo));
-    let o = sim_core::impls::sheoldred::sheoldred_special(&mut g, P0, false).unwrap();
-    let eq = o.iter().find(|o| o.label.contains("Champion's Helm")).expect("helm offered");
-    assert!(eq.label.contains("Seizan"));
-    assert!(run_plan(&mut g, P0, eq));
-    assert_eq!(g.perm(helm).attached, Some(z));
-    assert!(values::untargetable(&g, z));
 }
 
 #[test]
@@ -998,7 +846,6 @@ fn howling_mine_draws_an_extra_card_in_every_players_draw_step_while_untapped() 
 
 #[test]
 fn every_opponent_draw_the_new_cards_cause_fires_sheoldred_dreams_and_fate_unraveler() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["sheoldred", "cloud"]);
     perm(&mut g, P0, SHEO);
     perm(&mut g, P0, "Underworld Dreams");
@@ -1008,17 +855,6 @@ fn every_opponent_draw_the_new_cards_cause_fires_sheoldred_dreams_and_fate_unrav
     let before = life(&g, P1);
     turn::step_start(&mut g, P1).unwrap();
     assert_eq!(before - life(&g, P1), 8, "two draws, each costing 2 + 1 + 1");
-    // Temple Bell
-    let mut g = game();
-    perm(&mut g, P0, SHEO);
-    perm(&mut g, P0, "Underworld Dreams");
-    perm(&mut g, P0, UNRAV);
-    let bell = perm(&mut g, P0, BELL);
-    let o = perm_opts(&mut g, bell, P0, None);
-    assert_eq!(o.len(), 1);
-    assert!(run_plan(&mut g, P0, &o[0]));
-    assert_eq!(life(&g, P1), 36, "the Bell's draw cost the opponent 4");
-    assert_eq!(life(&g, P0), 42, "and our own draw gained 2");
     // Geier Reach Sanitarium
     let mut g = game();
     perm(&mut g, P0, SHEO);
@@ -1052,29 +888,6 @@ fn fate_unraveler_pings_only_opponents_that_draw() {
 }
 
 #[test]
-fn temple_bell_draws_for_every_player_and_the_ai_taps_it_only_with_a_punisher() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = game3();
-    let bell = perm(&mut g, P0, BELL);
-    assert!(perm_opts(&mut g, bell, P0, None).is_empty(), "no draw punisher: leave it");
-    let (h0, h2) = (hand_len(&g, P0), hand_len(&g, P2));
-    // do it by hand anyway: the ability itself
-    let f = g.registry.get(g.perm(bell).cd.unwrap()).unwrap().options.unwrap();
-    perm(&mut g, P0, "Underworld Dreams");
-    let o = f(&mut g, bell, P0, None).unwrap();
-    assert_eq!(o.len(), 1, "with Underworld Dreams out: tap it at the end of an opponent's turn");
-    assert!(f(&mut g, bell, P0, Some(false)).unwrap().is_empty(), "main phase: only when it kills");
-    g.player_mut(P1).life = 1;
-    assert_eq!(f(&mut g, bell, P0, Some(false)).unwrap().len(), 1, "and now it kills");
-    assert!(run_plan(&mut g, P0, &o[0]));
-    assert!(g.perm(bell).tapped);
-    assert_eq!(hand_len(&g, P0), h0 + 1);
-    assert!(life(&g, P1) <= 0, "the draw killed the opponent at 1 life");
-    assert_eq!(hand_len(&g, P2), h2 + 1);
-    assert!(f(&mut g, bell, P0, None).unwrap().is_empty(), "tapped");
-}
-
-#[test]
 fn peer_into_the_abyss_draws_half_the_library_and_loses_half_the_life_rounding_up() {
     let mut g = game();
     trim_library(&mut g, P1, 11);
@@ -1094,7 +907,6 @@ fn peer_into_the_abyss_draws_half_the_library_and_loses_half_the_life_rounding_u
 
 #[test]
 fn the_ai_aims_peer_into_the_abyss_at_the_opponent_it_kills_and_otherwise_mostly_holds_it() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Swamp", 8, false);
     let c = hand(&mut g, P0, &[PEER])[0];
@@ -1116,7 +928,6 @@ fn the_ai_aims_peer_into_the_abyss_at_the_opponent_it_kills_and_otherwise_mostly
 
 #[test]
 fn geier_reach_sanitarium_taps_for_colourless_and_loots_everyone() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     let sani = lands(&mut g, P0, GEIER, 1, false)[0];
     assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 1);
@@ -1148,7 +959,6 @@ fn charge(g: &Game, m: PermId) -> i64 {
 
 #[test]
 fn otherworld_atlas_stores_counters_then_makes_each_player_draw_that_many() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     // no punisher: a counter at the end of an opponent's turn, never in our own turn
     let mut g = game();
     let atlas = perm(&mut g, P0, ATLAS);
@@ -1192,7 +1002,6 @@ fn otherworld_atlas_stores_counters_then_makes_each_player_draw_that_many() {
 
 #[test]
 fn mikokoro_taps_for_colourless_and_makes_each_player_draw() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     let miko = lands(&mut g, P0, MIKOKORO, 1, false)[0];
     assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 1);
@@ -1225,10 +1034,6 @@ fn ambitions_cost_draws_three_and_loses_three() {
     perm(&mut g, P0, SHEO);
     cast_spell(&mut g, P0, "Ambition's Cost", Ctx::default());
     assert_eq!(life(&g, P0), 37 - 3 + 6, "Sheoldred gains 2 per card");
-    let c = hand(&mut g, P0, &["Ambition's Cost"])[0];
-    g.player_mut(P0).life = 5;
-    let p = sim_core::impls::sheoldred::sheoldred_prio(&g, P0, c);
-    assert_eq!(p, 0, "not at 5 life");
 }
 
 #[test]
@@ -1246,29 +1051,6 @@ fn syphon_mind_makes_each_other_player_discard_and_draws_for_each() {
     let h = hand_len(&g, P0);
     cast_spell(&mut g, P0, "Syphon Mind", Ctx::default());
     assert_eq!(hand_len(&g, P0), h + 1);
-}
-
-#[test]
-fn howling_mine_is_held_until_a_draw_punisher_is_out() {
-    let mut g = game();
-    let m = hand(&mut g, P0, &[MINE])[0];
-    let p = |g: &Game| sim_core::impls::sheoldred::sheoldred_prio(g, P0, m);
-    assert_eq!(p(&g), 0, "no punisher: hold it");
-    perm(&mut g, P0, "Underworld Dreams");
-    assert!(p(&g) > 50);
-    let mut g = game();
-    let m = hand(&mut g, P0, &[MINE])[0];
-    perm(&mut g, P0, SHEO);
-    assert!(sim_core::impls::sheoldred::sheoldred_prio(&g, P0, m) > 50);
-    let mut g = game();
-    let (m, u) = {
-        let h = hand(&mut g, P0, &[MINE, UNRAV]);
-        (h[0], h[1])
-    };
-    assert_eq!(sim_core::impls::sheoldred::sheoldred_prio(&g, P0, m), 0);
-    assert!(sim_core::impls::sheoldred::sheoldred_prio(&g, P0, u) >= 80, "the Unraveler is cast at once");
-    perm(&mut g, P0, UNRAV);
-    assert!(sim_core::impls::sheoldred::sheoldred_prio(&g, P0, m) > 50, "Fate Unraveler is a punisher too");
 }
 
 // the older cards the package leans on: each proven with a play in a sheoldred game
@@ -1351,7 +1133,6 @@ fn read_the_bones_scries_draws_two_and_loses_two() {
 
 #[test]
 fn exsanguinate_drains_x_and_the_sheoldred_ai_casts_it_to_finish() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Swamp", 5, false);
     let c = hand(&mut g, P0, &["Exsanguinate"])[0];
@@ -1374,36 +1155,6 @@ fn gray_merchant_counts_the_black_mana_symbols_of_your_permanents() {
     perm(&mut g, P0, "Gray Merchant of Asphodel"); // {3}{B}{B}: 2
     assert_eq!(life(&g, P1), 36, "devotion 4");
     assert_eq!(life(&g, P0), 44);
-}
-
-#[test]
-fn swiftfoot_boots_go_on_sheoldred_unless_the_helm_comes_first() {
-    let mut g = game();
-    lands(&mut g, P0, "Swamp", 4, false);
-    let sheo = perm(&mut g, P0, SHEO);
-    let boots = perm(&mut g, P0, "Swiftfoot Boots");
-    let o = sim_core::impls::sheoldred::sheoldred_special(&mut g, P0, false).unwrap();
-    let e = o.iter().find(|o| o.label.contains("Swiftfoot Boots")).expect("Boots offered");
-    assert!(run_plan(&mut g, P0, e));
-    assert_eq!(g.perm(boots).attached, Some(sheo));
-    assert!(values::untargetable(&g, sheo));
-    // with the Helm in hand, the Helm goes first and the Boots wait
-    let mut g = game();
-    lands(&mut g, P0, "Swamp", 4, false);
-    perm(&mut g, P0, SHEO);
-    perm(&mut g, P0, "Swiftfoot Boots");
-    hand(&mut g, P0, &["Champion's Helm"]);
-    let o = sim_core::impls::sheoldred::sheoldred_special(&mut g, P0, false).unwrap();
-    assert!(!o.iter().any(|o| o.label.contains("Swiftfoot Boots")));
-    // with the Helm on the table, the Helm is chosen over the Boots
-    let mut g = game();
-    lands(&mut g, P0, "Swamp", 4, false);
-    perm(&mut g, P0, SHEO);
-    perm(&mut g, P0, "Swiftfoot Boots");
-    perm(&mut g, P0, "Champion's Helm");
-    let o = sim_core::impls::sheoldred::sheoldred_special(&mut g, P0, false).unwrap();
-    let best = o.iter().max_by(|a, b| a.utility.partial_cmp(&b.utility).unwrap()).unwrap();
-    assert!(best.label.contains("Champion's Helm"));
 }
 
 #[test]

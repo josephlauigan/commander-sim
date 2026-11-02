@@ -530,7 +530,7 @@ fn riders_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if !trigger_window(g, o, Some(src), "return two creatures you control", Some(3.0))? {
         return Ok(());
     }
-    let mine = creatures(g, o);
+    let mut ranked = creatures(g, o);
     let score = |x: PermId| -> f64 {
         if x == src {
             -50.0
@@ -538,7 +538,6 @@ fn riders_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
             reenter_value(g, o, x) - 0.4 * pval(g, x) - if g.perm(x).token { 1.0 } else { 0.0 }
         }
     };
-    let mut ranked: Vec<PermId> = mine.iter().copied().filter(|&x| !super::cloud::riders_spare(g, x)).collect();
     ranked.sort_by(|&a, &b| score(b).partial_cmp(&score(a)).unwrap_or(std::cmp::Ordering::Equal));
     let riders = riders_of(g, o);
     let mut back = 0;

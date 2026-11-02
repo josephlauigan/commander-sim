@@ -1,15 +1,14 @@
 //! Tests for the Cloud AI fixes (cloud-ai-fix task): equip options, the tutor pick, search value, priorities,
 //! the attack filter, and recasting Cloud before combat.
 
-use sim_core::ai::{act, brain, search};
+use sim_core::ai::brain;
 use sim_core::ids::{PermId, PlayerId};
 use sim_core::impls::cloud;
 use sim_core::settings::AiMode;
-use sim_core::state::{Game, Step};
+use sim_core::state::Game;
 use sim_core::testkit::*;
 
 const P0: PlayerId = PlayerId(0);
-const P1: PlayerId = PlayerId(1);
 const CLOUD: &str = "Cloud, Midgar Mercenary";
 
 fn game() -> Game {
@@ -30,36 +29,6 @@ fn cloud_board(g: &mut Game, n: usize) -> PermId {
     let cl = perm(g, P0, CLOUD);
     g.perm_mut(cl).sick = false;
     cl
-}
-
-fn prio(g: &mut Game, name: &str) -> i32 {
-    let c = hand(g, P0, &[name])[0];
-    cloud::cloud_prio(g, P0, c)
-}
-
-#[test]
-fn helm_and_feast_and_famine_equip_and_work() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    for (n, cost) in [("Champion's Helm", 1), ("Sword of Feast and Famine", 2)] {
-        let mut g = game();
-        let cl = cloud_board(&mut g, 3);
-        let e = perm(&mut g, P0, n);
-        g.perm_mut(e).attached = None;
-        let before = sim_core::engine::values::epow(&g, cl);
-        let opts = brain::main_options(&mut g, P0, false).unwrap();
-        let o =
-            opts.iter().find(|o| o.label == format!("equip {n} to {CLOUD}")).unwrap_or_else(|| panic!("{n}: no equip"));
-        assert_eq!(opts.iter().filter(|o| o.label.starts_with(&format!("equip {n}"))).count(), 1, "no double options");
-        let free = g.player(P0).lands.iter().filter(|&&l| !g.perm(l).tapped).count();
-        assert!(act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
-        assert_eq!(g.perm(e).attached, Some(cl));
-        let used = free - g.player(P0).lands.iter().filter(|&&l| !g.perm(l).tapped).count();
-        assert_eq!(used, cost, "{n} equip cost");
-        assert_eq!(sim_core::engine::values::epow(&g, cl), before + 2);
-        // not offered again once worn
-        let opts = brain::main_options(&mut g, P0, false).unwrap();
-        assert!(!opts.iter().any(|o| o.label.starts_with(&format!("equip {n}"))));
-    }
 }
 
 #[test]
@@ -128,81 +97,9 @@ fn tutor_skips_pieces_in_hand() {
 }
 
 #[test]
-fn equipping_shield_of_kaldra_beats_stop() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = game();
-    set_library(&mut g, P0, &vec!["Plains"; 30]);
-    cloud_board(&mut g, 4);
-    perm(&mut g, P0, "Shield of Kaldra");
-    hand(&mut g, P0, &["Sword of Kaldra", "Helm of Kaldra", "Puresteel Paladin"]);
-    let opts = brain::main_options(&mut g, P0, false).unwrap();
-    search::LAST_SCORES.with(|l| l.borrow_mut().clear());
-    let pick = search::choose(&mut g, P0, false, &opts).map(|i| opts[i].label.clone());
-    let sc = search::LAST_SCORES.with(|l| l.borrow().clone());
-    let get = |n: &str| sc.iter().find(|x| x.0 == n).map(|x| x.1).unwrap();
-    assert!(get("equip Shield of Kaldra") > get("stop"), "{sc:?}");
-    assert_eq!(pick.as_deref(), Some("equip Shield of Kaldra"));
-}
-
-#[test]
-fn priorities() {
-    let mut g = game();
-    lands(&mut g, P0, "Plains", 6, false);
-    let hold = prio(&mut g, "Sword of Kaldra"); // an Equipment waits in hand
-    assert!(prio(&mut g, "Solemn Simulacrum") >= 68);
-    assert!(prio(&mut g, "Court of Ardenvale") >= 64);
-    assert!(prio(&mut g, "Sword of Fire and Ice") > hold);
-    assert!(prio(&mut g, "Sword of Feast and Famine") > 0);
-    assert!(prio(&mut g, "Sword of Hearth and Home") > 0);
-    // C4 additions
-    assert!(prio(&mut g, "Auriok Steelshaper") >= 66);
-    assert!(prio(&mut g, "Kor Outfitter") >= 66);
-    assert!(prio(&mut g, "Balan, Wandering Knight") >= 66); // backup carrier: Equipment waits, Cloud away
-    assert!(prio(&mut g, "Armored Skyhunter") >= 60);
-    cloud_board(&mut g, 0);
-    assert!(prio(&mut g, "Swiftfoot Boots") >= 74);
-    assert!(prio(&mut g, "Benevolent Bodyguard") >= 64);
-}
-
-#[test]
-fn cloud_with_only_a_scope_stays_home_against_a_blocker() {
-    let mut g = game();
-    let cl = cloud_board(&mut g, 3);
-    let sc = perm(&mut g, P0, "Explorer's Scope");
-    g.perm_mut(sc).attached = Some(cl);
-    token(&mut g, P1, 3);
-    let out = cloud::attack_filter(&mut g, P0, vec![cl], P1);
-    assert!(!out.contains(&cl));
-    // a real Sword puts him back in
-    let sw = perm(&mut g, P0, "Sword of Fire and Ice");
-    g.perm_mut(sw).attached = Some(cl);
-    let out = cloud::attack_filter(&mut g, P0, vec![cl], P1);
-    assert!(out.contains(&cl));
-}
-
-#[test]
-fn recast_cloud_before_combat_with_equipment_out() {
+fn the_equip_goes_to_a_carrier_while_cloud_is_away() {
     let mut g = game();
     lands(&mut g, P0, "Plains", 5, false);
-    let e = perm(&mut g, P0, "Helm of Kaldra");
-    g.perm_mut(e).attached = None;
-    g.player_mut(P0).turns = 4;
-    g.step = Step::Main1;
-    let opts = brain::main_options(&mut g, P0, false).unwrap();
-    let o = opts.iter().find(|o| o.label == CLOUD).expect("Cloud castable");
-    assert!(cloud::search_bonus(&g, P0, o) >= 18.0);
-    g.step = Step::Main2;
-    assert_eq!(cloud::search_bonus(&g, P0, o), 10.0);
-}
-
-#[test]
-fn c4_cards_priorities_and_carriers() {
-    let mut g = game();
-    lands(&mut g, P0, "Plains", 5, false);
-    hand(&mut g, P0, &["Sword of Fire and Ice"]); // Equipment waits in hand
-    assert!(prio(&mut g, "Ardenn, Intrepid Archaeologist") >= 72);
-    assert!(prio(&mut g, "Kor Duelist") >= 62);
-    assert!(prio(&mut g, "Balan, Wandering Knight") >= 66);
     // with Cloud away, the equip goes to Balan or Duelist over a plain body
     perm(&mut g, P0, "Bronze Guardian");
     let kd = perm(&mut g, P0, "Kor Duelist");

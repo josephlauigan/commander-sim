@@ -6,11 +6,11 @@ use super::{is_main, pool};
 use crate::cards::Types;
 use crate::engine::cast::on_cast;
 use crate::engine::combat::blocked;
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::removal::legal_targets;
-use crate::engine::stack::{counter_window, equip_to};
+use crate::engine::stack::counter_window;
 use crate::engine::tutors::card_worth;
-use crate::engine::values::{army_of, epow, equipped, etgh, find, has, pval, silenced, threat};
+use crate::engine::values::{army_of, epow, etgh, find, has, pval, silenced, threat};
 use crate::engine::zones::{max_by, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt};
@@ -37,10 +37,7 @@ pub fn bomb_on_bf(g: &Game, p: PlayerId) -> bool {
 /// ais.deck_prio: the deck's cast priority for a card (0-90)
 pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let v = match hand_key(g, p) {
-        "yshtola" => crate::impls::yshtola::yshtola_prio(g, p, c) as i32,
         "omnath" => crate::impls::titania::titania_prio(g, p, c),
-        "sheoldred" => crate::impls::sheoldred::sheoldred_prio(g, p, c),
-        "cloud" => crate::impls::cloud::cloud_prio(g, p, c),
         "kraum" => crate::impls::tymna_partners::kraum_prio(g, p, c),
         "garland" => crate::impls::garland::garland_prio(g, p, c),
         "sephfs" => crate::impls::sephfs::sephfs_prio(g, p, c),
@@ -55,48 +52,12 @@ pub fn deck_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     v
 }
 
-/// ais.deck_prio as Python returns it: a float where a deck's priority isn't whole (Y'shtola's for a card taken from
-/// an opponent: its ability-language value)
+/// ais.deck_prio as a float (a Tier 6 deck's plan slot can return a fraction)
 pub fn deck_prio_f(g: &Game, p: PlayerId, c: CardId) -> f64 {
     if let Some(v) = crate::impls::t6_plans::prio(g, p, c) {
         return v; // a Tier 6 deck's own plan slot
     }
-    match hand_key(g, p) {
-        "yshtola" => crate::impls::yshtola::yshtola_prio(g, p, c),
-        _ => deck_prio(g, p, c) as f64,
-    }
-}
-
-/// t4.sphinx_prio: Consecrated Sphinx by the cards it will draw over the next three rounds, discounted with a hand
-/// full of spells, and when you're low on life against a big board
-pub fn sphinx_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let opps: Vec<PlayerId> = g.opps(p).collect();
-    let per_round = 2 * opps.len();
-    let lib = g.player(p).library.len();
-    let rounds = if per_round > 0 { 3.0f64.min(lib.saturating_sub(12) as f64 / per_round as f64) } else { 0.0 };
-    let cards = per_round as f64 * rounds;
-    let mana = total_mana(g, p, false).max(1) as f64;
-    let backlog: f64 =
-        g.player(p).hand.iter().filter(|&&x| x != c && !g.db.get(x).land).map(|&x| g.db.get(x).cmc as f64).psum()
-            / mana;
-    let usef = if backlog <= 1.0 {
-        1.0
-    } else if backlog <= 2.0 {
-        0.6
-    } else {
-        0.35
-    };
-    let mut v = 30.0 + 1.6 * cards * usef;
-    let big: i32 = opps
-        .iter()
-        .flat_map(|&q| g.player(q).perms.iter().copied())
-        .filter(|&m| g.is_creature(m) && !g.perm(m).phased)
-        .map(|m| epow(g, m))
-        .sum();
-    if big >= 12 && g.player(p).life <= 15 {
-        v -= 15.0;
-    }
-    v.clamp(15.0, 75.0) as i32
+    deck_prio(g, p, c) as f64
 }
 
 /// ais.necro_cards: how many cards Necropotence would buy at this end step
@@ -186,40 +147,6 @@ pub fn breach_candidates(g: &Game, p: PlayerId, need_mana: bool) -> Vec<(f64, Ca
 }
 
 // ------------------------------------------------------------------ Sauron's plays
-/// ais.helm_target: where Champion's Helm should go: the most valuable legendary creature (the Army once it is the
-/// Ring-bearer), else the Army; None if it is already there
-pub fn helm_target(g: &Game, p: PlayerId) -> Option<PermId> {
-    let legends: Vec<PermId> = g
-        .player(p)
-        .perms
-        .iter()
-        .copied()
-        .filter(|&m| g.is_creature(m) && !g.perm(m).phased && crate::cardcode::is_legendary(g, m))
-        .collect();
-    let best = max_by(&legends, |m| pval(g, m)).or_else(|| army_of(g, p))?;
-    (!equipped(g, best, Tag::Helm)).then_some(best)
-}
-
-/// ais.helm_equip
-pub fn helm_equip(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let m = PermId(arg as u32);
-    let mut helm = None;
-    for e in find(g, p, Tag::Helm) {
-        let n = g.perm(e).name;
-        if !blocked(g, p, n) {
-            helm = Some(e);
-            break;
-        }
-    }
-    let Some(h) = helm else { return Ok(false) };
-    if !g.perm(m).on_bf || g.perm(m).owner != p || !can_pay(g, p, 1, "", false) {
-        return Ok(false);
-    }
-    crate::glog!(g, "  {} equips Champion's Helm to {}", g.player(p).name, g.perm(m).name);
-    equip_to(g, p, h, m, 1)?;
-    Ok(true)
-}
-
 /// ais.monolith_untap_options: Grim Monolith {4}: untap, with mana that would otherwise go unused
 pub fn monolith_untap_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
     let mut out = vec![];
@@ -386,8 +313,6 @@ pub fn tutor_pick_named(g: &Game, p: PlayerId, kind: &str) -> Option<CardId> {
     };
     let okn: Vec<CardId> = searchable(g, p).into_iter().filter(|&c| ok(c)).collect();
     match hand_key(g, p) {
-        "yshtola" => crate::impls::yshtola::tutor_pick(g, p, kind, &okn),
-        "cloud" if matches!(kind, "ae" | "art") => crate::impls::cloud::tutor_pick(g, p, &okn),
         "kraum" => crate::impls::tymna_cards::tutor_pick(g, p, kind, &okn),
         "sephfs" => crate::impls::sephfs::tutor_pick(g, p, kind, &okn),
         "omnath" if kind == "cre" => crate::impls::titania::worldly_pick(g, p, &okn),
@@ -733,7 +658,6 @@ pub fn wipe_eval(g: &Game, p: PlayerId, kind: &str) -> (f64, f64, Option<PlayerI
                 "dmg13" => etgh(g, m) <= 13,
                 "austere" | "austere2" => cmc.is_some_and(|v| v >= 4),
                 "nib" => etgh(g, m) <= x,
-                "minus" => crate::impls::sheoldred::deluge_cap(g, p).is_none_or(|cap| etgh(g, m) <= cap),
                 _ => true, // destroy, minus, exile, evac
             };
             if !hit {
@@ -894,14 +818,8 @@ fn protect_main(
     if silenced(g, owner) {
         return Ok(false);
     }
-    if key == "cloud" && crate::impls::bulk_white::white_protect(g, owner, m, kind, actor, spell)? {
-        return Ok(true); // Patriot, Shardmage's Rescue, Cho-Manno's Blessing, Ultimate Magic: Holy
-    }
     match key {
-        "yshtola" => crate::impls::yshtola::yshtola_protect(g, owner, m, kind, actor, spell),
         "omnath" => crate::impls::titania::titania_protect(g, owner, m, kind, actor, spell),
-        "sheoldred" => crate::impls::sheoldred::sheoldred_protect(g, owner, m, kind, actor, spell),
-        "cloud" => crate::impls::cloud::cloud_protect(g, owner, m, kind, actor, spell),
         _ => Ok(false),
     }
 }
@@ -944,19 +862,6 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
             sac_doomed(g, q, kind, caster)?; // --- ghave: unprotected: Ghave's {1} outlet (and the free ones) first
         }
         return Ok(r);
-    }
-    if key == "yshtola" {
-        return crate::impls::yshtola::yshtola_wipe_response(g, q, kind, caster);
-    }
-    if key == "cloud"
-        && let Some(r) = crate::impls::bulk_white::white_wipe_response(g, q, kind, caster)?
-    {
-        return Ok(Some(r)); // Ultimate Magic: Holy
-    }
-    if key == "cloud"
-        && let Some(r) = crate::impls::cloud::cloud_wipe_response(g, q, kind, caster)?
-    {
-        return Ok(Some(r)); // Unbreakable Formation, Rootborn Defenses
     }
     if !g.marchesa_on // (her return counts the creatures that die together)
         && !crate::cardcode::outlets_of(g, q).is_empty()

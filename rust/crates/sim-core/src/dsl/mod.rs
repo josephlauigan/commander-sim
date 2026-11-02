@@ -2464,7 +2464,6 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
             continue;
         };
         if x.attached.is_some_and(|t| g.perm(t).on_bf && g.perm(t).owner == p && !g.perm(t).phased)
-            && !crate::impls::cloud::wants_move(g, p, src)
             && !crate::ai::plan_data::equip_moves(g, p, src)
         {
             continue;
@@ -2499,7 +2498,6 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
             let flies = y.fly || has_kw(g, m, "flying");
             (if y.army { 3.0 } else { 0.0 }) + if flies { 2.0 } else { 0.0 } + 0.3 * epow(g, m) as f64
                 - if y.sick { 1.0 } else { 0.0 }
-                + crate::impls::cloud::holder_bonus(g, p, m)
                 + crate::ai::plan_data::equip_holder_bonus(g, p, m)
                 + crate::impls::tymna_cards::equip_holder_value(g, p, src, m)
         };
@@ -2526,7 +2524,6 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
             .filter(|a| matches!(a, Ability::Triggered { source: Some(s), .. } if s == "equipped"))
             .count();
         let u = 2.5 + 0.5 * bonus as f64 + 2.0 * trig as f64 - 0.3 * n as f64
-            + crate::impls::cloud::equip_utility_bonus(g, p, src, best)
             + crate::ai::plan_data::equip_utility(g, p, best)
             + crate::impls::tymna_cards::equip_utility_value(g, p, src, best);
         out.push(Opt {
@@ -2543,11 +2540,10 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
 /// the Swords {2} (Sword of Feast and Famine +2/+2), Conqueror's Flail {2} (+1/+1 a colour, counted as one), Sword
 /// of the Animist {2} (+1/+1), Nim Deathmantle {4} (+2/+2). Their equip was a deck's hand AI only (Sauron's Army
 /// equips, the kraum seat's Flail, Cloud's), so no other deck ever equipped them. Not for a seat whose own hand AI
-/// equips them (the kept decks, the kraum test seat); Whispersilk Cloak and the Boots are the pool's
+/// equips them (the kraum test seat); Whispersilk Cloak and the Boots are the pool's
 /// (`pool::special_options`), Champion's Helm a plan's `[equip] extra`.
 fn manual_equip(g: &Game, p: PlayerId, t: &crate::cards::Tags) -> Option<[u32; 2]> {
-    let k = crate::ai::hand_key(g, p);
-    if crate::ai::HAND_DECKS.contains(&k) || k == "kraum" {
+    if crate::ai::hand_key(g, p) == "kraum" {
         return None;
     }
     [(Tag::Sword, 2, 2), (Tag::Flail, 2, 1), (Tag::Animist, 2, 1), (Tag::Nim, 4, 2)]

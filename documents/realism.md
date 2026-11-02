@@ -19,7 +19,7 @@ Each phase has a gate. The next phase starts only when the gate passes.
 | 1 Fit and guard | Fit the AI's style knobs against the scorecard; generic rule checks (Pact upkeep, tutor then discard); sequential stopping and an interval on every delta | The Tier 6 seat edge is inside its target band |
 | 2 One card model | `cardgen export` refuses cards modeled by two paths; combos from Commander Spellbook; model coverage per deck printed on every run | No double-modeled cards; coverage printed per deck |
 | 3 Engine structures | A characteristics pass, one replacement step, a mana pool with restrictions, identity for exiled cards, one permanent arena | Paired tests level, scorecard holds, under 10% slower |
-| 4 Generic AI | Plan files as data, card values from abilities, a learned evaluation, tree search on high-stakes choices; delete the per-deck hand code | Each deck level with its hand code in a paired test |
+| 4 Generic AI | Plan files as data, card values from abilities, a learned evaluation, tree search on high-stakes choices; delete the per-deck hand code | Each deck level with its hand code in a paired test. **Met 2026-11-01**: every deck was level or better with its hand AI off in a paired test (2000 games, final lists; the last three: yshtola t5 +0.5 [-2.1, +3.1], sheoldred -0.8 [-2.5, +0.8], cloud +1.0 [-0.3, +2.4], hand on minus off), and the hand code is deleted (`audit/phase4/hand-off-design.md`) |
 
 ## The scorecard
 

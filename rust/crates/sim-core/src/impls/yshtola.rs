@@ -9,38 +9,32 @@
 //!   The card is held in your hand (as Opposition Agent's are), counted out of your hand size, and goes back to its
 //!   owner's graveyard; Hostage Taker's card returns to the battlefield if the Taker leaves before you cast it.
 //! - The rest that needs code: Curiosity (on Y'shtola it draws for each opponent her trigger hits), Jester's Cap, Dark
-//!   Petition (spell mastery adds {B}{B}{B}), Plea for Guidance, Take Up the Shield, Champion's Helm for the AI.
-//! - Zur the Enchanter in the 99: its attack trigger (zur.py) fetches with this deck's values (`fetch_value`).
-//! - The AI: cast priorities (a spell that triggers Y'shtola is worth more), X and drain timing, tutor targets,
-//!   protection and wipe responses (Take Up the Shield here; Clever Concealment, Rootborn Defenses and Restoration
-//!   Angel in zur.py).
+//!   Petition (spell mastery adds {B}{B}{B}), Plea for Guidance, Take Up the Shield.
+//! - The AI (cast priorities, X and drain timing, tutor targets, protection and wipe responses, Zur's fetch values)
+//!   was deleted on 2026-11-01: the deck plays the generic policy and `data/plans/yshtola.toml`
+//!   (`audit/phase4/hand-off-design.md`, "Deleted, part 2"). What stays is the cards' own options (X drains,
+//!   Syphon-Mage, Ill-Gotten Inheritance, Jester's Cap).
 //!
 //! The person's choices (practice mode) are the `human_of` branches.
-//!
-//! The zur.py functions this module calls (untargetable_by_you, the lock Auras' LOCKS / lock_host /
-//! lock_worth, zur_protect, zur_wipe_response) come from `impls/zur.rs`, through the small `zur` module at the end of
-//! this file.
 
-use crate::ai::hand_key; // --- phase4-hand-off
 use crate::engine::repl;
 use crate::engine::pool::Kind;
-use crate::ai::decks::{helm_equip, helm_target, necro_prio, pay_card, sphinx_prio};
-use crate::ai::plans::{citadel_prio, one_ring_prio, wish_list};
+use crate::ai::plans::wish_list;
 use crate::ai::pool::generic_prio;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::cast_card;
 use crate::engine::life::{check_state, gain, lose_life, prevents_damage};
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
-use crate::engine::removal::{apply_removal, legal_targets};
+use crate::engine::removal::apply_removal;
 use crate::engine::stack::{ability_window, ability_window_card, may_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
-use crate::engine::values::{card_name, epow, etgh, protected_from, pval, threat, untargetable};
+use crate::engine::values::{card_name, epow, protected_from, pval, threat, untargetable};
 use crate::engine::zones::{Enter, die, discard_cards, draw, enter, max_by, min_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::human::{cards, choices, human_of};
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::impls::common::{AURA, AuraSpec, aura, aura_spec, auras_on};
+use crate::impls::common::{AURA, AuraSpec, aura};
 use crate::pysum::PySum;
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::Sym;
@@ -166,7 +160,7 @@ fn curiosity_host(g: &mut Game, p: PlayerId, a: PermId) -> Res<Option<PermId>> {
         return Ok(None); // the person picks (common.human_aura_host)
     }
     if let Some(y) = ysh_perm(g, p)
-        && !zur::untargetable_by_you(g, y)
+        && !crate::impls::zur::untargetable_by_you(g, y)
     {
         return Ok(Some(y));
     }
@@ -341,13 +335,12 @@ pub fn x_drain_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-/// yshtola._x_option: the drain X spell as a main-phase play (your turn, your deck's AI)
+/// yshtola._x_option: the drain X spell as a main-phase play (your turn, a deck whose plan `plays` it)
 fn x_option(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if post.is_none()
         || g.active != Some(p)
         || !hand_has(g, p, c)
-        || (!matches!(hand_key(g, p), "yshtola" | "sheoldred")
-            && !crate::ai::plan_data::plays(g, p, &g.db.get(c).name)) // --- plan-files-3: a plan's `plays`
+        || !crate::ai::plan_data::plays(g, p, &g.db.get(c).name) // --- plan-files-3: a plan's `plays`
     {
         return Ok(vec![]);
     }
@@ -922,64 +915,6 @@ fn plea(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     Ok("gy")
 }
 
-/// yshtola.tutor_pick: the card a tutor finds: Sanguine Bond to start the drain engine, a finisher once it kills,
-/// Necropotence early, a lock or pillowfort piece when under pressure. `okn`: the cards this tutor may find.
-pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<CardId> {
-    let first = |ns: &[&str]| -> Option<CardId> { ns.iter().filter_map(|n| g.db.id(n)).find(|c| okn.contains(c)) };
-    let pl = g.player(p);
-    let have: Vec<&str> = pl.perms.iter().filter_map(|&m| g.perm(m).cd).map(|c| g.db.get(c).name.as_ref()).collect();
-    let hand: Vec<&str> = pl.hand.iter().map(|&c| g.db.get(c).name.as_ref()).collect();
-    let held = |n: &str| have.contains(&n) || hand.contains(&n);
-    let opps: Vec<PlayerId> = g.opps(p).collect();
-    let mana = pl.lands.len() as i32
-        + pl.perms.iter().filter(|&&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Rock))).count() as i32;
-    let mut order: Vec<&str> = vec![];
-    let finisher_ok = matches!(kind, "any" | "is"); // Mystical Tutor finds the X drains too
-    if finisher_ok {
-        let low: i32 = opps.iter().map(|&q| g.player(q).life).sum();
-        if mana >= 7
-            && !opps.is_empty()
-            && (low <= 2 * (mana - 2) * opps.len() as i32
-                || opps.iter().map(|&q| g.player(q).life).min().unwrap() <= mana - 2)
-        {
-            order.extend(["Debt to the Deathless", "Exsanguinate"]);
-        }
-        if kind == "any" && ysh_perm(g, p).is_none() && !pl.cmd_in_zone && pl.tax >= 4 {
-            order.push("Lightning Greaves");
-        }
-    }
-    if !held("Sanguine Bond") {
-        order.push("Sanguine Bond");
-    }
-    if pl.turns <= 6 && pl.life >= 25 && !held("Necropotence") {
-        order.push("Necropotence");
-    }
-    if under_attack(g, p) && !have.iter().any(|n| matches!(*n, "Propaganda" | "Windborn Muse")) {
-        order.push("Propaganda");
-    }
-    if !held("Marauding Blight-Priest") && kind == "any" {
-        order.push("Marauding Blight-Priest");
-    }
-    if ysh_perm(g, p).is_some() && !held("Curiosity") {
-        order.push("Curiosity");
-    }
-    order.extend(["Ill-Gotten Inheritance", "Prison Sentence", "Arrest", "Propaganda"]);
-    if finisher_ok {
-        order.extend(["Exsanguinate", "Debt to the Deathless"]);
-    }
-    first(&order)
-}
-
-/// yshtola.under_attack: the table's creatures hit hard enough to matter (total power at 12 or more)
-pub fn under_attack(g: &Game, p: PlayerId) -> bool {
-    g.opps(p)
-        .flat_map(|q| g.player(q).perms.iter().copied())
-        .filter(|&m| g.is_creature(m) && !g.perm(m).phased)
-        .map(|m| epow(g, m))
-        .sum::<i32>()
-        >= 12
-}
-
 // ======================================================== Take Up the Shield
 fn shield_resolve(g: &mut Game, _p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     if let Some(t) = ctx.target
@@ -998,326 +933,13 @@ pub fn shield(g: &mut Game, m: PermId) {
     crate::glog!(g, "    Take Up the Shield: {} gets a +1/+1 counter, lifelink and indestructible", g.perm(m).name);
 }
 
-// ======================================================== Champion's Helm (the AI equips it on Y'shtola)
-fn helm(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if p != g.perm(src).owner
-        || hand_key(g, p) != "yshtola"
-        || human(g, p)
-        || post.is_none()
-        || !can_pay(g, p, 1, "", false)
-    {
-        return Ok(vec![]);
-    }
-    let t = if g.player(p).perms.iter().any(|&m| g.is_creature(m)) { helm_target(g, p) } else { None };
-    let Some(t) = t else { return Ok(vec![]) };
-    if g.perm(src).attached == Some(t) {
-        return Ok(vec![]);
-    }
-    Ok(vec![Opt {
-        utility: 2.5 + 0.3 * pval(g, t),
-        label: format!("equip Champion's Helm to {}", g.perm(t).name),
-        act: Some(Action::Plan { f: helm_equip, arg: t.0 as i64 }),
-    }])
-}
-
-// ======================================================== Zur in the 99: what to fetch
-/// yshtola.fetch_value: an enchantment with mana value 3 or less from Zur's attack, for this deck (zur.fetch_value
-/// calls it: CI.yshtola_fetch_value)
-pub fn fetch_value(g: &Game, p: PlayerId, c: CardId, _zur: PermId) -> f64 {
-    let d = g.db.get(c);
-    let n: &str = &d.name;
-    let pl = g.player(p);
-    let have = pl.perms.iter().any(|&m| !g.perm(m).phased && card_name(g, m) == Some(n));
-    if have && aura_spec(g, c).is_none() && !zur::is_lock(n) {
-        return 0.0;
-    }
-    let turn = pl.turns as f64;
-    match n {
-        "Necropotence" => {
-            if pl.life >= 20 {
-                8.5 - 0.3 * turn
-            } else {
-                1.0
-            }
-        }
-        "Mystic Remora" => 0f64.max(5.0 - 1.2 * (turn - 1.0)),
-        "Propaganda" => {
-            let n_cr = g
-                .opps(p)
-                .flat_map(|q| g.player(q).perms.iter().copied())
-                .filter(|&m| g.is_creature(m) && !g.perm(m).phased)
-                .count();
-            2.0 + if under_attack(g, p) { 5.0 } else { 0.0 } + 0.15 * n_cr as f64
-        }
-        "Curiosity" => {
-            let y = ysh_perm(g, p);
-            let on_y = y.is_some_and(|y| auras_on(g, y).iter().any(|&a| card_name(g, a) == Some(n)));
-            if y.is_some() && !on_y { 3.0 + 1.5 * g.opps(p).count() as f64 } else { 1.5 }
-        }
-        _ if zur::is_lock(n) => {
-            let kind = zur::lock_kind(n);
-            match zur::lock_host(g, p, n, false, &[]) {
-                Some(t) => zur::lock_worth(g, p, t, kind),
-                None => 0.0,
-            }
-        }
-        _ => 0.5,
-    }
-}
-
-// ======================================================== the AI: priorities
-/// yshtola.trigger_bonus: what Y'shtola's cast trigger adds to casting c now (2 to each opponent, 2 life, and what
-/// that sets off)
-pub fn trigger_bonus(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let d = g.db.get(c);
-    let Some(y) = ysh_perm(g, p) else { return 0 };
-    if d.creature || d.land || d.cmc < 3 {
-        return 0;
-    }
-    let n_opps = g.opps(p).count() as f64;
-    let per = 2 + drain_extra(g, p);
-    let cur = auras_on(g, y).iter().filter(|&&a| name_is(g, a, "Curiosity")).count() as f64;
-    let mut v = 0.5 * n_opps * per as f64 + if bond_on(g, p) { 1.0 } else { 0.0 } + 1.5 * cur * n_opps;
-    if g.opps(p).any(|q| g.player(q).life <= per) {
-        v += 6.0;
-    }
-    if one_trigger_from_four(g, p) {
-        v += 3.0; // a player has lost 2-3 already: this trigger makes four and she draws at the end step
-    }
-    20.min((4.0 * v) as i32)
-}
-
-/// yshtola.yshtola_prio: the deck's cast priority (0-90). The deck's own rules (`yshtola_named_prio`) where they name
-/// the card; any other card (one taken from an opponent, or one swapped into the list) gets the pool AI's generic
-/// priority, else its ability-language value. A float only for that value, so `ai::decks::deck_prio_f` keeps it.
-pub fn yshtola_prio(g: &Game, p: PlayerId, c: CardId) -> f64 {
-    yshtola_named_prio(g, p, c).unwrap_or_else(|| {
-        let v = generic_prio(g, p, c) as f64;
-        if v == 0.0 && g.db.get(c).has_dsl() { crate::dsl::card_value(g, p, c) * 10.0 } else { v }
-    })
-}
-
-/// the deck's own priority for the cards its rules name; None: no rule for this card
-pub fn yshtola_named_prio(g: &Game, p: PlayerId, c: CardId) -> Option<f64> {
-    const UNNAMED: i32 = i32::MIN;
-    let pl = g.player(p);
-    let d = g.db.get(c);
-    let (t, n) = (&d.tags, &*d.name);
-    let ysh = ysh_perm(g, p);
-    if pl.stolen.contains_key(&c) {
-        return None; // a card taken from an opponent
-    }
-    if c == pl.cmd {
-        return Some(if pl.turns >= 2 { 90.0 } else { 60.0 });
-    }
-    let b = trigger_bonus(g, p, c);
-    let v: i32 = (|| {
-        if t.has(Tag::Rock) {
-            return if pl.turns <= 5 { 82 } else { 30 + b };
-        }
-        if t.has(Tag::Citadel) {
-            // Bolas's Citadel: with life above the threat floor
-            let v = citadel_prio(g, p, c);
-            return if v != 0 { v + b } else { 0 };
-        }
-        if n == "The One Ring" {
-            return one_ring_prio(g, p, c) + b; // draw engine, a turn of protection, and it triggers her
-        }
-        if t.has(Tag::Necro) {
-            // Necropotence: from the cards it will buy
-            let v = necro_prio(g, p, c);
-            return if v != 0 { v + b } else { 0 };
-        }
-        if t.has(Tag::Remora) {
-            // lowest win rate of her cards when cast (39-45%): a turn or two at most, so below her engine cards
-            return if pl.turns <= 4 { 40 } else { 8 };
-        }
-        if n == "Esper Sentinel" {
-            return if pl.turns <= 4 { 46 } else { 30 }; // bottom group by win rate when cast
-        }
-        if t.has(Tag::Xdrain) || t.has(Tag::Tokx) {
-            return 0; // X spells: their own options
-        }
-        match n {
-            "Sanguine Bond" => return 76 + b,
-            "Marauding Blight-Priest" => return 62,
-            "Ill-Gotten Inheritance" => return 54 + b,
-            "Polluted Bonds" => return (if pl.turns <= 8 { 56 } else { 38 }) + b, // opponents' land drops to come
-            "Propaganda" | "Windborn Muse" => {
-                if pl.perms.iter().any(|&m| matches!(card_name(g, m), Some("Propaganda" | "Windborn Muse"))) {
-                    return 30 + b;
-                }
-                return 72.min(44 + if under_attack(g, p) { 18 } else { 0 }) + b;
-            }
-            _ => {}
-        }
-        if zur::is_lock(n) {
-            let kind = zur::lock_kind(n);
-            return match zur::lock_host(g, p, n, true, &[]) {
-                Some(tg) => 80.min((42.0 + 7.0 * zur::lock_worth(g, p, tg, kind)) as i32) + b,
-                None => 0,
-            };
-        }
-        match n {
-            "Curiosity" => {
-                return if ysh.is_some_and(|y| !zur::untargetable_by_you(g, y)) { 50 } else { 18 };
-            }
-            "Bribery" => return 56 + b,
-            "Hostage Taker" => {
-                let tg = if !human(g, p) { taker_target(g, p, None) } else { None };
-                return match tg {
-                    Some(tg) => 45 + 30.min((6.0 * pval(g, tg)) as i32),
-                    None => 25,
-                };
-            }
-            "Massacre Wurm" => {
-                let k = g
-                    .opps(p)
-                    .flat_map(|q| g.player(q).perms.iter().copied())
-                    .filter(|&m| g.is_creature(m) && !g.perm(m).phased && etgh(g, m) <= 2)
-                    .count() as i32;
-                return 80.min(46 + 6 * k);
-            }
-            "Gonti, Lord of Luxury" => return 50,
-            "Thief of Sanity" => return 52,
-            "Urborg Syphon-Mage" => return 46,
-            "Zur the Enchanter" => return 54,
-            "Champion's Helm" => return (if ysh.is_some() { 46 } else { 22 }) + b,
-            _ => {}
-        }
-        if t.str(Tag::Prot) == Some("boots") {
-            return if ysh.is_some() { 58 } else { 25 };
-        }
-        match n {
-            "Bastion Protector" => return if ysh.is_some() { 50 } else { 30 },
-            "Notion Thief" => return 50,
-            _ => {}
-        }
-        if t.has(Tag::Tithe) {
-            // Smothering Tithe: from the Treasures it will make
-            return crate::cardcode::tithe_prio(g, p, c) + b;
-        }
-        if t.has(Tag::Sphinx) {
-            // Consecrated Sphinx: from what it will draw
-            return sphinx_prio(g, p, c);
-        }
-        match n {
-            "Skyclave Apparition" => {
-                let tg = legal_targets(g, p, "exile", "nl", true, Some(c));
-                if tg.is_empty() {
-                    return 25;
-                }
-                let best = tg.iter().map(|&m| pval(g, m)).fold(f64::NEG_INFINITY, f64::max);
-                return 45 + 30.min((6.0 * best) as i32);
-            }
-            "Restoration Angel" => return 25, // held for flash
-            "The Eternal Wanderer" => return 58 + b,
-            "Prayer of Binding" | "Static Net" | "Memory Trap" => {
-                // exile an opponent's best nonland permanent
-                let best = g
-                    .opps(p)
-                    .flat_map(|q| g.player(q).perms.iter().copied())
-                    .filter(|&m| !g.perm(m).phased && !untargetable(g, m))
-                    .map(|m| pval(g, m))
-                    .fold(0.0, f64::max);
-                return if best >= 3.0 { 75.min((40.0 + 6.0 * best) as i32) + b } else { 0 };
-            }
-            "Jester's Cap" => return 34 + b,
-            _ => {}
-        }
-        if t.str(Tag::Tut).is_some_and(|s| !s.is_empty()) {
-            return 52 + b;
-        }
-        if n == "Triplicate Spirits" {
-            return 46 + b;
-        }
-        if t.has(Tag::Draw) && (d.instant || d.sorcery) {
-            return 46 + b;
-        }
-        if d.creature {
-            return 40;
-        }
-        UNNAMED
-    })();
-    (v != UNNAMED).then_some(v as f64)
-}
-
-// ------------------------------------------------------------------ the rigid AI's extra plays (ais.yshtola_main)
-// The rigid AI (ais.MAIN) isn't ported: the Rust plays the heuristic AI (brain), which reaches the X spells through
-// `hand_options` and the abilities through `options`. These two are ported for completeness.
-
-/// yshtola.yshtola_x_spell: a drain X spell worth casting now
-pub fn yshtola_x_spell(g: &mut Game, p: PlayerId, _post: bool) -> Res<bool> {
-    let opts: Vec<(f64, CardId)> = g
-        .player(p)
-        .hand
-        .iter()
-        .copied()
-        .filter(|&c| g.db.get(c).tag(Tag::Xdrain))
-        .filter_map(|c| x_drain_option(g, p, c).map(|o| (o.0, c)))
-        .collect();
-    let Some((u, c)) = max_by(&opts, |o| o.0) else { return Ok(false) };
-    Ok(u >= 4.0 && x_drain_go(g, p, c.0 as i64)?)
-}
-
-/// yshtola.yshtola_abilities: the best activated ability with a clear use (Syphon-Mage, Ill-Gotten Inheritance,
-/// Jester's Cap, the Helm)
-pub fn yshtola_abilities(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<bool> {
-    let mut opts: Vec<Opt> = vec![];
-    for (src, imp) in crate::engine::hooks::hooked(g, crate::hooks::Event::Options) {
-        if g.perm(src).owner == p && !crate::cardcode::ability_locked(g, src, p) {
-            opts.extend((imp.options.unwrap())(g, src, p, post)?);
-        }
-    }
-    opts.retain(|o| o.utility >= 2.5);
-    let mut best: Option<&Opt> = None;
-    for o in &opts {
-        if best.is_none_or(|b| o.utility > b.utility) {
-            best = Some(o);
-        }
-    }
-    match best.and_then(|o| o.act.clone()) {
-        Some(a) => crate::ai::act::perform(g, p, &a),
-        None => Ok(false),
-    }
-}
-
-// ------------------------------------------------------------------ protection and wipes
-/// yshtola.yshtola_protect: removal at Y'shtola or another key creature: Take Up the Shield against destroy and
-/// damage, then the answers in zur.py (Clever Concealment, Rootborn Defenses, Restoration Angel)
-pub fn yshtola_protect(
-    g: &mut Game,
-    owner: PlayerId,
-    m: PermId,
-    kind: Sym,
-    actor: Option<PlayerId>,
-    spell: Option<CardId>,
-) -> Res<bool> {
-    if !g.is_creature(m) || pval(g, m) < 4.0 {
-        return Ok(false);
-    }
-    if kind == "destroy" || kind.starts_with("dmg") {
-        for c in g.player(owner).hand.clone() {
-            let d = g.db.get(c);
-            if d.tags.str(Tag::Prot) == Some("shield")
-                && can_pay(g, owner, d.generic, &d.pips, false)
-                && !zur::untargetable_by_you(g, m)
-            {
-                if !pay_card(g, owner, c, 0)? {
-                    return Ok(false);
-                }
-                crate::glog!(g, "    {} casts Take Up the Shield on {}", pname(g, owner), g.perm(m).name);
-                shield(g, m);
-                return Ok(true);
-            }
-        }
-    }
-    zur::zur_protect(g, owner, m, kind, actor, spell)
-}
-
-/// yshtola.yshtola_wipe_response (zur.zur_wipe_response)
-pub fn yshtola_wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> Res<Option<Sym>> {
-    zur::zur_wipe_response(g, q, kind, caster)
+// ======================================================== Champion's Helm
+/// Champion's Helm's options slot: none. The Y'shtola deck's hand AI equipped it on her; it was deleted on 2026-11-01
+/// (`audit/phase4/hand-off-design.md`, "Deleted, part 2") and a plan's `[equip]` extra decides. The slot stays
+/// registered: opponents rate a card with an options hook as an engine (`pool::card_threat_value`), so removing it
+/// would change how they value the Helm.
+fn helm(_g: &mut Game, _src: Src, _p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
+    Ok(vec![])
 }
 
 // ======================================================== registration
@@ -1352,53 +974,3 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     Ok(())
 }
 
-// ======================================================== zur.py's pieces this deck uses
-/// zur.rs, with the two lookups Y'shtola's code reads by name
-mod zur {
-    pub use crate::impls::zur::*;
-
-    /// one of zur.py's lock Auras (Arrest, Prison Sentence ...)
-    pub fn is_lock(name: &str) -> bool {
-        crate::impls::zur::lock_kind(name).is_some()
-    }
-
-    /// the lock Aura's kind ("" if it isn't one)
-    pub fn lock_kind(name: &str) -> &'static str {
-        crate::impls::zur::lock_kind(name).unwrap_or("")
-    }
-}
-
-// ======================================================== AI audit: removal with her out, wipes with Teferi's
-/// brain.removal_options for the yshtola seat: the utility added to casting removal spell c (best target worth `best`),
-/// or None when it isn't worth casting. With Y'shtola out, a noncreature spell of mana value 3 or more is also her
-/// trigger (2 to each opponent, 2 life: Anguished Unmaking, Generous Gift, Your Fate Ends Here), and the draw when an
-/// opponent has already lost 2-3 this turn, so it needs only a target worth 1; every other removal needs a target worth
-/// 3 or more (before, Path to Exile went on Ornithopter and Fatal Push on Esper Sentinel).
-pub fn removal_adjust(g: &Game, p: PlayerId, c: CardId, best: f64) -> Option<f64> {
-    if trigger_bonus(g, p, c) > 0 {
-        (best >= 1.0).then(|| trigger_bonus(g, p, c) as f64 / 4.0)
-    } else {
-        (best >= 3.0).then_some(0.0)
-    }
-}
-
-/// a player (not her) has lost 2 or 3 life this turn: one more trigger makes four, and she draws at the end step
-fn one_trigger_from_four(g: &Game, p: PlayerId) -> bool {
-    g.players.iter().any(|q| q.alive && q.id != p && (2..=3).contains(&lost_this_turn(g, q.id)))
-}
-
-/// Teferi's Protection in hand and enough mana to hold it up behind wipe `c` (cast the wipe, phase her own permanents
-/// out in response, so it takes only the opponents'): the deck's key line. Only when the wipe would cost her something.
-pub fn teferis_first(g: &Game, p: PlayerId, c: CardId, kind: &str) -> bool {
-    let pl = g.player(p);
-    let Some(t) = g.db.id(crate::engine::zones::TEFERIS_PROTECTION).filter(|t| pl.hand.contains(t)) else {
-        return false;
-    };
-    if pl.life_locked || crate::engine::values::silenced(g, p) || !crate::engine::cast::castable(g, p, t, "hand") {
-        return false;
-    }
-    let (_, ml, _) = crate::ai::decks::wipe_eval(g, p, kind);
-    let (cg, cp) = crate::ai::decks::wipe_cost(g, p, c);
-    let td = g.db.get(t);
-    ml >= 2.0 && can_pay(g, p, cg + td.generic, &format!("{cp}{}", td.pips), false)
-}

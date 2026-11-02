@@ -2,7 +2,6 @@
 //! Feeder), Carnage Altar, Common Crook, Callous Inspector and the AI rules for using them. Seat 0 plays the
 //! sheoldred deck, seat 1 the seph deck.
 
-use sim_core::ai::decks;
 use sim_core::engine::pool::Kind;
 use sim_core::cardcode;
 use sim_core::dsl;
@@ -154,18 +153,6 @@ fn no_outlet_use_without_a_payoff_or_a_reason() {
 }
 
 #[test]
-fn the_commander_and_sephiroth_are_never_fodder() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = game();
-    perm(&mut g, P0, "Phyrexian Altar");
-    perm(&mut g, P0, SEPH);
-    perm(&mut g, P0, "Blood Artist");
-    let c = token(&mut g, P0, 1);
-    g.perm_mut(c).is_cmd = true;
-    assert!(common::aristocrat_options(&mut g, P0, Some(true)).unwrap().is_empty());
-}
-
-#[test]
 fn four_sacrifices_in_one_turn_flip_sephiroth() {
     let mut g = game();
     let s = perm(&mut g, P0, SEPH);
@@ -200,18 +187,6 @@ fn the_ai_sacrifices_its_spare_fodder_until_sephiroth_flips() {
 
 // ------------------------------------------------------------------ a creature that dies anyway
 #[test]
-fn a_creature_that_is_about_to_die_goes_to_an_outlet_that_gains_something() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = game();
-    let f = perm(&mut g, P0, "Carrion Feeder");
-    let c = perm(&mut g, P0, "Common Crook");
-    assert!(cardcode::sac_in_response(&mut g, P0, c, "destroy").unwrap());
-    assert!(!g.perm(c).on_bf);
-    assert_eq!(g.perm(f).plus, 1);
-    assert_eq!(g.player(P0).treasures, 1, "Common Crook's Treasure");
-}
-
-#[test]
 fn the_commander_is_not_sacrificed_in_response() {
     let mut g = game();
     perm(&mut g, P0, "Carrion Feeder");
@@ -219,33 +194,6 @@ fn the_commander_is_not_sacrificed_in_response() {
     g.perm_mut(c).is_cmd = true;
     assert!(!cardcode::sac_in_response(&mut g, P0, c, "destroy").unwrap());
     assert!(g.perm(c).on_bf);
-}
-
-#[test]
-fn altar_mana_is_only_worth_a_sacrifice_in_response_when_a_spell_waits_on_it() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = game();
-    lands(&mut g, P0, "Swamp", 3, false);
-    perm(&mut g, P0, "Phyrexian Altar");
-    let a = token(&mut g, P0, 1);
-    assert!(!cardcode::sac_in_response(&mut g, P0, a, "destroy").unwrap(), "nothing to spend the mana on");
-    hand(&mut g, P0, &["Crypt Ghast"]);
-    assert!(cardcode::sac_in_response(&mut g, P0, a, "destroy").unwrap());
-}
-
-#[test]
-fn a_wipe_finds_the_outlets_sacrificing_what_it_kills() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = game4();
-    perm(&mut g, P0, SEPH);
-    let f = perm(&mut g, P0, "Carrion Feeder");
-    let ts = tokens(&mut g, P0, 2);
-    let before = g.player(P1).life;
-    let r = decks::wipe_response(&mut g, P0, "destroy", P1).unwrap();
-    assert_eq!(r, None);
-    assert!(ts.iter().all(|&t| !g.perm(t).on_bf));
-    assert!(g.perm(f).plus >= 2 || !g.perm(f).on_bf);
-    assert!(g.player(P1).life < before, "Sephiroth drained on the way out");
 }
 
 // ------------------------------------------------------------------ Carnage Altar, Common Crook, Callous Inspector
@@ -264,19 +212,6 @@ fn carnage_altar_pays_three_and_a_creature_for_a_card() {
     assert!(!g.perm(t).on_bf);
     assert_eq!(g.player(P0).hand.len(), hand_before + 1);
     assert_eq!(mana::total_mana(&g, P0, false), 0);
-}
-
-#[test]
-fn carnage_altar_never_eats_the_commander_or_a_payoff() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = game();
-    lands(&mut g, P0, "Swamp", 3, false);
-    perm(&mut g, P0, "Carnage Altar");
-    perm(&mut g, P0, "Blood Artist");
-    let c = token(&mut g, P0, 1);
-    g.perm_mut(c).is_cmd = true;
-    let o = dsl::ability_options(&mut g, P0, true).unwrap();
-    assert!(!o.iter().any(|o| o.label.contains("Carnage Altar")));
 }
 
 #[test]

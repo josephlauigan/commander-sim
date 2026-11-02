@@ -282,9 +282,6 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     let d = g.db.get(c);
     let main = is_main(hand_key(g, p));
     let mut base = decks::deck_prio_f(g, p, c);
-    if hand_key(g, p) == "cloud" && crate::impls::cloud::strands_equipment(g, p, c) {
-        return None; // hold the Equipment until a creature can carry it
-    }
     if !main && pl.library.len() < 8 && draws_cards(g, c) {
         return None; // don't draw yourself out
     }
@@ -632,16 +629,7 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
         if !main && v < 2.5 {
             continue; // outside decks: no removal on trivial targets
         }
-        // the yshtola seat: spot removal only on targets worth it; her MV3+ spells are also her trigger
-        let ysh_bonus = if hand_key(g, p) == "yshtola" {
-            match crate::impls::yshtola::removal_adjust(g, p, c, super::values::pval_for(g, p, best)) {
-                Some(b) => b,
-                None => continue,
-            }
-        } else {
-            0.0
-        };
-        let mut u = v - 3.5 + ysh_bonus;
+        let mut u = v - 3.5;
         if alt {
             u -= 1.5 * altcost::lost(g, p, c, None); // cards given up instead of mana
         }
@@ -739,13 +727,7 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
                 continue;
             }
             let pen = if alt { 1.5 * altcost::lost(g, d, c, None) } else { 0.0 };
-            let mut v = pval(g, m) + if danger { 3.0 } else { 0.0 } + 0.3 * epow(g, m) as f64 - pen;
-            if hand_key(g, d) == "yshtola" {
-                match crate::impls::yshtola::removal_adjust(g, d, c, pval(g, m)) {
-                    Some(b) => v += b,
-                    None => continue,
-                }
-            }
+            let v = pval(g, m) + if danger { 3.0 } else { 0.0 } + 0.3 * epow(g, m) as f64 - pen;
             if best.is_none_or(|b| v > b.0) {
                 best = Some((v, c, m));
             }
@@ -817,12 +799,6 @@ pub fn cast_removal(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], kick: u
         return Ok(false);
     }
     let t = temp(g, p);
-    let live = if hand_key(g, p) == "yshtola" {
-        let top = live.iter().map(|x| x.0).fold(0.0, f64::max);
-        live.into_iter().filter(|x| x.0 >= 0.5 * top).collect() // no sampling of a target far below the best
-    } else {
-        live
-    };
     let target = sample(&mut g.rng, &live, t).unwrap();
     let mut fod = None;
     if d.tag(Tag::Needsac) || (d.tag(Tag::Sacor4) && !fods.is_empty()) {
@@ -875,13 +851,7 @@ pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt>
         if ol <= 0.0 {
             continue; // hits nothing of theirs (Nibelheim Aflame with no creature of ours)
         }
-        let ysh = hand_key(g, p) == "yshtola";
-        // yshtola: Teferi's Protection held up behind the wipe phases her own permanents out, so it costs her nothing
-        let swing = if ysh && crate::impls::yshtola::teferis_first(g, p, c, kind) { ol } else { ol - 1.2 * ml };
-        let mut u = swing / 2.2 - 2.5 + 2.0 * s.danger.min(1.5);
-        if ysh {
-            u += crate::impls::yshtola::trigger_bonus(g, p, c) as f64 / 4.0; // the wipe is also her trigger
-        }
+        let mut u = (ol - 1.2 * ml) / 2.2 - 2.5 + 2.0 * s.danger.min(1.5);
         if g.player(p).key == "sephfs" {
             match crate::impls::sephfs::wipe_utility(g, p, c, kind, s.danger) {
                 Some(v) => u = v,
@@ -909,17 +879,12 @@ pub fn cast_wipe(g: &mut Game, p: PlayerId, c: CardId, victim: Option<PlayerId>)
     if g.cast_checks() && !castable(g, p, c, "hand") {
         return Ok(false);
     }
-    let teferi = hand_key(g, p) == "yshtola"
-        && g.db.get(c).tags.str(Tag::Wipe).is_some_and(|k| crate::impls::yshtola::teferis_first(g, p, c, k));
     if alt {
         if !altcost::pay_alt(g, p, c, None)? {
             return Ok(false);
         }
     } else {
         pay_for(g, p, c, cg, &cp, false)?;
-    }
-    if teferi {
-        crate::engine::zones::cast_teferis_protection(g, p, 6.0)?; // in response: her permanents phase out of the wipe
     }
     cast_card(g, p, c, "hand", Ctx { victim, ..Ctx::default() })?;
     g.player_mut(p).stat("wipes_cast", 1);
@@ -932,8 +897,6 @@ pub fn cast_wipe(g: &mut Game, p: PlayerId, c: CardId, victim: Option<PlayerId>)
 pub fn special_options(g: &mut Game, p: PlayerId, _s: &Situation, post: bool) -> Res<Vec<Opt>> {
     match hand_key(g, p) {
         "omnath" => crate::impls::titania::titania_special(g, p, post),
-        "sheoldred" => crate::impls::sheoldred::sheoldred_special(g, p, post),
-        "cloud" => crate::impls::cloud::cloud_special(g, p, post),
         "kraum" => crate::impls::tymna_cards::kraum_special(g, p, post),
         "sephfs" => crate::impls::sephfs::options(g, p, post),
         _ => Ok(vec![]),
@@ -1048,9 +1011,6 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
 }
 
 // ------------------------------------------------------------------ main phase
-/// your decks that also use the outside decks' generic plays (equip, Dispute, reanimation)
-const GENERIC_PLAYS: [&str; 4] = ["yshtola", "omnath", "sheoldred", "cloud"];
-
 /// brain.hook_options: activated abilities of card code (battlefield, graveyard and hand), the outside decks' generic
 /// plays, land abilities and modeled combos. post None: the end-of-turn window.
 pub fn hook_options(g: &mut Game, p: PlayerId, s: &Situation, post: Option<bool>) -> Res<Vec<Opt>> {
@@ -1074,7 +1034,8 @@ pub fn hook_options(g: &mut Game, p: PlayerId, s: &Situation, post: Option<bool>
             o.extend(f(g, c, p, post)?);
         }
     }
-    if !is_main(hand_key(g, p)) || GENERIC_PLAYS.contains(&hand_key(g, p)) {
+    // Omnath also uses the outside decks' generic plays (equip, Dispute, reanimation)
+    if !is_main(hand_key(g, p)) || hand_key(g, p) == "omnath" {
         o.extend(pool::special_options(g, p, s, post)?);
     } else if g.player(p).perms.iter().any(|&m| {
         let x = g.perm(m);

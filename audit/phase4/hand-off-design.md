@@ -1,8 +1,8 @@
 # Phase 4, PR 7: each deck's hand-written AI behind a switch, off by default (design)
 
-Default since the recalibration's stage 1 (`audit/recal/pairs-2026-10-31.md` section 4): on for three decks, see "The
-switch". On 2026-11-01 the hand AI of the other eleven was deleted: see "Deleted" below; the survey further down
-describes the code as it was before.
+The switch is gone: on 2026-11-01 the hand AI of eleven decks was deleted ("Deleted"), and the last three (yshtola,
+sheoldred, cloud) after their paired tests ("Deleted, part 2"). "The switch" below and the survey describe the code as
+it was before.
 
 Brief: `rust/agents/phase4-hand-off.md`. JD's decision (2026-10-31): with no sims, every deck's hand-written AI goes
 behind a switch that defaults to the generic policy now; it is deleted later, deck by deck, after the recalibration's
@@ -84,6 +84,108 @@ test also checked a card's rules, that part stays with the hand AI off (Susurian
 Mishra's Factory's animation, Gamble, Unclaimed Territory, Veyran's engine milestone). `tests/hand_off.rs` keeps the
 switch tests of the three kept decks and checks that the deleted decks play the generic policy and their plan files
 even with the hand AI forced on. `tests/tymna_ai.rs` went whole (it tested the thrasios seat's attack spread only).
+
+## Deleted, part 2 (2026-11-01): yshtola, sheoldred, cloud
+
+Brief: the coordinator's task for branch `hand-ai-delete-2`. The recalibration's paired test (2000 games, seeds
+500000-501999, final lists, hand AI on minus off with the generic policy and its plan file from #197 as the "off"
+arm) found each level or better with the hand AI off: yshtola t5 +0.5 [-2.1, +3.1]; sheoldred average -0.8
+[-2.5, +0.8]; cloud average +1.0 [-0.3, +2.4]. That completes Phase 4's gate (`documents/realism.md`): every deck
+plays the generic policy and its plan file, and the last hand code is gone.
+
+The switch is gone with it. `AI_HAND`, `ai::HAND_DECKS`, `HAND_KEEP`, `parse_hand` / `hand_mode` / `hand_wants`,
+`hand_switch_wants`, `force_hand` (and its guard), `hand_ai` and `plan_unread` were removed; `plans::plays_plan` and
+`plans::config` read a plan file whenever the deck has one. `ai::HAND_DELETED` lists the nine decks (veyran left the
+game earlier): sauron, galadriel, yshtola, alela, kefka, sheoldred, cloud, karn, thrasios. `hand_ai_key` is
+`!HAND_DELETED.contains(key)`, `hand_key` reads those nine as "" as before, and every `is_main(hand_key(..))` routing
+site is untouched. The three decks play exactly as on origin/main with `AI_HAND=0`: every deleted site was one that
+`hand_key` (or `hand_ai_key`) gated, so with the hand AI off it was never reached.
+
+What went, per deck:
+
+- **cloud** (`impls/cloud.rs`, about 880 lines): `cloud_prio` (and its helpers), `cloud_protect` / `plaza_protect` /
+  `cast_instant` / `cast_aura` / `worth_saving`, `cloud_wipe_response` / `cast_team_indestructible`, `cloud_special`
+  and `equip_plan`, `holder_bonus` / `equip_utility_bonus` / `wants_move` (and their reads in `dsl::equip_options`
+  and `best_pull`), `attack_filter` / `all_out_trim` / `keep_cloud_home` / `strong_gear` / `trigger_gear` /
+  `likely_loss`, `must_attack` (the look-ahead's "none is out" rule in `search::choose_attack_inner`), `search_bonus`
+  and its helpers (`PROTECT_FIRST`, `protection_follows`, `cloud_into_open_removal`, `protect_piece_first`,
+  `precombat_cloud`, `equip_search_value`), `tutor_pick`, `strands_equipment` (`brain::card_utility`), `keep_hand`
+  (`turn::keeps_hand`), `riders_spare` (Stormfront Riders), `wipe_modes` (Austere Command) and the Open the Armory
+  pick; in the shared files the cloud arms of `decks::deck_prio`, `tutor_pick_named`, `protect_main`,
+  `wipe_response`, `ai::wipe_modes` / `attack_filter`, `combat::combat`'s all-out trim.
+- **yshtola** (`impls/yshtola.rs`, about 470 lines): `yshtola_prio` / `yshtola_named_prio`, `trigger_bonus`,
+  `tutor_pick` / `under_attack`, `yshtola_protect` / `yshtola_wipe_response`, `yshtola_x_spell` /
+  `yshtola_abilities`, `removal_adjust` (spot removal in `brain::removal_options` and `attack_response`),
+  `teferis_first` (wipe options and `cast_wipe`), `fetch_value` and with it Zur's fetch for this deck
+  (`zur::zur_fetch`, `put_enchantment`, `lock_host`, `lock_worth`, `zur_protect`, `zur_wipe_response`, `t5::zur`'s
+  branch), the "no sampling far below the best target" rule in `cast_removal`, the chump rule's `hand_key` arm
+  (the plan's `commander_chumps_to_live` stays), and the Champion's Helm equip (`helm`, `ais::helm_target`,
+  `helm_equip`, `sphinx_prio`; the Helm keeps an empty registered options slot, see below).
+- **sheoldred** (`impls/sheoldred.rs`, about 330 lines): `sheoldred_prio` and its helpers (`rooftop_prio`,
+  `necro_prio`, `jar_prio`, `seizan_prio`, `pkg2_prio`), `sheoldred_special` (`equip_options`, `equip_sheoldred`,
+  `beckoner_options`, `exile_cast_go`), `sheoldred_protect` / `sheoldred_hold` / `shield_in_hand`, `deluge_cap`
+  (Toxic Deluge's X in `removal::apply_wipe_inner` and `decks::wipe_eval`), the Memory Jar crack while she is out
+  (`legends::jar`), and the `hand_key == "sheoldred"` half of `plays_it` (a plan's `plays` alone gates the draw-
+  punisher plays now) and of `adnaus_cast_now` (the plan's `adnaus_main2`).
+- Shared: `GENERIC_PLAYS` is gone (Omnath alone takes the generic plays); `manual_equip` is off only for the kraum
+  seat; the `search::deck_extras` and `choose_inner` cloud arms; `brain::wipe_options` lost the Y'shtola terms.
+
+Kept (card code, not deciding): every card's resolution, triggers and costs; Cloud's search (`cloud_pick`, run by his
+enter trigger and read by `reenter_value`); the cards' own options hooks (Cid, Brass Squire,
+Syphon-Mage, Ill-Gotten Inheritance, Jester's Cap, the X drains, Tome, Diary, Leech Collector, ...); `cmd_stays_in_hand`
+(903.9b), `jocasta_attack`, `plan_milestone`; the registered `prio` hooks of the cards (`narsil_prio`, `body_prio`,
+`ds_prio`, `tome_prio`, ...). The Champion's Helm options slot stays registered, empty (`yshtola::helm`): opponents
+rate a card with an options hook as an engine (`pool::card_threat_value`), so removing it would change how they value
+the Helm. `zack_sacrifice` stays (the card's rules, tested), with no caller.
+
+Cards whose only play path was one of the three hand AIs and that no plan file (`plays`, `[equip]`, ...) or generic
+path reaches now (unreachable on main since `AI_HAND=0`, so listed, not changed). In the three current lists:
+
+- cloud: Plaza of Heroes (its exile for hexproof and indestructible) and Zack Fair's sacrifice. Giver of Runes,
+  Unbreakable Formation, Rootborn Defenses, Restoration Angel and Teferi's Protection are pool protectors; Shardmage's
+  Rescue is answered by `t12_lightpaws::protect` for any deck.
+- sheoldred: Battle-Rage Blessing (it was cast only by `sheoldred_protect`; the plan's holds still name it) and Perigee
+  Beckoner's warp and cast from exile.
+- yshtola: none (Champion's Helm is the plan's `[equip]`; Restoration Angel and Teferi's Protection are pool
+  protectors).
+
+In no current list, written for a swap (the "upgrade packages"): cloud's Cho-Manno's Blessing, Patriot's response and
+Ultimate Magic: Holy (`bulk_white::white_protect` and `white_wipe_response` now serve the kraum test seat and the
+Light-Paws deck only), Take Up the Shield (cloud and yshtola); sheoldred's Masterful Flourish and Dark Endurance, and
+the draw punishers' plays Temple Bell and Painful Lesson (their options need a plan's `plays`, which names six
+cards); yshtola's Clever Concealment.
+
+Equipment equips are covered: Cloud's pieces, Champion's Helm and Sword of Feast and Famine by the plan's `[equip]`
+and `manual_equip`; Sheoldred's Darksteel Plate by her `[equip]`; the Helm on Y'shtola by hers.
+
+Tests (82 deleted, in sim-core's `tests/`; every `force_hand(Some(true))` marker line is gone, the card-rule parts run
+with the hand AI off). Per file, what went:
+
+- `hand_off.rs`: rewritten (the switch tests, the three `*_switch` tests, the on/off comparisons went; it now checks
+  that the nine decks play the generic policy and their plan files, and keeps the Sisay and Dack plan tests).
+- `plan_files_3.rs`: the hand-AI side of every comparison went (13 tests kept, each with the plan-file side only).
+- `cards_cloud.rs` (8): attack filter (2), protection of Cloud (5: Take Up the Shield, Zack Fair, the not-worth-it
+  case, Unbreakable Formation, the edict), `search_bonus`. `cards_cloud_ai_fix.rs` (5): Helm / Feast and Famine
+  equip labels, Shield of Kaldra in the look-ahead, priorities, the scope's stay-home, the recast bonus (the carrier
+  test stays, equip options only). `cards_cloud_ai_fix2.rs` (11): the Enlightened Tutor pick, don't strand
+  equipment (2), Plaza and the wipe answers (4), Cloud into open removal (2), the keep rule (2).
+  `cards_cloud_aifix3.rs` (11): must_attack / attack_filter (4), Riders sparing Cloud, the tutor order (3), Unfinished
+  Business' priority (2), Austere Command's modes. `cards_cloud_ai_diag.rs`: none (the equip probe now sets
+  `dsl_on`, as the sims do).
+- `cards_yshtola.rs` (15): Zur's fetch (2), priorities, tutors, the Helm, the wipe answer and the unnamed cards (12),
+  Take Up the Shield as a response (1); the Teferi's Protection answers stay (pool protectors).
+  `audit_ysh.rs` (4): the Y'shtola section (removal adjust, trigger bonus, Farewell with Teferi's held up).
+- `cards_sheoldred.rs` (11): equip plays, protection answer and hold, priorities (3), Seizan's Helm, Swiftfoot Boots,
+  Toxic Deluge's cap, Painful Lesson's aim, Temple Bell's AI use (the Bell's draw rule stays in the others).
+  `cards_sheoldred_sac.rs` (5): the deck's sacrifice rules (fodder, in-response, wipe, Altar mana, Carnage Altar).
+  `cards_audit_mono.rs` (4): priorities of Rooftop Assassin, Seizan, Necrosquito and Memory Jar.
+- `cards_zur.rs` (3): Zur's fetch of lock Auras (2), the lock worth; the wipe answer and `zur_protect` tests became
+  `zur::rootborn` and `activated` tests. `search_hold.rs` (1): the Sheoldred look-ahead pick that pinned her hand AI.
+- Edited, none deleted: `cards_bulk_white.rs` (Cho-Manno, Patriot, Ultimate Magic now call `white_protect` /
+  `white_wipe_response` directly), `jd_zero_prio.rs` (only the decks that still have a priority function),
+  `values.rs` (the decks with hand AI), `generic_paths.rs` (Cloud's Sword equip is now a generic one).
+`sim-cli`'s preflight test for a positively ranked card uses Sheoldred's plan rule (the generic policy), no longer a
+"deck rule".
 
 ## How a site is classed
 

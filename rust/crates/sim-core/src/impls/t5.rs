@@ -604,14 +604,6 @@ fn zur(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res
     if !atk.contains(&src) {
         return Ok(vec![]);
     }
-    if crate::ai::hand_key(g, p) == "yshtola" {
-        // Zur in your Y'shtola deck (cards/impl/zur.py)
-        if !trigger_window(g, p, Some(src), "search for an enchantment", Some(5.0))? {
-            return Ok(vec![]);
-        }
-        crate::cardcode::zur_fetch(g, src, p)?;
-        return Ok(vec![]);
-    }
     let have = |g: &Game| -> Vec<CardId> { g.player(p).perms.iter().filter_map(|&m| g.perm(m).cd).collect() };
     let fits = |g: &Game, c: CardId, have: &[CardId]| {
         let d = g.db.get(c);

@@ -1,15 +1,12 @@
 //! Python's `cards/impl/zur.py`: card rules first written for the Zur deck (removed 2026-10-07), kept for the cards
-//! other lists still run (mostly the Y'shtola deck, which also uses the protection and wipe responses here).
+//! other lists still run (mostly the Y'shtola deck).
 //!
 //! - Auras that lock a permanent down while they stay attached: Arrest and Prison Sentence (can't attack or block, no
 //!   activated abilities), Luminous Bonds and Bound in Silence (can't attack or block), Encrust (doesn't untap, no
-//!   activated abilities). Cast, they target as they enter (engine::removal::etb_removal); put onto the battlefield
-//!   by Zur, they don't target, so hexproof and ward don't stop them (protection does). Python's 'kasmina' kind
+//!   activated abilities). Cast, they target as they enter (engine::removal::etb_removal); Python's 'kasmina' kind
 //!   (loses all abilities, base 1/1) has no Aura registered with it, so it isn't ported.
-//! - Zur's attack trigger for the Y'shtola deck's 99 (`zur_fetch`: what to fetch is yshtola.fetch_value).
 //! - Other cards that need code: Bastion Protector (its anthem is compiled), The Eternal Wanderer, Prayer of Binding,
 //!   Rootborn Defenses, Disenchant (tags only), and Azorius Guildmage (no list runs it; the stack tests use it).
-//! - Protection and wipe responses (Clever Concealment, Rootborn Defenses, Restoration Angel), used by Y'shtola's AI.
 
 use crate::cards::{CardDb, Colors, Types};
 use crate::dsl::model::Ability;
@@ -19,11 +16,11 @@ use crate::engine::mana::{can_pay, pay};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
 use crate::engine::values::{epow, etgh, protected_from, pval, untargetable};
-use crate::engine::zones::{Enter, Tokens, Zone, die, enter, leave, make_tokens, max_by, searchable, to_zone_card};
+use crate::engine::zones::{Enter, Tokens, Zone, die, enter, leave, make_tokens, max_by, to_zone_card};
 use crate::flow::Res;
-use crate::human::{cards, choices, human_of};
+use crate::human::{cards, human_of};
 use crate::hooks::{Action, Event, Opt, Registry, Src};
-use crate::ids::{CardId, PermId, PlayerId};
+use crate::ids::{PermId, PlayerId};
 use crate::impls::common::{AURA, AuraSpec};
 use crate::pysum::PySum;
 use crate::state::{DataKey, Game, Val};
@@ -47,12 +44,6 @@ fn card_name(g: &Game, m: PermId) -> &str {
 
 fn pname(g: &Game, p: PlayerId) -> &'static str {
     g.player(p).name
-}
-
-fn remove_first(v: &mut Vec<CardId>, c: CardId) {
-    if let Some(i) = v.iter().position(|&x| x == c) {
-        v.remove(i);
-    }
 }
 
 fn is_artifact(g: &Game, m: PermId) -> bool {
@@ -172,79 +163,6 @@ pub fn apply_lock(g: &mut Game, _actor: Option<PlayerId>, m: PermId, _kind: Sym)
     }
     lock_attach(g, a, m)?;
     Ok(())
-}
-
-/// zur.lock_host: the best opposing permanent for lock Aura `name` (targeted: cast, so hexproof and ward stop it), or
-/// None
-pub fn lock_host(g: &Game, p: PlayerId, name: &str, targeted: bool, exclude: &[PermId]) -> Option<PermId> {
-    let kind = lock_kind(name)?;
-    let ok_art = name == "Encrust";
-    let col = Colors::from_letters(if name == "Coerced to Kill" { "UB" } else if name != "Encrust" && name != "Kasmina's Transmutation" { "W" } else { "U" });
-    let (mut best, mut bv) = (None, 0.0);
-    for q in g.opps(p) {
-        for &m in &g.player(q).perms {
-            if g.perm(m).phased || exclude.contains(&m) {
-                continue;
-            }
-            if !(g.is_creature(m) || (ok_art && is_artifact(g, m))) {
-                continue;
-            }
-            if protected_from(g, m, col) {
-                continue;
-            }
-            if targeted && untargetable(g, m) {
-                continue;
-            }
-            if locks_of(name).iter().any(|k| locked(g, m, k)) {
-                continue;
-            }
-            let v = lock_worth(g, p, m, kind);
-            if v > bv {
-                (best, bv) = (Some(m), v);
-            }
-        }
-    }
-    if bv >= 2.0 { best } else { None }
-}
-
-/// zur.lock_worth: what locking m this way takes away from its controller
-pub fn lock_worth(g: &Game, _p: PlayerId, m: PermId, kind: &str) -> f64 {
-    let v = pval(g, m) * lock_factor(g, m);
-    let acts = activated(g, m);
-    let pw = epow(g, m).min(4) as f64;
-    match kind {
-        "pacify" => {
-            if !g.is_creature(m) {
-                return 0.0;
-            }
-            v * (0.45 + 0.1 * pw) * if acts { 0.5 } else { 1.0 }
-        }
-        "arrest" => v * (0.55 + 0.08 * pw + if acts { 0.4 } else { 0.0 }),
-        "encrust" => {
-            if g.is_creature(m) || acts {
-                v * (0.5 + if acts { 0.5 } else { 0.0 })
-            } else {
-                0.0
-            }
-        }
-        "coerce" => {
-            if !g.is_creature(m) {
-                return 0.0;
-            }
-            v * 1.6 // it is ours: its value to them and to us
-        }
-        "kasmina" => {
-            if !g.is_creature(m) {
-                return 0.0;
-            }
-            let live = g
-                .perm(m)
-                .cd
-                .is_some_and(|c| g.registry.get(c).is_some_and(|i| i.live()) || g.db.get(c).has_dsl() || acts);
-            v * if live { 0.9 } else { 0.6 }
-        }
-        _ => v,
-    }
 }
 
 /// zur.activated: does m have activated abilities worth stopping (mana abilities included)?
@@ -616,235 +534,6 @@ pub fn rootborn(g: &mut Game, p: PlayerId) -> Res {
     }
     crate::glog!(g, "  {} casts Rootborn Defenses: creatures gain indestructible", pname(g, p));
     Ok(())
-}
-
-// ================================================================== Zur's attack trigger (the Y'shtola deck's 99)
-/// zur.zur_fetch: Zur attacks: search for an enchantment card with mana value 3 or less and put it onto the
-/// battlefield (t5's Zur attack calls it for the Y'shtola deck)
-pub fn zur_fetch(g: &mut Game, src: PermId, p: PlayerId) -> Res {
-    let cs: Vec<CardId> = searchable(g, p)
-        .into_iter()
-        .filter(|&c| g.db.get(c).types.has(Types::ENCHANTMENT) && g.db.get(c).cmc <= 3)
-        .collect();
-    if cs.is_empty() {
-        return Ok(());
-    }
-    let c = if human_of(g, p).is_some() {
-        let pred = |g: &Game, c: CardId| g.db.get(c).types.has(Types::ENCHANTMENT) && g.db.get(c).cmc <= 3;
-        let got = choices::search(
-            g,
-            p,
-            &pred,
-            1,
-            "Zur attacks: search for an enchantment with mana value 3 or less (it enters the battlefield)",
-            true,
-        )?;
-        let Some(&c) = got.first() else { return Ok(()) };
-        c
-    } else {
-        let mut best: Option<(f64, CardId)> = None;
-        for &c in &cs {
-            let v = fetch_value(g, p, c, src);
-            if best.is_none_or(|b| v > b.0) {
-                best = Some((v, c));
-            }
-        }
-        let (v, c) = best.unwrap();
-        if v <= 0.0 {
-            return Ok(());
-        }
-        remove_first(&mut g.player_mut(p).library, c);
-        crate::engine::tutors::shuffle_library(g, p);
-        c
-    };
-    put_enchantment(g, p, c, src)?;
-    crate::glog!(g, "    Zur fetches {}", g.db.get(c).name);
-    Ok(())
-}
-
-/// zur.human_lock_host: the person picks the permanent a lock Aura put onto the battlefield enchants
-fn human_lock_host(g: &Game, p: PlayerId, name: &str) -> Res<Option<PermId>> {
-    let ok = |g: &Game, m: PermId| {
-        !g.perm(m).phased && (g.is_creature(m) || (name == "Encrust" && g.perm(m).cd.is_some() && is_artifact(g, m)))
-    };
-    let mut cands: Vec<PermId> =
-        g.opps(p).flat_map(|q| g.player(q).perms.iter().copied()).filter(|&m| ok(g, m)).collect();
-    cands.extend(g.player(p).perms.iter().copied().filter(|&m| ok(g, m)));
-    if cands.is_empty() {
-        return Ok(None);
-    }
-    cards::pick_perm(
-        g,
-        p,
-        "target",
-        &format!("{name}: enchant which permanent? (it enters without targeting)"),
-        &cands,
-        None,
-    )
-}
-
-/// zur.put_enchantment: an enchantment put onto the battlefield (not cast): an Aura goes where it's needed, without
-/// targeting
-pub fn put_enchantment(g: &mut Game, p: PlayerId, c: CardId, _zur: PermId) -> Res {
-    let name = g.db.get(c).name.clone();
-    if lock_kind(&name).is_some() {
-        let host = if human_of(g, p).is_some() {
-            human_lock_host(g, p, &name)?
-        } else {
-            lock_host(g, p, &name, false, &[])
-        };
-        g.aura_put = true;
-        let r = enter(g, p, c, Enter::default());
-        g.aura_put = false;
-        let a = r?;
-        let ok = match host {
-            Some(h) => lock_attach(g, a, h)?,
-            None => false,
-        };
-        if !ok {
-            leave(g, a)?;
-            g.player_mut(p).gy.push(c);
-        }
-        return Ok(());
-    }
-    if g.db.get(c).has_subtype("aura") && crate::impls::common::aura_spec(g, c).is_some() {
-        g.attach_to = None; // the AI's host pick, or the person chooses
-        g.aura_put = true;
-        let r = enter(g, p, c, Enter::default());
-        g.attach_to = None;
-        g.aura_put = false;
-        r?;
-        return Ok(());
-    }
-    enter(g, p, c, Enter::default())?;
-    Ok(())
-}
-
-/// zur.fetch_value: how much an enchantment from Zur is worth now (Y'shtola's values: CI.yshtola_fetch_value)
-fn fetch_value(g: &Game, p: PlayerId, c: CardId, zur: PermId) -> f64 {
-    crate::impls::yshtola::fetch_value(g, p, c, zur)
-}
-
-// ================================================================== the AI: protection and wipe responses (Y'shtola's)
-/// zur.zur_protect: removal at a key creature: phase it out with its Auras (Clever Concealment), make it
-/// indestructible (Rootborn Defenses), or blink it with Restoration Angel (not a creature with Auras on it, which
-/// would lose them)
-pub fn zur_protect(
-    g: &mut Game,
-    o: PlayerId,
-    m: PermId,
-    kind: &str,
-    _actor: Option<PlayerId>,
-    _spell: Option<CardId>,
-) -> Res<bool> {
-    use crate::ai::decks::pay_card;
-    if pval(g, m) < 4.0 || !g.is_creature(m) {
-        return Ok(false);
-    }
-    let auras = if g.auras.is_empty() { vec![] } else { crate::impls::common::auras_on(g, m) };
-    for c in g.player(o).hand.clone() {
-        let d = g.db.get(c);
-        let tp = d.tags.str(Tag::Prot);
-        let (gen_, pips, convoke) = (d.generic, d.pips.to_string(), d.tag(Tag::Convoke));
-        if tp == Some("phase") && d.name.as_ref() == crate::engine::zones::TEFERIS_PROTECTION {
-            // Teferi's Protection: the whole board, life locked; not worth it for one removal spell
-            if crate::ai::pool::worth_whole_board(g, o, m) && crate::engine::zones::cast_teferis_protection(g, o, 6.0)? {
-                return Ok(true);
-            }
-            continue;
-        }
-        if tp == Some("phase") && can_pay(g, o, gen_, &pips, convoke) {
-            // Clever Concealment
-            if !pay_card(g, o, c, 0)? {
-                return Ok(false);
-            }
-            g.perm_mut(m).phased = true;
-            for &a in &auras {
-                g.perm_mut(a).phased = true;
-            }
-            crate::glog!(g, "    {} casts {}: {} phases out", pname(g, o), g.db.get(c).name, g.perm(m).name);
-            return Ok(true);
-        }
-        if tp == Some("indes") && (kind == "destroy" || kind.starts_with("dmg")) && can_pay(g, o, gen_, &pips, false) {
-            // Rootborn Defenses
-            if !pay_card(g, o, c, 0)? {
-                return Ok(false);
-            }
-            rootborn(g, o)?;
-            return Ok(true);
-        }
-    }
-    if !auras.is_empty() || (!matches!(kind, "destroy" | "exile" | "bounce" | "tuck") && !kind.starts_with("dmg")) {
-        return Ok(false);
-    }
-    for c in g.player(o).hand.clone() {
-        let d = g.db.get(c);
-        let (gen_, pips) = (d.generic, d.pips.to_string());
-        if &*d.name == "Restoration Angel" && can_pay(g, o, gen_, &pips, false) {
-            if !pay_card(g, o, c, 0)? {
-                return Ok(false);
-            }
-            remove_first(&mut g.player_mut(o).gy, c);
-            g.resto_target = Some(m); // its enters trigger blinks the creature under attack
-            let r = enter(g, o, c, Enter::default());
-            g.resto_target = None;
-            r?;
-            let x = g.perm(m);
-            let what = x.cd.map_or(x.name, |cd| &*g.db.get(cd).name).to_string();
-            crate::glog!(g, "    {} casts {}: blinks {}", pname(g, o), g.db.get(c).name, what);
-            return Ok(true);
-        }
-    }
-    Ok(false)
-}
-
-/// zur.zur_wipe_response: a wipe: phase out your creatures and the Auras on them (Clever Concealment), or make them
-/// indestructible (Rootborn Defenses). Some('all'), Some('indes') or None.
-pub fn zur_wipe_response(g: &mut Game, q: PlayerId, kind: &str, caster: PlayerId) -> Res<Option<Sym>> {
-    use crate::ai::decks::pay_card;
-    let all = matches!(kind, "rift" | "rebuke");
-    let loss = g.player(q).perms.iter().filter(|&&m| g.is_creature(m) || all).map(|&m| pval(g, m)).psum();
-    let board_loss = crate::ai::decks::wipe_loss(g, q, kind, caster); // Teferi's phases out every permanent
-    if loss < 6.0 && board_loss < 6.0 {
-        return Ok(None);
-    }
-    for c in g.player(q).hand.clone() {
-        let d = g.db.get(c);
-        let (gen_, pips, convoke) = (d.generic, d.pips.to_string(), d.tag(Tag::Convoke));
-        if d.tags.str(Tag::Prot) == Some("phase") && d.name.as_ref() != crate::engine::zones::TEFERIS_PROTECTION && loss >= 6.0 && can_pay(g, q, gen_, &pips, convoke) {
-            if !pay_card(g, q, c, 0)? {
-                return Ok(None);
-            }
-            let mine: Vec<PermId> = g.player(q).perms.iter().copied().filter(|&m| g.is_creature(m)).collect();
-            for m in g.player(q).perms.clone() {
-                if g.is_creature(m) || g.perm(m).attached.is_some_and(|h| mine.contains(&h)) {
-                    g.perm_mut(m).phased = true;
-                }
-            }
-            crate::glog!(g, "    {} casts {}: their creatures phase out", pname(g, q), g.db.get(c).name);
-            return Ok(Some("all"));
-        }
-    }
-    if board_loss >= 6.0 && crate::engine::zones::cast_teferis_protection(g, q, 6.0)? {
-        return Ok(Some("all"));
-    }
-    if loss < 6.0 {
-        return Ok(None);
-    }
-    if matches!(kind, "destroy" | "dmg13" | "austere" | "nib") {
-        for c in g.player(q).hand.clone() {
-            let d = g.db.get(c);
-            let (gen_, pips) = (d.generic, d.pips.to_string());
-            if d.tags.str(Tag::Prot) == Some("indes") && can_pay(g, q, gen_, &pips, false) {
-                if !pay_card(g, q, c, 0)? {
-                    return Ok(None);
-                }
-                rootborn(g, q)?;
-                return Ok(Some("indes"));
-            }
-        }
-    }
-    Ok(None)
 }
 
 // ================================================================== registration
