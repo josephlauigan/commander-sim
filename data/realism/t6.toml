@@ -54,18 +54,34 @@ source = "TopDeck.gg API v2, cEDH Swiss pods, Apr-Sep 2026, decisive 4-player ga
 date = "2026-10-24"
 
 # --- Speed. No public dataset gives the round cEDH games are won on. JD set a median of about 7 (2026-10-19,
-# decklists/pool/TARGETS-t6.md); Playgroup's average win turn for the Tier 6 commanders agrees: Kinnan, Rograkh,
-# Tymna and Thrasios 6, Kraum, Silas and Sisay 7, Dack 9 (https://playgroup.gg/api/public/v1/commanders/<id>.json).
-# The spread (win_round_spread) has no source yet: Playgroup publishes averages only.
+# decklists/pool/TARGETS-t6.md), then 5 (2026-11-01: "Tier 6 should get a faster median target and spread target.
+# Make it target round 5"): the old 7 matched Tier 5 and so did not separate the tiers (`audit/t6-structure/`).
+# Playgroup's average win turn for the Tier 6 commanders (Kinnan, Rograkh, Tymna and Thrasios 6, Kraum, Silas and
+# Sisay 7, Dack 9; https://playgroup.gg/api/public/v1/commanders/<id>.json) is casual play of cEDH commanders,
+# not tournament speed.
+#
+# The spread (win_round_spread, 75th minus 25th percentile of the win round) has no public source (Playgroup gives
+# averages only). JD asked for a target on 2026-11-01; the value is the coordinator's: a turn-order model of the
+# seat edge (`audit/t6-structure/diagnosis-2026-11-01.md`) gives the real seat shares (31.8 / 27.3 / 22.1 / 18.8)
+# only when most players have a line ready within about one round of each other, an interquartile range near 2.
 
 [win_round_median]
-value = 7
-lo = 6
-hi = 8
-n = 2722
-source = "JD's speed target (TARGETS-t6.md, 2026-10-19); Playgroup average win turn of the Tier 6 commanders, 6-7"
-date = "2026-10-22"
-note = "n = Playgroup wins logged for the five Tier 6 lead commanders"
+value = 5
+lo = 4
+hi = 6
+n = 1
+source = "JD's speed target, 2026-11-01 (was 7, 2026-10-19)"
+date = "2026-11-01"
+note = "a set target, no real sample (n = 1 only because the loader needs n > 0)"
+
+[win_round_spread]
+value = 2
+lo = 1
+hi = 3
+n = 1
+source = "JD asked for a spread target, 2026-11-01; value from the turn-order model in audit/t6-structure"
+date = "2026-11-01"
+note = "a set target, no real sample (n = 1 only because the loader needs n > 0)"
 
 # --- How games are won: Playgroup commanders.json (https://playgroup.gg/api/public/v1/commanders.json, CC BY 4.0),
 # wins of Dack Fayden, Kinnan, Kraum, Rograkh and Sisay: combo 33.6%, alternate win and mill 14.2%, combat and other
