@@ -132,8 +132,8 @@ pub fn raw(g: &Game, p: PlayerId) -> Raw {
         v[o + HAND] = pl.hand.len() as f32;
         v[o + LANDS] = pl.lands.len() as f32;
         v[o + TREASURES] = pl.treasures as f32;
-        v[o + COMBO] = crate::cardcode::combo_progress(g, q) as f32;
-        v[o + STRENGTH] = search::strength(g, q) as f32;
+        v[o + COMBO] = crate::cardcode::combo_progress_seen(g, p, q) as f32; // as p reads q
+        v[o + STRENGTH] = search::strength_seen(g, p, q) as f32;
         v[o + THREAT] = live.iter().filter_map(|&m| g.perm(m).cd).map(|c| threat_of(g, c)).sum::<f64>() as f32;
         v[o + CMD_TAKEN] = pl.cmd_dmg.iter().chain(pl.cmd2_dmg.iter()).copied().max().unwrap_or(0) as f32;
         v[o + POISON] = pl.poison as f32;

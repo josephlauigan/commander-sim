@@ -288,7 +288,7 @@ pub fn raw_term(g: &Game, p: PlayerId) -> f64 {
     if opps.is_empty() {
         return s + 12.0 * dead;
     }
-    let mut so: Vec<f64> = opps.iter().map(|&q| strength(g, q)).collect();
+    let mut so: Vec<f64> = opps.iter().map(|&q| strength_seen(g, p, q)).collect();
     so.sort_by(|a, b| b.partial_cmp(a).unwrap_or(std::cmp::Ordering::Equal));
     s - 0.6 * so[0] - 0.4 * (so.iter().copied().psum() / so.len() as f64) + 12.0 * dead
 }
@@ -410,6 +410,12 @@ pub(crate) fn board_value(g: &Game, m: crate::ids::PermId) -> f64 {
 
 /// search.strength
 pub fn strength(g: &Game, q: PlayerId) -> f64 {
+    strength_seen(g, q, q)
+}
+
+/// `strength` of q as `viewer` reads it: the combo term is `combo_progress_seen` (a Tier 6 player's quiet lines count
+/// only to a Tier 6 viewer)
+pub fn strength_seen(g: &Game, viewer: PlayerId, q: PlayerId) -> f64 {
     use crate::engine::values::epow;
     let pl = g.player(q);
     let life = pl.life.clamp(0, 60) as f64;
@@ -422,7 +428,7 @@ pub fn strength(g: &Game, q: PlayerId) -> f64 {
         + 0.9 * pl.hand.len() as f64
         + 0.6 * pl.lands.len() as f64
         + 0.4 * pl.treasures as f64
-        + g.settings.search.combo_w * crate::cardcode::combo_progress(g, q)
+        + g.settings.search.combo_w * crate::cardcode::combo_progress_seen(g, viewer, q)
 }
 
 /// own turns over which ramp still pays off (`ramp_bonus`)
