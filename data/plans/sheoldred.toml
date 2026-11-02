@@ -7,9 +7,10 @@
 # drain, Dark Deal, Peer into the Abyss, the Atlas, Geier Reach Sanitarium and Mikokoro), Ad Nauseam in her second
 # main phase (`knobs.adnaus_main2`), and Darksteel Plate on Sheoldred ahead of the other plays (`[equip]`: was
 # `sheoldred_special`'s equip).
-# Left out (the schema can't express it): Phyrexian Delver's reanimation target, Soul Enervation's kill check, the
-# Memory Jar / Necrosquito / Rooftop Assassin / Seizan rules; the Beckoner's warp (`sheoldred_special`) and Seizan
-# taking the Helm; Toxic Deluge's cap (`deluge_cap`); the hold's value by removal risk and the hexproof check.
+# Left out (the schema can't express it): Phyrexian Delver's reanimation target, the Memory Jar / Necrosquito /
+# Rooftop Assassin / Seizan rules; the Beckoner's warp (`sheoldred_special`) and Seizan taking the Helm; Toxic Deluge's
+# cap (`deluge_cap`). 2026-11-02 (Ghave breakup): Battle-Rage Blessing and Soul Enervation left the deck, so the
+# Blessing's `[[hold]]` (the commander protection hold) is gone with it.
 deck = "sheoldred"
 default = "plan"
 # the card plays her hand AI made through card code (Exsanguinate's main-phase X cast, Dark Deal, Peer into the Abyss,
@@ -32,8 +33,7 @@ prio = 90
 adnaus_main2 = true
 
 # Cast priorities (was sheoldred_prio): rocks first while she is not out (she comes a turn sooner); the draw tolls
-# (Underworld Dreams, Fate Unraveler) high; Howling Mine only with a toll out; Darksteel Plate onto her; the
-# protection instants held (cast by the protect hook)
+# (Underworld Dreams, Fate Unraveler) high; Howling Mine only with a toll out; Darksteel Plate onto her
 [[prio]]
 cards = ["Arcane Signet", "Fellwar Stone"]
 when = ["not commander-out"]
@@ -59,10 +59,6 @@ when = ["commander-out"]
 value = 78
 
 [[prio]]
-cards = ["Battle-Rage Blessing"]
-value = 0
-
-[[prio]]
 cards = ["Perigee Beckoner"]
 value = 52
 
@@ -70,12 +66,6 @@ value = 52
 cards = ["Ambition's Cost"]
 when = ["life<=6"]
 value = 0
-
-# indestructible for Sheoldred against destroy / damage removal; mana kept up while she is out
-[[hold]]
-card = "Battle-Rage Blessing"
-protects = ["commander"]
-mana = true
 
 # --- 2026-11-01: Darksteel Plate onto Sheoldred ahead of every other play of the turn (was sheoldred_special: utility
 # 9 - 0.1 x the cost; here 2.5 - 0.3 x 2 + 7)
