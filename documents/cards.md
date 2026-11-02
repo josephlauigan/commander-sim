@@ -69,9 +69,9 @@ Unmodeled ([`documents/testing-decks.md`](testing-decks.md)).
 - **It needs code.** Register a slot in the `impls/` file for its deck or tier (`impls/mine.rs` for JD's decks,
   `common.rs` for staples), with a test in `sim-core/tests/cards_*.rs` that checks the behaviour against the Oracle
   text.
-- **It needs a decision from the deck's AI** (when to cast it, what to tutor). Add it to the deck's priority function
-  (`ai/decks.rs`, `ai/seph.rs` or the deck's `impls/` file); the swap run's preflight shows whether the
-  AI would ever cast it.
+- **It needs a decision from the deck's AI** (when to cast it, what to tutor). Add it to the deck's plan file
+  (`data/plans/<key>.toml`), or for Y'shtola, Sheoldred and Cloud to its priority function (`ai/decks.rs` or the
+  deck's `impls/` file); the swap run's preflight shows whether the AI would ever cast it.
 
 What the engine can't do yet, found while modeling the Tier 6 cards, is listed in
 `rust/agents/engine-needs-*.md` (one file per batch).

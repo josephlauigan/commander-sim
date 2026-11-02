@@ -75,8 +75,9 @@ Every seat is played by the AI, in two modes (`--ai`):
   of the player's next turn (`horizon = 1`), and scores the result. Blocks, protection and the other responses stay
   heuristic. It is about 60 times slower than `adaptive`.
 
-**Deck plans.** JD's and Avery's decks have hand-written priority functions and plans (`ai/decks.rs`, `ai/seph.rs`
-and the deck files in `impls/`). Pool decks use the generic rules in `ai/pool.rs` plus per-deck entries
+**Deck plans.** JD's and Avery's decks play the generic policy with a plan file each (`data/plans/<key>.toml`, read
+by `ai/plan_data.rs`); Y'shtola, Sheoldred and Cloud keep hand-written priorities (`ai/decks.rs` and the deck files in
+`impls/`). Pool decks use the generic rules in `ai/pool.rs` plus per-deck entries
 in `ai/plans.rs` (key cards, tutor wish lists, custom priorities). The six Tier 6 pool decks, JD's `scion` (Scion of the
 Ur-Dragon, played by this AI rather than a hand-written plan) and the retired `godo` (kept as a test seat) also
 have plan files `impls/t6_plan_<deck>.rs` and shared cEDH table rules in `ai/t6_table.rs` (who is about to win, when
