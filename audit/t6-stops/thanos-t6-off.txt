@@ -1,0 +1,47 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  thanos                       100 cards: Full 92, Full-auto 5, Approximate 3, Partial 0, Unmodeled 0
+  opponents Tier 6 (cEDH, B5)  6 decks, 600 cards: Full 535, Full-auto 20, Approximate 25, Partial 20, Unmodeled 0
+
+
+=== Thanos vs Tier 6 (cEDH, B5) [loose, lookahead AI, 2000 games] ===
+Win rate  28.4%   95% CI 26.5-30.4%   (even share 25%: +3.4 pts)
+Average turn (your own turn count) of wins 8.6, of losses 7.0
+Plan online (first combo attempt): 39.6% of games
+Wins by: combo 85%, damage 11%, timeout 4%
+  Opponent                                    seated  won when seated  eliminated you
+  Kinnan (kinnan-bonder-mana-combo)            50.5%            22.7%           11.3%
+  Rograkh/Thrasios (rograkh-thrasios-creatur   50.5%            18.7%            9.4%
+  Dack Fayden (dack-fayden-white-stax)         50.1%            26.6%           12.8%
+  Kraum/Tymna (kraum-tymna-blue-breach-midra   50.0%            26.7%           13.8%
+  Rograkh/Silas (rograkh-silas-turbo-breach)   49.8%            21.2%           10.5%
+  Sisay (sisay-legends-toolbox)                49.1%            27.4%           13.4%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+  -- Tier 6 report (2000 games, 1965 decisive; round-cap draws 1.8%) --
+  win share by seat of decisive games: seat 1 26.0% (real 34.1%, sim 30-38) OUT; seat 2 27.5% (real 27.3%, sim 24-31); seat 3 24.2% (real 22.5%, sim 19-26); seat 4 22.3% (real 17.4%, sim 14-21) OUT
+  by seat (1 goes first): wins, win round avg/median, mulligan hands, combo tries per game, stopped, removal+counters taken per game, died, death round avg, first out
+      seat 1: wins 511 (25.6% of games), win round 7.8/7.0, mulligans 44.1%, tries 0.37/game, stopped 37%, taken 1.02+0.90/game, died 74%, death round 7.5, first out 62%, wins by round <=4/5/6/8: 78/133/213/344 of 511, T4 mana 4.6 hand 4.9, commander out turn 2.9
+      seat 2: wins 541 (27.1% of games), win round 7.7/7.0, mulligans 44.4%, tries 0.37/game, stopped 33%, taken 0.90+0.91/game, died 72%, death round 7.5, first out 61%, wins by round <=4/5/6/8: 103/181/249/357 of 541, T4 mana 4.7 hand 4.8, commander out turn 2.9
+      seat 3: wins 475 (23.8% of games), win round 8.0/7.0, mulligans 42.4%, tries 0.33/game, stopped 35%, taken 0.83+0.89/game, died 75%, death round 7.4, first out 64%, wins by round <=4/5/6/8: 71/125/206/304 of 475, T4 mana 4.6 hand 4.8, commander out turn 2.9
+      seat 4: wins 438 (21.9% of games), win round 7.7/7.0, mulligans 45.4%, tries 0.32/game, stopped 33%, taken 0.75+0.84/game, died 77%, death round 7.5, first out 65%, wins by round <=4/5/6/8: 78/135/199/293 of 438, T4 mana 4.5 hand 4.8, commander out turn 2.8
+  Thanos: seated 2000, won 568 (28.4%; 23 by the round cap)
+      wins by: Thassa's Oracle + Demonic Consultation / Tainted Pact 458 (84%), damage 56 (10%), Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 17 (3%), commander damage 6 (1%), combo (unnamed) 5 (1%), other 3 (1%)
+      win round: average 8.1, median 7.0
+      went for a combo 924 times (0.46 per game) [Thassa's Oracle + Demonic Consultation / Tainted Pact 709, Ad Nauseam into a win 174, Underworld Breach + Lion's Eye Diamond + Brain Freeze (at the table) 33, Underworld Breach + Lion's Eye Diamond + Brain Freeze (Thassa's Oracle finish) 8]; stopped 442 (48%)
+      stopped by: Ad Nauseam into a win by an unnamed answer 137, Thassa's Oracle + Demonic Consultation / Tainted Pact by an unnamed answer 59, Thassa's Oracle + Demonic Consultation / Tainted Pact by Fierce Guardianship 29, Thassa's Oracle + Demonic Consultation / Tainted Pact by Mental Misstep 26, Thassa's Oracle + Demonic Consultation / Tainted Pact by Mindbreak Trap 24, Thassa's Oracle + Demonic Consultation / Tainted Pact by Swan Song 19
+      stopped by card: (no card named: a cost, a ward or a lock) 208, Fierce Guardianship 34, Mindbreak Trap 31, Force of Negation 29, Mental Misstep 26, Swan Song 23
+      speed (median round): ready 6.0 (41% of games), one tutor away 6.0 (50% of games), went for a line 6.0 (40% of games), won 7.0
+      ready before go: went for it later in 64 of 818 ready games (median wait 0.0 rounds, mean 0.16); never went in 25
+      while ready and not gone it chose: Thanos, the Mad Titan 30, stop (hold mana) 23, stop 16, combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 13, Dark Ritual 5, combo: Ad Nauseam into a win 3
+      while one tutor away (not ready) it chose: stop 126, stop (hold mana) 124, Thanos, the Mad Titan 82, Enlightened Tutor 38, Merchant Scroll for Demonic Consultation 23, Eladamri's Call 22, Diabolic Intent for Thassa's Oracle 22, Demonic Tutor for Thassa's Oracle 20
+      tutors held when it passed then: Mystical Tutor 117, Diabolic Intent 110, Eladamri's Call 24, Enlightened Tutor 11, Merchant Scroll 5, Grim Tutor 4
+      mana T1-T5: 1.21 2.66 3.52 4.14 4.72; mana permanents: 0.00 0.38 0.52 0.65 0.77; mana cards in hand: 1.25 0.86 0.77 0.79 0.82 (castable 0.86 0.77 0.72 0.76 0.80); cast on T1-3: 0.47 0.26 0.22
+      held at the end of turns 1-3 with the mana to cast (card-turns): Mox Diamond 58 (T1 55/T2 1/T3 2; rule 54, lost 4), Chrome Mox 13 (T1 5/T2 4/T3 4; lost 13), Noble Hierarch 5 (T1 0/T2 2/T3 3; lost 5), Birds of Paradise 4 (T1 2/T2 0/T3 2; lost 4), Sol Ring 3 (T1 0/T2 0/T3 3; lost 3), Mana Vault 3 (T1 0/T2 1/T3 2; lost 3); rituals and one-shots: Lion's Eye Diamond 450 (T1 131/T2 148/T3 171), Rite of Flame 176 (T1 48/T2 54/T3 74), Desperate Ritual 102 (T1 15/T2 35/T3 52), Dark Ritual 35 (T1 23/T2 3/T3 9), Cabal Ritual 22 (T1 8/T2 3/T3 11), Lotus Petal 17 (T1 4/T2 5/T3 8)
+      Thrasios digs per seated game: end of the turn before its own 0.00, own turn 0.00 (of which a land onto the battlefield 0.00); end-of-turn windows per game 6.4, untapped mana at them 2.2, windows with Thrasios in play 0.0 offering 0.00 digs each
+      mulligans: 823 of 2000 hands (41.1%): one 567, two 202, three 54
+      by mulligans (none/one/two/three): win % 28.8/26.6/22.8/16.7, median win round 7/7/7/9
+      counters resolved: 1689 (Force of Will 268, Force of Negation 267, Mindbreak Trap 233, Mental Misstep 216, Fierce Guardianship 206); hit Dack Fayden 330, Kinnan 311, Kraum/Tymna 283, Rograkh/Silas 275, Rograkh/Thrasios 269
+      removal resolved: 1440 (ability 516, Snapback 356, Into the Flood Maw 224, Deadly Rollick 207, Red Elemental Blast 128); hit Kinnan 360, Sisay 326, Dack Fayden 217, Rograkh/Thrasios 213, Kraum/Tymna 180
+      stax cast: 55 (Silence 41, Orim's Chant 14)
+      wipes: 346 (Thanos, the Mad Titan 346)
+
+(385s total)
