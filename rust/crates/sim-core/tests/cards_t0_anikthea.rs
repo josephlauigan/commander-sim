@@ -9,7 +9,7 @@ const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 
 fn tbl() -> Game {
-    table(&["anikthea-enduring-enchantments", "galadriel", "veyran"])
+    table(&["anikthea-enduring-enchantments", "galadriel", "cloud"])
 }
 
 fn on(g: &Game, m: PermId) -> bool {

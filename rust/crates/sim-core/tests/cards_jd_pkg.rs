@@ -39,7 +39,7 @@ fn cast_free(g: &mut Game, p: PlayerId, name: &str, ctx: sim_core::state::Ctx) {
 
 #[test]
 fn terror_of_the_peaks_hits_for_each_token_a_maker_creates() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     perm(&mut g, P0, "Terror of the Peaks");
     perm(&mut g, P0, "Young Pyromancer");
     let before = g.player(P1).life;
@@ -50,7 +50,7 @@ fn terror_of_the_peaks_hits_for_each_token_a_maker_creates() {
 
 #[test]
 fn mirari_copies_burn_and_the_copy_counts_as_a_cast_for_magecraft() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     lands(&mut g, P0, "Island", 6, false);
     perm(&mut g, P0, "Mirari");
     let before = g.player(P1).life;
@@ -110,7 +110,7 @@ fn titania_casts_survey_early_and_vorinclex_as_a_top_end_threat() {
 
 #[test]
 fn veyran_still_escapes_spells_with_underworld_breach() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     lands(&mut g, P0, "Island", 3, false);
     lands(&mut g, P0, "Mountain", 3, false);
     perm(&mut g, P0, "Underworld Breach");

@@ -11,7 +11,7 @@ const P1: PlayerId = PlayerId(1);
 
 /// Kefka against one Veyran with `opp_library` cards left (no hand), `fuel` Islands in Kefka's graveyard
 fn board(swamps: usize, mountains: usize, islands: usize, opp_library: usize, fuel: usize) -> Game {
-    let mut g = table(&["kefka", "veyran"]);
+    let mut g = table(&["kefka", "cloud"]);
     let pl = g.player_mut(P1);
     pl.hand.clear();
     let rest = pl.library.split_off(opp_library.min(pl.library.len()));

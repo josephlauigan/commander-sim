@@ -7,7 +7,7 @@ use sim_core::testkit::*;
 
 #[test]
 fn snoop_with_snoop_on_top_does_not_recurse() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let p = PlayerId(0);
     let snoop = take(&mut g, p, "Conspicuous Snoop");
     let src = perm(&mut g, p, "Conspicuous Snoop");

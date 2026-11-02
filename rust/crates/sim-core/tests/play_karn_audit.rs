@@ -56,7 +56,7 @@ fn karn_deck_abilities_in_practice() {
         if want.is_empty() {
             continue;
         }
-        let mut g = table(&["karn", "veyran"]);
+        let mut g = table(&["karn", "cloud"]);
         seat(&mut g, P0, vec![]);
         g.player_mut(P0).pool.add('C', 20); // enough to pay any of them
         g.active = Some(P0);

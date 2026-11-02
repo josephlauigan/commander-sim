@@ -14,7 +14,7 @@ fn tapped(g: &Game, p: PlayerId, name: &str) -> bool {
 
 #[test]
 fn check_land() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Mountain", 1, false);
     assert!(tapped(&g, P0, "Drowned Catacomb")); // needs an Island or a Swamp
     lands(&mut g, P0, "Island", 1, false);
@@ -26,14 +26,14 @@ fn check_land() {
 
 #[test]
 fn check_land_counts_dual_types() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Steam Vents", 1, false); // Land — Island Mountain
     assert!(!tapped(&g, P0, "Drowned Catacomb"));
 }
 
 #[test]
 fn fast_land() {
-    let mut g = table(&["veyran", "sauron"]);
+    let mut g = table(&["kefka", "sauron"]);
     lands(&mut g, P0, "Island", 2, false);
     assert!(!tapped(&g, P0, "Spirebluff Canal")); // two or fewer other lands
     lands(&mut g, P0, "Island", 1, false);
@@ -42,7 +42,7 @@ fn fast_land() {
 
 #[test]
 fn slow_land() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Swamp", 1, false);
     assert!(tapped(&g, P0, "Haunted Ridge")); // two or more other lands
     lands(&mut g, P0, "Mountain", 1, false);
@@ -51,7 +51,7 @@ fn slow_land() {
 
 #[test]
 fn snarl_reveals_from_hand() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     assert!(tapped(&g, P0, "Foreboding Ruins"));
     hand(&mut g, P0, &["Swamp"]);
     assert!(!tapped(&g, P0, "Foreboding Ruins"));
@@ -59,7 +59,7 @@ fn snarl_reveals_from_hand() {
 
 #[test]
 fn battle_bond_and_sanctuary() {
-    let mut g = table(&["sauron", "veyran", "seph", "galadriel"]);
+    let mut g = table(&["sauron", "cloud", "seph", "galadriel"]);
     assert!(!tapped(&g, P0, "Luxury Suite")); // three opponents
     lands(&mut g, P0, "Island", 1, false);
     assert!(tapped(&g, P0, "Sunken Hollow")); // two or more basic lands
@@ -72,14 +72,14 @@ fn battle_bond_and_sanctuary() {
 
 #[test]
 fn plain_tapped_and_untapped_lands() {
-    let g = table(&["sauron", "veyran"]);
+    let g = table(&["sauron", "cloud"]);
     assert!(tapped(&g, P0, "Crumbling Necropolis"));
     assert!(!tapped(&g, P0, "Command Tower"));
 }
 
 #[test]
 fn the_ai_pays_for_a_shock_land_only_when_it_uses_the_mana() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     g.player_mut(P0).turns = 6;
     lands(&mut g, P0, "Island", 1, false);
     let cs = card(&g, "Counterspell");
@@ -89,7 +89,7 @@ fn the_ai_pays_for_a_shock_land_only_when_it_uses_the_mana() {
     let l = *g.player(P0).lands.last().unwrap();
     assert!(!g.perm(l).tapped);
     assert_eq!(g.player(P0).life, 38);
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     g.player_mut(P0).turns = 6;
     g.player_mut(P0).hand.clear(); // nothing to cast: save the life
     play_land_card(&mut g, P0, vents, "plays").unwrap();

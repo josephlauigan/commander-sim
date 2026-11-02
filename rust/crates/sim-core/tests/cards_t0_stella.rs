@@ -648,7 +648,7 @@ fn mizzix_s_mastery_copies_one_spell_without_the_overload_mana() {
 
 #[test]
 fn mizzix_s_mastery_is_not_offered_to_veyran_s_own_brain() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     g.active = Some(P0);
     lands(&mut g, P0, "Mountain", 8, false);
     for n in ["Opt", "Ponder", "Preordain", "Consider"] {

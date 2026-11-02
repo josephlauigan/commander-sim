@@ -1,7 +1,7 @@
 //! Building game positions for tests and examples: Python's `tests/table.py`.
 //!
 //! ```ignore
-//! let mut g = table(&["veyran", "seph"]);          // two seats, before turn one, the first seat active in main 1
+//! let mut g = table(&["kefka", "seph"]);           // two seats, before turn one, the first seat active in main 1
 //! let (me, opp) = (PlayerId(0), PlayerId(1));
 //! lands(&mut g, me, "Island", 2); hand(&mut g, me, &["Counterspell"]); perm(&mut g, opp, "Grave Titan");
 //! ```

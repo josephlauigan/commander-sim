@@ -35,7 +35,7 @@ fn fingerprint(g: &Game) -> Fingerprint {
 // ------------------------------------------------------------------ test_search.Clone
 #[test]
 fn a_copy_is_independent() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Grave Titan");
     hand(&mut g, P1, &["Counterspell", "Lightning Bolt"]);
     let before = fingerprint(&g);
@@ -50,7 +50,7 @@ fn a_copy_is_independent() {
 // ------------------------------------------------------------------ test_search.Determinize
 #[test]
 fn opponents_hands_are_redealt_from_hand_and_library() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     hand(&mut g, P0, &["Entomb"]);
     hand(&mut g, P1, &["Counterspell", "Lightning Bolt"]);
     let mut g2 = search::clone(&mut g);
@@ -68,7 +68,7 @@ fn opponents_hands_are_redealt_from_hand_and_library() {
 // ------------------------------------------------------------------ test_search.Evaluate
 #[test]
 fn a_win_beats_any_board() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     for _ in 0..60 {
         token(&mut g, P0, 5);
     }
@@ -82,7 +82,7 @@ fn a_win_beats_any_board() {
 
 #[test]
 fn more_is_better() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let a = search::evaluate(&g, P0);
     perm(&mut g, P0, "Hellkite Tyrant");
     assert!(search::evaluate(&g, P0) > a);
@@ -90,7 +90,7 @@ fn more_is_better() {
 
 // ------------------------------------------------------------------ test_search.Decision
 fn decision_table() -> Game {
-    let mut g = table_with(&["veyran", "sauron"], 7, 40);
+    let mut g = table_with(&["kefka", "sauron"], 7, 40);
     set_ai(&mut g, AiMode::Lookahead);
     lands(&mut g, P0, "Island", 2, false);
     lands(&mut g, P0, "Mountain", 2, false);
@@ -137,7 +137,7 @@ fn copies_never_search() {
 // ------------------------------------------------------------------ test_rules.Tutors
 #[test]
 fn a_tutor_moves_one_card_from_library_to_hand() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let lib = g.player(P0).library.clone();
     tutors::tutor(&mut g, P0, "any").unwrap();
     assert_eq!(g.player(P0).hand.len(), 1);
@@ -188,7 +188,7 @@ fn stack_top(g: &mut Game, p: PlayerId, names: &[&str]) {
 
 #[test]
 fn scry_keeps_what_it_wants_on_top_and_bottoms_the_rest() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Island", 6, false); // enough lands: another is worth little
     stack_top(&mut g, P0, &["Sol Ring", "Mountain"]); // the Mountain on top
     topdeck::scry(&mut g, P0, 2, false).unwrap();
@@ -200,7 +200,7 @@ fn scry_keeps_what_it_wants_on_top_and_bottoms_the_rest() {
 
 #[test]
 fn a_land_stays_on_top_when_short_on_lands() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     stack_top(&mut g, P0, &["Mountain"]);
     topdeck::scry(&mut g, P0, 1, false).unwrap();
     assert_eq!(*g.player(P0).library.last().unwrap(), card(&g, "Mountain"));
@@ -208,7 +208,7 @@ fn a_land_stays_on_top_when_short_on_lands() {
 
 #[test]
 fn surveil_puts_the_unwanted_into_the_graveyard() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Island", 6, false);
     stack_top(&mut g, P0, &["Sol Ring", "Mountain"]);
     let n = g.player(P0).library.len();
@@ -221,7 +221,7 @@ fn surveil_puts_the_unwanted_into_the_graveyard() {
 
 #[test]
 fn kept_cards_go_back_the_most_wanted_on_top() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let cs = [card(&g, "Sol Ring"), card(&g, "Grave Titan"), card(&g, "Arcane Signet")];
     topdeck::arrange(&mut g, P0, &cs);
     let lib = &g.player(P0).library;
@@ -232,7 +232,7 @@ fn kept_cards_go_back_the_most_wanted_on_top() {
 // ------------------------------------------------------------------ test_game_changers.Mana
 #[test]
 fn mox_diamond_waits_for_a_land_to_discard() {
-    let mut g = table(&["kinnan-simic-mana-combo", "veyran"]);
+    let mut g = table(&["kinnan-simic-mana-combo", "cloud"]);
     g.player_mut(P0).turns = 6;
     let mox = hand(&mut g, P0, &["Mox Diamond"])[0];
     assert_eq!(pool::generic_prio(&g, P0, mox), 0);
@@ -243,7 +243,7 @@ fn mox_diamond_waits_for_a_land_to_discard() {
 // ------------------------------------------------------------------ the heuristic AI (Rust-only)
 #[test]
 fn the_main_phase_lists_castable_cards_and_stop() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Island", 2, false);
     hand(&mut g, P0, &["Sol Ring", "Aggravated Assault"]); // Assault costs 3: not castable with two lands
     let opts = brain::main_options(&mut g, P0, false).unwrap();
@@ -255,7 +255,7 @@ fn the_main_phase_lists_castable_cards_and_stop() {
 
 #[test]
 fn the_main_phase_casts_what_it_can() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Island", 1, false);
     hand(&mut g, P0, &["Sol Ring"]);
     brain::main(&mut g, P0, false).unwrap();
@@ -289,7 +289,7 @@ fn farewell_takes_the_modes_that_hurt_opponents_more() {
 
 #[test]
 fn a_rift_overload_counts_every_opponent() {
-    let mut g = table(&["sauron", "veyran", "seph"]);
+    let mut g = table(&["sauron", "cloud", "seph"]);
     token(&mut g, P1, 3);
     token(&mut g, P2, 3);
     let (ol, ml, victim) = decks::wipe_eval(&g, P0, "rift");

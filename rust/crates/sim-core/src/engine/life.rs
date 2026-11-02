@@ -342,7 +342,7 @@ mod tests {
 
     #[test]
     fn damage_and_life_loss_and_elimination() {
-        let mut g = table(&["sauron", "veyran"]);
+        let mut g = table(&["sauron", "cloud"]);
         let (s, v) = (PlayerId(0), PlayerId(1));
         lose_life(&mut g, v, 5, Some(s), "burn", None).unwrap();
         assert_eq!(g.player(v).life, 35);
@@ -364,7 +364,7 @@ mod tests {
 
     #[test]
     fn commander_damage_and_poison_eliminate() {
-        let mut g = table(&["sauron", "veyran", "seph"]);
+        let mut g = table(&["sauron", "cloud", "seph"]);
         g.player_mut(PlayerId(1)).cmd_dmg[0] = 21;
         g.player_mut(PlayerId(2)).poison = 10;
         check_state(&mut g).unwrap();
@@ -375,7 +375,7 @@ mod tests {
 
     #[test]
     fn the_one_rings_protection_stops_damage_from_every_source() {
-        let mut g = table(&["sauron", "veyran"]);
+        let mut g = table(&["sauron", "cloud"]);
         let (s, v) = (PlayerId(0), PlayerId(1));
         g.player_mut(v).ring_prot = true;
         lose_life(&mut g, v, 4, Some(s), "combat", None).unwrap();

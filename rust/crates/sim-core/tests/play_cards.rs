@@ -27,7 +27,7 @@ fn gy_push(g: &mut Game, p: PlayerId, name: &str) {
 // ------------------------------------------------------------------ Walkers
 #[test]
 fn vraska_minus_two_on_your_pick() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let vr = perm(&mut g, P0, "Vraska, Betrayal's Sting");
     let small = perm(&mut g, P1, "Guttersnipe");
     perm(&mut g, P1, "Archmage Emeritus");
@@ -38,7 +38,7 @@ fn vraska_minus_two_on_your_pick() {
 
 #[test]
 fn once_per_turn_and_sorcery_speed() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let vr = perm(&mut g, P0, "Vraska, Betrayal's Sting");
     let idx = g.player(P0).perms.iter().position(|&x| x == vr).unwrap();
     let h = use_perm(&mut g, P0, vr, vec![by_text("0:"), act(json!({"do": "use", "perm": idx})), by_text("0:")]);
@@ -50,7 +50,7 @@ fn once_per_turn_and_sorcery_speed() {
 
 #[test]
 fn ral_zarek_returns_your_pick() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let rz = perm(&mut g, P0, "Ral Zarek, Guest Lecturer");
     gy_push(&mut g, P0, "Orcish Bowmasters");
     gy_push(&mut g, P0, "Metallic Mimic");
@@ -63,7 +63,7 @@ fn ral_zarek_returns_your_pick() {
 // ------------------------------------------------------------------ Permanents
 #[test]
 fn mind_stone_whenever() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let ms = perm(&mut g, P0, "Mind Stone");
     pool(&mut g, P0, &[('C', 1)]);
     let n = g.player(P0).hand.len();
@@ -74,7 +74,7 @@ fn mind_stone_whenever() {
 
 #[test]
 fn mind_stone_needs_mana() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let ms = perm(&mut g, P0, "Mind Stone");
     let h = use_perm(&mut g, P0, ms, vec![pick(0)]);
     assert!(told_last(&h).contains("Can't activate Mind Stone"), "{}", told_last(&h));
@@ -83,7 +83,7 @@ fn mind_stone_needs_mana() {
 
 #[test]
 fn prepared_lightning_bolt() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let em = perm(&mut g, P0, "Emeritus of Conflict // Lightning Bolt");
     g.perm_mut(em).data.set(DataKey::Prepared, Val::Bool(true));
     pool(&mut g, P0, &[('R', 1)]);
@@ -94,7 +94,7 @@ fn prepared_lightning_bolt() {
 
 #[test]
 fn aetherflux_reservoir() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let ax = perm(&mut g, P0, "Aetherflux Reservoir");
     g.player_mut(P0).life = 60;
     use_perm(&mut g, P0, ax, vec![pick(0), by_text("Sephiroth")]);
@@ -103,7 +103,7 @@ fn aetherflux_reservoir() {
 
 #[test]
 fn aetherflux_needs_fifty_life() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let ax = perm(&mut g, P0, "Aetherflux Reservoir");
     let h = use_perm(&mut g, P0, ax, vec![pick(0)]);
     assert!(told_last(&h).contains("You need 50 life"), "{}", told_last(&h));
@@ -111,7 +111,7 @@ fn aetherflux_needs_fifty_life() {
 
 #[test]
 fn triskelion() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let t = perm(&mut g, P0, "Triskelion");
     g.perm_mut(t).plus = 3;
     let gs = perm(&mut g, P1, "Kessig Flamebreather");
@@ -123,7 +123,7 @@ fn triskelion() {
 // ------------------------------------------------------------------ Lands
 #[test]
 fn strip_mine_any_land() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     lands(&mut g, P0, "Strip Mine", 1, false);
     lands(&mut g, P1, "Island", 2, false);
     seat(&mut g, P0, vec![act(json!({"do": "use", "land": 0})), pick(0), by_text("Island"), pass()]);
@@ -133,7 +133,7 @@ fn strip_mine_any_land() {
 
 #[test]
 fn desolate_lighthouse_loots() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let l = lands(&mut g, P0, "Desolate Lighthouse", 1, false)[0];
     pool(&mut g, P0, &[('U', 1), ('R', 2)]);
     hand(&mut g, P0, &["Counterspell"]);
@@ -147,7 +147,7 @@ fn desolate_lighthouse_loots() {
 // ------------------------------------------------------------------ Citadel
 #[test]
 fn cast_the_top_card_for_life() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let cit = perm(&mut g, P0, "Bolas's Citadel");
     let top = card(&g, "Mind Stone");
     g.player_mut(P0).library.push(top);
@@ -159,7 +159,7 @@ fn cast_the_top_card_for_life() {
 
 #[test]
 fn play_the_top_land() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let cit = perm(&mut g, P0, "Bolas's Citadel");
     let top = card(&g, "Command Tower");
     g.player_mut(P0).library.push(top);
@@ -170,7 +170,7 @@ fn play_the_top_land() {
 
 #[test]
 fn sacrifice_ten() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let cit = perm(&mut g, P0, "Bolas's Citadel");
     for _ in 0..9 {
         let mut spec = zones::Tokens::new(1, 1);
@@ -187,7 +187,7 @@ fn sacrifice_ten() {
 // ------------------------------------------------------------------ Mistrise Village
 #[test]
 fn next_spell_cant_be_countered() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     lands(&mut g, P0, "Mistrise Village", 1, false);
     pool(&mut g, P0, &[('U', 1)]);
     seat(&mut g, P0, vec![act(json!({"do": "use", "land": 0})), pick(0), pass()]);
@@ -202,10 +202,10 @@ fn next_spell_cant_be_countered() {
 // ------------------------------------------------------------------ Responding
 #[test]
 fn no_sorcery_speed_play_in_response() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let vr = perm(&mut g, P0, "Vraska, Betrayal's Sting");
     let idx = g.player(P0).perms.iter().position(|&x| x == vr).unwrap();
     let h = seat(&mut g, P0, vec![act(json!({"do": "use", "perm": idx})), by_text("0:"), pass()]);
-    respond(&mut g, P0, "Veyran casts Opt", None, None).unwrap();
+    respond(&mut g, P0, "Cloud casts Opt", None, None).unwrap();
     assert!(told_last(&h).contains("not in response"), "{}", told_last(&h));
 }

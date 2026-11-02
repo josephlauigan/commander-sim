@@ -21,7 +21,7 @@ fn gy_push(g: &mut Game, p: PlayerId, name: &str) -> sim_core::ids::CardId {
 // ------------------------------------------------------------------ Reanimation
 #[test]
 fn animate_dead_from_an_opponents_graveyard() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     hand(&mut g, P0, &["Animate Dead"]);
     gy_push(&mut g, P1, "Guttersnipe");
     gy_push(&mut g, P0, "Grave Titan");
@@ -34,7 +34,7 @@ fn animate_dead_from_an_opponents_graveyard() {
 
 #[test]
 fn unburial_rites_only_from_your_graveyard() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     gy_push(&mut g, P1, "Guttersnipe");
     assert!(choices::rean_candidates(&g, P0, "rites").is_empty());
     let c = hand(&mut g, P0, &["Unburial Rites"])[0];
@@ -43,7 +43,7 @@ fn unburial_rites_only_from_your_graveyard() {
 
 #[test]
 fn entomb() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     seat(&mut g, P0, vec![by_text("Grave Titan")]);
     choices::fill(&mut g, P0, "entomb").unwrap();
     let names: Vec<String> = g.player(P0).gy.iter().map(|&c| g.db.get(c).name.to_string()).collect();
@@ -52,7 +52,7 @@ fn entomb() {
 
 #[test]
 fn grisly_salvage() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let n = g.player(P0).hand.len();
     seat(&mut g, P0, vec![cancel()]);
     choices::fill(&mut g, P0, "grisly").unwrap();
@@ -62,7 +62,7 @@ fn grisly_salvage() {
 // ------------------------------------------------------------------ Dispute
 #[test]
 fn deadly_dispute_sacrifices_your_pick() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     hand(&mut g, P0, &["Deadly Dispute"]);
     let a = perm(&mut g, P0, "Sol Ring");
     float_mana(&mut g, P0, &[('C', 1), ('B', 1)]);
@@ -75,7 +75,7 @@ fn deadly_dispute_sacrifices_your_pick() {
 // ------------------------------------------------------------------ FromTheGraveyard
 #[test]
 fn flashback_deep_analysis() {
-    let mut g = table(&["yshtola", "veyran"]);
+    let mut g = table(&["yshtola", "cloud"]);
     let da = gy_push(&mut g, P0, "Deep Analysis");
     float_mana(&mut g, P0, &[('C', 1), ('U', 1)]);
     let n = g.player(P0).hand.len();
@@ -87,7 +87,7 @@ fn flashback_deep_analysis() {
 
 #[test]
 fn dread_return_flashback_sacrifices_three() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     for n in ["Llanowar Elves", "Birds of Paradise", "Viscera Seer"] {
         perm(&mut g, P0, n);
     }
@@ -112,7 +112,7 @@ fn dread_return_flashback_sacrifices_three() {
 
 #[test]
 fn yawgmoths_will() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     gy_push(&mut g, P0, "Swamp");
     let entomb = gy_push(&mut g, P0, "Entomb");
     g.player_mut(P0).yawg = true;
@@ -127,7 +127,7 @@ fn yawgmoths_will() {
 
 #[test]
 fn not_from_the_graveyard_otherwise() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let c = gy_push(&mut g, P0, "Entomb");
     assert!(legal::check_cast_gy(&g, P0, c).unwrap().contains("can't cast Entomb from your graveyard"));
 }
@@ -135,7 +135,7 @@ fn not_from_the_graveyard_otherwise() {
 // ------------------------------------------------------------------ Loops
 #[test]
 fn start_the_loop() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Mikaeus, the Unhallowed");
     let trisk = perm(&mut g, P0, "Triskelion");
     let labels: Vec<String> =
@@ -152,7 +152,7 @@ fn start_the_loop() {
 // ------------------------------------------------------------------ Triggers
 #[test]
 fn aura_shards_target_or_none() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Aura Shards");
     let ring = perm(&mut g, P1, "Sol Ring");
     seat(&mut g, P0, vec![cancel()]);
@@ -165,7 +165,7 @@ fn aura_shards_target_or_none() {
 
 #[test]
 fn archon_targets_your_pick() {
-    let mut g = table(&["seph", "veyran", "sauron"]);
+    let mut g = table(&["seph", "cloud", "sauron"]);
     seat(&mut g, P0, vec![by_text("Sauron")]);
     perm(&mut g, P0, "Archon of Cruelty");
     assert_eq!((g.player(P1).life, g.player(P2).life), (40, 37));
@@ -173,7 +173,7 @@ fn archon_targets_your_pick() {
 
 #[test]
 fn consecrated_sphinx_may() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Consecrated Sphinx");
     let n = g.player(P0).hand.len();
     seat(&mut g, P0, vec![pick(1)]);
@@ -186,7 +186,7 @@ fn consecrated_sphinx_may() {
 
 #[test]
 fn nim_deathmantle_pay_or_not() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Nim Deathmantle");
     lands(&mut g, P0, "Swamp", 4, false);
     let t = perm(&mut g, P0, "Grave Titan");
@@ -198,7 +198,7 @@ fn nim_deathmantle_pay_or_not() {
 #[test]
 fn tortured_existence() {
     use sim_core::human::abilities::tortured;
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let te = perm(&mut g, P0, "Tortured Existence");
     let elves = hand(&mut g, P0, &["Llanowar Elves"])[0];
     let titan = gy_push(&mut g, P0, "Grave Titan");
@@ -211,7 +211,7 @@ fn tortured_existence() {
 
 #[test]
 fn gifts_ungiven_you_pick_they_split() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     seat(&mut g, P0, vec![pick(0), pick(0), pick(0), pick(0)]);
     let n = g.player(P0).hand.len();
     tutors::pile_tutor(&mut g, P0, 4, 2).unwrap();
@@ -221,7 +221,7 @@ fn gifts_ungiven_you_pick_they_split() {
 // ------------------------------------------------------------------ Atraxa
 #[test]
 fn you_pick_a_card_of_each_type() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let top = [
         "Swamp",
         "Sol Ring",

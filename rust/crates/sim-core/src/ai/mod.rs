@@ -12,7 +12,7 @@
 //! - `decks`: your decks' priorities, tutor targets, protection and wipe answers, and the wipe evaluation.
 //! - `topdeck`: how much a player wants each card next, and scry / surveil.
 //!
-//! This file has the decisions the engine calls inline. Deck-specific code for your other decks (Sephiroth, Veyran,
+//! This file has the decisions the engine calls inline. Deck-specific code for your other decks (Sephiroth,
 //! Galadriel, Y'shtola, Alela) lives in `impls/*` and `decks`.
 
 pub mod act;
@@ -57,8 +57,7 @@ const fn st(temp: f64, aggression: f64, caution: f64) -> Style {
 }
 
 /// brain.STYLE: your decks (their keys are also ais.MAIN, the decks with hand-written plans)
-const MAIN_STYLES: [(&str, Style); 11] = [
-    ("veyran", st(1.0, 0.40, 0.80)),
+const MAIN_STYLES: [(&str, Style); 10] = [
     ("sauron", st(1.0, 0.55, 0.75)),
     ("galadriel", st(1.0, 0.70, 0.55)),
     ("yshtola", st(1.0, 0.50, 0.75)),
@@ -82,7 +81,7 @@ pub fn is_main(key: &str) -> bool {
 pub fn jd_deck(key: &str) -> bool {
     matches!(
         key,
-        "veyran" | "sauron" | "yshtola" | "kefka" | "omnath" | "sheoldred" | "cloud" | "thrasios" | "sephfs" | "karn"
+        "sauron" | "yshtola" | "kefka" | "omnath" | "sheoldred" | "cloud" | "thrasios" | "sephfs" | "karn"
     )
 }
 
@@ -96,7 +95,7 @@ pub const HAND_DECKS: [&str; 3] = ["yshtola", "sheoldred", "cloud"];
 /// "Deleted"): `is_main` / `jd_deck` still name them (styles, table reads), so `hand_key` reads them as "" and every
 /// `is_main(hand_key(..))` routing site takes the generic path; `values::generic_deck` counts them as generic decks.
 /// The pool's four (brago, aurelia, sisay, dack) need no entry: no routing site names a pool deck.
-pub const HAND_DELETED: [&str; 7] = ["veyran", "sauron", "galadriel", "alela", "kefka", "karn", "thrasios"];
+pub const HAND_DELETED: [&str; 6] = ["sauron", "galadriel", "alela", "kefka", "karn", "thrasios"];
 
 /// the switchable decks that play their hand-written AI when `AI_HAND` is unset: those whose hand AI beat the generic
 /// policy in the stage 1 paired tests (`audit/recal/pairs-2026-10-31.md` section 4: yshtola +4.1, sheoldred +1.9 over
@@ -720,32 +719,14 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
     brain::main(g, p, post)
 }
 
-/// ais.combo_interrupted: p goes for a combo (`which`: 'veyran', 'sauron') whose key permanents are `key`; an opponent
-/// stops it with instant removal on a key piece, or (Veyran's spell loop) a counterspell. Seph's Tidebinder first.
+/// ais.combo_interrupted: p goes for a combo (`which`: 'sauron', 'seph', 'sephfs') whose key permanents are `key`; an
+/// opponent stops it with instant removal on a key piece. Seph's Tidebinder first. (Veyran's spell loop, retired
+/// 2026-11-01, also met counterspells and could use Mistrise Village.)
 pub fn combo_interrupted(g: &mut Game, p: PlayerId, which: &str, key: &[PermId]) -> Res<bool> {
     use crate::engine::cast::cast_card;
     use crate::engine::mana::{can_pay, pay};
     use crate::engine::removal::legal_targets;
-    use crate::engine::stack::{cast_counter, free_counter, pick_counter};
     use crate::tag::Tag;
-    let mut uncounterable = false;
-    if which == "veyran" {
-        // Mistrise Village: {U},{T}: the next spell can't be countered
-        let ml =
-            g.player(p).lands.iter().copied().find(|&l| {
-                g.db.get(g.perm(l).card()).tag(Tag::Mistrise) && !g.perm(l).tapped
-            });
-        if let Some(l) = ml {
-            g.perm_mut(l).tapped = true;
-            if can_pay(g, p, 0, "U", false) {
-                pay(g, p, 0, "U", false)?;
-                uncounterable = true;
-                crate::glog!(g, "    Mistrise Village: the loop spell can't be countered");
-            } else {
-                g.perm_mut(l).tapped = false;
-            }
-        }
-    }
     if tide_response(g, p, &format!("combo_{which}"), 10.0, None)? {
         return Ok(true);
     }
@@ -780,31 +761,6 @@ pub fn combo_interrupted(g: &mut Game, p: PlayerId, which: &str, key: &[PermId])
                 return Ok(true);
             }
             break;
-        }
-        if which == "veyran" && !uncounterable {
-            let ctrs: Vec<CardId> = g
-                .player(q)
-                .hand
-                .iter()
-                .copied()
-                .filter(|&c| matches!(g.db.get(c).tags.str(Tag::Ctr), Some("any" | "nc" | "ise")))
-                .collect();
-            for ctr in ctrs {
-                let d = g.db.get(ctr);
-                if !free_counter(g, q, ctr) && !can_pay(g, q, d.generic, &d.pips.to_string(), false) {
-                    continue;
-                }
-                if !cast_counter(g, q, ctr, None)? {
-                    continue;
-                }
-                if let Some(back) = pick_counter(g, p, ctr)
-                    && cast_counter(g, p, back, Some(ctr))?
-                {
-                    break;
-                }
-                g.player_mut(q).stat("combo_stops_counter", 1);
-                return Ok(true);
-            }
         }
     }
     Ok(false)
@@ -847,16 +803,6 @@ pub fn note_bomb(g: &mut Game, p: PlayerId, c: CardId, was_removed: bool) {
             pl.stat("bomb_recovered", 1);
         }
     }
-}
-
-/// ais.engine_payoff: Veyran's engine is online (the 'engine online' milestone): a payoff that turns the spell loop
-/// into a win (ais.payoff: a pinger, Aetherflux, Dragoncaller) or anything else that gets value from each spell
-pub fn engine_payoff(g: &Game, p: PlayerId) -> bool {
-    use crate::engine::values::has;
-    use crate::tag::Tag;
-    [Tag::Ping, Tag::Aether, Tag::Dragoncaller, Tag::Mystic, Tag::Spelltok, Tag::Spelldraw, Tag::Kiln]
-        .iter()
-        .any(|&t| has(g, p, t))
 }
 
 /// the ability language's search choice (dsl.py's search): for any card, ais.tutor_pick; for a card type, your

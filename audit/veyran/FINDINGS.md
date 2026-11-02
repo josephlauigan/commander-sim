@@ -1,5 +1,9 @@
 # Veyran (key veyran): findings
 
+**Retired 2026-11-01 (JD).** The deck was taken apart on 2026-10-31 (Veyran and the magecraft package went to Kefka)
+and the `veyran` simulator seat is gone; its list is in `decklists/pool/retired/veyran-izzet-spellslinger.md`. This file
+is kept as history.
+
 The deck's living list of strengths, weaknesses and what was tested.
 
 ## 2026-10-18: band calibration (proposed swaps, NOT applied; see audit/bands/REPORT.md)

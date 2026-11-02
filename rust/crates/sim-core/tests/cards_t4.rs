@@ -105,7 +105,7 @@ fn yuriko_comes_from_the_command_zone() {
 
 #[test]
 fn yuriko_reveals_the_top_card_and_drains_its_mana_value() {
-    let mut g = table(&[YURIKO, "seph", "veyran"]);
+    let mut g = table(&[YURIKO, "seph", "cloud"]);
     perm(&mut g, P0, "Yuriko, the Tiger's Shadow");
     let ninja = perm(&mut g, P0, "Mistblade Shinobi");
     on_top(&mut g, P0, "Treasure Cruise");
@@ -226,7 +226,7 @@ fn goblin_etb_and_death_triggers() {
 
 #[test]
 fn goblin_chainwhirler_pings_each_opponent_and_their_x_1s() {
-    let mut g = table(&[KRENKO, "seph", "veyran"]);
+    let mut g = table(&[KRENKO, "seph", "cloud"]);
     let small = token(&mut g, P1, 1);
     let big = token(&mut g, P1, 3);
     let mine = token(&mut g, P0, 1);
@@ -333,7 +333,7 @@ fn dark_confidant_costs_life_equal_to_mana_value() {
 
 #[test]
 fn sanguine_bond_and_exquisite_blood_drain_but_stop() {
-    let mut g = table(&[PROSPER, "seph", "veyran"]);
+    let mut g = table(&[PROSPER, "seph", "cloud"]);
     perm(&mut g, P0, "Sanguine Bond");
     life::gain(&mut g, P0, 3).unwrap();
     assert_eq!(g.player(P0).life, 43);
