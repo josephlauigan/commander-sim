@@ -341,3 +341,242 @@ as win attempts), and the rule leaves it out.
 **Total:** about 2 h 10 min of machine time (I 31 min, S1 55, S2 2, S5 17, S6 22 = 127 min), plus 25 min of builds
 before "go". Without the identity run I (if the coordinator checks it another way): 1 h 36 min. Order: I (the
 identity has to pass before S1 means anything) -> S1 -> S2 -> S5 -> S6.
+
+## Results (2026-11-01)
+
+The queue (`q.sh`) ran to its end, every run rc=0. Setup: base = origin/main 57c41e89, new = this branch ae568cad (the
+mixed-table counter fix, merged with main), `*-diag` = the same plus the scratch diagnostic patch (never committed).
+Loose, look-ahead AI, `--jobs 22`. Outputs are in the session scratchpad
+`/tmp/claude-1000/-home-joseph-projects/61d4d38b-9b1e-4bc1-8845-ec4ae3a757af/scratchpad/t6-structure/run/` (`q.log`,
+`runs/`: `s1-base.txt`, `s1-new.txt`, `s1-paired.txt`, `s2-*`, `s5.txt`, `s5-ready.txt`, `s6-real*.txt`, `s6-rt.txt`,
+`s6-paired.txt`, `id-*`). The race model is `scratchpad/t6-structure/race.awk` (awk).
+
+**Identity (run I):** `--realism --pool t1..t6 --games 300 --seed 900000` and `--calibrate ordering --pool t5 --games
+300`: base and new outputs identical (7 of 7). `--calibrate ordering --pool t6 --games 300` differs, as allowed (23.0%
+-> 22.6% overall, deck moves within noise). One side note: the base build skipped games on integer-overflow panics
+(300-game run: seed 500123, `iter/traits/accum.rs:206`; S1 base: seeds 500429, `engine/combat.rs:491`, and 500123).
+The new build skipped none in 9000 games. The play diverged, so this is not a fix; the overflow is an open engine bug
+(a very large Miirym board does 386 damage in the S2 trace, and the sum overflows somewhere).
+
+### 1. Each run against its criterion
+
+| run | numbers | verdict |
+|---|---|---|
+| S1 (base) | Six decks alone into three t5 decks, 1500 games each (table below) | **H1 partly, H2's mechanism not, H3's "went later" not** |
+| S1 (new vs base) | Paired change: overall -0.0 +/- 0.6 points | **H2 (code asymmetry 1) refuted as a cost; level means speed and lists (H1)** |
+| S2 | 16 traced losses (8 Rograkh/Thrasios, 8 Sisay) | **H2 not shown for Rograkh/Thrasios, partly for Sisay; speed of the t5 winners is what the traces show** |
+| S5 | 4000 t6 games, `DIAG_READY=1`, base | **H1 confirmed (both numbers); the race model fits the shape, not the 1.5 point tolerance** |
+| S6 | `PLANNER_PROGRESS=1` | **H3 (planner side) refuted: no effect** |
+
+**S1 (base), per deck.** Criterion: "t6 decks' median win round at or behind the t5 winners' (8); creature-line decks
+show high stop rates by removal or sweepers; Kinnan, Sisay and Silas show more 'ready, went later' than within t6."
+
+| deck | into t5 | own median win round | ready (share of games, median round) | one tutor away | combos stopped | ready, went later |
+|---|---|---|---|---|---|---|
+| Dack Fayden | 23.2% | 4 | 22%, 4 | 22% | 5% | 0 of 329 |
+| Kinnan | 23.1% | 6 | 23%, 6 | 53% | 8% | 17 of 350 (5%) |
+| Kraum/Tymna | 30.7% | 6 | 45%, 6 | 52% | 33% | 100 of 682 (15%) |
+| Rograkh/Silas | 27.7% | 5 | 36%, 5 | 41% | 30% | 18 of 539 (3%) |
+| Rograkh/Thrasios | 12.9% | 8 | 15%, 7 | 30% | 34% | 0 of 225 |
+| Sisay | 19.4% | 7 | 19%, 7 | 25% | 9% | 1 of 290 |
+
+The t5 winners' median win round at these tables is 8 (the seat tables, all winners, give 7.7-8.6 average).
+- Speed: only Rograkh/Thrasios (8) and Sisay (7) are at or behind it. The other four are 2-4 rounds ahead of it, so
+  that part of the criterion is met for two decks of six.
+- Stops: the creature decks are not the stopped ones. Sisay is stopped in 9% of its attempts. Rograkh/Thrasios is
+  stopped 34% (39% new), but 49 of 88 stops name no card ("a cost, a ward or a lock"), and the named ones are counters
+  (Swan Song 6, Force of Will 5, Pact of Negation 5), not removal or sweepers. Not met.
+- Went later: Kinnan 5%, Sisay 0.3%, Silas 3% at the t5 table, against 0-19 games per deck within t6 (the H3 table).
+  Not more. Not met. Only Kraum/Tymna holds ready lines (15%, down from 19% within t6).
+- The simple relation that does hold: **win rate is about ready share times (1 - stop rate)**. Dack 22 x 0.95 = 21
+  (actual 23.2), Kinnan 23 x 0.92 = 21 (23.1), Sisay 19 x 0.91 = 17 (19.4), Silas 36 x 0.70 = 25 (27.7), Kraum 45 x
+  0.67 = 30 (30.7), Rograkh/Thrasios 15 x 0.66 = 10 (12.9). The ready share is the number to move.
+- Against within-t6 ready shares (calibrate, 1500): Sisay 31% -> 19% and Rograkh/Thrasios 21% -> 15% fall at the t5
+  table; the other four are level (Dack 22 -> 22, Kinnan 22 -> 23, Kraum 46 -> 45, Silas 33 -> 36). The two creature
+  decks lose readiness (they are killed or bounced before the line; the report does not say which), and they are the two
+  worst into t5.
+
+**S1 (new vs base), paired** (`s1-paired.txt`, 1500 seeds per deck, discordant games only, 95% interval):
+
+| deck | base | new | new - base (points) | +/- 95% |
+|---|---|---|---|---|
+| Dack Fayden | 23.2% | 24.1% | +0.9 | 0.8 |
+| Kinnan | 23.1% | 21.5% | -1.6 | 1.7 |
+| Kraum/Tymna | 30.7% | 31.3% | +0.6 | 1.7 |
+| Rograkh/Silas | 27.7% | 27.4% | -0.3 | 1.3 |
+| Rograkh/Thrasios | 12.9% | 13.5% | +0.6 | 1.7 |
+| Sisay | 19.5% | 19.2% | -0.3 | 1.8 |
+| **all (equal weight)** | **22.9%** | **22.8%** | **-0.0** | **0.6** |
+
+(The paired file counts 1500 games per deck, so Sisay's and Dack's base figures differ from the report's 19.4% and
+23.2% by the skipped games. The report's overall is 22.8% for both builds.) Only Dack's change excludes zero (+0.9
++/- 0.8), and it is the smallest of the deck intervals; it is one of six and Kinnan's is -1.6, so I read it as noise
+across six comparisons. The brief's bar was +2 points: nothing is near it. **The counter fix does not move Tier 6 into
+Tier 5.** It is still the right rule (a Tier 5 deck should read a Tier 6 deck by the generic rules), it just was not
+what held Tier 6 back. The 300-game ordering run agrees (23.0% -> 22.6%).
+
+**S2, 16 traced losses** (the first eight losses of each deck, new-diag; seeds 500000+, same table for the two decks in
+games 3 and 4). Criterion: "the losses show a sweeper or Yawgmoth on the board line, or a sorcery tutor held with the
+mana to cast it."
+- Who won: 9 by a t5 combo (Kinnan round 3 and 13, Yawgmoth rounds 4, 4, 6 and 7, Urza rounds 9 and 10), 7 by damage
+  (Miirym 3, Urza, Kinnan, Zur: rounds 7-18). Two distinct games were over by round 3-4 (Kinnan round 3, Yawgmoth round
+  4); the t6 deck would have needed a line before round 3.
+- Interaction aimed at the t6 board: Sisay in 3 of 8 (Urza's Rift at Sisay round 3; Miirym's Rift at Sisay round 3,
+  countered by Sisay's Fierce Guardianship; Yawgmoth's Feed the Swarm at Sisay round 4). Rograkh/Thrasios in 1 of 8
+  (Urza's Rift at Rograkh round 2, redirected). Zur cast Toxic Deluge, Winds of Rath or Supreme Verdict in 3 Rograkh/
+  Thrasios games (rounds 5, 6, 10). Whether each resolved was not read; no loss was clearly a sweep of a ready line.
+- A sorcery tutor held with the mana: the traces print no hands. No Finale of Devastation or Green Sun's Zenith decision
+  line appears in five Rograkh/Thrasios traces read. Not shown either way.
+- Not met in general (4 of 16 show a removal or bounce spell aimed at the t6 deck; none shows a held tutor). What the
+  traces show is speed: the t6 deck casts 1-1.7 spells a turn and has not gone for a line when a t5 deck does. This
+  matches S1: a t6 deck at a t5 table loses because it is not ready, not because it is stopped.
+
+**S5, Tier 6 realism, 4000 games, base, `DIAG_READY=1`** (`s5-ready.txt`). Criterion: "under 50% of player-games are
+ever ready and the ready round's standard deviation is 2.5 or more; the race model fed the numbers reproduces the sim's
+seats within 1.5 points."
+- Player-games ever ready (pr): **28.9%**. Ready round: mean 6.72, **sd 2.75**. Anyone ready in 94.2% of games, 1.22
+  players ready in those games (0 / 1 / 2 / 3 players ready: 5.8 / 75.0 / 17.3 / 1.9%). The first-ready player wins
+  80.4% of decisive games where someone is ready.
+- Ready share by seat: 31.0 / 31.6 / 27.8 / 25.0%. Win share by seat: 27.3 / 27.2 / 24.0 / 21.5%.
+- **H1 confirmed**: both numbers meet the criterion (28.9% < 50%, sd 2.75 >= 2.5), as on 10/24 (28% ready, sd 2.8).
+- Race model, `pr 0.289, mu 6.72, sd 2.75`: seats **26.2 / 25.4 / 24.5 / 23.9** with s = 0.5 (26.0 / 25.5 / 24.6 /
+  23.9 with s = 0.76, 26.4 / 25.3 / 24.5 / 23.9 with s = 0.95), median 6-7, IQR 4. The sim's 27.3 / 27.2 / 24.0 / 21.5
+  is off by 1.1, 1.8, 0.5 and 2.4 points. **The shape reproduces (flat, seat 1 near a quarter share) but the 1.5 point
+  tolerance is missed on seats 2 and 4**: the sim's seat 1 to seat 4 gap is 5.8 points, the model's 2.3. The model
+  gives every seat the same ready share; the sim's later seats are ready less often (25-28% against 31%). The model
+  cannot reach the real 31.8 / 27.3 / 22.1 / 18.8 at these parameters; that was the H1 claim, and it holds.
+- Against the new targets: see section 3.
+
+**S6, `PLANNER_PROGRESS=1`** (new-diag). Criterion: "ready share up, spread down, seat 1 up (paired against S5);
+Rograkh/Thrasios into t5 up."
+
+| | S5 (off) | S6 (on) |
+|---|---|---|
+| player-games ever ready | 28.9% | 29.6% |
+| ready round mean, sd | 6.72, 2.75 | 6.71, 2.72 |
+| median win round, IQR | 7, 5 | 7, 5 |
+| seat 1 / 2 / 3 / 4 share | 27.3 / 27.2 / 24.0 / 21.5 | 26.8 / 26.9 / 24.1 / 22.1 |
+| first-ready wins | 80.4% | 78.3% |
+| deck win spread (best - worst) | 12.7 | 14.3 |
+| Rograkh/Thrasios into t5 (1500) | 13.5% | 13.5%, 0 discordant games |
+
+The switch changes 57% of the t6 games (1725 of 4000 per-game lines identical, the winner differs in 1419), and the
+aggregate moves by +0.7 points of ready share, -0.5 on seat 1: noise (seat CI +/- 1.4). **Not met; H3's planner fix does
+nothing.** For Rograkh/Thrasios the cell is byte-identical: the planner never acts for its lines. The planner's own
+header says X tutors (Chord of Calling, Finale of Devastation) and pile tutors are not modelled, and Finale and Green
+Sun's Zenith are exactly the tutors that deck holds (213 and 179 times in S1). The held-tutor passes themselves
+(H3's table) stand; the existing switch just cannot reach them.
+
+### 2. The counter fix: Tier 6 into Tier 5
+
+See the S1 paired table above. Overall: **22.9% -> 22.8%, -0.0 points (95% interval +/- 0.6)**, 9000 paired games.
+Per deck: +0.9 (+/- 0.8), -1.6 (1.7), +0.6 (1.7), -0.3 (1.3), +0.6 (1.7), -0.3 (1.8). Nothing is outside a 2 point
+band and the interval on the overall excludes a gain of 0.6 or more. The ordering run of 300 games per cell and the
+S1 report's overall (22.8% for both) say the same. Everything else is unchanged: seven identity checks identical.
+
+### 3. Tier 6 against the new targets (median 5, spread 2), base scorecard (S5, 4000 games)
+
+`--realism --pool t6 --games 4000 --seed 900000`, loose, look-ahead, targets in `data/realism/t6.toml` after PR #202:
+**1 of 7 targets pass** (seat 2 only).
+
+| statistic | sim | target (band) | result |
+|---|---|---|---|
+| seat 1 share | 27.3% (25.9-28.7) | 31.8% (30.3-33.3) | FAIL |
+| seat 2 share | 27.2% (25.8-28.6) | 27.3% (25.8-28.8) | PASS |
+| seat 3 share | 24.0% (22.7-25.4) | 22.1% (20.6-23.6) | FAIL |
+| seat 4 share | 21.5% (20.2-22.8) | 18.8% (17.3-20.3) | FAIL |
+| median win round | 7.0 | 5.0 (4-6) | FAIL, 2 rounds slow |
+| win round 75th - 25th percentile | 5.0 | 2.0 (1-3) | FAIL, 2.5 times too wide |
+| deck win spread (best - worst) | 12.7 points | 4.0 (0-8) | FAIL |
+
+Reference rows (not scored): wins by combo 88.4% (real 47.8%), by damage 11.0% (39.9%), by commander damage 0.6%
+(11.6%). Games over 15 rounds 5.7%. Deck shares: Sisay 31.5%, Dack 27.3%, Kraum/Tymna 25.8%, Kinnan 24.7%, Rograkh/
+Silas 21.9%, Rograkh/Thrasios 18.9%. The two stat families the race model ties together (seats and spread) both need
+the ready share and the ready round to change; the median needs the round.
+
+What target-shaped games need, from the race model (`race.awk`, 200,000 games each; s is the per-turn win chance once
+ready; decisive 97-100% unless noted):
+
+| pr | mu | sd | s | seats | median, IQR |
+|---|---|---|---|---|---|
+| 0.29 (sim now) | 6.7 | 2.8 | 0.5-0.95 | 26.2 / 25.4 / 24.5 / 23.9 | 6-7, 4 |
+| 0.29 | 6.7 | 1.5 | 0.76 | 27.4 / 25.5 / 24.2 / 22.9 | 6, 2 |
+| 0.29 | 5.0 | 1.0 | 0.76 | 28.2 / 25.8 / 24.0 / 22.1 | 5, 2 |
+| 0.60 | 6.7 | 2.8 | 0.76 | 28.0 / 25.8 / 24.0 / 22.2 | 5, 3 |
+| 0.50 | 5.0 | 1.5 | 0.5 | 28.5 / 26.2 / 23.7 / 21.6 | 5, 2 |
+| 0.60 | 5.0 | 1.0 | 0.5 | 30.9 / 26.5 / 22.8 / 19.8 | 5, 2 |
+| 0.90 | 5.0 | 1.0 | 0.35 | **32.6 / 26.7 / 22.2 / 18.5** | 5, 2 |
+| 0.90 | 5.0 | 1.0 | 0.5 | 34.7 / 26.9 / 21.3 / 17.1 | 5, 1 |
+
+(The model's decisive share is 74% at pr 0.29 and 94% at pr 0.5; the sim's games end by damage and other wins too, so
+it reads the seat shares only.) The real 31.8 / 27.3 / 22.1 / 18.8 and the median 5 / IQR 2 are reached together only
+with **pr 0.6-0.9, mu about 5, sd 1-1.5**, and with attempts often failing (s 0.35-0.5). The sim is at pr 0.29, mu 6.7,
+sd 2.75. Fixing only one of the three moves seat 1 by about 2 points. All three have to move.
+
+### 4. What to change next, ranked
+
+The pattern in every run: the ready share (29%) is the binding number. It sets the seat edge (race table), the win
+rate at a t5 table (win % is about ready % x (1 - stop %), S1), and caps how consistent the table is. Rough sizes are
+estimates from these runs; none has been simulated.
+
+1. **Raise the ready share from the "one tutor away" pool. Needs code.** Evidence: the share one tutor away is 22 /
+   53 / 52 / 41 / 30 / 25% for Dack / Kinnan / Kraum / Silas / Rograkh/Thrasios / Sisay against ready shares of 22 /
+   23 / 45 / 36 / 15 / 19% (S1); the passes while one tutor away are in the H3 table (Rograkh/Thrasios held Finale and
+   Green Sun's Zenith 392 times in 1500 games), and S6 shows the existing planner switch cannot reach them (X tutors
+   and pile tutors unmodelled; the Rograkh/Thrasios cell is byte-identical). Change: teach `ai/planner.rs` (or a
+   plain rule in the t6 tutor choice) to cast a sorcery X tutor (Finale, Chord, Green Sun's Zenith) when the mana
+   to cast it and then reach a line exists, and review Kinnan's "no counter and blue up: don't go" rule
+   (`kinnan-bonder-mana-combo.toml`; 17 ready games waited, 8 never went, so it is small). Size: the ceiling is the
+   gap between "one tutor away" and "ready", an average of +10 points of ready share (27 -> 37%), Kinnan +30 and
+   Rograkh/Thrasios +15. Realistic: half of that, so pr 0.29 -> 0.33-0.35. By the S1 relation that is +3-5 points
+   win rate at a t5 table for those two decks, and about +1 point on seat 1 in the race table. Helps ready share
+   most, ready round least (these tutors fire at rounds 5-7).
+2. **Make the slowest and least ready decks faster. Needs JD's decision, then list edits.** Evidence: the slow decks are
+   the ones that hold the median at 7 and the spread at 5: median win rounds at a t5 table 4 / 5 / 6 / 6 / 7 / 8
+   (Dack, Silas, Kinnan, Kraum, Sisay, Rograkh/Thrasios); ready shares for Kinnan 23%, Sisay 19%, Rograkh/Thrasios 15%
+   (S1; 31% and 21% for the last two within t6); deck win spread 12.7 points against a target of 4 (Sisay 31.5% to
+   Rograkh/Thrasios 18.9% within t6). Mana available at T3 is 3.4-3.8 for Kraum/Tymna, Silas and Rograkh/Thrasios,
+   with 0.6-0.8 mana permanents out at T2-T3 (S5 card and mana flow). Rograkh/Thrasios' lines need Gaea's Cradle or
+   Oboro on the board (H2) and its Partial cards (H6). The decisions: add tutors, cantrips and fast mana to those
+   decks (the pool lists are JD's); or lower the median target for the board-combo decks. Size: moving the three slow
+   decks to the pace of Silas (ready 36%, median 5) would take the average ready share from 27% to about 33%, cut the
+   win round IQR by 1-2 rounds (the per-deck medians span 4 rounds, so deck differences are most of the 5-round IQR)
+   and the deck spread from 12.7 toward 4. This is the one change that moves the median.
+3. **Find out what the "unnamed" stops are. Needs a trace read, then probably code.** Evidence: 30-34% of Kraum/Tymna,
+   Silas and Rograkh/Thrasios attempts are stopped at a t5 table, and 184 of 221 (Kraum), 147 of 181 (Silas) and 49 of 88
+   (Rograkh/Thrasios) name no card ("a cost, a ward or a lock"); for Kraum and Silas they are Ad Nauseam and Thassa's
+   Oracle attempts (114 + 54 and 51 + 92 "by an unnamed answer"). If these are the attempt failing by itself (a missing
+   piece, an Ad Nauseam that finds no win), it is a line-completion bug in the "ready" test, not interaction. Via the
+   relation, each stop costs about a third of the decks' ready wins: Kraum/Tymna 45% ready converts to 30.7%, Silas 36%
+   to 27.7%. Removing half of the unnamed stops is worth about +5 points of win rate for those two decks at a t5 table,
+   and it also tightens the ready-to-win time (a failed attempt is a later, later try). Cheap first step: one trace of
+   10 stopped Kraum/Tymna games.
+4. **Make the keep rule value line pieces and tutors. Needs code (`impls/t6_keep.rs`).** Evidence: 37-52% of hands are
+   mulliganed (S1: 51% Dack, 47% Kinnan, 51% Kraum, 43% Silas, 37% Rograkh/Thrasios); win rate by mulligans
+   (none / one / two / three): Kraum 32.6 / 31.5 / 26.2 / 23.4, Silas 30.2 / 25.5 / 24.6 / 17.7, Kinnan 24.8 / 22.8 /
+   20.9 / 14.3; the median win round moves little (6 / 6 / 7 / 7). Size: a keep that took the hands with a tutor and
+   two lands would cut the rate of 2+ mulligans (12-27% of hands, by deck) and is worth about +1 point of win rate per
+   deck, little on the median. Low: it helps the win rate more than the speed.
+5. **Spread: what cuts the ready-round sd (2.75).** Evidence: the race model at pr 0.29 with sd 1.5 gives an IQR of 2
+   and seat 1 at 27.4% (S5 table). The sd has three sources: deck differences (item 2), stops and retries (item 3), and
+   the late pile of lines (ready rounds up to 12+, 5.7% of games over 15 rounds). A late-game accelerator for the
+   slow tail, rather than a faster median, is needed to cut the IQR. Needs JD's decision on how Tier 6 games are
+   meant to end (the target set has no "games over 15 rounds" value, and the real tournament draw rate of 24% is not
+   in the sim's seat shares).
+6. **The targets themselves. Needs JD's decision.** Seat 1 31.8%, median 5 and IQR 2 together imply pr 0.6-0.9 with
+   about 1 round of spread (race table). None of the sim's decks is near it: ready 15-45%. If the 31.8% / 27.3% /
+   22.1% / 18.8% seat target is kept, the ready share has to double or triple; if only the median and IQR are the goal,
+   items 1-3 with a spread of 1.5 would reach the IQR at pr 0.5. I would set a ready-share target (the DIAG_READY
+   numbers: pr, mu, sd) in `data/realism/t6.toml`, since it is the statistic the seat edge depends on and the median
+   cannot tell the tiers apart.
+
+**To beat Tier 5 handily** (22.8% now against 25% even; "handily" would be 35% or more): the counter rule is not the
+lever (section 2), and the t5 lists were ruled out by JD. By the relation win % = ready % x (1 - stop %), 35% needs the
+average ready share near 45% with the stops at 20-25%, i.e. items 1-3 together plus the Sisay/Rograkh/Thrasios readiness
+at the table (31 -> 19% and 21 -> 15% against within t6). One consequence: Dack's 23.2% rests on 22% ready and 5%
+stopped, so it is the one deck whose ready line is not stoppable, and it is already as fast as it can be (median 4);
+it needs more lines, not more speed. Item 2 is the only change that lifts the weak decks and the median together.
+
+**What this run did not test:** asymmetry 2 (the generic t5 counter rule reading any t6 spell; S3 was dropped by JD),
+why Sisay wins 31.5% within t6 against 19.4% into t5 (its ready share falls 31 -> 19%, but why it is killed or
+bounced before its line is not in the report), and what the unnamed stops are.
