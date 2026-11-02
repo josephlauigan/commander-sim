@@ -23,8 +23,8 @@ with her out. What breaks her is exile, bounce, or removal you can't answer. Kee
 bring her back (see "Protect her") before you start making the table draw.
 
 ### Game plan
-- **Turns 1-3:** play a mana rock (Arcane Signet, Fellwar Stone, Mind Stone, Commander's Sphere, Potioner's Trove)
-  and a cheap blocker or value creature (Burrog Banemaker, Fetid Imp, Undercity Dire Rat, Blood
+- **Turns 1-3:** play a mana rock (Arcane Signet, Fellwar Stone, Mind Stone) or Dark Ritual into an early
+  threat, and a cheap blocker or value creature (Burrog Banemaker, Viscera Seer, Undercity Dire Rat, Blood
   Artist, Phyrexian Rager, Vault Plunderer). **Underworld Dreams** ({B}{B}{B}) is a fine turn-3 play on its own: every
   card an opponent draws costs them 1.
 - **Turns 4-6:** Sheoldred on turn 3 or 4. Once she is out, equip protection first, then start the draw engines.
@@ -59,8 +59,8 @@ These are the cards that turn the punishers on. Play the symmetric ones only onc
 Each card you draw is 2 life with Sheoldred out, so the deck is full of draw: **Phyrexian Arena** (a card each upkeep,
 1 life), **Seymour Flux** (pay 1 life each upkeep for a card and a +1/+1 counter), **Ambition's Cost**, **Cast Away
 Doubt** (draw two; 2 damage to each player, which Sheoldred's lifegain more than covers), **Syphon Mind** (each other
-player discards; you draw a card for each), **Phyrexian Rager**, **Deadly Dispute** (sacrifice a creature or artifact, draw two, make a Treasure), **Carnage Altar** ({3}, sacrifice a
-creature: draw a card), **Bonders' Enclave** (draw with {3} and a creature of power 4 or more, which Sheoldred is) and
+player discards; you draw a card for each), **Phyrexian Rager**, **Deadly Dispute** (sacrifice a creature or artifact, draw two, make a Treasure), **Skullclamp** (equip {1}: when
+the creature dies, draw two), **Bonders' Enclave** (draw with {3} and a creature of power 4 or more, which Sheoldred is) and
 **Gix, Yawgmoth Praetor** (when a creature deals combat damage to an opponent, its controller may pay 1 life to draw;
 that includes opposing creatures, so with Sheoldred out an attacker drawing off Gix costs them 2 more).
 
@@ -83,36 +83,34 @@ These cards are played, not drawn, so Sheoldred gains you nothing from them dire
 ### Finishers
 **Exsanguinate** (X life from each opponent, you gain it) is the plain kill. **Peer into the Abyss** is the draw-based
 kill. **Necrosquito** ({3}{B}, flying) is a body that grows into a finisher: it enters with two oil counters (a 2/2) and
-gets an oil counter, so +1/+1, whenever another creature or artifact you control goes to the graveyard. Carnage Altar,
-Deadly Dispute, the sacrifice-cost removal, chump blocks and your own Treasures and rocks all feed it, and it flies over
+gets an oil counter, so +1/+1, whenever another creature or artifact you control goes to the graveyard. The sacrifice
+outlets, Deadly Dispute, the sacrifice-cost removal, chump blocks and your own Treasures and rocks all feed it, and it flies over
 the table's blockers. **Grave Titan** ({4}{B}{B}, 6/6 deathtouch) makes two 2/2 Zombies when it enters and each time it
-attacks. The Zombies block for you and are the sacrifice fodder for Carnage Altar, Deadly Dispute and the
+attacks. The Zombies block for you and are the sacrifice fodder for Viscera Seer, Ashnod's Altar, Deadly Dispute and the
 sacrifice-cost removal, and each one that dies drains with Blood Artist and Zulaport Cutthroat out.
 
 ### Protect her
 - **Swiftfoot Boots** (hexproof and haste, equip {1}) and **Darksteel Plate** (indestructible, equip {2}): equip one
   as soon as Sheoldred lands. Boots stop targeted removal; the Plate stops destroy effects and damage, but not exile
   or -X/-X.
-- **Battle-Rage Blessing** (deathtouch and indestructible): hold it up
-  for a destroy effect or a bad block.
 - **Perigee Beckoner**: when it enters, another creature of yours gets +2/+0 and returns if it dies this turn. Cast it
   on Sheoldred before she attacks or blocks into a risk; warp ({1}{B}) lets you reuse it later.
 - **Recursion** (below) is the backup when protection isn't there, and **Demonic Tutor** ({1}{B}) or **Diabolic Tutor** ({2}{B}{B}) finds Sheoldred
   again if she was exiled or shuffled away.
 
 ### Remove threats
-12 removal spells keep the board manageable: **Terror** (nonblack, nonartifact), **Last Gasp** (-3/-3), **Vanquish the
-Weak** (power 3 or less), **Disembowel** (X equals the target's mana value), **Overkill** (-0/-9999), **Foolish Fate**,
+Eight removal spells and Grave Pact keep the board manageable: **Vanquish the Weak** (power 3 or less), **Overkill** (-0/-9999), **Foolish Fate**,
 **Sephiroth's Intervention** (destroy, gain 2 life), **Wander Off** (exile), **Invoke Despair** (edict for a creature,
 an enchantment and a planeswalker, with a loss of 2 life and a card for you each time they have none; needs {B}{B}{B}{B}),
-**Soul Enervation** (flash, -4/-4), and the sacrifice-cost cheap ones **Silence the Echo** and **Lethal Throwdown** (each cheap
+and the sacrifice-cost cheap ones **Silence the Echo** and **Lethal Throwdown** (each cheap
 with a creature to sacrifice; Silence the Echo can instead pay {3}). **Rooftop Assassin** (flash, flying, lifelink) destroys a creature that was dealt damage this turn, and
-**Accursed Marauder** makes each player sacrifice a nontoken creature (it can sacrifice itself).
+**Accursed Marauder** makes each player sacrifice a nontoken creature (it can sacrifice itself). **Grave Pact** ({1}{B}{B}{B}) makes each opponent sacrifice a creature whenever one of
+yours dies, so every sacrifice for value is also removal.
 
 ### Gain life, use it
 Sheoldred's lifegain turns on the lifegain payoffs: **Foolish Fate** (the target's controller loses 3 if you gained
 life this turn) and **Leech Collector // Bloodletting** (the first lifegain each turn prepares {B} Bloodletting: each
-opponent loses 2). **Potioner's Trove** gains 2 after you cast an instant or sorcery. The life is also a resource:
+opponent loses 2). The life is also a resource:
 it pays for The One Ring's burden counters, Call of the Ring, Bolas's Citadel and Ad Nauseam.
 
 ### Drain creatures
@@ -123,25 +121,38 @@ is 3 to an opponent and a bigger threat. **Gray Merchant of Asphodel** ({3}{B}{B
 devotion to black when it enters, and you gain what they lose: Sheoldred ({B}{B}), Underworld Dreams ({B}{B}{B}),
 Phyrexian Arena ({B}{B}), Seizan ({B}{B}) and the Merchant itself ({B}{B}) all count, so with Sheoldred and
 Underworld Dreams out it is at least 7 from each. **Zulaport Cutthroat** drains each opponent
-1 (and gains you 1) whenever a creature you control dies; Carnage Altar, Deadly Dispute, Silence the Echo, Lethal
-Throwdown, Accursed Marauder and chump blocks feed it.
-**Fetid Imp** and **Burrog Banemaker** are deathtouch blockers that protect the life total. **Undercity Dire Rat** is a
+1 (and gains you 1) whenever a creature you control dies; the sacrifice outlets, Deadly Dispute, Silence the Echo,
+Lethal Throwdown, Accursed Marauder and chump blocks feed it.
+**Burrog Banemaker** is a deathtouch blocker that protect the life total. **Undercity Dire Rat** is a
 cheap body that leaves a Treasure.
+
+### The aristocrats package: a second way to win
+**Mikaeus, the Unhallowed** ({2}{B}{B}) gives your other non-Human creatures +1/+1 and undying. With **Triskelion**
+({6}, enters with three +1/+1 counters; remove one: 1 damage to any target) it is an infinite-damage combo: Triskelion
+pings itself to death, returns with a +1/+1 counter from undying, and pings again. Demonic Tutor and Diabolic Tutor find
+the missing piece. **Yawgmoth, Thran Physician** (pay 1 life, sacrifice another creature: a -1/-1 counter on up to one
+creature and draw a card) is a sacrifice outlet that draws; a -1/-1 counter cancels the +1/+1 counter undying leaves,
+so Mikaeus's creatures can die and return again and again. **Viscera Seer** (sacrifice a creature: scry 1) and
+**Ashnod's Altar** (sacrifice a creature: {C}{C}) are the free outlets, and **Phyrexian Tower** is a land that
+sacrifices a creature for {B}{B}. Every death drains with Blood Artist, Zulaport Cutthroat and Al Bhed Salvagers, and
+**Sephiroth, Fabled SOLDIER** drains 1 more for each other creature that dies; after four in one turn he transforms and
+every creature death drains for the rest of the game. With Grave Pact out, each loop also costs every opponent a
+creature.
 
 ### Recursion
 **Phyrexian Delver** returns a creature card from your graveyard (you lose life equal to its mana value): Sheoldred
-if she died, Sneering Shadewriter for a second drain. It also triggers **Soul Enervation**, which drains 1 whenever creature
-cards leave your graveyard. Keep it for Sheoldred.
+if she died, Sneering Shadewriter for a second drain. Keep it for Sheoldred.
 
 ### Ramp
-Five rocks, Arcane Signet, Fellwar Stone, Mind Stone (it can cash in for a card), Commander's Sphere (also a card)
-and Potioner's Trove, plus Undercity Dire Rat (a Treasure when it dies). Memory Jar, Otherworld Atlas, The One Ring
+Three rocks, Arcane Signet, Fellwar Stone and Mind Stone (it can cash in for a card), plus **Dark Ritual** (Sheoldred a
+turn early), Ashnod's Altar and Undercity Dire Rat (a Treasure when it dies). Memory Jar, Otherworld Atlas, The One Ring
 and Bolas's Citadel are the bigger artifacts you cast once the rocks are out.
 
 ### How it wins
 - **The slow drain.** Sheoldred plus Howling Mine, Seizan and the end-step engines drains each of three opponents every round; with Underworld Dreams and Fate Unraveler out it is faster.
 - **The burst.** Memory Jar with Sheoldred out is 14 life to each opponent at once. Peer into the Abyss on one
   opponent with Sheoldred out is lethal on its own. Exsanguinate for X is the table-wide finish.
+- **Mikaeus + Triskelion**, or a Yawgmoth loop with Blood Artist, Zulaport Cutthroat and Sephiroth out.
 - **Necrosquito** with a few sacrifices behind it is a large flier that attacks over the table's blockers.
 
 ### Weak spots and how to play around them
@@ -153,7 +164,7 @@ and Bolas's Citadel are the bigger artifacts you cast once the rocks are out.
 - **Opponents who stop draws or punish the symmetric cards.** If a deck is built around card draw, or has a combo that
   wants cards, hold the symmetric draw cards (the Mine, the Atlas, Mikokoro, the Sanitarium, Seizan, the wheels) until
   a punisher is out and kill that deck first.
-- **Big creature decks.** Use the cheap deathtouch blockers (Fetid Imp, Burrog Banemaker) and the removal; save Overkill
+- **Big creature decks.** Use the cheap deathtouch blocker (Burrog Banemaker), Grave Pact and the removal; save Overkill
   and Wander Off for the biggest threat.
 - **Lifegain decks.** The drain is slower against them; push Exsanguinate and the drain creatures for the last points.
 
@@ -168,18 +179,19 @@ and Bolas's Citadel are the bigger artifacts you cast once the rocks are out.
   Sneering Shadewriter, Screeching Soulbreaker, Gray Merchant, Zulaport Cutthroat) keep the pressure on until she
   comes back; hold the symmetric draw cards.
 - **The kill:** Peer into the Abyss on an opponent with Sheoldred out, or Exsanguinate for the table. Demonic Tutor or
-  Diabolic Tutor finds Peer into the Abyss once she is safe.
+  Diabolic Tutor finds Peer into the Abyss once she is safe, or the missing half of Mikaeus + Triskelion.
 - **Mulligan:** keep hands with two or three lands, a rock and a creature or a draw spell; send back hands with no
   black source.
 
 ## Mana and consistency
 
-36 lands: 32 Swamp, Command Tower (makes black here), and three colorless lands that draw cards: Bonders' Enclave,
-Mikokoro, Center of the Sea and Geier Reach Sanitarium. That is 33 black sources. Ramp: five mana artifacts (Arcane
-Signet, Fellwar Stone, Mind Stone, Commander's Sphere, Potioner's Trove) plus Undercity Dire Rat. Tutors: Demonic
+36 lands: 31 Swamp, Command Tower (makes black here), Phyrexian Tower, and three colorless lands that draw cards:
+Bonders' Enclave, Mikokoro, Center of the Sea and Geier Reach Sanitarium. That is 32 black sources, plus Phyrexian
+Tower with a creature to sacrifice. Ramp: three mana rocks (Arcane Signet, Fellwar Stone, Mind Stone), Dark Ritual,
+Ashnod's Altar and Undercity Dire Rat. Tutors: Demonic
 Tutor and Diabolic Tutor.
-Interaction: 12 removal spells, 3 protection cards (Swiftfoot Boots, Darksteel Plate, Battle-Rage
-Blessing) and Perigee Beckoner.
+Interaction: eight removal spells and Grave Pact, 2 protection cards (Swiftfoot Boots, Darksteel Plate) and
+Perigee Beckoner.
 
 ## Bracket and Rule 0
 
@@ -192,17 +204,17 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Commander (1).** Sheoldred, the Apocalypse
 
-**Lands (36).** Bonders' Enclave, Command Tower, Geier Reach Sanitarium, Mikokoro Center of the Sea, 32 Swamp
+**Lands (36).** Bonders' Enclave, Command Tower, Geier Reach Sanitarium, Mikokoro Center of the Sea, Phyrexian Tower, 31 Swamp
 
-**Creatures (23).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Fetid Imp, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Necrosquito, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Seymour Flux, Sneering Shadewriter, Undercity Dire Rat, Vault Plunderer, Zulaport Cutthroat
+**Creatures (27).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Mikaeus the Unhallowed, Necrosquito, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Sephiroth Fabled SOLDIER // Sephiroth One-Winged Angel, Seymour Flux, Sneering Shadewriter, Triskelion, Undercity Dire Rat, Vault Plunderer, Viscera Seer, Yawgmoth Thran Physician, Zulaport Cutthroat
 
-**Enchantments (4).** Call of the Ring, Phyrexian Arena, Soul Enervation, Underworld Dreams
+**Enchantments (4).** Call of the Ring, Grave Pact, Phyrexian Arena, Underworld Dreams
 
-**Artifacts (13).** Arcane Signet, Bolas's Citadel, Carnage Altar, Commander's Sphere, Darksteel Plate, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Otherworld Atlas, Potioner's Trove, Swiftfoot Boots, The One Ring
+**Artifacts (12).** Arcane Signet, Ashnod's Altar, Bolas's Citadel, Darksteel Plate, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Otherworld Atlas, Skullclamp, Swiftfoot Boots, The One Ring
 
 **Sorceries (12).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Demonic Tutor, Diabolic Tutor, Exsanguinate, Invoke Despair, Lethal Throwdown, Peer into the Abyss, Silence the Echo, Syphon Mind
 
-**Instants (11).** Ad Nauseam, Battle-Rage Blessing, Deadly Dispute, Disembowel, Foolish Fate, Last Gasp, Overkill, Sephiroth's Intervention, Terror, Vanquish the Weak, Wander Off
+**Instants (8).** Ad Nauseam, Dark Ritual, Deadly Dispute, Foolish Fate, Overkill, Sephiroth's Intervention, Vanquish the Weak, Wander Off
 
 ## Import list (100)
 
@@ -212,38 +224,36 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Al Bhed Salvagers
 1 Ambition's Cost
 1 Arcane Signet
-1 Battle-Rage Blessing
+1 Ashnod's Altar
 1 Blood Artist
 1 Bolas's Citadel
 1 Bonders' Enclave
 1 Burrog Banemaker
 1 Call of the Ring
-1 Carnage Altar
 1 Cast Away Doubt
 1 Command Tower
-1 Commander's Sphere
 1 Cost of Brilliance
 1 Dark Deal
+1 Dark Ritual
 1 Darksteel Plate
 1 Deadly Dispute
 1 Demonic Tutor
 1 Diabolic Tutor
-1 Disembowel
 1 Exsanguinate
 1 Fate Unraveler
 1 Fellwar Stone
-1 Fetid Imp
 1 Foolish Fate
 1 Geier Reach Sanitarium
 1 Gix, Yawgmoth Praetor
+1 Grave Pact
 1 Grave Titan
 1 Gray Merchant of Asphodel
 1 Howling Mine
 1 Invoke Despair
-1 Last Gasp
 1 Leech Collector // Bloodletting
 1 Lethal Throwdown
 1 Memory Jar
+1 Mikaeus, the Unhallowed
 1 Mikokoro, Center of the Sea
 1 Mind Stone
 1 Necrosquito
@@ -255,25 +265,28 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Phyrexian Arena
 1 Phyrexian Delver
 1 Phyrexian Rager
-1 Potioner's Trove
+1 Phyrexian Tower
 1 Rooftop Assassin
 1 Screeching Soulbreaker
 1 Seizan, Perverter of Truth
 1 Sephiroth's Intervention
+1 Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel
 1 Seymour Flux
 1 Sheoldred, the Apocalypse
 1 Silence the Echo
+1 Skullclamp
 1 Sneering Shadewriter
-1 Soul Enervation
 1 Swiftfoot Boots
 1 Syphon Mind
-1 Terror
 1 The One Ring
+1 Triskelion
 1 Undercity Dire Rat
 1 Underworld Dreams
 1 Vanquish the Weak
 1 Vault Plunderer
+1 Viscera Seer
 1 Wander Off
+1 Yawgmoth, Thran Physician
 1 Zulaport Cutthroat
-32 Swamp
+31 Swamp
 ```

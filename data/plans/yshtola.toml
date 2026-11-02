@@ -11,8 +11,8 @@
 # the combat.rs chump rule).
 # Left out (the schema can't express it): `trigger_bonus` exactly (by the opponents alive, Curiosity, a kill in
 # range, the fourth-life draw) and in the removal and wipe utilities; the lethal test for the X drains in
-# `tutor_pick` (the X drains are wished for last here); the Zur lock targets; Hostage Taker / Skyclave / Massacre
-# Wurm / Prayer of Binding target values; Necropotence / Sphinx / Tithe / One Ring helpers (generic priority); the
+# `tutor_pick` (the X drains are wished for last here); the Zur lock targets; Hostage Taker / Skyclave /
+# Prayer of Binding target values; Necropotence / Sphinx / Tithe / One Ring helpers (generic priority); the
 # removal-target rules in brain.rs (`removal_adjust`, no sampling far below the best target); the wipe swing with
 # Teferi's Protection held up (`teferis_first`).
 deck = "yshtola"
@@ -35,12 +35,6 @@ kind = "drain"
 pieces = [["Y'shtola, Night's Blessed"], ["Sanguine Bond", "Marauding Blight-Priest"]]
 
 # Tutor wishes (yshtola::tutor_pick), best score first, ahead of the lines' pieces
-# Greaves for a Y'shtola that keeps getting removed (tax 4+, not on the battlefield or in the command zone)
-[[wish]]
-cards = ["Lightning Greaves"]
-when = ["not commander-out & not commander-zone & tax>=4"]
-score = 90
-
 [[wish]]
 cards = ["Sanguine Bond"]
 score = 85
@@ -89,7 +83,7 @@ value = 90
 else = 60
 
 [[prio]]
-cards = ["Sol Ring", "Arcane Signet", "Chromatic Lantern", "Coalition Relic", "Talisman of Progress"]
+cards = ["Sol Ring", "Arcane Signet", "Chromatic Lantern", "Coalition Relic", "Talisman of Progress", "Talisman of Hierarchy"]
 when = ["turn<=5"]
 value = 82
 else = 30
@@ -115,16 +109,6 @@ cards = ["Marauding Blight-Priest"]
 value = 62
 
 [[prio]]
-cards = ["Lightning Greaves"]
-when = ["commander-out"]
-value = 58
-else = 25
-
-[[prio]]
-cards = ["The Eternal Wanderer"]
-value = 58
-
-[[prio]]
 cards = ["Polluted Bonds"]
 when = ["turn<=8"]
 value = 56
@@ -139,7 +123,7 @@ cards = ["Ill-Gotten Inheritance", "Zur the Enchanter"]
 value = 54
 
 [[prio]]
-cards = ["Dark Petition", "Diabolic Tutor", "Idyllic Tutor", "Mystical Tutor"]
+cards = ["Dark Petition", "Diabolic Tutor", "Idyllic Tutor", "Mystical Tutor", "Vampiric Tutor"]
 value = 52
 
 [[prio]]

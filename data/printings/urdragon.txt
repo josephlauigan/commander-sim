@@ -1,4 +1,5 @@
 1 Ancient Tomb (plst) TMP-315
+1 Arcane Signet (lcc) 104
 1 Badlands (cei) 278
 1 Bayou (ced) 279
 1 Birds of Paradise (blc) 81
@@ -8,12 +9,11 @@
 1 Breeding Pool (unf) 286
 1 Cavern of Souls (ltc) 362
 1 Chaos Warp (pw24) 7
+1 Chromatic Lantern (fca) 61
 1 Chrome Mox (2xm) 358
 1 City of Brass (2x2) 403
 1 Combat Celebrant (trc) 281
 1 Command Tower (mic) 170
-1 Conqueror's Flail (sld) 1571
-1 Cyclonic Rift (2xm) 339
 1 Decimate (sld) 140
 1 Demonic Tutor (sld) 1856
 1 Dragonlord Ojutai (slc) 2015
@@ -64,6 +64,7 @@
 1 Rampant Growth (fic) 313
 1 Rhystic Study (pcy) 45
 1 Sacred Foundry (unf) 285
+1 Sakura-Tribe Elder (soc) 285
 1 Scrubland (cei) 282
 1 Shadowspear (ltc) 353
 1 Sigarda's Aid (sld) 731
@@ -74,7 +75,6 @@
 1 Sting, the Glinting Dagger (ltr) 409
 1 Stomping Ground (rvr) 299
 1 Stoneforge Mystic (2xm) 337
-1 Swiftfoot Boots (fic) 361
 1 Sword of Feast and Famine (2xm) 364
 1 Sword of Fire and Ice (2xm) 365
 1 Swords to Plowshares (pf25) 12

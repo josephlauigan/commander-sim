@@ -75,11 +75,17 @@ fn without_the_bonus_the_lookahead_taps_out() {
     set_hold_w(&mut g, 0.0);
     // --- ai-eval: the old search is also the bare argmax (margin 0): with the margin the heuristic's top play
     // (holding for Ad Nauseam) stands, since Sheoldred's lead is inside the noise of six rollouts
+    // The old search is the look-ahead of `search::choose_inner`: Sheoldred's deck is a generic-policy deck, which
+    // decides by ISMCTS unless it is turned off, and ISMCTS hands a close call back to the heuristic's hold (its
+    // paired margin, with only a few rollouts) whatever `margin` says. So whether the old search spent the mana
+    // depended on the lists' noise; turn ISMCTS off on this thread and the look-ahead's bare argmax is the test.
+    sim_core::ai::ismcts::force(Some(false));
     let mut s = (*g.settings).clone();
     s.search.margin = 0.0;
     g.settings = Arc::new(s);
     let opts = brain::main_options(&mut g, P0, false).unwrap();
     let pick = search::choose(&mut g, P0, false, &opts).map(|i| opts[i].label.clone());
+    sim_core::ai::ismcts::force(None);
     assert_eq!(pick.as_deref(), Some("Sheoldred, the Apocalypse"), "the old search spends the mana");
 }
 

@@ -3,10 +3,10 @@
 # Written in Phase 4 PR 7 from its hand AI, played when AI_HAND is off: `karn::karn_prio` (the prio rules),
 # `karn::combo_this_turn` (the combo line), `karn::search_pick` (the Tron line: the missing Tron piece first).
 # Left out (the schema can't express it): Karn held while the Basalt + Rings + Ballista win is castable this turn; the
-# sweepers' gates (Oblivion Stone / Nevinyrral's Disk when behind, All Is Dust / Ugin by the coloured permanents
-# across the table); Greaves / Boots' middle value while Karn is coming (`karn_soon`); the Tron land drop first
-# (`land_adjust`); the Baubles held on the battlefield (`hold_ability`); the Factory / Foundry blocks
-# (`block_response`); the land search's fallbacks after Tron (Workshops, Factories, Wastes); `search_bonus`.
+# sweepers' gates (Oblivion Stone when behind, All Is Dust / Ugin by the coloured permanents across the table;
+# Nevinyrral's Disk left the deck 2026-11-02); Greaves / Boots' middle value while Karn is coming (`karn_soon`); the
+# Tron land drop first (`land_adjust`); the Baubles held on the battlefield (`hold_ability`); the Factory / Foundry
+# blocks (`block_response`); the land search's fallbacks after Tron (Workshops, Factories, Wastes); `search_bonus`.
 deck = "karn"
 default = "plan"
 
@@ -37,5 +37,5 @@ value = 88
 else = 30
 
 [[prio]]
-cards = ["Sol Ring", "Mind Stone", "Mox Opal", "Mana Vault", "Everflowing Chalice", "Thought Vessel", "Grim Monolith", "Urza's Bauble", "Wayfarer's Bauble", "Liquimetal Torque", "Mazemind Tome", "Soul-Guide Lantern", "Skullclamp"]
+cards = ["Sol Ring", "Mind Stone", "Mox Opal", "Mana Vault", "Thought Vessel", "Grim Monolith", "Urza's Bauble", "Wayfarer's Bauble", "Liquimetal Torque", "Mazemind Tome", "Soul-Guide Lantern", "Skullclamp"]
 value = 74
