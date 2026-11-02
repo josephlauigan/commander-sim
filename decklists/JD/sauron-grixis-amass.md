@@ -41,7 +41,7 @@ around.
 Orcish Bowmasters adds counters on its own and again on every extra opponent draw. Iron Man adds a counter every time
 you draw. Vision grows on off-turn casts. **Barad-dûr** is a late-game mana sink: it taps for black, and for
 {X}{X}{B} it amasses Orcs X whenever a creature has died that turn, which in a deck with Orcish Bowmasters, the
-spot removal, and Massacre Wurm, Ral, Inferno Titan and Comet Storm killing opposing creatures is almost always.
+spot removal, and Massacre Wurm, Inferno Titan and Comet Storm killing opposing creatures is almost always.
 
 ### Start it early
 **Dreadhorde Invasion** ({1}{B} enchantment) loses you 1 life and amasses Zombies 1 every upkeep, and **Lazotep
@@ -97,9 +97,7 @@ tempts on the way to a tutor, so with Sauron out each can mean discarding your h
 
 ### Clear the table, keep the Army
 Every sweeper here is one-sided or Army-friendly. **Massacre Wurm** ({3}{B}{B}{B}) gives opponents' creatures −2/−2
-when it enters, and each opponent loses 2 life whenever one of their creatures dies. **Ral and the Implicit Maze**
-({3}{R}{R} Saga) deals 2 damage to each creature and planeswalker your opponents control (chapter I), lets you discard
-a card to exile the top two and play them through your next turn (II), and makes a Spellgorger Weird (III). **Inferno
+when it enters, and each opponent loses 2 life whenever one of their creatures dies. **Inferno
 Titan** deals 3 damage divided among up to three targets when it enters and whenever it attacks. **Chandra's
 Ignition** ({3}{R}{R}) has a creature you control, the Army, deal damage equal to its power to each other creature and
 each opponent: it also hits your own other creatures, like Nibelheim Aflame, so cast it when the Army is the only body
@@ -126,6 +124,12 @@ equal to the spell's mana value: both fire off the same event, an opponent casti
 turn, which clears tokens, mana creatures and small blockers in front of the Army, and he gets a +1/+1 counter
 whenever a creature an opponent controls dies, so the turn he lands he is usually a 6/6 or bigger. Vigilance lets
 him attack and still guard Sauron.
+
+**Triple Triad** ({3}{R}{R}{R} enchantment) is the late-game value engine: at the beginning of your upkeep each player
+exiles the top card of their library, and until end of turn you may play yours and every other exiled card with lower
+mana value free. The deck's top end (the Titans, Massacre Wurm, Kaervek, Sephiroth, Jin-Gitaxias) is what makes it
+pay: flip one of them and you get it plus most of the table's cards for nothing. A land on top gets you only that land,
+so about one upkeep in three is a miss. Cast it when the board is stable, not into an open table.
 
 ### Card flow, mana and interaction
 Card draw: **Fact or Fiction** (an instant-speed dig: cast it at the end of an opponent's turn for two of the five
@@ -157,7 +161,7 @@ when it protects a creature of yours with power 7 or more (a grown Army or Sauro
 The Army wins by size, by getting through, and by the X-spell finishers; the deck has no combo. A big Army that
 connects tempts the Ring, which refills your hand while the table keeps feeding it. Sheoldred and the Archivist wheel
 drain the table, Exsanguinate, Comet Storm and Torment of Hailfire finish a table that is low, and Massacre
-Wurm, Ral or Inferno Titan clear blockers first.
+Wurm or Inferno Titan clear blockers first.
 
 ### Weak spots and how to play around them
 - **Big creature decks.** The deck loses mostly to combat. Land Propaganda, Talrand's Drakes and the one-sided
@@ -177,7 +181,7 @@ Wurm, Ral or Inferno Titan clear blockers first.
 
 **Archivist wheel with Bowmasters** (see Strategy) is the grind engine and, late, a finisher: three opponents redrawing five cards each take about 5 pings apiece from Bowmasters, and the Army grows by about 15. Hold it for the turn it kills or the counters matter.
 
-**The early Army.** Dreadhorde Invasion on turn two, or Lazotep Reaver, with a rock to follow (eleven in the deck), builds an Army before Sauron arrives. Then the first hit comes sooner, and Massacre Wurm, Ral or Inferno Titan clear the way for it.
+**The early Army.** Dreadhorde Invasion on turn two, or Lazotep Reaver, with a rock to follow (eleven in the deck), builds an Army before Sauron arrives. Then the first hit comes sooner, and Massacre Wurm or Inferno Titan clear the way for it.
 
 **Finish with X.** Once the Army has connected or opponents are low, Exsanguinate drains every opponent for X, and Comet Storm spreads X damage over as many targets as you kick. Both are better after a sweeper has already thinned the table.
 
@@ -196,7 +200,7 @@ The list is exactly 100 cards. 35 lands (18 nonbasic, 5 Island, 6 Mountain, 6 Sw
 
 Dual lands: the original dual Underground Sea; the shocklands Blood Crypt, Steam Vents and Watery Grave; the check lands Drowned Catacomb and Sulfur Falls; the painlands Shivan Reef and Underground River; Foreboding Ruins (reveal a matching land or enter tapped); Haunted Ridge; and the tapped lands Treno, Dark City and Path of Ancestry. **Sokenzan, Crucible of Defiance** taps for {R} like a Mountain; late, channel it ({3}{R}, discard it) for two hasty 1/1 Spirits at instant speed.
 
-**Interaction.** Six pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Baleful Mastery, Infernal Grasp, Terminate and Chaos Warp) plus Noxious Gearhulk; five counters (Mana Drain, Counterspell, An Offer You Can't Refuse, Force of Will and **Mystic Confluence**) plus Jin-Gitaxias; Not of This World, Deflecting Swat and Slip Out the Back to protect Sauron and the Army; Propaganda against attackers; two symmetric resets in Nibelheim Aflame and Cyclonic Rift; five one-sided sweepers or sweeper-like cards (Massacre Wurm, Ral and the Implicit Maze, Inferno Titan, Chandra's Ignition, Comet Storm); and Vandalblast for artifact-heavy tables.
+**Interaction.** Six pieces of spot removal (Bitter Triumph, Bloodchief's Thirst, Baleful Mastery, Infernal Grasp, Terminate and Chaos Warp) plus Noxious Gearhulk; five counters (Mana Drain, Counterspell, An Offer You Can't Refuse, Force of Will and **Mystic Confluence**) plus Jin-Gitaxias; Not of This World, Deflecting Swat and Slip Out the Back to protect Sauron and the Army; Propaganda against attackers; two symmetric resets in Nibelheim Aflame and Cyclonic Rift; four one-sided sweepers or sweeper-like cards (Massacre Wurm, Inferno Titan, Chandra's Ignition, Comet Storm); and Vandalblast for artifact-heavy tables.
 
 ## Tutor targets by board state
 
@@ -210,7 +214,7 @@ Three tutors: **Diabolic Tutor** (any card to hand), **Diabolic Intent** (any ca
 - **Need protection for the swing → Diabolic Tutor for Not of This World** (it needs a colourless-capable tutor; Ringsight can't find it).
 - **One problem creature → Ringsight for Infernal Grasp** (or Terminate for {B}{R} when the target is a creature and Grasp is not in hand).
 - **Pod is casting into you → Ringsight for Kaervek**.
-- **Behind on board / need the reset → Ringsight for Massacre Wurm or Inferno Titan**, or Ral and the Implicit Maze when you can wait a turn for the Army to stay safe; Cyclonic Rift if it is the whole table. The Ozolith out helps if you cast Nibelheim Aflame or Chandra's Ignition.
+- **Behind on board / need the reset → Ringsight for Massacre Wurm or Inferno Titan**; Cyclonic Rift if it is the whole table. The Ozolith out helps if you cast Nibelheim Aflame or Chandra's Ignition.
 - **Slow start, no mana → Diabolic Tutor for Sol Ring.**
 - **Flooded and grinding → Diabolic Tutor for Barad-dûr.**
 
@@ -236,7 +240,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Creatures (20).** Faerie Mastermind, Grave Titan, Inferno Titan, Iron Man Armored Avenger, Jace's Archivist, Jin-Gitaxias Progress Tyrant, Kaervek the Merciless, Lazotep Reaver, Massacre Wurm, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sephiroth Planet's Heir, Sheoldred the Apocalypse, Talrand Sky Summoner, Urza Lord High Artificer, Vision Synthezoid Avenger, War Machine Avenging Arsenal
 
-**Enchantments (4).** Call of the Ring, Dreadhorde Invasion, Propaganda, Ral and the Implicit Maze
+**Enchantments (4).** Call of the Ring, Dreadhorde Invasion, Propaganda, Triple Triad
 
 **Artifacts (13).** Arcane Signet, Chromatic Lantern, Dimir Signet, Fellwar Stone, Lightning Greaves, Mind Stone, Rakdos Signet, Sol Ring, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, The Ozolith, Whispersilk Cloak
 
@@ -301,7 +305,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Path of Ancestry
 1 Propaganda
 1 Rakdos Signet
-1 Ral and the Implicit Maze
 1 Ringsight
 1 Rogue's Passage
 1 Sauron, the Dark Lord
@@ -324,6 +327,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 The Ozolith
 1 Torment of Hailfire
 1 Treno, Dark City
+1 Triple Triad
 1 Underground River
 1 Underground Sea
 1 Urza, Lord High Artificer

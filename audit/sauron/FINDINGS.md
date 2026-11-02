@@ -15,6 +15,14 @@ T5 26.4% (28.7% over t3–t5).**
   Disdainful Stroke, Arcane Denial, Spell Pierce (t3, t4), Inexorable Tide, Relic of Legends.
 
 ## What was tried, and why it did or didn't work
+### 2026-11-01: Triple Triad in for Ral and the Implicit Maze (JD's choice; no run)
+Picked by fit, not simulated. Of JD's red decks Sauron has the heaviest curve (3.28 average mana value, 16 cards at 5+),
+which is what Triple Triad's "lesser mana value" clause rewards. Ral was the card most often stuck in hand (cast in
+20-30% of the games it was drawn, t3-t5, 10/17 card report), and swapping a 5-drop for a 6-drop keeps the curve about
+the same. Risks: the top end is already stuck in hand (Titans, Wurm, Gearhulk cast in 27-45% of their draws), Triad's
+{R}{R}{R} adds to that, and a land on top (a third of the deck) gives nothing. **Sim gap:** Triad is modeled Full
+(`impls/mine.rs`, `triad_upkeep`), but the generic priority Sauron's AI uses gives it 0 (no tags, no prio hook), so
+it is never cast; add a priority before any swap test of it.
 ### 2026-10-18: list matched to the physical deck (Urza in, Spell Pierce out; no new run)
 JD's physical list already had Urza in for Spell Pierce, so the repo list now matches it (branch `printings`). The
 evidence is the test below: +0.5, noise, a fair swap. The "Current state" numbers are from the old list; the next
