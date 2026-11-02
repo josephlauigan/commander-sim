@@ -1,0 +1,18 @@
+=== Realism: Tier 6 (cEDH, B5) [loose, lookahead AI, 2000 games, seeds 900000-901999; 6 decks, 4 a pod] ===
+targets: data/realism/t6.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     28.5%     26.5-30.5   31.8%     30.3-33.3  FAIL
+  seat 2 share of decisive games (%)                     26.6%     24.7-28.6   27.3%     25.8-28.8  PASS
+  seat 3 share of decisive games (%)                     24.1%     22.2-26.0   22.1%     20.6-23.6  FAIL
+  seat 4 share of decisive games (%)                     20.9%     19.1-22.7   18.8%     17.3-20.3  FAIL
+  median round of a decisive win (rounds)                  7.0       7.0-7.0     7.0           6-8  PASS
+  win round, 75th minus 25th percentile (rounds)           5.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                87.4%     85.9-88.8   47.8%     46.3-49.3  reference
+  wins by damage (combat or other) (%)                   11.8%     10.5-13.3   39.9%     38.4-41.4  reference
+  wins by commander damage (%)                            0.8%       0.5-1.2   11.6%     10.1-13.1  reference
+  wins by poison (%)                                      0.0%       0.0-0.2    0.7%         0-2.2  reference
+  deck win spread, best minus worst deck (pts)            11.7             -     4.0           0-8  FAIL
+  games over 15 rounds (round cap 20) (%)                 5.8%       4.8-6.9       -             -  no target
+  2 of 6 targets pass (2 statistics have no target yet; 4 reference values, not scored)
+Games: 2000, decisive 1978 (98.9%), round-cap timeouts 1.1%
+Each deck's share of the decisive games it sat in: Dack Fayden 27.2% of 1328; Kinnan 22.2% of 1319; Kraum/Tymna 27.5% of 1347; Rograkh/Silas 21.0% of 1291; Rograkh/Thrasios 20.3% of 1352; Sisay 32.0% of 1275

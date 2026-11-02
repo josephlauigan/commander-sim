@@ -1,0 +1,42 @@
+# Knobs fitted by commander-sim --fit --pool t5 --fit-scope shared (lookahead AI, loose profile)
+# 8 generations of 8, 500 games a candidate on seeds 500000-500499
+# Scored statistics: seat1_win, seat2_win, seat3_win, seat4_win, win_round_median
+# Loss: sum over the scored targets of ((sim - target) / half the band)^2; the win types at 0.25
+
+tier = "t5"
+
+[table]
+cthresh_default = 4
+instant_extra = 0
+
+[style.kinnan-simic-mana-combo]
+temp = 0.7367
+aggression = 0.0317
+caution = 0.6796
+
+[style.miirym-temur-dragons]
+temp = 0.7367
+aggression = 0.0317
+caution = 0.6796
+
+[style.urza-mono-blue-artifacts]
+temp = 0.7367
+aggression = 0.0317
+caution = 0.6796
+
+[style.yawgmoth-mono-black-aristocrats]
+temp = 0.7367
+aggression = 0.0317
+caution = 0.6796
+
+[style.zur-esper-enchantment-control]
+temp = 0.7367
+aggression = 0.0317
+caution = 0.6796
+
+[fit]
+loss = 2.102
+loss_builtin = 12.663
+games = 500
+generations = 8
+scope = "shared"

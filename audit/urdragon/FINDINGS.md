@@ -48,3 +48,7 @@ Finishing blows: Kinnan 22.4% of games, Miirym 15.8%, Urza 14.4%, Yawgmoth 13.6%
 ## 2026-10-31: card models (branch card-models-1; no sims until Phase 4 recalibration)
 
 Dragonlord Ojutai: Partial -> Full (hexproof while untapped, the combat-damage dig). Nicol Bolas, the Ravager: Partial -> Approximate (the flip to the Arisen; an Arisen that leaves is a planeswalker card in the graveyard). Still Partial: Peter Parker's Camera. No new number yet.
+
+## 2026-11-01: recalibration stage 2 remeasure
+
+The Ur-Dragon, t5: **19.2%** (CI 17.5-21.0, 1999 games: one skipped by an internal overflow panic) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). Stage 1, same seeds: 19.3%; the 10/30 number was 19.1%. Fitted t5 knobs: 19.0% (level).

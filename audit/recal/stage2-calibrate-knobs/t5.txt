@@ -1,0 +1,32 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t5 Kinnan             100 cards: Full 88, Full-auto 3, Approximate 9, Partial 0, Unmodeled 0
+  t5 Miirym             100 cards: Full 79, Full-auto 10, Approximate 11, Partial 0, Unmodeled 0
+  t5 Urza               100 cards: Full 90, Full-auto 4, Approximate 6, Partial 0, Unmodeled 0
+  t5 Yawgmoth           100 cards: Full 83, Full-auto 11, Approximate 6, Partial 0, Unmodeled 0
+  t5 Zur the Enchanter  100 cards: Full 88, Full-auto 6, Approximate 6, Partial 0, Unmodeled 0
+
+
+=== Within-tier balance [loose, n=1500 games per tier; each deck is seated in ~80%] ===
+  Tier 5 (High B4): avg game 8.6 rounds, timeouts 0.3%
+    Kinnan                        35.6% (32.9-38.3)  HIGH  [0.1 pts from round-cap wins]
+    Miirym                        27.7% (25.2-30.3)  [0.0 pts from round-cap wins]
+    Urza                          24.0% (21.6-26.5)  [0.1 pts from round-cap wins]
+    Yawgmoth                      17.8% (15.7-20.0)  [0.2 pts from round-cap wins]
+    Zur the Enchanter             19.9% (17.7-22.3)  [0.0 pts from round-cap wins]
+
+=== Tier ordering: each deck alone against three decks of the tier below [loose, n=1500] ===
+  Tier 5 (High B4) into Tier 4 (Low B4): 26.4% overall
+    Kinnan                        30.3% (28.1-32.7)
+    Miirym                        27.3% (25.1-29.6)
+    Urza                          23.7% (21.6-26.0)  (not above 25%)
+    Yawgmoth                      25.5% (23.3-27.7)
+    Zur the Enchanter             25.0% (22.9-27.3)  (not above 25%)
+
+(1729s total)
+
+WARNING: 3 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 501342  panic: attempt to multiply with overflow (at crates/sim-core/src/engine/life.rs:26)
+   seed 500401  panic: attempt to multiply with overflow (at crates/sim-core/src/engine/combat.rs:694)
+   seed 501313  panic: attempt to add with overflow (at crates/sim-core/src/engine/life.rs:126)
+  Please send me that output so I can fix the cause.

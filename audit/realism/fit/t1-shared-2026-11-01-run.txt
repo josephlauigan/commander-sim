@@ -1,0 +1,40 @@
+
+=== Fit: Tier 1 (High B2 / Low B3) [loose, adaptive AI, 2000 games a candidate, seeds 500000-501999] ===
+knobs (5): temp, aggression, caution, cthresh_default, instant_extra
+built-in values: loss 37.70
+  generation  1: best so far 33.26, this generation 33.26 (mean 43.61), step 0.270
+  generation  2: best so far 26.06, this generation 27.31 (mean 37.64), step 0.262
+  generation  3: best so far 26.06, this generation 26.84 (mean 32.27), step 0.284
+  generation  4: best so far 23.50, this generation 24.29 (mean 33.95), step 0.306
+  generation  5: best so far 23.22, this generation 24.02 (mean 33.73), step 0.334
+  generation  6: best so far 22.58, this generation 24.31 (mean 35.00), step 0.309
+  generation  7: best so far 22.58, this generation 25.46 (mean 30.65), step 0.276
+  generation  8: best so far 22.58, this generation 24.00 (mean 32.85), step 0.258
+  generation  9: best so far 22.58, this generation 28.51 (mean 31.66), step 0.238
+  generation 10: best so far 22.58, this generation 26.58 (mean 29.63), step 0.227
+  generation 11: best so far 22.58, this generation 23.92 (mean 27.09), step 0.196
+  generation 12: best so far 22.50, this generation 23.33 (mean 29.49), step 0.180
+  generation 13: best so far 22.23, this generation 22.60 (mean 29.58), step 0.158
+  generation 14: best so far 22.23, this generation 23.10 (mean 27.95), step 0.145
+  generation 15: best so far 21.69, this generation 22.72 (mean 29.57), step 0.134
+
+  statistic                                          built-in        best      target       band
+  seat 1 share of decisive games                         31.1        30.4        31.3  29.8-32.8 
+  seat 2 share of decisive games                         26.0        26.9        26.9  25.4-28.4 
+  seat 3 share of decisive games                         22.8        23.1        22.9  21.4-24.4 
+  seat 4 share of decisive games                         20.0        19.6        18.9  17.4-20.4 
+  median round of a decisive win                         10.0        10.0         8.0   7.0-9.0  
+  wins by a combo or an alternate win                     2.4         4.3        11.3   9.8-12.8 
+  wins by damage (combat or other)                       65.7        67.8        70.4  68.9-71.9 
+  wins by commander damage                               32.0        28.0        18.1  16.6-19.6 
+  wins by poison                                          0.0         0.0         0.2   0.0-1.7  
+  loss: built-in 37.70, best 21.69
+
+  best knobs:
+    temp                                           0.967  (built-in 1.000)
+    aggression                                     0.000  (built-in 0.640)
+    caution                                        0.974  (built-in 0.480)
+    cthresh_default                                5.000  (built-in 6.000)
+    instant_extra                                  0.000  (built-in 0.000)
+
+wrote /home/joseph/projects/mtg_sims/commander-sim/.claude/worktrees/overnight-stack/audit/realism/fit/t1-shared-2026-11-01.toml (run it with --knobs; confirm with --realism and more games)

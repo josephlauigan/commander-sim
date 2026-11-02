@@ -1,0 +1,18 @@
+=== Realism: Tier 2 (Mid B3) [loose, lookahead AI, 2000 games, seeds 900000-901999; 5 decks, 4 a pod] ===
+targets: data/realism/t2.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     29.1%     27.1-31.1   30.9%     29.4-32.4  FAIL
+  seat 2 share of decisive games (%)                     25.1%     23.2-27.0   28.1%     26.6-29.6  FAIL
+  seat 3 share of decisive games (%)                     23.4%     21.5-25.3   22.3%     20.8-23.8  PASS
+  seat 4 share of decisive games (%)                     22.5%     20.7-24.4   18.6%     17.1-20.1  FAIL
+  median round of a decisive win (rounds)                 12.0     12.0-12.0     9.0          8-10  FAIL
+  win round, 75th minus 25th percentile (rounds)           4.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                10.3%      9.0-11.7   21.2%     19.7-22.7  FAIL
+  wins by damage (combat or other) (%)                   81.5%     79.7-83.2   72.6%     71.1-74.1  FAIL
+  wins by commander damage (%)                            8.2%       7.0-9.5    5.7%       4.2-7.2  FAIL
+  wins by poison (%)                                      0.0%       0.0-0.2    0.5%           0-2  PASS
+  deck win spread, best minus worst deck (pts)            31.1             -       -             -  no target
+  games over 15 rounds (round cap 20) (%)                17.4%     15.8-19.2       -             -  no target
+  2 of 9 targets pass (3 statistics have no target yet)
+Games: 2000, decisive 1944 (97.2%), round-cap timeouts 2.8%
+Each deck's share of the decisive games it sat in: Brago 13.0% of 1556; Kaalia of the Vast 25.2% of 1579; Lord Windgrace 28.0% of 1560; Meren of Clan Nel Toth 14.2% of 1518; Sythis 44.1% of 1563

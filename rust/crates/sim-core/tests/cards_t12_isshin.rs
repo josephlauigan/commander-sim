@@ -201,6 +201,22 @@ fn firebender_ascension_counts_attack_triggers_and_copies_from_four() {
     assert_eq!(g.perm(fa).data.get(DataKey::T12Isshin), Some(&Val::Int(4)), "a vanilla attacker: no counter");
 }
 
+/// A creature Firebender Ascension (Anikthea's 3/3 Zombie copy) attacking: its own quest trigger is not a trigger
+/// its attack caused, so no counter and no copy (copying it re-ran the hook without end: a stack overflow, 11/01)
+#[test]
+fn an_attacking_creature_firebender_ascension_does_not_count_itself() {
+    let mut g = game();
+    let fa = perm(&mut g, P0, "Firebender Ascension");
+    g.perm_mut(fa).data.set(DataKey::T12Isshin, Val::Int(5));
+    combat::attack_triggers(&mut g, P0, &[fa], P1).unwrap();
+    assert_eq!(g.perm(fa).data.get(DataKey::T12Isshin), Some(&Val::Int(5)), "no counter for its own ability");
+    let c = perm(&mut g, P0, "Captain Lannery Storm");
+    let tr = g.player(P0).treasures;
+    combat::attack_triggers(&mut g, P0, &[fa, c], P1).unwrap();
+    assert_eq!(g.perm(fa).data.get(DataKey::T12Isshin), Some(&Val::Int(6)), "Lannery's trigger counts");
+    assert_eq!(g.player(P0).treasures, tr + 2, "and is copied");
+}
+
 // ======================================================== Hammers of Moradin
 #[test]
 fn hammers_of_moradin_taps_a_creature_of_each_opponent() {

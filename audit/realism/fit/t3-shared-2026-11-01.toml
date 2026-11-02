@@ -1,0 +1,42 @@
+# Knobs fitted by commander-sim --fit --pool t3 --fit-scope shared (adaptive AI, loose profile)
+# 15 generations of 8, 2000 games a candidate on seeds 500000-501999
+# Scored statistics: seat1_win, seat2_win, seat3_win, seat4_win, win_combo_alt, win_commander_damage, win_damage, win_poison, win_round_median
+# Loss: sum over the scored targets of ((sim - target) / half the band)^2; the win types at 0.25
+
+tier = "t3"
+
+[table]
+cthresh_default = 10
+instant_extra = 2
+
+[style.atraxa-infect]
+temp = 1.4853
+aggression = 1.0000
+caution = 0.0000
+
+[style.aurelia-boros-extra-combats]
+temp = 1.4853
+aggression = 1.0000
+caution = 0.0000
+
+[style.korvold-jund-sacrifice]
+temp = 1.4853
+aggression = 1.0000
+caution = 0.0000
+
+[style.marwyn-mono-green-elves]
+temp = 1.4853
+aggression = 1.0000
+caution = 0.0000
+
+[style.tergrid-mono-black-disruption]
+temp = 1.4853
+aggression = 1.0000
+caution = 0.0000
+
+[fit]
+loss = 28.809
+loss_builtin = 40.024
+games = 2000
+generations = 15
+scope = "shared"

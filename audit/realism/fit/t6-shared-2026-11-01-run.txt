@@ -1,0 +1,38 @@
+
+=== Fit: Tier 6 (cEDH, B5) [loose, adaptive AI, 2000 games a candidate, seeds 500000-501999] ===
+knobs (6): temp, aggression, caution, cthresh_default, instant_extra, t6_moxd_lands
+built-in values: loss 25.83
+  generation  1: best so far 19.15, this generation 19.15 (mean 28.54), step 0.268
+  generation  2: best so far 19.15, this generation 24.80 (mean 29.91), step 0.289
+  generation  3: best so far 19.15, this generation 20.80 (mean 25.59), step 0.310
+  generation  4: best so far 15.37, this generation 15.77 (mean 26.74), step 0.296
+  generation  5: best so far 15.37, this generation 19.33 (mean 27.61), step 0.309
+  generation  6: best so far 15.37, this generation 19.55 (mean 25.52), step 0.352
+  generation  7: best so far 15.37, this generation 24.13 (mean 33.09), step 0.376
+  generation  8: best so far 15.37, this generation 19.09 (mean 28.67), step 0.332
+  generation  9: best so far 15.37, this generation 18.74 (mean 26.26), step 0.293
+  generation 10: best so far 15.37, this generation 17.21 (mean 25.48), step 0.269
+  generation 11: best so far 15.37, this generation 20.73 (mean 26.76), step 0.254
+  generation 12: best so far 15.37, this generation 19.11 (mean 27.14), step 0.257
+  generation 13: best so far 15.37, this generation 19.64 (mean 26.82), step 0.245
+  generation 14: best so far 15.37, this generation 17.85 (mean 25.96), step 0.221
+  generation 15: best so far 15.37, this generation 17.07 (mean 24.97), step 0.212
+
+  statistic                                          built-in        best      target       band
+  seat 1 share of decisive games                         28.0        28.6        31.8  30.3-33.3 
+  seat 2 share of decisive games                         25.2        26.1        27.3  25.8-28.8 
+  seat 3 share of decisive games                         23.7        24.0        22.1  20.6-23.6 
+  seat 4 share of decisive games                         23.1        21.3        18.8  17.3-20.3 
+  median round of a decisive win                          8.0         8.0         7.0   6.0-8.0  
+  deck win spread, best minus worst deck                 14.7        12.7         4.0   0.0-8.0  
+  loss: built-in 25.83, best 15.37
+
+  best knobs:
+    temp                                           0.200  (built-in 1.000)
+    aggression                                     0.320  (built-in 0.600)
+    caution                                        0.677  (built-in 0.500)
+    cthresh_default                                4.000  (built-in 6.000)
+    instant_extra                                  0.000  (built-in 0.000)
+    t6_moxd_lands                                  2.000  (built-in 3.000)
+
+wrote /home/joseph/projects/mtg_sims/commander-sim/.claude/worktrees/overnight-stack/audit/realism/fit/t6-shared-2026-11-01.toml (run it with --knobs; confirm with --realism and more games)

@@ -1,0 +1,42 @@
+# Knobs fitted by commander-sim --fit --pool t0 --fit-scope shared (lookahead AI, loose profile)
+# 8 generations of 8, 500 games a candidate on seeds 500000-500499
+# Scored statistics: seat1_win, seat2_win, seat3_win, seat4_win, win_combo_alt, win_commander_damage, win_damage, win_poison, win_round_median
+# Loss: sum over the scored targets of ((sim - target) / half the band)^2; the win types at 0.25
+
+tier = "t0"
+
+[table]
+cthresh_default = 5
+instant_extra = 3
+
+[style.anikthea-enduring-enchantments]
+temp = 2.0000
+aggression = 0.6321
+caution = 0.5153
+
+[style.captain-america-avengers-assemble]
+temp = 2.0000
+aggression = 0.6321
+caution = 0.5153
+
+[style.giada-calling-all-angels]
+temp = 2.0000
+aggression = 0.6321
+caution = 0.5153
+
+[style.stella-lee-quick-draw]
+temp = 2.0000
+aggression = 0.6321
+caution = 0.5153
+
+[style.zurgo-mardu-surge]
+temp = 2.0000
+aggression = 0.6321
+caution = 0.5153
+
+[fit]
+loss = 50.207
+loss_builtin = 74.463
+games = 500
+generations = 8
+scope = "shared"

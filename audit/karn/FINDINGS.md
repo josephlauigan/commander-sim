@@ -45,3 +45,7 @@ seed 77) explains it.
 ## 2026-10-31: card models (branch card-models-1; no sims until Phase 4 recalibration)
 
 Treasure Vault: Partial -> Full (the {X}{X} ability, used at the end of the turn before Karn's own or for a large X). No new number yet.
+
+## 2026-11-01: recalibration stage 2 remeasure
+
+Karn, t4 / t5: **22.6% / 21.1%** (average 21.9%) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). Stage 1, same seeds: 21.1 / 21.7. The 10/20 numbers (23.8 / 29.0, 1,000 games, `--any-tier`) are from the old list. Fitted t5 knobs: 21.7% (level).

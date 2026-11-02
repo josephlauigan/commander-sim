@@ -1,0 +1,30 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t4 Chulane       100 cards: Full 90, Full-auto 7, Approximate 3, Partial 0, Unmodeled 0
+  t4 Edgar Markov  100 cards: Full 78, Full-auto 14, Approximate 8, Partial 0, Unmodeled 0
+  t4 Krenko        100 cards: Full 84, Full-auto 8, Approximate 8, Partial 0, Unmodeled 0
+  t4 Prosper       100 cards: Full 91, Full-auto 3, Approximate 6, Partial 0, Unmodeled 0
+  t4 Yuriko        100 cards: Full 87, Full-auto 9, Approximate 4, Partial 0, Unmodeled 0
+
+
+=== Within-tier balance [loose, n=1500 games per tier; each deck is seated in ~80%] ===
+  Tier 4 (Low B4): avg game 8.2 rounds, timeouts 0.0%
+    Chulane                       18.4% (16.3-20.6)  [0.0 pts from round-cap wins]
+    Edgar Markov                  44.5% (41.7-47.3)  HIGH  [0.0 pts from round-cap wins]
+    Krenko                        29.3% (26.8-31.9)  [0.0 pts from round-cap wins]
+    Prosper                       16.6% (14.6-18.8)  [0.0 pts from round-cap wins]
+    Yuriko                        16.1% (14.1-18.3)  [0.0 pts from round-cap wins]
+
+=== Tier ordering: each deck alone against three decks of the tier below [loose, n=1500] ===
+  Tier 4 (Low B4) into Tier 3 (High B3): 27.1% overall
+    Chulane                       23.1% (21.0-25.3)  (not above 25%)
+    Edgar Markov                  40.2% (37.7-42.7)
+    Krenko                        32.6% (30.3-35.0)
+    Prosper                       17.6% (15.8-19.6)  (not above 25%)
+    Yuriko                        21.8% (19.8-24.0)  (not above 25%)
+
+(1328s total)
+
+WARNING: 1 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 501345  panic: called `Option::unwrap()` on a `None` value (at crates/sim-core/src/engine/stack.rs:1065)
+  Please send me that output so I can fix the cause.
