@@ -257,57 +257,66 @@ worth it) -> S3, S4 -> S5 -> S6.
 
 ## JD's decisions (2026-11-01) and Phase B
 
-1. Tier 6 targets: median win round 5, win-round IQR 2 (band 1-3). The coordinator is changing them on branch
-   `t6-targets`.
+1. Tier 6 targets: median win round 5 and a spread target of 2 (PR #202; `data/realism/` is not touched on this
+   branch).
 2. Tier 5's lists and interaction are right for its level: no pool list changes. S3 is dropped.
 3. Tier 5 should not single out the cEDH deck. **The rule:** the cEDH pod's readings (every win step countered, Ad
-   Nauseam a win spell, the quiet lines' progress) are how Tier 6 decks read each other. A deck of any other tier
-   reads a Tier 6 player by the generic rules, as it reads anyone.
+   Nauseam a win spell, the quiet lines' progress) are how Tier 6 decks read each other. A deck of any other tier reads
+   a Tier 6 player by the generic rules, as it reads anyone.
 
 ### The code (branch `t6-structure`)
 
-Every place where a deck's choice depends on an *opponent* being Tier 6 (`is_t6` / `.t6` / `t6_going` of a
-player other than the one choosing):
+Every place where a deck's choice depends on an *opponent* being Tier 6 (`is_t6` / `.t6` / `t6_going` of a player other
+than the one choosing), and what was done:
 
 | place | what it did | change |
 |---|---|---|
-| `ai/t6_table.rs::counter_verdict` (`g.t6_going == Some(ctrl)`: counter every win step) | Only reached for a Tier 6 counterer: `engine/stack.rs::ai_respond` sends a non-t6 counterer to the look-ahead or the generic roll | Made explicit: a non-t6 q gets `Verdict::Roll(val, thr)`, the generic roll. No behaviour change: the caller already gates. (The asymmetry in H2 (1) runs the other way: a *Tier 6* counterer doesn't treat a *Tier 5* win step as a win attempt. That follows the same rule and is unchanged.) |
-| `ai/pool.rs::spell_importance`: a Tier 6 caster's Ad Nauseam is 8 | The stack item's `imp`, read by every counterer: a Tier 5 counterer's `wants_counter` value and its Hullbreaker bounce check | `engine/stack.rs::imp_seen_by`: a non-t6 responder reads that spell at its generic importance (`combo_imp` max `spell_importance_generic`). The caster's own reading (its counter-war defence, `t.imp >= 6`) is unchanged |
-| `impls/combos.rs::combo_progress`: a Tier 6 player's quiet lines and Cradle-type land pieces count | The look-ahead's `strength` of every player (`raw_term`), and the learned evaluation's `COMBO` / `STRENGTH` features: a Tier 5 searcher read a Tier 6 opponent's progress by the Tier 6 rule | `combo_progress_seen(viewer, q)` / `strength_seen(viewer, q)`: the Tier 6 reading only when both are Tier 6. `raw_term`, `learned::raw` and `evdiag::terms` pass the viewer. `combo_progress(q)` and `strength(q)` are q's own reading, unchanged |
+| `ai/t6_table.rs::counter_verdict` (`g.t6_going == Some(ctrl)`, or Ad Nauseam: counter every win step) | The caller (`engine/stack.rs::ai_respond`) already sends a non-Tier-6 counterer to the look-ahead or the generic roll, so a Tier 5 counterer never reached it | Made explicit: a non-Tier-6 q gets `Verdict::Roll(val, thr)`, the generic roll. No behaviour change in the game; it keeps the rule true for any caller |
+| `ai/pool.rs::spell_importance`: a Tier 6 caster's Ad Nauseam is 8 | The stack item's `imp`, read by every counterer: a Tier 5 counterer's counter value and its Hullbreaker bounce check | `engine/stack.rs::imp_seen_by` / `value_seen_by`: a non-Tier-6 responder reads that spell at its generic importance (`combo_imp` max `spell_importance_generic`). The caster's own reading (counter-war defence, `t.imp >= 6`) is unchanged |
+| `impls/t6_redirects.rs::redirect_counter` (picks the best other spell on the stack to turn a counter on, by `max(value_to, imp)`) | Read the raw `imp` (8 for a Tier 6 Ad Nauseam) for a responder of any tier | Reads `value_seen_by` / `imp_seen_by`, the same rule |
+| `impls/combos.rs::combo_progress`: a Tier 6 player's quiet lines and Cradle-type land pieces count | "Closest to winning": the look-ahead's `strength` of every player (`raw_term`), and the learned evaluation's `COMBO` / `STRENGTH` features: a Tier 5 searcher read a Tier 6 opponent's progress by the Tier 6 rule | `combo_progress_seen(viewer, q)` / `strength_seen(viewer, q)`: the Tier 6 reading only when both are Tier 6. `raw_term`, `learned::raw` and `evdiag::terms` pass the viewer. `combo_progress(q)` and `strength(q)` are q's own reading, unchanged |
+
+Why the `search.rs`, `learned.rs` and `evdiag.rs` edits are needed: they are the callers of `strength` on an
+*opponent* (`raw_term`'s opponent terms, the learned features of each opponent, and evdiag's copy of the evaluation). A
+`strength_seen` that is not passed the viewer would keep the Tier 6 reading for a Tier 5 searcher. Each one only passes
+the evaluating player as the viewer; `strength(q)` for q's own term is the old function.
 
 Checked and left alone, each because it is the choosing player's own deck, a statistic, or not keyed on tier:
 - **The player's own play:** `engine/life.rs:173` and `engine/zones.rs:696` (Angel's Grace); `engine/stack.rs`
-  `pact_affordable` / `pick_counter`; `engine/tutors.rs:469`; `impls/t4.rs:985` (Consecrated Sphinx's owner);
-  `impls/combos.rs:707, 1531, 1757`; `ai/brain.rs` 143, 611, 623, 1158, 1265, 1352 (the threat bonus and "combo
-  near" read archenemy scores, gated on the viewer being Tier 6); `ai/plans.rs:91`; `ai/pool.rs` 126, 150, 159;
-  `ai/values.rs:39`; and the `impls/*` hooks, every one keyed on the acting player.
-- **Not keyed on tier:** `plan_data` `opp-stop-max`, `archenemy-max` and `stop_chance` read the opponents'
-  cards. Threat values (`common.rs` PVAL) are per card name, the same whoever plays it. A Tier 6 line step's
-  importance (`t6_combos_t6.rs:147`, 6) is the line's own value.
-- **Statistics only:** `t6stats.rs` (79, 87 and the rest), `search.rs:1322`, `evdiag.rs:197`.
+  `pact_affordable` / `pick_counter`; `engine/tutors.rs:469`; `impls/t4.rs:985` (Consecrated Sphinx's owner draws);
+  `impls/combos.rs:707, 1531, 1757`; `ai/brain.rs` 143, 611, 623, 1158, 1265, 1352 (the threat bonus and "combo near"
+  read archenemy scores, gated on the viewer being Tier 6); `ai/plans.rs:91`; `ai/pool.rs` 126, 150, 159;
+  `ai/values.rs:39` (`generic_deck(p)`, only asked of the choosing player); `ai/planner.rs:104`; and the `impls/*`
+  hooks, every one keyed on the acting player.
+- **Not keyed on tier:** `plan_data` `opp-stop-max`, `archenemy-max` and `stop_chance` read the opponents' cards (only
+  the Kraum/Tymna and Dack plans, both Tier 6, use them). Threat values (`common.rs` PVAL) are per card name, the same
+  whoever plays it. A Tier 6 line step's importance (`t6_combos_t6.rs:147`, 6) is the line's own value.
+- **Other readers of a stack item's `imp`:** `t6_counters.rs` Commandeer / Sudden Substitution (permanents or spells
+  aimed at q; Ad Nauseam is neither), Louisoix's Sacrifice and Azorius Guildmage (abilities, not spells),
+  `t12_brago_meren.rs:663` and the copy checks in `ai_respond` (the responder's own items).
+- **Statistics only:** `t6stats.rs`, `search.rs:1328` and `evdiag.rs:197` (`pl.t6` printed).
 
 **Which games change:** only those where a non-Tier-6 deck faces a Tier 6 deck. In the pool that is `--calibrate
-ordering` t6 into t5 (and `--any-tier` runs). A table with no Tier 6 deck never meets a Tier 6 caster or player.
-At an all-Tier-6 table every viewer and responder is Tier 6. Neither branch draws from the RNG, so those games must
-be byte-identical.
+ordering` t6 into t5 (and `--any-tier` runs). A table with no Tier 6 deck never meets a Tier 6 caster or player: every
+new test is `is_t6(q)` or `is_t6(caster)` and is false. At an all-Tier-6 table every viewer and responder is Tier 6, so
+each test is true and the old path runs. Neither branch draws from the RNG, so those games must be byte-identical.
 
-**How that will be shown** (in the sim plan): old (origin/main) against new (this branch) on the same seeds, with
-the outputs diffed:
+**How that will be shown** (in the sim plan): old (origin/main) against new (this branch) on the same seeds, with the
+outputs diffed:
 - `--realism --pool tN --games 300 --seed 900000` for t1-t6: identical;
 - `--calibrate ordering --pool t5 --games 300`: identical;
 - `--calibrate ordering --pool t6 --games 300`: allowed to differ, the only place.
 
-Tests: `rust/crates/sim-core/tests/ai_t6_mixed_table.rs` (5 tests). The suite, the build warnings and
-`cardgen export` are in the commit message.
+Tests: `rust/crates/sim-core/tests/ai_t6_mixed_table.rs` (5 tests). The suite, the build warnings and `cardgen export`
+are in the commit message.
 
 ## Sim plan after "go" (replaces the one above)
 
-Speeds from the existing outputs at `--jobs 22`:
+Speeds from the existing outputs at `--jobs 22` (fewer if another job runs):
 - ordering and `--deck` cells: about 5.6 games a second (4.5 min per 1500 games);
-- look-ahead realism t6: about 4 games a second;
-- realism t1-t5: 2.7-9 games a second.
+- look-ahead realism t6: about 4 games a second.
 
-Every run is under the 24G cap, loose, the look-ahead AI, `--jobs 22`.
+Every run is under the 24G cap, loose, the look-ahead AI.
 
 **S0. Diagnostic patch and two scratch builds** (cargo `-j 6`; this can be done before "go", since it plays no
 games). The patch is scratch only and never committed:
@@ -320,14 +329,15 @@ About 25 min for both.
 
 | # | run | binary | games | cost | confirms if |
 |---|---|---|---|---|---|
-| I | Identity: `--realism --pool tN --games 300 --seed 900000` for t1-t6 and `--calibrate ordering --pool t5 --games 300`, base and new, outputs diffed (timing lines aside) | both | 2 x 3300 | 20 min | every diff empty. Then `--calibrate ordering --pool t6 --games 300` (2 x 1800, 11 min) shows the only change |
-| S1 | `--deck KEY --pool t5 --games 1500 --seed 500000` for the six t6 keys (the ordering's games), base and new, paired by seed | both | 2 x 9000 | 55 min | Base: H1-H3 as before (t6 win round not ahead of the t5 winners'; board decks stopped by removal and sweepers; more "ready, went later" than within t6). New against base: the paired change from (a) on each deck, with its 95% interval. A gain means t5's Tier 6 reading was costing the t6 deck; level means the gap is speed and lists (H1) |
+| I | Identity (the coordinator's check): `--realism --pool tN --games 300 --seed 900000` for t1-t6 and `--calibrate ordering --pool t5 --games 300`, base and new, outputs diffed (timing lines aside) | both | 2 x 3300 | 20 min | every diff empty. Then `--calibrate ordering --pool t6 --games 300` (2 x 1800, 11 min) shows the only change |
+| S1 | `--deck KEY --pool t5 --games 1500 --seed 500000` for the six Tier 6 keys (the ordering's games, seeds 500000+), base and new, paired by seed | both | 2 x 9000 | 55 min | Base: H1-H3 as before (t6 win round not ahead of the t5 winners'; board decks stopped by removal and sweepers; more "ready, went later" than within t6). New against base: the paired change on each deck, with its 95% interval. A gain means t5's Tier 6 reading was costing the t6 deck; level means the gap is speed and lists (H1) |
 | S2 | `--trace` 8 lost games each of Rograkh/Thrasios and Sisay from S1 | new | 16 | 2 min | the losses show a sweeper or Yawgmoth on the board line, or a sorcery tutor held with the mana to cast it |
-| S5 | `--realism --pool t6 --games 4000 --seed 900000` with `DIAG_READY=1`, scored against the new targets (median 5, IQR 2: `data/realism/t6.toml` from `t6-targets`). All-t6 tables are the same on both binaries | base | 4000 | 17 min | It shows the gap to the new targets. It confirms H1 if under 50% of player-games are ever ready and the ready round's standard deviation is 2.5 or more, and if the race model fed those numbers reproduces the sim's seats within 1.5 points |
-| S6 | `PLANNER_PROGRESS=1` on S5's run, and on S1's Rograkh/Thrasios cell | new | 4000 + 1500 | 22 min | ready share up, IQR down, seat 1 up (paired against S5); Rograkh/Thrasios into t5 up |
+| S5 | `--realism --pool t6 --games 4000 --seed 900000` with `DIAG_READY=1`, scored against the new targets (median 5, spread 2: `data/realism/t6.toml` after PR #202). All-t6 tables are the same on both binaries, so the base binary is the one used | base | 4000 | 17 min | It shows the gap to the new targets. It confirms H1 if under 50% of player-games are ever ready and the ready round's standard deviation is 2.5 or more, and if the race model fed those numbers reproduces the sim's seats within 1.5 points |
+| S6 | `PLANNER_PROGRESS=1` on S5's run, and on S1's Rograkh/Thrasios cell | new | 4000 + 1500 | 22 min | ready share up, spread down, seat 1 up (paired against S5); Rograkh/Thrasios into t5 up |
 
 S3 is dropped (JD's decision 2). S4 is dropped: it was the reverse change (Tier 6 counterers treating Tier 5 win steps
 as win attempts), and the rule leaves it out.
 
-**Total:** about 2 h 10 min of machine time (I 31 min, S1 55, S2 2, S5 17, S6 22), plus 25 min of builds before
-"go". Order: I (the identity has to pass before S1 means anything) -> S1 -> S2 -> S5 -> S6.
+**Total:** about 2 h 10 min of machine time (I 31 min, S1 55, S2 2, S5 17, S6 22 = 127 min), plus 25 min of builds
+before "go". Without the identity run I (if the coordinator checks it another way): 1 h 36 min. Order: I (the
+identity has to pass before S1 means anything) -> S1 -> S2 -> S5 -> S6.

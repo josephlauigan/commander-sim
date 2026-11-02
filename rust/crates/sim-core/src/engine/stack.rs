@@ -768,7 +768,7 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
         return Ok(());
     }
     let imp = imp_seen_by(g, q, &top);
-    let val = top.aff.iter().find(|x| x.0 == q).map_or(imp, |x| x.1); // `StackItem::value_to` with q's reading
+    let val = value_seen_by(g, q, &top);
     if val <= 0.0 && top.aff.is_empty() {
         return Ok(());
     }
@@ -842,6 +842,11 @@ pub fn imp_seen_by(g: &Game, q: PlayerId, it: &StackItem) -> f64 {
         }
         _ => it.imp,
     }
+}
+
+/// `StackItem::value_to(q)` with q's reading of the importance (`imp_seen_by`)
+pub fn value_seen_by(g: &Game, q: PlayerId, it: &StackItem) -> f64 {
+    it.aff.iter().find(|x| x.0 == q).map_or_else(|| imp_seen_by(g, q, it), |x| x.1)
 }
 
 // ------------------------------------------------------------------ counterspells

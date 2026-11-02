@@ -242,7 +242,10 @@ pub fn redirect_counter(g: &mut Game, q: PlayerId, id: u32) -> Res<bool> {
                 && x.card.is_some_and(|s| crate::engine::stack::counter_ok(g, ctr, s))
                 && crate::engine::stack::counterable(g, x)
         })
-        .map(|x| (x.id, x.value_to(q).max(x.imp)))
+        .map(|x| {
+            // q's reading of the spell (a Tier 6 caster's Ad Nauseam is a win spell to the Tier 6 table only)
+            (x.id, crate::engine::stack::value_seen_by(g, q, x).max(crate::engine::stack::imp_seen_by(g, q, x)))
+        })
         .collect();
     let Some(&(n, _)) = alt.iter().max_by(|a, b| a.1.total_cmp(&b.1)) else { return Ok(false) };
     if !cast_redirect(g, q, c, id)? {
