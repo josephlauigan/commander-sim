@@ -484,8 +484,11 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
         cost_of(g, p, c)
     };
     g.pay_for = Some(c);
-    let ok = can_pay(g, p, cg, &cp, cv);
-    let paid = if ok { pay(g, p, cg, &cp, cv) } else { Ok(false) };
+    // --- t6-xtutor: the planner pays X = its target's mana value (set only around its cast), not all the spare mana;
+    // the X is paid with the cost
+    let plan_x = g.player(p).plan_x.filter(|_| d.tag(Tag::Xtutor)).unwrap_or(0);
+    let ok = can_pay(g, p, cg + plan_x, &cp, cv);
+    let paid = if ok { pay(g, p, cg + plan_x, &cp, cv) } else { Ok(false) };
     g.pay_for = None;
     if !ok || !paid? {
         return Ok(false);
@@ -493,8 +496,14 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
     let mut ctx = ctx0;
     if d.tag(Tag::Tokx) || d.tag(Tag::Xtutor) {
         // X spells of outside decks: X = all spare mana
-        let x = total_mana(g, p, cv);
-        pay(g, p, x, "", cv)?;
+        let x = match g.player(p).plan_x.filter(|_| d.tag(Tag::Xtutor)) {
+            Some(x) => x, // --- t6-xtutor: paid with the cost
+            None => {
+                let x = total_mana(g, p, cv);
+                pay(g, p, x, "", cv)?;
+                x
+            }
+        };
         ctx.x = x as i32;
         if d.tag(Tag::Xtutor) {
             g.last_x = x as i32;
@@ -1216,7 +1225,7 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
                 Decision::Reserve { tutor, plan } => {
                     let (n, t, seq) = (g.player(p).name, g.db.get(tutor).name.to_string(), describe(g, &plan));
                     crate::glog!(g, "      [{n} keeps mana for {t} [plan: {seq}; at the end of the turn before ours]]");
-                    opts = super::planner::reserve(g, p, tutor, opts);
+                    opts = super::planner::reserve(g, p, tutor, super::planner::tutor_x(g, plan[0]), opts);
                     super::planner::bump(g, p, "plan|reserve");
                 }
                 Decision::None => {}

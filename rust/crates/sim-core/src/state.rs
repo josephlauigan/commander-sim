@@ -666,6 +666,9 @@ pub struct Player {
     /// --- ai-planner: the card the line planner chose for the tutor being cast (`ai::planner`); a tutor takes it
     /// when it meets the tutor's own restriction, else picks as usual. Set only around the planner's cast
     pub plan_tutor: Option<CardId>,
+    /// --- t6-xtutor: the X the line planner pays for the X tutor being cast (the mana value of the card it chose), in
+    /// place of all the spare mana. Set only around the planner's cast
+    pub plan_x: Option<u32>,
     /// the permanent number (born) when this player's last turn ended
     pub last_turn_end: u32,
     /// the graveyard at the start of this turn
@@ -895,6 +898,7 @@ impl Player {
             known_top: vec![], // --- ai-fix: B
             tutored: vec![], // --- phase4-rules
             plan_tutor: None, // --- ai-planner
+            plan_x: None, // --- t6-xtutor
             last_turn_end: 0,
             gy_start: vec![],
             chasm_age: 0,
