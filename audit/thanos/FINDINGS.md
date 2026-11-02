@@ -59,3 +59,10 @@ Orim's Chant, Gemstone Caverns, Tinder Wall: Partial -> Full (the kicked attack 
 ## 2026-11-01: recalibration stage 2 remeasure
 
 Thanos, t6: **29.6%** (CI 27.6-31.6) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). Stage 1, same seeds: 25.6% (earlier build). Fitted t6 knobs: 31.2% (level).
+
+## 2026-11-01: Dragonlord Dromoka out, Deadly Rollick in (JD; not simulated)
+
+Deadly Rollick ({3}{B}, free while you control a commander: exile target creature; modelled Full) replaces Dragonlord
+Dromoka, a 6-mana lock that died to Thanos's own even wipe. Rollick adds a free instant-speed answer to creature stax
+(Drannith Magistrate, Collector Ouphe, Lavinia, Opposition Agent, Archon of Emeria) and creature commanders. No new
+number yet: the 29.6% above is the list before this swap. The pilot's guide in the deck file is updated.
