@@ -98,3 +98,7 @@ Sentence 67%), but it doesn't change her losses (fast combo: Kinnan, Urza, Zur, 
 ## 2026-10-31: card models (branch card-models-1; no sims until Phase 4 recalibration)
 
 Venat, Heart of Hydaelyn // Hydaelyn: Partial -> Full. Its card code had never run (registered under a name not in the data); before this the deck played it as a 3/3 that drew on every legendary spell. No new number yet.
+
+## 2026-11-01: recalibration stage 2 remeasure
+
+Y'shtola, t5: **22.4%** (CI 20.6-24.2) with the hand AI on (default) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). `AI_HAND=0` (generic + plan file): 21.9%, level (+0.5 [-2.1, +3.1]). Stage 1, same seeds: 19.8% (hand AI on), 15.7% (off). The 10/18 AI audit number (24.5%) is from an older build and list. Fitted t5 knobs: 23.1% (level).

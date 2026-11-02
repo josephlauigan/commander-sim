@@ -102,3 +102,7 @@ Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big down
 ## 2026-10-31: card models (branch card-models-1; no sims until Phase 4 recalibration)
 
 Buster Sword: Partial -> Full (draw, then a free spell up to the damage). No new number yet.
+
+## 2026-11-01: recalibration stage 2 remeasure
+
+Cloud, t1 / t2 / t3: **25.6% / 14.2% / 17.0%** (average 18.9%) with the hand AI on (default) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). `AI_HAND=0` (generic + plan file): 23.1 / 13.8 / 16.8, level (average delta +1.0 [-0.3, +2.4]). The 10/18 numbers (28.9 / 23.8 / 21.4) are from the old list.

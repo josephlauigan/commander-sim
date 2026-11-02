@@ -89,3 +89,7 @@ for his {U}{U}; white carries the deck: 43 W pips against 11 U).
 **Reading it:** not adopted. Urza is a like-for-like trade with Restoration Angel here: the deck runs too few
 artifacts for his mana to matter, and the Basalt + Rings combo already has Ballista and Thrasios as payoffs (Urza's
 {5} ability is a third). He stays in Sauron.
+
+## 2026-11-01: recalibration stage 2 remeasure
+
+Thrasios, t5: **12.8%** (CI 11.4-14.3, 1999 games: one skipped by an internal overflow panic) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). Stage 1, same seeds: 12.1%. The last FINDINGS number (25.3%, 10/20, 3,000 games) is from an older build and list. Fitted t5 knobs: 12.7% (level).

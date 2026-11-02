@@ -1,0 +1,18 @@
+=== Realism: Tier 4 (Low B4) [loose, lookahead AI, 2000 games, seeds 900000-901999; 5 decks, 4 a pod] ===
+targets: data/realism/t4.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     28.6%     26.7-30.7   32.8%     31.3-34.3  FAIL
+  seat 2 share of decisive games (%)                     25.9%     24.1-27.9   27.8%     26.3-29.3  FAIL
+  seat 3 share of decisive games (%)                     23.6%     21.8-25.5   21.6%     20.1-23.1  FAIL
+  seat 4 share of decisive games (%)                     21.8%     20.0-23.7   17.9%     16.4-19.4  FAIL
+  median round of a decisive win (rounds)                  8.0       8.0-8.0     8.0           7-9  PASS
+  win round, 75th minus 25th percentile (rounds)           2.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                33.1%     31.1-35.2   17.9%     16.4-19.4  reference
+  wins by damage (combat or other) (%)                   66.1%     64.0-68.1   79.7%     78.2-81.2  reference
+  wins by commander damage (%)                            0.8%       0.5-1.2    2.2%       0.7-3.7  reference
+  wins by poison (%)                                      0.0%       0.0-0.2    0.1%         0-1.6  reference
+  deck win spread, best minus worst deck (pts)            27.0             -       -             -  no target
+  games over 15 rounds (round cap 20) (%)                 0.5%       0.3-0.9       -             -  no target
+  1 of 5 targets pass (3 statistics have no target yet; 4 reference values, not scored)
+Games: 2000, decisive 2000 (100.0%), round-cap timeouts 0.0%
+Each deck's share of the decisive games it sat in: Chulane 18.8% of 1610; Edgar Markov 42.2% of 1620; Krenko 32.2% of 1598; Prosper 15.2% of 1557; Yuriko 16.2% of 1615
