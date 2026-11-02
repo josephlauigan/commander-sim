@@ -58,9 +58,6 @@ pub struct Knobs {
     pub top_pref: Option<String>,
     /// a card-code permanent's default cast priority (default 55)
     pub hooked_prio: Option<i32>,
-    /// --- ghave: answer removal and wipes by sacrificing through a paid outlet too ({1}, sacrifice a creature:
-    /// Ghave), not only the free ones (`common::sac_in_response`, `sac_before_wipe`)
-    pub paid_outlets: Option<bool>,
     /// --- plan-files-3: the commander chump-blocks only when the attack would otherwise kill (`combat.rs` blocks;
     /// Y'shtola is the engine)
     pub commander_chumps_to_live: Option<bool>,
@@ -1016,7 +1013,6 @@ pub fn load(stem: &str, text: &str) -> Result<Loaded, String> {
         aura_host: plan.knobs.aura_host.as_deref().map(leak),
         top_pref: plan.knobs.top_pref.as_deref().map(leak),
         hooked_prio: plan.knobs.hooked_prio,
-        paid_outlets: plan.knobs.paid_outlets.unwrap_or(false),
     };
     let sets = plan.sets.values().cloned().collect();
     Ok(Loaded {

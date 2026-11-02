@@ -825,8 +825,7 @@ fn protect_main(
 }
 
 /// ais.wipe_response: q's answer to a board wipe about to hit it: 'all' (everything saved), 'indes', or none
-/// the wipe will kill these anyway: sacrifice them to an outlet first (the free ones; a paid one too for a deck with
-/// the `paid_outlets` plan knob), the least worth keeping first
+/// the wipe will kill these anyway: sacrifice them to a free outlet first, the least worth keeping first
 fn sac_doomed(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> Res {
     if matches!(kind, "rift" | "evac" | "rebuke" | "vandal") {
         return Ok(());
@@ -858,9 +857,6 @@ pub fn wipe_response(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> 
         }
         crate::impls::t12_lightpaws::wipe_response(g, q, kind, caster)?; // --- Tiers 1/2 (lightpaws): Flickerform
         let r = pool::wipe_response(g, q, kind, caster)?;
-        if r.is_none() && crate::impls::common::paid_outlets_on(g, q) {
-            sac_doomed(g, q, kind, caster)?; // --- ghave: unprotected: Ghave's {1} outlet (and the free ones) first
-        }
         return Ok(r);
     }
     if !g.marchesa_on // (her return counts the creatures that die together)

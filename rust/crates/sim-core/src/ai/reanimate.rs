@@ -1,6 +1,6 @@
 //! What a creature card is worth to the reanimation spells and the graveyard fillers (Entomb, Buried Alive), for every
-//! deck. --- ghave: these were the generic parts of Sephiroth's hand AI (`ai/seph.rs`, Python's `ais.py`), kept when
-//! that AI was removed on 2026-10-30 (Ghave, Guru of Spores took the seat and plays from its plan file).
+//! deck. These were the generic parts of Sephiroth's hand AI (`ai/seph.rs`, Python's `ais.py`), kept when
+//! that AI was removed on 2026-10-30.
 
 use crate::ids::{CardId, PlayerId};
 use crate::impls::mine;
@@ -54,7 +54,7 @@ pub fn bval(g: &Game, p: PlayerId, c: CardId) -> f64 {
 }
 
 /// library creatures that are the missing piece of a loop (Entomb/Buried Alive bin these first: Finks, Triskelion,
-/// Melira). --- ghave: every deck (it was Sephiroth's only); only the ghave list plays the loops' pieces
+/// Melira). Read for every deck; a list without the loops' pieces gets none.
 pub fn fill_pieces(g: &Game, p: PlayerId) -> Vec<CardId> {
     let need = mine::loop_need(g, p, &[]);
     if need.is_empty() {

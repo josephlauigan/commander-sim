@@ -319,7 +319,7 @@ fn equipment_with_a_card_code_equip_is_equipped_by_the_generic_policy() {
         ("urdragon", "Sword of Feast and Famine", 2),
         ("thrasios", "Conqueror's Flail", 2),
         ("aurelia-boros-extra-combats", "Sword of the Animist", 2),
-        ("ghave", "Nim Deathmantle", 4),
+        ("sheoldred", "Nim Deathmantle", 4),
         ("cloud", "Sword of Feast and Famine", 2),
     ] {
         let mut g = seated(key);
@@ -350,7 +350,7 @@ fn lightning_greaves_moves_off_the_creature_daydream_wants() {
 
 #[test]
 fn ephemerate_blinks_an_enter_effect_creature_for_value() {
-    let mut g = seated("ghave");
+    let mut g = seated("sheoldred");
     lands(&mut g, P, "Plains", 1, false);
     let c = hand(&mut g, P, &["Ephemerate"])[0];
     token(&mut g, P, 2);
