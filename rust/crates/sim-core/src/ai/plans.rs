@@ -103,13 +103,13 @@ fn effective() -> &'static std::collections::HashMap<&'static str, DeckConfig> {
 
 /// --- phase4-plans: the deck plays from its plan file
 pub fn plays_plan(key: &str) -> bool {
-    effective().contains_key(key) && !super::plan_unread(key) // --- phase4-hand-off
+    effective().contains_key(key)
 }
 
 /// the deck's configuration (an empty one for a deck without an entry): from its plan file when that is on, else
 /// its hand entry
 pub fn config(key: &str) -> &'static DeckConfig {
-    if let Some(c) = effective().get(key).filter(|_| !super::plan_unread(key)) {
+    if let Some(c) = effective().get(key) {
         return c;
     }
     hand_config(key).unwrap_or(&NONE)
@@ -346,10 +346,9 @@ pub fn adnaus_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 /// cards under the hand cap (the cast itself leaves the hand)
 pub fn adnaus_cast_now(g: &Game, p: PlayerId) -> bool {
     let room = (adnaus_hand_cap(g, p) + 1).saturating_sub(g.player(p).hand.len());
-    // the sheoldred deck taps out on its own turn, so it never holds 5 mana for the opposing end step; its own second
-    // main phase (everything better already cast) is when the mana is idle
-    // --- plan-files-3: or a plan's `adnaus_main2`
-    if (super::hand_key(g, p) == "sheoldred" || super::plan_data::adnaus_main2(g, p))
+    // a plan's `adnaus_main2` (--- plan-files-3): a deck that taps out on its own turn never holds 5 mana for the
+    // opposing end step; its own second main phase (everything better already cast) is when the mana is idle
+    if super::plan_data::adnaus_main2(g, p)
         && g.active == Some(p)
         && g.step == crate::state::Step::Main2
         && room >= 4

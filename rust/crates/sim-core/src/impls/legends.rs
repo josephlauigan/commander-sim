@@ -11,7 +11,6 @@
 //! Plaza of Heroes' and Unclaimed Territory's colours (Python's mine.plaza_colors and territory_colors, which
 //! engine._land_cols calls by name) are here too.
 
-use crate::ai::hand_key; // --- phase4-hand-off
 use super::common::{WalkerAb, best_opp_creature, best_opp_nonland, oring_exile, oring_return, walker};
 use crate::engine::mana::restr_ok;
 use crate::engine::pool::Restr;
@@ -1740,10 +1739,6 @@ fn mirari_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 fn jar(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if p != owner(g, src) || post != Some(false) || g.active != Some(p) {
         return Ok(vec![]);
-    }
-    // the sheoldred deck with Sheoldred out: seven cards for everyone is 14 life gained and 14 lost by each opponent
-    if hand_key(g, p) == "sheoldred" && super::sheoldred::sheoldred_out(g, p) {
-        return Ok(vec![ability(8.0, "Memory Jar (Sheoldred)".into(), src, jar_go, 0)]);
     }
     if g.player(p).hand.len() > 2 || total_mana(g, p, false) < 3 {
         return Ok(vec![]);

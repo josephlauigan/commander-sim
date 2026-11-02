@@ -1,14 +1,14 @@
 //! The sheoldred deck (decklists/JD/sheoldred-mono-black.md): mono-black drain around Sheoldred, the Apocalypse. Its
-//! card code and AI plan; the brief is rust/agents/archive/sheoldred-cards.md, the verdicts are in
-//! data/card_overrides.toml and the tests are tests/cards_sheoldred.rs.
+//! card code (its AI, deleted on 2026-11-01, is the generic policy and `data/plans/sheoldred.toml`); the brief is
+//! rust/agents/archive/sheoldred-cards.md, the verdicts are in data/card_overrides.toml and the tests are
+//! tests/cards_sheoldred.rs.
 //!
 //! Several cards here came with the retired candidate decks (glissa, gix, yawgmoth), whose card code was deleted while
 //! their `Full` verdicts stayed in the overrides; they are modeled here again, keyed by card name.
 
-use crate::ai::hand_key; // --- phase4-hand-off
 use crate::engine::repl;
 use crate::engine::pool::Kind;
-use crate::ai::pool::generic_prio;
+use crate::ai::plan_data::plays;
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst};
 use crate::engine::life::{gain, lose_life};
@@ -503,12 +503,6 @@ fn rooftop_targets(g: &Game, p: PlayerId) -> Vec<PermId> {
     opp_creatures(g, p).into_iter().filter(|&m| on_bf(g, m) && g.was_damaged_now(m) && !untargetable(g, m)).collect()
 }
 
-/// flash, flying, lifelink: it is removal only for a creature that already took damage this turn (after combat or a
-/// burn spell), so it is cast for that; otherwise it is a plain 2/2 flyer body
-fn rooftop_prio(g: &Game, p: PlayerId) -> i32 {
-    if rooftop_targets(g, p).iter().any(|&m| pval(g, m) >= 2.0) { 82 } else { 46 }
-}
-
 /// Rooftop Assassin: when it enters, destroy target creature an opponent controls that was dealt damage this turn
 fn rooftop_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
@@ -525,30 +519,6 @@ fn rooftop_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     apply_removal(g, Some(p), t, "destroy", None)
-}
-
-/// Necrosquito: grows with every other creature or artifact of ours that goes to the graveyard and every token or
-/// Treasure sacrificed, so it is worth more with a sacrifice outlet (Carnage Altar, Deadly Dispute) or fodder around
-fn necro_prio(g: &Game, p: PlayerId) -> i32 {
-    let pl = g.player(p);
-    let outlet = |n: &str| count_named(g, p, n) > 0 || pl.hand.iter().any(|&c| name_of(g, c) == n);
-    let engine = outlet("Carnage Altar") || outlet("Deadly Dispute") || outlet("Blood Artist");
-    let fodder = pl
-        .perms
-        .iter()
-        .filter(|&&m| {
-            let x = g.perm(m);
-            x.on_bf
-                && (x.token || (x.cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT) && !g.db.get(c).creature)))
-        })
-        .count() as i32;
-    (55 + 3 * fodder.min(3) + if engine { 6 } else { 0 }).min(70)
-}
-
-/// Memory Jar: cast it to crack at once. With Sheoldred (or Dreams / Unraveler) out, both draws of seven punish every
-/// opponent; without a punisher it is only a burst of temporary cards, so it waits behind the real plays
-fn jar_prio(g: &Game, p: PlayerId) -> i32 {
-    if draw_toll(g, p) > 0 { 82 } else { 38 }
 }
 
 // ------------------------------------------------------------------ Callous Inspector
@@ -1062,19 +1032,6 @@ pub(crate) fn warp_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-fn exile_cast_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let c = CardId(arg as u16);
-    let (cg, cp) = cost_of(g, p, c);
-    let Some(i) = g.player(p).exile.iter().position(|&x| x == c) else { return Ok(false) };
-    if !can_pay(g, p, cg, &cp, false) {
-        return Ok(false);
-    }
-    pay(g, p, cg, &cp, false)?;
-    g.player_mut(p).exile.remove(i);
-    cast_card(g, p, c, "exile", Ctx::default())?;
-    Ok(true)
-}
-
 /// Arnim Zola, Bio-Fanatic: {3}, {T}: create a tapped 2/1 black Villain creature token with menace. Activate only if
 
 // ------------------------------------------------------------------ Locust Spray
@@ -1429,227 +1386,7 @@ fn throwdown_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym
     Ok("gy")
 }
 
-// ------------------------------------------------------------------ the AI plan
-/// sheoldred's cast priority: the generic priorities, the recursion creatures only with something worth bringing
-/// back, Soul Enervation with a creature to kill
-pub fn sheoldred_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    let d = g.db.get(c);
-    let out = sheoldred_out(g, p);
-    match &*d.name {
-        SHEOLDRED => 96,                                 // as early as the mana allows
-        "Arcane Signet" | "Fellwar Stone" if !out => 92, // rocks first: they get her out a turn sooner
-        "Champion's Helm" | "Darksteel Plate" if out => 78,
-        // answers held for removal aimed at her (the protect hook casts them)
-        "Masterful Flourish" | "Battle-Rage Blessing" | "Dark Endurance" => 0,
-        DELVER => {
-            let ok = rean_pick(g, p, 99, true).map_or(0.0, |x| cv(g, x)) >= 2.5 && g.player(p).life > 14;
-            if ok { 74 } else { 36 }
-        }
-        "Soul Enervation" => {
-            let kill = opp_creatures(g, p).iter().any(|&m| etgh(g, m) <= 4 && pval(g, m) >= 2.0);
-            if kill { 66 } else { 34 }
-        }
-        "Perigee Beckoner" => 52,
-        "Memory Jar" => jar_prio(g, p),
-        "Necrosquito" => necro_prio(g, p),
-        ROOFTOP => rooftop_prio(g, p),
-        SEIZAN => seizan_prio(g, p),
-        "Underworld Dreams" => 90,
-        _ if pkg2_prio(g, p, &d.name).is_some() => pkg2_prio(g, p, &d.name).unwrap(),
-        _ => generic_prio(g, p, c),
-    }
-}
-
-/// sheoldred's own plays (brain.special_options): equip Champion's Helm or Darksteel Plate onto Sheoldred before
-/// anything else, then the Beckoner's warp and its cast from exile
-pub fn sheoldred_special(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
-    let mut out = equip_options(g, p);
-    out.extend(beckoner_options(g, p, post)?);
-    Ok(out)
-}
-
 const SHEOLDRED: &str = "Sheoldred, the Apocalypse";
-
-/// Champion's Helm (equip {1}: hexproof on a legendary creature) or Darksteel Plate (equip {2}: indestructible) onto
-/// Sheoldred, ahead of every other play of the turn
-fn equip_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
-    let mut out = vec![];
-    if human(g, p) || g.active != Some(p) {
-        return out;
-    }
-    let Some(sheo) = my_creatures(g, p).into_iter().find(|&m| sheoldred_card(g, m)) else { return out };
-    // Seizan (not in the list yet) takes Champion's Helm once Darksteel Plate already protects Sheoldred
-    let seizan = my_creatures(g, p).into_iter().find(|&m| name_of_perm(g, m) == SEIZAN);
-    let plated = g.player(p).perms.iter().any(|&e| {
-        let x = g.perm(e);
-        x.on_bf && x.attached == Some(sheo) && name_of_perm(g, e) == "Darksteel Plate"
-    });
-    // Swiftfoot Boots follow Champion's Helm: only once no Helm waits in hand
-    let hand_has_helm = g.player(p).hand.iter().any(|&c| name_of(g, c) == "Champion's Helm");
-    for e in g.player(p).perms.clone() {
-        let x = g.perm(e);
-        let mut host = sheo;
-        if let Some(z) = seizan.filter(|_| plated && name_of_perm(g, e) == "Champion's Helm") {
-            host = z;
-        }
-        if !x.on_bf || x.phased || x.attached == Some(host) {
-            continue;
-        }
-        let (n, hexproof_plan) = match name_of_perm(g, e) {
-            "Champion's Helm" => (1, true),
-            "Darksteel Plate" => (2, false),
-            BOOTS if !hand_has_helm => (1, true),
-            _ => continue,
-        };
-        if !can_pay(g, p, n, "", false) || (hexproof_plan && untargetable(g, host)) {
-            continue;
-        }
-        out.push(Opt {
-            utility: 9.0 - 0.1 * n as f64 - if name_of_perm(g, e) == BOOTS { 0.3 } else { 0.0 },
-            label: format!("equip {} to {}", g.perm(e).name, if host == sheo { "Sheoldred" } else { SEIZAN }),
-            act: Some(Action::Plan {
-                f: equip_sheoldred,
-                arg: e.0 as i64 | ((n as i64) << 40) | if host == sheo { 0 } else { 1 << 56 },
-            }),
-        });
-    }
-    out
-}
-
-fn name_of_perm(g: &Game, m: PermId) -> &str {
-    g.perm(m).cd.map_or("", |c| name_of(g, c))
-}
-
-fn equip_sheoldred(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let (e, n) = (PermId((arg & 0xff_ffff_ffff) as u32), ((arg >> 40) & 0xffff) as u32);
-    let want_seizan = arg >> 56 != 0;
-    let Some(sheo) = my_creatures(g, p)
-        .into_iter()
-        .find(|&m| if want_seizan { name_of_perm(g, m) == SEIZAN } else { sheoldred_card(g, m) })
-    else {
-        return Ok(false);
-    };
-    if !on_bf(g, e) || !can_pay(g, p, n, "", false) {
-        return Ok(false);
-    }
-    crate::glog!(
-        g,
-        "  {} equips {} to {}",
-        pname(g, p),
-        g.perm(e).name,
-        if want_seizan { SEIZAN } else { "Sheoldred" }
-    );
-    crate::engine::stack::equip_to(g, p, e, sheo, n)
-}
-
-// ------------------------------------------------------------------ protecting Sheoldred
-/// the protection instants: (name, generic, pips, power bonus). All give indestructible until end of turn.
-const SHIELDS: [(&str, u32, &str, i32); 3] =
-    [("Masterful Flourish", 0, "B", 1), ("Battle-Rage Blessing", 1, "B", 0), ("Dark Endurance", 1, "B", 2)];
-
-/// removal that indestructible stops: destroy and damage (not exile, -X/-X, sacrifice)
-fn indestructible_helps(kind: &str) -> bool {
-    kind == "destroy" || kind.starts_with("dmg")
-}
-
-/// the cheapest protection instant in p's hand that it can pay for
-fn shield_in_hand(g: &Game, p: PlayerId) -> Option<CardId> {
-    let cs: Vec<CardId> = g
-        .player(p)
-        .hand
-        .iter()
-        .copied()
-        .filter(|&c| {
-            SHIELDS.iter().any(|s| s.0 == name_of(g, c)) && {
-                let s = SHIELDS.iter().find(|s| s.0 == name_of(g, c)).unwrap();
-                can_pay(g, p, s.1, s.2, false) && castable(g, p, c, "hand")
-            }
-        })
-        .collect();
-    min_by(&cs, |c| g.db.get(c).cmc as f64)
-}
-
-/// removal aimed at Sheoldred: destroy-type removal is answered with a protection instant (Masterful Flourish, Battle-
-/// Rage Blessing, Dark Endurance); Champion's Helm's hexproof already stops targeted removal, and -X/-X or exile
-/// is not stopped by indestructible, so those get no response. True if she is safe.
-pub fn sheoldred_protect(
-    g: &mut Game,
-    p: PlayerId,
-    m: PermId,
-    kind: &str,
-    actor: Option<PlayerId>,
-    _spell: Option<CardId>,
-) -> Res<bool> {
-    if !sheoldred_card(g, m) || actor.is_none() || actor == Some(p) || !indestructible_helps(kind) {
-        return Ok(false);
-    }
-    let Some(c) = shield_in_hand(g, p) else { return Ok(false) };
-    let (_, gn, pips, bonus) = *SHIELDS.iter().find(|s| s.0 == name_of(g, c)).unwrap();
-    remove_card(&mut g.player_mut(p).hand, c);
-    pay(g, p, gn, pips, false)?;
-    let pl = g.player_mut(p);
-    pl.spells_this_turn += 1;
-    pl.stat("spells_cast", 1);
-    pl.cast_names.insert(c);
-    crate::glog!(g, "  {} casts {} on Sheoldred", pname(g, p), name_of(g, c));
-    crate::engine::cast::on_cast(g, p, c)?;
-    let ok = crate::engine::stack::counter_window(g, p, c, 6.0, vec![])?;
-    g.player_mut(p).gy.push(c);
-    if ok && on_bf(g, m) {
-        super::partials::eot_kw(g, m, "indestructible");
-        let x = g.perm_mut(m);
-        x.eot_pt.0 += bonus;
-    }
-    Ok(ok)
-}
-
-/// brain.hold_value: with Sheoldred out and a protection instant in hand, keep its mana up (worth more the likelier an
-/// opponent holds instant removal) -- but not once she has hexproof, which only exile and -X/-X get past
-pub fn sheoldred_hold(g: &Game, p: PlayerId) -> (Option<CardId>, f64) {
-    if !sheoldred_out(g, p) {
-        return (None, 0.0);
-    }
-    let Some(c) = shield_in_hand(g, p) else { return (None, 0.0) };
-    let hexproof = my_creatures(g, p).into_iter().any(|m| sheoldred_card(g, m) && untargetable(g, m));
-    if hexproof {
-        return (None, 0.0);
-    }
-    (Some(c), 1.5 + 2.5 * crate::ai::brain::removal_risk(g, p))
-}
-
-/// the plays from the hand and exile: warp the Beckoner, and cast it from exile on a later turn
-fn beckoner_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
-    let mut out = vec![];
-    if g.active != Some(p) {
-        return Ok(out);
-    }
-    for c in g.player(p).hand.clone() {
-        if name_of(g, c) == BECKONER && !post && can_pay(g, p, 1, "B", false) {
-            // warp when the full cost can't be paid this turn and there is a creature to buff
-            let (cg, cp) = cost_of(g, p, c);
-            if !can_pay(g, p, cg, &cp, false) && !my_creatures(g, p).is_empty() {
-                out.push(Opt {
-                    utility: 2.2,
-                    label: "Perigee Beckoner (warp)".into(),
-                    act: Some(Action::Plan { f: warp_go, arg: c.0 as i64 }),
-                });
-            }
-        }
-    }
-    let st = g.turn_stamp();
-    let later = g.player(p).flag_turn.get(&intern("beckoner_warped")).is_none_or(|s| *s != st);
-    if later && let Some(c) = g.player(p).exile.iter().copied().find(|&c| name_of(g, c) == BECKONER) {
-        let (cg, cp) = cost_of(g, p, c);
-        if can_pay(g, p, cg, &cp, false) {
-            out.push(Opt {
-                utility: 4.5,
-                label: "Perigee Beckoner (from exile)".into(),
-                act: Some(Action::Plan { f: exile_cast_go, arg: c.0 as i64 }),
-            });
-        }
-    }
-    Ok(out)
-}
 
 const BECKONER: &str = "Perigee Beckoner";
 const DELVER: &str = "Phyrexian Delver";
@@ -1739,20 +1476,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     register_upgrade(r, db)
 }
 
-// ------------------------------------------------------------------ Toxic Deluge
-/// the largest X a -X/-X sweep (Toxic Deluge) may take while p's Sheoldred is out: her toughness minus one, and never
-/// more than the life it would leave p with. None: no limit (the sheoldred deck without her out, or any other deck).
-pub fn deluge_cap(g: &Game, p: PlayerId) -> Option<i32> {
-    if hand_key(g, p) != "sheoldred" || !sheoldred_out(g, p) {
-        return None;
-    }
-    let sheo = my_creatures(g, p).into_iter().filter(|&m| sheoldred_card(g, m)).map(|m| etgh(g, m)).min()?;
-    Some((sheo - 1).min(g.player(p).life - 1).max(0))
-}
-
 // ------------------------------------------------------------------ the upgrade package (not in the list yet)
 // Seizan, Perverter of Truth; Underworld Dreams; Dark Deal; Painful Lesson. JD may buy them; they are tested with
-// `--swap`, so their plan is gated to the sheoldred deck's seat.
+// `--swap`.
 const SEIZAN: &str = "Seizan, Perverter of Truth";
 
 /// Seizan: at the beginning of each player's upkeep, that player loses 2 life and draws two cards (life loss, not
@@ -1789,7 +1515,7 @@ fn lesson_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> 
 }
 
 fn lesson_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if !plays_it(g, p, name_of(g, c)) || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
+    if !plays(g, p, name_of(g, c)) || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
         return Ok(vec![]);
     }
     if let Some(q) = drain_target(g, p, 2) {
@@ -1850,7 +1576,7 @@ fn opp_hand_total(g: &Game, p: PlayerId) -> usize {
 }
 
 fn deal_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if !plays_it(g, p, name_of(g, c)) || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
+    if !plays(g, p, name_of(g, c)) || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
         return Ok(vec![]);
     }
     // each card an opponent redraws costs them 2; keep it for when they hold plenty and we hold little
@@ -1870,20 +1596,9 @@ fn deal_plan(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     crate::ai::brain::do_cast_with(g, p, CardId((arg & 0xffff) as u16), None, Ctx::default())
 }
 
-/// Seizan comes down with Sheoldred out (without her it hands every opponent two cards a turn), or when our life is
-/// high and we are far behind on cards
-fn seizan_prio(g: &Game, p: PlayerId) -> i32 {
-    let pl = g.player(p);
-    if draw_toll(g, p) > 0 {
-        return 80;
-    }
-    let max_opp = g.opps(p).filter(|&q| g.player(q).alive).map(|q| g.player(q).hand.len()).max().unwrap_or(0);
-    if pl.life >= 30 && pl.hand.len() + 4 <= max_opp { 50 } else { 0 }
-}
-
 // ------------------------------------------------------------------ the second upgrade package (not in the list yet)
 // Howling Mine, Temple Bell, Fate Unraveler, Peer into the Abyss, Geier Reach Sanitarium, Ambition's Cost, Syphon
-// Mind; Swiftfoot Boots and Exsanguinate get their sheoldred plan here too. All plans are gated to the sheoldred seat.
+// Mind. The draw punishers' activations are offered when a plan's `plays` lists the card.
 const MINE: &str = "Howling Mine";
 const BELL: &str = "Temple Bell";
 const ATLAS: &str = "Otherworld Atlas";
@@ -1891,7 +1606,6 @@ const UNRAVELER: &str = "Fate Unraveler";
 const PEER: &str = "Peer into the Abyss";
 const GEIER: &str = "Geier Reach Sanitarium";
 const MIKOKORO: &str = "Mikokoro, Center of the Sea";
-const BOOTS: &str = "Swiftfoot Boots";
 
 /// the untapped, phased-in permanents named `name` that p controls
 fn count_named(g: &Game, p: PlayerId, name: &str) -> i32 {
@@ -1960,7 +1674,7 @@ fn bell_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 /// tap the Bell / use the Sanitarium or Mikokoro: only while a draw punisher is out, at the end of an opponent's turn
 /// (post: None), or in a main phase when it kills. None: don't.
 fn punish_window_utility(g: &Game, p: PlayerId, post: Option<bool>, card: &str) -> Option<f64> {
-    if !plays_it(g, p, card) || human(g, p) || draw_toll(g, p) == 0 || g.player(p).library.len() < 4 {
+    if !plays(g, p, card) || human(g, p) || draw_toll(g, p) == 0 || g.player(p).library.len() < 4 {
         return None;
     }
     match post {
@@ -2012,7 +1726,7 @@ fn atlas_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     if owner(g, src) != p || !x.on_bf || x.tapped || x.phased || x.neutered {
         return Ok(vec![]);
     }
-    if !plays_it(g, p, g.perm(src).name) || human(g, p) {
+    if !plays(g, p, g.perm(src).name) || human(g, p) {
         return Ok(vec![]);
     }
     let k = x.data.int(DataKey::Charge);
@@ -2126,7 +1840,7 @@ fn peer_kills(g: &Game, q: PlayerId, toll: i32) -> bool {
 }
 
 fn peer_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if !plays_it(g, p, name_of(g, c)) || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
+    if !plays(g, p, name_of(g, c)) || human(g, p) || post.is_none() || g.active != Some(p) || !affordable(g, p, c) {
         return Ok(vec![]);
     }
     let toll = draw_toll(g, p);
@@ -2173,26 +1887,6 @@ fn syphon_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym>
         draw(g, p, n as u32, false)?;
     }
     Ok("gy")
-}
-
-/// cast priorities of the package for the sheoldred seat; None: the card has no special rule
-fn pkg2_prio(g: &Game, p: PlayerId, name: &str) -> Option<i32> {
-    Some(match name {
-        MINE => {
-            if draw_toll(g, p) > 0 {
-                70
-            } else {
-                0
-            }
-        }
-        UNRAVELER => 88,
-        super::krrik::KRRIK => {
-            // a body that grows with every black spell; cast it early, with life to spare when the mana is short
-            if g.player(p).life >= 16 { 70 } else { 44 }
-        }
-        "Ambition's Cost" if g.player(p).life <= 6 => 0,
-        _ => return None,
-    })
 }
 
 pub fn register_upgrade(r: &mut Registry, db: &CardDb) -> Result<(), String> {
@@ -2505,8 +2199,3 @@ fn register_seph(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     Ok(())
 }
 
-/// --- plan-files-3: the sheoldred deck's hand AI makes this card's play, or the generic policy does for a plan whose
-/// `plays` list it (the draw punishers' activations, Dark Deal, Peer into the Abyss)
-fn plays_it(g: &Game, p: PlayerId, card: &str) -> bool {
-    hand_key(g, p) == "sheoldred" || crate::ai::plan_data::plays(g, p, card)
-}

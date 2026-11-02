@@ -630,13 +630,12 @@ fn rollout_vals(
     }
 }
 
-/// --- ai-rollouts: each option's deck bonus per rollout (Karn's and Cloud's `search_bonus`; 0 for other decks)
+/// --- ai-rollouts: each option's deck bonus per rollout (Karn's `search_bonus`; 0 for other decks)
 fn deck_extras(g: &Game, p: PlayerId, opts: &[Opt], keyed: &[(usize, &str, usize)]) -> Vec<f64> {
     keyed
         .iter()
         .map(|kk| match hand_key(g, p) {
             "karn" => crate::impls::karn::search_bonus(g, p, &opts[kk.0]),
-            "cloud" => crate::impls::cloud::search_bonus(g, p, &opts[kk.0]),
             _ => 0.0,
         })
         .collect()
@@ -814,17 +813,6 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
             }
         }
     }
-    if hand_key(g, p) == "cloud" {
-        for (k, kk) in keyed.iter().enumerate() {
-            scores[k] += crate::impls::cloud::search_bonus(g, p, &opts[kk.0]) * g.settings.search.rollouts as f64;
-        }
-        best = 0;
-        for k in 1..keyed.len() {
-            if scores[k] > scores[best] {
-                best = k;
-            }
-        }
-    }
     let n = g.settings.search.rollouts as f64;
     // a bonus never lifts a line above a sure win: when every playout of the best play wins, a held line that also wins
     // (the heuristic combos next turn) scored 100 plus its hold bonus and beat it, so a ready Thassa's Oracle waited
@@ -852,7 +840,6 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
     {
         let extra = |k: usize| match hand_key(g, p) {
             "karn" => crate::impls::karn::search_bonus(g, p, &opts[keyed[k].0]),
-            "cloud" => crate::impls::cloud::search_bonus(g, p, &opts[keyed[k].0]),
             _ => 0.0,
         };
         let (eb, et) = (extra(best), extra(ti));
@@ -1061,14 +1048,6 @@ fn choose_attack_inner(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
     for r in 0..g.settings.search.rollouts as u64 {
         for (k, &c) in cands.iter().enumerate() {
             scores[k] += playout_attack(g, p, c, base_seed, r);
-        }
-    }
-    if crate::impls::cloud::must_attack(g, p) {
-        // an equipped Cloud attacks (the position score can't see a Sword's trigger pair): "none" is out
-        for (k, c) in cands.iter().enumerate() {
-            if c.1 == "none" {
-                scores[k] = f64::NEG_INFINITY;
-            }
         }
     }
     let mut best = 0;

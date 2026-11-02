@@ -5,9 +5,9 @@
 //! the two Sanguine Bond tests (t4.py's gain-life hook, ported with t4) and Zur fetching for this deck (Zur's attack
 //! trigger is t5.py / zur.py); `cargo test -- --ignored` runs them.
 
-use sim_core::ai::{self, act, brain, decks};
+use sim_core::ai::{act, brain, decks};
 use sim_core::engine::pool::Kind;
-use sim_core::engine::{cast, combat, hooks, life, mana, removal, turn, values, zones};
+use sim_core::engine::{cast, combat, hooks, life, mana, turn, zones};
 use sim_core::hooks::{Action, Call, Event, Opt};
 use sim_core::ids::{CardId, PermId, PlayerId};
 use sim_core::impls::{common, yshtola as ysh_mod};
@@ -216,7 +216,6 @@ fn debt_to_the_deathless() {
 
 #[test]
 fn the_ai_casts_an_x_drain_for_the_kill() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = three();
     lands(&mut g, P0, "Swamp", 6, false);
     let c = hand(&mut g, P0, &["Exsanguinate"])[0];
@@ -454,21 +453,6 @@ fn plea_for_guidance_finds_two_enchantments() {
 }
 
 #[test]
-fn take_up_the_shield_saves_yshtola() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = two();
-    let m = ysh(&mut g, P0);
-    lands(&mut g, P0, "Plains", 2, false);
-    hand(&mut g, P0, &["Take Up the Shield"]);
-    let gftt = card(&g, "Go for the Throat");
-    removal::apply_removal(&mut g, Some(P1), m, "destroy", Some(gftt)).unwrap();
-    assert!(g.perm(m).on_bf);
-    assert_eq!(g.perm(m).plus, 1);
-    assert!(g.perm(m).eot_kw.contains(&"lifelink"));
-    assert!(g.perm(m).eot_kw.contains(&"indestructible"));
-}
-
-#[test]
 fn take_up_the_shield_as_a_spell() {
     let mut g = two();
     let m = ysh(&mut g, P0);
@@ -479,58 +463,7 @@ fn take_up_the_shield_as_a_spell() {
 }
 
 #[test]
-fn zur_in_the_99_fetches_for_this_deck() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = two();
-    let y = ysh(&mut g, P0);
-    let z = perm(&mut g, P0, "Zur the Enchanter");
-    let keep: Vec<CardId> = g
-        .player(P0)
-        .library
-        .iter()
-        .copied()
-        .filter(|&c| {
-            let d = g.db.get(c);
-            !(d.types.has(sim_core::cards::Types::ENCHANTMENT) && d.cmc <= 3)
-                || matches!(&*d.name, "Curiosity" | "Propaganda")
-        })
-        .collect();
-    g.player_mut(P0).library = keep;
-    // Curiosity left her list (2026-10-19, for Orcish Bowmasters): put one in, so Zur's preference is still tested
-    if !g.player(P0).library.iter().any(|&c| &*g.db.get(c).name == "Curiosity") {
-        let c = card(&g, "Curiosity");
-        g.player_mut(P0).library.push(c);
-    }
-    combat::attack_triggers(&mut g, P0, &[z], P1).unwrap();
-    let got: Vec<PermId> = g
-        .player(P0)
-        .perms
-        .iter()
-        .copied()
-        .filter(|&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(sim_core::cards::Types::ENCHANTMENT)))
-        .collect();
-    assert_eq!(got.iter().map(|&m| g.perm(m).name).collect::<Vec<_>>(), vec!["Curiosity"]);
-    assert_eq!(g.perm(got[0]).attached, Some(y));
-}
-
-#[test]
-fn zurs_fetch_values_for_this_deck() {
-    // what the Zur port asks this deck (yshtola.fetch_value): Curiosity for Y'shtola, Necropotence early
-    let mut g = two();
-    let z = perm(&mut g, P0, "Zur the Enchanter");
-    let cur = card(&g, "Curiosity");
-    assert_eq!(ysh_mod::fetch_value(&g, P0, cur, z), 1.5);
-    ysh(&mut g, P0);
-    assert_eq!(ysh_mod::fetch_value(&g, P0, cur, z), 4.5); // 3 + 1.5 per opponent
-    let necro = card(&g, "Necropotence");
-    assert!((ysh_mod::fetch_value(&g, P0, necro, z) - 8.2).abs() < 1e-9);
-    perm(&mut g, P0, "Propaganda");
-    assert_eq!(ysh_mod::fetch_value(&g, P0, card(&g, "Propaganda"), z), 0.0); // already out
-}
-
-#[test]
 fn yshtola_doesnt_chump_block_unless_it_would_kill_you() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = table(&["kefka", "yshtola"]);
     let m = ysh(&mut g, P1);
     let big = perm(&mut g, P0, "Grave Titan");
@@ -546,49 +479,7 @@ fn yshtola_doesnt_chump_block_unless_it_would_kill_you() {
 
 // ======================================================== the AI
 #[test]
-fn a_spell_that_triggers_yshtola_ranks_higher() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = three();
-    let c = card(&g, "Read the Bones");
-    let before = ysh_mod::yshtola_prio(&g, P0, c);
-    ysh(&mut g, P0);
-    assert!(ysh_mod::yshtola_prio(&g, P0, c) > before);
-    assert_eq!(ai::deck_prio(&g, P0, c), ysh_mod::yshtola_prio(&g, P0, c)); // the deck's priority is this plan's
-}
-
-#[test]
-fn tutors_find_sanguine_bond() {
-    let mut g = two();
-    g.player_mut(P0).turns = 8;
-    g.player_mut(P0).life = 20;
-    assert_eq!(ai::tutor_pick(&g, P0, "any"), Some(card(&g, "Sanguine Bond")));
-    perm(&mut g, P0, "Sanguine Bond");
-    assert_ne!(ai::tutor_pick(&g, P0, "ench"), Some(card(&g, "Sanguine Bond")));
-}
-
-#[test]
-fn idyllic_tutor_uses_the_wish_list() {
-    let mut g = two();
-    g.player_mut(P0).turns = 8;
-    g.player_mut(P0).life = 20;
-    cast(&mut g, P0, "Idyllic Tutor");
-    assert!(g.player(P0).hand.contains(&card(&g, "Sanguine Bond")));
-}
-
-#[test]
-fn tutors_find_the_finisher_when_it_kills() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = three();
-    lands(&mut g, P0, "Swamp", 9, false);
-    g.player_mut(P1).life = 6;
-    g.player_mut(P2).life = 6;
-    let pick = ai::tutor_pick(&g, P0, "any").unwrap();
-    assert!(["Debt to the Deathless", "Exsanguinate"].contains(&&*g.db.get(pick).name));
-}
-
-#[test]
 fn the_x_drain_is_a_main_phase_play() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = three();
     lands(&mut g, P0, "Swamp", 6, false);
     hand(&mut g, P0, &["Exsanguinate"]);
@@ -597,67 +488,6 @@ fn the_x_drain_is_a_main_phase_play() {
     let o = opts.iter().find(|o| o.label == "Exsanguinate (X = 4)").expect("the X drain");
     assert!(matches!(o.act, Some(Action::Plan { .. })));
     assert!(!opts.iter().any(|o| o.label == "Exsanguinate")); // not cast by priority
-}
-
-#[test]
-fn a_taken_card_is_cast_by_its_generic_priority() {
-    let mut g = two();
-    let c = card(&g, "Guttersnipe");
-    ysh_mod::take_card(&mut g, P0, c, P1, "test");
-    let v = sim_core::ai::pool::generic_prio(&g, P0, c) as f64;
-    assert!(v > 0.0);
-    assert_eq!(ysh_mod::yshtola_prio(&g, P0, c), v);
-}
-
-#[test]
-fn hostage_taker_priority_from_its_target() {
-    let mut g = two();
-    let ht = card(&g, "Hostage Taker");
-    assert_eq!(ysh_mod::yshtola_prio(&g, P0, ht), 25.0); // nothing to take
-    let gs = perm(&mut g, P1, "Grave Titan");
-    let want = 45 + 30.min((6.0 * values::pval(&g, gs)) as i32);
-    assert_eq!(ysh_mod::yshtola_prio(&g, P0, ht), want as f64);
-}
-
-#[test]
-fn champions_helm_goes_on_yshtola() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = two();
-    let helm = perm(&mut g, P0, "Champion's Helm");
-    let y = ysh(&mut g, P0);
-    lands(&mut g, P0, "Island", 1, false);
-    assert!(options(&mut g, helm, P0, None).is_empty()); // not at the end-of-turn window
-    let o = options(&mut g, helm, P0, Some(false));
-    assert_eq!(o.len(), 1);
-    assert_eq!(o[0].label, "equip Champion's Helm to Y'shtola, Night's Blessed");
-    assert!(perform(&mut g, P0, &o[0]));
-    assert_eq!(g.perm(helm).attached, Some(y));
-}
-
-#[test]
-fn champions_helm_is_yshtolas_alone() {
-    let mut g = table(&["sauron", "yshtola"]);
-    let helm = perm(&mut g, P0, "Champion's Helm");
-    perm(&mut g, P0, "Sauron, the Dark Lord");
-    lands(&mut g, P0, "Island", 1, false);
-    assert!(options(&mut g, helm, P0, Some(false)).is_empty());
-}
-
-#[test]
-fn the_wipe_answer_is_zurs() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    // Y'shtola has no wipe answer in hand: no response; with Clever Concealment her creatures phase out
-    let mut g = two();
-    let y = ysh(&mut g, P0);
-    perm(&mut g, P0, "Thief of Sanity");
-    perm(&mut g, P0, "Gonti, Lord of Luxury");
-    assert_eq!(decks::wipe_response(&mut g, P0, "destroy", P1).unwrap(), None);
-    hand(&mut g, P0, &["Clever Concealment"]);
-    lands(&mut g, P0, "Plains", 4, false);
-    let loss: f64 = g.player(P0).perms.iter().map(|&m| values::pval(&g, m)).sum();
-    assert!(loss >= 6.0, "{loss}");
-    assert_eq!(decks::wipe_response(&mut g, P0, "destroy", P1).unwrap(), Some("all"));
-    assert!(g.perm(y).phased);
 }
 
 // ======================================================== whole games
@@ -678,55 +508,6 @@ fn yshtola_plays_whole_games() {
 }
 
 // ------------------------------------------------------------------ cards her rules don't name use the generic priority
-#[test]
-fn a_card_her_rules_dont_name_gets_the_generic_priority_not_zero() {
-    let mut g = three();
-    let c = take(&mut g, P0, "Ad Nauseam");
-    assert_eq!(ysh_mod::yshtola_named_prio(&g, P0, c), None, "her rules don't name Ad Nauseam");
-    // 40 life and an empty table: about 12 cards of margin, worth casting
-    assert!(ysh_mod::yshtola_prio(&g, P0, c) > 0.0);
-    // at 15 life the margin is under four cards: held
-    g.player_mut(P0).life = 15;
-    assert_eq!(ysh_mod::yshtola_prio(&g, P0, c), 0.0);
-}
-
-#[test]
-fn the_cards_of_her_list_her_rules_dont_name() {
-    // these fall through to the generic priority (before 2026-10-17 they were never cast by priority: 0)
-    let g = three();
-    let mut unnamed: Vec<String> = g
-        .player(P0)
-        .deck_names
-        .iter()
-        .filter(|&&c| !g.db.get(c).land && ysh_mod::yshtola_named_prio(&g, P0, c).is_none())
-        .map(|&c| g.db.get(c).name.to_string())
-        .collect();
-    unnamed.sort();
-    unnamed.dedup();
-    for n in &unnamed {
-        let c = g.db.id(n).unwrap();
-        println!("UNNAMED {n}: {}", ysh_mod::yshtola_prio(&g, P0, c));
-    }
-    let want = [
-        "Anguished Unmaking",
-        "Austere Command",
-        "Conjurer's Closet",
-        "Dovin's Veto",
-        "Farewell",
-        "Fatal Push",
-        "Force of Will",
-        "Generous Gift",
-        "Go for the Throat",
-        "Path to Exile",
-        "Rhystic Study",
-        "Sphere of Safety",
-        "Teferi's Protection",
-        "Teleportation Circle",
-        "Your Fate Ends Here",
-    ];
-    assert_eq!(unnamed, want);
-}
-
 // ------------------------------------------------------------------ Teferi's Protection is the real card
 #[test]
 fn teferis_protection_answers_a_wipe_with_the_whole_card() {
@@ -759,12 +540,3 @@ fn teferis_protection_is_not_spent_on_one_removal_spell() {
     assert!(g.player(P0).hand.iter().any(|&c| &*g.db.get(c).name == "Teferi's Protection"));
 }
 
-#[test]
-fn an_instant_tutor_finds_the_x_drain_when_it_kills() {
-    let mut g = three();
-    lands(&mut g, P0, "Swamp", 9, false);
-    g.player_mut(P1).life = 6;
-    g.player_mut(P2).life = 6;
-    let pick = ai::tutor_pick(&g, P0, "is").unwrap(); // Mystical Tutor: instants and sorceries only
-    assert!(["Debt to the Deathless", "Exsanguinate"].contains(&&*g.db.get(pick).name), "{}", g.db.get(pick).name);
-}

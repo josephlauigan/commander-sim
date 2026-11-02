@@ -1,6 +1,6 @@
 //! generic-paths (2026-11-01): the cards whose only play path was a deck's hand-written AI (deleted on 2026-11-01,
 //! `audit/phase4/hand-off-design.md`, "Deleted") or a deck-key gate no live deck opens, and the generic path each got
-//! (`audit/phase4/generic-paths-2026-11-01.md`). For each card, with the defaults (no `AI_HAND`, no `force_hand`), the
+//! (`audit/phase4/generic-paths-2026-11-01.md`). For each card, the
 //! generic policy plays it in a hand-built position where it should, and declines where it shouldn't.
 
 use sim_core::ai::{self, pool};
@@ -320,6 +320,7 @@ fn equipment_with_a_card_code_equip_is_equipped_by_the_generic_policy() {
         ("thrasios", "Conqueror's Flail", 2),
         ("aurelia-boros-extra-combats", "Sword of the Animist", 2),
         ("ghave", "Nim Deathmantle", 4),
+        ("cloud", "Sword of Feast and Famine", 2),
     ] {
         let mut g = seated(key);
         let e = perm(&mut g, P, eq);
@@ -329,12 +330,6 @@ fn equipment_with_a_card_code_equip_is_equipped_by_the_generic_policy() {
         lands(&mut g, P, "Wastes", 1, false);
         assert!(equip_of(&g, e), "{key}: {eq} equipped");
     }
-    // cloud plays its hand AI (on by default), which equips its Sword itself: no generic equip added
-    let mut g = seated("cloud");
-    let e = perm(&mut g, P, "Sword of Feast and Famine");
-    perm(&mut g, P, "Grave Titan");
-    lands(&mut g, P, "Wastes", 4, false);
-    assert!(!equip_of(&g, e));
 }
 
 #[test]

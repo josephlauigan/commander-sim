@@ -85,112 +85,26 @@ pub fn jd_deck(key: &str) -> bool {
     )
 }
 
-// --- phase4-hand-off: each deck's hand-written AI behind one switch (`audit/phase4/hand-off-design.md`)
-/// the live decks whose hand-written AI is switchable (`AI_HAND`); every other key keeps whatever it has. The hand AI
-/// of eleven more decks was deleted after the recalibration's paired tests (`audit/phase4/hand-off-design.md`,
-/// "Deleted"): they play the generic policy and their plan file (`HAND_DELETED`)
-pub const HAND_DECKS: [&str; 3] = ["yshtola", "sheoldred", "cloud"];
-
-/// JD's (and Avery's) decks whose hand-written AI was deleted (2026-11-01, `audit/phase4/hand-off-design.md`,
-/// "Deleted"): `is_main` / `jd_deck` still name them (styles, table reads), so `hand_key` reads them as "" and every
+// --- phase4-hand-off: the decks whose hand-written AI was deleted (`audit/phase4/hand-off-design.md`, "Deleted")
+/// JD's (and Avery's) decks whose hand-written AI was deleted after the recalibration's paired tests (2026-11-01, the
+/// last three, yshtola, sheoldred and cloud, in "Deleted, part 2"): each plays the generic policy and its plan file.
+/// `is_main` / `jd_deck` still name them (styles, table reads), so `hand_key` reads them as "" and every
 /// `is_main(hand_key(..))` routing site takes the generic path; `values::generic_deck` counts them as generic decks.
 /// The pool's four (brago, aurelia, sisay, dack) need no entry: no routing site names a pool deck.
-pub const HAND_DELETED: [&str; 6] = ["sauron", "galadriel", "alela", "kefka", "karn", "thrasios"];
+pub const HAND_DELETED: [&str; 9] =
+    ["sauron", "galadriel", "yshtola", "alela", "kefka", "sheoldred", "cloud", "karn", "thrasios"];
 
-/// the switchable decks that play their hand-written AI when `AI_HAND` is unset: those whose hand AI beat the generic
-/// policy in the stage 1 paired tests (`audit/recal/pairs-2026-10-31.md` section 4: yshtola +4.1, sheoldred +1.9 over
-/// t3-t4, cloud +6.6 over t1-t3); their plan files are read only with their hand AI off
-pub const HAND_KEEP: [&str; 3] = ["yshtola", "sheoldred", "cloud"];
-
-enum HandMode {
-    Off,
-    All,
-    Keys(Vec<String>),
-}
-
-/// `AI_HAND`: unset or empty the hand AI on for `HAND_KEEP` only (the default); `0` off for every switchable deck;
-/// `1` on for all of them; else the deck keys, separated by commas, whose hand AI is on
-fn parse_hand(v: Option<&str>) -> HandMode {
-    match v.map(str::trim) {
-        None | Some("") => HandMode::Keys(HAND_KEEP.iter().map(|s| s.to_string()).collect()),
-        Some("0") => HandMode::Off,
-        Some("1") => HandMode::All,
-        Some(list) => {
-            HandMode::Keys(list.split(',').map(|s| s.trim().to_string()).filter(|s| !s.is_empty()).collect())
-        }
-    }
-}
-
-fn hand_mode() -> &'static HandMode {
-    static M: std::sync::OnceLock<HandMode> = std::sync::OnceLock::new();
-    M.get_or_init(|| parse_hand(std::env::var("AI_HAND").ok().as_deref()))
-}
-
-fn hand_wants(m: &HandMode, key: &str) -> bool {
-    match m {
-        HandMode::Off => false,
-        HandMode::All => true,
-        HandMode::Keys(k) => k.iter().any(|x| x == key),
-    }
-}
-
-/// does `AI_HAND` read as `v` turn switchable deck `key`'s hand AI on? (`parse_hand`; `force_hand` and the decks
-/// that are not switchable are not consulted)
-pub fn hand_switch_wants(v: Option<&str>, key: &str) -> bool {
-    hand_wants(&parse_hand(v), key)
-}
-
-thread_local! {
-    static HAND_FORCE: std::cell::Cell<Option<bool>> = const { std::cell::Cell::new(None) };
-}
-
-/// for tests: the hand AI on (`Some(true)`) or off for every switchable deck on this thread, whatever `AI_HAND` says
-/// (None: back to `AI_HAND`); the guard puts the previous value back when dropped
-#[must_use]
-pub fn force_hand(on: Option<bool>) -> HandGuard {
-    HandGuard(HAND_FORCE.with(|f| f.replace(on)))
-}
-
-/// restores the previous `force_hand` value on drop
-pub struct HandGuard(Option<bool>);
-
-impl Drop for HandGuard {
-    fn drop(&mut self) {
-        HAND_FORCE.with(|f| f.set(self.0));
-    }
-}
-
-/// does this deck play its hand-written AI? A switchable deck: as `AI_HAND` (or `force_hand`) says, by default on for
-/// `HAND_KEEP` only; a deck in `HAND_DELETED`: no (it has none); any other key: yes (the pool decks have nothing to
-/// switch; the retired test seats keep theirs)
+/// does this deck play a hand-written AI? No for the nine in `HAND_DELETED`; any other key: yes (the pool decks have
+/// nothing to switch; the retired test seats keep theirs)
 pub fn hand_ai_key(key: &str) -> bool {
-    if HAND_DELETED.contains(&key) {
-        return false;
-    }
-    if !HAND_DECKS.contains(&key) {
-        return true;
-    }
-    if let Some(f) = HAND_FORCE.with(|f| f.get()) {
-        return f;
-    }
-    hand_wants(hand_mode(), key)
+    !HAND_DELETED.contains(&key)
 }
 
-/// does seat p play its deck's hand-written AI?
-pub fn hand_ai(g: &Game, p: PlayerId) -> bool {
-    hand_ai_key(g.player(p).key)
-}
-
-/// p's deck key for the deck-AI sites: the key while its hand AI is on, "" while it is off or deleted (so every
-/// `match` and `is_main` on it falls through to the generic policy)
+/// p's deck key for the deck-AI sites: the key while it has a hand-written AI, "" when it has none (so every `match`
+/// and `is_main` on it falls through to the generic policy)
 pub fn hand_key(g: &Game, p: PlayerId) -> crate::sym::Sym {
     let k = g.player(p).key;
     if hand_ai_key(k) { k } else { "" }
-}
-
-/// a switchable deck's plan file that is not read now (its deck plays its hand AI)
-pub fn plan_unread(key: &str) -> bool {
-    HAND_DECKS.contains(&key) && hand_ai_key(key)
 }
 
 /// brain.style: the run's style for this deck (`Settings::styles`), else its built-in one
@@ -539,9 +453,6 @@ pub fn protect_response(
 
 /// ais.wipe_modes (Farewell, Austere Command's modes)
 pub fn wipe_modes(g: &Game, p: PlayerId, kind: Sym) -> Vec<Sym> {
-    if hand_key(g, p) == "cloud" {
-        return crate::impls::cloud::wipe_modes(g, p, kind); // gated on the deck key (ai-audit cv)
-    }
     decks::wipe_modes(g, p, kind)
 }
 
@@ -681,9 +592,6 @@ pub fn filter_attackers(g: &mut Game, p: PlayerId, atk: Vec<PermId>) -> Vec<Perm
 
 /// pool_ai.attack_filter (an outside deck's own attack rules)
 pub fn attack_filter(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -> Vec<PermId> {
-    if hand_key(g, p) == "cloud" {
-        return crate::impls::cloud::attack_filter(g, p, atk, d);
-    }
     if is_main(hand_key(g, p)) {
         return atk;
     }

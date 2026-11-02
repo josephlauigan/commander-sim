@@ -349,7 +349,6 @@ fn puresteel_paladin_makes_equip_free_with_three_artifacts() {
 
 #[test]
 fn the_equip_option_uses_the_changed_cost_and_picks_cloud() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
     let mut g = game();
     lands(&mut g, P0, "Plains", 3, false);
     let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
@@ -614,28 +613,6 @@ fn an_equipment_that_attaches_on_entering_waits_for_a_creature() {
 }
 
 #[test]
-fn an_unequipped_cloud_stays_home_when_he_can_be_blocked_and_goes_when_equipped() {
-    let mut g = game();
-    let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
-    g.perm_mut(cl).sick = false;
-    token(&mut g, P1, 1);
-    let out = cloud::attack_filter(&mut g, P0, vec![cl], P1);
-    assert!(out.is_empty(), "a bare 2/1 against a blocker stays home");
-    let e = perm(&mut g, P0, "Medic's Kitesail");
-    g.perm_mut(e).attached = Some(cl);
-    let out = cloud::attack_filter(&mut g, P0, vec![cl], P1);
-    assert_eq!(out, vec![cl]);
-}
-
-#[test]
-fn an_unequipped_cloud_attacks_into_an_empty_board() {
-    let mut g = game();
-    let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
-    g.perm_mut(cl).sick = false;
-    assert_eq!(cloud::attack_filter(&mut g, P0, vec![cl], P1), vec![cl]);
-}
-
-#[test]
 fn entering_again_is_worth_more_to_a_bare_cloud_than_a_laden_one() {
     let mut g = game();
     let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
@@ -650,69 +627,6 @@ fn entering_again_is_worth_more_to_a_bare_cloud_than_a_laden_one() {
     assert_eq!(cloud::reenter_value(&g, P0, other), 0.0, "only Cloud");
 }
 
-// ------------------------------------------------------------------ protecting Cloud
-fn destroy(g: &mut Game, m: PermId) {
-    sim_core::engine::removal::apply_removal(g, Some(P1), m, "destroy", None).unwrap();
-}
-
-#[test]
-fn take_up_the_shield_saves_cloud_from_a_destroy_spell() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = game();
-    lands(&mut g, P0, "Plains", 2, false);
-    let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
-    hand(&mut g, P0, &["Take Up the Shield"]);
-    destroy(&mut g, cl);
-    assert!(g.perm(cl).on_bf, "indestructible");
-    assert_eq!(g.perm(cl).plus, 1, "and a +1/+1 counter");
-    assert!(in_gy(&g, P0, "Take Up the Shield"));
-}
-
-#[test]
-fn zack_fair_saves_cloud_and_gives_him_the_equipment_and_counters() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = game();
-    lands(&mut g, P0, "Plains", 2, false);
-    let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
-    let z = perm(&mut g, P0, "Zack Fair");
-    let e = perm(&mut g, P0, "Mask of Memory");
-    g.perm_mut(e).attached = Some(z);
-    destroy(&mut g, cl);
-    assert!(g.perm(cl).on_bf && !g.perm(z).on_bf);
-    assert_eq!(g.perm(e).attached, Some(cl));
-}
-
-#[test]
-fn a_creature_that_is_not_worth_it_is_left_to_die() {
-    let mut g = game();
-    lands(&mut g, P0, "Plains", 2, false);
-    let t = perm(&mut g, P0, "Thalia, the Survivor");
-    hand(&mut g, P0, &["Take Up the Shield"]);
-    destroy(&mut g, t);
-    assert!(!g.perm(t).on_bf);
-    assert!(in_hand(&g, P0, "Take Up the Shield"));
-}
-
-#[test]
-fn unbreakable_formation_answers_a_destroy_spell_when_nothing_cheaper_is_there() {
-    let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = game();
-    lands(&mut g, P0, "Plains", 3, false);
-    let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
-    hand(&mut g, P0, &["Unbreakable Formation"]);
-    destroy(&mut g, cl);
-    assert!(g.perm(cl).on_bf);
-}
-
-#[test]
-fn an_edict_cannot_be_answered() {
-    let mut g = game();
-    lands(&mut g, P0, "Plains", 3, false);
-    let cl = perm(&mut g, P0, "Cloud, Midgar Mercenary");
-    hand(&mut g, P0, &["Take Up the Shield"]);
-    assert!(!cloud::cloud_protect(&mut g, P0, cl, "edict", Some(P1), None).unwrap());
-}
-
 // ------------------------------------------------------------------ the plan (cloud-plan)
 #[test]
 fn bounced_cloud_stays_in_hand_without_tax() {
@@ -723,20 +637,6 @@ fn bounced_cloud_stays_in_hand_without_tax() {
     assert!(in_hand(&g, P0, "Cloud, Midgar Mercenary"), "903.9b: he stays in hand");
     assert!(!g.player(P0).cmd_in_zone);
     assert_eq!(g.player(P0).tax, 0);
-}
-
-#[test]
-fn search_bonus_favours_casting_cloud_only() {
-    use sim_core::hooks::Action;
-    let mut g = game();
-    let c = g.player(P0).cmd;
-    let cast =
-        Opt { utility: 5.0, label: "Cloud, Midgar Mercenary".into(), act: Some(Action::Cast { card: c, zone: None }) };
-    let stop = Opt { utility: 0.0, label: "stop".into(), act: None };
-    assert!(cloud::search_bonus(&g, P0, &cast) > 0.0);
-    assert_eq!(cloud::search_bonus(&g, P0, &stop), 0.0);
-    perm(&mut g, P0, "Cloud, Midgar Mercenary");
-    assert_eq!(cloud::search_bonus(&g, P0, &cast), 0.0, "no bonus once he is out");
 }
 
 #[test]
