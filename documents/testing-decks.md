@@ -25,7 +25,7 @@ Each deck plays only the opponent tiers listed for it in `data/my_decks.toml` (`
 | Decks | Tiers |
 | --- | --- |
 | yshtola, thrasios, urdragon | t5 |
-| sheoldred, sauron, ghave | t3-t4 |
+| sheoldred, sauron | t3-t4 |
 | kefka | t3 |
 | cloud | t1-t3 |
 | karn | t4-t5 |

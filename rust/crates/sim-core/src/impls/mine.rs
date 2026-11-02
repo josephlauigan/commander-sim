@@ -3385,7 +3385,7 @@ pub fn seph_loops(g: &Game, p: PlayerId) -> Vec<(usize, Vec<PermId>, bool)> {
     loops_now(g, p)
 }
 
-/// --- ghave: the loops any deck can run now (the combo catalogue's entries in impls/ghave.rs): (loop index, key
+/// the loops any deck can run now (the combo catalogue entry in impls/mikaeus_trisk.rs): (loop index, key
 /// permanents, kills)
 pub fn loops_now(g: &Game, p: PlayerId) -> Vec<(usize, Vec<PermId>, bool)> {
     if loops_blocked(g, p) {

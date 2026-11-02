@@ -249,7 +249,7 @@ fn rest_in_peace_stops_the_loops() {
 }
 
 #[test]
-/// --- ghave: the loop is a combo-catalogue line now (impls/ghave.rs), offered to every deck that holds it
+/// the loop is a combo-catalogue line now (impls/mikaeus_trisk.rs), offered to every deck that holds it
 fn the_ai_goes_for_a_killing_loop() {
     let (mut g, _) = loops_with(&["Mikaeus, the Unhallowed", "Triskelion", "Viscera Seer"], &[]);
     assert!(take_option(&mut g, P0, "combo: Mikaeus + Triskelion"));
