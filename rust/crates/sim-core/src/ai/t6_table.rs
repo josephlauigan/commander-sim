@@ -111,7 +111,14 @@ pub fn threat_bonus(g: &Game, q: PlayerId) -> f64 {
 
 /// What q does with its counterspell(s) against `top` (a spell on the stack that q may counter). `val`/`thr`/`nc` are
 /// the generic inputs (value to q, threshold, counters in hand).
+///
+/// These are the rules of a cEDH pod answering each other: they apply only when q itself plays a Tier 6 deck. A
+/// counterer of any other tier judges a Tier 6 player's spells by the generic rules, as it does anyone's (JD,
+/// 2026-11-01): the generic roll here, and `engine::stack::ai_respond` doesn't ask this for such a counterer.
 pub fn counter_verdict(g: &Game, q: PlayerId, top: &StackItem, val: f64, thr: f64, nc: usize) -> Verdict {
+    if !t6_plans::is_t6(g, q) {
+        return Verdict::Roll(val, thr); // not a cEDH pod: the generic roll, whoever cast it
+    }
     let ctrl = top.controller;
     let adnaus = top.card.is_some_and(|c| g.db.get(c).tag(Tag::Adnaus));
     if g.t6_going == Some(ctrl) || adnaus {
