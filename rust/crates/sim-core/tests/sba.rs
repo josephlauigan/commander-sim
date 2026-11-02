@@ -11,7 +11,7 @@ const P1: PlayerId = PlayerId(1);
 
 #[test]
 fn toughness_zero_after_entering_dies_at_the_next_check() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let a = token(&mut g, P1, 3); // a 3/3
     check_state(&mut g).unwrap();
     assert!(g.perm(a).on_bf, "3 toughness lives");
@@ -22,7 +22,7 @@ fn toughness_zero_after_entering_dies_at_the_next_check() {
 
 #[test]
 fn indestructible_and_regeneration_do_not_save_a_zero_toughness_creature() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let a = token(&mut g, P1, 3);
     g.perm_mut(a).data.set(DataKey::Indestr, sim_core::state::Val::Int(1));
     g.player_mut(P1).regen_turn = Some(g.turn_stamp());
@@ -43,7 +43,7 @@ fn dismember_kills_an_indestructible_godo() {
 
 #[test]
 fn a_draw_from_an_empty_library_loses_at_the_next_check_not_before() {
-    let mut g = table(&["sauron", "veyran", "seph"]);
+    let mut g = table(&["sauron", "cloud", "seph"]);
     g.player_mut(P0).library.clear();
     zones::draw(&mut g, P0, 1, false).unwrap();
     assert!(g.player(P0).alive && g.player(P0).decked, "flagged, not yet out");
@@ -53,7 +53,7 @@ fn a_draw_from_an_empty_library_loses_at_the_next_check_not_before() {
 
 #[test]
 fn an_empty_library_alone_does_not_lose() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     g.player_mut(P0).library.clear();
     check_state(&mut g).unwrap();
     assert!(g.player(P0).alive, "only an attempted draw loses");

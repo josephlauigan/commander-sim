@@ -15,7 +15,7 @@ fn count_tokens(g: &Game, p: PlayerId) -> usize {
 
 #[test]
 fn twinflame_two_targets() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     hand(&mut g, P0, &["Twinflame"]);
     perm(&mut g, P0, "Guttersnipe");
     perm(&mut g, P0, "Kessig Flamebreather");
@@ -31,7 +31,7 @@ fn twinflame_two_targets() {
 
 #[test]
 fn twinflame_extra_target_needs_mana() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let c = hand(&mut g, P0, &["Twinflame"])[0];
     perm(&mut g, P0, "Guttersnipe");
     perm(&mut g, P0, "Kessig Flamebreather");
@@ -43,7 +43,7 @@ fn twinflame_extra_target_needs_mana() {
 
 #[test]
 fn twinflame_copies_a_token() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     hand(&mut g, P0, &["Twinflame"]);
     let mut spec = Tokens::new(1, 4);
     spec.fly = true;
@@ -57,7 +57,7 @@ fn twinflame_copies_a_token() {
 
 #[test]
 fn ephemerate_and_rebound() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     hand(&mut g, P0, &["Ephemerate"]);
     let m = perm(&mut g, P0, "Grave Titan");
     pool(&mut g, P0, &[('W', 1)]);
@@ -74,7 +74,7 @@ fn ephemerate_and_rebound() {
 
 #[test]
 fn cycling_at_instant_speed() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     g.active = Some(P1);
     hand(&mut g, P0, &["Unearth"]);
     pool(&mut g, P0, &[('C', 2)]);
@@ -88,7 +88,7 @@ fn cycling_at_instant_speed() {
 
 #[test]
 fn unearth_your_pick() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     hand(&mut g, P0, &["Unearth"]);
     let (a, b) = (card(&g, "Carrion Feeder"), card(&g, "Burglar Rat"));
     g.player_mut(P0).gy.extend([a, b]);
@@ -99,7 +99,7 @@ fn unearth_your_pick() {
 
 #[test]
 fn sokenzan_channel() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     hand(&mut g, P0, &["Sokenzan, Crucible of Defiance"]);
     pool(&mut g, P0, &[('R', 1), ('C', 3)]);
     main(&mut g, P0, vec![act(json!({"do": "cast", "card": 0}))]);
@@ -109,7 +109,7 @@ fn sokenzan_channel() {
 
 #[test]
 fn necromancy_at_instant_speed() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     g.active = Some(P1);
     hand(&mut g, P0, &["Necromancy"]);
     let t = card(&g, "Grave Titan");
@@ -123,7 +123,7 @@ fn necromancy_at_instant_speed() {
 
 #[test]
 fn return_the_favor_needs_a_spell() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     hand(&mut g, P0, &["Return the Favor"]);
     pool(&mut g, P0, &[('R', 3)]);
     let h = main(&mut g, P0, vec![act(json!({"do": "cast", "card": 0}))]);
@@ -132,7 +132,7 @@ fn return_the_favor_needs_a_spell() {
 
 #[test]
 fn return_the_favor_copies_your_bolt() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     hand(&mut g, P0, &["Lightning Bolt", "Return the Favor"]);
     pool(&mut g, P0, &[('R', 4)]);
     main(
@@ -152,7 +152,7 @@ fn return_the_favor_copies_your_bolt() {
 
 #[test]
 fn the_ai_does_not_cast_return_the_favor_for_you() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     hand(&mut g, P0, &["Lightning Bolt", "Return the Favor"]);
     pool(&mut g, P0, &[('R', 4)]);
     main(&mut g, P0, vec![act(json!({"do": "cast", "card": 0})), by_text("Sephiroth"), pass()]);

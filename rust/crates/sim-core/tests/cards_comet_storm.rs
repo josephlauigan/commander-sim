@@ -12,7 +12,7 @@ const P2: PlayerId = PlayerId(2);
 const P3: PlayerId = PlayerId(3);
 
 fn game() -> Game {
-    let mut g = table(&["sauron", "veyran", "seph", "kefka"]);
+    let mut g = table(&["sauron", "cloud", "seph", "kefka"]);
     g.active = Some(P0);
     for p in [P1, P2, P3] {
         g.player_mut(p).life = 40;

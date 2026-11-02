@@ -21,7 +21,7 @@ fn cols(g: &Game, l: PermId) -> String {
 
 #[test]
 fn every_filter_land_needs_an_untapped_land_that_makes_one_of_its_colours() {
-    let mut g = table(&["meren-golgari-recursion", "veyran"]);
+    let mut g = table(&["meren-golgari-recursion", "cloud"]);
     let mire = lands(&mut g, P0, "Twilight Mire", 1, false)[0];
     assert_eq!(cols(&g, mire), "", "alone: colourless only");
     lands(&mut g, P0, "Plains", 1, false);
@@ -34,7 +34,7 @@ fn every_filter_land_needs_an_untapped_land_that_makes_one_of_its_colours() {
 
 #[test]
 fn two_filter_lands_alone_make_nothing_but_a_fed_one_feeds_the_next() {
-    let mut g = table(&["aurelia-boros-extra-combats", "veyran"]);
+    let mut g = table(&["aurelia-boros-extra-combats", "cloud"]);
     let prairie = lands(&mut g, P0, "Rugged Prairie", 1, false)[0];
     let gate = lands(&mut g, P0, "Mystic Gate", 1, false)[0];
     assert_eq!(cols(&g, prairie), "", "two filters and no real source");
@@ -49,14 +49,14 @@ fn two_filter_lands_alone_make_nothing_but_a_fed_one_feeds_the_next() {
 
 #[test]
 fn sungrass_prairie_and_ferrous_lake_need_another_untapped_land_and_net_one_mana() {
-    let mut g = table(&["sythis-selesnya-enchantress", "veyran"]);
+    let mut g = table(&["sythis-selesnya-enchantress", "cloud"]);
     let sp = lands(&mut g, P0, "Sungrass Prairie", 1, false)[0];
     assert_eq!(amt(&g, sp), 0, "nothing to pay the {{1}}");
     let f = lands(&mut g, P0, "Forest", 1, true)[0];
     assert_eq!(amt(&g, sp), 0, "a tapped Forest cannot pay");
     g.perm_mut(f).tapped = false;
     assert_eq!(amt(&g, sp), 1);
-    let mut g = table(&["thrasios", "veyran"]);
+    let mut g = table(&["thrasios", "cloud"]);
     let fl = lands(&mut g, P0, "Ferrous Lake", 1, false)[0];
     assert_eq!(amt(&g, fl), 0);
     lands(&mut g, P0, "Island", 1, false);
@@ -65,7 +65,7 @@ fn sungrass_prairie_and_ferrous_lake_need_another_untapped_land_and_net_one_mana
 
 #[test]
 fn spire_of_industry_needs_an_artifact_and_costs_a_life() {
-    let mut g = table(&["yshtola", "veyran"]);
+    let mut g = table(&["yshtola", "cloud"]);
     let spire = lands(&mut g, P0, "Spire of Industry", 1, false)[0];
     assert_eq!(cols(&g, spire), "", "no artifact: colourless only");
     perm(&mut g, P0, "Arcane Signet");
@@ -75,7 +75,7 @@ fn spire_of_industry_needs_an_artifact_and_costs_a_life() {
 
 #[test]
 fn exotic_orchard_makes_only_colours_an_opponent_land_could_make() {
-    let mut g = table(&["omnath", "veyran"]);
+    let mut g = table(&["omnath", "cloud"]);
     let orchard = lands(&mut g, P0, "Exotic Orchard", 1, false)[0];
     assert_eq!(cols(&g, orchard), "", "the opponents control no lands");
     lands(&mut g, P1, "Forest", 1, false);
@@ -86,7 +86,7 @@ fn exotic_orchard_makes_only_colours_an_opponent_land_could_make() {
 
 #[test]
 fn hall_of_the_bandit_lord_costs_three_life_per_mana() {
-    let mut g = table(&["krenko-mono-red-goblins", "veyran"]);
+    let mut g = table(&["krenko-mono-red-goblins", "cloud"]);
     let hall = lands(&mut g, P0, "Hall of the Bandit Lord", 1, false)[0];
     assert_eq!(amt(&g, hall), 1);
     assert!(mana::pay(&mut g, P0, 1, "", false).unwrap());
@@ -98,7 +98,7 @@ fn hall_of_the_bandit_lord_costs_three_life_per_mana() {
 
 #[test]
 fn cavern_of_souls_makes_coloured_mana_for_creature_spells_of_one_type_only() {
-    let mut g = table(&["chulane-bant-value-combo", "veyran"]);
+    let mut g = table(&["chulane-bant-value-combo", "cloud"]);
     let cavern = lands(&mut g, P0, "Cavern of Souls", 1, false)[0];
     assert_eq!(cols(&g, cavern), "", "no spell: colourless");
     let t = sim_core::impls::mine::territory_type(&g, P0);
@@ -124,7 +124,7 @@ fn cavern_of_souls_makes_coloured_mana_for_creature_spells_of_one_type_only() {
 
 #[test]
 fn spectator_seating_makes_red_or_white_and_sulfur_falls_deals_no_damage() {
-    let mut g = table(&["thrasios", "veyran"]);
+    let mut g = table(&["thrasios", "cloud"]);
     let ss = lands(&mut g, P0, "Spectator Seating", 1, false)[0];
     assert_eq!(cols(&g, ss), "WR");
     assert!(!g.db.get(g.perm(ss).card()).tag(Tag::Pain));
@@ -134,7 +134,7 @@ fn spectator_seating_makes_red_or_white_and_sulfur_falls_deals_no_damage() {
 
 #[test]
 fn hidden_grotto_taps_for_colourless() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     let hg = lands(&mut g, P0, "Hidden Grotto", 1, false)[0];
     lands(&mut g, P0, "Plains", 1, false);
     assert_eq!(cols(&g, hg), "", "the {{1}},{{T}} any-colour mode nets no mana and is left out");
@@ -144,7 +144,7 @@ fn hidden_grotto_taps_for_colourless() {
 #[test]
 fn fabled_passage_untaps_the_land_with_three_other_lands() {
     for (others, tapped) in [(2usize, true), (3, false)] {
-        let mut g = table(&["omnath", "veyran"]);
+        let mut g = table(&["omnath", "cloud"]);
         lands(&mut g, P0, "Forest", others, false);
         let before = g.player(P0).lands.len();
         let fp = lands(&mut g, P0, "Fabled Passage", 1, false)[0];
@@ -169,7 +169,7 @@ fn orchards_and_filter_lands_on_both_sides_do_not_recurse() {
 
 #[test]
 fn dryad_arbor_cannot_tap_the_turn_it_enters() {
-    let mut g = table(&["marwyn-mono-green-elves", "veyran"]);
+    let mut g = table(&["marwyn-mono-green-elves", "cloud"]);
     let c = take(&mut g, P0, "Dryad Arbor");
     assert!(sim_core::engine::turn::land_enters_tapped(&g, P0, c), "summoning sick: no mana this turn");
 }

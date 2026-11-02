@@ -365,9 +365,10 @@ fn ephemerate_blinks_an_enter_effect_creature_for_value() {
 }
 
 #[test]
-fn mizzixs_mastery_is_offered_to_veyran() {
-    // the audit's claim: its gate (`is_main(hand_key(..))`) reads Veyran as a generic deck now, so it is reachable
-    let mut g = seated("veyran");
+fn mizzixs_mastery_is_offered_to_a_generic_jd_deck() {
+    // the audit's claim: its gate (`is_main(hand_key(..))`) reads a JD deck whose hand AI was deleted (Kefka; Veyran
+    // until its retirement, 2026-11-01) as a generic deck, so it is reachable
+    let mut g = seated("kefka");
     lands(&mut g, P, "Mountain", 8, false);
     let c = hand(&mut g, P, &["Mizzix's Mastery"])[0];
     for n in ["Brainstorm", "Ponder", "Preordain", "Lightning Bolt"] {

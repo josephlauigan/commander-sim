@@ -19,7 +19,7 @@ fn tap_all(g: &mut Game, p: PlayerId) {
 
 #[test]
 fn one_land_per_turn() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let cs = hand(&mut g, P0, &["Swamp", "Island"]);
     assert_eq!(legal::check_land(&g, P0, cs[0]), None);
     assert_eq!(apply(&mut g, P0, &json!({"do": "land", "card": 0})).unwrap(), None);
@@ -28,7 +28,7 @@ fn one_land_per_turn() {
 
 #[test]
 fn lands_and_sorceries_only_in_your_main_phase() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let c = hand(&mut g, P0, &["Swamp"])[0];
     let sheo = hand(&mut g, P0, &["Sheoldred, the Apocalypse"])[0];
     g.step = Step::Combat;
@@ -40,7 +40,7 @@ fn lands_and_sorceries_only_in_your_main_phase() {
 
 #[test]
 fn instants_any_time_you_have_priority() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let cs = hand(&mut g, P0, &["Infernal Grasp"])[0];
     lands(&mut g, P0, "Swamp", 2, false);
     perm(&mut g, P1, "Guttersnipe");
@@ -51,7 +51,7 @@ fn instants_any_time_you_have_priority() {
 
 #[test]
 fn the_reason_when_mana_is_short() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let sheo = hand(&mut g, P0, &["Sheoldred, the Apocalypse"])[0];
     lands(&mut g, P0, "Swamp", 2, false);
     tap_all(&mut g, P0);
@@ -63,7 +63,7 @@ fn the_reason_when_mana_is_short() {
 
 #[test]
 fn commander_tax() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     g.player_mut(P0).tax = 2;
     for n in ["Island", "Swamp", "Mountain"] {
         lands(&mut g, P0, n, 2, false);
@@ -79,7 +79,7 @@ fn commander_tax() {
 
 #[test]
 fn tap_then_cast() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     hand(&mut g, P0, &["Orcish Bowmasters"]);
     lands(&mut g, P0, "Swamp", 2, false);
     let tap = || act(json!({"do": "tap", "source": 0}));
@@ -96,7 +96,7 @@ fn tap_then_cast() {
 
 #[test]
 fn an_illegal_move_is_explained_and_you_keep_priority() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let sheo = hand(&mut g, P0, &["Sheoldred, the Apocalypse"])[0];
     let h = seat(&mut g, P0, vec![act(json!({"do": "cast", "card": 0})), pass()]);
     human_main(&mut g, P0, false).unwrap();
@@ -108,7 +108,7 @@ fn an_illegal_move_is_explained_and_you_keep_priority() {
 
 #[test]
 fn casting_the_commander_raises_the_tax() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     for n in ["Island", "Swamp", "Mountain", "Island", "Swamp", "Mountain"] {
         lands(&mut g, P0, n, 1, false);
     }

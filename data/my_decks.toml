@@ -8,13 +8,6 @@ commander = "Ghave, Guru of Spores"
 ident = "WBG"
 tiers = ["t3", "t4"]
 
-[veyran]
-file = "JD/veyran-izzet-spellslinger.md"
-name = "Veyran"
-commander = "Veyran, Voice of Duality"
-ident = "UR"
-tiers = ["t1", "t2", "t3"]
-
 [sauron]
 file = "JD/sauron-grixis-amass.md"
 name = "Sauron"

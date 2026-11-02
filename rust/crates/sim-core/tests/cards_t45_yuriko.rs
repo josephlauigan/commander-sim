@@ -47,7 +47,7 @@ fn combat_damage(g: &mut Game, p: PlayerId, a: PermId, d: PlayerId, dmg: i32) {
 }
 
 fn yuriko_table() -> Game {
-    let mut g = table(&[YURIKO, "seph", "veyran"]);
+    let mut g = table(&[YURIKO, "seph", "cloud"]);
     g.player_mut(P0).cmd_in_zone = false; // Yuriko elsewhere: only the Ninjas in hand
     g
 }

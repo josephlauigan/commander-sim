@@ -76,7 +76,7 @@ fn every_decision_of_several_games_has_a_hint() {
 
 fn game() -> (Game, PlayerId) {
     let e = engine();
-    let seats: Vec<String> = ["sauron", "ghave", "veyran", "galadriel"].iter().map(|s| s.to_string()).collect();
+    let seats: Vec<String> = ["sauron", "ghave", "cloud", "galadriel"].iter().map(|s| s.to_string()).collect();
     let (g, _) =
         practice::session::setup::build_game(&e, settings("loose", "adaptive", 1.0).unwrap(), 77, &seats, &[]).unwrap();
     (g, PlayerId(0))

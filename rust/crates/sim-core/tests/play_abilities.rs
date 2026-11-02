@@ -30,7 +30,7 @@ fn tap_all(g: &mut Game, p: PlayerId) {
 // ------------------------------------------------------------------ Targets
 #[test]
 fn what_a_removal_spell_can_target() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let c = hand(&mut g, P0, &["Terminate"])[0];
     let mine = perm(&mut g, P0, "Orcish Bowmasters");
     let theirs = perm(&mut g, P1, "Guttersnipe");
@@ -46,7 +46,7 @@ fn what_a_removal_spell_can_target() {
 
 #[test]
 fn burn_can_target_players() {
-    let mut g = table(&["veyran", "sauron"]);
+    let mut g = table(&["kefka", "sauron"]);
     let bolt = card(&g, "Lightning Bolt");
     let tg = legal::spell_targets(&g, P0, bolt).unwrap();
     assert!(tg.contains(&Target::Player(P1)));
@@ -57,7 +57,7 @@ fn burn_can_target_players() {
 
 #[test]
 fn cast_with_a_target() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     hand(&mut g, P0, &["Terminate"]);
     lands(&mut g, P0, "Swamp", 1, false);
     lands(&mut g, P0, "Mountain", 1, false);
@@ -72,7 +72,7 @@ fn cast_with_a_target() {
 
 #[test]
 fn cancelling_a_target_costs_nothing() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     hand(&mut g, P0, &["Terminate"]);
     lands(&mut g, P0, "Swamp", 1, false);
     lands(&mut g, P0, "Mountain", 1, false);
@@ -87,7 +87,7 @@ fn cancelling_a_target_costs_nothing() {
 
 #[test]
 fn bloodchiefs_thirst_kicker() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let c = hand(&mut g, P0, &["Bloodchief's Thirst"])[0];
     lands(&mut g, P0, "Swamp", 1, false);
     tap_all(&mut g, P0);
@@ -104,7 +104,7 @@ fn bloodchiefs_thirst_kicker() {
 // ------------------------------------------------------------------ Abilities
 #[test]
 fn equip() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     zones::amass(&mut g, P0, 3).unwrap();
     let army = sim_core::engine::values::army_of(&g, P0).unwrap();
     let sword = perm(&mut g, P0, "Sword of Feast and Famine");
@@ -120,7 +120,7 @@ fn equip() {
 
 #[test]
 fn equip_needs_mana_and_your_main_phase() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     zones::amass(&mut g, P0, 3).unwrap();
     let army = sim_core::engine::values::army_of(&g, P0).unwrap();
     let sword = perm(&mut g, P0, "Sword of Feast and Famine");
@@ -131,7 +131,7 @@ fn equip_needs_mana_and_your_main_phase() {
 
 #[test]
 fn a_planeswalker_ability() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let vr = perm(&mut g, P0, "Vraska, Betrayal's Sting");
     let abil = abilities_of(&mut g, P0, vr).unwrap();
     assert!(!abil.is_empty(), "Vraska offers loyalty abilities");
@@ -144,7 +144,7 @@ fn a_planeswalker_ability() {
 
 #[test]
 fn nothing_to_activate() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Orcish Bowmasters");
     let h = seat(&mut g, P0, vec![act(json!({"do": "use", "perm": 0})), pass()]);
     human_main(&mut g, P0, false).unwrap();
@@ -154,7 +154,7 @@ fn nothing_to_activate() {
 // ------------------------------------------------------------------ Table refs
 #[test]
 fn choices_point_at_the_table() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let gs = perm(&mut g, P1, "Guttersnipe");
     let c = hand(&mut g, P0, &["Terminate"])[0];
     let gl = legal::describe_target(&g, P0, Target::Perm(gs));
@@ -167,8 +167,8 @@ fn choices_point_at_the_table() {
     ];
     let refs = choices::table_refs(&g, P0, &labels);
     let idx = g.player(P1).perms.iter().position(|&x| x == gs).unwrap();
-    assert_eq!(refs[0], json!({"seat": "veyran", "perm": idx}));
-    assert_eq!(refs[1], json!({"player": "veyran"}));
+    assert_eq!(refs[0], json!({"seat": "cloud", "perm": idx}));
+    assert_eq!(refs[1], json!({"player": "cloud"}));
     assert_eq!(refs[2], json!({"hand": 0}));
     assert_eq!(refs[3], refs[0]);
     assert!(refs[4].is_null());
@@ -189,7 +189,7 @@ impl Human for Browser {
 
 #[test]
 fn the_browser_gets_them() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P1, "Guttersnipe");
     let b = std::sync::Arc::new(Browser(Default::default()));
     g.humans.add(P0, b.clone());
@@ -197,13 +197,13 @@ fn the_browser_gets_them() {
     let label = legal::describe_target(&g, P0, Target::Perm(m));
     choices::choose(&g, P0, "target", "pick", &[label], Some("cancel"), None).unwrap();
     let got = b.0.lock().unwrap();
-    assert_eq!(got[0].data["refs"], json!([{"seat": "veyran", "perm": 0}]));
+    assert_eq!(got[0].data["refs"], json!([{"seat": "cloud", "perm": 0}]));
 }
 
 // ------------------------------------------------------------------ Overload
 #[test]
 fn only_overloaded_with_nothing_to_target() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     hand(&mut g, P0, &["Vandalblast"]);
     pool(&mut g, P0, &[('R', 1), ('C', 4)]);
     let h = seat(&mut g, P0, vec![act(json!({"do": "cast", "card": 0})), pick(0), pass()]);
@@ -219,7 +219,7 @@ fn only_overloaded_with_nothing_to_target() {
 #[test]
 fn wayfarers_bauble_from_the_pool() {
     // JD (10/21): two {C} in the pool, Wayfarer's Bauble on the battlefield: its compiled ability wasn't offered
-    let mut g = table(&["karn", "veyran"]);
+    let mut g = table(&["karn", "cloud"]);
     lands(&mut g, P0, "Wastes", 2, false);
     let b = perm(&mut g, P0, "Wayfarer's Bauble");
     tap_all(&mut g, P0);
@@ -236,7 +236,7 @@ fn wayfarers_bauble_from_the_pool() {
 
 #[test]
 fn a_compiled_ability_without_the_mana_says_so() {
-    let mut g = table(&["karn", "veyran"]);
+    let mut g = table(&["karn", "cloud"]);
     let b = perm(&mut g, P0, "Wayfarer's Bauble");
     let i = g.player(P0).perms.iter().position(|&x| x == b).unwrap();
     let h = seat(&mut g, P0, vec![act(json!({"do": "use", "perm": i})), pick(0), pass()]);
@@ -249,7 +249,7 @@ fn a_compiled_ability_without_the_mana_says_so() {
 fn arrest_from_the_person_locks_the_creatures_activated_abilities() {
     // JD (10/21): a friend put Arrest on an opponent's creature and "its ability still kicked in". Arrest stops
     // attacking, blocking and activated abilities (triggered abilities still work)
-    let mut g = table(&["yshtola", "veyran"]);
+    let mut g = table(&["yshtola", "cloud"]);
     let ar = hand(&mut g, P0, &["Arrest"])[0];
     lands(&mut g, P0, "Plains", 3, false);
     tap_all(&mut g, P0);
@@ -282,7 +282,7 @@ fn your_arrested_permanent_offers_no_ability() {
 #[test]
 fn liliana_of_the_veil_plus_one_asks_the_person_which_card_to_discard() {
     // JD (10/21): an opponent's Liliana +1 asked neither person; each player discards a card of their choice
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let kept = hand(&mut g, P0, &["Lightning Bolt", "Counterspell"]);
     let li = perm(&mut g, P1, "Liliana of the Veil");
     let h = seat(&mut g, P0, vec![pick(1)]); // discard the second card offered
@@ -296,7 +296,7 @@ fn liliana_of_the_veil_plus_one_asks_the_person_which_card_to_discard() {
 #[test]
 fn the_ai_discards_a_spell_not_a_permanent_into_tergrid() {
     // JD (10/21): with Tergrid out, discard a non-permanent card so Tergrid gets nothing
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Tergrid, God of Fright // Tergrid's Lantern");
     g.player_mut(P1).hand.clear();
     let cs = hand(&mut g, P1, &["Lightning Bolt", "Krenko, Mob Boss"]);

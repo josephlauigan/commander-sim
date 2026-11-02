@@ -67,7 +67,7 @@ fn main1(g: &mut Game, p: PlayerId, n: usize) {
 #[test]
 fn sheoldred_the_apocalypse() {
     // "Whenever you draw a card, you gain 2 life. Whenever an opponent draws a card, they lose 2 life."
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Sheoldred, the Apocalypse");
     zones::draw(&mut g, P1, 1, false).unwrap();
     assert_eq!(lives(&g), vec![40, 38]); // the opponent's draw gains you nothing
@@ -79,7 +79,7 @@ fn sheoldred_the_apocalypse() {
 fn massacre_wurm() {
     // "When this enters, creatures your opponents control get -2/-2 until end of turn. Whenever a creature an opponent
     //  controls dies, that player loses 2 life."
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P1, "Guttersnipe");
     let mystic = perm(&mut g, P1, "Murmuring Mystic"); // 2/2 dies, 1/5 lives
     perm(&mut g, P0, "Massacre Wurm");
@@ -90,7 +90,7 @@ fn massacre_wurm() {
 #[test]
 fn archon_of_cruelty_enters() {
     // opponent sacrifices a creature, discards a card and loses 3; you draw a card and gain 3
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P1, "Guttersnipe");
     hand(&mut g, P1, &["Lightning Bolt", "Think Twice"]);
     perm(&mut g, P0, "Archon of Cruelty");
@@ -101,7 +101,7 @@ fn archon_of_cruelty_enters() {
 
 #[test]
 fn gray_merchant_drains_devotion() {
-    let mut g = table(&["seph", "veyran", "sauron"]);
+    let mut g = table(&["seph", "cloud", "sauron"]);
     perm(&mut g, P0, "Sheoldred, Whispering One"); // {5}{B}{B}: devotion 2 + Gray Merchant's 2
     perm(&mut g, P0, "Gray Merchant of Asphodel");
     assert_eq!(lives(&g), vec![48, 36, 36]);
@@ -109,7 +109,7 @@ fn gray_merchant_drains_devotion() {
 
 #[test]
 fn blood_artist() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Blood Artist");
     let s = perm(&mut g, P1, "Guttersnipe");
     zones::die(&mut g, s, "destroy").unwrap();
@@ -118,7 +118,7 @@ fn blood_artist() {
 
 #[test]
 fn elesh_norn_grand_cenobite() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let mystic = perm(&mut g, P1, "Murmuring Mystic");
     let artist = perm(&mut g, P0, "Blood Artist");
     perm(&mut g, P0, "Elesh Norn, Grand Cenobite");
@@ -128,7 +128,7 @@ fn elesh_norn_grand_cenobite() {
 
 #[test]
 fn grave_titan() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let t = perm(&mut g, P0, "Grave Titan");
     assert_eq!(tokens(&g, P0), 2); // enters with two Zombies
     combat::attack_triggers(&mut g, P0, &[t], P1).unwrap();
@@ -137,7 +137,7 @@ fn grave_titan() {
 
 #[test]
 fn atraxa_takes_one_card_of_each_type() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let lib = &g.player(P0).library;
     let top: Vec<CardId> = lib[lib.len() - 10..].to_vec();
     perm(&mut g, P0, "Atraxa, Grand Unifier");
@@ -152,7 +152,7 @@ fn atraxa_takes_one_card_of_each_type() {
 
 #[test]
 fn consecrated_sphinx() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Consecrated Sphinx");
     zones::draw(&mut g, P1, 1, false).unwrap();
     assert_eq!(g.player(P0).hand.len(), 2);
@@ -161,7 +161,7 @@ fn consecrated_sphinx() {
 // --- the four loops: Mikaeus + Triskelion, Mikaeus or Melira + Kitchen Finks, Nim Deathmantle + Ashnod's Altar + Grave
 // Titan
 fn loops_with(cards: &[&str], opp: &[&str]) -> (Game, Vec<(&'static str, bool)>) {
-    let mut g = table(&["seph", "veyran", "sauron"]);
+    let mut g = table(&["seph", "cloud", "sauron"]);
     for c in cards {
         perm(&mut g, P0, c);
     }
@@ -291,7 +291,7 @@ fn reanimation_takes_the_last_piece() {
 
 #[test]
 fn kitchen_finks_persist() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let finks = perm(&mut g, P0, "Kitchen Finks");
     assert_eq!(g.player(P0).life, 42); // enters: gain 2
     zones::die(&mut g, finks, "sac").unwrap();
@@ -303,7 +303,7 @@ fn kitchen_finks_persist() {
 
 #[test]
 fn melira_keeps_persist_going() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Melira, Sylvok Outcast");
     let mut finks = perm(&mut g, P0, "Kitchen Finks");
     for _ in 0..3 {
@@ -319,7 +319,7 @@ fn melira_keeps_persist_going() {
 fn finks_at_zero_toughness_under_melira_stays_dead() {
     // Kitchen Finks (3/2) enters under an opponent's Elesh Norn (-2/-2): it dies at once, and under Melira persist
     // returns it without a counter every time, a mandatory loop
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let melira = perm(&mut g, P0, "Melira, Sylvok Outcast");
     g.perm_mut(melira).plus = 2; // 4/4: she survives the Norn
     perm(&mut g, P1, "Elesh Norn, Grand Cenobite");
@@ -344,7 +344,7 @@ fn teferis_protection_against_a_wipe() {
 #[test]
 fn ephemerate_fizzles_targeted_removal() {
     // "Exile target creature you control, then return it to the battlefield under its owner's control. Rebound"
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     lands(&mut g, P0, "Plains", 1, false);
     hand(&mut g, P0, &["Ephemerate"]);
     let grave = perm(&mut g, P0, "Grave Titan"); // enters: two Zombies
@@ -359,7 +359,7 @@ fn ephemerate_fizzles_targeted_removal() {
 
 #[test]
 fn ephemerate_answers_theft() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     lands(&mut g, P0, "Plains", 1, false);
     hand(&mut g, P0, &["Ephemerate"]);
     let grave = perm(&mut g, P0, "Grave Titan");
@@ -370,7 +370,7 @@ fn ephemerate_answers_theft() {
 
 #[test]
 fn ephemerate_rebound_blinks_again() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     lands(&mut g, P0, "Plains", 1, false);
     hand(&mut g, P0, &["Ephemerate"]);
     let grave = perm(&mut g, P0, "Grave Titan");
@@ -388,7 +388,7 @@ fn ephemerate_rebound_blinks_again() {
 // value of other permanents you control to each opponent." 9/9 flying
 #[test]
 fn chapter_one_destroys_the_biggest_threat() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let snipe = perm(&mut g, P1, "Guttersnipe");
     perm(&mut g, P1, "Veyran, Voice of Duality");
     lands(&mut g, P1, "Island", 1, false);
@@ -402,7 +402,7 @@ fn chapter_one_destroys_the_biggest_threat() {
 
 #[test]
 fn chapter_two_after_your_draw_step() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let b = perm(&mut g, P0, B);
     let snipe = perm(&mut g, P1, "Guttersnipe");
     main1(&mut g, P1, 1); // an opponent's main phase adds nothing
@@ -414,7 +414,7 @@ fn chapter_two_after_your_draw_step() {
 
 #[test]
 fn chapter_three_draws_two() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let b = perm(&mut g, P0, B);
     main1(&mut g, P0, 1);
     let n = g.player(P0).hand.len();
@@ -424,7 +424,7 @@ fn chapter_three_draws_two() {
 
 #[test]
 fn mega_flare_then_sacrificed() {
-    let mut g = table(&["seph", "veyran", "sauron"]);
+    let mut g = table(&["seph", "cloud", "sauron"]);
     perm(&mut g, P0, "Sol Ring");
     perm(&mut g, P0, "Grave Titan");
     lands(&mut g, P0, "Swamp", 3, false); // 1 + 6 (Zombies and lands: 0)
@@ -438,7 +438,7 @@ fn mega_flare_then_sacrificed() {
 
 #[test]
 fn mega_flare_kills() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Grave Titan");
     g.player_mut(P1).life = 6;
     perm(&mut g, P0, B);
@@ -449,7 +449,7 @@ fn mega_flare_kills() {
 
 #[test]
 fn entomb_target() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Sol Ring");
     let bah = card(&g, B);
     if !g.player(P0).library.contains(&bah) {
@@ -464,7 +464,7 @@ fn entomb_target() {
 
 #[test]
 fn blink_restarts_at_chapter_one() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let b = perm(&mut g, P0, B);
     main1(&mut g, P0, 2); // chapter III done: IV next
     let vey = perm(&mut g, P1, "Veyran, Voice of Duality");
@@ -481,7 +481,7 @@ fn blink_restarts_at_chapter_one() {
 
 #[test]
 fn kitten_blinks_it_for_a_target() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let b = perm(&mut g, P0, B);
     perm(&mut g, P0, "Displacer Kitten");
     let vey = perm(&mut g, P1, "Veyran, Voice of Duality");
@@ -493,7 +493,7 @@ fn kitten_blinks_it_for_a_target() {
 
 #[test]
 fn no_blink_before_a_lethal_mega_flare() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Grave Titan");
     g.player_mut(P1).life = 6;
     let b = perm(&mut g, P0, B);
@@ -509,7 +509,7 @@ fn end_step(g: &mut Game, p: PlayerId) {
 
 #[test]
 fn soulherder_flickers_the_commander_at_your_end_step() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let herd = perm(&mut g, P0, "Soulherder");
     perm(&mut g, P0, "Grave Titan");
     let atx = perm(&mut g, P0, "Atraxa, Grand Unifier");
@@ -527,7 +527,7 @@ fn soulherder_flickers_the_commander_at_your_end_step() {
 
 #[test]
 fn closet_restarts_bahamut_for_another_destroy() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Conjurer's Closet");
     let b = perm(&mut g, P0, B);
     main1(&mut g, P0, 1); // chapter II: nothing to destroy yet
@@ -540,7 +540,7 @@ fn closet_restarts_bahamut_for_another_destroy() {
 
 #[test]
 fn no_restart_before_a_strong_mega_flare() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Conjurer's Closet");
     let titan = perm(&mut g, P0, "Grave Titan"); // Mega Flare: 5 + 6 = 11
     let b = perm(&mut g, P0, B);
@@ -554,7 +554,7 @@ fn no_restart_before_a_strong_mega_flare() {
 
 #[test]
 fn counters_worth_more_than_the_enter_effect() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Conjurer's Closet");
     let titan = perm(&mut g, P0, "Grave Titan");
     g.perm_mut(titan).plus = 6;
@@ -565,7 +565,7 @@ fn counters_worth_more_than_the_enter_effect() {
 
 #[test]
 fn restoration_angel_blinks_the_best_enter_effect() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let titan = perm(&mut g, P0, "Grave Titan");
     let archon = perm(&mut g, P0, "Archon of Cruelty");
     let atx = perm(&mut g, P0, "Atraxa, Grand Unifier");
@@ -578,7 +578,7 @@ fn restoration_angel_blinks_the_best_enter_effect() {
 
 #[test]
 fn teleportation_circle_flickers_the_best_creature() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Teleportation Circle");
     perm(&mut g, P0, "Grave Titan");
     let archon = perm(&mut g, P0, "Archon of Cruelty");
@@ -592,14 +592,14 @@ fn teleportation_circle_flickers_the_best_creature() {
 
 #[test]
 fn teleportation_circle_untaps_a_rock_with_no_creature_worth_it() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Teleportation Circle");
     let rock = perm(&mut g, P0, "Sol Ring");
     g.perm_mut(rock).tapped = true;
     end_step(&mut g, P0);
     assert!(!on_bf(&g, rock));
     assert!(!g.perm(named(&g, P0, "Sol Ring").unwrap()).tapped); // back untapped for the opponents' turns
-    let mut g2 = table(&["seph", "veyran"]);
+    let mut g2 = table(&["seph", "cloud"]);
     perm(&mut g2, P0, "Teleportation Circle");
     let rock2 = perm(&mut g2, P0, "Sol Ring");
     end_step(&mut g2, P0);
@@ -608,7 +608,7 @@ fn teleportation_circle_untaps_a_rock_with_no_creature_worth_it() {
 
 #[test]
 fn flickering_hound_flickers_on_your_creature_casts() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let hound = perm(&mut g, P0, "Flickering Hound");
     perm(&mut g, P0, "Grave Titan");
     let archon = perm(&mut g, P0, "Archon of Cruelty");
@@ -631,7 +631,7 @@ fn flickering_hound_flickers_on_your_creature_casts() {
 fn bahamut_is_a_saga_proliferate_can_count() {
     // CI.SAGA for common.proliferate and Karn's Bastion (their own tests come with lands.rs and common.rs): toward
     // chapters II and III, and IV only when Mega Flare is strong
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let b = perm(&mut g, P0, B);
     assert!(sim_core::cardcode::saga_wants_lore(&g, P0, b));
     main1(&mut g, P0, 2);
@@ -648,7 +648,7 @@ fn bahamut_is_a_saga_proliferate_can_count() {
 
 #[test]
 fn bastion_proliferates_bahamut_and_the_loop_counters() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     lands(&mut g, P0, "Karn's Bastion", 1, false);
     lands(&mut g, P0, "Swamp", 4, false);
     let trisk = perm(&mut g, P0, "Triskelion"); // three +1/+1 counters
@@ -677,7 +677,7 @@ fn bastion_proliferates_bahamut_and_the_loop_counters() {
 #[test]
 fn nim_deathmantle_leaves_marchesa_returns_alone() {
     // Nim Deathmantle doesn't pay {4} for a creature Marchesa returns for free
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     lands(&mut g, P0, "Swamp", 4, false);
     perm(&mut g, P0, "Marchesa, the Black Rose");
     perm(&mut g, P0, "Nim Deathmantle");
@@ -691,7 +691,7 @@ fn nim_deathmantle_leaves_marchesa_returns_alone() {
 fn nim_deathmantle_card_exiled_while_paying() {
     // paying {4} with Treasures sets off Mayhem Devil; its ping kills Dark Confidant, and the state-based check that
     // follows runs Dauthi Voidwalker's sweep: the card has left the graveyard, so nothing returns (the mana is spent)
-    let mut g = table(&["seph", "veyran", "veyran"]);
+    let mut g = table(&["seph", "cloud", "cloud"]);
     g.player_mut(P0).treasures = 4;
     perm(&mut g, P0, "Nim Deathmantle");
     perm(&mut g, P1, "Mayhem Devil");
@@ -709,7 +709,7 @@ fn nim_deathmantle_card_exiled_while_paying() {
 fn nim_deathmantle_returns_a_bomb_and_equips_it() {
     // "Whenever a nontoken creature is put into your graveyard from the battlefield, you may pay {4}. If you do,
     //  return that card to the battlefield and attach Nim Deathmantle to it."
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     lands(&mut g, P0, "Swamp", 4, false);
     let nim = perm(&mut g, P0, "Nim Deathmantle");
     let archon = perm(&mut g, P0, "Archon of Cruelty");
@@ -718,7 +718,7 @@ fn nim_deathmantle_returns_a_bomb_and_equips_it() {
     assert_eq!(g.perm(nim).attached, Some(back));
     assert_eq!(g.player(P0).lands.iter().filter(|&&l| g.perm(l).tapped).count(), 4);
     // a 1/1 without an enter effect isn't worth {4}
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     lands(&mut g, P0, "Swamp", 4, false);
     perm(&mut g, P0, "Nim Deathmantle");
     let seer = perm(&mut g, P0, "Viscera Seer");
@@ -728,7 +728,7 @@ fn nim_deathmantle_returns_a_bomb_and_equips_it() {
 
 // ======================================================== Muldrotha (test_audit_fixes.Muldrotha)
 fn muldrotha_table() -> (Game, PermId) {
-    let mut g = table(&["seph", "veyran", "sauron"]);
+    let mut g = table(&["seph", "cloud", "sauron"]);
     let m = perm(&mut g, P0, "Muldrotha, the Gravetide");
     (g, m)
 }
@@ -774,7 +774,7 @@ fn muldrotha_the_ai_plays_a_land_from_the_graveyard() {
 fn triskelion_enters_with_three_counters_and_pings() {
     // "Triskelion enters with three +1/+1 counters on it. Remove a +1/+1 counter from Triskelion: It deals 1 damage
     //  to any target."
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let t = perm(&mut g, P0, "Triskelion");
     assert_eq!(g.perm(t).plus, 3);
     g.player_mut(P1).life = 2;
@@ -792,7 +792,7 @@ fn triskelion_enters_with_three_counters_and_pings() {
 fn displacer_kitten_flickers_the_best_enter_effect() {
     // "Whenever you cast a noncreature spell, exile up to one target nonland permanent you control. Return that
     //  permanent to the battlefield under its owner's control."
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Displacer Kitten");
     let titan = perm(&mut g, P0, "Grave Titan");
     let archon = perm(&mut g, P0, "Archon of Cruelty");
@@ -828,7 +828,7 @@ fn strip_mine_takes_a_key_land() {
 fn necromancy_flashes_in_for_an_enter_effect() {
     // cast at instant speed at the end of an opponent's turn for an enter effect (Archon of Cruelty): sacrificed at
     // cleanup
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     g.active = Some(P1);
     lands(&mut g, P0, "Swamp", 3, false);
     hand(&mut g, P0, &["Necromancy"]);
@@ -848,7 +848,7 @@ fn necromancy_flashes_in_for_an_enter_effect() {
 
 #[test]
 fn seph_bval_counts_mega_flares_reach() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let b = card(&g, B);
     assert_eq!(ai::reanimate::bval(&g, P0, b), 8.0);
     perm(&mut g, P0, "Grave Titan"); // 6 mana value: +0.4
@@ -858,7 +858,7 @@ fn seph_bval_counts_mega_flares_reach() {
 #[test]
 fn whole_games_with_sephiroth_finish() {
     for seed in [1, 2, 3] {
-        let g = play(&["seph", "veyran", "sauron"], seed, false);
+        let g = play(&["seph", "cloud", "sauron"], seed, false);
         assert!(g.over || g.round >= 20, "seed {seed}");
     }
 }
@@ -867,7 +867,7 @@ fn whole_games_with_sephiroth_finish() {
 /// ∞ — At the beginning of your upkeep, return target creature card from your graveyard to the battlefield."
 #[test]
 fn soul_stone_harness_and_upkeep_return() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let st = perm(&mut g, P0, "The Soul Stone");
     assert!(values::indestructible(&g, st));
     let tok = token(&mut g, P0, 2);
@@ -895,7 +895,7 @@ fn soul_stone_harness_and_upkeep_return() {
 /// under its owner's control."
 #[test]
 fn mind_stone_harness_and_end_step_blink() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let st = perm(&mut g, P0, "The Mind Stone");
     assert!(values::indestructible(&g, st));
     let titan = perm(&mut g, P0, "Grave Titan");
@@ -925,7 +925,7 @@ fn mind_stone_harness_and_end_step_blink() {
 // --- Priest of Gix: enters and adds BBB; the Nim Deathmantle + Ashnod's Altar + Priest of Gix loop
 #[test]
 fn priest_of_gix_adds_three_mana_each_time_it_enters() {
-    let mut g = table(&["seph", "veyran", "sauron"]);
+    let mut g = table(&["seph", "cloud", "sauron"]);
     let before = g.player(P0).mana.get(Kind::Any);
     let m = perm(&mut g, P0, "Priest of Gix");
     assert_eq!(g.player(P0).mana.get(Kind::Any), before + 3);
@@ -974,7 +974,7 @@ fn tutors_and_priorities_see_priest_as_the_last_piece() {
 
 #[test]
 fn priest_is_a_good_blink_target() {
-    let mut g = table(&["seph", "veyran", "sauron"]);
+    let mut g = table(&["seph", "cloud", "sauron"]);
     let m = perm(&mut g, P0, "Priest of Gix");
     assert!(mine::flicker_worth(&g, P0, m) >= 3.0, "{}", mine::flicker_worth(&g, P0, m));
 }

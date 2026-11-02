@@ -289,7 +289,7 @@ fn proliferate_adds_counters_and_loyalty_twice_with_tekuthal() {
 
 #[test]
 fn karn_liberated_ultimate_ends_the_game() {
-    let mut g = table(&["atraxa-infect", "sauron", "veyran"]);
+    let mut g = table(&["atraxa-infect", "sauron", "cloud"]);
     let k = perm(&mut g, P0, "Karn Liberated");
     (rules::KARN_ULT.eff)(&mut g, P0, k).unwrap();
     assert!(g.over && g.winner == Some(P0));
@@ -360,7 +360,7 @@ fn liliana_dreadhorde_general_ultimate_keeps_one_of_each() {
 
 #[test]
 fn hymn_discards_two_at_random_from_the_fullest_hand() {
-    let mut g = table(&["tergrid-mono-black-disruption", "sauron", "veyran"]);
+    let mut g = table(&["tergrid-mono-black-disruption", "sauron", "cloud"]);
     hand(&mut g, P1, &["Island", "Swamp", "Counterspell", "Sol Ring"]);
     hand(&mut g, P2, &["Mountain"]);
     resolve(&mut g, P0, "Hymn to Tourach", Ctx::default());

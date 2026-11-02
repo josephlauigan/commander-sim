@@ -115,10 +115,13 @@ that creature indestructible.
   attached through removal, a board wipe or a lethal attack, and it all comes back at your next turn.
 - **Protect the team.** Elspeth, Sun's Champion makes three 1/1 Soldiers each turn (+1) as a wall of blockers and carriers; her -3 destroys creatures with
   power 4 or greater, so use it only when Cloud is not carrying a big Equipment.
+- **Judgment of Alexander** ({2}{W}, instant): prevents all damage that would be dealt to you this turn by sources your
+  opponents control, and each creature whose damage was prevented takes damage equal to Cloud's power. Cast it once
+  attackers are declared: with Cloud equipped it is a fog that kills the attackers, without wiping your own carriers.
 
 ### Removal
 - **Single targets:** Winds of Abandon ({1}{W}, exile; overload {4}{W}{W} exiles all your opponents' creatures), Lay Down Arms ({W}: exiles a creature with mana value up to the number of Plains you control, so
-  it gets better later), Stand Up for Yourself (power 3 or more), Fate of the
+  it gets better later), Fate of the
   Sun-Cryst (costs {2} less against a tapped creature), Skyclave Apparition (mana value 4 or less) and Stroke of Midnight ({2}{W} instant: destroys any nonland permanent, and its controller gets a 1/1 Human).
 - **Artifacts and enchantments:** Disenchant.
 - **Attack limits and taxes:** **Archangel of Tithes** ({1}{W}{W}{W}, a 3/5 flier: while untapped, opponents pay {1} for each creature that attacks you, and while it attacks, they pay {1} for each creature that blocks). With her too,
@@ -175,7 +178,7 @@ that creature indestructible.
 when you cast a creature that shares a type with Cloud), Plaza of Heroes and Terminal Moraine. Ramp: Sol Ring, Mind Stone,
 Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel, Page, Loose Leaf, Solemn Simulacrum, Knight of the
 White Orchid and Loyal Warhound. Card draw: Mask of Memory, Court of Ardenvale, Puresteel Paladin and the Swords.
-Interaction: Wrath of God, Day of Judgment, Fumigate, Archangel of Tithes, Archon of Absolution, Norn's Annex, Lay Down Arms, Stand Up for Yourself, Stroke of Midnight, Fate of the Sun-Cryst, Skyclave
+Interaction: Wrath of God, Day of Judgment, Fumigate, Archangel of Tithes, Archon of Absolution, Norn's Annex, Lay Down Arms, Judgment of Alexander, Stroke of Midnight, Fate of the Sun-Cryst, Skyclave
 Apparition, Winds of Abandon, Austere Command, Elspeth, Sun's Champion and Disenchant. 11 Equipment in the deck, so Cloud's search always finds one.
 
 ## Bracket and Rule 0
@@ -198,7 +201,7 @@ on its own. Tell the table before the game that:
 
 **Sorceries (7).** Austere Command, Day of Judgment, Fumigate, Lay Down Arms, Open the Armory, Winds of Abandon, Wrath of God
 
-**Instants (7).** Akroma's Will, Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Stand Up for Yourself, Stroke of Midnight, Teferi's Protection
+**Instants (7).** Akroma's Will, Disenchant, Enlightened Tutor, Fate of the Sun-Cryst, Judgment of Alexander, Stroke of Midnight, Teferi's Protection
 
 **Lands (33).** Ash Barrens, Evolving Wilds, Path of Ancestry, Plaza of Heroes, Terminal Moraine, 28 Plains
 
@@ -246,6 +249,7 @@ on its own. Tell the table before the game that:
 1 Grand Abolisher
 1 Helitrooper
 1 Jocasta, Automaton Avenger
+1 Judgment of Alexander
 1 Knight of the White Orchid
 1 Kor Outfitter
 1 Lay Down Arms
@@ -264,7 +268,6 @@ on its own. Tell the table before the game that:
 1 Sol Ring
 1 Solemn Simulacrum
 1 Sram, Senior Edificer
-1 Stand Up for Yourself
 1 Stroke of Midnight
 1 Swiftfoot Boots
 1 Sword of Feast and Famine

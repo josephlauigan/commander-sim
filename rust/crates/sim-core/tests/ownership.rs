@@ -95,7 +95,7 @@ fn tinybones_takes_one_permanent_from_one_graveyard_and_it_stays_its_owners() {
 
 #[test]
 fn a_spell_jin_gitaxias_counters_goes_to_its_owners_graveyard() {
-    let mut g = table(&["yuriko-dimir-ninjas", "galadriel", "veyran"]);
+    let mut g = table(&["yuriko-dimir-ninjas", "galadriel", "cloud"]);
     perm(&mut g, P2, "Jin-Gitaxias, Progress Tyrant");
     let bs = card(&g, "Brainstorm");
     g.player_mut(P0).hand.push(bs);

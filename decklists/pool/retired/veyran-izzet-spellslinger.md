@@ -1,11 +1,12 @@
 # Veyran, Voice of Duality — Izzet Spellslinger
 
-> **Taken apart (JD, 2026-10-31).** Veyran's spell engine moved into Kefka (`decklists/JD/kefka-grixis-discard.md`):
-> Veyran, Harmonic Prodigy, Guttersnipe, Kessig Flamebreather, Firebrand Archer, Young Pyromancer, Niv-Mizzet, Parun,
-> Frantic Search, Think Twice, Solve the Equation, Mystical Tutor, Birgi, Storm-Kiln Artist, Blazing Firesinger and four
-> lands. Counterspell also went to Kefka; Mystic Confluence, Propaganda, An Offer You Can't Refuse and Sokenzan went to Sauron. The rest goes
-> to bulk; JD no longer owns Mizzix's Mastery. The list below is unchanged and stays the simulator's t1-t3 seat until
-> the deck is retired there.
+> **Retired from the simulator (JD, 2026-11-01).** The physical deck was taken apart on 2026-10-31: Veyran, Voice of
+> Duality and the magecraft package (Harmonic Prodigy, Guttersnipe, Kessig Flamebreather, Firebrand Archer, Young
+> Pyromancer, Niv-Mizzet, Parun, Frantic Search, Think Twice, Solve the Equation, Mystical Tutor, Birgi, Storm-Kiln
+> Artist, Blazing Firesinger, Counterspell and four lands) went to Kefka (`decklists/JD/kefka-grixis-discard.md`);
+> Mystic Confluence, Propaganda, An Offer You Can't Refuse and Sokenzan went to Sauron; the rest to bulk (JD no
+> longer owns Mizzix's Mastery). The `veyran` key and its t1-t3 seat are gone (Cloud keeps band 4). The list is kept
+> here as history only: it is not a pool deck, no test seats it, and it is never drawn.
 
 Chain cheap instants and sorceries, and let Veyran make every cast-trigger fire twice. The deck turns those doubled
 triggers into damage, cards, Treasure and a stream of creature tokens, and ends the game with a big turn: the pingers

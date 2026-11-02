@@ -9,9 +9,8 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 /// your decks: key -> (owner folder in decklists/, file), as deck_files.FILES
-pub const FILES: [(&str, &str, &str); 13] = [
+pub const FILES: [(&str, &str, &str); 12] = [
     ("ghave", "JD", "ghave-abzan-aristocrats.md"),
-    ("veyran", "JD", "veyran-izzet-spellslinger.md"),
     ("sauron", "JD", "sauron-grixis-amass.md"),
     ("yshtola", "JD", "yshtola-esper-drain.md"),
     ("galadriel", "Avery", "galadriel-bant-rebels.md"),
@@ -26,7 +25,7 @@ pub const FILES: [(&str, &str, &str); 13] = [
 ];
 
 /// compare.KEYS / poolmode.MINE: your decks, in the order --all-decks runs them
-pub const MINE: [&str; 13] = ["ghave", "veyran", "sauron", "galadriel", "yshtola", "alela", "kefka", "sheoldred", "cloud", "thrasios", "karn", "thanos", "urdragon"];
+pub const MINE: [&str; 12] = ["ghave", "sauron", "galadriel", "yshtola", "alela", "kefka", "sheoldred", "cloud", "thrasios", "karn", "thanos", "urdragon"];
 
 pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 
@@ -235,7 +234,7 @@ mod tests {
     fn the_repository_decks_load() {
         let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../..");
         let mine = load_mine(&root).unwrap();
-        assert_eq!(mine.len(), 13);
+        assert_eq!(mine.len(), 12);
         for (k, v) in &mine {
             assert_eq!(v.len(), 100, "{k}");
         }

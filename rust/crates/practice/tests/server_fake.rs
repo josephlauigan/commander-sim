@@ -215,7 +215,7 @@ fn options_and_saves_shapes() {
     let (st, _, o) = call(r.h.port, "GET", "/api/options", None, None);
     assert_eq!(st, 200);
     assert_eq!((o["lan"].clone(), o["host"].clone(), o["app"].clone()), (json!(false), json!(true), json!(false)));
-    assert_eq!(o["decks"].as_array().unwrap().len(), 13);
+    assert_eq!(o["decks"].as_array().unwrap().len(), 12);
     assert_eq!(o["tiers"].as_array().unwrap().len(), 7);
     assert!(o["images"].is_object());
     let (_, _, s) = call(r.h.port, "GET", "/api/saves", None, None);
@@ -229,7 +229,7 @@ fn a_game_through_the_routes() {
     let (st, _, b) = call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "nope", "tier": "t1"})));
     assert_eq!(
         (st, b["error"].as_str()),
-        (400, Some("deck: one of ghave, veyran, sauron, yshtola, galadriel, alela, kefka, sheoldred, cloud, thrasios, karn, thanos, urdragon"))
+        (400, Some("deck: one of ghave, sauron, yshtola, galadriel, alela, kefka, sheoldred, cloud, thrasios, karn, thanos, urdragon"))
     );
     assert_eq!(
         call(p, "POST", "/api/new", Some("me"), Some(&json!({"deck": "ghave", "tier": "t9"}))).2["error"],
@@ -417,15 +417,15 @@ fn lobby_and_join_with_lan() {
     let join = |cookie: &str, code: &str, deck: &str| {
         call(p, "POST", "/api/join", Some(cookie), Some(&json!({"code": code, "deck": deck}))).2
     };
-    assert_eq!(join("guest", "000000x", "veyran")["error"], "That code is not right: the host's screen shows it.");
+    assert_eq!(join("guest", "000000x", "cloud")["error"], "That code is not right: the host's screen shows it.");
     assert_eq!(join("guest", &code, "ghave")["error"], "The host plays that deck: pick another.");
-    assert_eq!(join("host", &code, "veyran")["error"], "This browser is the host's: join from the other computer.");
+    assert_eq!(join("host", &code, "cloud")["error"], "This browser is the host's: join from the other computer.");
     assert_eq!(
         join("guest", &code, "bogus")["error"],
-        "deck: one of ghave, veyran, sauron, yshtola, galadriel, alela, kefka, sheoldred, cloud, thrasios, karn, thanos, urdragon"
+        "deck: one of ghave, sauron, yshtola, galadriel, alela, kefka, sheoldred, cloud, thrasios, karn, thanos, urdragon"
     );
-    assert_eq!(join("guest", &code, "veyran")["ok"], true);
-    assert_eq!(join("guest", &code, "veyran")["error"], "There is no game waiting for a second player.");
+    assert_eq!(join("guest", &code, "cloud")["ok"], true);
+    assert_eq!(join("guest", &code, "cloud")["error"], "There is no game waiting for a second player.");
     let (_, _, s) = call(p, "GET", "/api/state", Some("guest"), None);
-    assert_eq!(s["game"]["you"], "veyran");
+    assert_eq!(s["game"]["you"], "cloud");
 }

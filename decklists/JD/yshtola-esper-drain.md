@@ -14,7 +14,7 @@ Drain the table a little with every spell, then all at once. Y'shtola turns your
 
 Y'shtola, Night's Blessed ({1}{W}{U}{B}, 2/4, vigilance): *At the beginning of each end step, if a player lost 4 or more life this turn, you draw a card. Whenever you cast a noncreature spell with mana value 3 or greater, Y'shtola deals 2 damage to each opponent and you gain 2 life.*
 
-**Thirty-four spells trigger her.** Every noncreature spell in the list with mana value 3 or more counts: rocks (Chromatic Lantern, Coalition Relic, Champion's Helm), lock Auras, tutors, draw spells, removal and wipes. X counts too, so Exsanguinate and Debt to the Deathless with X = 1 or more trigger her. Each trigger is 6 damage across a four-player table and 2 life for you. Creatures and spells of mana value 2 or less don't trigger her.
+**Thirty-five spells trigger her.** Every noncreature spell in the list with mana value 3 or more counts: rocks (Chromatic Lantern, Coalition Relic, Champion's Helm, Conjurer's Closet), lock Auras, tutors, draw spells, removal and wipes. X counts too, so Exsanguinate and Debt to the Deathless with X = 1 or more trigger her. Each trigger is 6 damage across a four-player table and 2 life for you. Creatures and spells of mana value 2 or less don't trigger her.
 
 **Her draw needs 4 life lost by one player in one turn.** One trigger is only 2 to each opponent, so a draw needs a second source in the same turn:
 - **Two triggers**, such as a removal spell on an opponent's turn plus your own main-phase spell, or two spells in one turn. Cheap instants with mana value 3 (Anguished Unmaking, Generous Gift, Your Fate Ends Here) on an opponent's turn are the easiest second trigger. Cast Away Doubt does it alone: its 2 damage plus her 2 is 4 to each opponent.
@@ -57,9 +57,9 @@ The second opponent dies too if they're at 12. Debt to the Deathless is the best
 
 **Mana, then cards.** The deck usually holds more spells than it can cast, so **Smothering Tithe** comes first: each opponent who draws without {2} to spare gives you a Treasure, and casting it triggers Y'shtola. **Consecrated Sphinx** draws two whenever an opponent draws; it's a creature, so it doesn't trigger her, and it's best cast when the hand is running low. **Necropotence** skips your draw step and turns life into cards (cast it with a healthy life total; the drains refill it; your maximum hand size is seven, so spend what you draw). **Mystic Remora** draws a card when an opponent casts a noncreature spell unless they pay {4}: pay its cumulative upkeep for a turn or two at most, then let it go. **Esper Sentinel** draws a card when an opponent casts their first noncreature spell each turn, unless they pay {X} (its power). **Notion Thief** (flash) turns each extra card an opponent draws into a card for you, and goes well with **Deep Analysis**: target an opponent with it while Notion Thief is out and you draw the cards; its flashback ({1}{U}, 3 life) is a second Y'shtola trigger. **Rhystic Study** ({2}{U}) draws a card whenever an opponent casts a spell unless they pay {1}, and casting it triggers Y'shtola. The other draw spells are Read the Bones and Tezzeret's Gambit.
 
-**Blink.** **Displacer Kitten** ({3}{U}) exiles and returns a nonland permanent you control whenever you cast a noncreature spell, and nearly every spell here is one: each lock, drain or draw spell also re-buys an enters trigger (Hostage Taker steals again, Skyclave Apparition exiles again, Gonti looks again, Esper Sentinel and Thief of Sanity come back fresh), or untaps a used rock. Don't blink Hostage Taker or Skyclave Apparition while the card they hold is one you want to keep exiled: the exiled card returns. **Teleportation Circle** ({3}{W}, an enchantment, so it triggers Y'shtola and counts for Serra's Sanctum) does the same to one creature or artifact at each of your end steps.
+**Blink.** **Displacer Kitten** ({3}{U}) exiles and returns a nonland permanent you control whenever you cast a noncreature spell, and nearly every spell here is one: each lock, drain or draw spell also re-buys an enters trigger (Hostage Taker steals again, Skyclave Apparition exiles again, Gonti looks again, Esper Sentinel comes back fresh), or untaps a used rock. Don't blink Hostage Taker or Skyclave Apparition while the card they hold is one you want to keep exiled: the exiled card returns. **Teleportation Circle** ({3}{W}, an enchantment, so it triggers Y'shtola and counts for Serra's Sanctum) does the same to one creature or artifact at each of your end steps, and **Conjurer's Closet** ({5}, an artifact, so casting it triggers Y'shtola) to one creature. With the Circle and the Closet both out, two enters triggers come back every turn: Orcish Bowmasters pings and amasses again, Massacre Wurm sweeps and drains again, Gonti looks again.
 
-**Take their cards.** Gonti, Lord of Luxury (the best of the top four of an opponent's library), Thief of Sanity (each time it connects, the best of the top three; the other two go to their graveyard) and Hostage Taker (exiles their best creature or artifact: cast it before the Taker leaves the battlefield, or it goes back to its owner) let you cast an opponent's card with mana of any type. Bribery takes a creature outright. A stolen noncreature spell with mana value 3 or more triggers Y'shtola like your own.
+**Take their cards.** Gonti, Lord of Luxury (the best of the top four of an opponent's library) and Hostage Taker (exiles their best creature or artifact: cast it before the Taker leaves the battlefield, or it goes back to its owner) let you cast an opponent's card with mana of any type. Bribery takes a creature outright. A stolen noncreature spell with mana value 3 or more triggers Y'shtola like your own.
 
 **Discount.** Grand Arbiter Augustin IV makes your white and blue spells cost {1} less each (a white-and-blue spell {2} less) and the opponents' spells {1} more. **Venat, Heart of Hydaelyn** draws a card the first time each turn you cast a legendary spell (Y'shtola, Gonti, Augustin, Zur, The Eternal Wanderer); its {7} ability exiles a nonland permanent and flips it to Hydaelyn, the Mothercrystal, which gives another creature a +1/+1 counter and indestructible each turn (and draws a card if it is legendary, such as Y'shtola).
 
@@ -133,15 +133,15 @@ The list is exactly 100 cards.
 
 Black is the main colour (Necropotence's {B}{B}{B}, Massacre Wurm's {B}{B}{B}, the X drains' {B}{B}), so it has the most sources. Blue has the fewest. Most blue spells cost a single {U}, and Bribery's {U}{U} is the exception. Each fetch finds the colour the hand is short of, and cracking one turns on Fatal Push's revolt (destroy a creature with mana value 4 or less).
 
-**Curve.** One-drops 7, two-drops 5, three-drops 24, four-drops 17 (counting Y'shtola), five 5, six 5. Average mana value about 3.3, with Exsanguinate and Debt counted at X = 0. It is a slow curve by design: Y'shtola pays you for mana value 3 and up.
+**Curve.** One-drops 7, two-drops 5, three-drops 23, four-drops 17 (counting Y'shtola), five 6, six 5. Average mana value about 3.3, with Exsanguinate and Debt counted at X = 0. It is a slow curve by design: Y'shtola pays you for mana value 3 and up.
 
-**Card types.** 16 creatures (plus Y'shtola), 16 enchantments, 7 artifacts, 10 instants, 12 sorceries, 1 planeswalker.
+**Card types.** 15 creatures (plus Y'shtola), 16 enchantments, 8 artifacts, 10 instants, 12 sorceries, 1 planeswalker.
 
 **Finding cards.**
 - **Engines:** Necropotence, Consecrated Sphinx, Mystic Remora, Esper Sentinel, Notion Thief, and her own end-step draw (Orcish Bowmasters turns the opponents' extra draws into damage and Orcs).
 - **Mana:** Smothering Tithe's Treasures, on top of the rocks.
 - **Draw spells:** Read the Bones, Deep Analysis, Tezzeret's Gambit, Cast Away Doubt; Rhystic Study as the engine.
-- **Cards taken from opponents:** Gonti, Thief of Sanity, Hostage Taker.
+- **Cards taken from opponents:** Gonti, Hostage Taker.
 - **Tutors:** Diabolic Tutor and Dark Petition (any card), Idyllic Tutor (an enchantment), Mystical Tutor (an instant or sorcery, to the top), and Zur's attacks.
 
 **Interaction.**
@@ -165,7 +165,7 @@ Disclose before the game:
 - **Free counterspell and board wipe:** Force of Will (pitch a blue card) and Farewell (exiles creatures, artifacts, enchantments and graveyards as you choose).
 - **Three tutors** (Diabolic Tutor, Dark Petition, Idyllic Tutor) plus Mystical Tutor, and Zur's enchantment search.
 - **The win is a drain:** Y'shtola pings the table on every big spell, and Exsanguinate or Debt to the Deathless with Sanguine Bond can take out two players in one turn.
-- **Theft:** Bribery, Hostage Taker, Gonti and Thief of Sanity use opponents' cards.
+- **Theft:** Bribery, Hostage Taker and Gonti use opponents' cards.
 
 Re-check the official list at https://commanderbrackets.com/faq before an event.
 
@@ -173,13 +173,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Y'shtola, Night's Blessed
 
-**Creatures (16).** Consecrated Sphinx, Displacer Kitten, Esper Sentinel, Gonti, Lord of Luxury, Grand Arbiter Augustin IV, Hostage Taker, Marauding Blight-Priest, Massacre Wurm, Notion Thief, Orcish Bowmasters, Restoration Angel, Skyclave Apparition, Thief of Sanity, Urborg Syphon-Mage, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal, Zur the Enchanter
+**Creatures (15).** Consecrated Sphinx, Displacer Kitten, Esper Sentinel, Gonti, Lord of Luxury, Grand Arbiter Augustin IV, Hostage Taker, Marauding Blight-Priest, Massacre Wurm, Notion Thief, Orcish Bowmasters, Restoration Angel, Skyclave Apparition, Urborg Syphon-Mage, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal, Zur the Enchanter
 
 **Planeswalkers (1).** The Eternal Wanderer
 
 **Enchantments (16).** Arrest, Bound in Silence, Ill-Gotten Inheritance, Memory Trap, Mystic Remora, Necropotence, Polluted Bonds, Prayer of Binding, Prison Sentence, Propaganda, Rhystic Study, Sanguine Bond, Smothering Tithe, Sphere of Safety, Static Net, Teleportation Circle
 
-**Artifacts (7).** Arcane Signet, Champion's Helm, Chromatic Lantern, Coalition Relic, Lightning Greaves, Sol Ring, Talisman of Progress
+**Artifacts (8).** Arcane Signet, Champion's Helm, Chromatic Lantern, Coalition Relic, Conjurer's Closet, Lightning Greaves, Sol Ring, Talisman of Progress
 
 **Instants (10).** Anguished Unmaking, Dovin's Veto, Fatal Push, Force of Will, Generous Gift, Go for the Throat, Mystical Tutor, Path to Exile, Teferi's Protection, Your Fate Ends Here
 
@@ -203,6 +203,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Chromatic Lantern
 1 Coalition Relic
 1 Command Tower
+1 Conjurer's Closet
 1 Consecrated Sphinx
 1 Dark Petition
 1 Debt to the Deathless
@@ -257,7 +258,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Teleportation Circle
 1 Tezzeret's Gambit
 1 The Eternal Wanderer
-1 Thief of Sanity
 1 Tundra
 1 Underground River
 1 Underground Sea

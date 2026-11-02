@@ -26,7 +26,7 @@ fn cast_cast() -> F {
 // ------------------------------------------------------------------ Spells
 #[test]
 fn crackle_with_power_x_two() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     hand(&mut g, P0, &["Crackle with Power"]);
     pool(&mut g, P0, &[('R', 2), ('C', 6)]);
     main(&mut g, P0, vec![cast_cast(), by_text("X = 2"), by_text("Sephiroth"), by_text("Sauron")]);
@@ -35,7 +35,7 @@ fn crackle_with_power_x_two() {
 
 #[test]
 fn crackle_one_target_is_enough() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     hand(&mut g, P0, &["Crackle with Power"]);
     pool(&mut g, P0, &[('R', 2), ('C', 6)]);
     main(&mut g, P0, vec![cast_cast(), by_text("X = 2"), by_text("Sephiroth"), by_text("no more")]);
@@ -44,7 +44,7 @@ fn crackle_one_target_is_enough() {
 
 #[test]
 fn flashback_grants_flashback() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     hand(&mut g, P0, &["Flashback"]);
     let qs = gy_push(&mut g, P0, "Quick Study");
     pool(&mut g, P0, &[('R', 1), ('U', 1), ('C', 2)]);
@@ -56,7 +56,7 @@ fn flashback_grants_flashback() {
 
 #[test]
 fn jeskas_will_mana() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     hand(&mut g, P0, &["Jeska's Will"]);
     hand(&mut g, P1, &["Ephemerate", "Necromancy", "Entomb"]);
     pool(&mut g, P0, &[('R', 1), ('C', 2)]);
@@ -66,7 +66,7 @@ fn jeskas_will_mana() {
 
 #[test]
 fn jeskas_will_exile_does_not_play_a_land_for_you() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     hand(&mut g, P0, &["Jeska's Will"]);
     pool(&mut g, P0, &[('R', 1), ('C', 2)]);
     let isl = card(&g, "Island");
@@ -78,7 +78,7 @@ fn jeskas_will_exile_does_not_play_a_land_for_you() {
 
 #[test]
 fn expressive_iteration() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     hand(&mut g, P0, &["Expressive Iteration"]);
     pool(&mut g, P0, &[('U', 1), ('R', 1)]);
     let lib = g.player(P0).library.clone();
@@ -91,7 +91,7 @@ fn expressive_iteration() {
 
 #[test]
 fn stock_up() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     hand(&mut g, P0, &["Stock Up"]);
     pool(&mut g, P0, &[('U', 1), ('C', 2)]);
     let n = g.player(P0).hand.len();
@@ -101,7 +101,7 @@ fn stock_up() {
 
 #[test]
 fn prismari_charm_two_pings() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     hand(&mut g, P0, &["Prismari Charm"]);
     pool(&mut g, P0, &[('U', 1), ('R', 1)]);
     main(&mut g, P0, vec![cast_cast(), by_text("1 damage"), by_text("Sephiroth"), by_text("Sauron")]);
@@ -110,7 +110,7 @@ fn prismari_charm_two_pings() {
 
 #[test]
 fn thousand_year_storm_copies_take_new_targets() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     perm(&mut g, P0, "Thousand-Year Storm");
     hand(&mut g, P0, &["Quick Study", "Lightning Bolt"]);
     pool(&mut g, P0, &[('U', 1), ('C', 2), ('R', 1)]);
@@ -130,7 +130,7 @@ fn opp_cards(g: &Game) -> usize {
 
 #[test]
 fn the_first_instant_is_copied_once() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     perm(&mut g, P0, "Alania, Divergent Storm");
     let before = opp_cards(&g);
     bolt(&mut g, P0, P1);
@@ -142,7 +142,7 @@ fn the_first_instant_is_copied_once() {
 
 #[test]
 fn veyran_and_harmonic_prodigy_each_add_a_copy() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     for n in ["Alania, Divergent Storm", "Veyran, Voice of Duality", "Harmonic Prodigy"] {
         perm(&mut g, P0, n);
     }
@@ -153,7 +153,7 @@ fn veyran_and_harmonic_prodigy_each_add_a_copy() {
 
 #[test]
 fn the_first_sorcery_too_and_not_a_counterspell() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     perm(&mut g, P0, "Alania, Divergent Storm");
     let before = opp_cards(&g);
     cast_card_ctx(&mut g, P0, "Stock Up", Ctx::default());
@@ -166,7 +166,7 @@ fn the_first_sorcery_too_and_not_a_counterspell() {
 
 #[test]
 fn a_spell_before_alania_counts() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     bolt(&mut g, P0, P1);
     perm(&mut g, P0, "Alania, Divergent Storm");
     let before = opp_cards(&g);
@@ -176,7 +176,7 @@ fn a_spell_before_alania_counts() {
 
 #[test]
 fn you_choose_who_draws_or_no_copy() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     for n in ["Alania, Divergent Storm", "Veyran, Voice of Duality"] {
         perm(&mut g, P0, n);
     }

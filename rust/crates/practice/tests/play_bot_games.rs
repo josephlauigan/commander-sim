@@ -159,8 +159,8 @@ fn ghave_t3() {
     play("ghave", "t3", 1);
 }
 #[test]
-fn veyran_t1() {
-    play("veyran", "t1", 1);
+fn cloud_t1() {
+    play("cloud", "t1", 1);
 }
 #[test]
 fn galadriel_t3() {

@@ -52,7 +52,7 @@ cardgen audit                  # per pool deck: cards by status, key engines tha
 cardgen audit --deck yuriko    # every card of one deck (a key prefix is enough)
 cardgen audit --mine           # JD's and Avery's decks: every card that is not Full
 cardgen audit --md FILE        # also write the tables as Markdown
-commander-sim --deck veyran --cards   # one deck: every card's tags, abilities, source and unmodeled text
+commander-sim --deck kefka --cards    # one deck: every card's tags, abilities, source and unmodeled text
 ```
 
 `documents/card-audit.md` is the hand check of JD's and Avery's deck cards against Oracle text; `cardgen audit` reads
@@ -69,9 +69,9 @@ Unmodeled ([`documents/testing-decks.md`](testing-decks.md)).
 - **It needs code.** Register a slot in the `impls/` file for its deck or tier (`impls/mine.rs` for JD's decks,
   `common.rs` for staples), with a test in `sim-core/tests/cards_*.rs` that checks the behaviour against the Oracle
   text.
-- **It needs a decision from the deck's AI** (when to cast it, what to tutor). Add it to the deck's priority function
-  (`ai/decks.rs`, `ai/seph.rs`, `ai/veyran.rs` or the deck's `impls/` file); the swap run's preflight shows whether the
-  AI would ever cast it.
+- **It needs a decision from the deck's AI** (when to cast it, what to tutor). Add it to the deck's plan file
+  (`data/plans/<key>.toml`), or for Y'shtola, Sheoldred and Cloud to its priority function (`ai/decks.rs` or the
+  deck's `impls/` file); the swap run's preflight shows whether the AI would ever cast it.
 
 What the engine can't do yet, found while modeling the Tier 6 cards, is listed in
 `rust/agents/engine-needs-*.md` (one file per batch).

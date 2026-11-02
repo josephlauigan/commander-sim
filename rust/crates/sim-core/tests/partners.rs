@@ -11,7 +11,7 @@ const P1: PlayerId = PlayerId(1);
 
 /// a table whose first seat is the Thrasios deck, with plenty of untapped lands of every colour
 fn partner_table() -> sim_core::state::Game {
-    let mut g = table(&["thrasios", "veyran"]);
+    let mut g = table(&["thrasios", "cloud"]);
     for n in ["Plains", "Island", "Swamp", "Forest"] {
         lands(&mut g, P0, n, 6, false);
     }
@@ -34,7 +34,7 @@ fn perm_of(g: &sim_core::state::Game, c: CardId) -> Option<PermId> {
 
 #[test]
 fn both_start_in_the_command_zone_and_neither_is_in_the_library() {
-    let g = table(&["thrasios", "veyran"]);
+    let g = table(&["thrasios", "cloud"]);
     let (a, b) = tymna_thrasios(&g);
     let pl = g.player(P0);
     assert_eq!((pl.cmd, pl.cmd2), (a, Some(b)));
@@ -151,7 +151,7 @@ fn bastion_protector_buffs_both_commanders() {
 
 #[test]
 fn a_single_commander_seat_is_unchanged() {
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let pl = g.player(P0);
     assert_eq!(pl.cmd2, None);
     assert!(pl.cmd_in_zone && !pl.cmd2_in_zone);

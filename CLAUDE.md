@@ -8,6 +8,14 @@
 - **Every subagent runs at high effort** (JD, 2026-11-01): pass `effort: "high"` on every Agent call, workflow
   agents included. No setting does this for subagents alone (`CLAUDE_CODE_EFFORT_LEVEL` would also change the main
   session), so it goes on each call.
+- **Pass `model: "sonnet"` on every Agent call too** (JD, 2026-11-01): `CLAUDE_CODE_SUBAGENT_MODEL` loads only in
+  sessions started inside `commander-sim/`; a session started in a parent folder otherwise gives its agents the main
+  model (Opus).
+- **An agent is open no longer than its work needs** (JD, 2026-11-01: "My usage is completely getting eaten up"). No
+  agent waits on sims or long builds: an agent writes code or a queue script and stops; the coordinator runs the
+  queue as a background script with a watcher on its "all done" line, and a new short agent reads the outputs and
+  writes the results. An agent whose work is done or blocked reports and ends; resume it only for a short follow-up.
+  Never keep an agent open as a monitor.
 
 ## Checking subagents' work
 
@@ -44,8 +52,9 @@ shell command that starts with `python`, `python3`, `pip`, `pipx` or `uv`, in ev
 
 Each of JD's decks is simulated only against the opponent tiers listed for it in `data/my_decks.toml` (`tiers = [...]`,
 also exported to `data/decks.json`): yshtola, thrasios and urdragon t5 (band 1; urdragon 10/30);
-sheoldred, sauron and ghave t3-t4 (band 2; ghave 10/30: Seph's seat); kefka t3 (band 3); cloud and veyran t1-t3 (band 4);
-karn t4-t5 (10/20); thanos t6 (cEDH, 10/30: Scion's seat); alela and galadriel t1 (Avery's).
+sheoldred, sauron and ghave t3-t4 (band 2; ghave 10/30: Seph's seat); kefka t3 (band 3); cloud t1-t3 (band 4;
+veyran retired 11/01); karn t4-t5 (10/20); thanos t6 (cEDH, 10/30: Scion's seat); alela t1 and galadriel t1-t2
+(Avery's).
 `--pool all`, `--all-decks`, `--analyze`,
 swap runs and `searchtest` use only those tiers; `--deck X --pool tN` outside them is refused. Report averages over
 the deck's own tiers (label them, e.g. "over t1-t3"). Use `--any-tier` only when JD asks for it. `--calibrate` is unchanged.
