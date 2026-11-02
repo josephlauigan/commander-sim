@@ -5,9 +5,10 @@
 //! What it changes (each only for a Tier 6 player going for a combo):
 //! - a line whose cast pieces cannot be cast now (a lock, a second spell under Rule of Law) is not "ready";
 //! - "Ad Nauseam into a win" is ready only when Ad Nauseam is likely to find the pieces it lacks;
-//! - the player's own counterspell, cast during its own attempt, may not take the mana the rest of the line needs.
+//! (A counter war that spends the mana of the line's later steps is left: see the trace write-up.)
 //!
-//! The labels of the stops (which name the real stopper instead of "?") change no play and do not read this.
+//! The stop labels name the step or cast that failed instead of "?"; they change no play, but read this too, so that
+//! `AI_T6STOPS=0` reports stay byte-identical.
 
 use std::cell::Cell;
 use std::sync::OnceLock;
