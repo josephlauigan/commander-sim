@@ -1,5 +1,10 @@
 # Ghave, Guru of Spores — Abzan Aristocrats
 
+**Retired 2026-11-02 (JD).** The deck was broken up: 53 of its cards moved as upgrades into eight decks (Tymna/Thrasios,
+Sheoldred, Kefka, Y'shtola, Cloud, Ur-Dragon, Sauron, Karn; see the CHANGELOG entries of 2026-11-02), and the other 36
+cards and the basics went to the binder. The physical deck no longer exists. The list below stays only as the `ghave`
+simulator seat until the key is retired in a separate change.
+
 The Seph/Atraxa reanimator (`decklists/pool/retired/sephiroth-phyrexian-reanimator.md`) rebuilt around Ghave, Guru of Spores (JD's
 choice, 10/30). The blue cards are out and the deck leans into sacrifice: Ghave makes Saprolings out of +1/+1 counters
 and counters out of creatures, so he is a sacrifice outlet and a combo piece from the command zone. The reanimation

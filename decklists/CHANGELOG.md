@@ -5,7 +5,7 @@ simulator results over time, and tuning notes. The deck documents themselves des
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
 JD's decks: Cloud, Ghave, Karn, Kefka, Sauron, Sheoldred, Thanos, Tymna/Thrasios, Ur-Dragon, Y'shtola (Veyran retired
-2026-11-01).
+2026-11-01; Ghave broken up 2026-11-02, its key still a simulator seat).
 Avery's decks: Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
@@ -788,6 +788,11 @@ Deck key `ghave`, `decklists/JD/ghave-abzan-aristocrats.md`, tiers t3-t4 (Seph's
 
 ### Changes
 
+- **2026-11-02.** Retired (JD): the deck was broken up and its cards placed as upgrades in eight decks (each deck's
+  2026-11-02 entry lists them: Tymna/Thrasios 22 cards, Sheoldred 10, Kefka 6, Y'shtola 4, Cloud 3, Ur-Dragon 3, Karn
+  3, Sauron 2). The other 36 cards (among them Ghave himself, Doubling Season, Kitchen Finks, Living Death, the Elesh
+  Norn, Grand Cenobite and Elspeth Tirel) and the 11 basics went to the binder, with every card the other decks cut. Not
+  simulated. The `ghave` key stays as a simulator seat until it is retired in a separate change.
 - **2026-10-31.** Out: Open the Armory, Victimize. In: Elspeth Tirel, Galadriel's Dismissal. Out: Victimize, Open the Armory. In: Galadriel's Dismissal (from Cloud), Elspeth Tirel (JD's Miku, Divine Diva). JD's choice (10/31), not simulated: Ghave dies to wipes and to go-wide combat before its loop; Dismissal protects the combo turn for {W}, Elspeth's Soldiers block and feed the altars, and her -5 keeps the tokens. Victimize and Open the Armory were often held with no target.
 - **2026-10-30.** New deck (JD, 10/30): the Seph/Atraxa reanimator rebuilt around Ghave, Guru of Spores (W/B/G). Out: Atraxa, Grand Unifier (the old commander), Displacer Kitten, Arcane Denial, Swan Song, Gifts Ungiven, Rhystic Study, Glimpse the Unthinkable, Muldrotha, the Gravetide, Teleportation Circle, Conjurer's Closet, Buried Alive, Underground River, Underground Sea, Watery Grave, Tropical Island, Hallowed Fountain, Tundra, 2 Island. In: Ghave, Guru of Spores (commander), Yawgmoth, Thran Physician, Worldly Tutor, Cathars' Crusade, Cruel Celebrant, Pitiless Plunderer, Sylvan Library, Heroic Intervention, Doubling Season, Zulaport Cutthroat, Eladamri's Call, Gaea's Cradle, Indatha Triome, Woodland Cemetery, Isolated Chapel, Sunpetal Grove, Brushland, Llanowar Wastes, Sandsteppe Citadel (proxies where JD doesn't own them). Ghave + an altar + Cathars' Crusade or Doubling Season are four new infinite combos; the Mikaeus and Nim Deathmantle loops stay. 5 Game Changers (Demonic Tutor, Vampiric Tutor, Worldly Tutor, Aura Shards, Gaea's Cradle). Not simulated.
 

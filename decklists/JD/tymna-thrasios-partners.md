@@ -12,7 +12,7 @@ turn, to fast combo, and to falling behind on mana.
 | | |
 |---|---|
 | **Commanders** | Tymna the Weaver ({1}{W}{B}, 2/2) and Thrasios, Triton Hero ({G}{U}, 1/1); white-blue-black-green |
-| **Bracket** | 3 (3 Game Changers: Worldly Tutor, Smothering Tithe, Gifts Ungiven); read Rule 0 below for the Basalt Monolith + Rings of Brighthearth loop |
+| **Bracket** | 4 (6 Game Changers: Worldly Tutor, Demonic Tutor, Smothering Tithe, Gifts Ungiven, Gaea's Cradle, Aura Shards); read Rule 0 below for the Basalt Monolith + Rings of Brighthearth loop |
 | **Simulator** | deck key `thrasios`, matched tier T5; built from the retired Tymna/Kraum deck |
 
 ## Strategy
@@ -34,9 +34,9 @@ worth more than one big hit. Keep **Lightning Greaves** for Tymna: she is the de
 
 ### Game plan
 
-**Early turns (1–3).** A mana creature or rock (Avacyn's Pilgrim, Faeburrow Elder, Arcane Signet, Fellwar Stone, Orzhov
-Signet, a Talisman) into **Thrasios on turn 2** or **Tymna on turn 3**. Coiling Oracle and Paradox Surveyor are
-two-for-ones that find lands.
+**Early turns (1–3).** A mana creature or rock (Sol Ring, Birds of Paradise, Avacyn's Pilgrim, Faeburrow Elder, Arcane
+Signet, Talisman of Curiosity) into **Thrasios on turn 2** or **Tymna on turn 3**. Coiling Oracle is a two-for-one that
+finds a land.
 
 **Middle turns (4–6).** Get the defense down: **Ghostly Prison**, **Propaganda**, **Crawlspace**, **Windborn Muse**,
 **Archon of Absolution** and **Baird** make attacking you expensive, so opponents attack each other instead. Attack
@@ -91,14 +91,13 @@ mana for removal: an opponent who destroys Rings or the Monolith in response end
   blocker never comes.
 - **Diabolic Tutor** ({2}{B}{B}) fetches any card. Fetch Elspeth when behind, a Titan or Dromoka to close, or a piece of
   the combo.
-- **Conqueror's Flail** gives +4/+4 with all four colours and stops opponents from casting spells
-  on your turn.
+- **Demonic Tutor** ({1}{B}) does the same for two mana less.
 
 ### Tymna's attackers
 
 Tymna wants every opponent hit each turn. **Adeline** makes a 1/1 attacking *each* opponent whenever you attack, and
 **Hero of Bladehold** makes two attacking tokens with battle cry; **Dauthi Voidwalker** (shadow), **Vampire
-Nighthawk**, **The Wasp** (taps a blocker when it attacks), **Nightwind Glider**, **Falcon and Redwing** and **Nightveil
+Nighthawk**, **The Wasp** (taps a blocker when it attacks), **Falcon and Redwing** and **Nightveil
 Predator** get through on their own. **Cecil, Dark Knight** ({B}, 2/3 deathtouch) attacks from turn two: nothing wants to
 block him, so he starts Tymna's draws early; each hit costs you that much life, and at 20 life or less he untaps and
 becomes **Cecil, Redeemed Paladin** (4/4 lifelink, and the other attackers are indestructible when he attacks). Attack the
@@ -107,24 +106,29 @@ opponents you can reach, keep enough back to block what the taxes let through, a
 ### Removal and interaction
 
 **Swords to Plowshares** and **Path to Exile** (one mana), **Darksteel Mutation** (also answers a commander),
-**Skyclave Apparition**, **Bite Down** (a creature of yours deals damage equal to its power to one of theirs),
-**Memory Trap** and **Disenchant** ({1}{W}, instant: destroy an artifact or enchantment); **Elspeth** adds more. **Arcane Denial**, **Swan Song** ({U}: counter an enchantment, instant or sorcery; its
+**Skyclave Apparition**, **Anguished Unmaking** ({1}{W}{B}, instant: exile any nonland permanent, you lose 3 life) and
+**Aura Shards** (whenever a creature enters under your control, destroy an artifact or enchantment; Adeline's and Hero of
+Bladehold's tokens trigger it every combat); **Elspeth** adds more. **Arcane Denial**, **Swan Song** ({U}: counter an enchantment, instant or sorcery; its
 controller gets a 2/2 Bird) and **Disdainful Stroke** ({1}{U}: counter a spell with mana value 4 or more) are the counterspells, and **Aven
 Mindcensor** (flash) blunts tutors and land searches. **Restoration Angel** (flash) blinks a creature out of removal and
-reuses an enters effect (a Titan, Skyclave Apparition, Atraxa). **Swan Song**, **Blossoming Defense** ({G}: +2/+2 and
-hexproof) and **Lightning Greaves** protect Tymna.
+reuses an enters effect (a Titan, Skyclave Apparition, Atraxa). **Swan Song**, **Lightning Greaves** and
+**Ephemerate** ({W}: blink a creature you control, and again next turn by rebound) protect Tymna; **Grand Abolisher**
+stops opponents casting spells on your turn.
 
 ### Ramp and card advantage beyond the commanders
 
 **Avacyn's Pilgrim** and **Faeburrow Elder** (taps for one mana of each colour among your permanents) ramp and fix;
-**Coiling Oracle** and **Paradox Surveyor** find lands or cards when they enter; **Fact or Fiction** digs.
+**Birds of Paradise** and **Gaea's Cradle** (one {G} per creature you control) ramp further; **Coiling Oracle** finds a
+land or a card when it enters; **Fact or Fiction** digs, and **Sylvan Library** sets up every draw.
 **Atraxa, Grand Unifier** ({3}{G}{W}{U}{B}, 7/7 flying, vigilance, deathtouch, lifelink) reveals the top ten when she
 enters and keeps one card of each type: usually five or six cards. Restoration Angel can't blink her (she's an Angel).
+**Elesh Norn, Mother of Machines** ({4}{W}, 4/7 vigilance) makes your enters triggers happen twice (Atraxa reveals
+twice, Grave Titan makes four Zombies) and stops your opponents'.
 **Gifts Ungiven** ({3}{U}, instant) names four cards with different names; an opponent puts two in your hand and two in
 your graveyard. Name the combo (Basalt Monolith, Rings of Brighthearth, Walking Ballista) plus Worldly Tutor, and any
 split leaves a way to it; Sun Titan returns a Monolith or Ballista from the graveyard.
 **Smothering Tithe** (a Game Changer) makes a Treasure whenever an opponent draws unless they pay {2}: steady mana for
-Thrasios's {4} activations and the six-drop finishers. **Worldly Tutor** (another Game Changer; Gifts Ungiven is the third) puts a creature on
+Thrasios's {4} activations and the six-drop finishers. **Worldly Tutor** (another Game Changer) puts a creature on
 top of the library, such as the Ballista when the combo is out, Dromoka or a Titan.
 
 ### How it wins
@@ -136,11 +140,11 @@ or the Basalt Monolith + Rings of Brighthearth loop into Walking Ballista, from 
 
 - **Fast decks.** The first four turns are slow; the taxes matter only from turn 4. Spend the first turns on mana and a
   blocker rather than holding up Tymna's draws.
-- **Combo and storm.** Aven Mindcensor, Arcane Denial, Disdainful Stroke (the big pieces) and Memory Trap are the answers; a Dromoka on the battlefield
+- **Combo and storm.** Aven Mindcensor, Arcane Denial, Disdainful Stroke (the big pieces) and Grand Abolisher are the answers; a Dromoka on the battlefield
   stops anything cast on your turn.
 - **Wipes.** The defense is mostly enchantments and artifacts, which survive creature wipes; rebuild the attackers with
   the Titans and Elspeth.
-- **Commander removal.** Tymna dies to everything; Greaves, Swan Song and Blossoming Defense protect her, and the
+- **Commander removal.** Tymna dies to everything; Greaves, Swan Song and Ephemerate protect her, and the
   command zone makes her a three-mana recast plus tax.
 
 ## Key lines
@@ -159,28 +163,33 @@ turn-3 commander. A hand that can't cast a commander by turn 3 or 4 is a mulliga
 
 ## Mana and consistency
 
-38 lands: 16 nonbasic and 22 basic (7 Plains, 6 Island, 6 Swamp, 3 Forest); no land enters tapped every time. Mana
-rocks and creatures: **Arcane Signet**, **Fellwar Stone**, **Orzhov Signet**, **Talisman of Curiosity**, **Talisman of
-Unity**, **Avacyn's Pilgrim**, **Faeburrow Elder**.
+39 lands: 29 nonbasic and 10 basic (6 Island, 2 Plains, 1 Swamp, 1 Forest); no land enters tapped every time. Mana
+rocks and creatures: **Sol Ring**, **Arcane Signet**, **Talisman of Curiosity**, **Birds of Paradise**, **Avacyn's
+Pilgrim**, **Faeburrow Elder**.
 
 - **Any colour:** Command Tower.
-- **Original duals** (untapped, no cost): Tundra (W/U), Tropical Island (G/U). **Shock lands** (pay 2 life or they enter
-  tapped): Hallowed Fountain (W/U), Breeding Pool (G/U).
+- **Original duals** (untapped, no cost): Tundra (W/U), Tropical Island (G/U), Bayou (B/G), Scrubland (W/B), Savannah
+  (G/W). **Shock lands** (pay 2 life or they enter tapped): Hallowed Fountain (W/U), Breeding Pool (G/U), Overgrown
+  Tomb (B/G), Godless Shrine (W/B), Temple Garden (G/W).
+- **Fetch lands:** Flooded Strand, Marsh Flats, Polluted Delta, Misty Rainforest, Verdant Catacombs, Windswept Heath:
+  each finds a dual or shock land with one of its two types, so every colour is two fetches away.
+- **Gaea's Cradle:** {G} for each creature you control.
 - **Checklands** (untapped with a basic of the right type): Isolated Chapel (W/B), Drowned Catacomb (U/B), Glacial
   Fortress (W/U), Sunpetal Grove (G/W).
 - **Other two-colour lands:** Brushland, Caves of Koilos, Llanowar Wastes and Underground River (pain lands), Deathcap
   Glade (G/B, untapped with two or more other lands), Yavimaya Coast (pain land), Undergrowth Stadium (B/G, untapped with two or more opponents).
 
-**Card draw:** Tymna, Thrasios, Coiling Oracle, Paradox Surveyor, Fact or Fiction, Atraxa.
-**Tutors:** Worldly Tutor, Diabolic Tutor, Gifts Ungiven.
+**Card draw:** Tymna, Thrasios, Coiling Oracle, Fact or Fiction, Sylvan Library, Atraxa.
+**Tutors:** Worldly Tutor, Demonic Tutor, Diabolic Tutor, Gifts Ungiven.
 
 ## Bracket and Rule 0
 
-**Bracket 3,** with three Game Changers, **Worldly Tutor**, **Smothering Tithe** and **Gifts Ungiven**. No mass land destruction and no extra turns. **Basalt Monolith +
+**Bracket 4,** with six Game Changers: **Worldly Tutor**, **Demonic Tutor**, **Smothering Tithe**, **Gifts Ungiven**,
+**Gaea's Cradle** and **Aura Shards** (more than three Game Changers is Bracket 4). No mass land destruction and no extra turns. **Basalt Monolith +
 Rings of Brighthearth** makes unlimited colourless mana; with Walking Ballista it wins the game, which is a two-card
-infinite mana loop that Bracket 3 normally leaves out: tell the table about it, and about the attack taxes (Ghostly
+infinite mana loop: tell the table about it, and about the attack taxes (Ghostly
 Prison, Propaganda, Crawlspace, Windborn Muse, Archon of Absolution, Baird), Aven Mindcensor, Dragonlord Dromoka and
-Conqueror's Flail (no spells on your turn) before the game.
+Grand Abolisher (no spells on your turn) before the game.
 
 ## Decklist by type (100)
 
