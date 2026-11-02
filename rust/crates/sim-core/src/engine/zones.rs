@@ -1476,9 +1476,11 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         sun_titan(g, p)?;
     }
     if t.has(Tag::Dualcaster) {
-        // copy a spell: approximated as copying your last instant/sorcery
+        // copy a spell: approximated as copying your last instant/sorcery (no card carries the tag now: Dualcaster Mage
+        // copies through impls/threats.rs and `cast::copy_spell`). The copy is yours, so your magecraft triggers.
         let last = g.player(p).gy.iter().rev().copied().find(|&x| g.db.get(x).instant || g.db.get(x).sorcery);
         if let Some(last) = last {
+            crate::engine::cast::magecraft(g, p, Some(last), true)?;
             if let Some(n) = g.db.get(last).tags.int(Tag::Draw) {
                 draw(g, p, n.max(0) as u32, false)?;
             }
