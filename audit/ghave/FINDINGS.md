@@ -56,3 +56,7 @@ together: part of the drop is the list, part is the AI.
 
 The old Seph notes (audit/seph/FINDINGS.md) describe the Atraxa list and its swaps (Priest of Gix, the Stones); none
 of them applies to this list.
+
+## 2026-11-01: recalibration stage 2 remeasure
+
+Ghave, t3 / t4: **11.2% / 13.6%** (average 12.4%) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). 10/31 first numbers: 12.3 / 11.3 (stage 1, same seeds: 13.5 / 11.8). Fitted t3 knobs: 11.7% (level).

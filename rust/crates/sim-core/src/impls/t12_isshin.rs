@@ -238,7 +238,10 @@ fn atk_trigs(g: &Game, p: PlayerId, atk: &[PermId]) -> Vec<(PermId, AtkTrig)> {
                 }
             }
         }
-        if g.registry.get(c).is_some_and(|i| i.attack.is_some()) {
+        // a creature Firebender Ascension (an Anikthea Zombie copy) attacking: its quest trigger is its own ability,
+        // not one its attack caused, so it isn't counted (copying it re-ran this hook without end: a stack overflow
+        // in `--calibrate ordering`, t1 into t0, 11/01)
+        if g.registry.get(c).is_some_and(|i| i.attack.is_some()) && &*g.db.get(c).name != "Firebender Ascension" {
             out.push((m, AtkTrig::Hook));
         }
     }

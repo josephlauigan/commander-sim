@@ -1,0 +1,42 @@
+# Knobs fitted by commander-sim --fit --pool t4 --fit-scope shared (adaptive AI, loose profile)
+# 15 generations of 8, 2000 games a candidate on seeds 500000-501999
+# Scored statistics: seat1_win, seat2_win, seat3_win, seat4_win, win_round_median
+# Loss: sum over the scored targets of ((sim - target) / half the band)^2; the win types at 0.25
+
+tier = "t4"
+
+[table]
+cthresh_default = 4
+instant_extra = 1
+
+[style.chulane-bant-value-combo]
+temp = 1.4660
+aggression = 0.9061
+caution = 0.3342
+
+[style.edgar-markov-mardu-vampires]
+temp = 1.4660
+aggression = 0.9061
+caution = 0.3342
+
+[style.krenko-mono-red-goblins]
+temp = 1.4660
+aggression = 0.9061
+caution = 0.3342
+
+[style.prosper-rakdos-exile-treasure]
+temp = 1.4660
+aggression = 0.9061
+caution = 0.3342
+
+[style.yuriko-dimir-ninjas]
+temp = 1.4660
+aggression = 0.9061
+caution = 0.3342
+
+[fit]
+loss = 5.233
+loss_builtin = 10.586
+games = 2000
+generations = 15
+scope = "shared"
