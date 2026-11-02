@@ -8,6 +8,14 @@
 - **Every subagent runs at high effort** (JD, 2026-11-01): pass `effort: "high"` on every Agent call, workflow
   agents included. No setting does this for subagents alone (`CLAUDE_CODE_EFFORT_LEVEL` would also change the main
   session), so it goes on each call.
+- **Pass `model: "sonnet"` on every Agent call too** (JD, 2026-11-01): `CLAUDE_CODE_SUBAGENT_MODEL` loads only in
+  sessions started inside `commander-sim/`; a session started in a parent folder otherwise gives its agents the main
+  model (Opus).
+- **An agent is open no longer than its work needs** (JD, 2026-11-01: "My usage is completely getting eaten up"). No
+  agent waits on sims or long builds: an agent writes code or a queue script and stops; the coordinator runs the
+  queue as a background script with a watcher on its "all done" line, and a new short agent reads the outputs and
+  writes the results. An agent whose work is done or blocked reports and ends; resume it only for a short follow-up.
+  Never keep an agent open as a monitor.
 
 ## Checking subagents' work
 
