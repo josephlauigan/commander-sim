@@ -4,9 +4,9 @@ Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Pillowfort / enchantress
 
 - **Commander:** Sythis, Harvest's Hand
 - **Color identity:** White, Green
-- **Game Changers (1):** Enlightened Tutor
-- **Combos:** None (no two-card infinite combo; Solitary Confinement with the enchantress draws is a soft lock, not a combo).
-- **Lands:** 35 (15 nonbasic + 20 basic), plus Strength of the Harvest // Haven of the Harvest as a land face
+- **Game Changers (1):** Aura Shards
+- **Combos:** None (no two-card infinite combo).
+- **Lands:** 35 (15 nonbasic + 20 basic)
 
 ## Role in the pool
 
@@ -14,14 +14,14 @@ Can your decks win through an attack tax, and do they bring enchantment removal?
 
 ## At the table
 
-- **Plan:** Ramps with Utopia Sprawl, Wild Growth, Fertile Ground, Overgrowth, Abundant Growth, Sanctum Weaver, Sol Ring and Arcane Signet, then draws a card off every enchantment with Sythis, Enchantress's Presence, Eidolon of Blossoms, Argothian, Mesa and Verduran Enchantress, Satyr Enchanter, Setessan Champion and Jukai Naturalist (Weaver of Harmony copies those draws). Idyllic Tutor, Enlightened Tutor and Sterling Grove find the pieces.
+- **Plan:** Ramps with Utopia Sprawl, Wild Growth, Fertile Ground, Overgrowth, Abundant Growth, Sanctum Weaver, Selesnya Signet and Arcane Signet, then draws a card off every enchantment with Sythis, Enchantress's Presence, Eidolon of Blossoms, Argothian, Mesa and Verduran Enchantress, Satyr Enchanter, Setessan Champion and Jukai Naturalist (Weaver of Harmony copies those draws). Aura Shards clears enchantments and artifacts as creatures arrive; the deck has no tutors left.
 - **Wins by:** One big Aura-carrier: All That Glitters, Ethereal Armor, Ancestral Mask, Strength of the Harvest and Rancor on an evasive or protected creature, with Setessan Champion and Calix, Guided by Fate growing it (Calix copies an enchantment each turn it connects). Sigil of the Empty Throne and Hallowed Haunting make fliers; Archon of Sun's Grace makes Pegasi; Heliod, Sun-Crowned turns life gain into counters.
-- **Watch out for:** Ghostly Prison, Sphere of Safety and Archon of Sun's Grace tax or punish attacks, Solitary Confinement and Greater Auramancy make the player or its enchantments untouchable, Privileged Position and Sterling Grove give hexproof, and Resurgent Belief (suspended) or Mirari's Wake rebuild after a wipe. Kill the enchantress draw engines early and bring enchantment removal.
-- **Interaction:** Swords to Plowshares, Path to Exile, Grasp of Fate, Song of the Dryads, Darksteel Mutation, Kenrith's Transformation, Seal of Cleansing, Seal of Primordium, Aura of Silence, Beast Within, Austere Command and Winds of Rath (Auras survive it). Heroic Intervention, Flickering Ward and Destiny Spinner protect.
+- **Watch out for:** Ghostly Prison and Archon of Sun's Grace tax or punish attacks, Greater Auramancy makes its enchantments untouchable, Privileged Position gives hexproof, and Resurgent Belief (suspended) or Mirari's Wake rebuild after a wipe. Kill the enchantress draw engines early and bring enchantment removal.
+- **Interaction:** Swords to Plowshares, Path to Exile, Grasp of Fate, Prison Sentence, Song of the Dryads, Darksteel Mutation, Kenrith's Transformation, Seal of Cleansing, Seal of Primordium, Aura of Silence, Beast Within, Austere Command and Winds of Rath (Auras survive it). Heroic Intervention, Flickering Ward and Destiny Spinner protect.
 
 ## Strategy
 
-Build a fort that makes attacking it expensive (Ghostly Prison, Sphere of Safety, Archon of Sun's Grace, Solitary Confinement, Authority of the Consuls, Blind Obedience), draw a card off every enchantment cast, and win with an Aura-stacked creature or a squadron of enchantment tokens. Removal is almost all enchantment-based, so it grows the engine; Resurgent Belief brings the whole board back.
+Build a fort that makes attacking it expensive (Ghostly Prison, Archon of Sun's Grace, Authority of the Consuls, Blind Obedience), draw a card off every enchantment cast, and win with an Aura-stacked creature or a squadron of enchantment tokens. Removal is almost all enchantment-based, so it grows the engine; Resurgent Belief brings the whole board back.
 
 ## Sim modeling notes
 
@@ -35,13 +35,13 @@ Enchantress draw triggers; attack taxes; Aura pump (All That Glitters, Ethereal 
 
 **Creatures (21).** Alseid of Life's Bounty, Archon of Sun's Grace, Argothian Enchantress, Calix, Guided by Fate, Composer of Spring, Courser of Kruphix, Destiny Spinner, Dryad of the Ilysian Grove, Eidolon of Blossoms, Enduring Vitality, Heliod, Sun-Crowned, Herald of the Pantheon, Jukai Naturalist, Mesa Enchantress, Moon-Blessed Cleric, Sanctum Weaver, Satyr Enchanter, Setessan Champion, Starfield Mystic, Verduran Enchantress, Weaver of Harmony
 
-**Enchantments (32).** Abundant Growth, All That Glitters, Ancestral Mask, Aura of Silence, Authority of the Consuls, Blind Obedience, Darksteel Mutation, Enchantress's Presence, Ethereal Armor, Exploration, Fertile Ground, Flickering Ward, Ghostly Prison, Grasp of Fate, Greater Auramancy, Hallowed Haunting, Kenrith's Transformation, Mirari's Wake, Overgrowth, Privileged Position, Rancor, Seal of Cleansing, Seal of Primordium, Sigil of the Empty Throne, Solitary Confinement, Song of the Dryads, Sphere of Safety, Sterling Grove, Strength of the Harvest // Haven of the Harvest, Sylvan Library, Utopia Sprawl, Wild Growth
+**Enchantments (34).** Abundant Growth, All That Glitters, Ancestral Mask, Aura Shards, Aura of Silence, Authority of the Consuls, Blind Obedience, Darksteel Mutation, Druid Class, Enchantress's Presence, Ethereal Armor, Exploration, Fertile Ground, Flickering Ward, Ghostly Prison, Grasp of Fate, Greater Auramancy, Hallowed Haunting, Kenrith's Transformation, Mirari's Wake, Overgrowth, Prison Sentence, Privileged Position, Rancor, Seal of Cleansing, Seal of Primordium, Sigil of the Empty Throne, Snake Umbra, Song of the Dryads, Spider Umbra, Strength of the Harvest // Haven of the Harvest, Sylvan Library, Utopia Sprawl, Wild Growth
 
-**Artifacts (2).** Arcane Signet, Sol Ring
+**Artifacts (2).** Arcane Signet, Selesnya Signet
 
-**Sorceries (4).** Austere Command, Idyllic Tutor, Resurgent Belief, Winds of Rath
+**Sorceries (3).** Austere Command, Resurgent Belief, Winds of Rath
 
-**Instants (5).** Beast Within, Enlightened Tutor, Heroic Intervention, Path to Exile, Swords to Plowshares
+**Instants (4).** Beast Within, Heroic Intervention, Path to Exile, Swords to Plowshares
 
 **Lands (35).** Bountiful Promenade, Branchloft Pathway // Boulderloft Pathway, Brushland, Canopy Vista, Command Tower, Fortified Village, Hall of Heliod's Generosity, Hushwood Verge, Overgrown Farmland, Reliquary Tower, Sungrass Prairie, Sunpetal Grove, Temple Garden, Temple of Plenty, Windswept Heath, 9 Forest, 11 Plains
 
@@ -55,6 +55,7 @@ Enchantress draw triggers; attack taxes; Aura pump (All That Glitters, Ethereal 
 1 Arcane Signet
 1 Archon of Sun's Grace
 1 Argothian Enchantress
+1 Aura Shards
 1 Aura of Silence
 1 Austere Command
 1 Authority of the Consuls
@@ -70,11 +71,11 @@ Enchantress draw triggers; attack taxes; Aura pump (All That Glitters, Ethereal 
 1 Courser of Kruphix
 1 Darksteel Mutation
 1 Destiny Spinner
+1 Druid Class
 1 Dryad of the Ilysian Grove
 1 Eidolon of Blossoms
 1 Enchantress's Presence
 1 Enduring Vitality
-1 Enlightened Tutor
 1 Ethereal Armor
 1 Exploration
 1 Fertile Ground
@@ -89,7 +90,6 @@ Enchantress draw triggers; attack taxes; Aura pump (All That Glitters, Ethereal 
 1 Herald of the Pantheon
 1 Heroic Intervention
 1 Hushwood Verge
-1 Idyllic Tutor
 1 Jukai Naturalist
 1 Kenrith's Transformation
 1 Mesa Enchantress
@@ -98,6 +98,7 @@ Enchantress draw triggers; attack taxes; Aura pump (All That Glitters, Ethereal 
 1 Overgrown Farmland
 1 Overgrowth
 1 Path to Exile
+1 Prison Sentence
 1 Privileged Position
 1 Rancor
 1 Reliquary Tower
@@ -106,14 +107,13 @@ Enchantress draw triggers; attack taxes; Aura pump (All That Glitters, Ethereal 
 1 Satyr Enchanter
 1 Seal of Cleansing
 1 Seal of Primordium
+1 Selesnya Signet
 1 Setessan Champion
 1 Sigil of the Empty Throne
-1 Sol Ring
-1 Solitary Confinement
+1 Snake Umbra
 1 Song of the Dryads
-1 Sphere of Safety
+1 Spider Umbra
 1 Starfield Mystic
-1 Sterling Grove
 1 Strength of the Harvest // Haven of the Harvest
 1 Sungrass Prairie
 1 Sunpetal Grove

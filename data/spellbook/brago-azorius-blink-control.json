@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-10-30",
+  "fetched": "2026-11-02",
   "deck": "brago-azorius-blink-control",
   "commanders": [
     "Brago, King Eternal"
   ],
-  "request_sha256": "d7df3d648539c07309b18d523f83f439ac030791caa8f89471aa1ccb32807937",
+  "request_sha256": "0ba68c6924872a28dc67e36eed86a42f07c301cd25c77c9a3f6b707d47c371ac",
   "identity": "WU",
   "included": [
     {
@@ -40,7 +40,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 38230
+      "popularity": 38337
     },
     {
       "id": "2397-3634-3821",
@@ -75,7 +75,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 18015
+      "popularity": 18045
     },
     {
       "id": "2751-3557",
@@ -101,7 +101,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 12507
+      "popularity": 12511
     },
     {
       "id": "3634-3821-6751",
@@ -136,7 +136,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 9165
+      "popularity": 9237
     },
     {
       "id": "1741-1987-2397-2493",
@@ -175,7 +175,7 @@
       "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 7811
+      "popularity": 7833
     },
     {
       "id": "1770-3634-3821",
@@ -209,7 +209,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 6837
+      "popularity": 6846
     },
     {
       "id": "1741-1770-1987-2493",
@@ -248,7 +248,7 @@
       "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2558
+      "popularity": 2567
     }
   ],
   "included_by_changing_commanders": [],
@@ -279,7 +279,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 364272,
+      "popularity": 365390,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -308,7 +308,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 66280,
+      "popularity": 66605,
       "missing": [
         "Forsaken Monument"
       ]
@@ -335,7 +335,7 @@
       "mana": "{3}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 55147,
+      "popularity": 55425,
       "missing": [
         "Felidar Guardian"
       ]
@@ -364,7 +364,7 @@
       "mana": "{2}",
       "bracket": "R",
       "legal": true,
-      "popularity": 53795,
+      "popularity": 54121,
       "missing": [
         "Rings of Brighthearth"
       ]
@@ -393,7 +393,7 @@
       "mana": "{1}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 48005,
+      "popularity": 48207,
       "missing": [
         "Deadeye Navigator"
       ]
@@ -429,7 +429,7 @@
       "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 46202,
+      "popularity": 46258,
       "missing": [
         "Teferi, Time Raveler"
       ]
@@ -458,7 +458,7 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 37844,
+      "popularity": 37935,
       "missing": [
         "Tidespout Tyrant"
       ]
@@ -487,7 +487,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 26462,
+      "popularity": 26514,
       "missing": [
         "Forensic Gadgeteer"
       ]
@@ -514,7 +514,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 19201,
+      "popularity": 19267,
       "missing": [
         "Deadeye Navigator"
       ]
@@ -550,7 +550,7 @@
       "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
       "bracket": "S",
       "legal": true,
-      "popularity": 17305,
+      "popularity": 17358,
       "missing": [
         "Abdel Adrian, Gorion's Ward"
       ]
@@ -586,7 +586,7 @@
       "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
       "bracket": "S",
       "legal": true,
-      "popularity": 16389,
+      "popularity": 16419,
       "missing": [
         "Abdel Adrian, Gorion's Ward"
       ]
@@ -622,7 +622,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 14511,
+      "popularity": 14541,
       "missing": [
         "Displace"
       ]
@@ -652,7 +652,7 @@
       "mana": "{4}{U}{U}{U} plus commander tax if applicable",
       "bracket": "P",
       "legal": true,
-      "popularity": 13994,
+      "popularity": 14018,
       "missing": [
         "Naru Meha, Master Wizard"
       ]
@@ -681,7 +681,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 10936,
+      "popularity": 11001,
       "missing": [
         "Power Artifact"
       ]
@@ -717,7 +717,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 10080,
+      "popularity": 10115,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -746,7 +746,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 10060,
+      "popularity": 10099,
       "missing": [
         "Mesmeric Orb"
       ]
@@ -773,7 +773,7 @@
       "mana": "{3}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 9616,
+      "popularity": 9697,
       "missing": [
         "Icewind Stalwart"
       ]
@@ -844,7 +844,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 6835,
+      "popularity": 6852,
       "missing": [
         "Gilded Lotus"
       ]
@@ -873,7 +873,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 6767,
+      "popularity": 6754,
       "missing": [
         "Eldrazi Displacer"
       ]
@@ -908,7 +908,7 @@
       "mana": "{3}",
       "bracket": "E",
       "legal": true,
-      "popularity": 6152,
+      "popularity": 6159,
       "missing": [
         "Teferi, Time Raveler"
       ]
@@ -943,7 +943,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 6074,
+      "popularity": 6071,
       "missing": [
         "Abdel Adrian, Gorion's Ward"
       ]
@@ -978,7 +978,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5501,
+      "popularity": 5512,
       "missing": [
         "Abdel Adrian, Gorion's Ward"
       ]
@@ -1013,7 +1013,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5458,
+      "popularity": 5462,
       "missing": [
         "Abdel Adrian, Gorion's Ward"
       ]
@@ -1048,7 +1048,7 @@
       "mana": "{6}{U} every turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 5437,
+      "popularity": 5450,
       "missing": [
         "Cyclonic Rift"
       ]
@@ -1078,7 +1078,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5410,
+      "popularity": 5423,
       "missing": [
         "Intruder Alarm"
       ]
@@ -1114,7 +1114,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5372,
+      "popularity": 5396,
       "missing": [
         "Shipwreck Dowser"
       ]
@@ -1150,7 +1150,7 @@
       "mana": "{5}{W}{W} plus enough mana to pay commander tax, if applicable",
       "bracket": "O",
       "legal": true,
-      "popularity": 5260,
+      "popularity": 5266,
       "missing": [
         "Abdel Adrian, Gorion's Ward"
       ]
@@ -1186,7 +1186,7 @@
       "mana": "{6}{U}{W} plus enough mana to pay commander tax, if applicable",
       "bracket": "O",
       "legal": true,
-      "popularity": 4982,
+      "popularity": 4990,
       "missing": [
         "Abdel Adrian, Gorion's Ward"
       ]
@@ -1221,7 +1221,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 4780,
+      "popularity": 4786,
       "missing": [
         "Coveted Jewel"
       ]
@@ -1257,7 +1257,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 4550,
+      "popularity": 4556,
       "missing": [
         "Mnemonic Wall"
       ]
@@ -1323,7 +1323,7 @@
       "mana": "{14}{W}{W}{U}{U}",
       "bracket": "C",
       "legal": true,
-      "popularity": 4180,
+      "popularity": 4199,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -1352,7 +1352,7 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 3918,
+      "popularity": 3949,
       "missing": [
         "Crackdown Construct"
       ]
@@ -1389,7 +1389,7 @@
       "mana": "{4}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 3718,
+      "popularity": 3717,
       "missing": [
         "Shrieking Drake"
       ]
@@ -1426,7 +1426,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 3683,
+      "popularity": 3697,
       "missing": [
         "Illusionist's Stratagem"
       ]
@@ -1467,7 +1467,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 3546,
+      "popularity": 3568,
       "missing": [
         "High Tide"
       ]
@@ -1502,7 +1502,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 3210,
+      "popularity": 3211,
       "missing": [
         "Lithoform Engine"
       ]
@@ -1532,7 +1532,7 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 2943,
+      "popularity": 2947,
       "missing": [
         "Palinchron"
       ]
@@ -1573,7 +1573,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 2845,
+      "popularity": 2861,
       "missing": [
         "Mana Vault"
       ]
@@ -1603,7 +1603,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2836,
+      "popularity": 2853,
       "missing": [
         "Unstoppable Plan"
       ]
@@ -1632,7 +1632,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 2576,
+      "popularity": 2584,
       "missing": [
         "The Enigma Jewel // Locus of Enlightenment"
       ]
@@ -1668,7 +1668,7 @@
       "mana": "{1}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2350,
+      "popularity": 2353,
       "missing": [
         "Shrieking Drake"
       ]
@@ -1695,7 +1695,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2322,
+      "popularity": 2349,
       "missing": [
         "Peter Parker's Camera"
       ]
@@ -1724,7 +1724,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 2271,
+      "popularity": 2266,
       "missing": [
         "Cephalid Illusionist"
       ]
@@ -1751,7 +1751,7 @@
       "mana": "{2}{W}{U}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2077,
+      "popularity": 2079,
       "missing": [
         "Naru Meha, Master Wizard"
       ]
@@ -1788,7 +1788,7 @@
       "mana": "{4}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2017,
+      "popularity": 2031,
       "missing": [
         "Shrieking Drake"
       ]
@@ -1823,7 +1823,7 @@
       "mana": "{3}{W}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 1958,
+      "popularity": 1967,
       "missing": [
         "Time Warp"
       ]
@@ -1860,7 +1860,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1915,
+      "popularity": 1922,
       "missing": [
         "Delney, Streetwise Lookout"
       ]
@@ -1896,7 +1896,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1894,
+      "popularity": 1912,
       "missing": [
         "Palinchron"
       ]
@@ -1932,7 +1932,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1834,
+      "popularity": 1833,
       "missing": [
         "Scholar of the Ages"
       ]
@@ -1959,7 +1959,7 @@
       "mana": "{2}{W}{U}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1797,
+      "popularity": 1799,
       "missing": [
         "Naru Meha, Master Wizard"
       ]
@@ -1995,9 +1995,39 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1784,
+      "popularity": 1793,
       "missing": [
         "Salvager of Secrets"
+      ]
+    },
+    {
+      "id": "1668-4067",
+      "cards": [
+        {
+          "name": "Mind Over Matter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Loran of the Third Path",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting",
+        "Near-infinite card draw for target opponent"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1754,
+      "missing": [
+        "Mind Over Matter"
       ]
     },
     {
@@ -2030,39 +2060,9 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 1734,
+      "popularity": 1735,
       "missing": [
         "Time Warp"
-      ]
-    },
-    {
-      "id": "1668-4067",
-      "cards": [
-        {
-          "name": "Mind Over Matter",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Loran of the Third Path",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite looting",
-        "Near-infinite card draw for target opponent"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 1734,
-      "missing": [
-        "Mind Over Matter"
       ]
     },
     {
@@ -2093,7 +2093,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1725,
+      "popularity": 1730,
       "missing": [
         "Lotus Petal"
       ]
@@ -2128,7 +2128,7 @@
       "mana": "{3}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 1700,
+      "popularity": 1702,
       "missing": [
         "Time Warp"
       ]
@@ -2161,7 +2161,7 @@
       "mana": "{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1699,
+      "popularity": 1696,
       "missing": [
         "Lumbering Battlement"
       ]
@@ -2197,7 +2197,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1665,
+      "popularity": 1673,
       "missing": [
         "Shrieking Drake"
       ]
@@ -2265,7 +2265,7 @@
       "mana": "{3}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 1592,
+      "popularity": 1595,
       "missing": [
         "Time Warp"
       ]
@@ -2298,7 +2298,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 1538,
+      "popularity": 1545,
       "missing": [
         "Chrome Mox"
       ]
@@ -2327,7 +2327,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1528,
+      "popularity": 1532,
       "missing": [
         "Crackdown Construct"
       ]
@@ -2354,7 +2354,7 @@
       "mana": "{3}{W}{U}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1461,
+      "popularity": 1466,
       "missing": [
         "Naru Meha, Master Wizard"
       ]
@@ -2381,7 +2381,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1442,
+      "popularity": 1441,
       "missing": [
         "Azor, the Lawbringer"
       ]
@@ -2414,7 +2414,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1436,
+      "popularity": 1438,
       "missing": [
         "Mindsplice Apparatus"
       ]
@@ -2447,7 +2447,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1409,
+      "popularity": 1413,
       "missing": [
         "Pact of Negation"
       ]
@@ -2512,7 +2512,7 @@
       "mana": "{3}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 1165,
+      "popularity": 1170,
       "missing": [
         "Time Warp"
       ]
@@ -2547,7 +2547,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 1072,
+      "popularity": 1074,
       "missing": [
         "Temporal Manipulation"
       ]
@@ -2574,7 +2574,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1004,
+      "popularity": 1010,
       "missing": [
         "Azor, the Lawbringer"
       ]
@@ -2609,7 +2609,7 @@
       "mana": "{3}{W}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 943,
+      "popularity": 951,
       "missing": [
         "Temporal Manipulation"
       ]
@@ -2645,7 +2645,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 883,
+      "popularity": 884,
       "missing": [
         "Great Whale"
       ]
@@ -2682,7 +2682,7 @@
       "mana": "{1} at most",
       "bracket": "E",
       "legal": true,
-      "popularity": 877,
+      "popularity": 872,
       "missing": [
         "Whitemane Lion"
       ]
@@ -2719,7 +2719,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 842,
+      "popularity": 841,
       "missing": [
         "Chromatic Orrery"
       ]
@@ -2752,7 +2752,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 820,
+      "popularity": 819,
       "missing": [
         "Lithoform Engine"
       ]
@@ -2787,7 +2787,7 @@
       "mana": "{3}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 788,
+      "popularity": 792,
       "missing": [
         "Temporal Manipulation"
       ]
@@ -2822,7 +2822,7 @@
       "mana": "{3}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 752,
+      "popularity": 755,
       "missing": [
         "Temporal Manipulation"
       ]
@@ -2859,7 +2859,7 @@
       "mana": "{1} at most",
       "bracket": "E",
       "legal": true,
-      "popularity": 737,
+      "popularity": 739,
       "missing": [
         "Dream Stalker"
       ]
@@ -2897,7 +2897,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 710,
+      "popularity": 713,
       "missing": [
         "Mirror Room // Fractured Realm"
       ]
@@ -2930,7 +2930,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 620,
+      "popularity": 630,
       "missing": [
         "Everflowing Chalice"
       ]
@@ -2965,7 +2965,7 @@
       "mana": "{3}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 509,
+      "popularity": 512,
       "missing": [
         "Temporal Manipulation"
       ]
@@ -3035,44 +3035,9 @@
       "mana": "{4}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 397,
+      "popularity": 398,
       "missing": [
         "Shrieking Drake"
-      ]
-    },
-    {
-      "id": "2103-2493-6122",
-      "cards": [
-        {
-          "name": "Dour Port-Mage",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Capture of Jingzhou",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Archaeomancer",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite turns"
-      ],
-      "requires": [],
-      "prerequisites": "{1}{U} available plus enough mana to cast Capture of Jingzhou and Archaeomancer each turn.",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 379,
-      "missing": [
-        "Capture of Jingzhou"
       ]
     },
     {
@@ -3107,36 +3072,44 @@
       "mana": "{1} at most",
       "bracket": "E",
       "legal": true,
-      "popularity": 376,
+      "popularity": 378,
       "missing": [
         "Dream Stalker"
       ]
     },
     {
-      "id": "1170-6513",
+      "id": "2103-2493-6122",
       "cards": [
         {
-          "name": "Chancellor of the Spires",
+          "name": "Dour Port-Mage",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Displacer Kitten",
+          "name": "Capture of Jingzhou",
           "zones": [
-            "B"
+            "H"
+          ]
+        },
+        {
+          "name": "Archaeomancer",
+          "zones": [
+            "H"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Infinite turns"
+      ],
       "requires": [],
-      "prerequisites": "An opponent has an instant or sorcery in their graveyard.\nYou have a noncreature spell in hand with the mana to cast it.",
+      "prerequisites": "{1}{U} available plus enough mana to cast Capture of Jingzhou and Archaeomancer each turn.",
       "mana": "",
-      "bracket": "E",
+      "bracket": "R",
       "legal": true,
-      "popularity": 363,
+      "popularity": 377,
       "missing": [
-        "Chancellor of the Spires"
+        "Capture of Jingzhou"
       ]
     },
     {
@@ -3171,9 +3144,36 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 360,
+      "popularity": 364,
       "missing": [
         "Ancestral Statue"
+      ]
+    },
+    {
+      "id": "1170-6513",
+      "cards": [
+        {
+          "name": "Chancellor of the Spires",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "An opponent has an instant or sorcery in their graveyard.\nYou have a noncreature spell in hand with the mana to cast it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 363,
+      "missing": [
+        "Chancellor of the Spires"
       ]
     },
     {
@@ -3207,7 +3207,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 346,
+      "popularity": 345,
       "missing": [
         "Scrivener"
       ]
@@ -3242,7 +3242,7 @@
       "mana": "{3}{W}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 329,
+      "popularity": 330,
       "missing": [
         "Capture of Jingzhou"
       ]
@@ -3275,7 +3275,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 302,
+      "popularity": 316,
       "missing": [
         "Glamdring, Foe-hammer // Gleam of Death"
       ]
@@ -3312,7 +3312,7 @@
       "mana": "{1} at most",
       "bracket": "E",
       "legal": true,
-      "popularity": 298,
+      "popularity": 301,
       "missing": [
         "Whitemane Lion"
       ]
@@ -3349,7 +3349,7 @@
       "mana": "{1} at most",
       "bracket": "S",
       "legal": true,
-      "popularity": 290,
+      "popularity": 293,
       "missing": [
         "Whitemane Lion"
       ]
@@ -3417,7 +3417,7 @@
       "mana": "{4}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 275,
+      "popularity": 274,
       "missing": [
         "Walk the Aeons"
       ]
@@ -3524,7 +3524,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 263,
+      "popularity": 264,
       "missing": [
         "Ancestral Statue"
       ]
@@ -3553,7 +3553,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 262,
+      "popularity": 264,
       "missing": [
         "Second Chance"
       ]
@@ -3586,7 +3586,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 256,
+      "popularity": 258,
       "missing": [
         "Heliod, the Radiant Dawn // Heliod, the Warped Eclipse"
       ]
@@ -3621,38 +3621,9 @@
       "mana": "{4}{W}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 255,
+      "popularity": 256,
       "missing": [
         "Walk the Aeons"
-      ]
-    },
-    {
-      "id": "712-4131",
-      "cards": [
-        {
-          "name": "Wake Thrasher",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Basalt Monolith",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinitely large creature until end of turn"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 247,
-      "missing": [
-        "Wake Thrasher"
       ]
     },
     {
@@ -3685,9 +3656,38 @@
       "mana": "{3}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 247,
+      "popularity": 249,
       "missing": [
         "Capture of Jingzhou"
+      ]
+    },
+    {
+      "id": "712-4131",
+      "cards": [
+        {
+          "name": "Wake Thrasher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 248,
+      "missing": [
+        "Wake Thrasher"
       ]
     },
     {
@@ -3718,7 +3718,7 @@
       "mana": "{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 241,
+      "popularity": 239,
       "missing": [
         "Arcane Melee"
       ]
@@ -3791,7 +3791,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 220,
+      "popularity": 222,
       "missing": [
         "Shrieking Drake"
       ]
@@ -3827,7 +3827,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 214,
+      "popularity": 217,
       "missing": [
         "Donnie & April, Adorkable Duo"
       ]
@@ -3857,7 +3857,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 204,
+      "popularity": 203,
       "missing": [
         "Sands of Time"
       ]
@@ -3923,7 +3923,7 @@
       "mana": "{1} at most",
       "bracket": "E",
       "legal": true,
-      "popularity": 186,
+      "popularity": 185,
       "missing": [
         "Kor Skyfisher"
       ]
@@ -3958,7 +3958,7 @@
       "mana": "{3}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 175,
+      "popularity": 177,
       "missing": [
         "Capture of Jingzhou"
       ]
@@ -3993,7 +3993,7 @@
       "mana": "{8}{U}{U} every other turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 137,
+      "popularity": 136,
       "missing": [
         "Time Stretch"
       ]
@@ -4062,7 +4062,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 120,
+      "popularity": 121,
       "missing": [
         "Treachery"
       ]
@@ -4097,7 +4097,7 @@
       "mana": "{4}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 114,
+      "popularity": 116,
       "missing": [
         "Walk the Aeons"
       ]
@@ -4165,7 +4165,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 94,
+      "popularity": 92,
       "missing": [
         "Will Kenrith"
       ]
@@ -4275,7 +4275,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 67,
+      "popularity": 66,
       "missing": [
         "Meticulous Excavation"
       ]
@@ -4312,7 +4312,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 58,
+      "popularity": 59,
       "missing": [
         "Ancestral Statue"
       ]
@@ -4428,39 +4428,6 @@
       ]
     },
     {
-      "id": "3821-6751-6844",
-      "cards": [
-        {
-          "name": "Peregrine Drake",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Starfield Vocalist",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Spider-Man 2099, Miguel O'Hara",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control up to five lands that can collectively tap to produce at least {4}{U}.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 40,
-      "missing": [
-        "Spider-Man 2099, Miguel O'Hara"
-      ]
-    },
-    {
       "id": "1170-2733-3821",
       "cards": [
         {
@@ -4491,9 +4458,42 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 39,
+      "popularity": 40,
       "missing": [
         "Shimmering Wings"
+      ]
+    },
+    {
+      "id": "3821-6751-6844",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Starfield Vocalist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spider-Man 2099, Miguel O'Hara",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {4}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 39,
+      "missing": [
+        "Spider-Man 2099, Miguel O'Hara"
       ]
     },
     {
@@ -4561,7 +4561,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 33,
+      "popularity": 32,
       "missing": [
         "Spider-Man 2099, Miguel O'Hara"
       ]
@@ -4632,7 +4632,7 @@
       "mana": "{8}{U}{U}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 27,
+      "popularity": 28,
       "missing": [
         "Notorious Throng"
       ]
@@ -4704,7 +4704,7 @@
       "mana": "{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 18,
+      "popularity": 16,
       "missing": [
         "Mana Matrix"
       ]

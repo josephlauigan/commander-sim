@@ -15,13 +15,13 @@ Whether your decks carry enough spot removal, instant-speed answers, and chump b
 ## At the table
 
 - **Plan:** Plays cheap Aura-lovers (Sram, Mesa Enchantress, Kor Spiritdancer, Hero of Iroas, Danitha, Transcendent Envoy, Starnheim Courser, Pearl-Ear), then casts an Aura on Light-Paws, Emperor's Voice. Each cast Aura tutors a cheaper Aura onto her, and the cost reducers make the chain cheap.
-- **Wins by:** Stacks Auras on Light-Paws and kills by commander damage: All That Glitters, Ethereal Armor, Sage's Reverie, Armored Ascension, Mantle of the Ancients and Thran Power Suit scale with what is on her, Battle Mastery and Twinblade Blessing give double strike, and Idolized makes a lone attacker enormous. Holy Mantle, Spirit Mantle and Unquestioned Authority make her unblockable by creatures.
-- **Watch out for:** Everything rides on one creature, so exile or wipe her in response to the Aura chain. Shardmage's Rescue, Blacksmith's Skill, Karametra's Blessing, Benevolent Blessing and Stoneskin answer spot removal at instant speed, Flickerform dodges removal and wipes (she and her Auras come back at the end step), and Hyena Umbra and Umbra Mystic give umbra armor. Chains of Custody and Thran Power Suit add ward {2}. Retether and Mantle of the Ancients rebuild the Auras after a wipe.
+- **Wins by:** Stacks Auras on Light-Paws and kills by commander damage: All That Glitters, Ethereal Armor, Sage's Reverie, Empyrial Armor and Thran Power Suit scale with what is on her, and Idolized makes a lone attacker enormous. Celestial Mantle, Face of Divinity, Angelic Destiny and Mammoth Umbra add flat size and keywords. Holy Mantle, Spirit Mantle and Unquestioned Authority make her unblockable by creatures.
+- **Watch out for:** Everything rides on one creature, so exile or wipe her in response to the Aura chain. Shardmage's Rescue, Blacksmith's Skill, Karametra's Blessing, Benevolent Blessing and Stoneskin answer spot removal at instant speed, Flickerform dodges removal and wipes (she and her Auras come back at the end step), and Hyena Umbra, Felidar Umbra, Mammoth Umbra and Umbra Mystic give umbra armor. Cho-Manno's Blessing gives protection at instant speed. Chains of Custody and Thran Power Suit add ward {2}. Retether rebuilds the Auras after a wipe.
 - **Interaction:** Swords to Plowshares, Path to Exile, Generous Gift, Darksteel Mutation, Reprobation, Ossification, Sheltered by Ghosts, Chains of Custody, Winds of Rath and Single Combat (each player keeps one creature or planeswalker, then nobody casts creatures until her next turn). Rebuff the Wicked counters a spell aimed at her; Pariah moves damage aimed at her controller onto a creature.
 
 ## Strategy
 
-Cast an Aura, and Light-Paws tutors another Aura onto the battlefield; stack four or five on the commander and swing for 21 commander damage in two or three hits. All That Glitters, Ethereal Armor, Sage's Reverie and Mantle of the Ancients scale with enchantments, Face of Divinity adds first strike and lifelink once another Aura is on her, and Light of Promise turns Spirit Link and On Serra's Wings lifegain into counters. The protection layer is a hand of one-mana instants and flash Auras plus Flickerform and the umbras. Winds of Rath and Single Combat clear the board around her.
+Cast an Aura, and Light-Paws tutors another Aura onto the battlefield; stack four or five on the commander and swing for 21 commander damage in two or three hits. All That Glitters, Ethereal Armor, Sage's Reverie and Empyrial Armor scale with what she has, Face of Divinity adds first strike and lifelink once another Aura is on her, and Light of Promise turns Spirit Link and On Serra's Wings lifegain into counters. The protection layer is a hand of one-mana instants and flash Auras plus Flickerform and the umbras. Winds of Rath and Single Combat clear the board around her.
 
 ## Sim modeling notes
 
@@ -33,11 +33,11 @@ Light-Paws' Aura-to-Aura tutoring chain; enchantress draw (Sram, Mesa Enchantres
 
 **Commander (1).** Light-Paws, Emperor's Voice
 
-**Creatures (14).** Archon of Sun's Grace, Auramancer, Danitha Capashen, Paragon, Eidolon of Countless Battles, Heliod's Pilgrim, Hero of Iroas, Kor Spiritdancer, Mesa Enchantress, Pearl-Ear, Imperial Advisor, Sram, Senior Edificer, Starfield Mystic, Starnheim Courser, Transcendent Envoy, Umbra Mystic
+**Creatures (15).** Archon of Sun's Grace, Auramancer, Danitha Capashen, Paragon, Eidolon of Countless Battles, Heliod's Pilgrim, Hero of Iroas, Indebted Spirit, Kor Spiritdancer, Mesa Enchantress, Pearl-Ear, Imperial Advisor, Sram, Senior Edificer, Starfield Mystic, Starnheim Courser, Transcendent Envoy, Umbra Mystic
 
-**Enchantments (35).** All That Glitters, Angelic Destiny, Angelic Gift, Armored Ascension, Battle Mastery, Benevolent Blessing, Chains of Custody, Darksteel Mutation, Daybreak Coronet, Ethereal Armor, Face of Divinity, Feather of Flight, Flickerform, Gryff's Boon, Holy Mantle, Hyena Umbra, Idolized, Light of Promise, Mantle of the Ancients, Mask of Law and Grace, On Serra's Wings, Ossification, Pariah, Reprobation, Sage's Reverie, Sentinel's Eyes, Shardmage's Rescue, Sheltered by Ghosts, Shield of Duty and Reason, Spirit Link, Spirit Mantle, Stoneskin, Timely Ward, Twinblade Blessing, Unquestioned Authority
+**Enchantments (36).** All That Glitters, Angelic Destiny, Angelic Gift, Benevolent Blessing, Cartouche of Solidarity, Celestial Mantle, Chains of Custody, Cho-Manno's Blessing, Darksteel Mutation, Empyrial Armor, Ethereal Armor, Face of Divinity, Feather of Flight, Felidar Umbra, Flickerform, Gryff's Boon, Holy Mantle, Hyena Umbra, Idolized, Light of Promise, Mammoth Umbra, Mask of Law and Grace, On Serra's Wings, Ossification, Pariah, Reprobation, Sage's Reverie, Sentinel's Eyes, Shardmage's Rescue, Sheltered by Ghosts, Shield of Duty and Reason, Spirit Link, Spirit Mantle, Stoneskin, Timely Ward, Unquestioned Authority
 
-**Artifacts (5).** Arcane Signet, Pearl Medallion, Sol Ring, Swiftfoot Boots, Thran Power Suit
+**Artifacts (3).** Arcane Signet, Pearl Medallion, Thran Power Suit
 
 **Sorceries (5).** Brilliant Restoration, Open the Armory, Retether, Single Combat, Winds of Rath
 
@@ -53,20 +53,22 @@ Light-Paws' Aura-to-Aura tutoring chain; enchantress draw (Sram, Mesa Enchantres
 1 Angelic Gift
 1 Arcane Signet
 1 Archon of Sun's Grace
-1 Armored Ascension
 1 Auramancer
-1 Battle Mastery
 1 Benevolent Blessing
 1 Blacksmith's Skill
 1 Brilliant Restoration
+1 Cartouche of Solidarity
+1 Celestial Mantle
 1 Chains of Custody
+1 Cho-Manno's Blessing
 1 Danitha Capashen, Paragon
 1 Darksteel Mutation
-1 Daybreak Coronet
 1 Eidolon of Countless Battles
+1 Empyrial Armor
 1 Ethereal Armor
 1 Face of Divinity
 1 Feather of Flight
+1 Felidar Umbra
 1 Flickerform
 1 Generous Gift
 1 Gryff's Boon
@@ -76,12 +78,13 @@ Light-Paws' Aura-to-Aura tutoring chain; enchantress draw (Sram, Mesa Enchantres
 1 Holy Mantle
 1 Hyena Umbra
 1 Idolized
+1 Indebted Spirit
 1 Karametra's Blessing
 1 Kor Spiritdancer
 1 Light of Promise
 1 Light-Paws, Emperor's Voice
 1 Loran's Escape
-1 Mantle of the Ancients
+1 Mammoth Umbra
 1 Mask of Law and Grace
 1 Mesa Enchantress
 1 Myriad Landscape
@@ -102,19 +105,16 @@ Light-Paws' Aura-to-Aura tutoring chain; enchantress draw (Sram, Mesa Enchantres
 1 Sheltered by Ghosts
 1 Shield of Duty and Reason
 1 Single Combat
-1 Sol Ring
 1 Spirit Link
 1 Spirit Mantle
 1 Sram, Senior Edificer
 1 Starfield Mystic
 1 Starnheim Courser
 1 Stoneskin
-1 Swiftfoot Boots
 1 Swords to Plowshares
 1 Thran Power Suit
 1 Timely Ward
 1 Transcendent Envoy
-1 Twinblade Blessing
 1 Umbra Mystic
 1 Unquestioned Authority
 1 War Room

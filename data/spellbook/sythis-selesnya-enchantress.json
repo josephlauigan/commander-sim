@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-10-30",
+  "fetched": "2026-11-02",
   "deck": "sythis-selesnya-enchantress",
   "commanders": [
     "Sythis, Harvest's Hand"
   ],
-  "request_sha256": "a26f261e6a0641bd36a583931bab85a706e856204fa4c9f520584508dbe6db79",
+  "request_sha256": "3c98f469b14df7dd481745ea960ebb147db69055938d76788de53836809e786c",
   "identity": "GW",
   "included": [],
   "included_by_changing_commanders": [],
@@ -37,7 +37,7 @@
       "mana": "{1}{W}",
       "bracket": "S",
       "legal": true,
-      "popularity": 52877,
+      "popularity": 53079,
       "missing": [
         "Walking Ballista"
       ]
@@ -67,7 +67,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 12286,
+      "popularity": 12228,
       "missing": [
         "Secret Arcade // Dusty Parlor"
       ]
@@ -96,7 +96,7 @@
       "mana": "{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 11993,
+      "popularity": 12086,
       "missing": [
         "Jumbo Cactuar"
       ]
@@ -127,7 +127,7 @@
       "mana": "{1}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 6308,
+      "popularity": 6319,
       "missing": [
         "Triskelion"
       ]
@@ -157,7 +157,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 5829,
+      "popularity": 5842,
       "missing": [
         "Spike Feeder"
       ]
@@ -190,7 +190,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 3045,
+      "popularity": 3049,
       "missing": [
         "Staff of Domination"
       ]
@@ -219,7 +219,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2898,
+      "popularity": 2900,
       "missing": [
         "Gauntlets of Light"
       ]
@@ -251,7 +251,7 @@
       "mana": "{G/W}",
       "bracket": "S",
       "legal": true,
-      "popularity": 1779,
+      "popularity": 1774,
       "missing": [
         "Seedcradle Witch"
       ]
@@ -282,7 +282,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1168,
+      "popularity": 1175,
       "missing": [
         "Umbral Mantle"
       ]
@@ -312,7 +312,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 789,
+      "popularity": 786,
       "missing": [
         "Virtue of Loyalty // Ardenvale Fealty"
       ]
@@ -339,7 +339,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 537,
+      "popularity": 540,
       "missing": [
         "Cloudstone Curio"
       ]
@@ -369,7 +369,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 399,
+      "popularity": 401,
       "missing": [
         "Sword of the Paruns"
       ]
@@ -399,7 +399,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 324,
+      "popularity": 325,
       "missing": [
         "Curse of Bounty"
       ]
@@ -429,7 +429,7 @@
       "mana": "{10}{G}{G}{W}{W}",
       "bracket": "P",
       "legal": true,
-      "popularity": 234,
+      "popularity": 235,
       "missing": [
         "Biorhythm"
       ]

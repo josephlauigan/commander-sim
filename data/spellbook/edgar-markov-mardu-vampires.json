@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-10-30",
+  "fetched": "2026-11-02",
   "deck": "edgar-markov-mardu-vampires",
   "commanders": [
     "Edgar Markov"
   ],
-  "request_sha256": "74a8ee0cb4cc5b7e88a5c91ed959ec8c995e222ba64aa1f5d5b7194e77655e46",
+  "request_sha256": "b4d0083026552cec1b623c798a04738095ce30cfd2880e166933a88ae6d6a9d6",
   "identity": "RWB",
   "included": [
     {
@@ -35,7 +35,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 151187
+      "popularity": 151507
     },
     {
       "id": "314-3966",
@@ -63,7 +63,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 126816
+      "popularity": 127141
     },
     {
       "id": "314-6191",
@@ -91,7 +91,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 95701
+      "popularity": 96177
     },
     {
       "id": "690-6191",
@@ -119,7 +119,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 80326
+      "popularity": 80726
     },
     {
       "id": "110-3966",
@@ -147,7 +147,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 61508
+      "popularity": 61687
     },
     {
       "id": "110-6191",
@@ -175,7 +175,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 49816
+      "popularity": 50098
     }
   ],
   "included_by_changing_commanders": [
@@ -213,7 +213,7 @@
       "mana": "{3}{W/B} plus commander tax if applicable",
       "bracket": "S",
       "legal": true,
-      "popularity": 1657
+      "popularity": 1665
     }
   ],
   "almost_included": [
@@ -239,7 +239,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 78898,
+      "popularity": 79377,
       "missing": [
         "Gravecrawler"
       ]
@@ -270,7 +270,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 76347,
+      "popularity": 76567,
       "missing": [
         "Enduring Tenacity"
       ]
@@ -301,7 +301,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 64278,
+      "popularity": 64605,
       "missing": [
         "Enduring Tenacity"
       ]
@@ -331,7 +331,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 57007,
+      "popularity": 57183,
       "missing": [
         "Aetherflux Reservoir"
       ]
@@ -361,7 +361,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 38082,
+      "popularity": 38292,
       "missing": [
         "Aetherflux Reservoir"
       ]
@@ -392,9 +392,42 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 28577,
+      "popularity": 28639,
       "missing": [
         "Starscape Cleric"
+      ]
+    },
+    {
+      "id": "1580-4050-4314",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 23831,
+      "missing": [
+        "Reassembling Skeleton"
       ]
     },
     {
@@ -423,7 +456,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 23440,
+      "popularity": 23569,
       "missing": [
         "Starscape Cleric"
       ]
@@ -460,7 +493,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 21497,
+      "popularity": 21619,
       "missing": [
         "Forsaken Miner"
       ]
@@ -490,7 +523,7 @@
       "mana": "{5}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 17992,
+      "popularity": 18047,
       "missing": [
         "Beacon of Immortality"
       ]
@@ -519,7 +552,7 @@
       "mana": "{5}{W}",
       "bracket": "S",
       "legal": true,
-      "popularity": 17737,
+      "popularity": 17779,
       "missing": [
         "Beacon of Immortality"
       ]
@@ -548,7 +581,7 @@
       "mana": "{4}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 17179,
+      "popularity": 17172,
       "missing": [
         "Blood Tribute"
       ]
@@ -577,38 +610,9 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 16195,
+      "popularity": 16230,
       "missing": [
         "Peer into the Abyss"
-      ]
-    },
-    {
-      "id": "5342-5944",
-      "cards": [
-        {
-          "name": "Unstoppable Slasher",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Bloodletter of Aclazotz",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Target opponent loses the game"
-      ],
-      "requires": [],
-      "prerequisites": "Unstoppable Slasher cannot be blocked by an opponent.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 14964,
-      "missing": [
-        "Unstoppable Slasher"
       ]
     },
     {
@@ -637,9 +641,38 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 14933,
+      "popularity": 14975,
       "missing": [
         "Cliffhaven Vampire"
+      ]
+    },
+    {
+      "id": "5342-5944",
+      "cards": [
+        {
+          "name": "Unstoppable Slasher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodletter of Aclazotz",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "Unstoppable Slasher cannot be blocked by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14973,
+      "missing": [
+        "Unstoppable Slasher"
       ]
     },
     {
@@ -667,7 +700,7 @@
       "mana": "{R}{W}",
       "bracket": "S",
       "legal": true,
-      "popularity": 14238,
+      "popularity": 14266,
       "missing": [
         "Boros Reckoner"
       ]
@@ -697,7 +730,7 @@
       "mana": "{4}{W}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 13788,
+      "popularity": 13816,
       "missing": [
         "Revival // Revenge"
       ]
@@ -727,9 +760,45 @@
       "mana": "{4}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 13500,
+      "popularity": 13524,
       "missing": [
         "Revival // Revenge"
+      ]
+    },
+    {
+      "id": "3240-4050-4314",
+      "cards": [
+        {
+          "name": "Nether Traitor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12943,
+      "missing": [
+        "Nether Traitor"
       ]
     },
     {
@@ -758,7 +827,7 @@
       "mana": "{1}{W}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 12434,
+      "popularity": 12452,
       "missing": [
         "Vizkopa Guildmage"
       ]
@@ -789,7 +858,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 11729,
+      "popularity": 11744,
       "missing": [
         "Defiant Bloodlord"
       ]
@@ -819,7 +888,7 @@
       "mana": "{4}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 10625,
+      "popularity": 10621,
       "missing": [
         "Blood Tribute"
       ]
@@ -848,7 +917,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 10374,
+      "popularity": 10423,
       "missing": [
         "Tree of Perdition"
       ]
@@ -879,38 +948,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 10182,
+      "popularity": 10240,
       "missing": [
         "Cliffhaven Vampire"
-      ]
-    },
-    {
-      "id": "553-4105",
-      "cards": [
-        {
-          "name": "Approach of the Second Sun",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Demonic Tutor",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Win the game"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{13}{W}{W}{B}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 9642,
-      "missing": [
-        "Approach of the Second Sun"
       ]
     },
     {
@@ -939,7 +979,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 8694,
+      "popularity": 8720,
       "missing": [
         "Defiant Bloodlord"
       ]
@@ -968,7 +1008,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 8558,
+      "popularity": 8545,
       "missing": [
         "Grievous Wound"
       ]
@@ -999,7 +1039,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 8417,
+      "popularity": 8400,
       "missing": [
         "Epicure of Blood"
       ]
@@ -1028,7 +1068,7 @@
       "mana": "{3}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 8025,
+      "popularity": 8051,
       "missing": [
         "Ad Nauseam"
       ]
@@ -1057,7 +1097,7 @@
       "mana": "{5}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7893,
+      "popularity": 7883,
       "missing": [
         "Shard of the Nightbringer"
       ]
@@ -1088,7 +1128,7 @@
       "mana": "{1}{W}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 7807,
+      "popularity": 7844,
       "missing": [
         "Vizkopa Guildmage"
       ]
@@ -1117,75 +1157,40 @@
       "mana": "{5}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7502,
+      "popularity": 7494,
       "missing": [
         "Shard of the Nightbringer"
       ]
     },
     {
-      "id": "553-1827",
+      "id": "2842-6215",
       "cards": [
         {
-          "name": "Approach of the Second Sun",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Vampiric Tutor",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Win the game"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to draw a card.",
-      "mana": "{12}{W}{W}{B}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 7437,
-      "missing": [
-        "Approach of the Second Sun"
-      ]
-    },
-    {
-      "id": "1308-4682-7890",
-      "cards": [
-        {
-          "name": "Gleaming Splendor",
+          "name": "Tombstone Stairwell",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Smothering Tithe",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Anointed Procession",
+          "name": "Blood Artist",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite card draw for any number of players",
-        "Near-infinite Treasure tokens",
-        "Near-infinite colored mana"
+        "Near-infinite lifeloss",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
       ],
       "requires": [],
-      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
-      "mana": "{2}{W}",
-      "bracket": "P",
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
       "legal": true,
-      "popularity": 6681,
+      "popularity": 6679,
       "missing": [
-        "Gleaming Splendor"
+        "Tombstone Stairwell"
       ]
     },
     {
@@ -1215,37 +1220,6 @@
       "popularity": 6678,
       "missing": [
         "Rush of Dread"
-      ]
-    },
-    {
-      "id": "2842-6215",
-      "cards": [
-        {
-          "name": "Tombstone Stairwell",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Blood Artist",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite lifeloss",
-        "Near-infinite lifegain",
-        "Near-infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 6638,
-      "missing": [
-        "Tombstone Stairwell"
       ]
     },
     {
@@ -1280,7 +1254,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 6378,
+      "popularity": 6419,
       "missing": [
         "Forsaken Miner"
       ]
@@ -1310,7 +1284,7 @@
       "mana": "{5}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 6332,
+      "popularity": 6338,
       "missing": [
         "Shard of the Nightbringer"
       ]
@@ -1341,7 +1315,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5928,
+      "popularity": 5945,
       "missing": [
         "Epicure of Blood"
       ]
@@ -1368,7 +1342,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5587,
+      "popularity": 5593,
       "missing": [
         "Liliana, Untouched by Death"
       ]
@@ -1399,7 +1373,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5125,
+      "popularity": 5170,
       "missing": [
         "South Wind Avatar"
       ]
@@ -1433,7 +1407,7 @@
       "mana": "{1}{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 5000,
+      "popularity": 5033,
       "missing": [
         "Oathsworn Vampire"
       ]
@@ -1462,7 +1436,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 4989,
+      "popularity": 4996,
       "missing": [
         "Quietus Spike"
       ]
@@ -1492,7 +1466,7 @@
       "mana": "{4}{W}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 4519,
+      "popularity": 4533,
       "missing": [
         "Revival // Revenge"
       ]
@@ -1523,9 +1497,42 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 4351,
+      "popularity": 4411,
       "missing": [
         "South Wind Avatar"
+      ]
+    },
+    {
+      "id": "1263-4050-4314",
+      "cards": [
+        {
+          "name": "Bloodsoaked Champion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You attacked with a creature this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3633,
+      "missing": [
+        "Bloodsoaked Champion"
       ]
     },
     {
@@ -1553,7 +1560,7 @@
       "mana": "{3}{B}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 3404,
+      "popularity": 3418,
       "missing": [
         "Fraying Omnipotence"
       ]
@@ -1583,7 +1590,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 3266,
+      "popularity": 3292,
       "missing": [
         "Shredder, Shadow Master"
       ]
@@ -1613,7 +1620,7 @@
       "mana": "{5}{B}{B}",
       "bracket": "O",
       "legal": true,
-      "popularity": 3215,
+      "popularity": 3216,
       "missing": [
         "Scourge of the Skyclaves"
       ]
@@ -1642,7 +1649,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 3006,
+      "popularity": 3008,
       "missing": [
         "Virtus the Veiled"
       ]
@@ -1671,7 +1678,7 @@
       "mana": "{B}{B}{B}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2572,
+      "popularity": 2598,
       "missing": [
         "Pox Plague"
       ]
@@ -1708,7 +1715,7 @@
       "mana": "{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2446,
+      "popularity": 2450,
       "missing": [
         "Serra Avatar"
       ]
@@ -1735,7 +1742,7 @@
       "mana": "{8}{R}{R}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2336,
+      "popularity": 2350,
       "missing": [
         "Obliterate"
       ]
@@ -1765,7 +1772,7 @@
       "mana": "{8}{R}{R}{R}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2101,
+      "popularity": 2102,
       "missing": [
         "Worldfire"
       ]
@@ -1802,7 +1809,7 @@
       "mana": "{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2040,
+      "popularity": 2049,
       "missing": [
         "Serra Avatar"
       ]
@@ -1831,9 +1838,42 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 1859,
+      "popularity": 1872,
       "missing": [
         "Alpharael, Stonechosen"
+      ]
+    },
+    {
+      "id": "3054-4050-4314",
+      "cards": [
+        {
+          "name": "Oathsworn Vampire",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have gained life this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1738,
+      "missing": [
+        "Oathsworn Vampire"
       ]
     },
     {
@@ -1860,9 +1900,46 @@
       "mana": "{W}{B} plus commander tax if applicable if Dark Leo & Shredder isn't on the battlefield",
       "bracket": "E",
       "legal": true,
-      "popularity": 1591,
+      "popularity": 1604,
       "missing": [
         "Dark Leo & Shredder"
+      ]
+    },
+    {
+      "id": "4050-5544-6794",
+      "cards": [
+        {
+          "name": "Forsaken Miner",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Susurian Voidborn",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1552,
+      "missing": [
+        "Forsaken Miner"
       ]
     },
     {
@@ -1889,7 +1966,7 @@
       "mana": "{1}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 1451,
+      "popularity": 1459,
       "missing": [
         "Silverquill Lecturer"
       ]
@@ -1918,7 +1995,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1414,
+      "popularity": 1421,
       "missing": [
         "Spellbinder"
       ]
@@ -1947,7 +2024,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1351,
+      "popularity": 1350,
       "missing": [
         "Scytheclaw"
       ]
@@ -1982,7 +2059,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1281,
+      "popularity": 1280,
       "missing": [
         "Animation Module"
       ]
@@ -2012,7 +2089,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1239,
+      "popularity": 1243,
       "missing": [
         "Enduring Angel // Angelic Enforcer"
       ]
@@ -2079,7 +2156,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1086,
+      "popularity": 1088,
       "missing": [
         "Nim Deathmantle"
       ]
@@ -2106,43 +2183,16 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1014,
+      "popularity": 1012,
       "missing": [
         "Enduring Renewal"
       ]
     },
     {
-      "id": "1308-2143",
+      "id": "4050-4314-6115",
       "cards": [
         {
-          "name": "Spawnsire of Ulamog",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Anointed Procession",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{4}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 925,
-      "missing": [
-        "Spawnsire of Ulamog"
-      ]
-    },
-    {
-      "id": "1308-3996-4050",
-      "cards": [
-        {
-          "name": "Twilight Drover",
+          "name": "Ozox, the Clattering King",
           "zones": [
             "B"
           ]
@@ -2154,25 +2204,21 @@
           ]
         },
         {
-          "name": "Anointed Procession",
+          "name": "Pawn of Ulamog",
           "zones": [
             "B"
           ]
         }
       ],
-      "results": [
-        "Infinite colored mana",
-        "Infinite creature tokens",
-        "Infinite +1/+1 counters on a creature"
-      ],
+      "results": [],
       "requires": [],
       "prerequisites": "",
-      "mana": "{2}{W}",
+      "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 922,
+      "popularity": 989,
       "missing": [
-        "Twilight Drover"
+        "Ozox, the Clattering King"
       ]
     },
     {
@@ -2204,7 +2250,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 883,
+      "popularity": 886,
       "missing": [
         "Cloudstone Curio"
       ]
@@ -2246,7 +2292,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 844,
+      "popularity": 851,
       "missing": [
         "Mortuary"
       ]
@@ -2276,7 +2322,7 @@
       "mana": "{6}{B}{B} at most plus enough mana to pay for commander tax, if applicable",
       "bracket": "O",
       "legal": true,
-      "popularity": 769,
+      "popularity": 764,
       "missing": [
         "Torgaar, Famine Incarnate"
       ]
@@ -2303,9 +2349,42 @@
       "mana": "{4}{W}{W}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 751,
+      "popularity": 756,
       "missing": [
         "Balancing Act"
+      ]
+    },
+    {
+      "id": "2738-4050-4314",
+      "cards": [
+        {
+          "name": "Tenacious Dead",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 684,
+      "missing": [
+        "Tenacious Dead"
       ]
     },
     {
@@ -2332,7 +2411,7 @@
       "mana": "{4}{R}{R}{R}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 619,
+      "popularity": 623,
       "missing": [
         "Apocalypse"
       ]
@@ -2365,7 +2444,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 568,
+      "popularity": 569,
       "missing": [
         "Haakon, Stromgald Scourge"
       ]
@@ -2445,33 +2524,6 @@
       ]
     },
     {
-      "id": "1245-1308",
-      "cards": [
-        {
-          "name": "Tooth and Claw",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Anointed Procession",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control at least two creatures.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 390,
-      "missing": [
-        "Tooth and Claw"
-      ]
-    },
-    {
       "id": "5342-5377",
       "cards": [
         {
@@ -2532,9 +2584,38 @@
       "mana": "{2}{W/B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 179,
+      "popularity": 178,
       "missing": [
         "Haakon, Stromgald Scourge"
+      ]
+    },
+    {
+      "id": "314-5109",
+      "cards": [
+        {
+          "name": "Volcano Hellion",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Vito, Thorn of the Dusk Rose",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{B}{B}{R}{R}",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 117,
+      "missing": [
+        "Volcano Hellion"
       ]
     },
     {
@@ -2577,35 +2658,6 @@
       "popularity": 116,
       "missing": [
         "Mortuary"
-      ]
-    },
-    {
-      "id": "314-5109",
-      "cards": [
-        {
-          "name": "Volcano Hellion",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Vito, Thorn of the Dusk Rose",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifegain"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{5}{B}{B}{R}{R}",
-      "bracket": "C",
-      "legal": true,
-      "popularity": 116,
-      "missing": [
-        "Volcano Hellion"
       ]
     },
     {
@@ -2664,6 +2716,48 @@
         },
         {
           "name": "Cruel Celebrant",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 46,
+      "missing": [
+        "Mortuary"
+      ]
+    },
+    {
+      "id": "2173-2292-5220-6794",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Susurian Voidborn",
           "zones": [
             "B"
           ]
@@ -2785,6 +2879,48 @@
       ]
     },
     {
+      "id": "1829-2173-2292-5220",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vindictive Vampire",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 28,
+      "missing": [
+        "Mortuary"
+      ]
+    },
+    {
       "id": "1988-4050-5086",
       "cards": [
         {
@@ -2851,75 +2987,6 @@
       ]
     },
     {
-      "id": "1308-2316-4050",
-      "cards": [
-        {
-          "name": "Goblin Warrens",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Anointed Procession",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana",
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least two Goblins.",
-      "mana": "{2}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 15,
-      "missing": [
-        "Goblin Warrens"
-      ]
-    },
-    {
-      "id": "1308-1923-4050",
-      "cards": [
-        {
-          "name": "Summon the School",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Anointed Procession",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 14,
-      "missing": [
-        "Summon the School"
-      ]
-    },
-    {
       "id": "2876-4050-4790",
       "cards": [
         {
@@ -2951,7 +3018,7 @@
       "mana": "{6}",
       "bracket": "S",
       "legal": true,
-      "popularity": 14,
+      "popularity": 13,
       "missing": [
         "Dino DNA"
       ]

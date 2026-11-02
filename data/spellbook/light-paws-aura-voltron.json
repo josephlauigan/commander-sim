@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-10-30",
+  "fetched": "2026-11-02",
   "deck": "light-paws-aura-voltron",
   "commanders": [
     "Light-Paws, Emperor's Voice"
   ],
-  "request_sha256": "d78131f63f302fd64eb8badd29eb3f89075bf02afb8782481095db84ce6dd59f",
+  "request_sha256": "24dd734d672f1aa6fe810dac189b9d42bdddf3931503427b4f2bf0c355436684",
   "identity": "W",
   "included": [],
   "included_by_changing_commanders": [],
@@ -33,7 +33,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 15905,
+      "popularity": 16021,
       "missing": [
         "Anti-Venom, Horrifying Healer"
       ]
@@ -62,7 +62,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 14331,
+      "popularity": 14386,
       "missing": [
         "Stuffy Doll"
       ]
@@ -92,7 +92,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 12286,
+      "popularity": 12228,
       "missing": [
         "Secret Arcade // Dusty Parlor"
       ]
@@ -119,7 +119,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 4164,
+      "popularity": 4173,
       "missing": [
         "Caduceus, Staff of Hermes"
       ]
@@ -150,7 +150,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2420,
+      "popularity": 2423,
       "missing": [
         "Walking Ballista"
       ]
@@ -177,7 +177,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2406,
+      "popularity": 2411,
       "missing": [
         "Rune-Tail, Kitsune Ascendant // Rune-Tail's Essence"
       ]
@@ -204,7 +204,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1015,
+      "popularity": 1016,
       "missing": [
         "Cho-Manno, Revolutionary"
       ]
@@ -235,7 +235,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 912,
+      "popularity": 917,
       "missing": [
         "Triskelion"
       ]
@@ -262,7 +262,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 842,
+      "popularity": 844,
       "missing": [
         "Inviolability"
       ]
