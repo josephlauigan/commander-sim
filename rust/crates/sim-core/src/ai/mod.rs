@@ -27,6 +27,7 @@ pub mod search;
 pub mod reanimate;
 pub mod rules; // --- phase4-rules
 pub mod t6_table;
+pub mod t6_stops; // --- t6-stops
 pub mod tape;
 pub mod topdeck;
 pub mod ismcts; // --- phase4-search

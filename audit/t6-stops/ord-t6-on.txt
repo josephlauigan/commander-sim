@@ -1,0 +1,26 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t6 Dack Fayden       100 cards: Full 81, Full-auto 6, Approximate 7, Partial 6, Unmodeled 0 | Partial: All-Fates Stalker, Bilbo's Gambit, Soul Partition, Tezzeret, Cruel Captain, Petrified Hamlet (+1 more)
+  t6 Kinnan            100 cards: Full 94, Full-auto 2, Approximate 2, Partial 2, Unmodeled 0 | Partial: Imposter Mech, Volatile Stormdrake
+  t6 Kraum/Tymna       100 cards: Full 94, Full-auto 4, Approximate 1, Partial 1, Unmodeled 0 | Partial: Exhibition Tidecaller
+  t6 Rograkh/Silas     100 cards: Full 94, Full-auto 4, Approximate 2, Partial 0, Unmodeled 0
+  t6 Rograkh/Thrasios  100 cards: Full 86, Full-auto 1, Approximate 8, Partial 5, Unmodeled 0 | Partial: Biomancer's Familiar, Sowing Mycospawn, Springheart Nantuko, Training Grounds, Vibrance
+  t6 Sisay             100 cards: Full 86, Full-auto 3, Approximate 5, Partial 6, Unmodeled 0 | Partial: Agatha's Soul Cauldron, Deadpool, Trading Card, Derevi, Empyrial Tactician, Shang-Chi, Master of Kung Fu, Spider-Woman, Stunning Savior (+1 more)
+
+
+=== Tier ordering: each deck alone against three decks of the tier below [loose, n=2000] ===
+  Tier 6 (cEDH, B5) into Tier 5 (High B4): 22.9% overall
+    Dack Fayden                   23.6% (21.7-25.5)  (not above 25%)
+    Kinnan                        21.6% (19.8-23.4)  (not above 25%)
+    Kraum/Tymna                   31.1% (29.1-33.1)
+    Rograkh/Silas                 28.6% (26.7-30.6)
+    Rograkh/Thrasios              13.3% (11.8-14.8)  (not above 25%)
+    Sisay                         19.6% (17.9-21.4)  (not above 25%)
+
+(1962s total)
+
+WARNING: 3 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 501962  panic: attempt to multiply with overflow (at crates/sim-core/src/engine/combat.rs:491)
+   seed 501675  panic: attempt to add with overflow (at /home/joseph/.rustup/toolchains/1.99.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs:206)
+   seed 501675  panic: attempt to add with overflow (at /home/joseph/.rustup/toolchains/1.99.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs:206)
+  Please send me that output so I can fix the cause.

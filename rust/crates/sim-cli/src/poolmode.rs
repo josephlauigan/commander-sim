@@ -753,7 +753,11 @@ fn trace_pool(sim: &Sim, a: &Args) -> Result<(), String> {
     let st = sim.settings_in(profile(&prof)?, Some(tier));
     let game = a.trace.unwrap();
     let seed = a.seed + game;
-    let seats = sim.seats_for(seed, None, None, &sim.pool_keys(tier), 4);
+    // TRACE_ORDER=<deck key> (scratch): the `--calibrate ordering` game of that deck against the tier below
+    let seats = match (std::env::var("TRACE_ORDER").ok(), TIERS.iter().position(|t| *t == tier)) {
+        (Some(k), Some(ti)) if ti > 0 => sim.seats_for(seed, Some(&k), None, &sim.pool_keys(TIERS[ti - 1]), 3),
+        _ => sim.seats_for(seed, None, None, &sim.pool_keys(tier), 4),
+    };
     let g = crate::play::catch_game(|| GameOut::from_game(&sim.play(seed, &seats, &st, true), false))?;
     println!(
         "Play-by-play of within-tier game {game} (seed {seed}): {}, {prof} profile, {} AI",
