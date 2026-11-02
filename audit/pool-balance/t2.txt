@@ -1,0 +1,37 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t2 Brago                   100 cards: Full 85, Full-auto 10, Approximate 5, Partial 0, Unmodeled 0
+  t2 Kaalia of the Vast      100 cards: Full 88, Full-auto 7, Approximate 5, Partial 0, Unmodeled 0
+  t2 Lord Windgrace          100 cards: Full 79, Full-auto 14, Approximate 7, Partial 0, Unmodeled 0
+  t2 Meren of Clan Nel Toth  100 cards: Full 82, Full-auto 17, Approximate 1, Partial 0, Unmodeled 0
+  t2 Sythis                  100 cards: Full 82, Full-auto 16, Approximate 2, Partial 0, Unmodeled 0
+
+9,000 games (calibration: all, 1,500 per list per tier, profile loose), lookahead AI, 22 worker threads: about 20 minutes
+
+=== Within-tier balance [loose, n=1500 games per tier; each deck is seated in ~80%] ===
+  progress  10.0%  5m06s elapsed, ~45m57s left
+  Tier 2 (Mid B3): avg game 12.4 rounds, timeouts 1.9%
+    Brago                         13.9% (12.0-15.9)  LOW  [0.9 pts from round-cap wins]
+    Kaalia of the Vast            28.9% (26.4-31.5)  [0.2 pts from round-cap wins]
+    Lord Windgrace                30.4% (27.8-33.0)  [0.3 pts from round-cap wins]
+    Meren of Clan Nel Toth        15.9% (13.9-18.1)  [0.3 pts from round-cap wins]
+    Sythis                        36.0% (33.3-38.7)  HIGH  [0.7 pts from round-cap wins]
+
+=== Tier ordering: each deck alone against three decks of the tier below [loose, n=1500] ===
+  progress  20.0%  9m45s elapsed, ~39m03s left
+  progress  30.0%  13m50s elapsed, ~32m16s left
+  progress  40.0%  17m02s elapsed, ~25m33s left
+  progress  50.0%  19m33s elapsed, ~19m33s left
+  progress  60.0%  23m57s elapsed, ~15m58s left
+  progress  70.0%  28m12s elapsed, ~12m05s left
+  progress  80.0%  31m24s elapsed, ~7m51s left
+  progress  90.0%  36m28s elapsed, ~4m03s left
+  progress 100.0%  43m11s elapsed, ~0m00s left
+  Tier 2 (Mid B3) into Tier 1 (High B2 / Low B3): 29.4% overall
+    Brago                         23.8% (21.7-26.0)  (not above 25%)
+    Kaalia of the Vast            27.4% (25.2-29.7)
+    Lord Windgrace                28.3% (26.1-30.7)
+    Meren of Clan Nel Toth        27.7% (25.5-30.0)
+    Sythis                        39.7% (37.3-42.2)
+
+(2592s total)
+EXIT 0

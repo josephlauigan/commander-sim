@@ -1,0 +1,37 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t3 Atraxa   100 cards: Full 87, Full-auto 10, Approximate 3, Partial 0, Unmodeled 0
+  t3 Aurelia  100 cards: Full 86, Full-auto 9, Approximate 5, Partial 0, Unmodeled 0
+  t3 Korvold  100 cards: Full 92, Full-auto 5, Approximate 3, Partial 0, Unmodeled 0
+  t3 Marwyn   100 cards: Full 79, Full-auto 12, Approximate 9, Partial 0, Unmodeled 0
+  t3 Tergrid  100 cards: Full 85, Full-auto 13, Approximate 1, Partial 1, Unmodeled 0 | Partial: Aclazotz, Deepest Betrayal // Temple of the Dead
+
+9,000 games (calibration: all, 1,500 per list per tier, profile loose), lookahead AI, 22 worker threads: about 20 minutes
+
+=== Within-tier balance [loose, n=1500 games per tier; each deck is seated in ~80%] ===
+  progress  10.0%  1m34s elapsed, ~14m08s left
+  Tier 3 (High B3): avg game 10.0 rounds, timeouts 0.2%
+    Atraxa                        29.1% (26.6-31.7)  [0.1 pts from round-cap wins]
+    Aurelia                       24.3% (21.9-26.8)  [0.0 pts from round-cap wins]
+    Korvold                       13.7% (11.8-15.7)  LOW  [0.0 pts from round-cap wins]
+    Marwyn                        20.2% (18.0-22.6)  [0.0 pts from round-cap wins]
+    Tergrid                       37.8% (35.1-40.6)  HIGH  [0.2 pts from round-cap wins]
+
+=== Tier ordering: each deck alone against three decks of the tier below [loose, n=1500] ===
+  progress  20.0%  3m53s elapsed, ~15m32s left
+  progress  30.0%  7m23s elapsed, ~17m14s left
+  progress  40.0%  11m43s elapsed, ~17m34s left
+  progress  50.0%  16m05s elapsed, ~16m05s left
+  progress  60.0%  20m55s elapsed, ~13m57s left
+  progress  70.0%  26m02s elapsed, ~11m09s left
+  progress  80.0%  30m24s elapsed, ~7m36s left
+  progress  90.0%  33m48s elapsed, ~3m45s left
+  progress 100.0%  36m34s elapsed, ~0m00s left
+  Tier 3 (High B3) into Tier 2 (Mid B3): 28.4% overall
+    Atraxa                        34.1% (31.8-36.6)
+    Aurelia                       26.1% (23.9-28.3)
+    Korvold                       16.5% (14.7-18.5)  (not above 25%)
+    Marwyn                        24.5% (22.4-26.8)  (not above 25%)
+    Tergrid                       40.9% (38.4-43.4)
+
+(2195s total)
+EXIT 0

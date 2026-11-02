@@ -1,0 +1,37 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t1 Isshin        100 cards: Full 82, Full-auto 11, Approximate 7, Partial 0, Unmodeled 0
+  t1 Lathril       100 cards: Full 78, Full-auto 16, Approximate 6, Partial 0, Unmodeled 0
+  t1 Light-Paws    100 cards: Full 89, Full-auto 9, Approximate 2, Partial 0, Unmodeled 0
+  t1 Tatyova       100 cards: Full 75, Full-auto 24, Approximate 1, Partial 0, Unmodeled 0
+  t1 Teysa Karlov  100 cards: Full 80, Full-auto 18, Approximate 2, Partial 0, Unmodeled 0
+
+9,000 games (calibration: all, 1,500 per list per tier, profile loose), lookahead AI, 22 worker threads: about 20 minutes
+
+=== Within-tier balance [loose, n=1500 games per tier; each deck is seated in ~80%] ===
+  progress  10.0%  3m13s elapsed, ~29m00s left
+  Tier 1 (High B2 / Low B3): avg game 10.1 rounds, timeouts 0.6%
+    Isshin                        25.7% (23.3-28.2)  [0.1 pts from round-cap wins]
+    Lathril                       18.7% (16.6-21.0)  [0.2 pts from round-cap wins]
+    Light-Paws                    42.9% (40.1-45.7)  HIGH  [0.1 pts from round-cap wins]
+    Tatyova                       18.8% (16.6-21.1)  [0.2 pts from round-cap wins]
+    Teysa Karlov                  19.0% (16.9-21.3)  [0.2 pts from round-cap wins]
+
+=== Tier ordering: each deck alone against three decks of the tier below [loose, n=1500] ===
+  progress  20.0%  6m30s elapsed, ~26m02s left
+  progress  30.0%  9m38s elapsed, ~22m30s left
+  progress  40.0%  13m48s elapsed, ~20m43s left
+  progress  50.0%  18m22s elapsed, ~18m22s left
+  progress  60.0%  21m51s elapsed, ~14m34s left
+  progress  70.0%  26m48s elapsed, ~11m29s left
+  progress  80.0%  33m18s elapsed, ~8m19s left
+  progress  90.0%  38m31s elapsed, ~4m16s left
+  progress 100.0%  42m31s elapsed, ~0m00s left
+  Tier 1 (High B2 / Low B3) into Tier 0 (Bracket 2 precons): 30.0% overall
+    Isshin                        32.9% (30.6-35.4)
+    Lathril                       22.0% (20.0-24.2)  (not above 25%)
+    Light-Paws                    43.3% (40.8-45.8)
+    Tatyova                       20.3% (18.3-22.4)  (not above 25%)
+    Teysa Karlov                  31.3% (29.0-33.7)
+
+(2551s total)
+EXIT 0
