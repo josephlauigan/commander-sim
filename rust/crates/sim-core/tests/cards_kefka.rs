@@ -404,7 +404,7 @@ fn disintegrate_goes_face_or_exiles_a_creature() {
     lands(&mut g, P0, "Mountain", 5, false);
     g.player_mut(P1).life = 4;
     hand(&mut g, P0, &["Disintegrate"]);
-    assert!(take(&mut g, P0, "Disintegrate the face of Veyran"));
+    assert!(take(&mut g, P0, "Disintegrate the face of Cloud"));
     assert!(g.player(P1).life <= 0 || !g.player(P1).alive);
     // a creature: exiled, not dying
     let mut g = table2();

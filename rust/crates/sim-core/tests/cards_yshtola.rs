@@ -20,11 +20,11 @@ const P1: PlayerId = PlayerId(1);
 const P2: PlayerId = PlayerId(2);
 
 fn three() -> Game {
-    table(&["yshtola", "cloud", "sauron"])
+    table(&["yshtola", "kefka", "sauron"])
 }
 
 fn two() -> Game {
-    table(&["yshtola", "cloud"])
+    table(&["yshtola", "kefka"])
 }
 
 /// Y'shtola onto p's battlefield as the commander
@@ -421,7 +421,7 @@ fn jesters_cap_waits_for_main_two_or_an_opponents_end_step() {
     assert!(options(&mut g, cap, P0, None).is_empty()); // your own end step
     let o = options(&mut g, cap, P0, Some(true));
     assert_eq!(o.len(), 1);
-    assert_eq!(o[0].label, "Jester's Cap on Veyran");
+    assert_eq!(o[0].label, "Jester's Cap on Kefka");
     assert!(perform(&mut g, P0, &o[0]));
     assert_eq!(g.player(P1).exile.len(), 3);
 }

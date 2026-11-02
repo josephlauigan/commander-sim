@@ -206,6 +206,6 @@ fn no_sorcery_speed_play_in_response() {
     let vr = perm(&mut g, P0, "Vraska, Betrayal's Sting");
     let idx = g.player(P0).perms.iter().position(|&x| x == vr).unwrap();
     let h = seat(&mut g, P0, vec![act(json!({"do": "use", "perm": idx})), by_text("0:"), pass()]);
-    respond(&mut g, P0, "Veyran casts Opt", None, None).unwrap();
+    respond(&mut g, P0, "Cloud casts Opt", None, None).unwrap();
     assert!(told_last(&h).contains("not in response"), "{}", told_last(&h));
 }

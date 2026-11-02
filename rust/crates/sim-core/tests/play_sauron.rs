@@ -60,7 +60,7 @@ fn bowmasters_on_extra_draws() {
     perm(&mut g, P0, "Orcish Bowmasters");
     let h = seat_fn(&mut g, P0, |r| {
         // the label carries the life total, which changes with each trigger
-        Answer::Pick(r.choices.iter().position(|c| c.starts_with("Veyran (player")).unwrap())
+        Answer::Pick(r.choices.iter().position(|c| c.starts_with("Cloud (player")).unwrap())
     });
     zones::draw(&mut g, P1, 2, false).unwrap(); // two cards, neither is the draw step's first
     assert_eq!(h.asked().len(), 2);

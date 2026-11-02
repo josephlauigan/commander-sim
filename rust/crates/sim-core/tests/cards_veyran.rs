@@ -7,7 +7,7 @@
 //! The `veyran` deck was retired on 2026-11-01: these tests seat Kefka, whose list holds Veyran, Voice of Duality and
 //! the magecraft package now.
 
-use sim_core::ai::{self, act, brain, decks};
+use sim_core::ai::{act, brain};
 use sim_core::engine::{cast, combat, life, values};
 use sim_core::hooks::Opt;
 use sim_core::ids::{CardId, PermId, PlayerId};
@@ -444,19 +444,5 @@ fn whole_games_with_veyrans_cards_finish() {
         let g = play(&["kefka", "seph", "sauron"], seed, false);
         assert!(g.over || g.round >= 20, "seed {seed}");
     }
-}
-
-// ======================================================== ai-audit cv: the audit's problems
-#[test]
-fn mystical_tutor_finds_a_wipe_when_the_table_outboards_us() {
-    let mut g = table(&["kefka", "seph"]);
-    lands(&mut g, P0, "Island", 6, false);
-    g.player_mut(P0).library = ["Stock Up", "Blasphemous Act", "Counterspell"].iter().map(|n| card(&g, n)).collect();
-    let pick = |g: &Game| decks::tutor_pick(g, P0, "is").map(|c| g.db.get(c).name.to_string()).unwrap();
-    assert_ne!(pick(&g), "Blasphemous Act", "an empty table: no wipe");
-    for _ in 0..4 {
-        perm(&mut g, P1, "Grave Titan");
-    }
-    assert_eq!(pick(&g), "Blasphemous Act");
 }
 

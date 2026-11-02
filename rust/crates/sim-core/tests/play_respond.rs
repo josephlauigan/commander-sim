@@ -141,7 +141,7 @@ fn the_priority_order_on_a_spell() {
     let mut g = table(&["kefka", "sauron", "seph"]);
     let h = seat(&mut g, P2, vec![pass()]);
     let bolt = card(&g, "Lightning Bolt");
-    respond(&mut g, P2, "Veyran casts Opt", Some(bolt), Some(P0)).unwrap();
+    respond(&mut g, P2, "Kefka casts Opt", Some(bolt), Some(P0)).unwrap();
     let d = h.asked()[0].data.clone();
     let keys: Vec<&str> = d["order"].as_array().unwrap().iter().map(|x| x["key"].as_str().unwrap()).collect();
     assert_eq!(keys, ["sauron", "seph"]); // after the caster, in turn order
