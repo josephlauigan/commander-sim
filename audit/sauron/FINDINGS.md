@@ -68,3 +68,7 @@ it's a wash: not adopted, Urza stays.
 ## 2026-10-31: card models (branch card-models-1; no sims until Phase 4 recalibration)
 
 Baleful Mastery: Partial -> Full (the {1}{B} alternative cost, an opponent draws; the AI uses it only when it can't pay {3}{B}). No new number yet.
+
+## 2026-11-01: recalibration stage 2 remeasure
+
+Sauron, t3 / t4: **21.4% / 20.3%** (average 20.9%) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). Stage 1, same seeds: 24.9 / 21.2. The 10/18 AI audit numbers (30.4 / 32.0, with the hand AI) are from an older build and list. Fitted t3 knobs: 20.9% (level).

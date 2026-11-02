@@ -107,3 +107,7 @@ Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big down
 ## 2026-10-31: card models (branch card-models-1; no sims until Phase 4 recalibration)
 
 Price of Progress: Unmodeled -> Full (damage to each player for its nonbasic lands; the AI casts it when the opponents lose more). Glimpse the Unthinkable (new from Seph): Full (mills itself with Yawgmoth's Will or a reanimation spell in hand, else an opponent it can mill out). No new number yet.
+
+## 2026-11-01: recalibration stage 2 remeasure
+
+Kefka, t3: **13.6%** (CI 12.2-15.2) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). Stage 1, same seeds: 14.1%. The 10/18 AI audit number (27.3%, with the hand AI) is from an older build and list. Fitted t3 knobs: 12.9% (level).

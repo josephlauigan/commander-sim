@@ -55,3 +55,7 @@ No swaps yet.
 ## 2026-10-31: card models (branch card-models-1; no sims until Phase 4 recalibration)
 
 Orim's Chant, Gemstone Caverns, Tinder Wall: Partial -> Full (the kicked attack lock; begin the game with Caverns when not first, also for every t6 opponent; the blocking sacrifice). Still Partial: Redirect Lightning, Shifting Woodland. No new number yet.
+
+## 2026-11-01: recalibration stage 2 remeasure
+
+Thanos, t6: **29.6%** (CI 27.6-31.6) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). Stage 1, same seeds: 25.6% (earlier build). Fitted t6 knobs: 31.2% (level).

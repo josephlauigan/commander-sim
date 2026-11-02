@@ -38,3 +38,7 @@ paired old-vs-new run on today's code would separate them; not run yet.
 | 10/14 leftovers swap (Tymna, Exotic Orchard, Shattered Sanctum) | +1.2 (paired, 500 games) | Within noise. |
 
 **2026-10-17 land audit** (branch `land-audit2`, `rust/agents/report-land-audit2.md`): 12 lands across the decks now make only the mana their Oracle text allows (filter lands, Rugged Prairie, Mystic Gate, Spire of Industry, Exotic Orchard, Cavern of Souls, Spectator Seating, Hidden Grotto and others; Sulfur Falls and Fabled Passage were too strict). Same-seed check (adaptive AI, 300 games per tier, matched tiers): 20.3 → 18.7, inside the noise (about ±5). No measurable change to this deck.
+
+## 2026-11-01: recalibration stage 2 remeasure
+
+Alela, t1: **4.0%** (CI 3.2-5.0) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). Stage 1, same seeds: 4.3%. The 10/15 FINDINGS number (9.8%) is from an older build and list.
