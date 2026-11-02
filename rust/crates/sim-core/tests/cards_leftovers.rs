@@ -58,7 +58,7 @@ fn braids_makes_the_cheapest_permanent_go() {
 
 #[test]
 fn eris_has_prowess_without_the_keyword() {
-    let mut g = table(&["veyran", "sauron"]);
+    let mut g = table(&["kefka", "sauron"]);
     let eris = perm(&mut g, P0, "Eris, Roar of the Storm");
     assert!(cardcode::is_prowess_card(&g, g.perm(eris).cd.unwrap()));
     sim_core::engine::cast::prowess(&mut g, P0);

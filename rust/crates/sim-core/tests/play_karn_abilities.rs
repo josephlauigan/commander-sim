@@ -52,7 +52,7 @@ fn on_bf(g: &Game, m: PermId) -> bool {
 }
 
 fn karn_table() -> Game {
-    table(&["karn", "veyran"])
+    table(&["karn", "cloud"])
 }
 
 // ------------------------------------------------------------------ artifacts and creatures

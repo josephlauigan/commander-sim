@@ -7,7 +7,7 @@ use sim_core::engine::combat::combat;
 use sim_core::human::combat::{SPLIT, attack_candidates, attackable_walkers};
 
 fn setup() -> (Game, PermId) {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let vr = perm(&mut g, P1, "Vraska, Betrayal's Sting");
     (g, vr)
 }
@@ -63,7 +63,7 @@ fn a_dead_walker_goes_to_the_graveyard_and_the_player_is_spared() {
 
 #[test]
 fn no_walkers_no_extra_question() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     token(&mut g, P0, 2);
     let h = seat(&mut g, P0, vec![picks(&[0])]);
     assert!(attackable_walkers(&g, P0).is_empty());

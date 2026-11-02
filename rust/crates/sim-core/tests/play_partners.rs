@@ -30,7 +30,7 @@ fn run(g: &mut Game, answers: Vec<F>) -> std::sync::Arc<ScriptHuman> {
 
 #[test]
 fn either_commander_is_cast_from_the_command_zone_with_its_own_tax() {
-    let mut g = table(&["thrasios", "veyran"]);
+    let mut g = table(&["thrasios", "cloud"]);
     let (tymna, kraum) = (card(&g, "Tymna the Weaver"), card(&g, "Thrasios, Triton Hero"));
     assert_eq!(g.player(P0).cmds_in_zone().collect::<Vec<_>>(), vec![tymna, kraum]);
     fund(&mut g, P0, 6);
@@ -53,7 +53,7 @@ fn either_commander_is_cast_from_the_command_zone_with_its_own_tax() {
 
 #[test]
 fn a_recast_pays_that_commanders_tax_and_each_returns_to_the_zone() {
-    let mut g = table(&["thrasios", "veyran"]);
+    let mut g = table(&["thrasios", "cloud"]);
     let (tymna, kraum) = (card(&g, "Tymna the Weaver"), card(&g, "Thrasios, Triton Hero"));
     fund(&mut g, P0, 6);
     run(&mut g, vec![act(json!({"do": "cast", "zone": "cmd"})), pass()]); // no "cmd": the first in the zone, Tymna

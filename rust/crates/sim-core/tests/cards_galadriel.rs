@@ -49,7 +49,7 @@ fn set_ctype(g: &mut Game, m: PermId, t: &'static str) {
 // ======================================================== Alliance
 #[test]
 fn each_mode_once_a_turn() {
-    let mut g = table(&["galadriel", "veyran", "sauron"]);
+    let mut g = table(&["galadriel", "cloud", "sauron"]);
     let gal = galadriel(&mut g, P0);
     for n in ["Llanowar Elves", "Fyndhorn Elves", "Elvish Mystic", "Jhovall Queen"] {
         perm(&mut g, P0, n);
@@ -62,7 +62,7 @@ fn each_mode_once_a_turn() {
 
 #[test]
 fn panharmonicon_doubles_alliance() {
-    let mut g = table(&["galadriel", "veyran", "sauron"]);
+    let mut g = table(&["galadriel", "cloud", "sauron"]);
     let gal = galadriel(&mut g, P0);
     perm(&mut g, P0, "Panharmonicon");
     perm(&mut g, P0, "Llanowar Elves");
@@ -71,7 +71,7 @@ fn panharmonicon_doubles_alliance() {
 
 #[test]
 fn panharmonicon_doubles_cathars_crusade() {
-    let mut g = table(&["galadriel", "veyran", "sauron"]);
+    let mut g = table(&["galadriel", "cloud", "sauron"]);
     perm(&mut g, P0, "Cathars' Crusade");
     perm(&mut g, P0, "Panharmonicon");
     let a = perm(&mut g, P0, "Jhovall Queen");
@@ -82,7 +82,7 @@ fn panharmonicon_doubles_cathars_crusade() {
 #[test]
 fn alliance_takes_mana_in_your_main_phase_for_a_spell_within_reach() {
     // a 4-drop in hand with one land: {G}{G}{G} (3.2) beats scry and draw (2.6) and one creature's counter
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     lands(&mut g, P0, "Forest", 1, false);
     hand(&mut g, P0, &["Elspeth, Sun's Champion"]); // mana value 6: out of reach
     assert_eq!(gal::alliance_value(&g, P0, "mana"), 0.6);
@@ -101,7 +101,7 @@ fn alliance_takes_mana_in_your_main_phase_for_a_spell_within_reach() {
 // ======================================================== Rebels
 #[test]
 fn a_searcher_finds_a_rebel_within_its_cap() {
-    let mut g = table(&["galadriel", "veyran", "sauron"]);
+    let mut g = table(&["galadriel", "cloud", "sauron"]);
     lands(&mut g, P0, "Plains", 3, false);
     let m = perm(&mut g, P0, "Ramosian Sergeant");
     let before = g.player(P0).perms.clone();
@@ -117,7 +117,7 @@ fn a_searcher_finds_a_rebel_within_its_cap() {
 #[test]
 fn searchers_wait_for_an_opponents_end_step_on_their_own_turn() {
     // the end-of-turn window (post None) on your own turn: no activation
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     lands(&mut g, P0, "Plains", 3, false);
     let m = perm(&mut g, P0, "Ramosian Sergeant");
     assert!(opts(&mut g, m, P0, None).is_empty());
@@ -127,7 +127,7 @@ fn searchers_wait_for_an_opponents_end_step_on_their_own_turn() {
 
 #[test]
 fn maskwood_makes_every_creature_a_rebel() {
-    let mut g = table(&["galadriel", "veyran", "sauron"]);
+    let mut g = table(&["galadriel", "cloud", "sauron"]);
     let elves = card(&g, "Llanowar Elves");
     assert!(!gal::card_is(&g, P0, elves, "rebel"));
     perm(&mut g, P0, "Maskwood Nexus");
@@ -139,7 +139,7 @@ fn maskwood_makes_every_creature_a_rebel() {
 #[test]
 fn lin_sivvi_fetches_with_x_and_the_best_rebel() {
     // the AI's side of Python's practice test: X is the fetched card's mana value, at most the mana available
-    let mut g = table(&["galadriel", "veyran", "sauron"]);
+    let mut g = table(&["galadriel", "cloud", "sauron"]);
     let lin = perm(&mut g, P0, "Lin Sivvi, Defiant Hero");
     lands(&mut g, P0, "Plains", 3, false);
     let o = opts(&mut g, lin, P0, Some(true));
@@ -156,7 +156,7 @@ fn lin_sivvi_fetches_with_x_and_the_best_rebel() {
 
 #[test]
 fn revivalist_returns_a_rebel() {
-    let mut g = table(&["galadriel", "veyran", "sauron"]);
+    let mut g = table(&["galadriel", "cloud", "sauron"]);
     lands(&mut g, P0, "Plains", 6, false);
     let m = perm(&mut g, P0, "Ramosian Revivalist");
     let c = take(&mut g, P0, "Ramosian Captain");
@@ -183,7 +183,7 @@ fn rebel_values_follow_the_board() {
 // ======================================================== creature types
 #[test]
 fn kindred_discovery_names_a_type() {
-    let mut g = table(&["galadriel", "veyran", "sauron"]);
+    let mut g = table(&["galadriel", "cloud", "sauron"]);
     let kd = perm(&mut g, P0, "Kindred Discovery");
     let t = gal::ctype(&g, kd).unwrap();
     assert!(t == "human" || t == "rebel", "{t}");
@@ -195,7 +195,7 @@ fn kindred_discovery_names_a_type() {
 
 #[test]
 fn door_of_destinies_and_the_banner() {
-    let mut g = table(&["galadriel", "veyran", "sauron"]);
+    let mut g = table(&["galadriel", "cloud", "sauron"]);
     let door = perm(&mut g, P0, "Door of Destinies");
     set_ctype(&mut g, door, "rebel");
     let ban = perm(&mut g, P0, "Vanquisher's Banner");
@@ -211,7 +211,7 @@ fn door_of_destinies_and_the_banner() {
 
 #[test]
 fn patchwork_banner_pumps_the_named_type() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     let b = perm(&mut g, P0, "Patchwork Banner");
     set_ctype(&mut g, b, "elf");
     let e = perm(&mut g, P0, "Llanowar Elves");
@@ -222,7 +222,7 @@ fn patchwork_banner_pumps_the_named_type() {
 
 #[test]
 fn secluded_courtyard_colours_only_for_the_type() {
-    let mut g = table(&["galadriel", "veyran", "sauron"]);
+    let mut g = table(&["galadriel", "cloud", "sauron"]);
     let cd = card(&g, "Secluded Courtyard");
     let l = g.add_land(P0, cd, false);
     g.perm_mut(l).data.set(DataKey::Ctype, Val::Str("elf"));
@@ -249,7 +249,7 @@ fn crackdown_keeps_big_nonwhite_creatures_tapped() {
 
 #[test]
 fn cho_manno_takes_no_damage() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     let cho = perm(&mut g, P0, "Cho-Manno, Revolutionary");
     removal::apply_removal(&mut g, Some(P1), cho, "dmg3", None).unwrap();
     assert!(g.perm(cho).on_bf);
@@ -257,7 +257,7 @@ fn cho_manno_takes_no_damage() {
 
 #[test]
 fn knight_of_the_holy_nimbus_regenerates_unless_paid() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     let k = perm(&mut g, P0, "Knight of the Holy Nimbus");
     zones::die(&mut g, k, "destroy").unwrap();
     assert!(g.perm(k).on_bf && g.perm(k).tapped, "the opponent had no mana");
@@ -280,7 +280,7 @@ fn defiant_vanguard_kills_what_it_blocks() {
 
 #[test]
 fn amrou_seekers_blockers() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     let a = perm(&mut g, P0, "Amrou Seekers");
     let gs = perm(&mut g, P1, "Guttersnipe");
     assert!(!combat::can_block(&g, gs, a));
@@ -347,7 +347,7 @@ fn bribery_takes_the_biggest_threat() {
 fn eerie_interlude_returns_at_the_end_step() {
     // Python casts it with ctx {'targets': [m]} (practice mode's choice); the AI picks by enter value, so the
     // exile is driven directly here
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     let m = perm(&mut g, P0, "Recruiter of the Guard");
     let cd = g.perm(m).cd;
     gal::interlude(&mut g, P0, &[m]).unwrap();
@@ -358,7 +358,7 @@ fn eerie_interlude_returns_at_the_end_step() {
 
 #[test]
 fn voice_of_resurgence_token() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     perm(&mut g, P0, "Voice of Resurgence");
     perm(&mut g, P0, "Jhovall Queen");
     let bolt = card(&g, "Lightning Bolt");
@@ -369,7 +369,7 @@ fn voice_of_resurgence_token() {
 
 #[test]
 fn voice_of_resurgence_dies_into_a_token() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     let v = perm(&mut g, P0, "Voice of Resurgence");
     zones::die(&mut g, v, "destroy").unwrap();
     let tok = g.player(P0).perms.iter().copied().find(|&x| g.perm(x).token).unwrap();
@@ -378,7 +378,7 @@ fn voice_of_resurgence_dies_into_a_token() {
 
 #[test]
 fn mangara_draws_on_the_second_spell() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     perm(&mut g, P0, "Mangara, the Diplomat");
     let n = g.player(P0).hand.len();
     g.player_mut(P1).spells_this_turn = 2;
@@ -389,7 +389,7 @@ fn mangara_draws_on_the_second_spell() {
 
 #[test]
 fn tocasia_draws_once_a_turn() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     perm(&mut g, P0, "Tocasia's Welcome");
     let n = g.player(P0).hand.len();
     perm(&mut g, P0, "Llanowar Elves");
@@ -399,7 +399,7 @@ fn tocasia_draws_once_a_turn() {
 
 #[test]
 fn mana_springleaf_drum_and_elvish_archdruid() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     let d = perm(&mut g, P0, "Springleaf Drum");
     assert_eq!(sim_core::cardcode::dyn_mana_perm(&g, P0, d), Some(0), "no creature to tap");
     let q = perm(&mut g, P0, "Jhovall Queen");
@@ -413,7 +413,7 @@ fn mana_springleaf_drum_and_elvish_archdruid() {
 
 #[test]
 fn return_to_dust_takes_two_in_your_main_phase() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     let a = perm(&mut g, P1, "Sol Ring");
     let b = perm(&mut g, P1, "Mind Stone");
     let c = hand(&mut g, P0, &["Return to Dust"])[0];
@@ -423,7 +423,7 @@ fn return_to_dust_takes_two_in_your_main_phase() {
 
 #[test]
 fn unbreakable_formation_addendum() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     let m = perm(&mut g, P0, "Jhovall Queen");
     let c = hand(&mut g, P0, &["Unbreakable Formation"])[0];
     cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
@@ -436,7 +436,7 @@ fn unbreakable_formation_addendum() {
 
 #[test]
 fn elspeth_emblem_flies() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     let m = perm(&mut g, P0, "Jhovall Queen");
     gal::elspeth_emblem(&mut g, P0);
     assert!(sim_core::dsl::has_kw(&g, m, "flying"));
@@ -445,7 +445,7 @@ fn elspeth_emblem_flies() {
 
 #[test]
 fn mirror_entity_makes_creatures_x_x_of_every_type() {
-    let mut g = table(&["galadriel", "veyran", "sauron"]);
+    let mut g = table(&["galadriel", "cloud", "sauron"]);
     perm(&mut g, P0, "Mirror Entity");
     let q = perm(&mut g, P0, "Jhovall Queen");
     gal::mirror(&mut g, P0, 5).unwrap();
@@ -455,7 +455,7 @@ fn mirror_entity_makes_creatures_x_x_of_every_type() {
 
 #[test]
 fn whipcorder_face_down_and_up() {
-    let mut g = table(&["galadriel", "veyran", "sauron"]);
+    let mut g = table(&["galadriel", "cloud", "sauron"]);
     let c = take(&mut g, P0, "Whipcorder");
     let m = gal::enter_face_down(&mut g, P0, c).unwrap();
     assert!(g.perm(m).neutered && g.perm(m).data.truthy(DataKey::Facedown));
@@ -465,7 +465,7 @@ fn whipcorder_face_down_and_up() {
 
 #[test]
 fn planar_genesis_puts_a_land_onto_the_battlefield_tapped() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     for n in ["Island", "Counterspell", "Forest", "Cultivate"] {
         let c = take(&mut g, P0, n);
         g.player_mut(P0).library.push(c);
@@ -482,7 +482,7 @@ fn planar_genesis_puts_a_land_onto_the_battlefield_tapped() {
 // ======================================================== the plan
 #[test]
 fn galadriel_casts_the_engine_first() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     let c = |g: &Game, n: &str| card(g, n);
     let sgt = c(&g, "Ramosian Sergeant");
     assert_eq!(decks::deck_prio(&g, P0, sgt), 73, "no searcher out yet: +10");
@@ -506,7 +506,7 @@ fn galadriel_casts_the_engine_first() {
 
 #[test]
 fn lawbringer_exiles_a_red_threat() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     let lb = perm(&mut g, P0, "Lawbringer");
     let t = perm(&mut g, P1, "Guttersnipe");
     let o = opts(&mut g, lb, P0, Some(true));
@@ -522,7 +522,7 @@ fn lawbringer_exiles_a_red_threat() {
 
 #[test]
 fn maskwood_makes_a_shapeshifter_at_an_opponents_end_step() {
-    let mut g = table(&["galadriel", "veyran"]);
+    let mut g = table(&["galadriel", "cloud"]);
     let mw = perm(&mut g, P0, "Maskwood Nexus");
     lands(&mut g, P0, "Plains", 3, false);
     assert!(opts(&mut g, mw, P0, None).is_empty(), "not on your own turn");

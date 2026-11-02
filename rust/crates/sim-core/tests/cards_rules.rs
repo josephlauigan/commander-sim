@@ -70,7 +70,7 @@ fn deathrite_exiles_and_gains() {
 // ------------------------------------------------------------------ test_stack.Abilities: Azorius Guildmage
 #[test]
 fn the_ai_counters_an_important_ability_with_azorius_guildmage() {
-    let mut g = table(&["veyran", "yshtola"]);
+    let mut g = table(&["kefka", "yshtola"]);
     let (v, z) = (P0, P1);
     perm(&mut g, z, "Azorius Guildmage");
     lands(&mut g, z, "Island", 3, false);
@@ -95,7 +95,7 @@ fn a_countered_equip_does_not_attach() {
 // ------------------------------------------------------------------ test_triggers: Tidebinder, Tithe Taker
 #[test]
 fn tidebinder_counters_a_trigger() {
-    let mut g = table(&["seph", "veyran", "sauron"]);
+    let mut g = table(&["seph", "cloud", "sauron"]);
     let (s, v) = (P0, P1);
     hand(&mut g, v, &["Tishana's Tidebinder"]);
     lands(&mut g, v, "Island", 3, false);
@@ -107,7 +107,7 @@ fn tidebinder_counters_a_trigger() {
 #[test]
 fn tithe_taker_leaves_one_spirit() {
     // afterlife 1 (test_triggers: the probe never doubles an effect)
-    let mut g = table(&["yshtola", "veyran", "sauron"]);
+    let mut g = table(&["yshtola", "cloud", "sauron"]);
     let z = P0;
     let m = perm(&mut g, z, "Tithe Taker");
     zones::die(&mut g, m, "destroy").unwrap();
@@ -216,7 +216,7 @@ fn tajic_prevents_damage_to_the_others() {
 // ------------------------------------------------------------------ rules
 #[test]
 fn kenriths_transformation_makes_an_elk() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let t = perm(&mut g, P1, "Grave Titan");
     removal::apply_removal(&mut g, Some(P0), t, "elk", None).unwrap();
     let x = g.perm(t);
@@ -241,7 +241,7 @@ fn ezuri_regenerates_a_valuable_elf() {
 
 #[test]
 fn fact_or_fiction_splits_the_five() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let c = card(&g, "Fact or Fiction");
     let (h, gy, lib) = (g.player(P0).hand.len(), g.player(P0).gy.len(), g.player(P0).library.len());
     let f = g.registry.get(c).unwrap().resolve.unwrap();
@@ -302,7 +302,7 @@ fn aetherize_returns_a_big_attack() {
 
 #[test]
 fn crackling_doom_takes_the_greatest_power() {
-    let mut g = table(&["isshin-mardu-attack-triggers", "sauron", "veyran"]);
+    let mut g = table(&["isshin-mardu-attack-triggers", "sauron", "cloud"]);
     let big = token(&mut g, P1, 5);
     let small = token(&mut g, P1, 1);
     let c = card(&g, "Crackling Doom");
@@ -319,7 +319,7 @@ fn ugin_skips_a_permanent_discarded_on_the_way() {
     // test_rules.GameEndsMidEffect: -10: gain 7, draw 7, then up to seven permanents from hand onto the battlefield,
     // best first. Kefka's enter trigger makes each player discard, so Festering Goblin, still on the list, is gone by
     // the time its turn comes
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let s = P0;
     g.player_mut(s).hand.clear();
     g.player_mut(s).library.clear();

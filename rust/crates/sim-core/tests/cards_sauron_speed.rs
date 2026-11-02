@@ -9,7 +9,7 @@ const P1: PlayerId = PlayerId(1);
 
 #[test]
 fn army_hit_is_set_on_the_turn_an_army_first_connects() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Sauron, the Dark Lord");
     let t = token(&mut g, P0, 3); // not an Army
     g.player_mut(P0).turns = 3;
@@ -26,7 +26,7 @@ fn army_hit_is_set_on_the_turn_an_army_first_connects() {
 
 #[test]
 fn army_power_is_recorded_at_the_start_of_turns_6_8_and_10() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Sauron, the Dark Lord");
     sim_core::engine::zones::amass(&mut g, P0, 4).unwrap();
     g.player_mut(P0).turns = 4;
@@ -41,7 +41,7 @@ fn army_power_is_recorded_at_the_start_of_turns_6_8_and_10() {
 
 #[test]
 fn the_commander_resolving_sets_cmd_cast() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Swamp", 4, false);
     lands(&mut g, P0, "Mountain", 2, false);
     g.player_mut(P0).turns = 4;

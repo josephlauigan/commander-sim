@@ -25,7 +25,7 @@ fn opp_casts(g: &mut Game, q: PlayerId, name: &str) -> bool {
 
 #[test]
 fn counter_an_opponents_spell() {
-    let mut g = table(&["veyran", "sauron"]);
+    let mut g = table(&["kefka", "sauron"]);
     hand(&mut g, P1, &["Counterspell"]);
     lands(&mut g, P1, "Island", 2, false);
     tap_all(&mut g, P1);
@@ -44,7 +44,7 @@ fn counter_an_opponents_spell() {
 
 #[test]
 fn pass_and_it_resolves() {
-    let mut g = table(&["veyran", "sauron"]);
+    let mut g = table(&["kefka", "sauron"]);
     lands(&mut g, P0, "Mountain", 3, false);
     seat(&mut g, P1, vec![pass()]);
     assert!(opp_casts(&mut g, P0, "Guttersnipe"));
@@ -52,7 +52,7 @@ fn pass_and_it_resolves() {
 
 #[test]
 fn priority_on_every_spell() {
-    let mut g = table(&["veyran", "sauron"]);
+    let mut g = table(&["kefka", "sauron"]);
     lands(&mut g, P0, "Island", 1, false);
     let h = seat(&mut g, P1, vec![pass()]);
     opp_casts(&mut g, P0, "Sol Ring"); // a spell the AI would never bother to counter
@@ -61,7 +61,7 @@ fn priority_on_every_spell() {
 
 #[test]
 fn tap_then_counter() {
-    let mut g = table(&["veyran", "sauron"]);
+    let mut g = table(&["kefka", "sauron"]);
     hand(&mut g, P1, &["Counterspell"]);
     lands(&mut g, P1, "Island", 2, false);
     lands(&mut g, P0, "Mountain", 3, false);
@@ -79,7 +79,7 @@ fn tap_then_counter() {
 
 #[test]
 fn wrong_kind_of_counterspell() {
-    let mut g = table(&["veyran", "sauron"]);
+    let mut g = table(&["kefka", "sauron"]);
     let fg = hand(&mut g, P1, &["Fierce Guardianship"])[0];
     lands(&mut g, P1, "Island", 3, false);
     tap_all(&mut g, P1);
@@ -96,7 +96,7 @@ fn wrong_kind_of_counterspell() {
 
 #[test]
 fn no_spell_to_counter() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let c = hand(&mut g, P0, &["Counterspell"])[0];
     lands(&mut g, P0, "Island", 2, false);
     tap_all(&mut g, P0);
@@ -106,7 +106,7 @@ fn no_spell_to_counter() {
 
 #[test]
 fn counter_back_when_the_ai_counters_you() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let sheo = hand(&mut g, P0, &["Sheoldred, the Apocalypse"])[0];
     hand(&mut g, P0, &["Counterspell"]);
     lands(&mut g, P0, "Island", 2, false);
@@ -126,7 +126,7 @@ fn counter_back_when_the_ai_counters_you() {
 
 #[test]
 fn priority_when_attacked() {
-    let mut g = table(&["veyran", "sauron"]);
+    let mut g = table(&["kefka", "sauron"]);
     perm(&mut g, P1, "Grave Titan");
     let a = perm(&mut g, P0, "Guttersnipe");
     let h = seat(&mut g, P1, vec![pass(), cancel()]);
@@ -138,7 +138,7 @@ fn priority_when_attacked() {
 
 #[test]
 fn the_priority_order_on_a_spell() {
-    let mut g = table(&["veyran", "sauron", "seph"]);
+    let mut g = table(&["kefka", "sauron", "seph"]);
     let h = seat(&mut g, P2, vec![pass()]);
     let bolt = card(&g, "Lightning Bolt");
     respond(&mut g, P2, "Veyran casts Opt", Some(bolt), Some(P0)).unwrap();

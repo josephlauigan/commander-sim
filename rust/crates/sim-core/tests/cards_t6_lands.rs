@@ -9,7 +9,7 @@ const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 
 fn pod() -> Game {
-    table(&["lathril-golgari-elves", "veyran"])
+    table(&["lathril-golgari-elves", "cloud"])
 }
 
 fn play_land(g: &mut Game, p: PlayerId, name: &str) {
@@ -322,7 +322,7 @@ fn mount_doom_costs_one_life_to_tap_and_is_not_tapped_at_one_life() {
 
 #[test]
 fn mount_doom_pings_every_opponent_for_one() {
-    let mut g = table(&["lathril-golgari-elves", "veyran", "sauron"]);
+    let mut g = table(&["lathril-golgari-elves", "cloud", "sauron"]);
     lands(&mut g, P0, "Mount Doom", 1, false);
     lands(&mut g, P0, "Swamp", 1, false);
     lands(&mut g, P0, "Mountain", 1, false);

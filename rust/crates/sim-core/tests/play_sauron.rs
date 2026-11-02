@@ -42,7 +42,7 @@ fn float_mana(g: &mut Game, p: PlayerId, m: &[(char, u32)]) {
 // ------------------------------------------------------------------ Damage
 #[test]
 fn bowmasters_enters() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let l = label_of(&g, P0, Target::Player(P1));
     let h = seat_fn(&mut g, P0, {
         let mut f = pick_label(l);
@@ -56,7 +56,7 @@ fn bowmasters_enters() {
 
 #[test]
 fn bowmasters_on_extra_draws() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Orcish Bowmasters");
     let h = seat_fn(&mut g, P0, |r| {
         // the label carries the life total, which changes with each trigger
@@ -68,7 +68,7 @@ fn bowmasters_on_extra_draws() {
 
 #[test]
 fn a_creature_survives_damage_below_its_toughness() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let big = perm(&mut g, P1, "Grave Titan");
     let l = label_of(&g, P0, Target::Perm(big));
     seat(&mut g, P0, vec![pick_label(l)]);
@@ -79,7 +79,7 @@ fn a_creature_survives_damage_below_its_toughness() {
 
 #[test]
 fn kaervek_kills_what_it_reaches() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let gs = perm(&mut g, P1, "Guttersnipe");
     let l = label_of(&g, P0, Target::Perm(gs));
     seat(&mut g, P0, vec![pick_label(l)]);
@@ -91,7 +91,7 @@ fn kaervek_kills_what_it_reaches() {
 // ------------------------------------------------------------------ Ring
 #[test]
 fn tempt() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Call of the Ring");
     perm(&mut g, P0, "Sauron, the Dark Lord");
     let bow = perm(&mut g, P0, "Grave Titan");
@@ -116,7 +116,7 @@ fn tempt() {
 #[test]
 fn jaces_archivist() {
     use sim_core::human::abilities::archivist;
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let arch = perm(&mut g, P0, "Jace's Archivist");
     g.perm_mut(arch).sick = false;
     hand(&mut g, P0, &["Island", "Swamp"]);
@@ -131,7 +131,7 @@ fn jaces_archivist() {
 #[test]
 fn archivist_needs_to_untap_first() {
     use sim_core::human::abilities::archivist;
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let arch = perm(&mut g, P0, "Jace's Archivist");
     g.perm_mut(arch).sick = true;
     seat(&mut g, P0, vec![]);
@@ -142,7 +142,7 @@ fn archivist_needs_to_untap_first() {
 #[test]
 fn aggravated_assault() {
     use sim_core::human::abilities::assault;
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let aa = perm(&mut g, P0, "Aggravated Assault");
     let t = perm(&mut g, P0, "Grave Titan");
     g.perm_mut(t).tapped = true;
@@ -156,7 +156,7 @@ fn aggravated_assault() {
 
 #[test]
 fn rogues_passage() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Rogue's Passage", 1, false);
     let t = perm(&mut g, P0, "Grave Titan");
     g.perm_mut(t).sick = false;
@@ -176,7 +176,7 @@ fn rogues_passage() {
 
 #[test]
 fn scavenger_grounds() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Scavenger Grounds", 1, false);
     let titan = card(&g, "Grave Titan");
     g.player_mut(P1).gy.push(titan);
@@ -190,7 +190,7 @@ fn scavenger_grounds() {
 
 #[test]
 fn cyclonic_rift_overloaded() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     hand(&mut g, P0, &["Cyclonic Rift"]);
     perm(&mut g, P1, "Guttersnipe");
     perm(&mut g, P1, "Sol Ring");
@@ -203,7 +203,7 @@ fn cyclonic_rift_overloaded() {
 // ------------------------------------------------------------------ SpellChoices
 #[test]
 fn toxic_deluge_x() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     hand(&mut g, P0, &["Toxic Deluge"]);
     let small = perm(&mut g, P1, "Guttersnipe");
     let big = perm(&mut g, P1, "Grave Titan");
@@ -217,7 +217,7 @@ fn toxic_deluge_x() {
 
 #[test]
 fn bitter_triumph_discard_instead_of_life() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     hand(&mut g, P0, &["Bitter Triumph", "Island"]);
     let gs = perm(&mut g, P1, "Guttersnipe");
     float_mana(&mut g, P0, &[('C', 1), ('B', 1)]);
@@ -232,7 +232,7 @@ fn bitter_triumph_discard_instead_of_life() {
 
 #[test]
 fn gearhulk_target_or_none() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let gs = perm(&mut g, P1, "Guttersnipe");
     seat(&mut g, P0, vec![cancel()]);
     perm(&mut g, P0, "Noxious Gearhulk");
@@ -245,7 +245,7 @@ fn gearhulk_target_or_none() {
 
 #[test]
 fn kefka_discard_is_yours() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let hs = hand(&mut g, P0, &["Island", "Counterspell"]);
     hand(&mut g, P1, &["Mountain"]);
     seat(&mut g, P0, vec![pick(1)]); // discard Counterspell
@@ -257,7 +257,7 @@ fn kefka_discard_is_yours() {
 // ------------------------------------------------------------------ Taxes
 #[test]
 fn rhystic_study_asks() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let l = lands(&mut g, P0, "Island", 1, false)[0];
     seat(&mut g, P0, vec![pick(0)]); // yes: pay {1} (taps the Island)
     assert!(!rules::rhystic_unpaid(&mut g, P0).unwrap());
@@ -268,7 +268,7 @@ fn rhystic_study_asks() {
 
 #[test]
 fn cant_pay_isnt_asked() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let h = seat(&mut g, P0, vec![]);
     assert!(rules::tithe_unpaid(&mut g, P0).unwrap());
     assert!(h.asked().is_empty());

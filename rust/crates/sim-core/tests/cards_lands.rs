@@ -30,7 +30,7 @@ fn land_named(g: &Game, p: PlayerId, name: &str) -> Option<sim_core::ids::PermId
 // ------------------------------------------------------------------ creature lands
 #[test]
 fn mutavault_animates_into_an_open_attack_and_reverts_next_turn() {
-    let mut g = table(&["lathril-golgari-elves", "veyran"]);
+    let mut g = table(&["lathril-golgari-elves", "cloud"]);
     lands(&mut g, P0, "Mutavault", 1, false);
     lands(&mut g, P0, "Forest", 2, false);
     let o = cardcode::land_options(&mut g, P0, Some(false)).unwrap();
@@ -51,7 +51,7 @@ fn mutavault_animates_into_an_open_attack_and_reverts_next_turn() {
 
 #[test]
 fn an_animated_land_that_died_goes_to_the_graveyard() {
-    let mut g = table(&["lathril-golgari-elves", "veyran"]);
+    let mut g = table(&["lathril-golgari-elves", "cloud"]);
     let l = lands(&mut g, P0, "Mutavault", 1, false)[0];
     let m = il::animate(&mut g, P0, l, 2, 2, &[], false);
     zones::die(&mut g, m, "destroy").unwrap();
@@ -62,7 +62,7 @@ fn an_animated_land_that_died_goes_to_the_graveyard() {
 
 #[test]
 fn a_creature_land_stays_home_when_a_bigger_blocker_waits() {
-    let mut g = table(&["lathril-golgari-elves", "veyran"]);
+    let mut g = table(&["lathril-golgari-elves", "cloud"]);
     lands(&mut g, P0, "Mutavault", 1, false);
     lands(&mut g, P0, "Forest", 3, false);
     token(&mut g, P1, 3);
@@ -72,7 +72,7 @@ fn a_creature_land_stays_home_when_a_bigger_blocker_waits() {
 // ------------------------------------------------------------------ Kor Haven
 #[test]
 fn kor_haven_stops_the_biggest_unblocked_attacker() {
-    let mut g = table(&["light-paws-aura-voltron", "veyran"]);
+    let mut g = table(&["light-paws-aura-voltron", "cloud"]);
     lands(&mut g, P0, "Kor Haven", 1, false);
     lands(&mut g, P0, "Plains", 2, false);
     let big = token(&mut g, P1, 5);
@@ -86,7 +86,7 @@ fn kor_haven_stops_the_biggest_unblocked_attacker() {
 
 #[test]
 fn kor_haven_waits_for_four_power() {
-    let mut g = table(&["light-paws-aura-voltron", "veyran"]);
+    let mut g = table(&["light-paws-aura-voltron", "cloud"]);
     lands(&mut g, P0, "Kor Haven", 1, false);
     lands(&mut g, P0, "Plains", 2, false);
     let a = token(&mut g, P1, 3);
@@ -99,7 +99,7 @@ fn kor_haven_waits_for_four_power() {
 // ------------------------------------------------------------------ value lands
 #[test]
 fn war_room_draws_at_the_end_of_a_turn_for_life() {
-    let mut g = table(&["light-paws-aura-voltron", "veyran"]);
+    let mut g = table(&["light-paws-aura-voltron", "cloud"]);
     lands(&mut g, P0, "War Room", 1, false);
     lands(&mut g, P0, "Plains", 3, false);
     assert!(cardcode::land_options(&mut g, P0, Some(false)).unwrap().is_empty()); // not in a main phase
@@ -118,7 +118,7 @@ fn war_room_draws_at_the_end_of_a_turn_for_life() {
 
 #[test]
 fn oran_rief_counters_new_green_creatures_after_combat() {
-    let mut g = table(&["tatyova-simic-landfall", "veyran"]);
+    let mut g = table(&["tatyova-simic-landfall", "cloud"]);
     lands(&mut g, P0, "Oran-Rief, the Vastwood", 1, false);
     let a = perm(&mut g, P0, "Llanowar Elves");
     assert!(cardcode::land_options(&mut g, P0, Some(true)).unwrap().is_empty()); // not sick
@@ -135,7 +135,7 @@ fn oran_rief_counters_new_green_creatures_after_combat() {
 
 #[test]
 fn vault_of_the_archangel_arms_a_wide_attack() {
-    let mut g = table(&["teysa-orzhov-aristocrats", "veyran"]);
+    let mut g = table(&["teysa-orzhov-aristocrats", "cloud"]);
     lands(&mut g, P0, "Vault of the Archangel", 1, false);
     lands(&mut g, P0, "Plains", 2, false);
     lands(&mut g, P0, "Swamp", 2, false);
@@ -153,7 +153,7 @@ fn vault_of_the_archangel_arms_a_wide_attack() {
 
 #[test]
 fn silent_clearing_cycles_when_flooded_and_its_mana_costs_life() {
-    let mut g = table(&["teysa-orzhov-aristocrats", "veyran"]);
+    let mut g = table(&["teysa-orzhov-aristocrats", "cloud"]);
     lands(&mut g, P0, "Silent Clearing", 1, false);
     lands(&mut g, P0, "Plains", 5, false);
     assert!(cardcode::land_options(&mut g, P0, Some(false)).unwrap().is_empty()); // six lands
@@ -168,7 +168,7 @@ fn silent_clearing_cycles_when_flooded_and_its_mana_costs_life() {
     assert_eq!(g.player(P0).hand.len(), 1);
     assert_eq!(g.player(P0).life, 40); // paid with a Plains
 
-    let mut g = table(&["teysa-orzhov-aristocrats", "veyran"]);
+    let mut g = table(&["teysa-orzhov-aristocrats", "cloud"]);
     lands(&mut g, P0, "Silent Clearing", 1, false);
     assert!(mana::pay(&mut g, P0, 0, "W", false).unwrap());
     assert_eq!(g.player(P0).life, 39);
@@ -176,7 +176,7 @@ fn silent_clearing_cycles_when_flooded_and_its_mana_costs_life() {
 
 #[test]
 fn emeria_returns_the_best_creature_with_seven_plains() {
-    let mut g = table(&["light-paws-aura-voltron", "veyran"]);
+    let mut g = table(&["light-paws-aura-voltron", "cloud"]);
     lands(&mut g, P0, "Emeria, the Sky Ruin", 1, false);
     lands(&mut g, P0, "Plains", 6, false);
     let c = take(&mut g, P0, "Llanowar Elves");
@@ -191,7 +191,7 @@ fn emeria_returns_the_best_creature_with_seven_plains() {
 
 #[test]
 fn mortuary_mire_puts_the_best_creature_on_top() {
-    let mut g = table(&["teysa-orzhov-aristocrats", "veyran"]);
+    let mut g = table(&["teysa-orzhov-aristocrats", "cloud"]);
     let elves = take(&mut g, P0, "Llanowar Elves");
     let titan = take(&mut g, P0, "Grave Titan");
     let bolt = take(&mut g, P0, "Lightning Bolt");
@@ -205,7 +205,7 @@ fn mortuary_mire_puts_the_best_creature_on_top() {
 
 #[test]
 fn mosswort_bridge_hides_a_spell_and_casts_it_with_ten_power() {
-    let mut g = table(&["tatyova-simic-landfall", "veyran"]);
+    let mut g = table(&["tatyova-simic-landfall", "cloud"]);
     let names = ["Island", "Llanowar Elves", "Forest", "Grave Titan", "Island"]; // the last on top
     let top: Vec<CardId> = names.iter().map(|n| take(&mut g, P0, n)).collect();
     g.player_mut(P0).library.extend(&top);
@@ -230,7 +230,7 @@ fn mosswort_bridge_hides_a_spell_and_casts_it_with_ten_power() {
 #[test]
 fn a_combo_piece_is_worth_more_as_its_partner_arrives() {
     // the Urza list's Basalt Monolith + Forensic Gadgeteer (a mana sink in hand: Walking Ballista)
-    let mut g = table(&["urza-mono-blue-artifacts", "veyran"]);
+    let mut g = table(&["urza-mono-blue-artifacts", "cloud"]);
     g.player_mut(P0).cmd_in_zone = false;
     hand(&mut g, P0, &["Walking Ballista"]);
     let gad = perm(&mut g, P0, "Forensic Gadgeteer");
@@ -255,7 +255,7 @@ fn a_combo_piece_is_worth_more_as_its_partner_arrives() {
 
 #[test]
 fn an_outside_deck_goes_for_a_ready_combo() {
-    let mut g = table(&["yawgmoth-mono-black-aristocrats", "veyran"]);
+    let mut g = table(&["yawgmoth-mono-black-aristocrats", "cloud"]);
     lands(&mut g, P0, "Swamp", 5, false);
     perm(&mut g, P0, "Sanguine Bond");
     hand(&mut g, P0, &["Exquisite Blood"]);
@@ -263,12 +263,12 @@ fn an_outside_deck_goes_for_a_ready_combo() {
     let o = cardcode::combo_options(&mut g, P0, 0.5, Some(false)).unwrap();
     assert_eq!(labels(&o), ["combo: Sanguine Bond + Exquisite Blood"]);
     assert!((o[0].utility - 11.0).abs() < 1e-9); // a spell to cast: 14 - 6 * risk
-    let mut g2 = table(&["veyran", "seph"]); // your decks don't run the modeled combos
+    let mut g2 = table(&["kefka", "seph"]); // your decks don't run the modeled combos
     assert!(cardcode::combo_options(&mut g2, P0, 0.0, Some(false)).unwrap().is_empty());
 }
 
 fn oracle_table(library: &[&str]) -> (Game, usize) {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     lands(&mut g, P0, "Island", 2, false);
     lands(&mut g, P0, "Swamp", 2, false);
     hand(&mut g, P0, &["Thassa's Oracle", "Tainted Pact"]);
@@ -294,14 +294,14 @@ fn tainted_pact_needs_a_library_without_duplicate_names() {
 
 #[test]
 fn the_oracle_waits_with_a_full_library() {
-    let g = table(&["urza-mono-blue-artifacts", "veyran"]);
+    let g = table(&["urza-mono-blue-artifacts", "cloud"]);
     let c = card(&g, "Thassa's Oracle");
     assert_eq!((g.registry.get(c).unwrap().prio.unwrap())(&g, P0, c), 0);
 }
 
 // ------------------------------------------------------------------ Sylvan Library
 fn sylvan_table(life: i32) -> (Game, [CardId; 3]) {
-    let mut g = table(&["lathril-golgari-elves", "veyran"]);
+    let mut g = table(&["lathril-golgari-elves", "cloud"]);
     perm(&mut g, P0, "Sylvan Library");
     g.player_mut(P0).life = life;
     let cs = [take(&mut g, P0, "Swamp"), take(&mut g, P0, "Forest"), take(&mut g, P0, "Llanowar Elves")];
@@ -355,7 +355,7 @@ fn sylvan_library_puts_back_a_copy_of_a_card_in_hand() {
 /// spells on top
 #[test]
 fn scroll_rack_taps_when_used() {
-    let mut g = table(&["lathril-golgari-elves", "veyran"]);
+    let mut g = table(&["lathril-golgari-elves", "cloud"]);
     let rk = perm(&mut g, P0, "Scroll Rack");
     lands(&mut g, P0, "Forest", 8, false);
     g.player_mut(P0).hand = vec![take(&mut g, P0, "Forest"), take(&mut g, P0, "Swamp")];

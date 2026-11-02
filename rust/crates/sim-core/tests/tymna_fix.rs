@@ -10,7 +10,7 @@ const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 
 fn tbl(key: &str) -> Game {
-    table(&[key, "veyran", "seph", "galadriel"])
+    table(&[key, "cloud", "seph", "galadriel"])
 }
 
 fn on(g: &Game, m: sim_core::ids::PermId) -> bool {

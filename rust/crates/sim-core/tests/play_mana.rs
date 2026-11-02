@@ -21,7 +21,7 @@ fn pool_pay(g: &mut Game, p: PlayerId, generic: u32, pips: &str) -> bool {
 
 #[test]
 fn colours_and_generic() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     pool(&mut g, P0, &[('B', 2)]);
     let pl = g.player(P0).pool.clone();
     assert!(!pl.can_pay(&g, P0, 2, "BB"));
@@ -33,7 +33,7 @@ fn colours_and_generic() {
 
 #[test]
 fn generic_spends_colourless_before_colours() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     pool(&mut g, P0, &[('C', 1), ('U', 1), ('B', 1)]);
     assert!(pool_pay(&mut g, P0, 1, "B"));
     assert_eq!(pool_text(&g, P0), "{U}");
@@ -41,14 +41,14 @@ fn generic_spends_colourless_before_colours() {
 
 #[test]
 fn any_colour_mana_pays_a_pip() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     pool(&mut g, P0, &[('A', 1)]);
     assert!(pool_pay(&mut g, P0, 0, "U"));
 }
 
 #[test]
 fn a_land_taps_into_the_pool() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Swamp", 2, false);
     let id = src(&g, P0, "Swamp");
     assert_eq!(mana::tap(&mut g, P0, id, None).unwrap(), None);
@@ -59,7 +59,7 @@ fn a_land_taps_into_the_pool() {
 
 #[test]
 fn wrong_colour_is_refused() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Swamp", 1, false);
     let id = src(&g, P0, "Swamp");
     let why = mana::tap(&mut g, P0, id, Some('U')).unwrap().unwrap();
@@ -70,12 +70,12 @@ fn wrong_colour_is_refused() {
 
 #[test]
 fn talisman_hurts_only_for_colour() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Talisman of Dominance");
     let id = src(&g, P0, "Talisman of Dominance");
     assert_eq!(mana::tap(&mut g, P0, id, Some('C')).unwrap(), None);
     assert_eq!(g.player(P0).life, 40);
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Talisman of Dominance");
     let id = src(&g, P0, "Talisman of Dominance");
     mana::tap(&mut g, P0, id, Some('U')).unwrap();
@@ -84,7 +84,7 @@ fn talisman_hurts_only_for_colour() {
 
 #[test]
 fn sol_ring_and_treasure() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Sol Ring");
     g.player_mut(P0).treasures = 1;
     let id = src(&g, P0, "Sol Ring");
@@ -97,7 +97,7 @@ fn sol_ring_and_treasure() {
 
 #[test]
 fn paying_from_the_pool_and_the_reason_when_short() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Swamp", 2, false);
     for _ in 0..2 {
         let id = mana::sources(&g, P0)[0].id as i64;
@@ -110,7 +110,7 @@ fn paying_from_the_pool_and_the_reason_when_short() {
 
 #[test]
 fn ritual_mana_joins_the_pool() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     g.player_mut(P0).mana.set(Kind::Any, 3); // Dark Ritual's mana, as the engine adds it
     assert_eq!(mana::pay_from_pool(&mut g, P0, 2, "B"), None);
     assert_eq!(g.player(P0).mana.get(Kind::Any), 0);
@@ -118,7 +118,7 @@ fn ritual_mana_joins_the_pool() {
 
 #[test]
 fn the_pool_empties_between_steps() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     seat(&mut g, P0, vec![]);
     pool(&mut g, P0, &[('B', 2)]);
     let _ = continue_turn(&mut g, P0, Step::End);
@@ -127,7 +127,7 @@ fn the_pool_empties_between_steps() {
 
 #[test]
 fn sources_name_their_land_permanent_or_treasure() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Island", 2, false);
     let rock = perm(&mut g, P0, "Sol Ring");
     g.player_mut(P0).treasures = 1;
@@ -143,7 +143,7 @@ fn sources_name_their_land_permanent_or_treasure() {
 const VRASKA: &str = "Vraska, Betrayal's Sting";
 
 fn cast_vraska(answers: Vec<F>, mana: &[(char, u32)]) -> (Game, std::sync::Arc<ScriptHuman>) {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     hand(&mut g, P0, &[VRASKA]);
     pool(&mut g, P0, mana);
     let mut a = vec![act(json!({"do": "cast", "card": 0}))];
@@ -175,7 +175,7 @@ fn only_life_works() {
 
 #[test]
 fn rules_check_counts_life() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let c = hand(&mut g, P0, &[VRASKA])[0];
     pool(&mut g, P0, &[('B', 1), ('C', 4)]);
     assert_eq!(legal::check_cast(&mut g, P0, c, "hand"), None);

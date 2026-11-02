@@ -33,14 +33,13 @@ fn test_your_decks() {
             "thanos",
             "thrasios",
             "urdragon",
-            "veyran",
             "yshtola"
         ]
     );
     assert_eq!(d["ghave"]["name"], "Ghave, Guru of Spores"); // the deck file's commander line
     assert_eq!(d["ghave"]["commander"], "Ghave, Guru of Spores"); // the card the engine (and image) uses
     assert_eq!(d["ghave"]["bracket"], 4);
-    assert_eq!(d["veyran"]["bracket"], 3);
+    assert_eq!(d["cloud"]["bracket"], 3);
     assert!(d["yshtola"]["game_changers"].as_array().unwrap().len() > 3); // band 1 (10/18): only Y'shtola, Seph FS above 3
     for x in d.values() {
         for k in ["key", "commander", "name", "bracket", "game_changers", "win_rates"] {

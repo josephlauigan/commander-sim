@@ -8,7 +8,7 @@ use sim_core::testkit::*;
 const P0: PlayerId = PlayerId(0);
 
 fn sauron_table() -> sim_core::state::Game {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let h: Vec<_> = g.player_mut(P0).hand.drain(..).collect();
     g.player_mut(P0).library.extend(h);
     lands(&mut g, P0, "Island", 3, false);
@@ -38,7 +38,7 @@ fn sauron_tutor_ringsight_wants_the_archivist_with_bowmasters_out() {
 
 #[test]
 fn sauron_tutor_fetches_sol_ring_when_short_of_mana() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Island", 2, false);
     g.player_mut(P0).turns = 3;
     zones::amass(&mut g, P0, 1).unwrap();
@@ -62,7 +62,7 @@ fn sauron_holds_mana_up_for_two_counters_more_than_for_one() {
 }
 
 fn kefka_hand(names: &[&str]) -> sim_core::state::Game {
-    let mut g = table(&["kefka", "veyran"]);
+    let mut g = table(&["kefka", "cloud"]);
     let h: Vec<_> = g.player_mut(P0).hand.drain(..).collect();
     g.player_mut(P0).library.extend(h);
     hand(&mut g, P0, names);

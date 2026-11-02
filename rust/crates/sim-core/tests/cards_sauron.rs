@@ -49,7 +49,7 @@ fn tapped_lands(g: &Game, p: PlayerId) -> usize {
 // ======================================================== Sauron
 #[test]
 fn sauron_amasses_when_an_opponent_casts() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Sauron, the Dark Lord");
     on_cast(&mut g, P1, "Lightning Bolt");
     on_cast(&mut g, P1, "Think Twice");
@@ -58,7 +58,7 @@ fn sauron_amasses_when_an_opponent_casts() {
 
 #[test]
 fn kaervek() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Kaervek the Merciless");
     on_cast(&mut g, P1, "Counterspell"); // mana value 2
     assert_eq!(g.player(P1).life, 38);
@@ -67,7 +67,7 @@ fn kaervek() {
 #[test]
 fn witch_king_takes_the_least_power() {
     // "defending player sacrifices a creature with the least power among creatures they control"
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let w = perm(&mut g, P0, "Witch-king, Bringer of Ruin");
     let snipe = perm(&mut g, P1, "Guttersnipe");
     perm(&mut g, P1, "Kessig Flamebreather"); // power 2 and 1
@@ -77,7 +77,7 @@ fn witch_king_takes_the_least_power() {
 
 #[test]
 fn orcish_bowmasters() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Orcish Bowmasters");
     assert_eq!(g.player(P1).life, 39); // enters: 1 damage, then amass 1
     assert!(values::army_of(&g, P0).is_some());
@@ -89,7 +89,7 @@ fn orcish_bowmasters() {
 
 #[test]
 fn rhystic_study() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Rhystic Study");
     on_cast(&mut g, P1, "Lightning Bolt"); // the caster has no mana to pay {1}
     assert_eq!(g.player(P0).hand.len(), 1);
@@ -97,7 +97,7 @@ fn rhystic_study() {
 
 #[test]
 fn sauron_casts_sheoldred_early() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Swamp", 4, false);
     hand(&mut g, P0, &["Sheoldred, the Apocalypse", "Night's Whisper"]);
     let opts = options(&mut g, P0);
@@ -115,7 +115,7 @@ fn slaughter_pact_hits_nonblack_only() {
 
 #[test]
 fn slaughter_pact_is_paid_at_the_next_upkeep() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Swamp", 3, false);
     on_cast(&mut g, P0, "Slaughter Pact");
     turn::upkeep(&mut g, P0).unwrap();
@@ -126,7 +126,7 @@ fn slaughter_pact_is_paid_at_the_next_upkeep() {
 
 #[test]
 fn slaughter_pact_unpaid_loses_the_game() {
-    let mut g = table(&["sauron", "veyran", "seph"]);
+    let mut g = table(&["sauron", "cloud", "seph"]);
     lands(&mut g, P0, "Island", 3, false); // no black mana
     on_cast(&mut g, P0, "Slaughter Pact");
     turn::upkeep(&mut g, P0).unwrap();
@@ -135,7 +135,7 @@ fn slaughter_pact_unpaid_loses_the_game() {
 
 #[test]
 fn the_ai_casts_slaughter_pact_only_when_it_can_pay() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     hand(&mut g, P0, &["Slaughter Pact"]);
     perm(&mut g, P1, "Guttersnipe");
     assert!(brain::removal_options(&g, P0, &brain::Situation::new(&g, P0)).is_empty());
@@ -146,7 +146,7 @@ fn the_ai_casts_slaughter_pact_only_when_it_can_pay() {
 #[test]
 fn urabrask_on_your_upkeep() {
     // "At the beginning of your upkeep, exile the top card of your library. You may play it this turn."
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Urabrask, Heretic Praetor");
     let top = *g.player(P0).library.last().unwrap();
     turn::upkeep(&mut g, P0).unwrap();
@@ -159,7 +159,7 @@ fn urabrask_replaces_an_opponents_draw() {
     // "At the beginning of each opponent's upkeep, the next time they would draw a card this turn, instead they
     //  exile the top card of their library. They may play it this turn."  Exiling isn't drawing: Sheoldred doesn't
     //  trigger, and the card is gone at the end of the turn if it isn't played.
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Urabrask, Heretic Praetor");
     perm(&mut g, P0, "Sheoldred, the Apocalypse");
     g.active = Some(P1);
@@ -178,7 +178,7 @@ fn urabrask_replaces_an_opponents_draw() {
 #[test]
 fn kefka_enters() {
     // "each player discards a card. Then you draw a card for each card type among cards discarded this way"
-    let mut g = table(&["sauron", "veyran", "seph"]);
+    let mut g = table(&["sauron", "cloud", "seph"]);
     hand(&mut g, P0, &["Sol Ring"]);
     hand(&mut g, P1, &["Island"]);
     hand(&mut g, P2, &["Grave Titan"]);
@@ -190,7 +190,7 @@ fn kefka_enters() {
 
 #[test]
 fn kefka_transforms() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let kefka = perm(&mut g, P0, "Kefka, Court Mage // Kefka, Ruler of Ruin");
     lands(&mut g, P0, "Island", 8, false);
     lands(&mut g, P1, "Island", 5, false);
@@ -209,7 +209,7 @@ fn kefka_transforms() {
 
 #[test]
 fn brush_off_is_cheaper_against_instants_and_sorceries() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let brush = hand(&mut g, P0, &["Brush Off"])[0];
     lands(&mut g, P0, "Island", 2, false);
     let bolt = card(&g, "Lightning Bolt");
@@ -223,7 +223,7 @@ fn brush_off_is_cheaper_against_instants_and_sorceries() {
 #[test]
 fn diabolic_intent_needs_a_creature_to_sacrifice() {
     // "As an additional cost to cast this spell, sacrifice a creature." It used to be free outside Sephiroth.
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Swamp", 2, false);
     let c = hand(&mut g, P0, &["Diabolic Intent"])[0];
     assert!(!brain::do_cast(&mut g, P0, c, None).unwrap());
@@ -240,7 +240,7 @@ fn diabolic_intent_needs_a_creature_to_sacrifice() {
 fn diabolic_intent_never_sacrifices_the_army() {
     // the AI used to sacrifice the Army (often with ten or more counters) when it was the only creature,
     // frequently to fetch the Sword that goes on it
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Swamp", 2, false);
     let c = hand(&mut g, P0, &["Diabolic Intent"])[0];
     zones::amass(&mut g, P0, 6).unwrap();
@@ -250,7 +250,7 @@ fn diabolic_intent_never_sacrifices_the_army() {
 
 #[test]
 fn phyrexian_arena() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Phyrexian Arena");
     turn::upkeep(&mut g, P0).unwrap();
     assert_eq!((g.player(P0).hand.len(), g.player(P0).life), (1, 39));
@@ -262,7 +262,7 @@ fn phyrexian_arena() {
 /// Sauron against three Veyrans whose libraries hold `opp_library` cards (the rest milled), no hands; six Islands in
 /// Sauron's graveyard for escape fuel
 fn board(islands: usize, mountains: usize, opp_library: usize) -> Game {
-    let mut g = table(&["sauron", "veyran", "veyran", "veyran"]);
+    let mut g = table(&["sauron", "cloud", "cloud", "cloud"]);
     for q in 1..4 {
         let pl = g.player_mut(PlayerId(q));
         pl.hand.clear();
@@ -299,11 +299,11 @@ fn grapeshot_kills_the_lowest_life_first() {
 
 #[test]
 fn laboratory_maniac_turns_an_empty_draw_into_a_win() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     g.player_mut(P0).library.clear();
     zones::draw(&mut g, P0, 1, false).unwrap();
     assert!(g.player(P0).decked);
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     g.player_mut(P0).library.clear();
     perm(&mut g, P0, "Laboratory Maniac");
     zones::draw(&mut g, P0, 1, false).unwrap();
@@ -316,7 +316,7 @@ fn laboratory_maniac_turns_an_empty_draw_into_a_win() {
 
 #[test]
 fn the_army_gets_dethrone_and_mauhurs_extra_counter() {
-    let mut g = table(&["sauron", "veyran", "seph"]);
+    let mut g = table(&["sauron", "cloud", "seph"]);
     perm(&mut g, P0, "Marchesa, the Black Rose");
     perm(&mut g, P0, "Mauhúr, Uruk-hai Captain");
     zones::amass(&mut g, P0, 2).unwrap();
@@ -330,7 +330,7 @@ fn the_army_gets_dethrone_and_mauhurs_extra_counter() {
 
 #[test]
 fn a_creature_with_a_counter_returns() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Marchesa, the Black Rose");
     let b = perm(&mut g, P0, "Orcish Bowmasters");
     g.perm_mut(b).plus = 1;
@@ -343,7 +343,7 @@ fn a_creature_with_a_counter_returns() {
 // ======================================================== the Ring and the rest of mine.py's Sauron cards (Rust-only)
 #[test]
 fn the_ring_tempts_and_makes_the_army_the_ring_bearer() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Orcish Bowmasters");
     let a = army(&g, P0);
     mine::ring_tempt(&mut g, P0).unwrap();
@@ -360,7 +360,7 @@ fn the_ring_tempts_and_makes_the_army_the_ring_bearer() {
 fn ringsight_tempts_sauron_into_a_new_hand() {
     // Sauron, the Dark Lord: whenever the Ring tempts you, you may discard your hand and draw four (the AI does with
     // three or fewer cards)
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Sauron, the Dark Lord");
     hand(&mut g, P0, &["Island", "Swamp"]);
     mine::ring_tempt(&mut g, P0).unwrap();
@@ -370,7 +370,7 @@ fn ringsight_tempts_sauron_into_a_new_hand() {
 
 #[test]
 fn vraska_turns_a_creature_into_a_treasure() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let v = perm(&mut g, P0, "Vraska, Betrayal's Sting");
     assert_eq!(g.perm(v).loyalty, Some(6));
     perm(&mut g, P1, "Guttersnipe");
@@ -383,7 +383,7 @@ fn vraska_turns_a_creature_into_a_treasure() {
 
 #[test]
 fn bloodsoaked_insight_takes_an_opponents_top_three() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     lands(&mut g, P0, "Swamp", 4, false);
     let c = hand(&mut g, P0, &["Bloodsoaked Insight // Sanguine Morass"])[0];
     sim_core::engine::life::lose_life(&mut g, P1, 3, Some(P0), "other", None).unwrap(); // {5} - 3
@@ -402,7 +402,7 @@ fn bloodsoaked_insight_takes_an_opponents_top_three() {
 
 #[test]
 fn sauron_wont_draw_four_from_a_short_library() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Sauron, the Dark Lord");
     hand(&mut g, P0, &["Island", "Swamp"]);
     g.player_mut(P0).library.truncate(3);
@@ -414,7 +414,7 @@ fn sauron_wont_draw_four_from_a_short_library() {
 
 #[test]
 fn call_of_the_ring_wont_draw_from_an_empty_library() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     perm(&mut g, P0, "Call of the Ring");
     token(&mut g, P0, 2);
     hand(&mut g, P0, &["Island", "Swamp", "Forest", "Plains"]); // four cards: Sauron's draw-four is off anyway
@@ -426,7 +426,7 @@ fn call_of_the_ring_wont_draw_from_an_empty_library() {
 
 #[test]
 fn the_ring_bearer_stays_home_when_its_loot_would_deck_sauron() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let b = token(&mut g, P0, 3);
     g.player_mut(P0).ring_level = 2;
     g.player_mut(P0).ring_bearer = Some(b);
@@ -436,7 +436,7 @@ fn the_ring_bearer_stays_home_when_its_loot_would_deck_sauron() {
     assert!(g.player(P0).alive);
     assert!(!g.perm(b).tapped);
     // with a card left the loot is safe, and it attacks
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let b = token(&mut g, P0, 3);
     g.player_mut(P0).ring_level = 2;
     g.player_mut(P0).ring_bearer = Some(b);

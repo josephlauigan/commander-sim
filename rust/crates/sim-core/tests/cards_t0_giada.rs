@@ -13,7 +13,7 @@ const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 
 fn tbl() -> Game {
-    table(&["giada-calling-all-angels", "veyran", "seph"])
+    table(&["giada-calling-all-angels", "cloud", "seph"])
 }
 
 fn pt(g: &Game, m: PermId) -> (i32, i32) {
@@ -540,7 +540,7 @@ fn linvala_gains_life_and_makes_an_angel_when_behind() {
 
 #[test]
 fn a_whole_game_with_the_deck_plays_to_the_end() {
-    let g = play(&["giada-calling-all-angels", "veyran", "seph"], 3, false);
+    let g = play(&["giada-calling-all-angels", "cloud", "seph"], 3, false);
     assert!(g.round >= 1);
     let _ = turn::run_rounds;
 }

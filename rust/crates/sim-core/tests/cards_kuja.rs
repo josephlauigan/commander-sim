@@ -15,7 +15,7 @@ const KEFKA: &str = "Kefka, Court Mage // Kefka, Ruler of Ruin";
 const NIV: &str = "Niv-Mizzet, the Firemind";
 
 fn tbl() -> Game {
-    let mut g = table(&["kefka", "seph", "veyran"]);
+    let mut g = table(&["kefka", "seph", "cloud"]);
     g.active = Some(P0);
     g
 }

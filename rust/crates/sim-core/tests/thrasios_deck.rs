@@ -15,7 +15,7 @@ const P0: PlayerId = PlayerId(0);
 const THRASIOS: &str = "Thrasios, Triton Hero";
 
 fn tbl() -> Game {
-    let mut g = table(&["thrasios", "seph", "veyran"]);
+    let mut g = table(&["thrasios", "seph", "cloud"]);
     g.active = Some(P0);
     g
 }

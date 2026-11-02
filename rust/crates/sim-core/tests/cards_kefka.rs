@@ -71,7 +71,7 @@ fn flipped_kefka(g: &mut Game, p: PlayerId) -> PermId {
 }
 
 fn table2() -> Game {
-    table(&["kefka", "veyran"])
+    table(&["kefka", "cloud"])
 }
 
 // ======================================================== the discard-pressure spells
@@ -319,7 +319,7 @@ fn postmortem_professor_needs_an_instant_or_sorcery_in_the_graveyard() {
 
 #[test]
 fn postmortem_professor_attack_drains_one_and_gains_one() {
-    let mut g = table(&["kefka", "veyran", "seph"]);
+    let mut g = table(&["kefka", "cloud", "seph"]);
     let prof = perm(&mut g, P0, "Postmortem Professor");
     let imp = g.registry.get(g.perm(prof).cd.unwrap()).unwrap().attack.unwrap();
     let l0 = g.player(P0).life;
@@ -534,7 +534,7 @@ fn stadium_tidalmage_loots_on_entering_and_attacking() {
 
 #[test]
 fn screeching_soulbreaker_pings_each_opponent_and_gains_one_when_attacking() {
-    let mut g = table(&["kefka", "veyran", "seph"]);
+    let mut g = table(&["kefka", "cloud", "seph"]);
     let s = perm(&mut g, P0, "Screeching Soulbreaker");
     let at = g.registry.get(g.perm(s).cd.unwrap()).unwrap().attack.unwrap();
     let l0 = g.player(P0).life;
@@ -545,7 +545,7 @@ fn screeching_soulbreaker_pings_each_opponent_and_gains_one_when_attacking() {
 
 #[test]
 fn sawblade_scamp_collects_oil_on_noncreature_spells_and_pings() {
-    let mut g = table(&["kefka", "veyran", "seph"]);
+    let mut g = table(&["kefka", "cloud", "seph"]);
     let s = perm(&mut g, P0, "Sawblade Scamp");
     cast_free(&mut g, P0, "Lightning Bolt", Ctx { face: Some(P1), ..Ctx::default() });
     cast_free(&mut g, P0, "Llanowar Elves", Ctx::default());
@@ -604,7 +604,7 @@ fn susurian_voidborn_warp_is_cast_for_b_and_exiled_at_the_end_step() {
 
 #[test]
 fn corroding_dragonstorm_drains_two_and_surveils() {
-    let mut g = table(&["kefka", "veyran", "seph"]);
+    let mut g = table(&["kefka", "cloud", "seph"]);
     set_library(&mut g, P0, &["Island", "Island", "Island", "Lightning Bolt", "Ichor Slick"]);
     let l0 = g.player(P0).life;
     cast_free(&mut g, P0, "Corroding Dragonstorm", Ctx::default());
@@ -625,7 +625,7 @@ fn corroding_dragonstorm_returns_to_hand_when_a_dragon_enters() {
 
 #[test]
 fn intellect_devourer_exiles_a_card_from_each_opponents_hand_until_it_leaves() {
-    let mut g = table(&["kefka", "veyran", "seph"]);
+    let mut g = table(&["kefka", "cloud", "seph"]);
     hand(&mut g, P1, &["Forest", "Lightning Bolt"]);
     hand(&mut g, P2, &["Counterspell"]);
     let d = perm(&mut g, P0, "Intellect Devourer");
@@ -676,7 +676,7 @@ fn kefkas_wheel_for_the_kefka_deck_picks_a_new_type_after_the_opponents() {
 
 #[test]
 fn the_crawler_loop_kills_the_table_when_the_library_is_long_enough() {
-    let mut g = table(&["kefka", "veyran", "seph"]);
+    let mut g = table(&["kefka", "cloud", "seph"]);
     flipped_kefka(&mut g, P0);
     hand(&mut g, P0, &["Island"]); // the Crawler is */* (cards in hand): with an empty hand it is a 0/0 and dies
     perm(&mut g, P0, "Psychosis Crawler");
@@ -691,7 +691,7 @@ fn the_crawler_loop_kills_the_table_when_the_library_is_long_enough() {
 
 #[test]
 fn the_crawler_loop_stops_cleanly_when_the_library_runs_out() {
-    let mut g = table(&["kefka", "veyran"]);
+    let mut g = table(&["kefka", "cloud"]);
     flipped_kefka(&mut g, P0);
     hand(&mut g, P0, &["Island"]); // the Crawler is */* (cards in hand): with an empty hand it is a 0/0 and dies
     perm(&mut g, P0, "Psychosis Crawler");
@@ -703,7 +703,7 @@ fn the_crawler_loop_stops_cleanly_when_the_library_runs_out() {
 
 #[test]
 fn the_crawler_loop_ends_with_the_last_opponent_dead_in_a_four_player_game() {
-    let mut g = table(&["kefka", "veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "cloud", "seph", "sauron"]);
     flipped_kefka(&mut g, P0);
     hand(&mut g, P0, &["Island"]); // the Crawler is */* (cards in hand): with an empty hand it is a 0/0 and dies
     perm(&mut g, P0, "Psychosis Crawler");
@@ -739,7 +739,7 @@ fn the_discard_choice_keeps_a_held_crawler() {
 /// chooses), whoever it is.
 #[test]
 fn oppression_makes_every_caster_discard_a_card() {
-    let mut g = table(&["kefka", "seph", "veyran"]);
+    let mut g = table(&["kefka", "seph", "cloud"]);
     perm(&mut g, P0, "Oppression");
     // an opponent casts a spell with two cards left in hand: one is discarded
     hand(&mut g, P1, &["Swords to Plowshares", "Forest", "Island"]);
@@ -768,7 +768,7 @@ fn oppression_makes_every_caster_discard_a_card() {
 /// storm cards in hand
 #[test]
 fn kefka_casts_oppression_when_opponents_hold_cards_and_not_with_a_combo_turn() {
-    let mut g = table(&["kefka", "seph", "veyran"]);
+    let mut g = table(&["kefka", "seph", "cloud"]);
     let c = hand(&mut g, P0, &["Oppression", "Swamp", "Island", "Duress"])[0];
     hand(&mut g, P1, &["Forest", "Forest", "Forest", "Forest"]);
     hand(&mut g, P2, &["Forest", "Forest", "Forest", "Forest"]);
@@ -785,7 +785,7 @@ fn kefka_casts_oppression_when_opponents_hold_cards_and_not_with_a_combo_turn() 
 /// this creature." Modeled for Niv-Mizzet, Viashino Fangtail, Blightspeaker and Rummaging Goblin only (Partial).
 #[test]
 fn marvin_uses_nivs_draw_only_while_niv_is_out() {
-    let mut g = table(&["kefka", "veyran"]);
+    let mut g = table(&["kefka", "cloud"]);
     fill_library(&mut g, P0, 10);
     let marvin = perm(&mut g, P0, "Marvin, Murderous Mimic");
     let opts = |g: &mut Game| {

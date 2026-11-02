@@ -16,7 +16,7 @@ const P3: PlayerId = PlayerId(3);
 const GARLAND: &str = "Garland, Royal Kidnapper";
 
 fn tbl() -> Game {
-    table(&["garland", "veyran", "seph", "sauron"])
+    table(&["garland", "cloud", "seph", "sauron"])
 }
 
 fn on(g: &Game, p: PlayerId, m: PermId) -> bool {
