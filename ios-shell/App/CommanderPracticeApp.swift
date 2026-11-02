@@ -1,5 +1,6 @@
 // Commander Practice: the iPad app around the Rust library. It starts practice mode's server on the iPad and shows
 // the table in a web view, full screen, on true black.
+import AVFoundation
 import PracticeCore
 import SwiftUI
 
@@ -8,6 +9,12 @@ struct CommanderPracticeApp: App {
     @State private var url: URL? = nil
     @State private var failed = false
     @Environment(\.scenePhase) private var phase
+
+    /// The page reads the opponents' moves aloud (Voice, in the header): play it as spoken audio even when the iPad
+    /// is silenced, mixed with any music that is playing.
+    init() {
+        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.mixWithOthers])
+    }
 
     var body: some Scene {
         WindowGroup {

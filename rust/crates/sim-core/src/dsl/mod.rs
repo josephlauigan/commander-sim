@@ -853,7 +853,10 @@ fn run(
                 }
             }
         }
-        "search" => search(g, p, e)?,
+        "search" => {
+            let by = spell.or_else(|| src.and_then(|m| g.perm(m).cd)).map(|c| g.db.get(c).name.to_string());
+            search(g, p, e, by.as_deref().unwrap_or(""))?
+        }
         "reanimate" => {
             if crate::impls::t45_winota::jailed(g) {
                 return Ok(()); // --- Tiers 4/5 (winota): Soulless Jailer: permanent cards in graveyards can't enter
@@ -1284,8 +1287,8 @@ fn run(
     Ok(())
 }
 
-/// search effects: a land to the battlefield or hand, or a card matching the filter
-fn search(g: &mut Game, p: PlayerId, e: &Effect) -> Res {
+/// search effects: a land to the battlefield or hand, or a card matching the filter, with the card `by`
+fn search(g: &mut Game, p: PlayerId, e: &Effect, by: &str) -> Res {
     let f = e.filter.clone().unwrap_or_default();
     let to = match &e.to {
         Some(To::Zone(z)) => z.as_str(),
@@ -1364,11 +1367,10 @@ fn search(g: &mut Game, p: PlayerId, e: &Effect) -> Res {
         if !matches!(to, "battlefield" | "graveyard") {
             crate::ai::rules::mark_tutored(g, p, c); // --- phase4-rules
         }
-        let (pn, cn) = (g.player(p).name, g.db.get(c).name.to_string());
-        if to == "hand" || to == "top" {
-            g.log_secret(p, &format!("    {pn} searches for a card"), &format!("    {pn} searches for {cn}"));
+        if matches!(to, "battlefield" | "graveyard") {
+            crate::glog!(g, "    {} searches for {}", g.player(p).name, g.db.get(c).name);
         } else {
-            crate::glog!(g, "    {} searches for {}", pn, cn);
+            crate::engine::tutors::log_found(g, p, c, to, by);
         }
     }
     Ok(())

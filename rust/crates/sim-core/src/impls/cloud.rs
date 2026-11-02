@@ -394,10 +394,7 @@ fn cloud_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let pick = if crate::human::is_human(g, o) { None } else { cloud_pick(g, o) };
     let human = crate::human::is_human(g, o);
-    let got = super::t1::tutor_named(g, o, &|g, c| is_equipment_card(g, c) && (human || Some(c) == pick), 1, "hand")?;
-    for c in got {
-        crate::glog!(g, "    {} reveals {}", g.player(o).name, card_name(g, c));
-    }
+    super::t1::tutor_named(g, o, &|g, c| is_equipment_card(g, c) && (human || Some(c) == pick), 1, "hand", CLOUD)?;
     Ok(())
 }
 
@@ -1137,10 +1134,7 @@ pub fn register_ds(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 /// Open the Armory: search for an Aura or Equipment card (the DSL row had no filter and fetched Sol Ring, Cid ...).
 fn open_the_armory(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &crate::state::Ctx) -> Res<crate::sym::Sym> {
     let ok = |g: &Game, c: CardId| g.db.get(c).has_subtype("equipment") || g.db.get(c).has_subtype("aura");
-    let got = super::t1::tutor_named(g, p, &ok, 1, "hand")?;
-    for c in got {
-        crate::glog!(g, "    {} reveals {}", g.player(p).name, card_name(g, c));
-    }
+    super::t1::tutor_named(g, p, &ok, 1, "hand", "Open the Armory")?;
     Ok(intern("gy"))
 }
 

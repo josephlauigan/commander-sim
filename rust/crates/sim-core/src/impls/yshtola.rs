@@ -884,7 +884,7 @@ pub fn cap_use(g: &mut Game, p: PlayerId, src: PermId, q: PlayerId) -> Res {
 // ======================================================== tutors
 /// search for any card; with two or more instants and sorceries in your graveyard, add {B}{B}{B}
 fn petition(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    tutor(g, p, "any")?;
+    tutor(g, p, "any", "Dark Petition")?;
     let n = g.player(p).gy.iter().filter(|&&x| g.db.get(x).instant || g.db.get(x).sorcery).count();
     if n >= 2 {
         if human_of(g, p).is_some() {
@@ -910,8 +910,8 @@ fn plea(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
         }
         return Ok("gy");
     }
-    tutor(g, p, "ench")?;
-    tutor(g, p, "ench")?;
+    tutor(g, p, "ench", "Plea for Guidance")?;
+    tutor(g, p, "ench", "Plea for Guidance")?;
     Ok("gy")
 }
 

@@ -417,10 +417,7 @@ fn fighter_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src || !trigger_window(g, o, Some(src), "search for an Equipment", None)? {
         return Ok(());
     }
-    let got = crate::impls::t1::tutor_named(g, o, &|g, c| g.db.get(c).has_subtype("equipment"), 1, "hand")?;
-    if let Some(&c) = got.first() {
-        crate::glog!(g, "    {} finds {} (Fighter Class)", pname(g, o), cname(g, c));
-    }
+    crate::impls::t1::tutor_named(g, o, &|g, c| g.db.get(c).has_subtype("equipment"), 1, "hand", "Fighter Class")?;
     Ok(())
 }
 

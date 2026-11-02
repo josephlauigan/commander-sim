@@ -1218,7 +1218,7 @@ fn archon_sg(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 /// search for an Aura
 fn pilgrim(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if m == src && trigger_window(g, p, Some(src), "search for an Aura", None)? {
-        tutor_named(g, p, &|g, c| card_sub(g, c, "aura"), 1, "hand")?;
+        tutor_named(g, p, &|g, c| card_sub(g, c, "aura"), 1, "hand", "Heliod's Pilgrim")?;
     }
     Ok(())
 }
@@ -1254,13 +1254,15 @@ fn tutor_pred(g: &Game, c: CardId) -> Option<fn(&Game, CardId) -> bool> {
 type TutorRank = (bool, bool, i64, bool, f64);
 
 /// t1.tutor_named: search for up to k cards matching pred (different names), to `to` ('hand'), the deck's wish list
-/// first, then a tutor that can find a wished card, then the best card not already held
+/// first, then a tutor that can find a wished card, then the best card not already held. `by` is the tutor card: a
+/// card to the hand is logged as it says (`log_found`)
 pub fn tutor_named(
     g: &mut Game,
     p: PlayerId,
     pred: &dyn Fn(&Game, CardId) -> bool,
     k: usize,
     to: &str,
+    by: &str,
 ) -> Res<Vec<CardId>> {
     if human_of(g, p).is_some() {
         // practice mode: the person picks
@@ -1272,6 +1274,9 @@ pub fn tutor_named(
                 pl.seen.insert(c);
             }
             pl.stat("tutored", 1);
+            if to == "hand" {
+                crate::engine::tutors::log_found(g, p, c, "hand", by);
+            }
         }
         return Ok(got);
     }
@@ -1311,6 +1316,7 @@ pub fn tutor_named(
         pl.stat("tutored", 1);
         if to == "hand" {
             crate::ai::rules::mark_tutored(g, p, c); // --- phase4-rules
+            crate::engine::tutors::log_found(g, p, c, "hand", by);
         }
     }
     shuffle_library(g, p);
@@ -1354,7 +1360,7 @@ fn wayfarer_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     pay(g, p, 0, "W", false)?;
     g.perm_mut(src).tapped = true;
     if ability_window(g, p, Some(src), "search for a land", None, None)? {
-        tutor_named(g, p, &|g, c| g.db.get(c).land, 1, "hand")?;
+        tutor_named(g, p, &|g, c| g.db.get(c).land, 1, "hand", "Weathered Wayfarer")?;
     }
     Ok(true)
 }

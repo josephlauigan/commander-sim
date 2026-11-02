@@ -300,6 +300,7 @@ function onEvent(ev, draw = true) {
     const mine = !ev.by || ev.by === me.seat || !two();
     const who = me.names[ev.by] || ev.by;
     if (!ev.undone || !mine) recentTaps = [];
+    hush();
     $('#log').replaceChildren(); logQueue = []; pending = null; waitingOn = null; renderPrompt(null); markChoices(null);
     showProposal(null);
     if (ev.tryit) {
@@ -369,9 +370,11 @@ async function pump() {
         if (paused && !stepOnce) break;
         stepOnce = false;
         inbox.shift(); onEvent(ev); showControls();
-        if (!paused) await sleep(BASE / speed);
+        const said = say(ev);                // the next action waits until this one has been read out
+        if (!paused) await Promise.all([sleep(BASE / speed), said]);
       } else {
         inbox.shift();
+        if (!skipping) say(ev);              // an opponent's move on your turn (a response): read out, not waited for
         onEvent(ev, false);                  // drawn once the burst is over (scheduleDraw), not once per event
         if (ev.kind === 'request' || ev.kind === 'over') skipping = false;
       }
@@ -393,8 +396,125 @@ function showControls() {
 function setupPlayback() {
   $('#pb-pause').addEventListener('click', () => { paused = !paused; showControls(); pump(); });
   $('#pb-next').addEventListener('click', () => { stepOnce = true; pump(); });
-  $('#pb-skip').addEventListener('click', () => { skipping = true; pump(); });
+  $('#pb-skip').addEventListener('click', () => { skipping = true; hush(); pump(); });
   for (const b of $('#playback').querySelectorAll('[data-speed]')) b.addEventListener('click', () => { speed = +b.dataset.speed; showControls(); });
+}
+
+// ------------------------------------------------------------------ the opponents' moves read aloud
+// With Voice on, each opponent's move (a top-level log line that starts with their name) and the start of their turn
+// is spoken by the browser's own speech (the iPad app's web view has it too), at a quicker rate on 2× and 4×, with
+// the few effects worth hearing (`spoken`). Your own moves are not, nor history replayed on load, Undo, Try it or Skip
+// ahead. On, and remembered in this browser.
+const speech = window.speechSynthesis || null;
+let voiceOn = true, unlocked = false;
+const RATE = { 1: 1, 2: 1.3, 4: 1.7 };
+const MANA = { W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green', C: 'colourless', S: 'snow', T: 'tap', Q: 'untap' };
+
+let mover = null;   // who made the last move: inside its effects, a line by another opponent is a response (a counter)
+// Held back and read out as one line once the move's effects are all in (at the next other line, or a moment after):
+// a board wipe ({n, yours} permanents removed) and the sacrifices its effects made (player -> cards, in order).
+let wipe = null, sacs = new Map(), held = false;
+// how a permanent of yours left (removal's kind; 'dmg4' is 4 damage)
+const REMOVED = { destroy: 'is destroyed', exile: 'is exiled', bounce: 'is returned to your hand', tuck: 'is put into your library',
+  top: 'is put on top of your library', topbot: 'is put on top or bottom of your library' };
+// the effects of an opponent's own move that are read out too: what a tutor found
+const NOTED = / (reveals|tutors a card|puts a card on top) /;
+
+const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+const listed = (xs) => xs.length < 2 ? xs.join('') : `${xs.slice(0, -1).join(', ')} and ${xs[xs.length - 1]}`;
+
+/// the words for a log line, or null: an opponent's move (or response), the start of their turn, and the effects
+/// you would look up for at a table (your permanents removed, a board wipe, a tutor's card, sacrifices, a player out)
+function spoken(text, view) {
+  const body = text.startsWith('R') ? text.slice(4) : text;           // 'R4    Tergrid casts ...' (the round, then the line)
+  const player = (name) => view && view.players.find((p) => p.name === name);
+  const yours = (name) => !!player(name)?.you;
+  const out = body.match(/^\*\*\* (.+?) is eliminated .*?by (.+)$/);
+  if (out) return yours(out[1]) ? `You are eliminated by ${out[2]}` : `${out[1]} is eliminated${out[2] === '?' ? '' : ` by ${out[2]}`}`;
+  const turn = body.match(/^--- (.+?) turn \d+/);
+  if (turn) { mover = null; return player(turn[1]) && !yours(turn[1]) ? `${turn[1]}'s turn` : null; }
+  if (!body.startsWith('  ')) return null;                            // a note
+  const line = body.trim();
+  if (/^board wipe resolves/.test(line)) { wipe = { n: 0, yours: 0 }; return hold(); }
+  const wiped = line.match(/^.+ \((.+)\) is removed by the wipe/);
+  if (wiped) { if (wipe) { wipe.n++; if (yours(wiped[1])) wipe.yours++; } return hold(); }
+  const gone = line.match(/^(.+) \((.+)\) is removed: (\w+)$/);
+  if (gone) {
+    if (!yours(gone[2])) return null;
+    const dmg = gone[3].match(/^dmg(\d+)$/);
+    return `Your ${gone[1]} ${dmg ? `takes ${dmg[1]} damage and dies` : REMOVED[gone[3]] || 'is removed'}`;
+  }
+  const sac = body.startsWith('   ') && line.match(/^(.+?) sacrifices (.+?)(?: \([^)]*\))?$/);
+  if (sac && player(sac[1])) { sacs.set(sac[1], [...(sacs.get(sac[1]) || []), sac[2]]); return hold(); }
+  if (/ gets 0 /.test(line)) return null;                              // 'gets 0 poison counter(s)'
+  const who = view && view.players.find((p) => line.startsWith(p.name + ' ') || line.startsWith(p.name + ':'));
+  if (!body.startsWith('   ')) mover = who ? who.name : null;         // a top-level move
+  else if (!who || (who.name === mover && !NOTED.test(line))) return null;  // an effect of the move, not a response
+  if (!who || who.you) return null;
+  return line.replace(/\{([^}]+)\}/g, (_, m) => ` ${m.split('/').map((x) => MANA[x] || x).join(' or ')} `)  // {2}{U}: 2 blue
+    .replace(/ -> /g, ' on ').replace(/\b1 (\w+)\(s\)/g, '1 $1').replace(/\(s\)/g, 's').replace(/\s+/g, ' ').trim();
+}
+
+/// read out an event if it is an opponent's move (or an effect worth hearing); resolves once it has been spoken
+function say(ev) {
+  if (!speech || !voiceOn || ev.kind !== 'log' || ev.id <= liveFrom || ev.replay) return Promise.resolve();
+  held = false;
+  const words = spoken(ev.text, ev.view || lastView);
+  if (!held && words) sayHeld();                                       // the effects held back are all in
+  return words ? speak(words) : Promise.resolve();
+}
+
+let heldTimer = null;
+function hold() { held = true; clearTimeout(heldTimer); heldTimer = setTimeout(sayHeld, 50); return null; }
+function sayHeld() {
+  clearTimeout(heldTimer);
+  const [w, s] = [wipe, sacs];
+  wipe = null; sacs = new Map();
+  if (!voiceOn) return;
+  if (w) speak(`Board wipe: ${plural(w.n, 'permanent')} removed${w.yours ? `, ${w.yours} of yours` : ''}`);
+  for (const [name, cards] of s) {
+    const n = new Map();
+    for (const c of cards) n.set(c, (n.get(c) || 0) + 1);
+    const what = listed([...n].map(([c, k]) => (k > 1 ? `${k} ${c}s` : c)));
+    const mine = lastView && lastView.players.some((p) => p.you && p.name === name);
+    speak(mine ? `You sacrifice ${what}` : `${name} sacrifices ${what}`);
+  }
+}
+
+function speak(words) {
+  return new Promise((done) => {
+    const u = new SpeechSynthesisUtterance(words);
+    u.rate = RATE[speed] || 1;
+    const guard = setTimeout(done, 4000 + 150 * words.length);       // the end event doesn't always come (iOS)
+    u.onend = u.onerror = () => { clearTimeout(guard); done(); };
+    speech.speak(u);
+  });
+}
+
+function hush() { wipe = null; sacs = new Map(); mover = null; if (speech) speech.cancel(); }
+
+function setVoice(on) {
+  voiceOn = on;
+  if (!on) hush();
+  const b = $('#voice');
+  b.replaceChildren(icon(on ? 'voice' : 'mute'), on ? ' Voice' : ' Muted');
+  b.setAttribute('aria-pressed', String(on));
+  try { localStorage.setItem('voice', on ? '1' : '0'); } catch (e) { /* private window: not remembered */ }
+}
+
+function setupVoice() {
+  if (!speech) return;                                                 // no speech in this browser: no button
+  $('#voice').hidden = false;
+  try { setVoice(localStorage.getItem('voice') !== '0'); } catch (e) { setVoice(true); }
+  $('#voice').addEventListener('click', () => setVoice(!voiceOn));
+  // Safari (and the iPad app) speaks only after a first utterance made from a tap or a key
+  const unlock = () => {
+    if (unlocked) return;
+    unlocked = true;
+    speech.speak(new SpeechSynthesisUtterance(''));
+  };
+  document.addEventListener('pointerdown', unlock, { capture: true });
+  document.addEventListener('keydown', unlock, { capture: true });
 }
 
 function connect() {
@@ -783,6 +903,7 @@ async function init() {
   $('#hint').addEventListener('click', hint);
   $('#autopass').addEventListener('change', changeAutopass);
   setupPlayback();
+  setupVoice();
   (passBtn = passBtn || $('#pass')).addEventListener('click', () => answer({ do: 'pass' }));
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeMenu();

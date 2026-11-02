@@ -288,7 +288,7 @@ fn speaker_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let h = g.player(p).hand.len();
     crate::engine::cast::discard_worst(g, p, 1)?;
     if g.player(p).hand.len() < h {
-        super::t1::tutor_named(g, p, &|g, c| g.db.get(c).creature, 1, "hand")?;
+        super::t1::tutor_named(g, p, &|g, c| g.db.get(c).creature, 1, "hand", "Formidable Speaker")?;
     }
     Ok(())
 }
@@ -416,7 +416,7 @@ fn vibrance_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
             let n = &*g.db.get(c).name;
             n == "Gaea's Cradle" || (n == "Talon Gates of Madara" && !g.player(p).library.iter().any(|&x| &*g.db.get(x).name == "Gaea's Cradle"))
         };
-        super::t1::tutor_named(g, p, &|g, c| g.db.get(c).land && (!want || key(g, c)), 1, "hand")?;
+        super::t1::tutor_named(g, p, &|g, c| g.db.get(c).land && (!want || key(g, c)), 1, "hand", "Vibrance")?;
         crate::engine::life::gain(g, p, 2)?;
     }
     Ok(())

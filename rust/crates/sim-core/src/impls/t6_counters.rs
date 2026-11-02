@@ -429,7 +429,7 @@ fn dizzy_transmute_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let mv = g.db.get(c).cmc;
     crate::glog!(g, "  {} transmutes Dizzy Spell", pname(g, p));
     let pred = move |g: &Game, x: CardId| g.db.get(x).cmc == mv;
-    super::t1::tutor_named(g, p, &pred, 1, "hand")?;
+    super::t1::tutor_named(g, p, &pred, 1, "hand", "Dizzy Spell")?;
     Ok(true)
 }
 

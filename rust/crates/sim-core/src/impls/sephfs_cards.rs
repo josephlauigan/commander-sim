@@ -969,7 +969,7 @@ fn gix_chapter(g: &mut Game, src: PermId, p: PlayerId, n: i64) -> Res {
             if !crate::engine::stack::trigger_window(g, p, Some(src), "chapter II: tutor, lose 3 life", Some(3.0))? {
                 return Ok(());
             }
-            crate::engine::tutors::tutor(g, p, "any")?;
+            crate::engine::tutors::tutor(g, p, "any", "The Cruelty of Gix")?;
             lose_life(g, p, 3, Some(p), "life", None)?;
             stat(g, p, "sf_gix_tutors", 1);
         }

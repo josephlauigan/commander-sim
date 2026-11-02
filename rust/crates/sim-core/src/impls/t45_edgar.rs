@@ -500,7 +500,7 @@ fn emeritus_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.perm_mut(src).data.set(DataKey::Prepared, Val::Bool(false));
-    crate::impls::mine::cast_copy_with(g, p, None, Some("Demonic Tutor"), false, 5.0, &mut |g| tutor(g, p, "any"))?;
+    crate::impls::mine::cast_copy_with(g, p, None, Some("Demonic Tutor"), false, 5.0, &mut |g| tutor(g, p, "any", "Demonic Tutor"))?;
     Ok(true)
 }
 

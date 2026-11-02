@@ -954,7 +954,7 @@ fn helm(g: &mut Game, src: Src, p: PlayerId) -> Res<Vec<PermId>> {
 fn sfm(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let o = g.perm(src).owner;
     if m == src && trigger_window(g, o, Some(src), "search for an Equipment", None)? {
-        super::t1::tutor_named(g, o, &|g, c| g.db.get(c).has_subtype("equipment"), 1, "hand")?;
+        super::t1::tutor_named(g, o, &|g, c| g.db.get(c).has_subtype("equipment"), 1, "hand", "Stoneforge Mystic")?;
     }
     Ok(())
 }

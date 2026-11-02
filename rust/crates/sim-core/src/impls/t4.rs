@@ -445,7 +445,7 @@ fn oni(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, _dmg: i32) -
 /// ninjutsu {2}{U}{U}: searches for a Ninja on combat damage
 fn higure(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _dmg: i32) -> Res {
     if a == src && trigger_window(g, p, Some(src), "search for a Ninja", None)? {
-        crate::impls::t1::tutor_named(g, p, &|g, c| g.db.get(c).has_subtype("ninja"), 1, "hand")?;
+        crate::impls::t1::tutor_named(g, p, &|g, c| g.db.get(c).has_subtype("ninja"), 1, "hand", "Higure, the Still Wind")?;
     }
     Ok(())
 }

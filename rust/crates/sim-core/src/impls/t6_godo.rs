@@ -105,7 +105,7 @@ pub fn godo_fetch(g: &mut Game, o: PlayerId) -> Res {
         Some(n) => &*g.db.get(c).name == n,
         None => is_equipment_card(g, c),
     };
-    let got = super::t1::tutor_named(g, o, &pred, 1, "battlefield")?;
+    let got = super::t1::tutor_named(g, o, &pred, 1, "battlefield", "Godo, Bandit Warlord")?;
     if human_of(g, o).is_some() {
         // the human's pick may still be in the library list
         for &c in &got {
@@ -352,7 +352,7 @@ fn engineer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         Some(n) => &*g.db.get(c).name == n,
         None => is_artifact_card(g, c) && g.db.get(c).cmc <= 3,
     };
-    let got = super::t1::tutor_named(g, o, &pred, 1, "graveyard")?;
+    let got = super::t1::tutor_named(g, o, &pred, 1, "graveyard", "Goblin Engineer")?;
     for c in got {
         let lib = &mut g.player_mut(o).library;
         if let Some(i) = lib.iter().position(|&x| x == c) {
@@ -463,7 +463,7 @@ fn tez_three_val(g: &Game, p: PlayerId, src: PermId) -> Option<f64> {
 }
 
 fn tez_three(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
-    super::t1::tutor_named(g, p, &|g, c| is_artifact_card(g, c) && g.db.get(c).cmc <= 1, 1, "hand")?;
+    super::t1::tutor_named(g, p, &|g, c| is_artifact_card(g, c) && g.db.get(c).cmc <= 1, 1, "hand", "Tezzeret, Cruel Captain")?;
     Ok(())
 }
 
