@@ -1,8 +1,10 @@
 1 Adeline, Resplendent Cathar (fca) 1
+1 Anguished Unmaking (soc) 293
 1 Arcane Denial (all) 22b
 1 Arcane Signet (p30m) 1P
 1 Archon of Absolution (eld) 3
 1 Atraxa, Grand Unifier (fca) 49
+1 Aura Shards (inv) 233
 1 Austere Command (brc) 69
 1 Avacyn's Pilgrim (isd) 170
 1 Aven Mindcensor (clb) 688
@@ -10,35 +12,39 @@
 1 Baneslayer Angel (m21) 6
 1 Basalt Monolith (3ed) 235
 1 Bastion Protector (msc) 122
-1 Bite Down (dmu) 155
-1 Blossoming Defense (kld) 146
+1 Bayou (ced) 279
+1 Birds of Paradise (dmr) 439
 1 Breeding Pool (unf) 286
 1 Brushland (bro) 259
 1 Caves of Koilos (drc) 148
 1 Cecil, Dark Knight (fin) 525
 1 Coiling Oracle (rvr) 172
 1 Command Tower (pip) 259
-1 Conqueror's Flail (fic) 340
 1 Crawlspace (ulg) 123
 1 Darksteel Mutation (cmm) 623
 1 Dauthi Voidwalker (tdc) 176
 1 Deathcap Glade (sos) 253
+1 Demonic Tutor (cmm) 696
 1 Diabolic Tutor (sld) 721
 1 Disdainful Stroke (soa) 147
-1 Disenchant (ath) 5
 1 Dragonlord Dromoka (2x2) 376
 1 Drowned Catacomb (m11) 224
 1 Elenda, the Dusk Rose (2x2) 377
+1 Elesh Norn, Mother of Machines (one) 416
 1 Elspeth, Sun's Champion (ths) 9
+1 Ephemerate (sta) 68
 1 Fact or Fiction (cmm) 631
 1 Faeburrow Elder (plst) ELD-190
 1 Falcon and Redwing (msc) 14
-1 Fellwar Stone (cmm) 657
 1 Flickering Hound (fra) 7
-3 Forest (mdd) 301
+1 Flooded Strand (mh3) 353
+1 Forest (mdd) 301
+1 Gaea's Cradle (olgc) 2022A
 1 Ghostly Prison (soc) 146
 1 Gifts Ungiven (2x2) 347
 1 Glacial Fortress (msc) 248
+1 Godless Shrine (rvr) 294
+1 Grand Abolisher (cmm) 625
 1 Grave Titan (sld) 2188
 1 Hallowed Fountain (rvr) 280
 1 Hero of Bladehold (mbs) 8
@@ -47,27 +53,31 @@
 1 Lightning Greaves (2xm) 360
 1 Llanowar Wastes (c19) 258
 1 Lyra Dawnbringer (dmr) 413
-1 Memory Trap (fra) 15
+1 Marsh Flats (mh2) 476
+1 Misty Rainforest (spg) 111
 1 Nightveil Predator (rvr) 206
-1 Nightwind Glider (plst) MMQ-31
-1 Orzhov Signet (drc) 134
-1 Paradox Surveyor (sos) 208
+1 Overgrown Tomb (rtr) 243
 1 Path to Exile (blc) 147
-7 Plains (mdd) 292
+2 Plains (mdd) 292
+1 Polluted Delta (mh3) 356
 1 Propaganda (plst) C16-94
 1 Resplendent Angel (lci) 32
 1 Restoration Angel (khc) 31
 1 Rings of Brighthearth (ltc) 352
+1 Savannah (ced) 281
+1 Scrubland (ced) 282
 1 Skyclave Apparition (m3c) 172
 1 Smothering Tithe (cmm) 57
+1 Sol Ring (sld) 2093
 1 Sphinx of New Prahv (rvr) 227
 1 Sun Titan (afc) 73
 1 Sunpetal Grove (ltc) 336
-6 Swamp (mdd) 296
+1 Swamp (mdd) 296
 1 Swan Song (sld) 2829
 1 Swords to Plowshares (ice) 54
+1 Sylvan Library (4ed) 273
 1 Talisman of Curiosity (pip) 245
-1 Talisman of Unity (mrd) 257
+1 Temple Garden (rvr) 300
 1 The Wasp, Winsome Avenger (msc) 39
 1 Thrasios, Triton Hero (fca) 58
 1 Tropical Island (cei) 284
@@ -76,7 +86,9 @@
 1 Underground River (wc98) bs362
 1 Undergrowth Stadium (cmm) 666
 1 Vampire Nighthawk (m13) 112
+1 Verdant Catacombs (zne) 8
 1 Walking Ballista (sld) 58
 1 Windborn Muse (dmr) 415
+1 Windswept Heath (zne) 5
 1 Worldly Tutor (dmr) 442
 1 Yavimaya Coast (c21) 409

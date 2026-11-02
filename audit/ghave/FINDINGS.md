@@ -1,5 +1,10 @@
 # Ghave, Guru of Spores (key `ghave`): findings
 
+**Retired 2026-11-02 (JD).** The deck was broken up: 53 of its cards moved as upgrades into eight decks (Tymna/Thrasios,
+Sheoldred, Kefka, Y'shtola, Cloud, Ur-Dragon, Sauron, Karn; see the CHANGELOG entries of 2026-11-02), and the other 36
+cards and the basics went to the binder. The physical deck no longer exists. The list below stays only as the `ghave`
+simulator seat until the key is retired in a separate change.
+
 The deck's living list of strengths, weaknesses and what was tested. Opponents: its matched tiers, t3-t4
 (`data/my_decks.toml`; Seph's seat since 2026-10-30). Loose profile, look-ahead AI.
 

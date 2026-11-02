@@ -76,8 +76,11 @@ cardgen validate                                                        # check 
   they never cast, attack, block or respond): the kill turn (median, mean, share by turn 1-8), how it won, mulligans,
   the ready turn and the protection held on the kill turn. No tier limit applies. `--trace GAME` prints one game.
 - `--realism`: with `--pool tN`, play the tier's own decks and score the games against `data/realism/tN.toml`.
-- `--knobs FILE`: the AI's hand-set values (deck styles, counter thresholds, look-ahead weights) from a TOML file
-  (`rust/crates/sim-cli/src/knobs.rs`).
+- `--knobs FILE|builtin`: the AI's values (deck styles, counter thresholds, look-ahead weights). By default the fitted
+  knobs of `data/knobs/t3.toml`, `t5.toml` and `t6.toml` load (each pool deck of those tiers its own tier's style; the
+  table takes the `[table]` knobs of the tier most of its seats belong to); t0, t1, t2, t4 and your decks stay
+  built-in. `FILE` is a TOML file used instead of those defaults, over the built-in values
+  (`rust/crates/sim-cli/src/knobs.rs`); `builtin` gives the built-in values everywhere.
 - `--fit`: with `--pool tN`, search the knobs (sep-CMA-ES, the same seeds for every candidate) for the values that
   bring the tier closest to its targets, and write them as a knobs file (`--fit-scope`, `--fit-gens`, `--fit-stats`,
   `--fit-out`; `rust/crates/sim-cli/src/fit.rs`).
