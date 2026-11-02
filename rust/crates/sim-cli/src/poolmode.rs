@@ -198,7 +198,7 @@ impl Ctx<'_> {
         seed0: u64,
     ) -> RunTally {
         let sim = self.sim;
-        let st = sim.settings(profile(prof).unwrap());
+        let st = sim.settings_vs(profile(prof).unwrap(), opp_keys);
         let games = sim.run_seeds(&Self::seeds(n, seed0), |s| {
             let seats = sim.seats_for(s, Some(me), my_seat, opp_keys, 3);
             GameOut::from_game(&sim.play(s, &seats, &st, false), false)
@@ -222,7 +222,7 @@ impl Ctx<'_> {
         seed0: u64,
     ) -> (RunTally, Analysis) {
         let sim = self.sim;
-        let st = sim.settings(profile(prof).unwrap());
+        let st = sim.settings_vs(profile(prof).unwrap(), opp_keys);
         let games = sim.run_seeds(&Self::seeds(n, seed0), |s| {
             let seats = sim.seats_for(s, Some(me), Some(my_seat), opp_keys, 3);
             let mut g = GameOut::from_game(&sim.play(s, &seats, &st, false), true);
@@ -245,7 +245,7 @@ impl Ctx<'_> {
 
     /// poolmode.analyze
     pub fn analyze(&self, me: &str, my_seat: &Seat, opp_keys: &[String], prof: &str, n: u64, seed0: u64) -> Analysis {
-        self.analyze_with(me, my_seat, opp_keys, self.sim.settings(profile(prof).unwrap()), n, seed0)
+        self.analyze_with(me, my_seat, opp_keys, self.sim.settings_vs(profile(prof).unwrap(), opp_keys), n, seed0)
     }
 
     /// analyze with these settings (the preflight dry run plays the adaptive AI whatever --ai says)
@@ -281,7 +281,7 @@ impl Ctx<'_> {
         n: u64,
         seed0: u64,
     ) -> Vec<(u64, GameOut)> {
-        let st = self.sim.settings(profile(prof).unwrap());
+        let st = self.sim.settings_vs(profile(prof).unwrap(), opp_keys);
         self.tier_games_with(&st, me, opp_keys, k, n, seed0)
     }
 
@@ -718,7 +718,6 @@ fn card_infos(sim: &Sim, cards: &[String]) -> Vec<CardInfo> {
 pub fn trace(sim: &Sim, a: &Args, cards: &[String]) -> Result<(), String> {
     let Some(deck) = a.deck.as_deref() else { return trace_pool(sim, a) };
     let prof = a.profiles[0].clone();
-    let st = sim.settings(profile(&prof)?);
     // no tier (or all): the deck's first tier; a tier outside the deck's own needs --any-tier
     let own = deck_tiers(sim, deck);
     let tier = match a.pool.as_deref() {
@@ -726,6 +725,7 @@ pub fn trace(sim: &Sim, a: &Args, cards: &[String]) -> Result<(), String> {
         Some(t) => select_tiers(deck, &own, t, a.any_tier)?.remove(0),
     };
     let tier = tier.as_str();
+    let st = sim.settings_in(profile(&prof)?, Some(tier)); // the table is the tier's: its default [table] knobs
     let game = a.trace.unwrap();
     let seed = a.seed + game;
     let seat = sim.seat(deck, cards)?;
@@ -750,10 +750,14 @@ fn trace_pool(sim: &Sim, a: &Args) -> Result<(), String> {
         Some(t) => t,
     };
     let prof = a.profiles[0].clone();
-    let st = sim.settings(profile(&prof)?);
+    let st = sim.settings_in(profile(&prof)?, Some(tier));
     let game = a.trace.unwrap();
     let seed = a.seed + game;
-    let seats = sim.seats_for(seed, None, None, &sim.pool_keys(tier), 4);
+    // TRACE_ORDER=<deck key> (scratch): the `--calibrate ordering` game of that deck against the tier below
+    let seats = match (std::env::var("TRACE_ORDER").ok(), TIERS.iter().position(|t| *t == tier)) {
+        (Some(k), Some(ti)) if ti > 0 => sim.seats_for(seed, Some(&k), None, &sim.pool_keys(TIERS[ti - 1]), 3),
+        _ => sim.seats_for(seed, None, None, &sim.pool_keys(tier), 4),
+    };
     let g = crate::play::catch_game(|| GameOut::from_game(&sim.play(seed, &seats, &st, true), false))?;
     println!(
         "Play-by-play of within-tier game {game} (seed {seed}): {}, {prof} profile, {} AI",
@@ -802,9 +806,8 @@ mod tier_tests {
     fn the_repository_decks_have_their_tiers() {
         let root = crate::decks::root().unwrap();
         let f = sim_core::export::load_decks(&crate::decks::data_dir(&root).join("decks.json")).unwrap();
-        let want: [(&str, &[&str]); 12] = [
+        let want: [(&str, &[&str]); 11] = [
             ("yshtola", &["t5"]), // JD 10/18 bands: 1 t5, 2 t3-t4, 3 t3, 4 t1-t3
-            ("ghave", &["t3", "t4"]),
             ("sheoldred", &["t3", "t4"]),
             ("sauron", &["t3", "t4"]),
             ("kefka", &["t3"]),

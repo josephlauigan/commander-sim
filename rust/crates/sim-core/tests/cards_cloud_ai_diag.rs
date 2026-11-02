@@ -348,12 +348,12 @@ fn probe_m_immediate_shield() {
     );
 }
 
-/// (fixed in cloud-ai-fix) these three Equipment of the deck get no equip option at all, so once
-/// cast they never attach (Champion's Helm and Sword of Feast and Famine only have the Sauron deck's hand-written
-/// equip plan; Magitek Scythe attaches on entering only, its Equip {2} is not modeled).
+/// (fixed in cloud-ai-fix) these Equipment of the deck get no equip option at all, so once cast they never attach
+/// (Sword of Feast and Famine only has the Sauron deck's hand-written equip plan; Magitek Scythe attaches on entering
+/// only, its Equip {2} is not modeled). Champion's Helm, once the third, left the deck in the Ghave breakup (11/02).
 #[test]
 fn bug_helm_feast_and_famine_and_scythe_have_no_equip_option() {
-    for n in ["Champion's Helm", "Sword of Feast and Famine", "Magitek Scythe"] {
+    for n in ["Sword of Feast and Famine", "Magitek Scythe"] {
         let mut g = game();
         g.dsl_on = true;
         cloud_board(&mut g, 9);

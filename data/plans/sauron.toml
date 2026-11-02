@@ -125,10 +125,6 @@ value = 57
 cards = ["Call of the Ring"]
 value = 55
 
-[[prio]]
-cards = ["Kaervek the Merciless"]
-value = 54
-
 # Jace's Archivist: only with a wheel payoff out
 [[prio]]
 cards = ["Jace's Archivist"]

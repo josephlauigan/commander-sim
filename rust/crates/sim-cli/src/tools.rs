@@ -137,7 +137,7 @@ pub fn swaptest(argv: &[String]) -> i32 {
             return Err(format!("variant list fails validation: {}", probs.join("; ")));
         }
         let vseat = sim.seat(me, &cards)?;
-        let st = sim.settings(Profile::Loose); // loose only (JD 2026-10-19)
+        let st = sim.settings_vs(Profile::Loose, &opp); // loose only (JD 2026-10-19)
         sim.prog.lock().unwrap().on = false;
         let seeds: Vec<u64> = (500000..500000 + n).collect();
         let res = sim.run_seeds(&seeds, |s| {
@@ -198,8 +198,9 @@ pub fn searchtest(argv: &[String]) -> i32 {
         if opp.is_empty() {
             return Err(format!("no tier {tier:?}"));
         }
-        let heur = sim.settings(Profile::Conservative);
+        let heur = sim.settings_vs(Profile::Conservative, &opp);
         let mut srch = sim_core::settings::Settings::new(Profile::Conservative, AiMode::Lookahead, 1.0);
+        sim.tune(&mut srch, sim.table_tier(&opp).as_deref()); // both sides play the same knobs
         if argv.len() > 3 {
             srch.search.rollouts = arg(argv, 3, "rollouts")?;
         }

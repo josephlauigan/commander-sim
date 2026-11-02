@@ -20,7 +20,7 @@ const fn m(key: &'static str, label: &'static str, axis: &'static str, up: bool,
 }
 
 /// compare.METRICS: (key, label, axis, which direction is better, applies to)
-pub const METRICS: [Metric; 26] = [
+pub const METRICS: [Metric; 24] = [
     m("win", "Win rate", "Outcome", true, None),
     m("survived", "Rounds survived (or game length)", "Outcome", true, None),
     m("mulls", "Extra mulligans per game", "Mana & consistency", false, None),
@@ -39,8 +39,6 @@ pub const METRICS: [Metric; 26] = [
     m("protection", "Protection used (HI/sac/Tidebinder/counter-war)", "Resilience", true, None),
     m("threats_lost", "Your key permanents removed by opponents", "Resilience", false, None),
     m("countered", "Your spells countered", "Resilience", false, None),
-    m("recovered", "Removed bombs brought back", "Resilience", true, Some("ghave")),
-    m("bombs_landed", "Bombs put on the battlefield", "Threat & pressure", true, Some("ghave")),
     m("dmg_dealt", "Damage dealt to opponents per game", "Threat & pressure", true, None),
     m("dmg_combat", "  ...of which combat damage", "Threat & pressure", true, None),
     m("dmg_burn", "  ...of which magecraft / burn", "Threat & pressure", true, None),
@@ -61,7 +59,7 @@ pub fn plan_text(deck: &str) -> &'static str {
         "sephfs" => "Sephiroth flipped (the fourth drain of a turn)",
         "cloud" => "first attack by an equipped Cloud",
         "karn" => "Karn first adds mana at upkeep",
-        "thanos" | "urdragon" | "ghave" => "first combo attempt",
+        "thanos" | "urdragon" => "first combo attempt",
         "thrasios" | "kraum" => "first Tymna draw, or the infinite-mana combo going off",
         "najeela" => "first WUBRG extra combat",
         _ => "",
@@ -126,8 +124,6 @@ pub fn axis_values(g: &GameOut, me: usize, deck: &str) -> Vec<(&'static str, f64
         ("protection", (p.stat("hi_used") + p.stat("sac_saves") + p.stat("counterwar_won") + tide) as f64),
         ("threats_lost", s("threats_lost")),
         ("countered", s("spells_countered")),
-        ("recovered", s("bomb_recovered")),
-        ("bombs_landed", s("bombs_landed")),
         ("dmg_dealt", s("dmg_dealt")),
     ];
     if p.stat("had_T4") != 0 {

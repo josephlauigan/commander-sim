@@ -16,7 +16,7 @@ pub mod galadriel;
 pub mod garland;
 pub mod garland_cards;
 pub mod karn_cards;
-pub mod ghave; // --- ghave: Ghave, Guru of Spores (enters with counters, the deck's loops in the combo catalogue)
+pub mod mikaeus_trisk; // --- Mikaeus + Triskelion in the combo catalogue (Sephiroth's loop 0, read for any deck)
 pub mod sephfs;
 pub mod sephfs_cards;
 pub mod kefka;

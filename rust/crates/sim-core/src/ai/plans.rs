@@ -33,8 +33,6 @@ pub struct DeckConfig {
     /// how the deck stacks the top of its library ('mv': biggest mana value first)
     pub top_pref: Option<&'static str>,
     pub hooked_prio: Option<i32>,
-    /// --- ghave: sacrifice through paid outlets in response to removal and wipes (plan `knobs.paid_outlets`)
-    pub paid_outlets: bool,
 }
 
 const NONE: DeckConfig = DeckConfig {
@@ -48,7 +46,6 @@ const NONE: DeckConfig = DeckConfig {
     aura_host: None,
     top_pref: None,
     hooked_prio: None,
-    paid_outlets: false,
 };
 
 const fn style(temp: f64, aggression: f64, caution: f64) -> Option<Style> {

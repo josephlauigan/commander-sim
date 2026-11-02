@@ -25,7 +25,6 @@ fn test_your_decks() {
             "alela",
             "cloud",
             "galadriel",
-            "ghave",
             "karn",
             "kefka",
             "sauron",
@@ -36,9 +35,9 @@ fn test_your_decks() {
             "yshtola"
         ]
     );
-    assert_eq!(d["ghave"]["name"], "Ghave, Guru of Spores"); // the deck file's commander line
-    assert_eq!(d["ghave"]["commander"], "Ghave, Guru of Spores"); // the card the engine (and image) uses
-    assert_eq!(d["ghave"]["bracket"], 4);
+    assert_eq!(d["sheoldred"]["name"], "Sheoldred, the Apocalypse"); // the deck file's commander line
+    assert_eq!(d["sheoldred"]["commander"], "Sheoldred, the Apocalypse"); // the card the engine (and image) uses
+    assert_eq!(d["sheoldred"]["bracket"], 4);
     assert_eq!(d["cloud"]["bracket"], 3);
     assert!(d["yshtola"]["game_changers"].as_array().unwrap().len() > 3); // band 1 (10/18): only Y'shtola, Seph FS above 3
     for x in d.values() {

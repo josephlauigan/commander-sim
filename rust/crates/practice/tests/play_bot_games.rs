@@ -155,8 +155,8 @@ fn sauron_t4() {
     play("sauron", "t4", 2);
 }
 #[test]
-fn ghave_t3() {
-    play("ghave", "t3", 1);
+fn sheoldred_t3() {
+    play("sheoldred", "t3", 1);
 }
 #[test]
 fn cloud_t1() {
@@ -175,6 +175,6 @@ fn alela_t3() {
     play("alela", "t3", 2);
 }
 #[test]
-fn ghave_t4() {
-    play("ghave", "t4", 2);
+fn sheoldred_t4() {
+    play("sheoldred", "t4", 2);
 }

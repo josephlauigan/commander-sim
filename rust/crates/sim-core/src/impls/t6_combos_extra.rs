@@ -434,7 +434,59 @@ fn ad_ready(g: &Game, p: PlayerId) -> Ready {
         && in_hand_or_lib(g, p, LED)
         && in_hand_or_lib(g, p, BRAIN_FREEZE)
         && can_pay(g, p, 4, "BBR", false);
-    if oracle_line || breach_line { ok_ready() } else { no() }
+    if !(oracle_line || breach_line) {
+        return no();
+    }
+    // --- t6-stops: Ad Nauseam is a dig, not a combo piece. "In hand or library" made every deck with the cards in it
+    // "ready" the turn it held Ad Nauseam and the mana, and most of those attempts drew ten cards, paid sixteen life
+    // and found nothing (traced: Kraum/Tymna with nothing of the line in hand, Rograkh/Silas with the Oracle gone).
+    // Ready now means Ad Nauseam is likely to find what the line lacks, with the life it can spend.
+    if crate::ai::t6_stops::on() && ad_odds(g, p, oracle_line, breach_line) < AD_MIN_ODDS {
+        return no();
+    }
+    ok_ready()
+}
+
+/// the least chance Ad Nauseam must have of finding the line for it to be called ready
+const AD_MIN_ODDS: f64 = 0.4;
+
+/// the chance that Ad Nauseam finds the missing pieces of the better line it can still pay for: the cards it can
+/// draw with the life above the table's threat floor (at most 15, as the dig is capped), taken from the library
+fn ad_odds(g: &Game, p: PlayerId, oracle_line: bool, breach_line: bool) -> f64 {
+    let lib = &g.player(p).library;
+    let copies = |names: &[&str]| lib.iter().filter(|&&c| names.contains(&cname(g, c))).count();
+    let held = |names: &[&str]| names.iter().any(|n| in_hand(g, p, n).is_some());
+    let spend = g.player(p).life - crate::ai::plans::adnaus_floor(g, p) - 7;
+    let d = ((spend.max(0) as f64 / crate::ai::plans::adnaus_life_per_card(g, p)) as usize).min(15);
+    // the groups of a line still to find: the copies of each in the library
+    let missing =
+        |groups: &[&[&str]]| -> Vec<usize> { groups.iter().filter(|grp| !held(grp)).map(|grp| copies(grp)).collect() };
+    let mut best = 0.0f64;
+    if oracle_line {
+        best = best.max(find_all(lib.len(), d, &missing(&[&[ORACLE], &[CONSULT, PACT]])));
+    }
+    if breach_line {
+        best = best.max(find_all(lib.len(), d, &missing(&[&[BREACH], &[LED], &[BRAIN_FREEZE]])));
+    }
+    best
+}
+
+/// the chance that `d` cards drawn from `n` include at least one copy of every group, `ks[i]` being the copies of
+/// group i among the `n` (inclusion and exclusion over the groups that are missed)
+pub fn find_all(n: usize, d: usize, ks: &[usize]) -> f64 {
+    let d = d.min(n); // a library of ten cannot give fifteen
+    if ks.iter().any(|&k| k == 0) {
+        return 0.0; // a piece is not in the library: the dig cannot find it
+    }
+    let mut total = 0.0;
+    for mask in 0..(1u32 << ks.len()) {
+        let sum: usize = ks.iter().enumerate().filter(|(i, _)| mask >> i & 1 == 1).map(|(_, &k)| k).sum();
+        // the chance that none of the d cards is among those `sum` copies
+        let miss =
+            if n < sum + d { 0.0 } else { (0..d).map(|j| (n - sum - j) as f64 / (n - j) as f64).product::<f64>() };
+        total += if mask.count_ones() % 2 == 0 { miss } else { -miss };
+    }
+    total.clamp(0.0, 1.0)
 }
 
 fn cast_ad(g: &mut Game, p: PlayerId) -> Res<bool> {

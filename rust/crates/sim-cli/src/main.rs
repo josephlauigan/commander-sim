@@ -2,8 +2,8 @@
 //! without Python. Measure one of your decks against the opponent pools (decklists/pool/), or compare a list
 //! change with paired runs.
 //!
-//!     commander-sim --deck ghave --pool t3 --games 1500
-//!     commander-sim --deck ghave --pool t3 --swap "Blood Artist=>Grim Tutor"
+//!     commander-sim --deck sauron --pool t3 --games 1500
+//!     commander-sim --deck sauron --pool t3 --swap "Blood Artist=>Grim Tutor"
 //!     commander-sim --all-decks --pool all --profile loose
 //!
 //! Baseline = the deck list in decklists/<owner>/. Same seeds are used for baseline and variant, so the comparison
@@ -72,7 +72,9 @@ fn compare(argv: &[String]) -> i32 {
             return 1;
         }
     };
-    if let Some(path) = &a.knobs {
+    if a.knobs.as_deref() == Some("builtin") {
+        sim.defaults = knobs::Defaults::builtin(); // --knobs builtin: no fitted defaults, the built-in values everywhere
+    } else if let Some(path) = &a.knobs {
         let read = std::fs::read_to_string(path).map_err(|e| format!("--knobs {path}: {e}"));
         match read.and_then(|text| knobs::parse(&text, path, &sim.deck_keys())) {
             Ok(k) => sim.knobs = Some(k),

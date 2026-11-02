@@ -121,7 +121,7 @@ pub fn all() -> &'static [&'static Combo] {
             .chain(super::cc_brago::COMBOS.iter()) // --- casual combos (brago)
             .chain(super::cc_teysa::COMBOS.iter()) // --- casual combos (teysa)
             .chain(super::t6_combos_scion::COMBOS.iter()) // --- scion
-            .chain(super::ghave::COMBOS.iter()) // --- ghave
+            .chain(super::mikaeus_trisk::COMBOS.iter()) // --- Mikaeus + Triskelion
             .collect()
     });
     &ALL
@@ -423,6 +423,57 @@ fn affordable(g: &Game, p: PlayerId, cmb: &Combo, casts: &[CardId]) -> bool {
     can_pay_with_rituals(g, p, gn, &pips, &line_cards(g, p, cmb, casts))
 }
 
+// --- t6-stops
+/// `affordable`, and (a Tier 6 player, `AI_T6STOPS` on) the cards the line casts can be cast now: no lock forbids the
+/// first (Void Winnower on an even mana value, a Chalice or Bauble that would counter it as it is cast), and none
+/// forbids a later one once the earlier ones are cast (Rule of Law, Deafening Silence, Ethersworn Canonist: one spell
+/// each turn). The line's `ready` looks at the pieces and the mana only, so a line a lock made impossible was gone for
+/// again and again (traced: Kraum/Tymna's Thassa's Oracle under Void Winnower, Rograkh/Silas's Tainted Pact under
+/// Rule of Law).
+fn playable(g: &Game, p: PlayerId, cmb: &Combo, casts: &[CardId]) -> bool {
+    affordable(g, p, cmb, casts) && (!crate::ai::t6_stops::on() || casts_castable(g, p, casts))
+}
+
+fn casts_castable(g: &Game, p: PlayerId, casts: &[CardId]) -> bool {
+    if !crate::impls::t6_plans::is_t6(g, p) {
+        return true;
+    }
+    for (i, &c) in casts.iter().enumerate() {
+        if i == 0 || g.hooks.is_empty() {
+            if !castable(g, p, c, "hand") {
+                return false;
+            }
+        } else {
+            // the earlier casts of the line are made: a copy of the game that has them in this turn's casts
+            let mut g2 = g.clone();
+            let st = g2.turn_stamp();
+            let mut done: Vec<CardId> = match &g2.player(p).turn_casts {
+                Some((s, cs)) if *s == st => cs.clone(),
+                _ => vec![],
+            };
+            done.extend_from_slice(&casts[..i]);
+            g2.player_mut(p).turn_casts = Some((st, done));
+            if !castable(&g2, p, c, "hand") {
+                return false;
+            }
+        }
+    }
+    true
+}
+
+/// why a stopped line named no card: the step or cast that failed (the report reads it where it read "?")
+fn stop_by(g: &Game, what: &str, earlier: Option<CardId>) -> String {
+    match g.last_counter {
+        Some(c) => name_of(g, c).to_string(),
+        None if !crate::ai::t6_stops::on() => "?".to_string(),
+        // an earlier step met an answer (a counter war that spent the mana of the rest): `run_steps` forgets it at each step
+        None => match earlier {
+            Some(c) => format!("no card: {what}, after {} at an earlier step", name_of(g, c)),
+            None => format!("no card: {what}"),
+        },
+    }
+}
+
 // --- ai-fix: C
 /// the cards in p's hand a line uses: the pieces of its groups and the cards it casts (no ritual among them is spent
 /// as mana for the line)
@@ -469,6 +520,14 @@ pub fn ready(g: &Game, p: PlayerId, i: usize) -> bool {
     (all()[i].ready)(g, p).0
 }
 
+/// --- t6-stops: COMBOS[i] is ready and `playable` now: its pieces are there, the mana pays for it and (a Tier 6
+/// player, `AI_T6STOPS` on) a lock lets its spells be cast. The test `combo_options` offers a line by.
+pub fn ready_to_go(g: &Game, p: PlayerId, i: usize) -> bool {
+    let cmb = all()[i];
+    let (ok, _, casts) = (cmb.ready)(g, p);
+    ok && playable(g, p, cmb, &casts)
+}
+
 /// combos.attempt: p goes for COMBOS[i]
 pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     if !crate::impls::t6_plans::is_t6(g, p) {
@@ -479,7 +538,7 @@ pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     let cmb = all()[i as usize];
     let (ok, _, casts) = (cmb.ready)(g, p);
     let turns = g.player(p).turns;
-    if ok && affordable(g, p, cmb, &casts) && g.player(p).combo_turn != Some((turns, cmb.name)) {
+    if ok && playable(g, p, cmb, &casts) && g.player(p).combo_turn != Some((turns, cmb.name)) {
         let need = mana_need(g, p, cmb, &casts);
         crate::ai::t6_table::protect_before_go(g, p, need)?;
     }
@@ -492,7 +551,7 @@ pub fn attempt(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
 fn attempt_run(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     let cmb = all()[i as usize];
     let (ok, keys, casts) = (cmb.ready)(g, p);
-    if !ok || !affordable(g, p, cmb, &casts) {
+    if !ok || !playable(g, p, cmb, &casts) {
         return Ok(false);
     }
     let turns = g.player(p).turns;
@@ -509,7 +568,7 @@ fn attempt_run(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
             return Ok(cast); // a ritual cast (or countered) changed the turn state
         }
         let (ok, keys, casts) = (cmb.ready)(g, p);
-        if !ok || !affordable(g, p, cmb, &casts) {
+        if !ok || !playable(g, p, cmb, &casts) {
             return Ok(true);
         }
         (keys, casts)
@@ -546,7 +605,7 @@ fn attempt_run(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
         if !r? {
             crate::glog!(g, "    ...{} is countered: {} stopped", name_of(g, c), cmb.name);
             g.player_mut(p).stat("combo_stopped", 1);
-            let by = crate::t6stats::last_counter_name(g);
+            let by = stop_by(g, &format!("cast of {}", name_of(g, c)), None);
             crate::t6stats::combo_stop(g, p, cmb.name, &by);
             return Ok(true);
         }
@@ -581,7 +640,9 @@ pub fn run_steps(g: &mut Game, p: PlayerId, cmb: &Combo) -> Res<bool> {
     if gn > 0 || !pips.is_empty() {
         pay(g, p, gn, pips, false)?;
     }
+    let mut earlier: Option<CardId> = None; // --- t6-stops: the last answer an earlier step met
     for (n, st) in cmb.steps.iter().enumerate() {
+        earlier = g.last_counter.or(earlier);
         g.last_counter = None;
         let ok = match st.kind {
             StepKind::Spell | StepKind::Engine => (st.run)(g, p)?,
@@ -617,7 +678,7 @@ pub fn run_steps(g: &mut Game, p: PlayerId, cmb: &Combo) -> Res<bool> {
         if !ok {
             crate::glog!(g, "    ...{} stops at step {} ({})", cmb.name, n + 1, st.label);
             g.player_mut(p).stat("combo_stopped", 1);
-            let by = crate::t6stats::last_counter_name(g);
+            let by = stop_by(g, &format!("step {} ({})", n + 1, st.label), earlier);
             crate::t6stats::combo_stop(g, p, cmb.name, &by);
             return Ok(true);
         }
@@ -730,7 +791,7 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
             continue; // already gone for this turn: `attempt_run` refuses a second try
         }
         let (ok, _, casts) = (cmb.ready)(g, p);
-        if !ok || !affordable(g, p, cmb, &casts) {
+        if !ok || !playable(g, p, cmb, &casts) {
             continue;
         }
         if crate::impls::t6_plans::is_t6(g, p) && !crate::ai::t6_table::go_ok(g, p, cmb.name) {
@@ -1593,7 +1654,7 @@ fn t6_measure(g: &mut Game, p: PlayerId) {
             continue;
         }
         let (ok, _, casts) = (cmb.ready)(g, p);
-        if ok && affordable(g, p, cmb, &casts) {
+        if ok && playable(g, p, cmb, &casts) {
             any_ready = true;
             break;
         }
@@ -1627,7 +1688,7 @@ pub fn audit_ready(g: &Game, p: PlayerId) -> Option<&'static str> {
             continue;
         }
         let (ok, _, casts) = (cmb.ready)(g, p);
-        if ok && affordable(g, p, cmb, &casts) {
+        if ok && playable(g, p, cmb, &casts) {
             return Some(cmb.name);
         }
     }
@@ -1652,7 +1713,7 @@ pub fn ready_lines(g: &Game, p: PlayerId) -> Vec<((u32, String), Vec<CardId>)> {
             continue;
         }
         let (ok, _, casts) = (cmb.ready)(g, p);
-        if ok && affordable(g, p, cmb, &casts) {
+        if ok && playable(g, p, cmb, &casts) {
             out.push((mana_need(g, p, cmb, &casts), line_cards(g, p, cmb, &casts)));
         }
     }
@@ -1773,7 +1834,7 @@ pub fn plan_lines(g: &Game, p: PlayerId, table: bool) -> Vec<(usize, Vec<CardId>
             continue;
         }
         let (ok, _, casts) = (cmb.ready)(g, p);
-        if !ok || !affordable(g, p, cmb, &casts) {
+        if !ok || !playable(g, p, cmb, &casts) {
             continue;
         }
         if table && t6 && !crate::ai::t6_table::go_ok(g, p, cmb.name) {

@@ -9,19 +9,19 @@
 1 Cityscape Leveler (prm) 105858
 1 Coalition Relic (fut) 161
 1 Conjurer's Closet (inr) 441
+1 Crucible of Worlds (2x2) 393
 1 Darksteel Citadel (sld) 608
 1 Darksteel Forge (dst) 110
 1 Duplicant (ema) 220
 1 Endless Atlas (40k) 237
-1 Everflowing Chalice (tsr) 394
 1 Expedition Map (lcc) 112
 1 Ghost Quarter (dis) 173
 1 Gilded Lotus (brr) 80
 1 Grim Monolith (ulg) 126
 1 Hangarback Walker (plg20) 2
 1 Inventors' Fair (kld) 247
-1 Karn Liberated (2xm) 333
 1 Karn, Legacy Reforged (mat) 149
+1 Karn Liberated (2xm) 333
 1 Karn, Scion of Urza (sld) 1419
 1 Karn, the Great Creator (war) 1
 1 Kuldotha Forgemaster (som) 169
@@ -40,7 +40,6 @@
 1 Mox Opal (2xm) 362
 1 Myr Battlesphere (som) 180
 1 Mystic Forge (brr) 99
-1 Nevinyrral's Disk (lea) 266
 1 Oblivion Stone (brc) 153
 1 Pithing Needle (2x2) 397
 1 Platinum Angel (brr) 104
@@ -58,6 +57,8 @@
 1 Staff of Domination (brr) 119
 1 Steel Hellkite (brc) 163
 1 Steel Overseer (brc) 164
+1 Strip Mine (4ed) 363
+1 Summon: Bahamut (fin) 356
 1 Swiftfoot Boots (brr) 121
 1 Tezzeret, Cruel Captain (eoe) 2
 1 The Mightstone and Weakstone (bro) 238
@@ -81,7 +82,7 @@
 1 Urza's Workshop (brc) 51
 1 Walking Ballista (sld) 58
 1 War Room (cmr) 716
-14 Wastes (plg25) 2
+13 Wastes (plg25) 2
 1 Wayfarer's Bauble (5dn) 165
 1 Worn Powerstone (usg) 318
 1 Wurmcoil Engine (sld) 1661
