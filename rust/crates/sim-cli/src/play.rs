@@ -146,8 +146,10 @@ pub struct Sim {
     pub opts: RunOpts,
     pub prog: Mutex<Progress>,
     pub errors: Mutex<Vec<GameError>>,
-    /// --knobs FILE: applied to every run's settings (`settings`)
+    /// --knobs FILE: applied to every run's settings (`settings`), instead of the defaults
     pub knobs: Option<crate::knobs::Knobs>,
+    /// the fitted knobs that are the defaults (data/knobs; `--knobs builtin` empties them)
+    pub defaults: crate::knobs::Defaults,
     seats: HashMap<String, Seat>,
     /// the exported card records (data/cards.json), by name
     raw: HashMap<String, RawCard>,
@@ -170,6 +172,7 @@ impl Sim {
             prog: Mutex::new(Progress::new()),
             errors: Mutex::new(vec![]),
             knobs: None,
+            defaults: crate::knobs::Defaults::builtin(),
             seats: HashMap::new(),
             raw,
         };
@@ -181,6 +184,10 @@ impl Sim {
             seats.insert(d.key.clone(), sim.seat(&d.key, &d.cards)?);
         }
         sim.seats = seats;
+        sim.defaults = {
+            let pool: Vec<(&str, &str)> = sim.pool.iter().map(|d| (d.key.as_str(), d.tier.as_str())).collect();
+            crate::knobs::Defaults::load(&root.join("data").join("knobs"), &pool, &sim.deck_keys())?
+        };
         sim.warn_stale_export();
         Ok(sim)
     }
@@ -230,14 +237,35 @@ impl Sim {
         }
     }
 
-    pub fn settings(&self, profile: Profile) -> Settings {
+    /// a run's settings with the knobs in force (`--knobs FILE`, else the fitted defaults) for a table of this tier: the
+    /// default knobs' `[table]` of that tier's file (None: the built-in table knobs; every pool deck's own tier style
+    /// applies either way)
+    pub fn settings_in(&self, profile: Profile, table_tier: Option<&str>) -> Settings {
         let mut st = Settings::new(profile, self.opts.ai, self.opts.temp);
-        if let Some(k) = &self.knobs {
-            k.apply(&mut st);
-        }
+        self.tune(&mut st, table_tier);
         st
     }
 
+    /// `settings` for a table whose opponents are drawn from `opp_keys`: the table's tier is the one most of them
+    /// belong to (`knobs::majority_tier`)
+    pub fn settings_vs(&self, profile: Profile, opp_keys: &[String]) -> Settings {
+        self.settings_in(profile, self.table_tier(opp_keys).as_deref())
+    }
+
+    /// the tier most of these pool decks belong to (their `[table]` default knobs apply to the whole table)
+    pub fn table_tier(&self, opp_keys: &[String]) -> Option<String> {
+        crate::knobs::majority_tier(
+            opp_keys.iter().filter_map(|k| self.pool.iter().find(|d| &d.key == k)).map(|d| d.tier.as_str()),
+        )
+    }
+
+    /// the knobs in force on top of these settings: `--knobs FILE` replaces the defaults for the run
+    pub fn tune(&self, st: &mut Settings, table_tier: Option<&str>) {
+        match &self.knobs {
+            Some(k) => k.apply(st),
+            None => self.defaults.apply(st, table_tier),
+        }
+    }
     /// every deck key a knobs file may name: your decks and the pool's
     pub fn deck_keys(&self) -> Vec<&str> {
         self.mine.keys().map(|k| k.as_str()).chain(self.pool.iter().map(|d| d.key.as_str())).collect()

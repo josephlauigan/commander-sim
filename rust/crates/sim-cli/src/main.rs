@@ -72,7 +72,9 @@ fn compare(argv: &[String]) -> i32 {
             return 1;
         }
     };
-    if let Some(path) = &a.knobs {
+    if a.knobs.as_deref() == Some("builtin") {
+        sim.defaults = knobs::Defaults::builtin(); // --knobs builtin: no fitted defaults, the built-in values everywhere
+    } else if let Some(path) = &a.knobs {
         let read = std::fs::read_to_string(path).map_err(|e| format!("--knobs {path}: {e}"));
         match read.and_then(|text| knobs::parse(&text, path, &sim.deck_keys())) {
             Ok(k) => sim.knobs = Some(k),

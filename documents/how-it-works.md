@@ -91,7 +91,7 @@ interaction, keeping blockers home). JD's decks have their own; pool decks defau
 and the only one in use: a spell needs importance 6 to be countered, and instant removal is used as freely as
 sorcery-speed removal. Conservative: importance 7, and instant removal needs 2 more. Sephiroth's threshold is 6 in both.
 
-**Knobs.** `--knobs FILE` overrides these hand-set values (styles per deck, `temp_scale`, the counter thresholds,
+**Knobs.** The fitted knobs of t3, t5 and t6 (`data/knobs/tN.toml`, from the 2026-11-01 style fit) are the defaults since 2026-11-02: each pool deck of those tiers gets its own tier's style, and the table takes the `[table]` knobs (`cthresh_default`, `instant_extra`, `t6_moxd_lands`, `temp_scale`) of the tier most of its seats belong to (`--pool tN`, your deck against tN, a tN+1 deck tested into tN: all tN). t0, t1, t2 and t4 stay built-in, as do your decks' styles. `--knobs builtin` gives the built-in values everywhere (for paired runs against the old defaults). `--knobs FILE` replaces the defaults for that run and overrides these hand-set values (styles per deck, `temp_scale`, the counter thresholds,
 `instant_extra`, Tier 6's Mox Diamond land rule `t6_moxd_lands`, the look-ahead's `combo_w`, `ramp_w`, `hold_w`,
 `top_k`, `rollouts`, `horizon`) from a TOML file. The
 format is in `rust/crates/sim-cli/src/knobs.rs` and [`documents/realism.md`](realism.md). Style overrides go into

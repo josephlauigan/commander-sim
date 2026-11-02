@@ -101,9 +101,11 @@ const OPTS: [Opt; 32] = [
         "--knobs",
         false,
         &[],
-        "FILE",
-        "AI knobs (deck styles, counter thresholds, look-ahead weights) from a TOML file, over the built-in values: \
-         see rust/crates/sim-cli/src/knobs.rs; --fit writes one",
+        "FILE|builtin",
+        "AI knobs (deck styles, counter thresholds, look-ahead weights). Default: the fitted knobs of data/knobs/tN.toml \
+         (t3, t5, t6: each pool deck its own tier's style, the table's tier its table knobs). FILE: a TOML file over the \
+         built-in values instead of those defaults (see rust/crates/sim-cli/src/knobs.rs; --fit writes one). builtin: no \
+         fitted knobs, the built-in values everywhere",
     ),
     opt(
         "--any-tier",
@@ -166,7 +168,7 @@ const OPTS: [Opt; 32] = [
 pub fn usage() -> &'static str {
     "usage: commander-sim [-h] [--deck KEY] [--swap \"OUT=>IN\"] [--pool TIER] [--all-decks] [--calibrate WHICH] [--realism]\n\
      \x20                    [--goldfish KEYS]\n\
-     \x20                    [--knobs FILE] [--fit [--fit-scope shared|deck] [--fit-gens N] [--fit-stats LIST] [--fit-out FILE]]\n\
+     \x20                    [--knobs FILE|builtin] [--fit [--fit-scope shared|deck] [--fit-gens N] [--fit-stats LIST] [--fit-out FILE]]\n\
      \x20                    [--games N] [--seed SEED] [--profiles LIST | --profile NAME] [--analyze] [--trace GAME]\n\
      \x20                    [--cards] [--brief] [--no-explain] [--no-preflight | --preflight-only] [--ai {lookahead,adaptive}]\n\
      \x20                    [--temp T] [--quiet] [--jobs N]\n\

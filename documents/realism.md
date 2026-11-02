@@ -126,6 +126,13 @@ win is round 13 against 8, 33% of games run past round 15, combo wins are 1.9% a
 against 31.3%. Korvold (13.9%) and Marwyn (11.7%) are the weakest decks in the sim, although on Playgroup they win most
 often.
 
+**Default knobs (2026-11-02, JD: "Load the fitted knobs by default").** The t3, t5 and t6 files of the recalibration's style
+fit (`audit/recal/stage2-2026-11-01.md`, section 2) are copied to `data/knobs/t3.toml`, `t5.toml`, `t6.toml` and load in
+every mode that runs pool decks (`Defaults` in `knobs.rs`). Styles: each pool deck gets the style of its own tier's file.
+Table knobs: the table's tier is the tier most seats belong to; a tier without a file gives the built-in table knobs.
+`--knobs builtin` gives today's built-in values everywhere; `--knobs FILE` replaces the defaults for a run; `--fit`
+starts from the knobs in force.
+
 **Phase 1, step 1: the knobs as data** (branch `realism-phase1`, commit `538ca94a`). `--knobs FILE`
 (`rust/crates/sim-cli/src/knobs.rs`) overrides the AI's hand-set values from a TOML file:
 
