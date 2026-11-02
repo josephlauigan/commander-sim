@@ -55,3 +55,10 @@ No swaps yet.
 ## 2026-10-31: card models (branch card-models-1; no sims until Phase 4 recalibration)
 
 Orim's Chant, Gemstone Caverns, Tinder Wall: Partial -> Full (the kicked attack lock; begin the game with Caverns when not first, also for every t6 opponent; the blocking sacrifice). Still Partial: Redirect Lightning, Shifting Woodland. No new number yet.
+
+## 2026-11-01: Dragonlord Dromoka out, Deadly Rollick in (JD; not simulated)
+
+Deadly Rollick ({3}{B}, free while you control a commander: exile target creature; modelled Full) replaces Dragonlord
+Dromoka, a 6-mana lock that died to Thanos's own even wipe. Rollick adds a free instant-speed answer to creature stax
+(Drannith Magistrate, Collector Ouphe, Lavinia, Opposition Agent, Archon of Emeria) and creature commanders. No new
+number yet; the pilot's guide in the deck file is updated.

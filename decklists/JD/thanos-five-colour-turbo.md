@@ -15,7 +15,7 @@ brought in line with JD's physical deck (22 cards each way, see `decklists/CHANG
 
 Fast mana and rituals into the cEDH finishes: Thassa's Oracle with Demonic Consultation or Tainted Pact, Underworld
 Breach with Lion's Eye Diamond and Brain Freeze, and Ad Nauseam to dig for either. Free counters, Silence, Orim's
-Chant, Grand Abolisher, Voice of Victory, Teferi, Time Raveler and Dragonlord Dromoka protect the win turn. The
+Chant, Grand Abolisher, Voice of Victory and Teferi, Time Raveler protect the win turn. The
 commander is not the plan; he is the five-colour identity, a cheap body, and the switch for the free spells.
 
 The design reasoning (the stance, the role counts, why each card is in) is in JD's design doc, "Thanos Turbo:
@@ -27,9 +27,10 @@ only compare lists.
 
 - **He is cheap.** Thanos costs {R}{W}{B}: a 4/4 with deathtouch and lifelink on turn 2-3 off a mana creature, and
   cheap to recast ({2} more each time). Scion needs exactly {W}{U}{B}{R}{G}.
-- **He makes two spells free.** Fierce Guardianship (counter a noncreature spell) and Deflecting Swat (new targets
-  for a spell or ability) cost nothing while you control your commander, and Jeska's Will gets both modes. A
-  3-mana commander is usually on the battlefield; Scion rarely was.
+- **He makes three spells free.** Fierce Guardianship (counter a noncreature spell), Deflecting Swat (new targets
+  for a spell or ability) and Deadly Rollick (exile a creature) cost nothing while you control your commander, and
+  Jeska's Will gets both modes. A 3-mana
+  commander is usually on the battlefield; Scion rarely was.
 - **Scion's engine barely won.** In the goldfish, the Prismari line was 0.9% of Scion's kills and Thassa's Oracle 73%.
   Ancient Copper Dragon, Korvold and Prismari were copy targets for Scion and dead cards without him.
 - **What Scion had that Thanos doesn't:** a backup win from the command zone (become Prismari for storm, or Ancient
@@ -115,7 +116,7 @@ in your graveyard (not LED or Brain Freeze) when you first escape Brain Freeze. 
 | Card | Cost | Life per card | When | Watch out |
 |---|---|---|---|---|
 | Necropotence | {B}{B}{B} (turn 1 with Dark Ritual) | 1 per card | Main phase 1; cards arrive at the beginning of this turn's end step | You discard down to 7 at cleanup, and Necro exiles discards. Pay for about 7 minus your hand, plus what you can cast at instant speed in the end step. It skips your draw step (no Sylvan Library; tapped Mana Vault doesn't hurt you) |
-| Ad Nauseam | {3}{B}{B} instant | Mana value of each card: the 99 add up to 134, about 1.3 per card (27 lands cost 0) | End step of the player before you, or your own turn with the combo mana up | Dragonlord Dromoka costs 6, Force of Will and Ad Nauseam 5, Beseech the Mirror and Mindbreak Trap 4 |
+| Ad Nauseam | {3}{B}{B} instant | Mana value of each card: the 99 add up to 132, about 1.3 per card (27 lands cost 0) | End step of the player before you, or your own turn with the combo mana up | Force of Will 5; Deadly Rollick, Beseech the Mirror and Mindbreak Trap 4 |
 
 - Ad Nauseam rough budget: 10 cards cost about 13-14 life, 20 cards about 27. On an opponent's end step, stop around
   10 life. On your kill turn, keep only what the rest of the kill costs (fetch 1, Confluence 1, Force of Will 1,
@@ -135,7 +136,10 @@ mana isn't needed for protection. With the kill available, win instead. The sim'
   or Dack Fayden).
 - **Deflecting Swat:** new targets for target spell or ability, free. Moves removal off Thanos or a lock creature,
   moves an opponent's Chain of Vapor copy, and moves a targeted counter onto another legal spell (it needs one on the
-  stack, such as the ritual you cast first).
+  stack: another spell still waiting to resolve, such as one cast while you held priority).
+- **Deadly Rollick:** exile target creature, free. Your instant-speed answer to Drannith Magistrate, Collector
+  Ouphe, Lavinia, Opposition Agent, Archon of Emeria or a creature commander (a commander usually goes back to the
+  command zone, costing its owner {2} more next time).
 - **Jeska's Will:** both modes ({R} per card in an opponent's hand, and exile your top three to play this turn).
 
 The free cost is checked when you cast the spell. Killing Thanos in response doesn't stop it; killing him earlier
@@ -159,7 +163,7 @@ creature with mana value of the chosen quality.*
 
 | Parity | Your creatures it destroys | What it destroys at the table (opponents' cards) |
 |---|---|---|
-| **Even** | Thassa's Oracle, Orcish Bowmasters (and its Orc Army), Lotho, Hexing Squelcher, Grand Abolisher, Voice of Victory (2); Dragonlord Dromoka (6) | Rograkh (0); Kinnan, Thrasios, Drannith Magistrate, Collector Ouphe, Lavinia, Dauthi Voidwalker, Grand Abolisher, Thalia, Orcish Bowmasters (2); Dack Fayden (6) |
+| **Even** | Thassa's Oracle, Orcish Bowmasters (and its Orc Army), Lotho, Hexing Squelcher, Grand Abolisher, Voice of Victory (2) | Rograkh (0); Kinnan, Thrasios, Drannith Magistrate, Collector Ouphe, Lavinia, Dauthi Voidwalker, Grand Abolisher, Thalia, Orcish Bowmasters (2); Dack Fayden (6) |
 | **Odd** | Birds of Paradise, Noble Hierarch, Ragavan, Esper Sentinel, Mockingbird (1); Ranger-Captain of Eos, Valley Floodcaller (3) | Mana creatures, Ragavan, Esper Sentinel (1); Tymna, Sisay, Silas Renn, Archon of Emeria, Opposition Agent, Spellseeker, Endurance, Magus of the Moon (3); Kraum (5) |
 
 **Which parity: it depends on the matchup.** Even against Kinnan, Thrasios, Rograkh, Dack Fayden and creature stax
@@ -187,12 +191,12 @@ on the bottom per mulligan after the free one).
   and protection is in hand on about 75% of kill turns anyway.
 - **The rule counts mana, not colours.** A hand with no coloured source for its spells is a ship even if the count
   passes.
-- **Bottom first:** lands past the third, Dragonlord Dromoka, the disruption creatures (Ragavan, Esper Sentinel,
+- **Bottom first:** lands past the third, the disruption creatures (Ragavan, Esper Sentinel,
   Lotho, Orcish Bowmasters), then the flex cards (Hexing Squelcher, Seething Song, Diabolic Intent). Keep win-line
   cards and tutors.
 - **Gemstone Caverns:** if it's in your kept hand and you aren't the starting player (3 seats in 4), you may start
   with it on the battlefield with a luck counter, tapping for any colour, by exiling a card from your hand. Exile
-  what you would bottom (Dromoka, a disruption creature, a fourth land). It then can't pay the power-up's {C}.
+  what you would bottom (a disruption creature, a flex card, a fourth land). It then can't pay the power-up's {C}.
 - Rough odds from the design model: with this rule, a kill is possible by turn 3 in about 29% of games and by turn 4
   in about 41%. Pace yourself for a turn-3-to-5 kill, not a turn-2 one.
 
@@ -207,9 +211,9 @@ Example opening 7s:
 | 5 | Plateau, Savannah, Taiga, Tropical Island, Noble Hierarch, Orcish Bowmasters, Teferi, Time Raveler | Ship | Good mana and a lock, but no line card, tutor or dig |
 | 6 | Ancient Tomb, Sol Ring, Mana Vault, Grim Monolith, Ad Nauseam, Rite of Flame, Gamble | Ship | Passes the count, but there's no coloured source: Ad Nauseam needs {B}{B}, Rite and Gamble {R} |
 | 7 | Lotus Petal, Chrome Mox, Elvish Spirit Guide, Dark Ritual, Demonic Tutor, Thassa's Oracle, Brain Freeze | Keep (close) | 0 lands but 4 fast-mana cards. Petal for {B}, Ritual, Demonic Tutor; Mox imprinting Brain Freeze is a blue source. It needs a land for Oracle's {U}{U} |
-| 8 | Mana Confluence, Flooded Strand, Birds of Paradise, Rhystic Study, Sylvan Library, Esper Sentinel, Swan Song | Keep (close) | 3 mana on turn 2 and Sylvan Library counts as dig, but no line card: slow, and the right keep only on a second 7 |
+| 8 | Mana Confluence, Flooded Strand, Birds of Paradise, Rhystic Study, Sylvan Library, Esper Sentinel, Swan Song | Keep (close) | 3 mana on turn 2 and Sylvan Library counts as dig, so the rule keeps it; no line card, so expect a slow start |
 | 9 | Bayou, Wooded Foothills, Marsh Flats, Arid Mesa, Command Tower, Vampiric Tutor, Valley Floodcaller | Ship | Five lands go back, whatever the tutor |
-| 10 | Scrubland, Arid Mesa, Dark Ritual, Vampiric Tutor, Silence, Ragavan, Dragonlord Dromoka (on 6) | Keep, bottom Dromoka | 6-card rule: 3 mana cards and a tutor |
+| 10 | Scrubland, Arid Mesa, Dark Ritual, Vampiric Tutor, Silence, Ragavan, Esper Sentinel (on 6) | Keep, bottom Esper Sentinel | 6-card rule: 3 mana cards and a tutor |
 
 ### 4. Turns 1-3
 
@@ -311,7 +315,7 @@ Order:
   rarely happens, so plan on {2}{U}{U}.
 - **Pact of Negation:** at your next upkeep you pay {3}{U}{U} or lose. Use it on the turn you win, or when you're sure
   of five mana with {U}{U} next upkeep.
-- **Fierce Guardianship and Deflecting Swat** need Thanos on the battlefield when you cast them. Opponents who kill
+- **Fierce Guardianship, Deflecting Swat and Deadly Rollick** need Thanos on the battlefield when you cast them. Opponents who kill
   him at your upkeep switch them off.
 - **Mental Misstep** hits only mana value 1: Swan Song, Flusterstorm, Silence, Orim's Chant, Consultation. Not Force
   of Will, Pact or Fierce.
@@ -335,8 +339,8 @@ free, and Mindbreak Trap turns free once they cast their third spell.
 | The same, if they cast Consultation first | Thassa's Oracle (a creature) | Force of Will, Pact, Mindbreak Trap, Red Elemental Blast |
 | Underworld Breach loops (Kraum/Tymna, Rograkh/Silas) | Breach when it's cast; mid-loop, Brain Freeze | Breach: Swan Song, Force of Negation, Fierce, Force of Will. Mid-loop: Mindbreak Trap (free, exile Brain Freeze and its copies), Flusterstorm, Red Elemental Blast on Brain Freeze |
 | Kinnan + Basalt Monolith | The Monolith (artifact), or Kinnan himself | Force of Negation, Fierce, Force of Will, Pact (Swan Song can't hit artifacts); Red Elemental Blast destroys Kinnan; the even power-up |
-| Dack Fayden (6-mana creature) | Dack, on the cast | Force of Will, Pact, Mindbreak Trap. Fierce, Force of Negation and Swan Song can't counter a creature. After it resolves: the even power-up |
-| Sisay's activation (an ability) | Nothing counters it: remove Sisay first | Odd power-up, Snapback, Into the Flood Maw, Chain of Vapor |
+| Dack Fayden (6-mana creature) | Dack, on the cast | Force of Will, Pact, Mindbreak Trap. Fierce, Force of Negation and Swan Song can't counter a creature. After it resolves: Deadly Rollick or the even power-up |
+| Sisay's activation (an ability) | Nothing counters it: remove Sisay first | Deadly Rollick, odd power-up, Snapback, Into the Flood Maw, Chain of Vapor |
 
 - **Swan Song** ({U}) only hits enchantments, instants and sorceries, and gives them a 2/2 flier. Spend it on the
   Consultation, Breach or Ad Nauseam that wins, not on a draw spell.
@@ -361,20 +365,20 @@ Boseiju and Otawara work from hand and are abilities, not spells.
 
 | Stax piece (opponent's) | What it stops for us | Answer | Line that still works |
 |---|---|---|---|
-| Drannith Magistrate | Breach escapes, recasting Thanos from the command zone, Beseech's free cast | Snapback, Chain, Flood Maw, Otawara, Teferi -3, even power-up | Oracle |
+| Drannith Magistrate | Breach escapes, recasting Thanos from the command zone, Beseech's free cast | Deadly Rollick, Snapback, Chain, Flood Maw, Otawara, Teferi -3, even power-up | Oracle |
 | Rest in Peace | Breach (graveyards are exiled), Noxious Revival | Chain, Flood Maw (gift), Boseiju, Otawara, Teferi -3 | Oracle |
 | Grafdigger's Cage | Breach (no casting from graveyards) | Chain, Flood Maw (gift), Boseiju, Otawara, Teferi -3 | Oracle |
-| Dauthi Voidwalker | Breach (our cards are exiled instead of going to the graveyard) | Snapback, Chain, Flood Maw, Otawara, Teferi -3, even power-up | Oracle |
-| Null Rod / Collector Ouphe | All artifact mana: Sol Ring, Mana Vault, Grim Monolith, the Moxen, Lotus Petal, LED, Treasures | Null Rod: Chain, Flood Maw (gift), Boseiju, Otawara, Teferi -3. Ouphe: Snapback, Chain, Flood Maw, Otawara, Teferi -3, even power-up | Oracle (off lands, rituals, mana creatures); Breach is dead without LED |
+| Dauthi Voidwalker | Breach (our cards are exiled instead of going to the graveyard) | Deadly Rollick, Snapback, Chain, Flood Maw, Otawara, Teferi -3, even power-up | Oracle |
+| Null Rod / Collector Ouphe | All artifact mana: Sol Ring, Mana Vault, Grim Monolith, the Moxen, Lotus Petal, LED, Treasures | Null Rod: Chain, Flood Maw (gift), Boseiju, Otawara, Teferi -3. Ouphe: Deadly Rollick, Snapback, Chain, Flood Maw, Otawara, Teferi -3, even power-up | Oracle (off lands, rituals, mana creatures); Breach is dead without LED |
 | Cursed Totem | Birds and Hierarch's mana, the power-up, Ranger-Captain's sacrifice | Chain, Flood Maw (gift), Boseiju, Otawara, Teferi -3 | Both (spirit guides still work from hand) |
-| Archon of Emeria | One spell per player per turn; your fetched duals enter tapped | Abilities: Otawara, the odd power-up. Or spend the turn's spell on Snapback, Chain or Flood Maw and win next turn | Neither while it's out |
+| Archon of Emeria | One spell per player per turn; your fetched duals enter tapped | Abilities: Otawara, the odd power-up. Or spend the turn's spell on Deadly Rollick, Snapback, Chain or Flood Maw and win next turn | Oracle only with Necropotence out: Consultation or Pact at an opponent's end step, then Oracle on your turn (Necro skips the draw step that would otherwise lose you the game). If Oracle is countered, your library is gone. Breach is dead |
 | Deafening Silence | One noncreature spell per turn | Boseiju, Otawara (abilities); Teferi -3 (Teferi uses the turn's spell) | Oracle (a creature) + one Consultation or Pact; Breach is dead |
-| Blood Moon / Magus of the Moon | Every land taps only for {R} (no basics); fetches, Cavern and Gemstone lose their abilities | Boseiju from hand ({1}{G}: G from Birds, Hierarch, Elvish Spirit Guide, a Mox, Petal, or Manamorphose paid with {R}), Otawara from hand, Chain, Flood Maw (gift), Teferi -3. Magus: Snapback, odd power-up | Breach (Breach is red; LED makes blue). Oracle needs {U}{U} from Manamorphose, Moxen, Petal or mana creatures |
+| Blood Moon / Magus of the Moon | Every land taps only for {R} (no basics); fetches, Cavern and Gemstone lose their abilities | Boseiju from hand ({1}{G}: G from Birds, Hierarch, Elvish Spirit Guide, a Mox, Petal, or Manamorphose paid with {R}), Otawara from hand, Chain, Flood Maw (gift), Teferi -3. Magus: Deadly Rollick, Snapback, odd power-up | Breach (Breach is red; LED makes blue). Oracle needs {U}{U} from Manamorphose, Moxen, Petal or mana creatures |
 | Chalice of the Void (Dack) | X=0: LED, Moxen, Petal, Pact. X=1: Consultation, Dark Ritual, Silence, Orim's Chant, the 1-mana tutors and counters | Boseiju, Otawara, Teferi -3, Hexing Squelcher; Chain or Flood Maw if X isn't 1 | X=1: Oracle with Tainted Pact. X=0: Oracle; Breach is dead without Squelcher |
 | Trinisphere (Dack) | Every spell costs at least 3: free spells and rituals stop working | Boseiju, Otawara, Teferi -3 (Chain and Flood Maw cost 3) | Oracle at 6 mana |
-| Damping Sphere / Defense Grid (Dack) | Sphere: each spell costs {1} more per other spell you cast this turn, Ancient Tomb makes {C}. Grid: {3} more on opponents' turns, so your free counters cost 3 there | Boseiju, Otawara, Chain, Flood Maw (gift), Teferi -3 | Oracle (two spells); Breach is dead under Sphere |
-| Vexing Bauble (Rograkh/Silas, Dack) / Lavinia (Sisay) | Spells cast with no mana are countered: alternative costs, Pact, the free spells, LED, Moxen, Petal, Phyrexian mana paid with life. Lavinia also stops noncreature spells with mana value above your land count | Hexing Squelcher; pay mana. Bauble: Chain, Flood Maw (gift), Boseiju, Otawara, Teferi -3. Lavinia: Snapback hard-cast, Chain, Flood Maw, Otawara, Teferi -3, even power-up | Oracle (paid with mana) |
-| Opposition Agent | Your tutors and fetches: they take the card | Snapback, Chain, Flood Maw, Otawara, Teferi -3, odd power-up | Oracle from hand (Consultation and Pact don't search) |
+| Damping Sphere (Dack) / Defense Grid (Dack, Rograkh/Silas) | Sphere: each spell costs {1} more per other spell you cast this turn, Ancient Tomb makes {C}. Grid: {3} more on opponents' turns, so your free counters cost 3 there | Boseiju, Otawara, Chain, Flood Maw (gift), Teferi -3 | Oracle (two spells); Breach is dead under Sphere |
+| Vexing Bauble (Rograkh/Silas, Dack) / Lavinia (Sisay) | Spells cast with no mana are countered: alternative costs, Pact, the free spells, LED, Moxen, Petal, Phyrexian mana paid with life. Lavinia also stops noncreature spells with mana value above your land count | Hexing Squelcher; pay mana. Bauble: Chain, Flood Maw (gift), Boseiju, Otawara, Teferi -3. Lavinia: Snapback or Deadly Rollick hard-cast, Chain, Flood Maw, Otawara, Teferi -3, even power-up | Oracle (paid with mana) |
+| Opposition Agent | Your tutors and fetches: they take the card | Deadly Rollick, Snapback, Chain, Flood Maw, Otawara, Teferi -3, odd power-up | Oracle from hand (Consultation and Pact don't search) |
 | Opposing Teferi, Time Raveler (Sisay) | You can cast spells only at sorcery speed, so you can't cast Consultation with the Oracle trigger on the stack | Chain, Flood Maw (gift), Otawara, Red Elemental Blast (on your main phase) | Breach (each escape at sorcery speed); Oracle only with the risky order |
 
 ### 9. Matchups
@@ -390,7 +394,7 @@ Song, Mental Misstep, Fierce Guardianship and Force of Negation.
 | Kinnan (fast mana combo, turn 3-5) | Race, but hold one counter for Basalt Monolith or Kinnan | Force of Negation, Fierce Guardianship; Red Elemental Blast for Kinnan | Even (Kinnan 2) | Orcish Bowmasters on their mana creatures; their Endurance can undo a Breach loop; Hexing Squelcher against their free counters |
 | Rograkh/Thrasios (creature mana loops) | Race; they need Gaea's Cradle and creature loops | A free counter for the loop piece | Even (Rograkh 0, Thrasios 2) | Orcish Bowmasters kills Rograkh; the even power-up breaks their board; their Veil of Summer beats your counters, so answer the creature instead |
 | Rograkh/Silas (turbo Oracle and Breach, turn 1-3) | The true race. Keep a free counter up from turn 1 | Force of Negation, Mindbreak Trap, Flusterstorm | Rarely worth the mana; odd kills Silas | Their Vexing Bauble and Pyroblast punish free spells and Oracle; Hexing Squelcher; Mental Misstep on their Consultation and rituals |
-| Sisay (legends toolbox) | Race; its win threat appears around turn 3-4 | Removal for Sisay (Snapback, Flood Maw), not counters: the legends arrive without being cast | Odd (Sisay 3), even for Lavinia | Its Lavinia, Teferi, Deafening Silence and Esper Sentinel tax you; Hexing Squelcher against Lavinia |
+| Sisay (legends toolbox) | Race; its win threat appears around turn 3-4 | Removal for Sisay (Deadly Rollick, Snapback, Flood Maw), not counters: the legends arrive without being cast | Odd (Sisay 3), even for Lavinia | Its Lavinia, Teferi, Deafening Silence and Esper Sentinel tax you; Hexing Squelcher against Lavinia |
 | Dack Fayden (white stax) | Race before the stax builds | Force of Will, Pact or Mindbreak Trap for Dack himself | Even (Dack 6) | Its Silence and Orim's Chant come before Dack; Chalice, Trinisphere, Damping Sphere, Defense Grid, Cursed Totem and Vexing Bauble call for Boseiju, Otawara and Hexing Squelcher |
 
 ### 10. After a stopped attempt
@@ -424,7 +428,7 @@ Song, Mental Misstep, Fierce Guardianship and Force of Negation.
 | Gitaxian Probe, Mental Misstep, Noxious Revival | 2 each if paid with life |
 | Force of Will | 1 |
 | Necropotence | 1 per card |
-| Ad Nauseam | Each card's mana value (about 1.3 on average; Dromoka 6) |
+| Ad Nauseam | Each card's mana value (about 1.3 on average; Force of Will 5) |
 | Sylvan Library | 4 per extra card kept |
 | Lotho, Corrupt Shirriff | 1 each time any player casts their second spell in a turn (that's also a Treasure) |
 
@@ -460,7 +464,7 @@ Bracket 5 (cEDH): 23 Game Changers, Thassa's Oracle and Underworld Breach combos
 ## Decklist by type (100)
 **Commander (1).** Thanos, the Mad Titan
 
-**Creatures (16).** Birds of Paradise, Dragonlord Dromoka, Elvish Spirit Guide, Esper Sentinel, Grand Abolisher, Hexing Squelcher, Lotho, Corrupt Shirriff, Mockingbird, Noble Hierarch, Orcish Bowmasters, Ragavan, Nimble Pilferer, Ranger-Captain of Eos, Simian Spirit Guide, Thassa's Oracle, Valley Floodcaller, Voice of Victory
+**Creatures (15).** Birds of Paradise, Elvish Spirit Guide, Esper Sentinel, Grand Abolisher, Hexing Squelcher, Lotho, Corrupt Shirriff, Mockingbird, Noble Hierarch, Orcish Bowmasters, Ragavan, Nimble Pilferer, Ranger-Captain of Eos, Simian Spirit Guide, Thassa's Oracle, Valley Floodcaller, Voice of Victory
 
 **Enchantments (5).** Mystic Remora, Necropotence, Rhystic Study, Sylvan Library, Underworld Breach
 
@@ -468,7 +472,7 @@ Bracket 5 (cEDH): 23 Game Changers, Thassa's Oracle and Underworld Breach combos
 
 **Sorceries (10).** Beseech the Mirror, Demonic Tutor, Diabolic Intent, Gamble, Gitaxian Probe, Grim Tutor, Imperial Seal, Jeska's Will, Merchant Scroll, Rite of Flame
 
-**Instants (33).** Ad Nauseam, Borne Upon a Wind, Brain Freeze, Cabal Ritual, Chain of Vapor, Dark Ritual, Deflecting Swat, Demonic Consultation, Desperate Ritual, Eladamri's Call, Enlightened Tutor, Fierce Guardianship, Flusterstorm, Force of Negation, Force of Will, Into the Flood Maw, Intuition, Manamorphose, Mental Misstep, Mindbreak Trap, Mystical Tutor, Noxious Revival, Orim's Chant, Pact of Negation, Red Elemental Blast, Seething Song, Silence, Snapback, Swan Song, Tainted Pact, Vampiric Tutor, Veil of Summer, Worldly Tutor
+**Instants (34).** Ad Nauseam, Borne Upon a Wind, Brain Freeze, Cabal Ritual, Chain of Vapor, Dark Ritual, Deadly Rollick, Deflecting Swat, Demonic Consultation, Desperate Ritual, Eladamri's Call, Enlightened Tutor, Fierce Guardianship, Flusterstorm, Force of Negation, Force of Will, Into the Flood Maw, Intuition, Manamorphose, Mental Misstep, Mindbreak Trap, Mystical Tutor, Noxious Revival, Orim's Chant, Pact of Negation, Red Elemental Blast, Seething Song, Silence, Snapback, Swan Song, Tainted Pact, Vampiric Tutor, Veil of Summer, Worldly Tutor
 
 **Lands (27).** Ancient Tomb, Arid Mesa, Badlands, Bayou, Bloodstained Mire, Boseiju, Who Endures, Cavern of Souls, Command Tower, Flooded Strand, Gemstone Caverns, Mana Confluence, Marsh Flats, Misty Rainforest, Otawara, Soaring City, Plateau, Polluted Delta, Savannah, Scalding Tarn, Scrubland, Taiga, Tropical Island, Tundra, Underground Sea, Verdant Catacombs, Volcanic Island, Windswept Heath, Wooded Foothills
 
@@ -494,12 +498,12 @@ Bracket 5 (cEDH): 23 Game Changers, Thassa's Oracle and Underworld Breach combos
 1 Chrome Mox
 1 Command Tower
 1 Dark Ritual
+1 Deadly Rollick
 1 Deflecting Swat
 1 Demonic Consultation
 1 Demonic Tutor
 1 Desperate Ritual
 1 Diabolic Intent
-1 Dragonlord Dromoka
 1 Eladamri's Call
 1 Elvish Spirit Guide
 1 Enlightened Tutor
