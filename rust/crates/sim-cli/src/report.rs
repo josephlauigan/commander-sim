@@ -11,7 +11,7 @@ pub struct Metric {
     pub axis: &'static str,
     /// is a higher value better?
     pub up: bool,
-    /// None: every deck; Some("combo"): Veyran (Sauron's Sword + Assault combo left with the Swords, 2026-10-13); Some(deck): that deck only
+    /// None: every deck; Some(deck): that deck only
     pub only: Option<&'static str>,
 }
 
@@ -20,7 +20,7 @@ const fn m(key: &'static str, label: &'static str, axis: &'static str, up: bool,
 }
 
 /// compare.METRICS: (key, label, axis, which direction is better, applies to)
-pub const METRICS: [Metric; 28] = [
+pub const METRICS: [Metric; 26] = [
     m("win", "Win rate", "Outcome", true, None),
     m("survived", "Rounds survived (or game length)", "Outcome", true, None),
     m("mulls", "Extra mulligans per game", "Mana & consistency", false, None),
@@ -47,14 +47,11 @@ pub const METRICS: [Metric; 28] = [
     m("dmg_drain", "  ...of which drain triggers", "Threat & pressure", true, None),
     m("dmg_aether", "  ...of which Aetherflux shots", "Threat & pressure", true, None),
     m("dmg_triggers", "  ...of which other triggers", "Threat & pressure", true, None),
-    m("combo_rate", "Games with a combo attempt", "Speed", true, Some("combo")),
-    m("aether_shots", "Aetherflux shots per game", "Threat & pressure", true, Some("veyran")),
 ];
 
 /// compare.PLAN: what "the game plan came online" means for each deck
 pub fn plan_text(deck: &str) -> &'static str {
     match deck {
-        "veyran" => "Veyran + a magecraft payoff on the battlefield",
         "sauron" => "first combat damage to a player by an Army",
         "galadriel" => "first Alliance trigger from Galadriel",
         "yshtola" => "first drain from Y'shtola's cast trigger",
@@ -90,7 +87,6 @@ fn axis_note(axis: &str) -> &'static str {
 pub fn plan_turn(me: &PlayerOut, deck: &str) -> Option<u32> {
     let ms = |k: &str| me.milestone.get(k).copied();
     let t = match deck {
-        "veyran" => ms("engine"),
         "najeela" => ms("act"),
         "sauron" => ms("army_hit"),
         "galadriel" => ms("alliance"),
@@ -149,8 +145,6 @@ pub fn axis_values(g: &GameOut, me: usize, deck: &str) -> Vec<(&'static str, f64
     ] {
         v.push((k, s(src)));
     }
-    v.push(("combo_rate", if p.stat("combo_attempt") != 0 { 1.0 } else { 0.0 }));
-    v.push(("aether_shots", s("aether_shots")));
     let plan = plan_turn(p, deck);
     v.push(("plan_reached", if plan.is_some() { 1.0 } else { 0.0 }));
     if let Some(t) = plan {
@@ -203,11 +197,7 @@ pub fn axis_report(deck: &str, pairs: &[(String, Axes, Axes)], lookahead: bool) 
     let mut moved: Vec<((&str, &str, bool), Vec<String>)> = vec![];
     let mut cur_axis: Option<&str> = None;
     for mt in &METRICS {
-        if mt.only == Some("combo") && deck != "veyran" {
-            continue;
-        }
         if let Some(o) = mt.only
-            && o != "combo"
             && o != deck
         {
             continue;
@@ -228,7 +218,7 @@ pub fn axis_report(deck: &str, pairs: &[(String, Axes, Axes)], lookahead: bool) 
             let d = av.mean() - ab.mean();
             let se = (ab.var() / ab.n as f64 + av.var() / av.n as f64).sqrt();
             let sig = se > 0.0 && d.abs() > 2.0 * se;
-            let pctfmt = matches!(mt.key, "win" | "plan_reached" | "combo_rate");
+            let pctfmt = matches!(mt.key, "win" | "plan_reached");
             let f = |x: f64| if pctfmt { format!("{:5.1}%", 100.0 * x) } else { format!("{x:6.2}") };
             let dd = if pctfmt { format!("{:+.1}pt", 100.0 * d) } else { format!("{d:+.2}") };
             let nz = if pctfmt { format!("±{:.1}", 200.0 * se) } else { format!("±{:.2}", 2.0 * se) };
@@ -310,12 +300,10 @@ pub struct Analysis {
     pub death_round: i64,
     pub survived: i64,
     pub plan: Counter<u32>,
-    pub combo: i64,
     /// the turn the commander first resolved
     pub cmd: Counter<u32>,
     /// Sauron: the Army's power at the start of turns 6, 8 and 10, one entry per game (0: no Army)
     pub army: [Vec<u32>; 3],
-    pub aether: i64,
     /// creatures sacrificed (all games) and games in which Sephiroth flipped
     pub sacs: i64,
     pub flips: i64,
@@ -378,8 +366,6 @@ impl Analysis {
                 self.army[i].push(me.milestone.get(k).copied().unwrap_or(0));
             }
         }
-        self.combo += (me.stat("combo_attempt") != 0) as i64;
-        self.aether += (me.stat("aether_shots") != 0) as i64;
         self.sacs += me.stat("creatures_sacrificed");
         self.flips += (me.stat("seph_flips") != 0) as i64;
         for (i, k) in ["bl_held", "bl_dry", "bl_pass", "breach_line", "bl_won"].into_iter().enumerate() {
@@ -533,9 +519,6 @@ pub fn print_analysis(
     println!("  Online by turn:  {}", line.join("  "));
     println!("  Online at all: {:.1}% of games", (100 * pn) as f64 / n);
     print_speed(r, deck);
-    if deck == "veyran" {
-        println!("  Combo attempted in {:.1}% of games", (100 * r.combo) as f64 / n);
-    }
     let has = |n: &str| cards.iter().any(|c| c.name == n);
     if has("Underworld Breach") && (has("Brain Freeze") || has("Grapeshot")) {
         let [held, dry, pass, exec, won] = r.bl;
@@ -563,9 +546,6 @@ pub fn print_analysis(
             r.sacs as f64 / n,
             (100 * r.flips) as f64 / n
         );
-    }
-    if deck == "veyran" {
-        println!("  Aetherflux fired in {:.1}% of games", (100 * r.aether) as f64 / n);
     }
 
     println!("\n-- Card report (correlation, not causation: see notes) --");

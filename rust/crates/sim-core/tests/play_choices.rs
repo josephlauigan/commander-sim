@@ -13,7 +13,7 @@ use sim_core::rng::Rng;
 
 #[test]
 fn discard_is_yours() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let cs = hand(&mut g, P0, &["Swamp", "Counterspell", "Sol Ring"]);
     seat(&mut g, P0, vec![pick(2)]); // the third card listed: Sol Ring
     cast::discard_worst(&mut g, P0, 1).unwrap();
@@ -23,7 +23,7 @@ fn discard_is_yours() {
 
 #[test]
 fn discard_to_hand_size() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let mut names = vec!["Swamp"; 4];
     names.extend(vec!["Island"; 5]);
     hand(&mut g, P0, &names);
@@ -35,7 +35,7 @@ fn discard_to_hand_size() {
 
 #[test]
 fn edict() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let a = perm(&mut g, P0, "Orcish Bowmasters");
     let b = perm(&mut g, P0, "Grave Titan");
     let h =
@@ -48,7 +48,7 @@ fn edict() {
 
 #[test]
 fn tutor_finds_only_its_kind() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let h = seat(&mut g, P0, vec![pick(0)]);
     tutors::tutor(&mut g, P0, "art").unwrap();
     let asked = h.asked();
@@ -65,7 +65,7 @@ fn tutor_finds_only_its_kind() {
 
 #[test]
 fn finding_nothing() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let n = g.player(P0).library.len();
     seat(&mut g, P0, vec![cancel()]);
     tutors::tutor(&mut g, P0, "any").unwrap();
@@ -74,7 +74,7 @@ fn finding_nothing() {
 
 #[test]
 fn basic_land_search() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let h = seat(&mut g, P0, vec![pick(0)]);
     zones::land_ramp(&mut g, P0, 1, true).unwrap();
     let asked = h.asked();
@@ -86,7 +86,7 @@ fn basic_land_search() {
 
 #[test]
 fn scry() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     let lib = &g.player(P0).library;
     let (top, second) = (lib[lib.len() - 1], lib[lib.len() - 2]);
     seat(&mut g, P0, vec![pick(1), pick(0)]); // first card to the bottom, second stays
@@ -98,7 +98,7 @@ fn scry() {
 
 #[test]
 fn mulligan() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     // table() leaves hands empty: the library holds the whole deck
     let h = seat(&mut g, P0, vec![ans(Answer::Pick(1)), ans(Answer::Pick(1)), ans(Answer::Pick(0)), pick(0)]);
     choices::mulligan(&mut g, P0, &mut Rng::from_u64(1)).unwrap();
@@ -110,7 +110,7 @@ fn mulligan() {
 
 #[test]
 fn choose_modes() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     hand(&mut g, P1, &["Island", "Mountain"]);
     let kc = card(&g, "Kolaghan's Command");
     let modal =
@@ -132,7 +132,7 @@ fn choose_modes() {
 
 #[test]
 fn yes_no() {
-    let mut g = table(&["sauron", "veyran"]);
+    let mut g = table(&["sauron", "cloud"]);
     seat(&mut g, P0, vec![pick(1)]);
     assert!(!choices::yes_no(&g, P0, "Draw?").unwrap());
 }

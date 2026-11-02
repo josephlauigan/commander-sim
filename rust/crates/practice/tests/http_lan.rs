@@ -155,7 +155,7 @@ fn test_the_lobby_and_joining() {
     let mut humans: Vec<&str> = a["game"]["humans"].as_array().unwrap().iter().map(|x| x.as_str().unwrap()).collect();
     humans.sort();
     assert_eq!(humans, ["ghave", "sauron"]);
-    assert_eq!(friend.post("/api/new", json!({"deck": "veyran", "tier": "t2"})).status, 403);
+    assert_eq!(friend.post("/api/new", json!({"deck": "cloud", "tier": "t2"})).status, 403);
     assert_eq!(friend.post("/api/quit", json!({})).status, 403);
     assert_eq!(friend.post("/api/save", json!({})).status, 403);
     assert_eq!(friend.c.get("/api/saves").status, 403);
@@ -341,7 +341,7 @@ fn test_a_saved_two_player_game_waits_for_the_friend() {
         (lb["deck"].as_str(), lb["partner"].as_str(), lb["loaded"].as_bool()),
         (Some("sauron"), Some("ghave"), Some(true))
     );
-    assert_eq!(join(&mut friend, &code2, "veyran"), 409);
+    assert_eq!(join(&mut friend, &code2, "cloud"), 409);
     assert_eq!(join(&mut friend, &code2, "ghave"), 200);
     assert_eq!(friend.get("/api/state")["game"]["you"], "ghave");
     host.post("/api/quit", json!({}));

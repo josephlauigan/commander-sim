@@ -33,7 +33,7 @@ fn has_opt(g: &mut Game, p: PlayerId, prefix: &str) -> bool {
 }
 
 fn table2() -> Game {
-    table(&["kefka", "veyran"])
+    table(&["kefka", "cloud"])
 }
 
 fn fill_library(g: &mut Game, p: PlayerId, n: usize) {
@@ -99,7 +99,7 @@ fn the_crawler_now_beats_ordinary_five_drops_in_the_main_phase() {
 
 // ======================================================== the engine guard: Niv-Mizzet with the flipped Kefka
 fn niv_table(life: i32, library: usize) -> Game {
-    let mut g = table(&["kefka", "veyran", "seph"]);
+    let mut g = table(&["kefka", "cloud", "seph"]);
     kefka_out(&mut g, P0, true);
     perm(&mut g, P0, NIV);
     fill_library(&mut g, P0, library);

@@ -4,8 +4,10 @@
 //!
 //! Not ported: a person's choices (practice mode: the rest of test_play_veyran.py, Alania's 'you choose').
 //! Twinflame and Thunderdrum Soloist are in no decklist now; their tests run anyway (the card code is ported).
+//! The `veyran` deck was retired on 2026-11-01: these tests seat Kefka, whose list holds Veyran, Voice of Duality and
+//! the magecraft package now.
 
-use sim_core::ai::{self, act, brain, decks};
+use sim_core::ai::{act, brain};
 use sim_core::engine::{cast, combat, life, values};
 use sim_core::hooks::Opt;
 use sim_core::ids::{CardId, PermId, PlayerId};
@@ -63,7 +65,7 @@ fn tokens(g: &Game, p: PlayerId) -> Vec<PermId> {
 // ======================================================== Veyran (test_my_cards.Veyran)
 #[test]
 fn magecraft_pings_each_opponent() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     perm(&mut g, P0, "Guttersnipe");
     magecraft(&mut g, P0, "Lightning Bolt");
     assert_eq!(lives(&g), vec![40, 38, 38]);
@@ -71,7 +73,7 @@ fn magecraft_pings_each_opponent() {
 
 #[test]
 fn veyran_doubles_magecraft() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     perm(&mut g, P0, "Veyran, Voice of Duality");
     perm(&mut g, P0, "Guttersnipe");
     magecraft(&mut g, P0, "Lightning Bolt");
@@ -80,7 +82,7 @@ fn veyran_doubles_magecraft() {
 
 #[test]
 fn archmage_emeritus_with_veyran_draws_two() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     perm(&mut g, P0, "Archmage Emeritus");
     perm(&mut g, P0, "Veyran, Voice of Duality");
     magecraft(&mut g, P0, "Think Twice");
@@ -89,7 +91,7 @@ fn archmage_emeritus_with_veyran_draws_two() {
 
 #[test]
 fn rite_of_the_dragoncaller() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     perm(&mut g, P0, "Rite of the Dragoncaller");
     magecraft(&mut g, P0, "Lightning Bolt");
     let toks: Vec<(i32, i32, bool)> =
@@ -100,7 +102,7 @@ fn rite_of_the_dragoncaller() {
 #[test]
 fn aetherflux_reservoir() {
     // gain 1 life for each spell you've cast before it this turn
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     perm(&mut g, P0, "Aetherflux Reservoir");
     for name in ["Lightning Bolt", "Think Twice", "Counterspell"] {
         g.player_mut(P0).spells_this_turn += 1;
@@ -111,7 +113,7 @@ fn aetherflux_reservoir() {
 
 #[test]
 fn jin_gitaxias_copies_the_first_spell() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     perm(&mut g, P0, "Jin-Gitaxias, Progress Tyrant");
     on_cast(&mut g, P0, "Quick Study"); // the copy resolves: draw two
     assert_eq!(g.player(P0).hand.len(), 2);
@@ -121,13 +123,13 @@ fn jin_gitaxias_copies_the_first_spell() {
 
 #[test]
 fn emeritus_of_ideation_draws_nothing_on_entering() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     perm(&mut g, P0, "Emeritus of Ideation // Ancestral Recall");
     assert_eq!(g.player(P0).hand, vec![]);
 }
 
 fn twinflame(n_lands: usize, creatures: &[&str], spells: &[&str]) -> (Game, Vec<Opt>) {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     lands(&mut g, P0, "Mountain", n_lands, false);
     for c in creatures {
         perm(&mut g, P0, c);
@@ -151,7 +153,7 @@ fn twinflame_strive_cost() {
 
 #[test]
 fn unsummon_returns_a_creature() {
-    let mut g = table(&["veyran", "sauron"]);
+    let mut g = table(&["kefka", "sauron"]);
     lands(&mut g, P0, "Island", 1, false);
     hand(&mut g, P0, &["Unsummon"]);
     let k = perm(&mut g, P1, "Kaervek the Merciless");
@@ -175,7 +177,7 @@ fn opp_hands(g: &Game) -> usize {
 
 #[test]
 fn alania_copies_the_first_instant_once() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     perm(&mut g, P0, "Alania, Divergent Storm");
     let before = opp_hands(&g);
     bolt(&mut g, P1);
@@ -188,7 +190,7 @@ fn alania_copies_the_first_instant_once() {
 
 #[test]
 fn alania_veyran_and_harmonic_prodigy_each_add_a_copy() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     for n in ["Alania, Divergent Storm", "Veyran, Voice of Duality", "Harmonic Prodigy"] {
         perm(&mut g, P0, n);
     }
@@ -199,7 +201,7 @@ fn alania_veyran_and_harmonic_prodigy_each_add_a_copy() {
 
 #[test]
 fn alania_copies_the_first_sorcery_too_and_not_a_counterspell() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     perm(&mut g, P0, "Alania, Divergent Storm");
     let before = opp_hands(&g);
     let c = hand(&mut g, P0, &["Stock Up"])[0];
@@ -213,7 +215,7 @@ fn alania_copies_the_first_sorcery_too_and_not_a_counterspell() {
 
 #[test]
 fn alania_counts_a_spell_cast_before_it() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     bolt(&mut g, P1);
     perm(&mut g, P0, "Alania, Divergent Storm");
     let before = opp_hands(&g);
@@ -227,7 +229,7 @@ fn alania_counts_a_spell_cast_before_it() {
 fn thousand_year_storm_copies_per_earlier_spell() {
     // "Whenever you cast an instant or sorcery spell, copy it for each other instant and sorcery spell you've cast
     //  before it this turn. You may choose new targets for the copies."
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     perm(&mut g, P0, "Thousand-Year Storm");
     let qs = hand(&mut g, P0, &["Quick Study"])[0];
     cast::cast_card(&mut g, P0, qs, "hand", Ctx::default()).unwrap(); // the first: no copy
@@ -235,7 +237,7 @@ fn thousand_year_storm_copies_per_earlier_spell() {
     bolt(&mut g, P1); // the second: one copy
     assert_eq!(g.player(P1).life + g.player(P2).life, 80 - 6);
     // with Veyran, twice as many copies
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     perm(&mut g, P0, "Thousand-Year Storm");
     perm(&mut g, P0, "Veyran, Voice of Duality");
     let qs = hand(&mut g, P0, &["Quick Study"])[0];
@@ -247,7 +249,7 @@ fn thousand_year_storm_copies_per_earlier_spell() {
 #[test]
 fn a_prepared_copy_is_a_cast_spell() {
     // Emeritus of Ideation enters prepared: a copy of Ancestral Recall for {U} draws three, with magecraft
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     lands(&mut g, P0, "Island", 1, false);
     let em = perm(&mut g, P0, "Emeritus of Ideation // Ancestral Recall");
     perm(&mut g, P0, "Guttersnipe");
@@ -264,7 +266,7 @@ fn a_prepared_copy_is_a_cast_spell() {
 
 #[test]
 fn thousand_year_storm_copies_a_prepared_copy() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     lands(&mut g, P0, "Island", 1, false);
     perm(&mut g, P0, "Thousand-Year Storm");
     perm(&mut g, P0, "Emeritus of Ideation // Ancestral Recall");
@@ -278,7 +280,7 @@ fn thousand_year_storm_copies_a_prepared_copy() {
 #[test]
 fn emeritus_of_ideation_prepares_again_when_it_attacks() {
     // "Whenever this creature attacks, you may exile eight cards from your graveyard. If you do, it becomes prepared."
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let em = perm(&mut g, P0, "Emeritus of Ideation // Ancestral Recall");
     g.perm_mut(em).data.set(DataKey::Prepared, Val::Bool(false));
     for n in
@@ -298,7 +300,7 @@ fn emeritus_of_ideation_prepares_again_when_it_attacks() {
 
 #[test]
 fn ral_storm_conduit_copies_the_next_spell() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     let ral = perm(&mut g, P0, "Ral, Storm Conduit");
     lands(&mut g, P0, "Island", 3, false);
     let qs = hand(&mut g, P0, &["Quick Study"])[0]; // draw two: a copy is worth 3
@@ -320,7 +322,7 @@ fn ral_storm_conduit_copies_the_next_spell() {
 
 #[test]
 fn expressive_iteration_flow_state_and_stock_up() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let top3: Vec<CardId> = g.player(P0).library.iter().rev().take(3).copied().collect();
     let c = hand(&mut g, P0, &["Expressive Iteration"])[0];
     cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
@@ -329,11 +331,11 @@ fn expressive_iteration_flow_state_and_stock_up() {
     assert_eq!(pl.impulse.len(), 1);
     assert!(top3.contains(&pl.library[0])); // the last to the bottom
     // Flow State: one card (two with an instant and a sorcery in the graveyard)
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let c = hand(&mut g, P0, &["Flow State"])[0];
     cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
     assert_eq!(g.player(P0).hand.len(), 1);
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     for n in ["Lightning Bolt", "Light Up the Stage"] {
         let x = take(&mut g, P0, n);
         g.player_mut(P0).gy.push(x);
@@ -344,7 +346,7 @@ fn expressive_iteration_flow_state_and_stock_up() {
     assert_eq!(g.player(P0).hand.len(), 2);
     assert_eq!(g.player(P0).library.len(), lib - 2);
     // Stock Up: two of the top five
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let c = hand(&mut g, P0, &["Stock Up"])[0];
     let lib = g.player(P0).library.len();
     cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
@@ -354,7 +356,7 @@ fn expressive_iteration_flow_state_and_stock_up() {
 
 #[test]
 fn prismari_charm_picks_its_mode() {
-    let mut g = table(&["veyran", "seph", "sauron"]);
+    let mut g = table(&["kefka", "seph", "sauron"]);
     g.player_mut(P1).life = 1;
     g.player_mut(P2).life = 1;
     let c = hand(&mut g, P0, &["Prismari Charm"])[0];
@@ -362,7 +364,7 @@ fn prismari_charm_picks_its_mode() {
     life::check_state(&mut g).unwrap();
     assert!(!g.player(P1).alive && !g.player(P2).alive); // two players at 1: ping both
     // nothing to ping or bounce: surveil 2 and draw
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let c = hand(&mut g, P0, &["Prismari Charm"])[0];
     cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
     assert_eq!(g.player(P0).hand.len(), 1);
@@ -370,11 +372,11 @@ fn prismari_charm_picks_its_mode() {
 
 #[test]
 fn visions_of_beyond_draws_three_with_a_big_graveyard() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let c = hand(&mut g, P0, &["Visions of Beyond"])[0];
     cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
     assert_eq!(g.player(P0).hand.len(), 1);
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let rest = {
         let lib = &mut g.player_mut(P1).library;
         lib.split_off(lib.len() - 20)
@@ -387,7 +389,7 @@ fn visions_of_beyond_draws_three_with_a_big_graveyard() {
 
 #[test]
 fn desolate_lighthouse_loots_at_the_end_of_an_opponents_turn() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     lands(&mut g, P0, "Desolate Lighthouse", 1, false);
     lands(&mut g, P0, "Steam Vents", 3, false);
     hand(&mut g, P0, &["Island"]);
@@ -406,7 +408,7 @@ fn docent_of_perfection_transforms_with_three_wizards() {
     // "Whenever you cast an instant or sorcery spell, create a 1/1 blue Human Wizard creature token. Then if you
     //  control three or more Wizards, transform Docent of Perfection." Final Iteration: Wizards you control get +2/+1
     //  and have flying.
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     perm(&mut g, P0, "Docent of Perfection // Final Iteration");
     let emer = perm(&mut g, P0, "Emeritus of Conflict // Lightning Bolt"); // a Human Wizard, 2/2
     assert_eq!(values::epow(&g, emer), 2);
@@ -428,7 +430,7 @@ fn docent_of_perfection_transforms_with_three_wizards() {
 
 #[test]
 fn fiery_emancipation_triples_damage() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     perm(&mut g, P0, "Fiery Emancipation");
     perm(&mut g, P0, "Guttersnipe");
     magecraft(&mut g, P0, "Lightning Bolt");
@@ -437,32 +439,10 @@ fn fiery_emancipation_triples_damage() {
 
 // ======================================================== the plan's choices
 #[test]
-fn veyran_engine_payoff_milestone() {
-    let mut g = table(&["veyran", "seph"]);
-    assert!(!ai::engine_payoff(&g, P0));
-    perm(&mut g, P0, "Murmuring Mystic");
-    assert!(ai::engine_payoff(&g, P0));
-}
-
-#[test]
-fn whole_games_with_veyran_finish() {
+fn whole_games_with_veyrans_cards_finish() {
     for seed in [1, 2, 3] {
-        let g = play(&["veyran", "seph", "sauron"], seed, false);
+        let g = play(&["kefka", "seph", "sauron"], seed, false);
         assert!(g.over || g.round >= 20, "seed {seed}");
     }
-}
-
-// ======================================================== ai-audit cv: the audit's problems
-#[test]
-fn mystical_tutor_finds_a_wipe_when_the_table_outboards_us() {
-    let mut g = table(&["veyran", "seph"]);
-    lands(&mut g, P0, "Island", 6, false);
-    g.player_mut(P0).library = ["Stock Up", "Blasphemous Act", "Counterspell"].iter().map(|n| card(&g, n)).collect();
-    let pick = |g: &Game| decks::tutor_pick(g, P0, "is").map(|c| g.db.get(c).name.to_string()).unwrap();
-    assert_ne!(pick(&g), "Blasphemous Act", "an empty table: no wipe");
-    for _ in 0..4 {
-        perm(&mut g, P1, "Grave Titan");
-    }
-    assert_eq!(pick(&g), "Blasphemous Act");
 }
 

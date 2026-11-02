@@ -13,7 +13,7 @@ const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 
 fn game() -> Game {
-    table(&["sauron", "veyran"])
+    table(&["sauron", "cloud"])
 }
 
 /// a creature token with these types, not summoning sick

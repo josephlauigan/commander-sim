@@ -4,7 +4,8 @@ The history of the decks in `decklists/JD/` and `decklists/Avery/`: every change
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Cloud, Ghave, Karn, Kefka, Sauron, Sheoldred, Thanos, Tymna/Thrasios, Ur-Dragon, Veyran, Y'shtola.
+JD's decks: Cloud, Ghave, Karn, Kefka, Sauron, Sheoldred, Thanos, Tymna/Thrasios, Ur-Dragon, Y'shtola (Veyran retired
+2026-11-01).
 Avery's decks: Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
@@ -464,10 +465,19 @@ Deck key `kraum` (removed), `decklists/JD/tymna-kraum-partners.md` (removed).
 
 ## Veyran, Voice of Duality — Izzet Spellslinger
 
-Deck key `veyran`, `decklists/JD/veyran-izzet-spellslinger.md`.
+**Retired 2026-11-01 (JD: "we should retire veyran").** The deck was taken apart on 2026-10-31: Veyran, Voice of
+Duality and the magecraft package went to Kefka, Mystic Confluence, Propaganda, An Offer You Can't Refuse and
+Sokenzan to Sauron (see their entries), the rest to bulk. The `veyran` key and its t1-t3 simulator seat are gone (Cloud
+keeps band 4); its plan file and Spellbook data were removed (its hand-written AI already was, 2026-11-01). The list
+is kept in `decklists/pool/retired/veyran-izzet-spellslinger.md` as history; no test seats it (the tests of its cards
+seat Kefka). The entries below are the deck's history.
+
+Deck key `veyran` (until 2026-11-01), `decklists/JD/veyran-izzet-spellslinger.md` (moved to `decklists/pool/retired/`).
 
 ### Changes
 
+- **2026-11-01.** Retired from the simulator (JD): the key left `data/my_decks.toml`, `data/decks.json` and the deck
+  guard fixture; the list moved to `decklists/pool/retired/`. No list change.
 - **2026-10-30.** Out: Spell Pierce. In: Arcane Denial. Veyran: Arcane Denial (from the retired Seph/Atraxa deck, 10/30) in for Spell Pierce. JD's choice, not simulated.
 - **2026-10-30.** Out: Aetherflux Reservoir, Talrand, Sky Summoner, Visions of Beyond. In: Birgi, God of Storytelling, Firebrand Archer, Frantic Search. JD's swaps (10/30), not simulated: Aetherflux Reservoir -> Firebrand Archer, Talrand, Sky Summoner -> Birgi, God of Storytelling, Visions of Beyond -> Frantic Search.
 - **2026-10-18.** Out: Evacuation, Venser, Shaper Savant. In: Consecrated Sphinx, Mystical Tutor. Band calibration 10/18 (JD approved): Evacuation=>Consecrated Sphinx;Venser, Shaper Savant=>Mystical Tutor

@@ -66,7 +66,7 @@ fn on_top(g: &mut Game, p: PlayerId, name: &str) {
 // ======================================================== Faeries
 #[test]
 fn artifact_spell_makes_a_faerie_with_alela_out() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     alela_out(&mut g, P0);
     lands(&mut g, P0, "Plains", 2, false);
     let c = hand(&mut g, P0, &["Mind Stone"])[0];
@@ -81,7 +81,7 @@ fn artifact_spell_makes_a_faerie_with_alela_out() {
 // ======================================================== the Jace token
 #[test]
 fn empower_creates_then_grows() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     alela::empower(&mut g, P0, 2);
     let j = alela::jace_token(&g, P0).unwrap();
     assert_eq!(g.perm(j).loyalty, Some(2));
@@ -92,7 +92,7 @@ fn empower_creates_then_grows() {
 
 #[test]
 fn keeper_empowers_two() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     perm(&mut g, P0, "Keeper of the Quiet Hour");
     let j = alela::jace_token(&g, P0).unwrap();
     assert_eq!(g.perm(j).loyalty, Some(2));
@@ -100,7 +100,7 @@ fn keeper_empowers_two() {
 
 #[test]
 fn annex_enters_untapped_with_a_planeswalker() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     lands(&mut g, P0, "Plains", 3, false);
     let annex = card(&g, "Fatehold Annex");
     assert!(turn::land_enters_tapped(&g, P0, annex));
@@ -110,7 +110,7 @@ fn annex_enters_untapped_with_a_planeswalker() {
 
 #[test]
 fn the_token_leaves_no_card_behind() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     alela::empower(&mut g, P0, 1);
     let j = alela::jace_token(&g, P0).unwrap();
     let gy = g.player(P0).gy.len();
@@ -123,7 +123,7 @@ fn the_token_leaves_no_card_behind() {
 
 #[test]
 fn minus_three_draws() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     alela::empower(&mut g, P0, 3);
     let j = alela::jace_token(&g, P0).unwrap();
     let o = perm_opts(&mut g, j, P0, Some(false));
@@ -141,7 +141,7 @@ fn minus_three_draws() {
 
 #[test]
 fn jace_surveils_only_while_far_from_the_draw() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     alela::empower(&mut g, P0, 2);
     let j = alela::jace_token(&g, P0).unwrap();
     let o = perm_opts(&mut g, j, P0, Some(true));
@@ -153,7 +153,7 @@ fn jace_surveils_only_while_far_from_the_draw() {
 
 #[test]
 fn plan_empowers_on_first_noncreature_spell_only() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     perm(&mut g, P0, "Plan for All Outcomes");
     on_cast(&mut g, P0, "Night's Whisper");
     on_cast(&mut g, P0, "Sol Ring");
@@ -164,7 +164,7 @@ fn plan_empowers_on_first_noncreature_spell_only() {
 // ======================================================== removal and control
 #[test]
 fn multiply_by_zero_kills_unless_counters() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     let a = perm(&mut g, P1, "Grave Titan");
     let b = perm(&mut g, P1, "Serra Angel");
     g.perm_mut(b).plus = 1;
@@ -177,7 +177,7 @@ fn multiply_by_zero_kills_unless_counters() {
 
 #[test]
 fn prophesied_end_draws_unless_attacking() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     let spell = card(&g, "Prophesied End");
     let a = perm(&mut g, P1, "Grave Titan");
     let n = g.player(P1).hand.len();
@@ -192,7 +192,7 @@ fn prophesied_end_draws_unless_attacking() {
 
 #[test]
 fn plan_puts_the_permanent_on_top() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     let t = perm(&mut g, P1, "Grave Titan");
     perm(&mut g, P0, "Plan for All Outcomes");
     assert!(!g.perm(t).on_bf);
@@ -202,7 +202,7 @@ fn plan_puts_the_permanent_on_top() {
 
 #[test]
 fn karmic_justice_answers_an_opponents_destroy() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     perm(&mut g, P0, "Karmic Justice");
     let stone = perm(&mut g, P0, "Mind Stone");
     let t = perm(&mut g, P1, "Grave Titan");
@@ -213,7 +213,7 @@ fn karmic_justice_answers_an_opponents_destroy() {
 
 #[test]
 fn karmic_justice_ignores_creatures_and_your_own() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     perm(&mut g, P0, "Karmic Justice");
     let c = perm(&mut g, P0, "Serra Angel");
     let stone = perm(&mut g, P0, "Mind Stone");
@@ -225,7 +225,7 @@ fn karmic_justice_ignores_creatures_and_your_own() {
 
 #[test]
 fn ray_of_command_steals_and_returns_tapped() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     lands(&mut g, P0, "Island", 4, false);
     let t = perm(&mut g, P1, "Grave Titan");
     g.perm_mut(t).tapped = true;
@@ -241,7 +241,7 @@ fn ray_of_command_steals_and_returns_tapped() {
 
 #[test]
 fn malice_destroys_a_nonblack_creature() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     lands(&mut g, P0, "Swamp", 4, false);
     let t = perm(&mut g, P1, "Consecrated Sphinx");
     perm(&mut g, P1, "Grave Titan"); // black
@@ -254,7 +254,7 @@ fn malice_destroys_a_nonblack_creature() {
 
 #[test]
 fn muddle_counters_only_instants_and_sorceries() {
-    let g = table(&["alela", "veyran"]);
+    let g = table(&["alela", "cloud"]);
     let m = card(&g, "Muddle the Mixture");
     assert!(stack::counter_ok(&g, m, card(&g, "Counterspell")));
     assert!(!stack::counter_ok(&g, m, card(&g, "Rhystic Study")));
@@ -275,7 +275,7 @@ fn last_gasp_targets() {
 
 #[test]
 fn last_gasp_ignores_indestructible() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     let snipe = perm(&mut g, P1, "Guttersnipe");
     g.player_mut(P1).regen_turn = Some(g.turn_stamp());
     let lg = card(&g, "Last Gasp");
@@ -287,7 +287,7 @@ fn last_gasp_ignores_indestructible() {
 // ======================================================== Opposition
 #[test]
 fn opposition_taps_their_mana_in_their_upkeep() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     perm(&mut g, P0, "Opposition");
     flier(&mut g, P0);
     flier(&mut g, P0);
@@ -299,7 +299,7 @@ fn opposition_taps_their_mana_in_their_upkeep() {
 
 #[test]
 fn opposition_taps_attackers_at_their_combat() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     perm(&mut g, P0, "Opposition");
     flier(&mut g, P0);
     let t = perm(&mut g, P1, "Grave Titan");
@@ -311,7 +311,7 @@ fn opposition_taps_attackers_at_their_combat() {
 #[test]
 fn opposition_taps_blocking_fliers_on_your_turn() {
     // your beginning of combat: a summoning-sick creature taps the opponent's flier
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     perm(&mut g, P0, "Opposition");
     let sick = flier(&mut g, P0);
     g.perm_mut(sick).sick = true;
@@ -323,7 +323,7 @@ fn opposition_taps_blocking_fliers_on_your_turn() {
 // ======================================================== energy
 #[test]
 fn static_prison_pays_then_goes() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     let t = perm(&mut g, P1, "Grave Titan");
     let sp = perm(&mut g, P0, "Static Prison");
     assert!(!g.perm(t).on_bf);
@@ -338,7 +338,7 @@ fn static_prison_pays_then_goes() {
 
 #[test]
 fn aether_hub_colour_costs_energy() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     let hub = card(&g, "Aether Hub");
     let l = g.add_land(P0, hub, false);
     let f = g.registry.get(hub).unwrap().land_etb.unwrap();
@@ -353,7 +353,7 @@ fn aether_hub_colour_costs_energy() {
 // ======================================================== creatures
 #[test]
 fn plumecreed_counts_faerie_tokens() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     perm(&mut g, P0, "Plumecreed Mentor");
     let page = perm(&mut g, P0, "Page, Loose Leaf");
     flier(&mut g, P0);
@@ -362,7 +362,7 @@ fn plumecreed_counts_faerie_tokens() {
 
 #[test]
 fn jackdaw_returns_a_cheaper_creature() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     let i = card(&g, "Initiates of the Ebon Hand");
     g.player_mut(P0).gy.push(i);
     let j = perm(&mut g, P0, "Jackdaw Savior");
@@ -372,7 +372,7 @@ fn jackdaw_returns_a_cheaper_creature() {
 
 #[test]
 fn malcator_golem_at_end_step_after_three_artifacts() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     perm(&mut g, P0, "Malcator, Purity Overseer");
     let golems = |g: &Game| {
         g.player(P0).perms.iter().filter(|&&m| g.perm(m).token && g.perm(m).ttypes.contains(&"golem")).count()
@@ -386,7 +386,7 @@ fn malcator_golem_at_end_step_after_three_artifacts() {
 
 #[test]
 fn airlift_chaplain_keeps_a_small_creature() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     for n in ["Island", "Island", "Initiates of the Ebon Hand"] {
         on_top(&mut g, P0, n);
     }
@@ -398,7 +398,7 @@ fn airlift_chaplain_keeps_a_small_creature() {
 
 #[test]
 fn airlift_chaplain_counter_when_nothing_fits() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     for n in ["Island", "Island", "Island"] {
         on_top(&mut g, P0, n);
     }
@@ -409,7 +409,7 @@ fn airlift_chaplain_counter_when_nothing_fits() {
 
 #[test]
 fn skycoach_crews_with_a_sick_creature() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     let sc = perm(&mut g, P0, "Strixhaven Skycoach");
     let c = take(&mut g, P0, "Plumecreed Mentor");
     zones::enter(&mut g, P0, c, zones::Enter::default()).unwrap(); // summoning sick
@@ -420,7 +420,7 @@ fn skycoach_crews_with_a_sick_creature() {
 
 #[test]
 fn stirring_hopesinger_counters_on_a_creature_spell_target() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     let h = perm(&mut g, P0, "Stirring Hopesinger");
     on_cast(&mut g, P0, "Last Gasp");
     assert_eq!(g.perm(h).plus, 1);
@@ -430,7 +430,7 @@ fn stirring_hopesinger_counters_on_a_creature_spell_target() {
 
 #[test]
 fn desperate_futurescribe_pumps_another_creature() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     perm(&mut g, P0, "Desperate Futurescribe");
     let q = perm(&mut g, P0, "Plumecreed Mentor");
     fire_trigger(&mut g, Event::Crew, Call::Player { p: P0 }).unwrap();
@@ -442,7 +442,7 @@ fn desperate_futurescribe_pumps_another_creature() {
 
 #[test]
 fn reconstructed_thopter_unearths_once() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     lands(&mut g, P0, "Island", 2, false);
     let c = card(&g, "Reconstructed Thopter");
     g.player_mut(P0).gy.push(c);
@@ -460,7 +460,7 @@ fn reconstructed_thopter_unearths_once() {
 // ======================================================== spells, sagas, Venser
 #[test]
 fn helping_hand_returns_tapped() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     let pm = card(&g, "Plumecreed Mentor");
     g.player_mut(P0).gy.push(pm);
     let hh = card(&g, "Helping Hand");
@@ -471,7 +471,7 @@ fn helping_hand_returns_tapped() {
 
 #[test]
 fn daydream_blinks_with_a_counter() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     perm(&mut g, P0, "Keeper of the Quiet Hour");
     let dd = card(&g, "Daydream");
     alela::daydream(&mut g, P0, dd, &Default::default()).unwrap();
@@ -483,7 +483,7 @@ fn daydream_blinks_with_a_counter() {
 
 #[test]
 fn ajani_chapters() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     let t = perm(&mut g, P1, "Grave Titan");
     let aj = perm(&mut g, P0, "Ajani Fells the Godsire");
     assert!(!g.perm(t).on_bf);
@@ -495,7 +495,7 @@ fn ajani_chapters() {
 
 #[test]
 fn venser_emblem_exiles_per_spell() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     g.player_mut(P0).emblems.push("venser");
     let t = perm(&mut g, P1, "Grave Titan");
     on_cast(&mut g, P0, "Sol Ring");
@@ -504,7 +504,7 @@ fn venser_emblem_exiles_per_spell() {
 
 #[test]
 fn venser_minus_one_before_a_big_attack() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     let v = perm(&mut g, P0, "Venser, the Sojourner");
     for n in ["Pileated Provisioner", "Grave Titan"] {
         perm(&mut g, P0, n);
@@ -518,7 +518,7 @@ fn venser_minus_one_before_a_big_attack() {
 // ======================================================== the plan
 #[test]
 fn card_prios_of_the_99() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     let op = card(&g, "Opposition");
     perm(&mut g, P0, "Plumecreed Mentor");
     let f = g.registry.get(op).unwrap().prio.unwrap();
@@ -534,7 +534,7 @@ fn card_prios_of_the_99() {
 
 #[test]
 fn fatehold_charm_draws_at_the_end_of_the_turn_before_yours() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     lands(&mut g, P0, "Plains", 1, false);
     lands(&mut g, P0, "Island", 1, false);
     let c = hand(&mut g, P0, &["Fatehold Charm"])[0];
@@ -551,7 +551,7 @@ fn fatehold_charm_draws_at_the_end_of_the_turn_before_yours() {
 
 #[test]
 fn emry_costs_less_with_artifacts_and_casts_from_the_graveyard() {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     let emry = card(&g, "Emry, Lurker of the Loch");
     perm(&mut g, P0, "Mind Stone");
     g.player_mut(P0).treasures = 1;
@@ -572,7 +572,7 @@ use sim_core::cardcode;
 use sim_core::engine::{combat, life};
 
 fn alela_table() -> Game {
-    let mut g = table(&["alela", "veyran"]);
+    let mut g = table(&["alela", "cloud"]);
     g.player_mut(P0).hand.clear();
     g.player_mut(P1).hand.clear();
     g

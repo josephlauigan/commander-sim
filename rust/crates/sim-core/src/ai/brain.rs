@@ -162,8 +162,7 @@ impl Situation {
         let combo_near = t6 && super::t6_table::archenemy(g, p).is_some_and(|a| a.1 >= super::t6_table::NEAR)
             || opps.iter().any(|&q| {
             let k = g.player(q).key;
-            (k == "sauron" && has_q(q, Tag::Sword) && has_q(q, Tag::Assault))
-                || (k == "veyran" && has_q(q, Tag::Aether) && g.player(q).life >= 40)
+            k == "sauron" && has_q(q, Tag::Sword) && has_q(q, Tag::Assault)
         });
         let cmdr_combo = opps.iter().any(|&q| {
             g.player(q).perms.iter().any(|&m| {

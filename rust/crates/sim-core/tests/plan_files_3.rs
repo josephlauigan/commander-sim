@@ -288,7 +288,7 @@ fn sheoldred_the_atlas_is_used() {
     let off: Vec<String> = perm_options(&mut g, a, None).into_iter().map(|o| o.label).collect();
     assert_eq!(off, on, "the plan's plays");
     // a deck whose plan doesn't list it: no play
-    let mut g = seated("veyran", "t1");
+    let mut g = seated("kefka", "t3");
     let a = perm(&mut g, P, "Otherworld Atlas");
     g.active = Some(Q);
     assert!(perm_options(&mut g, a, None).is_empty());

@@ -193,7 +193,7 @@ fn priest_of_titania_counts_every_elf() {
 
 #[test]
 fn lathril_taps_ten_elves_to_drain_ten() {
-    let mut g = table(&[LATHRIL, "seph", "veyran"]);
+    let mut g = table(&[LATHRIL, "seph", "cloud"]);
     let l = perm(&mut g, P0, "Lathril, Blade of the Elves");
     let elves = t1::elf_tokens(&mut g, P0, 9).unwrap();
     assert_eq!(use_option(&mut g, P0, l, Some(false)), None); // nine Elves: not enough

@@ -18,7 +18,7 @@ fn game() -> Game {
 }
 
 fn game3() -> Game {
-    table(&["sheoldred", "seph", "veyran"])
+    table(&["sheoldred", "seph", "cloud"])
 }
 
 fn life(g: &Game, p: PlayerId) -> i32 {
@@ -999,7 +999,7 @@ fn howling_mine_draws_an_extra_card_in_every_players_draw_step_while_untapped() 
 #[test]
 fn every_opponent_draw_the_new_cards_cause_fires_sheoldred_dreams_and_fate_unraveler() {
     let _hand = sim_core::ai::force_hand(Some(true)); // --- phase4-hand-off: a test of the hand AI
-    let mut g = table(&["sheoldred", "veyran"]);
+    let mut g = table(&["sheoldred", "cloud"]);
     perm(&mut g, P0, SHEO);
     perm(&mut g, P0, "Underworld Dreams");
     perm(&mut g, P0, UNRAV);

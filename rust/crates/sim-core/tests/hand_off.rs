@@ -140,7 +140,6 @@ fn cloud_switch() {
 fn deleted_jd_decks_play_the_generic_policy() {
     let _on = ai::force_hand(Some(true));
     for (key, t) in [
-        ("veyran", "t1"),
         ("sauron", "t3"),
         ("galadriel", "t1"),
         ("alela", "t1"),

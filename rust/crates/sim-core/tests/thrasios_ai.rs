@@ -9,7 +9,7 @@ use sim_core::testkit::*;
 const P0: PlayerId = PlayerId(0);
 
 fn tbl() -> Game {
-    let mut g = table(&["thrasios", "seph", "veyran"]);
+    let mut g = table(&["thrasios", "seph", "cloud"]);
     g.active = Some(P0);
     g
 }

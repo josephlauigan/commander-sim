@@ -13,7 +13,7 @@ const P1: PlayerId = PlayerId(1);
 #[test]
 fn niv_mizzet_pings_when_you_draw() {
     // compiled from Scryfall: "Whenever you draw a card, Niv-Mizzet deals 1 damage to any target."
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     assert!(g.db.by_name("Niv-Mizzet, the Firemind").unwrap().has_dsl());
     perm(&mut g, P0, "Niv-Mizzet, the Firemind");
     zones::draw(&mut g, P0, 1, false).unwrap();
@@ -23,7 +23,7 @@ fn niv_mizzet_pings_when_you_draw() {
 #[test]
 fn niv_mizzets_tap_draws_and_pings() {
     // "{T}: Draw a card." as an option for the AI, then its draw trigger
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let niv = perm(&mut g, P0, "Niv-Mizzet, the Firemind");
     let opts = dsl::ability_options(&mut g, P0, true).unwrap();
     let (src, idx) = opts
@@ -44,7 +44,7 @@ fn niv_mizzets_tap_draws_and_pings() {
 #[test]
 fn dictate_of_erebos_makes_each_opponent_sacrifice() {
     // "Whenever a creature you control dies, each opponent sacrifices a creature."
-    let mut g = table(&["seph", "veyran", "sauron"]);
+    let mut g = table(&["seph", "cloud", "sauron"]);
     perm(&mut g, P0, "Dictate of Erebos");
     let mine = token(&mut g, P0, 2);
     let a = token(&mut g, P1, 1);
@@ -56,7 +56,7 @@ fn dictate_of_erebos_makes_each_opponent_sacrifice() {
 #[test]
 fn lyra_pumps_other_angels_and_gives_angels_lifelink() {
     // "Other Angels you control get +1/+1 and have lifelink."
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     let lyra = perm(&mut g, P0, "Lyra Dawnbringer");
     let angel = perm(&mut g, P0, "Admonition Angel");
     let printed = g.perm(angel).pow;
@@ -70,7 +70,7 @@ fn lyra_pumps_other_angels_and_gives_angels_lifelink() {
 #[test]
 fn goblin_electromancer_makes_instants_and_sorceries_cheaper() {
     // "Instant and sorcery spells you cast cost {1} less to cast."
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let div = card(&g, "Divination");
     assert_eq!(mana::cost_of(&g, P0, div), (2, "U".into()));
     perm(&mut g, P0, "Goblin Electromancer");
@@ -82,7 +82,7 @@ fn goblin_electromancer_makes_instants_and_sorceries_cheaper() {
 fn dread_drone_makes_two_spawn_that_make_mana() {
     // "When Dread Drone enters, create two 0/1 colorless Eldrazi Spawn creature tokens with 'Sacrifice this creature:
     // Add {C}.'"
-    let mut g = table(&["seph", "veyran"]);
+    let mut g = table(&["seph", "cloud"]);
     perm(&mut g, P0, "Dread Drone");
     let spawn: Vec<_> = g.player(P0).perms.iter().copied().filter(|&m| g.perm(m).token).collect();
     assert_eq!(spawn.len(), 2);
@@ -92,7 +92,7 @@ fn dread_drone_makes_two_spawn_that_make_mana() {
 
 #[test]
 fn divination_draws_two() {
-    let mut g = table(&["veyran", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let div = card(&g, "Divination");
     let hand = g.player(P0).hand.len();
     dsl::resolve_spell(&mut g, P0, div, &Ctx::default()).unwrap();

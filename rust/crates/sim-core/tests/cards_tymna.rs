@@ -16,7 +16,7 @@ const P2: PlayerId = PlayerId(2);
 const ABIGALE: &str = "Abigale, Poet Laureate // Heroic Stanza";
 
 fn tbl() -> Game {
-    table(&["galadriel", "veyran", "seph"])
+    table(&["galadriel", "cloud", "seph"])
 }
 
 fn set_library(g: &mut Game, p: PlayerId, top: &[&str]) {
@@ -472,7 +472,7 @@ fn attach(g: &mut Game, e: PermId, m: PermId) {
 }
 
 fn kraum_table() -> Game {
-    table(&["thrasios", "veyran", "seph"])
+    table(&["thrasios", "cloud", "seph"])
 }
 
 // ------------------------------------------------------------------ Gilgamesh, Master-at-Arms
@@ -803,7 +803,7 @@ fn shield_goes_on_the_commander_and_helm_on_the_big_attacker_and_kaldra_is_never
 
 // ======================================================== Phyrexian mana: Dismember, Porcelain Legionnaire, Vault Skirge, Apostle's Blessing
 fn kraum_tbl() -> Game {
-    table(&["thrasios", "galadriel", "veyran"])
+    table(&["thrasios", "galadriel", "cloud"])
 }
 
 /// the label of the main-phase option that casts `name`, run; true if there was one

@@ -24,7 +24,7 @@ fn game() -> Game {
 
 /// three opponents, the usual pod: a drain is worth three
 fn game4() -> Game {
-    table(&["sheoldred", "seph", "veyran", "sauron"])
+    table(&["sheoldred", "seph", "cloud", "sauron"])
 }
 
 fn run(g: &mut Game, p: PlayerId, o: &Opt) -> bool {

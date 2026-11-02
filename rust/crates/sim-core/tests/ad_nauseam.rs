@@ -14,7 +14,7 @@ const P2: PlayerId = PlayerId(2);
 const P3: PlayerId = PlayerId(3);
 
 fn tbl() -> Game {
-    table(&["kefka", "veyran", "sauron", "seph"])
+    table(&["kefka", "cloud", "sauron", "seph"])
 }
 
 /// p's library: these cards, the last on top
