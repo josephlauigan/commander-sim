@@ -246,12 +246,19 @@ fn jaxis_copies_the_creature_you_choose_and_you_choose_the_discard() {
     pool(&mut g, P0, &[('R', 1)]);
     seat_script(
         &mut g,
-        vec![rule("which ability", first), rule("Jaxis: copy which", text("Birds")), rule("Jaxis: discard", text("Rampant"))],
+        vec![
+            rule("which ability", first),
+            rule("Jaxis: copy which", text("Birds")),
+            rule("Jaxis: discard", text("Rampant")),
+        ],
     );
     let i = index_of(&g, P0, jaxis);
     let why = sim_core::human::human::apply(&mut g, P0, &json!({"do": "use", "perm": i})).unwrap();
     assert_eq!(why, None);
-    assert!(g.player(P0).gy.contains(&junk[1]) && g.player(P0).hand.contains(&junk[0]), "the chosen card was discarded");
+    assert!(
+        g.player(P0).gy.contains(&junk[1]) && g.player(P0).hand.contains(&junk[0]),
+        "the chosen card was discarded"
+    );
     let toks: Vec<PermId> = perms_named(&g, P0, "Birds of Paradise").into_iter().filter(|&m| m != birds).collect();
     assert_eq!(toks.len(), 1, "a token copy of Birds");
     assert!(g.perm(toks[0]).token && !g.perm(toks[0]).sick, "with haste");
@@ -265,7 +272,10 @@ fn twinflame_makes_hasty_token_copies_that_leave_at_the_end() {
     let elves = perm(&mut g, P0, "Llanowar Elves");
     let c = hand(&mut g, P0, &["Twinflame"])[0];
     pool(&mut g, P0, &[('R', 2)]);
-    seat_script(&mut g, vec![rule("Twinflame: target creature #1", first), rule("Twinflame: target creature #2", |_| Answer::Decline)]);
+    seat_script(
+        &mut g,
+        vec![rule("Twinflame: target creature #1", first), rule("Twinflame: target creature #2", |_| Answer::Decline)],
+    );
     let why = sim_core::human::human::apply(&mut g, P0, &json!({"do": "cast", "card": 0})).unwrap();
     assert_eq!(why, None);
     let toks: Vec<PermId> = perms_named(&g, P0, "Llanowar Elves").into_iter().filter(|&m| m != elves).collect();
@@ -394,7 +404,11 @@ fn the_helm_loop_repeats_your_attack_until_the_table_is_dead() {
     let attacks = log.iter().filter(|l| l.starts_with("attack:")).count();
     assert_eq!(attacks, 1, "only the first combat asked for attackers: {attacks} in {log:?}");
     assert!(log.iter().any(|l| l.contains("Helm loop: repeat")), "{log:?}");
-    assert!(g.over && g.winner == Some(P0), "the table is dead: {:?}", g.players.iter().map(|q| (q.alive, q.life)).collect::<Vec<_>>());
+    assert!(
+        g.over && g.winner == Some(P0),
+        "the table is dead: {:?}",
+        g.players.iter().map(|q| (q.alive, q.life)).collect::<Vec<_>>()
+    );
 }
 
 #[test]
@@ -465,4 +479,56 @@ fn combat_celebrant_with_helm_loops_too() {
     let log = log.lock().unwrap().clone();
     assert_eq!(log.iter().filter(|l| l.starts_with("attack:")).count(), 1, "{log:?}");
     assert!(g.over && g.winner == Some(P0), "{:?}", g.players.iter().map(|q| (q.alive, q.life)).collect::<Vec<_>>());
+}
+
+// ------------------------------------------------------------------ the rest of the deck's Equipment engine
+#[test]
+fn gilgamesh_asks_which_equipment_goes_on_which_samurai() {
+    let mut g = urdragon_table();
+    // the top six: Lightning Greaves and a Sword; both come out, and you pick the one to attach
+    for n in ["Lightning Greaves", "Sword of Fire and Ice"] {
+        let c = take(&mut g, P0, n);
+        g.player_mut(P0).library.push(c);
+    }
+    let log = seat_script(
+        &mut g,
+        vec![rule("look at the top six", first), rule("Gilgamesh: attach which Equipment", text("Sword of Fire"))],
+    );
+    let gil = perm(&mut g, P0, "Gilgamesh, Master-at-Arms");
+    let sword = perms_named(&g, P0, "Sword of Fire and Ice");
+    assert_eq!(sword.len(), 1, "{:?}", log.lock().unwrap());
+    assert_eq!(g.perm(sword[0]).attached, Some(gil), "the Sword went on the only Samurai");
+    assert!(has_perm(&g, P0, "Lightning Greaves"), "and the Greaves came out too");
+    let greaves = perms_named(&g, P0, "Lightning Greaves")[0];
+    assert_eq!(g.perm(greaves).attached, None, "but only the one you chose was attached");
+}
+
+#[test]
+fn the_ur_dragon_lets_you_choose_the_permanent_to_put_onto_the_battlefield() {
+    let mut g = urdragon_table();
+    let ur = perm(&mut g, P0, "The Ur-Dragon");
+    g.perm_mut(ur).sick = false;
+    g.active = Some(P0);
+    let cards = hand(&mut g, P0, &["Sol Ring", "Mana Vault"]);
+    let log = seat_script(
+        &mut g,
+        vec![
+            rule("Declare attackers", |r| Answer::Picks((0..r.choices.len()).collect())),
+            rule("Attack which player", first),
+            rule("The Ur-Dragon: put a permanent", text("Mana Vault")),
+        ],
+    );
+    sim_core::engine::combat::combat(&mut g, P0).unwrap();
+    assert!(has_perm(&g, P0, "Mana Vault"), "{:?}", log.lock().unwrap());
+    assert!(g.player(P0).hand.contains(&cards[0]), "the Sol Ring stayed in hand: you chose");
+}
+
+#[test]
+fn embercleave_asks_which_creature_it_attaches_to() {
+    let mut g = urdragon_table();
+    perm(&mut g, P0, "Llanowar Elves");
+    let b = perm(&mut g, P0, "Birds of Paradise");
+    seat_script(&mut g, vec![rule("Embercleave: attach", text("Birds"))]);
+    let e = perm(&mut g, P0, "Embercleave");
+    assert_eq!(g.perm(e).attached, Some(b));
 }

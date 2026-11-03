@@ -257,7 +257,18 @@ fn ur_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) 
     }
     draw(g, p, n, false)?;
     let cs: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).perm && !g.db.get(c).land).collect();
-    let Some(c) = crate::engine::zones::max_by(&cs, |c| body_worth(g, p, c)) else { return Ok(vec![]) };
+    let pick = if crate::human::is_human(g, p) && !crate::human::urdragon::repeat_on(g, p) {
+        // a person chooses which permanent card (or none: "you may")
+        if cs.is_empty() {
+            return Ok(vec![]);
+        }
+        let labels: Vec<String> = cs.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
+        let prompt = "The Ur-Dragon: put a permanent card from your hand onto the battlefield?";
+        crate::human::choices::choose(g, p, "choose", prompt, &labels, Some("none"), None)?.map(|k| cs[k])
+    } else {
+        crate::engine::zones::max_by(&cs, |c| body_worth(g, p, c))
+    };
+    let Some(c) = pick else { return Ok(vec![]) };
     let pl = g.player_mut(p);
     if let Some(i) = pl.hand.iter().position(|&x| x == c) {
         pl.hand.remove(i);

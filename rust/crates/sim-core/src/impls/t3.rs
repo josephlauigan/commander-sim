@@ -838,11 +838,9 @@ fn celebrant(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) 
         return Ok(vec![]);
     }
     let ok = trigger_window(g, p, Some(src), "untap creatures; an additional combat", Some(6.0))?;
-    if ok
-        && crate::human::is_human(g, p)
-        && !crate::human::urdragon::repeat_on(g, p)
-        && !crate::human::choices::yes_no(g, p, "Combat Celebrant: exert it as it attacks (untap your other creatures, an additional combat)?")?
-    {
+    let ask = "Combat Celebrant: exert it as it attacks (untap your other creatures, an additional combat)?";
+    let person = crate::human::is_human(g, p) && !crate::human::urdragon::repeat_on(g, p);
+    if ok && person && !crate::human::choices::yes_no(g, p, ask)? {
         return Ok(vec![]); // a "may": not exerted
     }
     g.perm_mut(src).data.set(DataKey::Exerted, Val::Int(turns)); // exerted as it attacked
@@ -938,10 +936,18 @@ fn embercleave(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let o = g.perm(src).owner;
     let ready = |g: &Game| creatures(g, o).into_iter().filter(|&x| !g.perm(x).noatk).collect::<Vec<_>>();
-    if ready(g).is_empty() {
+    let person = crate::human::is_human(g, o); // a person may put it on any creature (the AI skips its mana creatures)
+    if (person && creatures(g, o).is_empty()) || (!person && ready(g).is_empty()) {
         return Ok(());
     }
     if !trigger_window(g, o, Some(src), "attach to a creature", Some(4.0))? || !controls(g, o, src) {
+        return Ok(());
+    }
+    if person {
+        // a person chooses the creature
+        if let Some(x) = crate::human::urdragon::pick_attach_target(g, o, "Embercleave", src)? {
+            g.perm_mut(src).attached = Some(x);
+        }
         return Ok(());
     }
     let cr = ready(g);

@@ -79,7 +79,9 @@ pub fn loop_live(g: &Game, p: PlayerId) -> bool {
         live(g, h)
             && g.perm(h).cd.is_some_and(|c| cards_name(g, c) == HELM)
             && g.perm(h).attached.is_some_and(|a| {
-                live(g, a) && g.is_creature(a) && g.perm(a).cd.is_some_and(|c| matches!(cards_name(g, c), GODO | CELEBRANT))
+                live(g, a)
+                    && g.is_creature(a)
+                    && g.perm(a).cd.is_some_and(|c| matches!(cards_name(g, c), GODO | CELEBRANT))
             })
     })
 }
@@ -96,7 +98,14 @@ pub fn repeat_attack(g: &mut Game, p: PlayerId, cands: &[PermId]) -> Option<Vec<
 
 /// After the person declared an attack with the loop live, offer to repeat it in every additional combat this turn
 pub fn offer_repeat(g: &mut Game, p: PlayerId, groups: &[(PlayerId, Vec<PermId>)]) -> Res {
-    if repeat_on(g, p) || groups.len() != 1 || !g.human_walker_atk.is_empty() || !loop_live(g, p) {
+    let stamp = g.turn_stamp();
+    let declined = intern("ur_repeat_declined");
+    if repeat_on(g, p)
+        || g.player(p).flag_turn.get(declined) == Some(&stamp)
+        || groups.len() != 1
+        || !g.human_walker_atk.is_empty()
+        || !loop_live(g, p)
+    {
         return Ok(());
     }
     let q = groups[0].0;
@@ -107,8 +116,9 @@ pub fn offer_repeat(g: &mut Game, p: PlayerId, groups: &[(PlayerId, Vec<PermId>)
         pname(g, q)
     );
     let labels = ["yes, repeat the attack".to_string(), "no, I'll declare each combat".to_string()];
-    if choices::choose_one(g, p, "choose", &prompt, &labels)? == 0 {
-        let stamp = g.turn_stamp();
+    if choices::choose_one(g, p, "choose", &prompt, &labels)? != 0 {
+        g.player_mut(p).flag_turn.insert(declined, stamp); // asked once a turn
+    } else {
         g.player_mut(p).flag_turn.insert(repeat_key(), stamp);
         set_dest(g, p, q);
         crate::glog!(g, "  {} will repeat the attack at {} in every additional combat", pname(g, p), pname(g, q));
@@ -152,11 +162,16 @@ fn squire_go(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     let labels: Vec<String> = eqs
         .iter()
         .map(|&e| {
-            let on = g.perm(e).attached.filter(|&t| live(g, t)).map_or(String::new(), |t| format!(" (on {})", g.perm(t).name));
+            let on = g
+                .perm(e)
+                .attached
+                .filter(|&t| live(g, t))
+                .map_or(String::new(), |t| format!(" (on {})", g.perm(t).name));
             format!("{}{on}", g.perm(e).name)
         })
         .collect();
-    let Some(i) = choices::choose(g, p, "target", "Brass Squire: attach which Equipment?", &labels, Some("cancel"), None)?
+    let Some(i) =
+        choices::choose(g, p, "target", "Brass Squire: attach which Equipment?", &labels, Some("cancel"), None)?
     else {
         return Ok(None);
     };
@@ -208,15 +223,8 @@ fn camera_go(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         return Ok(Some(format!("Can't activate Peter Parker's Camera. {why}")));
     }
     let labels: Vec<String> = items.iter().map(|x| x.1.clone()).collect();
-    let Some(k) = choices::choose(
-        g,
-        p,
-        "target",
-        "Peter Parker's Camera: copy which ability?",
-        &labels,
-        Some("cancel"),
-        None,
-    )?
+    let Some(k) =
+        choices::choose(g, p, "target", "Peter Parker's Camera: copy which ability?", &labels, Some("cancel"), None)?
     else {
         return Ok(None);
     };
@@ -294,7 +302,9 @@ fn jaxis_go(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
 /// the person's abilities of Brass Squire, Peter Parker's Camera and Jaxis (None: not one of these cards)
 pub fn abilities(nm: &str) -> Option<Vec<PermAbility>> {
     Some(match nm {
-        "Brass Squire" => vec![ability("{T}: attach target Equipment you control to target creature you control", squire_go)],
+        "Brass Squire" => {
+            vec![ability("{T}: attach target Equipment you control to target creature you control", squire_go)]
+        }
         "Peter Parker's Camera" => vec![ability(
             "{2}, {T}, remove a film counter: copy target activated or triggered ability you control",
             camera_go,
@@ -371,7 +381,12 @@ pub fn twinflame_copy(g: &mut Game, p: PlayerId, spell: CardId, ctx: &Ctx) -> Re
 }
 
 fn bf_last_named(g: &Game, p: PlayerId, name: &str) -> Option<PermId> {
-    g.player(p).perms.iter().rev().copied().find(|&m| live(g, m) && g.perm(m).cd.is_some_and(|c| cards_name(g, c) == name))
+    g.player(p)
+        .perms
+        .iter()
+        .rev()
+        .copied()
+        .find(|&m| live(g, m) && g.perm(m).cd.is_some_and(|c| cards_name(g, c) == name))
 }
 
 /// Dualcaster Mage entered (flashed in, or a token): "When this creature enters, copy target instant or sorcery
@@ -381,7 +396,9 @@ fn bf_last_named(g: &Game, p: PlayerId, name: &str) -> Option<PermId> {
 pub fn dualcaster_etb(g: &mut Game, p: PlayerId, dm: PermId, spell: Option<(CardId, &Ctx)>) -> Res {
     let Some((sc, sctx)) = spell else { return Ok(()) };
     let d = g.db.get(sc);
-    if !(d.instant || d.sorcery) || !live(g, dm) || !g.stack.iter().any(|it| it.kind == StackKind::Spell && it.card == Some(sc))
+    if !(d.instant || d.sorcery)
+        || !live(g, dm)
+        || !g.stack.iter().any(|it| it.kind == StackKind::Spell && it.card == Some(sc))
     {
         return Ok(());
     }
@@ -413,12 +430,8 @@ pub fn dualcaster_etb(g: &mut Game, p: PlayerId, dm: PermId, spell: Option<(Card
 fn loop_tokens(g: &Game, p: PlayerId) -> usize {
     let mut n = 5;
     for q in g.opps(p) {
-        let blockers = g
-            .player(q)
-            .perms
-            .iter()
-            .filter(|&&m| live(g, m) && g.is_creature(m) && !g.perm(m).tapped)
-            .count();
+        let blockers =
+            g.player(q).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m) && !g.perm(m).tapped).count();
         n += ((g.player(q).life.max(0) as usize) + 1) / 2 + blockers;
     }
     n.clamp(10, 200)
