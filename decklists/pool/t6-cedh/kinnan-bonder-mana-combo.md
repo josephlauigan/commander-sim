@@ -15,7 +15,7 @@ Second by meta share (6.9%, 19.2% conversion). It wins through Kinnan's extra ma
 
 ## At the table
 
-- **Plan:** Make lots of mana with dorks and rocks (Birds of Paradise, Elvish Mystic, Bloom Tender, Gaea's Cradle, Sol Ring, Mana Vault), doubled by Kinnan, Bonder Prodigy. It draws with Rhystic Study, Mystic Remora and The One Ring while it waits for a safe window.
+- **Plan:** Make lots of mana with dorks and rocks (Birds of Paradise, Elvish Mystic, Incubation Druid, Gaea's Cradle, Sol Ring, Mana Vault), doubled by Kinnan, Bonder Prodigy. It draws with Rhystic Study, Mystic Remora and The One Ring while it waits for a safe window.
 - **Wins by:** Kinnan with Basalt Monolith makes unbounded colorless mana, Kinnan with Freed from the Real or Pemmin's Aura on Birds of Paradise (or another blue mana creature) makes unbounded mana too, and Hullbreaker Horror with two rocks is a third loop. Green Sun's Zenith, Whir of Invention and Transmute Artifact find the pieces. It finishes with Finale of Devastation or by decking you with Faerie Mastermind. It can win on turn three to five.
 - **Watch out for:** Kill or counter Kinnan and the mana creatures early, and keep a counter ready for the combo. Few tutors means it digs slowly, so tax its draw engines. A creature and artifact wipe hurts it badly.
 - **Interaction:** Force of Will, Fierce Guardianship, Force of Negation, Pact of Negation, Swan Song, Flusterstorm, Mental Misstep, Veil of Summer, Misdirection, Mindbreak Trap, Chain of Vapor and An Offer You Can't Refuse.
@@ -34,7 +34,7 @@ Written in Stage 3.
 
 **Battles (1).** Invasion of Ikoria // Zilortha, Apex of Ikoria
 
-**Creatures (24).** Birds of Paradise, Bloom Tender, Clever Impersonator, Consecrated Sphinx, Delighted Halfling, Drift of Phantasms, Elvish Mystic, Elvish Spirit Guide, Endurance, Enduring Vitality, Faerie Mastermind, Flesh Duplicate, Formidable Speaker, Fyndhorn Elves, Gene Pollinator, High Fae Trickster, Hullbreaker Horror, Llanowar Elves, Mockingbird, The Cabbage Merchant, Thrasios, Triton Hero, Trophy Mage, Valley Floodcaller, Wan Shi Tong, Librarian
+**Creatures (24).** Birds of Paradise, Clever Impersonator, Consecrated Sphinx, Delighted Halfling, Drift of Phantasms, Elvish Mystic, Elvish Spirit Guide, Endurance, Enduring Vitality, Faerie Mastermind, Flesh Duplicate, Formidable Speaker, Fyndhorn Elves, Gene Pollinator, High Fae Trickster, Hullbreaker Horror, Incubation Druid, Llanowar Elves, Mockingbird, The Cabbage Merchant, Thrasios, Triton Hero, Trophy Mage, Valley Floodcaller, Wan Shi Tong, Librarian
 
 **Artifacts (15).** Arcane Signet, Basalt Monolith, Chrome Mox, Fellwar Stone, Grim Monolith, Lotus Petal, Mana Vault, Mirage Mirror, Mox Amber, Mox Diamond, Mox Opal, Sol Ring, Springleaf Drum, Talisman of Curiosity, The One Ring
 
@@ -54,7 +54,6 @@ Written in Stage 3.
 1 Arcane Signet
 1 Basalt Monolith
 1 Birds of Paradise
-1 Bloom Tender
 1 Borne Upon a Wind
 1 Boseiju, Who Endures
 1 Botanical Sanctum
@@ -99,6 +98,7 @@ Written in Stage 3.
 1 Hidden Strings
 1 High Fae Trickster
 1 Hullbreaker Horror
+1 Incubation Druid
 1 Invasion of Ikoria // Zilortha, Apex of Ikoria
 1 Kinnan, Bonder Prodigy
 1 Llanowar Elves

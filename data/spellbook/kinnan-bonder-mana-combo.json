@@ -6,7 +6,7 @@
   "commanders": [
     "Kinnan, Bonder Prodigy"
   ],
-  "request_sha256": "a798eab2754409c36b2ceaab0024424f64a22f54c9b3f36056bc5ad6c550153d",
+  "request_sha256": "800e776f33904d54799143cde6a081c9d4d9772b6da80ff7ab58b33b1d329f83",
   "identity": "GU",
   "included": [
     {
@@ -118,33 +118,6 @@
       "popularity": 46965
     },
     {
-      "id": "4222-5168",
-      "cards": [
-        {
-          "name": "Bloom Tender",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite non-blue mana of colors among permanents you control",
-        "Infinite mana of colors among permanents you control"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Bloom Tender.\nBloom Tender does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 23924
-    },
-    {
       "id": "129-4222--140",
       "cards": [
         {
@@ -175,31 +148,30 @@
       "popularity": 19156
     },
     {
-      "id": "3525-5168",
+      "id": "3990-4222",
       "cards": [
         {
-          "name": "Bloom Tender",
+          "name": "Incubation Druid",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Pemmin's Aura",
+          "name": "Freed from the Real",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite non-blue mana of colors among permanents you control",
-        "Infinite mana of colors among permanents you control"
+        "Infinite mana lands you control can produce"
       ],
       "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Bloom Tender.\nBloom Tender does not have summoning sickness.",
+      "prerequisites": "Freed from the Real attached to Incubation Druid.\nIncubation Druid does not have summoning sickness.\nIncubation Druid has at least one +1/+1 counter on it.\nYou control a land that can produce {U}.",
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 14521
+      "popularity": 13966
     },
     {
       "id": "129-3525--140",
@@ -262,6 +234,32 @@
       "bracket": "O",
       "legal": true,
       "popularity": 9570
+    },
+    {
+      "id": "3525-3990",
+      "cards": [
+        {
+          "name": "Incubation Druid",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pemmin's Aura",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Pemmin's Aura attached to Incubation Druid.\nIncubation Druid does not have summoning sickness.\nIncubation Druid has at least one +1/+1 counter on it.\nYou control a land that can produce {U}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9278
     },
     {
       "id": "129-3525-5814",
@@ -532,6 +530,36 @@
       ]
     },
     {
+      "id": "4222-5168",
+      "cards": [
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Freed from the Real attached to Bloom Tender.\nBloom Tender does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 23924,
+      "missing": [
+        "Bloom Tender"
+      ]
+    },
+    {
       "id": "1792-2364-5864",
       "cards": [
         {
@@ -664,36 +692,33 @@
       ]
     },
     {
-      "id": "2645-5168",
+      "id": "3525-5168",
       "cards": [
         {
-          "name": "Staff of Domination",
+          "name": "Bloom Tender",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Bloom Tender",
+          "name": "Pemmin's Aura",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite lifegain triggers",
-        "Infinite lifegain",
-        "Infinite card draw",
-        "Infinite mana creatures you control can produce",
-        "Infinite colored mana"
+        "Infinite non-blue mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
       ],
       "requires": [],
-      "prerequisites": "Bloom Tender does not have summoning sickness. You control a permanent of each color.",
+      "prerequisites": "Pemmin's Aura attached to Bloom Tender.\nBloom Tender does not have summoning sickness.",
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 14632,
+      "popularity": 14521,
       "missing": [
-        "Staff of Domination"
+        "Bloom Tender"
       ]
     },
     {
@@ -723,35 +748,6 @@
       "popularity": 13995,
       "missing": [
         "Tidespout Tyrant"
-      ]
-    },
-    {
-      "id": "3990-4222",
-      "cards": [
-        {
-          "name": "Incubation Druid",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Incubation Druid.\nIncubation Druid does not have summoning sickness.\nIncubation Druid has at least one +1/+1 counter on it.\nYou control a land that can produce {U}.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 13966,
-      "missing": [
-        "Incubation Druid"
       ]
     },
     {
@@ -1141,35 +1137,6 @@
       ]
     },
     {
-      "id": "3525-3990",
-      "cards": [
-        {
-          "name": "Incubation Druid",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Incubation Druid.\nIncubation Druid does not have summoning sickness.\nIncubation Druid has at least one +1/+1 counter on it.\nYou control a land that can produce {U}.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 9278,
-      "missing": [
-        "Incubation Druid"
-      ]
-    },
-    {
       "id": "542-2585",
       "cards": [
         {
@@ -1409,6 +1376,35 @@
       "popularity": 7114,
       "missing": [
         "Mind Over Matter"
+      ]
+    },
+    {
+      "id": "2816-3990",
+      "cards": [
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Incubation Druid",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control a mana-producing land.\nIncubation Druid does not have summoning sickness.\nUmbral Mantle attached to Incubation Druid.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6769,
+      "missing": [
+        "Umbral Mantle"
       ]
     },
     {
@@ -1774,6 +1770,35 @@
       "popularity": 3443,
       "missing": [
         "Mana Reflection"
+      ]
+    },
+    {
+      "id": "3990-4019",
+      "cards": [
+        {
+          "name": "Vigean Graftmage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Incubation Druid",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Incubation Druid does not have summoning sickness.\nIncubation Druid has at least one +1/+1 counter on it.\nYou control a land that can produce {U}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3434,
+      "missing": [
+        "Vigean Graftmage"
       ]
     },
     {
@@ -2194,36 +2219,6 @@
       ]
     },
     {
-      "id": "5168-5200",
-      "cards": [
-        {
-          "name": "Sword of the Paruns",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Bloom Tender",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana creatures you control can produce",
-        "Infinite mana of colors among permanents you control"
-      ],
-      "requires": [],
-      "prerequisites": "There are at least four colors among permanents you control.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1523,
-      "missing": [
-        "Sword of the Paruns"
-      ]
-    },
-    {
       "id": "129-1247-4289",
       "cards": [
         {
@@ -2402,35 +2397,6 @@
       "popularity": 1179,
       "missing": [
         "Krosan Restorer"
-      ]
-    },
-    {
-      "id": "4019-5168",
-      "cards": [
-        {
-          "name": "Vigean Graftmage",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Bloom Tender",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite non-blue mana of colors among permanents you control"
-      ],
-      "requires": [],
-      "prerequisites": "Bloom Tender does not have summoning sickness.\nBloom Tender has at least one +1/+1 counter on it.\nYou control a white, black and/or red permanent.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1103,
-      "missing": [
-        "Vigean Graftmage"
       ]
     },
     {
@@ -2708,6 +2674,44 @@
       ]
     },
     {
+      "id": "129-2816-3990",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Incubation Druid",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Umbral Mantle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn",
+        "Put most creature cards from your library onto the battlefield",
+        "Infinite mana lands you control can produce",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Umbral Mantle attached to Incubation Druid.\nIncubation Druid does not have summoning sickness.\nIncubation Druid has at least one +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 782,
+      "missing": [
+        "Umbral Mantle"
+      ]
+    },
+    {
       "id": "129-3995-4289",
       "cards": [
         {
@@ -2864,35 +2868,6 @@
       "popularity": 585,
       "missing": [
         "Sakashima of a Thousand Faces"
-      ]
-    },
-    {
-      "id": "195-5168",
-      "cards": [
-        {
-          "name": "Chain Stasis",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Bloom Tender",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite non-blue mana of colors among permanents you control"
-      ],
-      "requires": [],
-      "prerequisites": "Bloom Tender does not have summoning sickness.\nThere are at least three colors among permanents you control, one of which must be blue.",
-      "mana": "{U}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 569,
-      "missing": [
-        "Chain Stasis"
       ]
     },
     {
