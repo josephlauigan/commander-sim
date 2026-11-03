@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-10-30",
+  "fetched": "2026-11-03",
   "deck": "tergrid-mono-black-disruption",
   "commanders": [
     "Tergrid, God of Fright // Tergrid's Lantern"
   ],
-  "request_sha256": "0e8eb8a8eff22952eab5420533914abf219b5d5c168b34bfa3244cc5705d6433",
+  "request_sha256": "59302050d02769bfe332db1a963bc8a91168ae36badd14a2e37afeae08d5315a",
   "identity": "B",
   "included": [],
   "included_by_changing_commanders": [],
@@ -35,7 +35,7 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 3918,
+      "popularity": 3949,
       "missing": [
         "Crackdown Construct"
       ]
