@@ -1,0 +1,19 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  sauron                     100 cards: Full 100, Full-auto 0, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 4 (Low B4)  5 decks, 500 cards: Full 435, Full-auto 37, Approximate 28, Partial 0, Unmodeled 0
+
+
+=== Sauron vs Tier 4 (Low B4) [loose, lookahead AI, 2000 games] ===
+Win rate  25.4%   95% CI 23.5-27.4%   (even share 25%: +0.4 pts)
+Average turn (your own turn count) of wins 10.8, of losses 7.6
+Plan online (first combat damage to a player by an Army): 55.0% of games
+Wins by: damage 100%
+  Opponent                                    seated  won when seated  eliminated you
+  Yuriko (yuriko-dimir-ninjas)                 61.0%            22.5%           13.5%
+  Chulane (chulane-bant-value-combo)           60.4%            19.5%           11.2%
+  Edgar Markov (edgar-markov-mardu-vampires)   60.4%            31.6%           18.2%
+  Prosper (prosper-rakdos-exile-treasure)      59.7%            19.3%           12.1%
+  Krenko (krenko-mono-red-goblins)             58.6%            31.6%           19.6%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(363s total)

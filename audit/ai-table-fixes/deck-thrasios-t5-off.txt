@@ -1,0 +1,19 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  thrasios                    100 cards: Full 99, Full-auto 1, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 429, Full-auto 34, Approximate 37, Partial 0, Unmodeled 0
+
+
+=== Tymna/Thrasios vs Tier 5 (High B4) [loose, lookahead AI, 2000 games] ===
+Win rate  15.2%   95% CI 13.6-16.8%   (even share 25%: -9.8 pts)
+Average turn (your own turn count) of wins 11.1, of losses 7.8
+Plan online (first Tymna draw, or the infinite-mana combo going off): 73.9% of games
+Wins by: damage 57%, combo 41%, timeout 2%
+  Opponent                                    seated  won when seated  eliminated you
+  Zur the Enchanter (zur-esper-enchantment-c   61.0%            24.3%           14.3%
+  Kinnan (kinnan-simic-mana-combo)             60.4%            41.3%           24.5%
+  Miirym (miirym-temur-dragons)                60.4%            26.8%           17.1%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   59.7%            22.3%           13.2%
+  Urza (urza-mono-blue-artifacts)              58.6%            26.6%           15.5%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(363s total)

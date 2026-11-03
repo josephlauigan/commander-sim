@@ -1,0 +1,19 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  cloud                      100 cards: Full 89, Full-auto 9, Approximate 0, Partial 1, Unmodeled 1 | Unmodeled: Judgment of Alexander; Partial: Forge Anew
+  opponents Tier 2 (Mid B3)  5 decks, 500 cards: Full 423, Full-auto 59, Approximate 18, Partial 0, Unmodeled 0
+
+
+=== Cloud vs Tier 2 (Mid B3) [loose, lookahead AI, 2000 games] ===
+Win rate  18.4%   95% CI 16.7-20.1%   (even share 25%: -6.7 pts)
+Average turn (your own turn count) of wins 13.3, of losses 11.4
+Plan online (first attack by an equipped Cloud): 76.0% of games
+Wins by: damage 97%, timeout 3%
+  Opponent                                    seated  won when seated  eliminated you
+  Sythis (sythis-selesnya-enchantress)         61.0%            23.1%           11.8%
+  Brago (brago-azorius-blink-control)          60.4%            20.1%           12.0%
+  Kaalia of the Vast (kaalia-mardu-creature-   60.4%            30.2%           19.2%
+  Meren of Clan Nel Toth (meren-golgari-recu   59.7%            22.2%           12.6%
+  Lord Windgrace (lord-windgrace-jund-lands)   58.6%            41.0%           24.2%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(616s total)
