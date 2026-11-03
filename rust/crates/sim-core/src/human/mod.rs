@@ -13,6 +13,7 @@ pub mod abilities;
 pub mod alt;
 pub mod cards;
 pub mod choices;
+pub mod combos;
 pub mod combat;
 pub mod human;
 pub mod karn;

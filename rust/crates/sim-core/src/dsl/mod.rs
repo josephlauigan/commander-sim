@@ -633,7 +633,7 @@ fn run(
                         Some(c) => g.db.get(c).name.to_string(),
                         None => "Damage".to_string(),
                     };
-                    crate::human::choices::deal_damage(g, p, dmg, &what, "triggers")?;
+                    crate::human::choices::deal_damage_from(g, p, dmg, &what, "triggers", src)?;
                 }
                 Some("any_target") => {
                     let cols = src_colors(g, src, spell);

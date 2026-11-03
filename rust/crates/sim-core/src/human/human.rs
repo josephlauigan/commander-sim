@@ -1045,6 +1045,9 @@ pub fn order_triggers(g: &mut Game, real: Vec<crate::hooks::Trigger>) -> Res<Vec
                 a == b
             });
             while left.len() > 1 {
+                if super::combos::niv_pings_standing(g, &left) {
+                    break; // every Niv-Mizzet ping goes to the standing target: their order can't matter
+                }
                 let labels: Vec<String> = left.iter().map(|t| trig_label(g, t)).collect();
                 if labels.iter().all(|l| *l == labels[0]) {
                     break; // the rest are the same trigger (four Sephiroth drains): their order can't matter

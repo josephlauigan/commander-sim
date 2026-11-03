@@ -443,6 +443,37 @@ pub fn deal_damage(g: &mut Game, p: PlayerId, n: i32, source: &str, kind: &str) 
     apply_damage(g, p, tg[k], n, source, kind)
 }
 
+/// `deal_damage` for a trigger of permanent `src`: Niv-Mizzet's pings go where the person's standing choice says (set from the
+/// prompt itself, or from its ability), until the turn ends; the prompt offers each opponent as "all of its pings"
+pub fn deal_damage_from(g: &mut Game, p: PlayerId, n: i32, source: &str, kind: &str, src: Option<PermId>) -> Res {
+    let Some(s) = src.filter(|&s| g.perm(s).cd.is_some_and(|c| g.db.get(c).name.starts_with("Niv-Mizzet"))) else {
+        return deal_damage(g, p, n, source, kind);
+    };
+    if n <= 0 {
+        return Ok(());
+    }
+    if let Some(q) = super::combos::standing_ping(g, s) {
+        crate::glog!(g, "  {source}: {n} damage to {} (your standing choice)", g.player(q).name);
+        return apply_damage(g, p, Target::Player(q), n, source, kind);
+    }
+    let tg = damage_targets(g, p, Default::default());
+    if tg.is_empty() {
+        return Ok(());
+    }
+    let mut labels: Vec<String> = tg.iter().map(|&x| legal::describe_target(g, p, x)).collect();
+    let opps: Vec<PlayerId> = tg.iter().filter_map(|x| if let Target::Player(q) = x { Some(*q).filter(|&q| q != p) } else { None }).collect();
+    for &q in &opps {
+        labels.push(format!("every {source} ping this turn: {} ({} life)", g.player(q).name, g.player(q).life));
+    }
+    let k = choose_one(g, p, "target", &format!("{source}: deal {n} damage to which target?"), &labels)?;
+    if k >= tg.len() {
+        let q = opps[k - tg.len()];
+        super::combos::set_standing_ping(g, s, Some(q));
+        return apply_damage(g, p, Target::Player(q), n, source, kind);
+    }
+    apply_damage(g, p, tg[k], n, source, kind)
+}
+
 /// `n` damage from p's `source` to one target (a creature dies if n reaches its toughness, a planeswalker loses that
 /// much loyalty, a player loses that much life).
 pub fn apply_damage(g: &mut Game, p: PlayerId, t: Target, n: i32, source: &str, kind: &str) -> Res {
@@ -453,9 +484,10 @@ pub fn apply_damage(g: &mut Game, p: PlayerId, t: Target, n: i32, source: &str, 
     let name = g.perm(m).name;
     if g.is_creature(m) && repl::no_damage(g, m) {
         crate::glog!(g, "    the damage to {} is prevented", name);
-    } else if g.is_creature(m) && etgh(g, m) <= n {
+    } else if g.is_creature(m) && etgh(g, m) <= n + super::combos::marked(g, m) {
         engine::removal::apply_removal(g, Some(p), m, &format!("dmg{n}"), None)?;
     } else if g.is_creature(m) {
+        super::combos::mark(g, m, n); // a person's damage stays marked on the creature
         crate::glog!(g, "    {} deals {} damage to {} (it survives)", source, n, name);
     }
     let x = g.perm(m);
