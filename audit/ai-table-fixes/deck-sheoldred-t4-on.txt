@@ -1,0 +1,19 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  sheoldred                  100 cards: Full 88, Full-auto 12, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 4 (Low B4)  5 decks, 500 cards: Full 435, Full-auto 37, Approximate 28, Partial 0, Unmodeled 0
+
+
+=== Sheoldred vs Tier 4 (Low B4) [loose, lookahead AI, 2000 games] ===
+Win rate  22.4%   95% CI 20.6-24.2%   (even share 25%: -2.6 pts)
+Average turn (your own turn count) of wins 9.7, of losses 7.4
+Plan online (first opponent drained by Sheoldred): 90.2% of games
+Wins by: damage 84%, combo 16%
+  Opponent                                    seated  won when seated  eliminated you
+  Yuriko (yuriko-dimir-ninjas)                 61.0%            17.4%           10.6%
+  Chulane (chulane-bant-value-combo)           60.4%            16.5%           10.4%
+  Edgar Markov (edgar-markov-mardu-vampires)   60.4%            38.2%           21.4%
+  Prosper (prosper-rakdos-exile-treasure)      59.7%            21.4%           13.2%
+  Krenko (krenko-mono-red-goblins)             58.6%            36.2%           22.1%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(336s total)

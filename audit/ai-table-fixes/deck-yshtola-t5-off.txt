@@ -1,0 +1,26 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  yshtola                     100 cards: Full 95, Full-auto 5, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 429, Full-auto 34, Approximate 37, Partial 0, Unmodeled 0
+
+
+=== Y'shtola vs Tier 5 (High B4) [loose, lookahead AI, 1997 games] ===
+Win rate  22.8%   95% CI 21.0-24.7%   (even share 25%: -2.2 pts)
+Average turn (your own turn count) of wins 12.0, of losses 7.8
+Plan online (first drain from Y'shtola's cast trigger): 65.7% of games
+Wins by: damage 100%, timeout 0%
+  Opponent                                    seated  won when seated  eliminated you
+  Zur the Enchanter (zur-esper-enchantment-c   60.9%            20.0%           12.3%
+  Kinnan (kinnan-simic-mana-combo)             60.3%            35.1%           20.7%
+  Miirym (miirym-temur-dragons)                60.3%            29.0%           18.2%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   59.8%            20.7%           12.4%
+  Urza (urza-mono-blue-artifacts)              58.6%            23.7%           13.5%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(284s total)
+
+WARNING: 3 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 501060  panic: attempt to add with overflow (at /home/joseph/.rustup/toolchains/1.99.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs:206)
+   seed 501270  panic: attempt to add with overflow (at /home/joseph/.rustup/toolchains/1.99.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs:206)
+   seed 501675  panic: attempt to add with overflow (at /home/joseph/.rustup/toolchains/1.99.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs:206)
+  Please send me that output so I can fix the cause.

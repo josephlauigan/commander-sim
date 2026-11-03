@@ -1,0 +1,19 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  sauron                      100 cards: Full 100, Full-auto 0, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 3 (High B3)  5 decks, 500 cards: Full 430, Full-auto 49, Approximate 20, Partial 1, Unmodeled 0
+
+
+=== Sauron vs Tier 3 (High B3) [loose, lookahead AI, 2000 games] ===
+Win rate  22.2%   95% CI 20.5-24.1%   (even share 25%: -2.7 pts)
+Average turn (your own turn count) of wins 11.6, of losses 8.7
+Plan online (first combat damage to a player by an Army): 59.4% of games
+Wins by: damage 100%, timeout 0%
+  Opponent                                    seated  won when seated  eliminated you
+  Tergrid (tergrid-mono-black-disruption)      61.0%            38.6%           23.6%
+  Atraxa (atraxa-infect)                       60.4%            28.0%            8.8%
+  Aurelia (aurelia-boros-extra-combats)        60.4%            27.8%           19.6%
+  Marwyn (marwyn-mono-green-elves)             59.7%            22.2%           15.2%
+  Korvold (korvold-jund-sacrifice)             58.6%            12.5%           10.0%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(202s total)

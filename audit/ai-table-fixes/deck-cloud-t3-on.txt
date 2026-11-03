@@ -1,0 +1,19 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  cloud                       100 cards: Full 89, Full-auto 9, Approximate 0, Partial 1, Unmodeled 1 | Unmodeled: Judgment of Alexander; Partial: Forge Anew
+  opponents Tier 3 (High B3)  5 decks, 500 cards: Full 430, Full-auto 49, Approximate 20, Partial 1, Unmodeled 0
+
+
+=== Cloud vs Tier 3 (High B3) [loose, lookahead AI, 2000 games] ===
+Win rate  18.5%   95% CI 16.9-20.3%   (even share 25%: -6.5 pts)
+Average turn (your own turn count) of wins 11.6, of losses 8.8
+Plan online (first attack by an equipped Cloud): 68.8% of games
+Wins by: damage 99%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Tergrid (tergrid-mono-black-disruption)      61.0%            38.2%           24.4%
+  Atraxa (atraxa-infect)                       60.4%            34.0%           11.0%
+  Aurelia (aurelia-boros-extra-combats)        60.4%            30.3%           21.9%
+  Marwyn (marwyn-mono-green-elves)             59.7%            19.8%           12.7%
+  Korvold (korvold-jund-sacrifice)             58.6%            12.8%           10.7%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(268s total)

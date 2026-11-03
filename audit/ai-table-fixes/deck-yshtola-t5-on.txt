@@ -1,0 +1,25 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  yshtola                     100 cards: Full 95, Full-auto 5, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 429, Full-auto 34, Approximate 37, Partial 0, Unmodeled 0
+
+
+=== Y'shtola vs Tier 5 (High B4) [loose, lookahead AI, 1998 games] ===
+Win rate  22.6%   95% CI 20.8-24.5%   (even share 25%: -2.4 pts)
+Average turn (your own turn count) of wins 12.1, of losses 7.8
+Plan online (first drain from Y'shtola's cast trigger): 65.4% of games
+Wins by: damage 100%
+  Opponent                                    seated  won when seated  eliminated you
+  Zur the Enchanter (zur-esper-enchantment-c   61.0%            21.4%           12.7%
+  Kinnan (kinnan-simic-mana-combo)             60.4%            35.6%           21.0%
+  Miirym (miirym-temur-dragons)                60.3%            27.9%           17.7%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   59.8%            19.4%           11.7%
+  Urza (urza-mono-blue-artifacts)              58.6%            24.4%           14.2%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(295s total)
+
+WARNING: 2 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 501270  panic: attempt to add with overflow (at /home/joseph/.rustup/toolchains/1.99.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs:206)
+   seed 501675  panic: attempt to add with overflow (at /home/joseph/.rustup/toolchains/1.99.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs:206)
+  Please send me that output so I can fix the cause.

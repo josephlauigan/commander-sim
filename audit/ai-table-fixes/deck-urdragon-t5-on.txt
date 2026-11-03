@@ -1,0 +1,19 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  urdragon                    100 cards: Full 91, Full-auto 4, Approximate 5, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 429, Full-auto 34, Approximate 37, Partial 0, Unmodeled 0
+
+
+=== The Ur-Dragon vs Tier 5 (High B4) [loose, lookahead AI, 2000 games] ===
+Win rate  20.4%   95% CI 18.7-22.2%   (even share 25%: -4.6 pts)
+Average turn (your own turn count) of wins 8.0, of losses 7.3
+Plan online (first combo attempt): 9.7% of games
+Wins by: damage 59%, combo 41%
+  Opponent                                    seated  won when seated  eliminated you
+  Zur the Enchanter (zur-esper-enchantment-c   61.0%            22.9%           13.4%
+  Kinnan (kinnan-simic-mana-combo)             60.4%            41.1%           23.9%
+  Miirym (miirym-temur-dragons)                60.4%            23.6%           14.9%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   59.7%            20.7%           13.2%
+  Urza (urza-mono-blue-artifacts)              58.6%            24.1%           13.9%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(270s total)
