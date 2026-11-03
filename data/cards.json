@@ -83957,7 +83957,8 @@
     "tgh": "1",
     "rem": "destroy",
     "tgt": "cna",
-    "etb": true
+    "etb": true,
+    "nonblack": true
    },
    "pow": 2,
    "tgh": 1,
