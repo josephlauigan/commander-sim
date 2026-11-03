@@ -32,7 +32,7 @@ Within each tier, the five decks cover different axes: a combat/aggro deck, a gr
 | 2 | [Meren of Clan Nel Toth — Golgari Recursion](t2-mid-b3/meren-golgari-recursion.md) | Meren of Clan Nel Toth | Grind / recursion value | 2 | 36 | No |
 | 2 | [Sythis — Selesnya Enchantress Pillowfort](t2-mid-b3/sythis-selesnya-enchantress.md) | Sythis, Harvest's Hand | Pillowfort / enchantress | 2 | 36 | No |
 | 2 | [Brago — Azorius Blink Control](t2-mid-b3/brago-azorius-blink-control.md) | Brago, King Eternal | Control / interaction-heavy | 2 | 36 | No |
-| 2 | [Lord Windgrace — Jund Lands](t2-mid-b3/lord-windgrace-jund-lands.md) | Lord Windgrace | Lands / ramp value | 2 | 41 | No |
+| 2 | [Lord Windgrace — Jund Lands](t2-mid-b3/lord-windgrace-jund-lands.md) | Lord Windgrace | Lands / ramp value | 1 | 41 | No |
 | 3 | [Korvold — Jund Sacrifice & Treasure](t3-high-b3/korvold-jund-sacrifice.md) | Korvold, Fae-Cursed King | Sacrifice value engine | 3 | 35 | Yes |
 | 3 | [Marwyn — Mono-Green Elves](t3-high-b3/marwyn-mono-green-elves.md) | Marwyn, the Nurturer | Go-wide / Craterhoof finish | 3 | 33 | No |
 | 3 | [Atraxa — Four-Color Infect & Proliferate](t3-high-b3/atraxa-infect.md) | Atraxa, Praetors' Voice | Infect / poison and proliferate | 3 | 36 | No |
