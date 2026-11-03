@@ -17,6 +17,7 @@
     <button id="pb-skip" type="button" title="Show everything up to your next decision">Skip ahead</button>
   </div>
   <button id="voice" type="button" hidden title="Read the opponents' moves aloud" aria-pressed="false">Voice</button>
+  <span id="voice-pick" hidden><select id="voice-name" title="Which voice reads the moves" aria-label="Voice"></select><select id="voice-rate" title="How fast it speaks (2× and 4× speak faster still)" aria-label="Speaking speed"><option value="0.8">Slower</option><option value="1">Normal</option><option value="1.2">Faster</option><option value="1.45">Fastest</option></select></span>
   <div id="status"></div>
   <span id="zoom" role="group" aria-label="Card size"><button type="button" data-zoom="-1" title="Smaller cards">A−</button><button type="button" data-zoom="1" title="Bigger cards">A+</button></span>
   <label id="autopass-box" hidden title="When the game stops to give you priority (from your next decision)">Stop <select id="autopass"><option value="respond">when I can respond</option><option value="stack">on every spell, ability and trigger</option><option value="all">at every step (full control)</option></select></label>
