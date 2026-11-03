@@ -404,9 +404,10 @@ function setupPlayback() {
 // With Voice on, each opponent's move (a top-level log line that starts with their name) and the start of their turn
 // is spoken by the browser's own speech (the iPad app's web view has it too), at a quicker rate on 2× and 4×, with
 // the few effects worth hearing (`spoken`). Your own moves are not, nor history replayed on load, Undo, Try it or Skip
-// ahead. On, and remembered in this browser.
+// ahead. On, and remembered in this browser, with the voice and speaking speed picked beside the button.
 const speech = window.speechSynthesis || null;
 let voiceOn = true, unlocked = false;
+let voice = null, voiceRate = 1;     // the picked voice (null: the system's default) and the speed, times RATE's
 const RATE = { 1: 1, 2: 1.3, 4: 1.7 };
 const MANA = { W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green', C: 'colourless', S: 'snow', T: 'tap', Q: 'untap' };
 
@@ -484,7 +485,8 @@ function sayHeld() {
 function speak(words) {
   return new Promise((done) => {
     const u = new SpeechSynthesisUtterance(words);
-    u.rate = RATE[speed] || 1;
+    u.rate = (RATE[speed] || 1) * voiceRate;
+    if (voice) { u.voice = voice; u.lang = voice.lang; }
     const guard = setTimeout(done, 4000 + 150 * words.length);       // the end event doesn't always come (iOS)
     u.onend = u.onerror = () => { clearTimeout(guard); done(); };
     speech.speak(u);
@@ -499,7 +501,39 @@ function setVoice(on) {
   const b = $('#voice');
   b.replaceChildren(icon(on ? 'voice' : 'mute'), on ? ' Voice' : ' Muted');
   b.setAttribute('aria-pressed', String(on));
+  $('#voice-pick').hidden = !on || !$('#voice-name').options.length;
   try { localStorage.setItem('voice', on ? '1' : '0'); } catch (e) { /* private window: not remembered */ }
+}
+
+const remembered = (key) => { try { return localStorage.getItem(key); } catch (e) { return null; } };
+const remember = (key, v) => { try { localStorage.setItem(key, v); } catch (e) { /* private window */ } };
+
+/// the voices this device offers, in the picker: the page's language first, then the others by language. The list
+/// can come late (Safari fills it after the first voiceschanged), so this runs again then.
+function listVoices() {
+  const all = speech.getVoices();
+  if (!all.length) return;
+  const mine = (navigator.language || 'en').slice(0, 2);
+  const byName = (a, b) => a.lang.localeCompare(b.lang) || a.name.localeCompare(b.name);
+  const opt = (v) => el('option', { value: v.voiceURI }, `${v.name} (${v.lang})`);
+  const near = all.filter((v) => v.lang.startsWith(mine)).sort(byName), far = all.filter((v) => !v.lang.startsWith(mine)).sort(byName);
+  const pick = $('#voice-name');
+  pick.replaceChildren(el('option', { value: '' }, 'Default voice'), ...near.map(opt),
+    far.length ? el('optgroup', { label: 'Other languages' }, ...far.map(opt)) : null);
+  const want = remembered('voice-name') || '';
+  voice = all.find((v) => v.voiceURI === want) || null;
+  pick.value = voice ? want : '';
+  $('#voice-pick').hidden = !voiceOn;
+}
+
+// a voice or speed picked: use it from the next line, and say a sample line in it (the change is a tap, so it speaks)
+function pickVoice() {
+  const want = $('#voice-name').value;
+  voice = speech.getVoices().find((v) => v.voiceURI === want) || null;
+  voiceRate = Number($('#voice-rate').value) || 1;
+  remember('voice-name', want); remember('voice-rate', String(voiceRate));
+  speech.cancel();
+  speak('Kefka casts Swords to Plowshares on Sheoldred');
 }
 
 function setupVoice() {
@@ -507,14 +541,24 @@ function setupVoice() {
   $('#voice').hidden = false;
   try { setVoice(localStorage.getItem('voice') !== '0'); } catch (e) { setVoice(true); }
   $('#voice').addEventListener('click', () => setVoice(!voiceOn));
-  // Safari (and the iPad app) speaks only after a first utterance made from a tap or a key
+  voiceRate = Number(remembered('voice-rate')) || 1;
+  $('#voice-rate').value = String(voiceRate);
+  if (!$('#voice-rate').value) { voiceRate = 1; $('#voice-rate').value = '1'; }
+  listVoices();
+  speech.addEventListener('voiceschanged', listVoices);
+  $('#voice-name').addEventListener('change', pickVoice);
+  $('#voice-rate').addEventListener('change', pickVoice);
+  // Safari (and the iPad app) speaks only after a first utterance made from a tap or a key. A touch's pointerdown
+  // isn't a user gesture to WebKit (its touchend and click are), and an empty utterance may be dropped: speak a
+  // silent space from the gesture events that count.
   const unlock = () => {
     if (unlocked) return;
     unlocked = true;
-    speech.speak(new SpeechSynthesisUtterance(''));
+    const u = new SpeechSynthesisUtterance(' ');
+    u.volume = 0;
+    speech.speak(u);
   };
-  document.addEventListener('pointerdown', unlock, { capture: true });
-  document.addEventListener('keydown', unlock, { capture: true });
+  for (const ev of ['touchend', 'click', 'keydown']) document.addEventListener(ev, unlock, { capture: true });
 }
 
 function connect() {

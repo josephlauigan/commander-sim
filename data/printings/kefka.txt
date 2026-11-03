@@ -72,12 +72,13 @@
 1 Sulfur Falls (isd) 248
 1 Sulfurous Springs (dmu) 381
 1 Susurian Voidborn (eoe) 118
-8 Swamp (mdd) 296
+7 Swamp (mdd) 296
 1 Temple of Epiphany (soc) 412
 1 Think Twice (tsr) 92
 1 Twinned Vision (fra) 157
 1 Underground River (wc98) bs362
 1 Underworld Breach (spg) 9
+1 Urborg, Tomb of Yawgmoth (ltc) 375
 1 Veyran, Voice of Duality (sld) 1915
 1 Yawgmoth's Will (vma) 148
 1 Young Pyromancer (2x2) 364
