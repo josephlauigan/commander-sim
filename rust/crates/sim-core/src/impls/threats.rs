@@ -123,7 +123,8 @@ fn cheapest(g: &Game, q: PlayerId, skip_c: &[CardId], skip_m: &[PermId]) -> Opti
         if skip_c.contains(&c) {
             continue;
         }
-        let w = card_worth(g, q, c, false) / 10.0;
+        let w0 = card_worth(g, q, c, false) / 10.0;
+        let w = w0 + crate::ai::table_fixes::steal_cost_card(g, q, c, w0); // --- ai-table-fixes: AI_SACSTEAL
         if best.is_none_or(|b| w < b.1) {
             best = Some((Give::Card(c), w));
         }
@@ -132,7 +133,7 @@ fn cheapest(g: &Game, q: PlayerId, skip_c: &[CardId], skip_m: &[PermId]) -> Opti
         if skip_m.contains(&m) || g.perm(m).phased {
             continue;
         }
-        let w = pval(g, m) + if g.perm(m).is_cmd { 6.0 } else { 0.0 };
+        let w = pval(g, m) + if g.perm(m).is_cmd { 6.0 } else { 0.0 } + crate::ai::table_fixes::steal_cost(g, q, m); // --- ai-table-fixes: AI_SACSTEAL
         if best.is_none_or(|b| w < b.1) {
             best = Some((Give::Perm(m), w));
         }
