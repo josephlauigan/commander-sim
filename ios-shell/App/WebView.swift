@@ -6,7 +6,9 @@ struct WebView: UIViewRepresentable {
     let url: URL
 
     func makeUIView(context: Context) -> WKWebView {
-        let view = WKWebView(frame: .zero, configuration: WKWebViewConfiguration())
+        let config = WKWebViewConfiguration()
+        config.mediaTypesRequiringUserActionForPlayback = []   // the page's speech (Voice) needs no first tap
+        let view = WKWebView(frame: .zero, configuration: config)
         view.isOpaque = false
         view.backgroundColor = .black
         view.scrollView.backgroundColor = .black

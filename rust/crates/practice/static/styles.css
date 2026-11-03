@@ -153,6 +153,7 @@ section.targetable > header { cursor: crosshair; }
 .stackbar figure.item figcaption b { color: var(--text); font-weight: 600; }
 .stackbar figure.item.ability img { outline: 2px dashed #6596BD; outline-offset: 2px; }
 #autopass-box { font-size: 13px; color: var(--dim); } #autopass-box select { margin-left: 4px; }
+#voice-pick { display: inline-flex; gap: 4px; font-size: 13px; } #voice-pick[hidden] { display: none; } #voice-name { max-width: 15em; }
 #hintbox { background: #121C25; border: 1px solid #6596BD; border-radius: 10px; padding: 10px 12px; margin-bottom: 10px; }
 #hintbox h3 { margin: 0 0 6px; font-size: 14px; color: #d3e3f0; }
 #hintbox ul { margin: 4px 0 8px; padding-left: 18px; font-size: 12px; } #hintbox li.lead { list-style: none; margin-left: -18px; color: var(--dim); }
