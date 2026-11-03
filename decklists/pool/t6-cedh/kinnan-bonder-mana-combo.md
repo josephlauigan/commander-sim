@@ -15,8 +15,8 @@ Second by meta share (6.9%, 19.2% conversion). It wins through Kinnan's extra ma
 
 ## At the table
 
-- **Plan:** Make lots of mana with dorks and rocks (Birds of Paradise, Elvish Mystic, Bloom Tender, Incubation Druid, Gaea's Cradle, Sol Ring, Mana Vault), doubled by Kinnan, Bonder Prodigy. It draws with Rhystic Study, Mystic Remora and The One Ring while it waits for a safe window.
-- **Wins by:** Kinnan with Basalt Monolith makes unbounded colorless mana, and Hullbreaker Horror with two rocks is a second loop. Green Sun's Zenith, Whir of Invention and Transmute Artifact find the pieces. It finishes with Finale of Devastation or by decking you with Faerie Mastermind. It can win on turn three to five.
+- **Plan:** Make lots of mana with Gaea's Cradle and nonland sources such as Birds of Paradise, Elvish Mystic, Bloom Tender, Incubation Druid, Sol Ring and Mana Vault; Kinnan, Bonder Prodigy adds mana to those nonland sources. It draws with Rhystic Study, Mystic Remora and The One Ring while it waits for a safe window.
+- **Wins by:** Kinnan with Basalt Monolith makes unbounded colorless mana, and Hullbreaker Horror with two rocks is a second loop. Green Sun's Zenith finds green creatures, while Whir of Invention and Transmute Artifact find artifacts. Thrasios or Mirage Mirror can turn the mana into a payoff; the simulator's base line has an outlet gap described in the implementation report.
 - **Watch out for:** Kill or counter Kinnan and the mana creatures early, and keep a counter ready for the combo. Few tutors means it digs slowly, so tax its draw engines. A creature and artifact wipe hurts it badly.
 - **Interaction:** Force of Will, Fierce Guardianship, Force of Negation, Pact of Negation, Swan Song, Flusterstorm, Mental Misstep, Veil of Summer, Misdirection, Mindbreak Trap, Chain of Vapor and An Offer You Can't Refuse.
 

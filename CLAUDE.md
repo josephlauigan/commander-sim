@@ -1,5 +1,16 @@
 # Rules for Claude Code sessions in this repository
 
+## Always use the current rules (origin/main)
+
+At the start of a session, run `git fetch -q origin main`, then read `git show origin/main:CLAUDE.md` and
+`git show origin/main:AGENTS.md`. Follow the current remote rules where the local copies differ, keeping
+Claude-specific model and tool instructions scoped to Claude. This applies in worktrees and sessions started
+from a parent directory too; run the commands from the repository root (or use `git -C <repo>`).
+If fetching is unavailable, state that the remote rules could not be refreshed and use the available copies.
+
+Two rules must never be missed: keep swap and package explanations enabled for deck decisions, and simulate each
+owned deck only against its matched tiers in `data/my_decks.toml`. Details follow below.
+
 ## Models
 
 - The main agent runs on **Opus 5.5** (`claude-opus-5-5`), set in `.claude/settings.json`.
@@ -72,8 +83,9 @@ Report one number per tier.
 off): before the run, the model status of each swapped-in card (Full ... Unmodeled, WARNING on Partial/Unmodeled);
 after it, the swapped cards' drawn / cast / average round / stuck-in-hand numbers for both lists, and the game
 shape (win, survival, how it wins and dies, plan timing, commander removals, mana and hand at turns 4 and 8). It
-costs no extra games and the `delta` line is unchanged. After every run, update `audit/<deck>/FINDINGS.md`, the
-deck's living list of strengths and weaknesses and what was tested (with why it helped or not).
+costs no extra games and the `delta` line is unchanged. Never pass `--no-explain` for a deck decision. After every
+run, update `audit/<deck>/FINDINGS.md`, the deck's living list of strengths and weaknesses and what was tested
+(with why it helped or not), and tell JD the why along with the number.
 
 ## Check every swap before proposing it
 
