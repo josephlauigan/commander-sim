@@ -26,6 +26,7 @@
 //! - Miirym, Sentinel Wyrm: another nontoken Dragon of yours enters: a token copy of it that isn't legendary.
 //! - Morophon, the Boundless: names a creature type as it enters (the deck's most common); spells of that type cost
 //!   {W}{U}{B}{R}{G} less (only coloured mana, mana::cost_of); your other creatures of that type get +1/+1.
+//! - Mox Jasper: {T}: one mana of any colour, only while you control a Dragon (Maskwood Nexus and changelings count).
 //! - Rith, Liberated Primeval: your other Dragons have ward {2} (removal::aura_ward). Its end-step Dragon comes when an
 //!   opponent's creature died during your turn. Left out: "excess damage" (the engine does not track it).
 //! - Rivaz of the Claw: {T}: two mana of any colour, only for Dragon creature spells (mana.rs); once during each of
@@ -77,6 +78,7 @@ const KLAUTH: &str = "Klauth, Unrivaled Ancient";
 const LATHLISS: &str = "Lathliss, Dragon Queen";
 const MIIRYM: &str = "Miirym, Sentinel Wyrm";
 const MOROPHON: &str = "Morophon, the Boundless";
+const JASPER: &str = "Mox Jasper";
 const RITH: &str = "Rith, Liberated Primeval";
 const RIVAZ: &str = "Rivaz of the Claw";
 const THRONE: &str = "Roaming Throne";
@@ -769,6 +771,12 @@ fn rivaz_mana(_g: &Game, _p: PlayerId, _m: PermId) -> u32 {
     2
 }
 
+// ================================================================== Mox Jasper
+/// Mox Jasper: mana only while you control a Dragon
+fn jasper_mana(g: &Game, p: PlayerId, _m: PermId) -> u32 {
+    g.player(p).perms.iter().any(|&x| live(g, x) && has_type(g, x, "dragon")) as u32
+}
+
 // ================================================================== Scion of Draco
 fn draco_cost(g: &Game, p: PlayerId, _c: CardId) -> i32 {
     -2 * crate::impls::partials::domain(g, p)
@@ -955,6 +963,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     if has(MOROPHON) {
         r.card(db, MOROPHON)?.as_enters = Some(morophon_as);
         r.creature_pt.push(morophon_pt);
+    }
+    if has(JASPER) {
+        r.card(db, JASPER)?.dyn_mana_perm = Some(jasper_mana);
     }
     if has(RITH) {
         r.card(db, RITH)?.end_step = Some(rith_end);

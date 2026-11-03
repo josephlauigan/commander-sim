@@ -52,3 +52,17 @@ Dragonlord Ojutai: Partial -> Full (hexproof while untapped, the combat-damage d
 ## 2026-11-01: recalibration stage 2 remeasure
 
 The Ur-Dragon, t5: **19.2%** (CI 17.5-21.0, 1999 games: one skipped by an internal overflow panic) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). Stage 1, same seeds: 19.3%; the 10/30 number was 19.1%. Fitted t5 knobs: 19.0% (level).
+
+## 2026-11-02: Sting, the Glinting Dagger out, Mox Jasper in (JD's choice, not simulated)
+
+- **Why:** Jasper is a free artifact. It makes one mana of any colour while JD controls a Dragon: the eight Dragons in
+  the 99, or any creature once Maskwood Nexus is out. It is also an artifact for Puresteel Paladin's metalcraft.
+- **What it costs:** Sting untapped Gilgamesh every combat, so he attacked and dug six cards each combat without Godo.
+  That is a value effect, not part of a win line.
+- **Expectation:** Jasper is dead on turns 1-3 in most games. The early Dragons cost four to six, and The Ur-Dragon is
+  cast in about a third of games, at a median own turn of 8. A cheap Dragon would turn it on early. Universal Automaton
+  ({1} artifact changeling) is the candidate, still unmodelled.
+- **Model:** Mox Jasper is Full (impls/t45_urdragon.rs; tests in cards_t45_urdragon.rs).
+- **Number:** none yet. JD asked for no sims (11/02). The swap to run is `--deck urdragon --pool t5 --swap
+  "Mox Jasper=>Sting, the Glinting Dagger"`, against the new list.
+- **Stale above:** Cyclonic Rift and Conqueror's Flail, in the 10/30 weaknesses, have since left the list.

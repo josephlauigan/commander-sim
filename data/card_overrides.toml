@@ -3212,6 +3212,10 @@ note = "protection from a colour in response to targeted removal"
 status = "Full"
 note = "mana only while you control a legendary creature or planeswalker"
 
+["Mox Jasper"]
+status = "Full"
+note = "mana only while you control a Dragon (Maskwood Nexus and changelings count)"
+
 ["Mox Opal"]
 status = "Full"
 note = "metalcraft: mana only with three or more artifacts"
