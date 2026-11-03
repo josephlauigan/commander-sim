@@ -4,9 +4,9 @@ Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Control / interaction-he
 
 - **Commander:** Brago, King Eternal
 - **Color identity:** White, Blue
-- **Game Changers (1):** Farewell
+- **Game Changers (2):** Consecrated Sphinx, Farewell
 - **Combos:** Peregrine Drake + Archaeomancer + Ghostly Flicker (unbounded mana; EDHREC's Deadeye Navigator, which made a two-card infinite with the Drake, is cut for Skyclave Apparition under the Tier 2 rule). It wins through Agent of Treachery, blinked until it has taken every permanent.
-- **Lands:** 35 (15 nonbasic + 20 basic)
+- **Lands:** 34 (14 nonbasic + 20 basic)
 
 ## Role in the pool
 
@@ -33,19 +33,19 @@ ETB re-use through flicker (Brago, Soulherder, Teleportation Circle, Restoration
 
 **Commander (1).** Brago, King Eternal
 
-**Creatures (35).** Adeline, Resplendent Cathar, Agent of Treachery, Angel of Serenity, Archaeomancer, Archangel of Tithes, Baneslayer Angel, Cloudblazer, Displacer Kitten, Dour Port-Mage, Eldrazi Displacer, Elesh Norn, Mother of Machines, Flickerwisp, Giver of Runes, Hero of Bladehold, Loran of the Third Path, Man-o'-War, Mother of Runes, Mulldrifter, Palace Jailer, Peregrine Drake, Recruiter of the Guard, Reflector Mage, Resplendent Angel, Restoration Angel, Riptide Gearhulk, Skyclave Apparition, Solemn Simulacrum, Soulherder, Spellseeker, Sun Titan, Venser, Shaper Savant, Wall of Omens, Whirler Rogue, Witch Enchanter // Witch-Blessed Meadow, Yorion, Sky Nomad
+**Creatures (42).** Adeline, Resplendent Cathar, Agent of Treachery, Angel of Serenity, Archaeomancer, Archangel of Tithes, Aven Mindcensor, Baneslayer Angel, Brimaz, King of Oreskos, Cathar Commando, Cloudblazer, Consecrated Sphinx, Displacer Kitten, Dream Trawler, Eldrazi Displacer, Elesh Norn, Mother of Machines, Faerie Mastermind, Fiend Hunter, Flickerwisp, Giver of Runes, Hero of Bladehold, Luminarch Aspirant, Lyra Dawnbringer, Man-o'-War, Mirror Entity, Mother of Runes, Mulldrifter, Palace Jailer, Peregrine Drake, Reflector Mage, Resplendent Angel, Restoration Angel, Riptide Gearhulk, Serra Angel, Skyclave Apparition, Solitude, Soulherder, Spark Double, Sun Titan, Venser, Shaper Savant, Wall of Omens, Whirler Rogue, Yorion, Sky Nomad
 
-**Planeswalkers (2).** Teferi, Hero of Dominaria, Venser, the Sojourner
+**Planeswalkers (4).** Elspeth, Sun's Champion, Teferi, Hero of Dominaria, The Wandering Emperor, Venser, the Sojourner
 
-**Enchantments (7).** Banishing Light, Detention Sphere, Ghostly Prison, Mystic Remora, Oblivion Ring, Reality Acid, Teleportation Circle
+**Enchantments (4).** Banishing Light, Ghostly Prison, Oblivion Ring, Reality Acid
 
-**Artifacts (8).** Arcane Signet, Azorius Signet, Basalt Monolith, Lightning Greaves, Mind Stone, Panharmonicon, Sol Ring, Talisman of Progress
+**Artifacts (5).** Arcane Signet, Azorius Signet, Mind Stone, Sol Ring, Talisman of Progress
 
-**Sorceries (1).** Farewell
+**Sorceries (2).** Council's Judgment, Farewell
 
-**Instants (11).** An Offer You Can't Refuse, Cloudshift, Counterspell, Dovin's Veto, Eerie Interlude, Ephemerate, Ghostly Flicker, Mana Drain, Momentary Blink, Path to Exile, Swords to Plowshares
+**Instants (8).** An Offer You Can't Refuse, Counterspell, Ephemerate, Fateful Absence, Ghostly Flicker, Mana Drain, Path to Exile, Swords to Plowshares
 
-**Lands (35).** Adarkar Wastes, Azorius Chancery, Command Tower, Deserted Beach, Flooded Strand, Glacial Fortress, Hallowed Fountain, Nimbus Maze, Port Town, Prairie Stream, Reliquary Tower, Rogue's Passage, Sea of Clouds, Skycloud Expanse, Temple of Enlightenment, 10 Island, 10 Plains
+**Lands (34).** Adarkar Wastes, Azorius Chancery, Command Tower, Deserted Beach, Flooded Strand, Glacial Fortress, Hallowed Fountain, Nimbus Maze, Prairie Stream, Reliquary Tower, Rogue's Passage, Sea of Clouds, Skycloud Expanse, Temple of Enlightenment, 10 Island, 10 Plains
 
 ## Import list (100)
 
@@ -58,26 +58,30 @@ ETB re-use through flicker (Brago, Soulherder, Teleportation Circle, Restoration
 1 Arcane Signet
 1 Archaeomancer
 1 Archangel of Tithes
+1 Aven Mindcensor
 1 Azorius Chancery
 1 Azorius Signet
 1 Baneslayer Angel
 1 Banishing Light
-1 Basalt Monolith
 1 Brago, King Eternal
+1 Brimaz, King of Oreskos
+1 Cathar Commando
 1 Cloudblazer
-1 Cloudshift
 1 Command Tower
+1 Consecrated Sphinx
+1 Council's Judgment
 1 Counterspell
 1 Deserted Beach
-1 Detention Sphere
 1 Displacer Kitten
-1 Dour Port-Mage
-1 Dovin's Veto
-1 Eerie Interlude
+1 Dream Trawler
 1 Eldrazi Displacer
 1 Elesh Norn, Mother of Machines
+1 Elspeth, Sun's Champion
 1 Ephemerate
+1 Faerie Mastermind
 1 Farewell
+1 Fateful Absence
+1 Fiend Hunter
 1 Flickerwisp
 1 Flooded Strand
 1 Ghostly Flicker
@@ -86,25 +90,21 @@ ETB re-use through flicker (Brago, Soulherder, Teleportation Circle, Restoration
 1 Glacial Fortress
 1 Hallowed Fountain
 1 Hero of Bladehold
-1 Lightning Greaves
-1 Loran of the Third Path
+1 Luminarch Aspirant
+1 Lyra Dawnbringer
 1 Man-o'-War
 1 Mana Drain
 1 Mind Stone
-1 Momentary Blink
+1 Mirror Entity
 1 Mother of Runes
 1 Mulldrifter
-1 Mystic Remora
 1 Nimbus Maze
 1 Oblivion Ring
 1 Palace Jailer
-1 Panharmonicon
 1 Path to Exile
 1 Peregrine Drake
-1 Port Town
 1 Prairie Stream
 1 Reality Acid
-1 Recruiter of the Guard
 1 Reflector Mage
 1 Reliquary Tower
 1 Resplendent Angel
@@ -112,23 +112,23 @@ ETB re-use through flicker (Brago, Soulherder, Teleportation Circle, Restoration
 1 Riptide Gearhulk
 1 Rogue's Passage
 1 Sea of Clouds
+1 Serra Angel
 1 Skyclave Apparition
 1 Skycloud Expanse
 1 Sol Ring
-1 Solemn Simulacrum
+1 Solitude
 1 Soulherder
-1 Spellseeker
+1 Spark Double
 1 Sun Titan
 1 Swords to Plowshares
 1 Talisman of Progress
 1 Teferi, Hero of Dominaria
-1 Teleportation Circle
 1 Temple of Enlightenment
+1 The Wandering Emperor
 1 Venser, Shaper Savant
 1 Venser, the Sojourner
 1 Wall of Omens
 1 Whirler Rogue
-1 Witch Enchanter // Witch-Blessed Meadow
 1 Yorion, Sky Nomad
 10 Island
 10 Plains
