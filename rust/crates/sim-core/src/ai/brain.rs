@@ -340,6 +340,11 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     }
     if pl.is_commander(c) && !pl.hand.contains(&c) {
         u -= 0.35 * pl.tax_of(c) as f64; // recasting gets pricier each time (no tax from hand)
+        // --- ai-table-fixes (AI_CMDRISK): and into open removal it is the other threats first
+        if super::table_fixes::cmdrisk_on() && pl.tax_of(c) > 0 {
+            let other = pl.hand.iter().any(|&x| x != c && !g.db.get(x).land && can_pay_now(g, p, x));
+            u -= super::table_fixes::cmd_recast_penalty(g, p, c, s.danger, other);
+        }
     }
     if (super::values::bomb_of(g, p, c) >= 5.0 || pl.is_commander(c) || base >= 70.0) && !d.land {
         u *= 1.0 - 0.35 * s.ctr_risk; // walking into open counter mana
@@ -859,6 +864,14 @@ pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt>
         let (ol, ml, victim) = decks::wipe_eval(g, p, kind);
         if ol <= 0.0 {
             continue; // hits nothing of theirs (Nibelheim Aflame with no creature of ours)
+        }
+        // --- ai-table-fixes (AI_WIPEVALUE): a wipe that costs the caster as much as the table is held unless it is
+        // about to lose
+        if super::table_fixes::wipevalue_on() && !matches!(kind, "rift" | "rebuke" | "vandal") {
+            let theirs: Vec<f64> = g.opps(p).filter(|&q| g.player(q).alive).map(|q| decks::wipe_loss(g, q, kind, p)).collect();
+            if super::table_fixes::wipe_blocked(decks::wipe_loss(g, p, kind, p), &theirs, s.danger) {
+                continue;
+            }
         }
         let mut u = (ol - 1.2 * ml) / 2.2 - 2.5 + 2.0 * s.danger.min(1.5);
         if g.player(p).key == "sephfs" {

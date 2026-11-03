@@ -1,0 +1,24 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  karn                        100 cards: Full 87, Full-auto 0, Approximate 12, Partial 1, Unmodeled 0 | Partial: Tezzeret, Cruel Captain
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 429, Full-auto 34, Approximate 37, Partial 0, Unmodeled 0
+
+
+=== Karn vs Tier 5 (High B4) [loose, lookahead AI, 1999 games] ===
+Win rate  20.3%   95% CI 18.6-22.1%   (even share 25%: -4.7 pts)
+Average turn (your own turn count) of wins 11.2, of losses 7.4
+Plan online (Karn first adds mana at upkeep): 63.8% of games
+Wins by: damage 91%, combo 9%, timeout 0%
+  Opponent                                    seated  won when seated  eliminated you
+  Zur the Enchanter (zur-esper-enchantment-c   61.0%            22.6%           13.2%
+  Kinnan (kinnan-simic-mana-combo)             60.4%            39.4%           23.7%
+  Miirym (miirym-temur-dragons)                60.3%            25.3%           16.2%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   59.7%            19.2%           11.4%
+  Urza (urza-mono-blue-artifacts)              58.6%            26.2%           15.2%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(403s total)
+
+WARNING: 1 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 501675  panic: attempt to add with overflow (at /home/joseph/.rustup/toolchains/1.99.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs:206)
+  Please send me that output so I can fix the cause.

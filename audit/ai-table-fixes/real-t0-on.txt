@@ -1,0 +1,36 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t0 Anikthea           100 cards: Full 83, Full-auto 17, Approximate 0, Partial 0, Unmodeled 0
+  t0 Captain America    100 cards: Full 96, Full-auto 4, Approximate 0, Partial 0, Unmodeled 0
+  t0 Giada              100 cards: Full 85, Full-auto 15, Approximate 0, Partial 0, Unmodeled 0
+  t0 Stella Lee         100 cards: Full 94, Full-auto 4, Approximate 2, Partial 0, Unmodeled 0
+  t0 Zurgo Stormrender  100 cards: Full 90, Full-auto 10, Approximate 0, Partial 0, Unmodeled 0
+
+
+=== Realism: Tier 0 (Bracket 2 precons) [loose, lookahead AI, 2000 games, seeds 500000-501999; 5 decks, 4 a pod] ===
+targets: data/realism/t0.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     29.2%     27.2-31.2   32.1%     30.6-33.6  FAIL
+  seat 2 share of decisive games (%)                     27.6%     25.7-29.6   27.3%     25.8-28.8  PASS
+  seat 3 share of decisive games (%)                     22.9%     21.1-24.8   22.2%     20.7-23.7  PASS
+  seat 4 share of decisive games (%)                     20.3%     18.6-22.1   18.4%     16.9-19.9  FAIL
+  median round of a decisive win (rounds)                 12.0     12.0-12.0     9.0          8-10  FAIL
+  win round, 75th minus 25th percentile (rounds)           4.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                 1.0%       0.7-1.5   13.8%     12.3-15.3  FAIL
+  wins by damage (combat or other) (%)                   96.2%     95.2-96.9   82.3%     80.8-83.8  FAIL
+  wins by commander damage (%)                            2.8%       2.2-3.6    3.7%       2.2-5.2  PASS
+  wins by poison (%)                                      0.0%       0.0-0.2    0.2%         0-1.7  PASS
+  deck win spread, best minus worst deck (pts)            14.7             -       -             -  no target
+  games over 15 rounds (round cap 20) (%)                12.2%     10.8-13.7       -             -  no target
+  4 of 9 targets pass (3 statistics have no target yet)
+Games: 2000, decisive 1989 (99.5%), round-cap timeouts 0.6%
+Each deck's share of the decisive games it sat in: Anikthea 32.4% of 1614; Captain America 22.3% of 1578; Giada 32.7% of 1580; Stella Lee 17.9% of 1589; Zurgo Stormrender 19.6% of 1595
+Target sources:
+  seat1_win: Playgroup commander pages, seat win rates of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight), share of seat wins (n=34140, read 2026-10-25)
+  seat2_win: Playgroup commander pages, seat win rates of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight), share of seat wins (n=34140, read 2026-10-25)
+  seat3_win: Playgroup commander pages, seat win rates of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight), share of seat wins (n=34140, read 2026-10-25)
+  seat4_win: Playgroup commander pages, seat win rates of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight), share of seat wins (n=34140, read 2026-10-25)
+  win_round_median: Playgroup commander stats, average win turn of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight) (n=11116, read 2026-10-25)
+  win_combo_alt: Playgroup commanders.json, wins of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight) (n=5905, read 2026-10-25)
+  win_damage: Playgroup commanders.json, wins of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight) (n=5905, read 2026-10-25)
+  win_commander_damage: Playgroup commanders.json, wins of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight) (n=5905, read 2026-10-25)
+  win_poison: Playgroup commanders.json, wins of Anikthea, Captain America, Giada, Stella Lee, Zurgo (equal weight) (n=5905, read 2026-10-25)

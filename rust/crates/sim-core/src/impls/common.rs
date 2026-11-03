@@ -1008,6 +1008,9 @@ pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<
 /// ("destroy", damage): sacrifice it for value instead. A creature that dies anyway only goes when an outlet gives
 /// something by itself.
 pub fn sac_in_response(g: &mut Game, p: PlayerId, m: PermId, kind: Sym) -> Res<bool> {
+    if crate::ai::table_fixes::steal_cost(g, p, m) > 0.0 {
+        return Ok(false); // --- ai-table-fixes: AI_SACSTEAL: an opposing Tergrid would take it
+    }
     let dying =
         crate::ai::is_main(hand_key(g, p)) && (matches!(kind, "destroy" | "wipe") || kind.starts_with("dmg"));
     if !g.is_creature(m) || !(dying || matches!(kind, "exile" | "bounce" | "tuck")) || g.perm(m).is_cmd {
@@ -1030,6 +1033,9 @@ pub fn sac_in_response(g: &mut Game, p: PlayerId, m: PermId, kind: Sym) -> Res<b
 pub fn sac_before_wipe(g: &mut Game, q: PlayerId, victims: &[PermId]) -> Res<usize> {
     let mut n = 0;
     for &m in victims {
+        if crate::ai::table_fixes::steal_cost(g, q, m) > 0.0 {
+            continue; // --- ai-table-fixes: AI_SACSTEAL
+        }
         if !g.perm(m).on_bf || !g.is_creature(m) || g.perm(m).is_cmd || g.perm(m).phased {
             continue;
         }

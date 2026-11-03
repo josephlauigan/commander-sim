@@ -1,0 +1,19 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  cloud                                100 cards: Full 89, Full-auto 9, Approximate 0, Partial 1, Unmodeled 1 | Unmodeled: Judgment of Alexander; Partial: Forge Anew
+  opponents Tier 1 (High B2 / Low B3)  5 decks, 500 cards: Full 406, Full-auto 76, Approximate 18, Partial 0, Unmodeled 0
+
+
+=== Cloud vs Tier 1 (High B2 / Low B3) [loose, lookahead AI, 2000 games] ===
+Win rate  29.9%   95% CI 27.9-31.9%   (even share 25%: +4.9 pts)
+Average turn (your own turn count) of wins 11.8, of losses 9.2
+Plan online (first attack by an equipped Cloud): 76.7% of games
+Wins by: damage 100%
+  Opponent                                    seated  won when seated  eliminated you
+  Teysa Karlov (teysa-orzhov-aristocrats)      61.0%            23.7%           15.0%
+  Isshin (isshin-mardu-attack-triggers)        60.4%            32.7%           20.4%
+  Lathril (lathril-golgari-elves)              60.4%            20.6%           12.9%
+  Tatyova (tatyova-simic-landfall)             59.7%            18.6%            9.5%
+  Light-Paws (light-paws-aura-voltron)         58.6%            21.1%           12.2%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(526s total)

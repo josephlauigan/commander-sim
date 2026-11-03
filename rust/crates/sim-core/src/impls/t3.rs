@@ -183,9 +183,23 @@ pub fn sac_worst_permanent(g: &mut Game, p: PlayerId, exclude: Option<PermId>) -
     let tokens: Vec<PermId> = cands.iter().copied().filter(|&m| g.perm(m).cd.is_none()).collect();
     // creature tokens, then (with five lands or more) a land, then the cheapest card (Python: the cheapest permanent
     // first, so Korvold gave up its Altars and Bombardment with lands to spare)
-    let pick = min_by(&tokens, |m| pval(g, m)).or_else(|| {
+    let mut pick = min_by(&tokens, |m| pval(g, m)).or_else(|| {
         (lands.len() < SPARE_LANDS).then(|| min_by(&cands, |m| pval(g, m))).flatten()
     });
+    // --- ai-table-fixes (AI_SACSTEAL): an opposing Tergrid takes every nontoken permanent sacrificed, a land too: with
+    // no token to give, the cheapest is the one worth least to her as well as to us (a land is worth one point to her)
+    if pick.is_none_or(|m| !tokens.contains(&m))
+        && !cands.is_empty()
+        && crate::ai::table_fixes::sacsteal_on()
+        && crate::ai::table_fixes::steal_on_sacrifice(g, p)
+    {
+        let own = |m: PermId| pval(g, m) + crate::ai::table_fixes::steal_cost(g, p, m);
+        if let Some(best) = min_by(&cands, own) {
+            if lands.len() < SPARE_LANDS || own(best) < 1.0 {
+                pick = Some(best);
+            }
+        }
+    }
     if let Some(m) = pick {
         die(g, m, "sac")?;
         return Ok(Some(Sacrificed::Perm(m)));
@@ -1568,7 +1582,8 @@ fn each_player_sacrifice(g: &mut Game, nontoken: bool) -> Res {
             crate::human::choices::sacrifice_creature(g, q, &cr, why)?;
             continue;
         }
-        if let Some(m) = min_by(&cr, |m| pval(g, m)) {
+        if let Some(m) = min_by(&cr, |m| pval(g, m) + crate::ai::table_fixes::steal_cost(g, q, m)) {
+            // --- ai-table-fixes: AI_SACSTEAL
             die(g, m, "sac")?;
         }
     }

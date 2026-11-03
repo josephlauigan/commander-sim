@@ -1,0 +1,19 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  galadriel                  100 cards: Full 93, Full-auto 7, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 2 (Mid B3)  5 decks, 500 cards: Full 423, Full-auto 59, Approximate 18, Partial 0, Unmodeled 0
+
+
+=== Galadriel vs Tier 2 (Mid B3) [loose, lookahead AI, 2000 games] ===
+Win rate   6.6%   95% CI 5.6-7.8%   (even share 25%: -18.4 pts)
+Average turn (your own turn count) of wins 14.9, of losses 11.4
+Plan online (first Alliance trigger from Galadriel): 56.0% of games
+Wins by: damage 86%, timeout 14%
+  Opponent                                    seated  won when seated  eliminated you
+  Sythis (sythis-selesnya-enchantress)         61.0%            24.2%           12.9%
+  Brago (brago-azorius-blink-control)          60.4%            26.2%           16.1%
+  Kaalia of the Vast (kaalia-mardu-creature-   60.4%            36.3%           22.9%
+  Meren of Clan Nel Toth (meren-golgari-recu   59.7%            25.9%           14.8%
+  Lord Windgrace (lord-windgrace-jund-lands)   58.6%            43.4%           24.6%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(745s total)

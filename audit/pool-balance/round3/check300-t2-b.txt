@@ -1,0 +1,28 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t2 Brago                   100 cards: Full 91, Full-auto 6, Approximate 3, Partial 0, Unmodeled 0
+  t2 Kaalia of the Vast      100 cards: Full 88, Full-auto 7, Approximate 5, Partial 0, Unmodeled 0
+  t2 Lord Windgrace          100 cards: Full 81, Full-auto 13, Approximate 6, Partial 0, Unmodeled 0
+  t2 Meren of Clan Nel Toth  100 cards: Full 82, Full-auto 17, Approximate 1, Partial 0, Unmodeled 0
+  t2 Sythis                  100 cards: Full 83, Full-auto 15, Approximate 2, Partial 0, Unmodeled 0
+
+300 games (calibration: within, 300 per list per tier, profile loose), lookahead AI, 6 worker threads: about 2 minutes
+
+=== Within-tier balance [loose, n=300 games per tier; each deck is seated in ~80%] ===
+  progress  10.0%  0m22s elapsed, ~3m24s left
+  progress  20.0%  0m49s elapsed, ~3m18s left
+  progress  30.0%  1m11s elapsed, ~2m47s left
+  progress  40.0%  1m34s elapsed, ~2m22s left
+  progress  50.0%  1m58s elapsed, ~1m58s left
+  progress  60.0%  2m20s elapsed, ~1m33s left
+  progress  70.0%  2m41s elapsed, ~1m09s left
+  progress  80.0%  3m16s elapsed, ~0m49s left
+  progress  90.0%  3m33s elapsed, ~0m23s left
+  progress 100.0%  4m00s elapsed, ~0m00s left
+  Tier 2 (Mid B3): avg game 13.3 rounds, timeouts 4.0%
+    Brago                         18.4% (14.0-23.8)  [2.1 pts from round-cap wins]
+    Kaalia of the Vast            35.0% (29.2-41.3)  HIGH  [0.8 pts from round-cap wins]
+    Lord Windgrace                30.5% (25.1-36.5)  [0.0 pts from round-cap wins]
+    Meren of Clan Nel Toth        17.5% (13.2-22.9)  [0.4 pts from round-cap wins]
+    Sythis                        23.2% (18.3-29.0)  [1.7 pts from round-cap wins]
+
+(241s total)
