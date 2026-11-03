@@ -26,6 +26,7 @@ use crate::engine::zones::{Enter, Tokens, draw, enter, make_tokens, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Sacrificed, Src};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::Game;
 use crate::sym::intern;
 
@@ -1059,7 +1060,7 @@ fn will_blocks(
         .filter(|&m| live(g, m) && g.is_creature(m) && !assign.iter().any(|x| x.0 == m))
         .filter(|&m| !crate::engine::combat::double_strike(g, m))
         .collect();
-    let extra: i32 = open.iter().map(|&m| epow(g, m)).sum();
+    let extra: i32 = open.iter().map(|&m| epow(g, m)).ssum();
     let cloud_swung = open.iter().any(|&m| name_of(g, m) == CLOUD && has_trigger_sword(g, p));
     if !(cloud_swung || extra >= 4) {
         return Ok(());

@@ -11,6 +11,7 @@ use crate::engine::combat::{can_block, has_haste, kw};
 use crate::engine::values::{chasm, epow};
 use crate::flow::{Res, Stop};
 use crate::ids::{PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::Game;
 use crate::sym::intern;
 use serde_json::{Value, json};
@@ -192,7 +193,7 @@ pub fn human_blocks(
         .copied()
         .filter(|&m| g.is_creature(m) && !g.perm(m).tapped && !g.perm(m).phased)
         .collect();
-    let total: i32 = atk.iter().filter(|&&a| g.player(p).perms.contains(&a)).map(|&a| epow(g, a)).sum();
+    let total: i32 = atk.iter().filter(|&&a| g.player(p).perms.contains(&a)).map(|&a| epow(g, a)).ssum();
     let Some(h) = human_of(g, d) else { return Ok(vec![]) };
     let show = h.live();
     let attackers: Vec<Value> = if show {

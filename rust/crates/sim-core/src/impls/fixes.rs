@@ -1,6 +1,7 @@
 //! Python's `cards/impl/fixes.py`: corrections for cards the ability compiler reads wrongly, each a hand-written
 //! implementation (the Tier 1 and Sauron cards and Deathrite Shaman for M5, the rest in phase 6: `register_phase6`).
 
+use crate::satsum::SatSum;
 use super::partials::{at_once, best_opp_nonland, first_max, first_min, of_type, on, pack, remove_card, unpack};
 use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
@@ -74,7 +75,7 @@ fn aetherize(
         return Ok(());
     }
     let power: i32 =
-        atk.iter().filter(|&&a| on(g, p, a) && !assign.iter().any(|x| x.0 == a)).map(|&a| epow(g, a)).sum();
+        atk.iter().filter(|&&a| on(g, p, a) && !assign.iter().any(|x| x.0 == a)).map(|&a| epow(g, a)).ssum();
     let toks = atk.iter().filter(|&&a| g.perm(a).token).count();
     if (power as f64) < (8.0f64).max(g.player(d).life as f64 / 3.0) && toks < 4 {
         return Ok(());

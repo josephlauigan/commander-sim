@@ -15,6 +15,7 @@
 //!
 //! The `view` the page wants in `data` is added by the `Human` itself (see `human/mod.rs`).
 
+use crate::satsum::SatSum;
 use super::mana::Spending;
 use super::{Target, abilities, cards, choices, human_of, legal, mana, specs};
 use crate::control::{Answer, Human, Request};
@@ -198,7 +199,7 @@ pub fn step_priority(g: &mut Game, q: PlayerId, step: &str, defender: Option<Pla
     let prompt = if step == "end" {
         if a == q { "End of your turn".to_string() } else { format!("End of {}'s turn", name_of(g, a)) }
     } else if step == "attackers" && Some(q) == defender {
-        let power: i32 = attackers.iter().map(|&m| epow(g, m)).sum();
+        let power: i32 = attackers.iter().map(|&m| epow(g, m)).ssum();
         format!("{} attacks you with {} creature(s) ({} power)", name_of(g, a), attackers.len(), power)
     } else {
         let sn = match step {

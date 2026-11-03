@@ -14,6 +14,7 @@
 //! The person's choices (practice mode) are in `human/abilities.rs`. Daydream, Venser and Ray of Command use the stand-ins
 //! for t2.blink / blink_value and marchesa.best_steal / steal in `galadriel.rs`.
 
+use crate::satsum::SatSum;
 use super::common::{
     AURA, AuraSpec, WalkerAb, allowed, aura, best_opp_creature, best_opp_nonland, oring_exile, oring_return,
     round_stamp, uses, walker,
@@ -1093,7 +1094,7 @@ fn skycoach_crew(g: &mut Game, src: Src, p: PlayerId) -> Res {
             power += epow(g, m);
         }
     }
-    let ready: i32 = pick.iter().filter(|&&m| !(g.perm(m).sick || g.perm(m).noatk)).map(|&m| epow(g, m)).sum();
+    let ready: i32 = pick.iter().filter(|&&m| !(g.perm(m).sick || g.perm(m).noatk)).map(|&m| epow(g, m)).ssum();
     if power < 2 || ready >= 3 {
         return Ok(());
     }

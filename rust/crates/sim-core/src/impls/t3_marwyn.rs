@@ -25,6 +25,7 @@
 //! - Umbral Mantle: the combo with a mana creature making four or more (Marwyn grows by itself) and Ezuri: infinite
 //!   mana and infinite overruns win before combat. Its plain +2/+2 pump outside the loop is not used.
 
+use crate::satsum::SatSum;
 use crate::engine::repl;
 use crate::engine::pool::Kind;
 use crate::ai::brain::{Situation, card_utility, do_cast_with};
@@ -473,7 +474,7 @@ pub fn ambush_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
         return Ok(false);
     }
     let mine: Vec<PermId> = atk.iter().copied().filter(|&m| live(g, m) && g.perm(m).owner == p).collect();
-    let incoming: i32 = mine.iter().filter(|&&m| !has_type(g, m, "elf")).map(|&m| epow(g, m).max(0)).sum();
+    let incoming: i32 = mine.iter().filter(|&&m| !has_type(g, m, "elf")).map(|&m| epow(g, m).max(0)).ssum();
     let life = g.player(d).life;
     if incoming * 5 < life && mine.len() < 3 && incoming < life {
         return Ok(false);

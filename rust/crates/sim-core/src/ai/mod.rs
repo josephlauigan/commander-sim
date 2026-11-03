@@ -35,6 +35,7 @@ pub mod ismcts; // --- phase4-search
 pub mod learned; // --- phase4-eval
 pub mod values; // --- phase4-values
 
+use crate::satsum::SatSum;
 use crate::engine::repl;
 use crate::engine::values::epow;
 use crate::flow::Res;
@@ -276,7 +277,7 @@ pub fn necro_floor(g: &Game, p: PlayerId) -> i32 {
     let biggest = g
         .opps(p)
         .map(|q| {
-            g.player(q).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).map(|&m| epow(g, m)).sum()
+            g.player(q).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).map(|&m| epow(g, m)).ssum()
         })
         .max()
         .unwrap_or(0);

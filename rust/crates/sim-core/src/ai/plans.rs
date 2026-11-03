@@ -9,6 +9,7 @@ use crate::cards::Types;
 use crate::engine::mana::total_mana;
 use crate::engine::values::{commander_out, epow, pval};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::Game;
 
 pub type WishFn = fn(&Game, PlayerId) -> Vec<CardId>;
@@ -308,7 +309,7 @@ pub fn adnaus_floor(g: &Game, p: PlayerId) -> i32 {
     let mut boards: Vec<i32> = g
         .opps(p)
         .map(|q| {
-            g.player(q).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).map(|&m| epow(g, m)).sum()
+            g.player(q).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).map(|&m| epow(g, m)).ssum()
         })
         .collect();
     boards.sort_unstable_by(|a, b| b.cmp(a));

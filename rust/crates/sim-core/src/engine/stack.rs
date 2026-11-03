@@ -5,6 +5,7 @@
 //! find out whether it really triggers, then pushed, then run for real top first: its `trigger_window` gives every
 //! player priority on it and says whether it was countered.
 
+use crate::satsum::SatSum;
 use crate::ai;
 use crate::engine::altcost;
 use crate::engine::cast::discard_worst;
@@ -1130,7 +1131,7 @@ pub fn resolve_counter(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -> R
     let mut soft = d.tags.int(Tag::Soft).unwrap_or(0);
     if &*d.name == "Flusterstorm" {
         // storm: a copy per spell cast before it this turn
-        soft = g.players.iter().filter(|x| x.alive).map(|x| crate::engine::cast::casts_this_turn(g, x.id)).sum::<i32>()
+        soft = g.players.iter().filter(|x| x.alive).map(|x| crate::engine::cast::casts_this_turn(g, x.id)).ssum()
             - 1;
     }
     if soft > 0 && can_pay(g, p, soft as u32, "", false) {

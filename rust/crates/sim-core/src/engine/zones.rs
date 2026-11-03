@@ -1,6 +1,7 @@
 //! Zones: drawing, milling, tokens, permanents entering, leaving and dying, lands, discards
 //! (engine.py's "zones" section, and enter / do_etb / etb_once / lands / discards from later in the file).
 
+use crate::satsum::SatSum;
 use crate::engine::repl;
 use crate::ai;
 use crate::cardcode;
@@ -1392,7 +1393,7 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
             .filter_map(|&x| g.perm(x).cd)
             .filter(|&c| g.db.get(c).perm)
             .map(|c| g.db.get(c).pips.chars().filter(|&ch| ch == 'B').count() as i32)
-            .sum::<i32>();
+            .ssum();
         let dev = dev.min(10);
         for &q in &opps {
             lose_life(g, q, dev, Some(p), "drain", None)?;

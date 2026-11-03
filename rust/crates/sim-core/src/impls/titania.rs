@@ -19,6 +19,7 @@
 //! fetch lands cracked in response when nothing saves her); Arachnogenesis against a big attack; Overwhelming Stampede
 //! and End-Raze Forerunners when the attack is lethal through the blockers.
 
+use crate::satsum::SatSum;
 use crate::cards::CardDb;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::apply_removal;
@@ -432,11 +433,11 @@ pub fn attack_fog(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Res
     }
     let mine: Vec<PermId> = atk.iter().copied().filter(|&m| live(g, m) && g.perm(m).owner == p).collect();
     let incoming: i32 =
-        mine.iter().map(|&m| epow(g, m) * if crate::engine::combat::double_strike(g, m) { 2 } else { 1 }).sum();
+        mine.iter().map(|&m| epow(g, m).saturating_mul(if crate::engine::combat::double_strike(g, m) { 2 } else { 1 })).ssum();
     let life = g.player(d).life;
     let cmd_threat = mine.iter().any(|&m| g.perm(m).is_cmd && g.player(d).cmd_dmg[p.index()] + epow(g, m) >= 21);
     // a fifth of the life, three or more attackers (three Spider blockers and a fogged turn) or a 12-point swing
-    if incoming * 5 < life && mine.len() < 3 && incoming < 12 && !cmd_threat && incoming < life {
+    if incoming.saturating_mul(5) < life && mine.len() < 3 && incoming < 12 && !cmd_threat && incoming < life {
         return Ok(false);
     }
     let (gn, pips) = cost_of(g, d, c);

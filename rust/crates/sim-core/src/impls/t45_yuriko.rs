@@ -44,6 +44,7 @@
 //! - Clearwater Pathway // Murkwater Pathway: played as the face whose colour the deck's lands make less of (the
 //!   hand's pips break a tie).
 
+use crate::satsum::SatSum;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, castable, on_cast};
 use crate::engine::life::lose_life;
@@ -716,7 +717,7 @@ fn pathway_face(g: &Game, p: PlayerId, l: PermId) -> &'static str {
         pl.lands.iter().filter(|&&x| x != l && crate::engine::mana::land_colors_now(g, p, x).has(ch)).count() as i32
     };
     let pips =
-        |ch: char| pl.hand.iter().map(|&c| g.db.get(c).pips.chars().filter(|&x| x == ch).count() as i32).sum::<i32>();
+        |ch: char| pl.hand.iter().map(|&c| g.db.get(c).pips.chars().filter(|&x| x == ch).count() as i32).ssum();
     let (u, b) = (src('U') * 10 - pips('U'), src('B') * 10 - pips('B'));
     if b < u { "B" } else { "U" }
 }

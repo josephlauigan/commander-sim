@@ -8,6 +8,7 @@
 
 use super::Style;
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::Game;
 use crate::tag::Tag;
 use indexmap::IndexMap;
@@ -739,7 +740,7 @@ fn quantity(g: &Game, p: PlayerId, q: Q, cx: Cx) -> f64 {
         Q::CmdPower => cmd_perm(g, p, cx).map_or(0, |m| crate::engine::values::epow(g, m)) as f64,
         Q::CmdBlockers => cmd_perm(g, p, cx).map_or(0, |m| cmd_blockers(g, p, m, cx, false)) as f64,
         Q::CmdKillers => cmd_perm(g, p, cx).map_or(0, |m| cmd_blockers(g, p, m, cx, true)) as f64,
-        Q::AtkPower => cx.atk.iter().map(|&m| crate::engine::values::epow(g, m)).sum::<i32>() as f64,
+        Q::AtkPower => cx.atk.iter().map(|&m| crate::engine::values::epow(g, m)).ssum() as f64,
         Q::DefLife => (match cx.def {
             Some(d) => g.player(d).life,
             None => g.opps(p).map(|q| g.player(q).life).min().unwrap_or(0),

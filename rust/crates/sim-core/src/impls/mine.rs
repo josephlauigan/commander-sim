@@ -4,6 +4,7 @@
 //! through `cardcode.rs`. Also ais.py's `breach_gc_options` (Breach escapes, Panoptic Mirror, Lion's Eye Diamond,
 //! Bolas's Citadel), which every deck reaches.
 
+use crate::satsum::SatSum;
 use super::lands::{can_pay_without, pay_without};
 use crate::engine::mana::restr_ok;
 use crate::engine::pool::Restr;
@@ -916,7 +917,7 @@ const BRAIN_FREEZE: &str = "Brain Freeze";
 const GRAPESHOT: &str = "Grapeshot";
 /// mine.storm_count: spells cast this turn before the one resolving now
 pub fn storm_count(g: &Game) -> i32 {
-    (g.players.iter().map(|q| casts_this_turn(g, q.id)).sum::<i32>() - 1).max(0)
+    (g.players.iter().map(|q| casts_this_turn(g, q.id)).ssum() - 1).max(0)
 }
 
 /// mine._opp_by: the living opponent (not life-locked) with the lowest key

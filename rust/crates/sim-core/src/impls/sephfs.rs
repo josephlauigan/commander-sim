@@ -14,6 +14,7 @@
 //!   (`rean_targets`).
 //! - Stats for `--analyze`: `sf_*` counters (flips, wipes, steals by card, sacrifices, cards drawn by Sephiroth).
 
+use crate::satsum::SatSum;
 use super::sephfs_cards::{all_creatures, cmc_of, flipped, is_seph, parity_choice, steal_targets, steal_value};
 use crate::ai::pool::generic_prio;
 use crate::cards::CardDb;
@@ -266,7 +267,7 @@ fn exsanguinate_option(g: &Game, p: PlayerId) -> Option<crate::hooks::Opt> {
         return None;
     }
     let (u, label) = super::yshtola::x_drain_option(g, p, c)?;
-    let threat: i32 = g.opps(p).flat_map(|q| g.player(q).perms.iter().copied()).filter(|&m| g.perm(m).on_bf && g.is_creature(m)).map(|m| crate::engine::values::epow(g, m)).sum();
+    let threat: i32 = g.opps(p).flat_map(|q| g.player(q).perms.iter().copied()).filter(|&m| g.perm(m).on_bf && g.is_creature(m)).map(|m| crate::engine::values::epow(g, m)).ssum();
     if u < 7.0 && threat * 3 >= g.player(p).life {
         return None;
     }
@@ -389,7 +390,7 @@ fn devotion(g: &Game, p: PlayerId) -> i32 {
         .filter(|&&m| g.perm(m).on_bf)
         .filter_map(|&m| g.perm(m).cd)
         .map(|c| g.db.get(c).pips.matches('B').count() as i32)
-        .sum::<i32>()
+        .ssum()
 }
 
 /// Gray Merchant of Asphodel: each opponent loses its devotion in life, you gain the total. Lethal on one opponent: cast

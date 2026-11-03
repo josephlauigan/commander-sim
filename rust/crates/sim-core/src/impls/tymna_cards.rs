@@ -10,6 +10,7 @@
 //!   `ai::decks::protect_response` / `wipe_response`.
 //! - Tymna the Weaver herself is in `legends.rs`.
 
+use crate::satsum::SatSum;
 use crate::ai::hand_key; // --- phase4-hand-off
 use super::partials::eot_kw;
 use crate::engine::pool::Kind;
@@ -1311,12 +1312,12 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<C
     if lands < 5 && pl.turns <= 8 {
         return land_pick(g, p, okn);
     }
-    let mine: i32 = pl.perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).map(|&m| epow(g, m)).sum();
+    let mine: i32 = pl.perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).map(|&m| epow(g, m)).ssum();
     let theirs: i32 = g
         .opps(p)
         .filter(|&q| g.player(q).alive)
         .map(|q| {
-            g.player(q).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).map(|&m| epow(g, m)).sum::<i32>()
+            g.player(q).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).map(|&m| epow(g, m)).ssum()
         })
         .max()
         .unwrap_or(0);

@@ -10,6 +10,7 @@
 //! - Orim's Chant also sets `stax_no_attack` when kicked (`attack_lock`).
 //! - Angel's Grace: the turn flag `grace_active`.
 
+use crate::satsum::SatSum;
 use crate::cards::CardDb;
 use crate::engine::zones::max_by;
 use crate::flow::Res;
@@ -274,7 +275,7 @@ pub fn chalice_x(g: &Game, p: PlayerId) -> Option<i32> {
         pl.hand.iter().chain(pl.library.iter()).filter(|&&c| !g.db.get(c).land && g.db.get(c).cmc as i32 == x).count()
             as i32
     };
-    let score = |x: i32| g.opps(p).map(|q| count(q, x)).sum::<i32>() - count(p, x);
+    let score = |x: i32| g.opps(p).map(|q| count(q, x)).ssum() - count(p, x);
     let afford = (total_mana(g, p, false) as i32 / 2).min(CHALICE_MAX_X);
     let best = (1..=afford).max_by_key(|&x| (score(x), -x))?;
     Some(if score(0) > score(best).max(0) { 0 } else { best })

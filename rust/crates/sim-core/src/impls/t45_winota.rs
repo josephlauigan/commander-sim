@@ -277,7 +277,7 @@ fn one_spell(g: &Game, _src: Src, caster: PlayerId, c: CardId, _zone: Sym) -> bo
 
 /// the 5 damage's worth: a player it kills (9), else the best creature it kills (its value less the enchantment's)
 fn noon_value(g: &Game, p: PlayerId) -> f64 {
-    let n = 5 * crate::engine::combat::fiery(g, p);
+    let n = 5i32.saturating_mul(crate::engine::combat::fiery(g, p));
     let lethal = g.opps(p).any(|q| {
         let x = g.player(q);
         x.life <= n && !x.life_locked && !prevents_damage(g, q, Some(p))
