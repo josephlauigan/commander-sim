@@ -7,6 +7,7 @@ use crate::ai::hand_key; // --- phase4-hand-off
 use crate::engine::mana::can_pay;
 use crate::engine::values::card_name;
 use crate::ids::{CardId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::Game;
 use crate::tag::Tag;
 
@@ -209,7 +210,7 @@ pub fn spread(
     if hand_key(g, p) != "kraum" || !hit_engine_out(g, p) {
         return groups;
     }
-    let hit = |a: PermId| epow(g, a) * if double_strike(g, a) { 2 } else { 1 } * fiery(g, p);
+    let hit = |a: PermId| epow(g, a).saturating_mul(if double_strike(g, a) { 2 } else { 1 }).saturating_mul(fiery(g, p));
     let mut groups = groups;
     let opps: Vec<PlayerId> =
         g.opps(p).filter(|&q| g.player(q).alive && !shielded(g, q) && attack_restrictions(g, p, q).0 == 0).collect();
@@ -217,7 +218,7 @@ pub fn spread(
     // lethal groups: the damage that can't be blocked reaches the life total
     let lethal = |gr: &[(PlayerId, Vec<PermId>)], i: usize| {
         let (q, xs) = &gr[i];
-        xs.iter().filter(|&&a| connects(g, *q, a)).map(|&a| hit(a)).sum::<i32>() >= g.player(*q).life
+        xs.iter().filter(|&&a| connects(g, *q, a)).map(|&a| hit(a)).ssum() >= g.player(*q).life
     };
     let covered = |gr: &[(PlayerId, Vec<PermId>)], q: PlayerId| {
         gr.iter().any(|x| x.0 == q && x.1.iter().any(|&a| epow(g, a) > 0 && connects(g, q, a)))

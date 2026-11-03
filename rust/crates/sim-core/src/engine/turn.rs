@@ -1,6 +1,7 @@
 //! The turn (Python's `ais.py` "turn structure" section and the turn loop): lands entering tapped or not, playing
 //! lands, upkeep, the end step, the five steps of a turn, mulligans, and a whole game.
 
+use crate::satsum::SatSum;
 use crate::engine::repl;
 use crate::engine::pool::Kind;
 use crate::ai;
@@ -456,7 +457,7 @@ pub fn more_lands(g: &mut Game, p: PlayerId) -> Res {
 }
 
 pub fn chasm_threatened(g: &Game, p: PlayerId) -> bool {
-    g.opps(p).map(|q| board_power(g, q)).sum::<i32>() as f64 >= g.player(p).life as f64 * 0.5 || g.player(p).life <= 15
+    g.opps(p).map(|q| board_power(g, q)).ssum() as f64 >= g.player(p).life as f64 * 0.5 || g.player(p).life <= 15
 }
 
 // ------------------------------------------------------------------ upkeep and end step

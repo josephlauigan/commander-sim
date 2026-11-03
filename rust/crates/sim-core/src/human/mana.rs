@@ -459,13 +459,20 @@ pub fn available(g: &Game, p: PlayerId) -> u32 {
 /// `choices::pay_tax`'s body: an opponent's tax (Rhystic Study, Smothering Tithe, Mystic Remora): ask p whether to
 /// pay {n}. Paid from p's floating mana first, then by tapping p's sources (as you would at the table).
 pub fn pay_tax(g: &mut Game, p: PlayerId, n: u32, what: &str) -> Res<bool> {
+    pay_tax_ask(g, p, n, what, Some(format!("{what}: pay {{{n}}}?")))
+}
+
+/// `pay_tax` with its own question (None: no question, pay if it can)
+pub fn pay_tax_ask(g: &mut Game, p: PlayerId, n: u32, what: &str, prompt: Option<String>) -> Res<bool> {
     let name = g.player(p).name;
     let can = available(g, p);
     if can < n {
         crate::glog!(g, "    {} can't pay {{{}}} for {}", name, n, what);
         return Ok(false);
     }
-    if !super::choices::yes_no(g, p, &format!("{what}: pay {{{n}}}?"))? {
+    if let Some(q) = prompt
+        && !super::choices::yes_no(g, p, &q)?
+    {
         return Ok(false);
     }
     gather_floating(g, p);

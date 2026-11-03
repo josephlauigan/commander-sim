@@ -28,6 +28,7 @@ use crate::engine::zones::draw;
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::Game;
 
 pub const KARN: &str = "Karn, Legacy Reforged";
@@ -221,7 +222,7 @@ pub fn block_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) ->
     if crate::human::is_human(g, d) || !g.player(d).lands.iter().any(|&l| manland(g, l)) {
         return Ok(false);
     }
-    let incoming: i32 = atk.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).owner == p).map(|&m| epow(g, m)).sum();
+    let incoming: i32 = atk.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).owner == p).map(|&m| epow(g, m)).ssum();
     let life = g.player(d).life;
     if (incoming as f64) < life as f64 * 0.4 && !(life <= 12 && incoming >= 4) {
         return Ok(false);

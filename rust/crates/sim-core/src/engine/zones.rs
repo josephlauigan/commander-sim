@@ -1,6 +1,7 @@
 //! Zones: drawing, milling, tokens, permanents entering, leaving and dying, lands, discards
 //! (engine.py's "zones" section, and enter / do_etb / etb_once / lands / discards from later in the file).
 
+use crate::satsum::SatSum;
 use crate::engine::repl;
 use crate::ai;
 use crate::cardcode;
@@ -898,18 +899,21 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
     }
     let is_cmd_card = g.player(p).is_commander(cd);
     // undying from Mikaeus
+    let person = crate::human::is_human(g, p);
     if has(g, p, Tag::Mikaeus)
         && d.creature
         && !d.tag(Tag::Human)
         && !d.tag(Tag::Mikaeus)
-        && !x.undying
+        && (person || !x.undying) // (a person's creature may come back again: undying only asks that it has no +1/+1 counter now)
         && x.plus <= 0
         && x.orig == p
         && !is_cmd_card
         && trigger_window(g, p, Some(m), "undying", None)?
     {
         let n = enter(g, p, cd, Enter { undying: true, ..Enter::default() })?;
-        g.perm_mut(n).plus = 1;
+        if !person {
+            g.perm_mut(n).plus = 1; // (for a person the enter step's counters stay: Triskelion comes back with 3 + 1)
+        }
         g.perm_mut(n).undying = true;
         g.player_mut(p).stat("undying", 1);
         return Ok(());
@@ -1392,7 +1396,7 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
             .filter_map(|&x| g.perm(x).cd)
             .filter(|&c| g.db.get(c).perm)
             .map(|c| g.db.get(c).pips.chars().filter(|&ch| ch == 'B').count() as i32)
-            .sum::<i32>();
+            .ssum();
         let dev = dev.min(10);
         for &q in &opps {
             lose_life(g, q, dev, Some(p), "drain", None)?;

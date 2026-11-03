@@ -4,6 +4,7 @@
 //! Grist's and Freyalise's first loyalty abilities (`grist_plus`, `freyalise_plus`) replace t3's in Python: t3.rs
 //! lists them.
 
+use crate::satsum::SatSum;
 use super::partials::{
     ability_window_card, at_once, auras_on, best_opp_creature, best_opp_nonland, eot_kw, exile_fodder, first_max,
     first_min, name_of, on, pack, remove_card, unpack,
@@ -579,7 +580,7 @@ fn cleave_flash(g: &mut Game, c: CardId, p: PlayerId, atk: &[PermId], _d: Player
     if !can_pay(g, p, gn, &pips, false) {
         return Ok(());
     }
-    if atk.len() < 2 && atk.iter().map(|&m| epow(g, m)).sum::<i32>() < 5 {
+    if atk.len() < 2 && atk.iter().map(|&m| epow(g, m)).ssum() < 5 {
         return Ok(());
     }
     remove_card(&mut g.player_mut(p).hand, c);

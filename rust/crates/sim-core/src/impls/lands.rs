@@ -7,6 +7,7 @@
 //! player's lands while animated and comes back at the start of the next turn; if the creature died, the land goes
 //! to the graveyard.
 
+use crate::satsum::SatSum;
 use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::hooks::fire_trigger;
@@ -926,7 +927,7 @@ fn mosswort_play(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Re
     if post.is_none() || g.perm(l).tapped || !can_pay_without(g, p, l, 0, "G") {
         return Ok(vec![]);
     }
-    let power: i32 = g.player(p).perms.iter().filter(|&&m| g.is_creature(m)).map(|&m| epow(g, m)).sum();
+    let power: i32 = g.player(p).perms.iter().filter(|&&m| g.is_creature(m)).map(|&m| epow(g, m)).ssum();
     if power < 10 {
         return Ok(vec![]);
     }

@@ -10,6 +10,7 @@
 //!   `ai::decks::protect_response` / `wipe_response`.
 //! - Tymna the Weaver herself is in `legends.rs`.
 
+use crate::satsum::SatSum;
 use crate::ai::hand_key; // --- phase4-hand-off
 use super::partials::eot_kw;
 use crate::engine::pool::Kind;
@@ -120,8 +121,15 @@ fn thrasios_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !ability_window(g, p, Some(src), "scry 1, then a land or a card", None, None)? {
         return Ok(true);
     }
+    thrasios_resolve(g, p)?;
+    Ok(true)
+}
+
+/// what Thrasios's ability does when it resolves (the person's too: practice mode, `human::karn`): scry 1, then reveal the
+/// top card; a land goes onto the battlefield tapped, anything else is drawn
+pub(crate) fn thrasios_resolve(g: &mut Game, p: PlayerId) -> Res {
     crate::cardcode::scry(g, p, 1, false)?;
-    let Some(&top) = g.player(p).library.last() else { return Ok(true) };
+    let Some(&top) = g.player(p).library.last() else { return Ok(()) };
     if g.db.get(top).land {
         crate::glog!(g, "    Thrasios reveals {}: onto the battlefield tapped", g.db.get(top).name);
         if crate::t6stats::is_t6(g, p) {
@@ -138,7 +146,7 @@ fn thrasios_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         crate::glog!(g, "    Thrasios reveals {}: drawn", g.db.get(top).name);
         draw(g, p, 1, false)?;
     }
-    Ok(true)
+    Ok(())
 }
 
 // ================================================================== Kraum, Ludevic's Opus
@@ -978,6 +986,27 @@ fn gilgamesh_trigger(g: &mut Game, src: PermId) -> Res {
     let own_hero = |g: &Game, e: PermId| matches!(name_of(g, e), LANCE | KATANA | "White Mage's Staff");
     let samurai: Vec<PermId> =
         g.player(o).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m) && is_samurai(g, m)).collect();
+    if crate::human::is_human(g, o) && !crate::human::urdragon::repeat_on(g, o) {
+        // a person chooses which Equipment goes on which Samurai (the Helm loop's repeat mode takes the best)
+        let es: Vec<PermId> = came.iter().copied().filter(|&e| live(g, e) && !own_hero(g, e)).collect();
+        if es.is_empty() || samurai.is_empty() {
+            return Ok(());
+        }
+        let labels: Vec<String> = es.iter().map(|&e| g.perm(e).name.to_string()).collect();
+        let k = crate::human::choices::choose_one(g, o, "target", "Gilgamesh: attach which Equipment to a Samurai?", &labels)?;
+        let slabels: Vec<String> = samurai
+            .iter()
+            .map(|&m| crate::human::legal::describe_target(g, o, crate::human::Target::Perm(m)))
+            .collect();
+        let j = if samurai.len() == 1 {
+            0
+        } else {
+            let pr = format!("Gilgamesh: attach {} to which Samurai?", g.perm(es[k]).name);
+            crate::human::choices::choose_one(g, o, "target", &pr, &slabels)?
+        };
+        super::cloud::attach(g, es[k], samurai[j]);
+        return Ok(());
+    }
     let best =
         came.iter().copied().filter(|&e| live(g, e) && !own_hero(g, e)).max_by_key(|&e| gear_rank(name_of(g, e)));
     let to = if live(g, src) && samurai.contains(&src) { Some(src) } else { samurai.first().copied() };
@@ -1311,12 +1340,12 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<C
     if lands < 5 && pl.turns <= 8 {
         return land_pick(g, p, okn);
     }
-    let mine: i32 = pl.perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).map(|&m| epow(g, m)).sum();
+    let mine: i32 = pl.perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).map(|&m| epow(g, m)).ssum();
     let theirs: i32 = g
         .opps(p)
         .filter(|&q| g.player(q).alive)
         .map(|q| {
-            g.player(q).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).map(|&m| epow(g, m)).sum::<i32>()
+            g.player(q).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).map(|&m| epow(g, m)).ssum()
         })
         .max()
         .unwrap_or(0);

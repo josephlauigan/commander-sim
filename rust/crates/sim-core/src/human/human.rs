@@ -15,6 +15,7 @@
 //!
 //! The `view` the page wants in `data` is added by the `Human` itself (see `human/mod.rs`).
 
+use crate::satsum::SatSum;
 use super::mana::Spending;
 use super::{Target, abilities, cards, choices, human_of, legal, mana, specs};
 use crate::control::{Answer, Human, Request};
@@ -141,10 +142,13 @@ pub fn stack_priority(g: &mut Game, q: PlayerId) -> Res {
     let mode = autopass(g, q);
     let Some(top) = g.stack.last().cloned() else { return Ok(()) };
     if top.kind != StackKind::Spell {
-        if top.controller == q && mode != "all" {
+        // Thassa's Oracle's own trigger, with Demonic Consultation / Tainted Pact in hand: the window to cast it;
+        // your own important ability, with Peter Parker's Camera ready to copy it: you get priority
+        let own = super::thanos::oracle_window(g, q, &top) || super::urdragon::camera_window(g, q, &top);
+        if top.controller == q && mode != "all" && !own {
             return Ok(());
         }
-        if mode == "respond" && !can_respond(g, q) {
+        if mode == "respond" && !own && !can_respond(g, q) {
             return Ok(());
         }
         let who = if top.controller == q {
@@ -166,6 +170,16 @@ pub fn stack_priority(g: &mut Game, q: PlayerId) -> Res {
         None => tc,
     };
     respond(g, q, &format!("{who} {what}"), top.card, Some(top.controller))
+}
+
+/// A Rings of Brighthearth copy of the person's ability has resolved (its caller applied it) and the original is still to
+/// resolve: the person gets priority first, e.g. to tap Basalt Monolith for mana again before the original untaps it.
+/// Skipped in a run of many activations (`stack::with_rings_auto`).
+pub fn copies_priority(g: &mut Game, p: PlayerId, what: &str) -> Res {
+    if !super::is_human(g, p) || crate::engine::stack::rings_auto_set() {
+        return Ok(());
+    }
+    respond(g, p, &format!("The copy of {what} has resolved; the original is still to resolve"), None, Some(p))
 }
 
 /// practice mode: the caster gets priority on their own instant or sorcery when they hold a card that copies it
@@ -198,7 +212,7 @@ pub fn step_priority(g: &mut Game, q: PlayerId, step: &str, defender: Option<Pla
     let prompt = if step == "end" {
         if a == q { "End of your turn".to_string() } else { format!("End of {}'s turn", name_of(g, a)) }
     } else if step == "attackers" && Some(q) == defender {
-        let power: i32 = attackers.iter().map(|&m| epow(g, m)).sum();
+        let power: i32 = attackers.iter().map(|&m| epow(g, m)).ssum();
         format!("{} attacks you with {} creature(s) ({} power)", name_of(g, a), attackers.len(), power)
     } else {
         let sn = match step {
@@ -524,7 +538,19 @@ pub fn abilities_of(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<(String, Ab
         return Ok(out); // Arrest, Pithing Needle, Collector Ouphe ...: its activated abilities can't be activated
     }
     if let Some(n) = legal::equip_cost(g, m) {
-        out.push((format!("Equip {{{n}}}"), AbilityKind::Equip));
+        // the cheapest it costs onto any creature of yours (Puresteel Paladin, Auriok Steelshaper ...)
+        let least = g
+            .player(p)
+            .perms
+            .iter()
+            .filter(|&&x| g.is_creature(x) && !g.perm(x).phased && x != m)
+            .filter_map(|&x| legal::equip_cost_to(g, p, m, x))
+            .min()
+            .unwrap_or(n);
+        out.push((
+            if least < n { format!("Equip {{{n}}} ({{{least}}} onto the right creature)") } else { format!("Equip {{{n}}}") },
+            AbilityKind::Equip,
+        ));
     }
     let post = if g.active == Some(p) { Some(g.step == Step::Main2) } else { None }; // None: instant-speed only
     for a in abilities::permanent_abilities(g, p, m) {
@@ -590,7 +616,7 @@ fn use_perm(g: &mut Game, p: PlayerId, m: PermId) -> Res<Option<String>> {
             if let Some(why) = legal::check_equip(g, p, m, t) {
                 return Ok(Some(why));
             }
-            mana::pay_from_pool(g, p, legal::equip_cost(g, m).unwrap_or(0), "");
+            mana::pay_from_pool(g, p, legal::equip_cost_to(g, p, m, t).unwrap_or(0), ""); // with the discounts
             crate::glog!(g, "  {} equips {} to {}", name_of(g, p), mname, perm_name(g, t));
             let tn = perm_name(g, t);
             if stack::ability_window(g, p, Some(m), &format!("equip to {tn}"), None, Some(t))?
@@ -893,9 +919,11 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         // X: up to what's left in the pool
         let top = g.player(p).pool.total();
         let x = if top > 0 {
-            let labels: Vec<String> = (0..=top).map(|x| format!("X = {x}")).collect();
+            // every number up to 24, then round ones and the whole pool (infinite mana)
+            let xs = choices::amount_choices(top);
+            let labels: Vec<String> = xs.iter().map(|x| format!("X = {x}")).collect();
             let prompt = format!("{cname}: choose X (paid from what is left in your pool)");
-            choices::choose(g, p, "choose", &prompt, &labels, None, None)?.unwrap_or(0) as u32
+            xs[choices::choose(g, p, "choose", &prompt, &labels, None, None)?.unwrap_or(0)]
         } else {
             0
         };
@@ -1044,6 +1072,9 @@ pub fn order_triggers(g: &mut Game, real: Vec<crate::hooks::Trigger>) -> Res<Vec
                 a == b
             });
             while left.len() > 1 {
+                if super::combos::niv_pings_standing(g, &left) {
+                    break; // every Niv-Mizzet ping goes to the standing target: their order can't matter
+                }
                 let labels: Vec<String> = left.iter().map(|t| trig_label(g, t)).collect();
                 if labels.iter().all(|l| *l == labels[0]) {
                     break; // the rest are the same trigger (four Sephiroth drains): their order can't matter

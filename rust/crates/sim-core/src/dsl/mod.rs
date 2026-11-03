@@ -10,6 +10,7 @@
 
 pub mod model;
 
+use crate::satsum::SatSum;
 use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::{Colors, Types};
 use crate::engine::pool::Kind;
@@ -165,7 +166,7 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
             .filter_map(|&m| g.perm(m).cd)
             .filter(|&c| g.db.get(c).perm)
             .map(|c| g.db.get(c).pips.chars().filter(|&x| x == 'B').count() as i32)
-            .sum::<i32>()
+            .ssum()
             .min(10),
         "target_power" => ctx.snapshot.map_or(2, |s| s.0),
         "target_toughness" => ctx.snapshot.map_or(2, |s| s.1),
@@ -632,7 +633,7 @@ fn run(
                         Some(c) => g.db.get(c).name.to_string(),
                         None => "Damage".to_string(),
                     };
-                    crate::human::choices::deal_damage(g, p, dmg, &what, "triggers")?;
+                    crate::human::choices::deal_damage_from(g, p, dmg, &what, "triggers", src)?;
                 }
                 Some("any_target") => {
                     let cols = src_colors(g, src, spell);
@@ -2309,6 +2310,10 @@ pub fn activate(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool> {
             let mut copy = DslCtx { target: None, ..dctx.clone() };
             execute(g, p, effects, Some(src), &mut copy, None, 0)?;
         }
+        if r.copies > 0 && r.resolves {
+            let nm = g.perm(src).name.to_string(); // Rings of Brighthearth: priority before the original resolves
+            crate::human::human::copies_priority(g, p, &nm)?;
+        }
         if !r.resolves {
             return Ok(true); // countered
         }
@@ -2347,6 +2352,10 @@ pub fn use_loyalty(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool
     let r = crate::engine::stack::ability_window_ex(g, p, Some(src), &format!("{loyalty:+}"), None, ctx)?;
     for _ in 0..r.copies {
         execute(g, p, effects, Some(src), &mut DslCtx::base(), None, 0)?;
+    }
+    if r.copies > 0 && r.resolves {
+        let nm = g.perm(src).name.to_string();
+        crate::human::human::copies_priority(g, p, &nm)?;
     }
     if !r.resolves {
         return Ok(true);
@@ -2446,7 +2455,7 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
                 Ability::Static { kind, pow, .. } if kind == "equip_bonus" => *pow,
                 _ => None,
             })
-            .sum::<i32>()
+            .ssum()
             + extra.map_or(0, |x| x[1] as i32);
         let trig = d
             .abilities

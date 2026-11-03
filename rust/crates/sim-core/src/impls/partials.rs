@@ -1,6 +1,7 @@
 //! Python's `cards/impl/partials.py`: the abilities the audit listed as missing, implemented from their rules text
 //! (the Tier 1 and Sauron cards for M5, the rest in phase 6: `register_phase6`).
 
+use crate::satsum::SatSum;
 use super::common;
 use crate::engine::repl;
 use crate::cardcode;
@@ -1047,6 +1048,13 @@ fn aid_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let label = format!("attach {}", g.perm(m).name);
     if !trigger_window(g, o, Some(src), &label, Some(2.0))? || !g.perm(m).on_bf {
+        return Ok(());
+    }
+    if crate::human::is_human(g, o) {
+        // a person chooses the creature, or none ("you may attach it")
+        if let Some(x) = crate::human::urdragon::pick_attach_target(g, o, "Sigarda's Aid", m)? {
+            g.perm_mut(m).attached = Some(x);
+        }
         return Ok(());
     }
     let cr = creatures(g);
@@ -2771,8 +2779,8 @@ fn tekuthal(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<
         return Ok(vec![]);
     }
     let pool = tekuthal_pool(g, p, src);
-    let have: i32 = pool.iter().map(|&m| g.perm(m).plus).sum::<i32>()
-        + pool.iter().map(|&m| (g.perm(m).loyalty.unwrap_or(0) - 3).max(0)).sum::<i32>();
+    let have: i32 = pool.iter().map(|&m| g.perm(m).plus).ssum()
+        + pool.iter().map(|&m| (g.perm(m).loyalty.unwrap_or(0) - 3).max(0)).ssum();
     if have < 3 || !can_pay(g, p, 1, "", false) || (!can_pay(g, p, 1, "UU", false) && g.player(p).life < 20) {
         return Ok(vec![]);
     }

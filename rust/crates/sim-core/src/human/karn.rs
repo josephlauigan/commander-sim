@@ -11,7 +11,7 @@ use super::abilities::{LandAbility, PermAbility, Why, ability};
 use super::{Target, cards, choices, legal, mana};
 use crate::engine::repl;
 use crate::cards::{Colors, Types};
-use crate::engine::stack::{ability_window, ability_window_card};
+use crate::engine::stack::{self, ability_window, ability_window_card};
 use crate::engine::values::{epow, untargetable};
 use crate::engine::zones::{self, Tokens, die};
 use crate::flow::Res;
@@ -19,7 +19,8 @@ use crate::hooks::Action;
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{DataKey, Game, Val};
 
-const PERMS: [&str; 17] = [
+const PERMS: [&str; 18] = [
+    "Thrasios, Triton Hero",
     "Grim Monolith",
     "Liquimetal Torque",
     "Mazemind Tome",
@@ -214,6 +215,10 @@ pub fn perm_abilities(g: &Game, _p: PlayerId, m: PermId) -> Vec<PermAbility> {
             "{T}, sacrifice three artifacts: search your library for an artifact card, put it onto the battlefield",
             forgemaster,
         )],
+        "Thrasios, Triton Hero" => vec![
+            ability("{4}: scry 1, then reveal the top card: a land goes onto the battlefield tapped, else draw it", |g, p, m| thrasios(g, p, m, 1)),
+            ability("{4}, again and again: activate it N times", |g, p, m| thrasios_many(g, p, m)),
+        ],
         "Walking Ballista" => vec![
             ability("{4}: put a +1/+1 counter on Walking Ballista", ballista_grow),
             ability("remove a +1/+1 counter: 1 damage to any target", ballista_ping),
@@ -231,7 +236,16 @@ fn monolith(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if let Some(why) = need(g, p, 4, "", "Grim Monolith") {
         return Ok(Some(why));
     }
-    run(g, p, Action::Plan { f: crate::ai::decks::untap_monolith, arg: m.0 as i64 }, "Grim Monolith")
+    mana::pay_from_pool(g, p, 4, "");
+    crate::glog!(g, "  {} activates Grim Monolith: untap it", g.player(p).name);
+    // an ability on the stack: the Rings of Brighthearth copy untaps it too
+    stack::ability_run(g, p, Some(m), None, "untap Grim Monolith", None, None, |g| {
+        if live(g, m) {
+            g.perm_mut(m).tapped = false;
+        }
+        Ok(())
+    })?;
+    Ok(None)
 }
 
 fn torque(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
@@ -397,9 +411,12 @@ fn hellkite_pump(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     }
     mana::pay_from_pool(g, p, 2, "");
     crate::glog!(g, "  {} pumps Steel Hellkite (+1/+0)", g.player(p).name);
-    if ability_window(g, p, Some(m), "+1/+0", None, None)? && live(g, m) {
-        g.perm_mut(m).eot_pt.0 += 1;
-    }
+    stack::ability_run(g, p, Some(m), None, "+1/+0", None, None, |g| {
+        if live(g, m) {
+            g.perm_mut(m).eot_pt.0 += 1;
+        }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -499,9 +516,12 @@ fn ballista_grow(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     }
     mana::pay_from_pool(g, p, 4, "");
     crate::glog!(g, "  {} activates Walking Ballista (+1/+1 counter)", g.player(p).name);
-    if ability_window(g, p, Some(m), "+1/+1 counter", None, None)? && live(g, m) {
-        repl::put_plus(g, m, 1);
-    }
+    stack::ability_run(g, p, Some(m), None, "+1/+1 counter", None, None, |g| {
+        if live(g, m) {
+            repl::put_plus(g, m, 1);
+        }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -520,13 +540,53 @@ fn ballista_ping(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         return Ok(None);
     };
     let t = tg[k];
-    g.perm_mut(m).plus -= 1; // the cost: it shrinks (and dies at 0/0) whatever happens to the ping
+    // several counters at once (a table shortcut: that many separate activations, one after another)
+    let plus = g.perm(m).plus as u32;
+    let n = if plus > 1 {
+        let xs: Vec<u32> = choices::amount_choices(plus).into_iter().filter(|&x| x >= 1).collect();
+        let labels: Vec<String> = xs.iter().map(|x| format!("{x} counter{}: {x} damage", if *x == 1 { "" } else { "s" })).collect();
+        let prompt = format!(
+            "Walking Ballista: remove how many counters (it has {plus}; each is a separate activation dealing 1 damage to {})?",
+            legal::describe_target(g, p, t)
+        );
+        let Some(i) = choices::choose(g, p, "choose", &prompt, &labels, Some("cancel"), None)? else {
+            return Ok(None);
+        };
+        xs[i]
+    } else {
+        1
+    };
+    // Rings of Brighthearth: one answer for all of the activations ({2} for each copy)
+    let auto = if n > 1 && !stack::rings_of(g, p).is_empty() {
+        let q = format!("Rings of Brighthearth: pay {{2}} to copy each of the {n} activations (2 damage for each counter)?");
+        Some(choices::yes_no(g, p, &q)?)
+    } else {
+        None
+    };
+    stack::with_rings_auto(auto, || -> Res {
+        for _ in 0..n {
+            let alive = match t {
+                Target::Player(q) => g.player(q).alive,
+                Target::Perm(x) => live(g, x),
+            };
+            if g.perm(m).plus < 1 || !live(g, m) || !alive || g.over {
+                break;
+            }
+            ping_once(g, p, m, t)?;
+        }
+        Ok(())
+    })?;
+    Ok(None)
+}
+
+/// one activation of Walking Ballista's ping: the counter is the cost (it shrinks, and dies at 0/0, whatever happens to
+/// the ping), 1 damage for the ability and for each Rings of Brighthearth copy
+fn ping_once(g: &mut Game, p: PlayerId, m: PermId, t: Target) -> Res {
+    g.perm_mut(m).plus -= 1;
     g.bf_ver += 1;
     crate::glog!(g, "  {} removes a counter from Walking Ballista", g.player(p).name);
     let tp = if let Target::Perm(x) = t { Some(x) } else { None };
-    let still = live(g, m);
-    let ok = if still { ability_window(g, p, Some(m), "1 damage", None, tp)? } else { true };
-    if ok {
+    let mut hit = |g: &mut Game| -> Res {
         let alive = match t {
             Target::Player(q) => g.player(q).alive,
             Target::Perm(x) => live(g, x),
@@ -534,9 +594,14 @@ fn ballista_ping(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         if alive {
             choices::apply_damage(g, p, t, 1, "Walking Ballista", "burn")?;
         }
+        Ok(())
+    };
+    if live(g, m) {
+        stack::ability_run(g, p, Some(m), None, "1 damage", None, tp, &mut hit)?;
+    } else {
+        hit(g)?;
     }
-    crate::engine::life::check_state(g)?;
-    Ok(None)
+    crate::engine::life::check_state(g)
 }
 
 fn skull(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
@@ -811,4 +876,53 @@ fn land_pump(g: &mut Game, p: PlayerId, l: PermId, pay: u32, by: (i32, i32)) -> 
     g.perm_mut(l).tapped = true;
     let cd = g.perm(l).card();
     pump(g, p, None, Some(cd), t, by)
+}
+
+// ------------------------------------------------------------------ Thrasios, Triton Hero
+/// the cost of Thrasios's ability: {4} (less with Training Grounds, Biomancer's Familiar)
+fn thrasios_cost(g: &Game, p: PlayerId) -> u32 {
+    crate::impls::t6_green1::creature_ability_cost(g, p, 4)
+}
+
+/// {4}: scry 1, then reveal the top card of your library; a land goes onto the battlefield tapped, anything else is put
+/// into your hand. `times` activations in a row (each its own ability on the stack, with Rings of Brighthearth's offer)
+fn thrasios(g: &mut Game, p: PlayerId, m: PermId, times: u32) -> Res<Why> {
+    let cost = thrasios_cost(g, p);
+    let mut done = 0;
+    while done < times && !g.over && live(g, m) {
+        if g.player(p).library.is_empty() {
+            return Ok((done == 0).then(|| "Your library is empty.".to_string()));
+        }
+        if let Some(why) = need(g, p, cost, "", "Thrasios") {
+            return Ok((done == 0).then_some(why));
+        }
+        mana::pay_from_pool(g, p, cost, "");
+        crate::glog!(g, "  {} activates Thrasios", g.player(p).name);
+        stack::ability_run(g, p, Some(m), None, "scry 1, then a land or a card", None, None, |g| {
+            crate::impls::tymna_cards::thrasios_resolve(g, p)
+        })?;
+        done += 1;
+    }
+    Ok(None)
+}
+
+/// Thrasios N times over (a table shortcut for a big pool: that many separate activations, one after another)
+fn thrasios_many(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    let cost = thrasios_cost(g, p).max(1);
+    let room = (mana_in_pool(g, p) / cost).min(g.player(p).library.len() as u32);
+    let xs: Vec<u32> = choices::amount_choices(room).into_iter().filter(|&x| x >= 1).collect();
+    if xs.is_empty() {
+        return Ok(Some(format!("Can't activate Thrasios. It costs {{{cost}}}; your mana pool has {}.", mana_in_pool(g, p))));
+    }
+    let labels: Vec<String> = xs.iter().map(|x| format!("{x} time{}", if *x == 1 { "" } else { "s" })).collect();
+    let prompt = format!("Thrasios: activate it how many times ({{{cost}}} each, from your pool)?");
+    let Some(i) = choices::choose(g, p, "choose", &prompt, &labels, Some("cancel"), None)? else { return Ok(None) };
+    let n = xs[i];
+    let auto = if n > 1 && !stack::rings_of(g, p).is_empty() {
+        let q = "Rings of Brighthearth: pay {2} to copy each activation (two reveals for each {4})?";
+        Some(choices::yes_no(g, p, q)?)
+    } else {
+        None
+    };
+    stack::with_rings_auto(auto, || thrasios(g, p, m, n))
 }

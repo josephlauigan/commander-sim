@@ -11,6 +11,7 @@ use crate::engine::combat::{can_block, has_haste, kw};
 use crate::engine::values::{chasm, epow};
 use crate::flow::{Res, Stop};
 use crate::ids::{PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::Game;
 use crate::sym::intern;
 use serde_json::{Value, json};
@@ -86,6 +87,9 @@ pub fn human_attack(g: &mut Game, p: PlayerId, ncomb: u32) -> Res<Option<Vec<(Pl
     if cands.is_empty() || opps.is_empty() {
         return Ok(None);
     }
+    if let Some(r) = super::urdragon::repeat_attack(g, p, &cands) {
+        return Ok(Some(r)); // the Helm loop, repeated: no more attack prompts this turn
+    }
     let Some(h) = human_of(g, p) else { return Ok(None) };
     let labels: Vec<String> = cands.iter().map(|&m| legal::describe_target(g, p, Target::Perm(m))).collect();
     let extra = if ncomb == 1 { String::new() } else { format!(" (combat {ncomb})") };
@@ -115,7 +119,9 @@ pub fn human_attack(g: &mut Game, p: PlayerId, ncomb: u32) -> Res<Option<Vec<(Pl
         }
         let walkers = attackable_walkers(g, p);
         if opps.len() == 1 && walkers.is_empty() {
-            return Ok(Some(vec![(opps[0], atk)]));
+            let groups = vec![(opps[0], atk)];
+            super::urdragon::offer_repeat(g, p, &groups)?;
+            return Ok(Some(groups));
         }
         // everything that can be attacked: the players, then their planeswalkers
         let mut dests: Vec<Dest> = opps.iter().map(|&q| Dest::Player(q)).collect();
@@ -165,12 +171,13 @@ pub fn human_attack(g: &mut Game, p: PlayerId, ncomb: u32) -> Res<Option<Vec<(Pl
                 g.human_walker_atk.push((m, w));
             }
         }
-        return Ok(Some(
-            opps.iter()
-                .filter(|&&q| to.iter().any(|x| ctl(x.1) == q))
-                .map(|&q| (q, to.iter().filter(|x| ctl(x.1) == q).map(|x| x.0).collect()))
-                .collect(),
-        ));
+        let groups: Vec<(PlayerId, Vec<PermId>)> = opps
+            .iter()
+            .filter(|&&q| to.iter().any(|x| ctl(x.1) == q))
+            .map(|&q| (q, to.iter().filter(|x| ctl(x.1) == q).map(|x| x.0).collect()))
+            .collect();
+        super::urdragon::offer_repeat(g, p, &groups)?;
+        return Ok(Some(groups));
     }
     Ok(None)
 }
@@ -192,7 +199,7 @@ pub fn human_blocks(
         .copied()
         .filter(|&m| g.is_creature(m) && !g.perm(m).tapped && !g.perm(m).phased)
         .collect();
-    let total: i32 = atk.iter().filter(|&&a| g.player(p).perms.contains(&a)).map(|&a| epow(g, a)).sum();
+    let total: i32 = atk.iter().filter(|&&a| g.player(p).perms.contains(&a)).map(|&a| epow(g, a)).ssum();
     let Some(h) = human_of(g, d) else { return Ok(vec![]) };
     let show = h.live();
     let attackers: Vec<Value> = if show {

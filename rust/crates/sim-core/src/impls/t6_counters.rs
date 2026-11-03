@@ -12,6 +12,7 @@
 //! - Effects on a spell on the stack, by stack item id: `misdirect`, `commandeer`, `substitute`, `bilbo_bounce`,
 //!   `mindbreak_exile`, and Tibalt's Trickery's side effect (`tibalt_after`).
 
+use crate::satsum::SatSum;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, castable, casts_this_turn, on_cast, spell_targets};
 use crate::engine::mana::{can_pay, cost_of, pay};
@@ -382,7 +383,7 @@ fn dizzy_defend(
         .copied()
         .filter(|&a| g.perm(a).on_bf && g.perm(a).owner != d && !assign.iter().any(|x| x.0 == a))
         .collect();
-    let dmg: i32 = open.iter().map(|&a| epow(g, a).max(0)).sum();
+    let dmg: i32 = open.iter().map(|&a| epow(g, a).max(0)).ssum();
     let Some(big) = max_by(&open, |a| epow(g, a) as f64) else { return Ok(()) };
     let saved = epow(g, big).clamp(0, 3);
     let life = g.player(d).life;

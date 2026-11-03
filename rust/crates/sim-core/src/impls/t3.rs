@@ -7,6 +7,7 @@
 //! Joraga Treespeaker's options and mana (rules2), Legion Loyalist's attack (rules), Painful Quandary's cast trigger
 //! (rules), Finale of Devastation (rules2), Embercleave's cast priority (rules2: 0).
 
+use crate::satsum::SatSum;
 use super::common::{WalkerAb, best_opp_creature, best_opp_nonland, death_value, outlets, sac_food, walker};
 use crate::engine::pool::Kind;
 use super::partials::{at_once, eot_kw, first_max, name_of, remove_card};
@@ -837,6 +838,11 @@ fn celebrant(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) 
         return Ok(vec![]);
     }
     let ok = trigger_window(g, p, Some(src), "untap creatures; an additional combat", Some(6.0))?;
+    let ask = "Combat Celebrant: exert it as it attacks (untap your other creatures, an additional combat)?";
+    let person = crate::human::is_human(g, p) && !crate::human::urdragon::repeat_on(g, p);
+    if ok && person && !crate::human::choices::yes_no(g, p, ask)? {
+        return Ok(vec![]); // a "may": not exerted
+    }
     g.perm_mut(src).data.set(DataKey::Exerted, Val::Int(turns)); // exerted as it attacked
     if !ok {
         return Ok(vec![]);
@@ -854,7 +860,7 @@ fn celebrant(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) 
 /// pays {5}{R}{R} for another combat when the attack is big enough
 fn charger(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
     let key = intern(&format!("charger{}_{}", src.0, g.player(p).combat_no));
-    let power: i32 = atk.iter().map(|&m| epow(g, m)).sum();
+    let power: i32 = atk.iter().map(|&m| epow(g, m)).ssum();
     if atk.contains(&src) && can_pay(g, p, 5, "RR", false) && power >= 8 && fresh(g, p, key) {
         if !trigger_window(g, p, Some(src), "pay 5RR: untap attackers, an additional combat", Some(6.0))? {
             return Ok(vec![]);
@@ -930,10 +936,18 @@ fn embercleave(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let o = g.perm(src).owner;
     let ready = |g: &Game| creatures(g, o).into_iter().filter(|&x| !g.perm(x).noatk).collect::<Vec<_>>();
-    if ready(g).is_empty() {
+    let person = crate::human::is_human(g, o); // a person may put it on any creature (the AI skips its mana creatures)
+    if (person && creatures(g, o).is_empty()) || (!person && ready(g).is_empty()) {
         return Ok(());
     }
     if !trigger_window(g, o, Some(src), "attach to a creature", Some(4.0))? || !controls(g, o, src) {
+        return Ok(());
+    }
+    if person {
+        // a person chooses the creature
+        if let Some(x) = crate::human::urdragon::pick_attach_target(g, o, "Embercleave", src)? {
+            g.perm_mut(src).attached = Some(x);
+        }
         return Ok(());
     }
     let cr = ready(g);

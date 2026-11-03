@@ -11,6 +11,7 @@
 //! Engine hooks into this file (each a one-line call): stack.rs `spree_extra`/`spirit_token`/`acrobatics_tap`,
 //! cast.rs `spell_to_library`, removal.rs `top_or_bottom`, zur.rs `kasmina_attach`, common.rs `kasmina_detach`.
 
+use crate::satsum::SatSum;
 use super::common::{AURA, AuraSpec, WalkerAb, aura, eot, walker};
 use super::galadriel::blink_value;
 use crate::engine::repl;
@@ -92,7 +93,7 @@ fn jace_minus_val(g: &Game, p: PlayerId, src: PermId) -> Option<f64> {
                 .iter()
                 .filter(|&&m| g.is_creature(m) && !g.perm(m).phased)
                 .map(|&m| crate::engine::values::epow(g, m).min(5))
-                .sum::<i32>()
+                .ssum()
         })
         .sum();
     if big < 8 {
@@ -541,7 +542,7 @@ fn acrobatics_attack(g: &mut Game, c: CardId, p: PlayerId, atk: &[PermId], d: Pl
     if !can_pay(g, p, gn, &pips, false) {
         return Ok(());
     }
-    let power: i32 = atk.iter().filter(|&&a| on_bf(g, a)).map(|&a| epow(g, a)).sum();
+    let power: i32 = atk.iter().filter(|&&a| on_bf(g, a)).map(|&a| epow(g, a)).ssum();
     let blockers: Vec<PermId> = g
         .player(d)
         .perms
@@ -594,7 +595,7 @@ fn icy_defend(
         .copied()
         .filter(|&a| on_bf(g, a) && g.perm(a).owner == p && !assign.iter().any(|x| x.0 == a))
         .collect();
-    let dmg: i32 = open.iter().map(|&a| epow(g, a)).sum();
+    let dmg: i32 = open.iter().map(|&a| epow(g, a)).ssum();
     let Some(big) = max_by(&open, |a| epow(g, a) as f64) else { return Ok(()) };
     let saved = epow(g, big).min(5);
     let life = g.player(d).life;

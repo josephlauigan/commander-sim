@@ -159,10 +159,12 @@ fn loop_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
     let mut out = vec![];
     let Some(cd) = g.perm(m).cd else { return out };
     let nm = name(g, cd);
-    if &*g.player(p).key != "seph" || !mine::loop_card(&nm) {
+    out.extend(super::combos::yawg_loop_abilities(g, p, m)); // Mikaeus + Yawgmoth + two undying creatures
+    out.extend(super::combos::niv_abilities(g, m));
+    if !mine::loop_card(&nm) {
         return out;
     }
-    for (i, keys, kills) in mine::seph_loops(g, p) {
+    for (i, keys, kills) in mine::loops_now(g, p) {
         let l = &mine::LOOPS[i];
         if !l.groups.iter().any(|grp| grp.contains(&nm.as_str())) && !mine::OUTLETS.contains(&nm.as_str()) {
             continue;
@@ -170,11 +172,127 @@ fn loop_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
         let label =
             format!("start the loop: {}{}", l.name, if kills { "" } else { " (no payoff on the battlefield yet)" });
         out.push(ability(label, move |g: &mut Game, p: PlayerId, _m: PermId| {
+            if i == 0 {
+                return super::combos::trisk_loop(g, p, &keys); // Mikaeus + Triskelion: the person picks what it hits
+            }
             mine::run_loop(g, p, i, &keys, kills)?;
             Ok(None)
         }));
     }
     out
+}
+
+/// the Basalt Monolith and the Rings of Brighthearth p controls (on the battlefield, not phased out)
+fn basalt_rings(g: &Game, p: PlayerId) -> Option<(PermId, PermId)> {
+    let find = |n: &str| {
+        g.player(p).perms.iter().copied().find(|&m| {
+            let x = g.perm(m);
+            x.on_bf && !x.phased && !x.neutered && &*x.name == n
+        })
+    };
+    Some((find("Basalt Monolith")?, find("Rings of Brighthearth")?))
+}
+
+/// Basalt Monolith + Rings of Brighthearth can start now: {5} in all (the same test as `combos::power_artifact`): the
+/// Basalt untapped plus {2} more, or {5} from elsewhere when it is tapped
+fn basalt_loop_ready(g: &Game, p: PlayerId) -> Option<(PermId, PermId)> {
+    let (b, r) = basalt_rings(g, p)?;
+    (mana::available(g, p) >= 5 && !crate::cardcode::ability_locked(g, b, p)).then_some((b, r))
+}
+
+/// how much {C} the person takes out of the loop, the largest first
+const LOOP_AMOUNTS: [u32; 7] = [999, 500, 200, 100, 50, 20, 10];
+
+/// Basalt Monolith and Rings of Brighthearth: unbounded colourless mana as a table shortcut. Basalt taps for {C}{C}{C};
+/// its {3} untap, copied by Rings for {2}, untaps it twice and it taps twice more: {6} for {5}, one more each time
+/// round. So: pay the {5} to start, give the table its window (an ability on the stack, the Stifle-type answers, and
+/// removal on a piece), then take the {C} the person asks for, Basalt left tapped as the real loop leaves it.
+fn basalt_loop(g: &mut Game, p: PlayerId, _m: PermId) -> Res<Why> {
+    let Some((b, r)) = basalt_loop_ready(g, p) else {
+        return Ok(Some(
+            "The loop needs Basalt Monolith and Rings of Brighthearth, and {5} in all to start it.".into(),
+        ));
+    };
+    if !mana::pay_tax_ask(g, p, 5, "the Basalt Monolith loop", None)? {
+        return Ok(Some("Can't pay the {5} to start the loop.".into()));
+    }
+    crate::glog!(g, "  {} starts the loop: Basalt Monolith and Rings of Brighthearth", g.player(p).name);
+    let live = |g: &Game, m: PermId| g.perm(m).on_bf && !g.perm(m).phased;
+    if !stack::ability_window(g, p, Some(b), "start the loop: infinite colourless mana", Some(10.0), None)?
+        || !live(g, b)
+        || !live(g, r)
+        || crate::ai::combo_interrupted(g, p, "basalt", &[b, r])?
+    {
+        crate::glog!(g, "    ...the loop is stopped");
+        return Ok(None);
+    }
+    let amounts: Vec<u32> = LOOP_AMOUNTS.to_vec();
+    let labels: Vec<String> = amounts.iter().map(|n| format!("{n} {{C}}")).collect();
+    let k = choices::choose_one(g, p, "choose", "The loop runs: how much {C} do you want?", &labels)?;
+    let n = amounts[k];
+    g.player_mut(p).pool.add('C', n);
+    g.perm_mut(b).tapped = true;
+    crate::glog!(g, "    the loop makes {n} {{C}}; Basalt Monolith ends tapped");
+    Ok(None)
+}
+
+/// Staff of Domination: {1}: untap it, {5}, {T}: draw a card, again and again with mana to spare
+fn staff_draw(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    let abil = crate::dsl::human_abilities(g, p, m);
+    let find = |pre: &str, post: &str| abil.iter().find(|a| a.0.starts_with(pre) && a.0.ends_with(post)).map(|a| a.1);
+    let (Some(untap), Some(draw)) = (find("{1}:", "untap"), find("{5}, {T}:", "draw")) else {
+        return Ok(Some("Staff of Domination's abilities aren't available.".into()));
+    };
+    let room = g.player(p).library.len().saturating_sub(1) as u32; // never the last card
+    if room == 0 {
+        return Ok(Some("Your library is nearly empty.".into()));
+    }
+    let xs: Vec<u32> = choices::amount_choices(room).into_iter().filter(|&x| x >= 1).collect();
+    let labels: Vec<String> = xs.iter().map(|x| format!("draw {x} card{}", if *x == 1 { "" } else { "s" })).collect();
+    let Some(i) = choices::choose(
+        g,
+        p,
+        "choose",
+        "Staff of Domination: draw how many cards ({1} untap, then {5}, {T} each time)?",
+        &labels,
+        Some("cancel"),
+        None,
+    )?
+    else {
+        return Ok(None);
+    };
+    let n = xs[i];
+    let auto = if n > 1 && !stack::rings_of(g, p).is_empty() {
+        Some(choices::yes_no(
+            g,
+            p,
+            "Rings of Brighthearth: pay {2} to copy each draw ability (two cards for each {5}, {T})?",
+        )?)
+    } else {
+        None
+    };
+    let mut drawn = 0u32;
+    while drawn < n && !g.over && g.player(p).library.len() > 1 {
+        if g.perm(m).tapped && !stack::with_rings_auto(Some(false), || crate::dsl::activate(g, p, m, untap))? {
+            break;
+        }
+        let before = g.player(p).library.len();
+        let ans = if n - drawn < 2 { Some(false) } else { auto };
+        if !stack::with_rings_auto(ans, || crate::dsl::activate(g, p, m, draw))? {
+            break;
+        }
+        drawn += before.saturating_sub(g.player(p).library.len()) as u32;
+    }
+    if drawn == 0 {
+        return Ok(Some("Can't activate Staff of Domination: it costs {1} to untap and {5} to draw.".into()));
+    }
+    crate::glog!(
+        g,
+        "    {} drew {drawn} card{} with Staff of Domination",
+        g.player(p).name,
+        if drawn == 1 { "" } else { "s" }
+    );
+    Ok(None)
 }
 
 /// abilities.permanent_abilities: the abilities of permanent m
@@ -195,6 +313,13 @@ pub fn permanent_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility>
         ));
     }
     out.extend(loop_abilities(g, p, m));
+    // Basalt Monolith + Rings of Brighthearth: the infinite-mana shortcut on each piece
+    if matches!(&*d.name, "Basalt Monolith" | "Rings of Brighthearth") && basalt_loop_ready(g, p).is_some() {
+        out.push(ability("start the loop: infinite colourless mana", basalt_loop));
+    }
+    if &*d.name == "Staff of Domination" {
+        out.push(ability("draw N cards: untap for {1}, draw for {5} and tapping it, again and again", staff_draw));
+    }
     out
 }
 

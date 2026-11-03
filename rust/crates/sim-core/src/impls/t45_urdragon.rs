@@ -45,6 +45,7 @@
 //!   battlefield, the rest to the bottom in a random order.
 //! - Urza's Incubator: names a creature type as it enters; creature spells of that type cost {2} less.
 
+use crate::satsum::SatSum;
 use crate::engine::repl;
 use crate::engine::mana::restr_ok;
 use crate::engine::pool::Restr;
@@ -256,7 +257,18 @@ fn ur_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) 
     }
     draw(g, p, n, false)?;
     let cs: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).perm && !g.db.get(c).land).collect();
-    let Some(c) = crate::engine::zones::max_by(&cs, |c| body_worth(g, p, c)) else { return Ok(vec![]) };
+    let pick = if crate::human::is_human(g, p) && !crate::human::urdragon::repeat_on(g, p) {
+        // a person chooses which permanent card (or none: "you may")
+        if cs.is_empty() {
+            return Ok(vec![]);
+        }
+        let labels: Vec<String> = cs.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
+        let prompt = "The Ur-Dragon: put a permanent card from your hand onto the battlefield?";
+        crate::human::choices::choose(g, p, "choose", prompt, &labels, Some("none"), None)?.map(|k| cs[k])
+    } else {
+        crate::engine::zones::max_by(&cs, |c| body_worth(g, p, c))
+    };
+    let Some(c) = pick else { return Ok(vec![]) };
     let pl = g.player_mut(p);
     if let Some(i) = pl.hand.iter().position(|&x| x == c) {
         pl.hand.remove(i);
@@ -587,7 +599,7 @@ fn klauth_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Player
     if !trigger_window(g, p, Some(src), "mana equal to the attackers' power", Some(3.0))? {
         return Ok(vec![]);
     }
-    let x: i32 = atk.iter().filter(|&&m| g.perm(m).on_bf).map(|&m| epow(g, m).max(0)).sum();
+    let x: i32 = atk.iter().filter(|&&m| g.perm(m).on_bf).map(|&m| epow(g, m).max(0)).ssum();
     g.player_mut(p).mana.add_kept(Kind::Any, x as u32); // kept until the end of the turn
     crate::glog!(g, "    Klauth adds {x} mana");
     Ok(vec![])
@@ -626,7 +638,7 @@ fn lathliss_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
         let (gn, pips) = cost_of(g, p, c);
         !g.db.get(c).land && can_pay(g, p, gn, &pips, false)
     });
-    let power: i32 = ds.iter().map(|&m| epow(g, m)).sum();
+    let power: i32 = ds.iter().map(|&m| epow(g, m)).ssum();
     if castable || !crate::impls::lands::open_attack(g, p, power + k * ds.len() as i32, true) {
         return Ok(vec![]);
     }

@@ -5,6 +5,7 @@
 //! - `AI_SEARCH_DIAG=1`: one line on stderr per look-ahead decision of a generic-policy deck (`SRD ...`), with the
 //!   stakes facts and whether the look-ahead's pick differs from the policy's. Stats only: play is unchanged.
 
+use crate::satsum::SatSum;
 use crate::engine::values::epow;
 use crate::hooks::{Action, Opt};
 use crate::ids::{CardId, PermId, PlayerId};
@@ -50,7 +51,7 @@ pub fn stakes(g: &Game, p: PlayerId, opts: &[Opt]) -> Stakes {
     let dist = |q: PlayerId| super::planner::distance(g, q).min(6);
     let creatures = |q: PlayerId| g.player(q).perms.iter().copied().filter(|&m| g.is_creature(m)).collect::<Vec<_>>();
     let mine = creatures(p);
-    let power: i32 = mine.iter().map(|&m| epow(g, m).max(0)).sum();
+    let power: i32 = mine.iter().map(|&m| epow(g, m).max(0)).ssum();
     let min_life = opps.iter().map(|&q| g.player(q).life).min().unwrap_or(i32::MAX);
     Stakes {
         nreal: u.len(),
@@ -749,8 +750,8 @@ pub fn block_plans(
         .filter(|&b| g.is_creature(b) && !g.perm(b).tapped && !g.perm(b).phased)
         .collect();
     let (fd, fp) = (fiery(g, d), fiery(g, p));
-    let kills = |b: PermId, a: PermId| epow(g, b) * fd >= etgh(g, a) || g.perm(b).dt;
-    let dies = |b: PermId, a: PermId| epow(g, a) * fp >= etgh(g, b) || g.perm(a).dt;
+    let kills = |b: PermId, a: PermId| epow(g, b).saturating_mul(fd) >= etgh(g, a) || g.perm(b).dt;
+    let dies = |b: PermId, a: PermId| epow(g, a).saturating_mul(fp) >= etgh(g, b) || g.perm(a).dt;
     let mut order: Vec<PermId> = atk
         .iter()
         .copied()

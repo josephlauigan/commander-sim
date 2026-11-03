@@ -1,0 +1,36 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t1 Isshin        100 cards: Full 82, Full-auto 11, Approximate 7, Partial 0, Unmodeled 0
+  t1 Lathril       100 cards: Full 78, Full-auto 16, Approximate 6, Partial 0, Unmodeled 0
+  t1 Light-Paws    100 cards: Full 91, Full-auto 7, Approximate 2, Partial 0, Unmodeled 0
+  t1 Tatyova       100 cards: Full 75, Full-auto 24, Approximate 1, Partial 0, Unmodeled 0
+  t1 Teysa Karlov  100 cards: Full 80, Full-auto 18, Approximate 2, Partial 0, Unmodeled 0
+
+
+=== Realism: Tier 1 (High B2 / Low B3) [loose, lookahead AI, 300 games, seeds 500000-500299; 5 decks, 4 a pod] ===
+targets: data/realism/t1.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     30.5%     25.6-36.0   31.3%     29.8-32.8  PASS
+  seat 2 share of decisive games (%)                     26.5%     21.8-31.8   26.9%     25.4-28.4  PASS
+  seat 3 share of decisive games (%)                     25.5%     20.9-30.7   22.9%     21.4-24.4  FAIL
+  seat 4 share of decisive games (%)                     17.4%     13.6-22.2   18.9%     17.4-20.4  PASS
+  median round of a decisive win (rounds)                 10.0     10.0-11.0     8.0           7-9  FAIL
+  win round, 75th minus 25th percentile (rounds)           3.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                 3.4%       1.8-6.1   11.3%      9.8-12.8  FAIL
+  wins by damage (combat or other) (%)                   73.8%     68.6-78.5   70.4%     68.9-71.9  FAIL
+  wins by commander damage (%)                           22.8%     18.4-27.9   18.1%     16.6-19.6  FAIL
+  wins by poison (%)                                      0.0%       0.0-1.3    0.2%         0-1.7  PASS
+  deck win spread, best minus worst deck (pts)            11.5             -       -             -  no target
+  games over 15 rounds (round cap 20) (%)                 9.3%      6.5-13.2       -             -  no target
+  4 of 9 targets pass (3 statistics have no target yet)
+Games: 300, decisive 298 (99.3%), round-cap timeouts 0.7%
+Each deck's share of the decisive games it sat in: Isshin 28.0% of 239; Lathril 23.4% of 235; Light-Paws 32.0% of 247; Tatyova 20.7% of 232; Teysa Karlov 20.5% of 239
+Target sources:
+  seat1_win: Playgroup commander pages, seat win rates of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight), share of seat wins (n=31006, read 2026-10-25)
+  seat2_win: Playgroup commander pages, seat win rates of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight), share of seat wins (n=31006, read 2026-10-25)
+  seat3_win: Playgroup commander pages, seat win rates of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight), share of seat wins (n=31006, read 2026-10-25)
+  seat4_win: Playgroup commander pages, seat win rates of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight), share of seat wins (n=31006, read 2026-10-25)
+  win_round_median: Playgroup commander stats, average win turn of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight) (n=10576, read 2026-10-25)
+  win_combo_alt: Playgroup commanders.json, wins of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight) (n=5419, read 2026-10-25)
+  win_damage: Playgroup commanders.json, wins of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight) (n=5419, read 2026-10-25)
+  win_commander_damage: Playgroup commanders.json, wins of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight) (n=5419, read 2026-10-25)
+  win_poison: Playgroup commanders.json, wins of Isshin, Lathril, Light-Paws, Tatyova, Teysa (equal weight) (n=5419, read 2026-10-25)

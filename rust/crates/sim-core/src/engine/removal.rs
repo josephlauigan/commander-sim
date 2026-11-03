@@ -154,13 +154,13 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
         // Fiery Emancipation: triple damage (--- Tiers 4/5 (winota): Angrath's Marauders: double)
         let k = crate::engine::combat::fiery(g, a);
         if k > 1 {
-            kind = intern(&format!("dmg{}", n * k));
+            kind = intern(&format!("dmg{}", n.saturating_mul(k)));
         }
     }
     if let Some(n) = dmg_amount(kind, "dmg")
         && crate::engine::life::stagger_mult(g, owner) > 1
     {
-        kind = intern(&format!("dmg{}", n * 2)); // Lightning, Army of One: damage to its victim's permanents is doubled
+        kind = intern(&format!("dmg{}", n.saturating_mul(2))); // Lightning, Army of One: damage to its victim's permanents is doubled
     }
     if let Some(n) = dmg_amount(kind, "dmg")
         && crate::impls::t3_aurelia::gisela_scale(g, owner, n) != n

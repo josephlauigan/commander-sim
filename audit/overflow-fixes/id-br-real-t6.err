@@ -1,0 +1,2 @@
+Search cost per game (main/attack/counter/block/protect/wipe), 300 games: all seats decisions 57.6 (43.2/14.4/0.0/0.0/0.0/0.0), steps 146959 (110463/36496/0/0/0/0), policy 0.0 (0.0/0.0/0.0/0.0/0.0/0.0), playouts 2184 (1612/572/0/0/0/0); generic seats decisions 0.0 (0.0/0.0/0.0/0.0/0.0/0.0), steps 0 (0/0/0/0/0/0), policy 0.0 (0.0/0.0/0.0/0.0/0.0/0.0), playouts 0 (0/0/0/0/0/0)
+Generic seats' blocks / protection / wipe responses per game: seen 0.00/0.00/0.00, hot 0.00/0.00/0.00, acted 0.00/0.00/0.00
