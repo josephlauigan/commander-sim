@@ -507,14 +507,17 @@ function setupVoice() {
   $('#voice').hidden = false;
   try { setVoice(localStorage.getItem('voice') !== '0'); } catch (e) { setVoice(true); }
   $('#voice').addEventListener('click', () => setVoice(!voiceOn));
-  // Safari (and the iPad app) speaks only after a first utterance made from a tap or a key
+  // Safari (and the iPad app) speaks only after a first utterance made from a tap or a key. A touch's pointerdown
+  // isn't a user gesture to WebKit (its touchend and click are), and an empty utterance may be dropped: speak a
+  // silent space from the gesture events that count.
   const unlock = () => {
     if (unlocked) return;
     unlocked = true;
-    speech.speak(new SpeechSynthesisUtterance(''));
+    const u = new SpeechSynthesisUtterance(' ');
+    u.volume = 0;
+    speech.speak(u);
   };
-  document.addEventListener('pointerdown', unlock, { capture: true });
-  document.addEventListener('keydown', unlock, { capture: true });
+  for (const ev of ['touchend', 'click', 'keydown']) document.addEventListener(ev, unlock, { capture: true });
 }
 
 function connect() {
