@@ -55,7 +55,7 @@ value = 0
 else = 60
 
 [[prio]]
-cards = ["Chatterstorm", "Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun", "Springheart Nantuko", "Gene Pollinator", "The Cabbage Merchant", "Biomancer's Familiar", "Cloud of Faeries", "Valley Floodcaller"]
+cards = ["Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun", "Springheart Nantuko", "Gene Pollinator", "The Cabbage Merchant", "Biomancer's Familiar", "Cloud of Faeries", "Valley Floodcaller"]
 value = 82
 
 # Gamble and Crop Rotation find Cradle (88), or Talon Gates once Cradle is out (86); held when Cradle is in hand or
