@@ -76,12 +76,6 @@ cards = ["Hullbreaker Horror"]
 when = ["out:Kinnan, Bonder Prodigy & mana-perms>=2"]
 score = 7.5
 
-# the second two-card line (2026-11-03): Kinnan + an aura on a blue mana creature
-[[wish]]
-cards = ["Freed from the Real", "Pemmin's Aura"]
-when = ["out:Kinnan, Bonder Prodigy & not have:Freed from the Real & not have:Pemmin's Aura"]
-score = 7.8
-
 [[wish]]
 cards = ["Rhystic Study", "Mystic Remora"]
 when = ["turn<=5"]

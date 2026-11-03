@@ -6,7 +6,7 @@
   "commanders": [
     "Kinnan, Bonder Prodigy"
   ],
-  "request_sha256": "800e776f33904d54799143cde6a081c9d4d9772b6da80ff7ab58b33b1d329f83",
+  "request_sha256": "260fc3c363123430810fac2fe5ea77f71c6b3340621de8293545e7446f27a87b",
   "identity": "GU",
   "included": [
     {
@@ -116,182 +116,6 @@
       "bracket": "R",
       "legal": true,
       "popularity": 46965
-    },
-    {
-      "id": "129-4222--140",
-      "cards": [
-        {
-          "name": "Kinnan, Bonder Prodigy",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite blue mana",
-        "Infinite mana a specific creature can produce",
-        "Put most creature cards from your library onto the battlefield"
-      ],
-      "requires": [
-        "Mana Dork or Mana Dork Creator"
-      ],
-      "prerequisites": "Freed from the Real is attached to the mana dork.\nThe mana dork doesn't have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 19156
-    },
-    {
-      "id": "3990-4222",
-      "cards": [
-        {
-          "name": "Incubation Druid",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Incubation Druid.\nIncubation Druid does not have summoning sickness.\nIncubation Druid has at least one +1/+1 counter on it.\nYou control a land that can produce {U}.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 13966
-    },
-    {
-      "id": "129-3525--140",
-      "cards": [
-        {
-          "name": "Kinnan, Bonder Prodigy",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite blue mana",
-        "Infinite mana a specific creature can produce",
-        "Put most creature cards from your library onto the battlefield"
-      ],
-      "requires": [
-        "Mana Dork or Mana Dork Creator"
-      ],
-      "prerequisites": "Pemmin's Aura is attached to the mana dork.\nThe mana dork doesn't have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 12116
-    },
-    {
-      "id": "129-4222-5814",
-      "cards": [
-        {
-          "name": "Kinnan, Bonder Prodigy",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Delighted Halfling",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana that can only be spent to cast legendary spells"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 9570
-    },
-    {
-      "id": "3525-3990",
-      "cards": [
-        {
-          "name": "Incubation Druid",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Incubation Druid.\nIncubation Druid does not have summoning sickness.\nIncubation Druid has at least one +1/+1 counter on it.\nYou control a land that can produce {U}.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 9278
-    },
-    {
-      "id": "129-3525-5814",
-      "cards": [
-        {
-          "name": "Kinnan, Bonder Prodigy",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Delighted Halfling",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana that can only be spent to cast legendary spells"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 5912
     },
     {
       "id": "513--62",
@@ -556,7 +380,7 @@
       "legal": true,
       "popularity": 23924,
       "missing": [
-        "Bloom Tender"
+        "Freed from the Real"
       ]
     },
     {
@@ -593,6 +417,39 @@
       "popularity": 22480,
       "missing": [
         "Retraction Helix"
+      ]
+    },
+    {
+      "id": "129-4222--140",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite mana a specific creature can produce",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [
+        "Mana Dork or Mana Dork Creator"
+      ],
+      "prerequisites": "Freed from the Real is attached to the mana dork.\nThe mana dork doesn't have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 19156,
+      "missing": [
+        "Freed from the Real"
       ]
     },
     {
@@ -692,6 +549,39 @@
       ]
     },
     {
+      "id": "2645-5168",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Bloom Tender does not have summoning sickness. You control a permanent of each color.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14632,
+      "missing": [
+        "Staff of Domination"
+      ]
+    },
+    {
       "id": "3525-5168",
       "cards": [
         {
@@ -718,7 +608,7 @@
       "legal": true,
       "popularity": 14521,
       "missing": [
-        "Bloom Tender"
+        "Pemmin's Aura"
       ]
     },
     {
@@ -748,6 +638,35 @@
       "popularity": 13995,
       "missing": [
         "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "3990-4222",
+      "cards": [
+        {
+          "name": "Incubation Druid",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Freed from the Real attached to Incubation Druid.\nIncubation Druid does not have summoning sickness.\nIncubation Druid has at least one +1/+1 counter on it.\nYou control a land that can produce {U}.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 13966,
+      "missing": [
+        "Freed from the Real"
       ]
     },
     {
@@ -844,32 +763,36 @@
       ]
     },
     {
-      "id": "2085-4222",
+      "id": "129-3525--140",
       "cards": [
         {
-          "name": "Kelpie Guide",
+          "name": "Kinnan, Bonder Prodigy",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Freed from the Real",
+          "name": "Pemmin's Aura",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite mana permanents you control can produce"
+        "Infinite blue mana",
+        "Infinite mana a specific creature can produce",
+        "Put most creature cards from your library onto the battlefield"
       ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Kelpie Guide.\nKelpie Guide does not have summoning sickness.\nYou control a permanent that can tap to produce at least {1}{U}.",
+      "requires": [
+        "Mana Dork or Mana Dork Creator"
+      ],
+      "prerequisites": "Pemmin's Aura is attached to the mana dork.\nThe mana dork doesn't have summoning sickness.",
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 12354,
+      "popularity": 12116,
       "missing": [
-        "Kelpie Guide"
+        "Pemmin's Aura"
       ]
     },
     {
@@ -965,35 +888,6 @@
       ]
     },
     {
-      "id": "527-4222",
-      "cards": [
-        {
-          "name": "Selvala, Heart of the Wilds",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Selvala.\nSelvala does not have summoning sickness.\nYou control a creature with power three or greater.",
-      "mana": "{G}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 10587,
-      "missing": [
-        "Selvala, Heart of the Wilds"
-      ]
-    },
-    {
       "id": "4131-4684",
       "cards": [
         {
@@ -1052,35 +946,6 @@
       ]
     },
     {
-      "id": "81-4222",
-      "cards": [
-        {
-          "name": "Kami of Whispered Hopes",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Kami of Whispered Hopes.\nKami of Whispered Hopes does not have summoning sickness and has a power of at least two.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 9986,
-      "missing": [
-        "Kami of Whispered Hopes"
-      ]
-    },
-    {
       "id": "1999-3363",
       "cards": [
         {
@@ -1108,10 +973,16 @@
       ]
     },
     {
-      "id": "1355-4222",
+      "id": "129-4222-5814",
       "cards": [
         {
-          "name": "Sanctum Weaver",
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Delighted Halfling",
           "zones": [
             "B"
           ]
@@ -1124,16 +995,45 @@
         }
       ],
       "results": [
-        "Infinite colored mana"
+        "Infinite colored mana that can only be spent to cast legendary spells"
       ],
       "requires": [],
-      "prerequisites": "Freed from the Real attached to Sanctum Weaver.\nSanctum Weaver does not have summoning sickness.",
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 9570,
+      "missing": [
+        "Freed from the Real"
+      ]
+    },
+    {
+      "id": "3525-3990",
+      "cards": [
+        {
+          "name": "Incubation Druid",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pemmin's Aura",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Pemmin's Aura attached to Incubation Druid.\nIncubation Druid does not have summoning sickness.\nIncubation Druid has at least one +1/+1 counter on it.\nYou control a land that can produce {U}.",
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 9336,
+      "popularity": 9278,
       "missing": [
-        "Sanctum Weaver"
+        "Pemmin's Aura"
       ]
     },
     {
@@ -1163,36 +1063,6 @@
       "popularity": 8872,
       "missing": [
         "Tidespout Tyrant"
-      ]
-    },
-    {
-      "id": "3430-4222",
-      "cards": [
-        {
-          "name": "Nyxbloom Ancient",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite blue mana",
-        "Infinite mana creatures you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "You control a creature that can tap to produce at least {U}, and Freed from the Real is attached to that creature.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 8831,
-      "missing": [
-        "Nyxbloom Ancient"
       ]
     },
     {
@@ -1286,64 +1156,6 @@
       "popularity": 8250,
       "missing": [
         "Kitsa, Otterball Elite"
-      ]
-    },
-    {
-      "id": "2085-3525",
-      "cards": [
-        {
-          "name": "Kelpie Guide",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana permanents you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Kelpie Guide.\nKelpie Guide does not have summoning sickness.\nYou control a permanent that can tap to produce at least {1}{U}.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 7953,
-      "missing": [
-        "Kelpie Guide"
-      ]
-    },
-    {
-      "id": "527-3525",
-      "cards": [
-        {
-          "name": "Selvala, Heart of the Wilds",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Selvala.\nSelvala does not have summoning sickness.\nYou control a creature with power three or greater.",
-      "mana": "{G}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 7115,
-      "missing": [
-        "Selvala, Heart of the Wilds"
       ]
     },
     {
@@ -1444,10 +1256,16 @@
       ]
     },
     {
-      "id": "81-3525",
+      "id": "129-3525-5814",
       "cards": [
         {
-          "name": "Kami of Whispered Hopes",
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Delighted Halfling",
           "zones": [
             "B"
           ]
@@ -1460,75 +1278,16 @@
         }
       ],
       "results": [
-        "Infinite colored mana"
+        "Infinite colored mana that can only be spent to cast legendary spells"
       ],
       "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Kami of Whispered Hopes.\nKami of Whispered Hopes does not have summoning sickness and has a power of at least two.",
+      "prerequisites": "",
       "mana": "",
-      "bracket": "S",
+      "bracket": "O",
       "legal": true,
-      "popularity": 6237,
+      "popularity": 5912,
       "missing": [
-        "Kami of Whispered Hopes"
-      ]
-    },
-    {
-      "id": "1355-3525",
-      "cards": [
-        {
-          "name": "Sanctum Weaver",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Sanctum Weaver.\nSanctum Weaver does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 6177,
-      "missing": [
-        "Sanctum Weaver"
-      ]
-    },
-    {
-      "id": "3430-3525",
-      "cards": [
-        {
-          "name": "Nyxbloom Ancient",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite blue mana",
-        "Infinite mana creatures you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "You control a creature that can tap to produce at least {U}, and Pemmin's Aura is attached to that creature.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 5941,
-      "missing": [
-        "Nyxbloom Ancient"
+        "Pemmin's Aura"
       ]
     },
     {
@@ -1567,35 +1326,6 @@
       ]
     },
     {
-      "id": "4222-4639",
-      "cards": [
-        {
-          "name": "Unctus, Grand Metatect",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite looting"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to a creature without summmoning sickness that can tap to produce at least {U}.",
-      "mana": "{U/P} if the creature with Freed from the Real attached is not blue",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 4996,
-      "missing": [
-        "Unctus, Grand Metatect"
-      ]
-    },
-    {
       "id": "3094-4821",
       "cards": [
         {
@@ -1628,35 +1358,6 @@
       ]
     },
     {
-      "id": "4222-7008",
-      "cards": [
-        {
-          "name": "Badgermole Cub",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite green mana"
-      ],
-      "requires": [],
-      "prerequisites": "You control an untapped land that can tap to produce at least {U}.",
-      "mana": "{3}{G}{U}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 4648,
-      "missing": [
-        "Badgermole Cub"
-      ]
-    },
-    {
       "id": "2539-4821",
       "cards": [
         {
@@ -1683,64 +1384,6 @@
       "popularity": 4362,
       "missing": [
         "Twinning Staff"
-      ]
-    },
-    {
-      "id": "3201-4222",
-      "cards": [
-        {
-          "name": "Arixmethes, Slumbering Isle",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite green mana"
-      ],
-      "requires": [],
-      "prerequisites": "Arixmethes does not have summoning sickness.\nArixmethes has no slumber counters on it.\nFreed from the Real attached to Arixmethes.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 3699,
-      "missing": [
-        "Arixmethes, Slumbering Isle"
-      ]
-    },
-    {
-      "id": "3525-4639",
-      "cards": [
-        {
-          "name": "Unctus, Grand Metatect",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite looting"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to a creature without summmoning sickness that can tap to produce at least {U}.",
-      "mana": "{U/P} if the creature with Pemmin's Aura attached is not blue",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 3690,
-      "missing": [
-        "Unctus, Grand Metatect"
       ]
     },
     {
@@ -1829,123 +1472,6 @@
       ]
     },
     {
-      "id": "579-4222",
-      "cards": [
-        {
-          "name": "Mana Reflection",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite blue mana",
-        "Infinite mana creatures you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "You control a creature that can tap to produce at least {U}, and Freed from the Real is attached to that creature.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 3183,
-      "missing": [
-        "Mana Reflection"
-      ]
-    },
-    {
-      "id": "1253-4222",
-      "cards": [
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Gyre Engineer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite green mana"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Gyre Engineer.\nGyre Engineer does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 3010,
-      "missing": [
-        "Gyre Engineer"
-      ]
-    },
-    {
-      "id": "3525-7008",
-      "cards": [
-        {
-          "name": "Badgermole Cub",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite green mana"
-      ],
-      "requires": [],
-      "prerequisites": "You control an untapped land that can tap to produce at least {U}.",
-      "mana": "{2}{G}{U}{U}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 2968,
-      "missing": [
-        "Badgermole Cub"
-      ]
-    },
-    {
-      "id": "3772-4222",
-      "cards": [
-        {
-          "name": "Omen Hawker",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana that can only be spent to activate abilities"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Omen Hawker.\nOmen Hawker does not have summoning sickness.",
-      "mana": "",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 2656,
-      "missing": [
-        "Omen Hawker"
-      ]
-    },
-    {
       "id": "74-4131",
       "cards": [
         {
@@ -1972,35 +1498,6 @@
       "popularity": 2581,
       "missing": [
         "The Enigma Jewel // Locus of Enlightenment"
-      ]
-    },
-    {
-      "id": "3201-3525",
-      "cards": [
-        {
-          "name": "Arixmethes, Slumbering Isle",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite green mana"
-      ],
-      "requires": [],
-      "prerequisites": "Arixmethes does not have summoning sickness.\nArixmethes has no slumber counters on it.\nPemmin's Aura attached to Arixmethes.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 2549,
-      "missing": [
-        "Arixmethes, Slumbering Isle"
       ]
     },
     {
@@ -2031,94 +1528,6 @@
       "popularity": 2339,
       "missing": [
         "Sigil Tracer"
-      ]
-    },
-    {
-      "id": "579-3525",
-      "cards": [
-        {
-          "name": "Mana Reflection",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite blue mana",
-        "Infinite mana creatures you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "You control a creature that can tap to produce at least {U}, and Pemmin's Aura is attached to that creature.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 2248,
-      "missing": [
-        "Mana Reflection"
-      ]
-    },
-    {
-      "id": "4222-6037",
-      "cards": [
-        {
-          "name": "Twitching Doll",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Twitching Doll. Twitching Doll does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 2195,
-      "missing": [
-        "Twitching Doll"
-      ]
-    },
-    {
-      "id": "1253-3525",
-      "cards": [
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Gyre Engineer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite green mana"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Gyre Engineer.\nGyre Engineer does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 2069,
-      "missing": [
-        "Gyre Engineer"
       ]
     },
     {
@@ -2157,39 +1566,6 @@
       ]
     },
     {
-      "id": "1329-1414-4222",
-      "cards": [
-        {
-          "name": "Emry, Lurker of the Loch",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lotus Petal",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1683,
-      "missing": [
-        "Emry, Lurker of the Loch"
-      ]
-    },
-    {
       "id": "4131-4944",
       "cards": [
         {
@@ -2216,6 +1592,36 @@
       "popularity": 1535,
       "missing": [
         "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "5168-5200",
+      "cards": [
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least four colors among permanents you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1523,
+      "missing": [
+        "Sword of the Paruns"
       ]
     },
     {
@@ -2254,64 +1660,6 @@
       ]
     },
     {
-      "id": "3525-3772",
-      "cards": [
-        {
-          "name": "Omen Hawker",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana that can only be spent to activate abilities"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Omen Hawker.\nOmen Hawker does not have summoning sickness.",
-      "mana": "",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 1462,
-      "missing": [
-        "Omen Hawker"
-      ]
-    },
-    {
-      "id": "3525-6037",
-      "cards": [
-        {
-          "name": "Twitching Doll",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Twitching Doll. Twitching Doll does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1339,
-      "missing": [
-        "Twitching Doll"
-      ]
-    },
-    {
       "id": "2825-4821",
       "cards": [
         {
@@ -2341,125 +1689,32 @@
       ]
     },
     {
-      "id": "3043-4222",
+      "id": "4019-5168",
       "cards": [
         {
-          "name": "Axebane Guardian",
+          "name": "Vigean Graftmage",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Freed from the Real",
+          "name": "Bloom Tender",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite colored mana"
+        "Infinite non-blue mana of colors among permanents you control"
       ],
       "requires": [],
-      "prerequisites": "You control at least two creatures with defender.",
+      "prerequisites": "Bloom Tender does not have summoning sickness.\nBloom Tender has at least one +1/+1 counter on it.\nYou control a white, black and/or red permanent.",
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1206,
+      "popularity": 1103,
       "missing": [
-        "Axebane Guardian"
-      ]
-    },
-    {
-      "id": "3181-4222",
-      "cards": [
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Krosan Restorer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Krosan Restorer.\nYou control up to three lands that can produce a total of {1}{U} or more.\nAt least seven cards in your graveyard.\nKrosan Restorer does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1179,
-      "missing": [
-        "Krosan Restorer"
-      ]
-    },
-    {
-      "id": "1329-1414-3525",
-      "cards": [
-        {
-          "name": "Emry, Lurker of the Loch",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lotus Petal",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1081,
-      "missing": [
-        "Emry, Lurker of the Loch"
-      ]
-    },
-    {
-      "id": "3814-4222",
-      "cards": [
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Argothian Elder",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Argothian Elder.\nYou control two lands that can produce a total of {1}{U} or more.\nArgothian Elder does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1054,
-      "missing": [
-        "Argothian Elder"
+        "Vigean Graftmage"
       ]
     },
     {
@@ -2490,36 +1745,6 @@
       ]
     },
     {
-      "id": "1606-4222",
-      "cards": [
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ley Weaver",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Ley Weaver.\nYou control two lands that can produce a total of {1}{U} or more.\nLey Weaver does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1006,
-      "missing": [
-        "Ley Weaver"
-      ]
-    },
-    {
       "id": "579-2585",
       "cards": [
         {
@@ -2546,35 +1771,6 @@
       "popularity": 938,
       "missing": [
         "Mana Reflection"
-      ]
-    },
-    {
-      "id": "4222-5724",
-      "cards": [
-        {
-          "name": "Sage of the Maze",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Sage of the Maze does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 931,
-      "missing": [
-        "Sage of the Maze"
       ]
     },
     {
@@ -2611,66 +1807,6 @@
       "popularity": 835,
       "missing": [
         "Horseshoe Crab"
-      ]
-    },
-    {
-      "id": "3525-3814",
-      "cards": [
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Argothian Elder",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Argothian Elder.\nYou control two lands that can produce a total of {1}{U} or more.\nArgothian Elder does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 823,
-      "missing": [
-        "Argothian Elder"
-      ]
-    },
-    {
-      "id": "1606-3525",
-      "cards": [
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ley Weaver",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Ley Weaver.\nYou control two lands that can produce a total of {1}{U} or more.\nLey Weaver does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 809,
-      "missing": [
-        "Ley Weaver"
       ]
     },
     {
@@ -2777,65 +1913,6 @@
       ]
     },
     {
-      "id": "3181-3525",
-      "cards": [
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Krosan Restorer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Krosan Restorer.\nYou control up to three lands that can produce a total of {1}{U} or more.\nAt least seven cards in your graveyard.\nKrosan Restorer does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 761,
-      "missing": [
-        "Krosan Restorer"
-      ]
-    },
-    {
-      "id": "3525-5724",
-      "cards": [
-        {
-          "name": "Sage of the Maze",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Sage of the Maze does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 665,
-      "missing": [
-        "Sage of the Maze"
-      ]
-    },
-    {
       "id": "129-2585-2719",
       "cards": [
         {
@@ -2871,32 +1948,32 @@
       ]
     },
     {
-      "id": "3043-3525",
+      "id": "195-5168",
       "cards": [
         {
-          "name": "Axebane Guardian",
+          "name": "Chain Stasis",
           "zones": [
-            "B"
+            "H"
           ]
         },
         {
-          "name": "Pemmin's Aura",
+          "name": "Bloom Tender",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite colored mana"
+        "Infinite non-blue mana of colors among permanents you control"
       ],
       "requires": [],
-      "prerequisites": "You control at least two creatures with defender.",
-      "mana": "",
+      "prerequisites": "Bloom Tender does not have summoning sickness.\nThere are at least three colors among permanents you control, one of which must be blue.",
+      "mana": "{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 544,
+      "popularity": 569,
       "missing": [
-        "Axebane Guardian"
+        "Chain Stasis"
       ]
     },
     {
@@ -3230,64 +2307,6 @@
       ]
     },
     {
-      "id": "4222-7308",
-      "cards": [
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Mona Lisa, Science Geek",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 254,
-      "missing": [
-        "Mona Lisa, Science Geek"
-      ]
-    },
-    {
-      "id": "4188-4222",
-      "cards": [
-        {
-          "name": "Accomplished Alchemist",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Accomplished Alchemist.\nAccomplished Alchemist does not have summoning sickness.\nYou have gained at least 2 life this turn.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 252,
-      "missing": [
-        "Accomplished Alchemist"
-      ]
-    },
-    {
       "id": "712-4131",
       "cards": [
         {
@@ -3350,215 +2369,6 @@
       ]
     },
     {
-      "id": "4222-7066",
-      "cards": [
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "The Legend of Kyoshi // Avatar Kyoshi",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 194,
-      "missing": [
-        "The Legend of Kyoshi // Avatar Kyoshi"
-      ]
-    },
-    {
-      "id": "4222-7704",
-      "cards": [
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Doc Samson, Super Psychiatrist",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 185,
-      "missing": [
-        "Doc Samson, Super Psychiatrist"
-      ]
-    },
-    {
-      "id": "3525-7308",
-      "cards": [
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Mona Lisa, Science Geek",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 183,
-      "missing": [
-        "Mona Lisa, Science Geek"
-      ]
-    },
-    {
-      "id": "4222-8190",
-      "cards": [
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Loot, the Nexus",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least two creatures with different powers.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 161,
-      "missing": [
-        "Loot, the Nexus"
-      ]
-    },
-    {
-      "id": "711-4222-4289",
-      "cards": [
-        {
-          "name": "Fallowsage",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Fallowsage.\nFallowsage does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 151,
-      "missing": [
-        "Fallowsage"
-      ]
-    },
-    {
-      "id": "3525-4188",
-      "cards": [
-        {
-          "name": "Accomplished Alchemist",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Accomplished Alchemist.\nAccomplished Alchemist does not have summoning sickness.\nYou have gained at least 2 life this turn.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 138,
-      "missing": [
-        "Accomplished Alchemist"
-      ]
-    },
-    {
-      "id": "1129-3525",
-      "cards": [
-        {
-          "name": "Harabaz Druid",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Harabaz Druid. You control at least two Allies.\nHarabaz Druid does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 135,
-      "missing": [
-        "Harabaz Druid"
-      ]
-    },
-    {
       "id": "3363-4782",
       "cards": [
         {
@@ -3583,35 +2393,6 @@
       "popularity": 114,
       "missing": [
         "Heidar, Rimewind Master"
-      ]
-    },
-    {
-      "id": "3525-7704",
-      "cards": [
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Doc Samson, Super Psychiatrist",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 111,
-      "missing": [
-        "Doc Samson, Super Psychiatrist"
       ]
     },
     {
@@ -3684,64 +2465,6 @@
       ]
     },
     {
-      "id": "3762-4222",
-      "cards": [
-        {
-          "name": "Oasis Ritualist",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Oasis Ritualist.\nOasis Ritualist does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 99,
-      "missing": [
-        "Oasis Ritualist"
-      ]
-    },
-    {
-      "id": "3525-8190",
-      "cards": [
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Loot, the Nexus",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least two creatures with different powers.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 97,
-      "missing": [
-        "Loot, the Nexus"
-      ]
-    },
-    {
       "id": "1363-3363",
       "cards": [
         {
@@ -3766,35 +2489,6 @@
       "popularity": 96,
       "missing": [
         "Tradewind Rider"
-      ]
-    },
-    {
-      "id": "3525-7066",
-      "cards": [
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "The Legend of Kyoshi // Avatar Kyoshi",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 95,
-      "missing": [
-        "The Legend of Kyoshi // Avatar Kyoshi"
       ]
     },
     {
@@ -3831,41 +2525,6 @@
       "popularity": 91,
       "missing": [
         "Simic Ragworm"
-      ]
-    },
-    {
-      "id": "711-3525-4289",
-      "cards": [
-        {
-          "name": "Fallowsage",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Fallowsage.\nFallowsage does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 90,
-      "missing": [
-        "Fallowsage"
       ]
     },
     {
@@ -3923,107 +2582,6 @@
       ]
     },
     {
-      "id": "3525-3762",
-      "cards": [
-        {
-          "name": "Oasis Ritualist",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Oasis Ritualist.\nOasis Ritualist does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 77,
-      "missing": [
-        "Oasis Ritualist"
-      ]
-    },
-    {
-      "id": "4222-4289-7065",
-      "cards": [
-        {
-          "name": "Tui and La, Moon and Ocean",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite looting",
-        "Near-infinite +1/+1 counters on a creature"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 59,
-      "missing": [
-        "Tui and La, Moon and Ocean"
-      ]
-    },
-    {
-      "id": "4222-6006-7065",
-      "cards": [
-        {
-          "name": "Tui and La, Moon and Ocean",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Enduring Vitality",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite looting",
-        "Near-infinite +1/+1 counters on a creature"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 57,
-      "missing": [
-        "Tui and La, Moon and Ocean"
-      ]
-    },
-    {
       "id": "129-4289-5137",
       "cards": [
         {
@@ -4057,41 +2615,6 @@
       "popularity": 54,
       "missing": [
         "Morphling"
-      ]
-    },
-    {
-      "id": "4222-4289-7208",
-      "cards": [
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pestered Wellguard",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 52,
-      "missing": [
-        "Pestered Wellguard"
       ]
     },
     {
@@ -4203,218 +2726,6 @@
       ]
     },
     {
-      "id": "2758-4222-4289",
-      "cards": [
-        {
-          "name": "Grimoire Thief",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Exile each opponent's library"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Grimoire Thief.\nGrimoire Thief does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 50,
-      "missing": [
-        "Grimoire Thief"
-      ]
-    },
-    {
-      "id": "4222-6006-7208",
-      "cards": [
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Enduring Vitality",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pestered Wellguard",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 38,
-      "missing": [
-        "Pestered Wellguard"
-      ]
-    },
-    {
-      "id": "4222-4289-6210",
-      "cards": [
-        {
-          "name": "Neerdiv, Devious Diver",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mill",
-        "Infinite self-mill"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Neerdiv. Neerdiv does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 38,
-      "missing": [
-        "Neerdiv, Devious Diver"
-      ]
-    },
-    {
-      "id": "2758-3525-4289",
-      "cards": [
-        {
-          "name": "Grimoire Thief",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Exile each opponent's library"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Grimoire Thief.\nGrimoire Thief does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 38,
-      "missing": [
-        "Grimoire Thief"
-      ]
-    },
-    {
-      "id": "4222-6006-6210",
-      "cards": [
-        {
-          "name": "Neerdiv, Devious Diver",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Enduring Vitality",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mill",
-        "Infinite self-mill"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Neerdiv. Neerdiv does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 37,
-      "missing": [
-        "Neerdiv, Devious Diver"
-      ]
-    },
-    {
-      "id": "3525-4289-7208",
-      "cards": [
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pestered Wellguard",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 36,
-      "missing": [
-        "Pestered Wellguard"
-      ]
-    },
-    {
       "id": "3363-4780",
       "cards": [
         {
@@ -4469,70 +2780,6 @@
       ]
     },
     {
-      "id": "4222-4418",
-      "cards": [
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Mul Daya Channelers",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Mul Daya Channelers.\nLand on top of your library.\nMul Daya Channelers does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 32,
-      "missing": [
-        "Mul Daya Channelers"
-      ]
-    },
-    {
-      "id": "3525-6006-7208",
-      "cards": [
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Enduring Vitality",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pestered Wellguard",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 32,
-      "missing": [
-        "Pestered Wellguard"
-      ]
-    },
-    {
       "id": "3363-3823",
       "cards": [
         {
@@ -4560,214 +2807,6 @@
       ]
     },
     {
-      "id": "3525-6006-7065",
-      "cards": [
-        {
-          "name": "Tui and La, Moon and Ocean",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Enduring Vitality",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite looting",
-        "Near-infinite +1/+1 counters on a creature"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 28,
-      "missing": [
-        "Tui and La, Moon and Ocean"
-      ]
-    },
-    {
-      "id": "3525-4289-6210",
-      "cards": [
-        {
-          "name": "Neerdiv, Devious Diver",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mill",
-        "Infinite self-mill"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Neerdiv. Neerdiv does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 28,
-      "missing": [
-        "Neerdiv, Devious Diver"
-      ]
-    },
-    {
-      "id": "3525-4289-7065",
-      "cards": [
-        {
-          "name": "Tui and La, Moon and Ocean",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite looting",
-        "Near-infinite +1/+1 counters on a creature"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 27,
-      "missing": [
-        "Tui and La, Moon and Ocean"
-      ]
-    },
-    {
-      "id": "3525-6006-6210",
-      "cards": [
-        {
-          "name": "Neerdiv, Devious Diver",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Enduring Vitality",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mill",
-        "Infinite self-mill"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Neerdiv. Neerdiv does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 27,
-      "missing": [
-        "Neerdiv, Devious Diver"
-      ]
-    },
-    {
-      "id": "4137-4222",
-      "cards": [
-        {
-          "name": "Weaver of Blossoms // Blossom-Clad Werewolf",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Freed from the Real attached to Weaver of Blossoms.Weaver of Blossoms does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 19,
-      "missing": [
-        "Weaver of Blossoms // Blossom-Clad Werewolf"
-      ]
-    },
-    {
-      "id": "437-4222-4289",
-      "cards": [
-        {
-          "name": "Sphinx's Disciple",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 19,
-      "missing": [
-        "Sphinx's Disciple"
-      ]
-    },
-    {
       "id": "306-3363",
       "cards": [
         {
@@ -4792,70 +2831,6 @@
       "popularity": 12,
       "missing": [
         "Cache Raiders"
-      ]
-    },
-    {
-      "id": "3525-4137",
-      "cards": [
-        {
-          "name": "Weaver of Blossoms // Blossom-Clad Werewolf",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Pemmin's Aura attached to Weaver of Blossoms.Weaver of Blossoms does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 12,
-      "missing": [
-        "Weaver of Blossoms // Blossom-Clad Werewolf"
-      ]
-    },
-    {
-      "id": "437-4222-6006",
-      "cards": [
-        {
-          "name": "Sphinx's Disciple",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Enduring Vitality",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 12,
-      "missing": [
-        "Sphinx's Disciple"
       ]
     },
     {
@@ -4910,488 +2885,6 @@
       "popularity": 8,
       "missing": [
         "Salvage Scuttler"
-      ]
-    },
-    {
-      "id": "437-3525-4289",
-      "cards": [
-        {
-          "name": "Sphinx's Disciple",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 8,
-      "missing": [
-        "Sphinx's Disciple"
-      ]
-    },
-    {
-      "id": "3525-3711-6006",
-      "cards": [
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Moonfolk Puzzlemaker",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Enduring Vitality",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 7,
-      "missing": [
-        "Moonfolk Puzzlemaker"
-      ]
-    },
-    {
-      "id": "4222-4289-6218",
-      "cards": [
-        {
-          "name": "Pheres-Band Tromper",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite +1/+1 counters on a creature"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 7,
-      "missing": [
-        "Pheres-Band Tromper"
-      ]
-    },
-    {
-      "id": "3711-4222-6006",
-      "cards": [
-        {
-          "name": "Moonfolk Puzzlemaker",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Enduring Vitality",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 6,
-      "missing": [
-        "Moonfolk Puzzlemaker"
-      ]
-    },
-    {
-      "id": "3711-4222-4289",
-      "cards": [
-        {
-          "name": "Moonfolk Puzzlemaker",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 6,
-      "missing": [
-        "Moonfolk Puzzlemaker"
-      ]
-    },
-    {
-      "id": "437-3525-6006",
-      "cards": [
-        {
-          "name": "Sphinx's Disciple",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Enduring Vitality",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 6,
-      "missing": [
-        "Sphinx's Disciple"
-      ]
-    },
-    {
-      "id": "3525-3711-4289",
-      "cards": [
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Moonfolk Puzzlemaker",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 5,
-      "missing": [
-        "Moonfolk Puzzlemaker"
-      ]
-    },
-    {
-      "id": "3525-4289-8230",
-      "cards": [
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Seedship Agrarian",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens"
-      ],
-      "requires": [],
-      "prerequisites": "Seedship Agrarian doesn't have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 4,
-      "missing": [
-        "Seedship Agrarian"
-      ]
-    },
-    {
-      "id": "4222-4289-8230",
-      "cards": [
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Seedship Agrarian",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens"
-      ],
-      "requires": [],
-      "prerequisites": "Seedship Agrarian doesn't have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 4,
-      "missing": [
-        "Seedship Agrarian"
-      ]
-    },
-    {
-      "id": "3525-6006-6218",
-      "cards": [
-        {
-          "name": "Pheres-Band Tromper",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Enduring Vitality",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite +1/+1 counters on a creature"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 4,
-      "missing": [
-        "Pheres-Band Tromper"
-      ]
-    },
-    {
-      "id": "3525-4289-6218",
-      "cards": [
-        {
-          "name": "Pheres-Band Tromper",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite +1/+1 counters on a creature"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 4,
-      "missing": [
-        "Pheres-Band Tromper"
-      ]
-    },
-    {
-      "id": "4222-6006-6218",
-      "cards": [
-        {
-          "name": "Pheres-Band Tromper",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Enduring Vitality",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite +1/+1 counters on a creature"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 4,
-      "missing": [
-        "Pheres-Band Tromper"
-      ]
-    },
-    {
-      "id": "3525-6006-8230",
-      "cards": [
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Enduring Vitality",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Seedship Agrarian",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens"
-      ],
-      "requires": [],
-      "prerequisites": "Seedship Agrarian doesn't have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 3,
-      "missing": [
-        "Seedship Agrarian"
-      ]
-    },
-    {
-      "id": "4222-6006-8230",
-      "cards": [
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Enduring Vitality",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Seedship Agrarian",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens"
-      ],
-      "requires": [],
-      "prerequisites": "Seedship Agrarian doesn't have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2,
-      "missing": [
-        "Seedship Agrarian"
       ]
     },
     {
