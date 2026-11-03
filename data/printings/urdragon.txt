@@ -51,6 +51,7 @@
 1 Maskwood Nexus (sld) 1904
 1 Misty Rainforest (spg) 111
 1 Mox Diamond (sth) 138
+1 Mox Jasper (tdm) 325
 1 Nature's Lore (fic) 311
 1 Nicol Bolas, the Ravager (sld) 1158
 1 Open the Armory (sld) 2089
@@ -72,7 +73,6 @@
 1 Sol Ring (cmm) 703
 1 Steam Vents (unf) 283
 1 Steelshaper's Gift (5dn) 19
-1 Sting, the Glinting Dagger (ltr) 409
 1 Stomping Ground (rvr) 299
 1 Stoneforge Mystic (2xm) 337
 1 Sword of Feast and Famine (2xm) 364

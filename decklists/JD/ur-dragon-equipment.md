@@ -81,8 +81,6 @@ and put any number of Equipment from among them onto the battlefield; attach one
 
 - Godo untaps all Samurai on his first attack each turn. In the Helm loop every Godo token's first attack untaps
   Gilgamesh, so he attacks every combat and digs six cards every combat.
-- **Sting, the Glinting Dagger** untaps the equipped creature at the beginning of each combat, so on Gilgamesh he
-  attacks each combat without Godo.
 - **Helm of the Host on Gilgamesh** makes a Gilgamesh token every combat, and each token's enter trigger digs again.
 
 ### Maskwood Nexus
@@ -105,7 +103,6 @@ own that aren't on the battlefield.*
 | **Sword of Fire and Ice** | Protection from red and blue; 2 damage and a card on each hit. |
 | **Sword of Feast and Famine** | Protection from black and green; discard, and your lands untap. |
 | **Shadowspear** | Trample and lifelink; strips hexproof and indestructible from opponents' permanents. |
-| **Sting, the Glinting Dagger** | Haste, and untaps the equipped creature every combat. |
 | **Lightning Greaves** | Haste and shroud. |
 
 Support: **Puresteel Paladin** (equip {0} with metalcraft, a card per Equipment), **Sigarda's Aid** (flash Equipment,
@@ -165,7 +162,9 @@ Wooded Foothills), City of Brass, Mana Confluence, Command Tower, Ancient Tomb, 
 Inventors' Fair, Gaea's Cradle and one Forest. Every fetch finds a dual or shock land of two colours, and Nature's Lore
 finds any land with the Forest type (Bayou, Taiga, Tropical Island and the green shock lands). Rampant Growth finds only
 a basic, so it needs the Forest, which is also there for Blood Moon. Fast mana: Sol Ring, Mana Vault, Grim Monolith,
-Chrome Mox, Mox Diamond and Lotus Petal, plus three mana creatures and two land-ramp spells.
+Chrome Mox, Mox Diamond and Lotus Petal, plus three mana creatures and two land-ramp spells. **Mox Jasper** taps for
+one mana of any colour only while you control a Dragon (a Dragon creature, or any creature with Maskwood Nexus out),
+so it is a late source: keep it as an artifact for Puresteel Paladin, not as a mana source in an opening hand.
 
 **Gaea's Cradle** taps for {G} per creature you control. With a mana creature or two out it is a second Mana Vault, but
 on turns 1-2 with no creatures it makes nothing, so don't keep it as one of only two lands.
@@ -186,7 +185,7 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 
 **Enchantments (4).** Rhystic Study, Sigarda's Aid, Smothering Tithe, Sylvan Library
 
-**Artifacts (20).** Arcane Signet, Chromatic Lantern, Chrome Mox, Embercleave, Grim Monolith, Hammer of Nazahn, Helm of the Host, Kaldra Compleat, Lightning Greaves, Lotus Petal, Mana Vault, Maskwood Nexus, Mox Diamond, Peter Parker's Camera, Shadowspear, Sol Ring, Sting the Glinting Dagger, Sword of Feast and Famine, Sword of Fire and Ice, The One Ring
+**Artifacts (20).** Arcane Signet, Chromatic Lantern, Chrome Mox, Embercleave, Grim Monolith, Hammer of Nazahn, Helm of the Host, Kaldra Compleat, Lightning Greaves, Lotus Petal, Mana Vault, Maskwood Nexus, Mox Diamond, Mox Jasper, Peter Parker's Camera, Shadowspear, Sol Ring, Sword of Feast and Famine, Sword of Fire and Ice, The One Ring
 
 **Sorceries (9).** Decimate, Demonic Tutor, Imperial Seal, Kindred Dominance, Nature's Lore, Open the Armory, Rampant Growth, Steelshaper's Gift, Twinflame
 
@@ -249,6 +248,7 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 1 Maskwood Nexus
 1 Misty Rainforest
 1 Mox Diamond
+1 Mox Jasper
 1 Nature's Lore
 1 Nicol Bolas, the Ravager
 1 Open the Armory
@@ -270,7 +270,6 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 1 Sol Ring
 1 Steam Vents
 1 Steelshaper's Gift
-1 Sting, the Glinting Dagger
 1 Stomping Ground
 1 Stoneforge Mystic
 1 Sword of Feast and Famine

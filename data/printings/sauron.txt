@@ -74,7 +74,7 @@
 1 Talrand, Sky Summoner (tsr) 318
 1 Terminate (dmc) 172
 1 The Ozolith (ltc) 351
-1 Torment of Hailfire (sld) 2287
+1 Torment of Hailfire (sld) 9992
 1 Treno, Dark City (fin) 290
 1 Triple Triad (fin) 340
 1 Underground River (wc98) bs362
