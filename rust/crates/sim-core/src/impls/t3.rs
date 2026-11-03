@@ -7,6 +7,7 @@
 //! Joraga Treespeaker's options and mana (rules2), Legion Loyalist's attack (rules), Painful Quandary's cast trigger
 //! (rules), Finale of Devastation (rules2), Embercleave's cast priority (rules2: 0).
 
+use crate::satsum::SatSum;
 use super::common::{WalkerAb, best_opp_creature, best_opp_nonland, death_value, outlets, sac_food, walker};
 use crate::engine::pool::Kind;
 use super::partials::{at_once, eot_kw, first_max, name_of, remove_card};
@@ -840,7 +841,7 @@ fn celebrant(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) 
 /// pays {5}{R}{R} for another combat when the attack is big enough
 fn charger(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
     let key = intern(&format!("charger{}_{}", src.0, g.player(p).combat_no));
-    let power: i32 = atk.iter().map(|&m| epow(g, m)).sum();
+    let power: i32 = atk.iter().map(|&m| epow(g, m)).ssum();
     if atk.contains(&src) && can_pay(g, p, 5, "RR", false) && power >= 8 && fresh(g, p, key) {
         if !trigger_window(g, p, Some(src), "pay 5RR: untap attackers, an additional combat", Some(6.0))? {
             return Ok(vec![]);

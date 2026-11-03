@@ -13,6 +13,12 @@ use crate::sym::{Sym, intern};
 /// damage (Orcish Bowmasters, Kaervek, the ability language's damage); Undermine passes damage = Some(false).
 pub const DAMAGE_KINDS: [&str; 4] = ["combat", "burn", "aether", "triggers"];
 
+/// Life totals stay within +-LIFE_CAP (2^30). A Thrakkus-style doubling or a Fiery Emancipation stack can push a total
+/// toward `i32::MIN` / `MAX`, and the many `life - cost` and `life + power` checks around the AI would then overflow
+/// (release builds check). A total past a billion is lethal or untouchable already, so the clamp changes no game that
+/// stayed in range.
+pub const LIFE_CAP: i32 = 1 << 30;
+
 /// p loses n life (or is dealt n damage) from src. Python's `lose_life`.
 pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind: Sym, damage: Option<bool>) -> Res {
     let pl = g.player(p);
@@ -23,10 +29,10 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
     let mut n = n;
     if damage && let Some(s) = src.filter(|&s| s != p) {
         // Fiery Emancipation: triple damage, once per copy (--- Tiers 4/5 (winota): Angrath's Marauders: double)
-        n *= crate::engine::combat::fiery(g, s);
+        n = n.saturating_mul(crate::engine::combat::fiery(g, s));
     }
     if damage {
-        n *= stagger_mult(g, p); // Lightning, Army of One
+        n = n.saturating_mul(stagger_mult(g, p)); // Lightning, Army of One
     }
     if damage && kind != "combat" {
         n = crate::impls::t3_aurelia::gisela_scale(g, p, n); // Gisela, Blade of Goldnight (combat.rs scales combat damage)
@@ -58,7 +64,7 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
     crate::impls::t45_krenko::speed_up(g, p); // --- Tiers 4/5 (krenko): an opponent of the active player lost life
     let st = g.turn_stamp();
     let pl = g.player_mut(p);
-    pl.life = pl.life.saturating_sub(n); // --- urdragon: a huge power (Thrakkus doublings) can pass i32
+    pl.life = pl.life.saturating_sub(n).max(-LIFE_CAP); // --- urdragon: a huge power (Thrakkus doublings) can pass i32
     let before = pl.lost_turn.filter(|x| x.0 == st).map_or(0, |x| x.1);
     pl.lost_turn = Some((st, before.saturating_add(n))); // Bloodsoaked Insight, Archfiend, Y'shtola
     if !g.hooks.is_empty() && n > 0 {
@@ -123,7 +129,8 @@ pub fn gain(g: &mut Game, p: PlayerId, n: i32) -> Res {
     }
     // the life gain step: Erebos and the "can't gain life" statics, Angel of Vitality, Cleric Class, The Wind Crystal
     let Some(n) = repl::life_gain(g, p, n) else { return Ok(()) };
-    g.player_mut(p).life += n;
+    let pl = g.player_mut(p);
+    pl.life = pl.life.saturating_add(n).clamp(-LIFE_CAP, LIFE_CAP);
     // (recorded with no hooked permanent out too: infusion cards cast later this turn read it)
     if n > 0 {
         let st = g.turn_stamp();

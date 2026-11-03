@@ -369,8 +369,14 @@ pub fn install_panic_hook() {
     std::panic::set_hook(Box::new(move |info| {
         if !IN_GAME.get() {
             default(info);
-        } else if let Some(l) = info.location() {
-            WHERE.with(|w| *w.borrow_mut() = format!("{}:{}", l.file(), l.line()));
+        } else {
+            if let Some(l) = info.location() {
+                WHERE.with(|w| *w.borrow_mut() = format!("{}:{}", l.file(), l.line()));
+            }
+            // RUST_BACKTRACE set: print where an in-game panic came from (a panic inside std, e.g. an iterator `sum`)
+            if std::env::var_os("RUST_BACKTRACE").is_some_and(|v| v != "0") {
+                eprintln!("in-game panic: {info}\n{}", std::backtrace::Backtrace::force_capture());
+            }
         }
     }));
 }

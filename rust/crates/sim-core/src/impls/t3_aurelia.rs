@@ -19,6 +19,7 @@
 //! - Slayers' Stronghold, Sunhome, Fortress of the Legion: the lands' pump abilities.
 //! - Sunforger: {R}{W}, unattach: cast a red or white instant with mana value 4 or less from the library, free.
 
+use crate::satsum::SatSum;
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::{cast_card, spell_targets};
 use crate::engine::combat::{can_block, first_strike, has_haste};
@@ -120,7 +121,7 @@ fn glory_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
     {
         return 0;
     }
-    let life: i32 = g.opps(p).map(|q| g.player(q).life.max(0)).sum();
+    let life: i32 = g.opps(p).map(|q| g.player(q).life.max(0)).ssum();
     if life > 0 && next_turn_damage(g, p) >= life { 85 } else { 0 }
 }
 

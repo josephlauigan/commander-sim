@@ -271,6 +271,12 @@ pub fn has_keyword(g: &Game, m: PermId, kw: &str) -> bool {
 }
 
 // ================================================================== layer 7: power and toughness
+/// Power and toughness are clamped to +-POWER_CAP (2^20) when read. A Thrakkus-style doubling can take a creature toward
+/// `i32::MAX`; sums over a board (each side holds at most a few hundred creatures) and multiplied damage then wrapped
+/// and panicked (release builds check overflow). A million power is lethal ten thousand times over, so the clamp changes
+/// no game that stayed in range.
+pub const POWER_CAP: i32 = 1 << 20;
+
 /// m's power now (Python's `epow`)
 pub fn power(g: &Game, m: PermId) -> i32 {
     let x = g.perm(m);
@@ -288,30 +294,30 @@ pub fn power(g: &Game, m: PermId) -> i32 {
         v -= 2;
     }
     v = v.saturating_add(pt_changes(g, m).0); // --- urdragon: Thrakkus doublings can pass i32
-    v -= crate::impls::blue_cards::weakened(g, m); // Mouth of the Storm
+    v = v.saturating_sub(crate::impls::blue_cards::weakened(g, m)); // Mouth of the Storm
     let pl = g.player(p);
     let cre = is_creature(g, m);
     if pl.pump != 0 && cre {
         v = v.max(pl.pump);
     }
     if cre {
-        v += pl.pumpadd;
+        v = v.saturating_add(pl.pumpadd);
     }
-    v.max(0)
+    v.clamp(0, POWER_CAP)
 }
 
 /// m's toughness now (Python's `etgh`)
 pub fn toughness(g: &Game, m: PermId) -> i32 {
     let x = g.perm(m);
     let mut v = x.tgh + x.plus + static_bonus(g, m);
-    v += pt_changes(g, m).1;
+    v = v.saturating_add(pt_changes(g, m).1);
     if equipped(g, m, Tag::Sword) {
         v += 2;
     }
     if norn_vs(g, x.owner) {
         v -= 2;
     }
-    v
+    v.clamp(-POWER_CAP, POWER_CAP)
 }
 
 /// anthems and equipment that change a creature's size (the tagged ones: card code's and auto-tagged)

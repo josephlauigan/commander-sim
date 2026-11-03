@@ -4,6 +4,7 @@
 //! The choices the heuristic AI makes here (which player to attack, which creatures stay home, chump blocks) are
 //! `ai.rs`'s; the look-ahead's attack plan comes in M4.
 
+use crate::satsum::SatSum;
 use crate::ai::hand_key; // --- phase4-hand-off
 use crate::engine::repl;
 use crate::ai;
@@ -41,9 +42,10 @@ pub fn fiery(g: &Game, pl: PlayerId) -> i32 {
         g.player(pl).perms.iter().filter(|&&m| !g.perm(m).phased && card_name(g, m) == Some(name)).count() as u32
     };
     // --- Tiers 4/5 (urdragon): Twinflame Tyrant doubles it too (once per copy)
-    3i32.pow(count("Fiery Emancipation"))
-        * 2i32.pow(count("Angrath's Marauders"))
-        * 2i32.pow(count(crate::impls::t45_urdragon::TYRANT))
+    // saturating: a runaway count of copies must not wrap (the callers multiply it saturating too)
+    3i32.saturating_pow(count("Fiery Emancipation"))
+        .saturating_mul(2i32.saturating_pow(count("Angrath's Marauders")))
+        .saturating_mul(2i32.saturating_pow(count(crate::impls::t45_urdragon::TYRANT)))
 }
 
 fn untapped_creatures(g: &Game, q: PlayerId) -> impl Iterator<Item = PermId> + '_ {
@@ -55,8 +57,8 @@ pub fn good_blockers(g: &Game, q: PlayerId, a: PermId, p: PlayerId) -> Vec<PermI
     untapped_creatures(g, q)
         .filter(|&b| {
             can_block(g, b, a)
-                && (epow(g, b) * fiery(g, q) >= etgh(g, a) || g.perm(b).dt)
-                && !(epow(g, a) * fiery(g, p) >= etgh(g, b) || g.perm(a).dt)
+                && (epow(g, b).saturating_mul(fiery(g, q)) >= etgh(g, a) || g.perm(b).dt)
+                && !(epow(g, a).saturating_mul(fiery(g, p)) >= etgh(g, b) || g.perm(a).dt)
         })
         .collect()
 }
@@ -162,7 +164,7 @@ pub fn attack_limits(g: &mut Game, p: PlayerId, d: PlayerId, atk: Vec<PermId>) -
         && atk.len() > 1
     {
         // Master of Cruelties attacks alone
-        let others: i32 = atk.iter().filter(|&&m| m != mc).map(|&m| epow(g, m)).sum();
+        let others: i32 = atk.iter().filter(|&&m| m != mc).map(|&m| epow(g, m)).ssum();
         let life = g.player(d).life;
         atk = if life > 1 && life > others { vec![mc] } else { atk.into_iter().filter(|&m| m != mc).collect() };
     }
@@ -233,12 +235,12 @@ pub fn split_attack(
     }
     let hooked = !g.hooks.is_empty();
     let tax = |q: PlayerId| if hooked { attack_restrictions(g, p, q).0 } else { 0 };
-    let hit = |a: PermId| epow(g, a) * if double_strike(g, a) { 2 } else { 1 } * fiery(g, p);
+    let hit = |a: PermId| epow(g, a).saturating_mul(if double_strike(g, a) { 2 } else { 1 }).saturating_mul(fiery(g, p));
     // `to`: where each attacker goes, in the order Python's dict keeps (attackers first, then held ones as moved)
     let mut to: Vec<(PermId, PlayerId)> = atk.iter().map(|&a| (a, d)).collect();
     let dest = |to: &[(PermId, PlayerId)], a: PermId| to.iter().find(|x| x.0 == a).map(|x| x.1);
     let d_kill: Vec<PermId> = atk.iter().copied().filter(|&a| !blockable(g, d, a)).collect();
-    let d_dies = d_kill.iter().map(|&a| hit(a)).sum::<i32>() >= g.player(d).life;
+    let d_dies = d_kill.iter().map(|&a| hit(a)).ssum() >= g.player(d).life;
     let mut by_life = others.clone();
     by_life.sort_by_key(|&q| g.player(q).life);
     for q in by_life {
@@ -255,7 +257,7 @@ pub fn split_attack(
             })
             .collect();
         free.sort_by_key(|&a| std::cmp::Reverse(hit(a)));
-        if free.iter().map(|&a| hit(a)).sum::<i32>() < g.player(q).life {
+        if free.iter().map(|&a| hit(a)).ssum() < g.player(q).life {
             continue;
         }
         let mut need = 0;
@@ -396,7 +398,7 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) 
                 .copied()
                 .filter(|&x| g.perm(x).token && g.is_creature(x) && !atk.contains(&x))
                 .collect();
-            let x: i32 = toks.iter().map(|&x| epow(g, x)).sum();
+            let x: i32 = toks.iter().map(|&x| epow(g, x)).ssum();
             for &tk in &toks {
                 die(g, tk, "sac")?;
             }
@@ -488,7 +490,7 @@ pub fn ai_blocks(
     rng: &mut crate::rng::Rng,
 ) -> Vec<(PermId, PermId)> {
     let blockers: Vec<PermId> = untapped_creatures(g, d).collect();
-    let mut incoming: i32 = atk.iter().map(|&m| epow(g, m) * if double_strike(g, m) { 2 } else { 1 }).sum();
+    let mut incoming: i32 = atk.iter().map(|&m| epow(g, m).saturating_mul(if double_strike(g, m) { 2 } else { 1 })).ssum();
     let (fd, fp) = (fiery(g, d), fiery(g, p));
     let mut assign = vec![];
     let mut used: Vec<PermId> = vec![];
@@ -510,7 +512,7 @@ pub fn ai_blocks(
         let good: Vec<PermId> = cands
             .iter()
             .copied()
-            .filter(|&b| (epow(g, b) * fd >= at || g.perm(b).dt) && !(ap * fp >= etgh(g, b) || g.perm(a).dt))
+            .filter(|&b| (epow(g, b).saturating_mul(fd) >= at || g.perm(b).dt) && !(ap.saturating_mul(fp) >= etgh(g, b) || g.perm(a).dt))
             .collect();
         let b = if let Some(b) = min_by(&good, |x| pval(g, x)) {
             b
@@ -518,7 +520,7 @@ pub fn ai_blocks(
             let trade: Vec<PermId> = cands
                 .iter()
                 .copied()
-                .filter(|&b| epow(g, b) * fd >= at || g.perm(b).dt || card_name(g, b) == Some("Defiant Vanguard"))
+                .filter(|&b| epow(g, b).saturating_mul(fd) >= at || g.perm(b).dt || card_name(g, b) == Some("Defiant Vanguard"))
                 .collect();
             if !trade.is_empty() && pval(g, a) >= trade.iter().map(|&x| pval(g, x)).fold(f64::INFINITY, f64::min) {
                 min_by(&trade, |x| pval(g, x)).unwrap()
@@ -640,9 +642,9 @@ pub fn resolve_blocks(
                     && blocker_of(&assign, a).is_none_or(|b| !g.perm(b).on_bf || g.perm(b).owner != d)
                     && !to_walker.iter().any(|x| x.0 == a)
             })
-            .map(|a| (a, epow(g, a) * if double_strike(g, a) { 2 } else { 1 }))
+            .map(|a| (a, epow(g, a).saturating_mul(if double_strike(g, a) { 2 } else { 1 })))
             .collect();
-        let lethal = unbl_dmg.iter().map(|x| x.1).sum::<i32>() >= g.player(d).life
+        let lethal = unbl_dmg.iter().map(|x| x.1).ssum() >= g.player(d).life
             || unbl_dmg
                 .iter()
                 .any(|&(a, x)| g.perm(a).is_cmd && crate::engine::values::cmd_dmg_by(g, d, p, a) + x >= 21);
@@ -657,12 +659,12 @@ pub fn resolve_blocks(
             if !g.perm(a).on_bf || !g.player(d).alive {
                 continue;
             }
-            let mut ap = epow(g, a) * if double_strike(g, a) { 2 } else { 1 };
+            let mut ap = epow(g, a).saturating_mul(if double_strike(g, a) { 2 } else { 1 });
             if repl::source_prevented(g, a) || repl::dovin(g, a) {
                 ap = 0; // Old Fat Spider's chapter II, Dovin's lock
             }
             let fs = crate::impls::kuja::flare_star(g, Some(a)); // Trance Kuja: a Wizard's damage is doubled
-            let (ap_raw, ap) = (ap, ap * fs);
+            let (ap_raw, ap) = (ap, ap.saturating_mul(fs));
             let tr =
                 g.player(p).trample || has(g, p, Tag::Uprising) || card_tag(g, a, Tag::Trample) || kw(g, a, "trample");
             let mut dmg = match blocker_of(&assign, a) {
@@ -674,14 +676,17 @@ pub fn resolve_blocks(
                     let bt = etgh(g, b);
                     let t0 = crate::impls::t0_giada::combat_proof;
                     let gs = crate::impls::t3_aurelia::gisela_scale; // Gisela, Blade of Goldnight
-                    let mut a_dies = (gs(g, p, epow(g, b) * crate::impls::kuja::flare_star(g, Some(b)) * fiery(g, d) * crate::engine::life::stagger_mult(g, p)) >= etgh(g, a) || g.perm(b).dt)
+                    let mut a_dies = (gs(g, p, epow(g, b)
+                        .saturating_mul(crate::impls::kuja::flare_star(g, Some(b)))
+                        .saturating_mul(fiery(g, d))
+                        .saturating_mul(crate::engine::life::stagger_mult(g, p))) >= etgh(g, a) || g.perm(b).dt)
                         && !protected_from(g, a, colors_of(g, b))
                         && !repl::no_damage(g, a)
                         && !t0(g, a);
                     if repl::source_prevented(g, b) {
                         a_dies = false;
                     }
-                    let mut b_dies = (gs(g, d, ap * fiery(g, p) * crate::engine::life::stagger_mult(g, d)) >= bt || g.perm(a).dt)
+                    let mut b_dies = (gs(g, d, ap.saturating_mul(fiery(g, p)).saturating_mul(crate::engine::life::stagger_mult(g, d))) >= bt || g.perm(a).dt)
                         && !protected_from(g, b, colors_of(g, a))
                         && !repl::no_damage(g, b)
                         && !t0(g, b);
@@ -703,7 +708,7 @@ pub fn resolve_blocks(
                     } else if fb && !fa && a_dies {
                         b_dies = false;
                     }
-                    let dmg = if tr { (ap_raw - bt).max(0) * fs } else { 0 };
+                    let dmg = if tr { (ap_raw.saturating_sub(bt)).max(0).saturating_mul(fs) } else { 0 };
                     // --- card-models-3: Zilortha, Apex of Ikoria: a non-Human may assign its damage as though unblocked
                     let dmg = if crate::impls::card_models3::zilortha_unblocked(g, p, a, b, b_dies) {
                         b_dies = false;
@@ -769,9 +774,9 @@ pub fn resolve_blocks(
                 && g.perm(w).owner == d
             {
                 // this attacker went after a planeswalker
-                let l = g.perm(w).loyalty.unwrap_or(0) - dmg;
+                let l = g.perm(w).loyalty.unwrap_or(0).saturating_sub(dmg);
                 g.perm_mut(w).loyalty = Some(l);
-                *tot += dmg;
+                *tot = tot.saturating_add(dmg);
                 crate::glog!(g, "    {} deals {} to {} (loyalty {})", g.perm(a).name, dmg, g.perm(w).name, l);
                 if l <= 0 {
                     leave(g, w)?;
@@ -827,7 +832,7 @@ pub fn resolve_blocks(
                 // damage is plain damage)
                 crate::impls::karn_cards::infect_hit(g, a, d, dmg)?;
                 conn.push(a);
-                *tot += dmg;
+                *tot = tot.saturating_add(dmg);
                 dmg = 0;
             }
             // double strike, unblocked: two damage steps (first strike, then regular), so every "deals combat damage to a
@@ -839,7 +844,7 @@ pub fn resolve_blocks(
                 if dmg > 0 && g.perm(a).on_bf && g.player(d).alive {
                     lose_life(g, d, dmg, Some(p), "combat", None)?;
                     conn.push(a);
-                    *tot += dmg;
+                    *tot = tot.saturating_add(dmg);
                     crate::impls::tymna_cards::toxic_hit(g, a, d); // toxic: compiled, Mite tokens, granted by Skrelv
                     if g.dsl_on {
                         let fired = crate::dsl::Fired {
@@ -964,7 +969,7 @@ pub fn walker_attacks(
     if free.is_empty() {
         return vec![];
     }
-    if g.player(d).life as f64 <= free.iter().map(|&a| epow(g, a)).sum::<i32>() as f64 * 1.2 {
+    if g.player(d).life as f64 <= free.iter().map(|&a| epow(g, a)).ssum() as f64 * 1.2 {
         return vec![]; // lethal on the player instead
     }
     let mut out: Vec<(PermId, PermId)> = vec![];
@@ -993,7 +998,7 @@ pub fn walker_attacks(
             }
             cap -= 1;
             out.push((a, w));
-            need -= epow(g, a) * if double_strike(g, a) { 2 } else { 1 };
+            need -= epow(g, a).saturating_mul(if double_strike(g, a) { 2 } else { 1 });
         }
     }
     out

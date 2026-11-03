@@ -5,6 +5,7 @@
 //! replaced in Python by rules2.py's for the same card and event, so they never run and aren't ported: Rionya, Fire
 //! Dancer's combat_start, Valakut Exploration's landfall and end_step, and Purphoros, God of the Forge's etb.
 
+use crate::satsum::SatSum;
 use crate::engine::repl;
 use crate::engine::pool::Kind;
 use crate::cards::{CardDb, Colors};
@@ -798,7 +799,7 @@ fn piledriver(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId)
 /// Battle Cry Goblin (Approximate: pack tactics Goblin; the pump is not used)
 fn battle_cry(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
     if atk.contains(&src)
-        && atk.iter().map(|&m| epow(g, m)).sum::<i32>() >= 6
+        && atk.iter().map(|&m| epow(g, m)).ssum() >= 6
         && trigger_window(g, p, Some(src), "create an attacking Goblin", None)?
     {
         let spec = Tokens {

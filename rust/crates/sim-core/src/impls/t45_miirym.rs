@@ -259,7 +259,7 @@ pub fn wrathful_deal(g: &mut Game, p: PlayerId, n: i32) -> Res {
     }
     let mult = crate::engine::combat::fiery(g, p); // Twinflame Tyrant, if it is still there
     let opps: Vec<PlayerId> = g.opps(p).collect();
-    let lethal: Vec<PlayerId> = opps.iter().copied().filter(|&q| g.player(q).life <= n * mult).collect();
+    let lethal: Vec<PlayerId> = opps.iter().copied().filter(|&q| g.player(q).life <= n.saturating_mul(mult)).collect();
     if let Some(q) = max_by(&lethal, |q| g.player(q).life as f64) {
         crate::glog!(g, "    Wrathful Red Dragon: {} damage to {}", n, g.player(q).name);
         crate::engine::life::lose_life(g, q, n, Some(p), "triggers", None)?;
@@ -274,12 +274,12 @@ pub fn wrathful_deal(g: &mut Game, p: PlayerId, n: i32) -> Res {
                 && !has_type(g, m, "dragon")
                 && !untargetable(g, m)
                 && !repl::no_damage(g, m)
-                && etgh(g, m) <= n * mult
+                && etgh(g, m) <= n.saturating_mul(mult)
         })
         .collect();
     if let Some(b) = max_by(&tg, |m| pval(g, m)).filter(|&b| pval(g, b) >= 3.0) {
         crate::glog!(g, "    Wrathful Red Dragon: {} damage to {}", n, g.perm(b).name);
-        return apply_removal(g, Some(p), b, &format!("dmg{}", n * mult), None);
+        return apply_removal(g, Some(p), b, &format!("dmg{}", n.saturating_mul(mult)), None);
     }
     if let Some(q) = crate::engine::zones::min_by(&opps, |q| g.player(q).life as f64) {
         crate::glog!(g, "    Wrathful Red Dragon: {} damage to {}", n, g.player(q).name);

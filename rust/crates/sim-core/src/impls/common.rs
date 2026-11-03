@@ -8,6 +8,7 @@
 //! grants). Phase 6: the rest (pillowfort taxes, stax pieces, the four planeswalkers, Urza's Saga, Walking Ballista,
 //! graveyard hate, proliferate, the dynamic mana cards ...), registered by `register_phase6`.
 
+use crate::satsum::SatSum;
 use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::{CardDb, CardDef, Colors, Types};
 use crate::engine::pool::Kind;
@@ -2643,7 +2644,7 @@ fn spore_frog(
     if d != owner(g, src) || g.fog == Some(g.turn_stamp()) {
         return Ok(());
     }
-    let incoming: i32 = atk.iter().filter(|&&a| !assign.iter().any(|x| x.0 == a)).map(|&a| epow(g, a)).sum();
+    let incoming: i32 = atk.iter().filter(|&&a| !assign.iter().any(|x| x.0 == a)).map(|&a| epow(g, a)).ssum();
     if incoming as f64 >= (6.0f64).max(g.player(d).life as f64 * 0.35) {
         die(g, src, "sac")?;
         g.fog = Some(g.turn_stamp());

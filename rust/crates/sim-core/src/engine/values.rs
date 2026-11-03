@@ -1,6 +1,7 @@
 //! Board reading: what a permanent is (power, toughness, types, keywords, protection) and what it's worth.
 //! engine.py's "helpers" and "values / threat" sections, in the same order.
 
+use crate::satsum::SatSum;
 use crate::cardcode;
 use crate::cards::Colors;
 use crate::dsl;
@@ -83,7 +84,7 @@ pub fn etgh(g: &Game, m: PermId) -> i32 {
 }
 
 pub fn board_power(g: &Game, p: PlayerId) -> i32 {
-    g.player(p).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).map(|&m| epow(g, m)).sum()
+    g.player(p).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).map(|&m| epow(g, m)).ssum()
 }
 
 // ------------------------------------------------------------------ types
@@ -269,7 +270,8 @@ pub fn cmd_dmg_by(g: &Game, d: PlayerId, p: PlayerId, a: PermId) -> i32 {
 pub fn add_cmd_dmg(g: &mut Game, d: PlayerId, p: PlayerId, a: PermId, dmg: i32) {
     let second = is_second_cmd(g, p, a);
     let pl = g.player_mut(d);
-    if second { pl.cmd2_dmg[p.index()] += dmg } else { pl.cmd_dmg[p.index()] += dmg }
+    let slot = if second { &mut pl.cmd2_dmg[p.index()] } else { &mut pl.cmd_dmg[p.index()] };
+    *slot = slot.saturating_add(dmg);
 }
 
 /// Glacial Chasm
@@ -403,5 +405,5 @@ pub fn threat(g: &Game, _me: PlayerId, q: PlayerId) -> f64 {
     {
         s += 10.0;
     }
-    s + (pl.life - 40) as f64 * 0.05
+    s + (pl.life as f64 - 40.0) * 0.05
 }

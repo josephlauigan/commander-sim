@@ -2,6 +2,7 @@
 //! card tags, per-deck configuration (`plans`), protection and wipe answers from a table of protectors, generic plays
 //! (equip, Skullclamp, Deadly Dispute, reanimation, X spells) and attack rules.
 
+use crate::satsum::SatSum;
 use super::brain::Situation;
 use super::{Style, decks, plans};
 use crate::engine::repl;
@@ -1587,7 +1588,7 @@ pub fn attack_filter(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -
     if atk.is_empty() {
         return atk;
     }
-    let total: i32 = atk.iter().map(|&m| epow(g, m)).sum();
+    let total: i32 = atk.iter().map(|&m| epow(g, m)).ssum();
     if total >= g.player(d).life {
         return atk; // lethal-ish: everyone goes
     }

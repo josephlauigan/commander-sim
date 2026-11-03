@@ -45,6 +45,7 @@
 //!   battlefield, the rest to the bottom in a random order.
 //! - Urza's Incubator: names a creature type as it enters; creature spells of that type cost {2} less.
 
+use crate::satsum::SatSum;
 use crate::engine::repl;
 use crate::engine::mana::restr_ok;
 use crate::engine::pool::Restr;
@@ -587,7 +588,7 @@ fn klauth_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Player
     if !trigger_window(g, p, Some(src), "mana equal to the attackers' power", Some(3.0))? {
         return Ok(vec![]);
     }
-    let x: i32 = atk.iter().filter(|&&m| g.perm(m).on_bf).map(|&m| epow(g, m).max(0)).sum();
+    let x: i32 = atk.iter().filter(|&&m| g.perm(m).on_bf).map(|&m| epow(g, m).max(0)).ssum();
     g.player_mut(p).mana.add_kept(Kind::Any, x as u32); // kept until the end of the turn
     crate::glog!(g, "    Klauth adds {x} mana");
     Ok(vec![])
@@ -626,7 +627,7 @@ fn lathliss_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
         let (gn, pips) = cost_of(g, p, c);
         !g.db.get(c).land && can_pay(g, p, gn, &pips, false)
     });
-    let power: i32 = ds.iter().map(|&m| epow(g, m)).sum();
+    let power: i32 = ds.iter().map(|&m| epow(g, m)).ssum();
     if castable || !crate::impls::lands::open_attack(g, p, power + k * ds.len() as i32, true) {
         return Ok(vec![]);
     }

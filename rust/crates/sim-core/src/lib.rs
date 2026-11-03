@@ -19,6 +19,7 @@ pub mod impls;
 pub mod pysum;
 pub mod rng;
 pub mod run;
+pub mod satsum;
 pub mod settings;
 pub mod state;
 pub mod sym;
