@@ -142,10 +142,12 @@ pub fn stack_priority(g: &mut Game, q: PlayerId) -> Res {
     let mode = autopass(g, q);
     let Some(top) = g.stack.last().cloned() else { return Ok(()) };
     if top.kind != StackKind::Spell {
-        if top.controller == q && mode != "all" {
+        // Thassa's Oracle's own trigger, with Demonic Consultation / Tainted Pact in hand: the window to cast it
+        let oracle = super::thanos::oracle_window(g, q, &top);
+        if top.controller == q && mode != "all" && !oracle {
             return Ok(());
         }
-        if mode == "respond" && !can_respond(g, q) {
+        if mode == "respond" && !oracle && !can_respond(g, q) {
             return Ok(());
         }
         let who = if top.controller == q {
