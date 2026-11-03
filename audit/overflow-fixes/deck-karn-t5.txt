@@ -1,0 +1,19 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  karn                        100 cards: Full 87, Full-auto 0, Approximate 12, Partial 1, Unmodeled 0 | Partial: Tezzeret, Cruel Captain
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 429, Full-auto 34, Approximate 37, Partial 0, Unmodeled 0
+
+
+=== Karn vs Tier 5 (High B4) [loose, lookahead AI, 2000 games] ===
+Win rate  20.6%   95% CI 18.9-22.5%   (even share 25%: -4.4 pts)
+Average turn (your own turn count) of wins 11.3, of losses 7.4
+Plan online (Karn first adds mana at upkeep): 64.3% of games
+Wins by: damage 92%, combo 8%
+  Opponent                                    seated  won when seated  eliminated you
+  Zur the Enchanter (zur-esper-enchantment-c   61.0%            21.6%           13.2%
+  Kinnan (kinnan-simic-mana-combo)             60.4%            39.4%           23.4%
+  Miirym (miirym-temur-dragons)                60.4%            25.4%           16.2%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   59.7%            19.9%           11.7%
+  Urza (urza-mono-blue-artifacts)              58.6%            25.9%           14.8%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(394s total)

@@ -1,0 +1,29 @@
+6,7c6,7
+< === Y'shtola vs Tier 5 (High B4) [loose, lookahead AI, 1997 games] ===
+< Win rate  22.8%   95% CI 21.0-24.7%   (even share 25%: -2.2 pts)
+---
+> === Y'shtola vs Tier 5 (High B4) [loose, lookahead AI, 2000 games] ===
+> Win rate  22.8%   95% CI 21.0-24.6%   (even share 25%: -2.2 pts)
+12,16c12,16
+<   Zur the Enchanter (zur-esper-enchantment-c   60.9%            20.0%           12.3%
+<   Kinnan (kinnan-simic-mana-combo)             60.3%            35.1%           20.7%
+<   Miirym (miirym-temur-dragons)                60.3%            29.0%           18.2%
+<   Yawgmoth (yawgmoth-mono-black-aristocrats)   59.8%            20.7%           12.4%
+<   Urza (urza-mono-blue-artifacts)              58.6%            23.7%           13.5%
+---
+>   Zur the Enchanter (zur-esper-enchantment-c   61.0%            20.0%           12.2%
+>   Kinnan (kinnan-simic-mana-combo)             60.4%            35.0%           20.7%
+>   Miirym (miirym-temur-dragons)                60.4%            29.2%           18.3%
+>   Yawgmoth (yawgmoth-mono-black-aristocrats)   59.7%            20.7%           12.4%
+>   Urza (urza-mono-blue-artifacts)              58.6%            23.7%           13.4%
+19,26c19
+< (284s total)
+< 
+< WARNING: 3 game(s) hit an internal simulator error and were skipped (results use the rest).
+<   Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+<    seed 501060  panic: attempt to add with overflow (at /home/joseph/.rustup/toolchains/1.99.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs:206)
+<    seed 501270  panic: attempt to add with overflow (at /home/joseph/.rustup/toolchains/1.99.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs:206)
+<    seed 501675  panic: attempt to add with overflow (at /home/joseph/.rustup/toolchains/1.99.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs:206)
+<   Please send me that output so I can fix the cause.
+---
+> (282s total)

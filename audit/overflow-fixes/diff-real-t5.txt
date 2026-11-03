@@ -1,0 +1,24 @@
+9c9
+< === Realism: Tier 5 (High B4) [loose, lookahead AI, 1999 games, seeds 500000-501999; 5 decks, 4 a pod] ===
+---
+> === Realism: Tier 5 (High B4) [loose, lookahead AI, 2000 games, seeds 500000-501999; 5 decks, 4 a pod] ===
+15c15
+<   seat 4 share of decisive games (%)                     20.4%     18.6-22.2   18.0%     16.5-19.5  FAIL
+---
+>   seat 4 share of decisive games (%)                     20.4%     18.7-22.2   18.0%     16.5-19.5  FAIL
+19c19
+<   wins by damage (combat or other) (%)                   29.7%     27.8-31.8   50.4%     48.9-51.9  reference
+---
+>   wins by damage (combat or other) (%)                   29.8%     27.8-31.8   50.4%     48.9-51.9  reference
+25,26c25,26
+< Games: 1999, decisive 1990 (99.5%), round-cap timeouts 0.5%
+< Each deck's share of the decisive games it sat in: Kinnan 35.7% of 1615; Miirym 26.2% of 1583; Urza 23.0% of 1582; Yawgmoth 18.9% of 1589; Zur the Enchanter 21.0% of 1591
+---
+> Games: 2000, decisive 1991 (99.5%), round-cap timeouts 0.5%
+> Each deck's share of the decisive games it sat in: Kinnan 35.7% of 1616; Miirym 26.2% of 1584; Urza 23.0% of 1583; Yawgmoth 18.9% of 1590; Zur the Enchanter 21.0% of 1591
+37,41d36
+< 
+< WARNING: 1 game(s) hit an internal simulator error and were skipped (results use the rest).
+<   Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+<    seed 501342  panic: attempt to multiply with overflow (at crates/sim-core/src/engine/life.rs:26)
+<   Please send me that output so I can fix the cause.
