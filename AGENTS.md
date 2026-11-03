@@ -29,21 +29,22 @@ a new session or for delegated work that the user explicitly requests, route wor
 
 | Work | Model | Reasoning | Use for |
 | --- | --- | --- | --- |
-| Lead agent and complex work | `gpt-6.1-sol` | `high` or `xhigh` | Coordination, architecture, difficult debugging, final reviews, cross-crate changes, and conflicting simulation evidence |
-| Normal implementation or subagent work | `gpt-6.1-terra` | `high` | Feature work, focused bug fixes, card implementations, tests, and most delegated coding tasks |
-| Visual or UI workflow | `gpt-6.1-terra` | `high` | Practice-mode UI, `ios-shell`, screenshots, computer use, and tightly scoped visual fixes |
-| Mechanical or high-volume work | `gpt-6-luna` | `medium` | Repository searches, repetitive data edits, triage, audits, and output summarization |
+| Lead agent and complex work | `gpt-6.1-sol` | `medium`; `high` for difficult correctness reviews | Coordination, architecture, difficult debugging, final reviews, cross-crate changes, and conflicting simulation evidence |
+| Normal implementation or subagent work | `gpt-6.1-terra` | `medium` | Feature work, focused bug fixes, card implementations, tests, and most delegated coding tasks |
+| Visual or UI workflow | `gpt-6.1-terra` | `medium` | Practice-mode UI, `ios-shell`, screenshots, computer use, and tightly scoped visual fixes |
+| Mechanical or high-volume work | `gpt-6-luna` | `low` | Repository searches, repetitive data edits, triage, audits, and output summarization |
 
-- Use `gpt-6.1-sol` as the highest-level agent for coordination, complex decisions, and final review, with high
-  reasoning by default and xhigh reasoning for especially difficult work. Do not select `gpt-6-astra` unless the user
+- Use `gpt-6.1-sol` as the highest-level agent for coordination, complex decisions, and final review, with medium
+  reasoning by default and high reasoning reserved for difficult correctness issues. Do not select `gpt-6-astra` unless the user
   explicitly requests it.
-- Use `gpt-6.1-terra` with high reasoning as the default implementation subagent, including visual and UI work.
+- Use `gpt-6.1-terra` with medium reasoning as the default implementation subagent, including visual and UI work.
   Escalate ambiguous architecture, subtle engine correctness, and conflicting evidence to the Sol lead.
 - Use `gpt-6-luna` only for bounded tasks with clear acceptance criteria; do not use it to judge subtle simulator
   correctness or ambiguous Magic rules.
 - Do not select the older `gpt-6-sol` for new work when `gpt-6.1-sol` is available, unless the user asks to preserve
   an existing model configuration.
 - Do not delegate work or spawn subagents unless the user explicitly asks for delegation or parallel agent work.
+- Prefer completing existing work without additional subagents when delegation would duplicate context or review.
 - Keep every delegated assignment narrowly scoped and end the subagent when its assigned work is done or blocked.
 
 ## Non-negotiable rules
