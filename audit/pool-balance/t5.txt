@@ -1,0 +1,46 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t5 Kinnan             100 cards: Full 88, Full-auto 3, Approximate 9, Partial 0, Unmodeled 0
+  t5 Miirym             100 cards: Full 79, Full-auto 10, Approximate 11, Partial 0, Unmodeled 0
+  t5 Urza               100 cards: Full 90, Full-auto 4, Approximate 6, Partial 0, Unmodeled 0
+  t5 Yawgmoth           100 cards: Full 83, Full-auto 11, Approximate 6, Partial 0, Unmodeled 0
+  t5 Zur the Enchanter  100 cards: Full 88, Full-auto 6, Approximate 6, Partial 0, Unmodeled 0
+
+9,000 games (calibration: all, 1,500 per list per tier, profile loose), lookahead AI, 22 worker threads: about 20 minutes
+
+=== Within-tier balance [loose, n=1500 games per tier; each deck is seated in ~80%] ===
+  progress  10.0%  2m17s elapsed, ~20m38s left
+  Tier 5 (High B4): avg game 8.6 rounds, timeouts 0.3%
+    Kinnan                        34.2% (31.6-36.9)  [0.0 pts from round-cap wins]
+    Miirym                        27.4% (24.9-29.9)  [0.1 pts from round-cap wins]
+    Urza                          23.4% (21.1-25.9)  [0.0 pts from round-cap wins]
+    Yawgmoth                      18.9% (16.8-21.2)  [0.2 pts from round-cap wins]
+    Zur the Enchanter             21.0% (18.8-23.4)  [0.1 pts from round-cap wins]
+
+=== Tier ordering: each deck alone against three decks of the tier below [loose, n=1500] ===
+  progress  20.0%  4m52s elapsed, ~19m31s left
+  progress  30.0%  7m37s elapsed, ~17m48s left
+  progress  40.0%  10m28s elapsed, ~15m43s left
+  progress  50.0%  13m11s elapsed, ~13m11s left
+  progress  60.0%  17m10s elapsed, ~11m26s left
+  progress  70.0%  20m53s elapsed, ~8m57s left
+  progress  80.0%  23m43s elapsed, ~5m55s left
+  progress  90.0%  26m35s elapsed, ~2m57s left
+  progress 100.0%  29m24s elapsed, ~0m00s left
+  Tier 5 (High B4) into Tier 4 (Low B4): 26.0% overall
+    Kinnan                        32.2% (29.9-34.6)
+    Miirym                        26.6% (24.4-28.9)
+    Urza                          21.0% (19.0-23.1)  (not above 25%)
+    Yawgmoth                      24.4% (22.3-26.6)  (not above 25%)
+    Zur the Enchanter             25.9% (23.7-28.1)
+
+(1764s total)
+
+WARNING: 5 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 500341  panic: attempt to add with overflow (at /home/joseph/.rustup/toolchains/1.99.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs:206)
+   seed 500585  panic: attempt to add with overflow (at /home/joseph/.rustup/toolchains/1.99.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs:206)
+   seed 500235  panic: attempt to add with overflow (at /home/joseph/.rustup/toolchains/1.99.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs:206)
+   seed 500972  panic: attempt to add with overflow (at /home/joseph/.rustup/toolchains/1.99.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs:206)
+   seed 501134  panic: attempt to add with overflow (at /home/joseph/.rustup/toolchains/1.99.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs:206)
+  Please send me that output so I can fix the cause.
+EXIT 0

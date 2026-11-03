@@ -1,0 +1,37 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t4 Chulane       100 cards: Full 90, Full-auto 7, Approximate 3, Partial 0, Unmodeled 0
+  t4 Edgar Markov  100 cards: Full 80, Full-auto 12, Approximate 8, Partial 0, Unmodeled 0
+  t4 Krenko        100 cards: Full 84, Full-auto 8, Approximate 8, Partial 0, Unmodeled 0
+  t4 Prosper       100 cards: Full 91, Full-auto 3, Approximate 6, Partial 0, Unmodeled 0
+  t4 Yuriko        100 cards: Full 87, Full-auto 9, Approximate 4, Partial 0, Unmodeled 0
+
+9,000 games (calibration: all, 1,500 per list per tier, profile loose), lookahead AI, 22 worker threads: about 20 minutes
+
+=== Within-tier balance [loose, n=1500 games per tier; each deck is seated in ~80%] ===
+  progress  10.0%  3m07s elapsed, ~28m07s left
+  Tier 4 (Low B4): avg game 8.5 rounds, timeouts 0.0%
+    Chulane                       18.9% (16.7-21.2)  [0.0 pts from round-cap wins]
+    Edgar Markov                  43.3% (40.5-46.1)  HIGH  [0.0 pts from round-cap wins]
+    Krenko                        29.0% (26.5-31.7)  [0.0 pts from round-cap wins]
+    Prosper                       18.7% (16.6-21.0)  [0.0 pts from round-cap wins]
+    Yuriko                        15.0% (13.1-17.1)  LOW  [0.0 pts from round-cap wins]
+
+=== Tier ordering: each deck alone against three decks of the tier below [loose, n=1500] ===
+  progress  20.0%  5m58s elapsed, ~23m54s left
+  progress  30.0%  8m04s elapsed, ~18m51s left
+  progress  40.0%  9m58s elapsed, ~14m57s left
+  progress  50.0%  12m10s elapsed, ~12m10s left
+  progress  60.0%  14m09s elapsed, ~9m26s left
+  progress  70.0%  16m12s elapsed, ~6m56s left
+  progress  80.0%  18m06s elapsed, ~4m31s left
+  progress  90.0%  20m10s elapsed, ~2m14s left
+  progress 100.0%  22m12s elapsed, ~0m00s left
+  Tier 4 (Low B4) into Tier 3 (High B3): 27.2% overall
+    Chulane                       24.1% (22.0-26.3)  (not above 25%)
+    Edgar Markov                  40.5% (38.1-43.0)
+    Krenko                        31.1% (28.8-33.5)
+    Prosper                       19.7% (17.7-21.8)  (not above 25%)
+    Yuriko                        20.5% (18.5-22.6)  (not above 25%)
+
+(1332s total)
+EXIT 0
