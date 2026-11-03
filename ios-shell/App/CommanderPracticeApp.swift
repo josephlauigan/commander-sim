@@ -13,7 +13,9 @@ struct CommanderPracticeApp: App {
     /// The page reads the opponents' moves aloud (Voice, in the header): play it as spoken audio even when the iPad
     /// is silenced, mixed with any music that is playing.
     init() {
-        try? AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.mixWithOthers])
+        let session = AVAudioSession.sharedInstance()
+        try? session.setCategory(.playback, mode: .spokenAudio, options: [.mixWithOthers])
+        try? session.setActive(true)
     }
 
     var body: some Scene {

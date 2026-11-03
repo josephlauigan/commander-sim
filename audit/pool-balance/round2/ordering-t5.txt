@@ -1,0 +1,35 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t5 Kinnan             100 cards: Full 88, Full-auto 3, Approximate 9, Partial 0, Unmodeled 0
+  t5 Miirym             100 cards: Full 79, Full-auto 10, Approximate 11, Partial 0, Unmodeled 0
+  t5 Urza               100 cards: Full 90, Full-auto 4, Approximate 6, Partial 0, Unmodeled 0
+  t5 Yawgmoth           100 cards: Full 83, Full-auto 11, Approximate 6, Partial 0, Unmodeled 0
+  t5 Zur the Enchanter  100 cards: Full 88, Full-auto 6, Approximate 6, Partial 0, Unmodeled 0
+
+7,500 games (calibration: ordering, 1,500 per list per tier, profile loose), lookahead AI, 22 worker threads: about 17 minutes
+
+=== Tier ordering: each deck alone against three decks of the tier below [loose, n=1500] ===
+  progress  10.0%  2m27s elapsed, ~22m03s left
+  progress  20.0%  4m57s elapsed, ~19m48s left
+  progress  30.0%  7m09s elapsed, ~16m41s left
+  progress  40.0%  9m21s elapsed, ~14m01s left
+  progress  50.0%  12m37s elapsed, ~12m37s left
+  progress  60.0%  16m06s elapsed, ~10m44s left
+  progress  70.0%  18m31s elapsed, ~7m56s left
+  progress  80.0%  21m05s elapsed, ~5m16s left
+  progress  90.0%  23m22s elapsed, ~2m35s left
+  progress 100.0%  26m15s elapsed, ~0m00s left
+  Tier 5 (High B4) into Tier 4 (Low B4): 28.4% overall
+    Kinnan                        33.4% (31.1-35.8)
+    Miirym                        30.2% (27.9-32.5)
+    Urza                          24.1% (22.0-26.4)  (not above 25%)
+    Yawgmoth                      27.3% (25.1-29.6)
+    Zur the Enchanter             27.3% (25.1-29.6)
+
+(1576s total)
+
+WARNING: 2 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 500235  panic: attempt to add with overflow (at /home/joseph/.rustup/toolchains/1.99.0-x86_64-unknown-linux-gnu/lib/rustlib/src/rust/library/core/src/iter/traits/accum.rs:206)
+   seed 500854  panic: attempt to subtract with overflow (at crates/sim-core/src/ai/pool.rs:39)
+  Please send me that output so I can fix the cause.
+EXIT 0

@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-10-30",
+  "fetched": "2026-11-03",
   "deck": "sythis-selesnya-enchantress",
   "commanders": [
     "Sythis, Harvest's Hand"
   ],
-  "request_sha256": "a26f261e6a0641bd36a583931bab85a706e856204fa4c9f520584508dbe6db79",
+  "request_sha256": "9e6af825fd83e64a24d60ab6c8dea658d5624b8d51ff2f9c3a7df6c0d19fab99",
   "identity": "GW",
   "included": [],
   "included_by_changing_commanders": [],
@@ -37,7 +37,7 @@
       "mana": "{1}{W}",
       "bracket": "S",
       "legal": true,
-      "popularity": 52877,
+      "popularity": 53079,
       "missing": [
         "Walking Ballista"
       ]
@@ -67,7 +67,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 12286,
+      "popularity": 12228,
       "missing": [
         "Secret Arcade // Dusty Parlor"
       ]
@@ -96,7 +96,7 @@
       "mana": "{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 11993,
+      "popularity": 12086,
       "missing": [
         "Jumbo Cactuar"
       ]
@@ -127,7 +127,7 @@
       "mana": "{1}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 6308,
+      "popularity": 6319,
       "missing": [
         "Triskelion"
       ]
@@ -157,9 +157,36 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 5829,
+      "popularity": 5842,
       "missing": [
         "Spike Feeder"
+      ]
+    },
+    {
+      "id": "125-3903",
+      "cards": [
+        {
+          "name": "Knowledge Pool",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rule of Law",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3483,
+      "missing": [
+        "Knowledge Pool"
       ]
     },
     {
@@ -190,7 +217,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 3045,
+      "popularity": 3049,
       "missing": [
         "Staff of Domination"
       ]
@@ -219,9 +246,45 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2898,
+      "popularity": 2900,
       "missing": [
         "Gauntlets of Light"
+      ]
+    },
+    {
+      "id": "168-372-2902",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Journey to Nowhere",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Oblivion Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1869,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
       ]
     },
     {
@@ -251,7 +314,7 @@
       "mana": "{G/W}",
       "bracket": "S",
       "legal": true,
-      "popularity": 1779,
+      "popularity": 1774,
       "missing": [
         "Seedcradle Witch"
       ]
@@ -282,7 +345,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1168,
+      "popularity": 1175,
       "missing": [
         "Umbral Mantle"
       ]
@@ -312,7 +375,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 789,
+      "popularity": 786,
       "missing": [
         "Virtue of Loyalty // Ardenvale Fealty"
       ]
@@ -339,7 +402,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 537,
+      "popularity": 540,
       "missing": [
         "Cloudstone Curio"
       ]
@@ -369,9 +432,36 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 399,
+      "popularity": 401,
       "missing": [
         "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "2902-5299",
+      "cards": [
+        {
+          "name": "Opalescence",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Journey to Nowhere",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 335,
+      "missing": [
+        "Opalescence"
       ]
     },
     {
@@ -399,7 +489,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 324,
+      "popularity": 325,
       "missing": [
         "Curse of Bounty"
       ]
@@ -429,7 +519,7 @@
       "mana": "{10}{G}{G}{W}{W}",
       "bracket": "P",
       "legal": true,
-      "popularity": 234,
+      "popularity": 235,
       "missing": [
         "Biorhythm"
       ]
@@ -463,39 +553,6 @@
       "popularity": 162,
       "missing": [
         "Awakening"
-      ]
-    },
-    {
-      "id": "3018-3560-4050",
-      "cards": [
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Rancor",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Archon of Sun's Grace",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control another creature.",
-      "mana": "{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 50,
-      "missing": [
-        "Phyrexian Altar"
       ]
     }
   ]
