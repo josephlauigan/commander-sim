@@ -10,34 +10,31 @@ Opponent pool deck — **Tier 2: Mid Bracket 3**. Axis: Control / interaction-he
 
 ## Role in the pool
 
-The pool's enters-the-battlefield engine: every creature and Aura does something as it enters, and a dozen cards make it enter again. Tests whether decks can answer a value engine before it buries them, and whether their own permanents survive Agent of Treachery, Riptide Gearhulk and Reality Acid.
+Brago combines enter-the-battlefield value with interaction and combat pressure. The rebuild adds early creatures and removal alongside stronger fliers, while retaining the blink engine and a late multi-card line.
 
 ## At the table
 
-- **Plan:** Builds a board of enters creatures (Mulldrifter, Wall of Omens, Reflector Mage, Agent of Treachery, Riptide Gearhulk, Sun Titan, Angel of Serenity) and blinks them: Brago, King Eternal when he connects, Soulherder and Teleportation Circle each end step, Restoration Angel, Flickerwisp, Yorion, and the flicker spells Ephemerate, Cloudshift, Momentary Blink, Ghostly Flicker and Eerie Interlude. Panharmonicon and Elesh Norn, Mother of Machines make each enters trigger count twice. Oblivion Ring, Banishing Light and Detention Sphere are removal that a blink re-aims, and Mother of Runes and Giver of Runes shield Brago and the blinkers.
-- **Wins by:** Grinds the table out of permanents and cards, then attacks with fliers and token makers (Brago, Cloudblazer, Restoration Angel, Baneslayer Angel, Resplendent Angel, Archangel of Tithes, Hero of Bladehold, Adeline). Peregrine Drake with Archaeomancer and Ghostly Flicker makes unbounded mana and blinks Agent of Treachery until it has everything.
-- **Watch out for:** Agent of Treachery takes your best permanent, again each time it is blinked; Reality Acid on your best permanent kills it when the Acid leaves, and Brago blinks it. Elesh Norn stops your own enters triggers. Kill Brago, and answer Peregrine Drake before Archaeomancer arrives.
-- **Interaction:** Counterspell, Mana Drain, Dovin's Veto and An Offer You Can't Refuse. Swords to Plowshares, Path to Exile, Reflector Mage, Palace Jailer, Venser, Shaper Savant, Riptide Gearhulk, Flickerwisp, Reality Acid, Witch Enchanter, Loran of the Third Path, Agent of Treachery; Oblivion Ring, Banishing Light and Detention Sphere; Man-o'-War bounces; Farewell is the one sweeper. Ghostly Prison taxes attacks.
+- **Plan:** Develop creatures such as Wall of Omens, Cloudblazer and Reflector Mage, then reuse their effects with Brago, Soulherder, Restoration Angel, Flickerwisp, Yorion and flicker spells. Elesh Norn doubles your enters triggers. Mother and Giver of Runes protect creatures.
+- **Wins by:** Build advantage with Agent of Treachery and other enter effects, then attack with fliers and token makers including Brimaz, Hero of Bladehold, Baneslayer Angel and Elspeth. Peregrine Drake, Archaeomancer and Ghostly Flicker can repeatedly blink Agent of Treachery.
+- **Interaction:** Counterspell, Mana Drain and An Offer You Can't Refuse back up targeted removal, bounce and Farewell. Aven Mindcensor constrains searches and Ghostly Prison taxes attacks.
 
 ## Strategy
 
-Ramp with rocks (Sol Ring, Signets, Talisman, Basalt Monolith, Mind Stone), land a value creature a turn, and blink it as often as possible. Brago's combat damage blinks every enters permanent (and Reality Acid, whose host dies); Soulherder and Teleportation Circle do it each end step. The combos are a bonus: the deck plays the value game first.
+Use mana rocks to deploy value creatures and Brago; blink enters effects while applying combat pressure. Reality Acid removes its attached permanent when it leaves. The Drake line is a late bonus and needs a way to win, not just mana.
 
 ## Sim modeling notes
 
-Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
-
-ETB re-use through flicker (Brago, Soulherder, Teleportation Circle, Restoration Angel, Flickerwisp, Yorion, the flicker spells); trigger doubling (Panharmonicon, Elesh Norn, Mother of Machines); steals (Agent of Treachery); Reality Acid's delayed removal; counterspell decisions. All of the list's cards are modeled (impls/t12_brago_meren.rs for the Tier 2 additions); left out: Yorion's companion, lands for Ghostly Flicker and Agent of Treachery.
+The Drake line has an explicit combo implementation requiring Drake and Archaeomancer on the battlefield, castable Ghostly Flicker, at least four lands and an available Agent of Treachery finish. The simulator simplifies some individual effects; inspect the card audit before interpreting results.
 
 ## Decklist by type (100)
 
 **Commander (1).** Brago, King Eternal
 
-**Creatures (42).** Adeline, Resplendent Cathar, Agent of Treachery, Angel of Serenity, Archaeomancer, Archangel of Tithes, Aven Mindcensor, Baneslayer Angel, Brimaz, King of Oreskos, Cathar Commando, Cloudblazer, Consecrated Sphinx, Displacer Kitten, Dream Trawler, Eldrazi Displacer, Elesh Norn, Mother of Machines, Faerie Mastermind, Fiend Hunter, Flickerwisp, Giver of Runes, Hero of Bladehold, Luminarch Aspirant, Lyra Dawnbringer, Man-o'-War, Mirror Entity, Mother of Runes, Mulldrifter, Palace Jailer, Peregrine Drake, Reflector Mage, Resplendent Angel, Restoration Angel, Riptide Gearhulk, Serra Angel, Skyclave Apparition, Solitude, Soulherder, Spark Double, Sun Titan, Venser, Shaper Savant, Wall of Omens, Whirler Rogue, Yorion, Sky Nomad
+**Creatures (40).** Adeline, Resplendent Cathar, Agent of Treachery, Angel of Serenity, Archaeomancer, Archangel of Tithes, Aven Mindcensor, Baneslayer Angel, Brimaz, King of Oreskos, Cloudblazer, Consecrated Sphinx, Displacer Kitten, Dour Port-Mage, Dream Trawler, Elesh Norn, Mother of Machines, Faerie Mastermind, Fiend Hunter, Flickerwisp, Giver of Runes, Hero of Bladehold, Loran of the Third Path, Man-o'-War, Mirror Entity, Mother of Runes, Mulldrifter, Palace Jailer, Peregrine Drake, Reflector Mage, Resplendent Angel, Restoration Angel, Riptide Gearhulk, Serra Angel, Skyclave Apparition, Solitude, Soulherder, Spark Double, Sun Titan, Venser, Shaper Savant, Wall of Omens, Whirler Rogue, Yorion, Sky Nomad
 
 **Planeswalkers (4).** Elspeth, Sun's Champion, Teferi, Hero of Dominaria, The Wandering Emperor, Venser, the Sojourner
 
-**Enchantments (4).** Banishing Light, Ghostly Prison, Oblivion Ring, Reality Acid
+**Enchantments (6).** Banishing Light, Detention Sphere, Ghostly Prison, Oblivion Ring, Reality Acid, Teleportation Circle
 
 **Artifacts (5).** Arcane Signet, Azorius Signet, Mind Stone, Sol Ring, Talisman of Progress
 
@@ -65,16 +62,16 @@ ETB re-use through flicker (Brago, Soulherder, Teleportation Circle, Restoration
 1 Banishing Light
 1 Brago, King Eternal
 1 Brimaz, King of Oreskos
-1 Cathar Commando
 1 Cloudblazer
 1 Command Tower
 1 Consecrated Sphinx
 1 Council's Judgment
 1 Counterspell
 1 Deserted Beach
+1 Detention Sphere
 1 Displacer Kitten
+1 Dour Port-Mage
 1 Dream Trawler
-1 Eldrazi Displacer
 1 Elesh Norn, Mother of Machines
 1 Elspeth, Sun's Champion
 1 Ephemerate
@@ -90,8 +87,7 @@ ETB re-use through flicker (Brago, Soulherder, Teleportation Circle, Restoration
 1 Glacial Fortress
 1 Hallowed Fountain
 1 Hero of Bladehold
-1 Luminarch Aspirant
-1 Lyra Dawnbringer
+1 Loran of the Third Path
 1 Man-o'-War
 1 Mana Drain
 1 Mind Stone
@@ -123,6 +119,7 @@ ETB re-use through flicker (Brago, Soulherder, Teleportation Circle, Restoration
 1 Swords to Plowshares
 1 Talisman of Progress
 1 Teferi, Hero of Dominaria
+1 Teleportation Circle
 1 Temple of Enlightenment
 1 The Wandering Emperor
 1 Venser, Shaper Savant

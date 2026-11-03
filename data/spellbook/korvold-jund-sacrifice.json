@@ -6,9 +6,33 @@
   "commanders": [
     "Korvold, Fae-Cursed King"
   ],
-  "request_sha256": "e3546ba4e771993a5ff7911599879ee0d4befa33b25f270f4b582ba6a36753d9",
+  "request_sha256": "265a527f6f9f575d1db59282fc7abc53a4639326ebc67865dec741ab68a6389e",
   "identity": "BRG",
   "included": [
+    {
+      "id": "2577-4050",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 79502
+    },
     {
       "id": "1580-2034-4871",
       "cards": [
@@ -39,7 +63,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 65900
+      "popularity": 65964
     },
     {
       "id": "3000-4871",
@@ -67,7 +91,7 @@
       "mana": "{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 64166
+      "popularity": 64225
     },
     {
       "id": "1580-4050-4871",
@@ -97,7 +121,299 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 42680
+      "popularity": 42728
+    },
+    {
+      "id": "2034-2577-4871",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 40966
+    },
+    {
+      "id": "2292-2577-4871",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 37244
+    },
+    {
+      "id": "2438-2577-4871",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 33696
+    },
+    {
+      "id": "1580-4050-4314",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 23872
+    },
+    {
+      "id": "997-2577-4871",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Woe Strider",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7969
+    },
+    {
+      "id": "2577-4871-5147",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Bombardment",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4550
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "1561-2498",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite card draw for target opponent",
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has a library size that is at least half their life total.",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 51929,
+      "missing": [
+        "Peer into the Abyss"
+      ]
+    },
+    {
+      "id": "2577-2842-5670",
+      "cards": [
+        {
+          "name": "Warren Soultrader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 48708,
+      "missing": [
+        "Warren Soultrader"
+      ]
+    },
+    {
+      "id": "1385-2577-5670",
+      "cards": [
+        {
+          "name": "Warren Soultrader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zulaport Cutthroat",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 43577,
+      "missing": [
+        "Warren Soultrader"
+      ]
     },
     {
       "id": "1580-2842-4871-5670",
@@ -135,7 +451,10 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 38487
+      "popularity": 38537,
+      "missing": [
+        "Warren Soultrader"
+      ]
     },
     {
       "id": "1385-1580-4871-5670",
@@ -173,7 +492,46 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 37157
+      "popularity": 37203,
+      "missing": [
+        "Warren Soultrader"
+      ]
+    },
+    {
+      "id": "2577-3025-5670",
+      "cards": [
+        {
+          "name": "Warren Soultrader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bastion of Remembrance",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 28497,
+      "missing": [
+        "Warren Soultrader"
+      ]
     },
     {
       "id": "1385-3000-5670",
@@ -209,321 +567,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 27717
-    },
-    {
-      "id": "2842-3000-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Blood Artist",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 24813
-    },
-    {
-      "id": "3000-4231-5670",
-      "cards": [
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Academy Manufactor",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifegain",
-        "Infinite card draw",
-        "Infinite Treasure tokens",
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 3.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 23014
-    }
-  ],
-  "included_by_changing_commanders": [],
-  "almost_included": [
-    {
-      "id": "2577-4050",
-      "cards": [
-        {
-          "name": "Gravecrawler",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control an additional Zombie.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 79377,
+      "popularity": 27761,
       "missing": [
-        "Gravecrawler"
-      ]
-    },
-    {
-      "id": "2577-2842-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Gravecrawler",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Blood Artist",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifegain triggers",
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 48608,
-      "missing": [
-        "Gravecrawler"
-      ]
-    },
-    {
-      "id": "1385-2577-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Gravecrawler",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Zulaport Cutthroat",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifegain triggers",
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 43473,
-      "missing": [
-        "Gravecrawler"
-      ]
-    },
-    {
-      "id": "2034-2577-4871",
-      "cards": [
-        {
-          "name": "Gravecrawler",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ashnod's Altar",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "You control an additional Zombie.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 40884,
-      "missing": [
-        "Gravecrawler"
-      ]
-    },
-    {
-      "id": "2292-2577-4871",
-      "cards": [
-        {
-          "name": "Gravecrawler",
-          "zones": [
-            "G"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Viscera Seer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 37160,
-      "missing": [
-        "Gravecrawler"
-      ]
-    },
-    {
-      "id": "2438-2577-4871",
-      "cards": [
-        {
-          "name": "Gravecrawler",
-          "zones": [
-            "G"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Carrion Feeder",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite +1/+1 counters on a creature"
-      ],
-      "requires": [],
-      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 33611,
-      "missing": [
-        "Gravecrawler"
-      ]
-    },
-    {
-      "id": "2842-5544-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Forsaken Miner",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Blood Artist",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifegain triggers",
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is at least 2.",
-      "mana": "{B}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 30628,
-      "missing": [
-        "Forsaken Miner"
+        "Warren Soultrader"
       ]
     },
     {
@@ -562,22 +608,61 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 26773,
+      "popularity": 26798,
       "missing": [
-        "Bastion of Remembrance"
+        "Warren Soultrader"
       ]
     },
     {
-      "id": "1580-4050-4314",
+      "id": "2842-3000-5670",
       "cards": [
         {
-          "name": "Reassembling Skeleton",
+          "name": "Warren Soultrader",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Phyrexian Altar",
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chatterfang, Squirrel General",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 24851,
+      "missing": [
+        "Warren Soultrader"
+      ]
+    },
+    {
+      "id": "1385-4279-4314--216",
+      "cards": [
+        {
+          "name": "Yawgmoth, Thran Physician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zulaport Cutthroat",
           "zones": [
             "B"
           ]
@@ -589,15 +674,97 @@
           ]
         }
       ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain triggers",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [
+        "Creature with Undying"
+      ],
+      "prerequisites": "The undying creature doesn't have a +1/+1 counter on it.\nYour life total is 2 or higher.",
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 23831,
+      "popularity": 23995,
+      "missing": []
+    },
+    {
+      "id": "2842-4279-4314--216",
+      "cards": [
+        {
+          "name": "Yawgmoth, Thran Physician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain triggers",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [
+        "Creature with Undying"
+      ],
+      "prerequisites": "The undying creature doesn't have a +1/+1 counter on it.\nYour life total is 2 or higher.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 23917,
+      "missing": []
+    },
+    {
+      "id": "3000-4231-5670",
+      "cards": [
+        {
+          "name": "Chatterfang, Squirrel General",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Warren Soultrader",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Academy Manufactor",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite Treasure tokens",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.\nYour life total is at least 3.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 23037,
       "missing": [
-        "Pawn of Ulamog"
+        "Warren Soultrader"
       ]
     },
     {
@@ -632,92 +799,47 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 21619,
+      "popularity": 21646,
       "missing": [
         "Forsaken Miner"
       ]
     },
     {
-      "id": "1580-4871-5670-6578",
+      "id": "3025-4279-4314--216",
       "cards": [
         {
-          "name": "Warren Soultrader",
+          "name": "Yawgmoth, Thran Physician",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Pitiless Plunderer",
+          "name": "Bastion of Remembrance",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel",
+          "name": "Pawn of Ulamog",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite lifeloss"
+        "Infinite card draw",
+        "Near-infinite lifegain triggers",
+        "Near-infinite lifeloss"
       ],
-      "requires": [],
-      "prerequisites": "You either have Sephiroth, Fabled SOLDIER on the battlefield or have the emblem granted by Sephiroth, One-Winged Angel.\nYour life total is 2 or higher.",
+      "requires": [
+        "Creature with Undying"
+      ],
+      "prerequisites": "The undying creature doesn't have a +1/+1 counter on it.\nYour life total is 2 or higher.",
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 20563,
-      "missing": [
-        "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel"
-      ]
-    },
-    {
-      "id": "3000-4321-5670",
-      "cards": [
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Peregrin Took",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifegain",
-        "Infinite card draw",
-        "Infinite Treasure tokens",
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 3.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 19198,
-      "missing": [
-        "Peregrin Took"
-      ]
+      "popularity": 17426,
+      "missing": []
     },
     {
       "id": "1580-2292-4871-5111",
@@ -753,7 +875,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 16881,
+      "popularity": 16898,
       "missing": [
         "Drivnod, Carnage Dominus"
       ]
@@ -792,9 +914,38 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 16185,
+      "popularity": 16216,
       "missing": [
-        "Bastion of Remembrance"
+        "Warren Soultrader"
+      ]
+    },
+    {
+      "id": "1110-2136",
+      "cards": [
+        {
+          "name": "Orthion, Hero of Lavabrink",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{R}{R}{R}",
+      "bracket": "C",
+      "legal": true,
+      "popularity": 15815,
+      "missing": [
+        "Orthion, Hero of Lavabrink"
       ]
     },
     {
@@ -829,48 +980,45 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 14525,
+      "popularity": 14532,
       "missing": [
         "Nest of Scarabs"
       ]
     },
     {
-      "id": "3000-5104-5670",
+      "id": "3240-4050-4314",
       "cards": [
         {
-          "name": "Warren Soultrader",
+          "name": "Nether Traitor",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Chatterfang, Squirrel General",
+          "name": "Phyrexian Altar",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Nadier's Nightblade",
+          "name": "Pawn of Ulamog",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite artifact tokens",
         "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens"
+        "Infinite colorless mana"
       ],
       "requires": [],
-      "prerequisites": "You control at least one creature token.\nYour life total is at least 2.",
+      "prerequisites": "",
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 13857,
+      "popularity": 12957,
       "missing": [
-        "Nadier's Nightblade"
+        "Nether Traitor"
       ]
     },
     {
@@ -909,48 +1057,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 12312,
+      "popularity": 12330,
       "missing": [
         "Drivnod, Carnage Dominus"
-      ]
-    },
-    {
-      "id": "3000-4616-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Moldervine Reclamation",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite card draw",
-        "Near-infinite colored mana",
-        "Near-infinite Treasure tokens",
-        "Near-infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 11856,
-      "missing": [
-        "Moldervine Reclamation"
       ]
     },
     {
@@ -985,50 +1094,80 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 11399,
+      "popularity": 11405,
       "missing": [
         "Nest of Scarabs"
       ]
     },
     {
-      "id": "856-4231-5670",
+      "id": "2577-4871-6798",
       "cards": [
         {
-          "name": "Warren Soultrader",
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Cauldron Familiar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Academy Manufactor",
+          "name": "Umbral Collar Zealot",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifegain",
-        "Infinite card draw",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens"
+        "Infinite surveil"
       ],
       "requires": [],
-      "prerequisites": "Your life total is at least 2.",
+      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 10667,
+      "popularity": 10876,
       "missing": [
-        "Cauldron Familiar"
+        "Umbral Collar Zealot"
+      ]
+    },
+    {
+      "id": "2577-4871-5256",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Altar of Dementia",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mill",
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 10745,
+      "missing": [
+        "Altar of Dementia"
       ]
     },
     {
@@ -1061,47 +1200,9 @@
       "mana": "{3}{B} at most",
       "bracket": "E",
       "legal": true,
-      "popularity": 10143,
+      "popularity": 10158,
       "missing": [
         "Living Death"
-      ]
-    },
-    {
-      "id": "3000-4716-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Prosperous Innkeeper",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 9674,
-      "missing": [
-        "Prosperous Innkeeper"
       ]
     },
     {
@@ -1128,7 +1229,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 9020,
+      "popularity": 9056,
       "missing": [
         "Smaug the Impenetrable"
       ]
@@ -1167,7 +1268,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 8937,
+      "popularity": 8955,
       "missing": [
         "The Masamune"
       ]
@@ -1200,9 +1301,38 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 8573,
+      "popularity": 8581,
       "missing": [
         "Sifter of Skulls"
+      ]
+    },
+    {
+      "id": "1110-1908",
+      "cards": [
+        {
+          "name": "Rionya, Fire Dancer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 8561,
+      "missing": [
+        "Rionya, Fire Dancer"
       ]
     },
     {
@@ -1235,83 +1365,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 8447,
+      "popularity": 8453,
       "missing": [
         "Bloodsoaked Champion"
-      ]
-    },
-    {
-      "id": "1580-4871-5670-6094",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vengeful Bloodwitch",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 8000,
-      "missing": [
-        "Vengeful Bloodwitch"
-      ]
-    },
-    {
-      "id": "997-2577-4871",
-      "cards": [
-        {
-          "name": "Gravecrawler",
-          "zones": [
-            "G"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Woe Strider",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 7948,
-      "missing": [
-        "Gravecrawler"
       ]
     },
     {
@@ -1356,44 +1412,75 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 7935,
+      "popularity": 7939,
       "missing": [
         "Cauldron Familiar"
       ]
     },
     {
-      "id": "2034-5003-6199",
+      "id": "1110-6785",
       "cards": [
         {
-          "name": "Nim Deathmantle",
+          "name": "Devastating Onslaught",
           "zones": [
-            "B"
+            "H"
           ]
         },
         {
-          "name": "Ashnod's Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Marionette Apprentice",
+          "name": "Terror of the Peaks",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite lifeloss"
+        "Near-infinite damage"
       ],
       "requires": [],
       "prerequisites": "",
-      "mana": "{2}",
-      "bracket": "E",
+      "mana": "{10}{R}",
+      "bracket": "C",
       "legal": true,
-      "popularity": 7102,
+      "popularity": 7518,
       "missing": [
-        "Nim Deathmantle"
+        "Devastating Onslaught"
+      ]
+    },
+    {
+      "id": "2760-3025-4279",
+      "cards": [
+        {
+          "name": "Yawgmoth, Thran Physician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nest of Scarabs",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bastion of Remembrance",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite card draw",
+        "Near-infinite lifegain triggers",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.\nAn opponent controls a creature.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 7065,
+      "missing": [
+        "Nest of Scarabs"
       ]
     },
     {
@@ -1426,9 +1513,73 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 6921,
+      "popularity": 6925,
       "missing": [
         "Revel in Riches"
+      ]
+    },
+    {
+      "id": "2577-3967-4871",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yahenni, Undying Partisan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6742,
+      "missing": [
+        "Yahenni, Undying Partisan"
+      ]
+    },
+    {
+      "id": "2842-6215",
+      "cards": [
+        {
+          "name": "Tombstone Stairwell",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifeloss",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 6693,
+      "missing": [
+        "Tombstone Stairwell"
       ]
     },
     {
@@ -1478,117 +1629,6 @@
       ]
     },
     {
-      "id": "2842-6215",
-      "cards": [
-        {
-          "name": "Tombstone Stairwell",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Blood Artist",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite lifeloss",
-        "Near-infinite lifegain",
-        "Near-infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 6679,
-      "missing": [
-        "Tombstone Stairwell"
-      ]
-    },
-    {
-      "id": "1580-4871-5670-5931",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Funeral Room // Awakening Hall",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Funeral Room is unlocked.\nYour life total is 2 or higher.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 6403,
-      "missing": [
-        "Funeral Room // Awakening Hall"
-      ]
-    },
-    {
-      "id": "3000-5670-6578",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite Treasure tokens",
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 6394,
-      "missing": [
-        "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel"
-      ]
-    },
-    {
       "id": "2612-5035",
       "cards": [
         {
@@ -1614,7 +1654,7 @@
       "mana": "{6}{B}",
       "bracket": "O",
       "legal": true,
-      "popularity": 6258,
+      "popularity": 6267,
       "missing": [
         "Plague of Vermin"
       ]
@@ -1655,7 +1695,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 6245,
+      "popularity": 6262,
       "missing": [
         "The Masamune"
       ]
@@ -1688,48 +1728,9 @@
       "mana": "{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 6239,
+      "popularity": 6245,
       "missing": [
         "Hazel's Brewmaster"
-      ]
-    },
-    {
-      "id": "3000-5670-7452",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cauldron of Essence",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite Treasure tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 6053,
-      "missing": [
-        "Cauldron of Essence"
       ]
     },
     {
@@ -1764,9 +1765,40 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5870,
+      "popularity": 5877,
       "missing": [
         "Hapatra, Vizier of Poisons"
+      ]
+    },
+    {
+      "id": "679-2498",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lich's Mastery",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5664,
+      "missing": [
+        "Lich's Mastery"
       ]
     },
     {
@@ -1791,7 +1823,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5593,
+      "popularity": 5595,
       "missing": [
         "Liliana, Untouched by Death"
       ]
@@ -1824,7 +1856,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5538,
+      "popularity": 5542,
       "missing": [
         "Bloodsoaked Champion"
       ]
@@ -1859,7 +1891,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5512,
+      "popularity": 5514,
       "missing": [
         "There and Back Again"
       ]
@@ -1901,7 +1933,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5095,
+      "popularity": 5096,
       "missing": [
         "Blight Mound"
       ]
@@ -1938,7 +1970,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 4930,
+      "popularity": 4938,
       "missing": [
         "Hapatra, Vizier of Poisons"
       ]
@@ -1973,91 +2005,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 4723,
+      "popularity": 4722,
       "missing": [
         "Cult Conscript"
-      ]
-    },
-    {
-      "id": "1263-2842-4871-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Bloodsoaked Champion",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Blood Artist",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher. You have attacked this turn.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 4638,
-      "missing": [
-        "Bloodsoaked Champion"
-      ]
-    },
-    {
-      "id": "1263-1385-4871-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Bloodsoaked Champion",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Zulaport Cutthroat",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher. You have attacked this turn.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 4601,
-      "missing": [
-        "Bloodsoaked Champion"
       ]
     },
     {
@@ -2100,41 +2050,6 @@
       ]
     },
     {
-      "id": "2577-4871-5147",
-      "cards": [
-        {
-          "name": "Gravecrawler",
-          "zones": [
-            "G"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Goblin Bombardment",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite damage"
-      ],
-      "requires": [],
-      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 4535,
-      "missing": [
-        "Gravecrawler"
-      ]
-    },
-    {
       "id": "1580-4050-4556",
       "cards": [
         {
@@ -2165,7 +2080,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 4471,
+      "popularity": 4470,
       "missing": [
         "Blight Mound"
       ]
@@ -2200,7 +2115,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 4425,
+      "popularity": 4426,
       "missing": [
         "Forsaken Miner"
       ]
@@ -2238,9 +2153,39 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 4353,
+      "popularity": 4355,
       "missing": [
         "Stridehangar Automaton"
+      ]
+    },
+    {
+      "id": "4050-7686",
+      "cards": [
+        {
+          "name": "The Unbeatable Squirrel Girl",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control four or more Squirrels.",
+      "mana": "{1}{G}{G}{G}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4253,
+      "missing": [
+        "The Unbeatable Squirrel Girl"
       ]
     },
     {
@@ -2273,74 +2218,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 4245,
+      "popularity": 4250,
       "missing": [
         "Revel in Riches"
-      ]
-    },
-    {
-      "id": "4050-7686",
-      "cards": [
-        {
-          "name": "The Unbeatable Squirrel Girl",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana",
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control four or more Squirrels.",
-      "mana": "{1}{G}{G}{G}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 4238,
-      "missing": [
-        "The Unbeatable Squirrel Girl"
-      ]
-    },
-    {
-      "id": "222-2034-4871",
-      "cards": [
-        {
-          "name": "Slimefoot and Squee",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ashnod's Altar",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one Saproling.\n{B}, {R} or",
-      "mana": "{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 4208,
-      "missing": [
-        "Slimefoot and Squee"
       ]
     },
     {
@@ -2377,9 +2257,44 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 4200,
+      "popularity": 4204,
       "missing": [
         "Drivnod, Carnage Dominus"
+      ]
+    },
+    {
+      "id": "222-2034-4871",
+      "cards": [
+        {
+          "name": "Slimefoot and Squee",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one Saproling.\n{B}, {R} or",
+      "mana": "{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4203,
+      "missing": [
+        "Slimefoot and Squee"
       ]
     },
     {
@@ -2414,7 +2329,7 @@
       "mana": "{4}",
       "bracket": "S",
       "legal": true,
-      "popularity": 4182,
+      "popularity": 4180,
       "missing": [
         "Slimefoot, the Stowaway"
       ]
@@ -2443,7 +2358,7 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 3949,
+      "popularity": 3950,
       "missing": [
         "Crackdown Construct"
       ]
@@ -2478,7 +2393,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 3768,
+      "popularity": 3772,
       "missing": [
         "Revel in Riches"
       ]
@@ -2524,9 +2439,42 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 3749,
+      "popularity": 3751,
       "missing": [
         "Cauldron Familiar"
+      ]
+    },
+    {
+      "id": "1263-4050-4314",
+      "cards": [
+        {
+          "name": "Bloodsoaked Champion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You attacked with a creature this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3637,
+      "missing": [
+        "Bloodsoaked Champion"
       ]
     },
     {
@@ -2551,7 +2499,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 3619,
+      "popularity": 3622,
       "missing": [
         "Polyraptor"
       ]
@@ -2588,7 +2536,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 3592,
+      "popularity": 3600,
       "missing": [
         "Flourishing Defenses"
       ]
@@ -2631,7 +2579,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 3361,
+      "popularity": 3362,
       "missing": [
         "Blight Mound"
       ]
@@ -2668,47 +2616,40 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 3318,
+      "popularity": 3314,
       "missing": [
         "Slimefoot and Squee"
       ]
     },
     {
-      "id": "2741-3000-5670",
+      "id": "2238-3259",
       "cards": [
         {
-          "name": "Warren Soultrader",
+          "name": "Breath of Fury",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Essence Warden",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
+          "name": "Goblin Rabblemaster",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite Treasure tokens"
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
       ],
       "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
+      "prerequisites": "An opponent cannot block creatures you control.",
       "mana": "",
-      "bracket": "E",
+      "bracket": "S",
       "legal": true,
-      "popularity": 3227,
+      "popularity": 3129,
       "missing": [
-        "Essence Warden"
+        "Breath of Fury"
       ]
     },
     {
@@ -2742,48 +2683,9 @@
       "mana": "{7}{B} at most",
       "bracket": "E",
       "legal": true,
-      "popularity": 3118,
+      "popularity": 3125,
       "missing": [
         "Rise of the Dark Realms"
-      ]
-    },
-    {
-      "id": "2034-3490-3597",
-      "cards": [
-        {
-          "name": "Animation Module",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ashnod's Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Juri, Master of the Revue",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite +1/+1 counters on a creature",
-        "Infinite colorless mana",
-        "Infinite creature tokens",
-        "Infinite damage to one opponent"
-      ],
-      "requires": [],
-      "prerequisites": "You control an additional creature.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 3085,
-      "missing": [
-        "Animation Module"
       ]
     },
     {
@@ -2814,7 +2716,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 3028,
+      "popularity": 3027,
       "missing": [
         "Cult Conscript"
       ]
@@ -2852,7 +2754,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2887,
+      "popularity": 2890,
       "missing": [
         "Ozox, the Clattering King"
       ]
@@ -2893,9 +2795,44 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2852,
+      "popularity": 2853,
       "missing": [
         "Ogre Slumlord"
+      ]
+    },
+    {
+      "id": "2438-2577-7390",
+      "cards": [
+        {
+          "name": "The Ghoul, Gunslinger",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 2845,
+      "missing": [
+        "The Ghoul, Gunslinger"
       ]
     },
     {
@@ -2932,7 +2869,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2793,
+      "popularity": 2794,
       "missing": [
         "Open the Graves"
       ]
@@ -2969,50 +2906,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2691,
+      "popularity": 2698,
       "missing": [
         "Flourishing Defenses"
-      ]
-    },
-    {
-      "id": "1385-2946-4871-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Zulaport Cutthroat",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cult Conscript",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher. A non-Skeleton creature has died under your control this turn.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2677,
-      "missing": [
-        "Cult Conscript"
       ]
     },
     {
@@ -3054,7 +2950,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2659,
+      "popularity": 2658,
       "missing": [
         "Oathsworn Vampire"
       ]
@@ -3087,50 +2983,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2648,
-      "missing": [
-        "Oathsworn Vampire"
-      ]
-    },
-    {
-      "id": "2842-2946-4871-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Blood Artist",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cult Conscript",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher. A non-Skeleton creature has died under your control this turn.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
       "popularity": 2647,
       "missing": [
-        "Cult Conscript"
+        "Oathsworn Vampire"
       ]
     },
     {
@@ -3163,7 +3018,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2540,
+      "popularity": 2547,
       "missing": [
         "Animation Module"
       ]
@@ -3196,7 +3051,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2505,
+      "popularity": 2508,
       "missing": [
         "Unearth"
       ]
@@ -3235,7 +3090,7 @@
       "mana": "{1}{G}{G}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2471,
+      "popularity": 2486,
       "missing": [
         "The Unbeatable Squirrel Girl"
       ]
@@ -3282,85 +3137,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2448,
+      "popularity": 2453,
       "missing": [
         "Cauldron Familiar"
-      ]
-    },
-    {
-      "id": "1580-1829-4871-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vindictive Vampire",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite damage"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2440,
-      "missing": [
-        "Vindictive Vampire"
-      ]
-    },
-    {
-      "id": "147-2034-3125",
-      "cards": [
-        {
-          "name": "Ashnod's Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Victimize",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "You control another nontoken creature. You have two creature cards in your graveyard.",
-      "mana": "{3}{B}{R}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2424,
-      "missing": [
-        "Dualcaster Mage"
       ]
     },
     {
@@ -3395,87 +3174,44 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2361,
+      "popularity": 2364,
       "missing": [
         "Stridehangar Automaton"
       ]
     },
     {
-      "id": "3000-3124-5670",
+      "id": "413-2577-4871",
       "cards": [
         {
-          "name": "Chatterfang, Squirrel General",
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Savra, Queen of the Golgari",
+          "name": "Blasting Station",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifegain",
-        "Infinite Treasure tokens"
+        "Infinite damage"
       ],
       "requires": [],
-      "prerequisites": "You control at least one additional green creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 2269,
-      "missing": [
-        "Savra, Queen of the Golgari"
-      ]
-    },
-    {
-      "id": "1385-5670-6291",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Zulaport Cutthroat",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Stridehangar Automaton",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens",
-        "Infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
+      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2259,
+      "popularity": 2316,
       "missing": [
-        "Stridehangar Automaton"
+        "Blasting Station"
       ]
     },
     {
@@ -3506,42 +3242,46 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2259,
+      "popularity": 2262,
       "missing": [
         "Kaya's Ghostform"
       ]
     },
     {
-      "id": "147-2292-3125",
+      "id": "2228-3025-4279",
       "cards": [
         {
-          "name": "Viscera Seer",
+          "name": "Yawgmoth, Thran Physician",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Dualcaster Mage",
+          "name": "Hapatra, Vizier of Poisons",
           "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Victimize",
+          "name": "Bastion of Remembrance",
           "zones": [
-            "H"
+            "B"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Near-infinite card draw",
+        "Near-infinite lifegain triggers",
+        "Near-infinite lifeloss"
+      ],
       "requires": [],
-      "prerequisites": "You control another nontoken creature. You have two creature cards in your graveyard.",
-      "mana": "{3}{B}{R}{R}",
-      "bracket": "E",
+      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.\nAn opponent controls a creature.",
+      "mana": "",
+      "bracket": "S",
       "legal": true,
-      "popularity": 2238,
+      "popularity": 2193,
       "missing": [
-        "Dualcaster Mage"
+        "Hapatra, Vizier of Poisons"
       ]
     },
     {
@@ -3572,7 +3312,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2187,
+      "popularity": 2192,
       "missing": [
         "Ozox, the Clattering King"
       ]
@@ -3609,76 +3349,22 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2165,
+      "popularity": 2166,
       "missing": [
         "Stridehangar Automaton"
       ]
     },
     {
-      "id": "1580-4871-5670-5708",
+      "id": "1110-3356",
       "cards": [
         {
-          "name": "Warren Soultrader",
+          "name": "Polyraptor",
           "zones": [
-            "B"
+            "H"
           ]
         },
         {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vein Ripper",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifegain",
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2157,
-      "missing": [
-        "Vein Ripper"
-      ]
-    },
-    {
-      "id": "1580-4616-4871-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "G"
-          ]
-        },
-        {
-          "name": "Moldervine Reclamation",
+          "name": "Terror of the Peaks",
           "zones": [
             "B"
           ]
@@ -3686,52 +3372,13 @@
       ],
       "results": [],
       "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
-      "mana": "",
+      "prerequisites": "",
+      "mana": "{6}{G}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2141,
+      "popularity": 2136,
       "missing": [
-        "Moldervine Reclamation"
-      ]
-    },
-    {
-      "id": "3000-5670-6094",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vengeful Bloodwitch",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2137,
-      "missing": [
-        "Vengeful Bloodwitch"
+        "Polyraptor"
       ]
     },
     {
@@ -3773,50 +3420,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2118,
+      "popularity": 2117,
       "missing": [
         "Oathsworn Vampire"
-      ]
-    },
-    {
-      "id": "323-1580-4871-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Falkenrath Noble",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2101,
-      "missing": [
-        "Falkenrath Noble"
       ]
     },
     {
@@ -3851,7 +3457,7 @@
       "mana": "{2}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2038,
+      "popularity": 2040,
       "missing": [
         "Trudge Garden"
       ]
@@ -3888,9 +3494,42 @@
       "mana": "{2}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2033,
+      "popularity": 2035,
       "missing": [
         "Trudge Garden"
+      ]
+    },
+    {
+      "id": "2577-3899-4871",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spawning Pit",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2030,
+      "missing": [
+        "Spawning Pit"
       ]
     },
     {
@@ -3927,7 +3566,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2021,
+      "popularity": 2022,
       "missing": [
         "Fumulus, the Infestation"
       ]
@@ -3968,48 +3607,38 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1987,
+      "popularity": 1990,
       "missing": [
         "Open the Graves"
       ]
     },
     {
-      "id": "2842-5670-6291",
+      "id": "1110-4245",
       "cards": [
         {
-          "name": "Warren Soultrader",
+          "name": "Vrondiss, Rage of Ancients",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Blood Artist",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Stridehangar Automaton",
+          "name": "Terror of the Peaks",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens"
+        "Infinite creature tokens"
       ],
       "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
+      "prerequisites": "You have a way to give Vrondiss indestructible.\nYou have a way to deal damage to Vrondiss.",
       "mana": "",
-      "bracket": "E",
+      "bracket": "S",
       "legal": true,
-      "popularity": 1979,
+      "popularity": 1984,
       "missing": [
-        "Stridehangar Automaton"
+        "Vrondiss, Rage of Ancients"
       ]
     },
     {
@@ -4077,7 +3706,7 @@
       "mana": "{2}{B}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 1943,
+      "popularity": 1946,
       "missing": [
         "Scurry Oak"
       ]
@@ -4116,7 +3745,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1935,
+      "popularity": 1941,
       "missing": [
         "The Masamune"
       ]
@@ -4153,48 +3782,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1925,
+      "popularity": 1928,
       "missing": [
         "Ozox, the Clattering King"
-      ]
-    },
-    {
-      "id": "3000-5670-5931",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Funeral Room // Awakening Hall",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite Treasure tokens",
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Funeral Room is unlocked.\nYou control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1907,
-      "missing": [
-        "Funeral Room // Awakening Hall"
       ]
     },
     {
@@ -4221,7 +3811,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 1898,
+      "popularity": 1906,
       "missing": [
         "Silverclad Ferocidons"
       ]
@@ -4256,9 +3846,44 @@
       "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1889,
+      "popularity": 1891,
       "missing": [
         "Insidious Roots"
+      ]
+    },
+    {
+      "id": "2034-2577-7390",
+      "cards": [
+        {
+          "name": "The Ghoul, Gunslinger",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1829,
+      "missing": [
+        "The Ghoul, Gunslinger"
       ]
     },
     {
@@ -4296,7 +3921,7 @@
       "mana": "{2}{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1821,
+      "popularity": 1822,
       "missing": [
         "Ruthless Knave"
       ]
@@ -4329,9 +3954,42 @@
       "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1763,
+      "popularity": 1762,
       "missing": [
         "Desecrated Tomb"
+      ]
+    },
+    {
+      "id": "3054-4050-4314",
+      "cards": [
+        {
+          "name": "Oathsworn Vampire",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have gained life this turn.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1741,
+      "missing": [
+        "Oathsworn Vampire"
       ]
     },
     {
@@ -4368,7 +4026,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1740,
+      "popularity": 1741,
       "missing": [
         "Ogre Slumlord"
       ]
@@ -4405,7 +4063,7 @@
       "mana": "{2}{B}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 1732,
+      "popularity": 1734,
       "missing": [
         "Scurry Oak"
       ]
@@ -4444,82 +4102,6 @@
       ]
     },
     {
-      "id": "1580-4871-5670-6634",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Al Bhed Salvagers",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1679,
-      "missing": [
-        "Al Bhed Salvagers"
-      ]
-    },
-    {
-      "id": "147-3125-5147",
-      "cards": [
-        {
-          "name": "Goblin Bombardment",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Victimize",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite damage"
-      ],
-      "requires": [],
-      "prerequisites": "You control another nontoken creature. You have two creature cards in your graveyard.",
-      "mana": "{3}{B}{R}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1678,
-      "missing": [
-        "Dualcaster Mage"
-      ]
-    },
-    {
       "id": "2034-2738-4871",
       "cards": [
         {
@@ -4549,7 +4131,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1643,
+      "popularity": 1647,
       "missing": [
         "Tenacious Dead"
       ]
@@ -4585,7 +4167,7 @@
       "mana": "{7}{G} at most",
       "bracket": "O",
       "legal": true,
-      "popularity": 1617,
+      "popularity": 1620,
       "missing": [
         "Sprout Swarm"
       ]
@@ -4623,7 +4205,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1580,
+      "popularity": 1583,
       "missing": [
         "Quina, Qu Gourmet"
       ]
@@ -4671,118 +4253,13 @@
       ]
     },
     {
-      "id": "3719-6323",
+      "id": "2577-4871-6518",
       "cards": [
         {
-          "name": "Ruthless Technomancer",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Jumbo Cactuar",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite colored mana",
-        "Near-infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "Jumbo Cactuar does not have summoning sickness. Jumbo Cactuar cannot be blocked and killed by an opponent.",
-      "mana": "{3}{B}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1497,
-      "missing": [
-        "Jumbo Cactuar"
-      ]
-    },
-    {
-      "id": "1531-1580-4871-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Deathgreeter",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
+          "name": "Gravecrawler",
           "zones": [
             "G"
           ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1477,
-      "missing": [
-        "Deathgreeter"
-      ]
-    },
-    {
-      "id": "3490-3597-4050",
-      "cards": [
-        {
-          "name": "Animation Module",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Juri, Master of the Revue",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite +1/+1 counters on a creature",
-        "Infinite damage to one opponent"
-      ],
-      "requires": [],
-      "prerequisites": "You control an additional creature.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1473,
-      "missing": [
-        "Animation Module"
-      ]
-    },
-    {
-      "id": "1580-4871-5670-6794",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
         },
         {
           "name": "Pitiless Plunderer",
@@ -4791,29 +4268,60 @@
           ]
         },
         {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Susurian Voidborn",
+          "name": "The Sibsig Ceremony",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite lifeloss"
+        "Infinite creature tokens"
       ],
       "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
-      "mana": "",
+      "prerequisites": "You control a Zombie.",
+      "mana": "{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1409,
+      "popularity": 1523,
       "missing": [
-        "Susurian Voidborn"
+        "The Sibsig Ceremony"
+      ]
+    },
+    {
+      "id": "1084-3025-4279",
+      "cards": [
+        {
+          "name": "Yawgmoth, Thran Physician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flourishing Defenses",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bastion of Remembrance",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite card draw",
+        "Near-infinite lifegain triggers",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.\nAn opponent controls a creature.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1466,
+      "missing": [
+        "Flourishing Defenses"
       ]
     },
     {
@@ -4874,7 +4382,7 @@
       "mana": "{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1380,
+      "popularity": 1382,
       "missing": [
         "Liliana, Untouched by Death"
       ]
@@ -4909,48 +4417,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1378,
+      "popularity": 1381,
       "missing": [
         "Revel in Riches"
-      ]
-    },
-    {
-      "id": "1385-5670-6705",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Zulaport Cutthroat",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Quina, Qu Gourmet",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1360,
-      "missing": [
-        "Quina, Qu Gourmet"
       ]
     },
     {
@@ -4975,44 +4444,9 @@
       "mana": "{4}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1301,
+      "popularity": 1302,
       "missing": [
         "Spawnsire of Ulamog"
-      ]
-    },
-    {
-      "id": "147-3125-4050",
-      "cards": [
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Victimize",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "You control another nontoken creature. You have two creature cards in your graveyard.",
-      "mana": "{3}{B}{R}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1295,
-      "missing": [
-        "Dualcaster Mage"
       ]
     },
     {
@@ -5051,7 +4485,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1273,
+      "popularity": 1278,
       "missing": [
         "Drivnod, Carnage Dominus"
       ]
@@ -5088,7 +4522,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1254,
+      "popularity": 1256,
       "missing": [
         "Quina, Qu Gourmet"
       ]
@@ -5126,7 +4560,7 @@
       "mana": "{1}{G}{G}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1231,
+      "popularity": 1237,
       "missing": [
         "The Unbeatable Squirrel Girl"
       ]
@@ -5159,48 +4593,46 @@
       "mana": "{2}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1187,
+      "popularity": 1188,
       "missing": [
         "Jade Mage"
       ]
     },
     {
-      "id": "2842-5670-6705",
+      "id": "2034-2308-3025",
       "cards": [
         {
-          "name": "Warren Soultrader",
+          "name": "Trudge Garden",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Blood Artist",
+          "name": "Ashnod's Altar",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Quina, Qu Gourmet",
+          "name": "Bastion of Remembrance",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
+        "Infinite lifegain",
         "Infinite lifegain triggers",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens"
+        "Infinite lifeloss"
       ],
       "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "S",
+      "prerequisites": "You have a way to gain life.",
+      "mana": "{2}",
+      "bracket": "E",
       "legal": true,
-      "popularity": 1181,
+      "popularity": 1184,
       "missing": [
-        "Quina, Qu Gourmet"
+        "Trudge Garden"
       ]
     },
     {
@@ -5236,9 +4668,42 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1176,
+      "popularity": 1177,
       "missing": [
         "Stridehangar Automaton"
+      ]
+    },
+    {
+      "id": "2577-4871-4924",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Heartless Summoning",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one additional Zombie.",
+      "mana": "{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1175,
+      "missing": [
+        "Heartless Summoning"
       ]
     },
     {
@@ -5269,7 +4734,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1155,
+      "popularity": 1156,
       "missing": [
         "Haunt of the Dead Marshes"
       ]
@@ -5304,50 +4769,79 @@
       "mana": "{3}{R}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1134,
+      "popularity": 1135,
       "missing": [
         "Pashalik Mons"
       ]
     },
     {
-      "id": "1580-4871-5670-7192",
+      "id": "2292-2577-7390",
       "cards": [
         {
-          "name": "Warren Soultrader",
+          "name": "The Ghoul, Gunslinger",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Pitiless Plunderer",
+          "name": "Gravecrawler",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Reassembling Skeleton",
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1131,
+      "missing": [
+        "The Ghoul, Gunslinger"
+      ]
+    },
+    {
+      "id": "3025-4186-4279",
+      "cards": [
+        {
+          "name": "Yawgmoth, Thran Physician",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Scurry Oak",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Grave Venerations",
+          "name": "Bastion of Remembrance",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite lifeloss"
+        "Infinite card draw",
+        "Near-infinite lifegain triggers",
+        "Near-infinite lifeloss"
       ],
       "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
-      "mana": "",
-      "bracket": "E",
+      "prerequisites": "You control at least two additional creatures.\nScurry Oak has no +1/+1 counters on it.\nYour life total is at least 2.",
+      "mana": "{2}{B}{B}",
+      "bracket": "S",
       "legal": true,
-      "popularity": 1132,
+      "popularity": 1128,
       "missing": [
-        "Grave Venerations"
+        "Scurry Oak"
       ]
     },
     {
@@ -5378,7 +4872,7 @@
       "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1097,
+      "popularity": 1099,
       "missing": [
         "Skeleton Crew"
       ]
@@ -5419,50 +4913,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1097,
+      "popularity": 1098,
       "missing": [
         "Fumulus, the Infestation"
-      ]
-    },
-    {
-      "id": "1580-4871-5670-6559",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Venerated Stormsinger",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1079,
-      "missing": [
-        "Venerated Stormsinger"
       ]
     },
     {
@@ -5496,47 +4949,6 @@
       "popularity": 1062,
       "missing": [
         "Tenacious Dead"
-      ]
-    },
-    {
-      "id": "1580-4871-5670-7452",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cauldron of Essence",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1058,
-      "missing": [
-        "Cauldron of Essence"
       ]
     },
     {
@@ -5580,51 +4992,71 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1021,
+      "popularity": 1020,
       "missing": [
         "Cauldron Familiar"
       ]
     },
     {
-      "id": "1580-4871-5670-7286",
+      "id": "4050-4314-6115",
       "cards": [
         {
-          "name": "Warren Soultrader",
+          "name": "Ozox, the Clattering King",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Pitiless Plunderer",
+          "name": "Phyrexian Altar",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Reassembling Skeleton",
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 995,
+      "missing": [
+        "Ozox, the Clattering King"
+      ]
+    },
+    {
+      "id": "4314-7084",
+      "cards": [
+        {
+          "name": "Beifong's Bounty Hunters",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "South Wind Avatar",
+          "name": "Pawn of Ulamog",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite lifegain",
-        "Infinite lifeloss"
+        "Infinite colorless mana"
       ],
       "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
+      "prerequisites": "You control a land. You control an Eldrazi Spawn.",
       "mana": "",
-      "bracket": "E",
+      "bracket": "S",
       "legal": true,
-      "popularity": 1017,
+      "popularity": 983,
       "missing": [
-        "South Wind Avatar"
+        "Beifong's Bounty Hunters"
       ]
     },
     {
@@ -5659,7 +5091,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 941,
+      "popularity": 945,
       "missing": [
         "Animation Module"
       ]
@@ -5692,47 +5124,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 933,
+      "popularity": 935,
       "missing": [
         "Bog Initiate"
-      ]
-    },
-    {
-      "id": "222-3719-5147",
-      "cards": [
-        {
-          "name": "Slimefoot and Squee",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ruthless Technomancer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Goblin Bombardment",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite damage",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control a nontoken creature with base power eight or greater.\nYou control at least one Saproling.",
-      "mana": "{1}{B}{R}{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 920,
-      "missing": [
-        "Slimefoot and Squee"
       ]
     },
     {
@@ -5765,7 +5159,7 @@
       "mana": "{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 885,
+      "popularity": 890,
       "missing": [
         "Joo Dee, One of Many"
       ]
@@ -5804,81 +5198,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 882,
+      "popularity": 883,
       "missing": [
         "Open the Graves"
-      ]
-    },
-    {
-      "id": "222-2292-3719",
-      "cards": [
-        {
-          "name": "Slimefoot and Squee",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ruthless Technomancer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Viscera Seer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control a nontoken creature with base power eight or greater.\nYou control at least one Saproling.",
-      "mana": "{1}{B}{R}{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 876,
-      "missing": [
-        "Slimefoot and Squee"
-      ]
-    },
-    {
-      "id": "147-2438-3125",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Carrion Feeder",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Victimize",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite +1/+1 counters on a creature"
-      ],
-      "requires": [],
-      "prerequisites": "You control another nontoken creature. You have two creature cards in your graveyard.",
-      "mana": "{3}{B}{R}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 870,
-      "missing": [
-        "Dualcaster Mage"
       ]
     },
     {
@@ -5952,44 +5274,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 865,
+      "popularity": 864,
       "missing": [
         "Anax, Hardened in the Forge"
-      ]
-    },
-    {
-      "id": "222-2034-3719",
-      "cards": [
-        {
-          "name": "Slimefoot and Squee",
-          "zones": [
-            "G"
-          ]
-        },
-        {
-          "name": "Ruthless Technomancer",
-          "zones": [
-            "G"
-          ]
-        },
-        {
-          "name": "Ashnod's Altar",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one Saproling.",
-      "mana": "{1}{B}{R}{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 849,
-      "missing": [
-        "Slimefoot and Squee"
       ]
     },
     {
@@ -6025,9 +5312,92 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 838,
+      "popularity": 840,
       "missing": [
         "Stridehangar Automaton"
+      ]
+    },
+    {
+      "id": "2438-2530-2577-2842",
+      "cards": [
+        {
+          "name": "Carnival of Souls",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 823,
+      "missing": [
+        "Carnival of Souls"
+      ]
+    },
+    {
+      "id": "2292-2738-4314-4871",
+      "cards": [
+        {
+          "name": "Tenacious Dead",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 813,
+      "missing": [
+        "Tenacious Dead"
       ]
     },
     {
@@ -6100,7 +5470,7 @@
       "mana": "{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 807,
+      "popularity": 808,
       "missing": [
         "Carnival of Souls"
       ]
@@ -6185,7 +5555,7 @@
       "mana": "{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 801,
+      "popularity": 802,
       "missing": [
         "Carnival of Souls"
       ]
@@ -6220,7 +5590,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 780,
+      "popularity": 785,
       "missing": [
         "Krenko, Baron of Tin Street"
       ]
@@ -6247,7 +5617,7 @@
       "mana": "{R}",
       "bracket": "E",
       "legal": true,
-      "popularity": 759,
+      "popularity": 758,
       "missing": [
         "Crown of Flames"
       ]
@@ -6291,6 +5661,48 @@
       "bracket": "E",
       "legal": true,
       "popularity": 756,
+      "missing": [
+        "Carnival of Souls"
+      ]
+    },
+    {
+      "id": "1385-2438-2530-2577",
+      "cards": [
+        {
+          "name": "Carnival of Souls",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zulaport Cutthroat",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 755,
       "missing": [
         "Carnival of Souls"
       ]
@@ -6352,42 +5764,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 731,
+      "popularity": 734,
       "missing": [
         "Magmatic Galleon"
-      ]
-    },
-    {
-      "id": "222-3719-4050",
-      "cards": [
-        {
-          "name": "Slimefoot and Squee",
-          "zones": [
-            "G"
-          ]
-        },
-        {
-          "name": "Ruthless Technomancer",
-          "zones": [
-            "G"
-          ]
-        },
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control at least one Saproling.",
-      "mana": "{1}{B}{R}{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 728,
-      "missing": [
-        "Slimefoot and Squee"
       ]
     },
     {
@@ -6426,7 +5805,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 719,
+      "popularity": 718,
       "missing": [
         "Anax, Hardened in the Forge"
       ]
@@ -6471,41 +5850,36 @@
       ]
     },
     {
-      "id": "3000-5670-7399",
+      "id": "2738-4050-4314",
       "cards": [
         {
-          "name": "Warren Soultrader",
+          "name": "Tenacious Dead",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Chatterfang, Squirrel General",
+          "name": "Phyrexian Altar",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Bogwater Lumaret",
+          "name": "Pawn of Ulamog",
           "zones": [
             "B"
           ]
         }
       ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite Treasure tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers"
-      ],
+      "results": [],
       "requires": [],
-      "prerequisites": "Your life total is at least 2.\nYou control at least one additional creature.",
+      "prerequisites": "",
       "mana": "",
-      "bracket": "S",
+      "bracket": "E",
       "legal": true,
-      "popularity": 674,
+      "popularity": 686,
       "missing": [
-        "Bogwater Lumaret"
+        "Tenacious Dead"
       ]
     },
     {
@@ -6580,45 +5954,6 @@
       ]
     },
     {
-      "id": "3000-5670-6794",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Susurian Voidborn",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 609,
-      "missing": [
-        "Susurian Voidborn"
-      ]
-    },
-    {
       "id": "2034-4871-5433",
       "cards": [
         {
@@ -6648,9 +5983,45 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 607,
+      "popularity": 610,
       "missing": [
         "Krenko, Baron of Tin Street"
+      ]
+    },
+    {
+      "id": "2034-2577-3537",
+      "cards": [
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bog Initiate",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite black mana",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one additional Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 608,
+      "missing": [
+        "Bog Initiate"
       ]
     },
     {
@@ -6690,56 +6061,16 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 601,
+      "popularity": 603,
       "missing": [
         "Animation Module"
       ]
     },
     {
-      "id": "3000-5670-5708",
+      "id": "2438-2738-4314-4871",
       "cards": [
         {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vein Ripper",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens",
-        "Infinite lifegain"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 585,
-      "missing": [
-        "Vein Ripper"
-      ]
-    },
-    {
-      "id": "397-2034-4871",
-      "cards": [
-        {
-          "name": "Stimulus Package",
+          "name": "Tenacious Dead",
           "zones": [
             "B"
           ]
@@ -6751,23 +6082,136 @@
           ]
         },
         {
-          "name": "Ashnod's Altar",
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite colorless mana"
+        "Infinite +1/+1 counters on a creature",
+        "Infinite colored mana"
       ],
       "requires": [],
-      "prerequisites": "You control a Treasure.",
+      "prerequisites": "",
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 549,
+      "popularity": 602,
       "missing": [
-        "Stimulus Package"
+        "Tenacious Dead"
+      ]
+    },
+    {
+      "id": "2577-4871-6495",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Evereth, Viceroy of Plunder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 582,
+      "missing": [
+        "Evereth, Viceroy of Plunder"
+      ]
+    },
+    {
+      "id": "924-2577-4871",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Ghoul",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 571,
+      "missing": [
+        "Phyrexian Ghoul"
+      ]
+    },
+    {
+      "id": "2577-4247-4871",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodthrone Vampire",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 564,
+      "missing": [
+        "Bloodthrone Vampire"
       ]
     },
     {
@@ -6806,48 +6250,44 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 548,
+      "popularity": 549,
       "missing": [
         "Anax, Hardened in the Forge"
       ]
     },
     {
-      "id": "3000-5670-6634",
+      "id": "397-2034-4871",
       "cards": [
         {
-          "name": "Warren Soultrader",
+          "name": "Stimulus Package",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Chatterfang, Squirrel General",
+          "name": "Pitiless Plunderer",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Al Bhed Salvagers",
+          "name": "Ashnod's Altar",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens"
+        "Infinite colorless mana"
       ],
       "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
+      "prerequisites": "You control a Treasure.",
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 547,
+      "popularity": 549,
       "missing": [
-        "Al Bhed Salvagers"
+        "Stimulus Package"
       ]
     },
     {
@@ -6884,7 +6324,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 545,
+      "popularity": 547,
       "missing": [
         "Roaming Throne"
       ]
@@ -6920,7 +6360,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 541,
+      "popularity": 544,
       "missing": [
         "Animation Module"
       ]
@@ -6965,42 +6405,38 @@
       ]
     },
     {
-      "id": "1829-3000-5670",
+      "id": "228-1742-2577",
       "cards": [
         {
-          "name": "Warren Soultrader",
+          "name": "Gravecrawler",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Vindictive Vampire",
+          "name": "Skirge Familiar",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Chatterfang, Squirrel General",
+          "name": "Skullclamp",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite Treasure tokens",
-        "Infinite damage"
+        "Infinite looting"
       ],
       "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
+      "prerequisites": "You control another Zombie.",
+      "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 534,
+      "popularity": 529,
       "missing": [
-        "Vindictive Vampire"
+        "Skirge Familiar"
       ]
     },
     {
@@ -7034,44 +6470,6 @@
       "popularity": 516,
       "missing": [
         "Stimulus Package"
-      ]
-    },
-    {
-      "id": "222-2438-3719",
-      "cards": [
-        {
-          "name": "Slimefoot and Squee",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ruthless Technomancer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Carrion Feeder",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite +1/+1 counters on a creature",
-        "Infinite colored mana",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control a nontoken creature with base power eight or greater.\nYou control at least one Saproling.",
-      "mana": "{1}{B}{R}{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 515,
-      "missing": [
-        "Slimefoot and Squee"
       ]
     },
     {
@@ -7157,7 +6555,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 495,
+      "popularity": 496,
       "missing": [
         "Cauldron Familiar"
       ]
@@ -7192,7 +6590,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 491,
+      "popularity": 490,
       "missing": [
         "Krenko, Baron of Tin Street"
       ]
@@ -7225,9 +6623,44 @@
       "mana": "{B}{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 476,
+      "popularity": 477,
       "missing": [
         "Razorlash Transmogrant"
+      ]
+    },
+    {
+      "id": "2511-2577-4871",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloodflow Connoisseur",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 476,
+      "missing": [
+        "Bloodflow Connoisseur"
       ]
     },
     {
@@ -7266,7 +6699,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 468,
+      "popularity": 467,
       "missing": [
         "Totentanz, Swarm Piper"
       ]
@@ -7340,48 +6773,9 @@
       "mana": "{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 461,
+      "popularity": 462,
       "missing": [
         "Not Dead After All"
-      ]
-    },
-    {
-      "id": "323-3000-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Falkenrath Noble",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 460,
-      "missing": [
-        "Falkenrath Noble"
       ]
     },
     {
@@ -7417,7 +6811,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 459,
+      "popularity": 461,
       "missing": [
         "Quina, Qu Gourmet"
       ]
@@ -7460,7 +6854,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 449,
+      "popularity": 450,
       "missing": [
         "Animation Module"
       ]
@@ -7498,7 +6892,7 @@
       "mana": "{1}{G}{G}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 438,
+      "popularity": 443,
       "missing": [
         "The Unbeatable Squirrel Girl"
       ]
@@ -7537,9 +6931,38 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 430,
+      "popularity": 431,
       "missing": [
         "Anax, Hardened in the Forge"
+      ]
+    },
+    {
+      "id": "202-2498",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lich",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 426,
+      "missing": [
+        "Lich"
       ]
     },
     {
@@ -7576,7 +6999,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 424,
+      "popularity": 426,
       "missing": [
         "Sek'Kuar, Deathkeeper"
       ]
@@ -7687,50 +7110,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 412,
+      "popularity": 414,
       "missing": [
         "Sek'Kuar, Deathkeeper"
-      ]
-    },
-    {
-      "id": "1580-4871-5670-5933",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Popular Egotist",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 394,
-      "missing": [
-        "Popular Egotist"
       ]
     },
     {
@@ -7796,6 +7178,35 @@
       ]
     },
     {
+      "id": "1110-3748",
+      "cards": [
+        {
+          "name": "Hornet Nest",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Hornet Nest indestructible.\nYou have a way to deal damage to Hornet Nest.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 385,
+      "missing": [
+        "Hornet Nest"
+      ]
+    },
+    {
       "id": "997-4871-6705",
       "cards": [
         {
@@ -7827,7 +7238,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 381,
+      "popularity": 383,
       "missing": [
         "Quina, Qu Gourmet"
       ]
@@ -7868,6 +7279,39 @@
       ]
     },
     {
+      "id": "2292-4871-5433",
+      "cards": [
+        {
+          "name": "Krenko, Baron of Tin Street",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one Treasure.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 367,
+      "missing": [
+        "Krenko, Baron of Tin Street"
+      ]
+    },
+    {
       "id": "1580-4871-5075-5147",
       "cards": [
         {
@@ -7903,7 +7347,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 367,
+      "popularity": 365,
       "missing": [
         "Ogre Slumlord"
       ]
@@ -7946,36 +7390,32 @@
       ]
     },
     {
-      "id": "2292-4871-5433",
+      "id": "2498-4126",
       "cards": [
         {
-          "name": "Krenko, Baron of Tin Street",
+          "name": "Sheoldred, the Apocalypse",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Viscera Seer",
+          "name": "Nefarious Lich",
           "zones": [
             "B"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Infinite card draw"
+      ],
       "requires": [],
-      "prerequisites": "You control at least one Treasure.",
+      "prerequisites": "You have a way to draw a card.",
       "mana": "",
-      "bracket": "E",
+      "bracket": "S",
       "legal": true,
-      "popularity": 363,
+      "popularity": 349,
       "missing": [
-        "Krenko, Baron of Tin Street"
+        "Nefarious Lich"
       ]
     },
     {
@@ -8006,69 +7446,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 334,
+      "popularity": 333,
       "missing": [
         "Embalmer's Tools"
-      ]
-    },
-    {
-      "id": "792-1580-4050",
-      "cards": [
-        {
-          "name": "Totentanz, Swarm Piper",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 323,
-      "missing": [
-        "Totentanz, Swarm Piper"
-      ]
-    },
-    {
-      "id": "5147-5199",
-      "cards": [
-        {
-          "name": "Saber Ants",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Goblin Bombardment",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control another creature. Saber Ants is indestructible.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 321,
-      "missing": [
-        "Saber Ants"
       ]
     },
     {
@@ -8107,9 +7487,69 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 320,
+      "popularity": 322,
       "missing": [
         "Roaming Throne"
+      ]
+    },
+    {
+      "id": "5147-5199",
+      "cards": [
+        {
+          "name": "Saber Ants",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Bombardment",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control another creature. Saber Ants is indestructible.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 322,
+      "missing": [
+        "Saber Ants"
+      ]
+    },
+    {
+      "id": "792-1580-4050",
+      "cards": [
+        {
+          "name": "Totentanz, Swarm Piper",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 322,
+      "missing": [
+        "Totentanz, Swarm Piper"
       ]
     },
     {
@@ -8145,7 +7585,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 317,
+      "popularity": 319,
       "missing": [
         "Quina, Qu Gourmet"
       ]
@@ -8184,9 +7624,85 @@
       "mana": "{1}{G}{G}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 315,
+      "popularity": 318,
       "missing": [
         "The Unbeatable Squirrel Girl"
+      ]
+    },
+    {
+      "id": "2577-4871-6797",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phantom Train",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 307,
+      "missing": [
+        "Phantom Train"
+      ]
+    },
+    {
+      "id": "1116-1580-2438-4871",
+      "cards": [
+        {
+          "name": "Sek'Kuar, Deathkeeper",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 301,
+      "missing": [
+        "Sek'Kuar, Deathkeeper"
       ]
     },
     {
@@ -8235,10 +7751,51 @@
       ]
     },
     {
-      "id": "1116-1580-2438-4871",
+      "id": "997-2738-4314-4871",
       "cards": [
         {
-          "name": "Sek'Kuar, Deathkeeper",
+          "name": "Tenacious Dead",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Woe Strider",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 291,
+      "missing": [
+        "Tenacious Dead"
+      ]
+    },
+    {
+      "id": "1580-4871-5231",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
           "zones": [
             "B"
           ]
@@ -8250,29 +7807,21 @@
           ]
         },
         {
-          "name": "Carrion Feeder",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
+          "name": "Thermopod",
           "zones": [
             "B"
           ]
         }
       ],
-      "results": [
-        "Infinite +1/+1 counters on a creature"
-      ],
+      "results": [],
       "requires": [],
       "prerequisites": "",
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 300,
+      "popularity": 289,
       "missing": [
-        "Sek'Kuar, Deathkeeper"
+        "Thermopod"
       ]
     },
     {
@@ -8377,10 +7926,10 @@
       ]
     },
     {
-      "id": "1580-4871-5231",
+      "id": "1580-2292-4871-7316",
       "cards": [
         {
-          "name": "Pitiless Plunderer",
+          "name": "Viscera Seer",
           "zones": [
             "B"
           ]
@@ -8392,7 +7941,13 @@
           ]
         },
         {
-          "name": "Thermopod",
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rat King, Pale Piper",
           "zones": [
             "B"
           ]
@@ -8404,9 +7959,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 288,
+      "popularity": 287,
       "missing": [
-        "Thermopod"
+        "Rat King, Pale Piper"
       ]
     },
     {
@@ -8445,48 +8000,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 286,
+      "popularity": 287,
       "missing": [
         "Totentanz, Swarm Piper"
-      ]
-    },
-    {
-      "id": "1580-2292-4871-7316",
-      "cards": [
-        {
-          "name": "Viscera Seer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "G"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Rat King, Pale Piper",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 285,
-      "missing": [
-        "Rat King, Pale Piper"
       ]
     },
     {
@@ -8524,39 +8040,6 @@
       "popularity": 282,
       "missing": [
         "Slimefoot and Squee"
-      ]
-    },
-    {
-      "id": "147-997-3125",
-      "cards": [
-        {
-          "name": "Woe Strider",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Victimize",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control another nontoken creature. You have two creature cards in your graveyard.",
-      "mana": "{3}{B}{R}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 274,
-      "missing": [
-        "Dualcaster Mage"
       ]
     },
     {
@@ -8644,7 +8127,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 249,
+      "popularity": 248,
       "missing": [
         "Oathkeeper, Takeno's Daisho"
       ]
@@ -8680,39 +8163,75 @@
       ]
     },
     {
-      "id": "397-2842-5670",
+      "id": "2034-2577-2948",
       "cards": [
         {
-          "name": "Stimulus Package",
+          "name": "Ashnod's Altar",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Warren Soultrader",
+          "name": "Initiates of the Ebon Hand",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Blood Artist",
+          "name": "Gravecrawler",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite lifegain triggers",
-        "Infinite lifeloss"
+        "Infinite black mana",
+        "Infinite colorless mana"
       ],
       "requires": [],
-      "prerequisites": "You control an additional creature.\nYour life total is at least 2.",
+      "prerequisites": "An extra zombie on the battlefield.",
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 212,
+      "popularity": 225,
       "missing": [
-        "Stimulus Package"
+        "Initiates of the Ebon Hand"
+      ]
+    },
+    {
+      "id": "1283-2034-2577",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chromatic Orrery",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 224,
+      "missing": [
+        "Chromatic Orrery"
       ]
     },
     {
@@ -8745,48 +8264,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 207,
+      "popularity": 208,
       "missing": [
         "Displaced Dinosaurs"
-      ]
-    },
-    {
-      "id": "3000-5670-6559",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Venerated Stormsinger",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 202,
-      "missing": [
-        "Venerated Stormsinger"
       ]
     },
     {
@@ -8823,50 +8303,45 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 202,
+      "popularity": 203,
       "missing": [
         "Totentanz, Swarm Piper"
       ]
     },
     {
-      "id": "1580-4446-4871-5670",
+      "id": "2034-2577-3263",
       "cards": [
         {
-          "name": "Warren Soultrader",
+          "name": "Gravecrawler",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Pitiless Plunderer",
+          "name": "Ashnod's Altar",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Relic Vial",
+          "name": "Mycosynth Lattice",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite lifeloss"
+        "Infinite colored mana",
+        "Infinite colorless mana"
       ],
       "requires": [],
-      "prerequisites": "Your life total is 2 or higher. You control at least one Cleric",
+      "prerequisites": "You control an additional Zombie.",
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 192,
+      "popularity": 202,
       "missing": [
-        "Relic Vial"
+        "Mycosynth Lattice"
       ]
     },
     {
@@ -8929,6 +8404,81 @@
       "popularity": 190,
       "missing": [
         "One with the Kami"
+      ]
+    },
+    {
+      "id": "997-2577-7390",
+      "cards": [
+        {
+          "name": "The Ghoul, Gunslinger",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Woe Strider",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 185,
+      "missing": [
+        "The Ghoul, Gunslinger"
+      ]
+    },
+    {
+      "id": "2738-4314-4871-5147",
+      "cards": [
+        {
+          "name": "Tenacious Dead",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Bombardment",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 185,
+      "missing": [
+        "Tenacious Dead"
       ]
     },
     {
@@ -9037,36 +8587,38 @@
       ]
     },
     {
-      "id": "1580-2034-3263",
+      "id": "2577-4871-8095",
       "cards": [
         {
-          "name": "Reassembling Skeleton",
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Ashnod's Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Mycosynth Lattice",
+          "name": "Hammerhead, Maggia Boss",
           "zones": [
             "B"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
       "requires": [],
-      "prerequisites": "",
+      "prerequisites": "You control an additional Zombie.\nYou control another Zombie.",
       "mana": "",
-      "bracket": "E",
+      "bracket": "O",
       "legal": true,
-      "popularity": 174,
+      "popularity": 177,
       "missing": [
-        "Mycosynth Lattice"
+        "Hammerhead, Maggia Boss"
       ]
     },
     {
@@ -9107,9 +8659,75 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 174,
+      "popularity": 176,
       "missing": [
         "Animation Module"
+      ]
+    },
+    {
+      "id": "222-4050-4314",
+      "cards": [
+        {
+          "name": "Slimefoot and Squee",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one Saproling.\nYou control at least one additional nontoken creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 175,
+      "missing": [
+        "Slimefoot and Squee"
+      ]
+    },
+    {
+      "id": "1580-2034-3263",
+      "cards": [
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mycosynth Lattice",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 174,
+      "missing": [
+        "Mycosynth Lattice"
       ]
     },
     {
@@ -9150,7 +8768,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 169,
+      "popularity": 168,
       "missing": [
         "Blight Mound"
       ]
@@ -9197,42 +8815,39 @@
       ]
     },
     {
-      "id": "3000-5670-5933",
+      "id": "228-1475-4871",
       "cards": [
         {
-          "name": "Warren Soultrader",
+          "name": "One with the Kami",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Chatterfang, Squirrel General",
+          "name": "Skullclamp",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Popular Egotist",
+          "name": "Pitiless Plunderer",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite Treasure tokens",
-        "Infinite lifeloss"
+        "Infinite card draw",
+        "Near-infinite creature tokens"
       ],
       "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
+      "prerequisites": "You control a creature with toughness equal to one, except the creature with One with the Kami attached.",
+      "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 160,
+      "popularity": 167,
       "missing": [
-        "Popular Egotist"
+        "One with the Kami"
       ]
     },
     {
@@ -9274,6 +8889,39 @@
       "popularity": 155,
       "missing": [
         "Golgari Germination"
+      ]
+    },
+    {
+      "id": "2577-2899-4871",
+      "cards": [
+        {
+          "name": "Kaervek, the Spiteful",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one additional Zombie.",
+      "mana": "{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 145,
+      "missing": [
+        "Kaervek, the Spiteful"
       ]
     },
     {
@@ -9335,7 +8983,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 143,
+      "popularity": 144,
       "missing": [
         "The Ooze"
       ]
@@ -9417,47 +9065,6 @@
       ]
     },
     {
-      "id": "640-1580-4871-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Dross Harvester",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "G"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifegain"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 132,
-      "missing": [
-        "Dross Harvester"
-      ]
-    },
-    {
       "id": "876-1475-4050",
       "cards": [
         {
@@ -9528,6 +9135,76 @@
       ]
     },
     {
+      "id": "2577-4871-5231",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thermopod",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 124,
+      "missing": [
+        "Thermopod"
+      ]
+    },
+    {
+      "id": "2438-4871-5433",
+      "cards": [
+        {
+          "name": "Krenko, Baron of Tin Street",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one Treasure.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 122,
+      "missing": [
+        "Krenko, Baron of Tin Street"
+      ]
+    },
+    {
       "id": "1245-3000",
       "cards": [
         {
@@ -9593,41 +9270,6 @@
       "popularity": 121,
       "missing": [
         "Roaming Throne"
-      ]
-    },
-    {
-      "id": "2438-4871-5433",
-      "cards": [
-        {
-          "name": "Krenko, Baron of Tin Street",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Carrion Feeder",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite +1/+1 counters on a creature"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one Treasure.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 120,
-      "missing": [
-        "Krenko, Baron of Tin Street"
       ]
     },
     {
@@ -9750,6 +9392,41 @@
       ]
     },
     {
+      "id": "4871-5147-8168",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Draconic Visitor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Bombardment",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 112,
+      "missing": [
+        "Draconic Visitor"
+      ]
+    },
+    {
       "id": "997-3284-3490-4871",
       "cards": [
         {
@@ -9792,7 +9469,7 @@
       ]
     },
     {
-      "id": "4871-5147-8168",
+      "id": "997-1580-4871-5334",
       "cards": [
         {
           "name": "Pitiless Plunderer",
@@ -9801,29 +9478,33 @@
           ]
         },
         {
-          "name": "Draconic Visitor",
+          "name": "Reassembling Skeleton",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Goblin Bombardment",
+          "name": "Woe Strider",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Roaming Throne",
           "zones": [
             "B"
           ]
         }
       ],
-      "results": [
-        "Infinite damage"
-      ],
+      "results": [],
       "requires": [],
-      "prerequisites": "You control another creature.",
+      "prerequisites": "",
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 109,
+      "popularity": 107,
       "missing": [
-        "Draconic Visitor"
+        "Roaming Throne"
       ]
     },
     {
@@ -9867,45 +9548,6 @@
       "popularity": 107,
       "missing": [
         "Slimefoot and Squee"
-      ]
-    },
-    {
-      "id": "997-1580-4871-5334",
-      "cards": [
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Woe Strider",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Roaming Throne",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 106,
-      "missing": [
-        "Roaming Throne"
       ]
     },
     {
@@ -9985,44 +9627,6 @@
       ]
     },
     {
-      "id": "3000-3188-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Social Climber",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 102,
-      "missing": [
-        "Social Climber"
-      ]
-    },
-    {
       "id": "1580-4871-5147-6112",
       "cards": [
         {
@@ -10061,6 +9665,39 @@
       "popularity": 99,
       "missing": [
         "Fumulus, the Infestation"
+      ]
+    },
+    {
+      "id": "2577-3983-4871",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Night of Souls' Betrayal",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one additional Zombie.",
+      "mana": "{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 98,
+      "missing": [
+        "Night of Souls' Betrayal"
       ]
     },
     {
@@ -10138,6 +9775,51 @@
       ]
     },
     {
+      "id": "2577-4314-4871-5009",
+      "cards": [
+        {
+          "name": "Ruthless Knave",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite colorless mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control another Zombie.",
+      "mana": "{2}{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 94,
+      "missing": [
+        "Ruthless Knave"
+      ]
+    },
+    {
       "id": "1417-1580-2292-4871",
       "cards": [
         {
@@ -10174,6 +9856,45 @@
       "popularity": 92,
       "missing": [
         "Bridge from Below"
+      ]
+    },
+    {
+      "id": "997-1580-4871-7316",
+      "cards": [
+        {
+          "name": "Woe Strider",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rat King, Pale Piper",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 90,
+      "missing": [
+        "Rat King, Pale Piper"
       ]
     },
     {
@@ -10221,42 +9942,32 @@
       ]
     },
     {
-      "id": "997-1580-4871-7316",
+      "id": "1110-1724",
       "cards": [
         {
-          "name": "Woe Strider",
+          "name": "Sekki, Seasons' Guide",
           "zones": [
-            "B"
+            "H"
           ]
         },
         {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "G"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Rat King, Pale Piper",
+          "name": "Terror of the Peaks",
           "zones": [
             "B"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Infinite damage"
+      ],
       "requires": [],
       "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
+      "mana": "{5}{G}{G}{G}",
+      "bracket": "P",
       "legal": true,
       "popularity": 89,
       "missing": [
-        "Rat King, Pale Piper"
+        "Sekki, Seasons' Guide"
       ]
     },
     {
@@ -10284,6 +9995,99 @@
       "popularity": 86,
       "missing": [
         "Sprouting Phytohydra"
+      ]
+    },
+    {
+      "id": "487-1110",
+      "cards": [
+        {
+          "name": "Sporeweb Weaver",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Sporeweb Weaver indestructible.\nYou have a way to cause a creature to enter the battlefield under your control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 85,
+      "missing": [
+        "Sporeweb Weaver"
+      ]
+    },
+    {
+      "id": "1110-3760",
+      "cards": [
+        {
+          "name": "Broodhatch Nantuko",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Broodhatch Nantuko indestructible.\nYou have a way to deal damage to Broodhatch Nantuko.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 82,
+      "missing": [
+        "Broodhatch Nantuko"
+      ]
+    },
+    {
+      "id": "2292-4871-8168",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Draconic Visitor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 82,
+      "missing": [
+        "Draconic Visitor"
       ]
     },
     {
@@ -10322,39 +10126,6 @@
       ]
     },
     {
-      "id": "2292-4871-8168",
-      "cards": [
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Draconic Visitor",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Viscera Seer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control another creature.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 80,
-      "missing": [
-        "Draconic Visitor"
-      ]
-    },
-    {
       "id": "3000-4050-7306",
       "cards": [
         {
@@ -10388,6 +10159,39 @@
       ]
     },
     {
+      "id": "159-2577-4871",
+      "cards": [
+        {
+          "name": "Geth, Thane of Contracts",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 78,
+      "missing": [
+        "Geth, Thane of Contracts"
+      ]
+    },
+    {
       "id": "4050-4871-8168",
       "cards": [
         {
@@ -10417,9 +10221,77 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 75,
+      "popularity": 76,
       "missing": [
         "Draconic Visitor"
+      ]
+    },
+    {
+      "id": "1812-2034-2577",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Prismite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 74,
+      "missing": [
+        "Prismite"
+      ]
+    },
+    {
+      "id": "876-1475-5147",
+      "cards": [
+        {
+          "name": "One with the Kami",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Bombardment",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "One with the Kami attached to any creature you control.\nLightning Greaves attached to any creature you control except the creature with One with the Kami attached.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 74,
+      "missing": [
+        "One with the Kami"
       ]
     },
     {
@@ -10456,44 +10328,9 @@
       "mana": "{1}{G}{G}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 74,
-      "missing": [
-        "The Unbeatable Squirrel Girl"
-      ]
-    },
-    {
-      "id": "876-1475-5147",
-      "cards": [
-        {
-          "name": "One with the Kami",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lightning Greaves",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Goblin Bombardment",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite damage"
-      ],
-      "requires": [],
-      "prerequisites": "One with the Kami attached to any creature you control.\nLightning Greaves attached to any creature you control except the creature with One with the Kami attached.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
       "popularity": 73,
       "missing": [
-        "One with the Kami"
+        "The Unbeatable Squirrel Girl"
       ]
     },
     {
@@ -10649,45 +10486,6 @@
       ]
     },
     {
-      "id": "1496-3000-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Verdant Sun's Avatar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite lifegain",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 62,
-      "missing": [
-        "Verdant Sun's Avatar"
-      ]
-    },
-    {
       "id": "1417-1580-2438-4871",
       "cards": [
         {
@@ -10802,47 +10600,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 55,
+      "popularity": 54,
       "missing": [
         "Golgari Thug"
-      ]
-    },
-    {
-      "id": "3000-3330-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Leyline of Vitality",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 53,
-      "missing": [
-        "Leyline of Vitality"
       ]
     },
     {
@@ -11002,6 +10762,68 @@
       ]
     },
     {
+      "id": "1110-3046",
+      "cards": [
+        {
+          "name": "Overgrown Armasaur",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Overgrown Armasaur indestructible.\nYou have a way to deal damage to Overgrown Armasaur.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 42,
+      "missing": [
+        "Overgrown Armasaur"
+      ]
+    },
+    {
+      "id": "2034-2577-5115",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gemstone Array",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 41,
+      "missing": [
+        "Gemstone Array"
+      ]
+    },
+    {
       "id": "443-1580-2438-4871",
       "cards": [
         {
@@ -11040,6 +10862,33 @@
       "popularity": 41,
       "missing": [
         "Magus of the Bridge"
+      ]
+    },
+    {
+      "id": "1724-5147",
+      "cards": [
+        {
+          "name": "Sekki, Seasons' Guide",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Bombardment",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional creature.\nThe amount of +1/+1 counters on Sekki plus the number of other Spirits you control is at least eight.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 40,
+      "missing": [
+        "Sekki, Seasons' Guide"
       ]
     },
     {
@@ -11084,78 +10933,6 @@
       ]
     },
     {
-      "id": "2034-3719-3924-4871",
-      "cards": [
-        {
-          "name": "Ruthless Technomancer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ashnod's Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Deep Forest Hermit",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite colorless mana",
-        "Infinite creature tokens",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{G}{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 40,
-      "missing": [
-        "Deep Forest Hermit"
-      ]
-    },
-    {
-      "id": "1724-5147",
-      "cards": [
-        {
-          "name": "Sekki, Seasons' Guide",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Goblin Bombardment",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control an additional creature.\nThe amount of +1/+1 counters on Sekki plus the number of other Spirits you control is at least eight.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 39,
-      "missing": [
-        "Sekki, Seasons' Guide"
-      ]
-    },
-    {
       "id": "252-997-4871",
       "cards": [
         {
@@ -11189,42 +10966,69 @@
       ]
     },
     {
-      "id": "640-3000-5670",
+      "id": "1110-5199",
       "cards": [
         {
-          "name": "Warren Soultrader",
+          "name": "Saber Ants",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Dross Harvester",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
+          "name": "Terror of the Peaks",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite Treasure tokens",
-        "Infinite lifegain"
+        "Infinite creature tokens"
       ],
       "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
+      "prerequisites": "You have a way to give Saber Ants indestructible.\nYou have a way to deal damage to Saber Ants.",
       "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 38,
+      "missing": [
+        "Saber Ants"
+      ]
+    },
+    {
+      "id": "228-1580-4277",
+      "cards": [
+        {
+          "name": "Cadaverous Bloom",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Skullclamp",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite black mana",
+        "Near-infinite card draw",
+        "Near-infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least one card in hand or",
+      "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 36,
+      "popularity": 37,
       "missing": [
-        "Dross Harvester"
+        "Cadaverous Bloom"
       ]
     },
     {
@@ -11347,6 +11151,39 @@
       ]
     },
     {
+      "id": "2034-2577-4720",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stonework Packbeast",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 31,
+      "missing": [
+        "Stonework Packbeast"
+      ]
+    },
+    {
       "id": "789-1580-2438-4871",
       "cards": [
         {
@@ -11386,6 +11223,41 @@
       "popularity": 31,
       "missing": [
         "Gutter Grime"
+      ]
+    },
+    {
+      "id": "2438-4871-8168",
+      "cards": [
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Draconic Visitor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carrion Feeder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on a creature"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 29,
+      "missing": [
+        "Draconic Visitor"
       ]
     },
     {
@@ -11465,41 +11337,6 @@
       "popularity": 29,
       "missing": [
         "Zombie Infestation"
-      ]
-    },
-    {
-      "id": "2438-4871-8168",
-      "cards": [
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Draconic Visitor",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Carrion Feeder",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite +1/+1 counters on a creature"
-      ],
-      "requires": [],
-      "prerequisites": "You control another creature.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 28,
-      "missing": [
-        "Draconic Visitor"
       ]
     },
     {
@@ -11810,6 +11647,74 @@
       ]
     },
     {
+      "id": "2577-5147-7390",
+      "cards": [
+        {
+          "name": "The Ghoul, Gunslinger",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Goblin Bombardment",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 21,
+      "missing": [
+        "The Ghoul, Gunslinger"
+      ]
+    },
+    {
+      "id": "90-2577-4871",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Pitiless Plunderer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Engineered Plague",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one additional Zombie.\n\"Zombie\" chosen with Engineered Plague.",
+      "mana": "{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 19,
+      "missing": [
+        "Engineered Plague"
+      ]
+    },
+    {
       "id": "1580-4050-7422",
       "cards": [
         {
@@ -11886,42 +11791,36 @@
       ]
     },
     {
-      "id": "3000-4446-5670",
+      "id": "913-2034-2577",
       "cards": [
         {
-          "name": "Warren Soultrader",
+          "name": "Gravecrawler",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Chatterfang, Squirrel General",
+          "name": "Ashnod's Altar",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Relic Vial",
+          "name": "Signpost Scarecrow",
           "zones": [
             "B"
           ]
         }
       ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens"
-      ],
+      "results": [],
       "requires": [],
-      "prerequisites": "You control at least one Cleric\nYou control at least one additional creature.\nYour life total is at least 2.",
+      "prerequisites": "You control an additional Zombie.",
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 15,
+      "popularity": 13,
       "missing": [
-        "Relic Vial"
+        "Signpost Scarecrow"
       ]
     },
     {
@@ -11963,6 +11862,75 @@
       "popularity": 13,
       "missing": [
         "Gutter Grime"
+      ]
+    },
+    {
+      "id": "2034-2577-4758",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Crossroads Candleguide",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12,
+      "missing": [
+        "Crossroads Candleguide"
+      ]
+    },
+    {
+      "id": "1012-2034-2577",
+      "cards": [
+        {
+          "name": "Gravecrawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vizier of the Menagerie",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana that can only be spent to cast creature spells",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional Zombie.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12,
+      "missing": [
+        "Vizier of the Menagerie"
       ]
     },
     {
@@ -12093,92 +12061,6 @@
       ]
     },
     {
-      "id": "2034-3426-3719-4871",
-      "cards": [
-        {
-          "name": "Ruthless Technomancer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ashnod's Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Deranged Hermit",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite colorless mana",
-        "Infinite creature tokens",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{G}{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 9,
-      "missing": [
-        "Deranged Hermit"
-      ]
-    },
-    {
-      "id": "1580-4871-5670-7918",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Sifa Grent",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 8,
-      "missing": [
-        "Sifa Grent"
-      ]
-    },
-    {
       "id": "997-4871-8168",
       "cards": [
         {
@@ -12209,6 +12091,68 @@
       "popularity": 7,
       "missing": [
         "Draconic Visitor"
+      ]
+    },
+    {
+      "id": "1110-1344",
+      "cards": [
+        {
+          "name": "Nested Ghoul",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Nested Ghoul indestructible.\nYou have a way to deal damage to Nested Ghoul.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6,
+      "missing": [
+        "Nested Ghoul"
+      ]
+    },
+    {
+      "id": "2034-4144-4314",
+      "cards": [
+        {
+          "name": "Kuldotha Phoenix",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pawn of Ulamog",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "It is your upkeep step.\nYou control at least three artifacts.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6,
+      "missing": [
+        "Kuldotha Phoenix"
       ]
     },
     {
@@ -12289,44 +12233,6 @@
       ]
     },
     {
-      "id": "3000-4699-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Overgrowth Elemental",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2,
-      "missing": [
-        "Overgrowth Elemental"
-      ]
-    },
-    {
       "id": "1417-1580-4871-5147",
       "cards": [
         {
@@ -12365,85 +12271,6 @@
       "popularity": 2,
       "missing": [
         "Bridge from Below"
-      ]
-    },
-    {
-      "id": "1325-3000-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Kheru Bloodsucker",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Chatterfang, Squirrel General",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite Treasure tokens",
-        "Infinite colored mana",
-        "Infinite lifegain triggers",
-        "Infinite lifeloss",
-        "Infinite artifact tokens",
-        "Infinite lifegain"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1,
-      "missing": [
-        "Kheru Bloodsucker"
-      ]
-    },
-    {
-      "id": "1580-4699-4871-5670",
-      "cards": [
-        {
-          "name": "Warren Soultrader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pitiless Plunderer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "G"
-          ]
-        },
-        {
-          "name": "Overgrowth Elemental",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "Your life total is 2 or higher.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1,
-      "missing": [
-        "Overgrowth Elemental"
       ]
     },
     {
@@ -12489,228 +12316,98 @@
       ]
     },
     {
-      "id": "914-997-3719",
+      "id": "2498-7844",
       "cards": [
         {
-          "name": "Ruthless Technomancer",
+          "name": "Sheoldred, the Apocalypse",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Dockside Extortionist",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Woe Strider",
+          "name": "Yawgmoth's Bargain",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite Treasure tokens"
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
       ],
       "requires": [],
-      "prerequisites": "Opponents control at least four artifacts and/or enchantments.",
-      "mana": "{1}{R}",
+      "prerequisites": "Your life total is at least 2.",
+      "mana": "",
       "bracket": "B",
       "legal": false,
       "popularity": 0,
       "missing": [
-        "Dockside Extortionist"
+        "Yawgmoth's Bargain"
       ]
     },
     {
-      "id": "914-2438-3719",
+      "id": "2498-4322",
       "cards": [
         {
-          "name": "Ruthless Technomancer",
+          "name": "Sheoldred, the Apocalypse",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Dockside Extortionist",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Carrion Feeder",
+          "name": "Griselbrand",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite artifact tokens",
-        "Infinite +1/+1 counters on a creature",
-        "Infinite colored mana",
-        "Infinite Treasure tokens"
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
       ],
       "requires": [],
-      "prerequisites": "Opponents control at least four artifacts and/or enchantments.",
-      "mana": "{1}{R}",
+      "prerequisites": "Your life total is at least 8.",
+      "mana": "",
       "bracket": "B",
       "legal": false,
       "popularity": 0,
       "missing": [
-        "Dockside Extortionist"
+        "Griselbrand"
       ]
     },
     {
-      "id": "914-2292-3719",
+      "id": "1580-4050-8347",
       "cards": [
-        {
-          "name": "Ruthless Technomancer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Dockside Extortionist",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Viscera Seer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "Opponents control at least four artifacts and/or enchantments.",
-      "mana": "{1}{R}",
-      "bracket": "B",
-      "legal": false,
-      "popularity": 0,
-      "missing": [
-        "Dockside Extortionist"
-      ]
-    },
-    {
-      "id": "914-3719-5147",
-      "cards": [
-        {
-          "name": "Ruthless Technomancer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Dockside Extortionist",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Goblin Bombardment",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite damage",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "Opponents control at least four artifacts and/or enchantments.",
-      "mana": "{1}{R}",
-      "bracket": "B",
-      "legal": false,
-      "popularity": 0,
-      "missing": [
-        "Dockside Extortionist"
-      ]
-    },
-    {
-      "id": "914-2034-3719",
-      "cards": [
-        {
-          "name": "Ruthless Technomancer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Dockside Extortionist",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Ashnod's Altar",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite colorless mana",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "Opponents control at least two artifacts and/or enchantments.",
-      "mana": "{1}{R}",
-      "bracket": "B",
-      "legal": false,
-      "popularity": 0,
-      "missing": [
-        "Dockside Extortionist"
-      ]
-    },
-    {
-      "id": "914-3719-4050",
-      "cards": [
-        {
-          "name": "Ruthless Technomancer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Dockside Extortionist",
-          "zones": [
-            "H"
-          ]
-        },
         {
           "name": "Phyrexian Altar",
           "zones": [
             "B"
           ]
+        },
+        {
+          "name": "Reassembling Skeleton",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sela, Tal Shiar Paradox",
+          "zones": [
+            "B"
+          ]
         }
       ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite Treasure tokens"
-      ],
+      "results": [],
       "requires": [],
-      "prerequisites": "Opponents control at least three artifacts and/or enchantments.",
-      "mana": "{1}{R}",
-      "bracket": "B",
-      "legal": false,
-      "popularity": 0,
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": null,
       "missing": [
-        "Dockside Extortionist"
+        "Sela, Tal Shiar Paradox"
       ]
     }
   ]

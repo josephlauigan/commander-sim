@@ -6,7 +6,7 @@
   "commanders": [
     "Brago, King Eternal"
   ],
-  "request_sha256": "1854fa78d30cd8361a6317d35c6af79b2528d7aa0dbff6ef4938b38aec8f5865",
+  "request_sha256": "e8b0fe1da9fc032ef731a3443052d7171fcb72ef236f39d0904d7de05c08c42a",
   "identity": "WU",
   "included": [
     {
@@ -40,42 +40,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 38337
-    },
-    {
-      "id": "2397-3634-3821",
-      "cards": [
-        {
-          "name": "Peregrine Drake",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Panharmonicon",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Venser, Shaper Savant",
-          "zones": [
-            "H",
-            "C"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce",
-        "Infinite blue mana",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "You control up to five lands that can collectively tap to produce at least {3}{U}{U}.\nYou have enough mana to pay for commander tax minus {1} if applicable.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 18045
+      "popularity": 38382
     },
     {
       "id": "1770-3634-3821",
@@ -109,67 +74,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 6846
-    },
-    {
-      "id": "3821-4013",
-      "cards": [
-        {
-          "name": "Peregrine Drake",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Eldrazi Displacer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "You control up to five lands that can tap to produce at least {2}{C}.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 6754
-    },
-    {
-      "id": "770-2397-3821",
-      "cards": [
-        {
-          "name": "Peregrine Drake",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Man-o'-War",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Panharmonicon",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite blue mana",
-        "Infinite untap of lands you control",
-        "Infinite mana lands you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "You control lands that can produce at least {3}{U}.",
-      "mana": "{4}{U}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 4542
+      "popularity": 6854
     }
   ],
   "included_by_changing_commanders": [],
@@ -200,38 +105,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 365390,
+      "popularity": 365847,
       "missing": [
         "Hullbreaker Horror"
-      ]
-    },
-    {
-      "id": "4131-4547",
-      "cards": [
-        {
-          "name": "Basalt Monolith",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Forsaken Monument",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 66605,
-      "missing": [
-        "Forsaken Monument"
       ]
     },
     {
@@ -256,38 +132,9 @@
       "mana": "{3}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 55425,
+      "popularity": 55518,
       "missing": [
         "Felidar Guardian"
-      ]
-    },
-    {
-      "id": "4131-4235",
-      "cards": [
-        {
-          "name": "Rings of Brighthearth",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Basalt Monolith",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{2}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 54121,
-      "missing": [
-        "Rings of Brighthearth"
       ]
     },
     {
@@ -314,7 +161,7 @@
       "mana": "{1}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 48207,
+      "popularity": 48264,
       "missing": [
         "Deadeye Navigator"
       ]
@@ -350,7 +197,7 @@
       "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 46258,
+      "popularity": 46311,
       "missing": [
         "Teferi, Time Raveler"
       ]
@@ -379,38 +226,47 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 37935,
+      "popularity": 37954,
       "missing": [
         "Tidespout Tyrant"
       ]
     },
     {
-      "id": "4131-5390",
+      "id": "2397-3634-3821",
       "cards": [
         {
-          "name": "Basalt Monolith",
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Forensic Gadgeteer",
+          "name": "Venser, Shaper Savant",
           "zones": [
-            "B"
+            "H",
+            "C"
           ]
         }
       ],
       "results": [
-        "Infinite colorless mana"
+        "Infinite mana lands you control can produce",
+        "Infinite blue mana",
+        "Infinite untap of lands you control"
       ],
       "requires": [],
-      "prerequisites": "",
+      "prerequisites": "You control up to five lands that can collectively tap to produce at least {3}{U}{U}.\nYou have enough mana to pay for commander tax minus {1} if applicable.",
       "mana": "",
-      "bracket": "R",
+      "bracket": "S",
       "legal": true,
-      "popularity": 26514,
+      "popularity": 18060,
       "missing": [
-        "Forensic Gadgeteer"
+        "Panharmonicon"
       ]
     },
     {
@@ -444,43 +300,7 @@
       "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
       "bracket": "S",
       "legal": true,
-      "popularity": 17358,
-      "missing": [
-        "Abdel Adrian, Gorion's Ward"
-      ]
-    },
-    {
-      "id": "372-1090-3603",
-      "cards": [
-        {
-          "name": "Abdel Adrian, Gorion's Ward",
-          "zones": [
-            "H",
-            "C"
-          ]
-        },
-        {
-          "name": "Restoration Angel",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cloudshift",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 16419,
+      "popularity": 17376,
       "missing": [
         "Abdel Adrian, Gorion's Ward"
       ]
@@ -516,7 +336,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 14541,
+      "popularity": 14554,
       "missing": [
         "Displace"
       ]
@@ -546,7 +366,7 @@
       "mana": "{4}{U}{U}{U} plus commander tax if applicable",
       "bracket": "P",
       "legal": true,
-      "popularity": 14018,
+      "popularity": 14019,
       "missing": [
         "Naru Meha, Master Wizard"
       ]
@@ -575,67 +395,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 12511,
+      "popularity": 12526,
       "missing": [
         "Strionic Resonator"
-      ]
-    },
-    {
-      "id": "4131-5149",
-      "cards": [
-        {
-          "name": "Power Artifact",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Basalt Monolith",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "Power Artifact attached to Basalt Monolith.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 11001,
-      "missing": [
-        "Power Artifact"
-      ]
-    },
-    {
-      "id": "4131-4684",
-      "cards": [
-        {
-          "name": "Basalt Monolith",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Mesmeric Orb",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite self-mill"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 10099,
-      "missing": [
-        "Mesmeric Orb"
       ]
     },
     {
@@ -660,7 +422,7 @@
       "mana": "{3}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 9697,
+      "popularity": 9723,
       "missing": [
         "Icewind Stalwart"
       ]
@@ -698,51 +460,66 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 9237,
+      "popularity": 9257,
       "missing": [
         "Starfield Vocalist"
       ]
     },
     {
-      "id": "1741-1987-2397-2493",
+      "id": "2781-3908",
       "cards": [
         {
-          "name": "Cloud of Faeries",
+          "name": "Felidar Guardian",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Archaeomancer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ghostly Flicker",
+          "name": "Spark Double",
           "zones": [
             "H"
           ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Spark Double.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9138,
+      "missing": [
+        "Felidar Guardian"
+      ]
+    },
+    {
+      "id": "2022-3283",
+      "cards": [
+        {
+          "name": "Wedding Ring",
+          "zones": [
+            "B"
+          ]
         },
         {
-          "name": "Panharmonicon",
+          "name": "Consecrated Sphinx",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite casts of any instants and/or sorcery cards in your hand or graveyard",
-        "Infinite mana lands you control can produce"
+        "Infinite card draw",
+        "Infinite card draw for opponents that control a Wedding Ring"
       ],
       "requires": [],
-      "prerequisites": "You control up to two lands that can tap to produce at least {1}{U}.",
-      "mana": "{1}",
-      "bracket": "E",
+      "prerequisites": "An opponent controls a Wedding Ring.\nYou have a way to draw a card.\nIt is your turn.",
+      "mana": "",
+      "bracket": "S",
       "legal": true,
-      "popularity": 7833,
+      "popularity": 7888,
       "missing": [
-        "Cloud of Faeries"
+        "Wedding Ring"
       ]
     },
     {
@@ -811,65 +588,30 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 6852,
+      "popularity": 6861,
       "missing": [
         "Gilded Lotus"
       ]
     },
     {
-      "id": "1170-4131-4761",
-      "cards": [
-        {
-          "name": "Teferi, Time Raveler",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Displacer Kitten",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Basalt Monolith",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 6159,
-      "missing": [
-        "Teferi, Time Raveler"
-      ]
-    },
-    {
-      "id": "372-2493-3603",
+      "id": "372-1090-1734",
       "cards": [
         {
           "name": "Abdel Adrian, Gorion's Ward",
           "zones": [
-            "B"
+            "H"
           ]
         },
         {
-          "name": "Archaeomancer",
+          "name": "Restoration Angel",
           "zones": [
             "E"
           ]
         },
         {
-          "name": "Cloudshift",
+          "name": "Fiend Hunter",
           "zones": [
-            "H"
+            "B"
           ]
         }
       ],
@@ -877,20 +619,20 @@
         "Infinite creature tokens"
       ],
       "requires": [],
-      "prerequisites": "You have any number of other nonland permanents that enter the battlefield untapped, and that can collectively tap to produce enough mana to cast Cloudshift exiled by Abdel Adrian.\nArchaeomancer exiled by Abdel Adrian.\nYou have enough mana to cast Cloudshift.",
-      "mana": "",
+      "prerequisites": "Restoration Angel exiled by Fiend Hunter",
+      "mana": "{4}{W} plus enough mana to pay for command tax, if applicable",
       "bracket": "E",
       "legal": true,
-      "popularity": 6071,
+      "popularity": 6821,
       "missing": [
         "Abdel Adrian, Gorion's Ward"
       ]
     },
     {
-      "id": "372-4013",
+      "id": "3821-4013",
       "cards": [
         {
-          "name": "Abdel Adrian, Gorion's Ward",
+          "name": "Peregrine Drake",
           "zones": [
             "B"
           ]
@@ -903,17 +645,16 @@
         }
       ],
       "results": [
-        "Infinite creature tokens",
-        "Infinite mana nonland permanents you control can produce"
+        "Infinite mana lands you control can produce"
       ],
       "requires": [],
-      "prerequisites": "Nonland permanent card(s) you own that can produce at least {3}{C} exiled by Abdel Adrian.",
-      "mana": "{2}{C}",
+      "prerequisites": "You control up to five lands that can tap to produce at least {2}{C}.",
+      "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5783,
+      "popularity": 6760,
       "missing": [
-        "Abdel Adrian, Gorion's Ward"
+        "Eldrazi Displacer"
       ]
     },
     {
@@ -946,42 +687,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5512,
-      "missing": [
-        "Abdel Adrian, Gorion's Ward"
-      ]
-    },
-    {
-      "id": "372-1567-2493",
-      "cards": [
-        {
-          "name": "Abdel Adrian, Gorion's Ward",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Momentary Blink",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Archaeomancer",
-          "zones": [
-            "E"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You have any number of other nonland permanents that enter the battlefield untapped, and that can collectively tap to produce enough mana to cast Momentary Blink exiled by Abdel Adrian.\nArchaeomancer exiled by Abdel Adrian.\nYou have enough mana to cast Momentary Blink.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 5462,
+      "popularity": 5516,
       "missing": [
         "Abdel Adrian, Gorion's Ward"
       ]
@@ -1016,7 +722,7 @@
       "mana": "{6}{U} every turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 5450,
+      "popularity": 5459,
       "missing": [
         "Cyclonic Rift"
       ]
@@ -1046,7 +752,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5423,
+      "popularity": 5435,
       "missing": [
         "Intruder Alarm"
       ]
@@ -1082,45 +788,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5396,
+      "popularity": 5404,
       "missing": [
         "Shipwreck Dowser"
-      ]
-    },
-    {
-      "id": "372-1090-1567",
-      "cards": [
-        {
-          "name": "Abdel Adrian, Gorion's Ward",
-          "zones": [
-            "H",
-            "C"
-          ]
-        },
-        {
-          "name": "Restoration Angel",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Momentary Blink",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{5}{W}{W} plus enough mana to pay commander tax, if applicable",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 5266,
-      "missing": [
-        "Abdel Adrian, Gorion's Ward"
       ]
     },
     {
@@ -1154,7 +824,7 @@
       "mana": "{6}{U}{W} plus enough mana to pay commander tax, if applicable",
       "bracket": "O",
       "legal": true,
-      "popularity": 4990,
+      "popularity": 4992,
       "missing": [
         "Abdel Adrian, Gorion's Ward"
       ]
@@ -1189,7 +859,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 4786,
+      "popularity": 4794,
       "missing": [
         "Coveted Jewel"
       ]
@@ -1225,9 +895,46 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 4556,
+      "popularity": 4561,
       "missing": [
         "Mnemonic Wall"
+      ]
+    },
+    {
+      "id": "770-2397-3821",
+      "cards": [
+        {
+          "name": "Peregrine Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Man-o'-War",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Panharmonicon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite untap of lands you control",
+        "Infinite mana lands you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control lands that can produce at least {3}{U}.",
+      "mana": "{4}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4548,
+      "missing": [
+        "Panharmonicon"
       ]
     },
     {
@@ -1254,75 +961,9 @@
       "mana": "{14}{W}{W}{U}{U}",
       "bracket": "C",
       "legal": true,
-      "popularity": 4199,
+      "popularity": 4204,
       "missing": [
         "Approach of the Second Sun"
-      ]
-    },
-    {
-      "id": "876-4944",
-      "cards": [
-        {
-          "name": "Crackdown Construct",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lightning Greaves",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinitely large creature until end of turn"
-      ],
-      "requires": [],
-      "prerequisites": "You control another creature.",
-      "mana": "",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 3949,
-      "missing": [
-        "Crackdown Construct"
-      ]
-    },
-    {
-      "id": "751-2397-3821",
-      "cards": [
-        {
-          "name": "Peregrine Drake",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Shrieking Drake",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Panharmonicon",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce",
-        "Infinite blue mana",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "You control lands that can produce at least {2}{U}.",
-      "mana": "{4}{U}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 3717,
-      "missing": [
-        "Shrieking Drake"
       ]
     },
     {
@@ -1357,50 +998,44 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 3697,
+      "popularity": 3700,
       "missing": [
         "Illusionist's Stratagem"
       ]
     },
     {
-      "id": "1846-1987-2397-2493",
+      "id": "786-1734-4605",
       "cards": [
         {
-          "name": "Panharmonicon",
+          "name": "Preston, the Vanisher",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Archaeomancer",
+          "name": "Fiend Hunter",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "High Tide",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Ghostly Flicker",
+          "name": "Flickerwisp",
           "zones": [
             "H"
           ]
         }
       ],
       "results": [
-        "Infinite blue mana"
+        "Infinite creature tokens"
       ],
       "requires": [],
-      "prerequisites": "You control at least 1 island.",
-      "mana": "",
-      "bracket": "E",
+      "prerequisites": "",
+      "mana": "{1}{W}{W}",
+      "bracket": "S",
       "legal": true,
-      "popularity": 3568,
+      "popularity": 3318,
       "missing": [
-        "High Tide"
+        "Preston, the Vanisher"
       ]
     },
     {
@@ -1433,68 +1068,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 3211,
+      "popularity": 3210,
       "missing": [
         "Lithoform Engine"
-      ]
-    },
-    {
-      "id": "2397-3542",
-      "cards": [
-        {
-          "name": "Palinchron",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Panharmonicon",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least six mana-producing lands, two of which can produce at least {U}.",
-      "mana": "{1}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 2947,
-      "missing": [
-        "Palinchron"
-      ]
-    },
-    {
-      "id": "74-4131",
-      "cards": [
-        {
-          "name": "The Enigma Jewel // Locus of Enlightenment",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Basalt Monolith",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 2584,
-      "missing": [
-        "The Enigma Jewel // Locus of Enlightenment"
       ]
     },
     {
@@ -1534,9 +1110,44 @@
       "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2567,
+      "popularity": 2571,
       "missing": [
         "Cloud of Faeries"
+      ]
+    },
+    {
+      "id": "1734-2034-3175",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2475,
+      "missing": [
+        "Ashnod's Altar"
       ]
     },
     {
@@ -1561,38 +1172,81 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2349,
+      "popularity": 2355,
       "missing": [
         "Peter Parker's Camera"
       ]
     },
     {
-      "id": "876-2904",
+      "id": "168-372-1734",
       "cards": [
         {
-          "name": "Cephalid Illusionist",
+          "name": "Abdel Adrian, Gorion's Ward",
           "zones": [
-            "B"
+            "H",
+            "C"
           ]
         },
         {
-          "name": "Lightning Greaves",
+          "name": "Fiend Hunter",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Oblivion Ring",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2338,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
+      ]
+    },
+    {
+      "id": "1734-3175-5256",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Altar of Dementia",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mill",
         "Infinite self-mill"
       ],
       "requires": [],
       "prerequisites": "",
       "mana": "",
-      "bracket": "R",
+      "bracket": "E",
       "legal": true,
-      "popularity": 2266,
+      "popularity": 2137,
       "missing": [
-        "Cephalid Illusionist"
+        "Altar of Dementia"
       ]
     },
     {
@@ -1617,7 +1271,7 @@
       "mana": "{2}{W}{U}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2079,
+      "popularity": 2080,
       "missing": [
         "Naru Meha, Master Wizard"
       ]
@@ -1652,7 +1306,7 @@
       "mana": "{3}{W}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 1967,
+      "popularity": 1969,
       "missing": [
         "Time Warp"
       ]
@@ -1689,7 +1343,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1922,
+      "popularity": 1928,
       "missing": [
         "Delney, Streetwise Lookout"
       ]
@@ -1761,36 +1415,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1833,
+      "popularity": 1835,
       "missing": [
         "Scholar of the Ages"
-      ]
-    },
-    {
-      "id": "141-3603",
-      "cards": [
-        {
-          "name": "Naru Meha, Master Wizard",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Cloudshift",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for Cloudshift.",
-      "mana": "{2}{W}{U}{U}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1799,
-      "missing": [
-        "Naru Meha, Master Wizard"
       ]
     },
     {
@@ -1824,7 +1451,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1793,
+      "popularity": 1795,
       "missing": [
         "Salvager of Secrets"
       ]
@@ -1854,7 +1481,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 1754,
+      "popularity": 1760,
       "missing": [
         "Mind Over Matter"
       ]
@@ -1922,7 +1549,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1730,
+      "popularity": 1732,
       "missing": [
         "Lotus Petal"
       ]
@@ -1957,7 +1584,7 @@
       "mana": "{3}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 1702,
+      "popularity": 1701,
       "missing": [
         "Time Warp"
       ]
@@ -1990,40 +1617,7 @@
       "mana": "{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1696,
-      "missing": [
-        "Lumbering Battlement"
-      ]
-    },
-    {
-      "id": "1090-3603-4344",
-      "cards": [
-        {
-          "name": "Lumbering Battlement",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Restoration Angel",
-          "zones": [
-            "E"
-          ]
-        },
-        {
-          "name": "Cloudshift",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1603,
+      "popularity": 1695,
       "missing": [
         "Lumbering Battlement"
       ]
@@ -2091,92 +1685,9 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 1545,
+      "popularity": 1548,
       "missing": [
         "Chrome Mox"
-      ]
-    },
-    {
-      "id": "4131-4944",
-      "cards": [
-        {
-          "name": "Crackdown Construct",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Basalt Monolith",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinitely large creature until end of turn"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1532,
-      "missing": [
-        "Crackdown Construct"
-      ]
-    },
-    {
-      "id": "141-1567",
-      "cards": [
-        {
-          "name": "Naru Meha, Master Wizard",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Momentary Blink",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for Momentary Blink.",
-      "mana": "{3}{W}{U}{U}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1466,
-      "missing": [
-        "Naru Meha, Master Wizard"
-      ]
-    },
-    {
-      "id": "205-2334",
-      "cards": [
-        {
-          "name": "Azor, the Lawbringer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Soulherder",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1441,
-      "missing": [
-        "Azor, the Lawbringer"
       ]
     },
     {
@@ -2207,9 +1718,36 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1438,
+      "popularity": 1442,
       "missing": [
         "Mindsplice Apparatus"
+      ]
+    },
+    {
+      "id": "205-2334",
+      "cards": [
+        {
+          "name": "Azor, the Lawbringer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Soulherder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1440,
+      "missing": [
+        "Azor, the Lawbringer"
       ]
     },
     {
@@ -2240,9 +1778,44 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1413,
+      "popularity": 1414,
       "missing": [
         "Pact of Negation"
+      ]
+    },
+    {
+      "id": "1734-3175-4050",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1351,
+      "missing": [
+        "Phyrexian Altar"
       ]
     },
     {
@@ -2270,7 +1843,7 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 1245,
+      "popularity": 1244,
       "missing": [
         "Palinchron"
       ]
@@ -2305,9 +1878,77 @@
       "mana": "{3}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 1170,
+      "popularity": 1171,
       "missing": [
         "Time Warp"
+      ]
+    },
+    {
+      "id": "413-1734-3175",
+      "cards": [
+        {
+          "name": "Sun Titan",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blasting Station",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1122,
+      "missing": [
+        "Blasting Station"
+      ]
+    },
+    {
+      "id": "168-1734-5276",
+      "cards": [
+        {
+          "name": "Oblivion Ring",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Leonin Relic-Warder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fiend Hunter",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{W}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1093,
+      "missing": [
+        "Leonin Relic-Warder"
       ]
     },
     {
@@ -2340,7 +1981,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 1074,
+      "popularity": 1076,
       "missing": [
         "Temporal Manipulation"
       ]
@@ -2402,7 +2043,7 @@
       "mana": "{3}{W}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 951,
+      "popularity": 952,
       "missing": [
         "Temporal Manipulation"
       ]
@@ -2438,46 +2079,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 884,
+      "popularity": 885,
       "missing": [
         "Great Whale"
-      ]
-    },
-    {
-      "id": "2397-3821-4770",
-      "cards": [
-        {
-          "name": "Peregrine Drake",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Panharmonicon",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Whitemane Lion",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite blue mana",
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
-      "mana": "{1} at most",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 872,
-      "missing": [
-        "Whitemane Lion"
       ]
     },
     {
@@ -2512,42 +2116,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 841,
+      "popularity": 842,
       "missing": [
         "Chromatic Orrery"
-      ]
-    },
-    {
-      "id": "1987-3094-4131",
-      "cards": [
-        {
-          "name": "Ghostly Flicker",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Lithoform Engine",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Basalt Monolith",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 819,
-      "missing": [
-        "Lithoform Engine"
       ]
     },
     {
@@ -2580,7 +2151,7 @@
       "mana": "{3}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 792,
+      "popularity": 793,
       "missing": [
         "Temporal Manipulation"
       ]
@@ -2615,46 +2186,9 @@
       "mana": "{3}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 755,
+      "popularity": 756,
       "missing": [
         "Temporal Manipulation"
-      ]
-    },
-    {
-      "id": "2397-2908-3821",
-      "cards": [
-        {
-          "name": "Peregrine Drake",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Panharmonicon",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Dream Stalker",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite blue mana",
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "You control up to five lands that can collectively tap to produce at least {3}{U}.",
-      "mana": "{1} at most",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 739,
-      "missing": [
-        "Dream Stalker"
       ]
     },
     {
@@ -2690,38 +2224,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 713,
+      "popularity": 714,
       "missing": [
         "Mirror Room // Fractured Realm"
-      ]
-    },
-    {
-      "id": "2441-4013",
-      "cards": [
-        {
-          "name": "Rasputin Dreamweaver",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Eldrazi Displacer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{2}{C}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 712,
-      "missing": [
-        "Rasputin Dreamweaver"
       ]
     },
     {
@@ -2749,7 +2254,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 637,
+      "popularity": 638,
       "missing": [
         "Intruder Alarm"
       ]
@@ -2782,98 +2287,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 630,
+      "popularity": 631,
       "missing": [
         "Everflowing Chalice"
-      ]
-    },
-    {
-      "id": "3542-4013",
-      "cards": [
-        {
-          "name": "Palinchron",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Eldrazi Displacer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "You control up to seven lands that can tap to produce at least {2}{C}.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 612,
-      "missing": [
-        "Palinchron"
-      ]
-    },
-    {
-      "id": "1636-4013",
-      "cards": [
-        {
-          "name": "Intruder Alarm",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Eldrazi Displacer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana creatures you control can produce",
-        "Infinite untap of creatures"
-      ],
-      "requires": [],
-      "prerequisites": "Creatures you control can tap for at least enough mana to activate your blink effect.",
-      "mana": "{2}{C}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 571,
-      "missing": [
-        "Intruder Alarm"
-      ]
-    },
-    {
-      "id": "2059-4013",
-      "cards": [
-        {
-          "name": "Village Bell-Ringer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Eldrazi Displacer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana creatures you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "Creatures you control can tap to produce at least {3}{C}.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 562,
-      "missing": [
-        "Village Bell-Ringer"
       ]
     },
     {
@@ -2939,45 +2355,42 @@
       "mana": "{2}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 489,
+      "popularity": 487,
       "missing": [
         "Lumbering Battlement"
       ]
     },
     {
-      "id": "2034-3635-4013",
+      "id": "2084-3908",
       "cards": [
         {
-          "name": "Eldrazi Displacer",
+          "name": "Mirror-Mad Phantasm",
           "zones": [
-            "B"
+            "H",
+            "B",
+            "C",
+            "E",
+            "G"
           ]
         },
         {
-          "name": "Ashnod's Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Whirler Rogue",
+          "name": "Spark Double",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite colorless mana",
-        "Infinite creature tokens"
+        "Infinite self-mill"
       ],
       "requires": [],
-      "prerequisites": "",
-      "mana": "{2}{C}",
-      "bracket": "E",
+      "prerequisites": "Spark Double is a copy of Mirror-Mad Phantasm.",
+      "mana": "{1}{U}",
+      "bracket": "S",
       "legal": true,
-      "popularity": 446,
+      "popularity": 434,
       "missing": [
-        "Ashnod's Altar"
+        "Mirror-Mad Phantasm"
       ]
     },
     {
@@ -3012,7 +2425,7 @@
       "mana": "{4}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 398,
+      "popularity": 399,
       "missing": [
         "Shrieking Drake"
       ]
@@ -3047,7 +2460,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 377,
+      "popularity": 378,
       "missing": [
         "Capture of Jingzhou"
       ]
@@ -3074,7 +2487,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 363,
+      "popularity": 364,
       "missing": [
         "Chancellor of the Spires"
       ]
@@ -3145,7 +2558,7 @@
       "mana": "{3}{W}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 330,
+      "popularity": 332,
       "missing": [
         "Capture of Jingzhou"
       ]
@@ -3178,22 +2591,28 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 316,
+      "popularity": 318,
       "missing": [
         "Glamdring, Foe-hammer // Gleam of Death"
       ]
     },
     {
-      "id": "205-4013",
+      "id": "1734-3175-3899",
       "cards": [
         {
-          "name": "Azor, the Lawbringer",
+          "name": "Spawning Pit",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Eldrazi Displacer",
+          "name": "Fiend Hunter",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sun Titan",
           "zones": [
             "B"
           ]
@@ -3202,12 +2621,12 @@
       "results": [],
       "requires": [],
       "prerequisites": "",
-      "mana": "{2}{C} each turn",
-      "bracket": "S",
+      "mana": "{1}{W}{W}",
+      "bracket": "E",
       "legal": true,
-      "popularity": 294,
+      "popularity": 315,
       "missing": [
-        "Azor, the Lawbringer"
+        "Spawning Pit"
       ]
     },
     {
@@ -3242,75 +2661,9 @@
       "mana": "{1} at most",
       "bracket": "S",
       "legal": true,
-      "popularity": 293,
+      "popularity": 292,
       "missing": [
         "Whitemane Lion"
-      ]
-    },
-    {
-      "id": "2792-4013",
-      "cards": [
-        {
-          "name": "Great Whale",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Eldrazi Displacer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "You control up to seven lands that can tap to produce at least {2}{C}",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 285,
-      "missing": [
-        "Great Whale"
-      ]
-    },
-    {
-      "id": "3635-4013-4659",
-      "cards": [
-        {
-          "name": "Whirler Rogue",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Eldrazi Displacer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Krark-Clan Ironworks",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana",
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{2}{C}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 284,
-      "missing": [
-        "Krark-Clan Ironworks"
       ]
     },
     {
@@ -3341,7 +2694,7 @@
       "mana": "{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 280,
+      "popularity": 281,
       "missing": [
         "Semblance Anvil"
       ]
@@ -3452,43 +2805,6 @@
       ]
     },
     {
-      "id": "2-2397-3821",
-      "cards": [
-        {
-          "name": "Peregrine Drake",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Ancestral Statue",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Panharmonicon",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite blue mana",
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "You control up to five lands that can collectively tap to produce at least {4}{U}.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 264,
-      "missing": [
-        "Ancestral Statue"
-      ]
-    },
-    {
       "id": "1530-3175",
       "cards": [
         {
@@ -3515,6 +2831,35 @@
       "popularity": 264,
       "missing": [
         "Second Chance"
+      ]
+    },
+    {
+      "id": "1965-3908",
+      "cards": [
+        {
+          "name": "Omarthis, Ghostfire Initiate",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spark Double",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite +1/+1 counters on certain creatures"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 258,
+      "missing": [
+        "Omarthis, Ghostfire Initiate"
       ]
     },
     {
@@ -3586,6 +2931,35 @@
       ]
     },
     {
+      "id": "4486-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mirror Entity",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 255,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
       "id": "2103-2334-2493",
       "cards": [
         {
@@ -3615,38 +2989,9 @@
       "mana": "{3}{U}{U} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 249,
+      "popularity": 250,
       "missing": [
         "Capture of Jingzhou"
-      ]
-    },
-    {
-      "id": "712-4131",
-      "cards": [
-        {
-          "name": "Wake Thrasher",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Basalt Monolith",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinitely large creature until end of turn"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 248,
-      "missing": [
-        "Wake Thrasher"
       ]
     },
     {
@@ -3683,43 +3028,6 @@
       ]
     },
     {
-      "id": "2397-3821-4415",
-      "cards": [
-        {
-          "name": "Peregrine Drake",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Panharmonicon",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Stonecloaker",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite blue mana",
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
-      "mana": "{1} at most",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 223,
-      "missing": [
-        "Stonecloaker"
-      ]
-    },
-    {
       "id": "1987-3821-6991",
       "cards": [
         {
@@ -3750,75 +3058,71 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 217,
+      "popularity": 219,
       "missing": [
         "Donnie & April, Adorkable Duo"
       ]
     },
     {
-      "id": "876-2796",
+      "id": "1621-3908",
       "cards": [
         {
-          "name": "Cephalid Aristocrat",
+          "name": "Wispweaver Angel",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Lightning Greaves",
+          "name": "Spark Double",
           "zones": [
-            "B"
+            "H"
           ]
         }
       ],
-      "results": [
-        "Infinite self-mill"
-      ],
+      "results": [],
       "requires": [],
-      "prerequisites": "You control an additional creature.",
+      "prerequisites": "You have enough mana to cast Spark Double.",
       "mana": "",
-      "bracket": "R",
+      "bracket": "E",
       "legal": true,
-      "popularity": 202,
+      "popularity": 207,
       "missing": [
-        "Cephalid Aristocrat"
+        "Wispweaver Angel"
       ]
     },
     {
-      "id": "2397-3821-4518",
+      "id": "372-1734-3908",
       "cards": [
         {
-          "name": "Peregrine Drake",
+          "name": "Abdel Adrian, Gorion's Ward",
           "zones": [
             "H"
           ]
         },
         {
-          "name": "Panharmonicon",
+          "name": "Fiend Hunter",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Spark Double",
           "zones": [
             "B"
-          ]
-        },
-        {
-          "name": "Kor Skyfisher",
-          "zones": [
-            "H"
           ]
         }
       ],
       "results": [
-        "Infinite blue mana",
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
+        "Infinite creature tokens"
       ],
       "requires": [],
-      "prerequisites": "You control up to five lands that can collectively tap to produce at least {2}{W}{U}.",
-      "mana": "{1} at most",
-      "bracket": "E",
+      "prerequisites": "",
+      "mana": "{4}{W}",
+      "bracket": "S",
       "legal": true,
-      "popularity": 185,
+      "popularity": 178,
       "missing": [
-        "Kor Skyfisher"
+        "Abdel Adrian, Gorion's Ward"
       ]
     },
     {
@@ -3916,36 +3220,9 @@
       "mana": "{8}{U}{U} every other turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 136,
+      "popularity": 135,
       "missing": [
         "Time Stretch"
-      ]
-    },
-    {
-      "id": "4013-5296",
-      "cards": [
-        {
-          "name": "Workhorse",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Eldrazi Displacer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{2}{C}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 126,
-      "missing": [
-        "Workhorse"
       ]
     },
     {
@@ -4082,7 +3359,7 @@
       "mana": "{8}{U}{U} every other turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 105,
+      "popularity": 104,
       "missing": [
         "Time Stretch"
       ]
@@ -4118,6 +3395,41 @@
       "popularity": 92,
       "missing": [
         "Will Kenrith"
+      ]
+    },
+    {
+      "id": "168-372-3908",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spark Double",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Oblivion Ring",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 79,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
       ]
     },
     {
@@ -4189,45 +3501,9 @@
       "mana": "{1} at most",
       "bracket": "S",
       "legal": true,
-      "popularity": 69,
+      "popularity": 68,
       "missing": [
         "Stonecloaker"
-      ]
-    },
-    {
-      "id": "1350-2397-3821",
-      "cards": [
-        {
-          "name": "Peregrine Drake",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Meticulous Excavation",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Panharmonicon",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "You control up to five lands that can tap to produce at least {3}{W}{U}.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 66,
-      "missing": [
-        "Meticulous Excavation"
       ]
     },
     {
@@ -4305,16 +3581,10 @@
       ]
     },
     {
-      "id": "1061-2334-7679",
+      "id": "2334-3908-7009",
       "cards": [
         {
-          "name": "Timestream Navigator",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Recruiter of the Guard",
+          "name": "The Legend of Kuruk // Avatar Kuruk",
           "zones": [
             "B"
           ]
@@ -4324,48 +3594,25 @@
           "zones": [
             "B"
           ]
+        },
+        {
+          "name": "Spark Double",
+          "zones": [
+            "B"
+          ]
         }
       ],
       "results": [
         "Infinite turns"
       ],
       "requires": [],
-      "prerequisites": "You have the city's blessing.",
-      "mana": "{3}{U}{U}{U} each turn",
+      "prerequisites": "",
+      "mana": "{20} minus {1} for each creature and artifact you control each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 57,
+      "popularity": 50,
       "missing": [
-        "Timestream Navigator"
-      ]
-    },
-    {
-      "id": "3562-4013",
-      "cards": [
-        {
-          "name": "Sky Hussar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Eldrazi Displacer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana creatures you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "Creatures you control can tap to produce at least {3}{C}.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 52,
-      "missing": [
-        "Sky Hussar"
+        "The Legend of Kuruk // Avatar Kuruk"
       ]
     },
     {
@@ -4399,44 +3646,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 45,
+      "popularity": 46,
       "missing": [
         "Flickering Ward"
-      ]
-    },
-    {
-      "id": "1061-2963-7679",
-      "cards": [
-        {
-          "name": "Timestream Navigator",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Recruiter of the Guard",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Teleportation Circle",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite turns"
-      ],
-      "requires": [],
-      "prerequisites": "You have the city's blessing.",
-      "mana": "{3}{U}{U}{U} each turn",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 44,
-      "missing": [
-        "Timestream Navigator"
       ]
     },
     {
@@ -4476,36 +3688,73 @@
       ]
     },
     {
-      "id": "2397-3821-6844",
+      "id": "2963-3908-7009",
       "cards": [
         {
-          "name": "Peregrine Drake",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Panharmonicon",
+          "name": "The Legend of Kuruk // Avatar Kuruk",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Spider-Man 2099, Miguel O'Hara",
+          "name": "Teleportation Circle",
           "zones": [
-            "H"
+            "B"
+          ]
+        },
+        {
+          "name": "Spark Double",
+          "zones": [
+            "B"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Infinite turns"
+      ],
       "requires": [],
-      "prerequisites": "You control up to five lands that can collectively tap to produce at least {4}{U}.",
-      "mana": "",
-      "bracket": "E",
+      "prerequisites": "",
+      "mana": "{20} minus {1} for each creature and artifact you control each turn",
+      "bracket": "R",
       "legal": true,
-      "popularity": 32,
+      "popularity": 39,
       "missing": [
-        "Spider-Man 2099, Miguel O'Hara"
+        "The Legend of Kuruk // Avatar Kuruk"
+      ]
+    },
+    {
+      "id": "3557-3908-7009",
+      "cards": [
+        {
+          "name": "The Legend of Kuruk // Avatar Kuruk",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Brago, King Eternal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spark Double",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent cannot block Brago.",
+      "mana": "{20} minus {1} for each creature and artifact you control each turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 36,
+      "missing": [
+        "The Legend of Kuruk // Avatar Kuruk"
       ]
     },
     {
@@ -4613,41 +3862,6 @@
       ]
     },
     {
-      "id": "1061-3557-7679",
-      "cards": [
-        {
-          "name": "Timestream Navigator",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Recruiter of the Guard",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Brago, King Eternal",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite turns"
-      ],
-      "requires": [],
-      "prerequisites": "You have the city's blessing.\nAn opponent cannot block Brago.",
-      "mana": "{3}{U}{U}{U} each turn",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 16,
-      "missing": [
-        "Timestream Navigator"
-      ]
-    },
-    {
       "id": "1987-2493-3110",
       "cards": [
         {
@@ -4711,76 +3925,6 @@
       "popularity": 10,
       "missing": [
         "Spider-Man 2099, Miguel O'Hara"
-      ]
-    },
-    {
-      "id": "1061-4013-7679",
-      "cards": [
-        {
-          "name": "Timestream Navigator",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Recruiter of the Guard",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Eldrazi Displacer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite turns"
-      ],
-      "requires": [],
-      "prerequisites": "You have the city's blessing.",
-      "mana": "{3}{U}{U}{U} each turn plus {2}{C} each turn",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 10,
-      "missing": [
-        "Timestream Navigator"
-      ]
-    },
-    {
-      "id": "1061-4243-7679",
-      "cards": [
-        {
-          "name": "Timestream Navigator",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Recruiter of the Guard",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Venser, the Sojourner",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite turns"
-      ],
-      "requires": [],
-      "prerequisites": "You have the city's blessing.",
-      "mana": "{3}{U}{U}{U} each turn",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 9,
-      "missing": [
-        "Timestream Navigator"
       ]
     },
     {

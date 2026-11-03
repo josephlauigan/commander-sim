@@ -10,32 +10,29 @@ Opponent pool deck — **Tier 3: High Bracket 3**. Axis: Sacrifice value engine.
 
 ## Role in the pool
 
-A snowballing value engine that punishes letting the commander live a turn cycle, with a real late-game combo kill.
+A sacrifice and Treasure value deck that turns disposable permanents into Korvold cards and counters, with a late sacrifice loop and direct damage payoffs.
 
 ## At the table
 
-- **Plan:** Mana dorks (Birds, Ignoble Hierarch, Sylvan Caryatid, Delighted Halfling, Gilded Goose), Nature's Lore and Sol Ring into Korvold, Fae-Cursed King, then a stream of sacrifice fodder: Treasure, Food, Clues and recursive creatures like Bloodghast and Reassembling Skeleton. Each sacrifice grows Korvold and draws a card.
-- **Wins by:** Drain from every sacrifice or death: Blood Artist, Zulaport Cutthroat, Mayhem Devil and Goblin Bombardment; Siege-Gang Commander adds fodder and damage, and Midnight Reaper, Dark Prophecy, Tireless Tracker and Yawgmoth turn the deaths into cards. Late, Gravecrawler with Phyrexian Altar and another Zombie loops sacrifices into a kill.
-- **Watch out for:** Korvold is a flying threat that draws a card every sacrifice, so kill him early. Watch for Gravecrawler and a Zombie with Phyrexian Altar. Grave Pact and Pernicious Deed punish boards of small creatures. Vampiric Tutor and Demonic Tutor find missing pieces.
-- **Interaction:** Terminate, Infernal Grasp, Vraska, Golgari Queen (a removal walker), Putrefy, Assassin's Trophy, Kolaghan's Command, Chaos Warp and Beast Within, plus Toxic Deluge and Pernicious Deed as sweepers. Heroic Intervention, Deflecting Swat and Swiftfoot Boots protect its pieces.
+- **Plan:** Ramp with mana creatures, Nature's Lore and Sol Ring, then feed Korvold Treasures, tokens and recursive creatures. Dreadhorde Invasion, Goblin Rabblemaster and Siege-Gang Commander add recurring bodies; Skullclamp converts small creatures into cards.
+- **Wins by:** Blood Artist, Zulaport Cutthroat, Mayhem Devil, Goblin Bombardment and Impact Tremors reward deaths or creatures entering. Korvold and Terror of the Peaks add pressure. Gravecrawler and Phyrexian Altar can loop with another Zombie and a payoff.
+- **Interaction:** Abrupt Decay, Assassin's Trophy, Beast Within, Go for the Throat, Heartless Act, Infernal Grasp, Lightning Bolt and Terminate answer threats; Toxic Deluge clears boards. Heroic Intervention and boots protect key pieces.
 
 ## Strategy
 
-Korvold draws a card and grows on every sacrifice, so Treasure, Food, Clues, and recursive bodies all become card draw. Mayhem Devil and Goblin Bombardment turn each sacrifice into damage; Pitiless Plunderer and Chatterfang turn each death into more fodder. Late in the game, Gravecrawler plus Phyrexian Altar (with a second Zombie) is an unbounded sacrifice loop that kills through Blood Artist, Zulaport, or Mayhem Devil.
+Use tokens and recurring bodies to fuel Korvold and the sacrifice payoffs. Pitiless Plunderer and Chatterfang replace resources; tutors can find missing pieces. Carrion Feeder or Midnight Reaper supplies the other Zombie for the Gravecrawler loop, which also needs a damage or drain payoff to finish.
 
 ## Sim modeling notes
 
-Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
-
-Korvold sac trigger (draw + counter); Treasure/Food/Clue tokens; Mayhem Devil / Bombardment / Blood Artist per-sacrifice damage; Gravecrawler + Phyrexian Altar loop (needs another Zombie on board).
+The simulator has an explicit Gravecrawler / Phyrexian Altar combo requiring another Zombie and a supported payoff. Its exact readiness conditions and individual card approximations matter when interpreting results; consult the audit.
 
 ## Decklist by type (100)
 
 **Commander (1).** Korvold, Fae-Cursed King
 
-**Creatures (31).** Academy Manufactor, Birds of Paradise, Blood Artist, Braids, Arisen Nightmare, Carrion Feeder, Chatterfang, Squirrel General, Delighted Halfling, Eternal Witness, Goblin Rabblemaster, Goldspan Dragon, Gravecrawler, Ignoble Hierarch, Mahadi, Emporium Master, Mayhem Devil, Midnight Reaper, Pawn of Ulamog, Pitiless Plunderer, Priest of Forgotten Gods, Reassembling Skeleton, Sakura-Tribe Elder, Sheoldred, the Apocalypse, Siege-Gang Commander, Sylvan Caryatid, Syr Konrad, the Grim, Terror of the Peaks, Tireless Provisioner, Tireless Tracker, Viscera Seer, Woe Strider, Yawgmoth, Thran Physician, Zulaport Cutthroat
+**Creatures (32).** Academy Manufactor, Birds of Paradise, Blood Artist, Braids, Arisen Nightmare, Carrion Feeder, Chatterfang, Squirrel General, Delighted Halfling, Eternal Witness, Goblin Rabblemaster, Goldspan Dragon, Gravecrawler, Ignoble Hierarch, Mahadi, Emporium Master, Mayhem Devil, Midnight Reaper, Mirkwood Bats, Pawn of Ulamog, Pitiless Plunderer, Priest of Forgotten Gods, Reassembling Skeleton, Sakura-Tribe Elder, Sheoldred, the Apocalypse, Siege-Gang Commander, Sylvan Caryatid, Syr Konrad, the Grim, Terror of the Peaks, Tireless Provisioner, Tireless Tracker, Viscera Seer, Woe Strider, Yawgmoth, Thran Physician, Zulaport Cutthroat
 
-**Enchantments (7).** Bastion of Remembrance, Bitterblossom, Black Market Connections, Dark Prophecy, Dreadhorde Invasion, Goblin Bombardment, Impact Tremors
+**Enchantments (6).** Bastion of Remembrance, Black Market Connections, Dark Prophecy, Dreadhorde Invasion, Goblin Bombardment, Impact Tremors
 
 **Artifacts (7).** Arcane Signet, Ashnod's Altar, Lightning Greaves, Phyrexian Altar, Skullclamp, Sol Ring, Swiftfoot Boots
 
@@ -58,7 +55,6 @@ Korvold sac trigger (draw + counter); Treasure/Food/Clue tokens; Mayhem Devil / 
 1 Bastion of Remembrance
 1 Beast Within
 1 Birds of Paradise
-1 Bitterblossom
 1 Black Market Connections
 1 Blood Artist
 1 Blood Crypt
@@ -98,6 +94,7 @@ Korvold sac trigger (draw + counter); Treasure/Food/Clue tokens; Mayhem Devil / 
 1 Mahadi, Emporium Master
 1 Mayhem Devil
 1 Midnight Reaper
+1 Mirkwood Bats
 1 Nature's Lore
 1 Overgrown Tomb
 1 Pawn of Ulamog
