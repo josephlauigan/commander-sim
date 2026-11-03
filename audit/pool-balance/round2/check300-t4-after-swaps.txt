@@ -1,0 +1,18 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t4 Chulane       100 cards: Full 90, Full-auto 7, Approximate 3, Partial 0, Unmodeled 0
+  t4 Edgar Markov  100 cards: Full 82, Full-auto 10, Approximate 8, Partial 0, Unmodeled 0
+  t4 Krenko        100 cards: Full 84, Full-auto 8, Approximate 8, Partial 0, Unmodeled 0
+  t4 Prosper       100 cards: Full 91, Full-auto 3, Approximate 6, Partial 0, Unmodeled 0
+  t4 Yuriko        100 cards: Full 87, Full-auto 9, Approximate 4, Partial 0, Unmodeled 0
+
+300 games (calibration: within, 300 per list per tier, profile loose), lookahead AI, 4 worker threads: about 4 minutes
+
+=== Within-tier balance [loose, n=300 games per tier; each deck is seated in ~80%] ===
+  Tier 4 (Low B4): avg game 8.7 rounds, timeouts 0.0%
+    Chulane                       13.8% (10.0-18.8)  LOW  [0.0 pts from round-cap wins]
+    Edgar Markov                  35.9% (30.0-42.2)  HIGH  [0.0 pts from round-cap wins]
+    Krenko                        31.7% (26.3-37.7)  [0.0 pts from round-cap wins]
+    Prosper                       17.9% (13.6-23.4)  [0.0 pts from round-cap wins]
+    Yuriko                        25.3% (20.2-31.2)  [0.0 pts from round-cap wins]
+
+(347s total)

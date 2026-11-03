@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-11-02",
+  "fetched": "2026-11-03",
   "deck": "light-paws-aura-voltron",
   "commanders": [
     "Light-Paws, Emperor's Voice"
   ],
-  "request_sha256": "24dd734d672f1aa6fe810dac189b9d42bdddf3931503427b4f2bf0c355436684",
+  "request_sha256": "3ac5a680a63b98be6bc8776bc8a74dbbdc8330f25460215593669fa5b1cdd65b",
   "identity": "W",
   "included": [],
   "included_by_changing_commanders": [],
@@ -265,6 +265,36 @@
       "popularity": 844,
       "missing": [
         "Inviolability"
+      ]
+    },
+    {
+      "id": "43-4770",
+      "cards": [
+        {
+          "name": "Paradox Engine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Whitemane Lion",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana nonland permanents you control can produce",
+        "Infinite untap of nonland permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Nonland permanents you control can tap to produce at least {1}{W}.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Paradox Engine"
       ]
     }
   ]

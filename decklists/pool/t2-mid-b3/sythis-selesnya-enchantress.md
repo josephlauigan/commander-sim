@@ -15,19 +15,19 @@ Can your decks win through an attack tax, and do they bring enchantment removal?
 ## At the table
 
 - **Plan:** Ramps with Utopia Sprawl, Wild Growth, Fertile Ground, Overgrowth, Abundant Growth, Sanctum Weaver, Selesnya Signet and Arcane Signet, then draws a card off every enchantment with Sythis, Enchantress's Presence, Eidolon of Blossoms, Argothian, Mesa and Verduran Enchantress, Satyr Enchanter, Setessan Champion and Jukai Naturalist (Weaver of Harmony copies those draws). Aura Shards clears enchantments and artifacts as creatures arrive; the deck has no tutors left.
-- **Wins by:** One big Aura-carrier: All That Glitters, Ethereal Armor, Ancestral Mask, Strength of the Harvest and Rancor on an evasive or protected creature, with Setessan Champion and Calix, Guided by Fate growing it (Calix copies an enchantment each turn it connects). Sigil of the Empty Throne and Hallowed Haunting make fliers; Archon of Sun's Grace makes Pegasi; Heliod, Sun-Crowned turns life gain into counters.
-- **Watch out for:** Ghostly Prison and Archon of Sun's Grace tax or punish attacks, Greater Auramancy makes its enchantments untouchable, Privileged Position gives hexproof, and Resurgent Belief (suspended) or Mirari's Wake rebuild after a wipe. Kill the enchantress draw engines early and bring enchantment removal.
+- **Wins by:** A slow win: Setessan Champion and Calix, Guided by Fate grow one creature (Calix copies an enchantment each turn it connects), with Strength of the Harvest as the only Aura pump. Archon of Sun's Grace makes Pegasi; Heliod, Sun-Crowned turns life gain into counters.
+- **Watch out for:** Ghostly Prison and Archon of Sun's Grace tax or punish attacks, Greater Auramancy makes its enchantments untouchable, Privileged Position gives hexproof, and Resurgent Belief (suspended) rebuilds after a wipe. Banishing Light, Oblivion Ring, Journey to Nowhere and Cast Out answer threats and each draws a card; Rule of Law, Norn's Decree and Karmic Justice slow the table. Kill the enchantress draw engines early and bring enchantment removal.
 - **Interaction:** Swords to Plowshares, Path to Exile, Grasp of Fate, Prison Sentence, Song of the Dryads, Darksteel Mutation, Kenrith's Transformation, Seal of Cleansing, Seal of Primordium, Aura of Silence, Beast Within, Austere Command and Winds of Rath (Auras survive it). Heroic Intervention, Flickering Ward and Destiny Spinner protect.
 
 ## Strategy
 
-Build a fort that makes attacking it expensive (Ghostly Prison, Archon of Sun's Grace, Authority of the Consuls, Blind Obedience), draw a card off every enchantment cast, and win with an Aura-stacked creature or a squadron of enchantment tokens. Removal is almost all enchantment-based, so it grows the engine; Resurgent Belief brings the whole board back.
+Build a fort that makes attacking it expensive (Ghostly Prison, Archon of Sun's Grace, Authority of the Consuls, Blind Obedience), draw a card off every enchantment cast, and win slowly with a growing enchantress, Archon of Sun's Grace and Calix. Removal is almost all enchantment-based, so it grows the engine; Resurgent Belief brings the whole board back.
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Enchantress draw triggers; attack taxes; Aura pump (All That Glitters, Ethereal Armor, Ancestral Mask, Strength of the Harvest, Rancor); Sythis's lifegain/draw on enchantment cast; Calix's counters and enchantment copies; Resurgent Belief's suspend and mass return. Left Approximate: Weaver of Harmony copies only the enchantress draw triggers.
+Enchantress draw triggers; attack taxes; Aura pump (Strength of the Harvest); Sythis's lifegain/draw on enchantment cast; Calix's counters and enchantment copies; Resurgent Belief's suspend and mass return. Left Approximate: Weaver of Harmony copies only the enchantress draw triggers.
 
 ## Decklist by type (100)
 
@@ -35,7 +35,7 @@ Enchantress draw triggers; attack taxes; Aura pump (All That Glitters, Ethereal 
 
 **Creatures (21).** Alseid of Life's Bounty, Archon of Sun's Grace, Argothian Enchantress, Calix, Guided by Fate, Composer of Spring, Courser of Kruphix, Destiny Spinner, Dryad of the Ilysian Grove, Eidolon of Blossoms, Enduring Vitality, Heliod, Sun-Crowned, Herald of the Pantheon, Jukai Naturalist, Mesa Enchantress, Moon-Blessed Cleric, Sanctum Weaver, Satyr Enchanter, Setessan Champion, Starfield Mystic, Verduran Enchantress, Weaver of Harmony
 
-**Enchantments (34).** Abundant Growth, All That Glitters, Ancestral Mask, Aura Shards, Aura of Silence, Authority of the Consuls, Blind Obedience, Darksteel Mutation, Druid Class, Enchantress's Presence, Ethereal Armor, Exploration, Fertile Ground, Flickering Ward, Ghostly Prison, Grasp of Fate, Greater Auramancy, Hallowed Haunting, Kenrith's Transformation, Mirari's Wake, Overgrowth, Prison Sentence, Privileged Position, Rancor, Seal of Cleansing, Seal of Primordium, Sigil of the Empty Throne, Snake Umbra, Song of the Dryads, Spider Umbra, Strength of the Harvest // Haven of the Harvest, Sylvan Library, Utopia Sprawl, Wild Growth
+**Enchantments (34).** Abundant Growth, Aura Shards, Aura of Silence, Authority of the Consuls, Banishing Light, Blind Obedience, Cast Out, Darksteel Mutation, Druid Class, Enchantress's Presence, Exploration, Fertile Ground, Flickering Ward, Ghostly Prison, Grasp of Fate, Greater Auramancy, Journey to Nowhere, Karmic Justice, Kenrith's Transformation, Norn's Decree, Oblivion Ring, Overgrowth, Prison Sentence, Privileged Position, Rule of Law, Seal of Cleansing, Seal of Primordium, Search the Premises, Song of the Dryads, Strength of the Harvest // Haven of the Harvest, Sylvan Library, Tocasia's Welcome, Utopia Sprawl, Wild Growth
 
 **Artifacts (2).** Arcane Signet, Selesnya Signet
 
@@ -49,9 +49,7 @@ Enchantress draw triggers; attack taxes; Aura pump (All That Glitters, Ethereal 
 
 ```
 1 Abundant Growth
-1 All That Glitters
 1 Alseid of Life's Bounty
-1 Ancestral Mask
 1 Arcane Signet
 1 Archon of Sun's Grace
 1 Argothian Enchantress
@@ -59,6 +57,7 @@ Enchantress draw triggers; attack taxes; Aura pump (All That Glitters, Ethereal 
 1 Aura of Silence
 1 Austere Command
 1 Authority of the Consuls
+1 Banishing Light
 1 Beast Within
 1 Blind Obedience
 1 Bountiful Promenade
@@ -66,6 +65,7 @@ Enchantress draw triggers; attack taxes; Aura pump (All That Glitters, Ethereal 
 1 Brushland
 1 Calix, Guided by Fate
 1 Canopy Vista
+1 Cast Out
 1 Command Tower
 1 Composer of Spring
 1 Courser of Kruphix
@@ -76,7 +76,6 @@ Enchantress draw triggers; attack taxes; Aura pump (All That Glitters, Ethereal 
 1 Eidolon of Blossoms
 1 Enchantress's Presence
 1 Enduring Vitality
-1 Ethereal Armor
 1 Exploration
 1 Fertile Ground
 1 Flickering Ward
@@ -85,34 +84,34 @@ Enchantress draw triggers; attack taxes; Aura pump (All That Glitters, Ethereal 
 1 Grasp of Fate
 1 Greater Auramancy
 1 Hall of Heliod's Generosity
-1 Hallowed Haunting
 1 Heliod, Sun-Crowned
 1 Herald of the Pantheon
 1 Heroic Intervention
 1 Hushwood Verge
+1 Journey to Nowhere
 1 Jukai Naturalist
+1 Karmic Justice
 1 Kenrith's Transformation
 1 Mesa Enchantress
-1 Mirari's Wake
 1 Moon-Blessed Cleric
+1 Norn's Decree
+1 Oblivion Ring
 1 Overgrown Farmland
 1 Overgrowth
 1 Path to Exile
 1 Prison Sentence
 1 Privileged Position
-1 Rancor
 1 Reliquary Tower
 1 Resurgent Belief
+1 Rule of Law
 1 Sanctum Weaver
 1 Satyr Enchanter
 1 Seal of Cleansing
 1 Seal of Primordium
+1 Search the Premises
 1 Selesnya Signet
 1 Setessan Champion
-1 Sigil of the Empty Throne
-1 Snake Umbra
 1 Song of the Dryads
-1 Spider Umbra
 1 Starfield Mystic
 1 Strength of the Harvest // Haven of the Harvest
 1 Sungrass Prairie
@@ -122,6 +121,7 @@ Enchantress draw triggers; attack taxes; Aura pump (All That Glitters, Ethereal 
 1 Sythis, Harvest's Hand
 1 Temple Garden
 1 Temple of Plenty
+1 Tocasia's Welcome
 1 Utopia Sprawl
 1 Verduran Enchantress
 1 Weaver of Harmony

@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-11-02",
+  "fetched": "2026-11-03",
   "deck": "sythis-selesnya-enchantress",
   "commanders": [
     "Sythis, Harvest's Hand"
   ],
-  "request_sha256": "3c98f469b14df7dd481745ea960ebb147db69055938d76788de53836809e786c",
+  "request_sha256": "9e6af825fd83e64a24d60ab6c8dea658d5624b8d51ff2f9c3a7df6c0d19fab99",
   "identity": "GW",
   "included": [],
   "included_by_changing_commanders": [],
@@ -163,6 +163,33 @@
       ]
     },
     {
+      "id": "125-3903",
+      "cards": [
+        {
+          "name": "Knowledge Pool",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rule of Law",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3483,
+      "missing": [
+        "Knowledge Pool"
+      ]
+    },
+    {
       "id": "1355-2645",
       "cards": [
         {
@@ -222,6 +249,42 @@
       "popularity": 2900,
       "missing": [
         "Gauntlets of Light"
+      ]
+    },
+    {
+      "id": "168-372-2902",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Journey to Nowhere",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Oblivion Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1869,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
       ]
     },
     {
@@ -375,6 +438,33 @@
       ]
     },
     {
+      "id": "2902-5299",
+      "cards": [
+        {
+          "name": "Opalescence",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Journey to Nowhere",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 335,
+      "missing": [
+        "Opalescence"
+      ]
+    },
+    {
       "id": "806-1300",
       "cards": [
         {
@@ -463,39 +553,6 @@
       "popularity": 162,
       "missing": [
         "Awakening"
-      ]
-    },
-    {
-      "id": "3018-3560-4050",
-      "cards": [
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Rancor",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Archon of Sun's Grace",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control another creature.",
-      "mana": "{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 50,
-      "missing": [
-        "Phyrexian Altar"
       ]
     }
   ]

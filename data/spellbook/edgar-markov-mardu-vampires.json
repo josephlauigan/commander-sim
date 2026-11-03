@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-11-02",
+  "fetched": "2026-11-03",
   "deck": "edgar-markov-mardu-vampires",
   "commanders": [
     "Edgar Markov"
   ],
-  "request_sha256": "b4d0083026552cec1b623c798a04738095ce30cfd2880e166933a88ae6d6a9d6",
+  "request_sha256": "68dc975c37016a9f7662d2ecf3a7103d40f39485088a834b1ebc0acf29857625",
   "identity": "RWB",
   "included": [
     {
@@ -398,39 +398,6 @@
       ]
     },
     {
-      "id": "1580-4050-4314",
-      "cards": [
-        {
-          "name": "Reassembling Skeleton",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pawn of Ulamog",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 23831,
-      "missing": [
-        "Reassembling Skeleton"
-      ]
-    },
-    {
       "id": "5867-6191",
       "cards": [
         {
@@ -763,42 +730,6 @@
       "popularity": 13524,
       "missing": [
         "Revival // Revenge"
-      ]
-    },
-    {
-      "id": "3240-4050-4314",
-      "cards": [
-        {
-          "name": "Nether Traitor",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pawn of Ulamog",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana",
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 12943,
-      "missing": [
-        "Nether Traitor"
       ]
     },
     {
@@ -1503,39 +1434,6 @@
       ]
     },
     {
-      "id": "1263-4050-4314",
-      "cards": [
-        {
-          "name": "Bloodsoaked Champion",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pawn of Ulamog",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You attacked with a creature this turn.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 3633,
-      "missing": [
-        "Bloodsoaked Champion"
-      ]
-    },
-    {
       "id": "4794-5342",
       "cards": [
         {
@@ -1844,39 +1742,6 @@
       ]
     },
     {
-      "id": "3054-4050-4314",
-      "cards": [
-        {
-          "name": "Oathsworn Vampire",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pawn of Ulamog",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have gained life this turn.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1738,
-      "missing": [
-        "Oathsworn Vampire"
-      ]
-    },
-    {
       "id": "5342-7276",
       "cards": [
         {
@@ -1903,43 +1768,6 @@
       "popularity": 1604,
       "missing": [
         "Dark Leo & Shredder"
-      ]
-    },
-    {
-      "id": "4050-5544-6794",
-      "cards": [
-        {
-          "name": "Forsaken Miner",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Susurian Voidborn",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifegain triggers",
-        "Infinite lifegain",
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1552,
-      "missing": [
-        "Forsaken Miner"
       ]
     },
     {
@@ -2189,39 +2017,6 @@
       ]
     },
     {
-      "id": "4050-4314-6115",
-      "cards": [
-        {
-          "name": "Ozox, the Clattering King",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pawn of Ulamog",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 989,
-      "missing": [
-        "Ozox, the Clattering King"
-      ]
-    },
-    {
       "id": "2232-3416-4050",
       "cards": [
         {
@@ -2352,39 +2147,6 @@
       "popularity": 756,
       "missing": [
         "Balancing Act"
-      ]
-    },
-    {
-      "id": "2738-4050-4314",
-      "cards": [
-        {
-          "name": "Tenacious Dead",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pawn of Ulamog",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 684,
-      "missing": [
-        "Tenacious Dead"
       ]
     },
     {
@@ -2661,6 +2423,41 @@
       ]
     },
     {
+      "id": "2580-3707-5141",
+      "cards": [
+        {
+          "name": "Lethal Vapors",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Tithe Taker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Skip all your future turns, causing your opponents to eventually draw from an empty library and lose the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{B}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 62,
+      "missing": [
+        "Lethal Vapors"
+      ]
+    },
+    {
       "id": "1183-1988-4050",
       "cards": [
         {
@@ -2736,83 +2533,6 @@
       ]
     },
     {
-      "id": "2173-2292-5220-6794",
-      "cards": [
-        {
-          "name": "Mortuary",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Bolas's Citadel",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Viscera Seer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Susurian Voidborn",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite lifegain triggers",
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 45,
-      "missing": [
-        "Mortuary"
-      ]
-    },
-    {
-      "id": "2178-2380-4050",
-      "cards": [
-        {
-          "name": "Thornbite Staff",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Bloodline Keeper // Lord of Lineage",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Bloodline Keeper // Lord of Lineage doesn't have summoning sickness.\nThornbite Staff is attached to Bloodline Keeper // Lord of Lineage.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 35,
-      "missing": [
-        "Thornbite Staff"
-      ]
-    },
-    {
       "id": "1988-2762-4050",
       "cards": [
         {
@@ -2846,81 +2566,6 @@
       ]
     },
     {
-      "id": "2178-2292-2380",
-      "cards": [
-        {
-          "name": "Thornbite Staff",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Viscera Seer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Bloodline Keeper // Lord of Lineage",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "Bloodline Keeper // Lord of Lineage doesn't have summoning sickness.\nThornbite Staff is attached to Bloodline Keeper // Lord of Lineage.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 29,
-      "missing": [
-        "Thornbite Staff"
-      ]
-    },
-    {
-      "id": "1829-2173-2292-5220",
-      "cards": [
-        {
-          "name": "Mortuary",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Bolas's Citadel",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vindictive Vampire",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Viscera Seer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite damage",
-        "Infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 28,
-      "missing": [
-        "Mortuary"
-      ]
-    },
-    {
       "id": "1988-4050-5086",
       "cards": [
         {
@@ -2951,39 +2596,6 @@
       "popularity": 21,
       "missing": [
         "Triskelavus"
-      ]
-    },
-    {
-      "id": "2178-2380-3967",
-      "cards": [
-        {
-          "name": "Thornbite Staff",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Bloodline Keeper // Lord of Lineage",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Yahenni, Undying Partisan",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "Bloodline Keeper // Lord of Lineage doesn't have summoning sickness.\nThornbite Staff is attached to Bloodline Keeper // Lord of Lineage.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 20,
-      "missing": [
-        "Thornbite Staff"
       ]
     },
     {
@@ -3021,6 +2633,36 @@
       "popularity": 13,
       "missing": [
         "Dino DNA"
+      ]
+    },
+    {
+      "id": "43-4770",
+      "cards": [
+        {
+          "name": "Paradox Engine",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Whitemane Lion",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana nonland permanents you control can produce",
+        "Infinite untap of nonland permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Nonland permanents you control can tap to produce at least {1}{W}.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Paradox Engine"
       ]
     }
   ]
