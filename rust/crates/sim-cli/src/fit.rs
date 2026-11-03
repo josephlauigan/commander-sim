@@ -181,12 +181,13 @@ impl Dim {
 fn dims(tier: &str, keys: &[String], scope: &str, st: &sim_core::settings::Settings) -> Vec<Dim> {
     let mut out = vec![];
     let style = |name: String, field, decks: Vec<String>, lo, hi, base| Dim { name, field, decks, lo, hi, int: false, base };
+    let start = |k: &str| st.styles.get(k).copied().unwrap_or_else(|| sim_core::ai::base_style(k)); // the default knobs' style, else the built-in one
     let mean = |f: &dyn Fn(sim_core::ai::Style) -> f64| {
-        keys.iter().map(|k| f(sim_core::ai::base_style(k))).sum::<f64>() / keys.len().max(1) as f64
+        keys.iter().map(|k| f(start(k))).sum::<f64>() / keys.len().max(1) as f64
     };
     if scope == "deck" {
         for k in keys {
-            let b = sim_core::ai::base_style(k);
+            let b = start(k);
             out.push(style(format!("{k}.temp"), Field::Temp, vec![k.clone()], 0.2, 2.0, b.temp));
             out.push(style(format!("{k}.aggression"), Field::Aggression, vec![k.clone()], 0.0, 1.0, b.aggression));
             out.push(style(format!("{k}.caution"), Field::Caution, vec![k.clone()], 0.0, 1.0, b.caution));
@@ -279,7 +280,7 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
         return Err(format!("{tier} has no targets (data/realism/{tier}.toml): nothing to fit"));
     }
     let prof = a.profiles.first().cloned().unwrap_or_else(|| "loose".into());
-    let base_st = sim.settings(profile(&prof)?);
+    let base_st = sim.settings_in(profile(&prof)?, Some(tier)); // the start: the default knobs for the tier (--knobs builtin: the built-in ones)
     let ctx = Ctx { sim, verbose: false };
     let keys = sim.pool_keys(tier);
     let ds = dims(tier, &keys, &a.fit_scope, &base_st);
@@ -308,7 +309,7 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
     let (base_loss, base_m) = eval(&base_u);
     println!("\n=== Fit: {} [{prof}, {} AI, {n} games a candidate, seeds {seed0}-{}] ===", tier_label(tier), ctx.ai(), seed0 + n.max(1) - 1);
     println!("knobs ({}): {}", ds.len(), ds.iter().map(|d| d.name.as_str()).collect::<Vec<_>>().join(", "));
-    println!("built-in values: loss {base_loss:.2}");
+    println!("starting values (the knobs in force: {tier}'s defaults, or --knobs FILE / builtin): loss {base_loss:.2}");
     let (mut best_u, mut best_loss, mut best_m) = (base_u.clone(), base_loss, base_m.clone());
     for g in 1..=a.fit_gens {
         let xs = cma.ask(&mut rng);
@@ -326,16 +327,16 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
         println!("  generation {g:>2}: best so far {best_loss:.2}, this generation {:.2} (mean {mean:.2}), step {:.3}", losses.iter().cloned().fold(f64::INFINITY, f64::min), cma.sigma);
     }
     let best = knobs_of(tier, &ds, &best_u);
-    println!("\n  statistic                                          built-in        best      target       band");
+    println!("\n  statistic                                           start        best      target       band");
     for s in &STATS {
         let Some(t) = targets.get(s.key) else { continue };
         let (b, v) = (base_m.get(s.key).map_or(f64::NAN, |x| x.value), best_m.get(s.key).map_or(f64::NAN, |x| x.value));
         println!("  {:<48} {b:>10.1} {v:>11.1} {:>11.1} {:>5.1}-{:<5.1}", s.what, t.value, t.lo, t.hi);
     }
-    println!("  loss: built-in {base_loss:.2}, best {best_loss:.2}");
+    println!("  loss: start {base_loss:.2}, best {best_loss:.2}");
     println!("\n  best knobs:");
     for (d, &u) in ds.iter().zip(&best_u) {
-        println!("    {:<44} {:>7.3}  (built-in {:.3})", d.name, d.from_unit(u), d.base);
+        println!("    {:<44} {:>7.3}  (start {:.3})", d.name, d.from_unit(u), d.base);
     }
     let out = a.fit_out.clone().unwrap_or_else(|| format!("audit/realism/fit/{tier}-{}.toml", a.fit_scope));
     let path = if std::path::Path::new(&out).is_absolute() { std::path::PathBuf::from(&out) } else { root.join(&out) };
@@ -350,7 +351,7 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
     ];
     let fit = vec![
         ("loss".into(), format!("{best_loss:.3}")),
-        ("loss_builtin".into(), format!("{base_loss:.3}")),
+        ("loss_start".into(), format!("{base_loss:.3}")),
         ("games".into(), n.to_string()),
         ("generations".into(), a.fit_gens.to_string()),
         ("scope".into(), format!("\"{}\"", a.fit_scope)),

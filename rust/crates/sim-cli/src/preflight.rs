@@ -197,7 +197,8 @@ pub fn run(sim: &Sim, a: &Args, swaps: &[(String, String)], var: &[String]) -> R
     }
     for prof in &a.profiles {
         sim.prog.lock().unwrap().label = format!("preflight {tier} / {prof}");
-        let st = Settings::new(profile(prof)?, AiMode::Adaptive, sim.opts.temp);
+        let mut st = Settings::new(profile(prof)?, AiMode::Adaptive, sim.opts.temp);
+        sim.tune(&mut st, Some(tier.as_str())); // the dry run plays the knobs in force
         analyses.push(ctx.analyze_with(deck, &seat, &keys, st, DRY_GAMES, a.seed));
     }
     println!(

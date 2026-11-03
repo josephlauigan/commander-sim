@@ -119,16 +119,15 @@ fn cloud_worn_equipment_moves_onto_cloud() {
     assert_eq!(equip_of(&g, e).map(|x| x.0), Some(cl), "the plan's [equip] move");
 }
 
-/// was cloud_special: Champion's Helm and Sword of Feast and Famine (equip only in card code) are equipped to Cloud
+/// was cloud_special: Sword of Feast and Famine (equip only in card code) is equipped to Cloud (Champion's Helm, the
+/// other piece, left the deck in the Ghave breakup, 11/02, and left the plan's equip.extra with it)
 #[test]
-fn cloud_the_helm_and_feast_and_famine_are_equipped() {
+fn cloud_feast_and_famine_is_equipped() {
     let mut g = seated("cloud", "t1");
     lands(&mut g, P, "Plains", 4, false);
     let cl = commander(&mut g, P, "Cloud, Midgar Mercenary");
     perm(&mut g, P, "Archon of Absolution");
-    let helm = perm(&mut g, P, "Champion's Helm");
     let soff = perm(&mut g, P, "Sword of Feast and Famine");
-    assert_eq!(equip_of(&g, helm).map(|x| x.0), Some(cl), "the plan's equip.extra");
     let (t, u) = equip_of(&g, soff).expect("Sword of Feast and Famine");
     assert_eq!(t, cl);
     let want = 2.5 + 0.5 * 4.0 - 0.3 * 2.0 + 4.5; // cloud_special's utility (deleted)

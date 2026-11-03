@@ -59,7 +59,7 @@ fn the_deleted_jd_decks_play_the_generic_policy() {
 
 #[test]
 fn decks_with_nothing_to_switch_and_the_retired_test_seats_keep_what_they_have() {
-    for k in ["chulane-bant-value-combo", "ghave", "urdragon", "thanos", "sephfs", "godo", "scion"] {
+    for k in ["chulane-bant-value-combo", "urdragon", "thanos", "sephfs", "godo", "scion"] {
         assert!(ai::hand_ai_key(k), "{k}");
     }
 }

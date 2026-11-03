@@ -1,5 +1,11 @@
 # Ghave, Guru of Spores — Abzan Aristocrats
 
+**Retired 2026-11-02 (JD).** The deck was broken up: 53 of its cards moved as upgrades into eight decks (Tymna/Thrasios,
+Sheoldred, Kefka, Y'shtola, Cloud, Ur-Dragon, Sauron, Karn; see the CHANGELOG entries of 2026-11-02), and the other 36
+cards and the basics went to the binder. The physical deck no longer exists. **The `ghave` key and its t3-t4 seat were
+removed from the simulator on 2026-11-02** (JD; its plan, printings and Spellbook files and card code went with it).
+The list is kept here as history only: it is not a pool deck, no test seats it, and it is never drawn.
+
 The Seph/Atraxa reanimator (`decklists/pool/retired/sephiroth-phyrexian-reanimator.md`) rebuilt around Ghave, Guru of Spores (JD's
 choice, 10/30). The blue cards are out and the deck leans into sacrifice: Ghave makes Saprolings out of +1/+1 counters
 and counters out of creatures, so he is a sacrifice outlet and a combo piece from the command zone. The reanimation
@@ -9,7 +15,7 @@ package stays as the fast start. First sim (10/31, 2,000 games per tier): 12.3% 
 |---|---|
 | **Commander** | Ghave, Guru of Spores ({2}{W}{B}{G}, 0/0 that enters with five +1/+1 counters, white-black-green) |
 | **Bracket** | 4 (5 Game Changers: Demonic Tutor, Vampiric Tutor, Worldly Tutor, Aura Shards, Gaea's Cradle; the tutorable infinite combos also put it in Bracket 4) |
-| **Simulator** | deck key `ghave`, tiers t3-t4 (Seph's seat since 2026-10-30); plays from `data/plans/ghave.toml` |
+| **Simulator** | none (the deck key `ghave`, tiers t3-t4, was Seph's seat from 2026-10-30 to 2026-11-02) |
 
 ## Strategy
 

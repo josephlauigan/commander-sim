@@ -5,7 +5,8 @@
 # Helm, Kaldra, Mask, the Hammer), `cloud::keep_hand` (the mulligan). 2026-11-01 (audit/cloud/plan-file-2026-11-01.md):
 # the Equipment goes on Cloud (`[equip]`: was `holder_bonus`, `equip_utility_bonus`, `wants_move` and the Helm and
 # Sword of Feast and Famine equips of `cloud_special`), and Cloud stays home while nothing real is on him
-# (`[[stay_home]]`: was `keep_cloud_home`).
+# (`[[stay_home]]`: was `keep_cloud_home`). 2026-11-02 (Ghave breakup): Champion's Helm and Sword of Kaldra left the
+# deck, so they are out of the sets, the prio and the equip extras (the hand AI's engine order still names them).
 # Left out (the schema can't express it): the tutor's mana fit (cast + equip within next turn's mana), its order by a
 # clogged hand / a Sword held / removal risk, the Kaldra set's third piece and the free-equip branch; the catch-up ramp
 # (Knight of the White Orchid, Loyal Warhound: an opponent with more lands); Andúril's rule; the protection responses
@@ -14,10 +15,10 @@
 deck = "cloud"
 default = "plan"
 # the Equipment the tutors want once a Sword is in hand or out
-engines = ["Champion's Helm", "Sword of Kaldra", "Mask of Memory", "Colossus Hammer"]
+engines = ["Mask of Memory", "Colossus Hammer"]
 
 [sets]
-equipment = ["Andúril, Narsil Reforged", "Buster Sword", "Champion's Helm", "Colossus Hammer", "Fireshrieker", "Mask of Memory", "Swiftfoot Boots", "Sword of Feast and Famine", "Sword of Fire and Ice", "Sword of Hearth and Home", "Sword of Kaldra"]
+equipment = ["Andúril, Narsil Reforged", "Buster Sword", "Colossus Hammer", "Fireshrieker", "Mask of Memory", "Swiftfoot Boots", "Sword of Feast and Famine", "Sword of Fire and Ice", "Sword of Hearth and Home"]
 # what makes a two-land hand a keep: a mana rock or a creature of mana value two or less
 keep2 = ["Arcane Signet", "Coalition Relic", "Fellwar Stone", "Mind Stone", "Sol Ring", "Thought Vessel", "Giver of Runes", "Zack Fair", "Knight of the White Orchid", "Loyal Warhound", "Puresteel Paladin", "Kor Outfitter", "Auriok Steelshaper", "Grand Abolisher", "Ardenn, Intrepid Archaeologist", "Page, Loose Leaf"]
 # the Equipment with a combat trigger Cloud doubles: wearing one, he attacks unless a blocker would kill him
@@ -47,7 +48,7 @@ cards = ["Sword of Feast and Famine"]
 value = 78
 
 [[prio]]
-cards = ["Sword of Hearth and Home", "Sword of Kaldra"]
+cards = ["Sword of Hearth and Home"]
 value = 76
 
 [[prio]]
@@ -108,12 +109,6 @@ value = 66
 else = 54
 
 [[prio]]
-cards = ["Champion's Helm"]
-when = ["commander-out"]
-value = 62
-else = 52
-
-[[prio]]
 cards = ["Solemn Simulacrum"]
 when = ["turn<=5 & hand:equipment>=1"]
 value = 68
@@ -144,13 +139,13 @@ when = ["hand-lands=2 & hand:keep2>=1"]
 keep = true
 
 # Cloud wears the Equipment (was holder_bonus / equip_utility_bonus / wants_move: +20 to his score as a target, +4.5
-# to the equip's utility, worn pieces move onto him), and the two pieces whose equip is card code only (was
-# cloud_special: Champion's Helm {1} counted as +2, Sword of Feast and Famine {2} as +4)
+# to the equip's utility, worn pieces move onto him), and the piece whose equip is card code only (was
+# cloud_special: Sword of Feast and Famine {2} counted as +4; the Helm's {1} as +2 left with the Helm)
 [equip]
 holder = "commander"
 bonus = 20
 utility = 4.5
-extra = { "Champion's Helm" = [1, 2], "Sword of Feast and Famine" = [2, 4] }
+extra = { "Sword of Feast and Famine" = [2, 4] }
 
 # Cloud stays home (was keep_cloud_home) when a creature of the defender can block him, he has neither real size
 # (power 4) nor indestructible, the attack isn't lethal, and he wears no trigger Sword or a blocker would kill him

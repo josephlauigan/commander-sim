@@ -41,8 +41,8 @@ Ship hands with no acceleration.
 
 **Turns 3-5: the win turn.** Cast Godo with six mana (five with Maskwood Nexus out), plus Hammer of Nazahn already out,
 an untapped Brass Squire, Puresteel Paladin with metalcraft, Sigarda's Aid, or {5} to attach Helm. Hold Force of Will,
-Pact of Negation or Teferi's Protection for the response. Grand Abolisher on the battlefield, or Conqueror's Flail
-equipped first, means opponents can't cast spells during your turn at all.
+Pact of Negation or Teferi's Protection for the response. Grand Abolisher on the battlefield means
+opponents can't cast spells during your turn at all.
 
 **Late game.** If the combo is answered, the Dragons and Equipment win the long game: Terror of the Peaks, the hasty
 Dragons, Kaldra Compleat, and The Ur-Dragon's card draw.
@@ -55,7 +55,7 @@ creature, except it isn't legendary, and it gains haste. On Godo:
 1. Godo enters and fetches Helm. Attach it: free with Hammer of Nazahn or Sigarda's Aid out, free with Puresteel Paladin
    and three artifacts, by tapping Brass Squire, or by paying {5}.
 2. Beginning of combat: Helm makes a hasty token Godo. Its enter trigger fetches another Equipment (Hammer if it's
-   missing, otherwise Kaldra Compleat or Conqueror's Flail).
+   missing, otherwise Kaldra Compleat).
 3. The token attacks: untap it and all Samurai, and add a combat.
 4. The new combat begins, Helm makes another hasty token, and it repeats until the table is dead.
 
@@ -81,8 +81,6 @@ and put any number of Equipment from among them onto the battlefield; attach one
 
 - Godo untaps all Samurai on his first attack each turn. In the Helm loop every Godo token's first attack untaps
   Gilgamesh, so he attacks every combat and digs six cards every combat.
-- **Sting, the Glinting Dagger** untaps the equipped creature at the beginning of each combat, so on Gilgamesh he
-  attacks each combat without Godo.
 - **Helm of the Host on Gilgamesh** makes a Gilgamesh token every combat, and each token's enter trigger digs again.
 
 ### Maskwood Nexus
@@ -105,9 +103,7 @@ own that aren't on the battlefield.*
 | **Sword of Fire and Ice** | Protection from red and blue; 2 damage and a card on each hit. |
 | **Sword of Feast and Famine** | Protection from black and green; discard, and your lands untap. |
 | **Shadowspear** | Trample and lifelink; strips hexproof and indestructible from opponents' permanents. |
-| **Conqueror's Flail** | Opponents can't cast spells during your turn while it's equipped: protects the win turn. |
-| **Sting, the Glinting Dagger** | Haste, and untaps the equipped creature every combat. |
-| **Lightning Greaves, Swiftfoot Boots** | Haste and protection. |
+| **Lightning Greaves** | Haste and shroud. |
 
 Support: **Puresteel Paladin** (equip {0} with metalcraft, a card per Equipment), **Sigarda's Aid** (flash Equipment,
 attach on entering), **Brass Squire** (attach for free), **Stoneforge Mystic**, **Steelshaper's Gift**, **Open the
@@ -134,12 +130,12 @@ hasty 2/2s as you need. **Imperial Recruiter** finds Dualcaster or Godo (power 2
 
 - **Stack:** Force of Will, Force of Negation (noncreature spells; free on an opponent's turn), Pact of Negation, Mana Drain (the mana comes
   back on your next main phase: put it toward Godo).
-- **Removal:** Swords to Plowshares, Decimate, Chaos Warp, Cyclonic Rift.
+- **Removal:** Swords to Plowshares, Decimate, Chaos Warp.
 - **Board wipe:** **Kindred Dominance** ({5}{B}{B}, sorcery): name Dragon and every creature that isn't a Dragon is
   destroyed. With Maskwood Nexus out all your creatures are Dragons, so it is one-sided; without it, Godo, the mana
   creatures and the Paladins die too.
 - **Protection:** Grand Abolisher (opponents can't cast spells or activate abilities of artifacts, creatures or
-  enchantments during your turn), Teferi's Protection, Conqueror's Flail, Lightning Greaves, Swiftfoot Boots.
+  enchantments during your turn), Teferi's Protection, Lightning Greaves.
 
 ### Card flow
 
@@ -150,8 +146,8 @@ and the equip, and artifacts for Puresteel Paladin's metalcraft.
 ## Key lines
 
 - **Turn 1-2:** fast mana and a mana creature; Puresteel Paladin or Stoneforge Mystic.
-- **Godo turn:** six mana plus a way to attach Helm; Grand Abolisher down or Conqueror's Flail equipped first if you
-  have them.
+- **Godo turn:** six mana plus a way to attach Helm; Grand Abolisher down first if you
+  have it.
 - **Celebrant turn:** Helm already out (or found and attached) plus three mana for Combat Celebrant.
 - **Godo answered:** Camera or Jaxis copies Godo for a fresh trigger; otherwise switch to Celebrant, or Dualcaster and
   Twinflame.
@@ -166,32 +162,34 @@ Wooded Foothills), City of Brass, Mana Confluence, Command Tower, Ancient Tomb, 
 Inventors' Fair, Gaea's Cradle and one Forest. Every fetch finds a dual or shock land of two colours, and Nature's Lore
 finds any land with the Forest type (Bayou, Taiga, Tropical Island and the green shock lands). Rampant Growth finds only
 a basic, so it needs the Forest, which is also there for Blood Moon. Fast mana: Sol Ring, Mana Vault, Grim Monolith,
-Chrome Mox, Mox Diamond and Lotus Petal, plus three mana creatures and two land-ramp spells.
+Chrome Mox, Mox Diamond and Lotus Petal, plus three mana creatures and two land-ramp spells. **Mox Jasper** taps for
+one mana of any colour only while you control a Dragon (a Dragon creature, or any creature with Maskwood Nexus out),
+so it is a late source: keep it as an artifact for Puresteel Paladin, not as a mana source in an opening hand.
 
 **Gaea's Cradle** taps for {G} per creature you control. With a mana creature or two out it is a second Mana Vault, but
 on turns 1-2 with no creatures it makes nothing, so don't keep it as one of only two lands.
 
 ## Bracket and Rule 0
 
-Bracket 4: 17 Game Changers (Mana Vault, Grim Monolith, Chrome Mox, Mox Diamond, The One Ring, Rhystic Study,
+Bracket 4: 16 Game Changers (Mana Vault, Grim Monolith, Chrome Mox, Mox Diamond, The One Ring, Rhystic Study,
 Smothering Tithe, Enlightened Tutor, Demonic Tutor, Vampiric Tutor, Imperial Seal, Worldly Tutor, Force of Will,
-Cyclonic Rift, Teferi's Protection, Ancient Tomb, Gaea's Cradle) and two two-card infinite combos (Godo or Combat
+Teferi's Protection, Ancient Tomb, Gaea's Cradle) and two two-card infinite combos (Godo or Combat
 Celebrant plus Helm of the Host). Tell the table about the combos before the game.
 
 ## Decklist by type (100)
 **Commander (1).** The Ur-Dragon
 
-**Creatures (20).** Birds of Paradise, Brass Squire, Combat Celebrant, Dragonlord Ojutai, Dualcaster Mage, Gilgamesh Master-at-Arms, Glorybringer, Godo Bandit Warlord, Goldspan Dragon, Grand Abolisher, Imperial Recruiter, Jaxis the Troublemaker, Kura the Boundless Sky, Llanowar Elves, Nicol Bolas the Ravager, Paradise Druid, Puresteel Paladin, Stoneforge Mystic, Terror of the Peaks, Thundermaw Hellkite
+**Creatures (21).** Birds of Paradise, Brass Squire, Combat Celebrant, Dragonlord Ojutai, Dualcaster Mage, Gilgamesh Master-at-Arms, Glorybringer, Godo Bandit Warlord, Goldspan Dragon, Grand Abolisher, Imperial Recruiter, Jaxis the Troublemaker, Kura the Boundless Sky, Llanowar Elves, Nicol Bolas the Ravager, Paradise Druid, Puresteel Paladin, Sakura-Tribe Elder, Stoneforge Mystic, Terror of the Peaks, Thundermaw Hellkite
 
 **Planeswalkers (1).** Wrenn and Six
 
 **Enchantments (4).** Rhystic Study, Sigarda's Aid, Smothering Tithe, Sylvan Library
 
-**Artifacts (20).** Chrome Mox, Conqueror's Flail, Embercleave, Grim Monolith, Hammer of Nazahn, Helm of the Host, Kaldra Compleat, Lightning Greaves, Lotus Petal, Mana Vault, Maskwood Nexus, Mox Diamond, Peter Parker's Camera, Shadowspear, Sol Ring, Sting the Glinting Dagger, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, The One Ring
+**Artifacts (20).** Arcane Signet, Chromatic Lantern, Chrome Mox, Embercleave, Grim Monolith, Hammer of Nazahn, Helm of the Host, Kaldra Compleat, Lightning Greaves, Lotus Petal, Mana Vault, Maskwood Nexus, Mox Diamond, Mox Jasper, Peter Parker's Camera, Shadowspear, Sol Ring, Sword of Feast and Famine, Sword of Fire and Ice, The One Ring
 
 **Sorceries (9).** Decimate, Demonic Tutor, Imperial Seal, Kindred Dominance, Nature's Lore, Open the Armory, Rampant Growth, Steelshaper's Gift, Twinflame
 
-**Instants (11).** Chaos Warp, Cyclonic Rift, Enlightened Tutor, Force of Negation, Force of Will, Mana Drain, Pact of Negation, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
+**Instants (10).** Chaos Warp, Enlightened Tutor, Force of Negation, Force of Will, Mana Drain, Pact of Negation, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
 
 **Lands (34).** Ancient Tomb, Badlands, Bayou, Blood Crypt, Bloodstained Mire, Breeding Pool, Cavern of Souls, City of Brass, Command Tower, Flooded Strand, Gaea's Cradle, Hallowed Fountain, Inventors' Fair, Mana Confluence, Marsh Flats, Misty Rainforest, Overgrown Tomb, Plateau, Polluted Delta, Sacred Foundry, Scrubland, Steam Vents, Stomping Ground, Taiga, Temple Garden, Tropical Island, Tundra, Underground Sea, Verdant Catacombs, Volcanic Island, Watery Grave, Windswept Heath, Wooded Foothills, 1 Forest
 
@@ -199,6 +197,7 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 
 ```
 1 Ancient Tomb
+1 Arcane Signet
 1 Badlands
 1 Bayou
 1 Birds of Paradise
@@ -208,12 +207,11 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 1 Breeding Pool
 1 Cavern of Souls
 1 Chaos Warp
+1 Chromatic Lantern
 1 Chrome Mox
 1 City of Brass
 1 Combat Celebrant
 1 Command Tower
-1 Conqueror's Flail
-1 Cyclonic Rift
 1 Decimate
 1 Demonic Tutor
 1 Dragonlord Ojutai
@@ -250,6 +248,7 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 1 Maskwood Nexus
 1 Misty Rainforest
 1 Mox Diamond
+1 Mox Jasper
 1 Nature's Lore
 1 Nicol Bolas, the Ravager
 1 Open the Armory
@@ -263,6 +262,7 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 1 Rampant Growth
 1 Rhystic Study
 1 Sacred Foundry
+1 Sakura-Tribe Elder
 1 Scrubland
 1 Shadowspear
 1 Sigarda's Aid
@@ -270,10 +270,8 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 1 Sol Ring
 1 Steam Vents
 1 Steelshaper's Gift
-1 Sting, the Glinting Dagger
 1 Stomping Ground
 1 Stoneforge Mystic
-1 Swiftfoot Boots
 1 Sword of Feast and Famine
 1 Sword of Fire and Ice
 1 Swords to Plowshares

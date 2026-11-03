@@ -11,6 +11,7 @@
 1 Chromatic Lantern (drc) 53
 1 Coalition Relic (fut) 161
 1 Command Tower (sld) 1697
+1 Conjurer's Closet (inr) 321
 1 Consecrated Sphinx (sld) 1657
 1 Dark Petition (sch) 19
 1 Debt to the Deathless (rvr) 364
@@ -27,17 +28,14 @@
 1 Generous Gift (cmr) 620
 1 Go for the Throat (j25) 447
 1 Godless Shrine (rvr) 294
-1 Gonti, Lord of Luxury (plst) KLD-84
 1 Grand Arbiter Augustin IV (2x2) 379
 1 Hallowed Fountain (clu) 277
 1 Hostage Taker (lcc) 271
 1 Idyllic Tutor (thb) 24
 1 Ill-Gotten Inheritance (rvr) 77
 7 Island (trk) 320
-1 Lightning Greaves (2xm) 360
 1 Marauding Blight-Priest (znr) 112
 1 Marsh Flats (mh2) 476
-1 Massacre Wurm (m21) 316
 1 Memory Trap (fra) 15
 1 Mystic Remora (dmr) 420
 1 Mystical Tutor (dmr) 421
@@ -57,23 +55,25 @@
 1 Sanguine Bond (tsr) 330
 1 Scrubland (cei) 282
 1 Serra's Sanctum (usg) 325
+1 Sheoldred, the Apocalypse (pdmu) 107p
 1 Skyclave Apparition (soc) 173
 1 Smothering Tithe (2x2) 423
 1 Sol Ring (m3c) 305
 1 Sphere of Safety (sld) 588
 1 Static Net (bro) 27
 8 Swamp (trk) 321
+1 Talisman of Hierarchy (h1r) 36
 1 Talisman of Progress (msc) 221
 1 Teferi's Protection (sta) 74
 1 Teleportation Circle (afr) 39
 1 Tezzeret's Gambit (plst) NPH-47
-1 The Eternal Wanderer (one) 335
-1 Thief of Sanity (otc) 243
+1 Toxic Deluge (2xm) 345
 1 Tundra (ced) 285
 1 Underground River (wc98) bs362
 1 Underground Sea (cei) 286
 1 Urborg Syphon-Mage (dmr) 106
 1 Urborg, Tomb of Yawgmoth (ltc) 375
+1 Vampiric Tutor (soa) 100
 1 Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal (fin) 329
 1 Watery Grave (rvr) 301
 1 Y'shtola, Night's Blessed (fic) 207

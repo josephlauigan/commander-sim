@@ -173,6 +173,10 @@ pub struct Settings {
     /// brings the closest line nearest. Off unless env PLANNER_PROGRESS=1 (an A/B switch: it measured slower, see
     /// audit/ai-foundations/step2-planner.md)
     pub planner_progress: bool,
+    /// --- t6-xtutor: the planner casts a creature X tutor (Finale of Devastation, Green Sun's Zenith, Chord of Calling,
+    /// Nature's Rhythm, Invasion of Ikoria) at the X its target needs, toward a line. On unless env AI_XTUTOR is `0`
+    /// (`false`, `off`): then the play is origin/main's
+    pub xtutor: bool,
 }
 
 impl Settings {
@@ -200,6 +204,7 @@ impl Settings {
             t6_moxd_lands: 3,
             planner: planner_default(), // --- ai-planner
             planner_progress: matches!(std::env::var("PLANNER_PROGRESS").ok().as_deref(), Some("1")), // --- ai-planner
+            xtutor: xtutor_default(), // --- t6-xtutor
         }
     }
 
@@ -217,4 +222,10 @@ pub fn planner_default() -> bool {
 /// the planner setting an env value gives (unset or anything else: on)
 pub fn planner_from(v: Option<&str>) -> bool {
     !matches!(v.map(str::trim), Some("0" | "false" | "off"))
+}
+
+// --- t6-xtutor
+/// the X-tutor planning is on unless env AI_XTUTOR is `0` (or `false`, `off`)
+pub fn xtutor_default() -> bool {
+    planner_from(std::env::var("AI_XTUTOR").ok().as_deref())
 }

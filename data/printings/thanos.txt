@@ -84,7 +84,7 @@
 1 Tainted Pact (slc) 59
 1 Teferi, Time Raveler (blc) 92
 1 Thanos, the Mad Titan (msh) 400
-1 Thassa's Oracle (sld) 1280
+1 Thassa's Oracle (thb) 73
 1 Tropical Island (ced) 284
 1 Tundra (ced) 285
 1 Underground Sea (ced) 286

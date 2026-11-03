@@ -79,6 +79,12 @@ fn play(seed: u64) -> (Vec<String>, u64, u64) {
             landed.set(false);
             tried.set(false);
         }
+        // lands and spells only in your own main phases: a land asked for in an opponent's turn is refused (not
+        // sorcery timing), and which seat goes first would then decide whether the person ever played one
+        let view = &req["data"]["view"];
+        if view["active"] != "thrasios" || !matches!(view["step"].as_str(), Some("main1" | "main2")) {
+            return Some(json!({"do": "pass"}));
+        }
         let in_zone = |k: &str| m[k] == true;
         if !landed.get()
             && let Some(i) = m["hand_land"].as_array().unwrap().iter().position(|l| l == true)
@@ -86,10 +92,25 @@ fn play(seed: u64) -> (Vec<String>, u64, u64) {
             landed.set(true);
             return Some(json!({"do": "land", "card": i}));
         }
-        if (in_zone("commander_in_zone") || in_zone("commander2_in_zone"))
-            && let Some(src) = m["mana_sources"].as_array().and_then(|a| a.first())
-        {
-            return Some(json!({"do": "tap", "source": src["id"]}));
+        if in_zone("commander_in_zone") || in_zone("commander2_in_zone") {
+            // tap the source that makes the most colours still missing for a commander in the zone (WB for Tymna,
+            // UG for Thrasios), so the games don't depend on which lands the list runs or in what order they come
+            let pool = m["mana_pool"].as_str().unwrap_or("");
+            let mut want = String::new();
+            if in_zone("commander_in_zone") {
+                want += "WB";
+            }
+            if in_zone("commander2_in_zone") {
+                want += "UG";
+            }
+            let fills = |s: &Value| {
+                let cols = s["colours"].as_str().unwrap_or("");
+                want.chars().filter(|&c| !pool.contains(c) && cols.contains(c)).count()
+            };
+            let srcs = m["mana_sources"].as_array()?.iter().enumerate();
+            if let Some((_, best)) = srcs.max_by_key(|(i, s)| (fills(s), std::cmp::Reverse(*i))) {
+                return Some(json!({"do": "tap", "source": best["id"]}));
+            }
         }
         let pool = m["mana_pool"].as_str().unwrap_or("").chars().count() as u64;
         if !tried.get() && pool > 0 {

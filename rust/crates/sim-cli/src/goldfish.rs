@@ -140,11 +140,17 @@ fn list_of(sim: &Sim, key: &str) -> Result<Vec<String>, String> {
     sim.pool.iter().find(|d| d.key == key).map(|d| d.cards.clone()).ok_or_else(|| format!("no deck {key:?}"))
 }
 
+/// A goldfish has no table: a pool deck plays with its own tier's default knobs (style and [table]), one of your decks
+/// with the built-in table knobs (and its own built-in style).
+fn settings_of(sim: &Sim, key: &str, prof: sim_core::settings::Profile) -> sim_core::settings::Settings {
+    sim.settings_in(prof, sim.pool.iter().find(|d| d.key == key).map(|d| d.tier.as_str()))
+}
+
 /// play n goldfish games of `key` from seed0
 pub fn run_deck(sim: &Sim, key: &str, prof: &str, n: u64, seed0: u64) -> Result<Vec<GfGame>, String> {
     let deck = sim.seat(key, &list_of(sim, key)?)?;
     let seats = seats(sim, &deck)?;
-    let st = sim.settings(profile(prof)?);
+    let st = settings_of(sim, key, profile(prof)?);
     let seeds: Vec<u64> = (seed0..seed0 + n).collect();
     let games = sim.run_seeds(&seeds, |s| GfGame::read(&sim.play(s, &seats, &st, false)));
     Ok(games.into_iter().map(|x| x.1).collect())
@@ -371,7 +377,7 @@ pub fn main(sim: &Sim, a: &Args) -> Result<(), String> {
         let seed = a.seed + game;
         let deck = sim.seat(key, &list_of(sim, key)?)?;
         let seats = seats(sim, &deck)?;
-        let st = sim.settings(profile(&prof)?);
+        let st = settings_of(sim, key, profile(&prof)?);
         let g = crate::play::catch_game(|| sim.play(seed, &seats, &st, true))?;
         println!("Play-by-play of goldfish game {game} (seed {seed}): {} alone, {ai} AI", sim.name_of(key));
         println!("{}", g.log.clone().unwrap_or_default().join("\n"));
@@ -441,7 +447,7 @@ mod tests {
     #[test]
     fn the_inert_seats_never_act() {
         let sim = sim();
-        let st = sim.settings(profile("loose").unwrap());
+        let st = sim.settings_in(profile("loose").unwrap(), None);
         for key in ["kraum-tymna-blue-breach-midrange", "rograkh-silas-turbo-breach"] {
             let deck = sim.seat(key, &list_of(&sim, key).unwrap()).unwrap();
             let seats = seats(&sim, &deck).unwrap();
@@ -510,7 +516,7 @@ mod tests {
         let key = "thanos";
         let deck = sim.seat(key, &list_of(&sim, key).unwrap()).unwrap();
         let seats = seats(&sim, &deck).unwrap();
-        let st = sim.settings(profile("loose").unwrap());
+        let st = sim.settings_in(profile("loose").unwrap(), None);
         for seed in 500000..500008 {
             let on = sim.play(seed, &seats, &st, true);
             let mut g = sim_core::engine::turn::setup_game(
@@ -533,7 +539,7 @@ mod tests {
     fn the_deck_keys_are_yours_and_the_tier_6_pool() {
         let sim = sim();
         assert_eq!(deck_keys(&sim, "t6").unwrap().len(), 6);
-        assert_eq!(deck_keys(&sim, "ghave,t6,ghave").unwrap().len(), 7);
+        assert_eq!(deck_keys(&sim, "sauron,t6,sauron").unwrap().len(), 7);
         assert!(deck_keys(&sim, "krenko-mono-red-goblins").is_err());
         assert!(deck_keys(&sim, "").is_err());
     }

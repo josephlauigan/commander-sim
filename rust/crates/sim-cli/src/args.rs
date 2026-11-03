@@ -2,7 +2,7 @@
 //! prefix of an option's name also works (`--gam 960`), --swap repeats, and a bad value is an error naming the
 //! option (exit code 2).
 
-pub const DECK_KEYS: [&str; 12] = crate::decks::MINE;
+pub const DECK_KEYS: [&str; 11] = crate::decks::MINE;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Args {
@@ -101,9 +101,11 @@ const OPTS: [Opt; 32] = [
         "--knobs",
         false,
         &[],
-        "FILE",
-        "AI knobs (deck styles, counter thresholds, look-ahead weights) from a TOML file, over the built-in values: \
-         see rust/crates/sim-cli/src/knobs.rs; --fit writes one",
+        "FILE|builtin",
+        "AI knobs (deck styles, counter thresholds, look-ahead weights). Default: the fitted knobs of data/knobs/tN.toml \
+         (t3, t5, t6: each pool deck its own tier's style, the table's tier its table knobs). FILE: a TOML file over the \
+         built-in values instead of those defaults (see rust/crates/sim-cli/src/knobs.rs; --fit writes one). builtin: no \
+         fitted knobs, the built-in values everywhere",
     ),
     opt(
         "--any-tier",
@@ -166,7 +168,7 @@ const OPTS: [Opt; 32] = [
 pub fn usage() -> &'static str {
     "usage: commander-sim [-h] [--deck KEY] [--swap \"OUT=>IN\"] [--pool TIER] [--all-decks] [--calibrate WHICH] [--realism]\n\
      \x20                    [--goldfish KEYS]\n\
-     \x20                    [--knobs FILE] [--fit [--fit-scope shared|deck] [--fit-gens N] [--fit-stats LIST] [--fit-out FILE]]\n\
+     \x20                    [--knobs FILE|builtin] [--fit [--fit-scope shared|deck] [--fit-gens N] [--fit-stats LIST] [--fit-out FILE]]\n\
      \x20                    [--games N] [--seed SEED] [--profiles LIST | --profile NAME] [--analyze] [--trace GAME]\n\
      \x20                    [--cards] [--brief] [--no-explain] [--no-preflight | --preflight-only] [--ai {lookahead,adaptive}]\n\
      \x20                    [--temp T] [--quiet] [--jobs N]\n\
@@ -195,7 +197,7 @@ pub fn help() -> String {
           Partial, Unmodeled) and up to 5 of its Unmodeled and Partial cards, commander and engine cards first; \
           the opponent tiers of a --deck run get one summed line each. It is read from the card data once per run \
           and plays no game.\n";
-    s += "\nExamples\n  commander-sim --deck sauron --pool t2 --profile loose --games 960\n  commander-sim --deck ghave \
+    s += "\nExamples\n  commander-sim --deck sauron --pool t2 --profile loose --games 960\n  commander-sim --deck sauron \
           --pool t4 --swap \"Blood Artist=>Grim Tutor\"\n  commander-sim --all-decks --pool all --profile loose\n  commander-sim --goldfish thanos,t6 --games 2000   (each deck alone against three inert seats)\n  commander-sim --deck yshtola --pool t1 --any-tier   (only when asked: t1 is outside Y'shtola's tiers)\n";
     s
 }
@@ -368,10 +370,10 @@ mod tests {
         assert_eq!(a.pool.as_deref(), Some("t1"));
         assert_eq!(a.profiles, ["loose"]);
         assert_eq!((a.games, a.seed, a.jobs, a.ai.as_str(), a.temp), (960, 500000, 22, "lookahead", 1.0));
-        let a = p("--deck ghave --pool t3 --n 200").unwrap();
+        let a = p("--deck sauron --pool t3 --n 200").unwrap();
         assert_eq!(a.games, 200);
         assert_eq!(a.profiles, ["loose"]); // the default (JD 2026-10-19)
-        let a = p("--deck ghave --pool t3 --profiles conservative,loose").unwrap();
+        let a = p("--deck sauron --pool t3 --profiles conservative,loose").unwrap();
         assert_eq!(a.profiles, ["conservative", "loose"]);
         let a = p("--calibrate within").unwrap();
         assert_eq!(a.games, 1500);

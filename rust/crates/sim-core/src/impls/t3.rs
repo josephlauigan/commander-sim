@@ -618,7 +618,11 @@ pub fn put_creature(
     }
     let wish = crate::ai::plans::wish_list(g, p);
     // Tier 6: the best-ranked wished card (lower tiers keep the first in library order: their results are locked)
-    let pick = if crate::impls::t6_plans::is_t6(g, p) {
+    // --- t6-xtutor: the line planner's card, when it meets the spell's restriction
+    let planned = g.player(p).plan_tutor.filter(|t| g.settings.xtutor && cs.contains(t));
+    let pick = if planned.is_some() {
+        planned
+    } else if crate::impls::t6_plans::is_t6(g, p) {
         wish.iter().copied().find(|w| cs.contains(w))
     } else {
         cs.iter().copied().find(|c| wish.contains(c))

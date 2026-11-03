@@ -1,4 +1,6 @@
-//! The AI's tunable values as data: a knobs file (`--knobs FILE`, written by `--fit`) overrides the hand-set values
+//! The AI's tunable values as data. The fitted knobs of t3, t5 and t6 (`data/knobs/tN.toml`, `Defaults`) are the
+//! defaults since 2026-11-02; `--knobs builtin` drops them, and a knobs file (`--knobs FILE`, written by `--fit`)
+//! replaces them for a run. A file overrides the hand-set values
 //! in sim-core (each deck's style, the counter thresholds, the removal eagerness, the look-ahead's weights). A value
 //! the file leaves out keeps its built-in one, so an empty file, or one that repeats the built-in values, changes
 //! nothing (tests below, and `audit/realism/knobs-identity-*.txt`).
@@ -13,7 +15,7 @@
 //! [ai]
 //! planner = false        # --- ai-planner: the Tier 6 line planner off (the step 1 AI; env PLANNER=0 too)
 //! [cthresh]
-//! ghave = 6              # one of your decks' counter threshold
+//! sauron = 6              # one of your decks' counter threshold
 //! [search]               # the look-ahead's knobs (no effect with --ai adaptive)
 //! combo_w = 12.0
 //! [style.kinnan-bonder-mana-combo]
@@ -312,12 +314,97 @@ impl Knobs {
     }
 }
 
+/// The fitted knobs that are the defaults (JD, 2026-11-02): `data/knobs/tN.toml`, one file per tier whose fit beat the
+/// built-in values (t3, t5, t6). A run that gets `--knobs FILE` uses the file instead; `--knobs builtin` uses neither.
+///
+/// - **Styles** (`[style.<deck>]`): every pool deck gets the style of its own tier's file, whatever table it sits at.
+///   Decks in no file (yours, and the tiers with no file) keep their built-in style.
+/// - **Table knobs** (`[table]`) are whole-table settings, so one tier's file supplies them: the table's tier, the tier
+///   most of the table's seats belong to (`majority_tier`). Every mode names its opponents' pool (`--pool tN`, your deck
+///   against tN, a tN+1 deck tested into tN: all tN), so the rule was never ambiguous; a tie between tiers (no mode
+///   makes one) goes to the lowest tier. A tier with no file gives the built-in table knobs.
+#[derive(Debug, Clone, Default)]
+pub struct Defaults {
+    by_tier: BTreeMap<String, Knobs>,
+}
+
+/// the tier most of these seats' decks belong to (a tie: the lowest tier); None when none of them is a pool deck
+pub fn majority_tier<'a>(tiers: impl IntoIterator<Item = &'a str>) -> Option<String> {
+    let mut n: BTreeMap<&str, usize> = BTreeMap::new();
+    for t in tiers {
+        *n.entry(t).or_default() += 1;
+    }
+    let top = n.values().copied().max()?;
+    n.into_iter().find(|(_, c)| *c == top).map(|(t, _)| t.to_string())
+}
+
+impl Defaults {
+    /// the built-in values everywhere (`--knobs builtin`)
+    pub fn builtin() -> Defaults {
+        Defaults::default()
+    }
+
+    /// every `tN.toml` in `dir` (data/knobs); `pool`: (deck key, tier) of the pool decks, which a file's styles must
+    /// name and which must sit in the file's own tier
+    pub fn load(dir: &std::path::Path, pool: &[(&str, &str)], decks: &[&str]) -> Result<Defaults, String> {
+        let mut by_tier = BTreeMap::new();
+        let rd = std::fs::read_dir(dir)
+            .map_err(|e| format!("{}: {e} (the default knobs; --knobs builtin skips them)", dir.display()))?;
+        let mut paths: Vec<_> = rd.flatten().map(|f| f.path()).collect();
+        paths.sort();
+        for p in paths {
+            let stem = p.file_stem().and_then(|s| s.to_str()).unwrap_or("").to_string();
+            if p.extension().is_none_or(|x| x != "toml") {
+                continue;
+            }
+            let file = p.display().to_string();
+            let text = std::fs::read_to_string(&p).map_err(|e| format!("{file}: {e}"))?;
+            by_tier.insert(stem.clone(), Self::check(&text, &stem, &file, pool, decks)?);
+        }
+        Ok(Defaults { by_tier })
+    }
+
+    /// parse one default file and check it is a pure tier file (styles and table knobs only, its own tier's decks)
+    pub fn check(text: &str, tier: &str, file: &str, pool: &[(&str, &str)], decks: &[&str]) -> Result<Knobs, String> {
+        let k = parse(text, file, decks)?;
+        if k.tier.as_deref() != Some(tier) {
+            return Err(format!("{file}: tier = {:?}, but this is the default file for {tier}", k.tier));
+        }
+        if !k.cthresh.is_empty() || k.search != SearchKnobs::default() || k.planner.is_some() {
+            return Err(format!("{file}: a default file holds [table] and [style.*] only"));
+        }
+        for d in k.style.keys() {
+            if !pool.iter().any(|(key, t)| key == d && *t == tier) {
+                return Err(format!("{file}: [style.{d}] is not a {tier} pool deck"));
+            }
+        }
+        Ok(k)
+    }
+
+    /// the tiers that have a default file
+    #[cfg(test)]
+    pub fn tiers(&self) -> Vec<&str> {
+        self.by_tier.keys().map(|t| t.as_str()).collect()
+    }
+
+    /// the defaults on top of a run's settings; `table_tier`: the tier whose `[table]` knobs apply (None: built-in)
+    pub fn apply(&self, st: &mut Settings, table_tier: Option<&str>) {
+        for (tier, k) in &self.by_tier {
+            let mut k = k.clone();
+            if Some(tier.as_str()) != table_tier {
+                (k.temp_scale, k.cthresh_default, k.instant_extra, k.t6_moxd_lands) = (None, None, None, None);
+            }
+            k.apply(st);
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
     use sim_core::settings::{AiMode, Profile};
 
-    const DECKS: [&str; 3] = ["ghave", "kinnan-bonder-mana-combo", "sisay-legends-toolbox"];
+    const DECKS: [&str; 3] = ["sauron", "kinnan-bonder-mana-combo", "sisay-legends-toolbox"];
 
     fn p(s: &str) -> Result<Knobs, String> {
         parse(s, "k.toml", &DECKS)
@@ -348,13 +435,13 @@ mod tests {
     #[test]
     fn a_complete_file_is_read_and_applied() {
         let k = p("tier = \"t6\"\nnote = \"x\"\n[table]\ntemp_scale = 0.8\ncthresh_default = 5\ninstant_extra = 1\n\
-                   [cthresh]\nghave = 7\n[search]\ncombo_w = 10\ntop_k = 4\n\
+                   [cthresh]\nsauron = 7\n[search]\ncombo_w = 10\ntop_k = 4\n\
                    [style.kinnan-bonder-mana-combo]\naggression = 0.9\n[fit]\nloss = 1.5\n")
         .unwrap();
         let mut st = Settings::new(Profile::Loose, AiMode::Adaptive, 1.0);
         k.apply(&mut st);
         assert_eq!((st.temp_scale, st.cthresh_default, st.instant_extra), (0.8, 5, 1));
-        assert_eq!(st.counter_threshold("ghave"), Some(7));
+        assert_eq!(st.counter_threshold("sauron"), Some(7));
         assert_eq!((st.search.combo_w, st.search.top_k), (10.0, 4));
         let base = sim_core::ai::base_style("kinnan-bonder-mana-combo");
         let s = st.styles["kinnan-bonder-mana-combo"];
@@ -380,13 +467,162 @@ mod tests {
             ("[table]\ninstant_extra = 1.5\n", "whole number"),
             ("[table]\ncthresh_default = 99\n", "outside"),
             ("[style.nobody]\ntemp = 1\n", "not a deck"),
-            ("[style.ghave]\nboldness = 1\n", "unknown key `boldness`"),
-            ("[style.ghave]\naggression = 1.5\n", "outside"),
+            ("[style.sauron]\nboldness = 1\n", "unknown key `boldness`"),
+            ("[style.sauron]\naggression = 1.5\n", "outside"),
             ("[cthresh]\nnobody = 6\n", "not a deck"),
             ("[search]\ndepth = 3\n", "unknown key `depth`"),
             ("x = [", "not valid TOML"),
         ] {
             let e = p(text).unwrap_err();
+            assert!(e.contains(want), "{text:?}: {e}");
+        }
+    }
+}
+
+/// the fitted knobs as defaults (`data/knobs/tN.toml`), against the repository's decks
+#[cfg(test)]
+mod default_tests {
+    use super::*;
+    use crate::play::{RunOpts, Sim};
+    use sim_core::settings::{AiMode, Profile};
+
+    fn sim() -> Sim {
+        Sim::load(RunOpts { ai: AiMode::Lookahead, temp: 1.0, jobs: 2 }).unwrap()
+    }
+
+    fn builtin() -> Settings {
+        Settings::new(Profile::Loose, AiMode::Lookahead, 1.0)
+    }
+
+    /// the table knobs of a run's settings
+    fn table(st: &Settings) -> (i32, i32, usize, f64) {
+        (st.cthresh_default, st.instant_extra, st.t6_moxd_lands, st.temp_scale)
+    }
+
+    /// a tier's default file, read again by the test
+    fn file(sim: &Sim, tier: &str) -> Knobs {
+        let path = crate::decks::root().unwrap().join("data").join("knobs").join(format!("{tier}.toml"));
+        parse(&std::fs::read_to_string(&path).unwrap(), tier, &sim.deck_keys()).unwrap()
+    }
+
+    #[test]
+    fn exactly_t3_t5_and_t6_have_default_files() {
+        assert_eq!(sim().defaults.tiers(), ["t3", "t5", "t6"]);
+    }
+
+    #[test]
+    fn a_pool_deck_gets_the_style_of_its_own_tiers_file_at_any_table() {
+        let sim = sim();
+        for tier in ["t3", "t5", "t6"] {
+            let f = file(&sim, tier);
+            assert!(f.style.len() >= 5, "{tier}");
+            for table_tier in [Some(tier), Some("t4"), Some("t6"), None] {
+                let st = sim.settings_in(Profile::Loose, table_tier);
+                for (deck, want) in &f.style {
+                    let got = st.styles[deck];
+                    let base = sim_core::ai::base_style(deck);
+                    assert_eq!(got.temp, want.temp.unwrap_or(base.temp), "{deck} at {table_tier:?}");
+                    assert_eq!(got.aggression, want.aggression.unwrap_or(base.aggression), "{deck} at {table_tier:?}");
+                    assert_eq!(got.caution, want.caution.unwrap_or(base.caution), "{deck} at {table_tier:?}");
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn a_t4_deck_and_yours_stay_built_in() {
+        let sim = sim();
+        let st = sim.settings_vs(Profile::Loose, &sim.pool_keys("t4"));
+        for tier in ["t0", "t1", "t2", "t4"] {
+            for d in sim.pool_keys(tier) {
+                assert!(!st.styles.contains_key(&d), "{d}");
+            }
+        }
+        for d in sim.mine.keys() {
+            assert!(!st.styles.contains_key(d), "{d}");
+        }
+        // and a table of t4 decks has the built-in table knobs
+        assert_eq!(table(&st), table(&builtin()));
+    }
+
+    #[test]
+    fn the_table_takes_the_knobs_of_the_tier_most_seats_belong_to() {
+        let sim = sim();
+        let fit = |t: &str| {
+            let k = file(&sim, t);
+            (
+                k.cthresh_default.unwrap(),
+                k.instant_extra.unwrap(),
+                k.t6_moxd_lands.unwrap_or(builtin().t6_moxd_lands),
+                k.temp_scale.unwrap_or(1.0),
+            )
+        };
+        for t in ["t3", "t5", "t6"] {
+            assert_eq!(table(&sim.settings_vs(Profile::Loose, &sim.pool_keys(t))), fit(t), "{t}");
+        }
+        assert_ne!(fit("t3"), fit("t5"));
+        // the decks of a tier are not the table's tier when the others are more: 3 t5 decks and 2 t3 decks give t5
+        let mix = |a: &str, na: usize, b: &str, nb: usize| {
+            let mut v: Vec<String> = sim.pool_keys(a).into_iter().take(na).collect();
+            v.extend(sim.pool_keys(b).into_iter().take(nb));
+            v
+        };
+        assert_eq!(sim.table_tier(&mix("t5", 3, "t3", 2)).as_deref(), Some("t5"));
+        assert_eq!(table(&sim.settings_vs(Profile::Loose, &mix("t5", 3, "t3", 2))), fit("t5"));
+        assert_eq!(table(&sim.settings_vs(Profile::Loose, &mix("t3", 3, "t5", 2))), fit("t3"));
+        // a tier with no file, and no pool decks at all: the built-in table knobs
+        assert_eq!(table(&sim.settings_vs(Profile::Loose, &mix("t4", 3, "t3", 2))), table(&builtin()));
+        assert_eq!(table(&sim.settings_vs(Profile::Loose, &[])), table(&builtin()));
+        // a tie goes to the lowest tier
+        assert_eq!(majority_tier(["t5", "t3", "t5", "t3"]).as_deref(), Some("t3"));
+        assert_eq!(majority_tier(["t6", "t5", "t5"]).as_deref(), Some("t5"));
+        assert_eq!(majority_tier([]), None);
+    }
+
+    #[test]
+    fn knobs_builtin_gives_the_built_in_values() {
+        let mut sim = sim();
+        sim.defaults = Defaults::builtin();
+        for tier in ["t3", "t5", "t6"] {
+            let st = sim.settings_vs(Profile::Loose, &sim.pool_keys(tier));
+            // (the debug text would differ in map order)
+            assert_eq!(table(&st), table(&builtin()), "{tier}");
+            assert!(st.styles.is_empty(), "{tier}");
+            assert_eq!(st.cthresh, builtin().cthresh, "{tier}");
+            assert_eq!(st.search.combo_w, builtin().search.combo_w, "{tier}");
+        }
+    }
+
+    #[test]
+    fn knobs_file_replaces_the_defaults() {
+        let mut sim = sim();
+        let keys = sim.deck_keys();
+        sim.knobs = Some(parse("[table]\ncthresh_default = 7\n", "k.toml", &keys).unwrap());
+        let st = sim.settings_vs(Profile::Loose, &sim.pool_keys("t3"));
+        // the file's value, and nothing of t3's default file: its instant_extra and its styles
+        assert_eq!(st.cthresh_default, 7);
+        assert_eq!(st.instant_extra, builtin().instant_extra);
+        assert!(st.styles.is_empty());
+        // a file that styles a deck is the only source of that deck's style
+        sim.knobs = Some(parse("[style.atraxa-infect]\ntemp = 1.5\n", "k.toml", &sim.deck_keys()).unwrap());
+        let st = sim.settings_vs(Profile::Loose, &sim.pool_keys("t5"));
+        assert_eq!(st.styles["atraxa-infect"].temp, 1.5);
+        assert_eq!(st.styles.len(), 1);
+        assert_eq!(table(&st), table(&builtin()));
+    }
+
+    #[test]
+    fn a_default_file_is_refused_when_it_strays() {
+        let pool = [("atraxa-infect", "t3"), ("urza-mono-blue-artifacts", "t5")];
+        let decks = ["atraxa-infect", "urza-mono-blue-artifacts"];
+        let ok = "tier = \"t3\"\n[table]\ninstant_extra = 2\n[style.atraxa-infect]\ntemp = 1.0\n";
+        assert!(Defaults::check(ok, "t3", "t3.toml", &pool, &decks).is_ok());
+        for (text, want) in [
+            ("tier = \"t5\"\n", "default file for t3"),
+            ("tier = \"t3\"\n[cthresh]\natraxa-infect = 5\n", "[table] and [style.*] only"),
+            ("tier = \"t3\"\n[style.urza-mono-blue-artifacts]\ntemp = 1.0\n", "not a t3 pool deck"),
+        ] {
+            let e = Defaults::check(text, "t3", "t3.toml", &pool, &decks).unwrap_err();
             assert!(e.contains(want), "{text:?}: {e}");
         }
     }

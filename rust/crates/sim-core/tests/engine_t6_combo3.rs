@@ -279,6 +279,9 @@ fn ad_table(top: &[&str]) -> Game {
 }
 
 fn ad_table_with(top: &[&str], bottom: &[&str]) -> Game {
+    // these tests are about the dig itself (the cards drawn, the hand cap, the line played): the readiness gate that asks
+    // for odds of finding the pieces (`AI_T6STOPS`, tests/t6_stops.rs) is off, as it was when they were written
+    sim_core::ai::t6_stops::force(Some(false));
     let mut g = tbl(&["kraum-tymna-blue-breach-midrange", "seph"]);
     lands(&mut g, P0, "Swamp", 3, false);
     lands(&mut g, P0, "Island", 2, false);

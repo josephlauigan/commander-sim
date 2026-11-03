@@ -72,7 +72,8 @@ fn lightning_exiles_a_card_playable_while_it_stays_and_loses_them_when_it_leaves
     let mut g = kraum_tbl();
     g.active = Some(P0);
     let l = perm(&mut g, P0, "Lightning, Security Sergeant");
-    let c = card(&g, "Sol Ring");
+    // the card is pulled out of the library first, so a copy the deck runs can't stay under the pushed one
+    let c = take(&mut g, P0, "Sol Ring");
     g.player_mut(P0).library.push(c);
     let imp = g.registry.get(g.perm(l).cd.unwrap()).unwrap().combat_damage.unwrap();
     imp(&mut g, l, P0, l, P1, 2).unwrap();

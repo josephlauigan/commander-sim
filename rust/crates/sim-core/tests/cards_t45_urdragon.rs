@@ -521,3 +521,27 @@ fn crux_of_fate_spares_your_dragons() {
     assert!(g.perm(gold).on_bf, "the non-Dragon mode: the Dragon lives");
     assert!(!g.perm(bird).on_bf && !g.perm(theirs).on_bf, "every non-Dragon creature is destroyed");
 }
+
+// ------------------------------------------------------------------ Mox Jasper
+#[test]
+fn mox_jasper_makes_mana_only_while_you_control_a_dragon() {
+    use sim_core::engine::mana::total_mana;
+    let mut g = tbl();
+    perm(&mut g, P0, "Mox Jasper");
+    assert_eq!(total_mana(&g, P0, false), 0, "no Dragon: no mana");
+    perm(&mut g, P1, "Goldspan Dragon");
+    assert_eq!(total_mana(&g, P0, false), 0, "an opponent's Dragon doesn't count");
+    perm(&mut g, P0, "Goldspan Dragon");
+    assert_eq!(total_mana(&g, P0, false), 1, "your Dragon: one mana");
+}
+
+#[test]
+fn mox_jasper_counts_a_maskwood_nexus_creature_as_a_dragon() {
+    use sim_core::engine::mana::total_mana;
+    let mut g = tbl();
+    perm(&mut g, P0, "Mox Jasper");
+    perm(&mut g, P0, "Grand Abolisher");
+    assert_eq!(total_mana(&g, P0, false), 0, "a non-Dragon creature: no mana");
+    perm(&mut g, P0, "Maskwood Nexus");
+    assert_eq!(total_mana(&g, P0, false), 1, "Maskwood Nexus makes it a Dragon");
+}
