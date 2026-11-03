@@ -1,0 +1,19 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  karn                       100 cards: Full 87, Full-auto 0, Approximate 12, Partial 1, Unmodeled 0 | Partial: Tezzeret, Cruel Captain
+  opponents Tier 4 (Low B4)  5 decks, 500 cards: Full 435, Full-auto 37, Approximate 28, Partial 0, Unmodeled 0
+
+
+=== Karn vs Tier 4 (Low B4) [loose, lookahead AI, 2000 games] ===
+Win rate  22.9%   95% CI 21.2-24.8%   (even share 25%: -2.0 pts)
+Average turn (your own turn count) of wins 10.7, of losses 7.6
+Plan online (Karn first adds mana at upkeep): 67.8% of games
+Wins by: damage 90%, combo 9%, timeout 0%
+  Opponent                                    seated  won when seated  eliminated you
+  Yuriko (yuriko-dimir-ninjas)                 61.0%            24.2%           14.3%
+  Chulane (chulane-bant-value-combo)           60.4%            21.4%           11.7%
+  Edgar Markov (edgar-markov-mardu-vampires)   60.4%            29.3%           17.9%
+  Prosper (prosper-rakdos-exile-treasure)      59.7%            19.3%           12.3%
+  Krenko (krenko-mono-red-goblins)             58.6%            34.5%           20.8%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(630s total)

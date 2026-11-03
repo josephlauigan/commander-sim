@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-10-30",
+  "fetched": "2026-11-03",
   "deck": "lord-windgrace-jund-lands",
   "commanders": [
     "Lord Windgrace"
   ],
-  "request_sha256": "31fed039829b4475f2775aeb40c3b127873d9492390454f809d32f665f317abd",
+  "request_sha256": "af50a8681d52941e33c6abe907f7a1663547cd2eb7afc8ba583aaada5d7a1853",
   "identity": "BRG",
   "included": [],
   "included_by_changing_commanders": [],
@@ -35,7 +35,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 55834,
+      "popularity": 56065,
       "missing": [
         "Dakmor Salvage"
       ]
@@ -64,93 +64,9 @@
       "mana": "{8}{R} at most",
       "bracket": "C",
       "legal": true,
-      "popularity": 39801,
+      "popularity": 39924,
       "missing": [
         "Repercussion"
-      ]
-    },
-    {
-      "id": "3470-5720-5721-6620",
-      "cards": [
-        {
-          "name": "Shifting Woodland",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Aftermath Analyst",
-          "zones": [
-            "G"
-          ]
-        },
-        {
-          "name": "Lotus Cobra",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Sylvan Safekeeper",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "There are at least four card types among cards in your graveyard.\nYou control at least eight lands.",
-      "mana": "{5}{G}{G}{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 30927,
-      "missing": [
-        "Shifting Woodland"
-      ]
-    },
-    {
-      "id": "1315-3470-5720-5721",
-      "cards": [
-        {
-          "name": "Shifting Woodland",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Aftermath Analyst",
-          "zones": [
-            "G"
-          ]
-        },
-        {
-          "name": "Lotus Cobra",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Zuran Orb",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana",
-        "Infinite lifegain",
-        "Infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "There are at least four card types among cards in your graveyard.\nYou control at least eight lands.",
-      "mana": "{5}{G}{G}{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 26917,
-      "missing": [
-        "Shifting Woodland"
       ]
     },
     {
@@ -193,7 +109,7 @@
       "mana": "{5}{G}{G}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 26582,
+      "popularity": 26700,
       "missing": [
         "Shifting Woodland"
       ]
@@ -220,40 +136,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 23643,
-      "missing": [
-        "Glacial Chasm"
-      ]
-    },
-    {
-      "id": "3946-4011-4426",
-      "cards": [
-        {
-          "name": "Glacial Chasm",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Azusa, Lost but Seeking",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ramunap Excavator",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control another land.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 23523,
+      "popularity": 23830,
       "missing": [
         "Glacial Chasm"
       ]
@@ -298,7 +181,7 @@
       "mana": "{5}{G}{G}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 23403,
+      "popularity": 23502,
       "missing": [
         "Shifting Woodland"
       ]
@@ -327,42 +210,9 @@
       "mana": "{7}{R} at most",
       "bracket": "P",
       "legal": true,
-      "popularity": 22348,
+      "popularity": 22384,
       "missing": [
         "Toralf, God of Fury // Toralf's Hammer"
-      ]
-    },
-    {
-      "id": "2573-3946-4011",
-      "cards": [
-        {
-          "name": "Glacial Chasm",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Crucible of Worlds",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Azusa, Lost but Seeking",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control another land.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 21004,
-      "missing": [
-        "Glacial Chasm"
       ]
     },
     {
@@ -393,7 +243,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 20811,
+      "popularity": 20843,
       "missing": [
         "Glacial Chasm"
       ]
@@ -434,7 +284,7 @@
       "mana": "{5}{G}{G}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 20415,
+      "popularity": 20533,
       "missing": [
         "Shifting Woodland"
       ]
@@ -467,7 +317,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 19797,
+      "popularity": 19841,
       "missing": [
         "Glacial Chasm"
       ]
@@ -510,55 +360,9 @@
       "mana": "{5}{G}{G}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 19367,
+      "popularity": 19478,
       "missing": [
         "Shifting Woodland"
-      ]
-    },
-    {
-      "id": "1315-3470-5531-5702",
-      "cards": [
-        {
-          "name": "Lumra, Bellow of the Woods",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Springheart Nantuko",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Zuran Orb",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lotus Cobra",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite self-mill",
-        "Infinite lifegain triggers",
-        "Infinite lifegain",
-        "Infinite mana lands you control can produce",
-        "Infinite colored mana",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "You have at least two lands between the battlefield and your graveyard.\nYou have a land card in hand.\nYou are able to play a land this turn",
-      "mana": "{1}{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 19106,
-      "missing": [
-        "Springheart Nantuko"
       ]
     },
     {
@@ -589,157 +393,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 18137,
+      "popularity": 18152,
       "missing": [
         "Glacial Chasm"
-      ]
-    },
-    {
-      "id": "3946-4426-5449",
-      "cards": [
-        {
-          "name": "Glacial Chasm",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ramunap Excavator",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Oracle of Mul Daya",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control another land.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 17480,
-      "missing": [
-        "Glacial Chasm"
-      ]
-    },
-    {
-      "id": "2051-3946-4011",
-      "cards": [
-        {
-          "name": "Azusa, Lost but Seeking",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Glacial Chasm",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Life from the Loam",
-          "zones": [
-            "H",
-            "G"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control at least one additional land.\nYou are able to play a land this turn.",
-      "mana": "{1}{G} each subsequent turn",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 16860,
-      "missing": [
-        "Glacial Chasm"
-      ]
-    },
-    {
-      "id": "3946-4011-4935",
-      "cards": [
-        {
-          "name": "Glacial Chasm",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Azusa, Lost but Seeking",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Conduit of Worlds",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control another land.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 16758,
-      "missing": [
-        "Glacial Chasm"
-      ]
-    },
-    {
-      "id": "1315-3875-5531-5702",
-      "cards": [
-        {
-          "name": "Lumra, Bellow of the Woods",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Springheart Nantuko",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Zuran Orb",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Tireless Provisioner",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite self-mill",
-        "Infinite lifegain triggers",
-        "Infinite lifegain",
-        "Infinite mana lands you control can produce",
-        "Infinite colored mana",
-        "Infinite Treasure tokens",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "You have at least two lands between the battlefield and your graveyard.\nYou have a land card in hand.\nYou are able to play a land this turn.",
-      "mana": "{1}{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 16464,
-      "missing": [
-        "Springheart Nantuko"
       ]
     },
     {
@@ -770,7 +426,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 16214,
+      "popularity": 16249,
       "missing": [
         "Glacial Chasm"
       ]
@@ -803,7 +459,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 16071,
+      "popularity": 16093,
       "missing": [
         "Glacial Chasm"
       ]
@@ -837,40 +493,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 15750,
-      "missing": [
-        "Glacial Chasm"
-      ]
-    },
-    {
-      "id": "2573-3946-5449",
-      "cards": [
-        {
-          "name": "Glacial Chasm",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Crucible of Worlds",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Oracle of Mul Daya",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control another land.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 15393,
+      "popularity": 15792,
       "missing": [
         "Glacial Chasm"
       ]
@@ -904,7 +527,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 14690,
+      "popularity": 14743,
       "missing": [
         "Glacial Chasm"
       ]
@@ -937,7 +560,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 14515,
+      "popularity": 14533,
       "missing": [
         "Glacial Chasm"
       ]
@@ -966,9 +589,42 @@
       "mana": "{7}{R} (at most)",
       "bracket": "O",
       "legal": true,
-      "popularity": 14316,
+      "popularity": 14349,
       "missing": [
         "Fall of Cair Andros"
+      ]
+    },
+    {
+      "id": "250-2573-3946",
+      "cards": [
+        {
+          "name": "Glacial Chasm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Gitrog Monster",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Crucible of Worlds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control another land.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 13856,
+      "missing": [
+        "Glacial Chasm"
       ]
     },
     {
@@ -1001,42 +657,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 13826,
+      "popularity": 13821,
       "missing": [
         "Kodama of the East Tree"
-      ]
-    },
-    {
-      "id": "250-2573-3946",
-      "cards": [
-        {
-          "name": "Glacial Chasm",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "The Gitrog Monster",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Crucible of Worlds",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control another land.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 13802,
-      "missing": [
-        "Glacial Chasm"
       ]
     },
     {
@@ -1067,40 +690,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 12835,
-      "missing": [
-        "Glacial Chasm"
-      ]
-    },
-    {
-      "id": "3946-4935-5449",
-      "cards": [
-        {
-          "name": "Glacial Chasm",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Conduit of Worlds",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Oracle of Mul Daya",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control another land.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 12810,
+      "popularity": 12845,
       "missing": [
         "Glacial Chasm"
       ]
@@ -1133,7 +723,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 11787,
+      "popularity": 11820,
       "missing": [
         "Glacial Chasm"
       ]
@@ -1172,141 +762,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 11693,
-      "missing": [
-        "Kodama of the East Tree"
-      ]
-    },
-    {
-      "id": "573-1479-2907",
-      "cards": [
-        {
-          "name": "Kodama of the East Tree",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Gruul Turf",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Scute Swarm",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You are able to play a land this turn.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 11334,
-      "missing": [
-        "Kodama of the East Tree"
-      ]
-    },
-    {
-      "id": "573-1479-4862",
-      "cards": [
-        {
-          "name": "Kodama of the East Tree",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Gruul Turf",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Omnath, Locus of Rage",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You are able to play a land this turn.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 10620,
-      "missing": [
-        "Kodama of the East Tree"
-      ]
-    },
-    {
-      "id": "3063-3261",
-      "cards": [
-        {
-          "name": "Maze's End",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Scapeshift",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Win the game"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least 9 other lands.\nAt least 10 total Gates with different names in your library and/or on the battlefield.",
-      "mana": "{5}{G}{G}",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 8803,
-      "missing": [
-        "Maze's End"
-      ]
-    },
-    {
-      "id": "280-1479-2907",
-      "cards": [
-        {
-          "name": "Kodama of the East Tree",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Golgari Rot Farm",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Scute Swarm",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You are able to play a land this turn.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 8617,
+      "popularity": 11700,
       "missing": [
         "Kodama of the East Tree"
       ]
@@ -1345,71 +801,22 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 8389,
+      "popularity": 8403,
       "missing": [
         "Kodama of the East Tree"
       ]
     },
     {
-      "id": "5478-5531-6620-6621",
+      "id": "5478-5702-7401",
       "cards": [
         {
-          "name": "Lumra, Bellow of the Woods",
+          "name": "Springbloom Druid",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Mirrorpool",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Spelunking",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Sylvan Safekeeper",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite self-mill",
-        "Infinite mana lands you control can produce",
-        "Put all land cards from your library and graveyard onto the battlefield"
-      ],
-      "requires": [],
-      "prerequisites": "Other lands you control can tap to produce at least {4}{C}.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 7962,
-      "missing": [
-        "Mirrorpool"
-      ]
-    },
-    {
-      "id": "1315-5478-5531-6621",
-      "cards": [
-        {
-          "name": "Lumra, Bellow of the Woods",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Mirrorpool",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Zuran Orb",
+          "name": "Springheart Nantuko",
           "zones": [
             "B"
           ]
@@ -1422,20 +829,16 @@
         }
       ],
       "results": [
-        "Infinite self-mill",
-        "Infinite lifegain triggers",
-        "Infinite lifegain",
-        "Infinite mana lands you control can produce",
-        "Put all land cards from your library and graveyard onto the battlefield"
+        "Near-infinite creature tokens"
       ],
       "requires": [],
-      "prerequisites": "Other lands you control can tap to produce at least {4}{C}.",
-      "mana": "",
+      "prerequisites": "You have a land card in hand.\nYou are able to play a land this turn. At least half of the basic lands in your library are Forests.",
+      "mana": "{1}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 7773,
+      "popularity": 7296,
       "missing": [
-        "Mirrorpool"
+        "Springheart Nantuko"
       ]
     },
     {
@@ -1466,7 +869,7 @@
       "mana": "{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 6242,
+      "popularity": 6239,
       "missing": [
         "Hazel's Brewmaster"
       ]
@@ -1501,7 +904,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5452,
+      "popularity": 5461,
       "missing": [
         "Kodama of the East Tree"
       ]
@@ -1536,7 +939,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5422,
+      "popularity": 5430,
       "missing": [
         "Kodama of the East Tree"
       ]
@@ -1571,7 +974,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 5286,
+      "popularity": 5290,
       "missing": [
         "Kodama of the East Tree"
       ]
@@ -1600,7 +1003,7 @@
       "mana": "{7}{R} at most",
       "bracket": "O",
       "legal": true,
-      "popularity": 5103,
+      "popularity": 5145,
       "missing": [
         "Expedited Inheritance"
       ]
@@ -1635,79 +1038,9 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 5045,
+      "popularity": 5051,
       "missing": [
         "Kodama of the East Tree"
-      ]
-    },
-    {
-      "id": "880-2907-3470",
-      "cards": [
-        {
-          "name": "Perilous Forays",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Scute Swarm",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lotus Cobra",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control an additional creature.",
-      "mana": "{1}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 4426,
-      "missing": [
-        "Perilous Forays"
-      ]
-    },
-    {
-      "id": "880-2907-3875",
-      "cards": [
-        {
-          "name": "Perilous Forays",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Scute Swarm",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Tireless Provisioner",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control an additional creature.",
-      "mana": "{1}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 4224,
-      "missing": [
-        "Perilous Forays"
       ]
     },
     {
@@ -1748,7 +1081,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 3949,
+      "popularity": 3952,
       "missing": [
         "Springheart Nantuko"
       ]
@@ -1791,7 +1124,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 3676,
+      "popularity": 3700,
       "missing": [
         "Springheart Nantuko"
       ]
@@ -1834,7 +1167,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 3475,
+      "popularity": 3502,
       "missing": [
         "Springheart Nantuko"
       ]
@@ -1867,40 +1200,7 @@
       "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 3358,
-      "missing": [
-        "Perilous Forays"
-      ]
-    },
-    {
-      "id": "880-3470-4488",
-      "cards": [
-        {
-          "name": "Perilous Forays",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lotus Cobra",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Rampaging Baloths",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control an additional creature.",
-      "mana": "{1}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 3314,
+      "popularity": 3373,
       "missing": [
         "Perilous Forays"
       ]
@@ -1933,95 +1233,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 3263,
+      "popularity": 3260,
       "missing": [
         "Glacial Chasm"
-      ]
-    },
-    {
-      "id": "280-5449-5478-5702",
-      "cards": [
-        {
-          "name": "Springheart Nantuko",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Spelunking",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Golgari Rot Farm",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Oracle of Mul Daya",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens",
-        "Infinite black mana",
-        "Infinite green mana"
-      ],
-      "requires": [],
-      "prerequisites": "You are able to play a land this turn",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 3053,
-      "missing": [
-        "Springheart Nantuko"
-      ]
-    },
-    {
-      "id": "573-5449-5478-5702",
-      "cards": [
-        {
-          "name": "Springheart Nantuko",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Spelunking",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Gruul Turf",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Oracle of Mul Daya",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens",
-        "Infinite green mana",
-        "Infinite red mana"
-      ],
-      "requires": [],
-      "prerequisites": "You are able to play a land this turn",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 3032,
-      "missing": [
-        "Springheart Nantuko"
       ]
     },
     {
@@ -2052,7 +1266,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2867,
+      "popularity": 2868,
       "missing": [
         "Glacial Chasm"
       ]
@@ -2093,41 +1307,6 @@
       ]
     },
     {
-      "id": "880-3470-4862",
-      "cards": [
-        {
-          "name": "Perilous Forays",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Omnath, Locus of Rage",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lotus Cobra",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite damage"
-      ],
-      "requires": [],
-      "prerequisites": "You control an additional creature.",
-      "mana": "{1}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2809,
-      "missing": [
-        "Perilous Forays"
-      ]
-    },
-    {
       "id": "573-5478-5702-6850",
       "cards": [
         {
@@ -2165,7 +1344,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2777,
+      "popularity": 2809,
       "missing": [
         "Springheart Nantuko"
       ]
@@ -2208,44 +1387,9 @@
       "mana": "{3}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2452,
+      "popularity": 2469,
       "missing": [
         "Mirrorpool"
-      ]
-    },
-    {
-      "id": "880-3875-4862",
-      "cards": [
-        {
-          "name": "Perilous Forays",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Omnath, Locus of Rage",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Tireless Provisioner",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite damage"
-      ],
-      "requires": [],
-      "prerequisites": "You control an additional creature.",
-      "mana": "{1}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2451,
-      "missing": [
-        "Perilous Forays"
       ]
     },
     {
@@ -2276,112 +1420,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2328,
+      "popularity": 2327,
       "missing": [
         "Glacial Chasm"
-      ]
-    },
-    {
-      "id": "880-2907-5478",
-      "cards": [
-        {
-          "name": "Perilous Forays",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Scute Swarm",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Spelunking",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.",
-      "mana": "{1}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1661,
-      "missing": [
-        "Perilous Forays"
-      ]
-    },
-    {
-      "id": "880-3470-3534",
-      "cards": [
-        {
-          "name": "Perilous Forays",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lotus Cobra",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Field of the Dead",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control seven or more lands with different names.\nYou control an additional creature.",
-      "mana": "{1}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 1439,
-      "missing": [
-        "Perilous Forays"
-      ]
-    },
-    {
-      "id": "280-1479-4862",
-      "cards": [
-        {
-          "name": "Kodama of the East Tree",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Golgari Rot Farm",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Omnath, Locus of Rage",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You are able to play a land this turn.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1389,
-      "missing": [
-        "Kodama of the East Tree"
       ]
     },
     {
@@ -2412,7 +1453,7 @@
       "mana": "{1}",
       "bracket": "P",
       "legal": true,
-      "popularity": 1314,
+      "popularity": 1318,
       "missing": [
         "Perilous Forays"
       ]
@@ -2445,7 +1486,7 @@
       "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1198,
+      "popularity": 1199,
       "missing": [
         "Perilous Forays"
       ]
@@ -2484,112 +1525,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1099,
-      "missing": [
-        "Kodama of the East Tree"
-      ]
-    },
-    {
-      "id": "1479-2907-3257",
-      "cards": [
-        {
-          "name": "Kodama of the East Tree",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Scute Swarm",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Rakdos Carnarium",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You are able to play a land this turn.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1059,
-      "missing": [
-        "Kodama of the East Tree"
-      ]
-    },
-    {
-      "id": "880-4862-5478",
-      "cards": [
-        {
-          "name": "Perilous Forays",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Omnath, Locus of Rage",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Spelunking",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite damage"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one additional creature.",
-      "mana": "{1}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 979,
-      "missing": [
-        "Perilous Forays"
-      ]
-    },
-    {
-      "id": "1479-3257-4862",
-      "cards": [
-        {
-          "name": "Kodama of the East Tree",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Rakdos Carnarium",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Omnath, Locus of Rage",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You are able to play a land this turn.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 889,
+      "popularity": 1098,
       "missing": [
         "Kodama of the East Tree"
       ]
@@ -2657,7 +1593,7 @@
       "mana": "{1}",
       "bracket": "P",
       "legal": true,
-      "popularity": 703,
+      "popularity": 704,
       "missing": [
         "Perilous Forays"
       ]
@@ -2801,53 +1737,9 @@
       "mana": "{4}{B}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 319,
+      "popularity": 326,
       "missing": [
         "Phyrexian Reclamation"
-      ]
-    },
-    {
-      "id": "1315-3470-5721-6883",
-      "cards": [
-        {
-          "name": "Aftermath Analyst",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Strands of Night",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Zuran Orb",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lotus Cobra",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana",
-        "Infinite self-mill",
-        "Infinite lifegain triggers",
-        "Infinite lifegain"
-      ],
-      "requires": [],
-      "prerequisites": "There are at least six land cards between your graveyard and the battlefield under your control, one of which must be a Swamp.",
-      "mana": "{3}{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 232,
-      "missing": [
-        "Strands of Night"
       ]
     },
     {

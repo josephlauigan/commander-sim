@@ -156,8 +156,11 @@ fn all_is_dust_sacrifices_every_coloured_permanent_and_leaves_ours() {
     let own_col = perm(&mut g, P0, "Grave Titan"); // coloured: ours goes too
     let c = hand(&mut g, P0, &["All Is Dust"])[0];
     // the AI lists the wipe
+    // (a wipe that costs the caster a Titan for each Titan of theirs is held by AI_WIPEVALUE: this test is about the wipe)
+    sim_core::ai::table_fixes::force_wipevalue(Some(false));
     let o = brain::main_options(&mut g, P0, false).unwrap();
     assert!(labels(&o).contains(&"All Is Dust".to_string()), "{:?}", labels(&o));
+    sim_core::ai::table_fixes::force_wipevalue(None);
     assert!(cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap());
     assert!(!on(&g, lyra) && !on(&g, titan) && !on(&g, own_col));
     assert!(on(&g, ring) && on(&g, own_art), "colourless permanents stay");
