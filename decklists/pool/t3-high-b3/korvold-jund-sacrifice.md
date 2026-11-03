@@ -5,7 +5,7 @@ Opponent pool deck — **Tier 3: High Bracket 3**. Axis: Sacrifice value engine.
 - **Commander:** Korvold, Fae-Cursed King
 - **Color identity:** Black, Red, Green
 - **Game Changers (3):** Demonic Tutor, Vampiric Tutor, Worldly Tutor
-- **Combos:** Gravecrawler + Phyrexian Altar with another Zombie in play: unbounded sacrifices → Blood Artist / Zulaport / Mayhem Devil / Korvold draws. Three pieces; late-game.
+- **Combos:** Chatterfang + Pitiless Plunderer with sacrifice fodder, an outlet and a supported death payoff; late-game.
 - **Lands:** 35 (21 nonbasic + 14 basic)
 
 ## Role in the pool
@@ -15,22 +15,22 @@ A sacrifice and Treasure value deck that turns disposable permanents into Korvol
 ## At the table
 
 - **Plan:** Ramp with mana creatures, Nature's Lore and Sol Ring, then feed Korvold Treasures, tokens and recursive creatures. Dreadhorde Invasion, Goblin Rabblemaster and Siege-Gang Commander add recurring bodies; Skullclamp converts small creatures into cards.
-- **Wins by:** Blood Artist, Zulaport Cutthroat, Mayhem Devil, Goblin Bombardment and Impact Tremors reward deaths or creatures entering. Korvold and Terror of the Peaks add pressure. Gravecrawler and Phyrexian Altar can loop with another Zombie and a payoff.
+- **Wins by:** Blood Artist, Zulaport Cutthroat, Mayhem Devil, Goblin Bombardment and Impact Tremors reward deaths or creatures entering. Korvold and Terror of the Peaks add pressure.
 - **Interaction:** Abrupt Decay, Assassin's Trophy, Beast Within, Go for the Throat, Heartless Act, Infernal Grasp, Lightning Bolt and Terminate answer threats; Toxic Deluge clears boards. Heroic Intervention and boots protect key pieces.
 
 ## Strategy
 
-Use tokens and recurring bodies to fuel Korvold and the sacrifice payoffs. Pitiless Plunderer and Chatterfang replace resources; tutors can find missing pieces. Carrion Feeder or Midnight Reaper supplies the other Zombie for the Gravecrawler loop, which also needs a damage or drain payoff to finish.
+Use tokens and recurring bodies to fuel Korvold and the sacrifice payoffs. Pitiless Plunderer and Chatterfang replace resources; tutors can find missing pieces.
 
 ## Sim modeling notes
 
-The simulator has an explicit Gravecrawler / Phyrexian Altar combo requiring another Zombie and a supported payoff. Its exact readiness conditions and individual card approximations matter when interpreting results; consult the audit.
+Gravecrawler was excluded after the Spellbook guard found unsupported Pitiless Plunderer loops; Impulsive Pilferer stays as sacrifice fodder. Its exact readiness conditions and individual card approximations matter when interpreting results; consult the audit.
 
 ## Decklist by type (100)
 
 **Commander (1).** Korvold, Fae-Cursed King
 
-**Creatures (32).** Academy Manufactor, Birds of Paradise, Blood Artist, Braids, Arisen Nightmare, Carrion Feeder, Chatterfang, Squirrel General, Delighted Halfling, Eternal Witness, Goblin Rabblemaster, Goldspan Dragon, Gravecrawler, Ignoble Hierarch, Mahadi, Emporium Master, Mayhem Devil, Midnight Reaper, Mirkwood Bats, Pawn of Ulamog, Pitiless Plunderer, Priest of Forgotten Gods, Reassembling Skeleton, Sakura-Tribe Elder, Sheoldred, the Apocalypse, Siege-Gang Commander, Sylvan Caryatid, Syr Konrad, the Grim, Terror of the Peaks, Tireless Provisioner, Tireless Tracker, Viscera Seer, Woe Strider, Yawgmoth, Thran Physician, Zulaport Cutthroat
+**Creatures (32).** Academy Manufactor, Birds of Paradise, Blood Artist, Braids, Arisen Nightmare, Carrion Feeder, Chatterfang, Squirrel General, Delighted Halfling, Eternal Witness, Goblin Rabblemaster, Goldspan Dragon, Impulsive Pilferer, Ignoble Hierarch, Mahadi, Emporium Master, Mayhem Devil, Midnight Reaper, Mirkwood Bats, Pawn of Ulamog, Pitiless Plunderer, Priest of Forgotten Gods, Reassembling Skeleton, Sakura-Tribe Elder, Sheoldred, the Apocalypse, Siege-Gang Commander, Sylvan Caryatid, Syr Konrad, the Grim, Terror of the Peaks, Tireless Provisioner, Tireless Tracker, Viscera Seer, Woe Strider, Yawgmoth, Thran Physician, Zulaport Cutthroat
 
 **Enchantments (6).** Bastion of Remembrance, Black Market Connections, Dark Prophecy, Dreadhorde Invasion, Goblin Bombardment, Impact Tremors
 
@@ -81,7 +81,7 @@ The simulator has an explicit Gravecrawler / Phyrexian Altar combo requiring ano
 1 Goblin Bombardment
 1 Goblin Rabblemaster
 1 Goldspan Dragon
-1 Gravecrawler
+1 Impulsive Pilferer
 1 Heartless Act
 1 Heroic Intervention
 1 Ignoble Hierarch

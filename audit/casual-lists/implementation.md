@@ -86,3 +86,10 @@ Full | Terror of the Peaks | flying; opponents' spells targeting it cost 3 life;
 Full | Worldly Tutor | a creature on top of the library: the wish list first, cast at the end of the turn before yours
 
 ```
+
+## Coordinator validation corrections
+
+The full release suite found a stale Brago Cloudshift priority; it was removed from the plan.
+The Spellbook guard then found unsupported Gravecrawler + Pitiless Plunderer + Viscera Seer / Carrion Feeder loops.
+Gravecrawler is therefore excluded from the final list and the original Full-modeled Impulsive Pilferer retained.
+Earlier swap tables above describe the intermediate list; this correction supersedes its Gravecrawler entry.

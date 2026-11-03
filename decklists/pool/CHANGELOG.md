@@ -334,3 +334,9 @@ Deck key `korvold-jund-sacrifice`, `decklists/pool/t3-high-b3/korvold-jund-sacri
 ### Changes
 
 - **2026-11-03 (rebuild).** Out: Bojuka Bog, Crop Rotation, Dark Ritual, Deflecting Swat, Impulsive Pilferer, Juri, Master of the Revue, Marionette Apprentice, Professional Face-Breaker, Reanimate, Reliquary Tower, Ruthless Technomancer, Springbloom Druid, Victimize, Warren Soultrader. In: Bastion of Remembrance, Dreadhorde Invasion, Go for the Throat, Goblin Rabblemaster, Gravecrawler, Heartless Act, Impact Tremors, Lightning Bolt, Pawn of Ulamog, Sheoldred, the Apocalypse, Skullclamp, Terror of the Peaks, Worldly Tutor; plus one Swamp. Recurring fodder, sacrifice payoffs and cheap removal support Korvold while retaining the late Gravecrawler line. Final list awaits the 1,500-game check.
+
+### 2026-11-03 coordinator validation correction
+
+Korvold rebuild: retain Impulsive Pilferer instead of adding Gravecrawler, because the refreshed Spellbook guard
+found unsupported Pitiless Plunderer loops with Viscera Seer and Carrion Feeder. Brago: remove the stale Cloudshift
+plan priority. These corrections supersede those details of the rebuild entries above.
