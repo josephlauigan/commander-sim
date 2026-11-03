@@ -204,7 +204,9 @@ const LOOP_AMOUNTS: [u32; 7] = [999, 500, 200, 100, 50, 20, 10];
 /// removal on a piece), then take the {C} the person asks for, Basalt left tapped as the real loop leaves it.
 fn basalt_loop(g: &mut Game, p: PlayerId, _m: PermId) -> Res<Why> {
     let Some((b, r)) = basalt_loop_ready(g, p) else {
-        return Ok(Some("The loop needs Basalt Monolith and Rings of Brighthearth, and {5} in all to start it.".into()));
+        return Ok(Some(
+            "The loop needs Basalt Monolith and Rings of Brighthearth, and {5} in all to start it.".into(),
+        ));
     };
     if !mana::pay_tax_ask(g, p, 5, "the Basalt Monolith loop", None)? {
         return Ok(Some("Can't pay the {5} to start the loop.".into()));
@@ -242,13 +244,25 @@ fn staff_draw(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     }
     let xs: Vec<u32> = choices::amount_choices(room).into_iter().filter(|&x| x >= 1).collect();
     let labels: Vec<String> = xs.iter().map(|x| format!("draw {x} card{}", if *x == 1 { "" } else { "s" })).collect();
-    let Some(i) = choices::choose(g, p, "choose", "Staff of Domination: draw how many cards ({1} untap, then {5}, {T} each time)?", &labels, Some("cancel"), None)?
+    let Some(i) = choices::choose(
+        g,
+        p,
+        "choose",
+        "Staff of Domination: draw how many cards ({1} untap, then {5}, {T} each time)?",
+        &labels,
+        Some("cancel"),
+        None,
+    )?
     else {
         return Ok(None);
     };
     let n = xs[i];
     let auto = if n > 1 && !stack::rings_of(g, p).is_empty() {
-        Some(choices::yes_no(g, p, "Rings of Brighthearth: pay {2} to copy each draw ability (two cards for each {5}, {T})?")?)
+        Some(choices::yes_no(
+            g,
+            p,
+            "Rings of Brighthearth: pay {2} to copy each draw ability (two cards for each {5}, {T})?",
+        )?)
     } else {
         None
     };
@@ -267,7 +281,12 @@ fn staff_draw(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if drawn == 0 {
         return Ok(Some("Can't activate Staff of Domination: it costs {1} to untap and {5} to draw.".into()));
     }
-    crate::glog!(g, "    {} drew {drawn} card{} with Staff of Domination", g.player(p).name, if drawn == 1 { "" } else { "s" });
+    crate::glog!(
+        g,
+        "    {} drew {drawn} card{} with Staff of Domination",
+        g.player(p).name,
+        if drawn == 1 { "" } else { "s" }
+    );
     Ok(None)
 }
 

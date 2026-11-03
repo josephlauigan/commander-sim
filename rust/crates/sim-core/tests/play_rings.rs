@@ -22,7 +22,10 @@ fn run(g: &mut Game, p: PlayerId, mut answers: Vec<F>) -> std::sync::Arc<ScriptH
     answers.push(pass());
     let h = seat(g, p, answers);
     if let Err(e) = sim_core::human::human::human_main(g, p, false) {
-        panic!("{e:?}; asked: {:#?}", h.asked().iter().map(|r| (r.prompt.clone(), r.choices.len())).collect::<Vec<_>>());
+        panic!(
+            "{e:?}; asked: {:#?}",
+            h.asked().iter().map(|r| (r.prompt.clone(), r.choices.len())).collect::<Vec<_>>()
+        );
     }
     h
 }
@@ -45,9 +48,9 @@ fn rings_copies_basalts_untap_and_each_loop_nets_one() {
         vec![
             u,
             by_text("{3}: untap"),
-            pick(0),                          // Rings of Brighthearth: pay {2} to copy it? yes
+            pick(0),                                // Rings of Brighthearth: pay {2} to copy it? yes
             act(json!({"do": "tap", "source": 0})), // the copy untapped it: tap it again before the original resolves
-            pass(),                           // ... then let the original resolve (it untaps it again)
+            pass(),                                 // ... then let the original resolve (it untaps it again)
             act(json!({"do": "tap", "source": 0})),
         ],
     );
@@ -173,7 +176,11 @@ fn karn_seat_staff_of_domination_draws_n_cards_with_the_big_pool() {
     assert!(h.told().is_empty(), "{:?}", h.told());
     assert_eq!(g.player(P0).hand.len(), hand0 + 5);
     assert_eq!(g.player(P0).library.len(), lib - 5);
-    assert_eq!(colourless(&g), 999 - 6 * 5 + 1, "{{5}} to draw and {{1}} to untap, five times over (no untap at first)");
+    assert_eq!(
+        colourless(&g),
+        999 - 6 * 5 + 1,
+        "{{5}} to draw and {{1}} to untap, five times over (no untap at first)"
+    );
 }
 
 #[test]
