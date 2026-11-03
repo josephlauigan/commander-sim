@@ -1,0 +1,29 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t4 Chulane       100 cards: Full 90, Full-auto 7, Approximate 3, Partial 0, Unmodeled 0
+  t4 Edgar Markov  100 cards: Full 83, Full-auto 10, Approximate 7, Partial 0, Unmodeled 0
+  t4 Krenko        100 cards: Full 84, Full-auto 8, Approximate 8, Partial 0, Unmodeled 0
+  t4 Prosper       100 cards: Full 91, Full-auto 3, Approximate 6, Partial 0, Unmodeled 0
+  t4 Yuriko        100 cards: Full 87, Full-auto 9, Approximate 4, Partial 0, Unmodeled 0
+
+7,500 games (calibration: ordering, 1,500 per list per tier, profile loose), lookahead AI, 22 worker threads: about 17 minutes
+
+=== Tier ordering: each deck alone against three decks of the tier below [loose, n=1500] ===
+  progress  10.0%  1m54s elapsed, ~17m14s left
+  progress  20.0%  4m02s elapsed, ~16m09s left
+  progress  30.0%  5m33s elapsed, ~12m58s left
+  progress  40.0%  7m05s elapsed, ~10m38s left
+  progress  50.0%  8m58s elapsed, ~8m58s left
+  progress  60.0%  10m55s elapsed, ~7m16s left
+  progress  70.0%  12m34s elapsed, ~5m23s left
+  progress  80.0%  14m21s elapsed, ~3m35s left
+  progress  90.0%  16m13s elapsed, ~1m48s left
+  progress 100.0%  18m12s elapsed, ~0m00s left
+  Tier 4 (Low B4) into Tier 3 (High B3): 26.7% overall
+    Chulane                       21.2% (19.2-23.3)  (not above 25%)
+    Edgar Markov                  32.9% (30.5-35.3)
+    Krenko                        33.5% (31.2-36.0)
+    Prosper                       21.3% (19.3-23.5)  (not above 25%)
+    Yuriko                        24.8% (22.7-27.0)  (not above 25%)
+
+(1092s total)
+EXIT 0
