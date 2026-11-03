@@ -417,10 +417,16 @@ pub fn equip_cost(g: &Game, m: PermId) -> Option<u32> {
     None
 }
 
+/// what equipping e onto `target` costs p: the printed equip cost, less what p's Puresteel Paladin (equip {0} with metalcraft),
+/// Auriok Steelshaper and the like take off (the bots use the same table, `cloud::equip_cost`)
+pub fn equip_cost_to(g: &Game, p: PlayerId, e: PermId, target: PermId) -> Option<u32> {
+    Some(crate::impls::cloud::equip_cost(g, p, e, target, equip_cost(g, e)?))
+}
+
 pub fn check_equip(g: &Game, p: PlayerId, e: PermId, target: PermId) -> Option<String> {
-    let Some(cost) = equip_cost(g, e).filter(|_| g.player(p).perms.contains(&e)) else {
+    if equip_cost(g, e).is_none() || !g.player(p).perms.contains(&e) {
         return Some("That isn't equipment you control.".into());
-    };
+    }
     if let Some(why) = sorcery_timing(g, p) {
         return Some(why.replace("do that", "equip"));
     }
@@ -430,6 +436,7 @@ pub fn check_equip(g: &Game, p: PlayerId, e: PermId, target: PermId) -> Option<S
     if g.perm(e).attached == Some(target) {
         return Some(format!("{} is already on {}.", g.perm(e).name, g.perm(target).name));
     }
+    let cost = equip_cost_to(g, p, e, target).unwrap_or(0);
     mana::cost_problem(g, p, cost, "").map(|why| format!("Can't equip {}. {why}", g.perm(e).name))
 }
 

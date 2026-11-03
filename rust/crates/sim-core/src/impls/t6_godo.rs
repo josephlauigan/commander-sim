@@ -94,12 +94,34 @@ fn godo_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if !trigger_window(g, o, Some(src), "search for an Equipment, put it onto the battlefield", Some(6.0))? {
         return Ok(());
     }
+    if crate::human::is_human(g, o) {
+        // a person: the Helm loop's repeat mode skips the search; otherwise it is a "may"
+        if crate::human::urdragon::repeat_on(g, o) {
+            crate::glog!(g, "    Godo's search is skipped (repeat mode)");
+            return Ok(());
+        }
+        let q = "Godo, Bandit Warlord: search your library for an Equipment card and put it onto the battlefield?";
+        if !crate::human::choices::yes_no(g, o, q)? {
+            return Ok(());
+        }
+    }
     godo_fetch(g, o)
 }
 
 /// Godo's enters effect once the trigger resolves: search for an Equipment and put it onto the battlefield (also
 /// run by the combo framework for a Godo copy whose trigger it has already put on the stack)
 pub fn godo_fetch(g: &mut Game, o: PlayerId) -> Res {
+    if human_of(g, o).is_some() {
+        // a person picks any Equipment card (the wanted card above is the AI's)
+        let prompt = "Godo, Bandit Warlord: search for an Equipment card to put onto the battlefield";
+        let got = crate::human::choices::search(g, o, &|g, c| is_equipment_card(g, c), 1, prompt, true)?;
+        for c in got {
+            g.player_mut(o).stat("tutored", 1);
+            crate::glog!(g, "    Godo puts {} onto the battlefield", g.db.get(c).name);
+            enter(g, o, c, Enter { sick: false, ..Enter::default() })?;
+        }
+        return Ok(());
+    }
     let want = godo_wants(g, o);
     let pred = move |g: &Game, c: CardId| match want {
         Some(n) => &*g.db.get(c).name == n,
@@ -171,6 +193,15 @@ fn hammer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if !trigger_window(g, o, Some(src), &name, Some(5.0))? {
         return Ok(());
     }
+    let t = if crate::human::is_human(g, o) {
+        // a person chooses the creature (the AI always takes `attach_target`)
+        match crate::human::urdragon::pick_attach_target(g, o, "Hammer of Nazahn", m)? {
+            Some(t) => t,
+            None => return Ok(()),
+        }
+    } else {
+        t
+    };
     if live(g, m) && live(g, t) && g.is_creature(t) {
         super::cloud::attach(g, m, t);
     }

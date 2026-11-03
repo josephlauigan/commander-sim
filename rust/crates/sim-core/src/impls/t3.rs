@@ -838,6 +838,13 @@ fn celebrant(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) 
         return Ok(vec![]);
     }
     let ok = trigger_window(g, p, Some(src), "untap creatures; an additional combat", Some(6.0))?;
+    if ok
+        && crate::human::is_human(g, p)
+        && !crate::human::urdragon::repeat_on(g, p)
+        && !crate::human::choices::yes_no(g, p, "Combat Celebrant: exert it as it attacks (untap your other creatures, an additional combat)?")?
+    {
+        return Ok(vec![]); // a "may": not exerted
+    }
     g.perm_mut(src).data.set(DataKey::Exerted, Val::Int(turns)); // exerted as it attacked
     if !ok {
         return Ok(vec![]);
