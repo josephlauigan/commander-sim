@@ -22,6 +22,7 @@ pub mod mana;
 pub mod script;
 pub mod specs;
 pub mod thanos;
+pub mod urdragon;
 
 use crate::control::Human;
 use crate::ids::{PermId, PlayerId};

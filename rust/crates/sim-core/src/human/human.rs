@@ -142,12 +142,13 @@ pub fn stack_priority(g: &mut Game, q: PlayerId) -> Res {
     let mode = autopass(g, q);
     let Some(top) = g.stack.last().cloned() else { return Ok(()) };
     if top.kind != StackKind::Spell {
-        // Thassa's Oracle's own trigger, with Demonic Consultation / Tainted Pact in hand: the window to cast it
-        let oracle = super::thanos::oracle_window(g, q, &top);
-        if top.controller == q && mode != "all" && !oracle {
+        // Thassa's Oracle's own trigger, with Demonic Consultation / Tainted Pact in hand: the window to cast it;
+        // your own important ability, with Peter Parker's Camera ready to copy it: you get priority
+        let own = super::thanos::oracle_window(g, q, &top) || super::urdragon::camera_window(g, q, &top);
+        if top.controller == q && mode != "all" && !own {
             return Ok(());
         }
-        if mode == "respond" && !oracle && !can_respond(g, q) {
+        if mode == "respond" && !own && !can_respond(g, q) {
             return Ok(());
         }
         let who = if top.controller == q {
@@ -537,7 +538,19 @@ pub fn abilities_of(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<(String, Ab
         return Ok(out); // Arrest, Pithing Needle, Collector Ouphe ...: its activated abilities can't be activated
     }
     if let Some(n) = legal::equip_cost(g, m) {
-        out.push((format!("Equip {{{n}}}"), AbilityKind::Equip));
+        // the cheapest it costs onto any creature of yours (Puresteel Paladin, Auriok Steelshaper ...)
+        let least = g
+            .player(p)
+            .perms
+            .iter()
+            .filter(|&&x| g.is_creature(x) && !g.perm(x).phased && x != m)
+            .filter_map(|&x| legal::equip_cost_to(g, p, m, x))
+            .min()
+            .unwrap_or(n);
+        out.push((
+            if least < n { format!("Equip {{{n}}} ({{{least}}} onto the right creature)") } else { format!("Equip {{{n}}}") },
+            AbilityKind::Equip,
+        ));
     }
     let post = if g.active == Some(p) { Some(g.step == Step::Main2) } else { None }; // None: instant-speed only
     for a in abilities::permanent_abilities(g, p, m) {
@@ -603,7 +616,7 @@ fn use_perm(g: &mut Game, p: PlayerId, m: PermId) -> Res<Option<String>> {
             if let Some(why) = legal::check_equip(g, p, m, t) {
                 return Ok(Some(why));
             }
-            mana::pay_from_pool(g, p, legal::equip_cost(g, m).unwrap_or(0), "");
+            mana::pay_from_pool(g, p, legal::equip_cost_to(g, p, m, t).unwrap_or(0), ""); // with the discounts
             crate::glog!(g, "  {} equips {} to {}", name_of(g, p), mname, perm_name(g, t));
             let tn = perm_name(g, t);
             if stack::ability_window(g, p, Some(m), &format!("equip to {tn}"), None, Some(t))?

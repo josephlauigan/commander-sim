@@ -1050,6 +1050,13 @@ fn aid_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if !trigger_window(g, o, Some(src), &label, Some(2.0))? || !g.perm(m).on_bf {
         return Ok(());
     }
+    if crate::human::is_human(g, o) {
+        // a person chooses the creature, or none ("you may attach it")
+        if let Some(x) = crate::human::urdragon::pick_attach_target(g, o, "Sigarda's Aid", m)? {
+            g.perm_mut(m).attached = Some(x);
+        }
+        return Ok(());
+    }
     let cr = creatures(g);
     if let Some(x) = first_max(&cr, |x| (g.perm(x).is_cmd, pval(g, x))) {
         g.perm_mut(m).attached = Some(x);

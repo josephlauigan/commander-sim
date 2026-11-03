@@ -1413,6 +1413,10 @@ pub fn copy_spell(g: &mut Game, p: PlayerId, c: CardId, ctx: Option<&Ctx>, cast:
     } else {
         magecraft(g, p, Some(c), true)?;
     }
+    if crate::human::is_human(g, p) && &*g.db.get(c).name == "Twinflame" {
+        // a person's Twinflame has no card code to resolve (the bots' goes through their hand option): its copy
+        return crate::human::urdragon::twinflame_copy(g, p, c, &ctx);
+    }
     let t = &g.db.get(c).tags;
     if g.over || t.has(Tag::Ctr) || (t.has(Tag::Crackle) && ctx.x == 0) {
         return Ok(()); // nothing to counter; X copies as 0
