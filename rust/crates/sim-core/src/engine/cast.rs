@@ -1021,6 +1021,11 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
     } else {
         ctx
     };
+    // a person's Demonic Consultation / Tainted Pact / Grapeshot (practice mode): their choices as it resolves
+    if !g.db.get(c).perm && crate::human::is_human(g, p) && crate::human::thanos::resolve_spell(g, p, c, ctx)? {
+        to_gy_or_exile(g, p, c, ctx, zone, false);
+        return Ok(());
+    }
     let d = g.db.get(c);
     let t = d.tags.clone();
     let (perm, has_dsl) = (d.perm, d.has_dsl());
@@ -1148,7 +1153,11 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         tutor_to_top(g, p, "any", 2, &by)?; // Imperial Seal / Vampiric Tutor: card on top, lose 2 life
     }
     if t.has(Tag::Adnaus) {
-        ad_nauseam(g, p, None)?;
+        if crate::human::is_human(g, p) {
+            crate::human::thanos::ad_nauseam(g, p)?; // the person decides after every card
+        } else {
+            ad_nauseam(g, p, None)?;
+        }
     }
     if let Some(n) = t.int(Tag::Lose)
         && !ctx.paid_otherwise

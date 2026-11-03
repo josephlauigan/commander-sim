@@ -20,6 +20,7 @@ pub mod legal;
 pub mod mana;
 pub mod script;
 pub mod specs;
+pub mod thanos;
 
 use crate::control::Human;
 use crate::ids::{PermId, PlayerId};

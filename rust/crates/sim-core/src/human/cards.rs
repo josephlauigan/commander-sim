@@ -2401,6 +2401,11 @@ fn more_abilities(g: &Game, p: PlayerId, m: PermId, nm: &str) -> Option<Vec<Perm
             (-3, "destroy all creatures with power 4 or greater", elspeth_minus3),
             (-7, "emblem: your creatures get +2/+2 and have flying", elspeth_minus7),
         ]),
+        "Lion's Eye Diamond" => vec![ability(
+            "discard your hand, sacrifice it: add three mana of any one colour (a mana ability, at instant speed)",
+            super::thanos::led,
+        )],
+        "Underworld Breach" => return super::thanos::breach_abilities(g, p),
         "Necropotence" => vec![ability(
             "pay 1 life (any number of times): exile the top card of your library face down; put it into your hand at the beginning of your next end step",
             necro,
