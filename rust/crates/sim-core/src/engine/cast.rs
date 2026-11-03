@@ -1021,6 +1021,11 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
     } else {
         ctx
     };
+    // a person's Demonic Consultation / Tainted Pact / Grapeshot (practice mode): their choices as it resolves
+    if !g.db.get(c).perm && crate::human::is_human(g, p) && crate::human::thanos::resolve_spell(g, p, c, ctx)? {
+        to_gy_or_exile(g, p, c, ctx, zone, false);
+        return Ok(());
+    }
     let d = g.db.get(c);
     let t = d.tags.clone();
     let (perm, has_dsl) = (d.perm, d.has_dsl());
@@ -1148,7 +1153,11 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         tutor_to_top(g, p, "any", 2, &by)?; // Imperial Seal / Vampiric Tutor: card on top, lose 2 life
     }
     if t.has(Tag::Adnaus) {
-        ad_nauseam(g, p, None)?;
+        if crate::human::is_human(g, p) {
+            crate::human::thanos::ad_nauseam(g, p)?; // the person decides after every card
+        } else {
+            ad_nauseam(g, p, None)?;
+        }
     }
     if let Some(n) = t.int(Tag::Lose)
         && !ctx.paid_otherwise
@@ -1403,6 +1412,10 @@ pub fn copy_spell(g: &mut Game, p: PlayerId, c: CardId, ctx: Option<&Ctx>, cast:
         on_cast(g, p, c)?;
     } else {
         magecraft(g, p, Some(c), true)?;
+    }
+    if crate::human::is_human(g, p) && &*g.db.get(c).name == "Twinflame" {
+        // a person's Twinflame has no card code to resolve (the bots' goes through their hand option): its copy
+        return crate::human::urdragon::twinflame_copy(g, p, c, &ctx);
     }
     let t = &g.db.get(c).tags;
     if g.over || t.has(Tag::Ctr) || (t.has(Tag::Crackle) && ctx.x == 0) {

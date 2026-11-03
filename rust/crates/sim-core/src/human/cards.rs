@@ -218,9 +218,15 @@ pub fn damage(g: &mut Game, p: PlayerId, x: Target, n: i32, source: &str, kind: 
         return Ok(());
     }
     let name = g.perm(m).name;
-    if g.is_creature(m) && crate::engine::values::etgh(g, m) <= n {
+    // a person's damage stays marked on the creature (Triskelion pinging itself): the lethal check counts it
+    let person = crate::human::is_human(g, p);
+    let prior = if person { super::combos::marked(g, m) } else { 0 };
+    if g.is_creature(m) && crate::engine::values::etgh(g, m) <= n + prior {
         removal::apply_removal(g, Some(p), m, &format!("dmg{n}"), None)?;
     } else if g.is_creature(m) {
+        if person {
+            super::combos::mark(g, m, n);
+        }
         crate::glog!(g, "    {} deals {} damage to {} (it survives)", source, n, name);
     }
     let x = g.perm(m);
@@ -642,8 +648,8 @@ fn triskelion(_g: &Game) -> Vec<PermAbility> {
         if crate::engine::stack::ability_window(g, p, Some(m), "1 damage", None, tp)? {
             damage(g, p, tg[k], 1, "Triskelion", "triggers")?;
         }
-        if g.player(p).perms.contains(&m) && crate::engine::values::etgh(g, m) <= 0 {
-            crate::engine::zones::die(g, m, "sba")?;
+        if g.player(p).perms.contains(&m) {
+            super::combos::die_if_lethal(g, m)?; // no counters left, or its own pings marked on it
         }
         Ok(None)
     })]
@@ -890,6 +896,7 @@ pub fn abilities(g: &Game, p: PlayerId, m: PermId) -> Option<Vec<PermAbility>> {
         }
         "Mind Stone" => mind_stone(g),
         "Triskelion" => triskelion(g),
+        "Yawgmoth, Thran Physician" => super::combos::yawgmoth(),
         "Aetherflux Reservoir" => aetherflux(g),
         "Sakura-Tribe Elder" => ste(g),
         "Nim Deathmantle" => vec![], // equip {4}: the Equip ability every equipment has
@@ -1101,7 +1108,6 @@ fn names_of(g: &Game, ms: &[PermId]) -> String {
 
 /// cards._twinflame
 fn twinflame(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
-    use crate::engine::zones;
     if let Some(why) = legal::check_cast(g, p, c, "hand") {
         return Ok(Some(why));
     }
@@ -1133,32 +1139,16 @@ fn twinflame(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
         return Ok(Some(format!("Can't cast Twinflame on {} creatures. {why}", picked.len())));
     }
     let what = format!("Twinflame copying {}", names_of(g, &picked));
-    if !spell_cast(g, p, c, 3.0, Some(&what))? {
+    // the spell's targets, for a copy of it (Dualcaster Mage): its Ctx carries them while it is on the stack
+    let ctx = crate::state::Ctx { perms: picked.clone(), ..Default::default() };
+    let prev = g.cur_cast.replace((c, ctx, crate::sym::intern("hand")));
+    let cast = spell_cast(g, p, c, 3.0, Some(&what));
+    g.cur_cast = prev;
+    if !cast? {
         gy_push(g, p, c);
         return Ok(None);
     }
-    for m in picked {
-        if !g.player(p).perms.contains(&m) {
-            continue;
-        }
-        let cp = match g.perm(m).cd {
-            Some(cd) => zones::enter_token_copy(g, p, cd)?,
-            None => {
-                // a token with no card: the same creature token
-                let x = g.perm(m);
-                let mut spec = zones::Tokens::new(1, x.pow);
-                spec.tgh = Some(x.tgh);
-                spec.fly = x.fly;
-                spec.sick = false;
-                zones::make_tokens(g, p, spec)?.first().copied()
-            }
-        };
-        if let Some(cp) = cp {
-            let x = g.perm_mut(cp);
-            x.sick = false; // haste; exiled at the end step
-            x.temp = true;
-        }
-    }
+    super::urdragon::twinflame_tokens(g, p, &picked, None)?;
     gy_push(g, p, c);
     crate::engine::life::check_state(g)?;
     Ok(None)
@@ -1700,18 +1690,7 @@ pub fn copy_in_response(g: &mut Game, p: PlayerId, c: CardId, spell: Option<Card
         _ => None,
     };
     if &*g.db.get(c).name == "Dualcaster Mage" {
-        if !s_is {
-            return Ok(Some(format!("Dualcaster Mage copies an instant or sorcery spell; {sname} is not one.")));
-        }
-        if let Some(why) = super::mana::cost_problem(g, p, 1, "RR") {
-            return Ok(Some(format!("Can't cast Dualcaster Mage. {why}")));
-        }
-        super::mana::pay_from_pool(g, p, 1, "RR");
-        crate::glog!(g, "  {} flashes in Dualcaster Mage to copy {}", pname(g, p), sname);
-        if crate::engine::cast::cast_card(g, p, c, "hand", Default::default())? && !g.over {
-            crate::engine::cast::copy_spell(g, p, spell, ctx.as_ref(), false)?;
-        }
-        return Ok(None);
+        return super::urdragon::dualcaster_flash(g, p, c, spell, ctx);
     }
     let mut modes: Vec<(&str, String)> = vec![];
     if s_is {
@@ -2401,6 +2380,11 @@ fn more_abilities(g: &Game, p: PlayerId, m: PermId, nm: &str) -> Option<Vec<Perm
             (-3, "destroy all creatures with power 4 or greater", elspeth_minus3),
             (-7, "emblem: your creatures get +2/+2 and have flying", elspeth_minus7),
         ]),
+        "Lion's Eye Diamond" => vec![ability(
+            "discard your hand, sacrifice it: add three mana of any one colour (a mana ability, at instant speed)",
+            super::thanos::led,
+        )],
+        "Underworld Breach" => return super::thanos::breach_abilities(g, p),
         "Necropotence" => vec![ability(
             "pay 1 life (any number of times): exile the top card of your library face down; put it into your hand at the beginning of your next end step",
             necro,
@@ -2419,6 +2403,7 @@ fn more_abilities(g: &Game, p: PlayerId, m: PermId, nm: &str) -> Option<Vec<Perm
         "Narset, Parter of Veils" => {
             walker(&[(-2, "look at the top four; take a noncreature, nonland card", narset_minus2)])
         }
+        n @ ("Brass Squire" | "Peter Parker's Camera" | "Jaxis, the Troublemaker") => return super::urdragon::abilities(n),
         _ => return None,
     })
 }

@@ -633,7 +633,7 @@ fn run(
                         Some(c) => g.db.get(c).name.to_string(),
                         None => "Damage".to_string(),
                     };
-                    crate::human::choices::deal_damage(g, p, dmg, &what, "triggers")?;
+                    crate::human::choices::deal_damage_from(g, p, dmg, &what, "triggers", src)?;
                 }
                 Some("any_target") => {
                     let cols = src_colors(g, src, spell);
@@ -2310,6 +2310,10 @@ pub fn activate(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool> {
             let mut copy = DslCtx { target: None, ..dctx.clone() };
             execute(g, p, effects, Some(src), &mut copy, None, 0)?;
         }
+        if r.copies > 0 && r.resolves {
+            let nm = g.perm(src).name.to_string(); // Rings of Brighthearth: priority before the original resolves
+            crate::human::human::copies_priority(g, p, &nm)?;
+        }
         if !r.resolves {
             return Ok(true); // countered
         }
@@ -2348,6 +2352,10 @@ pub fn use_loyalty(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool
     let r = crate::engine::stack::ability_window_ex(g, p, Some(src), &format!("{loyalty:+}"), None, ctx)?;
     for _ in 0..r.copies {
         execute(g, p, effects, Some(src), &mut DslCtx::base(), None, 0)?;
+    }
+    if r.copies > 0 && r.resolves {
+        let nm = g.perm(src).name.to_string();
+        crate::human::human::copies_priority(g, p, &nm)?;
     }
     if !r.resolves {
         return Ok(true);

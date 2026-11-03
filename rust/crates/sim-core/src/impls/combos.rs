@@ -1284,7 +1284,7 @@ fn oracle(g: &Game, p: PlayerId) -> Ready {
 }
 
 /// combos.oracle_devotion: p's devotion to blue
-fn oracle_devotion(g: &Game, p: PlayerId) -> usize {
+pub(crate) fn oracle_devotion(g: &Game, p: PlayerId) -> usize {
     g.player(p)
         .perms
         .iter()
@@ -1300,6 +1300,9 @@ fn oracle_devotion(g: &Game, p: PlayerId) -> usize {
 fn oracle_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if m != src || g.combo_spell {
         return Ok(()); // in the combo the exile spell comes next
+    }
+    if crate::human::is_human(g, p) {
+        return crate::human::thanos::oracle_etb(g, p, src); // the trigger waits on the stack for a Consultation or Pact
     }
     let x = oracle_devotion(g, p);
     if x >= g.player(p).library.len() {

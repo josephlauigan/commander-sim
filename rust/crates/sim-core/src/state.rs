@@ -141,6 +141,10 @@ pub enum DataKey {
     /// a Spellgorger Weird token made by Ral and the Implicit Maze (+1/+1 counter per noncreature spell)
     WeirdToken,
     Lure,
+    /// practice mode: damage a person dealt to this creature this turn, [Stamp, Int] (Triskelion pinging itself)
+    Marked,
+    /// practice mode: where a person sends every ping of this Niv-Mizzet this turn, [Stamp, Player]
+    Ping,
     /// Knight of the Holy Nimbus: an opponent paid {2}, it can't regenerate this turn
     Noregen,
     Manatok,
