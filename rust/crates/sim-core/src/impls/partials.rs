@@ -453,6 +453,8 @@ pub fn special_unit_paid(g: &mut Game, p: PlayerId, u: Unit) -> Res {
         Source::HandCard(c) => {
             if remove_card(&mut g.player_mut(p).hand, c) {
                 g.player_mut(p).exile.push(c);
+                let (name, col) = HAND_MANA.iter().find(|h| h.0 == &*g.db.get(c).name).map_or(("a card", "C"), |h| *h);
+                crate::glog!(g, "    {} exiles {} from hand for {{{}}}", pname(g, p), name, col);
             }
         }
         Source::Scion(m) => {
