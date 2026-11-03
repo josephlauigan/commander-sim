@@ -15,7 +15,7 @@ gates = ["Talon Gates of Madara"]
 snap = ["Snap"]
 gsz = ["Green Sun's Zenith"]
 tomb = ["Ancient Tomb"]
-engine = ["Crop Rotation", "Gamble", "Chord of Calling", "Spellseeker", "Formidable Speaker", "Rhystic Study", "Mystic Remora", "Gaea's Cradle", "Wan Shi Tong, Librarian"]
+engine = ["Crop Rotation", "Gamble", "Chord of Calling", "Spellseeker", "Formidable Speaker", "Rhystic Study", "Mystic Remora", "Gaea's Cradle"]
 finders = ["Gaea's Cradle", "Talon Gates of Madara", "Crop Rotation", "Gamble", "Expedition Map", "Sylvan Scrying", "Sowing Mycospawn", "Vibrance", "Chord of Calling", "Spellseeker"]
 reactive = ["Force of Will", "Force of Negation", "Pact of Negation", "Swan Song", "Flusterstorm", "Mental Misstep", "Mindbreak Trap", "Flare of Denial", "Fierce Guardianship", "Deflecting Swat", "Louisoix's Sacrifice", "Veil of Summer", "Chain of Vapor", "Flare of Duplication"]
 # what Eternal Witness brings back worth its cast

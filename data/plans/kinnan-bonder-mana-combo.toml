@@ -46,7 +46,7 @@ cards = ["Sylvan Library"]
 value = 60
 
 [[prio]]
-cards = ["Force of Will", "Fierce Guardianship", "Force of Negation", "Pact of Negation", "Mental Misstep", "Misdirection", "Disrupting Shoal", "Mindbreak Trap", "Snapback", "Chain of Vapor", "Dispel", "Flusterstorm", "Swan Song", "An Offer You Can't Refuse"]
+cards = ["Force of Will", "Fierce Guardianship", "Force of Negation", "Pact of Negation", "Mental Misstep", "Misdirection", "Disrupting Shoal", "Mindbreak Trap", "Snapback", "Chain of Vapor", "Veil of Summer", "Flusterstorm", "Swan Song", "An Offer You Can't Refuse"]
 value = 0
 
 # Tutor targets, best first: the win line's missing pieces (Monolith, then an outlet, then the Horror line), then the
@@ -75,6 +75,12 @@ score = 7.0
 cards = ["Hullbreaker Horror"]
 when = ["out:Kinnan, Bonder Prodigy & mana-perms>=2"]
 score = 7.5
+
+# the second two-card line (2026-11-03): Kinnan + an aura on a blue mana creature
+[[wish]]
+cards = ["Freed from the Real", "Pemmin's Aura"]
+when = ["out:Kinnan, Bonder Prodigy & not have:Freed from the Real & not have:Pemmin's Aura"]
+score = 7.8
 
 [[wish]]
 cards = ["Rhystic Study", "Mystic Remora"]

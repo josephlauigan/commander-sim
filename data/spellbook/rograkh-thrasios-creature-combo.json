@@ -1,13 +1,13 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-10-30",
+  "fetched": "2026-11-03",
   "deck": "rograkh-thrasios-creature-combo",
   "commanders": [
     "Rograkh, Son of Rohgahh",
     "Thrasios, Triton Hero"
   ],
-  "request_sha256": "36aefc848d7a01964abec21f013fc24ea8c6cdcd20a459e26069853e7286b50a",
+  "request_sha256": "ef63eb38fc80b29195f6fa8912cbc849c6ca9d001a64ecbbdfcc33649d533257",
   "identity": "GUR",
   "included": [
     {
@@ -42,7 +42,7 @@
       "mana": "{1}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 22918
+      "popularity": 23018
     },
     {
       "id": "1174-2404-6678",
@@ -75,7 +75,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 18350
+      "popularity": 18507
     }
   ],
   "included_by_changing_commanders": [],
@@ -106,7 +106,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 364272,
+      "popularity": 365847,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -137,7 +137,7 @@
       "mana": "{2}{G} plus enough mana to animate the land",
       "bracket": "E",
       "legal": true,
-      "popularity": 94242,
+      "popularity": 94571,
       "missing": [
         "Tireless Provisioner"
       ]
@@ -168,7 +168,7 @@
       "mana": "{2}{G} plus enough mana to animate the land",
       "bracket": "E",
       "legal": true,
-      "popularity": 90762,
+      "popularity": 91138,
       "missing": [
         "Lotus Cobra"
       ]
@@ -199,7 +199,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 78094,
+      "popularity": 78375,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -228,7 +228,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 67063,
+      "popularity": 67345,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -257,7 +257,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 46905,
+      "popularity": 46965,
       "missing": [
         "Basalt Monolith"
       ]
@@ -286,7 +286,7 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 37844,
+      "popularity": 37954,
       "missing": [
         "Tidespout Tyrant"
       ]
@@ -317,7 +317,7 @@
       "mana": "{2}{G} plus enough mana to animate the land",
       "bracket": "S",
       "legal": true,
-      "popularity": 33272,
+      "popularity": 33412,
       "missing": [
         "Nissa, Resurgent Animist"
       ]
@@ -348,7 +348,7 @@
       "mana": "{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 29978,
+      "popularity": 30018,
       "missing": [
         "Retraction Helix"
       ]
@@ -384,7 +384,7 @@
       "mana": "{1}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 29557,
+      "popularity": 29592,
       "missing": [
         "Retraction Helix"
       ]
@@ -416,7 +416,7 @@
       "mana": "{2}{G} plus enough mana to animate the land",
       "bracket": "E",
       "legal": true,
-      "popularity": 23970,
+      "popularity": 24052,
       "missing": [
         "Doubling Season"
       ]
@@ -452,7 +452,7 @@
       "mana": "{1}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 22471,
+      "popularity": 22480,
       "missing": [
         "Retraction Helix"
       ]
@@ -479,7 +479,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 19201,
+      "popularity": 19285,
       "missing": [
         "Deadeye Navigator"
       ]
@@ -511,7 +511,7 @@
       "mana": "{2}{G} plus enough mana to animate the land",
       "bracket": "E",
       "legal": true,
-      "popularity": 19138,
+      "popularity": 19213,
       "missing": [
         "Parallel Lives"
       ]
@@ -544,7 +544,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 19066,
+      "popularity": 19156,
       "missing": [
         "Freed from the Real"
       ]
@@ -575,7 +575,7 @@
       "mana": "{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 16819,
+      "popularity": 16842,
       "missing": [
         "Banishing Knack"
       ]
@@ -611,7 +611,7 @@
       "mana": "{1}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 16555,
+      "popularity": 16575,
       "missing": [
         "Banishing Knack"
       ]
@@ -667,7 +667,7 @@
       "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 12743,
+      "popularity": 12745,
       "missing": [
         "Tidespout Tyrant"
       ]
@@ -703,7 +703,7 @@
       "mana": "{1}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 12663,
+      "popularity": 12668,
       "missing": [
         "Banishing Knack"
       ]
@@ -735,7 +735,7 @@
       "mana": "{15}{G}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 12619,
+      "popularity": 12650,
       "missing": [
         "Doppelgang"
       ]
@@ -768,7 +768,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 12075,
+      "popularity": 12116,
       "missing": [
         "Pemmin's Aura"
       ]
@@ -797,7 +797,7 @@
       "mana": "{1}{G}",
       "bracket": "R",
       "legal": true,
-      "popularity": 11922,
+      "popularity": 11921,
       "missing": [
         "Nissa, Who Shakes the World"
       ]
@@ -842,7 +842,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 9635,
+      "popularity": 9605,
       "missing": [
         "Displacer Kitten"
       ]
@@ -877,7 +877,7 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 9513,
+      "popularity": 9570,
       "missing": [
         "Freed from the Real"
       ]
@@ -906,7 +906,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 8530,
+      "popularity": 8622,
       "missing": [
         "Squirrel Nest"
       ]
@@ -938,7 +938,7 @@
       "mana": "{2}{G} plus enough mana to animate the land",
       "bracket": "E",
       "legal": true,
-      "popularity": 6993,
+      "popularity": 7006,
       "missing": [
         "Primal Vigor"
       ]
@@ -987,7 +987,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 6233,
+      "popularity": 6230,
       "missing": [
         "Displacer Kitten"
       ]
@@ -1014,7 +1014,7 @@
       "mana": "{1}{U}{U}{R}{R} plus enough mana to cast the additional instant or sorcery at most",
       "bracket": "E",
       "legal": true,
-      "popularity": 6040,
+      "popularity": 6091,
       "missing": [
         "Narset's Reversal"
       ]
@@ -1049,7 +1049,7 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 5883,
+      "popularity": 5912,
       "missing": [
         "Pemmin's Aura"
       ]
@@ -1081,7 +1081,7 @@
       "mana": "{2}{G} plus enough mana to animate the land",
       "bracket": "S",
       "legal": true,
-      "popularity": 5487,
+      "popularity": 5505,
       "missing": [
         "Adrix and Nev, Twincasters"
       ]
@@ -1108,7 +1108,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5128,
+      "popularity": 5149,
       "missing": [
         "Pyromancer's Goggles"
       ]
@@ -1139,7 +1139,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 4893,
+      "popularity": 4902,
       "missing": [
         "Aggravated Assault"
       ]
@@ -1168,7 +1168,7 @@
       "mana": "{3}{G}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 4570,
+      "popularity": 4648,
       "missing": [
         "Freed from the Real"
       ]
@@ -1199,7 +1199,7 @@
       "mana": "{1}{G}{G}{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 4440,
+      "popularity": 4535,
       "missing": [
         "The Unbeatable Squirrel Girl"
       ]
@@ -1231,7 +1231,7 @@
       "mana": "{2} plus enough mana to activate or trigger the untap ability",
       "bracket": "S",
       "legal": true,
-      "popularity": 4385,
+      "popularity": 4421,
       "missing": [
         "Gogo, Master of Mimicry"
       ]
@@ -1262,7 +1262,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 4116,
+      "popularity": 4143,
       "missing": [
         "Aggravated Assault"
       ]
@@ -1292,7 +1292,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 3538,
+      "popularity": 3566,
       "missing": [
         "Palinchron"
       ]
@@ -1323,7 +1323,7 @@
       "mana": "{2}{G} plus enough mana to animate the land",
       "bracket": "E",
       "legal": true,
-      "popularity": 3098,
+      "popularity": 3116,
       "missing": [
         "Stone-Seeder Hierophant"
       ]
@@ -1352,7 +1352,7 @@
       "mana": "{2}{G}{U}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2913,
+      "popularity": 2968,
       "missing": [
         "Pemmin's Aura"
       ]
@@ -1379,7 +1379,7 @@
       "mana": "{1}{R}{R} plus enough mana to cast the additional sorcery",
       "bracket": "E",
       "legal": true,
-      "popularity": 2550,
+      "popularity": 2548,
       "missing": [
         "Alania, Divergent Storm"
       ]
@@ -1406,7 +1406,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2309,
+      "popularity": 2314,
       "missing": [
         "Shrieking Drake"
       ]
@@ -1441,7 +1441,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1845,
+      "popularity": 1929,
       "missing": [
         "Pili-Pala"
       ]
@@ -1468,7 +1468,7 @@
       "mana": "{1}{R}{R} at most",
       "bracket": "E",
       "legal": true,
-      "popularity": 1662,
+      "popularity": 1681,
       "missing": [
         "Prismari, the Inspiration"
       ]
@@ -1497,7 +1497,7 @@
       "mana": "{1}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1644,
+      "popularity": 1640,
       "missing": [
         "Sage of the Maze"
       ]
@@ -1532,7 +1532,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1468,
+      "popularity": 1557,
       "missing": [
         "Pili-Pala"
       ]
@@ -1567,7 +1567,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1436,
+      "popularity": 1513,
       "missing": [
         "Pili-Pala"
       ]
@@ -1603,7 +1603,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 1226,
+      "popularity": 1222,
       "missing": [
         "Lilysplash Mentor"
       ]
@@ -1638,7 +1638,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1069,
+      "popularity": 1149,
       "missing": [
         "Pili-Pala"
       ]
@@ -1665,7 +1665,7 @@
       "mana": "{U} plus enough mana to cast the instant or sorcery card",
       "bracket": "E",
       "legal": true,
-      "popularity": 1027,
+      "popularity": 1030,
       "missing": [
         "Guile"
       ]
@@ -1700,7 +1700,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 965,
+      "popularity": 968,
       "missing": [
         "Kiki-Jiki, Mirror Breaker"
       ]
@@ -1735,7 +1735,42 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 857,
+      "popularity": 921,
+      "missing": [
+        "Pili-Pala"
+      ]
+    },
+    {
+      "id": "1247-4289-4893",
+      "cards": [
+        {
+          "name": "Pili-Pala",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Pili-Pala does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 837,
       "missing": [
         "Pili-Pala"
       ]
@@ -1771,7 +1806,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 822,
+      "popularity": 835,
       "missing": [
         "Horseshoe Crab"
       ]
@@ -1812,41 +1847,6 @@
       ]
     },
     {
-      "id": "1247-4289-4893",
-      "cards": [
-        {
-          "name": "Pili-Pala",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Training Grounds",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Pili-Pala does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 792,
-      "missing": [
-        "Pili-Pala"
-      ]
-    },
-    {
       "id": "129-3995-4289",
       "cards": [
         {
@@ -1877,7 +1877,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 768,
+      "popularity": 780,
       "missing": [
         "Horseshoe Crab"
       ]
@@ -1906,7 +1906,7 @@
       "mana": "{1}{R}{R} plus the cost of the additional sorcery",
       "bracket": "O",
       "legal": true,
-      "popularity": 538,
+      "popularity": 537,
       "missing": [
         "Kalamax, the Stormsire"
       ]
@@ -1933,7 +1933,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 481,
+      "popularity": 488,
       "missing": [
         "Adaptive Training Post"
       ]
@@ -1970,7 +1970,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 455,
+      "popularity": 460,
       "missing": [
         "Maze of Ith"
       ]
@@ -1999,7 +1999,7 @@
       "mana": "{1}{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 424,
+      "popularity": 429,
       "missing": [
         "Avatar of Growth"
       ]
@@ -2032,7 +2032,7 @@
       "mana": "{1}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 410,
+      "popularity": 413,
       "missing": [
         "Mirror-Mad Phantasm"
       ]
@@ -2063,7 +2063,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 406,
+      "popularity": 408,
       "missing": [
         "Silvanus's Invoker"
       ]
@@ -2098,7 +2098,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 376,
+      "popularity": 389,
       "missing": [
         "Horseshoe Crab"
       ]
@@ -2129,7 +2129,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 368,
+      "popularity": 372,
       "missing": [
         "Silvanus's Invoker"
       ]
@@ -2158,42 +2158,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 352,
+      "popularity": 358,
       "missing": [
         "Wakeroot Elemental"
-      ]
-    },
-    {
-      "id": "1741-4893-5900",
-      "cards": [
-        {
-          "name": "Cloud of Faeries",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lilysplash Mentor",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Training Grounds",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control up to two lands that can tap to produce at least {G}{U}.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 350,
-      "missing": [
-        "Lilysplash Mentor"
       ]
     },
     {
@@ -2234,9 +2201,42 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 346,
+      "popularity": 352,
       "missing": [
         "Wirewood Lodge"
+      ]
+    },
+    {
+      "id": "1741-4893-5900",
+      "cards": [
+        {
+          "name": "Cloud of Faeries",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lilysplash Mentor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control up to two lands that can tap to produce at least {G}{U}.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 350,
+      "missing": [
+        "Lilysplash Mentor"
       ]
     },
     {
@@ -2267,7 +2267,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 346,
+      "popularity": 347,
       "missing": [
         "Lilysplash Mentor"
       ]
@@ -2302,7 +2302,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 329,
+      "popularity": 341,
       "missing": [
         "Horseshoe Crab"
       ]
@@ -2335,7 +2335,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 311,
+      "popularity": 313,
       "missing": [
         "Drafna, Founder of Lat-Nam"
       ]
@@ -2370,7 +2370,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 310,
+      "popularity": 311,
       "missing": [
         "Gretchen Titchwillow"
       ]
@@ -2409,7 +2409,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 296,
+      "popularity": 298,
       "missing": [
         "Ashaya, Soul of the Wild"
       ]
@@ -2448,7 +2448,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 291,
+      "popularity": 292,
       "missing": [
         "Ashaya, Soul of the Wild"
       ]
@@ -2477,9 +2477,82 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 287,
+      "popularity": 289,
       "missing": [
         "Wakeroot Elemental"
+      ]
+    },
+    {
+      "id": "129-824-4289",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Leech Bonder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "Leech Bonder does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 280,
+      "missing": [
+        "Leech Bonder"
+      ]
+    },
+    {
+      "id": "943-2404-4235",
+      "cards": [
+        {
+          "name": "Rings of Brighthearth",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Deserted Temple",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gaea's Cradle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite green mana",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least four creatures.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 273,
+      "missing": [
+        "Rings of Brighthearth"
       ]
     },
     {
@@ -2516,43 +2589,6 @@
       ]
     },
     {
-      "id": "943-2404-4235",
-      "cards": [
-        {
-          "name": "Rings of Brighthearth",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Deserted Temple",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Gaea's Cradle",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control can produce",
-        "Infinite green mana",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least four creatures.",
-      "mana": "",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 269,
-      "missing": [
-        "Rings of Brighthearth"
-      ]
-    },
-    {
       "id": "1348-4657-4915",
       "cards": [
         {
@@ -2584,45 +2620,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 264,
+      "popularity": 263,
       "missing": [
         "Maze of Ith"
-      ]
-    },
-    {
-      "id": "129-824-4289",
-      "cards": [
-        {
-          "name": "Kinnan, Bonder Prodigy",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Leech Bonder",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana",
-        "Put most creature cards from your library onto the battlefield"
-      ],
-      "requires": [],
-      "prerequisites": "Leech Bonder does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 264,
-      "missing": [
-        "Leech Bonder"
       ]
     },
     {
@@ -2649,7 +2649,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 232,
+      "popularity": 230,
       "missing": [
         "Blazing Sunsteel"
       ]
@@ -2709,7 +2709,7 @@
       "mana": "{2}",
       "bracket": "E",
       "legal": true,
-      "popularity": 202,
+      "popularity": 203,
       "missing": [
         "Spawnsire of Ulamog"
       ]
@@ -2754,7 +2754,7 @@
       "mana": "{1}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 148,
+      "popularity": 153,
       "missing": [
         "Parallel Lives"
       ]
@@ -2783,7 +2783,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 114,
+      "popularity": 112,
       "missing": [
         "Blazing Sunsteel"
       ]
@@ -2888,7 +2888,7 @@
       "mana": "{1}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 108,
+      "popularity": 110,
       "missing": [
         "Mirror-Mad Phantasm"
       ]
@@ -2924,7 +2924,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 97,
+      "popularity": 100,
       "missing": [
         "Simic Ragworm"
       ]
@@ -2960,7 +2960,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 88,
+      "popularity": 91,
       "missing": [
         "Simic Ragworm"
       ]
@@ -3023,7 +3023,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 80,
+      "popularity": 81,
       "missing": [
         "Pili-Pala"
       ]
@@ -3059,7 +3059,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 77,
+      "popularity": 78,
       "missing": [
         "Pili-Pala"
       ]
@@ -3125,9 +3125,42 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 68,
+      "popularity": 66,
       "missing": [
         "The Enigma Jewel // Locus of Enlightenment"
+      ]
+    },
+    {
+      "id": "880-2757-5702",
+      "cards": [
+        {
+          "name": "Perilous Forays",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Earthcraft",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Springheart Nantuko",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 61,
+      "missing": [
+        "Perilous Forays"
       ]
     },
     {
@@ -3168,42 +3201,9 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 61,
-      "missing": [
-        "Wirewood Lodge"
-      ]
-    },
-    {
-      "id": "880-2757-5702",
-      "cards": [
-        {
-          "name": "Perilous Forays",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Earthcraft",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Springheart Nantuko",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control an additional creature.",
-      "mana": "{1}",
-      "bracket": "E",
-      "legal": true,
       "popularity": 59,
       "missing": [
-        "Perilous Forays"
+        "Wirewood Lodge"
       ]
     },
     {
@@ -3237,7 +3237,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 56,
+      "popularity": 54,
       "missing": [
         "Morphling"
       ]
@@ -3273,9 +3273,79 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 54,
+      "popularity": 52,
       "missing": [
         "Morphling"
+      ]
+    },
+    {
+      "id": "1912-4289-4687",
+      "cards": [
+        {
+          "name": "Gilder Bairn",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Biomancer's Familiar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite proliferate for permanents"
+      ],
+      "requires": [],
+      "prerequisites": "Gilder Bairn does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 51,
+      "missing": [
+        "Gilder Bairn"
+      ]
+    },
+    {
+      "id": "4289-4687-4893",
+      "cards": [
+        {
+          "name": "Gilder Bairn",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite proliferate for permanents"
+      ],
+      "requires": [],
+      "prerequisites": "Gilder Bairn does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 51,
+      "missing": [
+        "Gilder Bairn"
       ]
     },
     {
@@ -3315,6 +3385,41 @@
       ]
     },
     {
+      "id": "4289-4449-4893",
+      "cards": [
+        {
+          "name": "Hateflayer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Training Grounds",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Hateflayer does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 51,
+      "missing": [
+        "Hateflayer"
+      ]
+    },
+    {
       "id": "129-4824-6006",
       "cards": [
         {
@@ -3351,111 +3456,6 @@
       ]
     },
     {
-      "id": "1912-4289-4687",
-      "cards": [
-        {
-          "name": "Gilder Bairn",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Biomancer's Familiar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite proliferate for permanents"
-      ],
-      "requires": [],
-      "prerequisites": "Gilder Bairn does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 50,
-      "missing": [
-        "Gilder Bairn"
-      ]
-    },
-    {
-      "id": "4289-4687-4893",
-      "cards": [
-        {
-          "name": "Gilder Bairn",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Training Grounds",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite proliferate for permanents"
-      ],
-      "requires": [],
-      "prerequisites": "Gilder Bairn does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 50,
-      "missing": [
-        "Gilder Bairn"
-      ]
-    },
-    {
-      "id": "4289-4449-4893",
-      "cards": [
-        {
-          "name": "Hateflayer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Training Grounds",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cryptolith Rite",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite damage"
-      ],
-      "requires": [],
-      "prerequisites": "Hateflayer does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 50,
-      "missing": [
-        "Hateflayer"
-      ]
-    },
-    {
       "id": "965-4289",
       "cards": [
         {
@@ -3479,7 +3479,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 48,
+      "popularity": 49,
       "missing": [
         "Crackleburr"
       ]
@@ -3514,7 +3514,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 44,
+      "popularity": 48,
       "missing": [
         "Simic Ragworm"
       ]
@@ -3691,7 +3691,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 27,
+      "popularity": 28,
       "missing": [
         "Gilder Bairn"
       ]
@@ -3762,7 +3762,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 25,
+      "popularity": 26,
       "missing": [
         "Gilder Bairn"
       ]
@@ -3913,7 +3913,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 14,
+      "popularity": 13,
       "missing": [
         "Morphling"
       ]
@@ -4054,6 +4054,42 @@
       "popularity": 2,
       "missing": [
         "Gilder Bairn"
+      ]
+    },
+    {
+      "id": "5864-6006-7109",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Trusty Boomerang",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least four in any combination of Birds, Frogs, Otters and Rats that don't have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1,
+      "missing": [
+        "Trusty Boomerang"
       ]
     },
     {
@@ -4336,42 +4372,6 @@
       ],
       "requires": [],
       "prerequisites": "You control a basic land. You control at least four in any combination of Birds, Frogs, Otters and Rats - one of which doesn't have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 0,
-      "missing": [
-        "Trusty Boomerang"
-      ]
-    },
-    {
-      "id": "5864-6006-7109",
-      "cards": [
-        {
-          "name": "Valley Floodcaller",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Trusty Boomerang",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Enduring Vitality",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite power and toughness for certain creatures until end of turn",
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least four in any combination of Birds, Frogs, Otters and Rats that don't have summoning sickness.",
       "mana": "",
       "bracket": "E",
       "legal": true,
