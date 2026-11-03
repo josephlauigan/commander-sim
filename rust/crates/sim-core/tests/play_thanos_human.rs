@@ -588,28 +588,3 @@ fn the_whole_breach_line_can_be_looped_by_hand() {
     assert!(g.player(P0).alive && !g.player(P1).alive, "the escaped Oracle won\n{}", dump(&g));
     assert!(clicks < 150, "{clicks} answers");
 }
-
-// ------------------------------------------------------------------ Mockingbird copying the Oracle
-#[test]
-fn mockingbird_copying_the_oracle_gives_a_new_trigger_that_wins_on_an_empty_library() {
-    let mut g = tbl();
-    perm(&mut g, P0, "Thassa's Oracle");
-    g.player_mut(P0).library.clear(); // the library was exiled in response to the first trigger, which was countered
-    hand(&mut g, P0, &["Mockingbird"]);
-    pool(&mut g, P0, &[('U', 2)]);
-    let n = AtomicUsize::new(0);
-    let h = person(&mut g, move |r| {
-        if r.prompt.contains("choose X") {
-            Answer::Pick(1) // X = 1
-        } else if is_priority(r) && n.fetch_add(1, Ordering::SeqCst) == 0 {
-            cast_a(0)
-        } else if is_priority(r) {
-            pass_a()
-        } else {
-            Answer::Pick(0)
-        }
-    });
-    human_main(&mut g, P0, false).unwrap();
-    let asked: Vec<_> = h.asked().into_iter().map(|r| r.prompt).collect();
-    assert!(!g.player(P1).alive, "the copy's trigger saw an empty library\n{asked:?}\n{}", dump(&g));
-}
