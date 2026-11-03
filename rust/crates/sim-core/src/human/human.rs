@@ -169,6 +169,16 @@ pub fn stack_priority(g: &mut Game, q: PlayerId) -> Res {
     respond(g, q, &format!("{who} {what}"), top.card, Some(top.controller))
 }
 
+/// A Rings of Brighthearth copy of the person's ability has resolved (its caller applied it) and the original is still to
+/// resolve: the person gets priority first, e.g. to tap Basalt Monolith for mana again before the original untaps it.
+/// Skipped in a run of many activations (`stack::with_rings_auto`).
+pub fn copies_priority(g: &mut Game, p: PlayerId, what: &str) -> Res {
+    if !super::is_human(g, p) || crate::engine::stack::rings_auto_set() {
+        return Ok(());
+    }
+    respond(g, p, &format!("The copy of {what} has resolved; the original is still to resolve"), None, Some(p))
+}
+
 /// practice mode: the caster gets priority on their own instant or sorcery when they hold a card that copies it
 /// (Python's `engine._copy_window`)
 pub fn copy_window(g: &Game, p: PlayerId, c: Option<CardId>) -> bool {
@@ -894,9 +904,11 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         // X: up to what's left in the pool
         let top = g.player(p).pool.total();
         let x = if top > 0 {
-            let labels: Vec<String> = (0..=top).map(|x| format!("X = {x}")).collect();
+            // every number up to 24, then round ones and the whole pool (infinite mana)
+            let xs = choices::amount_choices(top);
+            let labels: Vec<String> = xs.iter().map(|x| format!("X = {x}")).collect();
             let prompt = format!("{cname}: choose X (paid from what is left in your pool)");
-            choices::choose(g, p, "choose", &prompt, &labels, None, None)?.unwrap_or(0) as u32
+            xs[choices::choose(g, p, "choose", &prompt, &labels, None, None)?.unwrap_or(0)]
         } else {
             0
         };

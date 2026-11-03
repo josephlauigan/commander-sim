@@ -255,12 +255,12 @@ fn walking_ballista_grows_and_pings() {
     assert_eq!(g.perm(b).plus, 3);
     let before = g.player(P1).life;
     let pt = pick_target(&g, P0, Target::Player(P1));
-    use_perm(&mut g, b, "remove a +1/+1", vec![pt]);
+    use_perm(&mut g, b, "remove a +1/+1", vec![pt, pick(0)] /* 1 counter: the count is asked while it has more than one */);
     assert_eq!((g.perm(b).plus, g.player(P1).life), (2, before - 1));
     // a creature it kills
     let x = token(&mut g, P1, 1);
     let pt = pick_target(&g, P0, Target::Perm(x));
-    use_perm(&mut g, b, "remove a +1/+1", vec![pt]);
+    use_perm(&mut g, b, "remove a +1/+1", vec![pt, pick(0)]);
     assert!(!on_bf(&g, x), "a 1/1 dies to the ping");
     assert_eq!(g.perm(b).plus, 1);
 }

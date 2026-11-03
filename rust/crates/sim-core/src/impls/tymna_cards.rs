@@ -121,8 +121,15 @@ fn thrasios_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !ability_window(g, p, Some(src), "scry 1, then a land or a card", None, None)? {
         return Ok(true);
     }
+    thrasios_resolve(g, p)?;
+    Ok(true)
+}
+
+/// what Thrasios's ability does when it resolves (the person's too: practice mode, `human::karn`): scry 1, then reveal the
+/// top card; a land goes onto the battlefield tapped, anything else is drawn
+pub(crate) fn thrasios_resolve(g: &mut Game, p: PlayerId) -> Res {
     crate::cardcode::scry(g, p, 1, false)?;
-    let Some(&top) = g.player(p).library.last() else { return Ok(true) };
+    let Some(&top) = g.player(p).library.last() else { return Ok(()) };
     if g.db.get(top).land {
         crate::glog!(g, "    Thrasios reveals {}: onto the battlefield tapped", g.db.get(top).name);
         if crate::t6stats::is_t6(g, p) {
@@ -139,7 +146,7 @@ fn thrasios_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         crate::glog!(g, "    Thrasios reveals {}: drawn", g.db.get(top).name);
         draw(g, p, 1, false)?;
     }
-    Ok(true)
+    Ok(())
 }
 
 // ================================================================== Kraum, Ludevic's Opus

@@ -784,3 +784,19 @@ pub fn wipe_modes(g: &Game, p: PlayerId, kind: &str) -> Res<Vec<crate::sym::Sym>
     }
     Ok(picked)
 }
+
+// ------------------------------------------------------------------ amounts
+/// The amounts the person may pick from 0..=max: every number up to 24, then round ones (30, 40, 50 ... 1000) and
+/// `max` itself, so a huge pool (infinite mana) does not make a thousand-line menu.
+pub fn amount_choices(max: u32) -> Vec<u32> {
+    let mut xs: Vec<u32> = (0..=max.min(24)).collect();
+    for r in [30, 40, 50, 60, 80, 100, 150, 200, 300, 400, 500, 600, 800, 1000, 1500, 2000, 5000, 10000] {
+        if r > 24 && r < max {
+            xs.push(r);
+        }
+    }
+    if max > 24 {
+        xs.push(max);
+    }
+    xs
+}
