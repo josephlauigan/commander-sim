@@ -256,7 +256,7 @@ fn flipped_kefka(g: &mut Game, p: PlayerId) -> PermId {
     m
 }
 
-/// Psychosis Crawler + the flipped Kefka by hand: one draw starts it; with a 45-card library the table (40 life each)
+/// Psychosis Crawler + the flipped Kefka by hand: one draw starts it; with a 45-card library the table (20 life each)
 /// is dead before the library is, with no question asked on the way
 #[test]
 fn crawler_and_flipped_kefka_loop_with_a_45_card_library_asks_nothing() {
@@ -266,9 +266,19 @@ fn crawler_and_flipped_kefka_loop_with_a_45_card_library_asks_nothing() {
     hand(&mut g, P0, &["Island"]); // the Crawler is */* (cards in hand): with an empty hand it dies
     perm(&mut g, P0, "Psychosis Crawler");
     g.player_mut(P0).library.truncate(45);
+    for q in [P1, P2] {
+        g.player_mut(q).life = 20; // each draw makes two draws (one per opponent): 40 cards kill two opponents at 20 life
+    }
     g.active = Some(P0);
     zones::draw(&mut g, P0, 1, false).unwrap();
     let asked: Vec<String> = h.asked().iter().map(|r| format!("{}: {}", r.kind, r.prompt)).collect();
-    assert!(g.over && g.winner == Some(P0), "the table is dead (library {} left, lives {} {}, hand {}, asked {asked:?})", g.player(P0).library.len(), g.player(P1).life, g.player(P2).life, g.player(P0).hand.len());
+    assert!(
+        g.over && g.winner == Some(P0),
+        "the table is dead (library {} left, lives {} {}, hand {}, asked {asked:?})",
+        g.player(P0).library.len(),
+        g.player(P1).life,
+        g.player(P2).life,
+        g.player(P0).hand.len()
+    );
     assert!(asked.len() <= 2, "{} questions: {asked:?}", asked.len());
 }

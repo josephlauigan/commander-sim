@@ -461,7 +461,8 @@ pub fn deal_damage_from(g: &mut Game, p: PlayerId, n: i32, source: &str, kind: &
         return Ok(());
     }
     let mut labels: Vec<String> = tg.iter().map(|&x| legal::describe_target(g, p, x)).collect();
-    let opps: Vec<PlayerId> = tg.iter().filter_map(|x| if let Target::Player(q) = x { Some(*q).filter(|&q| q != p) } else { None }).collect();
+    let opps: Vec<PlayerId> =
+        tg.iter().filter_map(|x| if let Target::Player(q) = x { Some(*q).filter(|&q| q != p) } else { None }).collect();
     for &q in &opps {
         labels.push(format!("every {source} ping this turn: {} ({} life)", g.player(q).name, g.player(q).life));
     }
