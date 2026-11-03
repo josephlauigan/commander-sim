@@ -443,8 +443,13 @@ pub fn copyable(it: &StackItem) -> bool {
 /// original resolves.
 /// True if the copy resolved. The copy cannot be copied again.
 pub fn copy_trigger(g: &mut Game, q: PlayerId, id: u32) -> Res<bool> {
+    copy_item(g, q, id, false)
+}
+
+/// `copy_trigger`; with `any`, any activated ability on the stack (Rings of Brighthearth: the caller resolves the copies)
+fn copy_item(g: &mut Game, q: PlayerId, id: u32, any: bool) -> Res<bool> {
     let Some(orig) = item(g, id).cloned() else { return Ok(false) };
-    if !copyable(&orig) {
+    if !(copyable(&orig) || any && orig.kind == StackKind::Ability) {
         return Ok(false);
     }
     let mut cp = orig;
@@ -532,7 +537,7 @@ pub fn ability_window_ex(
     let full = format!("{}: {name}", src_name(g, src));
     let ctx = Ctx { source: src, ..ctx };
     let it = new_item(g, p, card, ctx, "ability", imp, StackKind::Ability, full);
-    let out = stack_window_item(g, p, it)?;
+    let out = window_item(g, p, it, crate::human::is_human(g, p))?; // the person's Rings of Brighthearth may copy it
     let copies = take_copies(g, out.id);
     Ok(AbilityRes { resolves: !out.countered, target: out.ctx.target, copies })
 }
@@ -555,6 +560,158 @@ pub fn ability_window_card(
     let ctx = Ctx { target, ..Ctx::default() };
     let it = new_item(g, p, Some(cd), ctx, "ability", imp.unwrap_or(3.0), StackKind::Ability, full);
     stack_window(g, p, it)
+}
+
+// ------------------------------------------------------------------ Rings of Brighthearth (practice mode)
+thread_local! {
+    /// a preset answer to Rings' "pay {2} to copy it?" for a run of activations (Ballista pinging N times, Staff
+    /// drawing N cards): asked once by the caller, not for each activation
+    static RINGS_AUTO: std::cell::Cell<Option<bool>> = const { std::cell::Cell::new(None) };
+}
+
+/// run `f` with Rings' question answered in advance (`Some(false)`: never copy; `Some(true)`: copy whenever {2} can be
+/// paid); `None` asks each time
+pub fn with_rings_auto<T>(answer: Option<bool>, f: impl FnOnce() -> T) -> T {
+    let prev = RINGS_AUTO.with(|c| c.replace(answer));
+    let r = f();
+    RINGS_AUTO.with(|c| c.set(prev));
+    r
+}
+
+/// a preset Rings answer is in force (`with_rings_auto`)
+pub fn rings_auto_set() -> bool {
+    RINGS_AUTO.with(|c| c.get()).is_some()
+}
+
+/// the Rings of Brighthearth p (a person) controls: on the battlefield, not phased out
+pub fn rings_of(g: &Game, p: PlayerId) -> Vec<PermId> {
+    if !crate::human::is_human(g, p) {
+        return vec![];
+    }
+    g.player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            let x = g.perm(m);
+            x.on_bf && !x.phased && !x.neutered && &*x.name == "Rings of Brighthearth"
+        })
+        .collect()
+}
+
+/// "Whenever you activate an ability, if it isn't a mana ability, you may pay {2}. If you do, copy that ability."
+/// Each of p's Rings asks once for ability item `id` (just put on the stack). The trigger is on the stack (the table
+/// may answer it); the copy goes above the ability, and a copy that resolves is counted in `trig_copies`, for the
+/// caller to carry out first.
+fn rings_offer(g: &mut Game, p: PlayerId, id: u32) -> Res<()> {
+    for r in rings_of(g, p) {
+        let Some(it) = item(g, id).cloned() else { return Ok(()) };
+        if it.countered || it.kind != StackKind::Ability || !g.perm(r).on_bf || g.perm(r).phased {
+            return Ok(());
+        }
+        let prompt = match RINGS_AUTO.with(|c| c.get()) {
+            Some(false) => continue,
+            Some(true) => None,
+            None => Some(format!("Rings of Brighthearth: pay {{2}} to copy {}?", it.name)),
+        };
+        if !crate::human::mana::pay_tax_ask(g, p, 2, "Rings of Brighthearth", prompt)? {
+            continue;
+        }
+        let saved = g.trig_current.take(); // this is a new trigger, not the one being resolved
+        let ok = trigger_window(g, p, Some(r), &format!("copy {}", it.name), Some(3.0));
+        g.trig_current = saved;
+        if ok? && on_stack(g, id) && !item_countered(g, id) {
+            crate::glog!(g, "    Rings of Brighthearth copies {}", it.name);
+            copy_item(g, p, id, true)?;
+        }
+    }
+    Ok(())
+}
+
+/// `ability_window` for an ability of the person's whose caller carries out its copies (Rings of Brighthearth): the
+/// result is whether it resolves, and how many copies resolved before it. Anyone else gets `ability_window` as is.
+pub fn ability_window_rc(
+    g: &mut Game,
+    p: PlayerId,
+    src: Option<PermId>,
+    name: &str,
+    imp: Option<f64>,
+    target: Option<PermId>,
+) -> Res<(bool, usize)> {
+    if !crate::human::is_human(g, p) {
+        return Ok((ability_window(g, p, src, name, imp, target)?, 0));
+    }
+    let flow = src.and_then(|m| g.perm(m).cd);
+    crate::t6stats::flow_source(g, p, flow);
+    if let Some(m) = src
+        && crate::impls::combos::normal_play_window(g, p, m)?
+    {
+        return Ok((false, 0));
+    }
+    if g.over {
+        return Ok((true, 0));
+    }
+    let imp = imp.unwrap_or_else(|| 3.0 + src.filter(|&m| g.perm(m).on_bf).map_or(0.0, |m| 0.5 * pval(g, m)));
+    let card = src.and_then(|m| g.perm(m).cd);
+    let full = format!("{}: {name}", src_name(g, src));
+    let it =
+        new_item(g, p, card, Ctx { source: src, target, ..Ctx::default() }, "ability", imp, StackKind::Ability, full);
+    let out = window_item(g, p, it, true)?;
+    Ok((!out.countered, take_copies(g, out.id)))
+}
+
+/// `ability_window_card` for the person's ability whose source is a card (see `ability_window_rc`)
+pub fn ability_window_card_rc(
+    g: &mut Game,
+    p: PlayerId,
+    cd: CardId,
+    name: &str,
+    imp: Option<f64>,
+    target: Option<PermId>,
+) -> Res<(bool, usize)> {
+    if !crate::human::is_human(g, p) {
+        return Ok((ability_window_card(g, p, cd, name, imp, target)?, 0));
+    }
+    crate::t6stats::flow_source(g, p, Some(cd));
+    if g.over {
+        return Ok((true, 0));
+    }
+    let full = format!("{}: {name}", g.db.get(cd).name);
+    let ctx = Ctx { target, ..Ctx::default() };
+    let it = new_item(g, p, Some(cd), ctx, "ability", imp.unwrap_or(3.0), StackKind::Ability, full);
+    let out = window_item(g, p, it, true)?;
+    Ok((!out.countered, take_copies(g, out.id)))
+}
+
+/// An activated ability of the person's (cost paid) put on the stack and carried out: `eff` runs once for each
+/// Rings of Brighthearth copy that resolves, then once more if the ability itself was not countered. The copies
+/// resolve first and even when the original is countered (they are separate objects). `eff` chooses its targets as it
+/// runs, so a copy may take new ones. True if the original resolved. `src` None: the ability's source is the card `cd`.
+#[allow(clippy::too_many_arguments)]
+pub fn ability_run(
+    g: &mut Game,
+    p: PlayerId,
+    src: Option<PermId>,
+    cd: Option<CardId>,
+    name: &str,
+    imp: Option<f64>,
+    target: Option<PermId>,
+    mut eff: impl FnMut(&mut Game) -> Res,
+) -> Res<bool> {
+    let (resolves, copies) = match (src, cd) {
+        (None, Some(cd)) => ability_window_card_rc(g, p, cd, name, imp, target)?,
+        _ => ability_window_rc(g, p, src, name, imp, target)?,
+    };
+    for _ in 0..copies {
+        eff(g)?;
+    }
+    if copies > 0 && resolves {
+        crate::human::human::copies_priority(g, p, name)?;
+    }
+    if resolves {
+        eff(g)?;
+    }
+    Ok(resolves)
 }
 
 /// pay equip {n} for equipment e onto m; it attaches if the ability resolves and both are still there
@@ -667,12 +824,21 @@ pub fn stack_window_keep(g: &mut Game, p: PlayerId, new: StackItem) -> Res<(bool
 /// stack_window, returning the item as it left the stack: its controller and ctx may have changed (a stolen spell,
 /// a new target), and `cast_card` resolves the spell with them
 pub fn stack_window_item(g: &mut Game, p: PlayerId, new: StackItem) -> Res<StackItem> {
+    window_item(g, p, new, false)
+}
+
+/// `stack_window_item`; with `rings`, the person's Rings of Brighthearth get their trigger between the push and the
+/// round of priority (an activated ability of theirs: `ability_window_ex`, `ability_window_rc`)
+fn window_item(g: &mut Game, p: PlayerId, new: StackItem, rings: bool) -> Res<StackItem> {
     let id = new.id;
     g.stack_pushes = g.stack_pushes.max(id);
     g.stack.push(new);
     let r = (|| {
         if !g.trig_queue.is_empty() && g.resolving == 0 {
             flush_triggers(g)?;
+        }
+        if rings {
+            rings_offer(g, p, id)?;
         }
         priority(g, id, p)
     })();

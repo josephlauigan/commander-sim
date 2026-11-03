@@ -13,6 +13,7 @@ pub mod abilities;
 pub mod alt;
 pub mod cards;
 pub mod choices;
+pub mod combos;
 pub mod combat;
 pub mod human;
 pub mod karn;
@@ -20,6 +21,8 @@ pub mod legal;
 pub mod mana;
 pub mod script;
 pub mod specs;
+pub mod thanos;
+pub mod urdragon;
 
 use crate::control::Human;
 use crate::ids::{PermId, PlayerId};

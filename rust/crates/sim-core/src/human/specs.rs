@@ -55,6 +55,8 @@ pub enum Ask {
     Comet,
     /// a kicker of these coloured pips, from what is left in the pool; `ctx.kicks` = 1 if paid (Orim's Chant)
     Kick(&'static str),
+    /// a storm spell (Brain Freeze, Grapeshot): the target of the spell and of each copy, asked as it is cast
+    Storm,
 }
 
 const SPLATTER: &[(&str, &str)] =
@@ -80,6 +82,7 @@ pub fn spec(name: &str) -> Option<&'static [Ask]> {
         "Daydream" => &[Ask::Target(Tk::OwnCreature)],
         "Scout the City" => &[Ask::Scout],
         "Orim's Chant" => &[Ask::Target(Tk::Player), Ask::Kick("W")],
+        "Brain Freeze" | "Grapeshot" => &[Ask::Storm],
         _ => return None,
     })
 }
@@ -286,6 +289,11 @@ pub fn choose_pre(g: &Game, p: PlayerId, c: CardId, ctx: &mut Ctx) -> Res<Pre> {
                 };
                 costs.discard = Some(hand[k]);
                 ctx.x = !g.db.get(hand[k]).land as i32;
+            }
+            Ask::Storm => {
+                if !super::thanos::storm_asks(g, p, c, ctx)? {
+                    return Ok(Pre::Cancel);
+                }
             }
             Ask::X | Ask::Comet | Ask::Kick(_) => {} // after the mana is paid (choose_post)
         }

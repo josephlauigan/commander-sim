@@ -12,6 +12,10 @@ jobs:
   test:
     runs-on: ubuntu-latest
     timeout-minutes: 90
+    # No debug info in CI: the release profile's line tables (debug = 1, for profiling) made the ~240 test binaries
+    # fill the runner's disk, and the linker died with a bus error (PR #221, 11/03). Overflow checks stay on.
+    env:
+      CARGO_PROFILE_RELEASE_DEBUG: "0"
     defaults:
       run:
         working-directory: rust

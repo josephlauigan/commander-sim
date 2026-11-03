@@ -1731,9 +1731,10 @@ fn walker_go(g: &mut Game, src: PermId, p: PlayerId, i: i64) -> Res<bool> {
         to_zone_card(g, src, Zone::Gy);
     }
     let imp = if delta <= -5 { Some(8.0) } else { None };
-    if ability_window(g, p, Some(src), &format!("{delta:+}"), imp, None)? {
-        (ab.eff)(g, p, src)?;
-    }
+    // the person's Rings of Brighthearth may copy it (a copy runs the effect again, choosing anew)
+    crate::engine::stack::ability_run(g, p, Some(src), None, &format!("{delta:+}"), imp, None, |g| {
+        (ab.eff)(g, p, src)
+    })?;
     if on(g, src, p) && g.perm(src).loyalty.unwrap_or(0) <= 0 {
         leave(g, src)?;
         to_zone_card(g, src, Zone::Gy);

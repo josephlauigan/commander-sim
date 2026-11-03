@@ -363,6 +363,39 @@ fn oracle_won(g: &mut Game, _p: PlayerId) -> Res<bool> {
     Ok(g.over)
 }
 
+/// practice mode: the person's table shortcut for the Oracle line is assembled and will run through. Breach and Lion's Eye
+/// Diamond are on the battlefield, Brain Freeze and Thassa's Oracle are in hand or castable from the graveyard, and the
+/// graveyard can pay for the escapes: three other cards for the first Brain Freeze, and the first Brain Freeze
+/// (it mills 3 x (spells cast before it this turn + 1)) must leave six more for the next two escapes. The mana is
+/// Lion's Eye Diamond's own: each crack makes three more than the cast after it costs.
+pub fn human_loop_ready(g: &Game, p: PlayerId) -> bool {
+    let storm: i32 = g.players.iter().map(|q| crate::engine::cast::casts_this_turn(g, q.id)).sum();
+    let f = fuel(g, p) as i32;
+    bf(g, p, BREACH).is_some()
+        && bf(g, p, LED).is_some()
+        && bf_available(g, p)
+        && oracle_available(g, p)
+        && f >= 3
+        && f + 3 * storm >= 6
+}
+
+/// practice mode: play the loop out (the same real escapes and storm mills as the AI's line, each one a cast the table
+/// may answer): crack LED, Brain Freeze at yourself, again and again until the library is empty, then escape Thassa's
+/// Oracle. True if the Oracle's trigger won the game.
+pub fn human_loop(g: &mut Game, p: PlayerId) -> Res<bool> {
+    crate::glog!(g, "  {} loops Underworld Breach + Lion's Eye Diamond + Brain Freeze", g.player(p).name);
+    let r = first_freeze(g, p)? && self_loop(g, p, true)? && escape_oracle(g, p)?;
+    if !g.over {
+        let n = g.player(p).library.len();
+        crate::glog!(
+            g,
+            "    the loop stopped (it was answered or ran out of cards); library {n} card{}",
+            if n == 1 { "" } else { "s" }
+        );
+    }
+    Ok(r && g.over)
+}
+
 /// Brain Freeze on the table, round after round, until every opponent's library is empty
 fn table_loop(g: &mut Game, p: PlayerId) -> Res<bool> {
     for _ in 0..12 {

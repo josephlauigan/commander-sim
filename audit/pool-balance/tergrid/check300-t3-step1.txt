@@ -1,0 +1,28 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t3 Atraxa   100 cards: Full 87, Full-auto 10, Approximate 3, Partial 0, Unmodeled 0
+  t3 Aurelia  100 cards: Full 86, Full-auto 9, Approximate 5, Partial 0, Unmodeled 0
+  t3 Korvold  100 cards: Full 93, Full-auto 5, Approximate 2, Partial 0, Unmodeled 0
+  t3 Marwyn   100 cards: Full 79, Full-auto 12, Approximate 9, Partial 0, Unmodeled 0
+  t3 Tergrid  100 cards: Full 88, Full-auto 10, Approximate 1, Partial 1, Unmodeled 0 | Partial: Aclazotz, Deepest Betrayal // Temple of the Dead
+
+300 games (calibration: within, 300 per list per tier, profile loose), lookahead AI, 8 worker threads: about 2 minutes
+
+=== Within-tier balance [loose, n=300 games per tier; each deck is seated in ~80%] ===
+  progress  10.0%  0m06s elapsed, ~0m57s left
+  progress  20.0%  0m12s elapsed, ~0m50s left
+  progress  30.0%  0m20s elapsed, ~0m47s left
+  progress  40.0%  0m27s elapsed, ~0m41s left
+  progress  50.0%  0m35s elapsed, ~0m35s left
+  progress  60.0%  0m41s elapsed, ~0m27s left
+  progress  70.0%  0m49s elapsed, ~0m21s left
+  progress  80.0%  0m55s elapsed, ~0m13s left
+  progress  90.0%  1m02s elapsed, ~0m06s left
+  progress 100.0%  1m10s elapsed, ~0m00s left
+  Tier 3 (High B3): avg game 10.2 rounds, timeouts 0.0%
+    Atraxa                        33.9% (28.2-40.1)  [0.0 pts from round-cap wins]
+    Aurelia                       29.1% (23.7-35.2)  [0.0 pts from round-cap wins]
+    Korvold                       10.0% (6.9-14.4)  LOW  [0.0 pts from round-cap wins]
+    Marwyn                        22.2% (17.4-28.0)  [0.0 pts from round-cap wins]
+    Tergrid                       30.3% (24.8-36.4)  [0.0 pts from round-cap wins]
+
+(71s total)

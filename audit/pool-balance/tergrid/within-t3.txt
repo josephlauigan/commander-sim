@@ -1,0 +1,29 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t3 Atraxa   100 cards: Full 87, Full-auto 10, Approximate 3, Partial 0, Unmodeled 0
+  t3 Aurelia  100 cards: Full 86, Full-auto 9, Approximate 5, Partial 0, Unmodeled 0
+  t3 Korvold  100 cards: Full 93, Full-auto 5, Approximate 2, Partial 0, Unmodeled 0
+  t3 Marwyn   100 cards: Full 79, Full-auto 12, Approximate 9, Partial 0, Unmodeled 0
+  t3 Tergrid  100 cards: Full 91, Full-auto 8, Approximate 1, Partial 0, Unmodeled 0
+
+1,500 games (calibration: within, 1,500 per list per tier, profile loose), lookahead AI, 22 worker threads: about 3 minutes
+
+=== Within-tier balance [loose, n=1500 games per tier; each deck is seated in ~80%] ===
+  progress  10.0%  0m18s elapsed, ~2m42s left
+  progress  20.0%  0m36s elapsed, ~2m25s left
+  progress  30.0%  0m54s elapsed, ~2m07s left
+  progress  40.0%  1m11s elapsed, ~1m47s left
+  progress  50.0%  1m28s elapsed, ~1m28s left
+  progress  60.0%  1m46s elapsed, ~1m11s left
+  progress  70.0%  2m02s elapsed, ~0m52s left
+  progress  80.0%  2m19s elapsed, ~0m34s left
+  progress  90.0%  2m38s elapsed, ~0m17s left
+  progress 100.0%  3m01s elapsed, ~0m00s left
+  Tier 3 (High B3): avg game 10.0 rounds, timeouts 0.1%
+    Atraxa                        33.6% (30.9-36.3)  [0.0 pts from round-cap wins]
+    Aurelia                       26.9% (24.5-29.5)  [0.1 pts from round-cap wins]
+    Korvold                       12.1% (10.4-14.1)  LOW  [0.0 pts from round-cap wins]
+    Marwyn                        26.2% (23.8-28.8)  [0.0 pts from round-cap wins]
+    Tergrid                       26.2% (23.8-28.8)  [0.0 pts from round-cap wins]
+
+(182s total)
+EXIT 0

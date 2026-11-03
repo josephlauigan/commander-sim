@@ -14,36 +14,36 @@ Hand and board disruption. Punishes Veyran's hand-held combo and any deck that r
 
 ## At the table
 
-- **Plan:** Plays discard and edicts early (Hymn to Tourach, Mind Twist, Chainer's Edict, Plaguecrafter) while ramping with Dark Ritual, Sol Ring and Cabal Coffers. Tergrid, God of Fright takes every nontoken permanent you discard or sacrifice.
-- **Wins by:** Stealing your best cards with Tergrid, then finishing with big threats: Grave Titan, Sheoldred, the Apocalypse, Gray Merchant of Asphodel, and discard-punishers Waste Not and Megrim.
-- **Watch out for:** Tergrid on the table: do not discard or sacrifice nontoken permanents to her. Single big creatures die to edicts, so keep tokens around. Liliana of the Veil and Mind Twist empty hands, so play out your hand early. Dauthi Voidwalker and Bojuka Bog shut off graveyards.
-- **Interaction:** Go for the Throat, Infernal Grasp, Hero's Downfall, Snuff Out, Liliana's Triumph, Sheoldred's Edict, and sweepers Damnation, Toxic Deluge and Innocent Blood. No counterspells.
+- **Plan:** Plays discard and edicts early (Burglar Rat, Virus Beetle, Chittering Rats, Fleshbag Marauder, Plaguecrafter, Sheoldred's Edict) while ramping with Arcane Signet, Mind Stone and Cabal Coffers. Tergrid, God of Fright takes every nontoken permanent you discard or sacrifice.
+- **Wins by:** Stealing your best cards with Tergrid, then finishing with big threats: Sheoldred, Whispering One, Gray Merchant of Asphodel, Phyrexian Obliterator, Bloodgift Demon, and discard-punishers Waste Not and Painful Quandary.
+- **Watch out for:** Tergrid on the table: do not discard or sacrifice nontoken permanents to her. Single big creatures die to edicts, so keep tokens around. Liliana of the Veil empties hands, so play out your hand early. Dauthi Voidwalker and Bojuka Bog shut off graveyards.
+- **Interaction:** Go for the Throat, Infernal Grasp, Heartless Act, Nekrataal, Shriekmaw, Flare of Malice, Liliana's Triumph, Sheoldred's Edict and the sweeper Innocent Blood. No counterspells.
 
 ## Strategy
 
-Force opponents to discard and sacrifice, then use Tergrid to take every nontoken permanent they lose. Edict creatures (Fleshbag, Plaguecrafter, Archfiend of Depravity) and Grave Pact / Dictate of Erebos steal creatures; Liliana of the Veil, Hymn, Mind Twist, and Tinybones steal permanents out of hand. Waste Not and Megrim pay off every discard.
+Force opponents to discard and sacrifice, then use Tergrid to take every nontoken permanent they lose. Edict creatures (Fleshbag, Plaguecrafter) and edicts (Sheoldred's Edict, Liliana's Triumph, The Eldest Reborn) steal creatures; Liliana of the Veil, Duress, Syphon Mind and the cheap discard creatures steal permanents out of hand. Waste Not and Painful Quandary pay off every discard. The mass steal engines (Torment of Hailfire, Pox, Smallpox, Grave Pact, Delirium Skeins, Blasphemous Edict, Archfiend of Depravity, Soul Shatter) left on 2026-11-03 (see the changelog).
 
 ## Sim modeling notes
 
 Model these first; if any is Partial or unmodeled, this deck plays below its real strength and its results should be flagged.
 
-Tergrid's steal-on-discard/sacrifice (nontoken permanents only); edicts; symmetric vs. targeted discard; Grave Pact/Dictate; Cabal Coffers + Urborg mana.
+Tergrid's steal-on-discard/sacrifice (nontoken permanents only); edicts; symmetric vs. targeted discard; Cabal Coffers + Urborg mana.
 
 ## Decklist by type (100)
 
 **Commander (1).** Tergrid, God of Fright // Tergrid's Lantern
 
-**Creatures (21).** Accursed Marauder, Aclazotz, Deepest Betrayal // Temple of the Dead, Archfiend of Depravity, Braids, Arisen Nightmare, Braids, Cabal Minion, Burglar Rat, Crypt Ghast, Demon's Disciple, Elderfang Disciple, Fleshbag Marauder, Gray Merchant of Asphodel, Mindslicer, Nezumi Informant, Phyrexian Obliterator, Plaguecrafter, Rankle, Master of Pranks, Sangromancer, Sheoldred, Whispering One, The Raven Man, Tinybones, Trinket Thief, Virus Beetle
+**Creatures (29).** Accursed Marauder, Bloodgift Demon, Bloodline Keeper // Lord of Lineage, Braids, Arisen Nightmare, Braids, Cabal Minion, Burglar Rat, Chittering Rats, Crypt Ghast, Dark Confidant, Demon's Disciple, Elderfang Disciple, Fleshbag Marauder, Gonti, Lord of Luxury, Gray Merchant of Asphodel, Grim Haruspex, Midnight Reaper, Morbid Opportunist, Nekrataal, Nezumi Informant, Phyrexian Obliterator, Plaguecrafter, Rankle, Master of Pranks, Sangromancer, Sheoldred, Whispering One, Shriekmaw, Syr Konrad, the Grim, The Raven Man, Tinybones, Trinket Thief, Virus Beetle
 
 **Planeswalkers (2).** Liliana of the Veil, Liliana, Waker of the Dead
 
-**Enchantments (8).** Bottomless Pit, Grave Pact, Liliana's Caress, Oppression, Painful Quandary, Phyrexian Arena, The Eldest Reborn, Waste Not
+**Enchantments (7).** Bottomless Pit, Liliana's Caress, Oppression, Painful Quandary, Phyrexian Arena, The Eldest Reborn, Waste Not
 
-**Artifacts (10).** Arcane Signet, Charcoal Diamond, Fellwar Stone, Geth's Grimoire, Jet Medallion, Lightning Greaves, Mind Stone, Sol Ring, Swiftfoot Boots, Thought Vessel
+**Artifacts (6).** Arcane Signet, Geth's Grimoire, Jet Medallion, Lightning Greaves, Mind Stone, Thought Vessel
 
-**Sorceries (16).** Blasphemous Edict, Dark Deal, Delirium Skeins, Demonic Tutor, Duress, Feed the Swarm, Innocent Blood, Mire in Misery, Pox, Rankle's Prank, Reanimate, Sign in Blood, Smallpox, Syphon Mind, Torment of Hailfire, Vicious Rumors
+**Sorceries (12).** Dark Deal, Demonic Tutor, Duress, Feed the Swarm, Innocent Blood, Mire in Misery, Night's Whisper, Rankle's Prank, Reanimate, Sign in Blood, Syphon Mind, Vicious Rumors
 
-**Instants (8).** Dark Ritual, Flare of Malice, Imp's Mischief, Liliana's Triumph, Malakir Rebirth // Malakir Mire, Sheoldred's Edict, Soul Shatter, Vona's Hunger
+**Instants (9).** Flare of Malice, Go for the Throat, Heartless Act, Imp's Mischief, Infernal Grasp, Liliana's Triumph, Malakir Rebirth // Malakir Mire, Sheoldred's Edict, Vona's Hunger
 
 **Lands (34).** Bojuka Bog, Cabal Coffers, Cabal Stronghold, Geier Reach Sanitarium, Myriad Landscape, Nykthos, Shrine to Nyx, Urborg, Tomb of Yawgmoth, 27 Swamp
 
@@ -51,10 +51,9 @@ Tergrid's steal-on-discard/sacrifice (nontoken permanents only); edicts; symmetr
 
 ```
 1 Accursed Marauder
-1 Aclazotz, Deepest Betrayal // Temple of the Dead
 1 Arcane Signet
-1 Archfiend of Depravity
-1 Blasphemous Edict
+1 Bloodgift Demon
+1 Bloodline Keeper // Lord of Lineage
 1 Bojuka Bog
 1 Bottomless Pit
 1 Braids, Arisen Nightmare
@@ -62,24 +61,26 @@ Tergrid's steal-on-discard/sacrifice (nontoken permanents only); edicts; symmetr
 1 Burglar Rat
 1 Cabal Coffers
 1 Cabal Stronghold
-1 Charcoal Diamond
+1 Chittering Rats
 1 Crypt Ghast
+1 Dark Confidant
 1 Dark Deal
-1 Dark Ritual
-1 Delirium Skeins
 1 Demon's Disciple
 1 Demonic Tutor
 1 Duress
 1 Elderfang Disciple
 1 Feed the Swarm
-1 Fellwar Stone
 1 Flare of Malice
 1 Fleshbag Marauder
 1 Geier Reach Sanitarium
 1 Geth's Grimoire
-1 Grave Pact
+1 Go for the Throat
+1 Gonti, Lord of Luxury
 1 Gray Merchant of Asphodel
+1 Grim Haruspex
+1 Heartless Act
 1 Imp's Mischief
+1 Infernal Grasp
 1 Innocent Blood
 1 Jet Medallion
 1 Lightning Greaves
@@ -88,36 +89,35 @@ Tergrid's steal-on-discard/sacrifice (nontoken permanents only); edicts; symmetr
 1 Liliana's Triumph
 1 Liliana, Waker of the Dead
 1 Malakir Rebirth // Malakir Mire
+1 Midnight Reaper
 1 Mind Stone
-1 Mindslicer
 1 Mire in Misery
+1 Morbid Opportunist
 1 Myriad Landscape
+1 Nekrataal
 1 Nezumi Informant
+1 Night's Whisper
 1 Nykthos, Shrine to Nyx
 1 Oppression
 1 Painful Quandary
 1 Phyrexian Arena
 1 Phyrexian Obliterator
 1 Plaguecrafter
-1 Pox
 1 Rankle's Prank
 1 Rankle, Master of Pranks
 1 Reanimate
 1 Sangromancer
 1 Sheoldred's Edict
 1 Sheoldred, Whispering One
+1 Shriekmaw
 1 Sign in Blood
-1 Smallpox
-1 Sol Ring
-1 Soul Shatter
-1 Swiftfoot Boots
 1 Syphon Mind
+1 Syr Konrad, the Grim
 1 Tergrid, God of Fright // Tergrid's Lantern
 1 The Eldest Reborn
 1 The Raven Man
 1 Thought Vessel
 1 Tinybones, Trinket Thief
-1 Torment of Hailfire
 1 Urborg, Tomb of Yawgmoth
 1 Vicious Rumors
 1 Virus Beetle

@@ -143,7 +143,8 @@ fn start_the_loop() {
     assert!(labels.iter().any(|l| l.starts_with("start the loop: Mikaeus + Triskelion")), "{labels:?}");
     let k = labels.iter().position(|l| l.starts_with("start the loop")).unwrap();
     let i = g.player(P0).perms.iter().position(|&x| x == trisk).unwrap();
-    seat(&mut g, P0, vec![act(json!({"do": "use", "perm": i})), pick(k)]);
+    // then the loop asks what Triskelion hits: the one opponent
+    seat(&mut g, P0, vec![act(json!({"do": "use", "perm": i})), pick(k), pick(0)]);
     human_main(&mut g, P0, false).unwrap();
     assert!(g.over);
     assert_eq!(g.winner, Some(P0));
