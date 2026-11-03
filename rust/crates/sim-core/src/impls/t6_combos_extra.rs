@@ -5,8 +5,8 @@
 //! * Base combos with steps (their `Combo` entries in `combos::BASE` point at `ORACLE_STEPS` / `KINNAN_BASALT_STEPS`):
 //!   Thassa's Oracle + Demonic Consultation / Tainted Pact (cast Oracle, cast the exile spell in response, the
 //!   Oracle trigger is a trigger window), Kinnan + Basalt Monolith (the loop's pieces must survive, then the outlet).
-//! * Kinnan + Basalt with an outlet when no {U}{G} can be paid for Kinnan's own ability: Thrasios (draw the deck) or
-//!   Mirage Mirror (the loop's colourless becomes {U}{G}, then Kinnan).
+//! * Kinnan + Basalt with Thrasios and a reachable Finale; the Mirage Mirror shortcut is disabled until its
+//!   colored mana and payoff are verified.
 //! * Underworld Breach + Lion's Eye Diamond + Brain Freeze: the loop is played (real escapes, real storm mills, each
 //!   cast counterable), finishing with an escaped Thassa's Oracle on an empty library or Brain Freeze on the table.
 //! * Ad Nauseam: a real Ad Nauseam, then whichever line the cards drawn made ready (it needs the mana left).
@@ -15,16 +15,16 @@
 //!   a token copy spell), and Basalt Monolith with a copied opposing Kinnan.
 
 use super::combos::{self, Combo, QUIET, Ready, Step, StepKind, done, no_keys, no_src};
-use crate::engine::pool::Kind;
 use super::t6_combos_godo as gd;
 use super::t6_combos_godo::{Cost, affordable, bf, cost, in_hand, in_lib, nm, ok_ready};
 use super::t6_godo::welder_go;
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::pool::Kind;
 use crate::engine::zones::die;
 use crate::flow::Res;
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::{Ctx, Game};
+use crate::state::{Ctx, Game, Step as TurnStep};
 
 const ORACLE: &str = "Thassa's Oracle";
 const CONSULT: &str = "Demonic Consultation";
@@ -175,10 +175,41 @@ pub fn can_pay_ug(g: &Game, p: PlayerId) -> bool {
 }
 
 // ------------------------------------------------------------------ the other outlets
+fn finale_combat(g: &Game, p: PlayerId) -> bool {
+    let opponents: Vec<_> = g.opps(p).collect();
+    let attackers = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            let x = g.perm(m);
+            live(g, m) && g.is_creature(m) && !x.sick && !x.tapped && !x.noatk && !crate::dsl::has_kw(g, m, "defender")
+        })
+        .count();
+    g.active == Some(p)
+        && !crate::engine::values::chasm(g, p)
+        && matches!(g.step, TurnStep::Start | TurnStep::Main1)
+        && attackers >= opponents.len()
+        && opponents.iter().all(|&q| {
+            let (tax, cap) = crate::engine::combat::attack_restrictions(g, p, q);
+            tax == 0 && cap.is_none_or(|n| n > 0) && !crate::engine::values::chasm(g, q)
+        })
+        && !opponents
+            .iter()
+            .any(|&q| g.player(q).perms.iter().copied().any(|m| live(g, m) && g.is_creature(m) && !g.perm(m).tapped))
+}
+
 fn outlet_ready(g: &Game, p: PlayerId, outlet: &str) -> Ready {
     let (Some(k), Some(b), Some(o)) = (bf(g, p, KINNAN), bf(g, p, BASALT), bf(g, p, outlet)) else { return no() };
-    if can_pay_ug(g, p) {
-        return no(); // Kinnan's own ability is the outlet then (the base combo)
+    // Only Thrasios into a reachable Finale is currently modeled with a verified payoff.
+    // Reserve the startup mana and Finale's GG together; the loop makes colorless only.
+    if outlet != THRASIOS
+        || !finale_combat(g, p)
+        || !in_hand_or_lib(g, p, "Finale of Devastation")
+        || !can_pay(g, p, if g.perm(b).tapped { 3 } else { 0 }, "GG", false)
+    {
+        return no();
     }
     (true, vec![k, b, o], vec![])
 }
@@ -207,9 +238,34 @@ fn mirage_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
     [bf(g, p, KINNAN), bf(g, p, BASALT), bf(g, p, MIRAGE)].into_iter().flatten().collect()
 }
 
-const THRASIOS_STEPS: [Step; 2] = [
+fn basalt_start(g: &mut Game, p: PlayerId) -> Res<bool> {
+    let Some(b) = bf(g, p, BASALT) else { return Ok(false) };
+    let startup = if g.perm(b).tapped { 3 } else { 0 };
+    if !can_pay(g, p, startup, "GG", false) || !pay(g, p, startup, "GG", false)? {
+        return Ok(false);
+    }
+    if startup > 0 {
+        g.perm_mut(b).tapped = false;
+    }
+    Ok(true)
+}
+
+fn thrasios_finale(g: &mut Game, p: PlayerId) -> Res<bool> {
+    let name = "Finale of Devastation";
+    if in_hand(g, p, name).is_none() {
+        let Some(i) = g.player(p).library.iter().position(|&c| cname(g, c) == name) else { return Ok(false) };
+        let c = g.player_mut(p).library.remove(i);
+        g.player_mut(p).hand.push(c);
+    }
+    let Some(c) = in_hand(g, p, name) else { return Ok(false) };
+    Ok(super::t6_combos_t6::cast_abstract(g, p, c, true)? && finale_combat(g, p))
+}
+
+const THRASIOS_STEPS: [Step; 4] = [
     held("Kinnan, Basalt Monolith and Thrasios stay in play", thrasios_keys),
+    step("start Basalt Monolith", StepKind::Engine, basalt_start),
     trig("Thrasios: {4}, scry and reveal, again and again (draw the deck)", StepKind::Ability, thrasios_src, done),
+    step("cast Finale of Devastation", StepKind::Spell, thrasios_finale),
 ];
 
 const MIRAGE_STEPS: [Step; 3] = [

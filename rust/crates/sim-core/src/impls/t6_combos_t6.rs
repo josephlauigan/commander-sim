@@ -21,11 +21,11 @@
 //! Deadpool + Forbidden Orchard and the Mana Vault starter, Rograkh's Badgermole, Springheart/Vibrance lines.
 
 use super::combos::{Combo, QUIET, Ready, Step, StepKind, done, no_keys, no_src};
-use crate::engine::pool::Kind;
-use crate::engine::repl;
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::check_state;
 use crate::engine::mana::{can_pay, cost_of, pay, seq_cost};
+use crate::engine::pool::Kind;
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, ability_window_card, counter_window};
 use crate::engine::values::colors_of;
 use crate::flow::Res;
@@ -126,7 +126,7 @@ fn cast_named(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
 
 /// pay for and cast an instant or sorcery as a spell whose effect is the shortcut (`free`: the cost is paid by the
 /// infinite mana): the counter window is the normal one; false if it was countered or can't be cast
-fn cast_abstract(g: &mut Game, p: PlayerId, c: CardId, free: bool) -> Res<bool> {
+pub(crate) fn cast_abstract(g: &mut Game, p: PlayerId, c: CardId, free: bool) -> Res<bool> {
     let (gn, pips) = cost_of(g, p, c);
     if !g.player(p).hand.contains(&c) || !castable(g, p, c, "hand") || (!free && !can_pay(g, p, gn, &pips, false)) {
         return Ok(false);
