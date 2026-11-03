@@ -218,9 +218,15 @@ pub fn damage(g: &mut Game, p: PlayerId, x: Target, n: i32, source: &str, kind: 
         return Ok(());
     }
     let name = g.perm(m).name;
-    if g.is_creature(m) && crate::engine::values::etgh(g, m) <= n {
+    // a person's damage stays marked on the creature (Triskelion pinging itself): the lethal check counts it
+    let person = crate::human::is_human(g, p);
+    let prior = if person { super::combos::marked(g, m) } else { 0 };
+    if g.is_creature(m) && crate::engine::values::etgh(g, m) <= n + prior {
         removal::apply_removal(g, Some(p), m, &format!("dmg{n}"), None)?;
     } else if g.is_creature(m) {
+        if person {
+            super::combos::mark(g, m, n);
+        }
         crate::glog!(g, "    {} deals {} damage to {} (it survives)", source, n, name);
     }
     let x = g.perm(m);
@@ -642,8 +648,8 @@ fn triskelion(_g: &Game) -> Vec<PermAbility> {
         if crate::engine::stack::ability_window(g, p, Some(m), "1 damage", None, tp)? {
             damage(g, p, tg[k], 1, "Triskelion", "triggers")?;
         }
-        if g.player(p).perms.contains(&m) && crate::engine::values::etgh(g, m) <= 0 {
-            crate::engine::zones::die(g, m, "sba")?;
+        if g.player(p).perms.contains(&m) {
+            super::combos::die_if_lethal(g, m)?; // no counters left, or its own pings marked on it
         }
         Ok(None)
     })]
@@ -890,6 +896,7 @@ pub fn abilities(g: &Game, p: PlayerId, m: PermId) -> Option<Vec<PermAbility>> {
         }
         "Mind Stone" => mind_stone(g),
         "Triskelion" => triskelion(g),
+        "Yawgmoth, Thran Physician" => super::combos::yawgmoth(),
         "Aetherflux Reservoir" => aetherflux(g),
         "Sakura-Tribe Elder" => ste(g),
         "Nim Deathmantle" => vec![], // equip {4}: the Equip ability every equipment has

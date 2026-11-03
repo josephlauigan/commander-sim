@@ -159,10 +159,12 @@ fn loop_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
     let mut out = vec![];
     let Some(cd) = g.perm(m).cd else { return out };
     let nm = name(g, cd);
-    if &*g.player(p).key != "seph" || !mine::loop_card(&nm) {
+    out.extend(super::combos::yawg_loop_abilities(g, p, m)); // Mikaeus + Yawgmoth + two undying creatures
+    out.extend(super::combos::niv_abilities(g, m));
+    if !mine::loop_card(&nm) {
         return out;
     }
-    for (i, keys, kills) in mine::seph_loops(g, p) {
+    for (i, keys, kills) in mine::loops_now(g, p) {
         let l = &mine::LOOPS[i];
         if !l.groups.iter().any(|grp| grp.contains(&nm.as_str())) && !mine::OUTLETS.contains(&nm.as_str()) {
             continue;
@@ -170,6 +172,9 @@ fn loop_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
         let label =
             format!("start the loop: {}{}", l.name, if kills { "" } else { " (no payoff on the battlefield yet)" });
         out.push(ability(label, move |g: &mut Game, p: PlayerId, _m: PermId| {
+            if i == 0 {
+                return super::combos::trisk_loop(g, p, &keys); // Mikaeus + Triskelion: the person picks what it hits
+            }
             mine::run_loop(g, p, i, &keys, kills)?;
             Ok(None)
         }));
