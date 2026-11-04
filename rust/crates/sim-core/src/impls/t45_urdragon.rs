@@ -815,8 +815,9 @@ fn draco_kw(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
 /// {2}: the best Dragon creature card from the library into the graveyard, at the end-of-turn window, when Rivaz can
 /// cast it on your next turn
 fn scion_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.player(p).key == "scion" {
-        return crate::impls::t6_scion::scion_options(g, src, p, post); // --- scion: JD's deck copies the Dragon
+    if matches!(&*g.player(p).key, "scion" | "urdragon") {
+        // --- scion, urdragon: JD's decks copy the Dragon (the Ur-Dragon rebuild of 11/03 plays Scion too)
+        return crate::impls::t6_scion::scion_options(g, src, p, post);
     }
     if post.is_some() || p != owner(g, src) || !live(g, src) || g.active == Some(p) || named(g, p, RIVAZ).is_empty() {
         return Ok(vec![]);

@@ -1,21 +1,80 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-10-30",
+  "fetched": "2026-11-04",
   "deck": "urdragon",
   "commanders": [
     "The Ur-Dragon"
   ],
-  "request_sha256": "7ad1018b18607e244db62353754ecdbf1c30e5d3d4a64ba7e40f4b9b801b116f",
+  "request_sha256": "4b75b4aec91d90a08e92d2cea91142a43c39136c1edc8c77f5ac881a25e6e111",
   "identity": "WUBRG",
   "included": [
     {
-      "id": "147-1235",
+      "id": "703-5291",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Astral Dragon",
           "zones": [
             "H"
+          ]
+        },
+        {
+          "name": "Cursed Mirror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of noncreature permanents you control",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "Cursed Mirror cannot be copying a creature.",
+      "mana": "{6}{U}{U}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 11161
+    },
+    {
+      "id": "380-703-4772",
+      "cards": [
+        {
+          "name": "Miirym, Sentinel Wyrm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Astral Dragon",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{U}{U}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3738
+    },
+    {
+      "id": "1171-1235-3908-4772",
+      "cards": [
+        {
+          "name": "Garth One-Eye",
+          "zones": [
+            "B"
           ]
         },
         {
@@ -23,72 +82,31 @@
           "zones": [
             "H"
           ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens with haste"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Twinflame",
-      "mana": "{2}{R}{R}{R}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 74057
-    },
-    {
-      "id": "1692-2105",
-      "cards": [
+        },
         {
-          "name": "Combat Celebrant",
+          "name": "Spark Double",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Helm of the Host",
+          "name": "Doubling Season",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite combat phases",
-        "Infinite mana creatures you control can produce",
-        "Infinite tapped creature tokens"
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite creature tokens"
       ],
       "requires": [],
-      "prerequisites": "Helm of the Host attached to Combat Celebrant.",
-      "mana": "",
-      "bracket": "S",
+      "prerequisites": "",
+      "mana": "{4}{R}{R}{R}",
+      "bracket": "E",
       "legal": true,
-      "popularity": 26438
-    },
-    {
-      "id": "1692-4251",
-      "cards": [
-        {
-          "name": "Godo, Bandit Warlord",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Helm of the Host",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases",
-        "Put all Equipment cards from your library onto the battlefield"
-      ],
-      "requires": [],
-      "prerequisites": "Helm of the Host attached to Godo.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 25875
+      "popularity": 1
     }
   ],
   "included_by_changing_commanders": [],
@@ -119,7 +137,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 364475,
+      "popularity": 366163,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -150,13 +168,13 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 78146,
+      "popularity": 78428,
       "missing": [
         "Hullbreaker Horror"
       ]
     },
     {
-      "id": "147-5487",
+      "id": "147-1235",
       "cards": [
         {
           "name": "Dualcaster Mage",
@@ -165,7 +183,7 @@
           ]
         },
         {
-          "name": "Molten Duplication",
+          "name": "Twinflame",
           "zones": [
             "H"
           ]
@@ -175,13 +193,13 @@
         "Infinite creature tokens with haste"
       ],
       "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Molten Duplication",
+      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Twinflame",
       "mana": "{2}{R}{R}{R}",
       "bracket": "S",
       "legal": true,
-      "popularity": 51241,
+      "popularity": 74368,
       "missing": [
-        "Molten Duplication"
+        "Dualcaster Mage"
       ]
     },
     {
@@ -208,16 +226,16 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 37881,
+      "popularity": 37977,
       "missing": [
         "Tidespout Tyrant"
       ]
     },
     {
-      "id": "900-3750",
+      "id": "778-3750",
       "cards": [
         {
-          "name": "Sword of Feast and Famine",
+          "name": "Ancient Copper Dragon",
           "zones": [
             "B"
           ]
@@ -230,135 +248,50 @@
         }
       ],
       "results": [
-        "Infinite combat phases"
+        "Near-infinite colored mana",
+        "Near-infinite combat damage",
+        "Near-infinite Treasure tokens",
+        "Near-infinite combat phases",
+        "Near-infinite untap of creatures you control",
+        "Near-infinite mana creatures you control can produce"
       ],
       "requires": [],
-      "prerequisites": "Sword of Feast and Famine attached to a creature that can attack this turn.\nAn opponent is unable to block and kill the creature with Sword of Feast and Famine attached.\nLands you control can tap to produce at least {3}{R}{R}.",
+      "prerequisites": "Ancient Copper Dragon cannot be blocked by an opponent.",
       "mana": "",
-      "bracket": "S",
+      "bracket": "R",
       "legal": true,
-      "popularity": 37250,
+      "popularity": 31507,
       "missing": [
         "Aggravated Assault"
       ]
     },
     {
-      "id": "1692-4364",
+      "id": "2855-5982",
       "cards": [
         {
-          "name": "Aurelia, the Warleader",
+          "name": "Dragon Tempest",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Helm of the Host",
+          "name": "Ancient Gold Dragon",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite combat phases",
-        "Infinite creature tokens with haste",
-        "Infinite mana creatures you control can produce"
+        "Near-infinite damage"
       ],
       "requires": [],
-      "prerequisites": "Helm attached to Aurelia.",
+      "prerequisites": "Ancient Gold Dragon does not have summoning sickness and cannot be blocked by an opponent.",
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 32527,
+      "popularity": 28634,
       "missing": [
-        "Aurelia, the Warleader"
-      ]
-    },
-    {
-      "id": "147-500",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Saw in Half",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Saw in Half",
-      "mana": "{1}{R}{R}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 32037,
-      "missing": [
-        "Saw in Half"
-      ]
-    },
-    {
-      "id": "147-6106",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Electroduplicate",
-          "zones": [
-            "H",
-            "G"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens with haste"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Electroduplicate",
-      "mana": "{2}{R}{R}{R}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 28515,
-      "missing": [
-        "Electroduplicate"
-      ]
-    },
-    {
-      "id": "147-2959",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Heat Shimmer",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens with haste"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Heat Shimmer",
-      "mana": "{3}{R}{R}{R}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 27465,
-      "missing": [
-        "Heat Shimmer"
+        "Ancient Gold Dragon"
       ]
     },
     {
@@ -385,68 +318,9 @@
       "mana": "{W}{W}{U}{U}{B}{B}{R}{R}{G}{G}",
       "bracket": "C",
       "legal": true,
-      "popularity": 21712,
+      "popularity": 21795,
       "missing": [
         "The World Tree"
-      ]
-    },
-    {
-      "id": "618-2105",
-      "cards": [
-        {
-          "name": "Combat Celebrant",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Kiki-Jiki, Mirror Breaker",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases",
-        "Infinite creature tokens with haste"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 18918,
-      "missing": [
-        "Kiki-Jiki, Mirror Breaker"
-      ]
-    },
-    {
-      "id": "147-1987",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Ghostly Flicker",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana lands you control that enter the battlefield untapped can produce"
-      ],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for Ghostly Flicker.",
-      "mana": "{3}{U}{R}{R}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 17720,
-      "missing": [
-        "Ghostly Flicker"
       ]
     },
     {
@@ -473,68 +347,45 @@
       "mana": "{6}{R}{R}{R}",
       "bracket": "C",
       "legal": true,
-      "popularity": 15757,
+      "popularity": 15828,
       "missing": [
         "Orthion, Hero of Lavabrink"
       ]
     },
     {
-      "id": "618-1692",
+      "id": "380-1110-3362",
       "cards": [
         {
-          "name": "Kiki-Jiki, Mirror Breaker",
+          "name": "Miirym, Sentinel Wyrm",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Helm of the Host",
+          "name": "Bladewing the Risen",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite tapped creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "Helm of the Host attached to Kiki-Jiki.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 15667,
-      "missing": [
-        "Kiki-Jiki, Mirror Breaker"
-      ]
-    },
-    {
-      "id": "1908-2105",
-      "cards": [
-        {
-          "name": "Rionya, Fire Dancer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Combat Celebrant",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases",
-        "Infinite creature tokens with haste"
+        "Infinite damage",
+        "Infinite creature tokens"
       ],
       "requires": [],
       "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
+      "mana": "{3}{B}{B}{R}{R}",
+      "bracket": "O",
       "legal": true,
-      "popularity": 14386,
+      "popularity": 14720,
       "missing": [
-        "Rionya, Fire Dancer"
+        "Bladewing the Risen"
       ]
     },
     {
@@ -561,7 +412,7 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 14003,
+      "popularity": 13999,
       "missing": [
         "Tidespout Tyrant"
       ]
@@ -590,36 +441,9 @@
       "mana": "{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 12009,
+      "popularity": 12127,
       "missing": [
         "Jumbo Cactuar"
-      ]
-    },
-    {
-      "id": "147-4598",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Essence Flux",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for Essence Flux.",
-      "mana": "{1}{U}{R}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 11259,
-      "missing": [
-        "Essence Flux"
       ]
     },
     {
@@ -646,7 +470,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 9970,
+      "popularity": 10043,
       "missing": [
         "Power Artifact"
       ]
@@ -673,7 +497,7 @@
       "mana": "{4}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 9783,
+      "popularity": 9852,
       "missing": [
         "Master Transmuter"
       ]
@@ -702,42 +526,65 @@
       "mana": "{13}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 9658,
+      "popularity": 9717,
       "missing": [
         "Approach of the Second Sun"
       ]
     },
     {
-      "id": "1548-1692",
+      "id": "2781-3908",
       "cards": [
         {
-          "name": "Port Razer",
+          "name": "Felidar Guardian",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Helm of the Host",
+          "name": "Spark Double",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Spark Double.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9160,
+      "missing": [
+        "Felidar Guardian"
+      ]
+    },
+    {
+      "id": "876-7070--141",
+      "cards": [
+        {
+          "name": "Monk Gyatso",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
           "zones": [
             "B"
           ]
         }
       ],
-      "results": [
-        "Infinite combat damage",
-        "Infinite combat phases",
-        "Infinite creature tokens with haste",
-        "Infinite damage",
-        "Infinite mana creatures you control can produce"
+      "results": [],
+      "requires": [
+        "Creature with Affinity"
       ],
-      "requires": [],
-      "prerequisites": "Helm of the Host attached to Port Razer.\nAn opponent is unable to block Port Razer.",
+      "prerequisites": "You are able to reduce the affinity creature's cost by {2} or more.",
       "mana": "",
-      "bracket": "S",
+      "bracket": "E",
       "legal": true,
-      "popularity": 9492,
+      "popularity": 9035,
       "missing": [
-        "Port Razer"
+        "Monk Gyatso"
       ]
     },
     {
@@ -764,7 +611,7 @@
       "mana": "{2}",
       "bracket": "S",
       "legal": true,
-      "popularity": 8877,
+      "popularity": 8869,
       "missing": [
         "Tidespout Tyrant"
       ]
@@ -793,7 +640,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 8689,
+      "popularity": 8704,
       "missing": [
         "Nyxbloom Ancient"
       ]
@@ -822,7 +669,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 8509,
+      "popularity": 8574,
       "missing": [
         "Rionya, Fire Dancer"
       ]
@@ -849,7 +696,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 8378,
+      "popularity": 8407,
       "missing": [
         "Stasis"
       ]
@@ -878,68 +725,36 @@
       "mana": "{3}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 8035,
+      "popularity": 8063,
       "missing": [
         "Ad Nauseam"
       ]
     },
     {
-      "id": "1405-1692",
+      "id": "1478-3293",
       "cards": [
         {
-          "name": "Scourge of the Throne",
+          "name": "Emeria Shepherd",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Helm of the Host",
+          "name": "Sakura-Tribe Elder",
           "zones": [
             "B"
           ]
         }
       ],
-      "results": [
-        "Infinite combat phases",
-        "Infinite creature tokens with haste"
-      ],
+      "results": [],
       "requires": [],
-      "prerequisites": "Your life total is at most five.\nYou have the lowest life total or are tied for the lowest life total.",
+      "prerequisites": "",
       "mana": "",
-      "bracket": "S",
+      "bracket": "E",
       "legal": true,
-      "popularity": 7472,
+      "popularity": 7552,
       "missing": [
-        "Scourge of the Throne"
-      ]
-    },
-    {
-      "id": "553-1827",
-      "cards": [
-        {
-          "name": "Approach of the Second Sun",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Vampiric Tutor",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Win the game"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to draw a card.",
-      "mana": "{12}{W}{W}{B}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 7463,
-      "missing": [
-        "Approach of the Second Sun"
+        "Emeria Shepherd"
       ]
     },
     {
@@ -966,36 +781,38 @@
       "mana": "{10}{R}",
       "bracket": "C",
       "legal": true,
-      "popularity": 7450,
+      "popularity": 7528,
       "missing": [
         "Devastating Onslaught"
       ]
     },
     {
-      "id": "147-5144",
+      "id": "553-1827",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Approach of the Second Sun",
           "zones": [
             "H"
           ]
         },
         {
-          "name": "Ephemerate",
+          "name": "Vampiric Tutor",
           "zones": [
             "H"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Win the game"
+      ],
       "requires": [],
-      "prerequisites": "There are legal target(s) for Ephemerate.",
-      "mana": "{1}{R}{R}{W}",
-      "bracket": "E",
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "{12}{W}{W}{B}",
+      "bracket": "P",
       "legal": true,
-      "popularity": 7322,
+      "popularity": 7505,
       "missing": [
-        "Ephemerate"
+        "Approach of the Second Sun"
       ]
     },
     {
@@ -1025,41 +842,9 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 7077,
+      "popularity": 7125,
       "missing": [
         "Mind Over Matter"
-      ]
-    },
-    {
-      "id": "2105-3337--140",
-      "cards": [
-        {
-          "name": "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Combat Celebrant",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases",
-        "Infinite creature tokens with haste"
-      ],
-      "requires": [
-        "Mana Dork or Mana Dork Creator"
-      ],
-      "prerequisites": "Reflection of Kiki-Jiki does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 6746,
-      "missing": [
-        "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki"
       ]
     },
     {
@@ -1086,152 +871,49 @@
       "mana": "{10}",
       "bracket": "E",
       "legal": true,
-      "popularity": 6460,
+      "popularity": 6474,
       "missing": [
         "Realmbreaker, the Invasion Tree"
       ]
     },
     {
-      "id": "1692-4367",
+      "id": "84-2972-3750",
       "cards": [
         {
-          "name": "Akki Battle Squad",
+          "name": "Ganax, Astral Hunter",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Helm of the Host",
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Utvara Hellkite",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
         "Infinite combat phases",
-        "Infinite creature tokens with haste",
-        "Infinite untap of modified creatures you control"
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
+        "Infinite Treasure tokens"
       ],
       "requires": [],
-      "prerequisites": "You control another modified creature that can attack this turn, and that cannot be blocked and killed by an opponent.\nHelm of the Host attached to Akki Battle Squad.",
+      "prerequisites": "You control at least six Dragons that can attack this turn.\nAn opponent cannot block and kill creatures you control.",
       "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 6275,
-      "missing": [
-        "Akki Battle Squad"
-      ]
-    },
-    {
-      "id": "147-6785",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Devastating Onslaught",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens with haste"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Devastating Onslaught",
-      "mana": "{3}{R}{R}{R}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 5969,
-      "missing": [
-        "Devastating Onslaught"
-      ]
-    },
-    {
-      "id": "147-3647",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Displace",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for Displace.",
-      "mana": "{3}{U}{R}{R}",
       "bracket": "E",
       "legal": true,
-      "popularity": 5924,
+      "popularity": 5837,
       "missing": [
-        "Displace"
-      ]
-    },
-    {
-      "id": "147-1744",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Rite of Replication",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Rite of Replication",
-      "mana": "{1}{R}{R}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 5804,
-      "missing": [
-        "Rite of Replication"
-      ]
-    },
-    {
-      "id": "147-3603",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Cloudshift",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for Cloudshift.",
-      "mana": "{1}{R}{R}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 5479,
-      "missing": [
-        "Cloudshift"
+        "Aggravated Assault"
       ]
     },
     {
@@ -1258,99 +940,101 @@
       "mana": "{7}{U}{U}",
       "bracket": "C",
       "legal": true,
-      "popularity": 5414,
+      "popularity": 5447,
       "missing": [
         "Rite of Replication"
       ]
     },
     {
-      "id": "147-892",
+      "id": "380-703-2557",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Miirym, Sentinel Wyrm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Astral Dragon",
           "zones": [
             "H"
           ]
         },
         {
-          "name": "Sublime Epiphany",
+          "name": "Parallel Lives",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{U}{U}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 5331,
+      "missing": [
+        "Parallel Lives"
+      ]
+    },
+    {
+      "id": "3908-7073",
+      "cards": [
+        {
+          "name": "Pramikon, Sky Rampart",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spark Double",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Pramikon and Spark Double are naming different directions.\nYou have at least two opponents.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5111,
+      "missing": [
+        "Pramikon, Sky Rampart"
+      ]
+    },
+    {
+      "id": "2972-8168",
+      "cards": [
+        {
+          "name": "Ganax, Astral Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Draconic Visitor",
           "zones": [
             "H"
           ]
         }
       ],
       "results": [
-        "Infinite creature tokens",
-        "Infinite card draw for any number of players"
+        "Draw the game",
+        "Infinite creature tokens"
       ],
       "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Sublime Epiphany",
-      "mana": "{1}{R}{R}",
-      "bracket": "S",
+      "prerequisites": "",
+      "mana": "{3}{R}{R}",
+      "bracket": "P",
       "legal": true,
-      "popularity": 4887,
+      "popularity": 4844,
       "missing": [
-        "Sublime Epiphany"
-      ]
-    },
-    {
-      "id": "2105-4702",
-      "cards": [
-        {
-          "name": "Combat Celebrant",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Splinter Twin",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases",
-        "Infinite creature tokens with haste"
-      ],
-      "requires": [],
-      "prerequisites": "Splinter Twin attached to Combat Celebrant.\nCombat Celebrant does not have summoning sickness.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 4411,
-      "missing": [
-        "Splinter Twin"
-      ]
-    },
-    {
-      "id": "1378-2105",
-      "cards": [
-        {
-          "name": "Combat Celebrant",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Mirage Phalanx",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases",
-        "Infinite creature tokens with haste"
-      ],
-      "requires": [],
-      "prerequisites": "Mirage Phalanx is paired with Combat Celebrant.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 4309,
-      "missing": [
-        "Mirage Phalanx"
+        "Draconic Visitor"
       ]
     },
     {
@@ -1377,7 +1061,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 4226,
+      "popularity": 4249,
       "missing": [
         "Zirda, the Dawnwaker"
       ]
@@ -1406,42 +1090,9 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 3925,
+      "popularity": 3952,
       "missing": [
         "Crackdown Construct"
-      ]
-    },
-    {
-      "id": "900-3398",
-      "cards": [
-        {
-          "name": "Hellkite Charger",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Sword of Feast and Famine",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat damage",
-        "Infinite combat phases",
-        "Infinite damage",
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "Sword of Feast and Famine attached to Hellkite Charger.\nYou control lands that can produce at least {5}{R}{R}.\nOpponents cannot block Hellkite Charger.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 3923,
-      "missing": [
-        "Hellkite Charger"
       ]
     },
     {
@@ -1476,102 +1127,97 @@
       "mana": "{2}{W}",
       "bracket": "P",
       "legal": true,
-      "popularity": 3840,
+      "popularity": 3941,
       "missing": [
         "Gleaming Splendor"
       ]
     },
     {
-      "id": "1692-6188",
+      "id": "1883-4772",
       "cards": [
         {
-          "name": "Fear of Missing Out",
+          "name": "Replication Technique",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Doubling Season",
           "zones": [
             "B"
           ]
-        },
-        {
-          "name": "Helm of the Host",
-          "zones": [
-            "B"
-          ]
         }
       ],
       "results": [
-        "Infinite rummaging",
-        "Near-infinite combat phases",
-        "Near-infinite mana creatures you control can produce",
-        "Near-infinite tapped creature tokens",
-        "Near-infinite untap of creatures you control"
+        "Near-infinite creature tokens"
       ],
       "requires": [],
-      "prerequisites": "There are four or more card types among cards in your graveyard",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 3838,
-      "missing": [
-        "Fear of Missing Out"
-      ]
-    },
-    {
-      "id": "147-5726",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Three Steps Ahead",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens",
-        "Near-infinite card draw",
-        "Near-infinite looting"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.",
-      "mana": "{4}{U}{R}{R}",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 3506,
-      "missing": [
-        "Three Steps Ahead"
-      ]
-    },
-    {
-      "id": "147-4493",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Irenicus's Vile Duplication",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Irenicus's Vile Duplication",
-      "mana": "{1}{R}{R}",
+      "prerequisites": "You have a way to create a creature token.",
+      "mana": "{4}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 3420,
+      "popularity": 3803,
       "missing": [
-        "Irenicus's Vile Duplication"
+        "Replication Technique"
+      ]
+    },
+    {
+      "id": "703-1562",
+      "cards": [
+        {
+          "name": "Astral Dragon",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Machine God's Effigy",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite blue mana",
+        "Infinite creature token copies of all noncreature permanents",
+        "Infinite creature tokens",
+        "Infinite noncreature artifact token copies of all creatures"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{U}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 3769,
+      "missing": [
+        "Machine God's Effigy"
+      ]
+    },
+    {
+      "id": "2781-5291",
+      "cards": [
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cursed Mirror",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3465,
+      "missing": [
+        "Felidar Guardian"
       ]
     },
     {
@@ -1596,214 +1242,95 @@
       "mana": "{5}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 3289,
+      "popularity": 3305,
       "missing": [
         "Drafna, Founder of Lat-Nam"
       ]
     },
     {
-      "id": "147-1922",
+      "id": "1744-2676",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Scourge of Valkas",
           "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Blur",
+          "name": "Rite of Replication",
           "zones": [
             "H"
           ]
         }
       ],
       "results": [
-        "Infinite card draw"
+        "Near-infinite damage"
       ],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for Blur.",
-      "mana": "{3}{U}{R}{R}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 3184,
-      "missing": [
-        "Blur"
-      ]
-    },
-    {
-      "id": "147-2234",
-      "cards": [
-        {
-          "name": "Baral's Expertise",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
       "requires": [],
       "prerequisites": "",
-      "mana": "{4}{U}{U}{R}{R}",
-      "bracket": "E",
+      "mana": "{7}{U}{U}",
+      "bracket": "C",
       "legal": true,
-      "popularity": 3165,
+      "popularity": 2997,
       "missing": [
-        "Baral's Expertise"
+        "Rite of Replication"
       ]
     },
     {
-      "id": "1692-3259",
+      "id": "3908-6575",
       "cards": [
         {
-          "name": "Breath of Fury",
+          "name": "Terra, Magical Adept // Esper Terra",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Helm of the Host",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat damage",
-        "Infinite combat phases",
-        "Infinite mana creatures you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "Breath of Fury attached to any other creature you control that can attack this turn and that cannot be blocked by an opponent.\nHelm of the Host attached to any creature except the creature that has Breath of Fury attached.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 3075,
-      "missing": [
-        "Breath of Fury"
-      ]
-    },
-    {
-      "id": "147-673",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Planar Incision",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for Planar Incision.",
-      "mana": "{2}{U}{R}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2830,
-      "missing": [
-        "Planar Incision"
-      ]
-    },
-    {
-      "id": "147-1810",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Cackling Counterpart",
+          "name": "Spark Double",
           "zones": [
             "H"
           ]
         }
       ],
       "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Cackling Counterpart",
-      "mana": "{1}{R}{R}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 2822,
-      "missing": [
-        "Cackling Counterpart"
-      ]
-    },
-    {
-      "id": "147-7202",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Kindle the Inner Flame",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
+        "Infinite colored mana",
         "Infinite creature tokens with haste"
       ],
       "requires": [],
-      "prerequisites": "You control at least one creature.",
-      "mana": "{4}{R}{R}{R}",
-      "bracket": "O",
+      "prerequisites": "",
+      "mana": "{3}{U}",
+      "bracket": "R",
       "legal": true,
-      "popularity": 2779,
+      "popularity": 2978,
       "missing": [
-        "Kindle the Inner Flame"
+        "Terra, Magical Adept // Esper Terra"
       ]
     },
     {
-      "id": "900-2011",
+      "id": "2676-4245",
       "cards": [
         {
-          "name": "Najeela, the Blade-Blossom",
+          "name": "Vrondiss, Rage of Ancients",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Sword of Feast and Famine",
+          "name": "Scourge of Valkas",
           "zones": [
             "B"
           ]
         }
       ],
-      "results": [
-        "Infinite creature tokens with haste",
-        "Infinite combat damage",
-        "Infinite combat phases",
-        "Infinite lifegain",
-        "Infinite lifegain triggers"
-      ],
+      "results": [],
       "requires": [],
-      "prerequisites": "Sword of Feast and Famine attached to Najeela.\nNajeela does not have summoning sickness.\nAn opponent is unable to block and kill Najeela.\nLands you control can tap to produce at least {W}{U}{B}{R}{G}.",
+      "prerequisites": "You have a way to give Vrondiss indestructible.\nYou have a way to deal damage to Vrondiss.",
       "mana": "",
-      "bracket": "S",
+      "bracket": "E",
       "legal": true,
-      "popularity": 2765,
+      "popularity": 2951,
       "missing": [
-        "Najeela, the Blade-Blossom"
+        "Vrondiss, Rage of Ancients"
       ]
     },
     {
@@ -1831,9 +1358,36 @@
       "mana": "{3}{G}{G}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2580,
+      "popularity": 2594,
       "missing": [
         "Turntimber Ranger"
+      ]
+    },
+    {
+      "id": "2855-4245",
+      "cards": [
+        {
+          "name": "Vrondiss, Rage of Ancients",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dragon Tempest",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have a way to give Vrondiss indestructible.\nYou have a way to deal damage to Vrondiss.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2520,
+      "missing": [
+        "Vrondiss, Rage of Ancients"
       ]
     },
     {
@@ -1858,36 +1412,9 @@
       "mana": "{8}{R}{R}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2337,
+      "popularity": 2355,
       "missing": [
         "Obliterate"
-      ]
-    },
-    {
-      "id": "3557-6924",
-      "cards": [
-        {
-          "name": "Brago, King Eternal",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Peter Parker's Camera",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "An opponent cannot block Brago.\nYou control any number of nonland permanents that can tap to produce at least {2}.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2333,
-      "missing": [
-        "Brago, King Eternal"
       ]
     },
     {
@@ -1914,38 +1441,65 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 2271,
+      "popularity": 2264,
       "missing": [
         "Cephalid Illusionist"
       ]
     },
     {
-      "id": "147-4615",
+      "id": "3362-5291",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Bladewing the Risen",
           "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Quasiduplicate",
+          "name": "Cursed Mirror",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2233,
+      "missing": [
+        "Bladewing the Risen"
+      ]
+    },
+    {
+      "id": "380-4846",
+      "cards": [
+        {
+          "name": "Miirym, Sentinel Wyrm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Worldgorger Dragon",
           "zones": [
             "H"
           ]
         }
       ],
       "results": [
-        "Infinite creature tokens"
+        "Infinite mana permanents you control can produce"
       ],
       "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Quasiduplicate",
-      "mana": "{1}{R}{R}",
-      "bracket": "S",
+      "prerequisites": "",
+      "mana": "{3}{R}{R}{R}",
+      "bracket": "R",
       "legal": true,
-      "popularity": 2201,
+      "popularity": 2181,
       "missing": [
-        "Quasiduplicate"
+        "Worldgorger Dragon"
       ]
     },
     {
@@ -1970,7 +1524,7 @@
       "mana": "{2}{U}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2170,
+      "popularity": 2173,
       "missing": [
         "Naru Meha, Master Wizard"
       ]
@@ -1999,7 +1553,7 @@
       "mana": "{2}{W} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 2140,
+      "popularity": 2138,
       "missing": [
         "Zethi, Arcane Blademaster"
       ]
@@ -2026,7 +1580,7 @@
       "mana": "{6}{G}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2123,
+      "popularity": 2134,
       "missing": [
         "Polyraptor"
       ]
@@ -2056,7 +1610,7 @@
       "mana": "{8}{R}{R}{R}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2098,
+      "popularity": 2104,
       "missing": [
         "Worldfire"
       ]
@@ -2083,9 +1637,41 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2070,
+      "popularity": 2078,
       "missing": [
         "Wirewood Symbiote"
+      ]
+    },
+    {
+      "id": "618-3908",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "H",
+            "B",
+            "C",
+            "E",
+            "G",
+            "L"
+          ]
+        },
+        {
+          "name": "Spark Double",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Spark Double is a copy of Kiki-Jiki.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1995,
+      "missing": [
+        "Kiki-Jiki, Mirror Breaker"
       ]
     },
     {
@@ -2121,7 +1707,7 @@
       "mana": "{3}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 1987,
+      "popularity": 1990,
       "missing": [
         "Faerie Mastermind"
       ]
@@ -2150,248 +1736,139 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1983,
+      "popularity": 1988,
       "missing": [
         "Vrondiss, Rage of Ancients"
       ]
     },
     {
-      "id": "147-3556",
+      "id": "1170-1171--78",
       "cards": [
         {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Flicker",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for Flicker.",
-      "mana": "{2}{R}{R}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1823,
-      "missing": [
-        "Flicker"
-      ]
-    },
-    {
-      "id": "1908-4251",
-      "cards": [
-        {
-          "name": "Rionya, Fire Dancer",
+          "name": "Garth One-Eye",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Godo, Bandit Warlord",
+          "name": "Displacer Kitten",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite combat phases",
-        "Put all Equipment cards from your library onto the battlefield"
-      ],
-      "requires": [],
-      "prerequisites": "An opponent cannot block and kill creatures you control.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1660,
-      "missing": [
-        "Rionya, Fire Dancer"
-      ]
-    },
-    {
-      "id": "2105-3337-3809",
-      "cards": [
-        {
-          "name": "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Combat Celebrant",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Goldspan Dragon",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite Treasure tokens",
-        "Infinite artifact tokens",
         "Infinite colored mana",
-        "Infinite combat phases",
-        "Infinite creature tokens with haste"
+        "Infinite card draw for any number of players",
+        "Infinite copies of a specific artifact",
+        "Infinite casts of all spells created by Garth One-Eye except Shivan Dragon"
       ],
-      "requires": [],
-      "prerequisites": "Reflection of Kiki-Jiki and Goldspan Dragon do not have summoning sickness. Goldspan Dragon cannot be blocked and killed by an opponent.",
-      "mana": "{1}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1583,
-      "missing": [
-        "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki"
-      ]
-    },
-    {
-      "id": "147-5895",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Splash Portal",
-          "zones": [
-            "H"
-          ]
-        }
+      "requires": [
+        "Equipment That Gives Haste to a Creature"
       ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for Splash Portal.",
-      "mana": "{1}{U}{R}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1579,
-      "missing": [
-        "Splash Portal"
-      ]
-    },
-    {
-      "id": "1061-1692",
-      "cards": [
-        {
-          "name": "Timestream Navigator",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Helm of the Host",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite turns"
-      ],
-      "requires": [],
-      "prerequisites": "Helm of the Host attached to Timestream Navigator.\nYou have the City's Blessing.",
-      "mana": "{2}{U}{U}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 1547,
-      "missing": [
-        "Timestream Navigator"
-      ]
-    },
-    {
-      "id": "2105-4183",
-      "cards": [
-        {
-          "name": "Saheeli, the Sun's Brilliance",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Combat Celebrant",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases",
-        "Infinite creature tokens with haste",
-        "Infinite mana creatures you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "Creatures you control can tap to produce at least {U}{R}.",
+      "prerequisites": "You have enough mana to pay for the Equipment's equip ability if the Equipment is not already attached to Garth One-Eye.",
       "mana": "",
-      "bracket": "S",
+      "bracket": "E",
       "legal": true,
-      "popularity": 1523,
+      "popularity": 1693,
       "missing": [
-        "Saheeli, the Sun's Brilliance"
+        "Displacer Kitten"
       ]
     },
     {
-      "id": "147-3378",
+      "id": "4682-4772-7890",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1610,
+      "missing": [
+        "Gleaming Splendor"
+      ]
+    },
+    {
+      "id": "600-4772",
+      "cards": [
+        {
+          "name": "Jace, Cunning Castaway",
           "zones": [
             "H"
           ]
         },
         {
-          "name": "Illusionist's Stratagem",
+          "name": "Doubling Season",
           "zones": [
-            "H"
+            "B"
           ]
         }
       ],
       "results": [
-        "Infinite card draw"
+        "Infinite copies of a specific planeswalker",
+        "Infinite creature tokens"
       ],
       "requires": [],
       "prerequisites": "",
-      "mana": "{4}{U}{R}{R}",
-      "bracket": "P",
+      "mana": "{1}{U}{U}",
+      "bracket": "R",
       "legal": true,
-      "popularity": 1450,
+      "popularity": 1565,
       "missing": [
-        "Illusionist's Stratagem"
+        "Jace, Cunning Castaway"
       ]
     },
     {
-      "id": "147-3563",
+      "id": "2136-2676",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Scourge of Valkas",
           "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Flicker of Fate",
+          "name": "Orthion, Hero of Lavabrink",
           "zones": [
-            "H"
+            "B"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Near-infinite damage"
+      ],
       "requires": [],
-      "prerequisites": "There are legal target(s) for Flicker of Fate.",
-      "mana": "{2}{R}{R}{W}",
-      "bracket": "E",
+      "prerequisites": "",
+      "mana": "{6}{R}{R}{R}",
+      "bracket": "C",
       "legal": true,
-      "popularity": 1430,
+      "popularity": 1512,
       "missing": [
-        "Flicker of Fate"
+        "Orthion, Hero of Lavabrink"
       ]
     },
     {
@@ -2418,125 +1895,75 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1415,
+      "popularity": 1425,
       "missing": [
         "Spellbinder"
       ]
     },
     {
-      "id": "147-5362",
+      "id": "380-1409-2972",
       "cards": [
         {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Quantum Misalignment",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Quantum Misalignment",
-      "mana": "{1}{R}{R}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1375,
-      "missing": [
-        "Quantum Misalignment"
-      ]
-    },
-    {
-      "id": "2105-6426",
-      "cards": [
-        {
-          "name": "Sandstorm Crasher",
+          "name": "Miirym, Sentinel Wyrm",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Combat Celebrant",
+          "name": "Ganax, Astral Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Deadeye Navigator",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite combat phases",
-        "Infinite mana creatures you control can produce",
-        "Infinite creature tokens"
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite copies of most nontoken Dragons you control",
+        "Infinite creature tokens",
+        "Infinite Treasure tokens"
       ],
       "requires": [],
-      "prerequisites": "Sandstorm Crasher does not have summoning sickness. An opponent cannot block and kill creatures you control.",
-      "mana": "",
-      "bracket": "S",
+      "prerequisites": "Ganax is paired with Deadeye Navigator.",
+      "mana": "{1}{U}",
+      "bracket": "E",
       "legal": true,
-      "popularity": 1344,
+      "popularity": 1133,
       "missing": [
-        "Sandstorm Crasher"
+        "Deadeye Navigator"
       ]
     },
     {
-      "id": "1069-4944",
+      "id": "2143-4772",
       "cards": [
         {
-          "name": "Crackdown Construct",
+          "name": "Spawnsire of Ulamog",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Puresteel Paladin",
+          "name": "Doubling Season",
           "zones": [
             "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinitely large creature until end of turn"
-      ],
-      "requires": [],
-      "prerequisites": "You control an Equipment.\nYou control at least three artifacts.",
-      "mana": "",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 1316,
-      "missing": [
-        "Crackdown Construct"
-      ]
-    },
-    {
-      "id": "147-1567",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Momentary Blink",
-          "zones": [
-            "H"
           ]
         }
       ],
       "results": [],
       "requires": [],
-      "prerequisites": "There are legal target(s) for Momentary Blink.",
-      "mana": "{2}{R}{R}{W}",
+      "prerequisites": "",
+      "mana": "{4}",
       "bracket": "E",
       "legal": true,
-      "popularity": 1148,
+      "popularity": 1098,
       "missing": [
-        "Momentary Blink"
+        "Spawnsire of Ulamog"
       ]
     },
     {
@@ -2561,102 +1988,73 @@
       "mana": "{6}{W} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 1077,
+      "popularity": 1084,
       "missing": [
         "Meticulous Excavation"
       ]
     },
     {
-      "id": "147-2072",
+      "id": "703-2726-4772",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Astral Dragon",
           "zones": [
             "H"
           ]
         },
         {
-          "name": "Scrollshift",
+          "name": "Reflections of Littjara",
           "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{R}{R}{W}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 1053,
-      "missing": [
-        "Scrollshift"
-      ]
-    },
-    {
-      "id": "147-1883",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Replication Technique",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Replication Technique",
-      "mana": "{1}{R}{R}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 980,
-      "missing": [
-        "Replication Technique"
-      ]
-    },
-    {
-      "id": "782-2580-5141",
-      "cards": [
-        {
-          "name": "Lethal Vapors",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Teferi's Protection",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Grand Abolisher",
+          "name": "Doubling Season",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Skip all your future turns, causing your opponents to eventually draw from an empty library and lose the game"
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "\"Dragon\" chosen with Reflections of Littjara.",
+      "mana": "{6}{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1059,
+      "missing": [
+        "Reflections of Littjara"
+      ]
+    },
+    {
+      "id": "2676-6785",
+      "cards": [
+        {
+          "name": "Scourge of Valkas",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Devastating Onslaught",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
       ],
       "requires": [],
       "prerequisites": "",
-      "mana": "{4}{W}{B}{B}",
-      "bracket": "S",
+      "mana": "{10}{R}",
+      "bracket": "C",
       "legal": true,
-      "popularity": 942,
+      "popularity": 1016,
       "missing": [
-        "Lethal Vapors"
+        "Devastating Onslaught"
       ]
     },
     {
@@ -2683,121 +2081,47 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 932,
+      "popularity": 941,
       "missing": [
         "Mana Reflection"
       ]
     },
     {
-      "id": "147-359",
+      "id": "3908-4772-5403",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Oko, the Ringleader",
           "zones": [
             "H"
           ]
         },
         {
-          "name": "Acrobatic Maneuver",
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spark Double",
           "zones": [
             "H"
           ]
         }
       ],
       "results": [
-        "Infinite card draw"
+        "Infinite copies of nonland permanents you control",
+        "Infinite creature tokens",
+        "Infinite looting",
+        "Near-infinite card draw"
       ],
       "requires": [],
-      "prerequisites": "There are legal target(s) for Acrobatic Maneuver.",
-      "mana": "{3}{R}{R}{W}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 925,
-      "missing": [
-        "Acrobatic Maneuver"
-      ]
-    },
-    {
-      "id": "147-2417",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Siren's Ruse",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for Siren's Ruse.",
-      "mana": "{2}{U}{R}{R}",
+      "prerequisites": "",
+      "mana": "{5}{G}{U}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 897,
+      "popularity": 850,
       "missing": [
-        "Siren's Ruse"
-      ]
-    },
-    {
-      "id": "147-6618",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Relm's Sketching",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Relm's Sketching",
-      "mana": "{1}{R}{R}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 896,
-      "missing": [
-        "Relm's Sketching"
-      ]
-    },
-    {
-      "id": "2488-4546",
-      "cards": [
-        {
-          "name": "Apex Altisaur",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Hammer of Nazahn",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "Hammer of Nazahn attached to Apex Altisaur.\nYou have a way to deal damage to Apex Altisaur.",
-      "mana": "{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 810,
-      "missing": [
-        "Apex Altisaur"
+        "Oko, the Ringleader"
       ]
     },
     {
@@ -2824,7 +2148,7 @@
       "mana": "{1}",
       "bracket": "R",
       "legal": true,
-      "popularity": 774,
+      "popularity": 783,
       "missing": [
         "The Enigma Jewel // Locus of Enlightenment"
       ]
@@ -2851,7 +2175,7 @@
       "mana": "{R}",
       "bracket": "E",
       "legal": true,
-      "popularity": 759,
+      "popularity": 760,
       "missing": [
         "Crown of Flames"
       ]
@@ -2878,97 +2202,153 @@
       "mana": "{4}{W}{W}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 752,
+      "popularity": 758,
       "missing": [
         "Balancing Act"
       ]
     },
     {
-      "id": "147-5788",
+      "id": "1114-1414-4772",
       "cards": [
         {
-          "name": "Starfall Invocation",
+          "name": "Wrenn and Realmbreaker",
           "zones": [
             "H"
           ]
         },
         {
-          "name": "Dualcaster Mage",
+          "name": "Doubling Season",
           "zones": [
-            "H"
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "G"
           ]
         }
       ],
       "results": [
-        "Infinite card draw for target opponent"
+        "Cast all permanent cards in your graveyard",
+        "Infinite colored mana"
       ],
       "requires": [],
       "prerequisites": "",
-      "mana": "{4}{R}{R}{W}{W}",
-      "bracket": "P",
+      "mana": "{1}{G}{G}",
+      "bracket": "E",
       "legal": true,
-      "popularity": 710,
+      "popularity": 755,
       "missing": [
-        "Starfall Invocation"
+        "Wrenn and Realmbreaker"
       ]
     },
     {
-      "id": "147-5352",
+      "id": "1409-2972-3809",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Ganax, Astral Hunter",
           "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Doppelgang",
+          "name": "Deadeye Navigator",
           "zones": [
-            "H"
+            "B"
+          ]
+        },
+        {
+          "name": "Goldspan Dragon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Deadeye Navigator is paired with Ganax.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 755,
+      "missing": [
+        "Deadeye Navigator"
+      ]
+    },
+    {
+      "id": "1170-1171-2079",
+      "cards": [
+        {
+          "name": "Garth One-Eye",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Temur Ascendancy",
+          "zones": [
+            "B"
           ]
         }
       ],
       "results": [
-        "Infinite creature tokens",
-        "Infinite copies of all permanents"
+        "Infinite colored mana",
+        "Infinite card draw for any number of players",
+        "Infinite copies of a specific artifact",
+        "Infinite casts of all spells created by Garth One-Eye except Shivan Dragon"
       ],
       "requires": [],
       "prerequisites": "",
-      "mana": "{4}{G}{U}{R}{R}",
-      "bracket": "P",
+      "mana": "",
+      "bracket": "S",
       "legal": true,
-      "popularity": 680,
+      "popularity": 684,
       "missing": [
-        "Doppelgang"
+        "Displacer Kitten"
       ]
     },
     {
-      "id": "147-1193",
+      "id": "876-1171-1409",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Garth One-Eye",
           "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Mythos of Illuna",
+          "name": "Deadeye Navigator",
           "zones": [
-            "H"
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
           ]
         }
       ],
       "results": [
+        "Infinite card draw",
+        "Infinite colored mana",
         "Infinite creature tokens"
       ],
       "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Mythos of Illuna",
-      "mana": "{1}{R}{R}",
-      "bracket": "S",
+      "prerequisites": "Deadeye Navigator is paired with Garth One-Eye.",
+      "mana": "{1}{U}",
+      "bracket": "E",
       "legal": true,
-      "popularity": 674,
+      "popularity": 667,
       "missing": [
-        "Mythos of Illuna"
+        "Deadeye Navigator"
       ]
     },
     {
@@ -2995,291 +2375,151 @@
       "mana": "{4}{R}{R}{R}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 619,
+      "popularity": 622,
       "missing": [
         "Apocalypse"
       ]
     },
     {
-      "id": "147-3130",
+      "id": "1171-1409-2079",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Garth One-Eye",
           "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Blue Sun's Twilight",
+          "name": "Deadeye Navigator",
           "zones": [
-            "H"
+            "B"
+          ]
+        },
+        {
+          "name": "Temur Ascendancy",
+          "zones": [
+            "B"
           ]
         }
       ],
       "results": [
-        "Infinite creature tokens"
+        "Infinite card draw for any number of players",
+        "Infinite casts of all spells permitted by Garth One-Eye",
+        "Infinite colored mana",
+        "Infinite copies of a specific artifact",
+        "Infinite creature tokens with haste"
       ],
-      "requires": [],
-      "prerequisites": "There is a creature on the battlefield.",
-      "mana": "{6}{U}{U}{R}{R}",
-      "bracket": "C",
-      "legal": true,
-      "popularity": 599,
-      "missing": [
-        "Blue Sun's Twilight"
-      ]
-    },
-    {
-      "id": "147-5530",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Another Round",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for Another Round.",
-      "mana": "{3}{R}{R}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 581,
-      "missing": [
-        "Another Round"
-      ]
-    },
-    {
-      "id": "147-7063",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Ember Island Production",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.",
-      "mana": "{4}{U}{U}{R}{R}",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 556,
-      "missing": [
-        "Ember Island Production"
-      ]
-    },
-    {
-      "id": "147-2955",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Justiciar's Portal",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for Justiciar's Portal.",
-      "mana": "{2}{R}{R}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 522,
-      "missing": [
-        "Justiciar's Portal"
-      ]
-    },
-    {
-      "id": "147-5067",
-      "cards": [
-        {
-          "name": "Release to the Wind",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "There is at least one nonland permanent on the battlefield.",
-      "mana": "{3}{U}{R}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 505,
-      "missing": [
-        "Release to the Wind"
-      ]
-    },
-    {
-      "id": "147-4799",
-      "cards": [
-        {
-          "name": "Necromantic Selection",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
       "requires": [],
       "prerequisites": "",
-      "mana": "{5}{B}{B}{B}{R}{R}",
-      "bracket": "E",
+      "mana": "",
+      "bracket": "S",
       "legal": true,
-      "popularity": 501,
+      "popularity": 617,
       "missing": [
-        "Necromantic Selection"
+        "Deadeye Navigator"
       ]
     },
     {
-      "id": "147-797",
+      "id": "380-703-3129",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Miirym, Sentinel Wyrm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Astral Dragon",
           "zones": [
             "H"
           ]
         },
         {
-          "name": "Stolen Identity",
+          "name": "Primal Vigor",
           "zones": [
-            "H"
+            "B"
           ]
         }
       ],
       "results": [
-        "Infinite creature tokens"
+        "Near-infinite creature tokens"
       ],
       "requires": [],
-      "prerequisites": "There is an artifact or creature on the battlefield.\nYou have enough mana to cast Stolen Identity",
-      "mana": "{1}{R}{R}",
-      "bracket": "S",
+      "prerequisites": "",
+      "mana": "{6}{U}{U}",
+      "bracket": "O",
       "legal": true,
-      "popularity": 483,
+      "popularity": 611,
       "missing": [
-        "Stolen Identity"
+        "Primal Vigor"
       ]
     },
     {
-      "id": "147-972",
+      "id": "129-2585-3908",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Kinnan, Bonder Prodigy",
           "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Saheeli's Artistry",
+          "name": "Grim Monolith",
           "zones": [
-            "H"
+            "B"
+          ]
+        },
+        {
+          "name": "Spark Double",
+          "zones": [
+            "B"
           ]
         }
       ],
       "results": [
-        "Infinite creature tokens",
-        "Infinite copies of all artifacts"
+        "Infinite colorless mana"
       ],
       "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Saheeli's Artistry",
-      "mana": "{1}{R}{R}",
-      "bracket": "S",
+      "prerequisites": "Spark Double is a copy of Kinnan.",
+      "mana": "",
+      "bracket": "P",
       "legal": true,
-      "popularity": 470,
+      "popularity": 519,
       "missing": [
-        "Saheeli's Artistry"
+        "Kinnan, Bonder Prodigy"
       ]
     },
     {
-      "id": "147-6471",
+      "id": "2084-3908",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Mirror-Mad Phantasm",
           "zones": [
-            "H"
+            "H",
+            "B",
+            "C",
+            "E",
+            "G"
           ]
         },
         {
-          "name": "Will of the Temur",
+          "name": "Spark Double",
           "zones": [
-            "H"
+            "B"
           ]
         }
       ],
       "results": [
-        "Infinite creature tokens",
-        "Infinite card draw for any number of players"
+        "Infinite self-mill"
       ],
       "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Will of the Temur",
-      "mana": "{1}{R}{R}",
+      "prerequisites": "Spark Double is a copy of Mirror-Mad Phantasm.",
+      "mana": "{1}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 435,
+      "popularity": 434,
       "missing": [
-        "Will of the Temur"
-      ]
-    },
-    {
-      "id": "147-3306",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Slip On the Ring",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for Slip On the Ring.",
-      "mana": "{2}{R}{R}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 428,
-      "missing": [
-        "Slip On the Ring"
+        "Mirror-Mad Phantasm"
       ]
     },
     {
@@ -3333,9 +2573,36 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 383,
+      "popularity": 385,
       "missing": [
         "Hornet Nest"
+      ]
+    },
+    {
+      "id": "1245-4772",
+      "cards": [
+        {
+          "name": "Tooth and Claw",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least two additional creatures",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 382,
+      "missing": [
+        "Tooth and Claw"
       ]
     },
     {
@@ -3364,63 +2631,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 368,
+      "popularity": 374,
       "missing": [
         "Silvanus's Invoker"
-      ]
-    },
-    {
-      "id": "147-7495",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Skycoach Conductor // All Aboard",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for All Aboard.",
-      "mana": "{1}{U}{R}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 355,
-      "missing": [
-        "Skycoach Conductor // All Aboard"
-      ]
-    },
-    {
-      "id": "2529-3363",
-      "cards": [
-        {
-          "name": "The One Ring",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Vedalken Mastermind",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "Vedalken Mastermind does not have summoning sickness.",
-      "mana": "{4}{U} each turn",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 351,
-      "missing": [
-        "Vedalken Mastermind"
       ]
     },
     {
@@ -3447,74 +2660,36 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 351,
+      "popularity": 359,
       "missing": [
         "Wakeroot Elemental"
       ]
     },
     {
-      "id": "147-3853",
+      "id": "2529-3363",
       "cards": [
         {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Mirage Mockery",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one nonartifact creature.",
-      "mana": "{3}{U}{R}{R}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 350,
-      "missing": [
-        "Mirage Mockery"
-      ]
-    },
-    {
-      "id": "1235-1953-2105",
-      "cards": [
-        {
-          "name": "Brudiclad, Telchor Engineer",
+          "name": "The One Ring",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Combat Celebrant",
+          "name": "Vedalken Mastermind",
           "zones": [
             "B"
           ]
-        },
-        {
-          "name": "Twinflame",
-          "zones": [
-            "H"
-          ]
         }
       ],
-      "results": [
-        "Infinite combat phases",
-        "Infinite damage"
-      ],
+      "results": [],
       "requires": [],
-      "prerequisites": "",
-      "mana": "{1}{R}",
+      "prerequisites": "Vedalken Mastermind does not have summoning sickness.",
+      "mana": "{4}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 349,
+      "popularity": 354,
       "missing": [
-        "Brudiclad, Telchor Engineer"
+        "Vedalken Mastermind"
       ]
     },
     {
@@ -3541,39 +2716,9 @@
       "mana": "{3} each turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 333,
+      "popularity": 336,
       "missing": [
         "Wanderwine Prophets"
-      ]
-    },
-    {
-      "id": "147-5134",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Fated Infatuation",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens",
-        "Infinite scry"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Fated Infatuation",
-      "mana": "{1}{R}{R}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 326,
-      "missing": [
-        "Fated Infatuation"
       ]
     },
     {
@@ -3598,7 +2743,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 306,
+      "popularity": 317,
       "missing": [
         "Essence Reliquary"
       ]
@@ -3625,63 +2770,40 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 306,
+      "popularity": 307,
       "missing": [
         "Keeper of the Nine Gales"
       ]
     },
     {
-      "id": "147-7431",
+      "id": "703-4393",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Astral Dragon",
           "zones": [
             "H"
           ]
         },
         {
-          "name": "Daydream",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "There are legal target(s) for Daydream.",
-      "mana": "{1}{R}{R}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 288,
-      "missing": [
-        "Daydream"
-      ]
-    },
-    {
-      "id": "205-1692",
-      "cards": [
-        {
-          "name": "Azor, the Lawbringer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Helm of the Host",
+          "name": "Dance of Many",
           "zones": [
             "B"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Infinite copies of any nontoken creatures",
+        "Infinite creature copies of all noncreature permanents",
+        "Infinite creature tokens"
+      ],
       "requires": [],
-      "prerequisites": "Helm of the Host attached to Azor.",
-      "mana": "",
-      "bracket": "S",
+      "prerequisites": "",
+      "mana": "{6}{U}{U}",
+      "bracket": "P",
       "legal": true,
-      "popularity": 288,
+      "popularity": 305,
       "missing": [
-        "Azor, the Lawbringer"
+        "Dance of Many"
       ]
     },
     {
@@ -3706,9 +2828,43 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 279,
+      "popularity": 289,
       "missing": [
         "Umbilicus"
+      ]
+    },
+    {
+      "id": "2920-3908",
+      "cards": [
+        {
+          "name": "Garruk Relentless // Garruk, the Veil-Cursed",
+          "zones": [
+            "H",
+            "B",
+            "C",
+            "E",
+            "G",
+            "L"
+          ]
+        },
+        {
+          "name": "Spark Double",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Draw the game"
+      ],
+      "requires": [],
+      "prerequisites": "Three loyalty counters on Spark Double.\nAny creature on the battlefield has 1 or 2 power.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 279,
+      "missing": [
+        "Garruk Relentless // Garruk, the Veil-Cursed"
       ]
     },
     {
@@ -3739,32 +2895,110 @@
       ]
     },
     {
-      "id": "147-3280",
+      "id": "1965-3908",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Omarthis, Ghostfire Initiate",
           "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Croaking Counterpart",
+          "name": "Spark Double",
           "zones": [
             "H"
           ]
         }
       ],
       "results": [
-        "Infinite creature tokens"
+        "Infinite +1/+1 counters on certain creatures"
       ],
       "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Croaking Counterpart",
-      "mana": "{1}{R}{R}",
+      "prerequisites": "",
+      "mana": "{3}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 230,
+      "popularity": 258,
       "missing": [
-        "Croaking Counterpart"
+        "Omarthis, Ghostfire Initiate"
+      ]
+    },
+    {
+      "id": "1414-4772-6232",
+      "cards": [
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tamiyo, the Moon Sage",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 228,
+      "missing": [
+        "Tamiyo, the Moon Sage"
+      ]
+    },
+    {
+      "id": "703-2751-2855-2972",
+      "cards": [
+        {
+          "name": "Ganax, Astral Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Astral Dragon",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Strionic Resonator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dragon Tempest",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of noncreature permanents you control",
+        "Infinite creature tokens",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{7}{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 228,
+      "missing": [
+        "Strionic Resonator"
       ]
     },
     {
@@ -3792,9 +3026,36 @@
       "mana": "{8}{W}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 213,
+      "popularity": 215,
       "missing": [
         "Storm Herd"
+      ]
+    },
+    {
+      "id": "1621-3908",
+      "cards": [
+        {
+          "name": "Wispweaver Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spark Double",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Spark Double.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 207,
+      "missing": [
+        "Wispweaver Angel"
       ]
     },
     {
@@ -3827,62 +3088,30 @@
       ]
     },
     {
-      "id": "147-7694",
+      "id": "380-1916",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Miirym, Sentinel Wyrm",
           "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Multiversal Incursion",
+          "name": "Changeling Titan",
           "zones": [
             "H"
           ]
         }
       ],
-      "results": [
-        "Infinite creature tokens",
-        "Infinite copies of nontoken creatures you control"
-      ],
+      "results": [],
       "requires": [],
       "prerequisites": "",
-      "mana": "{6}{U}{U}{R}{R}",
+      "mana": "{4}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 201,
+      "popularity": 191,
       "missing": [
-        "Multiversal Incursion"
-      ]
-    },
-    {
-      "id": "147-7506",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Repudiate // Replicate",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.",
-      "mana": "{2}{G}{U}{R}{R}",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 200,
-      "missing": [
-        "Repudiate // Replicate"
+        "Changeling Titan"
       ]
     },
     {
@@ -3907,39 +3136,71 @@
       "mana": "{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 193,
+      "popularity": 190,
       "missing": [
         "Whip Silk"
       ]
     },
     {
-      "id": "1692-2808",
+      "id": "703-2506-4772",
       "cards": [
         {
-          "name": "Enduring Scalelord",
+          "name": "Astral Dragon",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Molten Echoes",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Helm of the Host",
+          "name": "Doubling Season",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite +1/+1 counters on a creature token with haste",
-        "Infinite +1/+1 counters on a creature"
+        "Near-infinite creature tokens"
       ],
       "requires": [],
-      "prerequisites": "You have a way to put a +1/+1 counter on Enduring Scalelord.\nHelm of the Host attached to Enduring Scalelord.",
-      "mana": "",
-      "bracket": "O",
+      "prerequisites": "\"Dragon\" chosen with Molten Echoes.",
+      "mana": "{6}{U}{U}",
+      "bracket": "E",
       "legal": true,
-      "popularity": 174,
+      "popularity": 187,
       "missing": [
-        "Enduring Scalelord"
+        "Molten Echoes"
+      ]
+    },
+    {
+      "id": "1621-5291",
+      "cards": [
+        {
+          "name": "Wispweaver Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cursed Mirror",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 177,
+      "missing": [
+        "Wispweaver Angel"
       ]
     },
     {
@@ -3964,51 +3225,190 @@
       "mana": "{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 166,
+      "popularity": 168,
       "missing": [
         "Flickering Ward"
       ]
     },
     {
-      "id": "147-6198",
+      "id": "703-4663-4772",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Astral Dragon",
           "zones": [
             "H"
           ]
         },
         {
-          "name": "Self-Reflection",
+          "name": "Bramble Sovereign",
           "zones": [
-            "H"
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
           ]
         }
       ],
       "results": [
-        "Infinite creature tokens"
+        "Near-infinite creature tokens"
       ],
       "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Self-Reflection",
-      "mana": "{1}{R}{R}",
-      "bracket": "S",
+      "prerequisites": "",
+      "mana": "{7}{G}{U}{U}",
+      "bracket": "E",
       "legal": true,
-      "popularity": 164,
+      "popularity": 166,
       "missing": [
-        "Self-Reflection"
+        "Bramble Sovereign"
       ]
     },
     {
-      "id": "147-961",
+      "id": "168-703",
       "cards": [
         {
-          "name": "Against All Odds",
+          "name": "Astral Dragon",
           "zones": [
             "H"
           ]
         },
         {
-          "name": "Dualcaster Mage",
+          "name": "Oblivion Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of noncreature permanents you control",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{U}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 149,
+      "missing": [
+        "Oblivion Ring"
+      ]
+    },
+    {
+      "id": "2972-4772-5456",
+      "cards": [
+        {
+          "name": "Magda, the Hoardmaster",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ganax, Astral Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite creature tokens with haste",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least three Treasures.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 145,
+      "missing": [
+        "Magda, the Hoardmaster"
+      ]
+    },
+    {
+      "id": "703-4772-5257",
+      "cards": [
+        {
+          "name": "Riku of Two Reflections",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Astral Dragon",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{G}{U}{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 132,
+      "missing": [
+        "Riku of Two Reflections"
+      ]
+    },
+    {
+      "id": "703-2517",
+      "cards": [
+        {
+          "name": "Astral Dragon",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Parallax Wave",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature copies of all noncreature permanents",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{U}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 127,
+      "missing": [
+        "Parallax Wave"
+      ]
+    },
+    {
+      "id": "380-3839",
+      "cards": [
+        {
+          "name": "Miirym, Sentinel Wyrm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Changeling Hero",
           "zones": [
             "H"
           ]
@@ -4016,13 +3416,13 @@
       ],
       "results": [],
       "requires": [],
-      "prerequisites": "There are legal target(s) for Against All Odds.",
-      "mana": "{4}{R}{R}{W}",
+      "prerequisites": "",
+      "mana": "{4}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 139,
+      "popularity": 118,
       "missing": [
-        "Against All Odds"
+        "Changeling Hero"
       ]
     },
     {
@@ -4082,6 +3482,41 @@
       ]
     },
     {
+      "id": "380-703-1308",
+      "cards": [
+        {
+          "name": "Miirym, Sentinel Wyrm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Astral Dragon",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Anointed Procession",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{U}{U}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 100,
+      "missing": [
+        "Anointed Procession"
+      ]
+    },
+    {
       "id": "1363-3363",
       "cards": [
         {
@@ -4109,32 +3544,32 @@
       ]
     },
     {
-      "id": "1110-1724",
+      "id": "703-2902",
       "cards": [
         {
-          "name": "Sekki, Seasons' Guide",
+          "name": "Astral Dragon",
           "zones": [
             "H"
           ]
         },
         {
-          "name": "Terror of the Peaks",
+          "name": "Journey to Nowhere",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite damage"
+        "Infinite creature tokens"
       ],
       "requires": [],
       "prerequisites": "",
-      "mana": "{5}{G}{G}{G}",
+      "mana": "{6}{U}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 88,
+      "popularity": 91,
       "missing": [
-        "Sekki, Seasons' Guide"
+        "Journey to Nowhere"
       ]
     },
     {
@@ -4159,36 +3594,9 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 87,
+      "popularity": 90,
       "missing": [
         "Esperzoa"
-      ]
-    },
-    {
-      "id": "1111-3363",
-      "cards": [
-        {
-          "name": "The One Ring",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Temporal Adept",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "Temporal Adept does not have summoning sickness.",
-      "mana": "{4}{U}{U}{U} each turn",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 87,
-      "missing": [
-        "Temporal Adept"
       ]
     },
     {
@@ -4213,9 +3621,38 @@
       "mana": "{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 87,
+      "popularity": 89,
       "missing": [
         "Shimmering Wings"
+      ]
+    },
+    {
+      "id": "1110-1724",
+      "cards": [
+        {
+          "name": "Sekki, Seasons' Guide",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{G}{G}{G}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 89,
+      "missing": [
+        "Sekki, Seasons' Guide"
       ]
     },
     {
@@ -4244,9 +3681,36 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 83,
+      "popularity": 85,
       "missing": [
         "Sporeweb Weaver"
+      ]
+    },
+    {
+      "id": "1111-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Temporal Adept",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Temporal Adept does not have summoning sickness.",
+      "mana": "{4}{U}{U}{U} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 84,
+      "missing": [
+        "Temporal Adept"
       ]
     },
     {
@@ -4279,84 +3743,173 @@
       ]
     },
     {
-      "id": "147-7339",
+      "id": "3809-4682-4772-5140",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Kenrith, the Returned King",
           "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Go Ninja Go",
+          "name": "Smothering Tithe",
           "zones": [
-            "H"
+            "B"
+          ]
+        },
+        {
+          "name": "Goldspan Dragon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Infinite card draw for any number of opponents"
+      ],
       "requires": [],
-      "prerequisites": "There are legal target(s) for Go Ninja Go.",
-      "mana": "{1}{R}{R}{R}{W}",
-      "bracket": "E",
+      "prerequisites": "An opponent cannot pay for Smothering Tithe's trigger.",
+      "mana": "{3}{U}",
+      "bracket": "P",
       "legal": true,
-      "popularity": 81,
+      "popularity": 75,
       "missing": [
-        "Go Ninja Go"
+        "Kenrith, the Returned King"
       ]
     },
     {
-      "id": "147-2885",
+      "id": "2808-3908",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Enduring Scalelord",
           "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Pegasus Guardian // Rescue the Foal",
+          "name": "Spark Double",
           "zones": [
             "H"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Infinite +1/+1 counters on certain creatures"
+      ],
       "requires": [],
-      "prerequisites": "There are legal target(s) for Pegasus Guardian // Rescue the Foal.",
-      "mana": "{2}{R}{R}{W}",
-      "bracket": "E",
+      "prerequisites": "",
+      "mana": "{3}{U}",
+      "bracket": "S",
       "legal": true,
-      "popularity": 77,
+      "popularity": 69,
       "missing": [
-        "Pegasus Guardian // Rescue the Foal"
+        "Enduring Scalelord"
       ]
     },
     {
-      "id": "147-695",
+      "id": "2084-5291",
       "cards": [
         {
-          "name": "Settle Beyond Reality",
+          "name": "Mirror-Mad Phantasm",
           "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Dualcaster Mage",
+          "name": "Cursed Mirror",
           "zones": [
             "H"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Infinite self-mill"
+      ],
       "requires": [],
-      "prerequisites": "There are legal target(s) for Settle Beyond Reality.",
-      "mana": "{5}{R}{R}{W}",
+      "prerequisites": "",
+      "mana": "{3}{U}{R}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 66,
+      "missing": [
+        "Mirror-Mad Phantasm"
+      ]
+    },
+    {
+      "id": "703-4313-4772",
+      "cards": [
+        {
+          "name": "Astral Dragon",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Flameshadow Conjuring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{U}{U}{R}",
       "bracket": "E",
       "legal": true,
-      "popularity": 52,
+      "popularity": 53,
       "missing": [
-        "Settle Beyond Reality"
+        "Flameshadow Conjuring"
+      ]
+    },
+    {
+      "id": "1645-3284-3809",
+      "cards": [
+        {
+          "name": "Goldspan Dragon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Crown of Flames",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Korvold, Fae-Cursed King",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinitely large creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 53,
+      "missing": [
+        "Crown of Flames"
       ]
     },
     {
@@ -4381,39 +3934,51 @@
       "mana": "{1}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 50,
+      "popularity": 51,
       "missing": [
         "View from Above"
       ]
     },
     {
-      "id": "7124-7651",
+      "id": "380-703-2047-4772",
       "cards": [
         {
-          "name": "Bruce Banner // The Incredible Hulk",
+          "name": "Miirym, Sentinel Wyrm",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Smaug the Magnificent",
+          "name": "Astral Dragon",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mechanized Production",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite +1/+1 counters on a creature",
-        "Infinite combat phases"
+        "Near-infinite creature tokens",
+        "Win the game at the beginning of your next upkeep"
       ],
       "requires": [],
-      "prerequisites": "An opponent cannot block and kill The Incredible Hulk or Smaug.\nYou control a Treasure. Smaug the Magnificent has vigilance.",
-      "mana": "",
-      "bracket": "S",
+      "prerequisites": "You control a noncreature artifact.",
+      "mana": "{6}{U}{U}",
+      "bracket": "E",
       "legal": true,
-      "popularity": 47,
+      "popularity": 45,
       "missing": [
-        "Bruce Banner // The Incredible Hulk"
+        "Mechanized Production"
       ]
     },
     {
@@ -4440,9 +4005,49 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 41,
+      "popularity": 42,
       "missing": [
         "Overgrown Armasaur"
+      ]
+    },
+    {
+      "id": "4682-4772-7132",
+      "cards": [
+        {
+          "name": "Super-Skrull",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of opponents",
+        "Near-infinite Treasure tokens",
+        "Near-infinite card draw",
+        "Near-infinite colored mana",
+        "Near-infinite creature tokens",
+        "Near-infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent cannot pay for Smothering Tithe's trigger more than once.",
+      "mana": "{5}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 42,
+      "missing": [
+        "Super-Skrull"
       ]
     },
     {
@@ -4523,7 +4128,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 34,
+      "popularity": 35,
       "missing": [
         "Phenomenon Investigators"
       ]
@@ -4550,7 +4155,7 @@
       "mana": "{10} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 32,
+      "popularity": 33,
       "missing": [
         "Obelisk of Undoing"
       ]
@@ -4583,32 +4188,179 @@
       ]
     },
     {
-      "id": "1069-2904",
+      "id": "643-2837-2972",
       "cards": [
         {
-          "name": "Cephalid Illusionist",
+          "name": "Jinnie Fay, Jetmir's Second",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Puresteel Paladin",
+          "name": "Ganax, Astral Hunter",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Maskwood Nexus",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite self-mill"
+        "Infinite creature tokens with haste"
       ],
       "requires": [],
-      "prerequisites": "You control three or more artifacts including an Equipment.",
+      "prerequisites": "",
+      "mana": "{4}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 27,
+      "missing": [
+        "Jinnie Fay, Jetmir's Second"
+      ]
+    },
+    {
+      "id": "3284-3809-4124",
+      "cards": [
+        {
+          "name": "Goldspan Dragon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Whip Silk",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Korvold, Fae-Cursed King",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinitely large creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{G}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 23,
+      "missing": [
+        "Whip Silk"
+      ]
+    },
+    {
+      "id": "3284-3389-3809",
+      "cards": [
+        {
+          "name": "Goldspan Dragon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flickering Ward",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Korvold, Fae-Cursed King",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinitely large creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 20,
+      "missing": [
+        "Flickering Ward"
+      ]
+    },
+    {
+      "id": "703-2144",
+      "cards": [
+        {
+          "name": "Myrkul, Lord of Bones",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Astral Dragon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of all noncreature permanents",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to cause Astral Dragon to die.",
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 26,
+      "popularity": 19,
       "missing": [
-        "Cephalid Illusionist"
+        "Myrkul, Lord of Bones"
+      ]
+    },
+    {
+      "id": "876-1171-7070",
+      "cards": [
+        {
+          "name": "Garth One-Eye",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Monk Gyatso",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite creature tokens",
+        "Infinite card draw for any number of players",
+        "Infinite copies of a specific artifact",
+        "Infinite casts of all spells permitted by Garth One-Eye"
+      ],
+      "requires": [],
+      "prerequisites": "You have not cast Black Lotus using Garth.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 17,
+      "missing": [
+        "Monk Gyatso"
       ]
     },
     {
@@ -4681,37 +4433,6 @@
       ]
     },
     {
-      "id": "111-147",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Invasion of Alara // Awaken the Maelstrom",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens",
-        "Infinite card draw for any number of players",
-        "Infinite +1/+1 counters on creatures you control"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature. You are able to defeat Invasion of Alara.",
-      "mana": "{1}{R}{R}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 13,
-      "missing": [
-        "Invasion of Alara // Awaken the Maelstrom"
-      ]
-    },
-    {
       "id": "306-3363",
       "cards": [
         {
@@ -4760,9 +4481,42 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 10,
+      "popularity": 11,
       "missing": [
         "Shi'ar Soldier"
+      ]
+    },
+    {
+      "id": "643-751-2972",
+      "cards": [
+        {
+          "name": "Ganax, Astral Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Maskwood Nexus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 11,
+      "missing": [
+        "Shrieking Drake"
       ]
     },
     {
@@ -4822,109 +4576,195 @@
       ]
     },
     {
-      "id": "1069-2796",
+      "id": "643-2972-4694",
       "cards": [
         {
-          "name": "Cephalid Aristocrat",
+          "name": "Ganax, Astral Hunter",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Puresteel Paladin",
+          "name": "March of the Machines",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Maskwood Nexus",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite self-mill"
+        "Draw the game"
       ],
       "requires": [],
-      "prerequisites": "You control three or more artifacts including an Equipment.",
+      "prerequisites": "You have a way to cause a creature to enter the battlefield under your control.",
       "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 6,
+      "missing": [
+        "March of the Machines"
+      ]
+    },
+    {
+      "id": "703-1622-4772",
+      "cards": [
+        {
+          "name": "Astral Dragon",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Minion Reflector",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5,
+      "missing": [
+        "Minion Reflector"
+      ]
+    },
+    {
+      "id": "2733-3284-3809",
+      "cards": [
+        {
+          "name": "Goldspan Dragon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shimmering Wings",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Korvold, Fae-Cursed King",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinitely large creature"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}",
       "bracket": "S",
       "legal": true,
       "popularity": 5,
       "missing": [
-        "Cephalid Aristocrat"
+        "Shimmering Wings"
       ]
     },
     {
-      "id": "147-643-8200",
+      "id": "1171-1235-3129-3908",
       "cards": [
         {
-          "name": "Dualcaster Mage",
+          "name": "Garth One-Eye",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Twinflame",
           "zones": [
             "H"
           ]
         },
         {
-          "name": "Grub's Command",
+          "name": "Spark Double",
           "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Maskwood Nexus",
+          "name": "Primal Vigor",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite creature tokens",
-        "Infinite mill",
-        "Infinite self-mill",
-        "Infinitely large creatures you control until end of turn"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Grub's Command",
-      "mana": "{4}{B}{R}{R}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2,
-      "missing": [
-        "Grub's Command"
-      ]
-    },
-    {
-      "id": "147-643-6974",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Ashling's Command",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Maskwood Nexus",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite Treasure tokens",
-        "Infinite artifact tokens",
-        "Infinite card draw for any number of players",
+        "Infinite card draw",
         "Infinite colored mana",
         "Infinite creature tokens"
       ],
       "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Ashling's Command",
-      "mana": "{4}{U}{R}{R}{R}",
+      "prerequisites": "",
+      "mana": "{4}{R}{R}{R}",
       "bracket": "E",
       "legal": true,
       "popularity": 1,
       "missing": [
-        "Ashling's Command"
+        "Primal Vigor"
+      ]
+    },
+    {
+      "id": "1171-1235-2557-3908",
+      "cards": [
+        {
+          "name": "Garth One-Eye",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Twinflame",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Spark Double",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Parallel Lives",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{R}{R}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1,
+      "missing": [
+        "Parallel Lives"
       ]
     },
     {
@@ -4948,116 +4788,6 @@
       "popularity": 0,
       "missing": [
         "Hullbreaker Horror"
-      ]
-    },
-    {
-      "id": "147-643-8198",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Trystan's Command",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Maskwood Nexus",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens",
-        "Infinite mana creatures you control can produce",
-        "Infinitely large creatures you control until end of turn"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Trystan's Command",
-      "mana": "{5}{B}{R}{R}{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 0,
-      "missing": [
-        "Trystan's Command"
-      ]
-    },
-    {
-      "id": "147-643-8199",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Brigid's Command",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Maskwood Nexus",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens",
-        "Infinite creature tokens that are infinitely large",
-        "Infinitely large creatures you control until end of turn"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Brigid's Command",
-      "mana": "{2}{R}{R}{G}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 0,
-      "missing": [
-        "Brigid's Command"
-      ]
-    },
-    {
-      "id": "147-643-7884",
-      "cards": [
-        {
-          "name": "Dualcaster Mage",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Sygg's Command",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Maskwood Nexus",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw for any number of players",
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Sygg's Command",
-      "mana": "{2}{U}{R}{R}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 0,
-      "missing": [
-        "Sygg's Command"
       ]
     }
   ]
