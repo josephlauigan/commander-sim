@@ -689,6 +689,25 @@ fn helitrooper_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: P
         .copied()
         .filter(|&m| m != src && live(g, m) && !g.perm(m).fly && !crate::dsl::has_kw(g, m, "flying"))
         .collect();
+    if crate::human::is_human(g, p) {
+        // practice mode: "another target attacking creature" is the person's pick (any other attacker), asked after
+        // the table's window (the engine probes a trigger up to its first window: a question before it is asked twice)
+        let others: Vec<PermId> = atk.iter().copied().filter(|&m| m != src && live(g, m)).collect();
+        if others.is_empty() || !trigger_window(g, p, Some(src), "another attacker gains flying", Some(4.0))? {
+            return Ok(vec![]);
+        }
+        let t = crate::human::gaps_t2::pick_target(
+            g,
+            p,
+            &others,
+            "Helitrooper: which attacking creature gains flying?",
+            None,
+        )?;
+        if let Some(t) = t.filter(|&t| live(g, t)) {
+            super::partials::eot_kw(g, t, "flying");
+        }
+        return Ok(vec![]);
+    }
     let Some(t) = max_by(&cs, |m| epow(g, m) as f64) else { return Ok(vec![]) };
     if trigger_window(g, p, Some(src), "another attacker gains flying", Some(4.0))? && live(g, t) {
         super::partials::eot_kw(g, t, "flying");

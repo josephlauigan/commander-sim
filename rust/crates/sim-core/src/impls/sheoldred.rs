@@ -428,7 +428,10 @@ fn salvagers_drain(g: &mut Game, src: Src) -> Res {
     if !trigger_window(g, o, Some(src), "drain 1", None)? {
         return Ok(());
     }
-    if let Some(q) = weakest_opp(g, o) {
+    // practice mode: "target opponent" is the person's pick, not the weakest (asked after the window: the engine
+    // probes a trigger up to its first window, and a question before it would be asked twice)
+    let picked = if human(g, o) { crate::human::gaps_t2::pick_opponent(g, o, "Al Bhed Salvagers")? } else { None };
+    if let Some(q) = picked.or_else(|| weakest_opp(g, o)).filter(|&q| g.player(q).alive) {
         lose_life(g, q, 1, Some(o), "drain", Some(false))?;
     }
     gain(g, o, 1)
@@ -2064,7 +2067,9 @@ fn seph_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId
 
 /// target opponent (the one with the least life) loses 1 life and p gains 1
 fn seph_drain(g: &mut Game, p: PlayerId) -> Res {
-    if let Some(q) = weakest_opp(g, p) {
+    // practice mode: "target opponent" is the person's pick, not the one with the least life
+    let picked = if human(g, p) { crate::human::gaps_t2::pick_opponent(g, p, "Sephiroth")? } else { None };
+    if let Some(q) = picked.or_else(|| weakest_opp(g, p)) {
         lose_life(g, q, 1, Some(p), "drain", Some(false))?;
     }
     gain(g, p, 1)

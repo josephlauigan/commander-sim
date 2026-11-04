@@ -6437,7 +6437,7 @@ note = "{2}, {T}: target creature can't be blocked this turn (the AI uses it bef
 
 ["Mask of Memory"]
 dsl = [
-  { type = "triggered", event = "combat_damage", source = "equipped", effects = [{ do = "draw", n = 2, who = "you" }, { do = "discard", n = 1, who = "you" }] },
+  { type = "triggered", event = "combat_damage", source = "equipped", effects = [{ do = "draw", n = 2, who = "you", optional = true }, { do = "discard", n = 1, who = "you", cont = true }] },
   { type = "static", static = "equip_cost", mana = 1 },
 ]
 status = "Full"

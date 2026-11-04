@@ -1536,6 +1536,20 @@ fn skyhunter_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Pla
     if owner(g, src) != p || !atk.contains(&src) || !live(g, src) {
         return Ok(vec![]);
     }
+    let human = crate::human::is_human(g, p);
+    // practice mode: the table's window comes first (the engine probes a trigger up to its first window, so nothing
+    // may be asked or moved before it), then the person looks at the top six
+    if human
+        && !crate::engine::stack::trigger_window(
+            g,
+            p,
+            Some(src),
+            "look at the top six: put an Aura or Equipment onto the battlefield",
+            Some(5.0),
+        )?
+    {
+        return Ok(vec![]);
+    }
     let n = g.player(p).library.len().min(6);
     let top: Vec<CardId> = (0..n).map(|_| g.player_mut(p).library.pop().unwrap()).collect();
     let can_aura = |g: &Game, c: CardId| {
@@ -1543,24 +1557,52 @@ fn skyhunter_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Pla
     };
     let cands: Vec<CardId> =
         top.iter().copied().filter(|&c| g.db.get(c).has_subtype("equipment") || can_aura(g, c)).collect();
-    let pick = max_by(&cands, |c| crate::engine::tutors::card_worth(g, p, c, false));
+    let pick = if human {
+        // practice mode: the person sees the six and picks which Aura or Equipment (if any) to put onto the battlefield
+        crate::human::gaps_t2::pick_card(
+            g,
+            p,
+            &cands,
+            "Armored Skyhunter: put which Aura or Equipment card onto the battlefield?",
+            Some("none"),
+        )?
+    } else {
+        max_by(&cands, |c| crate::engine::tutors::card_worth(g, p, c, false))
+    };
     let mut rest: Vec<CardId> = top.iter().copied().filter(|&c| Some(c) != pick).collect();
     g.rng.shuffle(&mut rest);
     for c in rest {
         g.player_mut(p).library.insert(0, c); // the bottom
     }
     let Some(c) = pick else { return Ok(vec![]) };
-    if !may_window(g, p, Some(src), "put an Aura or Equipment onto the battlefield", Some(5.0))? {
+    // the person has said yes by picking the card, after the table's window above
+    if !human && !may_window(g, p, Some(src), "put an Aura or Equipment onto the battlefield", Some(5.0))? {
         g.player_mut(p).library.insert(0, c);
         return Ok(vec![]);
     }
     g.player_mut(p).seen.insert(c);
+    // where it goes: the AI puts it on the best holder; the person picks a creature they control (an Equipment: "you
+    // may attach it", so they may leave it unattached)
+    let holder = |g: &Game, what: &str, may: bool| -> Res<Option<PermId>> {
+        if !human {
+            return Ok(super::cloud::best_holder(g, p));
+        }
+        let mine: Vec<PermId> =
+            g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).collect();
+        crate::human::gaps_t2::pick_target(
+            g,
+            p,
+            &mine,
+            &format!("Armored Skyhunter: {what} which creature?"),
+            if may { Some("none") } else { None },
+        )
+    };
     if g.db.get(c).has_subtype("equipment") {
         let em = enter(g, p, c, Enter { sick: false, ..Default::default() })?;
-        if let Some(to) = super::cloud::best_holder(g, p) {
+        if let Some(to) = holder(g, "attach the Equipment to", true)? {
             super::cloud::attach(g, em, to);
         }
-    } else if let Some(to) = super::cloud::best_holder(g, p) {
+    } else if let Some(to) = holder(g, "enchant", false)? {
         g.attach_to = Some(to);
         let r = enter(g, p, c, Enter::default());
         g.attach_to = None;

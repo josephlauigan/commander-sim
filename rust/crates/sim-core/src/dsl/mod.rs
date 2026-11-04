@@ -894,10 +894,36 @@ fn run(
                     );
                 }
             }
-            if let Some(&(c, q)) = pool.iter().max_by(|a, b| {
-                let (x, y) = (g.db.get(a.0), g.db.get(b.0));
-                (x.bomb, x.pow, x.cmc).cmp(&(y.bomb, y.pow, y.cmc))
-            }) {
+            // practice mode: the person picks the card (a target of the ability: no way out)
+            let best = if crate::human::is_human(g, p) && !pool.is_empty() {
+                let what = match spell.or(src.and_then(|m| g.perm(m).cd)) {
+                    Some(c) => g.db.get(c).name.to_string(),
+                    None => "An effect".to_string(),
+                };
+                let labels: Vec<String> = pool
+                    .iter()
+                    .map(|&(c, q)| {
+                        let l = crate::human::choices::card_label(g, c);
+                        if q == p { l } else { format!("{l} ({})", g.player(q).name) }
+                    })
+                    .collect();
+                let k = crate::human::choices::choose_one(
+                    g,
+                    p,
+                    "target",
+                    &format!("{what}: return which card to the battlefield?"),
+                    &labels,
+                )?;
+                Some(pool[k])
+            } else {
+                pool.iter()
+                    .max_by(|a, b| {
+                        let (x, y) = (g.db.get(a.0), g.db.get(b.0));
+                        (x.bomb, x.pow, x.cmc).cmp(&(y.bomb, y.pow, y.cmc))
+                    })
+                    .copied()
+            };
+            if let Some((c, q)) = best {
                 let gy = &mut g.player_mut(q).gy;
                 let i = gy.iter().position(|&x| x == c).unwrap();
                 gy.remove(i);

@@ -381,7 +381,11 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) 
         if let Some(n) = t.int(Tag::Tokatk) {
             let att = name.starts_with("Adeline");
             let n = if att { g.opps(p).count() as u32 } else { n.max(0) as u32 };
-            new.extend(make_tokens(g, p, Tokens { attacking: att, sick: !att, lifelink: !att, ..Tokens::new(n, 1) })?);
+            let made = make_tokens(g, p, Tokens { attacking: att, sick: !att, lifelink: !att, ..Tokens::new(n, 1) })?;
+            if att && crate::human::is_human(g, p) {
+                crate::human::gaps_t2::route_adeline(g, p, &made)?; // practice mode: one token per opponent, player or walker
+            }
+            new.extend(made);
         }
         if t.has(Tag::Suntitan) {
             sun_titan(g, p)?;

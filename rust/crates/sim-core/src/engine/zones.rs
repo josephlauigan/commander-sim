@@ -850,7 +850,12 @@ fn card_tag_str(g: &Game, m: PermId, t: Tag) -> Option<&str> {
 fn hand_tag_death(g: &mut Game, q: PlayerId, p: PlayerId, _m: PermId, creature: bool) -> Res {
     if has(g, q, Tag::Bartist) {
         let opps: Vec<PlayerId> = g.opps(q).collect();
-        if let Some(t) = max_by(&opps, |o| threat(g, q, o)) {
+        let target = if crate::human::is_human(g, q) {
+            crate::human::gaps_t2::pick_player(g, q, "Blood Artist")? // "target player": the person's pick, you included
+        } else {
+            max_by(&opps, |o| threat(g, q, o))
+        };
+        if let Some(t) = target {
             lose_life(g, t, 1, Some(q), "drain", None)?; // Blood Artist
             gain(g, q, 1)?;
         }

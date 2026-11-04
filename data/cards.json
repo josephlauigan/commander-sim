@@ -76663,12 +76663,14 @@
       {
        "do": "draw",
        "n": 2,
-       "who": "you"
+       "who": "you",
+       "optional": true
       },
       {
        "do": "discard",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "cont": true
       }
      ]
     },

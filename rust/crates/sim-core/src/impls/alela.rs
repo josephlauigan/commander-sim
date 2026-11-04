@@ -526,6 +526,28 @@ fn karmic_fire(g: &mut Game, src: PermId, m: PermId, cause: Sym) -> Res {
     }
     let cands: Vec<PermId> =
         g.player(d).perms.iter().copied().filter(|&x| !g.perm(x).phased && !untargetable(g, x)).collect();
+    if crate::human::is_human(g, o) {
+        // practice mode: "you may destroy target permanent that opponent controls": the person picks it, or declines
+        // (asked after the table's window: the engine probes a trigger up to its first window, and a question before
+        // it would be asked twice)
+        if cands.is_empty() || !trigger_window(g, o, Some(src), "destroy a permanent", Some(4.0))? {
+            return Ok(());
+        }
+        let Some(t) = crate::human::gaps_t2::pick_target(
+            g,
+            o,
+            &cands,
+            "Karmic Justice: destroy which of their permanents?",
+            Some("don't destroy"),
+        )?
+        else {
+            return Ok(());
+        };
+        if controls(g, d, t) {
+            apply_removal(g, Some(o), t, "destroy", None)?;
+        }
+        return Ok(());
+    }
     let Some(t) = max_by(&cands, |x| pval(g, x)) else { return Ok(()) };
     if !may_window(g, o, Some(src), &format!("destroy {}", name_of(g, t)), Some(4.0))? {
         return Ok(());
@@ -842,13 +864,29 @@ fn jackdaw_return(g: &mut Game, o: PlayerId, src: PermId, dead: PermId) -> Res {
     let mv = g.db.get(dcd).cmc;
     let cs: Vec<CardId> =
         g.player(o).gy.iter().copied().filter(|&c| g.db.get(c).creature && g.db.get(c).cmc < mv && c != dcd).collect();
-    let Some(c) = max_by(&cs, |c| {
-        let d = g.db.get(c);
-        crate::ai::card_etb_value(g, o, c) + d.cmc as f64 + d.pow as f64
-    }) else {
+    let human = crate::human::is_human(g, o);
+    let best = if human {
+        None
+    } else {
+        max_by(&cs, |c| {
+            let d = g.db.get(c);
+            crate::ai::card_etb_value(g, o, c) + d.cmc as f64 + d.pow as f64
+        })
+    };
+    let best = if human {
+        // practice mode: "another target creature card with lesser mana value" is the person's pick, asked after the
+        // table's window (the engine probes a trigger up to its first window: a question before it is asked twice)
+        if cs.is_empty() || !trigger_window(g, o, Some(src), "return a creature card", Some(3.0))? {
+            return Ok(());
+        }
+        crate::human::gaps_t2::pick_card(g, o, &cs, "Jackdaw Savior: return which creature card to the battlefield?", None)?
+    } else {
+        best
+    };
+    let Some(c) = best else {
         return Ok(());
     };
-    if !trigger_window(g, o, Some(src), &format!("return {}", g.db.get(c).name), Some(3.0))?
+    if (!human && !trigger_window(g, o, Some(src), &format!("return {}", g.db.get(c).name), Some(3.0))?)
         || !g.player(o).gy.contains(&c)
     {
         return Ok(());
@@ -925,13 +963,34 @@ fn futurescribe(g: &mut Game, src: Src, p: PlayerId) -> Res {
         return Ok(());
     }
     let cs: Vec<PermId> = creatures(g, p).into_iter().filter(|&m| m != src).collect();
-    let Some(t) = first_max(&cs, |m| {
-        let x = g.perm(m);
-        (!x.tapped && !x.sick, flier(g, m), epow(g, m))
-    }) else {
+    let human = crate::human::is_human(g, p);
+    let mut best = if human {
+        None
+    } else {
+        first_max(&cs, |m| {
+            let x = g.perm(m);
+            (!x.tapped && !x.sick, flier(g, m), epow(g, m))
+        })
+    };
+    if human {
+        // practice mode: "another target creature you control" is the person's pick, asked after the table's window
+        // (the engine probes a trigger up to its first window, and a question before it would be asked twice)
+        if cs.is_empty() || !trigger_window(g, p, Some(src), "+1/+1 to another creature", None)? {
+            return Ok(());
+        }
+        best = crate::human::gaps_t2::pick_target(
+            g,
+            p,
+            &cs,
+            "Desperate Futurescribe: which other creature gets +1/+1 (or a +1/+1 counter)?",
+            None,
+        )?;
+    }
+    let Some(t) = best else {
         return Ok(());
     };
-    if !trigger_window(g, p, Some(src), &format!("+1/+1 to {}", name_of(g, t)), None)? || !controls(g, p, t) {
+    if (!human && !trigger_window(g, p, Some(src), &format!("+1/+1 to {}", name_of(g, t)), None)?) || !controls(g, p, t)
+    {
         return Ok(());
     }
     if g.player(p).scry_turn == Some(g.turn_stamp()) {
