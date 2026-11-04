@@ -36,6 +36,14 @@ Why:
   (a plan file may name only cards in the deck).
 Next candidate (not run): Exquisite Blood alone for Prison Sentence, the one piece that pulled its weight.
 
+**Same package, Urza's Cave for the Island instead of Tolaria West**: **24.9% -> 26.1%, +1.3 (noise ±2.4): NO CLEAR
+EFFECT.** Raw: `2026-11-04-coffers/package-cave-t5.txt`. Same seeds, so the 1.4 points over the Tolaria West version is
+also noise. Same shape: 27% of wins by the Blood combo (Blood cast 68%, wins 63% when cast), the same losses (Kinnan,
+Urza, Zur, Miirym), plan online -4.5 (±3.0), 1.35 cards fewer drawn, damage -3.4 a game. **Caveat: the Cave never
+fetched anything for her.** Its AI (`impls/karn_engines.rs`) cracks it only for a Tron piece, Mishra's Workshop or
+Ancient Tomb, so here it was a colourless land; Urborg and Coffers aren't on its want list. A real Cave test needs
+that AI rule first.
+
 ### 2026-10-19: Curiosity => Orcish Bowmasters, confirmed (T5, loose, 2,000 games per list, look-ahead)
 Result: **31.6% -> 34.1%, +2.5 (noise ±2.3): BETTER**, the first swap to clear the noise for her. Raw:
 `2026-10-19-bowmasters/full-curiosity-t5.txt`.
