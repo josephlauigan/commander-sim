@@ -66,3 +66,12 @@ Deadly Rollick ({3}{B}, free while you control a commander: exile target creatur
 Dromoka, a 6-mana lock that died to Thanos's own even wipe. Rollick adds a free instant-speed answer to creature stax
 (Drannith Magistrate, Collector Ouphe, Lavinia, Opposition Agent, Archon of Emeria) and creature commanders. No new
 number yet: the 29.6% above is the list before this swap. The pilot's guide in the deck file is updated.
+
+## 2026-11-03 — revised Tier 6 opponent field
+
+`commander-sim --deck thanos --pool t6 --games 2000 --seed 500000 --jobs 22 --ai lookahead --profile loose --quiet`
+under a 24 GiB cap, code 2ea651e6: 31.2% (624/2000, approximate Wilson 95% CI 29.2–33.3), median win round 7.
+Raw output: `audit/t6-lists/thanos-t6-2000.txt`. Thanos itself is unchanged; opponent lists and Kinnan combo guards
+changed together, so this is not a paired deck-swap gain. Oracle/Consultation/Pact supplied 85% of decisive wins;
+combo attempts still had interruption and no-card stops. The opponent pool remains too slow and internally uneven;
+this result is simulator evidence, not a real-world win-rate prediction.

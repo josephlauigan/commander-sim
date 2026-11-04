@@ -54,10 +54,20 @@ fn log_has(g: &Game, s: &str) -> bool {
 /// Kinnan and Basalt Monolith out, Forests for mana, the tutor in hand: Thrasios in the library is the outlet
 fn thrasios_table(tutor: &str, forests: usize) -> Game {
     let mut g = kinnan_goldfish();
+    g.active = Some(P0);
+    g.step = TurnStep::Main1;
     perm(&mut g, P0, "Kinnan, Bonder Prodigy");
     perm(&mut g, P0, "Basalt Monolith");
+    perm(&mut g, P0, "Consecrated Sphinx");
+    token(&mut g, P0, 1);
     lands(&mut g, P0, "Forest", forests, false);
     hand(&mut g, P0, &[tutor]);
+    // Synthetic tutor-cost fixture: retain a separate payoff even when Finale itself is the tutor.
+    // These tests exercise X selection, not Commander singleton legality.
+    let finale = card(&g, "Finale of Devastation");
+    if !g.player(P0).library.contains(&finale) {
+        g.player_mut(P0).library.push(finale);
+    }
     assert!(in_lib(&g, "Thrasios, Triton Hero"));
     g
 }

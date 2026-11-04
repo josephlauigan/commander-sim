@@ -10,6 +10,18 @@ guessing at simulator behavior.
 carry its model names or Claude-tool instructions into Codex. Use the Codex model policy below. Keep the durable
 project rules in this file and the detailed domain documentation aligned when either changes.
 
+## Always use the current rules (origin/main)
+
+At the start of a session, run `git fetch -q origin main`, then read `git show origin/main:AGENTS.md` and
+`git show origin/main:CLAUDE.md`. Follow the current remote repository rules where the local copies differ;
+Claude-specific model names and tool instructions remain scoped to Claude, and Codex uses the model policy below.
+This applies in worktrees and sessions started from a parent directory too; run the commands from the repository
+root (or use `git -C <repo>`). If fetching is unavailable, state that the remote rules could not be refreshed and
+use the available copies.
+
+Two rules must never be missed: keep swap and package explanations enabled for deck decisions, and simulate each
+owned deck only against its matched tiers in `data/my_decks.toml`. Details appear in the simulation rules below.
+
 ## Codex model policy
 
 The main chat's model is selected by the Codex session and cannot be changed by this file. When choosing a model for
@@ -17,19 +29,22 @@ a new session or for delegated work that the user explicitly requests, route wor
 
 | Work | Model | Reasoning | Use for |
 | --- | --- | --- | --- |
-| Complex main work | `gpt-6-astra` | `high` or `xhigh` | Ambiguous architecture, difficult debugging, broad reviews, cross-crate changes, and conflicting simulation evidence |
-| Normal implementation or subagent work | `gpt-6.1-sol` | `high` | Feature work, focused bug fixes, card implementations, tests, and most delegated coding tasks |
-| Visual or UI workflow | `gpt-6.1-terra` | `high` | Practice-mode UI, `ios-shell`, screenshots, computer use, and tightly scoped visual fixes |
-| Mechanical or high-volume work | `gpt-6-luna` | `medium` | Repository searches, repetitive data edits, triage, audits, and output summarization |
+| Lead agent and complex work | `gpt-6.1-sol` | `medium`; `high` for difficult correctness reviews | Coordination, architecture, difficult debugging, final reviews, cross-crate changes, and conflicting simulation evidence |
+| Normal implementation or subagent work | `gpt-6.1-terra` | `medium` | Feature work, focused bug fixes, card implementations, tests, and most delegated coding tasks |
+| Visual or UI workflow | `gpt-6.1-terra` | `medium` | Practice-mode UI, `ios-shell`, screenshots, computer use, and tightly scoped visual fixes |
+| Mechanical or high-volume work | `gpt-6-luna` | `low` | Repository searches, repetitive data edits, triage, audits, and output summarization |
 
-- Prefer `gpt-6.1-sol` with high reasoning as the everyday default when Astra-level reasoning is unnecessary.
-- Use `gpt-6-astra` when quality and judgment matter more than latency or usage.
-- Use `gpt-6.1-terra` for its visual and computer-use strengths, not as the default for deep Rust engine work.
+- Use `gpt-6.1-sol` as the highest-level agent for coordination, complex decisions, and final review, with medium
+  reasoning by default and high reasoning reserved for difficult correctness issues. Do not select `gpt-6-astra` unless the user
+  explicitly requests it.
+- Use `gpt-6.1-terra` with medium reasoning as the default implementation subagent, including visual and UI work.
+  Escalate ambiguous architecture, subtle engine correctness, and conflicting evidence to the Sol lead.
 - Use `gpt-6-luna` only for bounded tasks with clear acceptance criteria; do not use it to judge subtle simulator
   correctness or ambiguous Magic rules.
 - Do not select the older `gpt-6-sol` for new work when `gpt-6.1-sol` is available, unless the user asks to preserve
   an existing model configuration.
 - Do not delegate work or spawn subagents unless the user explicitly asks for delegation or parallel agent work.
+- Prefer completing existing work without additional subagents when delegation would duplicate context or review.
 - Keep every delegated assignment narrowly scoped and end the subagent when its assigned work is done or blocked.
 
 ## Non-negotiable rules
@@ -118,9 +133,11 @@ cargo test --release -p sim-cli realism
 - Use adaptive AI for a quick directional check and the default look-ahead AI for final claims unless the task says
   otherwise. Always state which AI produced a reported result.
 - Keep the paired explain breakdown enabled for `--swap` and package tests. Do not pass `--no-explain` for a deck
-  decision. Keep preflight enabled unless diagnosing the preflight itself.
-- After every substantive deck run, update `audit/<deck>/FINDINGS.md` with the date, exact command, result and noise
-  band, raw-output location, and interpretation.
+  decision. This includes incoming cards' model status and the paired drawn / cast / stuck-in-hand and game-shape
+  breakdown. Keep preflight enabled unless diagnosing the preflight itself.
+- After every swap or package run, and every other substantive deck run, update `audit/<deck>/FINDINGS.md` with the
+  date, exact command, result and noise band, raw-output location, strengths and weaknesses, and what was tried and
+  why it helped or not. Tell JD the why along with the number.
 - Interpret paired differences against their reported noise band. Treat an effect inside the band as no clear
   effect.
 

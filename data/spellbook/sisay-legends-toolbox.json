@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-10-30",
+  "fetched": "2026-11-03",
   "deck": "sisay-legends-toolbox",
   "commanders": [
     "Sisay, Weatherlight Captain"
   ],
-  "request_sha256": "7dac82c9aafb424dae8740a4fc22d917473c909212df6dd5e37820c8e2dbda56",
+  "request_sha256": "a29506dccae8dc3f33c912fd1a9850efb9b37827530cb6ee7d2498fce2a25bb2",
   "identity": "WUBRG",
   "included": [
     {
@@ -34,7 +34,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 24766
+      "popularity": 25021
     },
     {
       "id": "2608-4499-5168",
@@ -68,7 +68,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 18002
+      "popularity": 18104
     },
     {
       "id": "2404-2608-4499",
@@ -102,7 +102,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 17994
+      "popularity": 18091
     },
     {
       "id": "2364-2608-4499",
@@ -132,7 +132,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 16099
+      "popularity": 16191
     },
     {
       "id": "527-2608-4499",
@@ -166,7 +166,7 @@
       "mana": "{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 9909
+      "popularity": 9973
     },
     {
       "id": "527-4499-4927",
@@ -198,7 +198,7 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 8183
+      "popularity": 8231
     }
   ],
   "included_by_changing_commanders": [],
@@ -229,7 +229,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 364272,
+      "popularity": 365847,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -260,7 +260,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 78094,
+      "popularity": 78375,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -289,7 +289,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 67063,
+      "popularity": 67345,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -318,7 +318,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 46905,
+      "popularity": 46965,
       "missing": [
         "Basalt Monolith"
       ]
@@ -350,7 +350,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 46618,
+      "popularity": 46750,
       "missing": [
         "Peer into the Abyss"
       ]
@@ -386,7 +386,7 @@
       "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 46202,
+      "popularity": 46311,
       "missing": [
         "Displacer Kitten"
       ]
@@ -415,7 +415,7 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 37844,
+      "popularity": 37954,
       "missing": [
         "Tidespout Tyrant"
       ]
@@ -451,7 +451,7 @@
       "mana": "{1}",
       "bracket": "P",
       "legal": true,
-      "popularity": 27463,
+      "popularity": 27466,
       "missing": [
         "Displacer Kitten"
       ]
@@ -484,7 +484,7 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 23970,
+      "popularity": 24140,
       "missing": [
         "Staff of Domination"
       ]
@@ -514,7 +514,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 23778,
+      "popularity": 23924,
       "missing": [
         "Freed from the Real"
       ]
@@ -547,7 +547,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 19066,
+      "popularity": 19156,
       "missing": [
         "Freed from the Real"
       ]
@@ -578,7 +578,7 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 18349,
+      "popularity": 18422,
       "missing": [
         "Aggravated Assault"
       ]
@@ -614,7 +614,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 18226,
+      "popularity": 18281,
       "missing": [
         "Displacer Kitten"
       ]
@@ -645,7 +645,7 @@
       "mana": "{2}{G} at most",
       "bracket": "S",
       "legal": true,
-      "popularity": 15529,
+      "popularity": 15642,
       "missing": [
         "Umbral Mantle"
       ]
@@ -678,7 +678,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 14502,
+      "popularity": 14632,
       "missing": [
         "Staff of Domination"
       ]
@@ -708,7 +708,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 14432,
+      "popularity": 14521,
       "missing": [
         "Pemmin's Aura"
       ]
@@ -774,7 +774,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 13904,
+      "popularity": 13937,
       "missing": [
         "Faeburrow Elder"
       ]
@@ -812,7 +812,7 @@
       "mana": "{3}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 13572,
+      "popularity": 13717,
       "missing": [
         "Faerie Mastermind"
       ]
@@ -839,7 +839,7 @@
       "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 12743,
+      "popularity": 12745,
       "missing": [
         "Tidespout Tyrant"
       ]
@@ -872,7 +872,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 12075,
+      "popularity": 12116,
       "missing": [
         "Pemmin's Aura"
       ]
@@ -901,7 +901,7 @@
       "mana": "{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 11993,
+      "popularity": 12108,
       "missing": [
         "Jumbo Cactuar"
       ]
@@ -930,7 +930,7 @@
       "mana": "{G}",
       "bracket": "R",
       "legal": true,
-      "popularity": 11398,
+      "popularity": 11489,
       "missing": [
         "Jumbo Cactuar"
       ]
@@ -962,38 +962,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 11362,
+      "popularity": 11426,
       "missing": [
         "The Chain Veil"
-      ]
-    },
-    {
-      "id": "1486-3750",
-      "cards": [
-        {
-          "name": "Magda, Brazen Outlaw",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Aggravated Assault",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least 5 Dwarfs who do not have summoning sickness.\nOpponents can not block.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 10725,
-      "missing": [
-        "Aggravated Assault"
       ]
     },
     {
@@ -1020,7 +991,7 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 10534,
+      "popularity": 10587,
       "missing": [
         "Freed from the Real"
       ]
@@ -1053,7 +1024,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 10085,
+      "popularity": 10103,
       "missing": [
         "Najeela, the Blade-Blossom"
       ]
@@ -1082,38 +1053,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 9828,
+      "popularity": 9872,
       "missing": [
         "Peregrine Drake"
-      ]
-    },
-    {
-      "id": "553-4105",
-      "cards": [
-        {
-          "name": "Approach of the Second Sun",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Demonic Tutor",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Win the game"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{13}{W}{W}{B}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 9642,
-      "missing": [
-        "Approach of the Second Sun"
       ]
     },
     {
@@ -1147,9 +1089,38 @@
       "mana": "{1}{G}",
       "bracket": "P",
       "legal": true,
-      "popularity": 9608,
+      "popularity": 9740,
       "missing": [
         "Badgermole Cub"
+      ]
+    },
+    {
+      "id": "553-4105",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Demonic Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{13}{W}{W}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 9713,
+      "missing": [
+        "Approach of the Second Sun"
       ]
     },
     {
@@ -1182,7 +1153,7 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 9513,
+      "popularity": 9570,
       "missing": [
         "Freed from the Real"
       ]
@@ -1209,7 +1180,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 8374,
+      "popularity": 8401,
       "missing": [
         "Stasis"
       ]
@@ -1238,7 +1209,7 @@
       "mana": "{12}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7437,
+      "popularity": 7503,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -1267,7 +1238,7 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 7081,
+      "popularity": 7115,
       "missing": [
         "Pemmin's Aura"
       ]
@@ -1304,7 +1275,7 @@
       "mana": "{2}{W}",
       "bracket": "P",
       "legal": true,
-      "popularity": 6681,
+      "popularity": 6948,
       "missing": [
         "Anointed Procession"
       ]
@@ -1341,7 +1312,7 @@
       "mana": "{2}{W}",
       "bracket": "P",
       "legal": true,
-      "popularity": 6087,
+      "popularity": 6302,
       "missing": [
         "Mondrak, Glory Dominus"
       ]
@@ -1376,9 +1347,46 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 5883,
+      "popularity": 5912,
       "missing": [
         "Pemmin's Aura"
+      ]
+    },
+    {
+      "id": "4682-6441-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elspeth, Storm Slayer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 5763,
+      "missing": [
+        "Elspeth, Storm Slayer"
       ]
     },
     {
@@ -1403,7 +1411,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5648,
+      "popularity": 5689,
       "missing": [
         "Knowledge Pool"
       ]
@@ -1442,46 +1450,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5614,
+      "popularity": 5599,
       "missing": [
         "Chromatic Orrery"
-      ]
-    },
-    {
-      "id": "4682-6441-7890",
-      "cards": [
-        {
-          "name": "Gleaming Splendor",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Smothering Tithe",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Elspeth, Storm Slayer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw for any number of players",
-        "Near-infinite Treasure tokens",
-        "Near-infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
-      "mana": "{2}{W}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 5539,
-      "missing": [
-        "Elspeth, Storm Slayer"
       ]
     },
     {
@@ -1515,7 +1486,7 @@
       "mana": "{1}{G}{G}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 5131,
+      "popularity": 5252,
       "missing": [
         "The Unbeatable Squirrel Girl"
       ]
@@ -1544,7 +1515,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5047,
+      "popularity": 5061,
       "missing": [
         "Village Bell-Ringer"
       ]
@@ -1575,77 +1546,45 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 4893,
+      "popularity": 4902,
       "missing": [
         "Aggravated Assault"
       ]
     },
     {
-      "id": "527-2011",
+      "id": "4289-7686-7730",
       "cards": [
         {
-          "name": "Najeela, the Blade-Blossom",
+          "name": "The Unbeatable Squirrel Girl",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Selvala, Heart of the Wilds",
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shang-Chi, Master of Kung Fu",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite creature tokens with haste",
         "Infinite colored mana",
-        "Infinite combat phases"
+        "Infinite creature tokens"
       ],
       "requires": [],
-      "prerequisites": "Selvala, Heart of the Wilds does not have summoning sickness. You have a way to give Selvala vigilance.\nYou control a creature with power 6 or greater.",
-      "mana": "{G}",
-      "bracket": "S",
+      "prerequisites": "You control four or more Squirrels.",
+      "mana": "{1}{G}{G}{G}",
+      "bracket": "E",
       "legal": true,
-      "popularity": 4328,
+      "popularity": 4825,
       "missing": [
-        "Najeela, the Blade-Blossom"
-      ]
-    },
-    {
-      "id": "4682-7824-7890",
-      "cards": [
-        {
-          "name": "Gleaming Splendor",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Smothering Tithe",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Bard, King of Dale",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw for any number of players",
-        "Near-infinite Treasure tokens",
-        "Near-infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
-      "mana": "{2}{W}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 4243,
-      "missing": [
-        "Bard, King of Dale"
+        "The Unbeatable Squirrel Girl"
       ]
     },
     {
@@ -1680,9 +1619,77 @@
       "mana": "{2}{W}",
       "bracket": "P",
       "legal": true,
-      "popularity": 4209,
+      "popularity": 4381,
       "missing": [
         "Exalted Sunborn"
+      ]
+    },
+    {
+      "id": "4682-7824-7890",
+      "cards": [
+        {
+          "name": "Gleaming Splendor",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bard, King of Dale",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw for any number of players",
+        "Near-infinite Treasure tokens",
+        "Near-infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
+      "mana": "{2}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 4357,
+      "missing": [
+        "Bard, King of Dale"
+      ]
+    },
+    {
+      "id": "527-2011",
+      "cards": [
+        {
+          "name": "Najeela, the Blade-Blossom",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Selvala, Heart of the Wilds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens with haste",
+        "Infinite colored mana",
+        "Infinite combat phases"
+      ],
+      "requires": [],
+      "prerequisites": "Selvala, Heart of the Wilds does not have summoning sickness. You have a way to give Selvala vigilance.\nYou control a creature with power 6 or greater.",
+      "mana": "{G}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4342,
+      "missing": [
+        "Najeela, the Blade-Blossom"
       ]
     },
     {
@@ -1715,9 +1722,40 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 4197,
+      "popularity": 4193,
       "missing": [
         "Felidar Guardian"
+      ]
+    },
+    {
+      "id": "3750-4289",
+      "cards": [
+        {
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite combat phases",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five creatures that do not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4143,
+      "missing": [
+        "Aggravated Assault"
       ]
     },
     {
@@ -1742,7 +1780,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 4049,
+      "popularity": 4074,
       "missing": [
         "Knowledge Pool"
       ]
@@ -1772,7 +1810,7 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 3930,
+      "popularity": 3960,
       "missing": [
         "Sword of the Paruns"
       ]
@@ -1809,42 +1847,9 @@
       "mana": "{2}{W}",
       "bracket": "P",
       "legal": true,
-      "popularity": 3807,
+      "popularity": 3920,
       "missing": [
         "Goldspan Dragon"
-      ]
-    },
-    {
-      "id": "2608-4131-4499",
-      "cards": [
-        {
-          "name": "Derevi, Empyrial Tactician",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Emiel the Blessed",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Basalt Monolith",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 3581,
-      "missing": [
-        "Basalt Monolith"
       ]
     },
     {
@@ -1879,9 +1884,42 @@
       "mana": "{2}{W}",
       "bracket": "P",
       "legal": true,
-      "popularity": 3531,
+      "popularity": 3629,
       "missing": [
         "Xorn"
+      ]
+    },
+    {
+      "id": "2608-4131-4499",
+      "cards": [
+        {
+          "name": "Derevi, Empyrial Tactician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3587,
+      "missing": [
+        "Basalt Monolith"
       ]
     },
     {
@@ -1906,7 +1944,7 @@
       "mana": "{2}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 3333,
+      "popularity": 3346,
       "missing": [
         "Starfield of Nyx"
       ]
@@ -1936,7 +1974,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2975,
+      "popularity": 3036,
       "missing": [
         "Sakashima of a Thousand Faces"
       ]
@@ -1963,7 +2001,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2935,
+      "popularity": 2958,
       "missing": [
         "Knowledge Pool"
       ]
@@ -1990,7 +2028,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2905,
+      "popularity": 2922,
       "missing": [
         "Omen Machine"
       ]
@@ -2020,7 +2058,7 @@
       "mana": "{3}",
       "bracket": "S",
       "legal": true,
-      "popularity": 2622,
+      "popularity": 2635,
       "missing": [
         "Intruder Alarm"
       ]
@@ -2051,7 +2089,7 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 2129,
+      "popularity": 2150,
       "missing": [
         "Bruce Banner // The Incredible Hulk"
       ]
@@ -2084,7 +2122,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 1979,
+      "popularity": 1973,
       "missing": [
         "Grim Monolith"
       ]
@@ -2114,36 +2152,9 @@
       "mana": "{3}",
       "bracket": "S",
       "legal": true,
-      "popularity": 1941,
+      "popularity": 1939,
       "missing": [
         "Abdel Adrian, Gorion's Ward"
-      ]
-    },
-    {
-      "id": "1725-4761",
-      "cards": [
-        {
-          "name": "Teferi, Time Raveler",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Omen Machine",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 1906,
-      "missing": [
-        "Omen Machine"
       ]
     },
     {
@@ -2176,9 +2187,36 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1845,
+      "popularity": 1929,
       "missing": [
         "Pili-Pala"
+      ]
+    },
+    {
+      "id": "1725-4761",
+      "cards": [
+        {
+          "name": "Teferi, Time Raveler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Omen Machine",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1912,
+      "missing": [
+        "Omen Machine"
       ]
     },
     {
@@ -2206,7 +2244,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1821,
+      "popularity": 1844,
       "missing": [
         "Requiem Monolith"
       ]
@@ -2275,7 +2313,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1675,
+      "popularity": 1672,
       "missing": [
         "Deadeye Navigator"
       ]
@@ -2312,7 +2350,7 @@
       "mana": "{2}{W}",
       "bracket": "P",
       "legal": true,
-      "popularity": 1535,
+      "popularity": 1603,
       "missing": [
         "Doubling Season"
       ]
@@ -2342,9 +2380,44 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1516,
+      "popularity": 1523,
       "missing": [
         "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "129-1247-4289",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pili-Pala",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1513,
+      "missing": [
+        "Pili-Pala"
       ]
     },
     {
@@ -2372,7 +2445,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1324,
+      "popularity": 1332,
       "missing": [
         "Palinchron"
       ]
@@ -2405,7 +2478,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1250,
+      "popularity": 1252,
       "missing": [
         "Lithoform Engine"
       ]
@@ -2441,22 +2514,22 @@
       ]
     },
     {
-      "id": "527-1753-4499",
+      "id": "1247-5168-5963",
       "cards": [
         {
-          "name": "Selvala, Heart of the Wilds",
+          "name": "Marvin, Murderous Mimic",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Emiel the Blessed",
+          "name": "Pili-Pala",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Samut, Voice of Dissent",
+          "name": "Bloom Tender",
           "zones": [
             "B"
           ]
@@ -2466,13 +2539,13 @@
         "Infinite colored mana"
       ],
       "requires": [],
-      "prerequisites": "",
-      "mana": "{G}",
-      "bracket": "S",
+      "prerequisites": "There are at least two colors among permanents you control.",
+      "mana": "",
+      "bracket": "E",
       "legal": true,
-      "popularity": 1154,
+      "popularity": 1185,
       "missing": [
-        "Samut, Voice of Dissent"
+        "Pili-Pala"
       ]
     },
     {
@@ -2507,7 +2580,7 @@
       "mana": "{2}{W}",
       "bracket": "P",
       "legal": true,
-      "popularity": 1144,
+      "popularity": 1183,
       "missing": [
         "Parallel Lives"
       ]
@@ -2544,28 +2617,28 @@
       "mana": "{W}",
       "bracket": "P",
       "legal": true,
-      "popularity": 1139,
+      "popularity": 1178,
       "missing": [
         "Zirda, the Dawnwaker"
       ]
     },
     {
-      "id": "1247-5168-5963",
+      "id": "527-1753-4499",
       "cards": [
         {
-          "name": "Marvin, Murderous Mimic",
+          "name": "Selvala, Heart of the Wilds",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Pili-Pala",
+          "name": "Emiel the Blessed",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Bloom Tender",
+          "name": "Samut, Voice of Dissent",
           "zones": [
             "B"
           ]
@@ -2575,13 +2648,13 @@
         "Infinite colored mana"
       ],
       "requires": [],
-      "prerequisites": "There are at least two colors among permanents you control.",
-      "mana": "",
-      "bracket": "E",
+      "prerequisites": "",
+      "mana": "{G}",
+      "bracket": "S",
       "legal": true,
-      "popularity": 1134,
+      "popularity": 1158,
       "missing": [
-        "Pili-Pala"
+        "Samut, Voice of Dissent"
       ]
     },
     {
@@ -2608,7 +2681,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1108,
+      "popularity": 1103,
       "missing": [
         "Vigean Graftmage"
       ]
@@ -2640,141 +2713,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1086,
+      "popularity": 1095,
       "missing": [
         "High Alert"
-      ]
-    },
-    {
-      "id": "1432-3746",
-      "cards": [
-        {
-          "name": "Robaran Mercenaries",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ioreth of the Healing House",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite untap of legendary creatures you control",
-        "Infinite mana legendary creatures you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "There is at least one other legendary creature on the battlefield.",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 1052,
-      "missing": [
-        "Robaran Mercenaries"
-      ]
-    },
-    {
-      "id": "1623-2293",
-      "cards": [
-        {
-          "name": "Guile",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Flusterstorm",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have an additional instant or sorcery card in hand.",
-      "mana": "{U} plus enough mana to cast the instant or sorcery card",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1027,
-      "missing": [
-        "Guile"
-      ]
-    },
-    {
-      "id": "2608-4499-7203",
-      "cards": [
-        {
-          "name": "Derevi, Empyrial Tactician",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Emiel the Blessed",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Brigid, Clachan's Heart // Brigid, Doun's Mind",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite untap of permanents you control",
-        "Infinite green mana",
-        "Infinite mana permanents you control can produce",
-        "Infinite white mana"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least one other creature",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1023,
-      "missing": [
-        "Brigid, Clachan's Heart // Brigid, Doun's Mind"
-      ]
-    },
-    {
-      "id": "527-1432-1753",
-      "cards": [
-        {
-          "name": "Ioreth of the Healing House",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Samut, Voice of Dissent",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Selvala, Heart of the Wilds",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana",
-        "Infinite untap of legendary creatures you control",
-        "Infinite mana legendary creatures you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{G}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1014,
-      "missing": [
-        "Samut, Voice of Dissent"
       ]
     },
     {
@@ -2811,9 +2752,141 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 995,
+      "popularity": 1075,
       "missing": [
         "Deadeye Navigator"
+      ]
+    },
+    {
+      "id": "1432-3746",
+      "cards": [
+        {
+          "name": "Robaran Mercenaries",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ioreth of the Healing House",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite untap of legendary creatures you control",
+        "Infinite mana legendary creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "There is at least one other legendary creature on the battlefield.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1060,
+      "missing": [
+        "Robaran Mercenaries"
+      ]
+    },
+    {
+      "id": "2608-4499-7203",
+      "cards": [
+        {
+          "name": "Derevi, Empyrial Tactician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Brigid, Clachan's Heart // Brigid, Doun's Mind",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite untap of permanents you control",
+        "Infinite green mana",
+        "Infinite mana permanents you control can produce",
+        "Infinite white mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one other creature",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1035,
+      "missing": [
+        "Brigid, Clachan's Heart // Brigid, Doun's Mind"
+      ]
+    },
+    {
+      "id": "1623-2293",
+      "cards": [
+        {
+          "name": "Guile",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Flusterstorm",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have an additional instant or sorcery card in hand.",
+      "mana": "{U} plus enough mana to cast the instant or sorcery card",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1030,
+      "missing": [
+        "Guile"
+      ]
+    },
+    {
+      "id": "527-1432-1753",
+      "cards": [
+        {
+          "name": "Ioreth of the Healing House",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Samut, Voice of Dissent",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Selvala, Heart of the Wilds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite untap of legendary creatures you control",
+        "Infinite mana legendary creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{G}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1018,
+      "missing": [
+        "Samut, Voice of Dissent"
       ]
     },
     {
@@ -2846,7 +2919,7 @@
       "mana": "{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 942,
+      "popularity": 972,
       "missing": [
         "Temur Sabertooth"
       ]
@@ -2873,7 +2946,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 923,
+      "popularity": 926,
       "missing": [
         "Splinter Twin"
       ]
@@ -2910,7 +2983,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 919,
+      "popularity": 913,
       "missing": [
         "Fanatic of Rhonas"
       ]
@@ -2945,7 +3018,7 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 906,
+      "popularity": 911,
       "missing": [
         "Dynaheir, Invoker Adept"
       ]
@@ -2972,7 +3045,7 @@
       "mana": "{3}",
       "bracket": "E",
       "legal": true,
-      "popularity": 863,
+      "popularity": 862,
       "missing": [
         "Brood Monitor"
       ]
@@ -3008,7 +3081,82 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 822,
+      "popularity": 835,
+      "missing": [
+        "Horseshoe Crab"
+      ]
+    },
+    {
+      "id": "129-1409-4289-7730",
+      "cards": [
+        {
+          "name": "Deadeye Navigator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shang-Chi, Master of Kung Fu",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 810,
+      "missing": [
+        "Deadeye Navigator"
+      ]
+    },
+    {
+      "id": "129-3995-4289",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Horseshoe Crab",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 780,
       "missing": [
         "Horseshoe Crab"
       ]
@@ -3074,7 +3222,7 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 721,
+      "popularity": 722,
       "missing": [
         "Thousand-Year Elixir"
       ]
@@ -3109,7 +3257,7 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 672,
+      "popularity": 676,
       "missing": [
         "Concordant Crossroads"
       ]
@@ -3142,7 +3290,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 640,
+      "popularity": 639,
       "missing": [
         "Lotus Field"
       ]
@@ -3172,7 +3320,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 632,
+      "popularity": 635,
       "missing": [
         "Great Whale"
       ]
@@ -3199,7 +3347,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 605,
+      "popularity": 609,
       "missing": [
         "Possibility Storm"
       ]
@@ -3228,7 +3376,7 @@
       "mana": "{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 567,
+      "popularity": 569,
       "missing": [
         "Chain Stasis"
       ]
@@ -3265,7 +3413,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 549,
+      "popularity": 561,
       "missing": [
         "Timeless Lotus"
       ]
@@ -3300,42 +3448,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 549,
-      "missing": [
-        "Intruder Alarm"
-      ]
-    },
-    {
-      "id": "1636-4549-4630",
-      "cards": [
-        {
-          "name": "Sisay, Weatherlight Captain",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Relic of Legends",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Intruder Alarm",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Put a selection of creature cards from your library onto the battlefield"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least three other legendary creatures.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 543,
+      "popularity": 548,
       "missing": [
         "Intruder Alarm"
       ]
@@ -3371,9 +3484,44 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 541,
+      "popularity": 543,
       "missing": [
         "Saryth, the Viper's Fang"
+      ]
+    },
+    {
+      "id": "1636-4549-4630",
+      "cards": [
+        {
+          "name": "Sisay, Weatherlight Captain",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Relic of Legends",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Put a selection of creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least three other legendary creatures.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 540,
+      "missing": [
+        "Intruder Alarm"
       ]
     },
     {
@@ -3401,7 +3549,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 530,
+      "popularity": 534,
       "missing": [
         "Ith, High Arcanist"
       ]
@@ -3432,7 +3580,7 @@
       "mana": "{G}, plus an additional {1} available if you do not control a creature with power 5 or greater",
       "bracket": "S",
       "legal": true,
-      "popularity": 513,
+      "popularity": 517,
       "missing": [
         "Seedcradle Witch"
       ]
@@ -3486,7 +3634,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 481,
+      "popularity": 487,
       "missing": [
         "Eye of the Storm"
       ]
@@ -3513,9 +3661,44 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 460,
+      "popularity": 462,
       "missing": [
         "Possibility Storm"
+      ]
+    },
+    {
+      "id": "527-1247-5963",
+      "cards": [
+        {
+          "name": "Marvin, Murderous Mimic",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pili-Pala",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Selvala, Heart of the Wilds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a creature with power 3 or greater.\nMarvin does not have summoning sickness.",
+      "mana": "{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 443,
+      "missing": [
+        "Pili-Pala"
       ]
     },
     {
@@ -3577,41 +3760,6 @@
       ]
     },
     {
-      "id": "527-1247-5963",
-      "cards": [
-        {
-          "name": "Marvin, Murderous Mimic",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pili-Pala",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Selvala, Heart of the Wilds",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "You control a creature with power 3 or greater.\nMarvin does not have summoning sickness.",
-      "mana": "{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 435,
-      "missing": [
-        "Pili-Pala"
-      ]
-    },
-    {
       "id": "2198-2404-4499",
       "cards": [
         {
@@ -3642,36 +3790,9 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 433,
+      "popularity": 431,
       "missing": [
         "Deceiver Exarch"
-      ]
-    },
-    {
-      "id": "411-5963",
-      "cards": [
-        {
-          "name": "Marvin, Murderous Mimic",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Grinning Ignus",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{2}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 417,
-      "missing": [
-        "Grinning Ignus"
       ]
     },
     {
@@ -3699,6 +3820,33 @@
       "popularity": 417,
       "missing": [
         "Workhorse"
+      ]
+    },
+    {
+      "id": "411-5963",
+      "cards": [
+        {
+          "name": "Marvin, Murderous Mimic",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Grinning Ignus",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 416,
+      "missing": [
+        "Grinning Ignus"
       ]
     },
     {
@@ -3733,7 +3881,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 399,
+      "popularity": 402,
       "missing": [
         "Sanctum Weaver"
       ]
@@ -3766,7 +3914,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 387,
+      "popularity": 389,
       "missing": [
         "Incubation Druid"
       ]
@@ -3797,7 +3945,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 368,
+      "popularity": 372,
       "missing": [
         "Silvanus's Invoker"
       ]
@@ -3834,7 +3982,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 358,
+      "popularity": 366,
       "missing": [
         "Circle of Dreams Druid"
       ]
@@ -3863,7 +4011,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 352,
+      "popularity": 358,
       "missing": [
         "Wakeroot Elemental"
       ]
@@ -3896,42 +4044,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 346,
+      "popularity": 347,
       "missing": [
         "Gilded Lotus"
-      ]
-    },
-    {
-      "id": "2608-4050-5168",
-      "cards": [
-        {
-          "name": "Derevi, Empyrial Tactician",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Bloom Tender",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Phyrexian Altar",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "Bloom Tender does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 323,
-      "missing": [
-        "Phyrexian Altar"
       ]
     },
     {
@@ -3968,22 +4083,28 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 313,
+      "popularity": 325,
       "missing": [
         "Horseshoe Crab"
       ]
     },
     {
-      "id": "2550-4499",
+      "id": "2608-4050-5168",
       "cards": [
         {
-          "name": "Emrakul's Hatcher",
+          "name": "Derevi, Empyrial Tactician",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Emiel the Blessed",
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Altar",
           "zones": [
             "B"
           ]
@@ -3991,13 +4112,13 @@
       ],
       "results": [],
       "requires": [],
-      "prerequisites": "",
-      "mana": "{3}",
+      "prerequisites": "Bloom Tender does not have summoning sickness.",
+      "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 285,
+      "popularity": 324,
       "missing": [
-        "Emrakul's Hatcher"
+        "Phyrexian Altar"
       ]
     },
     {
@@ -4030,9 +4151,105 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 284,
+      "popularity": 285,
       "missing": [
         "Ashnod's Altar"
+      ]
+    },
+    {
+      "id": "2550-4499",
+      "cards": [
+        {
+          "name": "Emrakul's Hatcher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 284,
+      "missing": [
+        "Emrakul's Hatcher"
+      ]
+    },
+    {
+      "id": "129-824-4289",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Leech Bonder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "Leech Bonder does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 280,
+      "missing": [
+        "Leech Bonder"
+      ]
+    },
+    {
+      "id": "751-6006-7730",
+      "cards": [
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shang-Chi, Master of Kung Fu",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 277,
+      "missing": [
+        "Shrieking Drake"
       ]
     },
     {
@@ -4065,107 +4282,9 @@
       "mana": "{2}",
       "bracket": "E",
       "legal": true,
-      "popularity": 269,
+      "popularity": 272,
       "missing": [
         "Nykthos, Shrine to Nyx"
-      ]
-    },
-    {
-      "id": "751-6006-7730",
-      "cards": [
-        {
-          "name": "Shrieking Drake",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Enduring Vitality",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Shang-Chi, Master of Kung Fu",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 268,
-      "missing": [
-        "Shrieking Drake"
-      ]
-    },
-    {
-      "id": "527-955-4499",
-      "cards": [
-        {
-          "name": "Selvala, Heart of the Wilds",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Emiel the Blessed",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Maelstrom Wanderer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{G}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 244,
-      "missing": [
-        "Maelstrom Wanderer"
-      ]
-    },
-    {
-      "id": "1995-5168",
-      "cards": [
-        {
-          "name": "Bloom Tender",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Gauntlets of Light",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite non-white mana of colors among permanents you control",
-        "Infinite mana of colors among permanents you control"
-      ],
-      "requires": [],
-      "prerequisites": "Gauntlets of Light attached to Bloom Tender.\nBloom Tender does not have summoning sickness.\nThere are at least four colors among permanents you control.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 242,
-      "missing": [
-        "Gauntlets of Light"
       ]
     },
     {
@@ -4198,9 +4317,74 @@
       "mana": "{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 242,
+      "popularity": 251,
       "missing": [
         "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "527-955-4499",
+      "cards": [
+        {
+          "name": "Selvala, Heart of the Wilds",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Maelstrom Wanderer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{G}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 247,
+      "missing": [
+        "Maelstrom Wanderer"
+      ]
+    },
+    {
+      "id": "1995-5168",
+      "cards": [
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gauntlets of Light",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-white mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Gauntlets of Light attached to Bloom Tender.\nBloom Tender does not have summoning sickness.\nThere are at least four colors among permanents you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 245,
+      "missing": [
+        "Gauntlets of Light"
       ]
     },
     {
@@ -4235,7 +4419,7 @@
       "mana": "{2}{W}",
       "bracket": "P",
       "legal": true,
-      "popularity": 228,
+      "popularity": 237,
       "missing": [
         "Primal Vigor"
       ]
@@ -4270,7 +4454,7 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 226,
+      "popularity": 225,
       "missing": [
         "Akroma's Memorial"
       ]
@@ -4299,7 +4483,7 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 221,
+      "popularity": 224,
       "missing": [
         "Crab Umbra"
       ]
@@ -4334,7 +4518,7 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 218,
+      "popularity": 220,
       "missing": [
         "Frostcliff Siege"
       ]
@@ -4371,38 +4555,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 211,
+      "popularity": 209,
       "missing": [
         "Kami of Whispered Hopes"
-      ]
-    },
-    {
-      "id": "2440-4499",
-      "cards": [
-        {
-          "name": "Mana Echoes",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Emiel the Blessed",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least three creatures that share a creature type, one of which must be a nontoken creature.",
-      "mana": "{3}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 202,
-      "missing": [
-        "Mana Echoes"
       ]
     },
     {
@@ -4429,9 +4584,71 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 199,
+      "popularity": 201,
       "missing": [
         "Gauntlets of Light"
+      ]
+    },
+    {
+      "id": "2440-4499",
+      "cards": [
+        {
+          "name": "Mana Echoes",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least three creatures that share a creature type, one of which must be a nontoken creature.",
+      "mana": "{3}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 199,
+      "missing": [
+        "Mana Echoes"
+      ]
+    },
+    {
+      "id": "1556-2608-4499",
+      "cards": [
+        {
+          "name": "Derevi, Empyrial Tactician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scorched Ruins",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 198,
+      "missing": [
+        "Scorched Ruins"
       ]
     },
     {
@@ -4472,39 +4689,6 @@
       ]
     },
     {
-      "id": "1556-2608-4499",
-      "cards": [
-        {
-          "name": "Derevi, Empyrial Tactician",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Emiel the Blessed",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Scorched Ruins",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 197,
-      "missing": [
-        "Scorched Ruins"
-      ]
-    },
-    {
       "id": "215-527-4927",
       "cards": [
         {
@@ -4534,7 +4718,7 @@
       "mana": "{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 195,
+      "popularity": 196,
       "missing": [
         "Temur Sabertooth"
       ]
@@ -4604,9 +4788,36 @@
       "mana": "{2}{W}",
       "bracket": "P",
       "legal": true,
-      "popularity": 182,
+      "popularity": 187,
       "missing": [
         "Adrix and Nev, Twincasters"
+      ]
+    },
+    {
+      "id": "4398-5151",
+      "cards": [
+        {
+          "name": "Deafening Silence",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Eye of the Storm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 179,
+      "missing": [
+        "Eye of the Storm"
       ]
     },
     {
@@ -4647,33 +4858,6 @@
       ]
     },
     {
-      "id": "4398-5151",
-      "cards": [
-        {
-          "name": "Deafening Silence",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Eye of the Storm",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 177,
-      "missing": [
-        "Eye of the Storm"
-      ]
-    },
-    {
       "id": "4094-4682-7890",
       "cards": [
         {
@@ -4705,7 +4889,7 @@
       "mana": "{2}{W}",
       "bracket": "P",
       "legal": true,
-      "popularity": 170,
+      "popularity": 175,
       "missing": [
         "Kaya, Geist Hunter"
       ]
@@ -4740,7 +4924,7 @@
       "mana": "{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 150,
+      "popularity": 155,
       "missing": [
         "Cacophodon"
       ]
@@ -4770,7 +4954,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 149,
+      "popularity": 150,
       "missing": [
         "Gogo, Mysterious Mime"
       ]
@@ -4799,7 +4983,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 143,
+      "popularity": 147,
       "missing": [
         "Sky Hussar"
       ]
@@ -4836,9 +5020,44 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 142,
+      "popularity": 143,
       "missing": [
         "Selvala, Eager Trailblazer"
+      ]
+    },
+    {
+      "id": "527-3995-5963",
+      "cards": [
+        {
+          "name": "Marvin, Murderous Mimic",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Selvala, Heart of the Wilds",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Horseshoe Crab",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Marvin does not have summoning sickness.\nYou control a creature with power 3 or greater.",
+      "mana": "{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 140,
+      "missing": [
+        "Horseshoe Crab"
       ]
     },
     {
@@ -4872,41 +5091,6 @@
       ]
     },
     {
-      "id": "527-3995-5963",
-      "cards": [
-        {
-          "name": "Marvin, Murderous Mimic",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Selvala, Heart of the Wilds",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Horseshoe Crab",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Marvin does not have summoning sickness.\nYou control a creature with power 3 or greater.",
-      "mana": "{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 139,
-      "missing": [
-        "Horseshoe Crab"
-      ]
-    },
-    {
       "id": "527-1879-4499",
       "cards": [
         {
@@ -4936,9 +5120,44 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 139,
+      "popularity": 138,
       "missing": [
         "Rising of the Day"
+      ]
+    },
+    {
+      "id": "1636-4289-4630",
+      "cards": [
+        {
+          "name": "Sisay, Weatherlight Captain",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Intruder Alarm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Put a selection of creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five creatures without summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 129,
+      "missing": [
+        "Intruder Alarm"
       ]
     },
     {
@@ -4963,46 +5182,9 @@
       "mana": "{3} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 126,
+      "popularity": 127,
       "missing": [
         "Azor, the Lawbringer"
-      ]
-    },
-    {
-      "id": "527-1432-5904",
-      "cards": [
-        {
-          "name": "Selvala, Heart of the Wilds",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Adric, Mathematical Genius",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Ioreth of the Healing House",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana",
-        "Infinite untap of legendary creatures you control",
-        "Infinite mana legendary creatures you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "You control a creature with power 5 or greater.",
-      "mana": "{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 119,
-      "missing": [
-        "Adric, Mathematical Genius"
       ]
     },
     {
@@ -5036,7 +5218,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 118,
+      "popularity": 119,
       "missing": [
         "Neerdiv, Devious Diver"
       ]
@@ -5072,9 +5254,112 @@
       "mana": "{1}{G}{G}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 118,
+      "popularity": 119,
       "missing": [
         "The Unbeatable Squirrel Girl"
+      ]
+    },
+    {
+      "id": "751-4289-7730",
+      "cards": [
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shang-Chi, Master of Kung Fu",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 117,
+      "missing": [
+        "Shrieking Drake"
+      ]
+    },
+    {
+      "id": "527-1432-5904",
+      "cards": [
+        {
+          "name": "Selvala, Heart of the Wilds",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Adric, Mathematical Genius",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ioreth of the Healing House",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite untap of legendary creatures you control",
+        "Infinite mana legendary creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control a creature with power 5 or greater.",
+      "mana": "{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 117,
+      "missing": [
+        "Adric, Mathematical Genius"
+      ]
+    },
+    {
+      "id": "1766-2608-4499",
+      "cards": [
+        {
+          "name": "Derevi, Empyrial Tactician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thran Dynamo",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 117,
+      "missing": [
+        "Thran Dynamo"
       ]
     },
     {
@@ -5108,42 +5393,45 @@
       "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 117,
+      "popularity": 116,
       "missing": [
         "Knacksaw Clique"
       ]
     },
     {
-      "id": "1766-2608-4499",
+      "id": "4289-4927-7686",
       "cards": [
         {
-          "name": "Derevi, Empyrial Tactician",
+          "name": "The Unbeatable Squirrel Girl",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Emiel the Blessed",
+          "name": "Cryptolith Rite",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Thran Dynamo",
+          "name": "Tyvar, Jubilant Brawler",
           "zones": [
             "B"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Infinite colored mana",
+        "Infinite creature tokens"
+      ],
       "requires": [],
-      "prerequisites": "",
-      "mana": "",
+      "prerequisites": "You control four or more Squirrels.",
+      "mana": "{1}{G}{G}{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 116,
+      "popularity": 104,
       "missing": [
-        "Thran Dynamo"
+        "The Unbeatable Squirrel Girl"
       ]
     },
     {
@@ -5179,9 +5467,45 @@
       "mana": "{2}{W}",
       "bracket": "P",
       "legal": true,
-      "popularity": 99,
+      "popularity": 101,
       "missing": [
         "Jolene, the Plunder Queen"
+      ]
+    },
+    {
+      "id": "129-3812-4289",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Ragworm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 100,
+      "missing": [
+        "Simic Ragworm"
       ]
     },
     {
@@ -5214,7 +5538,7 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 99,
+      "popularity": 100,
       "missing": [
         "Deadeye Navigator"
       ]
@@ -5322,6 +5646,77 @@
       ]
     },
     {
+      "id": "527-542-7730",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Selvala, Heart of the Wilds",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Shang-Chi, Master of Kung Fu",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have a creature card in hand that can be cast using only colored mana.\nSelvala can tap to produce at least {1}{G}{G}{G} plus enough mana to cast the other creature card.",
+      "mana": "{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 91,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "129-3812-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Simic Ragworm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 91,
+      "missing": [
+        "Simic Ragworm"
+      ]
+    },
+    {
       "id": "527-4613-4687",
       "cards": [
         {
@@ -5395,42 +5790,6 @@
       ]
     },
     {
-      "id": "129-3812-6006",
-      "cards": [
-        {
-          "name": "Kinnan, Bonder Prodigy",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Simic Ragworm",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Enduring Vitality",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana",
-        "Put most creature cards from your library onto the battlefield"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 88,
-      "missing": [
-        "Simic Ragworm"
-      ]
-    },
-    {
       "id": "4613-4687-5168",
       "cards": [
         {
@@ -5461,44 +5820,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 84,
+      "popularity": 85,
       "missing": [
         "Gilder Bairn"
-      ]
-    },
-    {
-      "id": "527-542-7730",
-      "cards": [
-        {
-          "name": "Tidespout Tyrant",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Selvala, Heart of the Wilds",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Shang-Chi, Master of Kung Fu",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "You have a creature card in hand that can be cast using only colored mana.\nSelvala can tap to produce at least {1}{G}{G}{G} plus enough mana to cast the other creature card.",
-      "mana": "{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 84,
-      "missing": [
-        "Tidespout Tyrant"
       ]
     },
     {
@@ -5562,44 +5886,9 @@
       "mana": "{1}{G} at most",
       "bracket": "S",
       "legal": true,
-      "popularity": 81,
+      "popularity": 82,
       "missing": [
         "Farmstead Gleaner"
-      ]
-    },
-    {
-      "id": "527-647-4499",
-      "cards": [
-        {
-          "name": "Selvala, Heart of the Wilds",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Emiel the Blessed",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Urabrask the Hidden",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{G}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 79,
-      "missing": [
-        "Urabrask the Hidden"
       ]
     },
     {
@@ -5636,9 +5925,44 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 76,
+      "popularity": 78,
       "missing": [
         "Simic Ragworm"
+      ]
+    },
+    {
+      "id": "527-647-4499",
+      "cards": [
+        {
+          "name": "Selvala, Heart of the Wilds",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Urabrask the Hidden",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{G}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 77,
+      "missing": [
+        "Urabrask the Hidden"
       ]
     },
     {
@@ -5710,7 +6034,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 74,
+      "popularity": 73,
       "missing": [
         "Elvish Archdruid"
       ]
@@ -5745,9 +6069,44 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 70,
+      "popularity": 71,
       "missing": [
         "Tannuk, Steadfast Second"
+      ]
+    },
+    {
+      "id": "527-2079-4499",
+      "cards": [
+        {
+          "name": "Selvala, Heart of the Wilds",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Temur Ascendancy",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{G}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 69,
+      "missing": [
+        "Temur Ascendancy"
       ]
     },
     {
@@ -5788,41 +6147,6 @@
       ]
     },
     {
-      "id": "527-2079-4499",
-      "cards": [
-        {
-          "name": "Selvala, Heart of the Wilds",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Emiel the Blessed",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Temur Ascendancy",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{G}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 67,
-      "missing": [
-        "Temur Ascendancy"
-      ]
-    },
-    {
       "id": "527-3812-5963",
       "cards": [
         {
@@ -5852,7 +6176,7 @@
       "mana": "{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 65,
+      "popularity": 66,
       "missing": [
         "Simic Ragworm"
       ]
@@ -5889,7 +6213,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 64,
+      "popularity": 65,
       "missing": [
         "Empowered Autogenerator"
       ]
@@ -5925,7 +6249,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 60,
+      "popularity": 61,
       "missing": [
         "Farmstead Gleaner"
       ]
@@ -5964,7 +6288,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 60,
+      "popularity": 61,
       "missing": [
         "Deadeye Navigator"
       ]
@@ -6042,7 +6366,7 @@
       ]
     },
     {
-      "id": "129-5137-6006",
+      "id": "129-4289-5137",
       "cards": [
         {
           "name": "Kinnan, Bonder Prodigy",
@@ -6051,13 +6375,13 @@
           ]
         },
         {
-          "name": "Morphling",
+          "name": "Cryptolith Rite",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Enduring Vitality",
+          "name": "Morphling",
           "zones": [
             "B"
           ]
@@ -6075,41 +6399,6 @@
       "popularity": 54,
       "missing": [
         "Morphling"
-      ]
-    },
-    {
-      "id": "527-1849-4499",
-      "cards": [
-        {
-          "name": "Selvala, Heart of the Wilds",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Emiel the Blessed",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Mass Hysteria",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{G}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 53,
-      "missing": [
-        "Mass Hysteria"
       ]
     },
     {
@@ -6177,6 +6466,77 @@
       ]
     },
     {
+      "id": "129-5137-6006",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Morphling",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Enduring Vitality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 52,
+      "missing": [
+        "Morphling"
+      ]
+    },
+    {
+      "id": "527-1849-4499",
+      "cards": [
+        {
+          "name": "Selvala, Heart of the Wilds",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mass Hysteria",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{G}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 52,
+      "missing": [
+        "Mass Hysteria"
+      ]
+    },
+    {
       "id": "5137-5168-5963",
       "cards": [
         {
@@ -6213,6 +6573,42 @@
       "popularity": 51,
       "missing": [
         "Morphling"
+      ]
+    },
+    {
+      "id": "129-4289-4824",
+      "cards": [
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Soliton",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Put most creature cards from your library onto the battlefield"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 51,
+      "missing": [
+        "Soliton"
       ]
     },
     {
@@ -6322,6 +6718,35 @@
       ]
     },
     {
+      "id": "965-4289",
+      "cards": [
+        {
+          "name": "Crackleburr",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least two other blue creatures that do not have summoning sickness.\nCrackleburr does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 49,
+      "missing": [
+        "Crackleburr"
+      ]
+    },
+    {
       "id": "2608-3291-4499",
       "cards": [
         {
@@ -6380,38 +6805,9 @@
       "mana": "{3}",
       "bracket": "E",
       "legal": true,
-      "popularity": 41,
+      "popularity": 42,
       "missing": [
         "Priest of Gix"
-      ]
-    },
-    {
-      "id": "527-5090",
-      "cards": [
-        {
-          "name": "Selvala, Heart of the Wilds",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Singing Bell Strike",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Singing Bell Strike attached to Selvala.\nSelvala does not have summoning sickness.\nYou control a creature with a power of at least eight.",
-      "mana": "{G}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 40,
-      "missing": [
-        "Singing Bell Strike"
       ]
     },
     {
@@ -6444,7 +6840,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 40,
+      "popularity": 41,
       "missing": [
         "Nyx Lotus"
       ]
@@ -6481,9 +6877,38 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 40,
+      "popularity": 41,
       "missing": [
         "Cabal Coffers"
+      ]
+    },
+    {
+      "id": "527-5090",
+      "cards": [
+        {
+          "name": "Selvala, Heart of the Wilds",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Singing Bell Strike",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Singing Bell Strike attached to Selvala.\nSelvala does not have summoning sickness.\nYou control a creature with a power of at least eight.",
+      "mana": "{G}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 40,
+      "missing": [
+        "Singing Bell Strike"
       ]
     },
     {
@@ -6511,6 +6936,41 @@
       "popularity": 39,
       "missing": [
         "Ghired, Mirror of the Wilds"
+      ]
+    },
+    {
+      "id": "149-4289-4831",
+      "cards": [
+        {
+          "name": "Cacophodon",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Legolas's Quick Reflexes",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Cacophodon has indestructible.",
+      "mana": "{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 33,
+      "missing": [
+        "Cacophodon"
       ]
     },
     {
@@ -6543,9 +7003,73 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 31,
+      "popularity": 32,
       "missing": [
         "The Fire Crystal"
+      ]
+    },
+    {
+      "id": "1129-2608-4499",
+      "cards": [
+        {
+          "name": "Derevi, Empyrial Tactician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Harabaz Druid",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite untap of permanents you control",
+        "Infinite colored mana",
+        "Infinite mana permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Harabaz Druid does not have summoning sickness. You control at least three Allies.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 31,
+      "missing": [
+        "Harabaz Druid"
+      ]
+    },
+    {
+      "id": "232-4499",
+      "cards": [
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Priest of Urabrask",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 30,
+      "missing": [
+        "Priest of Urabrask"
       ]
     },
     {
@@ -6659,43 +7183,6 @@
       ]
     },
     {
-      "id": "1129-2608-4499",
-      "cards": [
-        {
-          "name": "Derevi, Empyrial Tactician",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Emiel the Blessed",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Harabaz Druid",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite untap of permanents you control",
-        "Infinite colored mana",
-        "Infinite mana permanents you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "Harabaz Druid does not have summoning sickness. You control at least three Allies.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 30,
-      "missing": [
-        "Harabaz Druid"
-      ]
-    },
-    {
       "id": "2608-4188-4499",
       "cards": [
         {
@@ -6733,33 +7220,6 @@
       ]
     },
     {
-      "id": "232-4499",
-      "cards": [
-        {
-          "name": "Emiel the Blessed",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Priest of Urabrask",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 29,
-      "missing": [
-        "Priest of Urabrask"
-      ]
-    },
-    {
       "id": "527-4068-4499",
       "cards": [
         {
@@ -6789,7 +7249,7 @@
       "mana": "{G}",
       "bracket": "E",
       "legal": true,
-      "popularity": 28,
+      "popularity": 27,
       "missing": [
         "Anger"
       ]
@@ -7002,43 +7462,6 @@
       ]
     },
     {
-      "id": "2608-4499-7908",
-      "cards": [
-        {
-          "name": "Derevi, Empyrial Tactician",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Emiel the Blessed",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "The Notary Hobbits",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana",
-        "Infinite mana permanents you control can produce",
-        "Infinite untap of permanents you control"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least three Halflings.",
-      "mana": "{3}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 20,
-      "missing": [
-        "The Notary Hobbits"
-      ]
-    },
-    {
       "id": "527-4927-5900",
       "cards": [
         {
@@ -7071,6 +7494,117 @@
       "popularity": 20,
       "missing": [
         "Lilysplash Mentor"
+      ]
+    },
+    {
+      "id": "527-725-1432",
+      "cards": [
+        {
+          "name": "Ioreth of the Healing House",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Aura of Dominion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Selvala, Heart of the Wilds",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana legendary creatures you control can produce",
+        "Infinite untap of legendary creatures you control",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control another legendary creature.\nYou control a creature with power 3 or greater.",
+      "mana": "{G}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 19,
+      "missing": [
+        "Aura of Dominion"
+      ]
+    },
+    {
+      "id": "2608-4499-7908",
+      "cards": [
+        {
+          "name": "Derevi, Empyrial Tactician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "The Notary Hobbits",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite mana permanents you control can produce",
+        "Infinite untap of permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least three Halflings.",
+      "mana": "{3}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 19,
+      "missing": [
+        "The Notary Hobbits"
+      ]
+    },
+    {
+      "id": "1336-2608-4499",
+      "cards": [
+        {
+          "name": "Derevi, Empyrial Tactician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Heronblade Elite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite untap of permanents you control",
+        "Infinite colored mana",
+        "Infinite mana permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Heronblade Elite does not have summoning sickness, and has power 3 or greater.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 19,
+      "missing": [
+        "Heronblade Elite"
       ]
     },
     {
@@ -7109,80 +7643,6 @@
       ]
     },
     {
-      "id": "1336-2608-4499",
-      "cards": [
-        {
-          "name": "Derevi, Empyrial Tactician",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Emiel the Blessed",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Heronblade Elite",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite untap of permanents you control",
-        "Infinite colored mana",
-        "Infinite mana permanents you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "Heronblade Elite does not have summoning sickness, and has power 3 or greater.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 18,
-      "missing": [
-        "Heronblade Elite"
-      ]
-    },
-    {
-      "id": "527-725-1432",
-      "cards": [
-        {
-          "name": "Ioreth of the Healing House",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Aura of Dominion",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Selvala, Heart of the Wilds",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite mana legendary creatures you control can produce",
-        "Infinite untap of legendary creatures you control",
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "You control another legendary creature.\nYou control a creature with power 3 or greater.",
-      "mana": "{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 17,
-      "missing": [
-        "Aura of Dominion"
-      ]
-    },
-    {
       "id": "527-3480-4499",
       "cards": [
         {
@@ -7215,6 +7675,45 @@
       "popularity": 17,
       "missing": [
         "Purphoros, Bronze-Blooded"
+      ]
+    },
+    {
+      "id": "129-1409-4289-4927",
+      "cards": [
+        {
+          "name": "Deadeye Navigator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kinnan, Bonder Prodigy",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tyvar, Jubilant Brawler",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 17,
+      "missing": [
+        "Deadeye Navigator"
       ]
     },
     {
@@ -7364,6 +7863,43 @@
       ]
     },
     {
+      "id": "2608-4499-7308",
+      "cards": [
+        {
+          "name": "Derevi, Empyrial Tactician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mona Lisa, Science Geek",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite untap of permanents you control",
+        "Infinite colored mana",
+        "Infinite mana permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 13,
+      "missing": [
+        "Mona Lisa, Science Geek"
+      ]
+    },
+    {
       "id": "1432-4613-5251",
       "cards": [
         {
@@ -7469,46 +8005,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 12,
+      "popularity": 11,
       "missing": [
         "Mind Over Matter"
-      ]
-    },
-    {
-      "id": "2608-4499-7308",
-      "cards": [
-        {
-          "name": "Derevi, Empyrial Tactician",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Emiel the Blessed",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Mona Lisa, Science Geek",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite untap of permanents you control",
-        "Infinite colored mana",
-        "Infinite mana permanents you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 12,
-      "missing": [
-        "Mona Lisa, Science Geek"
       ]
     },
     {
@@ -7798,6 +8297,43 @@
       ]
     },
     {
+      "id": "1460-2608-4499",
+      "cards": [
+        {
+          "name": "Derevi, Empyrial Tactician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Storm the Vault // Vault of Catlacan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite untap of permanents you control",
+        "Infinite blue mana",
+        "Infinite mana permanents you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least three artifacts.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7,
+      "missing": [
+        "Storm the Vault // Vault of Catlacan"
+      ]
+    },
+    {
       "id": "437-1432-4613",
       "cards": [
         {
@@ -7859,43 +8395,6 @@
       "popularity": 6,
       "missing": [
         "Ardent Electromancer"
-      ]
-    },
-    {
-      "id": "1460-2608-4499",
-      "cards": [
-        {
-          "name": "Derevi, Empyrial Tactician",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Emiel the Blessed",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Storm the Vault // Vault of Catlacan",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite untap of permanents you control",
-        "Infinite blue mana",
-        "Infinite mana permanents you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least three artifacts.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 6,
-      "missing": [
-        "Storm the Vault // Vault of Catlacan"
       ]
     },
     {
@@ -8080,6 +8579,72 @@
       ]
     },
     {
+      "id": "751-4289-4927",
+      "cards": [
+        {
+          "name": "Shrieking Drake",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cryptolith Rite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tyvar, Jubilant Brawler",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4,
+      "missing": [
+        "Shrieking Drake"
+      ]
+    },
+    {
+      "id": "2608-4499-4667",
+      "cards": [
+        {
+          "name": "Derevi, Empyrial Tactician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elvish Aberration",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Elvish Aberration does not have summoning sickness.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 4,
+      "missing": [
+        "Elvish Aberration"
+      ]
+    },
+    {
       "id": "527-1251-4499",
       "cards": [
         {
@@ -8219,39 +8784,6 @@
       "popularity": 3,
       "missing": [
         "Kratos, God of War"
-      ]
-    },
-    {
-      "id": "2608-4499-4667",
-      "cards": [
-        {
-          "name": "Derevi, Empyrial Tactician",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Emiel the Blessed",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Elvish Aberration",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "Elvish Aberration does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 3,
-      "missing": [
-        "Elvish Aberration"
       ]
     },
     {
