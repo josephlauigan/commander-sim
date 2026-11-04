@@ -629,7 +629,7 @@ note = "combo piece: assembly, casting and responses are simulated; the loop its
 
 ["Cabal Coffers"]
 status = "Full"
-note = "{2},{T}: B per Swamp"
+note = "{2},{T}: B per Swamp, as net mana (nothing with two Swamps or fewer, or without two other untapped lands for the {2})"
 
 ["Cabal Ritual"]
 types = "I"
@@ -5320,7 +5320,7 @@ note = "{2}{B}, {T}, discard a card: each other player loses 2 life and you gain
 
 ["Urborg, Tomb of Yawgmoth"]
 status = "Full"
-note = "every land is a Swamp"
+note = "every land is a Swamp, and a land that makes one mana can also tap for {B} (engine::mana granted_cols)"
 
 ["Uro, Titan of Nature's Wrath"]
 tags = "leg pow=6 bomb=6"

@@ -65,6 +65,6 @@ fn the_urdragon_seat_plays_from_its_plan_file() {
     assert!(sim_core::ai::plans::plays_plan("urdragon"));
     assert!(!sim_core::ai::is_main("urdragon"), "a plan-file deck, not a hand-written main deck");
     let s = sim_core::ai::base_style("urdragon");
-    assert_eq!((s.aggression, s.caution), (0.65, 0.45));
+    assert_eq!((s.aggression, s.caution), (0.72, 0.52), "the Dragon rebuild's style (11/03)");
     assert_eq!(sim_core::ai::base_style("thanos"), sim_core::ai::base_style("scion"), "Scion's style, from data");
 }

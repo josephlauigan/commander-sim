@@ -1,65 +1,103 @@
-# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
-# policy (ai/plans.rs `config`). JD's The Ur-Dragon deck (decklists/JD/ur-dragon-equipment.md, Bracket 4, tier t5,
-# 2026-10-30): Godo, Bandit Warlord fetches Helm of the Host and the hasty token copies take a combat each (infinite
-# combats); the backups are Combat Celebrant + Helm and Dualcaster Mage + Twinflame. The lines are the catalogue's
-# combos (impls/t6_combos_godo.rs, impls/combos.rs): `combo_options` offers them, the tutors want their pieces.
-# The Ur-Dragon's eminence and attack trigger are card code (impls/t45_urdragon.rs); no deck AI is hand-written.
+# JD's The Ur-Dragon deck: five-colour Dragon entries, copies and attack payoffs. The card hooks model Eminence,
+# Dragon entry triggers, token engines and the commander's attack trigger; this plan tells the generic pilot to ramp
+# first, establish one multiplier or damage engine, and then deploy Dragons.
 deck = "urdragon"
 default = "plan"
-# card engines the tutors want once no line wants a card
-engines = ["Rhystic Study", "The One Ring", "Smothering Tithe", "Sylvan Library"]
+engines = ["Dragon Tempest", "Dragon's Hoard", "Garruk's Uprising", "Temur Ascendancy", "Rhystic Study",
+    "Sylvan Library", "The One Ring", "Smothering Tithe", "Doubling Season", "Maskwood Nexus"]
 
-# a combo deck that attacks: the pool's aggression, a little less caution so it taps out for Godo
+# a Dragon board that wins by attacking: more aggression than the Godo build (0.65), and more caution (was 0.45, low
+# so it tapped out for Godo) since no combo turn needs everything tapped
 [style]
 temp = 1.0
-aggression = 0.65
-caution = 0.45
+aggression = 0.72
+caution = 0.52
 
-# The Ur-Dragon costs nine and works from the command zone (eminence): cast him late, as a card engine
+# Eminence supplies value without casting the commander. Cast the nine-drop after the Dragon board can attack or
+# Lightning Greaves can give it haste, rather than holding back the deck's mid-game development for it.
 [commander]
-prio = 40
+prio = 58
 turn = 6
 
-# Godo is the main line; Gilgamesh digs six for Equipment
 [key_cards]
-"Godo, Bandit Warlord" = 88
-"Gilgamesh, Master-at-Arms" = 70
+"Miirym, Sentinel Wyrm" = 82
+"Ganax, Astral Hunter" = 76
+"Lathliss, Dragon Queen" = 76
+"Terror of the Peaks" = 78
+"Scourge of Valkas" = 74
+"Utvara Hellkite" = 76
+"Dragonlord Dromoka" = 72
+"Scion of the Ur-Dragon" = 70
 
-# win lines, best first: the tutors want the first missing piece of the closest one
+# These are value packages rather than deterministic combos. Each line gives creature and unrestricted tutors a
+# board-aware route toward mana, multiplication or an entry-damage finish.
 [[line]]
-name = "Godo + Helm of the Host (Hammer of Nazahn out)"
-combo = "Godo + Helm of the Host (Hammer of Nazahn out)"
-
-[[line]]
-name = "Godo + Helm of the Host (Brass Squire attaches)"
-combo = "Godo + Helm of the Host (Brass Squire attaches)"
-
-[[line]]
-name = "Godo + Helm of the Host (equip {5})"
-combo = "Godo + Helm of the Host (equip {5})"
-
-[[line]]
-name = "Godo + Peter Parker's Camera copies the enter trigger"
-combo = "Godo + Peter Parker's Camera copies the enter trigger"
+name = "Dragon entry damage"
+kind = "combat"
+pieces = [["Dragon Tempest", "Scourge of Valkas", "Terror of the Peaks"],
+    ["Miirym, Sentinel Wyrm", "Lathliss, Dragon Queen", "Utvara Hellkite"]]
 
 [[line]]
-name = "Godo + Hammer first, then Jaxis copies Godo"
-combo = "Godo + Hammer first, then Jaxis copies Godo"
+name = "Dragon copies"
+kind = "value"
+pieces = [["Miirym, Sentinel Wyrm"], ["Astral Dragon", "Spark Double", "Cursed Mirror", "Jaxis, the Troublemaker"]]
 
 [[line]]
-name = "Helm of the Host + Combat Celebrant"
-combo = "Helm of the Host + Combat Celebrant"
+name = "Dragon mana"
+kind = "value"
+pieces = [["Ganax, Astral Hunter", "Dragon's Hoard"], ["Ancient Copper Dragon", "Goldspan Dragon"]]
 
-[[line]]
-name = "Dualcaster Mage + a copy spell"
-combo = "Dualcaster Mage + a copy spell"
+# Early tutors should make the hand functional before chasing the highest-ceiling six- and seven-drops.
+[[wish]]
+cards = ["Ganax, Astral Hunter", "Dragon's Hoard"]
+when = ["lands+rocks<=4 & turn<=5"]
+score = 90
 
-# protection held for the combo turn, not cast proactively
+[[wish]]
+cards = ["Miirym, Sentinel Wyrm", "Lathliss, Dragon Queen"]
+when = ["turn>=4"]
+score = 82
+
+[[wish]]
+cards = ["Dragon Tempest", "Terror of the Peaks", "Scourge of Valkas"]
+when = ["creatures>=2"]
+score = 78
+
+[[wish]]
+cards = ["Dragonlord Dromoka", "Scion of Draco", "Utvara Hellkite", "Ancient Copper Dragon"]
+score = 60
+
+# Acceleration and fixing are the first plays; setup permanents come next, followed by the Dragons they multiply.
+[[prio]]
+cards = ["Sol Ring", "Mana Vault", "Grim Monolith", "Chrome Mox", "Mox Diamond", "Mox Jasper", "Lotus Petal",
+    "Arcane Signet", "Chromatic Lantern", "Birds of Paradise", "Llanowar Elves", "Paradise Druid",
+    "Sakura-Tribe Elder", "Nature's Lore", "Rampant Growth"]
+when = ["turn<=5"]
+value = 82
+else = 42
+
+[[prio]]
+cards = ["Dragon Tempest", "Dragon's Hoard", "Garruk's Uprising", "Temur Ascendancy", "Rhystic Study",
+    "Sylvan Library", "Smothering Tithe"]
+when = ["turn<=5"]
+value = 72
+else = 58
+
+[[prio]]
+cards = ["Ganax, Astral Hunter", "Miirym, Sentinel Wyrm", "Lathliss, Dragon Queen", "Terror of the Peaks",
+    "Scourge of Valkas", "Doubling Season", "Maskwood Nexus"]
+value = 74
+
+[[prio]]
+cards = ["Dragonlord Dromoka", "Ancient Copper Dragon", "Utvara Hellkite", "Scion of Draco",
+    "Scion of the Ur-Dragon"]
+value = 68
+
 [[hold]]
 card = "Teferi's Protection"
-protects = ["Godo, Bandit Warlord", "Helm of the Host"]
+protects = ["commander", "Miirym, Sentinel Wyrm", "Lathliss, Dragon Queen", "Terror of the Peaks"]
 
-# keep two to five lands with a piece of a line (or an engine)
+# Keep a functional mana hand; unlike the former Godo build, no specific two-card line is required.
 [mulligan]
 lands = [2, 5]
-pieces = 1
+pieces = 0

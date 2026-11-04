@@ -2995,10 +2995,15 @@ fn is_swamp(g: &Game, l: PermId) -> bool {
     crate::engine::chars::land_types(g, l).has('B') // Blood Moon, Urborg: layer 4
 }
 
-/// Cabal Coffers (Approximate): B per Swamp minus the {2} activation (Urborg makes every land a Swamp)
-fn coffers(g: &Game, p: PlayerId, _l: PermId) -> u32 {
-    let n = g.player(p).lands.iter().filter(|&&l| is_swamp(g, l)).count() as i32;
-    (n - 2).max(1) as u32
+/// Cabal Coffers: "{2}, {T}: Add {B} for each Swamp you control" as its net mana, B per Swamp minus the {2} (Urborg
+/// makes every land a Swamp, Coffers included). It has no plain {T} ability, so it nets nothing with two Swamps or
+/// fewer (it used to give one {B} there), and nothing when fewer than two other untapped lands could pay the {2}
+/// (floating mana and rocks aren't counted: a rare, conservative miss).
+fn coffers(g: &Game, p: PlayerId, l: PermId) -> u32 {
+    let pl = g.player(p);
+    let n = pl.lands.iter().filter(|&&x| is_swamp(g, x)).count() as i32;
+    let payers = pl.lands.iter().filter(|&&x| x != l && !g.perm(x).tapped).count();
+    if payers < 2 { 0 } else { (n - 2).max(0) as u32 }
 }
 
 /// Marwyn, the Nurturer: G equal to its power
