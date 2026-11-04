@@ -908,7 +908,25 @@ fn run(
         "regrow" => {
             let cs: Vec<CardId> =
                 g.player(p).gy.iter().copied().filter(|&c| card_matches(g, c, e.filter.as_ref())).collect();
-            if let Some(&c) = cs.iter().max_by_key(|&&c| (g.db.get(c).bomb, g.db.get(c).cmc)) {
+            // practice mode: the person picks the card (a target of the spell: no way out)
+            let pick = if crate::human::is_human(g, p) && !cs.is_empty() {
+                let what = match spell.or(src.and_then(|m| g.perm(m).cd)) {
+                    Some(c) => g.db.get(c).name.to_string(),
+                    None => "An effect".to_string(),
+                };
+                let labels: Vec<String> = cs.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
+                let k = crate::human::choices::choose_one(
+                    g,
+                    p,
+                    "target",
+                    &format!("{what}: return which card from your graveyard to your hand?"),
+                    &labels,
+                )?;
+                Some(cs[k])
+            } else {
+                cs.iter().max_by_key(|&&c| (g.db.get(c).bomb, g.db.get(c).cmc)).copied()
+            };
+            if let Some(c) = pick {
                 let pl = g.player_mut(p);
                 let i = pl.gy.iter().position(|&x| x == c).unwrap();
                 pl.gy.remove(i);

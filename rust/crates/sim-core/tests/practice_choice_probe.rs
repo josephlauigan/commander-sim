@@ -114,13 +114,28 @@ fn play_it(key: &str, name: &str, land: bool) -> (Vec<String>, Vec<String>, bool
         let c = take(&mut g, p, n);
         g.player_mut(p).gy.push(c);
     }
+    // cards whose choice needs Equipment on the table (Kor Outfitter attaches one; Forge Anew returns one)
+    match name {
+        "Forge Anew" => {
+            let c = take(&mut g, P0, "Bonesplitter");
+            g.player_mut(P0).gy.push(c);
+        }
+        "Kor Outfitter" => {
+            perm(&mut g, P0, "Bonesplitter");
+        }
+        _ => {}
+    }
     hand(&mut g, P0, &["Plains", "Island", "Swamp"]); // something to discard or reveal (Foreboding Ruins)
     let c = take(&mut g, P0, name);
     g.player_mut(P0).hand.push(c);
-    if !land {
+    if !land || sim_core::human::fetch::person_fetch(name) {
         pool(&mut g, P0, &[('W', 10), ('U', 10), ('B', 10), ('R', 10), ('G', 10), ('C', 10)]);
     }
     let first = Mutex::new(true);
+    // a fetch land stays on the battlefield for a person: the next thing they do is activate it (the land just played is
+    // the fourth: three Islands are already there)
+    let fetch = land && sim_core::human::fetch::person_fetch(name);
+    let second = Mutex::new(fetch);
     let h = Arc::new(ScriptHuman::from_fn(move |r: &Request| {
         match &*r.kind {
             "priority" => {
@@ -129,6 +144,11 @@ fn play_it(key: &str, name: &str, land: bool) -> (Vec<String>, Vec<String>, bool
                     *f = false;
                     // the probed card is the last in hand
                     return Answer::Action(json!({"do": if land { "land" } else { "cast" }, "card": 3}));
+                }
+                let mut s = second.lock().unwrap();
+                if *s {
+                    *s = false;
+                    return Answer::Action(json!({"do": "use", "land": 3}));
                 }
                 Answer::Action(json!({"do": "pass"}))
             }
@@ -144,7 +164,7 @@ fn play_it(key: &str, name: &str, land: bool) -> (Vec<String>, Vec<String>, bool
     let asked: Vec<String> = h
         .asked()
         .iter()
-        .filter(|r| r.kind != "priority" && !other(&r.prompt))
+        .filter(|r| r.kind != "priority" && !other(&r.prompt) && !(fetch && r.prompt.ends_with("which ability?")))
         .map(|r| format!("{}: {}", r.kind, r.prompt))
         .collect();
     let refused = h.told_kind("invalid");
@@ -220,54 +240,6 @@ fn every_choice_of_the_owned_decks_is_asked_of_a_person() {
 /// gaps found on 2026-11-04 and not yet fixed: the AI chooses for the person. Fixing one means taking it off this list;
 /// a new gap fails the test.
 const TO_FIX: &[&str] = &[
-    "alela: Airlift Chaplain",
-    "alela: Pileated Provisioner",
-    "alela: Plan for All Outcomes",
-    "cloud: Akroma's Will",
-    "cloud: Evolving Wilds",
-    "cloud: Forge Anew",
-    "cloud: Galadriel's Dismissal",
-    "cloud: Kor Outfitter",
-    "cloud: Terminal Moraine",
-    "cloud: Winds of Abandon",
-    "galadriel: Fabled Passage",
-    "galadriel: River's Rebuke",
-    "karn: Pithing Needle",
-    "karn: Soul-Guide Lantern",
-    "karn: Spine of Ish Sah",
-    "sheoldred: Perigee Beckoner",
-    "sheoldred: Phyrexian Delver",
-    "sheoldred: Raise Dead",
-    "thanos: Arid Mesa",
-    "thanos: Bloodstained Mire",
-    "thanos: Flooded Strand",
-    "thanos: Marsh Flats",
-    "thanos: Misty Rainforest",
-    "thanos: Polluted Delta",
-    "thanos: Scalding Tarn",
-    "thanos: Verdant Catacombs",
-    "thanos: Windswept Heath",
-    "thanos: Wooded Foothills",
-    "thrasios: Flooded Strand",
-    "thrasios: Marsh Flats",
-    "thrasios: Misty Rainforest",
-    "thrasios: Natural Order",
-    "thrasios: Polluted Delta",
-    "thrasios: The Wasp, Winsome Avenger",
-    "thrasios: Verdant Catacombs",
-    "thrasios: Windswept Heath",
-    "urdragon: Bloodstained Mire",
-    "urdragon: Flooded Strand",
-    "urdragon: Marsh Flats",
-    "urdragon: Misty Rainforest",
-    "urdragon: Polluted Delta",
-    "urdragon: Verdant Catacombs",
-    "urdragon: Windswept Heath",
-    "urdragon: Wooded Foothills",
-    "yshtola: Deep Analysis",
-    "yshtola: Flooded Strand",
-    "yshtola: Marsh Flats",
-    "yshtola: Polluted Delta",
 ];
 
 /// listed by the probe but not a gap, each with why
@@ -282,7 +254,9 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
     ("sheoldred: Invoke Despair", "the opponent chooses what to sacrifice, not the person"),
     ("sheoldred: Rooftop Assassin", "no creature was dealt damage this turn: no legal target"),
     ("cloud: Loyal Warhound", "a basic Plains: every choice is the same card"),
+    ("alela: Airlift Chaplain", "already asks; the probe's three milled cards held no Plains or cheap creature, so there was nothing to choose (practice_gaps_c.rs)"),
     ("kefka: Twinned Vision", "cast from the hand it only draws a card, nothing to choose; the flashback's discard is the person's (practice_gaps_a: twinned_vision_flashback_discards_the_card_the_person_names)"),
+    ("thrasios: The Wasp, Winsome Avenger", "the only Hero on the probe table is the Wasp itself, so the enter target is forced; the person is asked when there is another Hero, and for the attack trigger (practice_gaps_c.rs)"),
     ("urdragon: Rampant Growth", "the person is asked (practice_gaps_a: rampant_growth_finds_a_basic_land_tapped); the probe moves the deck's only Forest, its only basic land, to the graveyard, so the search finds nothing"),
 ];
 

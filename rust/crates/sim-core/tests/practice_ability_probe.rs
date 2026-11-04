@@ -171,30 +171,6 @@ fn every_activated_ability_of_the_owned_decks_is_offered_to_a_person() {
 /// gaps found on 2026-11-04 and not yet fixed: the person cannot activate these in practice mode (or only when the AI's
 /// own conditions say so). Fixing one means taking it off this list; a new gap fails the test.
 const TO_FIX: &[&str] = &[
-    "alela: Angelic Page",
-    "alela: Cabal Patriarch",
-    "alela: Credit Voucher",
-    "alela: Crystal Chimes",
-    "alela: Emry, Lurker of the Loch",
-    "alela: Mirage Mirror",
-    "alela: Wispdrinker Vampire",
-    "cloud: Balan, Wandering Knight",
-    "cloud: Cid, Freeflier Pilot",
-    "cloud: Evolving Wilds",
-    "cloud: Giver of Runes",
-    "cloud: Plaza of Heroes",
-    "cloud: Stoneforge Mystic",
-    "cloud: Terminal Moraine",
-    "cloud: Zack Fair",
-    "galadriel: Fabled Passage",
-    "karn: Expedition Map",
-    "karn: Urza's Cave",
-    "karn: Urza's Saga",
-    "karn: Urza's Tome",
-    "sheoldred: Gix, Yawgmoth Praetor",
-    "thrasios: Dauthi Voidwalker",
-    "thrasios: Resplendent Angel",
-    "yshtola: Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal",
 ];
 
 /// listed by the probe but not a gap, each with why

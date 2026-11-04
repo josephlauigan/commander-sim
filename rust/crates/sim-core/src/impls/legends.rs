@@ -547,7 +547,7 @@ fn leader(g: &Game, p: PlayerId) -> Option<PlayerId> {
     max_by(&opps, |q| threat(g, p, q))
 }
 
-fn sundering_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn sundering_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let t = PermId(arg as u32);
     if !on(g, p, src) || g.perm(src).tapped || !g.perm(t).on_bf || !can_pay(g, p, 7, "", false) {
         return Ok(false);

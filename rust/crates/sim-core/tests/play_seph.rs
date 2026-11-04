@@ -79,7 +79,7 @@ fn flashback_deep_analysis() {
     let da = gy_push(&mut g, P0, "Deep Analysis");
     float_mana(&mut g, P0, &[('C', 1), ('U', 1)]);
     let n = g.player(P0).hand.len();
-    seat(&mut g, P0, vec![act(json!({"do": "cast", "zone": "gy", "card": 0})), pass()]);
+    seat(&mut g, P0, vec![act(json!({"do": "cast", "zone": "gy", "card": 0})), pick(0), pass()]);
     human_main(&mut g, P0, false).unwrap();
     assert_eq!((g.player(P0).hand.len(), g.player(P0).life), (n + 2, 37));
     assert!(g.player(P0).exile.contains(&da));

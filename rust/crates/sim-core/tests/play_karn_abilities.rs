@@ -176,6 +176,8 @@ fn soul_guide_lantern_exiles_graveyards_or_draws() {
     use_perm(&mut g, l, "exile each opponent", vec![]);
     assert!(g.player(P1).gy.is_empty() && g.player(P1).exile.contains(&c));
     assert!(!on_bf(&g, l));
+    // the person now picks the card its enter trigger exiles (the first Lantern is in their graveyard)
+    seat(&mut g, P0, vec![pick(0)]);
     let l2 = perm(&mut g, P0, "Soul-Guide Lantern");
     pool(&mut g, P0, &[('C', 1)]);
     let n = g.player(P0).hand.len();

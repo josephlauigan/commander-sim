@@ -560,6 +560,10 @@ pub fn abilities_of(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<(String, Ab
     if super::karn::owns_perm(g, m) {
         return Ok(out); // the Karn deck's cards: all listed above (the AI's hook options would show twice)
     }
+    out.extend(super::cloud::perm_abilities(g, p, m).into_iter().map(|a| (a.label, AbilityKind::Extra(a.act))));
+    if super::cloud::owns_perm(g, m) {
+        return Ok(out); // the Cloud deck's cards listed there (the AI's hook options would show twice)
+    }
     // the card's compiled abilities (its text, e.g. Wayfarer's Bauble), paid from your pool
     for (label, idx) in crate::dsl::human_abilities(g, p, m) {
         out.push((label, AbilityKind::Hook(Action::Dsl { src: m, idx })));
@@ -833,6 +837,20 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         let prompt = format!("{cname}: choose X (you pay X life; creatures with toughness X or less die)");
         let k = pick!(choices::choose(g, p, "choose", &prompt, &labels, Some("cancel"), None)?);
         ctx.deluge_x = Some(k as i32);
+    }
+    if d.tags.str(Tag::Wipe) == Some("rebuke") {
+        // River's Rebuke: "return all nonland permanents target player controls to their owner's hand": the person
+        // names the player (the AI's wipe evaluation does it for a seat without one; without it the wipe hit nobody)
+        let ps: Vec<PlayerId> = g
+            .players
+            .iter()
+            .filter(|q| q.alive && (q.id == p || legal::player_targetable(g, q.id)))
+            .map(|q| q.id)
+            .collect();
+        let labels: Vec<String> = ps.iter().map(|&q| legal::describe_target(g, p, Target::Player(q))).collect();
+        let prompt = format!("{cname}: return all nonland permanents of which player?");
+        let k = pick!(choices::choose(g, p, "target", &prompt, &labels, Some("cancel"), None)?);
+        ctx.victim = Some(ps[k]);
     }
     let mut discard_cost = false;
     if cname == "Bitter Triumph" {

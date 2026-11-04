@@ -14,8 +14,10 @@ pub mod alt;
 pub mod cards;
 pub mod gaps_a;
 pub mod choices;
+pub mod cloud;
 pub mod combos;
 pub mod combat;
+pub mod fetch;
 pub mod human;
 pub mod karn;
 pub mod legal;
@@ -23,6 +25,7 @@ pub mod mana;
 pub mod script;
 pub mod specs;
 pub mod thanos;
+pub mod gaps_c;
 pub mod urdragon;
 
 use crate::control::Human;
