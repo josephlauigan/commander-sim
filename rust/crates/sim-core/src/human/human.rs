@@ -617,6 +617,7 @@ fn use_perm(g: &mut Game, p: PlayerId, m: PermId) -> Res<Option<String>> {
                 return Ok(Some(why));
             }
             mana::pay_from_pool(g, p, legal::equip_cost_to(g, p, m, t).unwrap_or(0), ""); // with the discounts
+            crate::impls::cloud::note_equip(g, p); // Forge Anew: the first equip of the turn is spent
             crate::glog!(g, "  {} equips {} to {}", name_of(g, p), mname, perm_name(g, t));
             let tn = perm_name(g, t);
             if stack::ability_window(g, p, Some(m), &format!("equip to {tn}"), None, Some(t))?
@@ -702,6 +703,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         pips = mp;
         match kind {
             legal::GyKind::Escape => zone = "escape".into(), // Underworld Breach: back to the graveyard afterwards
+            legal::GyKind::Retrace => zone = "mgy".into(), // --- urdragon: back to the graveyard as it resolves
             legal::GyKind::Muldrotha => {
                 // which of its types this uses up (an artifact creature ...)
                 let ts = crate::impls::mine::muld_types(g, p, c);
@@ -970,6 +972,13 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
             }
             pl.exile.push(x);
         }
+    }
+    if gymode == Some(legal::GyKind::Retrace) {
+        // retrace: discard a land card as an additional cost
+        let lands: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&y| g.db.get(y).land).collect();
+        let prompt = format!("Retrace {cname}: discard a land card");
+        let x = choices::pick_cards(g, p, &lands, 1, &prompt, "choose")?[0];
+        zones::discard_cards(g, p, &[x])?;
     }
     if std::mem::take(&mut sac_cost) {
         choices::sac_artifact_or_creature(g, p, &cname)?;

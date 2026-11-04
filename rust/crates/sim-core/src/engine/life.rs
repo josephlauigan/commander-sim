@@ -114,6 +114,9 @@ pub fn prevents_damage(g: &Game, p: PlayerId, src: Option<PlayerId>) -> bool {
     if crate::impls::bulk_white::damage_shield(g, p) {
         return true; // Ultimate Magic: Holy cast from exile
     }
+    if crate::impls::cloud::judgment_shield(g, p, src) {
+        return true; // Judgment of Alexander: from sources an opponent controls
+    }
     if !g.hooks.is_empty() && src != Some(p) && hooks::any_prevent_damage(g, p) {
         return true; // Solitary Confinement
     }

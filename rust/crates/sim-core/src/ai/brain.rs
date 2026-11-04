@@ -401,7 +401,7 @@ const CAST_FILL: [&str; 3] = ["stitcher", "tortured", "wayfinder"];
 /// a creature worth more than this (pval) isn't sacrificed to pay for a spell
 const SPARE_VALUE: f64 = 3.0;
 
-fn special(g: &Game, c: CardId) -> bool {
+pub(crate) fn special(g: &Game, c: CardId) -> bool {
     SPECIAL.iter().any(|&k| g.db.get(c).tag(k))
 }
 
@@ -1049,6 +1049,7 @@ pub fn hook_options(g: &mut Game, p: PlayerId, s: &Situation, post: Option<bool>
             o.extend(f(g, c, p, post)?);
         }
     }
+    o.extend(crate::impls::t12_windgrace::emblem_retrace_options(g, p, post)?); // --- urdragon: Wrenn and Six's emblem
     o.extend(crate::impls::bulk_white::face_up_options(g, p, post)?); // face-down creatures turned face up
     o.extend(crate::impls::generic_paths::exile_options(g, p, post)?); // --- generic-paths: a warped Voidborn
     for c in g.player(p).hand.clone() {

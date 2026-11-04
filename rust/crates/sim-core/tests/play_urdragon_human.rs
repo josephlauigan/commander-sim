@@ -15,6 +15,12 @@ fn urdragon_table() -> Game {
     table(&["urdragon", "kinnan-simic-mana-combo", "urza-mono-blue-artifacts"])
 }
 
+/// the Godo package moved to Sauron in the 11/03 Ur-Dragon rebuild: the tests whose searches need Godo's Equipment in
+/// the library (Helm of the Host, Hammer of Nazahn, Whispersilk Cloak) sit at the Sauron seat
+fn sauron_table() -> Game {
+    table(&["sauron", "kinnan-simic-mana-combo", "urza-mono-blue-artifacts"])
+}
+
 type Rule = (&'static str, Box<dyn Fn(&Request) -> Answer + Send>);
 
 /// a person who answers by what is asked: each rule is used once, the first whose text is in the prompt (or the
@@ -67,13 +73,20 @@ fn seat_script(g: &mut Game, rules: Vec<Rule>) -> Arc<Mutex<Vec<String>>> {
 // ------------------------------------------------------------------ Godo's search
 #[test]
 fn godo_lets_you_search_for_any_equipment() {
-    let mut g = urdragon_table();
+    let mut g = sauron_table();
     let log = seat_script(
         &mut g,
-        vec![rule("search your library for an Equipment", first), rule("search for an Equipment", text("Embercleave"))],
+        vec![
+            rule("search your library for an Equipment", first),
+            rule("search for an Equipment", text("Whispersilk Cloak")),
+        ],
     );
     perm(&mut g, P0, GODO);
-    assert!(has_perm(&g, P0, "Embercleave"), "any Equipment, not only the one the AI wants: {:?}", log.lock().unwrap());
+    assert!(
+        has_perm(&g, P0, "Whispersilk Cloak"),
+        "any Equipment, not only the one the AI wants: {:?}",
+        log.lock().unwrap()
+    );
     assert!(!has_perm(&g, P0, HELM));
 }
 
@@ -187,7 +200,7 @@ fn brass_squire_attaches_at_instant_speed_where_you_choose() {
 // ------------------------------------------------------------------ Peter Parker's Camera
 #[test]
 fn the_camera_copies_godos_enter_trigger() {
-    let mut g = urdragon_table();
+    let mut g = sauron_table();
     let cam = perm(&mut g, P0, "Peter Parker's Camera");
     pool(&mut g, P0, &[('C', 2)]);
     let ci = index_of(&g, P0, cam);

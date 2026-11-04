@@ -629,7 +629,7 @@ note = "combo piece: assembly, casting and responses are simulated; the loop its
 
 ["Cabal Coffers"]
 status = "Full"
-note = "{2},{T}: B per Swamp"
+note = "{2},{T}: B per Swamp, as net mana (nothing with two Swamps or fewer, or without two other untapped lands for the {2})"
 
 ["Cabal Ritual"]
 types = "I"
@@ -5320,7 +5320,7 @@ note = "{2}{B}, {T}, discard a card: each other player loses 2 life and you gain
 
 ["Urborg, Tomb of Yawgmoth"]
 status = "Full"
-note = "every land is a Swamp"
+note = "every land is a Swamp, and a land that makes one mana can also tap for {B} (engine::mana granted_cols)"
 
 ["Uro, Titan of Nature's Wrath"]
 tags = "leg pow=6 bomb=6"
@@ -5665,8 +5665,8 @@ note = "enters tapped; taps for {C}{C}"
 ["Wrenn and Six"]
 tags = "leg"
 dsl = []
-status = "Approximate"
-note = "+1 a land from graveyard to hand, -1 one damage (an X/1 or a player), -7 emblem (retrace recorded, not used)"
+status = "Full"
+note = "+1 the land card worth most in the graveyard back to hand; -1 one damage (the AI aims it at an X/1 creature worth killing, else at the opponent with the least life); -7 an emblem: instant and sorcery cards in your graveyard have retrace (impls/t12_windgrace.rs emblem_retrace_options: the AI, in its main phase with a land card to spare, recasts the best instant or sorcery it can pay for, discarding the least useful land; a person casts them from the graveyard menu, GyKind::Retrace)"
 
 ["Xorn"]
 tags = "pow=3 tgh=2"
@@ -7748,8 +7748,8 @@ status = "Full"
 note = "flash; enters if cast: the next instant or sorcery spell this turn has storm (copies for each spell cast before it)"
 
 ["Cursed Mirror"]
-status = "Approximate"
-note = "{T}: add {R}; as it enters it becomes a copy of the best creature on the battlefield until end of turn with haste (stats and flying, deathtouch, vigilance, lifelink; the copied creature's own triggered abilities are not copied)"
+status = "Full"
+note = "{T}: add {R}; as it enters it may become a copy of a creature on the battlefield until end of turn, with haste, as a replacement effect (impls/t0_stella.rs mirror_copy, engine/zones.rs enter): the permanent is the copied card, so it has that creature's abilities and its enters triggers fire (and no mana ability while it is a copy); the Mirror card stays under it, goes to the graveyard as the Mirror, and the permanent is the Mirror again as the next turn starts (mirror_revert). The AI copies the creature worth most to copy when it has 3 power or is worth 5 or more; a person picks or declines. Sculpting Steel copying the Mirror, or a token copy of it, does the same"
 
 ["Curse of the Swine"]
 status = "Full"
@@ -10163,8 +10163,8 @@ note = "compiled: equipped creature gets +3/+2, equip {2}. Card code (impls/card
 paths_ok = "compiled: the +3/+2 and equip {2}; card code: the combat-damage draw and free spell (card_models.rs buster_hit)"
 
 ["Nicol Bolas, the Ravager"]
-status = "Approximate"
-note = "4/4 flying; compiled: when he enters, each opponent discards a card. Card code (impls/card_models.rs): {4}{U}{B}{R}, as a sorcery: exile him and return him transformed (the AI does it in its main phase when it can pay): he comes back as the card data's double-faced entry, Nicol Bolas, the Arisen. Left out: the Arisen that leaves the battlefield is a planeswalker card in the graveyard, not the creature front"
+status = "Full"
+note = "4/4 flying; compiled: when he enters, each opponent discards a card. Card code (impls/card_models.rs): {4}{U}{B}{R}, as a sorcery: exile him and return him transformed (the AI does it in its main phase when it can pay; a token or a copy of him has no front face to turn over): he comes back as the card data's double-faced entry, Nicol Bolas, the Arisen, with 7 loyalty and all four of its loyalty abilities, and if the Arisen leaves the battlefield the card is the Ravager (the creature front) in the graveyard, hand or library (Perm::phys; dsl::use_loyalty at 0 loyalty)"
 
 ["Nicol Bolas, the Ravager // Nicol Bolas, the Arisen"]
 types = "P"
@@ -10262,3 +10262,14 @@ tags = "rem=destroy tgt=cna nonblack"
 dsl = []
 status = "Full"
 note = "destroy target nonartifact, nonblack creature (the removal tags: tgt=cna and nonblack; it can't be regenerated is not modeled)"
+
+# --- cloud-gaps (rust/agents/cloud-gaps.md): the Cloud deck's two audit gaps
+
+["Judgment of Alexander"]
+status = "Full"
+note = "instant: prevents all damage to its caster from opponents' sources until end of turn (combat and noncombat; not their permanents); each prevented creature's damage makes every commander creature deal damage equal to its power to it (combat only: a ping has no source creature); the AI casts it after blockers against a lethal or heavy attack or one whose attacker the commanders kill, and in response to a big burn spell at its face"
+
+["Forge Anew"]
+dsl = [] # the compiled reanimate had no Equipment filter (it returned the best card of any type); card code does it
+status = "Full"
+note = "enters: returns the best Equipment from the graveyard; the first equip of its controller's turn costs {0} (the AI spends it on the dearest equip), and on that turn equips can be activated at instant speed (the AI moves Equipment onto an unblocked attacker after blockers; practice mode allows it)"

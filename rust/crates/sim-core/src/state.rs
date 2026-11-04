@@ -377,6 +377,9 @@ pub struct CopyExc {
     pub not_legendary: bool,
     /// --- card-models-2: it has vanishing N (Flesh Duplicate: 3): it enters with N time counters (`DataKey::Vanish`)
     pub vanishing: u8,
+    /// --- urdragon: the copy lasts until end of turn, then the permanent is this card again (Cursed Mirror;
+    /// `t0_stella::mirror_revert`, at the start of the next turn)
+    pub revert_to: Option<CardId>,
 }
 
 /// An "enters as a copy of" replacement: the card that is copied, and the exceptions.

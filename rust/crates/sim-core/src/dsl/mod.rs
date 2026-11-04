@@ -2365,8 +2365,10 @@ pub fn use_loyalty(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool
         execute(g, p, effects, Some(src), &mut dctx, None, 0)?;
     }
     if g.perm(src).loyalty.unwrap_or(0) <= 0 && g.perm(src).on_bf {
+        // --- urdragon: a transformed walker (Nicol Bolas, the Arisen) goes to the graveyard as its front face
+        let back = g.perm(src).phys.unwrap_or(cd);
         zones::leave(g, src)?;
-        g.player_mut(p).gy.push(cd);
+        g.player_mut(p).gy.push(back);
     }
     Ok(true)
 }
@@ -2463,6 +2465,12 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
             .filter(|a| matches!(a, Ability::Triggered { source: Some(s), .. } if s == "equipped"))
             .count();
         let u = 2.5 + 0.5 * bonus as f64 + 2.0 * trig as f64 - 0.3 * n as f64
+            // Forge Anew: the free equip goes to the dearest
+            + if crate::impls::cloud::forge_free(g, p) {
+                0.3 * crate::impls::cloud::equip_cost_full(g, p, src, best, base) as f64
+            } else {
+                0.0
+            }
             + crate::ai::plan_data::equip_utility(g, p, best)
             + crate::impls::tymna_cards::equip_utility_value(g, p, src, best);
         out.push(Opt {
@@ -2497,6 +2505,7 @@ pub fn equip(g: &mut Game, p: PlayerId, src: PermId, target: PermId, n: u32) -> 
         return Ok(false);
     }
     pay(g, p, n, "", false)?;
+    crate::impls::cloud::note_equip(g, p); // Forge Anew: the first equip of the turn is spent
     crate::glog!(g, "  {} equips {} to {}", g.player(p).name, g.perm(src).name, g.perm(target).name);
     if crate::impls::t6_copies::image_targeted(g, target)? && !g.perm(target).on_bf {
         return Ok(true); // --- card-models-2: a Phantasmal Image targeted by the equip

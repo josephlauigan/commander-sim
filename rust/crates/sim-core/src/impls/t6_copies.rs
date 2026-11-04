@@ -88,7 +88,7 @@ fn copyable(g: &Game, p: PlayerId, x: PermId, kind: Kind) -> bool {
 }
 
 /// what a copy of x is worth to p: its own worth, plus what entering again does
-fn copy_value(g: &Game, p: PlayerId, x: PermId) -> f64 {
+pub(crate) fn copy_value(g: &Game, p: PlayerId, x: PermId) -> f64 {
     let mut v = pval(g, x) + 0.5 * etb_value(g, p, x).max(0.0);
     if let Some(r) = g.perm(x).cd.and_then(|c| g.db.get(c).tags.str(Tag::Rock)) {
         v += 0.5 * r.split(':').next().and_then(|s| s.parse::<f64>().ok()).unwrap_or(1.0); // a rock: mana
@@ -159,6 +159,20 @@ pub(crate) fn clone_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
 /// --- Tiers 4/5 (yuriko): what the best creature copy is worth to p (Sakashima's Student's ninjutsu choice)
 pub(crate) fn best_creature_copy(g: &Game, p: PlayerId) -> Option<f64> {
     best_copy(g, p, Kind::Creature, None, None).map(|b| b.1)
+}
+
+/// --- urdragon (Cursed Mirror): the creatures p may copy, and the best of them with its copy value
+pub(crate) fn creature_copies(g: &Game, p: PlayerId) -> Vec<PermId> {
+    g.players
+        .iter()
+        .filter(|q| q.alive)
+        .flat_map(|q| q.perms.iter().copied())
+        .filter(|&x| copyable(g, p, x, Kind::Creature))
+        .collect()
+}
+
+pub(crate) fn best_creature_copy_perm(g: &Game, p: PlayerId) -> Option<(PermId, f64)> {
+    best_copy(g, p, Kind::Creature, None, None)
 }
 
 fn zero_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {

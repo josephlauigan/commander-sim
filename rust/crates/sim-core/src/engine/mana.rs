@@ -104,11 +104,27 @@ fn land_cols(g: &Game, p: PlayerId, l: PermId, anyc: bool, moon: bool, dryad: bo
     tag_colors(d.tags.str(Tag::C).unwrap_or("C"), ident)
 }
 
+/// Urborg, Tomb of Yawgmoth / Yavimaya, Cradle of Growth: every land is also a Swamp / Forest, so it has that basic
+/// type's mana ability too ({T}: add {B} / {G}). None under Blood Moon (`lands_are` checks it). Read once per call
+/// by the callers, not per land. Only a land that makes one mana gets it: a unit is one colour set and one amount, so
+/// adding {B} to Ancient Tomb's {C}{C} or Cabal Coffers' count would let it make that much {B}; those keep their
+/// bigger ability.
+fn granted_cols(g: &Game) -> Colors {
+    let mut c = Colors::NONE;
+    for (ch, s) in [('B', "B"), ('G', "G")] {
+        if crate::engine::chars::lands_are(g, ch) {
+            c = c.union(Colors::from_letters(s));
+        }
+    }
+    c
+}
+
 /// the colours p's land L taps for now (Fellwar Stone reads opponents' lands)
 pub fn land_colors_now(g: &Game, p: PlayerId, l: PermId) -> Colors {
     let moon = !g.hooks.is_empty() && cardcode::blood_moon(g);
     let dryad = !g.hooks.is_empty() && cardcode::dryad_colors(g, p);
-    land_cols(g, p, l, false, moon, dryad)
+    let cols = land_cols(g, p, l, false, moon, dryad);
+    if g.db.get(g.perm(l).card()).tags.int(Tag::Amt).unwrap_or(1) == 1 { cols.union(granted_cols(g)) } else { cols }
 }
 
 /// every mana unit p can use now (Python's `mana_units`)
@@ -121,6 +137,7 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
     let hooked = !g.hooks.is_empty();
     let moon = hooked && cardcode::blood_moon(g);
     let dryad = hooked && cardcode::dryad_colors(g, p);
+    let granted = granted_cols(g); // Urborg / Yavimaya
     for &l in &pl.lands {
         let land = g.perm(l);
         if land.tapped {
@@ -139,10 +156,14 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
         if !plain && let Some(n) = cardcode::dyn_mana_land(g, p, l) {
             amt = n as i32;
         }
+        let one = amt == 1; // its own ability makes one mana (before Crypt Ghast's extra and the like)
         if hooked {
             amt += hooks::total_land_mana(g, p, l);
         }
         let mut cols = land_cols(g, p, l, anyc, moon, dryad);
+        if one {
+            cols = cols.union(granted); // Urborg / Yavimaya: also {B} / {G} (see granted_cols)
+        }
         if hooked && amt >= 2 && hooks::land_colorless(g, p, l, amt as u32) {
             cols = Colors::NONE; // Damping Sphere: one {C} instead of any other type and amount
             amt = 1;

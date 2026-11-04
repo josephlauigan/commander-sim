@@ -1,7 +1,8 @@
 # Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
 # policy (ai/plans.rs `config`). JD's Sauron, the Dark Lord deck (Grixis: the Orc Army amasses off the opponents'
 # spells, gets through with Whispersilk Cloak / Rogue's Passage and grows on The Ozolith; Bowmasters, Sheoldred and
-# the X drains close). Written in Phase 4 PR 7 from its hand AI, which runs when AI_HAND is on: ai/decks.rs
+# the X drains close; since the 11/03 Ur-Dragon rebuild, Godo or Combat Celebrant plus Helm of the Host is a second,
+# infinite-combat finish). Written in Phase 4 PR 7 from its hand AI, which runs when AI_HAND is on: ai/decks.rs
 # `sauron_prio` (with impls/threats.rs `sauron_extra_prio`), `sauron_tutor` (the tutor wish list) and the sauron arm
 # of `protect_main` (Not of This World).
 # Left out (the schema can't express it): anything that reads the Army token (its power, whether it exists or has
@@ -23,6 +24,23 @@ plays = ["Exsanguinate"]
 prio = 85
 
 # win lines, best first: the tutors want the first missing piece of the closest one
+# the Godo package (from the Ur-Dragon rebuild, 11/03): catalogue combos in impls/t6_combos_godo.rs and combos.rs
+[[line]]
+name = "Godo + Helm of the Host (Hammer of Nazahn out)"
+combo = "Godo + Helm of the Host (Hammer of Nazahn out)"
+
+[[line]]
+name = "Godo + Peter Parker's Camera copies the enter trigger"
+combo = "Godo + Peter Parker's Camera copies the enter trigger"
+
+[[line]]
+name = "Godo + Helm of the Host (equip {5})"
+combo = "Godo + Helm of the Host (equip {5})"
+
+[[line]]
+name = "Helm of the Host + Combat Celebrant"
+combo = "Helm of the Host + Combat Celebrant"
+
 [[line]]
 name = "an Orc Army that gets through"
 kind = "combat"
@@ -34,6 +52,23 @@ kind = "value"
 pieces = [["Orcish Bowmasters"], ["Jace's Archivist"]]
 
 # Tutor wishes (sauron_tutor), best score first, ahead of the lines' pieces
+# Hammer on the battlefield turns Godo into the cleanest one-card tutor target in the deck
+[[wish]]
+cards = ["Godo, Bandit Warlord"]
+when = ["out:Hammer of Nazahn"]
+score = 98
+
+# Camera plus Godo finds Hammer and Helm from the two enter triggers
+[[wish]]
+cards = ["Godo, Bandit Warlord"]
+when = ["out:Peter Parker's Camera"]
+score = 96
+
+[[wish]]
+cards = ["Helm of the Host"]
+when = ["out:Combat Celebrant"]
+score = 94
+
 # a slow start with no mana: Sol Ring
 [[wish]]
 cards = ["Sol Ring"]
@@ -83,6 +118,29 @@ score = 40
 [[prio]]
 commander = true
 value = 85
+
+# the Godo package: Godo once Hammer or Camera is out (or with mana to spare), Helm once a body to copy is out
+[[prio]]
+cards = ["Godo, Bandit Warlord"]
+when = ["out:Hammer of Nazahn", "out:Peter Parker's Camera", "lands+rocks>=11"]
+value = 92
+else = 70
+
+[[prio]]
+cards = ["Helm of the Host"]
+when = ["out:Godo, Bandit Warlord", "out:Combat Celebrant"]
+value = 88
+else = 55
+
+[[prio]]
+cards = ["Combat Celebrant"]
+when = ["out:Helm of the Host"]
+value = 86
+else = 48
+
+[[prio]]
+cards = ["Hammer of Nazahn", "Peter Parker's Camera"]
+value = 66
 
 # rocks early, not late
 [[prio]]
@@ -160,7 +218,7 @@ protects = ["commander", "Sheoldred, the Apocalypse"]
 # protection for Sauron against targeted removal (veyran_protect: Swat redirects, Slip phases out; from Kefka 10/31)
 [[hold]]
 card = "Deflecting Swat"
-protects = ["commander"]
+protects = ["commander", "Godo, Bandit Warlord", "Helm of the Host", "Combat Celebrant"]
 
 [[hold]]
 card = "Slip Out the Back"

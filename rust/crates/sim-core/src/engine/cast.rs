@@ -892,7 +892,8 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         let human_near = g.humans.any()
             && (g.players.iter().any(|q| q.id != p && crate::human::is_human(g, q.id))
                 || crate::human::human::copy_window(g, p, Some(c)));
-        if !(imp > 0.0 || !aff.is_empty() || human_near) || !counterable(g, &item) {
+        let judged = crate::impls::cloud::judgment_watch(g, &ctx); // --- cloud-gaps: Judgment of Alexander in hand
+        if !(imp > 0.0 || !aff.is_empty() || human_near || judged) || !counterable(g, &item) {
             return Ok(Some((true, None, ctx.clone()))); // nobody would answer it
         }
         let sent = (item.ctx.target, item.ctx.face);

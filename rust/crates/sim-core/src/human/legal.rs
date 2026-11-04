@@ -427,8 +427,10 @@ pub fn check_equip(g: &Game, p: PlayerId, e: PermId, target: PermId) -> Option<S
     if equip_cost(g, e).is_none() || !g.player(p).perms.contains(&e) {
         return Some("That isn't equipment you control.".into());
     }
-    if let Some(why) = sorcery_timing(g, p) {
-        return Some(why.replace("do that", "equip"));
+    if !crate::impls::cloud::forge_instant(g, p)
+        && let Some(why) = sorcery_timing(g, p)
+    {
+        return Some(why.replace("do that", "equip")); // (Forge Anew: equip at instant speed on your turn)
     }
     if !g.player(p).perms.contains(&target) || !g.is_creature(target) || g.perm(target).phased {
         return Some("Equip only onto a creature you control.".into());
@@ -499,6 +501,8 @@ pub enum GyKind {
     Sac3,
     Escape,
     Muldrotha,
+    /// --- urdragon: Wrenn and Six's emblem, retrace: the normal cost and a land card from the hand discarded
+    Retrace,
 }
 
 /// How p may cast card c from their graveyard now: (kind, generic, pips), or None. Yawgmoth's Will: the normal
@@ -543,6 +547,13 @@ pub fn gy_mode(g: &Game, p: PlayerId, c: CardId) -> Option<(GyKind, u32, String)
         // Muldrotha: a permanent of an unused type
         let (gn, pips) = engine::mana::cost_of(g, p, c);
         return Some((GyKind::Muldrotha, gn, pips));
+    }
+    if pl.emblems.contains(&crate::impls::t12_windgrace::WRENN_EMBLEM)
+        && (d.instant || d.sorcery)
+        && pl.hand.iter().any(|&h| g.db.get(h).land)
+    {
+        let (gn, pips) = engine::mana::cost_of(g, p, c);
+        return Some((GyKind::Retrace, gn, pips));
     }
     None
 }

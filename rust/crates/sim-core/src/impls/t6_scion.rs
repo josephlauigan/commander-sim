@@ -19,8 +19,8 @@
 //! casts is copied once per spell cast before it this turn. A storm card (Brain Freeze) gets this as a second storm
 //! trigger: its copies mill 3 each, on the targets after the ones its own storm uses.
 //!
-//! The Scion AI (`scion_options`, deck `scion` only; The Ur-Dragon pool deck keeps its Rivaz use): before combat on its
-//! own turn, with {2} spare and Scion able to attack, become Ancient Copper Dragon (a d20 of Treasures when it
+//! The Scion AI (`scion_options`, decks `scion` and `urdragon`; the pool's Ur-Dragon decks keep their Rivaz use):
+//! before combat on its own turn, with {2} spare and Scion able to attack, become Ancient Copper Dragon (a d20 of Treasures when it
 //! connects); with Copper gone and a Treasure to feed it, Korvold. Prismari is fetched only as a step of the storm line
 //! (`t6_combos_scion.rs`), where its storm wins the game.
 
@@ -137,7 +137,7 @@ pub fn activate(g: &mut Game, src: PermId, p: PlayerId, dragons: &[&str]) -> Res
     Ok(true)
 }
 
-/// the AI's Scion activation (deck `scion`): precombat on its own turn, Scion untapped and able to attack, {2}
+/// the AI's Scion activation (decks `scion` and `urdragon`): precombat on its own turn, Scion untapped and able to attack, {2}
 /// spare: Ancient Copper Dragon (its combat damage makes a d20 of Treasures); with Copper gone and a Treasure for
 /// Korvold's attack trigger to sacrifice, Korvold (a card per sacrifice). Prismari only as a step of the storm line.
 pub fn scion_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {

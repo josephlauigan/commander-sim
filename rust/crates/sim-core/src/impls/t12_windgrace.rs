@@ -215,7 +215,7 @@ fn land_want(g: &Game, p: PlayerId, c: CardId, chosen: &[CardId]) -> f64 {
 }
 
 /// the best k land cards of `cands` for p, picked one at a time (different names when `distinct`)
-fn pick_lands(g: &Game, p: PlayerId, cands: &[CardId], k: usize, distinct: bool) -> Vec<CardId> {
+pub(crate) fn pick_lands(g: &Game, p: PlayerId, cands: &[CardId], k: usize, distinct: bool) -> Vec<CardId> {
     let mut out: Vec<CardId> = vec![];
     let mut pool: Vec<CardId> = cands.to_vec();
     while out.len() < k {
@@ -572,6 +572,95 @@ fn retrace_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     cast_card(g, p, c, "mgy", Ctx::default())?;
     Ok(true)
 }
+
+// ------------------------------------------------------------------ Wrenn and Six's emblem (--- urdragon)
+/// the emblem's name in `Player::emblems`: "Instant and sorcery cards in your graveyard have retrace."
+pub const WRENN_EMBLEM: &str = "wrenn6";
+
+/// Instant and sorcery cards in your graveyard have retrace (cast from the graveyard by discarding a land card as an
+/// additional cost; the spell goes back to the graveyard as it resolves). The AI, in its own main phases with a land
+/// card in hand to spare (five lands out, or two in hand), casts the best instant or sorcery in its graveyard it can
+/// pay for: a removal spell at a target worth 3.5 or more, any other spell its usual `card_utility` likes. Not offered:
+/// counterspells, wipes, X spells, spells with their own graveyard code. Left out: a person's menus (practice mode)
+/// do not list retrace casts.
+pub(crate) fn emblem_retrace_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if !g.player(p).emblems.contains(&WRENN_EMBLEM) || post.is_none() || g.active != Some(p) {
+        return Ok(vec![]);
+    }
+    let lands_in_hand = hand_lands(g, p).len();
+    if lands_in_hand == 0 || (lands_in_hand < 2 && g.player(p).lands.len() < 5) {
+        return Ok(vec![]);
+    }
+    let s = crate::ai::brain::Situation::new(g, p);
+    let mut out = vec![];
+    for c in g.player(p).gy.clone() {
+        let d = g.db.get(c);
+        if !(d.instant || d.sorcery) || d.land || d.creature || crate::ai::brain::special(g, c) {
+            continue;
+        }
+        let t = &d.tags;
+        if t.has(Tag::Wipe) || t.has(Tag::Ctr) || t.has(Tag::Tokx) || t.has(Tag::Xtutor) || t.has(Tag::Needsac) {
+            continue;
+        }
+        let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
+        if !can_pay(g, p, gn, &pips, false) || !castable(g, p, c, "gy") {
+            continue;
+        }
+        let u = if t.has(Tag::Rem) {
+            let (rk, tgt) = (t.str(Tag::Rem).unwrap_or(""), t.str(Tag::Tgt).unwrap_or("c"));
+            let tg = crate::engine::removal::legal_targets(g, p, rk, tgt, t.has(Tag::Mv4), Some(c));
+            let Some(best) = max_by(&tg, |m| crate::ai::values::pval_for(g, p, m)) else { continue };
+            let v = crate::ai::values::pval_for(g, p, best);
+            if v < 3.5 {
+                continue;
+            }
+            v / 1.5
+        } else {
+            let Some(u) = crate::ai::brain::card_utility(g, p, &s, c) else { continue };
+            u - 0.5
+        };
+        if u <= 0.5 {
+            continue;
+        }
+        out.push(Opt {
+            utility: u,
+            label: format!("{} from the graveyard (retrace, Wrenn and Six)", cname(g, c)),
+            act: Some(Action::Plan { f: emblem_retrace_go, arg: c.0 as i64 }),
+        });
+    }
+    Ok(out)
+}
+
+fn emblem_retrace_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    let d = g.db.get(c);
+    let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
+    let ls = hand_lands(g, p);
+    let Some(land) = min_by(&ls, |x| land_want(g, p, x, &[])) else { return Ok(false) };
+    if !g.player(p).emblems.contains(&WRENN_EMBLEM) || !g.player(p).gy.contains(&c) || !can_pay(g, p, gn, &pips, false)
+    {
+        return Ok(false);
+    }
+    let mut ctx = Ctx::default();
+    if d.tags.has(Tag::Rem) {
+        let (rk, tgt) = (d.tags.str(Tag::Rem).unwrap_or(""), d.tags.str(Tag::Tgt).unwrap_or("c"));
+        let tg = crate::engine::removal::legal_targets(g, p, rk, tgt, d.tags.has(Tag::Mv4), Some(c));
+        let Some(t) = max_by(&tg, |m| crate::ai::values::pval_for(g, p, m)) else { return Ok(false) };
+        ctx.target = Some(t);
+    }
+    pay(g, p, gn, &pips, false)?;
+    discard_cards(g, p, &[land])?;
+    crate::glog!(
+        g,
+        "  {} casts {} from the graveyard (retrace), discarding {}",
+        pname(g, p),
+        cname(g, c),
+        cname(g, land)
+    );
+    cast_card(g, p, c, "mgy", ctx)?;
+    Ok(true)
+}
+
 
 // ================================================================== Soul of Windgrace
 /// the best land card in any graveyard for p: (its owner, the card)

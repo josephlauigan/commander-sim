@@ -362,7 +362,8 @@ fn sculpting_steel_copies_cursed_mirror_which_becomes_a_hasty_copy_of_godo() {
     let godo = perm(&mut g, P1, "Godo, Bandit Warlord");
     let _ = godo;
     let c = cast_hand(&mut g, P0, "Sculpting Steel");
-    let m = on_bf(&g, P0, "Cursed Mirror").into_iter().find(|&m| g.perm(m).phys == Some(c)).expect("Steel as Mirror");
+    let m =
+        on_bf(&g, P0, "Godo, Bandit Warlord").into_iter().find(|&m| g.perm(m).phys == Some(c)).expect("Steel as Mirror");
     assert!(g.is_creature(m), "as Cursed Mirror it became a copy of Godo");
     assert!(!g.perm(m).sick, "with haste");
     assert!(sim_core::engine::values::epow(&g, m) >= 3);

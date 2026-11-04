@@ -19,8 +19,9 @@ This applies in worktrees and sessions started from a parent directory too; run 
 root (or use `git -C <repo>`). If fetching is unavailable, state that the remote rules could not be refreshed and
 use the available copies.
 
-Two rules must never be missed: keep swap and package explanations enabled for deck decisions, and simulate each
-owned deck only against its matched tiers in `data/my_decks.toml`. Details appear in the simulation rules below.
+Three rules must never be missed: ask the user for approval before starting work, keep swap and package
+explanations enabled for deck decisions, and simulate each owned deck only against its matched tiers in
+`data/my_decks.toml`. Details appear in the rules below.
 
 ## Codex model policy
 
@@ -49,6 +50,12 @@ a new session or for delegated work that the user explicitly requests, route wor
 
 ## Non-negotiable rules
 
+- Ask for approval before starting work. Present the plan (what will change, which branches or worktrees, which
+  agents, which simulations), explicitly ask the user to approve it, and wait for a clear go-ahead. Until then, don't
+  edit or create files, create branches or worktrees, commit, push, open PRs, delegate, or run builds, tests or
+  simulations. Answering the plan's open questions, or approving one step, is not approval to start the rest; if
+  the plan changes, ask again. Read-only investigation (reading files, `git log`/`diff`/`fetch`, searches,
+  `cardgen audit`) needs no approval. (User, 2026-11-04.)
 - Do not run Python, Python package managers, or Python one-liners in this repository. Do not introduce new Python
   tooling. Use Rust programs, Rust tests/examples, `jq`, or shell tools instead.
 - Run builds, tests, Rust examples, and simulations through the repository's memory-capped commands when possible.
