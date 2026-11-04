@@ -107,7 +107,8 @@ pub fn astral_target(g: &Game, p: PlayerId) -> Option<PermId> {
 /// picks the permanent. The tokens are creatures from the moment they enter (`CopyExc::add_types`), so the enters
 /// triggers of Dragon Tempest, Terror of the Peaks and the like see 3/3 flying Dragons.
 fn astral_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
-    if m != src || p != owner(g, src) {
+    // in a catalogued combo (`t45_urdragon_combos`) the combo's own trigger step stands in for this one
+    if m != src || p != owner(g, src) || g.combo_spell {
         return Ok(());
     }
     let cands = astral_targets(g, p);
