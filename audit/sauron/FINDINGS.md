@@ -117,3 +117,11 @@ reported separately (`.claude/worktrees/sim-runs-2026-11-04/sauron-baseline.txt`
   (`rust/agents/report-urdragon-combos.md`), which can shift opponents' removal and counter choices slightly. It is part of
   this baseline.
 - **One seed per tier.** The CIs above are the only noise estimate.
+
+## 2026-11-04 (late): AI changes, not simulated (JD: no sims for this batch)
+
+- **Mystic Confluence** now costs {3}{U}{U} (data/carddb.txt had {3}{U}{U}{U}) and **Mauhúr, Uruk-hai Captain** {B}{R} (had {1}{B}{R}): both were a mana dearer for the AI than printed.
+- **Iron Man, Armored Avenger**: its draw counter goes on the AI's best creature (it went only on the Army, and nowhere without one), as the Oracle text's "target creature" says.
+- Unchanged on purpose: Bloodchief's Thirst is stored at its kicked cost {2}{B}{B}, which the AI always pays (a documented approximation; a person pays {B}).
+
+The numbers above predate these changes; a re-run on the deck's own tiers would show their effect.
