@@ -594,6 +594,27 @@ pub fn check_cast_gy(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
     mana::cost_problem(g, p, gn, &pips).map(|why| format!("Can't cast {name} from your graveyard. {why}"))
 }
 
+/// Why p can't cast the exiled card c now (a Dauthi Voidwalker permission of the turn: no mana cost; the timing of the
+/// card's own type), or None.
+pub fn check_cast_exile(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
+    let name = nm(g, c).to_string();
+    if super::gaps_c::dauthi_permits(g, p, c).is_none() {
+        return Some(format!("You can't cast {name} from exile right now."));
+    }
+    if !instant_speed(g, p, c)
+        && let Some(why) = sorcery_timing(g, p)
+    {
+        return Some(why.replace("do that", &format!("cast {name}")));
+    }
+    if engine::values::silenced(g, p) {
+        return Some("You can't cast spells during this player's turn (Conqueror's Flail).".into());
+    }
+    if !cast::castable(g, p, c, "lib") {
+        return Some(format!("Something on the battlefield stops you casting {name} right now."));
+    }
+    None
+}
+
 pub fn check_land_gy(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
     let pl = g.player(p);
     if !pl.gy.contains(&c) || !g.db.get(c).land {

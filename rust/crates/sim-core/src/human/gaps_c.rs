@@ -357,35 +357,41 @@ pub fn emry_permits(g: &Game, p: PlayerId, c: CardId) -> bool {
 }
 
 // ------------------------------------------------------------------ Mirage Mirror
-/// {2}: becomes a copy of target artifact, creature, enchantment or land until end of turn. Lands (they are not
-/// permanents of the permanent list), tokens, Auras, legends the person already controls and copies are not offered
+/// {2}: becomes a copy of target artifact, creature, enchantment or land until end of turn. Not offered: Auras (a copy
+/// of an Aura would be attached to nothing and go to the graveyard), copies, a legendary land the person already
+/// controls, and any land with more than mana abilities (see `plain_land`). A copy of a land moves the Mirror to its
+/// controller's land list until `alela::mirror_revert`.
 fn mirage_mirror(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if let Some(why) = cost_ok(g, p, 2, "", "Mirage Mirror") {
         return Ok(Some(why));
     }
     let mut tg: Vec<PermId> = vec![];
     for q in g.players.iter().filter(|q| q.alive) {
-        for &t in &q.perms {
+        for &t in q.perms.iter().chain(q.lands.iter()) {
             let x = g.perm(t);
             let Some(cd) = x.cd else { continue };
             // a token copy of a card counts (its copiable values are the card's); your own legend too (the legend
-            // rule then has you keep one of the two). Not offered: an Aura (the copy would be attached to nothing) and
-            // a land (lands are kept apart from the permanent list here)
+            // rule then has you keep one of the two), except a land (the legend rule looks at the permanent list).
+            // Not offered: an Aura (the copy would be attached to nothing and go to the graveyard)
             if t == m || x.phased || (x.owner != p && values::untargetable(g, t)) {
                 continue;
             }
             let d = g.db.get(cd);
-            if d.land || x.data.truthy(DataKey::MirageMirror) || d.has_subtype("aura") {
+            if x.data.truthy(DataKey::MirageMirror) || d.has_subtype("aura") {
                 continue;
             }
-            if !(g.is_creature(t) || d.types.has(Types::ARTIFACT) || d.types.has(Types::ENCHANTMENT)) {
+            if d.land {
+                if !plain_land(g, p, t) || (x.owner == p && crate::cardcode::is_legendary(g, t)) {
+                    continue;
+                }
+            } else if !(g.is_creature(t) || d.types.has(Types::ARTIFACT) || d.types.has(Types::ENCHANTMENT)) {
                 continue;
             }
             tg.push(t);
         }
     }
     if tg.is_empty() {
-        return Ok(Some("There is no artifact, creature or enchantment to copy.".into()));
+        return Ok(Some("There is no artifact, creature, enchantment or land to copy.".into()));
     }
     let Some(t) =
         cards::pick_perm(g, p, "target", "Mirage Mirror: become a copy of which permanent?", &tg, Some("cancel"))?
@@ -405,8 +411,26 @@ fn mirage_mirror(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     let x = g.perm_mut(m);
     x.phys = own;
     x.data.set(DataKey::MirageMirror, Val::Bool(true));
+    crate::impls::alela::mirror_lists(g, m, g.db.get(tcd).land);
     crate::engine::life::check_state(g)?; // a copy of your own legend: the legend rule (you keep one)
     Ok(None)
+}
+
+/// a land whose only abilities are mana abilities: a Mirage Mirror that copies one is safe in the land list. The lands
+/// with card code of their own (fetch lands, bouncelands, Glacial Chasm, sacrifice or activated abilities, triggers)
+/// are left out: the engine's code for them reads the permanent's card to put into a zone and would put the copied
+/// land's card there instead of the Mirror.
+fn plain_land(g: &Game, p: PlayerId, l: PermId) -> bool {
+    use crate::tag::Tag;
+    let cd = g.perm(l).card();
+    let d = g.db.get(cd);
+    d.land
+        && !d.tag(Tag::F)
+        && !d.tag(Tag::Bounceland)
+        && !d.tag(Tag::Chasm)
+        && !crate::dsl::land_live(d)
+        && !g.registry.get(cd).is_some_and(|i| i.live() || i.land_options.is_some())
+        && super::abilities::land_abilities(g, p, l).is_empty()
 }
 
 // ------------------------------------------------------------------ Wispdrinker Vampire
@@ -510,7 +534,7 @@ fn gix(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
 
 // ------------------------------------------------------------------ Dauthi Voidwalker
 /// {T}, sacrifice it: choose an exiled card an opponent owns with a void counter; you may play it this turn without
-/// paying its mana cost (played at once, as the AI's play does; lands are not offered)
+/// paying its mana cost (a land is played at once as the land drop; a spell is a permission for the turn)
 fn dauthi(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if let Some(why) = tap_ok(g, m, true) {
         return Ok(Some(why));
@@ -558,8 +582,60 @@ fn dauthi(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         engine::life::check_state(g)?;
         return Ok(None);
     }
-    crate::impls::common::dauthi_go(g, m, p, (c.0 as i64) | ((q.0 as i64) << 16))?;
+    // a spell: "you may play it this turn without paying its mana cost". The Voidwalker is sacrificed as a cost; the
+    // permission lasts the turn and the person casts the card (from exile, for free) whenever they like, or not at
+    // all (`dauthi_permits`, `legal::check_cast_exile`). The AI's play (`common::dauthi_go`) casts it at once.
+    let Some(cd) = g.perm(m).cd else { return Ok(None) };
+    zones::die(g, m, "sac")?;
+    let what = format!("you may play {} this turn", cname(g, c));
+    if engine::stack::ability_window_card(g, p, cd, &what, Some(5.0), None)? && g.player(q).exile.contains(&c) {
+        let st = g.turn_stamp();
+        let mut list = match g.perm(m).data.get(DataKey::Dauthi) {
+            Some(Val::List(v)) if v.first() == Some(&Val::Stamp(st)) => v.clone(),
+            _ => vec![Val::Stamp(st)],
+        };
+        list.push(Val::Card(c));
+        g.perm_mut(m).data.set(DataKey::Dauthi, Val::List(list));
+        crate::glog!(g, "    Dauthi Voidwalker: {what}");
+    }
+    engine::life::check_state(g)?;
     Ok(None)
+}
+
+/// a person's Dauthi Voidwalker let p play the exiled card c this turn: whose exile it is in
+pub fn dauthi_permits(g: &Game, p: PlayerId, c: CardId) -> Option<PlayerId> {
+    // every Voidwalker p has had (the permanents' arena keeps the sacrificed one: the permission outlives it)
+    let st = g.turn_stamp();
+    let held = g.perms.iter().any(|x| {
+        x.owner == p
+            && matches!(x.data.get(DataKey::Dauthi),
+                Some(Val::List(v)) if v.first() == Some(&Val::Stamp(st)) && v.contains(&Val::Card(c)))
+    });
+    if !held {
+        return None;
+    }
+    g.players.iter().find(|q| q.exile.contains(&c)).map(|q| q.id)
+}
+
+/// the exiled cards p may play this turn: (card, whose exile)
+pub fn dauthi_playable(g: &Game, p: PlayerId) -> Vec<(CardId, PlayerId)> {
+    let st = g.turn_stamp();
+    let mut out = vec![];
+    for x in g.perms.iter().filter(|x| x.owner == p) {
+        if let Some(Val::List(v)) = x.data.get(DataKey::Dauthi)
+            && v.first() == Some(&Val::Stamp(st))
+        {
+            for e in v.iter().skip(1) {
+                if let Val::Card(c) = e
+                    && let Some(q) = dauthi_permits(g, p, *c)
+                    && !out.contains(&(*c, q))
+                {
+                    out.push((*c, q));
+                }
+            }
+        }
+    }
+    out
 }
 
 /// the lands among Dauthi Voidwalker's void cards (`common::dauthi_void` leaves them out: the AI plays only spells)

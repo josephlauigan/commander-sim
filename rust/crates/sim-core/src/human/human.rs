@@ -493,6 +493,17 @@ pub fn apply(g: &mut Game, p: PlayerId, act: &Value) -> Res<Option<String>> {
         engine::life::check_state(g)?;
         return Ok(None);
     }
+    if d == "cast" && zone == Some("ex") {
+        // an exiled card a Dauthi Voidwalker let you play this turn (`card` is the card's id, as `exile_playable` lists)
+        let c = act.get("card").and_then(Value::as_u64).map(|i| CardId(i as u16));
+        let Some(c) = c.filter(|c| g.players.iter().any(|q| q.exile.contains(c))) else {
+            return Ok(Some("There is no such card in exile.".into()));
+        };
+        if let Some(why) = legal::check_cast_exile(g, p, c) {
+            return Ok(Some(why));
+        }
+        return cast(g, p, c, "ex");
+    }
     if d == "cast" && zone == Some("gy") {
         let Some(c) = index_of(act, "card").and_then(|i| g.player(p).gy.get(i).copied()) else {
             return Ok(Some("There is no such card in your graveyard.".into()));
@@ -751,6 +762,13 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         gn = 0;
         pips = String::new();
     }
+    // Dauthi Voidwalker's permission: cast from exile without paying its mana cost (the card leaves exile as it is cast)
+    let free = zone == "ex";
+    if free {
+        zone = "lib".into();
+        gn = 0;
+        pips = String::new();
+    }
     let mut ctx = Ctx::default();
     let mut gymode = None;
     if zone == "gy" {
@@ -787,7 +805,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         }
         gymode = Some(kind);
     }
-    if d.tags.str(Tag::Wipe).is_some() && d.tags.has(Tag::Rem) && !cit {
+    if d.tags.str(Tag::Wipe).is_some() && d.tags.has(Tag::Rem) && !cit && !free {
         // overload (Cyclonic Rift, Vandalblast)
         let (og, op) = crate::ai::decks::wipe_cost(g, p, c);
         let over = format!("overloaded ({}): every one you don't control", mana::cost_text(og, &op));
@@ -817,7 +835,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
             return Ok(None);
         }
     }
-    if d.tags.has(Tag::Mastery) && !cit {
+    if d.tags.has(Tag::Mastery) && !cit && !free {
         // Mizzix's Mastery: one target, or overloaded
         let one = format!("one target ({})", mana::cost_text(gn, &pips));
         let over = "overloaded ({5}{R}{R}{R}): every instant and sorcery card in your graveyard".to_string();
@@ -936,7 +954,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
     }
     let mut life = 0;
     let phy = legal::phyrexian(g, p, c);
-    if !phy.is_empty() && !cit {
+    if !phy.is_empty() && !cit && !free {
         // {B/P}: its colour, or 2 life (your choice)
         let ways = legal::phyrexian_ways(g, p, c, gn, &pips);
         if ways.is_empty() {
@@ -1067,6 +1085,12 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         let x = choices::pick_cards(g, p, &others, 1, &format!("{cname}: discard a card"), "choose")?[0];
         zones::discard_cards(g, p, &[x])?;
         ctx.paid_otherwise = true;
+    }
+    if free
+        && let Some(q) = g.players.iter().find(|q| q.exile.contains(&c)).map(|q| q.id)
+    {
+        g.player_mut(q).exile.take(c);
+        ctx.owner = Some(q); // still theirs: it goes back to their graveyard
     }
     if ctx.rean_target.is_some() {
         return cast_rean(g, p, c, &zone, ctx, flash_sac);

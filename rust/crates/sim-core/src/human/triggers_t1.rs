@@ -9,7 +9,7 @@
 //! - **Mishra's Self-Replicator**: the "you may pay {1}".
 //! - **Myr Battlesphere**: X, the Myr tapped.
 //! - **Portal to Phyrexia**: the creature card put onto the battlefield at upkeep.
-//! - **Scarlet Witch**: the target and costs of the spell cast for free.
+//! - **Scarlet Witch**: the target and costs of the spell cast for free (X is 0: cast without paying its mana cost).
 //! - **Susurian Voidborn**: the target opponent of the drain.
 //! - **Sylvan Library**: the optional draw, the two cards chosen, and pay 4 life or put on top.
 //! - **The Ozolith**: the creature that gets the counters (or none).
@@ -239,7 +239,7 @@ pub fn portal_pick(g: &Game, p: PlayerId) -> Res<Option<(CardId, PlayerId)>> {
 /// a spell cast without paying its mana cost from Scarlet Witch's exiled cards: the person's target (and any other
 /// choice the cast asks before paying). None: they cancelled, so the card stays exiled with her. The additional costs
 /// the choices made are returned to pay.
-pub fn free_cast(g: &Game, p: PlayerId, c: CardId) -> Res<Option<(Ctx, super::specs::Costs)>> {
+pub fn free_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res<Option<(Ctx, super::specs::Costs)>> {
     let name = g.db.get(c).name.to_string();
     let mut ctx = Ctx::default();
     if let Some(tgts) = legal::spell_targets(g, p, c) {
@@ -256,10 +256,13 @@ pub fn free_cast(g: &Game, p: PlayerId, c: CardId) -> Res<Option<(Ctx, super::sp
             Target::Perm(m) => ctx.target = Some(m),
         }
     }
-    match super::specs::choose_pre(g, p, c, &mut ctx)? {
-        super::specs::Pre::Ok(costs) => Ok(Some((ctx, costs))),
-        _ => Ok(None),
-    }
+    let costs = match super::specs::choose_pre(g, p, c, &mut ctx)? {
+        super::specs::Pre::Ok(costs) => costs,
+        _ => return Ok(None),
+    };
+    // X stays 0: a spell cast without paying its mana cost has X = 0 (rule 107.3b), so Scarlet Witch's Comet Storm or
+    // Exsanguinate is cast for X = 0 (checked against the Oracle text, 2026-11-04)
+    Ok(Some((ctx, costs)))
 }
 
 // ------------------------------------------------------------------ Susurian Voidborn
