@@ -1643,7 +1643,7 @@ fn scourge_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-/// {3}{W}{W}{W}: +2/+0 and lifelink
+/// {3}{W}{W}{W}: +2/+2 and lifelink until end of turn (it gave +2/+0 before, short of the Oracle text)
 fn resplendent_pump(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if p != g.perm(src).owner || post != Some(false) || g.perm(src).tapped || !can_pay(g, p, 3, "WWW", false) {
         return Ok(vec![]);
@@ -1656,8 +1656,8 @@ fn resplendent_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool
         return Ok(false);
     }
     pay(g, p, 3, "WWW", false)?;
-    if ability_window(g, p, Some(src), "+2/+0 and lifelink", None, None)? && on(g, p, src) {
-        super::t3::eot(g, src, 2, 0);
+    if ability_window(g, p, Some(src), "+2/+2 and lifelink", None, None)? && on(g, p, src) {
+        super::t3::eot(g, src, 2, 2);
         eot_kw(g, src, "lifelink");
     }
     Ok(true)
