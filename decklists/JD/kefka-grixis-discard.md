@@ -98,6 +98,12 @@ cards and play them; with a commander on the battlefield you may do both) and th
 - **On every spell:** Guttersnipe, Kessig Flamebreather, Firebrand Archer and Kuja's tokens (see The spell engine).
 - **Repeatable pings:** Blightspeaker, Susurian Voidborn (each creature or artifact of yours that dies drains one
   opponent, and Treasure you crack counts).
+- **Palantír of Orthanc** ({3} artifact, since 11/01): at each of your end steps it gets an influence counter and you
+  scry 2, then a target opponent chooses: you draw a card, or you mill X cards (X is the number of influence counters,
+  one more each turn) and that opponent loses life equal to the total mana value of the milled cards. Either way it
+  pays: the scry sets up the next turn, a card is a card, and a milled pile fills the graveyard for Underworld Breach and
+  Yawgmoth's Will. The life loss happens on your turn, so once Kefka has flipped it draws you that many cards. The
+  mill is your own library, so count it before a Crawler or Niv loop.
 - **One-shots:** Corroding Dragonstorm, Lightning Bolt and Massacre Wurm (2 for each of their creatures
   that dies).
 - **Price of Progress** ({1}{R}, instant) deals 2 damage to each player for each nonbasic land they control. Kefka runs
@@ -172,7 +178,7 @@ creature on your side, and one fewer in their deck. Pick the opponent whose deck
   draws and the Crawler loop still works.
 - **Removal before the flip.** Kefka is a 4/5 that has to attack or survive a turn cycle. Hold Counterspell
   mana, and remember he can be recast from the command zone.
-- **Short library.** Never start the Crawler or Niv loop without counting your library against the highest life total.
+- **Short library.** Never start the Crawler or Niv loop without counting your library against the highest life total (Palantír of Orthanc and Glimpse the Unthinkable aimed at yourself shorten it).
 - **Hand size.** Discard down to seven is the limit to watch after a flip turn.
 - **Fast pressure and large creatures.** You win late. Spend removal on the threats that would kill you first, and
   use **Massacre Wurm**, Young Pyromancer's tokens or a counterspell to buy time.
@@ -197,7 +203,7 @@ creature on your side, and one fewer in their deck. Pick the opponent whose deck
 
 - **Lands:** 36 (17 nonbasic + 19 basic)
 - **Mana:** Arcane Signet, Lotus Petal, Birgi, Storm-Kiln Artist, Dark Ritual, Seething Song, Jeska's Will, Treasure makers and burst cards. Yawgmoth's Will replays Dark Ritual and Lotus Petal from the graveyard. Basics: 7 Swamp, 7 Mountain, 5 Island; Urborg, Tomb of Yawgmoth makes every land a Swamp, so the duals and Islands tap for {B} too; Mistrise Village enters untapped with a Mountain.
-- **Card draw:** Kefka, Frantic Search, Think Twice, Decorum Dissertation (a free draw-two each turn after the first cast), Skullclamp, Niv-Mizzet (taps to draw), Marvin, Murderous Mimic (a 2-mana 2/2 that has the activated abilities of your other creatures: it copies Niv-Mizzet's draw, Blightspeaker and Rummaging Goblin), the looters, and the cheap digging spell Expressive Iteration (look at three: one to hand, one to the bottom, one exiled and playable this turn). **Glimpse the Unthinkable** ({U}{B}: target player mills ten) fills your graveyard for Underworld Breach and Yawgmoth's Will, or points at an opponent to start the mill-out that Brain Freeze finishes. **Tutors:** Diabolic Tutor, Mystical Tutor, Solve the Equation, Entomb (to the graveyard). **Graveyard:** Underworld Breach, Yawgmoth's Will, Mystic Sanctuary, Reanimate, Animate Dead, Necromancy.
+- **Card draw:** Kefka, Frantic Search, Think Twice, Decorum Dissertation (a free draw-two each turn after the first cast), Skullclamp, Palantír of Orthanc (a card or a drain at each of your end steps), Niv-Mizzet (taps to draw), Marvin, Murderous Mimic (a 2-mana 2/2 that has the activated abilities of your other creatures: it copies Niv-Mizzet's draw, Blightspeaker and Rummaging Goblin), the looters, and the cheap digging spell Expressive Iteration (look at three: one to hand, one to the bottom, one exiled and playable this turn). **Glimpse the Unthinkable** ({U}{B}: target player mills ten) fills your graveyard for Underworld Breach and Yawgmoth's Will, or points at an opponent to start the mill-out that Brain Freeze finishes. **Tutors:** Diabolic Tutor, Mystical Tutor, Solve the Equation, Entomb (to the graveyard). **Graveyard:** Underworld Breach, Yawgmoth's Will, Mystic Sanctuary, Reanimate, Animate Dead, Necromancy.
 - **Interaction:** Lightning Bolt, Reality Shift, Extinguish the Light, Deadly Embrace, Contract Killing, Chaos Warp; Counterspell; one-sided sweeper Massacre Wurm.
 - **Protection:** Counterspell and Mistrise Village (makes a spell uncounterable).
 

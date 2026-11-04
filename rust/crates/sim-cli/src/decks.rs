@@ -20,7 +20,7 @@ pub const FILES: [(&str, &str, &str); 11] = [
     ("thrasios", "JD", "tymna-thrasios-partners.md"),
     ("karn", "JD", "karn-colorless-artifacts.md"),
     ("thanos", "JD", "thanos-five-colour-turbo.md"),
-    ("urdragon", "JD", "ur-dragon-equipment.md"),
+    ("urdragon", "JD", "ur-dragon-dragon-copies.md"),
 ];
 
 /// compare.KEYS / poolmode.MINE: your decks, in the order --all-decks runs them

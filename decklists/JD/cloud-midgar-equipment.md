@@ -53,6 +53,8 @@ With Cloud equipped, these Equipment gain from the extra trigger:
 - **Mask of Memory**: two triggers of draw two then discard one.
 - **Buster Sword**: two triggers of draw a card, then cast a spell from your hand free with mana value up to that
   damage.
+- **Andúril, Narsil Reforged**: whenever the equipped creature attacks, it puts a +1/+1 counter on each creature you
+  control (two with the city's blessing), so the attack trigger doubles to two counters on each.
 
 **Swiftfoot Boots**,
 **Colossus Hammer** and **Fireshrieker** have
@@ -128,8 +130,8 @@ that creature indestructible.
 
 ### Removal
 - **Single targets:** Winds of Abandon ({1}{W}, exile; overload {4}{W}{W} exiles all your opponents' creatures), Lay Down Arms ({W}: exiles a creature with mana value up to the number of Plains you control, so
-  it gets better later), Fate of the
-  Sun-Cryst (costs {2} less against a tapped creature), Skyclave Apparition (mana value 4 or less) and Stroke of Midnight ({2}{W} instant: destroys any nonland permanent, and its controller gets a 1/1 Human).
+  it gets better later), Swords to Plowshares and Path to Exile ({W} each: exile a creature; its controller gains life
+  equal to its power, or may fetch a basic land tapped), Skyclave Apparition (mana value 4 or less) and Stroke of Midnight ({2}{W} instant: destroys any nonland permanent, and its controller gets a 1/1 Human).
 - **Artifacts and enchantments:** Disenchant.
 - **Attack limits and taxes:** **Archangel of Tithes** ({1}{W}{W}{W}, a 3/5 flier: while untapped, opponents pay {1} for each creature that attacks you, and while it attacks, they pay {1} for each creature that blocks). With her too,
   creatures cannot attack you unless their controller pays per attacker: Windborn Muse {2} (a 2/3 flier), Baird,
@@ -193,7 +195,8 @@ Apparition, Winds of Abandon, Austere Command, Elspeth, Sun's Champion and Disen
 **Bracket 3,** with three Game Changers: **Smothering Tithe**, **Enlightened Tutor** and **Teferi's Protection**. The deck has no combo that wins
 on its own. Tell the table before the game that:
 
-- the deck has two tutors (Cloud and Enlightened Tutor) but no game-winning combo;
+- the deck has Equipment tutors (Cloud, Stoneforge Mystic, Steelshaper's Gift and Open the Armory) and Enlightened
+  Tutor, but no game-winning combo;
 - Austere Command can wipe the table, and Winds of Abandon (overloaded) and Elspeth, Sun's Champion can clear opposing creatures.
 
 ## Decklist by type (100)

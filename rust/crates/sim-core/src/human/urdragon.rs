@@ -1,4 +1,4 @@
-//! Practice mode for the Ur-Dragon deck's combos (`decklists/JD/ur-dragon-equipment.md`): what a person at the seat can
+//! Practice mode for the Ur-Dragon deck's combos (`decklists/JD/ur-dragon-dragon-copies.md`): what a person at the seat can
 //! do by hand that the bots do through their own code.
 //!
 //! - **The Helm loop** (Godo, Bandit Warlord or Combat Celebrant wearing Helm of the Host): by hand it is 3 or more

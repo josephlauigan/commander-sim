@@ -9,7 +9,7 @@ punisher out, because they then just refuel the table.
 | | |
 |---|---|
 | **Commander** | Sheoldred, the Apocalypse ({2}{B}{B}, 4/5 deathtouch, black) |
-| **Bracket** | 4 (4 Game Changers: Ad Nauseam, The One Ring, Demonic Tutor, Bolas's Citadel) |
+| **Bracket** | 4 (4 Game Changers: Ad Nauseam, The One Ring, Demonic Tutor, Bolas's Citadel; Mikaeus + Triskelion infinite-damage combo) |
 | **Simulator** | deck key `sheoldred`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -74,7 +74,7 @@ card; Sheoldred gives the 2 back.
 equal to its mana value, repeat. Cast it at the end of the opponent's turn before yours, with your mana untapped,
 and stop at a hand you can use next turn (about seven plus a card per three mana) or while your life is still well
 above what the table could swing for. The cards are put into your hand, not drawn, so Sheoldred gains you nothing
-from them. The deck's low curve (average mana value under 3) makes it cheap: about 2–3 life a card.
+from them. The cost stays moderate: the nonland cards average about 3.3 mana value and 36 of the 100 cards are lands (free), so a card costs about 2 life on average.
 
 **Bolas's Citadel** ({3}{B}{B}{B}) lets you look at the top card of your library and play it, paying life equal to
 its mana value instead of mana. The low curve keeps that cheap, and Sheoldred's lifegain keeps the life total up.
@@ -127,9 +127,11 @@ Lethal Throwdown, Accursed Marauder and chump blocks feed it.
 cheap body that leaves a Treasure.
 
 ### The aristocrats package: a second way to win
-**Mikaeus, the Unhallowed** ({2}{B}{B}) gives your other non-Human creatures +1/+1 and undying. With **Triskelion**
-({6}, enters with three +1/+1 counters; remove one: 1 damage to any target) it is an infinite-damage combo: Triskelion
-pings itself to death, returns with a +1/+1 counter from undying, and pings again. Demonic Tutor and Diabolic Tutor find
+**Mikaeus, the Unhallowed** ({3}{B}{B}{B}) gives your other non-Human creatures +1/+1 and undying. With **Triskelion**
+({6}, enters with three +1/+1 counters; remove one: 1 damage to any target) it is an infinite-damage combo: remove
+every counter, aim enough pings at Triskelion itself to kill it (with Mikaeus it is a 2/2 once the counters are gone, so
+two pings), and the rest at an opponent. It dies with no counters, so undying returns it, and it comes back with its
+three counters plus the undying one. Demonic Tutor and Diabolic Tutor find
 the missing piece. **Yawgmoth, Thran Physician** (pay 1 life, sacrifice another creature: a -1/-1 counter on up to one
 creature and draw a card) is a sacrifice outlet that draws; a -1/-1 counter cancels the +1/+1 counter undying leaves,
 so Mikaeus's creatures can die and return again and again. **Viscera Seer** (sacrifice a creature: scry 1) and
@@ -197,8 +199,12 @@ Perigee Beckoner.
 
 ## Bracket and Rule 0
 
-Bracket 4, on the Game Changer count: four Game Changers (Ad Nauseam, The One Ring, Demonic Tutor, Bolas's Citadel).
-There are no two-card combos, no extra turns and no mass land destruction. Tell the table about the four Game
+Bracket 4: four Game Changers (Ad Nauseam, The One Ring, Demonic Tutor, Bolas's Citadel) and the combos named here.
+There are no extra turns and no mass land destruction, but there are infinite combos: Mikaeus + Triskelion is a
+two-card infinite-damage combo (Commander Spellbook lists it), Mikaeus + Yawgmoth + Gray Merchant of Asphodel is a
+three-card loop (it needs a second nontoken non-Human creature with toughness 2 or more), and Sheoldred + Peer into the
+Abyss (or Underworld Dreams + Peer into the Abyss) is a near-instant kill on an opponent whose library is large
+compared with their life. Name these before the game. Tell the table about the four Game
 Changers, and tell it that Howling Mine, Memory Jar, Dark Deal and the other draw cards are symmetric on purpose: they make everyone
 draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cost the opponents.
 
