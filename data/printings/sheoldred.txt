@@ -45,6 +45,7 @@
 1 Phyrexian Delver (inv) 115
 1 Phyrexian Rager (dmr) 99
 1 Phyrexian Tower (sld) 208
+1 Raise Dead (plst) P02-86
 1 Rooftop Assassin (otj) 103
 1 Screeching Soulbreaker (fra) 65
 1 Seizan, Perverter of Truth (mul) 145
@@ -54,7 +55,6 @@
 1 Sheoldred, the Apocalypse (dmu) 436
 1 Silence the Echo (fra) 66
 1 Skullclamp (sld) 1663
-1 Sneering Shadewriter (sos) 101
 31 Swamp (mdd) 296
 1 Swiftfoot Boots (brr) 121
 1 Syphon Mind (scd) 111
