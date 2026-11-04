@@ -87,6 +87,7 @@ function renderPrompt(ev) {
     row('Activate', me.battlefield.map((m) => btn(m.name, { do: 'use', perm: m.i })));
     row('Land abilities', me.lands.filter((L) => L.ability).map((L) => btn(L.name, { do: 'use', land: L.i })));
     row('Graveyard', (me.graveyard_playable || []).map((x) => btn(`${x.name} (${x.how})`, { do: x.how === 'land' ? 'land' : 'cast', zone: 'gy', card: x.i })));
+    row('Exile (this turn)', (me.exile_playable || []).map((x) => btn(`${x.name} (${x.owner}'s exile)`, { do: 'cast', zone: 'ex', card: x.card })));
     box.append(list);
   } else if (req.kind === 'attack') {
     box.append(el('p', { class: 'help' }, 'Click your creatures to attack with them (click again to take one back).'));

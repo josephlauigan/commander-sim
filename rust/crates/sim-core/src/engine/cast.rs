@@ -467,7 +467,13 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
         let src = find(g, p, Tag::Jin)[0];
         let name = format!("copy {}", g.db.get(c).name);
         if trigger_window(g, p, Some(src), &name, Some(5.0))? {
-            copy_spell(g, p, c, None, false)?; // Jin-Gitaxias copies your first artifact/instant/sorcery each turn
+            // a person's copy starts from the original's targets (and X), so "keep the same target" is offered; the AI's
+            // copy picks its own (it was never given the original's ctx)
+            let orig = match &g.cur_cast {
+                Some((cc, cx, _)) if *cc == c && crate::human::is_human(g, p) => Some(cx.clone()),
+                _ => None,
+            };
+            copy_spell(g, p, c, orig.as_ref(), false)?; // Jin-Gitaxias copies your first artifact/instant/sorcery each turn
         }
     }
     if instant_or_sorcery && &*g.db.get(c).name != "Galvanic Iteration" && g.player(p).galvanic == Some(st) {

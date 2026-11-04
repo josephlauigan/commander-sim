@@ -985,7 +985,7 @@ fn leveler_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Playe
 
 /// Unearth {8}: from the graveyard at sorcery speed, once per death (it is exiled at the end step)
 fn leveler_unearth_opts(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false) || g.active != Some(p) || !g.player(p).gy.contains(&c) || crate::human::is_human(g, p) {
+    if post != Some(false) || g.active != Some(p) || !g.player(p).gy.contains(&c) {
         return Ok(vec![]);
     }
     if !can_pay(g, p, 8, "", false) {

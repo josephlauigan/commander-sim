@@ -102,10 +102,14 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
         crate::t6stats::flow_draw(g, p, step && k == 0, new); // --- ai-flow
         if has(g, p, Tag::Ironman) && crate::human::is_human(g, p) {
             crate::human::triggers_t1::ironman_counter(g, p)?; // the person picks the creature
-        } else if has(g, p, Tag::Ironman)
-            && let Some(a) = army_of(g, p)
-        {
-            repl::put_plus(g, a, 1);
+        } else if has(g, p, Tag::Ironman) {
+            // "put a +1/+1 counter on target creature": the AI picks the creature it values most (the Army before,
+            // whatever else it had; the Army still wins a tie)
+            let own: Vec<PermId> =
+                g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased).collect();
+            if let Some(t) = max_by(&own, |m| pval(g, m) + if g.perm(m).army { 0.01 } else { 0.0 }) {
+                repl::put_plus(g, t, 1);
+            }
         }
         if g.dsl_on {
             crate::dsl::fire(g, "draw", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
@@ -850,7 +854,9 @@ fn card_tag_str(g: &Game, m: PermId, t: Tag) -> Option<&str> {
 }
 
 fn hand_tag_death(g: &mut Game, q: PlayerId, p: PlayerId, _m: PermId, creature: bool) -> Res {
-    if has(g, q, Tag::Bartist) {
+    // Blood Artist: "this creature or another creature dies": one drain per Artist you control (two drained once)
+    let artists = if creature { find(g, q, Tag::Bartist).iter().filter(|&&a| !g.perm(a).neutered).count() } else { 0 };
+    for _ in 0..artists {
         let opps: Vec<PlayerId> = g.opps(q).collect();
         let target = if crate::human::is_human(g, q) {
             crate::human::gaps_t2::pick_player(g, q, "Blood Artist")? // "target player": the person's pick, you included

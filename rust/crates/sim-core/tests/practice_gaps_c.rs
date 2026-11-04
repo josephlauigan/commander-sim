@@ -294,8 +294,9 @@ fn dauthi_voidwalker_plays_the_exiled_card_you_pick() {
     let h = person(&mut g, |r| r.prompt.contains("Dauthi").then(|| text(r, "Arcane Signet")).flatten());
     assert_eq!(use_ability(&mut g, P0, d, "void counter"), None);
     assert!(asked_has(&h, "play which exiled card"));
-    assert!(on_table(&g, P0, "Arcane Signet").is_some());
-    assert!(on_table(&g, P0, "Sol Ring").is_none());
+    // "you may play it this turn": a permission, not a cast at once (tests/practice_limits.rs casts it from exile)
+    assert!(on_table(&g, P0, "Arcane Signet").is_none());
+    assert!(sim_core::human::gaps_c::dauthi_permits(&g, P0, sig).is_some());
     assert!(!g.perm(d).on_bf, "sacrificed");
 }
 
