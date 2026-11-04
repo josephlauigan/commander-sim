@@ -166,18 +166,41 @@ fn crystal_chimes_returns_every_enchantment_card() {
 }
 
 #[test]
-fn emry_casts_the_artifact_card_you_pick() {
+fn emry_lets_you_cast_the_artifact_card_you_pick_this_turn() {
+    use sim_core::human::legal::check_cast_gy;
     let mut g = table(&["alela", "seph"]);
     let e = perm(&mut g, P0, "Emry, Lurker of the Loch");
     let (ring, sig) = (card(&g, "Sol Ring"), card(&g, "Arcane Signet"));
     g.player_mut(P0).gy.extend([ring, sig]);
-    pool(&mut g, P0, &[('C', 2)]);
+    // no mana yet: Emry's permission costs nothing; the card is paid for when it is cast
     let h = person(&mut g, |r| r.prompt.contains("Emry").then(|| text(r, "Arcane Signet")).flatten());
     assert_eq!(use_ability(&mut g, P0, e, "artifact card"), None);
-    assert!(asked_has(&h, "cast which artifact card"));
-    assert!(on_table(&g, P0, "Arcane Signet").is_some());
-    assert!(g.player(P0).gy.contains(&ring), "the other stays");
+    assert!(asked_has(&h, "choose target artifact card"));
     assert!(g.perm(e).tapped);
+    assert!(g.player(P0).gy.contains(&sig), "not cast yet: the person casts it when they choose");
+    assert!(check_cast_gy(&g, P0, ring).is_some(), "only the chosen card");
+    pool(&mut g, P0, &[('C', 2)]);
+    assert_eq!(check_cast_gy(&g, P0, sig), None, "the chosen card can be cast from the graveyard this turn");
+    // cast it later in the turn, from the graveyard
+    let i = g.player(P0).gy.iter().position(|&c| c == sig).unwrap();
+    let first = std::sync::Mutex::new(true);
+    let h2 = Arc::new(ScriptHuman::from_fn(move |r| {
+        if &*r.kind == "priority" {
+            let mut f = first.lock().unwrap();
+            let a = if *f { json!({"do": "cast", "zone": "gy", "card": i}) } else { json!({"do": "pass"}) };
+            *f = false;
+            return Answer::Action(a);
+        }
+        Answer::Decline
+    }));
+    g.humans.add(P0, h2.clone());
+    sim_core::human::human::human_main(&mut g, P0, false).unwrap();
+    assert!(on_table(&g, P0, "Arcane Signet").is_some(), "{:?}", h2.told());
+    assert!(g.player(P0).gy.contains(&ring), "the other stays");
+    // and the permission ends with the turn
+    assert!(sim_core::human::gaps_c::emry_permits(&g, P0, sig));
+    g.round += 1;
+    assert!(!sim_core::human::gaps_c::emry_permits(&g, P0, sig), "a new turn: the permission is gone");
 }
 
 #[test]

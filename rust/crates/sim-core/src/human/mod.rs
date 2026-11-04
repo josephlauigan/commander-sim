@@ -16,12 +16,14 @@ pub mod gaps_a;
 pub mod choices;
 pub mod cloud;
 pub mod combos;
+pub mod confluence;
 pub mod combat;
 pub mod fetch;
 pub mod human;
 pub mod karn;
 pub mod legal;
 pub mod mana;
+pub mod protect;
 pub mod script;
 pub mod specs;
 pub mod thanos;
@@ -37,6 +39,14 @@ use std::sync::Arc;
 /// caller can keep using `g` mutably while it asks.
 pub fn human_of(g: &Game, p: PlayerId) -> Option<Arc<dyn Human>> {
     g.humans.get(p).cloned()
+}
+
+/// Tell the person at p that the engine decided something for them (the log's "(automatic)" line): for a choice the
+/// card's code still makes by the AI's rules for a person. No-op for a seat without a person.
+pub fn auto_note(g: &Game, p: PlayerId, text: &str) {
+    if let Some(h) = human_of(g, p) {
+        h.tell(p, crate::sym::intern("auto"), text);
+    }
 }
 
 /// Is p played by a person? (Python's `is_human(g, p)` / `human_seat`)

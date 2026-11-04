@@ -3346,7 +3346,19 @@ pub fn saga_step(g: &mut Game, p: PlayerId) -> Res {
             saga_construct(g, p, l)?;
         }
         if lore >= 3 && person {
-            let got = crate::human::choices::search(
+            // chapter III goes on the stack: the person may answer it with the Saga's own Construct ability ({2},
+            // {T}: `human/karn.rs`) before it resolves; the Saga is sacrificed either way (714.4), even if it's countered
+            let resolves = crate::engine::stack::trigger_window(
+                g,
+                p,
+                Some(l),
+                "chapter III: search for an artifact card with mana cost {0} or {1}",
+                None,
+            )? && g.player(p).lands.contains(&l);
+            let got = if !resolves {
+                vec![]
+            } else {
+                crate::human::choices::search(
                 g,
                 p,
                 &|g: &Game, c: CardId| {
@@ -3356,7 +3368,8 @@ pub fn saga_step(g: &mut Game, p: PlayerId) -> Res {
                 1,
                 "Urza's Saga: search for an artifact card with mana cost {0} or {1}",
                 true,
-            )?;
+            )?
+            };
             if let Some(&c) = got.first() {
                 enter(g, p, c, Enter::default())?;
                 crate::glog!(
@@ -3366,9 +3379,12 @@ pub fn saga_step(g: &mut Game, p: PlayerId) -> Res {
                     g.db.get(c).name
                 );
             }
-            crate::engine::turn::remove_land(g, p, l);
-            let cd = g.perm(l).card();
-            g.player_mut(p).gy.push(cd);
+            if g.player(p).lands.contains(&l) {
+                // (it may have left in response: bounced, destroyed)
+                crate::engine::turn::remove_land(g, p, l);
+                let cd = g.perm(l).card();
+                g.player_mut(p).gy.push(cd);
+            }
             if let Some(i) = g.player(p).sagas.iter().position(|x| x.0 == l) {
                 g.player_mut(p).sagas.remove(i);
             }

@@ -184,7 +184,26 @@ fn garth_person(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
             x = xs[k];
         }
     }
-    if !garth::cast_copy(g, p, c, target, x)? {
+    // Braingeyser: "target player draws X cards" (the person may make an opponent draw out)
+    let mut face: Option<PlayerId> = None;
+    if name == "Braingeyser" {
+        let ps: Vec<PlayerId> = g
+            .players
+            .iter()
+            .filter(|q| q.alive && (q.id == p || legal::player_targetable(g, q.id)))
+            .map(|q| q.id)
+            .collect();
+        let labels: Vec<String> = ps.iter().map(|&q| legal::describe_target(g, p, Target::Player(q))).collect();
+        let k = choices::choose_one(
+            g,
+            p,
+            "target",
+            "Braingeyser (Garth One-Eye's copy): which player draws X cards?",
+            &labels,
+        )?;
+        face = Some(ps[k]);
+    }
+    if !garth::cast_copy_at(g, p, c, target, face, x)? {
         crate::glog!(
             g,
             "    {name} can't be cast (the mana isn't in your pool, or it has no target): the copy ceases to exist"

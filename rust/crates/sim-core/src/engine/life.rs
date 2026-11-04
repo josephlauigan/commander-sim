@@ -276,7 +276,18 @@ fn sba_legend(g: &mut Game) -> Res {
                     + if x.token { 0.0 } else { 0.25 }
                     - x.born as f64 * 1e-6
             };
-            let keep = same.iter().copied().fold(same[0], |b, n| if score(n) > score(b) { n } else { b });
+            let pid = g.players[i].id;
+            let keep = if crate::human::is_human(g, pid) {
+                // practice mode: the person chooses which one to keep
+                let labels: Vec<String> = same
+                    .iter()
+                    .map(|&n| crate::human::legal::describe_target(g, pid, crate::human::Target::Perm(n)))
+                    .collect();
+                let prompt = format!("The legend rule: you control two or more {name}. Which one do you keep?");
+                same[crate::human::choices::choose_one(g, pid, "choose", &prompt, &labels)?]
+            } else {
+                same.iter().copied().fold(same[0], |b, n| if score(n) > score(b) { n } else { b })
+            };
             for n in same {
                 if n != keep && g.perm(n).on_bf {
                     crate::glog!(g, "    legend rule: {} keeps one {}, the other goes to the graveyard", g.players[i].name, g.perm(n).name);
