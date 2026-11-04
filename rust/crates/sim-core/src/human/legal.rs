@@ -427,8 +427,10 @@ pub fn check_equip(g: &Game, p: PlayerId, e: PermId, target: PermId) -> Option<S
     if equip_cost(g, e).is_none() || !g.player(p).perms.contains(&e) {
         return Some("That isn't equipment you control.".into());
     }
-    if let Some(why) = sorcery_timing(g, p) {
-        return Some(why.replace("do that", "equip"));
+    if !crate::impls::cloud::forge_instant(g, p)
+        && let Some(why) = sorcery_timing(g, p)
+    {
+        return Some(why.replace("do that", "equip")); // (Forge Anew: equip at instant speed on your turn)
     }
     if !g.player(p).perms.contains(&target) || !g.is_creature(target) || g.perm(target).phased {
         return Some("Equip only onto a creature you control.".into());

@@ -281,7 +281,7 @@ pub fn chasm(g: &Game, p: PlayerId) -> bool {
 
 /// damage to p from an opponent would be prevented (attack and burn AIs look elsewhere)
 pub fn shielded(g: &Game, p: PlayerId) -> bool {
-    g.player(p).ring_prot || chasm(g, p)
+    g.player(p).ring_prot || chasm(g, p) || crate::impls::cloud::judgment_up(g, p)
 }
 
 // ------------------------------------------------------------------ what things are worth

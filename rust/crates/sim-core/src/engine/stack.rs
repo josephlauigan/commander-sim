@@ -717,6 +717,7 @@ pub fn ability_run(
 /// pay equip {n} for equipment e onto m; it attaches if the ability resolves and both are still there
 pub fn equip_to(g: &mut Game, p: PlayerId, e: PermId, m: PermId, n: u32) -> Res<bool> {
     pay(g, p, n, "", false)?;
+    crate::impls::cloud::note_equip(g, p); // Forge Anew: the first equip of the turn is spent
     if crate::impls::t6_copies::image_targeted(g, m)? && !g.perm(m).on_bf {
         return Ok(true); // --- card-models-2: a Phantasmal Image targeted by the equip
     }
@@ -903,6 +904,10 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
         if top.imp >= 6.0 {
             crate::cardcode::answer_ability(g, q, top_id)?;
         }
+        return Ok(());
+    }
+    // --- cloud-gaps: Judgment of Alexander in response to a big burn spell aimed at q
+    if top.ctx.face == Some(q) && crate::impls::cloud::judgment_respond(g, q, &top)? {
         return Ok(());
     }
     let hand = g.player(q).hand.clone();

@@ -10233,3 +10233,14 @@ note = "loyalty 4 (compleated: the engine pays {G/W/P} with mana, so it enters w
 paths_ok = "compiled: toxic 2; card code: the corrupted end-step trigger (card_models3::ixhel_end)"
 status = "Full"
 note = "flying, vigilance, toxic 2 (compiled); corrupted: at the beginning of your end step each opponent with three or more poison counters exiles their top card face down, and you may play it for as long as it stays exiled with mana of any type (held in your hand as a card taken from them, yshtola::take_card; card_models3::ixhel_end, card-models-3)"
+
+# --- cloud-gaps (rust/agents/cloud-gaps.md): the Cloud deck's two audit gaps
+
+["Judgment of Alexander"]
+status = "Full"
+note = "instant: prevents all damage to its caster from opponents' sources until end of turn (combat and noncombat; not their permanents); each prevented creature's damage makes every commander creature deal damage equal to its power to it (combat only: a ping has no source creature); the AI casts it after blockers against a lethal or heavy attack or one whose attacker the commanders kill, and in response to a big burn spell at its face"
+
+["Forge Anew"]
+dsl = [] # the compiled reanimate had no Equipment filter (it returned the best card of any type); card code does it
+status = "Full"
+note = "enters: returns the best Equipment from the graveyard; the first equip of its controller's turn costs {0} (the AI spends it on the dearest equip), and on that turn equips can be activated at instant speed (the AI moves Equipment onto an unblocked attacker after blockers; practice mode allows it)"
