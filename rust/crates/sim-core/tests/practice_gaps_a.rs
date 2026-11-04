@@ -487,7 +487,7 @@ fn chandras_ignition_with_the_big_creature_kills_the_other_titan() {
     pool(&mut g, P0, &all_mana());
     let life = g.player(P1).life;
     let first = Some(cast_last(&g));
-    let log =
+    let _log =
         person(
             &mut g,
             first,
