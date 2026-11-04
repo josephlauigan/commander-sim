@@ -652,6 +652,7 @@ pub fn resolve_blocks(
             last_chance(g, d)?; // lethal coming: Teferi's Protection
         }
     }
+    let mut judged: Vec<PermId> = vec![]; // --- cloud-gaps: creatures whose damage Judgment of Alexander prevented
     let mut conn = vec![];
     g.resolving += 1; // combat damage is dealt at once: its triggers wait
     let r = (|| -> Res {
@@ -809,6 +810,10 @@ pub fn resolve_blocks(
                 && (prevents_damage(g, d, Some(p)) || crate::impls::t12_kaalia_sythis::emissary_shields(g, d))
             {
                 // protection / Glacial Chasm: no damage, lifelink, commander damage or triggers
+                if crate::impls::cloud::judgment_shield(g, d, Some(p)) {
+                    let twice = double_strike(g, a) && blocker_of(&assign, a).is_none() && dmg % 2 == 0;
+                    judged.extend(std::iter::repeat_n(a, if twice { 2 } else { 1 })); // its damage strikes back
+                }
                 g.player_mut(d).stat("dmg_prevented", dmg as i64);
                 crate::glog!(
                     g,
@@ -911,6 +916,7 @@ pub fn resolve_blocks(
                 }
             }
         }
+        crate::impls::cloud::judgment_strike(g, d, &judged)?; // --- cloud-gaps: Judgment of Alexander
         for b in ringblk {
             if g.perm(b).on_bf {
                 die(g, b, "sac")?; // the Ring, level 3: blockers are sacrificed

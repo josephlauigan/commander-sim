@@ -2463,6 +2463,12 @@ pub fn equip_options(g: &Game, p: PlayerId) -> Vec<crate::hooks::Opt> {
             .filter(|a| matches!(a, Ability::Triggered { source: Some(s), .. } if s == "equipped"))
             .count();
         let u = 2.5 + 0.5 * bonus as f64 + 2.0 * trig as f64 - 0.3 * n as f64
+            // Forge Anew: the free equip goes to the dearest
+            + if crate::impls::cloud::forge_free(g, p) {
+                0.3 * crate::impls::cloud::equip_cost_full(g, p, src, best, base) as f64
+            } else {
+                0.0
+            }
             + crate::ai::plan_data::equip_utility(g, p, best)
             + crate::impls::tymna_cards::equip_utility_value(g, p, src, best);
         out.push(Opt {
@@ -2497,6 +2503,7 @@ pub fn equip(g: &mut Game, p: PlayerId, src: PermId, target: PermId, n: u32) -> 
         return Ok(false);
     }
     pay(g, p, n, "", false)?;
+    crate::impls::cloud::note_equip(g, p); // Forge Anew: the first equip of the turn is spent
     crate::glog!(g, "  {} equips {} to {}", g.player(p).name, g.perm(src).name, g.perm(target).name);
     if crate::impls::t6_copies::image_targeted(g, target)? && !g.perm(target).on_bf {
         return Ok(true); // --- card-models-2: a Phantasmal Image targeted by the equip

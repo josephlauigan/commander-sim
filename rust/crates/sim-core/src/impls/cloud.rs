@@ -179,8 +179,14 @@ fn metalcraft(g: &Game, p: PlayerId) -> bool {
     g.player(p).perms.iter().filter(|&&m| live(g, m) && is_artifact(g, m)).count() >= 3
 }
 
-/// the equip cost of Equipment e (printed `base`) onto creature m, with the cards that change it
+/// the equip cost of Equipment e (printed `base`) onto creature m, with the cards that change it; {0} for the first
+/// equip p activates on their turn with Forge Anew out
 pub fn equip_cost(g: &Game, p: PlayerId, e: PermId, m: PermId, base: u32) -> u32 {
+    if forge_free(g, p) { 0 } else { equip_cost_full(g, p, e, m, base) }
+}
+
+/// `equip_cost` without Forge Anew
+pub fn equip_cost_full(g: &Game, p: PlayerId, e: PermId, m: PermId, base: u32) -> u32 {
     let mut n = base;
     match name_of(g, e) {
         "Wrecking Ball Arm" if crate::cardcode::is_legendary(g, m) => n = n.min(3), // Equip legendary creature {3}
@@ -938,6 +944,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Unfinished Business")?.resolve = Some(unfinished_business);
     r.card(db, "Open the Armory")?.resolve = Some(open_the_armory);
     register_ds(r, db)?;
+    register_gaps(r, db)?;
     Ok(())
 }
 
@@ -1180,4 +1187,315 @@ fn narsil_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
     // two mana for a counter on every creature each swing: early, and better the wider the team (and Cloud's doubling)
     let team = g.player(p).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).count();
     if cloud_of(g, p).is_some() || team >= 2 { 79 } else { 66 }
+}
+
+// ------------------------------------------------------------------ Judgment of Alexander
+// (rust/agents/cloud-gaps.md) {2}{W} instant: "Prevent all damage that would be dealt to you this turn by sources your
+// opponents control. Whenever damage from a creature is prevented this way, each commander creature you control deals
+// damage equal to its power to that creature."
+//
+// The shield is a per-turn flag on the caster (`flag_turn`, like Ultimate Magic: Holy's), read by
+// `engine::life::prevents_damage` (so combat damage, burn and every other damage to the player) and by
+// `values::shielded` (the attack and burn AIs look elsewhere). The strike back is a trigger per prevented creature,
+// run after combat damage by `engine::combat` (`judgment_strike`). Simplification: damage a creature deals outside
+// combat (a ping) is prevented but has no strike back, because noncombat damage to a player carries no source
+// permanent; the commanders' damage is added into one source per creature.
+pub const JUDGMENT: &str = "Judgment of Alexander";
+const JUDGMENT_FLAG: &str = "judgment_shield";
+const EQUIP_FLAG: &str = "equip_activated";
+
+fn flag_on(g: &Game, p: PlayerId, key: &str) -> bool {
+    g.player(p).flag_turn.get(&intern(key)) == Some(&g.turn_stamp())
+}
+
+fn flag_set(g: &mut Game, p: PlayerId, key: &str) {
+    let st = g.turn_stamp();
+    g.player_mut(p).flag_turn.insert(intern(key), st);
+}
+
+/// p's Judgment of Alexander is in force this turn (damage to p from an opponent is prevented)
+pub fn judgment_up(g: &Game, p: PlayerId) -> bool {
+    flag_on(g, p, JUDGMENT_FLAG)
+}
+
+/// damage to p from a source src's controller controls is prevented by Judgment of Alexander (`prevents_damage`)
+pub fn judgment_shield(g: &Game, p: PlayerId, src: Option<PlayerId>) -> bool {
+    src.is_some_and(|s| s != p) && judgment_up(g, p)
+}
+
+/// p's commander creatures on the battlefield
+fn cmd_creatures(g: &Game, p: PlayerId) -> Vec<PermId> {
+    g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m) && g.perm(m).is_cmd).collect()
+}
+
+fn judgment_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &crate::state::Ctx) -> Res<crate::sym::Sym> {
+    flag_set(g, p, JUDGMENT_FLAG);
+    crate::glog!(g, "    damage to {} from sources its opponents control is prevented this turn", g.player(p).name);
+    Ok(intern("gy"))
+}
+
+/// p casts Judgment of Alexander (card c in hand) now, paying {2}{W}; true if it was cast
+pub fn cast_judgment(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
+    if judgment_up(g, p) || !g.player(p).hand.contains(&c) || !crate::engine::cast::castable(g, p, c, "hand") {
+        return Ok(false);
+    }
+    let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
+    if !can_pay(g, p, gn, &pips, false) || !pay(g, p, gn, &pips, false)? {
+        return Ok(false);
+    }
+    crate::engine::cast::cast_card(g, p, c, "hand", crate::state::Ctx::default())
+}
+
+fn judgment_in_hand(g: &Game, p: PlayerId) -> Option<CardId> {
+    g.player(p).hand.iter().copied().find(|&c| card_name(g, c) == JUDGMENT)
+}
+
+/// the AI's answer to an attack on d (after blockers): cast it when the unblocked attackers are lethal or heavy, or
+/// when the commanders' strike back kills an attacker worth killing. A trivial attack is let through.
+fn judgment_defend(
+    g: &mut Game,
+    c: CardId,
+    d: PlayerId,
+    p: PlayerId,
+    atk: &mut Vec<PermId>,
+    assign: &mut Vec<(PermId, PermId)>,
+) -> Res {
+    if judgment_up(g, d) || !g.player(d).hand.contains(&c) {
+        return Ok(());
+    }
+    let hits: Vec<PermId> = atk
+        .iter()
+        .copied()
+        .filter(|&a| live(g, a) && owner(g, a) == p && !assign.iter().any(|x| x.0 == a))
+        .collect();
+    let dmg: i32 = hits
+        .iter()
+        .map(|&a| epow(g, a).saturating_mul(if crate::engine::combat::double_strike(g, a) { 2 } else { 1 }))
+        .ssum();
+    if dmg <= 0 {
+        return Ok(());
+    }
+    let life = g.player(d).life;
+    let cmd_pow: i32 = cmd_creatures(g, d).iter().map(|&m| epow(g, m).max(0)).ssum();
+    let cmd_dmg_lethal = hits.iter().any(|&a| {
+        g.perm(a).is_cmd && crate::engine::values::cmd_dmg_by(g, d, p, a) + epow(g, a) >= 21
+    });
+    let killed: f64 = if cmd_pow > 0 {
+        hits.iter().filter(|&&a| etgh(g, a) <= cmd_pow).map(|&a| pval(g, a)).sum()
+    } else {
+        0.0
+    };
+    let lethal = dmg >= life || cmd_dmg_lethal;
+    let heavy = dmg as f64 >= (6.0f64).max(life as f64 * 0.4);
+    if lethal || heavy || (killed >= 5.0 && dmg >= 3) {
+        cast_judgment(g, d, c)?;
+    }
+    Ok(())
+}
+
+/// the AI's answer to a big burn spell aimed at q (`stack::ai_respond`): cast it in response. True if it was cast.
+pub fn judgment_respond(g: &mut Game, q: PlayerId, top: &crate::state::StackItem) -> Res<bool> {
+    if top.ctx.face != Some(q) || top.controller == q || judgment_up(g, q) {
+        return Ok(false);
+    }
+    let Some(c) = judgment_in_hand(g, q) else { return Ok(false) };
+    let Some(spell) = top.card else { return Ok(false) };
+    let rem = top.ctx.rem_kind.or_else(|| g.db.get(spell).tags.str(crate::tag::Tag::Rem).map(intern));
+    let n: i32 = rem.and_then(|k| k.strip_prefix("dmg")).and_then(|x| x.parse().ok()).unwrap_or(0);
+    let life = g.player(q).life;
+    if n >= life || n >= 6 || (n >= 4 && n * 2 >= life) {
+        return cast_judgment(g, q, c);
+    }
+    Ok(false)
+}
+
+/// Whenever damage from a creature is prevented by Judgment of Alexander: each commander creature q controls deals
+/// damage equal to its power to that creature (`hit`: the creatures, once per prevented damage; run by
+/// `engine::combat` after combat damage). Nothing without a commander creature out.
+pub fn judgment_strike(g: &mut Game, q: PlayerId, hit: &[PermId]) -> Res {
+    for &a in hit {
+        let cmds = cmd_creatures(g, q);
+        if cmds.is_empty() {
+            break;
+        }
+        if !live(g, a) || g.over {
+            continue;
+        }
+        if !trigger_window(g, q, Some(cmds[0]), "commanders deal damage to the creature", Some(5.0))? {
+            continue;
+        }
+        let n: i32 = cmd_creatures(g, q).iter().map(|&m| epow(g, m).max(0)).ssum();
+        if n > 0 && live(g, a) {
+            crate::glog!(g, "    Judgment of Alexander: {} takes {} from the commanders", g.perm(a).name, n);
+        }
+        // (damage is not kept marked in this engine: it kills at the toughness, as `partials::deal_noncombat`)
+        if n > 0 && live(g, a) && etgh(g, a) <= n {
+            crate::engine::removal::apply_removal(g, Some(q), a, &format!("dmg{n}"), None)?;
+        }
+    }
+    Ok(())
+}
+
+// ------------------------------------------------------------------ Forge Anew
+// {2}{W} enchantment: "When this enchantment enters, return target Equipment card from your graveyard to the
+// battlefield. During your turn, you may activate equip abilities any time you could cast an instant. You may pay {0}
+// rather than pay the equip cost of the first equip ability you activate during each of your turns."
+//
+// The enter trigger is card code (the compiled `reanimate` had no Equipment filter and returned the best card of any
+// type). The free first equip is in `equip_cost` (read by every equip: the AI's options, practice mode, the combos);
+// `note_equip` records the first activation. The instant-speed equips are the `blocks` hook below (the AI moves
+// Equipment onto an unblocked attacker once blockers are declared) and `forge_instant` (practice mode's timing).
+pub const FORGE_ANEW: &str = "Forge Anew";
+
+fn forge_anew(g: &Game, p: PlayerId) -> Option<PermId> {
+    g.player(p).perms.iter().copied().find(|&m| live(g, m) && name_of(g, m) == FORGE_ANEW)
+}
+
+/// p may activate equip abilities at instant speed now (Forge Anew, on p's own turn)
+pub fn forge_instant(g: &Game, p: PlayerId) -> bool {
+    g.active == Some(p) && forge_anew(g, p).is_some()
+}
+
+/// the next equip p activates costs {0} (Forge Anew, and none activated yet this turn)
+pub fn forge_free(g: &Game, p: PlayerId) -> bool {
+    forge_instant(g, p) && !flag_on(g, p, EQUIP_FLAG)
+}
+
+/// p activated an equip ability: the first of the turn is spent (every equip path calls this when it pays)
+pub fn note_equip(g: &mut Game, p: PlayerId) {
+    flag_set(g, p, EQUIP_FLAG);
+}
+
+fn forge_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
+    if m != src {
+        return Ok(());
+    }
+    let o = owner(g, src);
+    if crate::impls::t45_winota::jailed(g) {
+        return Ok(()); // Soulless Jailer: permanent cards in graveyards can't enter
+    }
+    let eq: Vec<CardId> = g.player(o).gy.iter().copied().filter(|&c| is_equipment_card(g, c)).collect();
+    let Some(c) = max_by(&eq, |c| crate::engine::tutors::card_worth(g, o, c, false)) else { return Ok(()) };
+    if !trigger_window(g, o, Some(src), "return an Equipment from the graveyard", Some(6.0))? {
+        return Ok(());
+    }
+    let gy = &mut g.player_mut(o).gy;
+    let Some(i) = gy.iter().position(|&x| x == c) else { return Ok(()) };
+    gy.remove(i);
+    enter(g, o, c, Enter::default())?;
+    crate::glog!(g, "    {} returns to the battlefield", card_name(g, c));
+    Ok(())
+}
+
+/// what an Equipment is worth wearing, as the compiled card says (bonus power, equipped-creature triggers); 1 when the
+/// card has no such data
+fn equip_gain(g: &Game, e: PermId) -> f64 {
+    use crate::dsl::model::Ability;
+    let Some(cd) = g.perm(e).cd else { return 0.0 };
+    let (mut v, mut known) = (0.0, false);
+    for a in g.db.get(cd).abilities.iter() {
+        match a {
+            Ability::Static { kind, pow, .. } if kind == "equip_bonus" => {
+                v += 0.5 * pow.unwrap_or(0) as f64;
+                known = true;
+            }
+            Ability::Triggered { source: Some(s), .. } if s == "equipped" => {
+                v += 2.0;
+                known = true;
+            }
+            _ => {}
+        }
+    }
+    if known { v } else { 1.0 }
+}
+
+/// the best equip to make now onto one of the unblocked attackers `unbl`: (Equipment, creature, cost). Equipment that
+/// is loose or worn by a creature that is not attacking; free ones (Forge Anew's first, Puresteel Paladin) when they
+/// are worth anything, paid ones ({2} or less) only when they add a lot. The free one goes to the most expensive.
+fn forge_move(g: &Game, p: PlayerId, unbl: &[PermId], atk: &[PermId]) -> Option<(PermId, PermId, u32)> {
+    let mut best: Option<(f64, PermId, PermId, u32)> = None;
+    for e in my_equipment(g, p) {
+        let Some(base) = crate::human::legal::equip_cost(g, e) else { continue };
+        if crate::engine::values::stopped(g, name_of(g, e)) {
+            continue;
+        }
+        if g.perm(e).attached.is_some_and(|h| live(g, h) && atk.contains(&h)) {
+            continue; // already on an attacker: leave it
+        }
+        let gain = equip_gain(g, e);
+        let Some(t) = max_by(&unbl.iter().copied().filter(|&t| g.perm(e).attached != Some(t)).collect::<Vec<_>>(), |t| {
+            holder_score(g, t)
+        }) else {
+            continue;
+        };
+        let cost = equip_cost(g, p, e, t, base);
+        let full = equip_cost_full(g, p, e, t, base);
+        let ok = if cost == 0 { gain > 0.0 } else { cost <= 2 && gain >= 2.0 && can_pay(g, p, cost, "", false) };
+        if !ok {
+            continue;
+        }
+        let v = gain + if cost == 0 { 0.3 * full as f64 } else { 0.0 };
+        if best.is_none_or(|b| v > b.0) {
+            best = Some((v, e, t, cost));
+        }
+    }
+    best.map(|b| (b.1, b.2, b.3))
+}
+
+/// once blockers are declared (the attacker's side of the `blocks` event): with Forge Anew out, equip abilities can be
+/// activated now, so move Equipment onto an unblocked attacker
+fn forge_blocks(
+    g: &mut Game,
+    src: Src,
+    p: PlayerId,
+    atk: &[PermId],
+    _d: PlayerId,
+    assign: &mut Vec<(PermId, PermId)>,
+) -> Res {
+    if owner(g, src) != p || !live(g, src) || !forge_instant(g, p) || crate::human::is_human(g, p) {
+        return Ok(());
+    }
+    let atk: Vec<PermId> = atk.iter().copied().filter(|&a| live(g, a) && owner(g, a) == p).collect();
+    let unbl: Vec<PermId> =
+        atk.iter().copied().filter(|&a| g.is_creature(a) && !assign.iter().any(|x| x.0 == a)).collect();
+    for _ in 0..4 {
+        if unbl.is_empty() {
+            break;
+        }
+        let Some((e, t, n)) = forge_move(g, p, &unbl, &atk) else { break };
+        if !crate::dsl::equip(g, p, e, t, n)? {
+            break;
+        }
+    }
+    Ok(())
+}
+
+/// cast it for the Equipment it returns; later, for the free equip and the instant-speed moves once there is
+/// Equipment to move
+fn forge_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    if g.player(p).gy.iter().any(|&c| is_equipment_card(g, c)) {
+        68
+    } else if my_equipment(g, p).len() >= 2 && creatures_out(g, p) > 0 {
+        45
+    } else {
+        0
+    }
+}
+
+pub fn register_gaps(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    let c = r.card(db, JUDGMENT)?;
+    c.resolve = Some(judgment_resolve);
+    c.hand_defend = Some(judgment_defend);
+    c.prio = Some(|_, _, _| 0); // a response only (`judgment_defend`, `judgment_respond`)
+    let c = r.card(db, FORGE_ANEW)?;
+    c.etb = Some(forge_etb);
+    c.blocks = Some(forge_blocks);
+    c.prio = Some(forge_prio);
+    Ok(())
+}
+
+/// a spell aimed at a player's face that holds Judgment of Alexander and could answer it: the spell gets a round of
+/// priority even when nobody else would answer it (`cast::cast_card`)
+pub fn judgment_watch(g: &Game, ctx: &crate::state::Ctx) -> bool {
+    ctx.face.is_some_and(|q| !g.humans.any() && !judgment_up(g, q) && judgment_in_hand(g, q).is_some())
 }
