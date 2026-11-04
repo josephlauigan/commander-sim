@@ -1329,6 +1329,9 @@ pub struct Game {
     pub unc_cast: Option<(CardId, TurnStamp)>,
     /// practice mode: the person paid for a counterspell from their pool
     pub free_counter: bool,
+    /// practice mode: a person's Mystic Confluence modes, set as it is cast and used as it resolves: (counter modes,
+    /// creatures to return, cards to draw) (`human::confluence`)
+    pub confluence: Option<(u32, Vec<PermId>, u32)>,
     pub trig_queue: Vec<crate::hooks::Trigger>,
     /// > 0 while a spell or effect is resolving: its triggers wait until it's done
     pub resolving: u32,
@@ -1516,6 +1519,7 @@ impl Game {
             bounced_spell: false,
             unc_cast: None,
             free_counter: false,
+            confluence: None,
             trig_queue: vec![],
             resolving: 0,
             work: 0,

@@ -260,3 +260,72 @@ fn dauthi_voidwalker_can_play_an_exiled_land_as_the_land_drop() {
     assert!(h2.told_kind("invalid").iter().any(|t| t.contains("can't play a land now")), "{:?}", h2.told());
     assert!(g2.perm(d2).on_bf, "not sacrificed");
 }
+
+// ------------------------------------------------------------------ Mystic Confluence: the three modes
+#[test]
+fn mystic_confluence_with_nothing_to_counter_draws_and_bounces() {
+    let mut g = table(&["sauron", "seph"]);
+    let elf = perm(&mut g, P1, "Llanowar Elves");
+    hand(&mut g, P0, &["Mystic Confluence"]);
+    pool(&mut g, P0, &[('U', 3), ('C', 3)]);
+    let before = g.player(P0).hand.len();
+    let picks = Mutex::new(vec!["return target", "draw", "draw"].into_iter());
+    let h = Arc::new(ScriptHuman::from_fn({
+        let first = Mutex::new(true);
+        move |r: &Request| {
+            if &*r.kind == "priority" {
+                let mut f = first.lock().unwrap();
+                let a = if *f { json!({"do": "cast", "card": 0}) } else { json!({"do": "pass"}) };
+                *f = false;
+                return Answer::Action(a);
+            }
+            if r.prompt.contains("choose mode") {
+                let w = picks.lock().unwrap().next().unwrap();
+                return Answer::Pick(r.choices.iter().position(|c| c.contains(w)).unwrap());
+            }
+            if r.prompt.contains("return which creature") {
+                return Answer::Pick(r.choices.iter().position(|c| c.contains("Llanowar")).unwrap());
+            }
+            if r.choices.is_empty() { Answer::Yes } else { Answer::Pick(0) }
+        }
+    }));
+    g.humans.add(P0, h.clone());
+    sim_core::human::human::human_main(&mut g, P0, false).unwrap();
+    assert!(h.asked().iter().any(|r| r.prompt.contains("choose mode 3")), "{:?}", h.told());
+    assert!(!g.player(P1).perms.contains(&elf), "the Elves went back to their owner's hand");
+    assert_eq!(g.player(P0).hand.len(), before - 1 + 2, "cast it, drew two");
+    assert!(pool_total(&g, P0) <= 1, "its cost was paid from the pool (data/carddb.txt has {{3}}{{U}}{{U}}{{U}}, Scryfall {{3}}{{U}}{{U}})");
+}
+
+#[test]
+fn mystic_confluence_two_counter_modes_need_six_and_a_draw() {
+    use sim_core::state::Ctx;
+    let mut g = table(&["sauron", "seph"]);
+    g.active = Some(P1);
+    hand(&mut g, P0, &["Mystic Confluence"]);
+    pool(&mut g, P0, &[('U', 3), ('C', 3)]);
+    lands(&mut g, P1, "Island", 4, false); // the opponent can pay {3} but not {6}
+    let before = g.player(P0).hand.len();
+    let picks = Mutex::new(vec!["counter", "counter", "draw"].into_iter());
+    let h = Arc::new(ScriptHuman::from_fn({
+        let first = Mutex::new(true);
+        move |r: &Request| {
+            if &*r.kind == "priority" {
+                let mut f = first.lock().unwrap();
+                let a = if *f { json!({"do": "cast", "card": 0}) } else { json!({"do": "pass"}) };
+                *f = false;
+                return Answer::Action(a);
+            }
+            if r.prompt.contains("choose mode") {
+                let w = picks.lock().unwrap().next().unwrap();
+                return Answer::Pick(r.choices.iter().position(|c| c.contains(w)).unwrap());
+            }
+            if r.choices.is_empty() { Answer::Yes } else { Answer::Pick(0) }
+        }
+    }));
+    g.humans.add(P0, h.clone());
+    let s = hand(&mut g, P1, &["Grave Titan"])[0];
+    let resolved = sim_core::engine::cast::cast_card(&mut g, P1, s, "hand", Ctx::default()).unwrap();
+    assert!(!resolved, "four lands can't pay {{6}}: countered ({:?})", h.told());
+    assert_eq!(g.player(P0).hand.len(), before - 1 + 1, "and the draw mode drew one");
+}

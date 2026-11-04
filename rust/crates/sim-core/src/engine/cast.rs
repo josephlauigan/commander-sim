@@ -1074,6 +1074,23 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
     } else {
         ctx
     };
+    // a person's Teferi's Protection (practice mode): the engine's effect (the AI casts it through its own code);
+    // "Exile Teferi's Protection"
+    if &*g.db.get(c).name == crate::engine::zones::TEFERIS_PROTECTION && crate::human::is_human(g, p) {
+        crate::engine::zones::teferis_protection(g, p);
+        g.player_mut(p).stat("protection_used", 1);
+        g.player_mut(p).exile.push(c);
+        return Ok(());
+    }
+    // a person's Mystic Confluence cast with no counter mode (practice mode): the modes they chose
+    if &*g.db.get(c).name == crate::human::confluence::NAME
+        && crate::human::is_human(g, p)
+        && let Some((_, bounce, draws)) = g.confluence.take()
+    {
+        crate::human::confluence::resolve_rest(g, p, &bounce, draws)?;
+        to_gy_or_exile(g, p, c, ctx, zone, false);
+        return Ok(());
+    }
     // a person's Demonic Consultation / Tainted Pact / Grapeshot (practice mode): their choices as it resolves
     if !g.db.get(c).perm && crate::human::is_human(g, p) && crate::human::thanos::resolve_spell(g, p, c, ctx)? {
         to_gy_or_exile(g, p, c, ctx, zone, false);

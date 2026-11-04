@@ -334,6 +334,19 @@ fn respond_loop(g: &mut Game, q: PlayerId, prompt: &str, spell: Option<CardId>, 
         let n = g.stack_pushes;
         if do_of(&act) == "cast" && !g.stack.is_empty() && act.get("zone").and_then(Value::as_str) != Some("cmd") {
             if let Some(c) = hand_card(g, q, &act) {
+                // protection the AI plays through its own code: the person's version (`human::protect`)
+                let pr = match card_name(g, c).as_str() {
+                    super::protect::NOTW => Some(super::protect::not_of_this_world(g, q, c)?),
+                    super::protect::SWAT => Some(super::protect::deflecting_swat(g, q, c)?),
+                    _ => None,
+                };
+                if let Some(r) = pr {
+                    if let Some(why) = r {
+                        tell_invalid(&h, q, &why);
+                        continue;
+                    }
+                    return Ok(());
+                }
                 if g.db.get(c).tag(Tag::Ctr) {
                     if let Some(why) = cast_counterspell(g, q, c)? {
                         tell_invalid(&h, q, &why);
@@ -372,6 +385,21 @@ fn respond_loop(g: &mut Game, q: PlayerId, prompt: &str, spell: Option<CardId>, 
 /// q casts counterspell c at a spell on the stack (the top one, or one they pick when there are several it can
 /// counter). None, or why not
 pub fn cast_counterspell(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<String>> {
+    if card_name(g, c) == super::confluence::NAME {
+        // Mystic Confluence: the three modes first; with no counter mode it is cast as a plain spell
+        let Some(m) = super::confluence::modes(g, q, true)? else { return Ok(Some("Cancelled.".into())) };
+        if m.0 == 0 {
+            return super::confluence::cast_with(g, q, c, m);
+        }
+        g.confluence = Some(m);
+        let r = cast_counterspell_inner(g, q, c);
+        g.confluence = None; // (resolved, countered, or not cast)
+        return r;
+    }
+    cast_counterspell_inner(g, q, c)
+}
+
+fn cast_counterspell_inner(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<String>> {
     let many = g.stack.len() > 1;
     let cands: Vec<&StackItem> = g
         .stack
@@ -398,16 +426,34 @@ pub fn cast_counterspell(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<Str
     if let Some(why) = legal::check_counter(g, q, c, spell) {
         return Ok(Some(why));
     }
-    let alt = legal::alternative_counter_cost(g, q, c);
     let (gn, pips) = stack::counter_cost(g, c, Some(spell), Some(q));
-    if mana::cost_problem(g, q, gn, &pips).is_none() {
-        // pay from your pool
-        mana::pay_from_pool(g, q, gn, &pips);
-        g.free_counter = true; // already paid
-    } else if alt.is_none() {
-        let why = mana::cost_problem(g, q, gn, &pips).unwrap_or_default();
-        return Ok(Some(format!("Can't cast {}. {why}", card_name(g, c))));
+    let can_mana = mana::cost_problem(g, q, gn, &pips).is_none();
+    let alt = stack::counter_alt_label(g, q, c, Some(spell));
+    // with both open, the person chooses (Force of Will: pay {3}{U}{U} or pitch a blue card)
+    let use_alt = match (&alt, can_mana) {
+        (Some(a), true) => {
+            let labels = vec![format!("pay {}", mana::cost_text(gn, &pips)), a.clone()];
+            let prompt = format!("{}: how do you pay?", card_name(g, c));
+            let Some(k) = choices::choose(g, q, "choose", &prompt, &labels, Some("cancel"), None)? else {
+                return Ok(Some("Cancelled.".into()));
+            };
+            k == 1
+        }
+        (Some(_), false) => true,
+        (None, true) => false,
+        (None, false) => {
+            let why = mana::cost_problem(g, q, gn, &pips).unwrap_or_default();
+            return Ok(Some(format!("Can't cast {}. {why}", card_name(g, c))));
+        }
+    };
+    if use_alt {
+        if !stack::pay_counter_alt(g, q, c, Some(spell))? {
+            return Ok(Some(format!("Can't pay {}'s alternative cost.", card_name(g, c))));
+        }
+    } else {
+        mana::pay_from_pool(g, q, gn, &pips); // pay from your pool
     }
+    g.free_counter = true; // already paid
     let r = stack::cast_counter_spell(g, q, c, id);
     g.free_counter = false;
     if !r? {
@@ -514,6 +560,10 @@ pub fn apply(g: &mut Game, p: PlayerId, act: &Value) -> Res<Option<String>> {
         let zone = if zone == Some("cmd") { "cmd" } else { "hand" };
         let c = if zone == "cmd" { commander_of(g, p, act) } else { hand_card(g, p, act) };
         let Some(c) = c else { return Ok(Some("There is no such card in your hand.".into())) };
+        if zone == "hand" && card_name(g, c) == super::confluence::NAME {
+            // Mystic Confluence with nothing to counter: its other modes (an instant: any time you have priority)
+            return super::confluence::cast_plain(g, p, c);
+        }
         if zone == "hand" && cards::hand_override(g, c) {
             return cards::cast_from_hand(g, p, c);
         }
