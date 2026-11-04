@@ -2365,8 +2365,10 @@ pub fn use_loyalty(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool
         execute(g, p, effects, Some(src), &mut dctx, None, 0)?;
     }
     if g.perm(src).loyalty.unwrap_or(0) <= 0 && g.perm(src).on_bf {
+        // --- urdragon: a transformed walker (Nicol Bolas, the Arisen) goes to the graveyard as its front face
+        let back = g.perm(src).phys.unwrap_or(cd);
         zones::leave(g, src)?;
-        g.player_mut(p).gy.push(cd);
+        g.player_mut(p).gy.push(back);
     }
     Ok(true)
 }

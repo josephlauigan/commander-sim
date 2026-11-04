@@ -4,8 +4,8 @@
 //! (dsl_parse.rs, `// --- Tiers 4/5 (urdragon)`); the rest is here, with small hooks in the engine marked the same way.
 //!
 //! - The Ur-Dragon: eminence, in the command zone or on the battlefield: your other Dragon spells cost {1} less
-//!   (mana::cost_of); one or more Dragons you control attack: draw that many, then put the best nonland permanent card
-//!   from your hand onto the battlefield. Left out: a land card is never the one put onto the battlefield.
+//!   (mana::cost_of); one or more Dragons you control attack: draw that many, then put a permanent card from your hand
+//!   onto the battlefield: the nonland one worth most, or a land when that saves under 3 mana (`ur_pick`).
 //! - Ancient Brass Dragon: combat damage to a player: a d20; creature cards from all graveyards with total mana value
 //!   up to the roll come back under your control (the most mana value that fits).
 //! - Ancient Copper Dragon: combat damage to a player: a d20, that many Treasures.
@@ -256,7 +256,14 @@ fn ur_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) 
         return Ok(vec![]);
     }
     draw(g, p, n, false)?;
-    let cs: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).perm && !g.db.get(c).land).collect();
+    // a permanent card: a land too (an Aura has nothing to enchant as it enters, so the AI leaves it)
+    let cs: Vec<CardId> = g
+        .player(p)
+        .hand
+        .iter()
+        .copied()
+        .filter(|&c| g.db.get(c).land || (g.db.get(c).perm && !g.db.get(c).has_subtype("aura")))
+        .collect();
     let pick = if crate::human::is_human(g, p) && !crate::human::urdragon::repeat_on(g, p) {
         // a person chooses which permanent card (or none: "you may")
         if cs.is_empty() {
@@ -266,16 +273,43 @@ fn ur_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) 
         let prompt = "The Ur-Dragon: put a permanent card from your hand onto the battlefield?";
         crate::human::choices::choose(g, p, "choose", prompt, &labels, Some("none"), None)?.map(|k| cs[k])
     } else {
-        crate::engine::zones::max_by(&cs, |c| body_worth(g, p, c))
+        ur_pick(g, p, &cs)
     };
     let Some(c) = pick else { return Ok(vec![]) };
     let pl = g.player_mut(p);
     if let Some(i) = pl.hand.iter().position(|&x| x == c) {
         pl.hand.remove(i);
         crate::glog!(g, "    {} puts {} onto the battlefield (The Ur-Dragon)", pname(g, p), cname(g, c));
-        enter(g, p, c, Enter::default())?;
+        if g.db.get(c).land {
+            // a land put onto the battlefield is not a land drop: its enters effect, landfall, a fetch land
+            let tapped = crate::engine::turn::land_enters_tapped(g, p, c);
+            crate::impls::t12_windgrace::land_onto_bf(g, p, c, tapped)?;
+        } else {
+            enter(g, p, c, Enter::default())?;
+        }
     }
     Ok(vec![])
+}
+
+/// what putting nonland permanent card c onto the battlefield saves or adds, against a land's 3 (1.5 from six lands):
+/// its mana value (the mana not spent), a bomb's rating, a creature's size, a mana rock's mana
+fn free_worth(g: &Game, c: CardId) -> f64 {
+    let d = g.db.get(c);
+    let rock = d.tags.str(crate::tag::Tag::Rock).and_then(|r| r.split(':').next()?.parse::<f64>().ok()).unwrap_or(0.0);
+    d.cmc as f64 + d.bomb as f64 + d.pow as f64 / 2.0 + rock
+}
+
+/// the AI's permanent card from its hand: the nonland one worth most (`body_worth`), unless it saves little
+/// (`free_worth` under a land's worth) and there is a land card to ramp with
+fn ur_pick(g: &Game, p: PlayerId, cs: &[CardId]) -> Option<CardId> {
+    let (lands, rest): (Vec<CardId>, Vec<CardId>) = cs.iter().partition(|&&c| g.db.get(c).land);
+    let best = crate::engine::zones::max_by(&rest, |c| body_worth(g, p, c));
+    let land = crate::impls::t12_windgrace::pick_lands(g, p, &lands, 1, false).into_iter().next();
+    let land_worth = if g.player(p).lands.len() >= 6 { 1.5 } else { 3.0 };
+    match (best, land) {
+        (Some(b), Some(l)) => Some(if free_worth(g, b) < land_worth { l } else { b }),
+        (b, l) => b.or(l),
+    }
 }
 
 // ================================================================== the Ancient Dragons

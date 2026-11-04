@@ -194,7 +194,8 @@ pub const ARISEN: &str = "Nicol Bolas, the Ravager // Nicol Bolas, the Arisen";
 /// a turn is worth more than the 4/4 body
 fn bolas_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let x = g.perm(src);
-    if post.is_none() || g.active != Some(p) || x.owner != p || x.phased || !can_pay(g, p, 4, "UBR", false) {
+    let copy = x.token || x.phys.is_some(); // a token or a card that is a copy has no front face to turn over
+    if post.is_none() || g.active != Some(p) || x.owner != p || x.phased || copy || !can_pay(g, p, 4, "UBR", false) {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -216,8 +217,11 @@ fn bolas_flip(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     {
         return Ok(true);
     }
+    let front = g.perm(src).cd;
     crate::engine::zones::leave(g, src)?;
-    crate::engine::zones::enter(g, p, back, Enter::default())?;
+    let m = crate::engine::zones::enter(g, p, back, Enter::default())?;
+    // a transformed card is its front face in every other zone: if the Arisen leaves, the creature card goes there
+    g.perm_mut(m).phys = front;
     crate::glog!(g, "    Nicol Bolas, the Arisen enters with 7 loyalty");
     Ok(true)
 }
