@@ -8,8 +8,18 @@ Claude-specific model and tool instructions scoped to Claude. This applies in wo
 from a parent directory too; run the commands from the repository root (or use `git -C <repo>`).
 If fetching is unavailable, state that the remote rules could not be refreshed and use the available copies.
 
-Two rules must never be missed: keep swap and package explanations enabled for deck decisions, and simulate each
-owned deck only against its matched tiers in `data/my_decks.toml`. Details follow below.
+Three rules must never be missed: ask JD for approval before starting work, keep swap and package explanations
+enabled for deck decisions, and simulate each owned deck only against its matched tiers in `data/my_decks.toml`.
+Details follow below.
+
+## Ask for approval before starting work
+
+Before doing any work, present the plan and **explicitly ask JD to approve it**, then wait for a clear go-ahead
+(for example "approved", "go ahead", "start"). The plan says what will change, which branches or worktrees, which
+agents and which sims. The work that waits includes editing or creating files, creating branches or worktrees,
+committing, pushing, opening PRs, spawning agents and running builds, tests or sims. Answering the plan's open
+questions, or approving one step, is not approval to start the rest. If the plan changes, ask again. Read-only
+investigation needs no approval: reading files, `git log`/`diff`/`fetch`, `grep`, `cardgen audit`. (JD, 2026-11-04.)
 
 ## Models
 
