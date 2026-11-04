@@ -45,33 +45,57 @@ Together with the five transferred cards, this opens twenty Ur-Dragon slots.
 
 ## 4. Add these twenty cards to The Ur-Dragon
 
+- Ancient Copper Dragon
 - Astral Dragon
-- Atarka, World Render
 - Cursed Mirror
-- Dracogenesis
+- Doubling Season
 - Dragon's Hoard
 - Dragon Tempest
+- Dragonlord Dromoka
 - Ganax, Astral Hunter
 - Garth One-Eye
 - Garruk's Uprising
-- Kindred Discovery
+- Korvold, Fae-Cursed King
 - Lathliss, Dragon Queen
 - Maelstrom of the Spirit Dragon
 - Miirym, Sentinel Wyrm
-- Panharmonicon
-- Sarkhan, Soul Aflame
 - Scion of Draco
+- Scion of the Ur-Dragon
 - Scourge of Valkas
 - Spark Double
 - Temur Ascendancy
 - Utvara Hellkite
 
-Panharmonicon and Kindred Discovery are also used by the current Galadriel list. Buy separate copies unless spare
-copies are already available; do not dismantle Galadriel as part of this rebuild.
+### Already owned
+
+- Ancient Copper Dragon
+- Doubling Season
+- Dragonlord Dromoka
+- Garruk's Uprising
+- Garth One-Eye
+- Korvold, Fae-Cursed King
+- Scion of Draco
+- Scion of the Ur-Dragon
+- Spark Double
+- Utvara Hellkite
+
+### Still to buy
+
+- Astral Dragon
+- Cursed Mirror
+- Dragon's Hoard
+- Dragon Tempest
+- Ganax, Astral Hunter
+- Lathliss, Dragon Queen
+- Maelstrom of the Spirit Dragon
+- Miirym, Sentinel Wyrm
+- Scourge of Valkas
+- Temur Ascendancy
 
 Garth One-Eye and Scion of Draco replace Dragonborn Champion and Wrathful Red Dragon from the initial shopping list.
-Garth adds a flexible five-colour toolbox; Scion remains a Dragon and supplies team-wide keywords. The purchase count
-therefore stays at twenty.
+Five additional owned cards replace proposed purchases: Ancient Copper Dragon for Dracogenesis, Doubling Season for
+Panharmonicon, Korvold for Kindred Discovery, Dragonlord Dromoka for Atarka, and Scion of the Ur-Dragon for Sarkhan.
+Dragonlord Ojutai remains in the deck. Ten of the twenty additions are already owned, leaving ten cards to buy.
 
 ## 5. Check the physical decks
 
@@ -92,7 +116,8 @@ For Sauron:
 ## 6. Update the Rule 0 description
 
 The Ur-Dragon remains Bracket 4 because of its sixteen Game Changers, but it no longer contains an intentional
-infinite combo. Describe it as a Dragon entry, token and copy deck led by Astral Dragon and Miirym.
+infinite combo. Describe it as a Dragon entry, token and copy deck led by Astral Dragon and Miirym, with doubled
+Treasures feeding Korvold and Scion of the Ur-Dragon providing a toolbox.
 
 Sauron becomes Bracket 4. Disclose the three Game Changers—Cyclonic Rift, Orcish Bowmasters and Force of Will—and the
 two infinite-combat combinations: Godo plus Helm of the Host, and Combat Celebrant plus Helm of the Host.
@@ -101,9 +126,10 @@ two infinite-combat combinations: Godo plus Helm of the Host, and Combat Celebra
 
 Every transferred card is Commander-legal and fits Sauron's blue-black-red identity. Every Ur-Dragon addition is
 Commander-legal and fits its five-colour identity. The simulator rates most additions Full or Full-auto. Astral
-Dragon, Cursed Mirror, Sarkhan, Soul Aflame and Peter Parker's Camera are Approximate. Garth One-Eye is Partial: the
-simulator has his 5/5 body but not his tap ability or the six spells it can create. Scion of Draco is Full. Consult the
-deck documents for the real paper interactions rather than treating simulation output as complete for those cards.
+Dragon, Cursed Mirror, Scion of the Ur-Dragon and Peter Parker's Camera are Approximate. Garth One-Eye is Partial: the
+simulator has his 5/5 body but not his tap ability or the six spells it can create. Ancient Copper Dragon, Doubling
+Season, Dragonlord Dromoka, Korvold and Scion of Draco are Full. Consult the deck documents for the real paper
+interactions rather than treating simulation output as complete for those cards.
 
 No simulation result is claimed for either rebuilt list. Measure Sauron only against its matched T3 and T4 tiers and
 The Ur-Dragon only against its matched T5 tier, using the loose interaction profile.

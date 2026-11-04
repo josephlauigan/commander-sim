@@ -40,9 +40,9 @@ Uprising and Temur Ascendancy are good setup plays when they do not delay necess
 Miirym supplies copies, and Scourge of Valkas or Terror of the Peaks converts every new body into damage. Hold cheap
 interaction for a spell that would end the game or erase the developing board.
 
-**Late game.** Attack with the Dragon army. Utvara Hellkite multiplies attackers, Atarka gives Dragons double strike,
-and The Ur-Dragon refills the hand and places another engine or Dragon onto the battlefield. Dracogenesis turns every
-Dragon in hand into a free spell once eight mana is available.
+**Late game.** Attack with the Dragon army. Dragonlord Dromoka prevents opponents from casting spells during the turn,
+Utvara Hellkite multiplies attackers, Ancient Copper Dragon supplies a burst of Treasures when it connects, and The
+Ur-Dragon refills the hand and places another engine or Dragon onto the battlefield.
 
 ### Entry and token engines
 
@@ -52,24 +52,32 @@ Dragon in hand into a free spell once eight mana is available.
   Lathliss, but it does trigger Ganax, Dragon Tempest, Scourge and Terror.
 - **Ganax, Astral Hunter:** every Dragon entering creates a Treasure, including tokens from Miirym, Lathliss, Astral
   Dragon and Utvara Hellkite.
-- **Panharmonicon:** adds another applicable entry trigger from Miirym, Lathliss, Ganax, Astral Dragon, Dragon Tempest,
-  Scourge of Valkas and Terror of the Peaks. It adds triggers; it does not copy the resulting tokens directly.
+- **Doubling Season:** doubles the tokens from Miirym, Lathliss, Ganax, Astral Dragon, Utvara Hellkite, Ancient Copper
+  Dragon, Jaxis and Twinflame. It doubles token creation rather than entry triggers, so Dragon Tempest, Scourge of
+  Valkas and Terror of the Peaks still trigger once for each creature that actually enters. It also doubles the
+  +1/+1 counters placed on Korvold and Wrenn and Six's starting loyalty.
 - **Maskwood Nexus:** makes every creature spell and creature a Dragon. Mana creatures and utility creatures then get
   the Eminence discount, trigger the entry engines and count for The Ur-Dragon's attack.
 
 ### Copies
 
 **Astral Dragon** creates two token copies of a target noncreature permanent, except each is also a 3/3 flying Dragon.
-Good targets include Rhystic Study, Smothering Tithe, Dragon Tempest, Kindred Discovery, Garruk's Uprising,
-Panharmonicon, Dragon's Hoard and useful opposing permanents. It can copy a land when another mana source or utility
-land is the best available target. Avoid copying your own legendary permanent unless losing the extras to the legend
-rule is acceptable.
+Good targets include Doubling Season, Rhystic Study, Smothering Tithe, Dragon Tempest, Garruk's Uprising, Temur
+Ascendancy, Dragon's Hoard and useful opposing permanents. It can copy a land when another mana source or utility land
+is the best available target. Avoid copying your own legendary permanent unless losing the extras to the legend rule
+is acceptable.
 
 **Spark Double** copies your best creature without being legendary. Miirym is usually the highest ceiling, followed by
 Lathliss, Ganax, Terror of the Peaks or The Ur-Dragon. **Cursed Mirror** is a mana rock that can be the best creature on
 the battlefield for one turn. **Jaxis, the Troublemaker** and **Twinflame** make temporary copies; use them on Dragons
-with entry triggers or on an engine that makes the next Dragon much stronger. **Sarkhan, Soul Aflame** discounts
-Dragons and can become each Dragon that enters for the turn.
+with entry triggers or on an engine that makes the next Dragon much stronger.
+
+**Scion of the Ur-Dragon** pays {2} to put a Dragon from the library into the graveyard and become a copy of it until
+end of turn. Before combat, Ancient Copper Dragon is the default mana option, Utvara Hellkite builds the widest board,
+Dragonlord Dromoka closes the interaction window, and Scourge of Valkas or Terror of the Peaks can supply a damage
+engine already supported by the battlefield. Scion does not enter again when it becomes a copy, so it does not create
+Miirym or Lathliss tokens or retrigger an enter ability. Treat each activation as spending that Dragon from the
+library; the deck has no dedicated reanimation package to recover it.
 
 ### Five-colour toolbox
 
@@ -91,7 +99,10 @@ body. Each name can be chosen only once for that Garth object, so prioritize the
 - **Terror of the Peaks:** each creature entering deals damage equal to its power, so Lathliss and Utvara tokens hit
   especially hard.
 - **Utvara Hellkite:** creates a 6/6 Dragon for every Dragon that attacks.
-- **Atarka, World Render:** gives attacking Dragons double strike and ends games without requiring another setup card.
+- **Ancient Copper Dragon:** combat damage can create enough Treasures to deploy the rest of the hand; Doubling Season
+  doubles those Treasure tokens.
+- **Dragonlord Dromoka:** prevents opponents from casting spells during your turn, making the main phase and attack
+  safer while contributing flying, lifelink and a large body.
 - **Scion of Draco:** cheaply adds another attacker while distributing combat and defensive keywords across the army.
 
 ### Interaction and protection
@@ -99,31 +110,38 @@ body. Each name can be chosen only once for that Garth object, so prioritize the
 Force of Will, Force of Negation, Pact of Negation and Mana Drain protect the board and stop faster combo decks.
 Swords to Plowshares, Chaos Warp and Decimate answer permanents. Kindred Dominance names Dragon and normally leaves the
 main board intact; Maskwood Nexus protects the utility creatures too. Teferi's Protection and Lightning Greaves cover
-the turn when the deck commits its most important engine.
+the turn when the deck commits its most important engine. Dragonlord Dromoka protects an entire proactive turn from
+opposing spells, though abilities can still be activated.
 
 ### Card flow and tutors
 
-Kindred Discovery names Dragon and draws on both entries and attacks. Garruk's Uprising and Temur Ascendancy draw from
-the large creatures, Dragon's Hoard spends its gold counters for cards, and Rhystic Study, Sylvan Library and The One
-Ring keep the hand moving before the creature engines start.
+Garruk's Uprising and Temur Ascendancy draw from the large creatures, Dragon's Hoard spends its gold counters for
+cards, and Rhystic Study, Sylvan Library and The One Ring keep the hand moving before the creature engines start.
+Korvold, Fae-Cursed King draws and grows whenever the deck sacrifices a fetch land, Treasure or Lotus Petal. Miirym
+copies Korvold as a nonlegendary token; each Korvold then sees every sacrifice, while Doubling Season doubles both the
+Miirym token and the counters Korvold receives.
 
 Worldly Tutor finds the Dragon needed for the board: Ganax for mana, Miirym or Lathliss for multiplication, Scourge or
-Terror for damage, Scion for protection and evasion, Utvara for a developed attack, Atarka for lethal combat, or Garth
-for a flexible answer. Enlightened Tutor finds Dragon Tempest, Panharmonicon, Kindred Discovery, Maskwood Nexus,
-Dragon's Hoard or Dracogenesis. The unrestricted tutors can find either half of that choice.
+Terror for damage, Scion of Draco for protection and evasion, Ancient Copper Dragon for Treasures, Dragonlord Dromoka
+for a protected turn, Utvara for a developed attack, Korvold for card flow, or Garth for a flexible answer. Enlightened
+Tutor finds Dragon Tempest, Doubling Season, Maskwood Nexus or Dragon's Hoard. The unrestricted tutors can find either
+half of that choice.
 
 ## Key lines
 
-- **Need mana:** Ganax or Dragon's Hoard, then let later Dragon entries fund the turn.
+- **Need mana:** Ganax or Dragon's Hoard for dependable mana; Ancient Copper Dragon for a combat-damage burst.
 - **Need bodies:** Lathliss first, then cast nontoken Dragons.
-- **Need copies:** Miirym first; Spark Double can become a second Miirym.
+- **Need copies:** Miirym first; Spark Double can become a second Miirym, and Doubling Season doubles its tokens.
 - **Need damage:** Dragon Tempest, Scourge of Valkas or Terror of the Peaks before making tokens.
 - **Need protection or evasion:** Scion of Draco distributes keywords according to each creature's colours.
+- **Need a protected turn:** Dragonlord Dromoka prevents opposing spells during the main phase and combat.
+- **Need a Dragon from the library for this turn:** activate Scion of the Ur-Dragon before the relevant step.
 - **Need a flexible answer:** cast Garth, protect him for a turn cycle, then choose the copy that fits the board.
-- **Ready to attack:** Utvara makes the army; Atarka doubles its combat damage; The Ur-Dragon turns the attack into
-  cards and a free permanent.
+- **Ready to attack:** Utvara makes the army; Dromoka keeps opponents from casting spells; The Ur-Dragon turns the
+  attack into cards and a free permanent.
 - **Astral Dragon target:** copy a noncreature engine that remains useful in multiples. Rhystic Study and Smothering
-  Tithe generate long-term value; Dragon Tempest and Panharmonicon accelerate a finishing turn.
+  Tithe generate long-term value; Dragon Tempest accelerates a finishing turn; Doubling Season multiplies every later
+  token effect.
 
 ## Mana and consistency
 
@@ -146,13 +164,13 @@ Helm of the Host.
 ## Decklist by type (100)
 **Commander (1).** The Ur-Dragon
 
-**Creatures (23).** Astral Dragon, Atarka World Render, Birds of Paradise, Dragonlord Ojutai, Ganax Astral Hunter, Garth One-Eye, Glorybringer, Goldspan Dragon, Jaxis the Troublemaker, Kura the Boundless Sky, Lathliss Dragon Queen, Llanowar Elves, Miirym Sentinel Wyrm, Nicol Bolas the Ravager, Paradise Druid, Sakura-Tribe Elder, Sarkhan Soul Aflame, Scion of Draco, Scourge of Valkas, Spark Double, Terror of the Peaks, Thundermaw Hellkite, Utvara Hellkite
+**Creatures (25).** Ancient Copper Dragon, Astral Dragon, Birds of Paradise, Dragonlord Dromoka, Dragonlord Ojutai, Ganax Astral Hunter, Garth One-Eye, Glorybringer, Goldspan Dragon, Jaxis the Troublemaker, Korvold Fae-Cursed King, Kura the Boundless Sky, Lathliss Dragon Queen, Llanowar Elves, Miirym Sentinel Wyrm, Nicol Bolas the Ravager, Paradise Druid, Sakura-Tribe Elder, Scion of Draco, Scion of the Ur-Dragon, Scourge of Valkas, Spark Double, Terror of the Peaks, Thundermaw Hellkite, Utvara Hellkite
 
 **Planeswalkers (1).** Wrenn and Six
 
-**Enchantments (8).** Dracogenesis, Dragon Tempest, Garruk's Uprising, Kindred Discovery, Rhystic Study, Smothering Tithe, Sylvan Library, Temur Ascendancy
+**Enchantments (7).** Doubling Season, Dragon Tempest, Garruk's Uprising, Rhystic Study, Smothering Tithe, Sylvan Library, Temur Ascendancy
 
-**Artifacts (15).** Arcane Signet, Chromatic Lantern, Chrome Mox, Cursed Mirror, Dragon's Hoard, Grim Monolith, Lightning Greaves, Lotus Petal, Mana Vault, Maskwood Nexus, Mox Diamond, Mox Jasper, Panharmonicon, Sol Ring, The One Ring
+**Artifacts (14).** Arcane Signet, Chromatic Lantern, Chrome Mox, Cursed Mirror, Dragon's Hoard, Grim Monolith, Lightning Greaves, Lotus Petal, Mana Vault, Maskwood Nexus, Mox Diamond, Mox Jasper, Sol Ring, The One Ring
 
 **Sorceries (7).** Decimate, Demonic Tutor, Imperial Seal, Kindred Dominance, Nature's Lore, Rampant Growth, Twinflame
 
@@ -163,10 +181,10 @@ Helm of the Host.
 ## Import list (100)
 
 ```
+1 Ancient Copper Dragon
 1 Ancient Tomb
 1 Arcane Signet
 1 Astral Dragon
-1 Atarka, World Render
 1 Badlands
 1 Bayou
 1 Birds of Paradise
@@ -182,9 +200,10 @@ Helm of the Host.
 1 Cursed Mirror
 1 Decimate
 1 Demonic Tutor
-1 Dracogenesis
+1 Doubling Season
 1 Dragon Tempest
 1 Dragon's Hoard
+1 Dragonlord Dromoka
 1 Dragonlord Ojutai
 1 Enlightened Tutor
 1 Flooded Strand
@@ -201,8 +220,8 @@ Helm of the Host.
 1 Imperial Seal
 1 Inventors' Fair
 1 Jaxis, the Troublemaker
-1 Kindred Discovery
 1 Kindred Dominance
+1 Korvold, Fae-Cursed King
 1 Kura, the Boundless Sky
 1 Lathliss, Dragon Queen
 1 Lightning Greaves
@@ -222,7 +241,6 @@ Helm of the Host.
 1 Nicol Bolas, the Ravager
 1 Overgrown Tomb
 1 Pact of Negation
-1 Panharmonicon
 1 Paradise Druid
 1 Plateau
 1 Polluted Delta
@@ -230,8 +248,8 @@ Helm of the Host.
 1 Rhystic Study
 1 Sacred Foundry
 1 Sakura-Tribe Elder
-1 Sarkhan, Soul Aflame
 1 Scion of Draco
+1 Scion of the Ur-Dragon
 1 Scourge of Valkas
 1 Scrubland
 1 Smothering Tithe
