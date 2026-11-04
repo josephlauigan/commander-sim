@@ -10,10 +10,10 @@ led by Astral Dragon, Miirym, Lathliss, Ganax, Dragon Tempest, Scourge of Valkas
 Hellkite. Garth One-Eye and Scion of Draco then replaced the proposed Dragonborn Champion and Wrathful Red Dragon:
 Garth adds a flexible paper toolbox, while Scion is an efficiently discounted Dragon that distributes keywords. The
 old results below describe the retired Godo list and are not a baseline for the rebuilt deck. The next measurement
-must use the matched T5 tier, loose profile and the default look-ahead AI.
+must use the matched T5 tier, loose profile and the default look-ahead AI. (Done 2026-11-04: first baseline 21.1%, last section.)
 
 The simulator rates Scion of Draco Full. Garth One-Eye is Partial: it models the 5/5 body but not the tap ability or
-the six named spells, so do not use a simulation to judge Garth until that behavior is implemented. No simulation was
+the six named spells, so do not use a simulation to judge Garth until that behavior is implemented. (Superseded 2026-11-04: the 11/04 coverage line shows Partial 0 for the deck, and Garth is modelled in the Twinflame combo; the baseline in the last section includes him.) No simulation was
 run for this list-only refinement.
 
 The final owned-card pass replaced five proposed purchases: Ancient Copper Dragon for Dracogenesis, Doubling Season
@@ -86,3 +86,51 @@ The Ur-Dragon, t5: **19.2%** (CI 17.5-21.0, 1999 games: one skipped by an intern
 - **Number:** none yet. JD asked for no sims (11/02). The swap to run is `--deck urdragon --pool t5 --swap
   "Mox Jasper=>Sting, the Glinting Dagger"`, against the new list.
 - **Stale above:** Cyclonic Rift and Conqueror's Flail, in the 10/30 weaknesses, have since left the list.
+
+## 2026-11-04: first baseline of the rebuilt Dragon-copies list (t5)
+
+List: `decklists/JD/ur-dragon-dragon-copies.md` (the 11/03 rebuild with the owned-card swaps). Run: The Ur-Dragon vs t5
+(High B4: Zur, Kinnan, Miirym, Yawgmoth, Urza), 2,000 games, seed 500000, loose, look-ahead AI, defaults, on main at
+PR #238 (build b8fc69f9). Raw: `.claude/worktrees/sim-runs-2026-11-04/urdragon-baseline.txt`.
+
+- **Win rate 21.1% (95% CI 19.4-23.0%).** The even share is 25%, so it is 3.9 points under. This is the first number
+  for the rebuilt list. The Godo-list results above and the 11/01 remeasure describe a different list and are not
+  compared with it.
+- **Win and loss turns:** average own turn of wins 10.1, of losses 7.6. It wins late and loses earlier.
+- **How it wins: damage 93%, combo 7%.** The plan (first combo attempt) came online in 1.8% of games, so the three
+  catalogue combos are a rare finish (7% of wins is about 1.5% of games). The Dragon damage plan carries the deck.
+- **Who eliminates it** (share of all games in which that opponent dealt the finishing blow): Kinnan 20.6%, Miirym
+  17.4%, Urza 15.1%, Yawgmoth 13.2%, Zur 12.1%. These add to 78.4%; the deck wins 21.1% and the remaining 0.5% is
+  neither (my arithmetic from the table).
+- **Win rate by opponent seated** (each is seated in about 60% of games, so about 1,200 games per cell, roughly +-2.5
+  points at 95%): Kinnan 34.0%, Miirym 28.8%, Urza 25.8%, Yawgmoth 21.5%, Zur 21.2%. Kinnan's 34.0% is clearly above
+  Yawgmoth's and Zur's; the other gaps are small.
+- **Old vs new not run, on purpose.** The rewritten plan file (`data/plans/urdragon.toml`) no longer casts the old
+  Equipment (preflight: Embercleave and Sword of Feast and Famine cast 0%), so an old-list run would measure a crippled
+  list rather than the retired one.
+- **Crash check:** a pre-fix run of the same seeds (`urdragon-baseline-prefix.txt`, before PR #238) skipped 10 of 2,000
+  games on a counter-multiplier overflow (`engine/repl.rs:383`, e.g. seeds 500196 and 500203) and gave the same 21.1%
+  (CI 19.4-23.0, 1,990 games; wins 10.1, losses 7.5 turns). The baseline above has no skipped games. The 11/01
+  remeasure's "one skipped by an internal overflow panic" was the same bug.
+
+**Caveats on what the number includes**
+- **Approximate cards:** the coverage line reads Full 94, Full-auto 4, Approximate 2, Partial 0, Unmodeled 0. By
+  `data/audit.toml` the two Approximate cards are **Astral Dragon** (it does not copy lands; a nonland permanent is the
+  better target in this deck anyway) and **Scion of the Ur-Dragon** (it does not copy a Dragon with an enters ability or
+  a cost-reduction static the AI doesn't read). Cursed Mirror has no Approximate entry there and
+  `rust/agents/report-urdragon-approx-cards.md` calls it Full (the AI can copy only non-token, non-commander creatures
+  that aren't its own legends). Garth One-Eye is no longer Partial (see the 11/03 note above).
+- **The three catalogue combos** (Astral Dragon + Cursed Mirror; Miirym + Astral Dragon + Doubling Season; Garth One-Eye
+  + Twinflame + Spark Double + Doubling Season) are stepped combos (`impls/t45_urdragon_combos.rs`) with these
+  simplifications: the Lotus and Braingeyser rounds are not played out (the finish resolves the loop); Twinflame
+  targets one Garth; the Regrowth copy fires no cast triggers; lines 1 and 3 need the Mirror or Spark Double already on
+  the battlefield (a piece in hand doesn't count); line 2 stops at the engine's token cap. Full list:
+  `rust/agents/report-urdragon-combos.md`.
+- **Opponents see the combo cards now.** The combo cards are catalogue piece names for every deck (`is_piece_name`), so
+  opponents' removal and counter choices treat them as combo pieces. That is part of this baseline, and it can shift
+  the Miirym pool deck and Sauron slightly.
+- **One seed, 2,000 games.** The CI above is the only noise estimate.
+
+**Still open:** the Mox Jasper for Sting swap (11/02) has not been run on this list; Universal Automaton is still
+unmodelled. "Strengths", "Weaknesses" and "Model status" under the Retired Godo-list heading describe the old list. A
+card report (`--analyze`) of the new list is the next step to learn what sits in hand.

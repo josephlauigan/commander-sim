@@ -10,7 +10,7 @@ Godo, Helm of the Host, Hammer of Nazahn, Combat Celebrant and Peter Parker's Ca
 Sauron as a secondary finish. Phyrexian Arena, Sauron, the Necromancer, Sephiroth, Triple Triad and Urza left. This
 makes the paper list Bracket 4 through the Godo/Helm and Celebrant/Helm infinite-combat lines. The old current-state
 numbers below predate this rebuild and are not its baseline. The next measurement must report T3 and T4 separately,
-using the loose profile and default look-ahead AI.
+using the loose profile and default look-ahead AI. (Done 2026-11-04: see the last section.)
 
 ## Previous state (2026-10-17, night)
 Look-ahead, loose, current list (baselines of the Urza run, with the hold-mana search credit): **T3 28.2%, T4 31.6%,
@@ -24,7 +24,7 @@ T5 26.4% (28.7% over t3–t5).**
 
 ## What was tried, and why it did or didn't work
 ### 2026-11-01: Triple Triad in for Ral and the Implicit Maze (JD's choice; no run)
-Picked by fit, not simulated. Of JD's red decks Sauron has the heaviest curve (3.28 average mana value, 16 cards at 5+),
+(Triple Triad left the list in the 11/03 Godo rebuild, so the sim gap below is moot for now.) Picked by fit, not simulated. Of JD's red decks Sauron has the heaviest curve (3.28 average mana value, 16 cards at 5+),
 which is what Triple Triad's "lesser mana value" clause rewards. Ral was the card most often stuck in hand (cast in
 20-30% of the games it was drawn, t3-t5, 10/17 card report), and swapping a 5-drop for a 6-drop keeps the curve about
 the same. Risks: the top end is already stuck in hand (Titans, Wurm, Gearhulk cast in 27-45% of their draws), Triad's
@@ -88,3 +88,32 @@ Baleful Mastery: Partial -> Full (the {1}{B} alternative cost, an opponent draws
 ## 2026-11-01: recalibration stage 2 remeasure
 
 Sauron, t3 / t4: **21.4% / 20.3%** (average 20.9%) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). Stage 1, same seeds: 24.9 / 21.2. The 10/18 AI audit numbers (30.4 / 32.0, with the hand AI) are from an older build and list. Fitted t3 knobs: 20.9% (level).
+
+## 2026-11-04: first baseline of the Godo, Helm and Celebrant list (t3, t4)
+
+List: the 11/03 rebuild (Godo, Helm of the Host, Hammer of Nazahn, Combat Celebrant and Peter Parker's Camera in;
+Phyrexian Arena, Sauron the Necromancer, Sephiroth, Triple Triad and Urza out) with the plan file rewritten for it
+(`data/plans/sauron.toml`, 11/04). Run: 2,000 games per tier, seed 500000, loose, look-ahead AI, defaults, each tier
+reported separately (`.claude/worktrees/sim-runs-2026-11-04/sauron-baseline.txt`).
+
+| Tier | Win rate | 95% CI | vs even share (25%) |
+|---|---|---|---|
+| t3 (High B3) | **29.1%** | 27.2-31.1 | +4.1 |
+| t4 (Low B4) | **25.9%** | 24.0-27.8 | +0.9 (inside the CI) |
+| **Average over t3-t4** | **27.5%** | about +-1.4 (my pooling of the two cell CIs) | +2.5 |
+
+- **t3 is the better tier by 3.2 points** (29.1 vs 25.9). The two cells' CIs overlap slightly (27.2-31.1 vs 24.0-27.8),
+  so treat the gap as likely but not settled (different pods, 2,000 games each).
+- **Not in this output:** win and loss turns, how it wins (damage vs combo vs the Godo/Helm lines) and who eliminates it.
+  A multi-tier `--pool all` run prints only the win-rate table. Those need a single-tier run (`--pool t3`, `--pool t4`)
+  or `--analyze`; none was run. So whether the Godo, Helm and Celebrant package actually fires in games is not yet
+  measured here.
+- **Old vs new not run, on purpose.** The plan file was rewritten for the Godo, Helm and Celebrant package, so the old
+  list under the new plan (or the new list under the old plan) would not be a fair comparison. The older numbers in
+  this file (30.4 / 32.0 on 10/18, 21.4 / 20.3 on 11/01) are from earlier lists and builds.
+- **Model coverage:** Full 99, Approximate 1, Partial 0, Unmodeled 0 (the Approximate card is not named in the output).
+  Opponents t3: Full 439, Full-auto 42, Approximate 19; t4: Full 435, Full-auto 37, Approximate 28.
+- **Combo cards now visible to opponents:** the Ur-Dragon combo cards became catalogue piece names for every deck
+  (`rust/agents/report-urdragon-combos.md`), which can shift opponents' removal and counter choices slightly. It is part of
+  this baseline.
+- **One seed per tier.** The CIs above are the only noise estimate.

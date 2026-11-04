@@ -4,7 +4,7 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run (CLAUDE.md "Swap tests explain themselves"). Newest evidence first; numbers are
 look-ahead, loose profile, vs Cloud's matched tiers (T1, T2) unless noted.
 
-## Current state (2026-10-16)
+## Current state (2026-10-16; superseded: the newest baseline is the 2026-11-04 section at the end)
 List: C4 + Package D with substitutes (Crawlspace, Archon of Absolution), plus the 10/15 AI fixes.
 Win rate: **T1 20.6%, T2 18.2%** (was 14.0 / 11.9 on the morning of 10/15). Fair band for its tiers: 22-32%.
 Double strike package (Fireshrieker, Duelist's Heritage, Akroma's Will) applied 10/15: 2,000 games, T1 25.9 -> 30.3 (+4.5), T2 20.4 -> 24.8 (+4.3), measured on the list before the Crawlspace/Archon substitutes (within noise of it). Not re-measured on the current list.
@@ -106,3 +106,109 @@ Buster Sword: Partial -> Full (draw, then a free spell up to the damage). No new
 ## 2026-11-01: recalibration stage 2 remeasure
 
 Cloud, t1 / t2 / t3: **25.6% / 14.2% / 17.0%** (average 18.9%) with the hand AI on (default) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). `AI_HAND=0` (generic + plan file): 23.1 / 13.8 / 16.8, level (average delta +1.0 [-0.3, +2.4]). The 10/18 numbers (28.9 / 23.8 / 21.4) are from the old list.
+
+## 2026-11-04: Judgment of Alexander and Forge Anew vs the cards they replaced (paired, loose, look-ahead, 2,000 games per list per tier, t1-t3)
+
+Both cards are in the current list (JD's choices 11/01 and the 11/02 Ghave breakup; neither had a number until now). The
+runs were set up as NEW=>OLD, so the tool's "baseline -> variant" is the current list -> the old card back in. **The
+numbers below are flipped to read as the new card's effect over the old one.** Raw:
+`.claude/worktrees/sim-runs-2026-11-04/cloud-judgment-vs-standup.txt`, `cloud-forge-vs-sphere.txt`. Same seeds in both
+lists; "noise" is the paired +-2 SE the tool prints next to the win rate (the per-axis tables print wider bands, +-2.6-2.9
+on win rate, which are not the paired ones).
+
+**Current-list baseline (both runs share it): t1 31.9%, t2 22.3%, t3 22.9% (average 25.7% over t1-t3).** This is not
+like-for-like with the 11/01 remeasure (25.6 / 14.2 / 17.0, average 18.9): the list may have changed since (JD's swaps of 11/01,
+the Ghave breakup 11/02, Stoneforge Mystic and Steelshaper's Gift 11/03) and so did the build and plan file. The size of
+the jump was not investigated here.
+
+### Judgment of Alexander over Stand Up for Yourself
+| Tier | With Judgment | With Stand Up | Judgment over Stand Up | Noise (+-2 SE) | Verdict |
+|---|---|---|---|---|---|
+| t1 | 31.9% | 30.1% | **+1.8** | +-2.1 | inside noise |
+| t2 | 22.3% | 22.1% | **+0.2** | +-2.1 | inside noise |
+| t3 | 22.9% | 21.9% | **+1.0** | +-1.9 | inside noise |
+| **Average over t1-t3** | 25.7% | 24.7% | **+1.0** | about +-1.2 (my pooling of the three bands) | inside noise |
+
+**Reading it:** the sign is positive at all three tiers but every cell, and the average, is inside its noise band, so this
+is "no clear effect", at best a small lean toward Judgment. The tool's verdict was NO CLEAR EFFECT at every tier.
+
+**Why (paired breakdown, per tier t1 / t2 / t3):**
+| | Judgment of Alexander | Stand Up for Yourself |
+|---|---|---|
+| Drawn in | 24.4 / 26.2 / 22.8% of games | 24.8 / 26.4 / 23.2% |
+| Cast, of games drawn | **23.1 / 34.3 / 17.5%** | **79.2 / 86.0 / 75.9%** |
+| Stuck in hand | 76.9 / 65.7 / 82.5% | 20.8 / 14.0 / 24.1% |
+| Average round of first cast | 9.8 / 11.7 / 9.4 | 7.1 / 8.3 / 6.8 |
+| Win rate when cast (correlation only) | 54.0 / 28.9 / 55.0% | 44.0 / 31.1 / 33.2% |
+| Removed by opponents, per game | 0.00 | 0.00 |
+- **Judgment is mostly held, and cast late:** it is drawn about as often as Stand Up but cast in only 17-34% of those games,
+  at round 9-12, because the AI never casts it in the main phase (priority 0) and keeps it for a big unblocked attack or a
+  burn spell. When it is cast the games are won more often at t1 and t3 (54-55% vs 33-44%), but that is correlation only (the tool says so too).
+- **Stand Up is cast in 76-86% of draws, as spot removal:** the one axis that moves beyond noise at all three tiers is spot
+  removal cast per game, 0.97 / 1.05 / 0.77 with Judgment vs 1.14 / 1.21 / 0.93 with Stand Up (Stand Up +0.15-0.17, +-0.06).
+  That extra removal does not turn into more wins: the Stand Up list wins 1.0 less on average.
+- **Game shape is the same either way:** rounds survived 10.03 / 12.08 / 9.70 with Judgment vs 10.02 / 12.01 / 9.70; plan
+  online at all 75.8 / 74.2 / 68.6% vs 75.8 / 73.5 / 67.9%; commander removals per game 0.36 / 1.07 / 0.41 vs 0.35 / 1.05 / 0.41.
+  The Stand Up list is eliminated 1.8 / 0.8 / 1.0 points more often and deals 1.0-1.5 less damage per game (+-3.3-3.8, noise),
+  with plan-online by turn 8 at t3 2.1 points lower (62.0 vs 59.9). None of these is beyond noise.
+- **One more starred axis, probably chance:** at t2 the Stand Up list resolves 0.11 fewer tutors per game (+-0.10); the tool
+  itself warns that one or two stars appear by chance in ~40 checks.
+- **Model notes (`impls/cloud.rs`, `rust/agents/report-cloud-gaps.md`):** Judgment is modelled (the 11/04 coverage line shows no Approximate, Partial or Unmodeled card in the list). The shield is a per-turn flag
+  read by the damage-prevention path (combat, burn and every damage to the player). The strike back runs after combat
+  damage for creatures whose combat damage was prevented, with every commander creature's power added into one source per
+  creature; it kills when that reaches the toughness (damage is not kept marked). **Simplification:** a creature's noncombat
+  damage to the player (a ping) is prevented but has no strike back, because noncombat damage to a player carries no
+  source permanent. The AI casts it after blockers when the unblocked damage is lethal, heavy (at least max(6, 40% of life))
+  or the commanders can kill attackers worth at least 5 with 3+ damage coming, or in response to a face burn spell of 6+,
+  lethal or 4+ and half their life. Stand Up for Yourself is Full-auto (compiled from the Oracle text as a destroy-target-creature
+  removal spell), cast as a response / removal only.
+
+### Forge Anew over Sphere of Safety
+| Tier | With Forge Anew | With Sphere of Safety | Forge over Sphere | Noise (+-2 SE) | Verdict |
+|---|---|---|---|---|---|
+| t1 | 31.9% | 30.6% | **+1.4** | +-1.8 | inside noise |
+| t2 | 22.3% | 20.4% | **+1.9** | +-1.8 | just outside the band (the tool: Sphere WORSE) |
+| t3 | 22.9% | 22.6% | **+0.4** | +-1.6 | inside noise |
+| **Average over t1-t3** | 25.7% | 24.5% | **+1.2** | about +-1.0 (my pooling) | borderline: 1.2 against a 1.0 band |
+
+**Reading it:** Forge Anew is ahead of Sphere of Safety at all three tiers. Only t2 clears its band (by 0.1), and one tier in three is thin, so call it a likely small edge for Forge
+(about +1), not a proven one.
+
+**Why (paired breakdown, per tier t1 / t2 / t3):**
+| | Forge Anew | Sphere of Safety |
+|---|---|---|
+| Drawn in | 24.6 / 26.8 / 21.3% of games | 23.8 / 26.2 / 21.1% |
+| Cast, of games drawn | **64.4 / 68.5 / 54.7%** | **42.1 / 50.8 / 44.1%** |
+| Stuck in hand | 35.6 / 31.5 / 45.3% | 57.9 / 49.2 / 55.9% |
+| Average round of first cast | 8.7 / 9.1 / 8.0 | 8.5 / 9.4 / 8.1 |
+| Win rate when cast (correlation only) | 62.8 / 43.1 / 55.4% | 55.0 / 29.3 / 44.1% |
+| Removed by opponents, per game | 0.00 / 0.01 / 0.00 | 0.01 / 0.03 / 0.00 |
+- **Forge is cast 10-22 points more often when drawn** (64 / 69 / 55% vs 42 / 51 / 44%), at about the same round, so it is
+  not that Forge comes down sooner; it is that Sphere sits in hand more (49-58% stuck). A likely reason (not shown by the
+  breakdown): Sphere costs {4}{W} against Forge's {2}{W}, and both compete with equips for mana, the deck's known deployment
+  bottleneck.
+- **Damage and survival:** with Sphere the games run slightly longer (rounds survived +0.04 / +0.14 / +0.10 for Sphere, all
+  inside the +-0.16-0.21 noise), but Cloud is eliminated more often with Sphere
+  (+1.4 / +2.2 / +0.3 points) and deals less damage (t1 52.6 vs 52.6 flat, t2 47.4 vs 45.0, t3 40.7 vs 40.1; all inside the
+  +-3.4-3.9 noise).
+- **The one starred axis:** damage from "other triggers" is lower with Sphere at every tier
+  (4.51 vs 4.22, 3.18 vs 2.86 starred at t2, 3.98 vs 3.79). The breakdown does not say why; the likely reason is Forge's free
+  first equip and instant-speed equips, which let Equipment re-equip and trigger more, but that is a reading, not a measurement.
+- **Plan timing is unchanged:** plan online by turn 6 is 55.8 / 51.2 / 48.4% with Forge vs 55.6 / 50.3 / 48.1% with Sphere;
+  turn-4 and turn-8 mana, commander resolution and commander removals do not move. So Forge's free equip is not making the plan
+  come online sooner; its edge, if real, is in the damage and the fewer eliminations once the plan is running.
+- **Model notes (`impls/cloud.rs`, `rust/agents/report-cloud-gaps.md`):** Forge Anew is hand-written card code: the enter trigger returns the best Equipment card from the graveyard (the compiled reanimate had no Equipment filter, so
+  it was replaced); the first equip each own turn costs {0} (`equip_cost` / `forge_free`); equips can be activated at instant
+  speed on Cloud's own turn. **Simplifications:** the AI uses instant speed only by moving Equipment from loose or
+  non-attacking holders onto the best unblocked attacker after blockers (free equips if worth anything, paid ones only
+  at cost 2 or less with a large gain); Forge's cast priority is 68 with an Equipment in the graveyard, 45 with two or more
+  Equipment and a creature out, otherwise 0 (so it is held until there is something to use it on). Sphere of Safety is Full
+  with no tags and a generic priority of 55.
+
+### What this changes
+- Neither new card is shown to be better than the one it replaced beyond noise; both lean positive (+1.0 and +1.2
+  average over t1-t3). No reason to swap either back.
+- Judgment's low cast rate (17-34% of draws) comes from the AI's conservative trigger, not the card being dead; a looser
+  trigger is untested.
+- Open: both averages are pooled by hand from per-tier bands, so a 4x run (or `--ai adaptive`) is needed to settle the Forge
+  edge.
