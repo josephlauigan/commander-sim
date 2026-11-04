@@ -54,21 +54,24 @@ pub fn land_abilities(g: &Game, l: PermId) -> Vec<Ability<PermId>> {
         label.push_str(&format!("pay {life} life, "));
     }
     label.push_str("sacrifice it: search your library for ");
-    label.push_str(match turn::true_fetch(&d.name) {
-        Some("basic") => "a basic land card".to_string(),
-        Some(k) => {
-            let n = |c: char| match c {
-                'W' => "Plains",
-                'U' => "Island",
-                'B' => "Swamp",
-                'R' => "Mountain",
-                _ => "Forest",
-            };
-            let mut cs = k.chars();
-            format!("a {} or {} card", n(cs.next().unwrap()), n(cs.next().unwrap()))
+    label.push_str(
+        match turn::true_fetch(&d.name) {
+            Some("basic") => "a basic land card".to_string(),
+            Some(k) => {
+                let n = |c: char| match c {
+                    'W' => "Plains",
+                    'U' => "Island",
+                    'B' => "Swamp",
+                    'R' => "Mountain",
+                    _ => "Forest",
+                };
+                let mut cs = k.chars();
+                format!("a {} or {} card", n(cs.next().unwrap()), n(cs.next().unwrap()))
+            }
+            None => "a basic land card".to_string(),
         }
-        None => "a basic land card".to_string(),
-    }.as_str());
+        .as_str(),
+    );
     vec![ability(label, crack)]
 }
 

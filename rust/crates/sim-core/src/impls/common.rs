@@ -3304,6 +3304,21 @@ fn saga_construct(g: &mut Game, p: PlayerId, l: PermId) -> Res {
         return Ok(());
     }
     pay(g, p, 2, "", false)?;
+    make_construct(g, p, arts)
+}
+
+/// the artifacts p controls now (a Construct made now counts itself too: +1)
+pub fn construct_arts(g: &Game, p: PlayerId) -> i64 {
+    g.player(p)
+        .perms
+        .iter()
+        .filter(|&&m| !g.perm(m).phased && (card_is(g, m, Types::ARTIFACT) || g.perm(m).data.truthy(DataKey::Artifact)))
+        .count() as i64
+}
+
+/// the Construct token of Urza's Saga's chapter II ability, the cost already paid (by `saga_construct`, or by the
+/// person's ability in `human/karn.rs`); `arts` is `construct_arts` before it
+pub fn make_construct(g: &mut Game, p: PlayerId, arts: i64) -> Res {
     g.selfpt = true; // before the token exists: a 0/0 is checked at once
     let mut data = crate::state::PermData::default();
     data.set(DataKey::Construct, Val::Bool(true));
@@ -3325,10 +3340,39 @@ pub fn saga_step(g: &mut Game, p: PlayerId) -> Res {
         }
         let lore = g.player(p).sagas[i].1 + 1;
         g.player_mut(p).sagas[i].1 = lore;
-        if lore == 2 {
+        // a person makes the Construct themselves (the Saga's ability in `human/karn.rs`) and picks chapter III's card
+        let person = crate::human::is_human(g, p);
+        if lore == 2 && !person {
             saga_construct(g, p, l)?;
         }
-        if lore >= 3 {
+        if lore >= 3 && person {
+            let got = crate::human::choices::search(
+                g,
+                p,
+                &|g: &Game, c: CardId| {
+                    let d = g.db.get(c);
+                    d.types.has(Types::ARTIFACT) && d.cmc <= 1 && !d.land && !d.tag(Tag::X)
+                },
+                1,
+                "Urza's Saga: search for an artifact card with mana cost {0} or {1}",
+                true,
+            )?;
+            if let Some(&c) = got.first() {
+                enter(g, p, c, Enter::default())?;
+                crate::glog!(
+                    g,
+                    "    Urza's Saga: {} puts {} onto the battlefield",
+                    player_name(g, p),
+                    g.db.get(c).name
+                );
+            }
+            crate::engine::turn::remove_land(g, p, l);
+            let cd = g.perm(l).card();
+            g.player_mut(p).gy.push(cd);
+            if let Some(i) = g.player(p).sagas.iter().position(|x| x.0 == l) {
+                g.player_mut(p).sagas.remove(i);
+            }
+        } else if lore >= 3 {
             saga_construct(g, p, l)?; // in response to chapter III
             let cs: Vec<CardId> = searchable(g, p)
                 .into_iter()

@@ -114,6 +114,17 @@ fn play_it(key: &str, name: &str, land: bool) -> (Vec<String>, Vec<String>, bool
         let c = take(&mut g, p, n);
         g.player_mut(p).gy.push(c);
     }
+    // cards whose choice needs Equipment on the table (Kor Outfitter attaches one; Forge Anew returns one)
+    match name {
+        "Forge Anew" => {
+            let c = take(&mut g, P0, "Bonesplitter");
+            g.player_mut(P0).gy.push(c);
+        }
+        "Kor Outfitter" => {
+            perm(&mut g, P0, "Bonesplitter");
+        }
+        _ => {}
+    }
     hand(&mut g, P0, &["Plains", "Island", "Swamp"]); // something to discard or reveal (Foreboding Ruins)
     let c = take(&mut g, P0, name);
     g.player_mut(P0).hand.push(c);
@@ -232,15 +243,7 @@ const TO_FIX: &[&str] = &[
     "alela: Airlift Chaplain",
     "alela: Pileated Provisioner",
     "alela: Plan for All Outcomes",
-    "cloud: Akroma's Will",
-    "cloud: Forge Anew",
-    "cloud: Galadriel's Dismissal",
-    "cloud: Kor Outfitter",
-    "cloud: Winds of Abandon",
     "galadriel: River's Rebuke",
-    "karn: Pithing Needle",
-    "karn: Soul-Guide Lantern",
-    "karn: Spine of Ish Sah",
     "kefka: Alpharael, Dreaming Acolyte",
     "kefka: Glimpse the Unthinkable",
     "kefka: Seize the Spoils",

@@ -64,16 +64,7 @@ fn the_person_activates_it_pays_a_life_and_picks_the_land() {
 fn it_can_be_cracked_later_and_may_find_nothing() {
     let mut g = setup("Polluted Delta", &["Island", "Swamp"]);
     // find nothing: the last choice is "find nothing"
-    let h = main(
-        &mut g,
-        P0,
-        vec![
-            play_land(),
-            use_land(0),
-            pick(0),
-            Box::new(|r| Answer::Pick(r.choices.len() - 1)),
-        ],
-    );
+    let h = main(&mut g, P0, vec![play_land(), use_land(0), pick(0), Box::new(|r| Answer::Pick(r.choices.len() - 1))]);
     assert!(h.asked_kind("search").len() == 1);
     assert!(in_gy(&g, P0, "Polluted Delta"), "sacrificed all the same");
     assert_eq!(g.player(P0).lands.len(), 0);

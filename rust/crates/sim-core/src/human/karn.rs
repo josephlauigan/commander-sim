@@ -19,7 +19,9 @@ use crate::hooks::Action;
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{DataKey, Game, Val};
 
-const PERMS: [&str; 18] = [
+const PERMS: [&str; 20] = [
+    "Expedition Map",
+    "Urza's Tome",
     "Thrasios, Triton Hero",
     "Grim Monolith",
     "Liquimetal Torque",
@@ -39,7 +41,9 @@ const PERMS: [&str; 18] = [
     "Endless Atlas",
     "Mishra's Factory",
 ];
-const LANDS: [&str; 8] = [
+const LANDS: [&str; 10] = [
+    "Urza's Cave",
+    "Urza's Saga",
     "Bonders' Enclave",
     "Buried Ruin",
     "Inventors' Fair",
@@ -225,6 +229,13 @@ pub fn perm_abilities(g: &Game, _p: PlayerId, m: PermId) -> Vec<PermAbility> {
         ],
         "Batterskull" => vec![ability("{3}: return Batterskull to its owner's hand", skull)],
         "Endless Atlas" => vec![ability("{2}, {T}: draw a card (three or more lands with the same name)", atlas)],
+        "Expedition Map" => {
+            vec![ability("{2}, {T}, sacrifice: search your library for a land card, put it into your hand", expedition_map)]
+        }
+        "Urza's Tome" => vec![ability(
+            "{3}, {T}: draw a card, then discard a card unless you exile a historic card from your graveyard",
+            urzas_tome,
+        )],
         _ => vec![],
     }
 }
@@ -706,6 +717,14 @@ pub fn land_abilities(g: &Game, _p: PlayerId, l: PermId) -> Vec<LandAbility> {
         "Urza's Factory" => {
             vec![ability("{7}, {T}: create a 2/2 colorless Assembly-Worker artifact creature token", urza_factory)]
         }
+        "Urza's Cave" => vec![ability(
+            "{3}, {T}, sacrifice: search your library for a land card, put it onto the battlefield tapped",
+            urzas_cave,
+        )],
+        "Urza's Saga" => vec![ability(
+            "{2}, {T}: create a 0/0 Construct artifact creature that gets +1/+1 for each artifact you control (chapter II onward)",
+            saga_construct,
+        )],
         "War Room" => {
             vec![ability("{3}, {T}, pay life equal to the colors in your commander's identity: draw a card", war_room)]
         }
@@ -925,4 +944,197 @@ fn thrasios_many(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         None
     };
     stack::with_rings_auto(auto, || thrasios(g, p, m, n))
+}
+
+// ------------------------------------------------------------------ Expedition Map, Urza's Cave, Urza's Saga, Urza's Tome
+/// Expedition Map: {2}, {T}, sacrifice: search your library for a land card, reveal it, put it into your hand
+fn expedition_map(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    if let Some(why) = tap_ok(g, m, false).or_else(|| need(g, p, 2, "", "Expedition Map")) {
+        return Ok(Some(why));
+    }
+    mana::pay_from_pool(g, p, 2, "");
+    g.perm_mut(m).tapped = true;
+    die(g, m, "sac")?;
+    let cd = g.perm(m).cd.unwrap();
+    crate::glog!(g, "  {} sacrifices Expedition Map", g.player(p).name);
+    if ability_window_card(g, p, cd, "search for a land card", None, None)? {
+        crate::impls::karn_engines::fetch_land(g, p, true, false)?;
+    }
+    Ok(None)
+}
+
+/// Urza's Cave: {3}, {T}, sacrifice: search your library for a land card, put it onto the battlefield tapped
+fn urzas_cave(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
+    if let Some(why) = land_tap_ok(g, l).or_else(|| need(g, p, 3, "", "Urza's Cave")) {
+        return Ok(Some(why));
+    }
+    if crate::engine::mana::moon_land(g, l) {
+        return Ok(Some("Urza's Cave has lost its abilities.".into()));
+    }
+    mana::pay_from_pool(g, p, 3, "");
+    g.perm_mut(l).tapped = true;
+    let cd = g.perm(l).card();
+    crate::glog!(g, "  {} sacrifices Urza's Cave", g.player(p).name);
+    crate::impls::lands::sac_land(g, p, l)?;
+    if ability_window_card(g, p, cd, "search for a land card", None, None)? {
+        crate::impls::karn_engines::fetch_land(g, p, false, true)?;
+    }
+    Ok(None)
+}
+
+/// Urza's Saga, chapter II onward: {2}, {T}: create a 0/0 Construct that gets +1/+1 for each artifact you control.
+/// (Chapter I gives it {T}: Add {C}, a mana ability. The lore counters are `Player::sagas`; chapter III sacrifices it.)
+fn saga_construct(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
+    if crate::engine::mana::moon_land(g, l) {
+        return Ok(Some("Urza's Saga has lost its abilities.".into()));
+    }
+    let lore = g.player(p).sagas.iter().find(|x| x.0 == l).map_or(0, |x| x.1);
+    if lore < 2 {
+        return Ok(Some("Urza's Saga has no lore counter II yet: the Construct ability comes with chapter II.".into()));
+    }
+    if let Some(why) = land_tap_ok(g, l).or_else(|| need(g, p, 2, "", "Urza's Saga")) {
+        return Ok(Some(why));
+    }
+    mana::pay_from_pool(g, p, 2, "");
+    g.perm_mut(l).tapped = true;
+    crate::glog!(g, "  {} activates Urza's Saga", g.player(p).name);
+    let cd = g.perm(l).card();
+    if ability_window_card(g, p, cd, "create a Construct token", None, None)? {
+        let arts = crate::impls::common::construct_arts(g, p);
+        crate::impls::common::make_construct(g, p, arts)?;
+    }
+    Ok(None)
+}
+
+/// Urza's Tome: {3}, {T}: draw a card, then discard a card unless you exile a historic card from your graveyard
+fn urzas_tome(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    if let Some(why) = tap_ok(g, m, false).or_else(|| need(g, p, 3, "", "Urza's Tome")) {
+        return Ok(Some(why));
+    }
+    mana::pay_from_pool(g, p, 3, "");
+    g.perm_mut(m).tapped = true;
+    crate::glog!(g, "  {} activates Urza's Tome", g.player(p).name);
+    let cd = g.perm(m).cd.unwrap();
+    if !ability_window_card(g, p, cd, "draw a card, then discard unless you exile a historic card", None, None)? {
+        return Ok(None);
+    }
+    zones::draw(g, p, 1, false)?;
+    let hist: Vec<CardId> =
+        g.player(p).gy.iter().copied().filter(|&c| crate::impls::karn_engines::historic(g, c)).collect();
+    let mut labels: Vec<String> = hist.iter().map(|&c| format!("exile {}", choices::card_label(g, c))).collect();
+    let hand = g.player(p).hand.clone();
+    if !hand.is_empty() {
+        labels.push("discard a card".into());
+    }
+    if labels.is_empty() {
+        return Ok(None); // nothing to exile and nothing to discard
+    }
+    let k = choices::choose_one(g, p, "choose", "Urza's Tome: exile a historic card from your graveyard, or discard a card?", &labels)?;
+    if k < hist.len() {
+        let c = hist[k];
+        let pl = g.player_mut(p);
+        if let Some(i) = pl.gy.iter().position(|&x| x == c) {
+            pl.gy.remove(i);
+            pl.exile.push(c);
+        }
+        crate::glog!(g, "    Urza's Tome: {} exiles {} from the graveyard", g.player(p).name, g.db.get(c).name);
+    } else {
+        let d = choices::pick_cards(g, p, &hand, 1, "Urza's Tome: discard which card?", "choose")?[0];
+        zones::discard_cards(g, p, &[d])?;
+    }
+    crate::engine::life::check_state(g)?;
+    Ok(None)
+}
+
+// ------------------------------------------------------------------ enter triggers the person answers (Pithing Needle, Soul-Guide Lantern, Spine of Ish Sah)
+/// Pithing Needle: "As this enters, choose a card name". The person picks from the names on the table: every permanent,
+/// each player's commander and the cards in their own hand. The card, whose name it is (`DataKey::Imprint`).
+pub fn name_for_needle(g: &Game, p: PlayerId) -> Res<Option<CardId>> {
+    let mut cards: Vec<CardId> = vec![];
+    let mut add = |c: CardId, g: &Game| {
+        if !cards.iter().any(|&x| g.db.get(x).name == g.db.get(c).name) {
+            cards.push(c);
+        }
+    };
+    for q in g.players.iter().filter(|q| q.alive) {
+        for &m in q.perms.iter().chain(q.lands.iter()) {
+            if let Some(c) = g.perm(m).cd.filter(|_| g.perm(m).on_bf) {
+                add(c, g);
+            }
+        }
+        add(q.cmd, g);
+        if let Some(c2) = q.cmd2 {
+            add(c2, g);
+        }
+    }
+    for &c in &g.player(p).hand {
+        add(c, g);
+    }
+    cards.sort_by(|&a, &b| g.db.get(a).name.cmp(&g.db.get(b).name));
+    if cards.is_empty() {
+        return Ok(None);
+    }
+    let labels: Vec<String> = cards.iter().map(|&c| g.db.get(c).name.to_string()).collect();
+    let k = choices::choose_one(
+        g,
+        p,
+        "choose",
+        "Pithing Needle: choose a card name (activated abilities of sources with that name can't be activated)",
+        &labels,
+    )?;
+    Ok(Some(cards[k]))
+}
+
+/// Soul-Guide Lantern: when it enters, exile target card from a graveyard (any graveyard)
+pub fn lantern_enters(g: &mut Game, src: PermId) -> Res {
+    let o = g.perm(src).owner;
+    let cands: Vec<(PlayerId, CardId)> =
+        g.players.iter().filter(|q| q.alive).flat_map(|q| q.gy.iter().map(move |&c| (q.id, c))).collect();
+    if cands.is_empty() {
+        return Ok(());
+    }
+    let labels: Vec<String> =
+        cands.iter().map(|&(q, c)| format!("{} ({}'s graveyard)", choices::card_label(g, c), g.player(q).name)).collect();
+    let k = choices::choose_one(g, o, "target", "Soul-Guide Lantern: exile which card from a graveyard?", &labels)?;
+    let (q, c) = cands[k];
+    if ability_window_card(g, o, g.perm(src).card(), "exile a card from a graveyard", None, None)? {
+        let pl = g.player_mut(q);
+        if let Some(i) = pl.gy.iter().position(|&x| x == c) {
+            pl.gy.remove(i);
+            pl.exile.push(c);
+            crate::glog!(g, "    Soul-Guide Lantern exiles {}", g.db.get(c).name);
+        }
+    }
+    Ok(())
+}
+
+/// Spine of Ish Sah: when it enters, destroy target permanent (any permanent, a land too)
+pub fn spine_enters(g: &mut Game, src: PermId) -> Res {
+    let o = g.perm(src).owner;
+    let mut cands: Vec<(PlayerId, PermId)> = vec![];
+    for q in g.players.iter().filter(|q| q.alive) {
+        for &m in q.perms.iter().chain(q.lands.iter()) {
+            let x = g.perm(m);
+            if x.on_bf && !x.phased && !(x.owner != o && untargetable(g, m)) {
+                cands.push((q.id, m));
+            }
+        }
+    }
+    if cands.is_empty() {
+        return Ok(());
+    }
+    let labels: Vec<String> =
+        cands.iter().map(|&(_, m)| legal::describe_target(g, o, Target::Perm(m))).collect();
+    let k = choices::choose_one(g, o, "target", "Spine of Ish Sah: destroy which permanent?", &labels)?;
+    let (q, t) = cands[k];
+    let Some(cd) = g.perm(src).cd else { return Ok(()) };
+    if !crate::engine::stack::trigger_window(g, o, Some(src), "destroy target permanent", Some(6.0))? || !g.perm(t).on_bf {
+        return Ok(());
+    }
+    if g.player(q).lands.contains(&t) {
+        crate::impls::fixes::destroy_land(g, q, t)?;
+    } else {
+        crate::engine::removal::apply_removal(g, Some(o), t, "destroy", Some(cd))?;
+    }
+    Ok(())
 }

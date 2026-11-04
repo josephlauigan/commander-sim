@@ -1027,6 +1027,11 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         to_gy_or_exile(g, p, c, ctx, zone, false);
         return Ok(());
     }
+    // a person's Akroma's Will / Winds of Abandon / Galadriel's Dismissal: the modes and targets they chose as they cast
+    if !g.db.get(c).perm && crate::human::is_human(g, p) && crate::human::cloud::resolve_spell(g, p, c, ctx)? {
+        to_gy_or_exile(g, p, c, ctx, zone, false);
+        return Ok(());
+    }
     let d = g.db.get(c);
     let t = d.tags.clone();
     let (perm, has_dsl) = (d.perm, d.has_dsl());
