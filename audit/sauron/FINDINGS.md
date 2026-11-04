@@ -4,6 +4,10 @@ What the simulator has taught us about the Sauron Grixis amass deck: strengths, 
 it did or didn't work. Updated after every run. Newest evidence first. Matched tiers: T3–T4 (`data/my_decks.toml`).
 Older tests: the dated folders here.
 
+## 2026-11-04: Cabal Coffers and Urborg for Karn's Bastion and a Swamp (JD's physical deck; not simulated)
+With both out, L lands make 2L - 3 mana for Exsanguinate and Torment of Hailfire (its AI already sizes X to the mana).
+Karn's Bastion's proliferate for the Army is gone. No number yet: the next baseline (T3-T4) measures it.
+
 ## 2026-11-03: Godo package added (JD's choice; not simulated)
 
 Godo, Helm of the Host, Hammer of Nazahn, Combat Celebrant and Peter Parker's Camera moved from The Ur-Dragon into
