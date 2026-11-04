@@ -14,7 +14,7 @@ Drain the table a little with every spell, then all at once. Y'shtola turns your
 
 Y'shtola, Night's Blessed ({1}{W}{U}{B}, 2/4, vigilance): *At the beginning of each end step, if a player lost 4 or more life this turn, you draw a card. Whenever you cast a noncreature spell with mana value 3 or greater, Y'shtola deals 2 damage to each opponent and you gain 2 life.*
 
-**Thirty-five spells trigger her.** Every noncreature spell in the list with mana value 3 or more counts: rocks (Chromatic Lantern, Coalition Relic, Champion's Helm, Conjurer's Closet), lock Auras, tutors, draw spells, removal and wipes. X counts too, so Exsanguinate and Debt to the Deathless with X = 1 or more trigger her. Each trigger is 6 damage across a four-player table and 2 life for you. Creatures and spells of mana value 2 or less don't trigger her.
+**Thirty-seven spells trigger her.** Every noncreature spell in the list with mana value 3 or more counts: rocks (Chromatic Lantern, Coalition Relic, Champion's Helm, Conjurer's Closet), lock Auras, tutors, draw spells, removal and wipes. X counts too, so Exsanguinate and Debt to the Deathless with X = 1 or more trigger her. Each trigger is 6 damage across a four-player table and 2 life for you. Creatures and spells of mana value 2 or less don't trigger her.
 
 **Her draw needs 4 life lost by one player in one turn.** One trigger is only 2 to each opponent, so a draw needs a second source in the same turn:
 - **Two triggers**, such as a removal spell on an opponent's turn plus your own main-phase spell, or two spells in one turn. Cheap instants with mana value 3 (Anguished Unmaking, Generous Gift, Your Fate Ends Here) on an opponent's turn are the easiest second trigger. Cast Away Doubt does it alone: its 2 damage plus her 2 is 4 to each opponent.
@@ -27,7 +27,7 @@ She checks at *every* end step, so instant-speed triggers on opponents' turns dr
 
 **Turns 1 to 3: mana.** Turn 2 Sol Ring, Arcane Signet or Talisman of Progress; Chromatic Lantern or Coalition Relic on three (each is a rock *and* a trigger once she is out). Play Y'shtola on turn 3 or 4 with a spell to follow. Keep a cheap lock Aura or Propaganda for a hand that has to deal with attackers.
 
-**Turns 4 to 6: the engine.** Every turn cast a spell of mana value 3 or more. Prefer trigger spells first, while the opponents' life is high and blockers don't matter. Look for Sanguine Bond first (the tutors find it: Diabolic Tutor, Dark Petition, Idyllic Tutor). Lock or remove the biggest creature and put Propaganda out so the table can't attack you.
+**Turns 4 to 6: the engine.** Every turn cast a spell of mana value 3 or more. Prefer trigger spells first, while the opponents' life is high and blockers don't matter. Look for Sanguine Bond first (the tutors find it: Diabolic Tutor, Dark Petition, Idyllic Tutor, Vampiric Tutor). Lock or remove the biggest creature and put Propaganda out so the table can't attack you.
 
 **Late game.** The first trigger usually lands by turn 6 to 8. Count before you cast an X spell: Exsanguinate or Debt to the Deathless plus Y'shtola's trigger plus the Blight-Priest's lifegain pings plus Bond often kills two players in one turn. If the table is not close, keep drawing and taxing.
 
@@ -97,7 +97,7 @@ The damage comes mostly from Y'shtola's and Ill-Gotten Inheritance's triggers, t
 
 **The opening.** Turn 2 Sol Ring, Arcane Signet or Talisman of Progress, Y'shtola on turn 3 or 4. Then every turn cast a spell of mana value 3 or more. A Chromatic Lantern or Coalition Relic after her is a rock *and* a trigger.
 
-**Bond first.** Sanguine Bond is the first thing the tutors find (Diabolic Tutor, Dark Petition, Idyllic Tutor). It costs 5 and Zur can't fetch it. Once it's out, every trigger drains an extra 2 and every X spell drains twice.
+**Bond first.** Sanguine Bond is the first thing the tutors find (Diabolic Tutor, Dark Petition, Idyllic Tutor, Vampiric Tutor). It costs 5 and Zur can't fetch it. Once it's out, every trigger drains an extra 2 and every X spell drains twice.
 
 **Sequencing a turn.**
 - **Trigger spells first,** while opponents' life is high and blockers don't matter.
@@ -120,7 +120,7 @@ Zur can find Arrest, Bound in Silence, Memory Trap, Mystic Remora, Necropotence,
 
 The list is exactly 100 cards.
 
-37 lands (15 nonbasic, 7 Plains, 7 Island, 8 Swamp) plus six rocks: Sol Ring, Arcane Signet, Talisman of Progress, Talisman of Hierarchy, Chromatic Lantern, Coalition Relic. **Serra's Sanctum** taps for {W} per enchantment you control, and that includes the removal Auras on opponents' creatures (you control the Aura), so Arrest or Prison Sentence also adds a mana. With 16 enchantments it taps for three or more by the mid-game. **Urborg, Tomb of Yawgmoth** makes every land a Swamp in addition to its other types, so every land can tap for {B}: it fixes Necropotence and Massacre Wurm and replaces a basic Swamp at no cost (the fetches can't find it, but they still have 8 Swamps).
+37 lands (15 nonbasic, 7 Plains, 7 Island, 8 Swamp) plus six rocks: Sol Ring, Arcane Signet, Talisman of Progress, Talisman of Hierarchy, Chromatic Lantern, Coalition Relic. **Serra's Sanctum** taps for {W} per enchantment you control, and that includes the removal Auras on opponents' creatures (you control the Aura), so Arrest or Prison Sentence also adds a mana. With 16 enchantments it taps for three or more by the mid-game. **Urborg, Tomb of Yawgmoth** makes every land a Swamp in addition to its other types, so every land can tap for {B}: it fixes Necropotence and Sheoldred, the Apocalypse and replaces a basic Swamp at no cost (the fetches can't find it, but they still have 8 Swamps).
 
 | Measure | Count | Note |
 | --- | --- | --- |
@@ -133,9 +133,9 @@ The list is exactly 100 cards.
 
 Black is the main colour (Necropotence's {B}{B}{B}, the X drains' {B}{B}), so it has the most sources. Blue has the fewest. Most blue spells cost a single {U}, and Bribery's {U}{U} is the exception. Each fetch finds the colour the hand is short of, and cracking one turns on Fatal Push's revolt (destroy a creature with mana value 4 or less).
 
-**Curve.** One-drops 7, two-drops 5, three-drops 23, four-drops 17 (counting Y'shtola), five 6, six 5. Average mana value about 3.3, with Exsanguinate and Debt counted at X = 0. It is a slow curve by design: Y'shtola pays you for mana value 3 and up.
+**Curve.** One-drops 7, two-drops 7, three-drops 22, four-drops 17 (counting Y'shtola), five 7, six 3. Average mana value about 3.3, with Exsanguinate and Debt counted at X = 0. It is a slow curve by design: Y'shtola pays you for mana value 3 and up.
 
-**Card types.** 15 creatures (plus Y'shtola), 16 enchantments, 8 artifacts, 10 instants, 12 sorceries, 1 planeswalker.
+**Card types.** 14 creatures (plus Y'shtola; Esper Sentinel is an artifact creature, counted here), 16 enchantments, 8 artifacts, 11 instants, 13 sorceries, no planeswalkers.
 
 **Finding cards.**
 - **Engines:** Necropotence, Consecrated Sphinx, Mystic Remora, Esper Sentinel, Notion Thief, and her own end-step draw (Orcish Bowmasters turns the opponents' extra draws into damage and Orcs).
@@ -150,7 +150,7 @@ Black is the main colour (Necropotence's {B}{B}{B}, the X drains' {B}{B}), so it
 - **Removal on permanents:** Skyclave Apparition, Hostage Taker, Prayer of Binding, Static Net, Memory Trap.
 - **Removal Auras (three):** Arrest, Prison Sentence, Bound in Silence.
 - **Theft:** Bribery.
-- **Board wipes (two):** Austere Command, Farewell.
+- **Board wipes (three):** Austere Command, Farewell, Toxic Deluge.
 - **Protection:** Teferi's Protection.
 
 **Life is a resource.** Necropotence, Read the Bones, Anguished Unmaking, Tezzeret's Gambit, Deep Analysis's flashback, Caves of Koilos, Adarkar Wastes, Underground River, the fetch lands (1 each), the shocks (2 to enter untapped) and Talisman of Progress all cost life. The deck gains it back steadily: 2 per Y'shtola trigger, plus every drain.
@@ -163,7 +163,7 @@ Disclose before the game:
 
 - **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Rhystic Study**, **Mystical Tutor**, **Vampiric Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell**, **Teferi's Protection**, **Orcish Bowmasters** and **Serra's Sanctum** (the thirteen Game Changers).
 - **Free counterspell and board wipe:** Force of Will (pitch a blue card) and Farewell (exiles creatures, artifacts, enchantments and graveyards as you choose).
-- **Three tutors** (Diabolic Tutor, Dark Petition, Idyllic Tutor) plus Mystical Tutor, and Zur's enchantment search.
+- **Three tutors** (Diabolic Tutor, Dark Petition, Idyllic Tutor) plus Mystical Tutor and Vampiric Tutor, and Zur's enchantment search.
 - **The win is a drain:** Y'shtola pings the table on every big spell, and Exsanguinate or Debt to the Deathless with Sanguine Bond can take out two players in one turn.
 - **Theft:** Bribery and Hostage Taker use opponents' cards.
 

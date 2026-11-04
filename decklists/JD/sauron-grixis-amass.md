@@ -30,7 +30,7 @@ around.
 
 ### Game plan
 - **Turns 1 to 3.** Start an Army before Sauron lands: **Dreadhorde Invasion** and **Lazotep Reaver** make one, and a
-  rock (eleven in the deck) pushes you toward six mana. Hold up **Orcish Bowmasters** (flash) for an opponent's
+  rock (ten in the deck) pushes you toward six mana. Hold up **Orcish Bowmasters** (flash) for an opponent's
   extra draw, and keep cheap removal for early threats. Cast **Call of the Ring** when you have nothing better.
 - **Turns 4 to 6.** Land Sauron, then The Ozolith, the Army's insurance, before you commit a big Army. Every
   opponent spell after Sauron lands is a free counter. Develop Talrand, Iron Man, Mauhúr and Sheoldred, and keep
@@ -186,7 +186,7 @@ secondary plan when combat stalls or the table spends its answers on Sauron and 
 
 **Archivist wheel with Bowmasters** (see Strategy) is the grind engine and, late, a finisher: three opponents redrawing five cards each take about 5 pings apiece from Bowmasters, and the Army grows by about 15. Hold it for the turn it kills or the counters matter.
 
-**The early Army.** Dreadhorde Invasion on turn two, or Lazotep Reaver, with a rock to follow (eleven in the deck), builds an Army before Sauron arrives. Then the first hit comes sooner, and Massacre Wurm or Inferno Titan clear the way for it.
+**The early Army.** Dreadhorde Invasion on turn two, or Lazotep Reaver, with a rock to follow (ten in the deck), builds an Army before Sauron arrives. Then the first hit comes sooner, and Massacre Wurm or Inferno Titan clear the way for it.
 
 **Finish with X.** Once the Army has connected or opponents are low, Exsanguinate drains every opponent for X, and Comet Storm spreads X damage over as many targets as you kick. Both are better after a sweeper has already thinned the table.
 
