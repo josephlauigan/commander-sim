@@ -792,7 +792,10 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
             let pl = g.player_mut(q);
             if let Some(i) = pl.hand.iter().position(|&x| x == c) {
                 pl.hand.remove(i);
-                pl.exile.push(c);
+                // a card taken from another player's library (Ragavan, Grenzo) goes back to its owner's exile
+                let owner = pl.stolen.swap_remove(&c).unwrap_or(q);
+                pl.agent_ids.retain(|&x| x != c);
+                g.player_mut(owner).exile.push(c);
             }
         }
     }

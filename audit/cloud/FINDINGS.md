@@ -212,3 +212,9 @@ is "no clear effect", at best a small lean toward Judgment. The tool's verdict w
   trigger is untested.
 - Open: both averages are pooled by hand from per-tier bands, so a 4x run (or `--ai adaptive`) is needed to settle the Forge
   edge.
+
+## 2026-11-04 (late): AI changes, not simulated (JD: no sims for this batch)
+
+- **Armored Skyhunter**: the AI's attack trigger no longer loses its pick (the trigger's probe run popped the top six cards and the real run looked at the next six).
+
+The numbers above predate these changes; a re-run on the deck's own tiers would show their effect.

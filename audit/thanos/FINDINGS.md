@@ -75,3 +75,10 @@ Raw output: `audit/t6-lists/thanos-t6-2000.txt`. Thanos itself is unchanged; opp
 changed together, so this is not a paired deck-swap gain. Oracle/Consultation/Pact supplied 85% of decisive wins;
 combo attempts still had interruption and no-card stops. The opponent pool remains too slow and internally uneven;
 this result is simulator evidence, not a real-world win-rate prediction.
+
+## 2026-11-04 (late): AI changes, not simulated (JD: no sims for this batch)
+
+- **Ragavan, Nimble Pilferer**: the exiled card can be cast that turn whatever its type (only permanents were cast before); it is held in hand for the turn and goes back to its owner's exile at the end step.
+- **Goldspan Dragon** (in opposing decks): a spell targeting it makes a Treasure.
+
+The numbers above predate these changes; a re-run on the deck's own tiers would show their effect.

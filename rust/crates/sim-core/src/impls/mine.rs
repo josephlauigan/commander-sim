@@ -705,6 +705,52 @@ fn insight_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ======================================================== Birgi, God of Storytelling // Harnfel, Horn of Bounty
+/// The back face of Birgi: Harnfel, Horn of Bounty, a {4}{R} legendary artifact ("Discard a card: Exile the top two
+/// cards of your library. You may play those cards this turn."). The card data holds only a card's front face, so
+/// Harnfel is an engine-made card (`cards::engine_made`): the spell on the stack and the permanent are Harnfel, and
+/// the permanent's `phys` is Birgi's card, so that is what goes to the graveyard, hand or exile when it leaves.
+/// Only a person casts it (the AI has no use for it that beats a 3-mana Birgi); its ability is the person's
+/// (`human::gaps_c::harnfel`).
+pub const HARNFEL: &str = "Harnfel, Horn of Bounty";
+
+fn harnfel_opt(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_none() || !crate::human::is_human(g, p) || !g.player(p).hand.contains(&c) {
+        return Ok(vec![]);
+    }
+    let Some(h) = g.db.id(HARNFEL) else { return Ok(vec![]) };
+    let (gn, pips) = cost_of(g, p, h);
+    if !can_pay(g, p, gn, &pips, false) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 1.0,
+        label: "Harnfel, Horn of Bounty ({4}{R}): the back face, a legendary artifact".into(),
+        act: Some(Action::Plan { f: harnfel_go, arg: c.0 as i64 }),
+    }])
+}
+
+fn harnfel_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    let Some(h) = g.db.id(HARNFEL) else { return Ok(false) };
+    let (gn, pips) = cost_of(g, p, h);
+    if !g.player(p).hand.contains(&c) || !can_pay(g, p, gn, &pips, false) || !castable(g, p, h, "hand") {
+        return Ok(false);
+    }
+    remove_card(&mut g.player_mut(p).hand, c);
+    pay(g, p, gn, &pips, false)?;
+    g.player_mut(p).spells_this_turn += 1;
+    crate::glog!(g, "  {} casts {HARNFEL} (the back face of Birgi)", g.player(p).name);
+    on_cast(g, p, h)?;
+    if !counter_window(g, p, h, 3.0, vec![])? {
+        g.player_mut(p).gy.push(c); // countered: the card (Birgi) goes to the graveyard
+        return Ok(true);
+    }
+    let m = enter(g, p, h, Enter { was_cast: true, ..Enter::default() })?;
+    g.perm_mut(m).phys = Some(c);
+    Ok(true)
+}
+
 // ======================================================== Urabrask, Heretic Praetor
 /// your upkeep: top card exiled, playable this turn; opponents: the next draw each upkeep is exiled instead and
 /// playable that turn (so it is not a draw); unplayed cards stay exiled
@@ -3910,6 +3956,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Latulla's Orders")?.combat_damage = Some(latulla_hit);
     r.card(db, "Barad-dûr")?.land_options = Some(baraddur);
     r.card(db, "Bloodsoaked Insight // Sanguine Morass")?.hand_options = Some(insight);
+    r.card(db, "Birgi, God of Storytelling")?.hand_options = Some(harnfel_opt);
+    r.card(db, "Birgi, God of Storytelling // Harnfel, Horn of Bounty")?.hand_options = Some(harnfel_opt);
     r.card(db, BRAIN_FREEZE)?.resolve = Some(brain_freeze);
     r.card(db, GRAPESHOT)?.resolve = Some(grapeshot);
     r.card(db, "Iron Man, Armored Avenger")?.attack = Some(ironman);

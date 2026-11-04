@@ -12,7 +12,7 @@ use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, discard_worst};
 use crate::engine::hooks::hooked;
 use crate::engine::life::{gain, lose_life};
-use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::mana::{can_pay, pay};
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
@@ -1081,29 +1081,26 @@ fn mahadi_count(g: &mut Game, _src: Src, m: PermId, _cause: Sym) -> Res {
     Ok(())
 }
 
-/// Ragavan, Nimble Pilferer (Approximate: Treasure and a stolen top card on hit; only permanents are cast; dash not
-/// used)
+/// Ragavan, Nimble Pilferer: a Treasure, and the top card of that player's library exiled; "you may cast it this turn" (a
+/// land can't be cast). Any card type: the card is held in p's hand as an impulse card (`impulse`: the end step sends
+/// what was not cast back to its owner's exile), so the AI's usual cast logic and a person's hand list both reach it.
+/// Its mana is ordinary (not "of any type"; unlike Opposition Agent's cards it is not in `agent_ids`). The old code
+/// cast a permanent card at once and never an instant or sorcery.
 fn ragavan(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, _dmg: i32) -> Res {
     if a != src || !trigger_window(g, p, Some(src), "create a Treasure, exile the top card", Some(4.0))? {
         return Ok(());
     }
     make_artifact_tokens(g, p, "Treasure", 1)?;
     if let Some(c) = g.player_mut(d).library.pop() {
-        g.player_mut(d).exile.push(c);
-        let (gen_, pips) = cost_of(g, p, c);
-        if !g.db.get(c).land
-            && can_pay(g, p, gen_, &pips, false)
-            && g.db.get(c).perm
-            && (!crate::human::is_human(g, p)
-                || choices::yes_no(
-                    g,
-                    p,
-                    &format!("Ragavan, Nimble Pilferer: cast {} from exile now?", g.db.get(c).name),
-                )?)
-        {
-            pay(g, p, gen_, &pips, false)?;
-            g.player_mut(d).exile.take(c);
-            enter(g, p, c, Enter { orig: Some(d), ..Enter::default() })?;
+        if g.db.get(c).land {
+            g.player_mut(d).exile.push(c); // a land can't be cast
+        } else {
+            // held in p's hand until the end step; `stolen` makes it the owner's card when it resolves or goes back
+            let pl = g.player_mut(p);
+            pl.hand.push(c);
+            pl.stolen.insert(c, d);
+            pl.impulse.push(c);
+            crate::glog!(g, "    {} exiles {} (Ragavan): it may cast it this turn", pname(g, p), g.db.get(c).name);
         }
     }
     Ok(())

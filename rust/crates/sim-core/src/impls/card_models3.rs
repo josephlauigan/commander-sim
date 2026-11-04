@@ -463,8 +463,11 @@ fn spell_target_perms(ctx: &Ctx) -> Vec<PermId> {
 /// `cast::cast_card` as a spell is cast (any player's spell). The AI gives the poison counter to the opponent with
 /// the most poison (the closest to ten), then the one with the least life.
 pub fn spell_targeted(g: &mut Game, ctx: &Ctx) -> Res {
-    let Some(rp) = g.db.id(ROTPRIEST) else { return Ok(()) };
+    let rp = g.db.id(ROTPRIEST);
     for m in spell_target_perms(ctx) {
+        // Goldspan Dragon: "Whenever ... becomes the target of a spell, create a Treasure token." (any player's spell)
+        crate::impls::rules::goldspan_targeted(g, m)?;
+        let Some(rp) = rp else { continue };
         if !live(g, m) || !g.is_creature(m) {
             continue;
         }

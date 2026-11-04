@@ -885,7 +885,8 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         }
         _ => {} // 'lib': Bolas's Citadel, already off the top of the library
     }
-    if g.player(p).agent_ids.contains(&c) && !g.player(p).hand.contains(&c) {
+    if (g.player(p).agent_ids.contains(&c) || g.player(p).stolen.contains_key(&c)) && !g.player(p).hand.contains(&c) {
+        // (`stolen` alone: Ragavan's card, cast with ordinary mana)
         // the card taken from an opponent is cast: other copies cost as usual
         g.player_mut(p).agent_ids.retain(|&x| x != c);
         if let Some(owner) = g.player_mut(p).stolen.swap_remove(&c)
