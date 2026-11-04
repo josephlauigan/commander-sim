@@ -231,6 +231,8 @@ pub enum DataKey {
     T12,
     /// --- Tiers 1/2 (brago-meren): the creature entered from a graveyard on this turn (Stamp; Twilight Diviner)
     T12FromGy,
+    /// --- garth: the names this Garth One-Eye has chosen (Int: a bit for each of its six names; `garth::chosen`)
+    Garth,
 }
 
 /// A value in per-card state.

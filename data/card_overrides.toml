@@ -10233,3 +10233,32 @@ note = "loyalty 4 (compleated: the engine pays {G/W/P} with mana, so it enters w
 paths_ok = "compiled: toxic 2; card code: the corrupted end-step trigger (card_models3::ixhel_end)"
 status = "Full"
 note = "flying, vigilance, toxic 2 (compiled); corrupted: at the beginning of your end step each opponent with three or more poison counters exiles their top card face down, and you may play it for as long as it stays exiled with mana of any type (held in your hand as a card taken from them, yshtola::take_card; card_models3::ixhel_end, card-models-3)"
+
+["Garth One-Eye"]
+status = "Full"
+note = "{T}: choose one of Disenchant, Braingeyser, Terror, Shivan Dragon, Regrowth, Black Lotus not yet chosen by this Garth, create a copy and cast it, paying its costs (eminence applies); an uncast copy ceases to exist; the AI taps it only for a copy it can cast and use now (impls/garth.rs)"
+
+["Black Lotus"]
+tags = "rock=3:A"
+dsl = []
+status = "Full"
+note = "{T}, sacrifice: three mana of any one colour (garth.rs: only ever cast as a Garth One-Eye copy, a token)"
+
+["Braingeyser"]
+dsl = [{ type = "spell", effects = [{ do = "draw", n = "X", who = "you" }] }]
+status = "Full"
+note = "{X}{U}{U}: draw X cards; the compiled \"target player\" is an opponent in the ability language, so the effect is written as \"you draw\" (the AI targets itself)"
+
+["Regrowth"]
+status = "Full"
+note = "return the best card from your graveyard to your hand"
+
+["Shivan Dragon"]
+status = "Full"
+note = "5/5 flier; {R}: +1/+0 until end of turn"
+
+["Terror"]
+tags = "rem=destroy tgt=cna nonblack"
+dsl = []
+status = "Full"
+note = "destroy target nonartifact, nonblack creature (the removal tags: tgt=cna and nonblack; it can't be regenerated is not modeled)"
