@@ -264,6 +264,9 @@ fn library(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if !trigger_window(g, p, Some(src), "draw two more cards", None)? || !once_per_turn(g, p, k) {
         return Ok(());
     }
+    if crate::human::is_human(g, p) {
+        return crate::human::triggers_t1::sylvan_library(g, p); // the person chooses (may draw; pay 4 life or put back)
+    }
     let before = g.player(p).hand.len();
     draw(g, p, 2, false)?;
     // the cards just drawn are the end of the hand (Python picked them by identity, and cards are shared per name, so

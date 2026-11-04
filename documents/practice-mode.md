@@ -97,7 +97,12 @@ This section covers what manual play needs from the engine that the simulations 
 | The Ring tempts you | Pick the Ring-bearer |
 
 - **Mechanism:** at each of these places the engine code first asks whether the seat has a person (`human_of(g, p)`). If so, it calls a helper in `sim-core/src/human/choices.rs` (`choose`, `yes_no`, `pick_cards`, `scry`, `pay_tax` and about twenty more) that posts a request and waits for the answer. Otherwise the AI code runs as it always has. The comment `HUMAN(phase 9)` no longer marks anything: every site is filled.
-- **Gaps:** a choice that has no person branch falls back to the AI and shows in the log as "(auto)". A normal game with your decks has none.
+- **Gaps:** each card's choices are made by the person only where its code has a person branch; elsewhere the AI's rule
+  decides. Two tests keep your decks covered: `practice_ability_probe` (every activated ability is offered to you) and
+  `practice_choice_probe` (every choice as a card is cast, played or enters is asked of you); triggers later in a game
+  were audited by hand (2026-11-04). The engine can't detect an AI fallback in general, so the log's "(automatic)" line
+  appears only where the code knows it decides for you (the fetch-style lands outside your decks: Blighted Woodland,
+  Krosan Verge, Myriad Landscape, Shattered Landscape). If a choice is made for you without one, it's a gap to report.
 
 ### The rules check
 

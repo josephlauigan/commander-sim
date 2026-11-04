@@ -1186,7 +1186,12 @@ fn voidborn_drain(g: &mut Game, src: PermId) -> Res {
         return Ok(());
     }
     let opps = alive_opps(g, o);
-    let Some(q) = min_by(&opps, |q| g.player(q).life as f64) else { return Ok(()) };
+    let q = if crate::human::is_human(g, o) && !opps.is_empty() {
+        crate::human::triggers_t1::voidborn_target(g, o, &opps)? // the person picks the opponent
+    } else {
+        let Some(q) = min_by(&opps, |q| g.player(q).life as f64) else { return Ok(()) };
+        q
+    };
     lose_life(g, q, 1, Some(o), "drain", None)?;
     gain(g, o, 1)
 }

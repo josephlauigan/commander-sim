@@ -134,6 +134,9 @@ pub fn card_is(g: &Game, p: PlayerId, c: CardId, t: &str) -> bool {
     d.has_subtype(t) || d.has_kw("changeling") || (d.creature && maskwood_on(g, p))
 }
 
+/// the last choice of a person's creature-type list: opens every creature type (Cavern of Souls, Kindred Dominance)
+pub const OTHER_TYPE: &str = "another creature type (the full list)";
+
 /// galadriel.type_counts: the creature types of p's creature cards (hand, library, graveyard, battlefield, commander),
 /// in the order first seen. Python counts with a Counter over each card's subtypes, a frozenset whose order is the
 /// string hash's (it differs from run to run): here each card's printed order.
@@ -174,10 +177,25 @@ pub fn choose_type(g: &Game, p: PlayerId, what: &str) -> Res<Sym> {
             ts.push("human");
         }
         let n = |t: Sym| counts.iter().find(|x| x.0 == t).map_or(0, |x| x.1);
-        let labels: Vec<String> =
+        let mut labels: Vec<String> =
             ts.iter().map(|&t| format!("{} ({} of your creature cards)", title(t), n(t))).collect();
+        labels.push(OTHER_TYPE.to_string());
         let k = choices::choose_one(g, p, "choose", &format!("{what}: choose a creature type"), &labels)?;
-        return Ok(ts[k]);
+        if k < ts.len() {
+            return Ok(ts[k]);
+        }
+        // any creature type: every one on a creature card in the card database, A to Z
+        let mut all: Vec<Sym> = g
+            .db
+            .iter()
+            .filter(|d| d.creature)
+            .flat_map(|d| d.subtypes.iter().map(|t| intern(t)))
+            .collect();
+        all.sort_unstable();
+        all.dedup();
+        let labels: Vec<String> = all.iter().map(|&t| title(t)).collect();
+        let k = choices::choose_one(g, p, "choose", &format!("{what}: choose any creature type"), &labels)?;
+        return Ok(all[k]);
     }
     let mut on_bf: Vec<(Sym, i32)> = vec![];
     for &m in &g.player(p).perms {

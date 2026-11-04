@@ -318,7 +318,7 @@ fn emry(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         g,
         p,
         "target",
-        "Emry: cast which artifact card from your graveyard? (you pay for it now, from your pool)",
+        "Emry: choose target artifact card in your graveyard (you may cast it this turn)",
         &labels,
         Some("cancel"),
         None,
@@ -327,12 +327,33 @@ fn emry(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         return Ok(None);
     };
     let c = arts[k];
-    let (gn, pips) = engine::mana::cost_of(g, p, c);
-    if let Some(why) = cost_ok(g, p, gn, &pips, &format!("{} with Emry", cname(g, c))) {
-        return Ok(Some(why));
+    // "Choose target artifact card in your graveyard. You may cast that card this turn.": the permission lasts the
+    // turn; the person casts it from the graveyard (paying its cost) whenever they like, or not at all
+    g.perm_mut(m).tapped = true;
+    let what = format!("you may cast {} from your graveyard this turn", cname(g, c));
+    if !engine::stack::ability_window(g, p, Some(m), &what, None, None)? || !g.player(p).gy.contains(&c) {
+        return Ok(None); // countered, or the card left the graveyard in response
     }
-    crate::impls::alela::emry_go(g, m, p, c.0 as i64)?;
+    let st = g.turn_stamp();
+    let mut list = match g.perm(m).data.get(DataKey::Emry) {
+        Some(Val::List(v)) if v.first() == Some(&Val::Stamp(st)) => v.clone(),
+        _ => vec![Val::Stamp(st)],
+    };
+    list.push(Val::Card(c));
+    g.perm_mut(m).data.set(DataKey::Emry, Val::List(list));
+    crate::glog!(g, "    {}: {what}", g.perm(m).name);
     Ok(None)
+}
+
+/// a person's Emry, Lurker of the Loch let p cast card c from the graveyard this turn
+pub fn emry_permits(g: &Game, p: PlayerId, c: CardId) -> bool {
+    // every Emry p has had (the permanents' arena keeps one that left the battlefield: the permission outlives it)
+    let st = g.turn_stamp();
+    g.perms.iter().any(|x| {
+        x.owner == p
+            && matches!(x.data.get(DataKey::Emry),
+                Some(Val::List(v)) if v.first() == Some(&Val::Stamp(st)) && v.contains(&Val::Card(c)))
+    })
 }
 
 // ------------------------------------------------------------------ Mirage Mirror
@@ -347,7 +368,10 @@ fn mirage_mirror(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         for &t in &q.perms {
             let x = g.perm(t);
             let Some(cd) = x.cd else { continue };
-            if t == m || x.phased || x.token || (x.owner != p && values::untargetable(g, t)) {
+            // a token copy of a card counts (its copiable values are the card's); your own legend too (the legend
+            // rule then has you keep one of the two). Not offered: an Aura (the copy would be attached to nothing) and
+            // a land (lands are kept apart from the permanent list here)
+            if t == m || x.phased || (x.owner != p && values::untargetable(g, t)) {
                 continue;
             }
             let d = g.db.get(cd);
@@ -355,9 +379,6 @@ fn mirage_mirror(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
                 continue;
             }
             if !(g.is_creature(t) || d.types.has(Types::ARTIFACT) || d.types.has(Types::ENCHANTMENT)) {
-                continue;
-            }
-            if x.owner == p && crate::cardcode::is_legendary(g, t) {
                 continue;
             }
             tg.push(t);
@@ -384,6 +405,7 @@ fn mirage_mirror(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     let x = g.perm_mut(m);
     x.phys = own;
     x.data.set(DataKey::MirageMirror, Val::Bool(true));
+    crate::engine::life::check_state(g)?; // a copy of your own legend: the legend rule (you keep one)
     Ok(None)
 }
 
@@ -493,9 +515,19 @@ fn dauthi(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if let Some(why) = tap_ok(g, m, true) {
         return Ok(Some(why));
     }
-    let void = crate::impls::common::dauthi_void(g, m);
+    let mut void = crate::impls::common::dauthi_void(g, m);
+    // "you may play it": an exiled land too, as your land drop (your main phase, the stack empty, a drop left)
+    let lands = dauthi_void_lands(g, m);
+    let land_ok = legal::sorcery_timing(g, p).is_none() && (g.player(p).lands_played as i32) < legal::land_drops(g, p);
+    if land_ok {
+        void.extend(lands.iter().copied());
+    }
     if void.is_empty() {
-        return Ok(Some("No nonland card is exiled with a void counter.".into()));
+        return Ok(Some(if lands.is_empty() {
+            "No card is exiled with a void counter.".into()
+        } else {
+            "Only a land is exiled with a void counter, and you can't play a land now.".into()
+        }));
     }
     let labels: Vec<String> =
         void.iter().map(|&(c, q)| format!("{} ({}'s)", choices::card_label(g, c), pname(g, q))).collect();
@@ -513,8 +545,36 @@ fn dauthi(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     };
     let (c, q) = void[k];
     crate::glog!(g, "  {} activates Dauthi Voidwalker", pname(g, p));
+    if g.db.get(c).land {
+        // {T}, sacrifice it; then the land is played from exile as the land drop
+        let Some(cd) = g.perm(m).cd else { return Ok(None) };
+        zones::die(g, m, "sac")?;
+        let label = format!("play {}", cname(g, c));
+        if engine::stack::ability_window_card(g, p, cd, &label, Some(5.0), None)? && g.player(q).exile.contains(&c) {
+            g.player_mut(q).exile.take(c);
+            crate::glog!(g, "  Dauthi Voidwalker: {} plays {} from exile", pname(g, p), cname(g, c));
+            engine::turn::play_land_card(g, p, c, "plays (Dauthi Voidwalker)")?;
+        }
+        engine::life::check_state(g)?;
+        return Ok(None);
+    }
     crate::impls::common::dauthi_go(g, m, p, (c.0 as i64) | ((q.0 as i64) << 16))?;
     Ok(None)
+}
+
+/// the lands among Dauthi Voidwalker's void cards (`common::dauthi_void` leaves them out: the AI plays only spells)
+fn dauthi_void_lands(g: &Game, m: PermId) -> Vec<(CardId, PlayerId)> {
+    let Some(Val::List(v)) = g.perm(m).data.get(DataKey::Void) else { return vec![] };
+    v.iter()
+        .filter_map(|e| match e {
+            Val::List(x) => match (&x[0], &x[1]) {
+                (Val::Card(c), Val::Player(q)) => Some((*c, *q)),
+                _ => None,
+            },
+            _ => None,
+        })
+        .filter(|&(c, q)| g.player(q).exile.contains(&c) && g.db.get(c).land)
+        .collect()
 }
 
 // ------------------------------------------------------------------ Resplendent Angel

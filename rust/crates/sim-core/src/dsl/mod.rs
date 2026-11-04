@@ -606,7 +606,17 @@ fn run(
             crate::cardcode::scry(g, p, k, e.kind == "surveil")?;
         }
         "draw" => {
-            for q in players(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx) {
+            // practice mode: Braingeyser says "target player draws X cards" (written "you draw" for the AI, which
+            // targets itself); a person names the player as it is cast (`ctx.face`)
+            let chosen = (spell.is_some_and(|c| &*g.db.get(c).name == "Braingeyser") && crate::human::is_human(g, p))
+                .then_some(ctx.face)
+                .flatten()
+                .filter(|&q| g.player(q).alive);
+            let who = match chosen {
+                Some(q) => vec![q],
+                None => players(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx),
+            };
+            for q in who {
                 // "you may draw": a person chooses (the draw by someone else's "may" is asked of that player here).
                 // The AI ignores the flag (it was never set before cardgen flagged every "you may" effect).
                 if e.optional == Some(true) && q != p && crate::human::is_human(g, q) {

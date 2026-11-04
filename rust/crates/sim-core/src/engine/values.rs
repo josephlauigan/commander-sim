@@ -213,6 +213,11 @@ pub fn prot_colors(g: &Game, m: PermId) -> Colors {
 }
 
 pub fn protected_from(g: &Game, m: PermId, source: Colors) -> bool {
+    // protection from colorless (a person's Giver of Runes): a source with no colour (an artifact, a land, a colorless
+    // spell). Only that ability sets the flag, so it changes nothing else.
+    if source == Colors::NONE && g.perm(m).eot_kw.contains(&"pro_colorless") {
+        return true;
+    }
     prot_colors(g, m).intersects(source)
 }
 

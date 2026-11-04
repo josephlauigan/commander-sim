@@ -376,6 +376,15 @@ fn vision(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     if !g.perm(src).on_bf {
         return Ok(());
     }
+    if human_of(g, o).is_some() {
+        // "choose one": the person picks the counter or phasing out
+        if crate::human::triggers_t1::vision_phases_out(g, o)? {
+            g.perm_mut(src).phased = true;
+        } else {
+            repl::put_plus(g, src, 1);
+        }
+        return Ok(());
+    }
     let target = match &g.cur_cast {
         Some((cc, ctx, _)) if *cc == c => ctx.target,
         _ => None,
@@ -434,11 +443,28 @@ fn witch(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _dmg: i32
         };
         c = ok[k];
     }
+    // a person chooses the spell's target (and any cost it asks before it is cast); the AI's pick is `spell_targets`
+    let mut human_cast = None;
+    if human_of(g, p).is_some() {
+        match crate::human::triggers_t1::free_cast(g, p, c)? {
+            Some(x) => human_cast = Some(x),
+            None => {
+                save(g, &held); // cancelled (or nothing to target): it stays exiled with her
+                return Ok(());
+            }
+        }
+    }
     g.player_mut(p).exile.take(c);
     remove_card(&mut held, c);
     save(g, &held);
     crate::glog!(g, "    Scarlet Witch: {} casts {} free", g.player(p).name, g.db.get(c).name);
-    let ctx = crate::engine::cast::spell_targets(g, p, c, None);
+    let ctx = match human_cast {
+        Some((ctx, costs)) => {
+            crate::human::specs::pay_costs(g, p, c, &costs)?;
+            ctx
+        }
+        None => crate::engine::cast::spell_targets(g, p, c, None),
+    };
     cast_card(g, p, c, "lib", ctx)?;
     Ok(())
 }
