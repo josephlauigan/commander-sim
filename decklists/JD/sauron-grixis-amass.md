@@ -1,15 +1,16 @@
-# Sauron, the Dark Lord — Grixis Amass
+# Sauron, the Dark Lord — Grixis Amass and Godo
 
 A Grixis (blue-black-red) deck that lets the whole table feed one enormous Orc Army. Sauron amasses every time an
 opponent casts a spell, the deck multiplies and protects the counters, and a Grixis control shell of one-sided
-removal and counters keeps the Army alive. The Army connects, the Ring tempts you, and you refill your hand;
-Exsanguinate and Comet Storm finish the table. It is weak to a board of big creatures that outclasses the Army, to
+removal and counters keeps the Army alive. The Army connects, the Ring tempts you, and you refill your hand. A compact
+Godo and Helm of the Host package gives the deck a secondary finish and turns its large enter-trigger creatures into
+repeatable value when the combo is unavailable. It is weak to a board of big creatures that outclasses the Army, to
 spot removal on the Army before it grows, and to fast decks that kill before Sauron lands.
 
 | | |
 |---|---|
 | **Commander** | Sauron, the Dark Lord ({3}{U}{B}{R}, 7/6, Grixis) |
-| **Bracket** | 3 (3 Game Changers: Cyclonic Rift, Orcish Bowmasters, Force of Will) |
+| **Bracket** | 4 (3 Game Changers; Godo/Helm and Combat Celebrant/Helm infinite-combat combos) |
 | **Simulator** | deck key `sauron`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -35,7 +36,28 @@ around.
   opponent spell after Sauron lands is a free counter. Develop Talrand, Iron Man, Mauhúr and Sheoldred, and keep
   counters up.
 - **Late game.** The Army connects, the Ring tempts you, and you refill. Use the sweepers and X spells to clear the
-  way and finish.
+  way, or assemble Helm with Godo or Combat Celebrant after opponents spend their interaction on the Army.
+
+### The Godo package
+
+**Godo, Bandit Warlord** searches for an Equipment and puts it directly onto the battlefield. The usual target is
+**Helm of the Host**. Helm makes a hasty, nonlegendary Godo token at the beginning of combat; that token's first attack
+creates another combat, the next combat makes another Godo, and the loop produces enough attackers and combat steps to
+end the game. Godo costs six and Helm normally costs {5} to equip, so do not treat Godo alone as a six-mana win.
+
+**Hammer of Nazahn** supplies the shortcut. If Hammer is already on the battlefield, the Helm that Godo finds attaches
+to him immediately. **Peter Parker's Camera** can copy Godo's enter trigger: let the copy find Hammer first, then let
+the original find Helm so Hammer attaches it. Camera can also copy Sauron's amass trigger, an Army's Ring-tempt trigger,
+or a Titan, Massacre Wurm or Gearhulk enter trigger when the combo is not ready.
+
+**Combat Celebrant** is the second Helm line. Helm makes a fresh hasty Celebrant each combat; exert the new token to
+untap the other creatures and create another combat. Celebrant does not find Helm, so use the unrestricted tutors for
+Helm only when the mana and attachment plan are already available. Outside the combo, one extra combat gives the Army
+another chance to connect and trigger Sauron.
+
+Helm remains useful without either combo creature. Copy Grave Titan for Zombies, Inferno Titan for damage, Massacre
+Wurm to shrink opposing boards, Noxious Gearhulk for removal, or Sauron to add another amass trigger to every opposing
+spell. Protect the combo turn with the deck's counters or Deflecting Swat rather than exposing it into open mana.
 
 ### Grow it
 Orcish Bowmasters adds counters on its own and again on every extra opponent draw. Iron Man adds a counter every time
@@ -75,10 +97,8 @@ against the creature decks that cause most losses, and attackers that don't depe
 flying, and **War Machine** gives modified attackers double strike. **Vision, Synthezoid Avenger** is a colourless
 flier that grows or phases out whenever a spell is cast outside its caster's own turn. **Scarlet Witch, Chaotic Avenger**
 flies and, when she connects, lets you cast a noncreature spell (or a Hero) from the top two cards for free.
-**Sauron, the Necromancer** (menace) attacks with a free, temporary 3/3 Wraith copy of a creature card in your
-graveyard (exiled at the next end step unless he is your Ring-bearer). A copy of Grave Titan, Massacre Wurm, Inferno
-Titan or Noxious Gearhulk brings its enter trigger with it. **Grave Titan** ({4}{B}{B}, deathtouch) makes two 2/2
-Zombies when it enters and attacks, which is also food for Diabolic Intent.
+**Grave Titan** ({4}{B}{B}, deathtouch) makes two 2/2 Zombies when it enters and attacks, which is also food for
+Diabolic Intent and a strong Helm of the Host target.
 
 ### Keep it
 **The Ozolith** is insurance for the one-creature plan. Whenever a creature you control leaves the battlefield with
@@ -117,19 +137,8 @@ rocks, it finishes a table that the Army has already thinned or that is racing y
 big X either kills or strips their boards and hands, and it needs no combat, so it wins when the Army is walled or
 answered.
 
-**Karn's Bastion** ({4}, {T}: proliferate) is a land that grows the Army: each activation puts another +1/+1
-counter on it. **Phyrexian Arena** draws an extra card each upkeep for 1 life.
-
-**Sephiroth, Planet's Heir** ({4}{U}{B}, 4/4 vigilance): when he enters, opponents' creatures get −2/−2 until end of
-turn, which clears tokens, mana creatures and small blockers in front of the Army, and he gets a +1/+1 counter
-whenever a creature an opponent controls dies, so the turn he lands he is usually a 6/6 or bigger. Vigilance lets
-him attack and still guard Sauron.
-
-**Triple Triad** ({3}{R}{R}{R} enchantment) is the late-game value engine: at the beginning of your upkeep each player
-exiles the top card of their library, and until end of turn you may play yours and every other exiled card with lower
-mana value free. The deck's top end (the Titans, Massacre Wurm, Sephiroth, Jin-Gitaxias) is what makes it
-pay: flip one of them and you get it plus most of the table's cards for nothing. A land on top gets you only that land,
-so about one upkeep in three is a miss. Cast it when the board is stable, not into an open table.
+**Karn's Bastion** ({4}, {T}: proliferate) is a land that grows the Army: each activation puts another +1/+1 counter
+on it.
 
 ### Card flow, mana and interaction
 Card draw: **Fact or Fiction** (an instant-speed dig: cast it at the end of an opponent's turn for two of the five
@@ -138,10 +147,7 @@ each life your opponents have lost this turn, or a land that taps for {B} or {R}
 **Faerie Mastermind** ({1}{U}, flash flier) draws you a card whenever an opponent draws their second card in a turn:
 the Archivist wheel, Bowmasters' forced draws and Baleful Mastery's cheap mode all trigger it.
 Rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone, Dimir Signet, Rakdos Signet,
-Talismans of Creativity, Dominance and Indulgence, and Chromatic Lantern. **Urza, Lord High Artificer** brings a
-Construct that grows with every artifact you control and taps your non-mana artifacts (The Ozolith, Lightning Greaves,
-Whispersilk Cloak, the Construct itself) for {U}; the rocks already make mana, so he adds little there. Late, {5}
-exiles the top card of your library, which you may play free this turn. Spot removal: **Bitter Triumph**,
+Talismans of Creativity, Dominance and Indulgence, and Chromatic Lantern. Spot removal: **Bitter Triumph**,
 **Bloodchief's Thirst**, **Baleful Mastery**, **Infernal Grasp**, **Terminate** and **Chaos
 Warp**. Counters: **Mana Drain** (the countered spell's mana value comes back as {C} on your next main phase: put it
 toward Sauron, a Titan or a big X spell), **Counterspell**, **An Offer You Can't Refuse** ({U}: counter a noncreature spell; its controller gets two Treasures, which
@@ -158,10 +164,9 @@ stay).
 when it protects a creature of yours with power 7 or more (a grown Army or Sauron).
 
 ### How it wins
-The Army wins by size, by getting through, and by the X-spell finishers; the deck has no combo. A big Army that
-connects tempts the Ring, which refills your hand while the table keeps feeding it. Sheoldred and the Archivist wheel
-drain the table, Exsanguinate, Comet Storm and Torment of Hailfire finish a table that is low, and Massacre
-Wurm or Inferno Titan clear blockers first.
+The primary plan remains an Army that grows from opposing spells, connects to refill the hand, and is backed by
+Sheoldred, the Archivist wheel and the X-spell finishers. Godo or Combat Celebrant with Helm of the Host is the
+secondary plan when combat stalls or the table spends its answers on Sauron and the Army.
 
 ### Weak spots and how to play around them
 - **Big creature decks.** The deck loses mostly to combat. Land Propaganda, Talrand's Drakes and the one-sided
@@ -170,8 +175,8 @@ Wurm or Inferno Titan clear blockers first.
   Out the Back, Deflecting Swat, Lightning Greaves and Whispersilk Cloak can protect it.
 - **Your own sweepers.** Nibelheim Aflame and Chandra's Ignition hit your other creatures, so use them when the
   Army is the only body that matters.
-- **Scavenger Grounds** ({2}, {T}, sacrifice a Desert: exile all graveyards) hits your own graveyard too, including
-  the creature that Sauron, the Necromancer needs. Fire it deliberately.
+- **Scavenger Grounds** ({2}, {T}, sacrifice a Desert: exile all graveyards) hits your own graveyard too. Fire it
+  deliberately.
 - **Force of Will** costs you a second card (or {3}{U}{U}) and 1 life when pitched; hold it for the spell that would
   stop the Army or end the game, not for the first thing that is cast.
 
@@ -185,11 +190,17 @@ Wurm or Inferno Titan clear blockers first.
 
 **Finish with X.** Once the Army has connected or opponents are low, Exsanguinate drains every opponent for X, and Comet Storm spreads X damage over as many targets as you kick. Both are better after a sweeper has already thinned the table.
 
+**Godo with an attachment plan.** Godo finds Helm, but the full line needs another {5} to equip unless Hammer is
+already out. Camera plus Godo can find Hammer and Helm in the correct order. Hold interaction for the combo turn.
+
+**Celebrant with Helm.** If Helm is already available, equip Combat Celebrant before combat. Each new token exerts to
+create the next combat while the Army and other creatures repeatedly untap.
+
 **Sequencing.** Get Sauron down early, since every opponent spell after he lands is a free counter. Land Dreadhorde Invasion early, and The Ozolith before you commit a big Army, so removal only costs you tempo. Bowmasters pays off from the turn it lands, so cast it before a wheel, not after. Hold the counterspells for the turn you swing.
 
 ## Mana and consistency
 
-The list is exactly 100 cards. 35 lands (18 nonbasic, 5 Island, 6 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 36 when you need the land half. Ten rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone (any colour an opponent's land could produce), Dimir Signet, Rakdos Signet, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, and Chromatic Lantern. Urza, Lord High Artificer adds {U} from the non-mana artifacts.
+The list is exactly 100 cards. 35 lands (18 nonbasic, 5 Island, 6 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 36 when you need the land half. Ten rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone (any colour an opponent's land could produce), Dimir Signet, Rakdos Signet, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, and Chromatic Lantern.
 
 | Measure | Count | Note |
 | --- | --- | --- |
@@ -216,20 +227,27 @@ Three tutors: **Diabolic Tutor** (any card to hand), **Diabolic Intent** (any ca
 - **Behind on board / need the reset → Ringsight for Massacre Wurm or Inferno Titan**; Cyclonic Rift if it is the whole table. The Ozolith out helps if you cast Nibelheim Aflame or Chandra's Ignition.
 - **Slow start, no mana → Diabolic Tutor for Sol Ring.**
 - **Flooded and grinding → Diabolic Tutor for Barad-dûr.**
+- **Godo in hand with enough mana → Diabolic Tutor for Hammer of Nazahn.** Cast Hammer first, then Godo finds and
+  immediately attaches Helm.
+- **Hammer or Camera already available → Ringsight for Godo.** Godo is red, so Ringsight can find him while Sauron is
+  out. Camera copies his trigger to find both Hammer and Helm.
+- **Combat Celebrant in hand → Diabolic Tutor for Helm** only when you can cast, attach and protect the line.
 
 Rule of thumb: Ringsight first for anything blue/black/red, and reserve Diabolic Tutor and Diabolic Intent for the colourless pieces nothing else can find (The Ozolith, Not of This World, the rocks).
 
 ## Bracket and Rule 0
 
-Bracket 3 by Game Changers, with **three**, the cap for the bracket: **Cyclonic Rift**, **Orcish Bowmasters** and **Force of Will**. No other card in the deck is on the list.
-
-**The deck has no two-card combo.** Exsanguinate, Comet Storm and Torment of Hailfire are X-spell finishers, not combos.
+Bracket 4 with three Game Changers: **Cyclonic Rift**, **Orcish Bowmasters** and **Force of Will**. The two intentional
+two-card infinite-combat combos are **Godo, Bandit Warlord + Helm of the Host** and **Combat Celebrant + Helm of the
+Host**. Godo can find Helm but still needs the equip cost or Hammer of Nazahn; Celebrant needs Helm to be found
+separately.
 
 Disclose before the game:
 
 - **Cyclonic Rift**, **Orcish Bowmasters** and **Force of Will** (the three Game Changers).
 - **Sauron amasses off every spell an opponent casts.**
 - **Jace's Archivist** is a repeatable wheel; with Orcish Bowmasters out it hurts for every card they draw.
+- **Godo/Helm and Combat Celebrant/Helm** are infinite-combat finishes.
 
 Re-check the official list at https://commanderbrackets.com/faq before an event.
 
@@ -237,11 +255,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sauron, the Dark Lord
 
-**Creatures (19).** Faerie Mastermind, Grave Titan, Inferno Titan, Iron Man Armored Avenger, Jace's Archivist, Jin-Gitaxias Progress Tyrant, Lazotep Reaver, Massacre Wurm, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Sauron the Necromancer, Scarlet Witch Chaotic Avenger, Sephiroth Planet's Heir, Sheoldred the Apocalypse, Talrand Sky Summoner, Urza Lord High Artificer, Vision Synthezoid Avenger, War Machine Avenging Arsenal
+**Creatures (18).** Combat Celebrant, Faerie Mastermind, Godo Bandit Warlord, Grave Titan, Inferno Titan, Iron Man Armored Avenger, Jace's Archivist, Jin-Gitaxias Progress Tyrant, Lazotep Reaver, Massacre Wurm, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Scarlet Witch Chaotic Avenger, Sheoldred the Apocalypse, Talrand Sky Summoner, Vision Synthezoid Avenger, War Machine Avenging Arsenal
 
-**Enchantments (5).** Call of the Ring, Dreadhorde Invasion, Phyrexian Arena, Propaganda, Triple Triad
+**Enchantments (3).** Call of the Ring, Dreadhorde Invasion, Propaganda
 
-**Artifacts (13).** Arcane Signet, Chromatic Lantern, Dimir Signet, Fellwar Stone, Lightning Greaves, Mind Stone, Rakdos Signet, Sol Ring, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, The Ozolith, Whispersilk Cloak
+**Artifacts (16).** Arcane Signet, Chromatic Lantern, Dimir Signet, Fellwar Stone, Hammer of Nazahn, Helm of the Host, Lightning Greaves, Mind Stone, Peter Parker's Camera, Rakdos Signet, Sol Ring, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, The Ozolith, Whispersilk Cloak
 
 **Instants and sorceries (27).** An Offer You Can't Refuse, Baleful Mastery, Bitter Triumph, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chandra's Ignition, Chaos Warp, Comet Storm, Counterspell, Cyclonic Rift, Deflecting Swat, Diabolic Intent, Diabolic Tutor, Exsanguinate, Fact or Fiction, Force of Will, Infernal Grasp, Mana Drain, Mystic Confluence, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slip Out the Back, Terminate, Torment of Hailfire, Vandalblast
 
@@ -264,6 +282,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Chandra's Ignition
 1 Chaos Warp
 1 Chromatic Lantern
+1 Combat Celebrant
 1 Comet Storm
 1 Command Tower
 1 Counterspell
@@ -281,8 +300,11 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Fellwar Stone
 1 Force of Will
 1 Foreboding Ruins
+1 Godo, Bandit Warlord
 1 Grave Titan
+1 Hammer of Nazahn
 1 Haunted Ridge
+1 Helm of the Host
 1 Infernal Grasp
 1 Inferno Titan
 1 Iron Man, Armored Avenger
@@ -302,16 +324,14 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Noxious Gearhulk
 1 Orcish Bowmasters
 1 Path of Ancestry
-1 Phyrexian Arena
+1 Peter Parker's Camera
 1 Propaganda
 1 Rakdos Signet
 1 Ringsight
 1 Rogue's Passage
 1 Sauron, the Dark Lord
-1 Sauron, the Necromancer
 1 Scarlet Witch, Chaotic Avenger
 1 Scavenger Grounds
-1 Sephiroth, Planet's Heir
 1 Sheoldred, the Apocalypse
 1 Shivan Reef
 1 Slip Out the Back
@@ -327,10 +347,8 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 The Ozolith
 1 Torment of Hailfire
 1 Treno, Dark City
-1 Triple Triad
 1 Underground River
 1 Underground Sea
-1 Urza, Lord High Artificer
 1 Vandalblast
 1 Vision, Synthezoid Avenger
 1 War Machine, Avenging Arsenal

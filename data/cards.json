@@ -48317,6 +48317,51 @@
    "spell_prio": false
   },
   {
+   "name": "Garth One-Eye",
+   "types": "C",
+   "generic": 0,
+   "pips": "WUBRG",
+   "tags": {
+    "leg": true,
+    "human": true,
+    "wizard": true,
+    "pow": "5",
+    "bomb": "5"
+   },
+   "pow": 5,
+   "tgh": 5,
+   "bomb": 5,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "human",
+    "wizard"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGRUW",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "{T}: Choose a card name that hasn't been chosen from among Disenchant, Braingeyser, Terror, Shivan Dragon, Regrowth, and Black Lotus. Create a copy of the card with the chosen name. You may cast the copy."
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Geier Reach Sanitarium",
    "types": "L",
    "generic": 0,
