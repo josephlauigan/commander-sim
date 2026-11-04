@@ -595,6 +595,19 @@ fn best_land_in_library(g: &Game, p: PlayerId) -> f64 {
     cands.into_iter().filter(|&c| g.db.get(c).land).map(|c| land_want(g, p, c)).fold(0.0, f64::max)
 }
 
+/// the option utility of a land search worth `w` (`best_land_in_library`): a Tron / Workshop want keeps the old
+/// 1.2 + w / 6; a board want (`board_land_want`: Urborg for Coffers, Coffers with Urborg ...) counts more, 1.2 + w / 2,
+/// as it is mana every turn (2026-11-04: at w / 6 the Y'shtola AI never chose the Cave over a mid-value spell)
+fn search_utility(g: &Game, p: PlayerId, w: f64) -> f64 {
+    let cands = crate::engine::zones::searchable(g, p);
+    let board = cands
+        .into_iter()
+        .filter(|&c| g.db.get(c).land && tron_land_want(g, p, c) <= 2.0)
+        .map(|c| board_land_want(g, p, c))
+        .fold(0.0, f64::max);
+    1.2 + (w / 6.0).max(if board >= 6.0 { board / 2.0 } else { 0.0 })
+}
+
 fn land_ok(g: &Game, l: crate::ids::PermId, p: PlayerId) -> bool {
     g.perm(l).on_bf
         && g.player(p).lands.contains(&l)
@@ -613,7 +626,7 @@ fn cave_options(g: &mut Game, l: crate::ids::PermId, p: PlayerId, post: Option<b
         return Ok(vec![]);
     }
     Ok(vec![Opt {
-        utility: 1.2 + w / 6.0,
+        utility: search_utility(g, p, w),
         label: "Urza's Cave: fetch a land".into(),
         act: Some(Action::Plan { f: cave_go, arg: l.0 as i64 }),
     }])
@@ -644,7 +657,7 @@ fn map_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<V
     if w < 6.0 && !(w >= 3.0 && g.player(p).lands.len() < 4 && !g.player(p).hand.iter().any(|&c| g.db.get(c).land)) {
         return Ok(vec![]);
     }
-    Ok(vec![ability(1.0 + w / 6.0, "Expedition Map: find a land".into(), src, map_go, 0)])
+    Ok(vec![ability(search_utility(g, p, w) - 0.2, "Expedition Map: find a land".into(), src, map_go, 0)])
 }
 
 fn map_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {

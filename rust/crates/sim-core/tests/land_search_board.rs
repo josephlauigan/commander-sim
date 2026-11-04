@@ -82,6 +82,30 @@ fn urzas_cave_stays_a_land_when_no_land_is_worth_it() {
     assert!(!has_opt(&mut g, "Urza's Cave"), "no Coffers or Urborg out, no colour missing");
 }
 
+fn opt_utility(g: &mut Game, word: &str) -> Option<f64> {
+    all_opts(g).iter().filter(|o| o.label.contains(word)).map(|o| o.utility).reduce(f64::max)
+}
+
+#[test]
+fn urzas_cave_for_urborg_beside_coffers_is_worth_more_than_a_mid_value_play() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Cabal Coffers", 1, false);
+    lands(&mut g, P0, "Plains", 7, false);
+    lands(&mut g, P0, "Urza's Cave", 1, false);
+    let u = opt_utility(&mut g, "Urza's Cave").expect("the Cave is offered");
+    assert!(u >= 5.0, "Urborg turns on seven more Swamps for Coffers: utility {u}");
+}
+
+#[test]
+fn urzas_cave_is_not_offered_once_the_pair_is_out() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Cabal Coffers", 1, false);
+    lands(&mut g, P0, "Urborg, Tomb of Yawgmoth", 1, false);
+    lands(&mut g, P0, "Plains", 3, false);
+    lands(&mut g, P0, "Urza's Cave", 1, false);
+    assert!(!has_opt(&mut g, "Urza's Cave"));
+}
+
 #[test]
 fn expedition_map_finds_urborg_for_cabal_coffers() {
     let mut g = tbl();

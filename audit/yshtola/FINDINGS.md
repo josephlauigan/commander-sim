@@ -54,6 +54,11 @@ add. Expedition Map now cracks (twice in the 60: Cabal Coffers, Flooded Strand);
 two earlier package runs had a dead Map too. Open: the Cave's and the Map's option utility should grow with the mana
 the fetched land adds.
 
+**Follow-up, not measured:** `search_utility` (`karn_engines.rs`) now scores a board-based search at 1.2 + want/2
+(Urborg beside Coffers on 8 lands: about 6), Tron/Workshop wants unchanged at 1.2 + want/6; tests in
+`tests/land_search_board.rs`, full suite passed. The package rerun was stopped at JD's request (11/04), so there is no
+number yet for a Cave that actually cracks.
+
 ### 2026-10-19: Curiosity => Orcish Bowmasters, confirmed (T5, loose, 2,000 games per list, look-ahead)
 Result: **31.6% -> 34.1%, +2.5 (noise ±2.3): BETTER**, the first swap to clear the noise for her. Raw:
 `2026-10-19-bowmasters/full-curiosity-t5.txt`.
