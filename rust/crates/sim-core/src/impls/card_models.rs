@@ -205,7 +205,7 @@ fn bolas_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     }])
 }
 
-fn bolas_flip(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub fn bolas_flip(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !g.perm(src).on_bf || g.perm(src).owner != p || !can_pay(g, p, 4, "UBR", false) {
         return Ok(false);
     }

@@ -110,7 +110,8 @@ fn you_flashback_twinned_vision() {
     pool(&mut g, P0, &[('U', 3), ('R', 3), ('B', 3)]);
     hand(&mut g, P0, &["Sol Ring"]);
     let hand0 = g.player(P0).hand.len();
-    main(&mut g, P0, vec![act(json!({"do": "cast", "zone": "gy", "card": 0}))]);
+    // the flashback discards a card of the person's choice: they are asked which
+    main(&mut g, P0, vec![act(json!({"do": "cast", "zone": "gy", "card": 0})), pick(0)]);
     assert_eq!(g.player(P0).hand.len(), hand0 - 1 + 2, "discarded one, drew two");
     assert!(!g.player(P0).gy.contains(&tv) || g.player(P0).gy.len() > 1);
 }

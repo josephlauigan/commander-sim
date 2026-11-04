@@ -39,6 +39,8 @@ pub struct DslCtx {
     pub x: i32,
     /// a target chosen as the spell was cast
     pub target: Option<PermId>,
+    /// a player target a person chose as the spell was cast (practice mode: Glimpse the Unthinkable)
+    pub face: Option<PlayerId>,
     /// the last target's power, toughness and mana value as it was hit
     pub snapshot: Option<(i32, i32, u32)>,
     pub target_owner: Option<PlayerId>,
@@ -948,7 +950,12 @@ fn run(
             }
         }
         "mill" => {
-            let qs = if e.who.as_deref() == Some("target_player") {
+            let qs = if e.who.as_deref() == Some("target_player")
+                && crate::human::is_human(g, p)
+                && ctx.face.is_some_and(|q| g.player(q).alive)
+            {
+                ctx.face.into_iter().collect() // a person chose the player as they cast it
+            } else if e.who.as_deref() == Some("target_player") {
                 mill_target(g, p, n(g, ctx)).into_iter().collect()
             } else {
                 players(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx)
@@ -1392,7 +1399,7 @@ fn search(g: &mut Game, p: PlayerId, e: &Effect, by: &str) -> Res {
 
 /// an instant or sorcery with compiled abilities resolves
 pub fn resolve_spell(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res {
-    let mut dctx = DslCtx { x: ctx.x, target: ctx.target, ..DslCtx::default() };
+    let mut dctx = DslCtx { x: ctx.x, target: ctx.target, face: ctx.face, ..DslCtx::default() };
     if dctx.x == 0 {
         dctx.x = 3; // Python's ctx.get('x', 3) when no X was chosen
         dctx.x_default = true;

@@ -171,19 +171,13 @@ fn every_activated_ability_of_the_owned_decks_is_offered_to_a_person() {
 /// gaps found on 2026-11-04 and not yet fixed: the person cannot activate these in practice mode (or only when the AI's
 /// own conditions say so). Fixing one means taking it off this list; a new gap fails the test.
 const TO_FIX: &[&str] = &[
-    "kefka: Birgi, God of Storytelling",
-    "kefka: Kefka, Court Mage // Kefka, Ruler of Ruin",
-    "sauron: Faerie Mastermind",
-    "thanos: Ranger-Captain of Eos",
-    "thanos: Thanos, the Mad Titan",
-    "urdragon: Dragon's Hoard",
-    "urdragon: Garth One-Eye",
-    "urdragon: Nicol Bolas, the Ravager",
-    "urdragon: Scion of the Ur-Dragon",
 ];
 
 /// listed by the probe but not a gap, each with why
-const FALSE_ALARMS: &[(&str, &str)] = &[];
+const FALSE_ALARMS: &[(&str, &str)] = &[(
+    "kefka: Birgi, God of Storytelling",
+    "the one activated ability (Harnfel, Horn of Bounty: discard a card, exile the top two) is the back face of the modal double-faced card, which the engine never plays as a permanent; Birgi on the battlefield has no activated ability",
+)];
 
 /// the gaps found against the two lists: a gap on neither list is new (fails), a TO_FIX entry no longer found is
 /// fixed and must come off the list (fails), and a FALSE_ALARMS entry no longer found must come off too (fails)

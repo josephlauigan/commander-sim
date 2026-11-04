@@ -431,7 +431,7 @@ pub fn apply_wipe(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, ct
 fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, ctx: &Ctx) -> Res {
     crate::glog!(g, "    board wipe resolves ({})", kind);
     if crate::impls::sweepers::is_kind(kind) {
-        return crate::impls::sweepers::resolve(g, p, kind);
+        return crate::impls::sweepers::resolve(g, p, kind, ctx);
     }
     let mut victims: Vec<PlayerId> = match kind {
         "rift" | "vandal" => g.opps(p).collect(),
@@ -468,8 +468,11 @@ fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, 
     if kind == "vandal" {
         victims = g.opps(p).collect();
     }
+    // practice mode: Nibelheim Aflame's creature is the one the person chose as they cast it
+    NIB_SRC.with(|c| c.set(if kind == "nib" && crate::human::is_human(g, p) { ctx.host } else { None }));
     for (i, &q) in victims.iter().enumerate() {
         if g.over {
+            NIB_SRC.with(|c| c.set(None));
             return Ok(());
         }
         // --- phase4-search-b: what the wipe response's search needs to play the rest of the wipe in a copy
@@ -479,8 +482,13 @@ fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, 
         });
         let prot = ai::wipe_response(g, q, kind, p)?;
         WIPE_CTX.with(|w| *w.borrow_mut() = None);
-        wipe_victim(g, p, kind, q, prot, &modes, deluge_x)?;
+        let r = wipe_victim(g, p, kind, q, prot, &modes, deluge_x);
+        if r.is_err() {
+            NIB_SRC.with(|c| c.set(None));
+        }
+        r?;
     }
+    NIB_SRC.with(|c| c.set(None));
     wipe_finish(g, kind, &modes)
 }
 
@@ -493,6 +501,11 @@ pub struct WipeCtx {
     pub modes: Vec<Sym>,
     pub deluge_x: Option<i32>,
     pub rest: Vec<PlayerId>,
+}
+
+thread_local! {
+    /// Nibelheim Aflame's creature when a person chose it as they cast it (None: the caster's biggest creature)
+    static NIB_SRC: std::cell::Cell<Option<PermId>> = const { std::cell::Cell::new(None) };
 }
 
 thread_local! {
@@ -516,7 +529,10 @@ pub fn wipe_victim(
         let (mut biggest, mut x_dmg) = (None, 0);
         if kind == "nib" {
             let cr: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m)).collect();
-            biggest = max_by(&cr, |m| epow(g, m) as f64);
+            biggest = NIB_SRC
+                .with(|c| c.get())
+                .filter(|m| cr.contains(m))
+                .or_else(|| max_by(&cr, |m| epow(g, m) as f64));
             x_dmg = biggest.map_or(0, |b| epow(g, b));
         }
         for m in g.player(q).perms.clone() {

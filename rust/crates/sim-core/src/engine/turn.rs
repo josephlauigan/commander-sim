@@ -75,7 +75,26 @@ fn untapped_by_rule(g: &Game, p: PlayerId, cd: CardId, rule: EnterRule) -> bool 
         EnterRule::Opponents(n) => g.opps(p).count() as u32 >= n,
         EnterRule::TypesMore(t, n) => pl.lands.iter().filter(|&&l| land_types(g, l).intersects(t)).count() as u32 >= n,
         EnterRule::Reveal(ts) => {
-            pl.hand.iter().any(|&c| c != cd && g.db.get(c).land && g.db.get(c).land_types.intersects(ts))
+            let cands: Vec<CardId> = pl
+                .hand
+                .iter()
+                .copied()
+                .filter(|&c| c != cd && g.db.get(c).land && g.db.get(c).land_types.intersects(ts))
+                .collect();
+            if cands.is_empty() || !crate::human::is_human(g, p) {
+                return !cands.is_empty();
+            }
+            // practice mode: "you may reveal" -- the person decides (an untapped land is not always what they want)
+            let mut labels: Vec<String> = vec![];
+            for &c in &cands {
+                let l = crate::human::choices::card_label(g, c);
+                if !labels.contains(&l) {
+                    labels.push(l);
+                }
+            }
+            let prompt = format!("{}: reveal a card from your hand? If you don't, it enters tapped", g.db.get(cd).name);
+            let labels: Vec<String> = labels.into_iter().map(|l| format!("reveal {l}")).collect();
+            matches!(crate::human::choices::choose(g, p, "choose", &prompt, &labels, Some("don't reveal"), None), Ok(Some(_)))
         }
         EnterRule::Legendary => pl.perms.iter().any(|&m| g.is_creature(m) && card_tag(g, m, Tag::Leg)),
         EnterRule::Pay(n) => pays_for_land(g, p, cd, n),

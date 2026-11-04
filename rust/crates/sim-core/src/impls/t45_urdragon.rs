@@ -482,7 +482,7 @@ fn call_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
 }
 
 // ================================================================== Dragon's Hoard
-fn gold(g: &Game, m: PermId) -> i64 {
+pub fn gold(g: &Game, m: PermId) -> i64 {
     match g.perm(m).data.get(DataKey::T45Dragon) {
         Some(Val::Int(n)) => *n,
         _ => 0,
@@ -513,7 +513,7 @@ fn hoard_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     }])
 }
 
-fn hoard_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub fn hoard_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !live(g, src) || g.perm(src).tapped || gold(g, src) <= 0 {
         return Ok(false);
     }
