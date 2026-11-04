@@ -1089,7 +1089,14 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     let d = g.db.get(cd);
     let (haste, has_dsl, loyalty) = (d.tag(Tag::Haste), d.has_dsl(), d.start_loyalty);
     let born = g.enter_no;
-    let plus = how.plus + crate::impls::green_cards::enters_with(g, p, cd, how.was_cast); // Wildgrowth Archaic
+    // Spark Double's copy: an additional +1/+1 counter if it's a creature, an additional loyalty counter if it's a
+    // planeswalker
+    let spark = crate::impls::common::spark_bonus(g, phys);
+    let (spark_plus, loyalty) = match loyalty {
+        Some(l) => (0, Some(l + spark)),
+        None => (if d.creature { spark } else { 0 }, None),
+    };
+    let plus = how.plus + spark_plus + crate::impls::green_cards::enters_with(g, p, cd, how.was_cast); // Wildgrowth Archaic
     // the enter step's counters (614.1c): Doubling Season doubles a planeswalker's loyalty (once: the old `etb` hook
     // in impls/t3.rs doubled it again), undying's counter and the counters it enters with; Scales, Vorinclex, Solemnity
     let (v_loy, v_undying, v_plus) = repl::enter_counters(g, p, m, loyalty, plus);

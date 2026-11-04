@@ -329,3 +329,20 @@ fn mystic_confluence_two_counter_modes_need_six_and_a_draw() {
     assert!(!resolved, "four lands can't pay {{6}}: countered ({:?})", h.told());
     assert_eq!(g.player(P0).hand.len(), before - 1 + 1, "and the draw mode drew one");
 }
+
+// ------------------------------------------------------------------ Spark Double
+#[test]
+fn spark_double_of_a_legend_is_not_legendary_and_the_person_picks_it() {
+    let mut g = table(&["urdragon", "seph"]);
+    let garth = perm(&mut g, P0, "Garth One-Eye");
+    perm(&mut g, P0, "Llanowar Elves");
+    // the person casts it from the hand, as in a game
+    hand(&mut g, P0, &["Spark Double"]);
+    pool(&mut g, P0, &[('U', 1), ('C', 3)]);
+    let h = act_main(&mut g, json!({"do": "cast", "card": 0}), vec![("Spark Double: enter as a copy", "Garth")]);
+    assert!(h.asked().iter().any(|r| r.prompt.contains("Spark Double: enter as a copy")), "asked {:?}", h.asked().iter().map(|r| r.prompt.clone()).collect::<Vec<_>>());
+    let garths = g.player(P0).perms.iter().filter(|&&m| g.perm(m).on_bf && &*g.perm(m).name == "Garth One-Eye").count();
+    assert_eq!(garths, 2, "\"it isn't legendary\": the legend rule leaves both");
+    assert!(g.player(P0).perms.contains(&garth));
+    assert!(!h.asked().iter().any(|r| r.prompt.contains("legend rule")), "no legend-rule question");
+}
