@@ -153,6 +153,13 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
             }
             Choice::Tap(m) => g.perm_mut(m).tapped = true,
             Choice::Behold(b) => crate::impls::t12_lathril::behold_pay(g, p, c, b)?,
+            Choice::Discard if crate::human::is_human(g, p) => {
+                // practice mode: the person chooses the card they discard as the additional cost
+                let others: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&x| x != c).collect();
+                let prompt = format!("{}: discard a card as an additional cost", g.db.get(c).name);
+                let x = crate::human::choices::pick_cards(g, p, &others, 1, &prompt, "choose")?[0];
+                discard_cards(g, p, &[x])?;
+            }
             Choice::Discard => {
                 let others: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&x| x != c).collect();
                 let others = crate::ai::rules::spare_tutored(g, p, &others).unwrap_or(others); // --- phase4-rules
@@ -1024,6 +1031,11 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
     };
     // a person's Demonic Consultation / Tainted Pact / Grapeshot (practice mode): their choices as it resolves
     if !g.db.get(c).perm && crate::human::is_human(g, p) && crate::human::thanos::resolve_spell(g, p, c, ctx)? {
+        to_gy_or_exile(g, p, c, ctx, zone, false);
+        return Ok(());
+    }
+    // a person's Slip Out the Back (practice mode; the AI plays it through its protection code)
+    if !g.db.get(c).perm && crate::human::is_human(g, p) && crate::human::gaps_a::resolve_spell(g, p, c, ctx)? {
         to_gy_or_exile(g, p, c, ctx, zone, false);
         return Ok(());
     }

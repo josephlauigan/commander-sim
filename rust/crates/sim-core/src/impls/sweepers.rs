@@ -178,14 +178,17 @@ pub fn eval(g: &Game, p: PlayerId, kind: &str) -> (f64, f64, Option<PlayerId>) {
 }
 
 /// resolve one of the three sweepers for p (called from `apply_wipe_inner`; `respond` lets each victim answer)
-pub fn resolve(g: &mut Game, p: PlayerId, kind: Sym) -> Res {
+pub fn resolve(g: &mut Game, p: PlayerId, kind: Sym, ctx: &crate::state::Ctx) -> Res {
     if kind == "dust" {
         return crate::impls::karn_cards::dust_resolve(g, p);
     }
     if kind == "brutal" {
         amass(g, p, 2)?; // "Amass Zombies 2": a Zombie Army, here the Orc Army; then the Army deals damage
     }
-    let rule = Sweep::new(g, p, kind, true);
+    let mut rule = Sweep::new(g, p, kind, true);
+    if crate::human::is_human(g, p) {
+        person_choices(g, p, kind, &mut rule, ctx)?;
+    }
     if kind == "fear" || kind == "dominance" {
         crate::glog!(g, "    {} names {}", if kind == "fear" { "Crippling Fear" } else { "Kindred Dominance" }, rule.ty);
     }
@@ -224,6 +227,45 @@ pub fn resolve(g: &mut Game, p: PlayerId, kind: Sym) -> Res {
         }
     }
     check_state(g)
+}
+
+/// practice mode: what the person chooses for Kindred Dominance (the creature type, as it resolves) and Chandra's
+/// Ignition (the creature that deals the damage, chosen as it was cast)
+fn person_choices(g: &Game, p: PlayerId, kind: Sym, rule: &mut Sweep, ctx: &crate::state::Ctx) -> Res {
+    if kind == "dominance" {
+        let mut types: Vec<Sym> = vec![];
+        for (_, m) in live_creatures(g) {
+            for t in subtypes(g, m) {
+                if !types.contains(&t) {
+                    types.push(t);
+                }
+            }
+        }
+        types.sort();
+        if types.is_empty() {
+            return Ok(());
+        }
+        let n = |t: Sym| live_creatures(g).iter().filter(|&&(_, m)| of_type(g, m, t)).count();
+        let labels: Vec<String> = types
+            .iter()
+            .map(|&t| format!("{} ({} creature{} survive)", crate::human::legal::title(t), n(t), if n(t) == 1 { "" } else { "s" }))
+            .collect();
+        let k = crate::human::choices::choose_one(
+            g,
+            p,
+            "choose",
+            "Kindred Dominance: choose a creature type (destroy all creatures that aren't of it)",
+            &labels,
+        )?;
+        rule.ty = types[k];
+    }
+    if kind == "ignite"
+        && let Some(t) = ctx.target.filter(|&t| g.perm(t).on_bf && !g.perm(t).phased && g.is_creature(t))
+    {
+        rule.src = Some(t);
+        rule.power = epow(g, t).max(0);
+    }
+    Ok(())
 }
 
 // ------------------------------------------------------------------ Inferno Titan

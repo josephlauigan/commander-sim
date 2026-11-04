@@ -12,6 +12,7 @@
 pub mod abilities;
 pub mod alt;
 pub mod cards;
+pub mod gaps_a;
 pub mod choices;
 pub mod combos;
 pub mod combat;

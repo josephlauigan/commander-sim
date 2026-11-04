@@ -57,6 +57,8 @@ pub enum Ask {
     Kick(&'static str),
     /// a storm spell (Brain Freeze, Grapeshot): the target of the spell and of each copy, asked as it is cast
     Storm,
+    /// Decimate: a target artifact, creature, enchantment and land (in that order) -> `ctx.perms`
+    Decimate,
 }
 
 const SPLATTER: &[(&str, &str)] =
@@ -83,6 +85,10 @@ pub fn spec(name: &str) -> Option<&'static [Ask]> {
         "Scout the City" => &[Ask::Scout],
         "Orim's Chant" => &[Ask::Target(Tk::Player), Ask::Kick("W")],
         "Brain Freeze" | "Grapeshot" => &[Ask::Storm],
+        "Glimpse the Unthinkable" => &[Ask::Target(Tk::Player)],
+        "Chandra's Ignition" | "Nibelheim Aflame" => &[Ask::Target(Tk::OwnCreature)],
+        "Slip Out the Back" => &[Ask::Target(Tk::Creature)],
+        "Decimate" => &[Ask::Decimate],
         _ => return None,
     })
 }
@@ -121,6 +127,34 @@ fn perm_cands(g: &Game, p: PlayerId, c: CardId, kind: Tk) -> Vec<PermId> {
                 continue;
             }
             out.push(m);
+        }
+    }
+    out
+}
+
+/// Decimate's legal targets: artifacts, creatures, enchantments and lands (anyone's)
+fn decimate_cands(g: &Game, p: PlayerId, c: CardId) -> [Vec<PermId>; 4] {
+    let pips = Colors::from_letters(&g.db.get(c).pips);
+    let mut out: [Vec<PermId>; 4] = Default::default();
+    for q in g.players.iter().filter(|q| q.alive) {
+        for &m in q.perms.iter().chain(q.lands.iter()) {
+            let x = g.perm(m);
+            if x.phased || (x.owner != p && (untargetable(g, m) || protected_from(g, m, pips))) {
+                continue;
+            }
+            let has = |t: Types| crate::engine::values::ptypes(g, m).has(t);
+            if has(Types::ARTIFACT) {
+                out[0].push(m);
+            }
+            if g.is_creature(m) {
+                out[1].push(m);
+            }
+            if has(Types::ENCHANTMENT) {
+                out[2].push(m);
+            }
+            if q.lands.contains(&m) {
+                out[3].push(m);
+            }
         }
     }
     out
@@ -168,6 +202,12 @@ pub fn problem(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
             }
             Ask::Sac | Ask::SacModified if my_creatures(g, p, None).is_empty() => {
                 return Some(format!("{} needs a creature to sacrifice as you cast it, and you control none.", d.name));
+            }
+            Ask::Decimate if decimate_cands(g, p, c).iter().any(|v| v.is_empty()) => {
+                return Some(format!(
+                    "{} needs a legal target for each of: an artifact, a creature, an enchantment and a land.",
+                    d.name
+                ));
             }
             Ask::DiscardNonland if !g.player(p).hand.iter().any(|&x| x != c) => {
                 return Some(format!("{} needs a card to discard as you cast it.", d.name));
@@ -293,6 +333,18 @@ pub fn choose_pre(g: &Game, p: PlayerId, c: CardId, ctx: &mut Ctx) -> Res<Pre> {
             Ask::Storm => {
                 if !super::thanos::storm_asks(g, p, c, ctx)? {
                     return Ok(Pre::Cancel);
+                }
+            }
+            Ask::Decimate => {
+                let kinds = ["artifact", "creature", "enchantment", "land"];
+                for (cands, kind) in decimate_cands(g, p, c).into_iter().zip(kinds) {
+                    let t: Vec<Target> = cands.iter().map(|&m| Target::Perm(m)).collect();
+                    let pr = format!("Decimate: choose a target ({kind})");
+                    let Some(k) = choices::choose(g, p, "target", &pr, &labels_of(g, p, &t), Some("cancel"), None)?
+                    else {
+                        return Ok(Pre::Cancel);
+                    };
+                    ctx.perms.push(cands[k]);
                 }
             }
             Ask::X | Ask::Comet | Ask::Kick(_) => {} // after the mana is paid (choose_post)

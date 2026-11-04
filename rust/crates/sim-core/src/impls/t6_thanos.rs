@@ -137,9 +137,31 @@ pub fn thanos_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
     if !ability_window(g, p, Some(src), "power-up", None, None)? {
         return Ok(true);
     }
-    let (even, _) = best_parity(g, p, src);
+    let even = if crate::human::is_human(g, p) { ask_parity(g, p, src)? } else { best_parity(g, p, src).0 };
     resolve(g, p, src, even)?;
     Ok(true)
+}
+
+/// practice mode: the person chooses odd or even as the ability resolves (what each would destroy is shown)
+fn ask_parity(g: &Game, p: PlayerId, src: PermId) -> Res<bool> {
+    let label = |even: bool| {
+        let v = victims(g, src, even);
+        let names: Vec<String> = v
+            .iter()
+            .map(|&(q, m)| format!("{}{}", g.perm(m).name, if q == p { " (yours)" } else { "" }))
+            .collect();
+        let what = if even { "even (0, 2, 4 ...)" } else { "odd (1, 3, 5 ...)" };
+        if names.is_empty() { format!("{what}: no creature") } else { format!("{what}: {}", names.join(", ")) }
+    };
+    let labels = vec![label(true), label(false)];
+    let k = crate::human::choices::choose_one(
+        g,
+        p,
+        "choose",
+        "Thanos, the Mad Titan: choose odd or even (destroy each other creature with a mana value of that kind)",
+        &labels,
+    )?;
+    Ok(k == 0)
 }
 
 /// the power-up resolves: two +1/+1 counters on Thanos (if he is still here), then each other creature of the chosen

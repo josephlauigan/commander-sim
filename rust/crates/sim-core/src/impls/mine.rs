@@ -796,7 +796,7 @@ fn kefka_ruin(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Ve
     }])
 }
 
-fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !g.perm(src).on_bf || g.perm(src).owner != p || !can_pay(g, p, 8, "", false) {
         return Ok(false);
     }
@@ -2913,6 +2913,19 @@ pub fn territory_type(g: &Game, p: PlayerId) -> Sym {
     }
 }
 
+/// Cavern of Souls: "as this land enters, choose a creature type". The AI's Cavern uses the deck's most common type
+/// (`territory_type`, read when a creature spell is paid for); a person chooses. A land with a `land_etb` of its own
+/// loses the City of Traitors check every other land gets (t6_lands), so it is made here.
+fn cavern_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
+    crate::impls::t6_lands::traitors_check(g, p, l)?;
+    if crate::human::is_human(g, p) {
+        let t = crate::impls::galadriel::choose_type(g, p, "Cavern of Souls")?;
+        g.perm_mut(l).data.set(DataKey::Ctype, Val::Str(t));
+        crate::glog!(g, "    Cavern of Souls names {t}");
+    }
+    Ok(())
+}
+
 /// mine.territory_colors: {C}, or any colour for a creature spell of the named type (a changeling is every type)
 fn territory_colors(g: &Game, p: PlayerId, l: PermId) -> crate::cards::Colors {
     if !g.pay_for.is_some_and(|c| g.db.get(c).creature) {
@@ -3938,7 +3951,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Ral Zarek, Guest Lecturer")?.options = Some(ralz);
     r.card(db, "Plaza of Heroes")?.land_cols = Some(plaza_colors);
     r.card(db, "Unclaimed Territory")?.land_cols = Some(territory_colors);
-    r.card(db, "Cavern of Souls")?.land_cols = Some(territory_colors); // any colour for a creature spell of the named type
+    let cavern = r.card(db, "Cavern of Souls")?;
+    cavern.land_cols = Some(territory_colors); // any colour for a creature spell of the named type
+    cavern.land_etb = Some(cavern_etb);
     r.card(db, "Andúril, Flame of the West")?.attack = Some(anduril);
     r.card(db, "Lord of the Nazgûl")?.cast = Some(nazgul);
     r.card(db, "Palantír of Orthanc")?.end_step = Some(palantir);

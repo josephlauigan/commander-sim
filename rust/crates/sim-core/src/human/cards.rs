@@ -869,6 +869,9 @@ pub fn abilities(g: &Game, p: PlayerId, m: PermId) -> Option<Vec<PermAbility>> {
         )]);
     }
     let nm = cname(g, cd);
+    if let Some(own) = super::gaps_a::abilities(g, p, m, &nm) {
+        return Some(own); // the Ur-Dragon, Kefka, Sauron and Thanos cards (practice-gaps, Agent A)
+    }
     Some(match nm.as_str() {
         "Bolas's Citadel" => citadel(g, p),
         "Otherworld Atlas" => atlas(),
