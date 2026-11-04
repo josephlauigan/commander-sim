@@ -178,3 +178,24 @@ fn alela_t3() {
 fn sheoldred_t4() {
     play("sheoldred", "t4", 2);
 }
+// The decks the bot games didn't cover (2026-11-04): each on one of its own tiers (`data/my_decks.toml`)
+#[test]
+fn urdragon_t5() {
+    play("urdragon", "t5", 1);
+}
+#[test]
+fn kefka_t3() {
+    play("kefka", "t3", 1);
+}
+#[test]
+fn thrasios_t5() {
+    play("thrasios", "t5", 1);
+}
+#[test]
+fn karn_t4() {
+    play("karn", "t4", 1);
+}
+#[test]
+fn thanos_t6() {
+    play("thanos", "t6", 1);
+}
