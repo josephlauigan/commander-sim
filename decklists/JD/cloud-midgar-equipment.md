@@ -29,7 +29,7 @@ of Cloud or an Equipment attached to it triggers, that ability triggers an addit
 ### Game plan
 - **Turns 1-2.** Cast Cloud on turn two ({W}{W}) or play a cheap mana rock (Sol Ring, Mind Stone, Arcane Signet) and
   then Cloud. His search finds a cheap Sword. Cheap creatures (Zack Fair, Giver of
-  Runes, Forum Familiar) are fine early plays.
+  Runes, Stoneforge Mystic) are fine early plays. Steelshaper's Gift can find the Equipment you need for {W}.
 - **Turns 3-4.** Cast and equip a Sword (equip {2}) on Cloud and attack. Use the free-equip pieces (Ardenn, Kor
   Outfitter, Balan) to save mana, and keep protection up. Enlightened Tutor finds the next piece.
 - **Turns 5+.** Add the big Equipment (Colossus Hammer), Open the Armory (search for a Sword or any Aura or Equipment), and
@@ -59,11 +59,17 @@ With Cloud equipped, these Equipment gain from the extra trigger:
 no triggers: they are plain bonuses (hexproof, double strike, +X/+X).
 
 ### Making Cloud enter again
-**Forum Familiar** returns Cloud (or any creature) to your hand when turned face up from disguise, and
 **Court of Ardenvale** returns a permanent with mana value 3 or less from the
 graveyard each upkeep (to the battlefield while you are the monarch, which Court makes you). **Kor Outfitter**,
 **Solemn Simulacrum**, **Knight of the White Orchid** and **Loyal Warhound** are worth a second enter if you have a way
 to blink them.
+
+### Equipment tutors
+**Stoneforge Mystic** ({1}{W}) finds an Equipment when it enters and puts it into your hand. Its {1}{W}, {T}
+ability puts Equipment from your hand onto the battlefield unattached; you still need to equip it. It provides a
+backup search when Cloud is unavailable, and Sword of Hearth and Home can blink it for another search.
+**Steelshaper's Gift** ({W}) finds any Equipment and puts it into your hand: a Sword, Colossus Hammer, Buster Sword,
+or Swiftfoot Boots as the situation demands. Open the Armory and Enlightened Tutor remain additional search options.
 
 ### Free equips
 - **Ardenn, Intrepid Archaeologist** moves any number of Equipment onto one permanent at the start of each combat.
@@ -129,7 +135,7 @@ that creature indestructible.
   creatures cannot attack you unless their controller pays per attacker: Windborn Muse {2} (a 2/3 flier), Baird,
   Steward of Argive {1} (a 1/4 vigilance), Norn's Annex {W/P}, and Archon of Absolution {1} (a 3/2 flier with
   protection from white).
-- **Board wipes:** Wrath of God, Day of Judgment and Fumigate (gain 1 life per creature destroyed). Equipment survives them, and Cloud comes back from the command zone.
+- **Board wipes:** Wrath of God and Fumigate (gain 1 life per creature destroyed). Equipment survives them, and Cloud comes back from the command zone. Austere Command and Winds of Abandon provide additional sweepers.
 - **Austere Command** (choose two modes): choose "destroy creatures with mana value 4 or greater" with
   "destroy all enchantments" to leave Cloud (mana value 2) and the artifacts (it also kills your own larger creatures).
   Winds of Abandon's overload is the cleaner one-sided wipe when you need opposing creatures gone and want to keep your own.
@@ -179,7 +185,7 @@ that creature indestructible.
 when you cast a creature that shares a type with Cloud), Plaza of Heroes and Terminal Moraine. Ramp: Sol Ring, Mind Stone,
 Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel, Page, Loose Leaf, Solemn Simulacrum, Knight of the
 White Orchid and Loyal Warhound. Card draw: Mask of Memory, Court of Ardenvale, Puresteel Paladin and the Swords.
-Interaction: Wrath of God, Day of Judgment, Fumigate, Archangel of Tithes, Archon of Absolution, Norn's Annex, Lay Down Arms, Judgment of Alexander, Stroke of Midnight, Swords to Plowshares, Path to Exile, Skyclave
+Interaction: Wrath of God, Fumigate, Archangel of Tithes, Archon of Absolution, Norn's Annex, Lay Down Arms, Judgment of Alexander, Stroke of Midnight, Swords to Plowshares, Path to Exile, Skyclave
 Apparition, Winds of Abandon, Austere Command, Elspeth, Sun's Champion and Disenchant. 9 Equipment in the deck, so Cloud's search always finds one.
 
 ## Bracket and Rule 0
@@ -194,13 +200,13 @@ on its own. Tell the table before the game that:
 
 **Commander (1).** Cloud, Midgar Mercenary
 
-**Creatures (30).** Adelbert Steiner, Archangel of Tithes, Archon of Absolution, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird, Steward of Argive, Balan, Wandering Knight, Bastion Protector, Cid, Freeflier Pilot, Danitha Capashen, Paragon, Exalted Angel, Forum Familiar, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta, Automaton Avenger, Knight of the White Orchid, Kor Outfitter, Loyal Warhound, Page, Loose Leaf, Puresteel Paladin, Silverblade Paladin, Skyclave Apparition, Solemn Simulacrum, Sram, Senior Edificer, Thalia, the Survivor, Windborn Muse, Zack Fair
+**Creatures (30).** Adelbert Steiner, Archangel of Tithes, Archon of Absolution, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird, Steward of Argive, Balan, Wandering Knight, Bastion Protector, Cid, Freeflier Pilot, Danitha Capashen, Paragon, Exalted Angel, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta, Automaton Avenger, Knight of the White Orchid, Kor Outfitter, Loyal Warhound, Page, Loose Leaf, Puresteel Paladin, Silverblade Paladin, Skyclave Apparition, Solemn Simulacrum, Sram, Senior Edificer, Stoneforge Mystic, Thalia, the Survivor, Windborn Muse, Zack Fair
 
 **Enchantments (3).** Court of Ardenvale, Forge Anew, Smothering Tithe
 
 **Artifacts (16).** Andúril, Narsil Reforged, Arcane Signet, Buster Sword, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Mask of Memory, Mind Stone, Norn's Annex, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Thought Vessel
 
-**Sorceries (7).** Austere Command, Day of Judgment, Fumigate, Lay Down Arms, Open the Armory, Winds of Abandon, Wrath of God
+**Sorceries (7).** Austere Command, Fumigate, Lay Down Arms, Open the Armory, Steelshaper's Gift, Winds of Abandon, Wrath of God
 
 **Instants (9).** Akroma's Will, Disenchant, Enlightened Tutor, Galadriel's Dismissal, Judgment of Alexander, Path to Exile, Stroke of Midnight, Swords to Plowshares, Teferi's Protection
 
@@ -233,7 +239,6 @@ on its own. Tell the table before the game that:
 1 Colossus Hammer
 1 Court of Ardenvale
 1 Danitha Capashen, Paragon
-1 Day of Judgment
 1 Disenchant
 1 Elspeth, Sun's Champion
 1 Enlightened Tutor
@@ -242,7 +247,6 @@ on its own. Tell the table before the game that:
 1 Fellwar Stone
 1 Fireshrieker
 1 Forge Anew
-1 Forum Familiar
 1 Fumigate
 1 Galadriel's Dismissal
 1 Giver of Runes
@@ -269,6 +273,8 @@ on its own. Tell the table before the game that:
 1 Sol Ring
 1 Solemn Simulacrum
 1 Sram, Senior Edificer
+1 Steelshaper's Gift
+1 Stoneforge Mystic
 1 Stroke of Midnight
 1 Swiftfoot Boots
 1 Sword of Feast and Famine

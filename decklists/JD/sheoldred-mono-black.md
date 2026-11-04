@@ -114,7 +114,7 @@ opponent loses 2). The life is also a resource:
 it pays for The One Ring's burden counters, Call of the Ring, Bolas's Citadel and Ad Nauseam.
 
 ### Drain creatures
-**Blood Artist**, **Al Bhed Salvagers**, **Sneering Shadewriter** (drain 2 on entering) and **Screeching Soulbreaker**
+**Blood Artist**, **Al Bhed Salvagers** and **Screeching Soulbreaker**
 (drain 1 each attack) keep the pressure on when Sheoldred is gone. **Ob Nixilis, the Fallen** ({3}{B}{B}, 3/3) makes a
 player lose 3 life each time a land enters under your control and grows by three +1/+1 counters: one land drop a turn
 is 3 to an opponent and a bigger threat. **Gray Merchant of Asphodel** ({3}{B}{B}) drains each opponent by your
@@ -140,8 +140,10 @@ every creature death drains for the rest of the game. With Grave Pact out, each 
 creature.
 
 ### Recursion
-**Phyrexian Delver** returns a creature card from your graveyard (you lose life equal to its mana value): Sheoldred
-if she died, Sneering Shadewriter for a second drain. Keep it for Sheoldred.
+**Phyrexian Delver** returns a creature card from your graveyard to the battlefield (you lose life equal to its mana
+value): recover Sheoldred, or return Gray Merchant for another drain. **Raise Dead** ({B}) returns a creature to your hand,
+not the battlefield; use it to recover Mikaeus, Triskelion, Yawgmoth or Gray Merchant, then pay to cast it again.
+Moving Sheoldred to the command zone instead makes her unavailable to these graveyard effects.
 
 ### Ramp
 Three rocks, Arcane Signet, Fellwar Stone and Mind Stone (it can cash in for a card), plus **Dark Ritual** (Sheoldred a
@@ -176,7 +178,7 @@ and Bolas's Citadel are the bigger artifacts you cast once the rocks are out.
   Mikokoro and Otherworld Atlas at each opponent's end step, Memory Jar the turn she's safe. Hold a protection instant
   for removal aimed at her. The One Ring and Bolas's Citadel turn her lifegain into cards.
 - **Without her:** removal, Underworld Dreams, Fate Unraveler and the drain creatures (Blood Artist, Al Bhed Salvagers,
-  Sneering Shadewriter, Screeching Soulbreaker, Gray Merchant, Zulaport Cutthroat) keep the pressure on until she
+  Screeching Soulbreaker, Gray Merchant, Zulaport Cutthroat) keep the pressure on until she
   comes back; hold the symmetric draw cards.
 - **The kill:** Peer into the Abyss on an opponent with Sheoldred out, or Exsanguinate for the table. Demonic Tutor or
   Diabolic Tutor finds Peer into the Abyss once she is safe, or the missing half of Mikaeus + Triskelion.
@@ -206,13 +208,13 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Lands (36).** Bonders' Enclave, Command Tower, Geier Reach Sanitarium, Mikokoro Center of the Sea, Phyrexian Tower, 31 Swamp
 
-**Creatures (27).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Mikaeus the Unhallowed, Necrosquito, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Sephiroth Fabled SOLDIER // Sephiroth One-Winged Angel, Seymour Flux, Sneering Shadewriter, Triskelion, Undercity Dire Rat, Vault Plunderer, Viscera Seer, Yawgmoth Thran Physician, Zulaport Cutthroat
+**Creatures (26).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Mikaeus the Unhallowed, Necrosquito, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Sephiroth Fabled SOLDIER // Sephiroth One-Winged Angel, Seymour Flux, Triskelion, Undercity Dire Rat, Vault Plunderer, Viscera Seer, Yawgmoth Thran Physician, Zulaport Cutthroat
 
 **Enchantments (4).** Call of the Ring, Grave Pact, Phyrexian Arena, Underworld Dreams
 
 **Artifacts (12).** Arcane Signet, Ashnod's Altar, Bolas's Citadel, Darksteel Plate, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Otherworld Atlas, Skullclamp, Swiftfoot Boots, The One Ring
 
-**Sorceries (12).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Demonic Tutor, Diabolic Tutor, Exsanguinate, Invoke Despair, Lethal Throwdown, Peer into the Abyss, Silence the Echo, Syphon Mind
+**Sorceries (13).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Demonic Tutor, Diabolic Tutor, Exsanguinate, Invoke Despair, Lethal Throwdown, Peer into the Abyss, Raise Dead, Silence the Echo, Syphon Mind
 
 **Instants (8).** Ad Nauseam, Dark Ritual, Deadly Dispute, Foolish Fate, Overkill, Sephiroth's Intervention, Vanquish the Weak, Wander Off
 
@@ -266,6 +268,7 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Phyrexian Delver
 1 Phyrexian Rager
 1 Phyrexian Tower
+1 Raise Dead
 1 Rooftop Assassin
 1 Screeching Soulbreaker
 1 Seizan, Perverter of Truth
@@ -275,7 +278,6 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Sheoldred, the Apocalypse
 1 Silence the Echo
 1 Skullclamp
-1 Sneering Shadewriter
 1 Swiftfoot Boots
 1 Syphon Mind
 1 The One Ring
