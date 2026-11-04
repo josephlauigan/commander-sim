@@ -2423,7 +2423,7 @@ fn dauthi_sweep(g: &mut Game, src: Src) -> Res {
     Ok(())
 }
 
-fn dauthi_void(g: &Game, src: PermId) -> Vec<(CardId, PlayerId)> {
+pub(crate) fn dauthi_void(g: &Game, src: PermId) -> Vec<(CardId, PlayerId)> {
     let Some(Val::List(v)) = g.perm(src).data.get(DataKey::Void) else { return vec![] };
     v.iter()
         .filter_map(|e| match e {
@@ -2456,7 +2456,7 @@ fn dauthi_play(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<V
     Ok(vec![opt_ability(2.0 + cmc as f64 * 0.6, label, src, dauthi_go, (c.0 as i64) | ((q.0 as i64) << 16))])
 }
 
-fn dauthi_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn dauthi_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, q) = (CardId((arg & 0xffff) as u16), PlayerId((arg >> 16) as u8));
     if !on(g, src, p) || !g.player(q).exile.contains(&c) {
         return Ok(false);

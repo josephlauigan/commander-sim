@@ -2404,7 +2404,7 @@ fn more_abilities(g: &Game, p: PlayerId, m: PermId, nm: &str) -> Option<Vec<Perm
             walker(&[(-2, "look at the top four; take a noncreature, nonland card", narset_minus2)])
         }
         n @ ("Brass Squire" | "Peter Parker's Camera" | "Jaxis, the Troublemaker") => return super::urdragon::abilities(n),
-        _ => return None,
+        n => return super::gaps_c::abilities(g, p, m, n),
     })
 }
 

@@ -92,6 +92,47 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
             if let Some(l) = min_by(&lands, key) {
                 choice = Some(Choice::Land(l));
             }
+        } else if crate::human::is_human(g, p)
+            && let Some(what) = sac_phrase(&t)
+        {
+            // practice mode: the person chooses what to sacrifice (Natural Order's green creature ...), any permanent
+            // of the kind but one that can't be sacrificed; a Treasure counts for an artifact cost
+            let art = what.contains("artifact") || what == "permanent";
+            let cre = what.contains("creature") || what == "permanent";
+            let mut cands: Vec<PermId> = g
+                .player(p)
+                .perms
+                .iter()
+                .copied()
+                .filter(|&m| {
+                    let x = g.perm(m);
+                    !x.phased
+                        && !no_sac(g, m)
+                        && ((cre && g.is_creature(m))
+                            || (art && x.cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT)))
+                            || what == "permanent")
+                })
+                .collect();
+            if what.contains("green") {
+                cands.retain(|&m| colors_of(g, m).has('G'));
+            }
+            let treasure = art && g.player(p).treasures > 0;
+            if cands.is_empty() && !treasure {
+                // nothing to sacrifice: the cost can't be paid
+            } else if dry {
+                choice = Some(Choice::Sac(if cands.is_empty() { Fodder::Treasure } else { Fodder::Perm(cands[0]) }));
+            } else {
+                let mut labels: Vec<String> = cands
+                    .iter()
+                    .map(|&m| crate::human::legal::describe_target(g, p, crate::human::Target::Perm(m)))
+                    .collect();
+                if treasure {
+                    labels.push("a Treasure token".into());
+                }
+                let prompt = format!("{}: sacrifice which permanent?", g.db.get(c).name);
+                let k = crate::human::choices::choose_one(g, p, "choose", &prompt, &labels)?;
+                choice = Some(Choice::Sac(if k == cands.len() { Fodder::Treasure } else { Fodder::Perm(cands[k]) }));
+            }
         } else if let Some(what) = sac_phrase(&t)
             && let Some(f) = sac_fodder(g, p, &what, None)
             && (f == Fodder::Treasure || matches!(f, Fodder::Perm(m) if pval(g, m) < 4.0) || !t.contains("discard"))
@@ -1088,7 +1129,23 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
     }
     if let Some(n) = t.int(Tag::Draw) {
         let n = if zone == "gy" { t.int(Tag::Fbdraw).unwrap_or(n) } else { n };
-        draw(g, p, n.max(0) as u32, false)?;
+        // practice mode: Deep Analysis says "target player draws two cards": the person picks the player
+        let who = if crate::human::is_human(g, p) && &*g.db.get(c).name == "Deep Analysis" {
+            let ps: Vec<PlayerId> = g
+                .players
+                .iter()
+                .filter(|q| q.alive && (q.id == p || crate::human::legal::player_targetable(g, q.id)))
+                .map(|q| q.id)
+                .collect();
+            let labels: Vec<String> = ps
+                .iter()
+                .map(|&q| crate::human::legal::describe_target(g, p, crate::human::Target::Player(q)))
+                .collect();
+            ps[crate::human::choices::choose_one(g, p, "target", "Deep Analysis: which player draws two cards?", &labels)?]
+        } else {
+            p
+        };
+        draw(g, who, n.max(0) as u32, false)?;
     }
     if let Some(n) = t.int(Tag::Treas) {
         add_treasure(g, p, n)?;

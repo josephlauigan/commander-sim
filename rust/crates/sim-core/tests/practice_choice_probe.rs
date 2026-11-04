@@ -240,10 +240,6 @@ fn every_choice_of_the_owned_decks_is_asked_of_a_person() {
 /// gaps found on 2026-11-04 and not yet fixed: the AI chooses for the person. Fixing one means taking it off this list;
 /// a new gap fails the test.
 const TO_FIX: &[&str] = &[
-    "alela: Airlift Chaplain",
-    "alela: Pileated Provisioner",
-    "alela: Plan for All Outcomes",
-    "galadriel: River's Rebuke",
     "kefka: Alpharael, Dreaming Acolyte",
     "kefka: Glimpse the Unthinkable",
     "kefka: Seize the Spoils",
@@ -252,18 +248,12 @@ const TO_FIX: &[&str] = &[
     "sauron: Foreboding Ruins",
     "sauron: Nibelheim Aflame",
     "sauron: Slip Out the Back",
-    "sheoldred: Perigee Beckoner",
-    "sheoldred: Phyrexian Delver",
-    "sheoldred: Raise Dead",
     "thanos: Cavern of Souls",
-    "thrasios: Natural Order",
-    "thrasios: The Wasp, Winsome Avenger",
     "urdragon: Cavern of Souls",
     "urdragon: Decimate",
     "urdragon: Kindred Dominance",
     "urdragon: Nature's Lore",
     "urdragon: Rampant Growth",
-    "yshtola: Deep Analysis",
 ];
 
 /// listed by the probe but not a gap, each with why
@@ -278,6 +268,8 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
     ("sheoldred: Invoke Despair", "the opponent chooses what to sacrifice, not the person"),
     ("sheoldred: Rooftop Assassin", "no creature was dealt damage this turn: no legal target"),
     ("cloud: Loyal Warhound", "a basic Plains: every choice is the same card"),
+    ("alela: Airlift Chaplain", "already asks; the probe's three milled cards held no Plains or cheap creature, so there was nothing to choose (practice_gaps_c.rs)"),
+    ("thrasios: The Wasp, Winsome Avenger", "the only Hero on the probe table is the Wasp itself, so the enter target is forced; the person is asked when there is another Hero, and for the attack trigger (practice_gaps_c.rs)"),
 ];
 
 /// the gaps found against the two lists: a gap on neither list is new (fails), a TO_FIX entry no longer found is
