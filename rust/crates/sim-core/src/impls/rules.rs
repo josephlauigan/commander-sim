@@ -63,7 +63,7 @@ fn drum_tap(g: &mut Game, p: PlayerId, _m: PermId, _used: u32) -> Res {
 }
 
 /// Lotus Petal: sacrificed as it's tapped for mana
-fn petal_sac(g: &mut Game, p: PlayerId, m: PermId, _used: u32) -> Res {
+pub fn petal_sac(g: &mut Game, p: PlayerId, m: PermId, _used: u32) -> Res {
     if on(g, p, m) {
         leave(g, m)?;
         to_zone_card(g, m, Zone::Gy);
