@@ -131,6 +131,7 @@ const HELP: &str = "Commands:
   cast N            cast card N from your hand
   cast cmd          cast your commander from the command zone
   cast gN / land gN cast or play card N of your graveyard (Yawgmoth's Will, flashback, Underworld Breach)
+  cast eN           cast card N listed under From exile (Dauthi Voidwalker), free
   use N             an ability of your permanent N (Equip, loyalty abilities, Jace's Archivist ...)
   use LN            an ability of your land N (Rogue's Passage, Scavenger Grounds)
   pass              pass priority (move on)
@@ -171,6 +172,14 @@ fn priority_prompt(req: &Value, out: &mut dyn Write) {
         .collect();
     if !gyp.is_empty() {
         let _ = writeln!(out, "  From your graveyard: {}", gyp.join("  "));
+    }
+    let exp: Vec<String> = arr(me, "exile_playable")
+        .iter()
+        .enumerate()
+        .map(|(i, x)| format!("E{}) {} ({}'s exile)", i + 1, s(x, "name"), s(x, "owner")))
+        .collect();
+    if !exp.is_empty() {
+        let _ = writeln!(out, "  From exile (this turn): {}", exp.join("  "));
     }
     let act: Vec<String> = arr(me, "lands")
         .iter()
@@ -224,6 +233,17 @@ pub fn parse(line: &str, view: &Value) -> Cmd {
         return match w.get(1).and_then(|t| digits(t)) {
             Some(k) => Cmd::Act(json!({"do": "use", "perm": k - 1})),
             None => Cmd::Err("Which permanent? e.g. use 1 (or use L1 for a land)".into()),
+        };
+    }
+    if cmd == "cast"
+        && let Some(t) = &w1
+        && t.starts_with('e')
+        && let Some(k) = digits(&t[1..])
+    {
+        // an exiled card Dauthi Voidwalker lets you play: E1, E2 ... in the order the view lists them
+        return match arr(me(view), "exile_playable").get((k - 1).max(0) as usize) {
+            Some(x) => Cmd::Act(json!({"do": "cast", "zone": "ex", "card": x["card"].clone()})),
+            None => Cmd::Err("No such exiled card to play.".into()),
         };
     }
     if matches!(cmd.as_str(), "land" | "cast")

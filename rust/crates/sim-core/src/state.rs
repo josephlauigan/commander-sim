@@ -236,6 +236,9 @@ pub enum DataKey {
     /// practice mode: the artifact cards a person's Emry, Lurker of the Loch let them cast from the graveyard this turn
     /// (a `Val::List`: the turn stamp, then the cards; `human::gaps_c::emry_permits`)
     Emry,
+    /// practice mode: the exiled cards a person's Dauthi Voidwalker lets them play this turn (a `Val::List`: the turn
+    /// stamp, then the cards; `human::gaps_c::dauthi_permits`)
+    Dauthi,
 }
 
 /// A value in per-card state.

@@ -121,6 +121,7 @@ fn player(g: &Game, p: PlayerId, me: &str) -> Value {
         d["mana_pool"] = seam::mana_pool_text(g, p).into();
         d["mana_sources"] = seam::mana_sources(g, p);
         d["graveyard_playable"] = seam::graveyard_playable(g, p);
+        d["exile_playable"] = seam::exile_playable(g, p);
     }
     d
 }
@@ -192,6 +193,16 @@ pub mod seam {
             out.push(json!({"i": i, "name": &*g.db.get(c).name, "how": how}));
         }
         out.into()
+    }
+    /// exiled cards the person may play this turn (Dauthi Voidwalker): `[{card, name, owner}]`; cast with
+    /// `{do: cast, zone: ex, card}` (`card` is the card id, not a position)
+    pub fn exile_playable(g: &Game, p: PlayerId) -> Value {
+        sim_core::human::gaps_c::dauthi_playable(g, p)
+            .into_iter()
+            .filter(|&(c, _)| sim_core::human::legal::check_cast_exile(g, p, c).is_none())
+            .map(|(c, q)| json!({"card": c.0, "name": &*g.db.get(c).name, "owner": &*g.player(q).name}))
+            .collect::<Vec<_>>()
+            .into()
     }
     /// a land with a spell side or channel (`cards.HAND`)
     pub fn hand_special(_g: &Game, _c: CardId) -> bool {

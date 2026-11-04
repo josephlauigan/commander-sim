@@ -9,7 +9,7 @@
 //! - **Mishra's Self-Replicator**: the "you may pay {1}".
 //! - **Myr Battlesphere**: X, the Myr tapped.
 //! - **Portal to Phyrexia**: the creature card put onto the battlefield at upkeep.
-//! - **Scarlet Witch**: the target and costs of the spell cast for free.
+//! - **Scarlet Witch**: the target, costs and X of the spell cast for free.
 //! - **Susurian Voidborn**: the target opponent of the drain.
 //! - **Sylvan Library**: the optional draw, the two cards chosen, and pay 4 life or put on top.
 //! - **The Ozolith**: the creature that gets the counters (or none).
@@ -25,6 +25,7 @@ use crate::hooks::{Call, Event, Sacrificed};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, Game};
 use crate::sym::intern;
+use crate::tag::Tag;
 
 fn live(g: &Game, m: PermId) -> bool {
     g.perm(m).on_bf && !g.perm(m).phased
@@ -239,7 +240,7 @@ pub fn portal_pick(g: &Game, p: PlayerId) -> Res<Option<(CardId, PlayerId)>> {
 /// a spell cast without paying its mana cost from Scarlet Witch's exiled cards: the person's target (and any other
 /// choice the cast asks before paying). None: they cancelled, so the card stays exiled with her. The additional costs
 /// the choices made are returned to pay.
-pub fn free_cast(g: &Game, p: PlayerId, c: CardId) -> Res<Option<(Ctx, super::specs::Costs)>> {
+pub fn free_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res<Option<(Ctx, super::specs::Costs)>> {
     let name = g.db.get(c).name.to_string();
     let mut ctx = Ctx::default();
     if let Some(tgts) = legal::spell_targets(g, p, c) {
@@ -256,10 +257,30 @@ pub fn free_cast(g: &Game, p: PlayerId, c: CardId) -> Res<Option<(Ctx, super::sp
             Target::Perm(m) => ctx.target = Some(m),
         }
     }
-    match super::specs::choose_pre(g, p, c, &mut ctx)? {
-        super::specs::Pre::Ok(costs) => Ok(Some((ctx, costs))),
-        _ => Ok(None),
+    let costs = match super::specs::choose_pre(g, p, c, &mut ctx)? {
+        super::specs::Pre::Ok(costs) => costs,
+        _ => return Ok(None),
+    };
+    // X (and the kicks and targets that depend on it), the way a cast from the hand asks for it: paid from what is
+    // left in the pool. By the rules a spell cast without paying its mana cost has X = 0; this follows JD's
+    // 2026-11-04 brief (a person chooses X), so it only differs from 0 when mana is floating.
+    super::specs::choose_post(g, p, c, &mut ctx)?;
+    let tags = &g.db.get(c).tags;
+    let has_x = tags.has(Tag::Tokx) || tags.has(Tag::Xtutor) || tags.has(Tag::Xdrain) || name == "Torment of Hailfire";
+    if has_x {
+        let top = g.player(p).pool.total();
+        let x = if top > 0 {
+            let xs = choices::amount_choices(top);
+            let labels: Vec<String> = xs.iter().map(|x| format!("X = {x}")).collect();
+            let prompt = format!("{name}: choose X (paid from what is left in your pool)");
+            xs[choices::choose(g, p, "choose", &prompt, &labels, None, None)?.unwrap_or(0)]
+        } else {
+            0
+        };
+        super::mana::pay_from_pool(g, p, x, "");
+        ctx.x = x as i32;
     }
+    Ok(Some((ctx, costs)))
 }
 
 // ------------------------------------------------------------------ Susurian Voidborn

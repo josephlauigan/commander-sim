@@ -1670,9 +1670,25 @@ pub fn mirror_revert(g: &mut Game) -> Res {
         if let Some(own) = g.perm(m).phys {
             set_face(g, m, own);
             g.perm_mut(m).phys = None;
+            mirror_lists(g, m, false); // a copy of a land (a person's Mirror) goes back to the permanent list
         }
     }
     Ok(())
+}
+
+/// a Mirage Mirror that is a copy of a land is listed with its controller's lands (`land`), else with the permanents
+pub(crate) fn mirror_lists(g: &mut Game, m: PermId, land: bool) {
+    let o = g.perm(m).owner;
+    let in_lands = g.player(o).lands.contains(&m);
+    if land && !in_lands {
+        g.player_mut(o).perms.retain(|&x| x != m);
+        g.player_mut(o).lands.push(m);
+        g.bf_ver += 1;
+    } else if !land && in_lands {
+        g.player_mut(o).lands.retain(|&x| x != m);
+        g.player_mut(o).perms.push(m);
+        g.bf_ver += 1;
+    }
 }
 
 /// how much the copy is worth as an attacker or a blocker: its printed body (a defender never attacks)
