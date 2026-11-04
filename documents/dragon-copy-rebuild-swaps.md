@@ -51,8 +51,8 @@ Together with the five transferred cards, this opens twenty Ur-Dragon slots.
 - Dracogenesis
 - Dragon's Hoard
 - Dragon Tempest
-- Dragonborn Champion
 - Ganax, Astral Hunter
+- Garth One-Eye
 - Garruk's Uprising
 - Kindred Discovery
 - Lathliss, Dragon Queen
@@ -60,14 +60,18 @@ Together with the five transferred cards, this opens twenty Ur-Dragon slots.
 - Miirym, Sentinel Wyrm
 - Panharmonicon
 - Sarkhan, Soul Aflame
+- Scion of Draco
 - Scourge of Valkas
 - Spark Double
 - Temur Ascendancy
 - Utvara Hellkite
-- Wrathful Red Dragon
 
 Panharmonicon and Kindred Discovery are also used by the current Galadriel list. Buy separate copies unless spare
 copies are already available; do not dismantle Galadriel as part of this rebuild.
+
+Garth One-Eye and Scion of Draco replace Dragonborn Champion and Wrathful Red Dragon from the initial shopping list.
+Garth adds a flexible five-colour toolbox; Scion remains a Dragon and supplies team-wide keywords. The purchase count
+therefore stays at twenty.
 
 ## 5. Check the physical decks
 
@@ -97,7 +101,8 @@ two infinite-combat combinations: Godo plus Helm of the Host, and Combat Celebra
 
 Every transferred card is Commander-legal and fits Sauron's blue-black-red identity. Every Ur-Dragon addition is
 Commander-legal and fits its five-colour identity. The simulator rates most additions Full or Full-auto. Astral
-Dragon, Cursed Mirror, Sarkhan, Soul Aflame, Wrathful Red Dragon and Peter Parker's Camera are Approximate; consult the
+Dragon, Cursed Mirror, Sarkhan, Soul Aflame and Peter Parker's Camera are Approximate. Garth One-Eye is Partial: the
+simulator has his 5/5 body but not his tap ability or the six spells it can create. Scion of Draco is Full. Consult the
 deck documents for the real paper interactions rather than treating simulation output as complete for those cards.
 
 No simulation result is claimed for either rebuilt list. Measure Sauron only against its matched T3 and T4 tiers and

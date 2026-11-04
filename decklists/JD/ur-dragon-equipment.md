@@ -71,6 +71,19 @@ the battlefield for one turn. **Jaxis, the Troublemaker** and **Twinflame** make
 with entry triggers or on an engine that makes the next Dragon much stronger. **Sarkhan, Soul Aflame** discounts
 Dragons and can become each Dragon that enters for the turn.
 
+### Five-colour toolbox
+
+**Scion of Draco** is a naturally colourless Dragon, so Eminence discounts it in addition to its Domain reduction. It
+costs {1} when the battlefield contains all five basic land types, and it gives each creature the keywords associated
+with that creature's colours. The deck's multicolour Dragons frequently gain several keywords at once; blue Dragons
+getting hexproof and green Dragons getting trample are especially important.
+
+**Garth One-Eye** is not naturally a Dragon and does not receive the Eminence discount unless Maskwood Nexus is out.
+Instead, he is a flexible five-colour utility creature: after he can tap, choose the copy that answers the current
+problem or advances the next turn. Black Lotus supplies a burst of mana, Regrowth recovers the best card in the
+graveyard, Disenchant and Terror answer permanents, Braingeyser provides card flow, and Shivan Dragon supplies another
+body. Each name can be chosen only once for that Garth object, so prioritize the option the current game needs.
+
 ### Turning entries into a win
 
 - **Dragon Tempest:** haste for the flying army and damage whenever a Dragon enters.
@@ -79,9 +92,7 @@ Dragons and can become each Dragon that enters for the turn.
   especially hard.
 - **Utvara Hellkite:** creates a 6/6 Dragon for every Dragon that attacks.
 - **Atarka, World Render:** gives attacking Dragons double strike and ends games without requiring another setup card.
-- **Wrathful Red Dragon:** makes combat and damage-based sweepers dangerous for opponents by reflecting damage dealt to
-  your Dragons.
-- **Dragonborn Champion:** turns the deck's five-damage events into cards.
+- **Scion of Draco:** cheaply adds another attacker while distributing combat and defensive keywords across the army.
 
 ### Interaction and protection
 
@@ -97,9 +108,9 @@ the large creatures, Dragon's Hoard spends its gold counters for cards, and Rhys
 Ring keep the hand moving before the creature engines start.
 
 Worldly Tutor finds the Dragon needed for the board: Ganax for mana, Miirym or Lathliss for multiplication, Scourge or
-Terror for damage, Utvara for a developed attack, and Atarka for lethal combat. Enlightened Tutor finds Dragon Tempest,
-Panharmonicon, Kindred Discovery, Maskwood Nexus, Dragon's Hoard or Dracogenesis. The unrestricted tutors can find
-either half of that choice.
+Terror for damage, Scion for protection and evasion, Utvara for a developed attack, Atarka for lethal combat, or Garth
+for a flexible answer. Enlightened Tutor finds Dragon Tempest, Panharmonicon, Kindred Discovery, Maskwood Nexus,
+Dragon's Hoard or Dracogenesis. The unrestricted tutors can find either half of that choice.
 
 ## Key lines
 
@@ -107,6 +118,8 @@ either half of that choice.
 - **Need bodies:** Lathliss first, then cast nontoken Dragons.
 - **Need copies:** Miirym first; Spark Double can become a second Miirym.
 - **Need damage:** Dragon Tempest, Scourge of Valkas or Terror of the Peaks before making tokens.
+- **Need protection or evasion:** Scion of Draco distributes keywords according to each creature's colours.
+- **Need a flexible answer:** cast Garth, protect him for a turn cycle, then choose the copy that fits the board.
 - **Ready to attack:** Utvara makes the army; Atarka doubles its combat damage; The Ur-Dragon turns the attack into
   cards and a free permanent.
 - **Astral Dragon target:** copy a noncreature engine that remains useful in multiples. Rhystic Study and Smothering
@@ -119,7 +132,8 @@ original duals, shock lands and fetch lands provide every colour; Nature's Lore 
 Ramp comes from Sol Ring, Mana Vault, Grim Monolith, Chrome Mox, Mox Diamond, Lotus Petal, Arcane Signet, Chromatic
 Lantern, Cursed Mirror, Dragon's Hoard, three mana creatures and two land-ramp spells. Mox Jasper produces mana only
 after a Dragon is on the battlefield, or any creature while Maskwood Nexus is out, so do not count it as an opening
-source by itself.
+source by itself. Fetch typed duals and shock lands deliberately: five basic land types reduce Scion of Draco to {1}
+after Eminence, while Garth requires all five colours at once.
 
 ## Bracket and Rule 0
 
@@ -132,7 +146,7 @@ Helm of the Host.
 ## Decklist by type (100)
 **Commander (1).** The Ur-Dragon
 
-**Creatures (23).** Astral Dragon, Atarka World Render, Birds of Paradise, Dragonborn Champion, Dragonlord Ojutai, Ganax Astral Hunter, Glorybringer, Goldspan Dragon, Jaxis the Troublemaker, Kura the Boundless Sky, Lathliss Dragon Queen, Llanowar Elves, Miirym Sentinel Wyrm, Nicol Bolas the Ravager, Paradise Druid, Sakura-Tribe Elder, Sarkhan Soul Aflame, Scourge of Valkas, Spark Double, Terror of the Peaks, Thundermaw Hellkite, Utvara Hellkite, Wrathful Red Dragon
+**Creatures (23).** Astral Dragon, Atarka World Render, Birds of Paradise, Dragonlord Ojutai, Ganax Astral Hunter, Garth One-Eye, Glorybringer, Goldspan Dragon, Jaxis the Troublemaker, Kura the Boundless Sky, Lathliss Dragon Queen, Llanowar Elves, Miirym Sentinel Wyrm, Nicol Bolas the Ravager, Paradise Druid, Sakura-Tribe Elder, Sarkhan Soul Aflame, Scion of Draco, Scourge of Valkas, Spark Double, Terror of the Peaks, Thundermaw Hellkite, Utvara Hellkite
 
 **Planeswalkers (1).** Wrenn and Six
 
@@ -171,7 +185,6 @@ Helm of the Host.
 1 Dracogenesis
 1 Dragon Tempest
 1 Dragon's Hoard
-1 Dragonborn Champion
 1 Dragonlord Ojutai
 1 Enlightened Tutor
 1 Flooded Strand
@@ -180,6 +193,7 @@ Helm of the Host.
 1 Gaea's Cradle
 1 Ganax, Astral Hunter
 1 Garruk's Uprising
+1 Garth One-Eye
 1 Glorybringer
 1 Goldspan Dragon
 1 Grim Monolith
@@ -217,6 +231,7 @@ Helm of the Host.
 1 Sacred Foundry
 1 Sakura-Tribe Elder
 1 Sarkhan, Soul Aflame
+1 Scion of Draco
 1 Scourge of Valkas
 1 Scrubland
 1 Smothering Tithe
@@ -246,7 +261,6 @@ Helm of the Host.
 1 Windswept Heath
 1 Wooded Foothills
 1 Worldly Tutor
-1 Wrathful Red Dragon
 1 Wrenn and Six
 1 Forest
 ```

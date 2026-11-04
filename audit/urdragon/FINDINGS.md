@@ -7,8 +7,14 @@ The list is in `decklists/JD/ur-dragon-equipment.md` (Bracket 4, 16 Game Changer
 
 The Godo, Helm and Equipment package moved to Sauron. Twenty slots now form a Dragon entry, token and copy package
 led by Astral Dragon, Miirym, Lathliss, Ganax, Dragon Tempest, Scourge of Valkas, Terror of the Peaks and Utvara
-Hellkite. The old results below describe the retired Godo list and are not a baseline for the rebuilt deck. The next
-measurement must use the matched T5 tier, loose profile and the default look-ahead AI.
+Hellkite. Garth One-Eye and Scion of Draco then replaced the proposed Dragonborn Champion and Wrathful Red Dragon:
+Garth adds a flexible paper toolbox, while Scion is an efficiently discounted Dragon that distributes keywords. The
+old results below describe the retired Godo list and are not a baseline for the rebuilt deck. The next measurement
+must use the matched T5 tier, loose profile and the default look-ahead AI.
+
+The simulator rates Scion of Draco Full. Garth One-Eye is Partial: it models the 5/5 body but not the tap ability or
+the six named spells, so do not use a simulation to judge Garth until that behavior is implemented. No simulation was
+run for this list-only refinement.
 
 ## Retired Godo-list result (loose, 2000 games, seeds 500000-501999)
 - **t5: 19.1% (CI 17.4-20.9).** The even share is 25%, so it is 5.9 points under.
