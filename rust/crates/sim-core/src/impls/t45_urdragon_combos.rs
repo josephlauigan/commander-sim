@@ -31,8 +31,10 @@
 //! than the loop spends) and Braingeyser (cards). Infinite cards, mana and hasty Garths. Steps: Twinflame (counter
 //! window), a token Garth's ability (the ability-answer path), the Regrowth copy (counter window), then the Garths and
 //! Doubling Season must survive. Finish: as above, the player wins by the unbounded hasty attackers, so it needs a
-//! combat still to come. The Spellbook lists {4}{R}{R}{R}; the sequence here spends {1}{R} (Twinflame) and {1}{G}
-//! (Regrowth) before Garth's own Black Lotus mana takes over, and `ready` asks for exactly that.
+//! combat still to come. Mana: one Twinflame on one Garth gives two token Garths (Doubling Season), one for Regrowth
+//! ({1}{G}) and one for Black Lotus (+3): against Twinflame's {1}{R} that loses a mana a round. The loop only pays for
+//! itself from the second Twinflame, which strives onto the new Garths ({2}{R} per extra target, each extra Garth
+//! nets a Lotus). So `ready` asks for {1}{R} + {1}{G} + {2}{R}: seven mana, the Spellbook's total ({4}{R}{R}{R}).
 //!
 //! Not modelled: the Lotus and Braingeyser rounds themselves (the loop is resolved by `finish`), Garth Lotus mana
 //! paying for the first Twinflame (the mana must be open), the Regrowth copy's cast triggers.
@@ -131,13 +133,15 @@ fn ready_miirym(g: &Game, p: PlayerId) -> Ready {
     ok_ready()
 }
 
-/// Twinflame ({1}{R}) and the Regrowth copy ({1}{G}) are paid from open mana
+/// Twinflame ({1}{R}) and the Regrowth copy ({1}{G}) from open mana, plus the second Twinflame's strive ({2}{R}): the
+/// loop gains mana only once Twinflame copies two or more Garths (see the module comment)
 fn ready_garth(g: &Game, p: PlayerId) -> Ready {
     if !precombat(g, p) || bf(g, p, SEASON).is_none() || plain_garth(g, p).is_none() || spark_garth(g, p).is_none() {
         return no();
     }
     let (Some(t), Some(rg)) = (in_hand(g, p, TWINFLAME), g.db.id(REGROWTH)) else { return no() };
-    if !castable(g, p, t, "hand") || !affordable(g, p, &[cost(g, p, t), cost(g, p, rg)]) {
+    let strive = super::t6_combos_godo::extra(2, "R");
+    if !castable(g, p, t, "hand") || !affordable(g, p, &[cost(g, p, t), cost(g, p, rg), strive]) {
         return no();
     }
     ok_ready()

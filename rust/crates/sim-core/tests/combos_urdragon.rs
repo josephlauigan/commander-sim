@@ -259,7 +259,8 @@ fn removal_on_a_piece_stops_the_miirym_line_before_the_flood() {
 }
 
 // ============================================================ Garth + Twinflame + Spark Double + Doubling Season
-/// Garth, Spark Double (a copy of Garth) and Doubling Season out; Twinflame in hand; {1}{R} and {1}{G} open
+/// Garth, Spark Double (a copy of Garth) and Doubling Season out; Twinflame in hand; seven mana open: {1}{R} and {1}{G}
+/// for the first round, {2}{R} for the second Twinflame's strive
 fn garth_table(seed: u64) -> Game {
     let mut g = tbl_with(seed);
     perm(&mut g, P0, "Garth One-Eye");
@@ -267,7 +268,7 @@ fn garth_table(seed: u64) -> Game {
     zones::enter(&mut g, P0, sd, Enter { plus: 1, ..Enter::default() }).unwrap();
     perm(&mut g, P0, "Doubling Season");
     hand(&mut g, P0, &["Twinflame"]);
-    lands(&mut g, P0, "Mountain", 3, false);
+    lands(&mut g, P0, "Mountain", 6, false);
     lands(&mut g, P0, "Forest", 1, false);
     g
 }
@@ -314,11 +315,12 @@ fn garth_line_is_not_ready_with_a_piece_missing_or_too_little_mana() {
     lands(&mut g, P0, "Forest", 1, false);
     assert!(!is_ready(&g, GARTH), "Garth and Spark Double in hand");
 
-    // three lands: {1}{R} and {1}{G} are four mana
+    // six open mana: enough for the first round ({1}{R}, {1}{G}) but not the second Twinflame's strive ({2}{R}),
+    // and one Twinflame on one Garth loses a mana a round (Regrowth {1}{G} + Twinflame {1}{R} vs one Black Lotus)
     let mut g = garth_table(1);
     let l = g.player(P0).lands.clone();
     g.perm_mut(l[0]).tapped = true;
-    assert!(!is_ready(&g, GARTH), "three open mana");
+    assert!(!is_ready(&g, GARTH), "six open mana");
 
     // {1}{G} needs a green source
     let mut g = tbl();
@@ -327,7 +329,7 @@ fn garth_line_is_not_ready_with_a_piece_missing_or_too_little_mana() {
     zones::enter(&mut g, P0, sd, Enter { plus: 1, ..Enter::default() }).unwrap();
     perm(&mut g, P0, "Doubling Season");
     hand(&mut g, P0, &["Twinflame"]);
-    lands(&mut g, P0, "Mountain", 4, false);
+    lands(&mut g, P0, "Mountain", 7, false);
     assert!(!is_ready(&g, GARTH), "no green");
 }
 
@@ -385,4 +387,21 @@ fn the_three_entries_are_in_the_catalogue_with_steps() {
         assert!(!combos::all()[i].steps.is_empty(), "{part} has declared steps");
         assert_eq!(combos::all()[i].name, part, "the plan file names it exactly");
     }
+}
+
+#[test]
+fn holding_astral_dragon_the_ai_keeps_cursed_mirror_an_artifact() {
+    // without Astral Dragon in hand, the Mirror copies a creature worth copying
+    let mut g = tbl();
+    perm(&mut g, P1, "Grave Titan");
+    let c = take(&mut g, P0, "Cursed Mirror");
+    let m = zones::enter(&mut g, P0, c, Enter::default()).unwrap();
+    assert!(g.is_creature(m), "copies Grave Titan");
+    // holding Astral Dragon it stays the artifact, so the loop can target it this turn
+    let mut g = tbl();
+    perm(&mut g, P1, "Grave Titan");
+    hand(&mut g, P0, &["Astral Dragon"]);
+    let c = take(&mut g, P0, "Cursed Mirror");
+    let m = zones::enter(&mut g, P0, c, Enter::default()).unwrap();
+    assert!(!g.is_creature(m) && &*g.perm(m).name == "Cursed Mirror", "{}", g.perm(m).name);
 }

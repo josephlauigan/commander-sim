@@ -1062,6 +1062,11 @@ fn mirror_copy(g: &mut Game, p: PlayerId, c: CardId) -> Option<crate::state::Cop
         let k = crate::human::choices::choose(g, p, "target", prompt, &labels, Some("no"), None).ok()??;
         all[k]
     } else {
+        // --- urdragon-combos: holding Astral Dragon, the Mirror stays an artifact (the Astral Dragon + Cursed Mirror
+        // loop needs a noncreature Mirror to copy this turn)
+        if g.player(p).hand.iter().any(|&h| &*g.db.get(h).name == "Astral Dragon") {
+            return None;
+        }
         let (t, v) = crate::impls::t6_copies::best_creature_copy_perm(g, p)?;
         if epow(g, t) < 3 && v < 5.0 {
             return None;
