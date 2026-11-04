@@ -1,6 +1,7 @@
-# JD's The Ur-Dragon deck: five-colour Dragon entries, copies and attack payoffs. The card hooks model Eminence,
-# Dragon entry triggers, token engines and the commander's attack trigger; this plan tells the generic pilot to ramp
-# first, establish one multiplier or damage engine, and then deploy Dragons.
+# JD's The Ur-Dragon deck (decklists/JD/ur-dragon-dragon-copies.md): five-colour Dragon entries, copies and attack
+# payoffs. The card hooks model Eminence, Dragon entry triggers, token engines and the commander's attack trigger; this
+# plan tells the generic pilot to ramp first, establish one multiplier or damage engine, and then deploy Dragons. Three
+# infinite combos are in the catalogue (impls/t45_urdragon_combos.rs); the lines below name them for the tutors.
 deck = "urdragon"
 default = "plan"
 engines = ["Dragon Tempest", "Dragon's Hoard", "Garruk's Uprising", "Temur Ascendancy", "Rhystic Study",
@@ -29,7 +30,23 @@ turn = 6
 "Dragonlord Dromoka" = 72
 "Scion of the Ur-Dragon" = 70
 
-# These are value packages rather than deterministic combos. Each line gives creature and unrestricted tutors a
+# The three infinite combos (Commander Spellbook, impls/t45_urdragon_combos.rs), best first: the tutors hunt the first
+# missing piece of the closest one. Astral Dragon + Cursed Mirror is two cards and wins at once with hasty Dragons;
+# Miirym + Astral Dragon + Doubling Season is three cards that fill the board (it kills the next combat); the Garth
+# line needs four pieces, two of them on the battlefield already.
+[[line]]
+name = "Astral Dragon + Cursed Mirror"
+combo = "Astral Dragon + Cursed Mirror"
+
+[[line]]
+name = "Miirym + Astral Dragon + Doubling Season"
+combo = "Miirym + Astral Dragon + Doubling Season"
+
+[[line]]
+name = "Garth One-Eye + Twinflame + Spark Double + Doubling Season"
+combo = "Garth One-Eye + Twinflame + Spark Double + Doubling Season"
+
+# The rest are value packages rather than deterministic combos. Each line gives creature and unrestricted tutors a
 # board-aware route toward mana, multiplication or an entry-damage finish.
 [[line]]
 name = "Dragon entry damage"
@@ -87,6 +104,18 @@ else = 58
 cards = ["Ganax, Astral Hunter", "Miirym, Sentinel Wyrm", "Lathliss, Dragon Queen", "Terror of the Peaks",
     "Scourge of Valkas", "Doubling Season", "Maskwood Nexus"]
 value = 74
+
+# Astral Dragon is the combo's last piece: with the Mirror (or Miirym and Doubling Season) already out it is cast at
+# once; otherwise it keeps the generic value. The Mirror goes out ahead of the Dragon that follows it.
+[[prio]]
+cards = ["Astral Dragon"]
+when = ["out:Cursed Mirror", "out:Miirym, Sentinel Wyrm & out:Doubling Season"]
+value = 92
+
+[[prio]]
+cards = ["Cursed Mirror"]
+when = ["have:Astral Dragon"]
+value = 80
 
 [[prio]]
 cards = ["Dragonlord Dromoka", "Ancient Copper Dragon", "Utvara Hellkite", "Scion of Draco",

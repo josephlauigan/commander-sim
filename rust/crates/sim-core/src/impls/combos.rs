@@ -122,6 +122,7 @@ pub fn all() -> &'static [&'static Combo] {
             .chain(super::cc_teysa::COMBOS.iter()) // --- casual combos (teysa)
             .chain(super::t6_combos_scion::COMBOS.iter()) // --- scion
             .chain(super::mikaeus_trisk::COMBOS.iter()) // --- Mikaeus + Triskelion
+            .chain(super::t45_urdragon_combos::COMBOS.iter()) // --- Ur-Dragon combos (Astral Dragon, Garth)
             .collect()
     });
     &ALL

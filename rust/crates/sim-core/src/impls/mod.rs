@@ -112,6 +112,7 @@ pub mod card_models2; // --- card models, part 2 (the pool's Partial cards, 10-3
 pub mod card_models3; // --- card models, part 3 (the pool's last Partial cards, 10-31)
 pub mod generic_paths; // --- generic-paths (2026-11-01): plays only a deleted hand AI offered
 pub mod garth; // --- garth (2026-11-04): Garth One-Eye
+pub mod t45_urdragon_combos; // --- urdragon-combos: the Ur-Dragon deck's three infinite combos in the catalogue
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
 /// topdeck, fixes, lands, partials, rules, rules2, mine, marchesa, zur, galadriel, yshtola, alela, legends): a later module's slot
