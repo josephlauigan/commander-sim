@@ -93,3 +93,10 @@ artifacts for his mana to matter, and the Basalt + Rings combo already has Balli
 ## 2026-11-01: recalibration stage 2 remeasure
 
 Thrasios, t5: **12.8%** (CI 11.4-14.3, 1999 games: one skipped by an internal overflow panic) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). Stage 1, same seeds: 12.1%. The last FINDINGS number (25.3%, 10/20, 3,000 games) is from an older build and list. Fitted t5 knobs: 12.7% (level).
+
+## 2026-11-04 (late): AI changes, not simulated (JD: no sims for this batch)
+
+- **Resplendent Angel**: the AI's {3}{W}{W}{W} ability gives +2/+2 and lifelink (it gave +2/+0).
+- **Adeline, Resplendent Cathar**: the AI sends one token at each opponent (they all attacked the main defender).
+
+The numbers above predate these changes; a re-run on the deck's own tiers would show their effect.

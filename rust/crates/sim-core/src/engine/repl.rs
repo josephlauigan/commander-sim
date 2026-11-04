@@ -194,8 +194,17 @@ pub fn counter_mult(g: &Game, p: PlayerId) -> i32 {
         .filter(|&&m| src_on(g, m))
         .filter_map(|&m| g.perm(m).cd)
         .map(|c| g.db.get(c).counters_mult)
-        .product()
+        .fold(1, |k: i32, x| k.saturating_mul(x).min(COUNTER_MULT_CAP))
 }
+
+/// The counter doublers' cap. Each doubler applies in turn (616.1), so k of them make 2^k: at urdragon t5 tables
+/// (seeds 500196, 500203, 500541, 500625, 500829 and five more) one seat's copies of a counter doubler passed 31 and
+/// overflowed the i32 product in `gather`. Not a loop: a finite, exponential board (like `MULT_CAP` for tokens).
+pub const COUNTER_MULT_CAP: i32 = 1 << 16;
+
+/// the most counters one event puts (either sign): keeps a permanent's running count and the power it gives
+/// far inside i32 however many such events follow
+pub const COUNTER_CAP: i32 = 1_000_000;
 
 // ================================================================== counters
 /// where counters go
@@ -233,9 +242,9 @@ impl Mod {
     #[inline]
     pub fn apply(self, k: i32) -> i32 {
         match self {
-            Mod::Add(a) => k + a,
-            Mod::Mul(x) => k * x,
-            Mod::Double => k * 2,
+            Mod::Add(a) => k.saturating_add(a),
+            Mod::Mul(x) => k.saturating_mul(x),
+            Mod::Double => k.saturating_mul(2),
             Mod::Half => k / 2,
         }
     }
@@ -380,7 +389,7 @@ fn gather(g: &Game, o: PlayerId, actor: PlayerId, vor: &mut Mods) -> Seen {
             }
             let mine = pl.id == o;
             if mine {
-                s.mult *= d.counters_mult;
+                s.mult = s.mult.saturating_mul(d.counters_mult).min(COUNTER_MULT_CAP); // (many copies: no overflow)
             }
             match d.repl {
                 Some(ReplFx::Solemnity) => s.solemnity = true,
@@ -443,7 +452,7 @@ pub fn counters(g: &Game, actor: PlayerId, on: On, kind: Ctr, n: i32, path: Path
             mods.push(Mod::Double, "Innkeeper's Talent"); // --- card-models-3: level 3, the counters you put
         }
     }
-    ordered(g, o, kind, n, &mods)
+    ordered(g, o, kind, n, &mods).clamp(-COUNTER_CAP, COUNTER_CAP)
 }
 
 // ================================================================== the order (616.1)
@@ -526,7 +535,8 @@ pub fn ordered(g: &Game, o: PlayerId, kind: Ctr, n: i32, mods: &Mods) -> i32 {
 pub fn put_counters(g: &mut Game, actor: PlayerId, m: PermId, n: i32) -> i32 {
     let k = counters(g, actor, On::Perm(m), Ctr::Plus, n, Path::ALL);
     if k != 0 {
-        g.perm_mut(m).plus += k;
+        let plus = &mut g.perm_mut(m).plus;
+        *plus = plus.saturating_add(k);
         crate::impls::t0_captain::counters_put(g, m, k); // Captain Marvel copies counters
     }
     k

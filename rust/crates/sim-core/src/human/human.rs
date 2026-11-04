@@ -144,7 +144,11 @@ pub fn stack_priority(g: &mut Game, q: PlayerId) -> Res {
     if top.kind != StackKind::Spell {
         // Thassa's Oracle's own trigger, with Demonic Consultation / Tainted Pact in hand: the window to cast it;
         // your own important ability, with Peter Parker's Camera ready to copy it: you get priority
-        let own = super::thanos::oracle_window(g, q, &top) || super::urdragon::camera_window(g, q, &top);
+        // your Urza's Saga's chapter III, while the Saga is yours: the window to make one more Construct first
+        let saga = top.controller == q
+            && top.name.contains("chapter III")
+            && top.ctx.source.is_some_and(|l| g.player(q).lands.contains(&l));
+        let own = super::thanos::oracle_window(g, q, &top) || super::urdragon::camera_window(g, q, &top) || saga;
         if top.controller == q && mode != "all" && !own {
             return Ok(());
         }
@@ -330,6 +334,19 @@ fn respond_loop(g: &mut Game, q: PlayerId, prompt: &str, spell: Option<CardId>, 
         let n = g.stack_pushes;
         if do_of(&act) == "cast" && !g.stack.is_empty() && act.get("zone").and_then(Value::as_str) != Some("cmd") {
             if let Some(c) = hand_card(g, q, &act) {
+                // protection the AI plays through its own code: the person's version (`human::protect`)
+                let pr = match card_name(g, c).as_str() {
+                    super::protect::NOTW => Some(super::protect::not_of_this_world(g, q, c)?),
+                    super::protect::SWAT => Some(super::protect::deflecting_swat(g, q, c)?),
+                    _ => None,
+                };
+                if let Some(r) = pr {
+                    if let Some(why) = r {
+                        tell_invalid(&h, q, &why);
+                        continue;
+                    }
+                    return Ok(());
+                }
                 if g.db.get(c).tag(Tag::Ctr) {
                     if let Some(why) = cast_counterspell(g, q, c)? {
                         tell_invalid(&h, q, &why);
@@ -368,6 +385,21 @@ fn respond_loop(g: &mut Game, q: PlayerId, prompt: &str, spell: Option<CardId>, 
 /// q casts counterspell c at a spell on the stack (the top one, or one they pick when there are several it can
 /// counter). None, or why not
 pub fn cast_counterspell(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<String>> {
+    if card_name(g, c) == super::confluence::NAME {
+        // Mystic Confluence: the three modes first; with no counter mode it is cast as a plain spell
+        let Some(m) = super::confluence::modes(g, q, true)? else { return Ok(Some("Cancelled.".into())) };
+        if m.0 == 0 {
+            return super::confluence::cast_with(g, q, c, m);
+        }
+        g.confluence = Some(m);
+        let r = cast_counterspell_inner(g, q, c);
+        g.confluence = None; // (resolved, countered, or not cast)
+        return r;
+    }
+    cast_counterspell_inner(g, q, c)
+}
+
+fn cast_counterspell_inner(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<String>> {
     let many = g.stack.len() > 1;
     let cands: Vec<&StackItem> = g
         .stack
@@ -394,16 +426,34 @@ pub fn cast_counterspell(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<Str
     if let Some(why) = legal::check_counter(g, q, c, spell) {
         return Ok(Some(why));
     }
-    let alt = legal::alternative_counter_cost(g, q, c);
     let (gn, pips) = stack::counter_cost(g, c, Some(spell), Some(q));
-    if mana::cost_problem(g, q, gn, &pips).is_none() {
-        // pay from your pool
-        mana::pay_from_pool(g, q, gn, &pips);
-        g.free_counter = true; // already paid
-    } else if alt.is_none() {
-        let why = mana::cost_problem(g, q, gn, &pips).unwrap_or_default();
-        return Ok(Some(format!("Can't cast {}. {why}", card_name(g, c))));
+    let can_mana = mana::cost_problem(g, q, gn, &pips).is_none();
+    let alt = stack::counter_alt_label(g, q, c, Some(spell));
+    // with both open, the person chooses (Force of Will: pay {3}{U}{U} or pitch a blue card)
+    let use_alt = match (&alt, can_mana) {
+        (Some(a), true) => {
+            let labels = vec![format!("pay {}", mana::cost_text(gn, &pips)), a.clone()];
+            let prompt = format!("{}: how do you pay?", card_name(g, c));
+            let Some(k) = choices::choose(g, q, "choose", &prompt, &labels, Some("cancel"), None)? else {
+                return Ok(Some("Cancelled.".into()));
+            };
+            k == 1
+        }
+        (Some(_), false) => true,
+        (None, true) => false,
+        (None, false) => {
+            let why = mana::cost_problem(g, q, gn, &pips).unwrap_or_default();
+            return Ok(Some(format!("Can't cast {}. {why}", card_name(g, c))));
+        }
+    };
+    if use_alt {
+        if !stack::pay_counter_alt(g, q, c, Some(spell))? {
+            return Ok(Some(format!("Can't pay {}'s alternative cost.", card_name(g, c))));
+        }
+    } else {
+        mana::pay_from_pool(g, q, gn, &pips); // pay from your pool
     }
+    g.free_counter = true; // already paid
     let r = stack::cast_counter_spell(g, q, c, id);
     g.free_counter = false;
     if !r? {
@@ -442,6 +492,17 @@ pub fn apply(g: &mut Game, p: PlayerId, act: &Value) -> Res<Option<String>> {
         turn::play_land_card(g, p, c, "plays from the graveyard")?;
         engine::life::check_state(g)?;
         return Ok(None);
+    }
+    if d == "cast" && zone == Some("ex") {
+        // an exiled card a Dauthi Voidwalker let you play this turn (`card` is the card's id, as `exile_playable` lists)
+        let c = act.get("card").and_then(Value::as_u64).map(|i| CardId(i as u16));
+        let Some(c) = c.filter(|c| g.players.iter().any(|q| q.exile.contains(c))) else {
+            return Ok(Some("There is no such card in exile.".into()));
+        };
+        if let Some(why) = legal::check_cast_exile(g, p, c) {
+            return Ok(Some(why));
+        }
+        return cast(g, p, c, "ex");
     }
     if d == "cast" && zone == Some("gy") {
         let Some(c) = index_of(act, "card").and_then(|i| g.player(p).gy.get(i).copied()) else {
@@ -510,6 +571,10 @@ pub fn apply(g: &mut Game, p: PlayerId, act: &Value) -> Res<Option<String>> {
         let zone = if zone == Some("cmd") { "cmd" } else { "hand" };
         let c = if zone == "cmd" { commander_of(g, p, act) } else { hand_card(g, p, act) };
         let Some(c) = c else { return Ok(Some("There is no such card in your hand.".into())) };
+        if zone == "hand" && card_name(g, c) == super::confluence::NAME {
+            // Mystic Confluence with nothing to counter: its other modes (an instant: any time you have priority)
+            return super::confluence::cast_plain(g, p, c);
+        }
         if zone == "hand" && cards::hand_override(g, c) {
             return cards::cast_from_hand(g, p, c);
         }
@@ -559,6 +624,10 @@ pub fn abilities_of(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<(String, Ab
     out.extend(super::karn::perm_abilities(g, p, m).into_iter().map(|a| (a.label, AbilityKind::Extra(a.act))));
     if super::karn::owns_perm(g, m) {
         return Ok(out); // the Karn deck's cards: all listed above (the AI's hook options would show twice)
+    }
+    out.extend(super::cloud::perm_abilities(g, p, m).into_iter().map(|a| (a.label, AbilityKind::Extra(a.act))));
+    if super::cloud::owns_perm(g, m) {
+        return Ok(out); // the Cloud deck's cards listed there (the AI's hook options would show twice)
     }
     // the card's compiled abilities (its text, e.g. Wayfarer's Bauble), paid from your pool
     for (label, idx) in crate::dsl::human_abilities(g, p, m) {
@@ -693,6 +762,13 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         gn = 0;
         pips = String::new();
     }
+    // Dauthi Voidwalker's permission: cast from exile without paying its mana cost (the card leaves exile as it is cast)
+    let free = zone == "ex";
+    if free {
+        zone = "lib".into();
+        gn = 0;
+        pips = String::new();
+    }
     let mut ctx = Ctx::default();
     let mut gymode = None;
     if zone == "gy" {
@@ -729,7 +805,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         }
         gymode = Some(kind);
     }
-    if d.tags.str(Tag::Wipe).is_some() && d.tags.has(Tag::Rem) && !cit {
+    if d.tags.str(Tag::Wipe).is_some() && d.tags.has(Tag::Rem) && !cit && !free {
         // overload (Cyclonic Rift, Vandalblast)
         let (og, op) = crate::ai::decks::wipe_cost(g, p, c);
         let over = format!("overloaded ({}): every one you don't control", mana::cost_text(og, &op));
@@ -759,7 +835,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
             return Ok(None);
         }
     }
-    if d.tags.has(Tag::Mastery) && !cit {
+    if d.tags.has(Tag::Mastery) && !cit && !free {
         // Mizzix's Mastery: one target, or overloaded
         let one = format!("one target ({})", mana::cost_text(gn, &pips));
         let over = "overloaded ({5}{R}{R}{R}): every instant and sorcery card in your graveyard".to_string();
@@ -834,6 +910,20 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         let k = pick!(choices::choose(g, p, "choose", &prompt, &labels, Some("cancel"), None)?);
         ctx.deluge_x = Some(k as i32);
     }
+    if d.tags.str(Tag::Wipe) == Some("rebuke") {
+        // River's Rebuke: "return all nonland permanents target player controls to their owner's hand": the person
+        // names the player (the AI's wipe evaluation does it for a seat without one; without it the wipe hit nobody)
+        let ps: Vec<PlayerId> = g
+            .players
+            .iter()
+            .filter(|q| q.alive && (q.id == p || legal::player_targetable(g, q.id)))
+            .map(|q| q.id)
+            .collect();
+        let labels: Vec<String> = ps.iter().map(|&q| legal::describe_target(g, p, Target::Player(q))).collect();
+        let prompt = format!("{cname}: return all nonland permanents of which player?");
+        let k = pick!(choices::choose(g, p, "target", &prompt, &labels, Some("cancel"), None)?);
+        ctx.victim = Some(ps[k]);
+    }
     let mut discard_cost = false;
     if cname == "Bitter Triumph" {
         // additional cost: discard a card, or pay 3 life
@@ -864,7 +954,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
     }
     let mut life = 0;
     let phy = legal::phyrexian(g, p, c);
-    if !phy.is_empty() && !cit {
+    if !phy.is_empty() && !cit && !free {
         // {B/P}: its colour, or 2 life (your choice)
         let ways = legal::phyrexian_ways(g, p, c, gn, &pips);
         if ways.is_empty() {
@@ -890,6 +980,16 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         }
         life = ways[k].0;
         pips = ways[k].1.clone();
+    }
+    if d.has_dsl() {
+        // the additional cost (Natural Order's sacrifice, Seize the Spoils' discard) is paid before the mana (601.2h:
+        // in any order), so the person can still back out of it with nothing paid
+        if let Some(why) = mana::cost_problem(g, p, gn, &pips) {
+            return Ok(Some(format!("Can't cast {cname}. {why}{}", legal::cost_changers(g, p, c))));
+        }
+        if !cast::additional_cost(g, p, c, false)? {
+            return Ok(None); // cancelled
+        }
     }
     if let Some(why) = mana::pay_from_pool(g, p, gn, &pips) {
         return Ok(Some(format!("Can't cast {cname}. {why}{}", legal::cost_changers(g, p, c))));
@@ -934,9 +1034,6 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         if d.tags.has(Tag::Xtutor) {
             g.last_x = x as i32;
         }
-    }
-    if d.has_dsl() {
-        cast::additional_cost(g, p, c, false)?;
     }
     specs::pay_costs(g, p, c, &spec_costs)?;
     if let Some(f) = fodder {
@@ -988,6 +1085,12 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         let x = choices::pick_cards(g, p, &others, 1, &format!("{cname}: discard a card"), "choose")?[0];
         zones::discard_cards(g, p, &[x])?;
         ctx.paid_otherwise = true;
+    }
+    if free
+        && let Some(q) = g.players.iter().find(|q| q.exile.contains(&c)).map(|q| q.id)
+    {
+        g.player_mut(q).exile.take(c);
+        ctx.owner = Some(q); // still theirs: it goes back to their graveyard
     }
     if ctx.rean_target.is_some() {
         return cast_rean(g, p, c, &zone, ctx, flash_sac);

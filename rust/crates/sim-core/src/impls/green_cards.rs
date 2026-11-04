@@ -1052,6 +1052,9 @@ fn kura_dies(g: &mut Game, _src: Src, m: PermId, _cause: Sym) -> Res {
     if !trigger_window(g, p, Some(m), label, None)? {
         return Ok(());
     }
+    if crate::human::is_human(g, p) {
+        return crate::human::triggers_t1::kura_dies(g, p); // the person chooses the mode and the lands
+    }
     if lands_mode {
         // nonbasic lands first (they are the deck's best), then basics
         let mut found = 0;

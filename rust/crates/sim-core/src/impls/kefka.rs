@@ -595,7 +595,16 @@ fn twinned_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     let Some(pips) = ["UU", "UR", "RR"].into_iter().find(|x| can_pay(g, p, 1, x, false)) else { return Ok(false) };
     let hand = g.player(p).hand.clone();
-    let Some(d) = discard_choice(g, p, &hand, 0) else { return Ok(false) };
+    let d = if crate::human::is_human(g, p) {
+        // the person chooses the card the flashback discards
+        if hand.is_empty() {
+            return Ok(false);
+        }
+        crate::human::choices::pick_cards(g, p, &hand, 1, "Twinned Vision (flashback): discard a card", "choose")?[0]
+    } else {
+        let Some(d) = discard_choice(g, p, &hand, 0) else { return Ok(false) };
+        d
+    };
     pay(g, p, 1, pips, false)?;
     discard_cards(g, p, &[d])?;
     cast_card(g, p, c, "gy", Ctx { x: 1, ..Ctx::default() })?;
@@ -1022,6 +1031,9 @@ fn alpharael_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     draw(g, o, 2, false)?;
+    if crate::human::is_human(g, o) {
+        return alpharael_person(g, o);
+    }
     let hand = g.player(o).hand.clone();
     let arts: Vec<CardId> = hand.iter().copied().filter(|&c| g.db.get(c).types.has(Types::ARTIFACT)).collect();
     let one_art = min_by(&arts, |c| card_worth(g, o, c, false) - if wants_gy(g, c) { 100.0 } else { 0.0 });
@@ -1044,6 +1056,32 @@ fn alpharael_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         }
     }
     Ok(())
+}
+
+/// the person's Alpharael: discard an artifact card (which one), or two cards (which two)
+fn alpharael_person(g: &mut Game, o: PlayerId) -> Res {
+    let hand = g.player(o).hand.clone();
+    let arts: Vec<CardId> = hand.iter().copied().filter(|&c| g.db.get(c).types.has(Types::ARTIFACT)).collect();
+    let two = hand.len().min(2);
+    if two == 0 {
+        return Ok(());
+    }
+    if !arts.is_empty() {
+        let mut labels: Vec<String> =
+            arts.iter().map(|&c| format!("discard {} (an artifact card) and nothing else", crate::human::choices::card_label(g, c))).collect();
+        labels.push(format!("discard {two} card{}", if two == 1 { "" } else { "s" }));
+        let k = crate::human::choices::choose_one(
+            g,
+            o,
+            "choose",
+            "Alpharael, Dreaming Acolyte: discard two cards unless you discard an artifact card",
+            &labels,
+        )?;
+        if k < arts.len() {
+            return discard_cards(g, o, &[arts[k]]);
+        }
+    }
+    crate::human::choices::discard(g, o, two, "Alpharael, Dreaming Acolyte: discard a card")
 }
 
 fn alpharael_dt(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
@@ -1148,7 +1186,12 @@ fn voidborn_drain(g: &mut Game, src: PermId) -> Res {
         return Ok(());
     }
     let opps = alive_opps(g, o);
-    let Some(q) = min_by(&opps, |q| g.player(q).life as f64) else { return Ok(()) };
+    let q = if crate::human::is_human(g, o) && !opps.is_empty() {
+        crate::human::triggers_t1::voidborn_target(g, o, &opps)? // the person picks the opponent
+    } else {
+        let Some(q) = min_by(&opps, |q| g.player(q).life as f64) else { return Ok(()) };
+        q
+    };
     lose_life(g, q, 1, Some(o), "drain", None)?;
     gain(g, o, 1)
 }

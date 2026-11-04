@@ -544,8 +544,35 @@ fn wasp_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         .into_iter()
         .filter(|&x| g.perm(x).cd.is_some_and(|c| g.db.get(c).has_subtype("hero")))
         .collect();
-    let t = max_by(&heroes, |x| pval(g, x) + if g.player(p).ring_bearer == Some(x) { 5.0 } else { 0.0 }).unwrap_or(src);
-    if trigger_window(g, p, Some(src), "a Hero gains hexproof until end of turn", Some(2.0))? && live(g, t) {
+    // practice mode: "target Hero" is any Hero (any player's); the person picks when there is a choice, after the table's
+    // window (the engine probes a trigger up to its first window: a question before it would be asked twice)
+    let human = crate::human::is_human(g, p);
+    let t = if human {
+        if !trigger_window(g, p, Some(src), "a Hero gains hexproof until end of turn", Some(2.0))? {
+            return Ok(());
+        }
+        let all: Vec<PermId> = g
+            .players
+            .iter()
+            .filter(|q| q.alive)
+            .flat_map(|q| q.perms.iter().copied())
+            .filter(|&x| {
+                g.is_creature(x)
+                    && !g.perm(x).phased
+                    && g.perm(x).cd.is_some_and(|c| g.db.get(c).has_subtype("hero"))
+                    && !(g.perm(x).owner != p && crate::engine::values::untargetable(g, x))
+            })
+            .collect();
+        if all.len() > 1 {
+            crate::human::cards::pick_perm(g, p, "target", "The Wasp: which Hero gains hexproof until end of turn?", &all, None)?
+                .unwrap_or(src)
+        } else {
+            src
+        }
+    } else {
+        max_by(&heroes, |x| pval(g, x) + if g.player(p).ring_bearer == Some(x) { 5.0 } else { 0.0 }).unwrap_or(src)
+    };
+    if (human || trigger_window(g, p, Some(src), "a Hero gains hexproof until end of turn", Some(2.0))?) && live(g, t) {
         super::partials::eot_kw(g, t, "hexproof");
     }
     Ok(())
@@ -560,8 +587,22 @@ fn wasp_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: PlayerId)
         .into_iter()
         .filter(|&x| !g.perm(x).tapped && !crate::engine::values::untargetable(g, x))
         .collect();
-    let Some(t) = max_by(&cs, |x| pval(g, x)) else { return Ok(vec![]) };
-    if trigger_window(g, p, Some(src), "tap target creature", Some(3.0))? && live(g, t) {
+    // practice mode: the person picks the creature to tap (any creature the defending player controls), after the
+    // table's window (the engine probes a trigger up to its first window: a question before it would be asked twice)
+    let human = crate::human::is_human(g, p);
+    let t = if human {
+        let all: Vec<PermId> =
+            my_creatures(g, d).into_iter().filter(|&x| !crate::engine::values::untargetable(g, x)).collect();
+        if all.is_empty() || !trigger_window(g, p, Some(src), "tap target creature", Some(3.0))? {
+            None
+        } else {
+            crate::human::cards::pick_perm(g, p, "target", "The Wasp: tap which creature?", &all, None)?
+        }
+    } else {
+        max_by(&cs, |x| pval(g, x))
+    };
+    let Some(t) = t else { return Ok(vec![]) };
+    if (human || trigger_window(g, p, Some(src), "tap target creature", Some(3.0))?) && live(g, t) {
         g.perm_mut(t).tapped = true;
     }
     Ok(vec![])

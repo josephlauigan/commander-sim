@@ -1170,6 +1170,81 @@ pub fn free_counter(g: &Game, q: PlayerId, c: CardId) -> bool {
             && altcost::available(g, q, c, None)) // Mindbreak Trap's free mode
 }
 
+/// the alternative cost a person may pay for counterspell ctr instead of its mana now, as a label (None: none)
+pub fn counter_alt_label(g: &Game, q: PlayerId, ctr: CardId, spell: Option<CardId>) -> Option<String> {
+    let t = &g.db.get(ctr).tags;
+    let blues = !blue_in_hand(g, q, ctr).is_empty();
+    if t.has(Tag::Fierce) && commander_out(g, q) {
+        return Some("cast it without paying its mana cost (you control your commander)".into());
+    }
+    if t.has(Tag::Pact) {
+        return Some("free now; pay {3}{U}{U} at your next upkeep or lose the game".into());
+    }
+    if t.has(Tag::Misstep) && g.player(q).life > 10 {
+        return Some("pay 2 life instead of {U}".into());
+    }
+    if t.has(Tag::Fon) && g.active != Some(q) && blues {
+        return Some("exile a blue card from your hand instead (not your turn)".into());
+    }
+    if t.has(Tag::Free) && blues {
+        return Some("exile a blue card from your hand and pay 1 life instead".into());
+    }
+    if altcost::slot(g, ctr).is_some() && altcost::available(g, q, ctr, spell) {
+        return Some("its alternative cost".into()); // Daze, Mindbreak Trap ...
+    }
+    None
+}
+
+/// practice mode: a person chose to pay counterspell ctr's alternative cost (`counter_alt_label`) rather than its
+/// mana. True if paid. The AI's `pay_counter` is unchanged.
+pub fn pay_counter_alt(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>) -> Res<bool> {
+    let t = g.db.get(ctr).tags.clone();
+    let what = g.db.get(ctr).name.to_string();
+    let pitch = |g: &mut Game| -> Res<bool> {
+        let blues = blue_in_hand(g, q, ctr);
+        if blues.is_empty() {
+            return Ok(false);
+        }
+        let x = crate::human::cards::pick_blue(g, q, &blues, &what)?;
+        let pl = g.player_mut(q);
+        let i = pl.hand.iter().position(|&c| c == x).unwrap();
+        pl.hand.remove(i);
+        pl.exile.push(x);
+        Ok(true)
+    };
+    if t.has(Tag::Fierce) && commander_out(g, q) {
+        return altcost::pay_tax(g, q, ctr);
+    }
+    if t.has(Tag::Pact) {
+        if !altcost::pay_tax(g, q, ctr)? {
+            return Ok(false);
+        }
+        g.player_mut(q).pacts += 1;
+        return Ok(true);
+    }
+    if t.has(Tag::Misstep) && g.player(q).life > 10 {
+        if !altcost::pay_tax(g, q, ctr)? {
+            return Ok(false);
+        }
+        lose_life(g, q, 2, Some(q), "other", None)?;
+        return Ok(true);
+    }
+    if t.has(Tag::Fon) && g.active != Some(q) {
+        return Ok(altcost::pay_tax(g, q, ctr)? && pitch(g)?);
+    }
+    if t.has(Tag::Free) {
+        if !(altcost::pay_tax(g, q, ctr)? && pitch(g)?) {
+            return Ok(false);
+        }
+        lose_life(g, q, 1, Some(q), "other", None)?;
+        return Ok(true);
+    }
+    if altcost::slot(g, ctr).is_some() {
+        return altcost::pay_alt(g, q, ctr, spell);
+    }
+    Ok(false)
+}
+
 /// pay counterspell ctr's cost (or its alternative cost) against spell; true if paid
 pub fn pay_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>) -> Res<bool> {
     if g.free_counter {
@@ -1293,13 +1368,29 @@ pub fn cast_counter_spell(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -
 /// counterspell ctr resolves: counter the target if it's still on the stack (unless its controller pays for a soft
 /// counter)
 pub fn resolve_counter(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -> Res {
+    // a person's Mystic Confluence (practice mode): each counter mode is "unless its controller pays {3}" (so two
+    // are {6}), then the other modes they chose
+    if &*g.db.get(ctr).name == crate::human::confluence::NAME
+        && crate::human::is_human(g, q)
+        && let Some((n, bounce, draws)) = g.confluence.take()
+    {
+        if n > 0 {
+            resolve_counter_with(g, q, ctr, target, Some(3 * n as i32))?;
+        }
+        return crate::human::confluence::resolve_rest(g, q, &bounce, draws);
+    }
+    resolve_counter_with(g, q, ctr, target, None)
+}
+
+/// `resolve_counter`, with a soft counter's amount given (None: the card's own)
+fn resolve_counter_with(g: &mut Game, q: PlayerId, ctr: CardId, target: u32, soft_n: Option<i32>) -> Res {
     let Some(t) = item(g, target).cloned() else { return Ok(()) }; // gone: the counterspell does nothing
     if t.countered {
         return Ok(());
     }
     let (p, c) = (t.controller, t.card.unwrap());
     let d = g.db.get(ctr);
-    let mut soft = d.tags.int(Tag::Soft).unwrap_or(0);
+    let mut soft = soft_n.unwrap_or_else(|| d.tags.int(Tag::Soft).unwrap_or(0));
     if &*d.name == "Flusterstorm" {
         // storm: a copy per spell cast before it this turn
         soft = g.players.iter().filter(|x| x.alive).map(|x| crate::engine::cast::casts_this_turn(g, x.id)).ssum()

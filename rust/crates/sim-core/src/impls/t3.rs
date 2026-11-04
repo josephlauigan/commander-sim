@@ -222,6 +222,9 @@ pub fn sac_worst_permanent(g: &mut Game, p: PlayerId, exclude: Option<PermId>) -
 fn korvold_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let o = g.perm(src).owner;
     if m == src && trigger_window(g, o, Some(src), "sacrifice another permanent", None)? {
+        if human_of(g, o).is_some() {
+            return crate::human::triggers_t1::korvold_sacrifice(g, o, src); // the person picks what to sacrifice
+        }
         sac_worst_permanent(g, o, Some(src))?;
     }
     Ok(())
@@ -229,6 +232,10 @@ fn korvold_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 
 fn korvold_atk(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
     if atk.contains(&src) && trigger_window(g, p, Some(src), "sacrifice another permanent", None)? {
+        if human_of(g, p).is_some() {
+            crate::human::triggers_t1::korvold_sacrifice(g, p, src)?; // the person picks what to sacrifice
+            return Ok(vec![]);
+        }
         sac_worst_permanent(g, p, Some(src))?;
     }
     Ok(vec![])
@@ -630,6 +637,22 @@ pub fn put_creature(
     let cs: Vec<CardId> = searchable(g, p).into_iter().filter(|&c| g.db.get(c).creature && pred(g, c)).collect();
     if cs.is_empty() {
         return Ok(None);
+    }
+    if crate::human::is_human(g, p) {
+        // practice mode: the person searches (Natural Order, Green Sun's Zenith, Chord of Calling, Eldritch Evolution);
+        // finding nothing is allowed, and the library is shuffled either way
+        let got = crate::human::choices::search(
+            g,
+            p,
+            &|g: &Game, x: CardId| g.db.get(x).creature && pred(g, x),
+            1,
+            "Search your library for a creature card to put onto the battlefield",
+            true,
+        )?;
+        let Some(&c) = got.first() else { return Ok(None) };
+        g.player_mut(p).stat("tutored", 1);
+        enter(g, p, c, Enter::default())?;
+        return Ok(Some(c));
     }
     let wish = crate::ai::plans::wish_list(g, p);
     // Tier 6: the best-ranked wished card (lower tiers keep the first in library order: their results are locked)

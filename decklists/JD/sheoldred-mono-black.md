@@ -189,9 +189,9 @@ and Bolas's Citadel are the bigger artifacts you cast once the rocks are out.
 
 ## Mana and consistency
 
-36 lands: 31 Swamp, Command Tower (makes black here), Phyrexian Tower, and three colorless lands that draw cards:
-Bonders' Enclave, Mikokoro, Center of the Sea and Geier Reach Sanitarium. That is 32 black sources, plus Phyrexian
-Tower with a creature to sacrifice. Ramp: three mana rocks (Arcane Signet, Fellwar Stone, Mind Stone), Dark Ritual,
+36 lands: 31 Swamp, Cabal Coffers, Phyrexian Tower, and three colorless lands that draw cards:
+Bonders' Enclave, Mikokoro, Center of the Sea and Geier Reach Sanitarium. That is 31 black sources, plus Phyrexian
+Tower with a creature to sacrifice. **Cabal Coffers** ({2}, {T}: add {B} for each Swamp you control) took Command Tower's slot (JD, 2026-11-04): with 31 Swamps it needs no Urborg, and six Swamps out make it net {B}{B}{B}{B}, more every turn, for Exsanguinate and the big turns. Ramp: three mana rocks (Arcane Signet, Fellwar Stone, Mind Stone), Dark Ritual,
 Ashnod's Altar and Undercity Dire Rat. Tutors: Demonic
 Tutor and Diabolic Tutor.
 Interaction: eight removal spells and Grave Pact, 2 protection cards (Swiftfoot Boots, Darksteel Plate) and
@@ -212,7 +212,7 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Commander (1).** Sheoldred, the Apocalypse
 
-**Lands (36).** Bonders' Enclave, Command Tower, Geier Reach Sanitarium, Mikokoro Center of the Sea, Phyrexian Tower, 31 Swamp
+**Lands (36).** Bonders' Enclave, Cabal Coffers, Geier Reach Sanitarium, Mikokoro Center of the Sea, Phyrexian Tower, 31 Swamp
 
 **Creatures (26).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Burrog Banemaker, Fate Unraveler, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Mikaeus the Unhallowed, Necrosquito, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Phyrexian Rager, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Sephiroth Fabled SOLDIER // Sephiroth One-Winged Angel, Seymour Flux, Triskelion, Undercity Dire Rat, Vault Plunderer, Viscera Seer, Yawgmoth Thran Physician, Zulaport Cutthroat
 
@@ -237,9 +237,9 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Bolas's Citadel
 1 Bonders' Enclave
 1 Burrog Banemaker
+1 Cabal Coffers
 1 Call of the Ring
 1 Cast Away Doubt
-1 Command Tower
 1 Cost of Brilliance
 1 Dark Deal
 1 Dark Ritual

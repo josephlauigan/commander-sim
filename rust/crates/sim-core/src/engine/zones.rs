@@ -100,10 +100,16 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
         pl.stat("cards_drawn", 1);
         crate::gf_audit::draw(g, p, c); // --- ai-audit
         crate::t6stats::flow_draw(g, p, step && k == 0, new); // --- ai-flow
-        if has(g, p, Tag::Ironman)
-            && let Some(a) = army_of(g, p)
-        {
-            repl::put_plus(g, a, 1);
+        if has(g, p, Tag::Ironman) && crate::human::is_human(g, p) {
+            crate::human::triggers_t1::ironman_counter(g, p)?; // the person picks the creature
+        } else if has(g, p, Tag::Ironman) {
+            // "put a +1/+1 counter on target creature": the AI picks the creature it values most (the Army before,
+            // whatever else it had; the Army still wins a tie)
+            let own: Vec<PermId> =
+                g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased).collect();
+            if let Some(t) = max_by(&own, |m| pval(g, m) + if g.perm(m).army { 0.01 } else { 0.0 }) {
+                repl::put_plus(g, t, 1);
+            }
         }
         if g.dsl_on {
             crate::dsl::fire(g, "draw", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
@@ -847,15 +853,33 @@ fn card_tag_str(g: &Game, m: PermId, t: Tag) -> Option<&str> {
     g.perm(m).cd.and_then(|c| g.db.get(c).tags.str(t))
 }
 
-fn hand_tag_death(g: &mut Game, q: PlayerId, p: PlayerId, _m: PermId, creature: bool) -> Res {
-    if has(g, q, Tag::Bartist) {
+fn hand_tag_death(g: &mut Game, q: PlayerId, p: PlayerId, m: PermId, creature: bool) -> Res {
+    // how many of q's permanents with tag t see this death: the ones still on the battlefield, and the dying creature
+    // itself ("this creature or another creature dies"), which has already left by now (`leave` comes first), read as
+    // it last was: q's, with its abilities
+    let seeing = |g: &Game, t: Tag| -> usize {
+        let on_bf = find(g, q, t).iter().filter(|&&a| a != m && !g.perm(a).neutered).count();
+        let itself = p == q && card_tag(g, m, t) && !g.perm(m).neutered;
+        on_bf + usize::from(itself)
+    };
+    // Blood Artist: "this creature or another creature dies": one drain per Artist you control (two drained once)
+    let artists = if creature { seeing(g, Tag::Bartist) } else { 0 };
+    for _ in 0..artists {
         let opps: Vec<PlayerId> = g.opps(q).collect();
-        if let Some(t) = max_by(&opps, |o| threat(g, q, o)) {
+        let target = if crate::human::is_human(g, q) {
+            crate::human::gaps_t2::pick_player(g, q, "Blood Artist")? // "target player": the person's pick, you included
+        } else {
+            max_by(&opps, |o| threat(g, q, o))
+        };
+        if let Some(t) = target {
             lose_life(g, t, 1, Some(q), "drain", None)?; // Blood Artist
             gain(g, q, 1)?;
         }
     }
-    if q == p && has(g, q, Tag::Drain) && creature {
+    // Zulaport Cutthroat: "this creature or another creature you control dies, each opponent loses 1 life and you gain
+    // 1 life": once per Zulaport (two drained once), and for its own death too (it had left before it was counted)
+    let zulaports = if q == p && creature { seeing(g, Tag::Drain) } else { 0 };
+    for _ in 0..zulaports {
         for o in g.opps(q).collect::<Vec<_>>() {
             lose_life(g, o, 1, Some(q), "drain", None)?;
         }
@@ -1082,7 +1106,14 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     let d = g.db.get(cd);
     let (haste, has_dsl, loyalty) = (d.tag(Tag::Haste), d.has_dsl(), d.start_loyalty);
     let born = g.enter_no;
-    let plus = how.plus + crate::impls::green_cards::enters_with(g, p, cd, how.was_cast); // Wildgrowth Archaic
+    // Spark Double's copy: an additional +1/+1 counter if it's a creature, an additional loyalty counter if it's a
+    // planeswalker
+    let spark = crate::impls::common::spark_bonus(g, phys);
+    let (spark_plus, loyalty) = match loyalty {
+        Some(l) => (0, Some(l + spark)),
+        None => (if d.creature { spark } else { 0 }, None),
+    };
+    let plus = how.plus + spark_plus + crate::impls::green_cards::enters_with(g, p, cd, how.was_cast); // Wildgrowth Archaic
     // the enter step's counters (614.1c): Doubling Season doubles a planeswalker's loyalty (once: the old `etb` hook
     // in impls/t3.rs doubled it again), undying's counter and the counters it enters with; Scales, Vorinclex, Solemnity
     let (v_loy, v_undying, v_plus) = repl::enter_counters(g, p, m, loyalty, plus);

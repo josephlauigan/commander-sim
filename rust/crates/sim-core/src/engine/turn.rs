@@ -36,7 +36,8 @@ pub fn land_enters_tapped(g: &Game, p: PlayerId, cd: CardId) -> bool {
         return false; // Blood Moon: a Mountain with no "enters tapped" of its own (not a fetch land either)
     }
     if t.has(Tag::F) {
-        return true;
+        // the AI cracks it at once, so it counts as tapped; a person keeps it untapped to activate it (`human::fetch`)
+        return !(crate::human::is_human(g, p) && crate::human::fetch::person_fetch(&d.name));
     }
     if crate::impls::t12_windgrace::lands_enter_untapped(g, p) {
         return false; // --- Tiers 1/2 (windgrace): Spelunking
@@ -74,7 +75,26 @@ fn untapped_by_rule(g: &Game, p: PlayerId, cd: CardId, rule: EnterRule) -> bool 
         EnterRule::Opponents(n) => g.opps(p).count() as u32 >= n,
         EnterRule::TypesMore(t, n) => pl.lands.iter().filter(|&&l| land_types(g, l).intersects(t)).count() as u32 >= n,
         EnterRule::Reveal(ts) => {
-            pl.hand.iter().any(|&c| c != cd && g.db.get(c).land && g.db.get(c).land_types.intersects(ts))
+            let cands: Vec<CardId> = pl
+                .hand
+                .iter()
+                .copied()
+                .filter(|&c| c != cd && g.db.get(c).land && g.db.get(c).land_types.intersects(ts))
+                .collect();
+            if cands.is_empty() || !crate::human::is_human(g, p) {
+                return !cands.is_empty();
+            }
+            // practice mode: "you may reveal" -- the person decides (an untapped land is not always what they want)
+            let mut labels: Vec<String> = vec![];
+            for &c in &cands {
+                let l = crate::human::choices::card_label(g, c);
+                if !labels.contains(&l) {
+                    labels.push(l);
+                }
+            }
+            let prompt = format!("{}: reveal a card from your hand? If you don't, it enters tapped", g.db.get(cd).name);
+            let labels: Vec<String> = labels.into_iter().map(|l| format!("reveal {l}")).collect();
+            matches!(crate::human::choices::choose(g, p, "choose", &prompt, &labels, Some("don't reveal"), None), Ok(Some(_)))
         }
         EnterRule::Legendary => pl.perms.iter().any(|&m| g.is_creature(m) && card_tag(g, m, Tag::Leg)),
         EnterRule::Pay(n) => pays_for_land(g, p, cd, n),
@@ -319,26 +339,43 @@ pub fn true_fetch(name: &str) -> Option<&'static str> { // --- ai-planner: pub (
     })
 }
 
+/// the life a person may pay for land card c to enter untapped (a shock land), when that rule applies to it now (the
+/// same test as `play_land_card`'s)
+pub fn shock_cost(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
+    match g.db.get(c).enters_rule {
+        Some(EnterRule::Pay(n))
+            if !crate::engine::mana::moon_card(g, c)
+                && !(!g.hooks.is_empty() && cards_named(g, p, &["Thalia, Heretic Cathar", "Archon of Emeria"])) =>
+        {
+            Some(n)
+        }
+        _ => None,
+    }
+}
+
+/// can fetch land card c be found by a fetch land of these kinds (`true_fetch`: two basic land types, "basic", or None:
+/// a basic land card)
+pub fn fetch_legal(g: &Game, c: CardId, kinds: Option<&str>) -> bool {
+    let d = g.db.get(c);
+    match kinds {
+        Some(k) if k != "basic" => d.land && d.land_types.intersects(crate::cards::Colors::from_letters(k)),
+        _ => d.land && ["Forest", "Island", "Plains", "Swamp", "Mountain", "Wastes"].contains(&&*d.name),
+    }
+}
+
 /// pool games: a fetch land is sacrificed at once for a land (a second landfall, a land in the graveyard)
 pub fn crack_fetch(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     if crate::engine::mana::moon_land(g, l) {
         return Ok(()); // Blood Moon: a fetch land has no ability
     }
     let name = g.db.get(g.perm(l).card()).name.to_string();
+    if crate::human::is_human(g, p) && crate::human::fetch::person_fetch(&name) {
+        return Ok(()); // a person keeps the fetch land and activates it when they choose (`human::fetch`)
+    }
+    // the other fetch-style lands (Blighted Woodland, Krosan Verge ...) are still cracked at once, by the AI's pick
+    crate::human::auto_note(g, p, &format!("{name} is cracked at once and the land it finds is picked for you"));
     let kinds = true_fetch(&name);
-    let basics = ["Forest", "Island", "Plains", "Swamp", "Mountain", "Wastes"];
-    let cands: Vec<CardId> = match kinds {
-        Some(k) if k != "basic" => {
-            let ts = crate::cards::Colors::from_letters(k);
-            searchable(g, p)
-                .into_iter()
-                .filter(|&c| g.db.get(c).land && g.db.get(c).land_types.intersects(ts))
-                .collect()
-        }
-        _ => {
-            searchable(g, p).into_iter().filter(|&c| g.db.get(c).land && basics.contains(&&*g.db.get(c).name)).collect()
-        }
-    };
+    let cands: Vec<CardId> = searchable(g, p).into_iter().filter(|&c| fetch_legal(g, c, kinds)).collect();
     if cands.is_empty() {
         if crate::impls::titania::is_deck(g.player(p).key) {
             // the sacrifice is a cost: the land goes to the graveyard even with nothing to find (Titania)
@@ -755,7 +792,10 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
             let pl = g.player_mut(q);
             if let Some(i) = pl.hand.iter().position(|&x| x == c) {
                 pl.hand.remove(i);
-                pl.exile.push(c);
+                // a card taken from another player's library (Ragavan, Grenzo) goes back to its owner's exile
+                let owner = pl.stolen.swap_remove(&c).unwrap_or(q);
+                pl.agent_ids.retain(|&x| x != c);
+                g.player_mut(owner).exile.push(c);
             }
         }
     }

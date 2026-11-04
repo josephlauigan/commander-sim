@@ -279,6 +279,37 @@ pub fn pile_tutor(g: &mut Game, p: PlayerId, n: usize, keep: usize) -> Res {
     if cs.is_empty() {
         return Ok(());
     }
+    if crate::human::is_human(g, p) {
+        // practice mode: you pick the cards; the opponent (the AI) still splits them. Only the chosen cards are scored,
+        // with no person seated: the AI's scoring of a card can run its targeting, which asked the person (six stray
+        // "choose a target" questions before the search)
+        let prompt = format!("Search for up to {n} cards with different names");
+        let pile = crate::human::choices::search(g, p, &|_: &Game, _: CardId| true, n, &prompt, true)?;
+        if pile.is_empty() {
+            return Ok(());
+        }
+        let hand = if pile.len() > keep {
+            let seats = std::mem::take(&mut g.humans);
+            let hv: Vec<(CardId, f64)> = pile.iter().map(|&c| (c, ai::tutor_value(g, p, c))).collect();
+            let gv: Vec<(CardId, f64)> =
+                pile.iter().map(|&c| (c, card_worth(g, p, c, true).max(15.0 * ai::gy_worth(g, p, c)))).collect();
+            g.humans = seats;
+            let val = |v: &[(CardId, f64)], c: CardId| v.iter().find(|x| x.0 == c).unwrap().1;
+            // the opponent's split: the one that leaves you the least value
+            let mut best: Option<(f64, Vec<CardId>)> = None;
+            for hand in combinations(&pile, keep) {
+                let v: f64 = hand.iter().map(|&c| val(&hv, c)).psum()
+                    + pile.iter().filter(|c| !hand.contains(c)).map(|&c| val(&gv, c)).psum();
+                if best.as_ref().is_none_or(|b| v < b.0) {
+                    best = Some((v, hand));
+                }
+            }
+            best.map(|b| b.1).unwrap_or_else(|| pile.clone())
+        } else {
+            pile.clone()
+        };
+        return finish_pile(g, p, opp, &pile, &hand, false);
+    }
     let mut hv: Vec<(CardId, f64)> = cs.iter().map(|&c| (c, ai::tutor_value(g, p, c))).collect();
     let gv: Vec<(CardId, f64)> =
         cs.iter().map(|&c| (c, card_worth(g, p, c, true).max(15.0 * ai::gy_worth(g, p, c)))).collect();
@@ -311,16 +342,6 @@ pub fn pile_tutor(g: &mut Game, p: PlayerId, n: usize, keep: usize) -> Res {
         }
         best.unwrap()
     };
-    if crate::human::is_human(g, p) {
-        // practice mode: you pick the cards; the opponent (the AI) still splits them
-        let prompt = format!("Search for up to {n} cards with different names");
-        let pile = crate::human::choices::search(g, p, &|_: &Game, _: CardId| true, n, &prompt, true)?;
-        if pile.is_empty() {
-            return Ok(());
-        }
-        let hand = if pile.len() > keep { result(&pile).1 } else { pile.clone() };
-        return finish_pile(g, p, opp, &pile, &hand, false);
-    }
     let mut best: Option<(f64, Vec<CardId>, Vec<CardId>)> = None;
     for pl in combinations(&pool, k) {
         let r = result(&pl);

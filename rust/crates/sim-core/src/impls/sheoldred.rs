@@ -349,9 +349,20 @@ fn plunderer_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let p = owner(g, src);
     let opps: Vec<PlayerId> = g.opps(p).collect();
-    let target = if crate::human::is_human(g, p) {
-        crate::human::specs::ask_player(g, p, "Vault Plunderer")?
-    } else if let Some(q) = drain_target(g, p, 1) {
+    if crate::human::is_human(g, p) {
+        // the person names the player after the trigger's window (the engine's probe run stops at the first window:
+        // asking before it asked twice)
+        if trigger_window(g, p, Some(src), "target player draws a card and loses 1 life", Some(3.0))? {
+            let target = crate::human::specs::ask_player(g, p, "Vault Plunderer")?;
+            if target != p {
+                crime(g, p)?;
+            }
+            draw(g, target, 1, false)?;
+            lose_life(g, target, 1, Some(p), "other", None)?;
+        }
+        return Ok(());
+    }
+    let target = if let Some(q) = drain_target(g, p, 1) {
         q // Sheoldred is out: an opponent draws and loses 3 in all
     } else if g.player(p).life > 3 && g.player(p).library.len() > 2 {
         p
@@ -428,7 +439,10 @@ fn salvagers_drain(g: &mut Game, src: Src) -> Res {
     if !trigger_window(g, o, Some(src), "drain 1", None)? {
         return Ok(());
     }
-    if let Some(q) = weakest_opp(g, o) {
+    // practice mode: "target opponent" is the person's pick, not the weakest (asked after the window: the engine
+    // probes a trigger up to its first window, and a question before it would be asked twice)
+    let picked = if human(g, o) { crate::human::gaps_t2::pick_opponent(g, o, "Al Bhed Salvagers")? } else { None };
+    if let Some(q) = picked.or_else(|| weakest_opp(g, o)).filter(|&q| g.player(q).alive) {
         lose_life(g, q, 1, Some(o), "drain", Some(false))?;
     }
     gain(g, o, 1)
@@ -972,10 +986,38 @@ fn delver_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let o = g.perm(src).owner;
-    let Some(c) = rean_pick(g, o, 99, true) else { return Ok(()) };
-    if !trigger_window(g, o, Some(src), "return a creature card from your graveyard", Some(5.0))? {
-        return Ok(());
-    }
+    // practice mode: the person picks the creature card (any in their graveyard; they lose its mana value in life),
+    // after the trigger's window (the engine's probe run stops at the first window: asking before it asked twice)
+    let c = if human(g, o) {
+        if !g.player(o).gy.iter().any(|&c| g.db.get(c).creature) {
+            return Ok(());
+        }
+        if !trigger_window(g, o, Some(src), "return a creature card from your graveyard", Some(5.0))? {
+            return Ok(());
+        }
+        let cs: Vec<CardId> = g.player(o).gy.iter().copied().filter(|&c| g.db.get(c).creature).collect();
+        if cs.is_empty() {
+            return Ok(());
+        }
+        let labels: Vec<String> = cs
+            .iter()
+            .map(|&c| format!("{} (lose {} life)", crate::human::choices::card_label(g, c), g.db.get(c).cmc))
+            .collect();
+        let k = crate::human::choices::choose_one(
+            g,
+            o,
+            "target",
+            "Phyrexian Delver: return which creature card from your graveyard?",
+            &labels,
+        )?;
+        cs[k]
+    } else {
+        let Some(c) = rean_pick(g, o, 99, true) else { return Ok(()) };
+        if !trigger_window(g, o, Some(src), "return a creature card from your graveyard", Some(5.0))? {
+            return Ok(());
+        }
+        c
+    };
     if reanimate(g, o, c)?.is_some() {
         let mv = g.db.get(c).cmc as i32;
         lose_life(g, o, mv, Some(o), "other", None)?;
@@ -992,7 +1034,29 @@ fn beckoner_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let o = g.perm(src).owner;
     let cs: Vec<PermId> = my_creatures(g, o).into_iter().filter(|&x| x != src).collect();
-    let Some(t) = max_by(&cs, |x| pval(g, x) + if g.perm(x).sick { 0.0 } else { 1.0 }) else { return Ok(()) };
+    // practice mode: the person picks the creature (a required target), after the trigger's window (the engine's probe
+    // run stops at the first window: asking before it asked twice)
+    if human(g, o) && !cs.is_empty() {
+        if !trigger_window(g, o, Some(src), "+2/+0 and returns when it dies", Some(3.0))? {
+            return Ok(());
+        }
+        let cs: Vec<PermId> = my_creatures(g, o).into_iter().filter(|&x| x != src).collect();
+        let t = crate::human::cards::pick_perm(
+            g,
+            o,
+            "target",
+            "Perigee Beckoner: +2/+0 and a return-when-it-dies grant on which creature?",
+            &cs,
+            None,
+        )?;
+        if let Some(t) = t.filter(|&t| g.perm(t).on_bf) {
+            g.perm_mut(t).eot_pt.0 += 2;
+            grant_eot(g, t, "ret_dies_tapped");
+        }
+        return Ok(());
+    }
+    let t = max_by(&cs, |x| pval(g, x) + if g.perm(x).sick { 0.0 } else { 1.0 });
+    let Some(t) = t else { return Ok(()) };
     if trigger_window(g, o, Some(src), "+2/+0 and returns when it dies", Some(3.0))? && g.perm(t).on_bf {
         g.perm_mut(t).eot_pt.0 += 2;
         grant_eot(g, t, "ret_dies_tapped");
@@ -2037,7 +2101,9 @@ fn seph_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId
 
 /// target opponent (the one with the least life) loses 1 life and p gains 1
 fn seph_drain(g: &mut Game, p: PlayerId) -> Res {
-    if let Some(q) = weakest_opp(g, p) {
+    // practice mode: "target opponent" is the person's pick, not the one with the least life
+    let picked = if human(g, p) { crate::human::gaps_t2::pick_opponent(g, p, "Sephiroth")? } else { None };
+    if let Some(q) = picked.or_else(|| weakest_opp(g, p)) {
         lose_life(g, q, 1, Some(p), "drain", Some(false))?;
     }
     gain(g, p, 1)

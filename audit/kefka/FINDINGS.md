@@ -3,7 +3,12 @@
 What the simulator has taught us about the Kefka Grixis discard deck: strengths, weaknesses, and what was tried and why
 it did or didn't work. Updated after every run. Newest evidence first. Matched tiers: t3–t5 (`data/my_decks.toml`).
 
-## Current state (2026-10-17, evening)
+## 2026-11-04: Cabal Coffers for a Mountain (JD's physical deck; not simulated)
+With Urborg out every land is a Swamp, so L lands make 2L - 3 mana for a Breach or Yawgmoth's Will turn. Without
+Urborg it nets little (7 Swamps; it makes nothing until two other lands can pay its {2}). No number yet: the next
+baseline (T3) measures it.
+
+## Current state (2026-10-17, evening; superseded: the newest baseline is the 2026-11-04 section at the end)
 Card report (adaptive AI, loose, 1,000 games per tier; `audit/kefka/2026-10-17-smaug/K0-analyze-adaptive.txt`):
 T3 24.3%, T4 32.5%, T5 26.4% on the quick AI. Look-ahead baselines from the swap run below: **T3 26.9%, T4 30.5%,
 T5 23.1% (26.8% over t3–t5).**
@@ -111,3 +116,34 @@ Price of Progress: Unmodeled -> Full (damage to each player for its nonbasic lan
 ## 2026-11-01: recalibration stage 2 remeasure
 
 Kefka, t3: **13.6%** (CI 12.2-15.2) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). Stage 1, same seeds: 14.1%. The 10/18 AI audit number (27.3%, with the hand AI) is from an older build and list. Fitted t3 knobs: 12.9% (level).
+
+## 2026-11-04: Urborg, Tomb of Yawgmoth vs a Swamp (paired, t3, loose, look-ahead, 2,000 games per list)
+
+JD swapped a Swamp for Urborg on 11/02 (list-only, not simulated); this is its number. The run was set up as NEW=>OLD
+(Urborg => Swamp), so the tool's "baseline -> variant" is the current list (Urborg) -> Swamp back in. **Flipped here to
+read as Urborg's effect over a Swamp.** Raw: `.claude/worktrees/sim-runs-2026-11-04/kefka-urborg-vs-swamp.txt`.
+
+- **Win rate: Urborg 18.3%, Swamp 18.1%; Urborg over Swamp +0.1 points (the tool prints -0.1 for the swap; the axis table
+  rounds it to -0.2), noise +-1.1 (paired).** Verdict NO CLEAR EFFECT, well inside the noise. Only t3 (Kefka's single tier
+  here); t4 and t5 were not run.
+- **The model has Urborg working:** it makes every land a Swamp, so every land can tap for {B} (`engine/mana.rs`,
+  `impls/common.rs`, tests `tests/lands_urborg_coffers.rs`, main as of 11/04). The preflight shows the Swamp is only played,
+  never cast; Urborg is drawn in 29.1% of games, the Swamp in 87.6% (it is one of eight in the swapped list).
+- **Why nothing moves, from the numbers:** every axis is flat inside its band. Mana available on turn 4 is 3.81 with Urborg
+  vs 3.82 with the Swamp, turn 6 5.18 vs 5.18, turn 8 6.62 vs 6.61; missed land drops in turns 1-5 0.61 vs 0.61; extra
+  mulligans 0.11 vs 0.11; the commander resolves by turn 4 in 14.8% vs 14.8% and by turn 6 in 66.1% vs 65.8%; plan online at
+  all 15.6% vs 14.9% (inside +-2.3), plan turn 9.40 vs 9.47; spells cast per game 10.46 vs 10.45; rounds survived 9.20 vs
+  9.21; damage per game 30.2 vs 29.9; commander removals 0.22 vs 0.22. Nothing the deck does changes.
+- **The "already plenty of {B}" reading is plausible but not shown by this run.** The breakdown has no coloured-mana count,
+  only total mana. From the list (`data/decks.json`, my count) the deck already has 7 Swamps, Blood Crypt, Haunted Ridge,
+  Sulfurous Springs and Underground River (11 lands that make {B}) plus Command Tower, Exotic Orchard and Gemstone Mine,
+  and the swapped list has an 8th Swamp. Urborg adds {B} from the other lands (the Islands, Mountains and the blue-red
+  duals), which would matter only when black is the missing colour. Showing that would need a coloured-mana metric (stuck
+  for black, black spells cast), which the explain output does not give.
+- **Wins by damage 100% in both lists;** eliminated by Aurelia, Tergrid and Marwyn in the same order and shares either way
+  (Aurelia via combat 15.6% vs 16.0%, Tergrid 11.7% vs 11.1%).
+- **Decision input, not a recommendation:** at t3 Urborg is neither better nor worse than a Swamp to within about +-1.1 points.
+  Its non-simulated risks and benefits (it also makes opponents' lands Swamps; Blood Moon turns it off) were not measured.
+- **Baseline note:** Kefka's 18.3% at t3 (current list) is not like-for-like with the 11/01 remeasure (13.6%, CI 12.2-15.2): the
+  list and the build may have changed since (Ghave breakup 11/02, JD's 11/01 Palantir swap, Urborg now tapping for {B}). The cause of the
+  difference was not investigated here.

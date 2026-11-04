@@ -381,7 +381,20 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) 
         if let Some(n) = t.int(Tag::Tokatk) {
             let att = name.starts_with("Adeline");
             let n = if att { g.opps(p).count() as u32 } else { n.max(0) as u32 };
-            new.extend(make_tokens(g, p, Tokens { attacking: att, sick: !att, lifelink: !att, ..Tokens::new(n, 1) })?);
+            let made = make_tokens(g, p, Tokens { attacking: att, sick: !att, lifelink: !att, ..Tokens::new(n, 1) })?;
+            if att && crate::human::is_human(g, p) {
+                crate::human::gaps_t2::route_adeline(g, p, &made)?; // practice mode: one token per opponent, player or walker
+            } else if att {
+                // "for each opponent, a token tapped and attacking that player or a planeswalker they control": the AI
+                // sends one token at each opponent's player (all of them went at the main defender before)
+                let opps: Vec<PlayerId> = g.opps(p).collect();
+                for (j, &t) in made.iter().enumerate() {
+                    if !opps.is_empty() {
+                        g.atk_targets.push((t, opps[j % opps.len()]));
+                    }
+                }
+            }
+            new.extend(made);
         }
         if t.has(Tag::Suntitan) {
             sun_titan(g, p)?;
@@ -1035,7 +1048,11 @@ const MAX_COMBATS: u32 = 200;
 
 /// p's combat phase (and extra combats). Python's `combat`.
 pub fn combat(g: &mut Game, p: PlayerId) -> Res {
-    ozolith_move(g, p);
+    if crate::human::is_human(g, p) {
+        crate::human::triggers_t1::ozolith_move(g, p)?; // the person picks the creature (or none)
+    } else {
+        ozolith_move(g, p);
+    }
     g.player_mut(p).haste_all = false;
     let mut ncomb = 0;
     while ncomb < MAX_COMBATS && !g.over && g.player(p).alive {

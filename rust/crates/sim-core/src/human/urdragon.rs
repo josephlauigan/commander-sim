@@ -1,25 +1,38 @@
-//! Practice mode for the Ur-Dragon deck's combos (`decklists/JD/ur-dragon-dragon-copies.md`): what a person at the seat can
-//! do by hand that the bots do through their own code.
+//! Practice mode for the Ur-Dragon deck's cards (`decklists/JD/ur-dragon-dragon-copies.md`) and the table shortcuts the
+//! Sauron deck shares with it: what a person at the seat can do by hand that the bots do through their own code.
 //!
-//! - **The Helm loop** (Godo, Bandit Warlord or Combat Celebrant wearing Helm of the Host): by hand it is 3 or more
-//!   prompts per combat. Once the loop is live, the person may declare "repeat": every additional combat this turn
-//!   attacks the chosen opponent with everything that can attack, with no more attack prompts. Blocks, damage, the
-//!   triggers and the opponents' answers stay real. In repeat mode Godo's enter trigger skips its search and Combat
-//!   Celebrant exerts without asking.
-//! - **Choosing what to attach** (Hammer of Nazahn, Sigarda's Aid, Brass Squire).
-//! - **Dualcaster Mage + Twinflame**: Twinflame's copy (new targets, hasty token copies), Dualcaster Mage's enter
+//! The Ur-Dragon deck itself (rebuilt 11/03):
+//! - **Its three combo loops** (Astral Dragon + Cursed Mirror; Miirym + Astral Dragon + Doubling Season; Garth One-Eye +
+//!   Twinflame + Spark Double + Doubling Season): "start the loop" on each piece on the battlefield while the
+//!   catalogue's `ready` holds (`impls/t45_urdragon_combos.rs`). It plays the catalogue's own steps (the cast, Miirym's
+//!   trigger, Twinflame, Regrowth, with the opponents' windows and the pieces-must-survive check), then makes the
+//!   tokens the loop makes: hasty Astral Dragon copies of the Mirror or hasty Garths, as many rounds as the person
+//!   picks or enough to kill the table (the token cap bounds both), or 3/3 flying Dragon tokens for Miirym's line.
+//!   Cancelling leaves everything to play by hand.
+//! - **Twinflame and Dualcaster Mage**: Twinflame's copy (new targets, hasty token copies), Dualcaster Mage's enter
 //!   trigger for the person (a flashed-in one or a token) and the loop shortcut (infinite hasty Dualcaster Mages).
-//! - **Peter Parker's Camera** and **Jaxis, the Troublemaker** activated by the person.
+//! - **Choosing what to attach** (Hammer of Nazahn, Sigarda's Aid, Brass Squire), **Peter Parker's Camera** and
+//!   **Jaxis, the Troublemaker** activated by the person.
+//!
+//! For the Sauron deck's Godo, Bandit Warlord, Combat Celebrant and Helm of the Host (they left the Ur-Dragon list in
+//! the 11/03 rebuild; the code and its tests live here):
+//! - **The Helm loop** (Godo or Combat Celebrant wearing Helm of the Host): by hand it is 3 or more prompts per
+//!   combat. Once the loop is live, the person may declare "repeat": every additional combat this turn attacks the
+//!   chosen opponent with everything that can attack, with no more attack prompts. Blocks, damage, the triggers and
+//!   the opponents' answers stay real. In repeat mode Godo's enter trigger skips its search and Combat Celebrant
+//!   exerts without asking.
 //!
 //! None of this is reached by a bot: every entry point is for a seat with a person.
 
 use super::abilities::{PermAbility, Why, ability};
 use super::{choices, legal, mana};
+use crate::cards::Types;
 use crate::engine::stack;
 use crate::engine::zones;
 use crate::flow::Res;
 use crate::ids::{CardId, PermId, PlayerId};
-use crate::state::{Ctx, DataKey, Game, StackKind, Step, Val};
+use crate::impls::combos::{self, Combo};
+use crate::state::{CopyExc, Ctx, DataKey, Game, StackKind, Step, Val};
 use crate::sym::{Sym, intern};
 
 pub const GODO: &str = "Godo, Bandit Warlord";
@@ -483,4 +496,234 @@ pub fn dualcaster_flash(g: &mut Game, p: PlayerId, c: CardId, spell: CardId, ctx
         dualcaster_etb(g, p, dm, Some((spell, &ctx)))?;
     }
     Ok(None)
+}
+
+// ------------------------------------------------------------------ the Ur-Dragon deck's three loops
+// The catalogue (`impls/t45_urdragon_combos.rs`) plays these for a bot: the steps with their answer windows, then a
+// finish. The person gets the same steps (the engine's own casts, Miirym's trigger, the opponents' windows and the
+// pieces-must-survive check) and a finish that makes the tokens the loop makes, as many as the person asks for. It is an
+// ability on every piece on the battlefield, listed only while the catalogue's `ready` holds (the pieces out, the
+// timing, and the whole line's mana in the pool); the person can always cancel and play it by hand.
+
+const ASTRAL: &str = "Astral Dragon";
+const MIRROR_CARD: &str = "Cursed Mirror";
+const GARTH: &str = "Garth One-Eye";
+const LOOP_MIRROR: &str = "Astral Dragon + Cursed Mirror";
+const LOOP_MIIRYM: &str = "Miirym + Astral Dragon + Doubling Season";
+const LOOP_GARTH: &str = "Garth One-Eye + Twinflame + Spark Double + Doubling Season";
+
+/// the loops of the catalogue that are live for p and have the permanent m as a piece
+fn live_loops(g: &Game, p: PlayerId, m: PermId) -> Vec<&'static str> {
+    let Some(cd) = g.perm(m).cd else { return vec![] };
+    if !live(g, m) {
+        return vec![];
+    }
+    let nm = cards_name(g, cd);
+    [LOOP_MIRROR, LOOP_MIIRYM, LOOP_GARTH]
+        .into_iter()
+        .filter(|&part| {
+            let Some(i) = combos::combo_index(part) else { return false };
+            combos::all()[i].groups.iter().any(|grp| grp.contains(&nm)) && combos::ready_to_go(g, p, i)
+        })
+        .collect()
+}
+
+/// "start the loop" on each piece of a live Ur-Dragon loop (Astral Dragon + Cursed Mirror; Miirym + Astral Dragon +
+/// Doubling Season; Garth One-Eye + Twinflame + Spark Double + Doubling Season)
+pub fn loop_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
+    live_loops(g, p, m)
+        .into_iter()
+        .map(|part| {
+            let what = match part {
+                LOOP_MIRROR | LOOP_MIIRYM => "cast Astral Dragon",
+                _ => "cast Twinflame",
+            };
+            ability(format!("start the loop: {part} ({what} and play the loop out)"), move |g: &mut Game, p, _m| {
+                go_loop(g, p, part)
+            })
+        })
+        .collect()
+}
+
+fn round_labels(kill: &str) -> Vec<String> {
+    let mut v = vec![kill.to_string()];
+    v.extend(["once around", "twice around", "three times around", "five times around"].map(String::from));
+    v
+}
+
+/// hasty creatures it takes to kill every opponent through their untapped blockers, at `pow` damage each
+fn attackers_needed(g: &Game, p: PlayerId, pow: i32) -> usize {
+    let pow = pow.max(1) as usize;
+    let mut n = 3;
+    for q in g.opps(p).filter(|&q| g.player(q).alive) {
+        let blockers = g.player(q).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m) && !g.perm(m).tapped).count();
+        n += (g.player(q).life.max(0) as usize).div_ceil(pow) + blockers;
+    }
+    n.clamp(5, crate::engine::zones::TOKEN_CAP)
+}
+
+/// p's creatures that are named `name`, can attack now (untapped, not summoning sick)
+fn ready_attackers(g: &Game, p: PlayerId, name: &str) -> usize {
+    g.player(p)
+        .perms
+        .iter()
+        .filter(|&&m| {
+            let x = g.perm(m);
+            live(g, m) && g.is_creature(m) && !x.tapped && !x.sick && x.cd.is_some_and(|c| cards_name(g, c) == name)
+        })
+        .count()
+}
+
+fn go_loop(g: &mut Game, p: PlayerId, part: &'static str) -> Res<Why> {
+    let Some(i) = combos::combo_index(part) else { return Ok(Some("That loop is not in the catalogue.".into())) };
+    if !combos::ready_to_go(g, p, i) {
+        return Ok(Some(format!(
+            "The loop ({part}) is not live: it needs the pieces out, the card in hand, the whole line's mana in your pool \
+             and (Astral Dragon + Cursed Mirror, Garth) a combat still to come."
+        )));
+    }
+    let (prompt, labels, finish): (String, Vec<String>, [fn(&mut Game, PlayerId) -> Res; 5]) = match part {
+        LOOP_MIRROR => (
+            "Astral Dragon + Cursed Mirror: cast Astral Dragon (the opponents may answer it, its trigger and the pieces). \
+             Each hasty Dragon copy of the Mirror makes two more. How far?"
+                .into(),
+            round_labels("until there are enough hasty Dragons to kill the table (up to the token cap)"),
+            [
+                mirror_finish::<0>,
+                mirror_finish::<1>,
+                mirror_finish::<2>,
+                mirror_finish::<3>,
+                mirror_finish::<5>,
+            ],
+        ),
+        LOOP_GARTH => (
+            "Garth + Twinflame + Spark Double + Doubling Season: cast Twinflame on Spark Double's Garth, Regrowth brings \
+             it back (the opponents may answer each). Then Twinflame again on every Garth. How far?"
+                .into(),
+            round_labels("until there are enough hasty Garths to kill the table (up to the token cap)"),
+            [garth_finish::<0>, garth_finish::<1>, garth_finish::<2>, garth_finish::<3>, garth_finish::<5>],
+        ),
+        _ => (
+            "Miirym + Astral Dragon + Doubling Season: cast Astral Dragon (the opponents may answer it, its trigger and \
+             the pieces). Miirym's copy and every Project Image add Doubling Seasons: the board grows without bound. How \
+             many 3/3 flying Dragon tokens (summoning sick; the next combat is the kill)?"
+                .into(),
+            vec![
+                "fill the battlefield (up to the token cap)".to_string(),
+                "about a hundred".to_string(),
+                "about fifty".to_string(),
+                "about ten".to_string(),
+                "about five".to_string(),
+            ],
+            [flood::<0>, flood::<100>, flood::<50>, flood::<10>, flood::<5>],
+        ),
+    };
+    let Some(k) = choices::choose(g, p, "choose", &prompt, &labels, Some("cancel, I'll play it by hand"), None)? else {
+        return Ok(None);
+    };
+    let cmb = combos::all()[i];
+    let person = Combo {
+        name: cmb.name,
+        groups: cmb.groups,
+        ready: cmb.ready,
+        mana: cmb.mana,
+        finish: Some(finish[k]),
+        xcost: cmb.xcost,
+        steps: cmb.steps,
+    };
+    crate::glog!(g, "  {} goes for the {part} loop", pname(g, p));
+    combos::run_steps(g, p, &person)?;
+    crate::engine::life::check_state(g)?;
+    Ok(None)
+}
+
+/// Astral Dragon + Cursed Mirror: each Astral Dragon's Project Image makes two Cursed Mirror tokens, each entering as a
+/// copy of Astral Dragon with haste (an artifact too) whose own Project Image makes two more. `R` rounds, or (0) until
+/// the hasty Dragons could kill the table. The Mirror copies last until end of turn, then the tokens are Mirrors again.
+fn mirror_finish<const R: usize>(g: &mut Game, p: PlayerId) -> Res {
+    let (Some(astral), Some(mirror)) = (g.db.id(ASTRAL), g.db.id(MIRROR_CARD)) else { return Ok(()) };
+    let exc = CopyExc { add_types: Types::ARTIFACT, haste: true, revert_to: Some(mirror), ..CopyExc::default() };
+    let need = |g: &Game| if R == 0 { attackers_needed(g, p, 3) } else { usize::MAX };
+    // the Project Image of the Dragon just cast stands in for the first round (its step only checked the pieces)
+    let (mut triggers, mut rounds) = (1, 0);
+    g.combo_spell = true; // the Dragons' own Project Image is the loop itself: no per-token prompt
+    let r = (|| -> Res {
+        while !g.over && triggers > 0 && (R == 0 || rounds < R) && ready_attackers(g, p, ASTRAL) < need(g) {
+            let per = crate::engine::repl::tokens(g, p, 2) as usize;
+            let mut made = 0;
+            'round: for _ in 0..triggers {
+                for _ in 0..per {
+                    let Some(t) = zones::enter_token_copy_with(g, p, astral, Some(exc))? else { break 'round };
+                    if g.perm(t).on_bf {
+                        g.perm_mut(t).sick = false; // haste
+                        made += 1;
+                    }
+                }
+            }
+            rounds += 1;
+            triggers = made;
+            crate::glog!(g, "    round {rounds}: {made} more hasty Astral Dragons (Cursed Mirror copies)");
+        }
+        Ok(())
+    })();
+    g.combo_spell = false;
+    r?;
+    crate::glog!(
+        g,
+        "    {} hasty Astral Dragons can attack (the Mirror tokens go back to being Mirrors next turn)",
+        ready_attackers(g, p, ASTRAL)
+    );
+    crate::engine::life::check_state(g)
+}
+
+/// Garth + Twinflame + Spark Double + Doubling Season, after the first Twinflame and Regrowth: Twinflame again on every
+/// Garth (strive paid for by the Black Lotuses the Garths make), a hasty token Garth for each, twice as many with
+/// Doubling Season; the tokens are exiled at the end step. `R` rounds, or (0) until the hasty Garths could kill the table.
+fn garth_finish<const R: usize>(g: &mut Game, p: PlayerId) -> Res {
+    let garths = |g: &Game| -> Vec<PermId> {
+        g.player(p)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| live(g, m) && g.is_creature(m) && g.perm(m).cd.is_some_and(|c| cards_name(g, c) == GARTH))
+            .collect()
+    };
+    let Some(&first) = garths(g).first() else { return Ok(()) };
+    let pow = crate::engine::values::epow(g, first);
+    let exc = CopyExc { haste: true, not_legendary: true, ..CopyExc::default() };
+    let mut rounds = 0;
+    let need = if R == 0 { attackers_needed(g, p, pow) } else { usize::MAX };
+    while !g.over && (R == 0 || rounds < R) && ready_attackers(g, p, GARTH) < need {
+        let targets = garths(g);
+        let per = crate::engine::repl::tokens(g, p, 1) as usize;
+        let mut made = 0;
+        'round: for &t in &targets {
+            let Some(cd) = g.perm(t).cd else { continue };
+            for _ in 0..per {
+                let Some(tok) = zones::enter_token_copy_with(g, p, cd, Some(exc))? else { break 'round };
+                if g.perm(tok).on_bf {
+                    let x = g.perm_mut(tok);
+                    x.sick = false; // haste
+                    x.temp = true; // exiled at the beginning of the next end step
+                    made += 1;
+                }
+            }
+        }
+        rounds += 1;
+        crate::glog!(g, "    round {rounds}: Twinflame on {} Garth(s): {made} more hasty token Garths", targets.len());
+        if made == 0 {
+            break;
+        }
+    }
+    crate::glog!(g, "    {} hasty Garths can attack (exiled at the end step)", ready_attackers(g, p, GARTH));
+    crate::engine::life::check_state(g)
+}
+
+/// Miirym + Astral Dragon + Doubling Season: about `N` 3/3 flying Dragon tokens (0: up to the token cap), the catalogue's
+/// own finish with a number
+fn flood<const N: u32>(g: &mut Game, p: PlayerId) -> Res {
+    let mult = crate::engine::repl::tokens(g, p, 1).max(1);
+    let n = if N == 0 { crate::engine::zones::TOKEN_CAP as u32 } else { N.div_ceil(mult) };
+    crate::impls::t45_urdragon_combos::dragon_flood_n(g, p, n)?;
+    crate::engine::life::check_state(g)
 }

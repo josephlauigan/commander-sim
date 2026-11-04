@@ -38454,7 +38454,7 @@
    "name": "Emeritus of Ideation // Ancestral Recall",
    "types": "C",
    "generic": 3,
-   "pips": "U",
+   "pips": "UU",
    "tags": {
     "pow": "5",
     "tgh": "5",
@@ -38478,7 +38478,7 @@
    "source": "manual",
    "unparsed": [],
    "derived": {
-    "cmc": 4,
+    "cmc": 5,
     "land": false,
     "creature": true,
     "instant": false,
@@ -38655,8 +38655,8 @@
   {
    "name": "Emmara, Soul of the Accord",
    "types": "C",
-   "generic": 2,
-   "pips": "W",
+   "generic": 0,
+   "pips": "GW",
    "tags": {
     "pow": "2",
     "tokatk": "1",
@@ -38679,7 +38679,7 @@
    "source": "manual",
    "unparsed": [],
    "derived": {
-    "cmc": 3,
+    "cmc": 2,
     "land": false,
     "creature": true,
     "instant": false,
@@ -76663,12 +76663,14 @@
       {
        "do": "draw",
        "n": 2,
-       "who": "you"
+       "who": "you",
+       "optional": true
       },
       {
        "do": "discard",
        "n": 1,
-       "who": "you"
+       "who": "you",
+       "cont": true
       }
      ]
     },
@@ -77076,7 +77078,7 @@
   {
    "name": "Mauhúr, Uruk-hai Captain",
    "types": "C",
-   "generic": 1,
+   "generic": 0,
    "pips": "BR",
    "tags": {
     "mauhur": true,
@@ -77102,7 +77104,7 @@
    "source": "manual",
    "unparsed": [],
    "derived": {
-    "cmc": 3,
+    "cmc": 2,
     "land": false,
     "creature": true,
     "instant": false,
@@ -82875,7 +82877,7 @@
    "name": "Mystic Confluence",
    "types": "I",
    "generic": 3,
-   "pips": "UUU",
+   "pips": "UU",
    "tags": {
     "ctr": "any",
     "soft": "3",
@@ -82895,7 +82897,7 @@
    "source": "manual",
    "unparsed": [],
    "derived": {
-    "cmc": 6,
+    "cmc": 5,
     "land": false,
     "creature": false,
     "instant": true,
@@ -104447,7 +104449,7 @@
   {
    "name": "Satyr Wayfinder",
    "types": "C",
-   "generic": 3,
+   "generic": 1,
    "pips": "G",
    "tags": {
     "fill": "wayfinder",
@@ -104470,7 +104472,7 @@
    "source": "manual",
    "unparsed": [],
    "derived": {
-    "cmc": 4,
+    "cmc": 2,
     "land": false,
     "creature": true,
     "instant": false,

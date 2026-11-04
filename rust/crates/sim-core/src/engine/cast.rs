@@ -92,6 +92,51 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
             if let Some(l) = min_by(&lands, key) {
                 choice = Some(Choice::Land(l));
             }
+        } else if crate::human::is_human(g, p)
+            && let Some(what) = sac_phrase(&t)
+        {
+            // practice mode: the person chooses what to sacrifice (Natural Order's green creature ...), any permanent
+            // of the kind but one that can't be sacrificed; a Treasure counts for an artifact cost
+            let art = what.contains("artifact") || what == "permanent";
+            let cre = what.contains("creature") || what == "permanent";
+            let mut cands: Vec<PermId> = g
+                .player(p)
+                .perms
+                .iter()
+                .copied()
+                .filter(|&m| {
+                    let x = g.perm(m);
+                    !x.phased
+                        && !no_sac(g, m)
+                        && ((cre && g.is_creature(m))
+                            || (art && x.cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT)))
+                            || what == "permanent")
+                })
+                .collect();
+            if what.contains("green") {
+                cands.retain(|&m| colors_of(g, m).has('G'));
+            }
+            let treasure = art && g.player(p).treasures > 0;
+            if cands.is_empty() && !treasure {
+                // nothing to sacrifice: the cost can't be paid
+            } else if dry {
+                choice = Some(Choice::Sac(if cands.is_empty() { Fodder::Treasure } else { Fodder::Perm(cands[0]) }));
+            } else {
+                let mut labels: Vec<String> = cands
+                    .iter()
+                    .map(|&m| crate::human::legal::describe_target(g, p, crate::human::Target::Perm(m)))
+                    .collect();
+                if treasure {
+                    labels.push("a Treasure token".into());
+                }
+                let prompt = format!("{}: sacrifice which permanent?", g.db.get(c).name);
+                // cancelling stops the cast: the person's cast pays this before its mana (`human::cast_inner`)
+                let Some(k) = crate::human::choices::choose(g, p, "choose", &prompt, &labels, Some("cancel"), None)?
+                else {
+                    return Ok(false);
+                };
+                choice = Some(Choice::Sac(if k == cands.len() { Fodder::Treasure } else { Fodder::Perm(cands[k]) }));
+            }
         } else if let Some(what) = sac_phrase(&t)
             && let Some(f) = sac_fodder(g, p, &what, None)
             && (f == Fodder::Treasure || matches!(f, Fodder::Perm(m) if pval(g, m) < 4.0) || !t.contains("discard"))
@@ -153,6 +198,13 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
             }
             Choice::Tap(m) => g.perm_mut(m).tapped = true,
             Choice::Behold(b) => crate::impls::t12_lathril::behold_pay(g, p, c, b)?,
+            Choice::Discard if crate::human::is_human(g, p) => {
+                // practice mode: the person chooses the card they discard as the additional cost
+                let others: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&x| x != c).collect();
+                let prompt = format!("{}: discard a card as an additional cost", g.db.get(c).name);
+                let x = crate::human::choices::pick_cards(g, p, &others, 1, &prompt, "choose")?[0];
+                discard_cards(g, p, &[x])?;
+            }
             Choice::Discard => {
                 let others: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&x| x != c).collect();
                 let others = crate::ai::rules::spare_tutored(g, p, &others).unwrap_or(others); // --- phase4-rules
@@ -415,7 +467,13 @@ pub fn on_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
         let src = find(g, p, Tag::Jin)[0];
         let name = format!("copy {}", g.db.get(c).name);
         if trigger_window(g, p, Some(src), &name, Some(5.0))? {
-            copy_spell(g, p, c, None, false)?; // Jin-Gitaxias copies your first artifact/instant/sorcery each turn
+            // a person's copy starts from the original's targets (and X), so "keep the same target" is offered; the AI's
+            // copy picks its own (it was never given the original's ctx)
+            let orig = match &g.cur_cast {
+                Some((cc, cx, _)) if *cc == c && crate::human::is_human(g, p) => Some(cx.clone()),
+                _ => None,
+            };
+            copy_spell(g, p, c, orig.as_ref(), false)?; // Jin-Gitaxias copies your first artifact/instant/sorcery each turn
         }
     }
     if instant_or_sorcery && &*g.db.get(c).name != "Galvanic Iteration" && g.player(p).galvanic == Some(st) {
@@ -827,7 +885,8 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         }
         _ => {} // 'lib': Bolas's Citadel, already off the top of the library
     }
-    if g.player(p).agent_ids.contains(&c) && !g.player(p).hand.contains(&c) {
+    if (g.player(p).agent_ids.contains(&c) || g.player(p).stolen.contains_key(&c)) && !g.player(p).hand.contains(&c) {
+        // (`stolen` alone: Ragavan's card, cast with ordinary mana)
         // the card taken from an opponent is cast: other copies cost as usual
         g.player_mut(p).agent_ids.retain(|&x| x != c);
         if let Some(owner) = g.player_mut(p).stolen.swap_remove(&c)
@@ -1022,8 +1081,35 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
     } else {
         ctx
     };
+    // a person's Teferi's Protection (practice mode): the engine's effect (the AI casts it through its own code);
+    // "Exile Teferi's Protection"
+    if &*g.db.get(c).name == crate::engine::zones::TEFERIS_PROTECTION && crate::human::is_human(g, p) {
+        crate::engine::zones::teferis_protection(g, p);
+        g.player_mut(p).stat("protection_used", 1);
+        g.player_mut(p).exile.push(c);
+        return Ok(());
+    }
+    // a person's Mystic Confluence cast with no counter mode (practice mode): the modes they chose
+    if &*g.db.get(c).name == crate::human::confluence::NAME
+        && crate::human::is_human(g, p)
+        && let Some((_, bounce, draws)) = g.confluence.take()
+    {
+        crate::human::confluence::resolve_rest(g, p, &bounce, draws)?;
+        to_gy_or_exile(g, p, c, ctx, zone, false);
+        return Ok(());
+    }
     // a person's Demonic Consultation / Tainted Pact / Grapeshot (practice mode): their choices as it resolves
     if !g.db.get(c).perm && crate::human::is_human(g, p) && crate::human::thanos::resolve_spell(g, p, c, ctx)? {
+        to_gy_or_exile(g, p, c, ctx, zone, false);
+        return Ok(());
+    }
+    // a person's Slip Out the Back (practice mode; the AI plays it through its protection code)
+    if !g.db.get(c).perm && crate::human::is_human(g, p) && crate::human::gaps_a::resolve_spell(g, p, c, ctx)? {
+        to_gy_or_exile(g, p, c, ctx, zone, false);
+        return Ok(());
+    }
+    // a person's Akroma's Will / Winds of Abandon / Galadriel's Dismissal: the modes and targets they chose as they cast
+    if !g.db.get(c).perm && crate::human::is_human(g, p) && crate::human::cloud::resolve_spell(g, p, c, ctx)? {
         to_gy_or_exile(g, p, c, ctx, zone, false);
         return Ok(());
     }
@@ -1083,13 +1169,33 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
     }
     if let Some(n) = t.int(Tag::Draw) {
         let n = if zone == "gy" { t.int(Tag::Fbdraw).unwrap_or(n) } else { n };
-        draw(g, p, n.max(0) as u32, false)?;
+        // practice mode: Deep Analysis says "target player draws two cards": the person picks the player
+        let who = if crate::human::is_human(g, p) && &*g.db.get(c).name == "Deep Analysis" {
+            let ps: Vec<PlayerId> = g
+                .players
+                .iter()
+                .filter(|q| q.alive && (q.id == p || crate::human::legal::player_targetable(g, q.id)))
+                .map(|q| q.id)
+                .collect();
+            let labels: Vec<String> = ps
+                .iter()
+                .map(|&q| crate::human::legal::describe_target(g, p, crate::human::Target::Player(q)))
+                .collect();
+            ps[crate::human::choices::choose_one(g, p, "target", "Deep Analysis: which player draws two cards?", &labels)?]
+        } else {
+            p
+        };
+        draw(g, who, n.max(0) as u32, false)?;
     }
     if let Some(n) = t.int(Tag::Treas) {
         add_treasure(g, p, n)?;
     }
     if let Some(n) = t.int(Tag::Lr) {
-        land_ramp(g, p, n.max(0) as u32, t.has(Tag::Lrt))?;
+        if crate::human::is_human(g, p) && crate::human::gaps_a::forest_search(g, p, c)? {
+            // a person's Nature's Lore found its Forest card
+        } else {
+            land_ramp(g, p, n.max(0) as u32, t.has(Tag::Lrt))?;
+        }
         if t.has(Tag::Lh) {
             land_to_hand(g, p)?;
         }

@@ -376,6 +376,15 @@ fn vision(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     if !g.perm(src).on_bf {
         return Ok(());
     }
+    if human_of(g, o).is_some() {
+        // "choose one": the person picks the counter or phasing out
+        if crate::human::triggers_t1::vision_phases_out(g, o)? {
+            g.perm_mut(src).phased = true;
+        } else {
+            repl::put_plus(g, src, 1);
+        }
+        return Ok(());
+    }
     let target = match &g.cur_cast {
         Some((cc, ctx, _)) if *cc == c => ctx.target,
         _ => None,
@@ -434,11 +443,28 @@ fn witch(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _dmg: i32
         };
         c = ok[k];
     }
+    // a person chooses the spell's target (and any cost it asks before it is cast); the AI's pick is `spell_targets`
+    let mut human_cast = None;
+    if human_of(g, p).is_some() {
+        match crate::human::triggers_t1::free_cast(g, p, c)? {
+            Some(x) => human_cast = Some(x),
+            None => {
+                save(g, &held); // cancelled (or nothing to target): it stays exiled with her
+                return Ok(());
+            }
+        }
+    }
     g.player_mut(p).exile.take(c);
     remove_card(&mut held, c);
     save(g, &held);
     crate::glog!(g, "    Scarlet Witch: {} casts {} free", g.player(p).name, g.db.get(c).name);
-    let ctx = crate::engine::cast::spell_targets(g, p, c, None);
+    let ctx = match human_cast {
+        Some((ctx, costs)) => {
+            crate::human::specs::pay_costs(g, p, c, &costs)?;
+            ctx
+        }
+        None => crate::engine::cast::spell_targets(g, p, c, None),
+    };
     cast_card(g, p, c, "lib", ctx)?;
     Ok(())
 }
@@ -679,6 +705,52 @@ fn insight_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ======================================================== Birgi, God of Storytelling // Harnfel, Horn of Bounty
+/// The back face of Birgi: Harnfel, Horn of Bounty, a {4}{R} legendary artifact ("Discard a card: Exile the top two
+/// cards of your library. You may play those cards this turn."). The card data holds only a card's front face, so
+/// Harnfel is an engine-made card (`cards::engine_made`): the spell on the stack and the permanent are Harnfel, and
+/// the permanent's `phys` is Birgi's card, so that is what goes to the graveyard, hand or exile when it leaves.
+/// Only a person casts it (the AI has no use for it that beats a 3-mana Birgi); its ability is the person's
+/// (`human::gaps_c::harnfel`).
+pub const HARNFEL: &str = "Harnfel, Horn of Bounty";
+
+fn harnfel_opt(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post.is_none() || !crate::human::is_human(g, p) || !g.player(p).hand.contains(&c) {
+        return Ok(vec![]);
+    }
+    let Some(h) = g.db.id(HARNFEL) else { return Ok(vec![]) };
+    let (gn, pips) = cost_of(g, p, h);
+    if !can_pay(g, p, gn, &pips, false) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 1.0,
+        label: "Harnfel, Horn of Bounty ({4}{R}): the back face, a legendary artifact".into(),
+        act: Some(Action::Plan { f: harnfel_go, arg: c.0 as i64 }),
+    }])
+}
+
+fn harnfel_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    let Some(h) = g.db.id(HARNFEL) else { return Ok(false) };
+    let (gn, pips) = cost_of(g, p, h);
+    if !g.player(p).hand.contains(&c) || !can_pay(g, p, gn, &pips, false) || !castable(g, p, h, "hand") {
+        return Ok(false);
+    }
+    remove_card(&mut g.player_mut(p).hand, c);
+    pay(g, p, gn, &pips, false)?;
+    g.player_mut(p).spells_this_turn += 1;
+    crate::glog!(g, "  {} casts {HARNFEL} (the back face of Birgi)", g.player(p).name);
+    on_cast(g, p, h)?;
+    if !counter_window(g, p, h, 3.0, vec![])? {
+        g.player_mut(p).gy.push(c); // countered: the card (Birgi) goes to the graveyard
+        return Ok(true);
+    }
+    let m = enter(g, p, h, Enter { was_cast: true, ..Enter::default() })?;
+    g.perm_mut(m).phys = Some(c);
+    Ok(true)
+}
+
 // ======================================================== Urabrask, Heretic Praetor
 /// your upkeep: top card exiled, playable this turn; opponents: the next draw each upkeep is exiled instead and
 /// playable that turn (so it is not a draw); unplayed cards stay exiled
@@ -796,7 +868,7 @@ fn kefka_ruin(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Ve
     }])
 }
 
-fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !g.perm(src).on_bf || g.perm(src).owner != p || !can_pay(g, p, 8, "", false) {
         return Ok(false);
     }
@@ -2913,6 +2985,19 @@ pub fn territory_type(g: &Game, p: PlayerId) -> Sym {
     }
 }
 
+/// Cavern of Souls: "as this land enters, choose a creature type". The AI's Cavern uses the deck's most common type
+/// (`territory_type`, read when a creature spell is paid for); a person chooses. A land with a `land_etb` of its own
+/// loses the City of Traitors check every other land gets (t6_lands), so it is made here.
+fn cavern_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
+    crate::impls::t6_lands::traitors_check(g, p, l)?;
+    if crate::human::is_human(g, p) {
+        let t = crate::impls::galadriel::choose_type(g, p, "Cavern of Souls")?;
+        g.perm_mut(l).data.set(DataKey::Ctype, Val::Str(t));
+        crate::glog!(g, "    Cavern of Souls names {t}");
+    }
+    Ok(())
+}
+
 /// mine.territory_colors: {C}, or any colour for a creature spell of the named type (a changeling is every type)
 fn territory_colors(g: &Game, p: PlayerId, l: PermId) -> crate::cards::Colors {
     if !g.pay_for.is_some_and(|c| g.db.get(c).creature) {
@@ -3871,6 +3956,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Latulla's Orders")?.combat_damage = Some(latulla_hit);
     r.card(db, "Barad-dûr")?.land_options = Some(baraddur);
     r.card(db, "Bloodsoaked Insight // Sanguine Morass")?.hand_options = Some(insight);
+    r.card(db, "Birgi, God of Storytelling")?.hand_options = Some(harnfel_opt);
+    r.card(db, "Birgi, God of Storytelling // Harnfel, Horn of Bounty")?.hand_options = Some(harnfel_opt);
     r.card(db, BRAIN_FREEZE)?.resolve = Some(brain_freeze);
     r.card(db, GRAPESHOT)?.resolve = Some(grapeshot);
     r.card(db, "Iron Man, Armored Avenger")?.attack = Some(ironman);
@@ -3938,7 +4025,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Ral Zarek, Guest Lecturer")?.options = Some(ralz);
     r.card(db, "Plaza of Heroes")?.land_cols = Some(plaza_colors);
     r.card(db, "Unclaimed Territory")?.land_cols = Some(territory_colors);
-    r.card(db, "Cavern of Souls")?.land_cols = Some(territory_colors); // any colour for a creature spell of the named type
+    let cavern = r.card(db, "Cavern of Souls")?;
+    cavern.land_cols = Some(territory_colors); // any colour for a creature spell of the named type
+    cavern.land_etb = Some(cavern_etb);
     r.card(db, "Andúril, Flame of the West")?.attack = Some(anduril);
     r.card(db, "Lord of the Nazgûl")?.cast = Some(nazgul);
     r.card(db, "Palantír of Orthanc")?.end_step = Some(palantir);

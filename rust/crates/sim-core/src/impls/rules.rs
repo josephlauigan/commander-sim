@@ -703,6 +703,21 @@ fn goldspan_atk(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerI
     Ok(vec![])
 }
 
+/// Goldspan Dragon: "Whenever it attacks or becomes the target of a spell, create a Treasure token." m is a permanent a
+/// spell targets as it is cast (`card_models3::spell_targeted`, from `cast::cast_card`; any player's spell, so an
+/// opponent's removal aimed at the Dragon makes its owner a Treasure). Spells whose target is chosen only as they
+/// resolve (and abilities, which the card doesn't mention) don't count.
+pub fn goldspan_targeted(g: &mut Game, m: PermId) -> Res {
+    if !g.perm(m).on_bf || g.perm(m).phased || g.perm(m).name != "Goldspan Dragon" {
+        return Ok(());
+    }
+    let o = g.perm(m).owner;
+    if trigger_window(g, o, Some(m), "create a Treasure", None)? {
+        add_treasure(g, o, 1)?;
+    }
+    Ok(())
+}
+
 /// Goldspan Dragon: your Treasures tap for two mana
 fn goldspan_bonus(g: &Game, src: Src, p: PlayerId) -> i32 {
     (p == g.perm(src).owner) as i32

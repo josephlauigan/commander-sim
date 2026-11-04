@@ -376,7 +376,20 @@ fn decimate_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 }
 
 /// Full: needs an artifact, a creature, an enchantment and a land to target; destroys the best of each
-fn decimate(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+fn decimate(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    if crate::human::is_human(g, p) && ctx.perms.len() == 4 {
+        // the person chose an artifact, a creature, an enchantment and a land as they cast it
+        for &t in &ctx.perms[..3] {
+            if g.perm(t).on_bf && !g.perm(t).phased {
+                apply_removal(g, Some(p), t, "destroy", None)?;
+            }
+        }
+        let l = ctx.perms[3];
+        if let Some(q) = g.players.iter().find(|q| q.lands.contains(&l)).map(|q| q.id) {
+            destroy_land(g, q, l)?;
+        }
+        return Ok("gy");
+    }
     let (a, cr, e, lands) = decimate_targets(g, p);
     for t in [a, cr, e].into_iter().flatten() {
         if g.perm(t).on_bf {

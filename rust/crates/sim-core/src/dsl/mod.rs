@@ -39,6 +39,8 @@ pub struct DslCtx {
     pub x: i32,
     /// a target chosen as the spell was cast
     pub target: Option<PermId>,
+    /// a player target a person chose as the spell was cast (practice mode: Glimpse the Unthinkable)
+    pub face: Option<PlayerId>,
     /// the last target's power, toughness and mana value as it was hit
     pub snapshot: Option<(i32, i32, u32)>,
     pub target_owner: Option<PlayerId>,
@@ -604,7 +606,17 @@ fn run(
             crate::cardcode::scry(g, p, k, e.kind == "surveil")?;
         }
         "draw" => {
-            for q in players(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx) {
+            // practice mode: Braingeyser says "target player draws X cards" (written "you draw" for the AI, which
+            // targets itself); a person names the player as it is cast (`ctx.face`)
+            let chosen = (spell.is_some_and(|c| &*g.db.get(c).name == "Braingeyser") && crate::human::is_human(g, p))
+                .then_some(ctx.face)
+                .flatten()
+                .filter(|&q| g.player(q).alive);
+            let who = match chosen {
+                Some(q) => vec![q],
+                None => players(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx),
+            };
+            for q in who {
                 // "you may draw": a person chooses (the draw by someone else's "may" is asked of that player here).
                 // The AI ignores the flag (it was never set before cardgen flagged every "you may" effect).
                 if e.optional == Some(true) && q != p && crate::human::is_human(g, q) {
@@ -892,10 +904,36 @@ fn run(
                     );
                 }
             }
-            if let Some(&(c, q)) = pool.iter().max_by(|a, b| {
-                let (x, y) = (g.db.get(a.0), g.db.get(b.0));
-                (x.bomb, x.pow, x.cmc).cmp(&(y.bomb, y.pow, y.cmc))
-            }) {
+            // practice mode: the person picks the card (a target of the ability: no way out)
+            let best = if crate::human::is_human(g, p) && !pool.is_empty() {
+                let what = match spell.or(src.and_then(|m| g.perm(m).cd)) {
+                    Some(c) => g.db.get(c).name.to_string(),
+                    None => "An effect".to_string(),
+                };
+                let labels: Vec<String> = pool
+                    .iter()
+                    .map(|&(c, q)| {
+                        let l = crate::human::choices::card_label(g, c);
+                        if q == p { l } else { format!("{l} ({})", g.player(q).name) }
+                    })
+                    .collect();
+                let k = crate::human::choices::choose_one(
+                    g,
+                    p,
+                    "target",
+                    &format!("{what}: return which card to the battlefield?"),
+                    &labels,
+                )?;
+                Some(pool[k])
+            } else {
+                pool.iter()
+                    .max_by(|a, b| {
+                        let (x, y) = (g.db.get(a.0), g.db.get(b.0));
+                        (x.bomb, x.pow, x.cmc).cmp(&(y.bomb, y.pow, y.cmc))
+                    })
+                    .copied()
+            };
+            if let Some((c, q)) = best {
                 let gy = &mut g.player_mut(q).gy;
                 let i = gy.iter().position(|&x| x == c).unwrap();
                 gy.remove(i);
@@ -906,7 +944,25 @@ fn run(
         "regrow" => {
             let cs: Vec<CardId> =
                 g.player(p).gy.iter().copied().filter(|&c| card_matches(g, c, e.filter.as_ref())).collect();
-            if let Some(&c) = cs.iter().max_by_key(|&&c| (g.db.get(c).bomb, g.db.get(c).cmc)) {
+            // practice mode: the person picks the card (a target of the spell: no way out)
+            let pick = if crate::human::is_human(g, p) && !cs.is_empty() {
+                let what = match spell.or(src.and_then(|m| g.perm(m).cd)) {
+                    Some(c) => g.db.get(c).name.to_string(),
+                    None => "An effect".to_string(),
+                };
+                let labels: Vec<String> = cs.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
+                let k = crate::human::choices::choose_one(
+                    g,
+                    p,
+                    "target",
+                    &format!("{what}: return which card from your graveyard to your hand?"),
+                    &labels,
+                )?;
+                Some(cs[k])
+            } else {
+                cs.iter().max_by_key(|&&c| (g.db.get(c).bomb, g.db.get(c).cmc)).copied()
+            };
+            if let Some(c) = pick {
                 let pl = g.player_mut(p);
                 let i = pl.gy.iter().position(|&x| x == c).unwrap();
                 pl.gy.remove(i);
@@ -930,7 +986,12 @@ fn run(
             }
         }
         "mill" => {
-            let qs = if e.who.as_deref() == Some("target_player") {
+            let qs = if e.who.as_deref() == Some("target_player")
+                && crate::human::is_human(g, p)
+                && ctx.face.is_some_and(|q| g.player(q).alive)
+            {
+                ctx.face.into_iter().collect() // a person chose the player as they cast it
+            } else if e.who.as_deref() == Some("target_player") {
                 mill_target(g, p, n(g, ctx)).into_iter().collect()
             } else {
                 players(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx)
@@ -1374,7 +1435,7 @@ fn search(g: &mut Game, p: PlayerId, e: &Effect, by: &str) -> Res {
 
 /// an instant or sorcery with compiled abilities resolves
 pub fn resolve_spell(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res {
-    let mut dctx = DslCtx { x: ctx.x, target: ctx.target, ..DslCtx::default() };
+    let mut dctx = DslCtx { x: ctx.x, target: ctx.target, face: ctx.face, ..DslCtx::default() };
     if dctx.x == 0 {
         dctx.x = 3; // Python's ctx.get('x', 3) when no X was chosen
         dctx.x_default = true;

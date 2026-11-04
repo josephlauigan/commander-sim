@@ -4,6 +4,10 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile, vs Sheoldred's matched
 tiers (T3-T5) unless noted. Older tests: README.md in this folder.
 
+## 2026-11-04: Cabal Coffers for Command Tower (JD's physical deck; not simulated)
+31 Swamps make Coffers a big-mana land on its own (six Swamps out: net {B}{B}{B}{B}) for Exsanguinate and the big
+turns. Command Tower made only {B} here. No number yet: the next baseline (T3-T4) measures it.
+
 ## Current state (2026-10-15)
 Win rate vs T4: **30.1%** (1,000 games, seed 1015, main 0f49b7d).
 
@@ -88,3 +92,11 @@ first cast round 6.3 vs 4.4: a 7-mana body that comes down later than the cheap 
 ## 2026-11-01: recalibration stage 2 remeasure
 
 Sheoldred, t3 / t4: **15.9% / 17.2%** (average 16.5%) with the hand AI on (default) (2000 games, seeds 500000-501999, loose, look-ahead, defaults, rc=0; `audit/recal/stage2-2026-11-01.md` section 4, build efe45425). `AI_HAND=0` (generic + plan file): 17.4 / 17.4, level (average delta -0.8 [-2.5, +0.8]). Stage 1, same seeds: 17.8 / 17.6 (hand AI on). The 10/18 AI audit numbers (31.9 / 31.6) are from an older build and list. Fitted t3 knobs: 18.7% (+2.8 [+0.5, +5.1]).
+
+## 2026-11-04 (late): AI changes, not simulated (JD: no sims for this batch)
+
+- **Blood Artist**: drains once per Artist (two Artists drained once per death), and only when a creature dies (it fired for any permanent).
+
+The numbers above predate these changes; a re-run on the deck's own tiers would show their effect.
+
+- **Zulaport Cutthroat** drains once per Zulaport (two drained once) and for its own death; **Blood Artist** also for its own death (the dying creature had left the battlefield before the drains were counted). Not simulated either.

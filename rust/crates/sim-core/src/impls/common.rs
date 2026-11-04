@@ -2136,46 +2136,53 @@ fn reflector_lock(g: &Game, _src: Src, caster: PlayerId, c: CardId, _zone: Sym) 
     true
 }
 
-/// Spark Double (Approximate): enters as a copy of your best creature or planeswalker (+1 counter); goes to the
-/// graveyard as Spark Double
-fn spark(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
-    if m != src || g.perm(src).data.truthy(DataKey::Copied) {
-        return Ok(());
-    }
-    let o = owner(g, src);
+/// Spark Double: "You may have Spark Double enter as a copy of a creature or planeswalker you control, except it enters
+/// with an additional +1/+1 counter on it if it's a creature, it enters with an additional loyalty counter on it if
+/// it's a planeswalker, and it isn't legendary." A replacement effect, applied as it is created (`zones::enter`'s
+/// `enter_copy` step; the extra counter is added there, by `spark_bonus`): no 0/0 that state-based actions could kill
+/// first (a person's Spark Double died that way before its old enters hook ran), and not legendary (a copy of a legend
+/// met the legend rule at once, and Twinflame's copies of it were legendary too). The AI copies its best creature or
+/// planeswalker, a person picks (or declines: it then enters as itself, a 0/0).
+fn spark_copy(g: &mut Game, p: PlayerId, _c: CardId) -> Option<crate::state::CopyOf> {
     let cands: Vec<PermId> = g
-        .player(o)
+        .player(p)
         .perms
         .iter()
         .copied()
         .filter(|&x| {
-            x != src
-                && g.perm(x).cd.is_some()
-                && (g.is_creature(x) || card_is(g, x, Types::PLANESWALKER))
-                && !g.perm(x).token
+            let y = g.perm(x);
+            y.on_bf && !y.phased && y.cd.is_some() && (g.is_creature(x) || card_is(g, x, Types::PLANESWALKER)) && !y.token
         })
         .collect();
-    let Some(best) = max_by(&cands, |x| pval(g, x)) else { return Ok(()) };
-    let best_cd = g.perm(best).cd.unwrap();
-    let own_cd = g.perm(src).cd;
-    leave(g, src)?;
-    let n = enter(g, o, best_cd, Enter::default())?;
-    let mut d = crate::state::PermData::default(); // `n.data = {'copied': True}`
-    d.set(DataKey::Copied, Val::Bool(true));
-    let creature = g.is_creature(n);
-    let x = g.perm_mut(n);
-    x.data = d;
-    x.phys = own_cd;
-    // the counters step (Stage C: these were direct writes): an additional +1/+1 or loyalty counter
-    if creature {
-        repl::put_plus(g, n, 1);
-    }
-    if let Some(l) = g.perm(n).loyalty {
-        let k = repl::counters(g, o, On::Perm(n), Ctr::Loyalty, 1, Path::ALL);
-        g.perm_mut(n).loyalty = Some(l + k);
-    }
-    crate::glog!(g, "    Spark Double copies {}", g.db.get(best_cd).name);
-    Ok(())
+    let best = if crate::human::is_human(g, p) {
+        if cands.is_empty() {
+            return None;
+        }
+        crate::human::cards::pick_perm(
+            g,
+            p,
+            "choose",
+            "Spark Double: enter as a copy of which creature or planeswalker you control?",
+            &cands,
+            Some("don't copy (it enters as a 0/0)"),
+        )
+        .ok()
+        .flatten()
+    } else {
+        max_by(&cands, |x| pval(g, x))
+    };
+    let best = best?;
+    crate::glog!(g, "    Spark Double enters as a copy of {}", g.perm(best).name);
+    Some(crate::state::CopyOf {
+        cd: g.perm(best).cd.unwrap(),
+        exc: crate::state::CopyExc { not_legendary: true, ..crate::state::CopyExc::default() },
+    })
+}
+
+/// the extra counter Spark Double's copy enters with (`zones::enter`): 1 when `phys` (the card that entered) is Spark
+/// Double, else 0
+pub fn spark_bonus(g: &Game, phys: Option<CardId>) -> i32 {
+    i32::from(phys.is_some_and(|c| &*g.db.get(c).name == "Spark Double"))
 }
 
 /// Frost Titan (Approximate): taps the best opposing creature on entry and attack (the no-untap is not enforced);
@@ -2423,7 +2430,7 @@ fn dauthi_sweep(g: &mut Game, src: Src) -> Res {
     Ok(())
 }
 
-fn dauthi_void(g: &Game, src: PermId) -> Vec<(CardId, PlayerId)> {
+pub(crate) fn dauthi_void(g: &Game, src: PermId) -> Vec<(CardId, PlayerId)> {
     let Some(Val::List(v)) = g.perm(src).data.get(DataKey::Void) else { return vec![] };
     v.iter()
         .filter_map(|e| match e {
@@ -2456,7 +2463,7 @@ fn dauthi_play(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<V
     Ok(vec![opt_ability(2.0 + cmc as f64 * 0.6, label, src, dauthi_go, (c.0 as i64) | ((q.0 as i64) << 16))])
 }
 
-fn dauthi_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn dauthi_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, q) = (CardId((arg & 0xffff) as u16), PlayerId((arg >> 16) as u8));
     if !on(g, src, p) || !g.player(q).exile.contains(&c) {
         return Ok(false);
@@ -3304,6 +3311,21 @@ fn saga_construct(g: &mut Game, p: PlayerId, l: PermId) -> Res {
         return Ok(());
     }
     pay(g, p, 2, "", false)?;
+    make_construct(g, p, arts)
+}
+
+/// the artifacts p controls now (a Construct made now counts itself too: +1)
+pub fn construct_arts(g: &Game, p: PlayerId) -> i64 {
+    g.player(p)
+        .perms
+        .iter()
+        .filter(|&&m| !g.perm(m).phased && (card_is(g, m, Types::ARTIFACT) || g.perm(m).data.truthy(DataKey::Artifact)))
+        .count() as i64
+}
+
+/// the Construct token of Urza's Saga's chapter II ability, the cost already paid (by `saga_construct`, or by the
+/// person's ability in `human/karn.rs`); `arts` is `construct_arts` before it
+pub fn make_construct(g: &mut Game, p: PlayerId, arts: i64) -> Res {
     g.selfpt = true; // before the token exists: a 0/0 is checked at once
     let mut data = crate::state::PermData::default();
     data.set(DataKey::Construct, Val::Bool(true));
@@ -3325,10 +3347,55 @@ pub fn saga_step(g: &mut Game, p: PlayerId) -> Res {
         }
         let lore = g.player(p).sagas[i].1 + 1;
         g.player_mut(p).sagas[i].1 = lore;
-        if lore == 2 {
+        // a person makes the Construct themselves (the Saga's ability in `human/karn.rs`) and picks chapter III's card
+        let person = crate::human::is_human(g, p);
+        if lore == 2 && !person {
             saga_construct(g, p, l)?;
         }
-        if lore >= 3 {
+        if lore >= 3 && person {
+            // chapter III goes on the stack: the person may answer it with the Saga's own Construct ability ({2},
+            // {T}: `human/karn.rs`) before it resolves; the Saga is sacrificed either way (714.4), even if it's countered
+            let resolves = crate::engine::stack::trigger_window(
+                g,
+                p,
+                Some(l),
+                "chapter III: search for an artifact card with mana cost {0} or {1}",
+                None,
+            )? && g.player(p).lands.contains(&l);
+            let got = if !resolves {
+                vec![]
+            } else {
+                crate::human::choices::search(
+                g,
+                p,
+                &|g: &Game, c: CardId| {
+                    let d = g.db.get(c);
+                    d.types.has(Types::ARTIFACT) && d.cmc <= 1 && !d.land && !d.tag(Tag::X)
+                },
+                1,
+                "Urza's Saga: search for an artifact card with mana cost {0} or {1}",
+                true,
+            )?
+            };
+            if let Some(&c) = got.first() {
+                enter(g, p, c, Enter::default())?;
+                crate::glog!(
+                    g,
+                    "    Urza's Saga: {} puts {} onto the battlefield",
+                    player_name(g, p),
+                    g.db.get(c).name
+                );
+            }
+            if g.player(p).lands.contains(&l) {
+                // (it may have left in response: bounced, destroyed)
+                crate::engine::turn::remove_land(g, p, l);
+                let cd = g.perm(l).card();
+                g.player_mut(p).gy.push(cd);
+            }
+            if let Some(i) = g.player(p).sagas.iter().position(|x| x.0 == l) {
+                g.player_mut(p).sagas.remove(i);
+            }
+        } else if lore >= 3 {
             saga_construct(g, p, l)?; // in response to chapter III
             let cs: Vec<CardId> = searchable(g, p)
                 .into_iter()
@@ -3407,9 +3474,7 @@ fn register_phase6(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Reflector Mage")?;
     c.etb = Some(reflector);
     c.can_cast = Some(reflector_lock);
-    let c = r.card(db, "Spark Double")?;
-    c.etb = Some(spark);
-    *c = c.at_once(Event::Etb);
+    r.card(db, "Spark Double")?.enter_copy = Some(spark_copy);
     let c = r.card(db, "Frost Titan")?;
     c.etb = Some(frost);
     c.attack = Some(frost_atk);

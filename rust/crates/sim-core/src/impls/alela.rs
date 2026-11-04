@@ -181,11 +181,19 @@ fn alela_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 // ================================================================== the 99
 /// alela._counter_nonflier: +1/+1 counter on target creature you control without flying (Plumecreed Mentor,
 /// Pileated Provisioner)
-fn counter_nonflier(g: &mut Game, p: PlayerId, src: PermId) {
+fn counter_nonflier(g: &mut Game, p: PlayerId, src: PermId) -> Res {
     let cs: Vec<PermId> = creatures(g, p).into_iter().filter(|&m| !flier(g, m)).collect();
-    let Some(t) = first_max(&cs, |m| (g.perm(m).is_cmd, !g.perm(m).noatk, pval(g, m))) else { return };
+    // practice mode: the person picks the creature (the target is required: no way out)
+    let t = if crate::human::is_human(g, p) && !cs.is_empty() {
+        let prompt = format!("{}: +1/+1 counter on which creature without flying?", name_of(g, src));
+        crate::human::cards::pick_perm(g, p, "target", &prompt, &cs, None)?
+    } else {
+        first_max(&cs, |m| (g.perm(m).is_cmd, !g.perm(m).noatk, pval(g, m)))
+    };
+    let Some(t) = t else { return Ok(()) };
     repl::put_plus(g, t, 1);
     crate::glog!(g, "    {}: +1/+1 counter on {}", name_of(g, src), name_of(g, t));
+    Ok(())
 }
 
 // ------------------------------------------------------------------ the Jace token (empower Jace)
@@ -265,6 +273,9 @@ fn plan_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let o = g.perm(src).owner;
+    if crate::human::is_human(g, o) {
+        return plan_etb_person(g, src, o);
+    }
     let Some(t) = best_opp_nonland(g, o, |_| true) else { return Ok(()) };
     if pval(g, t) < 2.0 {
         return Ok(());
@@ -275,6 +286,69 @@ fn plan_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     if on_bf(g, t) && !untargetable(g, t) {
         apply_removal(g, Some(o), t, "top", None)?; // its owner keeps it on top
+    }
+    Ok(())
+}
+
+/// Plan for All Outcomes for a person: "up to one other target nonland permanent" (any player's, yours too), then
+/// its owner puts it on the top or the bottom of their library: a person who owns it chooses, an opponent owner is
+/// the AI's (top, as `apply_removal(.., "top")` does)
+fn plan_etb_person(g: &mut Game, src: PermId, o: PlayerId) -> Res {
+    let cands: Vec<PermId> = g
+        .players
+        .iter()
+        .filter(|q| q.alive)
+        .flat_map(|q| q.perms.iter().copied())
+        .filter(|&t| {
+            let x = g.perm(t);
+            t != src
+                && !x.phased
+                && x.cd.is_none_or(|c| !g.db.get(c).land)
+                && !(x.owner != o && untargetable(g, t))
+        })
+        .collect();
+    if cands.is_empty() {
+        return Ok(());
+    }
+    // asked after the trigger's window (the engine's probe run stops at the first window: asking before asked twice)
+    if !trigger_window(g, o, Some(src), "a nonland permanent to the top or bottom of its library", Some(5.0))? {
+        return Ok(());
+    }
+    let cands: Vec<PermId> = cands.into_iter().filter(|&t| on_bf(g, t) && !g.perm(t).phased).collect();
+    if cands.is_empty() {
+        return Ok(());
+    }
+    let Some(t) = crate::human::cards::pick_perm(
+        g,
+        o,
+        "target",
+        "Plan for All Outcomes: which other nonland permanent goes to the top or bottom of its owner's library?",
+        &cands,
+        Some("no target"),
+    )?
+    else {
+        return Ok(());
+    };
+    let owner = g.perm(t).orig;
+    let top = if crate::human::is_human(g, owner) {
+        let labels = vec!["top of your library".to_string(), "bottom of your library".to_string()];
+        let prompt = format!("Plan for All Outcomes: {} goes on which end of your library?", name_of(g, t));
+        crate::human::choices::choose_one(g, owner, "choose", &prompt, &labels)? == 0
+    } else {
+        true
+    };
+    if top {
+        apply_removal(g, Some(o), t, "top", None)?;
+    } else {
+        // the bottom: as `bulk_blue::top_or_bottom` does it
+        leave(g, t)?;
+        let before = g.player(owner).library.len();
+        to_zone_card(g, t, Zone::Top);
+        if g.player(owner).library.len() > before {
+            let c = g.player_mut(owner).library.pop().unwrap();
+            g.player_mut(owner).library.insert(0, c);
+        }
+        crate::glog!(g, "    {} goes on the bottom of its owner's library", g.perm(t).name);
     }
     Ok(())
 }
@@ -456,6 +530,28 @@ fn karmic_fire(g: &mut Game, src: PermId, m: PermId, cause: Sym) -> Res {
     }
     let cands: Vec<PermId> =
         g.player(d).perms.iter().copied().filter(|&x| !g.perm(x).phased && !untargetable(g, x)).collect();
+    if crate::human::is_human(g, o) {
+        // practice mode: "you may destroy target permanent that opponent controls": the person picks it, or declines
+        // (asked after the table's window: the engine probes a trigger up to its first window, and a question before
+        // it would be asked twice)
+        if cands.is_empty() || !trigger_window(g, o, Some(src), "destroy a permanent", Some(4.0))? {
+            return Ok(());
+        }
+        let Some(t) = crate::human::gaps_t2::pick_target(
+            g,
+            o,
+            &cands,
+            "Karmic Justice: destroy which of their permanents?",
+            Some("don't destroy"),
+        )?
+        else {
+            return Ok(());
+        };
+        if controls(g, d, t) {
+            apply_removal(g, Some(o), t, "destroy", None)?;
+        }
+        return Ok(());
+    }
     let Some(t) = max_by(&cands, |x| pval(g, x)) else { return Ok(()) };
     if !may_window(g, o, Some(src), &format!("destroy {}", name_of(g, t)), Some(4.0))? {
         return Ok(());
@@ -772,13 +868,29 @@ fn jackdaw_return(g: &mut Game, o: PlayerId, src: PermId, dead: PermId) -> Res {
     let mv = g.db.get(dcd).cmc;
     let cs: Vec<CardId> =
         g.player(o).gy.iter().copied().filter(|&c| g.db.get(c).creature && g.db.get(c).cmc < mv && c != dcd).collect();
-    let Some(c) = max_by(&cs, |c| {
-        let d = g.db.get(c);
-        crate::ai::card_etb_value(g, o, c) + d.cmc as f64 + d.pow as f64
-    }) else {
+    let human = crate::human::is_human(g, o);
+    let best = if human {
+        None
+    } else {
+        max_by(&cs, |c| {
+            let d = g.db.get(c);
+            crate::ai::card_etb_value(g, o, c) + d.cmc as f64 + d.pow as f64
+        })
+    };
+    let best = if human {
+        // practice mode: "another target creature card with lesser mana value" is the person's pick, asked after the
+        // table's window (the engine probes a trigger up to its first window: a question before it is asked twice)
+        if cs.is_empty() || !trigger_window(g, o, Some(src), "return a creature card", Some(3.0))? {
+            return Ok(());
+        }
+        crate::human::gaps_t2::pick_card(g, o, &cs, "Jackdaw Savior: return which creature card to the battlefield?", None)?
+    } else {
+        best
+    };
+    let Some(c) = best else {
         return Ok(());
     };
-    if !trigger_window(g, o, Some(src), &format!("return {}", g.db.get(c).name), Some(3.0))?
+    if (!human && !trigger_window(g, o, Some(src), &format!("return {}", g.db.get(c).name), Some(3.0))?)
         || !g.player(o).gy.contains(&c)
     {
         return Ok(());
@@ -798,7 +910,7 @@ fn plume(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         && flier(g, m)
         && trigger_window(g, o, Some(src), "+1/+1 counter", None)?
     {
-        counter_nonflier(g, o, src);
+        counter_nonflier(g, o, src)?;
     }
     Ok(())
 }
@@ -809,7 +921,7 @@ fn plume_tokens(g: &mut Game, src: Src, p: PlayerId, toks: &[PermId]) -> Res {
     }
     for &t in toks {
         if g.perm(t).fly && controls(g, p, t) && trigger_window(g, p, Some(src), "+1/+1 counter", None)? {
-            counter_nonflier(g, p, src);
+            counter_nonflier(g, p, src)?;
         }
     }
     Ok(())
@@ -819,7 +931,7 @@ fn plume_tokens(g: &mut Game, src: Src, p: PlayerId, toks: &[PermId]) -> Res {
 fn provisioner(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let o = g.perm(src).owner;
     if m == src && trigger_window(g, o, Some(src), "+1/+1 counter", None)? {
-        counter_nonflier(g, o, src);
+        counter_nonflier(g, o, src)?;
     }
     Ok(())
 }
@@ -855,13 +967,34 @@ fn futurescribe(g: &mut Game, src: Src, p: PlayerId) -> Res {
         return Ok(());
     }
     let cs: Vec<PermId> = creatures(g, p).into_iter().filter(|&m| m != src).collect();
-    let Some(t) = first_max(&cs, |m| {
-        let x = g.perm(m);
-        (!x.tapped && !x.sick, flier(g, m), epow(g, m))
-    }) else {
+    let human = crate::human::is_human(g, p);
+    let mut best = if human {
+        None
+    } else {
+        first_max(&cs, |m| {
+            let x = g.perm(m);
+            (!x.tapped && !x.sick, flier(g, m), epow(g, m))
+        })
+    };
+    if human {
+        // practice mode: "another target creature you control" is the person's pick, asked after the table's window
+        // (the engine probes a trigger up to its first window, and a question before it would be asked twice)
+        if cs.is_empty() || !trigger_window(g, p, Some(src), "+1/+1 to another creature", None)? {
+            return Ok(());
+        }
+        best = crate::human::gaps_t2::pick_target(
+            g,
+            p,
+            &cs,
+            "Desperate Futurescribe: which other creature gets +1/+1 (or a +1/+1 counter)?",
+            None,
+        )?;
+    }
+    let Some(t) = best else {
         return Ok(());
     };
-    if !trigger_window(g, p, Some(src), &format!("+1/+1 to {}", name_of(g, t)), None)? || !controls(g, p, t) {
+    if (!human && !trigger_window(g, p, Some(src), &format!("+1/+1 to {}", name_of(g, t)), None)?) || !controls(g, p, t)
+    {
         return Ok(());
     }
     if g.player(p).scry_turn == Some(g.turn_stamp()) {
@@ -983,7 +1116,7 @@ fn emry_cast(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec
     Ok(out)
 }
 
-fn emry_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn emry_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if g.perm(src).tapped || !g.player(p).gy.contains(&c) {
         return Ok(false);
@@ -1537,9 +1670,25 @@ pub fn mirror_revert(g: &mut Game) -> Res {
         if let Some(own) = g.perm(m).phys {
             set_face(g, m, own);
             g.perm_mut(m).phys = None;
+            mirror_lists(g, m, false); // a copy of a land (a person's Mirror) goes back to the permanent list
         }
     }
     Ok(())
+}
+
+/// a Mirage Mirror that is a copy of a land is listed with its controller's lands (`land`), else with the permanents
+pub(crate) fn mirror_lists(g: &mut Game, m: PermId, land: bool) {
+    let o = g.perm(m).owner;
+    let in_lands = g.player(o).lands.contains(&m);
+    if land && !in_lands {
+        g.player_mut(o).perms.retain(|&x| x != m);
+        g.player_mut(o).lands.push(m);
+        g.bf_ver += 1;
+    } else if !land && in_lands {
+        g.player_mut(o).lands.retain(|&x| x != m);
+        g.player_mut(o).perms.push(m);
+        g.bf_ver += 1;
+    }
 }
 
 /// how much the copy is worth as an attacker or a blocker: its printed body (a defender never attacks)
@@ -1942,7 +2091,7 @@ fn chimes_cards(g: &Game, p: PlayerId) -> Vec<CardId> {
     g.player(p).gy.iter().copied().filter(|&c| g.db.get(c).types.has(Types::ENCHANTMENT)).collect()
 }
 
-fn chimes_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub(crate) fn chimes_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !controls(g, p, src) || g.perm(src).tapped || !can_pay(g, p, 3, "", false) {
         return Ok(false);
     }
