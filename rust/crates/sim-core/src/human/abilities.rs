@@ -161,6 +161,7 @@ fn loop_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
     let nm = name(g, cd);
     out.extend(super::combos::yawg_loop_abilities(g, p, m)); // Mikaeus + Yawgmoth + two undying creatures
     out.extend(super::combos::niv_abilities(g, m));
+    out.extend(super::urdragon::loop_abilities(g, p, m)); // the Ur-Dragon deck's three loops
     if !mine::loop_card(&nm) {
         return out;
     }
