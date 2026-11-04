@@ -120,13 +120,13 @@ Zur can find Arrest, Bound in Silence, Memory Trap, Mystic Remora, Necropotence,
 
 The list is exactly 100 cards.
 
-37 lands (15 nonbasic, 7 Plains, 7 Island, 8 Swamp) plus six rocks: Sol Ring, Arcane Signet, Talisman of Progress, Talisman of Hierarchy, Chromatic Lantern, Coalition Relic. **Serra's Sanctum** taps for {W} per enchantment you control, and that includes the removal Auras on opponents' creatures (you control the Aura), so Arrest or Prison Sentence also adds a mana. With 16 enchantments it taps for three or more by the mid-game. **Urborg, Tomb of Yawgmoth** makes every land a Swamp in addition to its other types, so every land can tap for {B}: it fixes Necropotence and Sheoldred, the Apocalypse and replaces a basic Swamp at no cost (the fetches can't find it, but they still have 8 Swamps).
+37 lands (16 nonbasic, 6 Plains, 7 Island, 8 Swamp) plus six rocks: Sol Ring, Arcane Signet, Talisman of Progress, Talisman of Hierarchy, Chromatic Lantern, Coalition Relic. **Serra's Sanctum** taps for {W} per enchantment you control, and that includes the removal Auras on opponents' creatures (you control the Aura), so Arrest or Prison Sentence also adds a mana. With 16 enchantments it taps for three or more by the mid-game. **Urborg, Tomb of Yawgmoth** makes every land a Swamp in addition to its other types, so every land can tap for {B}: it fixes Necropotence and Sheoldred, the Apocalypse and replaces a basic Swamp at no cost (the fetches can't find it, but they still have 8 Swamps). **Cabal Coffers** ({2}, {T}: add {B} for each Swamp you control) took a Plains slot (JD, 2026-11-04): with Urborg out every land is a Swamp, so L lands make 2L - 3 mana (11 at seven lands) for Exsanguinate, Debt to the Deathless or two big spells in a turn.
 
 | Measure | Count | Note |
 | --- | --- | --- |
-| White lands | 15 | 7 Plains plus Serra's Sanctum, Adarkar Wastes, Caves of Koilos, Command Tower, Tundra, Scrubland, Hallowed Fountain, Godless Shrine |
+| White lands | 14 | 6 Plains plus Serra's Sanctum, Adarkar Wastes, Caves of Koilos, Command Tower, Tundra, Scrubland, Hallowed Fountain, Godless Shrine |
 | Blue lands | 14 | 7 Island plus Adarkar Wastes, Command Tower, Underground River, Tundra, Underground Sea, Hallowed Fountain, Watery Grave |
-| Black lands | 16 (all 37 with Urborg out) | 8 Swamp plus Urborg, Tomb of Yawgmoth, Caves of Koilos, Command Tower, Underground River, Underground Sea, Scrubland, Watery Grave, Godless Shrine |
+| Black lands | 17 (all 37 with Urborg out) | 8 Swamp plus Urborg, Tomb of Yawgmoth, Cabal Coffers (with a Swamp out), Caves of Koilos, Command Tower, Underground River, Underground Sea, Scrubland, Watery Grave, Godless Shrine |
 | Fetch lands | 3 | Flooded Strand (W/U), Polluted Delta (U/B), Marsh Flats (W/B): each finds a basic or any dual or shock of its two types, for 1 life |
 | Always enter tapped | 0 | no land always enters tapped |
 | Sometimes enter tapped | 3 | the shocks (Hallowed Fountain, Watery Grave, Godless Shrine), unless you pay 2 life |
@@ -183,7 +183,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Sorceries (13).** Austere Command, Bribery, Cast Away Doubt, Dark Petition, Debt to the Deathless, Deep Analysis, Diabolic Tutor, Exsanguinate, Farewell, Idyllic Tutor, Read the Bones, Tezzeret's Gambit, Toxic Deluge
 
-**Lands (37).** Adarkar Wastes, Caves of Koilos, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Polluted Delta, Scrubland, Serra's Sanctum, Tundra, Underground River, Underground Sea, Urborg, Tomb of Yawgmoth, Watery Grave, 7 Plains, 7 Island, 8 Swamp
+**Lands (37).** Adarkar Wastes, Cabal Coffers, Caves of Koilos, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Polluted Delta, Scrubland, Serra's Sanctum, Tundra, Underground River, Underground Sea, Urborg, Tomb of Yawgmoth, Watery Grave, 6 Plains, 7 Island, 8 Swamp
 
 ## Import list (100)
 
@@ -195,6 +195,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Austere Command
 1 Bound in Silence
 1 Bribery
+1 Cabal Coffers
 1 Cast Away Doubt
 1 Caves of Koilos
 1 Champion's Helm
@@ -267,6 +268,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Your Fate Ends Here
 1 Zur the Enchanter
 7 Island
-7 Plains
+6 Plains
 8 Swamp
 ```
