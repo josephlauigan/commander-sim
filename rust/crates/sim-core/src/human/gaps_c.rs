@@ -82,6 +82,10 @@ pub fn abilities(_g: &Game, _p: PlayerId, _m: PermId, nm: &str) -> Option<Vec<Pe
             "{4}{B}{B}{B}, discard X cards: exile the top X cards of an opponent's library; you may play lands and cast spells from among them for free",
             gix,
         )],
+        "Harnfel, Horn of Bounty" => vec![ability(
+            "Discard a card: exile the top two cards of your library; you may play them this turn",
+            harnfel,
+        )],
         "Dauthi Voidwalker" => vec![ability(
             "{T}, sacrifice it: play an exiled card with a void counter without paying its mana cost",
             dauthi,
@@ -354,6 +358,33 @@ pub fn emry_permits(g: &Game, p: PlayerId, c: CardId) -> bool {
             && matches!(x.data.get(DataKey::Emry),
                 Some(Val::List(v)) if v.first() == Some(&Val::Stamp(st)) && v.contains(&Val::Card(c)))
     })
+}
+
+// ------------------------------------------------------------------ Harnfel, Horn of Bounty
+/// Discard a card: exile the top two cards of your library; you may play those cards this turn. The exiled cards are
+/// held in the hand for the turn (`Player::impulse`: the end step sends the unplayed ones back to exile).
+fn harnfel(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    let hand = g.player(p).hand.clone();
+    if hand.is_empty() {
+        return Ok(Some("You have no card to discard.".into()));
+    }
+    let Some(&d) = choices::pick_cards(g, p, &hand, 1, "Harnfel: discard which card?", "choose")?.first() else {
+        return Ok(None);
+    };
+    zones::discard_cards(g, p, &[d])?;
+    crate::glog!(g, "  {} activates Harnfel: discards {}", pname(g, p), cname(g, d));
+    if !ability_window(g, p, Some(m), "exile the top two cards of your library; you may play them this turn", None, None)? {
+        return Ok(None);
+    }
+    for _ in 0..2 {
+        let Some(c) = g.player_mut(p).library.pop() else { break };
+        let pl = g.player_mut(p);
+        pl.hand.push(c);
+        pl.impulse.push(c);
+        pl.seen.insert(c);
+        crate::glog!(g, "    exiles {} (Harnfel): you may play it this turn", cname(g, c));
+    }
+    Ok(None)
 }
 
 // ------------------------------------------------------------------ Mirage Mirror

@@ -434,6 +434,16 @@ pub fn engine_made() -> Vec<RawCard> {
     ps.tags.insert("pstone".to_string(), TagValue::Flag(true));
     ps.derived = ps.compute_derived();
     out.push(ps);
+    // Birgi's back face (impls/mine.rs `HARNFEL`): the card data holds only front faces
+    let mut hf = r.clone();
+    hf.name = "Harnfel, Horn of Bounty".into();
+    hf.types = "A".into();
+    hf.generic = 4;
+    hf.pips = "R".into();
+    hf.tags = indexmap::IndexMap::new();
+    hf.tags.insert("leg".to_string(), TagValue::Flag(true));
+    hf.derived = hf.compute_derived();
+    out.push(hf);
     // the back faces mine.py's prepared cards cast copies of, when the card data has no card of that name
     // (engine.back_face: `CD(name, 'I' if instant else 'S', '0', '')`)
     for (name, types) in [("Ancestral Recall", "I"), ("Wild Idea", "S")] {
