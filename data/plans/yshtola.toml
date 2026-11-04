@@ -59,10 +59,6 @@ cards = ["Ill-Gotten Inheritance"]
 score = 60
 
 [[wish]]
-cards = ["Prison Sentence"]
-score = 58
-
-[[wish]]
 cards = ["Arrest"]
 score = 56
 
@@ -72,7 +68,7 @@ score = 54
 
 # the X drains last (the hand AI moves them first once the table is in range of X: not expressible)
 [[wish]]
-cards = ["Exsanguinate", "Debt to the Deathless"]
+cards = ["Exsanguinate", "Debt to the Deathless", "Torment of Hailfire"]
 score = 50
 
 # Cast priorities (yshtola_named_prio), the first rule selecting a card decides
@@ -83,7 +79,7 @@ value = 90
 else = 60
 
 [[prio]]
-cards = ["Sol Ring", "Arcane Signet", "Chromatic Lantern", "Coalition Relic", "Talisman of Progress", "Talisman of Hierarchy"]
+cards = ["Sol Ring", "Arcane Signet", "Coalition Relic", "Talisman of Progress", "Talisman of Hierarchy"]
 when = ["turn<=5"]
 value = 82
 else = 30

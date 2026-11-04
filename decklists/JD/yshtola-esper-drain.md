@@ -175,15 +175,15 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Creatures (14).** Consecrated Sphinx, Displacer Kitten, Esper Sentinel, Grand Arbiter Augustin IV, Hostage Taker, Marauding Blight-Priest, Notion Thief, Orcish Bowmasters, Restoration Angel, Sheoldred, the Apocalypse, Skyclave Apparition, Urborg Syphon-Mage, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal, Zur the Enchanter
 
-**Enchantments (16).** Arrest, Bound in Silence, Ill-Gotten Inheritance, Memory Trap, Mystic Remora, Necropotence, Polluted Bonds, Prayer of Binding, Prison Sentence, Propaganda, Rhystic Study, Sanguine Bond, Smothering Tithe, Sphere of Safety, Static Net, Teleportation Circle
+**Enchantments (15).** Arrest, Bound in Silence, Exquisite Blood, Ill-Gotten Inheritance, Memory Trap, Mystic Remora, Necropotence, Polluted Bonds, Prayer of Binding, Propaganda, Rhystic Study, Sanguine Bond, Smothering Tithe, Sphere of Safety, Teleportation Circle
 
-**Artifacts (8).** Arcane Signet, Champion's Helm, Chromatic Lantern, Coalition Relic, Conjurer's Closet, Sol Ring, Talisman of Hierarchy, Talisman of Progress
+**Artifacts (8).** Arcane Signet, Champion's Helm, Coalition Relic, Conjurer's Closet, Expedition Map, Sol Ring, Talisman of Hierarchy, Talisman of Progress
 
 **Instants (11).** Anguished Unmaking, Dovin's Veto, Fatal Push, Force of Will, Generous Gift, Go for the Throat, Mystical Tutor, Path to Exile, Teferi's Protection, Vampiric Tutor, Your Fate Ends Here
 
-**Sorceries (13).** Austere Command, Bribery, Cast Away Doubt, Dark Petition, Debt to the Deathless, Deep Analysis, Diabolic Tutor, Exsanguinate, Farewell, Idyllic Tutor, Read the Bones, Tezzeret's Gambit, Toxic Deluge
+**Sorceries (14).** Austere Command, Bribery, Cast Away Doubt, Dark Petition, Debt to the Deathless, Demonic Tutor, Diabolic Tutor, Exsanguinate, Farewell, Idyllic Tutor, Read the Bones, Tezzeret's Gambit, Torment of Hailfire, Toxic Deluge
 
-**Lands (37).** Adarkar Wastes, Cabal Coffers, Caves of Koilos, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Polluted Delta, Scrubland, Serra's Sanctum, Tundra, Underground River, Underground Sea, Urborg, Tomb of Yawgmoth, Watery Grave, 6 Plains, 7 Island, 8 Swamp
+**Lands (37).** Adarkar Wastes, Cabal Coffers, Caves of Koilos, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Polluted Delta, Scrubland, Serra's Sanctum, Tundra, Underground River, Underground Sea, Urborg, Tomb of Yawgmoth, Urza's Cave, Watery Grave, 6 Plains, 6 Island, 8 Swamp
 
 ## Import list (100)
 
@@ -199,18 +199,19 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Cast Away Doubt
 1 Caves of Koilos
 1 Champion's Helm
-1 Chromatic Lantern
 1 Coalition Relic
 1 Command Tower
 1 Conjurer's Closet
 1 Consecrated Sphinx
 1 Dark Petition
 1 Debt to the Deathless
-1 Deep Analysis
+1 Demonic Tutor
 1 Diabolic Tutor
 1 Displacer Kitten
 1 Dovin's Veto
 1 Esper Sentinel
+1 Expedition Map
+1 Exquisite Blood
 1 Exsanguinate
 1 Farewell
 1 Fatal Push
@@ -236,7 +237,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Polluted Bonds
 1 Polluted Delta
 1 Prayer of Binding
-1 Prison Sentence
 1 Propaganda
 1 Read the Bones
 1 Restoration Angel
@@ -249,25 +249,26 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Smothering Tithe
 1 Sol Ring
 1 Sphere of Safety
-1 Static Net
 1 Talisman of Hierarchy
 1 Talisman of Progress
 1 Teferi's Protection
 1 Teleportation Circle
 1 Tezzeret's Gambit
+1 Torment of Hailfire
 1 Toxic Deluge
 1 Tundra
 1 Underground River
 1 Underground Sea
 1 Urborg Syphon-Mage
 1 Urborg, Tomb of Yawgmoth
+1 Urza's Cave
 1 Vampiric Tutor
 1 Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal
 1 Watery Grave
 1 Y'shtola, Night's Blessed
 1 Your Fate Ends Here
 1 Zur the Enchanter
-7 Island
+6 Island
 6 Plains
 8 Swamp
 ```

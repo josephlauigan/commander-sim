@@ -6,6 +6,10 @@ why it did or didn't work. Updated after every run. Newest evidence first. Match
 ## Current state (2026-11-04)
 Look-ahead, loose, current list (Cabal Coffers in for a Plains): **T5 24.9%** (95% CI 23.0-26.8), 2,000 games.
 Her losses are still fast combo (Kinnan, Urza, Zur) and Miirym combat, about 49% of games.
+**Applied 11/04 (JD):** the Coffers package with Urza's Cave (Demonic Tutor, Exquisite Blood, Torment of Hailfire,
+Expedition Map, Urza's Cave for Deep Analysis, Prison Sentence, Chromatic Lantern, Static Net, an Island). Measured
+26.1% vs T5 (+1.3, noise ±2.4) with the board-aware land choice before the Cave/Map utility change; the list as
+applied (that utility change, Torment in the plan file's X-drain wish) is not measured yet.
 
 ## Weaknesses (by evidence)
 - **Lowest win rate when cast** (adaptive card report, `audit/yshtola/2026-10-17-adnaus/K0-analyze-adaptive.txt`;
