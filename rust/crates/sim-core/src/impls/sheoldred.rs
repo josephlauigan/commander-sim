@@ -972,7 +972,28 @@ fn delver_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let o = g.perm(src).owner;
-    let Some(c) = rean_pick(g, o, 99, true) else { return Ok(()) };
+    // practice mode: the person picks the creature card (any in their graveyard; they lose its mana value in life)
+    let c = if human(g, o) {
+        let cs: Vec<CardId> = g.player(o).gy.iter().copied().filter(|&c| g.db.get(c).creature).collect();
+        if cs.is_empty() {
+            return Ok(());
+        }
+        let labels: Vec<String> = cs
+            .iter()
+            .map(|&c| format!("{} (lose {} life)", crate::human::choices::card_label(g, c), g.db.get(c).cmc))
+            .collect();
+        let k = crate::human::choices::choose_one(
+            g,
+            o,
+            "target",
+            "Phyrexian Delver: return which creature card from your graveyard?",
+            &labels,
+        )?;
+        cs[k]
+    } else {
+        let Some(c) = rean_pick(g, o, 99, true) else { return Ok(()) };
+        c
+    };
     if !trigger_window(g, o, Some(src), "return a creature card from your graveyard", Some(5.0))? {
         return Ok(());
     }
@@ -992,7 +1013,13 @@ fn beckoner_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let o = g.perm(src).owner;
     let cs: Vec<PermId> = my_creatures(g, o).into_iter().filter(|&x| x != src).collect();
-    let Some(t) = max_by(&cs, |x| pval(g, x) + if g.perm(x).sick { 0.0 } else { 1.0 }) else { return Ok(()) };
+    // practice mode: the person picks the creature (a required target)
+    let t = if human(g, o) && !cs.is_empty() {
+        crate::human::cards::pick_perm(g, o, "target", "Perigee Beckoner: +2/+0 and a return-when-it-dies grant on which creature?", &cs, None)?
+    } else {
+        max_by(&cs, |x| pval(g, x) + if g.perm(x).sick { 0.0 } else { 1.0 })
+    };
+    let Some(t) = t else { return Ok(()) };
     if trigger_window(g, o, Some(src), "+2/+0 and returns when it dies", Some(3.0))? && g.perm(t).on_bf {
         g.perm_mut(t).eot_pt.0 += 2;
         grant_eot(g, t, "ret_dies_tapped");

@@ -181,11 +181,19 @@ fn alela_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 // ================================================================== the 99
 /// alela._counter_nonflier: +1/+1 counter on target creature you control without flying (Plumecreed Mentor,
 /// Pileated Provisioner)
-fn counter_nonflier(g: &mut Game, p: PlayerId, src: PermId) {
+fn counter_nonflier(g: &mut Game, p: PlayerId, src: PermId) -> Res {
     let cs: Vec<PermId> = creatures(g, p).into_iter().filter(|&m| !flier(g, m)).collect();
-    let Some(t) = first_max(&cs, |m| (g.perm(m).is_cmd, !g.perm(m).noatk, pval(g, m))) else { return };
+    // practice mode: the person picks the creature (the target is required: no way out)
+    let t = if crate::human::is_human(g, p) && !cs.is_empty() {
+        let prompt = format!("{}: +1/+1 counter on which creature without flying?", name_of(g, src));
+        crate::human::cards::pick_perm(g, p, "target", &prompt, &cs, None)?
+    } else {
+        first_max(&cs, |m| (g.perm(m).is_cmd, !g.perm(m).noatk, pval(g, m)))
+    };
+    let Some(t) = t else { return Ok(()) };
     repl::put_plus(g, t, 1);
     crate::glog!(g, "    {}: +1/+1 counter on {}", name_of(g, src), name_of(g, t));
+    Ok(())
 }
 
 // ------------------------------------------------------------------ the Jace token (empower Jace)
@@ -265,6 +273,9 @@ fn plan_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let o = g.perm(src).owner;
+    if crate::human::is_human(g, o) {
+        return plan_etb_person(g, src, o);
+    }
     let Some(t) = best_opp_nonland(g, o, |_| true) else { return Ok(()) };
     if pval(g, t) < 2.0 {
         return Ok(());
@@ -275,6 +286,65 @@ fn plan_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     if on_bf(g, t) && !untargetable(g, t) {
         apply_removal(g, Some(o), t, "top", None)?; // its owner keeps it on top
+    }
+    Ok(())
+}
+
+/// Plan for All Outcomes for a person: "up to one other target nonland permanent" (any player's, yours too), then
+/// its owner puts it on the top or the bottom of their library: a person who owns it chooses, an opponent owner is
+/// the AI's (top, as `apply_removal(.., "top")` does)
+fn plan_etb_person(g: &mut Game, src: PermId, o: PlayerId) -> Res {
+    let cands: Vec<PermId> = g
+        .players
+        .iter()
+        .filter(|q| q.alive)
+        .flat_map(|q| q.perms.iter().copied())
+        .filter(|&t| {
+            let x = g.perm(t);
+            t != src
+                && !x.phased
+                && x.cd.is_none_or(|c| !g.db.get(c).land)
+                && !(x.owner != o && untargetable(g, t))
+        })
+        .collect();
+    if cands.is_empty() {
+        return Ok(());
+    }
+    let Some(t) = crate::human::cards::pick_perm(
+        g,
+        o,
+        "target",
+        "Plan for All Outcomes: which other nonland permanent goes to the top or bottom of its owner's library?",
+        &cands,
+        Some("no target"),
+    )?
+    else {
+        return Ok(());
+    };
+    let text = format!("{} to the top or bottom of its library", name_of(g, t));
+    if !trigger_window(g, o, Some(src), &text, Some(5.0))? || !on_bf(g, t) || (g.perm(t).owner != o && untargetable(g, t)) {
+        return Ok(());
+    }
+    let owner = g.perm(t).orig;
+    let top = if crate::human::is_human(g, owner) {
+        let labels = vec!["top of your library".to_string(), "bottom of your library".to_string()];
+        let prompt = format!("Plan for All Outcomes: {} goes on which end of your library?", name_of(g, t));
+        crate::human::choices::choose_one(g, owner, "choose", &prompt, &labels)? == 0
+    } else {
+        true
+    };
+    if top {
+        apply_removal(g, Some(o), t, "top", None)?;
+    } else {
+        // the bottom: as `bulk_blue::top_or_bottom` does it
+        leave(g, t)?;
+        let before = g.player(owner).library.len();
+        to_zone_card(g, t, Zone::Top);
+        if g.player(owner).library.len() > before {
+            let c = g.player_mut(owner).library.pop().unwrap();
+            g.player_mut(owner).library.insert(0, c);
+        }
+        crate::glog!(g, "    {} goes on the bottom of its owner's library", g.perm(t).name);
     }
     Ok(())
 }
@@ -798,7 +868,7 @@ fn plume(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         && flier(g, m)
         && trigger_window(g, o, Some(src), "+1/+1 counter", None)?
     {
-        counter_nonflier(g, o, src);
+        counter_nonflier(g, o, src)?;
     }
     Ok(())
 }
@@ -809,7 +879,7 @@ fn plume_tokens(g: &mut Game, src: Src, p: PlayerId, toks: &[PermId]) -> Res {
     }
     for &t in toks {
         if g.perm(t).fly && controls(g, p, t) && trigger_window(g, p, Some(src), "+1/+1 counter", None)? {
-            counter_nonflier(g, p, src);
+            counter_nonflier(g, p, src)?;
         }
     }
     Ok(())
@@ -819,7 +889,7 @@ fn plume_tokens(g: &mut Game, src: Src, p: PlayerId, toks: &[PermId]) -> Res {
 fn provisioner(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let o = g.perm(src).owner;
     if m == src && trigger_window(g, o, Some(src), "+1/+1 counter", None)? {
-        counter_nonflier(g, o, src);
+        counter_nonflier(g, o, src)?;
     }
     Ok(())
 }
@@ -983,7 +1053,7 @@ fn emry_cast(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec
     Ok(out)
 }
 
-fn emry_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn emry_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if g.perm(src).tapped || !g.player(p).gy.contains(&c) {
         return Ok(false);
@@ -1942,7 +2012,7 @@ fn chimes_cards(g: &Game, p: PlayerId) -> Vec<CardId> {
     g.player(p).gy.iter().copied().filter(|&c| g.db.get(c).types.has(Types::ENCHANTMENT)).collect()
 }
 
-fn chimes_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+pub(crate) fn chimes_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !controls(g, p, src) || g.perm(src).tapped || !can_pay(g, p, 3, "", false) {
         return Ok(false);
     }

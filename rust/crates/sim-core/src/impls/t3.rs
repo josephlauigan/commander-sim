@@ -631,6 +631,22 @@ pub fn put_creature(
     if cs.is_empty() {
         return Ok(None);
     }
+    if crate::human::is_human(g, p) {
+        // practice mode: the person searches (Natural Order, Green Sun's Zenith, Chord of Calling, Eldritch Evolution);
+        // finding nothing is allowed, and the library is shuffled either way
+        let got = crate::human::choices::search(
+            g,
+            p,
+            &|g: &Game, x: CardId| g.db.get(x).creature && pred(g, x),
+            1,
+            "Search your library for a creature card to put onto the battlefield",
+            true,
+        )?;
+        let Some(&c) = got.first() else { return Ok(None) };
+        g.player_mut(p).stat("tutored", 1);
+        enter(g, p, c, Enter::default())?;
+        return Ok(Some(c));
+    }
     let wish = crate::ai::plans::wish_list(g, p);
     // Tier 6: the best-ranked wished card (lower tiers keep the first in library order: their results are locked)
     // --- t6-xtutor: the line planner's card, when it meets the spell's restriction

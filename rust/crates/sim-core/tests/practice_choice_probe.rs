@@ -220,9 +220,6 @@ fn every_choice_of_the_owned_decks_is_asked_of_a_person() {
 /// gaps found on 2026-11-04 and not yet fixed: the AI chooses for the person. Fixing one means taking it off this list;
 /// a new gap fails the test.
 const TO_FIX: &[&str] = &[
-    "alela: Airlift Chaplain",
-    "alela: Pileated Provisioner",
-    "alela: Plan for All Outcomes",
     "cloud: Akroma's Will",
     "cloud: Evolving Wilds",
     "cloud: Forge Anew",
@@ -231,7 +228,6 @@ const TO_FIX: &[&str] = &[
     "cloud: Terminal Moraine",
     "cloud: Winds of Abandon",
     "galadriel: Fabled Passage",
-    "galadriel: River's Rebuke",
     "karn: Pithing Needle",
     "karn: Soul-Guide Lantern",
     "karn: Spine of Ish Sah",
@@ -243,9 +239,6 @@ const TO_FIX: &[&str] = &[
     "sauron: Foreboding Ruins",
     "sauron: Nibelheim Aflame",
     "sauron: Slip Out the Back",
-    "sheoldred: Perigee Beckoner",
-    "sheoldred: Phyrexian Delver",
-    "sheoldred: Raise Dead",
     "thanos: Arid Mesa",
     "thanos: Bloodstained Mire",
     "thanos: Cavern of Souls",
@@ -260,9 +253,7 @@ const TO_FIX: &[&str] = &[
     "thrasios: Flooded Strand",
     "thrasios: Marsh Flats",
     "thrasios: Misty Rainforest",
-    "thrasios: Natural Order",
     "thrasios: Polluted Delta",
-    "thrasios: The Wasp, Winsome Avenger",
     "thrasios: Verdant Catacombs",
     "thrasios: Windswept Heath",
     "urdragon: Bloodstained Mire",
@@ -278,7 +269,6 @@ const TO_FIX: &[&str] = &[
     "urdragon: Verdant Catacombs",
     "urdragon: Windswept Heath",
     "urdragon: Wooded Foothills",
-    "yshtola: Deep Analysis",
     "yshtola: Flooded Strand",
     "yshtola: Marsh Flats",
     "yshtola: Polluted Delta",
@@ -296,6 +286,8 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
     ("sheoldred: Invoke Despair", "the opponent chooses what to sacrifice, not the person"),
     ("sheoldred: Rooftop Assassin", "no creature was dealt damage this turn: no legal target"),
     ("cloud: Loyal Warhound", "a basic Plains: every choice is the same card"),
+    ("alela: Airlift Chaplain", "already asks; the probe's three milled cards held no Plains or cheap creature, so there was nothing to choose (practice_gaps_c.rs)"),
+    ("thrasios: The Wasp, Winsome Avenger", "the only Hero on the probe table is the Wasp itself, so the enter target is forced; the person is asked when there is another Hero, and for the attack trigger (practice_gaps_c.rs)"),
 ];
 
 /// the gaps found against the two lists: a gap on neither list is new (fails), a TO_FIX entry no longer found is
