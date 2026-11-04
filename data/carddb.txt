@@ -69,7 +69,7 @@ Phyrexian Arena|E|1BB|eng=1
 Phyrexian Metamorph|AC|3U|pow=0 clone
 Reanimate|S|B|rean=reanimate
 Sakura-Tribe Elder|C|1G|noatk
-Satyr Wayfinder|C|3G|fill=wayfinder pow=1 noatk
+Satyr Wayfinder|C|1G|fill=wayfinder pow=1 noatk
 Sephiroth, Planet's Heir|C|4UB|bomb=5 pow=4 vig leg heir
 Sheoldred, the Apocalypse|C|2BB|bomb=7 pow=4 tgh=5 dt leg sheoA
 Sheoldred, Whispering One|C|5BB|bomb=8 pow=6 leg sheoW swampwalk
@@ -131,7 +131,7 @@ Displacer Kitten|C|3U|vkitten pow=2 noatk
 Disruptor Flute|A|2|flash flute
 Dreams of Laguna|I|1U|draw=1 fb=3U
 Emeritus of Conflict // Lightning Bolt|C|1R|pow=2 tgh=2 conflict
-Emeritus of Ideation // Ancestral Recall|C|3U|pow=5 tgh=5 fly prepare
+Emeritus of Ideation // Ancestral Recall|C|3UU|pow=5 tgh=5 fly prepare
 Eris, Roar of the Storm|C|8UR|pow=4 fly eris leg
 Expressive Iteration|S|UR|draw=1
 Fabricate|S|2U|tut=art
@@ -151,7 +151,7 @@ Mistrise Village|L|-|c=U ck mistrise
 Mizzix's Mastery|S|3R|mastery
 Murmuring Mystic|C|3U|mystic pow=1 tgh=5 noatk wizard
 Muse Seeker|C|1U|pow=1 tgh=2 noatk spellloot
-Mystic Confluence|I|3UUU|ctr=any soft=3 eotdraw=3
+Mystic Confluence|I|3UU|ctr=any soft=3 eotdraw=3
 Mystic Sanctuary|L|-|c=U t
 Mystical Tutor|I|U|tut=is top
 Old Fat Spider Can't See Me|E|2U|spider
@@ -218,7 +218,7 @@ Jace's Archivist|C|1UU|archivist pow=2 noatk
 Kaervek the Merciless|C|5BR|kaervek pow=5 leg
 Kindred Discovery|E|3UU|kindred
 Lightning Greaves|A|2|prot=boots
-Mauhúr, Uruk-hai Captain|C|1BR|mauhur pow=2 leg
+Mauhúr, Uruk-hai Captain|C|BR|mauhur pow=2 leg
 Memory Lapse|I|1U|ctr=any lapse
 Metallic Mimic|AC|2|pow=2 tgh=1 noatk mimic
 Nibelheim Aflame|S|2RR|wipe=nib fb=5RR fbnib
@@ -264,7 +264,7 @@ Coalition Relic|A|3|rock=1:A
 Dispatch|I|W|rem=exile tgt=c needart3
 Duty Beyond Death|I|1W|prot=indes
 Elrond, Lord of Rivendell|C|2U|pow=3 tgh=2 leg
-Emmara, Soul of the Accord|C|2W|pow=2 tokatk=1 leg
+Emmara, Soul of the Accord|C|GW|pow=2 tokatk=1 leg
 End-Raze Forerunners|C|5GGG|pow=7 haste vig trample endraze
 Ephemerate|I|W|prot=blink
 Felidar Retreat|E|3W|landfall2
