@@ -165,7 +165,7 @@ fn play_it(key: &str, name: &str, land: bool) -> (Vec<String>, Vec<String>, bool
         .asked()
         .iter()
         .filter(|r| r.kind != "priority" && !other(&r.prompt) && !(fetch && r.prompt.ends_with("which ability?")))
-        .map(|r| format!("{}: {}", r.kind, r.prompt))
+        .map(|r| if std::env::var("PROBE_CHOICES").is_ok() { format!("{}: {} {:?}", r.kind, r.prompt, r.choices) } else { format!("{}: {}", r.kind, r.prompt) })
         .collect();
     let refused = h.told_kind("invalid");
     let left_hand = !g.player(P0).hand.contains(&c);
@@ -181,6 +181,7 @@ fn every_choice_of_the_owned_decks_is_asked_of_a_person() {
     let mut unplayed: Vec<String> = vec![];
     let mut probed = 0;
     let mut asked_ok = 0;
+    let mut twice: Vec<String> = vec![];
     for d in decks["mine"].as_array().unwrap() {
         let key = d["key"].as_str().unwrap();
         let mut names: Vec<String> =
@@ -217,6 +218,12 @@ fn every_choice_of_the_owned_decks_is_asked_of_a_person() {
                 }
                 Ok((asked, _, _)) => {
                     asked_ok += 1;
+                    // the same question twice in a row: asked before a trigger's first window, so the engine's probe run of
+                    // the trigger asked it once and the real run again (`stack::resolve_batch`)
+                    if asked.windows(2).any(|w| w[0] == w[1]) {
+                        eprintln!("TWICE {key}: {name}: {}", asked.join(" || "));
+                        twice.push(format!("{key}: {name}"));
+                    }
                     if std::env::var("PROBE_DUMP").is_ok() {
                         eprintln!("ASKED {key}: {name}: {}", asked.join(" || "));
                     }
@@ -234,6 +241,7 @@ fn every_choice_of_the_owned_decks_is_asked_of_a_person() {
     for e in &unplayed {
         eprintln!("!! {e}");
     }
+    assert!(twice.is_empty(), "asked the same question twice (before a trigger's first window?): {twice:?}");
     check(&silent);
 }
 

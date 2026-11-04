@@ -1111,6 +1111,11 @@ pub fn lantern_enters(g: &mut Game, src: PermId) -> Res {
 /// Spine of Ish Sah: when it enters, destroy target permanent (any permanent, a land too)
 pub fn spine_enters(g: &mut Game, src: PermId) -> Res {
     let o = g.perm(src).owner;
+    let Some(cd) = g.perm(src).cd else { return Ok(()) };
+    // asked after the trigger's window (the engine's probe run stops at the first window: asking before asked twice)
+    if !crate::engine::stack::trigger_window(g, o, Some(src), "destroy target permanent", Some(6.0))? {
+        return Ok(());
+    }
     let mut cands: Vec<(PlayerId, PermId)> = vec![];
     for q in g.players.iter().filter(|q| q.alive) {
         for &m in q.perms.iter().chain(q.lands.iter()) {
@@ -1127,10 +1132,6 @@ pub fn spine_enters(g: &mut Game, src: PermId) -> Res {
         cands.iter().map(|&(_, m)| legal::describe_target(g, o, Target::Perm(m))).collect();
     let k = choices::choose_one(g, o, "target", "Spine of Ish Sah: destroy which permanent?", &labels)?;
     let (q, t) = cands[k];
-    let Some(cd) = g.perm(src).cd else { return Ok(()) };
-    if !crate::engine::stack::trigger_window(g, o, Some(src), "destroy target permanent", Some(6.0))? || !g.perm(t).on_bf {
-        return Ok(());
-    }
     if g.player(q).lands.contains(&t) {
         crate::impls::fixes::destroy_land(g, q, t)?;
     } else {

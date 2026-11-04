@@ -310,6 +310,14 @@ fn plan_etb_person(g: &mut Game, src: PermId, o: PlayerId) -> Res {
     if cands.is_empty() {
         return Ok(());
     }
+    // asked after the trigger's window (the engine's probe run stops at the first window: asking before asked twice)
+    if !trigger_window(g, o, Some(src), "a nonland permanent to the top or bottom of its library", Some(5.0))? {
+        return Ok(());
+    }
+    let cands: Vec<PermId> = cands.into_iter().filter(|&t| on_bf(g, t) && !g.perm(t).phased).collect();
+    if cands.is_empty() {
+        return Ok(());
+    }
     let Some(t) = crate::human::cards::pick_perm(
         g,
         o,
@@ -321,10 +329,6 @@ fn plan_etb_person(g: &mut Game, src: PermId, o: PlayerId) -> Res {
     else {
         return Ok(());
     };
-    let text = format!("{} to the top or bottom of its library", name_of(g, t));
-    if !trigger_window(g, o, Some(src), &text, Some(5.0))? || !on_bf(g, t) || (g.perm(t).owner != o && untargetable(g, t)) {
-        return Ok(());
-    }
     let owner = g.perm(t).orig;
     let top = if crate::human::is_human(g, owner) {
         let labels = vec!["top of your library".to_string(), "bottom of your library".to_string()];
