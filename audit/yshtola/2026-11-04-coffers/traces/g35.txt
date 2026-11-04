@@ -1,0 +1,259 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 35 (seed 500035): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Urza, Y'shtola, Miirym, Kinnan
+R1  --- Urza turn 1: life 40, 7 cards in hand, 0 lands
+R1    Urza plays Island
+R1        [Urza decides: Mishra's Bauble 60%, Brainstorm 40%, stop 0% -> Mishra's Bauble [search]]
+R1    Urza casts Mishra's Bauble
+R1      Y'shtola casts Force of Will at Mishra's Bauble
+R1      Y'shtola counters Mishra's Bauble with Force of Will
+R1        [Urza decides: Brainstorm 100%, stop 0% -> Brainstorm [search]]
+R1    Urza casts Brainstorm
+R1  --- Y'shtola turn 1: life 39, 5 cards in hand, 0 lands
+R1    Y'shtola plays Serra's Sanctum
+R1  --- Miirym turn 1: life 40, 7 cards in hand, 0 lands
+R1    Miirym plays Scalding Tarn
+R1      cracks Scalding Tarn for Ketria Triome
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kinnan plays Exotic Orchard
+R1        [Kinnan decides: Mana Vault 92%, Delighted Halfling 8%, stop 0% -> Delighted Halfling [search]]
+R1    Kinnan casts Delighted Halfling
+R2  --- Urza turn 2: life 40, 6 cards in hand, 1 lands
+R2    Urza plays Ancient Tomb
+R2        [Urza decides: Arcane Signet 57%, Trinket Mage 29%, Tribute Mage 15%, stop 0% -> Trinket Mage [search]]
+R2    Urza casts Trinket Mage
+R2      Urza reveals Basalt Monolith and puts it into their hand
+R2  --- Y'shtola turn 2: life 39, 5 cards in hand, 1 lands
+R2    Y'shtola pays 2 life for an untapped Hallowed Fountain
+R2    Y'shtola plays Hallowed Fountain
+R2  --- Miirym turn 2: life 39, 7 cards in hand, 1 lands
+R2    Miirym plays Boseiju, Who Endures
+R2        [Miirym decides: Birds of Paradise 100%, stop (hold mana) 0% -> Birds of Paradise [search]]
+R2    Miirym casts Birds of Paradise
+R2  --- Kinnan turn 2: life 40, 6 cards in hand, 1 lands
+R2    Kinnan plays Flooded Grove
+R2        [Kinnan decides: Mana Vault 84%, Kinnan, Bonder Prodigy 14%, Enduring Vitality 1%, stop (hold mana) 0% -> Mana Vault [search]]
+R2    Kinnan casts Mana Vault
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 92%, Enduring Vitality 8%, stop (hold mana) 0% -> Kinnan, Bonder Prodigy [search]]
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R3  --- Urza turn 3: life 38, 6 cards in hand, 2 lands
+R3    Urza plays Island
+R3        [Urza decides: Arcane Signet 93%, Basalt Monolith 7%, stop (hold mana) 1%, transmute Muddle the Mixture (Cyclonic Rift) 0% -> Urza, Lord High Artificer [search]]
+R3    Urza casts Urza, Lord High Artificer
+R3        [Urza attack plan by search: none at Y'shtola]
+R3  --- Y'shtola turn 3: life 37, 5 cards in hand, 2 lands
+R3    Y'shtola plays Swamp
+R3        [Y'shtola decides: Go for the Throat -> Urza, Lord High Artificer 100%, stop (hold mana) 0% -> Go for the Throat -> Urza, Lord High Artificer [search]]
+R3    Y'shtola casts Go for the Throat -> Urza, Lord High Artificer (Urza)
+R3      Urza, Lord High Artificer (Urza) is removed: destroy
+R3    Miirym casts Worldly Tutor
+R3      Miirym reveals Wrathful Red Dragon and puts it on top of their library
+R3        [Miirym end of turn: Worldly Tutor 100%, pass 0% -> Worldly Tutor]
+R3  --- Miirym turn 3: life 39, 5 cards in hand, 2 lands
+R3    Miirym plays Rockfall Vale
+R3  --- Kinnan turn 3: life 40, 5 cards in hand, 2 lands
+R3    Kinnan plays Forest
+R3        [Kinnan decides: Fyndhorn Elves 97%, Void Winnower 2%, Enduring Vitality 0%, Chord of Calling 0% -> Fyndhorn Elves [search]]
+R3    Kinnan casts Fyndhorn Elves
+R3        [Kinnan decides: Enduring Vitality 42%, Chord of Calling 32%, stop (hold mana) 15%, Kinnan: dig five 11% -> Enduring Vitality [search]]
+R3    Kinnan casts Enduring Vitality
+R3        [Kinnan decides: Chord of Calling 100%, stop 0% -> Chord of Calling [search]]
+R3    Kinnan casts Chord of Calling
+R3      Miirym casts An Offer You Can't Refuse at Chord of Calling
+R3      Miirym counters Chord of Calling with An Offer You Can't Refuse
+R4  --- Urza turn 4: life 36, 6 cards in hand, 3 lands
+R4        [Urza decides: Arcane Signet 94%, Basalt Monolith 4%, stop (hold mana) 2%, transmute Muddle the Mixture (Cyclonic Rift) 0% -> Arcane Signet [search]]
+R4    Urza casts Arcane Signet
+R4        [Urza decides: Basalt Monolith 100%, Tribute Mage 0%, stop 0% -> Tribute Mage [search]]
+R4    Urza casts Tribute Mage
+R4      Kinnan casts Counterspell at Tribute Mage
+R4      Kinnan counters Tribute Mage with Counterspell
+R4        [Urza attack plan by search: filtered at Kinnan]
+R4    Urza attacks Kinnan with 2 creature(s): 4 damage (life now 36)
+R4  --- Y'shtola turn 4: life 37, 4 cards in hand, 3 lands
+R4    Y'shtola plays Plains
+R4        [Y'shtola decides: Y'shtola, Night's Blessed 68%, Sol Ring 32%, stop 0% -> Sol Ring [search]]
+R4    Y'shtola casts Sol Ring
+R4        [Y'shtola decides: Y'shtola, Night's Blessed 85%, Exquisite Blood 15%, stop 0% -> Y'shtola, Night's Blessed [search]]
+R4    Y'shtola casts Y'shtola, Night's Blessed
+R4  --- Miirym turn 4: life 39, 4 cards in hand, 3 lands
+R4    Miirym plays Wooded Foothills
+R4      cracks Wooded Foothills for Breeding Pool
+R4  --- Kinnan turn 4: life 36, 1 cards in hand, 3 lands
+R4        [Kinnan decides: Void Winnower 100%, Kinnan: dig five 0%, stop 0% -> Void Winnower [search]]
+R4    Kinnan casts Void Winnower
+R5  --- Urza turn 5: life 34, 5 cards in hand, 3 lands
+R5    Urza plays Island
+R5        [Urza decides: Basalt Monolith 100%, stop (hold mana) 0%, transmute Muddle the Mixture (Cyclonic Rift) 0% -> stop (hold mana) [search]]
+R5        [Urza attack plan by search: filtered at Miirym]
+R5    Urza attacks Miirym with 2 creature(s): 4 damage (life now 34)
+R5        [Urza decides: Basalt Monolith 100%, stop (hold mana) 0%, transmute Muddle the Mixture (Cyclonic Rift) 0% -> Basalt Monolith [search]]
+R5    Urza casts Basalt Monolith
+R5        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R5    Urza activates Basalt Monolith
+R5        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R5    Urza activates Basalt Monolith
+R5        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R5    Urza activates Basalt Monolith
+R5  --- Y'shtola turn 5: life 37, 4 cards in hand, 4 lands
+R5    Y'shtola plays Swamp
+R5        [Y'shtola decides: Exquisite Blood 100%, stop 0% -> Exquisite Blood [search]]
+R5    Y'shtola casts Exquisite Blood
+R5      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R5        [Y'shtola attack plan by search: filtered at Urza]
+R5    Y'shtola attacks Urza with 1 creature(s): 2 damage (life now 30)
+R5  --- Miirym turn 5: life 32, 4 cards in hand, 4 lands
+R5    Miirym plays Forest
+R5        [Miirym decides: Goldspan Dragon 75%, Wrathful Red Dragon 25%, stop 0% -> Goldspan Dragon [search]]
+R5    Miirym casts Goldspan Dragon
+R5        [Miirym attack plan by search: filtered at Y'shtola]
+R5    Miirym attacks Y'shtola with 1 creature(s): 4 damage (life now 37)
+R5  --- Kinnan turn 5: life 33, 1 cards in hand, 3 lands
+R5    Kinnan plays Waterlogged Grove
+R5        [Kinnan decides: Kinnan: dig five 100%, stop 0% -> Kinnan: dig five [search]]
+R5        [Kinnan attack plan by search: filtered at Y'shtola]
+R5    Kinnan attacks Y'shtola with 3 creature(s): 16 damage (life now 22)
+R6    Urza casts Mystical Tutor
+R6      Urza reveals Cyclonic Rift and puts it on top of their library
+R6        [Urza end of turn: Mystical Tutor 100%, Basalt Monolith ability 0%, pass 0% -> Mystical Tutor]
+R6    Urza activates Basalt Monolith
+R6        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R6    Urza activates Basalt Monolith
+R6        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R6    Urza activates Basalt Monolith
+R6        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R6  --- Urza turn 6: life 30, 3 cards in hand, 4 lands
+R6        [Urza decides: stop (hold mana) 100%, transmute Muddle the Mixture (Reshape) 0% -> stop (hold mana) [search]]
+R6        [Urza attack plan by search: filtered at Y'shtola]
+R6    Urza attacks Y'shtola with 2 creature(s): 5 damage (life now 17)
+R6        [Urza decides: stop (hold mana) 100%, transmute Muddle the Mixture (Reshape) 0% -> stop (hold mana) [search]]
+R6    Y'shtola casts Path to Exile -> Void Winnower (Kinnan)
+R6      Void Winnower (Kinnan) is removed: exile
+R6        [Y'shtola end of turn: Path to Exile -> Void Winnower 100%, pass 0% -> Path to Exile -> Void Winnower]
+R6  --- Y'shtola turn 6: life 17, 6 cards in hand, 5 lands
+R6    Y'shtola plays Island
+R6        [Y'shtola decides: Austere Command 95%, Diabolic Tutor 4%, Read the Bones 1%, stop 0% -> Austere Command [search]]
+R6    Y'shtola casts Austere Command
+R6      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R6      Urza casts Muddle the Mixture at Austere Command
+R6      Urza counters Austere Command with Muddle the Mixture
+R6        [Y'shtola attack plan by search: filtered at Urza]
+R6    Urza answers the attack: Cyclonic Rift -> Y'shtola, Night's Blessed
+R6    Urza casts Cyclonic Rift -> Y'shtola, Night's Blessed (Y'shtola)
+R6      Y'shtola, Night's Blessed (Y'shtola) is removed: bounce
+R6    Y'shtola attacks Urza with 1 creature(s): 0 damage (life now 28)
+R6  --- Miirym turn 6: life 30, 3 cards in hand, 5 lands
+R6    Miirym plays Rejuvenating Springs
+R6        [Miirym decides: Atarka, World Render 65%, Miirym, Sentinel Wyrm 34%, Wrathful Red Dragon 1%, stop 0% -> Atarka, World Render [search]]
+R6    Miirym casts Atarka, World Render
+R6        [Miirym attack plan by search: filtered at Kinnan]
+R6    Miirym attacks Kinnan with 1 creature(s): 8 damage (life now 22)
+R6    Kinnan sacrifices Waterlogged Grove: draws a card
+R6        [Kinnan end of turn: Waterlogged Grove draw 98%, pass 2% -> Waterlogged Grove draw]
+R6  --- Kinnan turn 6: life 22, 2 cards in hand, 4 lands
+R6        [Kinnan decides: Nature's Rhythm 94%, Chrome Mox 3%, Kinnan: dig five 3%, stop 0% -> Nature's Rhythm [search]]
+R6      Kinnan exiles Elvish Spirit Guide from hand for {G}
+R6    Kinnan casts Nature's Rhythm
+R7    Urza activates Basalt Monolith
+R7        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R7    Urza activates Basalt Monolith
+R7        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R7    Urza activates Basalt Monolith
+R7        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R7  --- Urza turn 7: life 28, 2 cards in hand, 4 lands
+R7    Urza plays Urza's Saga
+R7        [Urza decides: Urza, Lord High Artificer 80%, The One Ring 12%, Windfall 8%, stop 0% -> Urza, Lord High Artificer [search]]
+R7    Urza casts Urza, Lord High Artificer
+R7        [Urza decides: The One Ring 62%, Windfall 38%, Urza: free card 0%, stop 0% -> The One Ring [search]]
+R7    Urza casts The One Ring
+R7      The One Ring cast in Main1 step of Urza's turn (life 28)
+R7      Urza gains protection from everything until their next turn
+R7        [Urza decides: Windfall 98%, The One Ring 2%, stop 0% -> Windfall [search]]
+R7      2 damage to Urza is prevented
+R7    Urza casts Windfall
+R7        [Urza attack plan by search: filtered at Y'shtola]
+R7    Urza attacks Y'shtola with 1 creature(s): 2 damage (life now 32)
+R7  --- Y'shtola turn 7: life 32, 5 cards in hand, 6 lands
+R7    Y'shtola plays Plains
+R7        [Y'shtola decides: Consecrated Sphinx 49%, Y'shtola, Night's Blessed 44%, Dark Petition 5%, Exsanguinate (X = 7) 2% -> Consecrated Sphinx [search]]
+R7    Y'shtola casts Consecrated Sphinx
+R7    Miirym casts Chaos Warp -> Exquisite Blood (Y'shtola)
+R7      Exquisite Blood (Y'shtola) is removed: tuck
+R7      Y'shtola reveals Coalition Relic
+R7        [Miirym end of turn: Chaos Warp -> Urza, Lord High Artificer 100%, pass 0% -> Chaos Warp -> Urza, Lord High Artificer]
+R7  --- Miirym turn 7: life 30, 4 cards in hand, 6 lands
+R7    Miirym plays Maelstrom of the Spirit Dragon
+R7        [Miirym decides: Miirym, Sentinel Wyrm 98%, Dragonspeaker Shaman 1%, Dragon's Hoard 0%, Maelstrom of the Spirit Dragon ability 0% -> Miirym, Sentinel Wyrm [search]]
+R7    Miirym casts Miirym, Sentinel Wyrm
+R7        [Miirym attack plan by search: all at Kinnan]
+R7        [Kinnan blocks by search: blk:good]
+R7    Miirym attacks Kinnan with 2 creature(s): 12 damage (life now 9)
+R7        [Miirym decides: Dragonspeaker Shaman 82%, Dragon's Hoard 18%, stop 0% -> Dragonspeaker Shaman [search]]
+R7    Miirym casts Dragonspeaker Shaman
+R7  --- Kinnan turn 7: life 9, 5 cards in hand, 4 lands
+R7      Kinnan pays {4} to untap Mana Vault
+R7      Kinnan plays it as Barkchannel Pathway
+R7    Kinnan plays Barkchannel Pathway // Tidechannel Pathway
+R7        [Kinnan decides: Nyxbloom Ancient 73%, Fabricate 20%, harmonize Nature's Rhythm 6%, Seedborn Muse 2% -> Nyxbloom Ancient [search]]
+R7    Kinnan casts Nyxbloom Ancient
+R7        [Kinnan decides: harmonize Nature's Rhythm 66%, Fabricate 31%, Seedborn Muse 3%, Mystic Remora 0% -> harmonize Nature's Rhythm [search]]
+R7    Kinnan harmonizes Nature's Rhythm (X=13)
+R8  --- Urza turn 8: life 28, 5 cards in hand, 5 lands
+R8      Urza's Saga: Urza makes a Construct (6/6)
+R8    Urza no longer has protection from everything
+R8    Urza plays Island
+R8        [Urza decides: stop (hold mana) 99%, The One Ring 1%, Urza: free card 0%, Basalt Monolith ability 0% -> stop (hold mana) [search]]
+R8        [Urza attack plan by search: filtered at Kinnan]
+R8        [Urza keeps 3 creature(s) home as blockers]
+R8        [Urza holds back 1 attacker(s) that would die to blocks]
+R8        [Urza decides: stop (hold mana) 99%, The One Ring 1%, Urza: free card 0%, Basalt Monolith ability 0% -> stop (hold mana) [search]]
+R8  --- Y'shtola turn 8: life 32, 10 cards in hand, 7 lands
+R8    Y'shtola plays Underground River
+R8        [Y'shtola decides: Toxic Deluge 100%, Torment of Hailfire (X = 9) 0%, Exsanguinate (X = 9) 0%, Y'shtola, Night's Blessed 0% -> Exsanguinate (X = 9) [search]]
+R8    Y'shtola casts Exsanguinate
+R8      Urza casts Counterspell at Exsanguinate
+R8      Urza counters Exsanguinate with Counterspell
+R8        [Y'shtola attack plan by search: filtered at Kinnan]
+R8    Y'shtola attacks Kinnan with 1 creature(s): 4 damage (life now 5)
+R8  --- Miirym turn 8: life 30, 3 cards in hand, 7 lands
+R8    Miirym plays Command Tower
+R8        [Miirym decides: Ganax, Astral Hunter 92%, Dragon's Hoard 8%, Maelstrom of the Spirit Dragon ability 0%, stop 0% -> Ganax, Astral Hunter [search]]
+R8    Miirym casts Ganax, Astral Hunter
+R8        [Miirym decides: Dragon's Hoard 98%, Maelstrom of the Spirit Dragon ability 2%, stop 0% -> Dragon's Hoard [search]]
+R8    Miirym casts Dragon's Hoard
+R8        [Miirym attack plan by search: all at Kinnan]
+R8  *** Kinnan is eliminated (life -27) by Miirym
+R8    Miirym attacks Kinnan with 4 creature(s): 32 damage (life now -27)
+R9    Urza taps The One Ring: burden 1, life 28, End step of Miirym's turn
+R9        [Urza end of turn: The One Ring 96%, Basalt Monolith ability 3%, pass 1% -> The One Ring]
+R9    Urza activates Basalt Monolith
+R9        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R9    Urza activates Basalt Monolith
+R9        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R9    Urza activates Basalt Monolith
+R9        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R9  --- Urza turn 9: life 28, 5 cards in hand, 6 lands
+R9      Urza's Saga: Urza makes a Construct (7/7)
+R9      Urza's Saga: Urza puts Aether Spellbomb onto the battlefield
+R9    Urza loses 1 life to The One Ring's burden (life 28)
+R9      Mystic Sanctuary puts Cyclonic Rift on top
+R9    Urza plays Mystic Sanctuary
+R9        [Urza decides: Rings of Brighthearth 99%, Aether Spellbomb ability 1%, Padeem, Consul of Innovation 0%, The One Ring 0% -> Rings of Brighthearth [search]]
+R9    Urza casts Rings of Brighthearth
+R9        [Urza decides: combo: Power Artifact / Rings of Brighthearth + Monolith 100%, Aether Spellbomb ability 0%, Padeem, Consul of Innovation 0%, The One Ring 0% -> combo: Power Artifact / Rings of Brighthearth + Monolith [search]]
+R9    Urza goes for Power Artifact / Rings of Brighthearth + Monolith
+R9  *** Y'shtola is eliminated (life 32) by Urza
+R9  *** Miirym is eliminated (life 30) by Urza
+R9  *** Urza wins by combo
+Winner: Urza (combo)

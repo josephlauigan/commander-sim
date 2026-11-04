@@ -1,0 +1,263 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 24 (seed 500024): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Miirym, Urza, Yawgmoth, Y'shtola
+R1  --- Miirym turn 1: life 40, 7 cards in hand, 0 lands
+R1    Miirym plays Spire Garden
+R1  --- Urza turn 1: life 40, 6 cards in hand, 0 lands
+R1    Urza plays Island
+R1  --- Yawgmoth turn 1: life 40, 6 cards in hand, 0 lands
+R1    Yawgmoth plays Swamp
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Adarkar Wastes
+R2    Miirym casts Worldly Tutor
+R2      Miirym reveals Wrathful Red Dragon and puts it on top of their library
+R2        [Miirym end of turn: Worldly Tutor 100%, pass 0% -> Worldly Tutor]
+R2  --- Miirym turn 2: life 40, 6 cards in hand, 1 lands
+R2    Miirym plays Scalding Tarn
+R2      cracks Scalding Tarn for Ketria Triome
+R2  --- Urza turn 2: life 40, 6 cards in hand, 1 lands
+R2    Urza plays Urza's Saga
+R2        [Urza decides: Thought Vessel 100%, stop 0% -> Thought Vessel [search]]
+R2    Urza casts Thought Vessel
+R2  --- Yawgmoth turn 2: life 40, 6 cards in hand, 1 lands
+R2    Yawgmoth plays Swamp
+R2  --- Y'shtola turn 2: life 40, 7 cards in hand, 1 lands
+R2    Y'shtola plays Cabal Coffers
+R3  --- Miirym turn 3: life 39, 6 cards in hand, 2 lands
+R3    Miirym plays Maelstrom of the Spirit Dragon
+R3  --- Urza turn 3: life 40, 5 cards in hand, 2 lands
+R3    Urza plays Island
+R3        [Urza decides: Urza, Lord High Artificer 96%, stop (hold mana) 4% -> Urza, Lord High Artificer [search]]
+R3    Urza casts Urza, Lord High Artificer
+R3  --- Yawgmoth turn 3: life 40, 6 cards in hand, 2 lands
+R3    Yawgmoth plays Phyrexian Tower
+R3        [Yawgmoth decides: Pawn of Ulamog 49%, Hancock, Ghoulish Mayor 43%, Nine-Lives Familiar 8%, stop 0% -> Pawn of Ulamog [search]]
+R3    Yawgmoth casts Pawn of Ulamog
+R3  --- Y'shtola turn 3: life 40, 7 cards in hand, 2 lands
+R3    Y'shtola plays Swamp
+R3        [Y'shtola decides: Go for the Throat -> Urza, Lord High Artificer 100%, stop (hold mana) 0%, Orcish Bowmasters 0% -> Go for the Throat -> Urza, Lord High Artificer [search]]
+R3    Y'shtola casts Go for the Throat -> Urza, Lord High Artificer (Urza)
+R3      Urza casts Fierce Guardianship at Go for the Throat
+R3      Urza counters Go for the Throat with Fierce Guardianship
+R4    Miirym casts Chaos Warp -> Urza, Lord High Artificer (Urza)
+R4      Urza, Lord High Artificer (Urza) is removed: tuck
+R4      Urza reveals Darksteel Citadel
+R4        [Miirym end of turn: Chaos Warp -> Urza, Lord High Artificer 100%, pass 0% -> Chaos Warp -> Urza, Lord High Artificer]
+R4  --- Miirym turn 4: life 39, 5 cards in hand, 3 lands
+R4    Miirym plays Haven of the Spirit Dragon
+R4  --- Urza turn 4: life 40, 4 cards in hand, 4 lands
+R4      Urza's Saga: Urza makes a Construct (3/3)
+R4      Urza's Saga: Urza puts Mana Vault onto the battlefield
+R4    Urza plays Academy Ruins
+R4        [Urza decides: Lotus Petal 52%, Urza, Lord High Artificer 48%, stop 0% -> Lotus Petal [search]]
+R4    Urza casts Lotus Petal
+R4        [Urza decides: Urza, Lord High Artificer 100%, stop 0% -> Urza, Lord High Artificer [search]]
+R4    Urza casts Urza, Lord High Artificer
+R4        [Urza attack plan by search: filtered at Yawgmoth]
+R4    Urza attacks Yawgmoth with 1 creature(s): 6 damage (life now 34)
+R4  --- Yawgmoth turn 4: life 34, 5 cards in hand, 3 lands
+R4    Yawgmoth plays Swamp
+R4        [Yawgmoth decides: Yawgmoth, Thran Physician 81%, Hancock, Ghoulish Mayor 12%, Damnation 5%, Nine-Lives Familiar 2% -> Yawgmoth, Thran Physician [search]]
+R4    Yawgmoth casts Yawgmoth, Thran Physician
+R4        [Yawgmoth attack plan by search: all at Urza]
+R4    Yawgmoth attacks Urza with 1 creature(s): 0 damage (life now 40)
+R4  --- Y'shtola turn 4: life 40, 6 cards in hand, 3 lands
+R4    Y'shtola plays Scrubland
+R4        [Y'shtola decides: Memory Trap 75%, Idyllic Tutor 24%, Orcish Bowmasters 0%, stop 0% -> Memory Trap [search]]
+R4    Y'shtola casts Memory Trap
+R4      Yawgmoth, Thran Physician (Yawgmoth) is removed: exile
+R5  --- Miirym turn 5: life 39, 5 cards in hand, 4 lands
+R5  --- Urza turn 5: life 40, 3 cards in hand, 4 lands
+R5    Urza plays Island
+R5        [Urza decides: Urza: free card 99%, stop 1% -> Urza: free card [search]]
+R5    Urza: Island off the top, free
+R5        [Urza decides: Urza: free card 99%, stop 1% -> stop [search]]
+R5        [Urza attacks: Y'shtola 55%, Miirym 24%, Yawgmoth 22% -> Yawgmoth]
+R5    Urza attacks Yawgmoth with 4 creature(s): 19 damage (life now 15)
+R5  --- Yawgmoth turn 5: life 15, 5 cards in hand, 4 lands
+R5    Yawgmoth plays Swamp
+R5        [Yawgmoth decides: Damnation 43%, Hancock, Ghoulish Mayor 24%, Vengeful Bloodwitch 24%, Nine-Lives Familiar 5% -> Damnation [search]]
+R5    Yawgmoth casts Damnation
+R5  --- Y'shtola turn 5: life 39, 5 cards in hand, 4 lands
+R5    Y'shtola plays Plains
+R5        [Y'shtola decides: Y'shtola, Night's Blessed 91%, Idyllic Tutor 7%, Sheoldred, the Apocalypse 2%, Orcish Bowmasters 0% -> Sheoldred, the Apocalypse [search]]
+R5    Y'shtola casts Sheoldred, the Apocalypse
+R6  --- Miirym turn 6: life 39, 6 cards in hand, 4 lands
+R6    Miirym plays Mountain
+R6        [Miirym decides: Terror of the Peaks 93%, stop (hold mana) 3%, Wrathful Red Dragon 3%, Temur Ascendancy 1% -> Terror of the Peaks [search]]
+R6    Miirym casts Terror of the Peaks
+R6  --- Urza turn 6: life 39, 3 cards in hand, 5 lands
+R6    Urza plays Island
+R6        [Urza decides: Urza, Lord High Artificer 64%, Sai, Master Thopterist 36%, stop 0% -> Sai, Master Thopterist [search]]
+R6    Urza casts Sai, Master Thopterist
+R6  --- Yawgmoth turn 6: life 15, 4 cards in hand, 5 lands
+R6    Yawgmoth plays Swamp
+R6        [Yawgmoth decides: Yawgmoth, Thran Physician 82%, Hancock, Ghoulish Mayor 9%, Vengeful Bloodwitch 7%, Nine-Lives Familiar 2% -> Nine-Lives Familiar [search]]
+R6    Yawgmoth casts Nine-Lives Familiar
+R6        [Yawgmoth decides: Hancock, Ghoulish Mayor 53%, Vengeful Bloodwitch 47%, stop 0% -> Hancock, Ghoulish Mayor [search]]
+R6    Yawgmoth casts Hancock, Ghoulish Mayor
+R6  --- Y'shtola turn 6: life 39, 4 cards in hand, 5 lands
+R6    Y'shtola plays Island
+R6        [Y'shtola decides: Bound in Silence -> Terror of the Peaks 57%, Y'shtola, Night's Blessed 35%, Bound in Silence 6%, Idyllic Tutor 1% -> Bound in Silence -> Terror of the Peaks [search]]
+R6    Y'shtola casts Bound in Silence -> Terror of the Peaks (Miirym)
+R6      Terror of the Peaks (Miirym) is removed: pacify
+R6      Bound in Silence enchants Terror of the Peaks (Miirym)
+R6        [Y'shtola decides: Orcish Bowmasters 98%, stop 2% -> Orcish Bowmasters [search]]
+R6    Y'shtola casts Orcish Bowmasters
+R6      Nine-Lives Familiar returns at the beginning of the next end step (7 revival counters)
+R6        [Y'shtola attack plan by search: filtered at Yawgmoth]
+R6    Y'shtola attacks Yawgmoth with 1 creature(s): 4 damage (life now 9)
+R6    Nine-Lives Familiar returns to the battlefield (7 revival counters)
+R7  --- Miirym turn 7: life 37, 5 cards in hand, 5 lands
+R7        [Miirym decides: Wrathful Red Dragon 50%, stop (hold mana) 41%, Temur Ascendancy 8%, Maelstrom of the Spirit Dragon ability 1% -> Wrathful Red Dragon [search]]
+R7    Miirym casts Wrathful Red Dragon
+R7      Sheoldred, the Apocalypse (Y'shtola) is removed: dmg5
+R7  --- Urza turn 7: life 36, 2 cards in hand, 6 lands
+R7        [Urza decides: Urza, Lord High Artificer 94%, Mystic Forge 6%, stop 0% -> Urza, Lord High Artificer [search]]
+R7    Urza casts Urza, Lord High Artificer
+R7        [Urza attack plan by search: filtered at Yawgmoth]
+R7    Urza attacks Yawgmoth with 1 creature(s): 1 damage (life now 8)
+R7  --- Yawgmoth turn 7: life 8, 2 cards in hand, 6 lands
+R7        [Yawgmoth decides: Yawgmoth, Thran Physician 96%, Pitiless Plunderer 3%, Vengeful Bloodwitch 1%, stop 0% -> Yawgmoth, Thran Physician [search]]
+R7    Yawgmoth casts Yawgmoth, Thran Physician
+R7        [Yawgmoth attack plan by search: all at Urza]
+R7      Nine-Lives Familiar returns at the beginning of the next end step (6 revival counters)
+R7    Yawgmoth attacks Urza with 2 creature(s): 0 damage (life now 35)
+R7    Nine-Lives Familiar returns to the battlefield (6 revival counters)
+R7  --- Y'shtola turn 7: life 38, 2 cards in hand, 6 lands
+R7    Y'shtola plays Command Tower
+R7        [Y'shtola decides: Y'shtola, Night's Blessed 97%, Idyllic Tutor 3%, stop 0% -> Y'shtola, Night's Blessed [search]]
+R7    Y'shtola casts Y'shtola, Night's Blessed
+R7        [Y'shtola attack plan by search: filtered at Miirym]
+R7        [Y'shtola holds back 2 attacker(s) that would die to blocks]
+R8  --- Miirym turn 8: life 35, 5 cards in hand, 5 lands
+R8        [Miirym decides: stop (hold mana) 93%, Three Visits 6%, Maelstrom of the Spirit Dragon ability 0%, Temur Ascendancy 0% -> Three Visits [search]]
+R8    Miirym casts Three Visits
+R8        [Miirym decides: stop (hold mana) 100%, Temur Ascendancy 0% -> stop (hold mana) [search]]
+R8        [Miirym attack plan by search: filtered at Y'shtola]
+R8    Miirym attacks Y'shtola with 1 creature(s): 5 damage (life now 33)
+R8        [Miirym decides: stop (hold mana) 100%, Temur Ascendancy 0% -> stop (hold mana) [search]]
+R8  --- Urza turn 8: life 35, 3 cards in hand, 6 lands
+R8        [Urza decides: Thought Monitor 92%, Mystic Forge 8%, Urza: free card 0%, stop 0% -> Thought Monitor [search]]
+R8    Urza casts Thought Monitor
+R8        [Urza decides: Lightning Greaves 74%, Mystic Forge 25%, Urza: free card 1%, stop 0% -> Lightning Greaves [search]]
+R8    Urza casts Lightning Greaves
+R8        [Urza decides: equip Lightning Greaves 99%, Mystic Forge 1%, Urza: free card 0%, stop 0% -> equip Lightning Greaves [search]]
+R8    Urza equips Lightning Greaves to Urza, Lord High Artificer
+R8        [Urza decides: Mystic Forge 96%, Urza: free card 4%, stop 0% -> Mystic Forge [search]]
+R8    Urza casts Mystic Forge
+R8      Miirym casts Fierce Guardianship at Mystic Forge
+R8      Miirym counters Mystic Forge with Fierce Guardianship
+R8        [Urza attack plan by search: none at Miirym]
+R8  --- Yawgmoth turn 8: life 8, 3 cards in hand, 6 lands
+R8        [Yawgmoth decides: Pitiless Plunderer 55%, Bloodghast 28%, Vengeful Bloodwitch 16%, stop 0% -> Pitiless Plunderer [search]]
+R8    Yawgmoth casts Pitiless Plunderer
+R8        [Yawgmoth decides: Bloodghast 63%, Vengeful Bloodwitch 37%, stop 0% -> Bloodghast [search]]
+R8    Yawgmoth casts Bloodghast
+R8        [Yawgmoth attack plan by search: all at Urza]
+R8      Nine-Lives Familiar returns at the beginning of the next end step (5 revival counters)
+R8    Yawgmoth attacks Urza with 3 creature(s): 5 damage (life now 27)
+R8    Nine-Lives Familiar returns to the battlefield (5 revival counters)
+R8  --- Y'shtola turn 8: life 33, 4 cards in hand, 7 lands
+R8    Y'shtola plays Island
+R8        [Y'shtola decides: Torment of Hailfire (X = 5) 65%, Idyllic Tutor 22%, Smothering Tithe 12%, stop 0% -> Smothering Tithe [search]]
+R8    Y'shtola casts Smothering Tithe
+R8      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R8        [Y'shtola decides: Idyllic Tutor 100%, stop 0% -> Idyllic Tutor [search]]
+R8    Y'shtola casts Idyllic Tutor
+R8      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R8      Y'shtola reveals Sanguine Bond and puts it into their hand
+R8        [Y'shtola attack plan by search: filtered at Urza]
+R8        [Y'shtola holds back 1 attacker(s) that would die to blocks]
+R8    Y'shtola attacks Urza with 2 creature(s): 5 damage (life now 18)
+R8    Y'shtola attacks Miirym with 1 creature(s): 1 damage (life now 30)
+R9  --- Miirym turn 9: life 30, 4 cards in hand, 6 lands
+R9        [Miirym decides: Miirym, Sentinel Wyrm 91%, Lathliss, Dragon Queen 8%, Rhythm of the Wild 1%, Temur Ascendancy 0% -> Miirym, Sentinel Wyrm [search]]
+R9    Miirym casts Miirym, Sentinel Wyrm
+R9  *** Yawgmoth is eliminated (life -2) by Miirym
+R9        [Miirym attack plan by search: filtered at Urza]
+R9    Miirym attacks Urza with 1 creature(s): 5 damage (life now 13)
+R9  --- Urza turn 9: life 13, 3 cards in hand, 6 lands
+R9      Urza pays {4} to untap Mana Vault
+R9    Urza plays Island
+R9        [Urza decides: Urza: free card 99%, stop 1% -> Urza: free card [search]]
+R9    Urza: Otawara, Soaring City off the top, free
+R9        [Urza decides: Urza: free card 99%, stop 1% -> stop [search]]
+R9        [Urza attack plan by search: all at Miirym]
+R9      Wrathful Red Dragon: 8 damage to Y'shtola, Night's Blessed
+R9      Y'shtola, Night's Blessed (Y'shtola) is removed: dmg8
+R9    Urza attacks Miirym with 7 creature(s): 7 damage (life now 23)
+R9    Y'shtola casts Path to Exile -> Token (Urza)
+R9      Token (Urza) is removed: exile
+R9        [Y'shtola end of turn: Path to Exile -> Wrathful Red Dragon 81%, Fatal Push -> Sai, Master Thopterist 17%, pass 1% -> Path to Exile -> Wrathful Red Dragon]
+R9  --- Y'shtola turn 9: life 36, 4 cards in hand, 8 lands
+R9    Y'shtola plays Urborg, Tomb of Yawgmoth
+R9        [Y'shtola decides: Torment of Hailfire (X = 13) 100%, Y'shtola, Night's Blessed 0%, Sanguine Bond 0%, stop (hold mana) 0% -> Fatal Push -> Token [search]]
+R9    Y'shtola casts Fatal Push -> Token (Urza)
+R9      Token (Urza) is removed: destroy
+R9        [Y'shtola decides: Torment of Hailfire (X = 12) 100%, Y'shtola, Night's Blessed 0%, Sanguine Bond 0%, stop (hold mana) 0% -> Y'shtola, Night's Blessed [search]]
+R9    Y'shtola casts Y'shtola, Night's Blessed
+R9        [Y'shtola decides: Sanguine Bond 86%, Torment of Hailfire (X = 6) 8%, stop (hold mana) 5%, Generous Gift -> Wrathful Red Dragon 0% -> Sanguine Bond [search]]
+R9    Y'shtola casts Sanguine Bond
+R9      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R9        [Y'shtola decides: stop (hold mana) 98%, Generous Gift -> Wrathful Red Dragon 2% -> stop (hold mana) [search]]
+R9        [Y'shtola attack plan by search: filtered at Miirym]
+R9    Y'shtola attacks Miirym with 2 creature(s): 4 damage (life now 17)
+R9        [Y'shtola decides: stop (hold mana) 98%, Generous Gift -> Wrathful Red Dragon 2% -> stop (hold mana) [search]]
+R10 --- Miirym turn 10: life 17, 5 cards in hand, 6 lands
+R10       [Miirym decides: Cyclonic Rift -> Sanguine Bond 88%, stop (hold mana) 10%, Rhythm of the Wild 1%, Temur Ascendancy 1% -> Cyclonic Rift -> Sanguine Bond [search]]
+R10   Miirym casts Cyclonic Rift -> Sanguine Bond (Y'shtola)
+R10     Sanguine Bond (Y'shtola) is removed: bounce
+R10       [Miirym decides: Rhythm of the Wild 69%, Temur Ascendancy 31%, stop 0% -> Rhythm of the Wild [search]]
+R10   Miirym casts Rhythm of the Wild
+R10       [Miirym attack plan by search: none at Urza]
+R10 --- Urza turn 10: life 11, 3 cards in hand, 8 lands
+R10     Urza pays {4} to untap Mana Vault
+R10       [Urza decides: Thoughtcast 98%, Urza: free card 2%, stop 0% -> Thoughtcast [search]]
+R10   Urza casts Thoughtcast
+R10       [Urza decides: stop (hold mana) 96%, Urza: free card 4% -> stop (hold mana) [search]]
+R10   Urza plays Island
+R10       [Urza attack plan by search: none at Miirym]
+R10       [Urza decides: stop (hold mana) 91%, Urza: free card 9% -> stop (hold mana) [search]]
+R10   Y'shtola casts Generous Gift -> Terror of the Peaks (Miirym)
+R10     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R10     Terror of the Peaks (Miirym) is removed: destroy
+R10       [Y'shtola end of turn: Generous Gift -> Wrathful Red Dragon 99%, pass 1% -> Generous Gift -> Wrathful Red Dragon]
+R10 --- Y'shtola turn 10: life 36, 3 cards in hand, 9 lands
+R10       [Y'shtola decides: Torment of Hailfire (X = 14) 100%, Sanguine Bond 0%, Demonic Tutor 0%, Mystic Remora 0% -> Torment of Hailfire (X = 14) [search]]
+R10   Y'shtola casts Torment of Hailfire
+R10     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R10     Torment of Hailfire (X = 14)
+R10       Miirym sacrifices Token
+R10       Urza discards Back to Basics
+R10       Miirym discards Temur Ascendancy
+R10       Urza discards Winter Orb
+R10       Miirym sacrifices Wrathful Red Dragon
+R10       Urza sacrifices Thought Vessel
+R10       Miirym sacrifices Rhythm of the Wild
+R10       Urza sacrifices Token
+R10       Miirym discards Astral Dragon
+R10       Urza sacrifices Token
+R10       Urza discards Dramatic Reversal
+R10       Miirym discards Lathliss, Dragon Queen
+R10       Urza sacrifices Thought Monitor
+R10       Miirym discards Ureni of the Unwritten
+R10       Urza sacrifices Mana Vault
+R10       Urza sacrifices Sai, Master Thopterist
+R10       Urza sacrifices Lightning Greaves
+R10       Urza discards An Offer You Can't Refuse
+R10 *** Miirym is eliminated (life -2) by Y'shtola
+R10       Urza sacrifices Urza, Lord High Artificer
+R10 *** Urza is eliminated (life -1) by Y'shtola
+Winner: Y'shtola (damage)

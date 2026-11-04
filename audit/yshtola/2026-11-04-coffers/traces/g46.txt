@@ -1,0 +1,184 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 46 (seed 500046): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Yawgmoth, Kinnan, Miirym, Y'shtola
+R1  --- Yawgmoth turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yawgmoth plays Swamp
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kinnan plays City of Brass
+R1        [Kinnan decides: Mana Vault 94%, Fyndhorn Elves 6%, stop 0% -> Fyndhorn Elves [search]]
+R1    Kinnan casts Fyndhorn Elves
+R1  --- Miirym turn 1: life 40, 7 cards in hand, 0 lands
+R1    Miirym plays Island
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Island
+R2  --- Yawgmoth turn 2: life 40, 7 cards in hand, 1 lands
+R2    Yawgmoth plays Phyrexian Tower
+R2        [Yawgmoth decides: Vengeful Bloodwitch 100%, cycle Unearth 0%, stop 0% -> Vengeful Bloodwitch [search]]
+R2    Yawgmoth casts Vengeful Bloodwitch
+R2  --- Kinnan turn 2: life 39, 6 cards in hand, 1 lands
+R2    Kinnan plays Forest
+R2        [Kinnan decides: Mana Vault 62%, Kinnan, Bonder Prodigy 32%, Fabricate 6%, stop 0% -> Mana Vault [search]]
+R2    Kinnan casts Mana Vault
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 84%, Fabricate 16%, stop 0% -> Kinnan, Bonder Prodigy [search]]
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R2  --- Miirym turn 2: life 40, 7 cards in hand, 1 lands
+R2    Miirym plays Mountain
+R2        [Miirym decides: Cyclonic Rift -> Kinnan, Bonder Prodigy 100%, stop (hold mana) 0% -> Cyclonic Rift -> Kinnan, Bonder Prodigy [search]]
+R2    Miirym casts Cyclonic Rift -> Kinnan, Bonder Prodigy (Kinnan)
+R2      Kinnan, Bonder Prodigy (Kinnan) is removed: bounce
+R2  --- Y'shtola turn 2: life 40, 7 cards in hand, 1 lands
+R2    Y'shtola plays Serra's Sanctum
+R3  --- Yawgmoth turn 3: life 40, 6 cards in hand, 2 lands
+R3    Yawgmoth plays Swamp
+R3        [Yawgmoth decides: Cabal Ritual 82%, Pawn of Ulamog 10%, Hancock, Ghoulish Mayor 8%, Lightning Greaves 0% -> Pawn of Ulamog [search]]
+R3    Yawgmoth casts Pawn of Ulamog
+R3        [Yawgmoth attacks: Kinnan 69%, Miirym 16%, Y'shtola 16% -> Miirym]
+R3    Yawgmoth attacks Miirym with 1 creature(s): 1 damage (life now 39)
+R3  --- Kinnan turn 3: life 38, 5 cards in hand, 2 lands
+R3    Kinnan plays Dreamroot Cascade
+R3        [Kinnan decides: Fabricate 59%, Kinnan, Bonder Prodigy 33%, stop (hold mana) 8% -> Kinnan, Bonder Prodigy [search]]
+R3    Kinnan casts Kinnan, Bonder Prodigy
+R3  --- Miirym turn 3: life 39, 6 cards in hand, 2 lands
+R3  --- Y'shtola turn 3: life 40, 7 cards in hand, 2 lands
+R3    Y'shtola plays Swamp
+R3        [Y'shtola decides: Your Fate Ends Here -> Kinnan, Bonder Prodigy 86%, stop (hold mana) 10%, Toxic Deluge 4%, Your Fate Ends Here 0% -> stop (hold mana) [search]]
+R3        [Y'shtola decides: Your Fate Ends Here -> Kinnan, Bonder Prodigy 86%, stop (hold mana) 10%, Toxic Deluge 4%, Your Fate Ends Here 0% -> stop (hold mana) [search]]
+R4  --- Yawgmoth turn 4: life 40, 5 cards in hand, 3 lands
+R4        [Yawgmoth decides: Cabal Ritual 70%, Hancock, Ghoulish Mayor 15%, Bastion of Remembrance 15%, Lightning Greaves 1% -> Cabal Ritual [search]]
+R4    Yawgmoth casts Cabal Ritual
+R4      Kinnan casts Force of Negation at Cabal Ritual
+R4      Kinnan counters Cabal Ritual with Force of Negation
+R4        [Yawgmoth attack plan by search: filtered at Y'shtola]
+R4    Y'shtola answers the attack: Your Fate Ends Here -> Pawn of Ulamog
+R4    Y'shtola casts Your Fate Ends Here -> Pawn of Ulamog (Yawgmoth)
+R4      Pawn of Ulamog (Yawgmoth) is removed: destroy
+R4    Yawgmoth attacks Y'shtola with 2 creature(s): 1 damage (life now 39)
+R4  --- Kinnan turn 4: life 36, 3 cards in hand, 3 lands
+R4    Kinnan plays Forest
+R4        [Kinnan decides: Void Winnower 100%, Kinnan: dig five 0%, stop 0% -> Void Winnower [search]]
+R4    Kinnan casts Void Winnower
+R4        [Kinnan attacks: Yawgmoth 51%, Miirym 24%, Y'shtola 24% -> Miirym]
+R4    Kinnan attacks Miirym with 1 creature(s): 2 damage (life now 37)
+R4  --- Miirym turn 4: life 37, 7 cards in hand, 2 lands
+R4    Miirym pays 2 life for an untapped Breeding Pool
+R4    Miirym plays Breeding Pool
+R4        [Miirym decides: Rhystic Study 84%, Elemental Bond 16%, stop 0% -> Rhystic Study [search]]
+R4    Miirym casts Rhystic Study
+R4  --- Y'shtola turn 4: life 39, 6 cards in hand, 3 lands
+R4    Y'shtola plays Plains
+R4        [Y'shtola decides: Sol Ring 67%, Toxic Deluge 23%, Marauding Blight-Priest 11%, stop 0% -> Sol Ring [search]]
+R4    Y'shtola casts Sol Ring
+R4        [Y'shtola decides: Toxic Deluge 68%, Marauding Blight-Priest 32%, stop 0% -> Toxic Deluge [search]]
+R4    Y'shtola casts Toxic Deluge
+R4      board wipe resolves (minus)
+R4        Vengeful Bloodwitch (Yawgmoth) is removed by the wipe (minus)
+R4        Fyndhorn Elves (Kinnan) is removed by the wipe (minus)
+R4        Kinnan, Bonder Prodigy (Kinnan) is removed by the wipe (minus)
+R4        Void Winnower (Kinnan) is removed by the wipe (minus)
+R5  --- Yawgmoth turn 5: life 41, 5 cards in hand, 3 lands
+R5        [Yawgmoth decides: Bastion of Remembrance 72%, Hancock, Ghoulish Mayor 28%, stop 0% -> Bastion of Remembrance [search]]
+R5    Yawgmoth casts Bastion of Remembrance
+R5  --- Kinnan turn 5: life 35, 2 cards in hand, 4 lands
+R5    Kinnan plays Misty Rainforest
+R5      cracks Misty Rainforest for Breeding Pool
+R5        [Kinnan decides: Paradise Druid 100%, stop 0% -> Paradise Druid [search]]
+R5    Kinnan casts Paradise Druid
+R5  --- Miirym turn 5: life 35, 9 cards in hand, 3 lands
+R5        [Miirym decides: Sol Ring 96%, Scaled Nurturer 3%, Elemental Bond 0%, stop 0% -> Sol Ring [search]]
+R5    Miirym casts Sol Ring
+R5        [Miirym decides: Scaled Nurturer 96%, Elemental Bond 4%, stop 0% -> Scaled Nurturer [search]]
+R5    Miirym casts Scaled Nurturer
+R5  --- Y'shtola turn 5: life 30, 4 cards in hand, 4 lands
+R5    Y'shtola plays Plains
+R5        [Y'shtola decides: Y'shtola, Night's Blessed 81%, Grand Arbiter Augustin IV 14%, Marauding Blight-Priest 5%, stop 0% -> Grand Arbiter Augustin IV [search]]
+R5    Y'shtola casts Grand Arbiter Augustin IV
+R5        [Y'shtola decides: Marauding Blight-Priest 100%, stop 0% -> Marauding Blight-Priest [search]]
+R5    Y'shtola casts Marauding Blight-Priest
+R6  --- Yawgmoth turn 6: life 41, 5 cards in hand, 3 lands
+R6        [Yawgmoth decides: Skullclamp 53%, Lightning Greaves 41%, Phyrexian Tower: sacrifice Token for {B}{B} 6%, stop 0% -> Phyrexian Tower: sacrifice Token for {B}{B} [search]]
+R6    Yawgmoth sacrifices Token to Phyrexian Tower
+R6        [Yawgmoth decides: Hancock, Ghoulish Mayor 80%, Skullclamp 20%, stop 0% -> Hancock, Ghoulish Mayor [search]]
+R6    Yawgmoth casts Hancock, Ghoulish Mayor
+R6  --- Kinnan turn 6: life 31, 1 cards in hand, 5 lands
+R6  --- Miirym turn 6: life 34, 10 cards in hand, 3 lands
+R6    Miirym plays Spire Garden
+R6        [Miirym decides: Miirym, Sentinel Wyrm 48%, Dragonspeaker Shaman 25%, Wrathful Red Dragon 19%, Ganax, Astral Hunter 3% -> Miirym, Sentinel Wyrm [search]]
+R6    Miirym casts Miirym, Sentinel Wyrm
+R6  --- Y'shtola turn 6: life 29, 2 cards in hand, 5 lands
+R6    Y'shtola plays Underground Sea
+R6        [Y'shtola decides: Y'shtola, Night's Blessed 100%, stop 0% -> Y'shtola, Night's Blessed [search]]
+R6    Y'shtola casts Y'shtola, Night's Blessed
+R6        [Y'shtola attack plan by search: filtered at Yawgmoth]
+R6    Y'shtola attacks Yawgmoth with 2 creature(s): 5 damage (life now 37)
+R7  --- Yawgmoth turn 7: life 37, 5 cards in hand, 3 lands
+R7    Yawgmoth plays Swamp
+R7        [Yawgmoth decides: Lightning Greaves 57%, Skullclamp 43%, stop 0% -> Lightning Greaves [search]]
+R7    Yawgmoth casts Lightning Greaves
+R7        [Yawgmoth decides: equip Lightning Greaves 100%, stop 0% -> equip Lightning Greaves [search]]
+R7    Yawgmoth equips Lightning Greaves to Hancock, Ghoulish Mayor
+R7        [Yawgmoth attack plan by search: filtered at Kinnan]
+R7    Yawgmoth attacks Kinnan with 1 creature(s): 0 damage (life now 29)
+R7        [Yawgmoth decides: equip Lightning Greaves 100%, stop 0% -> equip Lightning Greaves [search]]
+R7    Yawgmoth equips Lightning Greaves to Hancock, Ghoulish Mayor
+R7  --- Kinnan turn 7: life 29, 2 cards in hand, 5 lands
+R7        [Kinnan decides: channel Colossal Skyturtle: Void Winnower 80%, channel Colossal Skyturtle: bounce 20%, stop 0% -> channel Colossal Skyturtle: Void Winnower [search]]
+R7    Kinnan channels Colossal Skyturtle: returns Void Winnower
+R7  --- Miirym turn 7: life 33, 7 cards in hand, 4 lands
+R7        [Miirym decides: Wrathful Red Dragon 76%, Ganax, Astral Hunter 8%, Dragonspeaker Shaman 7%, Thrakkus the Butcher 5% -> Wrathful Red Dragon [search]]
+R7    Miirym casts Wrathful Red Dragon
+R7        [Miirym attack plan by search: filtered at Yawgmoth]
+R7    Miirym attacks Yawgmoth with 1 creature(s): 6 damage (life now 32)
+R7  --- Y'shtola turn 7: life 28, 4 cards in hand, 6 lands
+R7    Y'shtola plays Hallowed Fountain
+R7        [Y'shtola decides: Esper Sentinel 100%, stop 0% -> Esper Sentinel [search]]
+R7    Y'shtola casts Esper Sentinel
+R7        [Y'shtola attack plan by search: filtered at Kinnan]
+R7    Y'shtola attacks Kinnan with 3 creature(s): 7 damage (life now 20)
+R8  --- Yawgmoth turn 8: life 32, 4 cards in hand, 4 lands
+R8    Yawgmoth plays Swamp
+R8        [Yawgmoth decides: Yawgmoth, Thran Physician 94%, Pitiless Plunderer 5%, Sheoldred, the Apocalypse 1%, Skullclamp 0% -> Sheoldred, the Apocalypse [search]]
+R8    Yawgmoth casts Sheoldred, the Apocalypse
+R8        [Yawgmoth attack plan by search: filtered at Kinnan]
+R8    Yawgmoth attacks Kinnan with 1 creature(s): 3 damage (life now 17)
+R8  --- Kinnan turn 8: life 17, 3 cards in hand, 5 lands
+R8      Kinnan pays {4} to untap Mana Vault
+R8    Kinnan plays Island
+R8  --- Miirym turn 8: life 33, 8 cards in hand, 4 lands
+R8    Miirym plays Island
+R8        [Miirym decides: combo: Wrathful Red Dragon + Blasphemous Act 100%, Ancient Copper Dragon 0%, Dragonspeaker Shaman 0%, Ganax, Astral Hunter 0% -> combo: Wrathful Red Dragon + Blasphemous Act [search]]
+R8    Miirym goes for Wrathful Red Dragon + Blasphemous Act
+R8    Miirym casts Blasphemous Act
+R8      board wipe resolves (dmg13)
+R8        Hancock, Ghoulish Mayor (Yawgmoth) is removed by the wipe (dmg13)
+R8        Sheoldred, the Apocalypse (Yawgmoth) is removed by the wipe (dmg13)
+R8        Scaled Nurturer (Miirym) is removed by the wipe (dmg13)
+R8        Miirym, Sentinel Wyrm (Miirym) is removed by the wipe (dmg13)
+R8        Wrathful Red Dragon (Miirym) is removed by the wipe (dmg13)
+R8        Wrathful Red Dragon (Miirym) is removed by the wipe (dmg13)
+R8        Grand Arbiter Augustin IV (Y'shtola) is removed by the wipe (dmg13)
+R8        Marauding Blight-Priest (Y'shtola) is removed by the wipe (dmg13)
+R8        Y'shtola, Night's Blessed (Y'shtola) is removed by the wipe (dmg13)
+R8        Esper Sentinel (Y'shtola) is removed by the wipe (dmg13)
+R8      Wrathful Red Dragon: 13 damage to Kinnan
+R8      Wrathful Red Dragon: 13 damage to Kinnan
+R8  *** Kinnan is eliminated (life -12) by Miirym
+R8      Wrathful Red Dragon: 13 damage to Y'shtola
+R8      Wrathful Red Dragon: 13 damage to Y'shtola
+R8      Wrathful Red Dragon: 13 damage to Y'shtola
+R8  *** Y'shtola is eliminated (life -11) by Miirym
+R8      Wrathful Red Dragon: 13 damage to Yawgmoth
+R8      Wrathful Red Dragon: 13 damage to Yawgmoth
+R8      Wrathful Red Dragon: 13 damage to Yawgmoth
+R8  *** Yawgmoth is eliminated (life -7) by Miirym
+Winner: Miirym (damage)

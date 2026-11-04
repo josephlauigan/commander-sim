@@ -1,0 +1,209 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 39 (seed 500039): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Urza, Y'shtola, Kinnan, Yawgmoth
+R1  --- Urza turn 1: life 40, 7 cards in hand, 0 lands
+R1    Urza plays Otawara, Soaring City
+R1        [Urza decides: Mox Opal 100%, stop 0% -> Mox Opal [search]]
+R1    Urza casts Mox Opal
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola pays 2 life for an untapped Hallowed Fountain
+R1    Y'shtola plays Hallowed Fountain
+R1  --- Kinnan turn 1: life 40, 6 cards in hand, 0 lands
+R1    Kinnan plays Forest
+R1        [Kinnan decides: Fyndhorn Elves 100%, stop 0% -> Fyndhorn Elves [search]]
+R1    Kinnan casts Fyndhorn Elves
+R1  --- Yawgmoth turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yawgmoth plays Swamp
+R1        [Yawgmoth decides: Deathgreeter 96%, Entomb (Gravecrawler) 4%, stop 0% -> Deathgreeter [search]]
+R1    Yawgmoth casts Deathgreeter
+R2  --- Urza turn 2: life 40, 6 cards in hand, 1 lands
+R2    Urza plays Island
+R2        [Urza decides: Mishra's Bauble 60%, Everflowing Chalice x1 40%, stop 0% -> Mishra's Bauble [search]]
+R2    Urza casts Mishra's Bauble
+R2        [Urza decides: Everflowing Chalice x1 100%, stop 0% -> Everflowing Chalice x1 [search]]
+R2    Urza casts Everflowing Chalice kicked 1 times
+R2  --- Y'shtola turn 2: life 38, 7 cards in hand, 1 lands
+R2    Y'shtola plays Swamp
+R2  --- Kinnan turn 2: life 40, 5 cards in hand, 1 lands
+R2    Kinnan plays Rejuvenating Springs
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 70%, Bloom Tender 30%, stop 0% -> Kinnan, Bonder Prodigy [search]]
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R2        [Kinnan decides: Bloom Tender 100%, stop 0% -> Bloom Tender [search]]
+R2    Kinnan casts Bloom Tender
+R2  --- Yawgmoth turn 2: life 40, 6 cards in hand, 1 lands
+R2    Yawgmoth plays Swamp
+R2        [Yawgmoth decides: Diabolic Intent 100%, Entomb (Gravecrawler) 0%, stop 0% -> Diabolic Intent [search]]
+R2    Yawgmoth casts Diabolic Intent
+R2      Yawgmoth tutors Mikaeus, the Unhallowed into their hand
+R3    Urza sacrifices Mishra's Bauble (draws at the next upkeep)
+R3        [Urza end of turn: Mishra's Bauble 96%, pass 4% -> Mishra's Bauble]
+R3  --- Urza turn 3: life 40, 4 cards in hand, 2 lands
+R3    Urza plays Mystic Sanctuary
+R3        [Urza decides: Forensic Gadgeteer 100%, stop 0% -> Forensic Gadgeteer [search]]
+R3    Urza casts Forensic Gadgeteer
+R3  --- Y'shtola turn 3: life 38, 7 cards in hand, 2 lands
+R3    Y'shtola plays Scrubland
+R3        [Y'shtola decides: stop (hold mana) 100%, Memory Trap 0%, Tezzeret's Gambit 0% -> stop (hold mana) [search]]
+R3        [Y'shtola decides: stop (hold mana) 100%, Memory Trap 0%, Tezzeret's Gambit 0% -> stop (hold mana) [search]]
+R3  --- Kinnan turn 3: life 40, 4 cards in hand, 2 lands
+R3    Kinnan plays Dreamroot Cascade
+R3        [Kinnan decides: Koma, Cosmos Serpent 88%, Enduring Vitality 12%, Kinnan: dig five 0%, Pongify -> Forensic Gadgeteer 0% -> Koma, Cosmos Serpent [search]]
+R3    Kinnan casts Koma, Cosmos Serpent
+R3        [Kinnan decides: Pongify -> Forensic Gadgeteer 97%, stop 3% -> Pongify -> Forensic Gadgeteer [search]]
+R3    Kinnan casts Pongify -> Forensic Gadgeteer (Urza)
+R3      Forensic Gadgeteer (Urza) is removed: destroy
+R3        [Kinnan attack plan by search: none at Urza]
+R3  --- Yawgmoth turn 3: life 40, 6 cards in hand, 2 lands
+R3    Yawgmoth plays Cabal Stronghold
+R3        [Yawgmoth decides: Ayara, First of Locthwain 100%, Blight Mound 0%, Entomb (Gravecrawler) 0%, stop 0% -> Ayara, First of Locthwain [search]]
+R3    Yawgmoth casts Ayara, First of Locthwain
+R4  --- Urza turn 4: life 39, 4 cards in hand, 3 lands
+R4        [Urza decides: Urza, Lord High Artificer 93%, Trinket Mage 5%, Padeem, Consul of Innovation 2%, stop 0% -> Trinket Mage [search]]
+R4    Urza casts Trinket Mage
+R4      Urza reveals Basalt Monolith and puts it into their hand
+R4        [Urza attack plan by search: none at Y'shtola]
+R4  --- Y'shtola turn 4: life 37, 7 cards in hand, 3 lands
+R4    Y'shtola plays Swamp
+R4        [Y'shtola decides: stop (hold mana) 81%, Expedition Map 19%, Y'shtola, Night's Blessed 0%, Memory Trap 0% -> stop (hold mana) [search]]
+R4        [Y'shtola decides: stop (hold mana) 81%, Expedition Map 19%, Y'shtola, Night's Blessed 0%, Memory Trap 0% -> stop (hold mana) [search]]
+R4  --- Kinnan turn 4: life 39, 2 cards in hand, 3 lands
+R4        [Kinnan decides: Fellwar Stone 94%, Enduring Vitality 6%, Kinnan: dig five 0%, stop 0% -> Fellwar Stone [search]]
+R4    Kinnan casts Fellwar Stone
+R4        [Kinnan decides: Enduring Vitality 99%, Kinnan: dig five 1%, stop 0% -> Enduring Vitality [search]]
+R4    Kinnan casts Enduring Vitality
+R4        [Kinnan decides: Kinnan: dig five 100%, stop 0% -> Kinnan: dig five [search]]
+R4        [Kinnan attack plan by search: filtered at Yawgmoth]
+R4        [Kinnan holds back 1 attacker(s) that would die to blocks]
+R4    Kinnan attacks Yawgmoth with 2 creature(s): 9 damage (life now 32)
+R4    Kinnan attacks Y'shtola with 1 creature(s): 2 damage (life now 35)
+R4  --- Yawgmoth turn 4: life 32, 5 cards in hand, 3 lands
+R4    Yawgmoth plays Bojuka Bog
+R4        [Yawgmoth decides: Pawn of Ulamog 93%, Blight Mound 7%, Entomb (Gravecrawler) 0%, stop 0% -> Pawn of Ulamog [search]]
+R4    Yawgmoth casts Pawn of Ulamog
+R4        [Yawgmoth attack plan by search: filtered at Urza]
+R4        [Yawgmoth holds back 1 attacker(s) that would die to blocks]
+R4    Yawgmoth attacks Y'shtola with 1 creature(s): 2 damage (life now 32)
+R5  --- Urza turn 5: life 38, 5 cards in hand, 3 lands
+R5        [Urza decides: Basalt Monolith 92%, Urza, Lord High Artificer 7%, Rhystic Study 0%, Padeem, Consul of Innovation 0% -> Basalt Monolith [search]]
+R5    Urza casts Basalt Monolith
+R5        [Urza decides: Urza, Lord High Artificer 89%, Rhystic Study 7%, Padeem, Consul of Innovation 3%, Thought Monitor 2% -> Urza, Lord High Artificer [search]]
+R5    Urza casts Urza, Lord High Artificer
+R5        [Urza attack plan by search: filtered at Yawgmoth]
+R5    Urza attacks Yawgmoth with 2 creature(s): 2 damage (life now 31)
+R5  --- Y'shtola turn 5: life 32, 7 cards in hand, 4 lands
+R5    Y'shtola plays Swamp
+R5        [Y'shtola decides: stop (hold mana) 85%, Expedition Map 15%, Y'shtola, Night's Blessed 0%, Sanguine Bond 0% -> stop (hold mana) [search]]
+R5        [Y'shtola decides: stop (hold mana) 85%, Expedition Map 15%, Y'shtola, Night's Blessed 0%, Sanguine Bond 0% -> stop (hold mana) [search]]
+R5  --- Kinnan turn 5: life 38, 2 cards in hand, 3 lands
+R5    Kinnan plays Island
+R5        [Kinnan decides: stop (hold mana) 97%, Kinnan: dig five 3% -> stop (hold mana) [search]]
+R5      Kinnan sacrifices Token (Koma)
+R5      Koma taps Token
+R5        [Kinnan attack plan by search: all at Urza]
+R5    Kinnan attacks Urza with 10 creature(s): 29 damage (life now 9)
+R5        [Kinnan decides: Kinnan: dig five 92%, stop (hold mana) 8% -> Kinnan: dig five [search]]
+R5  --- Yawgmoth turn 5: life 31, 4 cards in hand, 4 lands
+R5    Yawgmoth plays Swamp
+R5        [Yawgmoth decides: Deadly Rollick -> Koma, Cosmos Serpent 99%, stop (hold mana) 1%, Entomb (Gravecrawler) 0%, Yawgmoth, Thran Physician 0% -> Deadly Rollick -> Koma, Cosmos Serpent [search]]
+R5    Yawgmoth casts Deadly Rollick -> Koma, Cosmos Serpent (Kinnan)
+R5      Kinnan casts Force of Negation at Deadly Rollick
+R5      Kinnan counters Deadly Rollick with Force of Negation
+R5        [Yawgmoth decides: Entomb (Gravecrawler) 100%, stop 0% -> Entomb (Gravecrawler) [search]]
+R5    Yawgmoth casts Entomb
+R5      Yawgmoth puts Gravecrawler into the graveyard (Entomb)
+R5        [Yawgmoth attack plan by search: none at Urza]
+R6  --- Urza turn 6: life 9, 6 cards in hand, 3 lands
+R6        [Urza decides: Basalt Monolith 99%, Rhystic Study 1%, Padeem, Consul of Innovation 0%, stop 0% -> Basalt Monolith [search]]
+R6    Urza casts Basalt Monolith
+R6        [Urza decides: Thought Monitor 50%, Rhystic Study 38%, Padeem, Consul of Innovation 13%, Basalt Monolith ability 0% -> Thought Monitor [search]]
+R6    Urza casts Thought Monitor
+R6        [Urza decides: Manifold Key 100%, stop 0% -> Manifold Key [search]]
+R6    Urza casts Manifold Key
+R6    Urza plays Academy Ruins
+R6      Kinnan sacrifices Token (Koma)
+R6      Koma taps Token
+R6        [Urza attack plan by search: filtered at Y'shtola]
+R6        [Urza keeps 2 creature(s) home as blockers]
+R6        [Urza decides: untap an artifact (Manifold Key) 100%, stop 0% -> untap an artifact (Manifold Key) [search]]
+R6      Manifold Key untaps Basalt Monolith
+R6        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R6    Urza activates Basalt Monolith
+R6        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R6    Urza activates Basalt Monolith
+R6        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R6    Urza activates Basalt Monolith
+R6  --- Y'shtola turn 6: life 32, 7 cards in hand, 5 lands
+R6    Y'shtola plays Urborg, Tomb of Yawgmoth
+R6        [Y'shtola decides: Memory Trap 72%, stop (hold mana) 25%, Expedition Map 3%, Y'shtola, Night's Blessed 0% -> Memory Trap [search]]
+R6    Y'shtola casts Memory Trap
+R6      Kinnan, Bonder Prodigy (Kinnan) is removed: exile
+R6        [Y'shtola decides: stop (hold mana) 77%, Expedition Map 12%, Tezzeret's Gambit 11% -> stop (hold mana) [search]]
+R6        [Y'shtola decides: stop (hold mana) 77%, Expedition Map 12%, Tezzeret's Gambit 11% -> stop (hold mana) [search]]
+R6  --- Kinnan turn 6: life 38, 6 cards in hand, 4 lands
+R6    Kinnan plays Treasure Vault
+R6        [Kinnan decides: Tidespout Tyrant 50%, Paradise Druid 41%, Kinnan, Bonder Prodigy 3%, Mox Amber 2% -> Tidespout Tyrant [search]]
+R6    Kinnan casts Tidespout Tyrant
+R6        [Kinnan decides: Paradise Druid 82%, Kinnan, Bonder Prodigy 6%, Mox Amber 5%, Lotus Petal 5% -> Paradise Druid [search]]
+R6    Kinnan casts Paradise Druid
+R6      Manifold Key (Urza) is removed: bounce
+R6        [Kinnan decides: Kinnan, Bonder Prodigy 34%, Mox Amber 26%, Lotus Petal 26%, Badgermole Cub 13% -> Kinnan, Bonder Prodigy [search]]
+R6    Kinnan casts Kinnan, Bonder Prodigy
+R6      Memory Trap (Y'shtola) is removed: bounce
+R6        [Kinnan decides: combo: Hullbreaker Horror + Kinnan + two rocks cast between each other 100%, Mox Amber 0%, Lotus Petal 0%, Badgermole Cub 0% -> combo: Hullbreaker Horror + Kinnan + two rocks cast between each other [search]]
+R6    Kinnan goes for Hullbreaker Horror + Kinnan + two rocks cast between each other
+R6    Kinnan casts Mox Amber
+R6      Trinket Mage (Urza) is removed: bounce
+R6  *** Urza is eliminated (life 9) by Kinnan
+R6      Y'shtola casts Teferi's Protection: life can't change, protection from everything, all phased out
+R6      Y'shtola survives: its life total can't change
+R6  *** Yawgmoth is eliminated (life 31) by Kinnan
+R6  *** Kinnan goes off, but Y'shtola survive
+R6        [Kinnan decides: Badgermole Cub 87%, Lotus Petal 11%, Kinnan: dig five 3%, stop 0% -> Badgermole Cub [search]]
+R6    Kinnan casts Badgermole Cub
+R6        [Kinnan decides: Lotus Petal 81%, Kinnan: dig five 19%, stop 0% -> stop [search]]
+R6        [Kinnan attack plan by search: filtered at Y'shtola]
+R6      7 combat damage from Nezahal, Primal Tide to Y'shtola is prevented
+R6      7 combat damage from Hullbreaker Horror to Y'shtola is prevented
+R6      6 combat damage from Koma, Cosmos Serpent to Y'shtola is prevented
+R6      3 combat damage from Enduring Vitality to Y'shtola is prevented
+R6    Kinnan attacks Y'shtola with 4 creature(s): 0 damage (life now 32)
+R6        [Kinnan decides: Kinnan: dig five 78%, Lotus Petal 22%, stop 0% -> stop [search]]
+R7  --- Y'shtola turn 7: life 32, 6 cards in hand, 6 lands
+R7    Y'shtola no longer has protection from everything
+R7    Y'shtola plays Marsh Flats
+R7      cracks Marsh Flats for Underground Sea
+R7        [Y'shtola decides: Y'shtola, Night's Blessed 55%, Consecrated Sphinx 26%, Sanguine Bond 7%, Memory Trap 6% -> Y'shtola, Night's Blessed [search]]
+R7    Y'shtola casts Y'shtola, Night's Blessed
+R7        [Y'shtola decides: Memory Trap 65%, Demonic Tutor 31%, Tezzeret's Gambit 2%, Expedition Map 1% -> Memory Trap [search]]
+R7    Y'shtola casts Memory Trap
+R7      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R7      Kinnan, Bonder Prodigy (Kinnan) is removed: exile
+R7    Kinnan casts Worldly Tutor
+R7      Y'shtola, Night's Blessed (Y'shtola) is removed: bounce
+R7      Kinnan reveals Walking Ballista and puts it on top of their library
+R7        [Kinnan end of turn: Worldly Tutor 100%, pass 0% -> Worldly Tutor]
+R7  --- Kinnan turn 7: life 36, 3 cards in hand, 5 lands
+R7    Kinnan plays Flooded Grove
+R7        [Kinnan decides: Kinnan, Bonder Prodigy 62%, Walking Ballista 20%, Mystic Remora 15%, Treasure Vault ability 2% -> Kinnan, Bonder Prodigy [search]]
+R7      Badgermole Cub adds an additional {G}
+R7      Badgermole Cub adds an additional {G}
+R7      Badgermole Cub adds an additional {G}
+R7    Kinnan casts Kinnan, Bonder Prodigy
+R7      Memory Trap (Y'shtola) is removed: bounce
+R7        [Kinnan decides: combo: Hullbreaker Horror + Kinnan + two rocks cast between each other 100%, Walking Ballista 0%, Mystic Remora 0%, Kinnan: dig five 0% -> combo: Hullbreaker Horror + Kinnan + two rocks cast between each other [search]]
+R7    Kinnan goes for Hullbreaker Horror + Kinnan + two rocks cast between each other
+R7    Kinnan casts Lotus Petal
+R7  *** Y'shtola is eliminated (life 33) by Kinnan
+R7  *** Kinnan wins by combo
+Winner: Kinnan (combo)

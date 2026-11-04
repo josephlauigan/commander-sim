@@ -158,6 +158,28 @@ fn torment_ai_casts_it_for_a_kill_and_not_early_otherwise() {
     assert!(!g.player(P1).alive && !g.player(P2).alive);
 }
 
+#[test]
+fn torment_yshtola_casts_it_off_coffers_mana_for_a_kill_and_not_early_otherwise() {
+    let mut g = table(&["yshtola", "cloud", "seph"]);
+    g.active = Some(P0);
+    lands(&mut g, P0, "Urborg, Tomb of Yawgmoth", 1, false);
+    lands(&mut g, P0, "Cabal Coffers", 1, false);
+    lands(&mut g, P0, "Plains", 2, false);
+    let c = hand(&mut g, P0, &["Torment of Hailfire"])[0];
+    g.player_mut(P1).hand.clear();
+    g.player_mut(P2).hand.clear();
+    assert_eq!(total_mana(&g, P0, false), 5, "Coffers with Urborg: four lands make 2 * 4 - 3 = 5");
+    assert!(hand_opts(&mut g, c, Some(false)).is_empty(), "X = 3 kills nobody at 40 life early");
+    lands(&mut g, P0, "Plains", 2, false);
+    assert_eq!(total_mana(&g, P0, false), 9, "six lands make 2 * 6 - 3 = 9");
+    g.player_mut(P1).life = 15;
+    g.player_mut(P2).life = 15;
+    let o = hand_opts(&mut g, c, Some(false));
+    assert_eq!(o.len(), 1, "Y'shtola's seat gets the Torment option");
+    assert!(run_plan(&mut g, &o[0]));
+    assert!(!g.player(P1).alive && !g.player(P2).alive);
+}
+
 // ---------------------------------------------------------------- Exsanguinate in Sauron's deck
 // ---------------------------------------------------------------- Dualcaster Mage
 #[test]

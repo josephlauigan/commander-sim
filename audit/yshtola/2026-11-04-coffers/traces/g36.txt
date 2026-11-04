@@ -1,0 +1,337 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 36 (seed 500036): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Zur the Enchanter, Urza, Y'shtola, Kinnan
+R1  --- Zur the Enchanter turn 1: life 40, 7 cards in hand, 0 lands
+R1    Zur the Enchanter plays Caves of Koilos
+R1        [Zur the Enchanter decides: Dark Ritual 100%, stop 0% -> Dark Ritual [search]]
+R1    Zur the Enchanter casts Dark Ritual
+R1        [Zur the Enchanter decides: Rule of Law 100%, stop 0% -> Rule of Law [search]]
+R1    Zur the Enchanter casts Rule of Law
+R1  --- Urza turn 1: life 40, 7 cards in hand, 0 lands
+R1    Urza plays Island
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Polluted Delta
+R1      cracks Polluted Delta for Hallowed Fountain
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kinnan plays Island
+R2  --- Zur the Enchanter turn 2: life 39, 5 cards in hand, 1 lands
+R2    Zur the Enchanter plays Swamp
+R2  --- Urza turn 2: life 40, 7 cards in hand, 1 lands
+R2    Urza plays Academy Ruins
+R2        [Urza decides: Mana Vault 100%, stop (hold mana) 0% -> Mana Vault [search]]
+R2    Urza casts Mana Vault
+R2  --- Y'shtola turn 2: life 39, 7 cards in hand, 1 lands
+R2    Y'shtola plays Swamp
+R2  --- Kinnan turn 2: life 40, 7 cards in hand, 1 lands
+R2    Kinnan plays Treasure Vault
+R2        [Kinnan decides: Sol Ring 99%, Cyclonic Rift -> Rule of Law 1%, stop 0% -> Sol Ring [search]]
+R2    Kinnan casts Sol Ring
+R3  --- Zur the Enchanter turn 3: life 39, 5 cards in hand, 2 lands
+R3    Zur the Enchanter plays Hall of Heliod's Generosity
+R3  --- Urza turn 3: life 40, 6 cards in hand, 2 lands
+R3    Urza plays Island
+R3        [Urza decides: Aether Spellbomb 89%, Urza, Lord High Artificer 9%, Tezzeret the Seeker 1%, stop (hold mana) 1% -> Aether Spellbomb [search]]
+R3    Urza casts Aether Spellbomb
+R3        [Urza decides: stop (hold mana) 99%, Aether Spellbomb ability 1%, Aether Spellbomb ability 0% -> stop (hold mana) [search]]
+R3        [Urza decides: stop (hold mana) 99%, Aether Spellbomb ability 1%, Aether Spellbomb ability 0% -> stop (hold mana) [search]]
+R3  --- Y'shtola turn 3: life 39, 7 cards in hand, 2 lands
+R3    Y'shtola plays Plains
+R3        [Y'shtola decides: Coalition Relic 80%, Marauding Blight-Priest 20%, stop 0% -> Coalition Relic [search]]
+R3    Y'shtola casts Coalition Relic
+R3      Urza casts An Offer You Can't Refuse at Coalition Relic
+R3      Urza counters Coalition Relic with An Offer You Can't Refuse
+R3    Kinnan casts Cyclonic Rift -> Rule of Law (Zur the Enchanter)
+R3      Rule of Law (Zur the Enchanter) is removed: bounce
+R3        [Kinnan end of turn: Cyclonic Rift -> Rule of Law 100%, pass 0% -> Cyclonic Rift -> Rule of Law]
+R3  --- Kinnan turn 3: life 40, 5 cards in hand, 2 lands
+R3    Kinnan plays Island
+R3        [Kinnan decides: stop (hold mana) 100%, Treasure Vault ability 0% -> stop (hold mana) [search]]
+R3        [Kinnan decides: stop (hold mana) 100%, Treasure Vault ability 0% -> Treasure Vault ability [search]]
+R3    Kinnan activates Treasure Vault
+R3        [Kinnan decides: Fyndhorn Elves 56%, Bloom Tender 31%, Kinnan, Bonder Prodigy 13%, Sylvan Library 0% -> Fyndhorn Elves [search]]
+R3    Kinnan casts Fyndhorn Elves
+R4  --- Zur the Enchanter turn 4: life 39, 6 cards in hand, 3 lands
+R4    Zur the Enchanter plays Island
+R4        [Zur the Enchanter decides: Zur the Enchanter 88%, Rule of Law 10%, Imprisoned in the Moon 2%, stop 0% -> Rule of Law [search]]
+R4    Zur the Enchanter casts Rule of Law
+R4    Urza activates Aether Spellbomb
+R4        [Urza end of turn: Aether Spellbomb ability 71%, pass 17%, Aether Spellbomb ability 12% -> Aether Spellbomb ability]
+R4  --- Urza turn 4: life 40, 5 cards in hand, 3 lands
+R4    Urza plays Darksteel Citadel
+R4        [Urza decides: Urza, Lord High Artificer 94%, Tezzeret the Seeker 5%, Tormod's Crypt 1%, stop 0% -> stop [search]]
+R4        [Urza decides: Urza, Lord High Artificer 94%, Tezzeret the Seeker 5%, Tormod's Crypt 1%, stop 0% -> Urza, Lord High Artificer [search]]
+R4    Urza casts Urza, Lord High Artificer
+R4    Y'shtola casts Path to Exile -> Urza, Lord High Artificer (Urza)
+R4      Kinnan casts Pact of Negation at Path to Exile
+R4      Kinnan counters Path to Exile with Pact of Negation
+R4        [Y'shtola end of turn: Path to Exile -> Urza, Lord High Artificer 100%, pass 0% -> Path to Exile -> Urza, Lord High Artificer]
+R4  --- Y'shtola turn 4: life 39, 5 cards in hand, 3 lands
+R4        [Y'shtola decides: Y'shtola, Night's Blessed 65%, Marauding Blight-Priest 16%, Displacer Kitten 12%, Hostage Taker 6% -> Y'shtola, Night's Blessed [search]]
+R4    Y'shtola casts Y'shtola, Night's Blessed
+R4  --- Kinnan turn 4: life 40, 3 cards in hand, 2 lands
+R5  --- Zur the Enchanter turn 5: life 38, 5 cards in hand, 4 lands
+R5    Zur the Enchanter plays City of Brass
+R5        [Zur the Enchanter decides: Swords to Plowshares -> Urza, Lord High Artificer 50%, Imprisoned in the Moon -> Urza, Lord High Artificer 50%, Zur the Enchanter 0%, Imprisoned in the Moon 0% -> Imprisoned in the Moon [search]]
+R5    Zur the Enchanter casts Imprisoned in the Moon
+R5      Urza, Lord High Artificer (Urza) is removed: moon
+R5      Urza, Lord High Artificer becomes a Wastes
+R5  --- Urza turn 5: life 40, 5 cards in hand, 5 lands
+R5    Urza plays Island
+R5        [Urza decides: Tezzeret the Seeker 80%, Tormod's Crypt 20%, stop 0% -> Tezzeret the Seeker [search]]
+R5    Urza casts Tezzeret the Seeker
+R5        [Urza decides: Tezzeret the Seeker -2 68%, Tezzeret the Seeker +1 32%, stop 0% -> Tezzeret the Seeker -2 [search]]
+R5    Urza uses Tezzeret the Seeker (-2): artifact onto the battlefield
+R5      Isochron Scepter imprints Dramatic Reversal
+R5        [Urza attack plan by search: filtered at Y'shtola]
+R5    Urza attacks Y'shtola with 1 creature(s): 3 damage (life now 36)
+R5  --- Y'shtola turn 5: life 36, 6 cards in hand, 3 lands
+R5        [Y'shtola decides: Marauding Blight-Priest 100%, stop 0% -> Marauding Blight-Priest [search]]
+R5    Y'shtola casts Marauding Blight-Priest
+R5        [Y'shtola attacks: Urza 87%, Zur the Enchanter 10%, Kinnan 3% -> Urza]
+R5    Y'shtola attacks Urza with 1 creature(s): 2 damage (life now 38)
+R5  --- Kinnan turn 5: life 40, 4 cards in hand, 2 lands
+R5        [Kinnan decides: Kinnan, Bonder Prodigy 68%, Bloom Tender 31%, Sylvan Library 1%, stop 0% -> Bloom Tender [search]]
+R5    Kinnan casts Bloom Tender
+R6    Zur the Enchanter casts Swords to Plowshares -> Y'shtola, Night's Blessed (Y'shtola)
+R6      Y'shtola, Night's Blessed (Y'shtola) is removed: exile
+R6        [Zur the Enchanter end of turn: Swords to Plowshares -> Y'shtola, Night's Blessed 98%, pass 2% -> Swords to Plowshares -> Y'shtola, Night's Blessed]
+R6  --- Zur the Enchanter turn 6: life 36, 3 cards in hand, 5 lands
+R6    Zur the Enchanter plays Plains
+R6        [Zur the Enchanter decides: Zur the Enchanter 100%, stop 0% -> Zur the Enchanter [search]]
+R6    Zur the Enchanter casts Zur the Enchanter
+R6  --- Urza turn 6: life 37, 3 cards in hand, 6 lands
+R6    Urza plays Inventors' Fair
+R6        [Urza decides: Forensic Gadgeteer 89%, Tormod's Crypt 8%, Tezzeret the Seeker -2 2%, Tezzeret the Seeker +1 1% -> Tormod's Crypt [search]]
+R6    Urza casts Tormod's Crypt
+R6        [Urza decides: Tezzeret the Seeker -2 50%, Inventors' Fair: search for an artifact 26%, Tezzeret the Seeker +1 24%, stop 0% -> Tezzeret the Seeker -2 [search]]
+R6    Urza uses Tezzeret the Seeker (-2): artifact onto the battlefield
+R6        [Urza decides: Inventors' Fair: search for an artifact 100%, stop 0% -> stop [search]]
+R6        [Urza attack plan by search: all at Kinnan]
+R6    Urza attacks Kinnan with 1 creature(s): 5 damage (life now 34)
+R6        [Urza decides: Inventors' Fair: search for an artifact 100%, stop 0% -> stop [search]]
+R6  --- Y'shtola turn 6: life 38, 6 cards in hand, 3 lands
+R6        [Y'shtola decides: Anguished Unmaking -> Zur the Enchanter 100%, stop 0% -> Anguished Unmaking -> Zur the Enchanter [search]]
+R6    Y'shtola casts Anguished Unmaking -> Zur the Enchanter (Zur the Enchanter)
+R6      Zur the Enchanter (Zur the Enchanter) is removed: exile
+R6        [Y'shtola attack plan by search: filtered at Kinnan]
+R6    Y'shtola attacks Kinnan with 1 creature(s): 3 damage (life now 31)
+R6  --- Kinnan turn 6: life 31, 4 cards in hand, 2 lands
+R6    Kinnan plays Forest
+R6        [Kinnan decides: Kinnan, Bonder Prodigy 67%, Hullbreaker Horror 16%, Nyxbloom Ancient 16%, Sylvan Library 1% -> Kinnan, Bonder Prodigy [search]]
+R6    Kinnan casts Kinnan, Bonder Prodigy
+R6        [Kinnan decides: Kinnan: dig five 100%, stop 0% -> Kinnan: dig five [search]]
+R7  --- Zur the Enchanter turn 7: life 36, 3 cards in hand, 6 lands
+R7    Zur the Enchanter plays Raffine's Tower
+R7    Urza puts Aether Spellbomb on top with Academy Ruins
+R7        [Urza end of turn: Academy Ruins 98%, pass 2% -> Academy Ruins]
+R7  --- Urza turn 7: life 37, 2 cards in hand, 7 lands
+R7        [Urza decides: Aether Spellbomb 83%, Forensic Gadgeteer 17%, Inventors' Fair: search for an artifact 0%, stop 0% -> Aether Spellbomb [search]]
+R7    Urza casts Aether Spellbomb
+R7        [Urza decides: Aether Spellbomb ability 99%, Inventors' Fair: search for an artifact 1%, Aether Spellbomb ability 0%, stop 0% -> Aether Spellbomb ability [search]]
+R7    Urza activates Aether Spellbomb
+R7      Void Winnower (Kinnan) is removed: bounce
+R7        [Urza decides: Inventors' Fair: search for an artifact 100%, stop 0% -> Inventors' Fair: search for an artifact [search]]
+R7      Urza reveals Basalt Monolith and puts it into their hand
+R7        [Urza attack plan by search: filtered at Kinnan]
+R7    Urza attacks Kinnan with 1 creature(s): 5 damage (life now 26)
+R7  --- Y'shtola turn 7: life 35, 6 cards in hand, 3 lands
+R7        [Y'shtola attack plan by search: filtered at Kinnan]
+R7    Y'shtola attacks Kinnan with 1 creature(s): 0 damage (life now 26)
+R7  --- Kinnan turn 7: life 26, 5 cards in hand, 3 lands
+R7        [Kinnan decides: Hullbreaker Horror 40%, Nyxbloom Ancient 28%, Kinnan, Bonder Prodigy 22%, Enduring Vitality 8% -> Hullbreaker Horror [search]]
+R7    Kinnan casts Hullbreaker Horror
+R8  --- Zur the Enchanter turn 8: life 36, 3 cards in hand, 7 lands
+R8    Zur the Enchanter plays Hallowed Fountain
+R8        [Zur the Enchanter decides: Zur the Enchanter 73%, stop (hold mana) 27% -> Zur the Enchanter [search]]
+R8    Zur the Enchanter casts Zur the Enchanter
+R8  --- Urza turn 8: life 38, 3 cards in hand, 6 lands
+R8        [Urza decides: Forensic Gadgeteer 71%, Basalt Monolith 20%, Reshape 9%, Etherium Sculptor 1% -> Forensic Gadgeteer [search]]
+R8    Urza casts Forensic Gadgeteer
+R8        [Urza attack plan by search: filtered at Y'shtola]
+R8    Urza attacks Y'shtola with 1 creature(s): 5 damage (life now 30)
+R8  --- Y'shtola turn 8: life 30, 7 cards in hand, 3 lands
+R8        [Y'shtola decides: Go for the Throat -> Zur the Enchanter 100%, stop 0% -> Go for the Throat -> Zur the Enchanter [search]]
+R8    Y'shtola casts Go for the Throat -> Zur the Enchanter (Zur the Enchanter)
+R8      Zur the Enchanter (Zur the Enchanter) is removed: destroy
+R8  --- Kinnan turn 8: life 26, 5 cards in hand, 3 lands
+R8        [Kinnan decides: Void Winnower 85%, Kinnan, Bonder Prodigy 6%, Nyxbloom Ancient 6%, Enduring Vitality 1% -> Void Winnower [search]]
+R8    Kinnan casts Void Winnower
+R8        [Kinnan attack plan by search: filtered at Urza]
+R8    Kinnan attacks Urza with 1 creature(s): 7 damage (life now 31)
+R9  --- Zur the Enchanter turn 9: life 35, 4 cards in hand, 8 lands
+R9    Zur the Enchanter plays Marsh Flats
+R9      cracks Marsh Flats for Godless Shrine
+R9        [Zur the Enchanter decides: Rule of Law 82%, stop (hold mana) 18% -> Rule of Law [search]]
+R9    Zur the Enchanter casts Rule of Law
+R9  --- Urza turn 9: life 31, 3 cards in hand, 6 lands
+R9    Urza plays Island
+R9        [Urza decides: Basalt Monolith 100%, stop 0% -> Basalt Monolith [search]]
+R9    Urza casts Basalt Monolith
+R9        [Urza decides: crack a Clue 93%, Basalt Monolith ability 7%, stop 0% -> crack a Clue [search]]
+R9        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R9    Urza activates Basalt Monolith
+R9        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R9    Urza activates Basalt Monolith
+R9        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R9    Urza activates Basalt Monolith
+R9        [Urza attack plan by search: filtered at Y'shtola]
+R9    Urza attacks Y'shtola with 2 creature(s): 8 damage (life now 22)
+R9  --- Y'shtola turn 9: life 22, 7 cards in hand, 3 lands
+R9  --- Kinnan turn 9: life 26, 5 cards in hand, 3 lands
+R9        [Kinnan decides: Kinnan, Bonder Prodigy 28%, Sink into Stupor // Soporific Springs 21%, Nyxbloom Ancient 20%, Sink into Stupor // Soporific Springs -> Forensic Gadgeteer 15% -> Kinnan, Bonder Prodigy [search]]
+R9    Kinnan casts Kinnan, Bonder Prodigy
+R9        [Kinnan attack plan by search: filtered at Y'shtola]
+R9    Kinnan attacks Y'shtola with 2 creature(s): 18 damage (life now 4)
+R10 --- Zur the Enchanter turn 10: life 34, 3 cards in hand, 9 lands
+R10       [Zur the Enchanter decides: stop (hold mana) 51%, Necropotence 49% -> stop (hold mana) [search]]
+R10       [Zur the Enchanter decides: stop (hold mana) 51%, Necropotence 49% -> stop (hold mana) [search]]
+R10   Urza activates Basalt Monolith
+R10       [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R10   Urza activates Basalt Monolith
+R10       [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R10   Urza activates Basalt Monolith
+R10       [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R10 --- Urza turn 10: life 31, 4 cards in hand, 7 lands
+R10   Urza plays Island
+R10       [Urza decides: Forensic Gadgeteer 78%, Trinket Mage 22%, stop 0% -> Forensic Gadgeteer [search]]
+R10   Urza casts Forensic Gadgeteer
+R10       [Urza attack plan by search: all at Zur the Enchanter]
+R10   Urza attacks Zur the Enchanter with 1 creature(s): 6 damage (life now 28)
+R10 --- Y'shtola turn 10: life 4, 7 cards in hand, 3 lands
+R10       [Y'shtola decides: Read the Bones 100%, stop 0% -> Read the Bones [search]]
+R10   Y'shtola casts Read the Bones
+R10   Y'shtola plays Tundra
+R10   Kinnan casts Sink into Stupor // Soporific Springs -> Rule of Law (Zur the Enchanter)
+R10     Rule of Law (Zur the Enchanter) is removed: bounce
+R10       [Kinnan end of turn: Sink into Stupor // Soporific Springs -> Forensic Gadgeteer 100%, pass 0% -> Sink into Stupor // Soporific Springs -> Forensic Gadgeteer]
+R10 --- Kinnan turn 10: life 26, 5 cards in hand, 3 lands
+R10   Kinnan plays Flooded Grove
+R10       [Kinnan decides: Freed from the Real 84%, Nyxbloom Ancient 11%, Enduring Vitality 4%, Sylvan Library 1% -> Freed from the Real [search]]
+R10   Kinnan casts Freed from the Real
+R10       [Kinnan decides: Nyxbloom Ancient 68%, Enduring Vitality 24%, Sylvan Library 6%, Kinnan: dig five 2% -> Nyxbloom Ancient [search]]
+R10   Kinnan casts Nyxbloom Ancient
+R10       [Kinnan decides: Sylvan Library 100%, stop 0% -> Sylvan Library [search]]
+R10   Kinnan casts Sylvan Library
+R10       [Kinnan attack plan by search: all at Urza]
+R10   Kinnan attacks Urza with 3 creature(s): 20 damage (life now 10)
+R11 --- Zur the Enchanter turn 11: life 28, 5 cards in hand, 9 lands
+R11       [Zur the Enchanter decides: stop (hold mana) 84%, Rule of Law 16% -> stop (hold mana) [search]]
+R11       [Zur the Enchanter decides: stop (hold mana) 84%, Rule of Law 16% -> stop (hold mana) [search]]
+R11 --- Urza turn 11: life 10, 7 cards in hand, 8 lands
+R11       [Urza decides: Forensic Gadgeteer 69%, Trinket Mage 23%, Basalt Monolith 6%, Mana Vault 2% -> Forensic Gadgeteer [search]]
+R11   Urza casts Forensic Gadgeteer
+R11       [Urza decides: Trinket Mage 57%, Basalt Monolith 37%, Mana Vault 6%, stop 0% -> Trinket Mage [search]]
+R11   Urza casts Trinket Mage
+R11     Urza reveals Rings of Brighthearth and puts it into their hand
+R11       [Urza decides: Mana Vault 100%, stop 0% -> Mana Vault [search]]
+R11   Urza casts Mana Vault
+R11       [Urza decides: Basalt Monolith 74%, Rings of Brighthearth 25%, crack a Clue 0%, stop 0% -> Basalt Monolith [search]]
+R11   Urza casts Basalt Monolith
+R11       [Urza decides: Rings of Brighthearth 99%, crack a Clue 1%, Basalt Monolith ability 0%, stop 0% -> Rings of Brighthearth [search]]
+R11   Urza casts Rings of Brighthearth
+R11       [Urza decides: crack a Clue 100%, stop 0% -> crack a Clue [search]]
+R11       [Urza attack plan by search: all at Kinnan]
+R11   Urza attacks Kinnan with 1 creature(s): 6 damage (life now 20)
+R11 --- Y'shtola turn 11: life 2, 7 cards in hand, 4 lands
+R11   Y'shtola plays Plains
+R11       [Y'shtola decides: Sphere of Safety 75%, Esper Sentinel 25%, stop 0% -> Sphere of Safety [search]]
+R11   Y'shtola casts Sphere of Safety
+R11     Urza casts Force of Will at Sphere of Safety
+R11     Urza counters Sphere of Safety with Force of Will
+R11 --- Kinnan turn 11: life 20, 2 cards in hand, 4 lands
+R11       [Kinnan decides: Enduring Vitality 91%, Kinnan: dig five 9%, stop 0% -> Enduring Vitality [search]]
+R11   Kinnan casts Enduring Vitality
+R11       [Kinnan decides: Kinnan: dig five 100%, stop 0% -> Kinnan: dig five [search]]
+R11       [Kinnan decides: Kinnan: dig five 100%, stop 0% -> Kinnan: dig five [search]]
+R11       [Kinnan decides: Kinnan: dig five 100%, stop 0% -> Kinnan: dig five [search]]
+R11     Badgermole Cub adds an additional {G}
+R11       [Kinnan decides: Kinnan: dig five 100%, stop 0% -> Kinnan: dig five [search]]
+R11     Badgermole Cub adds an additional {G}
+R11     Badgermole Cub adds an additional {G}
+R11       [Kinnan decides: Kinnan: dig five 100%, stop 0% -> Kinnan: dig five [search]]
+R11     Badgermole Cub adds an additional {G}
+R12 --- Zur the Enchanter turn 12: life 28, 6 cards in hand, 9 lands
+R12       [Zur the Enchanter decides: stop (hold mana) 80%, Rule of Law 15%, Mesa Enchantress 5% -> stop (hold mana) [search]]
+R12       [Zur the Enchanter decides: stop (hold mana) 80%, Rule of Law 15%, Mesa Enchantress 5% -> stop (hold mana) [search]]
+R12 --- Urza turn 12: life 9, 4 cards in hand, 8 lands
+R12     Urza pays {4} to untap Mana Vault
+R12       [Urza decides: Forensic Gadgeteer 100%, crack a Clue 0%, Basalt Monolith ability 0%, stop 0% -> Forensic Gadgeteer [search]]
+R12   Urza casts Forensic Gadgeteer
+R12     Kinnan casts Force of Will at Forensic Gadgeteer
+R12     Basalt Monolith (Urza) is removed: bounce
+R12     Kinnan counters Forensic Gadgeteer with Force of Will
+R12       [Urza decides: Basalt Monolith 98%, crack a Clue 2%, stop 0% -> Basalt Monolith [search]]
+R12   Urza casts Basalt Monolith
+R12       [Urza decides: crack a Clue 93%, Basalt Monolith ability 7%, stop 0% -> crack a Clue [search]]
+R12       [Urza decides: crack a Clue 100%, stop 0% -> crack a Clue [search]]
+R12   Urza plays Island
+R12       [Urza attack plan by search: filtered at Zur the Enchanter]
+R12       [Urza keeps 2 creature(s) home as blockers]
+R12 --- Y'shtola turn 12: life 2, 6 cards in hand, 5 lands
+R12       [Y'shtola decides: Esper Sentinel 100%, stop 0% -> Esper Sentinel [search]]
+R12   Y'shtola casts Esper Sentinel
+R12 --- Kinnan turn 12: life 19, 1 cards in hand, 4 lands
+R12       [Kinnan decides: Kinnan: dig five 57%, Spellskite 33%, Springleaf Drum 10%, stop 0% -> stop [search]]
+R12       [Kinnan attack plan by search: filtered at Urza]
+R12   Kinnan attacks Urza with 3 creature(s): 4 damage (life now 5)
+R12 *** Zur the Enchanter is eliminated (life -2) by Kinnan
+R12   Kinnan attacks Zur the Enchanter with 4 creature(s): 30 damage (life now -2)
+R12 *** Y'shtola is eliminated (life -3) by Kinnan
+R12   Kinnan attacks Y'shtola with 1 creature(s): 5 damage (life now -3)
+R12       [Kinnan decides: Kinnan: dig five 95%, Spellskite 4%, Springleaf Drum 1%, stop 0% -> Kinnan: dig five [search]]
+R12       [Kinnan decides: Kinnan: dig five 95%, Spellskite 4%, Springleaf Drum 1%, stop 0% -> Kinnan: dig five [search]]
+R12     Badgermole Cub adds an additional {G}
+R12       [Kinnan decides: Kinnan: dig five 95%, Spellskite 4%, Springleaf Drum 1%, stop 0% -> Kinnan: dig five [search]]
+R12     Badgermole Cub adds an additional {G}
+R12       [Kinnan decides: Kinnan: dig five 95%, Spellskite 4%, Springleaf Drum 1%, stop 0% -> Kinnan: dig five [search]]
+R12     Badgermole Cub adds an additional {G}
+R12       [Kinnan decides: Kinnan: dig five 95%, Spellskite 4%, Springleaf Drum 1%, stop 0% -> Kinnan: dig five [search]]
+R12     Badgermole Cub adds an additional {G}
+R12       [Kinnan decides: Spellskite 76%, Springleaf Drum 24%, stop 0% -> Spellskite [search]]
+R12   Kinnan casts Spellskite
+R12     Basalt Monolith (Urza) is removed: bounce
+R12       [Kinnan decides: Springleaf Drum 100%, stop 0% -> stop [search]]
+R13 --- Urza turn 13: life 5, 8 cards in hand, 9 lands
+R13     Mystic Sanctuary puts An Offer You Can't Refuse on top
+R13   Urza plays Mystic Sanctuary
+R13       [Urza decides: Basalt Monolith 62%, Mana Vault 28%, Narset, Parter of Veils 10%, stop 0% -> Basalt Monolith [search]]
+R13   Urza casts Basalt Monolith
+R13       [Urza decides: Mana Vault 71%, Narset, Parter of Veils 29%, Basalt Monolith ability 0%, stop 0% -> Mana Vault [search]]
+R13   Urza casts Mana Vault
+R13       [Urza decides: Narset, Parter of Veils 99%, Basalt Monolith ability 1%, stop 0% -> Narset, Parter of Veils [search]]
+R13   Urza casts Narset, Parter of Veils
+R13       [Urza decides: Narset, Parter of Veils -2 97%, Basalt Monolith ability 3%, stop 0% -> Narset, Parter of Veils -2 [search]]
+R13   Urza uses Narset, Parter of Veils (-2): dig for a noncreature, nonland card
+R13     Narset: Urza takes a card
+R13       [Urza decides: stop (hold mana) 100%, Basalt Monolith ability 0% -> stop (hold mana) [search]]
+R13       [Urza attack plan by search: filtered at Kinnan]
+R13       [Urza keeps 1 creature(s) home as blockers]
+R13       [Urza decides: stop (hold mana) 100%, Basalt Monolith ability 0% -> stop (hold mana) [search]]
+R13   Kinnan channels Otawara
+R13     Basalt Monolith (Urza) is removed: bounce
+R13       [Kinnan end of turn: Otawara -> Basalt Monolith 94%, pass 6% -> Otawara -> Basalt Monolith]
+R13 --- Kinnan turn 13: life 19, 3 cards in hand, 4 lands
+R13       [Kinnan decides: combo: Hullbreaker Horror + Kinnan + two rocks cast between each other 100%, Chord of Calling 0%, Wandering Archaic // Explore the Vastlands 0%, Mana Vault 0% -> combo: Hullbreaker Horror + Kinnan + two rocks cast between each other [search]]
+R13   Kinnan goes for Hullbreaker Horror + Kinnan + two rocks cast between each other
+R13   Kinnan casts Mana Vault
+R13     Narset, Parter of Veils (Urza) is removed: bounce
+R13     Urza casts An Offer You Can't Refuse at Mana Vault
+R13     Urza counters Mana Vault with An Offer You Can't Refuse
+R13     ...Hullbreaker Horror + Kinnan + two rocks cast between each other stops at step 3 (cast the first rock (a counter on any loop spell ends the loop))
+R13       [Kinnan decides: Chord of Calling 89%, Wandering Archaic // Explore the Vastlands 9%, Kinnan: dig five 2%, Springleaf Drum 0% -> stop [search]]
+R13   Kinnan plays Dreamroot Cascade
+R13       [Kinnan attack plan by search: filtered at Urza]
+R13 *** Urza is eliminated (life -45) by Kinnan
+R13   Kinnan attacks Urza with 10 creature(s): 50 damage (life now -45)
+Winner: Kinnan (damage)

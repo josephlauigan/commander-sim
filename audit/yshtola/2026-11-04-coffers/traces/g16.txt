@@ -1,0 +1,233 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 16 (seed 500016): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Miirym, Zur the Enchanter, Kinnan, Y'shtola
+R1  --- Miirym turn 1: life 40, 7 cards in hand, 0 lands
+R1    Miirym plays Cavern of Souls
+R1  --- Zur the Enchanter turn 1: life 40, 7 cards in hand, 0 lands
+R1    Zur the Enchanter plays Adarkar Wastes
+R1        [Zur the Enchanter decides: Enlightened Tutor 100%, stop 0% -> Enlightened Tutor [search]]
+R1    Zur the Enchanter casts Enlightened Tutor
+R1      Zur the Enchanter reveals Heliod, Sun-Crowned and puts it on top of their library
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1      Kinnan plays it as Barkchannel Pathway
+R1    Kinnan plays Barkchannel Pathway // Tidechannel Pathway
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Scrubland
+R2  --- Miirym turn 2: life 40, 7 cards in hand, 1 lands
+R2    Miirym plays Rejuvenating Springs
+R2        [Miirym decides: Sol Ring 100%, stop 0% -> Sol Ring [search]]
+R2    Miirym casts Sol Ring
+R2        [Miirym decides: Kodama's Reach 100%, stop 0% -> Kodama's Reach [search]]
+R2    Miirym casts Kodama's Reach
+R2      Miirym reveals Forest and puts it into their hand
+R2  --- Zur the Enchanter turn 2: life 39, 6 cards in hand, 1 lands
+R2    Zur the Enchanter plays Caves of Koilos
+R2        [Zur the Enchanter decides: Drannith Magistrate 100%, stop 0% -> Drannith Magistrate [search]]
+R2    Zur the Enchanter casts Drannith Magistrate
+R2  --- Kinnan turn 2: life 40, 7 cards in hand, 1 lands
+R2    Kinnan plays Rejuvenating Springs
+R2        [Kinnan decides: Badgermole Cub 77%, Sylvan Library 23%, stop 0% -> Badgermole Cub [search]]
+R2    Kinnan casts Badgermole Cub
+R2  --- Y'shtola turn 2: life 40, 7 cards in hand, 1 lands
+R2    Y'shtola plays Plains
+R3  --- Miirym turn 3: life 40, 6 cards in hand, 3 lands
+R3    Miirym plays Forest
+R3        [Miirym decides: Carnelian Orb of Dragonkind 46%, Arcane Signet 46%, Temur Ascendancy 8%, stop 0% -> Carnelian Orb of Dragonkind [search]]
+R3    Miirym casts Carnelian Orb of Dragonkind
+R3        [Miirym decides: Arcane Signet 100%, stop 0% -> Arcane Signet [search]]
+R3    Miirym casts Arcane Signet
+R3        [Miirym decides: Dragonspeaker Shaman 99%, Temur Ascendancy 1%, stop 0% -> Dragonspeaker Shaman [search]]
+R3    Miirym casts Dragonspeaker Shaman
+R3  --- Zur the Enchanter turn 3: life 38, 5 cards in hand, 2 lands
+R3    Zur the Enchanter plays Reliquary Tower
+R3        [Zur the Enchanter decides: Talisman of Progress 99%, Heliod, Sun-Crowned 1%, Diplomatic Immunity 0%, stop 0% -> Talisman of Progress [search]]
+R3    Zur the Enchanter casts Talisman of Progress
+R3        [Zur the Enchanter attack plan by search: filtered at Kinnan]
+R3    Zur the Enchanter attacks Kinnan with 1 creature(s): 1 damage (life now 39)
+R3  --- Kinnan turn 3: life 39, 6 cards in hand, 2 lands
+R3    Kinnan plays Island
+R3        [Kinnan decides: Enduring Vitality 61%, Trophy Mage 21%, Sylvan Library 18%, stop 0% -> Enduring Vitality [search]]
+R3    Kinnan casts Enduring Vitality
+R3        [Kinnan attack plan by search: filtered at Miirym]
+R3    Kinnan attacks Miirym with 1 creature(s): 0 damage (life now 40)
+R3  --- Y'shtola turn 3: life 40, 7 cards in hand, 2 lands
+R3    Y'shtola plays Urborg, Tomb of Yawgmoth
+R3        [Y'shtola decides: Necropotence 100%, stop 0% -> Necropotence [search]]
+R3    Y'shtola casts Necropotence
+R3    Y'shtola pays 2 life to Necropotence
+R4  --- Miirym turn 4: life 40, 3 cards in hand, 4 lands
+R4    Miirym plays Frontier Bivouac
+R4        [Miirym decides: Farseek 97%, Temur Ascendancy 3%, stop 0% -> Farseek [search]]
+R4    Miirym casts Farseek
+R4      Farseek finds Ketria Triome
+R4        [Miirym decides: Temur Ascendancy 100%, stop 0% -> Temur Ascendancy [search]]
+R4    Miirym casts Temur Ascendancy
+R4  --- Zur the Enchanter turn 4: life 38, 4 cards in hand, 3 lands
+R4        [Zur the Enchanter decides: Zur the Enchanter 98%, Heliod, Sun-Crowned 2%, Diplomatic Immunity 1%, stop 0% -> Zur the Enchanter [search]]
+R4    Zur the Enchanter casts Zur the Enchanter
+R4        [Zur the Enchanter attack plan by search: filtered at Miirym]
+R4    Zur the Enchanter attacks Miirym with 1 creature(s): 1 damage (life now 39)
+R4  --- Kinnan turn 4: life 39, 5 cards in hand, 3 lands
+R4        [Kinnan decides: Chrome Mox 77%, Trophy Mage 12%, Sylvan Library 11%, stop 0% -> Chrome Mox [search]]
+R4    Kinnan casts Chrome Mox
+R4      Chrome Mox imprints Finale of Devastation
+R4        [Kinnan decides: Trophy Mage 53%, Sylvan Library 47%, stop 0% -> Trophy Mage [search]]
+R4    Kinnan casts Trophy Mage
+R4      Kinnan reveals Basalt Monolith and puts it into their hand
+R4        [Kinnan decides: Sylvan Library 100%, stop 0% -> stop [search]]
+R4        [Kinnan attack plan by search: filtered at Y'shtola]
+R4    Kinnan attacks Y'shtola with 1 creature(s): 3 damage (life now 35)
+R4        [Kinnan decides: Sylvan Library 100%, stop 0% -> stop [search]]
+R4  --- Y'shtola turn 4: life 35, 7 cards in hand, 3 lands
+R4    Y'shtola plays Swamp
+R4        [Y'shtola decides: Marauding Blight-Priest 100%, stop 0% -> Marauding Blight-Priest [search]]
+R4    Y'shtola casts Marauding Blight-Priest
+R4    Y'shtola pays 3 life to Necropotence
+R5  --- Miirym turn 5: life 39, 1 cards in hand, 6 lands
+R5  --- Zur the Enchanter turn 5: life 36, 5 cards in hand, 3 lands
+R5        [Zur the Enchanter decides: Propaganda 51%, Heliod, Sun-Crowned 39%, Diplomatic Immunity 10%, stop 0% -> Propaganda [search]]
+R5    Zur the Enchanter casts Propaganda
+R5        [Zur the Enchanter attack plan by search: all at Y'shtola]
+R5      Zur fetches Necropotence
+R5    Y'shtola answers the attack: Fatal Push -> Drannith Magistrate
+R5    Y'shtola casts Fatal Push -> Drannith Magistrate (Zur the Enchanter)
+R5      Drannith Magistrate (Zur the Enchanter) is removed: destroy
+R5    Zur the Enchanter attacks Y'shtola with 2 creature(s): 1 damage (life now 31)
+R5    Zur the Enchanter pays 3 life to Necropotence
+R5  --- Kinnan turn 5: life 39, 4 cards in hand, 3 lands
+R5        [Kinnan decides: Basalt Monolith 93%, Kinnan, Bonder Prodigy 7%, Sylvan Library 0%, stop 0% -> Basalt Monolith [search]]
+R5    Kinnan casts Basalt Monolith
+R5      Zur the Enchanter casts Force of Will at Basalt Monolith
+R5      Zur the Enchanter counters Basalt Monolith with Force of Will
+R5        [Kinnan decides: Kinnan, Bonder Prodigy 98%, Sylvan Library 2%, stop 0% -> Kinnan, Bonder Prodigy [search]]
+R5    Kinnan casts Kinnan, Bonder Prodigy
+R5        [Kinnan attack plan by search: filtered at Miirym]
+R5    Kinnan attacks Miirym with 1 creature(s): 2 damage (life now 37)
+R5  --- Y'shtola turn 5: life 31, 6 cards in hand, 4 lands
+R5    Y'shtola plays Plains
+R5        [Y'shtola decides: Sanguine Bond 86%, Sphere of Safety 14%, stop 0% -> Sanguine Bond [search]]
+R5    Y'shtola casts Sanguine Bond
+R5        [Y'shtola attack plan by search: filtered at Zur the Enchanter]
+R5    Y'shtola pays 4 life to Necropotence
+R6  --- Miirym turn 6: life 37, 2 cards in hand, 6 lands
+R6    Miirym plays Mountain
+R6        [Miirym decides: Miirym, Sentinel Wyrm 100%, stop 0% -> Miirym, Sentinel Wyrm [search]]
+R6    Miirym casts Miirym, Sentinel Wyrm
+R6        [Miirym decides: Lightning Greaves 100%, stop 0% -> Lightning Greaves [search]]
+R6    Miirym casts Lightning Greaves
+R6        [Miirym decides: equip Lightning Greaves 100%, stop 0% -> equip Lightning Greaves [search]]
+R6    Miirym equips Lightning Greaves to Miirym, Sentinel Wyrm
+R6        [Miirym attack plan by search: filtered at Y'shtola]
+R6    Miirym attacks Y'shtola with 1 creature(s): 6 damage (life now 21)
+R6  --- Zur the Enchanter turn 6: life 31, 6 cards in hand, 3 lands
+R6        [Zur the Enchanter decides: Dimir Signet 59%, Eidolon of Rhetoric 29%, Heliod, Sun-Crowned 9%, Diplomatic Immunity 2% -> Dimir Signet [search]]
+R6    Zur the Enchanter casts Dimir Signet
+R6        [Zur the Enchanter decides: Mirrormade 83%, Eidolon of Rhetoric 12%, Heliod, Sun-Crowned 4%, Diplomatic Immunity 1% -> Mirrormade [search]]
+R6    Zur the Enchanter casts Mirrormade
+R6      Mirrormade enters as a copy of Sanguine Bond
+R6        [Zur the Enchanter attack plan by search: none at Miirym]
+R6    Zur the Enchanter pays 4 life to Necropotence
+R6  --- Kinnan turn 6: life 39, 4 cards in hand, 3 lands
+R6        [Kinnan decides: stop (hold mana) 76%, Sylvan Library 21%, Kinnan: dig five 2%, Nezahal, Primal Tide 0% -> stop (hold mana) [search]]
+R6        [Kinnan attack plan by search: filtered at Miirym]
+R6    Kinnan attacks Miirym with 3 creature(s): 7 damage (life now 30)
+R6        [Kinnan decides: stop (hold mana) 78%, Sylvan Library 22% -> stop (hold mana) [search]]
+R6  --- Y'shtola turn 6: life 21, 7 cards in hand, 5 lands
+R6    Y'shtola plays Island
+R6        [Y'shtola decides: stop (hold mana) 66%, Smothering Tithe 34%, Y'shtola, Night's Blessed 0%, Sphere of Safety 0% -> stop (hold mana) [search]]
+R6        [Y'shtola attack plan by search: filtered at Zur the Enchanter]
+R6    Y'shtola pays 2 to attack Zur the Enchanter with 1
+R6    Y'shtola attacks Zur the Enchanter with 1 creature(s): 3 damage (life now 23)
+R6        [Y'shtola decides: stop (hold mana) 100%, Y'shtola, Night's Blessed 0%, Smothering Tithe 0% -> stop (hold mana) [search]]
+R6    Y'shtola pays 2 life to Necropotence
+R7  --- Miirym turn 7: life 30, 2 cards in hand, 7 lands
+R7    Miirym plays Mountain
+R7        [Miirym attack plan by search: filtered at Y'shtola]
+R7    Miirym attacks Y'shtola with 1 creature(s): 6 damage (life now 13)
+R7  --- Zur the Enchanter turn 7: life 23, 8 cards in hand, 3 lands
+R7        [Zur the Enchanter decides: Heliod, Sun-Crowned 75%, stop (hold mana) 11%, Eidolon of Rhetoric 7%, Walking Ballista 5% -> Heliod, Sun-Crowned [search]]
+R7    Zur the Enchanter casts Heliod, Sun-Crowned
+R7      Kinnan casts Force of Negation at Heliod, Sun-Crowned
+R7      Zur the Enchanter casts Swan Song at Force of Negation
+R7      Zur the Enchanter counters Force of Negation with Swan Song
+R7        [Zur the Enchanter attack plan by search: filtered at Y'shtola]
+R7      Ethereal Armor enchants Zur the Enchanter
+R7      Zur fetches Ethereal Armor
+R7    Zur the Enchanter attacks Y'shtola with 1 creature(s): 6 damage (life now 7)
+R7    Zur the Enchanter pays 2 life to Necropotence
+R7  --- Kinnan turn 7: life 39, 3 cards in hand, 3 lands
+R7        [Kinnan decides: Void Winnower 83%, Nezahal, Primal Tide 15%, Wandering Archaic // Explore the Vastlands 1%, Sylvan Library 1% -> Void Winnower [search]]
+R7    Kinnan casts Void Winnower
+R7        [Kinnan attack plan by search: filtered at Miirym]
+R7    Kinnan attacks Miirym with 1 creature(s): 2 damage (life now 28)
+R7  --- Y'shtola turn 7: life 7, 7 cards in hand, 6 lands
+R7    Y'shtola plays Polluted Delta
+R7      cracks Polluted Delta for Godless Shrine
+R7        [Y'shtola decides: Debt to the Deathless (X = 3) 100%, stop (hold mana) 0%, Sphere of Safety 0% -> Debt to the Deathless (X = 3) [search]]
+R7    Y'shtola casts Debt to the Deathless
+R7      Debt to the Deathless (X = 3): each opponent loses 6 life; Y'shtola gains 18
+R7  *** Zur the Enchanter is eliminated (life -6) by Y'shtola
+R7        [Y'shtola attack plan by search: filtered at Miirym]
+R7        [Y'shtola keeps 1 creature(s) home as blockers]
+R8  --- Miirym turn 8: life 21, 2 cards in hand, 8 lands
+R8        [Miirym decides: Beast Within -> Void Winnower 86%, Beast Within 13%, stop (hold mana) 1% -> Beast Within -> Void Winnower [search]]
+R8    Miirym casts Beast Within -> Void Winnower (Kinnan)
+R8      Void Winnower (Kinnan) is removed: destroy
+R8        [Miirym attack plan by search: filtered at Y'shtola]
+R8    Miirym attacks Y'shtola with 1 creature(s): 6 damage (life now 18)
+R8  --- Kinnan turn 8: life 32, 3 cards in hand, 3 lands
+R8        [Kinnan decides: Nezahal, Primal Tide 89%, Wandering Archaic // Explore the Vastlands 6%, Sylvan Library 2%, Seedborn Muse 2% -> Nezahal, Primal Tide [search]]
+R8    Kinnan casts Nezahal, Primal Tide
+R8        [Kinnan decides: Wandering Archaic // Explore the Vastlands 56%, Sylvan Library 24%, Seedborn Muse 20%, stop 0% -> Wandering Archaic // Explore the Vastlands [search]]
+R8    Kinnan casts Wandering Archaic // Explore the Vastlands
+R8  --- Y'shtola turn 8: life 18, 5 cards in hand, 7 lands
+R8        [Y'shtola decides: stop (hold mana) 63%, Smothering Tithe 18%, Sphere of Safety 16%, Restoration Angel 1% -> Sphere of Safety [search]]
+R8    Y'shtola casts Sphere of Safety
+R8        [Y'shtola decides: stop (hold mana) 100%, Orcish Bowmasters 0% -> stop (hold mana) [search]]
+R8        [Y'shtola attack plan by search: all at Miirym]
+R8    Y'shtola attacks Miirym with 1 creature(s): 3 damage (life now 18)
+R8        [Y'shtola decides: stop (hold mana) 100%, Orcish Bowmasters 0% -> stop (hold mana) [search]]
+R9  --- Miirym turn 9: life 18, 2 cards in hand, 8 lands
+R9    Miirym plays Exotic Orchard
+R9        [Miirym attack plan by search: none at Kinnan]
+R9  --- Kinnan turn 9: life 32, 3 cards in hand, 3 lands
+R9    Kinnan plays Forest
+R9        [Kinnan decides: stop (hold mana) 76%, Seedborn Muse 15%, Sylvan Library 6%, Kinnan: dig five 2% -> stop (hold mana) [search]]
+R9        [Kinnan attack plan by search: filtered at Miirym]
+R9    Kinnan attacks Miirym with 7 creature(s): 16 damage (life now 2)
+R9        [Kinnan decides: Kinnan: dig five 60%, Seedborn Muse 25%, Sylvan Library 10%, stop (hold mana) 5% -> Kinnan: dig five [search]]
+R9    Y'shtola casts Orcish Bowmasters
+R9        [Y'shtola end of turn: Orcish Bowmasters 99%, pass 1% -> Orcish Bowmasters]
+R9  --- Y'shtola turn 9: life 18, 3 cards in hand, 7 lands
+R9        [Y'shtola decides: stop (hold mana) 84%, Smothering Tithe 15%, Restoration Angel 1%, Y'shtola, Night's Blessed 0% -> stop (hold mana) [search]]
+R9        [Y'shtola attack plan by search: all at Kinnan]
+R9    Y'shtola attacks Kinnan with 3 creature(s): 4 damage (life now 27)
+R9        [Y'shtola decides: stop (hold mana) 84%, Smothering Tithe 15%, Restoration Angel 1%, Y'shtola, Night's Blessed 0% -> stop (hold mana) [search]]
+R10 --- Miirym turn 10: life 2, 2 cards in hand, 9 lands
+R10       [Miirym decides: Miirym, Sentinel Wyrm 71%, Balefire Dragon 29%, stop 0% -> Miirym, Sentinel Wyrm [search]]
+R10   Miirym casts Miirym, Sentinel Wyrm
+R10       [Miirym decides: equip Lightning Greaves 83%, stop (hold mana) 17% -> equip Lightning Greaves [search]]
+R10   Miirym equips Lightning Greaves to Miirym, Sentinel Wyrm
+R10       [Miirym attack plan by search: filtered at Y'shtola]
+R10   Miirym pays 3 to attack Y'shtola with 1
+R10 *** Y'shtola is eliminated (life 12) by Miirym
+R10   Miirym attacks Y'shtola with 1 creature(s): 6 damage (life now 12)
+R10 --- Kinnan turn 10: life 27, 3 cards in hand, 4 lands
+R10       [Kinnan decides: Seedborn Muse 46%, stop (hold mana) 41%, Sylvan Library 9%, Kinnan: dig five 3% -> Seedborn Muse [search]]
+R10   Kinnan casts Seedborn Muse
+R10       [Kinnan decides: stop (hold mana) 77%, Sylvan Library 17%, Kinnan: dig five 6% -> stop (hold mana) [search]]
+R10       [Kinnan attack plan by search: filtered at Miirym]
+R10 *** Miirym is eliminated (life -21) by Kinnan
+R10   Kinnan attacks Miirym with 7 creature(s): 23 damage (life now -21)
+Winner: Kinnan (damage)

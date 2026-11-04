@@ -1,0 +1,342 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 44 (seed 500044): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Yawgmoth, Urza, Y'shtola, Zur the Enchanter
+R1  --- Yawgmoth turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yawgmoth plays Swamp
+R1        [Yawgmoth decides: Lotus Petal 100%, stop 0% -> Lotus Petal [search]]
+R1    Yawgmoth casts Lotus Petal
+R1        [Yawgmoth decides: Bitterblossom 100%, stop 0% -> Bitterblossom [search]]
+R1    Yawgmoth casts Bitterblossom
+R1  --- Urza turn 1: life 40, 7 cards in hand, 0 lands
+R1    Urza plays Island
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Flooded Strand
+R1      cracks Flooded Strand for Godless Shrine
+R1        [Y'shtola decides: Esper Sentinel 100%, stop 0% -> Esper Sentinel [search]]
+R1    Y'shtola casts Esper Sentinel
+R1  --- Zur the Enchanter turn 1: life 40, 7 cards in hand, 0 lands
+R1    Zur the Enchanter pays 2 life for an untapped Watery Grave
+R1    Zur the Enchanter plays Watery Grave
+R2  --- Yawgmoth turn 2: life 40, 5 cards in hand, 1 lands
+R2    Yawgmoth plays Swamp
+R2        [Yawgmoth decides: Culling the Weak 100%, stop 0% -> Culling the Weak [search]]
+R2    Yawgmoth casts Culling the Weak
+R2        [Yawgmoth decides: Ayara, First of Locthwain 59%, Yawgmoth, Thran Physician 36%, Hancock, Ghoulish Mayor 4%, Blight Mound 0% -> Yawgmoth, Thran Physician [search]]
+R2    Yawgmoth casts Yawgmoth, Thran Physician
+R2  --- Urza turn 2: life 40, 7 cards in hand, 1 lands
+R2    Urza plays Island
+R2        [Urza decides: Arcane Signet 50%, Lotus Petal 50%, stop 0% -> Arcane Signet [search]]
+R2    Urza casts Arcane Signet
+R2        [Urza decides: Lotus Petal 100%, stop 0% -> Lotus Petal [search]]
+R2    Urza casts Lotus Petal
+R2  --- Y'shtola turn 2: life 39, 8 cards in hand, 1 lands
+R2    Y'shtola plays Island
+R2        [Y'shtola decides: Mystical Tutor 100%, stop 0% -> Mystical Tutor [search]]
+R2    Y'shtola casts Mystical Tutor
+R2      Urza casts Force of Negation at Mystical Tutor
+R2      Urza counters Mystical Tutor with Force of Negation
+R2        [Y'shtola attack plan by search: filtered at Zur the Enchanter]
+R2    Y'shtola attacks Zur the Enchanter with 1 creature(s): 1 damage (life now 37)
+R2  --- Zur the Enchanter turn 2: life 37, 7 cards in hand, 1 lands
+R2    Zur the Enchanter plays Island
+R3  --- Yawgmoth turn 3: life 39, 4 cards in hand, 2 lands
+R3    Yawgmoth plays Swamp
+R3        [Yawgmoth decides: Ayara, First of Locthwain 77%, Hancock, Ghoulish Mayor 20%, The Meathook Massacre 1%, Blight Mound 1% -> Ayara, First of Locthwain [search]]
+R3    Yawgmoth casts Ayara, First of Locthwain
+R3        [Yawgmoth decides: Yawgmoth: sacrifice Token 100%, stop 0% -> Yawgmoth: sacrifice Token [search]]
+R3        [Yawgmoth attacks: Urza 34%, Y'shtola 34%, Zur the Enchanter 32% -> Y'shtola]
+R3    Yawgmoth attacks Y'shtola with 1 creature(s): 2 damage (life now 36)
+R3  --- Urza turn 3: life 39, 3 cards in hand, 2 lands
+R3    Urza plays Island
+R3        [Urza decides: Urza, Lord High Artificer 100%, stop 0% -> Urza, Lord High Artificer [search]]
+R3    Urza casts Urza, Lord High Artificer
+R3  --- Y'shtola turn 3: life 36, 7 cards in hand, 2 lands
+R3    Y'shtola plays Plains
+R3        [Y'shtola decides: Bound in Silence -> Yawgmoth, Thran Physician 97%, Coalition Relic 2%, Bound in Silence 1%, Cast Away Doubt 1% -> Bound in Silence -> Yawgmoth, Thran Physician [search]]
+R3    Y'shtola casts Bound in Silence -> Urza, Lord High Artificer (Urza)
+R3      Urza, Lord High Artificer (Urza) is removed: pacify
+R3      Bound in Silence enchants Urza, Lord High Artificer (Urza)
+R3  --- Zur the Enchanter turn 3: life 36, 7 cards in hand, 2 lands
+R3    Zur the Enchanter plays Flooded Strand
+R3      cracks Flooded Strand for Raffine's Tower
+R4  --- Yawgmoth turn 4: life 38, 4 cards in hand, 3 lands
+R4    Yawgmoth plays Swamp
+R4        [Yawgmoth decides: Hancock, Ghoulish Mayor 89%, The Meathook Massacre 6%, Blight Mound 5%, Ayara, First of Locthwain ability 0% -> Hancock, Ghoulish Mayor [search]]
+R4    Yawgmoth casts Hancock, Ghoulish Mayor
+R4      Zur the Enchanter casts Mana Drain at Hancock, Ghoulish Mayor
+R4      Zur the Enchanter counters Hancock, Ghoulish Mayor with Mana Drain
+R4        [Yawgmoth decides: Ayara, First of Locthwain ability 100%, stop 0% -> Ayara, First of Locthwain ability [search]]
+R4    Yawgmoth activates Ayara, First of Locthwain
+R4        [Yawgmoth attack plan by search: filtered at Y'shtola]
+R4    Yawgmoth attacks Y'shtola with 1 creature(s): 2 damage (life now 33)
+R4  --- Urza turn 4: life 38, 3 cards in hand, 3 lands
+R4    Urza plays Darksteel Citadel
+R4        [Urza decides: Sol Ring 100%, Urza: free card 0%, stop 0% -> Sol Ring [search]]
+R4    Urza casts Sol Ring
+R4        [Urza decides: Windfall 100%, Urza: free card 0%, stop 0% -> Windfall [search]]
+R4    Urza casts Windfall
+R4        [Urza decides: Trinket Mage 65%, Emry, Lurker of the Loch 19%, stop (hold mana) 16%, Urza: free card 0% -> Trinket Mage [search]]
+R4    Urza casts Trinket Mage
+R4      Urza reveals Isochron Scepter and puts it into their hand
+R4        [Urza decides: stop (hold mana) 100%, Emry, Lurker of the Loch 0% -> stop (hold mana) [search]]
+R4        [Urza attacks: Yawgmoth 99%, Zur the Enchanter 1%, Y'shtola 1% -> Yawgmoth]
+R4    Urza attacks Yawgmoth with 1 creature(s): 4 damage (life now 34)
+R4        [Urza decides: Emry, Lurker of the Loch 100%, stop 0% -> Emry, Lurker of the Loch [search]]
+R4    Urza casts Emry, Lurker of the Loch
+R4  --- Y'shtola turn 4: life 33, 6 cards in hand, 3 lands
+R4    Y'shtola plays Swamp
+R4        [Y'shtola decides: Y'shtola, Night's Blessed 92%, Rhystic Study 7%, Prayer of Binding 1%, stop 0% -> Y'shtola, Night's Blessed [search]]
+R4    Y'shtola casts Y'shtola, Night's Blessed
+R4  --- Zur the Enchanter turn 4: life 34, 6 cards in hand, 3 lands
+R4    Zur the Enchanter plays Swamp
+R4        [Zur the Enchanter decides: Darksteel Mutation -> Yawgmoth, Thran Physician 96%, Zur the Enchanter 3%, Darksteel Mutation 1%, Fellwar Stone 0% -> Rhystic Study [search]]
+R4    Zur the Enchanter casts Rhystic Study
+R4        [Zur the Enchanter decides: Darksteel Mutation -> Yawgmoth, Thran Physician 96%, Zur the Enchanter 3%, Darksteel Mutation 1%, Fellwar Stone 0% -> Opposition Agent [search]]
+R4    Zur the Enchanter casts Opposition Agent
+R5  --- Yawgmoth turn 5: life 34, 6 cards in hand, 4 lands
+R5    Yawgmoth plays Swamp
+R5        [Yawgmoth decides: Demonic Tutor 76%, Gravecrawler 21%, Genesis Chamber 2%, Forsaken Miner 1% -> Demonic Tutor [search]]
+R5    Yawgmoth casts Demonic Tutor
+R5      Opposition Agent: Zur the Enchanter takes Mikaeus, the Unhallowed from Yawgmoth's search
+R5        [Yawgmoth decides: Gravecrawler 87%, Genesis Chamber 8%, Forsaken Miner 5%, Ayara, First of Locthwain ability 0% -> Gravecrawler [search]]
+R5    Yawgmoth casts Gravecrawler
+R5        [Yawgmoth decides: Forsaken Miner 96%, Ayara, First of Locthwain ability 4%, stop 0% -> Forsaken Miner [search]]
+R5    Yawgmoth casts Forsaken Miner
+R5        [Yawgmoth decides: Ayara, First of Locthwain ability 100%, stop 0% -> Ayara, First of Locthwain ability [search]]
+R5    Yawgmoth activates Ayara, First of Locthwain
+R5        [Yawgmoth attack plan by search: none at Urza]
+R5  --- Urza turn 5: life 35, 5 cards in hand, 4 lands
+R5        [Urza decides: Displacer Kitten 58%, stop (hold mana) 25%, Emry: cast Lotus Petal from the graveyard 11%, Emry: cast Manifold Key from the graveyard 3% -> Emry: cast Ornithopter from the graveyard [search]]
+R5    Urza casts Ornithopter from the graveyard (Emry)
+R5    Urza casts Ornithopter
+R5        [Urza decides: Displacer Kitten 69%, stop (hold mana) 29%, Efficient Construction 2%, Urza: free card 0% -> Displacer Kitten [search]]
+R5    Urza casts Displacer Kitten
+R5        [Urza decides: stop (hold mana) 100%, Efficient Construction 0% -> stop (hold mana) [search]]
+R5        [Urza attack plan by search: none at Yawgmoth]
+R5        [Urza decides: stop (hold mana) 100%, Efficient Construction 0% -> stop (hold mana) [search]]
+R5  --- Y'shtola turn 5: life 30, 6 cards in hand, 4 lands
+R5    Y'shtola plays Plains
+R5        [Y'shtola decides: Rhystic Study 44%, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal 35%, Prayer of Binding 21%, stop 0% -> Rhystic Study [search]]
+R5    Y'shtola casts Rhystic Study
+R5      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R5      Urza casts Counterspell at Rhystic Study
+R5      Displacer Kitten flickers Emry, Lurker of the Loch
+R5      Urza counters Rhystic Study with Counterspell
+R5        [Y'shtola attack plan by search: none at Yawgmoth]
+R5  --- Zur the Enchanter turn 5: life 29, 8 cards in hand, 4 lands
+R5    Zur the Enchanter plays Exotic Orchard
+R5        [Zur the Enchanter decides: Darksteel Mutation -> Yawgmoth, Thran Physician 97%, Zur the Enchanter 3%, Darksteel Mutation 0%, Fellwar Stone 0% -> Darksteel Mutation -> Yawgmoth, Thran Physician [search]]
+R5    Zur the Enchanter casts Darksteel Mutation -> Yawgmoth, Thran Physician (Yawgmoth)
+R5      Yawgmoth, Thran Physician (Yawgmoth) is removed: mutate
+R5      Yawgmoth, Thran Physician becomes a 0/1 Insect with no abilities
+R5        [Zur the Enchanter decides: Fellwar Stone 100%, stop 0% -> Fellwar Stone [search]]
+R5    Zur the Enchanter casts Fellwar Stone
+R5        [Zur the Enchanter attack plan by search: filtered at Yawgmoth]
+R5    Zur the Enchanter attacks Yawgmoth with 1 creature(s): 3 damage (life now 31)
+R6  --- Yawgmoth turn 6: life 31, 4 cards in hand, 5 lands
+R6    Yawgmoth plays Swamp
+R6        [Yawgmoth decides: Crypt Ghast 81%, Genesis Chamber 18%, Ayara, First of Locthwain ability 1%, stop 0% -> Crypt Ghast [search]]
+R6    Yawgmoth casts Crypt Ghast
+R6        [Yawgmoth decides: Genesis Chamber 96%, Ayara, First of Locthwain ability 4%, stop 0% -> Genesis Chamber [search]]
+R6    Yawgmoth casts Genesis Chamber
+R6        [Yawgmoth decides: Ayara, First of Locthwain ability 100%, stop 0% -> Ayara, First of Locthwain ability [search]]
+R6    Yawgmoth activates Ayara, First of Locthwain
+R6        [Yawgmoth attack plan by search: filtered at Y'shtola]
+R6        [Yawgmoth holds back 2 attacker(s) that would die to blocks]
+R6    Yawgmoth attacks Zur the Enchanter with 2 creature(s): 4 damage (life now 23)
+R6  --- Urza turn 6: life 31, 4 cards in hand, 4 lands
+R6        [Urza decides: Emry: cast Aether Spellbomb from the graveyard 81%, Hullbreaker Horror 16%, Sensei's Divining Top 2%, Emry: cast Lotus Petal from the graveyard 1% -> Emry: cast Aether Spellbomb from the graveyard [search]]
+R6    Urza casts Aether Spellbomb from the graveyard (Emry)
+R6    Urza casts Aether Spellbomb
+R6      Displacer Kitten flickers Emry, Lurker of the Loch
+R6        [Urza decides: Hullbreaker Horror 68%, Aether Spellbomb ability 25%, Sensei's Divining Top 7%, Efficient Construction 1% -> Hullbreaker Horror [search]]
+R6    Urza casts Hullbreaker Horror
+R6        [Urza decides: Aether Spellbomb ability 78%, Sensei's Divining Top 22%, Aether Spellbomb ability 0%, stop 0% -> Aether Spellbomb ability [search]]
+R6    Urza activates Aether Spellbomb
+R6      Yawgmoth, Thran Physician (Yawgmoth) is removed: bounce
+R6        [Urza decides: Sensei's Divining Top 100%, stop 0% -> Sensei's Divining Top [search]]
+R6    Urza casts Sensei's Divining Top
+R6      Displacer Kitten flickers Emry, Lurker of the Loch
+R6      Zur the Enchanter casts Force of Will at Sensei's Divining Top
+R6      Zur the Enchanter counters Sensei's Divining Top with Force of Will
+R6        [Urza attack plan by search: filtered at Yawgmoth]
+R6    Urza attacks Yawgmoth with 1 creature(s): 2 damage (life now 30)
+R6  --- Y'shtola turn 6: life 30, 6 cards in hand, 5 lands
+R6    Y'shtola plays Island
+R6        [Y'shtola decides: Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal 45%, Prayer of Binding 27%, Conjurer's Closet 27%, stop 0% -> Prayer of Binding [search]]
+R6    Y'shtola casts Prayer of Binding
+R6      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R6      Hullbreaker Horror (Urza) is removed: exile
+R6        [Y'shtola attack plan by search: filtered at Urza]
+R6    Y'shtola attacks Urza with 1 creature(s): 2 damage (life now 27)
+R6  --- Zur the Enchanter turn 6: life 20, 8 cards in hand, 5 lands
+R6    Zur the Enchanter plays Reliquary Tower
+R6        [Zur the Enchanter decides: Zur the Enchanter 80%, Sol Ring 11%, Mikaeus, the Unhallowed 3%, stop (hold mana) 3% -> Zur the Enchanter [search]]
+R6    Zur the Enchanter casts Zur the Enchanter
+R6        [Zur the Enchanter decides: Sol Ring 79%, stop (hold mana) 19%, Path to Exile -> Ayara, First of Locthwain 1%, Rule of Law 0% -> Sol Ring [search]]
+R6    Zur the Enchanter casts Sol Ring
+R6        [Zur the Enchanter decides: stop (hold mana) 50%, Rule of Law 38%, Phyrexian Unlife 8%, Path to Exile -> Ayara, First of Locthwain 4% -> Rule of Law [search]]
+R6    Zur the Enchanter casts Rule of Law
+R6        [Zur the Enchanter attack plan by search: filtered at Y'shtola]
+R6        [Zur the Enchanter holds back 1 attacker(s) that would die to blocks]
+R6    Zur the Enchanter attacks Urza with 1 creature(s): 3 damage (life now 24)
+R7  --- Yawgmoth turn 7: life 28, 3 cards in hand, 6 lands
+R7    Yawgmoth plays Swamp
+R7        [Yawgmoth decides: Yawgmoth, Thran Physician 100%, Ayara, First of Locthwain ability 0%, stop 0% -> Yawgmoth, Thran Physician [search]]
+R7    Yawgmoth casts Yawgmoth, Thran Physician
+R7        [Yawgmoth decides: Yawgmoth: sacrifice Token 77%, Ayara, First of Locthwain ability 23%, stop 0% -> Yawgmoth: sacrifice Token [search]]
+R7        [Yawgmoth decides: Yawgmoth: sacrifice Token 77%, Ayara, First of Locthwain ability 23%, stop 0% -> Yawgmoth: sacrifice Token [search]]
+R7        [Yawgmoth decides: Ayara, First of Locthwain ability 100%, stop 0% -> Ayara, First of Locthwain ability [search]]
+R7    Yawgmoth activates Ayara, First of Locthwain
+R7        [Yawgmoth attack plan by search: none at Urza]
+R7  --- Urza turn 7: life 21, 3 cards in hand, 4 lands
+R7    Urza plays Island
+R7        [Urza decides: Emry: cast Aether Spellbomb from the graveyard 97%, Emry: cast Sensei's Divining Top from the graveyard 1%, Emry: cast Foundry Inspector from the graveyard 1%, Emry: cast Lightning Greaves from the graveyard 0% -> Emry: cast Aether Spellbomb from the graveyard [search]]
+R7    Urza casts Aether Spellbomb from the graveyard (Emry)
+R7    Urza casts Aether Spellbomb
+R7      Displacer Kitten flickers Emry, Lurker of the Loch
+R7        [Urza decides: Aether Spellbomb ability 100%, Urza: free card 0%, Aether Spellbomb ability 0%, stop 0% -> Aether Spellbomb ability [search]]
+R7    Urza activates Aether Spellbomb
+R7      Yawgmoth, Thran Physician (Yawgmoth) is removed: bounce
+R7        [Urza decides: Urza: free card 99%, stop 1% -> Urza: free card [search]]
+R7    Urza: Swan Song off the top, free
+R7        [Urza decides: Urza: free card 99%, stop 1% -> Urza: free card [search]]
+R7    Urza: Mana Drain off the top, free
+R7        [Urza attack plan by search: all at Y'shtola]
+R7    Urza attacks Y'shtola with 1 creature(s): 0 damage (life now 31)
+R7  --- Y'shtola turn 7: life 31, 6 cards in hand, 6 lands
+R7    Y'shtola plays Island
+R7        [Y'shtola decides: Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal 39%, Conjurer's Closet 24%, Urborg Syphon-Mage 24%, Exsanguinate (X = 5) 13% -> Conjurer's Closet [search]]
+R7    Y'shtola casts Conjurer's Closet
+R7      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R7        [Y'shtola attack plan by search: filtered at Urza]
+R7    Y'shtola attacks Urza with 1 creature(s): 2 damage (life now 17)
+R7    Zur the Enchanter casts Path to Exile -> Ayara, First of Locthwain (Yawgmoth)
+R7      Ayara, First of Locthwain (Yawgmoth) is removed: exile
+R7      Opposition Agent: Zur the Enchanter takes Swamp from Yawgmoth's search
+R7        [Zur the Enchanter end of turn: Path to Exile -> Ayara, First of Locthwain 100%, pass 0% -> Path to Exile -> Ayara, First of Locthwain]
+R7  --- Zur the Enchanter turn 7: life 15, 6 cards in hand, 6 lands
+R7    Zur the Enchanter plays Swamp
+R7        [Zur the Enchanter decides: Mikaeus, the Unhallowed 78%, Mystic Remora 13%, Phyrexian Unlife 9%, stop 0% -> Mikaeus, the Unhallowed [search]]
+R7    Zur the Enchanter casts Mikaeus, the Unhallowed
+R7        [Zur the Enchanter attack plan by search: filtered at Yawgmoth]
+R7      Ethereal Armor enchants Zur the Enchanter
+R7      Zur fetches Ethereal Armor
+R7    Zur the Enchanter attacks Yawgmoth with 3 creature(s): 6 damage (life now 22)
+R8  --- Yawgmoth turn 8: life 22, 6 cards in hand, 7 lands
+R8    Yawgmoth plays Swamp
+R8        [Yawgmoth decides: Yawgmoth, Thran Physician 56%, Zulaport Cutthroat 41%, Skullclamp 4%, stop 0% -> Zulaport Cutthroat [search]]
+R8    Yawgmoth casts Zulaport Cutthroat
+R8        [Yawgmoth attack plan by search: all at Zur the Enchanter]
+R8    Yawgmoth attacks Zur the Enchanter with 1 creature(s): 0 damage (life now 14)
+R8  --- Urza turn 8: life 16, 3 cards in hand, 5 lands
+R8        [Urza decides: Emry: cast Aether Spellbomb from the graveyard 95%, Fabricate 3%, Emry: cast Sensei's Divining Top from the graveyard 1%, Emry: cast Foundry Inspector from the graveyard 1% -> Emry: cast Aether Spellbomb from the graveyard [search]]
+R8    Urza casts Aether Spellbomb from the graveyard (Emry)
+R8    Urza casts Aether Spellbomb
+R8      Displacer Kitten flickers Emry, Lurker of the Loch
+R8        [Urza decides: Aether Spellbomb ability 99%, Urza: free card 0%, Aether Spellbomb ability 0%, stop 0% -> Aether Spellbomb ability [search]]
+R8    Urza activates Aether Spellbomb
+R8      Zur the Enchanter (Zur the Enchanter) is removed: bounce
+R8        [Urza decides: Urza: free card 99%, stop 1% -> Urza: free card [search]]
+R8    Urza: Thoughtcast off the top, free
+R8        [Urza decides: Urza: free card 99%, stop 1% -> Urza: free card [search]]
+R8    Urza: Winter Orb off the top, free
+R8  --- Y'shtola turn 8: life 32, 7 cards in hand, 7 lands
+R8    Y'shtola plays Urborg, Tomb of Yawgmoth
+R8        [Y'shtola decides: Consecrated Sphinx 54%, Exquisite Blood 27%, Debt to the Deathless (X = 4) 6%, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal 4% -> Debt to the Deathless (X = 4) [search]]
+R8    Y'shtola casts Debt to the Deathless
+R8      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R8      Debt to the Deathless (X = 4): each opponent loses 8 life; Y'shtola gains 24
+R8        [Y'shtola attack plan by search: filtered at Yawgmoth]
+R8    Y'shtola attacks Yawgmoth with 1 creature(s): 2 damage (life now 10)
+R8  --- Zur the Enchanter turn 8: life 4, 5 cards in hand, 7 lands
+R8    Zur the Enchanter plays Hall of Heliod's Generosity
+R8        [Zur the Enchanter decides: Zur the Enchanter 98%, Phyrexian Unlife 2%, Mystic Remora 1%, stop 0% -> Phyrexian Unlife [search]]
+R8    Zur the Enchanter casts Phyrexian Unlife
+R8        [Zur the Enchanter attack plan by search: filtered at Urza]
+R8        [Zur the Enchanter keeps 3 creature(s) home as blockers]
+R8    Zur the Enchanter attacks Urza with 1 creature(s): 2 damage (life now 4)
+R9  --- Yawgmoth turn 9: life 10, 5 cards in hand, 8 lands
+R9    Yawgmoth plays Swamp
+R9        [Yawgmoth decides: Yawgmoth, Thran Physician 99%, Skullclamp 1%, stop 0% -> Yawgmoth, Thran Physician [search]]
+R9    Yawgmoth casts Yawgmoth, Thran Physician
+R9        [Yawgmoth decides: Yawgmoth: sacrifice Token 100%, stop 0% -> Yawgmoth: sacrifice Token [search]]
+R9      a crime: Yawgmoth returns Forsaken Miner
+R9        [Yawgmoth decides: Yawgmoth: sacrifice Token 100%, stop 0% -> Yawgmoth: sacrifice Token [search]]
+R9        [Yawgmoth decides: Yawgmoth: sacrifice Token 100%, stop 0% -> stop [search]]
+R9        [Yawgmoth decides: Yawgmoth: sacrifice Token 100%, stop 0% -> Yawgmoth: sacrifice Token [search]]
+R9        [Yawgmoth decides: Yawgmoth: sacrifice Token 100%, stop 0% -> Yawgmoth: sacrifice Token [search]]
+R9        [Yawgmoth decides: Yawgmoth: sacrifice Token 100%, stop 0% -> Yawgmoth: sacrifice Token [search]]
+R9  *** Urza is eliminated (life -1) by Yawgmoth
+R9  --- Y'shtola turn 9: life 53, 8 cards in hand, 8 lands
+R9    Y'shtola plays Hallowed Fountain
+R9        [Y'shtola decides: Exsanguinate (X = 6) 82%, Consecrated Sphinx 10%, Exquisite Blood 4%, Grand Arbiter Augustin IV 2% -> Exsanguinate (X = 6) [search]]
+R9    Y'shtola casts Exsanguinate
+R9      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R9      Zur the Enchanter gets 2 poison counters (Phyrexian Unlife)
+R9      Exsanguinate (X = 6): each opponent loses 6 life; Y'shtola gains 12
+R9        [Y'shtola attack plan by search: all at Zur the Enchanter]
+R9    Y'shtola attacks Zur the Enchanter with 1 creature(s): 0 damage (life now -7)
+R9    Zur the Enchanter puts Grasp of Fate on top with Hall of Heliod's Generosity
+R9        [Zur the Enchanter end of turn: Hall of Heliod's Generosity 98%, pass 2% -> Hall of Heliod's Generosity]
+R9  --- Zur the Enchanter turn 9: life -7, 4 cards in hand, 8 lands
+R9    Zur the Enchanter plays Vault of Champions
+R9        [Zur the Enchanter decides: Grasp of Fate -> Yawgmoth, Thran Physician 99%, Zur the Enchanter 1%, Mystic Remora 0%, stop 0% -> Zur the Enchanter [search]]
+R9    Zur the Enchanter casts Zur the Enchanter
+R9        [Zur the Enchanter attack plan by search: all at Y'shtola]
+R9    Zur the Enchanter attacks Y'shtola with 4 creature(s): 13 damage (life now 54)
+R10 --- Yawgmoth turn 10: life 1, 7 cards in hand, 9 lands
+R10 *** Yawgmoth is eliminated (life 0) by Y'shtola
+R10 --- Y'shtola turn 10: life 54, 7 cards in hand, 9 lands
+R10   Y'shtola plays Watery Grave
+R10       [Y'shtola decides: Y'shtola, Night's Blessed 49%, Consecrated Sphinx 33%, Grand Arbiter Augustin IV 7%, Exquisite Blood 4% -> Consecrated Sphinx [search]]
+R10   Y'shtola casts Consecrated Sphinx
+R10   Zur the Enchanter puts Mirrormade on top with Hall of Heliod's Generosity
+R10       [Zur the Enchanter end of turn: Hall of Heliod's Generosity 98%, pass 2% -> Hall of Heliod's Generosity]
+R10 --- Zur the Enchanter turn 10: life -7, 4 cards in hand, 9 lands
+R10   Zur the Enchanter plays Underground River
+R10       [Zur the Enchanter decides: Grasp of Fate -> Consecrated Sphinx 95%, Mirrormade 5%, Mystic Remora 0%, stop 0% -> Grasp of Fate -> Consecrated Sphinx [search]]
+R10   Zur the Enchanter casts Grasp of Fate -> Consecrated Sphinx (Y'shtola)
+R10     Y'shtola casts Dovin's Veto at Grasp of Fate
+R10     Y'shtola counters Grasp of Fate with Dovin's Veto
+R10       [Zur the Enchanter attack plan by search: all at Y'shtola]
+R10     Zur fetches Ghostly Prison
+R10   Zur the Enchanter attacks Y'shtola with 6 creature(s): 12 damage (life now 42)
+R11 --- Y'shtola turn 11: life 42, 7 cards in hand, 10 lands
+R11       [Y'shtola decides: Y'shtola, Night's Blessed 70%, Grand Arbiter Augustin IV 10%, Diabolic Tutor 6%, Exquisite Blood 5% -> Exquisite Blood [search]]
+R11   Y'shtola casts Exquisite Blood
+R11       [Y'shtola attack plan by search: filtered at Zur the Enchanter]
+R11   Y'shtola pays 2 to attack Zur the Enchanter with 1
+R11     Zur the Enchanter gets 4 poison counters (Phyrexian Unlife)
+R11   Y'shtola attacks Zur the Enchanter with 1 creature(s): 4 damage (life now -7)
+R11   Zur the Enchanter puts Grasp of Fate on top with Hall of Heliod's Generosity
+R11       [Zur the Enchanter end of turn: Hall of Heliod's Generosity 98%, pass 2% -> Hall of Heliod's Generosity]
+R11 --- Zur the Enchanter turn 11: life -7, 3 cards in hand, 10 lands
+R11   Zur the Enchanter plays Plains
+R11       [Zur the Enchanter decides: Grasp of Fate -> Consecrated Sphinx 92%, Mirrormade 8%, Mystic Remora 0%, stop 0% -> Grasp of Fate -> Consecrated Sphinx [search]]
+R11   Zur the Enchanter casts Grasp of Fate -> Consecrated Sphinx (Y'shtola)
+R11     Exquisite Blood (Y'shtola) is removed: exile
+R11       [Zur the Enchanter attack plan by search: none at Y'shtola]
+R12 --- Y'shtola turn 12: life 42, 9 cards in hand, 10 lands
+R12   Y'shtola plays Island
+R12       [Y'shtola decides: Arrest -> Zur the Enchanter 84%, Y'shtola, Night's Blessed 10%, Arrest 3%, Grand Arbiter Augustin IV 1% -> Arrest -> Zur the Enchanter [search]]
+R12   Y'shtola casts Arrest -> Zur the Enchanter (Zur the Enchanter)
+R12     Zur the Enchanter (Zur the Enchanter) is removed: arrest
+R12     Arrest enchants Zur the Enchanter (Zur the Enchanter)
+R12       [Y'shtola attack plan by search: filtered at Zur the Enchanter]
+R12   Y'shtola pays 2 to attack Zur the Enchanter with 1
+R12     Zur the Enchanter gets 4 poison counters (Phyrexian Unlife)
+R12 *** Zur the Enchanter is eliminated (life -7) by Y'shtola
+R12   Y'shtola attacks Zur the Enchanter with 1 creature(s): 4 damage (life now -7)
+Winner: Y'shtola (damage)

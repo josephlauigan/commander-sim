@@ -1,0 +1,314 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 48 (seed 500048): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Zur the Enchanter, Yawgmoth, Miirym, Y'shtola
+R1  --- Zur the Enchanter turn 1: life 40, 7 cards in hand, 0 lands
+R1    Zur the Enchanter pays 2 life for an untapped Godless Shrine
+R1    Zur the Enchanter plays Godless Shrine
+R1        [Zur the Enchanter decides: Esper Sentinel 100%, stop 0% -> Esper Sentinel [search]]
+R1    Zur the Enchanter casts Esper Sentinel
+R1  --- Yawgmoth turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yawgmoth plays Swamp
+R1  --- Miirym turn 1: life 40, 7 cards in hand, 0 lands
+R1    Miirym pays 2 life for an untapped Steam Vents
+R1    Miirym plays Steam Vents
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Adarkar Wastes
+R2  --- Zur the Enchanter turn 2: life 38, 6 cards in hand, 1 lands
+R2    Zur the Enchanter plays Swamp
+R2        [Zur the Enchanter decides: Fellwar Stone 74%, Rest in Peace 22%, All That Glitters 4%, stop 0% -> Fellwar Stone [search]]
+R2    Zur the Enchanter casts Fellwar Stone
+R2        [Zur the Enchanter decides: Mystic Remora 100%, stop 0% -> Mystic Remora [search]]
+R2    Zur the Enchanter casts Mystic Remora
+R2        [Zur the Enchanter attacks: Yawgmoth 34%, Y'shtola 34%, Miirym 33% -> Miirym]
+R2    Zur the Enchanter attacks Miirym with 1 creature(s): 1 damage (life now 37)
+R2  --- Yawgmoth turn 2: life 40, 7 cards in hand, 1 lands
+R2    Yawgmoth plays Ancient Tomb
+R2        [Yawgmoth decides: Warren Soultrader 98%, Bitterblossom 1%, Nest of Scarabs 1%, Entomb (Gravecrawler) 0% -> Warren Soultrader [search]]
+R2    Yawgmoth casts Warren Soultrader
+R2  --- Miirym turn 2: life 37, 7 cards in hand, 1 lands
+R2    Miirym plays Hinterland Harbor
+R2        [Miirym decides: Korlessa, Scale Singer 80%, Dragon Tempest 20%, stop 0% -> Korlessa, Scale Singer [search]]
+R2    Miirym casts Korlessa, Scale Singer
+R2  --- Y'shtola turn 2: life 40, 7 cards in hand, 1 lands
+R2    Y'shtola plays Plains
+R3  --- Zur the Enchanter turn 3: life 38, 4 cards in hand, 2 lands
+R3    Zur the Enchanter plays Flooded Strand
+R3      cracks Flooded Strand for Raffine's Tower
+R3        [Zur the Enchanter decides: Rest in Peace 84%, All That Glitters 16%, stop 0% -> All That Glitters [search]]
+R3    Zur the Enchanter casts All That Glitters
+R3      All That Glitters enchants Esper Sentinel
+R3        [Zur the Enchanter attack plan by search: all at Yawgmoth]
+R3    Zur the Enchanter attacks Yawgmoth with 1 creature(s): 5 damage (life now 33)
+R3  --- Yawgmoth turn 3: life 33, 6 cards in hand, 2 lands
+R3    Yawgmoth plays Swamp
+R3        [Yawgmoth decides: Yawgmoth, Thran Physician 97%, Bloodghast 2%, Bitterblossom 0%, Culling the Weak 0% -> Bloodghast [search]]
+R3    Yawgmoth casts Bloodghast
+R3        [Yawgmoth attack plan by search: filtered at Miirym]
+R3    Yawgmoth attacks Miirym with 1 creature(s): 3 damage (life now 34)
+R3  --- Miirym turn 3: life 34, 6 cards in hand, 2 lands
+R3    Miirym plays Mountain
+R3        [Miirym decides: Kodama's Reach 100%, Dragon Tempest 0%, stop 0% -> Kodama's Reach [search]]
+R3    Miirym casts Kodama's Reach
+R3      Miirym reveals Island and puts it into their hand
+R3        [Miirym attack plan by search: filtered at Zur the Enchanter]
+R3    Miirym attacks Zur the Enchanter with 1 creature(s): 1 damage (life now 36)
+R3  --- Y'shtola turn 3: life 40, 7 cards in hand, 2 lands
+R3    Y'shtola plays Polluted Delta
+R3      cracks Polluted Delta for Godless Shrine
+R3        [Y'shtola decides: Talisman of Hierarchy 96%, Marauding Blight-Priest 4%, stop 0% -> Marauding Blight-Priest [search]]
+R3    Y'shtola casts Marauding Blight-Priest
+R4  --- Zur the Enchanter turn 4: life 36, 5 cards in hand, 3 lands
+R4    Zur the Enchanter plays Adarkar Wastes
+R4        [Zur the Enchanter decides: Rest in Peace 50%, Narset, Parter of Veils 50%, stop 0% -> Rest in Peace [search]]
+R4    Zur the Enchanter casts Rest in Peace
+R4      Zur the Enchanter's graveyard is exiled by Rest in Peace
+R4      Miirym's graveyard is exiled by Rest in Peace
+R4      Y'shtola's graveyard is exiled by Rest in Peace
+R4        [Zur the Enchanter attack plan by search: none at Yawgmoth]
+R4  --- Yawgmoth turn 4: life 33, 5 cards in hand, 3 lands
+R4    Yawgmoth plays Swamp
+R4        [Yawgmoth decides: Yawgmoth, Thran Physician 99%, Bitterblossom 0%, Culling the Weak 0%, Feed the Swarm -> Esper Sentinel 0% -> Yawgmoth, Thran Physician [search]]
+R4    Yawgmoth casts Yawgmoth, Thran Physician
+R4        [Yawgmoth attack plan by search: filtered at Zur the Enchanter]
+R4        [Yawgmoth holds back 2 attacker(s) that would die to blocks]
+R4    Yawgmoth attacks Miirym with 2 creature(s): 5 damage (life now 29)
+R4  --- Miirym turn 4: life 29, 6 cards in hand, 4 lands
+R4    Miirym plays Island
+R4        [Miirym decides: Chaos Warp -> Yawgmoth, Thran Physician 97%, stop (hold mana) 3%, Dragon Tempest 1%, Terror of the Peaks 0% -> stop (hold mana) [search]]
+R4        [Miirym attack plan by search: none at Zur the Enchanter]
+R4        [Miirym decides: Chaos Warp -> Yawgmoth, Thran Physician 97%, stop (hold mana) 3%, Dragon Tempest 1%, Terror of the Peaks 0% -> Chaos Warp -> Yawgmoth, Thran Physician [search]]
+R4    Miirym casts Chaos Warp -> Yawgmoth, Thran Physician (Yawgmoth)
+R4      Yawgmoth, Thran Physician (Yawgmoth) is removed: tuck
+R4      Yawgmoth reveals Jet Medallion
+R4        [Miirym decides: Dragon Tempest 100%, stop 0% -> Dragon Tempest [search]]
+R4    Miirym casts Dragon Tempest
+R4  --- Y'shtola turn 4: life 39, 6 cards in hand, 3 lands
+R4    Y'shtola plays Island
+R4        [Y'shtola decides: Talisman of Hierarchy 64%, Y'shtola, Night's Blessed 33%, Smothering Tithe 1%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R4        [Y'shtola attack plan by search: filtered at Miirym]
+R4    Y'shtola attacks Miirym with 1 creature(s): 3 damage (life now 26)
+R4        [Y'shtola decides: Talisman of Hierarchy 64%, Y'shtola, Night's Blessed 33%, Smothering Tithe 1%, stop (hold mana) 1% -> Talisman of Hierarchy [search]]
+R4    Y'shtola casts Talisman of Hierarchy
+R5  --- Zur the Enchanter turn 5: life 35, 9 cards in hand, 4 lands
+R5    Zur the Enchanter plays Hall of Heliod's Generosity
+R5        [Zur the Enchanter decides: Narset, Parter of Veils 44%, Dimir Signet 20%, Talisman of Progress 20%, Opposition Agent 13% -> Narset, Parter of Veils [search]]
+R5    Zur the Enchanter casts Narset, Parter of Veils
+R5        [Zur the Enchanter decides: Narset, Parter of Veils -2 100%, stop 0% -> Narset, Parter of Veils -2 [search]]
+R5    Zur the Enchanter uses Narset, Parter of Veils (-2): dig for a noncreature, nonland card
+R5      Narset: Zur the Enchanter takes a card
+R5        [Zur the Enchanter attack plan by search: all at Yawgmoth]
+R5    Zur the Enchanter attacks Yawgmoth with 1 creature(s): 6 damage (life now 25)
+R5  --- Yawgmoth turn 5: life 25, 5 cards in hand, 4 lands
+R5        [Yawgmoth decides: Yawgmoth, Thran Physician 97%, Culling the Weak 1%, Bitterblossom 1%, Feed the Swarm -> Esper Sentinel 1% -> Gray Merchant of Asphodel [search]]
+R5    Yawgmoth casts Gray Merchant of Asphodel
+R5        [Yawgmoth attack plan by search: filtered at Zur the Enchanter]
+R5      Warren Soultrader deals 3 to Narset, Parter of Veils (loyalty 0)
+R5    Yawgmoth attacks Zur the Enchanter with 2 creature(s): 5 damage (life now 27)
+R5  --- Miirym turn 5: life 21, 4 cards in hand, 5 lands
+R5        [Miirym decides: Terror of the Peaks 90%, Cultivate 7%, Wrathful Red Dragon 2%, Spark Double 1% -> Cultivate [search]]
+R5    Miirym casts Cultivate
+R5      Miirym reveals Island and puts it into their hand
+R5    Miirym plays Island
+R5        [Miirym attack plan by search: none at Zur the Enchanter]
+R5  --- Y'shtola turn 5: life 34, 5 cards in hand, 4 lands
+R5    Y'shtola plays Underground River
+R5        [Y'shtola decides: Y'shtola, Night's Blessed 66%, Sanguine Bond 18%, Bribery 5%, Polluted Bonds 5% -> Y'shtola, Night's Blessed [search]]
+R5    Y'shtola casts Y'shtola, Night's Blessed
+R5        [Y'shtola attack plan by search: filtered at Yawgmoth]
+R5    Y'shtola attacks Yawgmoth with 1 creature(s): 3 damage (life now 35)
+R6  --- Zur the Enchanter turn 6: life 27, 9 cards in hand, 5 lands
+R6      Zur the Enchanter sacrifices Mystic Remora (cumulative upkeep 4)
+R6    Zur the Enchanter plays Marsh Flats
+R6      cracks Marsh Flats for Hallowed Fountain
+R6        [Zur the Enchanter decides: Zur the Enchanter 81%, Dimir Signet 8%, Talisman of Progress 8%, stop (hold mana) 1% -> Zur the Enchanter [search]]
+R6    Zur the Enchanter casts Zur the Enchanter
+R6        [Zur the Enchanter decides: Dimir Signet 46%, Talisman of Progress 46%, stop (hold mana) 8%, Opposition Agent 0% -> Dimir Signet [search]]
+R6    Zur the Enchanter casts Dimir Signet
+R6        [Zur the Enchanter decides: stop (hold mana) 95%, Talisman of Progress 5% -> stop (hold mana) [search]]
+R6        [Zur the Enchanter attack plan by search: none at Yawgmoth]
+R6        [Zur the Enchanter decides: stop (hold mana) 95%, Talisman of Progress 5% -> stop (hold mana) [search]]
+R6  --- Yawgmoth turn 6: life 35, 5 cards in hand, 4 lands
+R6    Yawgmoth plays Bojuka Bog
+R6        [Yawgmoth decides: Feed the Swarm -> Zur the Enchanter 100%, Yawgmoth, Thran Physician 0%, Culling the Weak 0%, Bitterblossom 0% -> Feed the Swarm -> Zur the Enchanter [search]]
+R6    Yawgmoth casts Feed the Swarm -> Zur the Enchanter (Zur the Enchanter)
+R6      Zur the Enchanter casts An Offer You Can't Refuse at Feed the Swarm
+R6      Zur the Enchanter counters Feed the Swarm with An Offer You Can't Refuse
+R6        [Yawgmoth decides: Yawgmoth, Thran Physician 96%, Culling the Weak 2%, Bitterblossom 1%, Nest of Scarabs 1% -> Yawgmoth, Thran Physician [search]]
+R6    Yawgmoth casts Yawgmoth, Thran Physician
+R6        [Yawgmoth decides: Culling the Weak 61%, Bitterblossom 36%, Entomb (Gravecrawler) 3%, stop 0% -> Culling the Weak [search]]
+R6    Yawgmoth casts Culling the Weak
+R6        [Yawgmoth decides: Bitterblossom 54%, Nest of Scarabs 41%, Entomb (Gravecrawler) 5%, stop 0% -> Bitterblossom [search]]
+R6    Yawgmoth casts Bitterblossom
+R6        [Yawgmoth decides: Nest of Scarabs 90%, Entomb (Gravecrawler) 10%, stop 0% -> Nest of Scarabs [search]]
+R6    Yawgmoth casts Nest of Scarabs
+R6        [Yawgmoth decides: Yawgmoth: sacrifice Token 44%, Entomb (Gravecrawler) 39%, Warren Soultrader ability 17%, stop 0% -> Yawgmoth: sacrifice Token [search]]
+R6        [Yawgmoth decides: Yawgmoth: sacrifice Token 44%, Entomb (Gravecrawler) 39%, Warren Soultrader ability 17%, stop 0% -> Yawgmoth: sacrifice Token [search]]
+R6        [Yawgmoth decides: Entomb (Gravecrawler) 100%, stop 0% -> Entomb (Gravecrawler) [search]]
+R6    Yawgmoth casts Entomb
+R6      Yawgmoth puts Gravecrawler into the graveyard (Entomb)
+R6        [Yawgmoth attack plan by search: all at Zur the Enchanter]
+R6    Yawgmoth attacks Zur the Enchanter with 2 creature(s): 0 damage (life now 25)
+R6  --- Miirym turn 6: life 21, 4 cards in hand, 7 lands
+R6    Miirym plays Rejuvenating Springs
+R6        [Miirym decides: Terror of the Peaks 52%, Miirym, Sentinel Wyrm 46%, Wrathful Red Dragon 2%, Spark Double 1% -> stop [search]]
+R6        [Miirym attack plan by search: all at Zur the Enchanter]
+R6    Miirym attacks Zur the Enchanter with 1 creature(s): 0 damage (life now 25)
+R6        [Miirym decides: Terror of the Peaks 52%, Miirym, Sentinel Wyrm 46%, Wrathful Red Dragon 2%, Spark Double 1% -> Terror of the Peaks [search]]
+R6    Miirym casts Terror of the Peaks
+R6  --- Y'shtola turn 6: life 34, 6 cards in hand, 5 lands
+R6        [Y'shtola decides: Generous Gift -> Yawgmoth, Thran Physician 90%, stop (hold mana) 10%, Sanguine Bond 0%, Bribery 0% -> Bribery [search]]
+R6    Y'shtola casts Bribery
+R6      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R6      Bribery: Y'shtola takes Ancient Silver Dragon from Miirym's library
+R6        [Y'shtola attack plan by search: all at Zur the Enchanter]
+R6    Y'shtola attacks Zur the Enchanter with 2 creature(s): 2 damage (life now 19)
+R7    Zur the Enchanter casts Mystical Tutor
+R7      Zur the Enchanter reveals Cyclonic Rift and puts it on top of their library
+R7        [Zur the Enchanter end of turn: Mystical Tutor 100%, pass 0% -> Mystical Tutor]
+R7  --- Zur the Enchanter turn 7: life 19, 7 cards in hand, 6 lands
+R7        [Zur the Enchanter decides: Cyclonic Rift -> Yawgmoth, Thran Physician 100%, stop (hold mana) 0%, Cyclonic Rift 0%, Aura of Silence 0% -> Cyclonic Rift [search]]
+R7    Zur the Enchanter casts Cyclonic Rift
+R7      board wipe resolves (rift)
+R7        Jet Medallion (Yawgmoth) is removed by the wipe (rift)
+R7        Yawgmoth, Thran Physician (Yawgmoth) is removed by the wipe (rift)
+R7        Bitterblossom (Yawgmoth) is removed by the wipe (rift)
+R7        Nest of Scarabs (Yawgmoth) is removed by the wipe (rift)
+R7        Dragon Tempest (Miirym) is removed by the wipe (rift)
+R7        Terror of the Peaks (Miirym) is removed by the wipe (rift)
+R7        [Y'shtola holds its wipe protection by search]
+R7        Talisman of Hierarchy (Y'shtola) is removed by the wipe (rift)
+R7        Y'shtola, Night's Blessed (Y'shtola) is removed by the wipe (rift)
+R7        Ancient Silver Dragon (Y'shtola) is removed by the wipe (rift)
+R7        [Zur the Enchanter attacks: Yawgmoth 46%, Y'shtola 36%, Miirym 18% -> Y'shtola]
+R7      Ethereal Armor enchants Zur the Enchanter
+R7      Zur fetches Ethereal Armor
+R7    Zur the Enchanter attacks Y'shtola with 2 creature(s): 11 damage (life now 24)
+R7  --- Yawgmoth turn 7: life 28, 5 cards in hand, 5 lands
+R7        [Yawgmoth decides: Sheoldred, the Apocalypse 32%, Nine-Lives Familiar 30%, Genesis Chamber 13%, Jet Medallion 9% -> Sheoldred, the Apocalypse [search]]
+R7    Yawgmoth casts Sheoldred, the Apocalypse
+R7        [Yawgmoth decides: Genesis Chamber 60%, Jet Medallion 40%, stop 0% -> Genesis Chamber [search]]
+R7    Yawgmoth casts Genesis Chamber
+R7  --- Miirym turn 7: life 18, 6 cards in hand, 8 lands
+R7        [Miirym decides: Miirym, Sentinel Wyrm 39%, Terror of the Peaks 30%, Ancient Silver Dragon 27%, Goldspan Dragon 2% -> Miirym, Sentinel Wyrm [search]]
+R7    Miirym casts Miirym, Sentinel Wyrm
+R7        [Miirym decides: Dragon Tempest 100%, stop 0% -> Dragon Tempest [search]]
+R7    Miirym casts Dragon Tempest
+R7  --- Y'shtola turn 7: life 24, 8 cards in hand, 5 lands
+R7    Y'shtola plays Plains
+R7        [Y'shtola decides: Generous Gift -> Zur the Enchanter 100%, stop (hold mana) 0%, Talisman of Hierarchy 0%, Y'shtola, Night's Blessed 0% -> Generous Gift -> Zur the Enchanter [search]]
+R7    Y'shtola casts Generous Gift -> Miirym, Sentinel Wyrm (Miirym)
+R7      Miirym, Sentinel Wyrm (Miirym) is removed: destroy
+R8  --- Zur the Enchanter turn 8: life 12, 10 cards in hand, 6 lands
+R8        [Zur the Enchanter decides: Eidolon of Rhetoric 32%, Rhystic Study 28%, Walking Ballista 11%, Aura of Silence 9% -> Walking Ballista [search]]
+R8    Zur the Enchanter casts Walking Ballista
+R8        [Zur the Enchanter attack plan by search: filtered at Y'shtola]
+R8      Zur fetches Ghostly Prison
+R8    Zur the Enchanter attacks Y'shtola with 2 creature(s): 14 damage (life now 8)
+R8  --- Yawgmoth turn 8: life 26, 4 cards in hand, 5 lands
+R8        [Yawgmoth decides: Blood Artist 70%, Nine-Lives Familiar 14%, Jet Medallion 6%, Nest of Scarabs 5% -> Blood Artist [search]]
+R8    Yawgmoth casts Blood Artist
+R8        [Yawgmoth decides: Nine-Lives Familiar 46%, Jet Medallion 20%, Nest of Scarabs 18%, Bitterblossom 16% -> stop [search]]
+R8        [Yawgmoth attack plan by search: filtered at Zur the Enchanter]
+R8    Yawgmoth pays 2 to attack Zur the Enchanter with 1
+R8    Yawgmoth attacks Zur the Enchanter with 1 creature(s): 0 damage (life now 10)
+R8        [Yawgmoth decides: Jet Medallion 100%, stop 0% -> Jet Medallion [search]]
+R8    Yawgmoth casts Jet Medallion
+R8  --- Miirym turn 8: life 16, 6 cards in hand, 8 lands
+R8    Miirym plays Island
+R8        [Miirym decides: Terror of the Peaks 43%, Ancient Silver Dragon 43%, Miirym, Sentinel Wyrm 8%, Goldspan Dragon 3% -> Terror of the Peaks [search]]
+R8    Miirym casts Terror of the Peaks
+R8        [Miirym decides: Spark Double 100%, stop 0% -> Spark Double [search]]
+R8    Miirym casts Spark Double
+R8        [Miirym attack plan by search: filtered at Yawgmoth]
+R8        [Miirym keeps 2 creature(s) home as blockers]
+R8    Miirym attacks Yawgmoth with 1 creature(s): 5 damage (life now 21)
+R8    Y'shtola casts Mystical Tutor
+R8      Y'shtola reveals Debt to the Deathless and puts it on top of their library
+R8        [Y'shtola end of turn: Mystical Tutor 100%, pass 0% -> Mystical Tutor]
+R8  --- Y'shtola turn 8: life 7, 6 cards in hand, 6 lands
+R8        [Y'shtola decides: Debt to the Deathless (X = 2) 96%, Y'shtola, Night's Blessed 3%, Sanguine Bond 1%, Polluted Bonds 0% -> Debt to the Deathless (X = 2) [search]]
+R8    Y'shtola casts Debt to the Deathless
+R8      Debt to the Deathless (X = 2): each opponent loses 4 life; Y'shtola gains 12
+R8  *** Zur the Enchanter is eliminated (life -2) by Y'shtola
+R9  --- Yawgmoth turn 9: life 17, 3 cards in hand, 5 lands
+R9        [Yawgmoth decides: Ashnod's Altar 77%, Nine-Lives Familiar 12%, Nest of Scarabs 7%, Bitterblossom 4% -> Nine-Lives Familiar [search]]
+R9    Yawgmoth casts Nine-Lives Familiar
+R9        [Yawgmoth decides: Ashnod's Altar 87%, Nest of Scarabs 8%, Bitterblossom 5%, stop 0% -> Nest of Scarabs [search]]
+R9    Yawgmoth casts Nest of Scarabs
+R9        [Yawgmoth attack plan by search: none at Miirym]
+R9  --- Miirym turn 9: life 10, 4 cards in hand, 9 lands
+R9        [Miirym decides: Wrathful Red Dragon 45%, Ancient Silver Dragon 39%, Miirym, Sentinel Wyrm 13%, Goldspan Dragon 3% -> Goldspan Dragon [search]]
+R9    Miirym casts Goldspan Dragon
+R9      Nine-Lives Familiar (Yawgmoth) is removed: dmg2
+R9      Nine-Lives Familiar returns at the beginning of the next end step (7 revival counters)
+R9        [Miirym attack plan by search: filtered at Yawgmoth]
+R9        [Miirym keeps 1 creature(s) home as blockers]
+R9        [Miirym holds back 2 attacker(s) that would die to blocks]
+R9    Miirym attacks Yawgmoth with 2 creature(s): 9 damage (life now 6)
+R9    Miirym attacks Y'shtola with 2 creature(s): 2 damage (life now 14)
+R9        [Miirym decides: Earthquake Dragon 83%, Wrathful Red Dragon 17%, stop 0% -> Earthquake Dragon [search]]
+R9    Miirym casts Earthquake Dragon
+R9  *** Yawgmoth is eliminated (life -8) by Miirym
+R9  --- Y'shtola turn 9: life 14, 6 cards in hand, 6 lands
+R9    Y'shtola plays Urborg, Tomb of Yawgmoth
+R9        [Y'shtola decides: Y'shtola, Night's Blessed 74%, Sanguine Bond 17%, Smothering Tithe 4%, Restoration Angel 2% -> Restoration Angel [search]]
+R9    Y'shtola casts Restoration Angel
+R9        [Y'shtola decides: stop (hold mana) 98%, Talisman of Hierarchy 2% -> stop (hold mana) [search]]
+R9        [Y'shtola decides: stop (hold mana) 98%, Talisman of Hierarchy 2% -> stop (hold mana) [search]]
+R10 --- Miirym turn 10: life 7, 3 cards in hand, 9 lands
+R10   Miirym plays Haven of the Spirit Dragon
+R10       [Miirym decides: Wrathful Red Dragon 45%, Ancient Silver Dragon 40%, Miirym, Sentinel Wyrm 15%, stop 0% -> Wrathful Red Dragon [search]]
+R10   Miirym casts Wrathful Red Dragon
+R10     Y'shtola protects with Teferi's Protection
+R10     Y'shtola casts Teferi's Protection: life can't change, protection from everything, all phased out
+R10     Y'shtola protects Restoration Angel
+R10       [Miirym decides: combo: Wrathful Red Dragon + Blasphemous Act 100%, stop 0% -> combo: Wrathful Red Dragon + Blasphemous Act [search]]
+R10   Miirym goes for Wrathful Red Dragon + Blasphemous Act
+R10   Miirym casts Blasphemous Act
+R10     board wipe resolves (dmg13)
+R10       Token (Miirym) is removed by the wipe (dmg13)
+R10       Token (Miirym) is removed by the wipe (dmg13)
+R10       Terror of the Peaks (Miirym) is removed by the wipe (dmg13)
+R10       Token (Miirym) is removed by the wipe (dmg13)
+R10       Goldspan Dragon (Miirym) is removed by the wipe (dmg13)
+R10       Token (Miirym) is removed by the wipe (dmg13)
+R10       Earthquake Dragon (Miirym) is removed by the wipe (dmg13)
+R10       Token (Miirym) is removed by the wipe (dmg13)
+R10       Wrathful Red Dragon (Miirym) is removed by the wipe (dmg13)
+R10     Wrathful Red Dragon: 13 damage to Y'shtola
+R10     Wrathful Red Dragon: 13 damage to Y'shtola
+R10     Wrathful Red Dragon: 13 damage to Y'shtola
+R10     Wrathful Red Dragon: 13 damage to Y'shtola
+R10 --- Y'shtola turn 10: life 14, 4 cards in hand, 7 lands
+R10   Y'shtola no longer has protection from everything
+R10       [Y'shtola decides: Y'shtola, Night's Blessed 61%, Sanguine Bond 37%, Smothering Tithe 1%, Polluted Bonds 1% -> Y'shtola, Night's Blessed [search]]
+R10   Y'shtola casts Y'shtola, Night's Blessed
+R10   Y'shtola attacks Miirym with 1 creature(s): 3 damage (life now 4)
+R11   Miirym returns Earthquake Dragon with Haven of the Spirit Dragon
+R11       [Miirym end of turn: Haven of the Spirit Dragon 98%, pass 2% -> Haven of the Spirit Dragon]
+R11 --- Miirym turn 11: life 4, 2 cards in hand, 9 lands
+R11   Miirym plays Island
+R11       [Miirym decides: Ancient Silver Dragon 66%, Miirym, Sentinel Wyrm 34%, stop 0% -> Ancient Silver Dragon [search]]
+R11   Miirym casts Ancient Silver Dragon
+R11       [Miirym attack plan by search: none at Y'shtola]
+R11 --- Y'shtola turn 11: life 13, 5 cards in hand, 7 lands
+R11       [Y'shtola decides: Sanguine Bond 94%, Smothering Tithe 3%, Polluted Bonds 2%, Conjurer's Closet 1% -> Sanguine Bond [search]]
+R11   Y'shtola casts Sanguine Bond
+R11     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R11       [Y'shtola decides: Talisman of Hierarchy 98%, stop 2% -> Talisman of Hierarchy [search]]
+R11   Y'shtola casts Talisman of Hierarchy
+R11       [Y'shtola attack plan by search: filtered at Miirym]
+R11 *** Miirym is eliminated (life 0) by Y'shtola
+R11   Y'shtola attacks Miirym with 2 creature(s): 2 damage (life now 0)
+Winner: Y'shtola (damage)

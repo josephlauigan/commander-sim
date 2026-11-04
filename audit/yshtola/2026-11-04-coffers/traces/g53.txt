@@ -1,0 +1,165 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 53 (seed 500053): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Kinnan, Urza, Y'shtola, Yawgmoth
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kinnan pays 2 life for an untapped Breeding Pool
+R1    Kinnan plays Breeding Pool
+R1  --- Urza turn 1: life 40, 7 cards in hand, 0 lands
+R1    Urza plays Island
+R1        [Urza decides: Chrome Mox 96%, Ponder 4%, stop 0% -> Ponder [search]]
+R1    Urza casts Ponder
+R1        [Urza decides: Mox Opal 100%, stop 0% -> Mox Opal [search]]
+R1    Urza casts Mox Opal
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Flooded Strand
+R1      cracks Flooded Strand for Underground Sea
+R1  --- Yawgmoth turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yawgmoth plays Swamp
+R1        [Yawgmoth decides: Skullclamp 100%, stop 0% -> Skullclamp [search]]
+R1    Yawgmoth casts Skullclamp
+R1      Kinnan casts An Offer You Can't Refuse at Skullclamp
+R1      Kinnan counters Skullclamp with An Offer You Can't Refuse
+R1        [Yawgmoth decides: The Meathook Massacre 100%, stop 0% -> The Meathook Massacre [search]]
+R1    Yawgmoth casts The Meathook Massacre
+R2  --- Kinnan turn 2: life 38, 6 cards in hand, 1 lands
+R2    Kinnan plays Forest
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 100%, stop 0% -> Kinnan, Bonder Prodigy [search]]
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R2  --- Urza turn 2: life 40, 6 cards in hand, 1 lands
+R2    Urza plays Island
+R2        [Urza decides: Chrome Mox 98%, Emry, Lurker of the Loch 2%, stop 0% -> Chrome Mox [search]]
+R2    Urza casts Chrome Mox
+R2      Chrome Mox imprints Thoughtcast
+R2        [Urza decides: Emry, Lurker of the Loch 100%, stop 0% -> Emry, Lurker of the Loch [search]]
+R2    Urza casts Emry, Lurker of the Loch
+R2    Y'shtola casts Mystical Tutor
+R2      Kinnan casts Force of Will at Mystical Tutor
+R2      Kinnan counters Mystical Tutor with Force of Will
+R2        [Y'shtola end of turn: Mystical Tutor 100%, pass 0% -> Mystical Tutor]
+R2  --- Y'shtola turn 2: life 39, 6 cards in hand, 1 lands
+R2    Y'shtola plays Plains
+R2        [Y'shtola decides: Arcane Signet 100%, stop 0% -> Arcane Signet [search]]
+R2    Y'shtola casts Arcane Signet
+R2  --- Yawgmoth turn 2: life 40, 5 cards in hand, 1 lands
+R2    Yawgmoth plays Swamp
+R2        [Yawgmoth decides: Reassembling Skeleton 100%, stop 0% -> Reassembling Skeleton [search]]
+R2    Yawgmoth casts Reassembling Skeleton
+R3  --- Kinnan turn 3: life 37, 4 cards in hand, 2 lands
+R3    Kinnan plays Rejuvenating Springs
+R3        [Kinnan decides: Basalt Monolith 99%, Faerie Mastermind 1%, stop 0% -> Basalt Monolith [search]]
+R3    Kinnan casts Basalt Monolith
+R3        [Kinnan decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R3    Kinnan activates Basalt Monolith
+R3        [Kinnan decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R3    Kinnan activates Basalt Monolith
+R3        [Kinnan decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R3    Kinnan activates Basalt Monolith
+R3        [Kinnan attack plan by search: none at Urza]
+R3  --- Urza turn 3: life 40, 3 cards in hand, 2 lands
+R3    Urza plays Island
+R3        [Urza decides: Urza, Lord High Artificer 93%, Emry: cast Thought Vessel from the graveyard 5%, Reshape 2%, stop 0% -> Urza, Lord High Artificer [search]]
+R3    Urza casts Urza, Lord High Artificer
+R3        [Urza decides: Emry: cast Thought Vessel from the graveyard 100%, stop 0% -> Emry: cast Thought Vessel from the graveyard [search]]
+R3    Urza casts Thought Vessel from the graveyard (Emry)
+R3    Urza casts Thought Vessel
+R3  --- Y'shtola turn 3: life 39, 5 cards in hand, 2 lands
+R3    Y'shtola plays Swamp
+R3        [Y'shtola decides: Y'shtola, Night's Blessed 87%, Necropotence 10%, Diabolic Tutor 3%, Propaganda 1% -> Y'shtola, Night's Blessed [search]]
+R3    Y'shtola casts Y'shtola, Night's Blessed
+R3  --- Yawgmoth turn 3: life 40, 4 cards in hand, 2 lands
+R3        [Yawgmoth decides: cycle Unearth 99%, stop 1% -> cycle Unearth [search]]
+R3        [Yawgmoth attack plan by search: filtered at Kinnan]
+R3        [Yawgmoth holds back 1 attacker(s) that would die to blocks]
+R4    Kinnan activates Basalt Monolith
+R4        [Kinnan end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R4    Kinnan activates Basalt Monolith
+R4        [Kinnan end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R4    Kinnan activates Basalt Monolith
+R4        [Kinnan end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R4  --- Kinnan turn 4: life 37, 3 cards in hand, 3 lands
+R4    Kinnan plays Forest
+R4        [Kinnan decides: Badgermole Cub 93%, Faerie Mastermind 5%, Kinnan: dig five 1%, stop 0% -> Badgermole Cub [search]]
+R4    Kinnan casts Badgermole Cub
+R4        [Kinnan decides: Faerie Mastermind 100%, stop 0% -> Faerie Mastermind [search]]
+R4    Kinnan casts Faerie Mastermind
+R4        [Kinnan attack plan by search: all at Y'shtola]
+R4    Kinnan attacks Y'shtola with 1 creature(s): 0 damage (life now 39)
+R4  --- Urza turn 4: life 40, 3 cards in hand, 3 lands
+R4    Urza plays Island
+R4        [Urza decides: Reshape 50%, Narset, Parter of Veils 50%, Urza: free card 0%, stop 0% -> Narset, Parter of Veils [search]]
+R4    Urza casts Narset, Parter of Veils
+R4        [Urza decides: Reshape 99%, Narset, Parter of Veils -2 1%, Urza: free card 0%, stop 0% -> Reshape [search]]
+R4    Urza casts Reshape
+R4        [Urza decides: Emry: cast Mox Opal from the graveyard 99%, Narset, Parter of Veils -2 0%, Basalt Monolith ability 0%, stop 0% -> Emry: cast Mox Opal from the graveyard [search]]
+R4    Urza casts Mox Opal from the graveyard (Emry)
+R4    Urza casts Mox Opal
+R4        [Urza decides: Narset, Parter of Veils -2 97%, Basalt Monolith ability 3%, stop 0% -> Narset, Parter of Veils -2 [search]]
+R4    Urza uses Narset, Parter of Veils (-2): dig for a noncreature, nonland card
+R4      Narset: Urza takes a card
+R4        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R4    Urza activates Basalt Monolith
+R4        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R4    Urza activates Basalt Monolith
+R4        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R4    Urza activates Basalt Monolith
+R4        [Urza attack plan by search: none at Kinnan]
+R4  --- Y'shtola turn 4: life 39, 5 cards in hand, 3 lands
+R4    Y'shtola plays Plains
+R4        [Y'shtola decides: Necropotence 35%, Propaganda 26%, Polluted Bonds 23%, Diabolic Tutor 16% -> Necropotence [search]]
+R4    Y'shtola casts Necropotence
+R4      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R4        [Y'shtola attack plan by search: filtered at Kinnan]
+R4    Y'shtola attacks Kinnan with 1 creature(s): 2 damage (life now 33)
+R4    Y'shtola pays 4 life to Necropotence
+R4  --- Yawgmoth turn 4: life 39, 5 cards in hand, 2 lands
+R4    Yawgmoth plays Swamp
+R4        [Yawgmoth decides: Pawn of Ulamog 99%, Nest of Scarabs 1%, Orcish Bowmasters 0%, stop 0% -> Orcish Bowmasters [search]]
+R4    Yawgmoth casts Orcish Bowmasters
+R4        [Yawgmoth attack plan by search: filtered at Kinnan]
+R4        [Yawgmoth holds back 1 attacker(s) that would die to blocks]
+R5  --- Kinnan turn 5: life 33, 1 cards in hand, 4 lands
+R5    Kinnan plays Yavimaya Coast
+R5        [Kinnan decides: Kinnan, Bonder Prodigy 87%, Thrasios, Triton Hero 13%, Basalt Monolith ability 0%, stop 0% -> Kinnan, Bonder Prodigy [search]]
+R5    Kinnan casts Kinnan, Bonder Prodigy
+R5        [Kinnan decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R5    Kinnan activates Basalt Monolith
+R5        [Kinnan decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R5    Kinnan activates Basalt Monolith
+R5        [Kinnan decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R5    Kinnan activates Basalt Monolith
+R5        [Kinnan attack plan by search: filtered at Urza]
+R5      Badgermole Cub deals 2 to Narset, Parter of Veils (loyalty 1)
+R5    Kinnan attacks Urza with 1 creature(s): 2 damage (life now 38)
+R5    Urza casts Mystical Tutor
+R5      Urza reveals Windfall and puts it on top of their library
+R5        [Urza end of turn: Mystical Tutor 100%, Basalt Monolith ability 0%, pass 0% -> Mystical Tutor]
+R5    Urza activates Basalt Monolith
+R5        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R5    Urza activates Basalt Monolith
+R5        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R5    Urza activates Basalt Monolith
+R5        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R5  --- Urza turn 5: life 38, 1 cards in hand, 4 lands
+R5    Urza plays Inventors' Fair
+R5        [Urza decides: Windfall 97%, Inventors' Fair: search for an artifact 2%, Urza: free card 0%, stop 0% -> Inventors' Fair: search for an artifact [search]]
+R5      Urza reveals Rings of Brighthearth and puts it into their hand
+R5        [Urza decides: Rings of Brighthearth 99%, Windfall 1%, Urza: free card 0%, stop 0% -> Rings of Brighthearth [search]]
+R5    Urza casts Rings of Brighthearth
+R5        [Urza decides: combo: Power Artifact / Rings of Brighthearth + Monolith 100%, Windfall 0%, Urza: free card 0%, stop 0% -> combo: Power Artifact / Rings of Brighthearth + Monolith [search]]
+R5    Urza goes for Power Artifact / Rings of Brighthearth + Monolith
+R5  *** Kinnan is eliminated (life 33) by Urza
+R5  *** Y'shtola is eliminated (life 37) by Urza
+R5  *** Yawgmoth is eliminated (life 40) by Urza
+R5  *** Urza wins by combo
+Winner: Urza (combo)

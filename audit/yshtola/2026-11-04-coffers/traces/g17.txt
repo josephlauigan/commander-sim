@@ -1,0 +1,183 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 17 (seed 500017): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Kinnan, Miirym, Zur the Enchanter, Y'shtola
+R1  --- Kinnan turn 1: life 40, 5 cards in hand, 0 lands
+R1    Kinnan plays Yavimaya Coast
+R1        [Kinnan decides: Ponder 100%, stop 0% -> Ponder [search]]
+R1    Kinnan casts Ponder
+R1  --- Miirym turn 1: life 40, 7 cards in hand, 0 lands
+R1    Miirym plays Island
+R1  --- Zur the Enchanter turn 1: life 40, 7 cards in hand, 0 lands
+R1    Zur the Enchanter pays 2 life for an untapped Hallowed Fountain
+R1    Zur the Enchanter plays Hallowed Fountain
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Polluted Delta
+R1      cracks Polluted Delta for Hallowed Fountain
+R2  --- Kinnan turn 2: life 39, 5 cards in hand, 1 lands
+R2    Kinnan plays Forest
+R2        [Kinnan decides: Incubation Druid 64%, Kinnan, Bonder Prodigy 35%, Mystic Remora 1%, stop 0% -> Incubation Druid [search]]
+R2    Kinnan casts Incubation Druid
+R2  --- Miirym turn 2: life 40, 7 cards in hand, 1 lands
+R2    Miirym plays Boseiju, Who Endures
+R2        [Miirym decides: Birds of Paradise 87%, Farseek 13%, stop (hold mana) 0% -> Birds of Paradise [search]]
+R2    Miirym casts Birds of Paradise
+R2  --- Zur the Enchanter turn 2: life 38, 7 cards in hand, 1 lands
+R2    Zur the Enchanter plays Island
+R2        [Zur the Enchanter decides: Talisman of Progress 50%, Arcane Signet 50%, Rest in Peace 1%, stop 0% -> Talisman of Progress [search]]
+R2    Zur the Enchanter casts Talisman of Progress
+R2  --- Y'shtola turn 2: life 39, 7 cards in hand, 1 lands
+R2    Y'shtola plays Swamp
+R2        [Y'shtola decides: Orcish Bowmasters 98%, stop 2% -> Orcish Bowmasters [search]]
+R2    Y'shtola casts Orcish Bowmasters
+R3  --- Kinnan turn 3: life 38, 4 cards in hand, 2 lands
+R3    Kinnan plays Island
+R3        [Kinnan decides: Kinnan, Bonder Prodigy 97%, Mystic Remora 3%, stop (hold mana) 0% -> Kinnan, Bonder Prodigy [search]]
+R3    Kinnan casts Kinnan, Bonder Prodigy
+R3        [Kinnan decides: Mystic Remora 95%, stop (hold mana) 5% -> Mystic Remora [search]]
+R3    Kinnan casts Mystic Remora
+R3  --- Miirym turn 3: life 40, 6 cards in hand, 2 lands
+R3        [Miirym decides: stop (hold mana) 100%, Farseek 0%, Urza's Incubator 0%, Temur Ascendancy 0% -> stop (hold mana) [search]]
+R3        [Miirym decides: stop (hold mana) 100%, Farseek 0%, Urza's Incubator 0%, Temur Ascendancy 0% -> stop (hold mana) [search]]
+R3  --- Zur the Enchanter turn 3: life 38, 6 cards in hand, 2 lands
+R3        [Zur the Enchanter decides: Imprisoned in the Moon -> Kinnan, Bonder Prodigy 93%, stop (hold mana) 6%, Arcane Signet 2%, Imprisoned in the Moon 0% -> Imprisoned in the Moon -> Kinnan, Bonder Prodigy [search]]
+R3    Zur the Enchanter casts Imprisoned in the Moon -> Kinnan, Bonder Prodigy (Kinnan)
+R3      Kinnan casts Swan Song at Imprisoned in the Moon
+R3      Kinnan counters Imprisoned in the Moon with Swan Song
+R3  --- Y'shtola turn 3: life 39, 6 cards in hand, 2 lands
+R3    Y'shtola plays Tundra
+R3        [Y'shtola decides: Rhystic Study 100%, stop 0% -> Rhystic Study [search]]
+R3    Y'shtola casts Rhystic Study
+R3        [Y'shtola attack plan by search: filtered at Kinnan]
+R3        [Y'shtola holds back 1 attacker(s) that would die to blocks]
+R3    Y'shtola attacks Kinnan with 1 creature(s): 3 damage (life now 32)
+R3    Y'shtola attacks Miirym with 1 creature(s): 1 damage (life now 39)
+R4  --- Kinnan turn 4: life 32, 4 cards in hand, 3 lands
+R4    Kinnan plays Treasure Vault
+R4        [Kinnan decides: Freed from the Real 93%, Wandering Archaic // Explore the Vastlands 7%, adapt Incubation Druid 0%, Treasure Vault ability 0% -> Freed from the Real [search]]
+R4    Kinnan casts Freed from the Real
+R4        [Kinnan attack plan by search: none at Miirym]
+R4  --- Miirym turn 4: life 39, 7 cards in hand, 2 lands
+R4        [Miirym decides: stop (hold mana) 100%, Farseek 0%, Urza's Incubator 0%, Temur Ascendancy 0% -> stop (hold mana) [search]]
+R4        [Miirym decides: stop (hold mana) 100%, Farseek 0%, Urza's Incubator 0%, Temur Ascendancy 0% -> stop (hold mana) [search]]
+R4  --- Zur the Enchanter turn 4: life 38, 6 cards in hand, 2 lands
+R4        [Zur the Enchanter decides: stop (hold mana) 86%, Arcane Signet 14%, Rest in Peace 0%, Steel of the Godhead 0% -> stop (hold mana) [search]]
+R4        [Zur the Enchanter attack plan by search: none at Kinnan]
+R4        [Zur the Enchanter decides: stop (hold mana) 86%, Arcane Signet 14%, Rest in Peace 0%, Steel of the Godhead 0% -> stop (hold mana) [search]]
+R4  --- Y'shtola turn 4: life 39, 5 cards in hand, 3 lands
+R4    Y'shtola plays Island
+R4        [Y'shtola decides: Y'shtola, Night's Blessed 91%, Zur the Enchanter 5%, Prayer of Binding 4%, stop 0% -> Y'shtola, Night's Blessed [search]]
+R4    Y'shtola casts Y'shtola, Night's Blessed
+R4        [Y'shtola attack plan by search: filtered at Kinnan]
+R4        [Y'shtola holds back 1 attacker(s) that would die to blocks]
+R4    Y'shtola attacks Kinnan with 1 creature(s): 3 damage (life now 29)
+R4    Y'shtola attacks Miirym with 1 creature(s): 1 damage (life now 38)
+R5  --- Kinnan turn 5: life 29, 3 cards in hand, 4 lands
+R5    Kinnan plays Island
+R5        [Kinnan decides: Wandering Archaic // Explore the Vastlands 99%, adapt Incubation Druid 1%, stop 0% -> Wandering Archaic // Explore the Vastlands [search]]
+R5    Kinnan casts Wandering Archaic // Explore the Vastlands
+R5        [Kinnan attack plan by search: none at Miirym]
+R5  --- Miirym turn 5: life 38, 7 cards in hand, 2 lands
+R5        [Miirym decides: stop (hold mana) 98%, Arcane Signet 2%, Urza's Incubator 0%, Farseek 0% -> stop (hold mana) [search]]
+R5        [Miirym decides: stop (hold mana) 98%, Arcane Signet 2%, Urza's Incubator 0%, Farseek 0% -> stop (hold mana) [search]]
+R5  --- Zur the Enchanter turn 5: life 38, 7 cards in hand, 2 lands
+R5        [Zur the Enchanter decides: stop (hold mana) 98%, Arcane Signet 2%, Rest in Peace 0%, Esper Sentinel 0% -> stop (hold mana) [search]]
+R5        [Zur the Enchanter attack plan by search: none at Kinnan]
+R5        [Zur the Enchanter decides: stop (hold mana) 98%, Arcane Signet 2%, Rest in Peace 0%, Esper Sentinel 0% -> stop (hold mana) [search]]
+R5  --- Y'shtola turn 5: life 39, 6 cards in hand, 4 lands
+R5    Y'shtola plays Swamp
+R5        [Y'shtola decides: Bribery 66%, Hostage Taker 15%, Prayer of Binding 13%, Zur the Enchanter 6% -> Bribery [search]]
+R5    Y'shtola casts Bribery
+R5      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R5      Bribery: Y'shtola takes Earthquake Dragon from Miirym's library
+R5        [Y'shtola attack plan by search: filtered at Miirym]
+R5    Y'shtola attacks Miirym with 3 creature(s): 5 damage (life now 31)
+R6  --- Kinnan turn 6: life 26, 3 cards in hand, 5 lands
+R6        [Kinnan decides: Sink into Stupor // Soporific Springs -> Earthquake Dragon 94%, Ilysian Caryatid 4%, Sink into Stupor // Soporific Springs 2%, Chrome Mox 0% -> Sink into Stupor // Soporific Springs -> Earthquake Dragon [search]]
+R6    Kinnan casts Sink into Stupor // Soporific Springs -> Earthquake Dragon (Y'shtola)
+R6      Earthquake Dragon (Y'shtola) is removed: bounce
+R6        [Kinnan decides: Chrome Mox 100%, stop 0% -> Chrome Mox [search]]
+R6    Kinnan casts Chrome Mox
+R6      Chrome Mox imprints Ilysian Caryatid
+R6        [Kinnan attack plan by search: none at Miirym]
+R6  --- Miirym turn 6: life 31, 8 cards in hand, 2 lands
+R6        [Miirym decides: stop (hold mana) 86%, Sol Ring 13%, Arcane Signet 1%, Farseek 0% -> stop (hold mana) [search]]
+R6        [Miirym decides: stop (hold mana) 86%, Sol Ring 13%, Arcane Signet 1%, Farseek 0% -> stop (hold mana) [search]]
+R6  --- Zur the Enchanter turn 6: life 36, 7 cards in hand, 2 lands
+R6    Zur the Enchanter plays Morphic Pool
+R6        [Zur the Enchanter decides: stop (hold mana) 69%, Walking Ballista 17%, Esper Sentinel 13%, Arcane Signet 1% -> stop (hold mana) [search]]
+R6        [Zur the Enchanter attack plan by search: none at Kinnan]
+R6        [Zur the Enchanter decides: stop (hold mana) 69%, Walking Ballista 17%, Esper Sentinel 13%, Arcane Signet 1% -> stop (hold mana) [search]]
+R6  --- Y'shtola turn 6: life 41, 7 cards in hand, 5 lands
+R6    Y'shtola plays Marsh Flats
+R6      cracks Marsh Flats for Watery Grave
+R6        [Y'shtola decides: Fatal Push -> Kinnan, Bonder Prodigy 59%, stop (hold mana) 15%, Hostage Taker 7%, Prayer of Binding 6% -> Fatal Push -> Kinnan, Bonder Prodigy [search]]
+R6    Y'shtola casts Fatal Push -> Kinnan, Bonder Prodigy (Kinnan)
+R6      Y'shtola pays {2} (Wandering Archaic)
+R6      Zur the Enchanter casts Fierce Guardianship at Fatal Push
+R6      Zur the Enchanter counters Fatal Push with Fierce Guardianship
+R6        [Y'shtola decides: Expedition Map 100%, stop 0% -> Expedition Map [search]]
+R6    Y'shtola casts Expedition Map
+R6        [Y'shtola attack plan by search: filtered at Kinnan]
+R6        [Y'shtola holds back 2 attacker(s) that would die to blocks]
+R6    Y'shtola attacks Kinnan with 1 creature(s): 7 damage (life now 15)
+R6    Y'shtola attacks Miirym with 2 creature(s): 3 damage (life now 28)
+R7  --- Kinnan turn 7: life 15, 4 cards in hand, 5 lands
+R7      Kinnan sacrifices Mystic Remora (cumulative upkeep 4)
+R7        [Kinnan decides: Consecrated Sphinx 95%, Thrasios, Triton Hero 2%, Sol Ring 1%, Birds of Paradise 0% -> Kinnan: dig five [search]]
+R7        [Kinnan decides: Thrasios, Triton Hero 48%, Sol Ring 36%, Birds of Paradise 11%, Fellwar Stone 5% -> Birds of Paradise [search]]
+R7    Kinnan casts Birds of Paradise
+R7        [Kinnan decides: Sol Ring 100%, stop 0% -> Sol Ring [search]]
+R7    Kinnan casts Sol Ring
+R7        [Kinnan decides: Fellwar Stone 100%, stop 0% -> Fellwar Stone [search]]
+R7    Kinnan casts Fellwar Stone
+R7        [Kinnan decides: Thrasios, Triton Hero 100%, stop 0% -> Thrasios, Triton Hero [search]]
+R7    Kinnan casts Thrasios, Triton Hero
+R7        [Kinnan attack plan by search: all at Y'shtola]
+R7    Kinnan attacks Y'shtola with 2 creature(s): 4 damage (life now 36)
+R7  --- Miirym turn 7: life 28, 7 cards in hand, 2 lands
+R7        [Miirym decides: stop (hold mana) 61%, Sol Ring 19%, Farseek 17%, Arcane Signet 3% -> Farseek [search]]
+R7    Miirym casts Farseek
+R7      Farseek finds Ketria Triome
+R7  --- Zur the Enchanter turn 7: life 36, 6 cards in hand, 3 lands
+R7    Zur the Enchanter plays Glacial Fortress
+R7        [Zur the Enchanter decides: Zur the Enchanter 97%, Rest in Peace 1%, Walking Ballista 1%, Esper Sentinel 1% -> Zur the Enchanter [search]]
+R7    Zur the Enchanter casts Zur the Enchanter
+R7        [Zur the Enchanter attack plan by search: filtered at Y'shtola]
+R7    Zur the Enchanter attacks Y'shtola with 1 creature(s): 2 damage (life now 34)
+R7    Y'shtola casts Mystical Tutor
+R7      Kinnan copies Mystical Tutor (Wandering Archaic)
+R7      Kinnan reveals Fabricate and puts it on top of their library
+R7      Y'shtola reveals Debt to the Deathless and puts it on top of their library
+R7        [Y'shtola end of turn: Mystical Tutor 100%, pass 0% -> Mystical Tutor]
+R7  --- Y'shtola turn 7: life 34, 11 cards in hand, 6 lands
+R7    Y'shtola plays Swamp
+R7        [Y'shtola decides: Sanguine Bond 60%, Consecrated Sphinx 34%, Zur the Enchanter 2%, Hostage Taker 1% -> Sanguine Bond [search]]
+R7    Y'shtola casts Sanguine Bond
+R7      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R7        [Y'shtola decides: Expedition Map: find a land 99%, stop 1% -> Expedition Map: find a land [search]]
+R7      Y'shtola searches for Cabal Coffers
+R7        [Y'shtola attack plan by search: none at Kinnan]
+R8  --- Kinnan turn 8: life 12, 1 cards in hand, 5 lands
+R8        [Kinnan decides: Consecrated Sphinx 65%, Fabricate 23%, Kinnan, Bonder Prodigy 12%, adapt Incubation Druid 0% -> Fabricate [search]]
+R8    Kinnan casts Fabricate
+R8      Kinnan reveals Walking Ballista and puts it into their hand
+R8        [Kinnan decides: Consecrated Sphinx 84%, Kinnan, Bonder Prodigy 15%, Walking Ballista 1%, adapt Incubation Druid 0% -> Kinnan, Bonder Prodigy [search]]
+R8    Kinnan casts Kinnan, Bonder Prodigy
+R8        [Kinnan decides: combo: Kinnan + Freed from the Real / Pemmin's Aura 100%, Walking Ballista 0%, stop 0% -> combo: Kinnan + Freed from the Real / Pemmin's Aura [search]]
+R8    Kinnan goes for Kinnan + Freed from the Real / Pemmin's Aura
+R8  *** Miirym is eliminated (life 26) by Kinnan
+R8  *** Zur the Enchanter is eliminated (life 34) by Kinnan
+R8  *** Y'shtola is eliminated (life 36) by Kinnan
+R8  *** Kinnan wins by combo
+Winner: Kinnan (combo)

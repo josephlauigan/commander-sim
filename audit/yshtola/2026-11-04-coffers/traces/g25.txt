@@ -1,0 +1,184 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 25 (seed 500025): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Y'shtola, Yawgmoth, Urza, Miirym
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Plains
+R1  --- Yawgmoth turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yawgmoth plays Takenuma, Abandoned Mire
+R1        [Yawgmoth decides: Lotus Petal 100%, stop 0% -> Lotus Petal [search]]
+R1    Yawgmoth casts Lotus Petal
+R1        [Yawgmoth decides: Bitterblossom 100%, stop 0% -> Bitterblossom [search]]
+R1    Yawgmoth casts Bitterblossom
+R1  --- Urza turn 1: life 40, 7 cards in hand, 0 lands
+R1    Urza plays Island
+R1        [Urza decides: Brainstorm 87%, Ornithopter 13%, stop 0% -> Brainstorm [search]]
+R1    Urza casts Brainstorm
+R1  --- Miirym turn 1: life 40, 7 cards in hand, 0 lands
+R1    Miirym pays 2 life for an untapped Stomping Ground
+R1    Miirym plays Stomping Ground
+R2  --- Y'shtola turn 2: life 40, 7 cards in hand, 1 lands
+R2    Y'shtola plays Urborg, Tomb of Yawgmoth
+R2        [Y'shtola decides: Talisman of Progress 100%, stop 0% -> Talisman of Progress [search]]
+R2    Y'shtola casts Talisman of Progress
+R2  --- Yawgmoth turn 2: life 40, 5 cards in hand, 1 lands
+R2    Yawgmoth plays Swamp
+R2  --- Urza turn 2: life 40, 7 cards in hand, 1 lands
+R2    Urza plays Island
+R2        [Urza decides: Manifold Key 91%, Ornithopter 9%, stop 0% -> Manifold Key [search]]
+R2    Urza casts Manifold Key
+R2        [Urza decides: Ornithopter 100%, stop 0% -> Ornithopter [search]]
+R2    Urza casts Ornithopter
+R2  --- Miirym turn 2: life 38, 7 cards in hand, 1 lands
+R2    Miirym plays Mountain
+R2        [Miirym decides: Three Visits 56%, Dragonlord's Servant 44%, stop 0% -> Three Visits [search]]
+R2    Miirym casts Three Visits
+R3  --- Y'shtola turn 3: life 40, 6 cards in hand, 2 lands
+R3    Y'shtola plays Cabal Coffers
+R3        [Y'shtola decides: Necropotence 85%, Bound in Silence 15%, stop 0% -> Necropotence [search]]
+R3    Y'shtola casts Necropotence
+R3    Y'shtola pays 3 life to Necropotence
+R3  --- Yawgmoth turn 3: life 39, 5 cards in hand, 2 lands
+R3    Yawgmoth plays Swamp
+R3        [Yawgmoth decides: Withering Torment 57%, Withering Torment -> Necropotence 43%, stop 0% -> Withering Torment [search]]
+R3    Yawgmoth casts Withering Torment
+R3      Necropotence (Y'shtola) is removed: destroy
+R3        [Yawgmoth attack plan by search: filtered at Urza]
+R3    Yawgmoth attacks Urza with 1 creature(s): 1 damage (life now 39)
+R3  --- Urza turn 3: life 39, 5 cards in hand, 2 lands
+R3    Urza plays Island
+R3  --- Miirym turn 3: life 38, 6 cards in hand, 3 lands
+R3    Miirym plays Haven of the Spirit Dragon
+R3        [Miirym decides: Cursed Mirror 95%, Dragonlord's Servant 5%, stop 0% -> Cursed Mirror [search]]
+R3    Miirym casts Cursed Mirror
+R3        [Miirym decides: Dragonlord's Servant 100%, stop 0% -> Dragonlord's Servant [search]]
+R3    Miirym casts Dragonlord's Servant
+R4  --- Y'shtola turn 4: life 37, 7 cards in hand, 3 lands
+R4    Y'shtola plays Swamp
+R4        [Y'shtola decides: Exquisite Blood 74%, Bound in Silence 9%, Champion's Helm 8%, Teleportation Circle 8% -> Exquisite Blood [search]]
+R4    Y'shtola casts Exquisite Blood
+R4  --- Yawgmoth turn 4: life 36, 4 cards in hand, 3 lands
+R4    Yawgmoth plays Swamp
+R4        [Yawgmoth decides: Yawgmoth, Thran Physician 90%, K'rrik, Son of Yawgmoth 7%, Skullclamp 2%, Sheoldred, the Apocalypse 1% -> Yawgmoth, Thran Physician [search]]
+R4    Yawgmoth casts Yawgmoth, Thran Physician
+R4        [Yawgmoth attack plan by search: filtered at Y'shtola]
+R4    Yawgmoth attacks Y'shtola with 2 creature(s): 2 damage (life now 36)
+R4  --- Urza turn 4: life 39, 5 cards in hand, 3 lands
+R4    Urza plays Island
+R4        [Urza decides: Chrome Mox 93%, stop (hold mana) 5%, Ponder 2%, Urza, Lord High Artificer 0% -> Chrome Mox [search]]
+R4    Urza casts Chrome Mox
+R4      Chrome Mox imprints Fierce Guardianship
+R4        [Urza decides: Urza, Lord High Artificer 98%, The One Ring 2%, Ponder 0%, stop 0% -> Urza, Lord High Artificer [search]]
+R4    Urza casts Urza, Lord High Artificer
+R4        [Urza decides: The One Ring 84%, Ponder 16%, stop 0% -> The One Ring [search]]
+R4    Urza casts The One Ring
+R4      The One Ring cast in Main1 step of Urza's turn (life 39)
+R4      Urza gains protection from everything until their next turn
+R4        [Urza decides: Ponder 95%, The One Ring 5%, stop 0% -> Ponder [search]]
+R4    Urza casts Ponder
+R4  --- Miirym turn 4: life 38, 4 cards in hand, 4 lands
+R4    Miirym plays Rootbound Crag
+R4        [Miirym decides: Miirym, Sentinel Wyrm 72%, Ancient Copper Dragon 28%, stop 0% -> Miirym, Sentinel Wyrm [search]]
+R4    Miirym casts Miirym, Sentinel Wyrm
+R4        [Miirym attack plan by search: filtered at Yawgmoth]
+R4    Miirym attacks Yawgmoth with 1 creature(s): 1 damage (life now 34)
+R5  --- Y'shtola turn 5: life 37, 6 cards in hand, 4 lands
+R5    Y'shtola plays Plains
+R5        [Y'shtola decides: Bound in Silence -> Yawgmoth, Thran Physician 67%, Bound in Silence 28%, Debt to the Deathless (X = 4) 2%, Champion's Helm 1% -> Bound in Silence -> Yawgmoth, Thran Physician [search]]
+R5    Y'shtola casts Bound in Silence -> Yawgmoth, Thran Physician (Yawgmoth)
+R5      Yawgmoth, Thran Physician (Yawgmoth) is removed: pacify
+R5      Bound in Silence enchants Yawgmoth, Thran Physician (Yawgmoth)
+R5  --- Yawgmoth turn 5: life 34, 4 cards in hand, 4 lands
+R5    Yawgmoth plays Cabal Stronghold
+R5        [Yawgmoth decides: K'rrik, Son of Yawgmoth 60%, Skullclamp 20%, Sheoldred, the Apocalypse 19%, stop 0% -> K'rrik, Son of Yawgmoth [search]]
+R5    Yawgmoth casts K'rrik, Son of Yawgmoth
+R5        [Yawgmoth attack plan by search: filtered at Y'shtola]
+R5    Yawgmoth attacks Y'shtola with 3 creature(s): 3 damage (life now 39)
+R5  --- Urza turn 5: life 39, 2 cards in hand, 4 lands
+R5    Urza no longer has protection from everything
+R5    Urza plays Urza's Saga
+R5        [Urza decides: unblockable (Manifold Key) 46%, The One Ring 46%, Urza: free card 9%, stop 0% -> unblockable (Manifold Key) [search]]
+R5      Token can't be blocked this turn (Manifold Key)
+R5        [Urza decides: The One Ring 84%, Urza: free card 16%, stop 0% -> The One Ring [search]]
+R5    Urza taps The One Ring: burden 1, life 39, Main1 step of Urza's turn
+R5        [Urza decides: Mana Vault 100%, Urza: free card 0%, stop 0% -> Mana Vault [search]]
+R5    Urza casts Mana Vault
+R5        [Urza decides: Urza: free card 99%, stop 1% -> Urza: free card [search]]
+R5    Urza: Uthros, Titanic Godcore off the top, free
+R5        [Urza attack plan by search: all at Miirym]
+R5    Urza attacks Miirym with 1 creature(s): 0 damage (life now 38)
+R5  --- Miirym turn 5: life 38, 4 cards in hand, 5 lands
+R5        [Miirym decides: stop (hold mana) 100%, Ancient Copper Dragon 0% -> stop (hold mana) [search]]
+R5        [Miirym attack plan by search: none at Y'shtola]
+R5        [Miirym decides: stop (hold mana) 100%, Ancient Copper Dragon 0% -> stop (hold mana) [search]]
+R6  --- Y'shtola turn 6: life 39, 5 cards in hand, 5 lands
+R6    Y'shtola plays Urza's Cave
+R6        [Y'shtola decides: Debt to the Deathless (X = 6) 79%, Champion's Helm 9%, Teleportation Circle 9%, Urza's Cave: fetch a land 2% -> Debt to the Deathless (X = 6) [search]]
+R6    Y'shtola casts Debt to the Deathless
+R6      Debt to the Deathless (X = 6): each opponent loses 12 life; Y'shtola gains 36
+R6  --- Yawgmoth turn 6: life 17, 3 cards in hand, 5 lands
+R6        [Yawgmoth decides: Sheoldred, the Apocalypse 52%, Skullclamp 48%, stop 0% -> Sheoldred, the Apocalypse [search]]
+R6    Yawgmoth casts Sheoldred, the Apocalypse
+R6      K'rrik grows (a black spell was cast)
+R6        [Yawgmoth decides: Skullclamp 100%, stop 0% -> Skullclamp [search]]
+R6    Yawgmoth casts Skullclamp
+R6        [Yawgmoth decides: Yawgmoth: sacrifice Token 100%, stop 0% -> Yawgmoth: sacrifice Token [search]]
+R6    Yawgmoth plays Nykthos, Shrine to Nyx
+R6        [Yawgmoth attack plan by search: filtered at Miirym]
+R6    Yawgmoth attacks Miirym with 3 creature(s): 2 damage (life now 24)
+R6    Yawgmoth attacks Urza with 1 creature(s): 3 damage (life now 24)
+R6        [Yawgmoth decides: Skullclamp 94%, Yawgmoth: sacrifice Token 4%, Yawgmoth: proliferate 2%, stop 0% -> Skullclamp [search]]
+R6    Yawgmoth Skullclamps Token
+R6        [Yawgmoth decides: Ophiomancer 78%, Skullclamp 21%, Entomb (Mikaeus, the Unhallowed) 1%, Yawgmoth: proliferate 0% -> Ophiomancer [search]]
+R6    Yawgmoth casts Ophiomancer
+R6      K'rrik grows (a black spell was cast)
+R6        [Yawgmoth decides: Skullclamp 95%, Entomb (Mikaeus, the Unhallowed) 3%, Yawgmoth: proliferate 2%, stop 0% -> Skullclamp [search]]
+R6    Yawgmoth Skullclamps Token
+R6        [Yawgmoth decides: Dauthi Voidwalker 86%, Skullclamp 13%, Entomb (Mikaeus, the Unhallowed) 0%, stop 0% -> Dauthi Voidwalker [search]]
+R6    Yawgmoth casts Dauthi Voidwalker
+R6      K'rrik grows (a black spell was cast)
+R6        [Yawgmoth decides: Entomb (Mikaeus, the Unhallowed) 100%, stop 0% -> Entomb (Mikaeus, the Unhallowed) [search]]
+R6    Yawgmoth casts Entomb
+R6      K'rrik grows (a black spell was cast)
+R6      Yawgmoth puts Mikaeus, the Unhallowed into the graveyard (Entomb)
+R6        [Yawgmoth decides: Reanimate -> Mikaeus, the Unhallowed 100%, stop 0% -> Reanimate -> Mikaeus, the Unhallowed [search]]
+R6    Yawgmoth casts Reanimate
+R6      K'rrik grows (a black spell was cast)
+R6        [Yawgmoth decides: combo: Yawgmoth + undying loop + a death payoff 100%, Yawgmoth: sacrifice Token 0%, stop 0% -> combo: Yawgmoth + undying loop + a death payoff [search]]
+R6    Yawgmoth goes for Yawgmoth + undying loop + a death payoff
+R6      Yawgmoth loop: opposing creatures die, Yawgmoth draws
+R6        [Yawgmoth decides: Imperial Seal 95%, Culling the Weak 3%, Deathgreeter 2%, stop 0% -> Imperial Seal [search]]
+R6    Yawgmoth casts Imperial Seal
+R6      K'rrik grows (a black spell was cast)
+R6      Yawgmoth puts Blood Artist on top of their library
+R6        [Yawgmoth decides: Culling the Weak 57%, Deathgreeter 43%, stop 0% -> Culling the Weak [search]]
+R6    Yawgmoth casts Culling the Weak
+R6      K'rrik grows (a black spell was cast)
+R6        [Yawgmoth decides: Feed the Swarm -> Exquisite Blood 71%, Diabolic Intent 20%, Hancock, Ghoulish Mayor 8%, Jet Medallion 1% -> Feed the Swarm -> Exquisite Blood [search]]
+R6    Yawgmoth casts Feed the Swarm -> Exquisite Blood (Y'shtola)
+R6      K'rrik grows (a black spell was cast)
+R6      Exquisite Blood (Y'shtola) is removed: destroy
+R6        [Yawgmoth decides: Diabolic Intent 69%, Hancock, Ghoulish Mayor 27%, Jet Medallion 3%, Deathgreeter 2% -> Diabolic Intent [search]]
+R6    Yawgmoth casts Diabolic Intent
+R6      K'rrik grows (a black spell was cast)
+R6      Yawgmoth tutors Geralf's Messenger into their hand
+R6        [Yawgmoth decides: Geralf's Messenger 99%, Deathgreeter 1%, stop 0% -> Geralf's Messenger [search]]
+R6    Yawgmoth casts Geralf's Messenger
+R6      K'rrik grows (a black spell was cast)
+R6        [Yawgmoth decides: combo: Yawgmoth + undying loop + a death payoff 100%, Deathgreeter 0%, stop 0% -> combo: Yawgmoth + undying loop + a death payoff [search]]
+R6    Yawgmoth goes for Yawgmoth + undying loop + a death payoff
+R6  *** Y'shtola is eliminated (life 137) by Yawgmoth
+R6  *** Urza is eliminated (life 22) by Yawgmoth
+R6  *** Miirym is eliminated (life 24) by Yawgmoth
+R6  *** Yawgmoth wins by combo
+Winner: Yawgmoth (combo)

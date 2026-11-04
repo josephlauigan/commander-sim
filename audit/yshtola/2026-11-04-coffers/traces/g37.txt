@@ -1,0 +1,339 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 37 (seed 500037): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Miirym, Zur the Enchanter, Urza, Y'shtola
+R1  --- Miirym turn 1: life 40, 7 cards in hand, 0 lands
+R1    Miirym plays Haven of the Spirit Dragon
+R1  --- Zur the Enchanter turn 1: life 40, 7 cards in hand, 0 lands
+R1    Zur the Enchanter plays Underground River
+R1  --- Urza turn 1: life 40, 7 cards in hand, 0 lands
+R1    Urza plays Island
+R1        [Urza decides: Ornithopter 100%, stop 0% -> Ornithopter [search]]
+R1    Urza casts Ornithopter
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Scrubland
+R1        [Y'shtola decides: Sol Ring 100%, stop 0% -> Sol Ring [search]]
+R1    Y'shtola casts Sol Ring
+R1        [Y'shtola decides: Arcane Signet 100%, stop 0% -> Arcane Signet [search]]
+R1    Y'shtola casts Arcane Signet
+R2  --- Miirym turn 2: life 40, 7 cards in hand, 1 lands
+R2    Miirym plays Forest
+R2        [Miirym decides: Arcane Signet 100%, stop (hold mana) 0% -> Arcane Signet [search]]
+R2    Miirym casts Arcane Signet
+R2  --- Zur the Enchanter turn 2: life 40, 7 cards in hand, 1 lands
+R2    Zur the Enchanter plays Plains
+R2        [Zur the Enchanter decides: Drannith Magistrate 44%, Orzhov Signet 43%, Rest in Peace 13%, stop 0% -> Drannith Magistrate [search]]
+R2    Zur the Enchanter casts Drannith Magistrate
+R2  --- Urza turn 2: life 40, 6 cards in hand, 1 lands
+R2    Urza plays Island
+R2        [Urza decides: Arcane Signet 100%, stop 0% -> Arcane Signet [search]]
+R2    Urza casts Arcane Signet
+R2      Miirym casts An Offer You Can't Refuse at Arcane Signet
+R2      Miirym counters Arcane Signet with An Offer You Can't Refuse
+R2  --- Y'shtola turn 2: life 40, 5 cards in hand, 1 lands
+R2    Y'shtola plays Island
+R2        [Y'shtola decides: Skyclave Apparition 78%, Rhystic Study 19%, Go for the Throat -> Drannith Magistrate 3%, Restoration Angel 0% -> Restoration Angel [search]]
+R2    Y'shtola casts Restoration Angel
+R3  --- Miirym turn 3: life 40, 5 cards in hand, 2 lands
+R3    Miirym plays Rockfall Vale
+R3        [Miirym decides: Dragonspeaker Shaman 49%, Carnelian Orb of Dragonkind 49%, Rhythm of the Wild 2%, stop (hold mana) 0% -> Carnelian Orb of Dragonkind [search]]
+R3    Miirym casts Carnelian Orb of Dragonkind
+R3  --- Zur the Enchanter turn 3: life 40, 6 cards in hand, 2 lands
+R3    Zur the Enchanter pays 2 life for an untapped Watery Grave
+R3    Zur the Enchanter plays Watery Grave
+R3        [Zur the Enchanter decides: Orzhov Signet 77%, Rest in Peace 23%, stop 0% -> Orzhov Signet [search]]
+R3    Zur the Enchanter casts Orzhov Signet
+R3        [Zur the Enchanter decides: Rest in Peace 100%, stop 0% -> Rest in Peace [search]]
+R3    Zur the Enchanter casts Rest in Peace
+R3      Miirym's graveyard is exiled by Rest in Peace
+R3      Urza's graveyard is exiled by Rest in Peace
+R3        [Zur the Enchanter attack plan by search: filtered at Miirym]
+R3    Zur the Enchanter attacks Miirym with 1 creature(s): 1 damage (life now 39)
+R3  --- Urza turn 3: life 40, 5 cards in hand, 2 lands
+R3    Urza plays Academy Ruins
+R3        [Urza decides: Foundry Inspector 49%, Displacer Kitten 30%, Trinket Mage 20%, stop 0% -> Foundry Inspector [search]]
+R3    Urza casts Foundry Inspector
+R3  --- Y'shtola turn 3: life 40, 4 cards in hand, 2 lands
+R3    Y'shtola plays Plains
+R3        [Y'shtola decides: Skyclave Apparition 78%, Rhystic Study 16%, Go for the Throat -> Drannith Magistrate 3%, Austere Command 2% -> Skyclave Apparition [search]]
+R3    Y'shtola casts Skyclave Apparition
+R3      Drannith Magistrate (Zur the Enchanter) is removed: exile
+R3        [Y'shtola decides: Rhystic Study 100%, stop 0% -> Rhystic Study [search]]
+R3    Y'shtola casts Rhystic Study
+R3        [Y'shtola attack plan by search: filtered at Zur the Enchanter]
+R3    Y'shtola attacks Zur the Enchanter with 1 creature(s): 3 damage (life now 35)
+R4  --- Miirym turn 4: life 39, 4 cards in hand, 3 lands
+R4    Miirym plays Mountain
+R4        [Miirym decides: Dragonspeaker Shaman 91%, Miirym, Sentinel Wyrm 6%, Rhythm of the Wild 3%, Twinflame Tyrant 0% -> Dragonspeaker Shaman [search]]
+R4    Miirym casts Dragonspeaker Shaman
+R4        [Miirym decides: Rhythm of the Wild 77%, Twinflame Tyrant 15%, stop (hold mana) 8% -> Rhythm of the Wild [search]]
+R4    Miirym casts Rhythm of the Wild
+R4  --- Zur the Enchanter turn 4: life 35, 4 cards in hand, 3 lands
+R4    Zur the Enchanter plays Swamp
+R4        [Zur the Enchanter decides: Zur the Enchanter 100%, stop 0% -> Zur the Enchanter [search]]
+R4    Zur the Enchanter casts Zur the Enchanter
+R4  --- Urza turn 4: life 40, 4 cards in hand, 3 lands
+R4    Urza plays Island
+R4        [Urza decides: Urza, Lord High Artificer 87%, Displacer Kitten 5%, Everflowing Chalice x3 4%, Trinket Mage 4% -> Everflowing Chalice x3 [search]]
+R4    Urza casts Everflowing Chalice kicked 3 times
+R4        [Urza attack plan by search: filtered at Zur the Enchanter]
+R4    Urza attacks Zur the Enchanter with 1 creature(s): 3 damage (life now 31)
+R4  --- Y'shtola turn 4: life 40, 6 cards in hand, 3 lands
+R4    Y'shtola plays Urza's Cave
+R4        [Y'shtola decides: Go for the Throat -> Zur the Enchanter 79%, Y'shtola, Night's Blessed 21%, Prayer of Binding 0%, Orcish Bowmasters 0% -> Go for the Throat -> Zur the Enchanter [search]]
+R4    Y'shtola casts Go for the Throat -> Zur the Enchanter (Zur the Enchanter)
+R4      Zur the Enchanter (Zur the Enchanter) is removed: destroy
+R4        [Y'shtola decides: Y'shtola, Night's Blessed 99%, Prayer of Binding 1%, Orcish Bowmasters 0%, stop 0% -> Y'shtola, Night's Blessed [search]]
+R4    Y'shtola casts Y'shtola, Night's Blessed
+R4        [Y'shtola attack plan by search: filtered at Miirym]
+R4      Zur the Enchanter gets a 2/2 Illusion
+R4    Y'shtola attacks Miirym with 2 creature(s): 3 damage (life now 36)
+R5  --- Miirym turn 5: life 36, 2 cards in hand, 4 lands
+R5    Miirym plays Forest
+R5        [Miirym decides: Miirym, Sentinel Wyrm 94%, Twinflame Tyrant 6%, stop (hold mana) 0% -> Miirym, Sentinel Wyrm [search]]
+R5    Miirym casts Miirym, Sentinel Wyrm
+R5      Miirym, Sentinel Wyrm has riot: haste
+R5        [Miirym attack plan by search: none at Zur the Enchanter]
+R5  --- Zur the Enchanter turn 5: life 31, 4 cards in hand, 4 lands
+R5    Zur the Enchanter plays Raffine's Tower
+R5        [Zur the Enchanter decides: Enlightened Tutor 100%, stop 0% -> Enlightened Tutor [search]]
+R5    Zur the Enchanter casts Enlightened Tutor
+R5      Zur the Enchanter reveals Heliod, Sun-Crowned and puts it on top of their library
+R5        [Zur the Enchanter attack plan by search: none at Miirym]
+R5  --- Urza turn 5: life 40, 3 cards in hand, 4 lands
+R5        [Urza decides: Urza, Lord High Artificer 85%, Displacer Kitten 6%, Trinket Mage 6%, Whir of Invention 3% -> Urza, Lord High Artificer [search]]
+R5    Urza casts Urza, Lord High Artificer
+R5        [Urza decides: Displacer Kitten 39%, Trinket Mage 39%, Whir of Invention 23%, Urza: free card 0% -> Displacer Kitten [search]]
+R5    Urza casts Displacer Kitten
+R5  --- Y'shtola turn 5: life 40, 6 cards in hand, 4 lands
+R5    Y'shtola plays Plains
+R5        [Y'shtola decides: Coalition Relic 90%, Prayer of Binding 3%, Teleportation Circle 3%, Austere Command 3% -> Coalition Relic [search]]
+R5    Y'shtola casts Coalition Relic
+R5      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R5        [Y'shtola decides: Prayer of Binding 35%, Teleportation Circle 35%, Austere Command 30%, Orcish Bowmasters 1% -> Prayer of Binding [search]]
+R5    Y'shtola casts Prayer of Binding
+R5      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R5      Urza, Lord High Artificer (Urza) is removed: exile
+R5        [Y'shtola decides: Orcish Bowmasters 98%, stop 2% -> Orcish Bowmasters [search]]
+R5    Y'shtola casts Orcish Bowmasters
+R5        [Y'shtola attack plan by search: none at Miirym]
+R6  --- Miirym turn 6: life 31, 2 cards in hand, 5 lands
+R6        [Miirym decides: Atarka, World Render 91%, Twinflame Tyrant 8%, stop (hold mana) 1% -> Atarka, World Render [search]]
+R6    Miirym casts Atarka, World Render
+R6      Atarka, World Render has riot: haste
+R6      Atarka, World Render has riot: haste
+R6        [Miirym attack plan by search: none at Zur the Enchanter]
+R6    Zur the Enchanter casts Mystical Tutor
+R6      Zur the Enchanter reveals Cyclonic Rift and puts it on top of their library
+R6        [Zur the Enchanter end of turn: Mystical Tutor 100%, pass 0% -> Mystical Tutor]
+R6  --- Zur the Enchanter turn 6: life 26, 2 cards in hand, 5 lands
+R6        [Zur the Enchanter decides: Cyclonic Rift -> Miirym, Sentinel Wyrm 85%, stop (hold mana) 15%, Zur the Enchanter 0% -> Cyclonic Rift -> Miirym, Sentinel Wyrm [search]]
+R6    Zur the Enchanter casts Cyclonic Rift -> Atarka, World Render (Miirym)
+R6        [Miirym holds its protection by search]
+R6      Atarka, World Render (Miirym) is removed: bounce
+R6        [Zur the Enchanter attack plan by search: none at Miirym]
+R6  --- Urza turn 6: life 36, 3 cards in hand, 4 lands
+R6        [Urza decides: Urza, Lord High Artificer 57%, Trinket Mage 26%, Whir of Invention 15%, Manifold Key 1% -> Urza, Lord High Artificer [search]]
+R6    Urza casts Urza, Lord High Artificer
+R6        [Urza decides: Trinket Mage 95%, Manifold Key 5%, stop 0% -> Trinket Mage [search]]
+R6    Urza casts Trinket Mage
+R6      Urza reveals Isochron Scepter and puts it into their hand
+R6        [Urza decides: Manifold Key 100%, stop 0% -> Manifold Key [search]]
+R6    Urza casts Manifold Key
+R6      Displacer Kitten flickers Urza, Lord High Artificer
+R6      Y'shtola casts Force of Will at Manifold Key
+R6      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R6      Y'shtola counters Manifold Key with Force of Will
+R6  --- Y'shtola turn 6: life 47, 4 cards in hand, 5 lands
+R6    Y'shtola plays Polluted Delta
+R6      cracks Polluted Delta for Watery Grave
+R6        [Y'shtola decides: Austere Command 82%, Consecrated Sphinx 13%, Bribery 4%, Teleportation Circle 1% -> Austere Command [search]]
+R6    Y'shtola casts Austere Command
+R6      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R6      board wipe resolves (austere2)
+R6        modes: ["ge4", "le3"]
+R6        [Miirym holds its wipe protection by search]
+R6        Miirym, Sentinel Wyrm (Miirym) is removed by the wipe (austere2)
+R6        Atarka, World Render (Miirym) is removed by the wipe (austere2)
+R6        Token (Zur the Enchanter) is removed by the wipe (austere2)
+R6        Ornithopter (Urza) is removed by the wipe (austere2)
+R6        Foundry Inspector (Urza) is removed by the wipe (austere2)
+R6        Token (Urza) is removed by the wipe (austere2)
+R6        Displacer Kitten (Urza) is removed by the wipe (austere2)
+R6        Token (Urza) is removed by the wipe (austere2)
+R6        Trinket Mage (Urza) is removed by the wipe (austere2)
+R6        Urza, Lord High Artificer (Urza) is removed by the wipe (austere2)
+R6        Token (Urza) is removed by the wipe (austere2)
+R6        Restoration Angel (Y'shtola) is removed by the wipe (austere2)
+R6        Y'shtola, Night's Blessed (Y'shtola) is removed by the wipe (austere2)
+R6        Orcish Bowmasters (Y'shtola) is removed by the wipe (austere2)
+R6        Orc Army (Y'shtola) is removed by the wipe (austere2)
+R6        [Y'shtola decides: Teleportation Circle 100%, stop 0% -> Teleportation Circle [search]]
+R6    Y'shtola casts Teleportation Circle
+R6      Coalition Relic is blinked
+R7  --- Miirym turn 7: life 27, 2 cards in hand, 5 lands
+R7        [Miirym decides: Twinflame Tyrant 92%, stop (hold mana) 8% -> Twinflame Tyrant [search]]
+R7    Miirym casts Twinflame Tyrant
+R7      Twinflame Tyrant has riot: haste
+R7        [Miirym attacks: Y'shtola 99%, Zur the Enchanter 1%, Urza 0% -> Y'shtola]
+R7    Miirym attacks Y'shtola with 1 creature(s): 3 damage (life now 42)
+R7  --- Zur the Enchanter turn 7: life 21, 2 cards in hand, 5 lands
+R7        [Zur the Enchanter decides: Zur the Enchanter 85%, stop (hold mana) 15% -> Zur the Enchanter [search]]
+R7    Zur the Enchanter casts Zur the Enchanter
+R7  --- Urza turn 7: life 32, 3 cards in hand, 4 lands
+R7        [Urza decides: Whir of Invention 50%, Reshape 50%, stop 0% -> Whir of Invention [search]]
+R7    Urza casts Whir of Invention
+R7  --- Y'shtola turn 7: life 42, 4 cards in hand, 6 lands
+R7    Y'shtola plays Serra's Sanctum
+R7        [Y'shtola decides: Consecrated Sphinx 48%, Y'shtola, Night's Blessed 43%, Bribery 6%, Smothering Tithe 3% -> Consecrated Sphinx [search]]
+R7    Y'shtola casts Consecrated Sphinx
+R7        [Y'shtola decides: Bribery 57%, Smothering Tithe 35%, Read the Bones 8%, stop 0% -> Bribery [search]]
+R7    Y'shtola casts Bribery
+R7      Bribery: Y'shtola takes Earthquake Dragon from Miirym's library
+R7      Coalition Relic is blinked
+R8  --- Miirym turn 8: life 27, 2 cards in hand, 5 lands
+R8        [Miirym decides: Balefire Dragon 87%, stop (hold mana) 13% -> Balefire Dragon [search]]
+R8    Miirym casts Balefire Dragon
+R8      Balefire Dragon has riot: haste
+R8        [Miirym attack plan by search: all at Y'shtola]
+R8    Miirym attacks Y'shtola with 2 creature(s): 6 damage (life now 30)
+R8  --- Zur the Enchanter turn 8: life 20, 3 cards in hand, 5 lands
+R8        [Zur the Enchanter decides: Phyrexian Unlife 60%, Ethereal Armor 20%, stop (hold mana) 20% -> Phyrexian Unlife [search]]
+R8    Zur the Enchanter casts Phyrexian Unlife
+R8        [Zur the Enchanter decides: Ethereal Armor 50%, stop (hold mana) 50% -> Ethereal Armor [search]]
+R8    Zur the Enchanter casts Ethereal Armor
+R8      Ethereal Armor enchants Zur the Enchanter
+R8        [Zur the Enchanter attack plan by search: filtered at Urza]
+R8      Zur fetches Necropotence
+R8    Zur the Enchanter attacks Urza with 1 creature(s): 5 damage (life now 27)
+R8    Zur the Enchanter pays 4 life to Necropotence
+R8  --- Urza turn 8: life 27, 3 cards in hand, 4 lands
+R8        [Urza decides: Hullbreaker Horror 66%, Reshape 34%, stop 0% -> Hullbreaker Horror [search]]
+R8    Urza casts Hullbreaker Horror
+R8  --- Y'shtola turn 8: life 30, 8 cards in hand, 7 lands
+R8    Y'shtola plays Swamp
+R8        [Y'shtola decides: Your Fate Ends Here -> Zur the Enchanter 50%, Anguished Unmaking -> Zur the Enchanter 50%, Y'shtola, Night's Blessed 0%, Your Fate Ends Here 0% -> Your Fate Ends Here -> Zur the Enchanter [search]]
+R8    Y'shtola casts Your Fate Ends Here -> Zur the Enchanter (Zur the Enchanter)
+R8      Zur the Enchanter (Zur the Enchanter) is removed: destroy
+R8        [Y'shtola decides: Y'shtola, Night's Blessed 54%, Anguished Unmaking -> Hullbreaker Horror 35%, Smothering Tithe 9%, Read the Bones 2% -> Y'shtola, Night's Blessed [search]]
+R8    Y'shtola casts Y'shtola, Night's Blessed
+R8      Zur the Enchanter casts Mana Drain at Y'shtola, Night's Blessed
+R8      Zur the Enchanter counters Y'shtola, Night's Blessed with Mana Drain
+R8        [Y'shtola decides: Anguished Unmaking -> Hullbreaker Horror 92%, Read the Bones 5%, Expedition Map 3%, stop 0% -> Anguished Unmaking -> Hullbreaker Horror [search]]
+R8    Y'shtola casts Anguished Unmaking -> Balefire Dragon (Miirym)
+R8        [Miirym holds its protection by search]
+R8      Balefire Dragon (Miirym) is removed: exile
+R8        [Y'shtola attack plan by search: none at Miirym]
+R8      Coalition Relic is blinked
+R9  --- Miirym turn 9: life 27, 2 cards in hand, 5 lands
+R9        [Miirym decides: Savage Ventmaw 83%, stop (hold mana) 17% -> Savage Ventmaw [search]]
+R9    Miirym casts Savage Ventmaw
+R9      Savage Ventmaw has riot: haste
+R9        [Miirym attack plan by search: filtered at Urza]
+R9    Miirym attacks Urza with 1 creature(s): 4 damage (life now 23)
+R9  --- Zur the Enchanter turn 9: life 15, 5 cards in hand, 5 lands
+R9        [Zur the Enchanter decides: Idyllic Tutor 53%, Toxic Deluge 46%, stop (hold mana) 0%, Zur the Enchanter 0% -> Idyllic Tutor [search]]
+R9    Zur the Enchanter casts Idyllic Tutor
+R9      Zur the Enchanter reveals Heliod, Sun-Crowned and puts it into their hand
+R9        [Zur the Enchanter decides: Toxic Deluge 94%, Heliod, Sun-Crowned 5%, stop (hold mana) 1%, Fellwar Stone 0% -> Toxic Deluge [search]]
+R9    Zur the Enchanter casts Toxic Deluge
+R9      board wipe resolves (minus)
+R9        Savage Ventmaw (Miirym) is removed by the wipe (minus)
+R9        Hullbreaker Horror (Urza) is removed by the wipe (minus)
+R9        Earthquake Dragon (Y'shtola) is removed by the wipe (minus)
+R9        [Zur the Enchanter decides: stop (hold mana) 70%, Heliod, Sun-Crowned 29%, Fellwar Stone 1% -> Heliod, Sun-Crowned [search]]
+R9    Zur the Enchanter casts Heliod, Sun-Crowned
+R9  --- Urza turn 9: life 23, 3 cards in hand, 4 lands
+R9    Urza plays Island
+R9        [Urza decides: Reshape 66%, Urza, Lord High Artificer 34%, stop 0% -> Reshape [search]]
+R9    Urza casts Reshape
+R9        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R9    Urza activates Basalt Monolith
+R9        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R9    Urza activates Basalt Monolith
+R9        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R9    Urza activates Basalt Monolith
+R9  --- Y'shtola turn 9: life 27, 10 cards in hand, 8 lands
+R9    Y'shtola plays Swamp
+R9        [Y'shtola decides: Y'shtola, Night's Blessed 53%, Grand Arbiter Augustin IV 18%, Smothering Tithe 11%, Diabolic Tutor 9% -> Y'shtola, Night's Blessed [search]]
+R9    Y'shtola casts Y'shtola, Night's Blessed
+R9        [Y'shtola decides: Smothering Tithe 35%, Diabolic Tutor 29%, Grand Arbiter Augustin IV 18%, Polluted Bonds 7% -> Smothering Tithe [search]]
+R9    Y'shtola casts Smothering Tithe
+R9      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R9        [Y'shtola decides: Expedition Map 100%, stop 0% -> Expedition Map [search]]
+R9    Y'shtola casts Expedition Map
+R9      Coalition Relic is blinked
+R10 --- Miirym turn 10: life 25, 2 cards in hand, 5 lands
+R10   Miirym plays Forest
+R10 --- Zur the Enchanter turn 10: life 3, 3 cards in hand, 5 lands
+R10       [Zur the Enchanter decides: stop (hold mana) 89%, Fellwar Stone 11% -> stop (hold mana) [search]]
+R10       [Zur the Enchanter decides: stop (hold mana) 89%, Fellwar Stone 11% -> stop (hold mana) [search]]
+R10   Urza activates Basalt Monolith
+R10       [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R10   Urza activates Basalt Monolith
+R10       [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R10   Urza activates Basalt Monolith
+R10       [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R10 --- Urza turn 10: life 21, 2 cards in hand, 5 lands
+R10 --- Y'shtola turn 10: life 29, 7 cards in hand, 9 lands
+R10   Y'shtola plays Marsh Flats
+R10     cracks Marsh Flats for Tundra
+R10       [Y'shtola decides: Diabolic Tutor 40%, Cast Away Doubt 26%, Grand Arbiter Augustin IV 12%, Polluted Bonds 10% -> Diabolic Tutor [search]]
+R10   Y'shtola casts Diabolic Tutor
+R10     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R10     Zur the Enchanter casts Fierce Guardianship at Diabolic Tutor
+R10     Zur the Enchanter counters Diabolic Tutor with Fierce Guardianship
+R10       [Y'shtola decides: Cast Away Doubt 46%, Grand Arbiter Augustin IV 21%, Polluted Bonds 15%, Read the Bones 12% -> Cast Away Doubt [search]]
+R10   Y'shtola casts Cast Away Doubt
+R10     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R10     Zur the Enchanter gets 2 poison counters (Phyrexian Unlife)
+R10     Zur the Enchanter gets 2 poison counters (Phyrexian Unlife)
+R10       [Y'shtola decides: Grand Arbiter Augustin IV 29%, Mystical Tutor 26%, Polluted Bonds 21%, Read the Bones 17% -> Read the Bones [search]]
+R10   Y'shtola casts Read the Bones
+R10     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R10     Zur the Enchanter gets 2 poison counters (Phyrexian Unlife)
+R10       [Y'shtola decides: Grand Arbiter Augustin IV 76%, Sheoldred, the Apocalypse 21%, Expedition Map: find a land 3%, stop 0% -> Grand Arbiter Augustin IV [search]]
+R10   Y'shtola casts Grand Arbiter Augustin IV
+R10       [Y'shtola attack plan by search: filtered at Miirym]
+R10   Y'shtola attacks Miirym with 1 creature(s): 2 damage (life now 15)
+R10     Coalition Relic is blinked
+R11 --- Miirym turn 11: life 15, 2 cards in hand, 6 lands
+R11   Miirym plays Frontier Bivouac
+R11 --- Zur the Enchanter turn 11: life 0, 2 cards in hand, 5 lands
+R11       [Zur the Enchanter decides: Fellwar Stone 100%, stop 0% -> Fellwar Stone [search]]
+R11   Zur the Enchanter casts Fellwar Stone
+R11   Urza activates Basalt Monolith
+R11       [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R11 --- Urza turn 11: life 13, 3 cards in hand, 5 lands
+R11       [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R11   Urza activates Basalt Monolith
+R11       [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R11   Urza activates Basalt Monolith
+R11   Y'shtola casts Mystical Tutor
+R11     Y'shtola reveals Debt to the Deathless and puts it on top of their library
+R11       [Y'shtola end of turn: Mystical Tutor 100%, pass 0% -> Mystical Tutor]
+R11 --- Y'shtola turn 11: life 32, 6 cards in hand, 10 lands
+R11   Y'shtola plays Swamp
+R11       [Y'shtola decides: Debt to the Deathless (X = 11) 100%, Sanguine Bond 0%, Polluted Bonds 0%, Sheoldred, the Apocalypse 0% -> Debt to the Deathless (X = 11) [search]]
+R11   Y'shtola casts Debt to the Deathless
+R11     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R11     Zur the Enchanter gets 2 poison counters (Phyrexian Unlife)
+R11     Debt to the Deathless (X = 11): each opponent loses 22 life; Y'shtola gains 66
+R11 *** Miirym is eliminated (life -9) by Y'shtola
+R11 *** Urza is eliminated (life -11) by Y'shtola
+R11       [Y'shtola attack plan by search: filtered at Zur the Enchanter]
+R11     Zur the Enchanter gets 2 poison counters (Phyrexian Unlife)
+R11     Zur the Enchanter gets 2 poison counters (Phyrexian Unlife)
+R11 *** Zur the Enchanter is eliminated (life -22) by Y'shtola
+R11   Y'shtola attacks Zur the Enchanter with 2 creature(s): 4 damage (life now -22)
+Winner: Y'shtola (damage)

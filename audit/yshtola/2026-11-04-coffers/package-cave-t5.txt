@@ -1,0 +1,160 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  yshtola                     100 cards: Full 95, Full-auto 5, Approximate 0, Partial 0, Unmodeled 0
+  yshtola (swapped)           100 cards: Full 95, Full-auto 5, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 430, Full-auto 34, Approximate 36, Partial 0, Unmodeled 0
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by yshtola's AI?
+  AI: Demonic Tutor: priority 72 (generic)
+  AI: Exquisite Blood: priority 102 (generic)
+  WARNING AI: Torment of Hailfire: priority 0 and no response path: the AI may never cast it
+  AI: Expedition Map: priority 43 (generic)
+  AI: Urza's Cave: land (played, never cast)
+200 games (preflight dry run: swapped list, 200 per profile on t5), adaptive AI, 24 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 5 (High B4)
+  dry run: Demonic Tutor: drawn in 26.0% of games (52), cast in 78.8% of those (41)
+  dry run: Exquisite Blood: drawn in 23.0% of games (46), cast in 76.1% of those (35)
+  dry run: Torment of Hailfire: drawn in 24.5% of games (49), cast in 53.1% of those (26)
+  dry run: Expedition Map: drawn in 25.0% of games (50), cast in 68.0% of those (34)
+  (the AI-rule warning above did not show up in the dry run; check the card's drawn / cast numbers after the main run)
+
+4,200 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 24 worker threads: about 9 minutes
+  progress 100.0%  18m45s elapsed, ~0m00s left
+Swaps: Deep Analysis -> Demonic Tutor; Prison Sentence -> Exquisite Blood; Chromatic Lantern -> Torment of Hailfire; Static Net -> Expedition Map; Island -> Urza's Cave
+
+=== Y'shtola vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  24.9% ->  26.1%  (delta +1.3 pts, noise ±2.4, paired)   n=2000
+               eliminated by (variant): Zur the Enchanter 12.9%  Kinnan 17.7%  Miirym 17.6%  Yawgmoth 11.1%  Urza 14.4%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (yshtola) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for yshtola: first drain from Y'shtola's cast trigger
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          24.9% ->  26.2%  +1.3pt   ±2.8 
+    Rounds survived (or game length)                   9.35 ->   9.07   -0.28  ±0.20*
+
+  Mana & consistency
+    Extra mulligans per game                           0.09 ->   0.09   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.48 ->   0.49   +0.01  ±0.05 
+    Mana available on your turn 4                      4.13 ->   4.09   -0.04  ±0.08 
+    Mana available on your turn 6                      6.06 ->   5.93   -0.13  ±0.12*
+
+  Speed
+    Games where the game plan came online             65.5% ->  61.0%  -4.5pt   ±3.0*
+    Turn the game plan came online                     6.30 ->   6.29   -0.01  ±0.16 
+    Turn the commander first resolved                  5.10 ->   5.17   +0.07  ±0.13 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            16.31 ->  14.97   -1.35  ±0.67*
+    Tutors resolved per game                           0.62 ->   0.73   +0.11  ±0.05*
+    Spells cast per game                              10.15 ->   9.43   -0.72  ±0.38*
+
+  Interaction
+    Counterspells cast                                 0.35 ->   0.32   -0.03  ±0.03 
+    Spot removal cast                                  1.47 ->   1.27   -0.20  ±0.07*
+    Board wipes cast                                   0.33 ->   0.33   -0.00  ±0.04 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.01 ->   0.01   -0.00  ±0.01 
+    Your key permanents removed by opponents           0.34 ->   0.32   -0.02  ±0.04 
+    Your spells countered                              0.92 ->   0.89   -0.04  ±0.07 
+
+  Threat & pressure
+    Damage dealt to opponents per game                34.39 ->  30.99   -3.40  ±2.13*
+      ...of which combat damage                        7.71 ->   6.89   -0.82  ±0.57*
+      ...of which magecraft / burn                     0.75 ->   0.71   -0.04  ±0.12 
+      ...of which drain triggers                      10.19 ->  10.23   +0.05  ±1.14 
+      ...of which other triggers                      15.75 ->  13.16   -2.59  ±1.00*
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    worse  - Rounds survived (or game length) (both profiles)
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Mana available on your turn 6 (both profiles)
+  Speed: how fast the deck does the thing it is built to do.
+    worse  - Games where the game plan came online (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+    better - Tutors resolved per game (both profiles)
+    worse  - Spells cast per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    worse  - Damage dealt to opponents per game (both profiles)
+    worse  -   ...of which combat damage (both profiles)
+    worse  -   ...of which other triggers (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Demonic Tutor                         23.4      77.6         5.5     22.4       39.1      0.00
+    Exquisite Blood                       22.4      68.2         7.7     31.8       62.7      0.02
+    Torment of Hailfire                   21.6      39.0         9.2     61.0       63.1      0.00
+    Expedition Map                        21.9      72.2         4.3     27.8       31.5      0.01
+    Urza's Cave                           24.3       0.0           -    100.0          -      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Deep Analysis                         22.8      29.4         9.1     70.6       56.7      0.00
+    Prison Sentence                       22.6      80.1         6.8     19.9       41.0      0.00
+    Chromatic Lantern                     24.1      57.8         5.6     42.2       37.3      0.00
+    Static Net                            23.4      75.5         7.5     24.5       41.8      0.01
+    Island                                81.5       0.0           -    100.0          -      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        24.9      26.1     +1.3
+    rounds survived                                   9.35      9.07    -0.28
+    eliminated, % of games                            75.0      73.8     -1.2
+    opponents it eliminated, per game                 0.70      0.73    +0.03
+    damage dealt, per game                            34.4      31.0     -3.4
+    plan: first drain from Y'shtola's cast trigger
+      plan online by turn 4, %                         8.8       7.9     -0.9
+      plan online by turn 6, %                        43.1      39.4     -3.8
+      plan online by turn 8, %                        57.4      53.4     -4.0
+      plan online by turn 12, %                       64.6      60.3     -4.3
+      plan online at all, %                           65.5      61.0     -4.5
+    commander resolved by turn 4, %                   37.5      35.1     -2.4
+    commander resolved by turn 6, %                   67.4      62.7     -4.7
+    commander removals, per game                      0.21      0.18    -0.03
+    lands on the battlefield, turn 4                  3.75      3.75    -0.00
+    lands on the battlefield, turn 8                  6.64      6.67    +0.03
+    mana available, turn 4                            4.13      4.09    -0.04
+    mana available, turn 8                            7.75      7.62    -0.13
+    cards in hand after the land drop, turn 4         6.05      6.01    -0.03
+    cards in hand after the land drop, turn 8         6.68      6.38    -0.30
+    wins by (current):  damage 99%, timeout 1%
+    wins by (swapped):  damage 72%, combo 27%, timeout 1%
+    eliminated by (current): Kinnan via combo 14.1%, Urza via combo 13.2%, Zur the Enchanter via combo 10.9%, Miirym via combat 9.3%
+    eliminated by (swapped): Kinnan via combo 13.9%, Urza via combo 13.5%, Zur the Enchanter via combo 10.6%, Miirym via combat 10.5%
+
+(1125s total)

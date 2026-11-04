@@ -1,0 +1,313 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 5 (seed 500005): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Miirym, Urza, Y'shtola, Zur the Enchanter
+R1  --- Miirym turn 1: life 40, 7 cards in hand, 0 lands
+R1    Miirym plays Path of Ancestry
+R1  --- Urza turn 1: life 40, 7 cards in hand, 0 lands
+R1    Urza plays Island
+R1        [Urza decides: Manifold Key 91%, Ornithopter 9%, stop 0% -> Manifold Key [search]]
+R1    Urza casts Manifold Key
+R1        [Urza decides: Ornithopter 100%, stop 0% -> Ornithopter [search]]
+R1    Urza casts Ornithopter
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Scrubland
+R1        [Y'shtola decides: Esper Sentinel 100%, stop 0% -> Esper Sentinel [search]]
+R1    Y'shtola casts Esper Sentinel
+R1  --- Zur the Enchanter turn 1: life 40, 6 cards in hand, 0 lands
+R1    Zur the Enchanter plays Raffine's Tower
+R2  --- Miirym turn 2: life 40, 7 cards in hand, 1 lands
+R2    Miirym plays Mountain
+R2  --- Urza turn 2: life 40, 5 cards in hand, 1 lands
+R2    Urza plays Island
+R2        [Urza decides: Cyclonic Rift -> Esper Sentinel 99%, stop 1% -> Cyclonic Rift -> Esper Sentinel [search]]
+R2    Urza casts Cyclonic Rift -> Esper Sentinel (Y'shtola)
+R2      Esper Sentinel (Y'shtola) is removed: bounce
+R2  --- Y'shtola turn 2: life 40, 8 cards in hand, 1 lands
+R2    Y'shtola plays Island
+R2        [Y'shtola decides: Talisman of Hierarchy 71%, Demonic Tutor 24%, Esper Sentinel 5%, stop 0% -> Talisman of Hierarchy [search]]
+R2    Y'shtola casts Talisman of Hierarchy
+R2        [Y'shtola decides: Esper Sentinel 100%, stop 0% -> Esper Sentinel [search]]
+R2    Y'shtola casts Esper Sentinel
+R2  --- Zur the Enchanter turn 2: life 40, 6 cards in hand, 1 lands
+R2    Zur the Enchanter plays Island
+R2        [Zur the Enchanter decides: Talisman of Dominance 100%, stop 0% -> Talisman of Dominance [search]]
+R2    Zur the Enchanter casts Talisman of Dominance
+R3  --- Miirym turn 3: life 40, 7 cards in hand, 2 lands
+R3    Miirym plays Island
+R3        [Miirym decides: Dragonspeaker Shaman 94%, Rhystic Study 5%, Elemental Bond 1%, stop 0% -> Dragonspeaker Shaman [search]]
+R3    Miirym casts Dragonspeaker Shaman
+R3  --- Urza turn 3: life 40, 4 cards in hand, 2 lands
+R3    Urza plays Uthros, Titanic Godcore
+R3  --- Y'shtola turn 3: life 39, 7 cards in hand, 2 lands
+R3    Y'shtola plays Island
+R3        [Y'shtola decides: Y'shtola, Night's Blessed 78%, Demonic Tutor 15%, Ill-Gotten Inheritance 7%, stop 0% -> Y'shtola, Night's Blessed [search]]
+R3    Y'shtola casts Y'shtola, Night's Blessed
+R3      Urza casts Counterspell at Y'shtola, Night's Blessed
+R3      Urza counters Y'shtola, Night's Blessed with Counterspell
+R3        [Y'shtola attack plan by search: filtered at Miirym]
+R3        [Y'shtola holds back 1 attacker(s) that would die to blocks]
+R3    Y'shtola attacks Zur the Enchanter with 1 creature(s): 1 damage (life now 39)
+R3  --- Zur the Enchanter turn 3: life 39, 5 cards in hand, 2 lands
+R3    Zur the Enchanter plays Island
+R3        [Zur the Enchanter decides: Zur the Enchanter 76%, Grand Arbiter Augustin IV 20%, Ghostly Prison 2%, Rest in Peace 2% -> Zur the Enchanter [search]]
+R3    Zur the Enchanter casts Zur the Enchanter
+R4  --- Miirym turn 4: life 40, 6 cards in hand, 3 lands
+R4    Miirym plays Cinder Glade
+R4        [Miirym decides: Miirym, Sentinel Wyrm 93%, Rhystic Study 6%, Elemental Bond 1%, stop 0% -> Miirym, Sentinel Wyrm [search]]
+R4    Miirym casts Miirym, Sentinel Wyrm
+R4        [Miirym attack plan by search: filtered at Zur the Enchanter]
+R4    Miirym attacks Zur the Enchanter with 1 creature(s): 2 damage (life now 36)
+R4  --- Urza turn 4: life 40, 3 cards in hand, 3 lands
+R4        [Urza decides: Rhystic Study 100%, stop 0% -> Rhystic Study [search]]
+R4    Urza casts Rhystic Study
+R4  --- Y'shtola turn 4: life 38, 8 cards in hand, 3 lands
+R4    Y'shtola plays Plains
+R4        [Y'shtola decides: Generous Gift -> Zur the Enchanter 37%, Grand Arbiter Augustin IV 30%, Smothering Tithe 14%, Demonic Tutor 12% -> Grand Arbiter Augustin IV [search]]
+R4    Y'shtola casts Grand Arbiter Augustin IV
+R4        [Y'shtola attack plan by search: filtered at Miirym]
+R4        [Y'shtola holds back 1 attacker(s) that would die to blocks]
+R4    Y'shtola attacks Urza with 1 creature(s): 1 damage (life now 39)
+R4  --- Zur the Enchanter turn 4: life 36, 5 cards in hand, 3 lands
+R4    Zur the Enchanter pays 2 life for an untapped Watery Grave
+R4    Zur the Enchanter plays Watery Grave
+R4        [Zur the Enchanter decides: Grand Arbiter Augustin IV 81%, Ghostly Prison 9%, Rest in Peace 9%, Steel of the Godhead 2% -> Ghostly Prison [search]]
+R4    Zur the Enchanter casts Ghostly Prison
+R4        [Zur the Enchanter attack plan by search: filtered at Urza]
+R4      Zur fetches Necropotence
+R4    Zur the Enchanter attacks Urza with 1 creature(s): 1 damage (life now 38)
+R4    Zur the Enchanter pays 4 life to Necropotence
+R5  --- Miirym turn 5: life 40, 6 cards in hand, 4 lands
+R5    Miirym plays Hinterland Harbor
+R5        [Miirym decides: Rhystic Study 85%, Elemental Bond 15%, stop 0% -> Rhystic Study [search]]
+R5    Miirym casts Rhystic Study
+R5        [Miirym attack plan by search: filtered at Y'shtola]
+R5        [Miirym holds back 1 attacker(s) that would die to blocks]
+R5    Miirym attacks Y'shtola with 1 creature(s): 6 damage (life now 32)
+R5    Miirym attacks Urza with 1 creature(s): 2 damage (life now 36)
+R5  --- Urza turn 5: life 36, 4 cards in hand, 3 lands
+R5  --- Y'shtola turn 5: life 32, 9 cards in hand, 4 lands
+R5    Y'shtola plays Swamp
+R5        [Y'shtola decides: Farewell 80%, Generous Gift -> Zur the Enchanter 17%, Coalition Relic 1%, Y'shtola, Night's Blessed 1% -> Farewell [search]]
+R5    Y'shtola casts Farewell
+R5      board wipe resolves (farewell)
+R5        modes: ["art", "ench", "cre"]
+R5        Dragonspeaker Shaman (Miirym) is removed by the wipe (farewell)
+R5        Miirym, Sentinel Wyrm (Miirym) is removed by the wipe (farewell)
+R5        Rhystic Study (Miirym) is removed by the wipe (farewell)
+R5        Manifold Key (Urza) is removed by the wipe (farewell)
+R5        Ornithopter (Urza) is removed by the wipe (farewell)
+R5        Rhystic Study (Urza) is removed by the wipe (farewell)
+R5        Talisman of Hierarchy (Y'shtola) is removed by the wipe (farewell)
+R5        Esper Sentinel (Y'shtola) is removed by the wipe (farewell)
+R5        Grand Arbiter Augustin IV (Y'shtola) is removed by the wipe (farewell)
+R5        Talisman of Dominance (Zur the Enchanter) is removed by the wipe (farewell)
+R5        Zur the Enchanter (Zur the Enchanter) is removed by the wipe (farewell)
+R5        Ghostly Prison (Zur the Enchanter) is removed by the wipe (farewell)
+R5        Necropotence (Zur the Enchanter) is removed by the wipe (farewell)
+R5  --- Zur the Enchanter turn 5: life 30, 7 cards in hand, 4 lands
+R5    Zur the Enchanter plays Adarkar Wastes
+R5        [Zur the Enchanter decides: Grand Arbiter Augustin IV 67%, Rest in Peace 16%, Propaganda 16%, stop 0% -> Grand Arbiter Augustin IV [search]]
+R5    Zur the Enchanter casts Grand Arbiter Augustin IV
+R5        [Zur the Enchanter decides: Rest in Peace 100%, stop 0% -> Rest in Peace [search]]
+R5    Zur the Enchanter casts Rest in Peace
+R5      Urza casts An Offer You Can't Refuse at Rest in Peace
+R5      Urza counters Rest in Peace with An Offer You Can't Refuse
+R5        [Zur the Enchanter decides: Propaganda 72%, Steel of the Godhead 14%, Swiftfoot Boots 14%, stop 0% -> Propaganda [search]]
+R5    Zur the Enchanter casts Propaganda
+R6  --- Miirym turn 6: life 40, 6 cards in hand, 5 lands
+R6    Miirym plays Mountain
+R6        [Miirym decides: Korlessa, Scale Singer 69%, Elemental Bond 31%, stop 0% -> Korlessa, Scale Singer [search]]
+R6    Miirym casts Korlessa, Scale Singer
+R6  --- Urza turn 6: life 36, 5 cards in hand, 3 lands
+R6    Urza plays Seat of the Synod
+R6        [Urza decides: Aether Spellbomb 100%, stop 0% -> Aether Spellbomb [search]]
+R6    Urza casts Aether Spellbomb
+R6        [Urza decides: Aether Spellbomb ability 100%, Aether Spellbomb ability 0%, stop 0% -> Aether Spellbomb ability [search]]
+R6    Urza activates Aether Spellbomb
+R6      Grand Arbiter Augustin IV (Zur the Enchanter) is removed: bounce
+R6  --- Y'shtola turn 6: life 32, 7 cards in hand, 5 lands
+R6    Y'shtola plays Swamp
+R6        [Y'shtola decides: Y'shtola, Night's Blessed 56%, Demonic Tutor 22%, Ill-Gotten Inheritance 10%, Smothering Tithe 10% -> Y'shtola, Night's Blessed [search]]
+R6    Y'shtola casts Y'shtola, Night's Blessed
+R6  --- Zur the Enchanter turn 6: life 29, 5 cards in hand, 5 lands
+R6        [Zur the Enchanter decides: Grand Arbiter Augustin IV 73%, stop (hold mana) 25%, Cyclonic Rift -> Y'shtola, Night's Blessed 2% -> Grand Arbiter Augustin IV [search]]
+R6    Zur the Enchanter casts Grand Arbiter Augustin IV
+R6        [Zur the Enchanter decides: Cyclonic Rift -> Y'shtola, Night's Blessed 100%, stop 0% -> Cyclonic Rift -> Y'shtola, Night's Blessed [search]]
+R6    Zur the Enchanter casts Cyclonic Rift -> Y'shtola, Night's Blessed (Y'shtola)
+R6      Y'shtola, Night's Blessed (Y'shtola) is removed: bounce
+R7  --- Miirym turn 7: life 40, 5 cards in hand, 6 lands
+R7    Miirym plays Forest
+R7        [Miirym decides: Korlessa: cast Savage Ventmaw from the top of the library 99%, Elemental Bond 1%, Cultivate 0%, stop 0% -> Cultivate [search]]
+R7    Miirym casts Cultivate
+R7      Miirym reveals Mountain and puts it into their hand
+R7        [Miirym attack plan by search: filtered at Zur the Enchanter]
+R7  --- Urza turn 7: life 36, 4 cards in hand, 4 lands
+R7    Urza plays Island
+R7        [Urza decides: Urza, Lord High Artificer 100%, Efficient Construction 0%, stop 0% -> Urza, Lord High Artificer [search]]
+R7    Urza casts Urza, Lord High Artificer
+R7        [Urza decides: Uthros: station with Token (1 charge counters) 100%, stop 0% -> Uthros: station with Token (1 charge counters) [search]]
+R7    Urza stations Uthros with Token: 1 charge counters
+R7        [Urza decides: Uthros: station with Urza, Lord High Artificer (1 charge counters) 100%, stop 0% -> stop [search]]
+R7        [Urza decides: Uthros: station with Urza, Lord High Artificer (1 charge counters) 100%, stop 0% -> Uthros: station with Urza, Lord High Artificer (1 charge counters) [search]]
+R7    Urza stations Uthros with Urza, Lord High Artificer: 2 charge counters
+R7  --- Y'shtola turn 7: life 32, 7 cards in hand, 6 lands
+R7    Y'shtola plays Island
+R7        [Y'shtola decides: Generous Gift -> Urza, Lord High Artificer 98%, Demonic Tutor 1%, Ill-Gotten Inheritance 0%, Smothering Tithe 0% -> Smothering Tithe [search]]
+R7    Y'shtola casts Smothering Tithe
+R7        [Y'shtola decides: stop (hold mana) 100%, Fatal Push -> Korlessa, Scale Singer 0% -> stop (hold mana) [search]]
+R7        [Y'shtola decides: stop (hold mana) 100%, Fatal Push -> Korlessa, Scale Singer 0% -> stop (hold mana) [search]]
+R7  --- Zur the Enchanter turn 7: life 28, 4 cards in hand, 5 lands
+R7        [Zur the Enchanter decides: stop (hold mana) 64%, Swiftfoot Boots 25%, Steel of the Godhead 11%, Winds of Rath 0% -> stop (hold mana) [search]]
+R7        [Zur the Enchanter attack plan by search: filtered at Urza]
+R7    Zur the Enchanter attacks Urza with 1 creature(s): 2 damage (life now 34)
+R7        [Zur the Enchanter decides: stop (hold mana) 64%, Swiftfoot Boots 25%, Steel of the Godhead 11%, Winds of Rath 0% -> stop (hold mana) [search]]
+R8  --- Miirym turn 8: life 40, 5 cards in hand, 8 lands
+R8    Miirym plays Mountain
+R8        [Miirym decides: Ureni of the Unwritten 46%, Savage Ventmaw 18%, Miirym, Sentinel Wyrm 16%, Korlessa: cast Wrathful Red Dragon from the top of the library 13% -> Miirym, Sentinel Wyrm [search]]
+R8    Miirym casts Miirym, Sentinel Wyrm
+R8      Zur the Enchanter casts Counterspell at Miirym, Sentinel Wyrm
+R8      Zur the Enchanter counters Miirym, Sentinel Wyrm with Counterspell
+R8        [Miirym attacks: Urza 90%, Y'shtola 8%, Zur the Enchanter 3% -> Urza]
+R8    Miirym attacks Urza with 1 creature(s): 1 damage (life now 33)
+R8  --- Urza turn 8: life 33, 4 cards in hand, 5 lands
+R8        [Urza decides: Emry, Lurker of the Loch 56%, Tezzeret the Seeker 29%, Efficient Construction 14%, Urza: free card 1% -> Urza: free card [search]]
+R8    Urza: Lotus Petal off the top, free
+R8    Urza casts Lotus Petal
+R8        [Urza attacks: Y'shtola 45%, Miirym 35%, Zur the Enchanter 21% -> Y'shtola]
+R8    Y'shtola answers the attack: Generous Gift -> Urza, Lord High Artificer
+R8    Y'shtola casts Generous Gift -> Urza, Lord High Artificer (Urza)
+R8      Urza, Lord High Artificer (Urza) is removed: destroy
+R8    Urza attacks Y'shtola with 2 creature(s): 2 damage (life now 30)
+R8        [Urza decides: Uthros: station with Token (3 charge counters) 100%, stop 0% -> Uthros: station with Token (3 charge counters) [search]]
+R8    Urza stations Uthros with Token: 5 charge counters
+R8  --- Y'shtola turn 8: life 30, 5 cards in hand, 7 lands
+R8    Y'shtola plays Swamp
+R8        [Y'shtola decides: Demonic Tutor 44%, Y'shtola, Night's Blessed 39%, Ill-Gotten Inheritance 16%, Coalition Relic 1% -> Y'shtola, Night's Blessed [search]]
+R8    Y'shtola casts Y'shtola, Night's Blessed
+R8  --- Zur the Enchanter turn 8: life 28, 4 cards in hand, 5 lands
+R8        [Zur the Enchanter decides: Zur the Enchanter 91%, Aura of Silence 5%, Swiftfoot Boots 3%, Steel of the Godhead 1% -> Steel of the Godhead [search]]
+R8    Zur the Enchanter casts Steel of the Godhead
+R8      Steel of the Godhead enchants Grand Arbiter Augustin IV
+R8        [Zur the Enchanter decides: Swiftfoot Boots 100%, stop 0% -> Swiftfoot Boots [search]]
+R8    Zur the Enchanter casts Swiftfoot Boots
+R8        [Zur the Enchanter decides: equip Swiftfoot Boots 100%, stop 0% -> equip Swiftfoot Boots [search]]
+R8    Zur the Enchanter equips Swiftfoot Boots to Grand Arbiter Augustin IV
+R8        [Zur the Enchanter attack plan by search: filtered at Y'shtola]
+R8    Zur the Enchanter attacks Y'shtola with 1 creature(s): 4 damage (life now 26)
+R9  --- Miirym turn 9: life 40, 5 cards in hand, 9 lands
+R9    Miirym plays Ketria Triome
+R9        [Miirym decides: Ureni of the Unwritten 43%, Korlessa: cast Ancient Copper Dragon from the top of the library 28%, Savage Ventmaw 16%, Wrathful Red Dragon 7% -> Ureni of the Unwritten [search]]
+R9    Miirym casts Ureni of the Unwritten
+R9      Ureni puts Ancient Copper Dragon onto the battlefield
+R9        [Miirym attack plan by search: filtered at Y'shtola]
+R9    Miirym attacks Y'shtola with 1 creature(s): 1 damage (life now 25)
+R9  --- Urza turn 9: life 33, 5 cards in hand, 5 lands
+R9        [Urza decides: stop (hold mana) 86%, Emry, Lurker of the Loch 7%, Tezzeret the Seeker 5%, Efficient Construction 2% -> stop (hold mana) [search]]
+R9        [Urza attack plan by search: filtered at Zur the Enchanter]
+R9    Urza pays 4 to attack Zur the Enchanter with 2
+R9    Urza attacks Zur the Enchanter with 2 creature(s): 5 damage (life now 26)
+R9    Y'shtola casts Fatal Push -> Korlessa, Scale Singer (Miirym)
+R9      Korlessa, Scale Singer (Miirym) is removed: destroy
+R9        [Y'shtola end of turn: Fatal Push -> Korlessa, Scale Singer 93%, pass 7% -> Fatal Push -> Korlessa, Scale Singer]
+R9  --- Y'shtola turn 9: life 25, 6 cards in hand, 8 lands
+R9    Y'shtola plays Island
+R9        [Y'shtola decides: Ill-Gotten Inheritance 49%, Demonic Tutor 32%, Sphere of Safety 13%, Teleportation Circle 4% -> Sphere of Safety [search]]
+R9    Y'shtola casts Sphere of Safety
+R9      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R9        [Y'shtola decides: Demonic Tutor 97%, Coalition Relic 3%, stop 0% -> Demonic Tutor [search]]
+R9    Y'shtola casts Demonic Tutor
+R9      Y'shtola tutors Sanguine Bond into their hand
+R9        [Y'shtola attack plan by search: filtered at Miirym]
+R9        [Y'shtola holds back 1 attacker(s) that would die to blocks]
+R9    Y'shtola attacks Urza with 1 creature(s): 2 damage (life now 29)
+R9  --- Zur the Enchanter turn 9: life 24, 3 cards in hand, 5 lands
+R9        [Zur the Enchanter decides: Zur the Enchanter 60%, Winds of Rath 29%, Aura of Silence 6%, Mystic Remora 4% -> Zur the Enchanter [search]]
+R9    Zur the Enchanter casts Zur the Enchanter
+R9        [Zur the Enchanter attack plan by search: filtered at Miirym]
+R9    Zur the Enchanter attacks Miirym with 1 creature(s): 4 damage (life now 34)
+R10 --- Miirym turn 10: life 34, 4 cards in hand, 10 lands
+R10       [Miirym decides: Savage Ventmaw 28%, Elemental Bond 25%, stop (hold mana) 25%, Wrathful Red Dragon 13% -> Elemental Bond [search]]
+R10   Miirym casts Elemental Bond
+R10       [Miirym attack plan by search: filtered at Zur the Enchanter]
+R10   Miirym pays 4 to attack Zur the Enchanter with 2
+R10     Ancient Copper Dragon rolls 1: 1 Treasures
+R10   Miirym attacks Zur the Enchanter with 2 creature(s): 9 damage (life now 18)
+R10 --- Urza turn 10: life 29, 6 cards in hand, 5 lands
+R10       [Urza decides: stop (hold mana) 51%, Sol Ring 41%, Emry, Lurker of the Loch 4%, Tezzeret the Seeker 3% -> stop (hold mana) [search]]
+R10       [Urza attack plan by search: filtered at Miirym]
+R10   Urza attacks Miirym with 2 creature(s): 5 damage (life now 29)
+R10       [Urza decides: stop (hold mana) 51%, Sol Ring 41%, Emry, Lurker of the Loch 4%, Tezzeret the Seeker 3% -> stop (hold mana) [search]]
+R10 --- Y'shtola turn 10: life 27, 9 cards in hand, 9 lands
+R10   Y'shtola plays Urborg, Tomb of Yawgmoth
+R10       [Y'shtola decides: Your Fate Ends Here -> Ureni of the Unwritten 58%, Sanguine Bond 22%, Ill-Gotten Inheritance 10%, Cast Away Doubt 5% -> Your Fate Ends Here -> Ureni of the Unwritten [search]]
+R10   Y'shtola casts Your Fate Ends Here -> Ancient Copper Dragon (Miirym)
+R10     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R10     Ancient Copper Dragon (Miirym) is removed: destroy
+R10       [Y'shtola decides: Ill-Gotten Inheritance 50%, Cast Away Doubt 25%, Sanguine Bond 20%, Teleportation Circle 4% -> Ill-Gotten Inheritance [search]]
+R10   Y'shtola casts Ill-Gotten Inheritance
+R10     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R10     Urza casts Fierce Guardianship at Ill-Gotten Inheritance
+R10     Urza counters Ill-Gotten Inheritance with Fierce Guardianship
+R10       [Y'shtola decides: Necropotence 61%, Cast Away Doubt 33%, stop (hold mana) 5%, Coalition Relic 1% -> Necropotence [search]]
+R10   Y'shtola casts Necropotence
+R10     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R10       [Y'shtola attacks: Miirym 76%, Zur the Enchanter 18%, Urza 7% -> Zur the Enchanter]
+R10   Y'shtola pays 1 life to Necropotence
+R10 --- Zur the Enchanter turn 10: life 12, 4 cards in hand, 5 lands
+R10       [Zur the Enchanter decides: Idyllic Tutor 92%, Aura of Silence 5%, Mystic Remora 3%, Winds of Rath 0% -> Idyllic Tutor [search]]
+R10   Zur the Enchanter casts Idyllic Tutor
+R10     Zur the Enchanter reveals Heliod, Sun-Crowned and puts it into their hand
+R10       [Zur the Enchanter decides: Heliod, Sun-Crowned 82%, Mystic Remora 18%, stop 0% -> Heliod, Sun-Crowned [search]]
+R10   Zur the Enchanter casts Heliod, Sun-Crowned
+R10       [Zur the Enchanter decides: Mystic Remora 100%, stop 0% -> Mystic Remora [search]]
+R10   Zur the Enchanter casts Mystic Remora
+R10       [Zur the Enchanter attack plan by search: filtered at Miirym]
+R10   Zur the Enchanter attacks Miirym with 1 creature(s): 4 damage (life now 19)
+R11 --- Miirym turn 11: life 19, 4 cards in hand, 10 lands
+R11   Miirym plays Scalding Tarn
+R11     cracks Scalding Tarn for Stomping Ground
+R11       [Miirym decides: Wrathful Red Dragon 82%, Savage Ventmaw 9%, stop (hold mana) 6%, Klauth, Unrivaled Ancient 3% -> Wrathful Red Dragon [search]]
+R11   Miirym casts Wrathful Red Dragon
+R11       [Miirym attack plan by search: filtered at Zur the Enchanter]
+R11   Miirym pays 2 to attack Zur the Enchanter with 1
+R11     Ureni puts Goldspan Dragon onto the battlefield
+R11   Miirym attacks Zur the Enchanter with 1 creature(s): 7 damage (life now 8)
+R11 --- Urza turn 11: life 23, 6 cards in hand, 5 lands
+R11       [Urza decides: Emry, Lurker of the Loch 58%, Efficient Construction 17%, Sol Ring 17%, Phyrexian Metamorph 9% -> Emry, Lurker of the Loch [search]]
+R11   Urza casts Emry, Lurker of the Loch
+R11       [Urza decides: Uthros: station with Emry, Lurker of the Loch (1 charge counters) 100%, stop 0% -> Uthros: station with Emry, Lurker of the Loch (1 charge counters) [search]]
+R11   Urza stations Uthros with Emry, Lurker of the Loch: 6 charge counters
+R11       [Urza attack plan by search: filtered at Miirym]
+R11       [Urza holds back 2 attacker(s) that would die to blocks]
+R11       [Urza decides: Uthros: station with Token (3 charge counters) 100%, stop 0% -> Uthros: station with Token (3 charge counters) [search]]
+R11   Urza stations Uthros with Token: 9 charge counters
+R11       [Urza decides: Uthros: station with Token (1 charge counters) 100%, stop 0% -> Uthros: station with Token (1 charge counters) [search]]
+R11   Urza stations Uthros with Token: 10 charge counters
+R11   Y'shtola casts Go for the Throat -> Goldspan Dragon (Miirym)
+R11     Goldspan Dragon (Miirym) is removed: destroy
+R11       [Y'shtola end of turn: Go for the Throat -> Ureni of the Unwritten 100%, pass 0% -> Go for the Throat -> Ureni of the Unwritten]
+R11 --- Y'shtola turn 11: life 32, 8 cards in hand, 10 lands
+R11   Y'shtola plays Caves of Koilos
+R11       [Y'shtola decides: Exquisite Blood 50%, Sanguine Bond 42%, Cast Away Doubt 8%, stop (hold mana) 0% -> Exquisite Blood [search]]
+R11   Y'shtola casts Exquisite Blood
+R11     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R11       [Y'shtola decides: combo: Sanguine Bond + Exquisite Blood 100%, Sanguine Bond 0%, Cast Away Doubt 0%, stop (hold mana) 0% -> combo: Sanguine Bond + Exquisite Blood [search]]
+R11   Y'shtola goes for Sanguine Bond + Exquisite Blood
+R11   Y'shtola casts Sanguine Bond
+R11     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R11 *** Miirym is eliminated (life 14) by Y'shtola
+R11 *** Urza is eliminated (life 19) by Y'shtola
+R11 *** Zur the Enchanter is eliminated (life 4) by Y'shtola
+R11 *** Y'shtola wins by combo
+Winner: Y'shtola (combo)

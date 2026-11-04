@@ -3,8 +3,9 @@
 What the simulator has taught us about the Y'shtola Esper drain deck: strengths, weaknesses, and what was tried and
 why it did or didn't work. Updated after every run. Newest evidence first. Matched tier: T5 (`data/my_decks.toml`).
 
-## Current state (2026-10-17, night)
-Look-ahead, loose, current list: **T5 23.3–23.6%** (the baselines of the swap runs below). Adaptive: 30.2–31.6%.
+## Current state (2026-11-04)
+Look-ahead, loose, current list (Cabal Coffers in for a Plains): **T5 24.9%** (95% CI 23.0-26.8), 2,000 games.
+Her losses are still fast combo (Kinnan, Urza, Zur) and Miirym combat, about 49% of games.
 
 ## Weaknesses (by evidence)
 - **Lowest win rate when cast** (adaptive card report, `audit/yshtola/2026-10-17-adnaus/K0-analyze-adaptive.txt`;
@@ -12,6 +13,52 @@ Look-ahead, loose, current list: **T5 23.3–23.6%** (the baselines of the swap 
   Sentence, Esper Sentinel, Curiosity, Chromatic Lantern, Thought Vessel (43–44%).
 
 ## What was tried, and why it did or didn't work
+### 2026-11-04: Cabal Coffers package (T5, loose, look-ahead, 2,000 games per list, seed 500000; branch yshtola-coffers)
+**Baseline, Cabal Coffers in for a Plains** (JD's physical list, 11/04): **24.9% vs T5** (95% CI 23.0-26.8). Not a
+measured Coffers effect: the 11/01 number (22.4%) is an older build. Raw: `2026-11-04-coffers/baseline-t5.txt`.
+
+**Package**: Deep Analysis => Demonic Tutor, Prison Sentence => Exquisite Blood, Chromatic Lantern => Torment of
+Hailfire, Static Net => Expedition Map, Island => Tolaria West (Diabolic Tutor kept: six tutors).
+Result: **24.9% -> 24.7%, -0.1 (noise ±2.4): NO CLEAR EFFECT.** Raw: `2026-11-04-coffers/package-t5.txt`.
+Why:
+- **It changes how she wins, not how often.** 29% of the package's wins are the Sanguine Bond + Exquisite Blood combo
+  (current list: 99% damage). Exquisite Blood is cast in 68% of the games it is drawn (round 7.6) and wins 61% of those,
+  the best card in the package; it takes wins the drain plan would have got anyway.
+- **Her losses don't move**: Urza, Kinnan and Zur combo plus Miirym combat (about 49% of games both ways). Games end at
+  about 9 rounds, and the big-mana half arrives too late: Torment of Hailfire is cast in only 39% of the games it is
+  drawn, at round 9.2 (stuck in hand 61%).
+- **The cuts cost tempo.** Games end 0.3 rounds sooner (±0.2) and the plan comes online 3.4 points less often (±3.0).
+  She draws 1.5 cards fewer per game (Deep Analysis out), casts 0.8 spells fewer and 0.2 spot removal fewer (Prison
+  Sentence, Static Net out), and has 0.16 less mana on turn 6 (Lantern out; Tolaria West enters tapped). Damage to
+  opponents falls 4.2 a game.
+- Engine fix for the test: Torment of Hailfire's cast option (`impls/threats.rs` torment_options) was Sauron/Tergrid-only,
+  so her AI never cast it (preflight: 0 of 48). Y'shtola now gets it, with a test. Tutors don't name it in her plan file
+  (a plan file may name only cards in the deck).
+Next candidate (not run): Exquisite Blood alone for Prison Sentence, the one piece that pulled its weight.
+
+**Same package, Urza's Cave for the Island instead of Tolaria West**: **24.9% -> 26.1%, +1.3 (noise ±2.4): NO CLEAR
+EFFECT.** Raw: `2026-11-04-coffers/package-cave-t5.txt`. Same seeds, so the 1.4 points over the Tolaria West version is
+also noise. Same shape: 27% of wins by the Blood combo (Blood cast 68%, wins 63% when cast), the same losses (Kinnan,
+Urza, Zur, Miirym), plan online -4.5 (±3.0), 1.35 cards fewer drawn, damage -3.4 a game. **Caveat: the Cave never
+fetched anything for her.** Its AI (`impls/karn_engines.rs`) cracks it only for a Tron piece, Mishra's Workshop or
+Ancient Tomb, so here it was a colourless land; Urborg and Coffers aren't on its want list. A real Cave test needs
+that AI rule first.
+
+**Same Cave package, board-aware land choice** (`karn_engines.rs` board_land_want: Coffers/Urborg as a pair, Serra's
+Sanctum, a colour the hand needs; tests `tests/land_search_board.rs`): **24.9% -> 26.1%, +1.3 (noise ±2.4): NO CLEAR
+EFFECT**, 12 threads (shared CPU). Raw: `2026-11-04-coffers/package-cave-board-t5.txt`. 60 traced games
+(`2026-11-04-coffers/traces/`) show why it matches the run before: the Cave was played in 10 games and its option
+offered 9 times (e.g. Coffers out, no Urborg, 10 lands), but **it was never chosen**: its utility is a flat
+1.2 + want/6 (about 3), below Champion's Helm, Sphere of Safety or holding mana, not scaled to the mana Urborg would
+add. Expedition Map now cracks (twice in the 60: Cabal Coffers, Flooded Strand); before this fix it never did, so the
+two earlier package runs had a dead Map too. Open: the Cave's and the Map's option utility should grow with the mana
+the fetched land adds.
+
+**Follow-up, not measured:** `search_utility` (`karn_engines.rs`) now scores a board-based search at 1.2 + want/2
+(Urborg beside Coffers on 8 lands: about 6), Tron/Workshop wants unchanged at 1.2 + want/6; tests in
+`tests/land_search_board.rs`, full suite passed. The package rerun was stopped at JD's request (11/04), so there is no
+number yet for a Cave that actually cracks.
+
 ### 2026-10-19: Curiosity => Orcish Bowmasters, confirmed (T5, loose, 2,000 games per list, look-ahead)
 Result: **31.6% -> 34.1%, +2.5 (noise ±2.3): BETTER**, the first swap to clear the noise for her. Raw:
 `2026-10-19-bowmasters/full-curiosity-t5.txt`.

@@ -109,7 +109,7 @@ fn colors_have(g: &Game, p: PlayerId, except: Option<PermId>) -> crate::cards::C
         .fold(crate::cards::Colors::NONE, |a, &l| a.union(land_colors_now(g, p, l)))
 }
 
-fn tag_cols(g: &Game, p: PlayerId, cd: CardId) -> crate::cards::Colors {
+pub(crate) fn tag_cols(g: &Game, p: PlayerId, cd: CardId) -> crate::cards::Colors {
     match g.db.get(cd).tags.str(Tag::C).unwrap_or("") {
         "A" => g.player(p).ident,
         "C" | "" => crate::cards::Colors::NONE,

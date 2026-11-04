@@ -1,0 +1,447 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 29 (seed 500029): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Urza, Kinnan, Zur the Enchanter, Y'shtola
+R1  --- Urza turn 1: life 40, 7 cards in hand, 0 lands
+R1    Urza plays Island
+R1        [Urza decides: Chrome Mox 100%, stop (hold mana) 0% -> Chrome Mox [search]]
+R1    Urza casts Chrome Mox
+R1      Chrome Mox imprints Mana Drain
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kinnan plays Rejuvenating Springs
+R1        [Kinnan decides: Mana Vault 87%, Mox Amber 13%, stop 0% -> Mana Vault [search]]
+R1    Kinnan casts Mana Vault
+R1        [Kinnan decides: Mox Amber 99%, Mirage Mirror 1%, Spellskite 1%, stop 0% -> Mox Amber [search]]
+R1    Kinnan casts Mox Amber
+R1        [Kinnan decides: Mirage Mirror 57%, Spellskite 43%, stop 0% -> Mirage Mirror [search]]
+R1    Kinnan casts Mirage Mirror
+R1  --- Zur the Enchanter turn 1: life 40, 7 cards in hand, 0 lands
+R1    Zur the Enchanter plays Vault of Champions
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Cabal Coffers
+R2  --- Urza turn 2: life 40, 5 cards in hand, 1 lands
+R2    Urza plays Inventors' Fair
+R2        [Urza decides: Sai, Master Thopterist 100%, stop (hold mana) 0% -> Sai, Master Thopterist [search]]
+R2    Urza casts Sai, Master Thopterist
+R2  --- Kinnan turn 2: life 40, 4 cards in hand, 1 lands
+R2    Kinnan plays Dreamroot Cascade
+R2  --- Zur the Enchanter turn 2: life 40, 7 cards in hand, 1 lands
+R2    Zur the Enchanter pays 2 life for an untapped Watery Grave
+R2    Zur the Enchanter plays Watery Grave
+R2        [Zur the Enchanter decides: Drannith Magistrate 100%, Cyclonic Rift -> Sai, Master Thopterist 0%, stop 0% -> Drannith Magistrate [search]]
+R2    Zur the Enchanter casts Drannith Magistrate
+R2  --- Y'shtola turn 2: life 40, 7 cards in hand, 1 lands
+R2    Y'shtola plays Plains
+R3  --- Urza turn 3: life 40, 4 cards in hand, 2 lands
+R3    Urza plays Otawara, Soaring City
+R3        [Urza attack plan by search: filtered at Kinnan]
+R3    Urza attacks Kinnan with 1 creature(s): 1 damage (life now 38)
+R3  --- Kinnan turn 3: life 38, 4 cards in hand, 2 lands
+R3        [Kinnan decides: Elvish Mystic 100%, channel Colossal Skyturtle: bounce 0%, Spellskite 0%, stop 0% -> Elvish Mystic [search]]
+R3    Kinnan casts Elvish Mystic
+R3  --- Zur the Enchanter turn 3: life 38, 6 cards in hand, 2 lands
+R3    Zur the Enchanter plays Swamp
+R3        [Zur the Enchanter decides: Rhystic Study 66%, Rule of Law 34%, Cyclonic Rift -> Sai, Master Thopterist 0%, stop 0% -> Rhystic Study [search]]
+R3    Zur the Enchanter casts Rhystic Study
+R3        [Zur the Enchanter attack plan by search: filtered at Urza]
+R3    Zur the Enchanter attacks Urza with 1 creature(s): 1 damage (life now 39)
+R3  --- Y'shtola turn 3: life 40, 7 cards in hand, 2 lands
+R3    Y'shtola plays Plains
+R4  --- Urza turn 4: life 39, 4 cards in hand, 3 lands
+R4    Urza plays Island
+R4        [Urza attack plan by search: filtered at Zur the Enchanter]
+R4    Urza attacks Zur the Enchanter with 1 creature(s): 1 damage (life now 37)
+R4  --- Kinnan turn 4: life 37, 4 cards in hand, 2 lands
+R4    Kinnan plays Forest
+R4        [Kinnan decides: transmute Drift of Phantasms 99%, Drift of Phantasms 1%, channel Colossal Skyturtle: bounce 0%, Spellskite 0% -> transmute Drift of Phantasms [search]]
+R4    Kinnan transmutes Drift of Phantasms
+R4      Kinnan reveals Basalt Monolith (transmute)
+R4  --- Zur the Enchanter turn 4: life 37, 5 cards in hand, 3 lands
+R4    Zur the Enchanter plays Raffine's Tower
+R4        [Zur the Enchanter decides: Rule of Law 100%, Cyclonic Rift -> Sai, Master Thopterist 0%, stop 0% -> Rule of Law [search]]
+R4    Zur the Enchanter casts Rule of Law
+R4      Urza casts Pact of Negation at Rule of Law
+R4      Urza counters Rule of Law with Pact of Negation
+R4        [Zur the Enchanter attack plan by search: filtered at Y'shtola]
+R4    Zur the Enchanter attacks Y'shtola with 1 creature(s): 1 damage (life now 39)
+R4  --- Y'shtola turn 4: life 39, 7 cards in hand, 3 lands
+R4    Y'shtola plays Swamp
+R4        [Y'shtola decides: Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal 50%, Memory Trap 41%, Champion's Helm 9%, stop 0% -> Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal [search]]
+R4    Y'shtola casts Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal
+R5  --- Urza turn 5: life 39, 3 cards in hand, 4 lands
+R5    Urza plays Uthros, Titanic Godcore
+R5        [Urza attack plan by search: all at Zur the Enchanter]
+R5    Urza attacks Zur the Enchanter with 1 creature(s): 1 damage (life now 36)
+R5  --- Kinnan turn 5: life 36, 4 cards in hand, 3 lands
+R5        [Kinnan decides: Basalt Monolith 100%, channel Colossal Skyturtle: bounce 0%, channel Colossal Skyturtle: Drift of Phantasms 0%, Spellskite 0% -> Basalt Monolith [search]]
+R5    Kinnan casts Basalt Monolith
+R5        [Kinnan decides: Spellskite 53%, Phyrexian Metamorph 31%, Mirage Mirror: copy Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal 15%, Basalt Monolith ability 1% -> Spellskite [search]]
+R5    Kinnan casts Spellskite
+R5  --- Zur the Enchanter turn 5: life 36, 5 cards in hand, 4 lands
+R5    Zur the Enchanter plays Reliquary Tower
+R5        [Zur the Enchanter decides: Zur the Enchanter 84%, Mirrormade 14%, stop (hold mana) 2%, Cyclonic Rift -> Basalt Monolith 1% -> Cyclonic Rift -> Basalt Monolith [search]]
+R5    Zur the Enchanter casts Cyclonic Rift -> Mirage Mirror (Kinnan)
+R5      Kinnan redirects it to Spellskite
+R5      Spellskite (Kinnan) is removed: bounce
+R5      Kinnan protects Mirage Mirror
+R5        [Zur the Enchanter attack plan by search: filtered at Kinnan]
+R5    Zur the Enchanter attacks Kinnan with 1 creature(s): 1 damage (life now 32)
+R5  --- Y'shtola turn 5: life 39, 6 cards in hand, 4 lands
+R5    Y'shtola plays Swamp
+R5        [Y'shtola decides: Memory Trap 86%, Champion's Helm 14%, stop 0% -> Memory Trap [search]]
+R5    Y'shtola casts Memory Trap
+R5      Zur the Enchanter casts Fierce Guardianship at Memory Trap
+R5      Zur the Enchanter counters Memory Trap with Fierce Guardianship
+R5        [Y'shtola attacks: Kinnan 48%, Zur the Enchanter 46%, Urza 6% -> Zur the Enchanter]
+R5    Y'shtola attacks Zur the Enchanter with 1 creature(s): 3 damage (life now 33)
+R6  --- Urza turn 6: life 39, 3 cards in hand, 5 lands
+R6        [Urza decides: Forensic Gadgeteer 72%, Padeem, Consul of Innovation 28%, stop 0% -> Forensic Gadgeteer [search]]
+R6    Urza casts Forensic Gadgeteer
+R6        [Urza decides: Uthros: station with Forensic Gadgeteer (2 charge counters) 100%, stop 0% -> Uthros: station with Forensic Gadgeteer (2 charge counters) [search]]
+R6    Urza stations Uthros with Forensic Gadgeteer: 2 charge counters
+R6        [Urza attacks: Kinnan 52%, Zur the Enchanter 46%, Y'shtola 3% -> Kinnan]
+R6    Urza attacks Kinnan with 1 creature(s): 1 damage (life now 31)
+R6  --- Kinnan turn 6: life 31, 4 cards in hand, 3 lands
+R6    Kinnan plays Boseiju, Who Endures
+R6        [Kinnan decides: Koma, Cosmos Serpent 72%, Colossal Skyturtle 27%, channel Colossal Skyturtle: bounce 1%, Spellskite 0% -> Koma, Cosmos Serpent [search]]
+R6    Kinnan casts Koma, Cosmos Serpent
+R6  --- Zur the Enchanter turn 6: life 33, 3 cards in hand, 5 lands
+R6        [Zur the Enchanter decides: Zur the Enchanter 74%, Mirrormade 23%, stop (hold mana) 4% -> Zur the Enchanter [search]]
+R6    Zur the Enchanter casts Zur the Enchanter
+R6        [Zur the Enchanter attack plan by search: none at Urza]
+R6  --- Y'shtola turn 6: life 39, 5 cards in hand, 5 lands
+R6    Y'shtola plays Swamp
+R6        [Y'shtola decides: Farewell 100%, Sanguine Bond 0%, Sphere of Safety 0%, Champion's Helm 0% -> Farewell [search]]
+R6    Y'shtola casts Farewell
+R6      board wipe resolves (farewell)
+R6        modes: ["art", "ench", "cre"]
+R6        Chrome Mox (Urza) is removed by the wipe (farewell)
+R6        Sai, Master Thopterist (Urza) is removed by the wipe (farewell)
+R6        Forensic Gadgeteer (Urza) is removed by the wipe (farewell)
+R6        Mana Vault (Kinnan) is removed by the wipe (farewell)
+R6        Mox Amber (Kinnan) is removed by the wipe (farewell)
+R6        Mirage Mirror (Kinnan) is removed by the wipe (farewell)
+R6        Elvish Mystic (Kinnan) is removed by the wipe (farewell)
+R6        Basalt Monolith (Kinnan) is removed by the wipe (farewell)
+R6        Koma, Cosmos Serpent (Kinnan) is removed by the wipe (farewell)
+R6        Token (Kinnan) is removed by the wipe (farewell)
+R6        Token (Kinnan) is removed by the wipe (farewell)
+R6        Drannith Magistrate (Zur the Enchanter) is removed by the wipe (farewell)
+R6        Rhystic Study (Zur the Enchanter) is removed by the wipe (farewell)
+R6        Zur the Enchanter (Zur the Enchanter) is removed by the wipe (farewell)
+R6        Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal (Y'shtola) is removed by the wipe (farewell)
+R7  --- Urza turn 7: life 39, 3 cards in hand, 5 lands
+R7        [Urza decides: Urza, Lord High Artificer 96%, Displacer Kitten 3%, Padeem, Consul of Innovation 1%, stop 0% -> Urza, Lord High Artificer [search]]
+R7    Urza casts Urza, Lord High Artificer
+R7        [Urza decides: Uthros: station with Token (1 charge counters) 100%, stop 0% -> Uthros: station with Token (1 charge counters) [search]]
+R7    Urza stations Uthros with Token: 3 charge counters
+R7        [Urza decides: Uthros: station with Urza, Lord High Artificer (1 charge counters) 100%, stop 0% -> Uthros: station with Urza, Lord High Artificer (1 charge counters) [search]]
+R7    Urza stations Uthros with Urza, Lord High Artificer: 4 charge counters
+R7  --- Kinnan turn 7: life 30, 3 cards in hand, 4 lands
+R7    Kinnan plays Forest
+R7        [Kinnan decides: Kinnan, Bonder Prodigy 77%, channel Colossal Skyturtle: bounce 23%, channel Colossal Skyturtle: Drift of Phantasms 0%, Spellskite 0% -> Kinnan, Bonder Prodigy [search]]
+R7    Kinnan casts Kinnan, Bonder Prodigy
+R7        [Kinnan decides: channel Colossal Skyturtle: bounce 99%, channel Colossal Skyturtle: Drift of Phantasms 0%, Spellskite 0%, Phyrexian Metamorph 0% -> channel Colossal Skyturtle: bounce [search]]
+R7    Kinnan channels Colossal Skyturtle: bounces Urza, Lord High Artificer
+R7      Urza, Lord High Artificer (Urza) is removed: bounce
+R7  --- Zur the Enchanter turn 7: life 33, 5 cards in hand, 5 lands
+R7        [Zur the Enchanter decides: Imprisoned in the Moon -> Kinnan, Bonder Prodigy 98%, stop (hold mana) 2%, Talisman of Dominance 0%, Toxic Deluge 0% -> Imprisoned in the Moon -> Kinnan, Bonder Prodigy [search]]
+R7    Zur the Enchanter casts Imprisoned in the Moon -> Kinnan, Bonder Prodigy (Kinnan)
+R7      Kinnan, Bonder Prodigy (Kinnan) is removed: moon
+R7      Kinnan, Bonder Prodigy becomes a Wastes
+R7        [Zur the Enchanter decides: Talisman of Dominance 100%, stop 0% -> Talisman of Dominance [search]]
+R7    Zur the Enchanter casts Talisman of Dominance
+R7  --- Y'shtola turn 7: life 39, 4 cards in hand, 6 lands
+R7        [Y'shtola decides: Sanguine Bond 85%, Sphere of Safety 7%, Champion's Helm 6%, stop (hold mana) 1% -> Sanguine Bond [search]]
+R7    Y'shtola casts Sanguine Bond
+R8  --- Urza turn 8: life 39, 4 cards in hand, 5 lands
+R8        [Urza decides: Displacer Kitten 68%, Padeem, Consul of Innovation 20%, Etherium Sculptor 12%, stop 0% -> Displacer Kitten [search]]
+R8    Urza casts Displacer Kitten
+R8        [Urza decides: Uthros: station with Displacer Kitten (2 charge counters) 100%, stop 0% -> Uthros: station with Displacer Kitten (2 charge counters) [search]]
+R8    Urza stations Uthros with Displacer Kitten: 6 charge counters
+R8        [Urza attacks: Y'shtola 90%, Zur the Enchanter 6%, Kinnan 4% -> Y'shtola]
+R8    Urza attacks Y'shtola with 1 creature(s): 1 damage (life now 38)
+R8  --- Kinnan turn 8: life 30, 2 cards in hand, 6 lands
+R8        [Kinnan decides: Rhystic Study 96%, Spellskite 3%, Phyrexian Metamorph 2%, stop 0% -> Rhystic Study [search]]
+R8    Kinnan casts Rhystic Study
+R8        [Kinnan decides: Spellskite 63%, Phyrexian Metamorph 37%, stop 0% -> Spellskite [search]]
+R8    Kinnan casts Spellskite
+R8  --- Zur the Enchanter turn 8: life 33, 4 cards in hand, 5 lands
+R8        [Zur the Enchanter decides: Mirrormade 60%, Zur the Enchanter 29%, stop (hold mana) 6%, Supreme Verdict 5% -> Mirrormade [search]]
+R8    Zur the Enchanter casts Mirrormade
+R8      Mirrormade enters as a copy of Sanguine Bond
+R8        [Zur the Enchanter decides: Toxic Deluge 99%, stop 1% -> Toxic Deluge [search]]
+R8    Zur the Enchanter casts Toxic Deluge
+R8      board wipe resolves (minus)
+R8        Token (Urza) is removed by the wipe (minus)
+R8        Displacer Kitten (Urza) is removed by the wipe (minus)
+R8        Spellskite (Kinnan) is removed by the wipe (minus)
+R8  --- Y'shtola turn 8: life 38, 4 cards in hand, 6 lands
+R8    Y'shtola plays Urza's Cave
+R8        [Y'shtola decides: Champion's Helm 40%, Sphere of Safety 35%, Urza's Cave: fetch a land 15%, stop (hold mana) 11% -> Champion's Helm [search]]
+R8    Y'shtola casts Champion's Helm
+R9  --- Urza turn 9: life 39, 4 cards in hand, 5 lands
+R9        [Urza decides: Padeem, Consul of Innovation 53%, Etherium Sculptor 47%, stop 0% -> Padeem, Consul of Innovation [search]]
+R9    Urza casts Padeem, Consul of Innovation
+R9        [Urza decides: Uthros: station with Padeem, Consul of Innovation (1 charge counters) 100%, stop 0% -> Uthros: station with Padeem, Consul of Innovation (1 charge counters) [search]]
+R9    Urza stations Uthros with Padeem, Consul of Innovation: 7 charge counters
+R9  --- Kinnan turn 9: life 30, 4 cards in hand, 6 lands
+R9        [Kinnan decides: Consecrated Sphinx 91%, stop (hold mana) 6%, Llanowar Elves 2%, Phyrexian Metamorph 0% -> Consecrated Sphinx [search]]
+R9    Kinnan casts Consecrated Sphinx
+R9  --- Zur the Enchanter turn 9: life 28, 3 cards in hand, 5 lands
+R9        [Zur the Enchanter decides: Supreme Verdict 46%, Zur the Enchanter 42%, stop (hold mana) 10%, Supreme Verdict 2% -> Supreme Verdict [search]]
+R9    Zur the Enchanter casts Supreme Verdict
+R9  --- Y'shtola turn 9: life 38, 3 cards in hand, 7 lands
+R9    Y'shtola plays Caves of Koilos
+R9        [Y'shtola decides: Sphere of Safety 78%, Urza's Cave: fetch a land 14%, stop (hold mana) 9% -> Sphere of Safety [search]]
+R9    Y'shtola casts Sphere of Safety
+R10 --- Urza turn 10: life 39, 4 cards in hand, 5 lands
+R10   Urza plays Darksteel Citadel
+R10       [Urza decides: Urza, Lord High Artificer 96%, Etherium Sculptor 4%, stop 0% -> Urza, Lord High Artificer [search]]
+R10   Urza casts Urza, Lord High Artificer
+R10       [Urza decides: Uthros: station with Token (1 charge counters) 100%, stop 0% -> Uthros: station with Token (1 charge counters) [search]]
+R10   Urza stations Uthros with Token: 8 charge counters
+R10       [Urza decides: Uthros: station with Urza, Lord High Artificer (1 charge counters) 100%, stop 0% -> Uthros: station with Urza, Lord High Artificer (1 charge counters) [search]]
+R10   Urza stations Uthros with Urza, Lord High Artificer: 9 charge counters
+R10 --- Kinnan turn 10: life 30, 9 cards in hand, 6 lands
+R10   Kinnan plays Ancient Tomb
+R10       [Kinnan decides: stop (hold mana) 58%, Wandering Archaic // Explore the Vastlands 32%, Mystic Remora 8%, Phyrexian Metamorph 1% -> stop (hold mana) [search]]
+R10       [Kinnan decides: stop (hold mana) 58%, Wandering Archaic // Explore the Vastlands 32%, Mystic Remora 8%, Phyrexian Metamorph 1% -> stop (hold mana) [search]]
+R10 --- Zur the Enchanter turn 10: life 28, 3 cards in hand, 5 lands
+R10       [Zur the Enchanter decides: stop (hold mana) 100%, Zur the Enchanter 0% -> stop (hold mana) [search]]
+R10       [Zur the Enchanter decides: stop (hold mana) 100%, Zur the Enchanter 0% -> stop (hold mana) [search]]
+R10 --- Y'shtola turn 10: life 38, 2 cards in hand, 8 lands
+R10       [Y'shtola decides: stop (hold mana) 77%, Prayer of Binding 15%, Urza's Cave: fetch a land 9% -> stop (hold mana) [search]]
+R10       [Y'shtola decides: stop (hold mana) 77%, Prayer of Binding 15%, Urza's Cave: fetch a land 9% -> stop (hold mana) [search]]
+R11 --- Urza turn 11: life 39, 4 cards in hand, 6 lands
+R11   Urza plays Island
+R11       [Urza decides: Hullbreaker Horror 91%, Etherium Sculptor 9%, Urza: free card 0%, stop 0% -> Hullbreaker Horror [search]]
+R11   Urza casts Hullbreaker Horror
+R11       [Urza decides: Uthros: station with Hullbreaker Horror (7 charge counters) 100%, stop 0% -> Uthros: station with Hullbreaker Horror (7 charge counters) [search]]
+R11   Urza stations Uthros with Hullbreaker Horror: 16 charge counters
+R11       [Urza attacks: Zur the Enchanter 58%, Y'shtola 27%, Kinnan 15% -> Zur the Enchanter]
+R11   Urza attacks Zur the Enchanter with 1 creature(s): 1 damage (life now 27)
+R11 --- Kinnan turn 11: life 30, 7 cards in hand, 7 lands
+R11   Kinnan plays Yavimaya Coast
+R11       [Kinnan decides: stop (hold mana) 62%, Wandering Archaic // Explore the Vastlands 29%, Mystic Remora 8%, Llanowar Elves 1% -> stop (hold mana) [search]]
+R11       [Kinnan decides: stop (hold mana) 62%, Wandering Archaic // Explore the Vastlands 29%, Mystic Remora 8%, Llanowar Elves 1% -> stop (hold mana) [search]]
+R11 --- Zur the Enchanter turn 11: life 27, 4 cards in hand, 5 lands
+R11       [Zur the Enchanter decides: stop (hold mana) 100%, Zur the Enchanter 0% -> stop (hold mana) [search]]
+R11       [Zur the Enchanter decides: stop (hold mana) 100%, Zur the Enchanter 0% -> stop (hold mana) [search]]
+R11 --- Y'shtola turn 11: life 38, 3 cards in hand, 8 lands
+R11   Y'shtola plays Polluted Delta
+R11     cracks Polluted Delta for Tundra
+R11       [Y'shtola decides: Y'shtola, Night's Blessed 75%, stop (hold mana) 15%, Displacer Kitten 8%, Prayer of Binding 1% -> Y'shtola, Night's Blessed [search]]
+R11   Y'shtola casts Y'shtola, Night's Blessed
+R11     Kinnan casts Mana Drain at Y'shtola, Night's Blessed
+R11     Kinnan counters Y'shtola, Night's Blessed with Mana Drain
+R11       [Y'shtola decides: stop (hold mana) 100%, Prayer of Binding 0% -> stop (hold mana) [search]]
+R11       [Y'shtola decides: stop (hold mana) 100%, Prayer of Binding 0% -> stop (hold mana) [search]]
+R12 --- Urza turn 12: life 39, 3 cards in hand, 7 lands
+R12       [Urza decides: Thought Monitor 83%, Etherium Sculptor 16%, Urza: free card 0%, stop 0% -> Thought Monitor [search]]
+R12   Urza casts Thought Monitor
+R12     Zur the Enchanter casts Mana Drain at Thought Monitor
+R12     Zur the Enchanter counters Thought Monitor with Mana Drain
+R12       [Urza attacks: Y'shtola 60%, Kinnan 33%, Zur the Enchanter 7% -> Zur the Enchanter]
+R12   Urza attacks Zur the Enchanter with 2 creature(s): 8 damage (life now 18)
+R12 --- Kinnan turn 12: life 30, 6 cards in hand, 8 lands
+R12       [Kinnan decides: stop (hold mana) 62%, Wandering Archaic // Explore the Vastlands 29%, Mystic Remora 8%, Llanowar Elves 0% -> stop (hold mana) [search]]
+R12       [Kinnan decides: stop (hold mana) 62%, Wandering Archaic // Explore the Vastlands 29%, Mystic Remora 8%, Llanowar Elves 0% -> stop (hold mana) [search]]
+R12 --- Zur the Enchanter turn 12: life 18, 5 cards in hand, 5 lands
+R12   Zur the Enchanter plays Island
+R12       [Zur the Enchanter decides: Mirrormade 68%, Zur the Enchanter 32%, stop 0% -> Mirrormade [search]]
+R12   Zur the Enchanter casts Mirrormade
+R12     Kinnan casts Flusterstorm at Mirrormade
+R12     Zur the Enchanter pays 1
+R12     Mirrormade enters as a copy of Sanguine Bond
+R12       [Zur the Enchanter decides: Zur the Enchanter 100%, stop 0% -> Zur the Enchanter [search]]
+R12   Zur the Enchanter casts Zur the Enchanter
+R12       [Zur the Enchanter decides: Swiftfoot Boots 69%, Steel of the Godhead 16%, Ethereal Armor 16%, stop 0% -> Swiftfoot Boots [search]]
+R12   Zur the Enchanter casts Swiftfoot Boots
+R12       [Zur the Enchanter decides: equip Swiftfoot Boots 99%, Ethereal Armor 1%, stop 0% -> stop [search]]
+R12       [Zur the Enchanter decides: equip Swiftfoot Boots 92%, Ethereal Armor 8%, stop 0% -> equip Swiftfoot Boots [search]]
+R12   Zur the Enchanter equips Swiftfoot Boots to Zur the Enchanter
+R12 --- Y'shtola turn 12: life 37, 3 cards in hand, 9 lands
+R12       [Y'shtola decides: Path to Exile -> Urza, Lord High Artificer 96%, Y'shtola, Night's Blessed 2%, stop (hold mana) 1%, Displacer Kitten 0% -> Path to Exile -> Urza, Lord High Artificer [search]]
+R12   Y'shtola casts Path to Exile -> Urza, Lord High Artificer (Urza)
+R12     Urza, Lord High Artificer (Urza) is removed: exile
+R12       [Y'shtola decides: Displacer Kitten 46%, Y'shtola, Night's Blessed 41%, Prayer of Binding 7%, stop (hold mana) 6% -> Displacer Kitten [search]]
+R12   Y'shtola casts Displacer Kitten
+R13 --- Urza turn 13: life 39, 3 cards in hand, 8 lands
+R13       [Urza decides: Urza, Lord High Artificer 50%, Etherium Sculptor 29%, Emry, Lurker of the Loch 22%, stop 0% -> Urza, Lord High Artificer [search]]
+R13   Urza casts Urza, Lord High Artificer
+R13       [Urza decides: Etherium Sculptor 100%, stop 0% -> stop [search]]
+R13       [Urza attack plan by search: filtered at Zur the Enchanter]
+R13   Urza attacks Zur the Enchanter with 2 creature(s): 2 damage (life now 15)
+R13 --- Kinnan turn 13: life 30, 10 cards in hand, 8 lands
+R13   Kinnan plays Tropical Island
+R13       [Kinnan decides: Tidespout Tyrant 99%, Wandering Archaic // Explore the Vastlands 1%, Mystic Remora 0%, Llanowar Elves 0% -> Tidespout Tyrant [search]]
+R13   Kinnan casts Tidespout Tyrant
+R13       [Kinnan decides: Arcane Signet 50%, Lotus Petal 50%, stop 1% -> Arcane Signet [search]]
+R13   Kinnan casts Arcane Signet
+R13     Urza, Lord High Artificer (Urza) is removed: bounce
+R13       [Kinnan decides: Mystic Remora 97%, Llanowar Elves 2%, Lotus Petal 1%, stop 0% -> Mystic Remora [search]]
+R13   Kinnan casts Mystic Remora
+R13     Y'shtola protects with Teferi's Protection
+R13     Y'shtola casts Teferi's Protection: life can't change, protection from everything, all phased out
+R13     Y'shtola protects Sanguine Bond
+R13       [Kinnan decides: Lotus Petal 99%, stop 1% -> Lotus Petal [search]]
+R13   Kinnan casts Lotus Petal
+R13     Hullbreaker Horror (Urza) is removed: bounce
+R13       [Kinnan decides: Llanowar Elves 100%, stop 0% -> Llanowar Elves [search]]
+R13   Kinnan casts Llanowar Elves
+R13     Token (Urza) is removed: bounce
+R13 --- Zur the Enchanter turn 13: life 15, 4 cards in hand, 6 lands
+R13   Zur the Enchanter plays Hall of Heliod's Generosity
+R13       [Zur the Enchanter decides: Mirrormade 86%, Zur the Enchanter 14%, stop 0% -> Mirrormade [search]]
+R13   Zur the Enchanter casts Mirrormade
+R13     Mirrormade enters as a copy of Rhystic Study
+R13 --- Y'shtola turn 13: life 37, 1 cards in hand, 9 lands
+R13   Y'shtola no longer has protection from everything
+R13   Y'shtola plays Flooded Strand
+R13     cracks Flooded Strand for Watery Grave
+R13       [Y'shtola decides: Y'shtola, Night's Blessed 98%, Prayer of Binding 1%, Urza's Cave: fetch a land 1%, stop 0% -> Y'shtola, Night's Blessed [search]]
+R13   Y'shtola casts Y'shtola, Night's Blessed
+R13       [Y'shtola decides: Prayer of Binding 69%, equip Champion's Helm 31%, stop 0% -> Prayer of Binding [search]]
+R13   Y'shtola casts Prayer of Binding
+R13     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R13     Rhystic Study (Kinnan) is removed: exile
+R14 --- Urza turn 14: life 37, 5 cards in hand, 8 lands
+R14       [Urza decides: Hullbreaker Horror 41%, Etherium Sculptor 27%, Emry, Lurker of the Loch 20%, stop (hold mana) 12% -> Etherium Sculptor [search]]
+R14   Urza casts Etherium Sculptor
+R14       [Urza decides: Reshape 89%, Emry, Lurker of the Loch 7%, stop (hold mana) 4% -> Reshape [search]]
+R14   Urza casts Reshape
+R14       [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R14   Urza activates Basalt Monolith
+R14       [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R14   Urza activates Basalt Monolith
+R14       [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R14   Urza activates Basalt Monolith
+R14       [Urza attack plan by search: all at Y'shtola]
+R14 --- Kinnan turn 14: life 21, 10 cards in hand, 9 lands
+R14   Kinnan plays Forest
+R14       [Kinnan decides: Nyxbloom Ancient 48%, Green Sun's Zenith 46%, Wandering Archaic // Explore the Vastlands 6%, Faerie Mastermind 0% -> Nyxbloom Ancient [search]]
+R14   Kinnan casts Nyxbloom Ancient
+R14     Sanguine Bond (Y'shtola) is removed: bounce
+R14       [Kinnan decides: Green Sun's Zenith 88%, Wandering Archaic // Explore the Vastlands 11%, Faerie Mastermind 1%, Springleaf Drum 0% -> Ilysian Caryatid [search]]
+R14   Kinnan casts Ilysian Caryatid
+R14     Rhystic Study (Zur the Enchanter) is removed: bounce
+R14       [Kinnan decides: Green Sun's Zenith 89%, Wandering Archaic // Explore the Vastlands 10%, Faerie Mastermind 1%, Springleaf Drum 0% -> Green Sun's Zenith [search]]
+R14   Kinnan casts Green Sun's Zenith
+R14     Displacer Kitten (Y'shtola) is removed: bounce
+R14       [Kinnan attack plan by search: filtered at Zur the Enchanter]
+R14   Kinnan attacks Zur the Enchanter with 1 creature(s): 5 damage (life now 8)
+R14 --- Zur the Enchanter turn 14: life 8, 8 cards in hand, 7 lands
+R14   Zur the Enchanter plays Exotic Orchard
+R14       [Zur the Enchanter decides: Mirrormade 94%, Zur the Enchanter 3%, Aura of Silence 2%, Delney, Streetwise Lookout 1% -> Mirrormade [search]]
+R14   Zur the Enchanter casts Mirrormade
+R14     Mirrormade enters as a copy of Basalt Monolith
+R14       [Zur the Enchanter decides: Aura of Silence 46%, Zur the Enchanter 42%, Delney, Streetwise Lookout 12%, Orzhov Signet 0% -> Aura of Silence [search]]
+R14   Zur the Enchanter casts Aura of Silence
+R14     Kinnan casts Swan Song at Aura of Silence
+R14     Basalt Monolith (Urza) is removed: bounce
+R14     Kinnan counters Aura of Silence with Swan Song
+R14       [Zur the Enchanter decides: equip Swiftfoot Boots 35%, Delney, Streetwise Lookout 26%, Steel of the Godhead 20%, Ethereal Armor 20% -> equip Swiftfoot Boots [search]]
+R14   Zur the Enchanter equips Swiftfoot Boots to Token
+R14       [Zur the Enchanter decides: Delney, Streetwise Lookout 39%, Steel of the Godhead 30%, Ethereal Armor 30%, Orzhov Signet 1% -> Delney, Streetwise Lookout [search]]
+R14   Zur the Enchanter casts Delney, Streetwise Lookout
+R14       [Zur the Enchanter decides: Orzhov Signet 98%, stop 2% -> Orzhov Signet [search]]
+R14   Zur the Enchanter casts Orzhov Signet
+R14       [Zur the Enchanter decides: Ethereal Armor 100%, stop 0% -> Ethereal Armor [search]]
+R14   Zur the Enchanter casts Ethereal Armor
+R14     Ethereal Armor enchants Token
+R14       [Zur the Enchanter attack plan by search: filtered at Y'shtola]
+R14 --- Y'shtola turn 14: life 40, 4 cards in hand, 10 lands
+R14       [Y'shtola decides: Torment of Hailfire (X = 9) 99%, Sanguine Bond 1%, Displacer Kitten 0%, equip Champion's Helm 0% -> Torment of Hailfire (X = 9) [search]]
+R14   Y'shtola casts Torment of Hailfire
+R14     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R14     Torment of Hailfire (X = 9)
+R14       Urza discards Howling Mine
+R14       Kinnan sacrifices Arcane Signet
+R14       Zur the Enchanter discards Copy Enchantment
+R14       Urza sacrifices Token
+R14       Kinnan discards Island
+R14       Zur the Enchanter sacrifices Imprisoned in the Moon
+R14       Kinnan discards Island
+R14       Zur the Enchanter sacrifices Talisman of Dominance
+R14       Kinnan discards Exotic Orchard
+R14       Zur the Enchanter sacrifices Swiftfoot Boots
+R14       Kinnan discards Island
+R14       Zur the Enchanter sacrifices Orzhov Signet
+R14       Kinnan discards Dramatic Reversal
+R14       Zur the Enchanter discards Flooded Strand
+R14       Kinnan sacrifices Llanowar Elves
+R14       Zur the Enchanter sacrifices Token
+R14       Urza discards Emry, Lurker of the Loch
+R14       Kinnan sacrifices Ilysian Caryatid
+R14       Zur the Enchanter sacrifices Delney, Streetwise Lookout
+R14       Kinnan discards Trophy Mage
+R14       Zur the Enchanter discards Steel of the Godhead
+R14       [Y'shtola attack plan by search: filtered at Kinnan]
+R14       [Y'shtola holds back 1 attacker(s) that would die to blocks]
+R14   Y'shtola attacks Zur the Enchanter with 1 creature(s): 2 damage (life now 4)
+R15 --- Urza turn 15: life 17, 3 cards in hand, 8 lands
+R15       [Urza decides: Fabricate 92%, Hullbreaker Horror 4%, Basalt Monolith 2%, stop (hold mana) 1% -> Fabricate [search]]
+R15   Urza casts Fabricate
+R15     Urza reveals Rings of Brighthearth and puts it into their hand
+R15       [Urza decides: Rings of Brighthearth 78%, Basalt Monolith 13%, stop (hold mana) 9% -> Rings of Brighthearth [search]]
+R15   Urza casts Rings of Brighthearth
+R15   Kinnan casts Faerie Mastermind
+R15     Basalt Monolith (Zur the Enchanter) is removed: bounce
+R15     Urza casts Counterspell at Faerie Mastermind
+R15     Urza counters Faerie Mastermind with Counterspell
+R15       [Kinnan end of turn: Faerie Mastermind 100%, pass 0% -> Faerie Mastermind]
+R15 --- Kinnan turn 15: life 16, 7 cards in hand, 10 lands
+R15       [Kinnan decides: Freed from the Real 48%, Pemmin's Aura 48%, Nature's Rhythm 3%, Wandering Archaic // Explore the Vastlands 1% -> Freed from the Real [search]]
+R15   Kinnan casts Freed from the Real
+R15     Sphere of Safety (Y'shtola) is removed: bounce
+R15       [Kinnan decides: Pemmin's Aura 91%, Nature's Rhythm 5%, Wandering Archaic // Explore the Vastlands 3%, Walking Ballista 1% -> Pemmin's Aura [search]]
+R15   Kinnan casts Pemmin's Aura
+R15       [Y'shtola holds its protection by search]
+R15     Y'shtola, Night's Blessed (Y'shtola) is removed: bounce
+R15       [Kinnan decides: Nature's Rhythm 57%, Wandering Archaic // Explore the Vastlands 28%, Walking Ballista 15%, Incubation Druid 0% -> Nature's Rhythm [search]]
+R15   Kinnan casts Nature's Rhythm
+R15     Champion's Helm (Y'shtola) is removed: bounce
+R15       [Kinnan attack plan by search: filtered at Urza]
+R15   Kinnan attacks Urza with 2 creature(s): 7 damage (life now 10)
+R15 *** Zur the Enchanter is eliminated (life -1) by Kinnan
+R15   Kinnan attacks Zur the Enchanter with 1 creature(s): 5 damage (life now -1)
+R15 --- Y'shtola turn 15: life 42, 7 cards in hand, 10 lands
+R15       [Y'shtola decides: Sanguine Bond 57%, Anguished Unmaking -> Tidespout Tyrant 14%, Displacer Kitten 10%, Rhystic Study 5% -> Displacer Kitten [search]]
+R15   Y'shtola casts Displacer Kitten
+R15       [Y'shtola decides: Anguished Unmaking -> Tidespout Tyrant 46%, Sanguine Bond 20%, Rhystic Study 18%, stop (hold mana) 7% -> Sanguine Bond [search]]
+R15   Y'shtola casts Sanguine Bond
+R15     Displacer Kitten flickers Prayer of Binding
+R15     Rhystic Study returns to the battlefield
+R15     Tidespout Tyrant (Kinnan) is removed: exile
+R15       [Y'shtola decides: Orcish Bowmasters 98%, stop 2% -> Orcish Bowmasters [search]]
+R15   Y'shtola casts Orcish Bowmasters
+R15     Kinnan casts Force of Will at Orcish Bowmasters
+R15     Kinnan counters Orcish Bowmasters with Force of Will
+R16 --- Urza turn 16: life 10, 2 cards in hand, 8 lands
+R16   Urza plays Island
+R16       [Urza decides: Hullbreaker Horror 98%, Basalt Monolith 2%, stop 0% -> Hullbreaker Horror [search]]
+R16   Urza casts Hullbreaker Horror
+R16   Kinnan channels Otawara
+R16     Sanguine Bond (Y'shtola) is removed: bounce
+R16       [Kinnan end of turn: Otawara -> Sanguine Bond 100%, pass 0% -> Otawara -> Sanguine Bond]
+R16 --- Kinnan turn 16: life 14, 5 cards in hand, 10 lands
+R16       [Kinnan decides: harmonize Nature's Rhythm 100%, combo: Freed from the Real / Pemmin's Aura + Bloom Tender 0%, combo: Freed from the Real / Pemmin's Aura + Nyxbloom Ancient + a blue mana creature 0%, Wandering Archaic // Explore the Vastlands 0% -> harmonize Nature's Rhythm [search]]
+R16     Kinnan exiles Elvish Spirit Guide from hand for {G}
+R16   Kinnan harmonizes Nature's Rhythm (X=38)
+R16       [Kinnan decides: combo: Freed from the Real / Pemmin's Aura + Bloom Tender 100%, stop 0% -> combo: Freed from the Real / Pemmin's Aura + Bloom Tender [search]]
+R16   Kinnan goes for Freed from the Real / Pemmin's Aura + Bloom Tender
+R16 *** Urza is eliminated (life 10) by Kinnan
+R16 *** Y'shtola is eliminated (life 43) by Kinnan
+R16 *** Kinnan wins by combo
+Winner: Kinnan (combo)

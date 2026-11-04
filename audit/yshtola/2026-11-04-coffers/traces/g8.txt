@@ -1,0 +1,114 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 8 (seed 500008): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Kinnan, Yawgmoth, Y'shtola, Miirym
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kinnan plays Exotic Orchard
+R1  --- Yawgmoth turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yawgmoth plays Nykthos, Shrine to Nyx
+R1        [Yawgmoth decides: Lotus Petal 100%, stop 0% -> Lotus Petal [search]]
+R1    Yawgmoth casts Lotus Petal
+R1        [Yawgmoth decides: Zulaport Cutthroat 100%, stop 0% -> Zulaport Cutthroat [search]]
+R1    Yawgmoth casts Zulaport Cutthroat
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Cabal Coffers
+R1  --- Miirym turn 1: life 40, 7 cards in hand, 0 lands
+R1    Miirym plays Ketria Triome
+R2  --- Kinnan turn 2: life 40, 7 cards in hand, 1 lands
+R2    Kinnan plays Island
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 99%, Thrasios, Triton Hero 1%, stop (hold mana) 0% -> Kinnan, Bonder Prodigy [search]]
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R2  --- Yawgmoth turn 2: life 40, 5 cards in hand, 1 lands
+R2    Yawgmoth plays Swamp
+R2  --- Y'shtola turn 2: life 40, 7 cards in hand, 1 lands
+R2    Y'shtola pays 2 life for an untapped Godless Shrine
+R2    Y'shtola plays Godless Shrine
+R2        [Y'shtola decides: Fatal Push -> Kinnan, Bonder Prodigy 99%, stop (hold mana) 1% -> Fatal Push -> Kinnan, Bonder Prodigy [search]]
+R2    Y'shtola casts Fatal Push -> Kinnan, Bonder Prodigy (Kinnan)
+R2      Kinnan, Bonder Prodigy (Kinnan) is removed: destroy
+R2  --- Miirym turn 2: life 40, 7 cards in hand, 1 lands
+R2    Miirym plays Mountain
+R3  --- Kinnan turn 3: life 40, 7 cards in hand, 2 lands
+R3    Kinnan plays Dreamroot Cascade
+R3        [Kinnan decides: transmute Drift of Phantasms 99%, Thrasios, Triton Hero 0%, Fabricate 0%, Enduring Vitality 0% -> transmute Drift of Phantasms [search]]
+R3    Kinnan transmutes Drift of Phantasms
+R3      Kinnan reveals Basalt Monolith (transmute)
+R3  --- Yawgmoth turn 3: life 40, 5 cards in hand, 2 lands
+R3    Yawgmoth plays Swamp
+R3        [Yawgmoth decides: Necroskitter 100%, stop 0% -> Necroskitter [search]]
+R3    Yawgmoth casts Necroskitter
+R3  --- Y'shtola turn 3: life 38, 6 cards in hand, 2 lands
+R3    Y'shtola plays Island
+R3    Miirym casts Worldly Tutor
+R3      Miirym reveals Wrathful Red Dragon and puts it on top of their library
+R3        [Miirym end of turn: Worldly Tutor 100%, pass 0% -> Worldly Tutor]
+R3  --- Miirym turn 3: life 40, 6 cards in hand, 2 lands
+R3    Miirym plays Boseiju, Who Endures
+R3        [Miirym decides: Rhystic Study 100%, stop 0% -> Rhystic Study [search]]
+R3    Miirym casts Rhystic Study
+R3      Y'shtola casts Dovin's Veto at Rhystic Study
+R3      Y'shtola counters Rhystic Study with Dovin's Veto
+R4  --- Kinnan turn 4: life 40, 7 cards in hand, 3 lands
+R4    Kinnan plays Misty Rainforest
+R4      cracks Misty Rainforest for Tropical Island
+R4        [Kinnan decides: Basalt Monolith 88%, Simic Signet 12%, Fabricate 0%, Enduring Vitality 0% -> Basalt Monolith [search]]
+R4    Kinnan casts Basalt Monolith
+R4        [Kinnan decides: Simic Signet 100%, Fabricate 0%, stop (hold mana) 0%, Mirage Mirror 0% -> Simic Signet [search]]
+R4    Kinnan casts Simic Signet
+R4        [Kinnan decides: Fabricate 91%, stop (hold mana) 9%, Mirage Mirror 0%, Basalt Monolith ability 0% -> Fabricate [search]]
+R4    Kinnan casts Fabricate
+R4      Kinnan reveals Walking Ballista and puts it into their hand
+R4  --- Yawgmoth turn 4: life 40, 4 cards in hand, 3 lands
+R4    Yawgmoth plays Swamp
+R4        [Yawgmoth decides: Yawgmoth, Thran Physician 86%, Diabolic Intent 14%, stop 0% -> Yawgmoth, Thran Physician [search]]
+R4    Yawgmoth casts Yawgmoth, Thran Physician
+R4        [Yawgmoth decides: Yawgmoth: sacrifice Necroskitter 100%, stop 0% -> Yawgmoth: sacrifice Necroskitter [search]]
+R4  --- Y'shtola turn 4: life 37, 5 cards in hand, 3 lands
+R4    Y'shtola plays Urza's Cave
+R4        [Y'shtola decides: Your Fate Ends Here -> Yawgmoth, Thran Physician 89%, Your Fate Ends Here 10%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R4        [Y'shtola decides: Your Fate Ends Here -> Yawgmoth, Thran Physician 89%, Your Fate Ends Here 10%, stop (hold mana) 0% -> stop (hold mana) [search]]
+R4  --- Miirym turn 4: life 39, 5 cards in hand, 3 lands
+R4    Miirym plays Island
+R5  --- Kinnan turn 5: life 38, 5 cards in hand, 4 lands
+R5    Kinnan plays Forest
+R5        [Kinnan decides: Kinnan, Bonder Prodigy 51%, Enduring Vitality 29%, stop (hold mana) 8%, Thrasios, Triton Hero 8% -> Kinnan, Bonder Prodigy [search]]
+R5    Kinnan casts Kinnan, Bonder Prodigy
+R5      Miirym casts Counterspell at Kinnan, Bonder Prodigy
+R5      Kinnan casts An Offer You Can't Refuse at Counterspell
+R5      Kinnan counters Counterspell with An Offer You Can't Refuse
+R5        [Kinnan decides: combo: Kinnan + Basalt Monolith 100%, Enduring Vitality 0%, Thrasios, Triton Hero 0%, Walking Ballista 0% -> combo: Kinnan + Basalt Monolith [search]]
+R5    Kinnan goes for Kinnan + Basalt Monolith
+R5  *** Yawgmoth is eliminated (life 40) by Kinnan
+R5      Y'shtola casts Teferi's Protection: life can't change, protection from everything, all phased out
+R5      Y'shtola survives: its life total can't change
+R5  *** Miirym is eliminated (life 39) by Kinnan
+R5  *** Kinnan goes off, but Y'shtola survive
+R5        [Kinnan decides: Enduring Vitality 70%, Thrasios, Triton Hero 18%, Walking Ballista 11%, Mirage Mirror 1% -> Enduring Vitality [search]]
+R5    Kinnan casts Enduring Vitality
+R5        [Kinnan decides: Mirage Mirror 99%, Basalt Monolith ability 1%, stop 0% -> Mirage Mirror [search]]
+R5    Kinnan casts Mirage Mirror
+R5  --- Y'shtola turn 5: life 37, 4 cards in hand, 4 lands
+R5    Y'shtola no longer has protection from everything
+R5    Y'shtola plays Urborg, Tomb of Yawgmoth
+R5        [Y'shtola decides: Your Fate Ends Here -> Kinnan, Bonder Prodigy 77%, stop (hold mana) 16%, Sheoldred, the Apocalypse 6%, Your Fate Ends Here 0% -> Sheoldred, the Apocalypse [search]]
+R5    Y'shtola casts Sheoldred, the Apocalypse
+R5        [Y'shtola decides: Your Fate Ends Here -> Kinnan, Bonder Prodigy 82%, stop (hold mana) 17%, Your Fate Ends Here 0% -> Your Fate Ends Here -> Kinnan, Bonder Prodigy [search]]
+R5    Y'shtola casts Your Fate Ends Here -> Kinnan, Bonder Prodigy (Kinnan)
+R5      Enduring Vitality (Kinnan) is removed: destroy
+R5      Kinnan returns as an enchantment (Enduring Vitality)
+R6  --- Kinnan turn 6: life 38, 2 cards in hand, 5 lands
+R6        [Kinnan decides: combo: Kinnan + Basalt Monolith 100%, Pemmin's Aura 0%, Thrasios, Triton Hero 0%, Walking Ballista 0% -> combo: Kinnan + Basalt Monolith [search]]
+R6    Kinnan goes for Kinnan + Basalt Monolith
+R6  *** Y'shtola is eliminated (life 37) by Kinnan
+R6  *** Kinnan wins by combo
+Winner: Kinnan (combo)

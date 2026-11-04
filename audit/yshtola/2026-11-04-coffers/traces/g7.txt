@@ -1,0 +1,178 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 7 (seed 500007): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Y'shtola, Yawgmoth, Urza, Miirym
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Flooded Strand
+R1      cracks Flooded Strand for Tundra
+R1        [Y'shtola decides: Mystic Remora 100%, stop 0% -> Mystic Remora [search]]
+R1    Y'shtola casts Mystic Remora
+R1  --- Yawgmoth turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yawgmoth plays Swamp
+R1        [Yawgmoth decides: Lotus Petal 100%, stop 0% -> Lotus Petal [search]]
+R1    Yawgmoth casts Lotus Petal
+R1        [Yawgmoth decides: Arcane Signet 100%, stop 0% -> Arcane Signet [search]]
+R1    Yawgmoth casts Arcane Signet
+R1  --- Urza turn 1: life 40, 7 cards in hand, 0 lands
+R1    Urza plays Island
+R1  --- Miirym turn 1: life 40, 7 cards in hand, 0 lands
+R1    Miirym plays Training Center
+R2  --- Y'shtola turn 2: life 39, 8 cards in hand, 1 lands
+R2    Y'shtola plays Swamp
+R2  --- Yawgmoth turn 2: life 40, 5 cards in hand, 1 lands
+R2    Yawgmoth plays Ancient Tomb
+R2        [Yawgmoth decides: Yawgmoth, Thran Physician 70%, Warren Soultrader 15%, Pitiless Plunderer 12%, Ophiomancer 3% -> Yawgmoth, Thran Physician [search]]
+R2    Yawgmoth casts Yawgmoth, Thran Physician
+R2  --- Urza turn 2: life 40, 7 cards in hand, 1 lands
+R2    Urza plays Island
+R2  --- Miirym turn 2: life 40, 7 cards in hand, 1 lands
+R2    Miirym plays Forest
+R2        [Miirym decides: Farseek 58%, Arcane Signet 35%, Korlessa, Scale Singer 8%, stop 0% -> Farseek [search]]
+R2    Miirym casts Farseek
+R2      Farseek finds Ketria Triome
+R3  --- Y'shtola turn 3: life 39, 8 cards in hand, 2 lands
+R3    Y'shtola plays Cabal Coffers
+R3  --- Yawgmoth turn 3: life 38, 5 cards in hand, 2 lands
+R3    Yawgmoth plays Cabal Stronghold
+R3        [Yawgmoth decides: Warren Soultrader 52%, Pitiless Plunderer 39%, Ophiomancer 9%, stop 0% -> Warren Soultrader [search]]
+R3    Yawgmoth casts Warren Soultrader
+R3      Urza casts Counterspell at Warren Soultrader
+R3      Urza counters Warren Soultrader with Counterspell
+R3        [Yawgmoth attacks: Y'shtola 66%, Urza 17%, Miirym 17% -> Y'shtola]
+R3    Yawgmoth attacks Y'shtola with 1 creature(s): 2 damage (life now 37)
+R3  --- Urza turn 3: life 40, 6 cards in hand, 2 lands
+R3    Urza plays Reliquary Tower
+R3        [Urza decides: stop (hold mana) 100%, Rhystic Study 0% -> stop (hold mana) [search]]
+R3        [Urza decides: stop (hold mana) 100%, Rhystic Study 0% -> stop (hold mana) [search]]
+R3  --- Miirym turn 3: life 40, 6 cards in hand, 3 lands
+R3    Miirym plays Mountain
+R3        [Miirym decides: Arcane Signet 45%, Mox Jasper 45%, Korlessa, Scale Singer 10%, Parallel Lives 1% -> Arcane Signet [search]]
+R3    Miirym casts Arcane Signet
+R3        [Miirym decides: Mox Jasper 82%, Korlessa, Scale Singer 18%, stop 0% -> Mox Jasper [search]]
+R3    Miirym casts Mox Jasper
+R3        [Miirym decides: Korlessa, Scale Singer 100%, stop 0% -> Korlessa, Scale Singer [search]]
+R3    Miirym casts Korlessa, Scale Singer
+R4  --- Y'shtola turn 4: life 37, 10 cards in hand, 3 lands
+R4      Y'shtola sacrifices Mystic Remora (cumulative upkeep 3)
+R4    Y'shtola plays Urza's Cave
+R4        [Y'shtola decides: Generous Gift -> Yawgmoth, Thran Physician 99%, Coalition Relic 0%, Talisman of Hierarchy 0%, stop (hold mana) 0% -> Generous Gift -> Yawgmoth, Thran Physician [search]]
+R4    Y'shtola casts Generous Gift -> Yawgmoth, Thran Physician (Yawgmoth)
+R4      Yawgmoth, Thran Physician (Yawgmoth) is removed: destroy
+R4  --- Yawgmoth turn 4: life 38, 4 cards in hand, 3 lands
+R4    Yawgmoth plays Swamp
+R4        [Yawgmoth decides: Pitiless Plunderer 49%, Yawgmoth, Thran Physician 40%, Ophiomancer 11%, Feed the Swarm -> Korlessa, Scale Singer 0% -> Ophiomancer [search]]
+R4    Yawgmoth casts Ophiomancer
+R4        [Yawgmoth decides: Feed the Swarm -> Korlessa, Scale Singer 99%, stop 1% -> Feed the Swarm -> Korlessa, Scale Singer [search]]
+R4    Yawgmoth casts Feed the Swarm -> Korlessa, Scale Singer (Miirym)
+R4      Korlessa, Scale Singer (Miirym) is removed: destroy
+R4        [Yawgmoth attacks: Urza 34%, Miirym 34%, Y'shtola 32% -> Y'shtola]
+R4    Yawgmoth attacks Y'shtola with 1 creature(s): 3 damage (life now 34)
+R4  --- Urza turn 4: life 40, 6 cards in hand, 3 lands
+R4    Urza plays Island
+R4        [Urza decides: Basalt Monolith 95%, Urza, Lord High Artificer 2%, Rhystic Study 2%, stop (hold mana) 0% -> Basalt Monolith [search]]
+R4    Urza casts Basalt Monolith
+R4        [Urza decides: Rhystic Study 68%, stop (hold mana) 32%, Basalt Monolith ability 0% -> Rhystic Study [search]]
+R4    Urza casts Rhystic Study
+R4  --- Miirym turn 4: life 40, 3 cards in hand, 4 lands
+R4    Miirym plays Rootbound Crag
+R4        [Miirym decides: Miirym, Sentinel Wyrm 100%, Beast Within 0%, Parallel Lives 0%, Beast Within -> Rhystic Study 0% -> Miirym, Sentinel Wyrm [search]]
+R4    Miirym casts Miirym, Sentinel Wyrm
+R5  --- Y'shtola turn 5: life 34, 7 cards in hand, 4 lands
+R5        [Y'shtola decides: Coalition Relic 48%, Talisman of Hierarchy 48%, Propaganda 2%, Rhystic Study 1% -> Rhystic Study [search]]
+R5    Y'shtola casts Rhystic Study
+R5  --- Yawgmoth turn 5: life 34, 2 cards in hand, 4 lands
+R5        [Yawgmoth decides: Yawgmoth, Thran Physician 66%, Pitiless Plunderer 22%, Hancock, Ghoulish Mayor 11%, Toxic Deluge 0% -> Pitiless Plunderer [search]]
+R5    Yawgmoth casts Pitiless Plunderer
+R5        [Yawgmoth attack plan by search: filtered at Urza]
+R5    Yawgmoth attacks Urza with 3 creature(s): 6 damage (life now 34)
+R5  --- Urza turn 5: life 34, 6 cards in hand, 4 lands
+R5    Urza plays Island
+R5        [Urza decides: Urza, Lord High Artificer 99%, stop (hold mana) 0%, Mystic Forge 0%, Basalt Monolith ability 0% -> Urza, Lord High Artificer [search]]
+R5    Urza casts Urza, Lord High Artificer
+R5        [Urza decides: stop (hold mana) 60%, Mystic Forge 39%, Urza: free card 1%, Basalt Monolith ability 0% -> stop (hold mana) [search]]
+R5        [Urza decides: stop (hold mana) 60%, Mystic Forge 39%, Urza: free card 1%, Basalt Monolith ability 0% -> stop (hold mana) [search]]
+R5  --- Miirym turn 5: life 40, 3 cards in hand, 5 lands
+R5        [Miirym decides: Beast Within -> Urza, Lord High Artificer 98%, Beast Within 1%, stop (hold mana) 0%, Urza's Incubator 0% -> Beast Within -> Urza, Lord High Artificer [search]]
+R5    Miirym casts Beast Within -> Urza, Lord High Artificer (Urza)
+R5      Urza casts Swan Song at Beast Within
+R5      Urza counters Beast Within with Swan Song
+R5        [Miirym decides: Urza's Incubator 95%, Parallel Lives 5%, stop 0% -> Urza's Incubator [search]]
+R5    Miirym casts Urza's Incubator
+R5      Urza's Incubator names dragon
+R5        [Miirym attack plan by search: filtered at Urza]
+R5    Miirym attacks Urza with 1 creature(s): 6 damage (life now 28)
+R6  --- Y'shtola turn 6: life 34, 9 cards in hand, 4 lands
+R6    Y'shtola plays Urborg, Tomb of Yawgmoth
+R6        [Y'shtola decides: stop (hold mana) 65%, Coalition Relic 13%, Talisman of Hierarchy 13%, Read the Bones 8% -> stop (hold mana) [search]]
+R6        [Y'shtola decides: stop (hold mana) 65%, Coalition Relic 13%, Talisman of Hierarchy 13%, Read the Bones 8% -> stop (hold mana) [search]]
+R6  --- Yawgmoth turn 6: life 32, 2 cards in hand, 4 lands
+R6        [Yawgmoth decides: Yawgmoth, Thran Physician 78%, Hancock, Ghoulish Mayor 12%, Mikaeus, the Unhallowed 9%, Toxic Deluge 1% -> Mikaeus, the Unhallowed [search]]
+R6    Yawgmoth casts Mikaeus, the Unhallowed
+R6        [Yawgmoth attack plan by search: filtered at Miirym]
+R6    Yawgmoth attacks Miirym with 4 creature(s): 7 damage (life now 33)
+R6    Urza activates Basalt Monolith
+R6        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R6    Urza activates Basalt Monolith
+R6        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R6    Urza activates Basalt Monolith
+R6        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R6  --- Urza turn 6: life 28, 8 cards in hand, 5 lands
+R6    Urza plays Island
+R6        [Urza decides: Cyclonic Rift -> Miirym, Sentinel Wyrm 99%, Trinket Mage 1%, stop (hold mana) 0%, Mystic Forge 0% -> Cyclonic Rift [search]]
+R6    Urza casts Cyclonic Rift
+R6      board wipe resolves (rift)
+R6        Rhystic Study (Y'shtola) is removed by the wipe (rift)
+R6        Arcane Signet (Yawgmoth) is removed by the wipe (rift)
+R6        Token (Yawgmoth) is removed by the wipe (rift)
+R6        Token (Yawgmoth) is removed by the wipe (rift)
+R6        Pitiless Plunderer (Yawgmoth) is removed by the wipe (rift)
+R6        Mikaeus, the Unhallowed (Yawgmoth) is removed by the wipe (rift)
+R6        Arcane Signet (Miirym) is removed by the wipe (rift)
+R6        Mox Jasper (Miirym) is removed by the wipe (rift)
+R6        Miirym, Sentinel Wyrm (Miirym) is removed by the wipe (rift)
+R6        Urza's Incubator (Miirym) is removed by the wipe (rift)
+R6        [Urza decides: Trinket Mage 65%, stop (hold mana) 35% -> Trinket Mage [search]]
+R6    Urza casts Trinket Mage
+R6      Urza reveals Rings of Brighthearth and puts it into their hand
+R6        [Urza attacks: Miirym 52%, Yawgmoth 32%, Y'shtola 16% -> Miirym]
+R6    Urza attacks Miirym with 1 creature(s): 1 damage (life now 32)
+R6  --- Miirym turn 6: life 32, 5 cards in hand, 5 lands
+R6        [Miirym decides: Arcane Signet 31%, Mox Jasper 31%, Cultivate 31%, Urza's Incubator 6% -> Arcane Signet [search]]
+R6    Miirym casts Arcane Signet
+R6        [Miirym decides: Mox Jasper 46%, Cultivate 46%, Urza's Incubator 8%, Parallel Lives 1% -> Mox Jasper [search]]
+R6    Miirym casts Mox Jasper
+R6        [Miirym decides: Cultivate 84%, Urza's Incubator 15%, Parallel Lives 1%, stop 0% -> Cultivate [search]]
+R6    Miirym casts Cultivate
+R6      Miirym reveals Mountain and puts it into their hand
+R6    Miirym plays Mountain
+R7    Y'shtola casts Notion Thief
+R7        [Y'shtola end of turn: Notion Thief 89%, Notion Thief (flash) 7%, Restoration Angel 4%, pass 0% -> Notion Thief]
+R7  --- Y'shtola turn 7: life 34, 9 cards in hand, 5 lands
+R7    Y'shtola plays Plains
+R7        [Y'shtola decides: stop (hold mana) 29%, Exquisite Blood 28%, Rhystic Study 21%, Sphere of Safety 9% -> stop (hold mana) [search]]
+R7        [Y'shtola attack plan by search: none at Yawgmoth]
+R7        [Y'shtola decides: stop (hold mana) 29%, Exquisite Blood 28%, Rhystic Study 21%, Sphere of Safety 9% -> stop (hold mana) [search]]
+R7  --- Yawgmoth turn 7: life 30, 5 cards in hand, 4 lands
+R7        [Yawgmoth decides: Yawgmoth, Thran Physician 53%, Toxic Deluge 27%, Pitiless Plunderer 11%, Hancock, Ghoulish Mayor 5% -> Yawgmoth, Thran Physician [search]]
+R7    Yawgmoth casts Yawgmoth, Thran Physician
+R7  --- Urza turn 7: life 28, 10 cards in hand, 6 lands
+R7    Urza plays Island
+R7        [Urza decides: Rings of Brighthearth 81%, Hullbreaker Horror 18%, stop (hold mana) 1%, Tezzeret the Seeker 0% -> Rings of Brighthearth [search]]
+R7    Urza casts Rings of Brighthearth
+R7        [Urza decides: combo: Power Artifact / Rings of Brighthearth + Monolith 100%, Hullbreaker Horror 0%, stop (hold mana) 0%, Tezzeret the Seeker 0% -> combo: Power Artifact / Rings of Brighthearth + Monolith [search]]
+R7    Urza goes for Power Artifact / Rings of Brighthearth + Monolith
+R7  *** Y'shtola is eliminated (life 34) by Urza
+R7  *** Yawgmoth is eliminated (life 28) by Urza
+R7  *** Miirym is eliminated (life 32) by Urza
+R7  *** Urza wins by combo
+Winner: Urza (combo)

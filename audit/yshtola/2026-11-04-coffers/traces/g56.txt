@@ -1,0 +1,240 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 56 (seed 500056): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Miirym, Y'shtola, Urza, Kinnan
+R1  --- Miirym turn 1: life 40, 7 cards in hand, 0 lands
+R1    Miirym plays Command Tower
+R1        [Miirym decides: Sol Ring 100%, stop 0% -> Sol Ring [search]]
+R1    Miirym casts Sol Ring
+R1  --- Y'shtola turn 1: life 40, 6 cards in hand, 0 lands
+R1    Y'shtola plays Command Tower
+R1  --- Urza turn 1: life 40, 7 cards in hand, 0 lands
+R1    Urza plays Island
+R1        [Urza decides: Tormod's Crypt 53%, Ponder 47%, stop 0% -> Tormod's Crypt [search]]
+R1    Urza casts Tormod's Crypt
+R1        [Urza decides: Ponder 100%, stop 0% -> Ponder [search]]
+R1    Urza casts Ponder
+R1  --- Kinnan turn 1: life 40, 6 cards in hand, 0 lands
+R1    Kinnan pays 2 life for an untapped Breeding Pool
+R1    Kinnan plays Breeding Pool
+R2  --- Miirym turn 2: life 40, 6 cards in hand, 1 lands
+R2    Miirym plays Forest
+R2  --- Y'shtola turn 2: life 40, 6 cards in hand, 1 lands
+R2    Y'shtola plays Caves of Koilos
+R2        [Y'shtola decides: Arcane Signet 99%, stop (hold mana) 1% -> Arcane Signet [search]]
+R2    Y'shtola casts Arcane Signet
+R2  --- Urza turn 2: life 40, 6 cards in hand, 1 lands
+R2    Urza plays Island
+R2        [Urza decides: Etherium Sculptor 100%, stop (hold mana) 0% -> Etherium Sculptor [search]]
+R2    Urza casts Etherium Sculptor
+R2  --- Kinnan turn 2: life 38, 6 cards in hand, 1 lands
+R2    Kinnan plays Forest
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 73%, Talisman of Curiosity 13%, Arcane Signet 13%, stop 0% -> Arcane Signet [search]]
+R2    Kinnan casts Arcane Signet
+R3    Miirym casts Worldly Tutor
+R3      Miirym reveals Atarka, World Render and puts it on top of their library
+R3        [Miirym end of turn: Worldly Tutor 100%, pass 0% -> Worldly Tutor]
+R3  --- Miirym turn 3: life 40, 5 cards in hand, 2 lands
+R3    Miirym plays Island
+R3  --- Y'shtola turn 3: life 40, 5 cards in hand, 2 lands
+R3    Y'shtola plays Plains
+R3        [Y'shtola decides: Y'shtola, Night's Blessed 78%, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal 11%, stop (hold mana) 9%, Propaganda 2% -> Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal [search]]
+R3    Y'shtola casts Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal
+R3  --- Urza turn 3: life 40, 5 cards in hand, 2 lands
+R3    Urza plays Reliquary Tower
+R3        [Urza attack plan by search: filtered at Y'shtola]
+R3        [Urza holds back 1 attacker(s) that would die to blocks]
+R3    Urza attacks Miirym with 1 creature(s): 1 damage (life now 39)
+R3  --- Kinnan turn 3: life 38, 5 cards in hand, 2 lands
+R3    Kinnan plays Command Tower
+R3        [Kinnan decides: Kinnan, Bonder Prodigy 66%, Talisman of Curiosity 25%, Mystic Remora 6%, Freed from the Real 3% -> Mystic Remora [search]]
+R3    Kinnan casts Mystic Remora
+R3      Urza casts Mana Drain at Mystic Remora
+R3      Urza counters Mystic Remora with Mana Drain
+R3        [Kinnan decides: Kinnan, Bonder Prodigy 85%, Talisman of Curiosity 13%, Freed from the Real 1%, stop 0% -> Kinnan, Bonder Prodigy [search]]
+R3    Kinnan casts Kinnan, Bonder Prodigy
+R3        [Kinnan decides: Talisman of Curiosity 100%, stop 0% -> Talisman of Curiosity [search]]
+R3    Kinnan casts Talisman of Curiosity
+R4  --- Miirym turn 4: life 39, 5 cards in hand, 3 lands
+R4    Miirym pays 2 life for an untapped Steam Vents
+R4    Miirym plays Steam Vents
+R4        [Miirym decides: Miirym, Sentinel Wyrm 70%, Lathliss, Dragon Queen 27%, Wrathful Red Dragon 3%, stop 0% -> Miirym, Sentinel Wyrm [search]]
+R4    Miirym casts Miirym, Sentinel Wyrm
+R4  --- Y'shtola turn 4: life 39, 4 cards in hand, 3 lands
+R4    Y'shtola plays Marsh Flats
+R4      cracks Marsh Flats for Scrubland
+R4        [Y'shtola decides: Go for the Throat -> Miirym, Sentinel Wyrm 84%, stop (hold mana) 8%, Propaganda 8%, Y'shtola, Night's Blessed 0% -> Go for the Throat -> Miirym, Sentinel Wyrm [search]]
+R4    Y'shtola casts Go for the Throat -> Miirym, Sentinel Wyrm (Miirym)
+R4      Miirym, Sentinel Wyrm (Miirym) is removed: destroy
+R4        [Y'shtola attack plan by search: filtered at Kinnan]
+R4    Y'shtola attacks Kinnan with 1 creature(s): 3 damage (life now 35)
+R4  --- Urza turn 4: life 40, 4 cards in hand, 3 lands
+R4    Urza plays Urza's Saga
+R4        [Urza decides: Urza, Lord High Artificer 97%, Thought Monitor 2%, Efficient Construction 0%, stop 0% -> Urza, Lord High Artificer [search]]
+R4    Urza casts Urza, Lord High Artificer
+R4        [Urza decides: Thought Monitor 87%, Efficient Construction 13%, stop 0% -> Thought Monitor [search]]
+R4    Urza casts Thought Monitor
+R4        [Urza decides: The Reality Chip 100%, stop 0% -> The Reality Chip [search]]
+R4    Urza casts The Reality Chip
+R4  --- Kinnan turn 4: life 35, 3 cards in hand, 3 lands
+R4    Kinnan plays Rejuvenating Springs
+R4        [Kinnan decides: Koma, Cosmos Serpent 49%, Freed from the Real 49%, stop (hold mana) 1%, Kinnan: dig five 0% -> Koma, Cosmos Serpent [search]]
+R4    Kinnan casts Koma, Cosmos Serpent
+R4        [Kinnan attack plan by search: none at Miirym]
+R5  --- Miirym turn 5: life 37, 5 cards in hand, 4 lands
+R5        [Miirym decides: Lathliss, Dragon Queen 85%, Wrathful Red Dragon 12%, Twinflame Tyrant 2%, stop 0% -> Lathliss, Dragon Queen [search]]
+R5    Miirym casts Lathliss, Dragon Queen
+R5  --- Y'shtola turn 5: life 37, 3 cards in hand, 4 lands
+R5        [Y'shtola decides: Propaganda 61%, stop (hold mana) 39%, Y'shtola, Night's Blessed 0% -> Propaganda [search]]
+R5    Y'shtola casts Propaganda
+R5        [Y'shtola attack plan by search: filtered at Miirym]
+R5        [Y'shtola holds back 1 attacker(s) that would die to blocks]
+R5    Y'shtola attacks Urza with 1 creature(s): 3 damage (life now 37)
+R5  --- Urza turn 5: life 37, 4 cards in hand, 4 lands
+R5      Urza's Saga: Urza makes a Construct (6/6)
+R5    Urza plays Island
+R5        [Urza decides: Basalt Monolith 100%, Everflowing Chalice x3 0%, Efficient Construction 0%, The Reality Chip: reconfigure onto Token 0% -> Basalt Monolith [search]]
+R5    Urza casts Basalt Monolith
+R5        [Urza decides: Everflowing Chalice x3 97%, Efficient Construction 3%, The Reality Chip: reconfigure onto Token 1%, Urza: free card 0% -> Everflowing Chalice x3 [search]]
+R5    Urza casts Everflowing Chalice kicked 3 times
+R5        [Urza decides: Efficient Construction 81%, The Reality Chip: reconfigure onto Token 16%, Urza: free card 2%, Basalt Monolith ability 0% -> Efficient Construction [search]]
+R5    Urza casts Efficient Construction
+R5        [Urza attack plan by search: filtered at Miirym]
+R5        [Urza holds back 1 attacker(s) that would die to blocks]
+R5  --- Kinnan turn 5: life 35, 2 cards in hand, 4 lands
+R5    Kinnan plays Ancient Tomb
+R5        [Kinnan decides: Freed from the Real 97%, stop (hold mana) 3%, Kinnan: dig five 0% -> Freed from the Real [search]]
+R5    Kinnan casts Freed from the Real
+R5      Y'shtola casts Dovin's Veto at Freed from the Real
+R5      Y'shtola counters Freed from the Real with Dovin's Veto
+R5        [Kinnan decides: stop (hold mana) 97%, Kinnan: dig five 3% -> stop (hold mana) [search]]
+R5      Kinnan sacrifices Token (Koma)
+R5      Koma taps Token
+R5      Kinnan sacrifices Token (Koma)
+R5      Koma taps Lathliss, Dragon Queen
+R5        [Kinnan attack plan by search: filtered at Urza]
+R5    Kinnan attacks Urza with 3 creature(s): 11 damage (life now 26)
+R5        [Kinnan decides: stop (hold mana) 68%, Kinnan: dig five 32% -> stop (hold mana) [search]]
+R6  --- Miirym turn 6: life 37, 5 cards in hand, 4 lands
+R6    Miirym plays Cinder Glade
+R6        [Miirym decides: Atarka, World Render 98%, Wrathful Red Dragon 2%, Twinflame Tyrant 0%, Lightning Greaves 0% -> Atarka, World Render [search]]
+R6    Miirym casts Atarka, World Render
+R6      Kinnan sacrifices Token (Koma)
+R6      Koma taps Lathliss, Dragon Queen
+R6  --- Y'shtola turn 6: life 36, 2 cards in hand, 4 lands
+R6    Y'shtola plays Plains
+R6        [Y'shtola decides: Y'shtola, Night's Blessed 62%, Consecrated Sphinx 38%, stop 0% -> Y'shtola, Night's Blessed [search]]
+R6    Y'shtola casts Y'shtola, Night's Blessed
+R6        [Y'shtola attack plan by search: all at Urza]
+R6    Y'shtola attacks Urza with 1 creature(s): 3 damage (life now 23)
+R6  --- Urza turn 6: life 23, 1 cards in hand, 5 lands
+R6      Urza's Saga: Urza makes a Construct (9/9)
+R6      Urza's Saga: Urza puts Aether Spellbomb onto the battlefield
+R6    Urza plays Island
+R6        [Urza decides: Aether Spellbomb ability 98%, The Reality Chip: reconfigure onto Token 2%, Urza: free card 0%, Basalt Monolith ability 0% -> Aether Spellbomb ability [search]]
+R6    Urza activates Aether Spellbomb
+R6      Kinnan, Bonder Prodigy (Kinnan) is removed: bounce
+R6        [Urza decides: The Reality Chip: reconfigure onto Token 85%, Urza: free card 13%, Basalt Monolith ability 2%, stop 0% -> The Reality Chip: reconfigure onto Token [search]]
+R6    The Reality Chip attaches to Token
+R6        [Urza decides: Urza: free card 84%, Basalt Monolith ability 15%, stop 0% -> Urza: free card [search]]
+R6    Urza: Padeem, Consul of Innovation off the top, free
+R6    Urza casts Padeem, Consul of Innovation
+R6        [Urza decides: cast Tribute Mage from the top of the library (The Reality Chip) 100%, Urza: free card 0%, Basalt Monolith ability 0%, stop 0% -> Basalt Monolith ability [search]]
+R6    Urza activates Basalt Monolith
+R6        [Urza decides: cast Tribute Mage from the top of the library (The Reality Chip) 100%, Urza: free card 0%, Basalt Monolith ability 0%, stop 0% -> Basalt Monolith ability [search]]
+R6    Urza activates Basalt Monolith
+R6        [Urza decides: cast Tribute Mage from the top of the library (The Reality Chip) 100%, Urza: free card 0%, Basalt Monolith ability 0%, stop 0% -> stop [search]]
+R6        [Urza attack plan by search: filtered at Miirym]
+R6        [Urza keeps 2 creature(s) home as blockers]
+R6        [Urza holds back 1 attacker(s) that would die to blocks]
+R6    Urza attacks Kinnan with 1 creature(s): 2 damage (life now 33)
+R6        [Urza decides: cast Tribute Mage from the top of the library (The Reality Chip) 99%, Urza: free card 0%, Basalt Monolith ability 0%, stop 0% -> Basalt Monolith ability [search]]
+R6    Urza activates Basalt Monolith
+R6        [Urza decides: cast Tribute Mage from the top of the library (The Reality Chip) 99%, Urza: free card 0%, stop 0% -> Urza: free card [search]]
+R6    Urza: Displacer Kitten off the top, free
+R6    Urza casts Displacer Kitten
+R6  --- Kinnan turn 6: life 33, 1 cards in hand, 5 lands
+R6    Kinnan plays Hinterland Harbor
+R6        [Kinnan decides: Kinnan, Bonder Prodigy 85%, stop (hold mana) 15% -> Kinnan, Bonder Prodigy [search]]
+R6    Kinnan casts Kinnan, Bonder Prodigy
+R6        [Kinnan decides: stop (hold mana) 97%, Kinnan: dig five 3% -> stop (hold mana) [search]]
+R6      Kinnan sacrifices Token (Koma)
+R6      Koma taps Atarka, World Render
+R6      Kinnan sacrifices Token (Koma)
+R6      Koma taps Token
+R6        [Kinnan attack plan by search: filtered at Urza]
+R6        [Kinnan keeps 2 creature(s) home as blockers]
+R6        [Kinnan holds back 1 attacker(s) that would die to blocks]
+R6    Kinnan attacks Miirym with 1 creature(s): 3 damage (life now 34)
+R6        [Kinnan decides: stop (hold mana) 68%, Kinnan: dig five 32% -> stop (hold mana) [search]]
+R7  --- Miirym turn 7: life 34, 4 cards in hand, 5 lands
+R7        [Miirym decides: Wrathful Red Dragon 51%, Dragonspeaker Shaman 34%, Twinflame Tyrant 9%, Lightning Greaves 6% -> Twinflame Tyrant [search]]
+R7    Miirym casts Twinflame Tyrant
+R7        [Miirym decides: Lightning Greaves 100%, stop 0% -> Lightning Greaves [search]]
+R7    Miirym casts Lightning Greaves
+R7        [Miirym decides: equip Lightning Greaves 100%, stop 0% -> equip Lightning Greaves [search]]
+R7    Miirym equips Lightning Greaves to Lathliss, Dragon Queen
+R7      Kinnan sacrifices Token (Koma)
+R7      Koma taps Atarka, World Render
+R7      Kinnan sacrifices Token (Koma)
+R7      Koma taps Token
+R7        [Miirym attack plan by search: filtered at Urza]
+R7  *** Urza is eliminated (life -1) by Miirym
+R7    Miirym attacks Urza with 1 creature(s): 12 damage (life now -1)
+R7  --- Y'shtola turn 7: life 35, 4 cards in hand, 5 lands
+R7    Y'shtola plays Serra's Sanctum
+R7        [Y'shtola decides: Hero's Sundering -> Kinnan, Bonder Prodigy 68%, Consecrated Sphinx 32%, stop 0% -> Hero's Sundering -> Kinnan, Bonder Prodigy [search]]
+R7    Y'shtola activates Hero's Sundering: exile Kinnan, Bonder Prodigy, transform Venat
+R7      Kinnan, Bonder Prodigy (Kinnan) is removed: exile
+R7      Venat transforms into Hydaelyn, the Mothercrystal
+R7      Hydaelyn blesses Y'shtola, Night's Blessed: a +1/+1 counter, indestructible until Y'shtola's next turn
+R7        [Y'shtola attack plan by search: all at Miirym]
+R7    Y'shtola attacks Miirym with 1 creature(s): 0 damage (life now 34)
+R7  --- Kinnan turn 7: life 33, 1 cards in hand, 6 lands
+R7        [Kinnan decides: Nezahal, Primal Tide 99%, Kinnan, Bonder Prodigy 1%, stop (hold mana) 0% -> Kinnan, Bonder Prodigy [search]]
+R7    Kinnan casts Kinnan, Bonder Prodigy
+R7      Kinnan sacrifices Token (Koma)
+R7      Koma taps Token
+R7      Kinnan sacrifices Token (Koma)
+R7      Koma taps Twinflame Tyrant
+R7        [Kinnan attack plan by search: filtered at Miirym]
+R7        [Kinnan keeps 1 creature(s) home as blockers]
+R7    Kinnan attacks Miirym with 1 creature(s): 3 damage (life now 31)
+R8  --- Miirym turn 8: life 31, 3 cards in hand, 5 lands
+R8        [Miirym decides: Wrathful Red Dragon 55%, Dragonspeaker Shaman 40%, Temur Ascendancy 5%, stop 0% -> Wrathful Red Dragon [search]]
+R8    Miirym casts Wrathful Red Dragon
+R8      Kinnan sacrifices Token (Koma)
+R8      Koma taps Atarka, World Render
+R8      Kinnan sacrifices Token (Koma)
+R8      Koma taps Token
+R8        [Miirym attack plan by search: filtered at Kinnan]
+R8  *** Kinnan is eliminated (life -23) by Miirym
+R8    Miirym attacks Kinnan with 3 creature(s): 28 damage (life now -23)
+R8  --- Y'shtola turn 8: life 35, 6 cards in hand, 6 lands
+R8    Y'shtola plays Adarkar Wastes
+R8        [Y'shtola decides: Consecrated Sphinx 99%, Torment of Hailfire (X = 6) 1%, Debt to the Deathless (X = 4) 0%, stop 0% -> Consecrated Sphinx [search]]
+R8    Y'shtola casts Consecrated Sphinx
+R8      Hydaelyn blesses Consecrated Sphinx: a +1/+1 counter, indestructible until Y'shtola's next turn
+R8        [Y'shtola attack plan by search: filtered at Miirym]
+R8        [Y'shtola keeps 1 creature(s) home as blockers]
+R8        [Y'shtola holds back 1 attacker(s) that would die to blocks]
+R9  --- Miirym turn 9: life 31, 3 cards in hand, 5 lands
+R9    Miirym plays Sulfur Falls
+R9        [Miirym decides: Ancient Silver Dragon 60%, Miirym, Sentinel Wyrm 35%, Dragonspeaker Shaman 5%, Temur Ascendancy 0% -> stop [search]]
+R9        [Miirym attack plan by search: filtered at Y'shtola]
+R9    Miirym pays 8 to attack Y'shtola with 4
+R9      Wrathful Red Dragon: 5 damage to Consecrated Sphinx
+R9      Consecrated Sphinx (Y'shtola) is indestructible
+R9  *** Y'shtola is eliminated (life -30) by Miirym
+R9    Miirym attacks Y'shtola with 4 creature(s): 32 damage (life now -30)
+Winner: Miirym (damage)
