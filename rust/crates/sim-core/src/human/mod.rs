@@ -26,6 +26,7 @@ pub mod script;
 pub mod specs;
 pub mod thanos;
 pub mod gaps_c;
+pub mod triggers_t1;
 pub mod urdragon;
 
 use crate::control::Human;

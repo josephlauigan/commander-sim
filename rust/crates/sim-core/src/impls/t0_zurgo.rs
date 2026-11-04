@@ -690,7 +690,10 @@ fn battlesphere_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: P
     if myr.is_empty() || !trigger_window(g, p, Some(src), "tap X Myr: +X/+0 and X damage", Some(5.0))? {
         return Ok(vec![]);
     }
-    let myr: Vec<PermId> = myr.into_iter().filter(|&m| on_bf(g, m) && !g.perm(m).tapped).collect();
+    let mut myr: Vec<PermId> = myr.into_iter().filter(|&m| on_bf(g, m) && !g.perm(m).tapped).collect();
+    if crate::human::is_human(g, p) {
+        myr = crate::human::triggers_t1::battlesphere_tap(g, p, &myr)?; // the person picks X and the Myr
+    }
     let x = myr.len() as i32;
     crate::glog!(g, "    Myr Battlesphere taps {} Myr: +{}/+0 and {} damage", x, x, x);
     for m in myr {

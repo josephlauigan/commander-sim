@@ -625,7 +625,12 @@ fn historic(g: &Game, c: CardId) -> bool {
 /// Whenever you cast a historic spell, you may pay {1}: create a token that's a copy of this creature. Every copy
 /// triggers for the spell (the AI pays whenever it can).
 fn replicator_cast(g: &mut Game, src: Src, p: PlayerId, c: CardId) -> Res {
-    if p != owner(g, src) || !live(g, src) || !historic(g, c) || !can_pay(g, p, 1, "", false) {
+    let human = crate::human::is_human(g, p);
+    if p != owner(g, src)
+        || !live(g, src)
+        || !historic(g, c)
+        || !(if human { crate::human::mana::available(g, p) >= 1 } else { can_pay(g, p, 1, "", false) })
+    {
         return Ok(());
     }
     if g.perm(src).token && g.player(p).perms.iter().filter(|&&m| g.perm(m).token).count() >= 30 {
@@ -634,7 +639,13 @@ fn replicator_cast(g: &mut Game, src: Src, p: PlayerId, c: CardId) -> Res {
     if !trigger_window(g, p, Some(src), "pay {1}: copy Mishra's Self-Replicator", Some(3.0))? || !live(g, src) {
         return Ok(());
     }
-    if !pay(g, p, 1, "", false)? {
+    if human {
+        // "you may pay {1}": the person decides (the AI pays whenever it can)
+        let prompt = Some("Mishra's Self-Replicator: pay {1} to create a token that's a copy of it?".to_string());
+        if !crate::human::mana::pay_tax_ask(g, p, 1, "Mishra's Self-Replicator", prompt)? {
+            return Ok(());
+        }
+    } else if !pay(g, p, 1, "", false)? {
         return Ok(());
     }
     let cd = g.db.id(REPLICATOR).expect("Mishra's Self-Replicator");
@@ -689,7 +700,12 @@ fn portal_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if !trigger_window(g, p, Some(src), "reanimate a creature from a graveyard", Some(6.0))? {
         return Ok(());
     }
-    let Some((c, o)) = portal_pick(g, p) else { return Ok(()) };
+    let picked = if crate::human::is_human(g, p) {
+        crate::human::triggers_t1::portal_pick(g, p)? // the person chooses the creature card
+    } else {
+        portal_pick(g, p)
+    };
+    let Some((c, o)) = picked else { return Ok(()) };
     let pl = g.player_mut(o);
     let Some(i) = pl.gy.iter().position(|&x| x == c) else { return Ok(()) };
     pl.gy.remove(i);
@@ -926,6 +942,14 @@ fn leveler_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     if &*g.db.get(c).name != LEVELER {
         return Ok(());
     }
+    if crate::human::is_human(g, p) {
+        // the person chooses the target (or none: "up to one")
+        if let Some(t) = crate::human::triggers_t1::leveler_pick(g, p, "cast")? {
+            crate::glog!(g, "    Cityscape Leveler (cast): destroys {}", name_of(g, t));
+            leveler_destroy(g, p, t)?;
+        }
+        return Ok(());
+    }
     if let Some(t) = leveler_target(g, p) {
         crate::glog!(g, "    Cityscape Leveler (cast): destroys {}", name_of(g, t));
         leveler_destroy(g, p, t)?;
@@ -936,6 +960,17 @@ fn leveler_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res {
 /// Whenever it attacks, destroy up to one target nonland permanent (the same pick).
 fn leveler_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
     if p != owner(g, src) || !atk.contains(&src) {
+        return Ok(vec![]);
+    }
+    if crate::human::is_human(g, p) {
+        // the person chooses the target (or none) once the table has had its say
+        if !crate::human::triggers_t1::leveler_cands(g, p).is_empty()
+            && trigger_window(g, p, Some(src), "destroy a nonland permanent", Some(6.0))?
+            && let Some(t) = crate::human::triggers_t1::leveler_pick(g, p, "attack")?
+        {
+            crate::glog!(g, "    Cityscape Leveler (attack): destroys {}", name_of(g, t));
+            leveler_destroy(g, p, t)?;
+        }
         return Ok(vec![]);
     }
     if leveler_target(g, p).is_none() || !trigger_window(g, p, Some(src), "destroy a nonland permanent", Some(6.0))? {
