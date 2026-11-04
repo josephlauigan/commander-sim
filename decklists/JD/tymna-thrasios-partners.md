@@ -12,7 +12,7 @@ turn, to fast combo, and to falling behind on mana.
 | | |
 |---|---|
 | **Commanders** | Tymna the Weaver ({1}{W}{B}, 2/2) and Thrasios, Triton Hero ({G}{U}, 1/1); white-blue-black-green |
-| **Bracket** | 4 (6 Game Changers: Worldly Tutor, Demonic Tutor, Smothering Tithe, Gifts Ungiven, Gaea's Cradle, Aura Shards); read Rule 0 below for the Basalt Monolith + Rings of Brighthearth loop |
+| **Bracket** | 4 (7 Game Changers: Worldly Tutor, Demonic Tutor, Smothering Tithe, Gifts Ungiven, Gaea's Cradle, Aura Shards, Natural Order); read Rule 0 below for the Basalt Monolith + Rings of Brighthearth loop |
 | **Simulator** | deck key `thrasios`, matched tier T5; built from the retired Tymna/Kraum deck |
 
 ## Strategy
@@ -92,6 +92,11 @@ mana for removal: an opponent who destroys Rings or the Monolith in response end
 - **Diabolic Tutor** ({2}{B}{B}) fetches any card. Fetch Elspeth when behind, a Titan or Dromoka to close, or a piece of
   the combo.
 - **Demonic Tutor** ({1}{B}) does the same for two mana less.
+- **Natural Order** ({2}{G}{G}) sacrifices a green creature to put a green creature from your library directly onto
+  the battlefield. Turn a spare Avacyn's Pilgrim, Birds of Paradise or Coiling Oracle into Atraxa, Grand Unifier
+  for cards, or Dragonlord Dromoka for lifelink and protection during your turn. Keep enough mana creatures when
+  you still need their mana. The sacrifice is an additional cost and is lost even if Natural Order is countered;
+  Dromoka's own uncounterability does not protect the Natural Order spell.
 
 ### Tymna's attackers
 
@@ -180,12 +185,12 @@ Pilgrim**, **Faeburrow Elder**.
   Glade (G/B, untapped with two or more other lands), Yavimaya Coast (pain land), Undergrowth Stadium (B/G, untapped with two or more opponents).
 
 **Card draw:** Tymna, Thrasios, Coiling Oracle, Fact or Fiction, Sylvan Library, Atraxa.
-**Tutors:** Worldly Tutor, Demonic Tutor, Diabolic Tutor, Gifts Ungiven.
+**Tutors:** Worldly Tutor, Demonic Tutor, Diabolic Tutor, Gifts Ungiven, Natural Order.
 
 ## Bracket and Rule 0
 
-**Bracket 4,** with six Game Changers: **Worldly Tutor**, **Demonic Tutor**, **Smothering Tithe**, **Gifts Ungiven**,
-**Gaea's Cradle** and **Aura Shards** (more than three Game Changers is Bracket 4). No mass land destruction and no extra turns. **Basalt Monolith +
+**Bracket 4,** with seven Game Changers: **Worldly Tutor**, **Demonic Tutor**, **Smothering Tithe**, **Gifts Ungiven**,
+**Gaea's Cradle**, **Aura Shards** and **Natural Order** (more than three Game Changers is Bracket 4). No mass land destruction and no extra turns. **Basalt Monolith +
 Rings of Brighthearth** makes unlimited colourless mana; with Walking Ballista it wins the game, which is a two-card
 infinite mana loop: tell the table about it, and about the attack taxes (Ghostly
 Prison, Propaganda, Crawlspace, Windborn Muse, Archon of Absolution, Baird), Aven Mindcensor, Dragonlord Dromoka and
@@ -195,7 +200,7 @@ Grand Abolisher (no spells on your turn) before the game.
 
 **Commanders (2).** Tymna the Weaver, Thrasios, Triton Hero
 
-**Creatures (32).** Adeline, Resplendent Cathar, Archon of Absolution, Atraxa, Grand Unifier, Avacyn's Pilgrim, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Birds of Paradise, Cecil, Dark Knight, Coiling Oracle, Dauthi Voidwalker, Dragonlord Dromoka, Elenda, the Dusk Rose, Elesh Norn, Mother of Machines, Faeburrow Elder, Falcon and Redwing, Flickering Hound, Grand Abolisher, Grave Titan, Hero of Bladehold, Lyra Dawnbringer, Nightveil Predator, Resplendent Angel, Restoration Angel, Skyclave Apparition, Sphinx of New Prahv, Sun Titan, The Wasp, Winsome Avenger, Vampire Nighthawk, Walking Ballista, Windborn Muse
+**Creatures (31).** Adeline, Resplendent Cathar, Archon of Absolution, Atraxa, Grand Unifier, Avacyn's Pilgrim, Aven Mindcensor, Baird, Steward of Argive, Baneslayer Angel, Bastion Protector, Birds of Paradise, Cecil, Dark Knight, Coiling Oracle, Dauthi Voidwalker, Dragonlord Dromoka, Elenda, the Dusk Rose, Elesh Norn, Mother of Machines, Faeburrow Elder, Falcon and Redwing, Flickering Hound, Grand Abolisher, Grave Titan, Hero of Bladehold, Lyra Dawnbringer, Nightveil Predator, Resplendent Angel, Restoration Angel, Skyclave Apparition, Sun Titan, The Wasp, Winsome Avenger, Vampire Nighthawk, Walking Ballista, Windborn Muse
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
@@ -205,7 +210,7 @@ Grand Abolisher (no spells on your turn) before the game.
 
 **Instants (10).** Anguished Unmaking, Arcane Denial, Disdainful Stroke, Ephemerate, Fact or Fiction, Gifts Ungiven, Path to Exile, Swan Song, Swords to Plowshares, Worldly Tutor
 
-**Sorceries (3).** Austere Command, Demonic Tutor, Diabolic Tutor
+**Sorceries (4).** Austere Command, Demonic Tutor, Diabolic Tutor, Natural Order
 
 **Lands (39).** Bayou, Breeding Pool, Brushland, Caves of Koilos, Command Tower, Deathcap Glade, Drowned Catacomb, Flooded Strand, Gaea's Cradle, Glacial Fortress, Godless Shrine, Hallowed Fountain, Isolated Chapel, Llanowar Wastes, Marsh Flats, Misty Rainforest, Overgrown Tomb, Polluted Delta, Savannah, Scrubland, Sunpetal Grove, Temple Garden, Tropical Island, Tundra, Underground River, Undergrowth Stadium, Verdant Catacombs, Windswept Heath, Yavimaya Coast, 6 Island, 2 Plains, 1 Swamp, 1 Forest
 
@@ -267,6 +272,7 @@ Grand Abolisher (no spells on your turn) before the game.
 1 Lyra Dawnbringer
 1 Marsh Flats
 1 Misty Rainforest
+1 Natural Order
 1 Nightveil Predator
 1 Overgrown Tomb
 1 Path to Exile
@@ -280,7 +286,6 @@ Grand Abolisher (no spells on your turn) before the game.
 1 Skyclave Apparition
 1 Smothering Tithe
 1 Sol Ring
-1 Sphinx of New Prahv
 1 Sun Titan
 1 Sunpetal Grove
 1 Swan Song

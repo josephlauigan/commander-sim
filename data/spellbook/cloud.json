@@ -1,16 +1,45 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-10-30",
+  "fetched": "2026-11-04",
   "deck": "cloud",
   "commanders": [
     "Cloud, Midgar Mercenary"
   ],
-  "request_sha256": "802e2ae72d3abc3232007eff3821cb78404126794e452470b2acffa896203d14",
+  "request_sha256": "4a18b772e60d6fccba3ba1dd16bfcb40c36014eb1e11cbc9d35e95020dcb347c",
   "identity": "W",
   "included": [],
   "included_by_changing_commanders": [],
   "almost_included": [
+    {
+      "id": "1328-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Spellbinder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Your life total can't change during your opponents' turns"
+      ],
+      "requires": [],
+      "prerequisites": "Spellbinder attached to a creature that can attack this turn and that cannot be blocked and killed by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1425,
+      "missing": [
+        "Spellbinder"
+      ]
+    },
     {
       "id": "1069-4944",
       "cards": [
@@ -35,9 +64,36 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 1314,
+      "popularity": 1320,
       "missing": [
         "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "70-5141",
+      "cards": [
+        {
+          "name": "Balancing Act",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 758,
+      "missing": [
+        "Balancing Act"
       ]
     }
   ]

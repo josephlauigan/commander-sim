@@ -26,7 +26,7 @@ fn set_hand(g: &mut Game, names: &[&str]) {
 #[test]
 fn scenario_10_one_land_with_two_fast_mana_pieces_is_a_keep() {
     let mut g = tbl();
-    set_hand(&mut g, &["Forest", "Sol Ring", "Mox Amber", "Chatterstorm", "Gamble", "Snap", "Spellseeker"]);
+    set_hand(&mut g, &["Forest", "Sol Ring", "Mox Amber", "Gene Pollinator", "Gamble", "Snap", "Spellseeker"]);
     assert_eq!(t6_plans::keep(&g, P0), Some(true));
 }
 
@@ -43,11 +43,11 @@ fn scenario_11_two_lands_and_four_reactive_spells_is_a_ship() {
 #[test]
 fn two_lands_and_a_piece_of_acceleration_is_a_keep_and_no_land_is_a_ship() {
     let mut g = tbl();
-    set_hand(&mut g, &["Forest", "Island", "Birds of Paradise", "Chatterstorm", "Snap", "Gamble", "Rhystic Study"]);
+    set_hand(&mut g, &["Forest", "Island", "Birds of Paradise", "Gene Pollinator", "Snap", "Gamble", "Rhystic Study"]);
     assert_eq!(t6_plans::keep(&g, P0), Some(true));
     set_hand(
         &mut g,
-        &["Sol Ring", "Mox Amber", "Birds of Paradise", "Chatterstorm", "Snap", "Gamble", "Rhystic Study"],
+        &["Sol Ring", "Mox Amber", "Birds of Paradise", "Gene Pollinator", "Snap", "Gamble", "Rhystic Study"],
     );
     assert_eq!(t6_plans::keep(&g, P0), Some(false));
 }
@@ -57,13 +57,13 @@ fn scenario_12_oboro_and_the_finishers_stay_in_hand_and_rograkh_comes_first() {
     let mut g = tbl();
     set_hand(
         &mut g,
-        &["Oboro Breezecaller", "Finale of Devastation", "Eternal Witness", "Chatterstorm", "Rograkh, Son of Rohgahh"],
+        &["Oboro Breezecaller", "Finale of Devastation", "Eternal Witness", "Gene Pollinator", "Rograkh, Son of Rohgahh"],
     );
     let by = |g: &Game, n: &str| deck_prio_f(g, P0, card(g, n));
     assert!(by(&g, "Oboro Breezecaller") <= 0.0);
     assert!(by(&g, "Finale of Devastation") <= 0.0);
     assert!(by(&g, "Eternal Witness") <= 0.0);
-    assert!(by(&g, "Chatterstorm") > 50.0);
+    assert!(by(&g, "Gene Pollinator") > 50.0);
     assert!(by(&g, "Rograkh, Son of Rohgahh") > 90.0);
 }
 

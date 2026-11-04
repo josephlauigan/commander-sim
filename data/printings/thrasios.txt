@@ -55,6 +55,7 @@
 1 Lyra Dawnbringer (dmr) 413
 1 Marsh Flats (mh2) 476
 1 Misty Rainforest (spg) 111
+1 Natural Order (mb2) 210
 1 Nightveil Predator (rvr) 206
 1 Overgrown Tomb (rtr) 243
 1 Path to Exile (blc) 147
@@ -69,7 +70,6 @@
 1 Skyclave Apparition (m3c) 172
 1 Smothering Tithe (cmm) 57
 1 Sol Ring (sld) 2093
-1 Sphinx of New Prahv (rvr) 227
 1 Sun Titan (afc) 73
 1 Sunpetal Grove (ltc) 336
 1 Swamp (mdd) 296

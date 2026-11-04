@@ -165,32 +165,106 @@ fn a_guildmage_on_kinnans_activation_stops_the_loop() {
 }
 
 #[test]
-fn thrasios_draws_the_deck_when_kinnans_ability_cant_be_paid() {
+fn thrasios_needs_finale_and_green_mana_and_handles_ug() {
     let mut g = kinnan_table();
     assert!(not_ready(&g, "Thrasios (draw"), "no Thrasios");
     perm(&mut g, P0, "Thrasios, Triton Hero");
+    g.player_mut(P0).library.clear();
+    assert!(not_ready(&g, "Thrasios (draw"), "no payoff");
+    hand(&mut g, P0, &["Finale of Devastation"]);
+    assert!(not_ready(&g, "Thrasios (draw"), "no green mana");
+    lands(&mut g, P0, "Forest", 2, false);
     go(&mut g, "Thrasios (draw");
     assert_eq!(g.winner, Some(P0));
     let mut g = kinnan_table();
     perm(&mut g, P0, "Thrasios, Triton Hero");
+    lands(&mut g, P0, "Forest", 2, false);
+    lands(&mut g, P0, "Island", 1, false);
+    hand(&mut g, P0, &["Finale of Devastation"]);
+    go(&mut g, "Thrasios (draw");
+    assert_eq!(g.winner, Some(P0), "UG available does not suppress the outlet");
+    let mut g = kinnan_table();
+    perm(&mut g, P0, "Thrasios, Triton Hero");
+    lands(&mut g, P0, "Forest", 2, false);
+    hand(&mut g, P0, &["Finale of Devastation"]);
     lands(&mut g, P1, "Island", 3, false);
-    perm(&mut g, P1, "Azorius Guildmage");
+    let mage = perm(&mut g, P1, "Azorius Guildmage");
+    g.perm_mut(mage).tapped = true;
     go(&mut g, "Thrasios (draw");
     assert_eq!(g.winner, None, "Thrasios's ability was countered");
 }
 
 #[test]
-fn mirage_mirror_turns_the_loop_into_blue_green() {
+fn thrasios_finds_finale_in_the_library() {
     let mut g = kinnan_table();
-    perm(&mut g, P0, "Mirage Mirror");
-    go(&mut g, "Mirage Mirror");
+    perm(&mut g, P0, "Thrasios, Triton Hero");
+    lands(&mut g, P0, "Forest", 2, false);
+    let finale = card(&g, "Finale of Devastation");
+    g.player_mut(P0).library = vec![finale];
+    go(&mut g, "Thrasios (draw");
     assert_eq!(g.winner, Some(P0));
+}
+
+#[test]
+fn mirage_mirror_does_not_claim_an_unverified_win() {
     let mut g = kinnan_table();
     perm(&mut g, P0, "Mirage Mirror");
-    lands(&mut g, P1, "Island", 3, false);
-    perm(&mut g, P1, "Azorius Guildmage");
-    go(&mut g, "Mirage Mirror");
-    assert_eq!(g.winner, None, "the Mirror's ability was countered");
+    assert!(not_ready(&g, "Mirage Mirror"));
+}
+
+#[test]
+fn thrasios_tapped_basalt_needs_startup_mana_and_finale_is_counterable() {
+    let mut g = kinnan_table();
+    perm(&mut g, P0, "Thrasios, Triton Hero");
+    hand(&mut g, P0, &["Finale of Devastation"]);
+    let b = on_bf(&g, P0, "Basalt Monolith").unwrap();
+    g.perm_mut(b).tapped = true;
+    lands(&mut g, P0, "Forest", 2, false);
+    assert!(not_ready(&g, "Thrasios (draw"));
+    lands(&mut g, P0, "Island", 3, false);
+    assert!(!not_ready(&g, "Thrasios (draw"));
+    go(&mut g, "Thrasios (draw");
+    assert_eq!(g.winner, Some(P0), "startup preserves Finale's green mana");
+    let mut stopped = 0;
+    for seed in 0..16 {
+        let mut g = table_with(&["kinnan-bonder-mana-combo", "seph"], seed, 40);
+        g.active = Some(P0);
+        perm(&mut g, P0, "Kinnan, Bonder Prodigy");
+        perm(&mut g, P0, "Basalt Monolith");
+        perm(&mut g, P0, "Thrasios, Triton Hero");
+        hand(&mut g, P0, &["Finale of Devastation"]);
+        lands(&mut g, P0, "Forest", 2, false);
+        lands(&mut g, P1, "Island", 2, false);
+        hand(&mut g, P1, &["Counterspell"]);
+        go(&mut g, "Thrasios (draw");
+        if g.winner.is_none() && in_gy(&g, P0, "Finale of Devastation") {
+            stopped += 1;
+        }
+    }
+    assert!(stopped > 0, "a counter can stop Finale");
+}
+
+#[test]
+fn thrasios_finale_needs_unblocked_combat_before_main_two() {
+    let mut g = kinnan_table();
+    perm(&mut g, P0, "Thrasios, Triton Hero");
+    hand(&mut g, P0, &["Finale of Devastation"]);
+    lands(&mut g, P0, "Forest", 2, false);
+    let blocker = perm(&mut g, P1, "Birds of Paradise");
+    assert!(not_ready(&g, "Thrasios (draw"));
+    g.perm_mut(blocker).tapped = true;
+    g.step = sim_core::state::Step::Main2;
+    assert!(not_ready(&g, "Thrasios (draw"));
+}
+
+#[test]
+fn thrasios_finale_does_not_bypass_attack_taxes() {
+    let mut g = kinnan_table();
+    perm(&mut g, P0, "Thrasios, Triton Hero");
+    hand(&mut g, P0, &["Finale of Devastation"]);
+    lands(&mut g, P0, "Forest", 2, false);
+    perm(&mut g, P1, "Ghostly Prison");
+    assert!(not_ready(&g, "Thrasios (draw"));
 }
 
 // ============================================================ Underworld Breach + LED + Brain Freeze

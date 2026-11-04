@@ -7,7 +7,7 @@ Opponent pool deck — **Tier 6: cEDH (Bracket 5)**. Axis: Taxing toolbox.
 - **Game Changers (16):** Ancient Tomb, Chrome Mox, Crop Rotation, Cyclonic Rift, Demonic Tutor, Enlightened Tutor, Fierce Guardianship, Force of Will, Gaea's Cradle, Mana Vault, Mox Diamond, Orcish Bowmasters, Rhystic Study, Smothering Tithe, Vampiric Tutor, Worldly Tutor
 - **Combos:** written in Stage 2 from the deck's primer.
 - **Lands:** 28 (28 nonbasic + 0 basic)
-- **Source:** The Cookout 2026, #2 of 238, 2026-08-29, record 5-1-3 ([decklist](https://edhtop16.com/tournament/the-cookout-2026/decklist/GHPNb0E7DnWMVIsJIhYSXre58rB3))
+- **Source:** The Cookout 2026, #2 of 238, 2026-08-29, record 5-1-3 ([decklist](https://edhtop16.com/tournament/the-cookout-2026/decklist/GHPNb0E7DnWMVIsJIhYSXre58rB3)); 4 cards swapped on 2026-11-03 toward the top-8 Sisay lists of EDH events of 40+ players, July-November 2026 (105 lists; [TopDeck.gg](https://topdeck.gg), results as listed on [EDHTop16](https://edhtop16.com), data courtesy of TopDeck.gg)
 
 ## Role in the pool
 
@@ -15,10 +15,10 @@ Fourth by meta share (3.8%) with the best conversion of the five (24.3%). Sisay 
 
 ## At the table
 
-- **Plan:** Ramp with Moxen, Sol Ring, Birds of Paradise and the Hierarchs, then land Sisay, Weatherlight Captain. Sisay puts cheap legends onto the battlefield, so it is a toolbox that grinds first and goes off once it is protected.
-- **Wins by:** Mana loops: Bloom Tender, Derevi and Emiel; or Gaea's Cradle with Agatha's Soul Cauldron; or Marvin with Ioreth and a legendary mana creature. It finishes with Mount Doom or Deadpool. A win threat appears around turn three to four.
+- **Plan:** Ramp with Moxen, Sol Ring, Birds of Paradise and the Hierarchs, then land Sisay, Weatherlight Captain. Sisay puts cheap legends onto the battlefield. The Queen of Dale filters cards and can make tokens; the toolbox grinds until it can go off protected.
+- **Wins by:** Mana loops: Derevi and Emiel with Bloom Tender or Gaea's Cradle, or Marvin with Ioreth and a legendary mana creature. The modeled lines finish with Mount Doom. A win threat appears around turn three to four.
 - **Watch out for:** Removal on Sisay or the mana engine, since tutored legends arrive without being cast and counters miss them. Stax such as Cursed Totem and graveyard or ability hate slow it. Teferi, Time Raveler, Lavinia, Esper Sentinel and Rhystic Study tax you while it sets up.
-- **Interaction:** Force of Will, Fierce Guardianship, Swan Song, Pact of Negation, Flusterstorm, Mental Misstep, Silence, Deafening Silence, Cyclonic Rift, Abrupt Decay, Dismember and Touch the Spirit Realm.
+- **Interaction:** Force of Will, Fierce Guardianship, Force of Negation, Swan Song, Pact of Negation, Flusterstorm, Mental Misstep, Silence, Deafening Silence, Cyclonic Rift, Abrupt Decay, Dismember and Touch the Spirit Realm.
 
 ## Strategy
 
@@ -34,15 +34,15 @@ Written in Stage 3.
 
 **Planeswalkers (3).** Teferi, Time Raveler, Teferi, Who Slows the Sunset, Tyvar, Jubilant Brawler
 
-**Creatures (28).** Birds of Paradise, Bloom Tender, Colossal Skyturtle, Deadpool, Trading Card, Deathrite Shaman, Delighted Halfling, Derevi, Empyrial Tactician, Elvish Spirit Guide, Emiel the Blessed, Enduring Vitality, Ertai Resurrected, Esper Sentinel, Ignoble Hierarch, Ioreth of the Healing House, Kinnan, Bonder Prodigy, Lavinia, Azorius Renegade, Lotho, Corrupt Shirriff, Magda, Brazen Outlaw, Marvin, Murderous Mimic, Mockingbird, Noble Hierarch, Orcish Bowmasters, Ragavan, Nimble Pilferer, Selvala, Heart of the Wilds, Shang-Chi, Master of Kung Fu, Spider-Woman, Stunning Savior, Tataru Taru, The Cabbage Merchant
+**Creatures (26).** Birds of Paradise, Bloom Tender, Colossal Skyturtle, Deadpool, Trading Card, Deathrite Shaman, Delighted Halfling, Derevi, Empyrial Tactician, Elvish Spirit Guide, Emiel the Blessed, Enduring Vitality, Ertai Resurrected, Esper Sentinel, Ignoble Hierarch, Ioreth of the Healing House, Kinnan, Bonder Prodigy, Lavinia, Azorius Renegade, Lotho, Corrupt Shirriff, Marvin, Murderous Mimic, Noble Hierarch, Orcish Bowmasters, Ragavan, Nimble Pilferer, Selvala, Heart of the Wilds, Shang-Chi, Master of Kung Fu, Tataru Taru, The Cabbage Merchant, The Queen of Dale
 
 **Artifacts (10).** Agatha's Soul Cauldron, Arcane Signet, Chrome Mox, Loki's Scepter, Lotus Petal, Mana Vault, Mox Amber, Mox Diamond, Relic of Legends, Sol Ring
 
-**Enchantments (6).** Deafening Silence, Gleaming Splendor, Mystic Remora, Rhystic Study, Smothering Tithe, Touch the Spirit Realm
+**Enchantments (7).** Cryptolith Rite, Deafening Silence, Gleaming Splendor, Mystic Remora, Rhystic Study, Smothering Tithe, Touch the Spirit Realm
 
-**Instants (22).** Abrupt Decay, An Offer You Can't Refuse, Chord of Calling, Crop Rotation, Cyclonic Rift, Deflecting Swat, Eladamri's Call, Enlightened Tutor, Fierce Guardianship, Flusterstorm, Force of Will, Into the Flood Maw, Legolas's Quick Reflexes, Mental Misstep, Mindbreak Trap, Pact of Negation, Redirect Lightning, Silence, Swan Song, Swords to Plowshares, Vampiric Tutor, Worldly Tutor
+**Instants (22).** Abrupt Decay, An Offer You Can't Refuse, Chord of Calling, Crop Rotation, Cyclonic Rift, Deflecting Swat, Eladamri's Call, Enlightened Tutor, Fierce Guardianship, Flusterstorm, Force of Negation, Force of Will, Into the Flood Maw, Legolas's Quick Reflexes, Mental Misstep, Mindbreak Trap, Pact of Negation, Silence, Swan Song, Swords to Plowshares, Vampiric Tutor, Worldly Tutor
 
-**Sorceries (2).** Demonic Tutor, Green Sun's Zenith
+**Sorceries (3).** Demonic Tutor, Green Sun's Zenith, Nature's Rhythm
 
 **Lands (28).** Ancient Tomb, Bayou, Boseiju, Who Endures, City of Brass, Command Tower, Exotic Orchard, Flooded Strand, Gaea's Cradle, Gemstone Caverns, Mana Confluence, Misty Rainforest, Mount Doom, Otawara, Soaring City, Plateau, Polluted Delta, Savannah, Scalding Tarn, Scrubland, Starting Town, Taiga, Tarnished Citadel, Tropical Island, Tundra, Underground Sea, Verdant Catacombs, Volcanic Island, Windswept Heath, Wooded Foothills
 
@@ -64,6 +64,7 @@ Written in Stage 3.
 1 Colossal Skyturtle
 1 Command Tower
 1 Crop Rotation
+1 Cryptolith Rite
 1 Cyclonic Rift
 1 Deadpool, Trading Card
 1 Deafening Silence
@@ -83,6 +84,7 @@ Written in Stage 3.
 1 Fierce Guardianship
 1 Flooded Strand
 1 Flusterstorm
+1 Force of Negation
 1 Force of Will
 1 Gaea's Cradle
 1 Gemstone Caverns
@@ -97,18 +99,17 @@ Written in Stage 3.
 1 Loki's Scepter
 1 Lotho, Corrupt Shirriff
 1 Lotus Petal
-1 Magda, Brazen Outlaw
 1 Mana Confluence
 1 Mana Vault
 1 Marvin, Murderous Mimic
 1 Mental Misstep
 1 Mindbreak Trap
 1 Misty Rainforest
-1 Mockingbird
 1 Mount Doom
 1 Mox Amber
 1 Mox Diamond
 1 Mystic Remora
+1 Nature's Rhythm
 1 Noble Hierarch
 1 Orcish Bowmasters
 1 Otawara, Soaring City
@@ -116,7 +117,6 @@ Written in Stage 3.
 1 Plateau
 1 Polluted Delta
 1 Ragavan, Nimble Pilferer
-1 Redirect Lightning
 1 Relic of Legends
 1 Rhystic Study
 1 Savannah
@@ -128,7 +128,6 @@ Written in Stage 3.
 1 Sisay, Weatherlight Captain
 1 Smothering Tithe
 1 Sol Ring
-1 Spider-Woman, Stunning Savior
 1 Starting Town
 1 Swan Song
 1 Swords to Plowshares
@@ -138,6 +137,7 @@ Written in Stage 3.
 1 Teferi, Time Raveler
 1 Teferi, Who Slows the Sunset
 1 The Cabbage Merchant
+1 The Queen of Dale
 1 Touch the Spirit Realm
 1 Tropical Island
 1 Tundra
