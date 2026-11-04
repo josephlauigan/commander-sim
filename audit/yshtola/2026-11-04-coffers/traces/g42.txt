@@ -1,0 +1,216 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 42 (seed 500042): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Kinnan, Y'shtola, Urza, Miirym
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kinnan plays Forest
+R1        [Kinnan decides: Chrome Mox 27%, Llanowar Elves 27%, Fyndhorn Elves 27%, Lotus Petal 18% -> Chrome Mox [search]]
+R1    Kinnan casts Chrome Mox
+R1      Chrome Mox imprints Trophy Mage
+R1        [Kinnan decides: Llanowar Elves 37%, Fyndhorn Elves 37%, Lotus Petal 25%, stop (hold mana) 0% -> Llanowar Elves [search]]
+R1    Kinnan casts Llanowar Elves
+R1        [Kinnan decides: Lotus Petal 100%, stop (hold mana) 0% -> Lotus Petal [search]]
+R1    Kinnan casts Lotus Petal
+R1        [Kinnan decides: Fyndhorn Elves 100%, stop (hold mana) 0% -> Fyndhorn Elves [search]]
+R1    Kinnan casts Fyndhorn Elves
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Swamp
+R1  --- Urza turn 1: life 40, 7 cards in hand, 0 lands
+R1    Urza plays Island
+R1  --- Miirym turn 1: life 40, 7 cards in hand, 0 lands
+R1    Miirym plays Command Tower
+R1        [Miirym decides: Sol Ring 100%, stop 0% -> Sol Ring [search]]
+R1    Miirym casts Sol Ring
+R2  --- Kinnan turn 2: life 40, 2 cards in hand, 1 lands
+R2    Kinnan plays Island
+R2        [Kinnan decides: Simic Signet 65%, Kinnan, Bonder Prodigy 35%, stop (hold mana) 0% -> Simic Signet [search]]
+R2    Kinnan casts Simic Signet
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 100%, stop (hold mana) 0% -> Kinnan, Bonder Prodigy [search]]
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R2    Y'shtola casts Vampiric Tutor
+R2      Y'shtola puts Sanguine Bond on top of their library
+R2        [Y'shtola end of turn: Vampiric Tutor 100%, pass 0% -> Vampiric Tutor]
+R2  --- Y'shtola turn 2: life 38, 6 cards in hand, 1 lands
+R2    Y'shtola plays Island
+R2        [Y'shtola decides: Talisman of Hierarchy 100%, stop 0% -> Talisman of Hierarchy [search]]
+R2    Y'shtola casts Talisman of Hierarchy
+R2    Urza casts Mystical Tutor
+R2      Kinnan casts Pact of Negation at Mystical Tutor
+R2      Kinnan counters Mystical Tutor with Pact of Negation
+R2        [Urza end of turn: Mystical Tutor 100%, pass 0% -> Mystical Tutor]
+R2  --- Urza turn 2: life 40, 6 cards in hand, 1 lands
+R2    Urza plays Island
+R2  --- Miirym turn 2: life 40, 6 cards in hand, 1 lands
+R2    Miirym plays Forest
+R2        [Miirym decides: Spark Double 94%, Parallel Lives 6%, stop 0% -> Spark Double [search]]
+R2    Miirym casts Spark Double
+R3  --- Kinnan turn 3: life 40, 0 cards in hand, 2 lands
+R3        [Kinnan decides: Birds of Paradise 100%, stop 0% -> Birds of Paradise [search]]
+R3    Kinnan casts Birds of Paradise
+R3        [Kinnan attacks: Urza 34%, Miirym 34%, Y'shtola 33% -> Miirym]
+R3    Kinnan attacks Miirym with 1 creature(s): 2 damage (life now 38)
+R3  --- Y'shtola turn 3: life 38, 5 cards in hand, 2 lands
+R3        [Y'shtola decides: Memory Trap 100%, stop 0% -> Memory Trap [search]]
+R3    Y'shtola casts Memory Trap
+R3      Kinnan, Bonder Prodigy (Kinnan) is removed: exile
+R3  --- Urza turn 3: life 40, 6 cards in hand, 2 lands
+R3    Urza plays Inventors' Fair
+R3        [Urza decides: Rhystic Study 74%, stop (hold mana) 26% -> Rhystic Study [search]]
+R3    Urza casts Rhystic Study
+R3  --- Miirym turn 3: life 38, 5 cards in hand, 2 lands
+R3        [Miirym decides: Dragonborn Champion 89%, Parallel Lives 11%, stop 0% -> Dragonborn Champion [search]]
+R3    Miirym casts Dragonborn Champion
+R4  --- Kinnan turn 4: life 40, 0 cards in hand, 2 lands
+R4        [Kinnan decides: Kinnan, Bonder Prodigy 92%, Moonsilver Key 8%, stop 0% -> Kinnan, Bonder Prodigy [search]]
+R4    Kinnan casts Kinnan, Bonder Prodigy
+R4        [Kinnan decides: Moonsilver Key 100%, stop 0% -> Moonsilver Key [search]]
+R4    Kinnan casts Moonsilver Key
+R4        [Kinnan decides: Moonsilver Key ability 100%, stop 0% -> Moonsilver Key ability [search]]
+R4    Kinnan activates Moonsilver Key
+R4      Kinnan reveals Basalt Monolith and puts it into their hand
+R4  --- Y'shtola turn 4: life 37, 5 cards in hand, 2 lands
+R4    Y'shtola plays Underground River
+R4        [Y'shtola decides: Y'shtola, Night's Blessed 96%, Diabolic Tutor 3%, Sheoldred, the Apocalypse 1%, stop 0% -> Sheoldred, the Apocalypse [search]]
+R4    Y'shtola casts Sheoldred, the Apocalypse
+R4  --- Urza turn 4: life 40, 7 cards in hand, 3 lands
+R4    Urza plays Reliquary Tower
+R4        [Urza decides: Thought Vessel 90%, stop (hold mana) 10%, Urza, Lord High Artificer 0%, Mystic Forge 0% -> Thought Vessel [search]]
+R4    Urza casts Thought Vessel
+R4  --- Miirym turn 4: life 38, 5 cards in hand, 2 lands
+R4        [Miirym decides: Korlessa, Scale Singer 97%, Parallel Lives 3%, stop 0% -> Korlessa, Scale Singer [search]]
+R4    Miirym casts Korlessa, Scale Singer
+R4        [Miirym attack plan by search: filtered at Urza]
+R4      Dragonborn Champion: Miirym draws 1
+R4    Miirym attacks Urza with 1 creature(s): 5 damage (life now 33)
+R5  --- Kinnan turn 5: life 40, 1 cards in hand, 2 lands
+R5    Kinnan plays Forest
+R5        [Kinnan decides: Basalt Monolith 100%, Kinnan: dig five 0%, stop 0% -> Basalt Monolith [search]]
+R5    Kinnan casts Basalt Monolith
+R5      Urza casts Mana Drain at Basalt Monolith
+R5      Urza counters Basalt Monolith with Mana Drain
+R5        [Kinnan decides: Kinnan: dig five 100%, stop 0% -> Kinnan: dig five [search]]
+R5        [Kinnan attack plan by search: filtered at Miirym]
+R5    Kinnan attacks Miirym with 1 creature(s): 2 damage (life now 32)
+R5  --- Y'shtola turn 5: life 36, 4 cards in hand, 3 lands
+R5        [Y'shtola decides: Y'shtola, Night's Blessed 92%, Displacer Kitten 5%, Diabolic Tutor 3%, stop 0% -> Y'shtola, Night's Blessed [search]]
+R5    Y'shtola casts Y'shtola, Night's Blessed
+R5        [Y'shtola attack plan by search: filtered at Miirym]
+R5    Y'shtola attacks Miirym with 1 creature(s): 4 damage (life now 28)
+R5  --- Urza turn 5: life 31, 6 cards in hand, 4 lands
+R5    Urza plays Island
+R5        [Urza decides: Urza, Lord High Artificer 79%, Hullbreaker Horror 20%, stop (hold mana) 1%, Mystic Forge 0% -> Urza, Lord High Artificer [search]]
+R5    Urza casts Urza, Lord High Artificer
+R5        [Urza decides: stop (hold mana) 63%, Mystic Forge 19%, Sapphire Medallion 17%, Urza: free card 0% -> stop (hold mana) [search]]
+R5        [Urza decides: stop (hold mana) 79%, Sapphire Medallion 21% -> Sapphire Medallion [search]]
+R5    Urza casts Sapphire Medallion
+R5  --- Miirym turn 5: life 28, 6 cards in hand, 2 lands
+R5    Miirym plays Rockfall Vale
+R5        [Miirym decides: Terror of the Peaks 91%, Ganax, Astral Hunter 6%, Wrathful Red Dragon 3%, Parallel Lives 0% -> Terror of the Peaks [search]]
+R5    Miirym casts Terror of the Peaks
+R5        [Miirym attack plan by search: filtered at Urza]
+R5    Miirym attacks Urza with 2 creature(s): 1 damage (life now 26)
+R6  --- Kinnan turn 6: life 38, 0 cards in hand, 3 lands
+R6        [Kinnan decides: Chord of Calling 98%, Kinnan: dig five 2%, stop 0% -> Chord of Calling [search]]
+R6    Kinnan casts Chord of Calling
+R6  --- Y'shtola turn 6: life 39, 6 cards in hand, 3 lands
+R6        [Y'shtola attack plan by search: none at Kinnan]
+R6  --- Urza turn 6: life 24, 7 cards in hand, 5 lands
+R6    Urza plays Island
+R6        [Urza decides: Hullbreaker Horror 89%, stop (hold mana) 10%, Urza: free card 0% -> Hullbreaker Horror [search]]
+R6    Urza casts Hullbreaker Horror
+R6        [Urza attack plan by search: all at Kinnan]
+R6    Urza attacks Kinnan with 1 creature(s): 0 damage (life now 36)
+R6  --- Miirym turn 6: life 26, 5 cards in hand, 3 lands
+R6        [Miirym decides: Ganax, Astral Hunter 62%, Wrathful Red Dragon 38%, stop 0% -> Ganax, Astral Hunter [search]]
+R6    Miirym casts Ganax, Astral Hunter
+R6      Kinnan, Bonder Prodigy (Kinnan) is removed: dmg3
+R6        [Miirym attack plan by search: all at Urza]
+R6    Miirym attacks Urza with 2 creature(s): 5 damage (life now 15)
+R7  --- Kinnan turn 7: life 36, 0 cards in hand, 3 lands
+R7        [Kinnan decides: Kinnan, Bonder Prodigy 84%, stop (hold mana) 16% -> Kinnan, Bonder Prodigy [search]]
+R7    Kinnan casts Kinnan, Bonder Prodigy
+R7        [Kinnan attack plan by search: filtered at Urza]
+R7    Kinnan attacks Urza with 1 creature(s): 0 damage (life now 15)
+R7  --- Y'shtola turn 7: life 43, 8 cards in hand, 3 lands
+R7    Y'shtola plays Flooded Strand
+R7      cracks Flooded Strand for Godless Shrine
+R7        [Y'shtola decides: Exquisite Blood 54%, Sanguine Bond 45%, Conjurer's Closet 2%, stop 0% -> Exquisite Blood [search]]
+R7    Y'shtola casts Exquisite Blood
+R7      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R7      Kinnan casts Flusterstorm at Exquisite Blood
+R7      Kinnan counters Exquisite Blood with Flusterstorm
+R7        [Y'shtola attack plan by search: filtered at Kinnan]
+R7    Y'shtola attacks Kinnan with 2 creature(s): 6 damage (life now 26)
+R7  --- Urza turn 7: life 11, 8 cards in hand, 6 lands
+R7    Miirym casts Worldly Tutor
+R7      Miirym reveals Earthquake Dragon and puts it on top of their library
+R7        [Miirym end of turn: Worldly Tutor 100%, pass 0% -> Worldly Tutor]
+R7  --- Miirym turn 7: life 22, 4 cards in hand, 3 lands
+R7        [Miirym decides: Earthquake Dragon 98%, Wrathful Red Dragon 2%, stop 0% -> Wrathful Red Dragon [search]]
+R7    Miirym casts Wrathful Red Dragon
+R7  *** Urza is eliminated (life 0) by Miirym
+R7        [Miirym decides: Earthquake Dragon 100%, stop 0% -> Earthquake Dragon [search]]
+R7    Miirym casts Earthquake Dragon
+R7      Void Winnower (Kinnan) is removed: dmg10
+R7        [Miirym attack plan by search: filtered at Y'shtola]
+R7    Miirym attacks Y'shtola with 2 creature(s): 8 damage (life now 40)
+R8  --- Kinnan turn 8: life 26, 0 cards in hand, 3 lands
+R8    Kinnan plays Forest
+R8        [Kinnan decides: Kinnan: dig five 100%, stop 0% -> Kinnan: dig five [search]]
+R8        [Kinnan decides: Kinnan: dig five 100%, stop 0% -> Kinnan: dig five [search]]
+R8        [Kinnan attack plan by search: all at Y'shtola]
+R8    Kinnan attacks Y'shtola with 1 creature(s): 0 damage (life now 42)
+R8  --- Y'shtola turn 8: life 42, 8 cards in hand, 4 lands
+R8    Y'shtola plays Adarkar Wastes
+R8        [Y'shtola decides: Sanguine Bond 87%, Diabolic Tutor 9%, Displacer Kitten 2%, Conjurer's Closet 1% -> Sanguine Bond [search]]
+R8    Y'shtola casts Sanguine Bond
+R8      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R8        [Y'shtola attack plan by search: all at Miirym]
+R8      Wrathful Red Dragon: 4 damage to Seedborn Muse
+R8      Seedborn Muse (Kinnan) is removed: dmg4
+R8    Y'shtola attacks Miirym with 2 creature(s): 0 damage (life now 18)
+R8  --- Miirym turn 8: life 18, 3 cards in hand, 3 lands
+R8        [Miirym decides: Miirym, Sentinel Wyrm 94%, Lathliss, Dragon Queen 4%, Goldspan Dragon 2%, Kindred Discovery 0% -> Goldspan Dragon [search]]
+R8    Miirym casts Goldspan Dragon
+R8        [Miirym decides: Parallel Lives 100%, stop 0% -> Parallel Lives [search]]
+R8    Miirym casts Parallel Lives
+R8        [Miirym attack plan by search: filtered at Y'shtola]
+R8    Miirym attacks Y'shtola with 4 creature(s): 22 damage (life now 19)
+R9  --- Kinnan turn 9: life 22, 0 cards in hand, 4 lands
+R9        [Kinnan decides: stop (hold mana) 94%, Kinnan, Bonder Prodigy 6% -> stop (hold mana) [search]]
+R9        [Kinnan attack plan by search: filtered at Y'shtola]
+R9        [Kinnan keeps 1 creature(s) home as blockers]
+R9        [Kinnan decides: stop (hold mana) 94%, Kinnan, Bonder Prodigy 6% -> stop (hold mana) [search]]
+R9  --- Y'shtola turn 9: life 19, 7 cards in hand, 5 lands
+R9    Y'shtola plays Plains
+R9        [Y'shtola decides: Y'shtola, Night's Blessed 80%, Generous Gift -> Hullbreaker Horror 11%, Displacer Kitten 5%, Diabolic Tutor 3% -> Y'shtola, Night's Blessed [search]]
+R9    Y'shtola casts Y'shtola, Night's Blessed
+R9  --- Miirym turn 9: life 18, 2 cards in hand, 3 lands
+R9        [Miirym decides: Miirym, Sentinel Wyrm 97%, Lathliss, Dragon Queen 3%, Kindred Discovery 0%, stop 0% -> Miirym, Sentinel Wyrm [search]]
+R9    Miirym casts Miirym, Sentinel Wyrm
+R9      Y'shtola, Night's Blessed (Y'shtola) is removed: dmg6
+R9        [Miirym decides: Lathliss, Dragon Queen 99%, Kindred Discovery 1%, stop 0% -> Lathliss, Dragon Queen [search]]
+R9    Miirym casts Lathliss, Dragon Queen
+R9        [Miirym decides: Kindred Discovery 100%, stop 0% -> Kindred Discovery [search]]
+R9    Miirym casts Kindred Discovery
+R9      Kindred Discovery names Dragon
+R9        [Miirym attack plan by search: filtered at Kinnan]
+R9    Miirym attacks Kinnan with 2 creature(s): 3 damage (life now 13)
+R9  *** Y'shtola is eliminated (life -2) by Miirym
+R9    Miirym attacks Y'shtola with 2 creature(s): 15 damage (life now -2)
+R9        [Miirym decides: Roaming Throne 61%, Rhystic Study 27%, stop (hold mana) 12% -> Roaming Throne [search]]
+R9    Miirym casts Roaming Throne
+R9      Roaming Throne names dragon
+R9      Roaming Throne names dragon
+R9  *** Kinnan is eliminated (life -3) by Miirym
+Winner: Miirym (damage)

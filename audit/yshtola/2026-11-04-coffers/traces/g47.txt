@@ -1,0 +1,310 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 47 (seed 500047): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Y'shtola, Zur the Enchanter, Urza, Kinnan
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Scrubland
+R1  --- Zur the Enchanter turn 1: life 40, 7 cards in hand, 0 lands
+R1    Zur the Enchanter plays Exotic Orchard
+R1  --- Urza turn 1: life 40, 7 cards in hand, 0 lands
+R1    Urza plays Island
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kinnan pays 2 life for an untapped Breeding Pool
+R1    Kinnan plays Breeding Pool
+R1        [Kinnan decides: Mana Vault 90%, Mox Amber 10%, stop (hold mana) 0% -> Mana Vault [search]]
+R1    Kinnan casts Mana Vault
+R1        [Kinnan decides: Mox Amber 100%, stop (hold mana) 0% -> Mox Amber [search]]
+R1    Kinnan casts Mox Amber
+R2  --- Y'shtola turn 2: life 40, 7 cards in hand, 1 lands
+R2    Y'shtola plays Island
+R2  --- Zur the Enchanter turn 2: life 40, 7 cards in hand, 1 lands
+R2    Zur the Enchanter plays Raffine's Tower
+R2  --- Urza turn 2: life 40, 7 cards in hand, 1 lands
+R2    Urza plays Island
+R2        [Urza decides: Aether Spellbomb 100%, stop 0% -> Aether Spellbomb [search]]
+R2    Urza casts Aether Spellbomb
+R2        [Urza decides: Aether Spellbomb ability 93%, Aether Spellbomb ability 4%, stop 3% -> Aether Spellbomb ability [search]]
+R2    Urza activates Aether Spellbomb
+R2  --- Kinnan turn 2: life 38, 5 cards in hand, 1 lands
+R2    Kinnan plays Forest
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 80%, Fellwar Stone 17%, Thrasios, Triton Hero 3%, stop (hold mana) 0% -> Kinnan, Bonder Prodigy [search]]
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R2        [Kinnan decides: Fellwar Stone 84%, Thrasios, Triton Hero 16%, stop (hold mana) 0% -> Fellwar Stone [search]]
+R2    Kinnan casts Fellwar Stone
+R3  --- Y'shtola turn 3: life 40, 7 cards in hand, 2 lands
+R3    Y'shtola plays Swamp
+R3        [Y'shtola decides: Cast Away Doubt 65%, Vampiric Tutor 35%, stop 0% -> Cast Away Doubt [search]]
+R3    Y'shtola casts Cast Away Doubt
+R3  --- Zur the Enchanter turn 3: life 38, 7 cards in hand, 2 lands
+R3    Zur the Enchanter plays Arcane Sanctum
+R3        [Zur the Enchanter decides: stop (hold mana) 100%, Demonic Tutor 0%, Greater Auramancy 0% -> stop (hold mana) [search]]
+R3        [Zur the Enchanter decides: stop (hold mana) 100%, Demonic Tutor 0%, Greater Auramancy 0% -> stop (hold mana) [search]]
+R3  --- Urza turn 3: life 38, 7 cards in hand, 2 lands
+R3    Urza plays Island
+R3        [Urza decides: stop (hold mana) 100%, Forensic Gadgeteer 0%, Foundry Inspector 0%, Sapphire Medallion 0% -> stop (hold mana) [search]]
+R3        [Urza decides: stop (hold mana) 100%, Forensic Gadgeteer 0%, Foundry Inspector 0%, Sapphire Medallion 0% -> stop (hold mana) [search]]
+R3  --- Kinnan turn 3: life 36, 4 cards in hand, 2 lands
+R3    Kinnan plays Dreamroot Cascade
+R3        [Kinnan decides: Thrasios, Triton Hero 90%, stop (hold mana) 6%, Kinnan: dig five 5% -> Thrasios, Triton Hero [search]]
+R3    Kinnan casts Thrasios, Triton Hero
+R3        [Kinnan decides: stop (hold mana) 57%, Kinnan: dig five 43% -> stop (hold mana) [search]]
+R3        [Kinnan attacks: Y'shtola 44%, Zur the Enchanter 28%, Urza 28% -> Zur the Enchanter]
+R3    Kinnan attacks Zur the Enchanter with 1 creature(s): 2 damage (life now 36)
+R3        [Kinnan decides: Kinnan: dig five 92%, stop (hold mana) 8%, Thrasios: scry 1, a land or a card 0% -> Kinnan: dig five [search]]
+R4  --- Y'shtola turn 4: life 40, 7 cards in hand, 3 lands
+R4    Y'shtola plays Swamp
+R4        [Y'shtola decides: Y'shtola, Night's Blessed 68%, Vampiric Tutor 14%, Idyllic Tutor 14%, Tezzeret's Gambit 3% -> Y'shtola, Night's Blessed [search]]
+R4    Y'shtola casts Y'shtola, Night's Blessed
+R4      Zur the Enchanter casts Counterspell at Y'shtola, Night's Blessed
+R4      Zur the Enchanter counters Y'shtola, Night's Blessed with Counterspell
+R4  --- Zur the Enchanter turn 4: life 36, 6 cards in hand, 3 lands
+R4    Zur the Enchanter plays Swamp
+R4        [Zur the Enchanter decides: Zur the Enchanter 65%, Demonic Tutor 16%, Propaganda 11%, Mesa Enchantress 6% -> Zur the Enchanter [search]]
+R4    Zur the Enchanter casts Zur the Enchanter
+R4  --- Urza turn 4: life 38, 7 cards in hand, 3 lands
+R4    Urza plays Island
+R4        [Urza decides: stop (hold mana) 100%, Urza, Lord High Artificer 0%, Foundry Inspector 0%, Forensic Gadgeteer 0% -> stop (hold mana) [search]]
+R4        [Urza decides: stop (hold mana) 100%, Urza, Lord High Artificer 0%, Foundry Inspector 0%, Forensic Gadgeteer 0% -> stop (hold mana) [search]]
+R4    Kinnan casts Pongify -> Zur the Enchanter (Zur the Enchanter)
+R4      Zur the Enchanter (Zur the Enchanter) is removed: destroy
+R4        [Kinnan end of turn: Pongify -> Zur the Enchanter 100%, Thrasios: scry 1, a land or a card 0%, pass 0% -> Pongify -> Zur the Enchanter]
+R4      Thrasios reveals Counterspell: drawn
+R4        [Kinnan end of turn: Thrasios: scry 1, a land or a card 100%, pass 0% -> Thrasios: scry 1, a land or a card]
+R4      Thrasios reveals Swan Song: drawn
+R4        [Kinnan end of turn: Thrasios: scry 1, a land or a card 100%, pass 0% -> Thrasios: scry 1, a land or a card]
+R4  --- Kinnan turn 4: life 36, 4 cards in hand, 3 lands
+R4    Kinnan plays Forest
+R4        [Kinnan decides: stop (hold mana) 93%, Kinnan: dig five 7% -> stop (hold mana) [search]]
+R4        [Kinnan attack plan by search: filtered at Y'shtola]
+R4    Kinnan attacks Y'shtola with 3 creature(s): 5 damage (life now 35)
+R4        [Kinnan decides: Kinnan: dig five 53%, stop (hold mana) 47%, Thrasios: scry 1, a land or a card 0% -> Kinnan: dig five [search]]
+R5  --- Y'shtola turn 5: life 35, 7 cards in hand, 4 lands
+R5    Y'shtola plays Island
+R5        [Y'shtola decides: Vampiric Tutor 40%, Idyllic Tutor 40%, Teleportation Circle 12%, Tezzeret's Gambit 8% -> Vampiric Tutor [search]]
+R5    Y'shtola casts Vampiric Tutor
+R5      Urza casts Force of Negation at Vampiric Tutor
+R5      Urza counters Vampiric Tutor with Force of Negation
+R5        [Y'shtola decides: Idyllic Tutor 67%, Teleportation Circle 20%, Tezzeret's Gambit 13%, stop 0% -> Idyllic Tutor [search]]
+R5    Y'shtola casts Idyllic Tutor
+R5      Y'shtola reveals Sanguine Bond and puts it into their hand
+R5  --- Zur the Enchanter turn 5: life 36, 6 cards in hand, 4 lands
+R5    Zur the Enchanter plays Polluted Delta
+R5      cracks Polluted Delta for Watery Grave
+R5        [Zur the Enchanter decides: Demonic Tutor 32%, stop (hold mana) 30%, Propaganda 19%, Mesa Enchantress 11% -> Demonic Tutor [search]]
+R5    Zur the Enchanter casts Demonic Tutor
+R5      Kinnan casts Fierce Guardianship at Demonic Tutor
+R5      Kinnan counters Demonic Tutor with Fierce Guardianship
+R5        [Zur the Enchanter decides: stop (hold mana) 100%, Propaganda 0%, Mesa Enchantress 0%, Greater Auramancy 0% -> stop (hold mana) [search]]
+R5        [Zur the Enchanter attack plan by search: filtered at Kinnan]
+R5        [Zur the Enchanter holds back 1 attacker(s) that would die to blocks]
+R5    Zur the Enchanter attacks Urza with 1 creature(s): 3 damage (life now 35)
+R5        [Zur the Enchanter decides: stop (hold mana) 100%, Propaganda 0%, Mesa Enchantress 0%, Greater Auramancy 0% -> stop (hold mana) [search]]
+R5  --- Urza turn 5: life 35, 5 cards in hand, 4 lands
+R5      Mystic Sanctuary puts Force of Negation on top
+R5    Urza plays Mystic Sanctuary
+R5        [Urza decides: Urza, Lord High Artificer 70%, Forensic Gadgeteer 16%, Foundry Inspector 12%, Sapphire Medallion 1% -> Urza, Lord High Artificer [search]]
+R5    Urza casts Urza, Lord High Artificer
+R5      Kinnan casts Pact of Negation at Urza, Lord High Artificer
+R5      Kinnan counters Urza, Lord High Artificer with Pact of Negation
+R5      Thrasios reveals Basalt Monolith: drawn
+R5        [Kinnan end of turn: Thrasios: scry 1, a land or a card 100%, pass 0% -> Thrasios: scry 1, a land or a card]
+R5      Thrasios reveals Incubation Druid: drawn
+R5        [Kinnan end of turn: Thrasios: scry 1, a land or a card 100%, pass 0% -> Thrasios: scry 1, a land or a card]
+R5      Thrasios reveals Walking Ballista: drawn
+R5        [Kinnan end of turn: Thrasios: scry 1, a land or a card 100%, pass 0% -> Thrasios: scry 1, a land or a card]
+R5  --- Kinnan turn 5: life 35, 9 cards in hand, 4 lands
+R5    Kinnan plays Boseiju, Who Endures
+R5        [Kinnan decides: transmute Drift of Phantasms 80%, Incubation Druid 19%, Basalt Monolith 1%, Sylvan Library 0% -> transmute Drift of Phantasms [search]]
+R5    Kinnan transmutes Drift of Phantasms
+R5      Kinnan reveals Pemmin's Aura (transmute)
+R5        [Kinnan attacks: Y'shtola 38%, Zur the Enchanter 36%, Urza 25% -> Y'shtola]
+R5    Kinnan attacks Y'shtola with 4 creature(s): 12 damage (life now 23)
+R6  --- Y'shtola turn 6: life 23, 6 cards in hand, 5 lands
+R6    Y'shtola plays Swamp
+R6        [Y'shtola decides: Y'shtola, Night's Blessed 52%, Sanguine Bond 39%, Teleportation Circle 4%, Tezzeret's Gambit 4% -> Y'shtola, Night's Blessed [search]]
+R6    Y'shtola casts Y'shtola, Night's Blessed
+R6      Kinnan casts Counterspell at Y'shtola, Night's Blessed
+R6      Kinnan counters Y'shtola, Night's Blessed with Counterspell
+R6  --- Zur the Enchanter turn 6: life 35, 5 cards in hand, 5 lands
+R6        [Zur the Enchanter decides: stop (hold mana) 51%, Propaganda 22%, Mesa Enchantress 13%, Lightning Greaves 6% -> stop (hold mana) [search]]
+R6        [Zur the Enchanter attack plan by search: none at Y'shtola]
+R6        [Zur the Enchanter decides: stop (hold mana) 51%, Propaganda 22%, Mesa Enchantress 13%, Lightning Greaves 6% -> stop (hold mana) [search]]
+R6  --- Urza turn 6: life 35, 5 cards in hand, 5 lands
+R6    Urza plays Uthros, Titanic Godcore
+R6        [Urza decides: stop (hold mana) 82%, Sapphire Medallion 18%, Foundry Inspector 0%, Forensic Gadgeteer 0% -> stop (hold mana) [search]]
+R6        [Urza decides: stop (hold mana) 82%, Sapphire Medallion 18%, Foundry Inspector 0%, Forensic Gadgeteer 0% -> stop (hold mana) [search]]
+R6      Thrasios reveals Finale of Devastation: drawn
+R6        [Kinnan end of turn: Thrasios: scry 1, a land or a card 100%, pass 0% -> Thrasios: scry 1, a land or a card]
+R6      Thrasios reveals Freed from the Real: drawn
+R6        [Kinnan end of turn: Thrasios: scry 1, a land or a card 100%, pass 0% -> Thrasios: scry 1, a land or a card]
+R6      Thrasios reveals Koma, Cosmos Serpent: drawn
+R6        [Kinnan end of turn: Thrasios: scry 1, a land or a card 100%, pass 0% -> Thrasios: scry 1, a land or a card]
+R6  --- Kinnan turn 6: life 34, 9 cards in hand, 5 lands
+R6        [Kinnan decides: Springleaf Drum 35%, Basalt Monolith 32%, Pemmin's Aura 9%, Freed from the Real 9% -> Springleaf Drum [search]]
+R6    Kinnan casts Springleaf Drum
+R6      Zur the Enchanter casts Dovin's Veto at Springleaf Drum
+R6      Zur the Enchanter counters Springleaf Drum with Dovin's Veto
+R6        [Kinnan decides: Pemmin's Aura 26%, Freed from the Real 26%, Basalt Monolith 18%, Koma, Cosmos Serpent 17% -> Pemmin's Aura [search]]
+R6    Kinnan casts Pemmin's Aura
+R6      Urza casts Force of Negation at Pemmin's Aura
+R6      Kinnan casts Swan Song at Force of Negation
+R6      Kinnan counters Force of Negation with Swan Song
+R6        [Kinnan decides: Freed from the Real 43%, Basalt Monolith 29%, Walking Ballista 17%, Incubation Druid 8% -> Freed from the Real [search]]
+R6    Kinnan casts Freed from the Real
+R6    Kinnan plays City of Brass
+R6        [Kinnan attack plan by search: all at Zur the Enchanter]
+R6    Kinnan attacks Zur the Enchanter with 4 creature(s): 10 damage (life now 25)
+R7  --- Y'shtola turn 7: life 23, 6 cards in hand, 6 lands
+R7        [Y'shtola decides: Sanguine Bond 83%, Tezzeret's Gambit 7%, Teleportation Circle 6%, Esper Sentinel 4% -> Tezzeret's Gambit [search]]
+R7    Y'shtola casts Tezzeret's Gambit
+R7      Kinnan casts Force of Negation at Tezzeret's Gambit
+R7      Kinnan counters Tezzeret's Gambit with Force of Negation
+R7        [Y'shtola decides: Esper Sentinel 87%, Orcish Bowmasters 13%, stop 0% -> Esper Sentinel [search]]
+R7    Y'shtola casts Esper Sentinel
+R7  --- Zur the Enchanter turn 7: life 25, 5 cards in hand, 5 lands
+R7        [Zur the Enchanter decides: Imprisoned in the Moon -> Nezahal, Primal Tide 95%, Imprisoned in the Moon 5%, Propaganda 0%, Mesa Enchantress 0% -> Imprisoned in the Moon -> Nezahal, Primal Tide [search]]
+R7    Zur the Enchanter casts Imprisoned in the Moon -> Nezahal, Primal Tide (Kinnan)
+R7      Kinnan exiles Nezahal until the next end step
+R7      Kinnan protects Nezahal, Primal Tide
+R7        [Zur the Enchanter decides: Lightning Greaves 53%, Greater Auramancy 23%, Ethereal Armor 23%, stop 0% -> Lightning Greaves [search]]
+R7    Zur the Enchanter casts Lightning Greaves
+R7        [Zur the Enchanter decides: equip Lightning Greaves 100%, stop 0% -> equip Lightning Greaves [search]]
+R7    Zur the Enchanter equips Lightning Greaves to Token
+R7        [Zur the Enchanter attack plan by search: all at Kinnan]
+R7    Zur the Enchanter attacks Kinnan with 1 creature(s): 3 damage (life now 30)
+R7      Nezahal, Primal Tide returns to the battlefield (Eerie Interlude)
+R7  --- Urza turn 7: life 35, 3 cards in hand, 6 lands
+R7        [Urza decides: Urza, Lord High Artificer 80%, Foundry Inspector 10%, Tribute Mage 10%, Sapphire Medallion 1% -> Urza, Lord High Artificer [search]]
+R7    Urza casts Urza, Lord High Artificer
+R7        [Urza decides: Uthros: station with Token (1 charge counters) 100%, stop 0% -> Uthros: station with Token (1 charge counters) [search]]
+R7    Urza stations Uthros with Token: 1 charge counters
+R7        [Urza decides: Uthros: station with Urza, Lord High Artificer (1 charge counters) 100%, stop 0% -> Uthros: station with Urza, Lord High Artificer (1 charge counters) [search]]
+R7    Urza stations Uthros with Urza, Lord High Artificer: 2 charge counters
+R7        [Urza attack plan by search: filtered at Kinnan]
+R7    Urza attacks Kinnan with 1 creature(s): 2 damage (life now 28)
+R7      Thrasios reveals Elvish Mystic: drawn
+R7        [Kinnan end of turn: Thrasios: scry 1, a land or a card 100%, pass 0% -> Thrasios: scry 1, a land or a card]
+R7      Thrasios reveals Trophy Mage: drawn
+R7        [Kinnan end of turn: Thrasios: scry 1, a land or a card 100%, pass 0% -> Thrasios: scry 1, a land or a card]
+R7  --- Kinnan turn 7: life 28, 6 cards in hand, 6 lands
+R7    Kinnan plays Otawara, Soaring City
+R7        [Kinnan decides: Badgermole Cub 49%, Basalt Monolith 29%, Kinnan, Bonder Prodigy 13%, Finale of Devastation 7% -> Badgermole Cub [search]]
+R7    Kinnan casts Badgermole Cub
+R7        [Kinnan decides: Basalt Monolith 56%, Kinnan, Bonder Prodigy 25%, Finale of Devastation 14%, Trophy Mage 2% -> Basalt Monolith [search]]
+R7    Kinnan casts Basalt Monolith
+R7        [Kinnan decides: Kinnan, Bonder Prodigy 58%, Finale of Devastation 33%, Trophy Mage 5%, Walking Ballista 4% -> Kinnan, Bonder Prodigy [search]]
+R7    Kinnan casts Kinnan, Bonder Prodigy
+R7        [Kinnan attack plan by search: filtered at Zur the Enchanter]
+R7    Kinnan attacks Zur the Enchanter with 3 creature(s): 10 damage (life now 15)
+R8  --- Y'shtola turn 8: life 23, 6 cards in hand, 6 lands
+R8        [Y'shtola decides: stop (hold mana) 99%, Orcish Bowmasters 1%, Sanguine Bond 0%, Teleportation Circle 0% -> stop (hold mana) [search]]
+R8        [Y'shtola attack plan by search: all at Kinnan]
+R8    Y'shtola attacks Kinnan with 1 creature(s): 0 damage (life now 26)
+R8        [Y'shtola decides: stop (hold mana) 99%, Orcish Bowmasters 1%, Sanguine Bond 0%, Teleportation Circle 0% -> Orcish Bowmasters [search]]
+R8    Y'shtola casts Orcish Bowmasters
+R8        [Y'shtola decides: stop (hold mana) 100%, Teleportation Circle 0% -> stop (hold mana) [search]]
+R8  --- Zur the Enchanter turn 8: life 15, 4 cards in hand, 5 lands
+R8        [Zur the Enchanter decides: Propaganda 49%, Mesa Enchantress 22%, Greater Auramancy 10%, Ethereal Armor 10% -> Propaganda [search]]
+R8    Zur the Enchanter casts Propaganda
+R8        [Zur the Enchanter decides: Greater Auramancy 33%, Ethereal Armor 33%, Blind Obedience 33%, stop 0% -> Greater Auramancy [search]]
+R8    Zur the Enchanter casts Greater Auramancy
+R8        [Zur the Enchanter attack plan by search: all at Urza]
+R8    Zur the Enchanter attacks Urza with 1 creature(s): 3 damage (life now 32)
+R8  --- Urza turn 8: life 32, 4 cards in hand, 6 lands
+R8        [Urza decides: Foundry Inspector 51%, Tribute Mage 34%, Tormod's Crypt 8%, Sapphire Medallion 7% -> Foundry Inspector [search]]
+R8    Urza casts Foundry Inspector
+R8        [Urza decides: Tribute Mage 69%, Tormod's Crypt 16%, Sapphire Medallion 14%, Uthros: station with Foundry Inspector (3 charge counters) 1% -> Tribute Mage [search]]
+R8    Urza casts Tribute Mage
+R8      Urza reveals Lightning Greaves and puts it into their hand
+R8        [Urza decides: Lightning Greaves 60%, Tormod's Crypt 20%, Sapphire Medallion 18%, Uthros: station with Foundry Inspector (3 charge counters) 1% -> Lightning Greaves [search]]
+R8    Urza casts Lightning Greaves
+R8        [Urza decides: equip Lightning Greaves 93%, Tormod's Crypt 4%, Sapphire Medallion 3%, Uthros: station with Foundry Inspector (3 charge counters) 0% -> equip Lightning Greaves [search]]
+R8    Urza equips Lightning Greaves to Urza, Lord High Artificer
+R8        [Urza decides: Tormod's Crypt 52%, Sapphire Medallion 45%, Uthros: station with Foundry Inspector (3 charge counters) 3%, stop 0% -> Tormod's Crypt [search]]
+R8    Urza casts Tormod's Crypt
+R8        [Urza decides: Sapphire Medallion 93%, Uthros: station with Foundry Inspector (3 charge counters) 7%, stop 0% -> Sapphire Medallion [search]]
+R8    Urza casts Sapphire Medallion
+R8        [Urza decides: Uthros: station with Tribute Mage (2 charge counters) 100%, stop 0% -> Uthros: station with Tribute Mage (2 charge counters) [search]]
+R8    Urza stations Uthros with Tribute Mage: 4 charge counters
+R8        [Urza attack plan by search: filtered at Kinnan]
+R8        [Urza holds back 1 attacker(s) that would die to blocks]
+R8    Urza attacks Kinnan with 1 creature(s): 2 damage (life now 18)
+R8        [Urza decides: Uthros: station with Urza, Lord High Artificer (1 charge counters) 100%, stop 0% -> Uthros: station with Urza, Lord High Artificer (1 charge counters) [search]]
+R8    Urza stations Uthros with Urza, Lord High Artificer: 5 charge counters
+R8    Kinnan casts Worldly Tutor
+R8      Kinnan reveals Bloom Tender and puts it on top of their library
+R8        [Kinnan end of turn: Worldly Tutor 99%, Thrasios: scry 1, a land or a card 1%, Basalt Monolith ability 0%, pass 0% -> Worldly Tutor]
+R8      Thrasios reveals Bloom Tender: drawn
+R8        [Kinnan end of turn: Thrasios: scry 1, a land or a card 99%, Basalt Monolith ability 1%, pass 0% -> Thrasios: scry 1, a land or a card]
+R8      Thrasios reveals Ilysian Caryatid: drawn
+R8        [Kinnan end of turn: Thrasios: scry 1, a land or a card 99%, Basalt Monolith ability 1%, pass 0% -> Thrasios: scry 1, a land or a card]
+R8      Thrasios reveals Ancient Tomb: onto the battlefield tapped
+R8        [Kinnan end of turn: Thrasios: scry 1, a land or a card 99%, Basalt Monolith ability 1%, pass 0% -> Thrasios: scry 1, a land or a card]
+R8      Thrasios reveals Nyxbloom Ancient: drawn
+R8        [Kinnan end of turn: Thrasios: scry 1, a land or a card 99%, Basalt Monolith ability 1%, pass 0% -> Thrasios: scry 1, a land or a card]
+R8  --- Kinnan turn 8: life 14, 11 cards in hand, 8 lands
+R8      Kinnan pays {4} to untap Mana Vault
+R8    Kinnan plays Exotic Orchard
+R8        [Kinnan decides: combo: Kinnan + Basalt Monolith 100%, Void Winnower 0%, Nyxbloom Ancient 0%, Bloom Tender 0% -> combo: Kinnan + Basalt Monolith [search]]
+R8    Kinnan goes for Kinnan + Basalt Monolith
+R8      Y'shtola casts Teferi's Protection: life can't change, protection from everything, all phased out
+R8      Y'shtola survives: its life total can't change
+R8  *** Zur the Enchanter is eliminated (life 15) by Kinnan
+R8  *** Urza is eliminated (life 32) by Kinnan
+R8  *** Kinnan goes off, but Y'shtola survive
+R8        [Kinnan decides: combo: Kinnan + Basalt Monolith + Thrasios (draw the deck) 100%, Void Winnower 0%, Nyxbloom Ancient 0%, Bloom Tender 0% -> combo: Kinnan + Basalt Monolith + Thrasios (draw the deck) [search]]
+R8    Kinnan goes for Kinnan + Basalt Monolith + Thrasios (draw the deck)
+R8    Kinnan casts Finale of Devastation
+R8      Y'shtola survives: its life total can't change
+R8  *** Kinnan goes off, but Y'shtola survive
+R8        [Kinnan decides: combo: Kinnan + Basalt Monolith 100%, Void Winnower 0%, Nyxbloom Ancient 0%, Bloom Tender 0% -> combo: Kinnan + Basalt Monolith [search]]
+R8    Kinnan goes for Kinnan + Basalt Monolith
+R8      Y'shtola survives: its life total can't change
+R8  *** Kinnan goes off, but Y'shtola survive
+R8        [Kinnan decides: Void Winnower 80%, Nyxbloom Ancient 16%, Bloom Tender 4%, Walking Ballista 0% -> Void Winnower [search]]
+R8    Kinnan casts Void Winnower
+R8        [Kinnan decides: Nyxbloom Ancient 78%, Bloom Tender 19%, Walking Ballista 1%, Trophy Mage 1% -> Nyxbloom Ancient [search]]
+R8    Kinnan casts Nyxbloom Ancient
+R8        [Kinnan attack plan by search: filtered at Y'shtola]
+R8      7 combat damage from Nezahal, Primal Tide to Y'shtola is prevented
+R8      2 combat damage from Seedborn Muse to Y'shtola is prevented
+R8      2 combat damage from Badgermole Cub to Y'shtola is prevented
+R8      2 combat damage from Kinnan, Bonder Prodigy to Y'shtola is prevented
+R8      1 combat damage from Thrasios, Triton Hero to Y'shtola is prevented
+R8    Kinnan attacks Y'shtola with 5 creature(s): 0 damage (life now 23)
+R9  --- Y'shtola turn 9: life 23, 5 cards in hand, 6 lands
+R9    Y'shtola no longer has protection from everything
+R9        [Y'shtola decides: Sanguine Bond 100%, stop 0% -> Sanguine Bond [search]]
+R9    Y'shtola casts Sanguine Bond
+R9        [Y'shtola attack plan by search: filtered at Kinnan]
+R9    Y'shtola attacks Kinnan with 2 creature(s): 0 damage (life now 9)
+R9      Thrasios reveals Sink into Stupor // Soporific Springs: drawn
+R9        [Kinnan end of turn: Thrasios: scry 1, a land or a card 99%, Basalt Monolith ability 1%, pass 0% -> Thrasios: scry 1, a land or a card]
+R9    Kinnan casts Sink into Stupor // Soporific Springs -> Orc Army (Y'shtola)
+R9      Orc Army (Y'shtola) is removed: bounce
+R9        [Kinnan end of turn: Sink into Stupor // Soporific Springs -> Sanguine Bond 100%, Thrasios: scry 1, a land or a card 0%, Basalt Monolith ability 0%, pass 0% -> Sink into Stupor // Soporific Springs -> Sanguine Bond]
+R9      Thrasios reveals Enduring Vitality: drawn
+R9        [Kinnan end of turn: Thrasios: scry 1, a land or a card 99%, Basalt Monolith ability 1%, pass 0% -> Thrasios: scry 1, a land or a card]
+R9      Thrasios reveals Fyndhorn Elves: drawn
+R9        [Kinnan end of turn: Thrasios: scry 1, a land or a card 99%, Basalt Monolith ability 1%, pass 0% -> Thrasios: scry 1, a land or a card]
+R9      Thrasios reveals Endurance: drawn
+R9        [Kinnan end of turn: Thrasios: scry 1, a land or a card 99%, Basalt Monolith ability 1%, pass 0% -> Thrasios: scry 1, a land or a card]
+R9    Kinnan casts Endurance
+R9      Y'shtola's graveyard (7 cards) goes to the bottom of its library (Endurance)
+R9        [Kinnan end of turn: Endurance 98%, Thrasios: scry 1, a land or a card 2%, evoke Endurance 0%, Basalt Monolith ability 0% -> Endurance]
+R9  --- Kinnan turn 9: life 8, 10 cards in hand, 9 lands
+R9        [Kinnan decides: combo: Kinnan + Basalt Monolith 100%, Cyclonic Rift -> Sanguine Bond 0%, Bloom Tender 0%, Green Sun's Zenith 0% -> combo: Kinnan + Basalt Monolith [search]]
+R9    Kinnan goes for Kinnan + Basalt Monolith
+R9  *** Y'shtola is eliminated (life 23) by Kinnan
+R9  *** Kinnan wins by combo
+Winner: Kinnan (combo)

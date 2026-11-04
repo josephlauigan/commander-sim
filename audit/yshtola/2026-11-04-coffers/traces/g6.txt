@@ -1,0 +1,166 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 6 (seed 500006): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Y'shtola, Miirym, Urza, Zur the Enchanter
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola pays 2 life for an untapped Watery Grave
+R1    Y'shtola plays Watery Grave
+R1  --- Miirym turn 1: life 40, 7 cards in hand, 0 lands
+R1    Miirym pays 2 life for an untapped Stomping Ground
+R1    Miirym plays Stomping Ground
+R1  --- Urza turn 1: life 40, 7 cards in hand, 0 lands
+R1    Urza plays Island
+R1  --- Zur the Enchanter turn 1: life 40, 6 cards in hand, 0 lands
+R1    Zur the Enchanter pays 2 life for an untapped Godless Shrine
+R1    Zur the Enchanter plays Godless Shrine
+R2    Y'shtola casts Mystical Tutor
+R2      Zur the Enchanter casts Force of Will at Mystical Tutor
+R2      Zur the Enchanter counters Mystical Tutor with Force of Will
+R2        [Y'shtola end of turn: Mystical Tutor 100%, pass 0% -> Mystical Tutor]
+R2  --- Y'shtola turn 2: life 38, 6 cards in hand, 1 lands
+R2    Y'shtola plays Swamp
+R2        [Y'shtola decides: Orcish Bowmasters 98%, stop 2% -> Orcish Bowmasters [search]]
+R2    Y'shtola casts Orcish Bowmasters
+R2  --- Miirym turn 2: life 38, 7 cards in hand, 1 lands
+R2    Miirym plays Sulfur Falls
+R2        [Miirym decides: Nature's Lore 100%, Cyclonic Rift -> Orc Army 0%, stop 0% -> Nature's Lore [search]]
+R2    Miirym casts Nature's Lore
+R2  --- Urza turn 2: life 39, 7 cards in hand, 1 lands
+R2    Urza plays Island
+R2  --- Zur the Enchanter turn 2: life 37, 4 cards in hand, 1 lands
+R2    Zur the Enchanter plays Island
+R3  --- Y'shtola turn 3: life 38, 5 cards in hand, 2 lands
+R3    Y'shtola plays Island
+R3        [Y'shtola attacks: Urza 34%, Miirym 33%, Zur the Enchanter 33% -> Zur the Enchanter]
+R3    Y'shtola attacks Zur the Enchanter with 2 creature(s): 2 damage (life now 35)
+R3  --- Miirym turn 3: life 38, 6 cards in hand, 3 lands
+R3    Miirym plays Mountain
+R3        [Miirym decides: Dragon's Hoard 83%, Cultivate 16%, Jeska's Will 1%, Cyclonic Rift -> Orc Army 0% -> Jeska's Will [search]]
+R3    Miirym casts Jeska's Will
+R3      Jeska's Will adds 7 red mana
+R3        [Miirym decides: Dragon's Hoard 99%, Ganax, Astral Hunter 1%, Cyclonic Rift -> Orc Army 0%, Cyclonic Rift 0% -> Dragon's Hoard [search]]
+R3    Miirym casts Dragon's Hoard
+R3        [Miirym decides: Cultivate 60%, Miirym, Sentinel Wyrm 34%, Ganax, Astral Hunter 6%, Cyclonic Rift -> Orc Army 0% -> Cultivate [search]]
+R3    Miirym casts Cultivate
+R3      Miirym reveals Mountain and puts it into their hand
+R3        [Miirym decides: Cyclonic Rift -> Orc Army 97%, stop 3% -> Cyclonic Rift -> Orc Army [search]]
+R3    Miirym casts Cyclonic Rift -> Orc Army (Y'shtola)
+R3      Orc Army (Y'shtola) is removed: bounce
+R3  --- Urza turn 3: life 39, 7 cards in hand, 2 lands
+R3    Urza plays Island
+R3        [Urza decides: Arcane Signet 90%, Rings of Brighthearth 10%, stop 0% -> Arcane Signet [search]]
+R3    Urza casts Arcane Signet
+R3  --- Zur the Enchanter turn 3: life 35, 4 cards in hand, 2 lands
+R3    Zur the Enchanter plays Vault of Champions
+R3        [Zur the Enchanter decides: Enlightened Tutor 66%, Ghostly Prison 29%, Opposition Agent 4%, stop 0% -> Enlightened Tutor [search]]
+R3    Zur the Enchanter casts Enlightened Tutor
+R3      Zur the Enchanter reveals Heliod, Sun-Crowned and puts it on top of their library
+R4  --- Y'shtola turn 4: life 38, 5 cards in hand, 3 lands
+R4    Y'shtola plays Island
+R4        [Y'shtola attacks: Miirym 52%, Urza 25%, Zur the Enchanter 24% -> Zur the Enchanter]
+R4    Y'shtola attacks Zur the Enchanter with 1 creature(s): 1 damage (life now 34)
+R4  --- Miirym turn 4: life 38, 3 cards in hand, 5 lands
+R4    Miirym plays Island
+R4        [Miirym decides: Miirym, Sentinel Wyrm 86%, Ganax, Astral Hunter 14%, stop 0% -> Miirym, Sentinel Wyrm [search]]
+R4    Miirym casts Miirym, Sentinel Wyrm
+R4  --- Urza turn 4: life 39, 6 cards in hand, 3 lands
+R4    Urza plays Island
+R4        [Urza decides: Urza, Lord High Artificer 96%, Rings of Brighthearth 2%, stop (hold mana) 1%, Mystic Forge 1% -> Mystic Forge [search]]
+R4    Urza casts Mystic Forge
+R4        [Urza decides: stop (hold mana) 99%, Mystic Forge: exile the top land 1% -> stop (hold mana) [search]]
+R4        [Urza decides: stop (hold mana) 99%, Mystic Forge: exile the top land 1% -> stop (hold mana) [search]]
+R4  --- Zur the Enchanter turn 4: life 34, 3 cards in hand, 3 lands
+R4    Zur the Enchanter plays Polluted Delta
+R4      cracks Polluted Delta for Raffine's Tower
+R4        [Zur the Enchanter decides: Ghostly Prison 52%, Heliod, Sun-Crowned 40%, Opposition Agent 8%, stop 0% -> Opposition Agent [search]]
+R4    Zur the Enchanter casts Opposition Agent
+R5  --- Y'shtola turn 5: life 38, 5 cards in hand, 4 lands
+R5    Y'shtola plays Swamp
+R5        [Y'shtola attack plan by search: all at Miirym]
+R5    Y'shtola attacks Miirym with 1 creature(s): 0 damage (life now 38)
+R5        [Miirym end of turn: Dragon's Hoard: draw 99%, pass 1% -> Dragon's Hoard: draw]
+R5  --- Miirym turn 5: life 38, 4 cards in hand, 6 lands
+R5    Miirym plays Mountain
+R5        [Miirym decides: Ancient Silver Dragon 63%, Old Gnawbone 33%, Ganax, Astral Hunter 4%, stop 0% -> Ancient Silver Dragon [search]]
+R5    Miirym casts Ancient Silver Dragon
+R5        [Miirym attack plan by search: filtered at Urza]
+R5    Miirym attacks Urza with 1 creature(s): 6 damage (life now 33)
+R5  --- Urza turn 5: life 33, 5 cards in hand, 4 lands
+R5    Urza plays Island
+R5        [Urza decides: Urza, Lord High Artificer 96%, stop (hold mana) 3%, Rings of Brighthearth 1% -> Urza, Lord High Artificer [search]]
+R5    Urza casts Urza, Lord High Artificer
+R5        [Urza decides: stop (hold mana) 73%, Rings of Brighthearth 27% -> stop (hold mana) [search]]
+R5        [Urza decides: stop (hold mana) 73%, Rings of Brighthearth 27% -> stop (hold mana) [search]]
+R5  --- Zur the Enchanter turn 5: life 33, 2 cards in hand, 4 lands
+R5        [Zur the Enchanter decides: Cyclonic Rift -> Urza, Lord High Artificer 97%, stop (hold mana) 3%, Zur the Enchanter 0%, Ghostly Prison 0% -> Cyclonic Rift -> Urza, Lord High Artificer [search]]
+R5    Zur the Enchanter casts Cyclonic Rift -> Urza, Lord High Artificer (Urza)
+R5      Urza, Lord High Artificer (Urza) is removed: bounce
+R5        [Zur the Enchanter attack plan by search: filtered at Y'shtola]
+R5    Zur the Enchanter attacks Y'shtola with 1 creature(s): 3 damage (life now 35)
+R6  --- Y'shtola turn 6: life 35, 5 cards in hand, 5 lands
+R6        [Y'shtola decides: Exquisite Blood 100%, stop 0% -> Exquisite Blood [search]]
+R6    Y'shtola casts Exquisite Blood
+R6  --- Miirym turn 6: life 38, 3 cards in hand, 7 lands
+R6    Miirym plays Mountain
+R6        [Miirym decides: Old Gnawbone 88%, Ganax, Astral Hunter 12%, stop 0% -> Old Gnawbone [search]]
+R6    Miirym casts Old Gnawbone
+R6        [Miirym attack plan by search: none at Y'shtola]
+R6  --- Urza turn 6: life 33, 5 cards in hand, 5 lands
+R6    Urza plays Academy Ruins
+R6        [Urza decides: Urza, Lord High Artificer 70%, stop (hold mana) 21%, Rings of Brighthearth 8%, Mystic Forge: cast Chrome Mox 2% -> Mystic Forge: cast Chrome Mox [search]]
+R6    Urza casts Chrome Mox from the top of the library (Mystic Forge)
+R6    Urza casts Chrome Mox
+R6      Chrome Mox imprints Swan Song
+R6        [Urza decides: stop (hold mana) 73%, Rings of Brighthearth 27%, Urza, Lord High Artificer 0% -> stop (hold mana) [search]]
+R6        [Urza attack plan by search: all at Miirym]
+R6    Urza attacks Miirym with 1 creature(s): 0 damage (life now 38)
+R6        [Urza decides: stop (hold mana) 73%, Rings of Brighthearth 27%, Urza, Lord High Artificer 0% -> stop (hold mana) [search]]
+R6  --- Zur the Enchanter turn 6: life 33, 2 cards in hand, 4 lands
+R6    Zur the Enchanter plays Plains
+R6        [Zur the Enchanter decides: Zur the Enchanter 95%, Ghostly Prison 3%, Heliod, Sun-Crowned 2%, stop 0% -> Zur the Enchanter [search]]
+R6    Zur the Enchanter casts Zur the Enchanter
+R6        [Zur the Enchanter attack plan by search: filtered at Urza]
+R6        [Zur the Enchanter keeps 1 creature(s) home as blockers]
+R7  --- Y'shtola turn 7: life 35, 5 cards in hand, 5 lands
+R7    Y'shtola plays Polluted Delta
+R7      Opposition Agent: Zur the Enchanter takes Tundra from Y'shtola's search
+R7        [Miirym end of turn: Dragon's Hoard: draw 99%, pass 1% -> Dragon's Hoard: draw]
+R7  --- Miirym turn 7: life 38, 3 cards in hand, 8 lands
+R7    Miirym plays Forest
+R7        [Miirym decides: Ganax, Astral Hunter 94%, stop (hold mana) 6% -> Ganax, Astral Hunter [search]]
+R7    Miirym casts Ganax, Astral Hunter
+R7        [Miirym attack plan by search: filtered at Y'shtola]
+R7  *** Y'shtola is eliminated (life -1) by Miirym
+R7      Ancient Silver Dragon rolls 9: draw 9
+R7      Ancient Silver Dragon rolls 14: draw 14
+R7    Miirym attacks Y'shtola with 5 creature(s): 36 damage (life now -1)
+R7        [Miirym decides: Beast Within -> Zur the Enchanter 84%, Atarka, World Render 6%, Earthquake Dragon 6%, Ureni of the Unwritten 2% -> Beast Within -> Zur the Enchanter [search]]
+R7    Miirym casts Beast Within -> Zur the Enchanter (Zur the Enchanter)
+R7      Urza casts Force of Negation at Beast Within
+R7      Urza counters Beast Within with Force of Negation
+R7        [Miirym decides: Atarka, World Render 41%, Earthquake Dragon 41%, Ureni of the Unwritten 12%, Ancient Copper Dragon 3% -> Atarka, World Render [search]]
+R7    Miirym casts Atarka, World Render
+R7        [Miirym decides: Earthquake Dragon 70%, Ureni of the Unwritten 20%, Ancient Copper Dragon 6%, Klauth, Unrivaled Ancient 2% -> Earthquake Dragon [search]]
+R7    Miirym casts Earthquake Dragon
+R7        [Miirym decides: Ureni of the Unwritten 66%, Ancient Copper Dragon 19%, Klauth, Unrivaled Ancient 7%, Thrakkus the Butcher 3% -> Ureni of the Unwritten [search]]
+R7    Miirym casts Ureni of the Unwritten
+R7      Ureni puts Terror of the Peaks onto the battlefield
+R7      Zur the Enchanter (Zur the Enchanter) is removed: dmg5
+R7      Ureni puts Twinflame Tyrant onto the battlefield
+R7        [Miirym decides: Ancient Copper Dragon 55%, Klauth, Unrivaled Ancient 20%, Thrakkus the Butcher 10%, Rhystic Study 6% -> Ancient Copper Dragon [search]]
+R7    Miirym casts Ancient Copper Dragon
+R7  *** Urza is eliminated (life -87) by Miirym
+R7        [Miirym decides: Klauth, Unrivaled Ancient 55%, Thrakkus the Butcher 25%, Rhythm of the Wild 7%, Korlessa, Scale Singer 6% -> Klauth, Unrivaled Ancient [search]]
+R7    Miirym casts Klauth, Unrivaled Ancient
+R7  *** Zur the Enchanter is eliminated (life -55) by Miirym
+Winner: Miirym (damage)

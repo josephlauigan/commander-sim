@@ -1,0 +1,341 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 13 (seed 500013): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Zur the Enchanter, Y'shtola, Kinnan, Miirym
+R1  --- Zur the Enchanter turn 1: life 40, 7 cards in hand, 0 lands
+R1    Zur the Enchanter pays 2 life for an untapped Watery Grave
+R1    Zur the Enchanter plays Watery Grave
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Underground Sea
+R1  --- Kinnan turn 1: life 40, 5 cards in hand, 0 lands
+R1    Kinnan plays Command Tower
+R1  --- Miirym turn 1: life 40, 7 cards in hand, 0 lands
+R1    Miirym plays Cavern of Souls
+R2  --- Zur the Enchanter turn 2: life 38, 7 cards in hand, 1 lands
+R2    Zur the Enchanter plays Swamp
+R2  --- Y'shtola turn 2: life 40, 7 cards in hand, 1 lands
+R2    Y'shtola plays Adarkar Wastes
+R2  --- Kinnan turn 2: life 40, 5 cards in hand, 1 lands
+R2    Kinnan plays Waterlogged Grove
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 100%, stop (hold mana) 0% -> Kinnan, Bonder Prodigy [search]]
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R2  --- Miirym turn 2: life 40, 7 cards in hand, 1 lands
+R2    Miirym plays Mountain
+R2        [Miirym decides: Scaled Nurturer 100%, stop 0% -> Scaled Nurturer [search]]
+R2    Miirym casts Scaled Nurturer
+R3  --- Zur the Enchanter turn 3: life 38, 7 cards in hand, 2 lands
+R3    Zur the Enchanter plays Raffine's Tower
+R3  --- Y'shtola turn 3: life 40, 7 cards in hand, 2 lands
+R3    Y'shtola plays Island
+R3        [Y'shtola decides: Coalition Relic 51%, Memory Trap 27%, Rhystic Study 22%, stop 0% -> Memory Trap [search]]
+R3    Y'shtola casts Memory Trap
+R3      Kinnan, Bonder Prodigy (Kinnan) is removed: exile
+R3  --- Kinnan turn 3: life 39, 5 cards in hand, 2 lands
+R3    Kinnan plays Island
+R3        [Kinnan decides: transmute Drift of Phantasms 100%, stop (hold mana) 0%, Drift of Phantasms 0%, Pemmin's Aura 0% -> transmute Drift of Phantasms [search]]
+R3    Kinnan transmutes Drift of Phantasms
+R3      Kinnan reveals Basalt Monolith (transmute)
+R3  --- Miirym turn 3: life 40, 6 cards in hand, 2 lands
+R3    Miirym plays Forest
+R4  --- Zur the Enchanter turn 4: life 38, 7 cards in hand, 3 lands
+R4    Zur the Enchanter plays Underground River
+R4        [Zur the Enchanter decides: Zur the Enchanter 94%, Rule of Law 3%, Propaganda 2%, Greater Auramancy 0% -> Zur the Enchanter [search]]
+R4    Zur the Enchanter casts Zur the Enchanter
+R4  --- Y'shtola turn 4: life 39, 6 cards in hand, 3 lands
+R4    Y'shtola plays Tundra
+R4        [Y'shtola decides: Y'shtola, Night's Blessed 60%, Coalition Relic 28%, Marauding Blight-Priest 6%, Rhystic Study 5% -> Y'shtola, Night's Blessed [search]]
+R4    Y'shtola casts Y'shtola, Night's Blessed
+R4  --- Kinnan turn 4: life 38, 5 cards in hand, 3 lands
+R4    Kinnan plays Dreamroot Cascade
+R4        [Kinnan decides: Basalt Monolith 99%, Enduring Vitality 1%, Pemmin's Aura 0%, Kinnan, Bonder Prodigy 0% -> Basalt Monolith [search]]
+R4    Kinnan casts Basalt Monolith
+R4        [Kinnan decides: stop (hold mana) 99%, Basalt Monolith ability 1% -> Basalt Monolith ability [search]]
+R4    Kinnan activates Basalt Monolith
+R4        [Kinnan decides: stop (hold mana) 99%, Basalt Monolith ability 1% -> stop (hold mana) [search]]
+R4        [Kinnan decides: stop (hold mana) 99%, Basalt Monolith ability 1% -> stop (hold mana) [search]]
+R4    Miirym casts Worldly Tutor
+R4      Kinnan casts Swan Song at Worldly Tutor
+R4      Kinnan counters Worldly Tutor with Swan Song
+R4        [Miirym end of turn: Worldly Tutor 100%, pass 0% -> Worldly Tutor]
+R4  --- Miirym turn 4: life 40, 5 cards in hand, 3 lands
+R4    Miirym plays Island
+R4        [Miirym decides: Cyclonic Rift -> Zur the Enchanter 100%, stop 0% -> Cyclonic Rift -> Zur the Enchanter [search]]
+R4    Miirym casts Cyclonic Rift -> Zur the Enchanter (Zur the Enchanter)
+R4      Zur the Enchanter (Zur the Enchanter) is removed: bounce
+R4        [Miirym attack plan by search: filtered at Kinnan]
+R4    Miirym attacks Kinnan with 1 creature(s): 2 damage (life now 35)
+R5  --- Zur the Enchanter turn 5: life 38, 7 cards in hand, 4 lands
+R5    Zur the Enchanter plays Hallowed Fountain
+R5        [Zur the Enchanter decides: Rule of Law 55%, Propaganda 36%, Greater Auramancy 7%, Delney, Streetwise Lookout 2% -> Rule of Law [search]]
+R5    Zur the Enchanter casts Rule of Law
+R5  --- Y'shtola turn 5: life 38, 6 cards in hand, 4 lands
+R5    Y'shtola plays Plains
+R5        [Y'shtola decides: Coalition Relic 93%, Bribery 3%, Rhystic Study 2%, Marauding Blight-Priest 2% -> stop [search]]
+R5        [Y'shtola attack plan by search: none at Zur the Enchanter]
+R5        [Y'shtola decides: Coalition Relic 93%, Bribery 3%, Rhystic Study 2%, Marauding Blight-Priest 2% -> Bribery [search]]
+R5    Y'shtola casts Bribery
+R5      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R5      Bribery: Y'shtola takes Void Winnower from Kinnan's library
+R5    Kinnan activates Basalt Monolith
+R5        [Kinnan end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R5    Kinnan activates Basalt Monolith
+R5        [Kinnan end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R5  --- Kinnan turn 5: life 33, 3 cards in hand, 4 lands
+R5        [Kinnan decides: Wandering Archaic // Explore the Vastlands 48%, Enduring Vitality 43%, Pemmin's Aura 10%, Basalt Monolith ability 0% -> Wandering Archaic // Explore the Vastlands [search]]
+R5    Kinnan casts Wandering Archaic // Explore the Vastlands
+R5  --- Miirym turn 5: life 38, 4 cards in hand, 4 lands
+R5    Miirym plays Rootbound Crag
+R5        [Miirym attack plan by search: filtered at Kinnan]
+R5    Miirym attacks Kinnan with 1 creature(s): 2 damage (life now 31)
+R6  --- Zur the Enchanter turn 6: life 36, 6 cards in hand, 5 lands
+R6        [Zur the Enchanter decides: Grasp of Fate -> Void Winnower 99%, Propaganda 0%, Heliod, Sun-Crowned 0%, Delney, Streetwise Lookout 0% -> Propaganda [search]]
+R6    Zur the Enchanter casts Propaganda
+R6  --- Y'shtola turn 6: life 40, 5 cards in hand, 5 lands
+R6        [Y'shtola decides: Rhystic Study 47%, Marauding Blight-Priest 26%, Displacer Kitten 14%, Coalition Relic 11% -> Rhystic Study [search]]
+R6    Y'shtola casts Rhystic Study
+R6      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R6        [Y'shtola attack plan by search: filtered at Kinnan]
+R6        [Y'shtola holds back 1 attacker(s) that would die to blocks]
+R6    Y'shtola attacks Kinnan with 1 creature(s): 11 damage (life now 18)
+R6    Y'shtola attacks Miirym with 1 creature(s): 2 damage (life now 34)
+R6  --- Kinnan turn 6: life 18, 3 cards in hand, 4 lands
+R6        [Kinnan decides: Enduring Vitality 73%, Pemmin's Aura 25%, stop (hold mana) 3%, Basalt Monolith ability 0% -> Enduring Vitality [search]]
+R6    Kinnan casts Enduring Vitality
+R6        [Kinnan decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R6    Kinnan activates Basalt Monolith
+R6        [Kinnan decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R6    Kinnan activates Basalt Monolith
+R6        [Kinnan decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R6    Kinnan activates Basalt Monolith
+R6        [Kinnan attack plan by search: none at Zur the Enchanter]
+R6  --- Miirym turn 6: life 34, 4 cards in hand, 5 lands
+R6    Miirym plays Mountain
+R6        [Miirym attack plan by search: filtered at Kinnan]
+R6    Miirym attacks Kinnan with 1 creature(s): 2 damage (life now 15)
+R7  --- Zur the Enchanter turn 7: life 34, 6 cards in hand, 5 lands
+R7        [Zur the Enchanter decides: Grasp of Fate -> Void Winnower 100%, Heliod, Sun-Crowned 0%, Delney, Streetwise Lookout 0%, stop 0% -> Grasp of Fate -> Void Winnower [search]]
+R7    Zur the Enchanter casts Grasp of Fate -> Void Winnower (Y'shtola)
+R7      Void Winnower (Y'shtola) is removed: exile
+R7      Basalt Monolith (Kinnan) is removed: exile
+R7      Scaled Nurturer (Miirym) is removed: exile
+R7  --- Y'shtola turn 7: life 42, 7 cards in hand, 5 lands
+R7    Y'shtola plays Swamp
+R7        [Y'shtola decides: Marauding Blight-Priest 63%, Displacer Kitten 28%, Coalition Relic 4%, Expedition Map 4% -> Coalition Relic [search]]
+R7    Y'shtola casts Coalition Relic
+R7      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R7        [Y'shtola attack plan by search: filtered at Zur the Enchanter]
+R7    Y'shtola pays 2 to attack Zur the Enchanter with 1
+R7    Y'shtola attacks Zur the Enchanter with 1 creature(s): 2 damage (life now 30)
+R7  --- Kinnan turn 7: life 13, 3 cards in hand, 4 lands
+R7        [Kinnan decides: Kinnan, Bonder Prodigy 67%, Pemmin's Aura 21%, Consecrated Sphinx 9%, stop (hold mana) 2% -> Kinnan, Bonder Prodigy [search]]
+R7    Kinnan casts Kinnan, Bonder Prodigy
+R7        [Kinnan attack plan by search: none at Zur the Enchanter]
+R7  --- Miirym turn 7: life 32, 4 cards in hand, 6 lands
+R7    Miirym plays Maelstrom of the Spirit Dragon
+R7        [Miirym decides: Miirym, Sentinel Wyrm 99%, Sol Ring 1%, Maelstrom of the Spirit Dragon ability 0%, stop 0% -> Miirym, Sentinel Wyrm [search]]
+R7    Miirym casts Miirym, Sentinel Wyrm
+R7        [Miirym attack plan by search: filtered at Y'shtola]
+R7    Miirym attacks Y'shtola with 1 creature(s): 2 damage (life now 42)
+R8  --- Zur the Enchanter turn 8: life 30, 6 cards in hand, 5 lands
+R8        [Zur the Enchanter decides: Heliod, Sun-Crowned 66%, Mesa Enchantress 17%, Greater Auramancy 8%, Delney, Streetwise Lookout 7% -> Delney, Streetwise Lookout [search]]
+R8    Zur the Enchanter casts Delney, Streetwise Lookout
+R8  --- Y'shtola turn 8: life 42, 10 cards in hand, 6 lands
+R8    Y'shtola plays Caves of Koilos
+R8        [Y'shtola decides: Consecrated Sphinx 31%, Marauding Blight-Priest 22%, Austere Command 19%, Propaganda 19% -> Consecrated Sphinx [search]]
+R8    Y'shtola casts Consecrated Sphinx
+R8      Kinnan casts Mana Drain at Consecrated Sphinx
+R8      Kinnan counters Consecrated Sphinx with Mana Drain
+R8        [Y'shtola attack plan by search: none at Zur the Enchanter]
+R8  --- Kinnan turn 8: life 12, 3 cards in hand, 4 lands
+R8        [Kinnan decides: Pemmin's Aura 81%, Consecrated Sphinx 18%, Tezzeret the Seeker 0%, Kinnan: dig five 0% -> Pemmin's Aura [search]]
+R8    Kinnan casts Pemmin's Aura
+R8        [Kinnan decides: Kinnan: dig five 100%, stop 0% -> Kinnan: dig five [search]]
+R8        [Kinnan attack plan by search: all at Y'shtola]
+R8    Kinnan attacks Y'shtola with 2 creature(s): 3 damage (life now 39)
+R8  --- Miirym turn 8: life 32, 4 cards in hand, 7 lands
+R8    Miirym plays Wooded Foothills
+R8      cracks Wooded Foothills for Ketria Triome
+R8        [Miirym decides: Farseek 76%, Sol Ring 24%, Maelstrom of the Spirit Dragon ability 1%, stop 0% -> Maelstrom of the Spirit Dragon ability [search]]
+R8    Miirym activates Maelstrom of the Spirit Dragon
+R8      Miirym reveals Wrathful Red Dragon and puts it into their hand
+R8        [Miirym decides: Farseek 76%, Sol Ring 24%, stop 0% -> Farseek [search]]
+R8    Miirym casts Farseek
+R8      Farseek finds Steam Vents
+R8        [Miirym attack plan by search: filtered at Y'shtola]
+R8    Miirym attacks Y'shtola with 2 creature(s): 8 damage (life now 31)
+R9  --- Zur the Enchanter turn 9: life 30, 6 cards in hand, 5 lands
+R9        [Zur the Enchanter decides: Heliod, Sun-Crowned 61%, Mystic Remora 14%, Mesa Enchantress 10%, Diplomatic Immunity 5% -> Heliod, Sun-Crowned [search]]
+R9    Zur the Enchanter casts Heliod, Sun-Crowned
+R9        [Zur the Enchanter attack plan by search: filtered at Miirym]
+R9    Zur the Enchanter attacks Miirym with 1 creature(s): 2 damage (life now 29)
+R9  --- Y'shtola turn 9: life 31, 10 cards in hand, 7 lands
+R9    Y'shtola plays Plains
+R9        [Y'shtola decides: Sanguine Bond 39%, Go for the Throat -> Miirym, Sentinel Wyrm 23%, Marauding Blight-Priest 13%, Propaganda 12% -> Sanguine Bond [search]]
+R9    Y'shtola casts Sanguine Bond
+R9      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R9      Kinnan casts Force of Will at Sanguine Bond
+R9      Kinnan counters Sanguine Bond with Force of Will
+R9        [Y'shtola attack plan by search: all at Zur the Enchanter]
+R9    Y'shtola pays 2 to attack Zur the Enchanter with 1
+R9    Y'shtola attacks Zur the Enchanter with 1 creature(s): 0 damage (life now 28)
+R9  --- Kinnan turn 9: life 8, 1 cards in hand, 4 lands
+R9    Kinnan plays Otawara, Soaring City
+R9        [Kinnan decides: Consecrated Sphinx 94%, Kinnan, Bonder Prodigy 6%, stop 0% -> Consecrated Sphinx [search]]
+R9    Kinnan casts Consecrated Sphinx
+R9        [Kinnan attack plan by search: filtered at Zur the Enchanter]
+R9        [Kinnan keeps 1 creature(s) home as blockers]
+R9        [Kinnan holds back 2 attacker(s) that would die to blocks]
+R9    Y'shtola answers the attack: Go for the Throat -> Wandering Archaic // Explore the Vastlands
+R9    Y'shtola casts Go for the Throat -> Wandering Archaic // Explore the Vastlands (Kinnan)
+R9      Kinnan copies Go for the Throat (Wandering Archaic)
+R9      Miirym, Sentinel Wyrm (Miirym) is removed: destroy
+R9      Wandering Archaic // Explore the Vastlands (Kinnan) is removed: destroy
+R9    Kinnan attacks Y'shtola with 2 creature(s): 3 damage (life now 29)
+R9  --- Miirym turn 9: life 27, 4 cards in hand, 8 lands
+R9    Miirym plays Stomping Ground
+R9        [Miirym decides: Miirym, Sentinel Wyrm 68%, Wrathful Red Dragon 26%, Sol Ring 3%, Three Visits 3% -> Miirym, Sentinel Wyrm [search]]
+R9    Miirym casts Miirym, Sentinel Wyrm
+R9        [Miirym attack plan by search: filtered at Y'shtola]
+R9    Miirym attacks Y'shtola with 1 creature(s): 2 damage (life now 27)
+R10 --- Zur the Enchanter turn 10: life 28, 6 cards in hand, 5 lands
+R10   Zur the Enchanter plays Sea of Clouds
+R10       [Zur the Enchanter decides: Zur the Enchanter 87%, Mystic Remora 4%, Mesa Enchantress 3%, Diplomatic Immunity 2% -> Zur the Enchanter [search]]
+R10   Zur the Enchanter casts Zur the Enchanter
+R10     Y'shtola casts Force of Will at Zur the Enchanter
+R10     Y'shtola counters Zur the Enchanter with Force of Will
+R10       [Zur the Enchanter attack plan by search: filtered at Kinnan]
+R10   Kinnan answers the attack: Sink into Stupor // Soporific Springs -> Heliod, Sun-Crowned
+R10   Kinnan casts Sink into Stupor // Soporific Springs -> Heliod, Sun-Crowned (Zur the Enchanter)
+R10     Heliod, Sun-Crowned (Zur the Enchanter) is removed: bounce
+R10   Zur the Enchanter attacks Kinnan with 2 creature(s): 2 damage (life now 5)
+R10 --- Y'shtola turn 10: life 26, 6 cards in hand, 8 lands
+R10   Y'shtola plays Plains
+R10       [Y'shtola decides: Your Fate Ends Here -> Miirym, Sentinel Wyrm 24%, Your Fate Ends Here 24%, Y'shtola, Night's Blessed 18%, Marauding Blight-Priest 13% -> Y'shtola, Night's Blessed [search]]
+R10   Y'shtola casts Y'shtola, Night's Blessed
+R10 --- Kinnan turn 10: life 5, 9 cards in hand, 5 lands
+R10   Kinnan plays Hinterland Harbor
+R10       [Kinnan decides: Hullbreaker Horror 92%, Kinnan, Bonder Prodigy 4%, Seedborn Muse 3%, Paradise Druid 1% -> stop [search]]
+R10       [Kinnan attack plan by search: none at Zur the Enchanter]
+R10       [Kinnan decides: Hullbreaker Horror 92%, Kinnan, Bonder Prodigy 4%, Seedborn Muse 3%, Paradise Druid 1% -> Hullbreaker Horror [search]]
+R10   Kinnan casts Hullbreaker Horror
+R10       [Kinnan decides: Waterlogged Grove draw 99%, stop 1% -> Waterlogged Grove draw [search]]
+R10   Kinnan sacrifices Waterlogged Grove: draws a card
+R10 --- Miirym turn 10: life 27, 4 cards in hand, 9 lands
+R10       [Miirym decides: Earthquake Dragon 78%, Ancient Silver Dragon 19%, Wrathful Red Dragon 3%, Three Visits 0% -> Earthquake Dragon [search]]
+R10   Miirym casts Earthquake Dragon
+R10       [Miirym attack plan by search: all at Kinnan]
+R10   Miirym attacks Kinnan with 2 creature(s): 2 damage (life now 3)
+R11 --- Zur the Enchanter turn 11: life 28, 7 cards in hand, 6 lands
+R11       [Zur the Enchanter decides: stop (hold mana) 63%, Heliod, Sun-Crowned 23%, Mystic Remora 5%, Mesa Enchantress 4% -> stop (hold mana) [search]]
+R11       [Zur the Enchanter attack plan by search: filtered at Kinnan]
+R11   Zur the Enchanter attacks Kinnan with 1 creature(s): 2 damage (life now 1)
+R11       [Zur the Enchanter decides: stop (hold mana) 63%, Heliod, Sun-Crowned 23%, Mystic Remora 5%, Mesa Enchantress 4% -> stop (hold mana) [search]]
+R11   Y'shtola casts Your Fate Ends Here -> Hullbreaker Horror (Kinnan)
+R11     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R11 *** Kinnan is eliminated (life -1) by Y'shtola
+R11     Earthquake Dragon (Miirym) is removed: destroy
+R11       [Y'shtola end of turn: Your Fate Ends Here -> Hullbreaker Horror 100%, pass 0% -> Your Fate Ends Here -> Hullbreaker Horror]
+R11 --- Y'shtola turn 11: life 27, 6 cards in hand, 9 lands
+R11   Y'shtola plays Scrubland
+R11       [Y'shtola decides: Anguished Unmaking -> Miirym, Sentinel Wyrm 82%, Farewell 8%, Propaganda 4%, Marauding Blight-Priest 3% -> Farewell [search]]
+R11   Y'shtola casts Farewell
+R11     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R11     board wipe resolves (farewell)
+R11       modes: ["ench", "cre"]
+R11       Rule of Law (Zur the Enchanter) is removed by the wipe (farewell)
+R11       Propaganda (Zur the Enchanter) is removed by the wipe (farewell)
+R11     Scaled Nurturer returns to the battlefield
+R11       Grasp of Fate (Zur the Enchanter) is removed by the wipe (farewell)
+R11       Delney, Streetwise Lookout (Zur the Enchanter) is removed by the wipe (farewell)
+R11       Memory Trap (Y'shtola) is removed by the wipe (farewell)
+R11       Rhystic Study (Y'shtola) is removed by the wipe (farewell)
+R11       Y'shtola, Night's Blessed (Y'shtola) is removed by the wipe (farewell)
+R11       Token (Miirym) is removed by the wipe (farewell)
+R11       Miirym, Sentinel Wyrm (Miirym) is removed by the wipe (farewell)
+R11       Earthquake Dragon (Miirym) is removed by the wipe (farewell)
+R11       Scaled Nurturer (Miirym) is removed by the wipe (farewell)
+R11       [Y'shtola decides: Marauding Blight-Priest 78%, Propaganda 13%, Sheoldred, the Apocalypse 9%, Sol Ring 0% -> Sheoldred, the Apocalypse [search]]
+R11   Y'shtola casts Sheoldred, the Apocalypse
+R11     Zur the Enchanter casts Counterspell at Sheoldred, the Apocalypse
+R11     Zur the Enchanter counters Sheoldred, the Apocalypse with Counterspell
+R11       [Y'shtola decides: Sol Ring 98%, stop 2% -> Sol Ring [search]]
+R11   Y'shtola casts Sol Ring
+R11 --- Miirym turn 11: life 23, 4 cards in hand, 9 lands
+R11       [Miirym decides: Ancient Silver Dragon 74%, Balefire Dragon 17%, Wrathful Red Dragon 8%, Three Visits 1% -> Ancient Silver Dragon [search]]
+R11   Miirym casts Ancient Silver Dragon
+R11       [Miirym decides: Sol Ring 100%, stop 0% -> Sol Ring [search]]
+R11   Miirym casts Sol Ring
+R12 --- Zur the Enchanter turn 12: life 23, 6 cards in hand, 6 lands
+R12   Zur the Enchanter plays Island
+R12       [Zur the Enchanter decides: Heliod, Sun-Crowned 68%, Mystic Remora 15%, Mesa Enchantress 12%, Greater Auramancy 5% -> Heliod, Sun-Crowned [search]]
+R12   Zur the Enchanter casts Heliod, Sun-Crowned
+R12       [Zur the Enchanter decides: Mystic Remora 47%, Mesa Enchantress 36%, Greater Auramancy 16%, Arcane Signet 1% -> Mystic Remora [search]]
+R12   Zur the Enchanter casts Mystic Remora
+R12       [Zur the Enchanter decides: Mesa Enchantress 68%, Greater Auramancy 30%, Arcane Signet 2%, stop 0% -> Mesa Enchantress [search]]
+R12   Zur the Enchanter casts Mesa Enchantress
+R12 --- Y'shtola turn 12: life 28, 3 cards in hand, 10 lands
+R12       [Y'shtola decides: Y'shtola, Night's Blessed 45%, Marauding Blight-Priest 18%, Anguished Unmaking -> Ancient Silver Dragon 17%, Path to Exile -> Ancient Silver Dragon 17% -> Y'shtola, Night's Blessed [search]]
+R12   Y'shtola casts Y'shtola, Night's Blessed
+R12       [Y'shtola decides: Marauding Blight-Priest 30%, Anguished Unmaking -> Ancient Silver Dragon 27%, Path to Exile -> Ancient Silver Dragon 27%, Propaganda 16% -> Marauding Blight-Priest [search]]
+R12   Y'shtola casts Marauding Blight-Priest
+R12       [Y'shtola decides: Path to Exile -> Ancient Silver Dragon 100%, stop 0% -> Path to Exile -> Ancient Silver Dragon [search]]
+R12   Y'shtola casts Path to Exile -> Ancient Silver Dragon (Miirym)
+R12     Ancient Silver Dragon (Miirym) is removed: exile
+R12 --- Miirym turn 12: life 23, 3 cards in hand, 10 lands
+R12   Miirym plays Misty Rainforest
+R12     cracks Misty Rainforest for Cinder Glade
+R12       [Miirym decides: Balefire Dragon 59%, Wrathful Red Dragon 26%, Miirym, Sentinel Wyrm 14%, Three Visits 1% -> Miirym, Sentinel Wyrm [search]]
+R12   Miirym casts Miirym, Sentinel Wyrm
+R12       [Miirym decides: Three Visits 100%, stop 0% -> Three Visits [search]]
+R12   Miirym casts Three Visits
+R13 --- Zur the Enchanter turn 13: life 23, 5 cards in hand, 7 lands
+R13   Zur the Enchanter plays Swamp
+R13       [Zur the Enchanter decides: Lightning Greaves 59%, Ethereal Armor 13%, Greater Auramancy 13%, Steel of the Godhead 13% -> Lightning Greaves [search]]
+R13   Zur the Enchanter casts Lightning Greaves
+R13       [Zur the Enchanter decides: Ethereal Armor 28%, Greater Auramancy 28%, Steel of the Godhead 28%, equip Lightning Greaves 14% -> Ethereal Armor [search]]
+R13   Zur the Enchanter casts Ethereal Armor
+R13     Ethereal Armor enchants Mesa Enchantress
+R13       [Zur the Enchanter decides: equip Lightning Greaves 55%, Greater Auramancy 21%, Steel of the Godhead 21%, Arcane Signet 1% -> equip Lightning Greaves [search]]
+R13   Zur the Enchanter equips Lightning Greaves to Mesa Enchantress
+R13       [Zur the Enchanter decides: Greater Auramancy 48%, Steel of the Godhead 48%, Arcane Signet 2%, Orzhov Signet 2% -> Greater Auramancy [search]]
+R13   Zur the Enchanter casts Greater Auramancy
+R13       [Zur the Enchanter decides: Arcane Signet 50%, Orzhov Signet 50%, stop 0% -> Arcane Signet [search]]
+R13   Zur the Enchanter casts Arcane Signet
+R13       [Zur the Enchanter attack plan by search: filtered at Y'shtola]
+R13   Zur the Enchanter attacks Y'shtola with 2 creature(s): 4 damage (life now 22)
+R13 --- Y'shtola turn 13: life 22, 3 cards in hand, 10 lands
+R13       [Y'shtola decides: Propaganda 36%, Anguished Unmaking -> Miirym, Sentinel Wyrm 29%, Ill-Gotten Inheritance 24%, stop (hold mana) 10% -> Propaganda [search]]
+R13   Y'shtola casts Propaganda
+R13     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R13       [Y'shtola decides: Anguished Unmaking -> Miirym, Sentinel Wyrm 74%, stop (hold mana) 26%, Ill-Gotten Inheritance 0%, Restoration Angel 0% -> stop (hold mana) [search]]
+R13       [Y'shtola attack plan by search: filtered at Zur the Enchanter]
+R13   Y'shtola attacks Zur the Enchanter with 1 creature(s): 2 damage (life now 19)
+R13       [Y'shtola decides: Anguished Unmaking -> Miirym, Sentinel Wyrm 74%, stop (hold mana) 26%, Ill-Gotten Inheritance 0%, Restoration Angel 0% -> stop (hold mana) [search]]
+R13 --- Miirym turn 13: life 20, 2 cards in hand, 12 lands
+R13       [Miirym decides: Balefire Dragon 55%, Wrathful Red Dragon 25%, Goldspan Dragon 19%, stop 0% -> Balefire Dragon [search]]
+R13   Miirym casts Balefire Dragon
+R13       [Miirym decides: Wrathful Red Dragon 56%, Goldspan Dragon 44%, stop 0% -> Wrathful Red Dragon [search]]
+R13   Miirym casts Wrathful Red Dragon
+R13       [Miirym attack plan by search: filtered at Zur the Enchanter]
+R13   Miirym attacks Zur the Enchanter with 1 creature(s): 6 damage (life now 13)
+R14   Zur the Enchanter casts Vampiric Tutor
+R14     Zur the Enchanter puts Walking Ballista on top of their library
+R14       [Zur the Enchanter end of turn: Vampiric Tutor 100%, pass 0% -> Vampiric Tutor]
+R14 --- Zur the Enchanter turn 14: life 11, 2 cards in hand, 8 lands
+R14       [Zur the Enchanter decides: combo: Heliod, Sun-Crowned + Walking Ballista 100%, Walking Ballista 0%, Steel of the Godhead 0%, Orzhov Signet 0% -> combo: Heliod, Sun-Crowned + Walking Ballista [search]]
+R14   Zur the Enchanter goes for Heliod, Sun-Crowned + Walking Ballista
+R14   Zur the Enchanter casts Walking Ballista
+R14 *** Y'shtola is eliminated (life 24) by Zur the Enchanter
+R14 *** Miirym is eliminated (life 20) by Zur the Enchanter
+R14 *** Zur the Enchanter wins by combo
+Winner: Zur the Enchanter (combo)

@@ -44,6 +44,16 @@ fetched anything for her.** Its AI (`impls/karn_engines.rs`) cracks it only for 
 Ancient Tomb, so here it was a colourless land; Urborg and Coffers aren't on its want list. A real Cave test needs
 that AI rule first.
 
+**Same Cave package, board-aware land choice** (`karn_engines.rs` board_land_want: Coffers/Urborg as a pair, Serra's
+Sanctum, a colour the hand needs; tests `tests/land_search_board.rs`): **24.9% -> 26.1%, +1.3 (noise ±2.4): NO CLEAR
+EFFECT**, 12 threads (shared CPU). Raw: `2026-11-04-coffers/package-cave-board-t5.txt`. 60 traced games
+(`2026-11-04-coffers/traces/`) show why it matches the run before: the Cave was played in 10 games and its option
+offered 9 times (e.g. Coffers out, no Urborg, 10 lands), but **it was never chosen**: its utility is a flat
+1.2 + want/6 (about 3), below Champion's Helm, Sphere of Safety or holding mana, not scaled to the mana Urborg would
+add. Expedition Map now cracks (twice in the 60: Cabal Coffers, Flooded Strand); before this fix it never did, so the
+two earlier package runs had a dead Map too. Open: the Cave's and the Map's option utility should grow with the mana
+the fetched land adds.
+
 ### 2026-10-19: Curiosity => Orcish Bowmasters, confirmed (T5, loose, 2,000 games per list, look-ahead)
 Result: **31.6% -> 34.1%, +2.5 (noise ±2.3): BETTER**, the first swap to clear the noise for her. Raw:
 `2026-10-19-bowmasters/full-curiosity-t5.txt`.

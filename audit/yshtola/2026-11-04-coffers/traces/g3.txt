@@ -1,0 +1,85 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 3 (seed 500003): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Zur the Enchanter, Kinnan, Yawgmoth, Y'shtola
+R1  --- Zur the Enchanter turn 1: life 40, 7 cards in hand, 0 lands
+R1    Zur the Enchanter plays Adarkar Wastes
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kinnan plays Rejuvenating Springs
+R1        [Kinnan decides: Sol Ring 50%, Mana Vault 50%, stop 0% -> Sol Ring [search]]
+R1    Kinnan casts Sol Ring
+R1      Y'shtola casts Force of Will at Sol Ring
+R1      Y'shtola counters Sol Ring with Force of Will
+R1  --- Yawgmoth turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yawgmoth plays Swamp
+R1  --- Y'shtola turn 1: life 39, 5 cards in hand, 0 lands
+R1    Y'shtola plays Swamp
+R2  --- Zur the Enchanter turn 2: life 40, 7 cards in hand, 1 lands
+R2    Zur the Enchanter plays Plains
+R2  --- Kinnan turn 2: life 40, 6 cards in hand, 1 lands
+R2    Kinnan plays Island
+R2        [Kinnan decides: Mana Vault 64%, Kinnan, Bonder Prodigy 35%, Moonsilver Key 1%, stop 0% -> Moonsilver Key [search]]
+R2    Kinnan casts Moonsilver Key
+R2    Yawgmoth casts Vampiric Tutor
+R2      Yawgmoth puts Mikaeus, the Unhallowed on top of their library
+R2        [Yawgmoth end of turn: Vampiric Tutor 100%, pass 0% -> Vampiric Tutor]
+R2  --- Yawgmoth turn 2: life 38, 6 cards in hand, 1 lands
+R2    Yawgmoth plays Takenuma, Abandoned Mire
+R2        [Yawgmoth decides: Nether Traitor 100%, stop 0% -> Nether Traitor [search]]
+R2    Yawgmoth casts Nether Traitor
+R2        [Yawgmoth attacks: Kinnan 50%, Zur the Enchanter 25%, Y'shtola 25% -> Kinnan]
+R2    Yawgmoth attacks Kinnan with 1 creature(s): 1 damage (life now 39)
+R2  --- Y'shtola turn 2: life 39, 5 cards in hand, 1 lands
+R2    Y'shtola plays Swamp
+R3  --- Zur the Enchanter turn 3: life 40, 7 cards in hand, 2 lands
+R3    Zur the Enchanter plays Glacial Fortress
+R3        [Zur the Enchanter decides: Darksteel Mutation 100%, stop 0% -> Darksteel Mutation [search]]
+R3    Zur the Enchanter casts Darksteel Mutation
+R3  --- Kinnan turn 3: life 39, 5 cards in hand, 2 lands
+R3    Kinnan plays Forest
+R3        [Kinnan decides: Mana Vault 62%, Kinnan, Bonder Prodigy 32%, Fabricate 6%, Moonsilver Key ability 0% -> Mana Vault [search]]
+R3    Kinnan casts Mana Vault
+R3        [Kinnan decides: Kinnan, Bonder Prodigy 84%, Fabricate 16%, Seedborn Muse 1%, Moonsilver Key ability 0% -> Seedborn Muse [search]]
+R3    Kinnan casts Seedborn Muse
+R3  --- Yawgmoth turn 3: life 38, 5 cards in hand, 2 lands
+R3    Yawgmoth plays Reliquary Tower
+R3        [Yawgmoth attack plan by search: filtered at Kinnan]
+R3    Yawgmoth attacks Kinnan with 1 creature(s): 1 damage (life now 38)
+R3  --- Y'shtola turn 3: life 39, 5 cards in hand, 2 lands
+R3    Y'shtola plays Urza's Cave
+R3        [Y'shtola decides: Toxic Deluge 97%, stop 3% -> Toxic Deluge [search]]
+R3    Y'shtola casts Toxic Deluge
+R3      board wipe resolves (minus)
+R3        Seedborn Muse (Kinnan) is removed by the wipe (minus)
+R3        Nether Traitor (Yawgmoth) is removed by the wipe (minus)
+R4  --- Zur the Enchanter turn 4: life 40, 6 cards in hand, 3 lands
+R4    Zur the Enchanter plays Raffine's Tower
+R4    Kinnan activates Moonsilver Key
+R4      Kinnan reveals Walking Ballista and puts it into their hand
+R4        [Kinnan end of turn: Moonsilver Key ability 98%, pass 2% -> Moonsilver Key ability]
+R4  --- Kinnan turn 4: life 38, 4 cards in hand, 3 lands
+R4    Kinnan plays Waterlogged Grove
+R4        [Kinnan decides: Kinnan, Bonder Prodigy 87%, Fabricate 12%, Walking Ballista 1%, stop 0% -> Kinnan, Bonder Prodigy [search]]
+R4    Kinnan casts Kinnan, Bonder Prodigy
+R4        [Kinnan decides: Fabricate 93%, Walking Ballista 7%, stop 0% -> Fabricate [search]]
+R4    Kinnan casts Fabricate
+R4      Kinnan reveals Basalt Monolith and puts it into their hand
+R4        [Kinnan decides: Basalt Monolith 100%, stop 0% -> Basalt Monolith [search]]
+R4    Kinnan casts Basalt Monolith
+R4        [Kinnan decides: combo: Kinnan + Basalt Monolith 100%, Walking Ballista 0%, Basalt Monolith ability 0%, stop 0% -> combo: Kinnan + Basalt Monolith [search]]
+R4    Kinnan goes for Kinnan + Basalt Monolith
+R4  *** Zur the Enchanter is eliminated (life 40) by Kinnan
+R4  *** Yawgmoth is eliminated (life 38) by Kinnan
+R4  *** Y'shtola is eliminated (life 35) by Kinnan
+R4  *** Kinnan wins by combo
+Winner: Kinnan (combo)

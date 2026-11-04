@@ -1,0 +1,399 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 12 (seed 500012): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Kinnan, Y'shtola, Urza, Yawgmoth
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kinnan pays 2 life for an untapped Breeding Pool
+R1    Kinnan plays Breeding Pool
+R1        [Kinnan decides: Delighted Halfling 100%, stop 0% -> Delighted Halfling [search]]
+R1    Kinnan casts Delighted Halfling
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Marsh Flats
+R1      cracks Marsh Flats for Underground Sea
+R1  --- Urza turn 1: life 40, 7 cards in hand, 0 lands
+R1    Urza plays Island
+R1  --- Yawgmoth turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yawgmoth plays Swamp
+R1        [Yawgmoth decides: Dark Ritual 92%, Entomb (Gravecrawler) 8%, stop 0% -> Dark Ritual [search]]
+R1    Yawgmoth casts Dark Ritual
+R1        [Yawgmoth decides: Arcane Signet 90%, Butcher Ghoul 10%, Entomb (Gravecrawler) 0%, stop 0% -> Arcane Signet [search]]
+R1    Yawgmoth casts Arcane Signet
+R1        [Yawgmoth decides: Butcher Ghoul 99%, Entomb (Gravecrawler) 1%, stop 0% -> Butcher Ghoul [search]]
+R1    Yawgmoth casts Butcher Ghoul
+R2  --- Kinnan turn 2: life 38, 6 cards in hand, 1 lands
+R2    Kinnan plays Island
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 99%, Ponder 1%, stop 0% -> Kinnan, Bonder Prodigy [search]]
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R2  --- Y'shtola turn 2: life 39, 7 cards in hand, 1 lands
+R2    Y'shtola plays Island
+R2  --- Urza turn 2: life 40, 7 cards in hand, 1 lands
+R2    Urza plays Island
+R2  --- Yawgmoth turn 2: life 40, 4 cards in hand, 1 lands
+R2    Yawgmoth plays Swamp
+R2        [Yawgmoth decides: Entomb (Gravecrawler) 100%, stop 0% -> Entomb (Gravecrawler) [search]]
+R2    Yawgmoth casts Entomb
+R2      Yawgmoth puts Gravecrawler into the graveyard (Entomb)
+R2        [Yawgmoth attack plan by search: filtered at Kinnan]
+R2        [Yawgmoth holds back 1 attacker(s) that would die to blocks]
+R2    Yawgmoth attacks Urza with 1 creature(s): 1 damage (life now 39)
+R3  --- Kinnan turn 3: life 38, 6 cards in hand, 2 lands
+R3    Kinnan plays Island
+R3        [Kinnan decides: Birds of Paradise 87%, Wandering Archaic // Explore the Vastlands 11%, Ponder 2%, stop 0% -> Birds of Paradise [search]]
+R3    Kinnan casts Birds of Paradise
+R3        [Kinnan decides: Ponder 100%, stop 0% -> Ponder [search]]
+R3    Kinnan casts Ponder
+R3        [Kinnan decides: Talisman of Curiosity 100%, stop 0% -> Talisman of Curiosity [search]]
+R3    Kinnan casts Talisman of Curiosity
+R3        [Kinnan attacks: Yawgmoth 46%, Y'shtola 27%, Urza 27% -> Y'shtola]
+R3    Kinnan attacks Y'shtola with 1 creature(s): 2 damage (life now 37)
+R3  --- Y'shtola turn 3: life 37, 7 cards in hand, 2 lands
+R3    Y'shtola plays Plains
+R3        [Y'shtola decides: Bound in Silence -> Kinnan, Bonder Prodigy 66%, Bound in Silence 32%, Read the Bones 2%, stop 0% -> Bound in Silence -> Kinnan, Bonder Prodigy [search]]
+R3    Y'shtola casts Bound in Silence -> Kinnan, Bonder Prodigy (Kinnan)
+R3      Kinnan, Bonder Prodigy (Kinnan) is removed: pacify
+R3      Bound in Silence enchants Kinnan, Bonder Prodigy (Kinnan)
+R3  --- Urza turn 3: life 39, 7 cards in hand, 2 lands
+R3    Urza plays Urza's Saga
+R3        [Urza decides: Trinket Mage 63%, Narset, Parter of Veils 37%, stop 0% -> Trinket Mage [search]]
+R3    Urza casts Trinket Mage
+R3      Urza reveals Basalt Monolith and puts it into their hand
+R3  --- Yawgmoth turn 3: life 40, 3 cards in hand, 2 lands
+R3    Yawgmoth plays Cabal Coffers
+R3        [Yawgmoth attack plan by search: filtered at Kinnan]
+R3    Yawgmoth attacks Kinnan with 1 creature(s): 1 damage (life now 37)
+R4    Kinnan casts Worldly Tutor
+R4      Kinnan reveals Void Winnower and puts it on top of their library
+R4        [Kinnan end of turn: Worldly Tutor 100%, pass 0% -> Worldly Tutor]
+R4  --- Kinnan turn 4: life 36, 3 cards in hand, 3 lands
+R4    Kinnan plays Forest
+R4        [Kinnan decides: Void Winnower 95%, Wandering Archaic // Explore the Vastlands 4%, Nature's Rhythm 1%, Kinnan: dig five 0% -> Void Winnower [search]]
+R4    Kinnan casts Void Winnower
+R4  --- Y'shtola turn 4: life 37, 6 cards in hand, 3 lands
+R4    Y'shtola plays Swamp
+R4        [Y'shtola decides: Read the Bones 100%, stop 0% -> Read the Bones [search]]
+R4    Y'shtola casts Read the Bones
+R4  --- Urza turn 4: life 39, 7 cards in hand, 3 lands
+R4    Urza plays Island
+R4        [Urza decides: Basalt Monolith 50%, Sol Ring 50%, Narset, Parter of Veils 0%, stop 0% -> Basalt Monolith [search]]
+R4    Urza casts Basalt Monolith
+R4        [Urza decides: Sol Ring 100%, Basalt Monolith ability 0%, stop 0% -> Sol Ring [search]]
+R4    Urza casts Sol Ring
+R4        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R4    Urza activates Basalt Monolith
+R4        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R4    Urza activates Basalt Monolith
+R4        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R4    Urza activates Basalt Monolith
+R4        [Urza attack plan by search: filtered at Kinnan]
+R4        [Urza holds back 1 attacker(s) that would die to blocks]
+R4    Urza attacks Yawgmoth with 1 creature(s): 2 damage (life now 38)
+R4  --- Yawgmoth turn 4: life 38, 3 cards in hand, 3 lands
+R4    Yawgmoth plays Bojuka Bog
+R4        [Yawgmoth attack plan by search: none at Kinnan]
+R5  --- Kinnan turn 5: life 36, 2 cards in hand, 4 lands
+R5        [Kinnan decides: Arcane Signet 56%, Wandering Archaic // Explore the Vastlands 29%, Nature's Rhythm 14%, Kinnan: dig five 0% -> Arcane Signet [search]]
+R5    Kinnan casts Arcane Signet
+R5        [Kinnan decides: Wandering Archaic // Explore the Vastlands 66%, Nature's Rhythm 33%, Kinnan: dig five 1%, stop 0% -> Nature's Rhythm [search]]
+R5    Kinnan casts Nature's Rhythm
+R5        [Kinnan attack plan by search: filtered at Urza]
+R5    Kinnan attacks Urza with 1 creature(s): 11 damage (life now 28)
+R5  --- Y'shtola turn 5: life 35, 7 cards in hand, 4 lands
+R5    Y'shtola plays Serra's Sanctum
+R5        [Y'shtola decides: Path to Exile -> Void Winnower 96%, stop (hold mana) 4%, Champion's Helm 1%, Skyclave Apparition 0% -> Path to Exile -> Void Winnower [search]]
+R5    Y'shtola casts Path to Exile -> Void Winnower (Kinnan)
+R5      Void Winnower (Kinnan) is removed: exile
+R5        [Y'shtola decides: Y'shtola, Night's Blessed 89%, Displacer Kitten 6%, Hostage Taker 3%, Sheoldred, the Apocalypse 1% -> Y'shtola, Night's Blessed [search]]
+R5    Y'shtola casts Y'shtola, Night's Blessed
+R5    Urza activates Basalt Monolith
+R5        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R5    Urza activates Basalt Monolith
+R5        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R5    Urza activates Basalt Monolith
+R5        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R5  --- Urza turn 5: life 28, 5 cards in hand, 4 lands
+R5      Urza's Saga: Urza makes a Construct (3/3)
+R5      Urza's Saga: Urza puts Aether Spellbomb onto the battlefield
+R5        [Urza decides: Urza, Lord High Artificer 95%, Whir of Invention 2%, Narset, Parter of Veils 1%, Tezzeret the Seeker 1% -> Urza, Lord High Artificer [search]]
+R5    Urza casts Urza, Lord High Artificer
+R5        [Urza decides: Whir of Invention 44%, Narset, Parter of Veils 22%, Tezzeret the Seeker 22%, Lightning Greaves 6% -> Whir of Invention [search]]
+R5    Urza casts Whir of Invention
+R5      Chrome Mox imprints Narset, Parter of Veils
+R5        [Urza decides: Lightning Greaves 95%, Aether Spellbomb ability 4%, Aether Spellbomb ability 0%, stop 0% -> Lightning Greaves [search]]
+R5    Urza casts Lightning Greaves
+R5        [Urza decides: equip Lightning Greaves 100%, Aether Spellbomb ability 0%, Aether Spellbomb ability 0%, stop 0% -> equip Lightning Greaves [search]]
+R5    Urza equips Lightning Greaves to Urza, Lord High Artificer
+R5        [Urza decides: Aether Spellbomb ability 95%, Aether Spellbomb ability 5%, stop 0% -> Aether Spellbomb ability [search]]
+R5    Urza activates Aether Spellbomb
+R5      Tidespout Tyrant (Kinnan) is removed: bounce
+R5        [Urza attack plan by search: filtered at Yawgmoth]
+R5    Urza attacks Yawgmoth with 2 creature(s): 3 damage (life now 35)
+R5  --- Yawgmoth turn 5: life 35, 3 cards in hand, 4 lands
+R5        [Yawgmoth decides: Yawgmoth, Thran Physician 97%, Crypt Ghast 2%, Sheoldred, the Apocalypse 1%, Genesis Chamber 0% -> Yawgmoth, Thran Physician [search]]
+R5    Yawgmoth casts Yawgmoth, Thran Physician
+R5        [Yawgmoth attack plan by search: filtered at Y'shtola]
+R5        [Yawgmoth holds back 1 attacker(s) that would die to blocks]
+R5    Yawgmoth attacks Urza with 1 creature(s): 1 damage (life now 27)
+R6  --- Kinnan turn 6: life 36, 2 cards in hand, 5 lands
+R6        [Kinnan decides: Tidespout Tyrant 93%, harmonize Nature's Rhythm 5%, Wandering Archaic // Explore the Vastlands 2%, Kinnan: dig five 0% -> Tidespout Tyrant [search]]
+R6    Kinnan casts Tidespout Tyrant
+R6        [Kinnan decides: Wandering Archaic // Explore the Vastlands 91%, harmonize Nature's Rhythm 9%, stop 0% -> harmonize Nature's Rhythm [search]]
+R6    Kinnan harmonizes Nature's Rhythm (X=6)
+R6      Yawgmoth, Thran Physician (Yawgmoth) is removed: bounce
+R6  --- Y'shtola turn 6: life 35, 6 cards in hand, 5 lands
+R6        [Y'shtola decides: Skyclave Apparition 66%, Sphere of Safety 14%, Displacer Kitten 9%, Hostage Taker 5% -> Skyclave Apparition [search]]
+R6    Y'shtola casts Skyclave Apparition
+R6      Basalt Monolith (Urza) is removed: exile
+R6        [Y'shtola attack plan by search: none at Kinnan]
+R6  --- Urza turn 6: life 27, 3 cards in hand, 3 lands
+R6        [Urza decides: Etherium Sculptor 67%, Tezzeret the Seeker 23%, Mystic Forge 10%, Urza: free card 0% -> Etherium Sculptor [search]]
+R6    Urza casts Etherium Sculptor
+R6      Kinnan casts Force of Will at Etherium Sculptor
+R6      Y'shtola, Night's Blessed (Y'shtola) is removed: bounce
+R6      Kinnan counters Etherium Sculptor with Force of Will
+R6        [Urza decides: Tezzeret the Seeker 69%, Mystic Forge 31%, Urza: free card 1%, stop 0% -> Tezzeret the Seeker [search]]
+R6    Urza casts Tezzeret the Seeker
+R6        [Urza decides: Tezzeret the Seeker -2 68%, Tezzeret the Seeker +1 32%, stop 0% -> Tezzeret the Seeker -2 [search]]
+R6    Urza uses Tezzeret the Seeker (-2): artifact onto the battlefield
+R6        [Urza attack plan by search: all at Kinnan]
+R6    Urza attacks Kinnan with 3 creature(s): 3 damage (life now 31)
+R6  --- Yawgmoth turn 6: life 35, 4 cards in hand, 4 lands
+R6        [Yawgmoth decides: Crypt Ghast 38%, Ophiomancer 38%, Sheoldred, the Apocalypse 15%, Genesis Chamber 9% -> Crypt Ghast [search]]
+R6    Yawgmoth casts Crypt Ghast
+R6        [Yawgmoth attack plan by search: filtered at Kinnan]
+R6    Yawgmoth attacks Kinnan with 1 creature(s): 1 damage (life now 30)
+R7  --- Kinnan turn 7: life 30, 4 cards in hand, 5 lands
+R7        [Kinnan decides: Basalt Monolith 84%, stop (hold mana) 9%, Wandering Archaic // Explore the Vastlands 6%, Llanowar Elves 0% -> Basalt Monolith [search]]
+R7    Kinnan casts Basalt Monolith
+R7      Isochron Scepter (Urza) is removed: bounce
+R7        [Kinnan decides: stop (hold mana) 54%, Wandering Archaic // Explore the Vastlands 40%, Llanowar Elves 2%, Ilysian Caryatid 2% -> stop (hold mana) [search]]
+R7        [Kinnan attack plan by search: filtered at Y'shtola]
+R7    Kinnan attacks Y'shtola with 1 creature(s): 5 damage (life now 30)
+R7        [Kinnan decides: stop (hold mana) 43%, Wandering Archaic // Explore the Vastlands 32%, Kinnan: dig five 21%, Llanowar Elves 2% -> Wandering Archaic // Explore the Vastlands [search]]
+R7    Kinnan casts Wandering Archaic // Explore the Vastlands
+R7      Tezzeret the Seeker (Urza) is removed: bounce
+R7        [Kinnan decides: stop (hold mana) 60%, Kinnan: dig five 34%, Llanowar Elves 3%, Ilysian Caryatid 3% -> stop (hold mana) [search]]
+R7  --- Y'shtola turn 7: life 30, 6 cards in hand, 5 lands
+R7    Y'shtola plays Island
+R7        [Y'shtola decides: Consecrated Sphinx 44%, Y'shtola, Night's Blessed 40%, Displacer Kitten 7%, Hostage Taker 3% -> Consecrated Sphinx [search]]
+R7    Y'shtola casts Consecrated Sphinx
+R7      Kinnan casts Mana Drain at Consecrated Sphinx
+R7      Lightning Greaves (Urza) is removed: bounce
+R7      Kinnan counters Consecrated Sphinx with Mana Drain
+R7        [Y'shtola attack plan by search: none at Kinnan]
+R7  --- Urza turn 7: life 27, 5 cards in hand, 3 lands
+R7        [Urza decides: Lightning Greaves 42%, Tezzeret the Seeker 32%, Mystic Forge 19%, Lotus Petal 7% -> Lightning Greaves [search]]
+R7    Urza casts Lightning Greaves
+R7        [Urza decides: equip Lightning Greaves 96%, Tezzeret the Seeker 2%, Mystic Forge 1%, Lotus Petal 0% -> equip Lightning Greaves [search]]
+R7    Urza equips Lightning Greaves to Urza, Lord High Artificer
+R7        [Urza decides: Tezzeret the Seeker 55%, Mystic Forge 32%, Lotus Petal 12%, Urza: free card 1% -> Tezzeret the Seeker [search]]
+R7    Urza casts Tezzeret the Seeker
+R7        [Urza decides: Lotus Petal 40%, Tezzeret the Seeker -2 40%, Tezzeret the Seeker +1 19%, stop 0% -> Lotus Petal [search]]
+R7    Urza casts Lotus Petal
+R7        [Urza decides: Tezzeret the Seeker -2 68%, Tezzeret the Seeker +1 32%, stop 0% -> Tezzeret the Seeker -2 [search]]
+R7    Urza uses Tezzeret the Seeker (-2): artifact onto the battlefield
+R7        [Urza decides: Mystic Forge 97%, Urza: free card 3%, stop 0% -> Mystic Forge [search]]
+R7    Urza casts Mystic Forge
+R7        [Urza attack plan by search: none at Kinnan]
+R7  --- Yawgmoth turn 7: life 35, 4 cards in hand, 4 lands
+R7        [Yawgmoth decides: Yawgmoth, Thran Physician 90%, Ophiomancer 5%, Sheoldred, the Apocalypse 2%, Forsaken Miner 1% -> Yawgmoth, Thran Physician [search]]
+R7    Yawgmoth casts Yawgmoth, Thran Physician
+R7        [Yawgmoth attack plan by search: none at Kinnan]
+R8    Kinnan activates Basalt Monolith
+R8        [Kinnan end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R8    Kinnan activates Basalt Monolith
+R8        [Kinnan end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R8    Kinnan activates Basalt Monolith
+R8        [Kinnan end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R8  --- Kinnan turn 8: life 30, 2 cards in hand, 5 lands
+R8        [Kinnan decides: Badgermole Cub 87%, Kinnan: dig five 5%, Llanowar Elves 4%, Ilysian Caryatid 4% -> Badgermole Cub [search]]
+R8    Kinnan casts Badgermole Cub
+R8      Yawgmoth, Thran Physician (Yawgmoth) is removed: bounce
+R8        [Kinnan decides: Kinnan: dig five 38%, Llanowar Elves 31%, Ilysian Caryatid 31%, stop 0% -> Kinnan: dig five [search]]
+R8      Badgermole Cub adds an additional {G}
+R8        [Kinnan decides: Kinnan: dig five 38%, Llanowar Elves 31%, Ilysian Caryatid 31%, stop 0% -> Kinnan: dig five [search]]
+R8        [Kinnan decides: Kinnan: dig five 38%, Llanowar Elves 31%, Ilysian Caryatid 31%, stop 0% -> Kinnan: dig five [search]]
+R8      Badgermole Cub adds an additional {G}
+R8        [Kinnan decides: Kinnan: dig five 38%, Llanowar Elves 31%, Ilysian Caryatid 31%, stop 0% -> Kinnan: dig five [search]]
+R8        [Kinnan decides: Kinnan: dig five 38%, Llanowar Elves 31%, Ilysian Caryatid 31%, stop 0% -> Kinnan: dig five [search]]
+R8        [Kinnan decides: Llanowar Elves 50%, Ilysian Caryatid 50%, stop 0% -> Llanowar Elves [search]]
+R8    Kinnan casts Llanowar Elves
+R8      Tezzeret the Seeker (Urza) is removed: bounce
+R8        [Kinnan attack plan by search: all at Urza]
+R8    Kinnan attacks Urza with 2 creature(s): 5 damage (life now 22)
+R8  --- Y'shtola turn 8: life 30, 5 cards in hand, 6 lands
+R8        [Y'shtola decides: Y'shtola, Night's Blessed 79%, Displacer Kitten 8%, Hostage Taker 4%, Sphere of Safety 4% -> Y'shtola, Night's Blessed [search]]
+R8    Y'shtola casts Y'shtola, Night's Blessed
+R8        [Y'shtola attack plan by search: filtered at Kinnan]
+R8        [Y'shtola holds back 1 attacker(s) that would die to blocks]
+R8    Y'shtola attacks Yawgmoth with 1 creature(s): 2 damage (life now 33)
+R8  --- Urza turn 8: life 22, 3 cards in hand, 3 lands
+R8        [Urza decides: stop (hold mana) 60%, Pongify -> Tidespout Tyrant 34%, Tezzeret the Seeker 5%, Urza: free card 0% -> stop (hold mana) [search]]
+R8        [Urza attack plan by search: none at Kinnan]
+R8        [Urza decides: stop (hold mana) 60%, Pongify -> Tidespout Tyrant 34%, Tezzeret the Seeker 5%, Urza: free card 0% -> stop (hold mana) [search]]
+R8  --- Yawgmoth turn 8: life 33, 5 cards in hand, 4 lands
+R8        [Yawgmoth decides: Ophiomancer 33%, Sheoldred, the Apocalypse 23%, Sol Ring 16%, Forsaken Miner 15% -> Ophiomancer [search]]
+R8    Yawgmoth casts Ophiomancer
+R8        [Yawgmoth decides: Sol Ring 42%, Forsaken Miner 39%, Genesis Chamber 20%, stop 0% -> Sol Ring [search]]
+R8    Yawgmoth casts Sol Ring
+R8        [Yawgmoth decides: Forsaken Miner 66%, Genesis Chamber 34%, stop 0% -> Forsaken Miner [search]]
+R8    Yawgmoth casts Forsaken Miner
+R8        [Yawgmoth decides: Genesis Chamber 100%, stop 0% -> Genesis Chamber [search]]
+R8    Yawgmoth casts Genesis Chamber
+R8        [Yawgmoth attack plan by search: filtered at Kinnan]
+R8        [Yawgmoth holds back 2 attacker(s) that would die to blocks]
+R9  --- Kinnan turn 9: life 28, 1 cards in hand, 5 lands
+R9        [Kinnan decides: Finale of Devastation 97%, Kinnan: dig five 2%, Ilysian Caryatid 1%, Basalt Monolith ability 0% -> Finale of Devastation [search]]
+R9      Badgermole Cub adds an additional {G}
+R9      Badgermole Cub adds an additional {G}
+R9      Badgermole Cub adds an additional {G}
+R9      Badgermole Cub adds an additional {G}
+R9    Kinnan casts Finale of Devastation
+R9      Y'shtola, Night's Blessed (Y'shtola) is removed: bounce
+R9        [Kinnan decides: Ilysian Caryatid 98%, Basalt Monolith ability 2%, stop 0% -> Ilysian Caryatid [search]]
+R9    Kinnan casts Ilysian Caryatid
+R9      Lightning Greaves (Urza) is removed: bounce
+R9        [Kinnan attack plan by search: all at Yawgmoth]
+R9  *** Yawgmoth is eliminated (life -123) by Kinnan
+R9    Kinnan attacks Yawgmoth with 5 creature(s): 159 damage (life now -123)
+R9  --- Y'shtola turn 9: life 29, 6 cards in hand, 6 lands
+R9    Y'shtola plays Plains
+R9        [Y'shtola decides: Displacer Kitten 38%, Hostage Taker 19%, Sphere of Safety 19%, Sheoldred, the Apocalypse 17% -> Displacer Kitten [search]]
+R9    Y'shtola casts Displacer Kitten
+R9        [Y'shtola decides: Champion's Helm 86%, Orcish Bowmasters 14%, stop 0% -> Orcish Bowmasters [search]]
+R9    Y'shtola casts Orcish Bowmasters
+R9        [Y'shtola attack plan by search: all at Kinnan]
+R9    Y'shtola attacks Kinnan with 1 creature(s): 2 damage (life now 25)
+R9    Urza casts Pongify -> Nyxbloom Ancient (Kinnan)
+R9      Nyxbloom Ancient (Kinnan) is removed: destroy
+R9        [Urza end of turn: Pongify -> Tidespout Tyrant 100%, pass 0% -> Pongify -> Tidespout Tyrant]
+R9  --- Urza turn 9: life 20, 4 cards in hand, 3 lands
+R9      Urza pays {4} to untap Mana Vault
+R9    Urza plays Inventors' Fair
+R9        [Urza decides: Urza, Lord High Artificer 97%, Lightning Greaves 2%, Tezzeret the Seeker 1%, Inventors' Fair: search for an artifact 0% -> Urza, Lord High Artificer [search]]
+R9    Urza casts Urza, Lord High Artificer
+R9        [Urza decides: Lightning Greaves 100%, stop 0% -> Lightning Greaves [search]]
+R9    Urza casts Lightning Greaves
+R9        [Urza decides: equip Lightning Greaves 100%, stop 0% -> equip Lightning Greaves [search]]
+R9    Urza equips Lightning Greaves to Urza, Lord High Artificer
+R9        [Urza attack plan by search: filtered at Kinnan]
+R9        [Urza holds back 1 attacker(s) that would die to blocks]
+R9    Urza attacks Kinnan with 1 creature(s): 1 damage (life now 24)
+R9    Urza attacks Y'shtola with 1 creature(s): 2 damage (life now 27)
+R10 --- Kinnan turn 10: life 24, 0 cards in hand, 5 lands
+R10       [Kinnan decides: Kinnan: dig five 86%, Fellwar Stone 14%, Basalt Monolith ability 1%, stop 0% -> Kinnan: dig five [search]]
+R10     Badgermole Cub adds an additional {G}
+R10     Badgermole Cub adds an additional {G}
+R10       [Kinnan decides: Kinnan: dig five 86%, Fellwar Stone 14%, Basalt Monolith ability 1%, stop 0% -> Kinnan: dig five [search]]
+R10       [Kinnan decides: Kinnan: dig five 86%, Fellwar Stone 14%, Basalt Monolith ability 1%, stop 0% -> Kinnan: dig five [search]]
+R10     Badgermole Cub adds an additional {G}
+R10     Badgermole Cub adds an additional {G}
+R10       [Kinnan decides: Kinnan: dig five 86%, Fellwar Stone 14%, Basalt Monolith ability 1%, stop 0% -> Kinnan: dig five [search]]
+R10     Badgermole Cub adds an additional {G}
+R10       [Kinnan attack plan by search: all at Y'shtola]
+R10   Kinnan attacks Y'shtola with 5 creature(s): 6 damage (life now 21)
+R10 --- Y'shtola turn 10: life 21, 4 cards in hand, 7 lands
+R10       [Y'shtola decides: Austere Command 100%, Hostage Taker 0%, Sheoldred, the Apocalypse 0%, Sphere of Safety 0% -> Austere Command [search]]
+R10   Y'shtola casts Austere Command
+R10     board wipe resolves (austere2)
+R10       modes: ["le3", "ge4"]
+R10       Delighted Halfling (Kinnan) is removed by the wipe (austere2)
+R10       Kinnan, Bonder Prodigy (Kinnan) is removed by the wipe (austere2)
+R10       Birds of Paradise (Kinnan) is removed by the wipe (austere2)
+R10       Tidespout Tyrant (Kinnan) is removed by the wipe (austere2)
+R10       Badgermole Cub (Kinnan) is removed by the wipe (austere2)
+R10       Bloom Tender (Kinnan) is removed by the wipe (austere2)
+R10       Drift of Phantasms (Kinnan) is removed by the wipe (austere2)
+R10       Llanowar Elves (Kinnan) is removed by the wipe (austere2)
+R10       Ilysian Caryatid (Kinnan) is removed by the wipe (austere2)
+R10       Token (Kinnan) is removed by the wipe (austere2)
+R10       Token (Kinnan) is removed by the wipe (austere2)
+R10       Seedborn Muse (Kinnan) is removed by the wipe (austere2)
+R10       Elvish Spirit Guide (Kinnan) is removed by the wipe (austere2)
+R10       Skyclave Apparition (Y'shtola) is removed by the wipe (austere2)
+R10       Displacer Kitten (Y'shtola) is removed by the wipe (austere2)
+R10       Trinket Mage (Urza) is removed by the wipe (austere2)
+R10       Token (Urza) is removed by the wipe (austere2)
+R10       Token (Urza) is removed by the wipe (austere2)
+R10       Urza, Lord High Artificer (Urza) is removed by the wipe (austere2)
+R10       Token (Urza) is removed by the wipe (austere2)
+R10     Urza gets a 3/3 Illusion
+R10 --- Urza turn 10: life 20, 3 cards in hand, 4 lands
+R10   Urza plays Reliquary Tower
+R10       [Urza decides: Urza, Lord High Artificer 91%, Tezzeret the Seeker 6%, equip Lightning Greaves 2%, Inventors' Fair: search for an artifact 0% -> Urza, Lord High Artificer [search]]
+R10   Urza casts Urza, Lord High Artificer
+R10       [Urza decides: equip Lightning Greaves 100%, stop 0% -> equip Lightning Greaves [search]]
+R10   Urza equips Lightning Greaves to Urza, Lord High Artificer
+R10       [Urza attacks: Kinnan 98%, Y'shtola 2% -> Kinnan]
+R10   Urza attacks Kinnan with 2 creature(s): 4 damage (life now 19)
+R11   Kinnan activates Basalt Monolith
+R11       [Kinnan end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R11 --- Kinnan turn 11: life 19, 1 cards in hand, 5 lands
+R11       [Kinnan decides: Kinnan, Bonder Prodigy 62%, Colossal Skyturtle 38%, Fellwar Stone 0%, Basalt Monolith ability 0% -> Kinnan, Bonder Prodigy [search]]
+R11   Kinnan casts Kinnan, Bonder Prodigy
+R11       [Kinnan decides: Colossal Skyturtle 98%, Kinnan: dig five 2%, Fellwar Stone 0%, Basalt Monolith ability 0% -> Colossal Skyturtle [search]]
+R11   Kinnan casts Colossal Skyturtle
+R11       [Kinnan decides: Fellwar Stone 100%, stop 0% -> Fellwar Stone [search]]
+R11   Kinnan casts Fellwar Stone
+R11 --- Y'shtola turn 11: life 21, 4 cards in hand, 7 lands
+R11       [Y'shtola decides: Demonic Tutor 77%, Sheoldred, the Apocalypse 7%, Hostage Taker 7%, Sphere of Safety 7% -> Sheoldred, the Apocalypse [search]]
+R11   Y'shtola casts Sheoldred, the Apocalypse
+R11       [Y'shtola decides: Champion's Helm 100%, stop 0% -> Champion's Helm [search]]
+R11   Y'shtola casts Champion's Helm
+R11 --- Urza turn 11: life 20, 3 cards in hand, 5 lands
+R11       [Urza decides: Fabricate 54%, Mystic Forge: cast Walking Ballista 42%, Tezzeret the Seeker 4%, Inventors' Fair: search for an artifact 0% -> Fabricate [search]]
+R11   Urza casts Fabricate
+R11     Urza reveals The One Ring and puts it into their hand
+R11       [Urza decides: The One Ring 99%, Tezzeret the Seeker 1%, Urza: free card 0%, stop 0% -> The One Ring [search]]
+R11   Urza casts The One Ring
+R11     The One Ring cast in Main1 step of Urza's turn (life 18)
+R11     Urza gains protection from everything until their next turn
+R11       [Urza decides: Tezzeret the Seeker 83%, The One Ring 14%, Urza: free card 3%, stop 0% -> Tezzeret the Seeker [search]]
+R11   Urza casts Tezzeret the Seeker
+R11       [Urza decides: Tezzeret the Seeker -2 68%, Tezzeret the Seeker +1 32%, stop 0% -> Tezzeret the Seeker -2 [search]]
+R11   Urza uses Tezzeret the Seeker (-2): artifact onto the battlefield
+R11       [Urza attack plan by search: filtered at Kinnan]
+R11       [Urza keeps 2 creature(s) home as blockers]
+R12 --- Kinnan turn 12: life 18, 0 cards in hand, 5 lands
+R12       [Kinnan decides: Kinnan: dig five 63%, Spellskite 37%, Basalt Monolith ability 1%, stop 0% -> Kinnan: dig five [search]]
+R12       [Kinnan decides: Kinnan: dig five 63%, Spellskite 37%, Basalt Monolith ability 1%, stop 0% -> Kinnan: dig five [search]]
+R12       [Kinnan attack plan by search: all at Y'shtola]
+R12   Kinnan attacks Y'shtola with 2 creature(s): 6 damage (life now 15)
+R12 --- Y'shtola turn 12: life 15, 3 cards in hand, 7 lands
+R12       [Y'shtola decides: Demonic Tutor 84%, Hostage Taker 11%, Sphere of Safety 5%, equip Champion's Helm 1% -> Demonic Tutor [search]]
+R12   Y'shtola casts Demonic Tutor
+R12     Y'shtola tutors Sanguine Bond into their hand
+R12       [Y'shtola decides: Hostage Taker 66%, Sphere of Safety 30%, equip Champion's Helm 4%, stop 0% -> Hostage Taker [search]]
+R12   Y'shtola casts Hostage Taker
+R12     ward counters the removal on Colossal Skyturtle
+R12       [Y'shtola decides: equip Champion's Helm 99%, stop 1% -> equip Champion's Helm [search]]
+R12   Y'shtola equips Champion's Helm to Sheoldred, the Apocalypse
+R12       [Y'shtola attack plan by search: none at Kinnan]
+R12 --- Urza turn 12: life 18, 2 cards in hand, 5 lands
+R12   Urza no longer has protection from everything
+R12     Urza pays {4} to untap Mana Vault
+R12     Mystic Sanctuary puts Pongify on top
+R12   Urza plays Mystic Sanctuary
+R12       [Urza decides: Tezzeret the Seeker -2 52%, Tezzeret the Seeker +1 24%, The One Ring 20%, Urza: free card 4% -> Tezzeret the Seeker -2 [search]]
+R12   Urza uses Tezzeret the Seeker (-2): artifact onto the battlefield
+R12       [Urza decides: The One Ring 84%, Urza: free card 16%, stop 0% -> The One Ring [search]]
+R12   Urza taps The One Ring: burden 1, life 17, Main1 step of Urza's turn
+R12       [Urza decides: Ponder 83%, Sensei's Divining Top draw 16%, Urza: free card 1%, stop 0% -> Ponder [search]]
+R12   Urza casts Ponder
+R12       [Urza decides: combo: Isochron Scepter + Dramatic Reversal 100%, Isochron Scepter 0%, Urza: free card 0%, stop 0% -> combo: Isochron Scepter + Dramatic Reversal [search]]
+R12   Urza goes for Isochron Scepter + Dramatic Reversal
+R12   Urza casts Isochron Scepter
+R12     Isochron Scepter imprints Dramatic Reversal
+R12 *** Kinnan is eliminated (life 14) by Urza
+R12 *** Y'shtola is eliminated (life 17) by Urza
+R12 *** Urza wins by combo
+Winner: Urza (combo)

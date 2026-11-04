@@ -1,0 +1,291 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Exquisite Blood [pool] E 4B :: (no tags)
+   Torment of Hailfire [pool] S BB :: (no tags)
+   Expedition Map [pool] A 1 :: (no tags)
+   Urza's Cave [pool] L  :: c=C
+Model status of the swapped-in cards (cardgen audit):
+  Demonic Tutor: Full (tags: `tut=any`)
+  Exquisite Blood: Full (opponents' life loss gains you life; with Sanguine Bond a combo)
+  Torment of Hailfire: Full ({X}{B}{B}: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card; each opponent takes the cheapest way out each time (the least valuable card or permanent, or the 3 life while that is the lesser loss); Sauron casts it when it kills or late, X as large as the mana allows)
+  Expedition Map: Full ({2}, {T}, sacrifice: search for a land card (any land) and put it in your hand. The compiled text only found basic lands; now the AI takes the land it wants (a missing Tron piece first, then Mishra's Workshop, Ancient Tomb ...) and cracks it for one of those, or for a basic on a thin land count. impls/karn_engines.rs)
+  Urza's Cave: Full (taps for {C}. {3}, {T}, sacrifice: search for a land card (any land, not only a basic) and put it onto the battlefield tapped. The earlier compiled text tagged it as a fetch land (it entered tapped and cracked itself for free at once, taking any land): fixed. The AI cracks it only for a land it wants more than a Cave (a missing Tron piece, Mishra's Workshop, Ancient Tomb). impls/karn_engines.rs)
+
+Play-by-play of pool game 4 (seed 500004): Y'shtola vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Kinnan, Zur the Enchanter, Yawgmoth, Y'shtola
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1      Kinnan plays it as Barkchannel Pathway
+R1    Kinnan plays Barkchannel Pathway // Tidechannel Pathway
+R1  --- Zur the Enchanter turn 1: life 40, 7 cards in hand, 0 lands
+R1    Zur the Enchanter plays Command Tower
+R1        [Zur the Enchanter decides: Enlightened Tutor 100%, stop 0% -> Enlightened Tutor [search]]
+R1    Zur the Enchanter casts Enlightened Tutor
+R1      Zur the Enchanter reveals Heliod, Sun-Crowned and puts it on top of their library
+R1  --- Yawgmoth turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yawgmoth plays Swamp
+R1  --- Y'shtola turn 1: life 40, 7 cards in hand, 0 lands
+R1    Y'shtola plays Command Tower
+R1        [Y'shtola decides: Sol Ring 100%, stop 0% -> Sol Ring [search]]
+R1    Y'shtola casts Sol Ring
+R1        [Y'shtola decides: Talisman of Progress 50%, Talisman of Hierarchy 50%, stop 0% -> Talisman of Progress [search]]
+R1    Y'shtola casts Talisman of Progress
+R2  --- Kinnan turn 2: life 40, 7 cards in hand, 1 lands
+R2    Kinnan plays Forest
+R2        [Kinnan decides: Birds of Paradise 98%, Badgermole Cub 2%, stop 0% -> Birds of Paradise [search]]
+R2    Kinnan casts Birds of Paradise
+R2  --- Zur the Enchanter turn 2: life 40, 6 cards in hand, 1 lands
+R2    Zur the Enchanter plays Reliquary Tower
+R2        [Zur the Enchanter decides: Azorius Signet 95%, Darksteel Mutation 5%, stop 0% -> Azorius Signet [search]]
+R2    Zur the Enchanter casts Azorius Signet
+R2  --- Yawgmoth turn 2: life 40, 7 cards in hand, 1 lands
+R2    Yawgmoth plays Swamp
+R2        [Yawgmoth decides: Cabal Ritual 68%, Reassembling Skeleton 32%, stop 0% -> Reassembling Skeleton [search]]
+R2    Yawgmoth casts Reassembling Skeleton
+R2  --- Y'shtola turn 2: life 40, 5 cards in hand, 1 lands
+R2    Y'shtola plays Swamp
+R2        [Y'shtola decides: Talisman of Hierarchy 100%, stop 0% -> Talisman of Hierarchy [search]]
+R2    Y'shtola casts Talisman of Hierarchy
+R2        [Y'shtola decides: Y'shtola, Night's Blessed 84%, Necropotence 13%, Zur the Enchanter 3%, stop 0% -> Y'shtola, Night's Blessed [search]]
+R2    Y'shtola casts Y'shtola, Night's Blessed
+R3  --- Kinnan turn 3: life 40, 6 cards in hand, 2 lands
+R3        [Kinnan decides: Badgermole Cub 59%, Kinnan, Bonder Prodigy 39%, stop (hold mana) 1%, Endurance 0% -> Badgermole Cub [search]]
+R3    Kinnan casts Badgermole Cub
+R3  --- Zur the Enchanter turn 3: life 40, 5 cards in hand, 2 lands
+R3    Zur the Enchanter pays 2 life for an untapped Watery Grave
+R3    Zur the Enchanter plays Watery Grave
+R3        [Zur the Enchanter decides: Zur the Enchanter 96%, Heliod, Sun-Crowned 2%, Darksteel Mutation 2%, Darksteel Mutation -> Y'shtola, Night's Blessed 0% -> Zur the Enchanter [search]]
+R3    Zur the Enchanter casts Zur the Enchanter
+R3  --- Yawgmoth turn 3: life 40, 6 cards in hand, 2 lands
+R3    Yawgmoth plays Nykthos, Shrine to Nyx
+R3        [Yawgmoth decides: Cabal Ritual 75%, Geralf's Messenger 15%, Pawn of Ulamog 10%, stop 0% -> Geralf's Messenger [search]]
+R3    Yawgmoth casts Geralf's Messenger
+R3        [Yawgmoth attack plan by search: filtered at Kinnan]
+R3        [Yawgmoth holds back 1 attacker(s) that would die to blocks]
+R3  --- Y'shtola turn 3: life 39, 4 cards in hand, 2 lands
+R3    Y'shtola plays Plains
+R3        [Y'shtola decides: Necropotence 93%, Zur the Enchanter 7%, Farewell 0%, stop 0% -> Necropotence [search]]
+R3    Y'shtola casts Necropotence
+R3      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R3      Badgermole Cub adds an additional {G}
+R3      Kinnan casts Flusterstorm at Necropotence
+R3      Y'shtola pays 1
+R3        [Y'shtola attack plan by search: none at Kinnan]
+R3    Y'shtola pays 5 life to Necropotence
+R4  --- Kinnan turn 4: life 38, 5 cards in hand, 2 lands
+R4        [Kinnan decides: Kinnan, Bonder Prodigy 94%, channel Colossal Skyturtle: bounce 5%, Endurance 1%, Thrasios, Triton Hero 0% -> Kinnan, Bonder Prodigy [search]]
+R4      Badgermole Cub adds an additional {G}
+R4    Kinnan casts Kinnan, Bonder Prodigy
+R4        [Kinnan attack plan by search: none at Zur the Enchanter]
+R4  --- Zur the Enchanter turn 4: life 34, 5 cards in hand, 3 lands
+R4    Zur the Enchanter plays Raffine's Tower
+R4        [Zur the Enchanter decides: Darksteel Mutation -> Kinnan, Bonder Prodigy 69%, Darksteel Mutation 26%, Heliod, Sun-Crowned 6%, stop 0% -> Darksteel Mutation -> Kinnan, Bonder Prodigy [search]]
+R4    Zur the Enchanter casts Darksteel Mutation -> Kinnan, Bonder Prodigy (Kinnan)
+R4      Kinnan, Bonder Prodigy (Kinnan) is removed: mutate
+R4      Kinnan, Bonder Prodigy becomes a 0/1 Insect with no abilities
+R4        [Zur the Enchanter attack plan by search: filtered at Y'shtola]
+R4      Zur fetches Necropotence
+R4    Zur the Enchanter attacks Y'shtola with 1 creature(s): 1 damage (life now 34)
+R4    Zur the Enchanter pays 4 life to Necropotence
+R4  --- Yawgmoth turn 4: life 38, 5 cards in hand, 3 lands
+R4    Yawgmoth plays Swamp
+R4        [Yawgmoth decides: Yawgmoth, Thran Physician 44%, Pitiless Plunderer 18%, Cabal Ritual 16%, Pawn of Ulamog 12% -> Hancock, Ghoulish Mayor [search]]
+R4    Yawgmoth casts Hancock, Ghoulish Mayor
+R4        [Yawgmoth decides: Cabal Ritual 73%, Pawn of Ulamog 27%, stop 0% -> Cabal Ritual [search]]
+R4    Yawgmoth casts Cabal Ritual
+R4      Zur the Enchanter casts Fierce Guardianship at Cabal Ritual
+R4      Zur the Enchanter counters Cabal Ritual with Fierce Guardianship
+R4        [Yawgmoth attack plan by search: filtered at Zur the Enchanter]
+R4    Yawgmoth attacks Zur the Enchanter with 2 creature(s): 4 damage (life now 26)
+R4  --- Y'shtola turn 4: life 34, 8 cards in hand, 3 lands
+R4    Y'shtola plays Underground River
+R4        [Y'shtola decides: Farewell 63%, Grand Arbiter Augustin IV 23%, stop (hold mana) 5%, Read the Bones 4% -> Farewell [search]]
+R4    Y'shtola casts Farewell
+R4      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R4      board wipe resolves (farewell)
+R4        modes: ["cre"]
+R4        Birds of Paradise (Kinnan) is removed by the wipe (farewell)
+R4        Badgermole Cub (Kinnan) is removed by the wipe (farewell)
+R4        Kinnan, Bonder Prodigy (Kinnan) is removed by the wipe (farewell)
+R4        Zur the Enchanter (Zur the Enchanter) is removed by the wipe (farewell)
+R4        Reassembling Skeleton (Yawgmoth) is removed by the wipe (farewell)
+R4        Geralf's Messenger (Yawgmoth) is removed by the wipe (farewell)
+R4        Hancock, Ghoulish Mayor (Yawgmoth) is removed by the wipe (farewell)
+R4        Y'shtola, Night's Blessed (Y'shtola) is removed by the wipe (farewell)
+R4    Y'shtola pays 2 life to Necropotence
+R5  --- Kinnan turn 5: life 36, 6 cards in hand, 2 lands
+R5  --- Zur the Enchanter turn 5: life 24, 7 cards in hand, 4 lands
+R5    Zur the Enchanter plays Flooded Strand
+R5      cracks Flooded Strand for Hallowed Fountain
+R5        [Zur the Enchanter decides: Sol Ring 65%, Zur the Enchanter 30%, Heliod, Sun-Crowned 6%, Winds of Rath 0% -> Sol Ring [search]]
+R5    Zur the Enchanter casts Sol Ring
+R5        [Zur the Enchanter decides: Zur the Enchanter 84%, Heliod, Sun-Crowned 16%, Winds of Rath 0%, stop 0% -> Zur the Enchanter [search]]
+R5    Zur the Enchanter casts Zur the Enchanter
+R5    Zur the Enchanter pays 3 life to Necropotence
+R5  --- Yawgmoth turn 5: life 36, 3 cards in hand, 4 lands
+R5        [Yawgmoth decides: Yawgmoth, Thran Physician 77%, Pitiless Plunderer 13%, Pawn of Ulamog 8%, Ophiomancer 3% -> Pawn of Ulamog [search]]
+R5    Yawgmoth casts Pawn of Ulamog
+R5  --- Y'shtola turn 5: life 33, 7 cards in hand, 4 lands
+R5    Y'shtola plays Island
+R5        [Y'shtola decides: Y'shtola, Night's Blessed 58%, Grand Arbiter Augustin IV 31%, Zur the Enchanter 6%, Conjurer's Closet 2% -> Y'shtola, Night's Blessed [search]]
+R5    Y'shtola casts Y'shtola, Night's Blessed
+R5        [Y'shtola decides: stop (hold mana) 72%, Read the Bones 28% -> stop (hold mana) [search]]
+R5        [Y'shtola decides: stop (hold mana) 72%, Read the Bones 28% -> stop (hold mana) [search]]
+R5    Y'shtola pays 2 life to Necropotence
+R6  --- Kinnan turn 6: life 36, 7 cards in hand, 2 lands
+R6  --- Zur the Enchanter turn 6: life 20, 8 cards in hand, 5 lands
+R6    Zur the Enchanter plays Arcane Sanctum
+R6        [Zur the Enchanter decides: Heliod, Sun-Crowned 67%, Smothering Tithe 20%, Rhystic Study 8%, Imprisoned in the Moon 4% -> Heliod, Sun-Crowned [search]]
+R6    Zur the Enchanter casts Heliod, Sun-Crowned
+R6      Y'shtola casts Dovin's Veto at Heliod, Sun-Crowned
+R6      Y'shtola counters Heliod, Sun-Crowned with Dovin's Veto
+R6        [Zur the Enchanter decides: Smothering Tithe 60%, Rhystic Study 23%, Imprisoned in the Moon 12%, Walking Ballista 5% -> Smothering Tithe [search]]
+R6    Zur the Enchanter casts Smothering Tithe
+R6        [Zur the Enchanter attack plan by search: none at Kinnan]
+R6    Zur the Enchanter pays 3 life to Necropotence
+R6  --- Yawgmoth turn 6: life 36, 3 cards in hand, 4 lands
+R6        [Yawgmoth decides: Yawgmoth, Thran Physician 67%, Warren Soultrader 18%, Pitiless Plunderer 12%, Ophiomancer 2% -> Yawgmoth, Thran Physician [search]]
+R6    Yawgmoth casts Yawgmoth, Thran Physician
+R6        [Yawgmoth attack plan by search: filtered at Zur the Enchanter]
+R6    Yawgmoth attacks Zur the Enchanter with 1 creature(s): 2 damage (life now 15)
+R6  --- Y'shtola turn 6: life 29, 6 cards in hand, 5 lands
+R6    Y'shtola plays Plains
+R6        [Y'shtola decides: Generous Gift -> Yawgmoth, Thran Physician 68%, Demonic Tutor 11%, Grand Arbiter Augustin IV 9%, stop (hold mana) 6% -> Generous Gift -> Yawgmoth, Thran Physician [search]]
+R6    Y'shtola casts Generous Gift -> Zur the Enchanter (Zur the Enchanter)
+R6      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R6      Zur the Enchanter (Zur the Enchanter) is removed: destroy
+R6        [Y'shtola decides: Demonic Tutor 43%, Grand Arbiter Augustin IV 34%, Conjurer's Closet 13%, Zur the Enchanter 9% -> Demonic Tutor [search]]
+R6    Y'shtola casts Demonic Tutor
+R6      Y'shtola tutors Sanguine Bond into their hand
+R6        [Y'shtola decides: Sanguine Bond 75%, Grand Arbiter Augustin IV 15%, Conjurer's Closet 6%, Zur the Enchanter 4% -> Sanguine Bond [search]]
+R6    Y'shtola casts Sanguine Bond
+R6      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R6        [Y'shtola attack plan by search: none at Kinnan]
+R6    Y'shtola pays 4 life to Necropotence
+R7    Kinnan evokes Endurance (exiling Green Sun's Zenith)
+R7      Zur the Enchanter's graveyard (4 cards) goes to the bottom of its library (Endurance)
+R7        [Kinnan end of turn: evoke Endurance 98%, pass 2% -> evoke Endurance]
+R7  --- Kinnan turn 7: life 32, 5 cards in hand, 2 lands
+R7  --- Zur the Enchanter turn 7: life 11, 8 cards in hand, 6 lands
+R7        [Zur the Enchanter decides: Imprisoned in the Moon -> Yawgmoth, Thran Physician 37%, Grasp of Fate -> Yawgmoth, Thran Physician 37%, Winds of Rath 12%, Imprisoned in the Moon 10% -> Imprisoned in the Moon -> Yawgmoth, Thran Physician [search]]
+R7    Zur the Enchanter casts Imprisoned in the Moon -> Yawgmoth, Thran Physician (Yawgmoth)
+R7      Yawgmoth, Thran Physician (Yawgmoth) is removed: moon
+R7      Yawgmoth, Thran Physician becomes a Wastes
+R7        [Zur the Enchanter decides: Grasp of Fate -> Sanguine Bond 78%, Eidolon of Rhetoric 8%, Rhystic Study 8%, Zur the Enchanter 3% -> Grasp of Fate -> Sanguine Bond [search]]
+R7    Zur the Enchanter casts Grasp of Fate -> Sanguine Bond (Y'shtola)
+R7      Pawn of Ulamog (Yawgmoth) is removed: exile
+R7      Sanguine Bond (Y'shtola) is removed: exile
+R7        [Zur the Enchanter decides: Eidolon of Rhetoric 46%, Rhystic Study 41%, Walking Ballista 12%, Winds of Rath 0% -> Eidolon of Rhetoric [search]]
+R7    Zur the Enchanter casts Eidolon of Rhetoric
+R7        [Zur the Enchanter attack plan by search: filtered at Y'shtola]
+R7    Zur the Enchanter attacks Y'shtola with 1 creature(s): 3 damage (life now 24)
+R7    Zur the Enchanter pays 1 life to Necropotence
+R7  --- Yawgmoth turn 7: life 32, 4 cards in hand, 5 lands
+R7    Yawgmoth plays Cabal Coffers
+R7        [Yawgmoth decides: Bolas's Citadel 63%, Warren Soultrader 20%, Pitiless Plunderer 13%, Ophiomancer 3% -> Ophiomancer [search]]
+R7    Yawgmoth casts Ophiomancer
+R7  --- Y'shtola turn 7: life 24, 7 cards in hand, 6 lands
+R7    Y'shtola plays Swamp
+R7        [Y'shtola decides: Torment of Hailfire (X = 9) 93%, Grand Arbiter Augustin IV 4%, Zur the Enchanter 1%, Conjurer's Closet 1% -> Torment of Hailfire (X = 9) [search]]
+R7    Y'shtola casts Torment of Hailfire
+R7      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R7      Torment of Hailfire (X = 9)
+R7        Kinnan discards Dramatic Reversal
+R7        Zur the Enchanter discards Copy Enchantment
+R7        Yawgmoth sacrifices Token
+R7        Kinnan discards Chord of Calling
+R7        Zur the Enchanter sacrifices Azorius Signet
+R7        Zur the Enchanter sacrifices Darksteel Mutation
+R7        Zur the Enchanter sacrifices Sol Ring
+R7        Yawgmoth sacrifices Ophiomancer
+R7        Kinnan discards Thrasios, Triton Hero
+R7        Zur the Enchanter sacrifices Imprisoned in the Moon
+R7        Zur the Enchanter discards Toxic Deluge
+R7        Kinnan discards Pongify
+R7        Zur the Enchanter discards Winds of Rath
+R7        Zur the Enchanter discards Swamp
+R7        Yawgmoth discards Bolas's Citadel
+R7        Zur the Enchanter sacrifices Token
+R7        [Y'shtola attack plan by search: filtered at Zur the Enchanter]
+R7    Y'shtola attacks Zur the Enchanter with 1 creature(s): 0 damage (life now 8)
+R7    Y'shtola pays 2 life to Necropotence
+R8    Kinnan casts Worldly Tutor
+R8      Kinnan reveals Bloom Tender and puts it on top of their library
+R8        [Kinnan end of turn: Worldly Tutor 100%, pass 0% -> Worldly Tutor]
+R8  --- Kinnan turn 8: life 15, 1 cards in hand, 2 lands
+R8        [Kinnan decides: Bloom Tender 100%, stop 0% -> Bloom Tender [search]]
+R8    Kinnan casts Bloom Tender
+R8  --- Zur the Enchanter turn 8: life 8, 2 cards in hand, 6 lands
+R8        [Zur the Enchanter decides: Rhystic Study 44%, Zur the Enchanter 39%, Walking Ballista 17%, stop 0% -> Rhystic Study [search]]
+R8    Zur the Enchanter casts Rhystic Study
+R8        [Zur the Enchanter attack plan by search: filtered at Y'shtola]
+R8    Zur the Enchanter attacks Y'shtola with 1 creature(s): 1 damage (life now 23)
+R8  --- Yawgmoth turn 8: life 12, 2 cards in hand, 6 lands
+R8    Yawgmoth plays Urborg, Tomb of Yawgmoth
+R8        [Yawgmoth decides: Warren Soultrader 63%, Pitiless Plunderer 37%, stop 0% -> Warren Soultrader [search]]
+R8    Yawgmoth casts Warren Soultrader
+R8  --- Y'shtola turn 8: life 23, 7 cards in hand, 7 lands
+R8    Y'shtola plays Urborg, Tomb of Yawgmoth
+R8        [Y'shtola decides: Grand Arbiter Augustin IV 58%, Zur the Enchanter 22%, Sheoldred, the Apocalypse 10%, Conjurer's Closet 10% -> Sheoldred, the Apocalypse [search]]
+R8    Y'shtola casts Sheoldred, the Apocalypse
+R8        [Y'shtola attack plan by search: filtered at Zur the Enchanter]
+R8    Y'shtola attacks Zur the Enchanter with 1 creature(s): 2 damage (life now 6)
+R8    Y'shtola pays 3 life to Necropotence
+R9  --- Kinnan turn 9: life 15, 1 cards in hand, 2 lands
+R9        [Kinnan decides: Basalt Monolith 100%, stop 0% -> Basalt Monolith [search]]
+R9    Kinnan casts Basalt Monolith
+R9        [Kinnan decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R9    Kinnan activates Basalt Monolith
+R9        [Kinnan decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R9    Kinnan activates Basalt Monolith
+R9        [Kinnan decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R9    Kinnan activates Basalt Monolith
+R9  --- Zur the Enchanter turn 9: life 4, 2 cards in hand, 6 lands
+R9    Zur the Enchanter plays Caves of Koilos
+R9        [Zur the Enchanter decides: Zur the Enchanter 67%, Walking Ballista 33%, stop 0% -> Zur the Enchanter [search]]
+R9    Zur the Enchanter casts Zur the Enchanter
+R9        [Zur the Enchanter attack plan by search: filtered at Kinnan]
+R9        [Zur the Enchanter keeps 1 creature(s) home as blockers]
+R9  --- Yawgmoth turn 9: life 12, 1 cards in hand, 7 lands
+R9        [Yawgmoth decides: Damnation 63%, Damnation 36%, Pitiless Plunderer 1%, stop 0% -> Damnation [search]]
+R9    Yawgmoth casts Damnation
+R9      Y'shtola protects with Teferi's Protection
+R9      Y'shtola casts Teferi's Protection: life can't change, protection from everything, all phased out
+R9      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R9  *** Zur the Enchanter is eliminated (life -1) by Y'shtola
+R9  --- Y'shtola turn 9: life 20, 6 cards in hand, 8 lands
+R9    Y'shtola no longer has protection from everything
+R9    Y'shtola plays Swamp
+R9        [Y'shtola decides: Grand Arbiter Augustin IV 56%, Zur the Enchanter 28%, Conjurer's Closet 8%, Champion's Helm 8% -> Grand Arbiter Augustin IV [search]]
+R9    Y'shtola casts Grand Arbiter Augustin IV
+R9        [Y'shtola decides: Zur the Enchanter 64%, Conjurer's Closet 18%, Champion's Helm 18%, stop 0% -> Zur the Enchanter [search]]
+R9    Y'shtola casts Zur the Enchanter
+R9        [Y'shtola decides: Conjurer's Closet 50%, Champion's Helm 50%, stop 0% -> Conjurer's Closet [search]]
+R9    Y'shtola casts Conjurer's Closet
+R9      Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R9        [Y'shtola attack plan by search: filtered at Kinnan]
+R9  *** Yawgmoth is eliminated (life 0) by Y'shtola
+R9    Y'shtola attacks Yawgmoth with 2 creature(s): 6 damage (life now 0)
+R9    Y'shtola pays 5 life to Necropotence
+R10   Kinnan activates Basalt Monolith
+R10       [Kinnan end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R10   Kinnan activates Basalt Monolith
+R10       [Kinnan end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R10   Kinnan activates Basalt Monolith
+R10       [Kinnan end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R10 --- Kinnan turn 10: life 9, 1 cards in hand, 2 lands
+R10   Kinnan plays Flooded Grove
+R10       [Kinnan decides: Kinnan, Bonder Prodigy 93%, Finale of Devastation 7%, stop 0% -> Kinnan, Bonder Prodigy [search]]
+R10   Kinnan casts Kinnan, Bonder Prodigy
+R10   Y'shtola casts Vampiric Tutor
+R10     Y'shtola puts Marauding Blight-Priest on top of their library
+R10       [Y'shtola end of turn: Vampiric Tutor 100%, pass 0% -> Vampiric Tutor]
+R10 --- Y'shtola turn 10: life 15, 6 cards in hand, 9 lands
+R10   Y'shtola plays Plains
+R10       [Y'shtola decides: stop (hold mana) 37%, Champion's Helm 19%, Hostage Taker 19%, Urborg Syphon-Mage 17% -> stop (hold mana) [search]]
+R10       [Y'shtola attack plan by search: filtered at Kinnan]
+R10     Zur fetches Propaganda
+R10   Y'shtola attacks Kinnan with 4 creature(s): 5 damage (life now 2)
+R10       [Y'shtola decides: Champion's Helm 30%, Hostage Taker 30%, Urborg Syphon-Mage 27%, Esper Sentinel 10% -> Champion's Helm [search]]
+R10   Y'shtola casts Champion's Helm
+R10     Y'shtola deals 2 damage to each opponent; Y'shtola gains 2 life
+R10 *** Kinnan is eliminated (life 0) by Y'shtola
+Winner: Y'shtola (damage)

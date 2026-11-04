@@ -457,8 +457,73 @@ fn lname(g: &Game, c: CardId) -> &str {
 
 /// how much p's AI wants land card c from a search (battlefield and hand count as held): the missing Tron piece first
 /// (the last one is worth the most), then Mishra's Workshop, Ancient Tomb, Urza's Workshop / Saga, a third Wastes for
-/// Endless Atlas, any other land
+/// Endless Atlas; any other land by the board (`board_land_want`: Cabal Coffers / Urborg as a pair, Serra's Sanctum,
+/// a colour the hand needs)
 pub fn land_want(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    let base = tron_land_want(g, p, c);
+    if base > 2.0 { base } else { board_land_want(g, p, c) }
+}
+
+/// a big spell waiting on mana: an X spell in hand, or a nonland card that costs more than p's mana now
+fn mana_hungry(g: &Game, p: PlayerId) -> bool {
+    let have = total_mana(g, p, false);
+    g.player(p).hand.iter().any(|&h| {
+        let d = g.db.get(h);
+        !d.land && (d.tags.has(Tag::X) || d.cmc > have)
+    })
+}
+
+/// the board-dependent part of `land_want` (2.0 = a plain land; the Cave and the Map crack for 6 or more):
+/// - Cabal Coffers: 2 + the net {B} it would make now (Swamps p controls, every land with Urborg held, minus its {2}),
+///   +2 with a big spell waiting on mana;
+/// - Urborg, Tomb of Yawgmoth with Coffers held: 2 + the lands it would turn into Swamps for Coffers, +2 likewise;
+/// - Serra's Sanctum: 2 + the enchantments p controls;
+/// - any land: +4 for each colour it adds that a nonland card in hand needs and none of p's lands makes
+///   (2026-11-04, the Y'shtola Coffers package: these lands scored a flat 2, so the Cave and the Map never cracked)
+fn board_land_want(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    let pl = g.player(p);
+    let held = |x: &str| {
+        pl.lands.iter().any(|&l| lname(g, g.perm(l).card()) == x) || pl.hand.iter().any(|&h| lname(g, h) == x)
+    };
+    let name = lname(g, c);
+    let hungry = if mana_hungry(g, p) { 2.0 } else { 0.0 };
+    let lands = pl.lands.len() as f64;
+    let swamps = pl.lands.iter().filter(|&&l| crate::engine::chars::land_types(g, l).has('B')).count() as f64;
+    let mut w = 2.0;
+    match name {
+        "Cabal Coffers" if !held(name) => {
+            let s = if held("Urborg, Tomb of Yawgmoth") { lands + 1.0 } else { swamps };
+            w += (s - 2.0).max(0.0) + if s > 2.0 { hungry } else { 0.0 };
+        }
+        "Urborg, Tomb of Yawgmoth" if held("Cabal Coffers") => {
+            w += (lands - swamps).max(0.0) + hungry;
+        }
+        "Serra's Sanctum" if !held(name) => {
+            w += pl.perms.iter().filter(|&&m| g.perm(m).on_bf && crate::engine::values::ptypes(g, m).has(Types::ENCHANTMENT)).count() as f64;
+        }
+        _ => {}
+    }
+    // colours: Urborg adds {B} to every land
+    let adds = if name == "Urborg, Tomb of Yawgmoth" {
+        crate::cards::Colors::from_letters("B")
+    } else {
+        crate::engine::turn::tag_cols(g, p, c)
+    };
+    let have = pl
+        .lands
+        .iter()
+        .fold(crate::cards::Colors::NONE, |a, &l| a.union(crate::engine::mana::land_colors_now(g, p, l)));
+    let need = pl
+        .hand
+        .iter()
+        .filter(|&&h| !g.db.get(h).land)
+        .fold(crate::cards::Colors::NONE, |a, &h| a.union(crate::cards::Colors::from_letters(&g.db.get(h).pips)));
+    w += 4.0 * "WUBRG".chars().filter(|&ch| adds.has(ch) && need.has(ch) && !have.has(ch)).count() as f64;
+    w
+}
+
+/// the Tron / Workshop part of `land_want` (2.0 for every other land)
+fn tron_land_want(g: &Game, p: PlayerId, c: CardId) -> f64 {
     let pl = g.player(p);
     let held: Vec<&str> =
         pl.lands.iter().map(|&l| lname(g, g.perm(l).card())).chain(pl.hand.iter().map(|&h| lname(g, h))).collect();
