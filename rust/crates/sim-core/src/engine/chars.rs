@@ -92,7 +92,8 @@ pub fn is_creature(g: &Game, m: PermId) -> bool {
     let m = g.perm(m);
     ((m.token && m.cd.is_none_or(|c| g.db.get(c).creature)) // a Powerstone token is an artifact, not a creature
         || m.cd.is_some_and(|c| g.db.get(c).creature)
-        || m.data.truthy(DataKey::Anim))
+        || m.data.truthy(DataKey::Anim)
+        || m.exc.add_types.has(Types::CREATURE)) // --- urdragon: Astral Dragon's tokens are creatures as they enter
         && !m.data.truthy(DataKey::NotCreature) // --- Tiers 4/5 (chulane-kinnan): Enduring Vitality's return
 }
 

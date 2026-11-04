@@ -183,6 +183,7 @@ pub mod seam {
                     GyKind::Sac3 => "sac3",
                     GyKind::Escape => "escape",
                     GyKind::Muldrotha => "muldrotha",
+                    GyKind::Retrace => "retrace",
                 },
                 None if g.db.get(c).land && check_land_gy(g, p, c).is_none() => "land",
                 None if sim_core::human::alt::gy_hook(g, c) => "alt", // an escape, unearth ... the card code keeps for the AI

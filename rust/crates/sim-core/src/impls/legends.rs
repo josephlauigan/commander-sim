@@ -1037,7 +1037,9 @@ fn w6_land_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
 }
 
 fn w6_land(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
-    if let Some(x) = g.player(p).gy.iter().copied().find(|&c| g.db.get(c).land) {
+    // --- urdragon: the land card worth most to get back (a fetch land is a land drop and a shuffle), not the first
+    let ls: Vec<CardId> = g.player(p).gy.iter().copied().filter(|&c| g.db.get(c).land).collect();
+    if let Some(x) = super::t12_windgrace::pick_lands(g, p, &ls, 1, false).into_iter().next() {
         let pl = g.player_mut(p);
         remove_card(&mut pl.gy, x);
         pl.hand.push(x);
@@ -1066,8 +1068,11 @@ fn always_6(_g: &Game, _p: PlayerId, _src: PermId) -> Option<f64> {
     Some(6.0)
 }
 
-/// -7: emblem: retrace (Python records `p.w6_retrace`, which nothing reads)
-fn w6_ult(_g: &mut Game, _p: PlayerId, _src: PermId) -> Res {
+/// -7: you get an emblem with "Instant and sorcery cards in your graveyard have retrace." (the AI casts them through
+/// `t12_windgrace::emblem_retrace_options`)
+fn w6_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    g.player_mut(p).emblems.push(super::t12_windgrace::WRENN_EMBLEM);
+    crate::glog!(g, "    {} gets an emblem: instants and sorceries in the graveyard have retrace", g.player(p).name);
     Ok(())
 }
 

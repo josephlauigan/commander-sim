@@ -1069,6 +1069,13 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
         phys = Some(cd);
         cd = c.cd;
         exc = exc.or(Some(c.exc));
+        // --- urdragon: the copied card may itself say "as this enters, you may have it become a copy" (Sculpting Steel
+        // copying Cursed Mirror; a token copy of Cursed Mirror): that replacement applies too, in addition
+        if let Some(c2) = g.registry.get(cd).and_then(|i| i.enter_copy).and_then(|f| f(g, p, cd)) {
+            cd = c2.cd;
+            let (a, b) = (exc.unwrap_or_default(), c2.exc);
+            exc = Some(CopyExc { haste: a.haste || b.haste, revert_to: b.revert_to.or(a.revert_to), ..a });
+        }
     }
     let m = g.new_perm(p, Some(cd), "Token", 0, 0);
     g.enter_no += 1;

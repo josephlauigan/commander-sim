@@ -365,12 +365,14 @@ fn bloodthirsty_adversary_pays_nothing_without_targets() {
 fn cursed_mirror_copies_the_best_creature_until_end_of_turn() {
     let mut g = game();
     perm(&mut g, P1, "Sheoldred, the Apocalypse");
-    cast_spell(&mut g, P0, "Cursed Mirror", Ctx::default());
-    let m = on_bf(&g, P0, "Cursed Mirror").unwrap();
+    let c = cast_spell(&mut g, P0, "Cursed Mirror", Ctx::default());
+    let m = *g.player(P0).perms.iter().find(|&&m| g.perm(m).phys == Some(c)).expect("the Mirror's permanent");
+    assert_eq!(&*g.perm(m).name, "Sheoldred, the Apocalypse", "a copy of the creature");
     assert!(g.is_creature(m), "a creature copy this turn");
     assert!(values::epow(&g, m) >= 4 && !g.perm(m).sick, "a 4/5 with haste");
-    fire_trigger(&mut g, Event::EndStep, Call::Player { p: P0 }).unwrap();
+    sim_core::impls::t0_stella::mirror_revert(&mut g); // the next turn begins
     assert!(!g.is_creature(m), "an artifact again");
+    assert_eq!(&*g.perm(m).name, "Cursed Mirror");
 }
 
 #[test]

@@ -26968,9 +26968,7 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "As ~ enters, you may have it become a copy of any creature on the battlefield until end of turn, except it has haste."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -84585,9 +84583,7 @@
    "identity": "BRU",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{4}{U}{B}{R}: Exile ~, then return him to the battlefield transformed under his owner's control. Activate only as a sorcery."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,

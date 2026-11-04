@@ -22,7 +22,7 @@ use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{epow, has_type, pval};
-use crate::engine::zones::{Tokens, bounce, discard_cards, draw, exile_perm, make_tokens, max_by, mill, min_by};
+use crate::engine::zones::{Tokens, bounce, discard_cards, draw, exile_perm, make_tokens, mill, min_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
@@ -1043,63 +1043,49 @@ fn adversary_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
 // ================================================================== Cursed Mirror
 const MIRROR: &str = "Cursed Mirror";
 
-/// {T}: add {R}. As it enters, you may have it become a copy of any creature on the battlefield until end of turn,
-/// except it has haste. The AI copies the best creature (its stats and flying/deathtouch/lifelink/vigilance; the
-/// copy's own triggers and enters effects are not copied).
-fn mirror_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
-    if m != src || owner(g, src) != p {
-        return Ok(());
-    }
-    let all: Vec<PermId> = g
-        .players
-        .iter()
-        .flat_map(|q| q.perms.iter().copied())
-        .filter(|&x| x != src && g.perm(x).on_bf && !g.perm(x).phased && g.is_creature(x))
-        .collect();
-    let human = crate::human::is_human(g, p);
-    let t = if human {
+/// {T}: add {R}. As this artifact enters, you may have it become a copy of any creature on the battlefield until end
+/// of turn, except it has haste. A replacement effect (`enter_copy`, engine/zones.rs `enter`): the permanent is created
+/// as the creature's card, so it has all of its abilities (and none of the Mirror's {T}: add {R}), the copied card's
+/// enters triggers fire for it, and other creatures' "whenever a creature enters" triggers see a creature. The Mirror
+/// card stays in `phys` (it goes to the graveyard as the Mirror) and `mirror_revert` makes it the Mirror again as the
+/// next turn starts. The AI copies the creature worth most to copy (`t6_copies::best_creature_copy_perm`: its worth
+/// plus what entering again does) when that is a 3-power body or worth 5 or more; a person picks it or declines.
+fn mirror_copy(g: &mut Game, p: PlayerId, c: CardId) -> Option<crate::state::CopyOf> {
+    let all = crate::impls::t6_copies::creature_copies(g, p);
+    let t = if crate::human::is_human(g, p) {
         // "you may have it become a copy of any creature": the person picks the creature, or declines
+        if all.is_empty() {
+            return None;
+        }
         let labels: Vec<String> = all.iter().map(|&x| g.perm(x).name.to_string()).collect();
-        if labels.is_empty() {
-            return Ok(());
-        }
         let prompt = "Cursed Mirror: have it become a copy of a creature until end of turn?";
-        match crate::human::choices::choose(g, p, "target", prompt, &labels, Some("no"), None)? {
-            Some(k) => all[k],
-            None => return Ok(()),
-        }
+        let k = crate::human::choices::choose(g, p, "target", prompt, &labels, Some("no"), None).ok()??;
+        all[k]
     } else {
-        let Some(t) = max_by(&all, |x| (epow(g, x) + crate::engine::values::etgh(g, x)) as f64) else { return Ok(()) };
+        let (t, v) = crate::impls::t6_copies::best_creature_copy_perm(g, p)?;
+        if epow(g, t) < 3 && v < 5.0 {
+            return None;
+        }
         t
     };
-    let (tp, tt) = (epow(g, t), crate::engine::values::etgh(g, t));
-    if (tp < 3 && !human) || !trigger_window(g, p, Some(src), &format!("becomes a copy of {}", g.perm(t).name), None)? {
-        return Ok(());
-    }
-    let (fly, dt, vig, life) = (g.perm(t).fly, g.perm(t).dt, g.perm(t).vig, g.perm(t).lifelink);
-    let now = Val::Stamp(g.turn_stamp());
-    let x = g.perm_mut(src);
-    x.data.set(DataKey::Anim, Val::Bool(true));
-    x.eot_pt = (tp, tt);
-    (x.fly, x.dt, x.vig, x.lifelink) = (x.fly || fly, x.dt || dt, x.vig || vig, x.lifelink || life);
-    x.sick = false; // haste
-    x.data.set(DataKey::T0Stella, now);
     crate::glog!(g, "    Cursed Mirror becomes a copy of {} until end of turn", g.perm(t).name);
-    Ok(())
+    let exc = crate::state::CopyExc { haste: true, revert_to: Some(c), ..Default::default() };
+    Some(crate::state::CopyOf { cd: g.perm(t).cd?, exc })
 }
 
-/// at the end step the Mirror is an artifact again
-fn mirror_end(g: &mut Game, src: Src, _p: PlayerId) -> Res {
-    let x = g.perm_mut(src);
-    if x.data.get(DataKey::T0Stella).is_some() {
-        x.data.remove(DataKey::T0Stella);
-        x.data.set(DataKey::Anim, Val::Bool(false));
-        x.fly = false;
-        x.dt = false;
-        x.vig = false;
-        x.lifelink = false;
+/// engine/turn.rs, at the start of every turn: a Cursed Mirror that was a copy is the artifact again (the Mirror's card
+/// is back, without the haste; it stays untapped or tapped as it was)
+pub fn mirror_revert(g: &mut Game) {
+    for i in 0..g.perms.len() {
+        let m = PermId(i as u32);
+        let Some(back) = g.perm(m).exc.revert_to else { continue };
+        g.perm_mut(m).exc = Default::default();
+        if !g.perm(m).on_bf {
+            continue;
+        }
+        crate::impls::alela::set_face(g, m, back);
+        g.perm_mut(m).sick = false;
     }
-    Ok(())
 }
 
 // ================================================================== Forger's Foundry
@@ -1679,8 +1665,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, ADVERSARY)?.etb = Some(adversary_etb);
     // Cursed Mirror
     let c = r.card(db, MIRROR)?;
-    c.etb = Some(mirror_etb);
-    c.end_step = Some(mirror_end);
+    c.enter_copy = Some(mirror_copy);
     // Forger's Foundry
     let c = r.card(db, FOUNDRY)?;
     c.mana_tapped = Some(foundry_tapped);
