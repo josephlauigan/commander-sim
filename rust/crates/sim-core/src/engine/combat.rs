@@ -384,6 +384,15 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) 
             let made = make_tokens(g, p, Tokens { attacking: att, sick: !att, lifelink: !att, ..Tokens::new(n, 1) })?;
             if att && crate::human::is_human(g, p) {
                 crate::human::gaps_t2::route_adeline(g, p, &made)?; // practice mode: one token per opponent, player or walker
+            } else if att {
+                // "for each opponent, a token tapped and attacking that player or a planeswalker they control": the AI
+                // sends one token at each opponent's player (all of them went at the main defender before)
+                let opps: Vec<PlayerId> = g.opps(p).collect();
+                for (j, &t) in made.iter().enumerate() {
+                    if !opps.is_empty() {
+                        g.atk_targets.push((t, opps[j % opps.len()]));
+                    }
+                }
             }
             new.extend(made);
         }
