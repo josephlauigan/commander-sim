@@ -124,6 +124,18 @@ fn garth_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 /// "You may cast the copy": pay its costs (and X) and cast it. If it can't be cast, or its target is gone, it
 /// ceases to exist. Whatever happens to the copy, no card moves.
 pub fn cast_copy(g: &mut Game, p: PlayerId, c: CardId, target: Option<PermId>, x: u32) -> Res<bool> {
+    cast_copy_at(g, p, c, target, None, x)
+}
+
+/// `cast_copy` with a player target too (a person's Braingeyser: "target player draws X cards")
+pub fn cast_copy_at(
+    g: &mut Game,
+    p: PlayerId,
+    c: CardId,
+    target: Option<PermId>,
+    face: Option<PlayerId>,
+    x: u32,
+) -> Res<bool> {
     if g.over || !g.player(p).alive || !castable(g, p, c, "copy") {
         return Ok(false);
     }
@@ -141,7 +153,7 @@ pub fn cast_copy(g: &mut Game, p: PlayerId, c: CardId, target: Option<PermId>, x
         return Ok(false);
     }
     let (n_gy, n_ex) = (g.player(p).gy.len(), g.player(p).exile.len());
-    let ctx = Ctx { target, x: x as i32, ..Ctx::default() };
+    let ctx = Ctx { target, face, x: x as i32, ..Ctx::default() };
     let ok = cast_card(g, p, c, "copy", ctx)?;
     // a countered copy ceases to exist instead of going to the graveyard
     let pl = g.player_mut(p);

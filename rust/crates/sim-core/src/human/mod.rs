@@ -39,6 +39,14 @@ pub fn human_of(g: &Game, p: PlayerId) -> Option<Arc<dyn Human>> {
     g.humans.get(p).cloned()
 }
 
+/// Tell the person at p that the engine decided something for them (the log's "(automatic)" line): for a choice the
+/// card's code still makes by the AI's rules for a person. No-op for a seat without a person.
+pub fn auto_note(g: &Game, p: PlayerId, text: &str) {
+    if let Some(h) = human_of(g, p) {
+        h.tell(p, crate::sym::intern("auto"), text);
+    }
+}
+
 /// Is p played by a person? (Python's `is_human(g, p)` / `human_seat`)
 pub fn is_human(g: &Game, p: PlayerId) -> bool {
     g.humans.get(p).is_some()

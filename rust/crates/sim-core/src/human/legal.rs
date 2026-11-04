@@ -514,7 +514,8 @@ pub fn gy_mode(g: &Game, p: PlayerId, c: CardId) -> Option<(GyKind, u32, String)
     if !pl.gy.contains(&c) || d.land {
         return None;
     }
-    if pl.yawg && pl.yawg_gy.contains(&c) {
+    if (pl.yawg && pl.yawg_gy.contains(&c)) || super::gaps_c::emry_permits(g, p, c) {
+        // Yawgmoth's Will, or a person's Emry this turn: the normal cost
         let (gn, pips) = engine::mana::cost_of(g, p, c);
         return Some((GyKind::Yawg, gn, pips));
     }

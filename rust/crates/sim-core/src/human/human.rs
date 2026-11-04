@@ -144,7 +144,11 @@ pub fn stack_priority(g: &mut Game, q: PlayerId) -> Res {
     if top.kind != StackKind::Spell {
         // Thassa's Oracle's own trigger, with Demonic Consultation / Tainted Pact in hand: the window to cast it;
         // your own important ability, with Peter Parker's Camera ready to copy it: you get priority
-        let own = super::thanos::oracle_window(g, q, &top) || super::urdragon::camera_window(g, q, &top);
+        // your Urza's Saga's chapter III, while the Saga is yours: the window to make one more Construct first
+        let saga = top.controller == q
+            && top.name.contains("chapter III")
+            && top.ctx.source.is_some_and(|l| g.player(q).lands.contains(&l));
+        let own = super::thanos::oracle_window(g, q, &top) || super::urdragon::camera_window(g, q, &top) || saga;
         if top.controller == q && mode != "all" && !own {
             return Ok(());
         }
@@ -909,6 +913,16 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         life = ways[k].0;
         pips = ways[k].1.clone();
     }
+    if d.has_dsl() {
+        // the additional cost (Natural Order's sacrifice, Seize the Spoils' discard) is paid before the mana (601.2h:
+        // in any order), so the person can still back out of it with nothing paid
+        if let Some(why) = mana::cost_problem(g, p, gn, &pips) {
+            return Ok(Some(format!("Can't cast {cname}. {why}{}", legal::cost_changers(g, p, c))));
+        }
+        if !cast::additional_cost(g, p, c, false)? {
+            return Ok(None); // cancelled
+        }
+    }
     if let Some(why) = mana::pay_from_pool(g, p, gn, &pips) {
         return Ok(Some(format!("Can't cast {cname}. {why}{}", legal::cost_changers(g, p, c))));
     }
@@ -952,9 +966,6 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         if d.tags.has(Tag::Xtutor) {
             g.last_x = x as i32;
         }
-    }
-    if d.has_dsl() {
-        cast::additional_cost(g, p, c, false)?;
     }
     specs::pay_costs(g, p, c, &spec_costs)?;
     if let Some(f) = fodder {

@@ -372,6 +372,8 @@ pub fn crack_fetch(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     if crate::human::is_human(g, p) && crate::human::fetch::person_fetch(&name) {
         return Ok(()); // a person keeps the fetch land and activates it when they choose (`human::fetch`)
     }
+    // the other fetch-style lands (Blighted Woodland, Krosan Verge ...) are still cracked at once, by the AI's pick
+    crate::human::auto_note(g, p, &format!("{name} is cracked at once and the land it finds is picked for you"));
     let kinds = true_fetch(&name);
     let cands: Vec<CardId> = searchable(g, p).into_iter().filter(|&c| fetch_legal(g, c, kinds)).collect();
     if cands.is_empty() {

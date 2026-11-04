@@ -233,6 +233,9 @@ pub enum DataKey {
     T12FromGy,
     /// --- garth: the names this Garth One-Eye has chosen (Int: a bit for each of its six names; `garth::chosen`)
     Garth,
+    /// practice mode: the artifact cards a person's Emry, Lurker of the Loch let them cast from the graveyard this turn
+    /// (a `Val::List`: the turn stamp, then the cards; `human::gaps_c::emry_permits`)
+    Emry,
 }
 
 /// A value in per-card state.

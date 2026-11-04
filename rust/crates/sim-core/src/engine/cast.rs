@@ -130,7 +130,11 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
                     labels.push("a Treasure token".into());
                 }
                 let prompt = format!("{}: sacrifice which permanent?", g.db.get(c).name);
-                let k = crate::human::choices::choose_one(g, p, "choose", &prompt, &labels)?;
+                // cancelling stops the cast: the person's cast pays this before its mana (`human::cast_inner`)
+                let Some(k) = crate::human::choices::choose(g, p, "choose", &prompt, &labels, Some("cancel"), None)?
+                else {
+                    return Ok(false);
+                };
                 choice = Some(Choice::Sac(if k == cands.len() { Fodder::Treasure } else { Fodder::Perm(cands[k]) }));
             }
         } else if let Some(what) = sac_phrase(&t)
