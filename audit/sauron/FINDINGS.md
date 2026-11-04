@@ -1,10 +1,18 @@
 # Sauron, the Dark Lord — findings (living file)
 
 What the simulator has taught us about the Sauron Grixis amass deck: strengths, weaknesses, and what was tried and why
-it did or didn't work. Updated after every run. Newest evidence first. Matched tiers: t3–t5 (`data/my_decks.toml`).
+it did or didn't work. Updated after every run. Newest evidence first. Matched tiers: T3–T4 (`data/my_decks.toml`).
 Older tests: the dated folders here.
 
-## Current state (2026-10-17, night)
+## 2026-11-03: Godo package added (JD's choice; not simulated)
+
+Godo, Helm of the Host, Hammer of Nazahn, Combat Celebrant and Peter Parker's Camera moved from The Ur-Dragon into
+Sauron as a secondary finish. Phyrexian Arena, Sauron, the Necromancer, Sephiroth, Triple Triad and Urza left. This
+makes the paper list Bracket 4 through the Godo/Helm and Celebrant/Helm infinite-combat lines. The old current-state
+numbers below predate this rebuild and are not its baseline. The next measurement must report T3 and T4 separately,
+using the loose profile and default look-ahead AI.
+
+## Previous state (2026-10-17, night)
 Look-ahead, loose, current list (baselines of the Urza run, with the hold-mana search credit): **T3 28.2%, T4 31.6%,
 T5 26.4% (28.7% over t3–t5).**
 
