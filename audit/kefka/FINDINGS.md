@@ -3,6 +3,11 @@
 What the simulator has taught us about the Kefka Grixis discard deck: strengths, weaknesses, and what was tried and why
 it did or didn't work. Updated after every run. Newest evidence first. Matched tiers: t3–t5 (`data/my_decks.toml`).
 
+## 2026-11-04: Cabal Coffers for a Mountain (JD's physical deck; not simulated)
+With Urborg out every land is a Swamp, so L lands make 2L - 3 mana for a Breach or Yawgmoth's Will turn. Without
+Urborg it nets little (7 Swamps; it makes nothing until two other lands can pay its {2}). No number yet: the next
+baseline (T3) measures it.
+
 ## Current state (2026-10-17, evening; superseded: the newest baseline is the 2026-11-04 section at the end)
 Card report (adaptive AI, loose, 1,000 games per tier; `audit/kefka/2026-10-17-smaug/K0-analyze-adaptive.txt`):
 T3 24.3%, T4 32.5%, T5 26.4% on the quick AI. Look-ahead baselines from the swap run below: **T3 26.9%, T4 30.5%,

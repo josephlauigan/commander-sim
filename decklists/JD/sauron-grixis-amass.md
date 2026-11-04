@@ -137,8 +137,10 @@ rocks, it finishes a table that the Army has already thinned or that is racing y
 big X either kills or strips their boards and hands, and it needs no combat, so it wins when the Army is walled or
 answered.
 
-**Karn's Bastion** ({4}, {T}: proliferate) is a land that grows the Army: each activation puts another +1/+1 counter
-on it.
+**Cabal Coffers** ({2}, {T}: add {B} for each Swamp you control) and **Urborg, Tomb of Yawgmoth** (every land is a Swamp)
+took Karn's Bastion's and a Swamp's slots (JD, 2026-11-04): with both out, L lands make 2L - 3 mana (11 at seven lands) for
+Exsanguinate, Torment of Hailfire or two big spells in a turn. Coffers alone, on five Swamps and the black duals, nets a
+mana or two.
 
 ### Card flow, mana and interaction
 Card draw: **Fact or Fiction** (an instant-speed dig: cast it at the end of an opponent's turn for two of the five
@@ -200,13 +202,13 @@ create the next combat while the Army and other creatures repeatedly untap.
 
 ## Mana and consistency
 
-The list is exactly 100 cards. 35 lands (18 nonbasic, 5 Island, 6 Mountain, 6 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 36 when you need the land half. Ten rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone (any colour an opponent's land could produce), Dimir Signet, Rakdos Signet, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, and Chromatic Lantern.
+The list is exactly 100 cards. 35 lands (20 nonbasic, 5 Island, 5 Mountain, 5 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 36 when you need the land half. Ten rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone (any colour an opponent's land could produce), Dimir Signet, Rakdos Signet, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, and Chromatic Lantern.
 
 | Measure | Count | Note |
 | --- | --- | --- |
 | Blue lands | 16 | 5 Island plus the U duals, Command Tower, Exotic Orchard, Path of Ancestry, Treno |
-| Black lands | 18 | 6 Swamp plus Barad-dûr, Blood Crypt, Drowned Catacomb, Underground Sea, Watery Grave, Underground River, Foreboding Ruins, Haunted Ridge, Treno, and the any-colour lands |
-| Red lands | 16 | 6 Mountain, Sokenzan, plus the R duals, Haunted Ridge, and the any-colour lands |
+| Black lands | 18 (all 35 with Urborg out) | 5 Swamp plus Cabal Coffers (with a Swamp out), Barad-dûr, Blood Crypt, Drowned Catacomb, Underground Sea, Watery Grave, Underground River, Foreboding Ruins, Haunted Ridge, Treno, and the any-colour lands |
+| Red lands | 15 | 5 Mountain, Sokenzan, plus the R duals, Haunted Ridge, and the any-colour lands |
 | Colorless-only lands | 2 | Rogue's Passage, Scavenger Grounds |
 
 Dual lands: the original dual Underground Sea; the shocklands Blood Crypt, Steam Vents and Watery Grave; the check lands Drowned Catacomb and Sulfur Falls; the painlands Shivan Reef and Underground River; Foreboding Ruins (reveal a matching land or enter tapped); Haunted Ridge; and the tapped lands Treno, Dark City and Path of Ancestry. **Sokenzan, Crucible of Defiance** taps for {R} like a Mountain; late, channel it ({3}{R}, discard it) for two hasty 1/1 Spirits at instant speed.
@@ -263,7 +265,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Instants and sorceries (27).** An Offer You Can't Refuse, Baleful Mastery, Bitter Triumph, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chandra's Ignition, Chaos Warp, Comet Storm, Counterspell, Cyclonic Rift, Deflecting Swat, Diabolic Intent, Diabolic Tutor, Exsanguinate, Fact or Fiction, Force of Will, Infernal Grasp, Mana Drain, Mystic Confluence, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slip Out the Back, Terminate, Torment of Hailfire, Vandalblast
 
-**Lands (35).** Barad-dûr, Blood Crypt, Command Tower, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Haunted Ridge, Karn's Bastion, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Sokenzan Crucible of Defiance, Steam Vents, Sulfur Falls, Treno Dark City, Underground River, Underground Sea, Watery Grave, 5 Island, 5 Mountain, 6 Swamp
+**Lands (35).** Barad-dûr, Blood Crypt, Cabal Coffers, Command Tower, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Haunted Ridge, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Sokenzan Crucible of Defiance, Steam Vents, Sulfur Falls, Treno Dark City, Underground River, Underground Sea, Urborg Tomb of Yawgmoth, Watery Grave, 5 Island, 5 Mountain, 5 Swamp
 
 Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when you need the land half.
 
@@ -278,6 +280,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Blood Crypt
 1 Bloodchief's Thirst
 1 Bloodsoaked Insight // Sanguine Morass
+1 Cabal Coffers
 1 Call of the Ring
 1 Chandra's Ignition
 1 Chaos Warp
@@ -310,7 +313,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Iron Man, Armored Avenger
 1 Jace's Archivist
 1 Jin-Gitaxias, Progress Tyrant
-1 Karn's Bastion
 1 Lazotep Reaver
 1 Lightning Greaves
 1 Mana Drain
@@ -349,6 +351,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Treno, Dark City
 1 Underground River
 1 Underground Sea
+1 Urborg, Tomb of Yawgmoth
 1 Vandalblast
 1 Vision, Synthezoid Avenger
 1 War Machine, Avenging Arsenal
@@ -356,5 +359,5 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Whispersilk Cloak
 5 Island
 5 Mountain
-6 Swamp
+5 Swamp
 ```

@@ -4,6 +4,10 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile, vs Sheoldred's matched
 tiers (T3-T5) unless noted. Older tests: README.md in this folder.
 
+## 2026-11-04: Cabal Coffers for Command Tower (JD's physical deck; not simulated)
+31 Swamps make Coffers a big-mana land on its own (six Swamps out: net {B}{B}{B}{B}) for Exsanguinate and the big
+turns. Command Tower made only {B} here. No number yet: the next baseline (T3-T4) measures it.
+
 ## Current state (2026-10-15)
 Win rate vs T4: **30.1%** (1,000 games, seed 1015, main 0f49b7d).
 

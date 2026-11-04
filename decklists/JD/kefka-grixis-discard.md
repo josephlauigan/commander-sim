@@ -201,8 +201,8 @@ creature on your side, and one fewer in their deck. Pick the opponent whose deck
 
 ## Mana and consistency
 
-- **Lands:** 36 (17 nonbasic + 19 basic)
-- **Mana:** Arcane Signet, Lotus Petal, Birgi, Storm-Kiln Artist, Dark Ritual, Seething Song, Jeska's Will, Treasure makers and burst cards. Yawgmoth's Will replays Dark Ritual and Lotus Petal from the graveyard. Basics: 7 Swamp, 7 Mountain, 5 Island; Urborg, Tomb of Yawgmoth makes every land a Swamp, so the duals and Islands tap for {B} too; Mistrise Village enters untapped with a Mountain.
+- **Lands:** 36 (18 nonbasic + 18 basic)
+- **Mana:** Arcane Signet, Lotus Petal, Birgi, Storm-Kiln Artist, Dark Ritual, Seething Song, Jeska's Will, Treasure makers and burst cards. Yawgmoth's Will replays Dark Ritual and Lotus Petal from the graveyard. Basics: 7 Swamp, 6 Mountain, 5 Island; Urborg, Tomb of Yawgmoth makes every land a Swamp, so the duals and Islands tap for {B} too, and **Cabal Coffers** ({2}, {T}: {B} for each Swamp; JD, 2026-11-04, for a Mountain) then makes 2L - 3 mana from L lands (11 at seven) for a Breach or Yawgmoth's Will turn; Mistrise Village enters untapped with a Mountain.
 - **Card draw:** Kefka, Frantic Search, Think Twice, Decorum Dissertation (a free draw-two each turn after the first cast), Skullclamp, Palantír of Orthanc (a card or a drain at each of your end steps), Niv-Mizzet (taps to draw), Marvin, Murderous Mimic (a 2-mana 2/2 that has the activated abilities of your other creatures: it copies Niv-Mizzet's draw, Blightspeaker and Rummaging Goblin), the looters, and the cheap digging spell Expressive Iteration (look at three: one to hand, one to the bottom, one exiled and playable this turn). **Glimpse the Unthinkable** ({U}{B}: target player mills ten) fills your graveyard for Underworld Breach and Yawgmoth's Will, or points at an opponent to start the mill-out that Brain Freeze finishes. **Tutors:** Diabolic Tutor, Mystical Tutor, Solve the Equation, Entomb (to the graveyard). **Graveyard:** Underworld Breach, Yawgmoth's Will, Mystic Sanctuary, Reanimate, Animate Dead, Necromancy.
 - **Interaction:** Lightning Bolt, Reality Shift, Extinguish the Light, Deadly Embrace, Contract Killing, Chaos Warp; Counterspell; one-sided sweeper Massacre Wurm.
 - **Protection:** Counterspell and Mistrise Village (makes a spell uncounterable).
@@ -233,7 +233,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Instants (14).** Big Score, Brain Freeze, Chaos Warp, Counterspell, Dark Ritual, Entomb, Extinguish the Light, Frantic Search, Lightning Bolt, Mystical Tutor, Price of Progress, Reality Shift, Think Twice, Twinned Vision
 
-**Lands (36).** Blood Crypt, Command Tower, Exotic Orchard, Gemstone Mine, Haunted Ridge, Mistrise Village, Mystic Sanctuary, Scorched Geyser, Shivan Reef, Spirebluff Canal, Steam Vents, Stormcarved Coast, Sulfur Falls, Sulfurous Springs, Temple of Epiphany, Underground River, Urborg Tomb of Yawgmoth, 5 Island, 7 Mountain, 7 Swamp
+**Lands (36).** Blood Crypt, Cabal Coffers, Command Tower, Exotic Orchard, Gemstone Mine, Haunted Ridge, Mistrise Village, Mystic Sanctuary, Scorched Geyser, Shivan Reef, Spirebluff Canal, Steam Vents, Stormcarved Coast, Sulfur Falls, Sulfurous Springs, Temple of Epiphany, Underground River, Urborg Tomb of Yawgmoth, 5 Island, 6 Mountain, 7 Swamp
 
 ## Import list (100)
 
@@ -249,6 +249,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Blood Crypt
 1 Brain Freeze
 1 Bribery
+1 Cabal Coffers
 1 Chaos Warp
 1 Command Tower
 1 Contract Killing
@@ -320,6 +321,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Yawgmoth's Will
 1 Young Pyromancer
 5 Island
-7 Mountain
+6 Mountain
 7 Swamp
 ```
