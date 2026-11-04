@@ -260,7 +260,7 @@ fn person_choices(g: &Game, p: PlayerId, kind: Sym, rule: &mut Sweep, ctx: &crat
         rule.ty = types[k];
     }
     if kind == "ignite"
-        && let Some(t) = ctx.target.filter(|&t| g.perm(t).on_bf && !g.perm(t).phased && g.is_creature(t))
+        && let Some(t) = ctx.host.filter(|&t| g.perm(t).on_bf && !g.perm(t).phased && g.is_creature(t))
     {
         rule.src = Some(t);
         rule.power = epow(g, t).max(0);

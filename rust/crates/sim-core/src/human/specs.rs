@@ -57,6 +57,9 @@ pub enum Ask {
     Kick(&'static str),
     /// a storm spell (Brain Freeze, Grapeshot): the target of the spell and of each copy, asked as it is cast
     Storm,
+    /// a creature you control that does the work of a sweeper (Chandra's Ignition, Nibelheim Aflame) -> `ctx.host`
+    /// (not `ctx.target`: a spell with a target is resolved as targeted removal, not as the wipe)
+    Host,
     /// Decimate: a target artifact, creature, enchantment and land (in that order) -> `ctx.perms`
     Decimate,
 }
@@ -86,7 +89,7 @@ pub fn spec(name: &str) -> Option<&'static [Ask]> {
         "Orim's Chant" => &[Ask::Target(Tk::Player), Ask::Kick("W")],
         "Brain Freeze" | "Grapeshot" => &[Ask::Storm],
         "Glimpse the Unthinkable" => &[Ask::Target(Tk::Player)],
-        "Chandra's Ignition" | "Nibelheim Aflame" => &[Ask::Target(Tk::OwnCreature)],
+        "Chandra's Ignition" | "Nibelheim Aflame" => &[Ask::Host],
         "Slip Out the Back" => &[Ask::Target(Tk::Creature)],
         "Decimate" => &[Ask::Decimate],
         _ => return None,
@@ -202,6 +205,9 @@ pub fn problem(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
             }
             Ask::Sac | Ask::SacModified if my_creatures(g, p, None).is_empty() => {
                 return Some(format!("{} needs a creature to sacrifice as you cast it, and you control none.", d.name));
+            }
+            Ask::Host if perm_cands(g, p, c, Tk::OwnCreature).is_empty() => {
+                return Some(format!("{} needs a creature you control.", d.name));
             }
             Ask::Decimate if decimate_cands(g, p, c).iter().any(|v| v.is_empty()) => {
                 return Some(format!(
@@ -334,6 +340,15 @@ pub fn choose_pre(g: &Game, p: PlayerId, c: CardId, ctx: &mut Ctx) -> Res<Pre> {
                 if !super::thanos::storm_asks(g, p, c, ctx)? {
                     return Ok(Pre::Cancel);
                 }
+            }
+            Ask::Host => {
+                let ms = perm_cands(g, p, c, Tk::OwnCreature);
+                let t: Vec<Target> = ms.iter().map(|&m| Target::Perm(m)).collect();
+                let pr = format!("{name}: choose a target (creature you control)");
+                let Some(k) = choices::choose(g, p, "target", &pr, &labels_of(g, p, &t), Some("cancel"), None)? else {
+                    return Ok(Pre::Cancel);
+                };
+                ctx.host = Some(ms[k]);
             }
             Ask::Decimate => {
                 let kinds = ["artifact", "creature", "enchantment", "land"];

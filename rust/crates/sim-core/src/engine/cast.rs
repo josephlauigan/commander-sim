@@ -1101,7 +1101,11 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         add_treasure(g, p, n)?;
     }
     if let Some(n) = t.int(Tag::Lr) {
-        land_ramp(g, p, n.max(0) as u32, t.has(Tag::Lrt))?;
+        if crate::human::is_human(g, p) && crate::human::gaps_a::forest_search(g, p, c)? {
+            // a person's Nature's Lore found its Forest card
+        } else {
+            land_ramp(g, p, n.max(0) as u32, t.has(Tag::Lrt))?;
+        }
         if t.has(Tag::Lh) {
             land_to_hand(g, p)?;
         }

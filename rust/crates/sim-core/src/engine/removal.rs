@@ -469,7 +469,7 @@ fn apply_wipe_inner(g: &mut Game, p: PlayerId, kind: Sym, card: Option<CardId>, 
         victims = g.opps(p).collect();
     }
     // practice mode: Nibelheim Aflame's creature is the one the person chose as they cast it
-    NIB_SRC.with(|c| c.set(if kind == "nib" && crate::human::is_human(g, p) { ctx.target } else { None }));
+    NIB_SRC.with(|c| c.set(if kind == "nib" && crate::human::is_human(g, p) { ctx.host } else { None }));
     for (i, &q) in victims.iter().enumerate() {
         if g.over {
             NIB_SRC.with(|c| c.set(None));

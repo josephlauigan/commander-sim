@@ -21,7 +21,7 @@ use crate::engine::stack::{ability_window, ability_window_card};
 use crate::engine::zones;
 use crate::flow::Res;
 use crate::ids::{PermId, PlayerId};
-use crate::impls::{card_models, garth, mine, t45_urdragon, t6_scion, t6_thanos};
+use crate::impls::{card_models, garth, mine, t6_scion, t6_thanos, t45_urdragon};
 use crate::state::{DataKey, Game, Val};
 
 const KEFKA: &str = "Kefka, Court Mage // Kefka, Ruler of Ruin";
@@ -131,7 +131,12 @@ fn garth_person(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
             let Some(c) = g.db.id(garth::NAMES[i]) else { return garth::NAMES[i].to_string() };
             let (gn, pips) = cost_of(g, p, c);
             let ok = mana::cost_problem(g, p, gn, &pips).is_none();
-            format!("{} {}{}", garth::NAMES[i], mana::cost_text(gn, &pips), if ok { "" } else { " (you can't pay for it now)" })
+            format!(
+                "{} {}{}",
+                garth::NAMES[i],
+                mana::cost_text(gn, &pips),
+                if ok { "" } else { " (you can't pay for it now)" }
+            )
         })
         .collect();
     let k = choices::choose_one(
@@ -151,16 +156,15 @@ fn garth_person(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     let mut target: Option<PermId> = None;
     let mut x = 0u32;
     if let Some(tgts) = legal::spell_targets(g, p, c) {
-        let tgts: Vec<PermId> = tgts
-            .into_iter()
-            .filter_map(|t| if let Target::Perm(q) = t { Some(q) } else { None })
-            .collect();
+        let tgts: Vec<PermId> =
+            tgts.into_iter().filter_map(|t| if let Target::Perm(q) = t { Some(q) } else { None }).collect();
         if tgts.is_empty() {
             crate::glog!(g, "    {name} has no legal target: the copy ceases to exist");
             return Ok(None);
         }
         let labels: Vec<String> = tgts.iter().map(|&q| legal::describe_target(g, p, Target::Perm(q))).collect();
-        let k = choices::choose_one(g, p, "target", &format!("{name} (Garth One-Eye's copy): choose a target"), &labels)?;
+        let k =
+            choices::choose_one(g, p, "target", &format!("{name} (Garth One-Eye's copy): choose a target"), &labels)?;
         target = Some(tgts[k]);
     }
     if name == "Braingeyser" {
@@ -181,7 +185,10 @@ fn garth_person(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         }
     }
     if !garth::cast_copy(g, p, c, target, x)? {
-        crate::glog!(g, "    {name} can't be cast (the mana isn't in your pool, or it has no target): the copy ceases to exist");
+        crate::glog!(
+            g,
+            "    {name} can't be cast (the mana isn't in your pool, or it has no target): the copy ceases to exist"
+        );
     }
     crate::engine::life::check_state(g)?;
     Ok(None)
@@ -238,7 +245,9 @@ fn thanos_power_up(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
 // ------------------------------------------------------------------ Scion of the Ur-Dragon
 fn scion_search(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if t6_scion::is_copy(g, m) {
-        return Ok(Some("Scion of the Ur-Dragon is a copy of another card and has lost this ability for the turn.".into()));
+        return Ok(Some(
+            "Scion of the Ur-Dragon is a copy of another card and has lost this ability for the turn.".into(),
+        ));
     }
     if let Some(why) = pay(g, p, 2, "", "Scion of the Ur-Dragon") {
         return Ok(Some(why));
@@ -311,7 +320,11 @@ fn ranger_silence(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     }
     let cd = g.perm(m).card();
     zones::die(g, m, "sac")?;
-    crate::glog!(g, "  {} sacrifices Ranger-Captain of Eos: opponents can't cast noncreature spells this turn", pname(g, p));
+    crate::glog!(
+        g,
+        "  {} sacrifices Ranger-Captain of Eos: opponents can't cast noncreature spells this turn",
+        pname(g, p)
+    );
     if ability_window_card(g, p, cd, "your opponents can't cast noncreature spells this turn", None, None)? {
         g.silence = Some((g.turn_stamp(), p));
     }
@@ -375,4 +388,30 @@ fn arisen() -> Vec<PermAbility> {
             })
         })
         .collect()
+}
+
+// ------------------------------------------------------------------ Nature's Lore
+/// A person's Nature's Lore: "search your library for a Forest card, put it onto the battlefield". The AI's ramp takes
+/// a basic land of its own pick (`zones::land_ramp`); a person finds any Forest card (a Forest, or a dual land with the
+/// Forest type). True if handled here.
+pub fn forest_search(g: &mut Game, p: PlayerId, c: crate::ids::CardId) -> Res<bool> {
+    if &*g.db.get(c).name != "Nature's Lore" {
+        return Ok(false);
+    }
+    let found = choices::search(
+        g,
+        p,
+        &|g: &Game, x| {
+            let d = g.db.get(x);
+            d.land && d.land_types.has('G')
+        },
+        1,
+        "Nature's Lore: search your library for a Forest card (it enters untapped)",
+        true,
+    )?;
+    if let Some(&l) = found.first() {
+        g.add_land_entering(p, l, false);
+        zones::landfall(g, p)?;
+    }
+    Ok(true)
 }
