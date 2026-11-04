@@ -1,284 +1,235 @@
-# The Ur-Dragon — Five-Colour Dragons and Equipment
+# The Ur-Dragon — Five-Colour Dragon Copies
 
-A five-colour combo deck that wins with Godo, Bandit Warlord and Helm of the Host, with Equipment and Dragons as the
-value engine around it. **Godo** puts Helm of the Host onto the battlefield when he enters; Helm makes a hasty token
-copy of him every combat, and each copy's first attack adds another combat, so the turn never ends. **Combat
-Celebrant** is a second, cheaper creature for the same loop: three mana instead of six. **Gilgamesh,
-Master-at-Arms** is a Samurai, so every Godo attack untaps him and he digs six cards for Equipment on every attack.
-**Maskwood Nexus** makes every creature a Dragon (Eminence discount, Ur-Dragon draws) and a Samurai (Godo untaps the
-whole team). The Ur-Dragon itself is a nine-drop: in most games it is a cost reducer from the command zone and a late
-card engine, and the deck wins before it is cast. It is weak to artifact hate (Null Rod, Collector Ouphe, Vandalblast),
-to trigger counters on Godo, and to fast combo that wins before turn 5.
+A five-colour Dragon deck that turns one Dragon into several. Miirym, Lathliss and token multipliers reward Dragons
+entering, while Dragon Tempest, Scourge of Valkas and Terror of the Peaks turn those entries into damage. Astral Dragon
+is the signature card: it turns noncreature permanents into pairs of flying 3/3 Dragon copies. The Ur-Dragon discounts
+the creature suite from the command zone, then converts the resulting air force into cards and free permanents when it
+finally attacks. The deck is weak to early combo, sweepers before its draw engines appear, and hands with expensive
+Dragons but no acceleration.
 
 | | |
 |---|---|
 | **Commander** | The Ur-Dragon ({4}{W}{U}{B}{R}{G}, 10/10, five colours) |
-| **Bracket** | 4 (17 Game Changers; two two-card infinite combos) |
-| **Simulator** | Deck key `urdragon`, Tier 5 (10/30), played from `data/plans/urdragon.toml` (no hand-written deck AI). Eminence and the attack trigger are `impls/t45_urdragon.rs`; results in `audit/urdragon/FINDINGS.md`. |
+| **Bracket** | 4 (16 Game Changers; no intentional infinite combo) |
+| **Simulator** | Deck key `urdragon`, Tier 5, played from `data/plans/urdragon.toml`; results in `audit/urdragon/FINDINGS.md`. |
 
 ## Strategy
 
 ### The commander
 
-The Ur-Dragon ({4}{W}{U}{B}{R}{G}, Legendary Creature — Dragon Avatar, 10/10, flying) reads: *Eminence — As long as
-The Ur-Dragon is in the command zone or on the battlefield, other Dragon spells you cast cost {1} less to cast.
-Whenever one or more Dragons you control attack, draw that many cards, then you may put a permanent card from your
-hand onto the battlefield.*
+The Ur-Dragon's Eminence ability reduces every other Dragon spell by {1} while it is in the command zone or on the
+battlefield. When one or more Dragons attack while The Ur-Dragon is on the battlefield, draw that many cards and put
+one permanent from your hand onto the battlefield.
 
-- **Eminence works from the command zone.** Every Dragon costs one less from turn 1, and with Maskwood Nexus out every
-  creature does, Godo and Gilgamesh included.
-- **The attack trigger counts every attacking Dragon**, every combat. With Maskwood Nexus and Godo's extra combats it
-  draws a card per attacker per combat, and the free permanent is Kaldra Compleat, Helm of the Host or a Dragon.
-- **He costs nine.** Don't wait for him: the deck's plan is Godo.
+- Treat Eminence as dependable ramp from turn one. Do not wait to cast the commander before developing Dragons.
+- Cast The Ur-Dragon when it can attack soon, when Lightning Greaves supplies haste, or when the table has exhausted
+  its removal. Its first attack should refill the hand and put the best permanent drawn directly onto the battlefield.
+- Dragon tokens count for the attack trigger. Utvara Hellkite's tokens arrive after attackers are declared, so they
+  attack and count on later combats rather than the combat that created them.
 
 ### Game plan
 
-**Opening hand.** Keep two or more mana sources with fast mana or a mana creature among them, plus a path to Godo or
-Helm: Godo himself, Imperial Recruiter, Worldly Tutor or Demonic Tutor, or Helm (or a Helm tutor) with Combat Celebrant.
-Ship hands with no acceleration.
+**Opening hand.** Keep two or more usable mana sources plus acceleration. A hand with Dragon's Hoard, a mana creature,
+Nature's Lore, Rampant Growth or fast mana is better than a hand full of six-drops. Keep an entry payoff when the mana
+supports it; ship hands whose first meaningful play is turn five.
 
-**Turns 1-3.** Fast mana, mana creatures, land ramp. Puresteel Paladin or Stoneforge Mystic if there is a spare mana.
+**Turns 1–3.** Fix colours and ramp. Dragon's Hoard is both fixing and later card draw. Dragon Tempest, Garruk's
+Uprising and Temur Ascendancy are good setup plays when they do not delay necessary mana.
 
-**Turns 3-5: the win turn.** Cast Godo with six mana (five with Maskwood Nexus out), plus Hammer of Nazahn already out,
-an untapped Brass Squire, Puresteel Paladin with metalcraft, Sigarda's Aid, or {5} to attach Helm. Hold Force of Will,
-Pact of Negation or Teferi's Protection for the response. Grand Abolisher on the battlefield means
-opponents can't cast spells during your turn at all.
+**Turns 4–6.** Establish one engine, then cast Dragons. Ganax pays for the next Dragon, Lathliss supplies bodies,
+Miirym supplies copies, and Scourge of Valkas or Terror of the Peaks converts every new body into damage. Hold cheap
+interaction for a spell that would end the game or erase the developing board.
 
-**Late game.** If the combo is answered, the Dragons and Equipment win the long game: Terror of the Peaks, the hasty
-Dragons, Kaldra Compleat, and The Ur-Dragon's card draw.
+**Late game.** Attack with the Dragon army. Utvara Hellkite multiplies attackers, Atarka gives Dragons double strike,
+and The Ur-Dragon refills the hand and places another engine or Dragon onto the battlefield. Dracogenesis turns every
+Dragon in hand into a free spell once eight mana is available.
 
-### The Helm loop
+### Entry and token engines
 
-**Helm of the Host** ({4}, equip {5}): at the beginning of combat on your turn, create a token copy of the equipped
-creature, except it isn't legendary, and it gains haste. On Godo:
+- **Miirym, Sentinel Wyrm:** each other nontoken Dragon entering creates a nonlegendary token copy. Copy Dragons with
+  entry triggers first; both the original and token produce their own triggers.
+- **Lathliss, Dragon Queen:** each other nontoken Dragon entering creates a 5/5 Dragon. The token does not retrigger
+  Lathliss, but it does trigger Ganax, Dragon Tempest, Scourge and Terror.
+- **Ganax, Astral Hunter:** every Dragon entering creates a Treasure, including tokens from Miirym, Lathliss, Astral
+  Dragon and Utvara Hellkite.
+- **Panharmonicon:** adds another applicable entry trigger from Miirym, Lathliss, Ganax, Astral Dragon, Dragon Tempest,
+  Scourge of Valkas and Terror of the Peaks. It adds triggers; it does not copy the resulting tokens directly.
+- **Maskwood Nexus:** makes every creature spell and creature a Dragon. Mana creatures and utility creatures then get
+  the Eminence discount, trigger the entry engines and count for The Ur-Dragon's attack.
 
-1. Godo enters and fetches Helm. Attach it: free with Hammer of Nazahn or Sigarda's Aid out, free with Puresteel Paladin
-   and three artifacts, by tapping Brass Squire, or by paying {5}.
-2. Beginning of combat: Helm makes a hasty token Godo. Its enter trigger fetches another Equipment (Hammer if it's
-   missing, otherwise Kaldra Compleat).
-3. The token attacks: untap it and all Samurai, and add a combat.
-4. The new combat begins, Helm makes another hasty token, and it repeats until the table is dead.
+### Copies
 
-Godo himself never has to attack. Backups when the trigger is countered or Godo is removed: **Peter Parker's Camera**
-copies Godo's enter trigger (Hammer first, then Helm, which Hammer attaches), and **Jaxis, the Troublemaker** makes a
-hasty token copy of Godo, with a fresh enter trigger.
+**Astral Dragon** creates two token copies of a target noncreature permanent, except each is also a 3/3 flying Dragon.
+Good targets include Rhystic Study, Smothering Tithe, Dragon Tempest, Kindred Discovery, Garruk's Uprising,
+Panharmonicon, Dragon's Hoard and useful opposing permanents. It can copy a land when another mana source or utility
+land is the best available target. Avoid copying your own legendary permanent unless losing the extras to the legend
+rule is acceptable.
 
-**Combat Celebrant** ({2}{R}, 4/1): if it hasn't been exerted this turn, you may exert it as it attacks; when you do,
-untap all other creatures you control and add a combat. With Helm on it:
+**Spark Double** copies your best creature without being legendary. Miirym is usually the highest ceiling, followed by
+Lathliss, Ganax, Terror of the Peaks or The Ur-Dragon. **Cursed Mirror** is a mana rock that can be the best creature on
+the battlefield for one turn. **Jaxis, the Troublemaker** and **Twinflame** make temporary copies; use them on Dragons
+with entry triggers or on an engine that makes the next Dragon much stronger. **Sarkhan, Soul Aflame** discounts
+Dragons and can become each Dragon that enters for the turn.
 
-1. Beginning of combat: Helm makes a hasty token Celebrant that has never been exerted.
-2. The token attacks and exerts: everything else untaps, and there is another combat.
-3. The new combat begins, Helm makes another fresh token, and it repeats.
+### Turning entries into a win
 
-It costs half of Godo, but it doesn't fetch Helm. Find Helm with Stoneforge Mystic, Steelshaper's Gift, Open the
-Armory, Enlightened Tutor, Gilgamesh or Inventors' Fair, and attach it the same ways as above. Worldly Tutor finds Celebrant; Imperial
-Recruiter can't (power 4). It is a 4/1, so cast it the turn you go off.
-
-### Gilgamesh and the Samurai
-
-**Gilgamesh, Master-at-Arms** ({4}{R}{R}, 6/6, Human Samurai): whenever he enters or attacks, look at the top six cards
-and put any number of Equipment from among them onto the battlefield; attach one to a Samurai.
-
-- Godo untaps all Samurai on his first attack each turn. In the Helm loop every Godo token's first attack untaps
-  Gilgamesh, so he attacks every combat and digs six cards every combat.
-- **Helm of the Host on Gilgamesh** makes a Gilgamesh token every combat, and each token's enter trigger digs again.
-
-### Maskwood Nexus
-
-*Creatures you control are every creature type. The same is true for creature spells you control and creature cards you
-own that aren't on the battlefield.*
-
-- **Every creature is a Dragon:** Godo, Gilgamesh and the mana creatures cost {1} less, and every attacker counts for
-  The Ur-Dragon's draw.
-- **Every creature is a Samurai:** Godo's attack untaps the whole team for the extra combat.
-
-### The Equipment
-
-| Card | Role |
-|---|---|
-| **Helm of the Host** | The combo piece (above). |
-| **Hammer of Nazahn** | Attaches every Equipment as it enters, so Helm goes onto Godo the moment it's fetched; +2/+0 and indestructible. |
-| **Kaldra Compleat** | A 5/5 indestructible haste germ with first strike and trample: the best free permanent for Gilgamesh and The Ur-Dragon. |
-| **Embercleave** | Flash, costs less per attacker, double strike and trample, attaches as it enters. |
-| **Sword of Fire and Ice** | Protection from red and blue; 2 damage and a card on each hit. |
-| **Sword of Feast and Famine** | Protection from black and green; discard, and your lands untap. |
-| **Shadowspear** | Trample and lifelink; strips hexproof and indestructible from opponents' permanents. |
-| **Lightning Greaves** | Haste and shroud. |
-
-Support: **Puresteel Paladin** (equip {0} with metalcraft, a card per Equipment), **Sigarda's Aid** (flash Equipment,
-attach on entering), **Brass Squire** (attach for free), **Stoneforge Mystic**, **Steelshaper's Gift**, **Open the
-Armory** ({1}{W}, an Aura or Equipment to hand) and **Enlightened Tutor** (find Equipment), **Inventors' Fair** (finds Helm with three artifacts).
-
-### Dragons
-
-- **Hasty:** Glorybringer (exert for 4 to a creature), Thundermaw Hellkite (taps every opposing flier), Goldspan
-  Dragon (Treasures that make
-  two mana).
-- **Engines:** Terror of the Peaks (damage equal to each creature's power as it enters; spells that target it cost 3
-  life), Nicol Bolas, the Ravager (each
-  opponent discards; transforms into a planeswalker that draws two or deals 10), Dragonlord Ojutai (hexproof while
-  untapped, card selection on each hit), Kura, the Boundless Sky (flying deathtouch; three lands or an X/X when it
-  dies).
-
-### Backup combo
-
-**Dualcaster Mage** ({1}{R}{R}, flash) plus **Twinflame**: cast Twinflame on any creature you control and hold priority,
-flash in Dualcaster, copy Twinflame targeting Dualcaster; each token Dualcaster copies the spell again. Stop at as many
-hasty 2/2s as you need. **Imperial Recruiter** finds Dualcaster or Godo (power 2 and 3).
+- **Dragon Tempest:** haste for the flying army and damage whenever a Dragon enters.
+- **Scourge of Valkas:** another Dragon-entry damage engine on a flying body.
+- **Terror of the Peaks:** each creature entering deals damage equal to its power, so Lathliss and Utvara tokens hit
+  especially hard.
+- **Utvara Hellkite:** creates a 6/6 Dragon for every Dragon that attacks.
+- **Atarka, World Render:** gives attacking Dragons double strike and ends games without requiring another setup card.
+- **Wrathful Red Dragon:** makes combat and damage-based sweepers dangerous for opponents by reflecting damage dealt to
+  your Dragons.
+- **Dragonborn Champion:** turns the deck's five-damage events into cards.
 
 ### Interaction and protection
 
-- **Stack:** Force of Will, Force of Negation (noncreature spells; free on an opponent's turn), Pact of Negation, Mana Drain (the mana comes
-  back on your next main phase: put it toward Godo).
-- **Removal:** Swords to Plowshares, Decimate, Chaos Warp.
-- **Board wipe:** **Kindred Dominance** ({5}{B}{B}, sorcery): name Dragon and every creature that isn't a Dragon is
-  destroyed. With Maskwood Nexus out all your creatures are Dragons, so it is one-sided; without it, Godo, the mana
-  creatures and the Paladins die too.
-- **Protection:** Grand Abolisher (opponents can't cast spells or activate abilities of artifacts, creatures or
-  enchantments during your turn), Teferi's Protection, Lightning Greaves.
+Force of Will, Force of Negation, Pact of Negation and Mana Drain protect the board and stop faster combo decks.
+Swords to Plowshares, Chaos Warp and Decimate answer permanents. Kindred Dominance names Dragon and normally leaves the
+main board intact; Maskwood Nexus protects the utility creatures too. Teferi's Protection and Lightning Greaves cover
+the turn when the deck commits its most important engine.
 
-### Card flow
+### Card flow and tutors
 
-The One Ring, Rhystic Study, Sylvan Library, Wrenn and Six (returns fetch lands), Puresteel Paladin, and The Ur-Dragon's
-attack trigger. **Smothering Tithe** makes a Treasure for each card an opponent draws unless they pay {2}: mana for Godo
-and the equip, and artifacts for Puresteel Paladin's metalcraft.
+Kindred Discovery names Dragon and draws on both entries and attacks. Garruk's Uprising and Temur Ascendancy draw from
+the large creatures, Dragon's Hoard spends its gold counters for cards, and Rhystic Study, Sylvan Library and The One
+Ring keep the hand moving before the creature engines start.
+
+Worldly Tutor finds the Dragon needed for the board: Ganax for mana, Miirym or Lathliss for multiplication, Scourge or
+Terror for damage, Utvara for a developed attack, and Atarka for lethal combat. Enlightened Tutor finds Dragon Tempest,
+Panharmonicon, Kindred Discovery, Maskwood Nexus, Dragon's Hoard or Dracogenesis. The unrestricted tutors can find
+either half of that choice.
 
 ## Key lines
 
-- **Turn 1-2:** fast mana and a mana creature; Puresteel Paladin or Stoneforge Mystic.
-- **Godo turn:** six mana plus a way to attach Helm; Grand Abolisher down first if you
-  have it.
-- **Celebrant turn:** Helm already out (or found and attached) plus three mana for Combat Celebrant.
-- **Godo answered:** Camera or Jaxis copies Godo for a fresh trigger; otherwise switch to Celebrant, or Dualcaster and
-  Twinflame.
-- **Maskwood turn:** every creature is a Dragon and a Samurai: cast creatures for {1} less and attack with everything.
+- **Need mana:** Ganax or Dragon's Hoard, then let later Dragon entries fund the turn.
+- **Need bodies:** Lathliss first, then cast nontoken Dragons.
+- **Need copies:** Miirym first; Spark Double can become a second Miirym.
+- **Need damage:** Dragon Tempest, Scourge of Valkas or Terror of the Peaks before making tokens.
+- **Ready to attack:** Utvara makes the army; Atarka doubles its combat damage; The Ur-Dragon turns the attack into
+  cards and a free permanent.
+- **Astral Dragon target:** copy a noncreature engine that remains useful in multiples. Rhystic Study and Smothering
+  Tithe generate long-term value; Dragon Tempest and Panharmonicon accelerate a finishing turn.
 
 ## Mana and consistency
 
-34 lands, every one untapped: the nine original dual lands (Badlands, Bayou, Plateau, Scrubland, Taiga, Tropical
-Island, Tundra, Underground Sea, Volcanic Island), nine shock lands (all but Godless Shrine), eight fetch lands
-(Bloodstained Mire, Flooded Strand, Marsh Flats, Misty Rainforest, Polluted Delta, Verdant Catacombs, Windswept Heath,
-Wooded Foothills), City of Brass, Mana Confluence, Command Tower, Ancient Tomb, Cavern of Souls (name Dragon),
-Inventors' Fair, Gaea's Cradle and one Forest. Every fetch finds a dual or shock land of two colours, and Nature's Lore
-finds any land with the Forest type (Bayou, Taiga, Tropical Island and the green shock lands). Rampant Growth finds only
-a basic, so it needs the Forest, which is also there for Blood Moon. Fast mana: Sol Ring, Mana Vault, Grim Monolith,
-Chrome Mox, Mox Diamond and Lotus Petal, plus three mana creatures and two land-ramp spells. **Mox Jasper** taps for
-one mana of any colour only while you control a Dragon (a Dragon creature, or any creature with Maskwood Nexus out),
-so it is a late source: keep it as an artifact for Puresteel Paladin, not as a mana source in an opening hand.
-
-**Gaea's Cradle** taps for {G} per creature you control. With a mana creature or two out it is a second Mana Vault, but
-on turns 1-2 with no creatures it makes nothing, so don't keep it as one of only two lands.
+The deck has 35 lands, including Maelstrom of the Spirit Dragon as a five-colour Dragon source and late tutor. The
+original duals, shock lands and fetch lands provide every colour; Nature's Lore can find any Forest dual or shock.
+Ramp comes from Sol Ring, Mana Vault, Grim Monolith, Chrome Mox, Mox Diamond, Lotus Petal, Arcane Signet, Chromatic
+Lantern, Cursed Mirror, Dragon's Hoard, three mana creatures and two land-ramp spells. Mox Jasper produces mana only
+after a Dragon is on the battlefield, or any creature while Maskwood Nexus is out, so do not count it as an opening
+source by itself.
 
 ## Bracket and Rule 0
 
-Bracket 4: 16 Game Changers (Mana Vault, Grim Monolith, Chrome Mox, Mox Diamond, The One Ring, Rhystic Study,
-Smothering Tithe, Enlightened Tutor, Demonic Tutor, Vampiric Tutor, Imperial Seal, Worldly Tutor, Force of Will,
-Teferi's Protection, Ancient Tomb, Gaea's Cradle) and two two-card infinite combos (Godo or Combat
-Celebrant plus Helm of the Host). Tell the table about the combos before the game.
+Bracket 4 with 16 Game Changers: Ancient Tomb, Chrome Mox, Demonic Tutor, Enlightened Tutor, Force of Will, Gaea's
+Cradle, Grim Monolith, Imperial Seal, Mana Vault, Mox Diamond, Rhystic Study, Smothering Tithe, Teferi's Protection,
+The One Ring, Vampiric Tutor and Worldly Tutor. The rebuilt list has no intentional infinite combo. Disclose the fast
+mana and tutors, and explain that the deck multiplies Dragon entry and attack triggers rather than assembling Godo and
+Helm of the Host.
 
 ## Decklist by type (100)
 **Commander (1).** The Ur-Dragon
 
-**Creatures (21).** Birds of Paradise, Brass Squire, Combat Celebrant, Dragonlord Ojutai, Dualcaster Mage, Gilgamesh Master-at-Arms, Glorybringer, Godo Bandit Warlord, Goldspan Dragon, Grand Abolisher, Imperial Recruiter, Jaxis the Troublemaker, Kura the Boundless Sky, Llanowar Elves, Nicol Bolas the Ravager, Paradise Druid, Puresteel Paladin, Sakura-Tribe Elder, Stoneforge Mystic, Terror of the Peaks, Thundermaw Hellkite
+**Creatures (23).** Astral Dragon, Atarka World Render, Birds of Paradise, Dragonborn Champion, Dragonlord Ojutai, Ganax Astral Hunter, Glorybringer, Goldspan Dragon, Jaxis the Troublemaker, Kura the Boundless Sky, Lathliss Dragon Queen, Llanowar Elves, Miirym Sentinel Wyrm, Nicol Bolas the Ravager, Paradise Druid, Sakura-Tribe Elder, Sarkhan Soul Aflame, Scourge of Valkas, Spark Double, Terror of the Peaks, Thundermaw Hellkite, Utvara Hellkite, Wrathful Red Dragon
 
 **Planeswalkers (1).** Wrenn and Six
 
-**Enchantments (4).** Rhystic Study, Sigarda's Aid, Smothering Tithe, Sylvan Library
+**Enchantments (8).** Dracogenesis, Dragon Tempest, Garruk's Uprising, Kindred Discovery, Rhystic Study, Smothering Tithe, Sylvan Library, Temur Ascendancy
 
-**Artifacts (20).** Arcane Signet, Chromatic Lantern, Chrome Mox, Embercleave, Grim Monolith, Hammer of Nazahn, Helm of the Host, Kaldra Compleat, Lightning Greaves, Lotus Petal, Mana Vault, Maskwood Nexus, Mox Diamond, Mox Jasper, Peter Parker's Camera, Shadowspear, Sol Ring, Sword of Feast and Famine, Sword of Fire and Ice, The One Ring
+**Artifacts (15).** Arcane Signet, Chromatic Lantern, Chrome Mox, Cursed Mirror, Dragon's Hoard, Grim Monolith, Lightning Greaves, Lotus Petal, Mana Vault, Maskwood Nexus, Mox Diamond, Mox Jasper, Panharmonicon, Sol Ring, The One Ring
 
-**Sorceries (9).** Decimate, Demonic Tutor, Imperial Seal, Kindred Dominance, Nature's Lore, Open the Armory, Rampant Growth, Steelshaper's Gift, Twinflame
+**Sorceries (7).** Decimate, Demonic Tutor, Imperial Seal, Kindred Dominance, Nature's Lore, Rampant Growth, Twinflame
 
 **Instants (10).** Chaos Warp, Enlightened Tutor, Force of Negation, Force of Will, Mana Drain, Pact of Negation, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
 
-**Lands (34).** Ancient Tomb, Badlands, Bayou, Blood Crypt, Bloodstained Mire, Breeding Pool, Cavern of Souls, City of Brass, Command Tower, Flooded Strand, Gaea's Cradle, Hallowed Fountain, Inventors' Fair, Mana Confluence, Marsh Flats, Misty Rainforest, Overgrown Tomb, Plateau, Polluted Delta, Sacred Foundry, Scrubland, Steam Vents, Stomping Ground, Taiga, Temple Garden, Tropical Island, Tundra, Underground Sea, Verdant Catacombs, Volcanic Island, Watery Grave, Windswept Heath, Wooded Foothills, 1 Forest
+**Lands (35).** Ancient Tomb, Badlands, Bayou, Blood Crypt, Bloodstained Mire, Breeding Pool, Cavern of Souls, City of Brass, Command Tower, Flooded Strand, Gaea's Cradle, Hallowed Fountain, Inventors' Fair, Maelstrom of the Spirit Dragon, Mana Confluence, Marsh Flats, Misty Rainforest, Overgrown Tomb, Plateau, Polluted Delta, Sacred Foundry, Scrubland, Steam Vents, Stomping Ground, Taiga, Temple Garden, Tropical Island, Tundra, Underground Sea, Verdant Catacombs, Volcanic Island, Watery Grave, Windswept Heath, Wooded Foothills, 1 Forest
 
 ## Import list (100)
 
 ```
 1 Ancient Tomb
 1 Arcane Signet
+1 Astral Dragon
+1 Atarka, World Render
 1 Badlands
 1 Bayou
 1 Birds of Paradise
 1 Blood Crypt
 1 Bloodstained Mire
-1 Brass Squire
 1 Breeding Pool
 1 Cavern of Souls
 1 Chaos Warp
 1 Chromatic Lantern
 1 Chrome Mox
 1 City of Brass
-1 Combat Celebrant
 1 Command Tower
+1 Cursed Mirror
 1 Decimate
 1 Demonic Tutor
+1 Dracogenesis
+1 Dragon Tempest
+1 Dragon's Hoard
+1 Dragonborn Champion
 1 Dragonlord Ojutai
-1 Dualcaster Mage
-1 Embercleave
 1 Enlightened Tutor
 1 Flooded Strand
 1 Force of Negation
 1 Force of Will
 1 Gaea's Cradle
-1 Gilgamesh, Master-at-Arms
+1 Ganax, Astral Hunter
+1 Garruk's Uprising
 1 Glorybringer
-1 Godo, Bandit Warlord
 1 Goldspan Dragon
-1 Grand Abolisher
 1 Grim Monolith
 1 Hallowed Fountain
-1 Hammer of Nazahn
-1 Helm of the Host
-1 Imperial Recruiter
 1 Imperial Seal
 1 Inventors' Fair
 1 Jaxis, the Troublemaker
-1 Kaldra Compleat
+1 Kindred Discovery
 1 Kindred Dominance
 1 Kura, the Boundless Sky
+1 Lathliss, Dragon Queen
 1 Lightning Greaves
 1 Llanowar Elves
 1 Lotus Petal
+1 Maelstrom of the Spirit Dragon
 1 Mana Confluence
 1 Mana Drain
 1 Mana Vault
 1 Marsh Flats
 1 Maskwood Nexus
+1 Miirym, Sentinel Wyrm
 1 Misty Rainforest
 1 Mox Diamond
 1 Mox Jasper
 1 Nature's Lore
 1 Nicol Bolas, the Ravager
-1 Open the Armory
 1 Overgrown Tomb
 1 Pact of Negation
+1 Panharmonicon
 1 Paradise Druid
-1 Peter Parker's Camera
 1 Plateau
 1 Polluted Delta
-1 Puresteel Paladin
 1 Rampant Growth
 1 Rhystic Study
 1 Sacred Foundry
 1 Sakura-Tribe Elder
+1 Sarkhan, Soul Aflame
+1 Scourge of Valkas
 1 Scrubland
-1 Shadowspear
-1 Sigarda's Aid
 1 Smothering Tithe
 1 Sol Ring
+1 Spark Double
 1 Steam Vents
-1 Steelshaper's Gift
 1 Stomping Ground
-1 Stoneforge Mystic
-1 Sword of Feast and Famine
-1 Sword of Fire and Ice
 1 Swords to Plowshares
 1 Sylvan Library
 1 Taiga
 1 Teferi's Protection
 1 Temple Garden
+1 Temur Ascendancy
 1 Terror of the Peaks
 1 The One Ring
 1 The Ur-Dragon
@@ -287,6 +238,7 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 1 Tundra
 1 Twinflame
 1 Underground Sea
+1 Utvara Hellkite
 1 Vampiric Tutor
 1 Verdant Catacombs
 1 Volcanic Island
@@ -294,6 +246,7 @@ Celebrant plus Helm of the Host). Tell the table about the combos before the gam
 1 Windswept Heath
 1 Wooded Foothills
 1 Worldly Tutor
+1 Wrathful Red Dragon
 1 Wrenn and Six
 1 Forest
 ```

@@ -1,9 +1,16 @@
 # The Ur-Dragon (deck key `urdragon`, Tier 5)
 
-The list is in `decklists/JD/ur-dragon-equipment.md` (Bracket 4, 17 Game Changers). The deck joined the sim on
+The list is in `decklists/JD/ur-dragon-equipment.md` (Bracket 4, 16 Game Changers). The deck joined the sim on
 2026-10-30. It plays from `data/plans/urdragon.toml` through the generic policy, with no hand-written deck AI.
 
-## Result (loose, 2000 games, seeds 500000-501999)
+## 2026-11-03: Dragon-copy rebuild (JD's choice; not simulated)
+
+The Godo, Helm and Equipment package moved to Sauron. Twenty slots now form a Dragon entry, token and copy package
+led by Astral Dragon, Miirym, Lathliss, Ganax, Dragon Tempest, Scourge of Valkas, Terror of the Peaks and Utvara
+Hellkite. The old results below describe the retired Godo list and are not a baseline for the rebuilt deck. The next
+measurement must use the matched T5 tier, loose profile and the default look-ahead AI.
+
+## Retired Godo-list result (loose, 2000 games, seeds 500000-501999)
 - **t5: 19.1% (CI 17.4-20.9).** The even share is 25%, so it is 5.9 points under.
   - Wins: damage 58%, combo 42%.
   - The plan came online (first combo attempt) in 9.3% of games.
