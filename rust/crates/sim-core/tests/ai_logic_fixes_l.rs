@@ -194,3 +194,40 @@ fn zur_ai_still_enchants_itself_with_an_aura_for_its_own_creature() {
     let armor = on_bf(&g, P0, "Ethereal Armor").expect("fetched");
     assert_eq!(g.perm(armor).attached, Some(zur));
 }
+
+// ------------------------------------------------------------------ "this creature or another creature dies" (2026-11-04)
+// The dying creature has left the battlefield before the death drains are counted, so its own death was missed.
+
+#[test]
+fn blood_artist_drains_for_its_own_death() {
+    let mut g = table(&["sheoldred", "seph"]);
+    let artist = perm(&mut g, P0, "Blood Artist");
+    let (me, opp) = (g.player(P0).life, g.player(P1).life);
+    die(&mut g, artist, "destroy".into()).unwrap();
+    assert_eq!((me - g.player(P0).life, opp - g.player(P1).life), (-1, 1), "Oracle: \"this creature or another\"");
+}
+
+#[test]
+fn zulaport_drains_once_per_zulaport_and_for_its_own_death() {
+    // two Zulaports and a creature of yours dies: each opponent loses 2, you gain 2
+    let mut g = table(&["sheoldred", "seph"]);
+    perm(&mut g, P0, "Zulaport Cutthroat");
+    perm(&mut g, P0, "Zulaport Cutthroat");
+    let elf = perm(&mut g, P0, "Llanowar Elves");
+    let (me, opp) = (g.player(P0).life, g.player(P1).life);
+    die(&mut g, elf, "destroy".into()).unwrap();
+    assert_eq!((me - g.player(P0).life, opp - g.player(P1).life), (-2, 2), "one drain per Zulaport");
+    // a Zulaport alone, dying itself
+    let mut g = table(&["sheoldred", "seph"]);
+    let z = perm(&mut g, P0, "Zulaport Cutthroat");
+    let (me, opp) = (g.player(P0).life, g.player(P1).life);
+    die(&mut g, z, "destroy".into()).unwrap();
+    assert_eq!((me - g.player(P0).life, opp - g.player(P1).life), (-1, 1), "its own death drains");
+    // an opponent's creature dying: not "a creature you control"
+    let mut g = table(&["sheoldred", "seph"]);
+    perm(&mut g, P0, "Zulaport Cutthroat");
+    let theirs = perm(&mut g, P1, "Llanowar Elves");
+    let (me, opp) = (g.player(P0).life, g.player(P1).life);
+    die(&mut g, theirs, "destroy".into()).unwrap();
+    assert_eq!((g.player(P0).life, g.player(P1).life), (me, opp), "not for an opponent's creature");
+}

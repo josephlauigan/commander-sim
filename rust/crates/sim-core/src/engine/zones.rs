@@ -853,9 +853,17 @@ fn card_tag_str(g: &Game, m: PermId, t: Tag) -> Option<&str> {
     g.perm(m).cd.and_then(|c| g.db.get(c).tags.str(t))
 }
 
-fn hand_tag_death(g: &mut Game, q: PlayerId, p: PlayerId, _m: PermId, creature: bool) -> Res {
+fn hand_tag_death(g: &mut Game, q: PlayerId, p: PlayerId, m: PermId, creature: bool) -> Res {
+    // how many of q's permanents with tag t see this death: the ones still on the battlefield, and the dying creature
+    // itself ("this creature or another creature dies"), which has already left by now (`leave` comes first), read as
+    // it last was: q's, with its abilities
+    let seeing = |g: &Game, t: Tag| -> usize {
+        let on_bf = find(g, q, t).iter().filter(|&&a| a != m && !g.perm(a).neutered).count();
+        let itself = p == q && card_tag(g, m, t) && !g.perm(m).neutered;
+        on_bf + usize::from(itself)
+    };
     // Blood Artist: "this creature or another creature dies": one drain per Artist you control (two drained once)
-    let artists = if creature { find(g, q, Tag::Bartist).iter().filter(|&&a| !g.perm(a).neutered).count() } else { 0 };
+    let artists = if creature { seeing(g, Tag::Bartist) } else { 0 };
     for _ in 0..artists {
         let opps: Vec<PlayerId> = g.opps(q).collect();
         let target = if crate::human::is_human(g, q) {
@@ -868,7 +876,10 @@ fn hand_tag_death(g: &mut Game, q: PlayerId, p: PlayerId, _m: PermId, creature: 
             gain(g, q, 1)?;
         }
     }
-    if q == p && has(g, q, Tag::Drain) && creature {
+    // Zulaport Cutthroat: "this creature or another creature you control dies, each opponent loses 1 life and you gain
+    // 1 life": once per Zulaport (two drained once), and for its own death too (it had left before it was counted)
+    let zulaports = if q == p && creature { seeing(g, Tag::Drain) } else { 0 };
+    for _ in 0..zulaports {
         for o in g.opps(q).collect::<Vec<_>>() {
             lose_life(g, o, 1, Some(q), "drain", None)?;
         }

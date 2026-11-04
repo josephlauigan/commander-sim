@@ -98,3 +98,5 @@ Sheoldred, t3 / t4: **15.9% / 17.2%** (average 16.5%) with the hand AI on (defau
 - **Blood Artist**: drains once per Artist (two Artists drained once per death), and only when a creature dies (it fired for any permanent).
 
 The numbers above predate these changes; a re-run on the deck's own tiers would show their effect.
+
+- **Zulaport Cutthroat** drains once per Zulaport (two drained once) and for its own death; **Blood Artist** also for its own death (the dying creature had left the battlefield before the drains were counted). Not simulated either.
