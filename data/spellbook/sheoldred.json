@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-10-30",
+  "fetched": "2026-11-04",
   "deck": "sheoldred",
   "commanders": [
     "Sheoldred, the Apocalypse"
   ],
-  "request_sha256": "3608f5c1470827df9d43888a6bca85bba6f08475576aeb0d2ae5c3277757b4f5",
+  "request_sha256": "632a465b7dc3473c9d51199d50fef027d68e2e6732b45d825d65441c37be07e0",
   "identity": "B",
   "included": [
     {
@@ -35,7 +35,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "O",
       "legal": true,
-      "popularity": 51722
+      "popularity": 51929
     },
     {
       "id": "1561-2720",
@@ -61,11 +61,101 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "O",
       "legal": true,
-      "popularity": 36361
+      "popularity": 36515
+    },
+    {
+      "id": "328-628-4279",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yawgmoth, Thran Physician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gray Merchant of Asphodel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.\nYou control at least one additional nontoken non-Human creature with toughness two or greater.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 15637
+    },
+    {
+      "id": "628-1495",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Triskelion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Triskelion has at least two +1/+1 counters on it.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8529
     }
   ],
   "included_by_changing_commanders": [],
   "almost_included": [
+    {
+      "id": "628-2034--5",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Persist Creature"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 47518,
+      "missing": []
+    },
     {
       "id": "1561-3862",
       "cards": [
@@ -93,10 +183,37 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 46618,
+      "popularity": 46750,
       "missing": [
         "Orcish Bowmasters"
       ]
+    },
+    {
+      "id": "628-2292--5",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [
+        "Persist Creature"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 33419,
+      "missing": []
     },
     {
       "id": "1561-2384",
@@ -123,7 +240,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 31281,
+      "popularity": 31409,
       "missing": [
         "Psychosis Crawler"
       ]
@@ -160,7 +277,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 26169,
+      "popularity": 26280,
       "missing": [
         "Sensei's Divining Top"
       ]
@@ -189,7 +306,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "O",
       "legal": true,
-      "popularity": 17019,
+      "popularity": 17063,
       "missing": [
         "Ob Nixilis, the Hate-Twisted"
       ]
@@ -218,9 +335,110 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 16195,
+      "popularity": 16249,
       "missing": [
         "Bloodletter of Aclazotz"
+      ]
+    },
+    {
+      "id": "2760-2842-4279",
+      "cards": [
+        {
+          "name": "Yawgmoth, Thran Physician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nest of Scarabs",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite card draw",
+        "Near-infinite lifegain triggers",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.\nYou control at least one additional creature.\nThere is at least one other creature on the battlefield.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14532,
+      "missing": [
+        "Nest of Scarabs"
+      ]
+    },
+    {
+      "id": "628-3693",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Walking Ballista on the battlefield with a +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 12147,
+      "missing": [
+        "Walking Ballista"
+      ]
+    },
+    {
+      "id": "1385-2760-4279",
+      "cards": [
+        {
+          "name": "Yawgmoth, Thran Physician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zulaport Cutthroat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nest of Scarabs",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite card draw",
+        "Near-infinite lifegain triggers",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.\nAn opponent controls a creature.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 11405,
+      "missing": [
+        "Nest of Scarabs"
       ]
     },
     {
@@ -247,9 +465,82 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "O",
       "legal": true,
-      "popularity": 11351,
+      "popularity": 11394,
       "missing": [
         "Alhammarret's Archive"
+      ]
+    },
+    {
+      "id": "243-628-2034",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Plague Belcher",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9602,
+      "missing": [
+        "Plague Belcher"
+      ]
+    },
+    {
+      "id": "628-884-4279",
+      "cards": [
+        {
+          "name": "Yawgmoth, Thran Physician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ayara, First of Locthwain",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.\nYou control at least one additional nontoken non-Human creature with toughness two or greater.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 8629,
+      "missing": [
+        "Ayara, First of Locthwain"
       ]
     },
     {
@@ -278,7 +569,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 6638,
+      "popularity": 6693,
       "missing": [
         "Tombstone Stairwell"
       ]
@@ -308,7 +599,7 @@
       "mana": "{2}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 6357,
+      "popularity": 6407,
       "missing": [
         "Jaws of Defeat"
       ]
@@ -339,9 +630,47 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5662,
+      "popularity": 5664,
       "missing": [
         "Lich's Mastery"
+      ]
+    },
+    {
+      "id": "628-2123-4279",
+      "cards": [
+        {
+          "name": "Kokusho, the Evening Star",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yawgmoth, Thran Physician",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.\nYou control at least one additional nontoken non-Human creature with toughness two or greater.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 5175,
+      "missing": [
+        "Kokusho, the Evening Star"
       ]
     },
     {
@@ -376,9 +705,46 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 4888,
+      "popularity": 4914,
       "missing": [
         "Skirge Familiar"
+      ]
+    },
+    {
+      "id": "2760-4279-6578",
+      "cards": [
+        {
+          "name": "Yawgmoth, Thran Physician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nest of Scarabs",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain triggers",
+        "Near-infinite card draw",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.\nYou control at least one additional creature.\nThere is at least one other creature on the battlefield.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2902,
+      "missing": [
+        "Nest of Scarabs"
       ]
     },
     {
@@ -405,9 +771,45 @@
       "mana": "{3}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2160,
+      "popularity": 2196,
       "missing": [
         "Platinum Angel"
+      ]
+    },
+    {
+      "id": "2034-3968-5003",
+      "cards": [
+        {
+          "name": "Nim Deathmantle",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grave Titan",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2181,
+      "missing": [
+        "Nim Deathmantle"
       ]
     },
     {
@@ -434,9 +836,42 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "O",
       "legal": true,
-      "popularity": 1944,
+      "popularity": 1945,
       "missing": [
         "Black Vise"
+      ]
+    },
+    {
+      "id": "243-628-2292",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Plague Belcher",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1891,
+      "missing": [
+        "Plague Belcher"
       ]
     },
     {
@@ -466,9 +901,36 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "O",
       "legal": true,
-      "popularity": 1763,
+      "popularity": 1772,
       "missing": [
         "Feast of Sanity"
+      ]
+    },
+    {
+      "id": "2034-2143",
+      "cards": [
+        {
+          "name": "Spawnsire of Ulamog",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1302,
+      "missing": [
+        "Spawnsire of Ulamog"
       ]
     },
     {
@@ -497,9 +959,323 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 1268,
+      "popularity": 1270,
       "missing": [
         "Blitzwing, Cruel Tormentor // Blitzwing, Adaptive Assailant"
+      ]
+    },
+    {
+      "id": "328-2173-2292-5220",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gray Merchant of Asphodel",
+          "zones": [
+            "H",
+            "L"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 6 if Gray Merchant is on the top of your library, or you have {3}{B}{B} available otherwise.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1221,
+      "missing": [
+        "Mortuary"
+      ]
+    },
+    {
+      "id": "2173-2292-2842-5220",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Blood Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 852,
+      "missing": [
+        "Mortuary"
+      ]
+    },
+    {
+      "id": "628-2034-4907",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tatterkite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 724,
+      "missing": [
+        "Tatterkite"
+      ]
+    },
+    {
+      "id": "628-2034-4929",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptic Trilobite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 601,
+      "missing": [
+        "Cryptic Trilobite"
+      ]
+    },
+    {
+      "id": "1385-2173-2292-5220",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Zulaport Cutthroat",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 589,
+      "missing": [
+        "Mortuary"
+      ]
+    },
+    {
+      "id": "628-2034-3723",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carnifex Demon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 547,
+      "missing": [
+        "Carnifex Demon"
+      ]
+    },
+    {
+      "id": "328-2034-2173-5220",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gray Merchant of Asphodel",
+          "zones": [
+            "H",
+            "L"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 6 if Gray Merchant is on the top of your library, or you have {3}{B}{B} available otherwise.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 491,
+      "missing": [
+        "Mortuary"
+      ]
+    },
+    {
+      "id": "228-628-4929",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptic Trilobite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Skullclamp",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite colorless mana that can only be spent to activate abilities"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1} if Cryptic Trilobite does not have a +1/+1 counter on it",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 446,
+      "missing": [
+        "Cryptic Trilobite"
       ]
     },
     {
@@ -532,6 +1308,41 @@
       ]
     },
     {
+      "id": "628-2292-4929",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cryptic Trilobite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana that can only be spent to activate abilities"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 420,
+      "missing": [
+        "Cryptic Trilobite"
+      ]
+    },
+    {
       "id": "202-335",
       "cards": [
         {
@@ -555,9 +1366,77 @@
       "mana": "{3}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 413,
+      "popularity": 416,
       "missing": [
         "Lich"
+      ]
+    },
+    {
+      "id": "628-2034-7217",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Moonshadow",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 409,
+      "missing": [
+        "Moonshadow"
+      ]
+    },
+    {
+      "id": "628-2292-3723",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Carnifex Demon",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 357,
+      "missing": [
+        "Carnifex Demon"
       ]
     },
     {
@@ -584,7 +1463,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 351,
+      "popularity": 349,
       "missing": [
         "Nefarious Lich"
       ]
@@ -613,9 +1492,182 @@
       "mana": "{3}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 341,
+      "popularity": 347,
       "missing": [
         "Platinum Emperion"
+      ]
+    },
+    {
+      "id": "628-2034-2193",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chainbreaker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 331,
+      "missing": [
+        "Chainbreaker"
+      ]
+    },
+    {
+      "id": "628-2034-2060",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Crystalline Crawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 316,
+      "missing": [
+        "Crystalline Crawler"
+      ]
+    },
+    {
+      "id": "628-1242",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cinderhaze Wretch",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 315,
+      "missing": [
+        "Cinderhaze Wretch"
+      ]
+    },
+    {
+      "id": "2173-2292-5220-6578",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 314,
+      "missing": [
+        "Mortuary"
+      ]
+    },
+    {
+      "id": "628-2193-2292",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chainbreaker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 311,
+      "missing": [
+        "Chainbreaker"
       ]
     },
     {
@@ -640,9 +1692,46 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 275,
+      "popularity": 289,
       "missing": [
         "Umbilicus"
+      ]
+    },
+    {
+      "id": "2760-4279-6634",
+      "cards": [
+        {
+          "name": "Yawgmoth, Thran Physician",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Nest of Scarabs",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Al Bhed Salvagers",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite card draw",
+        "Near-infinite lifegain triggers",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least one additional creature.\nYour life total is at least 2.\nAn opponent controls a creature.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 278,
+      "missing": [
+        "Nest of Scarabs"
       ]
     },
     {
@@ -667,9 +1756,838 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 270,
+      "popularity": 274,
       "missing": [
         "Blood Clock"
+      ]
+    },
+    {
+      "id": "628-2060-2292",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Crystalline Crawler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 265,
+      "missing": [
+        "Crystalline Crawler"
+      ]
+    },
+    {
+      "id": "628-2034-5296",
+      "cards": [
+        {
+          "name": "Workhorse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 265,
+      "missing": [
+        "Workhorse"
+      ]
+    },
+    {
+      "id": "628-2292-7217",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Moonshadow",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 257,
+      "missing": [
+        "Moonshadow"
+      ]
+    },
+    {
+      "id": "2034-4640",
+      "cards": [
+        {
+          "name": "Oathkeeper, Takeno's Daisho",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You conrtol a nontoken Samurai and/or a nontoken creature with changeling.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 248,
+      "missing": [
+        "Oathkeeper, Takeno's Daisho"
+      ]
+    },
+    {
+      "id": "628-2034-3108",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grim Poppet",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 242,
+      "missing": [
+        "Grim Poppet"
+      ]
+    },
+    {
+      "id": "1495-3005",
+      "cards": [
+        {
+          "name": "Mephidross Vampire",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Triskelion",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Triskelion has at least one +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 208,
+      "missing": [
+        "Mephidross Vampire"
+      ]
+    },
+    {
+      "id": "328-628-2034-4417",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Hex Parasite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gray Merchant of Asphodel",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "Gray Merchant does not have a +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 157,
+      "missing": [
+        "Hex Parasite"
+      ]
+    },
+    {
+      "id": "122-328-2292-2732",
+      "cards": [
+        {
+          "name": "Prowling Geistcatcher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Delver",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gray Merchant of Asphodel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 155,
+      "missing": [
+        "Prowling Geistcatcher"
+      ]
+    },
+    {
+      "id": "628-2292-3108",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grim Poppet",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 152,
+      "missing": [
+        "Grim Poppet"
+      ]
+    },
+    {
+      "id": "628-1242-2034",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cinderhaze Wretch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 152,
+      "missing": [
+        "Cinderhaze Wretch"
+      ]
+    },
+    {
+      "id": "628-1242-2292",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cinderhaze Wretch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 145,
+      "missing": [
+        "Cinderhaze Wretch"
+      ]
+    },
+    {
+      "id": "1331-1495",
+      "cards": [
+        {
+          "name": "Triskelion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scythe of the Wretched",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Scythe of the Wretched attached to Triskelion.\nTriskelion has at least three +1/+1 counters on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 125,
+      "missing": [
+        "Scythe of the Wretched"
+      ]
+    },
+    {
+      "id": "628-2292-5405",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Soulstinger",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 116,
+      "missing": [
+        "Soulstinger"
+      ]
+    },
+    {
+      "id": "628-2034-5405",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Soulstinger",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 116,
+      "missing": [
+        "Soulstinger"
+      ]
+    },
+    {
+      "id": "228-628-5296",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Workhorse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Skullclamp",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1} if Workhorse does not have a +1/+1 counter on it",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 110,
+      "missing": [
+        "Workhorse"
+      ]
+    },
+    {
+      "id": "122-328-2034-2732",
+      "cards": [
+        {
+          "name": "Prowling Geistcatcher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Phyrexian Delver",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gray Merchant of Asphodel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 80,
+      "missing": [
+        "Prowling Geistcatcher"
+      ]
+    },
+    {
+      "id": "564-628-2034",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Monoskelion",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Monoskelion does not have a +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 77,
+      "missing": [
+        "Monoskelion"
+      ]
+    },
+    {
+      "id": "628-2292-5490",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pith Driller",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Pith Driller does not have a +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 73,
+      "missing": [
+        "Pith Driller"
+      ]
+    },
+    {
+      "id": "628-2034-5490",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pith Driller",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "Pith Driller does not have a +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 72,
+      "missing": [
+        "Pith Driller"
+      ]
+    },
+    {
+      "id": "2292-6132-6981",
+      "cards": [
+        {
+          "name": "Perigee Beckoner",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Metamorphosis Fanatic",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 66,
+      "missing": [
+        "Metamorphosis Fanatic"
+      ]
+    },
+    {
+      "id": "628-2034-7188",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Heirloom Auntie",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 50,
+      "missing": [
+        "Heirloom Auntie"
+      ]
+    },
+    {
+      "id": "628-2292-7188",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Heirloom Auntie",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 48,
+      "missing": [
+        "Heirloom Auntie"
+      ]
+    },
+    {
+      "id": "2034-6132-6981",
+      "cards": [
+        {
+          "name": "Perigee Beckoner",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Metamorphosis Fanatic",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 41,
+      "missing": [
+        "Metamorphosis Fanatic"
+      ]
+    },
+    {
+      "id": "628-2034-3374",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Antler Skulkin",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken, non-Human white creature.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 41,
+      "missing": [
+        "Antler Skulkin"
       ]
     },
     {
@@ -694,9 +2612,255 @@
       "mana": "{10} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 30,
+      "popularity": 33,
       "missing": [
         "Obelisk of Undoing"
+      ]
+    },
+    {
+      "id": "2173-2292-5220-6634",
+      "cards": [
+        {
+          "name": "Mortuary",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bolas's Citadel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Al Bhed Salvagers",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 30,
+      "missing": [
+        "Mortuary"
+      ]
+    },
+    {
+      "id": "628-2292-7865",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dream Seizer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 22,
+      "missing": [
+        "Dream Seizer"
+      ]
+    },
+    {
+      "id": "628-2034-7212",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Creakwood Safewright",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 22,
+      "missing": [
+        "Creakwood Safewright"
+      ]
+    },
+    {
+      "id": "628-2292-7212",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Creakwood Safewright",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 20,
+      "missing": [
+        "Creakwood Safewright"
+      ]
+    },
+    {
+      "id": "628-2034-7865",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dream Seizer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 15,
+      "missing": [
+        "Dream Seizer"
+      ]
+    },
+    {
+      "id": "628-2034-7215",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ashnod's Altar",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gnarlbark Elm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 15,
+      "missing": [
+        "Gnarlbark Elm"
+      ]
+    },
+    {
+      "id": "628-2292-7215",
+      "cards": [
+        {
+          "name": "Mikaeus, the Unhallowed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Viscera Seer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gnarlbark Elm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 14,
+      "missing": [
+        "Gnarlbark Elm"
       ]
     },
     {
