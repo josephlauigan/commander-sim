@@ -1537,17 +1537,16 @@ fn skyhunter_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Pla
         return Ok(vec![]);
     }
     let human = crate::human::is_human(g, p);
-    // practice mode: the table's window comes first (the engine probes a trigger up to its first window, so nothing
-    // may be asked or moved before it), then the person looks at the top six
-    if human
-        && !crate::engine::stack::trigger_window(
-            g,
-            p,
-            Some(src),
-            "look at the top six: put an Aura or Equipment onto the battlefield",
-            Some(5.0),
-        )?
-    {
+    // the table's window comes first, for the AI too: the engine probes a trigger up to its first window, so nothing
+    // may be asked or moved before it (the AI used to pop the top six before its window, so the probe run lost the
+    // picked card and the real run looked at the next six)
+    if !crate::engine::stack::trigger_window(
+        g,
+        p,
+        Some(src),
+        "look at the top six: put an Aura or Equipment onto the battlefield",
+        Some(5.0),
+    )? {
         return Ok(vec![]);
     }
     let n = g.player(p).library.len().min(6);
@@ -1575,11 +1574,6 @@ fn skyhunter_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Pla
         g.player_mut(p).library.insert(0, c); // the bottom
     }
     let Some(c) = pick else { return Ok(vec![]) };
-    // the person has said yes by picking the card, after the table's window above
-    if !human && !may_window(g, p, Some(src), "put an Aura or Equipment onto the battlefield", Some(5.0))? {
-        g.player_mut(p).library.insert(0, c);
-        return Ok(vec![]);
-    }
     g.player_mut(p).seen.insert(c);
     // where it goes: the AI puts it on the best holder; the person picks a creature they control (an Equipment: "you
     // may attach it", so they may leave it unattached)

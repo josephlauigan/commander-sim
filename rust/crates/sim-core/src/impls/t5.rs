@@ -600,6 +600,41 @@ const ZUR_PREF: [&str; 11] = [
     "Copy Enchantment",
 ];
 
+/// Where an Aura that Zur puts onto the battlefield goes (Oracle: "put it onto the battlefield", so it is attached to
+/// something it could legally enchant). `Some(host)`: attach it there (`None` inside: not an Aura, or the Aura's own
+/// enter hook picks); the outer `None`: no legal object, so the AI leaves it in the library. Zur itself (the
+/// commander) for an Aura that goes on your own creature, as before; an opponent's best creature for an Aura whose
+/// registry target is "opp" (Arrest and the lock Auras); an Aura with its own host picker keeps it. The AI used to
+/// put every Aura on Zur.
+fn zur_host(g: &Game, p: PlayerId, src: PermId, c: CardId) -> Option<Option<PermId>> {
+    if !g.db.get(c).has_subtype("aura") {
+        return Some(None);
+    }
+    let Some(spec) = g.registry.get(c).and_then(|i| i.aura) else { return Some(Some(src)) };
+    if spec.host_pick.is_some() {
+        return Some(None);
+    }
+    let zur_ok = spec.host_ok.is_none_or(|ok| ok(g, p, src));
+    match spec.target {
+        "own" => {
+            if zur_ok {
+                Some(Some(src))
+            } else {
+                super::common::own_host(g, p, spec, None).map(Some)
+            }
+        }
+        "opp" => {
+            let theirs: Vec<PermId> = g
+                .opps(p)
+                .flat_map(|q| g.player(q).perms.iter().copied())
+                .filter(|&m| g.is_creature(m) && !g.perm(m).phased && !untargetable(g, m))
+                .collect();
+            first_max(&theirs, |m| pval(g, m)).map(Some)
+        }
+        _ => zur_ok.then_some(Some(src)).or_else(|| super::common::own_host(g, p, spec, None).map(Some)),
+    }
+}
+
 /// attacks: an enchantment with MV 3 or less onto the battlefield (Necropotence and armor Auras on Zur first)
 fn zur(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
     if !atk.contains(&src) {
@@ -632,7 +667,8 @@ fn zur(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res
         let Some(&c) = got.first() else { return Ok(vec![]) };
         let own_aura = g.db.get(c).has_subtype("aura")
             && g.registry.get(c).and_then(|i| i.aura).is_some_and(|a| a.target == "own");
-        g.attach_to = if g.db.get(c).has_subtype("aura") { Some(src) } else { None };
+        // an Aura for your own creature defaults to Zur; any other Aura asks (Aura enter hook) where it goes
+        g.attach_to = if own_aura { Some(src) } else { None };
         if own_aura {
             let mine: Vec<PermId> = g
                 .player(p)
@@ -655,7 +691,11 @@ fn zur(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res
     let h = have(g);
     let cs: Vec<CardId> = searchable(g, p)
         .into_iter()
-        .filter(|&c| fits(g, c, &h) && !(g.db.get(c).tag(Tag::Necro) && crate::ai::decks::necro_prio(g, p, c) == 0))
+        .filter(|&c| {
+            fits(g, c, &h)
+                && !(g.db.get(c).tag(Tag::Necro) && crate::ai::decks::necro_prio(g, p, c) == 0)
+                && zur_host(g, p, src, c).is_some()
+        })
         .collect();
     let Some(c) = first_min(&cs, |c| {
         let name = &*g.db.get(c).name;
@@ -665,10 +705,20 @@ fn zur(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res
     };
     remove_card(&mut g.player_mut(p).library, c);
     shuffle_library(g, p);
-    g.attach_to = if g.db.get(c).has_subtype("aura") { Some(src) } else { None };
+    let host = zur_host(g, p, src, c).flatten();
+    g.attach_to = host;
+    // a lock Aura (Arrest ...) has no enter hook of its own that honours `attach_to`: its removal code picks a target
+    // when it is cast and does nothing when it is put onto the battlefield (`aura_put`, "placed by Zur"), so Zur
+    // attaches it
+    let lock = host.is_some() && super::zur::lock_kind(&g.db.get(c).name).is_some();
+    g.aura_put = lock;
     let r = enter(g, p, c, Enter::default());
+    g.aura_put = false;
     g.attach_to = None;
-    r?;
+    let a = r?;
+    if lock && let Some(h) = host {
+        super::zur::lock_attach(g, a, h)?;
+    }
     crate::glog!(g, "    Zur fetches {}", g.db.get(c).name);
     Ok(vec![])
 }
