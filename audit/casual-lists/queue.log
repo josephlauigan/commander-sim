@@ -1,0 +1,11 @@
+16:49:17 start within-t2
+16:56:47 run within-t2 exit 0
+16:56:47 start within-t3
+16:59:46 run within-t3 exit 0
+16:59:46 start ordering-t2
+17:36:07 run ordering-t2 exit 0
+17:36:07 start ordering-t3
+18:05:12 run ordering-t3 exit 0
+18:05:12 start ordering-t4
+18:24:18 run ordering-t4 exit 0
+ALL DONE

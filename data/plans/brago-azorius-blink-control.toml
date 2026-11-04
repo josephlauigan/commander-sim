@@ -17,9 +17,3 @@ combo = "Displacer Kitten + Archaeomancer + Peregrine Drake or Cloud of Faeries 
 name = "Peregrine Drake + Archaeomancer + Ghostly Flicker (+ Agent of Treachery)"
 combo = "Peregrine Drake + Archaeomancer + Ghostly Flicker (+ Agent of Treachery)"
 
-# Cloudshift waits for the Kitten loop: kept while Displacer Kitten and Archaeomancer are both in hand or on the
-# battlefield (cloudshift_hold's first clause); otherwise the generic priority decides
-[[prio]]
-cards = ["Cloudshift"]
-when = ["have:Displacer Kitten & have:Archaeomancer"]
-value = 0
