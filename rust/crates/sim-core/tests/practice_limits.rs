@@ -67,9 +67,10 @@ fn main_phase(g: &mut Game) {
     g.step = Step::Main1;
 }
 
-// ------------------------------------------------------------------ 1. Scarlet Witch: X
+// ------------------------------------------------------------------ 1. Scarlet Witch: X is 0
+// "without paying its mana cost": X is 0 by the rules (107.3b), even with mana floating, so no X question
 #[test]
-fn scarlet_witch_asks_the_person_for_x_and_pays_it_from_the_pool() {
+fn scarlet_witch_casts_an_x_spell_for_x_zero_even_with_mana_floating() {
     let mut g = table(&["kefka", "seph"]);
     let witch = perm(&mut g, P0, "Scarlet Witch, Chaotic Avenger");
     let drain = take(&mut g, P0, "Exsanguinate");
@@ -77,19 +78,11 @@ fn scarlet_witch_asks_the_person_for_x_and_pays_it_from_the_pool() {
     g.player_mut(P0).library.extend([island, drain]);
     pool(&mut g, P0, &[('B', 4)]);
     let before = g.player(P1).life;
-    let log = person(&mut g, |r| {
-        if r.prompt.starts_with("Scarlet Witch") {
-            Some(text(r, "Exsanguinate"))
-        } else if r.prompt.contains("Exsanguinate: choose X") {
-            Some(text(r, "X = 3"))
-        } else {
-            None
-        }
-    });
+    let log = person(&mut g, |r| if r.prompt.starts_with("Scarlet Witch") { Some(text(r, "Exsanguinate")) } else { None });
     hooks::fire_trigger(&mut g, Event::CombatDamage, Call::CombatDamage { p: P0, a: witch, d: P1, dmg: 3 }).unwrap();
-    assert!(asked(&log, "Exsanguinate: choose X"), "{}", dump(&log));
-    assert_eq!(g.player(P1).life, before - 3, "X = 3 drained: {}", dump(&log));
-    assert_eq!(pool_total(&g, P0), 1, "X was paid from the pool, the mana cost was not");
+    assert!(!asked(&log, "choose X"), "no X question: {}", dump(&log));
+    assert_eq!(g.player(P1).life, before, "X = 0 drains nothing: {}", dump(&log));
+    assert_eq!(pool_total(&g, P0), 4, "nothing paid");
 }
 
 #[test]
