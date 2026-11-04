@@ -36,7 +36,8 @@ pub fn land_enters_tapped(g: &Game, p: PlayerId, cd: CardId) -> bool {
         return false; // Blood Moon: a Mountain with no "enters tapped" of its own (not a fetch land either)
     }
     if t.has(Tag::F) {
-        return true;
+        // the AI cracks it at once, so it counts as tapped; a person keeps it untapped to activate it (`human::fetch`)
+        return !(crate::human::is_human(g, p) && crate::human::fetch::person_fetch(&d.name));
     }
     if crate::impls::t12_windgrace::lands_enter_untapped(g, p) {
         return false; // --- Tiers 1/2 (windgrace): Spelunking
@@ -319,26 +320,41 @@ pub fn true_fetch(name: &str) -> Option<&'static str> { // --- ai-planner: pub (
     })
 }
 
+/// the life a person may pay for land card c to enter untapped (a shock land), when that rule applies to it now (the
+/// same test as `play_land_card`'s)
+pub fn shock_cost(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
+    match g.db.get(c).enters_rule {
+        Some(EnterRule::Pay(n))
+            if !crate::engine::mana::moon_card(g, c)
+                && !(!g.hooks.is_empty() && cards_named(g, p, &["Thalia, Heretic Cathar", "Archon of Emeria"])) =>
+        {
+            Some(n)
+        }
+        _ => None,
+    }
+}
+
+/// can fetch land card c be found by a fetch land of these kinds (`true_fetch`: two basic land types, "basic", or None:
+/// a basic land card)
+pub fn fetch_legal(g: &Game, c: CardId, kinds: Option<&str>) -> bool {
+    let d = g.db.get(c);
+    match kinds {
+        Some(k) if k != "basic" => d.land && d.land_types.intersects(crate::cards::Colors::from_letters(k)),
+        _ => d.land && ["Forest", "Island", "Plains", "Swamp", "Mountain", "Wastes"].contains(&&*d.name),
+    }
+}
+
 /// pool games: a fetch land is sacrificed at once for a land (a second landfall, a land in the graveyard)
 pub fn crack_fetch(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     if crate::engine::mana::moon_land(g, l) {
         return Ok(()); // Blood Moon: a fetch land has no ability
     }
     let name = g.db.get(g.perm(l).card()).name.to_string();
+    if crate::human::is_human(g, p) && crate::human::fetch::person_fetch(&name) {
+        return Ok(()); // a person keeps the fetch land and activates it when they choose (`human::fetch`)
+    }
     let kinds = true_fetch(&name);
-    let basics = ["Forest", "Island", "Plains", "Swamp", "Mountain", "Wastes"];
-    let cands: Vec<CardId> = match kinds {
-        Some(k) if k != "basic" => {
-            let ts = crate::cards::Colors::from_letters(k);
-            searchable(g, p)
-                .into_iter()
-                .filter(|&c| g.db.get(c).land && g.db.get(c).land_types.intersects(ts))
-                .collect()
-        }
-        _ => {
-            searchable(g, p).into_iter().filter(|&c| g.db.get(c).land && basics.contains(&&*g.db.get(c).name)).collect()
-        }
-    };
+    let cands: Vec<CardId> = searchable(g, p).into_iter().filter(|&c| fetch_legal(g, c, kinds)).collect();
     if cands.is_empty() {
         if crate::impls::titania::is_deck(g.player(p).key) {
             // the sacrifice is a cost: the land goes to the graveyard even with nothing to find (Titania)

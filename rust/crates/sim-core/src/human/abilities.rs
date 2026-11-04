@@ -403,6 +403,8 @@ fn grounds(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
 pub fn land_abilities(g: &Game, p: PlayerId, l: PermId) -> Vec<LandAbility> {
     let mut out = super::cards::land_abilities(g, p, l);
     out.extend(super::karn::land_abilities(g, p, l));
+    out.extend(super::fetch::land_abilities(g, l));
+    out.extend(super::cloud::land_abilities(g, l));
     let d = g.db.get(g.perm(l).card());
     if d.tag(Tag::Passage) {
         out.push(ability("{4}, {T}: target creature can't be blocked this turn", passage));

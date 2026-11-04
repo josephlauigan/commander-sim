@@ -502,6 +502,9 @@ fn outfitter_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let o = owner(g, src);
+    if crate::human::is_human(g, o) {
+        return crate::human::cloud::outfitter(g, src); // the person chooses the Equipment and the creature
+    }
     let Some(to) = best_holder(g, o) else { return Ok(()) };
     if best_pull(g, o, to).is_none() || !may_window(g, o, Some(src), "attach Equipment", Some(5.0))? {
         return Ok(());
@@ -1371,6 +1374,9 @@ fn forge_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let o = owner(g, src);
+    if crate::human::is_human(g, o) {
+        return crate::human::cloud::forge_anew(g, src); // the person chooses the Equipment card
+    }
     if crate::impls::t45_winota::jailed(g) {
         return Ok(()); // Soulless Jailer: permanent cards in graveyards can't enter
     }

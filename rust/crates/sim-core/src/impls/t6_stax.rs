@@ -247,6 +247,14 @@ fn needle_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let o = owner(g, src);
+    if crate::human::is_human(g, o) {
+        // the person names the card
+        if let Some(name) = crate::human::karn::name_for_needle(g, o)? {
+            g.perm_mut(src).data.set(DataKey::Imprint, Val::Card(name));
+            crate::glog!(g, "    Pithing Needle names {}", g.db.get(name).name);
+        }
+        return Ok(());
+    }
     if let Some((name, _)) = crate::ai::decks::flute_pick(g, o) {
         g.perm_mut(src).data.set(DataKey::Imprint, Val::Card(name));
         crate::glog!(g, "    Pithing Needle names {}", g.db.get(name).name);

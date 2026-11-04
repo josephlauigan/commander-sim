@@ -715,6 +715,9 @@ fn spine_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());
     }
+    if crate::human::is_human(g, p) {
+        return crate::human::karn::spine_enters(g, src); // the person chooses the permanent
+    }
     let pick = |g: &Game| best_opp_nonland(g, p, |x| !indestructible(g, x)).filter(|&t| pval(g, t) >= 2.0);
     if pick(g).is_none() || !trigger_window(g, p, Some(src), "destroy target permanent", Some(6.0))? {
         return Ok(());

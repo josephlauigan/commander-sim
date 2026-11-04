@@ -29,6 +29,8 @@ pub enum Tk {
     OwnCreature,
     /// a player (you too)
     Player,
+    /// a creature you don't control
+    OppCreature,
 }
 
 /// One thing the person is asked as the spell is cast.
@@ -57,6 +59,13 @@ pub enum Ask {
     Kick(&'static str),
     /// a storm spell (Brain Freeze, Grapeshot): the target of the spell and of each copy, asked as it is cast
     Storm,
+    /// Akroma's Will: choose one (both, with a commander); `ctx.mode` = flying / protect / both
+    Will,
+    /// Winds of Abandon: its overload {4}{W}{W} (every creature you don't control) or a target creature you don't
+    /// control; `ctx.mode` = overload when overloaded
+    Overload,
+    /// Galadriel's Dismissal: a target creature, or kicked {2}{W}: a target player; `ctx.mode` = kicked when kicked
+    Dismissal,
 }
 
 const SPLATTER: &[(&str, &str)] =
@@ -83,6 +92,9 @@ pub fn spec(name: &str) -> Option<&'static [Ask]> {
         "Scout the City" => &[Ask::Scout],
         "Orim's Chant" => &[Ask::Target(Tk::Player), Ask::Kick("W")],
         "Brain Freeze" | "Grapeshot" => &[Ask::Storm],
+        "Akroma's Will" => &[Ask::Will],
+        "Winds of Abandon" => &[Ask::Overload],
+        "Galadriel's Dismissal" => &[Ask::Dismissal],
         _ => return None,
     })
 }
@@ -115,6 +127,7 @@ fn perm_cands(g: &Game, p: PlayerId, c: CardId, kind: Tk) -> Vec<PermId> {
                 Tk::Creature => cr,
                 Tk::CreatureOrPw => cr || pw,
                 Tk::OwnCreature => cr && x.owner == p,
+                Tk::OppCreature => cr && x.owner != p,
                 Tk::Player => false,
             };
             if !ok || x.phased || (x.owner != p && (untargetable(g, m) || protected_from(g, m, pips))) {
@@ -295,6 +308,94 @@ pub fn choose_pre(g: &Game, p: PlayerId, c: CardId, ctx: &mut Ctx) -> Res<Pre> {
                     return Ok(Pre::Cancel);
                 }
             }
+            Ask::Will => {
+                // "If you control a commander as you cast this spell, you may choose both instead"
+                let both = g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && !g.perm(m).phased && g.perm(m).is_cmd);
+                let mut labels = vec![
+                    "creatures you control gain flying, vigilance and double strike until end of turn".to_string(),
+                    "creatures you control gain lifelink, indestructible and protection from each color until end of turn"
+                        .to_string(),
+                ];
+                if both {
+                    labels.push("both".into());
+                }
+                let Some(k) =
+                    choices::choose(g, p, "choose", &format!("{name}: choose a mode"), &labels, Some("cancel"), None)?
+                else {
+                    return Ok(Pre::Cancel);
+                };
+                ctx.mode = Some(intern(["flying", "protect", "both"][k]));
+            }
+            Ask::Overload => {
+                // overload {4}{W}{W} (instead of {1}{W}): offered when the pool can pay it; it has no target
+                let can = mana::cost_problem(g, p, 4, "WW").is_none();
+                let mut over = false;
+                if can {
+                    let labels = vec![
+                        "cast it for {1}{W}: exile target creature you don't control".to_string(),
+                        "overload {4}{W}{W}: exile each creature you don't control".to_string(),
+                    ];
+                    let Some(k) = choices::choose(g, p, "choose", &format!("{name}: how?"), &labels, Some("cancel"), None)?
+                    else {
+                        return Ok(Pre::Cancel);
+                    };
+                    over = k == 1;
+                }
+                if over {
+                    ctx.mode = Some(intern("overload"));
+                } else {
+                    let ms = perm_cands(g, p, c, Tk::OppCreature);
+                    if ms.is_empty() {
+                        return Ok(Pre::Problem(format!("{name} has no legal target right now.")));
+                    }
+                    let t: Vec<Target> = ms.iter().map(|&m| Target::Perm(m)).collect();
+                    let pr = format!("{name}: choose a target (creature you don't control)");
+                    let Some(k) = choices::choose(g, p, "target", &pr, &labels_of(g, p, &t), Some("cancel"), None)?
+                    else {
+                        return Ok(Pre::Cancel);
+                    };
+                    ctx.target = Some(ms[k]);
+                }
+            }
+            Ask::Dismissal => {
+                // kicker {2}{W}: each creature target player controls phases out instead of one target creature
+                let can = mana::cost_problem(g, p, 2, "WW").is_none();
+                let mut kicked = false;
+                if can {
+                    let labels = vec![
+                        "cast it for {W}: target creature phases out".to_string(),
+                        "kicker {2}{W}: each creature target player controls phases out".to_string(),
+                    ];
+                    let Some(k) = choices::choose(g, p, "choose", &format!("{name}: kicker?"), &labels, Some("cancel"), None)?
+                    else {
+                        return Ok(Pre::Cancel);
+                    };
+                    kicked = k == 1;
+                }
+                if kicked {
+                    let ps = players(g);
+                    let t: Vec<Target> = ps.iter().map(|&q| Target::Player(q)).collect();
+                    let pr = format!("{name}: choose a target (player)");
+                    let Some(k) = choices::choose(g, p, "target", &pr, &labels_of(g, p, &t), Some("cancel"), None)?
+                    else {
+                        return Ok(Pre::Cancel);
+                    };
+                    ctx.face = Some(ps[k]);
+                    ctx.mode = Some(intern("kicked"));
+                } else {
+                    let ms = perm_cands(g, p, c, Tk::Creature);
+                    if ms.is_empty() {
+                        return Ok(Pre::Problem(format!("{name} has no legal target right now.")));
+                    }
+                    let t: Vec<Target> = ms.iter().map(|&m| Target::Perm(m)).collect();
+                    let pr = format!("{name}: choose a target (creature)");
+                    let Some(k) = choices::choose(g, p, "target", &pr, &labels_of(g, p, &t), Some("cancel"), None)?
+                    else {
+                        return Ok(Pre::Cancel);
+                    };
+                    ctx.target = Some(ms[k]);
+                }
+            }
             Ask::X | Ask::Comet | Ask::Kick(_) => {} // after the mana is paid (choose_post)
         }
     }
@@ -373,6 +474,20 @@ pub fn choose_post(g: &mut Game, p: PlayerId, c: CardId, ctx: &mut Ctx) -> Res {
                         Target::Perm(m) => ctx.perms.push(m),
                         Target::Player(q) => ctx.faces.push(q),
                     }
+                }
+            }
+            Ask::Overload if ctx.mode.is_some_and(|m| m == "overload") => {
+                // {4}{W}{W} in all, {1}{W} of it paid with the spell; if the pool can't pay the rest, it is not overloaded
+                if mana::pay_from_pool(g, p, 3, "W").is_some() {
+                    ctx.mode = None;
+                }
+            }
+            Ask::Dismissal if ctx.mode.is_some_and(|m| m == "kicked") => {
+                if mana::pay_from_pool(g, p, 2, "W").is_some() {
+                    ctx.mode = None;
+                    ctx.face = None;
+                } else {
+                    ctx.kicks = 1;
                 }
             }
             _ => {}
