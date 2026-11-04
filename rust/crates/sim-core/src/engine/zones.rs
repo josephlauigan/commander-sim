@@ -100,7 +100,9 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
         pl.stat("cards_drawn", 1);
         crate::gf_audit::draw(g, p, c); // --- ai-audit
         crate::t6stats::flow_draw(g, p, step && k == 0, new); // --- ai-flow
-        if has(g, p, Tag::Ironman)
+        if has(g, p, Tag::Ironman) && crate::human::is_human(g, p) {
+            crate::human::triggers_t1::ironman_counter(g, p)?; // the person picks the creature
+        } else if has(g, p, Tag::Ironman)
             && let Some(a) = army_of(g, p)
         {
             repl::put_plus(g, a, 1);

@@ -1035,7 +1035,11 @@ const MAX_COMBATS: u32 = 200;
 
 /// p's combat phase (and extra combats). Python's `combat`.
 pub fn combat(g: &mut Game, p: PlayerId) -> Res {
-    ozolith_move(g, p);
+    if crate::human::is_human(g, p) {
+        crate::human::triggers_t1::ozolith_move(g, p)?; // the person picks the creature (or none)
+    } else {
+        ozolith_move(g, p);
+    }
     g.player_mut(p).haste_all = false;
     let mut ncomb = 0;
     while ncomb < MAX_COMBATS && !g.over && g.player(p).alive {

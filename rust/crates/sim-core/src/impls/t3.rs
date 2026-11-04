@@ -222,6 +222,9 @@ pub fn sac_worst_permanent(g: &mut Game, p: PlayerId, exclude: Option<PermId>) -
 fn korvold_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let o = g.perm(src).owner;
     if m == src && trigger_window(g, o, Some(src), "sacrifice another permanent", None)? {
+        if human_of(g, o).is_some() {
+            return crate::human::triggers_t1::korvold_sacrifice(g, o, src); // the person picks what to sacrifice
+        }
         sac_worst_permanent(g, o, Some(src))?;
     }
     Ok(())
@@ -229,6 +232,10 @@ fn korvold_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 
 fn korvold_atk(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
     if atk.contains(&src) && trigger_window(g, p, Some(src), "sacrifice another permanent", None)? {
+        if human_of(g, p).is_some() {
+            crate::human::triggers_t1::korvold_sacrifice(g, p, src)?; // the person picks what to sacrifice
+            return Ok(vec![]);
+        }
         sac_worst_permanent(g, p, Some(src))?;
     }
     Ok(vec![])
