@@ -252,8 +252,9 @@ Three rules cover all of them:
 - **Produces:** infinite mana of any colour, infinite hasty tokens and enter triggers (Spellbook also lists infinite
   card draw and storm count).
 - **The win:** with the mana banked, spend the last tokens on Braingeyser: a token chooses Braingeyser, and the copy
-  ({X}{U}{U}, so keep blue mana) makes one opponent draw X cards, X their library size, and they lose when state-based
-  actions are checked. Use one token per opponent (each token can choose Braingeyser once). Shivan Dragon is a second
+  ({X}{U}{U}, so keep blue mana) makes one opponent draw X cards. Make X at least their library size plus one: a
+  player loses only after trying to draw from an empty library, and does so when state-based actions are next
+  checked. Use one token per opponent (each token can choose Braingeyser once). Shivan Dragon is a second
   route: each token that chooses it makes a Dragon enter, which with Terror of the Peaks, Scourge of Valkas or Dragon
   Tempest out is damage for every token.
 - **Finding the missing piece:** Twinflame is a sorcery, so Demonic Tutor puts it in hand, and Vampiric Tutor or Imperial
