@@ -270,12 +270,17 @@ fn garth_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
 /// the board that grows without bound: Dragon tokens to the battlefield's token cap (summoning sick; the next combat
 /// is the kill)
 fn dragon_flood(g: &mut Game, p: PlayerId) -> Res {
+    dragon_flood_n(g, p, TOKEN_CAP as u32)
+}
+
+/// `n` of those Dragons before any doubling (the person's shortcut, `human/urdragon.rs`, picks how many)
+pub fn dragon_flood_n(g: &mut Game, p: PlayerId, n: u32) -> Res {
     let spec = Tokens {
         fly: true,
         tgh: Some(3),
         types: vec!["dragon"],
         color: Some(Colors::from_letters("U")),
-        ..Tokens::new(TOKEN_CAP as u32, 3)
+        ..Tokens::new(n, 3)
     };
     let made = make_tokens(g, p, spec)?.len();
     crate::glog!(g, "    {} has {} more 3/3 flying Dragons", g.player(p).name, made);
