@@ -15,6 +15,7 @@ pub mod cards;
 pub mod choices;
 pub mod combos;
 pub mod combat;
+pub mod fetch;
 pub mod human;
 pub mod karn;
 pub mod legal;
