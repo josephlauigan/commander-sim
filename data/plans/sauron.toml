@@ -144,7 +144,7 @@ value = 66
 
 # rocks early, not late
 [[prio]]
-cards = ["Sol Ring", "Arcane Signet", "Chromatic Lantern", "Dimir Signet", "Fellwar Stone", "Mind Stone",
+cards = ["Sol Ring", "Arcane Signet", "Dimir Signet", "Fellwar Stone", "Mind Stone",
     "Rakdos Signet", "Talisman of Creativity", "Talisman of Dominance", "Talisman of Indulgence"]
 when = ["turn<=5"]
 value = 80

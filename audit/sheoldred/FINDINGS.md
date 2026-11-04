@@ -4,6 +4,13 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile, vs Sheoldred's matched
 tiers (T3-T5) unless noted. Older tests: README.md in this folder.
 
+## 2026-11-04: Coffers drain package (JD's choice; not simulated)
+Sanguine Bond, Exquisite Blood, Vito, Thorn of the Dusk Rose, Grim Tutor and Torment of Hailfire in for Seymour Flux,
+Lethal Throwdown, Raise Dead, Phyrexian Rager and Burrog Banemaker. Why: with 31 Swamps, Cabal Coffers is big mana on
+its own, and in Y'shtola's Coffers tests Exquisite Blood + Sanguine Bond was the piece that worked (cast in 68% of the
+games drawn, 61% wins when cast). Vito makes it any two of three; Grim Tutor is the third tutor. Triskelion stays (the
+Mikaeus combo). Game Changers unchanged (4). No number yet: measure over T3-T4.
+
 ## 2026-11-04: Cabal Coffers for Command Tower (JD's physical deck; not simulated)
 31 Swamps make Coffers a big-mana land on its own (six Swamps out: net {B}{B}{B}{B}) for Exsanguinate and the big
 turns. Command Tower made only {B} here. No number yet: the next baseline (T3-T4) measures it.

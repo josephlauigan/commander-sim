@@ -140,7 +140,9 @@ answered.
 **Cabal Coffers** ({2}, {T}: add {B} for each Swamp you control) and **Urborg, Tomb of Yawgmoth** (every land is a Swamp)
 took Karn's Bastion's and a Swamp's slots (JD, 2026-11-04): with both out, L lands make 2L - 3 mana (11 at seven lands) for
 Exsanguinate, Torment of Hailfire or two big spells in a turn. Coffers alone, on five Swamps and the black duals, nets a
-mana or two.
+mana or two. **Urza's Cave** (a land: {3}, {T}, sacrifice it: a land onto the battlefield tapped) and
+**Expedition Map** ({2}, {T}, sacrifice it: a land into your hand) find Urborg once Coffers is out, Coffers once Urborg is
+out, or a missing colour (JD, 2026-11-04, for an Island and Chromatic Lantern; not simulated).
 
 ### Card flow, mana and interaction
 Card draw: **Fact or Fiction** (an instant-speed dig: cast it at the end of an opponent's turn for two of the five
@@ -148,8 +150,8 @@ cards), **Night's Whisper**, **Bloodsoaked Insight // Sanguine Morass** (an exil
 each life your opponents have lost this turn, or a land that taps for {B} or {R}) and Iron Man.
 **Faerie Mastermind** ({1}{U}, flash flier) draws you a card whenever an opponent draws their second card in a turn:
 the Archivist wheel, Bowmasters' forced draws and Baleful Mastery's cheap mode all trigger it.
-Rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone, Dimir Signet, Rakdos Signet,
-Talismans of Creativity, Dominance and Indulgence, and Chromatic Lantern. Spot removal: **Bitter Triumph**,
+Rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone, Dimir Signet, Rakdos Signet, and the
+Talismans of Creativity, Dominance and Indulgence. Spot removal: **Bitter Triumph**,
 **Bloodchief's Thirst**, **Baleful Mastery**, **Infernal Grasp**, **Terminate** and **Chaos
 Warp**. Counters: **Mana Drain** (the countered spell's mana value comes back as {C} on your next main phase: put it
 toward Sauron, a Titan or a big X spell), **Counterspell**, **An Offer You Can't Refuse** ({U}: counter a noncreature spell; its controller gets two Treasures, which
@@ -202,14 +204,14 @@ create the next combat while the Army and other creatures repeatedly untap.
 
 ## Mana and consistency
 
-The list is exactly 100 cards. 35 lands (20 nonbasic, 5 Island, 5 Mountain, 5 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 36 when you need the land half. Ten rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone (any colour an opponent's land could produce), Dimir Signet, Rakdos Signet, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, and Chromatic Lantern.
+The list is exactly 100 cards. 35 lands (21 nonbasic, 4 Island, 5 Mountain, 5 Swamp); Bloodsoaked Insight // Sanguine Morass is counted as a spell, so the deck plays as 36 when you need the land half. Nine rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone (any colour an opponent's land could produce), Dimir Signet, Rakdos Signet, Talisman of Creativity, Talisman of Dominance and Talisman of Indulgence.
 
 | Measure | Count | Note |
 | --- | --- | --- |
-| Blue lands | 16 | 5 Island plus the U duals, Command Tower, Exotic Orchard, Path of Ancestry, Treno |
+| Blue lands | 15 | 4 Island plus the U duals, Command Tower, Exotic Orchard, Path of Ancestry, Treno |
 | Black lands | 18 (all 35 with Urborg out) | 5 Swamp plus Cabal Coffers (with a Swamp out), Barad-dûr, Blood Crypt, Drowned Catacomb, Underground Sea, Watery Grave, Underground River, Foreboding Ruins, Haunted Ridge, Treno, and the any-colour lands |
 | Red lands | 15 | 5 Mountain, Sokenzan, plus the R duals, Haunted Ridge, and the any-colour lands |
-| Colorless-only lands | 2 | Rogue's Passage, Scavenger Grounds |
+| Colorless-only lands | 3 | Rogue's Passage, Scavenger Grounds, Urza's Cave |
 
 Dual lands: the original dual Underground Sea; the shocklands Blood Crypt, Steam Vents and Watery Grave; the check lands Drowned Catacomb and Sulfur Falls; the painlands Shivan Reef and Underground River; Foreboding Ruins (reveal a matching land or enter tapped); Haunted Ridge; and the tapped lands Treno, Dark City and Path of Ancestry. **Sokenzan, Crucible of Defiance** taps for {R} like a Mountain; late, channel it ({3}{R}, discard it) for two hasty 1/1 Spirits at instant speed.
 
@@ -261,11 +263,11 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Enchantments (3).** Call of the Ring, Dreadhorde Invasion, Propaganda
 
-**Artifacts (16).** Arcane Signet, Chromatic Lantern, Dimir Signet, Fellwar Stone, Hammer of Nazahn, Helm of the Host, Lightning Greaves, Mind Stone, Peter Parker's Camera, Rakdos Signet, Sol Ring, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, The Ozolith, Whispersilk Cloak
+**Artifacts (16).** Arcane Signet, Dimir Signet, Expedition Map, Fellwar Stone, Hammer of Nazahn, Helm of the Host, Lightning Greaves, Mind Stone, Peter Parker's Camera, Rakdos Signet, Sol Ring, Talisman of Creativity, Talisman of Dominance, Talisman of Indulgence, The Ozolith, Whispersilk Cloak
 
 **Instants and sorceries (27).** An Offer You Can't Refuse, Baleful Mastery, Bitter Triumph, Bloodchief's Thirst, Bloodsoaked Insight // Sanguine Morass, Chandra's Ignition, Chaos Warp, Comet Storm, Counterspell, Cyclonic Rift, Deflecting Swat, Diabolic Intent, Diabolic Tutor, Exsanguinate, Fact or Fiction, Force of Will, Infernal Grasp, Mana Drain, Mystic Confluence, Nibelheim Aflame, Night's Whisper, Not of This World, Ringsight, Slip Out the Back, Terminate, Torment of Hailfire, Vandalblast
 
-**Lands (35).** Barad-dûr, Blood Crypt, Cabal Coffers, Command Tower, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Haunted Ridge, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Sokenzan Crucible of Defiance, Steam Vents, Sulfur Falls, Treno Dark City, Underground River, Underground Sea, Urborg Tomb of Yawgmoth, Watery Grave, 5 Island, 5 Mountain, 5 Swamp
+**Lands (35).** Barad-dûr, Blood Crypt, Cabal Coffers, Command Tower, Drowned Catacomb, Exotic Orchard, Foreboding Ruins, Haunted Ridge, Path of Ancestry, Rogue's Passage, Scavenger Grounds, Shivan Reef, Sokenzan Crucible of Defiance, Steam Vents, Sulfur Falls, Treno Dark City, Underground River, Underground Sea, Urborg Tomb of Yawgmoth, Urza's Cave, Watery Grave, 4 Island, 5 Mountain, 5 Swamp
 
 Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when you need the land half.
 
@@ -284,7 +286,6 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Call of the Ring
 1 Chandra's Ignition
 1 Chaos Warp
-1 Chromatic Lantern
 1 Combat Celebrant
 1 Comet Storm
 1 Command Tower
@@ -297,6 +298,7 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Dreadhorde Invasion
 1 Drowned Catacomb
 1 Exotic Orchard
+1 Expedition Map
 1 Exsanguinate
 1 Fact or Fiction
 1 Faerie Mastermind
@@ -352,12 +354,13 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Underground River
 1 Underground Sea
 1 Urborg, Tomb of Yawgmoth
+1 Urza's Cave
 1 Vandalblast
 1 Vision, Synthezoid Avenger
 1 War Machine, Avenging Arsenal
 1 Watery Grave
 1 Whispersilk Cloak
-5 Island
+4 Island
 5 Mountain
 5 Swamp
 ```
