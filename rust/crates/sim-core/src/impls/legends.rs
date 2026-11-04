@@ -588,12 +588,31 @@ fn blessing(g: &mut Game, src: Src, p: PlayerId) -> Res {
     stat(g, p, "jr_hyd_turns", 1);
     let cs: Vec<PermId> =
         g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && m != src && !g.perm(m).phased).collect();
-    let Some(t) = first_max(&cs, |m| (name_of(g, m) == JODAH, pval(g, m) + if legendary(g, m) { 2.0 } else { 0.0 }))
-    else {
+    let human = crate::human::is_human(g, p);
+    let mut best = if human {
+        None
+    } else {
+        first_max(&cs, |m| (name_of(g, m) == JODAH, pval(g, m) + if legendary(g, m) { 2.0 } else { 0.0 }))
+    };
+    if human {
+        // practice mode: "another target creature you control" is the person's pick, asked after the table's window
+        // (the engine probes a trigger up to its first window, and a question before it would be asked twice)
+        if cs.is_empty() || !trigger_window(g, p, Some(src), "+1/+1 counter, indestructible", None)? {
+            return Ok(());
+        }
+        best = crate::human::gaps_t2::pick_target(
+            g,
+            p,
+            &cs,
+            "Hydaelyn, Blessing of Light: which creature gets a +1/+1 counter and indestructible?",
+            None,
+        )?;
+    }
+    let Some(t) = best else {
         return Ok(());
     };
     let label = format!("+1/+1 counter, indestructible: {}", g.perm(t).name);
-    if !trigger_window(g, p, Some(src), &label, None)? || !on(g, p, t) {
+    if (!human && !trigger_window(g, p, Some(src), &label, None)?) || !on(g, p, t) {
         return Ok(());
     }
     let turns = g.player(p).turns as i64;
@@ -1830,7 +1849,14 @@ fn court(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if cs.is_empty() || !trigger_window(g, o, Some(src), "return a permanent card", None)? {
         return Ok(());
     }
-    let c = max_by(&cs, |c| card_worth(g, o, c, false)).unwrap();
+    // practice mode: "target permanent card" is the person's pick (asked after the window: the engine probes a trigger
+    // up to its first window, and a question before it would be asked twice)
+    let picked = if crate::human::is_human(g, o) {
+        crate::human::gaps_t2::pick_card(g, o, &cs, "Court of Ardenvale: return which permanent card?", None)?
+    } else {
+        None
+    };
+    let c = picked.unwrap_or_else(|| max_by(&cs, |c| card_worth(g, o, c, false)).unwrap());
     if !remove_card(&mut g.player_mut(o).gy, c) {
         return Ok(());
     }

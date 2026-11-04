@@ -134,3 +134,20 @@ PR #238 (build b8fc69f9). Raw: `.claude/worktrees/sim-runs-2026-11-04/urdragon-b
 **Still open:** the Mox Jasper for Sting swap (11/02) has not been run on this list; Universal Automaton is still
 unmodelled. "Strengths", "Weaknesses" and "Model status" under the Retired Godo-list heading describe the old list. A
 card report (`--analyze`) of the new list is the next step to learn what sits in hand.
+
+## 2026-11-04 (later): Spark Double fixed, t5 re-check
+
+Spark Double never worked for the AI: the 0/0 died to the toughness check before its enter hook copied (a ported
+Python bug that `tests/cards_common2.rs` even asserted). It now enters as the copy, as a replacement
+(`impls::common::spark_copy`), with its additional +1/+1 (or loyalty) counter, and it isn't legendary (before, a copy
+of a legend met the legend rule at once). Found through the practice-mode Garth loop shortcut.
+
+Re-run of the baseline above, same settings (t5, 2,000 games, seed 500000, loose, look-ahead), on the practice-mode
+follow-ups branch (all its other changes are person-only):
+
+- **Win rate 22.1% (95% CI 20.3-24.0%)**, against 21.1% (19.4-23.0) before: +1.0 point, inside the overlap of the
+  two intervals, so a small lift at most. Wins by damage 94%, combo 6% (7% before). Win turn 10.0, loss turn 7.5.
+- Why it is small: Spark Double is one card in 100, drawn in about a quarter of games, and when it lands it is a
+  second copy of the best creature (a Dragon) rather than a dead card. The Garth line (Spark Double's Garth) can now
+  start in an AI game too, but the catalogue's Garth combo is still rare.
+- Raw: `.claude/worktrees/sim-runs-2026-11-04/urdragon-spark-fix.txt`.

@@ -290,21 +290,21 @@ fn narset_digs_a_noncreature_card() {
 fn spark_double_copies_the_best_creature_with_a_counter() {
     let mut g = table(&["brago-azorius-blink-control", "seph"]);
     perm(&mut g, P0, "Grave Titan");
-    // as in the Python, the 0/0 dies to the toughness check before its enter hook copies (a Python bug, ported)
+    // 2026-11-04: it enters as the copy (a replacement, `impls::common::spark_copy`); before, the 0/0 died to the
+    // toughness check before its enter hook copied (a Python bug, ported), so the AI's Spark Double never worked
     let s = perm(&mut g, P0, "Spark Double");
-    assert!(!g.perm(s).on_bf);
-    assert!(in_gy(&g, P0, "Spark Double"));
-    assert_eq!(named(&g, P0, "Grave Titan").len(), 1);
-    // entering with a counter, it survives and copies
-    let c = take(&mut g, P0, "Spark Double");
-    g.player_mut(P0).gy.clear();
-    zones::enter(&mut g, P0, c, zones::Enter { plus: 1, ..zones::Enter::default() }).unwrap();
+    assert!(g.perm(s).on_bf);
     let copies = named(&g, P0, "Grave Titan");
     assert_eq!(copies.len(), 2);
-    let c = copies[1];
-    assert_eq!(g.perm(c).plus, 1);
-    assert_eq!(g.perm(c).phys, Some(card(&g, "Spark Double")));
-    assert!(g.perm(c).data.truthy(DataKey::Copied));
+    assert_eq!(g.perm(s).name, "Grave Titan");
+    assert_eq!(g.perm(s).plus, 1, "its additional +1/+1 counter");
+    assert_eq!(g.perm(s).phys, Some(card(&g, "Spark Double")));
+    assert!(g.perm(s).exc.not_legendary, "it isn't legendary");
+    // entering with a counter of its own too: both
+    let c = take(&mut g, P0, "Spark Double");
+    let m = zones::enter(&mut g, P0, c, zones::Enter { plus: 1, ..zones::Enter::default() }).unwrap();
+    assert_eq!(named(&g, P0, "Grave Titan").len(), 3);
+    assert_eq!(g.perm(m).plus, 2);
 }
 
 #[test]

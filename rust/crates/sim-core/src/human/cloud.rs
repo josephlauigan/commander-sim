@@ -417,13 +417,19 @@ pub fn forge_anew(g: &mut Game, src: PermId) -> Res {
     if eq.is_empty() {
         return Ok(());
     }
+    // the question comes after the trigger's window: the engine runs a trigger once up to its first window as a
+    // probe (`stack::resolve_batch`), so asking before it asked twice
+    if !crate::engine::stack::trigger_window(g, o, Some(src), "return an Equipment from the graveyard", Some(6.0))? {
+        return Ok(());
+    }
+    let eq: Vec<CardId> = g.player(o).gy.iter().copied().filter(|&c| g.db.get(c).has_subtype("equipment")).collect();
+    if eq.is_empty() {
+        return Ok(());
+    }
     let labels: Vec<String> = eq.iter().map(|&c| choices::card_label(g, c)).collect();
     let k =
         choices::choose_one(g, o, "target", "Forge Anew: return which Equipment card to the battlefield?", &labels)?;
     let c = eq[k];
-    if !crate::engine::stack::trigger_window(g, o, Some(src), "return an Equipment from the graveyard", Some(6.0))? {
-        return Ok(());
-    }
     if crate::impls::partials::remove_card(&mut g.player_mut(o).gy, c) {
         zones::enter(g, o, c, Enter::default())?;
         crate::glog!(g, "    {} returns to the battlefield", g.db.get(c).name);

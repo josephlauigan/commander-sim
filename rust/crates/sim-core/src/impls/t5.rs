@@ -617,6 +617,41 @@ fn zur(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res
     if !trigger_window(g, p, Some(src), "search for an enchantment", Some(5.0))? {
         return Ok(vec![]);
     }
+    if crate::human::is_human(g, p) {
+        // practice mode: "you may search your library for an enchantment card with mana value 3 or less": the person
+        // searches, and picks the creature an Aura enchants
+        let h = have(g);
+        let got = crate::human::choices::search(
+            g,
+            p,
+            &|g: &Game, c: CardId| fits(g, c, &h),
+            1,
+            "Zur the Enchanter: search for an enchantment card with mana value 3 or less",
+            true,
+        )?;
+        let Some(&c) = got.first() else { return Ok(vec![]) };
+        let own_aura = g.db.get(c).has_subtype("aura")
+            && g.registry.get(c).and_then(|i| i.aura).is_some_and(|a| a.target == "own");
+        g.attach_to = if g.db.get(c).has_subtype("aura") { Some(src) } else { None };
+        if own_aura {
+            let mine: Vec<PermId> = g
+                .player(p)
+                .perms
+                .iter()
+                .copied()
+                .filter(|&m| g.perm(m).on_bf && !g.perm(m).phased && g.is_creature(m))
+                .collect();
+            let prompt = format!("Zur the Enchanter: which creature does {} enchant?", g.db.get(c).name);
+            if let Some(to) = crate::human::gaps_t2::pick_target(g, p, &mine, &prompt, None)? {
+                g.attach_to = Some(to);
+            }
+        }
+        let r = enter(g, p, c, Enter::default());
+        g.attach_to = None;
+        r?;
+        crate::glog!(g, "    Zur fetches {}", g.db.get(c).name);
+        return Ok(vec![]);
+    }
     let h = have(g);
     let cs: Vec<CardId> = searchable(g, p)
         .into_iter()

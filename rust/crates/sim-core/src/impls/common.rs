@@ -2136,46 +2136,53 @@ fn reflector_lock(g: &Game, _src: Src, caster: PlayerId, c: CardId, _zone: Sym) 
     true
 }
 
-/// Spark Double (Approximate): enters as a copy of your best creature or planeswalker (+1 counter); goes to the
-/// graveyard as Spark Double
-fn spark(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
-    if m != src || g.perm(src).data.truthy(DataKey::Copied) {
-        return Ok(());
-    }
-    let o = owner(g, src);
+/// Spark Double: "You may have Spark Double enter as a copy of a creature or planeswalker you control, except it enters
+/// with an additional +1/+1 counter on it if it's a creature, it enters with an additional loyalty counter on it if
+/// it's a planeswalker, and it isn't legendary." A replacement effect, applied as it is created (`zones::enter`'s
+/// `enter_copy` step; the extra counter is added there, by `spark_bonus`): no 0/0 that state-based actions could kill
+/// first (a person's Spark Double died that way before its old enters hook ran), and not legendary (a copy of a legend
+/// met the legend rule at once, and Twinflame's copies of it were legendary too). The AI copies its best creature or
+/// planeswalker, a person picks (or declines: it then enters as itself, a 0/0).
+fn spark_copy(g: &mut Game, p: PlayerId, _c: CardId) -> Option<crate::state::CopyOf> {
     let cands: Vec<PermId> = g
-        .player(o)
+        .player(p)
         .perms
         .iter()
         .copied()
         .filter(|&x| {
-            x != src
-                && g.perm(x).cd.is_some()
-                && (g.is_creature(x) || card_is(g, x, Types::PLANESWALKER))
-                && !g.perm(x).token
+            let y = g.perm(x);
+            y.on_bf && !y.phased && y.cd.is_some() && (g.is_creature(x) || card_is(g, x, Types::PLANESWALKER)) && !y.token
         })
         .collect();
-    let Some(best) = max_by(&cands, |x| pval(g, x)) else { return Ok(()) };
-    let best_cd = g.perm(best).cd.unwrap();
-    let own_cd = g.perm(src).cd;
-    leave(g, src)?;
-    let n = enter(g, o, best_cd, Enter::default())?;
-    let mut d = crate::state::PermData::default(); // `n.data = {'copied': True}`
-    d.set(DataKey::Copied, Val::Bool(true));
-    let creature = g.is_creature(n);
-    let x = g.perm_mut(n);
-    x.data = d;
-    x.phys = own_cd;
-    // the counters step (Stage C: these were direct writes): an additional +1/+1 or loyalty counter
-    if creature {
-        repl::put_plus(g, n, 1);
-    }
-    if let Some(l) = g.perm(n).loyalty {
-        let k = repl::counters(g, o, On::Perm(n), Ctr::Loyalty, 1, Path::ALL);
-        g.perm_mut(n).loyalty = Some(l + k);
-    }
-    crate::glog!(g, "    Spark Double copies {}", g.db.get(best_cd).name);
-    Ok(())
+    let best = if crate::human::is_human(g, p) {
+        if cands.is_empty() {
+            return None;
+        }
+        crate::human::cards::pick_perm(
+            g,
+            p,
+            "choose",
+            "Spark Double: enter as a copy of which creature or planeswalker you control?",
+            &cands,
+            Some("don't copy (it enters as a 0/0)"),
+        )
+        .ok()
+        .flatten()
+    } else {
+        max_by(&cands, |x| pval(g, x))
+    };
+    let best = best?;
+    crate::glog!(g, "    Spark Double enters as a copy of {}", g.perm(best).name);
+    Some(crate::state::CopyOf {
+        cd: g.perm(best).cd.unwrap(),
+        exc: crate::state::CopyExc { not_legendary: true, ..crate::state::CopyExc::default() },
+    })
+}
+
+/// the extra counter Spark Double's copy enters with (`zones::enter`): 1 when `phys` (the card that entered) is Spark
+/// Double, else 0
+pub fn spark_bonus(g: &Game, phys: Option<CardId>) -> i32 {
+    i32::from(phys.is_some_and(|c| &*g.db.get(c).name == "Spark Double"))
 }
 
 /// Frost Titan (Approximate): taps the best opposing creature on entry and attack (the no-untap is not enforced);
@@ -3467,9 +3474,7 @@ fn register_phase6(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Reflector Mage")?;
     c.etb = Some(reflector);
     c.can_cast = Some(reflector_lock);
-    let c = r.card(db, "Spark Double")?;
-    c.etb = Some(spark);
-    *c = c.at_once(Event::Etb);
+    r.card(db, "Spark Double")?.enter_copy = Some(spark_copy);
     let c = r.card(db, "Frost Titan")?;
     c.etb = Some(frost);
     c.attack = Some(frost_atk);
