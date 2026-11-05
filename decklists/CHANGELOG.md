@@ -312,6 +312,7 @@ Deck key `sheoldred`, `decklists/JD/sheoldred-mono-black.md`.
 
 ### Changes
 
+- **2026-11-04.** Out: Necrosquito. In: Raise Dead. Coffers drain package revised (JD 11/04; not simulated): Necrosquito leaves instead of Raise Dead, which stays for cheap creature recovery.
 - **2026-11-04.** Out: Burrog Banemaker, Lethal Throwdown, Phyrexian Rager, Raise Dead, Seymour Flux. In: Exquisite Blood, Grim Tutor, Sanguine Bond, Torment of Hailfire, Vito, Thorn of the Dusk Rose. Coffers drain package (JD 11/04; not simulated): Sanguine Bond, Exquisite Blood, Vito, Grim Tutor, Torment of Hailfire for Seymour Flux, Lethal Throwdown, Raise Dead, Phyrexian Rager, Burrog Banemaker.
 - **2026-11-04.** Out: Command Tower. In: Cabal Coffers. Cabal Coffers for Command Tower (JD 11/04, physical deck; not simulated): 31 Swamps make Coffers a big-mana land without Urborg.
 - **2026-11-03.** Out: Sneering Shadewriter. In: Raise Dead. JD approved: replace Sneering Shadewriter with Raise Dead for inexpensive creature recovery; not simulated.

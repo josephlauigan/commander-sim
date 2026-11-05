@@ -83,10 +83,7 @@ These cards are played, not drawn, so Sheoldred gains you nothing from them dire
 
 ### Finishers
 **Exsanguinate** (X life from each opponent, you gain it) is the plain kill. **Peer into the Abyss** is the draw-based
-kill. **Necrosquito** ({3}{B}, flying) is a body that grows into a finisher: it enters with two oil counters (a 2/2) and
-gets an oil counter, so +1/+1, whenever another creature or artifact you control goes to the graveyard. The sacrifice
-outlets, Deadly Dispute, the sacrifice-cost removal, chump blocks and your own Treasures and rocks all feed it, and it flies over
-the table's blockers. **Torment of Hailfire** ({X}{B}{B}) is the second X spell: X times, each opponent loses 3 life
+kill. **Torment of Hailfire** ({X}{B}{B}) is the second X spell: X times, each opponent loses 3 life
 unless they sacrifice a nonland permanent or discard a card, so a big X off Cabal Coffers either kills or strips the
 table.
 
@@ -154,7 +151,8 @@ creature.
 
 ### Recursion
 **Phyrexian Delver** returns a creature card from your graveyard to the battlefield (you lose life equal to its mana
-value): recover Sheoldred, Mikaeus, Triskelion, Yawgmoth, Vito, or Gray Merchant for another drain.
+value): recover Sheoldred, or return Gray Merchant for another drain. **Raise Dead** ({B}) returns a creature to your hand,
+not the battlefield; use it to recover Mikaeus, Triskelion, Yawgmoth, Vito or Gray Merchant, then pay to cast it again.
 Moving Sheoldred to the command zone instead makes her unavailable to these graveyard effects.
 
 ### Ramp
@@ -169,7 +167,6 @@ and Bolas's Citadel are the bigger artifacts you cast once the rocks are out.
 - **Mikaeus + Triskelion**, or a Yawgmoth loop with Blood Artist, Zulaport Cutthroat and Sephiroth out.
 - **Exquisite Blood + Sanguine Bond or Vito**: an infinite drain from any life gain or loss.
 - **Cabal Coffers mana** into a big Exsanguinate or Torment of Hailfire.
-- **Necrosquito** with a few sacrifices behind it is a large flier that attacks over the table's blockers.
 
 ### Weak spots and how to play around them
 - **Exile, bounce and repeated removal on Sheoldred.** Play around it with Swiftfoot Boots and hold a protection spell;
@@ -228,13 +225,13 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Lands (36).** Bonders' Enclave, Cabal Coffers, Geier Reach Sanitarium, Mikokoro Center of the Sea, Phyrexian Tower, 31 Swamp
 
-**Creatures (24).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Fate Unraveler, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Mikaeus the Unhallowed, Necrosquito, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Sephiroth Fabled SOLDIER // Sephiroth One-Winged Angel, Triskelion, Undercity Dire Rat, Vault Plunderer, Viscera Seer, Vito Thorn of the Dusk Rose, Yawgmoth Thran Physician, Zulaport Cutthroat
+**Creatures (23).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Fate Unraveler, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Mikaeus the Unhallowed, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Sephiroth Fabled SOLDIER // Sephiroth One-Winged Angel, Triskelion, Undercity Dire Rat, Vault Plunderer, Viscera Seer, Vito Thorn of the Dusk Rose, Yawgmoth Thran Physician, Zulaport Cutthroat
 
 **Enchantments (6).** Call of the Ring, Exquisite Blood, Grave Pact, Phyrexian Arena, Sanguine Bond, Underworld Dreams
 
 **Artifacts (12).** Arcane Signet, Ashnod's Altar, Bolas's Citadel, Darksteel Plate, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Otherworld Atlas, Skullclamp, Swiftfoot Boots, The One Ring
 
-**Sorceries (13).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Demonic Tutor, Diabolic Tutor, Exsanguinate, Grim Tutor, Invoke Despair, Peer into the Abyss, Silence the Echo, Syphon Mind, Torment of Hailfire
+**Sorceries (14).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Demonic Tutor, Diabolic Tutor, Exsanguinate, Grim Tutor, Invoke Despair, Peer into the Abyss, Raise Dead, Silence the Echo, Syphon Mind, Torment of Hailfire
 
 **Instants (8).** Ad Nauseam, Dark Ritual, Deadly Dispute, Foolish Fate, Overkill, Sephiroth's Intervention, Vanquish the Weak, Wander Off
 
@@ -278,7 +275,6 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Mikaeus, the Unhallowed
 1 Mikokoro, Center of the Sea
 1 Mind Stone
-1 Necrosquito
 1 Ob Nixilis, the Fallen
 1 Otherworld Atlas
 1 Overkill
@@ -287,6 +283,7 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Phyrexian Arena
 1 Phyrexian Delver
 1 Phyrexian Tower
+1 Raise Dead
 1 Rooftop Assassin
 1 Sanguine Bond
 1 Screeching Soulbreaker
