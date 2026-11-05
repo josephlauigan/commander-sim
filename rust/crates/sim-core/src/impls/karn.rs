@@ -279,25 +279,26 @@ fn manland_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 }
 
 // ------------------------------------------------------------------ the pumps, in combat
-/// an animated Mishra's Factory / Foundry that an AI seat could tap for its pump now: (token, bonus, mana to pay,
-/// whether the target must be attacking). `{T}: target Assembly-Worker gets +1/+1` (Factory);
-/// `{1}, {T}: target attacking Assembly-Worker gets +2/+2` (Foundry).
+/// a Mishra's Factory / Foundry that an AI seat could tap for its pump now, as an untapped land or as the animated
+/// creature (a token standing in for the land): (bonus, mana to pay, whether the target must be attacking).
+/// `{T}: target Assembly-Worker creature gets +1/+1` (Factory);
+/// `{1}, {T}: target attacking Assembly-Worker creature gets +2/+2` (Foundry).
 fn pump_source(g: &Game, q: PlayerId, s: PermId) -> Option<(i32, u32, bool)> {
     let x = g.perm(s);
-    if !live(g, s) || x.tapped || x.cd.is_some() || !x.ttypes.contains(&"assembly-worker") {
+    if !live(g, s) || x.tapped {
         return None;
     }
-    let pump = match land_name_of_token(g, s)? {
+    let name = match x.cd {
+        Some(c) if g.player(q).lands.contains(&s) => &*g.db.get(c).name,
+        None if x.data.get(crate::state::DataKey::Land).is_some() && x.ttypes.contains(&"assembly-worker") => &*x.name,
+        _ => return None,
+    };
+    let pump = match name {
         "Mishra's Factory" => (1, 0, false),
         "Mishra's Foundry" => (2, 1, true),
         _ => return None,
     };
     (!crate::cardcode::ability_locked(g, s, q)).then_some(pump)
-}
-
-fn land_name_of_token(g: &Game, s: PermId) -> Option<&str> {
-    g.perm(s).data.get(crate::state::DataKey::Land)?;
-    Some(&*g.perm(s).name)
 }
 
 fn is_worker(g: &Game, w: PermId) -> bool {
@@ -325,17 +326,27 @@ fn pump_gain(g: &Game, w: PermId, o: PermId, by: i32) -> f64 {
 /// After blockers are declared (`engine::combat::resolve_blocks`, beside the other combat tricks): an AI seat taps its
 /// animated Mishra's Factory / Foundry to pump an Assembly-Worker in the fight when it saves that worker or kills its
 /// opponent. The Factory's pump is free; the Foundry's costs {1}, its target must be attacking, and the AI pays only
-/// for a gain worth 2 or more. (A Factory that attacked is tapped: it pumps as a blocker, or another worker.)
+/// for a gain worth 2 or more. (A Factory that attacked is tapped: it pumps as a blocker, or another Factory or Foundry,
+/// still a land, pumps it.)
 pub fn combat_pumps(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId, assign: &[(PermId, PermId)]) -> Res {
     for q in [d, p] {
         if crate::human::is_human(g, q) || !g.player(q).alive {
             continue;
         }
-        for s in g.player(q).perms.clone() {
-            // the fights q's workers are in: (worker, its opponent, attacking?)
+        let sources: Vec<PermId> = g.player(q).perms.iter().chain(g.player(q).lands.iter()).copied().collect();
+        for s in sources {
             let mut best: Option<(f64, PermId, i32, u32)> = None;
             let Some((by, cost, atk_only)) = pump_source(g, q, s) else { continue };
-            if g.over || (cost > 0 && !crate::engine::mana::can_pay(g, q, cost, "", false)) {
+            let is_land = g.player(q).lands.contains(&s);
+            let affordable = |g: &mut Game| {
+                cost == 0
+                    || if is_land {
+                        super::lands::can_pay_without(g, q, s, cost, "")
+                    } else {
+                        crate::engine::mana::can_pay(g, q, cost, "", false)
+                    }
+            };
+            if g.over || !affordable(g) {
                 continue;
             }
             for &(a, b) in assign {
@@ -355,7 +366,13 @@ pub fn combat_pumps(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId, assi
             }
             let Some((_, w, by, cost)) = best else { continue };
             let what = format!("{} gets +{by}/+{by}", g.perm(w).name);
-            if cost > 0 && !crate::engine::mana::pay(g, q, cost, "", false)? {
+            if cost > 0
+                && !(if is_land {
+                    super::lands::pay_without(g, q, s, cost, "")?
+                } else {
+                    crate::engine::mana::pay(g, q, cost, "", false)?
+                })
+            {
                 continue;
             }
             g.perm_mut(s).tapped = true;
