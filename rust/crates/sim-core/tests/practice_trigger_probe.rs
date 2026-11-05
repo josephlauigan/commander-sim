@@ -716,12 +716,6 @@ const TWICE_OK: &[(&str, &str)] = &[];
 /// gaps found on 2026-11-04 and not yet fixed: the AI chooses for the person. Fixing one means taking it off this list;
 /// a new gap fails the test. (The key ends with the moments the trigger was silent in.)
 const TO_FIX: &[&str] = &[
-    // engine/zones.rs:1719 (landfall_once, the Tag::Landfall2 loop): always makes the 2/2 Cat, no window, no mode choice
-    "alela: Felidar Retreat (Main1 (state only))",
-    // engine/zones.rs:1823 (sun_titan, called at engine/combat.rs:399 and zones.rs:1516): the AI takes the best card
-    "thrasios: Sun Titan (Combat, SelfEnter)",
-    // impls/karn_engines.rs:307 (mirror_etb): the window, then the {2} is paid and the copy made with no yes/no
-    "karn: Mirrorworks (EnterOwn)",
 ];
 
 /// listed by the probe but not a gap, each with why

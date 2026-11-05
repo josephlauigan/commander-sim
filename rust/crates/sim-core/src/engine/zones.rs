@@ -1514,7 +1514,7 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         }
     }
     if t.has(Tag::Suntitan) {
-        sun_titan(g, p)?;
+        sun_titan(g, p, m)?;
     }
     if t.has(Tag::Dualcaster) {
         // copy a spell: approximated as copying your last instant/sorcery (no card carries the tag now: Dualcaster Mage
@@ -1715,7 +1715,32 @@ pub fn landfall(g: &mut Game, p: PlayerId) -> Res {
 }
 
 fn landfall_once(g: &mut Game, p: PlayerId) -> Res {
-    for _ in find(g, p, Tag::Landfall2) {
+    for r in find(g, p, Tag::Landfall2) {
+        if crate::human::is_human(g, p) {
+            // "choose one": a 2/2 Cat Beast, or a +1/+1 counter on each creature you control and vigilance until end of turn
+            if !trigger_window(g, p, Some(r), "choose one: a 2/2 Cat, or +1/+1 counters and vigilance", None)? {
+                continue;
+            }
+            let labels = vec![
+                "Create a 2/2 white Cat Beast creature token".to_string(),
+                "Put a +1/+1 counter on each creature you control; they gain vigilance until end of turn".to_string(),
+            ];
+            let k = crate::human::choices::choose_one(g, p, "choose", "Felidar Retreat: choose a mode", &labels)?;
+            if k == 0 {
+                make_tokens(g, p, Tokens::new(1, 2))?;
+            } else {
+                for m in g.player(p).perms.clone() {
+                    if g.is_creature(m) {
+                        repl::put_plus(g, m, 1);
+                        let x = g.perm_mut(m);
+                        if !x.eot_kw.contains(&"vigilance") {
+                            x.eot_kw.push("vigilance");
+                        }
+                    }
+                }
+            }
+            continue;
+        }
         make_tokens(g, p, Tokens::new(1, 2))?; // Felidar Retreat: 2/2 Cat per land
     }
     let lands = g.player(p).lands.clone();
@@ -1819,8 +1844,9 @@ pub fn make_artifact_tokens_tapped(g: &mut Game, p: PlayerId, kind: Sym, n: i32,
     Ok(())
 }
 
-/// return the best permanent card with mana value 3 or less from graveyard to the battlefield
-pub fn sun_titan(g: &mut Game, p: PlayerId) -> Res {
+/// return the best permanent card with mana value 3 or less from graveyard to the battlefield (a person picks one, or
+/// none: "you may return target permanent card")
+pub fn sun_titan(g: &mut Game, p: PlayerId, src: PermId) -> Res {
     let cs: Vec<CardId> = g
         .player(p)
         .gy
@@ -1832,12 +1858,33 @@ pub fn sun_titan(g: &mut Game, p: PlayerId) -> Res {
         let d = g.db.get(c);
         (d.creature as i32 as f64) * 1000.0 + d.pow as f64 * 10.0 + d.cmc as f64
     };
-    let Some(x) = max_by(&cs, key) else { return Ok(()) };
+    let human = crate::human::is_human(g, p);
+    let x = if human && !cs.is_empty() {
+        if !trigger_window(g, p, Some(src), "return a permanent card with mana value 3 or less", None)? {
+            return Ok(());
+        }
+        let cs: Vec<CardId> = cs.iter().copied().filter(|c| g.player(p).gy.contains(c)).collect(); // (the window)
+        let labels: Vec<String> = cs.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
+        let prompt = "Sun Titan: return which permanent card with mana value 3 or less from your graveyard to the battlefield?";
+        match crate::human::choices::choose(g, p, "target", prompt, &labels, Some("none"), None)? {
+            Some(k) => cs[k],
+            None => return Ok(()),
+        }
+    } else {
+        let Some(x) = max_by(&cs, key) else { return Ok(()) };
+        x
+    };
     let gy = &mut g.player_mut(p).gy;
     let i = gy.iter().position(|&c| c == x).unwrap();
     gy.remove(i);
     if g.db.get(x).land {
-        g.add_land_entering(p, x, true);
+        if human {
+            let tapped = crate::engine::turn::land_enters_tapped(g, p, x);
+            g.add_land_entering(p, x, tapped);
+            landfall(g, p)?;
+        } else {
+            g.add_land_entering(p, x, true);
+        }
     } else {
         enter(g, p, x, Enter::default())?;
     }
