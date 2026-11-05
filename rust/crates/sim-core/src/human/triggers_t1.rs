@@ -265,6 +265,66 @@ pub fn free_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res<Option<(Ctx, super
     Ok(Some((ctx, costs)))
 }
 
+// ------------------------------------------------------------------ "you may play it without paying its mana cost"
+/// A card in `from`'s exile that the person may play free now (Urza, Lord High Artificer's {5}; Triple Triad): they
+/// choose whether to, then its target and any cost asked before it is cast. A land needs a land drop left. True: it
+/// was played. Not played, it stays in `from`'s exile. A card taken from an opponent stays theirs (`Ctx::owner`).
+/// It is played now, not later in the turn: a counterspell or a sorcery-speed card can't wait for a better moment.
+pub fn play_free_now(g: &mut Game, p: PlayerId, c: CardId, from: PlayerId, source: &str, ask: bool) -> Res<bool> {
+    let d = g.db.get(c);
+    let (name, land) = (d.name.to_string(), d.land);
+    if !g.player(from).exile.contains(&c) {
+        return Ok(false);
+    }
+    if land {
+        let drops = 1 + crate::cardcode::extra_lands(g, p) + g.player(p).extra_land_now;
+        if g.player(p).lands_played >= drops {
+            tell_info(g, p, &format!("{source}: {name} can't be played (no land drop left)."));
+            return Ok(false);
+        }
+        let labels = vec![format!("play {name}")];
+        if ask && choices::choose(g, p, "choose", &format!("{source}: play {name}?"), &labels, Some("don't play it"), None)?
+            .is_none()
+        {
+            return Ok(false);
+        }
+        g.player_mut(from).exile.take(c);
+        crate::engine::turn::play_land_card(g, p, c, "plays")?;
+        return Ok(true);
+    }
+    // as the AI's paths do: a counterspell has nothing to counter here, and an Aura's host isn't asked for
+    let (aura, ctr) = (d.has_subtype("aura"), d.tag(crate::tag::Tag::Ctr));
+    if aura || ctr {
+        let why = if ctr { "nothing to counter now" } else { "an Aura can't be cast this way here" };
+        tell_info(g, p, &format!("{source}: {name} stays in exile ({why})."));
+        return Ok(false);
+    }
+    if !crate::engine::cast::castable(g, p, c, "hand") {
+        tell_info(g, p, &format!("{source}: {name} can't be cast now."));
+        return Ok(false);
+    }
+    let labels = vec![format!("cast {name} free")];
+    if ask && choices::choose(g, p, "choose", &format!("{source}: cast {name}?"), &labels, Some("don't cast it"), None)?
+        .is_none()
+    {
+        return Ok(false);
+    }
+    let Some((mut ctx, costs)) = free_cast(g, p, c)? else { return Ok(false) };
+    if from != p {
+        ctx.owner = Some(from);
+    }
+    g.player_mut(from).exile.take(c);
+    g.player_mut(p).hand.push(c);
+    super::specs::pay_costs(g, p, c, &costs)?;
+    crate::engine::cast::cast_card(g, p, c, "hand", ctx)?;
+    if let Some(j) = g.player(p).hand.iter().position(|&x| x == c) {
+        g.player_mut(p).hand.remove(j); // not cast after all: back to exile
+        g.player_mut(from).exile.push(c);
+        return Ok(false);
+    }
+    Ok(true)
+}
+
 // ------------------------------------------------------------------ Susurian Voidborn
 /// "target opponent loses 1 life": with more than one opponent the person picks
 pub fn voidborn_target(g: &Game, p: PlayerId, opps: &[PlayerId]) -> Res<PlayerId> {
@@ -346,4 +406,11 @@ pub fn ozolith_move(g: &mut Game, p: PlayerId) -> Res {
 pub fn vision_phases_out(g: &Game, p: PlayerId) -> Res<bool> {
     let labels = vec!["put a +1/+1 counter on Vision".to_string(), "Vision phases out".to_string()];
     Ok(choices::choose_one(g, p, "choose", "Vision, Synthezoid Avenger: choose one", &labels)? == 1)
+}
+
+/// a plain message to the person at p (no-op for an AI seat)
+fn tell_info(g: &Game, p: PlayerId, text: &str) {
+    if let Some(h) = super::human_of(g, p) {
+        h.tell(p, intern("info"), text);
+    }
 }
