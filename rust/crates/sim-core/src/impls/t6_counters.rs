@@ -46,9 +46,9 @@ fn plan(utility: f64, label: String, f: crate::hooks::PlanFn, arg: i64) -> Opt {
 }
 
 // ================================================================== alternative costs
-/// a blue card (a blue mana symbol in its cost, as `engine::stack::blue_in_hand` counts it)
+/// a blue card (`engine::stack::blue_card`: {U}, {U/P} or a blue hybrid in its cost)
 fn is_blue(g: &Game, c: CardId) -> bool {
-    g.db.get(c).pips.contains('U')
+    crate::engine::stack::blue_card(g, c)
 }
 
 /// the blue cards in p's hand other than `card` itself (a pitch cost exiles "a blue card from your hand")

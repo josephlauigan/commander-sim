@@ -999,8 +999,8 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         } else if let Some(q) = ctx.desert_to.filter(|&q| g.player(q).alive) {
             enter(g, q, c, Enter { orig: Some(o), ..Enter::default() })?; // Desertion
             crate::glog!(g, "    {} enters under {}'s control (Desertion)", g.db.get(c).name, g.player(q).name);
-        } else if lt.is_some_and(|x| x.tag(Tag::Ctrexile)) && !land {
-            g.player_mut(o).exile.push(c); // Dissipate
+        } else if lt.is_some_and(|x| x.tag(Tag::Ctrexile) || x.tag(Tag::Fon)) && !land {
+            g.player_mut(o).exile.push(c); // Dissipate; Force of Negation ("exile it instead")
         } else if !land {
             g.player_mut(o).gy.push(c);
         }

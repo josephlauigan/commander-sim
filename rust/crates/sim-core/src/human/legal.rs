@@ -280,6 +280,9 @@ pub fn check_cast(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Option<St
         return None; // mana, life, or a mix
     }
     if let Some(why) = mana::cost_problem(g, p, gn, &pips) {
+        if zone == "hand" && spell_alt_label(g, p, c).is_some() {
+            return None; // its alternative cost (asked as it is cast)
+        }
         let extra = if phy.is_empty() {
             String::new()
         } else {
@@ -443,25 +446,26 @@ pub fn check_equip(g: &Game, p: PlayerId, e: PermId, target: PermId) -> Option<S
 }
 
 // ------------------------------------------------------------------ counterspells
-/// a way to cast counterspell ctr without its mana cost right now, in words, or None
-pub fn alternative_counter_cost(g: &Game, p: PlayerId, ctr: CardId) -> Option<&'static str> {
-    let d = g.db.get(ctr);
-    let pl = g.player(p);
-    let blues = pl.hand.iter().any(|&x| x != ctr && g.db.get(x).pips.contains('U'));
-    if d.tag(Tag::Fierce) && engine::values::commander_out(g, p) {
-        return Some("free while your commander is out");
+/// The alternative cost a person may pay for c, a spell that isn't a counterspell, cast from hand now, as a label (a
+/// counterspell's: `engine::stack::counter_alt_label`). "If you control a commander, you may cast this spell without
+/// paying its mana cost" (Deadly Rollick), or the card's alternative-cost slot (Snapback's blue card, Baleful
+/// Mastery's {1}{B}). None: none.
+pub fn spell_alt_label(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
+    let d = g.db.get(c);
+    if d.tag(Tag::Ctr) || !g.player(p).hand.contains(&c) {
+        return None;
     }
-    if d.tag(Tag::Pact) {
-        return Some("free now; pay {3}{U}{U} at your next upkeep or lose");
+    if d.tag(Tag::Freecmd) && engine::values::commander_out(g, p) && engine::altcost::tax_payable(g, p, c) {
+        return Some("cast it without paying its mana cost (you control your commander)".into());
     }
-    if d.tag(Tag::Misstep) && pl.life > 10 {
-        return Some("2 life");
-    }
-    if d.tag(Tag::Fon) && g.active != Some(p) && blues {
-        return Some("exile a blue card");
-    }
-    if d.tag(Tag::Free) && blues {
-        return Some("exile a blue card and pay 1 life");
+    if engine::altcost::available(g, p, c, None) {
+        let label = match &*d.name {
+            "Baleful Mastery" => "pay {1}{B} instead (an opponent draws a card)",
+            "Snapback" | "Misdirection" => "exile a blue card from your hand instead",
+            "Commandeer" => "exile two blue cards from your hand instead",
+            _ => "its alternative cost",
+        };
+        return Some(label.into());
     }
     None
 }
@@ -487,7 +491,8 @@ pub fn check_counter(g: &Game, p: PlayerId, ctr: CardId, spell: CardId) -> Optio
     let problem = mana::cost_problem(g, p, gn, &pips);
     match problem {
         None => None,
-        Some(_) if alternative_counter_cost(g, p, ctr).is_some() => None,
+        // every alternative the person's payment offers (Force of Will's pitch, Pact, Mindbreak Trap's {0} ...)
+        Some(_) if engine::stack::counter_alt_label(g, p, ctr, Some(spell)).is_some() => None,
         Some(why) => Some(format!("Can't cast {}. {why}", nm(g, ctr))),
     }
 }
