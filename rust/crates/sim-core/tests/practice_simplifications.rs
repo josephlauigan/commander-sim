@@ -468,3 +468,26 @@ fn a_hand_without_exiled_cards_counts_as_before() {
     hand(&mut g, P0, &["Sol Ring", "Mind Stone", "Island"]);
     assert_eq!(sim_core::engine::values::hand_count(&g, P0), 3);
 }
+
+// ------------------------------------------------------------------ 6. Goldspan Dragon: a copy of a spell is a spell
+#[test]
+fn goldspan_dragon_makes_a_treasure_when_a_copy_of_a_spell_targets_it() {
+    let mut g = table(&["urdragon", "seph"]);
+    let gold = perm(&mut g, P1, "Goldspan Dragon");
+    let swords = card(&g, "Swords to Plowshares");
+    let before = g.player(P1).treasures;
+    // Jin-Gitaxias-style copy: the bot re-aims the copy at the best opposing permanent (Goldspan Dragon is the only one)
+    sim_core::engine::cast::copy_spell(&mut g, P0, swords, None, false).unwrap();
+    assert_eq!(g.player(P1).treasures, before + 1, "the copy targeted the Dragon: a Treasure");
+    assert!(!g.perm(gold).on_bf, "and the copy resolved");
+}
+
+#[test]
+fn goldspan_dragon_ignores_a_spell_with_no_permanent_target() {
+    // Oracle: "becomes the target of a spell": nothing targets it here, and abilities never count
+    let mut g = table(&["urdragon", "seph"]);
+    perm(&mut g, P1, "Goldspan Dragon");
+    let before = g.player(P1).treasures;
+    sim_core::impls::card_models3::spell_targeted(&mut g, &Ctx::default()).unwrap();
+    assert_eq!(g.player(P1).treasures, before);
+}

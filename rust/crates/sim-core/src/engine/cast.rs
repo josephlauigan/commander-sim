@@ -1520,6 +1520,8 @@ pub fn copy_spell(g: &mut Game, p: PlayerId, c: CardId, ctx: Option<&Ctx>, cast:
     } else {
         magecraft(g, p, Some(c), true)?;
     }
+    // a copy is a spell too: what it targets "becomes the target of a spell" (Goldspan Dragon)
+    crate::impls::card_models3::spell_targeted(g, &ctx)?;
     if crate::human::is_human(g, p) && &*g.db.get(c).name == "Twinflame" {
         // a person's Twinflame has no card code to resolve (the bots' goes through their hand option): its copy
         return crate::human::urdragon::twinflame_copy(g, p, c, &ctx);
@@ -1539,6 +1541,7 @@ pub fn cast_spell_copy(g: &mut Game, p: PlayerId, c: CardId, ctx: Option<&Ctx>) 
     pl.stat("spells_cast", 1);
     crate::glog!(g, "  {} casts a copy of {}", g.player(p).name, g.db.get(c).name);
     on_cast(g, p, c)?;
+    crate::impls::card_models3::spell_targeted(g, &ctx)?; // the copy is a spell: its target "becomes the target of a spell"
     if g.over || !g.player(p).alive {
         return Ok(false);
     }

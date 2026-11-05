@@ -112,7 +112,7 @@ fn urzas_free_card_waits_in_exile_as_a_permission_and_is_cast_when_the_person_sa
 
 #[test]
 fn urzas_free_card_stays_in_exile_when_the_person_never_plays_it() {
-    let (mut g, _) = urza_with_top();
+    let (g, _) = urza_with_top();
     assert!(!has_perm(&g, P0, "Sol Ring"));
     assert!(in_exile(&g, P0, "Sol Ring"));
 }
