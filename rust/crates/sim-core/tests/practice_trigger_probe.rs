@@ -725,10 +725,6 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
         "no choice: it puts a counter on each creature; the word \"target\" is in the condition (a spell that targets a creature)",
     ),
     (
-        "sheoldred: Vito, Thorn of the Dusk Rose (GainLife)",
-        "the person is asked which opponent loses the life, but the prompt is headed \"Sanguine Bond:\" (impls/t4.rs:1335, shared with Sanguine Bond), so the probe takes it for another card's question; cosmetic",
-    ),
-    (
         "thanos: Necropotence (Discard (state only))",
         "no choice: the discarded card is exiled; the line only matched \"discard a\"",
     ),

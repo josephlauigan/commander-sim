@@ -303,7 +303,7 @@ fn vito(g: &mut Game, src: Src, p: PlayerId, n: i32) -> Res {
             return Ok(());
         }
         g.bond_depth += 1;
-        let q = crate::impls::t4::bond_target(g, p, n)?;
+        let q = crate::impls::t4::bond_target_for(g, p, n, "Vito, Thorn of the Dusk Rose")?;
         let r = lose_life(g, q, n, Some(p), "drain", None);
         g.bond_depth -= 1;
         r?;
