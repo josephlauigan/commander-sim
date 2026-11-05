@@ -59,8 +59,8 @@ is removed.
   trigger with no mana spent.
 
 ### Outlets and looting
-Rummaging Goblin, Frantic Search (draw two, discard two, untap three lands: free), Stadium Tidalmage, Alpharael, Big
-Score and Seize the Spoils. They pick the right card to bin before Kefka's trigger and fix the hand after it. Big Score
+Rummaging Goblin, Frantic Search (draw two, discard two, untap three lands: free), Stadium Tidalmage, Big Score
+and Seize the Spoils. They pick the right card to bin before Kefka's trigger and fix the hand after it. Big Score
 and Seize the Spoils also
 make mana or Treasure toward the {8}. **Skullclamp** keeps the hand full between triggers.
 
@@ -82,6 +82,10 @@ Cast him before a spell-heavy turn.
   each opponent per instant or sorcery, and after the flip that is 18 cards.
 - **Niv-Mizzet, Parun** ({U}{U}{U}{R}{R}{R}, can't be countered) draws a card whenever any player casts an instant or
   sorcery and deals 1 damage per card you draw: the same loop as the Firemind with the flipped Kefka.
+- **Triple Triad** ({3}{R}{R}{R}): at your upkeep each player exiles their top card, and until end of turn you may play
+  yours and every other exiled card of lesser mana value free. Every free instant or sorcery, yours or theirs, is a
+  cast for Niv-Mizzet, Parun, Veyran, Guttersnipe, Kessig, Firebrand Archer and Young Pyromancer. It is best with a
+  big card on top (Archon, Niv-Mizzet, Massacre Wurm); a land on top is only a land drop.
 
 ### Pressure on their hands
 **Intellect Devourer**
@@ -89,7 +93,7 @@ makes each opponent exile a card from hand and lets you play it, spending mana a
 Opponents low on cards discard their best one to Kefka.
 
 ### Ramp and the {8}
-Treasure (Big Score, Seize the Spoils, Contract Killing, Skullport Merchant, and **Storm-Kiln Artist**: a Treasure per
+Treasure (Big Score, Seize the Spoils, Skullport Merchant, and **Storm-Kiln Artist**: a Treasure per
 instant or sorcery), Arcane Signet and Lotus Petal, **Birgi, God of Storytelling** ({R} whenever you cast a spell),
 **Dark Ritual**, **Seething Song** (Blazing Firesinger's instant side), **Jeska's Will** (red mana for each card in an opponent's hand, or exile the top three
 cards and play them; with a commander on the battlefield you may do both) and the burst cards get you there.
@@ -120,6 +124,12 @@ enters or attacks, an opponent sacrifices a creature or planeswalker, discards a
 and gain 3) and **Sheoldred, Whispering One** (at your upkeep a creature returns from your graveyard; at each
 opponent's upkeep they sacrifice a creature). Massacre Wurm is a fine target too.
 
+**Sauron, the Necromancer** ({3}{B}{B}, menace) reuses the creatures that stay in the graveyard: whenever he attacks,
+exile a creature card from your graveyard and make a tapped and attacking token copy of it (a 3/3 black Wraith with
+menace that keeps its abilities). An Archon of Cruelty copy enters, so its trigger fires: a sacrifice, a discard and 3
+life from an opponent, and a card and 3 life for you. The token is exiled at the next end step unless Sauron is your
+Ring-bearer. He has to attack to do anything, so cast him when the table's blockers are thin.
+
 ### Tutors
 **Diabolic Tutor**, **Mystical Tutor** ({U},
 instant: an instant or sorcery to the top) and **Solve the Equation** ({2}{U}: an instant or sorcery to your hand). Use
@@ -129,7 +139,7 @@ Yawgmoth's Will or Jeska's Will, whichever the board needs.
 ### Removal, counters and wipes
 **Lightning Bolt**, **Reality Shift** (they manifest the top
 card), **Extinguish the Light**, **Deadly Embrace**
-(draws a card for each creature that died this turn), **Contract Killing** (two Treasure) and **Chaos Warp**
+(draws a card for each creature that died this turn) and **Chaos Warp**
 (the owner shuffles the permanent away and may get a permanent from the top of the library, so use it on the
 biggest threat). **Counterspell** ({U}{U}) counters anything. **Massacre Wurm** is the sweeper: it kills the opponents' small creatures, and each one costs its controller 2 life.
 
@@ -204,7 +214,7 @@ creature on your side, and one fewer in their deck. Pick the opponent whose deck
 - **Lands:** 36 (18 nonbasic + 18 basic)
 - **Mana:** Arcane Signet, Lotus Petal, Birgi, Storm-Kiln Artist, Dark Ritual, Seething Song, Jeska's Will, Treasure makers and burst cards. Yawgmoth's Will replays Dark Ritual and Lotus Petal from the graveyard. Basics: 7 Swamp, 6 Mountain, 5 Island; Urborg, Tomb of Yawgmoth makes every land a Swamp, so the duals and Islands tap for {B} too, and **Cabal Coffers** ({2}, {T}: {B} for each Swamp; JD, 2026-11-04, for a Mountain) then makes 2L - 3 mana from L lands (11 at seven) for a Breach or Yawgmoth's Will turn; Mistrise Village enters untapped with a Mountain.
 - **Card draw:** Kefka, Frantic Search, Think Twice, Decorum Dissertation (a free draw-two each turn after the first cast), Skullclamp, Palantír of Orthanc (a card or a drain at each of your end steps), Niv-Mizzet (taps to draw), Marvin, Murderous Mimic (a 2-mana 2/2 that has the activated abilities of your other creatures: it copies Niv-Mizzet's draw, Blightspeaker and Rummaging Goblin), the looters, and the cheap digging spell Expressive Iteration (look at three: one to hand, one to the bottom, one exiled and playable this turn). **Glimpse the Unthinkable** ({U}{B}: target player mills ten) fills your graveyard for Underworld Breach and Yawgmoth's Will, or points at an opponent to start the mill-out that Brain Freeze finishes. **Tutors:** Diabolic Tutor, Mystical Tutor, Solve the Equation, Entomb (to the graveyard). **Graveyard:** Underworld Breach, Yawgmoth's Will, Mystic Sanctuary, Reanimate, Animate Dead, Necromancy.
-- **Interaction:** Lightning Bolt, Reality Shift, Extinguish the Light, Deadly Embrace, Contract Killing, Chaos Warp; Counterspell; one-sided sweeper Massacre Wurm.
+- **Interaction:** Lightning Bolt, Reality Shift, Extinguish the Light, Deadly Embrace, Chaos Warp; Counterspell; one-sided sweeper Massacre Wurm.
 - **Protection:** Counterspell and Mistrise Village (makes a spell uncounterable).
 
 ## Bracket and Rule 0
@@ -223,13 +233,13 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Kefka, Court Mage // Kefka, Ruler of Ruin
 
-**Creatures (27).** Alpharael Dreaming Acolyte, Archon of Cruelty, Birgi God of Storytelling, Blazing Firesinger // Seething Song, Blightspeaker, Firebrand Archer, Garrison Excavator, Guttersnipe, Harmonic Prodigy, Intellect Devourer, Kessig Flamebreather, Kuja Genome Sorcerer // Trance Kuja Fate Defied, Marvin Murderous Mimic, Massacre Wurm, Niv-Mizzet Parun, Niv-Mizzet the Firemind, Psychosis Crawler, Rummaging Goblin, Scarlet Spider Kaine, Sheoldred Whispering One, Skullport Merchant, Stadium Tidalmage, Stinkweed Imp, Storm-Kiln Artist, Susurian Voidborn, Veyran Voice of Duality, Young Pyromancer
+**Creatures (27).** Archon of Cruelty, Birgi God of Storytelling, Blazing Firesinger // Seething Song, Blightspeaker, Firebrand Archer, Garrison Excavator, Guttersnipe, Harmonic Prodigy, Intellect Devourer, Kessig Flamebreather, Kuja Genome Sorcerer // Trance Kuja Fate Defied, Marvin Murderous Mimic, Massacre Wurm, Niv-Mizzet Parun, Niv-Mizzet the Firemind, Psychosis Crawler, Rummaging Goblin, Sauron the Necromancer, Scarlet Spider Kaine, Sheoldred Whispering One, Skullport Merchant, Stadium Tidalmage, Stinkweed Imp, Storm-Kiln Artist, Susurian Voidborn, Veyran Voice of Duality, Young Pyromancer
 
-**Enchantments (5).** Animate Dead, Corroding Dragonstorm, Fiery Emancipation, Necromancy, Underworld Breach
+**Enchantments (6).** Animate Dead, Corroding Dragonstorm, Fiery Emancipation, Necromancy, Triple Triad, Underworld Breach
 
 **Artifacts (4).** Arcane Signet, Lotus Petal, Palantír of Orthanc, Skullclamp
 
-**Sorceries (13).** Bribery, Contract Killing, Deadly Embrace, Decorum Dissertation, Diabolic Tutor, Expressive Iteration, Glimpse the Unthinkable, Grapeshot, Jeska's Will, Reanimate, Seize the Spoils, Solve the Equation, Yawgmoth's Will
+**Sorceries (12).** Bribery, Deadly Embrace, Decorum Dissertation, Diabolic Tutor, Expressive Iteration, Glimpse the Unthinkable, Grapeshot, Jeska's Will, Reanimate, Seize the Spoils, Solve the Equation, Yawgmoth's Will
 
 **Instants (14).** Big Score, Brain Freeze, Chaos Warp, Counterspell, Dark Ritual, Entomb, Extinguish the Light, Frantic Search, Lightning Bolt, Mystical Tutor, Price of Progress, Reality Shift, Think Twice, Twinned Vision
 
@@ -238,7 +248,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 ## Import list (100)
 
 ```
-1 Alpharael, Dreaming Acolyte
 1 Animate Dead
 1 Arcane Signet
 1 Archon of Cruelty
@@ -252,7 +261,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Cabal Coffers
 1 Chaos Warp
 1 Command Tower
-1 Contract Killing
 1 Corroding Dragonstorm
 1 Counterspell
 1 Dark Ritual
@@ -294,6 +302,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Reality Shift
 1 Reanimate
 1 Rummaging Goblin
+1 Sauron, the Necromancer
 1 Scarlet Spider, Kaine
 1 Scorched Geyser
 1 Seize the Spoils
@@ -313,6 +322,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Susurian Voidborn
 1 Temple of Epiphany
 1 Think Twice
+1 Triple Triad
 1 Twinned Vision
 1 Underground River
 1 Underworld Breach

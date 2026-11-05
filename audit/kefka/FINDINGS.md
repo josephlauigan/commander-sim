@@ -3,6 +3,12 @@
 What the simulator has taught us about the Kefka Grixis discard deck: strengths, weaknesses, and what was tried and why
 it did or didn't work. Updated after every run. Newest evidence first. Matched tiers: t3–t5 (`data/my_decks.toml`).
 
+## 2026-11-04: Sauron, the Necromancer for Contract Killing, Triple Triad for Alpharael (JD's choice; not simulated)
+Sauron, the Necromancer turns the graveyard's creatures into attacking 3/3 copies that keep their abilities (an Archon
+of Cruelty copy triggers on entering); Kefka keeps five removal spells and Counterspell. Triple Triad's free casts,
+yours and the opponents', trigger Niv-Mizzet, Parun, Veyran, Guttersnipe and the other pingers; the risk is Kefka's low
+curve (a cheap card on top frees little) and {R}{R}{R} on 6 Mountains. Alpharael was one of six looters. Measure over T3.
+
 ## 2026-11-04: Cabal Coffers for a Mountain (JD's physical deck; not simulated)
 With Urborg out every land is a Swamp, so L lands make 2L - 3 mana for a Breach or Yawgmoth's Will turn. Without
 Urborg it nets little (7 Swamps; it makes nothing until two other lands can pay its {2}). No number yet: the next

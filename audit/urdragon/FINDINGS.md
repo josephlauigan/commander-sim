@@ -3,6 +3,13 @@
 The list is in `decklists/JD/ur-dragon-equipment.md` (Bracket 4, 16 Game Changers). The deck joined the sim on
 2026-10-30. It plays from `data/plans/urdragon.toml` through the generic policy, with no hand-written deck AI.
 
+## 2026-11-04: Urza, Lord High Artificer for Jaxis, the Troublemaker (JD's choice; not simulated)
+Urza came out of Sauron's binder. With him out, the six artifacts that make no mana (Lightning Greaves, The One Ring,
+Cursed Mirror, Maskwood Nexus, Scion of Draco, his Construct) tap for {U}; the Construct grows with the deck's 15
+artifacts, and Maskwood Nexus makes both Dragons. Jaxis was a sorcery-speed copy engine outside the three combos
+(Spark Double, Twinflame and Cursed Mirror still copy); it left the plan file's Dragon-copies line. Wrenn and Six,
+Decimate, Pact of Negation and Lightning Greaves were the other cuts considered. Measure over T5.
+
 ## 2026-11-03: Dragon-copy rebuild (JD's choice; not simulated)
 
 The Godo, Helm and Equipment package moved to Sauron. Twenty slots now form a Dragon entry, token and copy package

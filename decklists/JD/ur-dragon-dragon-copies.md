@@ -53,7 +53,7 @@ Ur-Dragon refills the hand and places another engine or Dragon onto the battlefi
 - **Ganax, Astral Hunter:** every Dragon entering creates a Treasure, including tokens from Miirym, Lathliss, Astral
   Dragon and Utvara Hellkite.
 - **Doubling Season:** doubles the tokens from Miirym, Lathliss, Ganax, Astral Dragon, Utvara Hellkite, Ancient Copper
-  Dragon, Jaxis and Twinflame. It doubles token creation rather than entry triggers, so Dragon Tempest, Scourge of
+  Dragon, Urza's Construct and Twinflame. It doubles token creation rather than entry triggers, so Dragon Tempest, Scourge of
   Valkas and Terror of the Peaks still trigger once for each creature that actually enters. It also doubles the
   +1/+1 counters placed on Korvold and Wrenn and Six's starting loyalty.
 - **Maskwood Nexus:** makes every creature spell and creature a Dragon. Mana creatures and utility creatures then get
@@ -69,9 +69,15 @@ is acceptable.
 
 **Spark Double** copies your best creature without being legendary. Miirym is usually the highest ceiling, followed by
 Lathliss, Ganax, Terror of the Peaks or The Ur-Dragon. **Cursed Mirror** is a mana rock that can be the best creature on
-the battlefield for one turn, and the other half of the Astral Dragon loop (see Combos). **Jaxis, the Troublemaker**
-and **Twinflame** make temporary copies; use them on Dragons with entry triggers or on an engine that makes the next
+the battlefield for one turn, and the other half of the Astral Dragon loop (see Combos). **Twinflame** makes temporary
+copies; use it on Dragons with entry triggers or on an engine that makes the next
 Dragon much stronger. Twinflame on a Spark Double that copies Garth, with Doubling Season, is the third combo.
+
+**Urza, Lord High Artificer** ({2}{U}{U}) makes a 0/0 Construct token that gets +1/+1 for each artifact you control
+(fifteen in the deck), and lets you tap any untapped artifact for {U}. The six that make no mana (Lightning Greaves, The
+One Ring, Cursed Mirror, Maskwood Nexus, Scion of Draco and the Construct) become blue sources; tapping a rock for Urza
+replaces its own mana, so it adds nothing there. His {5} ability plays a free card off the top late in the game. With
+Maskwood Nexus out, Urza and the Construct are Dragons for the entry engines.
 
 **Scion of the Ur-Dragon** pays {2} to put a Dragon from the library into the graveyard and become a copy of it until
 end of turn. Before combat, Ancient Copper Dragon is the default mana option, Utvara Hellkite builds the widest board,
@@ -301,7 +307,7 @@ triggers rather than assembling Godo and Helm of the Host (that package is in th
 ## Decklist by type (100)
 **Commander (1).** The Ur-Dragon
 
-**Creatures (25).** Ancient Copper Dragon, Astral Dragon, Birds of Paradise, Dragonlord Dromoka, Dragonlord Ojutai, Ganax Astral Hunter, Garth One-Eye, Glorybringer, Goldspan Dragon, Jaxis the Troublemaker, Korvold Fae-Cursed King, Kura the Boundless Sky, Lathliss Dragon Queen, Llanowar Elves, Miirym Sentinel Wyrm, Nicol Bolas the Ravager, Paradise Druid, Sakura-Tribe Elder, Scion of Draco, Scion of the Ur-Dragon, Scourge of Valkas, Spark Double, Terror of the Peaks, Thundermaw Hellkite, Utvara Hellkite
+**Creatures (25).** Ancient Copper Dragon, Astral Dragon, Birds of Paradise, Dragonlord Dromoka, Dragonlord Ojutai, Ganax Astral Hunter, Garth One-Eye, Glorybringer, Goldspan Dragon, Korvold Fae-Cursed King, Kura the Boundless Sky, Lathliss Dragon Queen, Llanowar Elves, Miirym Sentinel Wyrm, Nicol Bolas the Ravager, Paradise Druid, Sakura-Tribe Elder, Scion of Draco, Scion of the Ur-Dragon, Scourge of Valkas, Spark Double, Terror of the Peaks, Thundermaw Hellkite, Urza Lord High Artificer, Utvara Hellkite
 
 **Planeswalkers (1).** Wrenn and Six
 
@@ -356,7 +362,6 @@ triggers rather than assembling Godo and Helm of the Host (that package is in th
 1 Hallowed Fountain
 1 Imperial Seal
 1 Inventors' Fair
-1 Jaxis, the Troublemaker
 1 Kindred Dominance
 1 Korvold, Fae-Cursed King
 1 Kura, the Boundless Sky
@@ -408,6 +413,7 @@ triggers rather than assembling Godo and Helm of the Host (that package is in th
 1 Tundra
 1 Twinflame
 1 Underground Sea
+1 Urza, Lord High Artificer
 1 Utvara Hellkite
 1 Vampiric Tutor
 1 Verdant Catacombs

@@ -4,6 +4,13 @@ What the simulator has taught us about the Sauron Grixis amass deck: strengths, 
 it did or didn't work. Updated after every run. Newest evidence first. Matched tiers: T3–T4 (`data/my_decks.toml`).
 Older tests: the dated folders here.
 
+## 2026-11-04: Gilgamesh, Master-at-Arms for Faerie Mastermind (JD's choice; not simulated)
+Gilgamesh (from Ur-Dragon's retired Equipment package) is a second way to find Helm of the Host or Hammer of Nazahn:
+when he enters or attacks he puts every Equipment in the top six onto the battlefield. Faerie Mastermind was a 2-mana
+flash flier that drew off the opponents' second draws; Jace's Archivist, Bowmasters, Night's Whisper and Fact or Fiction
+remain. Fellwar Stone, Slip Out the Back, Bitter Triumph and Chandra's Ignition were considered and kept. Measure over
+T3-T4.
+
 ## 2026-11-04: Urborg finders (JD's choice; not simulated)
 Urza's Cave for an Island, Expedition Map for Chromatic Lantern: both now pick a land by the board (Urborg beside
 Coffers, Coffers beside Urborg, a missing colour). Whispersilk Cloak stays (the unblockable enabler). The payoffs

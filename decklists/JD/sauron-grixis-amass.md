@@ -30,7 +30,7 @@ around.
 
 ### Game plan
 - **Turns 1 to 3.** Start an Army before Sauron lands: **Dreadhorde Invasion** and **Lazotep Reaver** make one, and a
-  rock (ten in the deck) pushes you toward six mana. Hold up **Orcish Bowmasters** (flash) for an opponent's
+  rock (nine in the deck) pushes you toward six mana. Hold up **Orcish Bowmasters** (flash) for an opponent's
   extra draw, and keep cheap removal for early threats. Cast **Call of the Ring** when you have nothing better.
 - **Turns 4 to 6.** Land Sauron, then The Ozolith, the Army's insurance, before you commit a big Army. Every
   opponent spell after Sauron lands is a free counter. Develop Talrand, Iron Man, Mauhúr and Sheoldred, and keep
@@ -44,6 +44,10 @@ around.
 **Helm of the Host**. Helm makes a hasty, nonlegendary Godo token at the beginning of combat; that token's first attack
 creates another combat, the next combat makes another Godo, and the loop produces enough attackers and combat steps to
 end the game. Godo costs six and Helm normally costs {5} to equip, so do not treat Godo alone as a six-mana win.
+
+**Gilgamesh, Master-at-Arms** ({4}{R}{R}) is the second way to find the Equipment: when he enters or attacks, look at
+the top six cards and put every Equipment among them onto the battlefield, and you may attach one to a Samurai (Godo and
+Gilgamesh are both Samurai). He finds Helm or Hammer when Godo is not drawn, and each attack digs again.
 
 **Hammer of Nazahn** supplies the shortcut. If Hammer is already on the battlefield, the Helm that Godo finds attaches
 to him immediately. **Peter Parker's Camera** can copy Godo's enter trigger: let the copy find Hammer first, then let
@@ -148,8 +152,6 @@ out, or a missing colour (JD, 2026-11-04, for an Island and Chromatic Lantern; n
 Card draw: **Fact or Fiction** (an instant-speed dig: cast it at the end of an opponent's turn for two of the five
 cards), **Night's Whisper**, **Bloodsoaked Insight // Sanguine Morass** (an exile-and-play spell that is cheaper for
 each life your opponents have lost this turn, or a land that taps for {B} or {R}) and Iron Man.
-**Faerie Mastermind** ({1}{U}, flash flier) draws you a card whenever an opponent draws their second card in a turn:
-the Archivist wheel, Bowmasters' forced draws and Baleful Mastery's cheap mode all trigger it.
 Rocks: Sol Ring, Arcane Signet, Mind Stone, Fellwar Stone, Dimir Signet, Rakdos Signet, and the
 Talismans of Creativity, Dominance and Indulgence. Spot removal: **Bitter Triumph**,
 **Bloodchief's Thirst**, **Baleful Mastery**, **Infernal Grasp**, **Terminate** and **Chaos
@@ -190,7 +192,7 @@ secondary plan when combat stalls or the table spends its answers on Sauron and 
 
 **Archivist wheel with Bowmasters** (see Strategy) is the grind engine and, late, a finisher: three opponents redrawing five cards each take about 5 pings apiece from Bowmasters, and the Army grows by about 15. Hold it for the turn it kills or the counters matter.
 
-**The early Army.** Dreadhorde Invasion on turn two, or Lazotep Reaver, with a rock to follow (ten in the deck), builds an Army before Sauron arrives. Then the first hit comes sooner, and Massacre Wurm or Inferno Titan clear the way for it.
+**The early Army.** Dreadhorde Invasion on turn two, or Lazotep Reaver, with a rock to follow (nine in the deck), builds an Army before Sauron arrives. Then the first hit comes sooner, and Massacre Wurm or Inferno Titan clear the way for it.
 
 **Finish with X.** Once the Army has connected or opponents are low, Exsanguinate drains every opponent for X, and Comet Storm spreads X damage over as many targets as you kick. Both are better after a sweeper has already thinned the table.
 
@@ -259,7 +261,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Sauron, the Dark Lord
 
-**Creatures (18).** Combat Celebrant, Faerie Mastermind, Godo Bandit Warlord, Grave Titan, Inferno Titan, Iron Man Armored Avenger, Jace's Archivist, Jin-Gitaxias Progress Tyrant, Lazotep Reaver, Massacre Wurm, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Scarlet Witch Chaotic Avenger, Sheoldred the Apocalypse, Talrand Sky Summoner, Vision Synthezoid Avenger, War Machine Avenging Arsenal
+**Creatures (18).** Combat Celebrant, Gilgamesh Master-at-Arms, Godo Bandit Warlord, Grave Titan, Inferno Titan, Iron Man Armored Avenger, Jace's Archivist, Jin-Gitaxias Progress Tyrant, Lazotep Reaver, Massacre Wurm, Mauhúr Uruk-hai Captain, Noxious Gearhulk, Orcish Bowmasters, Scarlet Witch Chaotic Avenger, Sheoldred the Apocalypse, Talrand Sky Summoner, Vision Synthezoid Avenger, War Machine Avenging Arsenal
 
 **Enchantments (3).** Call of the Ring, Dreadhorde Invasion, Propaganda
 
@@ -301,10 +303,10 @@ Sanguine Morass is counted above as a spell, so the deck plays as 36 lands when 
 1 Expedition Map
 1 Exsanguinate
 1 Fact or Fiction
-1 Faerie Mastermind
 1 Fellwar Stone
 1 Force of Will
 1 Foreboding Ruins
+1 Gilgamesh, Master-at-Arms
 1 Godo, Bandit Warlord
 1 Grave Titan
 1 Hammer of Nazahn
