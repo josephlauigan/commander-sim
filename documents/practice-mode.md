@@ -158,7 +158,7 @@ rust/crates/practice/src/
   catalog.rs     what the setup screen shows
   images.rs      card images: lookup, download, cache
   text.rs        the terminal client
-  static/        index.html, app.js, table.js, styles.css, knight-dragon.gif
+  static/        index.html, app.js, table.js, styles.css, loading-dragon.mp4 (the loading screen's art)
 ```
 
 ### The game thread and the person's seat

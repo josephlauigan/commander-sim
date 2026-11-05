@@ -10,7 +10,7 @@ the look-ahead AI, and no copy of Python. It replaced the old Python (Briefcase)
 ios-shell/
   App/                  the Swift app: start the server, show the page
   include/              the Rust library's C interface (practice.h) and its module map
-  Assets.xcassets/      the app icon
+  Assets.xcassets/      the app icon and the launch screen's parchment colour (LaunchBackground)
   project.yml           the Xcode project, for XcodeGen
   build-rust.sh         builds the Rust library for iOS (build/PracticeCore.xcframework) and fills AppData/
   run.sh                build-rust.sh, then generate the project, build, and start it in the iPad simulator

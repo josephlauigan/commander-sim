@@ -10,10 +10,21 @@ let waitingOn = null;       // two players: the other person, while the game wai
 const two = () => me.humans.length > 1;
 const otherName = () => { const k = me.humans.find((x) => x !== me.seat); return (k && me.names[k]) || 'your friend'; };
 
+// The loading art is an MP4. WebKit (the iPad app's web view, Safari) plays video only from servers that answer byte-range
+// requests, which the practice server doesn't, so the page fetches the whole file once (about 4 MB, from the same
+// machine) and plays it from memory. With reduced motion on it shows the first frame and doesn't play.
+const art = $('#loading-art');
+const still = matchMedia('(prefers-reduced-motion: reduce)');
+const playArt = () => { if (!$('#loading').hidden && !still.matches && art.src) art.play().catch(() => {}); };
+fetch('/static/loading-dragon.mp4')
+  .then((r) => (r.ok ? r.blob() : null))
+  .then((b) => { if (b) { art.src = URL.createObjectURL(new Blob([b], { type: 'video/mp4' })); art.preload = 'auto'; playArt(); } })
+  .catch(() => {});
+
 function loading(done, total) {
   const box = $('#loading');
-  if (done === null) { box.hidden = true; return; }
-  box.hidden = false;
+  if (done === null) { box.hidden = true; art.pause(); return; }
+  if (box.hidden) { box.hidden = false; playArt(); }
   const pct = total ? Math.round((100 * done) / total) : 0;
   box.querySelector('.bar > div').style.width = pct + '%';
   box.querySelector('.bar').setAttribute('aria-valuenow', pct);
