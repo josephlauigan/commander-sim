@@ -313,6 +313,31 @@ fn rakdos_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if !trigger_window(g, o, Some(src), "target opponent sacrifices two permanents or you draw two", Some(3.0))? {
         return Ok(());
     }
+    if crate::human::is_human(g, q) {
+        // practice mode: the person decides whether to sacrifice two nonland, nontoken permanents, and which
+        let cands: Vec<PermId> = g
+            .player(q)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| live(g, m) && !g.perm(m).token && g.perm(m).cd.is_some_and(|c| !g.db.get(c).land))
+            .collect();
+        if cands.len() >= 2
+            && crate::human::choices::yes_no(
+                g,
+                q,
+                &format!("Rakdos: sacrifice two nonland, nontoken permanents? (otherwise {} draws two cards)", pname(g, o)),
+            )?
+        {
+            for m in crate::human::cards::pick_perms(g, q, "choose", "Rakdos: sacrifice which permanent?", &cands, 2)? {
+                crate::glog!(g, "    {} sacrifices {} (Rakdos)", pname(g, q), g.perm(m).name);
+                die(g, m, "sac")?;
+            }
+            return Ok(());
+        }
+        crate::glog!(g, "    {} declines: {} draws two (Rakdos)", pname(g, q), pname(g, o));
+        return draw(g, o, 2, false);
+    }
     let two = rakdos_fodder(g, q);
     let cost: f64 = two.iter().map(|&m| sac_worth(g, m)).sum();
     if two.len() == 2 && cost < 3.0 {

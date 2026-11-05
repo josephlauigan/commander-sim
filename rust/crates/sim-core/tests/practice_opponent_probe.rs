@@ -787,46 +787,12 @@ fn every_opponent_effect_asks_the_person() {
     }
 }
 
-/// gaps found on 2026-11-04 and not yet fixed: the AI chooses (or pays, or refuses) for the person. Fixing one means
+/// gaps found on 2026-11-04 and not yet fixed (all 29 were fixed by the opponent-fixes task, so this is empty): the AI chooses (or pays, or refuses) for the person. Fixing one means
 /// taking it off this list; a new gap fails the test. Where the code is: `rust/agents/report-opponent-probe.md`.
-const TO_FIX: &[&str] = &[
-    "Archfiend of Depravity", // keeps the two best creatures for the person: impls/t3.rs depravity
-    "Braids, Cabal Minion", // sacrifices the person's least valuable artifact, creature or land: ai/decks.rs braids_sacrifice
-    "Burglar Rat",          // "each opponent discards": impls/t3.rs discard_worst_for (least worth)
-    "Butcher of Malakir",   // dies trigger, DSL "sacrifice": dsl/mod.rs
-    "Chittering Rats",      // puts the person's least worth card on top of the library: impls/t3.rs rats
-    "Council's Judgment",   // the person's vote is cast by the AI: impls/rules.rs judgment
-    "Demon's Disciple",     // enter trigger, DSL "sacrifice"
-    "Dictate of Erebos",    // dies trigger, DSL "sacrifice"
-    "Elderfang Disciple",   // "each opponent discards": impls/t3.rs discard_worst_for
-    "Flare of Malice",      // DSL "sacrifice" (and a tie for the greatest mana value)
-    "Fleshbag Marauder",    // enter trigger, DSL "sacrifice"
-    "Grave Pact",           // dies trigger, DSL "sacrifice"
-    "Liliana of the Veil",  // -6: the person's pile is chosen for them: impls/rules.rs lotv_ult
-    "Liliana, Dreadhorde General", // -9: the permanents the person keeps are chosen for them: impls/rules.rs ldg_ult
-    "Liliana's Triumph",    // DSL "sacrifice"
-    "Mire in Misery",       // DSL "sacrifice"
-    "Nezumi Informant",     // enter trigger, DSL "discard": a random card
-    "Painful Quandary",     // discards a card (or loses 5 life) for the person: impls/rules.rs quandary
-    "Rakdos, Patron of Chaos", // sacrifices two permanents instead of asking: impls/t12_kaalia_sythis.rs rakdos_end
-    "Rankle's Prank",       // DSL modal "sacrifice" / "discard"
-    "Sheoldred's Edict",    // DSL modal "sacrifice"
-    "Single Combat",        // keeps the person's best creature or planeswalker: impls/t12_lightpaws.rs
-    "Sword of Feast and Famine", // combat damage: a random discard: engine/combat.rs
-    "The Raven Man",        // {3}{B},{T}: DSL "discard": a random card
-    "The Tabernacle at Pendrell Vale", // pays {1} or loses each creature for the person: engine/turn.rs upkeep
-    "Vicious Rumors",       // DSL "discard": a random card
-    "Virus Beetle",         // enter trigger, DSL "discard": a random card
-    "Vraska's Fall",        // DSL "sacrifice"
-    "Wandering Archaic // Explore the Vastlands", // pays {2} for the person: impls/t45_chulane_kinnan.rs archaic_cast
-];
+const TO_FIX: &[&str] = &[];
 
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
-    (
-        "Chain of Vapor",
-        "the bounce is P1's own target (Chandra). The controller's optional 'sacrifice a land to copy it' is never offered to the person at all: not modelled (a tag `rem` bounce), see the report",
-    ),
     (
         "Dack Fayden, Helping Hand",
         "the donated All-Fates Stalker enters under P1, so its enter trigger is P1's and P1 chooses the person's creature to exile; the rules say so",
@@ -849,14 +815,6 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
     ("Silent-Blade Oni", "P1 looks at the person's hand and casts a spell of P1's choice from it"),
     ("Static Prison", "P1's target (exile until it leaves)"),
     ("Teferi, Time Raveler", "-3: P1 targets the person's enchantment"),
-    (
-        "Torment of Hailfire",
-        "X = 3: the person is asked three times, the same prompt each repetition (the three 'twice' hits). The prompt could say '1 of 3'",
-    ),
-    (
-        "Vona's Hunger",
-        "the city's blessing: half of four creatures rounded up is two sacrifices, so the person is asked twice with the same prompt. The prompt could say '1 of 2'",
-    ),
     ("Vraska, Betrayal's Sting", "-2: P1 targets the person's creature"),
 ];
 

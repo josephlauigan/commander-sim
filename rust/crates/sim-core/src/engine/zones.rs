@@ -1633,6 +1633,11 @@ pub fn sac_worth(g: &Game, m: PermId) -> f64 {
 
 /// q sacrifices the creature it values least (least_power: among those with the least power, Witch-king)
 pub fn edict(g: &mut Game, q: PlayerId, least_power: bool) -> Res {
+    edict_nth(g, q, least_power, 1, 1)
+}
+
+/// `edict` for the i-th of n sacrifices (a person's prompt says "(1 of 2)" when n is more than one)
+pub fn edict_nth(g: &mut Game, q: PlayerId, least_power: bool, i: usize, n: usize) -> Res {
     let mut cr: Vec<PermId> =
         g.player(q).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased && !no_sac(g, m)).collect();
     if !cr.is_empty() && least_power {
@@ -1640,7 +1645,11 @@ pub fn edict(g: &mut Game, q: PlayerId, least_power: bool) -> Res {
         cr.retain(|&m| epow(g, m) == lo);
     }
     if crate::human::is_human(g, q) && !cr.is_empty() {
-        return crate::human::choices::sacrifice_creature(g, q, &cr, "Sacrifice a creature (edict)");
+        let why = match n {
+            1 => "Sacrifice a creature (edict)".to_string(),
+            _ => format!("Sacrifice a creature (edict) ({i} of {n})"),
+        };
+        return crate::human::choices::sacrifice_creature(g, q, &cr, &why);
     }
     if let Some(m) = crate::ai::values::read_as(g, q, || {
         min_by(&cr, |x| sac_worth(g, x) + crate::ai::table_fixes::steal_cost(g, q, x)) // --- ai-table-fixes: AI_SACSTEAL

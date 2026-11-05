@@ -500,7 +500,12 @@ fn archaic_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     if !trigger_window(g, o, Some(src), "pay {2} or Wandering Archaic copies the spell", None)? {
         return Ok(());
     }
-    if worth >= 2.0 && can_pay(g, caster, 2, "", false) {
+    if crate::human::is_human(g, caster) {
+        // practice mode: the person decides whether to pay {2}
+        if crate::human::choices::pay_tax(g, caster, 2, "Wandering Archaic (or its owner may copy the spell)")? {
+            return Ok(());
+        }
+    } else if worth >= 2.0 && can_pay(g, caster, 2, "", false) {
         pay(g, caster, 2, "", false)?;
         crate::glog!(g, "    {} pays {{2}} (Wandering Archaic)", pname(g, caster));
         return Ok(());

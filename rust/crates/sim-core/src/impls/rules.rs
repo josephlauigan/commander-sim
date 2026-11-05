@@ -214,6 +214,32 @@ fn judgment(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let mut votes: Vec<(PermId, u32)> = vec![];
     let voters: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
     for &v in &voters {
+        if crate::human::is_human(g, v) {
+            // practice mode: the person casts their own vote: any nonland permanent the caster doesn't control
+            let cands: Vec<PermId> = voters
+                .iter()
+                .filter(|&&q| q != p)
+                .flat_map(|&q| g.player(q).perms.iter().copied())
+                .filter(|&m| !g.perm(m).phased)
+                .collect();
+            if cands.is_empty() {
+                continue;
+            }
+            let pick = crate::human::cards::pick_perm(
+                g,
+                v,
+                "choose",
+                &format!("Council's Judgment: vote for a nonland permanent {} doesn't control", pname(g, p)),
+                &cands,
+                None,
+            )?
+            .unwrap_or(cands[0]);
+            match votes.iter_mut().find(|x| x.0 == pick) {
+                Some(x) => x.1 += 1,
+                None => votes.push((pick, 1)),
+            }
+            continue;
+        }
         let mut cands: Vec<PermId> = voters
             .iter()
             .filter(|&&q| q != v)
@@ -848,6 +874,31 @@ fn lotv_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     sort_desc(&mut ps, |m| pval(g, m));
     let a: Vec<PermId> = ps.iter().copied().step_by(2).collect();
     let b: Vec<PermId> = ps.iter().copied().skip(1).step_by(2).collect();
+    if crate::human::is_human(g, q) {
+        // practice mode: the caster separated the piles; the person picks the pile they sacrifice
+        let list = |g: &Game, v: &[PermId]| -> String {
+            if v.is_empty() {
+                "(nothing)".to_string()
+            } else {
+                v.iter().map(|&m| g.perm(m).name.to_string()).collect::<Vec<_>>().join(", ")
+            }
+        };
+        let labels = vec![format!("Pile 1: {}", list(g, &a)), format!("Pile 2: {}", list(g, &b))];
+        let k = crate::human::choices::choose_one(
+            g,
+            q,
+            "choose",
+            "Liliana of the Veil: sacrifice which pile?",
+            &labels,
+        )?;
+        let pile = if k == 0 { a } else { b };
+        for m in pile {
+            if controls(g, q, m) {
+                die(g, m, "sac")?;
+            }
+        }
+        return Ok(());
+    }
     let keep = if a.iter().map(|&m| pval(g, m)).psum() >= b.iter().map(|&m| pval(g, m)).psum() { a } else { b };
     for m in ps {
         if !keep.contains(&m) && controls(g, q, m) {
@@ -882,6 +933,10 @@ fn first_type(g: &Game, m: PermId) -> char {
 /// Liliana, Dreadhorde General -9: each opponent keeps one permanent of each type (and one land)
 fn ldg_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     for q in g.opps(p).collect::<Vec<_>>() {
+        if crate::human::is_human(g, q) {
+            ldg_person(g, q)?;
+            continue;
+        }
         let mut ps: Vec<PermId> = g.player(q).perms.iter().copied().filter(|&m| !g.perm(m).phased).collect();
         sort_desc(&mut ps, |m| pval(g, m));
         let mut keep: Vec<(char, PermId)> = vec![];
@@ -907,6 +962,58 @@ fn ldg_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
                     g.player_mut(q).gy.push(cd);
                 }
             }
+        }
+    }
+    Ok(())
+}
+
+/// Liliana, Dreadhorde General -9 for a person: they choose a permanent of each permanent type they control (one
+/// permanent can be the choice for several types) and sacrifice the rest
+fn ldg_person(g: &mut Game, q: PlayerId) -> Res {
+    let ps: Vec<PermId> = g.player(q).perms.iter().copied().filter(|&m| !g.perm(m).phased).collect();
+    let lands = g.player(q).lands.clone();
+    let mut keep: Vec<PermId> = vec![];
+    let types = [
+        (Types::ARTIFACT, "artifact"),
+        (Types::CREATURE, "creature"),
+        (Types::ENCHANTMENT, "enchantment"),
+        (Types::PLANESWALKER, "planeswalker"),
+        (Types::LAND, "land"),
+    ];
+    for (t, label) in types {
+        let of_type = |g: &Game, m: PermId| {
+            (t == Types::CREATURE && g.is_creature(m)) || g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(t))
+        };
+        let pool: Vec<PermId> = if t == Types::LAND { lands.clone() } else { ps.clone() };
+        if pool.iter().any(|&m| keep.contains(&m) && of_type(g, m)) {
+            continue; // a permanent already kept is of this type
+        }
+        let cands: Vec<PermId> = pool.into_iter().filter(|&m| of_type(g, m)).collect();
+        let pick = match cands.len() {
+            0 => continue,
+            1 => cands[0],
+            _ => crate::human::cards::pick_perm(
+                g,
+                q,
+                "choose",
+                &format!("Liliana, Dreadhorde General: choose the {label} you keep"),
+                &cands,
+                None,
+            )?
+            .unwrap_or(cands[0]),
+        };
+        keep.push(pick);
+    }
+    for m in ps {
+        if !keep.contains(&m) && g.perm(m).on_bf {
+            die(g, m, "sac")?;
+        }
+    }
+    for l in lands {
+        if !keep.contains(&l) {
+            crate::engine::turn::remove_land(g, q, l);
+            let cd = g.perm(l).card();
+            g.player_mut(q).gy.push(cd);
         }
     }
     Ok(())
@@ -1225,7 +1332,10 @@ fn plague(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 fn triumph(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     for q in g.opps(p).collect::<Vec<_>>() {
         let cs = live_creatures(g, q);
-        if let Some(x) = min_by(&cs, |x| pval(g, x)) {
+        if crate::human::is_human(g, q) && !cs.is_empty() {
+            // practice mode: the person picks the creature
+            crate::human::choices::sacrifice_creature(g, q, &cs, "Liliana's Triumph: sacrifice a creature")?;
+        } else if let Some(x) = min_by(&cs, |x| pval(g, x)) {
             die(g, x, "sac")?;
         }
     }
@@ -1248,6 +1358,19 @@ fn quandary(g: &mut Game, src: Src, caster: PlayerId, _c: CardId) -> Res {
     let name = format!("{} discards or loses 5 life", pname(g, caster));
     if !trigger_window(g, o, Some(src), &name, None)? {
         return Ok(());
+    }
+    if crate::human::is_human(g, caster) {
+        // practice mode: the person decides whether to discard a card or lose 5 life, and which card
+        if !g.player(caster).hand.is_empty()
+            && crate::human::choices::yes_no(
+                g,
+                caster,
+                "Painful Quandary: discard a card? (otherwise you lose 5 life)",
+            )?
+        {
+            return crate::human::choices::discard(g, caster, 1, "Painful Quandary: discard a card");
+        }
+        return lose_life(g, caster, 5, Some(o), "triggers", None);
     }
     let junk: Vec<CardId> =
         g.player(caster).hand.iter().copied().filter(|&x| card_worth(g, caster, x, false) < 30.0).collect();
