@@ -130,6 +130,7 @@ Deck key `sauron`, `decklists/JD/sauron-grixis-amass.md`.
 
 ### Changes
 
+- **2026-11-04.** Out: Chromatic Lantern. In: Expedition Map, Urza's Cave. Urborg finders (JD 11/04; not simulated): Urza's Cave for an Island, Expedition Map for Chromatic Lantern.
 - **2026-11-04.** Out: Karn's Bastion. In: Cabal Coffers, Urborg, Tomb of Yawgmoth. Cabal Coffers and Urborg, Tomb of Yawgmoth for Karn's Bastion and a Swamp (JD 11/04, physical deck; not simulated): big mana for Exsanguinate and Torment of Hailfire.
 - **2026-11-03.** Out: Phyrexian Arena, Sauron, the Necromancer, Sephiroth, Planet's Heir, Triple Triad, Urza, Lord High Artificer. In: Combat Celebrant, Godo, Bandit Warlord, Hammer of Nazahn, Helm of the Host, Peter Parker's Camera. Added the compact Godo/Helm/Hammer package from Ur-Dragon as a secondary finish while preserving Sauron's Army plan.
 - **2026-11-02.** Out: Kaervek the Merciless. In: Karn's Bastion, Phyrexian Arena. Ghave breakup (JD, 11/02), not simulated: the Ghave deck is broken up and its cards placed as upgrades; the cards in come from Ghave, the cards out go to the binder. Karn's Bastion (proliferate grows the Army) for a Mountain (red has the fewest pips), Phyrexian Arena for Kaervek the Merciless (stuck in hand in every tier of the 10/17 card report).
@@ -311,6 +312,8 @@ Deck key `sheoldred`, `decklists/JD/sheoldred-mono-black.md`.
 
 ### Changes
 
+- **2026-11-04.** Out: Necrosquito. In: Raise Dead. Coffers drain package revised (JD 11/04; not simulated): Necrosquito leaves instead of Raise Dead, which stays for cheap creature recovery.
+- **2026-11-04.** Out: Burrog Banemaker, Lethal Throwdown, Phyrexian Rager, Raise Dead, Seymour Flux. In: Exquisite Blood, Grim Tutor, Sanguine Bond, Torment of Hailfire, Vito, Thorn of the Dusk Rose. Coffers drain package (JD 11/04; not simulated): Sanguine Bond, Exquisite Blood, Vito, Grim Tutor, Torment of Hailfire for Seymour Flux, Lethal Throwdown, Raise Dead, Phyrexian Rager, Burrog Banemaker.
 - **2026-11-04.** Out: Command Tower. In: Cabal Coffers. Cabal Coffers for Command Tower (JD 11/04, physical deck; not simulated): 31 Swamps make Coffers a big-mana land without Urborg.
 - **2026-11-03.** Out: Sneering Shadewriter. In: Raise Dead. JD approved: replace Sneering Shadewriter with Raise Dead for inexpensive creature recovery; not simulated.
 - **2026-11-02.** Out: Battle-Rage Blessing, Carnage Altar, Commander's Sphere, Disembowel, Fetid Imp, Last Gasp, Potioner's Trove, Soul Enervation, Terror. In: Ashnod's Altar, Dark Ritual, Grave Pact, Mikaeus, the Unhallowed, Phyrexian Tower, Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel, Skullclamp, Triskelion, Viscera Seer, Yawgmoth, Thran Physician. Ghave breakup (JD, 11/02), not simulated: the Ghave deck is broken up and its cards placed as upgrades; the cards in come from Ghave, the cards out go to the binder. An aristocrats package as a second win route: Mikaeus + Triskelion (infinite damage, found by Demonic and Diabolic Tutor), Yawgmoth, Viscera Seer, Ashnod's Altar, Skullclamp, Sephiroth (a drain per death) and Grave Pact, plus Dark Ritual and Phyrexian Tower. Cuts: the lowest win rates when cast in the 10/17 card report (Fetid Imp, Soul Enervation, Battle-Rage Blessing, Carnage Altar, Commander's Sphere, Potioner's Trove, Disembowel, Last Gasp) and Terror.
