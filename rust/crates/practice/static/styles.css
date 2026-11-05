@@ -83,12 +83,15 @@ main { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 12px; pa
 #log .auto, #log .turn { color: var(--gold); }
 footer { padding: 8px 16px; color: var(--dim); font-size: 12px; }
 a { color: var(--gold); }
-#loading { position: fixed; inset: 0; background: #000000; display: flex; align-items: center; justify-content: center; z-index: 10; }
+/* the loading screen: the watercolour knight and dragon on parchment (the icon's paper colour), its edges fading into
+   the paper, and a thin gold bar */
+#loading { position: fixed; inset: 0; background: #fde7cb; display: flex; align-items: center; justify-content: center; z-index: 10; }
 #loading[hidden] { display: none; }
-.loading-box { display: flex; flex-direction: column; align-items: center; gap: 20px; padding: 16px; max-width: 100%; }
-.loading-box img { image-rendering: pixelated; max-width: 100%; height: auto; }
-.bar { width: min(512px, 90vw); height: 14px; border: 2px solid var(--gold); border-radius: 3px; background: #0A0A0A; }
-.bar > div { height: 100%; width: 0; background: var(--gold); transition: width .2s; }
+.loading-box { display: flex; flex-direction: column; align-items: center; gap: 28px; padding: 16px; max-width: 100%; }
+#loading-art { display: block; width: min(92vw, 120vh, 1200px); height: auto; aspect-ratio: 3 / 2; background: #fde7cb;
+  -webkit-mask-image: radial-gradient(ellipse at center, #000 50%, transparent 71%); mask-image: radial-gradient(ellipse at center, #000 50%, transparent 71%); }
+.bar { width: min(420px, 70vw); height: 4px; border-radius: 2px; background: rgba(156, 114, 40, .2); overflow: hidden; }
+.bar > div { height: 100%; width: 0; background: linear-gradient(90deg, #9c7228, #e0b85a, #9c7228); transition: width .2s; }
 #setup { max-width: 1100px; margin: 0 auto; padding: 8px 16px 24px; }
 #setup h2 { font-size: 15px; color: var(--gold); margin: 18px 0 8px; }
 #setup .row { display: flex; flex-wrap: wrap; gap: 8px 18px; align-items: center; margin: 6px 0; }

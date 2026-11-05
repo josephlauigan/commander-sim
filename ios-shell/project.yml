@@ -30,7 +30,9 @@ targets:
         CFBundleDisplayName: Commander Practice
         UIRequiresFullScreen: true
         UIStatusBarHidden: true
-        UILaunchScreen: {}
+        # the launch screen: the parchment of the icon and the loading screen (Assets.xcassets/LaunchBackground)
+        UILaunchScreen:
+          UIColorName: LaunchBackground
         UISupportedInterfaceOrientations~ipad: [UIInterfaceOrientationLandscapeLeft, UIInterfaceOrientationLandscapeRight, UIInterfaceOrientationPortrait, UIInterfaceOrientationPortraitUpsideDown]
         # the web view loads the table from the server inside the app (http://127.0.0.1)
         NSAppTransportSecurity:

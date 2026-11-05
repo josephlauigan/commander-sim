@@ -32,6 +32,10 @@ fn test_the_page_and_its_files() {
     let r = c.get("/static/app.js");
     assert_eq!(r.status, 200);
     assert!(r.header("content-type").unwrap().contains("javascript"));
+    // the loading screen's art: the page fetches it whole and plays it from memory (app.js), so it must be served as video
+    let r = c.get("/static/loading-dragon.mp4");
+    assert_eq!((r.status, r.header("content-type")), (200, Some("video/mp4")));
+    assert_eq!(&r.body[4..8], b"ftyp");
     assert_eq!(c.get("/static/../server.py").status, 404);
     assert_eq!(c.get("/static/%2e%2e/server.py").status, 404);
     assert_eq!(c.get("/nothing-here").status, 404);
