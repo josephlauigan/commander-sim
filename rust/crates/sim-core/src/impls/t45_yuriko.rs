@@ -654,7 +654,7 @@ fn agadeem_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym>
 
 /// draw cards equal to the cards in hand plus one; no maximum hand size for the rest of the game
 fn sea_gate_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    let n = g.player(p).hand.len() as u32 + 1;
+    let n = crate::engine::values::hand_count(g, p) as u32 + 1;
     g.player_mut(p).t0s.nomax = true;
     draw(g, p, n, false)?;
     Ok("gy")

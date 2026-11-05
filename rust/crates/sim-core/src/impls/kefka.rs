@@ -292,7 +292,7 @@ fn inquiry_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
 
 /// **Inner Fire**: add {R} for each card in your hand (the mana floats until the turn ends)
 fn inner_fire(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    let n = g.player(p).hand.len() as u32;
+    let n = crate::engine::values::hand_count(g, p) as u32;
     g.player_mut(p).mana.add(Kind::R, n);
     crate::glog!(g, "    {} adds {n} red mana (Inner Fire)", pname(g, p));
     Ok("gy")

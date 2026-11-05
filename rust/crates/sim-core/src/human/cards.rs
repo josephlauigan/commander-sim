@@ -1783,9 +1783,9 @@ pub fn jeskas_will(g: &mut Game, p: PlayerId) -> Res<bool> {
         let opps: Vec<PlayerId> = g.opps(p).collect();
         if !opps.is_empty() {
             let labels: Vec<String> =
-                opps.iter().map(|&q| format!("{} ({} cards)", pname(g, q), g.player(q).hand.len())).collect();
+                opps.iter().map(|&q| format!("{} ({} cards)", pname(g, q), crate::engine::values::hand_count(g, q))).collect();
             let j = choices::choose_one(g, p, "target", "Jeska's Will: which opponent's hand?", &labels)?;
-            let n = g.player(opps[j]).hand.len() as u32;
+            let n = crate::engine::values::hand_count(g, opps[j]) as u32;
             g.player_mut(p).pool.add('R', n);
             crate::glog!(g, "    Jeska's Will adds {} red mana", n);
         }

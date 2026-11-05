@@ -81,7 +81,7 @@ fn archivist_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> 
     if !ability_window(g, p, Some(src), "each player discards their hand, then draws", None, None)? {
         return Ok(true);
     }
-    let n = g.players.iter().filter(|q| q.alive).map(|q| q.hand.len()).max().unwrap_or(0) as u32;
+    let n = g.players.iter().filter(|q| q.alive).map(|q| crate::engine::values::hand_count(g, q.id)).max().unwrap_or(0) as u32;
     let alive: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
     for &q in &alive {
         let hand = g.player(q).hand.clone();

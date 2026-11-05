@@ -410,3 +410,61 @@ fn the_garth_loop_leaves_every_new_garth_to_attack_when_the_person_says_none() {
     let tapped = g.player(P0).perms.iter().filter(|&&m| g.perm(m).token && g.perm(m).tapped).count();
     assert_eq!(tapped, 1, "only the Garth that chose Regrowth in the loop's steps is tapped");
 }
+
+// ------------------------------------------------------------------ 5. Ragavan's exiled card is not a card in hand
+/// seat 0 has Ragavan; he connected and exiled the top card of seat 1's library, which waits in seat 0's hand
+fn ragavan_hit() -> (Game, CardId) {
+    use sim_core::engine::hooks::run_hook;
+    use sim_core::hooks::{Call, Event};
+    let mut g = table(&["thanos", "seph"]);
+    let rag = perm(&mut g, P0, "Ragavan, Nimble Pilferer");
+    g.player_mut(P0).hand.clear();
+    hand(&mut g, P0, &["Sol Ring", "Mind Stone"]);
+    let c = take(&mut g, P1, "Think Twice");
+    g.player_mut(P1).library.push(c);
+    run_hook(&mut g, rag, Event::CombatDamage, &Call::CombatDamage { p: P0, a: rag, d: P1, dmg: 2 }).unwrap();
+    assert!(g.player(P0).hand.contains(&c), "held in the hand for the turn");
+    (g, c)
+}
+
+#[test]
+fn the_card_ragavan_exiled_is_not_counted_as_a_card_in_hand() {
+    let (g, _) = ragavan_hit();
+    assert_eq!(g.player(P0).hand.len(), 3);
+    assert_eq!(sim_core::engine::values::hand_count(&g, P0), 2, "only Sol Ring and Mind Stone");
+    assert_eq!(sim_core::engine::values::hand_proper(&g, P0).len(), 2);
+}
+
+#[test]
+fn sea_gate_restoration_draws_for_the_real_hand_and_the_hand_size_ignores_ragavans_card() {
+    let (mut g, _) = ragavan_hit();
+    g.active = Some(P0);
+    let sea = hand(&mut g, P0, &["Sea Gate Restoration // Sea Gate, Reborn"])[0];
+    let lib: Vec<&str> = vec!["Island"; 12];
+    library(&mut g, P0, &lib);
+    // hand: Sol Ring, Mind Stone, Ragavan's card, Sea Gate (cast: 3 left in hand, 2 of them real): draws 2 + 1
+    let before = g.player(P0).hand.len();
+    sim_core::engine::cast::cast_card(&mut g, P0, sea, "hand", Ctx::default()).unwrap();
+    assert_eq!(g.player(P0).hand.len(), before - 1 + 3, "drew three, not four");
+    // seven real cards and Ragavan's: no end-of-turn discard question for a person
+    g.player_mut(P0).hand.clear();
+    hand(&mut g, P0, &["Sol Ring", "Mind Stone", "Arcane Signet", "Thran Dynamo", "Island", "Swamp", "Forest"]);
+    let c = take(&mut g, P1, "Think Twice");
+    g.player_mut(P0).hand.push(c);
+    g.player_mut(P0).stolen.insert(c, P1);
+    g.player_mut(P0).impulse.push(c);
+    assert_eq!(g.player(P0).hand.len(), 8);
+    let h = person(vec![], |_| None);
+    g.humans.add(P0, h.clone());
+    sim_core::human::choices::discard_to_hand_size(&mut g, P0, 7).unwrap();
+    assert!(!asked(&h, "End of turn: discard"), "seven cards in hand: {:?}", h.asked());
+    assert_eq!(g.player(P0).hand.len(), 8, "nothing discarded");
+}
+
+#[test]
+fn a_hand_without_exiled_cards_counts_as_before() {
+    let mut g = table(&["thanos", "seph"]);
+    g.player_mut(P0).hand.clear();
+    hand(&mut g, P0, &["Sol Ring", "Mind Stone", "Island"]);
+    assert_eq!(sim_core::engine::values::hand_count(&g, P0), 3);
+}

@@ -828,8 +828,7 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
             || g.player(p).t0s.nomax
     };
     let held = |g: &Game| -> Vec<CardId> {
-        let pl = g.player(p);
-        pl.hand.iter().copied().filter(|c| !pl.stolen.contains_key(c) && !pl.agent_ids.contains(c)).collect()
+        crate::engine::values::hand_proper(g, p) // (also leaves out the exiled cards held in the hand: impulse, Prosper)
     };
     let human = crate::human::is_human(g, p);
     if human && !nomax(g) {

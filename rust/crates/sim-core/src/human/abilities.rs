@@ -65,7 +65,7 @@ pub fn archivist(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if !stack::ability_window(g, p, Some(m), "each player discards their hand and draws", None, None)? {
         return Ok(None);
     }
-    let n = g.players.iter().filter(|q| q.alive).map(|q| q.hand.len()).max().unwrap_or(0);
+    let n = g.players.iter().filter(|q| q.alive).map(|q| engine::values::hand_count(g, q.id)).max().unwrap_or(0);
     crate::glog!(g, "    everyone discards and draws {}", n);
     let ids: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
     for &q in &ids {

@@ -706,8 +706,8 @@ fn wojek_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if p != owner(g, src) {
         return Ok(());
     }
-    let mine = g.player(p).hand.len();
-    let n = g.opps(p).filter(|&q| g.player(q).alive && g.player(q).hand.len() > mine).count() as i32;
+    let mine = crate::engine::values::hand_count(g, p);
+    let n = g.opps(p).filter(|&q| g.player(q).alive && crate::engine::values::hand_count(g, q) > mine).count() as i32;
     if n > 0 && trigger_window(g, p, Some(src), "investigate per opponent with more cards", None)? {
         investigate(g, p, n)?;
     }

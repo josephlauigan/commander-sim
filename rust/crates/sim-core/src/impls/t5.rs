@@ -332,7 +332,7 @@ fn whir_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 /// each player discards their hand and draws as many as the largest hand
 fn windfall(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let qs: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
-    let n = qs.iter().map(|&q| g.player(q).hand.len() as i64 - if q == p { 1 } else { 0 }).max().unwrap_or(0);
+    let n = qs.iter().map(|&q| crate::engine::values::hand_count(g, q) as i64 - if q == p { 1 } else { 0 }).max().unwrap_or(0);
     for &q in &qs {
         let cards: Vec<CardId> = g.player(q).hand.iter().copied().filter(|&x| x != c).collect();
         discard_cards(g, q, &cards)?;

@@ -226,7 +226,7 @@ pub fn discard(g: &mut Game, p: PlayerId, n: usize, why: &str) -> Res {
 }
 
 pub fn discard_to_hand_size(g: &mut Game, p: PlayerId, size: usize) -> Res {
-    let over = g.player(p).hand.len().saturating_sub(size);
+    let over = engine::values::hand_count(g, p).saturating_sub(size);
     if over > 0 {
         discard(g, p, over, &format!("End of turn: discard down to {size}"))?;
     }

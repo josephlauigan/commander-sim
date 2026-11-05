@@ -157,9 +157,9 @@ pub fn num(g: &Game, p: PlayerId, n: Option<&Num>, ctx: &DslCtx, src: Option<Per
             .fold(Colors::NONE, |acc, &m| acc.union(colors_of(g, m)))
             .count() as i32,
         "creatures_you_control" => pl.perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count() as i32,
-        "cards_in_hand" => pl.hand.len() as i32,
+        "cards_in_hand" => crate::engine::values::hand_count(g, p) as i32,
         "lands_you_control" => pl.lands.len() as i32, // --- Tiers 1/2 (windgrace)
-        "event_player_hand" => ctx.event_player.map_or(0, |q| g.player(q).hand.len() as i32), // that player's hand
+        "event_player_hand" => ctx.event_player.map_or(0, |q| crate::engine::values::hand_count(g, q) as i32), // that player's hand
         "opponents" => g.opps(p).count() as i32,
         "spells_this_turn" => pl.spells_this_turn as i32,
         "devotion_B" => pl
