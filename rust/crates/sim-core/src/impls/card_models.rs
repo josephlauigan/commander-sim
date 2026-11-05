@@ -42,7 +42,15 @@ fn baleful_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> 
     let st = g.turn_stamp();
     if g.player_mut(p).flag_turn.shift_remove("baleful_alt") == Some(st) {
         let opps: Vec<PlayerId> = g.opps(p).collect();
-        if let Some(q) = min_by(&opps, |q| threat(g, p, q)) {
+        // a person names the opponent ("an opponent draws a card": the caster's choice)
+        let picked = if crate::human::is_human(g, p) && opps.len() > 1 {
+            let labels: Vec<String> = opps.iter().map(|&q| g.player(q).name.to_string()).collect();
+            let prompt = "Baleful Mastery: which opponent draws a card?";
+            crate::human::choices::choose(g, p, "choose", prompt, &labels, None, None)?.map(|k| opps[k])
+        } else {
+            None
+        };
+        if let Some(q) = picked.or_else(|| min_by(&opps, |q| threat(g, p, q))) {
             crate::glog!(
                 g,
                 "  {} paid {{1}}{{B}} for Baleful Mastery: {} draws a card",

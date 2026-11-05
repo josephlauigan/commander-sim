@@ -1070,8 +1070,15 @@ pub fn counter_cost(g: &Game, ctr: CardId, spell: Option<CardId>, q: Option<Play
     (d.generic, d.pips.to_string())
 }
 
+/// a blue card, for "exile a blue card from your hand" (Force of Will, Force of Negation, Snapback ...): a {U} in its
+/// cost, a Phyrexian {U/P} (Gitaxian Probe, whose cost has no plain {U}), or blue among its colours (hybrid)
+pub fn blue_card(g: &Game, c: CardId) -> bool {
+    let d = g.db.get(c);
+    d.pips.contains('U') || d.phyrexian.contains('U') || d.colors.has('U')
+}
+
 fn blue_in_hand(g: &Game, q: PlayerId, except: CardId) -> Vec<CardId> {
-    g.player(q).hand.iter().copied().filter(|&x| x != except && g.db.get(x).pips.contains('U')).collect()
+    g.player(q).hand.iter().copied().filter(|&x| x != except && blue_card(g, x)).collect()
 }
 
 /// Pact of Negation is only free if {3}{U}{U} (for each pact still owed) can be paid at the next upkeep. Tier 0-5: five
@@ -1180,7 +1187,7 @@ pub fn counter_alt_label(g: &Game, q: PlayerId, ctr: CardId, spell: Option<CardI
     if t.has(Tag::Pact) {
         return Some("free now; pay {3}{U}{U} at your next upkeep or lose the game".into());
     }
-    if t.has(Tag::Misstep) && g.player(q).life > 10 {
+    if t.has(Tag::Misstep) && g.player(q).life >= 2 {
         return Some("pay 2 life instead of {U}".into());
     }
     if t.has(Tag::Fon) && g.active != Some(q) && blues {
@@ -1222,7 +1229,7 @@ pub fn pay_counter_alt(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<Car
         g.player_mut(q).pacts += 1;
         return Ok(true);
     }
-    if t.has(Tag::Misstep) && g.player(q).life > 10 {
+    if t.has(Tag::Misstep) && g.player(q).life >= 2 {
         if !altcost::pay_tax(g, q, ctr)? {
             return Ok(false);
         }

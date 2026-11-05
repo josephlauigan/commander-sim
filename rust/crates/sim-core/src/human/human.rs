@@ -491,8 +491,11 @@ fn cast_counterspell_inner(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<S
     let (gn, pips) = stack::counter_cost(g, c, Some(spell), Some(q));
     let can_mana = mana::cost_problem(g, q, gn, &pips).is_none();
     let alt = stack::counter_alt_label(g, q, c, Some(spell));
-    // with both open, the person chooses (Force of Will: pay {3}{U}{U} or pitch a blue card)
+    // with both open, the person chooses (Force of Will: pay {3}{U}{U} or pitch a blue card). Pact of Negation's {0} is
+    // its mana cost and the upkeep payment part of its effect: no choice
+    let pact = g.db.get(c).tag(Tag::Pact);
     let use_alt = match (&alt, can_mana) {
+        (Some(_), true) if pact => true,
         (Some(a), true) => {
             let labels = vec![format!("pay {}", mana::cost_text(gn, &pips)), a.clone()];
             let prompt = format!("{}: how do you pay?", card_name(g, c));
@@ -522,6 +525,30 @@ fn cast_counterspell_inner(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<S
         return Ok(Some(format!("{} couldn't be cast.", card_name(g, c))));
     }
     Ok(None)
+}
+
+/// pay the alternative cost `legal::spell_alt_label` offered for spell c (from p's hand). The pitched card is the
+/// person's choice; the other slots pay as the AI's do (Baleful Mastery's {1}{B} from the pool). False if not paid
+fn pay_spell_alt(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
+    if g.db.get(c).tag(Tag::Freecmd) && engine::values::commander_out(g, p) {
+        return engine::altcost::pay_tax(g, p, c);
+    }
+    let name = card_name(g, c);
+    if matches!(name.as_str(), "Snapback" | "Misdirection") {
+        let blues: Vec<CardId> =
+            g.player(p).hand.iter().copied().filter(|&x| x != c && stack::blue_card(g, x)).collect();
+        if blues.is_empty() || !engine::altcost::pay_tax(g, p, c)? {
+            return Ok(false);
+        }
+        let x = cards::pick_blue(g, p, &blues, &name)?;
+        let pl = g.player_mut(p);
+        if let Some(i) = pl.hand.iter().position(|&y| y == x) {
+            pl.hand.remove(i);
+        }
+        pl.exile.push(x);
+        return Ok(true);
+    }
+    engine::altcost::pay_alt(g, p, c, None)
 }
 
 fn hand_card(g: &Game, p: PlayerId, act: &Value) -> Option<CardId> {
@@ -856,6 +883,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         pips = String::new();
     }
     let mut ctx = Ctx::default();
+    let mut tgt_extra: (u32, String) = (0, String::new()); // the extra cost of the chosen target (paid with an alternative cost too)
     let mut gymode = None;
     if zone == "gy" {
         let Some((kind, mg, mp)) = legal::gy_mode(g, p, c) else {
@@ -962,7 +990,10 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         let (eg, ep) = legal::target_extra_cost(g, p, c, x);
         gn += eg;
         pips.push_str(&ep);
-        if let Some(why) = mana::cost_problem(g, p, gn, &pips) {
+        tgt_extra = (eg, ep.clone());
+        if let Some(why) = mana::cost_problem(g, p, gn, &pips)
+            && !(zone == "hand" && !cit && !free && legal::spell_alt_label(g, p, c).is_some())
+        {
             return Ok(Some(format!("Can't cast {cname} on that target. {why}")));
         }
         match x {
@@ -1037,6 +1068,30 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
     }
     if d.has_dsl() && !cast::additional_cost(g, p, c, true)? {
         return Ok(Some(format!("You can't pay {cname}'s additional cost.")));
+    }
+    // an alternative cost instead of the mana cost (Snapback's blue card, Baleful Mastery's {1}{B}, Deadly Rollick free
+    // with your commander out): the person's choice when the mana cost can be paid too
+    if zone == "hand"
+        && !cit
+        && !free
+        && let Some(label) = legal::spell_alt_label(g, p, c)
+    {
+        let use_alt = if mana::cost_problem(g, p, gn, &pips).is_none() {
+            let labels = vec![format!("pay {}", mana::cost_text(gn, &pips)), label];
+            pick!(choices::choose(g, p, "choose", &format!("{cname}: how do you pay?"), &labels, Some("cancel"), None)?)
+                == 1
+        } else {
+            true
+        };
+        if use_alt {
+            if let Some(why) = mana::cost_problem(g, p, tgt_extra.0, &tgt_extra.1) {
+                return Ok(Some(format!("Can't cast {cname} on that target. {why}")));
+            }
+            if !pay_spell_alt(g, p, c)? {
+                return Ok(Some(format!("Can't pay {cname}'s alternative cost.")));
+            }
+            (gn, pips) = tgt_extra.clone(); // a target's extra cost is still paid
+        }
     }
     let mut life = 0;
     let phy = legal::phyrexian(g, p, c);
