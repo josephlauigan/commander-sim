@@ -23,6 +23,21 @@ pub fn pick_perm(
     Ok(choices::choose(g, p, kind, prompt, &labels, cancel, None)?.map(|k| cands[k]))
 }
 
+/// The person picks `n` of the permanents `cands` (fewer if there are fewer), one at a time, no cancelling: "chooses two
+/// creatures they control". The prompt says "(1 of 2)" when n is more than one.
+pub fn pick_perms(g: &Game, p: PlayerId, kind: &str, prompt: &str, cands: &[PermId], n: usize) -> Res<Vec<PermId>> {
+    let mut left: Vec<PermId> = cands.to_vec();
+    let mut picked = vec![];
+    let total = n.min(cands.len());
+    for i in 0..total {
+        let pr = if total > 1 { format!("{prompt} ({} of {total})", i + 1) } else { prompt.to_string() };
+        let m = pick_perm(g, p, kind, &pr, &left, None)?.unwrap_or(left[0]);
+        left.retain(|&x| x != m);
+        picked.push(m);
+    }
+    Ok(picked)
+}
+
 /// `hc.choose(g, p, kind, prompt, [NAME(q) for q in opps], cancel=None)`: the opponent the person picks.
 pub fn pick_player(g: &Game, p: PlayerId, kind: &str, prompt: &str, opps: &[PlayerId]) -> Res<PlayerId> {
     let labels: Vec<String> = opps.iter().map(|&q| g.player(q).name.to_string()).collect();

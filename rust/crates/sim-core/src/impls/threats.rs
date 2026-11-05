@@ -176,7 +176,7 @@ fn torment_sim(g: &Game, q: PlayerId, x: i32) -> (i32, f64) {
 }
 
 /// the person's turn in the process: lose 3 life, sacrifice a nonland permanent, or discard a card
-fn torment_human(g: &mut Game, p: PlayerId, q: PlayerId) -> Res {
+fn torment_human(g: &mut Game, p: PlayerId, q: PlayerId, i: i32, x: i32) -> Res {
     let perms: Vec<PermId> = g
         .player(q)
         .perms
@@ -198,7 +198,7 @@ fn torment_human(g: &mut Game, p: PlayerId, q: PlayerId) -> Res {
         g,
         q,
         "choose",
-        "Torment of Hailfire: lose 3 life unless you sacrifice a nonland permanent or discard a card",
+        &format!("Torment of Hailfire: lose 3 life unless you sacrifice a nonland permanent or discard a card ({i} of {x})"),
         &labels,
     )?;
     match kinds[k] {
@@ -217,13 +217,13 @@ fn torment_human(g: &mut Game, p: PlayerId, q: PlayerId) -> Res {
 fn torment_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     let x = ctx.x.max(0);
     crate::glog!(g, "    Torment of Hailfire (X = {x})");
-    for _ in 0..x {
+    for i in 0..x {
         for q in g.opps(p).collect::<Vec<_>>() {
             if !g.player(q).alive || g.over {
                 continue;
             }
             if crate::human::is_human(g, q) {
-                torment_human(g, p, q)?;
+                torment_human(g, p, q, i + 1, x)?;
                 continue;
             }
             let life = g.player(q).life;

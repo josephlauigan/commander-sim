@@ -972,7 +972,8 @@ fn run(
         "discard" => {
             for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx) {
                 let k = n(g, ctx);
-                if q == p && e.random != Some(true) {
+                // practice mode: a person discards what they choose (a random discard stays random)
+                if (q == p || crate::human::is_human(g, q)) && e.random != Some(true) {
                     crate::engine::cast::discard_worst(g, q, k.max(0) as u32)?;
                 } else {
                     for _ in 0..k {
@@ -1027,7 +1028,8 @@ fn run(
                 return Ok(());
             }
             for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx) {
-                for _ in 0..num(g, p, Some(e.n.as_ref().unwrap_or(&Num::Int(1))), ctx, src) {
+                let times = num(g, p, Some(e.n.as_ref().unwrap_or(&Num::Int(1))), ctx, src);
+                for i in 0..times {
                     let cs: Vec<PermId> = g
                         .player(q)
                         .perms
@@ -1035,7 +1037,23 @@ fn run(
                         .copied()
                         .filter(|&m| matches(g, q, m, Some(&f), None) && !crate::engine::values::no_sac(g, m))
                         .collect();
-                    if let Some(m) = min_by(&cs, |m| pval(g, m)) {
+                    if crate::human::is_human(g, q) && !cs.is_empty() {
+                        // practice mode: the person picks what they sacrifice
+                        let what = match spell.or(src.and_then(|m| g.perm(m).cd)) {
+                            Some(c) => g.db.get(c).name.to_string(),
+                            None => "An effect".to_string(),
+                        };
+                        crate::human::choices::sacrifice_permanent(
+                            g,
+                            q,
+                            &cs,
+                            &format!(
+                                "{what}: sacrifice which {}?{}",
+                                f.kind.as_deref().unwrap_or("creature"),
+                                if times > 1 { format!(" ({} of {times})", i + 1) } else { String::new() }
+                            ),
+                        )?;
+                    } else if let Some(m) = min_by(&cs, |m| pval(g, m)) {
                         zones::die(g, m, "sac")?;
                     }
                 }

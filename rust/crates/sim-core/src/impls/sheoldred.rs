@@ -231,8 +231,8 @@ fn vona_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
         } else {
             1
         };
-        for _ in 0..n {
-            crate::engine::zones::edict(g, q, false)?;
+        for i in 0..n {
+            crate::engine::zones::edict_nth(g, q, false, i + 1, n)?;
         }
     }
     Ok("gy")

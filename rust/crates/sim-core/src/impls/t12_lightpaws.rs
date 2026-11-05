@@ -642,7 +642,24 @@ fn single_combat_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 /// or planeswalker spells until the end of your next turn.
 fn single_combat_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let order: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
-    let keep: Vec<(PlayerId, Option<PermId>)> = order.iter().map(|&q| (q, keeper(g, q))).collect();
+    let mut keep: Vec<(PlayerId, Option<PermId>)> = vec![];
+    for &q in &order {
+        let fs = fighters(g, q);
+        if crate::human::is_human(g, q) && !fs.is_empty() {
+            // practice mode: the person chooses the creature or planeswalker they keep
+            let k = crate::human::cards::pick_perm(
+                g,
+                q,
+                "choose",
+                "Single Combat: choose the creature or planeswalker you keep",
+                &fs,
+                None,
+            )?;
+            keep.push((q, k));
+        } else {
+            keep.push((q, keeper(g, q)));
+        }
+    }
     for (q, k) in keep {
         for m in fighters(g, q) {
             if Some(m) != k && live(g, m) && !no_sac(g, m) {
