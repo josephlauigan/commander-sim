@@ -256,6 +256,7 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
     ("urdragon: Inventors' Fair", "an activated ability, not used as it enters: the probe doesn't activate it"),
     ("urdragon: Maelstrom of the Spirit Dragon", "an activated ability, not used as it enters: the probe doesn't activate it"),
     ("karn: Urza's Cave", "an activated ability, not used as it enters (its activation gap is the ability probe's)"),
+    ("yshtola: Urza's Cave", "an activated ability, not used as it enters (its activation gap is the ability probe's)"),
     ("sauron: Deflecting Swat", "new targets for a spell on the stack: the probe has none"),
     ("thanos: Deflecting Swat", "new targets for a spell on the stack: the probe has none"),
     ("sauron: Not of This World", "counters a spell targeting your permanent: the probe has none"),
