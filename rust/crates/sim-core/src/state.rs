@@ -459,6 +459,12 @@ impl Perm {
     pub fn card(&self) -> CardId {
         self.cd.expect("a permanent with a card")
     }
+
+    /// the card that is really there when the permanent leaves: its own card when it is a copy (`phys`: a Mirage Mirror
+    /// that is a copy of a land), else the face it shows (`card`). Zone changes of a land read this, not `card()`.
+    pub fn real_card(&self) -> CardId {
+        self.phys.or(self.cd).expect("a permanent with a card")
+    }
 }
 
 // ------------------------------------------------------------------ players
@@ -616,6 +622,9 @@ pub struct Player {
     pub draw_st: Option<TurnStamp>,
     /// cards drawn this turn
     pub draw_n: u32,
+    /// the cards drawn this turn (valid while `draw_st` is this turn), in the order drawn: Sylvan Library's "drawn this
+    /// turn" for a person (`human::triggers_t1::sylvan_library`)
+    pub drawn_cards: Vec<CardId>,
     /// this turn's first draw (miracle)
     pub miracle: Option<(TurnStamp, CardId)>,
     /// Urabrask, Heretic Praetor: the next draw this turn is exiled instead
@@ -624,6 +633,10 @@ pub struct Player {
     pub scry_turn: Option<TurnStamp>,
     /// cards exiled with "you may play them this turn" (held in hand)
     pub impulse: Vec<CardId>,
+    /// practice mode: exiled cards (in any player's exile) this player may play this turn without paying their mana costs
+    /// (Urza, Lord High Artificer's {5}; Triple Triad). The cards stay in exile until played; the end step clears the list
+    /// (`human::gaps_c::exile_permits`).
+    pub free_play: Vec<CardId>,
     /// key spells milled (reports)
     pub milled_keys: Vec<CardId>,
     /// The Ozolith: counters it holds
@@ -882,10 +895,12 @@ impl Player {
             flow_src: None, // --- ai-flow
             draw_st: None,
             draw_n: 0,
+            drawn_cards: vec![],
             miracle: None,
             urabrask: None,
             scry_turn: None,
             impulse: vec![],
+            free_play: vec![],
             milled_keys: vec![],
             ozolith_counters: 0,
             removed_bombs: vec![],
@@ -1372,6 +1387,9 @@ pub struct Game {
     pub animated: Vec<(PlayerId, PermId, PermId)>,
     /// a combo's last pieces are being cast (combos.attempt): Thassa's Oracle waits for the exile spell
     pub combo_spell: bool,
+    /// practice mode: a batch of tokens or a loop is making a person's "deals damage to any target" triggers (Terror of
+    /// the Peaks ...): the person is asked once whether to aim them all at one target (`human::choices::DamageBatch`)
+    pub damage_batch: Option<crate::human::choices::DamageBatch>,
     /// Tier 6: the player now going for a combo (set around `combos::attempt`): opponents answer its steps as wins
     pub t6_going: Option<PlayerId>,
     /// --- ai-planner: a line planner's copy of the game, played for this player: nobody else takes priority (the
@@ -1542,6 +1560,7 @@ impl Game {
             search_work: 0,
             animated: vec![],
             combo_spell: false,
+            damage_batch: None,
             t6_going: None,
             plan_for: None, // --- ai-planner
             lattice_lock: None,

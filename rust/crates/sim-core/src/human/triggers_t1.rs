@@ -265,64 +265,46 @@ pub fn free_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res<Option<(Ctx, super
     Ok(Some((ctx, costs)))
 }
 
-// ------------------------------------------------------------------ "you may play it without paying its mana cost"
-/// A card in `from`'s exile that the person may play free now (Urza, Lord High Artificer's {5}; Triple Triad): they
-/// choose whether to, then its target and any cost asked before it is cast. A land needs a land drop left. True: it
-/// was played. Not played, it stays in `from`'s exile. A card taken from an opponent stays theirs (`Ctx::owner`).
-/// It is played now, not later in the turn: a counterspell or a sorcery-speed card can't wait for a better moment.
-pub fn play_free_now(g: &mut Game, p: PlayerId, c: CardId, from: PlayerId, source: &str, ask: bool) -> Res<bool> {
-    let d = g.db.get(c);
-    let (name, land) = (d.name.to_string(), d.land);
+// ------------------------------------------------------------------ "you may play it this turn without paying its mana cost"
+/// A card in `from`'s exile that the person may play this turn without paying its mana cost (Urza, Lord High Artificer's
+/// {5}; Triple Triad): a permission until end of turn, not a play at once. The card stays in exile and is listed with the
+/// exiled cards the person can play (`Player::free_play`, `gaps_c::exile_permits`); they cast it or play it as a land
+/// whenever its timing allows: a counterspell at a spell, an instant held for later, a land or a sorcery-speed card or
+/// Aura (Kefka's Animate Dead) in their main phase. Unplayed, it stays in exile (the end step clears the permission). A
+/// card taken from an opponent stays theirs (`Ctx::owner`). True: the permission was given.
+pub fn allow_free_play(g: &mut Game, p: PlayerId, c: CardId, from: PlayerId, source: &str) -> bool {
     if !g.player(from).exile.contains(&c) {
-        return Ok(false);
+        return false;
     }
-    if land {
-        let drops = 1 + crate::cardcode::extra_lands(g, p) + g.player(p).extra_land_now;
-        if g.player(p).lands_played >= drops {
-            tell_info(g, p, &format!("{source}: {name} can't be played (no land drop left)."));
-            return Ok(false);
+    if !g.player(p).free_play.contains(&c) {
+        g.player_mut(p).free_play.push(c);
+    }
+    let name = g.db.get(c).name.to_string();
+    let whose = if from == p { String::new() } else { format!(" ({}'s)", g.player(from).name) };
+    tell_info(
+        g,
+        p,
+        &format!("{source}: you may play {name}{whose} this turn without paying its mana cost (see Exile (this turn))."),
+    );
+    true
+}
+
+/// the cards p drew this turn that are still in their hand, in the order drawn (matched one for one, as the hand holds
+/// a card of one name once per copy)
+pub fn drawn_in_hand(g: &Game, p: PlayerId) -> Vec<CardId> {
+    let pl = g.player(p);
+    if pl.draw_st != Some(g.turn_stamp()) {
+        return vec![];
+    }
+    let mut left = pl.hand.clone();
+    let mut out = vec![];
+    for &c in &pl.drawn_cards {
+        if let Some(i) = left.iter().position(|&x| x == c) {
+            left.remove(i);
+            out.push(c);
         }
-        let labels = vec![format!("play {name}")];
-        if ask && choices::choose(g, p, "choose", &format!("{source}: play {name}?"), &labels, Some("don't play it"), None)?
-            .is_none()
-        {
-            return Ok(false);
-        }
-        g.player_mut(from).exile.take(c);
-        crate::engine::turn::play_land_card(g, p, c, "plays")?;
-        return Ok(true);
     }
-    // as the AI's paths do: a counterspell has nothing to counter here, and an Aura's host isn't asked for
-    let (aura, ctr) = (d.has_subtype("aura"), d.tag(crate::tag::Tag::Ctr));
-    if aura || ctr {
-        let why = if ctr { "nothing to counter now" } else { "an Aura can't be cast this way here" };
-        tell_info(g, p, &format!("{source}: {name} stays in exile ({why})."));
-        return Ok(false);
-    }
-    if !crate::engine::cast::castable(g, p, c, "hand") {
-        tell_info(g, p, &format!("{source}: {name} can't be cast now."));
-        return Ok(false);
-    }
-    let labels = vec![format!("cast {name} free")];
-    if ask && choices::choose(g, p, "choose", &format!("{source}: cast {name}?"), &labels, Some("don't cast it"), None)?
-        .is_none()
-    {
-        return Ok(false);
-    }
-    let Some((mut ctx, costs)) = free_cast(g, p, c)? else { return Ok(false) };
-    if from != p {
-        ctx.owner = Some(from);
-    }
-    g.player_mut(from).exile.take(c);
-    g.player_mut(p).hand.push(c);
-    super::specs::pay_costs(g, p, c, &costs)?;
-    crate::engine::cast::cast_card(g, p, c, "hand", ctx)?;
-    if let Some(j) = g.player(p).hand.iter().position(|&x| x == c) {
-        g.player_mut(p).hand.remove(j); // not cast after all: back to exile
-        g.player_mut(from).exile.push(c);
-        return Ok(false);
-    }
-    Ok(true)
+    out
 }
 
 // ------------------------------------------------------------------ Susurian Voidborn
@@ -336,16 +318,18 @@ pub fn voidborn_target(g: &Game, p: PlayerId, opps: &[PlayerId]) -> Res<PlayerId
 
 // ------------------------------------------------------------------ Sylvan Library
 /// "you may draw two additional cards. If you do, choose two cards in your hand drawn this turn. For each of those
-/// cards, pay 4 life or put the card on top of your library." The hand's last `draw_n` cards are the ones drawn this
-/// turn (the library hook runs at the first draw of the turn, so the first card is already in the hand).
+/// cards, pay 4 life or put the card on top of your library." The cards offered are the ones really drawn this turn and
+/// still in the hand (`Player::drawn_cards`, filled by `zones::draw`): the draw step's card, an earlier Sylvan Library
+/// draw, a cantrip's, as well as the two just drawn; not a card put into the hand any other way (a tutor, a bounce).
+/// (Cards of one name share an id, so a drawn Island and an older Island in hand count as one if the drawn one was
+/// played and the older stays; the cards drawn are matched against the hand one for one.) The AI's Sylvan Library
+/// (`impls::topdeck::library`) still looks only at its two extra cards.
 pub fn sylvan_library(g: &mut Game, p: PlayerId) -> Res {
     if !choices::yes_no(g, p, "Sylvan Library: draw two additional cards?")? {
         return Ok(());
     }
     crate::engine::zones::draw(g, p, 2, false)?;
-    let hand = g.player(p).hand.clone();
-    let n = (g.player(p).draw_n as usize).min(hand.len());
-    let drawn: Vec<CardId> = hand[hand.len() - n..].to_vec();
+    let drawn = drawn_in_hand(g, p);
     let picked = choices::pick_cards(
         g,
         p,

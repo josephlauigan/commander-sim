@@ -8,7 +8,9 @@
 //!   trigger, Twinflame, Regrowth, with the opponents' windows and the pieces-must-survive check), then makes the
 //!   tokens the loop makes: hasty Astral Dragon copies of the Mirror or hasty Garths, as many rounds as the person
 //!   picks or enough to kill the table (the token cap bounds both), or 3/3 flying Dragon tokens for Miirym's line.
-//!   Cancelling leaves everything to play by hand.
+//!   Cancelling leaves everything to play by hand. In the Garth loop the person also chooses how many of the newest
+//!   Garths tap for Black Lotus mana and one Braingeyser (`garth_spare`); a batch of tokens or a loop that triggers Terror
+//!   of the Peaks and the like asks once for the target (`choices::DamageBatch`).
 //! - **Twinflame and Dualcaster Mage**: Twinflame's copy (new targets, hasty token copies), Dualcaster Mage's enter
 //!   trigger for the person (a flashed-in one or a token) and the loop shortcut (infinite hasty Dualcaster Mages).
 //! - **Choosing what to attach** (Hammer of Nazahn, Sigarda's Aid, Brass Squire), **Peter Parker's Camera** and
@@ -339,6 +341,13 @@ fn my_creatures(g: &Game, p: PlayerId) -> Vec<PermId> {
 /// the tokens are made by a copy of the spell, `spell` is the original still on the stack: a Dualcaster Mage token's
 /// enter trigger may copy it.
 pub fn twinflame_tokens(g: &mut Game, p: PlayerId, targets: &[PermId], spell: Option<(CardId, &Ctx)>) -> Res {
+    let batch = targets.len() > 1 && choices::batch_begin(g, p); // Terror of the Peaks and the like: asked once
+    let r = twinflame_tokens_in(g, p, targets, spell);
+    choices::batch_end(g, batch);
+    r
+}
+
+fn twinflame_tokens_in(g: &mut Game, p: PlayerId, targets: &[PermId], spell: Option<(CardId, &Ctx)>) -> Res {
     for &m in targets {
         if !g.player(p).perms.contains(&m) {
             continue;
@@ -462,13 +471,16 @@ fn dualcaster_loop(g: &mut Game, p: PlayerId, dm: PermId) -> Res {
     let n = loop_tokens(g, p);
     let cd = g.perm(dm).cd.unwrap();
     let mut made = 0;
+    let batch = choices::batch_begin(g, p); // Terror of the Peaks and the like: one question for all the tokens
     for _ in 0..n {
-        let Some(t) = zones::enter_token_copy(g, p, cd)? else { break };
+        let r = zones::enter_token_copy(g, p, cd);
+        let Some(t) = r.inspect_err(|_| choices::batch_end(g, batch))? else { break };
         let x = g.perm_mut(t);
         x.sick = false;
         x.temp = true;
         made += 1;
     }
+    choices::batch_end(g, batch);
     crate::glog!(
         g,
         "    {made} hasty Dualcaster Mages (as good as infinite; exiled at the end step): attack with them"
@@ -632,7 +644,10 @@ fn go_loop(g: &mut Game, p: PlayerId, part: &'static str) -> Res<Why> {
         steps: cmb.steps,
     };
     crate::glog!(g, "  {} goes for the {part} loop", pname(g, p));
-    combos::run_steps(g, p, &person)?;
+    let batch = choices::batch_begin(g, p); // Terror of the Peaks and the like: one question for all the tokens
+    let r = combos::run_steps(g, p, &person);
+    choices::batch_end(g, batch);
+    r?;
     crate::engine::life::check_state(g)?;
     Ok(None)
 }
@@ -692,11 +707,13 @@ fn garth_finish<const R: usize>(g: &mut Game, p: PlayerId) -> Res {
     let pow = crate::engine::values::epow(g, first);
     let exc = CopyExc { haste: true, not_legendary: true, ..CopyExc::default() };
     let mut rounds = 0;
+    let mut last: Vec<PermId> = vec![]; // the newest batch of token Garths
     let need = if R == 0 { attackers_needed(g, p, pow) } else { usize::MAX };
     while !g.over && (R == 0 || rounds < R) && ready_attackers(g, p, GARTH) < need {
         let targets = garths(g);
         let per = crate::engine::repl::tokens(g, p, 1) as usize;
         let mut made = 0;
+        last.clear();
         'round: for &t in &targets {
             let Some(cd) = g.perm(t).cd else { continue };
             for _ in 0..per {
@@ -706,6 +723,7 @@ fn garth_finish<const R: usize>(g: &mut Game, p: PlayerId) -> Res {
                     x.sick = false; // haste
                     x.temp = true; // exiled at the beginning of the next end step
                     made += 1;
+                    last.push(tok);
                 }
             }
         }
@@ -715,8 +733,95 @@ fn garth_finish<const R: usize>(g: &mut Game, p: PlayerId) -> Res {
             break;
         }
     }
+    garth_spare(g, p, &last)?;
     crate::glog!(g, "    {} hasty Garths can attack (exiled at the end step)", ready_attackers(g, p, GARTH));
     crate::engine::life::check_state(g)
+}
+
+/// The loop's Black Lotus and Braingeyser rounds, as the person's choice about the newest batch of token Garths: each
+/// Garth that taps instead of attacking chooses a name. Black Lotus makes a Lotus (three mana of one colour); one Garth
+/// may choose Braingeyser instead, cast for {X}{U}{U} out of the Lotuses' mana (target player draws X cards). The
+/// mana left goes to the person's pool, in the colour they pick, for the rest of the phase. (The earlier rounds' Garths
+/// stay untapped attackers, as before: their Lotuses were what paid for the next Twinflame.)
+fn garth_spare(g: &mut Game, p: PlayerId, batch: &[PermId]) -> Res {
+    let ready: Vec<PermId> = batch.iter().copied().filter(|&m| live(g, m) && !g.perm(m).tapped).collect();
+    let n = ready.len();
+    if n == 0 {
+        return Ok(());
+    }
+    let mut ks: Vec<usize> = vec![0];
+    ks.extend([1, 2, 3, 5, 10, 20, 50, 100].into_iter().filter(|&k| k < n));
+    ks.push(n);
+    let labels: Vec<String> = ks
+        .iter()
+        .map(|&k| match k {
+            0 => format!("none: all {n} attack"),
+            k if k == n => format!("all {n} tap: Black Lotus / Braingeyser (none of the new Garths attack)"),
+            k => format!("{k} tap: Black Lotus / Braingeyser (the other {} attack)", n - k),
+        })
+        .collect();
+    let prompt = format!(
+        "Garth loop: the {n} newest token Garths are hasty and untapped. A Garth that taps chooses a name: Black Lotus \
+         (three mana of one colour) or Braingeyser. How many tap instead of attacking?"
+    );
+    let k = ks[choices::choose_one(g, p, "choose", &prompt, &labels)?];
+    if k == 0 {
+        return Ok(());
+    }
+    for &m in &ready[..k] {
+        g.perm_mut(m).tapped = true;
+    }
+    let mut lotuses = k;
+    let mut budget = 3 * lotuses as u32;
+    // Braingeyser: one of the tapped Garths, X drawn, {X}{U}{U} from the Lotuses' mana
+    if k >= 2 {
+        let me = p;
+        let mut who: Vec<PlayerId> = vec![me];
+        who.extend(g.opps(p).filter(|&q| g.player(q).alive));
+        let labels: Vec<String> = ["no Braingeyser".to_string()]
+            .into_iter()
+            .chain(who.iter().map(|&q| {
+                if q == p { "Braingeyser: you draw X cards".to_string() } else { format!("Braingeyser: {} draws X cards", pname(g, q)) }
+            }))
+            .collect();
+        let prompt = format!("Garth loop: one of the {k} tapped Garths can choose Braingeyser ({{X}}{{U}}{{U}} out of the Lotuses' mana). Cast it?");
+        let w = choices::choose_one(g, p, "choose", &prompt, &labels)?;
+        if w > 0 {
+            let target = who[w - 1];
+            lotuses -= 1;
+            budget = 3 * lotuses as u32;
+            let max_x = budget.saturating_sub(2).min(g.player(target).library.len() as u32);
+            let xs = choices::amount_choices(max_x);
+            let xl: Vec<String> = xs.iter().map(|x| format!("X = {x}")).collect();
+            let prompt = format!("Braingeyser: {} draws X cards ({{X}}{{U}}{{U}} of the {budget} mana)", pname(g, target));
+            let x = xs[choices::choose_one(g, p, "choose", &prompt, &xl)?];
+            if x > 0 {
+                budget -= x + 2;
+                crate::glog!(g, "    a Garth's Braingeyser copy: {} draws {x} cards", pname(g, target));
+                zones::draw(g, target, x, false)?;
+            } else {
+                lotuses += 1; // not cast after all: that Garth made a Lotus
+                budget = 3 * lotuses as u32;
+            }
+        }
+    }
+    if budget > 0 {
+        let cols = ["W", "U", "B", "R", "G"];
+        let mut labels: Vec<String> = cols.iter().map(|c| format!("all {budget} mana as {{{c}}}")).collect();
+        labels.push("spread over the five colours".to_string());
+        let prompt = format!("Garth loop: Black Lotus mana, {budget} in all: which colour?");
+        let c = choices::choose_one(g, p, "choose", &prompt, &labels)?;
+        if c < 5 {
+            g.player_mut(p).pool.add(cols[c].chars().next().unwrap(), budget);
+        } else {
+            for (i, col) in cols.iter().enumerate() {
+                let share = budget / 5 + u32::from((i as u32) < budget % 5);
+                g.player_mut(p).pool.add(col.chars().next().unwrap(), share);
+            }
+        }
+        crate::glog!(g, "    {} Black Lotus mana ({budget}) is in the pool", pname(g, p));
+    }
+    Ok(())
 }
 
 /// Miirym + Astral Dragon + Doubling Season: about `N` 3/3 flying Dragon tokens (0: up to the token cap), the catalogue's

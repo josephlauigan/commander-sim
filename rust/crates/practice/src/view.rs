@@ -194,13 +194,19 @@ pub mod seam {
         }
         out.into()
     }
-    /// exiled cards the person may play this turn (Dauthi Voidwalker): `[{card, name, owner}]`; cast with
-    /// `{do: cast, zone: ex, card}` (`card` is the card id, not a position)
+    /// exiled cards the person may play this turn (Dauthi Voidwalker, Urza's {5}, Triple Triad): `[{card, name, owner,
+    /// land}]`; cast with `{do: cast, zone: ex, card}`, or a land (`land: true`) played with `{do: land, zone: ex, card}`
+    /// (`card` is the card id, not a position)
     pub fn exile_playable(g: &Game, p: PlayerId) -> Value {
-        sim_core::human::gaps_c::dauthi_playable(g, p)
+        use sim_core::human::legal::{check_cast_exile, check_land_exile};
+        sim_core::human::gaps_c::exile_playable(g, p)
             .into_iter()
-            .filter(|&(c, _)| sim_core::human::legal::check_cast_exile(g, p, c).is_none())
-            .map(|(c, q)| json!({"card": c.0, "name": &*g.db.get(c).name, "owner": &*g.player(q).name}))
+            .filter(|&(c, _)| {
+                if g.db.get(c).land { check_land_exile(g, p, c).is_none() } else { check_cast_exile(g, p, c).is_none() }
+            })
+            .map(|(c, q)| {
+                json!({"card": c.0, "name": &*g.db.get(c).name, "owner": &*g.player(q).name, "land": g.db.get(c).land})
+            })
             .collect::<Vec<_>>()
             .into()
     }

@@ -40,6 +40,7 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
             let pl = g.player_mut(p);
             pl.draw_st = Some(st);
             pl.draw_n = 0;
+            pl.drawn_cards.clear();
         }
         if g.player(p).draw_n >= 1
             && (g.opps(p).any(|q| has(g, q, Tag::Narset))
@@ -93,6 +94,7 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
         pl.draw_n += 1;
         let c = pl.library.pop().unwrap();
         pl.hand.push(c);
+        pl.drawn_cards.push(c);
         if pl.draw_n == 1 {
             pl.miracle = Some((st, c));
         }
@@ -343,7 +345,11 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
         }
     }
     if k > 0 && !g.hooks.is_empty() {
-        fire_trigger(g, Event::TokensEnter, Call::Tokens { p, toks: out.clone() })?; // Plumecreed Mentor
+        // a person's "damage to any target" trigger of each token (Terror of the Peaks): asked once for the batch
+        let batch = out.len() > 1 && crate::human::choices::batch_begin(g, p);
+        let r = fire_trigger(g, Event::TokensEnter, Call::Tokens { p, toks: out.clone() }); // Plumecreed Mentor
+        crate::human::choices::batch_end(g, batch);
+        r?;
     }
     Ok(out)
 }

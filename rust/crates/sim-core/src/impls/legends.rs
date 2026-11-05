@@ -1027,7 +1027,7 @@ fn mord_dog(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
 /// common.TOKEN_PT: Mordenkainen's Dog Illusion has power and toughness twice its controller's hand
 fn mord_dog_pt(g: &Game, m: PermId) -> (i32, i32) {
     if g.perm(m).data.truthy(DataKey::MordDog) {
-        let n = 2 * g.player(owner(g, m)).hand.len() as i32;
+        let n = 2 * crate::engine::values::hand_count(g, owner(g, m)) as i32;
         return (n, n);
     }
     (0, 0)

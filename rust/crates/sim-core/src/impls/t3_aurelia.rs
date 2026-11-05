@@ -345,7 +345,7 @@ fn angels_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, _d
         let v = f(g, d);
         g.players.iter().filter(|q| q.alive && q.id != d).all(|q| f(g, q.id) < v)
     };
-    if most(g, &|g, q| g.player(q).hand.len()) {
+    if most(g, &|g, q| crate::engine::values::hand_count(g, q)) {
         draw(g, p, 1, false)?;
     }
     if most(g, &|g, q| g.player(q).lands.len()) {

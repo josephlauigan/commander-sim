@@ -389,9 +389,11 @@ fn harnfel(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
 
 // ------------------------------------------------------------------ Mirage Mirror
 /// {2}: becomes a copy of target artifact, creature, enchantment or land until end of turn. Not offered: Auras (a copy
-/// of an Aura would be attached to nothing and go to the graveyard), copies, a legendary land the person already
-/// controls, and any land with more than mana abilities (see `plain_land`). A copy of a land moves the Mirror to its
-/// controller's land list until `alela::mirror_revert`.
+/// of an Aura would be attached to nothing and go to the graveyard) and Mirage Mirrors that are already copies. Any land
+/// can be copied, abilities and all (a fetch land can be cracked, a bounceland taps for its two mana, Command Beacon or
+/// Strip Mine can be sacrificed ...): the Mirror moves to its controller's land list until `alela::mirror_revert`, and
+/// the card that leaves the battlefield is the Mirror's own (`Perm::real_card`), never the copied land's card. Your
+/// own legendary land can be copied too: the legend rule (`life::sba_legend`) then has you keep one of the two.
 fn mirage_mirror(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if let Some(why) = cost_ok(g, p, 2, "", "Mirage Mirror") {
         return Ok(Some(why));
@@ -402,8 +404,7 @@ fn mirage_mirror(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
             let x = g.perm(t);
             let Some(cd) = x.cd else { continue };
             // a token copy of a card counts (its copiable values are the card's); your own legend too (the legend
-            // rule then has you keep one of the two), except a land (the legend rule looks at the permanent list).
-            // Not offered: an Aura (the copy would be attached to nothing and go to the graveyard)
+            // rule then has you keep one of the two). Not offered: an Aura (the copy would be attached to nothing)
             if t == m || x.phased || (x.owner != p && values::untargetable(g, t)) {
                 continue;
             }
@@ -412,9 +413,7 @@ fn mirage_mirror(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
                 continue;
             }
             if d.land {
-                if !plain_land(g, p, t) || (x.owner == p && crate::cardcode::is_legendary(g, t)) {
-                    continue;
-                }
+                // any land (its abilities work as the copy; see the doc above)
             } else if !(g.is_creature(t) || d.types.has(Types::ARTIFACT) || d.types.has(Types::ENCHANTMENT)) {
                 continue;
             }
@@ -445,23 +444,6 @@ fn mirage_mirror(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     crate::impls::alela::mirror_lists(g, m, g.db.get(tcd).land);
     crate::engine::life::check_state(g)?; // a copy of your own legend: the legend rule (you keep one)
     Ok(None)
-}
-
-/// a land whose only abilities are mana abilities: a Mirage Mirror that copies one is safe in the land list. The lands
-/// with card code of their own (fetch lands, bouncelands, Glacial Chasm, sacrifice or activated abilities, triggers)
-/// are left out: the engine's code for them reads the permanent's card to put into a zone and would put the copied
-/// land's card there instead of the Mirror.
-fn plain_land(g: &Game, p: PlayerId, l: PermId) -> bool {
-    use crate::tag::Tag;
-    let cd = g.perm(l).card();
-    let d = g.db.get(cd);
-    d.land
-        && !d.tag(Tag::F)
-        && !d.tag(Tag::Bounceland)
-        && !d.tag(Tag::Chasm)
-        && !crate::dsl::land_live(d)
-        && !g.registry.get(cd).is_some_and(|i| i.live() || i.land_options.is_some())
-        && super::abilities::land_abilities(g, p, l).is_empty()
 }
 
 // ------------------------------------------------------------------ Wispdrinker Vampire
@@ -631,6 +613,30 @@ fn dauthi(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     }
     engine::life::check_state(g)?;
     Ok(None)
+}
+
+/// p may play the exiled card c this turn without paying its mana cost, by a Dauthi Voidwalker or by Urza's {5} / Triple
+/// Triad (`Player::free_play`): whose exile it is in
+pub fn exile_permits(g: &Game, p: PlayerId, c: CardId) -> Option<PlayerId> {
+    if g.player(p).free_play.contains(&c)
+        && let Some(q) = g.players.iter().find(|q| q.exile.contains(&c)).map(|q| q.id)
+    {
+        return Some(q);
+    }
+    dauthi_permits(g, p, c)
+}
+
+/// the exiled cards p may play this turn without paying their mana costs: (card, whose exile)
+pub fn exile_playable(g: &Game, p: PlayerId) -> Vec<(CardId, PlayerId)> {
+    let mut out = dauthi_playable(g, p);
+    for &c in &g.player(p).free_play {
+        if let Some(q) = exile_permits(g, p, c)
+            && !out.contains(&(c, q))
+        {
+            out.push((c, q));
+        }
+    }
+    out
 }
 
 /// a person's Dauthi Voidwalker let p play the exiled card c this turn: whose exile it is in
