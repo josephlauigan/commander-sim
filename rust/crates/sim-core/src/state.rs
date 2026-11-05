@@ -622,6 +622,9 @@ pub struct Player {
     pub draw_st: Option<TurnStamp>,
     /// cards drawn this turn
     pub draw_n: u32,
+    /// the cards drawn this turn (valid while `draw_st` is this turn), in the order drawn: Sylvan Library's "drawn this
+    /// turn" for a person (`human::triggers_t1::sylvan_library`)
+    pub drawn_cards: Vec<CardId>,
     /// this turn's first draw (miracle)
     pub miracle: Option<(TurnStamp, CardId)>,
     /// Urabrask, Heretic Praetor: the next draw this turn is exiled instead
@@ -892,6 +895,7 @@ impl Player {
             flow_src: None, // --- ai-flow
             draw_st: None,
             draw_n: 0,
+            drawn_cards: vec![],
             miracle: None,
             urabrask: None,
             scry_turn: None,

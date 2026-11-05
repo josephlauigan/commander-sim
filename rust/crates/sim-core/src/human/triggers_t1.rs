@@ -289,6 +289,24 @@ pub fn allow_free_play(g: &mut Game, p: PlayerId, c: CardId, from: PlayerId, sou
     true
 }
 
+/// the cards p drew this turn that are still in their hand, in the order drawn (matched one for one, as the hand holds
+/// a card of one name once per copy)
+pub fn drawn_in_hand(g: &Game, p: PlayerId) -> Vec<CardId> {
+    let pl = g.player(p);
+    if pl.draw_st != Some(g.turn_stamp()) {
+        return vec![];
+    }
+    let mut left = pl.hand.clone();
+    let mut out = vec![];
+    for &c in &pl.drawn_cards {
+        if let Some(i) = left.iter().position(|&x| x == c) {
+            left.remove(i);
+            out.push(c);
+        }
+    }
+    out
+}
+
 // ------------------------------------------------------------------ Susurian Voidborn
 /// "target opponent loses 1 life": with more than one opponent the person picks
 pub fn voidborn_target(g: &Game, p: PlayerId, opps: &[PlayerId]) -> Res<PlayerId> {
@@ -300,16 +318,18 @@ pub fn voidborn_target(g: &Game, p: PlayerId, opps: &[PlayerId]) -> Res<PlayerId
 
 // ------------------------------------------------------------------ Sylvan Library
 /// "you may draw two additional cards. If you do, choose two cards in your hand drawn this turn. For each of those
-/// cards, pay 4 life or put the card on top of your library." The hand's last `draw_n` cards are the ones drawn this
-/// turn (the library hook runs at the first draw of the turn, so the first card is already in the hand).
+/// cards, pay 4 life or put the card on top of your library." The cards offered are the ones really drawn this turn and
+/// still in the hand (`Player::drawn_cards`, filled by `zones::draw`): the draw step's card, an earlier Sylvan Library
+/// draw, a cantrip's, as well as the two just drawn; not a card put into the hand any other way (a tutor, a bounce).
+/// (Cards of one name share an id, so a drawn Island and an older Island in hand count as one if the drawn one was
+/// played and the older stays; the cards drawn are matched against the hand one for one.) The AI's Sylvan Library
+/// (`impls::topdeck::library`) still looks only at its two extra cards.
 pub fn sylvan_library(g: &mut Game, p: PlayerId) -> Res {
     if !choices::yes_no(g, p, "Sylvan Library: draw two additional cards?")? {
         return Ok(());
     }
     crate::engine::zones::draw(g, p, 2, false)?;
-    let hand = g.player(p).hand.clone();
-    let n = (g.player(p).draw_n as usize).min(hand.len());
-    let drawn: Vec<CardId> = hand[hand.len() - n..].to_vec();
+    let drawn = drawn_in_hand(g, p);
     let picked = choices::pick_cards(
         g,
         p,

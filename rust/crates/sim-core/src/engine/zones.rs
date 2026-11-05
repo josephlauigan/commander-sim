@@ -40,6 +40,7 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
             let pl = g.player_mut(p);
             pl.draw_st = Some(st);
             pl.draw_n = 0;
+            pl.drawn_cards.clear();
         }
         if g.player(p).draw_n >= 1
             && (g.opps(p).any(|q| has(g, q, Tag::Narset))
@@ -93,6 +94,7 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
         pl.draw_n += 1;
         let c = pl.library.pop().unwrap();
         pl.hand.push(c);
+        pl.drawn_cards.push(c);
         if pl.draw_n == 1 {
             pl.miracle = Some((st, c));
         }

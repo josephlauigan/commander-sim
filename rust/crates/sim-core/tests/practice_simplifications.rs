@@ -215,3 +215,38 @@ fn mirage_mirror_copies_your_own_legendary_land_and_the_legend_rule_has_you_keep
     }
     assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).on_bf), "no dead permanent left in the land list");
 }
+
+// ------------------------------------------------------------------ 3. Sylvan Library: the cards really drawn this turn
+#[test]
+fn sylvan_library_offers_the_cards_drawn_this_turn_not_the_last_cards_in_hand() {
+    let mut g = table(&["thrasios", "seph"]);
+    g.active = Some(P0);
+    g.player_mut(P0).hand.clear();
+    library(&mut g, P0, &["Mind Stone", "Arcane Signet", "Thran Dynamo"]); // Thran Dynamo on top
+    // the draw step's card (no Sylvan Library out yet), then a tutored card, then Sylvan Library's two extra draws
+    sim_core::engine::zones::draw(&mut g, P0, 1, true).unwrap();
+    let ring = take(&mut g, P0, "Sol Ring");
+    g.player_mut(P0).hand.push(ring); // put into the hand, not drawn
+    let h = person(vec![], |_| None);
+    g.humans.add(P0, h.clone());
+    sim_core::human::triggers_t1::sylvan_library(&mut g, P0).unwrap();
+    let req = h.asked().into_iter().find(|r| r.prompt.contains("choose two cards")).expect("asked which cards");
+    let all = req.choices.join(" | ");
+    assert!(all.contains("Thran Dynamo"), "the draw step's card is offered: {all}");
+    assert!(all.contains("Arcane Signet") && all.contains("Mind Stone"), "and the two extra cards: {all}");
+    assert!(!all.contains("Sol Ring"), "a card that was not drawn is not offered: {all}");
+}
+
+#[test]
+fn drawn_cards_are_forgotten_at_the_next_turn() {
+    let mut g = table(&["thrasios", "seph"]);
+    g.active = Some(P0);
+    library(&mut g, P0, &["Mind Stone", "Arcane Signet"]);
+    sim_core::engine::zones::draw(&mut g, P0, 2, false).unwrap();
+    assert_eq!(sim_core::human::triggers_t1::drawn_in_hand(&g, P0).len(), 2);
+    g.round += 1; // a new turn
+    assert!(sim_core::human::triggers_t1::drawn_in_hand(&g, P0).is_empty(), "nothing drawn yet this turn");
+    library(&mut g, P0, &["Sol Ring"]);
+    sim_core::engine::zones::draw(&mut g, P0, 1, true).unwrap();
+    assert_eq!(sim_core::human::triggers_t1::drawn_in_hand(&g, P0), vec![card(&g, "Sol Ring")]);
+}
