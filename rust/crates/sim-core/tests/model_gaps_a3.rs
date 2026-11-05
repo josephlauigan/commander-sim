@@ -3,10 +3,10 @@
 
 mod play_common;
 use play_common::*;
+use sim_core::control::Answer;
 use sim_core::engine::turn::remove_land;
 use sim_core::engine::zones::Zone;
 use sim_core::impls::{fixes, lands as land_fx, rules};
-use sim_core::control::Answer;
 
 fn tbl() -> Game {
     table(&["karn", "kefka", "sauron"])
@@ -99,7 +99,12 @@ fn pick_word(word: &'static str) -> F {
 }
 
 fn astral_land_copies(g: &Game, p: PlayerId, name: &str) -> Vec<PermId> {
-    g.player(p).lands.iter().copied().filter(|&l| g.perm(l).token && &*g.db.get(g.perm(l).card()).name == name).collect()
+    g.player(p)
+        .lands
+        .iter()
+        .copied()
+        .filter(|&l| g.perm(l).token && &*g.db.get(g.perm(l).card()).name == name)
+        .collect()
 }
 
 #[test]
@@ -126,7 +131,11 @@ fn astral_dragon_copies_a_land_that_is_also_a_dragon_creature() {
     for &t in &toks {
         g.perm_mut(t).sick = false;
     }
-    assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), before + 2, "each taps for {{C}} once it is not sick");
+    assert_eq!(
+        sim_core::engine::mana::total_mana(&g, P0, false),
+        before + 2,
+        "each taps for {{C}} once it is not sick"
+    );
     // a creature: it attacks (the opponent has no blocker)
     g.humans = Default::default();
     let life = g.player(P1).life + g.player(P2).life;
@@ -176,7 +185,6 @@ fn the_ai_still_copies_a_nonland_permanent() {
     let sol = card(&g, "Sol Ring");
     assert_eq!(g.player(P0).perms.iter().filter(|&&m| g.perm(m).token && g.perm(m).cd == Some(sol)).count(), 2);
 }
-
 
 // ======================================================== item 3: ward on every targeting
 use sim_core::engine::{control, removal};

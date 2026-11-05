@@ -572,6 +572,9 @@ fn strings_effect(g: &mut Game, p: PlayerId) -> Res {
         .collect();
     theirs.sort_by(|&a, &b| pval(g, b).total_cmp(&pval(g, a)));
     for m in theirs.into_iter().take(2) {
+        if !crate::engine::ward::pay_ward(g, p, m)? {
+            continue;
+        }
         g.perm_mut(m).tapped = true;
         crate::glog!(g, "    Hidden Strings taps {}", g.perm(m).name);
     }

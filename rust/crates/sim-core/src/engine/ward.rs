@@ -8,6 +8,7 @@
 //! (`control::steal`), and the targeted tap effects. The AI pays when it can afford it (a spell it chose to cast at a
 //! warded target was priced with the ward in `removal_options`); a person is asked.
 
+use crate::cardcode;
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::values::*;
 use crate::engine::zones::*;
@@ -15,7 +16,6 @@ use crate::flow::Res;
 use crate::ids::{PermId, PlayerId};
 use crate::state::Game;
 use crate::tag::Tag;
-use crate::cardcode;
 
 /// `actor`'s spell or ability targets permanent `m`: false if a ward on it counters the spell or ability (the
 /// effect does not happen), true if there is no ward or it was paid. Targeting your own permanent never wards.
@@ -53,7 +53,8 @@ pub fn pay_ward(g: &mut Game, actor: PlayerId, m: PermId) -> Res<bool> {
                 .iter()
                 .map(|&x| crate::human::legal::describe_target(g, actor, crate::human::Target::Perm(x)))
                 .collect();
-            let prompt = format!("{}: ward - sacrifice a legendary artifact or creature, or it is countered", shown(g, m));
+            let prompt =
+                format!("{}: ward - sacrifice a legendary artifact or creature, or it is countered", shown(g, m));
             let Some(k) =
                 crate::human::choices::choose(g, actor, "choose", &prompt, &labels, Some("let it be countered"), None)?
             else {
