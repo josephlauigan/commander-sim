@@ -67,7 +67,7 @@ fn test_cards_tokens_and_progress() {
     // your deck's own printings (data/printings/sauron.txt): every copy by set and collector number
     let own = img["printed"]["sauron"].as_object().expect("Sauron's printings");
     let swamps = own["Swamp"].as_array().expect("Swamp copies");
-    assert_eq!(swamps.len(), 6);
+    assert_eq!(swamps.len(), 5); // 5 Swamps since Urborg took one (JD 11/04)
     assert!(swamps[0][0].as_str().unwrap().starts_with("print-2ed-"), "{swamps:?}");
     let f = own["Sol Ring"][0][0].as_str().unwrap();
     assert_eq!(c.get(&format!("/images/{f}")).status, 200);

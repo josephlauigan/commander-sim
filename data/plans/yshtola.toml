@@ -11,7 +11,7 @@
 # the combat.rs chump rule).
 # Left out (the schema can't express it): `trigger_bonus` exactly (by the opponents alive, Curiosity, a kill in
 # range, the fourth-life draw) and in the removal and wipe utilities; the lethal test for the X drains in
-# `tutor_pick` (the X drains are wished for last here); the Zur lock targets; Hostage Taker / Skyclave /
+# `tutor_pick` (the X drains are wished for last here); the Zur lock targets; Skyclave /
 # Prayer of Binding target values; Necropotence / Sphinx / Tithe / One Ring helpers (generic priority); the
 # removal-target rules in brain.rs (`removal_adjust`, no sampling far below the best target); the wipe swing with
 # Teferi's Protection held up (`teferis_first`).
@@ -59,10 +59,6 @@ cards = ["Ill-Gotten Inheritance"]
 score = 60
 
 [[wish]]
-cards = ["Prison Sentence"]
-score = 58
-
-[[wish]]
 cards = ["Arrest"]
 score = 56
 
@@ -72,7 +68,7 @@ score = 54
 
 # the X drains last (the hand AI moves them first once the table is in range of X: not expressible)
 [[wish]]
-cards = ["Exsanguinate", "Debt to the Deathless"]
+cards = ["Exsanguinate", "Debt to the Deathless", "Torment of Hailfire"]
 score = 50
 
 # Cast priorities (yshtola_named_prio), the first rule selecting a card decides
@@ -83,7 +79,7 @@ value = 90
 else = 60
 
 [[prio]]
-cards = ["Sol Ring", "Arcane Signet", "Chromatic Lantern", "Coalition Relic", "Talisman of Progress", "Talisman of Hierarchy"]
+cards = ["Sol Ring", "Arcane Signet", "Coalition Relic", "Talisman of Progress", "Talisman of Hierarchy"]
 when = ["turn<=5"]
 value = 82
 else = 30
@@ -113,10 +109,6 @@ cards = ["Polluted Bonds"]
 when = ["turn<=8"]
 value = 56
 else = 38
-
-[[prio]]
-cards = ["Bribery"]
-value = 56
 
 [[prio]]
 cards = ["Ill-Gotten Inheritance", "Zur the Enchanter"]

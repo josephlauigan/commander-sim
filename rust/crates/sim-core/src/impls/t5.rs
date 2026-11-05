@@ -569,6 +569,39 @@ fn loran(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let o = owner(g, src);
+    // practice mode: the person picks the artifact or enchantment ("up to one": they may pick none), after the
+    // trigger's window, like Perigee Beckoner (2026-11-04, Y'shtola's Loran)
+    if g.humans.get(o).is_some() {
+        let cands = |g: &Game| -> Vec<PermId> {
+            g.players
+                .iter()
+                .filter(|q| q.alive)
+                .flat_map(|q| q.perms.iter().copied())
+                .filter(|&x| {
+                    g.perm(x).cd.is_some_and(|c| {
+                        g.db.get(c).types.has(Types::ARTIFACT) || g.db.get(c).types.has(Types::ENCHANTMENT)
+                    }) && !g.perm(x).phased
+                        && !(g.perm(x).owner != o && crate::engine::values::untargetable(g, x))
+                })
+                .collect()
+        };
+        if cands(g).is_empty() || !trigger_window(g, o, Some(src), "destroy an artifact or enchantment", Some(5.0))? {
+            return Ok(());
+        }
+        let cs = cands(g);
+        let t = crate::human::cards::pick_perm(
+            g,
+            o,
+            "target",
+            "Loran of the Third Path: destroy which artifact or enchantment?",
+            &cs,
+            Some("none"),
+        )?;
+        if let Some(t) = t.filter(|&t| g.perm(t).on_bf) {
+            apply_removal(g, Some(o), t, "destroy", None)?;
+        }
+        return Ok(());
+    }
     let t = best_opp_nonland(g, o, |x| {
         g.perm(x)
             .cd
