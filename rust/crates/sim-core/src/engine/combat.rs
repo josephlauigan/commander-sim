@@ -1118,6 +1118,13 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                 return Ok(());
             }
         }
+        if g.player(p).emblems.contains(&"tezzeret_cc") {
+            // Tezzeret, Cruel Captain's emblem: three +1/+1 counters on an artifact (a noncreature one becomes a Robot)
+            crate::impls::t6_godo::tez_emblem(g, p)?;
+            if g.over || !g.player(p).alive {
+                return Ok(());
+            }
+        }
         if !g.hooks.is_empty() && ncomb == 1 {
             fire_trigger(g, Event::Crew, Call::Player { p })?;
         }

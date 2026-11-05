@@ -380,6 +380,12 @@ fn forge_top(g: &Game, p: PlayerId) -> Option<CardId> {
     (!d.land && (d.types.has(Types::ARTIFACT) || d.pips.is_empty())).then_some(top)
 }
 
+/// the card p may cast from the top of the library right now: a Mystic Forge is up, and the top card is an artifact or
+/// colourless nonland card (the removal and wipe options and `forge_options` read it)
+pub fn forge_top_card(g: &Game, p: PlayerId) -> Option<CardId> {
+    forge_up(g, p).and_then(|_| forge_top(g, p))
+}
+
 fn forge_up(g: &Game, p: PlayerId) -> Option<PermId> {
     g.player(p).perms.iter().copied().find(|&m| live(g, m) && g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == FORGE))
 }
@@ -397,8 +403,7 @@ fn forge_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     let d = g.db.get(top);
     if let Some(top) = forge_top(g, p)
         && post.is_some()
-        && !(d.tag(Tag::Rem) || d.tag(Tag::Wipe) || d.tag(Tag::X) || d.tag(Tag::Tokx) || d.tag(Tag::Ctr))
-        && !(d.tag(Tag::Rem) && !d.has_dsl())
+        && !(d.tag(Tag::Rem) || d.tag(Tag::Wipe) || d.tag(Tag::X) || d.tag(Tag::Ctr)) // (removal and wipes: brain.rs)
     {
         let s = crate::ai::brain::Situation::new(g, p);
         if let Some(u) = crate::ai::brain::card_utility(g, p, &s, top) {

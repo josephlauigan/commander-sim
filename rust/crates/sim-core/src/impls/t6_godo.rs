@@ -498,9 +498,83 @@ fn tez_three(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     Ok(())
 }
 
-static TEZZERET: [super::common::WalkerAb; 2] = [
+/// the emblem key of Tezzeret's -7 (one entry per emblem: `Player::emblems`)
+pub const TEZ_EMBLEM: &str = "tezzeret_cc";
+
+/// the artifact p's emblem pumps: an artifact creature first (the one worth most), else the artifact that costs p the
+/// least to lose its mana from (a rock is turned into a creature last)
+fn tez_emblem_cands(g: &Game, p: PlayerId) -> Vec<PermId> {
+    g.player(p).perms.iter().copied().filter(|&m| live(g, m) && is_artifact(g, m)).collect()
+}
+
+fn tez_emblem_pick(g: &Game, p: PlayerId) -> Option<PermId> {
+    max_by(&tez_emblem_cands(g, p), |m| {
+        let rock = g.perm(m).cd.is_some_and(|c| g.db.get(c).tags.str(Tag::Rock).is_some());
+        let worth = crate::engine::values::pval(g, m);
+        if g.is_creature(m) { 10.0 + worth } else { worth - if rock { 2.0 } else { 0.0 } }
+    })
+}
+
+fn tez_ult_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
+    // the emblem is a counter engine for every combat: worth it as soon as there is an artifact to pump
+    (!tez_emblem_cands(g, p).is_empty()).then_some(9.0)
+}
+
+/// -7: You get an emblem with "At the beginning of combat on your turn, put three +1/+1 counters on target artifact you
+/// control. If it's not a creature, it becomes a 0/0 Robot artifact creature."
+fn tez_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    g.player_mut(p).emblems.push(TEZ_EMBLEM);
+    crate::glog!(g, "    {} gets Tezzeret's emblem", g.player(p).name);
+    Ok(())
+}
+
+/// the emblem's trigger, at the beginning of combat on p's turn (`engine::combat`, beside Liliana's emblem): for each
+/// emblem, three +1/+1 counters on an artifact p controls; a noncreature one becomes a 0/0 Robot artifact creature for
+/// good (`DataKey::Anim` makes it a creature; summoning sickness is whatever it already was)
+pub fn tez_emblem(g: &mut Game, p: PlayerId) -> Res {
+    let n = g.player(p).emblems.iter().filter(|&&e| e == TEZ_EMBLEM).count();
+    for _ in 0..n {
+        let cands = tez_emblem_cands(g, p);
+        if cands.is_empty() {
+            return Ok(());
+        }
+        let t = if crate::human::is_human(g, p) {
+            match crate::human::cards::pick_perm(
+                g,
+                p,
+                "target",
+                "Tezzeret's emblem: which artifact gets three +1/+1 counters?",
+                &cands,
+                None,
+            )? {
+                Some(t) => t,
+                None => return Ok(()),
+            }
+        } else {
+            let Some(t) = tez_emblem_pick(g, p) else { return Ok(()) };
+            t
+        };
+        if !trigger_window(g, p, None, "Tezzeret's emblem: three +1/+1 counters on an artifact", Some(5.0))? || !live(g, t) {
+            continue;
+        }
+        if !g.is_creature(t) {
+            let x = g.perm_mut(t);
+            x.data.set(crate::state::DataKey::Anim, crate::state::Val::Bool(true));
+            x.pow = 0;
+            x.tgh = 0;
+            x.ttypes.push("robot");
+        }
+        repl::put_plus(g, t, 3);
+        crate::glog!(g, "    Tezzeret's emblem: three +1/+1 counters on {}", g.perm(t).name);
+        crate::engine::life::check_state(g)?;
+    }
+    Ok(())
+}
+
+static TEZZERET: [super::common::WalkerAb; 3] = [
     super::common::WalkerAb { delta: 0, label: "untap an artifact or creature", val: tez_zero_val, eff: tez_zero },
     super::common::WalkerAb { delta: -3, label: "search for an artifact with mana value 1 or less", val: tez_three_val, eff: tez_three },
+    super::common::WalkerAb { delta: -7, label: "emblem: three +1/+1 counters on an artifact each combat", val: tez_ult_val, eff: tez_ult },
 ];
 
 /// whenever an artifact you control enters, put a loyalty counter on Tezzeret
