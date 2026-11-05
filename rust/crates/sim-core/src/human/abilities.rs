@@ -46,7 +46,13 @@ fn tap_ok(g: &Game, m: PermId, creature: bool) -> Why {
 }
 
 fn land_tap_ok(g: &Game, l: PermId) -> Why {
-    if g.perm(l).tapped { Some(format!("{} is tapped.", name(g, g.perm(l).card()))) } else { None }
+    if g.perm(l).tapped {
+        Some(format!("{} is tapped.", name(g, g.perm(l).card())))
+    } else if g.perm(l).sick && g.is_creature(l) {
+        Some(format!("{} is a summoning-sick creature: it can't use a {{T}} ability.", name(g, g.perm(l).card())))
+    } else {
+        None
+    }
 }
 
 fn pay(g: &mut Game, p: PlayerId, gn: u32, pips: &str, what: &str) -> Why {

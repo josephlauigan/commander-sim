@@ -278,6 +278,16 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
     g.player_mut(p).lands_played += 1;
     crate::gf_audit::land_played(g, p); // --- ai-audit
     crate::glog!(g, "  {} {} {}", g.player(p).name, how, g.db.get(c).name);
+    land_arrives(g, p, l, c)?;
+    if !g.hooks.is_empty() {
+        fire_trigger(g, Event::LandPlay, Call::Cards { p, cards: vec![c] })?;
+    }
+    Ok(())
+}
+
+/// what a land does as it enters, however it came (played, or a token copy of it): Glacial Chasm's sacrifice, a
+/// bounceland's return, landfall, a fetch land cracked at once
+fn land_arrives(g: &mut Game, p: PlayerId, l: PermId, c: CardId) -> Res {
     // Blood Moon: a plain Mountain has no enters abilities (Glacial Chasm, bouncelands, fetch lands ...)
     let t = if crate::engine::mana::moon_land(g, l) { Default::default() } else { g.db.get(c).tags.clone() };
     if t.has(Tag::Chasm) {
@@ -307,10 +317,68 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
     if t.has(Tag::F) && g.player(p).lands.last() == Some(&l) && !crate::impls::titania::hold_fetch(g, p) {
         crack_fetch(g, p, l)?;
     }
-    if !g.hooks.is_empty() {
-        fire_trigger(g, Event::LandPlay, Call::Cards { p, cards: vec![c] })?;
-    }
     Ok(())
+}
+
+/// A token that is a copy of land card cd with the exceptions `exc` (Astral Dragon: a 3/3 flying Dragon creature in addition).
+/// It is a land in `Player::lands` (taps for mana, counts for landfall, can be sacrificed) and, when `exc` makes it a
+/// creature, listed in `perms` too (attacks, blocks, dies): `remove_land` and `zones::leave` keep the two lists in step.
+/// A land token is not played: no land drop, no "when you play a land" trigger.
+pub fn enter_token_land_copy(g: &mut Game, p: PlayerId, cd: CardId, exc: crate::state::CopyExc) -> Res<Option<PermId>> {
+    let have = g.player(p).perms.iter().filter(|&&m| g.perm(m).token).count();
+    if have >= crate::engine::zones::TOKEN_CAP {
+        return Ok(None);
+    }
+    let tapped = land_enters_tapped(g, p, cd);
+    let l = g.add_land(p, cd, tapped);
+    g.enter_no += 1;
+    let born = g.enter_no;
+    let x = g.perm_mut(l);
+    x.token = true;
+    x.born = born;
+    x.exc = exc;
+    if let Some((pw, th)) = exc.pt {
+        (x.pow, x.tgh) = (pw, th);
+    }
+    x.fly |= exc.fly;
+    if let Some(s) = exc.add_subtype.or(exc.only_subtype) {
+        x.ttypes.push(s);
+    }
+    let creature = exc.add_types.has(Types::CREATURE);
+    if creature {
+        x.sick = !exc.haste; // a creature land is summoning sick: no attack, no {T} ability (its mana) until next turn
+        g.player_mut(p).perms.push(l);
+    }
+    g.bf_ver += 1;
+    if g.registry.get(cd).is_some_and(|i| i.live()) {
+        g.hooks.push(l);
+    }
+    if g.dsl_on || g.db.get(cd).has_dsl() {
+        g.dsl_on = true;
+    }
+    crate::glog!(g, "    {} gets a token copy of {}", g.player(p).name, g.db.get(cd).name);
+    g.resolving += 1;
+    let r = (|| -> Res {
+        cardcode::land_etb(g, p, l)?; // (Bojuka Bog ...)
+        let st = g.turn_stamp();
+        g.entered.retain(|e| e.0 == st);
+        g.entered.push((st, l));
+        if creature {
+            crate::engine::zones::creature_entered(g, p, l)?;
+        }
+        land_arrives(g, p, l, cd)?;
+        if !g.hooks.is_empty() && g.perm(l).on_bf {
+            fire_trigger(g, Event::Etb, Call::Etb { p, m: l })?;
+        }
+        Ok(())
+    })();
+    g.resolving -= 1;
+    r?;
+    crate::engine::zones::note_tokens(g, p, 1);
+    if g.resolving == 0 && !g.trig_queue.is_empty() && !g.over {
+        crate::engine::stack::flush_triggers(g)?;
+    }
+    Ok(Some(l))
 }
 
 /// Land l leaves p's lands. `to` is the zone its card goes to (graveyard, hand, exile ...); `None` parks the land

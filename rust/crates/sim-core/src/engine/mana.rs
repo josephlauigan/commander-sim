@@ -143,6 +143,9 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
         if land.tapped {
             continue;
         }
+        if land.sick && g.is_creature(l) && !crate::impls::t6_legends1b::ability_haste(g, p) {
+            continue; // a creature land (Astral Dragon's copy) is summoning sick: no {T} ability, its mana included
+        }
         let t = &g.db.get(land.card()).tags;
         // Blood Moon: a plain Mountain with no abilities of its own (the board-wide check was made above)
         let plain = moon && !BASIC_NAMES.contains(&&*g.db.get(land.card()).name);

@@ -37,11 +37,16 @@ pub fn gain_control(g: &mut Game, new: PlayerId, m: PermId, dur: Duration) -> bo
     let old = g.perm(m).owner;
     if old != new {
         g.player_mut(old).perms.retain(|&x| x != m);
+        let land = g.player(old).lands.contains(&m); // (a creature token land: Astral Dragon's copy)
+        g.player_mut(old).lands.retain(|&x| x != m);
         g.player_mut(old).borrowed.retain(|&x| x != m);
         let x = g.perm_mut(m);
         x.owner = new;
         x.attached = None;
         g.player_mut(new).perms.push(m);
+        if land {
+            g.player_mut(new).lands.push(m);
+        }
         g.bf_ver += 1;
     }
     match dur {
@@ -79,8 +84,13 @@ pub fn return_borrowed(g: &mut Game, p: PlayerId) {
         let orig = g.perm(m).orig;
         if g.perm(m).on_bf && g.perm(m).owner == p && g.player(orig).alive {
             g.player_mut(p).perms.retain(|&x| x != m);
+            let land = g.player(p).lands.contains(&m);
+            g.player_mut(p).lands.retain(|&x| x != m);
             g.perm_mut(m).owner = orig;
             g.player_mut(orig).perms.push(m);
+            if land {
+                g.player_mut(orig).lands.push(m);
+            }
             g.bf_ver += 1;
             if g.perm_mut(m).data.remove(DataKey::TapOnReturn).is_some_and(|v| v.truthy()) {
                 g.perm_mut(m).tapped = true; // Ray of Command
