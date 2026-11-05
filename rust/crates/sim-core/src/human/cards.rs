@@ -2090,21 +2090,37 @@ fn lin_bottom(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     Ok(None)
 }
 
+/// Ramosian Revivalist: {6}, {T}: return TARGET Rebel permanent card with mana value 5 or less from your graveyard to
+/// the battlefield. The target is chosen first (a cancelled choice costs nothing); the card comes back when the ability
+/// resolves, if it is still there. (The AI's version picks when it resolves: `galadriel::revivalist_go`.)
 fn revivalist(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if let Some(why) = creature_tap_ok(g, m) {
         return Ok(Some(why));
     }
     let gy = g.player(p).gy.clone();
-    if crate::impls::galadriel::rebel_cards(g, p, &gy, 5).is_empty() {
+    let cs = crate::impls::galadriel::rebel_cards(g, p, &gy, 5);
+    if cs.is_empty() {
         return Ok(Some("There is no Rebel permanent card with mana value 5 or less in your graveyard.".into()));
     }
+    let labels: Vec<String> =
+        cs.iter().map(|&c| format!("{} (mana value {})", cname(g, c), g.db.get(c).cmc)).collect();
+    let Some(k) = pick(g, p, "target", "Ramosian Revivalist: return which Rebel permanent card?", &labels)? else {
+        return Ok(None);
+    };
+    let c = cs[k];
     if let Some(why) = gal_pay(g, p, m, 6, "", "Ramosian Revivalist") {
         return Ok(Some(why));
     }
     g.perm_mut(m).tapped = true;
-    crate::glog!(g, "  {} activates Ramosian Revivalist", pname(g, p));
-    if crate::engine::stack::ability_window(g, p, Some(m), "return a Rebel from your graveyard", None, None)? {
-        crate::impls::galadriel::put_rebel(g, p, "Ramosian Revivalist", 5, true)?;
+    crate::glog!(g, "  {} activates Ramosian Revivalist: {} returns", pname(g, p), cname(g, c));
+    let what = format!("return {} to the battlefield", cname(g, c));
+    if crate::engine::stack::ability_window(g, p, Some(m), &what, None, None)?
+        && let Some(i) = g.player(p).gy.iter().position(|&x| x == c)
+    {
+        g.player_mut(p).gy.remove(i);
+        crate::glog!(g, "    Ramosian Revivalist puts {} onto the battlefield", cname(g, c));
+        g.player_mut(p).stat("rebels_fetched", 1);
+        crate::engine::zones::enter(g, p, c, crate::engine::zones::Enter::default())?;
     }
     Ok(None)
 }
@@ -2453,7 +2469,7 @@ fn more_abilities(g: &Game, p: PlayerId, m: PermId, nm: &str) -> Option<Vec<Perm
             walker(&[(-2, "look at the top four; take a noncreature, nonland card", narset_minus2)])
         }
         n @ ("Brass Squire" | "Peter Parker's Camera" | "Jaxis, the Troublemaker") => return super::urdragon::abilities(n),
-        n => return super::gaps_c::abilities(g, p, m, n),
+        n => return super::model_gaps::abilities(n).or_else(|| super::gaps_c::abilities(g, p, m, n)),
     })
 }
 
