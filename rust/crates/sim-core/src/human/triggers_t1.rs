@@ -122,11 +122,12 @@ pub fn korvold_sacrifice(g: &mut Game, p: PlayerId, src: PermId) -> Res {
         }
         Pick::Land(l) => {
             let cd = g.perm(l).card();
-            crate::engine::turn::remove_land(g, p, l);
-            g.player_mut(p).gy.push(cd);
+            let went = crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
             if !g.hooks.is_empty() {
                 fire_trigger(g, Event::Sacrifice, Call::Sacrifice { p, what: Sacrificed::Card(cd) })?;
-                fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
+                if went {
+                    fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
+                }
             }
             Ok(())
         }

@@ -175,9 +175,7 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
         match choice {
             Choice::Land(l) => {
                 let cd = g.perm(l).card();
-                g.player_mut(p).lands.retain(|&x| x != l);
-                g.perm_mut(l).on_bf = false;
-                g.player_mut(p).gy.push(cd);
+                crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
                 if !g.hooks.is_empty() {
                     fire_trigger(g, Event::Sacrifice, Call::Sacrifice { p, what: crate::hooks::Sacrificed::Card(cd) })?;
                 }

@@ -907,9 +907,7 @@ pub fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<b
                 die(g, perms[k], "sac")?;
             } else {
                 let l = lands[k - perms.len()];
-                crate::engine::turn::remove_land(g, q, l);
-                let cd = g.perm(l).card();
-                g.player_mut(q).gy.push(cd);
+                crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
             }
             continue;
         }
@@ -944,9 +942,7 @@ pub fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<b
 /// q's last land to the graveyard (Python: `L = q.lands.pop(); q.gy.append(L.cd)`)
 fn sac_last_land(g: &mut Game, q: PlayerId) {
     let l = *g.player(q).lands.last().unwrap();
-    crate::engine::turn::remove_land(g, q, l);
-    let cd = g.perm(l).real_card();
-    g.player_mut(q).gy.push(cd);
+    crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
 }
 
 /// Kefka, Ruler of Ruin: whenever an opponent loses life during your turn, you draw that many cards (not optional,
@@ -1760,9 +1756,8 @@ fn strip_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).lands.contains(&l) || !g.player(q).lands.contains(&x) {
         return Ok(false);
     }
-    crate::engine::turn::remove_land(g, p, l);
     let cd = g.perm(l).real_card();
-    g.player_mut(p).gy.push(cd);
+    crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
     let xn = g.db.get(g.perm(x).card()).name.to_string();
     crate::glog!(g, "  {} sacrifices Strip Mine: destroy {xn} ({})", g.player(p).name, g.player(q).name);
     if ability_window_card(g, p, cd, &format!("destroy {xn}"), None, None)? && g.player(q).lands.contains(&x) {

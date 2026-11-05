@@ -244,8 +244,7 @@ fn lesson_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym>
     match tapped {
         Some(l) if spare && pl.lands_played < 1 => {
             let cd = g.perm(l).card();
-            crate::engine::turn::remove_land(g, p, l);
-            g.player_mut(p).hand.push(cd);
+            crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Hand));
             crate::glog!(g, "    {} returns {} (Tragic Lesson)", g.player(p).name, g.db.get(cd).name);
         }
         _ => crate::engine::cast::discard_worst(g, p, 1)?,

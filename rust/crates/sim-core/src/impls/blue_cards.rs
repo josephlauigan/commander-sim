@@ -426,8 +426,7 @@ fn fear_cost(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     });
     if let Some(l) = pick {
         let cd = g.perm(l).card();
-        crate::engine::turn::remove_land(g, p, l);
-        g.player_mut(p).hand.push(cd);
+        crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Hand));
         crate::glog!(g, "    {} returns {} (Fear of Isolation)", g.player(p).name, g.db.get(cd).name);
         return Ok(());
     }

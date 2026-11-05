@@ -387,9 +387,7 @@ fn grounds(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     }
     g.perm_mut(l).tapped = true;
     let d = if deserts.contains(&l) { l } else { deserts[0] }; // it is a Desert itself: sacrifice it (the usual choice)
-    engine::turn::remove_land(g, p, d);
-    let dcd = g.perm(d).real_card();
-    g.player_mut(p).gy.push(dcd);
+    engine::turn::remove_land(g, p, d, Some(crate::engine::zones::Zone::Gy));
     crate::glog!(g, "  {} activates Scavenger Grounds", g.player(p).name);
     let cd = g.perm(l).card();
     if !stack::ability_window_card(g, p, cd, "exile all graveyards", Some(9.0), None)? {

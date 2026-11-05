@@ -948,9 +948,8 @@ fn strip(_g: &Game) -> Vec<LandAbility> {
             .collect();
         let Some(k) = pick(g, p, "target", "Strip Mine: destroy which land?", &labels)? else { return Ok(None) };
         let (q, x) = tg[k];
-        crate::engine::turn::remove_land(g, p, l);
         let cd = g.perm(l).real_card();
-        g.player_mut(p).gy.push(cd);
+        crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
         crate::glog!(
             g,
             "  {} sacrifices Strip Mine: destroy {} ({})",

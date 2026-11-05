@@ -127,13 +127,11 @@ pub fn can_pay_without(g: &mut Game, p: PlayerId, l: PermId, generic: u32, pips:
 /// lands.sac_land: p sacrifices land l (it goes to the graveyard)
 pub fn sac_land(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     let cd = g.perm(l).real_card();
+    let mut card = false; // (a token land, a Mirrorworks copy, just ceases to exist: no card goes to the graveyard)
     if has_land(g, p, l) {
-        crate::engine::turn::remove_land(g, p, l);
-        if !g.perm(l).token {
-            g.player_mut(p).gy.push(cd); // (a token land, a Mirrorworks copy, just ceases to exist)
-        }
+        card = crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
     }
-    if !g.hooks.is_empty() {
+    if card && !g.hooks.is_empty() {
         fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
     }
     Ok(())
@@ -145,10 +143,9 @@ fn destroy_land(g: &mut Game, q: PlayerId, l: PermId) -> Res {
         return Ok(()); // (Avacyn, Angel of Hope: q's lands are indestructible; Darksteel Citadel)
     }
     let cd = g.perm(l).real_card();
-    crate::engine::turn::remove_land(g, q, l);
-    g.player_mut(q).gy.push(cd);
+    let went =     crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
     crate::glog!(g, "    {} ({}) is destroyed", name_of(g, cd), g.player(q).name);
-    if !g.hooks.is_empty() {
+    if went && !g.hooks.is_empty() {
         fire_trigger(g, Event::LandGy, Call::Cards { p: q, cards: vec![cd] })?;
     }
     Ok(())
@@ -184,8 +181,7 @@ pub fn revert_animated(g: &mut Game) -> Res {
             g.perm_mut(l).on_bf = true;
             g.player_mut(p).lands.push(l);
         } else if g.perm(m).owner == p && g.player(p).alive {
-            let cd = g.perm(l).card();
-            g.player_mut(p).gy.push(cd);
+            crate::engine::zones::to_zone_card(g, l, crate::engine::zones::Zone::Gy); // (a token land just ceases to exist)
         }
     }
     Ok(())
@@ -204,7 +200,7 @@ fn l_counters_set(g: &mut Game, l: PermId, n: i32) {
 /// Python marks it summoning sick only when it is `p.last_land_cd`, an attribute nothing sets, so an animated land is
 /// never sick (the land just played doesn't offer the ability anyway).
 pub fn animate(g: &mut Game, p: PlayerId, l: PermId, pw: i32, tg: i32, kws: &[&'static str], fly: bool) -> PermId {
-    crate::engine::turn::remove_land(g, p, l);
+    crate::engine::turn::remove_land(g, p, l, None); // (parked: the creature stands in for it until the turn ends)
     let name = intern(land_name(g, l));
     let tapped = g.perm(l).tapped;
     let plus = l_counters(g, l);

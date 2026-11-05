@@ -3388,9 +3388,7 @@ pub fn saga_step(g: &mut Game, p: PlayerId) -> Res {
             }
             if g.player(p).lands.contains(&l) {
                 // (it may have left in response: bounced, destroyed)
-                crate::engine::turn::remove_land(g, p, l);
-                let cd = g.perm(l).card();
-                g.player_mut(p).gy.push(cd);
+                crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
             }
             if let Some(i) = g.player(p).sagas.iter().position(|x| x.0 == l) {
                 g.player_mut(p).sagas.remove(i);
@@ -3422,9 +3420,7 @@ pub fn saga_step(g: &mut Game, p: PlayerId) -> Res {
                     g.db.get(c).name
                 );
             }
-            crate::engine::turn::remove_land(g, p, l);
-            let cd = g.perm(l).card();
-            g.player_mut(p).gy.push(cd);
+            crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
             if let Some(i) = g.player(p).sagas.iter().position(|x| x.0 == l) {
                 g.player_mut(p).sagas.remove(i);
             }

@@ -286,9 +286,8 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
         let others: Vec<PermId> = g.player(p).lands.iter().copied().filter(|&x| g.perm(x).card() != c).collect();
         let x = min_by(&others, |x| (!g.perm(x).tapped) as i32 as f64 * 10.0 + land_colors_now(g, p, x).count() as f64)
             .unwrap_or(l);
-        remove_land(g, p, x);
         let cd = g.perm(x).card();
-        g.player_mut(p).gy.push(cd);
+        remove_land(g, p, x, Some(Zone::Gy));
         crate::glog!(g, "    sacrifices {}", g.db.get(cd).name);
     }
     if t.has(Tag::Bounceland) {
@@ -302,9 +301,7 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
             .collect();
         // with no other land to return it returns itself (a first-turn bounceland is a wasted land drop)
         let x = min_by(&others, |x| land_colors_now(g, p, x).count() as f64).unwrap_or(l);
-        remove_land(g, p, x);
-        let cd = g.perm(x).card();
-        g.player_mut(p).hand.push(cd);
+        remove_land(g, p, x, Some(Zone::Hand));
     }
     landfall(g, p)?;
     if t.has(Tag::F) && g.player(p).lands.last() == Some(&l) && !crate::impls::titania::hold_fetch(g, p) {
@@ -316,9 +313,24 @@ pub fn play_land_card(g: &mut Game, p: PlayerId, c: CardId, how: &str) -> Res {
     Ok(())
 }
 
-pub fn remove_land(g: &mut Game, p: PlayerId, l: PermId) {
+/// Land l leaves p's lands. `to` is the zone its card goes to (graveyard, hand, exile ...); `None` parks the land
+/// without a zone (an animated land stands in as a creature). **Every path that takes a land away goes through here**:
+/// a token land (a Mirrorworks or Astral Dragon copy) is not a card, so it ceases to exist and its card goes nowhere.
+/// True when a card went to a zone (a "land card put into the graveyard" trigger fires only then).
+pub fn remove_land(g: &mut Game, p: PlayerId, l: PermId, to: Option<crate::engine::zones::Zone>) -> bool {
     g.player_mut(p).lands.retain(|&x| x != l);
+    let token = g.perm(l).token;
+    if token {
+        g.player_mut(p).perms.retain(|&x| x != l); // (an Astral Dragon land is a creature too: listed in both)
+    }
     g.perm_mut(l).on_bf = false;
+    match to {
+        Some(z) if !token => {
+            crate::engine::zones::to_zone_card(g, l, z);
+            true
+        }
+        _ => false,
+    }
 }
 
 /// fetch lands' basic land types (Prismatic Vista fetches a basic)
@@ -379,10 +391,10 @@ pub fn crack_fetch(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     if cands.is_empty() {
         if crate::impls::titania::is_deck(g.player(p).key) {
             // the sacrifice is a cost: the land goes to the graveyard even with nothing to find (Titania)
-            remove_land(g, p, l);
             let fetch = g.perm(l).card();
-            g.player_mut(p).gy.push(fetch);
-            fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![fetch] })?;
+            if remove_land(g, p, l, Some(Zone::Gy)) {
+                fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![fetch] })?;
+            }
         }
         return Ok(());
     }
@@ -402,16 +414,15 @@ pub fn crack_fetch(g: &mut Game, p: PlayerId, l: PermId) -> Res {
         .fold(None, |b: Option<(CardId, f64)>, x| if b.is_none_or(|b| x.1 > b.1) { Some(x) } else { b })
         .unwrap()
         .0;
-    remove_land(g, p, l);
     let fetch = g.perm(l).card();
-    g.player_mut(p).gy.push(fetch);
+    let went = remove_land(g, p, l, Some(Zone::Gy));
     let lib = &mut g.player_mut(p).library;
     let i = lib.iter().position(|&x| x == c).unwrap();
     lib.remove(i);
     crate::engine::tutors::shuffle_library(g, p);
     if let Some(a) = agent_for(g, p) {
         agent_take(g, a, p, c);
-        if !g.hooks.is_empty() {
+        if went && !g.hooks.is_empty() {
             fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![fetch] })?;
         }
         return Ok(());
@@ -424,7 +435,7 @@ pub fn crack_fetch(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     let t = g.db.get(c).tag(Tag::T);
     g.add_land(p, c, tapped || t);
     crate::glog!(g, "    cracks {} for {}", name, g.db.get(c).name);
-    if !g.hooks.is_empty() {
+    if went && !g.hooks.is_empty() {
         fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![fetch] })?;
     }
     landfall(g, p)
@@ -558,9 +569,7 @@ pub fn upkeep(g: &mut Game, p: PlayerId) -> Res {
             crate::glog!(g, "  {} pays {} life for Glacial Chasm", g.player(p).name, cost);
         } else {
             let l = g.player(p).lands.iter().copied().find(|&l| g.db.get(g.perm(l).card()).tag(Tag::Chasm)).unwrap();
-            remove_land(g, p, l);
-            let cd = g.perm(l).card();
-            g.player_mut(p).gy.push(cd);
+            remove_land(g, p, l, Some(Zone::Gy));
             g.player_mut(p).chasm_age = 0;
             crate::glog!(g, "  {} lets Glacial Chasm go", g.player(p).name);
         }

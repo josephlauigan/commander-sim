@@ -314,7 +314,7 @@ fn druid3_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         (d.tags.str(Tag::C).map_or(0, |s| s.chars().count()), !matches!(&*d.name, "Forest" | "Island"))
     })
     .unwrap();
-    crate::engine::turn::remove_land(g, p, l);
+    crate::engine::turn::remove_land(g, p, l, None); // (parked: the creature stands in for it)
     let n = g.player(p).lands.len() as i32 + 1;
     let name = intern(&g.db.get(g.perm(l).card()).name);
     let m = g.new_perm(p, None, name, n, n);
@@ -471,9 +471,7 @@ pub fn special_unit_paid(g: &mut Game, p: PlayerId, u: Unit) -> Res {
             g.perm_mut(src).data.set(DataKey::Used, now);
             let forest = g.player(p).lands.iter().copied().find(|&l| &*g.db.get(g.perm(l).card()).name == "Forest");
             if let Some(l) = forest {
-                crate::engine::turn::remove_land(g, p, l);
-                let cd = g.perm(l).card();
-                g.player_mut(p).hand.push(cd);
+                crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Hand));
             }
         }
         Source::Symbiote(src, _dork, elf) => {
@@ -1510,9 +1508,8 @@ fn chain(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
             (g.db.get(x.card()).tags.str(Tag::C).map_or(0, |s| s.chars().count()), !x.tapped)
         })
         .unwrap();
-        crate::engine::turn::remove_land(g, q, l);
         let cd = g.perm(l).card();
-        g.player_mut(q).gy.push(cd);
+        crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
         crate::glog!(g, "    {} sacrifices {} to copy Chain of Vapor", pname(g, q), g.db.get(cd).name);
         apply_removal(g, Some(q), back, "bounce", None)?;
     }
@@ -2385,9 +2382,7 @@ fn multani_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     };
     lands.sort_by_key(|&l| key(g, l)); // stable, as Python's sorted
     for l in lands.into_iter().take(2) {
-        crate::engine::turn::remove_land(g, p, l);
-        let cd = g.perm(l).card();
-        g.player_mut(p).hand.push(cd);
+        crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Hand));
     }
     if !ability_window_card(g, p, c, "return to hand")? || !g.player(p).gy.contains(&c) {
         return Ok(true);

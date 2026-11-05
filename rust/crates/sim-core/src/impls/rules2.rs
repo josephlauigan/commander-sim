@@ -326,9 +326,7 @@ fn springbloom(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let lands = g.player(o).lands.clone();
     let l = first_min(&lands, |l| (!BASICS.contains(&&*g.db.get(g.perm(l).card()).name), !g.perm(l).tapped)).unwrap();
-    crate::engine::turn::remove_land(g, o, l);
-    let cd = g.perm(l).card();
-    g.player_mut(o).gy.push(cd);
+    crate::engine::turn::remove_land(g, o, l, Some(crate::engine::zones::Zone::Gy));
     land_ramp(g, o, 2, true)
 }
 

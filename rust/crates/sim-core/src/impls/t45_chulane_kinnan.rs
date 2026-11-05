@@ -227,9 +227,8 @@ fn breach_cast(g: &mut Game, src: Src, caster: PlayerId, _c: CardId) -> Res {
         return Ok(());
     }
     let Some(l) = breach_land(g, caster) else { return Ok(()) };
-    crate::engine::turn::remove_land(g, caster, l);
     let cd = g.perm(l).card();
-    g.player_mut(caster).hand.push(cd);
+    crate::engine::turn::remove_land(g, caster, l, Some(crate::engine::zones::Zone::Hand));
     crate::glog!(g, "    {} returns {} to hand (Mana Breach)", pname(g, caster), cname(g, cd));
     Ok(())
 }

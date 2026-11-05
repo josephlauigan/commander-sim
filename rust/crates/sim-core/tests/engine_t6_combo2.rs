@@ -242,7 +242,7 @@ fn sisay_fetches_mount_doom_as_a_land_and_the_ddr_line_wins() {
     let mut g = tbl(SISAY);
     ddr_board(&mut g);
     let doom = g.player(P0).lands.iter().copied().find(|&l| &*g.db.get(g.perm(l).card()).name == "Mount Doom").unwrap();
-    sim_core::engine::turn::remove_land(&mut g, P0, doom);
+    let _ = sim_core::engine::turn::remove_land(&mut g, P0, doom, None);
     perm(&mut g, P0, "Sisay, Weatherlight Captain");
     perm(&mut g, P0, "Tyvar, Jubilant Brawler");
     perm(&mut g, P0, "Derevi, Empyrial Tactician");

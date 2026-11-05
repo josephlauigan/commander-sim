@@ -471,8 +471,7 @@ fn mina_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         return Ok(false);
     };
     let c = g.perm(l).card();
-    crate::engine::turn::remove_land(g, p, l);
-    g.player_mut(p).hand.push(c);
+    crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Hand));
     crate::glog!(g, "  {} activates Mina and Denn, returning {}", pname(g, p), cname(g, c));
     let mine: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).collect();
     if ability_window(g, p, Some(src), "trample", None, None)?

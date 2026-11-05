@@ -118,8 +118,7 @@ fn oboro_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(true);
     }
     let cd = g.perm(b).card();
-    remove_land(g, p, b);
-    g.player_mut(p).hand.push(cd);
+    remove_land(g, p, b, Some(crate::engine::zones::Zone::Hand));
     if !ability_window(g, p, Some(src), "untap target land", None, None)? {
         return Ok(true);
     }
