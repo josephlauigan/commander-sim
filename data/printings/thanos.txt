@@ -15,12 +15,12 @@
 1 Chrome Mox (2xm) 358
 1 Command Tower (slz) 239
 1 Dark Ritual (sld) 2678
+1 Deadly Rollick (cmm) 695
 1 Deflecting Swat (cmm) 698
 1 Demonic Consultation (ice) 121
 1 Demonic Tutor (sta) 90
 1 Desperate Ritual (sld) 1984
 1 Diabolic Intent (ltc) 526
-1 Dragonlord Dromoka (2x2) 376
 1 Eladamri's Call (pls) 106
 1 Elvish Spirit Guide (sld) 423
 1 Enlightened Tutor (dmr) 412

@@ -1,7 +1,7 @@
 1 Alpharael, Dreaming Acolyte (eoe) 212
-1 Animate Dead (4ed) 118
+1 Animate Dead (5ed) 140
 1 Arcane Signet (fic) 333
-1 Archon of Cruelty (pmh2) 75s
+1 Archon of Cruelty (mh2) 75
 1 Big Score (plst) SNC-102
 1 Birgi, God of Storytelling (khm) 123
 1 Blazing Firesinger // Seething Song (sos) 109
@@ -9,6 +9,7 @@
 1 Blood Crypt (rtr) 238
 1 Brain Freeze (soa) 78
 1 Bribery (cmm) 77
+1 Cabal Coffers (mh2) 325
 1 Chaos Warp (c19) 136
 1 Command Tower (sld) 7030
 1 Contract Killing (xln) 95
@@ -41,9 +42,9 @@
 1 Lightning Bolt (3ed) 162
 1 Lotus Petal (p30m) 2
 1 Marvin, Murderous Mimic (dsk) 367
-1 Massacre Wurm (m21) 114
+1 Massacre Wurm (m21) 316
 1 Mistrise Village (tdm) 397
-7 Mountain (mdd) 298
+6 Mountain (mdd) 298
 1 Mystic Sanctuary (soc) 388
 1 Mystical Tutor (dmr) 421
 1 Necromancy (plst) VIS-64
@@ -80,5 +81,5 @@
 1 Underworld Breach (spg) 9
 1 Urborg, Tomb of Yawgmoth (ltc) 375
 1 Veyran, Voice of Duality (sld) 1915
-1 Yawgmoth's Will (vma) 148
+1 Yawgmoth's Will (wc99) js171
 1 Young Pyromancer (2x2) 364
