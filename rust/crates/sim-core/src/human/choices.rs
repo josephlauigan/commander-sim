@@ -140,6 +140,20 @@ pub fn pick_cards(g: &Game, p: PlayerId, cards: &[CardId], n: usize, prompt: &st
     Ok(picked)
 }
 
+/// The person picks any number of `cards` ("you may put any number of ..."), one at a time until they choose
+/// `done`. Returns the picked cards in the order picked.
+pub fn pick_any(g: &Game, p: PlayerId, cards: &[CardId], prompt: &str, done: &str) -> Res<Vec<CardId>> {
+    let mut left: Vec<CardId> = cards.to_vec();
+    let mut picked = vec![];
+    while !left.is_empty() {
+        let labels: Vec<String> = left.iter().map(|&c| card_label(g, c)).collect();
+        let pr = format!("{prompt} ({} picked)", picked.len());
+        let Some(k) = choose(g, p, "choose", &pr, &labels, Some(done), None)? else { break };
+        picked.push(left.remove(k));
+    }
+    Ok(picked)
+}
+
 // ------------------------------------------------------------------ mulligan
 /// London mulligan with a free first mulligan (multiplayer Commander): draw seven, keep or shuffle back and draw
 /// seven again; on keeping after k mulligans, put k - 1 cards on the bottom.

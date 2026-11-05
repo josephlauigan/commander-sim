@@ -957,8 +957,8 @@ fn gear_rank(name: &str) -> i32 {
 }
 
 /// **Gilgamesh, Master-at-Arms**: whenever he enters or attacks, look at the top six cards of the library; every
-/// Equipment among them goes onto the battlefield (the AI always takes them all; a person is asked once, whether to
-/// do it at all), the rest on the bottom in a random order; then the best of the Equipment that came in without
+/// Equipment among them goes onto the battlefield (the AI always takes them all; a person picks any number of them,
+/// and whether and where to attach one), the rest on the bottom in a random order; then the best of the Equipment that came in without
 /// bringing its own Hero (job select pieces attach themselves to their token) is attached to a Samurai: Gilgamesh
 /// himself (he is one), else a creature wearing Samurai's Katana.
 fn gilgamesh_trigger(g: &mut Game, src: PermId) -> Res {
@@ -971,7 +971,18 @@ fn gilgamesh_trigger(g: &mut Game, src: PermId) -> Res {
     }
     let n = g.player(o).library.len().min(6);
     let top: Vec<CardId> = (0..n).map(|_| g.player_mut(o).library.pop().unwrap()).collect();
-    let gear: Vec<CardId> = top.iter().copied().filter(|&c| g.db.get(c).has_subtype("equipment")).collect();
+    let mut gear: Vec<CardId> = top.iter().copied().filter(|&c| g.db.get(c).has_subtype("equipment")).collect();
+    let person = crate::human::is_human(g, o) && !crate::human::urdragon::repeat_on(g, o);
+    if person && !gear.is_empty() {
+        // "you may put any number of Equipment cards from among them onto the battlefield"
+        gear = crate::human::choices::pick_any(
+            g,
+            o,
+            &gear,
+            "Gilgamesh: put which Equipment onto the battlefield?",
+            "done (the rest go to the bottom)",
+        )?;
+    }
     let mut rest: Vec<CardId> = top.iter().copied().filter(|&c| !gear.contains(&c)).collect();
     g.rng.shuffle(&mut rest);
     for c in rest {
@@ -986,14 +997,18 @@ fn gilgamesh_trigger(g: &mut Game, src: PermId) -> Res {
     let own_hero = |g: &Game, e: PermId| matches!(name_of(g, e), LANCE | KATANA | "White Mage's Staff");
     let samurai: Vec<PermId> =
         g.player(o).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m) && is_samurai(g, m)).collect();
-    if crate::human::is_human(g, o) && !crate::human::urdragon::repeat_on(g, o) {
-        // a person chooses which Equipment goes on which Samurai (the Helm loop's repeat mode takes the best)
+    if person {
+        // a person chooses which Equipment goes on which Samurai, or none ("you may attach"; the Helm loop's repeat
+        // mode takes the best)
         let es: Vec<PermId> = came.iter().copied().filter(|&e| live(g, e) && !own_hero(g, e)).collect();
         if es.is_empty() || samurai.is_empty() {
             return Ok(());
         }
         let labels: Vec<String> = es.iter().map(|&e| g.perm(e).name.to_string()).collect();
-        let k = crate::human::choices::choose_one(g, o, "target", "Gilgamesh: attach which Equipment to a Samurai?", &labels)?;
+        let pr = "Gilgamesh: attach which Equipment to a Samurai?";
+        let Some(k) = crate::human::choices::choose(g, o, "target", pr, &labels, Some("don't attach"), None)? else {
+            return Ok(());
+        };
         let slabels: Vec<String> = samurai
             .iter()
             .map(|&m| crate::human::legal::describe_target(g, o, crate::human::Target::Perm(m)))

@@ -505,7 +505,13 @@ fn gilgamesh_asks_which_equipment_goes_on_which_samurai() {
     }
     let log = seat_script(
         &mut g,
-        vec![rule("look at the top six", first), rule("Gilgamesh: attach which Equipment", text("Sword of Fire"))],
+        vec![
+            rule("look at the top six", first),
+            // both, one at a time (each rule answers once; then nothing is left to pick)
+            rule("Gilgamesh: put which Equipment", first),
+            rule("Gilgamesh: put which Equipment", first),
+            rule("Gilgamesh: attach which Equipment", text("Sword of Fire")),
+        ],
     );
     let gil = perm(&mut g, P0, "Gilgamesh, Master-at-Arms");
     let sword = perms_named(&g, P0, "Sword of Fire and Ice");

@@ -215,14 +215,21 @@ pub fn ring_damage(g: &mut Game, p: PlayerId, a: PermId, _d: PlayerId) -> Res {
 }
 
 // ======================================================== Sauron, the Necromancer
-/// mine.necromancer_attack: menace; attacking exiles your best graveyard creature for a tapped attacking token copy
-/// (a 3/3 black Wraith with menace, its abilities kept), exiled at end step unless Sauron is your Ring-bearer
+/// mine.necromancer_attack: menace; attacking exiles your best graveyard creature (a person picks it) for a tapped
+/// attacking token copy (a 3/3 black Wraith with menace, its abilities kept), exiled at end step unless Sauron is your
+/// Ring-bearer
 pub fn necromancer_attack(g: &mut Game, p: PlayerId, src: PermId) -> Res<Vec<PermId>> {
     let cs: Vec<CardId> = g.player(p).gy.iter().copied().filter(|&c| is_creature_card(g, c)).collect();
     if cs.is_empty() {
         return Ok(vec![]);
     }
-    let c = first_max(&cs, |c| card_worth(g, p, c, true) + g.db.get(c).pow as f64).unwrap();
+    let mut c = first_max(&cs, |c| card_worth(g, p, c, true) + g.db.get(c).pow as f64).unwrap();
+    if crate::human::is_human(g, p) && cs.len() > 1 {
+        // "exile target creature card from your graveyard": a person picks the target (not a "may": one is exiled)
+        let labels: Vec<String> = cs.iter().map(|&x| crate::human::choices::card_label(g, x)).collect();
+        let pr = "Sauron, the Necromancer: exile which creature card from your graveyard (an attacking 3/3 copy)?";
+        c = cs[crate::human::choices::choose_one(g, p, "target", pr, &labels)?];
+    }
     let pl = g.player_mut(p);
     remove_card(&mut pl.gy, c);
     pl.exile.push(c);
@@ -4056,7 +4063,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 /// sorcery-speed card would wait for the main phase), and the AI plays every card it can use: lands only while a land
 /// drop is left, never an Aura (no host to choose) or a counterspell (nothing to counter at upkeep). A card taken
 /// from an opponent stays theirs (it goes back to their graveyard or exile); a card not played stays in exile.
-fn triad_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
+pub fn triad_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if p != g.perm(src).owner
         || !g.perm(src).on_bf
         || !trigger_window(g, p, Some(src), "each player exiles the top card of their library", Some(6.0))?
@@ -4080,6 +4087,9 @@ fn triad_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
     let mut playable: Vec<(CardId, PlayerId)> =
         exiled.into_iter().filter(|&(c, q)| (q == p && c == mine) || g.db.get(c).cmc < top).collect();
     playable.sort_by_key(|&(c, _)| std::cmp::Reverse(g.db.get(c).cmc));
+    if crate::human::is_human(g, p) {
+        return triad_person(g, p, playable);
+    }
     for (c, d) in playable {
         if g.over || !g.player(p).alive {
             break;
@@ -4111,6 +4121,32 @@ fn triad_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
         }
     }
     Ok(())
+}
+
+/// Triple Triad for a person: they pick which of the playable cards to play, one at a time and in any order, until
+/// they stop (each is cast or played free, with its target asked; `human::triggers_t1::play_free_now`). The cards
+/// are still played in the upkeep, as the AI's are; one not played stays in its owner's exile.
+fn triad_person(g: &mut Game, p: PlayerId, playable: Vec<(CardId, PlayerId)>) -> Res {
+    let mut left = playable;
+    loop {
+        left.retain(|&(c, d)| g.player(d).exile.contains(&c));
+        if left.is_empty() || g.over || !g.player(p).alive {
+            return Ok(());
+        }
+        let labels: Vec<String> = left
+            .iter()
+            .map(|&(c, d)| {
+                let whose = if d == p { "yours".to_string() } else { format!("{}'s", g.player(d).name) };
+                format!("{} ({whose})", crate::human::choices::card_label(g, c))
+            })
+            .collect();
+        let pr = "Triple Triad: play which card free?";
+        let Some(k) = crate::human::choices::choose(g, p, "choose", pr, &labels, Some("play no more"), None)? else {
+            return Ok(());
+        };
+        let (c, d) = left.remove(k);
+        crate::human::triggers_t1::play_free_now(g, p, c, d, "Triple Triad", false)?;
+    }
 }
 
 /// speed metrics (reports): the Sauron plan milestone `army_hit`, the first combat damage to a player by an Army

@@ -130,7 +130,7 @@ fn urza_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 }
 
 /// Urza's {5} once paid (the AI's path and the person's, `human::abilities`): shuffle, then play the top card free
-pub(crate) fn urza_top(g: &mut Game, src: PermId, p: PlayerId) -> Res {
+pub fn urza_top(g: &mut Game, src: PermId, p: PlayerId) -> Res {
     if !ability_window(g, p, Some(src), "shuffle, play the top card free", None, None)?
         || g.player(p).library.is_empty()
     {
@@ -139,6 +139,12 @@ pub(crate) fn urza_top(g: &mut Game, src: PermId, p: PlayerId) -> Res {
     shuffle_library(g, p);
     let c = g.player_mut(p).library.pop().unwrap();
     crate::glog!(g, "  Urza: {} off the top, free", g.db.get(c).name);
+    if crate::human::is_human(g, p) {
+        // a person chooses whether to play it (and its target); not played, it stays exiled
+        g.player_mut(p).exile.push(c);
+        crate::human::triggers_t1::play_free_now(g, p, c, p, "Urza", true)?;
+        return Ok(());
+    }
     let d = g.db.get(c);
     if d.land {
         if g.player(p).lands_played < 1 {
