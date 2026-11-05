@@ -7,7 +7,7 @@
 # drain, Dark Deal, Peer into the Abyss, the Atlas, Geier Reach Sanitarium and Mikokoro), Ad Nauseam in her second
 # main phase (`knobs.adnaus_main2`), and Darksteel Plate on Sheoldred ahead of the other plays (`[equip]`: was
 # `sheoldred_special`'s equip).
-# Left out (the schema can't express it): Phyrexian Delver's reanimation target, the Memory Jar / Necrosquito /
+# Left out (the schema can't express it): Phyrexian Delver's reanimation target, the Memory Jar /
 # Rooftop Assassin / Seizan rules; the Beckoner's warp (`sheoldred_special`) and Seizan taking the Helm; Toxic Deluge's
 # cap (`deluge_cap`). 2026-11-02 (Ghave breakup): Battle-Rage Blessing and Soul Enervation left the deck, so the
 # Blessing's `[[hold]]` (the commander protection hold) is gone with it.
