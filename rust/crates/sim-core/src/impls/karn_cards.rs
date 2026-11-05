@@ -1038,7 +1038,7 @@ fn ugin_plus_val(_g: &Game, _p: PlayerId, _src: PermId) -> Option<f64> {
 
 /// +1: exile the top card of your library face down and look at it. Create a 2/2 colourless Spirit creature token.
 /// When that token leaves the battlefield, put the exiled card into your hand.
-pub(crate) fn ugin_plus(g: &mut Game, p: PlayerId, src: PermId) -> Res {
+pub(crate) fn ugin_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     let top = g.player_mut(p).library.pop();
     let mut spec = Tokens::new(1, 2);
     spec.tgh = Some(2);
@@ -1049,13 +1049,9 @@ pub(crate) fn ugin_plus(g: &mut Game, p: PlayerId, src: PermId) -> Res {
     match toks.first() {
         Some(&tok) => {
             g.player_mut(p).exile.push(c);
-            let mut v: Vec<Val> = match g.perm(src).data.get(DataKey::Held) {
-                Some(Val::List(v)) => v.clone(),
-                _ => vec![],
-            };
-            v.push(Val::Perm(tok));
-            v.push(Val::Card(c));
-            g.perm_mut(src).data.set(DataKey::Held, Val::List(v));
+            // the Spirit holds the card: "when that token leaves the battlefield" (`ugin_token_left`, from zones::leave),
+            // whether it dies, is exiled or bounced, and whether or not Ugin is still there
+            g.perm_mut(tok).data.set(DataKey::Held, Val::List(vec![Val::Player(p), Val::Card(c)]));
             crate::glog!(g, "    Ugin exiles the top card of the library face down; a Spirit token");
         }
         None => g.player_mut(p).hand.push(c), // no token: the "leaves" trigger never happens; the card is not lost
@@ -1063,45 +1059,19 @@ pub(crate) fn ugin_plus(g: &mut Game, p: PlayerId, src: PermId) -> Res {
     Ok(())
 }
 
-/// when a Spirit made by Ugin leaves the battlefield, its exiled card goes to its owner's hand (Ugin's dies hook
-/// covers a token that dies; `ugin_leaves` hands over every card still waiting when Ugin leaves)
-fn ugin_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
-    let p = owner(g, src);
-    let Some(Val::List(v)) = g.perm(src).data.get(DataKey::Held).cloned() else { return Ok(()) };
-    let mut keep = vec![];
-    for x in v.chunks(2) {
-        if let [Val::Perm(tok), Val::Card(c)] = x {
-            if *tok == m {
-                let pl = g.player_mut(p);
-                if let Some(i) = pl.exile.iter().position(|y| y == c) {
-                    pl.exile.remove(i);
-                    pl.hand.push(*c);
-                    crate::glog!(g, "    Ugin's Spirit leaves: {} returns the exiled card to hand", g.player(p).name);
-                }
-            } else {
-                keep.extend_from_slice(x);
-            }
+/// zones::leave: token m left the battlefield. A Spirit made by Ugin, the Ineffable puts the card exiled with it into its
+/// owner's hand.
+pub fn ugin_token_left(g: &mut Game, m: PermId) {
+    let Some(Val::List(v)) = g.perm(m).data.get(DataKey::Held).cloned() else { return };
+    g.perm_mut(m).data.set(DataKey::Held, Val::None);
+    if let [Val::Player(p), Val::Card(c)] = v.as_slice() {
+        let pl = g.player_mut(*p);
+        if let Some(i) = pl.exile.iter().position(|y| y == c) {
+            pl.exile.remove(i);
+            pl.hand.push(*c);
+            crate::glog!(g, "    Ugin's Spirit leaves: {} returns the exiled card to hand", g.player(*p).name);
         }
     }
-    g.perm_mut(src).data.set(DataKey::Held, Val::List(keep));
-    Ok(())
-}
-
-/// Ugin left: the cards still held under Spirits go to hand (the tokens' own departure is not tracked after this)
-fn ugin_leaves(g: &mut Game, src: Src, _m: PermId) -> Res {
-    let p = g.perm(src).orig;
-    let Some(Val::List(v)) = g.perm(src).data.get(DataKey::Held).cloned() else { return Ok(()) };
-    for x in v.chunks(2) {
-        if let [_, Val::Card(c)] = x {
-            let pl = g.player_mut(p);
-            if let Some(i) = pl.exile.iter().position(|y| y == c) {
-                pl.exile.remove(i);
-                pl.hand.push(*c);
-            }
-        }
-    }
-    g.perm_mut(src).data.set(DataKey::Held, Val::List(vec![]));
-    Ok(())
 }
 
 fn ugin_target(g: &Game, p: PlayerId) -> Option<PermId> {
@@ -1163,7 +1133,5 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     walker(r, db, UGIN, &UGIN_ABS)?;
     let c = r.card(db, UGIN)?;
     c.cost = Some(ugin_cost);
-    c.dies = Some(ugin_dies);
-    c.leaves = Some(ugin_leaves);
     Ok(())
 }
