@@ -251,7 +251,8 @@ pub fn mountainwalk(g: &Game, b: PermId, a: PermId) -> bool {
 
 // ------------------------------------------------------------------ Hexing Squelcher
 /// "Ward—Pay 2 life" on m (Hexing Squelcher, or another creature of its controller's): actor pays 2 life, or the
-/// spell is countered (false) when actor is at 4 life or less
+/// spell is countered (false) when the AI is at 4 life or less (a person is asked, and can pay at any life total of 2
+/// or more)
 pub fn life_ward(g: &mut Game, actor: PlayerId, m: PermId) -> Res<bool> {
     if !g.is_creature(m) {
         return Ok(true);
@@ -260,8 +261,16 @@ pub fn life_ward(g: &mut Game, actor: PlayerId, m: PermId) -> Res<bool> {
     if mine(g, o, SQUELCHER).is_none() {
         return Ok(true);
     }
-    if g.player(actor).life <= 4 {
-        return Ok(false);
+    let human = crate::human::is_human(g, actor);
+    if g.player(actor).life < 2 || (!human && g.player(actor).life <= 4) {
+        return Ok(false); // (the AI keeps its life above 2 after the payment)
+    }
+    if human {
+        // practice mode: the person decides whether the spell is worth 2 life (any life total of 2 or more can pay)
+        let prompt = format!("Ward (pay 2 life) on {}: pay 2 life, or the spell is countered?", g.perm(m).name);
+        if !crate::human::choices::yes_no(g, actor, &prompt)? {
+            return Ok(false);
+        }
     }
     crate::glog!(g, "    {} pays 2 life for ward ({})", g.player(actor).name, g.perm(m).name);
     lose_life(g, actor, 2, Some(actor), "life", Some(false))?;

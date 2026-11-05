@@ -8820,9 +8820,9 @@ status = "Full"
 note = "{1},{T}, sacrifice: draw a card; a spell cast with no mana spent (a Mox, a free alternative cost, either player's) is countered as it is cast: it counts as cast and goes to its owner's graveyard"
 
 ["Hexing Squelcher"]
-status = "Partial"
+status = "Approximate"
 paths_ok = "the compiled uncounterable (the unc tag) is \"this spell can't be countered\" (on the stack); the card code's uncounterable slot is \"spells you control can't be countered\" (on the battlefield)"
-note = "can't be countered itself and spells you control can't be countered; missing: ward--pay 2 life for itself and your other creatures (the engine's ward is mana only; rust/agents/engine-needs-godo.md)"
+note = "can't be countered itself and spells you control can't be countered (compiled); ward--pay 2 life on itself and your other creatures (impls/t45_krenko.rs life_ward, called from removal::apply_removal_rest with the other wards): an opponent's removal spell costs its caster 2 life (a person is asked; any life total of 2 or more can pay), or is countered (the AI at 4 life or less). Left out: ward against abilities and against spells that are not removal (the engine's wards, mana ones too, are checked only when a removal spell resolves on the permanent)"
 
 ["Blood Moon"]
 status = "Full"
@@ -9200,8 +9200,8 @@ status = "Approximate"
 note = "first strike, trample, lifelink; Stagger on combat damage to a player doubles, until its controller's next turn, all damage to that player (combat and noncombat) and to their permanents (removal damage, combat kills). Gaps: sweepers with a fixed damage kind, the AI's combat estimates, lifelink of a doubled hit, and attackers resolved before Lightning in the same damage step are not doubled"
 
 ["Marvin, Murderous Mimic"]
-status = "Partial"
-note = "2/2 for {2}; copies only the {T} abilities of Niv-Mizzet the Firemind (draw), Viashino Fangtail (1 damage), Blightspeaker (drain 1, or {4} search) and Rummaging Goblin (discard, draw) while you control that creature; one ability a turn, Marvin untapped and not summoning sick; best of them each turn, Niv's draw first; also has Ioreth's two untap abilities while its controller has an Ioreth (the Tier 6 DDR loop). Other creatures' activated abilities are not copied"
+status = "Approximate"
+note = "has the compiled activated abilities of the creatures you control that don't share its name (dsl::borrowed_abilities: cost and effects as printed, mana, discard and sacrifice costs included, token copies too; Marvin pays the {T}, so it must be untapped and not summoning sick; one slot per ability, the same per-turn cap as a printed one; the AI and a person both get them as Marvin copies options), plus the hand-written {T} abilities of Krenko, Mob Boss and Kiki-Jiki, Mirror Breaker (impls/t45_krenko.rs) and Ioreth's two untap abilities (the Tier 6 DDR loop). Left out: any other creature's card-code ability (a hand-written one), and a copied mana ability does not pay for another cost"
 
 ["Staff of Compleation"]
 paths_ok = "two sets of abilities, one path each: the options entry is {T}, pay 1 life: destroy target permanent you own (the override dropped the compiled misreading); the compiled activations are the proliferate, the draw and the untap"
@@ -9656,8 +9656,8 @@ dsl = [] # the compiled return took any creature card: card code returns a Drago
 ["Thanos, the Mad Titan"]
 tags = "leg pow=4 tgh=4 dt lifelink"
 dsl = []
-status = "Approximate"
-note = "deathtouch, lifelink; hand-written power-up (impls/t6_thanos.rs): {C}{W}{U}{B}{R}{G}, or {C}{U}{G} the turn he entered ({C} is colourless mana only), no timing restriction: two +1/+1 counters, then each other creature of the chosen parity (0 is even) is destroyed at once. The AI chooses the parity as it resolves (opponents' value lost against 1.2 times its own) and uses it in its main phase or at the end-of-turn window when that swing is worth it. Left out: once per game per player rather than per Thanos object, and a token's mana value is 0 (a token copy's is the copied card's)"
+status = "Full"
+note = "deathtouch, lifelink; the power-up (impls/t6_thanos.rs): {C}{W}{U}{B}{R}{G}, or {C}{U}{G} the turn he entered ({C} is colourless mana only), no timing restriction, once per Thanos object (a blink or recast is a new object that may power up again): two +1/+1 counters, then each other creature of the chosen parity is destroyed at once. A permanent's mana value is its card's: a token copy has the copied card's, any other token 0 (even), zero is even. The AI chooses the parity as it resolves (opponents' value lost against 1.2 times its own) and uses it in its main phase or at the end-of-turn window when that swing is worth it; a person chooses odd or even"
 
 ["Kindred Dominance"]
 tags = "wipe=dominance"
@@ -9861,6 +9861,8 @@ dsl = [] # the compiled exile never returned the card: the enter trigger is hand
 # read as 1/1 under the compiled count)
 ["Psychosis Crawler"]
 tags = "pow=0 tgh=0"
+status = "Full"
+note = "compiled: power and toughness each equal to the cards in your hand (a 0/0 with an empty hand), and whenever you draw a card each opponent loses 1 life (each card of a multi-card draw); the Kefka deck's draw engines and the Crawler loop (cards_kefka.rs) run through the engine's draw"
 
 # --- Phase 2 (doubles): cards where the compiled abilities and the card code met on one event (cardgen audit --paths)
 ["Liliana, Waker of the Dead"]
@@ -10273,3 +10275,11 @@ note = "instant: prevents all damage to its caster from opponents' sources until
 dsl = [] # the compiled reanimate had no Equipment filter (it returned the best card of any type); card code does it
 status = "Full"
 note = "enters: returns the best Equipment from the graveyard; the first equip of its controller's turn costs {0} (the AI spends it on the dearest equip), and on that turn equips can be activated at instant speed (the AI moves Equipment onto an unblocked attacker after blockers; practice mode allows it)"
+
+# --- model-gaps-a2 (rust/agents/model-gaps-a2.md)
+["Lotho, Corrupt Shirriff"]
+tags = "leg pow=2 tgh=1" # without the Scryfall treas tag: it made a Treasure as Lotho entered, which the card does not do
+dsl = []
+status = "Full"
+note = "whenever a player (you too) casts their second spell each turn, you lose 1 life and create a Treasure (impls/model_gaps_a2.rs, a cast hook; nothing happens when Lotho enters)"
+

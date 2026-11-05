@@ -73409,8 +73409,7 @@
    "tags": {
     "leg": true,
     "pow": "2",
-    "tgh": "1",
-    "treas": "1"
+    "tgh": "1"
    },
    "pow": 2,
    "tgh": 1,
@@ -73428,7 +73427,7 @@
    "ward": 0,
    "identity": "BW",
    "game_changer": false,
-   "source": "scryfall",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,

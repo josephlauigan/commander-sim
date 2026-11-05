@@ -884,6 +884,9 @@ fn scion_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
             lib.remove(i);
             g.player_mut(p).gy.push(c);
             crate::glog!(g, "    {} puts {} into the graveyard (Scion of the Ur-Dragon)", pname(g, p), cname(g, c));
+            if live(g, src) {
+                crate::impls::t6_scion::become_copy(g, src, c); // "Scion becomes a copy of that card until end of turn"
+            }
         }
     }
     shuffle_library(g, p);

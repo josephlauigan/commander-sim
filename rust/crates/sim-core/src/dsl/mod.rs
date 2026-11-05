@@ -2177,6 +2177,65 @@ fn round_stamp(g: &Game, p: PlayerId) -> crate::state::TurnStamp {
     crate::state::TurnStamp { round: g.round, active: Some(p) }
 }
 
+/// The AI's value of activating a compiled activated ability now, or None when it never would (a land's channel, a
+/// sacrifice for mana nobody waits for, the per-round cap, a cost it can't pay). `key` is the ability's slot in
+/// `Player::act_uses` for `src` (its index, or Marvin's borrowed slot), `land` whether the card is a land.
+#[allow(clippy::too_many_arguments)]
+fn activated_utility(
+    g: &mut Game,
+    p: PlayerId,
+    src: PermId,
+    key: u16,
+    land: bool,
+    (cost, effects, sorcery, once, ai_min): (&model::Cost, &[Effect], Option<bool>, Option<bool>, Option<f64>),
+    sorcery_ok: bool,
+    stamp: crate::state::TurnStamp,
+) -> Res<Option<f64>> {
+    if land && channel(cost) {
+        return Ok(None); // a land's channel ability is used from the hand
+    }
+    if sorcery == Some(true) && !sorcery_ok {
+        return Ok(None);
+    }
+    if effects.iter().all(|e| e.kind == "add_mana") && cost.sac.is_some() {
+        return Ok(None); // sacrificing for mana nobody is waiting to spend: never proactive
+    }
+    let uses = g.player(p).act_uses.get(&(src, key)).copied();
+    let tap_only = cost.mana.is_none() && cost.sac.is_none() && cost.life.is_none() && cost.discard.is_none();
+    let cap = if tap_only { 8 } else { 3 }; // tap-only abilities (untap engines) can recur
+    if let Some((st, k)) = uses
+        && st == stamp
+        && (once == Some(true) || k >= cap)
+    {
+        return Ok(None);
+    }
+    if !pay_ability_cost(g, p, src, cost, true)? {
+        return Ok(None);
+    }
+    // an {X} cost: valued at the X the mana pays now; at the end of the turn before yours the mana
+    // would go unused, so only the fixed part of the cost counts
+    let xv = if cost.x.is_some() { LAST_X.with(|c| c.take()) } else { 0 };
+    let with_x: Vec<Effect>;
+    let effects: &[Effect] = if xv > 0 {
+        with_x = effects.iter().cloned().map(|e| x_paid(e, xv)).collect();
+        &with_x
+    } else {
+        effects
+    };
+    let x_cost = if sorcery_ok { 0.25 * (cost.x.unwrap_or(0) as i32 * xv) as f64 } else { 0.0 };
+    let mut cost_v: f64 =
+        0.25 * cost.mana.as_deref().unwrap_or("").chars().map(|ch| ch.to_digit(10).unwrap_or(1) as f64).psum();
+    if cost.sac.as_deref() == Some("self") {
+        cost_v += 1.5;
+    }
+    cost_v += x_cost;
+    let mut u = value_of(g, p, effects, None) - cost_v;
+    if let Some(mn) = ai_min {
+        u = u.max(mn); // card data can insist the AI uses it
+    }
+    Ok(Some(u))
+}
+
 /// the activated, loyalty and equip abilities of p's compiled permanents, as choices for the AI
 pub fn ability_options(g: &mut Game, p: PlayerId, sorcery_ok: bool) -> Res<Vec<crate::hooks::Opt>> {
     use crate::hooks::{Action, Opt};
@@ -2212,60 +2271,15 @@ pub fn ability_options(g: &mut Game, p: PlayerId, sorcery_ok: bool) -> Res<Vec<c
         for (i, a) in abilities(g, cd).iter().enumerate() {
             match a {
                 Ability::Activated { cost, effects, sorcery, once, ai_min } => {
-                    if land && channel(cost) {
-                        continue; // a land's channel ability is used from the hand
-                    }
-                    if *sorcery == Some(true) && !sorcery_ok {
-                        continue;
-                    }
-                    if effects.iter().all(|e| e.kind == "add_mana") && cost.sac.is_some() {
-                        continue; // sacrificing for mana nobody is waiting to spend: never proactive
-                    }
-                    let uses = g.player(p).act_uses.get(&(src, i as u16)).copied();
-                    let tap_only =
-                        cost.mana.is_none() && cost.sac.is_none() && cost.life.is_none() && cost.discard.is_none();
-                    let cap = if tap_only { 8 } else { 3 }; // tap-only abilities (untap engines) can recur
-                    if let Some((st, k)) = uses
-                        && st == stamp
-                        && (*once == Some(true) || k >= cap)
+                    if let Some(u) =
+                        activated_utility(g, p, src, i as u16, land, (cost, effects, *sorcery, *once, *ai_min), sorcery_ok, stamp)?
                     {
-                        continue;
+                        out.push(Opt {
+                            utility: u,
+                            label: format!("{name} ability"),
+                            act: Some(Action::Dsl { src, idx: i as u16 }),
+                        });
                     }
-                    if !pay_ability_cost(g, p, src, cost, true)? {
-                        continue;
-                    }
-                    // an {X} cost: valued at the X the mana pays now; at the end of the turn before yours the mana
-                    // would go unused, so only the fixed part of the cost counts
-                    let xv = if cost.x.is_some() { LAST_X.with(|c| c.take()) } else { 0 };
-                    let with_x: Vec<Effect>;
-                    let effects: &[Effect] = if xv > 0 {
-                        with_x = effects.iter().cloned().map(|e| x_paid(e, xv)).collect();
-                        &with_x
-                    } else {
-                        effects
-                    };
-                    let x_cost = if sorcery_ok { 0.25 * (cost.x.unwrap_or(0) as i32 * xv) as f64 } else { 0.0 };
-                    let mut cost_v: f64 = 0.25
-                        * cost
-                            .mana
-                            .as_deref()
-                            .unwrap_or("")
-                            .chars()
-                            .map(|ch| ch.to_digit(10).unwrap_or(1) as f64)
-                            .psum();
-                    if cost.sac.as_deref() == Some("self") {
-                        cost_v += 1.5;
-                    }
-                    cost_v += x_cost;
-                    let mut u = value_of(g, p, effects, None) - cost_v;
-                    if let Some(mn) = ai_min {
-                        u = u.max(*mn); // card data can insist the AI uses it
-                    }
-                    out.push(Opt {
-                        utility: u,
-                        label: format!("{name} ability"),
-                        act: Some(Action::Dsl { src, idx: i as u16 }),
-                    });
                 }
                 Ability::Loyalty { loyalty, effects } if sorcery_ok => {
                     if g.perm(src).loyalty_used == Some(stamp) {
@@ -2358,6 +2372,11 @@ fn effects_text(effects: &[model::Effect]) -> String {
 /// p activates src's compiled ability idx (an option from ability_options); false if it can't now
 pub fn activate(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool> {
     let Some(cd) = g.perm(src).cd else { return Ok(false) };
+    activate_ability(g, p, src, cd, idx, idx)
+}
+
+/// the activation itself: ability `idx` of card `cd` (src's own, or one Marvin borrows), counted in `act_uses` under `key`
+fn activate_ability(g: &mut Game, p: PlayerId, src: PermId, cd: CardId, idx: u16, key: u16) -> Res<bool> {
     let ab = abilities(g, cd);
     let Ability::Activated { cost, effects, .. } = &ab[idx as usize] else { return Ok(false) };
     if g.locks_used
@@ -2372,7 +2391,7 @@ pub fn activate(g: &mut Game, p: PlayerId, src: PermId, idx: u16) -> Res<bool> {
     let sacrificed_mv = LAST_SAC_MV.with(|c| c.take()); // before the stack window runs other costs
     let paid_x = if cost.x.is_some() { LAST_X.with(|c| c.take()) } else { 0 };
     let stamp = round_stamp(g, p);
-    let e = g.player_mut(p).act_uses.entry((src, idx)).or_insert((stamp, 0));
+    let e = g.player_mut(p).act_uses.entry((src, key)).or_insert((stamp, 0));
     *e = if e.0 == stamp { (stamp, e.1 + 1) } else { (stamp, 1) };
     crate::glog!(g, "  {} activates {}", g.player(p).name, g.perm(src).name);
     let mut dctx = DslCtx { sacrificed_mv, ..DslCtx::base() };
@@ -2600,28 +2619,54 @@ pub fn equip(g: &mut Game, p: PlayerId, src: PermId, target: PermId, n: u32) -> 
 }
 
 // ------------------------------------------------------------------ borrowed abilities (Marvin, Murderous Mimic)
-/// Marvin: the `{T}` abilities (no mana cost) of the compiled creature card `from`, as (ability index, AI value)
-/// for `src`, a permanent that has them; only those `src` can pay for right now
-pub fn borrowed_tap_options(g: &mut Game, p: PlayerId, src: PermId, from: CardId) -> Res<Vec<(u16, f64)>> {
-    let mut out = vec![];
+/// Marvin: "has all activated abilities of creatures you control that don't have the same name as this creature."
+/// The compiled activated abilities (cost and effects as printed) of the creature cards `p` controls under another
+/// name than `src`'s, as (card, ability index); a card once however many creatures show it. Token copies count.
+pub fn borrowed_abilities(g: &Game, p: PlayerId, src: PermId) -> Vec<(CardId, u16)> {
+    let mut out: Vec<(CardId, u16)> = vec![];
     if !active(g) {
-        return Ok(out);
+        return out;
     }
-    for (i, a) in abilities(g, from).iter().enumerate() {
-        let Ability::Activated { cost, effects, sorcery, .. } = a else { continue };
-        if cost.tap != Some(true)
-            || cost.mana.is_some()
-            || cost.sac.is_some()
-            || cost.life.is_some()
-            || *sorcery == Some(true)
+    let me = g.perm(src).name;
+    for &m in &g.player(p).perms {
+        let x = g.perm(m);
+        let Some(cd) = x.cd else { continue };
+        if m == src || x.name == me || !x.on_bf || x.phased || x.neutered || !g.is_creature(m) || !g.db.get(cd).has_dsl()
         {
             continue;
         }
-        if !pay_ability_cost(g, p, src, cost, true)? {
-            continue;
+        if crate::engine::values::stopped(g, &g.db.get(cd).name) {
+            continue; // (Disruptor Flute)
         }
-        let u = value_of(g, p, effects, None) - if cost.discard.is_some() { 0.5 } else { 0.0 };
-        out.push((i as u16, u));
+        for (i, a) in abilities(g, cd).iter().enumerate() {
+            if matches!(a, Ability::Activated { .. }) && !out.contains(&(cd, i as u16)) {
+                out.push((cd, i as u16));
+            }
+        }
+    }
+    out
+}
+
+/// the `act_uses` slot of a borrowed ability (the per-turn cap): far from any printed index
+fn borrow_key(from: CardId, idx: u16) -> u16 {
+    0x8000 | (from.0.wrapping_mul(16).wrapping_add(idx) & 0x7fff)
+}
+
+/// Marvin's borrowed abilities `src` could use now, as (card, ability index, AI value): those whose cost `src` can pay
+/// (it taps itself, so it must be untapped and not summoning sick), timing as for the printed ones
+pub fn borrowed_options(g: &mut Game, p: PlayerId, src: PermId, sorcery_ok: bool) -> Res<Vec<(CardId, u16, f64)>> {
+    let mut out = vec![];
+    if crate::cardcode::ability_locked(g, src, p) {
+        return Ok(out);
+    }
+    let stamp = round_stamp(g, p);
+    for (from, i) in borrowed_abilities(g, p, src) {
+        let ab = abilities(g, from);
+        let Ability::Activated { cost, effects, sorcery, once, ai_min } = &ab[i as usize] else { continue };
+        let args = (cost, effects.as_slice(), *sorcery, *once, *ai_min);
+        if let Some(u) = activated_utility(g, p, src, borrow_key(from, i), false, args, sorcery_ok, stamp)? {
+            out.push((from, i, u - if cost.discard.is_some() { 0.5 } else { 0.0 }));
+        }
     }
     Ok(out)
 }
@@ -2629,17 +2674,10 @@ pub fn borrowed_tap_options(g: &mut Game, p: PlayerId, src: PermId, from: CardId
 /// p activates ability `idx` of card `from` with permanent `src` (which doesn't have it printed): pays the cost from
 /// `src`, puts it on the stack and resolves it with `src` as the source. False if it can't be paid now.
 pub fn activate_borrowed(g: &mut Game, p: PlayerId, src: PermId, from: CardId, idx: u16) -> Res<bool> {
-    let ab = abilities(g, from);
-    let Some(Ability::Activated { cost, effects, .. }) = ab.get(idx as usize) else { return Ok(false) };
-    if !g.perm(src).on_bf || g.perm(src).owner != p || !pay_ability_cost(g, p, src, cost, false)? {
+    if !borrowed_abilities(g, p, src).contains(&(from, idx)) {
         return Ok(false);
     }
-    crate::glog!(g, "  {} activates {} (copied ability)", g.player(p).name, g.perm(src).name);
-    if !crate::engine::stack::ability_window(g, p, Some(src), "ability", None, None)? {
-        return Ok(true);
-    }
-    execute(g, p, effects, Some(src), &mut DslCtx::base(), None, 0)?;
-    Ok(true)
+    activate_ability(g, p, src, from, idx, borrow_key(from, idx))
 }
 
 // --- Tiers 4/5 (heliod-zur)

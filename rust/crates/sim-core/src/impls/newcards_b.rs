@@ -5,7 +5,7 @@
 //!   creature); it does nothing for other cards.
 //! - **Lightning**: the Stagger mark is `Player::stagger`, read by `engine::life::stagger_mult` in `lose_life`
 //!   (player damage), `apply_removal` (damage to permanents) and the combat kill checks.
-//! - **Marvin**: borrows the `{T}` abilities of four of Kefka's creatures (`dsl::borrowed_tap_options`).
+//! - **Marvin**: has the compiled activated abilities of the creatures its controller has (`dsl::borrowed_options`).
 
 use crate::cards::CardDb;
 use crate::dsl;
@@ -89,32 +89,23 @@ fn lightning_hit(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, dm
 }
 
 // ================================================================== Marvin, Murderous Mimic
-/// the creatures whose {T} abilities Marvin copies, best first (Niv's draw first)
-const COPIED: [&str; 4] = ["Niv-Mizzet, the Firemind", "Rummaging Goblin", "Viashino Fangtail", "Blightspeaker"];
-
+/// Marvin has all activated abilities of the creatures its controller has that don't share its name. The compiled
+/// ones (`dsl::borrowed_abilities`: cost and effects as printed, mana and sacrifice costs included, token copies
+/// too) are offered here; Ioreth's untaps (t6_legends1b) and Krenko's and Kiki-Jiki's (t45_krenko) are the
+/// hand-written ones also borrowed. Left out: any other creature's card-code ability, and mana abilities used to pay
+/// for costs (Marvin taps for mana only through the engine's mana tags, which he doesn't have).
 pub(crate) fn marvin_options(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
     if g.perm(src).owner != p || !g.perm(src).on_bf || g.perm(src).phased {
         return Ok(vec![]);
     }
+    let sorcery_ok = g.active == Some(p) && matches!(g.step, crate::state::Step::Main1 | crate::state::Step::Main2);
     let mut out = vec![];
-    for (rank, name) in COPIED.iter().enumerate() {
-        let Some(cd) = g.db.id(name) else { continue };
-        let here = g.player(p).perms.iter().any(|&m| {
-            let x = g.perm(m);
-            x.on_bf && !x.phased && x.cd == Some(cd) && g.is_creature(m)
+    for (cd, idx, u) in dsl::borrowed_options(g, p, src, sorcery_ok)? {
+        out.push(Opt {
+            utility: u,
+            label: format!("Marvin copies {}", g.db.get(cd).name),
+            act: Some(Action::Ability { src, f: marvin_go, arg: super::partials::pack(cd.0 as u32, idx as u32) }),
         });
-        if !here {
-            continue;
-        }
-        // Blightspeaker's {4}, {T} search has a mana cost and isn't copied (the compiled search takes any permanent)
-        for (idx, u) in dsl::borrowed_tap_options(g, p, src, cd)? {
-            let bonus = (COPIED.len() - rank) as f64 * 0.1;
-            out.push(Opt {
-                utility: u + bonus,
-                label: format!("Marvin copies {name}"),
-                act: Some(Action::Ability { src, f: marvin_go, arg: super::partials::pack(cd.0 as u32, idx as u32) }),
-            });
-        }
     }
     Ok(out)
 }
