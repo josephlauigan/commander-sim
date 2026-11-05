@@ -14,7 +14,7 @@
 //! - AI (`options`): Garth is tapped only for a copy that can be cast and used now. Terror / Disenchant: an opposing
 //!   target worth removing; Shivan Dragon: the mana is there; Regrowth: a graveyard card worth having; Braingeyser:
 //!   X of at least 3 with the spare mana; Black Lotus: when its three mana make a spell castable this turn (else the
-//!   last resort). Left out: a person's Garth (practice mode) is not offered the choice; Braingeyser always targets its
+//!   last resort). Left out: Braingeyser always targets its
 //!   caster; "can't be regenerated" on Terror.
 
 use crate::cards::CardDb;

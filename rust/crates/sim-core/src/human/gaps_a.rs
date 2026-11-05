@@ -130,7 +130,8 @@ fn garth_person(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         .map(|&i| {
             let Some(c) = g.db.id(garth::NAMES[i]) else { return garth::NAMES[i].to_string() };
             let (gn, pips) = cost_of(g, p, c);
-            let ok = mana::cost_problem(g, p, gn, &pips).is_none();
+            let ok = mana::cost_problem(g, p, gn, &pips).is_none()
+                || mana::available(g, p) >= gn + pips.chars().count() as u32;
             format!(
                 "{} {}{}",
                 garth::NAMES[i],
@@ -152,6 +153,16 @@ fn garth_person(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     let name = garth::NAMES[i];
     crate::glog!(g, "  {} chooses {}: a copy of it", g.perm(m).name, name);
     let Some(c) = g.db.id(name) else { return Ok(None) };
+    // "you may cast the copy": declined, the name stays used and the copy ceases to exist
+    {
+        let (gn, pips) = cost_of(g, p, c);
+        let labels = vec![format!("cast {name} ({})", mana::cost_text(gn, &pips))];
+        let prompt = format!("Garth One-Eye: cast the copy of {name}?");
+        if choices::choose(g, p, "choose", &prompt, &labels, Some("don't cast it"), None)?.is_none() {
+            crate::glog!(g, "    {name} is not cast: the copy ceases to exist");
+            return Ok(None);
+        }
+    }
     // the target or X of the copy, chosen as it is cast
     let mut target: Option<PermId> = None;
     let mut x = 0u32;
@@ -169,7 +180,7 @@ fn garth_person(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     }
     if name == "Braingeyser" {
         let (gn, pips) = cost_of(g, p, c);
-        let have = g.player(p).pool.total();
+        let have = mana::available(g, p); // the pool and every untapped source (tapped into the pool before the cast)
         let top = have.saturating_sub(gn + pips.chars().count() as u32);
         if top > 0 {
             let xs = choices::amount_choices(top);
@@ -178,7 +189,7 @@ fn garth_person(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
                 g,
                 p,
                 "choose",
-                "Braingeyser (Garth One-Eye's copy): choose X (paid from what is left in your pool)",
+                "Braingeyser (Garth One-Eye's copy): choose X (paid from what is left of your pool and untapped sources)",
                 &labels,
             )?;
             x = xs[k];
@@ -203,10 +214,15 @@ fn garth_person(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         )?;
         face = Some(ps[k]);
     }
+    {
+        // the costs come out of the pool: tap what it lacks, as the person would at the table
+        let (gn, pips) = cost_of(g, p, c);
+        mana::tap_to_pay(g, p, gn + x, &pips)?;
+    }
     if !garth::cast_copy_at(g, p, c, target, face, x)? {
         crate::glog!(
             g,
-            "    {name} can't be cast (the mana isn't in your pool, or it has no target): the copy ceases to exist"
+            "    {name} can't be cast (the mana isn't there, or it has no target): the copy ceases to exist"
         );
     }
     crate::engine::life::check_state(g)?;

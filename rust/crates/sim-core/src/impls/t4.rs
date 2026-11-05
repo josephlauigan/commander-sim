@@ -1327,12 +1327,17 @@ fn bond(g: &mut Game, src: Src, p: PlayerId, n: i32) -> Res {
 
 /// t4.bond_target: the opponent who loses the life: one it kills, else the most threatening
 pub fn bond_target(g: &Game, p: PlayerId, n: i32) -> Res<PlayerId> {
+    bond_target_for(g, p, n, "Sanguine Bond")
+}
+
+/// `bond_target` with the asking card's name (Vito, Thorn of the Dusk Rose shares it)
+pub fn bond_target_for(g: &Game, p: PlayerId, n: i32, card: &str) -> Res<PlayerId> {
     let os = opps(g, p);
     if human_of(g, p).is_some() && os.len() > 1 {
         let labels: Vec<String> =
             os.iter().map(|&q| format!("{} ({} life)", g.player(q).name, g.player(q).life)).collect();
         let k =
-            choices::choose_one(g, p, "target", &format!("Sanguine Bond: which opponent loses {n} life?"), &labels)?;
+            choices::choose_one(g, p, "target", &format!("{card}: which opponent loses {n} life?"), &labels)?;
         return Ok(os[k]);
     }
     let dead: Vec<PlayerId> =

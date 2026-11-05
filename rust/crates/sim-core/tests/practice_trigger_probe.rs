@@ -423,6 +423,12 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
         g.log = Some(vec![]);
     }
     if let Sc::Activate(_) = sc {
+        // artifacts to pay with or sacrifice (Inventors' Fair, Kuldotha Forgemaster: three or more)
+        for n in ["Sol Ring", "Arcane Signet", "Mind Stone"] {
+            perm(&mut g, P0, n);
+        }
+    }
+    if let Sc::Activate(_) = sc {
         let i = if land {
             g.player(P0).lands.iter().position(|&x| x == m)
         } else {
@@ -504,11 +510,12 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
             eprintln!("  REQ {sc:?} {} | {} | {:?}", q.kind, q.prompt, q.choices);
         }
     }
+    let is_act = matches!(sc, Sc::Activate(_));
     let window = format!("Your trigger: {name}:");
     let fired = reqs.iter().any(|q| {
         (q.kind == "priority"
             && (q.prompt.contains(&window) || (q.prompt.starts_with("You activate") && q.prompt.contains(name))))
-            || (q.kind != "priority" && q.prompt.starts_with(name))
+            || (q.kind != "priority" && q.prompt.starts_with(name) && (!is_act || !q.prompt.ends_with("which ability?"))) // (a refused activation only asked which ability)
     });
     // only the probed card's questions: not the structure of the probe's own plays, nor a prompt headed by another card
     let other =
@@ -562,7 +569,7 @@ fn every_trigger_choice_of_the_owned_decks_is_asked_of_a_person() {
             }
             let Some(text) = oracle(&cache, &name) else { continue };
             let lines = trigger_lines(&text);
-            let acts = if std::env::var("PROBE_ACTIVATE").is_ok() { activated_lines(&text) } else { vec![] };
+            let acts = if std::env::var("PROBE_NO_ACTIVATE").is_ok() { vec![] } else { activated_lines(&text) };
             if lines.is_empty() && acts.is_empty() {
                 continue;
             }
@@ -716,23 +723,54 @@ const TWICE_OK: &[(&str, &str)] = &[];
 /// gaps found on 2026-11-04 and not yet fixed: the AI chooses for the person. Fixing one means taking it off this list;
 /// a new gap fails the test. (The key ends with the moments the trigger was silent in.)
 const TO_FIX: &[&str] = &[
-    // engine/zones.rs:1719 (landfall_once, the Tag::Landfall2 loop): always makes the 2/2 Cat, no window, no mode choice
-    "alela: Felidar Retreat (Main1 (state only))",
-    // engine/zones.rs:1823 (sun_titan, called at engine/combat.rs:399 and zones.rs:1516): the AI takes the best card
-    "thrasios: Sun Titan (Combat, SelfEnter)",
-    // impls/karn_engines.rs:307 (mirror_etb): the window, then the {2} is paid and the copy made with no yes/no
-    "karn: Mirrorworks (EnterOwn)",
+    // The activated-ability pass (default since 2026-11-04). Planeswalkers: the engine's walker framework
+    // (impls/common.rs walker_go -> WalkerAb.eff) runs the AI's effect for a person, who gets "which ability?" and
+    // then nothing; a fix is a human entry in human/cards.rs `walker(...)` (as for Vraska / Ral / Elspeth) that asks
+    // before paying loyalty. Such an entry replaces the whole generic list, so each needs ALL the walker's abilities
+    // (ultimates included) re-listed. Not fixed in the trigger-fixes task (size: ~12 abilities over 8 cards).
+    // Karn Liberated (impls/t3.rs karn_plus / karn_minus): +4 "target player exiles a card from their hand": the AI
+    // removes the worst card of the opponent with most cards (no target player, no exile, no choice of card); -3 takes
+    // best_opp_nonland.
+    "karn: Karn Liberated (Activate(0), Activate(1))",
+    // Ugin, the Ineffable -3 "destroy target permanent that's one or more colors": impls/karn_cards.rs picks the target
+    "karn: Ugin, the Ineffable (Activate(0))",
+    // Karn, Scion of Urza +1: an opponent chooses which revealed card you get (impls/karn_engines.rs); the AI decides both sides
+    "karn: Karn, Scion of Urza (Activate(0))",
+    // Karn, the Great Creator +1 (up to one target noncreature artifact) and -2 (which artifact card to take): AI picks
+    "karn: Karn, the Great Creator (Activate(0), Activate(1))",
+    // Teferi, Time Raveler -3 "up to one target artifact, creature, or enchantment": impls/t3.rs ttr_minus / ttr_target
+    "thanos: Teferi, Time Raveler (Activate(0))",
+    // Wrenn and Six +1 (up to one target land card in the graveyard) and -1 (1 damage to any target): the AI picks
+    // (choices::deal_damage is the person's helper for the second)
+    "urdragon: Wrenn and Six (Activate(0), Activate(1))",
+    // Venser, the Sojourner +2 "exile target permanent you own" (impls/alela.rs): the AI picks which
+    "alela: Venser, the Sojourner (Activate(0), Activate(1))",
+    // Blightspeaker: {T}: target player loses 1 life / {4},{T}: the Rebel search (impls/newcards_b.rs): no target player,
+    // no search prompt for a person (Lin Sivvi's identical search is asked: human/cards.rs ~1989)
+    "kefka: Blightspeaker (Activate(0))",
 ];
 
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
     (
-        "alela: Stirring Hopesinger (Main1)",
-        "no choice: it puts a counter on each creature; the word \"target\" is in the condition (a spell that targets a creature)",
+        "alela: Crystal Chimes (Activate(0))",
+        "no choice: it returns all enchantment cards from the graveyard",
     ),
     (
-        "sheoldred: Vito, Thorn of the Dusk Rose (GainLife)",
-        "the person is asked which opponent loses the life, but the prompt is headed \"Sanguine Bond:\" (impls/t4.rs:1335, shared with Sanguine Bond), so the probe takes it for another card's question; cosmetic",
+        "alela: Judge's Familiar (Activate(0))",
+        "the probe's table has no instant or sorcery spell on the stack to counter, so the ability does nothing (not read in the code)",
+    ),
+    (
+        "alela: Tragic Poet (Activate(0))",
+        "the probe's graveyard has no enchantment card to return, so there is no target to ask for (not read in the code)",
+    ),
+    (
+        "urdragon: Sakura-Tribe Elder (Activate(0))",
+        "the person is asked (\"Search for a basic land\", land_ramp), but urdragon's only basic is a single Forest, which the probe's table has already moved to the hand and graveyard, so the library has none to offer; the other decks' Elders show the question",
+    ),
+    (
+        "alela: Stirring Hopesinger (Main1)",
+        "no choice: it puts a counter on each creature; the word \"target\" is in the condition (a spell that targets a creature)",
     ),
     (
         "thanos: Necropotence (Discard (state only))",
@@ -755,6 +793,21 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
 /// cards with a triggered choice the probe could not drive (or whose trigger never fired), each with why; a new one
 /// fails the test, and so does one that now fires
 const UNPROBED: &[(&str, &str)] = &[
+    ("alela: Angelic Page", "activated: needs an attacking or blocking creature; the ability is refused in the probe's table"),
+    ("galadriel: Ballista Squad", "activated: needs an attacking or blocking creature; refused in the probe's table"),
+    ("karn: Mishra's Foundry", "activated: needs an attacking Assembly-Worker; refused in the probe's table"),
+    ("karn: Mishra's Factory", "activated: needs another Assembly-Worker (only itself is one); refused in the probe's table"),
+    ("cloud: Cid, Freeflier Pilot", "activated: needs an Equipment or Vehicle card in the graveyard; refused in the probe's table"),
+    ("cloud: Plaza of Heroes", "activated: needs a legendary creature; refused in the probe's table"),
+    ("galadriel: Lawbringer", "activated: needs a red creature; refused in the probe's table"),
+    ("galadriel: Lightbringer", "activated: needs a black creature; refused in the probe's table"),
+    ("galadriel: Ramosian Revivalist", "activated: needs a Rebel card in the graveyard; refused in the probe's table"),
+    ("karn: Walking Ballista", "activated: it leaves the battlefield on entering with no counters"),
+    ("thrasios: Walking Ballista", "activated: it leaves the battlefield on entering with no counters"),
+    ("sauron: Peter Parker's Camera", "activated: needs an ability of yours to copy; refused in the probe's table (human/urdragon.rs asks \"copy which ability?\")"),
+    ("thrasios: Dauthi Voidwalker", "activated: needs an exiled card with a void counter; refused in the probe's table (human/gaps_c.rs asks \"play which exiled card for free?\")"),
+    ("urdragon: Maelstrom of the Spirit Dragon", "activated: the ability never went on the stack in the probe's table (not read)"),
+    ("yshtola: Loran of the Third Path", "activated: the ability never went on the stack in the probe's table (not read)"),
     (
         "alela: Karmic Justice",
         "needs a spell or ability an opponent controls to destroy the person's noncreature permanent: no driver",

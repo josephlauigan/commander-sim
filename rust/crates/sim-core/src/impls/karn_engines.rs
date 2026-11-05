@@ -316,15 +316,31 @@ fn mirror_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let Some(c) = g.perm(m).cd else { return Ok(()) };
-    if !art_card(g, c) || mirror_worth(g, m) < 1.0 || !can_pay(g, o, 2, "", false) {
-        return Ok(());
-    }
-    if !trigger_window(g, o, Some(src), "pay {2}: a token copy of the artifact", None)? || !can_pay(g, o, 2, "", false)
-    {
-        return Ok(());
-    }
-    if !pay(g, o, 2, "", false)? {
-        return Ok(());
+    let human = crate::human::is_human(g, o);
+    if human {
+        // a person decides for any artifact, and pays from the pool or by tapping sources as at the table
+        if !art_card(g, c) || crate::human::mana::available(g, o) < 2 {
+            return Ok(());
+        }
+        if !trigger_window(g, o, Some(src), "pay {2}: a token copy of the artifact", None)? {
+            return Ok(());
+        }
+        let prompt = format!("Mirrorworks: pay {{2}} to create a token copy of {}?", g.db.get(c).name);
+        if !crate::human::mana::pay_tax_ask(g, o, 2, "Mirrorworks", Some(prompt))? {
+            return Ok(());
+        }
+    } else {
+        if !art_card(g, c) || mirror_worth(g, m) < 1.0 || !can_pay(g, o, 2, "", false) {
+            return Ok(());
+        }
+        if !trigger_window(g, o, Some(src), "pay {2}: a token copy of the artifact", None)?
+            || !can_pay(g, o, 2, "", false)
+        {
+            return Ok(());
+        }
+        if !pay(g, o, 2, "", false)? {
+            return Ok(());
+        }
     }
     crate::glog!(g, "    Mirrorworks copies {}", g.db.get(c).name);
     g.perm_mut(src).data.set(DataKey::Act, Val::Bool(true)); // the copy entering is not copied

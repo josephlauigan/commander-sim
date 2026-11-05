@@ -397,7 +397,7 @@ fn attack_triggers_once(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId) 
             new.extend(made);
         }
         if t.has(Tag::Suntitan) {
-            sun_titan(g, p)?;
+            sun_titan(g, p, m)?;
         }
         if t.has(Tag::Necromancer) {
             new.extend(cardcode::necromancer_attack(g, p, m)?); // an attacking token copy of a graveyard creature
