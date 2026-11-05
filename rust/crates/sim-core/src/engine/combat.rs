@@ -668,6 +668,8 @@ pub fn resolve_blocks(
         return Ok(vec![]); // --- card-models-3: Mandate of Peace, cast once the blockers were declared
     }
     crate::impls::tymna_partners::combat_trick(g, p, &atk, &assign)?; // thrasios, kraum: Blossoming Defense, Dark Endurance
+    crate::impls::karn::combat_pumps(g, p, &atk, d, &assign)?; // Mishra's Factory / Foundry pumps
+    crate::impls::karn_cards::hellkite_pump_lethal(g, p, &atk, d, &assign, &to_walker)?; // Steel Hellkite: {2}: +1/+0
     if g.humans.any() {
         step_priority(g, "blockers", Some(d), &atk)?; // practice mode: the declare blockers step's priority
         if g.end_combat {

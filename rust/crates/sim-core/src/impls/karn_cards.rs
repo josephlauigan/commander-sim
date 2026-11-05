@@ -882,6 +882,50 @@ fn hellkite_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
     Ok(vec![ability(u.min(8.0), &format!("Steel Hellkite (X={x})"), src, hellkite_go, x as i64)])
 }
 
+/// `{2}: this creature gets +1/+0 until end of turn.` The AI pumps an unblocked attacking Hellkite (after blockers are
+/// declared, `engine::combat::resolve_blocks`) when the pumps make the attack lethal: the unblocked damage of the whole
+/// attack plus one for each {2} it can pay reaches the defender's life. (Attacks on a planeswalker are left alone.)
+pub fn hellkite_pump_lethal(
+    g: &mut Game,
+    p: PlayerId,
+    atk: &[PermId],
+    d: PlayerId,
+    assign: &[(PermId, PermId)],
+    to_walker: &[(PermId, PermId)],
+) -> Res {
+    if crate::human::is_human(g, p) || g.over || !g.player(d).alive {
+        return Ok(());
+    }
+    let unblocked = |g: &Game, m: PermId| {
+        live(g, m) && g.perm(m).owner == p && !assign.iter().any(|x| x.0 == m) && !to_walker.iter().any(|x| x.0 == m)
+    };
+    let Some(h) = atk.iter().copied().find(|&m| {
+        unblocked(g, m)
+            && &*g.perm(m).name == HELLKITE
+            && !g.perm(m).neutered
+            && !crate::cardcode::ability_locked(g, m, p)
+    }) else {
+        return Ok(());
+    };
+    let dmg: i32 = atk.iter().filter(|&&m| unblocked(g, m)).map(|&m| epow(g, m).max(0)).sum();
+    let need = g.player(d).life - dmg;
+    if need <= 0 || g.player(d).life_locked || need as u32 > crate::engine::mana::total_mana(g, p, false) / 2 {
+        return Ok(()); // already lethal, or the pumps can't reach it
+    }
+    for _ in 0..need {
+        if !can_pay(g, p, 2, "", false) || !pay(g, p, 2, "", false)? {
+            break;
+        }
+        if !ability_window(g, p, Some(h), "+1/+0", Some(5.0), None)? || !live(g, h) {
+            break;
+        }
+        g.perm_mut(h).eot_pt.0 += 1;
+        g.bf_ver += 1;
+        crate::glog!(g, "    {} pumps Steel Hellkite (+1/+0) for lethal", g.player(p).name);
+    }
+    Ok(())
+}
+
 /// {X}: destroy each nonland permanent with mana value X whose controller was dealt combat damage by this creature
 /// this turn. Activate only once each turn.
 pub(crate) fn hellkite_go(g: &mut Game, src: PermId, p: PlayerId, x: i64) -> Res<bool> {
