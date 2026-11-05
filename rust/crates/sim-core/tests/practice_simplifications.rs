@@ -250,3 +250,91 @@ fn drawn_cards_are_forgotten_at_the_next_turn() {
     sim_core::engine::zones::draw(&mut g, P0, 1, true).unwrap();
     assert_eq!(sim_core::human::triggers_t1::drawn_in_hand(&g, P0), vec![card(&g, "Sol Ring")]);
 }
+
+// ------------------------------------------------------------------ 4a. Loop shortcuts: one question for a batch of tokens
+fn count_asked(h: &ScriptHuman, text: &str) -> usize {
+    h.asked().iter().filter(|r| r.prompt.contains(text)).count()
+}
+
+#[test]
+fn terror_of_the_peaks_asks_once_for_a_batch_of_tokens_when_the_target_is_the_same() {
+    let mut g = table(&["urdragon", "seph"]);
+    perm(&mut g, P0, "Terror of the Peaks");
+    let h = person(vec![], |r| {
+        if r.prompt.contains("which target for all") || r.prompt.contains("damage to which target") {
+            r.choices.iter().position(|c| c.contains("Sephiroth") || c.contains(&*"Seph"))
+        } else {
+            None // "yes, the same target" is the first choice
+        }
+    });
+    g.humans.add(P0, h.clone());
+    let life = g.player(P1).life;
+    sim_core::engine::zones::make_tokens(&mut g, P0, sim_core::engine::zones::Tokens::new(4, 2)).unwrap();
+    assert_eq!(count_asked(&h, "Aim all of them at the same target"), 1, "{:?}", h.asked());
+    assert_eq!(count_asked(&h, "damage to which target"), 0, "no per-token question");
+    assert_eq!(g.player(P1).life, life - 4 * 2, "all four triggers hit the chosen player");
+}
+
+#[test]
+fn terror_of_the_peaks_still_asks_per_token_when_the_person_wants_each_target() {
+    let mut g = table(&["urdragon", "seph"]);
+    perm(&mut g, P0, "Terror of the Peaks");
+    let h = person(vec![], |r| {
+        if r.prompt.contains("Aim all of them") {
+            with(r, "I'll choose each")
+        } else if r.prompt.contains("damage to which target") {
+            r.choices.iter().position(|c| c.contains("Seph"))
+        } else {
+            None
+        }
+    });
+    g.humans.add(P0, h.clone());
+    sim_core::engine::zones::make_tokens(&mut g, P0, sim_core::engine::zones::Tokens::new(3, 2)).unwrap();
+    assert_eq!(count_asked(&h, "Aim all of them at the same target"), 1);
+    assert_eq!(count_asked(&h, "damage to which target"), 3, "one question per token: {:?}", h.asked());
+}
+
+#[test]
+fn a_single_token_is_not_asked_whether_to_use_the_same_target() {
+    let mut g = table(&["urdragon", "seph"]);
+    perm(&mut g, P0, "Terror of the Peaks");
+    let h = person(vec![], |r| r.prompt.contains("damage to which target").then(|| with(r, "Seph")).flatten());
+    g.humans.add(P0, h.clone());
+    sim_core::engine::zones::make_tokens(&mut g, P0, sim_core::engine::zones::Tokens::new(1, 2)).unwrap();
+    assert_eq!(count_asked(&h, "Aim all of them"), 0);
+    assert_eq!(count_asked(&h, "damage to which target"), 1);
+}
+
+#[test]
+fn the_mirror_loop_asks_once_for_the_terror_of_the_peaks_target() {
+    let mut g = table_with(&["urdragon", "seph"], 1, 40);
+    g.active = Some(P0);
+    g.player_mut(P0).hand.clear();
+    let ur = card(&g, "The Ur-Dragon");
+    g.player_mut(P0).set_cmd_zone(ur, false);
+    let mirror = perm(&mut g, P0, "Cursed Mirror");
+    perm(&mut g, P0, "Terror of the Peaks");
+    hand(&mut g, P0, &["Astral Dragon"]);
+    let mana = g.player_mut(P0);
+    mana.pool.add('U', 2);
+    mana.pool.add('R', 6);
+    let h = person(vec![], |r| {
+        if r.prompt.contains("which ability") {
+            with(r, "start the loop")
+        } else if r.prompt.contains("the opponents may answer") {
+            with(r, "once around")
+        } else if r.prompt.contains("which target for all") {
+            with(r, "Seph")
+        } else {
+            None
+        }
+    });
+    g.humans.add(P0, h.clone());
+    let i = g.player(P0).perms.iter().position(|&m| m == mirror).unwrap();
+    let life = g.player(P1).life;
+    sim_core::human::human::apply(&mut g, P0, &json!({"do": "use", "perm": i})).unwrap();
+    assert!(count_asked(&h, "start the loop") + count_asked(&h, "which ability") > 0, "the loop was started");
+    assert!(count_asked(&h, "Aim all of them at the same target") == 1, "{:?}", h.asked());
+    assert_eq!(count_asked(&h, "damage to which target"), 0, "no per-token target question: {:?}", h.asked());
+    assert!(g.player(P1).life < life, "Terror's triggers hit the chosen player ({} -> {})", life, g.player(P1).life);
+}

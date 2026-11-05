@@ -1387,6 +1387,9 @@ pub struct Game {
     pub animated: Vec<(PlayerId, PermId, PermId)>,
     /// a combo's last pieces are being cast (combos.attempt): Thassa's Oracle waits for the exile spell
     pub combo_spell: bool,
+    /// practice mode: a batch of tokens or a loop is making a person's "deals damage to any target" triggers (Terror of
+    /// the Peaks ...): the person is asked once whether to aim them all at one target (`human::choices::DamageBatch`)
+    pub damage_batch: Option<crate::human::choices::DamageBatch>,
     /// Tier 6: the player now going for a combo (set around `combos::attempt`): opponents answer its steps as wins
     pub t6_going: Option<PlayerId>,
     /// --- ai-planner: a line planner's copy of the game, played for this player: nobody else takes priority (the
@@ -1557,6 +1560,7 @@ impl Game {
             search_work: 0,
             animated: vec![],
             combo_spell: false,
+            damage_batch: None,
             t6_going: None,
             plan_for: None, // --- ai-planner
             lattice_lock: None,

@@ -339,6 +339,13 @@ fn my_creatures(g: &Game, p: PlayerId) -> Vec<PermId> {
 /// the tokens are made by a copy of the spell, `spell` is the original still on the stack: a Dualcaster Mage token's
 /// enter trigger may copy it.
 pub fn twinflame_tokens(g: &mut Game, p: PlayerId, targets: &[PermId], spell: Option<(CardId, &Ctx)>) -> Res {
+    let batch = targets.len() > 1 && choices::batch_begin(g, p); // Terror of the Peaks and the like: asked once
+    let r = twinflame_tokens_in(g, p, targets, spell);
+    choices::batch_end(g, batch);
+    r
+}
+
+fn twinflame_tokens_in(g: &mut Game, p: PlayerId, targets: &[PermId], spell: Option<(CardId, &Ctx)>) -> Res {
     for &m in targets {
         if !g.player(p).perms.contains(&m) {
             continue;
@@ -462,13 +469,16 @@ fn dualcaster_loop(g: &mut Game, p: PlayerId, dm: PermId) -> Res {
     let n = loop_tokens(g, p);
     let cd = g.perm(dm).cd.unwrap();
     let mut made = 0;
+    let batch = choices::batch_begin(g, p); // Terror of the Peaks and the like: one question for all the tokens
     for _ in 0..n {
-        let Some(t) = zones::enter_token_copy(g, p, cd)? else { break };
+        let r = zones::enter_token_copy(g, p, cd);
+        let Some(t) = r.inspect_err(|_| choices::batch_end(g, batch))? else { break };
         let x = g.perm_mut(t);
         x.sick = false;
         x.temp = true;
         made += 1;
     }
+    choices::batch_end(g, batch);
     crate::glog!(
         g,
         "    {made} hasty Dualcaster Mages (as good as infinite; exiled at the end step): attack with them"
@@ -632,7 +642,10 @@ fn go_loop(g: &mut Game, p: PlayerId, part: &'static str) -> Res<Why> {
         steps: cmb.steps,
     };
     crate::glog!(g, "  {} goes for the {part} loop", pname(g, p));
-    combos::run_steps(g, p, &person)?;
+    let batch = choices::batch_begin(g, p); // Terror of the Peaks and the like: one question for all the tokens
+    let r = combos::run_steps(g, p, &person);
+    choices::batch_end(g, batch);
+    r?;
     crate::engine::life::check_state(g)?;
     Ok(None)
 }

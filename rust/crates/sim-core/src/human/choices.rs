@@ -442,6 +442,64 @@ pub fn damage_targets(g: &Game, p: PlayerId, colours: crate::cards::Colors) -> V
     out
 }
 
+/// "Whenever a creature enters, it deals damage to any target" (Terror of the Peaks, Scourge of Valkas, Dragon Tempest),
+/// when a batch of tokens or a loop makes dozens of them: the person is asked once whether every one goes to the same
+/// target, instead of once per token. Open the scope with `batch_begin` around the batch and close it with `batch_end`.
+#[derive(Debug, Clone, Default)]
+pub struct DamageBatch {
+    /// the question has been asked in this scope (and not been reset by the target going away)
+    pub asked: bool,
+    /// the target every trigger of the batch goes to, once the person chose "the same target"
+    pub same: Option<Target>,
+}
+
+/// start a damage batch for p (a person), if none is running. True: this call opened it (and must close it).
+pub fn batch_begin(g: &mut Game, p: PlayerId) -> bool {
+    if g.damage_batch.is_some() || !super::is_human(g, p) {
+        return false;
+    }
+    g.damage_batch = Some(DamageBatch::default());
+    true
+}
+
+/// close the batch `batch_begin` opened (`opened`: its return value)
+pub fn batch_end(g: &mut Game, opened: bool) {
+    if opened {
+        g.damage_batch = None;
+    }
+}
+
+/// `deal_damage` for one trigger of a batch: with a batch running, the first trigger asks "the same target for every
+/// one?" and, if yes, the target once; later ones go to that target while it is still a legal target (else the person
+/// is asked again). With no batch it is `deal_damage`.
+pub fn deal_damage_batched(g: &mut Game, p: PlayerId, n: i32, source: &str, kind: &str) -> Res {
+    if n <= 0 {
+        return Ok(());
+    }
+    let Some(mut b) = g.damage_batch.clone() else { return deal_damage(g, p, n, source, kind) };
+    let tg = damage_targets(g, p, Default::default());
+    if let Some(t) = b.same {
+        if tg.contains(&t) {
+            return apply_damage(g, p, t, n, source, kind);
+        }
+        b = DamageBatch::default(); // the target is gone: ask again for the rest
+    }
+    if !b.asked {
+        b.asked = true;
+        let prompt = format!("{source}: this triggers once for each creature that enters. Aim all of them at the same target?");
+        let labels = vec!["yes, the same target for all of them".to_string(), "no, I'll choose each target".to_string()];
+        if !tg.is_empty() && choose_one(g, p, "choose", &prompt, &labels)? == 0 {
+            let tl: Vec<String> = tg.iter().map(|&x| legal::describe_target(g, p, x)).collect();
+            let k = choose_one(g, p, "target", &format!("{source}: which target for all of them?"), &tl)?;
+            b.same = Some(tg[k]);
+            g.damage_batch = Some(b);
+            return apply_damage(g, p, tg[k], n, source, kind);
+        }
+    }
+    g.damage_batch = Some(b);
+    deal_damage(g, p, n, source, kind)
+}
+
 /// p's `source` deals n damage to a target p picks: a creature dies if n reaches its toughness, a planeswalker
 /// loses that much loyalty, a player loses that much life.
 pub fn deal_damage(g: &mut Game, p: PlayerId, n: i32, source: &str, kind: &str) -> Res {

@@ -345,7 +345,11 @@ pub fn make_tokens(g: &mut Game, p: PlayerId, mut spec: Tokens) -> Res<Vec<PermI
         }
     }
     if k > 0 && !g.hooks.is_empty() {
-        fire_trigger(g, Event::TokensEnter, Call::Tokens { p, toks: out.clone() })?; // Plumecreed Mentor
+        // a person's "damage to any target" trigger of each token (Terror of the Peaks): asked once for the batch
+        let batch = out.len() > 1 && crate::human::choices::batch_begin(g, p);
+        let r = fire_trigger(g, Event::TokensEnter, Call::Tokens { p, toks: out.clone() }); // Plumecreed Mentor
+        crate::human::choices::batch_end(g, batch);
+        r?;
     }
     Ok(out)
 }
