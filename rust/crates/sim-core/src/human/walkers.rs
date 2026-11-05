@@ -220,8 +220,17 @@ fn ugin_minus3(g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
 }
 
 // ------------------------------------------------------------------ Karn, Scion of Urza
+/// +1: the top two cards are revealed and an opponent (an AI seat: it gives you the card you want less) chooses which one
+/// you get; the person is told both cards before it is done, and the log names the one each way
 fn karn_su_plus(_g: &mut Game, p: PlayerId, m: PermId) -> Res<Ready> {
-    go(move |g| crate::impls::karn_engines::karn_plus(g, p, m))
+    go(move |g| {
+        let names: Vec<String> =
+            g.player(p).library.iter().rev().take(2).map(|&c| g.db.get(c).name.to_string()).collect();
+        if !names.is_empty() {
+            tell_info(g, p, &format!("Karn, Scion of Urza: you reveal {}.", names.join(" and ")));
+        }
+        crate::impls::karn_engines::karn_plus(g, p, m)
+    })
 }
 
 fn karn_su_minus1(g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
