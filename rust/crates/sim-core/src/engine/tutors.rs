@@ -427,7 +427,7 @@ pub fn jeskas_will(g: &mut Game, p: PlayerId) -> Res {
     if crate::human::is_human(g, p) && crate::human::cards::jeskas_will(g, p)? {
         return Ok(());
     }
-    let most = g.opps(p).map(|q| g.player(q).hand.len()).max().unwrap_or(0) as u32;
+    let most = g.opps(p).map(|q| crate::engine::values::hand_count(g, q)).max().unwrap_or(0) as u32;
     let both = commander_out(g, p);
     let need: i64 =
         g.player(p).hand.iter().filter(|&&x| !g.db.get(x).land).map(|&x| g.db.get(x).cmc as i64).sum::<i64>()

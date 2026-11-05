@@ -95,7 +95,7 @@ pub fn best_target_any(g: &mut Game, p: PlayerId, n: i32) -> Res {
         return Ok(());
     }
     if human_of(g, p).is_some() {
-        return choices::deal_damage(g, p, n, "Damage", "triggers");
+        return choices::deal_damage_batched(g, p, n, "Damage", "triggers");
     }
     if let Some(&q) = opps.iter().find(|&&q| g.player(q).life <= n) {
         return lose_life(g, q, n, Some(p), "triggers", None);
