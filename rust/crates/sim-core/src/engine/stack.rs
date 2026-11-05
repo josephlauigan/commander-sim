@@ -1460,7 +1460,7 @@ pub fn settle_stack(g: &mut Game) -> Res {
             } else if it.zone == "gy" || it.ctx.exile_after {
                 g.player_mut(o).exile.push(c);
             } else if !g.db.get(c).land {
-                g.player_mut(o).gy.push(c);
+                crate::engine::zones::put_in_gy(g, o, c);
             }
             continue;
         }

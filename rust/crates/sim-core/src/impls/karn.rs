@@ -63,7 +63,7 @@ pub fn max_mv(g: &Game, p: PlayerId) -> u32 {
         .perms
         .iter()
         .filter(|&&m| live(g, m))
-        .filter_map(|&m| g.perm(m).cd.filter(|&c| is_art_card(g, c)))
+        .filter_map(|&m| g.perm(m).cd.filter(|_| crate::impls::t5::is_artifact(g, m))) // (Liquimetal Torque's mark counts)
         .map(|c| g.db.get(c).cmc)
         .max()
         .unwrap_or(0)
@@ -276,6 +276,116 @@ fn manland_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     animate(g, p, l);
     Ok(true)
+}
+
+// ------------------------------------------------------------------ the pumps, in combat
+/// a Mishra's Factory / Foundry that an AI seat could tap for its pump now, as an untapped land or as the animated
+/// creature (a token standing in for the land): (bonus, mana to pay, whether the target must be attacking).
+/// `{T}: target Assembly-Worker creature gets +1/+1` (Factory);
+/// `{1}, {T}: target attacking Assembly-Worker creature gets +2/+2` (Foundry).
+fn pump_source(g: &Game, q: PlayerId, s: PermId) -> Option<(i32, u32, bool)> {
+    let x = g.perm(s);
+    if !live(g, s) || x.tapped {
+        return None;
+    }
+    let name = match x.cd {
+        Some(c) if g.player(q).lands.contains(&s) => &*g.db.get(c).name,
+        None if x.data.get(crate::state::DataKey::Land).is_some() && x.ttypes.contains(&"assembly-worker") => &*x.name,
+        _ => return None,
+    };
+    let pump = match name {
+        "Mishra's Factory" => (1, 0, false),
+        "Mishra's Foundry" => (2, 1, true),
+        _ => return None,
+    };
+    (!crate::cardcode::ability_locked(g, s, q)).then_some(pump)
+}
+
+fn is_worker(g: &Game, w: PermId) -> bool {
+    live(g, w) && g.is_creature(w) && g.perm(w).ttypes.contains(&"assembly-worker")
+}
+
+/// what `by` more power and toughness is worth to worker w in its combat with o: it survives a fight it lost (its
+/// value), or it now kills a creature it did not (a part of that one's value). First strike and tramplers are not
+/// worked through.
+fn pump_gain(g: &Game, w: PermId, o: PermId, by: i32) -> f64 {
+    let (pw, tw, po, to) = (epow(g, w), etgh(g, w), epow(g, o), etgh(g, o));
+    let (dtw, dto) = (g.perm(w).dt, g.perm(o).dt);
+    let dies = |t: i32| po >= t || dto;
+    let kills = |p: i32| p >= to || dtw;
+    let mut v = 0.0;
+    if dies(tw) && !dies(tw + by) {
+        v += pval(g, w).max(2.0);
+    }
+    if !kills(pw) && kills(pw + by) {
+        v += 0.8 * pval(g, o).max(1.0);
+    }
+    v
+}
+
+/// After blockers are declared (`engine::combat::resolve_blocks`, beside the other combat tricks): an AI seat taps its
+/// animated Mishra's Factory / Foundry to pump an Assembly-Worker in the fight when it saves that worker or kills its
+/// opponent. The Factory's pump is free; the Foundry's costs {1}, its target must be attacking, and the AI pays only
+/// for a gain worth 2 or more. (A Factory that attacked is tapped: it pumps as a blocker, or another Factory or Foundry,
+/// still a land, pumps it.)
+pub fn combat_pumps(g: &mut Game, p: PlayerId, atk: &[PermId], d: PlayerId, assign: &[(PermId, PermId)]) -> Res {
+    for q in [d, p] {
+        if crate::human::is_human(g, q) || !g.player(q).alive {
+            continue;
+        }
+        let sources: Vec<PermId> = g.player(q).perms.iter().chain(g.player(q).lands.iter()).copied().collect();
+        for s in sources {
+            let mut best: Option<(f64, PermId, i32, u32)> = None;
+            let Some((by, cost, atk_only)) = pump_source(g, q, s) else { continue };
+            let is_land = g.player(q).lands.contains(&s);
+            let affordable = |g: &mut Game| {
+                cost == 0
+                    || if is_land {
+                        super::lands::can_pay_without(g, q, s, cost, "")
+                    } else {
+                        crate::engine::mana::can_pay(g, q, cost, "", false)
+                    }
+            };
+            if g.over || !affordable(g) {
+                continue;
+            }
+            for &(a, b) in assign {
+                if !g.perm(a).on_bf || !g.perm(b).on_bf {
+                    continue;
+                }
+                let sides = [(a, b, true, p), (b, a, false, d)];
+                for (w, o, attacking, side) in sides {
+                    if side != q || !is_worker(g, w) || (atk_only && !(attacking && atk.contains(&w))) {
+                        continue;
+                    }
+                    let v = pump_gain(g, w, o, by);
+                    if v >= if cost > 0 { 2.0 } else { 1.0 } && best.is_none_or(|x| v > x.0) {
+                        best = Some((v, w, by, cost));
+                    }
+                }
+            }
+            let Some((_, w, by, cost)) = best else { continue };
+            let what = format!("{} gets +{by}/+{by}", g.perm(w).name);
+            if cost > 0
+                && !(if is_land {
+                    super::lands::pay_without(g, q, s, cost, "")?
+                } else {
+                    crate::engine::mana::pay(g, q, cost, "", false)?
+                })
+            {
+                continue;
+            }
+            g.perm_mut(s).tapped = true;
+            if !crate::engine::stack::ability_window(g, q, Some(s), &what, None, Some(w))? || !live(g, w) {
+                continue;
+            }
+            let x = g.perm_mut(w);
+            x.eot_pt = (x.eot_pt.0 + by, x.eot_pt.1 + by);
+            g.bf_ver += 1;
+            crate::glog!(g, "    {} taps {} in combat: {what} until end of turn", g.player(q).name, g.perm(s).name);
+        }
+    }
+    Ok(())
 }
 
 // ================================================================== the plan

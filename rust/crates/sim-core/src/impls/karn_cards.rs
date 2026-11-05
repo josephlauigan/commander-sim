@@ -882,6 +882,50 @@ fn hellkite_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
     Ok(vec![ability(u.min(8.0), &format!("Steel Hellkite (X={x})"), src, hellkite_go, x as i64)])
 }
 
+/// `{2}: this creature gets +1/+0 until end of turn.` The AI pumps an unblocked attacking Hellkite (after blockers are
+/// declared, `engine::combat::resolve_blocks`) when the pumps make the attack lethal: the unblocked damage of the whole
+/// attack plus one for each {2} it can pay reaches the defender's life. (Attacks on a planeswalker are left alone.)
+pub fn hellkite_pump_lethal(
+    g: &mut Game,
+    p: PlayerId,
+    atk: &[PermId],
+    d: PlayerId,
+    assign: &[(PermId, PermId)],
+    to_walker: &[(PermId, PermId)],
+) -> Res {
+    if crate::human::is_human(g, p) || g.over || !g.player(d).alive {
+        return Ok(());
+    }
+    let unblocked = |g: &Game, m: PermId| {
+        live(g, m) && g.perm(m).owner == p && !assign.iter().any(|x| x.0 == m) && !to_walker.iter().any(|x| x.0 == m)
+    };
+    let Some(h) = atk.iter().copied().find(|&m| {
+        unblocked(g, m)
+            && &*g.perm(m).name == HELLKITE
+            && !g.perm(m).neutered
+            && !crate::cardcode::ability_locked(g, m, p)
+    }) else {
+        return Ok(());
+    };
+    let dmg: i32 = atk.iter().filter(|&&m| unblocked(g, m)).map(|&m| epow(g, m).max(0)).sum();
+    let need = g.player(d).life - dmg;
+    if need <= 0 || g.player(d).life_locked || need as u32 > crate::engine::mana::total_mana(g, p, false) / 2 {
+        return Ok(()); // already lethal, or the pumps can't reach it
+    }
+    for _ in 0..need {
+        if !can_pay(g, p, 2, "", false) || !pay(g, p, 2, "", false)? {
+            break;
+        }
+        if !ability_window(g, p, Some(h), "+1/+0", Some(5.0), None)? || !live(g, h) {
+            break;
+        }
+        g.perm_mut(h).eot_pt.0 += 1;
+        g.bf_ver += 1;
+        crate::glog!(g, "    {} pumps Steel Hellkite (+1/+0) for lethal", g.player(p).name);
+    }
+    Ok(())
+}
+
 /// {X}: destroy each nonland permanent with mana value X whose controller was dealt combat damage by this creature
 /// this turn. Activate only once each turn.
 pub(crate) fn hellkite_go(g: &mut Game, src: PermId, p: PlayerId, x: i64) -> Res<bool> {
@@ -988,6 +1032,9 @@ fn leveler_unearth_opts(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>
     if post != Some(false) || g.active != Some(p) || !g.player(p).gy.contains(&c) {
         return Ok(vec![]);
     }
+    if crate::impls::t6_stax::needle_stops(g, LEVELER) {
+        return Ok(vec![]); // Pithing Needle: unearth is an activated ability
+    }
     if !can_pay(g, p, 8, "", false) {
         return Ok(vec![]);
     }
@@ -1038,7 +1085,7 @@ fn ugin_plus_val(_g: &Game, _p: PlayerId, _src: PermId) -> Option<f64> {
 
 /// +1: exile the top card of your library face down and look at it. Create a 2/2 colourless Spirit creature token.
 /// When that token leaves the battlefield, put the exiled card into your hand.
-pub(crate) fn ugin_plus(g: &mut Game, p: PlayerId, src: PermId) -> Res {
+pub(crate) fn ugin_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     let top = g.player_mut(p).library.pop();
     let mut spec = Tokens::new(1, 2);
     spec.tgh = Some(2);
@@ -1049,13 +1096,9 @@ pub(crate) fn ugin_plus(g: &mut Game, p: PlayerId, src: PermId) -> Res {
     match toks.first() {
         Some(&tok) => {
             g.player_mut(p).exile.push(c);
-            let mut v: Vec<Val> = match g.perm(src).data.get(DataKey::Held) {
-                Some(Val::List(v)) => v.clone(),
-                _ => vec![],
-            };
-            v.push(Val::Perm(tok));
-            v.push(Val::Card(c));
-            g.perm_mut(src).data.set(DataKey::Held, Val::List(v));
+            // the Spirit holds the card: "when that token leaves the battlefield" (`ugin_token_left`, from zones::leave),
+            // whether it dies, is exiled or bounced, and whether or not Ugin is still there
+            g.perm_mut(tok).data.set(DataKey::Held, Val::List(vec![Val::Player(p), Val::Card(c)]));
             crate::glog!(g, "    Ugin exiles the top card of the library face down; a Spirit token");
         }
         None => g.player_mut(p).hand.push(c), // no token: the "leaves" trigger never happens; the card is not lost
@@ -1063,45 +1106,19 @@ pub(crate) fn ugin_plus(g: &mut Game, p: PlayerId, src: PermId) -> Res {
     Ok(())
 }
 
-/// when a Spirit made by Ugin leaves the battlefield, its exiled card goes to its owner's hand (Ugin's dies hook
-/// covers a token that dies; `ugin_leaves` hands over every card still waiting when Ugin leaves)
-fn ugin_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
-    let p = owner(g, src);
-    let Some(Val::List(v)) = g.perm(src).data.get(DataKey::Held).cloned() else { return Ok(()) };
-    let mut keep = vec![];
-    for x in v.chunks(2) {
-        if let [Val::Perm(tok), Val::Card(c)] = x {
-            if *tok == m {
-                let pl = g.player_mut(p);
-                if let Some(i) = pl.exile.iter().position(|y| y == c) {
-                    pl.exile.remove(i);
-                    pl.hand.push(*c);
-                    crate::glog!(g, "    Ugin's Spirit leaves: {} returns the exiled card to hand", g.player(p).name);
-                }
-            } else {
-                keep.extend_from_slice(x);
-            }
+/// zones::leave: token m left the battlefield. A Spirit made by Ugin, the Ineffable puts the card exiled with it into its
+/// owner's hand.
+pub fn ugin_token_left(g: &mut Game, m: PermId) {
+    let Some(Val::List(v)) = g.perm(m).data.get(DataKey::Held).cloned() else { return };
+    g.perm_mut(m).data.set(DataKey::Held, Val::None);
+    if let [Val::Player(p), Val::Card(c)] = v.as_slice() {
+        let pl = g.player_mut(*p);
+        if let Some(i) = pl.exile.iter().position(|y| y == c) {
+            pl.exile.remove(i);
+            pl.hand.push(*c);
+            crate::glog!(g, "    Ugin's Spirit leaves: {} returns the exiled card to hand", g.player(*p).name);
         }
     }
-    g.perm_mut(src).data.set(DataKey::Held, Val::List(keep));
-    Ok(())
-}
-
-/// Ugin left: the cards still held under Spirits go to hand (the tokens' own departure is not tracked after this)
-fn ugin_leaves(g: &mut Game, src: Src, _m: PermId) -> Res {
-    let p = g.perm(src).orig;
-    let Some(Val::List(v)) = g.perm(src).data.get(DataKey::Held).cloned() else { return Ok(()) };
-    for x in v.chunks(2) {
-        if let [_, Val::Card(c)] = x {
-            let pl = g.player_mut(p);
-            if let Some(i) = pl.exile.iter().position(|y| y == c) {
-                pl.exile.remove(i);
-                pl.hand.push(*c);
-            }
-        }
-    }
-    g.perm_mut(src).data.set(DataKey::Held, Val::List(vec![]));
-    Ok(())
 }
 
 fn ugin_target(g: &Game, p: PlayerId) -> Option<PermId> {
@@ -1163,7 +1180,5 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     walker(r, db, UGIN, &UGIN_ABS)?;
     let c = r.card(db, UGIN)?;
     c.cost = Some(ugin_cost);
-    c.dies = Some(ugin_dies);
-    c.leaves = Some(ugin_leaves);
     Ok(())
 }

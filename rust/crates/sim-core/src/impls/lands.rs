@@ -129,7 +129,9 @@ pub fn sac_land(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     let cd = g.perm(l).real_card();
     if has_land(g, p, l) {
         crate::engine::turn::remove_land(g, p, l);
-        g.player_mut(p).gy.push(cd);
+        if !g.perm(l).token {
+            g.player_mut(p).gy.push(cd); // (a token land, a Mirrorworks copy, just ceases to exist)
+        }
     }
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
@@ -139,8 +141,8 @@ pub fn sac_land(g: &mut Game, p: PlayerId, l: PermId) -> Res {
 
 /// fixes.destroy_land (a copy: fixes.rs is ported separately; the same few lines)
 fn destroy_land(g: &mut Game, q: PlayerId, l: PermId) -> Res {
-    if !has_land(g, q, l) || crate::dsl::lands_have_kw(g, q, "indestructible") {
-        return Ok(()); // (Avacyn, Angel of Hope: q's lands are indestructible)
+    if !has_land(g, q, l) || crate::dsl::lands_have_kw(g, q, "indestructible") || crate::engine::values::indestructible(g, l) {
+        return Ok(()); // (Avacyn, Angel of Hope: q's lands are indestructible; Darksteel Citadel)
     }
     let cd = g.perm(l).real_card();
     crate::engine::turn::remove_land(g, q, l);

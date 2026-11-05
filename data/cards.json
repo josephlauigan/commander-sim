@@ -71247,10 +71247,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "You may cast colorless spells and artifact spells as though they had flash.",
-    "Whenever you cast a spell, if the amount of mana spent to cast that spell is greater than ~'s power, put a +1/+1 counter on ~."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 3,
     "land": false,
@@ -72566,9 +72563,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{T}: Target nonland permanent becomes an artifact in addition to its other types until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
@@ -79706,9 +79701,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "Whenever another nontoken artifact you control enters, you may pay {2}. If you do, create a token that's a copy of that artifact."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 5,
     "land": false,
@@ -79814,10 +79807,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{1}: This land becomes a 2/2 Assembly-Worker artifact creature until end of turn. It's still a land.",
-    "{T}: Target Assembly-Worker creature gets +1/+1 until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -79853,10 +79843,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "{2}: This land becomes a 2/2 Assembly-Worker artifact creature until end of turn. It's still a land.",
-    "{1}, {T}: Target attacking Assembly-Worker gets +2/+2 until end of turn."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 0,
     "land": true,
@@ -91703,9 +91690,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "Activated abilities of sources with the chosen name can't be activated unless they're mana abilities."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,

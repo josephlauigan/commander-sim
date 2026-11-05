@@ -583,18 +583,37 @@ fn rem_spec(g: &Game, c: CardId) -> (&str, &str, bool) {
     (t.str(Tag::Rem).unwrap_or(""), t.str(Tag::Tgt).unwrap_or("c"), t.has(Tag::Mv4))
 }
 
+/// the cards p may cast as a spell now, with the zone: the hand, and the top card of the library under a Mystic Forge
+/// (an artifact or colourless card), which the removal and wipe options and their executors treat like a hand card
+fn spell_sources(g: &Game, p: PlayerId) -> Vec<(CardId, &'static str)> {
+    let mut v: Vec<(CardId, &'static str)> = g.player(p).hand.iter().map(|&c| (c, "hand")).collect();
+    if let Some(t) = crate::impls::karn_engines::forge_top_card(g, p) {
+        v.push((t, "lib"));
+    }
+    v
+}
+
+/// where c is cast from for removal / wipe code: the hand, or the top of the library under a Mystic Forge
+fn source_zone(g: &Game, p: PlayerId, c: CardId) -> Option<&'static str> {
+    if g.player(p).hand.contains(&c) {
+        Some("hand")
+    } else {
+        (crate::impls::karn_engines::forge_top_card(g, p) == Some(c)).then_some("lib")
+    }
+}
+
 /// brain.removal_options
 pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
     let mut out = vec![];
     let main = is_main(hand_key(g, p));
     let caution = style(g, g.player(p).key).caution;
-    for &c in &g.player(p).hand {
+    for (c, zone) in spell_sources(g, p) {
         let d = g.db.get(c);
         let t = &d.tags;
         if !t.has(Tag::Rem) || d.creature {
             continue;
         }
-        if g.cast_checks() && !castable(g, p, c, "hand") {
+        if g.cast_checks() && !castable(g, p, c, zone) {
             continue; // a lock, or Vexing Bauble / Chalice of the Void: cast_removal would refuse it
         }
         let fods = rem_fodder(g, p);
@@ -602,7 +621,7 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
         let (rg, rp, _) = rem_cost(g, p, c);
         // an alternative cost (Snapback, Pyrokinesis: cards exiled from hand) when the mana can't be paid
         let free = free_removal(g, p, c);
-        let alt = !free && altcost::use_alt(g, p, c, None, rg + extra, &rp);
+        let alt = !free && zone == "hand" && altcost::use_alt(g, p, c, None, rg + extra, &rp);
         if !free && !alt && !can_pay(g, p, rg + extra, &rp, t.has(Tag::Convoke)) {
             continue;
         }
@@ -796,11 +815,12 @@ pub fn cast_removal(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], kick: u
     let free = free_removal(g, p, c);
     extra += kick;
     let (rg, rp, rlife) = rem_cost(g, p, c);
-    let alt = !free && kick == 0 && altcost::use_alt(g, p, c, None, rg + extra, &rp);
-    if !g.player(p).hand.contains(&c) || (!free && !alt && !can_pay_for(g, p, c, rg + extra, &rp, cv)) {
+    let Some(zone) = source_zone(g, p, c) else { return Ok(false) };
+    let alt = !free && kick == 0 && zone == "hand" && altcost::use_alt(g, p, c, None, rg + extra, &rp);
+    if !free && !alt && !can_pay_for(g, p, c, rg + extra, &rp, cv) {
         return Ok(false);
     }
-    if g.cast_checks() && !castable(g, p, c, "hand") {
+    if g.cast_checks() && !castable(g, p, c, zone) {
         return Ok(false);
     }
     let live: Vec<(f64, PermId)> =
@@ -841,7 +861,10 @@ pub fn cast_removal(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], kick: u
     if let Some(f) = fod {
         die(g, f, "sac")?;
     }
-    cast_card(g, p, c, "hand", Ctx { target: Some(target), rem_kind: kind, ..Ctx::default() })?;
+    if zone == "lib" {
+        g.player_mut(p).library.pop(); // Mystic Forge: cast from the top
+    }
+    cast_card(g, p, c, zone, Ctx { target: Some(target), rem_kind: kind, ..Ctx::default() })?;
     g.player_mut(p).stat("removal_cast", 1);
     Ok(true)
 }
@@ -850,15 +873,18 @@ pub fn cast_removal(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], kick: u
 /// overload) are offered; in the main phase an instant-speed wipe is held for that window unless the danger is now.
 pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt> {
     let mut out = vec![];
-    for &c in &g.player(p).hand {
+    for (c, zone) in spell_sources(g, p) {
         let d = g.db.get(c);
         let Some(kind) = d.tags.str(Tag::Wipe) else { continue };
-        if eot && !d.instant && !(d.sorcery && has(g, p, Tag::Gandalf)) {
+        if eot
+            && !d.instant
+            && !(d.sorcery && (has(g, p, Tag::Gandalf) || crate::impls::karn_cards::liberator_flash(g, p, c))) // (Liberator: All Is Dust)
+        {
             continue;
         }
         let (cg, cp) = decks::wipe_cost(g, p, c);
-        let alt = altcost::use_alt(g, p, c, None, cg, &cp); // Sunscour: two white cards instead of {5}{W}{W}
-        if (!alt && !can_pay(g, p, cg, &cp, false)) || (g.cast_checks() && !castable(g, p, c, "hand")) {
+        let alt = zone == "hand" && altcost::use_alt(g, p, c, None, cg, &cp); // Sunscour: two white cards instead of {5}{W}{W}
+        if (!alt && !can_pay(g, p, cg, &cp, false)) || (g.cast_checks() && !castable(g, p, c, zone)) {
             continue;
         }
         let (ol, ml, victim) = decks::wipe_eval(g, p, kind);
@@ -894,11 +920,12 @@ pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt>
 /// the executor of a wipe option
 pub fn cast_wipe(g: &mut Game, p: PlayerId, c: CardId, victim: Option<PlayerId>) -> Res<bool> {
     let (cg, cp) = decks::wipe_cost(g, p, c);
-    let alt = altcost::use_alt(g, p, c, None, cg, &cp);
-    if !g.player(p).hand.contains(&c) || (!alt && !can_pay_for(g, p, c, cg, &cp, false)) {
+    let Some(zone) = source_zone(g, p, c) else { return Ok(false) };
+    let alt = zone == "hand" && altcost::use_alt(g, p, c, None, cg, &cp);
+    if !alt && !can_pay_for(g, p, c, cg, &cp, false) {
         return Ok(false);
     }
-    if g.cast_checks() && !castable(g, p, c, "hand") {
+    if g.cast_checks() && !castable(g, p, c, zone) {
         return Ok(false);
     }
     if alt {
@@ -908,7 +935,10 @@ pub fn cast_wipe(g: &mut Game, p: PlayerId, c: CardId, victim: Option<PlayerId>)
     } else {
         pay_for(g, p, c, cg, &cp, false)?;
     }
-    cast_card(g, p, c, "hand", Ctx { victim, ..Ctx::default() })?;
+    if zone == "lib" {
+        g.player_mut(p).library.pop(); // Mystic Forge: cast from the top
+    }
+    cast_card(g, p, c, zone, Ctx { victim, ..Ctx::default() })?;
     g.player_mut(p).stat("wipes_cast", 1);
     Ok(true)
 }
@@ -1542,7 +1572,8 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
         let caution = style(g, g.player(p).key).caution;
         for mut o in removal_options(g, p, &s) {
             if let Some(Action::Removal { card, kick: 0, .. }) = &o.act
-                && (g.db.get(*card).instant || (gand && g.db.get(*card).sorcery))
+                && (g.db.get(*card).instant
+                    || (g.db.get(*card).sorcery && (gand || crate::impls::karn_cards::liberator_flash(g, p, *card))))
             {
                 o.utility += 1.2 * caution;
                 opts.push(o);

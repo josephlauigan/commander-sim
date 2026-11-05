@@ -152,6 +152,19 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
     Ok(())
 }
 
+/// card c goes to owner o's graveyard; Blightsteel Colossus is revealed and shuffled into o's library instead ("if it
+/// would be put into a graveyard from anywhere": milled, discarded or countered; from the battlefield `to_zone_card`)
+pub fn put_in_gy(g: &mut Game, o: PlayerId, c: CardId) {
+    if crate::impls::karn_cards::shuffles_back(g, c) {
+        crate::glog!(g, "    {} is revealed and shuffled into {}'s library instead", g.db.get(c).name, g.player(o).name);
+        let n = g.player(o).library.len() as u64;
+        let i = g.rng.below(n + 1) as usize;
+        g.player_mut(o).library.insert(i, c);
+    } else {
+        g.player_mut(o).gy.push(c);
+    }
+}
+
 pub fn mill(g: &mut Game, p: PlayerId, n: usize) -> Res {
     if !g.hooks.is_empty() && n > 0 {
         let lib = &g.player(p).library;
@@ -160,6 +173,10 @@ pub fn mill(g: &mut Game, p: PlayerId, n: usize) -> Res {
     }
     for _ in 0..n {
         let Some(c) = g.player_mut(p).library.pop() else { return Ok(()) };
+        if crate::impls::karn_cards::shuffles_back(g, c) {
+            put_in_gy(g, p, c); // Blightsteel Colossus: shuffled into the library instead
+            continue;
+        }
         g.player_mut(p).gy.push(c);
         crate::impls::t12_brago_meren::note_gy(g, c); // --- Tiers 1/2 (brago-meren): Twilight Diviner's record
         if is_keyspell(g, c) {
@@ -550,6 +567,7 @@ pub fn leave(g: &mut Game, m: PermId) -> Res {
         }
     }
     if on && g.perm(m).token {
+        crate::impls::karn_cards::ugin_token_left(g, m); // Ugin, the Ineffable: the Spirit's exiled card
         crate::impls::t0_zurgo::token_left(g, p, m)?; // t0-zurgo: Zurgo Stormrender, Twilight Drover
     }
     if on {
@@ -572,6 +590,8 @@ pub enum Zone {
 
 /// a nontoken card that left goes to a zone of its owner's; a commander goes to the command zone
 pub fn to_zone_card(g: &mut Game, m: PermId, zone: Zone) {
+    // unearth: "if it would leave the battlefield, exile it instead of putting it anywhere else"
+    let zone = if g.perm(m).data.truthy(DataKey::Unearth) { Zone::Exile } else { zone };
     if zone == Zone::Exile {
         crate::impls::bulk_white::note_exile(g, m); // Ennis: cards were put into exile this turn
     }
@@ -1923,7 +1943,7 @@ pub fn discard_cards(g: &mut Game, q: PlayerId, cards: &[CardId]) -> Res {
         if necro {
             pl.exile.push(c)
         } else {
-            pl.gy.push(c)
+            put_in_gy(g, q, c); // (Blightsteel Colossus is shuffled into the library)
         }
         if !necro {
             crate::impls::t12_brago_meren::note_gy(g, c); // --- Tiers 1/2 (brago-meren)
@@ -1960,7 +1980,7 @@ pub fn discard_index(g: &mut Game, q: PlayerId, i: usize) -> Res {
         g.player_mut(q).exile.push(c);
         return Ok(());
     }
-    g.player_mut(q).gy.push(c);
+    put_in_gy(g, q, c); // (Blightsteel Colossus is shuffled into the library)
     crate::impls::t12_brago_meren::note_gy(g, c); // --- Tiers 1/2 (brago-meren)
     crate::impls::kefka::discarded(g, q, &[c])?; // mayhem / madness
     tergrid_steal(g, q, c, q)

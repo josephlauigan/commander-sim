@@ -1002,7 +1002,7 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         } else if lt.is_some_and(|x| x.tag(Tag::Ctrexile)) && !land {
             g.player_mut(o).exile.push(c); // Dissipate
         } else if !land {
-            g.player_mut(o).gy.push(c);
+            put_in_gy(g, o, c); // (Blightsteel Colossus is shuffled into the library)
         }
         return Ok(false);
     }
