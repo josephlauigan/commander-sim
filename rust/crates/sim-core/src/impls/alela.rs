@@ -1444,7 +1444,7 @@ fn venser_emblem_v(_g: &Game, _p: PlayerId, _src: PermId) -> Option<f64> {
 }
 
 /// rules.give_emblem(p, 'venser'): exile a permanent per spell you cast (rules.emblem_cast)
-fn venser_emblem(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+pub(crate) fn venser_emblem(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     let e = &mut g.player_mut(p).emblems;
     if !e.contains(&"venser") {
         e.push("venser");

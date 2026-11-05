@@ -1385,6 +1385,9 @@ pub struct Game {
     /// creature lands animated until the start of the next turn: (controller, the creature, the land)
     /// (lands.animate, revert_animated)
     pub animated: Vec<(PlayerId, PermId, PermId)>,
+    /// practice mode: artifacts a person's Karn, the Great Creator (+1) made creatures until their next turn: (the player
+    /// whose next turn ends it, the artifact, its power and toughness before)
+    pub karn_anim: Vec<(PlayerId, PermId, i32, i32)>,
     /// a combo's last pieces are being cast (combos.attempt): Thassa's Oracle waits for the exile spell
     pub combo_spell: bool,
     /// practice mode: a batch of tokens or a loop is making a person's "deals damage to any target" triggers (Terror of
@@ -1559,6 +1562,7 @@ impl Game {
             search_n: 0,
             search_work: 0,
             animated: vec![],
+            karn_anim: vec![],
             combo_spell: false,
             damage_batch: None,
             t6_going: None,

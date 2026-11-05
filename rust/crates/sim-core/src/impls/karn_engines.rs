@@ -80,7 +80,7 @@ fn karn_plus_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
 
 /// +1: reveal the top two cards; an opponent chooses one for your hand, the other is exiled with a silver counter.
 /// The opponent's AI gives you the card you want less (`card_worth`). With one card left it is the one chosen.
-fn karn_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+pub(crate) fn karn_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     let mut top: Vec<CardId> = (0..2).filter_map(|_| g.player_mut(p).library.pop()).collect();
     if top.is_empty() {
         return Ok(());

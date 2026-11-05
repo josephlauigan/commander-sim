@@ -31,6 +31,7 @@ pub mod gaps_c;
 pub mod gaps_t2;
 pub mod triggers_t1;
 pub mod urdragon;
+pub mod walkers;
 
 use crate::control::Human;
 use crate::ids::{PermId, PlayerId};

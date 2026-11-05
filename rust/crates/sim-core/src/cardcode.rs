@@ -897,6 +897,7 @@ pub fn skip_draw(g: &Game, p: PlayerId) -> bool {
 /// Baubles' delayed draws, lands' upkeep abilities, pact payments, Sagas' chapters, rebound spells
 pub fn turn_start(g: &mut Game, p: PlayerId) -> Res {
     crate::impls::lands::revert_animated(g)?;
+    crate::human::walkers::karn_revert(g, p); // a person's Karn, the Great Creator: the artifacts stop being creatures
     crate::impls::rules2::uncrew(g, p);
     crate::impls::t0_captain::turn_start(g, p);
     for q in 0..g.players.len() {
