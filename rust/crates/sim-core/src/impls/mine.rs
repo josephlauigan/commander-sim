@@ -646,9 +646,9 @@ fn baraddur_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     g.perm_mut(l).tapped = true;
     crate::glog!(g, "  {} uses Barad-dûr: amass Orcs {x}", g.player(p).name);
     let cd = g.perm(l).card();
-    if card_ability_window(g, p, cd, &format!("amass Orcs {x}"), None, None)? {
-        amass(g, p, x as i32)?;
-    }
+    crate::engine::stack::ability_run_w(g, p, None, Some(cd), &format!("amass Orcs {x}"), None, None, x as f64, |g, _| {
+        amass(g, p, x as i32)
+    })?;
     Ok(true)
 }
 

@@ -1120,6 +1120,9 @@ pub struct Ctx {
     /// --- card-models-2: an ability on the stack that the ability language runs: its card and ability index (a
     /// copy of it can be resolved again, Peter Parker's Camera; its single `target` can be changed, Redirect Lightning)
     pub dsl_ab: Option<(CardId, u16)>,
+    /// --- model-gaps-a3: a hand-written (card code) activated ability on the stack whose caller carries out its copies
+    /// (`stack::ability_run_w`): what a Peter Parker's Camera copy is worth to the AI (0: only a person copies it)
+    pub copy_worth: Option<f64>,
 }
 
 /// A spell or ability on the stack (Python's `StackItem`).

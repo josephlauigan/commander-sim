@@ -1300,9 +1300,7 @@ fn mind_stone_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
     }
     pay(g, p, 1, "", false)?;
     die(g, src, "sac")?;
-    if ability_window(g, p, Some(src), "draw a card", None, None)? {
-        draw(g, p, 1, false)?;
-    }
+    crate::engine::stack::ability_run_w(g, p, Some(src), None, "draw a card", None, None, 0.0, |g, _| draw(g, p, 1, false))?;
     Ok(true)
 }
 

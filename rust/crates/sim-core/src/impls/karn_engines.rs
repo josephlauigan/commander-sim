@@ -682,9 +682,7 @@ fn cave_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     let cd = g.perm(l).card();
     crate::impls::lands::sac_land(g, p, l)?;
-    if ability_window_card(g, p, cd, "search for a land", None, None)? {
-        fetch_land(g, p, false, true)?;
-    }
+    run_w(g, p, None, Some(cd), "search for a land", None, 3.0, |g, _| fetch_land(g, p, false, true).map(|_| ()))?;
     Ok(true)
 }
 
@@ -709,9 +707,7 @@ fn map_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     }
     g.perm_mut(src).tapped = true;
     die(g, src, "sac")?;
-    if ability_window(g, p, Some(src), "search for a land", None, None)? {
-        fetch_land(g, p, true, false)?;
-    }
+    run_w(g, p, Some(src), None, "search for a land", None, 3.0, |g, _| fetch_land(g, p, true, false).map(|_| ()))?;
     Ok(true)
 }
 
@@ -805,11 +801,15 @@ fn passage_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.perm_mut(l).tapped = true;
-    if ability_window_card(g, p, g.perm(l).card(), "can't be blocked", None, Some(m))? && live(g, m) {
-        let st = g.turn_stamp();
-        g.perm_mut(m).data.set(DataKey::Unbl, Val::Stamp(st));
-        crate::glog!(g, "    {} can't be blocked this turn (Rogue's Passage)", g.perm(m).name);
-    }
+    let cd = g.perm(l).card();
+    run_w(g, p, None, Some(cd), "can't be blocked", Some(m), 0.0, |g, _| {
+        if live(g, m) {
+            let st = g.turn_stamp();
+            g.perm_mut(m).data.set(DataKey::Unbl, Val::Stamp(st));
+            crate::glog!(g, "    {} can't be blocked this turn (Rogue's Passage)", g.perm(m).name);
+        }
+        Ok(())
+    })?;
     Ok(true)
 }
 
@@ -1113,4 +1113,20 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Liquimetal Torque")?.options = Some(torque_options);
     r.card(db, "Staff of Domination")?.options = Some(staff_options);
     Ok(())
+}
+
+/// --- model-gaps-a3: an activated ability of a land or artifact whose cost is paid, with its effect `eff(g, is_copy)`
+/// split from it so that a Peter Parker's Camera (or Rings) copy runs it again without paying (`stack::ability_run_w`)
+#[allow(clippy::too_many_arguments)]
+fn run_w(
+    g: &mut Game,
+    p: PlayerId,
+    src: Option<PermId>,
+    cd: Option<CardId>,
+    name: &str,
+    target: Option<PermId>,
+    worth: f64,
+    eff: impl FnMut(&mut Game, bool) -> crate::flow::Res,
+) -> crate::flow::Res<bool> {
+    crate::engine::stack::ability_run_w(g, p, src, cd, name, None, target, worth, eff)
 }

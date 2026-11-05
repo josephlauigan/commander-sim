@@ -68,24 +68,23 @@ pub fn archivist(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     }
     g.perm_mut(m).tapped = true;
     crate::glog!(g, "  {} activates Jace's Archivist", g.player(p).name);
-    if !stack::ability_window(g, p, Some(m), "each player discards their hand and draws", None, None)? {
-        return Ok(None);
-    }
-    let n = g.players.iter().filter(|q| q.alive).map(|q| engine::values::hand_count(g, q.id)).max().unwrap_or(0);
-    crate::glog!(g, "    everyone discards and draws {}", n);
-    let ids: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
-    for &q in &ids {
-        if g.player(q).alive {
-            let hand = g.player(q).hand.clone();
-            zones::discard_cards(g, q, &hand)?;
+    stack::ability_run_w(g, p, Some(m), None, "each player discards their hand and draws", None, None, 0.0, |g, _| {
+        let n = g.players.iter().filter(|q| q.alive).map(|q| engine::values::hand_count(g, q.id)).max().unwrap_or(0);
+        crate::glog!(g, "    everyone discards and draws {}", n);
+        let ids: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
+        for &q in &ids {
+            if g.player(q).alive {
+                let hand = g.player(q).hand.clone();
+                zones::discard_cards(g, q, &hand)?;
+            }
         }
-    }
-    for &q in &ids {
-        if g.player(q).alive {
-            zones::draw(g, q, n as u32, false)?;
+        for &q in &ids {
+            if g.player(q).alive {
+                zones::draw(g, q, n as u32, false)?;
+            }
         }
-    }
-    engine::life::check_state(g)?;
+        engine::life::check_state(g)
+    })?;
     Ok(None)
 }
 
@@ -372,12 +371,23 @@ fn passage(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     let m = cre[k];
     crate::glog!(g, "  {} activates Rogue's Passage: {} can't be blocked this turn", g.player(p).name, g.perm(m).name);
     let cd = g.perm(l).card();
-    if stack::ability_window_card(g, p, cd, &format!("{} can't be blocked", g.perm(m).name), None, Some(m))?
-        && g.perm(m).on_bf
-    {
-        let st = g.turn_stamp();
-        g.perm_mut(m).data.set(DataKey::Unbl, Val::Stamp(st));
-    }
+    let nm = format!("{} can't be blocked", g.perm(m).name);
+    stack::ability_run_w(g, p, None, Some(cd), &nm, None, Some(m), 0.0, |g, is_copy| {
+        let mut t = m;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let labels: Vec<String> = cre.iter().map(|&x| legal::describe_target(g, p, Target::Perm(x))).collect();
+            let prompt = "Rogue's Passage (copy): which creature can't be blocked this turn?";
+            if let Some(j) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                t = cre[j];
+            }
+        }
+        if g.perm(t).on_bf {
+            let st = g.turn_stamp();
+            g.perm_mut(t).data.set(DataKey::Unbl, Val::Stamp(st));
+        }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -396,14 +406,14 @@ fn grounds(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     engine::turn::remove_land(g, p, d, Some(crate::engine::zones::Zone::Gy));
     crate::glog!(g, "  {} activates Scavenger Grounds", g.player(p).name);
     let cd = g.perm(l).card();
-    if !stack::ability_window_card(g, p, cd, "exile all graveyards", Some(9.0), None)? {
-        return Ok(None);
-    }
-    for q in g.players.iter().filter(|q| q.alive).map(|q| q.id).collect::<Vec<_>>() {
-        let gy = std::mem::take(&mut g.player_mut(q).gy);
-        g.player_mut(q).exile.extend(gy);
-    }
-    crate::glog!(g, "    all graveyards are exiled");
+    stack::ability_run_w(g, p, None, Some(cd), "exile all graveyards", Some(9.0), None, 0.0, |g, _| {
+        for q in g.players.iter().filter(|q| q.alive).map(|q| q.id).collect::<Vec<_>>() {
+            let gy = std::mem::take(&mut g.player_mut(q).gy);
+            g.player_mut(q).exile.extend(gy);
+        }
+        crate::glog!(g, "    all graveyards are exiled");
+        Ok(())
+    })?;
     Ok(None)
 }
 

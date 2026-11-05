@@ -2636,13 +2636,7 @@ pub fn equip(g: &mut Game, p: PlayerId, src: PermId, target: PermId, n: u32) -> 
     if crate::impls::t6_copies::image_targeted(g, target)? && !g.perm(target).on_bf {
         return Ok(true); // --- card-models-2: a Phantasmal Image targeted by the equip
     }
-    let name = format!("equip to {}", g.perm(target).name);
-    if crate::engine::stack::ability_window(g, p, Some(src), &name, None, Some(target))?
-        && g.perm(target).on_bf
-        && g.perm(src).on_bf
-    {
-        g.perm_mut(src).attached = Some(target);
-    }
+    crate::engine::stack::equip_ability(g, p, src, target)?;
     Ok(true)
 }
 

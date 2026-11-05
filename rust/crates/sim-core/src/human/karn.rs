@@ -976,9 +976,9 @@ fn expedition_map(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     die(g, m, "sac")?;
     let cd = g.perm(m).cd.unwrap();
     crate::glog!(g, "  {} sacrifices Expedition Map", g.player(p).name);
-    if ability_window_card(g, p, cd, "search for a land card", None, None)? {
-        crate::impls::karn_engines::fetch_land(g, p, true, false)?;
-    }
+    stack::ability_run_w(g, p, None, Some(cd), "search for a land card", None, None, 3.0, |g, _| {
+        crate::impls::karn_engines::fetch_land(g, p, true, false).map(|_| ())
+    })?;
     Ok(None)
 }
 
@@ -995,9 +995,9 @@ fn urzas_cave(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     let cd = g.perm(l).card();
     crate::glog!(g, "  {} sacrifices Urza's Cave", g.player(p).name);
     crate::impls::lands::sac_land(g, p, l)?;
-    if ability_window_card(g, p, cd, "search for a land card", None, None)? {
-        crate::impls::karn_engines::fetch_land(g, p, false, true)?;
-    }
+    stack::ability_run_w(g, p, None, Some(cd), "search for a land card", None, None, 3.0, |g, _| {
+        crate::impls::karn_engines::fetch_land(g, p, false, true).map(|_| ())
+    })?;
     Ok(None)
 }
 

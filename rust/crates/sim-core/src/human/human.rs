@@ -777,13 +777,7 @@ fn use_perm(g: &mut Game, p: PlayerId, m: PermId) -> Res<Option<String>> {
             mana::pay_from_pool(g, p, legal::equip_cost_to(g, p, m, t).unwrap_or(0), ""); // with the discounts
             crate::impls::cloud::note_equip(g, p); // Forge Anew: the first equip of the turn is spent
             crate::glog!(g, "  {} equips {} to {}", name_of(g, p), mname, perm_name(g, t));
-            let tn = perm_name(g, t);
-            if stack::ability_window(g, p, Some(m), &format!("equip to {tn}"), None, Some(t))?
-                && g.player(p).perms.contains(&t)
-                && g.player(p).perms.contains(&m)
-            {
-                g.perm_mut(m).attached = Some(t);
-            }
+            stack::equip_ability(g, p, m, t)?;
             Ok(None)
         }
         AbilityKind::Extra(f) => f(g, p, m),

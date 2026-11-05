@@ -638,10 +638,10 @@ fn mind_stone(_g: &Game) -> Vec<PermAbility> {
         crate::glog!(g, "  {} sacrifices Mind Stone: draw a card", pname(g, p));
         let cd = g.perm(m).cd;
         crate::engine::zones::die(g, m, "sac")?;
-        if let Some(cd) = cd
-            && crate::engine::stack::ability_window_card(g, p, cd, "draw a card", None, None)?
-        {
-            crate::engine::zones::draw(g, p, 1, false)?;
+        if let Some(cd) = cd {
+            crate::engine::stack::ability_run_w(g, p, None, Some(cd), "draw a card", None, None, 0.0, |g, _| {
+                crate::engine::zones::draw(g, p, 1, false)
+            })?;
         }
         Ok(None)
     })]
@@ -1033,9 +1033,9 @@ fn baraddur(_g: &Game) -> Vec<LandAbility> {
             g.perm_mut(l).tapped = true;
             crate::glog!(g, "  {} uses Barad-dûr: amass Orcs {}", pname(g, p), x);
             let cd = g.perm(l).card();
-            if crate::engine::stack::ability_window_card(g, p, cd, &format!("amass Orcs {x}"), None, None)? {
-                crate::engine::zones::amass(g, p, x)?;
-            }
+            crate::engine::stack::ability_run_w(g, p, None, Some(cd), &format!("amass Orcs {x}"), None, None, x as f64, |g, _| {
+                crate::engine::zones::amass(g, p, x)
+            })?;
             Ok(None)
         },
     )]
@@ -1230,10 +1230,12 @@ fn sokenzan(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
     }
     pl.gy.push(c);
     crate::glog!(g, "  {} channels Sokenzan: two 1/1 Spirits with haste", pname(g, p));
-    let mut spec = crate::engine::zones::Tokens::new(2, 1);
-    spec.sick = false;
-    spec.types = vec!["spirit"];
-    crate::engine::zones::make_tokens(g, p, spec)?;
+    crate::engine::stack::ability_run_w(g, p, None, Some(c), "two 1/1 Spirits", None, None, 0.0, |g, _| {
+        let mut spec = crate::engine::zones::Tokens::new(2, 1);
+        spec.sick = false;
+        spec.types = vec!["spirit"];
+        crate::engine::zones::make_tokens(g, p, spec).map(|_| ())
+    })?;
     Ok(None)
 }
 

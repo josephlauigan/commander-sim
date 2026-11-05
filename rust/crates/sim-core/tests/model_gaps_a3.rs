@@ -7,6 +7,7 @@ use sim_core::control::Answer;
 use sim_core::engine::turn::remove_land;
 use sim_core::engine::zones::Zone;
 use sim_core::impls::{fixes, lands as land_fx, rules};
+use std::sync::Arc;
 
 fn tbl() -> Game {
     table(&["karn", "kefka", "sauron"])
@@ -302,4 +303,172 @@ fn a_person_can_cast_the_counterspell_from_the_top_in_response() {
     let abs = sim_core::human::karn::perm_abilities(&g, P0, perms_named(&g, P0, "Mystic Forge")[0]);
     assert!(abs.iter().any(|a| a.label.contains("Pact of Negation")), "an ability to cast it from the top");
     assert!(sim_core::human::human::can_respond(&g, P0), "the response window opens for the top card");
+}
+
+// ======================================================== item 5: Peter Parker's Camera copies hand-written abilities
+type Rule = (&'static str, Box<dyn Fn(&sim_core::control::Request) -> Answer + Send>);
+
+/// a person who answers by what is asked: each rule is used once, the first whose text is in the prompt (or the kind);
+/// anything else is passed or declined
+fn scripted(rules: Vec<Rule>) -> ScriptHuman {
+    let mut rules: Vec<Option<Rule>> = rules.into_iter().map(Some).collect();
+    ScriptHuman::from_fn(move |r| {
+        for slot in rules.iter_mut() {
+            if slot.as_ref().is_some_and(|(k, _)| r.prompt.contains(k) || &*r.kind == *k) {
+                let (_, f) = slot.take().unwrap();
+                return f(r);
+            }
+        }
+        if r.kind == "priority" { Answer::Action(json!({"do": "pass"})) } else { Answer::Decline }
+    })
+}
+
+fn rule(key: &'static str, f: impl Fn(&sim_core::control::Request) -> Answer + Send + 'static) -> Rule {
+    (key, Box::new(f))
+}
+
+fn first(_: &sim_core::control::Request) -> Answer {
+    Answer::Pick(0)
+}
+
+fn index_of(g: &Game, p: PlayerId, m: PermId) -> usize {
+    g.player(p).perms.iter().position(|&x| x == m).unwrap()
+}
+
+fn films(g: &Game, cam: PermId) -> i64 {
+    g.perm(cam).data.int(sim_core::state::DataKey::Counters)
+}
+
+#[test]
+fn a_hand_written_ability_split_from_its_cost_is_run_again_for_a_camera_copy() {
+    let mut g = tbl();
+    lands(&mut g, P0, "Island", 2, false);
+    let cam = perm(&mut g, P0, "Peter Parker's Camera");
+    let cd = card(&g, "Barad-dûr");
+    let n = std::cell::Cell::new(0);
+    let worth = |w: f64, n: &std::cell::Cell<i32>, g: &mut Game| {
+        sim_core::engine::stack::ability_run_w(g, P0, None, Some(cd), "amass", None, None, w, |_g, _| {
+            n.set(n.get() + 1);
+            Ok(())
+        })
+        .unwrap()
+    };
+    // worth 0: the AI never spends a film counter on it
+    assert!(worth(0.0, &n, &mut g));
+    assert_eq!((n.get(), films(&g, cam), g.perm(cam).tapped), (1, 3, false));
+    // worth 3: the copy resolves first, the effect ran twice, the Camera was paid for once
+    n.set(0);
+    assert!(worth(3.0, &n, &mut g));
+    assert_eq!(n.get(), 2, "the copy and the original");
+    assert_eq!((films(&g, cam), g.perm(cam).tapped), (2, true));
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped), "{{2}} paid");
+}
+
+#[test]
+fn the_ai_camera_copies_its_expedition_map() {
+    let mut copied = 0;
+    for seed in 0..20 {
+        let mut g = table_with(&["sauron", "kefka", "karn"], seed, 40);
+        lands(&mut g, P0, "Island", 2, false);
+        perm(&mut g, P0, "Sol Ring");
+        let cam = perm(&mut g, P0, "Peter Parker's Camera");
+        let map = perm(&mut g, P0, "Expedition Map");
+        let tomb = card(&g, "Ancient Tomb");
+        g.player_mut(P0).library.push(tomb);
+        g.player_mut(P0).hand.clear();
+        g.active = Some(P0);
+        g.step = sim_core::state::Step::Main1;
+        let cd = g.perm(map).cd.unwrap();
+        let f = g.registry.get(cd).unwrap().options.unwrap();
+        let o = f(&mut g, map, P0, Some(false)).unwrap();
+        let Some(act) = o.first().and_then(|x| x.act.as_ref()) else { continue };
+        sim_core::ai::act::perform(&mut g, P0, act).unwrap();
+        let lands_in_hand = g.player(P0).hand.iter().filter(|&&c| g.db.get(c).land).count();
+        assert!(!g.perm(map).on_bf, "sacrificed");
+        if g.perm(cam).tapped {
+            copied += 1;
+            assert_eq!(lands_in_hand, 2, "the copy fetched a second land");
+            assert_eq!(films(&g, cam), 2);
+        } else {
+            assert_eq!(lands_in_hand, 1);
+        }
+    }
+    assert!(copied > 0, "the AI used the Camera on its Expedition Map (a land tutor) in some game");
+}
+
+#[test]
+fn a_person_copies_expedition_map_mind_stone_and_rogues_passage_with_the_camera() {
+    // Expedition Map: two lands to the hand
+    let mut g = tbl();
+    let cam = perm(&mut g, P0, "Peter Parker's Camera");
+    let map = perm(&mut g, P0, "Expedition Map");
+    g.player_mut(P0).hand.clear();
+    pool(&mut g, P0, &[('C', 4)]);
+    let (ci, mi) = (index_of(&g, P0, cam), index_of(&g, P0, map));
+    let h = Arc::new(scripted(vec![
+        rule("You activate", move |_| Answer::Action(json!({"do": "use", "perm": ci}))),
+        rule("which ability", first),
+        rule("which ability", first),
+        rule("copy which", first),
+        rule("Search for a land", first),
+        rule("Search for a land", first),
+    ]));
+    g.humans.add(P0, h.clone());
+    let why = sim_core::human::human::apply(&mut g, P0, &json!({"do": "use", "perm": mi})).unwrap();
+    assert!(why.is_none(), "{why:?}");
+    assert_eq!(g.player(P0).hand.iter().filter(|&&c| g.db.get(c).land).count(), 2, "the copy and the original");
+    assert_eq!((films(&g, cam), g.perm(cam).tapped), (2, true));
+    assert_eq!(pool_total(&g, P0), 0);
+
+    // Mind Stone: two cards
+    let mut g = tbl();
+    let cam = perm(&mut g, P0, "Peter Parker's Camera");
+    let stone = perm(&mut g, P0, "Mind Stone");
+    g.player_mut(P0).hand.clear();
+    pool(&mut g, P0, &[('C', 3)]);
+    let (ci, si) = (index_of(&g, P0, cam), index_of(&g, P0, stone));
+    g.humans.add(
+        P0,
+        Arc::new(scripted(vec![
+            rule("You activate", move |_| Answer::Action(json!({"do": "use", "perm": ci}))),
+            rule("which ability", first),
+            rule("which ability", first),
+            rule("copy which", first),
+        ])),
+    );
+    let why = sim_core::human::human::apply(&mut g, P0, &json!({"do": "use", "perm": si})).unwrap();
+    assert!(why.is_none(), "{why:?}");
+    assert_eq!(g.player(P0).hand.len(), 2, "drew for the copy and for the original");
+    assert!(!g.perm(stone).on_bf);
+
+    // Rogue's Passage: the copy may take a new target, so two creatures can't be blocked
+    let mut g = tbl();
+    let cam = perm(&mut g, P0, "Peter Parker's Camera");
+    let passage = lands(&mut g, P0, "Rogue's Passage", 1, false)[0];
+    let a = perm(&mut g, P0, "Serra Angel");
+    let b = perm(&mut g, P0, "Grave Titan");
+    pool(&mut g, P0, &[('C', 6)]);
+    let ci = index_of(&g, P0, cam);
+    g.humans.add(
+        P0,
+        Arc::new(scripted(vec![
+            rule("You activate", move |_| Answer::Action(json!({"do": "use", "perm": ci}))),
+            rule("which ability", first),
+            rule("copy which", first),
+            // the first choice is the Serra Angel (for the original), the copy takes Grave Titan
+            rule("which creature can't be blocked", |r| {
+                Answer::Pick(r.choices.iter().position(|c| c.contains("Serra")).unwrap())
+            }),
+            rule("(copy)", |r| Answer::Pick(r.choices.iter().position(|c| c.contains("Grave Titan")).unwrap())),
+        ])),
+    );
+    let ab = sim_core::human::abilities::land_abilities(&g, P0, passage);
+    let act = &ab.iter().find(|x| x.label.contains("can't be blocked")).expect("Passage's ability").act;
+    act(&mut g, P0, passage).unwrap();
+    let st = g.turn_stamp();
+    let unbl = |g: &Game, m: PermId| {
+        g.perm(m).data.get(sim_core::state::DataKey::Unbl) == Some(&sim_core::state::Val::Stamp(st))
+    };
+    assert!(unbl(&g, a) && unbl(&g, b), "both can't be blocked this turn");
+    assert!(g.perm(cam).tapped);
 }

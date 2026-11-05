@@ -430,8 +430,10 @@ fn sokenzan_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     remove_first(&mut g.player_mut(p).hand, c);
     pay(g, p, cost, "R", false)?;
     g.player_mut(p).gy.push(c);
-    make_tokens(g, p, Tokens { sick: false, types: vec!["spirit"], ..Tokens::new(2, 1) })?;
     crate::glog!(g, "  {} channels Sokenzan", g.player(p).name);
+    crate::engine::stack::ability_run_w(g, p, None, Some(c), "two 1/1 Spirits", None, None, 0.0, |g, _| {
+        make_tokens(g, p, Tokens { sick: false, types: vec!["spirit"], ..Tokens::new(2, 1) }).map(|_| ())
+    })?;
     Ok(true)
 }
 
