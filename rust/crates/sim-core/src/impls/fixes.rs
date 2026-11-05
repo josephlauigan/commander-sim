@@ -31,7 +31,7 @@ pub fn destroy_land(g: &mut Game, q: PlayerId, l: PermId) -> Res {
         return Ok(()); // (Avacyn, Angel of Hope: q's lands are indestructible)
     }
     crate::engine::turn::remove_land(g, q, l);
-    let cd = g.perm(l).card();
+    let cd = g.perm(l).real_card();
     g.player_mut(q).gy.push(cd);
     crate::glog!(g, "    {} ({}) is destroyed", g.db.get(cd).name, pname(g, q));
     if !g.hooks.is_empty() {
@@ -698,7 +698,7 @@ fn crop_rotation(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
     let sac = lands[i];
     let (target, _) = crop_target(g, p);
     crate::engine::turn::remove_land(g, p, sac);
-    let cd = g.perm(sac).card();
+    let cd = g.perm(sac).real_card();
     g.player_mut(p).gy.push(cd);
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;

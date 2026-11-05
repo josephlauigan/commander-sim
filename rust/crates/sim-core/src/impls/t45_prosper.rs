@@ -485,17 +485,7 @@ fn etali_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerI
 // ================================================================== Hex Magic
 /// the cards really in p's hand: not ones waiting in exile (impulse marks) or taken from an opponent
 fn hand_proper(g: &Game, p: PlayerId) -> Vec<CardId> {
-    let pl = g.player(p);
-    pl.hand
-        .iter()
-        .copied()
-        .filter(|c| {
-            !pl.impulse.contains(c)
-                && !pl.impulse_long.iter().any(|x| x.0 == *c)
-                && !pl.stolen.contains_key(c)
-                && !pl.agent_ids.contains(c)
-        })
-        .collect()
+    crate::engine::values::hand_proper(g, p)
 }
 
 /// Exile all the cards from your hand, then draw that many cards. Until the end of your next turn, you may play cards

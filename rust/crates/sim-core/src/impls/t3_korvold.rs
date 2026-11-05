@@ -676,7 +676,7 @@ fn pox_counts(g: &Game, q: PlayerId) -> (i32, usize, usize, usize) {
     let pl = g.player(q);
     (
         (pl.life.max(0) + 2) / 3,
-        pl.hand.len().div_ceil(3),
+        crate::engine::values::hand_count(g, q).div_ceil(3),
         creatures_of(g, q).len().div_ceil(3),
         pl.lands.len().div_ceil(3),
     )

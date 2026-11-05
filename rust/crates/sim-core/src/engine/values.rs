@@ -12,6 +12,38 @@ use crate::state::{DataKey, Game, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;
 
+// ------------------------------------------------------------------ the cards really in a hand
+/// The cards really in p's hand. The engine holds some exiled cards in the hand so that the usual cast logic reaches
+/// them: "you may play it this turn" cards (`impulse`: Ragavan's, Urabrask's, Khans'), Prosper's and the like
+/// (`impulse_long`), and cards taken from another player (`stolen`, Ragavan's; `agent_ids`, Opposition Agent's). They are
+/// in exile as far as the rules go: effects that count "cards in your hand", the maximum hand size, a wheel's draw
+/// count and the like read this, not `hand`. (Code that moves or discards cards still works on `hand`.)
+pub fn hand_proper(g: &Game, p: PlayerId) -> Vec<crate::ids::CardId> {
+    let pl = g.player(p);
+    if pl.impulse.is_empty() && pl.impulse_long.is_empty() && pl.stolen.is_empty() && pl.agent_ids.is_empty() {
+        return pl.hand.clone();
+    }
+    pl.hand
+        .iter()
+        .copied()
+        .filter(|c| {
+            !pl.impulse.contains(c)
+                && !pl.impulse_long.iter().any(|x| x.0 == *c)
+                && !pl.stolen.contains_key(c)
+                && !pl.agent_ids.contains(c)
+        })
+        .collect()
+}
+
+/// how many cards p really has in hand (`hand_proper`)
+pub fn hand_count(g: &Game, p: PlayerId) -> usize {
+    let pl = g.player(p);
+    if pl.impulse.is_empty() && pl.impulse_long.is_empty() && pl.stolen.is_empty() && pl.agent_ids.is_empty() {
+        return pl.hand.len();
+    }
+    hand_proper(g, p).len()
+}
+
 // ------------------------------------------------------------------ tags on the battlefield
 /// p controls a permanent with tag t (not phased out, abilities on): Python's `has`
 pub fn has(g: &Game, p: PlayerId, t: Tag) -> bool {

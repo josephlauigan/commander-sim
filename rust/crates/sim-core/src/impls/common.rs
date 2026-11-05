@@ -475,7 +475,7 @@ fn ancestral_mask(g: &Game, _p: PlayerId, _a: PermId, _m: PermId) -> (i32, i32) 
 }
 
 fn empyrial(g: &Game, p: PlayerId, _a: PermId, _m: PermId) -> (i32, i32) {
-    let k = g.player(p).hand.len() as i32;
+    let k = crate::engine::values::hand_count(g, p) as i32;
     (k, k)
 }
 

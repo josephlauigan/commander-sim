@@ -945,7 +945,7 @@ pub fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<b
 fn sac_last_land(g: &mut Game, q: PlayerId) {
     let l = *g.player(q).lands.last().unwrap();
     crate::engine::turn::remove_land(g, q, l);
-    let cd = g.perm(l).card();
+    let cd = g.perm(l).real_card();
     g.player_mut(q).gy.push(cd);
 }
 
@@ -1761,7 +1761,7 @@ fn strip_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     crate::engine::turn::remove_land(g, p, l);
-    let cd = g.perm(l).card();
+    let cd = g.perm(l).real_card();
     g.player_mut(p).gy.push(cd);
     let xn = g.db.get(g.perm(x).card()).name.to_string();
     crate::glog!(g, "  {} sacrifices Strip Mine: destroy {xn} ({})", g.player(p).name, g.player(q).name);
@@ -4059,9 +4059,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 /// library; until end of turn you may play the card you own exiled this way and each other card exiled this way with
 /// lesser mana value than it, without paying their mana costs.
 ///
-/// Modeled whole, with two simplifications: the cards are played at once, in the upkeep, highest mana value first (a
-/// sorcery-speed card would wait for the main phase), and the AI plays every card it can use: lands only while a land
-/// drop is left, never an Aura (no host to choose) or a counterspell (nothing to counter at upkeep). A card taken
+/// Modeled whole, with one simplification for the AI: it plays its cards at once, in the upkeep, highest mana value first
+/// (a sorcery-speed card would wait for the main phase), every card it can use: lands only while a land drop is left,
+/// never an Aura (no host to choose) or a counterspell (nothing to counter at upkeep). A person gets a permission for
+/// the turn instead (`triad_person`). A card taken
 /// from an opponent stays theirs (it goes back to their graveyard or exile); a card not played stays in exile.
 pub fn triad_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if p != g.perm(src).owner
@@ -4123,30 +4124,15 @@ pub fn triad_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
     Ok(())
 }
 
-/// Triple Triad for a person: they pick which of the playable cards to play, one at a time and in any order, until
-/// they stop (each is cast or played free, with its target asked; `human::triggers_t1::play_free_now`). The cards
-/// are still played in the upkeep, as the AI's are; one not played stays in its owner's exile.
+/// Triple Triad for a person: every playable card (their own, and each other with lesser mana value) becomes a
+/// permission to play it free until end of turn (`human::triggers_t1::allow_free_play`); the person plays them, in any
+/// order and at the timing each card allows, from the exiled cards listed for the turn. One not played stays in its
+/// owner's exile.
 fn triad_person(g: &mut Game, p: PlayerId, playable: Vec<(CardId, PlayerId)>) -> Res {
-    let mut left = playable;
-    loop {
-        left.retain(|&(c, d)| g.player(d).exile.contains(&c));
-        if left.is_empty() || g.over || !g.player(p).alive {
-            return Ok(());
-        }
-        let labels: Vec<String> = left
-            .iter()
-            .map(|&(c, d)| {
-                let whose = if d == p { "yours".to_string() } else { format!("{}'s", g.player(d).name) };
-                format!("{} ({whose})", crate::human::choices::card_label(g, c))
-            })
-            .collect();
-        let pr = "Triple Triad: play which card free?";
-        let Some(k) = crate::human::choices::choose(g, p, "choose", pr, &labels, Some("play no more"), None)? else {
-            return Ok(());
-        };
-        let (c, d) = left.remove(k);
-        crate::human::triggers_t1::play_free_now(g, p, c, d, "Triple Triad", false)?;
+    for (c, d) in playable {
+        crate::human::triggers_t1::allow_free_play(g, p, c, d, "Triple Triad");
     }
+    Ok(())
 }
 
 /// speed metrics (reports): the Sauron plan milestone `army_hit`, the first combat damage to a player by an Army

@@ -731,7 +731,8 @@ fn goldspan_atk(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerI
 
 /// Goldspan Dragon: "Whenever it attacks or becomes the target of a spell, create a Treasure token." m is a permanent a
 /// spell targets as it is cast (`card_models3::spell_targeted`, from `cast::cast_card`; any player's spell, so an
-/// opponent's removal aimed at the Dragon makes its owner a Treasure). Spells whose target is chosen only as they
+/// opponent's removal aimed at the Dragon makes its owner a Treasure; a copy of a spell is one too: `cast::copy_spell`,
+/// `cast_spell_copy`). Spells whose target is chosen only as they
 /// resolve (and abilities, which the card doesn't mention) don't count.
 pub fn goldspan_targeted(g: &mut Game, m: PermId) -> Res {
     if !g.perm(m).on_bf || g.perm(m).phased || g.perm(m).name != "Goldspan Dragon" {

@@ -259,7 +259,7 @@ fn plaza(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     };
     mana::pay_from_pool(g, p, 3, "");
     g.perm_mut(l).tapped = true;
-    let cd = g.perm(l).card();
+    let cd = g.perm(l).real_card();
     crate::engine::turn::remove_land(g, p, l);
     g.player_mut(p).exile.push(cd);
     crate::glog!(g, "  {} exiles Plaza of Heroes", g.player(p).name);

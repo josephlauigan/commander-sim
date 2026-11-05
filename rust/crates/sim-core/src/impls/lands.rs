@@ -126,7 +126,7 @@ pub fn can_pay_without(g: &mut Game, p: PlayerId, l: PermId, generic: u32, pips:
 
 /// lands.sac_land: p sacrifices land l (it goes to the graveyard)
 pub fn sac_land(g: &mut Game, p: PlayerId, l: PermId) -> Res {
-    let cd = g.perm(l).card();
+    let cd = g.perm(l).real_card();
     if has_land(g, p, l) {
         crate::engine::turn::remove_land(g, p, l);
         g.player_mut(p).gy.push(cd);
@@ -142,7 +142,7 @@ fn destroy_land(g: &mut Game, q: PlayerId, l: PermId) -> Res {
     if !has_land(g, q, l) || crate::dsl::lands_have_kw(g, q, "indestructible") {
         return Ok(()); // (Avacyn, Angel of Hope: q's lands are indestructible)
     }
-    let cd = g.perm(l).card();
+    let cd = g.perm(l).real_card();
     crate::engine::turn::remove_land(g, q, l);
     g.player_mut(q).gy.push(cd);
     crate::glog!(g, "    {} ({}) is destroyed", name_of(g, cd), g.player(q).name);
