@@ -4,6 +4,12 @@ The list is Scion v1 minus Scion, Ancient Copper Dragon, Korvold and Prismari, p
 Swat and Deadly Rollick (`decklists/JD/thanos-five-colour-turbo.md`). Thanos took Scion's seat, plan file and tests on
 2026-10-30. Scion's history is in `audit/scion/`.
 
+## 2026-11-04: AI change, not simulated: Ragavan's exiled card no longer counts as a card in hand
+Ragavan, Nimble Pilferer's exiled card waits in the hand for the turn (the engine's way to let it be cast). Counting
+effects now read the real hand (`engine::values::hand_proper`): the maximum hand size at cleanup, wheels' draw counts
+(Windfall), Jace's Archivist, Jeska's Will and the DSL's "cards in hand". The AI keeps one more card at cleanup on a
+Ragavan turn and a Windfall draws one fewer. The results below predate it; a re-run over t6 would show the effect.
+
 ## Result (loose, 2000 games, seeds 500000-501999)
 - **t6: 29.6% (CI 27.6-31.6).** Scion's last result was 30.1% (CI 28.1-32.1) on the same seeds; the two are within
   noise.

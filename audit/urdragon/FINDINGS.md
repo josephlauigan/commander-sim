@@ -3,6 +3,12 @@
 The list is in `decklists/JD/ur-dragon-equipment.md` (Bracket 4, 16 Game Changers). The deck joined the sim on
 2026-10-30. It plays from `data/plans/urdragon.toml` through the generic policy, with no hand-written deck AI.
 
+## 2026-11-04: AI change, not simulated: a copied spell that targets Goldspan Dragon makes a Treasure
+Oracle: "Whenever Goldspan Dragon attacks or becomes the target of a spell, create a Treasure token." A copy of a spell
+is a spell, so a copy (Twinflame's, Dualcaster Mage's, an opponent's) whose target is Goldspan now triggers it; abilities
+still don't (the Oracle says "a spell"). Also: a held exiled card (Ragavan and the like) no longer counts as a card in
+hand for the AI's maximum hand size. Measure over T5.
+
 ## 2026-11-04: Urza, Lord High Artificer for Jaxis, the Troublemaker (JD's choice; not simulated)
 Urza came out of Sauron's binder. With him out, the six artifacts that make no mana (Lightning Greaves, The One Ring,
 Cursed Mirror, Maskwood Nexus, Scion of Draco, his Construct) tap for {U}; the Construct grows with the deck's 15
