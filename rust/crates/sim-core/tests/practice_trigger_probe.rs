@@ -562,7 +562,7 @@ fn every_trigger_choice_of_the_owned_decks_is_asked_of_a_person() {
             }
             let Some(text) = oracle(&cache, &name) else { continue };
             let lines = trigger_lines(&text);
-            let acts = if std::env::var("PROBE_ACTIVATE").is_ok() { activated_lines(&text) } else { vec![] };
+            let acts = if std::env::var("PROBE_NO_ACTIVATE").is_ok() { vec![] } else { activated_lines(&text) };
             if lines.is_empty() && acts.is_empty() {
                 continue;
             }

@@ -489,3 +489,26 @@ pub fn pay_tax_ask(g: &mut Game, p: PlayerId, n: u32, what: &str, prompt: Option
     crate::glog!(g, "    {} pays {{{}}} for {}", name, n, what);
     Ok(true)
 }
+
+/// Tap p's sources into the pool until the pool can pay `generic` + `pips` (as a person does at the table before a
+/// cast the ability itself pays for): a source that makes a colour the pool lacks first, else the first. True if the
+/// pool can pay in the end; whatever was tapped stays in the pool.
+pub fn tap_to_pay(g: &mut Game, p: PlayerId, generic: u32, pips: &str) -> Res<bool> {
+    gather_floating(g, p);
+    for _ in 0..64 {
+        if pool_can_pay(g, p, generic, pips) {
+            return Ok(true);
+        }
+        let lacking: Vec<char> = g.player(p).pool.missing(generic, pips).chars().filter(|c| c.is_alphabetic()).collect();
+        let srcs = sources(g, p);
+        let pick = lacking
+            .iter()
+            .find_map(|&c| srcs.iter().find(|s| s.colours.contains(c) && s.restricted.is_none()).map(|s| (s.id, Some(c))))
+            .or_else(|| srcs.iter().find(|s| s.restricted.is_none()).map(|s| (s.id, None)));
+        let Some((id, colour)) = pick else { return Ok(false) };
+        if tap(g, p, id as i64, colour)?.is_some() {
+            return Ok(false);
+        }
+    }
+    Ok(pool_can_pay(g, p, generic, pips))
+}
