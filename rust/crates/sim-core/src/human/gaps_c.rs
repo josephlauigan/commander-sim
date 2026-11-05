@@ -633,6 +633,30 @@ fn dauthi(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     Ok(None)
 }
 
+/// p may play the exiled card c this turn without paying its mana cost, by a Dauthi Voidwalker or by Urza's {5} / Triple
+/// Triad (`Player::free_play`): whose exile it is in
+pub fn exile_permits(g: &Game, p: PlayerId, c: CardId) -> Option<PlayerId> {
+    if g.player(p).free_play.contains(&c)
+        && let Some(q) = g.players.iter().find(|q| q.exile.contains(&c)).map(|q| q.id)
+    {
+        return Some(q);
+    }
+    dauthi_permits(g, p, c)
+}
+
+/// the exiled cards p may play this turn without paying their mana costs: (card, whose exile)
+pub fn exile_playable(g: &Game, p: PlayerId) -> Vec<(CardId, PlayerId)> {
+    let mut out = dauthi_playable(g, p);
+    for &c in &g.player(p).free_play {
+        if let Some(q) = exile_permits(g, p, c)
+            && !out.contains(&(c, q))
+        {
+            out.push((c, q));
+        }
+    }
+    out
+}
+
 /// a person's Dauthi Voidwalker let p play the exiled card c this turn: whose exile it is in
 pub fn dauthi_permits(g: &Game, p: PlayerId, c: CardId) -> Option<PlayerId> {
     // every Voidwalker p has had (the permanents' arena keeps the sacrificed one: the permission outlives it)

@@ -332,7 +332,21 @@ fn respond_loop(g: &mut Game, q: PlayerId, prompt: &str, spell: Option<CardId>, 
             return Ok(());
         }
         let n = g.stack_pushes;
-        if do_of(&act) == "cast" && !g.stack.is_empty() && act.get("zone").and_then(Value::as_str) != Some("cmd") {
+        if do_of(&act) == "cast" && !g.stack.is_empty() && act.get("zone").and_then(Value::as_str) == Some("ex") {
+            // an exiled card played free this turn (Urza's {5}, Triple Triad): a counterspell goes on the stack at a spell
+            let c = act.get("card").and_then(Value::as_u64).map(|i| CardId(i as u16));
+            if let Some(c) = c.filter(|&c| g.db.get(c).tag(Tag::Ctr) && g.players.iter().any(|x| x.exile.contains(&c))) {
+                if let Some(why) = cast_counterspell_free(g, q, c)? {
+                    tell_invalid(&h, q, &why);
+                    continue;
+                }
+                return Ok(());
+            }
+        }
+        if do_of(&act) == "cast"
+            && !g.stack.is_empty()
+            && !matches!(act.get("zone").and_then(Value::as_str), Some("cmd" | "ex" | "gy"))
+        {
             if let Some(c) = hand_card(g, q, &act) {
                 // protection the AI plays through its own code: the person's version (`human::protect`)
                 let pr = match card_name(g, c).as_str() {
@@ -399,7 +413,9 @@ pub fn cast_counterspell(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<Str
     cast_counterspell_inner(g, q, c)
 }
 
-fn cast_counterspell_inner(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<String>> {
+/// the spell on the stack counterspell c is cast at: the only one it can counter, or the one the person picks.
+/// Err: why there is none (or they cancelled)
+fn counter_target(g: &mut Game, q: PlayerId, c: CardId) -> Res<Result<(u32, CardId), String>> {
     let many = g.stack.len() > 1;
     let cands: Vec<&StackItem> = g
         .stack
@@ -409,7 +425,7 @@ fn cast_counterspell_inner(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<S
         .filter(|it| it.card.is_some_and(|sc| stack::counter_ok(g, c, sc)) && stack::counterable(g, it))
         .collect();
     if cands.is_empty() {
-        return Ok(Some(format!("{} can't counter anything on the stack.", card_name(g, c))));
+        return Ok(Err(format!("{} can't counter anything on the stack.", card_name(g, c))));
     }
     let mut pick = (cands[0].id, cands[0].card.unwrap());
     if cands.len() > 1 {
@@ -418,11 +434,57 @@ fn cast_counterspell_inner(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<S
         let ids: Vec<(u32, CardId)> = cands.iter().map(|x| (x.id, x.card.unwrap())).collect();
         let prompt = format!("{}: counter which spell?", card_name(g, c));
         let Some(k) = choices::choose(g, q, "target", &prompt, &labels, Some("cancel"), None)? else {
-            return Ok(Some("Cancelled.".into()));
+            return Ok(Err("Cancelled.".into()));
         };
         pick = ids[k];
     }
-    let (id, spell) = pick;
+    Ok(Ok(pick))
+}
+
+/// q casts counterspell c, an exiled card they may play free this turn (Urza's {5}, Triple Triad), at a spell on the
+/// stack: no mana cost (the cost increases still apply). A card taken from another player's exile goes back to that
+/// player's graveyard. None, or why not
+pub fn cast_counterspell_free(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<String>> {
+    if let Some(why) = legal::check_cast_exile(g, q, c) {
+        return Ok(Some(why));
+    }
+    let Some(owner) = super::gaps_c::exile_permits(g, q, c) else {
+        return Ok(Some(format!("You can't cast {} from exile right now.", card_name(g, c))));
+    };
+    let (id, _) = match counter_target(g, q, c)? {
+        Ok(x) => x,
+        Err(why) => return Ok(Some(why)),
+    };
+    if !engine::altcost::tax_payable(g, q, c) {
+        return Ok(Some(format!("Can't pay the extra cost of casting {}.", card_name(g, c))));
+    }
+    engine::altcost::pay_tax(g, q, c)?;
+    g.player_mut(owner).exile.take(c);
+    g.player_mut(q).hand.push(c);
+    g.free_counter = true; // nothing more to pay
+    let r = stack::cast_counter_spell(g, q, c, id);
+    g.free_counter = false;
+    if !r? {
+        if let Some(i) = g.player(q).hand.iter().position(|&x| x == c) {
+            g.player_mut(q).hand.remove(i);
+            g.player_mut(owner).exile.push(c); // not cast after all
+        }
+        return Ok(Some(format!("{} couldn't be cast.", card_name(g, c))));
+    }
+    if owner != q
+        && let Some(i) = g.player(q).gy.iter().position(|&x| x == c)
+    {
+        g.player_mut(q).gy.remove(i);
+        g.player_mut(owner).gy.push(c); // still theirs
+    }
+    Ok(None)
+}
+
+fn cast_counterspell_inner(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<String>> {
+    let (id, spell) = match counter_target(g, q, c)? {
+        Ok(x) => x,
+        Err(why) => return Ok(Some(why)),
+    };
     if let Some(why) = legal::check_counter(g, q, c, spell) {
         return Ok(Some(why));
     }
@@ -502,7 +564,28 @@ pub fn apply(g: &mut Game, p: PlayerId, act: &Value) -> Res<Option<String>> {
         if let Some(why) = legal::check_cast_exile(g, p, c) {
             return Ok(Some(why));
         }
+        if g.db.get(c).tag(Tag::Ctr) {
+            // (the stack is empty here; with a spell on it the response loop casts the counterspell)
+            return Ok(Some(format!("{} has nothing to counter right now.", card_name(g, c))));
+        }
         return cast(g, p, c, "ex");
+    }
+    if d == "land" && zone == Some("ex") {
+        // an exiled land played as the land drop (Urza's {5}, Triple Triad)
+        let c = act.get("card").and_then(Value::as_u64).map(|i| CardId(i as u16));
+        let Some(c) = c.filter(|c| g.players.iter().any(|q| q.exile.contains(c))) else {
+            return Ok(Some("There is no such card in exile.".into()));
+        };
+        if let Some(why) = legal::check_land_exile(g, p, c) {
+            return Ok(Some(why));
+        }
+        g.player_mut(p).free_play.retain(|&x| x != c);
+        for q in 0..g.players.len() {
+            g.players[q].exile.take(c);
+        }
+        turn::play_land_card(g, p, c, "plays (free)")?;
+        engine::life::check_state(g)?;
+        return Ok(None);
     }
     if d == "cast" && zone == Some("gy") {
         let Some(c) = index_of(act, "card").and_then(|i| g.player(p).gy.get(i).copied()) else {
@@ -1118,7 +1201,13 @@ fn cast_rean(g: &mut Game, p: PlayerId, c: CardId, zone: &str, ctx: Ctx, flash_s
     let in_hand_dest = from_hand;
     macro_rules! dest_push {
         ($c:expr) => {
-            if in_hand_dest { g.player_mut(p).gy.push($c) } else { g.player_mut(p).exile.push($c) }
+            if let Some(o) = ctx.owner.filter(|_| !in_hand_dest) {
+                g.player_mut(o).gy.push($c) // played free from exile (Urza, Triple Triad): back to its owner's graveyard
+            } else if in_hand_dest {
+                g.player_mut(p).gy.push($c)
+            } else {
+                g.player_mut(p).exile.push($c)
+            }
         };
     }
     if g.over || !g.player(p).alive {

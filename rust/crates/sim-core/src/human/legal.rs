@@ -598,8 +598,11 @@ pub fn check_cast_gy(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
 /// card's own type), or None.
 pub fn check_cast_exile(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
     let name = nm(g, c).to_string();
-    if super::gaps_c::dauthi_permits(g, p, c).is_none() {
+    if super::gaps_c::exile_permits(g, p, c).is_none() {
         return Some(format!("You can't cast {name} from exile right now."));
+    }
+    if g.db.get(c).land {
+        return Some(format!("{name} is a land: play it as your land drop."));
     }
     if !instant_speed(g, p, c)
         && let Some(why) = sorcery_timing(g, p)
@@ -611,6 +614,22 @@ pub fn check_cast_exile(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
     }
     if !cast::castable(g, p, c, "lib") {
         return Some(format!("Something on the battlefield stops you casting {name} right now."));
+    }
+    None
+}
+
+/// Why p can't play the exiled land c now (Urza's {5}, Triple Triad: "play it this turn"; a land drop, your main phase),
+/// or None.
+pub fn check_land_exile(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
+    let name = nm(g, c).to_string();
+    if !g.db.get(c).land || !g.player(p).free_play.contains(&c) || super::gaps_c::exile_permits(g, p, c).is_none() {
+        return Some(format!("You can't play {name} from exile right now."));
+    }
+    if let Some(why) = sorcery_timing(g, p) {
+        return Some(why.replace("do that", "play a land"));
+    }
+    if g.player(p).lands_played as i32 >= land_drops(g, p) {
+        return Some("You've already played a land this turn.".into());
     }
     None
 }

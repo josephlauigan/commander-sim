@@ -60,49 +60,59 @@ fn sauron_the_necromancer_copies_the_graveyard_creature_the_person_picks() {
 }
 
 // ------------------------------------------------------------------ Triple Triad
+fn main_phase(g: &mut Game) {
+    g.active = Some(P0);
+    g.step = sim_core::state::Step::Main1;
+}
+
+fn cast_from_exile(g: &mut Game, c: CardId) -> Option<String> {
+    sim_core::human::human::apply(g, P0, &json!({"do": "cast", "zone": "ex", "card": c.0})).unwrap()
+}
+
 #[test]
-fn triple_triad_plays_only_the_cards_the_person_picks() {
+fn triple_triad_gives_a_permission_for_each_playable_card_and_the_person_plays_the_ones_they_pick() {
     let mut g = table(&["kefka", "seph"]);
     let t = perm(&mut g, P0, "Triple Triad");
-    library(&mut g, P0, &["Island", "Thran Dynamo"]); // MV 4 on top: the opponent's MV 1 card is playable too
-    library(&mut g, P1, &["Island", "Sol Ring"]);
-    // play the opponent's Sol Ring, then stop: Thran Dynamo stays in exile
-    let h = person(|r| {
-        if r.prompt.contains("Triple Triad: play which card") {
-            with(r, "Sol Ring").or_else(|| with(r, "play no more"))
-        } else {
-            None
-        }
-    });
+    let lib = library(&mut g, P0, &["Island", "Thran Dynamo"]); // MV 4 on top: the opponent's MV 1 card is playable too
+    let (dynamo, sol) = (lib[1], library(&mut g, P1, &["Island", "Sol Ring"])[1]);
+    let h = person(|_| None);
     g.humans.add(P0, h.clone());
     sim_core::impls::mine::triad_upkeep(&mut g, t, P0).unwrap();
-    assert!(asked(&h, "Triple Triad: play which card"), "the person was asked");
+    assert!(!has_perm(&g, P0, "Sol Ring") && !has_perm(&g, P0, "Thran Dynamo"), "nothing is played in the upkeep");
+    use sim_core::human::gaps_c::exile_permits;
+    assert_eq!(exile_permits(&g, P0, dynamo), Some(P0));
+    assert_eq!(exile_permits(&g, P0, sol), Some(P1), "a card of the opponent's, with lesser mana value");
+    // in the main phase: play the opponent's Sol Ring, leave Thran Dynamo
+    main_phase(&mut g);
+    assert_eq!(cast_from_exile(&mut g, sol), None);
     assert!(has_perm(&g, P0, "Sol Ring"), "the picked card was cast free");
     assert!(!has_perm(&g, P0, "Thran Dynamo"), "the card not picked wasn't played");
     assert!(in_exile(&g, P0, "Thran Dynamo"), "and stays in exile");
 }
 
 // ------------------------------------------------------------------ Urza, Lord High Artificer
-fn urza_with_top(answer: &'static str) -> (Game, Arc<ScriptHuman>) {
+fn urza_with_top() -> (Game, CardId) {
     let mut g = table(&["urdragon", "seph"]);
     let u = perm(&mut g, P0, "Urza, Lord High Artificer");
-    library(&mut g, P0, &["Sol Ring"]); // one card: the shuffle can't move it
-    let h = person(move |r| if r.prompt.contains("Urza: cast Sol Ring") { with(r, answer) } else { None });
-    g.humans.add(P0, h.clone());
+    let sol = library(&mut g, P0, &["Sol Ring"])[0]; // one card: the shuffle can't move it
+    g.humans.add(P0, person(|_| None));
     sim_core::impls::t5::urza_top(&mut g, u, P0).unwrap();
-    assert!(asked(&h, "Urza: cast Sol Ring"), "the person was asked");
-    (g, h)
+    (g, sol)
 }
 
 #[test]
-fn urzas_free_card_is_cast_when_the_person_says_so() {
-    let (g, _) = urza_with_top("cast Sol Ring free");
+fn urzas_free_card_waits_in_exile_as_a_permission_and_is_cast_when_the_person_says_so() {
+    let (mut g, sol) = urza_with_top();
+    assert!(!has_perm(&g, P0, "Sol Ring"), "not cast at once");
+    assert_eq!(sim_core::human::gaps_c::exile_permits(&g, P0, sol), Some(P0));
+    main_phase(&mut g);
+    assert_eq!(cast_from_exile(&mut g, sol), None);
     assert!(has_perm(&g, P0, "Sol Ring"));
 }
 
 #[test]
-fn urzas_free_card_stays_in_exile_when_the_person_declines() {
-    let (g, _) = urza_with_top("don't cast it");
+fn urzas_free_card_stays_in_exile_when_the_person_never_plays_it() {
+    let (mut g, _) = urza_with_top();
     assert!(!has_perm(&g, P0, "Sol Ring"));
     assert!(in_exile(&g, P0, "Sol Ring"));
 }

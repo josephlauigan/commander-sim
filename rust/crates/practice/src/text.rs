@@ -131,7 +131,7 @@ const HELP: &str = "Commands:
   cast N            cast card N from your hand
   cast cmd          cast your commander from the command zone
   cast gN / land gN cast or play card N of your graveyard (Yawgmoth's Will, flashback, Underworld Breach)
-  cast eN           cast card N listed under From exile (Dauthi Voidwalker), free
+  cast eN / land eN cast or play card N listed under From exile (Dauthi Voidwalker, Urza, Triple Triad), free
   use N             an ability of your permanent N (Equip, loyalty abilities, Jace's Archivist ...)
   use LN            an ability of your land N (Rogue's Passage, Scavenger Grounds)
   pass              pass priority (move on)
@@ -235,14 +235,14 @@ pub fn parse(line: &str, view: &Value) -> Cmd {
             None => Cmd::Err("Which permanent? e.g. use 1 (or use L1 for a land)".into()),
         };
     }
-    if cmd == "cast"
+    if matches!(cmd.as_str(), "cast" | "land")
         && let Some(t) = &w1
         && t.starts_with('e')
         && let Some(k) = digits(&t[1..])
     {
         // an exiled card Dauthi Voidwalker lets you play: E1, E2 ... in the order the view lists them
         return match arr(me(view), "exile_playable").get((k - 1).max(0) as usize) {
-            Some(x) => Cmd::Act(json!({"do": "cast", "zone": "ex", "card": x["card"].clone()})),
+            Some(x) => Cmd::Act(json!({"do": cmd, "zone": "ex", "card": x["card"].clone()})),
             None => Cmd::Err("No such exiled card to play.".into()),
         };
     }

@@ -624,6 +624,10 @@ pub struct Player {
     pub scry_turn: Option<TurnStamp>,
     /// cards exiled with "you may play them this turn" (held in hand)
     pub impulse: Vec<CardId>,
+    /// practice mode: exiled cards (in any player's exile) this player may play this turn without paying their mana costs
+    /// (Urza, Lord High Artificer's {5}; Triple Triad). The cards stay in exile until played; the end step clears the list
+    /// (`human::gaps_c::exile_permits`).
+    pub free_play: Vec<CardId>,
     /// key spells milled (reports)
     pub milled_keys: Vec<CardId>,
     /// The Ozolith: counters it holds
@@ -886,6 +890,7 @@ impl Player {
             urabrask: None,
             scry_turn: None,
             impulse: vec![],
+            free_play: vec![],
             milled_keys: vec![],
             ozolith_counters: 0,
             removed_bombs: vec![],

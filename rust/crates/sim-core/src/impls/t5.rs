@@ -140,9 +140,10 @@ pub fn urza_top(g: &mut Game, src: PermId, p: PlayerId) -> Res {
     let c = g.player_mut(p).library.pop().unwrap();
     crate::glog!(g, "  Urza: {} off the top, free", g.db.get(c).name);
     if crate::human::is_human(g, p) {
-        // a person chooses whether to play it (and its target); not played, it stays exiled
+        // a person plays it (or not) when they like, until end of turn: a permission on the exiled card
+        // (`human::triggers_t1::allow_free_play`), so a counterspell can wait for a spell and a land for the main phase
         g.player_mut(p).exile.push(c);
-        crate::human::triggers_t1::play_free_now(g, p, c, p, "Urza", true)?;
+        crate::human::triggers_t1::allow_free_play(g, p, c, p, "Urza");
         return Ok(());
     }
     let d = g.db.get(c);
