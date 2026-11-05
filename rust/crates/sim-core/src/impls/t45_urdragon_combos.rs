@@ -36,7 +36,8 @@
 //! itself from the second Twinflame, which strives onto the new Garths ({2}{R} per extra target, each extra Garth
 //! nets a Lotus). So `ready` asks for {1}{R} + {1}{G} + {2}{R}: seven mana, the Spellbook's total ({4}{R}{R}{R}).
 //!
-//! Not modelled: the Lotus and Braingeyser rounds themselves (the loop is resolved by `finish`), Garth Lotus mana
+//! Not modelled for a bot: the Lotus and Braingeyser rounds themselves (the loop is resolved by `finish`; a person's
+//! choice about the newest Garths is `human::urdragon::garth_spare`), Garth Lotus mana
 //! paying for the first Twinflame (the mana must be open), the Regrowth copy's cast triggers.
 
 use super::combos::{Combo, Ready, Step, StepKind, done, no_keys, no_src};

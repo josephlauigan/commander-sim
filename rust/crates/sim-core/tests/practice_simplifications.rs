@@ -338,3 +338,75 @@ fn the_mirror_loop_asks_once_for_the_terror_of_the_peaks_target() {
     assert_eq!(count_asked(&h, "damage to which target"), 0, "no per-token target question: {:?}", h.asked());
     assert!(g.player(P1).life < life, "Terror's triggers hit the chosen player ({} -> {})", life, g.player(P1).life);
 }
+
+// ------------------------------------------------------------------ 4b. The Garth loop: Black Lotus and Braingeyser
+fn garth_table() -> (Game, PermId) {
+    use sim_core::engine::zones::{self, Enter};
+    let mut g = table_with(&["urdragon", "seph"], 1, 40);
+    g.active = Some(P0);
+    g.player_mut(P0).hand.clear();
+    let ur = card(&g, "The Ur-Dragon");
+    g.player_mut(P0).set_cmd_zone(ur, false);
+    let garth = perm(&mut g, P0, "Garth One-Eye");
+    let sd = take(&mut g, P0, "Spark Double");
+    zones::enter(&mut g, P0, sd, Enter { plus: 1, ..Enter::default() }).unwrap();
+    perm(&mut g, P0, "Doubling Season");
+    hand(&mut g, P0, &["Twinflame"]);
+    pool(&mut g, P0, &[('R', 6), ('G', 1)]);
+    (g, garth)
+}
+
+fn garth_person(tap: &'static str, brain: &'static str) -> Arc<ScriptHuman> {
+    person(vec![], move |r| {
+        if r.prompt.contains("which ability") {
+            with(r, "start the loop")
+        } else if r.prompt.contains("the opponents may answer") {
+            with(r, "once around")
+        } else if r.prompt.contains("How many tap instead") {
+            with(r, tap)
+        } else if r.prompt.contains("one of the") && r.prompt.contains("Braingeyser") {
+            with(r, brain)
+        } else if r.prompt.contains("draws X cards") {
+            with(r, "X = 4")
+        } else if r.prompt.contains("which colour") {
+            with(r, "{U}")
+        } else {
+            None
+        }
+    })
+}
+
+#[test]
+fn the_garth_loop_plays_out_black_lotus_and_braingeyser_for_the_garths_that_tap() {
+    let (mut g, garth) = garth_table();
+    let h = garth_person("none of the new Garths attack", "you draw");
+    g.humans.add(P0, h.clone());
+    let i = g.player(P0).perms.iter().position(|&m| m == garth).unwrap();
+    let (hand0, lib0) = (g.player(P0).hand.len(), g.player(P0).library.len());
+    let pool0 = pool_total(&g, P0);
+    sim_core::human::human::apply(&mut g, P0, &json!({"do": "use", "perm": i})).unwrap();
+    assert!(asked(&h, "How many tap instead"), "{:?}", h.asked());
+    assert!(asked(&h, "Braingeyser"), "{:?}", h.asked());
+    // the Twinflame / Regrowth steps use mana and the hand: compare the cards drawn by Braingeyser (X = 4)
+    assert_eq!(g.player(P0).library.len(), lib0 - 4, "Braingeyser drew four cards");
+    assert!(g.player(P0).hand.len() >= hand0 + 4 - 1, "the cards are in the hand");
+    assert!(pool_total(&g, P0) > pool0, "Black Lotus mana is in the pool: {}", pool_text(&g, P0));
+    assert!(pool_text(&g, P0).contains('U'), "in the chosen colour: {}", pool_text(&g, P0));
+    let tapped = g.player(P0).perms.iter().filter(|&&m| g.perm(m).token && g.perm(m).tapped).count();
+    assert!(tapped >= 2, "the Garths that made the Lotuses and the Braingeyser are tapped ({tapped})");
+}
+
+#[test]
+fn the_garth_loop_leaves_every_new_garth_to_attack_when_the_person_says_none() {
+    let (mut g, garth) = garth_table();
+    let h = garth_person("none: all", "no Braingeyser");
+    g.humans.add(P0, h.clone());
+    let i = g.player(P0).perms.iter().position(|&m| m == garth).unwrap();
+    let lib0 = g.player(P0).library.len();
+    sim_core::human::human::apply(&mut g, P0, &json!({"do": "use", "perm": i})).unwrap();
+    assert!(asked(&h, "How many tap instead"));
+    assert_eq!(g.player(P0).library.len(), lib0, "no Braingeyser");
+    assert!(!pool_text(&g, P0).contains('U'));
+    let tapped = g.player(P0).perms.iter().filter(|&&m| g.perm(m).token && g.perm(m).tapped).count();
+    assert_eq!(tapped, 1, "only the Garth that chose Regrowth in the loop's steps is tapped");
+}
