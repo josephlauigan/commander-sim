@@ -4,6 +4,7 @@
 
 mod play_common;
 use play_common::*;
+use sim_core::engine::combat::combat;
 use sim_core::ids::PermId;
 use sim_core::state::Ctx;
 use std::sync::Arc;
@@ -422,4 +423,40 @@ fn wandering_archaic_the_person_decides_whether_to_pay_two() {
         }
         let _ = copied;
     }
+}
+
+// ------------------------------------------------------------------ attack taxes
+fn tax_table() -> Game {
+    let mut g = table(&["sauron", "cloud"]);
+    perm(&mut g, P1, "Ghostly Prison");
+    g
+}
+
+#[test]
+fn attack_tax_the_person_picks_which_creatures_they_can_afford_to_send() {
+    // two attackers declared, {2} to pay: one can attack. The person picks the 1/1, not the strongest
+    let mut g = tax_table();
+    perm(&mut g, P0, "Grave Titan"); // 6/6
+    token(&mut g, P0, 1);
+    lands(&mut g, P0, "Plains", 2, false);
+    let h = seat(&mut g, P0, vec![picks(&[0, 1]), pick(1), pick(0)]);
+    combat(&mut g, P0).unwrap();
+    assert!(asked(&h, "Which creature attacks"), "the person was asked which creature attacks");
+    assert_eq!(g.player(P1).life, 40 - 1, "the 1/1 the person picked attacked, the Titan stayed home");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.perm(l).tapped).count(), 0, "and {{2}} was paid");
+}
+
+#[test]
+fn attack_tax_the_person_may_send_fewer_than_they_can_pay_for() {
+    let mut g = tax_table();
+    perm(&mut g, P0, "Grave Titan");
+    token(&mut g, P0, 1);
+    token(&mut g, P0, 1);
+    lands(&mut g, P0, "Plains", 4, false); // pays for two of three
+    // pick the Titan, then "no more attackers" (index 2 of the two left plus the cancel)
+    let h = seat(&mut g, P0, vec![picks(&[0, 1, 2]), pick(0), pick(2), pick(0)]);
+    combat(&mut g, P0).unwrap();
+    assert!(asked(&h, "Which creature attacks"));
+    assert_eq!(g.player(P1).life, 40 - 6, "only the Titan attacked");
+    assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.perm(l).tapped).count(), 2, "{{2}} for one attacker");
 }

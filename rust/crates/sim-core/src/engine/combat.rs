@@ -193,8 +193,9 @@ pub fn attack_limits(g: &mut Game, p: PlayerId, d: PlayerId, atk: Vec<PermId>) -
 }
 
 /// A person's attackers into a tax: they decide whether to pay, from floating mana and untapped sources (the pool
-/// has emptied since the main phase), with no "worth its tax" filter. The strongest ones they can pay for attack
-/// (atk is sorted by power); the log says when some or all don't.
+/// has emptied since the main phase), with no "worth its tax" filter. When they can pay for all of them it is one
+/// yes/no; when they can pay for only some (atk is sorted by power), they pick which creatures attack, up to what they
+/// can afford; the log says when some or all don't.
 fn human_attack_tax(g: &mut Game, p: PlayerId, d: PlayerId, tax: i32, atk: Vec<PermId>) -> Res<Vec<PermId>> {
     let n = atk.len();
     let k = ((crate::human::mana::available(g, p) / tax as u32) as usize).min(n);
@@ -209,6 +210,37 @@ fn human_attack_tax(g: &mut Game, p: PlayerId, d: PlayerId, tax: i32, atk: Vec<P
         crate::glog!(g, "  {who} can't pay {{{tax}}} a creature for {what}: no attack");
         return Ok(vec![]);
     }
+    let atk = if k < n {
+        // they can pay for only k of the n: the person picks which creatures attack
+        let mut left = atk.clone();
+        let mut chosen: Vec<PermId> = vec![];
+        while chosen.len() < k {
+            let prompt = format!(
+                "Attack {by} ({}): {{{tax}}} a creature, you can pay for {k} of {n}. Which creature attacks? ({} of up to {k})",
+                taxes.join(", "),
+                chosen.len() + 1
+            );
+            match crate::human::cards::pick_perm(g, p, "choose", &prompt, &left, Some("no more attackers"))? {
+                Some(m) => {
+                    left.retain(|&x| x != m);
+                    chosen.push(m);
+                }
+                None => break,
+            }
+            if left.is_empty() {
+                break;
+            }
+        }
+        let all = atk;
+        all.into_iter().filter(|m| chosen.contains(m)).collect::<Vec<_>>()
+    } else {
+        atk
+    };
+    if atk.is_empty() {
+        crate::glog!(g, "  {who} picks no attackers for {what}: no attack");
+        return Ok(vec![]);
+    }
+    let k = atk.len();
     let what = if k < n { format!("{what} with {k} of {n} creatures") } else { format!("{what} with {n}") };
     let total = tax * k as i32;
     if !crate::human::choices::pay_tax(g, p, total as u32, &what)? {
@@ -216,7 +248,7 @@ fn human_attack_tax(g: &mut Game, p: PlayerId, d: PlayerId, tax: i32, atk: Vec<P
         return Ok(vec![]);
     }
     g.player_mut(p).stat("attack_tax_paid", total as i64);
-    Ok(atk[..k].to_vec())
+    Ok(atk)
 }
 
 /// The AI's attackers may go at different players, as in a real game: [(defending player, attackers)]. Everything

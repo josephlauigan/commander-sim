@@ -78,7 +78,7 @@ fn only_the_attackers_you_can_pay_for_attack() {
     perm(&mut g, P0, "Grave Titan"); // 6/6
     token(&mut g, P0, 1);
     lands(&mut g, P0, "Plains", 2, false); // {2}: one attacker
-    let h = seat(&mut g, P0, vec![picks(&[0, 1]), pick(0)]);
+    let h = seat(&mut g, P0, vec![picks(&[0, 1]), pick(0), pick(0)]);
     let log = logged(&mut g, P0);
     assert_eq!(g.player(P1).life, 40 - 6, "the strongest one attacks");
     assert_eq!(untapped_lands(&g, P0), 0);
