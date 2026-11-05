@@ -31,9 +31,23 @@ fn timing_ok(g: &Game, p: PlayerId, c: CardId) -> bool {
     legal::instant_speed(g, p, c) || legal::sorcery_timing(g, p).is_none()
 }
 
+/// Pithing Needle (or Phyrexian Revoker) names card c: the activated abilities of c, in any zone, can't be activated
+fn needled(g: &Game, c: CardId) -> bool {
+    crate::impls::t6_stax::needle_stops(g, &g.db.get(c).name)
+}
+
+/// a hook option that is an activated ability (unearth, cycling ...) and not a way to cast the card
+fn activated_label(label: &str) -> bool {
+    let l = label.to_lowercase();
+    ["unearth", "eternalize", "embalm", "encore", "scavenge", "cycling", "channel", "transmute", "ninjutsu", "bloodrush"]
+        .iter()
+        .any(|k| l.contains(k))
+}
+
 /// The hook options for a card in p's hand, as (label, option).
 pub fn hand_alts(g: &mut Game, p: PlayerId, c: CardId) -> Res<Vec<(String, Opt)>> {
     let Some(f) = g.registry.get(c).and_then(|i| i.hand_options) else { return Ok(vec![]) };
+    let needled = needled(g, c);
     if super::specs::spec(&g.db.get(c).name).is_some() {
         return Ok(vec![]); // its own cast asks the person (specs.rs); the hook is only the AI's plan for that cast
     }
@@ -42,7 +56,7 @@ pub fn hand_alts(g: &mut Game, p: PlayerId, c: CardId) -> Res<Vec<(String, Opt)>
     }
     let mut out: Vec<(String, Opt)> = f(g, c, p, Some(false))?
         .into_iter()
-        .filter(|o| o.act.is_some() && !plain_cast(o, c))
+        .filter(|o| o.act.is_some() && !plain_cast(o, c) && !(needled && activated_label(&o.label)))
         .map(|o| (named(g, c, &o.label), o))
         .collect();
     if out.is_empty() {
@@ -55,16 +69,17 @@ pub fn hand_alts(g: &mut Game, p: PlayerId, c: CardId) -> Res<Vec<(String, Opt)>
 /// plain cast is left out).
 pub fn gy_alts(g: &mut Game, p: PlayerId, c: CardId) -> Res<Vec<(String, Opt)>> {
     let Some(f) = g.registry.get(c).and_then(|i| i.gy_options) else { return Ok(vec![]) };
+    let needled = needled(g, c);
     if !timing_ok(g, p, c) || crate::engine::values::silenced(g, p) {
         return Ok(vec![]);
     }
     let mut out: Vec<(String, Opt)> = f(g, c, p, Some(false))?
         .into_iter()
-        .filter(|o| o.act.is_some() && !plain_cast(o, c))
+        .filter(|o| o.act.is_some() && !plain_cast(o, c) && !(needled && activated_label(&o.label)))
         .map(|o| (named(g, c, &o.label), o))
         .collect();
-    if out.is_empty() {
-        out.extend(forced_gy(g, c));
+    if out.is_empty() && !needled {
+        out.extend(forced_gy(g, c)); // (Reassembling Skeleton: an activated ability)
     }
     Ok(out)
 }

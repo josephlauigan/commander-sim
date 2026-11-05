@@ -853,7 +853,10 @@ pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt>
     for &c in &g.player(p).hand {
         let d = g.db.get(c);
         let Some(kind) = d.tags.str(Tag::Wipe) else { continue };
-        if eot && !d.instant && !(d.sorcery && has(g, p, Tag::Gandalf)) {
+        if eot
+            && !d.instant
+            && !(d.sorcery && (has(g, p, Tag::Gandalf) || crate::impls::karn_cards::liberator_flash(g, p, c))) // (Liberator: All Is Dust)
+        {
             continue;
         }
         let (cg, cp) = decks::wipe_cost(g, p, c);
@@ -1542,7 +1545,8 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
         let caution = style(g, g.player(p).key).caution;
         for mut o in removal_options(g, p, &s) {
             if let Some(Action::Removal { card, kick: 0, .. }) = &o.act
-                && (g.db.get(*card).instant || (gand && g.db.get(*card).sorcery))
+                && (g.db.get(*card).instant
+                    || (g.db.get(*card).sorcery && (gand || crate::impls::karn_cards::liberator_flash(g, p, *card))))
             {
                 o.utility += 1.2 * caution;
                 opts.push(o);

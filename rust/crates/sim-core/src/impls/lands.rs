@@ -129,7 +129,9 @@ pub fn sac_land(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     let cd = g.perm(l).real_card();
     if has_land(g, p, l) {
         crate::engine::turn::remove_land(g, p, l);
-        g.player_mut(p).gy.push(cd);
+        if !g.perm(l).token {
+            g.player_mut(p).gy.push(cd); // (a token land, a Mirrorworks copy, just ceases to exist)
+        }
     }
     if !g.hooks.is_empty() {
         fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;

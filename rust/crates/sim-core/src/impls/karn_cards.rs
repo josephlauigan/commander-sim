@@ -1032,6 +1032,9 @@ fn leveler_unearth_opts(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>
     if post != Some(false) || g.active != Some(p) || !g.player(p).gy.contains(&c) {
         return Ok(vec![]);
     }
+    if crate::impls::t6_stax::needle_stops(g, LEVELER) {
+        return Ok(vec![]); // Pithing Needle: unearth is an activated ability
+    }
     if !can_pay(g, p, 8, "", false) {
         return Ok(vec![]);
     }

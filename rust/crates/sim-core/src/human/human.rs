@@ -796,8 +796,12 @@ fn use_perm(g: &mut Game, p: PlayerId, m: PermId) -> Res<Option<String>> {
 
 /// an activated ability of land L (beyond tapping for mana)
 pub fn use_land(g: &mut Game, p: PlayerId, l: PermId) -> Res<Option<String>> {
-    let abil = abilities::land_abilities(g, p, l);
     let lname = card_name(g, g.perm(l).card());
+    if crate::cardcode::ability_locked(g, l, p) {
+        // Pithing Needle (mana abilities are used by tapping, not here), Arrest, Collector Ouphe ...
+        return Ok(Some(format!("{lname}'s activated abilities can't be activated.")));
+    }
+    let abil = abilities::land_abilities(g, p, l);
     let alts = super::alt::land_alts(g, p, l)?; // the land code's own abilities (the AI's hook)
     if abil.is_empty() && alts.is_empty() {
         return Ok(Some(format!("{lname} has no ability to activate beyond mana (tap it for mana with tap).")));

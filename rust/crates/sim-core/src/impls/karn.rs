@@ -63,7 +63,7 @@ pub fn max_mv(g: &Game, p: PlayerId) -> u32 {
         .perms
         .iter()
         .filter(|&&m| live(g, m))
-        .filter_map(|&m| g.perm(m).cd.filter(|&c| is_art_card(g, c)))
+        .filter_map(|&m| g.perm(m).cd.filter(|_| crate::impls::t5::is_artifact(g, m))) // (Liquimetal Torque's mark counts)
         .map(|c| g.db.get(c).cmc)
         .max()
         .unwrap_or(0)
