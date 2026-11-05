@@ -713,8 +713,11 @@ pub fn abilities_of(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<(String, Ab
         return Ok(out); // the Cloud deck's cards listed there (the AI's hook options would show twice)
     }
     // the card's compiled abilities (its text, e.g. Wayfarer's Bauble), paid from your pool
-    for (label, idx) in crate::dsl::human_abilities(g, p, m) {
-        out.push((label, AbilityKind::Hook(Action::Dsl { src: m, idx })));
+    // (a card whose abilities `cards::abilities` lists by the rules, with its choices, is not listed twice)
+    if !cards::replaces_dsl(g, m) {
+        for (label, idx) in crate::dsl::human_abilities(g, p, m) {
+            out.push((label, AbilityKind::Hook(Action::Dsl { src: m, idx })));
+        }
     }
     if let Some(own) = cards::abilities(g, p, m) {
         // your deck's card: its abilities by the rules

@@ -323,7 +323,7 @@ pub fn prismari_charm(g: &mut Game, p: PlayerId, c: CardId) -> Res {
 
 // ================================================================== abilities by the rules (cards.py ABILITIES, LANDS)
 /// a choice with the page's default 'cancel' (Python's `human.choose` default): the index, None if cancelled
-fn pick(g: &Game, p: PlayerId, kind: &str, prompt: &str, labels: &[String]) -> Res<Option<usize>> {
+pub(super) fn pick(g: &Game, p: PlayerId, kind: &str, prompt: &str, labels: &[String]) -> Res<Option<usize>> {
     choices::choose(g, p, kind, prompt, labels, Some("cancel"), None)
 }
 
@@ -331,7 +331,7 @@ fn target_labels(g: &Game, p: PlayerId, tg: &[Target]) -> Vec<String> {
     tg.iter().map(|&x| legal::describe_target(g, p, x)).collect()
 }
 
-fn pname(g: &Game, p: PlayerId) -> String {
+pub(super) fn pname(g: &Game, p: PlayerId) -> String {
     g.player(p).name.to_string()
 }
 
@@ -339,7 +339,7 @@ fn cname(g: &Game, c: CardId) -> String {
     g.db.get(c).name.to_string()
 }
 
-fn pm_name(g: &Game, m: PermId) -> String {
+pub(super) fn pm_name(g: &Game, m: PermId) -> String {
     match g.perm(m).cd {
         Some(c) => cname(g, c),
         None => g.perm(m).name.to_string(),
@@ -393,15 +393,15 @@ pub enum Ready {
     Go(Box<dyn FnOnce(&mut Game) -> Res>),
 }
 
-fn go(f: impl FnOnce(&mut Game) -> Res + 'static) -> Res<Ready> {
+pub(super) fn go(f: impl FnOnce(&mut Game) -> Res + 'static) -> Res<Ready> {
     Ok(Ready::Go(Box::new(f)))
 }
 
-type WalkEff = fn(&mut Game, PlayerId, PermId) -> Res<Ready>;
+pub(super) type WalkEff = fn(&mut Game, PlayerId, PermId) -> Res<Ready>;
 
 /// cards._walker: abilities: [(cost, text, effect)]: the effect runs after the loyalty is paid; one that needs a choice
 /// asks before paying (a cancelled choice costs nothing) by returning a `Ready::Go`
-fn walker(list: &[(i32, &'static str, WalkEff)]) -> Vec<PermAbility> {
+pub(super) fn walker(list: &[(i32, &'static str, WalkEff)]) -> Vec<PermAbility> {
     list.iter()
         .map(|&(cost, text, eff)| {
             ability(format!("{cost:+}: {text}"), move |g: &mut Game, p: PlayerId, m: PermId| {
@@ -441,7 +441,7 @@ fn walker(list: &[(i32, &'static str, WalkEff)]) -> Vec<PermAbility> {
 }
 
 /// cards._any_player: any living player (you included), None if cancelled
-fn any_player(g: &Game, p: PlayerId, prompt: &str) -> Res<Option<PlayerId>> {
+pub(super) fn any_player(g: &Game, p: PlayerId, prompt: &str) -> Res<Option<PlayerId>> {
     let ps: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
     let labels: Vec<String> =
         ps.iter().map(|&q| format!("{}{}", pname(g, q), if q == p { " (you)" } else { "" })).collect();
@@ -866,6 +866,12 @@ fn citadel(g: &Game, p: PlayerId) -> Vec<PermAbility> {
     out
 }
 
+/// Cards that have compiled (DSL) abilities AND an entry in `abilities` below that asks the person what the Oracle text
+/// lets them choose: the entry stands alone, the compiled abilities (which choose for the person) aren't listed too.
+pub fn replaces_dsl(g: &Game, m: PermId) -> bool {
+    g.perm(m).cd.is_some_and(|c| matches!(&*g.db.get(c).name, "Blightspeaker"))
+}
+
 /// cards.abilities: the abilities of your permanent m, or None when its card isn't listed here (its card-code
 /// abilities apply)
 pub fn abilities(g: &Game, p: PlayerId, m: PermId) -> Option<Vec<PermAbility>> {
@@ -886,6 +892,9 @@ pub fn abilities(g: &Game, p: PlayerId, m: PermId) -> Option<Vec<PermAbility>> {
     let nm = cname(g, cd);
     if let Some(own) = super::gaps_a::abilities(g, p, m, &nm) {
         return Some(own); // the Ur-Dragon, Kefka, Sauron and Thanos cards (practice-gaps, Agent A)
+    }
+    if let Some(own) = super::walkers::abilities(&nm) {
+        return Some(own); // Karn Liberated, Ugin, both Karns, Teferi, Wrenn and Six, Venser (walker-fixes)
     }
     Some(match nm.as_str() {
         "Bolas's Citadel" => citadel(g, p),
@@ -1933,7 +1942,7 @@ pub fn cast_target(g: &Game, p: PlayerId, c: CardId) -> Res<CastTarget> {
 }
 
 // ------------------------------------------------------------------ Galadriel's deck (Bant Rebels)
-fn creature_tap_ok(g: &Game, m: PermId) -> Why {
+pub(super) fn creature_tap_ok(g: &Game, m: PermId) -> Why {
     tapped(g, m, None).or_else(|| {
         if g.perm(m).sick {
             Some(format!("{} has summoning sickness (it came under your control this turn).", pm_name(g, m)))
@@ -1945,7 +1954,7 @@ fn creature_tap_ok(g: &Game, m: PermId) -> Why {
 
 /// cards._gal_pay: pay a creature's ability from your pool (Secluded Courtyard's mana may pay if it's of the named
 /// type). None once paid, or why not
-fn gal_pay(g: &mut Game, p: PlayerId, m: PermId, gn: u32, pips: &str, what: &str) -> Why {
+pub(super) fn gal_pay(g: &mut Game, p: PlayerId, m: PermId, gn: u32, pips: &str, what: &str) -> Why {
     use super::mana::Spending;
     let prev = std::mem::replace(&mut g.player_mut(p).pool.spending, Some(Spending::Perm(m)));
     let why = cost(g, p, gn, pips, what).or_else(|| {
@@ -1995,6 +2004,27 @@ fn searcher(gn: u32, cap: u32) -> Vec<PermAbility> {
             Ok(None)
         },
     )]
+}
+
+/// Blightspeaker: "{T}: Target player loses 1 life." (the person picks the player, you included) and "{4}, {T}: Search
+/// your library for a Rebel permanent card with mana value 3 or less, put it onto the battlefield, then shuffle." (the
+/// Ramosian Lieutenant's search, which asks which Rebel)
+fn blightspeaker() -> Vec<PermAbility> {
+    let mut out = vec![ability("{T}: target player loses 1 life", |g: &mut Game, p: PlayerId, m: PermId| {
+        if let Some(why) = creature_tap_ok(g, m) {
+            return Ok(Some(why));
+        }
+        let Some(q) = any_player(g, p, "Blightspeaker: which player loses 1 life?")? else { return Ok(None) };
+        g.perm_mut(m).tapped = true;
+        crate::glog!(g, "  {} activates Blightspeaker: {} loses 1 life", pname(g, p), pname(g, q));
+        if crate::engine::stack::ability_window(g, p, Some(m), "target player loses 1 life", None, None)? {
+            crate::engine::life::lose_life(g, q, 1, Some(p), "other", None)?;
+            crate::engine::life::check_state(g)?;
+        }
+        Ok(None)
+    })];
+    out.extend(searcher(4, 3));
+    out
 }
 
 fn lin_search(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
@@ -2364,6 +2394,7 @@ fn more_abilities(g: &Game, p: PlayerId, m: PermId, nm: &str) -> Option<Vec<Perm
         "Niv-Mizzet, the Firemind" => vec![ability("{T}: draw a card", niv_draw)],
         "Ramosian Sergeant" => searcher(3, 2),
         "Ramosian Lieutenant" => searcher(4, 3),
+        "Blightspeaker" => blightspeaker(),
         "Ramosian Captain" | "Defiant Vanguard" => searcher(5, 4),
         "Ramosian Commander" => searcher(6, 5),
         "Lin Sivvi, Defiant Hero" => vec![

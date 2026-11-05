@@ -1038,7 +1038,7 @@ fn ugin_plus_val(_g: &Game, _p: PlayerId, _src: PermId) -> Option<f64> {
 
 /// +1: exile the top card of your library face down and look at it. Create a 2/2 colourless Spirit creature token.
 /// When that token leaves the battlefield, put the exiled card into your hand.
-fn ugin_plus(g: &mut Game, p: PlayerId, src: PermId) -> Res {
+pub(crate) fn ugin_plus(g: &mut Game, p: PlayerId, src: PermId) -> Res {
     let top = g.player_mut(p).library.pop();
     let mut spec = Tokens::new(1, 2);
     spec.tgh = Some(2);

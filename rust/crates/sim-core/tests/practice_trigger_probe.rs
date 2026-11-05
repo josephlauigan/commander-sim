@@ -719,39 +719,22 @@ fn every_trigger_choice_of_the_owned_decks_is_asked_of_a_person() {
 
 /// asked twice in a row on purpose, each with why
 const TWICE_OK: &[(&str, &str)] = &[];
-
 /// gaps found on 2026-11-04 and not yet fixed: the AI chooses for the person. Fixing one means taking it off this list;
 /// a new gap fails the test. (The key ends with the moments the trigger was silent in.)
-const TO_FIX: &[&str] = &[
-    // The activated-ability pass (default since 2026-11-04). Planeswalkers: the engine's walker framework
-    // (impls/common.rs walker_go -> WalkerAb.eff) runs the AI's effect for a person, who gets "which ability?" and
-    // then nothing; a fix is a human entry in human/cards.rs `walker(...)` (as for Vraska / Ral / Elspeth) that asks
-    // before paying loyalty. Such an entry replaces the whole generic list, so each needs ALL the walker's abilities
-    // (ultimates included) re-listed. Not fixed in the trigger-fixes task (size: ~12 abilities over 8 cards).
-    // Karn Liberated (impls/t3.rs karn_plus / karn_minus): +4 "target player exiles a card from their hand": the AI
-    // removes the worst card of the opponent with most cards (no target player, no exile, no choice of card); -3 takes
-    // best_opp_nonland.
-    "karn: Karn Liberated (Activate(0), Activate(1))",
-    // Ugin, the Ineffable -3 "destroy target permanent that's one or more colors": impls/karn_cards.rs picks the target
-    "karn: Ugin, the Ineffable (Activate(0))",
-    // Karn, Scion of Urza +1: an opponent chooses which revealed card you get (impls/karn_engines.rs); the AI decides both sides
-    "karn: Karn, Scion of Urza (Activate(0))",
-    // Karn, the Great Creator +1 (up to one target noncreature artifact) and -2 (which artifact card to take): AI picks
-    "karn: Karn, the Great Creator (Activate(0), Activate(1))",
-    // Teferi, Time Raveler -3 "up to one target artifact, creature, or enchantment": impls/t3.rs ttr_minus / ttr_target
-    "thanos: Teferi, Time Raveler (Activate(0))",
-    // Wrenn and Six +1 (up to one target land card in the graveyard) and -1 (1 damage to any target): the AI picks
-    // (choices::deal_damage is the person's helper for the second)
-    "urdragon: Wrenn and Six (Activate(0), Activate(1))",
-    // Venser, the Sojourner +2 "exile target permanent you own" (impls/alela.rs): the AI picks which
-    "alela: Venser, the Sojourner (Activate(0), Activate(1))",
-    // Blightspeaker: {T}: target player loses 1 life / {4},{T}: the Rebel search (impls/newcards_b.rs): no target player,
-    // no search prompt for a person (Lin Sivvi's identical search is asked: human/cards.rs ~1989)
-    "kefka: Blightspeaker (Activate(0))",
-];
+/// Empty since the walker-fixes task (2026-11-04): the eight planeswalker / Blightspeaker gaps are fixed
+/// (`human/walkers.rs`, `human/cards.rs` blightspeaker; tests in `practice_trigger_fixes.rs`).
+const TO_FIX: &[&str] = &[];
 
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
+    (
+        "karn: Karn, Scion of Urza (Activate(0))",
+        "+1 \"an opponent chooses one of them\": the opponent is an AI seat, which rightly chooses; the person is told both revealed cards and the log names which goes where. The person's choices are -1 (which silver-counter card; asked, see practice_trigger_fixes) and nothing in -2",
+    ),
+    (
+        "kefka: Blightspeaker (Activate(1))",
+        "the Rebel search ({4},{T}) asks which Rebel (practice_trigger_fixes), but the probe's library holds no Rebel with mana value 3 or less, so there is nothing to choose and it only logs that none was found",
+    ),
     (
         "alela: Crystal Chimes (Activate(0))",
         "no choice: it returns all enchantment cards from the graveyard",

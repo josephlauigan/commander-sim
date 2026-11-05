@@ -1089,7 +1089,7 @@ fn always_6(_g: &Game, _p: PlayerId, _src: PermId) -> Option<f64> {
 
 /// -7: you get an emblem with "Instant and sorcery cards in your graveyard have retrace." (the AI casts them through
 /// `t12_windgrace::emblem_retrace_options`)
-fn w6_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+pub(crate) fn w6_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     g.player_mut(p).emblems.push(super::t12_windgrace::WRENN_EMBLEM);
     crate::glog!(g, "    {} gets an emblem: instants and sorceries in the graveyard have retrace", g.player(p).name);
     Ok(())
