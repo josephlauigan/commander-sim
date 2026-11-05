@@ -57,7 +57,7 @@ pieces = [["Dragon Tempest", "Scourge of Valkas", "Terror of the Peaks"],
 [[line]]
 name = "Dragon copies"
 kind = "value"
-pieces = [["Miirym, Sentinel Wyrm"], ["Astral Dragon", "Spark Double", "Cursed Mirror", "Jaxis, the Troublemaker"]]
+pieces = [["Miirym, Sentinel Wyrm"], ["Astral Dragon", "Spark Double", "Cursed Mirror"]]
 
 [[line]]
 name = "Dragon mana"

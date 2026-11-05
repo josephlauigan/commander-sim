@@ -37,7 +37,6 @@
 1 Hallowed Fountain (unf) 277
 1 Imperial Seal (2x2) 354
 1 Inventors' Fair (sld) 1735
-1 Jaxis, the Troublemaker (snc) 461
 1 Kindred Dominance (cmm) 640
 1 Korvold, Fae-Cursed King (sld) 2761
 1 Kura, the Boundless Sky (neo) 200
@@ -89,6 +88,7 @@
 1 Tundra (ced) 285
 1 Twinflame (2x2) 455
 1 Underground Sea (ced) 286
+1 Urza, Lord High Artificer (fca) 5
 1 Utvara Hellkite (rvr) 431
 1 Vampiric Tutor (soa) 100
 1 Verdant Catacombs (spg) 113

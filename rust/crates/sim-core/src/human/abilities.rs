@@ -321,6 +321,9 @@ pub fn permanent_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility>
     if &*d.name == "Staff of Domination" {
         out.push(ability("draw N cards: untap for {1}, draw for {5} and tapping it, again and again", staff_draw));
     }
+    if &*d.name == "Urza, Lord High Artificer" {
+        out.push(ability("{5}: shuffle your library, then play the top card free this turn", urza_five));
+    }
     out
 }
 
@@ -414,4 +417,18 @@ pub fn land_abilities(g: &Game, p: PlayerId, l: PermId) -> Vec<LandAbility> {
         out.push(ability("{2}, {T}, sacrifice a Desert: exile all graveyards", grounds));
     }
     out
+}
+
+/// Urza, Lord High Artificer: {5}: shuffle your library, then exile the top card; you may play it free this turn
+/// (the AI's resolution, `impls::t5::urza_top`; added 2026-11-04 when Urza joined the Ur-Dragon list)
+fn urza_five(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    if g.player(p).library.is_empty() {
+        return Ok(Some("Your library is empty.".into()));
+    }
+    if let Some(why) = pay(g, p, 5, "", "Urza") {
+        return Ok(Some(why));
+    }
+    crate::glog!(g, "  {} activates Urza, Lord High Artificer", g.player(p).name);
+    crate::impls::t5::urza_top(g, m, p)?;
+    Ok(None)
 }

@@ -323,8 +323,9 @@ fn ral_storm_conduit_copies_the_next_spell() {
 #[test]
 fn expressive_iteration_flow_state_and_stock_up() {
     let mut g = table(&["kefka", "seph"]);
-    let top3: Vec<CardId> = g.player(P0).library.iter().rev().take(3).copied().collect();
     let c = hand(&mut g, P0, &["Expressive Iteration"])[0];
+    // the top three after the spell leaves the library (it can be one of them, 11/04 Kefka list)
+    let top3: Vec<CardId> = g.player(P0).library.iter().rev().take(3).copied().collect();
     cast::cast_card(&mut g, P0, c, "hand", Ctx::default()).unwrap();
     let pl = g.player(P0);
     assert_eq!(pl.hand.len(), 2); // one to hand, one exiled and playable this turn

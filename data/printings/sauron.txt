@@ -25,10 +25,10 @@
 1 Expedition Map (fdn) 724
 1 Exsanguinate (som) 61
 1 Fact or Fiction (dmr) 283
-1 Faerie Mastermind (soc) 114
 1 Fellwar Stone (4ed) 319
 1 Force of Will (all) 28
 1 Foreboding Ruins (voc) 174
+1 Gilgamesh, Master-at-Arms (fin) 338
 1 Godo, Bandit Warlord (fca) 13
 1 Grave Titan (sld) 223
 1 Hammer of Nazahn (c17) 51

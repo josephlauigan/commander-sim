@@ -125,10 +125,16 @@ fn urza_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         return Ok(false);
     }
     pay(g, p, 5, "", false)?;
+    urza_top(g, src, p)?;
+    Ok(true)
+}
+
+/// Urza's {5} once paid (the AI's path and the person's, `human::abilities`): shuffle, then play the top card free
+pub(crate) fn urza_top(g: &mut Game, src: PermId, p: PlayerId) -> Res {
     if !ability_window(g, p, Some(src), "shuffle, play the top card free", None, None)?
         || g.player(p).library.is_empty()
     {
-        return Ok(true);
+        return Ok(());
     }
     shuffle_library(g, p);
     let c = g.player_mut(p).library.pop().unwrap();
@@ -146,7 +152,7 @@ fn urza_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     } else {
         g.player_mut(p).exile.push(c);
     }
-    Ok(true)
+    Ok(())
 }
 
 /// common.TOKEN_PT entry: Urza's Construct gets +1/+1 per artifact its controller has
