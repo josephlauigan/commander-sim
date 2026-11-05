@@ -249,6 +249,8 @@ struct Rec {
 struct Probe {
     script: bool,
     act: Mutex<Option<Value>>,
+    /// taken at the first priority window for a trigger of the person's own (a Peter Parker's Camera to copy it)
+    win: Mutex<Option<Value>>,
     want: String,
     n_abil: Mutex<usize>,
     n_main: Mutex<usize>,
@@ -268,6 +270,11 @@ impl Human for Probe {
         }
         match &*req.kind {
             "priority" => {
+                if req.prompt.starts_with("Your trigger:") {
+                    if let Some(a) = self.win.lock().unwrap().take() {
+                        return Answer::Action(a);
+                    }
+                }
                 if req.prompt.starts_with("Main phase") || req.prompt.starts_with("Your turn: you have priority") {
                     if let Some(a) = self.act.lock().unwrap().take() {
                         return Answer::Action(a);
@@ -286,7 +293,7 @@ impl Human for Probe {
             }
             "attack" => Answer::Picks((0..req.choices.len()).collect()),
             "block" => Answer::Picks(vec![]),
-            _ if req.prompt.ends_with("which ability?") => {
+            _ if req.prompt.ends_with(": which ability?") => {
                 let mut n = self.n_abil.lock().unwrap();
                 *n = (*n).max(req.choices.len());
                 Answer::Pick(pick_ability(&req.choices, &self.want))
@@ -333,6 +340,50 @@ fn signature(g: &Game, ignore_life: bool) -> Vec<i64> {
         v.push(q.perms.iter().map(|&m| g.perm(m).plus as i64).sum());
     }
     v
+}
+
+/// What an activated ability needs that the probe's table lacks (2026-11-05, model-gaps B1), put there before the
+/// person is seated. Returns Some(true) when the ability copies another one and so must be used while an ability of the
+/// person's is waiting (Peter Parker's Camera: Godo's enter trigger).
+fn precondition(g: &mut Game, name: &str, m: PermId, e0: PermId, e1: PermId) -> Option<bool> {
+    let assembly_worker = |g: &mut Game| {
+        let w = token(g, P0, 2);
+        g.perm_mut(w).ttypes.push("artifact");
+        g.perm_mut(w).ttypes.push("assembly-worker");
+        g.in_combat.push(w);
+    };
+    match name {
+        // an attacking creature
+        "Angelic Page" | "Ballista Squad" => g.in_combat.push(e0),
+        // an attacking Assembly-Worker (the Factory's {T} pump only needs an Assembly-Worker)
+        "Mishra's Factory" | "Mishra's Foundry" => assembly_worker(g),
+        "Cid, Freeflier Pilot" => {
+            let c = take(g, P0, "Lightning Greaves");
+            g.player_mut(P0).gy.push(c);
+        }
+        "Plaza of Heroes" => {
+            perm(g, P0, "Thrasios, Triton Hero");
+        }
+        "Lawbringer" => {
+            perm(g, P1, "Shivan Dragon");
+        }
+        "Lightbringer" => {
+            perm(g, P1, "Vampire Nighthawk");
+        }
+        "Ramosian Revivalist" => {
+            let c = take(g, P0, "Ramosian Lieutenant");
+            g.player_mut(P0).gy.push(c);
+        }
+        // an opponent's creature dies: exiled with a void counter
+        "Dauthi Voidwalker" => {
+            sim_core::engine::zones::die(g, e1, intern("destroy")).unwrap();
+            sim_core::engine::life::check_state(g).unwrap(); // the sweep exiles P1's graveyard
+        }
+        "Peter Parker's Camera" => return Some(true),
+        _ => {}
+    }
+    let _ = m;
+    None
 }
 
 fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc: Sc, want: &str) -> Outcome {
@@ -389,6 +440,7 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
         want: want.to_string(),
         n_abil: Mutex::new(0),
         act: Mutex::new(None),
+        win: Mutex::new(None),
         script,
         n_main: Mutex::new(0),
         reqs: Mutex::new(vec![]),
@@ -399,7 +451,23 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
         equipment_on_top(&mut g);
         g.humans.add(P0, h.clone());
     }
-    let m = if land { lands(&mut g, P0, put, 1, false)[0] } else { perm(&mut g, P0, put) };
+    let m = if land {
+        lands(&mut g, P0, put, 1, false)[0]
+    } else if put == "Walking Ballista" {
+        // cast with X = 6: it enters with three counters (a card put onto the battlefield enters with none and dies)
+        g.last_x = 6;
+        let c = take(&mut g, P0, put);
+        sim_core::engine::zones::enter(
+            &mut g,
+            P0,
+            c,
+            sim_core::engine::zones::Enter { sick: false, was_cast: true, ..Default::default() },
+        )
+        .unwrap()
+    } else {
+        perm(&mut g, P0, put)
+    };
+    let camera = if matches!(sc, Sc::Activate(_)) && put == name { precondition(&mut g, name, m, e0, e1) } else { None };
     if equip {
         g.perm_mut(m).attached = Some(e0); // "equipped creature" / "enchanted creature"
     }
@@ -434,11 +502,16 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
         } else {
             g.player(P0).perms.iter().position(|&x| x == m)
         };
-        *h.act.lock().unwrap() = Some(match (land, i) {
+        let use_it = match (land, i) {
             (true, Some(i)) => json!({"do": "use", "land": i}),
             (false, Some(i)) => json!({"do": "use", "perm": i}),
             _ => json!({"do": "pass"}),
-        });
+        };
+        if camera == Some(true) {
+            *h.win.lock().unwrap() = Some(use_it); // while the trigger waits
+        } else {
+            *h.act.lock().unwrap() = Some(use_it);
+        }
     }
     if script || sc == Sc::EnterOwn || matches!(sc, Sc::Activate(_)) {
         pool(&mut g, P0, &[('W', 10), ('U', 10), ('B', 10), ('R', 10), ('G', 10), ('C', 10)]);
@@ -455,6 +528,9 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
             }
             Sc::Main1 | Sc::Activate(_) => {
                 g.step = Step::Main1;
+                if camera == Some(true) {
+                    perm(&mut g, P0, "Godo, Bandit Warlord"); // its enter trigger is the ability to copy
+                }
                 sim_core::human::human::human_main(&mut g, P0, false)?;
             }
             Sc::Combat => {
@@ -509,13 +585,16 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
         for q in reqs.iter() {
             eprintln!("  REQ {sc:?} {} | {} | {:?}", q.kind, q.prompt, q.choices);
         }
+        for (k, t) in h.told.lock().unwrap().iter() {
+            eprintln!("  TOLD {sc:?} {k}: {t}");
+        }
     }
     let is_act = matches!(sc, Sc::Activate(_));
     let window = format!("Your trigger: {name}:");
     let fired = reqs.iter().any(|q| {
         (q.kind == "priority"
             && (q.prompt.contains(&window) || (q.prompt.starts_with("You activate") && q.prompt.contains(name))))
-            || (q.kind != "priority" && q.prompt.starts_with(name) && (!is_act || !q.prompt.ends_with("which ability?"))) // (a refused activation only asked which ability)
+            || (q.kind != "priority" && q.prompt.starts_with(name) && (!is_act || !q.prompt.ends_with(": which ability?"))) // (a refused activation only asked which ability)
     });
     // only the probed card's questions: not the structure of the probe's own plays, nor a prompt headed by another card
     let other =
@@ -526,7 +605,7 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
             !matches!(&*q.kind, "priority" | "attack" | "block")
                 && !q.prompt.starts_with("Attack which")
                 && !q.prompt.starts_with("attacking ")
-                && !q.prompt.ends_with("which ability?")
+                && !q.prompt.ends_with(": which ability?")
                 && !other(&q.prompt)
         })
         .map(|q| {
