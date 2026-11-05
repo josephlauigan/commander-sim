@@ -144,3 +144,74 @@ fn urzas_permission_ends_at_the_end_of_the_turn() {
     assert!(sim_core::human::legal::check_cast_exile(&g, P0, cs[0]).is_some());
     assert!(in_exile(&g, P0, "Sol Ring"), "unplayed, it stays in exile");
 }
+
+// ------------------------------------------------------------------ 2. Mirage Mirror copies lands with abilities
+use sim_core::human::human::{AbilityKind, abilities_of, apply};
+
+/// run the ability of m whose label contains `word`; the reason it can't be done, if any
+fn use_ability(g: &mut Game, p: PlayerId, m: PermId, word: &str) -> Option<String> {
+    let list = abilities_of(g, p, m).unwrap();
+    let Some((_, kind)) = list.into_iter().find(|(l, _)| l.contains(word)) else {
+        panic!("no ability with {word:?} on {}", g.perm(m).name)
+    };
+    let AbilityKind::Extra(act) = kind else { panic!("not an extra ability") };
+    act(g, p, m).unwrap()
+}
+
+#[test]
+fn mirage_mirror_copies_a_fetch_land_and_cracking_it_sends_the_mirror_to_the_graveyard() {
+    let mut g = table(&["alela", "seph"]);
+    let mm = perm(&mut g, P0, "Mirage Mirror");
+    let mirror_card = g.perm(mm).card();
+    let fetch = lands(&mut g, P0, "Verdant Catacombs", 1, false)[0];
+    let fetch_card = g.perm(fetch).card();
+    library(&mut g, P0, &["Swamp"]);
+    pool(&mut g, P0, &[('C', 2)]);
+    let h = person(vec![], |r| if r.prompt.contains("Mirage Mirror") { with(r, "Verdant Catacombs") } else { None });
+    g.humans.add(P0, h.clone());
+    assert_eq!(use_ability(&mut g, P0, mm, "becomes a copy"), None, "a fetch land is a legal choice now");
+    assert_eq!(g.perm(mm).name, "Verdant Catacombs");
+    let i = g.player(P0).lands.iter().position(|&l| l == mm).expect("the Mirror is in the land list");
+    // the copy's ability works: pay 1 life, sacrifice it, search
+    main_phase(&mut g);
+    let life = g.player(P0).life;
+    assert_eq!(apply(&mut g, P0, &json!({"do": "use", "land": i})).unwrap(), None, "{:?}", h.told());
+    assert_eq!(g.player(P0).life, life - 1);
+    assert!(!g.perm(mm).on_bf, "sacrificed");
+    assert!(g.player(P0).gy.contains(&mirror_card), "the Mirage Mirror card is in the graveyard");
+    assert!(!g.player(P0).gy.contains(&fetch_card), "not a second Verdant Catacombs");
+    assert!(g.perm(fetch).on_bf, "the real fetch land is untouched");
+    assert!(g.player(P0).lands.iter().any(|&l| &*g.perm(l).name == "Swamp"), "and it found a Swamp");
+}
+
+#[test]
+fn mirage_mirror_copies_your_own_legendary_land_and_the_legend_rule_has_you_keep_one() {
+    let mut g = table(&["alela", "seph"]);
+    let mm = perm(&mut g, P0, "Mirage Mirror");
+    let mirror_card = g.perm(mm).card();
+    let cradle = lands(&mut g, P0, "Gaea's Cradle", 1, false)[0];
+    pool(&mut g, P0, &[('C', 2)]);
+    // keep the Mirror (the second choice listed is not assumed: pick by the label's text)
+    let h = person(vec![], |r| {
+        if r.prompt.contains("Mirage Mirror") {
+            with(r, "Gaea's Cradle")
+        } else if r.prompt.contains("legend rule") {
+            Some(r.choices.len() - 1)
+        } else {
+            None
+        }
+    });
+    g.humans.add(P0, h.clone());
+    assert_eq!(use_ability(&mut g, P0, mm, "becomes a copy"), None);
+    assert!(asked(&h, "legend rule"), "two Gaea's Cradle: {:?}", h.asked());
+    let cradles =
+        g.player(P0).lands.iter().filter(|&&l| g.perm(l).on_bf && &*g.perm(l).name == "Gaea's Cradle").count();
+    assert_eq!(cradles, 1, "you keep one");
+    let gone = if g.perm(cradle).on_bf { mm } else { cradle };
+    assert!(!g.perm(gone).on_bf);
+    if gone == mm {
+        assert!(in_gy(&g, P0, "Mirage Mirror"), "the Mirror, not a second Cradle, is in the graveyard");
+        assert!(g.player(P0).gy.contains(&mirror_card));
+    }
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).on_bf), "no dead permanent left in the land list");
+}

@@ -242,12 +242,16 @@ fn sba_toughness(g: &mut Game) -> Res {
 /// Cheap: a player with fewer than two permanents is skipped, and names are compared only among legendary ones.
 fn sba_legend(g: &mut Game) -> Res {
     for i in 0..g.players.len() {
-        if !g.players[i].alive || g.players[i].perms.len() < 2 {
+        // a land that is a copy (a person's Mirage Mirror) can duplicate a legendary land: lands count only then
+        let copies = g.players[i].lands.iter().any(|&l| g.perm(l).phys.is_some());
+        let n_lands = if copies { g.players[i].lands.len() } else { 0 };
+        if !g.players[i].alive || g.players[i].perms.len() + n_lands < 2 {
             continue;
         }
         let leg: Vec<_> = g.players[i]
             .perms
             .iter()
+            .chain(g.players[i].lands.iter().take(n_lands))
             .copied()
             .filter(|&m| {
                 let x = g.perm(m);
@@ -291,7 +295,15 @@ fn sba_legend(g: &mut Game) -> Res {
             for n in same {
                 if n != keep && g.perm(n).on_bf {
                     crate::glog!(g, "    legend rule: {} keeps one {}, the other goes to the graveyard", g.players[i].name, g.perm(n).name);
-                    crate::engine::zones::die(g, n, "sba")?;
+                    if g.players[i].lands.contains(&n) {
+                        // a land (a Mirage Mirror that copies one): the card that is really there goes to the graveyard
+                        let cd = g.perm(n).real_card();
+                        crate::engine::turn::remove_land(g, pid, n);
+                        g.player_mut(pid).gy.push(cd);
+                        g.bf_ver += 1;
+                    } else {
+                        crate::engine::zones::die(g, n, "sba")?;
+                    }
                 }
             }
         }

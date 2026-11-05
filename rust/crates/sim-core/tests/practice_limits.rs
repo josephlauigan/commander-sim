@@ -247,7 +247,7 @@ fn mirage_mirror_can_become_a_copy_of_a_land_and_goes_back_at_end_of_turn() {
 }
 
 #[test]
-fn mirage_mirror_does_not_offer_a_land_with_abilities_of_its_own() {
+fn mirage_mirror_offers_a_land_with_abilities_of_its_own_too() {
     let mut g = table(&["alela", "seph"]);
     let mm = perm(&mut g, P0, "Mirage Mirror");
     lands(&mut g, P1, "Island", 1, false);
@@ -259,5 +259,5 @@ fn mirage_mirror_does_not_offer_a_land_with_abilities_of_its_own() {
     let l = dump(&log);
     let q = l.lines().find(|x| x.contains("become a copy of which")).unwrap();
     assert!(q.contains("Island") && q.contains("Sol Ring"), "{q}");
-    assert!(!q.contains("Flooded Strand"), "a fetch land would put the wrong card in the graveyard: {q}");
+    assert!(q.contains("Flooded Strand"), "a fetch land is offered too (tests/practice_simplifications.rs cracks one): {q}");
 }

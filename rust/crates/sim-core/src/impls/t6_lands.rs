@@ -102,7 +102,7 @@ pub(crate) fn abstergo_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !pay_without(g, p, l, 3, "")? {
         return Ok(false);
     }
-    let cd = g.perm(l).card();
+    let cd = g.perm(l).real_card();
     crate::engine::turn::remove_land(g, p, l); // {T} and exile it as costs
     g.player_mut(p).exile.push(cd);
     crate::glog!(g, "  {} exiles Abstergo Entertainment", g.player(p).name);

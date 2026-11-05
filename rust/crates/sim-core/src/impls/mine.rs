@@ -945,7 +945,7 @@ pub fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<b
 fn sac_last_land(g: &mut Game, q: PlayerId) {
     let l = *g.player(q).lands.last().unwrap();
     crate::engine::turn::remove_land(g, q, l);
-    let cd = g.perm(l).card();
+    let cd = g.perm(l).real_card();
     g.player_mut(q).gy.push(cd);
 }
 
@@ -1761,7 +1761,7 @@ fn strip_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     crate::engine::turn::remove_land(g, p, l);
-    let cd = g.perm(l).card();
+    let cd = g.perm(l).real_card();
     g.player_mut(p).gy.push(cd);
     let xn = g.db.get(g.perm(x).card()).name.to_string();
     crate::glog!(g, "  {} sacrifices Strip Mine: destroy {xn} ({})", g.player(p).name, g.player(q).name);

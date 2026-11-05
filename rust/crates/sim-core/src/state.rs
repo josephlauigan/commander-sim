@@ -459,6 +459,12 @@ impl Perm {
     pub fn card(&self) -> CardId {
         self.cd.expect("a permanent with a card")
     }
+
+    /// the card that is really there when the permanent leaves: its own card when it is a copy (`phys`: a Mirage Mirror
+    /// that is a copy of a land), else the face it shows (`card`). Zone changes of a land read this, not `card()`.
+    pub fn real_card(&self) -> CardId {
+        self.phys.or(self.cd).expect("a permanent with a card")
+    }
 }
 
 // ------------------------------------------------------------------ players
