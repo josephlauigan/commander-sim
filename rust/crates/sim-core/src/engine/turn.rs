@@ -532,8 +532,16 @@ pub fn upkeep(g: &mut Game, p: PlayerId) -> Res {
         let mut cr: Vec<_> =
             g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased).collect();
         cr.sort_by(|&a, &b| pval(g, b).total_cmp(&pval(g, a)));
+        let human = crate::human::is_human(g, p);
         for m in cr {
-            if pval(g, m) >= 0.5 && can_pay(g, p, 1, "", false) {
+            if human {
+                // practice mode: the person decides, creature by creature, whether to pay {1}
+                let what = format!("The Tabernacle at Pendrell Vale: pay {{1}} to keep {}?", g.perm(m).name);
+                if !crate::human::mana::pay_tax_ask(g, p, 1, "The Tabernacle at Pendrell Vale", Some(what))? {
+                    die(g, m, "destroy")?;
+                    g.player_mut(p).stat("tabernacle_lost", 1);
+                }
+            } else if pval(g, m) >= 0.5 && can_pay(g, p, 1, "", false) {
                 pay(g, p, 1, "", false)?;
             } else {
                 die(g, m, "destroy")?;

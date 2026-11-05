@@ -1544,8 +1544,8 @@ static LDG: [WalkerAb; 3] = [
             for i in 0..g.players.len() {
                 let q = g.players[i].id;
                 if g.player(q).alive {
-                    edict(g, q, false)?;
-                    edict(g, q, false)?;
+                    crate::engine::zones::edict_nth(g, q, false, 1, 2)?;
+                    crate::engine::zones::edict_nth(g, q, false, 2, 2)?;
                 }
             }
             Ok(())
@@ -1565,6 +1565,10 @@ fn ldg(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
 
 /// t3.discard_worst_for: an opponent chooses what to discard: their least useful card
 pub fn discard_worst_for(g: &mut Game, q: PlayerId, n: u32) -> Res {
+    if crate::human::is_human(g, q) {
+        // practice mode: the person chooses what to discard
+        return crate::human::choices::discard(g, q, n as usize, "Discard a card");
+    }
     for _ in 0..n {
         let hand = g.player(q).hand.clone();
         if let Some(c) = min_by(&hand, |c| card_worth(g, q, c, false)) {
@@ -1597,6 +1601,20 @@ fn rats(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let Some(q) = top_threat(g, o) else { return Ok(()) };
     let hand = g.player(q).hand.clone();
+    if crate::human::is_human(g, q) && !hand.is_empty() {
+        // practice mode: the person picks the card to put back
+        let c = crate::human::choices::pick_cards(
+            g,
+            q,
+            &hand,
+            1,
+            "Chittering Rats: put a card from your hand on top of your library",
+            "choose",
+        )?[0];
+        remove_card(&mut g.player_mut(q).hand, c);
+        g.player_mut(q).library.push(c);
+        return Ok(());
+    }
     if let Some(c) = min_by(&hand, |c| card_worth(g, q, c, false)) {
         remove_card(&mut g.player_mut(q).hand, c);
         g.player_mut(q).library.push(c);
@@ -1663,6 +1681,21 @@ fn depravity(g: &mut Game, src: Src, p: PlayerId) -> Res {
         return Ok(());
     }
     let mut cr = live_creatures(g, p);
+    if crate::human::is_human(g, p) {
+        // practice mode: the person chooses the two creatures to keep
+        let keep = crate::human::cards::pick_perms(
+            g,
+            p,
+            "choose",
+            "Archfiend of Depravity: choose a creature to keep",
+            &cr,
+            2,
+        )?;
+        for m in cr.into_iter().filter(|m| !keep.contains(m)) {
+            die(g, m, "sac")?;
+        }
+        return Ok(());
+    }
     sort_desc(&mut cr, |m| pval(g, m));
     for m in cr.into_iter().skip(2) {
         die(g, m, "sac")?;

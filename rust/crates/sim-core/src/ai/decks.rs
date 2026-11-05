@@ -949,14 +949,35 @@ pub fn braids_sacrifice(g: &mut Game, p: PlayerId) -> Res {
     for &l in &g.player(p).lands {
         opts.push((if nl >= 6 { 3.0 } else { 6.0 }, X::Land(l)));
     }
-    let mut best: Option<usize> = None;
-    for (i, o) in opts.iter().enumerate() {
-        if best.is_none_or(|b| o.0 < opts[b].0) {
-            best = Some(i);
+    let chosen = if crate::human::is_human(g, p) {
+        // practice mode: the person picks what to sacrifice
+        let cands: Vec<PermId> = opts.iter().map(|o| match o.1 {
+            X::Perm(m) | X::Land(m) => m,
+        }).collect();
+        if cands.is_empty() {
+            return Ok(());
         }
-    }
-    let Some(b) = best else { return Ok(()) };
-    match opts.swap_remove(b).1 {
+        let m = crate::human::cards::pick_perm(
+            g,
+            p,
+            "choose",
+            "Braids, Cabal Minion: sacrifice an artifact, creature, or land",
+            &cands,
+            None,
+        )?
+        .unwrap_or(cands[0]);
+        if g.player(p).lands.contains(&m) { X::Land(m) } else { X::Perm(m) }
+    } else {
+        let mut best: Option<usize> = None;
+        for (i, o) in opts.iter().enumerate() {
+            if best.is_none_or(|b| o.0 < opts[b].0) {
+                best = Some(i);
+            }
+        }
+        let Some(b) = best else { return Ok(()) };
+        opts.swap_remove(b).1
+    };
+    match chosen {
         X::Land(l) => {
             let cd = g.perm(l).card();
             crate::engine::turn::remove_land(g, p, l);

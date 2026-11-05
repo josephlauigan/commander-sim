@@ -467,7 +467,9 @@ pub fn archon_attack(g: &mut Game, p: PlayerId, d: PlayerId) -> Res {
     };
     edict(g, d, false)?;
     let n = g.player(d).hand.len() as u64;
-    if n > 0 {
+    if crate::human::is_human(g, d) {
+        crate::engine::cast::discard_worst(g, d, 1)?; // practice mode: the person chooses the card
+    } else if n > 0 {
         let i = g.rng.below(n) as usize;
         discard_index(g, d, i)?;
     }
@@ -918,7 +920,9 @@ pub fn resolve_blocks(
                     cardcode::ring_damage(g, p, a, d)?; // the Ring, level 4: each opponent loses 3
                     if equipped(g, a, Tag::Sword) {
                         let n = g.player(d).hand.len() as u64;
-                        if n > 0 {
+                        if crate::human::is_human(g, d) {
+                            crate::engine::cast::discard_worst(g, d, 1)?; // practice mode: the person chooses the card
+                        } else if n > 0 {
                             let i = g.rng.below(n) as usize;
                             discard_index(g, d, i)?;
                         }
