@@ -272,6 +272,9 @@ fn can_act_abilities(g: &mut Game, q: PlayerId) -> Res<bool> {
 /// counter)?
 pub fn can_respond(g: &Game, q: PlayerId) -> bool {
     let have = engine::mana::total_mana(g, q, false) + g.player(q).pool.total();
+    if engine::stack::counter_on_top(g, q).is_some_and(|c| g.db.get(c).cmc <= have) {
+        return true; // a counterspell on top of the library under a Mystic Forge
+    }
     if g.player(q).hand.iter().any(|&c| {
         let d = g.db.get(c);
         legal::instant_speed(g, q, c) && d.cmc <= have && !d.land

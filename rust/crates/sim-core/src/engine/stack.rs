@@ -921,7 +921,9 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
     if top.ctx.counter.is_some() && crate::impls::t6_redirects::redirect_counter(g, q, top_id)? {
         return Ok(());
     }
-    if !hand.iter().any(|&x| g.db.get(x).tag(Tag::Ctr) || &*g.db.get(x).name == "Venser, Shaper Savant") {
+    if counter_on_top(g, q).is_none()
+        && !hand.iter().any(|&x| g.db.get(x).tag(Tag::Ctr) || &*g.db.get(x).name == "Venser, Shaper Savant")
+    {
         return Ok(()); // nothing to respond with
     }
     if !counterable(g, &top) {
@@ -944,7 +946,7 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
     if val <= 0.0 && top.aff.is_empty() {
         return Ok(());
     }
-    let nc = hand.iter().filter(|&&x| g.db.get(x).tag(Tag::Ctr)).count();
+    let nc = hand.iter().filter(|&&x| g.db.get(x).tag(Tag::Ctr)).count() + usize::from(counter_on_top(g, q).is_some());
     let key = g.player(q).key;
     let mut thr = match g.settings.counter_threshold(key) {
         Some(t) => t as f64,
@@ -1086,12 +1088,20 @@ fn pact_affordable(g: &Game, q: PlayerId) -> bool {
     lands >= 5 * (1 + g.player(q).pacts as usize) && blue >= 2
 }
 
-/// the counterspell q would use against c, if any
+/// the counterspell on top of q's library that a cast-from-the-top permission lets q cast (Mystic Forge: an artifact or
+/// colourless card). It is cast like a hand card for the response windows, from the library (`cast_counter_spell`).
+pub fn counter_on_top(g: &Game, q: PlayerId) -> Option<CardId> {
+    crate::impls::karn_engines::forge_top_card(g, q).filter(|&c| g.db.get(c).tag(Tag::Ctr))
+}
+
+/// the counterspell q would use against c, if any (the hand, and the top of the library under a Mystic Forge)
 pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
     let mut best: Option<CardId> = None;
+    let top = counter_on_top(g, q);
     let mut loose = false; // best is a pitch (Force of Will) or alternative-cost pick: any counter paid in mana beats it
     let cheaper = |best: Option<CardId>, ctr: CardId| best.is_none_or(|b| g.db.get(ctr).cmc < g.db.get(b).cmc);
-    for &ctr in &g.player(q).hand {
+    for &ctr in g.player(q).hand.iter().chain(top.iter()) {
+        let zone = if g.player(q).hand.contains(&ctr) { "hand" } else { "lib" };
         let d = g.db.get(ctr);
         let t = &d.tags;
         if !crate::ai::rules::followup_ok(g, q, ctr) {
@@ -1102,7 +1112,7 @@ pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
             && !t.has(Tag::Ctr)
         {
             let (cg, cp) = counter_cost(g, ctr, Some(c), Some(q));
-            if can_pay(g, q, cg, &cp, false) && castable(g, q, ctr, "hand") && cheaper(best, ctr) {
+            if can_pay(g, q, cg, &cp, false) && castable(g, q, ctr, zone) && cheaper(best, ctr) {
                 best = Some(ctr);
             }
             continue;
@@ -1110,7 +1120,7 @@ pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
         if !t.has(Tag::Ctr) || !counter_ok(g, ctr, c) {
             continue;
         }
-        if g.cast_checks() && !castable(g, q, ctr, "hand") {
+        if g.cast_checks() && !castable(g, q, ctr, zone) {
             continue;
         }
         // the free modes pay the cost increases (Defense Grid) in mana: `altcost::tax`, 0 when nothing taxes spells
@@ -1308,6 +1318,25 @@ pub fn pay_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>
 /// q casts counterspell ctr at stack item `target`. It goes on the stack (players may respond, the target's caster
 /// can counter it back), and on resolution counters the target if it's still there. True if it was cast.
 pub fn cast_counter_spell(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -> Res<bool> {
+    if !g.player(q).hand.contains(&ctr) && counter_on_top(g, q) == Some(ctr) {
+        // cast from the top of the library (Mystic Forge): it is a hand card while it is cast, and goes back on top if it
+        // is not cast after all
+        g.player_mut(q).library.pop();
+        g.player_mut(q).hand.push(ctr);
+        crate::glog!(g, "    {} casts {} from the top of the library (Mystic Forge)", g.player(q).name, g.db.get(ctr).name);
+        let r = cast_counter_spell_from_hand(g, q, ctr, target);
+        if !matches!(r, Ok(true))
+            && let Some(i) = g.player(q).hand.iter().position(|&x| x == ctr)
+        {
+            g.player_mut(q).hand.remove(i);
+            g.player_mut(q).library.push(ctr);
+        }
+        return r;
+    }
+    cast_counter_spell_from_hand(g, q, ctr, target)
+}
+
+fn cast_counter_spell_from_hand(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -> Res<bool> {
     let Some(t) = item(g, target).cloned() else { return Ok(false) };
     if !g.player(q).hand.contains(&ctr) {
         return Ok(false);

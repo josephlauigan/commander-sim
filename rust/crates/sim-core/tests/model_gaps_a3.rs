@@ -240,3 +240,58 @@ fn a_person_is_asked_whether_to_pay_a_ward() {
     assert!(sim_core::engine::ward::pay_ward(&mut g, P0, ft).unwrap(), "the person paid");
     assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped));
 }
+
+// ======================================================== item 4: Mystic Forge, a counterspell on top
+/// P1 casts a big spell; P0 has a Mystic Forge and Pact of Negation on top of the library (no cards in hand)
+fn forge_game(seed: u64) -> Game {
+    let mut g = table_with(&["karn", "kefka", "sauron"], seed, 40);
+    perm(&mut g, P0, "Mystic Forge");
+    lands(&mut g, P0, "Island", 5, false);
+    g.player_mut(P0).hand.clear();
+    let pact = take(&mut g, P0, "Pact of Negation");
+    g.player_mut(P0).library.push(pact);
+    lands(&mut g, P1, "Wastes", 8, false);
+    g.active = Some(P1);
+    g
+}
+
+#[test]
+fn the_ai_counters_from_the_top_of_the_library_under_a_mystic_forge() {
+    let pact_id = |g: &Game| card(g, "Pact of Negation");
+    let mut countered = 0;
+    for seed in 0..40 {
+        let mut g = forge_game(seed);
+        let pact = pact_id(&g);
+        assert_eq!(sim_core::engine::stack::counter_on_top(&g, P0), Some(pact), "the Forge covers it");
+        let ugin = hand(&mut g, P1, &["Ugin, the Spirit Dragon"])[0];
+        sim_core::engine::cast::cast_card(&mut g, P1, ugin, "hand".into(), sim_core::state::Ctx::default()).unwrap();
+        if g.player(P0).gy.contains(&pact) || g.player(P0).exile.contains(&pact) {
+            countered += 1;
+            assert!(!g.player(P0).library.contains(&pact) && !g.player(P0).hand.contains(&pact));
+            assert!(!has_perm(&g, P1, "Ugin, the Spirit Dragon"), "countered");
+        }
+    }
+    assert!(countered > 0, "the Pact on top was cast from the library in at least one game");
+}
+
+#[test]
+fn without_a_forge_the_top_card_is_not_a_counterspell_option() {
+    let mut g = forge_game(1);
+    let forge = perms_named(&g, P0, "Mystic Forge")[0];
+    sim_core::engine::zones::die(&mut g, forge, "destroy").unwrap();
+    assert_eq!(sim_core::engine::stack::counter_on_top(&g, P0), None);
+}
+
+#[test]
+fn a_person_can_cast_the_counterspell_from_the_top_in_response() {
+    let mut g = forge_game(3);
+    let ugin = hand(&mut g, P1, &["Ugin, the Spirit Dragon"])[0];
+    let pact = card(&g, "Pact of Negation");
+    // the legality check accepts the top card as a counterspell source (cost problem aside: Pact costs {0})
+    let why = sim_core::human::legal::check_counter(&g, P0, pact, ugin);
+    assert!(why.is_none(), "{why:?}");
+    // and the page offers it
+    let abs = sim_core::human::karn::perm_abilities(&g, P0, perms_named(&g, P0, "Mystic Forge")[0]);
+    assert!(abs.iter().any(|a| a.label.contains("Pact of Negation")), "an ability to cast it from the top");
+    assert!(sim_core::human::human::can_respond(&g, P0), "the response window opens for the top card");
+}
