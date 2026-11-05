@@ -11,7 +11,7 @@
 # the combat.rs chump rule).
 # Left out (the schema can't express it): `trigger_bonus` exactly (by the opponents alive, Curiosity, a kill in
 # range, the fourth-life draw) and in the removal and wipe utilities; the lethal test for the X drains in
-# `tutor_pick` (the X drains are wished for last here); the Zur lock targets; Hostage Taker / Skyclave /
+# `tutor_pick` (the X drains are wished for last here); the Zur lock targets; Skyclave /
 # Prayer of Binding target values; Necropotence / Sphinx / Tithe / One Ring helpers (generic priority); the
 # removal-target rules in brain.rs (`removal_adjust`, no sampling far below the best target); the wipe swing with
 # Teferi's Protection held up (`teferis_first`).
@@ -109,10 +109,6 @@ cards = ["Polluted Bonds"]
 when = ["turn<=8"]
 value = 56
 else = 38
-
-[[prio]]
-cards = ["Bribery"]
-value = 56
 
 [[prio]]
 cards = ["Ill-Gotten Inheritance", "Zur the Enchanter"]

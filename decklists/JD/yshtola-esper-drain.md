@@ -1,11 +1,11 @@
 # Y'shtola, Night's Blessed — Esper Drain
 
-Drain the table a little with every spell, then all at once. Y'shtola turns your ordinary noncreature spells into damage to every opponent and life for you, Sanguine Bond and Marauding Blight-Priest turn that life into more damage, and Exsanguinate and Debt to the Deathless finish the game. The deck wins slowly, so it is weak to fast creature pressure and to fast combo decks that win before the drain gets there.
+Drain the table a little with every spell, then all at once. Y'shtola turns your ordinary noncreature spells into damage to every opponent and life for you, Sanguine Bond and Marauding Blight-Priest turn that life into more damage, and Exsanguinate, Debt to the Deathless and Torment of Hailfire finish the game, with Cabal Coffers and Urborg paying for a big X. Exquisite Blood with Sanguine Bond is the two-card kill the tutors look for. The deck wins slowly, so it is weak to fast creature pressure and to fast combo decks that win before the drain gets there.
 
 | | |
 |---|---|
 | **Commander** | Y'shtola, Night's Blessed ({1}{W}{U}{B}, 2/4, vigilance; white-blue-black) |
-| **Bracket** | 4 (13 Game Changers: Necropotence, Notion Thief, Consecrated Sphinx, Smothering Tithe, Rhystic Study, Mystical Tutor, Vampiric Tutor, Grand Arbiter Augustin IV, Force of Will, Farewell, Teferi's Protection, Orcish Bowmasters, Serra's Sanctum) |
+| **Bracket** | 4 (14 Game Changers: Necropotence, Notion Thief, Consecrated Sphinx, Smothering Tithe, Rhystic Study, Demonic Tutor, Mystical Tutor, Vampiric Tutor, Grand Arbiter Augustin IV, Force of Will, Farewell, Teferi's Protection, Orcish Bowmasters, Serra's Sanctum) |
 | **Simulator** | deck key `yshtola`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 ## Strategy
@@ -14,7 +14,7 @@ Drain the table a little with every spell, then all at once. Y'shtola turns your
 
 Y'shtola, Night's Blessed ({1}{W}{U}{B}, 2/4, vigilance): *At the beginning of each end step, if a player lost 4 or more life this turn, you draw a card. Whenever you cast a noncreature spell with mana value 3 or greater, Y'shtola deals 2 damage to each opponent and you gain 2 life.*
 
-**Thirty-seven spells trigger her.** Every noncreature spell in the list with mana value 3 or more counts: rocks (Chromatic Lantern, Coalition Relic, Champion's Helm, Conjurer's Closet), lock Auras, tutors, draw spells, removal and wipes. X counts too, so Exsanguinate and Debt to the Deathless with X = 1 or more trigger her. Each trigger is 6 damage across a four-player table and 2 life for you. Creatures and spells of mana value 2 or less don't trigger her.
+**Thirty-four spells trigger her.** Every noncreature spell in the list with mana value 3 or more counts: rocks and artifacts (Coalition Relic, Champion's Helm, Conjurer's Closet), lock Auras, tutors, draw spells, removal, wipes and the combo enchantments. X counts too, so Exsanguinate and Torment of Hailfire with X = 1 or more trigger her (Debt to the Deathless always does). Each trigger is 6 damage across a four-player table and 2 life for you. Creatures and spells of mana value 2 or less don't trigger her.
 
 **Her draw needs 4 life lost by one player in one turn.** One trigger is only 2 to each opponent, so a draw needs a second source in the same turn:
 - **Two triggers**, such as a removal spell on an opponent's turn plus your own main-phase spell, or two spells in one turn. Cheap instants with mana value 3 (Anguished Unmaking, Generous Gift, Your Fate Ends Here) on an opponent's turn are the easiest second trigger. Cast Away Doubt does it alone: its 2 damage plus her 2 is 4 to each opponent.
@@ -25,9 +25,9 @@ She checks at *every* end step, so instant-speed triggers on opponents' turns dr
 
 ### Game plan
 
-**Turns 1 to 3: mana.** Turn 2 Sol Ring, Arcane Signet or Talisman of Progress; Chromatic Lantern or Coalition Relic on three (each is a rock *and* a trigger once she is out). Play Y'shtola on turn 3 or 4 with a spell to follow. Keep a cheap lock Aura or Propaganda for a hand that has to deal with attackers.
+**Turns 1 to 3: mana.** Turn 2 Sol Ring, Arcane Signet or Talisman of Progress; Coalition Relic on three (a rock *and* a trigger once she is out). Suspend Profane Tutor early: it resolves two turns later. Play Y'shtola on turn 3 or 4 with a spell to follow. Keep a cheap lock Aura or Propaganda for a hand that has to deal with attackers.
 
-**Turns 4 to 6: the engine.** Every turn cast a spell of mana value 3 or more. Prefer trigger spells first, while the opponents' life is high and blockers don't matter. Look for Sanguine Bond first (the tutors find it: Diabolic Tutor, Dark Petition, Idyllic Tutor, Vampiric Tutor). Lock or remove the biggest creature and put Propaganda out so the table can't attack you.
+**Turns 4 to 6: the engine.** Every turn cast a spell of mana value 3 or more. Prefer trigger spells first, while the opponents' life is high and blockers don't matter. Look for Sanguine Bond first, then Exquisite Blood (the tutors find them: Demonic Tutor, Diabolic Tutor, Dark Petition, Profane Tutor, Idyllic Tutor, Vampiric Tutor). Lock or remove the biggest creature and put Propaganda out so the table can't attack you.
 
 **Late game.** The first trigger usually lands by turn 6 to 8. Count before you cast an X spell: Exsanguinate or Debt to the Deathless plus Y'shtola's trigger plus the Blight-Priest's lifegain pings plus Bond often kills two players in one turn. If the table is not close, keep drawing and taxing.
 
@@ -37,7 +37,7 @@ She checks at *every* end step, so instant-speed triggers on opponents' turns dr
 - **Marauding Blight-Priest:** whenever you gain life, each opponent loses 1. That's one more to everyone per trigger, and per drain.
 - **Ill-Gotten Inheritance:** 1 to each opponent and 1 life every upkeep (which sets off the Priest and Bond). {5}{B}, sacrifice: 4 damage to an opponent and 4 life.
 - **Urborg Syphon-Mage:** {2}{B}, {T}, discard a card: each other player loses 2 and you gain the total. Discard spare lands.
-- **Static Net:** exiles an opponent's nonland permanent and gains you 2 life, a lifegain event of its own on top of her trigger.
+- **Exquisite Blood:** whenever an opponent loses life, you gain that much. With Sanguine Bond out the two loop: each gain makes an opponent lose life, which gains you life again, until every opponent is dead. Any trigger, drain or ping starts it.
 - **Polluted Bonds:** whenever a land an opponent controls enters, they lose 2 and you gain 2. Each opponent's land drop is a drain plus a lifegain event for the Priest and Bond, and casting it triggers her too.
 - **Cast Away Doubt:** draw two; it deals 2 damage to each player, so with her trigger each opponent loses 4 (you take 2 and gain 2).
 
@@ -49,26 +49,26 @@ Exsanguinate (each opponent loses X) and Debt to the Deathless (each opponent lo
 - Y'shtola: 2 more to each opponent;
 - Blight-Priest: 1 to each opponent for each lifegain event.
 
-The second opponent dies too if they're at 12. Debt to the Deathless is the best closer in the deck: save mana for it. Mystical Tutor ({U}) can put Exsanguinate or Debt to the Deathless on top at the end of an opponent's turn so you draw it for your own.
+The second opponent dies too if they're at 12. Debt to the Deathless is the best closer in the deck: save mana for it. **Torment of Hailfire** ({X}{B}{B}) is the third X spell: X times, each opponent loses 3 life unless they sacrifice a nonland permanent or discard a card, so a big X kills or strips the table.
+
+**Cabal Coffers + Urborg is the big X.** With Urborg out every land is a Swamp, so L lands make 2L - 3 mana with Coffers (11 at seven lands, 15 at nine). **Expedition Map** and **Urza's Cave** ({3}, {T}, sacrifice: search for a land, put it onto the battlefield tapped) find whichever half is missing; when both are out, the Cave fetches the land that fixes the colour the hand needs. Mystical Tutor ({U}) can put Exsanguinate or Debt to the Deathless on top at the end of an opponent's turn so you draw it for your own.
 
 ### Draw and engines
 
 **Orcish Bowmasters punishes the table's extra cards.** *Flash. When it enters, and whenever an opponent draws a card except the first one they draw in each of their draw steps, it deals 1 damage to any target, then you amass Orcs 1.* At this table every cantrip, Rhystic Study and wheel feeds it. Flash it in at the end of an opponent's turn, or in answer to their draw spell, and aim the ping at a mana creature or a 1-toughness combo piece (the fast decks' Kinnan, Urza and Winota lines run on those). Each ping also grows the Orc Army, a body that chips in or blocks.
 
-**Mana, then cards.** The deck usually holds more spells than it can cast, so **Smothering Tithe** comes first: each opponent who draws without {2} to spare gives you a Treasure, and casting it triggers Y'shtola. **Consecrated Sphinx** draws two whenever an opponent draws; it's a creature, so it doesn't trigger her, and it's best cast when the hand is running low. **Necropotence** skips your draw step and turns life into cards (cast it with a healthy life total; the drains refill it; your maximum hand size is seven, so spend what you draw). **Mystic Remora** draws a card when an opponent casts a noncreature spell unless they pay {4}: pay its cumulative upkeep for a turn or two at most, then let it go. **Esper Sentinel** draws a card when an opponent casts their first noncreature spell each turn, unless they pay {X} (its power). **Notion Thief** (flash) turns each extra card an opponent draws into a card for you, and goes well with **Deep Analysis**: target an opponent with it while Notion Thief is out and you draw the cards; its flashback ({1}{U}, 3 life) is a second Y'shtola trigger. **Rhystic Study** ({2}{U}) draws a card whenever an opponent casts a spell unless they pay {1}, and casting it triggers Y'shtola. The other draw spells are Read the Bones and Tezzeret's Gambit.
+**Mana, then cards.** The deck usually holds more spells than it can cast, so **Smothering Tithe** comes first: each opponent who draws without {2} to spare gives you a Treasure, and casting it triggers Y'shtola. **Consecrated Sphinx** draws two whenever an opponent draws; it's a creature, so it doesn't trigger her, and it's best cast when the hand is running low. **Necropotence** skips your draw step and turns life into cards (cast it with a healthy life total; the drains refill it; your maximum hand size is seven, so spend what you draw). **Mystic Remora** draws a card when an opponent casts a noncreature spell unless they pay {4}: pay its cumulative upkeep for a turn or two at most, then let it go. **Esper Sentinel** draws a card when an opponent casts their first noncreature spell each turn, unless they pay {X} (its power). **Notion Thief** (flash) turns each extra card an opponent draws into a card for you. **Loran of the Third Path** ({2}{W}, vigilance) taps for "you and target opponent each draw a card"; with Notion Thief out you get both cards. **Rhystic Study** ({2}{U}) draws a card whenever an opponent casts a spell unless they pay {1}, and casting it triggers Y'shtola. The other draw spells are Read the Bones and Tezzeret's Gambit.
 
-**Blink.** **Displacer Kitten** ({3}{U}) exiles and returns a nonland permanent you control whenever you cast a noncreature spell, and nearly every spell here is one: each lock, drain or draw spell also re-buys an enters trigger (Hostage Taker steals again, Skyclave Apparition exiles again, Esper Sentinel comes back fresh), or untaps a used rock. Don't blink Hostage Taker or Skyclave Apparition while the card they hold is one you want to keep exiled: the exiled card returns. **Teleportation Circle** ({3}{W}, an enchantment, so it triggers Y'shtola and counts for Serra's Sanctum) does the same to one creature or artifact at each of your end steps, and **Conjurer's Closet** ({5}, an artifact, so casting it triggers Y'shtola) to one creature. With the Circle and the Closet both out, two enters triggers come back every turn: Orcish Bowmasters pings and amasses again, Skyclave Apparition exiles again.
-
-**Take their cards.** Hostage Taker (exiles their best creature or artifact: cast it before the Taker leaves the battlefield, or it goes back to its owner) lets you cast an opponent's card with mana of any type. Bribery takes a creature outright. A stolen noncreature spell with mana value 3 or more triggers Y'shtola like your own.
+**Blink.** **Displacer Kitten** ({3}{U}) exiles and returns a nonland permanent you control whenever you cast a noncreature spell, and nearly every spell here is one: each lock, drain or draw spell also re-buys an enters trigger (Loran destroys another artifact or enchantment, Skyclave Apparition exiles again, Esper Sentinel comes back fresh), or untaps a used rock. Loran is the best target: every blink is removal on the rocks, engines and stax pieces that beat this deck. Don't blink Skyclave Apparition while the card it holds is one you want to keep exiled: the exiled card returns. **Teleportation Circle** ({3}{W}, an enchantment, so it triggers Y'shtola and counts for Serra's Sanctum) does the same to one creature or artifact at each of your end steps, and **Conjurer's Closet** ({5}, an artifact, so casting it triggers Y'shtola) to one creature. With the Circle and the Closet both out, two enters triggers come back every turn: Orcish Bowmasters pings and amasses again, Loran destroys again.
 
 **Discount.** Grand Arbiter Augustin IV makes your white and blue spells cost {1} less each (a white-and-blue spell {2} less) and the opponents' spells {1} more. **Venat, Heart of Hydaelyn** draws a card the first time each turn you cast a legendary spell (Y'shtola, Augustin, Zur, Sheoldred); its {7} ability exiles a nonland permanent and flips it to Hydaelyn, the Mothercrystal, which gives another creature a +1/+1 counter and indestructible each turn (and draws a card if it is legendary, such as Y'shtola).
 
 ### Keep the table off you
 
 Y'shtola is a 2/4 and the deck wins slowly. The table's creature decks are the main danger, so deal with attackers early.
-- **Pillowfort:** Propaganda taxes every attacker {2}, and **Sphere of Safety** ({4}{W}) taxes every attacker {X}, X being the number of enchantments you control (the deck runs 16). Cast them early against creature decks.
-- **Locks:** Arrest, Prison Sentence and Bound in Silence shut down threats (and each triggers Y'shtola as you cast it).
-- **Removal:** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Your Fate Ends Here, Skyclave Apparition, Prayer of Binding, Memory Trap, Static Net.
+- **Pillowfort:** Propaganda taxes every attacker {2}, and **Sphere of Safety** ({4}{W}) taxes every attacker {X}, X being the number of enchantments you control (the deck runs 15). Cast them early against creature decks.
+- **Locks:** Arrest and Bound in Silence shut down threats (and each triggers Y'shtola as you cast it).
+- **Removal:** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Your Fate Ends Here, Skyclave Apparition, Loran of the Third Path, Prayer of Binding, Memory Trap.
 - **Wipes:** Austere Command, Farewell and Toxic Deluge ({2}{B}: pay X life, all creatures get -X/-X until end of turn; a cheap answer to a wide board that also triggers Y'shtola).
 - **Counters:** Dovin's Veto stops a removal spell aimed at Y'shtola. Force of Will counters any spell (a wipe, a combo piece, a Craterhoof): cast it for {3}{U}{U}, or for free by paying 1 life and exiling a blue card from your hand. Either way it is a mana value 5 noncreature spell, so it triggers Y'shtola, and the life paid counts toward her "4 life lost" draw.
 
@@ -88,16 +88,16 @@ The damage comes mostly from Y'shtola's and Ill-Gotten Inheritance's triggers, t
 ### Weak spots and how to play around them
 
 - **Creature decks (big attackers).** The deck loses almost always to combat. Land Propaganda or Sphere of Safety early, lock or remove the biggest threat, and keep Austere Command, Farewell or Toxic Deluge for the wide boards.
-- **Fast combo decks.** The drain is too slow to race a deck that wins on turn 4 to 6; hold Dovin's Veto, Force of Will and Memory Trap / Static Net for the key piece, and Notion Thief or Mystic Remora to slow their draws.
+- **Fast combo decks.** The drain is too slow to race a deck that wins on turn 4 to 6; hold Dovin's Veto, Force of Will and Memory Trap for the key piece (Loran answers an artifact or enchantment piece), and Notion Thief or Mystic Remora to slow their draws.
 - **Removal on Y'shtola.** Keep Restoration Angel, Champion's Helm, Teferi's Protection, Dovin's Veto or Force of Will up while she is the engine.
 - **Cheap spells.** Spells of mana value 1 or 2 (Fatal Push, Path to Exile, Dovin's Veto) are good cards but don't trigger her: don't cast them if they cost a trigger.
 - **Slow starts.** Expect to reach full power around turns 6 to 8; mulligan hands with no mana or no spell of mana value 3.
 
 ## Key lines
 
-**The opening.** Turn 2 Sol Ring, Arcane Signet or Talisman of Progress, Y'shtola on turn 3 or 4. Then every turn cast a spell of mana value 3 or more. A Chromatic Lantern or Coalition Relic after her is a rock *and* a trigger.
+**The opening.** Turn 2 Sol Ring, Arcane Signet or Talisman of Progress, Y'shtola on turn 3 or 4. Then every turn cast a spell of mana value 3 or more. A Coalition Relic after her is a rock *and* a trigger.
 
-**Bond first.** Sanguine Bond is the first thing the tutors find (Diabolic Tutor, Dark Petition, Idyllic Tutor, Vampiric Tutor). It costs 5 and Zur can't fetch it. Once it's out, every trigger drains an extra 2 and every X spell drains twice.
+**Bond first, then Blood.** Sanguine Bond is the first thing the tutors find (Demonic Tutor, Diabolic Tutor, Dark Petition, Profane Tutor, Idyllic Tutor, Vampiric Tutor). It costs 5 and Zur can't fetch it. Once it's out, every trigger drains an extra 2 and every X spell drains twice. Exquisite Blood (also 5) is the next tutor target: with Bond out, the next Y'shtola trigger kills the table. With both in hand, cast Bond first; it is useful alone, Blood mostly isn't.
 
 **Sequencing a turn.**
 - **Trigger spells first,** while opponents' life is high and blockers don't matter.
@@ -112,60 +112,60 @@ The damage comes mostly from Y'shtola's and Ill-Gotten Inheritance's triggers, t
 - **Mystic Remora** early, for cards off the table's spells;
 - **a lock Aura** on the biggest threat. A fetched Aura isn't cast and doesn't target, so it goes around hexproof and ward.
 
-Zur can find Arrest, Bound in Silence, Memory Trap, Mystic Remora, Necropotence, Prison Sentence, Propaganda and Rhystic Study. (Zur's enchantment is put onto the battlefield, not cast, so it doesn't trigger Y'shtola.)
+Zur can find Arrest, Bound in Silence, Memory Trap, Mystic Remora, Necropotence, Propaganda and Rhystic Study. (Zur's enchantment is put onto the battlefield, not cast, so it doesn't trigger Y'shtola.)
 
-**Notion Thief + Deep Analysis.** Target an opponent with Deep Analysis while Notion Thief is out and you draw the cards; its flashback ({1}{U}, 3 life) is a second Y'shtola trigger.
+**The Coffers turn.** With Urborg and Cabal Coffers out (Expedition Map or Urza's Cave finds the missing one), seven lands make 11 mana: Debt to the Deathless for X = 4 plus another trigger spell, or Torment of Hailfire for a big X.
 
 ## Mana and consistency
 
 The list is exactly 100 cards.
 
-37 lands (16 nonbasic, 6 Plains, 7 Island, 8 Swamp) plus six rocks: Sol Ring, Arcane Signet, Talisman of Progress, Talisman of Hierarchy, Chromatic Lantern, Coalition Relic. **Serra's Sanctum** taps for {W} per enchantment you control, and that includes the removal Auras on opponents' creatures (you control the Aura), so Arrest or Prison Sentence also adds a mana. With 16 enchantments it taps for three or more by the mid-game. **Urborg, Tomb of Yawgmoth** makes every land a Swamp in addition to its other types, so every land can tap for {B}: it fixes Necropotence and Sheoldred, the Apocalypse and replaces a basic Swamp at no cost (the fetches can't find it, but they still have 8 Swamps). **Cabal Coffers** ({2}, {T}: add {B} for each Swamp you control) took a Plains slot (JD, 2026-11-04): with Urborg out every land is a Swamp, so L lands make 2L - 3 mana (11 at seven lands) for Exsanguinate, Debt to the Deathless or two big spells in a turn.
+37 lands (17 nonbasic, 6 Plains, 6 Island, 8 Swamp) plus five rocks: Sol Ring, Arcane Signet, Talisman of Progress, Talisman of Hierarchy, Coalition Relic. **Serra's Sanctum** taps for {W} per enchantment you control, and that includes the removal Auras on opponents' creatures (you control the Aura), so Arrest or Bound in Silence also adds a mana. With 15 enchantments it taps for three or more by the mid-game. **Urborg, Tomb of Yawgmoth** makes every land a Swamp in addition to its other types, so every land can tap for {B}: it fixes Necropotence and Sheoldred, the Apocalypse and replaces a basic Swamp at no cost (the fetches can't find it, but they still have 8 Swamps). **Cabal Coffers** ({2}, {T}: add {B} for each Swamp you control) took a Plains slot (JD, 2026-11-04): with Urborg out every land is a Swamp, so L lands make 2L - 3 mana (11 at seven lands) for Exsanguinate, Debt to the Deathless, Torment of Hailfire or two big spells in a turn. **Urza's Cave** (an Island for a land, JD 11/04 package) taps for {C}, or for {B} with Urborg out; {3}, {T}, sacrifice it to fetch Urborg, Coffers or the colour the hand is missing.
 
 | Measure | Count | Note |
 | --- | --- | --- |
 | White lands | 14 | 6 Plains plus Serra's Sanctum, Adarkar Wastes, Caves of Koilos, Command Tower, Tundra, Scrubland, Hallowed Fountain, Godless Shrine |
-| Blue lands | 14 | 7 Island plus Adarkar Wastes, Command Tower, Underground River, Tundra, Underground Sea, Hallowed Fountain, Watery Grave |
+| Blue lands | 13 | 6 Island plus Adarkar Wastes, Command Tower, Underground River, Tundra, Underground Sea, Hallowed Fountain, Watery Grave |
 | Black lands | 17 (all 37 with Urborg out) | 8 Swamp plus Urborg, Tomb of Yawgmoth, Cabal Coffers (with a Swamp out), Caves of Koilos, Command Tower, Underground River, Underground Sea, Scrubland, Watery Grave, Godless Shrine |
 | Fetch lands | 3 | Flooded Strand (W/U), Polluted Delta (U/B), Marsh Flats (W/B): each finds a basic or any dual or shock of its two types, for 1 life |
+| Colourless only | 1 | Urza's Cave ({B} with Urborg out) |
 | Always enter tapped | 0 | no land always enters tapped |
 | Sometimes enter tapped | 3 | the shocks (Hallowed Fountain, Watery Grave, Godless Shrine), unless you pay 2 life |
 
-Black is the main colour (Necropotence's {B}{B}{B}, the X drains' {B}{B}), so it has the most sources. Blue has the fewest. Most blue spells cost a single {U}, and Bribery's {U}{U} is the exception. Each fetch finds the colour the hand is short of, and cracking one turns on Fatal Push's revolt (destroy a creature with mana value 4 or less).
+Black is the main colour (Necropotence's {B}{B}{B}, the X drains' {B}{B}), so it has the most sources. Blue has the fewest. Most blue spells cost a single {U}; Force of Will's {U}{U} is the exception, and it can be cast for free. Each fetch finds the colour the hand is short of, and cracking one turns on Fatal Push's revolt (destroy a creature with mana value 4 or less).
 
-**Curve.** One-drops 7, two-drops 7, three-drops 22, four-drops 17 (counting Y'shtola), five 7, six 3. Average mana value about 3.3, with Exsanguinate and Debt counted at X = 0. It is a slow curve by design: Y'shtola pays you for mana value 3 and up.
+**Curve.** Profane Tutor at 0 (suspended for {1}{B}), one-drops 8, two-drops 9, three-drops 21, four-drops 14 (counting Y'shtola), five 7, six 3. Average mana value about 3.1, with the X spells counted at X = 0. It is a slow curve by design: Y'shtola pays you for mana value 3 and up.
 
-**Card types.** 14 creatures (plus Y'shtola; Esper Sentinel is an artifact creature, counted here), 16 enchantments, 8 artifacts, 11 instants, 13 sorceries, no planeswalkers.
+**Card types.** 14 creatures (plus Y'shtola; Esper Sentinel is an artifact creature, counted here), 15 enchantments, 8 artifacts, 11 instants, 14 sorceries, no planeswalkers.
 
 **Finding cards.**
 - **Engines:** Necropotence, Consecrated Sphinx, Mystic Remora, Esper Sentinel, Notion Thief, and her own end-step draw (Orcish Bowmasters turns the opponents' extra draws into damage and Orcs).
 - **Mana:** Smothering Tithe's Treasures, on top of the rocks.
-- **Draw spells:** Read the Bones, Deep Analysis, Tezzeret's Gambit, Cast Away Doubt; Rhystic Study as the engine.
-- **Cards taken from opponents:** Hostage Taker, Bribery.
-- **Tutors:** Diabolic Tutor, Dark Petition and Vampiric Tutor (any card; Vampiric puts it on top), Idyllic Tutor (an enchantment), Mystical Tutor (an instant or sorcery, to the top), and Zur's attacks.
+- **Draw spells:** Read the Bones, Tezzeret's Gambit, Cast Away Doubt, Loran's tap; Rhystic Study as the engine.
+- **Tutors:** Demonic Tutor, Diabolic Tutor, Dark Petition, Profane Tutor (suspend 2) and Vampiric Tutor (any card; Vampiric puts it on top), Idyllic Tutor (an enchantment), Mystical Tutor (an instant or sorcery, to the top), and Zur's attacks.
+- **Land tutors:** Expedition Map and Urza's Cave (Urborg or Cabal Coffers, or the missing colour).
 
 **Interaction.**
 - **Counterspells (two):** Dovin's Veto, Force of Will.
 - **Spot removal spells (six):** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Your Fate Ends Here.
-- **Removal on permanents:** Skyclave Apparition, Hostage Taker, Prayer of Binding, Static Net, Memory Trap.
-- **Removal Auras (three):** Arrest, Prison Sentence, Bound in Silence.
-- **Theft:** Bribery.
+- **Removal on permanents:** Skyclave Apparition, Loran of the Third Path (an artifact or enchantment, again on every blink), Prayer of Binding, Memory Trap.
+- **Removal Auras (two):** Arrest, Bound in Silence.
 - **Board wipes (three):** Austere Command, Farewell, Toxic Deluge.
 - **Protection:** Teferi's Protection.
 
-**Life is a resource.** Necropotence, Read the Bones, Anguished Unmaking, Tezzeret's Gambit, Deep Analysis's flashback, Caves of Koilos, Adarkar Wastes, Underground River, the fetch lands (1 each), the shocks (2 to enter untapped) and Talisman of Progress all cost life. The deck gains it back steadily: 2 per Y'shtola trigger, plus every drain.
+**Life is a resource.** Necropotence, Read the Bones, Anguished Unmaking, Tezzeret's Gambit, Caves of Koilos, Adarkar Wastes, Underground River, the fetch lands (1 each), the shocks (2 to enter untapped) and Talisman of Progress all cost life. The deck gains it back steadily: 2 per Y'shtola trigger, plus every drain.
 
 ## Bracket and Rule 0
 
-**Bracket 4,** with thirteen Game Changers: **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Rhystic Study**, **Mystical Tutor**, **Vampiric Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell**, **Teferi's Protection**, **Orcish Bowmasters** and **Serra's Sanctum**. There are no infinite combos, no mass land destruction and no extra turns, so it's a Bracket 4 deck by its Game Changers, not by combos.
+**Bracket 4,** with fourteen Game Changers: **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Rhystic Study**, **Demonic Tutor**, **Mystical Tutor**, **Vampiric Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell**, **Teferi's Protection**, **Orcish Bowmasters** and **Serra's Sanctum**. It has one two-card infinite combo (Exquisite Blood + Sanguine Bond), no mass land destruction and no extra turns.
 
 Disclose before the game:
 
-- **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Rhystic Study**, **Mystical Tutor**, **Vampiric Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell**, **Teferi's Protection**, **Orcish Bowmasters** and **Serra's Sanctum** (the thirteen Game Changers).
+- **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Rhystic Study**, **Demonic Tutor**, **Mystical Tutor**, **Vampiric Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell**, **Teferi's Protection**, **Orcish Bowmasters** and **Serra's Sanctum** (the fourteen Game Changers).
 - **Free counterspell and board wipe:** Force of Will (pitch a blue card) and Farewell (exiles creatures, artifacts, enchantments and graveyards as you choose).
-- **Three tutors** (Diabolic Tutor, Dark Petition, Idyllic Tutor) plus Mystical Tutor and Vampiric Tutor, and Zur's enchantment search.
+- **Seven tutors** (Demonic, Diabolic, Dark Petition, Profane, Idyllic, Mystical, Vampiric), Zur's enchantment search, and Expedition Map / Urza's Cave for the Coffers lands.
 - **The win is a drain:** Y'shtola pings the table on every big spell, and Exsanguinate or Debt to the Deathless with Sanguine Bond can take out two players in one turn.
-- **Theft:** Bribery and Hostage Taker use opponents' cards.
+- **Two-card combo:** Exquisite Blood + Sanguine Bond drains the whole table from any life change.
 
 Re-check the official list at https://commanderbrackets.com/faq before an event.
 
@@ -173,7 +173,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Y'shtola, Night's Blessed
 
-**Creatures (14).** Consecrated Sphinx, Displacer Kitten, Esper Sentinel, Grand Arbiter Augustin IV, Hostage Taker, Marauding Blight-Priest, Notion Thief, Orcish Bowmasters, Restoration Angel, Sheoldred, the Apocalypse, Skyclave Apparition, Urborg Syphon-Mage, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal, Zur the Enchanter
+**Creatures (14).** Consecrated Sphinx, Displacer Kitten, Esper Sentinel, Grand Arbiter Augustin IV, Loran of the Third Path, Marauding Blight-Priest, Notion Thief, Orcish Bowmasters, Restoration Angel, Sheoldred, the Apocalypse, Skyclave Apparition, Urborg Syphon-Mage, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal, Zur the Enchanter
 
 **Enchantments (15).** Arrest, Bound in Silence, Exquisite Blood, Ill-Gotten Inheritance, Memory Trap, Mystic Remora, Necropotence, Polluted Bonds, Prayer of Binding, Propaganda, Rhystic Study, Sanguine Bond, Smothering Tithe, Sphere of Safety, Teleportation Circle
 
@@ -181,7 +181,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Instants (11).** Anguished Unmaking, Dovin's Veto, Fatal Push, Force of Will, Generous Gift, Go for the Throat, Mystical Tutor, Path to Exile, Teferi's Protection, Vampiric Tutor, Your Fate Ends Here
 
-**Sorceries (14).** Austere Command, Bribery, Cast Away Doubt, Dark Petition, Debt to the Deathless, Demonic Tutor, Diabolic Tutor, Exsanguinate, Farewell, Idyllic Tutor, Read the Bones, Tezzeret's Gambit, Torment of Hailfire, Toxic Deluge
+**Sorceries (14).** Austere Command, Cast Away Doubt, Dark Petition, Debt to the Deathless, Demonic Tutor, Diabolic Tutor, Exsanguinate, Farewell, Idyllic Tutor, Profane Tutor, Read the Bones, Tezzeret's Gambit, Torment of Hailfire, Toxic Deluge
 
 **Lands (37).** Adarkar Wastes, Cabal Coffers, Caves of Koilos, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Polluted Delta, Scrubland, Serra's Sanctum, Tundra, Underground River, Underground Sea, Urborg, Tomb of Yawgmoth, Urza's Cave, Watery Grave, 6 Plains, 6 Island, 8 Swamp
 
@@ -194,7 +194,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Arrest
 1 Austere Command
 1 Bound in Silence
-1 Bribery
 1 Cabal Coffers
 1 Cast Away Doubt
 1 Caves of Koilos
@@ -222,9 +221,9 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Godless Shrine
 1 Grand Arbiter Augustin IV
 1 Hallowed Fountain
-1 Hostage Taker
 1 Idyllic Tutor
 1 Ill-Gotten Inheritance
+1 Loran of the Third Path
 1 Marauding Blight-Priest
 1 Marsh Flats
 1 Memory Trap
@@ -237,6 +236,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Polluted Bonds
 1 Polluted Delta
 1 Prayer of Binding
+1 Profane Tutor
 1 Propaganda
 1 Read the Bones
 1 Restoration Angel

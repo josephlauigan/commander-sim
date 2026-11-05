@@ -10,6 +10,10 @@ Her losses are still fast combo (Kinnan, Urza, Zur) and Miirym combat, about 49%
 Expedition Map, Urza's Cave for Deep Analysis, Prison Sentence, Chromatic Lantern, Static Net, an Island). Measured
 26.1% vs T5 (+1.3, noise ±2.4) with the board-aware land choice before the Cave/Map utility change; the list as
 applied (that utility change, Torment in the plan file's X-drain wish) is not measured yet.
+**Revised 11/04 (JD's physical list; not simulated):** Demonic Tutor took Bribery's slot and Profane Tutor took Hostage
+Taker's, so the package's Deep Analysis slot goes to **Loran of the Third Path** instead: a blink target (Displacer
+Kitten, Restoration Angel, Conjurer's Closet, Teleportation Circle) whose enter trigger destroys an artifact or
+enchantment each time, and whose tap draws a card (the opponent draws too). Seven tutors; no theft left. Measure over T5.
 
 ## Weaknesses (by evidence)
 - **Lowest win rate when cast** (adaptive card report, `audit/yshtola/2026-10-17-adnaus/K0-analyze-adaptive.txt`;
