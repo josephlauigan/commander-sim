@@ -107,7 +107,14 @@ pub(crate) fn worst_land(g: &Game, q: PlayerId) -> Option<PermId> {
 /// q sacrifices its least useful land (Smallpox, Pox): it goes to the graveyard, the sacrifice triggers see it, and
 /// an opposing Tergrid takes it. Called by the ability language's land sacrifice too.
 pub fn sac_worst_land(g: &mut Game, q: PlayerId) -> Res {
-    let Some(l) = worst_land(g, q) else { return Ok(()) };
+    let Some(mut l) = worst_land(g, q) else { return Ok(()) };
+    if crate::human::is_human(g, q) && g.player(q).lands.len() > 1 {
+        // practice mode: the person picks the land
+        let lands = g.player(q).lands.clone();
+        if let Some(m) = crate::human::cards::pick_perm(g, q, "choose", "Sacrifice which land?", &lands, None)? {
+            l = m;
+        }
+    }
     let cd = g.perm(l).card();
     crate::glog!(g, "    {} sacrifices {}", pname(g, q), g.db.get(cd).name);
     super::lands::sac_land(g, q, l)?;
@@ -689,6 +696,11 @@ const FLARE: &str = "Flare of Malice";
 
 /// q's creature or planeswalker of greatest mana value (its least valuable among those)
 fn flare_victim(g: &Game, q: PlayerId) -> Option<PermId> {
+    flare_cands(g, q).into_iter().min_by(|&a, &b| sac_worth(g, a).total_cmp(&sac_worth(g, b)))
+}
+
+/// q's creatures and planeswalkers of the greatest mana value (what Flare of Malice lets q sacrifice from)
+fn flare_cands(g: &Game, q: PlayerId) -> Vec<PermId> {
     let cp: Vec<PermId> = g
         .player(q)
         .perms
@@ -701,13 +713,24 @@ fn flare_victim(g: &Game, q: PlayerId) -> Option<PermId> {
         })
         .collect();
     let mv = |m: PermId| g.perm(m).cd.map_or(0, |c| g.db.get(c).cmc);
-    let top = cp.iter().map(|&m| mv(m)).max()?;
-    cp.into_iter().filter(|&m| mv(m) == top).min_by(|&a, &b| sac_worth(g, a).total_cmp(&sac_worth(g, b)))
+    let Some(top) = cp.iter().map(|&m| mv(m)).max() else { return vec![] };
+    cp.into_iter().filter(|&m| mv(m) == top).collect()
 }
 
 /// Each opponent sacrifices a creature or planeswalker with the greatest mana value among those they control.
 fn flare_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     for q in apnap(g, p).into_iter().filter(|&q| q != p) {
+        if crate::human::is_human(g, q) {
+            // practice mode: the person picks among their greatest-mana-value creatures and planeswalkers
+            let cands = flare_cands(g, q);
+            crate::human::choices::sacrifice_permanent(
+                g,
+                q,
+                &cands,
+                &format!("{FLARE}: sacrifice a creature or planeswalker with the greatest mana value"),
+            )?;
+            continue;
+        }
         if let Some(m) = flare_victim(g, q) {
             crate::glog!(g, "    {} sacrifices {} ({FLARE})", pname(g, q), g.perm(m).name);
             die(g, m, "sac")?;

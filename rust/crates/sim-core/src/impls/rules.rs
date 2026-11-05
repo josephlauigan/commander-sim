@@ -1224,7 +1224,10 @@ fn plague(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 fn triumph(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     for q in g.opps(p).collect::<Vec<_>>() {
         let cs = live_creatures(g, q);
-        if let Some(x) = min_by(&cs, |x| pval(g, x)) {
+        if crate::human::is_human(g, q) && !cs.is_empty() {
+            // practice mode: the person picks the creature
+            crate::human::choices::sacrifice_creature(g, q, &cs, "Liliana's Triumph: sacrifice a creature")?;
+        } else if let Some(x) = min_by(&cs, |x| pval(g, x)) {
             die(g, x, "sac")?;
         }
     }

@@ -793,31 +793,16 @@ const TO_FIX: &[&str] = &[
     "Archfiend of Depravity", // keeps the two best creatures for the person: impls/t3.rs depravity
     "Braids, Cabal Minion", // sacrifices the person's least valuable artifact, creature or land: ai/decks.rs braids_sacrifice
     "Burglar Rat",          // "each opponent discards": impls/t3.rs discard_worst_for (least worth)
-    "Butcher of Malakir",   // dies trigger, DSL "sacrifice": dsl/mod.rs
     "Chittering Rats",      // puts the person's least worth card on top of the library: impls/t3.rs rats
     "Council's Judgment",   // the person's vote is cast by the AI: impls/rules.rs judgment
-    "Demon's Disciple",     // enter trigger, DSL "sacrifice"
-    "Dictate of Erebos",    // dies trigger, DSL "sacrifice"
     "Elderfang Disciple",   // "each opponent discards": impls/t3.rs discard_worst_for
-    "Flare of Malice",      // DSL "sacrifice" (and a tie for the greatest mana value)
-    "Fleshbag Marauder",    // enter trigger, DSL "sacrifice"
-    "Grave Pact",           // dies trigger, DSL "sacrifice"
     "Liliana of the Veil",  // -6: the person's pile is chosen for them: impls/rules.rs lotv_ult
     "Liliana, Dreadhorde General", // -9: the permanents the person keeps are chosen for them: impls/rules.rs ldg_ult
-    "Liliana's Triumph",    // DSL "sacrifice"
-    "Mire in Misery",       // DSL "sacrifice"
-    "Nezumi Informant",     // enter trigger, DSL "discard": a random card
     "Painful Quandary",     // discards a card (or loses 5 life) for the person: impls/rules.rs quandary
     "Rakdos, Patron of Chaos", // sacrifices two permanents instead of asking: impls/t12_kaalia_sythis.rs rakdos_end
-    "Rankle's Prank",       // DSL modal "sacrifice" / "discard"
-    "Sheoldred's Edict",    // DSL modal "sacrifice"
     "Single Combat",        // keeps the person's best creature or planeswalker: impls/t12_lightpaws.rs
     "Sword of Feast and Famine", // combat damage: a random discard: engine/combat.rs
-    "The Raven Man",        // {3}{B},{T}: DSL "discard": a random card
     "The Tabernacle at Pendrell Vale", // pays {1} or loses each creature for the person: engine/turn.rs upkeep
-    "Vicious Rumors",       // DSL "discard": a random card
-    "Virus Beetle",         // enter trigger, DSL "discard": a random card
-    "Vraska's Fall",        // DSL "sacrifice"
     "Wandering Archaic // Explore the Vastlands", // pays {2} for the person: impls/t45_chulane_kinnan.rs archaic_cast
 ];
 
