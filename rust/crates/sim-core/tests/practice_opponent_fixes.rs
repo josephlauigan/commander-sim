@@ -460,3 +460,45 @@ fn attack_tax_the_person_may_send_fewer_than_they_can_pay_for() {
     assert_eq!(g.player(P1).life, 40 - 6, "only the Titan attacked");
     assert_eq!(g.player(P0).lands.iter().filter(|&&l| !g.perm(l).tapped).count(), 2, "{{2}} for one attacker");
 }
+
+// ------------------------------------------------------------------ Chain of Vapor
+fn chain_table(h: &Arc<ScriptHuman>) -> Game {
+    let mut g = setup(h);
+    perm(&mut g, P0, "Sol Ring"); // the AI's target
+    perm(&mut g, P1, "Armored Warhorse");
+    lands(&mut g, P0, "Island", 2, false);
+    lands(&mut g, P0, "Forest", 1, false);
+    g
+}
+
+#[test]
+fn chain_of_vapor_the_person_may_sacrifice_a_land_and_copy_it_at_a_new_target() {
+    let h = person(|r| {
+        if r.prompt.contains("which land") {
+            with(r, "Forest")
+        } else if r.prompt.contains("returns which") {
+            with(r, "Warhorse")
+        } else {
+            None // yes to the copy
+        }
+    });
+    let mut g = chain_table(&h);
+    cast_p1(&mut g, "Chain of Vapor");
+    assert!(hand_has(&g, P0, "Sol Ring"), "the AI's Chain returned the person's Sol Ring");
+    assert!(asked(&h, "sacrifice a land to copy"), "the person was offered the copy");
+    assert!(asked(&h, "which land") && asked(&h, "returns which"));
+    assert!(gy_has(&g, P0, "Forest") && g.player(P0).lands.len() == 2, "the Forest the person picked was sacrificed");
+    assert!(!has_perm(&g, P1, "Armored Warhorse"), "the copy returned the new target");
+    assert!(g.player(P1).hand.iter().any(|&c| &*g.db.get(c).name == "Armored Warhorse"));
+}
+
+#[test]
+fn chain_of_vapor_the_person_may_decline() {
+    let h = person(|r| if r.prompt.contains("sacrifice a land to copy") { with(r, "no") } else { None });
+    let mut g = chain_table(&h);
+    cast_p1(&mut g, "Chain of Vapor");
+    assert!(asked(&h, "sacrifice a land to copy"));
+    assert!(hand_has(&g, P0, "Sol Ring"));
+    assert_eq!(g.player(P0).lands.len(), 3, "no land sacrificed");
+    assert!(has_perm(&g, P1, "Armored Warhorse"), "and no copy");
+}

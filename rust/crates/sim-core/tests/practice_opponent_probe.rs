@@ -787,17 +787,12 @@ fn every_opponent_effect_asks_the_person() {
     }
 }
 
-/// gaps found on 2026-11-04 and not yet fixed: the AI chooses (or pays, or refuses) for the person. Fixing one means
+/// gaps found on 2026-11-04 and not yet fixed (all 29 were fixed by the opponent-fixes task, so this is empty): the AI chooses (or pays, or refuses) for the person. Fixing one means
 /// taking it off this list; a new gap fails the test. Where the code is: `rust/agents/report-opponent-probe.md`.
-const TO_FIX: &[&str] = &[
-];
+const TO_FIX: &[&str] = &[];
 
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
-    (
-        "Chain of Vapor",
-        "the bounce is P1's own target (Chandra). The controller's optional 'sacrifice a land to copy it' is never offered to the person at all: not modelled (a tag `rem` bounce), see the report",
-    ),
     (
         "Dack Fayden, Helping Hand",
         "the donated All-Fates Stalker enters under P1, so its enter trigger is P1's and P1 chooses the person's creature to exile; the rules say so",

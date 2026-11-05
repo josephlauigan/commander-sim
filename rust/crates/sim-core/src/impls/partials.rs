@@ -1494,7 +1494,12 @@ fn prio_0(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
 fn chain(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     let Some(t) = ctx.target.filter(|&t| g.perm(t).on_bf) else { return Ok("gy") };
     let q = g.perm(t).owner;
+    let ctrl = g.players.iter().find(|pl| pl.perms.contains(&t)).map_or(q, |pl| pl.id);
     apply_removal(g, Some(p), t, "bounce", None)?;
+    if crate::human::is_human(g, ctrl) {
+        chain_person(g, ctrl)?; // practice mode: the person decides about the copy
+        return Ok("gy");
+    }
     if q == p || g.player(q).lands.len() < 5 {
         return Ok("gy");
     }
@@ -1512,6 +1517,48 @@ fn chain(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
         apply_removal(g, Some(q), back, "bounce", None)?;
     }
     Ok("gy")
+}
+
+/// Chain of Vapor for a person: "that permanent's controller may sacrifice a land of their choice. If the player does, they
+/// may copy this spell and may choose a new target for that copy." The copy bounces another nonland permanent.
+fn chain_person(g: &mut Game, q: PlayerId) -> Res {
+    if g.player(q).lands.is_empty() {
+        return Ok(());
+    }
+    if !crate::human::choices::yes_no(g, q, "Chain of Vapor: sacrifice a land to copy it?")? {
+        return Ok(());
+    }
+    let lands = g.player(q).lands.clone();
+    let Some(l) = crate::human::cards::pick_perm(g, q, "choose", "Chain of Vapor: sacrifice which land?", &lands, None)?
+    else {
+        return Ok(());
+    };
+    let cd = g.perm(l).card();
+    crate::glog!(g, "    {} sacrifices {} to copy Chain of Vapor", pname(g, q), g.db.get(cd).name);
+    super::lands::sac_land(g, q, l)?;
+    let cands: Vec<PermId> = g
+        .players
+        .iter()
+        .filter(|pl| pl.alive)
+        .flat_map(|pl| pl.perms.iter().copied())
+        .filter(|&m| g.perm(m).on_bf && g.perm(m).cd.is_some() && !(g.perm(m).owner != q && untargetable(g, m)))
+        .collect();
+    if cands.is_empty() {
+        return Ok(());
+    }
+    let Some(back) = crate::human::cards::pick_perm(
+        g,
+        q,
+        "target",
+        "Chain of Vapor: the copy returns which nonland permanent to its owner's hand?",
+        &cands,
+        Some("don't copy it"),
+    )?
+    else {
+        return Ok(());
+    };
+    crate::glog!(g, "    {} copies Chain of Vapor, targeting {}", pname(g, q), g.perm(back).name);
+    apply_removal(g, Some(q), back, "bounce", None)
 }
 
 // ======================================================== Coat of Arms
