@@ -177,3 +177,66 @@ fn the_ai_still_copies_a_nonland_permanent() {
     assert_eq!(g.player(P0).perms.iter().filter(|&&m| g.perm(m).token && g.perm(m).cd == Some(sol)).count(), 2);
 }
 
+
+// ======================================================== item 3: ward on every targeting
+use sim_core::engine::{control, removal};
+
+#[test]
+fn ward_counters_a_bounce_spell_unless_the_mana_is_paid() {
+    let mut g = tbl();
+    let ft = perm(&mut g, P1, "Frost Titan"); // ward {2}
+    let bolt = card(&g, "Lightning Bolt");
+    // no mana: the bounce is countered
+    removal::apply_removal(&mut g, Some(P0), ft, "bounce", Some(bolt)).unwrap();
+    assert!(g.perm(ft).on_bf, "ward {{2}} unpaid: the spell is countered");
+    // with the mana the AI pays and the bounce happens
+    lands(&mut g, P0, "Wastes", 2, false);
+    removal::apply_removal(&mut g, Some(P0), ft, "bounce", Some(bolt)).unwrap();
+    assert!(!g.perm(ft).on_bf, "paid: bounced");
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped), "{{2}} was tapped for the ward");
+}
+
+#[test]
+fn ward_counters_a_targeted_ability_too() {
+    // an ability (no spell card): Hexing Squelcher's "pay 2 life" on a destroy ability at 4 life, and Frost Titan's mana
+    let mut g = tbl();
+    let ft = perm(&mut g, P1, "Frost Titan");
+    removal::apply_removal(&mut g, Some(P0), ft, "destroy", None).unwrap();
+    assert!(g.perm(ft).on_bf, "an ability that targets Frost Titan needs the ward {{2}} paid as well");
+    lands(&mut g, P0, "Wastes", 2, false);
+    removal::apply_removal(&mut g, Some(P0), ft, "destroy", None).unwrap();
+    assert!(!g.perm(ft).on_bf);
+    let sq = perm(&mut g, P1, "Hexing Squelcher");
+    let life = g.player(P0).life;
+    removal::apply_removal(&mut g, Some(P0), sq, "dmg9", None).unwrap();
+    assert_eq!(g.player(P0).life, life - 2, "the ability's controller paid 2 life");
+    assert!(!g.perm(sq).on_bf);
+}
+
+#[test]
+fn ward_applies_to_a_steal_and_never_to_your_own_permanent() {
+    let mut g = tbl();
+    let ft = perm(&mut g, P1, "Frost Titan");
+    assert!(!control::steal(&mut g, P0, ft, control::Duration::Permanent).unwrap(), "countered: no mana");
+    assert_eq!(g.perm(ft).owner, P1);
+    lands(&mut g, P0, "Wastes", 2, false);
+    assert!(control::steal(&mut g, P0, ft, control::Duration::Permanent).unwrap());
+    assert_eq!(g.perm(ft).owner, P0, "ward paid: the steal happens");
+    // its new controller targeting it pays nothing
+    assert!(sim_core::engine::ward::pay_ward(&mut g, P0, ft).unwrap());
+}
+
+#[test]
+fn a_person_is_asked_whether_to_pay_a_ward() {
+    // a person pays or declines the ward: the page asks, a "no" counters the effect
+    let mut g = tbl();
+    let ft = perm(&mut g, P1, "Frost Titan");
+    lands(&mut g, P0, "Wastes", 2, false);
+    seat_live(&mut g, P0, (0..8).map(|_| pick(1)).collect());
+    assert!(!sim_core::engine::ward::pay_ward(&mut g, P0, ft).unwrap(), "the person declined to pay");
+    assert!(g.player(P0).lands.iter().all(|&l| !g.perm(l).tapped));
+    g.humans = Default::default();
+    seat_live(&mut g, P0, (0..8).map(|_| pick(0)).collect());
+    assert!(sim_core::engine::ward::pay_ward(&mut g, P0, ft).unwrap(), "the person paid");
+    assert!(g.player(P0).lands.iter().all(|&l| g.perm(l).tapped));
+}

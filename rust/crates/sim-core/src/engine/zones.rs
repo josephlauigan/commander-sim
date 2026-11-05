@@ -1518,7 +1518,9 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
                 .filter(|&x| g.is_creature(x) && etgh(g, x) <= 1 && pval(g, x) >= 2.0 && !untargetable(g, x))
                 .collect();
             if let Some(b) = max_by(&x1, |x| pval(g, x)) {
-                die(g, b, "destroy")?;
+                if crate::engine::ward::pay_ward(g, p, b)? {
+                    die(g, b, "destroy")?;
+                }
             } else if let Some(q) = max_by(&opps, |o| threat(g, p, o)) {
                 lose_life(g, q, 1, Some(p), "triggers", None)?;
             }

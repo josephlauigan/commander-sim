@@ -584,6 +584,15 @@ fn sel_or_empty(s: &Option<Sel>) -> Sel {
     s.clone().unwrap_or_default()
 }
 
+/// a targeted selection (not "self", "all" or the event's permanent) of an opponent's permanent: its ward is paid first
+/// (`ward::pay_ward`); false when the ward counters the effect
+fn target_ok(g: &mut Game, p: PlayerId, sel: &Sel, m: PermId) -> Res<bool> {
+    if matches!(sel.sel.as_deref(), Some("self" | "all" | "event")) {
+        return Ok(true);
+    }
+    crate::engine::ward::pay_ward(g, p, m)
+}
+
 #[allow(clippy::too_many_arguments)]
 fn run(
     g: &mut Game,
@@ -826,6 +835,9 @@ fn run(
             let k = n(g, ctx);
             let sel = e.what.clone().unwrap_or(Sel { sel: Some("self".into()), ..Sel::default() });
             for m in select(g, p, &sel, false, ctx, src, spell) {
+                if !target_ok(g, p, &sel, m)? {
+                    continue;
+                }
                 // the counters step: Hardened Scales, the controller's doublers, Vorinclex (Captain Marvel)
                 repl::put_counters(g, p, m, k);
             }
@@ -833,7 +845,11 @@ fn run(
         "pump" => {
             let dp = num(g, p, e.pow.as_ref(), ctx, src);
             let dt = num(g, p, e.tgh.as_ref(), ctx, src);
-            for m in select(g, p, &sel_or_empty(&e.what), dp < 0, ctx, src, spell) {
+            let sel = sel_or_empty(&e.what);
+            for m in select(g, p, &sel, dp < 0, ctx, src, spell) {
+                if !target_ok(g, p, &sel, m)? {
+                    continue;
+                }
                 let x = g.perm_mut(m);
                 x.eot_pt = (x.eot_pt.0 + dp, x.eot_pt.1 + dt);
             }
@@ -854,7 +870,11 @@ fn run(
         }
         "grant" => {
             let kw = intern(e.keyword.as_deref().unwrap_or(""));
-            for m in select(g, p, &sel_or_empty(&e.what), false, ctx, src, spell) {
+            let sel = sel_or_empty(&e.what);
+            for m in select(g, p, &sel, false, ctx, src, spell) {
+                if !target_ok(g, p, &sel, m)? {
+                    continue;
+                }
                 let x = g.perm_mut(m);
                 if !x.eot_kw.contains(&kw) {
                     x.eot_kw.push(kw);
@@ -1124,12 +1144,20 @@ fn run(
             }
         }
         "tap" => {
-            for m in select(g, p, &sel_or_empty(&e.what), true, ctx, src, spell) {
+            let sel = sel_or_empty(&e.what);
+            for m in select(g, p, &sel, true, ctx, src, spell) {
+                if !target_ok(g, p, &sel, m)? {
+                    continue;
+                }
                 g.perm_mut(m).tapped = true;
             }
         }
         "phase_out" => {
-            for m in select(g, p, &sel_or_empty(&e.what), false, ctx, src, spell) {
+            let sel = sel_or_empty(&e.what);
+            for m in select(g, p, &sel, false, ctx, src, spell) {
+                if !target_ok(g, p, &sel, m)? {
+                    continue;
+                }
                 g.perm_mut(m).phased = true;
             }
         }

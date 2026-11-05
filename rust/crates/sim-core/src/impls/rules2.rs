@@ -1367,7 +1367,7 @@ fn fang_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     if !ability_window(g, p, Some(src), &name, None, Some(t))? || !g.perm(t).on_bf {
         return Ok(true);
     }
-    if !untargetable(g, t) {
+    if !untargetable(g, t) && crate::engine::ward::pay_ward(g, p, t)? {
         super::t3::eot(g, t, x, -x);
         if etgh(g, t) <= 0 {
             die(g, t, "sba")?;

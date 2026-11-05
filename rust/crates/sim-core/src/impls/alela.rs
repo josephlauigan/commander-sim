@@ -507,7 +507,7 @@ fn ray_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if protect_response(g, to, t, "steal", Some(p), Some(c))? || !on_bf(g, t) {
         return Ok(true);
     }
-    steal(g, p, t, true);
+    steal(g, p, t, true)?;
     g.perm_mut(t).data.set(DataKey::TapOnReturn, Val::Bool(true));
     Ok(true)
 }

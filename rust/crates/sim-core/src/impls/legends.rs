@@ -760,7 +760,7 @@ fn garland_steal(g: &mut Game, src: Src, q: PlayerId) -> Res {
     if crate::ai::protect_response(g, q, t, "steal", Some(o), cd)? || !on(g, q, t) {
         return Ok(());
     }
-    super::marchesa::steal(g, o, t, false);
+    super::marchesa::steal(g, o, t, false)?;
     let r = g.round;
     g.garland_list.push((o, t, q, r));
     g.garland = true;
@@ -1524,6 +1524,9 @@ fn sisters(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: PlayerId, ass
     let Some(b) = assign.iter().find(|x| x.0 == src).map(|x| x.1) else { return Ok(()) };
     if on(g, d, b) && can_pay(g, p, 0, "BG", false) && !untargetable(g, b) {
         pay(g, p, 0, "BG", false)?;
+        if !crate::engine::ward::pay_ward(g, p, b)? {
+            return Ok(());
+        }
         crate::glog!(g, "  Sisters of Stone Death exile {}", g.perm(b).name);
         let name = g.perm(b).name;
         *g.player_mut(d).lost_names.entry(name).or_insert(0) += 1;

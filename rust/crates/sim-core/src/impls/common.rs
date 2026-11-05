@@ -2189,31 +2189,35 @@ pub fn spark_bonus(g: &Game, phys: Option<CardId>) -> i32 {
 /// the targeting tax is ward {2}. (rules.py's Frost Titan replaces both hooks.)
 fn frost(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src && trigger_window(g, owner(g, src), Some(src), "tap a creature", None)? {
-        frost_tap(g, src);
+        frost_tap(g, src)?;
     }
     Ok(())
 }
 
 fn frost_atk(g: &mut Game, src: Src, _p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
     if atk.contains(&src) && trigger_window(g, owner(g, src), Some(src), "tap a creature", None)? {
-        frost_tap(g, src);
+        frost_tap(g, src)?;
     }
     Ok(vec![])
 }
 
-fn frost_tap(g: &mut Game, src: PermId) {
+fn frost_tap(g: &mut Game, src: PermId) -> Res {
     let cands: Vec<PermId> = g
         .opps(owner(g, src))
         .flat_map(|q| g.player(q).perms.iter().copied())
         .filter(|&x| g.is_creature(x) && !g.perm(x).phased && !untargetable(g, x))
         .collect();
-    if let Some(t) = max_by(&cands, |x| pval(g, x)) {
+    let me = owner(g, src);
+    if let Some(t) = max_by(&cands, |x| pval(g, x))
+        && crate::engine::ward::pay_ward(g, me, t)?
+    {
         g.perm_mut(t).tapped = true;
         if g.perm(t).cd.is_some() {
             let turns = g.player(owner(g, t)).turns as i64 + 1;
             g.perm_mut(t).data.set(DataKey::Frozen, Val::Int(turns));
         }
     }
+    Ok(())
 }
 
 /// Dream Trawler (Approximate): draws on attack, +1/+0 per draw; the discard-for-hexproof is used by the protection

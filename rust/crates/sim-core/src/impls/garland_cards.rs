@@ -42,7 +42,8 @@ pub fn coerce_attach(g: &mut Game, a: PermId, host: PermId) {
     let saved = vec![Val::Int(x.pow as i64), Val::Int(x.tgh as i64), Val::Bool(x.dt)];
     g.perm_mut(a).data.set(DataKey::Held, Val::List(saved));
     if g.perm(host).owner != p {
-        super::marchesa::steal(g, p, host, false);
+        // (the Aura came in through `apply_removal`, which has paid any ward already)
+        crate::engine::control::gain_control(g, p, host, crate::engine::control::Duration::Permanent);
     }
     g.perm_mut(a).attached = Some(host);
     let x = g.perm_mut(host);

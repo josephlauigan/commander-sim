@@ -31,6 +31,7 @@ pub mod stack;
 pub mod turn;
 pub mod tutors;
 pub mod values;
+pub mod ward;
 pub mod zones;
 
 /// A play-by-play line, when the game is traced (`--trace`). The arguments are only formatted then.

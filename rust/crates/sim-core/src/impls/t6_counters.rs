@@ -252,7 +252,9 @@ pub fn substitute(g: &mut Game, id: u32, m: PermId) -> Res<bool> {
     }
     let (sp, cp) = (it.controller, g.perm(m).owner);
     crate::glog!(g, "    {} exchanges {} and {}", pname(g, sp), cname(g, c), g.perm(m).name);
-    crate::engine::control::gain_control(g, sp, m, crate::engine::control::Duration::Permanent);
+    if !crate::engine::control::steal(g, sp, m, crate::engine::control::Duration::Permanent)? {
+        return Ok(false); // (a ward on it countered the spell)
+    }
     let it = &mut g.stack[i];
     it.ctx.owner.get_or_insert(sp);
     it.controller = cp;

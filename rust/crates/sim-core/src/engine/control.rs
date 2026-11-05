@@ -108,3 +108,12 @@ pub fn goad(g: &mut Game, goader: PlayerId, m: PermId, dur: GoadFor) {
     };
     g.perm_mut(m).data.set(DataKey::Goaded, Val::List(vec![Val::Player(goader), Val::Int(stamp)]));
 }
+
+/// A targeted steal: `new` gains control of the opponent's permanent m with a spell or ability that targets it, so a ward
+/// on m is paid first (`ward::pay_ward`; unpaid, the effect is countered). False if nothing changed hands.
+pub fn steal(g: &mut Game, new: PlayerId, m: PermId, dur: Duration) -> crate::flow::Res<bool> {
+    if !crate::engine::ward::pay_ward(g, new, m)? {
+        return Ok(false);
+    }
+    Ok(gain_control(g, new, m, dur))
+}

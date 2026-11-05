@@ -51,7 +51,7 @@ use crate::engine::mana::restr_ok;
 use crate::engine::pool::Restr;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::cast_card;
-use crate::engine::control::{Duration, gain_control};
+use crate::engine::control::Duration;
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::removal::{apply_removal, apply_wipe};
@@ -149,14 +149,15 @@ fn steal_pick(g: &Game, p: PlayerId) -> Option<PermId> {
 }
 
 /// p takes m for good; it becomes a Vampire in addition to its other types
-fn take_as_vampire(g: &mut Game, p: PlayerId, m: PermId, by: &str) {
-    if gain_control(g, p, m, Duration::Permanent) {
+fn take_as_vampire(g: &mut Game, p: PlayerId, m: PermId, by: &str) -> Res {
+    if crate::engine::control::steal(g, p, m, Duration::Permanent)? {
         let x = g.perm_mut(m);
         if !x.ttypes.contains(&"vampire") {
             x.ttypes.push("vampire");
         }
         crate::glog!(g, "    {} takes {} ({by}); it is a Vampire now", g.player(p).name, g.perm(m).name);
     }
+    Ok(())
 }
 
 fn vampire_token(g: &mut Game, p: PlayerId, colors: &str, lifelink: bool) -> Res<Vec<PermId>> {
@@ -365,7 +366,7 @@ fn captivating_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool>
     }
     let label = format!("gain control of {}", g.perm(t).name);
     if ability_window(g, p, Some(src), &label, Some(5.0), Some(t))? && live(g, t) && owner(g, t) != p {
-        take_as_vampire(g, p, t, CAPTIVATING);
+        take_as_vampire(g, p, t, CAPTIVATING)?;
     }
     Ok(true)
 }
@@ -587,7 +588,7 @@ fn new_blood_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 fn new_blood_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     let t = ctx.target.filter(|&t| live(g, t) && g.is_creature(t) && owner(g, t) != p).or_else(|| steal_pick(g, p));
     if let Some(t) = t {
-        take_as_vampire(g, p, t, NEW_BLOOD);
+        take_as_vampire(g, p, t, NEW_BLOOD)?;
     }
     Ok("gy")
 }
