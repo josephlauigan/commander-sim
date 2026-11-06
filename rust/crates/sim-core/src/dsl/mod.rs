@@ -2101,15 +2101,32 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
         return Ok(false);
     }
     let mut fod = None;
+    let mut human_pick: Option<(Vec<PermId>, String)> = None;
     if let Some(sac) = cost.sac.as_deref().filter(|&s| s != "self") {
         let f = Filter { kind: type_ok(g, src, sac).map(|_| sac.to_string()), ..Filter::default() };
+        if crate::human::is_human(g, p) {
+            // --- model-gaps-a4: a person chooses what is sacrificed (any permanent that fits; the AI gives up the least valuable)
+            let all: Vec<PermId> = g
+                .player(p)
+                .perms
+                .iter()
+                .copied()
+                .filter(|&m| m != src && matches(g, p, m, Some(&f), None) && !crate::engine::values::no_sac(g, m))
+                .collect();
+            if all.is_empty() {
+                return Ok(false);
+            }
+            fod = Some(all[0]);
+            human_pick = Some((all, format!("{}: sacrifice which {sac}?", g.perm(src).name)));
+        }
         let fods: Vec<PermId> = g
             .player(p)
             .perms
             .iter()
             .copied()
             .filter(|&m| {
-                m != src
+                fod.is_none()
+                    && m != src
                     && matches(g, p, m, Some(&f), None)
                     && (g.perm(m).token || pval(g, m) < 3.0)
                     && (!crate::ai::is_main(hand_key(g, p))
@@ -2118,8 +2135,10 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
                             && !crate::impls::common::is_payoff(g, m)))
             })
             .collect();
-        let Some(f0) = min_by(&fods, |m| pval(g, m)) else { return Ok(false) };
-        fod = Some(f0);
+        if fod.is_none() {
+            let Some(f0) = min_by(&fods, |m| pval(g, m)) else { return Ok(false) };
+            fod = Some(f0);
+        }
     }
     if cost.other.is_some() || cost.tap_other.is_some() || cost.energy.is_some() {
         return Ok(false);
@@ -2146,6 +2165,13 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
     }
     if dry {
         return Ok(true);
+    }
+    // --- model-gaps-a4: the person's choice of what to sacrifice, once the cost is known payable
+    if let Some((all, what)) = human_pick {
+        match crate::human::cards::pick_perm(g, p, "choose", &what, &all, Some("cancel"))? {
+            Some(m) => fod = Some(m),
+            None => return Ok(false),
+        }
     }
     if land_tap {
         crate::impls::lands::pay_without(g, p, src, gn, &pips)?;

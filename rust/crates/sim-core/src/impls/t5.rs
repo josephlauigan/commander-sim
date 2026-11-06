@@ -490,7 +490,7 @@ pub(crate) fn kiki(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> R
     Ok(vec![ability(u, format!("Kiki-Jiki copies {}", g.perm(t).name), src, kiki_go, t.0 as i64)])
 }
 
-fn kiki_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn kiki_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let t = PermId(arg as u32);
     if g.perm(src).tapped || !on(g, p, t) {
         return Ok(false);

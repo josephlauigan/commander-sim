@@ -723,6 +723,11 @@ pub fn abilities_of(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<(String, Ab
         }
     }
     out.extend(cards::marvin_outlets(g, p, m).into_iter().map(|a| (a.label, AbilityKind::Extra(a.act))));
+    let marvin = perm_name(g, m) == crate::impls::newcards_b::MARVIN;
+    if marvin {
+        // --- model-gaps-a4: the creatures it borrows from that have a person path: the same questions, Marvin as the source
+        out.extend(super::model_gaps_a4::marvin_abilities(g, p, m).into_iter().map(|a| (a.label, AbilityKind::Extra(a.act))));
+    }
     if let Some(own) = cards::abilities(g, p, m) {
         // your deck's card: its abilities by the rules
         out.extend(own.into_iter().map(|a| (a.label, AbilityKind::Extra(a.act))));
@@ -732,6 +737,9 @@ pub fn abilities_of(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<(String, Ab
         for (src, imp) in engine::hooks::hooked(g, Event::Options) {
             if src == m {
                 for o in (imp.options.unwrap())(g, src, p, post)? {
+                    if marvin && super::model_gaps_a4::replaced_label(&o.label) {
+                        continue; // its person path is listed above
+                    }
                     if let Some(a) = o.act {
                         out.push((o.label, AbilityKind::Hook(a)));
                     }

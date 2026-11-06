@@ -1334,7 +1334,7 @@ fn glimpse(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
 }
 
 // ================================================================== Chatterfang
-fn squirrels(g: &Game, p: PlayerId) -> Vec<PermId> {
+pub(crate) fn squirrels(g: &Game, p: PlayerId) -> Vec<PermId> {
     g.player(p).perms.iter().copied().filter(|&m| g.perm(m).token && g.perm(m).ttypes.contains(&"squirrel")).collect()
 }
 
@@ -1353,7 +1353,7 @@ fn fang(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt
     Ok(vec![ability(pval(g, t) - 0.5 * x as f64, label, src, fang_go, pack(t.0, x.max(0) as u32))])
 }
 
-fn fang_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn fang_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let (t, x) = unpack(arg);
     let (t, x) = (PermId(t), x as i32);
     if !g.perm(t).on_bf || !can_pay(g, p, 0, "B", false) {

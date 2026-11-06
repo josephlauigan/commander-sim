@@ -32,6 +32,8 @@ pub fn abilities(_g: &Game, _p: PlayerId, _m: PermId, nm: &str) -> Option<Vec<Pe
         mg::FACE_BREAKER => vec![ability("sacrifice a Treasure: exile the top card of your library, you may play it this turn", face_breaker)],
         mg::TINYBONES => vec![ability("{4}{B}{B}: each opponent with no cards in hand loses 10 life", tinybones)],
         mg::EZURI => vec![ability("{2}{G}{G}{G}: Elf creatures you control get +3/+3 and trample until end of turn", ezuri)],
+        KIKI => vec![ability("{T}: create a token that's a copy of target nonlegendary creature you control, with haste; sacrifice it at the next end step", kiki)],
+        FANG => vec![ability("{B}, sacrifice X Squirrels: target creature gets +X/-X until end of turn", fang)],
         _ => return None,
     })
 }
@@ -118,4 +120,136 @@ fn ezuri(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     crate::glog!(g, "  {} activates {}", g.player(p).name, g.perm(m).name);
     mg::ezuri_resolve(g, p, m)?;
     Ok(None)
+}
+
+// ------------------------------------------------------------------ Kiki-Jiki, Mirror Breaker; Chatterfang
+pub const KIKI: &str = "Kiki-Jiki, Mirror Breaker";
+pub const FANG: &str = "Chatterfang, Squirrel General";
+
+/// the person's Kiki-Jiki: {T}: a hasty token copy of a nonlegendary creature you choose (any, Marvin using the ability
+/// too: it is itself nonlegendary)
+fn kiki(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    let x = g.perm(m);
+    if x.tapped {
+        return Ok(Some(format!("{} is tapped.", x.name)));
+    }
+    if x.sick && !crate::dsl::has_kw(g, m, "haste") && !crate::impls::t45_krenko::elixir(g, p) {
+        return Ok(Some(format!("{} has summoning sickness (it came under your control this turn).", x.name)));
+    }
+    let cands: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&c| {
+            live(g, c)
+                && g.is_creature(c)
+                && g.perm(c).cd.is_some_and(|cd| !g.db.get(cd).tag(crate::tag::Tag::Leg))
+                && !(g.perm(c).owner != p && crate::engine::values::untargetable(g, c))
+        })
+        .collect();
+    if cands.is_empty() {
+        return Ok(Some("You control no nonlegendary creature to copy.".into()));
+    }
+    let Some(t) = super::cards::pick_perm(g, p, "target", "Kiki-Jiki: copy which nonlegendary creature?", &cands, Some("cancel"))?
+    else {
+        return Ok(None);
+    };
+    if !crate::impls::t5::kiki_go(g, m, p, t.0 as i64)? {
+        return Ok(Some("That can't be done right now.".into()));
+    }
+    crate::engine::life::check_state(g)?;
+    Ok(None)
+}
+
+/// the person's Chatterfang: {B}, sacrifice X Squirrels: target creature gets +X/-X until end of turn; the target and X
+/// are the person's
+fn fang(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    if let Some(why) = problem(g, p, 0, "B", "Chatterfang") {
+        return Ok(Some(why));
+    }
+    let n = crate::impls::rules2::squirrels(g, p).len() as u32;
+    let cands = super::cards::creatures(g, p, false);
+    if cands.is_empty() {
+        return Ok(Some("There is no creature to target.".into()));
+    }
+    let Some(t) = super::cards::pick_perm(g, p, "target", "Chatterfang: +X/-X to which creature?", &cands, Some("cancel"))?
+    else {
+        return Ok(None);
+    };
+    let xs = choices::amount_choices(n);
+    let labels: Vec<String> = xs.iter().map(|x| format!("X = {x} (sacrifice {x} Squirrel{})", if *x == 1 { "" } else { "s" })).collect();
+    let Some(k) = choices::choose(g, p, "choose", "Chatterfang: sacrifice how many Squirrels?", &labels, Some("cancel"), None)?
+    else {
+        return Ok(None);
+    };
+    if !crate::impls::rules2::fang_go(g, m, p, crate::impls::partials::pack(t.0, xs[k]))? {
+        return Ok(Some("That can't be done right now.".into()));
+    }
+    crate::engine::life::check_state(g)?;
+    Ok(None)
+}
+
+// ------------------------------------------------------------------ Marvin, Murderous Mimic: the person's choices
+/// the creatures whose hand-written abilities Marvin uses through the person's own path (the same questions, Marvin as
+/// the source and the one that pays); the other hand-written abilities Marvin has are the AI's options (`abilities_of`)
+pub const BORROWED: [&str; 22] = [
+    KIKI,
+    FANG,
+    mg::SIEGE,
+    mg::KONRAD,
+    mg::FACE_BREAKER,
+    mg::TINYBONES,
+    mg::EZURI,
+    "Azorius Guildmage",
+    "Blightspeaker",
+    "Ramosian Sergeant",
+    "Ramosian Lieutenant",
+    "Ramosian Captain",
+    "Defiant Vanguard",
+    "Ramosian Commander",
+    "Lin Sivvi, Defiant Hero",
+    "Ramosian Revivalist",
+    "Errant Doomsayers",
+    "Lawbringer",
+    "Lightbringer",
+    "Urborg Syphon-Mage",
+    "Sakura-Tribe Elder",
+    "Jace's Archivist",
+];
+
+/// is this hook option (a label from Marvin's `options`) one a borrowed person path replaces?
+pub fn replaced_label(label: &str) -> bool {
+    label.starts_with("Marvin (Kiki-Jiki)")
+        || BORROWED.iter().any(|n| label.starts_with(&format!("Marvin copies {n}:")))
+}
+
+/// the abilities Marvin, Murderous Mimic (m) has from the creatures p controls that are in `BORROWED`, as the person's
+/// own list for each creature, labelled with its name
+pub fn marvin_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
+    let me = g.perm(m).name;
+    let mut out = vec![];
+    if crate::cardcode::ability_locked(g, m, p) {
+        return out;
+    }
+    let mut seen: Vec<crate::sym::Sym> = vec![];
+    for &d in &g.player(p).perms {
+        let x = g.perm(d);
+        if d == m || x.name == me || x.cd.is_none() || !x.on_bf || x.phased || x.neutered || !g.is_creature(d) {
+            continue;
+        }
+        let nm = g.db.get(x.cd.unwrap()).name.to_string();
+        if seen.contains(&x.name) || !BORROWED.contains(&nm.as_str()) || crate::engine::values::stopped(g, &nm) {
+            continue;
+        }
+        if crate::impls::bulk_white::is_face_down(g, d) {
+            continue;
+        }
+        seen.push(x.name);
+        for mut a in super::cards::abilities(g, p, d).unwrap_or_default() {
+            a.label = format!("Marvin copies {nm}: {}", a.label);
+            out.push(a);
+        }
+    }
+    out
 }
