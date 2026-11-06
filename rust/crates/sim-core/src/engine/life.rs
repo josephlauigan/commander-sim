@@ -139,7 +139,7 @@ pub fn gain(g: &mut Game, p: PlayerId, n: i32) -> Res {
         let st = g.turn_stamp();
         let pl = g.player_mut(p);
         let before = pl.gained_turn.filter(|x| x.0 == st).map_or(0, |x| x.1);
-        pl.gained_turn = Some((st, before + n));
+        pl.gained_turn = Some((st, before.saturating_add(n).min(LIFE_CAP))); // huge gains (Exquisite Blood off doubled damage) stay in range
     }
     if !g.hooks.is_empty() {
         hooks::fire_trigger(g, Event::GainLife, Call::Life { p, n })?;

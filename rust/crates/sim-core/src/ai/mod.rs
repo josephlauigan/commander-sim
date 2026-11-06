@@ -577,7 +577,14 @@ pub fn seph_rean_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res
 // ------------------------------------------------------------------ combat
 /// brain.chump_prob: how likely d chump-blocks, by how much of its life is coming at it
 pub fn chump_prob(g: &Game, d: PlayerId, incoming: i32) -> f64 {
-    let frac = incoming as f64 / g.player(d).life.max(1) as f64;
+    chump_prob_poison(g, d, incoming, 0.0)
+}
+
+/// --- c3: chump_prob when infect and toxic attackers are coming too: `poison_share` is the share of d's remaining
+/// poison (10 minus its counters) they would give, and ten counters are as lethal as forty life, so the larger of
+/// the two shares decides
+pub fn chump_prob_poison(g: &Game, d: PlayerId, incoming: i32, poison_share: f64) -> f64 {
+    let frac = (incoming as f64 / g.player(d).life.max(1) as f64).max(poison_share);
     sig((frac - 0.35) / 0.08)
 }
 
