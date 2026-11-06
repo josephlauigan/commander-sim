@@ -8822,7 +8822,7 @@ note = "{1},{T}, sacrifice: draw a card; a spell cast with no mana spent (a Mox,
 ["Hexing Squelcher"]
 status = "Approximate"
 paths_ok = "the compiled uncounterable (the unc tag) is \"this spell can't be countered\" (on the stack); the card code's uncounterable slot is \"spells you control can't be countered\" (on the battlefield)"
-note = "can't be countered itself and spells you control can't be countered (compiled); ward--pay 2 life on itself and your other creatures (impls/t45_krenko.rs life_ward, called from removal::apply_removal_rest with the other wards): an opponent's removal spell costs its caster 2 life (a person is asked; any life total of 2 or more can pay), or is countered (the AI at 4 life or less). Left out: ward against abilities and against spells that are not removal (the engine's wards, mana ones too, are checked only when a removal spell resolves on the permanent)"
+note = "can't be countered itself and spells you control can't be countered (compiled); ward--pay 2 life on itself and your other creatures (impls/t45_krenko.rs life_ward, from engine/ward.rs pay_ward); see data/audit.toml for the coverage. Not audited one by one: about 185 card-code effects that pick a target themselves (gap accepted by JD 2026-11-05)"
 
 ["Blood Moon"]
 status = "Full"
