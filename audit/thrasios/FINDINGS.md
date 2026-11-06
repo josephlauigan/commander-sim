@@ -17,7 +17,7 @@ What the AI does with Doomsday (`impls/doomsday.rs`; all of it untested by games
   (Silence) first and the fewest spells wins. Fillers: the highest `card_worth` cards left.
 - **Timing.** The end step of the turn before its own with an instant-speed enabler (Teferi +1, Valley Floodcaller, or a
   Borne Upon a Wind cast first); in its main phase (Pile C) only when no enabler is around. Declines with Demonic
-  Consultation or Tainted Pact in hand, below 16 life, into a board whose power reaches the life that is left, and into
+  Consultation or Tainted Pact in hand, at 1 life (life is otherwise no bar since 2026-11-06, JD: all or nothing; no board check), and into
   two or more opponents who can stop a spell with no lock in the pile and no counter held.
 - **Pile extras (doomsday-b, 2026-11-06).** The search also uses Thrasios's {4} dig as a draw source (scry 1, then a land
   goes onto the battlefield and anything else is drawn: either way the library is one card shorter); a devotion

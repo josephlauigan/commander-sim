@@ -25,8 +25,9 @@
 //! * **When** (`doomsday_options`, the card's `hand_options`): at the end step of the turn before the player's own
 //!   with an instant-speed enabler (the card's own flash from Teferi's +1, Valley Floodcaller or a Borne Upon a Wind
 //!   cast first), else in the main phase when the pile starts from the hand; never with Demonic Consultation or
-//!   Tainted Pact in hand (Line 1 is cheaper), never below 16 life or into a board that can deal the life that is
-//!   left, and not into several opponents who can stop a spell with no lock in the pile and no counter held.
+//!   Tainted Pact in hand (Line 1 is cheaper), never at 1 life (it would lose the last point), and not into several
+//!   opponents who can stop a spell with no lock in the pile and no counter held. Life is otherwise no bar (JD,
+//!   2026-11-06: an all-or-nothing move): no life minimum and no check of the opponents' boards.
 //! * **Pile extras** (doomsday-b). Beyond the cards above the search also plays: Thrasios's {4} dig (scry 1, then a land
 //!   goes onto the battlefield and anything else is drawn: the library is one card shorter either way; `Act::dig`,
 //!   played by `tymna_cards::pile_dig`, the scry decided by `pile_scry` with n = 1); a devotion permanent from the hand
@@ -65,8 +66,10 @@ const ORACLE: &str = "Thassa's Oracle";
 const REVIVAL: &str = "Noxious Revival";
 /// the pile is not started (and a Probe is not paid in life) below this much life
 const LIFE_FLOOR: i32 = 3;
-/// Doomsday is not cast below this much life (the guide: "Don't plan a Doomsday turn below about 16 life")
-const LIFE_NEEDED: i32 = 16;
+/// Doomsday is not cast below this much life: at 1 it loses the last point (half, rounded up) and the player dies before
+/// the pile is played. Otherwise life is no bar (JD, 2026-11-06: "It's an all or nothing move"): the pile wins or the
+/// player loses either way, and the pile search already plays with the life that is left.
+const LIFE_NEEDED: i32 = 2;
 
 // ------------------------------------------------------------------ Teferi, Time Raveler +1
 /// +1: until your next turn you may cast sorcery spells as though they had flash
@@ -254,15 +257,11 @@ impl<'a> Env<'a> {
     }
     /// the lock at the Oracle's cast: Silence is up, or Veil of Summer is in hand with {G} left over the Oracle's {U}{U}
     fn locked(&self, s: &S) -> bool {
-        s.silence
-            || (self.veil_ok
-                && s.hand.iter().any(|&c| self.kd(c) == K::Veil)
-                && self.ok(s.u + 2, s.w, 1, s.gn))
+        s.silence || (self.veil_ok && s.hand.iter().any(|&c| self.kd(c) == K::Veil) && self.ok(s.u + 2, s.w, 1, s.gn))
     }
     /// Noxious Revival is in hand with its {G} (or 2 life) left over the Oracle's {U}{U}
     fn backed(&self, s: &S) -> bool {
-        s.hand.iter().any(|&c| self.kd(c) == K::Revival)
-            && (self.ok(s.u + 2, s.w, 1, s.gn) || s.life - 2 >= LIFE_FLOOR)
+        s.hand.iter().any(|&c| self.kd(c) == K::Revival) && (self.ok(s.u + 2, s.w, 1, s.gn) || s.life - 2 >= LIFE_FLOOR)
     }
 }
 
@@ -1211,15 +1210,6 @@ fn revive_oracle(g: &mut Game, p: PlayerId) -> Res<bool> {
 }
 
 // ------------------------------------------------------------------ when to cast it
-fn opp_power(g: &Game, q: PlayerId) -> i32 {
-    g.player(q)
-        .perms
-        .iter()
-        .filter(|&&m| !g.perm(m).phased && g.is_creature(m))
-        .map(|&m| crate::engine::values::epow(g, m).max(0))
-        .sum()
-}
-
 /// the instant-speed enabler to cast first (Valley Floodcaller, else Borne Upon a Wind), when nothing grants flash now
 fn enabler(g: &Game, p: PlayerId) -> Option<CardId> {
     let hand = &g.player(p).hand;
@@ -1280,11 +1270,8 @@ pub fn plan_cast(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Option<(Built, O
     let en = if scn == Scn::EndStep && !flash { Some(enabler(g, p)?) } else { None };
     let b = doomsday_cost(g, p, c, en)?;
     // the checks that do not need the pile come first: the builder is the expensive part, and a look-ahead asks about a
-    // Doomsday in hand at every decision of every playout (a board that can deal what is left is the usual answer)
-    let life_after = pl.life - half_up(pl.life);
-    if g.opps(p).any(|q| g.player(q).alive && opp_power(g, q) >= life_after - 2) {
-        return None; // a board that can deal what is left
-    }
+    // Doomsday in hand at every decision of every playout. No board check (JD, 2026-11-06): a main-phase pile wins this
+    // turn, and an end-step cast is in the turn just before the player's own, so no opponent gets a combat first
     // the plan's go-now gate for the cast (a rule in `data/plans/thrasios.toml` naming "Doomsday cast")
     if crate::impls::t6_plans::go_now(g, p, "Doomsday cast") == Some(false) {
         return None;
