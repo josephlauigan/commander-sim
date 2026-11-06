@@ -3,6 +3,21 @@
 What the simulator has taught us about the Y'shtola Esper drain deck: strengths, weaknesses, and what was tried and
 why it did or didn't work. Updated after every run. Newest evidence first. Matched tier: T5 (`data/my_decks.toml`).
 
+## Baseline 2026-11-06 (after the rewire, Doomsday and Phase C engine work)
+Y'shtola, t5, 2,000 games, seed 500000, loose, look-ahead, integration build ef343cc1: **26.2%** (95% CI 24.3-28.2) over t5
+(1,994 games counted: 6 hit an internal simulator error, see below). Same command on main 1e027077 (2026-11-05, old build): **25.8%**
+(23.9-27.8). Change +0.4: noise (intervals overlap almost completely, under 2 points). Plan online 65.4% (old 63.5%); wins by
+damage 66% / combo 34% (old 70 / 30).
+Engine changes that can touch this deck: C2 Loran of the Third Path (fires less, picks better targets); C3 attack taxes no
+longer idle attackers (it plays Propaganda and Sphere of Safety; Toxic Deluge is not affected) and opponents cast their commander on time
+(+1.5), which changes the t5 opponents' play. C1/C1b and the rewire do not touch it. Nothing here is a measured effect of any
+one change: the net is noise.
+**Re-run after the crash fixes:** the 6 skipped games were the same look-ahead `cast_counter` panic as Thanos's (latent on main,
+fixed on #274); a first re-run then skipped one game on an overflow of the "life gained this turn" counter (Exquisite Blood off a
+doubled Dragon army, seed 501953), also fixed on #274. Final re-run (integration 23ecd983): **26.3%** (95% CI 24.4-28.3) over t5, all
+2,000 games, no errors; plan online 65.5%; damage 66% / combo 33%. Against the old build 25.8%: noise. This is the number of record.
+Raw: `audit/baseline-2026-11-06/yshtola-rerun.txt`; first run `audit/baseline-2026-11-06/yshtola.txt` and `yshtola-2026-11-05-oldbuild.txt`.
+
 ## Current state (2026-11-04)
 Look-ahead, loose, current list (Cabal Coffers in for a Plains): **T5 24.9%** (95% CI 23.0-26.8), 2,000 games.
 Her losses are still fast combo (Kinnan, Urza, Zur) and Miirym combat, about 49% of games.

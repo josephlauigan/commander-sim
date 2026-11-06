@@ -771,7 +771,7 @@ fn taker_leaves(g: &mut Game, _src: Src, m: PermId) -> Res {
 /// yshtola._cap: {2}, {T}, sacrifice: search target player's library for three cards and exile them (main 2, or an
 /// opponent's end step: the opponent whose best three cards matter most)
 pub fn cap_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if p != g.perm(src).owner || human(g, p) || g.perm(src).tapped || !can_pay(g, p, 2, "", false) {
+    if p != g.perm(src).owner || human(g, p) || g.perm(src).tapped || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false) {
         return Ok(vec![]);
     }
     if post == Some(false) || (post.is_none() && g.active == Some(p)) {
@@ -792,10 +792,11 @@ pub fn cap_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> R
 fn cap_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let q = PlayerId(arg as u8);
     let x = g.perm(src);
-    if !x.on_bf || x.owner != p || x.tapped || !can_pay(g, p, 2, "", false) || !g.player(q).alive {
+    let cost = crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0); // Forensic Gadgeteer
+    if !x.on_bf || x.owner != p || x.tapped || !can_pay(g, p, cost, "", false) || !g.player(q).alive {
         return Ok(false);
     }
-    pay(g, p, 2, "", false)?;
+    pay(g, p, cost, "", false)?;
     cap_use(g, p, src, q)?;
     Ok(true)
 }

@@ -346,6 +346,11 @@ pub fn card_matches(g: &Game, c: CardId, f: Option<&Filter>) -> bool {
 
 /// the players a 'who' names
 pub fn players(g: &Game, p: PlayerId, w: Option<&str>, ctx: &DslCtx) -> Vec<PlayerId> {
+    players_from(g, p, w, ctx, Colors::NONE)
+}
+
+/// `players`, for an effect from a source of these colours: a player with hexproof from them is no target (Veil)
+pub fn players_from(g: &Game, p: PlayerId, w: Option<&str>, ctx: &DslCtx, cols: Colors) -> Vec<PlayerId> {
     let opps: Vec<PlayerId> = g.opps(p).collect();
     match w.unwrap_or("you") {
         "you" => vec![p],
@@ -353,7 +358,7 @@ pub fn players(g: &Game, p: PlayerId, w: Option<&str>, ctx: &DslCtx) -> Vec<Play
         "each_player" => g.players.iter().filter(|q| q.alive).map(|q| q.id).collect(),
         "target_opponent" | "target_player" => {
             let ok: Vec<PlayerId> =
-                opps.into_iter().filter(|&q| !crate::engine::values::player_hexproof(g, q)).collect();
+                opps.into_iter().filter(|&q| !crate::engine::values::player_hexproof_from(g, q, cols)).collect();
             max_by(&ok, |q| threat(g, p, q)).into_iter().collect() // Shalai, Voice of Plenty
         }
         "target_controller" => ctx.target_owner.filter(|&t| g.player(t).alive).into_iter().collect(),
@@ -557,12 +562,12 @@ fn gy_payoff(g: &Game, p: PlayerId) -> bool {
 /// "Target player mills N cards" (Glimpse the Unthinkable): the AI mills itself when its graveyard pays off now,
 /// else the opponent closest to milling out (a library of N or fewer: that player loses at the next draw), else the
 /// one it fears most
-fn mill_target(g: &Game, p: PlayerId, k: i32) -> Option<PlayerId> {
+fn mill_target(g: &Game, p: PlayerId, k: i32, cols: Colors) -> Option<PlayerId> {
     if gy_payoff(g, p) && g.player(p).library.len() as i32 > k + 5 {
         return Some(p);
     }
     let opps: Vec<PlayerId> =
-        g.opps(p).filter(|&q| !crate::engine::values::player_hexproof(g, q)).collect();
+        g.opps(p).filter(|&q| !crate::engine::values::player_hexproof_from(g, q, cols)).collect();
     if let Some(q) = min_by(&opps, |q| g.player(q).library.len() as f64).filter(|&q| g.player(q).library.len() as i32 <= k)
     {
         return Some(q);
@@ -572,7 +577,7 @@ fn mill_target(g: &Game, p: PlayerId, k: i32) -> Option<PlayerId> {
 
 /// what "target player mills N" is worth to p now (value_of)
 fn mill_value(g: &Game, p: PlayerId, k: i32) -> f64 {
-    match mill_target(g, p, k) {
+    match mill_target(g, p, k, Colors::NONE) {
         Some(q) if q == p => 0.25 * k as f64,
         Some(q) if g.player(q).library.len() as i32 <= k => 15.0,
         Some(_) => 0.05 * k as f64,
@@ -605,6 +610,7 @@ fn run(
 ) -> Res {
     let opps: Vec<PlayerId> = g.opps(p).collect();
     let kind: Sym = if spell.is_some() { "burn" } else { "triggers" };
+    let cols = src_colors(g, src, spell); // the source's colours: a player with hexproof from them is no target
     let n = |g: &Game, ctx: &DslCtx| num(g, p, e.n.as_ref(), ctx, src);
     match e.kind.as_str() {
         "scry" | "surveil" => {
@@ -623,7 +629,7 @@ fn run(
                 .filter(|&q| g.player(q).alive);
             let who = match chosen {
                 Some(q) => vec![q],
-                None => players(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx),
+                None => players_from(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx, cols),
             };
             for q in who {
                 // "you may draw": a person chooses (the draw by someone else's "may" is asked of that player here).
@@ -682,7 +688,7 @@ fn run(
                 }
                 Some("player") if per_player_n(e).is_some() => {
                     // each player takes its own count, you too (Price of Progress)
-                    for q in players(g, p, Some(to.who.as_deref().unwrap_or("each_player")), ctx) {
+                    for q in players_from(g, p, Some(to.who.as_deref().unwrap_or("each_player")), ctx, cols) {
                         let k = per_player_n(e).map_or(0, |f| f(g, q)) * e.mult.unwrap_or(1);
                         if k > 0 {
                             lose_life(g, q, k, Some(p), kind, None)?;
@@ -690,7 +696,7 @@ fn run(
                     }
                 }
                 Some("player") => {
-                    for q in players(g, p, Some(to.who.as_deref().unwrap_or("each_opponent")), ctx) {
+                    for q in players_from(g, p, Some(to.who.as_deref().unwrap_or("each_opponent")), ctx, cols) {
                         if q != p {
                             lose_life(g, q, dmg, Some(p), kind, None)?;
                         }
@@ -814,13 +820,13 @@ fn run(
             if e.per_opponent == Some(true) {
                 k *= opps.len().max(1) as i32;
             }
-            for q in players(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx) {
+            for q in players_from(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx, cols) {
                 gain(g, q, k)?;
             }
         }
         "lose_life" => {
             let k = n(g, ctx);
-            for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx) {
+            for q in players_from(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx, cols) {
                 let before = g.player(q).life;
                 lose_life(g, q, k, Some(if q != p { p } else { q }), "drain", None)?;
                 if q != p {
@@ -990,7 +996,7 @@ fn run(
             }
         }
         "discard" => {
-            for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx) {
+            for q in players_from(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx, cols) {
                 let k = n(g, ctx);
                 // practice mode: a person discards what they choose (a random discard stays random)
                 if (q == p || crate::human::is_human(g, q)) && e.random != Some(true) {
@@ -1013,9 +1019,9 @@ fn run(
             {
                 ctx.face.into_iter().collect() // a person chose the player as they cast it
             } else if e.who.as_deref() == Some("target_player") {
-                mill_target(g, p, n(g, ctx)).into_iter().collect()
+                mill_target(g, p, n(g, ctx), cols).into_iter().collect()
             } else {
-                players(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx)
+                players_from(g, p, Some(e.who.as_deref().unwrap_or("you")), ctx, cols)
             };
             for q in qs {
                 let k = n(g, ctx);
@@ -1024,7 +1030,7 @@ fn run(
         }
         "exile_library" => {
             // "exile all but the bottom card of target player's library" (Nicol Bolas, the Arisen)
-            for q in players(g, p, Some(e.who.as_deref().unwrap_or("target_player")), ctx) {
+            for q in players_from(g, p, Some(e.who.as_deref().unwrap_or("target_player")), ctx, cols) {
                 let lib = std::mem::take(&mut g.player_mut(q).library);
                 let mut it = lib.into_iter();
                 let bottom = it.next();
@@ -1040,14 +1046,14 @@ fn run(
             if f.kind.as_deref() == Some("land") {
                 // --- Tier 3 (korvold): "each player sacrifices a land of their choice" (Smallpox): lands are not
                 // permanents here, each player gives up its least useful one
-                for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx) {
+                for q in players_from(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx, cols) {
                     for _ in 0..num(g, p, Some(e.n.as_ref().unwrap_or(&Num::Int(1))), ctx, src) {
                         crate::impls::t3_korvold::sac_worst_land(g, q)?;
                     }
                 }
                 return Ok(());
             }
-            for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx) {
+            for q in players_from(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx, cols) {
                 let times = num(g, p, Some(e.n.as_ref().unwrap_or(&Num::Int(1))), ctx, src);
                 for i in 0..times {
                     let cs: Vec<PermId> = g
@@ -1097,7 +1103,7 @@ fn run(
             // each opponent / each player / target opponent gets N poison counters (Melira stops them; Vorinclex
             // doubles the ones you give)
             let k = if e.n.is_some() { n(g, ctx).max(0) } else { 1 };
-            for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx) {
+            for q in players_from(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx, cols) {
                 if k == 0 || !repl::poison_ok(g, q) {
                     continue;
                 }
@@ -1231,13 +1237,13 @@ fn run(
             }
         }
         "exile_graveyard" => {
-            for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_player")), ctx) {
+            for q in players_from(g, p, Some(e.who.as_deref().unwrap_or("each_player")), ctx, cols) {
                 let gy = std::mem::take(&mut g.player_mut(q).gy);
                 g.player_mut(q).exile.extend(gy);
             }
         }
         "wheel" => {
-            let qs = players(g, p, Some(e.who.as_deref().unwrap_or("each_player")), ctx);
+            let qs = players_from(g, p, Some(e.who.as_deref().unwrap_or("each_player")), ctx, cols);
             let k = qs.iter().map(|&q| g.player(q).hand.len()).max().unwrap_or(0);
             for &q in &qs {
                 let hand = g.player(q).hand.clone();
@@ -1270,7 +1276,7 @@ fn run(
         "blight" => {
             // --- Tiers 1/2 (lathril): "each opponent blights 1" (High Perfect Morcant)
             let k = n(g, ctx);
-            for q in players(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx) {
+            for q in players_from(g, p, Some(e.who.as_deref().unwrap_or("each_opponent")), ctx, cols) {
                 crate::impls::t12_lathril::blight(g, q, k)?;
             }
         }
@@ -2081,8 +2087,12 @@ fn discard_typed(g: &Game, p: PlayerId, t: &str) -> Vec<CardId> {
 }
 
 fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, dry: bool) -> Res<bool> {
-    let (gn, pips) = cost.mana.as_deref().map(crate::engine::cast::parse_cost).unwrap_or((0, String::new()));
+    let (mut gn, pips) = cost.mana.as_deref().map(crate::engine::cast::parse_cost).unwrap_or((0, String::new()));
     let x = g.perm(src);
+    // Forensic Gadgeteer: an artifact's activated abilities cost {1} less, never under {1} (an {X} cost is left alone)
+    if gn > 0 && cost.x.is_none() && x.cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT)) {
+        gn = crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, gn, (!pips.is_empty()) as u32);
+    }
     // --- Tiers 4/5 (krenko): Thousand-Year Elixir, "as though those creatures had haste"
     let sick = x.sick && !crate::impls::t45_krenko::elixir(g, p);
     if cost.tap == Some(true) && (x.tapped || (g.is_creature(src) && sick)) {

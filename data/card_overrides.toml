@@ -574,7 +574,7 @@ types = "I"
 tags = ""
 dsl = []
 status = "Full"
-note = "draw three, then put back the two least wanted cards (Yuriko: the two biggest, for the reveal)"
+note = "draw three, then put back the two least wanted cards (Yuriko: the two biggest, for the reveal; a person picks the two, the last pick on top; the Doomsday pile puts back the two that keep its line winning)"
 
 ["Brazen Borrower"]
 status = "Full"
@@ -1902,7 +1902,7 @@ cost = "0"
 tags = ""
 dsl = []
 status = "Full"
-note = "{U} or 2 life; draw a card (looking at a hand has no effect in the sim)"
+note = "{U} or 2 life; draw a card (looking at a hand has no effect in the sim). A person chooses how to pay; the Doomsday pile pays what keeps its line winning; otherwise {U} when three mana is up"
 
 ["Giver of Runes"]
 status = "Full"
@@ -3672,7 +3672,7 @@ types = "S"
 tags = ""
 dsl = []
 status = "Full"
-note = "look at the top three: keep them in the best order, or shuffle if none is wanted; then draw"
+note = "look at the top three: keep them in the best order, or shuffle if none is wanted; then draw. A person orders the three (first pick on top) and chooses whether to shuffle (impls/topdeck.rs); the Doomsday pile plays the order that keeps its line winning"
 
 ["Port Razer"]
 tags = "pow=4"
@@ -3696,7 +3696,7 @@ types = "S"
 tags = ""
 dsl = []
 status = "Full"
-note = "scry 2, then draw"
+note = "scry 2, then draw (a person chooses each card; the Doomsday pile keeps the cards that make its line win)"
 
 ["Priest of Forgotten Gods"]
 tags = "human pow=1 tgh=2"
@@ -4946,7 +4946,11 @@ note = "+1 draw and untap two lands, -3 tuck, -8 emblem (exile an opposing perma
 tags = "leg"
 dsl = []
 status = "Full"
-note = "opponents cast only at sorcery speed; -3 bounce and draw (+1 has no use here)"
+note = "opponents cast only at sorcery speed; -3 bounce and draw; +1: until your next turn its controller may cast sorcery spells as though they had flash (Player::sorc_flash, read by cast::grants_flash for the AI end-of-turn window and a person; the AI values the +1 at 6 with a Doomsday in hand, impls/doomsday.rs; tested in tests/doomsday.rs)"
+
+["Doomsday"]
+status = "Full"
+note = "search library and graveyard for five cards (fewer if fewer exist), exile the rest of both, the five on top in the chosen order, lose half the life rounded up (nothing at 0 life or less): impls/doomsday.rs. A person picks the five and their order. The AI builds the pile by an exact search of the guide's Piles A, B, C and the devotion-3 variants (Silence first), casts it at the end step of the turn before with a flash enabler (Teferi +1, Valley Floodcaller, Borne Upon a Wind) or in its main phase, and plays the pile for real (catalogue combo 'Doomsday + Thassa's Oracle'); tests/doomsday.rs"
 
 ["Tekuthal, Inquiry Dominus"]
 tags = "leg pow=3 tgh=5 fly"
@@ -5387,7 +5391,7 @@ types = "I"
 tags = ""
 dsl = []
 status = "Full"
-note = "in response to a blue or black counterspell: your spells can't be countered this turn, draw a card"
+note = "draws a card if an opponent cast a blue or black spell this turn; your spells can't be countered this turn (every counterspell fails, Mindbreak Trap still exiles); you and your permanents (as it resolves) have hexproof from blue and black until end of turn. The AI casts it in response to any counterspell aimed at its spell (except the decks on the CTHRESH list); a person casts their own"
 
 ["Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal"]
 tags = "leg wizard pow=3 tgh=3"

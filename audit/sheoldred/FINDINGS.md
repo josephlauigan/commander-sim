@@ -4,6 +4,23 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile, vs Sheoldred's matched
 tiers (T3-T5) unless noted. Older tests: README.md in this folder.
 
+## 2026-11-06: Ad Nauseam held only with room for four cards (engine fix, branch t6-ai; T3-T4, loose, look-ahead, 2,000 per tier, seed 500000)
+The AI kept mana up for Ad Nauseam even with a full hand, where it would never cast it (it casts Ad Nauseam only with room
+for four cards). The Tier 6 decks already had the fix (C1b: stops held for Ad Nauseam 340 -> 144); JD approved it for
+Sheoldred. Before (the #276 build) **28.2% over t3-t4** (27.6% / 28.8%); after **28.1%** (27.9% / 28.2%): no change,
+inside the noise. Why: the wasted holds were turns late in a game with a full hand, when the mana had no better use, so
+freeing it bought little. Kept because it is correct, not because it wins.
+
+## Baseline 2026-11-06 (after the rewire, Doomsday and Phase C engine work)
+Sheoldred, t3 / t4, 2,000 games per tier, seed 500000, loose, look-ahead, build ef343cc1: **27.7%** (25.8-29.7) / **27.2%**
+(25.3-29.2), **27.5% over t3, t4**. Old build (main 1e027077, 2026-11-05): 28.8% (26.8-30.8) / 28.9% (27.0-30.9), 28.8% over t3, t4.
+Change -1.1 / -1.7, average -1.3: inside the noise (all intervals overlap, each under 2 points), though both tiers move the
+same way; not a proven loss. This is the first number for the Coffers drain package list (11/04; the old-build run already had it).
+Engine changes that can touch this deck: C3 (the t3 pool has Atraxa, so infect is now combat damage and a poison threat; the
+deck has no attack tax of its own) and opponents casting their commander on time (+1.5), which makes the table a little stronger.
+That is the only plausible source of a small drop. No C2 card is in the deck; C1/C1b and the rewire do not touch it.
+Raw: `audit/baseline-2026-11-06/sheoldred.txt` and `sheoldred-2026-11-05-oldbuild.txt`.
+
 ## 2026-11-04: Coffers drain package (JD's choice; not simulated)
 Sanguine Bond, Exquisite Blood, Vito, Thorn of the Dusk Rose, Grim Tutor and Torment of Hailfire in for Seymour Flux,
 Lethal Throwdown, Necrosquito, Phyrexian Rager and Burrog Banemaker (JD 11/04: Necrosquito leaves rather than Raise Dead,

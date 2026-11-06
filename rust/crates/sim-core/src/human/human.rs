@@ -426,7 +426,11 @@ fn counter_target(g: &mut Game, q: PlayerId, c: CardId) -> Res<Result<(u32, Card
         .iter()
         .rev()
         .filter(|it| it.controller != q || many)
-        .filter(|it| it.card.is_some_and(|sc| stack::counter_ok(g, c, sc)) && stack::counterable(g, it))
+        .filter(|it| {
+            // (Mindbreak Trap exiles: a spell that can't be countered is a legal target for it)
+            let trap = card_name(g, c) == "Mindbreak Trap" && stack::trap_exilable(g, it);
+            it.card.is_some_and(|sc| stack::counter_ok(g, c, sc)) && (stack::counterable(g, it) || trap)
+        })
         .collect();
     if cands.is_empty() {
         return Ok(Err(format!("{} can't counter anything on the stack.", card_name(g, c))));

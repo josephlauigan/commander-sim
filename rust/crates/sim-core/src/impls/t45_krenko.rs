@@ -380,7 +380,7 @@ fn untap_gain(g: &mut Game, p: PlayerId, m: PermId, post: Option<bool>) -> Res<f
 }
 
 fn untapper_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>, legendary: bool) -> Res<Vec<Opt>> {
-    if owner(g, src) != p || !live(g, src) || g.perm(src).tapped || !can_pay(g, p, 1, "", false) {
+    if owner(g, src) != p || !live(g, src) || g.perm(src).tapped || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false) {
         return Ok(vec![]);
     }
     let cands: Vec<PermId> = g
@@ -417,10 +417,10 @@ fn elixir_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Re
 
 fn untap_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let m = PermId(arg as u32);
-    if g.perm(src).tapped || !live(g, m) || owner(g, m) != p || !can_pay(g, p, 1, "", false) {
+    if g.perm(src).tapped || !live(g, m) || owner(g, m) != p || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false) {
         return Ok(false);
     }
-    pay(g, p, 1, "", false)?;
+    pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)?;
     g.perm_mut(src).tapped = true;
     let label = format!("untap {}", g.perm(m).name);
     if ability_window(g, p, Some(src), &label, None, Some(m))? && live(g, m) {

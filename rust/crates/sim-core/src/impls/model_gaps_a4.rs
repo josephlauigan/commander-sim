@@ -23,7 +23,7 @@ use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::stack::ability_run_w;
 use crate::engine::values::{
-    colors_of, epow, etgh, has_type, hand_count, indestructible, no_sac, player_hexproof, protected_from, pval, untargetable,
+    colors_of, epow, etgh, has_type, hand_count, indestructible, no_sac, protected_from, pval, untargetable,
 };
 use crate::engine::zones::{die, mill};
 use crate::flow::Res;
@@ -114,7 +114,9 @@ fn siege_fodder(g: &Game, p: PlayerId, src: PermId, any: bool) -> Option<PermId>
 /// protected from the source's colours
 pub fn ping_legal(g: &Game, p: PlayerId, src: PermId, t: Tgt) -> bool {
     match t {
-        Tgt::Player(q) => g.player(q).alive && (q == p || !player_hexproof(g, q)),
+        Tgt::Player(q) => {
+            g.player(q).alive && (q == p || !crate::engine::values::player_hexproof_from(g, q, colors_of(g, src)))
+        }
         Tgt::Perm(m) => {
             live(g, m)
                 && (g.is_creature(m) || g.perm(m).loyalty.is_some())

@@ -1297,7 +1297,7 @@ fn mind_stone(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Ve
     }
     // {1}, {T}, sacrifice: the {1} can't come from Mind Stone itself (offered on its own mana, then refused)
     let keep = std::mem::replace(&mut g.keep_untapped, vec![src]);
-    let ok = can_pay(g, p, 1, "", false);
+    let ok = can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false);
     g.keep_untapped = keep;
     if !ok {
         return Ok(vec![]);
@@ -1314,11 +1314,11 @@ fn mind_stone_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;
-    if !can_pay(g, p, 1, "", false) {
+    if !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false) {
         g.perm_mut(src).tapped = false;
         return Ok(false);
     }
-    pay(g, p, 1, "", false)?;
+    pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)?;
     die(g, src, "sac")?;
     crate::engine::stack::ability_run_w(g, p, Some(src), None, "draw a card", None, None, 0.0, |g, _| draw(g, p, 1, false))?;
     Ok(true)
@@ -1518,7 +1518,7 @@ fn the_mind_stone(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Re
         return Ok(vec![]);
     }
     g.perm_mut(src).tapped = true; // it taps as part of the cost: its own {W} can't help pay
-    let ok = can_pay(g, p, 5, "W", false);
+    let ok = can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 5, 1), "W", false);
     g.perm_mut(src).tapped = false;
     if !ok {
         return Ok(vec![]);
@@ -1546,11 +1546,11 @@ fn the_mind_stone_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<b
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;
-    if !can_pay(g, p, 5, "W", false) {
+    if !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 5, 1), "W", false) {
         g.perm_mut(src).tapped = false;
         return Ok(false);
     }
-    pay(g, p, 5, "W", false)?;
+    pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 5, 1), "W", false)?;
     crate::glog!(g, "  {} harnesses The Mind Stone", g.player(p).name);
     g.perm_mut(src).data.set(DataKey::Harnessed, Val::Bool(true)); // a special action: harnessing can't be responded to
     Ok(true)
@@ -1789,17 +1789,20 @@ pub fn sac_food(g: &mut Game, p: PlayerId, n: u32) -> Res<bool> {
 
 /// common.food_options: {2}, {T}, sacrifice a Food: gain 3 life (only when life matters)
 pub fn food_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.player(p).foods < 1 || !can_pay(g, p, 2, "", false) || g.player(p).life > 15 || post == Some(false) {
+    // Forensic Gadgeteer: an artifact's activation costs {1} less, never under {1}
+    let cost = crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0);
+    if g.player(p).foods < 1 || !can_pay(g, p, cost, "", false) || g.player(p).life > 15 || post == Some(false) {
         return Ok(vec![]);
     }
     Ok(vec![Opt { utility: 2.0, label: "eat a Food".into(), act: Some(Action::Plan { f: eat_food, arg: 0 }) }])
 }
 
 fn eat_food(g: &mut Game, p: PlayerId, _arg: i64) -> Res<bool> {
-    if g.player(p).foods < 1 || !can_pay(g, p, 2, "", false) {
+    let cost = crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0);
+    if g.player(p).foods < 1 || !can_pay(g, p, cost, "", false) {
         return Ok(false);
     }
-    pay(g, p, 2, "", false)?;
+    pay(g, p, cost, "", false)?;
     sac_food(g, p, 1)?;
     gain(g, p, 3)?;
     Ok(true)

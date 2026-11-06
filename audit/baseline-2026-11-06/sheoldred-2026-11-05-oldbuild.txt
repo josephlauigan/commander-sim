@@ -1,0 +1,24 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  sheoldred                   100 cards: Full 89, Full-auto 11, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 3 (High B3)  5 decks, 500 cards: Full 439, Full-auto 42, Approximate 19, Partial 0, Unmodeled 0
+  opponents Tier 4 (Low B4)   5 decks, 500 cards: Full 435, Full-auto 37, Approximate 28, Partial 0, Unmodeled 0
+
+4,000 games (1 deck x 2 tiers (each deck in its own tiers), 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 9 minutes
+  progress  10.0%  0m43s elapsed, ~6m31s left
+  progress  20.0%  1m25s elapsed, ~5m43s left
+  progress  30.0%  2m12s elapsed, ~5m08s left
+  progress  40.0%  3m07s elapsed, ~4m41s left
+  progress  50.0%  4m08s elapsed, ~4m08s left
+  cell sheoldred vs t3 [loose]:  28.8% (26.8-30.8)
+  progress  60.0%  5m19s elapsed, ~3m32s left
+  progress  70.0%  6m35s elapsed, ~2m49s left
+  progress  80.0%  8m01s elapsed, ~2m00s left
+  progress  90.0%  9m11s elapsed, ~1m01s left
+  progress 100.0%  10m33s elapsed, ~0m00s left
+  cell sheoldred vs t4 [loose]:  28.9% (27.0-30.9)
+
+=== Win rate by deck and tier [loose profile, lookahead AI, n=2000 per cell; even share 25%; each deck only against its own tiers] ===
+  deck                       t3                 t4     average over its tiers
+  sheoldred   28.8% (26.8-30.8)  28.9% (27.0-30.9)          28.8% over t3, t4
+
+(633s total)

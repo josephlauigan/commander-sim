@@ -27,6 +27,24 @@ pub fn kw(g: &Game, m: PermId, k: &str) -> bool {
     crate::dsl::has_kw(g, m, k)
 }
 
+/// --- c3: the poison counters attacker `a` gives a player it connects with: infect (its power) and toxic N, twice with
+/// double strike. 0 for a creature that deals plain damage.
+pub fn poison_hit(g: &Game, a: PermId) -> i32 {
+    let infect = if kw(g, a, "infect") { epow(g, a).max(0) } else { 0 };
+    let n = infect.saturating_add(crate::impls::tymna_cards::toxic_of(g, a));
+    n.saturating_mul(if double_strike(g, a) { 2 } else { 1 })
+}
+
+/// --- c3: how close poison brings d to losing: the share of d's remaining poison (10 minus what d has) the attackers
+/// `atk` would give, 0.0 when they give none (Melira's player can't get any)
+pub fn poison_share(g: &Game, d: PlayerId, atk: &[PermId]) -> f64 {
+    if !crate::engine::repl::poison_ok(g, d) {
+        return 0.0;
+    }
+    let n: i32 = atk.iter().map(|&m| poison_hit(g, m)).ssum();
+    if n == 0 { 0.0 } else { n as f64 / (10 - g.player(d).poison as i32).max(1) as f64 }
+}
+
 pub fn double_strike(g: &Game, m: PermId) -> bool {
     kw(g, m, "double strike")
 }
@@ -249,6 +267,76 @@ fn human_attack_tax(g: &mut Game, p: PlayerId, d: PlayerId, tax: i32, atk: Vec<P
     }
     g.player_mut(p).stat("attack_tax_paid", total as i64);
     Ok(atk)
+}
+
+/// --- c3: the creatures a tax (Ghostly Prison, Propaganda) or a cap (Crawlspace) kept off their defender attack
+/// another opponent instead of staying home. A player facing a tax does not stop the table's whole army: the
+/// creatures that cannot be paid for go at the opponent with the lowest tax (then the lowest life), the ones a good
+/// blocker there would eat stay home as before. `dropped`: (the defender it was dropped from, the attacker).
+fn redirect_dropped(
+    g: &mut Game,
+    p: PlayerId,
+    dropped: &[(PlayerId, PermId)],
+    kept: &mut Vec<(PlayerId, Vec<PermId>)>,
+) -> Res {
+    let from: Vec<PlayerId> = dropped.iter().map(|x| x.0).collect();
+    let mut pool: Vec<PermId> = dropped.iter().map(|x| x.1).filter(|&m| g.perm(m).on_bf && !g.perm(m).tapped).collect();
+    if pool.is_empty() || pool.iter().chain(kept.iter().flat_map(|x| x.1.iter())).any(|&m| card_name(g, m) == Some("Master of Cruelties"))
+    {
+        return Ok(()); // attacks alone: the rest stays home
+    }
+    pool.sort_by_key(|&m| -epow(g, m)); // stable
+    pool.dedup();
+    let mut targets: Vec<(i32, i32, PlayerId)> = vec![];
+    for q in g.opps(p).collect::<Vec<_>>() {
+        if from.contains(&q) || !g.player(q).alive || shielded(g, q) {
+            continue;
+        }
+        let (tax, cap) = attack_restrictions(g, p, q);
+        if cap.is_none() {
+            targets.push((tax, g.player(q).life, q));
+        }
+    }
+    targets.sort();
+    for (tax, _, q) in targets {
+        let go: Vec<PermId> = pool.iter().copied().filter(|&a| good_blockers(g, q, a, p).is_empty()).collect();
+        if go.is_empty() {
+            continue;
+        }
+        let go = if tax > 0 { attack_limits(g, p, q, go)? } else { go };
+        if go.is_empty() {
+            continue;
+        }
+        pool.retain(|m| !go.contains(m));
+        crate::glog!(g, "  {} sends {} more creature(s) at {} (kept off their first defender by a tax)", g.player(p).name, go.len(), g.player(q).name);
+        match kept.iter_mut().find(|x| x.0 == q) {
+            Some(x) => x.1.extend(go),
+            None => kept.push((q, go)),
+        }
+        if pool.is_empty() {
+            break;
+        }
+    }
+    Ok(())
+}
+
+/// --- c3: the power of the creatures p can send at q: all of them, but for a tax (as many as the mana pays for,
+/// biggest first) or a cap on attackers
+pub fn sendable_power(g: &Game, p: PlayerId, q: PlayerId, pows: &[i32]) -> i32 {
+    let mut n = pows.len();
+    if g.hooks.is_empty() {
+        return pows.iter().copied().ssum();
+    }
+    let (tax, cap) = attack_restrictions(g, p, q);
+    if let Some(c) = cap {
+        n = n.min(c.max(0) as usize);
+    }
+    if tax > 0 {
+        n = n.min((crate::engine::mana::total_mana(g, p, false) / tax as u32) as usize);
+    }
+    let mut sorted = pows.to_vec();
+    sorted.sort_by_key(|&x| -x);
+    sorted.iter().take(n).copied().ssum()
 }
 
 /// The AI's attackers may go at different players, as in a real game: [(defending player, attackers)]. Everything
@@ -537,8 +625,13 @@ pub fn ai_blocks(
     rng: &mut crate::rng::Rng,
 ) -> Vec<(PermId, PermId)> {
     let blockers: Vec<PermId> = untapped_creatures(g, d).collect();
-    let mut incoming: i32 = atk.iter().map(|&m| epow(g, m).saturating_mul(if double_strike(g, m) { 2 } else { 1 })).ssum();
+    // --- c3: infect damage is poison counters, not life
+    let life_dmg = |m: PermId| if kw(g, m, "infect") { 0 } else { epow(g, m).saturating_mul(if double_strike(g, m) { 2 } else { 1 }) };
+    let mut incoming: i32 = atk.iter().map(|&m| life_dmg(m)).ssum();
     let (fd, fp) = (fiery(g, d), fiery(g, p));
+    // --- c3: infect and toxic attackers threaten d's poison, not its life: ten counters end the game as forty life do
+    let mut poison_in: i32 = if crate::engine::repl::poison_ok(g, d) { atk.iter().map(|&m| poison_hit(g, m)).ssum() } else { 0 };
+    let poison_left = (10 - g.player(d).poison as i32).max(1) as f64;
     let mut assign = vec![];
     let mut used: Vec<PermId> = vec![];
     let mut order = atk.to_vec();
@@ -573,7 +666,9 @@ pub fn ai_blocks(
                 min_by(&trade, |x| pval(g, x)).unwrap()
             } else if shielded(g, d) {
                 continue; // the damage is prevented anyway: no chump blocks
-            } else if ap >= 2 && rng.random() < ai::chump_prob(g, d, incoming) {
+            } else if (ap >= 2 || poison_hit(g, a) > 0)
+                && rng.random() < ai::chump_prob_poison(g, d, incoming, poison_in as f64 / poison_left)
+            {
                 let mut cs = cands.clone();
                 // --- plan-files-3: or a plan's `commander_chumps_to_live`
                 if crate::ai::plan_data::commander_chumps_to_live(g, d) && incoming < g.player(d).life {
@@ -589,7 +684,8 @@ pub fn ai_blocks(
         };
         assign.push((a, b));
         used.push(b);
-        incoming -= ap;
+        incoming -= life_dmg(a).min(incoming);
+        poison_in -= poison_hit(g, a).min(poison_in);
         if kw(g, a, "menace") {
             // the second blocker is spent; only the first fights
             if let Some(second) = min_by(&cands.iter().copied().filter(|&x| x != b).collect::<Vec<_>>(), |x| pval(g, x))
@@ -881,14 +977,11 @@ pub fn resolve_blocks(
                 crate::glog!(g, "    Szadek: {} +1/+1 counters, {} mills {}", dmg, g.player(d).name, dmg);
                 dmg = 0;
             }
-            if dmg > 0 && kw(g, a, "infect") {
-                // infect (Blightsteel Colossus): poison counters instead of life loss (no creature -1/-1 counters: blocked
-                // damage is plain damage)
-                crate::impls::karn_cards::infect_hit(g, a, d, dmg)?;
-                conn.push(a);
-                *tot = tot.saturating_add(dmg);
-                dmg = 0;
-            }
+            // --- c3: infect (Blightsteel Colossus, Skithiryx): poison counters instead of life loss, and still combat
+            // damage dealt to the player: the "deals combat damage to a player" triggers, lifelink and commander
+            // damage follow below (they were skipped for infect). No creature -1/-1 counters here: blocked damage is
+            // plain damage.
+            let infect = dmg > 0 && kw(g, a, "infect");
             // double strike, unblocked: two damage steps (first strike, then regular), so every "deals combat damage to a
             // player" trigger happens twice (Swords, Cloud's doubling on top: four)
             let hits = if double_strike(g, a) && blocker_of(&assign, a).is_none() && dmg % 2 == 0 { 2 } else { 1 };
@@ -896,7 +989,11 @@ pub fn resolve_blocks(
             for _ in 0..hits {
                 let dmg = full / hits;
                 if dmg > 0 && g.perm(a).on_bf && g.player(d).alive {
-                    lose_life(g, d, dmg, Some(p), "combat", None)?;
+                    if infect {
+                        crate::impls::karn_cards::infect_hit(g, a, d, dmg)?;
+                    } else {
+                        lose_life(g, d, dmg, Some(p), "combat", None)?;
+                    }
                     conn.push(a);
                     *tot = tot.saturating_add(dmg);
                     crate::impls::tymna_cards::toxic_hit(g, a, d); // toxic: compiled, Mite tokens, granted by Skrelv
@@ -1217,6 +1314,7 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
         };
         let declared: Vec<PermId> = groups.iter().flat_map(|x| x.1.iter().copied()).collect();
         let mut kept = vec![];
+        let mut dropped: Vec<(PlayerId, PermId)> = vec![]; // --- c3: attackers a tax or cap kept off their defender
         for (gd, xs) in groups.clone() {
             // each defending player's taxes and restrictions
             let cand0: Vec<PermId> = declared
@@ -1226,7 +1324,14 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
                 .collect();
             let mut xs = xs;
             if !g.hooks.is_empty() {
+                let before = xs.clone();
                 xs = attack_limits(g, p, gd, xs)?;
+                if !human {
+                    let (tax, cap) = attack_restrictions(g, p, gd);
+                    if tax > 0 || cap.is_some() {
+                        dropped.extend(before.into_iter().filter(|m| !xs.contains(m)).map(|m| (gd, m)));
+                    }
+                }
                 if attack_restrictions(g, p, gd).0 == 0 && gd == d {
                     xs = cardcode::forced_attackers(g, p, xs, &cand0)?;
                 }
@@ -1235,6 +1340,9 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
             if !xs.is_empty() {
                 kept.push((gd, xs));
             }
+        }
+        if !dropped.is_empty() {
+            redirect_dropped(g, p, &dropped, &mut kept)?;
         }
         groups = kept;
         crate::impls::t0_zurgo::goad_attackers(g, p, &mut groups, d)?; // t0-zurgo: goaded creatures attack

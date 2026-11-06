@@ -70,7 +70,8 @@ fn ability(utility: f64, label: &str, src: PermId, f: crate::hooks::AbilityFn, a
 /// **Thrasios**: {4}: scry 1, then reveal the top card of your library; a land goes onto the battlefield tapped,
 /// anything else is drawn. The AI activates it as often as it can afford at the end of the turn before its own (the
 /// end-of-turn window, `post` None: the mana would untap anyway), and in its second main phase after everything else
-/// it wanted to do (a low utility, above "stop"). Never when the library is nearly empty.
+/// it wanted to do (a low utility, above "stop"). Never when the library is nearly empty, nor while a Doomsday pile is
+/// being played (it would draw a card off the pile).
 fn thrasios_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if p != owner(g, src) || g.perm(src).phased {
         return Ok(vec![]);
@@ -84,7 +85,7 @@ fn thrasios_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
     if crate::engine::values::once_per_turn(g, p, crate::sym::intern(&format!("ty_th_f_{when}"))) {
         g.player_mut(p).stat(crate::sym::intern(&format!("ty_th_turns_{when}")), 1);
     }
-    if !can_pay(g, p, cost, "", false) || g.player(p).library.len() < 3 {
+    if !can_pay(g, p, cost, "", false) || g.player(p).library.len() < 3 || super::doomsday::active(g, p) {
         return Ok(vec![]);
     }
     if when == "main2" {
@@ -109,7 +110,7 @@ fn thrasios_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
 
 fn thrasios_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     let cost = crate::impls::t6_green1::creature_ability_cost(g, p, 4);
-    if !g.perm(src).on_bf || !can_pay(g, p, cost, "", false) || g.player(p).library.len() < 3 {
+    if !g.perm(src).on_bf || !can_pay(g, p, cost, "", false) || g.player(p).library.len() < 3 || super::doomsday::active(g, p) {
         return Ok(false);
     }
     g.player_mut(p).stat(crate::sym::intern("ty_thrasios_acts"), 1);
@@ -122,6 +123,58 @@ fn thrasios_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         return Ok(true);
     }
     thrasios_resolve(g, p)?;
+    Ok(true)
+}
+
+/// Thrasios's {4} played as a move of a Doomsday pile (`doomsday::run_pile`): the same ability as `thrasios_go`, which
+/// refuses while a pile is active (the AI must not draw a card off the pile on its own). `rest` is the mana the rest of
+/// the line still needs ({generic}, pips): the {4} is paid from the lands that are left over from it, so the colours of
+/// Silence and the Oracle stay untapped. False when it could not be activated (no Thrasios, no mana, an empty library)
+pub fn pile_dig(g: &mut Game, p: PlayerId, rest: (u32, String)) -> Res<bool> {
+    let Some(src) = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .find(|&m| g.perm(m).on_bf && !g.perm(m).phased && name_of(g, m) == THRASIOS)
+    else {
+        return Ok(false);
+    };
+    let cost = crate::impls::t6_green1::creature_ability_cost(g, p, 4);
+    if !can_pay(g, p, cost, "", false) || g.player(p).library.is_empty() {
+        return Ok(false);
+    }
+    g.player_mut(p).stat(crate::sym::intern("ty_thrasios_acts"), 1);
+    pay_leaving(g, p, cost, &rest)?;
+    if !ability_window(g, p, Some(src), "scry 1, then a land or a card", None, None)? {
+        return Ok(true); // answered (Stifle): the mana is gone, the line is re-solved
+    }
+    thrasios_resolve(g, p)?;
+    Ok(true)
+}
+
+/// pay `generic` from the mana that `rest` (generic, pips) does not need: the units the rest would use are set aside
+/// first. Plain `pay` when a unit makes more than one mana (the leftover would be lost) or there is nothing to set aside
+fn pay_leaving(g: &mut Game, p: PlayerId, generic: u32, rest: &(u32, String)) -> Res<bool> {
+    let units = crate::engine::mana::mana_units(g, p, false);
+    let set_aside = crate::engine::mana::plan_pay(g, &units, rest.0, &rest.1);
+    let Some((reserved, _)) = set_aside.filter(|_| units.iter().all(|w| w.amt == 1)) else {
+        return pay(g, p, generic, "", false);
+    };
+    let free: Vec<Unit> = units.iter().enumerate().filter(|(i, _)| reserved[*i] == 0).map(|(_, w)| *w).collect();
+    let Some((used, col)) = crate::engine::mana::plan_pay(g, &free, generic, "") else {
+        return pay(g, p, generic, "", false);
+    };
+    g.treasure_paid = 0;
+    if !g.spent_keep {
+        g.mana_spent = 0;
+        g.mana_colored = false;
+    }
+    for (i, w) in free.iter().enumerate() {
+        if used[i] > 0 {
+            crate::engine::mana::spend_unit(g, p, *w, used[i], &col[i])?;
+        }
+    }
     Ok(true)
 }
 
@@ -1655,9 +1708,9 @@ fn skrelv_kws(ch: char) -> Option<(Sym, Sym)> {
     })
 }
 
-/// toxic from `eot_kw` (Skrelv's ability), a Mite token's keyword list, or the card's own compiled toxic N: the poison
-/// counters the combat damage to a player gives (called from `engine/combat.rs`)
-pub fn toxic_hit(g: &mut Game, a: PermId, d: PlayerId) {
+/// the toxic count of attacker `a`: from `eot_kw` (Skrelv's ability), a Mite token's keyword list, or the card's own
+/// compiled toxic N
+pub fn toxic_of(g: &Game, a: PermId) -> i32 {
     let x = g.perm(a);
     let mut k = i32::from(x.eot_kw.contains(&"toxic"));
     match x.cd {
@@ -1672,6 +1725,13 @@ pub fn toxic_hit(g: &mut Game, a: PermId, d: PlayerId) {
         // Predation, Ribskiff, Venomous Brutalizer): every card's toxic is given here
         Some(_) => k += crate::dsl::toxic_amount(g, a),
     }
+    k
+}
+
+/// toxic from `eot_kw` (Skrelv's ability), a Mite token's keyword list, or the card's own compiled toxic N: the poison
+/// counters the combat damage to a player gives (called from `engine/combat.rs`)
+pub fn toxic_hit(g: &mut Game, a: PermId, d: PlayerId) {
+    let k = toxic_of(g, a);
     if k == 0 || !repl::poison_ok(g, d) {
         return;
     }

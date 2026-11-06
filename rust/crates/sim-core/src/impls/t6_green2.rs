@@ -100,6 +100,9 @@ fn cloud_cycle(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// counting a little more and mana value breaking ties (Oboro, Eternal Witness); None if there is none. Never another
 /// Noxious Revival: its value is this same pick, so valuing it here would recurse without end
 pub fn revival_pick(g: &Game, p: PlayerId) -> Option<CardId> {
+    if let Some(o) = super::doomsday::revival_target(g, p) {
+        return Some(o); // a Doomsday pile: the Thassa's Oracle that was countered
+    }
     let gy: Vec<CardId> = g
         .player(p)
         .gy
@@ -127,6 +130,9 @@ fn revival_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym
 
 /// cast only to set up a draw: when the graveyard holds a card worth drawing
 fn revival_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    if super::doomsday::active(g, p) && super::doomsday::revival_target(g, p).is_none() {
+        return 0; // a Doomsday pile is played: Revival is held for a countered Oracle
+    }
     if revival_pick(g, p).is_some() { 30 } else { 0 }
 }
 

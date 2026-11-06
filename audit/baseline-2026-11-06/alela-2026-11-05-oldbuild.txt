@@ -1,0 +1,30 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  alela                                100 cards: Full 82, Full-auto 18, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 1 (High B2 / Low B3)  5 decks, 500 cards: Full 406, Full-auto 76, Approximate 18, Partial 0, Unmodeled 0
+
+2,000 games (1 tier, 2,000 per list per tier, profile loose), lookahead AI, 22 worker threads: about 5 minutes
+  progress  10.0%  0m54s elapsed, ~8m10s left
+  progress  20.0%  1m53s elapsed, ~7m33s left
+  progress  30.0%  3m04s elapsed, ~7m10s left
+  progress  40.0%  3m54s elapsed, ~5m52s left
+  progress  50.0%  4m50s elapsed, ~4m50s left
+  progress  60.0%  5m44s elapsed, ~3m49s left
+  progress  70.0%  6m46s elapsed, ~2m54s left
+  progress  80.0%  7m44s elapsed, ~1m56s left
+  progress  90.0%  8m32s elapsed, ~0m56s left
+  progress 100.0%  9m45s elapsed, ~0m00s left
+
+=== Alela vs Tier 1 (High B2 / Low B3) [loose, lookahead AI, 2000 games] ===
+Win rate   5.8%   95% CI 4.9-7.0%   (even share 25%: -19.1 pts)
+Average turn (your own turn count) of wins 14.9, of losses 9.7
+Plan online (first Faerie made by Alela): 48.0% of games
+Wins by: damage 86%, timeout 14%
+  Opponent                                    seated  won when seated  eliminated you
+  Teysa Karlov (teysa-orzhov-aristocrats)      61.0%            34.5%           20.0%
+  Isshin (isshin-mardu-attack-triggers)        60.4%            43.6%           27.9%
+  Lathril (lathril-golgari-elves)              60.4%            30.5%           19.0%
+  Tatyova (tatyova-simic-landfall)             59.7%            26.5%           15.3%
+  Light-Paws (light-paws-aura-voltron)         58.6%            21.4%           10.9%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(586s total)

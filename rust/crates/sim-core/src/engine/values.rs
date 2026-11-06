@@ -214,6 +214,17 @@ pub fn player_hexproof(g: &Game, q: PlayerId) -> bool {
     crate::engine::hooks::any_player_hexproof(g, q)
 }
 
+/// Veil of Summer has resolved for p this turn: p's spells can't be countered, and p has hexproof from blue and black
+pub fn veil_shield(g: &Game, p: PlayerId) -> bool {
+    g.player(p).veil_turn == Some(g.turn_stamp())
+}
+
+/// q can't be the target of an opponent's spell or ability of these colours: `player_hexproof`, or Veil of Summer's
+/// hexproof from blue and from black this turn
+pub fn player_hexproof_from(g: &Game, q: PlayerId, source: Colors) -> bool {
+    player_hexproof(g, q) || ((source.has('U') || source.has('B')) && veil_shield(g, q))
+}
+
 /// a permanent's colours: `chars::colors`
 #[inline]
 pub fn colors_of(g: &Game, m: PermId) -> Colors {
@@ -339,6 +350,15 @@ pub fn pval(g: &Game, m: PermId) -> f64 {
     let mut v = crate::ai::values::pval_bomb(g, c); // --- phase4-values: the tag, or a derived-arm reader's threat
     if cd.creature && v == 0.0 {
         v = 1.0 + epow(g, m) as f64 * 0.5;
+    }
+    // --- c3: an infect or toxic creature is a poison clock (ten counters kill as forty life do): worth more as
+    // its victims' counters mount, so removal and blocks find it
+    if cd.creature {
+        let ph = crate::engine::combat::poison_hit(g, m);
+        if ph > 0 {
+            let worst = g.opps(p).map(|q| g.player(q).poison).max().unwrap_or(0) as f64;
+            v += 0.6 * ph.min(6) as f64 * (1.0 + 0.25 * worst);
+        }
     }
     // a combo half is worth more with its other half out
     let with = |other: Tag, base: f64| if has(g, p, other) { base + 5.0 } else { base };

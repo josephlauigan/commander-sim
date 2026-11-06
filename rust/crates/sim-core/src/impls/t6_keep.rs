@@ -12,6 +12,7 @@
 //! - Chrome Mox: 1 when two other non-land, non-mana cards can imprint one of them (a spare), else 0;
 //! - Lion's Eye Diamond, rituals and spirit guides: 0 (they only fuel a spell).
 
+use crate::cards::Colors;
 use crate::ids::{CardId, PlayerId};
 use crate::state::Game;
 use crate::tag::Tag;
@@ -176,4 +177,102 @@ pub fn bottom_pick(g: &Game, p: PlayerId) -> Option<CardId> {
     let ok: Vec<CardId> = hand.iter().copied().filter(|&c| still_keeps(c)).collect();
     let pool = if ok.is_empty() { &hand } else { &ok };
     pool.iter().copied().min_by(|&a, &b| value(a).total_cmp(&value(b)))
+}
+
+// ------------------------------------------------------------------ the colours a hand can make
+/// the colours a land card taps for (`Tag::C`: letters, `A` the player's whole identity, `C` none)
+fn tag_cols(g: &Game, p: PlayerId, c: CardId) -> Colors {
+    match g.db.get(c).tags.str(Tag::C) {
+        Some("A") => g.player(p).ident,
+        Some(s) => Colors::from_letters(s),
+        None => Colors::NONE,
+    }
+}
+
+/// the colours of mana the card makes once it is in play: a rock (`rock` = `amount:colours`), a dork (`dork` =
+/// colours), Elvish Spirit Guide ({G} from the hand); Chrome Mox is none
+fn piece_cols(g: &Game, p: PlayerId, c: CardId) -> Colors {
+    let d = g.db.get(c);
+    let ident = g.player(p).ident;
+    let letters = |s: &str| if s == "A" { ident } else { Colors::from_letters(s) };
+    if let Some(r) = d.tags.str(Tag::Rock) {
+        return letters(r.rsplit(':').next().unwrap_or(""));
+    }
+    if let Some(r) = d.tags.str(Tag::Dork) {
+        return letters(r);
+    }
+    match &*d.name {
+        "Elvish Spirit Guide" => Colors::from_letters("G"),
+        // Chrome Mox exiles the card it imprints, so it cannot make the colour of the card that needs it: no source
+        "Chrome Mox" => Colors::NONE,
+        _ => Colors::NONE,
+    }
+}
+
+fn covers(have: Colors, need: Colors) -> bool {
+    "WUBRG".chars().all(|ch| !need.has(ch) || have.has(ch))
+}
+
+/// the colours the hand can make: its lands (a fetch land: the colours of the lands left in the library), then the rocks
+/// and dorks it can cast with what it has so far (their colours and a Mox's own cost, repeated until nothing is added)
+pub fn hand_sources(g: &Game, p: PlayerId) -> Colors {
+    let hand = &g.player(p).hand;
+    let lib_cols = || {
+        g.player(p)
+            .library
+            .iter()
+            .filter(|&&c| g.db.get(c).land && !g.db.get(c).tag(Tag::F))
+            .fold(Colors::NONE, |a, &c| a.union(tag_cols(g, p, c)))
+    };
+    let mut have = Colors::NONE;
+    let mut n_lands = 0;
+    for &c in hand.iter().filter(|&&c| g.db.get(c).land) {
+        n_lands += 1;
+        have = have.union(if g.db.get(c).tag(Tag::F) { lib_cols() } else { tag_cols(g, p, c) });
+    }
+    let pieces: Vec<CardId> = hand.iter().copied().filter(|&c| !g.db.get(c).land).collect();
+    let mut free = 0; // zero-cost pieces make the mana for a generic cost
+    for _ in 0..4 {
+        let mut changed = false;
+        for &c in &pieces {
+            let d = g.db.get(c);
+            let cols = piece_cols(g, p, c);
+            if cols.is_empty() || (covers(have, cols)) {
+                continue;
+            }
+            if covers(have, d.colors) && (d.generic as usize) <= n_lands + free {
+                have = have.union(cols);
+                if d.cmc == 0 {
+                    free += 1;
+                }
+                changed = true;
+            }
+        }
+        if !changed {
+            break;
+        }
+    }
+    have
+}
+
+fn in_scope(g: &Game, c: CardId, scope: Option<&[String]>) -> bool {
+    !g.db.get(c).land && scope.is_none_or(|s| s.iter().any(|n| **n == *g.db.get(c).name))
+}
+
+/// colours the hand's spells (those named in `scope`, else every nonland card) need and no source in the hand makes
+pub fn colour_gaps(g: &Game, p: PlayerId, scope: Option<&[String]>) -> usize {
+    let have = hand_sources(g, p);
+    let need = g
+        .player(p)
+        .hand
+        .iter()
+        .filter(|&&c| in_scope(g, c, scope))
+        .fold(Colors::NONE, |a, &c| a.union(g.db.get(c).colors));
+    "WUBRG".chars().filter(|&ch| need.has(ch) && !have.has(ch)).count()
+}
+
+/// how many of the hand's spells (those named in `scope`, else every nonland card) have a source of each colour they need
+pub fn colour_castable(g: &Game, p: PlayerId, scope: Option<&[String]>) -> usize {
+    let have = hand_sources(g, p);
+    g.player(p).hand.iter().filter(|&&c| in_scope(g, c, scope) && covers(have, g.db.get(c).colors)).count()
 }
