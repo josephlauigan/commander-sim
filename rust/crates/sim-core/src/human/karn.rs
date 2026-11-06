@@ -1164,7 +1164,8 @@ pub fn name_for_needle(g: &Game, p: PlayerId) -> Res<Option<CardId>> {
 /// (model-gaps-b3): it goes through `trigger_window` like the engine's other enter triggers, so the table may respond,
 /// a Peter Parker's Camera may copy it (the copy asks for a new target) and Rings of Brighthearth offers no copy
 /// (Rings copies activated abilities only). As with Spine of Ish Sah, the card is chosen after the window (the
-/// engine's probe run stops at the first window; asking before it asked twice).
+/// engine's probe run stops at the first window; asking before it asked twice). Its importance is 5, so a person with
+/// a Camera ready gets priority on it (`urdragon::camera_window`).
 pub fn lantern_enters(g: &mut Game, src: PermId) -> Res {
     let o = g.perm(src).owner;
     let graveyards = |g: &Game| -> Vec<(PlayerId, CardId)> {
@@ -1173,7 +1174,7 @@ pub fn lantern_enters(g: &mut Game, src: PermId) -> Res {
     if graveyards(g).is_empty() {
         return Ok(()); // no target: it does not trigger
     }
-    if !crate::engine::stack::trigger_window(g, o, Some(src), "exile a card from a graveyard", None)? {
+    if !crate::engine::stack::trigger_window(g, o, Some(src), "exile a card from a graveyard", Some(5.0))? {
         return Ok(());
     }
     let cands = graveyards(g); // (the table may have changed them in response)

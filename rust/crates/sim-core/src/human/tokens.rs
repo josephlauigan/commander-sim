@@ -107,13 +107,18 @@ pub fn use_token(g: &mut Game, p: PlayerId, kind: &str) -> Res<Option<String>> {
         "Clue" => ("Clue: draw a card", false),
         _ => ("Blood: draw a card", false),
     };
-    ability_run(g, p, None, None, name, None, None, |g| {
-        if food {
-            gain(g, p, 3)
-        } else {
-            zones::draw(g, p, 1, false)
-        }
-    })?;
+    ability_run(
+        g,
+        p,
+        None,
+        None,
+        name,
+        None,
+        None,
+        |g| {
+            if food { gain(g, p, 3) } else { zones::draw(g, p, 1, false) }
+        },
+    )?;
     crate::engine::life::check_state(g)?;
     Ok(None)
 }
