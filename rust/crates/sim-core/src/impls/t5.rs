@@ -131,35 +131,36 @@ fn urza_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 
 /// Urza's {5} once paid (the AI's path and the person's, `human::abilities`): shuffle, then play the top card free
 pub fn urza_top(g: &mut Game, src: PermId, p: PlayerId) -> Res {
-    if !ability_window(g, p, Some(src), "shuffle, play the top card free", None, None)?
-        || g.player(p).library.is_empty()
-    {
-        return Ok(());
-    }
-    shuffle_library(g, p);
-    let c = g.player_mut(p).library.pop().unwrap();
-    crate::glog!(g, "  Urza: {} off the top, free", g.db.get(c).name);
-    if crate::human::is_human(g, p) {
-        // a person plays it (or not) when they like, until end of turn: a permission on the exiled card
-        // (`human::triggers_t1::allow_free_play`), so a counterspell can wait for a spell and a land for the main phase
-        g.player_mut(p).exile.push(c);
-        crate::human::triggers_t1::allow_free_play(g, p, c, p, "Urza");
-        return Ok(());
-    }
-    let d = g.db.get(c);
-    if d.land {
-        if g.player(p).lands_played < 1 {
-            crate::engine::turn::play_land_card(g, p, c, "plays")?;
+    crate::engine::stack::ability_run(g, p, Some(src), None, "shuffle, play the top card free", None, None, |g| {
+        if g.player(p).library.is_empty() {
+            return Ok(());
+        }
+        shuffle_library(g, p);
+        let c = g.player_mut(p).library.pop().unwrap();
+        crate::glog!(g, "  Urza: {} off the top, free", g.db.get(c).name);
+        if crate::human::is_human(g, p) {
+            // a person plays it (or not) when they like, until end of turn: a permission on the exiled card
+            // (`human::triggers_t1::allow_free_play`), so a counterspell can wait for a spell and a land for the main phase
+            g.player_mut(p).exile.push(c);
+            crate::human::triggers_t1::allow_free_play(g, p, c, p, "Urza");
+            return Ok(());
+        }
+        let d = g.db.get(c);
+        if d.land {
+            if g.player(p).lands_played < 1 {
+                crate::engine::turn::play_land_card(g, p, c, "plays")?;
+            } else {
+                g.player_mut(p).exile.push(c);
+            }
+        } else if castable(g, p, c, "hand") && !d.tag(Tag::Ctr) {
+            g.player_mut(p).hand.push(c);
+            cast_card(g, p, c, "hand", Ctx::default())?;
         } else {
             g.player_mut(p).exile.push(c);
         }
-    } else if castable(g, p, c, "hand") && !d.tag(Tag::Ctr) {
-        g.player_mut(p).hand.push(c);
-        cast_card(g, p, c, "hand", Ctx::default())?;
-    } else {
-        g.player_mut(p).exile.push(c);
-    }
-    Ok(())
+        Ok(())
+    })
+    .map(|_| ())
 }
 
 /// common.TOKEN_PT entry: Urza's Construct gets +1/+1 per artifact its controller has

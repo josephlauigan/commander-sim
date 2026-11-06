@@ -88,7 +88,7 @@ pub fn abilities(nm: &str) -> Option<Vec<PermAbility>> {
 }
 
 /// a plain message to the person at p (no-op for an AI seat)
-fn tell_info(g: &Game, p: PlayerId, text: &str) {
+pub(super) fn tell_info(g: &Game, p: PlayerId, text: &str) {
     if let Some(h) = super::human_of(g, p) {
         h.tell(p, crate::sym::intern("info"), text);
     }

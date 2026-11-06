@@ -125,7 +125,18 @@ fn yawg_sacrifice(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         return Ok(None);
     }
     let what = if target.is_some() { "a -1/-1 counter, draw a card" } else { "draw a card" };
-    if stack::ability_window(g, p, Some(m), what, None, target)? {
+    stack::ability_run_w(g, p, Some(m), None, what, None, target, 0.0, |g, is_copy| {
+        let mut target = target;
+        if is_copy && target.is_some() {
+            // "you may choose a new target for the copy"
+            let now: Vec<PermId> = tg.iter().copied().filter(|&t| g.perm(t).on_bf && g.is_creature(t)).collect();
+            let prompt = "The copy of Yawgmoth's ability: put a -1/-1 counter on which creature?";
+            if !now.is_empty()
+                && let Some(t) = pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?
+            {
+                target = Some(t);
+            }
+        }
         if let Some(t) = target.filter(|&t| g.perm(t).on_bf && g.is_creature(t)) {
             if zones::minus_counter(g, t, 1) {
                 crate::glog!(g, "    a -1/-1 counter on {}", g.perm(t).name);
@@ -135,8 +146,8 @@ fn yawg_sacrifice(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
             }
             die_if_lethal(g, t)?;
         }
-        zones::draw(g, p, 1, false)?;
-    }
+        zones::draw(g, p, 1, false)
+    })?;
     life::check_state(g)?;
     Ok(None)
 }

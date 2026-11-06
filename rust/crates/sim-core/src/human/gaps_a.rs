@@ -17,7 +17,7 @@
 use super::abilities::{PermAbility, Why, ability};
 use super::{Target, choices, legal, mana};
 use crate::engine::mana::cost_of;
-use crate::engine::stack::{ability_window, ability_window_card};
+use crate::engine::stack;
 use crate::engine::zones;
 use crate::flow::Res;
 use crate::ids::{PermId, PlayerId};
@@ -117,13 +117,19 @@ fn garth_person(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     }
     g.perm_mut(m).tapped = true;
     crate::glog!(g, "  {} activates {}", pname(g, p), g.perm(m).name);
-    if !ability_window(g, p, Some(m), "choose a name, create a copy of it and cast it", None, None)? {
-        return Ok(None);
-    }
+    stack::ability_run(g, p, Some(m), None, "choose a name, create a copy of it and cast it", None, None, |g| {
+        garth_resolve(g, p, m)
+    })?;
+    Ok(None)
+}
+
+/// Garth One-Eye's ability as it resolves (once for each Rings of Brighthearth / Peter Parker's Camera copy, then for
+/// the ability itself): a name not chosen yet, its copy, and the cast
+fn garth_resolve(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     // the name, as the ability resolves
     let left = garth::unchosen(g, m);
     if left.is_empty() {
-        return Ok(None);
+        return Ok(());
     }
     let labels: Vec<String> = left
         .iter()
@@ -152,7 +158,7 @@ fn garth_person(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     g.perm_mut(m).data.set(DataKey::Garth, Val::Int(mask));
     let name = garth::NAMES[i];
     crate::glog!(g, "  {} chooses {}: a copy of it", g.perm(m).name, name);
-    let Some(c) = g.db.id(name) else { return Ok(None) };
+    let Some(c) = g.db.id(name) else { return Ok(()) };
     // "you may cast the copy": declined, the name stays used and the copy ceases to exist
     {
         let (gn, pips) = cost_of(g, p, c);
@@ -160,7 +166,7 @@ fn garth_person(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         let prompt = format!("Garth One-Eye: cast the copy of {name}?");
         if choices::choose(g, p, "choose", &prompt, &labels, Some("don't cast it"), None)?.is_none() {
             crate::glog!(g, "    {name} is not cast: the copy ceases to exist");
-            return Ok(None);
+            return Ok(());
         }
     }
     // the target or X of the copy, chosen as it is cast
@@ -171,7 +177,7 @@ fn garth_person(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
             tgts.into_iter().filter_map(|t| if let Target::Perm(q) = t { Some(q) } else { None }).collect();
         if tgts.is_empty() {
             crate::glog!(g, "    {name} has no legal target: the copy ceases to exist");
-            return Ok(None);
+            return Ok(());
         }
         let labels: Vec<String> = tgts.iter().map(|&q| legal::describe_target(g, p, Target::Perm(q))).collect();
         let k =
@@ -226,7 +232,7 @@ fn garth_person(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         );
     }
     crate::engine::life::check_state(g)?;
-    Ok(None)
+    Ok(())
 }
 
 // ------------------------------------------------------------------ Kefka, Court Mage
@@ -288,28 +294,31 @@ fn scion_search(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         return Ok(Some(why));
     }
     crate::glog!(g, "  {} activates Scion of the Ur-Dragon", pname(g, p));
-    if !ability_window(g, p, Some(m), "search for a Dragon, become a copy of it", None, None)? || g.over {
-        return Ok(None);
-    }
-    // the search, as the ability resolves
-    let found = choices::search(
-        g,
-        p,
-        &|g: &Game, c| {
-            let d = g.db.get(c);
-            d.perm && t45_urdragon::dragon_card(g, c)
-        },
-        1,
-        "Scion of the Ur-Dragon: search your library for a Dragon permanent card (it goes to your graveyard)",
-        true,
-    )?;
-    if let Some(&c) = found.first() {
-        g.player_mut(p).gy.push(c);
-        crate::glog!(g, "    {} puts {} into the graveyard", pname(g, p), g.db.get(c).name);
-        if live(g, m) {
-            t6_scion::become_copy(g, m, c);
+    stack::ability_run(g, p, Some(m), None, "search for a Dragon, become a copy of it", None, None, |g| {
+        if g.over {
+            return Ok(());
         }
-    }
+        // the search, as the ability resolves
+        let found = choices::search(
+            g,
+            p,
+            &|g: &Game, c| {
+                let d = g.db.get(c);
+                d.perm && t45_urdragon::dragon_card(g, c)
+            },
+            1,
+            "Scion of the Ur-Dragon: search your library for a Dragon permanent card (it goes to your graveyard)",
+            true,
+        )?;
+        if let Some(&c) = found.first() {
+            g.player_mut(p).gy.push(c);
+            crate::glog!(g, "    {} puts {} into the graveyard", pname(g, p), g.db.get(c).name);
+            if live(g, m) {
+                t6_scion::become_copy(g, m, c);
+            }
+        }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -334,17 +343,16 @@ fn mastermind_draw(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         return Ok(Some(why));
     }
     crate::glog!(g, "  {} activates Faerie Mastermind: each player draws a card", pname(g, p));
-    if !ability_window(g, p, Some(m), "each player draws a card", None, None)? {
-        return Ok(None);
-    }
-    let first = g.active.unwrap_or(p);
-    let order: Vec<PlayerId> = std::iter::once(first).chain(g.after(first)).collect();
-    for q in order {
-        if g.player(q).alive && !g.over {
-            zones::draw(g, q, 1, false)?;
+    stack::ability_run(g, p, Some(m), None, "each player draws a card", None, None, |g| {
+        let first = g.active.unwrap_or(p);
+        let order: Vec<PlayerId> = std::iter::once(first).chain(g.after(first)).collect();
+        for q in order {
+            if g.player(q).alive && !g.over {
+                zones::draw(g, q, 1, false)?;
+            }
         }
-    }
-    crate::engine::life::check_state(g)?;
+        crate::engine::life::check_state(g)
+    })?;
     Ok(None)
 }
 
@@ -360,9 +368,10 @@ fn ranger_silence(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         "  {} sacrifices Ranger-Captain of Eos: opponents can't cast noncreature spells this turn",
         pname(g, p)
     );
-    if ability_window_card(g, p, cd, "your opponents can't cast noncreature spells this turn", None, None)? {
+    stack::ability_run(g, p, None, Some(cd), "your opponents can't cast noncreature spells this turn", None, None, |g| {
         g.silence = Some((g.turn_stamp(), p));
-    }
+        Ok(())
+    })?;
     Ok(None)
 }
 

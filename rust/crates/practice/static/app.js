@@ -97,6 +97,7 @@ function renderPrompt(ev) {
     row('Command zone', commandersOf(me).filter((c) => c.in_zone).map((c) => btn(`${c.name} (tax ${c.tax})`, { do: 'cast', zone: 'cmd', cmd: c.i })));
     row('Activate', me.battlefield.map((m) => btn(m.name, { do: 'use', perm: m.i })));
     row('Land abilities', me.lands.filter((L) => L.ability).map((L) => btn(L.name, { do: 'use', land: L.i })));
+    row('Tokens', Object.entries(me.tokens || {}).map(([k, n]) => btn(`${k} (${n})`, { do: 'use', token: k })));
     row('Graveyard', (me.graveyard_playable || []).map((x) => btn(`${x.name} (${x.how})`, { do: x.how === 'land' ? 'land' : 'cast', zone: 'gy', card: x.i })));
     row('Exile (this turn)', (me.exile_playable || []).map((x) => btn(`${x.name} (${x.owner}'s exile)`, { do: x.land ? 'land' : 'cast', zone: 'ex', card: x.card })));
     box.append(list);

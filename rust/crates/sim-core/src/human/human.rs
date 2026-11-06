@@ -10,6 +10,7 @@
 //!   {"do": "cast", "zone": "cmd", "cmd": 1}      with Partner: the second commander (0, the default, is the first
 //!                                                in the zone; "cmd" may also be the commander's name)
 //!   {"do": "use", "perm": i}                     an ability of your i-th permanent (Equip, loyalty, ...)
+//!   {"do": "use", "token": "Clue"}               crack a Clue, eat a Food or use a Blood token (a count, not a permanent)
 //!   {"do": "pass"}
 //! Follow-up questions (which target, which ability) come back as 'target' / 'choose' requests.
 //!
@@ -669,6 +670,10 @@ pub fn apply(g: &mut Game, p: PlayerId, act: &Value) -> Res<Option<String>> {
         return Ok(None);
     }
     if d == "use" {
+        if let Some(kind) = act.get("token").and_then(Value::as_str) {
+            // a Clue, Food or Blood token (a count on the player, not a permanent)
+            return super::tokens::use_token(g, p, kind);
+        }
         if act.get("land").is_some() {
             let Some(l) = index_of(act, "land").and_then(|i| g.player(p).lands.get(i).copied()) else {
                 return Ok(Some("You don't control that land.".into()));

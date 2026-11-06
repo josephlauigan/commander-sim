@@ -148,6 +148,12 @@ enum Sc {
     EnterOpp,
     SelfEnter,
     Ring,
+    /// an opponent's spell destroys the person's noncreature permanent (Karmic Justice)
+    OppDestroy,
+    /// an opponent casts a spell on the person's turn (Vision)
+    OppCast,
+    /// the person activates a non-mana ability of their own (Rings of Brighthearth)
+    UseAbility,
 }
 
 /// the moments to drive for these trigger conditions, and the lines no moment fits
@@ -221,6 +227,15 @@ fn scenarios(lines: &[TLine]) -> (BTreeSet<Sc>, Vec<String>) {
         if has("ring-bearer") || has("ring tempts") {
             out.insert(Sc::Ring);
         }
+        if has(" destroys ") {
+            out.insert(Sc::OppDestroy);
+        }
+        if has("a player casts") {
+            out.insert(Sc::OppCast);
+        }
+        if has("you activate an ability") {
+            out.insert(Sc::UseAbility);
+        }
         if has("token") {
             out.insert(Sc::Token);
         }
@@ -249,6 +264,8 @@ struct Rec {
 struct Probe {
     script: bool,
     act: Mutex<Option<Value>>,
+    /// taken at the first priority window for a trigger of the person's own (a Peter Parker's Camera to copy it)
+    win: Mutex<Option<Value>>,
     want: String,
     n_abil: Mutex<usize>,
     n_main: Mutex<usize>,
@@ -268,6 +285,11 @@ impl Human for Probe {
         }
         match &*req.kind {
             "priority" => {
+                if req.prompt.starts_with("Your trigger:") {
+                    if let Some(a) = self.win.lock().unwrap().take() {
+                        return Answer::Action(a);
+                    }
+                }
                 if req.prompt.starts_with("Main phase") || req.prompt.starts_with("Your turn: you have priority") {
                     if let Some(a) = self.act.lock().unwrap().take() {
                         return Answer::Action(a);
@@ -286,7 +308,7 @@ impl Human for Probe {
             }
             "attack" => Answer::Picks((0..req.choices.len()).collect()),
             "block" => Answer::Picks(vec![]),
-            _ if req.prompt.ends_with("which ability?") => {
+            _ if req.prompt.ends_with(": which ability?") => {
                 let mut n = self.n_abil.lock().unwrap();
                 *n = (*n).max(req.choices.len());
                 Answer::Pick(pick_ability(&req.choices, &self.want))
@@ -335,6 +357,67 @@ fn signature(g: &Game, ignore_life: bool) -> Vec<i64> {
     v
 }
 
+/// What an activated ability needs that the probe's table lacks (2026-11-05, model-gaps B1), put there before the
+/// person is seated. Returns Some(true) when the ability copies another one and so must be used while an ability of the
+/// person's is waiting (Peter Parker's Camera: Godo's enter trigger).
+fn precondition(g: &mut Game, name: &str, sc: Sc, e0: PermId, e1: PermId) -> Option<bool> {
+    if !matches!(sc, Sc::Activate(_)) {
+        match (name, sc) {
+            // counters on The Ozolith (a creature with counters left earlier)
+            ("The Ozolith", Sc::Combat) => g.player_mut(P0).ozolith_counters = 2,
+            // an opponent was dealt combat damage this turn
+            ("Tymna the Weaver", Sc::Main2End) => {
+                let st = g.turn_stamp();
+                g.player_mut(P0).flag_turn.insert(intern("hit1"), st);
+            }
+            // an ability of the person's that Rings of Brighthearth copies (karn.rs: monolith)
+            ("Rings of Brighthearth", Sc::UseAbility) => {
+                let mon = perm(g, P0, "Grim Monolith");
+                g.perm_mut(mon).tapped = true;
+            }
+            _ => {}
+        }
+        return None;
+    }
+    let assembly_worker = |g: &mut Game| {
+        let w = token(g, P0, 2);
+        g.perm_mut(w).ttypes.push("artifact");
+        g.perm_mut(w).ttypes.push("assembly-worker");
+        g.in_combat.push(w);
+    };
+    match name {
+        // an attacking creature
+        "Angelic Page" | "Ballista Squad" => g.in_combat.push(e0),
+        // an attacking Assembly-Worker (the Factory's {T} pump only needs an Assembly-Worker)
+        "Mishra's Factory" | "Mishra's Foundry" => assembly_worker(g),
+        "Cid, Freeflier Pilot" => {
+            let c = take(g, P0, "Lightning Greaves");
+            g.player_mut(P0).gy.push(c);
+        }
+        "Plaza of Heroes" => {
+            perm(g, P0, "Thrasios, Triton Hero");
+        }
+        "Lawbringer" => {
+            perm(g, P1, "Shivan Dragon");
+        }
+        "Lightbringer" => {
+            perm(g, P1, "Vampire Nighthawk");
+        }
+        "Ramosian Revivalist" => {
+            let c = take(g, P0, "Ramosian Lieutenant");
+            g.player_mut(P0).gy.push(c);
+        }
+        // an opponent's creature dies: exiled with a void counter
+        "Dauthi Voidwalker" => {
+            sim_core::engine::zones::die(g, e1, intern("destroy")).unwrap();
+            sim_core::engine::life::check_state(g).unwrap(); // the sweep exiles P1's graveyard
+        }
+        "Peter Parker's Camera" => return Some(true),
+        _ => {}
+    }
+    None
+}
+
 fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc: Sc, want: &str) -> Outcome {
     let mut g: Game = table(&[key, "seph", "thanos"]);
     g.log = Some(vec![]);
@@ -344,7 +427,7 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
     let birds = fixture(name, "Birds of Paradise", "Shivan Dragon");
     let e0 = perm(&mut g, P0, elves);
     let b0 = perm(&mut g, P0, birds);
-    perm(&mut g, P0, "Bonesplitter");
+    let bone = perm(&mut g, P0, "Bonesplitter");
     lands(&mut g, P0, "Island", 3, false);
     let e1 = perm(&mut g, P1, elves);
     let b1 = perm(&mut g, P1, birds);
@@ -389,6 +472,7 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
         want: want.to_string(),
         n_abil: Mutex::new(0),
         act: Mutex::new(None),
+        win: Mutex::new(None),
         script,
         n_main: Mutex::new(0),
         reqs: Mutex::new(vec![]),
@@ -399,7 +483,33 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
         equipment_on_top(&mut g);
         g.humans.add(P0, h.clone());
     }
-    let m = if land { lands(&mut g, P0, put, 1, false)[0] } else { perm(&mut g, P0, put) };
+    let m = if land {
+        lands(&mut g, P0, put, 1, false)[0]
+    } else if put == "Walking Ballista" {
+        // cast with X = 6: it enters with three counters (a card put onto the battlefield enters with none and dies)
+        g.last_x = 6;
+        let c = take(&mut g, P0, put);
+        sim_core::engine::zones::enter(
+            &mut g,
+            P0,
+            c,
+            sim_core::engine::zones::Enter { sick: false, was_cast: true, ..Default::default() },
+        )
+        .unwrap()
+    } else if put == "Jocasta, Automaton Avenger" {
+        // she returns from the graveyard when the commander attacks: the card in the graveyard, the commander out
+        let j = take(&mut g, P0, put);
+        g.player_mut(P0).gy.push(j);
+        let cmd = perm(&mut g, P0, "Cloud, Midgar Mercenary");
+        g.perm_mut(cmd).is_cmd = true;
+        cmd
+    } else {
+        perm(&mut g, P0, put)
+    };
+    if land && put == "Urza's Saga" {
+        sim_core::cardcode::land_etb(&mut g, P0, m).unwrap(); // lore counter I; step_start adds II and III
+    }
+    let camera = if put == name { precondition(&mut g, name, sc, e0, e1) } else { None };
     if equip {
         g.perm_mut(m).attached = Some(e0); // "equipped creature" / "enchanted creature"
     }
@@ -422,7 +532,7 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
         g.humans.add(P0, h.clone());
         g.log = Some(vec![]);
     }
-    if let Sc::Activate(_) = sc {
+    if matches!(sc, Sc::Activate(_) | Sc::UseAbility) {
         // artifacts to pay with or sacrifice (Inventors' Fair, Kuldotha Forgemaster: three or more)
         for n in ["Sol Ring", "Arcane Signet", "Mind Stone"] {
             perm(&mut g, P0, n);
@@ -434,13 +544,25 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
         } else {
             g.player(P0).perms.iter().position(|&x| x == m)
         };
-        *h.act.lock().unwrap() = Some(match (land, i) {
+        let use_it = match (land, i) {
             (true, Some(i)) => json!({"do": "use", "land": i}),
             (false, Some(i)) => json!({"do": "use", "perm": i}),
             _ => json!({"do": "pass"}),
-        });
+        };
+        if camera == Some(true) {
+            *h.win.lock().unwrap() = Some(use_it); // while the trigger waits
+        } else {
+            *h.act.lock().unwrap() = Some(use_it);
+        }
     }
-    if script || sc == Sc::EnterOwn || matches!(sc, Sc::Activate(_)) {
+    if sc == Sc::UseAbility {
+        // the person's own ability (not a mana ability) that Rings can copy: untap Grim Monolith
+        // (the blank run has no Monolith)
+        if let Some(i) = g.player(P0).perms.iter().rposition(|&x| &*g.perm(x).name == "Grim Monolith") {
+            *h.act.lock().unwrap() = Some(json!({"do": "use", "perm": i}));
+        }
+    }
+    if script || sc == Sc::EnterOwn || matches!(sc, Sc::Activate(_) | Sc::UseAbility) {
         pool(&mut g, P0, &[('W', 10), ('U', 10), ('B', 10), ('R', 10), ('G', 10), ('C', 10)]);
     }
     let before = signature(&g, sc == Sc::Combat);
@@ -453,8 +575,11 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
                     turn::step_start(&mut g, P0)?;
                 }
             }
-            Sc::Main1 | Sc::Activate(_) => {
+            Sc::Main1 | Sc::Activate(_) | Sc::UseAbility => {
                 g.step = Step::Main1;
+                if camera == Some(true) {
+                    perm(&mut g, P0, "Godo, Bandit Warlord"); // its enter trigger is the ability to copy
+                }
                 sim_core::human::human::human_main(&mut g, P0, false)?;
             }
             Sc::Combat => {
@@ -495,6 +620,11 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
                 perm(&mut g, P0, "Sakura-Tribe Elder");
             }
             Sc::SelfEnter => {}
+            Sc::OppDestroy => sim_core::engine::removal::apply_removal(&mut g, Some(P1), bone, "destroy", None)?,
+            Sc::OppCast => {
+                let c = take(&mut g, P1, "Mind Stone");
+                sim_core::engine::cast::on_cast(&mut g, P1, c)?;
+            }
             Sc::Ring => sim_core::cardcode::ring_tempt(&mut g, P0)?,
             Sc::EnterOpp => {
                 perm(&mut g, P1, "Mind Stone");
@@ -509,13 +639,16 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
         for q in reqs.iter() {
             eprintln!("  REQ {sc:?} {} | {} | {:?}", q.kind, q.prompt, q.choices);
         }
+        for (k, t) in h.told.lock().unwrap().iter() {
+            eprintln!("  TOLD {sc:?} {k}: {t}");
+        }
     }
     let is_act = matches!(sc, Sc::Activate(_));
     let window = format!("Your trigger: {name}:");
     let fired = reqs.iter().any(|q| {
         (q.kind == "priority"
             && (q.prompt.contains(&window) || (q.prompt.starts_with("You activate") && q.prompt.contains(name))))
-            || (q.kind != "priority" && q.prompt.starts_with(name) && (!is_act || !q.prompt.ends_with("which ability?"))) // (a refused activation only asked which ability)
+            || (q.kind != "priority" && q.prompt.starts_with(name) && (!is_act || !q.prompt.ends_with(": which ability?"))) // (a refused activation only asked which ability)
     });
     // only the probed card's questions: not the structure of the probe's own plays, nor a prompt headed by another card
     let other =
@@ -526,7 +659,7 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
             !matches!(&*q.kind, "priority" | "attack" | "block")
                 && !q.prompt.starts_with("Attack which")
                 && !q.prompt.starts_with("attacking ")
-                && !q.prompt.ends_with("which ability?")
+                && !q.prompt.ends_with(": which ability?")
                 && !other(&q.prompt)
         })
         .map(|q| {
@@ -778,51 +911,12 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
 ];
 
 /// cards with a triggered choice the probe could not drive (or whose trigger never fired), each with why; a new one
-/// fails the test, and so does one that now fires
+/// fails the test, and so does one that now fires. Empty since model-gaps B1 (2026-11-05): `precondition` (activated
+/// abilities), the `OppDestroy` / `OppCast` / `UseAbility` moments and the placements in `run` (Jocasta, Urza's Saga,
+/// Walking Ballista) give each card what its trigger waits for. Rings of Brighthearth is driven with Grim Monolith's
+/// untap: the person's Rings offer exists only for the abilities that carry out their copies (`stack::ability_run`,
+/// `ability_window_ex`, `ability_window_rc`), see `tests/play_rings.rs`.
 const UNPROBED: &[(&str, &str)] = &[
-    ("alela: Angelic Page", "activated: needs an attacking or blocking creature; the ability is refused in the probe's table"),
-    ("galadriel: Ballista Squad", "activated: needs an attacking or blocking creature; refused in the probe's table"),
-    ("karn: Mishra's Foundry", "activated: needs an attacking Assembly-Worker; refused in the probe's table"),
-    ("karn: Mishra's Factory", "activated: needs another Assembly-Worker (only itself is one); refused in the probe's table"),
-    ("cloud: Cid, Freeflier Pilot", "activated: needs an Equipment or Vehicle card in the graveyard; refused in the probe's table"),
-    ("cloud: Plaza of Heroes", "activated: needs a legendary creature; refused in the probe's table"),
-    ("galadriel: Lawbringer", "activated: needs a red creature; refused in the probe's table"),
-    ("galadriel: Lightbringer", "activated: needs a black creature; refused in the probe's table"),
-    ("galadriel: Ramosian Revivalist", "activated: needs a Rebel card in the graveyard; refused in the probe's table"),
-    ("karn: Walking Ballista", "activated: it leaves the battlefield on entering with no counters"),
-    ("thrasios: Walking Ballista", "activated: it leaves the battlefield on entering with no counters"),
-    ("sauron: Peter Parker's Camera", "activated: needs an ability of yours to copy; refused in the probe's table (human/urdragon.rs asks \"copy which ability?\")"),
-    ("thrasios: Dauthi Voidwalker", "activated: needs an exiled card with a void counter; refused in the probe's table (human/gaps_c.rs asks \"play which exiled card for free?\")"),
-    ("urdragon: Maelstrom of the Spirit Dragon", "activated: the ability never went on the stack in the probe's table (not read)"),
-    (
-        "alela: Karmic Justice",
-        "needs a spell or ability an opponent controls to destroy the person's noncreature permanent: no driver",
-    ),
-    (
-        "cloud: Jocasta, Automaton Avenger",
-        "triggers from the graveyard when the commander attacks: the probe puts cards on the battlefield only",
-    ),
-    (
-        "karn: Rings of Brighthearth",
-        "triggers on activating an ability: the probe does not activate abilities (the ability probe does, without resolving)",
-    ),
-    (
-        "thrasios: Rings of Brighthearth",
-        "triggers on activating an ability: the probe does not activate abilities (the ability probe does, without resolving)",
-    ),
-    (
-        "karn: Urza's Saga",
-        "a land Saga: the probe puts it on the battlefield without lore counters, so its chapters never come; chapter III's search is asked in practice_binder.rs",
-    ),
-    ("sauron: The Ozolith", "needs counters on the Ozolith (a creature with counters must leave first)"),
-    (
-        "sauron: Vision, Synthezoid Avenger",
-        "triggers when an opponent casts a spell on their own turn: the probe's AI opponent casts nothing on the person's turn",
-    ),
-    (
-        "thrasios: Tymna the Weaver",
-        "needs an opponent dealt combat damage this turn before the second main phase: the probe drives the phases apart",
-    ),
 ];
 
 fn check(found: &BTreeMap<String, Vec<String>>) {

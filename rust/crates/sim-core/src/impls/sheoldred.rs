@@ -14,7 +14,7 @@ use crate::engine::cast::{cast_card, castable, discard_worst};
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::removal::{apply_removal, legal_targets};
-use crate::engine::stack::{ability_window, may_window, may_window_ask, trigger_window};
+use crate::engine::stack::{ability_run, may_window, may_window_ask, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{epow, etgh, pval, untargetable};
 use crate::engine::zones::{
@@ -719,11 +719,14 @@ fn seeker_flip(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     sac_blood(g, p, 2)?;
-    if ability_window(g, p, Some(m), "transform", Some(2.0), None)? && on_bf(g, m) {
-        g.perm_mut(m).data.set(DataKey::Flipped, Val::Bool(true));
-        g.selfpt = true;
-        crate::glog!(g, "  Restless Bloodseeker transforms into Bloodsoaked Reveler");
-    }
+    ability_run(g, p, Some(m), None, "transform", Some(2.0), None, |g| {
+        if on_bf(g, m) {
+            g.perm_mut(m).data.set(DataKey::Flipped, Val::Bool(true));
+            g.selfpt = true;
+            crate::glog!(g, "  Restless Bloodseeker transforms into Bloodsoaked Reveler");
+        }
+        Ok(())
+    })?;
     Ok(true)
 }
 
@@ -733,13 +736,13 @@ fn reveler_drain(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     pay(g, p, 4, "B", false)?;
-    if ability_window(g, p, Some(m), "each opponent loses 2 life and you gain 2", Some(3.0), None)? {
+    ability_run(g, p, Some(m), None, "each opponent loses 2 life and you gain 2", Some(3.0), None, |g| {
         let opps: Vec<PlayerId> = g.opps(p).collect();
         for q in opps {
             lose_life(g, q, 2, Some(p), "drain", Some(false))?;
         }
-        gain(g, p, 2)?;
-    }
+        gain(g, p, 2)
+    })?;
     Ok(true)
 }
 
@@ -1275,9 +1278,7 @@ fn tome_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     pay(g, p, 1, "", false)?;
     g.perm_mut(src).tapped = true;
     add_pages(g, src, -1);
-    if ability_window(g, p, Some(src), "draw a card", Some(2.0), None)? {
-        draw(g, p, 1, false)?;
-    }
+    ability_run(g, p, Some(src), None, "draw a card", Some(2.0), None, |g| draw(g, p, 1, false))?;
     Ok(true)
 }
 
@@ -1318,9 +1319,7 @@ fn diary_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     }
     pay(g, p, cost, "", false)?;
     g.perm_mut(src).tapped = true;
-    if ability_window(g, p, Some(src), "draw a card", Some(2.0), None)? {
-        draw(g, p, 1, false)?;
-    }
+    ability_run(g, p, Some(src), None, "draw a card", Some(2.0), None, |g| draw(g, p, 1, false))?;
     Ok(true)
 }
 
@@ -1727,11 +1726,12 @@ fn bell_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     }
     g.perm_mut(src).tapped = true;
     crate::glog!(g, "  {} taps Temple Bell: each player draws a card", pname(g, p));
-    if ability_window(g, p, Some(src), "each player draws a card", Some(3.0), None)? {
+    ability_run(g, p, Some(src), None, "each player draws a card", Some(3.0), None, |g| {
         for q in apnap(g, p) {
             draw(g, q, 1, false)?;
         }
-    }
+        Ok(())
+    })?;
     Ok(true)
 }
 
@@ -1770,15 +1770,29 @@ pub(crate) fn atlas_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<
     g.perm_mut(src).tapped = true;
     let k = g.perm(src).data.int(DataKey::Charge);
     if arg == 0 {
+        if crate::human::is_human(g, p) {
+            // a person's ability goes on the stack (Rings of Brighthearth / Peter Parker's Camera copy it); the AI's
+            // resolves at once, as it always did
+            ability_run(g, p, Some(src), None, "a charge counter", Some(3.0), None, |g| {
+                let k = g.perm(src).data.int(DataKey::Charge);
+                g.perm_mut(src).data.set(DataKey::Charge, Val::Int(k + 1));
+                crate::glog!(g, "  {} taps Otherworld Atlas: a charge counter ({})", pname(g, p), k + 1);
+                Ok(())
+            })?;
+            return Ok(true);
+        }
         g.perm_mut(src).data.set(DataKey::Charge, Val::Int(k + 1));
         crate::glog!(g, "  {} taps Otherworld Atlas: a charge counter ({})", pname(g, p), k + 1);
         return Ok(true);
     }
     crate::glog!(g, "  {} taps Otherworld Atlas: each player draws {}", pname(g, p), k);
-    if k > 0 && ability_window(g, p, Some(src), "each player draws a card for each charge counter", Some(3.0), None)? {
-        for q in apnap(g, p) {
-            draw(g, q, k as u32, false)?;
-        }
+    if k > 0 {
+        ability_run(g, p, Some(src), None, "each player draws a card for each charge counter", Some(3.0), None, |g| {
+            for q in apnap(g, p) {
+                draw(g, q, k as u32, false)?;
+            }
+            Ok(())
+        })?;
     }
     Ok(true)
 }
@@ -1868,7 +1882,8 @@ fn draw_land_go(g: &mut Game, p: PlayerId, l: PermId, loot: bool) -> Res<bool> {
     let (name, what) =
         if loot { (GEIER, "each player draws, then discards") } else { (MIKOKORO, "each player draws a card") };
     crate::glog!(g, "  {} uses {}", pname(g, p), name);
-    if crate::engine::stack::ability_window_card(g, p, g.perm(l).card(), what, Some(3.0), None)? {
+    let cd = g.perm(l).card();
+    ability_run(g, p, None, Some(cd), what, Some(3.0), None, |g| {
         let order = apnap(g, p);
         for &q in &order {
             draw(g, q, 1, false)?;
@@ -1880,7 +1895,8 @@ fn draw_land_go(g: &mut Game, p: PlayerId, l: PermId, loot: bool) -> Res<bool> {
                 }
             }
         }
-    }
+        Ok(())
+    })?;
     Ok(true)
 }
 

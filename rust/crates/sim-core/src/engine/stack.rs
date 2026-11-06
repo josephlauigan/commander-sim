@@ -419,6 +419,16 @@ fn take_copies(g: &mut Game, id: u32) -> usize {
     n
 }
 
+/// `take_copies` for an activated ability that left the stack (`ability_window_ex` and its kin): the copies that
+/// resolved are logged, one line each, as the caller carries them out
+fn ability_copies(g: &mut Game, out: &StackItem) -> usize {
+    let n = take_copies(g, out.id);
+    for _ in 0..n {
+        crate::glog!(g, "    the copy of {} resolves", out.name);
+    }
+    n
+}
+
 /// a copy of a triggered ability resolves: its hook runs again (no new stack window: it already had one)
 fn run_copy(g: &mut Game, t: &Trigger) -> Res {
     let prev = g.trig_current.replace(0); // id 0 is never on the stack: trigger_window just says "resolved"
@@ -472,6 +482,12 @@ fn copy_item(g: &mut Game, q: PlayerId, id: u32, any: bool) -> Res<bool> {
 // ------------------------------------------------------------------ priority
 /// p paid the cost of an activated ability of src: it goes on the stack and players get priority. True if it
 /// resolves (the caller then applies its effect, even if src is gone by then), false if it was countered.
+///
+/// **Not for an ability a person can activate** (model-gaps-b2): a person's Rings of Brighthearth and Peter Parker's
+/// Camera copy only abilities whose caller carries out the copies, and this one gives the caller no copies. Use
+/// `ability_run` / `ability_run_w` (the effect in a closure, run once for each copy that resolved and then for the
+/// ability itself); they are this function for anyone else. `tests/practice_rings_probe.rs` fails for a person ability
+/// that goes through this one.
 pub fn ability_window(
     g: &mut Game,
     p: PlayerId,
@@ -539,12 +555,13 @@ pub fn ability_window_ex(
     let ctx = Ctx { source: src, ..ctx };
     let it = new_item(g, p, card, ctx, "ability", imp, StackKind::Ability, full);
     let out = window_item(g, p, it, crate::human::is_human(g, p))?; // the person's Rings of Brighthearth may copy it
-    let copies = take_copies(g, out.id);
+    let copies = ability_copies(g, &out);
     Ok(AbilityRes { resolves: !out.countered, target: out.ctx.target, copies })
 }
 
 /// ability_window for an ability whose source is a card, not a permanent (a land's ability, a card in hand or the
-/// graveyard): Python's `ability_window(g, p, L.cd, ...)`
+/// graveyard): Python's `ability_window(g, p, L.cd, ...)`. Not for a person's ability either: see `ability_window`
+/// (`ability_run` with `src` None and `cd` Some).
 pub fn ability_window_card(
     g: &mut Game,
     p: PlayerId,
@@ -658,7 +675,7 @@ pub fn ability_window_rc(
     let it =
         new_item(g, p, card, Ctx { source: src, target, ..Ctx::default() }, "ability", imp, StackKind::Ability, full);
     let out = window_item(g, p, it, true)?;
-    Ok((!out.countered, take_copies(g, out.id)))
+    Ok((!out.countered, ability_copies(g, &out)))
 }
 
 /// `ability_window_card` for the person's ability whose source is a card (see `ability_window_rc`)
@@ -681,7 +698,7 @@ pub fn ability_window_card_rc(
     let ctx = Ctx { target, ..Ctx::default() };
     let it = new_item(g, p, Some(cd), ctx, "ability", imp.unwrap_or(3.0), StackKind::Ability, full);
     let out = window_item(g, p, it, true)?;
-    Ok((!out.countered, take_copies(g, out.id)))
+    Ok((!out.countered, ability_copies(g, &out)))
 }
 
 /// An activated ability of the person's (cost paid) put on the stack and carried out: `eff` runs once for each
@@ -720,7 +737,7 @@ pub fn ability_window_card_ex(
     let full = format!("{}: {name}", g.db.get(cd).name);
     let it = new_item(g, p, Some(cd), ctx, "ability", imp.unwrap_or(3.0), StackKind::Ability, full);
     let out = window_item(g, p, it, crate::human::is_human(g, p))?;
-    let copies = take_copies(g, out.id);
+    let copies = ability_copies(g, &out);
     Ok(AbilityRes { resolves: !out.countered, target: out.ctx.target, copies })
 }
 

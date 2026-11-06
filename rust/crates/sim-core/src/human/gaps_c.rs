@@ -9,7 +9,7 @@
 use super::abilities::{PermAbility, Why, ability};
 use super::{Target, cards, choices, legal, mana};
 use crate::cards::Types;
-use crate::engine::stack::ability_window;
+use crate::engine::stack;
 use crate::engine::{self, values, zones};
 use crate::flow::Res;
 use crate::ids::{CardId, PermId, PlayerId};
@@ -140,10 +140,24 @@ fn angelic_page(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     g.perm_mut(m).tapped = true;
     let tn = g.perm(t).name;
     crate::glog!(g, "  {} activates Angelic Page: {} gets +1/+1", pname(g, p), tn);
-    if ability_window(g, p, Some(m), &format!("+1/+1 on {tn}"), None, Some(t))? && alive(g, t) {
-        let y = g.perm_mut(t);
-        y.eot_pt = (y.eot_pt.0 + 1, y.eot_pt.1 + 1);
-    }
+    stack::ability_run_w(g, p, Some(m), None, &format!("+1/+1 on {tn}"), None, Some(t), 0.0, |g, is_copy| {
+        let mut t = t;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let now: Vec<PermId> = cre.iter().copied().filter(|&x| alive(g, x)).collect();
+            let prompt = "The copy of Angelic Page's ability: which attacking or blocking creature gets +1/+1?";
+            if !now.is_empty()
+                && let Some(x) = cards::pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?
+            {
+                t = x;
+            }
+        }
+        if alive(g, t) {
+            let y = g.perm_mut(t);
+            y.eot_pt = (y.eot_pt.0 + 1, y.eot_pt.1 + 1);
+        }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -232,9 +246,20 @@ fn patriarch(g: &mut Game, p: PlayerId, m: PermId, sac: bool) -> Res<Why> {
     }
     let tn = g.perm(t).name;
     crate::glog!(g, "  {} activates Cabal Patriarch: -2/-2 on {}", pname(g, p), tn);
-    if ability_window(g, p, Some(m), &format!("-2/-2 on {tn}"), None, Some(t))? {
-        shrink(g, p, t, 2)?;
-    }
+    stack::ability_run_w(g, p, Some(m), None, &format!("-2/-2 on {tn}"), None, Some(t), 0.0, |g, is_copy| {
+        let mut t = t;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let now: Vec<PermId> = tg.iter().copied().filter(|&x| g.perm(x).on_bf).collect();
+            let prompt = "The copy of Cabal Patriarch's ability: -2/-2 on which creature?";
+            if !now.is_empty()
+                && let Some(x) = cards::pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?
+            {
+                t = x;
+            }
+        }
+        shrink(g, p, t, 2)
+    })?;
     Ok(None)
 }
 
@@ -265,20 +290,37 @@ fn voucher(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     g.perm_mut(m).tapped = true;
     zones::die(g, m, "sac")?; // the sacrifice is a cost
     crate::glog!(g, "  {} activates Credit Voucher", pname(g, p));
-    if !ability_window(g, p, Some(m), "shuffle cards from hand into the library, draw that many", None, None)? {
-        return Ok(None);
-    }
-    let picked: Vec<CardId> = picked.into_iter().filter(|c| g.player(p).hand.contains(c)).collect();
-    for &c in &picked {
-        let pl = g.player_mut(p);
-        if let Some(i) = pl.hand.iter().position(|&x| x == c) {
-            pl.hand.remove(i);
+    let what = "shuffle cards from hand into the library, draw that many";
+    stack::ability_run_w(g, p, Some(m), None, what, None, None, 0.0, |g, is_copy| {
+        // the copy chooses its own cards ("any number": it may be none)
+        let mine: Vec<CardId> = if is_copy {
+            let mut left: Vec<CardId> = g.player(p).hand.clone();
+            let mut got: Vec<CardId> = vec![];
+            while !left.is_empty() {
+                let labels: Vec<String> = left.iter().map(|&c| choices::card_label(g, c)).collect();
+                let prompt = format!(
+                    "The copy of Credit Voucher's ability: shuffle which card into your library? ({} chosen so far)",
+                    got.len()
+                );
+                let Some(k) = choices::choose(g, p, "choose", &prompt, &labels, Some("done"), None)? else { break };
+                got.push(left.remove(k));
+            }
+            got
+        } else {
+            picked.clone()
+        };
+        let picked: Vec<CardId> = mine.into_iter().filter(|c| g.player(p).hand.contains(c)).collect();
+        for &c in &picked {
+            let pl = g.player_mut(p);
+            if let Some(i) = pl.hand.iter().position(|&x| x == c) {
+                pl.hand.remove(i);
+            }
+            pl.library.push(c);
         }
-        pl.library.push(c);
-    }
-    engine::tutors::shuffle_library(g, p);
-    crate::glog!(g, "    shuffles {} card(s) into the library and draws {}", picked.len(), picked.len());
-    zones::draw(g, p, picked.len() as u32, false)?;
+        engine::tutors::shuffle_library(g, p);
+        crate::glog!(g, "    shuffles {} card(s) into the library and draws {}", picked.len(), picked.len());
+        zones::draw(g, p, picked.len() as u32, false)
+    })?;
     Ok(None)
 }
 
@@ -335,17 +377,37 @@ fn emry(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     // turn; the person casts it from the graveyard (paying its cost) whenever they like, or not at all
     g.perm_mut(m).tapped = true;
     let what = format!("you may cast {} from your graveyard this turn", cname(g, c));
-    if !engine::stack::ability_window(g, p, Some(m), &what, None, None)? || !g.player(p).gy.contains(&c) {
-        return Ok(None); // countered, or the card left the graveyard in response
-    }
-    let st = g.turn_stamp();
-    let mut list = match g.perm(m).data.get(DataKey::Emry) {
-        Some(Val::List(v)) if v.first() == Some(&Val::Stamp(st)) => v.clone(),
-        _ => vec![Val::Stamp(st)],
-    };
-    list.push(Val::Card(c));
-    g.perm_mut(m).data.set(DataKey::Emry, Val::List(list));
-    crate::glog!(g, "    {}: {what}", g.perm(m).name);
+    stack::ability_run_w(g, p, Some(m), None, &what, None, None, 0.0, |g, is_copy| {
+        let mut c = c;
+        if is_copy {
+            // "you may choose a new target for the copy": another artifact card in the graveyard
+            let now: Vec<CardId> = g
+                .player(p)
+                .gy
+                .iter()
+                .copied()
+                .filter(|&c| g.db.get(c).types.has(Types::ARTIFACT) && !g.db.get(c).land)
+                .collect();
+            let labels: Vec<String> = now.iter().map(|&c| choices::card_label(g, c)).collect();
+            let prompt = "The copy of Emry's ability: choose target artifact card in your graveyard";
+            if let Some(k) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                c = now[k];
+            }
+        }
+        if !g.player(p).gy.contains(&c) {
+            return Ok(()); // the card left the graveyard in response
+        }
+        let what = format!("you may cast {} from your graveyard this turn", cname(g, c));
+        let st = g.turn_stamp();
+        let mut list = match g.perm(m).data.get(DataKey::Emry) {
+            Some(Val::List(v)) if v.first() == Some(&Val::Stamp(st)) => v.clone(),
+            _ => vec![Val::Stamp(st)],
+        };
+        list.push(Val::Card(c));
+        g.perm_mut(m).data.set(DataKey::Emry, Val::List(list));
+        crate::glog!(g, "    {}: {what}", g.perm(m).name);
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -373,17 +435,18 @@ fn harnfel(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     };
     zones::discard_cards(g, p, &[d])?;
     crate::glog!(g, "  {} activates Harnfel: discards {}", pname(g, p), cname(g, d));
-    if !ability_window(g, p, Some(m), "exile the top two cards of your library; you may play them this turn", None, None)? {
-        return Ok(None);
-    }
-    for _ in 0..2 {
-        let Some(c) = g.player_mut(p).library.pop() else { break };
-        let pl = g.player_mut(p);
-        pl.hand.push(c);
-        pl.impulse.push(c);
-        pl.seen.insert(c);
-        crate::glog!(g, "    exiles {} (Harnfel): you may play it this turn", cname(g, c));
-    }
+    let what = "exile the top two cards of your library; you may play them this turn";
+    stack::ability_run(g, p, Some(m), None, what, None, None, |g| {
+        for _ in 0..2 {
+            let Some(c) = g.player_mut(p).library.pop() else { break };
+            let pl = g.player_mut(p);
+            pl.hand.push(c);
+            pl.impulse.push(c);
+            pl.seen.insert(c);
+            crate::glog!(g, "    exiles {} (Harnfel): you may play it this turn", cname(g, c));
+        }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -431,18 +494,28 @@ fn mirage_mirror(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     mana::pay_from_pool(g, p, 2, "");
     let tn = g.perm(t).name;
     crate::glog!(g, "  {} activates Mirage Mirror: a copy of {}", pname(g, p), tn);
-    if !ability_window(g, p, Some(m), &format!("becomes a copy of {tn}"), None, Some(t))? {
-        return Ok(None);
-    }
-    let Some(tcd) = g.perm(t).cd.filter(|_| g.perm(t).on_bf && g.perm(m).on_bf) else { return Ok(None) };
-    // already a copy this turn (a second activation): the Mirror's own card is the one it was before
-    let own = if g.perm(m).data.truthy(DataKey::MirageMirror) { g.perm(m).phys } else { g.perm(m).cd };
-    crate::impls::alela::set_face(g, m, tcd);
-    let x = g.perm_mut(m);
-    x.phys = own;
-    x.data.set(DataKey::MirageMirror, Val::Bool(true));
-    crate::impls::alela::mirror_lists(g, m, g.db.get(tcd).land);
-    crate::engine::life::check_state(g)?; // a copy of your own legend: the legend rule (you keep one)
+    stack::ability_run_w(g, p, Some(m), None, &format!("becomes a copy of {tn}"), None, Some(t), 0.0, |g, is_copy| {
+        let mut t = t;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let now: Vec<PermId> = tg.iter().copied().filter(|&x| g.perm(x).on_bf).collect();
+            let prompt = "The copy of Mirage Mirror's ability: become a copy of which permanent?";
+            if !now.is_empty()
+                && let Some(x) = cards::pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?
+            {
+                t = x;
+            }
+        }
+        let Some(tcd) = g.perm(t).cd.filter(|_| g.perm(t).on_bf && g.perm(m).on_bf) else { return Ok(()) };
+        // already a copy this turn (a second activation): the Mirror's own card is the one it was before
+        let own = if g.perm(m).data.truthy(DataKey::MirageMirror) { g.perm(m).phys } else { g.perm(m).cd };
+        crate::impls::alela::set_face(g, m, tcd);
+        let x = g.perm_mut(m);
+        x.phys = own;
+        x.data.set(DataKey::MirageMirror, Val::Bool(true));
+        crate::impls::alela::mirror_lists(g, m, g.db.get(tcd).land);
+        crate::engine::life::check_state(g) // a copy of your own legend: the legend rule (you keep one)
+    })?;
     Ok(None)
 }
 
@@ -454,18 +527,18 @@ fn wispdrinker(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     }
     mana::pay_from_pool(g, p, 5, "WB");
     crate::glog!(g, "  {} activates Wispdrinker Vampire", pname(g, p));
-    if !ability_window(g, p, Some(m), "small creatures gain deathtouch and lifelink", None, None)? {
-        return Ok(None);
-    }
-    let mut n = 0;
-    for x in g.player(p).perms.clone() {
-        if g.is_creature(x) && !g.perm(x).phased && values::epow(g, x) <= 2 {
-            crate::impls::partials::eot_kw(g, x, "deathtouch");
-            crate::impls::partials::eot_kw(g, x, "lifelink");
-            n += 1;
+    stack::ability_run(g, p, Some(m), None, "small creatures gain deathtouch and lifelink", None, None, |g| {
+        let mut n = 0;
+        for x in g.player(p).perms.clone() {
+            if g.is_creature(x) && !g.perm(x).phased && values::epow(g, x) <= 2 {
+                crate::impls::partials::eot_kw(g, x, "deathtouch");
+                crate::impls::partials::eot_kw(g, x, "lifelink");
+                n += 1;
+            }
         }
-    }
-    crate::glog!(g, "    {n} creature(s) gain deathtouch and lifelink until end of turn");
+        crate::glog!(g, "    {n} creature(s) gain deathtouch and lifelink until end of turn");
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -512,36 +585,45 @@ fn gix(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     zones::discard_cards(g, p, &discards)?;
     crate::glog!(g, "  {} activates Gix: discards {} card(s)", pname(g, p), discards.len());
     let label = format!("exile the top {x} of {}'s library", pname(g, q));
-    if !ability_window(g, p, Some(m), &label, Some(6.0), None)? {
-        return Ok(None);
-    }
-    let mut top: Vec<CardId> = vec![];
-    for _ in 0..x.min(g.player(q).library.len()) {
-        top.push(g.player_mut(q).library.pop().unwrap());
-    }
-    crate::glog!(g, "    exiles {} card(s) of {}", top.len(), pname(g, q));
-    for c in top {
-        if g.over || !g.player(p).alive {
-            break;
+    stack::ability_run_w(g, p, Some(m), None, &label, Some(6.0), None, 0.0, |g, is_copy| {
+        let mut q = q;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let labels: Vec<String> = opps.iter().map(|&o| legal::describe_target(g, p, Target::Player(o))).collect();
+            let prompt = "The copy of Gix's ability: exile cards from which opponent's library?";
+            if let Some(k) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                q = opps[k];
+            }
         }
-        let d = g.db.get(c);
-        let my_main = g.active == Some(p) && matches!(g.step, Step::Main1 | Step::Main2);
-        let land_ok = d.land && my_main && (g.player(p).lands_played as i32) < legal::land_drops(g, p);
-        let spell_ok = !d.land && engine::cast::castable(g, p, c, "hand");
-        let play = (land_ok || spell_ok)
-            && choices::yes_no(
-                g,
-                p,
-                &format!("Gix: {} {} for free?", if land_ok { "play" } else { "cast" }, choices::card_label(g, c)),
-            )?;
-        if play && land_ok {
-            engine::turn::play_land_card(g, p, c, "plays (Gix)")?;
-        } else if play {
-            engine::cast::cast_card(g, p, c, "lib".into(), crate::state::Ctx { owner: Some(q), ..Default::default() })?;
-        } else {
-            g.player_mut(q).exile.push(c);
+        let mut top: Vec<CardId> = vec![];
+        for _ in 0..x.min(g.player(q).library.len()) {
+            top.push(g.player_mut(q).library.pop().unwrap());
         }
-    }
+        crate::glog!(g, "    exiles {} card(s) of {}", top.len(), pname(g, q));
+        for c in top {
+            if g.over || !g.player(p).alive {
+                break;
+            }
+            let d = g.db.get(c);
+            let my_main = g.active == Some(p) && matches!(g.step, Step::Main1 | Step::Main2);
+            let land_ok = d.land && my_main && (g.player(p).lands_played as i32) < legal::land_drops(g, p);
+            let spell_ok = !d.land && engine::cast::castable(g, p, c, "hand");
+            let play = (land_ok || spell_ok)
+                && choices::yes_no(
+                    g,
+                    p,
+                    &format!("Gix: {} {} for free?", if land_ok { "play" } else { "cast" }, choices::card_label(g, c)),
+                )?;
+            if play && land_ok {
+                engine::turn::play_land_card(g, p, c, "plays (Gix)")?;
+            } else if play {
+                engine::cast::cast_card(g, p, c, "lib".into(), crate::state::Ctx { owner: Some(q), ..Default::default() })?;
+            } else {
+                g.player_mut(q).exile.push(c);
+            }
+        }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -582,35 +664,52 @@ fn dauthi(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     };
     let (c, q) = void[k];
     crate::glog!(g, "  {} activates Dauthi Voidwalker", pname(g, p));
-    if g.db.get(c).land {
-        // {T}, sacrifice it; then the land is played from exile as the land drop
-        let Some(cd) = g.perm(m).cd else { return Ok(None) };
-        zones::die(g, m, "sac")?;
-        let label = format!("play {}", cname(g, c));
-        if engine::stack::ability_window_card(g, p, cd, &label, Some(5.0), None)? && g.player(q).exile.contains(&c) {
-            g.player_mut(q).exile.take(c);
-            crate::glog!(g, "  Dauthi Voidwalker: {} plays {} from exile", pname(g, p), cname(g, c));
-            engine::turn::play_land_card(g, p, c, "plays (Dauthi Voidwalker)")?;
-        }
-        engine::life::check_state(g)?;
-        return Ok(None);
-    }
-    // a spell: "you may play it this turn without paying its mana cost". The Voidwalker is sacrificed as a cost; the
-    // permission lasts the turn and the person casts the card (from exile, for free) whenever they like, or not at
+    // {T}, sacrifice it (the cost); the exiled card is then played (a land from exile as the land drop) or, for a spell,
+    // the permission lasts the turn and the person casts the card (from exile, for free) whenever they like, or not at
     // all (`dauthi_permits`, `legal::check_cast_exile`). The AI's play (`common::dauthi_go`) casts it at once.
     let Some(cd) = g.perm(m).cd else { return Ok(None) };
     zones::die(g, m, "sac")?;
-    let what = format!("you may play {} this turn", cname(g, c));
-    if engine::stack::ability_window_card(g, p, cd, &what, Some(5.0), None)? && g.player(q).exile.contains(&c) {
-        let st = g.turn_stamp();
-        let mut list = match g.perm(m).data.get(DataKey::Dauthi) {
-            Some(Val::List(v)) if v.first() == Some(&Val::Stamp(st)) => v.clone(),
-            _ => vec![Val::Stamp(st)],
-        };
-        list.push(Val::Card(c));
-        g.perm_mut(m).data.set(DataKey::Dauthi, Val::List(list));
-        crate::glog!(g, "    Dauthi Voidwalker: {what}");
-    }
+    let label = if g.db.get(c).land {
+        format!("play {}", cname(g, c))
+    } else {
+        format!("you may play {} this turn", cname(g, c))
+    };
+    stack::ability_run_w(g, p, None, Some(cd), &label, Some(5.0), None, 0.0, |g, is_copy| {
+        let (mut c, mut q) = (c, q);
+        if is_copy {
+            // "you may choose a new target for the copy": another exiled card with a void counter
+            let mut now = crate::impls::common::dauthi_void(g, m);
+            if legal::sorcery_timing(g, p).is_none() && (g.player(p).lands_played as i32) < legal::land_drops(g, p) {
+                now.extend(dauthi_void_lands(g, m));
+            }
+            now.retain(|&(x, o)| g.player(o).exile.contains(&x));
+            let labels: Vec<String> =
+                now.iter().map(|&(c, q)| format!("{} ({}'s)", choices::card_label(g, c), pname(g, q))).collect();
+            let prompt = "The copy of Dauthi Voidwalker's ability: play which exiled card for free?";
+            if let Some(k) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                (c, q) = now[k];
+            }
+        }
+        if !g.player(q).exile.contains(&c) {
+            return Ok(());
+        }
+        if g.db.get(c).land {
+            g.player_mut(q).exile.take(c);
+            crate::glog!(g, "  Dauthi Voidwalker: {} plays {} from exile", pname(g, p), cname(g, c));
+            engine::turn::play_land_card(g, p, c, "plays (Dauthi Voidwalker)")?;
+        } else {
+            let what = format!("you may play {} this turn", cname(g, c));
+            let st = g.turn_stamp();
+            let mut list = match g.perm(m).data.get(DataKey::Dauthi) {
+                Some(Val::List(v)) if v.first() == Some(&Val::Stamp(st)) => v.clone(),
+                _ => vec![Val::Stamp(st)],
+            };
+            list.push(Val::Card(c));
+            g.perm_mut(m).data.set(DataKey::Dauthi, Val::List(list));
+            crate::glog!(g, "    Dauthi Voidwalker: {what}");
+        }
+        Ok(())
+    })?;
     engine::life::check_state(g)?;
     Ok(None)
 }
@@ -698,10 +797,13 @@ fn resplendent(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     }
     mana::pay_from_pool(g, p, 3, "WWW");
     crate::glog!(g, "  {} activates Resplendent Angel", pname(g, p));
-    if ability_window(g, p, Some(m), "+2/+2 and lifelink", None, None)? && alive(g, m) {
-        crate::impls::t3::eot(g, m, 2, 2);
-        crate::impls::partials::eot_kw(g, m, "lifelink");
-    }
+    stack::ability_run(g, p, Some(m), None, "+2/+2 and lifelink", None, None, |g| {
+        if alive(g, m) {
+            crate::impls::t3::eot(g, m, 2, 2);
+            crate::impls::partials::eot_kw(g, m, "lifelink");
+        }
+        Ok(())
+    })?;
     Ok(None)
 }
 

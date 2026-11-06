@@ -23,7 +23,7 @@ use crate::engine::life::{check_state, lose_life};
 use crate::engine::mana::{Source, Unit, can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::stack::{
-    abilities_answered, ability_window, ability_window_card, counter_window, equip_to, stack_window, trigger_window,
+    abilities_answered, ability_run, ability_window, ability_window_card, counter_window, equip_to, stack_window, trigger_window,
 };
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{
@@ -914,9 +914,7 @@ pub(crate) fn kefka_ruin_do(g: &mut Game, src: PermId, p: PlayerId) -> Res<bool>
         return Ok(false);
     }
     pay(g, p, 8, "", false)?;
-    if !ability_window(g, p, Some(src), "{8}: each opponent sacrifices a permanent", Some(7.0), None)? {
-        return Ok(true);
-    }
+    ability_run(g, p, Some(src), None, "{8}: each opponent sacrifices a permanent", Some(7.0), None, |g| {
     for q in g.opps(p).collect::<Vec<_>>() {
         if crate::human::is_human(g, q) {
             // their choice: any permanent, a land included
@@ -975,6 +973,8 @@ pub(crate) fn kefka_ruin_do(g: &mut Game, src: PermId, p: PlayerId) -> Res<bool>
         if kefka { "Kefka" } else { "Kefka's ability (Marvin: nothing transforms)" },
         if kefka { "; Kefka transforms" } else { "" }
     );
+    Ok(())
+    })?;
     Ok(true)
 }
 

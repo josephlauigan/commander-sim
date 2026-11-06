@@ -26,7 +26,7 @@ use crate::engine::cast::cast_card;
 use crate::engine::life::{check_state, gain, lose_life, prevents_damage};
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::apply_removal;
-use crate::engine::stack::{ability_window, ability_window_card, may_window, trigger_window};
+use crate::engine::stack::{ability_window_card, may_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::values::{card_name, epow, protected_from, pval, threat, untargetable};
 use crate::engine::zones::{Enter, die, discard_cards, draw, enter, max_by, min_by};
@@ -431,14 +431,25 @@ pub fn inheritance_sac(g: &mut Game, p: PlayerId, src: PermId, t: PlayerId) -> R
     crate::glog!(g, "  {} sacrifices Ill-Gotten Inheritance: 4 damage to {}", pname(g, p), pname(g, t));
     die(g, src, "sac")?;
     let cd = g.perm(src).cd.unwrap();
-    if !ability_window_card(g, p, cd, &format!("4 damage to {}; gain 4 life", pname(g, t)), Some(4.0), None)? {
-        return Ok(());
-    }
-    if g.player(t).alive {
-        lose_life(g, t, 4, Some(p), "triggers", Some(true))?;
-    }
-    gain(g, p, 4)?;
-    check_state(g)
+    let what = format!("4 damage to {}; gain 4 life", pname(g, t));
+    crate::engine::stack::ability_run_w(g, p, None, Some(cd), &what, Some(4.0), None, 0.0, |g, is_copy| {
+        let mut t = t;
+        if is_copy && crate::human::is_human(g, p) {
+            // "you may choose a new target for the copy" (a person's Rings of Brighthearth / Peter Parker's Camera)
+            let now: Vec<PlayerId> = g.opps(p).filter(|&q| g.player(q).alive).collect();
+            let labels: Vec<String> = now.iter().map(|&q| g.player(q).name.to_string()).collect();
+            let prompt = "The copy of Ill-Gotten Inheritance's ability: 4 damage to which opponent?";
+            if let Some(k) = crate::human::choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                t = now[k];
+            }
+        }
+        if g.player(t).alive {
+            lose_life(g, t, 4, Some(p), "triggers", Some(true))?;
+        }
+        gain(g, p, 4)?;
+        check_state(g)
+    })
+    .map(|_| ())
 }
 
 // ------------------------------------------------------------------ Urborg Syphon-Mage
@@ -496,20 +507,20 @@ pub fn syphon_discard(g: &Game, p: PlayerId) -> Option<CardId> {
 /// yshtola.syphon: the ability resolves
 pub fn syphon(g: &mut Game, p: PlayerId, src: PermId) -> Res {
     crate::glog!(g, "  {} activates Urborg Syphon-Mage", pname(g, p));
-    if !ability_window(g, p, Some(src), "each other player loses 2 life", Some(4.0), None)? {
-        return Ok(());
-    }
-    let mut lost = 0;
-    let others: Vec<PlayerId> = g.players.iter().filter(|q| q.id != p && q.alive).map(|q| q.id).collect();
-    for q in others {
-        let b = g.player(q).life;
-        lose_life(g, q, 2, Some(p), "drain", None)?;
-        lost += 0.max(b - g.player(q).life);
-    }
-    if lost != 0 {
-        gain(g, p, lost)?;
-    }
-    check_state(g)
+    crate::engine::stack::ability_run(g, p, Some(src), None, "each other player loses 2 life", Some(4.0), None, |g| {
+        let mut lost = 0;
+        let others: Vec<PlayerId> = g.players.iter().filter(|q| q.id != p && q.alive).map(|q| q.id).collect();
+        for q in others {
+            let b = g.player(q).life;
+            lose_life(g, q, 2, Some(p), "drain", None)?;
+            lost += 0.max(b - g.player(q).life);
+        }
+        if lost != 0 {
+            gain(g, p, lost)?;
+        }
+        check_state(g)
+    })
+    .map(|_| ())
 }
 
 // ======================================================== cards taken from opponents

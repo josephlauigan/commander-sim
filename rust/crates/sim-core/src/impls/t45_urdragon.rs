@@ -520,9 +520,7 @@ pub fn hoard_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> 
     g.perm_mut(src).tapped = true;
     let n = gold(g, src) - 1;
     g.perm_mut(src).data.set(DataKey::T45Dragon, Val::Int(n));
-    if ability_window(g, p, Some(src), "draw a card", None, None)? {
-        draw(g, p, 1, false)?;
-    }
+    crate::engine::stack::ability_run(g, p, Some(src), None, "draw a card", None, None, |g| draw(g, p, 1, false))?;
     Ok(true)
 }
 
@@ -664,7 +662,20 @@ fn lathliss_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
         .into_iter()
         .filter(|&m| !g.perm(m).tapped && (!g.perm(m).sick || crate::engine::combat::has_haste(g, m)))
         .collect();
-    let k = (total_mana(g, p, false) as i32 - 2) / 2;
+    // each activation costs {1}{R}: k is what the red sources and the mana can pay, keeping two (model-gaps-b3: it was
+    // the mana alone, so an offer could need more red than there was)
+    let mut k = (total_mana(g, p, false) as i32 - 2) / 2;
+    // (paying k times is monotone: binary search the most that can be paid)
+    let (mut lo, mut hi) = (0, k.max(0));
+    while lo < hi {
+        let mid = (lo + hi + 1) / 2;
+        if can_pay(g, p, mid as u32, &"R".repeat(mid as usize), false) {
+            lo = mid;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    k = lo;
     if ds.is_empty() || k < 1 {
         return Ok(vec![]);
     }
@@ -683,6 +694,13 @@ fn lathliss_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
     }])
 }
 
+/// one activation's effect: Dragons you control get +1/+0 until end of turn (a person's too: `human::urdragon`)
+pub fn lathliss_pump(g: &mut Game, p: PlayerId) {
+    for m in dragons_of(g, p) {
+        crate::impls::common::eot(g, m, 1, 0);
+    }
+}
+
 fn lathliss_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let k = arg as u32;
     let pips = "R".repeat(k as usize);
@@ -690,11 +708,12 @@ fn lathliss_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     pay(g, p, k, &pips, false)?;
-    if ability_window(g, p, Some(src), &format!("Dragons get +{k}/+0"), None, None)? {
+    crate::engine::stack::ability_run(g, p, Some(src), None, &format!("Dragons get +{k}/+0"), None, None, |g| {
         for m in dragons_of(g, p) {
             crate::impls::common::eot(g, m, k as i32, 0);
         }
-    }
+        Ok(())
+    })?;
     Ok(true)
 }
 

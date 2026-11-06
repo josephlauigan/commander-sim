@@ -15,7 +15,7 @@ use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::life::check_state;
 use crate::engine::mana::{can_pay, pay};
-use crate::engine::stack::{ability_window, trigger_window};
+use crate::engine::stack::{ability_run, ability_run_w, ability_window, trigger_window};
 use crate::engine::tutors::shuffle_library;
 use crate::engine::values::{card_name, colors_of, epow, indestructible, ptypes, pval, untargetable};
 use crate::engine::zones::{Enter, Tokens, die, enter, enter_token_copy, exile_perm, make_tokens, max_by};
@@ -221,9 +221,10 @@ pub(crate) fn disk_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;
-    if ability_window(g, p, Some(src), "destroy all artifacts, creatures and enchantments", Some(8.0), None)? {
-        run(g, p, Wipe::Disk, None)?;
-    }
+    // (the ability on the stack with its copies: a person's Rings of Brighthearth / Peter Parker's Camera)
+    ability_run(g, p, Some(src), None, "destroy all artifacts, creatures and enchantments", Some(8.0), None, |g| {
+        run(g, p, Wipe::Disk, None)
+    })?;
     Ok(true)
 }
 
@@ -281,11 +282,26 @@ pub(crate) fn stone_mark(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Re
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;
-    if ability_window(g, p, Some(src), "fate counter", None, Some(t))? && live(g, t) {
-        let n = fate(g, t) + 1;
-        g.perm_mut(t).data.set(DataKey::Fate, Val::Int(n));
-        crate::glog!(g, "    a fate counter on {} (Oblivion Stone)", name_of(g, t));
-    }
+    ability_run_w(g, p, Some(src), None, "fate counter", None, Some(t), 0.0, |g, is_copy| {
+        let mut t = t;
+        if is_copy && crate::human::is_human(g, p) {
+            // "you may choose a new target for the copy"
+            let now = crate::human::karn::targets(g, p);
+            let prompt = "The copy of Oblivion Stone's ability: a fate counter on which permanent?";
+            if !now.is_empty()
+                && let Some(x) =
+                    crate::human::cards::pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?
+            {
+                t = x;
+            }
+        }
+        if live(g, t) {
+            let n = fate(g, t) + 1;
+            g.perm_mut(t).data.set(DataKey::Fate, Val::Int(n));
+            crate::glog!(g, "    a fate counter on {} (Oblivion Stone)", name_of(g, t));
+        }
+        Ok(())
+    })?;
     Ok(true)
 }
 
@@ -296,9 +312,9 @@ pub(crate) fn stone_wipe(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> R
     }
     g.perm_mut(src).tapped = true;
     die(g, src, "sac")?;
-    if ability_window(g, p, Some(src), "destroy each nonland permanent without a fate counter", Some(8.0), None)? {
-        run(g, p, Wipe::Stone, Some(src))?;
-    }
+    ability_run(g, p, Some(src), None, "destroy each nonland permanent without a fate counter", Some(8.0), None, |g| {
+        run(g, p, Wipe::Stone, Some(src))
+    })?;
     Ok(true)
 }
 
@@ -346,11 +362,14 @@ pub(crate) fn bomb_tick(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Re
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;
-    if ability_window(g, p, Some(src), "charge counter", None, None)? && live(g, src) {
-        let n = charges(g, src) + 1;
-        g.perm_mut(src).data.set(DataKey::Charge, Val::Int(n as i64));
-        crate::glog!(g, "    Ratchet Bomb has {n} charge counter(s)");
-    }
+    ability_run(g, p, Some(src), None, "charge counter", None, None, |g| {
+        if live(g, src) {
+            let n = charges(g, src) + 1;
+            g.perm_mut(src).data.set(DataKey::Charge, Val::Int(n as i64));
+            crate::glog!(g, "    Ratchet Bomb has {n} charge counter(s)");
+        }
+        Ok(())
+    })?;
     Ok(true)
 }
 
@@ -362,10 +381,8 @@ pub(crate) fn bomb_blow(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Re
     let n = charges(g, src);
     g.perm_mut(src).tapped = true;
     die(g, src, "sac")?;
-    if ability_window(g, p, Some(src), &format!("destroy each nonland permanent with mana value {n}"), Some(7.0), None)?
-    {
-        run(g, p, Wipe::Bomb(n), Some(src))?;
-    }
+    let what = format!("destroy each nonland permanent with mana value {n}");
+    ability_run(g, p, Some(src), None, &what, Some(7.0), None, |g| run(g, p, Wipe::Bomb(n), Some(src)))?;
     Ok(true)
 }
 
@@ -455,14 +472,15 @@ pub(crate) fn overseer_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> 
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;
-    if ability_window(g, p, Some(src), "+1/+1 counter on each artifact creature", None, None)? {
+    ability_run(g, p, Some(src), None, "+1/+1 counter on each artifact creature", None, None, |g| {
         let ms = art_creatures(g, p);
         for &m in &ms {
             repl::put_plus(g, m, 1);
         }
         crate::glog!(g, "    Steel Overseer: +1/+1 counter on {} artifact creature(s)", ms.len());
         g.bf_ver += 1;
-    }
+        Ok(())
+    })?;
     Ok(true)
 }
 
@@ -938,8 +956,8 @@ pub(crate) fn hellkite_go(g: &mut Game, src: PermId, p: PlayerId, x: i64) -> Res
     }
     let st = g.turn_stamp();
     g.perm_mut(src).data.set(DataKey::Used, Val::Stamp(st));
-    if ability_window(g, p, Some(src), &format!("destroy each nonland permanent with mana value {x}"), Some(7.0), None)?
-    {
+    let what = format!("destroy each nonland permanent with mana value {x}");
+    ability_run(g, p, Some(src), None, &what, Some(7.0), None, |g| {
         g.batch += 1;
         let prev_batch = g.cur_batch.replace(g.batch);
         let prev = g.destroyer.replace(p);
@@ -959,7 +977,8 @@ pub(crate) fn hellkite_go(g: &mut Game, src: PermId, p: PlayerId, x: i64) -> Res
         if g.resolving == 0 && !g.trig_queue.is_empty() {
             crate::engine::stack::flush_triggers(g)?;
         }
-    }
+        Ok(())
+    })?;
     Ok(true)
 }
 
@@ -1051,17 +1070,20 @@ fn leveler_unearth(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).gy.contains(&c) || !pay(g, p, 8, "", false)? {
         return Ok(false);
     }
-    if !crate::engine::stack::ability_window_card(g, p, c, "unearth", None, None)? || !g.player(p).gy.contains(&c) {
-        return Ok(true);
-    }
-    let pl = g.player_mut(p);
-    if let Some(i) = pl.gy.iter().position(|&x| x == c) {
-        pl.gy.remove(i);
-    }
-    let m = enter(g, p, c, Enter::default())?;
-    g.perm_mut(m).sick = false; // haste
-    g.perm_mut(m).data.set(DataKey::Unearth, Val::Bool(true));
-    crate::glog!(g, "  {} unearths Cityscape Leveler", g.player(p).name);
+    ability_run(g, p, None, Some(c), "unearth", None, None, |g| {
+        if !g.player(p).gy.contains(&c) {
+            return Ok(()); // a copy (a person's Rings of Brighthearth / Camera) found it already returned
+        }
+        let pl = g.player_mut(p);
+        if let Some(i) = pl.gy.iter().position(|&x| x == c) {
+            pl.gy.remove(i);
+        }
+        let m = enter(g, p, c, Enter::default())?;
+        g.perm_mut(m).sick = false; // haste
+        g.perm_mut(m).data.set(DataKey::Unearth, Val::Bool(true));
+        crate::glog!(g, "  {} unearths Cityscape Leveler", g.player(p).name);
+        Ok(())
+    })?;
     Ok(true)
 }
 

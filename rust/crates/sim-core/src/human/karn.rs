@@ -11,7 +11,7 @@ use super::abilities::{LandAbility, PermAbility, Why, ability};
 use super::{Target, cards, choices, legal, mana};
 use crate::engine::repl;
 use crate::cards::{Colors, Types};
-use crate::engine::stack::{self, ability_window, ability_window_card};
+use crate::engine::stack;
 use crate::engine::values::{epow, untargetable};
 use crate::engine::zones::{self, Tokens, die};
 use crate::flow::Res;
@@ -107,7 +107,7 @@ fn via_ability(g: &mut Game, p: PlayerId, src: PermId, f: crate::hooks::AbilityF
 }
 
 /// every nonland permanent p may target (hexproof and shroud respected for the others')
-fn targets(g: &Game, p: PlayerId) -> Vec<PermId> {
+pub(crate) fn targets(g: &Game, p: PlayerId) -> Vec<PermId> {
     g.players
         .iter()
         .filter(|q| q.alive)
@@ -319,27 +319,36 @@ fn bauble(g: &mut Game, p: PlayerId, m: PermId, hand: bool) -> Res<Why> {
     die(g, m, "sac")?;
     crate::glog!(g, "  {} sacrifices {} (draws at the next upkeep)", g.player(p).name, nm);
     let cd = g.perm(m).cd.unwrap();
-    if !crate::engine::stack::ability_window_card(g, p, cd, "look at a card; draw at the next upkeep", None, None)? {
-        return Ok(None);
-    }
-    let seen = if hand {
-        let h = g.player(q).hand.clone();
-        (!h.is_empty()).then(|| h[g.rng.below(h.len() as u64) as usize])
-    } else {
-        g.player(q).library.last().copied()
-    };
-    let qn = g.player(q).name.to_string();
-    let text = match seen {
-        Some(c) => format!(
-            "{nm}: {}'s {} is {}. You draw a card at the beginning of the next upkeep.",
-            qn,
-            if hand { "random card" } else { "top card" },
-            g.db.get(c).name
-        ),
-        None => format!("{nm}: {qn} has no card there. You draw a card at the beginning of the next upkeep."),
-    };
-    choices::choose_one(g, p, "choose", &text, &["OK".to_string()])?;
-    g.player_mut(p).delayed_draws += 1;
+    stack::ability_run_w(g, p, None, Some(cd), "look at a card; draw at the next upkeep", None, None, 0.0, |g, is_copy| {
+        let mut q = q;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let labels: Vec<String> = who.iter().map(|&x| legal::describe_target(g, p, Target::Player(x))).collect();
+            let prompt = format!("The copy of {nm}'s ability: look at {} of which player?", if hand { "a random card in the hand" } else { "the top card of the library" });
+            if let Some(k) = choices::choose(g, p, "target", &prompt, &labels, Some("keep the target"), None)? {
+                q = who[k];
+            }
+        }
+        let seen = if hand {
+            let h = g.player(q).hand.clone();
+            (!h.is_empty()).then(|| h[g.rng.below(h.len() as u64) as usize])
+        } else {
+            g.player(q).library.last().copied()
+        };
+        let qn = g.player(q).name.to_string();
+        let text = match seen {
+            Some(c) => format!(
+                "{nm}: {}'s {} is {}. You draw a card at the beginning of the next upkeep.",
+                qn,
+                if hand { "random card" } else { "top card" },
+                g.db.get(c).name
+            ),
+            None => format!("{nm}: {qn} has no card there. You draw a card at the beginning of the next upkeep."),
+        };
+        choices::choose_one(g, p, "choose", &text, &["OK".to_string()])?;
+        g.player_mut(p).delayed_draws += 1;
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -398,13 +407,14 @@ fn lantern_exile(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     die(g, m, "sac")?;
     let cd = g.perm(m).cd.unwrap();
     crate::glog!(g, "  {} sacrifices Soul-Guide Lantern", g.player(p).name);
-    if ability_window_card(g, p, cd, "exile each opponent's graveyard", None, None)? {
+    stack::ability_run(g, p, None, Some(cd), "exile each opponent's graveyard", None, None, |g| {
         for q in g.opps(p).collect::<Vec<_>>() {
             let gy = std::mem::take(&mut g.player_mut(q).gy);
             g.player_mut(q).exile.extend(gy);
         }
         crate::glog!(g, "    each opponent's graveyard is exiled");
-    }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -417,9 +427,7 @@ fn lantern_draw(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     die(g, m, "sac")?;
     let cd = g.perm(m).cd.unwrap();
     crate::glog!(g, "  {} sacrifices Soul-Guide Lantern", g.player(p).name);
-    if ability_window_card(g, p, cd, "draw a card", None, None)? {
-        zones::draw(g, p, 1, false)?;
-    }
+    stack::ability_run(g, p, None, Some(cd), "draw a card", None, None, |g| zones::draw(g, p, 1, false))?;
     crate::engine::life::check_state(g)?;
     Ok(None)
 }
@@ -495,12 +503,23 @@ fn obelisk(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     g.perm_mut(m).tapped = true;
     die(g, m, "sac")?;
     crate::glog!(g, "  {} activates Unstable Obelisk", g.player(p).name);
-    if ability_window(g, p, Some(m), "destroy target permanent", Some(6.0), Some(t))?
-        && live(g, t)
-        && !(g.perm(t).owner != p && untargetable(g, t))
-    {
-        crate::engine::removal::apply_removal(g, Some(p), t, "destroy", None)?;
-    }
+    stack::ability_run_w(g, p, Some(m), None, "destroy target permanent", Some(6.0), Some(t), 0.0, |g, is_copy| {
+        let mut t = t;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let now = targets(g, p);
+            let prompt = "The copy of Unstable Obelisk's ability: destroy which permanent?";
+            if !now.is_empty()
+                && let Some(x) = cards::pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?
+            {
+                t = x;
+            }
+        }
+        if live(g, t) && !(g.perm(t).owner != p && untargetable(g, t)) {
+            crate::engine::removal::apply_removal(g, Some(p), t, "destroy", None)?;
+        }
+        Ok(())
+    })?;
     crate::engine::life::check_state(g)?;
     Ok(None)
 }
@@ -525,7 +544,7 @@ fn forgemaster(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         crate::glog!(g, "  {} sacrifices {} to Kuldotha Forgemaster", g.player(p).name, g.perm(x).name);
         die(g, x, "sac")?;
     }
-    if ability_window(g, p, Some(m), "search for an artifact", Some(6.0), None)? {
+    stack::ability_run(g, p, Some(m), None, "search for an artifact", Some(6.0), None, |g| {
         let art = |g: &Game, c: CardId| {
             let d = g.db.get(c);
             d.types.has(Types::ARTIFACT) && !d.land
@@ -535,7 +554,8 @@ fn forgemaster(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
             crate::glog!(g, "    Kuldotha Forgemaster fetches {}", g.db.get(c).name);
             zones::enter(g, p, c, zones::Enter::default())?;
         }
-    }
+        Ok(())
+    })?;
     crate::engine::life::check_state(g)?;
     Ok(None)
 }
@@ -666,7 +686,7 @@ fn factory_pump(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         return Ok(None);
     };
     g.perm_mut(m).tapped = true;
-    pump(g, p, Some(m), None, t, (1, 1))
+    pump(g, p, Some(m), None, t, (1, 1), &tg)
 }
 
 /// {1}, {T} of Mishra's Foundry (animated): target attacking Assembly-Worker gets +2/+2 until end of turn
@@ -683,22 +703,39 @@ fn foundry_pump(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     let Some(t) = cards::pick_perm(g, p, "target", prompt, &tg, Some("cancel"))? else { return Ok(None) };
     mana::pay_from_pool(g, p, 1, "");
     g.perm_mut(m).tapped = true;
-    pump(g, p, Some(m), None, t, (2, 2))
+    pump(g, p, Some(m), None, t, (2, 2), &tg)
 }
 
-fn pump(g: &mut Game, p: PlayerId, src: Option<PermId>, card: Option<CardId>, t: PermId, by: (i32, i32)) -> Res<Why> {
+/// the pump on the stack with its chosen target; a copy (Rings, Camera) chooses a new one from `cands`
+fn pump(
+    g: &mut Game,
+    p: PlayerId,
+    src: Option<PermId>,
+    card: Option<CardId>,
+    t: PermId,
+    by: (i32, i32),
+    cands: &[PermId],
+) -> Res<Why> {
     let what = format!("{} gets +{}/+{}", g.perm(t).name, by.0, by.1);
-    let ok = match (src, card) {
-        (Some(m), _) => ability_window(g, p, Some(m), &what, None, Some(t))?,
-        (None, Some(c)) => ability_window_card(g, p, c, &what, None, Some(t))?,
-        _ => true,
-    };
-    if ok && live(g, t) {
-        g.perm_mut(t).eot_pt.0 += by.0;
-        g.perm_mut(t).eot_pt.1 += by.1;
-        g.bf_ver += 1;
-        crate::glog!(g, "    {what} until end of turn");
-    }
+    stack::ability_run_w(g, p, src, card, &what, None, Some(t), 0.0, |g, is_copy| {
+        let mut t = t;
+        if is_copy {
+            let now: Vec<PermId> = cands.iter().copied().filter(|&x| live(g, x)).collect();
+            let prompt = format!("The copy of the ability: which Assembly-Worker gets +{}/+{}?", by.0, by.1);
+            if !now.is_empty()
+                && let Some(x) = cards::pick_perm(g, p, "target", &prompt, &now, Some("keep the target"))?
+            {
+                t = x;
+            }
+        }
+        if live(g, t) {
+            g.perm_mut(t).eot_pt.0 += by.0;
+            g.perm_mut(t).eot_pt.1 += by.1;
+            g.bf_ver += 1;
+            crate::glog!(g, "    {} gets +{}/+{} until end of turn", g.perm(t).name, by.0, by.1);
+        }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -765,9 +802,8 @@ fn enclave(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     mana::pay_from_pool(g, p, 3, "");
     g.perm_mut(l).tapped = true;
     crate::glog!(g, "  {} activates Bonders' Enclave", g.player(p).name);
-    if ability_window_card(g, p, g.perm(l).card(), "draw a card", None, None)? {
-        zones::draw(g, p, 1, false)?;
-    }
+    let cd = g.perm(l).card();
+    stack::ability_run(g, p, None, Some(cd), "draw a card", None, None, |g| zones::draw(g, p, 1, false))?;
     crate::engine::life::check_state(g)?;
     Ok(None)
 }
@@ -795,13 +831,26 @@ fn ruin(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     let cd = g.perm(l).card();
     crate::impls::lands::sac_land(g, p, l)?;
     crate::glog!(g, "  {} sacrifices Buried Ruin", g.player(p).name);
-    if ability_window_card(g, p, cd, &format!("return {} to hand", g.db.get(c).name), None, None)? {
+    let what = format!("return {} to hand", g.db.get(c).name);
+    stack::ability_run_w(g, p, None, Some(cd), &what, None, None, 0.0, |g, is_copy| {
+        let mut c = c;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let now: Vec<CardId> =
+                g.player(p).gy.iter().copied().filter(|&c| g.db.get(c).types.has(Types::ARTIFACT)).collect();
+            let labels: Vec<String> = now.iter().map(|&c| choices::card_label(g, c)).collect();
+            let prompt = "The copy of Buried Ruin's ability: return which artifact card?";
+            if let Some(k) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                c = now[k];
+            }
+        }
         let pl = g.player_mut(p);
         if let Some(i) = pl.gy.iter().position(|&x| x == c) {
             pl.gy.remove(i);
             pl.hand.push(c);
         }
-    }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -846,9 +895,9 @@ fn vault(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     let cd = g.perm(l).card();
     crate::impls::lands::sac_land(g, p, l)?;
     crate::glog!(g, "  {} sacrifices Treasure Vault for {} Treasure(s)", g.player(p).name, x);
-    if ability_window_card(g, p, cd, &format!("create {x} Treasure tokens"), None, None)? {
-        zones::add_treasure(g, p, x as i32)?;
-    }
+    stack::ability_run(g, p, None, Some(cd), &format!("create {x} Treasure tokens"), None, None, |g| {
+        zones::add_treasure(g, p, x as i32)
+    })?;
     Ok(None)
 }
 
@@ -859,13 +908,14 @@ fn urza_factory(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     mana::pay_from_pool(g, p, 7, "");
     g.perm_mut(l).tapped = true;
     crate::glog!(g, "  {} activates Urza's Factory", g.player(p).name);
-    if ability_window_card(g, p, g.perm(l).card(), "create a 2/2 Assembly-Worker", None, None)? {
+    let cd = g.perm(l).card();
+    stack::ability_run(g, p, None, Some(cd), "create a 2/2 Assembly-Worker", None, None, |g| {
         let mut spec = Tokens::new(1, 2);
         spec.tgh = Some(2);
         spec.color = Some(Colors::NONE);
         spec.types = vec!["artifact", "assembly-worker"];
-        zones::make_tokens(g, p, spec)?;
-    }
+        zones::make_tokens(g, p, spec).map(|_| ())
+    })?;
     Ok(None)
 }
 
@@ -879,13 +929,19 @@ fn animate(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     }
     let new_land = g.player(p).land_turn == g.player(p).turns as i32 && g.player(p).lands.last() == Some(&l);
     mana::pay_from_pool(g, p, cost, "");
-    if !ability_window_card(g, p, g.perm(l).card(), "becomes a creature", None, None)? {
-        return Ok(None);
-    }
-    let m = crate::impls::karn::animate(g, p, l);
-    if new_land {
-        g.perm_mut(m).sick = true;
-    }
+    let cd = g.perm(l).card();
+    stack::ability_run(g, p, None, Some(cd), "becomes a creature", None, None, |g| {
+        // a copy (Rings, Camera) finds the land already a creature: the creature stands in for the land until the
+        // turn ends, so only the first of the copies and the original makes it
+        if !g.player(p).lands.contains(&l) && !g.is_creature(l) {
+            return Ok(());
+        }
+        let m = crate::impls::karn::animate(g, p, l);
+        if new_land {
+            g.perm_mut(m).sick = true;
+        }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -913,7 +969,7 @@ fn land_pump(g: &mut Game, p: PlayerId, l: PermId, pay: u32, by: (i32, i32)) -> 
     }
     g.perm_mut(l).tapped = true;
     let cd = g.perm(l).card();
-    pump(g, p, None, Some(cd), t, by)
+    pump(g, p, None, Some(cd), t, by, &tg)
 }
 
 // ------------------------------------------------------------------ Thrasios, Triton Hero
@@ -1018,10 +1074,10 @@ fn saga_construct(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     g.perm_mut(l).tapped = true;
     crate::glog!(g, "  {} activates Urza's Saga", g.player(p).name);
     let cd = g.perm(l).card();
-    if ability_window_card(g, p, cd, "create a Construct token", None, None)? {
+    stack::ability_run(g, p, None, Some(cd), "create a Construct token", None, None, |g| {
         let arts = crate::impls::common::construct_arts(g, p);
-        crate::impls::common::make_construct(g, p, arts)?;
-    }
+        crate::impls::common::make_construct(g, p, arts)
+    })?;
     Ok(None)
 }
 
@@ -1034,33 +1090,33 @@ fn urzas_tome(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     g.perm_mut(m).tapped = true;
     crate::glog!(g, "  {} activates Urza's Tome", g.player(p).name);
     let cd = g.perm(m).cd.unwrap();
-    if !ability_window_card(g, p, cd, "draw a card, then discard unless you exile a historic card", None, None)? {
-        return Ok(None);
-    }
-    zones::draw(g, p, 1, false)?;
-    let hist: Vec<CardId> =
-        g.player(p).gy.iter().copied().filter(|&c| crate::impls::karn_engines::historic(g, c)).collect();
-    let mut labels: Vec<String> = hist.iter().map(|&c| format!("exile {}", choices::card_label(g, c))).collect();
-    let hand = g.player(p).hand.clone();
-    if !hand.is_empty() {
-        labels.push("discard a card".into());
-    }
-    if labels.is_empty() {
-        return Ok(None); // nothing to exile and nothing to discard
-    }
-    let k = choices::choose_one(g, p, "choose", "Urza's Tome: exile a historic card from your graveyard, or discard a card?", &labels)?;
-    if k < hist.len() {
-        let c = hist[k];
-        let pl = g.player_mut(p);
-        if let Some(i) = pl.gy.iter().position(|&x| x == c) {
-            pl.gy.remove(i);
-            pl.exile.push(c);
+    stack::ability_run(g, p, None, Some(cd), "draw a card, then discard unless you exile a historic card", None, None, |g| {
+        zones::draw(g, p, 1, false)?;
+        let hist: Vec<CardId> =
+            g.player(p).gy.iter().copied().filter(|&c| crate::impls::karn_engines::historic(g, c)).collect();
+        let mut labels: Vec<String> = hist.iter().map(|&c| format!("exile {}", choices::card_label(g, c))).collect();
+        let hand = g.player(p).hand.clone();
+        if !hand.is_empty() {
+            labels.push("discard a card".into());
         }
-        crate::glog!(g, "    Urza's Tome: {} exiles {} from the graveyard", g.player(p).name, g.db.get(c).name);
-    } else {
-        let d = choices::pick_cards(g, p, &hand, 1, "Urza's Tome: discard which card?", "choose")?[0];
-        zones::discard_cards(g, p, &[d])?;
-    }
+        if labels.is_empty() {
+            return Ok(()); // nothing to exile and nothing to discard
+        }
+        let k = choices::choose_one(g, p, "choose", "Urza's Tome: exile a historic card from your graveyard, or discard a card?", &labels)?;
+        if k < hist.len() {
+            let c = hist[k];
+            let pl = g.player_mut(p);
+            if let Some(i) = pl.gy.iter().position(|&x| x == c) {
+                pl.gy.remove(i);
+                pl.exile.push(c);
+            }
+            crate::glog!(g, "    Urza's Tome: {} exiles {} from the graveyard", g.player(p).name, g.db.get(c).name);
+        } else {
+            let d = choices::pick_cards(g, p, &hand, 1, "Urza's Tome: discard which card?", "choose")?[0];
+            zones::discard_cards(g, p, &[d])?;
+        }
+        Ok(())
+    })?;
     crate::engine::life::check_state(g)?;
     Ok(None)
 }
@@ -1104,11 +1160,24 @@ pub fn name_for_needle(g: &Game, p: PlayerId) -> Res<Option<CardId>> {
     Ok(Some(cards[k]))
 }
 
-/// Soul-Guide Lantern: when it enters, exile target card from a graveyard (any graveyard)
+/// Soul-Guide Lantern: when it enters, exile target card from a graveyard (any graveyard). A triggered ability
+/// (model-gaps-b3): it goes through `trigger_window` like the engine's other enter triggers, so the table may respond,
+/// a Peter Parker's Camera may copy it (the copy asks for a new target) and Rings of Brighthearth offers no copy
+/// (Rings copies activated abilities only). As with Spine of Ish Sah, the card is chosen after the window (the
+/// engine's probe run stops at the first window; asking before it asked twice). Its importance is 5, so a person with
+/// a Camera ready gets priority on it (`urdragon::camera_window`).
 pub fn lantern_enters(g: &mut Game, src: PermId) -> Res {
     let o = g.perm(src).owner;
-    let cands: Vec<(PlayerId, CardId)> =
-        g.players.iter().filter(|q| q.alive).flat_map(|q| q.gy.iter().map(move |&c| (q.id, c))).collect();
+    let graveyards = |g: &Game| -> Vec<(PlayerId, CardId)> {
+        g.players.iter().filter(|q| q.alive).flat_map(|q| q.gy.iter().map(move |&c| (q.id, c))).collect()
+    };
+    if graveyards(g).is_empty() {
+        return Ok(()); // no target: it does not trigger
+    }
+    if !crate::engine::stack::trigger_window(g, o, Some(src), "exile a card from a graveyard", Some(5.0))? {
+        return Ok(());
+    }
+    let cands = graveyards(g); // (the table may have changed them in response)
     if cands.is_empty() {
         return Ok(());
     }
@@ -1116,13 +1185,11 @@ pub fn lantern_enters(g: &mut Game, src: PermId) -> Res {
         cands.iter().map(|&(q, c)| format!("{} ({}'s graveyard)", choices::card_label(g, c), g.player(q).name)).collect();
     let k = choices::choose_one(g, o, "target", "Soul-Guide Lantern: exile which card from a graveyard?", &labels)?;
     let (q, c) = cands[k];
-    if ability_window_card(g, o, g.perm(src).card(), "exile a card from a graveyard", None, None)? {
-        let pl = g.player_mut(q);
-        if let Some(i) = pl.gy.iter().position(|&x| x == c) {
-            pl.gy.remove(i);
-            pl.exile.push(c);
-            crate::glog!(g, "    Soul-Guide Lantern exiles {}", g.db.get(c).name);
-        }
+    let pl = g.player_mut(q);
+    if let Some(i) = pl.gy.iter().position(|&x| x == c) {
+        pl.gy.remove(i);
+        pl.exile.push(c);
+        crate::glog!(g, "    Soul-Guide Lantern exiles {}", g.db.get(c).name);
     }
     Ok(())
 }

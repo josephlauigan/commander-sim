@@ -504,13 +504,31 @@ pub(crate) fn ld_land_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     sac_land(g, p, l)?;
     let what = format!("destroy {}", land_name(g, t));
-    if !ability_window_card(g, p, g.perm(l).card(), &what, None, None)? || !has_land(g, q, t) {
-        return Ok(true);
-    }
-    destroy_land(g, q, t)?;
-    if ghost {
-        land_ramp(g, q, 1, true)?;
-    }
+    let cd = g.perm(l).card();
+    crate::engine::stack::ability_run_w(g, p, None, Some(cd), &what, None, None, 0.0, |g, is_copy| {
+        let (mut q, mut t) = (q, t);
+        if is_copy && crate::human::is_human(g, p) {
+            // "you may choose a new target for the copy" (a person's Rings of Brighthearth / Peter Parker's Camera)
+            let now: Vec<(PlayerId, PermId)> =
+                g.players.iter().filter(|x| x.alive).flat_map(|x| x.lands.iter().map(move |&y| (x.id, y))).collect();
+            let labels: Vec<String> = now
+                .iter()
+                .map(|&(o, x)| format!("{} ({})", land_name(g, x), if o == p { "yours".to_string() } else { g.player(o).name.to_string() }))
+                .collect();
+            let prompt = "The copy of the land's ability: destroy which land?";
+            if let Some(k) = crate::human::choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                (q, t) = now[k];
+            }
+        }
+        if !has_land(g, q, t) {
+            return Ok(());
+        }
+        destroy_land(g, q, t)?;
+        if ghost {
+            land_ramp(g, q, 1, true)?;
+        }
+        Ok(())
+    })?;
     Ok(true)
 }
 
@@ -602,9 +620,8 @@ pub(crate) fn war_room_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     g.perm_mut(l).tapped = true;
     lose_life(g, p, n, Some(p), "other", None)?;
     crate::glog!(g, "  {} uses War Room", g.player(p).name);
-    if ability_window_card(g, p, g.perm(l).card(), "draw a card", None, None)? {
-        draw(g, p, 1, false)?;
-    }
+    let cd = g.perm(l).card();
+    crate::engine::stack::ability_run(g, p, None, Some(cd), "draw a card", None, None, |g| draw(g, p, 1, false))?;
     Ok(true)
 }
 

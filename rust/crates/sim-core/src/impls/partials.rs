@@ -2995,13 +2995,18 @@ fn ring_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;
-    if !ability_window(g, p, Some(src), "a burden counter, then draw", None, None)? {
-        return Ok(true);
-    }
-    let b = burden(g, src) + 1;
-    g.perm_mut(src).data.set(DataKey::Burden, Val::Int(b));
-    crate::glog!(g, "  {} taps The One Ring: burden {b}, life {}, {:?} step of {}'s turn", pname(g, p), g.player(p).life, g.step, g.active.map_or("nobody", |a| &*g.player(a).name));
-    draw(g, p, b as u32, false)?;
+    // the burden counter is put on once (the first run: a Rings of Brighthearth / Peter Parker's Camera copy, or the
+    // ability itself); every run draws a card for each counter
+    let mut placed = false;
+    crate::engine::stack::ability_run(g, p, Some(src), None, "a burden counter, then draw", None, None, |g| {
+        if !placed {
+            placed = true;
+            let b = burden(g, src) + 1;
+            g.perm_mut(src).data.set(DataKey::Burden, Val::Int(b));
+            crate::glog!(g, "  {} taps The One Ring: burden {b}, life {}, {:?} step of {}'s turn", pname(g, p), g.player(p).life, g.step, g.active.map_or("nobody", |a| &*g.player(a).name));
+        }
+        draw(g, p, burden(g, src) as u32, false)
+    })?;
     Ok(true)
 }
 

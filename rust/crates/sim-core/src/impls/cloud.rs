@@ -860,17 +860,34 @@ pub fn zack_sacrifice(g: &mut Game, src: PermId, p: PlayerId, target: i64) -> Re
     let counters = g.perm(src).plus.max(0);
     let worn = equipment_on(g, src);
     crate::engine::zones::die(g, src, intern("sac"))?; // Zack is sacrificed as a cost: it happens first
-    if !ability_window(g, p, Some(src), "sacrifice: indestructible", Some(8.0), Some(t))? {
-        return Ok(true);
-    }
-    if live(g, t) {
-        super::partials::eot_kw(g, t, "indestructible");
-        repl::put_plus(g, t, counters);
-        for e in worn {
-            attach(g, e, t);
+    crate::engine::stack::ability_run_w(g, p, Some(src), None, "sacrifice: indestructible", Some(8.0), Some(t), 0.0, |g, is_copy| {
+        let mut t = t;
+        if is_copy && crate::human::is_human(g, p) {
+            // "you may choose a new target for the copy": another creature you control
+            let now: Vec<PermId> = g
+                .player(p)
+                .perms
+                .iter()
+                .copied()
+                .filter(|&x| x != src && live(g, x) && g.is_creature(x))
+                .collect();
+            let prompt = "The copy of Zack Fair's ability: which creature gains indestructible?";
+            if !now.is_empty()
+                && let Some(x) = crate::human::cards::pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?
+            {
+                t = x;
+            }
         }
-        crate::glog!(g, "    {} gains indestructible; Zack's counters and Equipment move to it", g.perm(t).name);
-    }
+        if live(g, t) {
+            super::partials::eot_kw(g, t, "indestructible");
+            repl::put_plus(g, t, counters);
+            for &e in &worn {
+                attach(g, e, t);
+            }
+            crate::glog!(g, "    {} gains indestructible; Zack's counters and Equipment move to it", g.perm(t).name);
+        }
+        Ok(())
+    })?;
     Ok(true)
 }
 
