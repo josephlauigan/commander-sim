@@ -1,5 +1,10 @@
 # Karn, Legacy Reforged — Colourless Urza and Mishra Artifacts
 
+**Retired 2026-11-05 (JD).** The deck is broken up: 27 of its cards (Basalt Monolith, Rings of Brighthearth, Walking
+Ballista, the Karn planeswalkers, Urza's Saga, one Wastes and others) move to the new Thanos deck
+(`decklists/JD/thanos-artifacts-and-dragons.md`), and the rest go to the binder; see `documents/doomsday-thanos-rebuild-swaps.md`.
+The `karn` key is still in the simulator until the rewire PR removes it and moves this file to `decklists/pool/retired/`.
+
 Fill the board with cheap artifacts, cast Karn, and turn his upkeep mana into big artifacts every turn. Karn adds
 {C} for each artifact you control at the start of your upkeep, so every Bauble, rock and artifact land is one more
 mana the next turn. The deck wins with large artifact threats (Wurmcoil Engine, Blightsteel Colossus, Portal to

@@ -1,5 +1,10 @@
 # Tymna the Weaver & Thrasios, Triton Hero — Four-Colour Partners (W/U/B/G)
 
+**Retired 2026-11-05 (JD).** Replaced by the Doomsday rebuild, `decklists/JD/tymna-thrasios-doomsday.md` (cEDH, t6). Tymna,
+Thrasios and 12 other cards move to the new list, and the rest go to the binder; see `documents/doomsday-thanos-rebuild-swaps.md`. The
+`thrasios` key still plays this list until the rewire PR points it at the new file and moves this one to
+`decklists/pool/retired/`.
+
 > Built from the Tymna/Kraum deck (2026-10-19).
 
 Two commanders that turn spare mana into cards: Tymna draws one card for each opponent your creatures hit in combat, and

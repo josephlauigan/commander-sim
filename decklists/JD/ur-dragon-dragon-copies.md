@@ -1,5 +1,10 @@
 # The Ur-Dragon — Five-Colour Dragon Copies
 
+**Retired 2026-11-05 (JD).** The deck is broken up: The Ur-Dragon and 66 other cards move to the new Thanos deck
+(`decklists/JD/thanos-artifacts-and-dragons.md`), with The Ur-Dragon in the 99, and the other 33 go to the binder; see
+`documents/doomsday-thanos-rebuild-swaps.md`. The `urdragon` key is still in the simulator until the rewire PR removes it and moves this file
+to `decklists/pool/retired/`.
+
 A five-colour Dragon deck that turns one Dragon into several. Miirym, Lathliss and token multipliers reward Dragons
 entering, while Dragon Tempest, Scourge of Valkas and Terror of the Peaks turn those entries into damage. Astral Dragon
 is the signature card: it turns noncreature permanents into pairs of flying 3/3 Dragon copies, and with Cursed Mirror
