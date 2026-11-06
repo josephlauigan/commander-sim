@@ -1,26 +1,18 @@
 //! Practice mode (2026-11-05, model-gaps B1): activated abilities of the owned decks' cards that a person could not use
 //! at all, found when the trigger probe was given the preconditions it lacked (`tests/practice_trigger_probe.rs`).
-//! Neither is used by the AI (Maelstrom of the Spirit Dragon's search has no AI code; Loran's draw is an option hook
-//! with the AI's own opponent choice), so both are person-only entries: the AI's paths are unchanged.
+//! Maelstrom of the Spirit Dragon's search has no AI code, so it is a person-only entry: the AI's paths are unchanged.
 //!
-//! `abilities` is tried by `cards::more_abilities` before `gaps_c`; `land_abilities` is appended by
+//! (Loran of the Third Path's person path, also written in B1, is `marvin_hooks::loran`, which model-gaps A4 added for the
+//! owner and for Marvin; the B1 copy was removed when the branches were merged.) `land_abilities` is appended by
 //! `abilities::land_abilities`.
 
-use super::abilities::{LandAbility, PermAbility, Why, ability};
-use super::{choices, gaps_t2, mana};
-use crate::engine::stack::{ability_window, ability_window_card};
+use super::abilities::{LandAbility, Why, ability};
+use super::{choices, mana};
+use crate::engine::stack::ability_window_card;
 use crate::engine::{self, zones};
 use crate::flow::Res;
 use crate::ids::{PermId, PlayerId};
 use crate::state::Game;
-
-/// the abilities of p's permanent m (card name `nm`), or None when this file doesn't list the card
-pub fn abilities(nm: &str) -> Option<Vec<PermAbility>> {
-    Some(match nm {
-        "Loran of the Third Path" => vec![ability("{T}: you and target opponent each draw a card", loran)],
-        _ => return None,
-    })
-}
 
 /// the abilities of p's land l that this file lists
 pub fn land_abilities(g: &Game, l: PermId) -> Vec<LandAbility> {
@@ -31,39 +23,6 @@ pub fn land_abilities(g: &Game, l: PermId) -> Vec<LandAbility> {
         )],
         _ => vec![],
     }
-}
-
-// ------------------------------------------------------------------ Loran of the Third Path
-/// {T}: you and target opponent each draw a card (the opponent is the person's choice)
-fn loran(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
-    let x = g.perm(m);
-    if x.tapped {
-        return Ok(Some("Loran of the Third Path is tapped.".into()));
-    }
-    if x.sick {
-        return Ok(Some(
-            "Loran of the Third Path has summoning sickness (it came under your control this turn).".into(),
-        ));
-    }
-    let Some(q) = gaps_t2::pick_opponent(g, p, "Loran of the Third Path")? else {
-        return Ok(Some("There is no opponent to target.".into()));
-    };
-    g.perm_mut(m).tapped = true;
-    let qn = g.player(q).name.to_string();
-    crate::glog!(
-        g,
-        "  {} activates Loran of the Third Path: {} and {} each draw a card",
-        g.player(p).name,
-        g.player(p).name,
-        qn
-    );
-    if ability_window(g, p, Some(m), &format!("you and {qn} each draw a card"), None, None)? {
-        zones::draw(g, p, 1, false)?;
-        if g.player(q).alive {
-            zones::draw(g, q, 1, false)?;
-        }
-    }
-    Ok(None)
 }
 
 // ------------------------------------------------------------------ Maelstrom of the Spirit Dragon

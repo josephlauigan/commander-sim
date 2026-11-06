@@ -104,13 +104,13 @@ fn loran_is_listed_and_asks_which_opponent_draws() {
     assert!(ls.iter().any(|x| x.starts_with("{T}: you and target opponent each draw a card")), "{ls:?}");
     let (mine, p1, p2) = (g.player(P0).hand.len(), g.player(P1).hand.len(), g.player(P2).hand.len());
     let h = run(&mut g, Use::Perm(l), "{T}:", |r| {
-        if r.prompt.contains("Loran of the Third Path: target opponent") {
+        if r.prompt.contains("Loran: which opponent draws a card?") {
             r.choices.iter().position(|c| c.contains("Thanos"))
         } else {
             None
         }
     });
-    assert!(asked(&h, "Loran of the Third Path: target opponent?"), "{:?}", prompts(&h));
+    assert!(asked(&h, "Loran: which opponent draws a card?"), "{:?}", prompts(&h));
     assert_eq!(g.player(P0).hand.len(), mine + 1, "the person drew");
     assert_eq!(g.player(P2).hand.len(), p2 + 1, "the opponent the person named drew");
     assert_eq!(g.player(P1).hand.len(), p1, "the other opponent did not");
