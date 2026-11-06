@@ -32,7 +32,9 @@ fn arm_p1(g: &mut Game) {
     g.player_mut(P1).hand.clear();
     hand(g, P1, &["Brainstorm", "Ponder", "Preordain", "Opt", "Counterspell", "Forest", "Island"]);
     let swords = card(g, "Swords to Plowshares");
-    g.player_mut(P1).deck_names.extend(std::iter::repeat_n(swords, 20));
+    let mut names = g.player(P1).deck_names.to_vec();
+    names.extend(std::iter::repeat_n(swords, 20));
+    g.player_mut(P1).deck_names = names.into();
 }
 
 fn miirym_out(g: &mut Game) {
@@ -139,10 +141,9 @@ fn jd_and_tier_six_decks_keep_the_old_floor() {
 #[test]
 fn garruks_uprising_is_cast_with_a_big_creature_out() {
     let mut g = miirym_table();
-    miirym_out(&mut g);
     hand(&mut g, P0, &["Garruk's Uprising"]);
     let up = card(&g, "Garruk's Uprising");
-    assert_eq!(decks::deck_prio(&g, P0, up), 0, "no creature of power 4 yet");
+    assert_eq!(decks::deck_prio(&g, P0, up), 0, "no creature of power 4 or more out yet");
     perm(&mut g, P0, "Goldspan Dragon"); // a 4/4
     assert!(decks::deck_prio(&g, P0, up) >= 50);
     let s = brain::Situation::new(&g, P0);
