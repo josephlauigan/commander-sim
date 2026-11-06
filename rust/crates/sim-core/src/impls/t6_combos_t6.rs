@@ -496,6 +496,9 @@ fn get_piece(g: &Game, p: PlayerId, names: &[&str]) -> Option<Src> {
         return Some(Src::Cast(c));
     }
     let sis = bf(g, p, SISAY)?;
+    if crate::cardcode::ability_locked(g, sis, p) {
+        return None; // --- c1-t6-lines: Cursed Totem, a Pithing Needle naming Sisay, Arrest: the fetch can't be activated
+    }
     let power = crate::engine::values::epow(g, sis);
     names.iter().filter_map(|n| lib_card(g, p, n)).find(|&c| (g.db.get(c).cmc as i32) < power).map(Src::Fetch)
 }

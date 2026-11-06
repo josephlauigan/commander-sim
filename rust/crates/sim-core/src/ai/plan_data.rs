@@ -1375,6 +1375,18 @@ pub fn hold_up_for(l: &Loaded, g: &Game, p: PlayerId) -> Option<f64> {
     l.plan.hold_up.iter().zip(&l.hold_up_when).find(|(_, w)| w.holds_cx(g, p, cx)).and_then(|x| x.0.value)
 }
 
+/// --- c1-t6-lines (trace only): the index of the first go-now rule that matches this combo now, with its verdict
+pub fn go_now_rule_idx(g: &Game, p: PlayerId, combo: &str) -> Option<(usize, Option<bool>)> {
+    let l = active(g, p)?;
+    let cx = Cx { plan: Some(l), ..Cx::default() };
+    l.plan
+        .go_now
+        .iter()
+        .zip(&l.go_now_when)
+        .position(|(r, w)| r.matches(combo) && w.holds_cx(g, p, cx))
+        .map(|i| (i, l.plan.go_now[i].go))
+}
+
 /// --- phase4-cedh: the plan's go-now gate for this catalogue combo, None: the shared table check decides
 pub fn go_now_for(l: &Loaded, g: &Game, p: PlayerId, combo: &str) -> Option<bool> {
     let cx = Cx { plan: Some(l), ..Cx::default() };

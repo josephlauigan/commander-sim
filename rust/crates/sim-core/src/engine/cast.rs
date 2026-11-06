@@ -978,7 +978,7 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
     if !ok {
         crate::t6stats::flow_countered(g, p, c); // --- ai-flow
         let last = by;
-        g.last_counter = last;
+        g.last_counter = last.or(g.last_counter); // --- c1-t6-lines: keep the card the stack window named
         let lt = last.map(|x| g.db.get(x));
         let land = g.db.get(c).land;
         let o = gy_of(&ctx, p); // its owner: a card cast from another player's deck goes back to their zones

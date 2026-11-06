@@ -418,7 +418,13 @@ fn sisay(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt
 
 fn sisay_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let t = CardId(arg as u16);
-    if !on(g, p, src) || !can_pay(g, p, 0, "WUBRG", false) || !g.player(p).library.contains(&t) {
+    // --- c1-t6-lines: the combo steps call this directly, so the lock (Cursed Totem, Pithing Needle naming Sisay, an Arrest)
+    // is checked here as well as when the option is offered
+    if !on(g, p, src)
+        || crate::cardcode::ability_locked(g, src, p)
+        || !can_pay(g, p, 0, "WUBRG", false)
+        || !g.player(p).library.contains(&t)
+    {
         return Ok(false);
     }
     pay(g, p, 0, "WUBRG", false)?;
