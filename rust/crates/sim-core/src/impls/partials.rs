@@ -2289,19 +2289,48 @@ fn vault(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
 }
 
 // ======================================================== Loran of the Third Path
-/// Full: {T}: you and the least threatening opponent each draw (at end of turn)
+/// how much one more card is worth to x: most with an empty hand and the mana to cast it, little with a full hand
+/// (it will be discarded) or few lands, and negative for a library about to run out
+fn card_use(g: &Game, x: PlayerId) -> f64 {
+    let pl = g.player(x);
+    if pl.library.len() <= 6 {
+        return -2.0;
+    }
+    let base = match pl.hand.len() {
+        0..=2 => 1.0,
+        3..=4 => 0.8,
+        5..=6 => 0.5,
+        _ => 0.1,
+    };
+    base * (pl.lands.len().min(6) as f64 / 6.0).max(0.3)
+}
+
+/// Full: {T}: you and target opponent each draw. The AI uses it only in the end-of-turn window before its own turn, an
+/// opponent's end step: Loran untaps at once in its own untap step, so the draw costs nothing (a use in its own turn
+/// would leave it tapped through every opponent's turn, no blocker, and still untap at the same time). The target is
+/// the opponent (not hexproof) an extra card helps least (`card_use`: the fullest hand, the fewest lands, a library
+/// nearly out) with a little weight on how threatening it is; it needs a library of 8 or more of its own and a hand
+/// below 7, and an extra card worth at least as much to it as to the opponent.
 fn loran(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if g.perm(src).owner != p || post.is_some() || g.perm(src).tapped || g.perm(src).sick {
         return Ok(vec![]);
     }
-    let os: Vec<PlayerId> = g.opps(p).collect();
-    let Some(q) = min_by(&os, |q| threat(g, p, q)) else { return Ok(vec![]) };
-    Ok(vec![opt_ability(0.6, "Loran draw".into(), src, loran_go, q.0 as i64)])
+    if g.player(p).library.len() < 8 || g.player(p).hand.len() >= 7 {
+        return Ok(vec![]);
+    }
+    let os: Vec<PlayerId> =
+        g.opps(p).filter(|&q| g.player(q).alive && !crate::engine::values::player_hexproof(g, q)).collect();
+    let Some(q) = min_by(&os, |q| card_use(g, q) + 0.02 * threat(g, p, q)) else { return Ok(vec![]) };
+    let gain = card_use(g, p) - card_use(g, q);
+    if gain < 0.0 {
+        return Ok(vec![]);
+    }
+    Ok(vec![opt_ability(0.6 + 0.2 * gain.min(2.0), "Loran draw".into(), src, loran_go, q.0 as i64)])
 }
 
 fn loran_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let q = PlayerId(arg as u8);
-    if g.perm(src).tapped {
+    if g.perm(src).tapped || !g.player(q).alive {
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;

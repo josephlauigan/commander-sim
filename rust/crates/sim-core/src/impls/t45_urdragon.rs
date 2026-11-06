@@ -538,6 +538,51 @@ fn maelstrom_colors(g: &Game, p: PlayerId, _l: PermId) -> Colors {
     if restr_ok(g, p, Restr::Subtype("dragon")) { g.player(p).ident } else { Colors::NONE }
 }
 
+/// the Dragon card in p's library an AI would fetch: the biggest body (`body_worth`)
+fn best_lib_dragon(g: &Game, p: PlayerId) -> Option<CardId> {
+    let cs: Vec<CardId> = crate::engine::zones::searchable(g, p).into_iter().filter(|&c| dragon_card(g, c)).collect();
+    crate::engine::zones::max_by(&cs, |c| body_worth(g, p, c))
+}
+
+/// {4}, {T}, sacrifice Maelstrom of the Spirit Dragon: search for a Dragon card, reveal it, put it into your hand. The
+/// AI cracks it with a land to spare (six lands, so five stay) for a Dragon it can cast soon (mana value 4 or more, at
+/// most one above its lands once Maelstrom is gone: a land drop). At the end of the turn before its own (the mana
+/// would untap anyway) it is a 1.4 play; in its second main phase, with seven lands, a 0.7 one.
+fn maelstrom_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let n = g.player(p).lands.len();
+    if post == Some(false) || n < 6 || (post.is_some() && n < 7) || g.perm(l).tapped || !can_pay_without(g, p, l, 4, "")
+    {
+        return Ok(vec![]);
+    }
+    let Some(c) = best_lib_dragon(g, p) else { return Ok(vec![]) };
+    let cmc = g.db.get(c).cmc as usize;
+    if cmc < 4 || cmc > n {
+        return Ok(vec![]); // not worth a land, or too big to cast soon
+    }
+    Ok(vec![Opt {
+        utility: if post.is_none() { 1.4 } else { 0.7 },
+        label: "Maelstrom of the Spirit Dragon: search for a Dragon".into(),
+        act: Some(Action::Plan { f: maelstrom_go, arg: l.0 as i64 }),
+    }])
+}
+
+fn maelstrom_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let l = PermId(arg as u32);
+    if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !pay_without(g, p, l, 4, "")? {
+        return Ok(false);
+    }
+    let Some(want) = best_lib_dragon(g, p) else { return Ok(false) };
+    let cd = g.perm(l).card();
+    g.perm_mut(l).tapped = true;
+    sac_land(g, p, l)?; // the sacrifice is a cost: it leaves before the ability can be answered
+    crate::engine::stack::ability_run(g, p, None, Some(cd), "search for a Dragon card", None, None, |g| {
+        // (the card is chosen now; if it has left the library, the best Dragon still there is taken)
+        let pick = if g.player(p).library.contains(&want) { want } else { best_lib_dragon(g, p).unwrap_or(want) };
+        crate::impls::t1::tutor_named(g, p, &|_, c| c == pick, 1, "hand", MAELSTROM).map(|_| ())
+    })?;
+    Ok(true)
+}
+
 fn best_gy_dragon(g: &Game, p: PlayerId) -> Option<CardId> {
     let cs: Vec<CardId> = g.player(p).gy.iter().copied().filter(|&c| dragon_creature_card(g, c)).collect();
     crate::engine::zones::max_by(&cs, |c| body_worth(g, p, c))
@@ -1013,7 +1058,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         c.land_options = Some(haven_options);
     }
     if has(MAELSTROM) {
-        r.card(db, MAELSTROM)?.land_cols = Some(maelstrom_colors);
+        let c = r.card(db, MAELSTROM)?;
+        c.land_cols = Some(maelstrom_colors);
+        c.land_options = Some(maelstrom_options);
     }
     if has(COURSER) {
         r.card(db, COURSER)?.etb = Some(courser_etb);
