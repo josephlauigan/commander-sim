@@ -207,3 +207,17 @@ fn a_counterspell_the_copy_does_not_hold_is_not_cast() {
     assert!(!sim_core::engine::stack::cast_counter(&mut g, P0, pact, Some(spell)).unwrap());
     assert!(!g.player(P0).gy.contains(&pact));
 }
+
+// ------------------------------------------------------------------ huge life gains in one turn
+
+/// Two huge gains in one turn (Exquisite Blood off a doubled Dragon army, seed 500000 Y'shtola Tier 5, game 1953) overflowed
+/// the "life gained this turn" counter; it saturates at the life cap like the life total does.
+#[test]
+fn two_huge_life_gains_in_one_turn_do_not_overflow() {
+    let mut g = table(&["sauron", "cloud"]);
+    let cap = sim_core::engine::life::LIFE_CAP;
+    sim_core::engine::life::gain(&mut g, P0, cap).unwrap();
+    sim_core::engine::life::gain(&mut g, P0, cap).unwrap();
+    assert!(g.player(P0).life <= cap);
+    assert_eq!(g.player(P0).gained_turn.map(|x| x.1), Some(cap));
+}
