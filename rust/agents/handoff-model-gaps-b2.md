@@ -1,13 +1,16 @@
 # Handoff: model-gaps-b2 (Rings for every person ability)
 
 ## Done
-- Probe `rust/crates/sim-core/tests/practice_rings_probe.rs` (sweep over karn/thrasios/sauron: `sweep_report` prints
-  every non-offered ability; `PROBE_SHOW="karn: Staff of Domination #1"` prints a case's questions and log).
-- stack.rs: `ability_copies` logs "the copy of X resolves" (the probe reads it).
-- First sweep: 22(33) offered, 46 NOT OFFERED, 18 not exercised.
+- All 67 `human/` call sites converted except two listed in the report (Basalt loop shortcut, Soul-Guide Lantern enter
+  trigger); the `impls/` functions the person's menus reach are converted too (list in the report).
+- `tests/practice_rings_probe.rs` (sweep of the 11 decks, two boards, hand/graveyard ways) passes: 257 offered, 11 exceptions.
+- `tests/play_rings.rs`: 9 new spot tests. Regression files (32 + 53 binaries) pass; `cargo build --release --all-targets`
+  has no warnings.
+- Report: `rust/agents/report-model-gaps-b2.md` (classification table, NEEDS JD).
 
 ## Next
-- convert human/ sites (list in the report table), then impls `*_go` paths the sweep names, then assert mode in the probe.
+- Nothing for the agent; JD decides the NEEDS JD list.
 
 ## Gotchas
-- ability_run for an AI seat == ability_window + eff (copy_worth 0.0 means the AI never Cameras it).
+- `ability_run` for an AI seat is `ability_window` plus the effect (copy worth 0.0, copies always 0).
+- A copy of a walker ability re-runs the effect's own choice function (`Ready::Go` is `Fn`).

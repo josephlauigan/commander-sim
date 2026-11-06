@@ -31,8 +31,19 @@ const P1: PlayerId = PlayerId(1);
 
 /// the decks with Rings of Brighthearth (karn, thrasios) or Peter Parker's Camera (sauron) first, then the rest: a card
 /// added to any of them later is covered too
-const DECKS: &[&str] =
-    &["karn", "thrasios", "sauron", "alela", "cloud", "galadriel", "kefka", "sheoldred", "thanos", "urdragon", "yshtola"];
+const DECKS: &[&str] = &[
+    "karn",
+    "thrasios",
+    "sauron",
+    "alela",
+    "cloud",
+    "galadriel",
+    "kefka",
+    "sheoldred",
+    "thanos",
+    "urdragon",
+    "yshtola",
+];
 
 /// where the ability is used from
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -171,9 +182,20 @@ fn place(g: &mut Game, name: &str, land: bool) -> PermId {
 /// an ability from the hand or graveyard (not a way to cast the card: transmute, channel, unearth, cycling ...)
 fn activated_way(label: &str) -> bool {
     let l = label.to_lowercase();
-    ["unearth", "eternalize", "embalm", "encore", "scavenge", "cycling", "channel", "transmute", "ninjutsu", "bloodrush"]
-        .iter()
-        .any(|k| l.contains(k))
+    [
+        "unearth",
+        "eternalize",
+        "embalm",
+        "encore",
+        "scavenge",
+        "cycling",
+        "channel",
+        "transmute",
+        "ninjutsu",
+        "bloodrush",
+    ]
+    .iter()
+    .any(|k| l.contains(k))
 }
 
 /// the card c put in P0's hand or graveyard, with the activated ways its hooks give a person
@@ -219,13 +241,16 @@ fn run_case(key: &str, name: &str, spot: Spot, k: usize, step: Step) -> Out {
         let (label, way) = match m {
             Some(m) => {
                 let labels: Vec<String> = if land {
-                    let mut v: Vec<String> = abilities::land_abilities(&g, P0, m).into_iter().map(|a| a.label).collect();
+                    let mut v: Vec<String> =
+                        abilities::land_abilities(&g, P0, m).into_iter().map(|a| a.label).collect();
                     v.extend(alt::land_alts(&mut g, P0, m).unwrap_or_default().into_iter().map(|a| a.0));
                     v
                 } else {
                     human::abilities_of(&mut g, P0, m).map(|v| v.into_iter().map(|a| a.0).collect()).unwrap_or_default()
                 };
-                let Some(label) = labels.get(k).cloned() else { return Out::NotExercised(format!("no such ability (the menu: {labels:?})")) };
+                let Some(label) = labels.get(k).cloned() else {
+                    return Out::NotExercised(format!("no such ability (the menu: {labels:?})"));
+                };
                 (label, None)
             }
             None => {
@@ -312,7 +337,10 @@ fn run_case(key: &str, name: &str, spot: Spot, k: usize, step: Step) -> Out {
     }));
     r.unwrap_or_else(|e| {
         Out::Panicked(
-            e.downcast_ref::<String>().cloned().or_else(|| e.downcast_ref::<&str>().map(|s| s.to_string())).unwrap_or_default(),
+            e.downcast_ref::<String>()
+                .cloned()
+                .or_else(|| e.downcast_ref::<&str>().map(|s| s.to_string()))
+                .unwrap_or_default(),
         )
     })
 }
@@ -331,7 +359,8 @@ fn menu_len(key: &str, name: &str, spot: Spot) -> usize {
             Some(m) => {
                 prep(&mut g, name, m);
                 if land {
-                    abilities::land_abilities(&g, P0, m).len() + alt::land_alts(&mut g, P0, m).map(|v| v.len()).unwrap_or(0)
+                    abilities::land_abilities(&g, P0, m).len()
+                        + alt::land_alts(&mut g, P0, m).map(|v| v.len()).unwrap_or(0)
                 } else {
                     human::abilities_of(&mut g, P0, m).map(|v| v.len()).unwrap_or(0)
                 }
@@ -353,7 +382,8 @@ fn sweep(decks: &[&str]) -> BTreeMap<String, Out> {
         if !decks.contains(&key) {
             continue;
         }
-        let mut names: Vec<String> = d["cards"].as_array().unwrap().iter().filter_map(|c| c.as_str().map(String::from)).collect();
+        let mut names: Vec<String> =
+            d["cards"].as_array().unwrap().iter().filter_map(|c| c.as_str().map(String::from)).collect();
         names.sort();
         names.dedup();
         for name in names {
@@ -410,8 +440,14 @@ const EXCEPTIONS: &[(&str, &str)] = &[
         "thrasios: Basalt Monolith #0",
         "\"start the loop\": a table shortcut standing for the whole Basalt Monolith + Rings loop (each pass of it is a real activation Rings copies, see play_rings.rs); not an ability itself",
     ),
-    ("karn: Mystic Forge #1", "casting a spell from the top of the library (Mystic Forge's static permission): a spell, not an ability"),
-    ("karn: Mystic Forge #2", "casting a spell from the top of the library (Mystic Forge's static permission): a spell, not an ability"),
+    (
+        "karn: Mystic Forge #1",
+        "casting a spell from the top of the library (Mystic Forge's static permission): a spell, not an ability",
+    ),
+    (
+        "karn: Mystic Forge #2",
+        "casting a spell from the top of the library (Mystic Forge's static permission): a spell, not an ability",
+    ),
     (
         "kefka: Blazing Firesinger // Seething Song #0",
         "prepared: casting a copy of the back-face spell (Seething Song): a spell cast, not an ability",
@@ -448,7 +484,15 @@ fn both_boards() -> BTreeMap<String, Out> {
                     Out::NotExercised(_) => 0,
                 };
                 // the worse of the two shows, except that a board where nothing could be exercised says nothing
-                if matches!(a, Out::NotExercised(_)) { b } else if matches!(b, Out::NotExercised(_)) { a } else if rank(&a) >= rank(&b) { a } else { b }
+                if matches!(a, Out::NotExercised(_)) {
+                    b
+                } else if matches!(b, Out::NotExercised(_)) {
+                    a
+                } else if rank(&a) >= rank(&b) {
+                    a
+                } else {
+                    b
+                }
             }
         };
         res.insert(k, merged);
@@ -483,7 +527,12 @@ fn every_ability_a_person_can_use_offers_the_rings_copy() {
     for s in &stale {
         eprintln!("STALE   {s}");
     }
-    assert!(bad.is_empty() && stale.is_empty(), "{} ability(ies) without a copy, {} stale exception(s): see above", bad.len(), stale.len());
+    assert!(
+        bad.is_empty() && stale.is_empty(),
+        "{} ability(ies) without a copy, {} stale exception(s): see above",
+        bad.len(),
+        stale.len()
+    );
 }
 
 /// the karn and thrasios decks (the ones with Rings of Brighthearth) are swept by the test above; this one says so
@@ -502,7 +551,8 @@ fn scan_option_hooks() {
     let db = db();
     for d in all["mine"].as_array().unwrap() {
         let key = d["key"].as_str().unwrap();
-        let mut names: Vec<String> = d["cards"].as_array().unwrap().iter().filter_map(|c| c.as_str().map(String::from)).collect();
+        let mut names: Vec<String> =
+            d["cards"].as_array().unwrap().iter().filter_map(|c| c.as_str().map(String::from)).collect();
         names.sort();
         names.dedup();
         for name in names {
@@ -515,7 +565,11 @@ fn scan_option_hooks() {
                 let mut g: Game = table(&[key, "seph"]);
                 g.humans.add(P0, Arc::new(ScriptHuman::new(vec![])));
                 let m = place(&mut g, &name, dd.land);
-                let imp = g.registry.get(c).map(|i| (i.options.is_some(), i.land_options.is_some())).unwrap_or((false, false));
+                let imp = g
+                    .registry
+                    .get(c)
+                    .map(|i| (i.options.is_some(), i.land_options.is_some()))
+                    .unwrap_or((false, false));
                 let own = if dd.land {
                     sim_core::human::karn::owns_land(&g, m)
                 } else {

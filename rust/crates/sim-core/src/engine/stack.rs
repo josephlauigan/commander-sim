@@ -482,6 +482,12 @@ fn copy_item(g: &mut Game, q: PlayerId, id: u32, any: bool) -> Res<bool> {
 // ------------------------------------------------------------------ priority
 /// p paid the cost of an activated ability of src: it goes on the stack and players get priority. True if it
 /// resolves (the caller then applies its effect, even if src is gone by then), false if it was countered.
+///
+/// **Not for an ability a person can activate** (model-gaps-b2): a person's Rings of Brighthearth and Peter Parker's
+/// Camera copy only abilities whose caller carries out the copies, and this one gives the caller no copies. Use
+/// `ability_run` / `ability_run_w` (the effect in a closure, run once for each copy that resolved and then for the
+/// ability itself); they are this function for anyone else. `tests/practice_rings_probe.rs` fails for a person ability
+/// that goes through this one.
 pub fn ability_window(
     g: &mut Game,
     p: PlayerId,
@@ -554,7 +560,8 @@ pub fn ability_window_ex(
 }
 
 /// ability_window for an ability whose source is a card, not a permanent (a land's ability, a card in hand or the
-/// graveyard): Python's `ability_window(g, p, L.cd, ...)`
+/// graveyard): Python's `ability_window(g, p, L.cd, ...)`. Not for a person's ability either: see `ability_window`
+/// (`ability_run` with `src` None and `cd` Some).
 pub fn ability_window_card(
     g: &mut Game,
     p: PlayerId,
