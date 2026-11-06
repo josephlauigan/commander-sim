@@ -340,7 +340,10 @@ fn liliana_of_the_veil_ultimate_keeps_the_better_pile() {
     let n = g.player(P1).perms.len();
     (rules::LOTV_ULT.eff)(&mut g, P0, l).unwrap();
     assert!(g.perm(big).on_bf, "the pile with the best permanent is kept");
-    assert_eq!(g.player(P1).perms.len(), n.div_ceil(2));
+    // the caster splits by worth (the best permanent against the rest), so the pile that stays is no bigger than
+    // half rounded up and the opponent lost the other pile (2026-11-05: the piles are no longer dealt alternately)
+    let left = g.player(P1).perms.len();
+    assert!(left >= 1 && left <= n.div_ceil(2), "kept {left} of {n}");
 }
 
 #[test]
