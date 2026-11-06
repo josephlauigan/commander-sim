@@ -9,7 +9,6 @@ use sim_core::ai::brain;
 use sim_core::engine::combat::{self, poison_hit, poison_share};
 use sim_core::engine::values::pval;
 use sim_core::ids::{PermId, PlayerId};
-use sim_core::state::Game;
 use sim_core::testkit::*;
 
 const P0: PlayerId = PlayerId(0);
