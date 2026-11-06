@@ -63,3 +63,19 @@ Hexing Squelcher below Full (JD accepted its gap).
   clean point with everything committed and end your reply with a first line `HANDOFF`.
 - Finish with: everything committed; full details in the report file (committed); a reply of at most 15 lines (commit hash,
   done / not done per card, test results, anything the coordinator must act on). Then stop.
+
+## Follow-up (JD's decisions, 2026-11-05, after items 1-4)
+5. **Marvin: the rules reading for self-named abilities** (rule 201.5: an ability that names its object means the object
+   that has it, i.e. Marvin; 701.28c: a permanent that isn't a double-faced card can't transform). Switch Kefka and
+   Tekuthal to match the other nine (Hope of Ghirapur, Hawkeye, Balan, Drivnod, Sisay, Scion, Thanos, Nicol Bolas, Venat):
+   Tekuthal's indestructible counter goes on Marvin; a Marvin-borrowed Kefka {8} does the rest of its text (check Kefka's
+   Oracle via the card_faces of `kefka, court mage // kefka, ruler of ruin` in data/scryfall_cache.json) but transforms
+   nothing (Kefka is not transformed). AI and person. Make sure the kefka deck's AI no longer counts Marvin as a way to
+   transform Kefka (grep the kefka plan / combo code for Marvin). Tests for both.
+6. **Proliferate: a person chooses** (rule 701.27: any number of permanents and/or players that have a counter; each
+   gets one more of each kind it already has). One shared person path (e.g. `human::choices::pick_any` over the
+   permanents and players with counters, with the AI's "useful" picks preselected or listed first) used by every
+   proliferate source a person controls: `cardcode::proliferate_all` callers, Karn's Bastion, Vraska's 0, Cankerbloom,
+   High Perfect Morcant, Marvin's borrowed ones, and any compiled proliferate effect (grep "proliferate"). AI unchanged.
+   Tests: a person proliferates a chosen subset (including choosing an opponent's poison or not), per source kind.
+Rules for these: as above (NEEDS JD for anything you can't do). Update the report and handoff.
