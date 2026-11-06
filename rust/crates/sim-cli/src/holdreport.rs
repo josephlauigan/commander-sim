@@ -94,9 +94,21 @@ fn render_one(label: &str, m: &HashMap<String, i64>, b: &str, detail: bool) -> S
     );
     o += &format!(
         "  {:24}{:>7}{:>7}{:>8}{:>6} | by the holder's next turn: {:>6}{:>9}{:>9}{:>8}{:>7} | {:>9}{:>7}\n",
-        "group", "turns", "% turns", "unused", "hold", "used", "cast,miss", "elsewhere", "unused", "ended", "spent/avg", "oinst"
+        "group",
+        "turns",
+        "% turns",
+        "unused",
+        "hold",
+        "used",
+        "cast,miss",
+        "elsewhere",
+        "unused",
+        "ended",
+        "spent/avg",
+        "oinst"
     );
-    let mut rows: Vec<(String, Vec<String>)> = GROUPS.iter().map(|(g, l)| (l.to_string(), vec![g.to_string()])).collect();
+    let mut rows: Vec<(String, Vec<String>)> =
+        GROUPS.iter().map(|(g, l)| (l.to_string(), vec![g.to_string()])).collect();
     rows.insert(5, ("all held together".into(), HELD.iter().map(|g| g.to_string()).collect()));
     for (l, gs) in &rows {
         let s = |name: &str| -> i64 { gs.iter().map(|g| k(&format!("{g}|{name}"))).sum() };
@@ -144,7 +156,14 @@ mod tests {
     #[test]
     fn the_blocks_read_the_counters() {
         let mut t = HoldTally::default();
-        let st = [("hd|all|turns", 10), ("hd|all|ctr|n", 4), ("hd|all|ctr|used", 1), ("hd|all|ctr|unused", 3), ("hd|all|ctr|hit|combo", 1), ("fl|n|T1", 5)];
+        let st = [
+            ("hd|all|turns", 10),
+            ("hd|all|ctr|n", 4),
+            ("hd|all|ctr|used", 1),
+            ("hd|all|ctr|unused", 3),
+            ("hd|all|ctr|hit|combo", 1),
+            ("fl|n|T1", 5),
+        ];
         t.add("zur", st.iter().map(|(k, v)| (*k, *v)));
         assert!(!t.is_empty());
         let r = t.render(&|k| k.to_string());
