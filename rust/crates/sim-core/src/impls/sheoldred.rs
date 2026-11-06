@@ -696,7 +696,7 @@ fn seeker_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Re
     }
     // a Blood's rummage: discard a card of no use to draw a new one
     if g.player(p).bloods > 0
-        && can_pay(g, p, 1, "", false)
+        && can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)
         && !g.player(p).hand.is_empty()
         && !g.player(p).library.is_empty()
     {
@@ -747,10 +747,11 @@ fn reveler_drain(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 }
 
 pub(crate) fn blood_rummage(g: &mut Game, p: PlayerId, _arg: i64) -> Res<bool> {
-    if g.player(p).bloods == 0 || g.player(p).hand.is_empty() || !can_pay(g, p, 1, "", false) {
+    let cost = crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0); // Forensic Gadgeteer (never under {1})
+    if g.player(p).bloods == 0 || g.player(p).hand.is_empty() || !can_pay(g, p, cost, "", false) {
         return Ok(false);
     }
-    pay(g, p, 1, "", false)?;
+    pay(g, p, cost, "", false)?;
     discard_worst(g, p, 1)?;
     sac_blood(g, p, 1)?;
     draw(g, p, 1, false)?;

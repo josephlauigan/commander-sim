@@ -346,17 +346,18 @@ pub fn shapeshifter(g: &mut Game, p: PlayerId) -> Res {
 /// Shapeshifter with changeling, with spare mana at an opponent's end step
 fn maskwood_ai(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let x = g.perm(src);
-    if p != x.owner || x.tapped || x.phased || post.is_some() || g.active == Some(p) || !can_pay(g, p, 3, "", false) {
+    if p != x.owner || x.tapped || x.phased || post.is_some() || g.active == Some(p) || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false) {
         return Ok(vec![]);
     }
     Ok(vec![ability(1.6 + fetch_bonus(g, p), "Maskwood Nexus: a Shapeshifter".into(), src, maskwood_go, 0)])
 }
 
 fn maskwood_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if g.perm(src).tapped || !can_pay(g, p, 3, "", false) {
+    let cost = crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0); // Forensic Gadgeteer
+    if g.perm(src).tapped || !can_pay(g, p, cost, "", false) {
         return Ok(false);
     }
-    pay(g, p, 3, "", false)?;
+    pay(g, p, cost, "", false)?;
     g.perm_mut(src).tapped = true;
     crate::glog!(g, "  {} activates Maskwood Nexus", pname(g, p));
     if ability_window(g, p, Some(src), "a 2/2 Shapeshifter", None, None)? {

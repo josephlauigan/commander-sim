@@ -1789,17 +1789,20 @@ pub fn sac_food(g: &mut Game, p: PlayerId, n: u32) -> Res<bool> {
 
 /// common.food_options: {2}, {T}, sacrifice a Food: gain 3 life (only when life matters)
 pub fn food_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.player(p).foods < 1 || !can_pay(g, p, 2, "", false) || g.player(p).life > 15 || post == Some(false) {
+    // Forensic Gadgeteer: an artifact's activation costs {1} less, never under {1}
+    let cost = crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0);
+    if g.player(p).foods < 1 || !can_pay(g, p, cost, "", false) || g.player(p).life > 15 || post == Some(false) {
         return Ok(vec![]);
     }
     Ok(vec![Opt { utility: 2.0, label: "eat a Food".into(), act: Some(Action::Plan { f: eat_food, arg: 0 }) }])
 }
 
 fn eat_food(g: &mut Game, p: PlayerId, _arg: i64) -> Res<bool> {
-    if g.player(p).foods < 1 || !can_pay(g, p, 2, "", false) {
+    let cost = crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0);
+    if g.player(p).foods < 1 || !can_pay(g, p, cost, "", false) {
         return Ok(false);
     }
-    pay(g, p, 2, "", false)?;
+    pay(g, p, cost, "", false)?;
     sac_food(g, p, 1)?;
     gain(g, p, 3)?;
     Ok(true)
