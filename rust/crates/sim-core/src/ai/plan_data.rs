@@ -375,6 +375,8 @@ enum Q {
     OppSecondSpell,
     /// the hand's blue cards
     HandBlue,
+    /// --- doomsday: the hand's lands that make {B}, and its fetch lands (every fetch of the deck finds a Swamp-type dual)
+    HandBLands,
     /// the hand's counterspells (tag `ctr`)
     Counters,
     /// p's nonland permanents of mana value 3 or less that make mana (tags rock, dork, fastmana, lr; Lotus Petal,
@@ -410,7 +412,7 @@ enum Q {
     CmdWears(usize),
 }
 
-const NUMS: [(&str, Q); 34] = [
+const NUMS: [(&str, Q); 35] = [
     ("cmd-power", Q::CmdPower),
     ("cmd-blockers", Q::CmdBlockers),
     ("cmd-killers", Q::CmdKillers),
@@ -438,6 +440,7 @@ const NUMS: [(&str, Q); 34] = [
     ("round", Q::Round),
     ("hand-max-mv", Q::HandMaxMv),
     ("hand-lands", Q::HandLands),
+    ("hand-b-lands", Q::HandBLands),
     ("nonland", Q::Nonland),
     ("tutors", Q::Tutors),
     ("fast", Q::Fast),
@@ -696,6 +699,13 @@ fn quantity(g: &Game, p: PlayerId, q: Q, cx: Cx) -> f64 {
                 as f64
         }
         Q::HandLands => hand.iter().filter(|&&c| g.db.get(c).land).count() as f64,
+        Q::HandBLands => hand
+            .iter()
+            .filter(|&&c| {
+                let d = g.db.get(c);
+                d.land && (d.tag(Tag::F) || d.tags.str(Tag::C).is_some_and(|s| s.contains('B')))
+            })
+            .count() as f64,
         Q::Nonland => hand.iter().filter(|&&c| !g.db.get(c).land).count() as f64,
         Q::Tutors => hand.iter().filter(|&&c| g.db.get(c).tag(Tag::Tut)).count() as f64,
         Q::Fast => mana().n_mana as f64 + rituals(g, p, cx),

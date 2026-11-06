@@ -1882,17 +1882,27 @@ fn mastermind(g: &mut Game, src: Src, p: PlayerId) -> Res {
 // ======================================================== Gitaxian Probe: Phyrexian mana
 /// Full: {U} or 2 life; draw a card (looking at a hand has no effect in the sim)
 fn probe(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    if can_pay(g, p, 0, "U", false) && total_mana(g, p, false) >= 3 {
-        pay(g, p, 0, "U", false)?;
-    } else {
-        lose_life(g, p, 2, Some(p), "other", None)?;
+    // {U/P}: a person is asked how to pay as they cast it (human::human, phyrexian_ways), so nothing is paid here (it was
+    // paid twice before); the Doomsday pile pays what keeps its line winning; otherwise {U} when three mana is up, else 2 life
+    if !crate::human::is_human(g, p) {
+        let can_u = can_pay(g, p, 0, "U", false);
+        let life = match crate::impls::doomsday::pile_probe_life(g, p) {
+            Some(l) => l || !can_u,
+            None => !(can_u && total_mana(g, p, false) >= 3),
+        };
+        if life {
+            lose_life(g, p, 2, Some(p), "other", None)?;
+        } else {
+            pay(g, p, 0, "U", false)?;
+        }
     }
     draw(g, p, 1, false)?;
     Ok("gy")
 }
 
-fn prio_40(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
-    40
+/// Gitaxian Probe: cast for value (40) unless a Doomsday pile is being played (the pile line casts it itself)
+fn prio_40(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    if crate::impls::doomsday::active(g, p) { 0 } else { 40 }
 }
 
 // ======================================================== Gix, Yawgmoth Praetor

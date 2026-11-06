@@ -314,6 +314,7 @@ pub fn grants_flash(g: &Game, p: PlayerId, c: CardId) -> bool {
         || crate::impls::t6_blue::static_flash(g, p, d.creature)
         || (d.creature && crate::impls::t6_redirects::scout_flash_active(g, p))
         || crate::impls::t3_marwyn::yeva_flash(g, p, c) // --- Tier 3 (marwyn): Yeva, Nature's Herald
+        || (d.sorcery && crate::impls::doomsday::teferi_flash(g, p)) // Teferi, Time Raveler +1: sorceries
 }
 
 /// can p cast c right now as far as locks go (Rule of Law, Drannith Magistrate, Grand Abolisher ...)

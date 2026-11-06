@@ -32,6 +32,7 @@ pub mod t2;
 pub mod t3;
 pub mod t4;
 pub mod t5;
+pub mod doomsday;
 pub mod topdeck;
 pub mod yshtola;
 pub mod bites;
@@ -183,6 +184,7 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     t6_stax::register(&mut r, db)?;
     t6_legends1::register(&mut r, db)?;
     t6_blue::register(&mut r, db)?;
+    doomsday::register(&mut r, db)?;
     smaug::register(&mut r, db)?;
     karn::register(&mut r, db)?;
     karn_engines::register(&mut r, db)?;

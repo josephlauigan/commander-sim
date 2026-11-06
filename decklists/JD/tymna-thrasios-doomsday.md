@@ -2,7 +2,7 @@
 
 > Built 2026-11-05 from JD's Thanos turbo deck and the Tymna/Thrasios partners deck. Thanos's cEDH core moves under
 > Tymna/Thrasios, the red cards and the Breach line come out, and Doomsday plus three cantrips go in. The card moves are
-> in `documents/doomsday-thanos-rebuild-swaps.md`. Not simulated yet: Doomsday has no card code.
+> in `documents/doomsday-thanos-rebuild-swaps.md`. Not simulated yet; Doomsday has card code and pile logic since 2026-11-05 (`rust/crates/sim-core/src/impls/doomsday.rs`).
 
 Thassa's Oracle wins the game three ways here: with **Demonic Consultation** or **Tainted Pact** (two cards, three or
 four mana), out of a five-card **Doomsday** pile, or after Thrasios digs through the library on unlimited mana. Fast
@@ -17,7 +17,7 @@ hand leans on fast mana.
 | **Commanders** | Tymna the Weaver ({1}{W}{B}, 2/2 lifelink) and Thrasios, Triton Hero ({G}{U}, 1/1); white-blue-black-green |
 | **Bracket** | 5 (cEDH): 22 Game Changers, Thassa's Oracle combos, free counters, Silence effects |
 | **Game Changers (22)** | Ad Nauseam, Ancient Tomb, Chrome Mox, Demonic Tutor, Enlightened Tutor, Fierce Guardianship, Force of Will, Gifts Ungiven, Grim Monolith, Imperial Seal, Intuition, Lion's Eye Diamond, Mana Vault, Mox Diamond, Mystical Tutor, Necropotence, Orcish Bowmasters, Rhystic Study, Smothering Tithe, Thassa's Oracle, Vampiric Tutor, Worldly Tutor |
-| **Simulator** | Deck key `thrasios`, tier T6 (cEDH), played from `data/plans/thrasios.toml`; findings in `audit/thrasios/FINDINGS.md` (no sims yet). Replaced the old `thrasios` list (T5) on 2026-11-05. Doomsday has no card code or pile logic yet (a separate change) |
+| **Simulator** | Deck key `thrasios`, tier T6 (cEDH), played from `data/plans/thrasios.toml`; findings in `audit/thrasios/FINDINGS.md` (no sims yet). Replaced the old `thrasios` list (T5) on 2026-11-05. Doomsday has card code, a pile builder and the play of the pile (`impls/doomsday.rs`, 2026-11-05); none of it simulated yet |
 | **Buys** | Doomsday, Brainstorm, Ponder, Preordain (none are in the binder or bulk lists) |
 
 ## Strategy

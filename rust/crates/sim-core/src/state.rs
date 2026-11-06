@@ -601,6 +601,9 @@ pub struct Player {
     pub nc_dmg_last: bool,
     /// once-per-turn flags (Python's `flag_turn`)
     pub flag_turn: IndexMap<Sym, TurnStamp>,
+    /// Teferi, Time Raveler +1: the `turns` count of this player's turn it was used on; "until your next turn" ends when
+    /// `turns` goes up (`cast::grants_flash`: sorcery spells may be cast as though they had flash)
+    pub sorc_flash: Option<u32>,
     /// the AI's memory of who hurt it (brain.note_damage)
     pub grudge: IndexMap<Sym, f64>,
     /// the dungeon p is in: (index into `engine::dungeon::DUNGEONS`, room index); None = not in one
@@ -885,6 +888,7 @@ impl Player {
             nc_dmg_this: false,
             nc_dmg_last: false,
             flag_turn: IndexMap::new(),
+            sorc_flash: None,
             grudge: IndexMap::new(),
             dungeon: None,
             dungeons_done: 0,

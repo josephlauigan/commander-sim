@@ -1,6 +1,6 @@
 # Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
 # policy (ai/plans.rs `config`). JD's Tymna the Weaver + Thrasios, Triton Hero deck (key `thrasios`, tier t6 since 2026-11-05: the
-# Doomsday rebuild, decklists/JD/tymna-thrasios-doomsday.md; the Doomsday lines are a separate change). Written in Phase 4 PR 7 from its hand AI, played when AI_HAND is off: `tymna_partners::
+# Doomsday rebuild, decklists/JD/tymna-thrasios-doomsday.md; the Doomsday line was added 2026-11-05, see the Doomsday section below). Written in Phase 4 PR 7 from its hand AI, played when AI_HAND is off: `tymna_partners::
 # partner_prio` / `combo_prio` (the prio rules), `combo_piece` / `tymna_cards::tutor_pick` (the line),
 # `protection_held` (no hold now: Blossoming Defense left 2026-11-02). The line is the catalogue's "Power Artifact /
 # Rings of Brighthearth + Monolith" as this deck plays it: the outlet is Walking Ballista or Thrasios on the
@@ -16,8 +16,8 @@ default = "plan"
 
 # Tier 6 (JD, 2026-11-05: `thrasios` is a Tier 6 key, so the plan slots read this file). The style, the Oracle line, the tutor
 # sets and the keep rule below are the old Thanos turbo plan (data/plans/thanos.toml before 2026-11-05) cut to the cards
-# this list still plays; PROVISIONAL like it was. The Doomsday lines (the pile, its tutors and keep hands) are a separate
-# change.
+# this list still plays; PROVISIONAL like it was (no sim has run on this list yet). The Doomsday line (the pile builder, its
+# cast and the play of the pile are code, impls/doomsday.rs; this file holds its tutor wishes, the go-now gate, the held prio and the keep terms) is in the Doomsday section at the end.
 [style]
 temp = 1.0
 aggression = 0.6
@@ -101,10 +101,13 @@ else = 66
 [sets]
 tutors = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Enlightened Tutor", "Worldly Tutor", "Imperial Seal", "Diabolic Intent", "Grim Tutor", "Merchant Scroll", "Eladamri's Call", "Beseech the Mirror", "Intuition", "Demonic Consultation", "Tainted Pact"]
 payoffs = ["Necropotence", "Ad Nauseam"]
+exilers = ["Demonic Consultation", "Tainted Pact"]
+enablers = ["Valley Floodcaller", "Borne Upon a Wind"]
+locks = ["Silence", "Grand Abolisher", "Voice of Victory"]
 # an engine alone does not win: it counts as action only with fast mana
 engines = ["Rhystic Study", "Mystic Remora", "Esper Sentinel", "Sylvan Library"]
 # a tutor, a payoff or the Oracle
-action = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Enlightened Tutor", "Worldly Tutor", "Imperial Seal", "Diabolic Intent", "Grim Tutor", "Merchant Scroll", "Eladamri's Call", "Beseech the Mirror", "Intuition", "Demonic Consultation", "Tainted Pact", "Necropotence", "Ad Nauseam", "Thassa's Oracle"]
+action = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Enlightened Tutor", "Worldly Tutor", "Imperial Seal", "Diabolic Intent", "Grim Tutor", "Merchant Scroll", "Eladamri's Call", "Beseech the Mirror", "Intuition", "Demonic Consultation", "Tainted Pact", "Necropotence", "Ad Nauseam", "Thassa's Oracle", "Doomsday", "Gitaxian Probe", "Brainstorm", "Ponder", "Preordain", "Borne Upon a Wind"]
 
 # Fast mana and a plan beat land count: `fast` = the hand's mana pieces that count by turn 2 plus its rituals, `mana`
 # = what the hand makes by turn 2 plus its rituals (t6_keep::mana). A settled hand (2-4 lands after a mulligan) is kept.
@@ -134,4 +137,49 @@ keep = false
 
 [[mulligan.rule]]
 when = ["hand-lands>=5 & fast=0 & hand:action<2"]
+keep = false
+
+# ---- Doomsday (2026-11-05; the pile builder, the cast timing and the play of the pile are code: impls/doomsday.rs) ----
+# PROVISIONAL, like the rest of the Tier 6 sections: nothing here has been simulated.
+# What the schema can't say, and the code does: which five cards (an exact search over Piles A, B, C and the devotion-3
+# variants), the cast at the end step of the turn before (the card's `hand_options`: Teferi +1 / Valley Floodcaller /
+# Borne Upon a Wind), Brainstorm's put-back and Preordain / Ponder / Probe inside the pile.
+[[line]]
+name = "Doomsday + Thassa's Oracle"
+combo = "Doomsday + Thassa's Oracle"
+
+# held: the card's own options cast it (a plain cast priority would cast it as a sorcery whenever the mana is there)
+[[prio]]
+cards = ["Doomsday"]
+value = 0
+
+# the pile is played once Doomsday has resolved: the table's "can it be stopped" check does not apply to the rest of it
+[[go_now]]
+combos = ["Doomsday + Thassa's Oracle"]
+go = true
+
+# tutors: Doomsday is the exile half in effect (the guide's tutor table): wanted with Oracle held and no Consultation or
+# Pact, when a flash enabler is out or in hand
+[[wish]]
+cards = ["Doomsday"]
+when = ["hand:exilers=0 & have:Thassa's Oracle & (hand:enablers>=1 | out:Valley Floodcaller | out:Teferi, Time Raveler)"]
+score = 2.5
+
+# the lock beats a spare piece when the line is held (the guide: one lock wins more games than a spare combo piece)
+[[wish]]
+cards = ["Silence"]
+when = ["have:Thassa's Oracle & (hand:exilers>=1 | have:Doomsday) & hand:locks=0"]
+score = 1.5
+
+# the pile's own cards when Doomsday and Oracle are held
+[[wish]]
+cards = ["Gitaxian Probe", "Preordain", "Ponder", "Brainstorm"]
+when = ["have:Doomsday & have:Thassa's Oracle"]
+score = 1.0
+
+# Keep rule, Doomsday term (the guide's keep table, hand 4: "Lots of mana, but none of it coloured: ... Doomsday {B}{B}{B}"):
+# a hand whose only line card is Doomsday and that has no land making {B} (a fetch counts) goes back. A Dark Ritual or a
+# Mox does not make the {B}{B}{B} alone. The rule runs after the shared rules above it, so it only adds a mulligan.
+[[mulligan.rule]]
+when = ["have:Doomsday & hand-b-lands=0 & hand:action<=1"]
 keep = false

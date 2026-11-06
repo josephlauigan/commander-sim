@@ -32,11 +32,38 @@ fn sorted_by(g: &Game, xs: &[CardId], key: impl Fn(&Game, CardId) -> f64) -> Vec
 
 /// topdeck.put_back: put n cards from hand on top (Brainstorm, Scroll Rack): the least wanted, or in Yuriko mode the
 /// biggest (`exclude`: a card not to put back, the spell itself)
-pub fn put_back(g: &mut Game, p: PlayerId, n: usize, exclude: Option<CardId>) {
+pub fn put_back(g: &mut Game, p: PlayerId, n: usize, exclude: Option<CardId>) -> Res {
+    // a person picks the cards (the first pick goes back first, the last one ends on top)
+    if crate::human::is_human(g, p) {
+        let cands: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&x| Some(x) != exclude).collect();
+        let picked = crate::human::choices::pick_cards(
+            g,
+            p,
+            &cands,
+            n,
+            "Brainstorm: put a card from your hand on top of your library (the last card you pick ends up on top)",
+            "choose",
+        )?;
+        let pl = g.player_mut(p);
+        for x in picked {
+            remove_first(&mut pl.hand, x);
+            pl.library.push(x);
+        }
+        return Ok(());
+    }
+    // Doomsday pile: the two cards that keep the line winning
+    if let Some(back) = crate::impls::doomsday::pile_putback(g, p, n, exclude) {
+        let pl = g.player_mut(p);
+        for x in back {
+            remove_first(&mut pl.hand, x);
+            pl.library.push(x);
+        }
+        return Ok(());
+    }
     for _ in 0..n {
         let rest: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&x| Some(x) != exclude).collect();
         if rest.is_empty() {
-            return;
+            return Ok(());
         }
         let x = if mv_mode(g, p) {
             // (cmc >= 6, cmc) as one number: the biggest
@@ -61,6 +88,7 @@ pub fn put_back(g: &mut Game, p: PlayerId, n: usize, exclude: Option<CardId>) {
         top.sort_by_key(|&c| db.get(c).cmc);
         g.player_mut(p).library.extend(top);
     }
+    Ok(())
 }
 
 // ------------------------------------------------------------------ cantrips
@@ -84,8 +112,7 @@ fn prio_38(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 /// reveal). Jace's Brainstorm ability (t3) calls it with no card.
 pub fn brainstorm_effect(g: &mut Game, p: PlayerId, c: Option<CardId>) -> Res {
     draw(g, p, 3, false)?;
-    put_back(g, p, 2, c);
-    Ok(())
+    put_back(g, p, 2, c)
 }
 
 fn brainstorm(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
@@ -95,7 +122,38 @@ fn brainstorm(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
 
 /// look at the top three: keep them in the best order, or shuffle if none is wanted; then draw
 fn ponder(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    // Doomsday pile: the order that keeps the line winning, never shuffled
+    if let Some(order) = crate::impls::doomsday::pile_ponder(g, p) {
+        look(g, p, order.len());
+        g.player_mut(p).library.extend(order.iter().rev().copied());
+        draw(g, p, 1, false)?;
+        return Ok("gy");
+    }
     let top = look(g, p, 3);
+    if crate::human::is_human(g, p) {
+        // "put them back in any order. You may shuffle." The first pick is the top card.
+        let order = if top.len() > 1 {
+            let mut o = crate::human::choices::pick_cards(
+                g,
+                p,
+                &top,
+                top.len() - 1,
+                "Ponder: put the cards back in any order (the first card you pick is the top card)",
+                "choose",
+            )?;
+            let rest: Vec<CardId> = top.iter().copied().filter(|c| !o.contains(c)).collect();
+            o.extend(rest);
+            o
+        } else {
+            top
+        };
+        g.player_mut(p).library.extend(order.iter().rev().copied());
+        if crate::human::choices::yes_no(g, p, "Ponder: shuffle your library?")? {
+            shuffle_library(g, p);
+        }
+        draw(g, p, 1, false)?;
+        return Ok("gy");
+    }
     let best = top.iter().map(|&x| desire(g, p, x)).fold(f64::NEG_INFINITY, f64::max);
     if !top.is_empty() && best < KEEP {
         g.player_mut(p).library.extend(top);
