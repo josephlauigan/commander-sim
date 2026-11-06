@@ -2146,6 +2146,61 @@
    "spell_prio": false
   },
   {
+   "name": "Ajani, Mentor of Heroes",
+   "types": "P",
+   "generic": 3,
+   "pips": "GW",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "loyalty",
+     "loyalty": -8,
+     "effects": [
+      {
+       "do": "gain_life",
+       "n": 100,
+       "who": "you"
+      }
+     ]
+    }
+   ],
+   "start_loyalty": "4",
+   "kws": [],
+   "subtypes": [
+    "ajani"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "distribute three +1/+1 counters among one, two, or three target creatures you control",
+    "look at the top four cards of your library",
+    "reveal an aura, creature, or planeswalker card from among them and put it into your hand",
+    "put the rest on the bottom of your library in any order"
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Ajani, Sleeper Agent",
    "types": "P",
    "generic": 1,
@@ -6992,6 +7047,64 @@
    "spell_prio": false
   },
   {
+   "name": "Ashiok, Dream Render",
+   "types": "P",
+   "generic": 1,
+   "pips": "UU",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "loyalty",
+     "loyalty": -1,
+     "effects": [
+      {
+       "do": "mill",
+       "n": 4,
+       "who": "target_player"
+      },
+      {
+       "do": "exile_graveyard",
+       "who": "each_player"
+      }
+     ]
+    }
+   ],
+   "start_loyalty": "5",
+   "kws": [
+    "mill"
+   ],
+   "subtypes": [
+    "ashiok"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BU",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Spells and abilities your opponents control can't cause their controller to search their library."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Ashnod's Altar",
    "types": "A",
    "generic": 3,
@@ -7197,6 +7310,111 @@
    "unparsed": [],
    "derived": {
     "cmc": 7,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Atomize",
+   "types": "I",
+   "generic": 2,
+   "pips": "BG",
+   "tags": {
+    "rem": "destroy",
+    "tgt": "nl"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "destroy",
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "nonland"
+        },
+        "upto": false
+       }
+      },
+      {
+       "do": "proliferate"
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "proliferate"
+   ],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BG",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": true,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Atraxa's Skitterfang",
+   "types": "AC",
+   "generic": 3,
+   "pips": "",
+   "tags": {
+    "pow": "2"
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "note",
+     "text": "~ enters with three oil counters on it"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "insect",
+    "phyrexian"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "At the beginning of combat on your turn, you may remove an oil counter from ~. When you do, target creature you control gains your choice of flying, vigilance, deathtouch, or lifelink until end of turn."
+   ],
+   "derived": {
+    "cmc": 3,
     "land": false,
     "creature": true,
     "instant": false,
@@ -15518,6 +15736,46 @@
    "spell_prio": false
   },
   {
+   "name": "Branching Evolution",
+   "types": "E",
+   "generic": 2,
+   "pips": "G",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "replacement",
+     "replace": "counters",
+     "multiplier": 2
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Branchloft Pathway // Boulderloft Pathway",
    "types": "L",
    "generic": 0,
@@ -20405,6 +20663,65 @@
    "spell_prio": false
   },
   {
+   "name": "Champion of Lambholt",
+   "types": "C",
+   "generic": 1,
+   "pips": "GG",
+   "tags": {
+    "human": true,
+    "warrior": true,
+    "pow": "1"
+   },
+   "pow": 1,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "counters",
+       "n": 1,
+       "what": {
+        "sel": "self"
+       }
+      }
+     ],
+     "event": "etb",
+     "source": "you_creature",
+     "other": true
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "human",
+    "warrior"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Creatures with power less than ~'s power can't block creatures you control."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Champion's Helm",
    "types": "A",
    "generic": 3,
@@ -22903,6 +23220,54 @@
    "spell_prio": false
   },
   {
+   "name": "Cloudthresher",
+   "types": "C",
+   "generic": 2,
+   "pips": "GGGG",
+   "tags": {
+    "pow": "7",
+    "bomb": "7",
+    "reach": true,
+    "flash": true
+   },
+   "pow": 7,
+   "tgh": 7,
+   "bomb": 7,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "evoke",
+    "flash",
+    "reach"
+   ],
+   "subtypes": [
+    "elemental"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Evoke {2}{G}{G}",
+    "note: small damage sweep (2) not modeled"
+   ],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Coalition Relic",
    "types": "A",
    "generic": 3,
@@ -24278,6 +24643,59 @@
    "spell_prio": false
   },
   {
+   "name": "Contagion Clasp",
+   "types": "A",
+   "generic": 2,
+   "pips": "",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "4",
+      "tap": true
+     },
+     "effects": [
+      {
+       "do": "proliferate"
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "proliferate"
+   ],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "When ~ enters, put a -1/-1 counter on target creature."
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Contagion Engine",
    "types": "A",
    "generic": 6,
@@ -24803,6 +25221,50 @@
    "unparsed": [],
    "derived": {
     "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Corpsejack Menace",
+   "types": "C",
+   "generic": 2,
+   "pips": "BG",
+   "tags": {
+    "pow": "4"
+   },
+   "pow": 4,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "replacement",
+     "replace": "counters",
+     "multiplier": 2
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "fungus"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BG",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
     "land": false,
     "creature": true,
     "instant": false,
@@ -26713,6 +27175,67 @@
    "spell_prio": false
   },
   {
+   "name": "Crystalline Crawler",
+   "types": "AC",
+   "generic": 4,
+   "pips": "",
+   "tags": {
+    "pow": "1"
+   },
+   "pow": 1,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "tap": true
+     },
+     "effects": [
+      {
+       "do": "counters",
+       "n": 1,
+       "what": {
+        "sel": "self"
+       }
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "converge"
+   ],
+   "subtypes": [
+    "construct"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Converge — ~ enters with a +1/+1 counter on it for each color of mana spent to cast it.",
+    "Remove a +1/+1 counter from ~: Add one mana of any color."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Cuboid Colony",
    "types": "C",
    "generic": 0,
@@ -27601,6 +28124,57 @@
    "unparsed": [],
    "derived": {
     "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
+    "perm": false
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Damning Verdict",
+   "types": "S",
+   "generic": 3,
+   "pips": "WW",
+   "tags": {
+    "wipe": "destroy"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "destroy",
+       "what": {
+        "sel": "all",
+        "filter": {
+         "type": "creature"
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 5,
     "land": false,
     "creature": false,
     "instant": false,
@@ -37210,6 +37784,95 @@
    "spell_prio": false
   },
   {
+   "name": "Elspeth, Knight-Errant",
+   "types": "P",
+   "generic": 2,
+   "pips": "WW",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "loyalty",
+     "loyalty": 1,
+     "effects": [
+      {
+       "do": "token",
+       "n": 1,
+       "pow": 1,
+       "tgh": 1,
+       "keywords": [],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "soldier"
+       ],
+       "color": "W"
+      }
+     ]
+    },
+    {
+     "type": "loyalty",
+     "loyalty": 1,
+     "effects": [
+      {
+       "do": "pump",
+       "pow": 3,
+       "tgh": 3,
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "creature"
+        },
+        "upto": false
+       }
+      },
+      {
+       "do": "grant",
+       "keyword": "flying",
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "creature"
+        },
+        "upto": false
+       }
+      }
+     ]
+    }
+   ],
+   "start_loyalty": "4",
+   "kws": [],
+   "subtypes": [
+    "elspeth"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "you get an emblem with \"artifacts, creatures, enchantments, and lands you control have indestructible.\""
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Elspeth, Sun's Champion",
    "types": "P",
    "generic": 4,
@@ -40714,6 +41377,53 @@
    "spell_prio": false
   },
   {
+   "name": "Evolution Witness",
+   "types": "C",
+   "generic": 2,
+   "pips": "G",
+   "tags": {
+    "shaman": true,
+    "pow": "2",
+    "tgh": "1"
+   },
+   "pow": 2,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "adapt"
+   ],
+   "subtypes": [
+    "elf",
+    "mutant",
+    "shaman"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "{1}{G}: Adapt 2.",
+    "Whenever one or more +1/+1 counters are put on ~, return target permanent card from your graveyard to your hand."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Evolutionary Leap",
    "types": "E",
    "generic": 1,
@@ -42745,6 +43455,52 @@
    "game_changer": false,
    "source": "scryfall+dsl",
    "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Fathom Mage",
+   "types": "C",
+   "generic": 2,
+   "pips": "GU",
+   "tags": {
+    "human": true,
+    "wizard": true,
+    "pow": "1"
+   },
+   "pow": 1,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "evolve"
+   ],
+   "subtypes": [
+    "human",
+    "wizard"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GU",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Evolve",
+    "Whenever a +1/+1 counter is put on ~, you may draw a card."
+   ],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -46652,6 +47408,64 @@
    "spell_prio": false
   },
   {
+   "name": "Forgotten Ancient",
+   "types": "C",
+   "generic": 3,
+   "pips": "G",
+   "tags": {
+    "pow": "0",
+    "tgh": "3"
+   },
+   "pow": 0,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "counters",
+       "n": 1,
+       "what": {
+        "sel": "self"
+       },
+       "optional": true
+      }
+     ],
+     "event": "cast",
+     "who": "any",
+     "spell": "any"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "elemental"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "At the beginning of your upkeep, you may move any number of +1/+1 counters from ~ onto other creatures."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Formidable Commons",
    "types": "L",
    "generic": 0,
@@ -49562,6 +50376,66 @@
    "unparsed": [],
    "derived": {
     "cmc": 1,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Gideon Jura",
+   "types": "P",
+   "generic": 3,
+   "pips": "WW",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "loyalty",
+     "loyalty": -2,
+     "effects": [
+      {
+       "do": "destroy",
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "creature",
+         "tapped": true
+        },
+        "upto": false
+       }
+      }
+     ]
+    }
+   ],
+   "start_loyalty": "6",
+   "kws": [],
+   "subtypes": [
+    "gideon"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "during target opponent's next turn, creatures that player controls attack ~ if able",
+    "until end of turn, ~ becomes a 6/6 human soldier creature that's still a planeswalker",
+    "prevent all damage that would be dealt to him this turn"
+   ],
+   "derived": {
+    "cmc": 5,
     "land": false,
     "creature": false,
     "instant": false,
@@ -54125,6 +54999,53 @@
    "spell_prio": false
   },
   {
+   "name": "Grim Affliction",
+   "types": "I",
+   "generic": 2,
+   "pips": "B",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "proliferate"
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "proliferate"
+   ],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Put a -1/-1 counter on target creature, then proliferate.   [partly: put a -1/-1 counter on target creature]"
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": true,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Grim Haruspex",
    "types": "C",
    "generic": 2,
@@ -55111,6 +56032,52 @@
    "unparsed": [],
    "derived": {
     "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Gyre Sage",
+   "types": "C",
+   "generic": 1,
+   "pips": "G",
+   "tags": {
+    "pow": "1",
+    "tgh": "2",
+    "dork": "G",
+    "noatk": true
+   },
+   "pow": 1,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "evolve"
+   ],
+   "subtypes": [
+    "druid",
+    "elf"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Evolve"
+   ],
+   "derived": {
+    "cmc": 2,
     "land": false,
     "creature": true,
     "instant": false,
@@ -57523,6 +58490,49 @@
    "spell_prio": false
   },
   {
+   "name": "Herald of Secret Streams",
+   "types": "C",
+   "generic": 3,
+   "pips": "U",
+   "tags": {
+    "warrior": true,
+    "pow": "2",
+    "tgh": "3"
+   },
+   "pow": 2,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "merfolk",
+    "warrior"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "U",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Creatures you control with +1/+1 counters on them can't be blocked."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Herald of War",
    "types": "C",
    "generic": 3,
@@ -58174,6 +59184,47 @@
     "instant": false,
     "sorcery": true,
     "perm": false
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Hex Parasite",
+   "types": "AC",
+   "generic": 1,
+   "pips": "",
+   "tags": {
+    "pow": "1"
+   },
+   "pow": 1,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "insect",
+    "phyrexian"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "{X}{B/P}: Remove up to X counters from target permanent. For each counter removed this way, ~ gets +1/+0 until end of turn."
+   ],
+   "derived": {
+    "cmc": 1,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "enters_rule": null,
@@ -62909,6 +63960,64 @@
    "spell_prio": false
   },
   {
+   "name": "Inspiring Call",
+   "types": "I",
+   "generic": 2,
+   "pips": "G",
+   "tags": {
+    "draw": "2"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "draw",
+       "n": "creatures_you_control",
+       "who": "you"
+      },
+      {
+       "do": "grant",
+       "keyword": "indestructible",
+       "what": {
+        "sel": "all",
+        "filter": {
+         "type": "creature",
+         "controller": "you"
+        }
+       }
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": true,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Inspiring Overseer",
    "types": "C",
    "generic": 2,
@@ -63049,6 +64158,42 @@
     "instant": false,
     "sorcery": false,
     "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Interplanar Beacon",
+   "types": "L",
+   "generic": 0,
+   "pips": "",
+   "tags": {
+    "c": "A"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 0,
+    "land": true,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": false
    },
    "phyrexian": "",
    "enters_rule": null,
@@ -66204,6 +67349,99 @@
    "spell_prio": false
   },
   {
+   "name": "Kalonian Hydra",
+   "types": "C",
+   "generic": 3,
+   "pips": "GG",
+   "tags": {
+    "pow": "0",
+    "tgh": "0",
+    "trample": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "note",
+     "text": "~ enters with four +1/+1 counters on it"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "double",
+    "trample"
+   ],
+   "subtypes": [
+    "hydra"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Whenever ~ attacks, double the number of +1/+1 counters on each creature you control."
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Kami of Whispered Hopes",
+   "types": "C",
+   "generic": 2,
+   "pips": "G",
+   "tags": {
+    "pow": "1",
+    "dork": "C",
+    "noatk": true
+   },
+   "pow": 1,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "spirit"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "If one or more +1/+1 counters would be put on a permanent you control, that many plus one +1/+1 counters are put on that permanent instead."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Kappa Cannoneer",
    "types": "AC",
    "generic": 5,
@@ -66688,6 +67926,65 @@
    "unparsed": [],
    "derived": {
     "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Kaya the Inexorable",
+   "types": "P",
+   "generic": 3,
+   "pips": "WB",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "loyalty",
+     "loyalty": -3,
+     "effects": [
+      {
+       "do": "exile",
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "nonland"
+        },
+        "upto": false
+       }
+      }
+     ]
+    }
+   ],
+   "start_loyalty": "5",
+   "kws": [],
+   "subtypes": [
+    "kaya"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "put a ghostform counter on up to one target nontoken creature",
+    "it gains \"when ~ dies or is put into exile, return it to its owner's hand and create a 1/1 white spirit creature token with flying.\"",
+    "you get an emblem with \"at the beginning of your upkeep, you may cast a legendary spell from your hand, from your graveyard, or from among cards you own in exile without paying its mana cost.\""
+   ],
+   "derived": {
+    "cmc": 5,
     "land": false,
     "creature": false,
     "instant": false,
@@ -68309,6 +69606,53 @@
    "spell_prio": false
   },
   {
+   "name": "Kodama of the East Tree",
+   "types": "C",
+   "generic": 4,
+   "pips": "GG",
+   "tags": {
+    "leg": true,
+    "pow": "6",
+    "bomb": "6",
+    "reach": true
+   },
+   "pow": 6,
+   "tgh": 6,
+   "bomb": 6,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "partner",
+    "reach"
+   ],
+   "subtypes": [
+    "spirit"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Whenever another permanent you control enters, if it wasn't put onto the battlefield with this ability, you may put a permanent card with equal or lesser mana value from your hand onto the battlefield.",
+    "Partner"
+   ],
+   "derived": {
+    "cmc": 6,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Kodama's Reach",
    "types": "S",
    "generic": 2,
@@ -69843,6 +71187,51 @@
    "source": "scryfall",
    "unparsed": [
     "If you would draw a card while your library has no cards in it, you win the game instead."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Lae'zel, Vlaakith's Champion",
+   "types": "C",
+   "generic": 2,
+   "pips": "W",
+   "tags": {
+    "leg": true,
+    "warrior": true,
+    "pow": "3"
+   },
+   "pow": 3,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "choose a background"
+   ],
+   "subtypes": [
+    "gith",
+    "warrior"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "If you would put one or more counters on a creature or planeswalker you control or on yourself, put that many plus one of each of those kinds of counters on that permanent or player instead."
    ],
    "derived": {
     "cmc": 3,
@@ -73876,6 +75265,57 @@
    "spell_prio": false
   },
   {
+   "name": "Loyal Tutor",
+   "types": "I",
+   "generic": 0,
+   "pips": "W",
+   "tags": {
+    "tut": "any"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "search",
+       "filter": {
+        "type": "planeswalker"
+       },
+       "to": "top",
+       "n": 1,
+       "tapped": false
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 1,
+    "land": false,
+    "creature": false,
+    "instant": true,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Loyal Warhound",
    "types": "C",
    "generic": 1,
@@ -76905,6 +78345,49 @@
     "instant": true,
     "sorcery": false,
     "perm": false
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Master Biomancer",
+   "types": "C",
+   "generic": 2,
+   "pips": "GU",
+   "tags": {
+    "wizard": true,
+    "pow": "2",
+    "tgh": "4"
+   },
+   "pow": 2,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "elf",
+    "wizard"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GU",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Each other creature you control enters with a number of additional +1/+1 counters on it equal to ~'s power and as a Mutant in addition to its other types."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "enters_rule": null,
@@ -83404,6 +84887,48 @@
    "spell_prio": false
   },
   {
+   "name": "Narset Transcendent",
+   "types": "P",
+   "generic": 2,
+   "pips": "WU",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": "6",
+   "kws": [],
+   "subtypes": [
+    "narset"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "UW",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "+1: Look at the top card of your library. If it's a noncreature, nonland card, you may reveal it and put it into your hand.",
+    "−2: When you next cast an instant or sorcery spell from your hand this turn, it gains rebound.",
+    "−9: You get an emblem with \"Your opponents can't cast noncreature spells.\""
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Narset, Parter of Veils",
    "types": "P",
    "generic": 1,
@@ -85217,6 +86742,63 @@
    "spell_prio": false
   },
   {
+   "name": "Nissa, Vital Force",
+   "types": "P",
+   "generic": 3,
+   "pips": "GG",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "loyalty",
+     "loyalty": -3,
+     "effects": [
+      {
+       "do": "regrow",
+       "filter": {
+        "type": "permanent"
+       },
+       "from": "yours"
+      }
+     ]
+    }
+   ],
+   "start_loyalty": "5",
+   "kws": [],
+   "subtypes": [
+    "nissa"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "untap target land you control",
+    "until your next turn, it becomes a 5/5 elemental creature with haste",
+    "it's still a land",
+    "you get an emblem with \"whenever a land you control enters, you may draw a card.\""
+   ],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Nissa, Who Shakes the World",
    "types": "P",
    "generic": 3,
@@ -86186,6 +87768,45 @@
     "cmc": 12,
     "land": false,
     "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Oath of Nissa",
+   "types": "E",
+   "generic": 0,
+   "pips": "G",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "When ~ enters, look at the top three cards of your library. You may reveal a creature, land, or planeswalker card from among them and put it into your hand. Put the rest on the bottom of your library in any order.",
+    "You may spend mana as though it were mana of any color to cast planeswalker spells."
+   ],
+   "derived": {
+    "cmc": 1,
+    "land": false,
+    "creature": false,
     "instant": false,
     "sorcery": false,
     "perm": true
@@ -88607,6 +90228,47 @@
     "instant": false,
     "sorcery": true,
     "perm": false
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Ozolith, the Shattered Spire",
+   "types": "A",
+   "generic": 1,
+   "pips": "G",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "cycling"
+   ],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "If one or more +1/+1 counters would be put on an artifact or creature you control, that many plus one +1/+1 counters are put on it instead.",
+    "{1}{G}, {T}: Put a +1/+1 counter on target artifact or creature you control. Activate only as a sorcery."
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
    },
    "phyrexian": "",
    "enters_rule": null,
@@ -92070,6 +93732,68 @@
    "unparsed": [],
    "derived": {
     "cmc": 7,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Plaxmanta",
+   "types": "C",
+   "generic": 1,
+   "pips": "U",
+   "tags": {
+    "pow": "2",
+    "flash": true
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "grant",
+       "keyword": "shroud",
+       "what": {
+        "sel": "all",
+        "filter": {
+         "type": "creature",
+         "controller": "you"
+        }
+       }
+      }
+     ],
+     "event": "etb",
+     "source": "self"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "flash"
+   ],
+   "subtypes": [
+    "beast"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GU",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "When ~ enters, sacrifice it unless {G} was spent to cast it."
+   ],
+   "derived": {
+    "cmc": 2,
     "land": false,
     "creature": true,
     "instant": false,
@@ -101247,6 +102971,53 @@
    "spell_prio": false
   },
   {
+   "name": "Ripples of Potential",
+   "types": "I",
+   "generic": 1,
+   "pips": "U",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "proliferate"
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "proliferate"
+   ],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "U",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Proliferate, then choose any number of permanents you control that had a counter put on them this way. Those permanents phase out.   [partly: choose any number of permanents you control that had a counter put on them this way; those permanents phase out]"
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": true,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Riptide Gearhulk",
    "types": "AC",
    "generic": 1,
@@ -103639,6 +105410,50 @@
    ],
    "derived": {
     "cmc": 6,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Sanctum Lurker",
+   "types": "C",
+   "generic": 2,
+   "pips": "B",
+   "tags": {
+    "pow": "3",
+    "tgh": "2"
+   },
+   "pow": 3,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "empower jace"
+   ],
+   "subtypes": [
+    "horror"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "When ~ enters, empower Jace 1.",
+    "Planeswalkers you control aren't put into their owners' graveyards for having 0 loyalty."
+   ],
+   "derived": {
+    "cmc": 3,
     "land": false,
     "creature": true,
     "instant": false,
@@ -111115,6 +112930,66 @@
    "spell_prio": false
   },
   {
+   "name": "Simic Ascendancy",
+   "types": "E",
+   "generic": 0,
+   "pips": "GU",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "1GU"
+     },
+     "effects": [
+      {
+       "do": "counters",
+       "n": 1,
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "creature",
+         "controller": "you"
+        },
+        "upto": false
+       }
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GU",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Whenever one or more +1/+1 counters are put on a creature you control, put that many growth counters on ~.",
+    "At the beginning of your upkeep, if ~ has twenty or more growth counters on it, you win the game."
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Simic Growth Chamber",
    "types": "L",
    "generic": 0,
@@ -114270,6 +116145,61 @@
    "unparsed": [],
    "derived": {
     "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Sorin, Vengeful Bloodlord",
+   "types": "P",
+   "generic": 2,
+   "pips": "WB",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "loyalty",
+     "loyalty": 2,
+     "effects": [
+      {
+       "do": "damage",
+       "n": 1,
+       "to": {
+        "sel": "any_target"
+       }
+      }
+     ]
+    }
+   ],
+   "start_loyalty": "4",
+   "kws": [],
+   "subtypes": [
+    "sorin"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "During your turn, creatures and planeswalkers you control have lifelink.",
+    "−X: Return target creature card with mana value X from your graveyard to the battlefield. That creature is a Vampire in addition to its other types."
+   ],
+   "derived": {
+    "cmc": 4,
     "land": false,
     "creature": false,
     "instant": false,
@@ -117852,6 +119782,58 @@
     "instant": false,
     "sorcery": false,
     "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Steady Progress",
+   "types": "I",
+   "generic": 2,
+   "pips": "U",
+   "tags": {
+    "draw": "1"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "spell",
+     "effects": [
+      {
+       "do": "proliferate"
+      },
+      {
+       "do": "draw",
+       "n": 1,
+       "who": "you"
+      }
+     ]
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "proliferate"
+   ],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "U",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": true,
+    "sorcery": false,
+    "perm": false
    },
    "phyrexian": "",
    "enters_rule": null,
@@ -123441,6 +125423,61 @@
    "spell_prio": false
   },
   {
+   "name": "Tamiyo, Collector of Tales",
+   "types": "P",
+   "generic": 2,
+   "pips": "GU",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "loyalty",
+     "loyalty": -3,
+     "effects": [
+      {
+       "do": "regrow",
+       "filter": {},
+       "from": "yours"
+      }
+     ]
+    }
+   ],
+   "start_loyalty": "5",
+   "kws": [],
+   "subtypes": [
+    "tamiyo"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GU",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "Spells and abilities your opponents control can't cause you to discard cards or sacrifice permanents.",
+    "choose a nonland card name",
+    "reveal the top four cards of your library",
+    "put all cards with the chosen name from among them into your hand and the rest into your graveyard"
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Tamiyo, Field Researcher",
    "types": "P",
    "generic": 1,
@@ -124074,6 +126111,49 @@
    ],
    "derived": {
     "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Teferi, Temporal Archmage",
+   "types": "P",
+   "generic": 4,
+   "pips": "UU",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": "5",
+   "kws": [],
+   "subtypes": [
+    "teferi"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "U",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "+1: Look at the top two cards of your library. Put one of them into your hand and the other on the bottom of your library.",
+    "−1: Untap up to four target permanents.",
+    "−10: You get an emblem with \"You may activate loyalty abilities of planeswalkers you control on any player's turn any time you could cast an instant.\"",
+    "~ can be your commander."
+   ],
+   "derived": {
+    "cmc": 6,
     "land": false,
     "creature": false,
     "instant": false,
@@ -126350,6 +128430,45 @@
     "cmc": 3,
     "land": false,
     "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "The Chain Veil",
+   "types": "A",
+   "generic": 4,
+   "pips": "",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "At the beginning of your end step, if you didn't activate a loyalty ability of a planeswalker this turn, you lose 2 life.",
+    "{4}, {T}: For each planeswalker you control, you may activate one of its loyalty abilities once this turn as though none of its loyalty abilities have been activated this turn."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
     "instant": false,
     "sorcery": false,
     "perm": true
@@ -135758,6 +137877,51 @@
    "spell_prio": false
   },
   {
+   "name": "Vampire Hexmage",
+   "types": "C",
+   "generic": 0,
+   "pips": "BB",
+   "tags": {
+    "shaman": true,
+    "pow": "2",
+    "tgh": "1"
+   },
+   "pow": 2,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "first strike"
+   ],
+   "subtypes": [
+    "shaman",
+    "vampire"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Sacrifice ~: Remove all counters from target permanent."
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Vampire Nighthawk",
    "types": "C",
    "generic": 1,
@@ -137703,6 +139867,65 @@
    "spell_prio": false
   },
   {
+   "name": "Viral Drake",
+   "types": "C",
+   "generic": 3,
+   "pips": "U",
+   "tags": {
+    "pow": "1",
+    "tgh": "4",
+    "fly": true
+   },
+   "pow": 1,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "3U"
+     },
+     "effects": [
+      {
+       "do": "proliferate"
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "flying",
+    "infect",
+    "proliferate"
+   ],
+   "subtypes": [
+    "drake",
+    "phyrexian"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "U",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Virus Beetle",
    "types": "AC",
    "generic": 1,
@@ -137781,6 +140004,64 @@
    "unparsed": [],
    "derived": {
     "cmc": 1,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Vishgraz, the Doomhive",
+   "types": "C",
+   "generic": 2,
+   "pips": "WBG",
+   "tags": {
+    "leg": true,
+    "pow": "3"
+   },
+   "pow": 3,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "static",
+     "static": "toxic",
+     "amount": 1
+    },
+    {
+     "type": "static",
+     "static": "self_scaling",
+     "pow": 1,
+     "tgh": 1,
+     "per": "opponents"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [
+    "menace",
+    "toxic"
+   ],
+   "subtypes": [
+    "insect",
+    "phyrexian"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BGW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "When ~ enters, create three 1/1 colorless Phyrexian Mite artifact creature tokens with toxic 1 and \"This token can't block.\""
+   ],
+   "derived": {
+    "cmc": 5,
     "land": false,
     "creature": true,
     "instant": false,
@@ -141582,6 +143863,48 @@
    "spell_prio": false
   },
   {
+   "name": "Winding Constrictor",
+   "types": "C",
+   "generic": 0,
+   "pips": "BG",
+   "tags": {
+    "pow": "2",
+    "tgh": "3"
+   },
+   "pow": 2,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "snake"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BG",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "If one or more counters would be put on an artifact or creature you control, that many plus one of each of those kinds of counters are put on that permanent instead.",
+    "If you would get one or more counters, you get that many plus one of each of those kinds of counters instead."
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Winds of Abandon",
    "types": "S",
    "generic": 1,
@@ -143463,6 +145786,64 @@
    "unparsed": [],
    "derived": {
     "cmc": 2,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Wrenn and Realmbreaker",
+   "types": "P",
+   "generic": 1,
+   "pips": "GG",
+   "tags": {
+    "leg": true,
+    "rock": "1:A"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "loyalty",
+     "loyalty": -2,
+     "effects": [
+      {
+       "do": "mill",
+       "n": 3,
+       "who": "you"
+      }
+     ]
+    }
+   ],
+   "start_loyalty": "4",
+   "kws": [
+    "mill"
+   ],
+   "subtypes": [
+    "wrenn"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "G",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "up to one target land you control becomes a 3/3 elemental creature with vigilance, hexproof, and haste until your next turn",
+    "it's still a land",
+    "put a permanent card from among the milled cards into your hand",
+    "you get an emblem with \"you may play lands and cast permanent spells from your graveyard.\""
+   ],
+   "derived": {
+    "cmc": 3,
     "land": false,
     "creature": false,
     "instant": false,
