@@ -1059,7 +1059,9 @@ fn plan_b(g: &Game, p: PlayerId) -> Option<Vec<CardId>> {
     // already out is bounced by the loop, so it does not count for Cradle. A tutored Witness: the tutor and Snap are
     // paid first, Snap's untap recasts Witness
     let feeders = creatures(g, p) - usize::from(w_out.is_some());
-    if feeders < 5 || finisher(g, p).is_none() {
+    // --- t6-ai: Finale in the graveyard (cast as the tutor that found Witness) is a finisher too: the loop's last
+    // Witness returns it instead of Snap (`witness_returns_finale`)
+    if feeders < 5 || (finisher(g, p).is_none() && !finale_in_gy(g, p)) {
         return None;
     }
     let ok = match &tutor {
@@ -1107,6 +1109,28 @@ fn cast_witness(g: &mut Game, p: PlayerId) -> Res<bool> {
         crate::glog!(g, "    Eternal Witness returns Snap");
     }
     Ok(hand_card(g, p, &[SNAP]).is_some())
+}
+
+/// --- t6-ai: Finale of Devastation is in p's graveyard (the planner cast it for Witness)
+fn finale_in_gy(g: &Game, p: PlayerId) -> bool {
+    gy_card(g, p, FINALE).is_some()
+}
+
+/// --- t6-ai: the loop is unbounded, so its last Witness returns Finale of Devastation instead of Snap: the finisher is
+/// back in hand when Finale was cast as the tutor that found Witness. Nothing to do with Finale in hand already.
+fn witness_returns_finale(g: &mut Game, p: PlayerId) -> Res<bool> {
+    if hand_card(g, p, &[FINALE]).is_some() {
+        return Ok(true);
+    }
+    let Some(f) = gy_card(g, p, FINALE) else { return Ok(true) };
+    if finisher(g, p).is_some() {
+        return Ok(true); // Thrasios's draw finds the finisher: leave Finale where it is
+    }
+    let pl = g.player_mut(p);
+    pl.gy.retain(|&c| c != f);
+    pl.hand.push(f);
+    crate::glog!(g, "    Eternal Witness returns Finale of Devastation");
+    Ok(true)
 }
 
 fn snap_witness(g: &mut Game, p: PlayerId) -> Res<bool> {
@@ -1375,6 +1399,7 @@ pub static COMBOS: [Combo; 9] = [
             step("Snap on Eternal Witness (untap two lands)", StepKind::Spell, snap_witness),
             trigger("Eternal Witness returns Snap (again and again)", witness_src),
             pieces("the creatures that feed Cradle survive", b_keys),
+            step("Eternal Witness returns Finale of Devastation", StepKind::Engine, witness_returns_finale),
             S_FIN_THRASIOS,
             S_FIN_DRAW,
             S_FIN_SPELL,
