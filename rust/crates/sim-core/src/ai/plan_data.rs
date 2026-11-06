@@ -382,6 +382,11 @@ enum Q {
     /// p's nonland permanents of mana value 3 or less that make mana (tags rock, dork, fastmana, lr; Lotus Petal,
     /// Mana Vault, Mox Amber, Mox Opal)
     ManaPerms,
+    /// --- doomsday: the colours the hand's spells need that no source in the hand makes (`hand-gaps`; the spells of a plan
+    /// set with `hand-gaps:<set>`): lands, a fetch land (the colours of the library's lands), rocks and dorks the hand can cast
+    HandGaps(Option<usize>),
+    /// the hand's spells (of a plan set with `hand-castable:<set>`) that have a source of every colour they need
+    HandCastable(Option<usize>),
     /// cards of this plan set (`[sets]`, by index) in hand
     Hand(usize),
     /// p's permanents of this plan set on the battlefield
@@ -412,7 +417,9 @@ enum Q {
     CmdWears(usize),
 }
 
-const NUMS: [(&str, Q); 35] = [
+const NUMS: [(&str, Q); 37] = [
+    ("hand-gaps", Q::HandGaps(None)),
+    ("hand-castable", Q::HandCastable(None)),
     ("cmd-power", Q::CmdPower),
     ("cmd-blockers", Q::CmdBlockers),
     ("cmd-killers", Q::CmdKillers),
@@ -567,6 +574,10 @@ fn atom(s: &str, sets: &[&str]) -> Result<Atom, String> {
                     Q::Hand(set_ix(set)?)
                 } else if let Some(set) = k.strip_prefix("bf:") {
                     Q::Bf(set_ix(set)?)
+                } else if let Some(set) = k.strip_prefix("hand-gaps:") {
+                    Q::HandGaps(Some(set_ix(set)?))
+                } else if let Some(set) = k.strip_prefix("hand-castable:") {
+                    Q::HandCastable(Some(set_ix(set)?))
                 } else if let Some(set) = k.strip_prefix("gy:") {
                     Q::Gy(set_ix(set)?)
                 } else if let Some(set) = k.strip_prefix("cmd-wears:") {
@@ -786,6 +797,14 @@ fn quantity(g: &Game, p: PlayerId, q: Q, cx: Cx) -> f64 {
             })
             .count() as f64,
         Q::Hand(i) => cx.plan.map_or(0, |l| hand_count(g, p, &l.sets[i])) as f64,
+        Q::HandGaps(i) => {
+            let scope = i.and_then(|i| cx.plan.map(|l| &l.sets[i][..]));
+            crate::impls::t6_keep::colour_gaps(g, p, scope) as f64
+        }
+        Q::HandCastable(i) => {
+            let scope = i.and_then(|i| cx.plan.map(|l| &l.sets[i][..]));
+            crate::impls::t6_keep::colour_castable(g, p, scope) as f64
+        }
         Q::Bf(i) => cx.plan.map_or(0, |l| {
             let set = &l.sets[i];
             pl.perms
