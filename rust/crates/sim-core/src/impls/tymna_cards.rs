@@ -70,7 +70,8 @@ fn ability(utility: f64, label: &str, src: PermId, f: crate::hooks::AbilityFn, a
 /// **Thrasios**: {4}: scry 1, then reveal the top card of your library; a land goes onto the battlefield tapped,
 /// anything else is drawn. The AI activates it as often as it can afford at the end of the turn before its own (the
 /// end-of-turn window, `post` None: the mana would untap anyway), and in its second main phase after everything else
-/// it wanted to do (a low utility, above "stop"). Never when the library is nearly empty.
+/// it wanted to do (a low utility, above "stop"). Never when the library is nearly empty, nor while a Doomsday pile is
+/// being played (it would draw a card off the pile).
 fn thrasios_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if p != owner(g, src) || g.perm(src).phased {
         return Ok(vec![]);
@@ -84,7 +85,7 @@ fn thrasios_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
     if crate::engine::values::once_per_turn(g, p, crate::sym::intern(&format!("ty_th_f_{when}"))) {
         g.player_mut(p).stat(crate::sym::intern(&format!("ty_th_turns_{when}")), 1);
     }
-    if !can_pay(g, p, cost, "", false) || g.player(p).library.len() < 3 {
+    if !can_pay(g, p, cost, "", false) || g.player(p).library.len() < 3 || super::doomsday::active(g, p) {
         return Ok(vec![]);
     }
     if when == "main2" {
@@ -109,7 +110,7 @@ fn thrasios_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
 
 fn thrasios_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     let cost = crate::impls::t6_green1::creature_ability_cost(g, p, 4);
-    if !g.perm(src).on_bf || !can_pay(g, p, cost, "", false) || g.player(p).library.len() < 3 {
+    if !g.perm(src).on_bf || !can_pay(g, p, cost, "", false) || g.player(p).library.len() < 3 || super::doomsday::active(g, p) {
         return Ok(false);
     }
     g.player_mut(p).stat(crate::sym::intern("ty_thrasios_acts"), 1);

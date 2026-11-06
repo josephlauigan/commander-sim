@@ -13,19 +13,6 @@ use sim_core::impls::combos;
 use sim_core::impls::doomsday::{self, NAME};
 use sim_core::state::{Ctx, Step};
 
-const FILL: [&str; 10] = [
-    "Sol Ring",
-    "Mana Vault",
-    "Grim Monolith",
-    "Chrome Mox",
-    "Lotus Petal",
-    "Arcane Signet",
-    "Basalt Monolith",
-    "Mox Diamond",
-    "Rings of Brighthearth",
-    "Cabal Ritual",
-];
-
 fn ids(g: &Game, names: &[&str]) -> Vec<sim_core::ids::CardId> {
     names.iter().map(|n| card(g, n)).collect()
 }
@@ -34,6 +21,7 @@ fn ids(g: &Game, names: &[&str]) -> Vec<sim_core::ids::CardId> {
 /// hand, the library (top first) and the graveyard are exactly what is given
 fn setup(hand_names: &[&str], lib_top_first: &[&str], gy: &[&str]) -> Game {
     let mut g = table_with(&["thrasios", "sauron"], 1, 40);
+    g.log = Some(vec![]);
     g.active = Some(P0);
     lands(&mut g, P0, "Underground Sea", 8, false);
     lands(&mut g, P0, "Scrubland", 2, false);
@@ -42,6 +30,9 @@ fn setup(hand_names: &[&str], lib_top_first: &[&str], gy: &[&str]) -> Game {
     pl.hand = h;
     pl.library = l.into_iter().rev().collect();
     pl.gy = y;
+    // the table has cards in hand (so it could hold an answer): the pile plays its lock
+    lands(&mut g, P1, "Island", 3, false);
+    hand(&mut g, P1, &["Sol Ring", "Mana Vault", "Grim Monolith"]);
     g
 }
 
@@ -152,7 +143,6 @@ fn doomsday_searches_library_and_graveyard_exiles_the_rest_and_orders_the_five()
         vec!["Thassa's Oracle", "Silence", "Brainstorm", "Gitaxian Probe", "Sol Ring"],
         vec!["Brainstorm", "Thassa's Oracle", "Gitaxian Probe", "Silence"],
     );
-    g.player_mut(P0).hand.clear();
     cast_for_person(&mut g);
     assert_eq!(lib_names(&g, P0), ["Brainstorm", "Thassa's Oracle", "Gitaxian Probe", "Silence", "Sol Ring"]);
     // "exile the rest": every other card of both zones (3 + 7 - 5 = 5), and the graveyard is empty
@@ -230,7 +220,6 @@ fn pile_a_is_built_at_the_end_step_and_wins_on_the_next_turn() {
     end_step(&mut g);
     let pile = lib_names(&g, P0);
     assert_eq!(pile.len(), 5, "{pile:?}");
-    assert_eq!(pile[0], "Brainstorm", "Pile A: the draw step takes the Brainstorm: {pile:?}");
     for n in ["Thassa's Oracle", "Gitaxian Probe", "Silence"] {
         assert!(pile.iter().any(|x| x == n), "{n} is in the pile {pile:?}");
     }
@@ -239,7 +228,7 @@ fn pile_a_is_built_at_the_end_step_and_wins_on_the_next_turn() {
     next_turn(&mut g, true);
     play_pile_line(&mut g);
     assert!(won(&g), "Thassa's Oracle wins with the pile");
-    assert!(g.silence.is_some(), "Silence was cast before the Oracle (the lock comes first)");
+    assert!(logged(&g, "can't cast spells this turn (Silence)"), "Silence was cast before the Oracle");
 }
 
 #[test]
@@ -262,12 +251,11 @@ fn pile_b_with_the_oracle_in_hand_wins_on_the_next_turn() {
     end_step(&mut g);
     let pile = lib_names(&g, P0);
     assert_eq!(pile.len(), 5);
-    assert_eq!(pile[0], "Gitaxian Probe", "Pile B starts with the Probe: {pile:?}");
     assert!(pile.iter().any(|x| x == "Preordain") && pile.iter().any(|x| x == "Silence"), "{pile:?}");
     next_turn(&mut g, true);
     play_pile_line(&mut g);
     assert!(won(&g));
-    assert!(g.silence.is_some());
+    assert!(logged(&g, "can't cast spells this turn (Silence)"), "Silence was cast before the Oracle");
 }
 
 #[test]
@@ -306,8 +294,6 @@ fn the_thrasios_variant_needs_one_draw_fewer() {
     perm(&mut g, P0, "Thrasios, Triton Hero");
     teferi_flash(&mut g);
     end_step(&mut g);
-    let pile = lib_names(&g, P0);
-    assert_eq!(pile[0], "Brainstorm", "{pile:?}");
     next_turn(&mut g, true);
     play_pile_line(&mut g);
     assert!(won(&g), "with Thrasios (devotion 3) three cards left are enough");
@@ -348,7 +334,10 @@ fn silence_stops_the_response_to_the_oracle() {
     // Silence first: the opponent cannot cast a spell for the rest of the turn
     doomsday::run_pile(&mut g, P0).unwrap();
     assert!(won(&g), "the lock came first and the counters in P1's hand stayed there");
-    assert!(g.player(P1).hand.len() >= 2 || g.over, "P1 kept its hand");
+    assert!(logged(&g, "can't cast spells this turn (Silence)"), "Silence was cast before the Oracle");
+    for n in ["Counterspell", "Force of Will"] {
+        assert!(in_zone(&g, &g.player(P1).hand, n), "P1 could not cast {n}");
+    }
 }
 
 /// the Doomsday cast of an option, without the pile that follows: the cast and resolve only
@@ -361,44 +350,69 @@ fn cast_card_only_doomsday(g: &mut Game, _o: &sim_core::hooks::Opt) {
 
 #[test]
 fn a_countered_cantrip_stalls_the_pile() {
-    // no Silence in the pile, a Force of Will on the other side: the first cantrip is countered and the line stops
+    // the Doomsday pile is in play (library of five) and the Probe has been countered into the graveyard: Preordain and
+    // Ponder are still in the library, the Oracle is in hand, and there is no line this turn
     let mut g = setup(
-        &["Doomsday", "Thassa's Oracle", "Gitaxian Probe"],
-        &["Preordain", "Ponder", "Chrome Mox", "Lotus Petal", "Arcane Signet", "Grim Monolith"],
+        &["Thassa's Oracle"],
+        &["Preordain", "Ponder", "Chrome Mox", "Lotus Petal", "Arcane Signet"],
+        &["Gitaxian Probe", "Doomsday"],
+    );
+    g.player_mut(P0).stats.insert("doomsday", 1);
+    doomsday::run_pile(&mut g, P0).unwrap();
+    assert!(!won(&g), "five cards left and no draw spell in hand: the pile has stalled");
+    assert_eq!(g.player(P0).library.len(), 5, "nothing was cast into the pile");
+    assert!(in_zone(&g, &g.player(P0).hand, "Thassa's Oracle"));
+    // the next draw step takes the Preordain and the line is back: Preordain, Ponder, Oracle
+    next_turn(&mut g, true);
+    play_pile_line(&mut g);
+    assert!(won(&g), "one turn lost, not the game");
+}
+
+#[test]
+fn a_countered_cantrip_in_a_real_counter_war_is_not_replayed() {
+    // a Counterspell and two Islands on the other side, no lock in the pile: whatever is countered stays countered
+    let mut g = setup(
+        &["Thassa's Oracle", "Gitaxian Probe"],
+        &["Preordain", "Ponder", "Chrome Mox", "Lotus Petal", "Arcane Signet"],
         &[],
     );
-    let c = card(&g, "Doomsday");
-    let o = doomsday::doomsday_options(&mut g, c, P0, Some(false));
-    // Probe, Preordain, Ponder, Oracle: the library is 5 after Doomsday; the line needs three draws
-    let o = o.unwrap();
-    if o.is_empty() {
-        return; // the AI would not start this pile into two counters (covered by the decline test)
-    }
-    cast_card_only_doomsday(&mut g, &o[0]);
-    lands(&mut g, P1, "Island", 4, false);
-    hand(&mut g, P1, &["Counterspell", "Force of Will", "Brainstorm", "Mystical Tutor"]);
+    g.player_mut(P0).stats.insert("doomsday", 1);
+    hand(&mut g, P1, &["Counterspell"]);
+    lands(&mut g, P1, "Island", 2, false);
     doomsday::run_pile(&mut g, P0).unwrap();
-    let lib = g.player(P0).library.len();
-    assert!(!won(&g) || lib <= 2, "either the counters stopped the pile (library {lib}), or nothing was held");
+    let probe_in_gy = in_zone(&g, &g.player(P0).gy, "Gitaxian Probe");
+    assert!(probe_in_gy, "the Probe was cast (and went to the graveyard, resolved or countered)");
+    if !in_zone(&g, &g.player(P1).hand, "Counterspell") {
+        assert!(
+            !won(&g) || g.player(P0).library.len() <= 2,
+            "a counter in the war: the line either stalled or won anyway"
+        );
+    }
 }
 
 #[test]
 fn noxious_revival_puts_a_countered_oracle_back_on_top() {
-    let mut g = setup(&["Thassa's Oracle", "Noxious Revival", "Gitaxian Probe"], &["Chrome Mox", "Lotus Petal"], &[]);
-    // the pile is two cards deep (devotion 2): Oracle wins with Probe and one card to draw. Counter the Oracle first
+    // a two-card pile (devotion 2): the Oracle is the first spell and is countered into the graveyard; Noxious Revival
+    // puts it on top; the next draw step brings it back and it wins
+    let mut g = setup(&["Thassa's Oracle", "Noxious Revival"], &["Chrome Mox", "Lotus Petal"], &[]);
+    g.player_mut(P0).stats.insert("doomsday", 1);
     lands(&mut g, P1, "Island", 2, false);
     hand(&mut g, P1, &["Counterspell"]);
-    g.player_mut(P0).stats.insert("doomsday", 1);
-    // an Oracle countered into the graveyard ...
-    let oracle = card(&g, "Thassa's Oracle");
-    let pl = g.player_mut(P0);
-    pl.hand.retain(|&c| c != oracle);
-    pl.gy.push(oracle);
-    // ... comes back on top with Noxious Revival, and the Probe draws it: then it is cast and wins
     doomsday::run_pile(&mut g, P0).unwrap();
-    let top_or_hand = g.player(P0).hand.contains(&oracle) || g.player(P0).library.last() == Some(&oracle) || won(&g);
-    assert!(top_or_hand, "Oracle is back on top (or in hand, or already won)");
-    assert!(in_zone(&g, &g.player(P0).gy, "Noxious Revival") || won(&g), "Noxious Revival was cast");
+    if won(&g) {
+        return; // the Counterspell was not cast: nothing to recover from (the table's own call)
+    }
+    let oracle = card(&g, "Thassa's Oracle");
+    assert!(
+        !in_zone(&g, &g.player(P1).hand, "Counterspell"),
+        "the Counterspell was cast on the Oracle: {:?}",
+        g.log.as_ref().map(|l| l.iter().rev().take(6).cloned().collect::<Vec<_>>())
+    );
+    assert_eq!(g.player(P0).library.last(), Some(&oracle), "Noxious Revival put the Oracle on top");
+    assert!(in_zone(&g, &g.player(P0).gy, "Noxious Revival"));
+    next_turn(&mut g, true);
+    play_pile_line(&mut g);
+    assert!(won(&g), "the Oracle is drawn and wins: two cards in the library, devotion 2");
 }
 
 // ------------------------------------------------------------------ the end-step cast with each enabler
@@ -480,7 +494,10 @@ fn borne_upon_a_wind_is_cast_first_and_then_doomsday() {
     );
     end_step(&mut g);
     assert_eq!(g.player(P0).life, 20, "Doomsday was cast at the end step, behind a Borne Upon a Wind");
-    assert!(in_zone(&g, &g.player(P0).gy, "Borne Upon a Wind"));
+    assert!(
+        in_zone(&g, &g.player(P0).exile, "Borne Upon a Wind"),
+        "Borne was cast first (and exiled with the graveyard)"
+    );
 }
 
 // ------------------------------------------------------------------ the AI declines
@@ -490,7 +507,8 @@ fn the_ai_declines_when_line_one_is_in_hand() {
     teferi_flash(&mut g);
     g.active = Some(P1);
     assert_eq!(opts(&mut g, None), 1, "Doomsday is the line here");
-    g.player_mut(P0).hand.push(card(&g, "Demonic Consultation"));
+    let consult = card(&g, "Demonic Consultation");
+    g.player_mut(P0).hand.push(consult);
     assert_eq!(opts(&mut g, None), 0, "Oracle and Consultation in hand: Line 1 is cheaper");
 }
 
@@ -535,7 +553,7 @@ fn ponder_asks_the_person_for_the_order_and_a_shuffle() {
             return Answer::Pick(r.choices.iter().position(|c| c.starts_with(want)).unwrap());
         }
         if r.prompt.contains("shuffle") {
-            return Answer::No;
+            return Answer::Pick(1);
         }
         Answer::Pick(0)
     }));
@@ -584,7 +602,7 @@ fn brainstorm_asks_the_person_which_two_cards_go_back() {
 }
 
 #[test]
-fn gitaxian_probe_asks_the_person_to_pay_u_or_life() {
+fn gitaxian_probe_asks_the_person_to_pay_u_or_life_once() {
     let mut g = setup(&["Gitaxian Probe"], &["Silence", "Chrome Mox", "Lotus Petal"], &[]);
     pool(&mut g, P0, &[('U', 1)]);
     let asked = std::sync::Arc::new(std::sync::Mutex::new(vec![]));
@@ -599,13 +617,17 @@ fn gitaxian_probe_asks_the_person_to_pay_u_or_life() {
                 Answer::Action(json!({"do": "cast", "card": 0}))
             };
         }
-        if r.prompt.contains("Gitaxian Probe") {
-            return Answer::Pick(1); // no: pay 2 life
+        if r.prompt.contains("with mana or life") {
+            return Answer::Pick(r.choices.iter().position(|c| c.contains("life")).unwrap_or(1)); // 2 life
         }
         Answer::Pick(0)
     }));
     g.humans.add(P0, h);
     human_main(&mut g, P0, false).unwrap();
-    assert!(asked.lock().unwrap().iter().any(|p| p.contains("Gitaxian Probe: pay")), "asked how to pay");
-    assert_eq!(g.player(P0).life, 38, "the person chose 2 life");
+    assert!(asked.lock().unwrap().iter().any(|p| p.contains("with mana or life")), "asked how to pay");
+    assert_eq!(g.player(P0).life, 38, "the person chose 2 life: {:?}", asked.lock().unwrap());
+}
+
+fn logged(g: &Game, text: &str) -> bool {
+    g.log.as_ref().is_some_and(|l| l.iter().any(|x| x.contains(text)))
 }

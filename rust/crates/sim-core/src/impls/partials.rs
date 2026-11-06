@@ -1882,20 +1882,19 @@ fn mastermind(g: &mut Game, src: Src, p: PlayerId) -> Res {
 // ======================================================== Gitaxian Probe: Phyrexian mana
 /// Full: {U} or 2 life; draw a card (looking at a hand has no effect in the sim)
 fn probe(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    // {U/P}: a person chooses; the Doomsday pile pays what keeps its line winning; otherwise {U} when the mana is not
-    // needed, else 2 life
-    let can_u = can_pay(g, p, 0, "U", false);
-    let life = if crate::human::is_human(g, p) {
-        !can_u || !crate::human::choices::yes_no(g, p, "Gitaxian Probe: pay {U}? (no: pay 2 life)")?
-    } else if let Some(l) = crate::impls::doomsday::pile_probe_life(g, p) {
-        l || !can_u
-    } else {
-        !(can_u && total_mana(g, p, false) >= 3)
-    };
-    if life {
-        lose_life(g, p, 2, Some(p), "other", None)?;
-    } else {
-        pay(g, p, 0, "U", false)?;
+    // {U/P}: a person is asked how to pay as they cast it (human::human, phyrexian_ways), so nothing is paid here (it was
+    // paid twice before); the Doomsday pile pays what keeps its line winning; otherwise {U} when three mana is up, else 2 life
+    if !crate::human::is_human(g, p) {
+        let can_u = can_pay(g, p, 0, "U", false);
+        let life = match crate::impls::doomsday::pile_probe_life(g, p) {
+            Some(l) => l || !can_u,
+            None => !(can_u && total_mana(g, p, false) >= 3),
+        };
+        if life {
+            lose_life(g, p, 2, Some(p), "other", None)?;
+        } else {
+            pay(g, p, 0, "U", false)?;
+        }
     }
     draw(g, p, 1, false)?;
     Ok("gy")

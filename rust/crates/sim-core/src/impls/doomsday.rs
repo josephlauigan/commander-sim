@@ -155,8 +155,24 @@ impl<'a> Env<'a> {
     }
 }
 
-fn silence_up(g: &Game, p: PlayerId) -> bool {
-    g.silence == Some((g.turn_stamp(), p))
+/// is a lock in force on every opponent this turn: Silence's cast lock (`cast_locks`, no opponent can cast a spell), or
+/// Ranger-Captain of Eos's
+pub fn silence_up(g: &Game, p: PlayerId) -> bool {
+    if g.silence == Some((g.turn_stamp(), p)) {
+        return true;
+    }
+    let Some(probe) = g.db.id("Silence") else { return false };
+    let mut any = false;
+    for q in g.opps(p) {
+        if !g.player(q).alive {
+            continue;
+        }
+        any = true;
+        if !crate::engine::cast::spell_locked(g, q, probe) {
+            return false;
+        }
+    }
+    any
 }
 
 fn half_up(life: i32) -> i32 {
@@ -870,7 +886,10 @@ pub fn plan_cast(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Option<(Built, O
     if !built.lock && n >= 2 && !pl.hand.iter().any(|&h| g.db.get(h).tag(crate::tag::Tag::Ctr)) {
         return None; // into several opponents who can stop a spell, with no lock and no counter of our own
     }
-    if !crate::ai::t6_table::go_ok(g, p, "Doomsday cast") {
+    // the plan's go-now gate for the cast (a rule in `data/plans/thrasios.toml` naming "Doomsday cast"); the table's own
+    // "can it be stopped" check is not asked: a countered Doomsday costs the card and {B}{B}{B} only (library and graveyard
+    // are untouched), and the dangerous spells come after it, behind the lock the pile carries
+    if crate::impls::t6_plans::go_now(g, p, "Doomsday cast") == Some(false) {
         return None;
     }
     Some((built, en))
