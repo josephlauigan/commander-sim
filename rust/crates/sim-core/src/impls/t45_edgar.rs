@@ -859,7 +859,8 @@ fn estate_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> R
         out.push(Opt { utility: 1.0, label, act: Some(Action::Plan { f: estate_go, arg: l.0 as i64 }) });
     }
     let bloodseeker = g.player(p).perms.iter().any(|&m| live(g, m) && named(g, m, "Restless Bloodseeker"));
-    if !bloodseeker && g.player(p).bloods > 0 && can_pay(g, p, 1, "", false) && g.player(p).hand.len() > 1 {
+    let blood_cost = crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0); // Forensic Gadgeteer (never under {1})
+    if !bloodseeker && g.player(p).bloods > 0 && can_pay(g, p, blood_cost, "", false) && g.player(p).hand.len() > 1 {
         let hand = g.player(p).hand.clone();
         let worst = min_by(&hand, |c| card_worth(g, p, c, false));
         if worst.is_some_and(|c| card_worth(g, p, c, false) < 15.0) && !g.player(p).library.is_empty() {

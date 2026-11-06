@@ -1519,7 +1519,7 @@ fn junk_in_hand(g: &Game, p: PlayerId) -> Vec<CardId> {
 /// of the turn or after combat.
 fn voucher_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let x = g.perm(src);
-    if x.owner != p || !x.on_bf || x.tapped || x.phased || !can_pay(g, p, 2, "", false) {
+    if x.owner != p || !x.on_bf || x.tapped || x.phased || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false) {
         return Ok(vec![]);
     }
     let junk = junk_in_hand(g, p).len();
@@ -1532,10 +1532,10 @@ fn voucher_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> R
 
 fn voucher_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     let junk = junk_in_hand(g, p);
-    if !controls(g, p, src) || g.perm(src).tapped || junk.is_empty() || !can_pay(g, p, 2, "", false) {
+    if !controls(g, p, src) || g.perm(src).tapped || junk.is_empty() || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false) {
         return Ok(false);
     }
-    pay(g, p, 2, "", false)?;
+    pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false)?;
     g.perm_mut(src).tapped = true;
     die(g, src, "sac")?; // the sacrifice is a cost
     if !ability_window(g, p, Some(src), "shuffle cards from hand into the library, draw that many", None, None)? {
@@ -1655,10 +1655,10 @@ fn mirror_targets(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
 /// pay {2} and become a copy of t until end of turn
 fn mirror_become(g: &mut Game, src: PermId, p: PlayerId, t: PermId) -> Res<bool> {
     let Some(tcd) = g.perm(t).cd else { return Ok(false) };
-    if !controls(g, p, src) || !on_bf(g, t) || !can_pay(g, p, 2, "", false) {
+    if !controls(g, p, src) || !on_bf(g, t) || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false) {
         return Ok(false);
     }
-    pay(g, p, 2, "", false)?;
+    pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false)?;
     if !ability_window(g, p, Some(src), &format!("becomes a copy of {}", name_of(g, t)), None, Some(t))? {
         return Ok(true);
     }
@@ -1728,7 +1728,7 @@ fn mirror_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Re
         || x.sick
         || x.tapped
         || x.data.truthy(DataKey::MirageMirror)
-        || !can_pay(g, p, 2, "", false)
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false)
     {
         return Ok(vec![]);
     }
@@ -1761,7 +1761,7 @@ fn mirror_blocks(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: PlayerI
         || x.tapped
         || x.data.truthy(DataKey::MirageMirror)
         || human_of(g, d).is_some()
-        || !can_pay(g, d, 2, "", false)
+        || !can_pay(g, d, crate::impls::t45_urza_yawgmoth::artifact_cost(g, d, 2, 0), "", false)
         || assign.iter().any(|y| y.1 == src)
     {
         return Ok(());
@@ -2095,7 +2095,7 @@ pub fn serra_floor(g: &Game, p: PlayerId, n: &mut i32) -> bool {
 /// (Opposition, Karmic Justice, Auras ... all come back at once).
 fn chimes_options(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
     let x = g.perm(src);
-    if x.owner != p || !x.on_bf || x.tapped || x.phased || !can_pay(g, p, 3, "", false) {
+    if x.owner != p || !x.on_bf || x.tapped || x.phased || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false) {
         return Ok(vec![]);
     }
     let n = chimes_cards(g, p).len();
@@ -2110,10 +2110,10 @@ fn chimes_cards(g: &Game, p: PlayerId) -> Vec<CardId> {
 }
 
 pub(crate) fn chimes_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !controls(g, p, src) || g.perm(src).tapped || !can_pay(g, p, 3, "", false) {
+    if !controls(g, p, src) || g.perm(src).tapped || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false) {
         return Ok(false);
     }
-    pay(g, p, 3, "", false)?;
+    pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false)?;
     g.perm_mut(src).tapped = true;
     die(g, src, "sac")?;
     ability_run(g, p, Some(src), None, "return all enchantment cards from the graveyard to hand", None, None, |g| {

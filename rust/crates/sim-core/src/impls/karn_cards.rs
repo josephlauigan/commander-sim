@@ -253,11 +253,11 @@ fn stone_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     let mut out = vec![];
     let (ol, ml) = stone_swing(g, p, src);
     let u = wipe_util(ol, ml);
-    if can_pay(g, p, 5, "", false) && ol >= 5.0 && u >= 0.8 {
+    if can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 5, 0), "", false) && ol >= 5.0 && u >= 0.8 {
         out.push(ability(u.min(9.0), "Oblivion Stone (destroy)", src, stone_wipe, 0));
     }
     // a fate counter on our best permanent, when the wipe would be good with it (this turn's mana is spare)
-    if can_pay(g, p, 4, "", false)
+    if can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 4, 0), "", false)
         && let Some(t) = fate_target(g, p, src)
     {
         let (ol2, ml2) = {
@@ -278,7 +278,7 @@ fn stone_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
 /// {4}, {T}: put a fate counter on target permanent
 pub(crate) fn stone_mark(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let t = PermId(arg as u32);
-    if !live(g, src) || owner(g, src) != p || g.perm(src).tapped || !live(g, t) || !pay(g, p, 4, "", false)? {
+    if !live(g, src) || owner(g, src) != p || g.perm(src).tapped || !live(g, t) || !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 4, 0), "", false)? {
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;
@@ -307,7 +307,7 @@ pub(crate) fn stone_mark(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Re
 
 /// {5}, {T}, sacrifice: destroy each nonland permanent without a fate counter, then remove all fate counters
 pub(crate) fn stone_wipe(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !live(g, src) || owner(g, src) != p || g.perm(src).tapped || !pay(g, p, 5, "", false)? {
+    if !live(g, src) || owner(g, src) != p || g.perm(src).tapped || !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 5, 0), "", false)? {
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;
@@ -792,7 +792,7 @@ fn obelisk_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> R
         return Ok(vec![]);
     }
     let Some(t) = obelisk_target(g, p) else { return Ok(vec![]) };
-    if !can_pay(g, p, 7, "", false) {
+    if !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 7, 0), "", false) {
         return Ok(vec![]);
     }
     Ok(vec![ability(0.5 + 0.35 * pval(g, t).min(9.0), "Unstable Obelisk", src, obelisk_go, 0)])
@@ -804,7 +804,7 @@ fn obelisk_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         return Ok(false);
     }
     let Some(t) = obelisk_target(g, p) else { return Ok(false) };
-    if !pay(g, p, 7, "", false)? {
+    if !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 7, 0), "", false)? {
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;

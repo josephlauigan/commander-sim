@@ -1271,7 +1271,7 @@ fn clock_upkeep(g: &mut Game, src: Src, _p: PlayerId) -> Res {
 /// {2}{U}: an hour counter. The AI winds it when the wheel helps (a nearly empty hand) and the mana is spare.
 fn clock_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if owner(g, src) != p
-        || !can_pay(g, p, 2, "U", false)
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 1), "U", false)
         || !(post.is_none() && g.active != Some(p) || post == Some(true))
     {
         return Ok(vec![]);
@@ -1285,10 +1285,10 @@ fn clock_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
 }
 
 fn clock_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !g.perm(src).on_bf || !can_pay(g, p, 2, "U", false) {
+    if !g.perm(src).on_bf || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 1), "U", false) {
         return Ok(false);
     }
-    pay(g, p, 2, "U", false)?;
+    pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 1), "U", false)?;
     if ability_window(g, p, Some(src), "an hour counter", None, None)? {
         add_hours(g, src, 1)?;
     }
