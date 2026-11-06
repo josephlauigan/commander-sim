@@ -1,5 +1,7 @@
 # The Ur-Dragon (deck key `urdragon`, Tier 5)
 
+**Retired 2026-11-05 (JD).** The Ur-Dragon deck was broken up (The Ur-Dragon and 66 other cards went to the new Thanos deck, the rest to the binder) and its `urdragon` key left the simulator the same day. The findings below are history; the list is `decklists/pool/retired/ur-dragon-dragon-copies.md`.
+
 The list is in `decklists/JD/ur-dragon-equipment.md` (Bracket 4, 16 Game Changers). The deck joined the sim on
 2026-10-30. It plays from `data/plans/urdragon.toml` through the generic policy, with no hand-written deck AI.
 
@@ -102,7 +104,7 @@ The Ur-Dragon, t5: **19.2%** (CI 17.5-21.0, 1999 games: one skipped by an intern
 
 ## 2026-11-04: first baseline of the rebuilt Dragon-copies list (t5)
 
-List: `decklists/JD/ur-dragon-dragon-copies.md` (the 11/03 rebuild with the owned-card swaps). Run: The Ur-Dragon vs t5
+List: `decklists/pool/retired/ur-dragon-dragon-copies.md` (the 11/03 rebuild with the owned-card swaps). Run: The Ur-Dragon vs t5
 (High B4: Zur, Kinnan, Miirym, Yawgmoth, Urza), 2,000 games, seed 500000, loose, look-ahead AI, defaults, on main at
 PR #238 (build b8fc69f9). Raw: `.claude/worktrees/sim-runs-2026-11-04/urdragon-baseline.txt`.
 

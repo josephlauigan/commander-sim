@@ -438,7 +438,7 @@ Deck key `titania`, `decklists/JD/titania-lands.md` (both removed).
 
 Deck key `kraum` (removed), `decklists/JD/tymna-kraum-partners.md` (removed).
 
-**Retired 2026-10-19: became Tymna/Thrasios** (key `thrasios`, see the Tymna/Thrasios section below and `audit/thrasios/FINDINGS.md`). The entries below are the deck's history.
+**Retired 2026-10-19: became Tymna/Thrasios** (key `thrasios`, see the Tymna/Thrasios section below and `audit/thrasios/FINDINGS-old-list.md`). The entries below are the deck's history.
 
 ### Changes
 
@@ -737,7 +737,7 @@ Deck key `galadriel`, `decklists/Avery/galadriel-bant-rebels.md`.
 
 Deck key `kraum` (removed), `decklists/JD/tymna-kraum-partners.md` (removed).
 
-**Retired 2026-10-19: became Tymna/Thrasios** (key `thrasios`, see `audit/thrasios/FINDINGS.md`). The entries below are the deck's history.
+**Retired 2026-10-19: became Tymna/Thrasios** (key `thrasios`, see `audit/thrasios/FINDINGS-old-list.md`). The entries below are the deck's history.
 
 ### Changes
 
