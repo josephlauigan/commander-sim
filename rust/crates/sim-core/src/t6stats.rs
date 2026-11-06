@@ -214,7 +214,9 @@ fn hold_diag(g: &mut Game, p: PlayerId, ready: bool) {
             out.push(format!("{} lacks {:?}; tutors: [{}]", cb::audit_name(i), miss[0], tut.join(", ")));
         }
     }
-    crate::glog!(g, "      [{n} passes ({}); hand: {}]", out.join(" | "), hand.join(", "));
+    let mana = crate::engine::mana::total_mana(g, p, false);
+    let crs = g.player(p).perms.iter().filter(|&&m| g.is_creature(m)).count();
+    crate::glog!(g, "      [{n} passes ({}); mana {mana}, creatures {crs}; hand: {}]", out.join(" | "), hand.join(", "));
 }
 
 /// p chose `label` at a main-phase decision: count it under `spx|` when a line was ready and the deck has not gone

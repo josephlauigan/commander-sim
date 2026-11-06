@@ -1221,6 +1221,10 @@ fn kinnan_basalt(g: &Game, p: PlayerId) -> Ready {
     if g.perm(b).tapped && !can_pay(g, p, 3, "", false) || !mana_sink(g, p) {
         return NOT_READY();
     }
+    // --- c1-t6-lines: the loop is Monolith's untap and Kinnan's ability: Collector Ouphe, Cursed Totem and a Needle stop them
+    if crate::cardcode::ability_locked(g, b, p) || crate::cardcode::ability_locked(g, k, p) {
+        return NOT_READY();
+    }
     (true, vec![k, b], vec![])
 }
 
