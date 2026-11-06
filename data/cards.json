@@ -33001,6 +33001,42 @@
    "spell_prio": false
   },
   {
+   "name": "Doomsday",
+   "types": "S",
+   "generic": 0,
+   "pips": "BBB",
+   "tags": {},
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "Search your library and graveyard for five cards and exile the rest. Put the chosen cards on top of your library in any order. You lose half your life, rounded up."
+   ],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": true,
+    "perm": false
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Doomskar",
    "types": "S",
    "generic": 3,
@@ -39601,7 +39637,7 @@
    "ward": 0,
    "identity": null,
    "game_changer": null,
-   "source": "manual",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 1,
