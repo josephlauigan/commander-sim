@@ -154,7 +154,14 @@ impl Situation {
             for &m in &g.player(q).perms {
                 let x = g.perm(m);
                 if g.is_creature(m) && !x.noatk && !x.phased {
-                    inc += epow(g, m) as f64 * if x.fly { 1.0 } else { 0.6 } * share;
+                    let reach = if x.fly { 1.0 } else { 0.6 } * share;
+                    let ph = crate::engine::combat::poison_hit(g, m);
+                    // --- c3: infect damage is poison: each counter is worth the share of life that ten kill
+                    let life_pow = if crate::engine::combat::kw(g, m, "infect") { 0 } else { epow(g, m) };
+                    inc += life_pow as f64 * reach;
+                    if ph > 0 && crate::engine::repl::poison_ok(g, p) {
+                        inc += ph as f64 * pl.life.max(1) as f64 / (10 - pl.poison as i32).max(1) as f64 * reach;
+                    }
                 }
             }
         }
@@ -741,7 +748,9 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
         .map(|&m| epow(g, m) * if double_strike(g, m) { 2 } else { 1 })
         .sum();
     let dl = g.player(d).life;
+    let mine: Vec<PermId> = atk.iter().copied().filter(|&m| g.perm(m).on_bf && g.perm(m).owner == p).collect();
     let danger = incoming as f64 >= dl as f64 * 0.5
+        || crate::engine::combat::poison_share(g, d, &mine) >= 0.5 // --- c3: infect and toxic: ten counters kill
         || atk.iter().any(|&m| g.perm(m).is_cmd && crate::engine::values::cmd_dmg_by(g, d, p, m) + epow(g, m) >= 21);
     let mut best: Option<(f64, CardId, PermId)> = None;
     for &c in &rem {
@@ -1347,16 +1356,19 @@ pub fn choose_defender(g: &mut Game, p: PlayerId) -> PlayerId {
     if g.player(p).key == crate::impls::garland::KEY {
         opps = crate::impls::garland::attack_targets(g, p, opps); // never the monarch: the hit would end the steals
     }
-    let my: i32 = g
+    let able: Vec<PermId> = g
         .player(p)
         .perms
         .iter()
-        .filter(|&&m| {
+        .copied()
+        .filter(|&m| {
             let x = g.perm(m);
             g.is_creature(m) && !x.tapped && !x.noatk && !x.sick
         })
-        .map(|&m| epow(g, m))
-        .sum();
+        .collect();
+    // --- c3: infect damage is poison, not life; a tax or cap on q cuts what can be sent there
+    let pows: Vec<i32> =
+        able.iter().map(|&m| if crate::engine::combat::kw(g, m, "infect") { 0 } else { epow(g, m) }).collect();
     let key = g.player(p).key;
     let aggr = style(g, key).aggression;
     let mut items: Vec<(f64, PlayerId)> = vec![];
@@ -1365,8 +1377,12 @@ pub fn choose_defender(g: &mut Game, p: PlayerId) -> PlayerId {
         if crate::impls::t6_plans::is_t6(g, p) {
             u += 0.25 * super::t6_table::threat_bonus(g, q); // Tier 6: hit whoever is about to win
         }
-        if my as f64 >= g.player(q).life as f64 * 0.8 {
-            u += 4.0 + 2.0 * aggr; // go for the kill
+        let my = crate::engine::combat::sendable_power(g, p, q, &pows);
+        let pshare = crate::engine::combat::poison_share(g, q, &able);
+        if my as f64 >= g.player(q).life as f64 * 0.8 || pshare >= 0.8 {
+            u += 4.0 + 2.0 * aggr; // go for the kill (ten poison counters are as lethal as the life)
+        } else {
+            u += 2.0 * pshare; // --- c3: and infect hits go where they bring a player nearer ten counters
         }
         u += 0.15 * g.player(p).grudge.get(&g.player(q).key).copied().unwrap_or(0.0); // hit back whoever hit you
         if !is_main(hand_key(g, p)) {
