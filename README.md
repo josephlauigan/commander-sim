@@ -1,6 +1,6 @@
 # commander-sim
 
-A Magic: The Gathering Commander game simulator, in Rust. It plays JD's decks (and Avery's) in four-player games
+A Magic: The Gathering Commander game simulator, in Rust. It plays JD's decks in four-player games
 against pools of outside decks in seven power tiers, t0 to t6, and reports win rates and paired before/after
 comparisons for list changes. Practice mode lets a person play one of those decks against the same AI in a browser.
 `cardgen` builds the card data and edits the deck lists.
@@ -55,13 +55,13 @@ commander-practice --text --deck sauron --tier t3                       # the sa
 cardgen deck sauron new-list.txt --dry-run                              # check a new list, show what would change
 cardgen deck sauron new-list.txt --log "Why."                           # write it, and log it in the changelog
 cardgen export                                                          # rebuild data/cards.json and data/decks.json
-cardgen audit --mine                                                    # JD's and Avery's cards that aren't fully modeled
+cardgen audit --mine                                                    # JD's cards that aren't fully modeled
 cardgen validate                                                        # check the pool decklists
 ```
 
 `commander-sim --help` lists every option (`rust/crates/sim-cli/src/args.rs`). The ones that matter most:
 
-- `--deck`: `sauron`, `galadriel`, `yshtola`, `alela`, `kefka`, `sheoldred`, `cloud`, `thrasios` or
+- `--deck`: `sauron`, `yshtola`, `kefka`, `sheoldred`, `cloud`, `thrasios` or
   `thanos`.
 - `--pool`: `t0` to `t6`, or `all` (the deck's own tiers). Each deck plays only its own tiers (`data/my_decks.toml`);
   `--any-tier` lifts that, only when JD asks.
@@ -104,8 +104,6 @@ the same opponents and draws.
 | kefka | t3 |
 | cloud | t1-t3 |
 | thrasios (cEDH) | t6 |
-| alela (Avery's) | t1 |
-| galadriel (Avery's) | t1-t2 |
 
 ## The realism loop
 
@@ -120,8 +118,8 @@ status and plan, and links JD's plan document.
 
 ## Your decks
 
-The baseline is the list in each deck's `.md` file (the `## Import list` block): JD's in `decklists/JD/`, Avery's in
-`decklists/Avery/`. `data/my_decks.toml` maps each deck key to its file, display name, commander, colour identity and
+The baseline is the list in each deck's `.md` file (the `## Import list` block): JD's in `decklists/JD/`
+(retired lists: `decklists/pool/retired/`). `data/my_decks.toml` maps each deck key to its file, display name, commander, colour identity and
 opponent tiers; to add a deck, add a table there. `SIM_DECKS` points at another folder of lists.
 
 To change a list, edit the file or give `cardgen deck` the whole new list, as copied from a deck site or typed one
@@ -167,7 +165,7 @@ built: [`documents/practice-mode.md`](documents/practice-mode.md).
 | --- | --- |
 | `rust/` | The Rust workspace: `crates/sim-core` (engine, rules, AI, card code), `crates/sim-cli` (`commander-sim`), `crates/practice` (`commander-practice` and its page), `crates/cardgen` (`cardgen`). See [`rust/README.md`](rust/README.md) |
 | `data/` | `cards.json` and `decks.json` (written by `cardgen export`), their hand-edited sources (`carddb.txt`, `card_overrides.toml`, `audit.toml`, `my_decks.toml`), the Scryfall cache, `printings/`, and `realism/` (the scorecard targets and the pod-game log) |
-| `decklists/` | `JD/` and `Avery/` (the decks under test), `pool/` (the opponent tiers), and the changelogs |
+| `decklists/` | `JD/` (the decks under test), `pool/` (the opponent tiers; `pool/retired/` for retired lists), and the changelogs |
 | `documents/` | How the project works: [realism](documents/realism.md), [how it works](documents/how-it-works.md), [testing decks](documents/testing-decks.md), [cards](documents/cards.md), [practice mode](documents/practice-mode.md); `archive/` holds the port-era documents |
 | `audit/` | Evidence: results of runs, each deck's `FINDINGS.md`, the realism baselines (`audit/realism/`) |
 | `ios-shell/` | The iPad app: Swift around the Rust practice server |

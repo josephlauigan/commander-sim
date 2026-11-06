@@ -22,9 +22,7 @@ fn test_your_decks() {
     assert_eq!(
         d.keys().copied().collect::<Vec<_>>(),
         [
-            "alela",
             "cloud",
-            "galadriel",
             "kefka",
             "sauron",
             "sheoldred",

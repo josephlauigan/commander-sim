@@ -74,7 +74,7 @@ a new session or for delegated work that the user explicitly requests, route wor
 - `rust/crates/practice/`: browser/terminal practice mode and its HTTP server.
 - `rust/crates/cardgen/`: card/deck data generation, validation, audits, and deck editing.
 - `data/`: hand-edited card/deck sources, plans, realism targets, knobs, caches, and generated JSON.
-- `decklists/`: JD's decks, Avery's decks, opponent pools, and changelogs.
+- `decklists/`: JD's decks, opponent pools (retired lists in `pool/retired/`), and changelogs.
 - `documents/`: current architecture and workflow documentation. `documents/archive/` is historical.
 - `audit/`: simulation evidence and each deck's living findings.
 - `ios-shell/`: native iPad shell around the Rust practice server.

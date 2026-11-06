@@ -1,5 +1,7 @@
 # Galadriel (key `galadriel`, tiers t1 and t2): findings
 
+**No longer tracked 2026-11-06 (JD).** The `galadriel` key left the simulator; the list is in `decklists/pool/retired/` and this file is history only.
+
 Avery's deck, in `data/decks.json` `mine` with tiers t1, t2. Plan file through the generic policy (no hand AI). Loose
 profile, look-ahead AI. This file starts with the recalibration remeasure; earlier history is in the commit log.
 

@@ -1,5 +1,7 @@
 # Alela, Artful Provocateur — Esper Faerie Flyers
 
+**Retired 2026-11-06 (JD).** Avery's Alela deck is no longer tracked: the `alela` key left the simulator (out of `data/my_decks.toml`, `data/decks.json`, the CLI and the practice app), and its plan, printings and Spellbook files were removed. The list is kept here so the Rust tests of its card code can still seat it (`testkit::retired_decks`, key `alela`); it is not a pool deck and is never drawn. Findings: `audit/retired/alela/FINDINGS.md`.
+
 Alela makes a 1/1 flying Faerie every time you cast an artifact or an enchantment, and gives every other flier +1/+0.
 The deck is built around that: more than twenty artifact and enchantment spells, a pile of fliers, cheap removal, a few
 ways to recast the same artifacts and enchantments, and **Skullclamp** to turn spare Faeries into cards. It wins by

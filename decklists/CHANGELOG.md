@@ -1,6 +1,6 @@
 # Deck changelog
 
-The history of the decks in `decklists/JD/` and `decklists/Avery/`: every change to a list (newest first), the
+The history of the decks in `decklists/JD/` (and of the retired ones, now in `decklists/pool/retired/`): every change to a list (newest first), the
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
@@ -8,7 +8,7 @@ JD's decks: Cloud, Kefka, Sauron, Sheoldred, Thanos, Tymna/Thrasios, Y'shtola (V
 up 2026-11-02 and its key retired the same day; Karn and Ur-Dragon broken up 2026-11-05 and their keys retired the same
 day). On 2026-11-05 the old Tymna/Thrasios and old Thanos lists were replaced by the Tymna/Thrasios Doomsday and Thanos
 artifacts-and-Dragons rebuilds, and the `thrasios` and `thanos` keys were pointed at the new files.
-Avery's decks: Alela, Galadriel.
+Avery's decks (Alela, Galadriel) are no longer tracked from 2026-11-06 (JD); their lists are in `decklists/pool/retired/`.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
 
@@ -662,7 +662,9 @@ Deck key `yshtola`, `decklists/JD/yshtola-esper-drain.md`.
 
 ## Alela, Artful Provocateur — Esper Faerie Flyers
 
-Deck key `alela`, `decklists/Avery/alela-esper-faeries.md`.
+Deck key `alela` (retired), `decklists/pool/retired/alela-esper-faeries.md`.
+
+**No longer tracked 2026-11-06 (JD).** The `alela` key left the simulator: out of `data/my_decks.toml`, `data/decks.json`, the CLI and the practice app; the list moved to `decklists/pool/retired/`; its plan, printings and Spellbook files were removed (the card code stays, and the card tests still seat it: `testkit::retired_decks`); `audit/alela` moved to `audit/retired/alela`. The entries below are the deck's history.
 
 ### Changes
 
@@ -706,7 +708,9 @@ Deck key `alela`, `decklists/Avery/alela-esper-faeries.md`.
 
 ## Galadriel, Light of Valinor — Bant Rebels
 
-Deck key `galadriel`, `decklists/Avery/galadriel-bant-rebels.md`.
+Deck key `galadriel` (retired), `decklists/pool/retired/galadriel-bant-rebels.md`.
+
+**No longer tracked 2026-11-06 (JD).** The `galadriel` key left the simulator: out of `data/my_decks.toml`, `data/decks.json`, the CLI and the practice app; the list moved to `decklists/pool/retired/`; its plan, printings and Spellbook files were removed (the card code stays, and the card tests still seat it: `testkit::retired_decks`); `audit/galadriel` moved to `audit/retired/galadriel`. The entries below are the deck's history.
 
 ### Changes
 

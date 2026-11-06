@@ -51,9 +51,7 @@ pub const METRICS: [Metric; 24] = [
 pub fn plan_text(deck: &str) -> &'static str {
     match deck {
         "sauron" => "first combat damage to a player by an Army",
-        "galadriel" => "first Alliance trigger from Galadriel",
         "yshtola" => "first drain from Y'shtola's cast trigger",
-        "alela" => "first Faerie made by Alela",
         "kefka" => "Kefka flipped into Ruler of Ruin",
         "sheoldred" => "first opponent drained by Sheoldred",
         "sephfs" => "Sephiroth flipped (the fourth drain of a turn)",
@@ -86,9 +84,7 @@ pub fn plan_turn(me: &PlayerOut, deck: &str) -> Option<u32> {
     let t = match deck {
         "najeela" => ms("act"),
         "sauron" => ms("army_hit"),
-        "galadriel" => ms("alliance"),
         "yshtola" => ms("yshtola"),
-        "alela" => ms("faerie"),
         "kefka" => ms("kefka"),
         "sheoldred" => ms("sheoldred"),
         "sephfs" => ms("sephfs"),

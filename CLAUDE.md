@@ -74,8 +74,8 @@ shell command that starts with `python`, `python3`, `pip`, `pipx` or `uv`, in ev
 Each of JD's decks is simulated only against the opponent tiers listed for it in `data/my_decks.toml` (`tiers = [...]`,
 also exported to `data/decks.json`): yshtola t5 (band 1); thanos t5 (new artifacts and Dragons list 11/05; no longer Scion's t6 seat);
 sheoldred and sauron t3-t4 (band 2; ghave retired 11/02); kefka t3 (band 3); cloud t1-t3 (band 4;
-veyran retired 11/01); thrasios t6 (cEDH; new Doomsday list 11/05); karn and urdragon retired 11/05; alela t1 and
-galadriel t1-t2 (Avery's).
+veyran retired 11/01); thrasios t6 (cEDH; new Doomsday list 11/05); karn and urdragon retired 11/05; Avery's alela and
+galadriel no longer tracked 11/06.
 `--pool all`, `--all-decks`, `--analyze`,
 swap runs and `searchtest` use only those tiers; `--deck X --pool tN` outside them is refused. Report averages over
 the deck's own tiers (label them, e.g. "over t1-t3"). Use `--any-tier` only when JD asks for it. `--calibrate` is unchanged.

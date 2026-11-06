@@ -7,7 +7,7 @@
 //! Secluded Courtyard mana in a person's pool): practice mode comes with phase 9. Mirror Entity and the morph are
 //! checked here through their effects (`mirror`, `enter_face_down`, `turn_face_up`) instead.
 
-use sim_core::ai::{act, decks};
+use sim_core::ai::act;
 use sim_core::engine::pool::Kind;
 use sim_core::engine::{cast, combat, mana, removal, turn, values, zones};
 use sim_core::hooks::{Action, Opt};
@@ -477,31 +477,6 @@ fn planar_genesis_puts_a_land_onto_the_battlefield_tapped() {
     assert_eq!(&*g.db.get(g.perm(l).card()).name, "Forest", "the first land of the top four");
     assert!(g.perm(l).tapped);
     assert_eq!(g.player(P0).library.len(), lib - 1);
-}
-
-// ======================================================== the plan
-#[test]
-fn galadriel_casts_the_engine_first() {
-    let mut g = table(&["galadriel", "cloud"]);
-    let c = |g: &Game, n: &str| card(g, n);
-    let sgt = c(&g, "Ramosian Sergeant");
-    assert_eq!(decks::deck_prio(&g, P0, sgt), 73, "no searcher out yet: +10");
-    perm(&mut g, P0, "Ramosian Lieutenant");
-    assert_eq!(decks::deck_prio(&g, P0, sgt), 63);
-    let cs = c(&g, "Counterspell");
-    assert_eq!(decks::deck_prio(&g, P0, cs), 0, "held for its window");
-    let f = c(&g, "Unbreakable Formation");
-    assert_eq!(decks::deck_prio(&g, P0, f), 0);
-    let ring = c(&g, "Sol Ring");
-    assert_eq!(decks::deck_prio(&g, P0, ring), 82);
-    let cmd = g.player(P0).cmd;
-    assert_eq!(decks::deck_prio(&g, P0, cmd), 66);
-    g.player_mut(P0).turns = 3;
-    assert_eq!(decks::deck_prio(&g, P0, cmd), 84);
-    let pan = c(&g, "Panharmonicon");
-    assert_eq!(decks::deck_prio(&g, P0, pan), 50, "one creature, no Galadriel");
-    perm(&mut g, P0, "Llanowar Elves");
-    assert_eq!(decks::deck_prio(&g, P0, pan), 72);
 }
 
 #[test]

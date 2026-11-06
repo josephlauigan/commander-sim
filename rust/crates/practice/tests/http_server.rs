@@ -224,7 +224,7 @@ fn test_options() {
     let d = r.json();
     let mut decks: Vec<&str> = d["decks"].as_array().unwrap().iter().map(|x| x["key"].as_str().unwrap()).collect();
     decks.sort();
-    assert_eq!(decks, ["alela", "cloud", "galadriel", "kefka", "sauron", "sheoldred", "thanos", "thrasios", "yshtola"]);
+    assert_eq!(decks, ["cloud", "kefka", "sauron", "sheoldred", "thanos", "thrasios", "yshtola"]);
     let tiers: Vec<&str> = d["tiers"].as_array().unwrap().iter().map(|x| x["key"].as_str().unwrap()).collect();
     assert_eq!(tiers, ["t0", "t1", "t2", "t3", "t4", "t5", "t6"]);
     assert_eq!(d["tiers"][2]["decks"].as_array().unwrap().len(), 5);
@@ -284,13 +284,13 @@ fn test_picked_opponents_seat_and_tools() {
         .collect();
     let r = c.post(
         "/api/new",
-        json!({"deck": "alela", "tier": "t1", "opponents": t1, "seat": 2, "ai": "adaptive", "images": false,
+        json!({"deck": "cloud", "tier": "t1", "opponents": t1, "seat": 2, "ai": "adaptive", "images": false,
                                       "tools": {"hint": false}}),
     );
     assert_eq!(r.status, 200);
     let seats: Vec<String> =
         r.json()["seats"].as_array().unwrap().iter().map(|x| x.as_str().unwrap().to_string()).collect();
-    assert_eq!(seats[1], "alela");
+    assert_eq!(seats[1], "cloud");
     let mut others: Vec<String> = seats[..1].iter().chain(&seats[2..]).cloned().collect();
     others.sort();
     let mut want = t1.clone();

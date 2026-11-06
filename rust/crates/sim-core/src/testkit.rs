@@ -113,6 +113,22 @@ fn retired_decks() -> Vec<RawDeck> {
             "WUBRG",
             include_str!("../../../../decklists/pool/retired/ur-dragon-dragon-copies.md"),
         ),
+        // Avery's Alela and Galadriel decks, no longer tracked from 2026-11-06 (JD): the tests of their card code still
+        // seat them with their real lists (decklists/pool/retired/); no deck AI or plan keys on these keys any more
+        listed(
+            "alela",
+            "Alela",
+            "Alela, Artful Provocateur",
+            "WUB",
+            include_str!("../../../../decklists/pool/retired/alela-esper-faeries.md"),
+        ),
+        listed(
+            "galadriel",
+            "Galadriel",
+            "Galadriel, Light of Valinor",
+            "WUG",
+            include_str!("../../../../decklists/pool/retired/galadriel-bant-rebels.md"),
+        ),
         // --- ghave: JD's Seph/Atraxa deck, retired 2026-10-30 (Ghave took its seat): the tests of its card code
         // (the loops in impls::mine, the reanimation spells, Sephiroth's cards) still seat it with its real list
         listed(

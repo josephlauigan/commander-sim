@@ -1,5 +1,7 @@
 # Galadriel, Light of Valinor — Bant Rebels
 
+**Retired 2026-11-06 (JD).** Avery's Galadriel deck is no longer tracked: the `galadriel` key left the simulator (out of `data/my_decks.toml`, `data/decks.json`, the CLI and the practice app), and its plan, printings and Spellbook files were removed. The list is kept here so the Rust tests of its card code can still seat it (`testkit::retired_decks`, key `galadriel`); it is not a pool deck and is never drawn. Findings: `audit/retired/galadriel/FINDINGS.md`.
+
 Galadriel pays you every time a creature enters: mana, a bigger team, or a card. The deck fills the battlefield with
 cheap creatures and a chain of Mercadian Masques Rebels, whose searchers put a creature onto the battlefield every
 turn without spending cards, and then grows the whole team with counters until it overruns the table. It is weak when

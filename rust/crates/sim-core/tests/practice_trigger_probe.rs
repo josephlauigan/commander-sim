@@ -869,22 +869,6 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
         "the Rebel search ({4},{T}) asks which Rebel (practice_trigger_fixes), but the probe's library holds no Rebel with mana value 3 or less, so there is nothing to choose and it only logs that none was found",
     ),
     (
-        "alela: Crystal Chimes (Activate(0))",
-        "no choice: it returns all enchantment cards from the graveyard",
-    ),
-    (
-        "alela: Judge's Familiar (Activate(0))",
-        "the probe's table has no instant or sorcery spell on the stack to counter, so the ability does nothing (not read in the code)",
-    ),
-    (
-        "alela: Tragic Poet (Activate(0))",
-        "the probe's graveyard has no enchantment card to return, so there is no target to ask for (not read in the code)",
-    ),
-    (
-        "alela: Stirring Hopesinger (Main1)",
-        "no choice: it puts a counter on each creature; the word \"target\" is in the condition (a spell that targets a creature)",
-    ),
-    (
         "thrasios: Necropotence (Discard (state only))",
         "no choice: the discarded card is exiled; the line only matched \"discard a\"",
     ),
