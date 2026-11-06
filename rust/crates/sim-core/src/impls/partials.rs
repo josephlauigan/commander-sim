@@ -215,7 +215,7 @@ fn hordechief_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> 
 }
 
 /// after the activation, every untapped creature of the defender blocks, assigned where it dies without killing
-fn hordechief_blocks(
+pub(crate) fn hordechief_blocks(
     g: &mut Game,
     src: Src,
     p: PlayerId,
@@ -2905,7 +2905,7 @@ fn tekuthal_do(g: &mut Game, src: PermId, p: PlayerId, target: PermId) -> Res<bo
     Ok(true)
 }
 
-fn tekuthal_kw(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
+pub(crate) fn tekuthal_kw(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
     kw == "indestructible" && m == src && g.perm(src).data.truthy(DataKey::Indestr)
 }
 

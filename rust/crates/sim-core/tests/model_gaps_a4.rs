@@ -842,3 +842,33 @@ fn a_person_chooses_how_the_opponents_block_with_a_brutal_hordechief_through_mar
     assert!(use_ability(&mut g, m, "Marvin copies Brutal Hordechief").is_none());
     assert!(matches!(g.perm(m).data.get(sim_core::state::DataKey::Lure), Some(_)), "Marvin carries the lure for this turn");
 }
+
+#[test]
+fn marvins_hordechief_ability_lets_the_person_assign_every_block() {
+    let (mut g, _d, m) = rich("Brutal Hordechief");
+    person(&mut g, vec![rule("pay {R/W}", first)]);
+    assert!(use_ability(&mut g, m, "Marvin copies Brutal Hordechief").is_none());
+    // P1's untapped creatures must block; the person (P0) says which attacker each blocks
+    let atk: Vec<PermId> = perms_named(&g, P0, "Goblin Guide").into_iter().chain(perms_named(&g, P0, "Goblin Chieftain")).collect();
+    assert_eq!(atk.len(), 2);
+    let asked = asking_person(&mut g);
+    let cd = g.perm(m).cd.unwrap();
+    let f = g.registry.get(cd).unwrap().blocks.expect("Marvin carries the block assignment");
+    let mut assign = vec![];
+    f(&mut g, m, P0, &atk, P1, &mut assign).unwrap();
+    let blockers = g.player(P1).perms.iter().filter(|&&b| g.is_creature(b) && !g.perm(b).tapped).count();
+    assert!(blockers > 0 && !assign.is_empty(), "{assign:?}");
+    assert!(asked.load(Ordering::SeqCst) >= assign.len(), "the person was asked for each block");
+}
+
+#[test]
+fn marvins_drivnod_counter_makes_marvin_indestructible_and_the_person_picks_the_three_cards() {
+    let (mut g, _d, m) = rich("Drivnod, Carnage Dominus");
+    let gy: Vec<_> = ["Llanowar Elves", "Goblin Guide", "Serra Angel", "Vampire Nighthawk"].iter().map(|n| card(&g, n)).collect();
+    g.player_mut(P0).gy = gy;
+    let asked = asking_person(&mut g);
+    assert!(!sim_core::dsl::has_kw(&g, m, "indestructible"));
+    assert!(use_ability(&mut g, m, "Marvin copies Drivnod").is_none());
+    assert!(asked.load(Ordering::SeqCst) >= 3, "which three creature cards to exile");
+    assert!(sim_core::dsl::has_kw(&g, m, "indestructible"), "the counter is on the permanent using the ability");
+}

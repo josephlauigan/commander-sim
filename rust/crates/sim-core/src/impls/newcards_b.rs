@@ -185,6 +185,8 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     if let Some(c) = card_if(r, db, MARVIN)? {
         c.options = Some(marvin_options);
         c.combat_damage = Some(super::partials::hope_hit); // Hope of Ghirapur's ability: dealt combat damage by it
+        c.blocks = Some(super::partials::hordechief_blocks); // Brutal Hordechief's ability: you choose how they block
+        c.grant_kw = Some(super::partials::tekuthal_kw); // Drivnod's / Tekuthal's indestructible counter, put on Marvin by its ability
     }
     Ok(())
 }
