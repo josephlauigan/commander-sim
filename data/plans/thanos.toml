@@ -1,62 +1,185 @@
-# Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs through the
-# Tier 6 plan slots (impls/t6_plans.rs). JD's Thanos, the Mad Titan turbo deck (Scion's seat and plan since 2026-10-30;
-# the list is JD's physical deck since 2026-11-01, 22 cards changed from the Scion v1 base): fast
-# mana, rituals and dorks into Thassa's Oracle + Demonic Consultation / Tainted Pact or Underworld Breach + Lion's Eye
-# Diamond + Brain Freeze. Thanos's power-up (a parity wipe) is card code (impls/t6_thanos.rs), not this plan.
-#
-# Only the keep rule has an opinion (was Scion's, the Rograkh/Silas turbo rule with this list's rituals, tutors,
-# payoffs and engines; PROVISIONAL until JD decides the mulligans, D11). Cast priority, wish list, hold-up and go-now
-# leave every decision to the shared Tier 6 table rules and the generic AI.
-# Scion's paired test (t6, --deck scion, 2000 games): byte-identical to the hand code (Scion 30.1%, CI 28.1-32.1).
+# JD's Thanos, the Mad Titan artifacts-and-Dragons deck (decklists/JD/thanos-artifacts-and-dragons.md, tier t5, key
+# `thanos`; rewritten 2026-11-05 for the list that replaced the cEDH turbo list). The deck plays the generic pool policy
+# (it is no longer a Tier 6 key) with this plan: ramp and Thanos first, the engines (The One Ring, Rhystic Study, Mystic
+# Forge, Urza, the Karns), then one of two infinite combos or the wipe-and-finish plan. Thanos's power-up (a parity
+# wipe, Rings of Brighthearth copying it to hit both parities) is card code (impls/t6_thanos.rs), not this plan; the
+# Astral Dragon loop is the catalogue combo in impls/t45_urdragon_combos.rs; Basalt Monolith + Rings is the catalogue
+# line "Power Artifact / Rings of Brighthearth + Monolith" widened here with the sinks this list holds.
+# PROVISIONAL: the style numbers, priorities and keep rule come from the pilot guide in the deck document, not from a
+# paired test (no sims yet).
+# Left out (the schema can't express it): the choice of odd or even for the power-up, wiping versus winning this turn,
+# holding Pact of Negation until five mana is certain next upkeep, and the Yawgmoth rule (no wipe into a death payoff).
 deck = "thanos"
 default = "plan"
+engines = ["The One Ring", "Rhystic Study", "Smothering Tithe", "Mystic Forge", "Sylvan Library",
+    "Karn, Scion of Urza", "Karn, the Great Creator", "Urza, Lord High Artificer"]
 
-# Scion's style (was ai::T6_JD_STYLES): the default temperature and aggression, less caution than the pool's 0.5, so
-# it spends its mana on its plan instead of passing with a counterspell up
+# Thanos plans to be down on turn 2-3 and then play value, not a goldfish combo: pool defaults for temperature, a little
+# above the pool's attack, less caution than the pool's 0.5 only while ahead on mana.
 [style]
 temp = 1.0
 aggression = 0.6
-caution = 0.35
+caution = 0.5
 
+# The cheapest threat and the enabler of Deflecting Swat and Jeska's Will: cast on turn 2 when {R}{W}{B} is there (the
+# colourless rocks can't pay for him), before the engines.
+[commander]
+prio = 88
+turn = 2
+
+[key_cards]
+"Walking Ballista" = 70
+"Mystic Forge" = 72
+"Urza, Lord High Artificer" = 74
+"Terror of the Peaks" = 70
+"Wurmcoil Engine" = 68
+"The Ur-Dragon" = 64
+
+# Win lines, best first: the tutors hunt the first missing piece of the closest one. Basalt Monolith + Rings is two cards
+# and then any mana sink: Walking Ballista from hand (a huge X), Mystic Forge on the battlefield (cast the Ballista off
+# the top) or Urza (the whole library). Astral Dragon + Cursed Mirror is the second two-card combo, with Terror of the
+# Peaks on the battlefield to turn the tokens into damage (hasty fliers win without it).
+[[line]]
+name = "Basalt Monolith + Rings of Brighthearth + a mana sink"
+kind = "combo"
+pieces = [["Basalt Monolith"], ["Rings of Brighthearth"], ["Walking Ballista", "Mystic Forge", "Urza, Lord High Artificer"]]
+
+[[line]]
+name = "Astral Dragon + Cursed Mirror"
+combo = "Astral Dragon + Cursed Mirror"
+
+[[line]]
+name = "Astral Dragon + Cursed Mirror + Terror of the Peaks"
+kind = "combo"
+pieces = [["Astral Dragon"], ["Cursed Mirror"], ["Terror of the Peaks"]]
+
+# The fair wins: the wipe (the power-up, Oblivion Stone, Ugin) and then a big threat
+[[line]]
+name = "Wipe, then a big threat"
+kind = "value"
+pieces = [["Oblivion Stone", "Ugin, the Spirit Dragon"], ["The Ur-Dragon", "Wurmcoil Engine", "Blightsteel Colossus", "Portal to Phyrexia"]]
+
+# What the tutors fetch (the guide's "What to tutor for"): the combo's missing piece first, an engine on turns 2-3 when
+# nothing is going, the wipe or the Rings when the board can't be beaten.
+[[wish]]
+cards = ["Basalt Monolith", "Rings of Brighthearth"]
+when = ["lands+rocks>=3"]
+score = 90
+
+[[wish]]
+cards = ["Mystic Forge", "Walking Ballista"]
+when = ["out:Basalt Monolith & out:Rings of Brighthearth"]
+score = 95
+
+[[wish]]
+cards = ["The One Ring", "Rhystic Study", "Mystic Forge"]
+when = ["turn<=3"]
+score = 80
+
+[[wish]]
+cards = ["Astral Dragon", "Terror of the Peaks"]
+when = ["out:Cursed Mirror"]
+score = 92
+
+[[wish]]
+cards = ["Oblivion Stone", "Ugin, the Spirit Dragon", "Portal to Phyrexia"]
+when = ["opp-power>=15"]
+score = 76
+
+# Acceleration and fixing are the first plays; Thanos and the engines next; the big top end last.
+[[prio]]
+cards = ["Sol Ring", "Mana Vault", "Grim Monolith", "Chrome Mox", "Mox Diamond", "Mox Opal", "Lotus Petal",
+    "Arcane Signet", "Mind Stone", "Birds of Paradise", "Urza's Bauble", "Wayfarer's Bauble"]
+when = ["turn<=4"]
+value = 86
+else = 46
+
+[[prio]]
+cards = ["Rhystic Study", "The One Ring", "Smothering Tithe", "Mystic Forge", "Sylvan Library"]
+when = ["turn<=6"]
+value = 78
+else = 62
+
+[[prio]]
+cards = ["Urza, Lord High Artificer", "Karn, Scion of Urza", "Karn, the Great Creator", "Gilded Lotus", "Thran Dynamo",
+    "Coalition Relic"]
+value = 74
+
+# The combo pieces: Basalt Monolith first, Rings once it is held (or out); the Ballista is the kill, not a body
+[[prio]]
+cards = ["Basalt Monolith"]
+value = 82
+
+[[prio]]
+cards = ["Rings of Brighthearth"]
+when = ["have:Basalt Monolith", "out:Basalt Monolith"]
+value = 80
+else = 44
+
+[[prio]]
+cards = ["Walking Ballista"]
+when = ["have:Basalt Monolith & have:Rings of Brighthearth & lands<8", "out:Basalt Monolith & have:Rings of Brighthearth & lands<8"]
+value = 0
+
+[[prio]]
+cards = ["Walking Ballista"]
+when = ["lands>=6"]
+value = 56
+else = 40
+
+# Astral Dragon is the combo's last piece: cast at once with the Mirror out; the Mirror goes out ahead of the Dragon
+[[prio]]
+cards = ["Astral Dragon"]
+when = ["out:Cursed Mirror"]
+value = 92
+
+[[prio]]
+cards = ["Cursed Mirror"]
+when = ["have:Astral Dragon"]
+value = 80
+
+[[prio]]
+cards = ["Terror of the Peaks", "Goldspan Dragon", "Steel Hellkite", "Wurmcoil Engine", "Duplicant"]
+value = 68
+
+# The nine-drop and the top end: after the board is built
+[[prio]]
+cards = ["The Ur-Dragon", "Portal to Phyrexia", "Blightsteel Colossus", "Karn Liberated", "Ugin, the Spirit Dragon"]
+when = ["lands+rocks>=7"]
+value = 66
+else = 20
+
+[[hold]]
+card = "Teferi's Protection"
+protects = ["commander", "The One Ring", "Terror of the Peaks"]
+
+# The guide's keep rule: 2-5 lands (a lone land only with three fast pieces), mana by turn 2-3, and something to do.
 [sets]
-tutors = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Enlightened Tutor", "Worldly Tutor", "Imperial Seal", "Gamble", "Diabolic Intent", "Grim Tutor", "Merchant Scroll", "Eladamri's Call", "Beseech the Mirror", "Intuition", "Demonic Consultation", "Tainted Pact"]
-payoffs = ["Necropotence", "Ad Nauseam", "Underworld Breach", "Brain Freeze"]
-# an engine alone does not win: it counts as action only with fast mana
-engines = ["Rhystic Study", "Mystic Remora", "Esper Sentinel", "Sylvan Library"]
-# a tutor, a payoff or the Oracle
-action = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Enlightened Tutor", "Worldly Tutor", "Imperial Seal", "Gamble", "Diabolic Intent", "Grim Tutor", "Merchant Scroll", "Eladamri's Call", "Beseech the Mirror", "Intuition", "Demonic Consultation", "Tainted Pact", "Necropotence", "Ad Nauseam", "Underworld Breach", "Brain Freeze", "Thassa's Oracle"]
+tutors = ["Demonic Tutor", "Vampiric Tutor", "Enlightened Tutor", "Worldly Tutor", "Imperial Seal", "Gamble"]
+engines = ["The One Ring", "Rhystic Study", "Mystic Forge", "Urza, Lord High Artificer", "Karn, Scion of Urza",
+    "Karn, the Great Creator", "Smothering Tithe"]
+pieces = ["Basalt Monolith", "Rings of Brighthearth", "Walking Ballista", "Astral Dragon", "Cursed Mirror"]
 
-# Fast mana and a plan beat land count: `fast` = the hand's mana pieces that count by turn 2 plus its rituals, `mana`
-# = what the hand makes by turn 2 plus its rituals (t6_keep::mana). A settled hand (2-4 lands after a mulligan) is kept.
 [mulligan]
 fast_mana = true
-# one-shot mana: rituals and spirit guides
-rituals = ["Dark Ritual", "Cabal Ritual", "Desperate Ritual", "Rite of Flame", "Seething Song", "Manamorphose", "Elvish Spirit Guide", "Simian Spirit Guide"]
 
-# ship all-land hands
 [[mulligan.rule]]
 when = ["hand-lands>=6"]
 keep = false
-
-# no colours from lands: only with three fast mana pieces and a tutor or payoff to cast
-[[mulligan.rule]]
-when = ["hand-lands=0 & fast>=3 & hand:tutors>=1", "hand-lands=0 & fast>=3 & hand:payoffs>=1"]
-keep = true
 
 [[mulligan.rule]]
 when = ["hand-lands=0"]
 keep = false
 
-# a 1-lander needs the mana (rituals count) and a payoff or tutor to spend it on
 [[mulligan.rule]]
-when = ["hand-lands=1 & mana<one-lander", "hand-lands=1 & hand:action=0 & hand:engines=0", "hand-lands=1 & hand:action=0 & fast<1"]
+when = ["hand-lands=1 & fast<3"]
 keep = false
 
-# lands-and-spells hands with no payoff or tutor, or no mana to cast it
+# nothing to do: no tutor, engine or combo piece
 [[mulligan.rule]]
-when = ["mana<2", "hand:action=0 & hand:engines=0 & fast<2", "hand:action=0 & fast<1"]
+when = ["hand:tutors=0 & hand:engines=0 & hand:pieces=0"]
 keep = false
 
 [[mulligan.rule]]
-when = ["hand-lands>=5 & fast=0 & hand:action<2"]
+when = ["mana<2"]
 keep = false
