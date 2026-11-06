@@ -1,5 +1,11 @@
 # Thanos, the Mad Titan — Five-Colour cEDH Turbo
 
+**Retired 2026-11-05 (JD).** The list is split up: 82 of its cards form the core of the Doomsday rebuild of Tymna/Thrasios
+(`decklists/JD/tymna-thrasios-doomsday.md`), Thanos and 5 other cards lead the new Thanos deck
+(`decklists/JD/thanos-artifacts-and-dragons.md`, t5), and 12 go to the binder; see `documents/doomsday-thanos-rebuild-swaps.md`. The
+`thanos` key still plays this list until the rewire PR points it at the new file and moves this one to
+`decklists/pool/retired/`.
+
 JD's five-colour cEDH turbo deck with Thanos, the Mad Titan as the commander. It started on 10/30 as the Scion v1 list
 (`decklists/pool/retired/scion-ur-dragon-turbo.md`, retired 10/30) minus Scion's copy targets; on 11/01 the list was
 brought in line with JD's physical deck (22 cards each way, see `decklists/CHANGELOG.md`). Not simulated since.

@@ -5,7 +5,9 @@ simulator results over time, and tuning notes. The deck documents themselves des
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
 JD's decks: Cloud, Karn, Kefka, Sauron, Sheoldred, Thanos, Tymna/Thrasios, Ur-Dragon, Y'shtola (Veyran retired
-2026-11-01; Ghave broken up 2026-11-02 and its key retired the same day).
+2026-11-01; Ghave broken up 2026-11-02 and its key retired the same day). On 2026-11-05 the Karn, Ur-Dragon, old
+Tymna/Thrasios and old Thanos lists were retired for the Tymna/Thrasios Doomsday and Thanos artifacts-and-Dragons
+rebuilds; their keys keep playing the old lists until the simulator is rewired.
 Avery's decks: Alela, Galadriel.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
@@ -74,6 +76,7 @@ Deck file `decklists/JD/karn-colorless-artifacts.md`; not in the simulator.
 
 ### Changes
 
+- **2026-11-05.** Retired (JD): the deck is broken up. 27 cards move to the new Thanos deck (`decklists/JD/thanos-artifacts-and-dragons.md`, t5), among them Basalt Monolith, Rings of Brighthearth, Walking Ballista, the three Karn planeswalkers, Urza's Saga and one Wastes; the rest go to the binder (`documents/doomsday-thanos-rebuild-swaps.md`). The `karn` key stays in the simulator until the rewire PR removes it and moves the list to `decklists/pool/retired/`.
 - **2026-11-02.** Out: Everflowing Chalice, Nevinyrral's Disk. In: Crucible of Worlds, Strip Mine, Summon: Bahamut. Ghave breakup (JD, 11/02), not simulated: the Ghave deck is broken up and its cards placed as upgrades; the cards in come from Ghave, the cards out go to the binder. Crucible of Worlds replays Urza's Saga (more Construct blockers) and Ghost Quarter or Strip Mine every turn; Summon: Bahamut (colourless 9-drop: two removals, two cards, then damage equal to the board's mana value). Out: a Wastes, Nevinyrral's Disk (stuck in hand) and Everflowing Chalice (never cast in the sim, a modelling gap).
 - **2026-11-01.** Out: Hedron Archive. In: Tezzeret, Cruel Captain. JD's actual list (11/01): the repo list brought in line with the physical deck. Not simulated.
 - **2026-10-30.** Out: Mishra's Bauble. In: Conjurer's Closet. Karn: Conjurer's Closet (from the retired Seph/Atraxa deck, 10/30) in for Mishra's Bauble. JD's choice, not simulated.
@@ -764,6 +767,7 @@ Deck key `thrasios`, `decklists/JD/tymna-thrasios-partners.md`.
 
 ### Changes
 
+- **2026-11-05.** Retired (JD): replaced by the Doomsday rebuild, `decklists/JD/tymna-thrasios-doomsday.md` (cEDH, t6; 82 cards from Thanos, 14 from this list, 4 to buy). Tymna, Thrasios, the four shock lands, Swords to Plowshares, Gifts Ungiven, Avacyn's Pilgrim, Basalt Monolith, Rings of Brighthearth, Walking Ballista, Smothering Tithe and Arcane Signet move to the new list; the rest go to the binder (`documents/doomsday-thanos-rebuild-swaps.md`). The `thrasios` key plays this list until the rewire PR points it at the new file.
 - **2026-11-03.** Out: Sphinx of New Prahv. In: Natural Order. JD approved: replace Sphinx of New Prahv with Natural Order to turn spare green creatures into Atraxa or Dromoka; retain Diabolic Tutor; not simulated.
 - **2026-11-02.** Out: Bite Down, Blossoming Defense, Conqueror's Flail, Disenchant, Fellwar Stone, Memory Trap, Nightwind Glider, Orzhov Signet, Paradox Surveyor, Talisman of Unity. In: Anguished Unmaking, Aura Shards, Bayou, Birds of Paradise, Demonic Tutor, Elesh Norn, Mother of Machines, Ephemerate, Flooded Strand, Gaea's Cradle, Godless Shrine, Grand Abolisher, Marsh Flats, Misty Rainforest, Overgrown Tomb, Polluted Delta, Savannah, Scrubland, Sol Ring, Sylvan Library, Temple Garden, Verdant Catacombs, Windswept Heath. Ghave breakup (JD, 11/02), not simulated: the Ghave deck is broken up and its cards placed as upgrades; the cards in come from Ghave, the cards out go to the binder. Sol Ring, Birds and Gaea's Cradle replace weaker rocks; six duals and shocks plus six fetch lands replace 5 Plains, 5 Swamp and 2 Forest (all 6 Islands stay: the new lands make no blue), since colour-hungry cards were stuck in hand; Demonic Tutor, Sylvan Library, Grand Abolisher, Anguished Unmaking, Aura Shards, Ephemerate and Elesh Norn, Mother of Machines take the slots of weaker cards in the same roles. Game Changers 3 -> 6.
 - **2026-10-31.** Out: Helm of Kaldra. In: Disdainful Stroke. JD (10/31), not simulated. In: Disdainful Stroke (from Sauron). Out: Helm of Kaldra (to the binder). A third counterspell against T5 combo's big pieces; Helm of Kaldra alone (no Sword or Shield of Kaldra in the deck) was only first strike, trample and haste.
@@ -778,6 +782,7 @@ Deck key `urdragon`, `decklists/JD/ur-dragon-equipment.md`. Simulated against Ti
 
 ### Changes
 
+- **2026-11-05.** Retired (JD): the deck is broken up. The Ur-Dragon and 66 other cards move to the new Thanos deck (`decklists/JD/thanos-artifacts-and-dragons.md`, t5), with The Ur-Dragon in the 99; the other 33 go to the binder (`documents/doomsday-thanos-rebuild-swaps.md`). The `urdragon` key stays in the simulator until the rewire PR removes it and moves the list to `decklists/pool/retired/`.
 - **2026-11-04.** Out: Jaxis, the Troublemaker. In: Urza, Lord High Artificer. JD's choice (11/04), not simulated: Urza, Lord High Artificer (from Sauron's binder) for Jaxis, the Troublemaker. The six artifacts that make no mana tap for {U} with Urza out, his Construct grows with the deck's 15 artifacts, and Maskwood Nexus makes both Dragons; Jaxis was a sorcery-speed copy engine outside the combos.
 - **2026-11-03.** Out: Atarka, World Render, Dracogenesis, Kindred Discovery, Panharmonicon, Sarkhan, Soul Aflame. In: Ancient Copper Dragon, Doubling Season, Dragonlord Dromoka, Korvold, Fae-Cursed King, Scion of the Ur-Dragon. Use owned cards to finish the Dragon-copy rebuild: Ancient Copper Dragon, Doubling Season and Korvold form a Treasure/token/sacrifice engine; Dragonlord Dromoka protects the deck's committed turns while Ojutai stays; Scion of the Ur-Dragon replaces Sarkhan as the Dragon toolbox and copy effect.
 - **2026-11-03.** Out: Dragonborn Champion, Wrathful Red Dragon. In: Garth One-Eye, Scion of Draco. Refine the Dragon-copy rebuild: Garth One-Eye adds a flexible five-colour toolbox, and Scion of Draco adds an efficiently discounted Dragon and team-wide combat keywords; they replace the redundant Dragonborn Champion draw engine and Wrathful Red Dragon, whose damage-redirection package lacks a damage sweeper.
@@ -798,6 +803,7 @@ Deck key `thanos`, `decklists/JD/thanos-five-colour-turbo.md`. Simulated against
 
 ### Changes
 
+- **2026-11-05.** Retired (JD): the list is split up. 82 cards form the core of the Tymna/Thrasios Doomsday rebuild (`decklists/JD/tymna-thrasios-doomsday.md`, cEDH); Thanos, Deflecting Swat, Gamble, Jeska's Will, Ragavan and Red Elemental Blast lead the new Thanos deck (`decklists/JD/thanos-artifacts-and-dragons.md`, t5, with cards from Karn and The Ur-Dragon); 12 go to the binder (`documents/doomsday-thanos-rebuild-swaps.md`). The `thanos` key plays this list until the rewire PR points it at the new file.
 - **2026-11-01.** Out: Dragonlord Dromoka. In: Deadly Rollick. Dragonlord Dromoka out, Deadly Rollick in (JD, 11/01, not simulated): a free creature exile while Thanos is out, in place of a 6-mana lock that died to our own even wipe
 - **2026-11-01.** Out: An Offer You Can't Refuse, Arcane Signet, City of Brass, Crop Rotation, Deadly Rollick, Deathrite Shaman, Emergence Zone, Faerie Mastermind, Final Fortune, Flash Photography, Ignoble Hierarch, Misdirection, Redirect Lightning, Sevinne's Reclamation, Shifting Woodland, Smothering Tithe, Starting Town, Storm-Kiln Artist, Tarnished Citadel, Tataru Taru, The Cabbage Merchant, Tinder Wall. In: Ad Nauseam, Cavern of Souls, Desperate Ritual, Dragonlord Dromoka, Eladamri's Call, Gitaxian Probe, Grand Abolisher, Grim Monolith, Grim Tutor, Into the Flood Maw, Jeska's Will, Merchant Scroll, Otawara, Soaring City, Red Elemental Blast, Seething Song, Snapback, Sylvan Library, Taiga, Teferi, Time Raveler, Voice of Victory, Wooded Foothills, Worldly Tutor. JD's actual list (11/01): the repo list brought in line with the physical deck. Not simulated.
 - **2026-10-30.** Into the simulator (JD, 10/30): deck key `thanos` takes Scion's seat at t6, its plan file and its tests; Thanos's power-up modeled (impls/t6_thanos.rs). The Scion list moved to `decklists/pool/retired/` (a test seat only). No list change.

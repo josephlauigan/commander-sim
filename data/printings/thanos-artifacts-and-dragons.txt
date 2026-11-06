@@ -1,0 +1,100 @@
+1 Ancient Tomb (plst) TMP-315
+1 Arcane Signet (cmr) 297
+1 Astral Dragon (clb) 613
+1 Badlands (cei) 278
+1 Basalt Monolith (leb) 232
+1 Bayou (ced) 279
+1 Birds of Paradise (blc) 81
+1 Blightsteel Colossus (2xm) 357
+1 Blood Crypt (ecl) 349
+1 Bloodstained Mire (mh3) 352
+1 Breeding Pool (unf) 286
+1 Chaos Warp (pw24) 7
+1 Chromatic Lantern (fca) 61
+1 Chrome Mox (2xm) 358
+1 City of Brass (2x2) 403
+1 Coalition Relic (fut) 161
+1 Command Tower (mic) 170
+1 Cursed Mirror (who) 474
+1 Decimate (sld) 140
+1 Deflecting Swat (cmm) 698
+1 Demonic Tutor (sld) 1856
+1 Duplicant (ema) 220
+1 Enlightened Tutor (dmr) 412
+1 Expedition Map (lcc) 112
+1 Flooded Strand (mh3) 353
+1 Force of Negation (2x2) 346
+1 Force of Will (2xm) 340
+1 Forest (sos) 271
+1 Gamble (spg) 24
+1 Gilded Lotus (brr) 80
+1 Goldspan Dragon (sld) 1780
+1 Grim Monolith (ulg) 126
+1 Hallowed Fountain (unf) 277
+1 Imperial Seal (2x2) 354
+1 Jeska's Will (soa) 44
+1 Karn Liberated (2xm) 333
+1 Karn, Scion of Urza (sld) 1419
+1 Karn, the Great Creator (war) 1
+1 Lightning Greaves (sld) 99
+1 Lotus Petal (plst) TMP-294
+1 Mana Confluence (sld) 1012a
+1 Mana Drain (2x2) 348
+1 Mana Vault (ced) 260
+1 Marsh Flats (spg) 115
+1 Mind Stone (wth) 153
+1 Misty Rainforest (spg) 111
+1 Mox Diamond (sth) 138
+1 Mox Opal (2xm) 362
+1 Mystic Forge (brr) 99
+1 Nature's Lore (fic) 311
+1 Nicol Bolas, the Ravager (sld) 1158
+1 Oblivion Stone (brc) 153
+1 Overgrown Tomb (rvr) 296
+1 Pact of Negation (ltc) 523
+1 Plateau (ced) 280
+1 Polluted Delta (mh3) 356
+1 Portal to Phyrexia (bro) 365
+1 Ragavan, Nimble Pilferer (mh2) 315
+1 Ratchet Bomb (m14) 215
+1 Red Elemental Blast (leb) 170
+1 Rhystic Study (pcy) 45
+1 Rings of Brighthearth (mps) 21
+1 Sacred Foundry (unf) 285
+1 Scrubland (cei) 282
+1 Smothering Tithe (cmm) 57
+1 Solemn Simulacrum (brc) 161
+1 Sol Ring (cmm) 703
+1 Steam Vents (unf) 283
+1 Steel Hellkite (brc) 163
+1 Stomping Ground (rvr) 299
+1 Swords to Plowshares (pf25) 12
+1 Sylvan Library (spg) 155
+1 Taiga (cei) 283
+1 Teferi's Protection (mar) 51
+1 Temple Garden (unf) 281
+1 Terror of the Peaks (pspl) 1
+1 Thanos, the Mad Titan (msh) 400
+1 The Mightstone and Weakstone (bro) 238
+1 The One Ring (ltr) 451
+1 The Ur-Dragon (sld) 11
+1 Thran Dynamo (uds) 139
+1 Tropical Island (cei) 284
+1 Tundra (ced) 285
+1 Ugin, the Spirit Dragon (m21) 279
+1 Underground Sea (ced) 286
+1 Urza, Lord High Artificer (fca) 5
+1 Urza's Bauble (ice) 343
+1 Urza's Saga (plst) MH2-259
+1 Vampiric Tutor (soa) 100
+1 Verdant Catacombs (spg) 113
+1 Volcanic Island (ced) 287
+1 Walking Ballista (sld) 58
+1 Wastes (plg25) 2
+1 Watery Grave (rvr) 301
+1 Wayfarer's Bauble (5dn) 165
+1 Windswept Heath (mh3) 360
+1 Wooded Foothills (mh3) 361
+1 Worldly Tutor (dmr) 442
+1 Wrenn and Six (2x2) 334
+1 Wurmcoil Engine (sld) 1661
