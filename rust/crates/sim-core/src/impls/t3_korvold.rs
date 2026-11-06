@@ -115,6 +115,11 @@ pub fn sac_worst_land(g: &mut Game, q: PlayerId) -> Res {
             l = m;
         }
     }
+    sac_given_land(g, q, l)
+}
+
+/// q sacrifices this land: it goes to the graveyard, the sacrifice triggers see it, and an opposing Tergrid takes it
+pub fn sac_given_land(g: &mut Game, q: PlayerId, l: PermId) -> Res {
     let cd = g.perm(l).card();
     crate::glog!(g, "    {} sacrifices {}", pname(g, q), g.db.get(cd).name);
     super::lands::sac_land(g, q, l)?;
