@@ -507,6 +507,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Ral and the Implicit Maze")?;
     c.etb = Some(ral_etb);
     c.main1 = Some(ral_main);
+    c.saga = Some((super::common::saga_by_choice, |g, p, m| ral_main(g, m, p)));
     c.prio = Some(ral_prio);
     Ok(())
 }

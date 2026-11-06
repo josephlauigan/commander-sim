@@ -560,9 +560,11 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, BRAIDS)?;
     c.etb = Some(braids_etb);
     c.upkeep = Some(braids_lore);
+    c.saga = Some((super::common::saga_by_choice, |g, p, m| braids_lore(g, m, p))); // a person's proliferate
     let c = r.card(db, GIX)?;
     c.etb = Some(gix_etb);
     c.upkeep = Some(gix_lore);
+    c.saga = Some((super::common::saga_by_choice, |g, p, m| gix_lore(g, m, p)));
     let c = r.card(db, "Grave Betrayal")?;
     c.dies = Some(betrayal_dies);
     c.end_step = Some(betrayal_end);
@@ -828,7 +830,7 @@ fn braids_chapter(g: &mut Game, src: PermId, p: PlayerId, n: i64) -> Res {
 
 /// **Braids's Frightful Return** (read ahead Saga): enters on the chapter `braids_start` picks, with that many lore
 /// counters; skipped chapters don't trigger. Sacrificed after III. Lore counters are added at the upkeep (`braids_lore`)
-/// rather than after the draw step, and proliferate does not add one (a rare case in this deck).
+/// rather than after the draw step; the AI's proliferate does not add one (a rare case in this deck), a person's may.
 fn braids_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m != src {
         return Ok(());

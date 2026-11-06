@@ -25,6 +25,7 @@ pub mod human;
 pub mod karn;
 pub mod legal;
 pub mod mana;
+pub mod proliferate;
 pub mod protect;
 pub mod script;
 pub mod specs;

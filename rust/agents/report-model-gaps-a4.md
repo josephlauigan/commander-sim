@@ -43,3 +43,41 @@ Full in data/card_overrides.toml and data/audit.toml (the note names what is bor
 ## Shared-file changes
 impls/{mod,t1,rules,rules2,t5,combos,t6_combos_godo,t6_combos_extra}.rs, human/{mod,cards,human}.rs, dsl/mod.rs; data/card_overrides.toml,
 data/audit.toml. New: impls/model_gaps_a4.rs, human/model_gaps_a4.rs, tests/model_gaps_a4.rs.
+
+## Follow-up (JD 2026-11-05)
+### 5. Marvin and the self-named abilities (rule 201.5, 701.28c)
+- Tekuthal: Marvin borrows the donor's ordinary `options` hook (src = Marvin) like any other; the indestructible counter goes on Marvin
+  (`partials::tekuthal_do` puts it on `src`; Marvin carries `tekuthal_kw`). Removed `tekuthal_borrowed`/`_go` and the special case in
+  `newcards_b::marvin_options`; the person path is `marvin_hooks::tekuthal(g, p, m, m)` (the special arm in `marvin_abilities` is gone).
+- Kefka: a Marvin-borrowed {8} makes each opponent sacrifice a permanent and transforms nothing (`mine::kefka_ruin_do(g, src, p)` transforms
+  and sets the "kefka" milestone only when `src` is Kefka). Marvin, Kefka and Kefka's Ruin flag are untouched. The AI weighs the option as a plain
+  edict (utility 1.0 + 0.5 per opponent; the real transform stays 3.0 + 0.5 per opponent). A transformed Kefka (Ruler of Ruin) gives Marvin nothing.
+  Nothing in the Kefka deck's plan or combo code mentions Marvin (grepped `impls/kefka.rs`, `ai/`, `impls/*kefka*`): the only way the AI counted Marvin as a
+  transformer was this borrowed option, which no longer transforms.
+- Tests: `model_gaps_a4.rs` (Tekuthal AI and person, Kefka AI and person, Kefka's own {8} still transforms for the AI and a person), and
+  `model_gaps_a3.rs` (the old "Kefka transforms" test now asserts it does not, and that Ruler of Ruin gives Marvin nothing).
+- Data: Marvin's note in `data/card_overrides.toml` and `data/audit.toml` states the reading; re-exported; `audit --mine`: only Hexing Squelcher below Full.
+
+### 6. Proliferate: a person chooses (rule 701.27)
+- New `human/proliferate.rs`: `once(g, p)` lists every permanent (any controller, lands included) and player with a counter the engine models, the
+  AI's own picks first and marked "(what the AI would pick)" (your +1/+1, loyalty, charge and other counters, ready Sagas; opponents' -1/-1
+  counters and poison; your Incubator and Ozolith), then the person picks one at a time until "done" (like `pick_any`). Each chosen permanent or
+  player gets one more of each kind it has through the replacement effects (`repl::put_counters` / `counters` / `give_poison`: Doubling Season,
+  Hardened Scales, Vorinclex, Melira, Solemnity). Counter kinds: +1/+1 and -1/-1, loyalty, the Int counters under Charge (a Vivid land's two when
+  unset), Counters, Fate, Oil, Bloodline, Influence, Stun, Vanish, Defense, Revival, T0Stella (hours), T45Dragon (gold), T12Isshin (quest), T12
+  (time), lore on every Saga with card code, Urza's Saga (a land); poison, energy and experience on a player. A person may also pick their own
+  poison or -1/-1 and an opponent's +1/+1.
+- Hook: `common::proliferate` hands every proliferate a person controls to `once` at the top of each of its `times` rounds (Tekuthal's doubling
+  applies), then runs the same "whenever you proliferate" triggers and Voidwing Hybrid's return as the AI body. The AI body is untouched.
+  `mine::proliferate_all` (Vraska's 0, cast.rs, legends) sends a person to `common::proliferate(g, p, 1)`. So the sources a person controls are all
+  covered: Karn's Bastion, Vraska 0, Cankerbloom, High Perfect Morcant, Marvin using those two, compiled effects (dsl "proliferate": Evolution Sage
+  and the rest), Atraxa's and the other card-code proliferates.
+- Sagas: Ajani Fells the Godsire, Braids's Frightful Return, The Cruelty of Gix and Ral and the Implicit Maze got `saga` hooks (`common::saga_by_choice`
+  as the "wants" function: always false, so the AI never proliferates them and its play is unchanged); a person's choice runs the card's own lore
+  step (chapter triggers). Urza's Saga: the body of `common::saga_step` is now `saga_lore_one` (same code; the loop calls it) and a person's
+  proliferate calls it. The Braids doc comment was updated.
+- Tests: `tests/model_gaps_a4_proliferate.rs` (14): a chosen subset (an opponent's poison chosen and not chosen), the list and its AI-first order,
+  opponents' -1/-1 and +1/+1, own poison and -1/-1, choosing nothing, Tekuthal's two rounds, other counter kinds (Vivid charge, energy), one test per
+  source (Karn's Bastion, Vraska 0, Cankerbloom and through Marvin, High Perfect Morcant and through Marvin, Evolution Sage's compiled trigger,
+  `proliferate_all`), and the AI unchanged. `play_abilities.rs` (Vraska test) answers the new question.
+- Shared files: impls/{common,mine,alela,sephfs_cards,sweepers,partials,newcards_b}.rs, human/{mod,model_gaps_a4,marvin_hooks}.rs, data/{audit,card_overrides}.toml.

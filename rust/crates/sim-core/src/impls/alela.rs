@@ -2228,6 +2228,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Ajani Fells the Godsire")?;
     c.etb = Some(ajani);
     c.upkeep = Some(ajani_lore);
+    c.saga = Some((super::common::saga_by_choice, |g, p, m| ajani_lore(g, m, p))); // a person's proliferate
     c.prio = Some(ajani_prio);
     walker(r, db, "Venser, the Sojourner", &VENSER)?;
     let c = r.card(db, "Venser, the Sojourner")?;

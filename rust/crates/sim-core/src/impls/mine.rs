@@ -587,6 +587,9 @@ fn vraska_minus9(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> 
 /// mine.proliferate_all: proliferate: your Army and other creatures' +1/+1 counters, your loyalty, opponents' poison
 /// and -1/-1 counters
 pub fn proliferate_all(g: &mut Game, p: PlayerId) -> Res {
+    if crate::human::is_human(g, p) {
+        return crate::impls::common::proliferate(g, p, 1); // a person chooses (rule 701.27: `human::proliferate`); Tekuthal too
+    }
     for m in g.player(p).perms.clone() {
         if g.perm(m).phased {
             continue;

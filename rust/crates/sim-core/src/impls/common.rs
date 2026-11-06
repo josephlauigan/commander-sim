@@ -2884,7 +2884,7 @@ static NARSET: [WalkerAb; 1] =
 
 // ======================================================== proliferate
 /// the Vivid lands (lands.py: they enter with two charge counters, `DataKey::Charge`, 2 when unset)
-const VIVID: [&str; 5] = ["Vivid Creek", "Vivid Grove", "Vivid Marsh", "Vivid Meadow", "Vivid Crag"];
+pub(crate) const VIVID: [&str; 5] = ["Vivid Creek", "Vivid Grove", "Vivid Marsh", "Vivid Meadow", "Vivid Crag"];
 
 /// common.proliferate: each permanent / player with counters gets one more of each kind it has (you choose: your
 /// +1/+1, loyalty and other counters, opponents' -1/-1 and poison). Orc Armies are left to their hand tag in the four
@@ -2902,6 +2902,18 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
     };
     let times = times as i32 * (1 + extra); // Tekuthal
     for _ in 0..times.max(0) {
+        if crate::human::is_human(g, p) {
+            // a person chooses what to proliferate (rule 701.27): `human::proliferate`
+            crate::human::proliferate::once(g, p)?;
+            if g.over || !g.player(p).alive {
+                return Ok(());
+            }
+            if g.dsl_on {
+                crate::dsl::fire(g, "proliferate", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
+            }
+            crate::impls::card_models2::voidwing_return(g, p)?;
+            continue;
+        }
         let mut sagas = vec![];
         for m in g.player(p).perms.clone() {
             let x = g.perm(m);
@@ -3362,10 +3374,18 @@ pub fn make_construct(g: &mut Game, p: PlayerId, arts: i64) -> Res {
 /// turn), chapter III's search trigger can be answered with one more Construct before the Saga is sacrificed
 pub fn saga_step(g: &mut Game, p: PlayerId) -> Res {
     for (l, _) in g.player(p).sagas.clone() {
-        let Some(i) = g.player(p).sagas.iter().position(|x| x.0 == l) else { continue };
+        saga_lore_one(g, p, l)?;
+    }
+    Ok(())
+}
+
+/// one more lore counter on p's Urza's Saga `l` (the main phase's, or a person's proliferate): chapter II, chapter III
+pub fn saga_lore_one(g: &mut Game, p: PlayerId, l: PermId) -> Res {
+    {
+        let Some(i) = g.player(p).sagas.iter().position(|x| x.0 == l) else { return Ok(()) };
         if !g.player(p).lands.contains(&l) {
             g.player_mut(p).sagas.remove(i);
-            continue;
+            return Ok(());
         }
         let lore = g.player(p).sagas[i].1 + 1;
         g.player_mut(p).sagas[i].1 = lore;
@@ -3647,4 +3667,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         r.card(db, name)?.pval = Some(v);
     }
     register_phase6(r, db)
+}
+
+/// `Registry::saga` for a Saga whose lore counters only a person's proliferate adds (the AI never wants one: its
+/// proliferate is unchanged): it is a counter a person may choose (`human::proliferate`)
+pub(crate) fn saga_by_choice(_: &Game, _: PlayerId, _: PermId) -> bool {
+    false
 }

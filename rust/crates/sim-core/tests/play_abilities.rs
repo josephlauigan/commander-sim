@@ -137,7 +137,8 @@ fn a_planeswalker_ability() {
     assert!(!abil.is_empty(), "Vraska offers loyalty abilities");
     let start = g.perm(vr).loyalty.unwrap();
     let i = g.player(P0).perms.iter().position(|&x| x == vr).unwrap();
-    seat(&mut g, P0, vec![act(json!({"do": "use", "perm": i})), pick(0), pass()]); // 0: draw, lose 1, proliferate
+    // 0: draw, lose 1, proliferate; the person chooses what to proliferate (rule 701.27): Vraska, the only permanent with a counter
+    seat(&mut g, P0, vec![act(json!({"do": "use", "perm": i})), pick(0), pick(0), pass()]);
     human_main(&mut g, P0, false).unwrap();
     assert_eq!((g.perm(vr).loyalty, g.player(P0).life), (Some(start + 1), 39)); // proliferate counts Vraska too
 }
