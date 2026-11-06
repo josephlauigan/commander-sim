@@ -61,39 +61,40 @@ fn beats_stop(opts: &[Opt], engine: &str) {
     );
 }
 
-/// Fix 1 (the main cause): Rhystic Study on turn 2 with two one-mana counters in hand and three lands. Casting it
-/// taps out, so the old reserve penalty (0.7 x the value of holding) took it below "stop (hold mana)". Real pilots
-/// cast the Study; the new rule does not charge the reserve through turn 4 when no opponent is about to win.
+/// Fix 1 (the main cause): Rhystic Study on turn 3 with Ad Nauseam and a counter in hand and five lands. Casting the
+/// Study (3) leaves too little for Ad Nauseam (5), so the old reserve penalty (0.7 x the 7.0 of holding for it) took
+/// the Study to 3.5 against "stop (hold mana)" at 7.0. Real pilots cast the Study on turn 3; the new rule does not
+/// charge the reserve through turn 4 when no opponent is about to win.
 #[test]
-fn rhystic_study_is_cast_into_a_held_counter_on_turn_two() {
+fn rhystic_study_is_cast_on_turn_three_with_ad_nauseam_held() {
     let mut g = goldfish("kinnan-bonder-mana-combo", 3);
-    lands(&mut g, P0, "Island", 3, false);
-    hand(&mut g, P0, &["Rhystic Study", "Swan Song", "Flusterstorm"]);
+    lands(&mut g, P0, "Underground Sea", 5, false);
+    hand(&mut g, P0, &["Rhystic Study", "Ad Nauseam", "Swan Song"]);
     let opts = menu(&mut g);
-    assert!(stop(&opts) > 1.0, "a counter is held, so stop is worth something: {:?}", labels(&opts));
+    assert!(stop(&opts) > 5.0, "mana is held for Ad Nauseam: {:?}", labels(&opts));
     beats_stop(&opts, "Rhystic Study");
 }
 
-/// Fix 1b: later, with mana for both the engine and the held counter, "stop" no longer outvotes the engine (the old
-/// cast was offered at the plan's 55 against a stop worth 5.5 or more).
+/// Fix 1b: later, with the mana for both the engine and the held card, "stop" no longer outvotes the engine (the old
+/// cast was offered at the plan's 55 against a stop worth 7.0).
 #[test]
-fn a_late_engine_is_not_outvoted_by_stop_while_the_counter_stays_payable() {
+fn a_late_engine_is_not_outvoted_by_stop_while_the_held_card_stays_payable() {
     let mut g = goldfish("kinnan-bonder-mana-combo", 7);
-    lands(&mut g, P0, "Island", 6, false);
-    hand(&mut g, P0, &["Rhystic Study", "Swan Song", "Flusterstorm"]);
+    lands(&mut g, P0, "Underground Sea", 8, false);
+    hand(&mut g, P0, &["Rhystic Study", "Ad Nauseam"]);
     let opts = menu(&mut g);
-    assert!(stop(&opts) > 1.0, "{:?}", labels(&opts));
+    assert!(stop(&opts) > 5.0, "{:?}", labels(&opts));
     beats_stop(&opts, "Rhystic Study");
 }
 
-/// Fix 1c: Necropotence on turn 2 (Rograkh/Silas: hand_payable 269 by turn 4, cast 4%).
+/// Fix 1c: Necropotence on turn 3 (Rograkh/Silas: hand_payable 269 by turn 4, cast 4%).
 #[test]
-fn necropotence_is_cast_on_turn_two_with_a_counter_held() {
-    let mut g = goldfish("rograkh-silas-turbo-breach", 2);
-    lands(&mut g, P0, "Underground Sea", 3, false);
-    hand(&mut g, P0, &["Necropotence", "Swan Song", "Flusterstorm", "Mental Misstep"]);
+fn necropotence_is_cast_on_turn_three_with_ad_nauseam_held() {
+    let mut g = goldfish("rograkh-silas-turbo-breach", 3);
+    lands(&mut g, P0, "Underground Sea", 5, false);
+    hand(&mut g, P0, &["Necropotence", "Ad Nauseam", "Swan Song"]);
     let opts = menu(&mut g);
-    assert!(stop(&opts) > 1.0, "{:?}", labels(&opts));
+    assert!(stop(&opts) > 5.0, "{:?}", labels(&opts));
     beats_stop(&opts, "Necropotence");
 }
 
