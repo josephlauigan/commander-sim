@@ -1502,47 +1502,94 @@ fn prio_0(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
     0
 }
 
-/// Full: bounces a nonland permanent; its controller may sacrifice a land to copy it back at you
+/// who controls permanent m now (the player whose list holds it)
+fn controller_of(g: &Game, m: PermId) -> PlayerId {
+    g.players.iter().find(|pl| pl.perms.contains(&m)).map_or(g.perm(m).owner, |pl| pl.id)
+}
+
+/// Full: bounces a nonland permanent; its controller may sacrifice a land to copy it, and so may the controller of
+/// the copy's target, and so on down the chain
 fn chain(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     let Some(t) = ctx.target.filter(|&t| g.perm(t).on_bf) else { return Ok("gy") };
-    let q = g.perm(t).owner;
-    let ctrl = g.players.iter().find(|pl| pl.perms.contains(&t)).map_or(q, |pl| pl.id);
+    let ctrl = controller_of(g, t);
+    let mv = g.perm(t).cd.map(|c| g.db.get(c).cmc);
     apply_removal(g, Some(p), t, "bounce", None)?;
-    if crate::human::is_human(g, ctrl) {
-        chain_person(g, ctrl)?; // practice mode: the person decides about the copy
-        return Ok("gy");
-    }
-    if q == p || g.player(q).lands.len() < 5 {
-        return Ok("gy");
-    }
-    if let Some(back) = best_opp_nonland(g, q, |_, _| true).filter(|&b| pval(g, b) >= 5.0) {
-        let lands = g.player(q).lands.clone();
-        let l = first_min(&lands, |l| {
-            let x = g.perm(l);
-            (g.db.get(x.card()).tags.str(Tag::C).map_or(0, |s| s.chars().count()), !x.tapped)
-        })
-        .unwrap();
-        let cd = g.perm(l).card();
-        crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
-        crate::glog!(g, "    {} sacrifices {} to copy Chain of Vapor", pname(g, q), g.db.get(cd).name);
-        apply_removal(g, Some(q), back, "bounce", None)?;
-    }
+    // an AI that bounced its own permanent on its own turn is re-casting it: the copy may re-cast another
+    let recast = if ctrl == p && g.active == Some(p) { mv } else { None };
+    chain_links(g, ctrl, recast)?;
     Ok("gy")
 }
 
+/// "that permanent's controller may sacrifice a land of their choice. If the player does, they may copy this spell and
+/// may choose a new target for that copy." Each copy's new target's controller gets the same offer in turn. Every link
+/// costs a land, so the chain ends (the cap is only a guard).
+fn chain_links(g: &mut Game, first: PlayerId, recast: Option<u32>) -> Res {
+    let (mut who, mut recast) = (first, recast);
+    for _ in 0..40 {
+        let next = if crate::human::is_human(g, who) { chain_person(g, who)? } else { chain_ai(g, who, recast)? };
+        let Some(r) = next else { break };
+        (who, recast) = (r, None);
+    }
+    Ok(())
+}
+
+/// an AI's copy of Chain of Vapor: it sacrifices a land only with lands to spare (five or more) and a worthwhile new
+/// target: an opponent's key permanent (value 5 or more, the highest), else, when it just bounced its own permanent on
+/// its own turn to re-cast it, another of its own permanents with an enter effect that it can afford to re-cast too.
+/// Returns the controller of the copy's target (who is offered a copy next), None if it didn't copy.
+fn chain_ai(g: &mut Game, c: PlayerId, recast: Option<u32>) -> Res<Option<PlayerId>> {
+    if g.player(c).lands.len() < 5 {
+        return Ok(None);
+    }
+    let mut back = best_opp_nonland(g, c, |_, _| true).filter(|&b| pval(g, b) >= 5.0);
+    if back.is_none()
+        && let Some(mv) = recast
+    {
+        let room = total_mana(g, c, false);
+        let own: Vec<PermId> = g
+            .player(c)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| {
+                let x = g.perm(m);
+                x.on_bf
+                    && !x.phased
+                    && x.cd.is_some_and(|cd| {
+                        g.db.get(cd).cmc + mv <= room && g.registry.get(cd).is_some_and(|i| i.etb.is_some())
+                    })
+            })
+            .collect();
+        back = max_by(&own, |m| pval(g, m));
+    }
+    let Some(back) = back else { return Ok(None) };
+    let lands = g.player(c).lands.clone();
+    let l = first_min(&lands, |l| {
+        let x = g.perm(l);
+        (g.db.get(x.card()).tags.str(Tag::C).map_or(0, |s| s.chars().count()), !x.tapped)
+    })
+    .unwrap();
+    crate::glog!(g, "    {} copies Chain of Vapor, targeting {}", pname(g, c), g.perm(back).name);
+    super::t3_korvold::sac_given_land(g, c, l)?;
+    let r = controller_of(g, back);
+    apply_removal(g, Some(c), back, "bounce", None)?;
+    Ok(Some(r))
+}
+
 /// Chain of Vapor for a person: "that permanent's controller may sacrifice a land of their choice. If the player does, they
-/// may copy this spell and may choose a new target for that copy." The copy bounces another nonland permanent.
-fn chain_person(g: &mut Game, q: PlayerId) -> Res {
+/// may copy this spell and may choose a new target for that copy." The copy bounces another nonland permanent; its
+/// controller is returned (they are offered a copy next).
+fn chain_person(g: &mut Game, q: PlayerId) -> Res<Option<PlayerId>> {
     if g.player(q).lands.is_empty() {
-        return Ok(());
+        return Ok(None);
     }
     if !crate::human::choices::yes_no(g, q, "Chain of Vapor: sacrifice a land to copy it?")? {
-        return Ok(());
+        return Ok(None);
     }
     let lands = g.player(q).lands.clone();
     let Some(l) = crate::human::cards::pick_perm(g, q, "choose", "Chain of Vapor: sacrifice which land?", &lands, None)?
     else {
-        return Ok(());
+        return Ok(None);
     };
     let cd = g.perm(l).card();
     crate::glog!(g, "    {} sacrifices {} to copy Chain of Vapor", pname(g, q), g.db.get(cd).name);
@@ -1555,7 +1602,7 @@ fn chain_person(g: &mut Game, q: PlayerId) -> Res {
         .filter(|&m| g.perm(m).on_bf && g.perm(m).cd.is_some() && !(g.perm(m).owner != q && untargetable(g, m)))
         .collect();
     if cands.is_empty() {
-        return Ok(());
+        return Ok(None);
     }
     let Some(back) = crate::human::cards::pick_perm(
         g,
@@ -1566,10 +1613,12 @@ fn chain_person(g: &mut Game, q: PlayerId) -> Res {
         Some("don't copy it"),
     )?
     else {
-        return Ok(());
+        return Ok(None);
     };
     crate::glog!(g, "    {} copies Chain of Vapor, targeting {}", pname(g, q), g.perm(back).name);
-    apply_removal(g, Some(q), back, "bounce", None)
+    let r = controller_of(g, back);
+    apply_removal(g, Some(q), back, "bounce", None)?;
+    Ok(Some(r))
 }
 
 // ======================================================== Coat of Arms
