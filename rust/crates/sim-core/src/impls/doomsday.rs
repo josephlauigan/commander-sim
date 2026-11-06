@@ -1413,13 +1413,17 @@ pub fn led_use(g: &Game, p: PlayerId) -> bool {
     if crate::human::is_human(g, p) || active(g, p) {
         return false;
     }
-    let scn = if g.active == Some(p) { Scn::Main } else { Scn::EndStep };
+    // (in the main phase the discarded hand can not start a pile, there being no draw: the end step is where the diamond pays)
     g.player(p).hand.iter().copied().filter(|&c| &*g.db.get(c).name == DOOMSDAY).any(|c| {
-        pre_checks(g, p, c, scn).is_some_and(|en| {
-            plan_mode(g, p, c, scn, en, true).is_some_and(|led| {
-                // it is a use when the plain cast has no pile, or the diamond's pile is better
-                plan_mode(g, p, c, scn, en, false).is_none_or(|plain| score_of(&led.0) > score_of(&plain.0))
-            })
+        [Scn::Main, Scn::EndStep].into_iter().any(|scn| led_use_in(g, p, c, scn))
+    })
+}
+
+fn led_use_in(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> bool {
+    pre_checks(g, p, c, scn).is_some_and(|en| {
+        plan_mode(g, p, c, scn, en, true).is_some_and(|led| {
+            // it is a use when the plain cast has no pile, or the diamond's pile is better
+            plan_mode(g, p, c, scn, en, false).is_none_or(|plain| score_of(&led.0) > score_of(&plain.0))
         })
     })
 }
