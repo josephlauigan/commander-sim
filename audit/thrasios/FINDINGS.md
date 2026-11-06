@@ -8,6 +8,16 @@ its first sim is the baseline below. The findings of the previous list (t5, Basa
 Monolith + Rings + Ballista deck with attack taxes) are in `FINDINGS-old-list.md`, and the retired Thanos turbo list's
 (t6) in `audit/thanos/FINDINGS-old-list.md`.
 
+## 2026-11-06: why Doomsday is rarely cast (trace-only counters, branch doomsday-why; t6, look-ahead, 2,000 games, seed 500000)
+The run is identical to Baseline B apart from the new lines (the counters change nothing). Doomsday was in hand at a
+decision in **471 games (23.6%)**, offered 37 times, chosen 31. What declined it (share of decisions; end step 2,133 /
+main phase 7,423): **Demonic Consultation or Tainted Pact in hand 47% / 47%** (the guide: Line 1 is cheaper); **no flash
+enabler 38%** (end step only); **no {B}{B}{B} 10% / 42%**; no winning pile 0% / 6%; an opponent's lock 3% / 2%; the rest
+under 2% each. Tutors: on 3,685 own turns with a tutor in hand and Doomsday in the library, Doomsday is on the wish list
+98% of the time, but a tutor would fetch Thassa's Oracle 71%, Demonic Consultation 12%, Doomsday 5%. Why so few: the
+Consultation / Pact line is the deck's first line and wins first; Doomsday is the backup, and its main-phase cast often
+lacks {B}{B}{B}. Raw: `audit/thrasios/2026-11-06-doomsday-why.txt`.
+
 ## Baseline 2026-11-06 (after the rewire, Doomsday and Phase C engine work)
 Tymna/Thrasios, **first number for the Doomsday list**, t6 (cEDH), 2,000 games, seed 500000, loose, look-ahead, integration build
 daa0bfdb (main + #271-#276 with the overnight fixes): **34.4%** (95% CI 32.3-36.5) over t6; even share 25%: +9.4 points. No old-build
