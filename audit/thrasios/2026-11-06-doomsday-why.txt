@@ -1,0 +1,61 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  thrasios                     100 cards: Full 96, Full-auto 4, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 6 (cEDH, B5)  6 decks, 600 cards: Full 545, Full-auto 19, Approximate 20, Partial 16, Unmodeled 0
+
+2,000 games (1 tier, 2,000 per list per tier, profile loose), lookahead AI, 23 worker threads: about 4 minutes
+  progress  10.0%  0m56s elapsed, ~8m24s left
+  progress  20.0%  1m49s elapsed, ~7m17s left
+  progress  30.0%  2m46s elapsed, ~6m28s left
+  progress  40.0%  3m44s elapsed, ~5m37s left
+  progress  50.0%  4m41s elapsed, ~4m41s left
+  progress  60.0%  5m35s elapsed, ~3m43s left
+  progress  70.0%  6m23s elapsed, ~2m44s left
+  progress  80.0%  7m22s elapsed, ~1m50s left
+  progress  90.0%  8m15s elapsed, ~0m55s left
+  progress 100.0%  9m15s elapsed, ~0m00s left
+
+=== Tymna/Thrasios vs Tier 6 (cEDH, B5) [loose, lookahead AI, 2000 games] ===
+Win rate  33.9%   95% CI 31.9-36.0%   (even share 25%: +8.9 pts)
+Average turn (your own turn count) of wins 6.8, of losses 6.6
+Plan online (first Tymna draw, or the infinite-mana combo going off): 80.6% of games
+Wins by: combo 97%, damage 3%, timeout 0%
+  Opponent                                    seated  won when seated  eliminated you
+  Kinnan (kinnan-bonder-mana-combo)            50.5%            11.1%            5.7%
+  Rograkh/Thrasios (rograkh-thrasios-creatur   50.5%            17.5%            8.3%
+  Dack Fayden (dack-fayden-white-stax)         50.1%            25.1%           12.6%
+  Kraum/Tymna (kraum-tymna-blue-breach-midra   50.0%            27.1%           14.2%
+  Rograkh/Silas (rograkh-silas-turbo-breach)   49.8%            21.7%           10.4%
+  Sisay (sisay-legends-toolbox)                49.1%            29.9%           14.8%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+  -- Tier 6 report (2000 games, 1988 decisive; round-cap draws 0.6%) --
+  win share by seat of decisive games: seat 1 26.9% (real 34.1%, sim 30-38) OUT; seat 2 25.7% (real 27.3%, sim 24-31); seat 3 24.6% (real 22.5%, sim 19-26); seat 4 22.8% (real 17.4%, sim 14-21) OUT
+  by seat (1 goes first): wins, win round avg/median, mulligan hands, combo tries per game, stopped, removal+counters taken per game, died, death round avg, first out
+      seat 1: wins 535 (26.8% of games), win round 7.3/7.0, mulligans 45.2%, tries 0.31/game, stopped 20%, taken 1.00+0.93/game, died 73%, death round 7.0, first out 64%, wins by round <=4/5/6/8: 77/156/252/405 of 535, T4 mana 4.7 hand 4.9, commander out turn 2.6
+      seat 2: wins 510 (25.5% of games), win round 7.2/7.0, mulligans 46.1%, tries 0.31/game, stopped 23%, taken 0.87+0.95/game, died 74%, death round 7.0, first out 66%, wins by round <=4/5/6/8: 87/159/251/378 of 510, T4 mana 4.6 hand 4.8, commander out turn 2.5
+      seat 3: wins 489 (24.4% of games), win round 7.2/7.0, mulligans 43.4%, tries 0.28/game, stopped 22%, taken 0.81+0.96/game, died 75%, death round 7.0, first out 67%, wins by round <=4/5/6/8: 89/163/230/363 of 489, T4 mana 4.7 hand 4.8, commander out turn 2.5
+      seat 4: wins 454 (22.7% of games), win round 7.2/7.0, mulligans 45.2%, tries 0.26/game, stopped 22%, taken 0.73+0.87/game, died 77%, death round 7.0, first out 68%, wins by round <=4/5/6/8: 81/138/219/338 of 454, T4 mana 4.6 hand 4.8, commander out turn 2.4
+  Tymna/Thrasios: seated 2000, won 678 (33.9%; 1 by the round cap)
+      wins by: Thassa's Oracle + Demonic Consultation / Tainted Pact 522 (77%), Power Artifact / Rings of Brighthearth + Monolith 106 (16%), combo (unnamed) 28 (4%), damage 18 (3%), Kinnan + Basalt Monolith 2 (0%), other 1 (0%)
+      win round: average 6.8, median 6.0
+      went for a combo 847 times (0.42 per game) [Thassa's Oracle + Demonic Consultation / Tainted Pact 708, Power Artifact / Rings of Brighthearth + Monolith 115, Doomsday + Thassa's Oracle 19, Ad Nauseam into a win 3]; stopped 201 (24%)
+      stopped by: Thassa's Oracle + Demonic Consultation / Tainted Pact by Mental Misstep 26, Thassa's Oracle + Demonic Consultation / Tainted Pact by no card: step 2 (Demonic Consultation / Tainted Pact in response exiles the library) 23, Thassa's Oracle + Demonic Consultation / Tainted Pact by Swan Song 20, Thassa's Oracle + Demonic Consultation / Tainted Pact by Force of Will 15, Thassa's Oracle + Demonic Consultation / Tainted Pact by Mindbreak Trap 15, Thassa's Oracle + Demonic Consultation / Tainted Pact by Fierce Guardianship 14
+      stopped by card: Mental Misstep 26, no card: step 2 (Demonic Consultation / Tainted Pact in response exiles the library) 23, Swan Song 20, Force of Will 15, Mindbreak Trap 15, Fierce Guardianship 14
+      speed (median round): ready 6.0 (41% of games), one tutor away 5.0 (59% of games), went for a line 6.0 (40% of games), won 6.0
+      ready before go: went for it later in 55 of 826 ready games (median wait 0.0 rounds, mean 0.09); never went in 18
+      while ready and not gone it chose: Tymna the Weaver 27, Thrasios, Triton Hero 16, combo: Thassa's Oracle + Demonic Consultation / Tainted Pact 8, stop 7, stop (hold mana) 6, Birds of Paradise 4
+      while one tutor away (not ready) it chose: stop 310, stop (hold mana) 201, Tymna the Weaver 198, Thrasios, Triton Hero 160, Walking Ballista 126, Basalt Monolith ability 77, Basalt Monolith 67, Grim Tutor for Thassa's Oracle 43
+      tutors held when it passed then: Walking Ballista 241, Vampiric Tutor 134, Mystical Tutor 87, Worldly Tutor 43, Grim Tutor 36, Diabolic Intent 32, Eladamri's Call 32, Beseech the Mirror 24
+      mana T1-T5: 1.07 2.58 3.48 4.25 5.06; mana permanents: 0.00 0.48 0.67 0.86 1.16; mana cards in hand: 1.21 0.71 0.62 0.66 0.63 (castable 0.80 0.60 0.58 0.63 0.61); cast on T1-3: 0.62 0.27 0.27
+      held at the end of turns 1-3 with the mana to cast (card-turns): Chrome Mox 10 (T1 2/T2 3/T3 5; lost 10), Mox Diamond 9 (T1 4/T2 4/T3 1; lost 9), Sol Ring 4 (T1 1/T2 0/T3 3; lost 4), Noble Hierarch 3 (T1 0/T2 0/T3 3; lost 3), Basalt Monolith 3 (T1 0/T2 1/T3 2; lost 3), Mana Vault 2 (T1 1/T2 0/T3 1; lost 2); rituals and one-shots: Lotus Petal 14 (T1 6/T2 2/T3 6), Dark Ritual 11 (T1 3/T2 2/T3 6), Cabal Ritual 4 (T1 0/T2 2/T3 2), Lion's Eye Diamond 2 (T1 2/T2 0/T3 0)
+      Thrasios digs per seated game: end of the turn before its own 0.20, own turn 0.23 (of which a land onto the battlefield 0.05); end-of-turn windows per game 5.7, untapped mana at them 1.2, windows with Thrasios in play 2.4 offering 0.12 digs each
+      Doomsday: asked in 471 games (23.6% of 2000); chosen 31 times
+        end step, 2133 decisions: Demonic Consultation or Tainted Pact in hand 1004 (47%); end step: no flash enabler (Teferi, Valley Floodcaller, Borne Upon a Wind) 804 (38%); no {B}{B}{B} (with the enabler) to pay for it 212 (10%); an opponent's lock (Opposition Agent or a one-spell rule) 58 (3%); not castable now 36 (2%); offered 8 (0%); at 1 life 7 (0%); no winning pile from the cards and mana there are 4 (0%)
+        main, 7423 decisions: Demonic Consultation or Tainted Pact in hand 3494 (47%); no {B}{B}{B} (with the enabler) to pay for it 3142 (42%); no winning pile from the cards and mana there are 470 (6%); an opponent's lock (Opposition Agent or a one-spell rule) 154 (2%); kept for the end step (a pile wins there) 69 (1%); not castable now 41 (1%); offered 29 (0%); two or more stoppers, and no lock, Noxious Revival or counter 15 (0%); at 1 life 9 (0%)
+        own turns with a tutor in hand and Doomsday in the library: 3685; Doomsday on the wish list 3612 (98%); a tutor would fetch: Thassa's Oracle 2629, Demonic Consultation 445, Doomsday 172, Silence 158, Rings of Brighthearth 128, Basalt Monolith 96
+      mulligans: 850 of 2000 hands (42.5%): one 563, two 209, three 78
+      by mulligans (none/one/two/three): win % 37.3/30.9/25.4/26.9, median win round 6/6/6/8
+      counters resolved: 1707 (Force of Will 294, Force of Negation 284, Fierce Guardianship 271, Mental Misstep 251, Mindbreak Trap 205); hit Dack Fayden 343, Kinnan 298, Kraum/Tymna 284, Rograkh/Silas 271, Rograkh/Thrasios 259
+      removal resolved: 1648 (ability 670, Snapback 326, Deadly Rollick 251, Swords to Plowshares 207, Into the Flood Maw 193); hit Kinnan 390, Sisay 368, Rograkh/Thrasios 289, Dack Fayden 223, Rograkh/Silas 191
+      stax cast: 59 (Silence 50, Orim's Chant 9)
+
+(555s total)

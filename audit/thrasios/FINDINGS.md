@@ -8,6 +8,26 @@ its first sim is the baseline below. The findings of the previous list (t5, Basa
 Monolith + Rings + Ballista deck with attack taxes) are in `FINDINGS-old-list.md`, and the retired Thanos turbo list's
 (t6) in `audit/thanos/FINDINGS-old-list.md`.
 
+## 2026-11-06: Cabal Ritual counted for Doomsday's {B}{B}{B} (branch doomsday-cabal; t6, look-ahead, 2,000 games, seed 500000)
+The cost check counted Dark Ritual but not Cabal Ritual ({1}{B}: add {B}{B}{B}); now both (Dark Ritual first). Effect:
+main-phase decisions declined for "no {B}{B}{B}" 3,142 -> 3,083, Doomsday chosen 31 -> 33, the line attempted 19 -> 20,
+win rate 33.9% -> 33.8% (noise). Why so little: one Cabal Ritual is rarely the missing card. The missing {B}{B}{B} is the
+mana base: black comes from five duals (Underground Sea, Godless Shrine, Scrubland, Bayou, Overgrown Tomb), Command Tower,
+Mana Confluence, the fetches, the five-colour rocks and Birds, and two rituals; Cavern of Souls' coloured mana is for
+creature spells only, and Gemstone Caverns makes colour only with its luck counter. Three black sources at once is hard
+in four colours on turns 2-4. A list question for JD. Raw: `audit/thrasios/2026-11-06-doomsday-cabal.txt`.
+
+## 2026-11-06: why Doomsday is rarely cast (trace-only counters, branch doomsday-why; t6, look-ahead, 2,000 games, seed 500000)
+The run is identical to Baseline B apart from the new lines (the counters change nothing). Doomsday was in hand at a
+decision in **471 games (23.6%)**, offered 37 times, chosen 31. What declined it (share of decisions; end step 2,133 /
+main phase 7,423): **Demonic Consultation or Tainted Pact in hand 47% / 47%** (the guide: Line 1 is cheaper); **no flash
+enabler 38%** (end step only); **no {B}{B}{B} 10% / 42%**; no winning pile 0% / 6%; an opponent's lock 3% / 2%; the rest
+under 2% each. Tutors: on 3,685 own turns with a tutor in hand and Doomsday in the library, Doomsday is on the wish list
+98% of the time, but a tutor would fetch Thassa's Oracle 71%, Demonic Consultation 12%, Doomsday 5%. Why so few: the
+Consultation / Pact line is the deck's first line and wins first; Doomsday is the backup, and its main-phase cast often
+lacks {B}{B}{B}. Raw: `audit/thrasios/2026-11-06-doomsday-why.txt`.
+
+
 ## Baseline B 2026-11-06 (after #278-#284; main 63d783b5; look-ahead, loose, 2,000 games per tier, seed 500000)
 **33.9%** (31.9-36.0) at t6, against 34.4% in the morning baseline: -0.5, noise. Plan online 80.6% of games. Wins: Thassa's Oracle +
 Consultation / Pact 77%, Power Artifact / Rings 16%. **Doomsday is still rarely cast:** the line was attempted 19 times in 2,000

@@ -48,6 +48,8 @@ pub struct DeckT6 {
     pub away_held: Counter<String>,
     /// sums of the `mn|...` mana stats (see `sim_core::t6stats`)
     pub mn: Counter<String>,
+    /// --- doomsday-why: the `dd|...` Doomsday statistics (`sim_core::impls::doomsday::why_stat`, `tutor_stat`)
+    pub dd: Counter<String>,
 }
 
 /// one seat's tallies (seat 0 goes first), over all games
@@ -160,6 +162,9 @@ impl T6Tally {
             for (k, &v) in &p.stats {
                 if let Some(l) = k.strip_prefix("mn|") {
                     d.mn.add(l.to_string(), v);
+                }
+                if let Some(l) = k.strip_prefix("dd|") {
+                    d.dd.add(l.to_string(), v);
                 }
                 if let Some(l) = k.strip_prefix("spx|") {
                     d.instead.add(l.to_string(), v);
@@ -275,6 +280,52 @@ fn top(c: &Counter<String>, n: usize, label: &dyn Fn(&str) -> String) -> String 
 
 /// the speed lines of one deck: median round a line was ready / one tutor away / gone for / won, and what it did
 /// instead while ready (see `sim_core::t6stats` speed keys)
+/// --- doomsday-why: when a Doomsday in hand was or wasn't cast, and what the tutors went for (`dd|` statistics; only a deck
+/// that has them, i.e. one that held Doomsday or tutored with it in the library)
+fn render_doomsday(d: &DeckT6) -> String {
+    if d.dd.total() == 0 {
+        return String::new();
+    }
+    let g = |k: &str| d.dd.get(&k.to_string());
+    let mut o = format!(
+        "      Doomsday: asked in {} games ({:.1}% of {}); chosen {} times\n",
+        g("games asked"),
+        pct(g("games asked") as u64, d.seated),
+        d.seated,
+        g("chosen (cast begun)")
+    );
+    for t in ["end step", "main"] {
+        let pre = format!("asked|{t}|");
+        let mut v: Vec<(String, i64)> =
+            d.dd.most_common().into_iter().filter_map(|(k, n)| k.strip_prefix(&pre).map(|r| (r.to_string(), n))).collect();
+        if v.is_empty() {
+            continue;
+        }
+        let tot: i64 = v.iter().map(|x| x.1).sum();
+        v.sort_by(|a, b| b.1.cmp(&a.1));
+        let parts: Vec<String> = v.iter().map(|(r, n)| format!("{r} {n} ({:.0}%)", pct(*n as u64, tot as u64))).collect();
+        o += &format!("        {t}, {tot} decisions: {}\n", parts.join("; "));
+    }
+    let turns = g("tutor turns");
+    if turns > 0 {
+        let mut picks: Vec<(String, i64)> = d
+            .dd
+            .most_common()
+            .into_iter()
+            .filter_map(|(k, n)| k.strip_prefix("tutor would fetch|").map(|r| (r.to_string(), n)))
+            .collect();
+        picks.sort_by(|a, b| b.1.cmp(&a.1));
+        let top: Vec<String> = picks.iter().take(6).map(|(r, n)| format!("{r} {n}")).collect();
+        o += &format!(
+            "        own turns with a tutor in hand and Doomsday in the library: {turns}; Doomsday on the wish list {} ({:.0}%); a tutor would fetch: {}\n",
+            g("tutor: Doomsday on the wish list"),
+            pct(g("tutor: Doomsday on the wish list") as u64, turns as u64),
+            top.join(", ")
+        );
+    }
+    o
+}
+
 fn render_speed(d: &DeckT6) -> String {
     let n = d.seated.max(1);
     let one = |v: &[u32]| {
@@ -481,6 +532,7 @@ pub fn render(t: &T6Tally, keys: &[String], name: &dyn Fn(&str) -> String) -> St
         }
         o += &render_speed(d);
         o += &render_mana(d);
+        o += &render_doomsday(d);
         let m = d.mulls;
         o += &format!(
             "      mulligans: {} of {} hands ({:.1}%): one {}, two {}, three {}\n",
