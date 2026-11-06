@@ -26,7 +26,7 @@ use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::stack::{ability_window, ability_window_card, counter_window, equip_to, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::values::{
-    board_power, colors_of, epow, etgh, once_per_turn, player_hexproof, protected_from, pval, threat, untargetable,
+    board_power, colors_of, epow, etgh, once_per_turn, protected_from, pval, threat, untargetable,
 };
 use crate::engine::zones::{
     Enter, Tokens, agent_for, agent_take, die, discard_cards, draw, enter, exile_perm, landfall, leave,
@@ -723,7 +723,9 @@ fn garland_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let o = owner(g, src);
     crate::impls::garland::entered(g, o, src);
-    let mut opps: Vec<PlayerId> = g.opps(o).filter(|&q| g.player(q).alive && !player_hexproof(g, q)).collect();
+    let cols = colors_of(g, src);
+    let mut opps: Vec<PlayerId> =
+        g.opps(o).filter(|&q| g.player(q).alive && !crate::engine::values::player_hexproof_from(g, q, cols)).collect();
     if opps.len() > 1 {
         if g.player(o).key == crate::impls::garland::KEY {
             opps.retain(|&q| g.monarch != Some(q)); // crowning the monarch changes nothing: no new steal

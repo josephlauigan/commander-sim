@@ -300,7 +300,7 @@ pub fn mindbreak_exile(g: &mut Game, q: PlayerId) -> Res<usize> {
                 && x.controller != q
                 && !x.countered
                 && x.card.is_some()
-                && crate::engine::stack::counterable(g, x)
+                && crate::engine::stack::counterable_but_veil(g, x)
         })
         .map(|x| x.id)
         .collect();

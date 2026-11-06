@@ -308,7 +308,8 @@ fn rakdos_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
     if p != o {
         return Ok(());
     }
-    let opps: Vec<PlayerId> = g.opps(o).filter(|&q| !crate::engine::hooks::any_player_hexproof(g, q)).collect();
+    let cols = crate::engine::values::colors_of(g, src);
+    let opps: Vec<PlayerId> = g.opps(o).filter(|&q| !crate::engine::values::player_hexproof_from(g, q, cols)).collect();
     let Some(q) = max_by(&opps, |q| threat(g, o, q)) else { return Ok(()) };
     if !trigger_window(g, o, Some(src), "target opponent sacrifices two permanents or you draw two", Some(3.0))? {
         return Ok(());

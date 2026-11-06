@@ -886,7 +886,11 @@ fn take_priority(g: &mut Game, q: PlayerId, _id: u32) -> Res<bool> {
 /// a spell cast by its own card code (not cast_card): it goes on the stack with a round of priority. True if it
 /// resolves (the caller carries out its effect), false if it was countered.
 pub fn counter_window(g: &mut Game, p: PlayerId, c: CardId, imp: f64, aff: Vec<(PlayerId, f64)>) -> Res<bool> {
-    if g.db.get(c).tag(Tag::Unc) || crate::engine::hooks::any_uncounterable(g, p, c) || mistrised(g, c) {
+    if g.db.get(c).tag(Tag::Unc)
+        || crate::engine::hooks::any_uncounterable(g, p, c)
+        || mistrised(g, c)
+        || crate::engine::values::veil_shield(g, p)
+    {
         return Ok(true);
     }
     let name = g.db.get(c).name.to_string();
@@ -939,7 +943,15 @@ pub fn mistrised(g: &Game, c: CardId) -> bool {
     g.unc_cast == Some((c, g.turn_stamp()))
 }
 
+/// can the spell on the stack be countered: not an uncounterable card, not made uncounterable (Allosaurus Shepherd,
+/// Cavern of Souls) and not under Veil of Summer this turn
 pub fn counterable(g: &Game, it: &StackItem) -> bool {
+    let veiled = it.kind == StackKind::Spell && crate::engine::values::veil_shield(g, it.controller);
+    counterable_but_veil(g, it) && !veiled
+}
+
+/// `counterable` without Veil of Summer: Mindbreak Trap exiles a spell, it does not counter it (Veil does not stop it)
+pub fn counterable_but_veil(g: &Game, it: &StackItem) -> bool {
     let Some(c) = it.card else { return true };
     !(g.db.get(c).tag(Tag::Unc) || crate::engine::hooks::any_uncounterable(g, it.controller, c) || mistrised(g, c))
 }
@@ -1003,6 +1015,10 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
     {
         return Ok(()); // Misdirection, Commandeer, Sudden Substitution
     }
+    // a counterspell aimed at q's spell: Veil of Summer, in response (any counter: the spell can't be countered)
+    if top.ctx.counter.is_some() && crate::cardcode::veil_respond(g, q, top_id)? {
+        return Ok(());
+    }
     // --- card-models-2: a counterspell aimed at q's important spell: Redirect Lightning turns it on another spell
     if top.ctx.counter.is_some() && crate::impls::t6_redirects::redirect_counter(g, q, top_id)? {
         return Ok(());
@@ -1012,7 +1028,9 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
     {
         return Ok(()); // nothing to respond with
     }
-    if !counterable(g, &top) {
+    // under Veil of Summer only Mindbreak Trap answers it (it exiles; it does not counter)
+    let veiled = !counterable(g, &top) && counterable_but_veil(g, &top) && top.ctx.counter.is_none();
+    if !counterable(g, &top) && !veiled {
         return Ok(());
     }
     let c = top.card.unwrap();
@@ -1041,7 +1059,11 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
     if nc == 0 {
         return Ok(());
     }
-    let pk = pick_counter(g, q, c);
+    let only = veiled.then_some("Mindbreak Trap");
+    let pk = pick_counter_only(g, q, c, only);
+    if only.is_some() && pk.is_none() {
+        return Ok(());
+    }
     if let Some(pk) = pk {
         // Force of Will pitched (no mana for it): two cards for one
         let (cg, cp) = counter_cost(g, pk, Some(c), Some(q));
@@ -1064,8 +1086,9 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
             }
         }
     } else {
-        // the look-ahead decides counters to the active player's spell in their main phase
-        match ai::search_counter(g, q, top.controller, c, top.generic) {
+        // the look-ahead decides counters to the active player's spell in their main phase (not one under Veil of
+        // Summer: its copies play out an ordinary counterspell)
+        match if veiled { None } else { ai::search_counter(g, q, top.controller, c, top.generic) } {
             Some(false) => return Ok(()),
             Some(true) => {}
             None => {
@@ -1075,14 +1098,14 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
             }
         }
     }
-    if imp >= 6.0 && crate::cardcode::hullbreaker_counter(g, q, c)? {
+    if !veiled && imp >= 6.0 && crate::cardcode::hullbreaker_counter(g, q, c)? {
         g.bounced_spell = true;
         if let Some(it) = g.stack.iter_mut().find(|it| it.id == top_id) {
             it.countered = true;
         }
         return Ok(());
     }
-    if let Some(ctr) = pick_counter(g, q, c) {
+    if let Some(ctr) = pick_counter_only(g, q, c, only) {
         cast_counter_spell(g, q, ctr, top_id)?;
     }
     Ok(())
@@ -1189,6 +1212,11 @@ pub fn counter_on_top(g: &Game, q: PlayerId) -> Option<CardId> {
 
 /// the counterspell q would use against c, if any (the hand, and the top of the library under a Mystic Forge)
 pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
+    pick_counter_only(g, q, c, None)
+}
+
+/// `pick_counter`, limited to the counterspell of that name (Mindbreak Trap, the one answer to a Veiled spell)
+pub fn pick_counter_only(g: &Game, q: PlayerId, c: CardId, only: Option<&str>) -> Option<CardId> {
     let mut best: Option<CardId> = None;
     let top = counter_on_top(g, q);
     let mut loose = false; // best is a pitch (Force of Will) or alternative-cost pick: any counter paid in mana beats it
@@ -1196,6 +1224,9 @@ pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
     for &ctr in g.player(q).hand.iter().chain(top.iter()) {
         let zone = if g.player(q).hand.contains(&ctr) { "hand" } else { "lib" };
         let d = g.db.get(ctr);
+        if only.is_some_and(|n| &*d.name != n) {
+            continue;
+        }
         let t = &d.tags;
         if !crate::ai::rules::followup_ok(g, q, ctr) {
             continue; // --- phase4-rules: a Pact whose upkeep (with every debt owed) can't be paid
@@ -1434,9 +1465,6 @@ fn cast_counter_spell_from_hand(g: &mut Game, q: PlayerId, ctr: CardId, target: 
     if !g.player(q).hand.contains(&ctr) {
         return Ok(false);
     }
-    if crate::cardcode::veil_response(g, t.controller, q, ctr)? {
-        return Ok(false);
-    }
     if !pay_counter(g, q, ctr, t.card)? {
         return Ok(false);
     }
@@ -1511,6 +1539,12 @@ fn resolve_counter_with(g: &mut Game, q: PlayerId, ctr: CardId, target: u32, sof
         return Ok(());
     }
     let (p, c) = (t.controller, t.card.unwrap());
+    if crate::engine::values::veil_shield(g, p) && &*g.db.get(ctr).name != "Mindbreak Trap" {
+        // Veil of Summer: the spell can't be countered, so the counterspell does nothing (Mindbreak Trap exiles)
+        let (sn, cn) = (g.db.get(c).name.to_string(), g.db.get(ctr).name.to_string());
+        crate::glog!(g, "    {sn} can't be countered (Veil of Summer): {cn} does nothing");
+        return Ok(());
+    }
     let d = g.db.get(ctr);
     let mut soft = soft_n.unwrap_or_else(|| d.tags.int(Tag::Soft).unwrap_or(0));
     if &*d.name == "Flusterstorm" {
@@ -1598,7 +1632,10 @@ pub fn settle_stack(g: &mut Game) -> Res {
         }
         let c = it.card.unwrap();
         if let Some(tgt) = it.ctx.counter {
-            if let Some(x) = g.stack.iter_mut().find(|x| x.id == tgt) {
+            let shielded = g.stack.iter().any(|x| {
+                x.id == tgt && x.kind == StackKind::Spell && crate::engine::values::veil_shield(g, x.controller)
+            });
+            if let Some(x) = g.stack.iter_mut().find(|x| x.id == tgt && !shielded) {
                 x.countered = true;
                 x.countered_by = Some(c);
             }

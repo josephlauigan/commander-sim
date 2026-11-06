@@ -631,6 +631,8 @@ pub struct Player {
     pub urabrask: Option<TurnStamp>,
     /// the turn this player last scried or surveilled (Desperate Futurescribe)
     pub scry_turn: Option<TurnStamp>,
+    /// the turn Veil of Summer resolved for this player (`engine::values::veil_shield`): no counters, hexproof from U/B
+    pub veil_turn: Option<TurnStamp>,
     /// cards exiled with "you may play them this turn" (held in hand)
     pub impulse: Vec<CardId>,
     /// practice mode: exiled cards (in any player's exile) this player may play this turn without paying their mana costs
@@ -899,6 +901,7 @@ impl Player {
             miracle: None,
             urabrask: None,
             scry_turn: None,
+            veil_turn: None,
             impulse: vec![],
             free_play: vec![],
             milled_keys: vec![],

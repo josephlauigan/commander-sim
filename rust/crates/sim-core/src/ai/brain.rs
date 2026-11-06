@@ -22,7 +22,7 @@ use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, cost_of, mana_units, pay, phyrexian_life, seq_cost, total_mana};
 use crate::engine::removal::legal_targets;
 use crate::engine::stack::free_counter;
-use crate::engine::values::{commander_out, epow, etgh, has, player_hexproof, pval, shielded, threat, untargetable};
+use crate::engine::values::{commander_out, epow, etgh, has, player_hexproof_from, pval, shielded, threat, untargetable};
 use crate::engine::zones::{die, draw, max_by, min_by, sac_worth};
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt};
@@ -1035,7 +1035,7 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
             _ => 0,
         };
         for &q in &s.opps {
-            if player_hexproof(g, q) {
+            if player_hexproof_from(g, q, d.colors) {
                 continue;
             }
             let life = g.player(q).life;

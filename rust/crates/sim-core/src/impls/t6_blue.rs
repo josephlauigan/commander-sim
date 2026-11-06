@@ -22,7 +22,7 @@ use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::stack::trigger_window;
-use crate::engine::values::{has_type, pval, untargetable};
+use crate::engine::values::{colors_of, has_type, pval, untargetable};
 use crate::engine::zones::{Enter, Tokens, discard_cards, agent_for, agent_take, draw, enter, make_tokens, max_by, mill, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -280,7 +280,8 @@ fn tidecaller_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     if !trigger_window(g, o, Some(src), &format!("mill {n}"), Some(2.0))? {
         return Ok(());
     }
-    let Some(&t) = crate::dsl::players(g, o, Some("target_player"), &crate::dsl::DslCtx::default()).first() else {
+    let ctx = crate::dsl::DslCtx::default();
+    let Some(&t) = crate::dsl::players_from(g, o, Some("target_player"), &ctx, colors_of(g, src)).first() else {
         return Ok(());
     };
     crate::glog!(g, "    Exhibition Tidecaller: {} mills {}", g.player(t).name, n);

@@ -92,31 +92,65 @@ pub fn replaced_tag_engine(name: &str) -> bool {
 const CTHRESH: [&str; 10] =
     ["seph", "sauron", "galadriel", "yshtola", "alela", "kefka", "najeela", "omnath", "sheoldred", "cloud"];
 
-/// rules.veil_response: q is about to counter p's spell with a blue or black counterspell: p answers with Veil of
-/// Summer (its spells can't be countered this turn, it draws a card)
-pub fn veil_response(g: &mut Game, p: PlayerId, _q: PlayerId, ctr: CardId) -> Res<bool> {
-    if g.humans.get(p).is_some() {
-        return Ok(false); // a person casts their own Veil
-    }
-    let d = g.db.get(ctr);
-    let blue_black =
-        d.pips.contains('U') || d.pips.contains('B') || matches!(&*d.name, "Force of Will" | "Force of Negation");
-    if CTHRESH.contains(&g.player(p).key) || !blue_black {
+/// Veil of Summer, the AI's answer: q's spell is the target of a counterspell (stack item `top_id`, on the stack
+/// already, its caster has paid): q casts Veil of Summer in response, whatever the counterspell is (blue, black, a red
+/// blast, colourless). Once Veil resolves the counterspell does nothing (`stack::resolve_counter_with`), and so does
+/// every later one this turn. Your decks never answer this way (`CTHRESH`); a person casts their own Veil.
+pub fn veil_respond(g: &mut Game, q: PlayerId, top_id: u32) -> Res<bool> {
+    if crate::human::is_human(g, q) || CTHRESH.contains(&g.player(q).key) {
         return Ok(false);
     }
-    let Some(v) = g.player(p).hand.iter().copied().find(|&c| &*g.db.get(c).name == "Veil of Summer") else {
+    let Some(target) = g.stack.iter().find(|x| x.id == top_id).and_then(|x| x.ctx.counter) else {
         return Ok(false);
     };
-    if !can_pay(g, p, 0, "G", false) || !castable(g, p, v, "hand") {
+    let Some(spell) = g.stack.iter().find(|x| x.id == target).cloned() else { return Ok(false) };
+    if spell.controller != q || spell.countered || !crate::engine::stack::counterable(g, &spell) {
         return Ok(false);
     }
-    pay(g, p, 0, "G", false)?;
-    remove_card(&mut g.player_mut(p).hand, v);
-    g.player_mut(p).gy.push(v);
-    on_cast(g, p, v)?;
-    crate::glog!(g, "    {} responds with Veil of Summer: the spell can't be countered", pname(g, p));
-    draw(g, p, 1, false)?;
+    let Some(v) = g.player(q).hand.iter().copied().find(|&c| &*g.db.get(c).name == VEIL) else {
+        return Ok(false);
+    };
+    let (gn, pips) = crate::engine::mana::cost_of(g, q, v);
+    if !castable(g, q, v, "hand") || !can_pay(g, q, gn, &pips, false) {
+        return Ok(false);
+    }
+    pay(g, q, gn, &pips, false)?;
+    crate::glog!(g, "    {} responds with Veil of Summer", pname(g, q));
+    crate::engine::cast::cast_card(g, q, v, "hand", Ctx::default())?;
     Ok(true)
+}
+
+pub const VEIL: &str = "Veil of Summer";
+
+/// Veil of Summer resolves: "Draw a card if an opponent has cast a blue or black spell this turn. Spells you control
+/// can't be countered this turn. You and permanents you control gain hexproof from blue and from black until end of
+/// turn." The permanents are the ones there are as it resolves (a permanent that enters later this turn has none).
+fn veil_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    let st = g.turn_stamp();
+    let blue_or_black = g.players.iter().filter(|x| x.id != p).any(|x| match &x.turn_casts {
+        Some((s, cs)) if *s == st => cs.iter().any(|&c| {
+            let k = g.db.get(c).colors;
+            k.has('U') || k.has('B')
+        }),
+        _ => false,
+    });
+    if blue_or_black {
+        draw(g, p, 1, false)?;
+    }
+    g.player_mut(p).veil_turn = Some(st);
+    let mut mine: Vec<PermId> = g.player(p).perms.iter().chain(g.player(p).lands.iter()).copied().collect();
+    mine.retain(|&m| g.perm(m).on_bf);
+    for m in mine {
+        eot_kw(g, m, "hx_U");
+        eot_kw(g, m, "hx_B");
+    }
+    crate::glog!(
+        g,
+        "    Veil of Summer: {}'s spells can't be countered this turn, hexproof from blue and black{}",
+        pname(g, p),
+        if blue_or_black { " (an opponent cast a blue or black spell: draws a card)" } else { "" }
+    );
+    Ok("gy")
 }
 
 // ================================================================== removal restrictions and taxes
@@ -1500,6 +1534,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.blocks = Some(brimaz_block);
     at_once(c, Event::Blocks, false);
     r.card(db, "Allosaurus Shepherd")?.uncounterable = Some(shepherd);
+    r.card(db, VEIL)?.resolve = Some(veil_resolve);
     let c = r.card(db, "Mirkwood Bats")?;
     c.token_created = Some(bats_make);
     at_once(c, Event::TokenCreated, false);

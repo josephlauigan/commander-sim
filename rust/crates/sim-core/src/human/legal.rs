@@ -341,7 +341,10 @@ pub fn spell_targets(g: &Game, p: PlayerId, c: CardId) -> Option<Vec<Target>> {
             if t.has(Tag::Alsoart) && !g.is_creature(m) && !ty_has(g, m, Types::ARTIFACT) {
                 continue;
             }
-            if untargetable(g, m) || protected_from(g, m, pips) {
+            if untargetable(g, m)
+                || protected_from(g, m, pips)
+                || (x.owner != p && crate::impls::tymna_cards::hexproof_from(g, m, pips))
+            {
                 continue;
             }
             if t.has(Tag::Nonblack) && colors_of(g, m).has('B') {
@@ -371,7 +374,15 @@ pub fn spell_targets(g: &Game, p: PlayerId, c: CardId) -> Option<Vec<Target>> {
         }
     }
     if t.has(Tag::Face) {
-        out.extend(g.players.iter().filter(|q| player_targetable(g, q.id)).map(|q| Target::Player(q.id)));
+        out.extend(
+            g.players
+                .iter()
+                .filter(|q| {
+                    player_targetable(g, q.id)
+                        && (q.id == p || !crate::engine::values::player_hexproof_from(g, q.id, pips))
+                })
+                .map(|q| Target::Player(q.id)),
+        );
     }
     Some(out)
 }
