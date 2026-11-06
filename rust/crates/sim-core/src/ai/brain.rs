@@ -280,8 +280,10 @@ fn hold_of(g: &Game, p: PlayerId, s: &Situation, held: &[CardId]) -> (Option<Car
     if !is_main(hand_key(g, p)) {
         // outside decks: three opponents will cast something worth answering this cycle
         let n = held.iter().filter(|&&x| g.db.get(x).tag(Tag::Ctr)).count();
-        if n == 0 && pool_deck(g, p) {
-            // t5-hold-b: protection alone has its own term, not the counter floor
+        let protection_only = held.iter().all(|&x| g.db.get(x).tag(Tag::Prot));
+        if n == 0 && protection_only && pool_deck(g, p) {
+            // t5-hold-b: protection alone has its own term, not the counter floor (instant removal keeps the floor: it
+            // was cast on 32% of the turns it was held, against 5% for protection)
             let Some(pv) = protection_hold(g, p, caution) else { return (None, 0.0) };
             return (Some(c), pv - if s.turn <= 2 { 2.0 } else { 0.0 });
         }

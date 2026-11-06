@@ -164,3 +164,15 @@ fn welding_jar_is_cast_once_an_artifact_is_out() {
     let s = brain::Situation::new(&g, P0);
     assert!(brain::card_utility(&g, P0, &s, jar).is_some_and(|u| u > 0.0));
 }
+
+#[test]
+fn a_held_instant_removal_spell_keeps_the_old_floor() {
+    // the protection term is for protection alone: with an instant removal spell held too (no counter), the old
+    // outside-deck floor applies as before, even with nothing of ours on the battlefield to protect
+    let mut g = miirym_table();
+    hand(&mut g, P0, &["Beast Within"]);
+    let (c, v) = held(&g);
+    assert!(c.is_some(), "the removal spell's mana is still kept up");
+    let caution = style(&g, g.player(P0).key).caution;
+    assert!(v >= 1.5 - 1e-9 && v >= (1.5 + 2.5 * caution * 0.0) - 1e-9, "the outside-deck floor: {v}");
+}
