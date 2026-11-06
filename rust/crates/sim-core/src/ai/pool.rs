@@ -133,6 +133,14 @@ fn generic_prio_base(g: &Game, p: PlayerId, c: CardId) -> i32 {
         // seat's rule; Kefka's hand AI had its own): it is sacrificed at the end step, so never for nothing
         return crate::impls::tymna_partners::breach_prio(g, p);
     }
+    // --- t5-hold-b: Garruk's Uprising draws a card for each creature of power 4 or more that enters (and when it
+    // does, if one is out): cast it with one out (the draw is immediate), or with two in hand to come (before them).
+    // The derived worth could not see the engine, and it sat in Miirym's hand for eight turns with 14 mana spare.
+    if t.has(Tag::Uprising) && !d.creature {
+        let big = |m: &PermId| g.is_creature(*m) && !g.perm(*m).phased && epow(g, *m) >= 4;
+        let coming = pl.hand.iter().filter(|&&x| !g.db.get(x).land && g.db.get(x).creature && g.db.get(x).pow >= 4).count();
+        return if pl.perms.iter().any(big) { 60 } else if coming >= 2 { 50 } else { 0 };
+    }
     if super::values::on(g, p) {
         return derived_prio(g, p, c); // --- phase4-values
     }
@@ -1130,6 +1138,18 @@ fn worth_protecting(g: &Game, p: PlayerId, m: PermId) -> bool {
         || x.cd.is_some_and(|c| {
             let n = &g.db.get(c).name;
             kc.iter().any(|k| *k.0 == **n) || super::plan_data::protects(g, p, n)
+        })
+}
+
+/// t5-hold-b: what `worth_protecting` names without its value clause: a commander, a combo piece, or a plan file's key
+/// card or protect row. The hold for a protection spell is kept only for these (`brain::protection_hold`)
+pub(super) fn worth_holding_for(g: &Game, p: PlayerId, m: PermId) -> bool {
+    let x = g.perm(m);
+    let kc = plans::config(g.player(p).key).key_cards;
+    x.is_cmd
+        || x.cd.is_some_and(|c| {
+            let n = &g.db.get(c).name;
+            crate::cardcode::is_combo_piece(g, c) || kc.iter().any(|k| *k.0 == **n) || super::plan_data::protects(g, p, n)
         })
 }
 

@@ -12,7 +12,7 @@
 //! The temperature sets how human the AI is: low is near-optimal and predictable, high is looser. Each deck also has
 //! a play style (aggression, caution) that shifts the utilities.
 
-use super::hand_key; // --- phase4-hand-off
+use super::{hand_key, jd_deck}; // --- phase4-hand-off
 use super::{act, decks, explain, gumbel_order, is_main, pool, sample, search, sig, style, temp};
 use crate::cards::Types;
 use crate::engine::altcost;
@@ -242,6 +242,30 @@ pub fn hold_value(g: &Game, p: PlayerId, s: &Situation) -> (Option<CardId>, f64)
     (hc, hv)
 }
 
+/// t5-hold-b: P(an opponent answers my worthy permanent at instant speed) below which a pool deck keeps no mana up for
+/// protection (`removal_risk`: an opponent that may hold instant removal and has two mana open)
+const PROT_RISK_MIN: f64 = 0.25;
+
+/// t5-hold-b: a pool deck (Tiers 1-5 outside decks): not one of JD's or Avery's decks (`is_main`, `jd_deck`) and not a
+/// Tier 6 deck, whose hold rules stay as they were
+fn pool_deck(g: &Game, p: PlayerId) -> bool {
+    let k = g.player(p).key;
+    !is_main(k) && !jd_deck(k) && !crate::impls::t6_plans::is_t6(g, p) && !g.player(p).t6
+}
+
+/// t5-hold-b: what mana kept up for protection alone is worth to a pool deck: nothing (None) unless it has a commander,
+/// a combo piece or a plan file's key card on the battlefield to protect and an opponent can plausibly answer it at
+/// instant speed (`removal_risk`); then it grows with that risk. The old floor held 4.8 mana on 2% of Tier 5 turns
+/// (Miirym mostly) and the protection was used 5% of the time (audit/realism/t5-hold-2026-11-06).
+fn protection_hold(g: &Game, p: PlayerId, caution: f64) -> Option<f64> {
+    let worth = g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && !g.perm(m).phased && pool::worth_holding_for(g, p, m));
+    if !worth {
+        return None;
+    }
+    let risk = removal_risk(g, p);
+    (risk >= PROT_RISK_MIN).then(|| 1.0 + 3.0 * caution * risk)
+}
+
 /// brain._hold: the cheapest held card, and how much keeping its mana up is worth
 fn hold_of(g: &Game, p: PlayerId, s: &Situation, held: &[CardId]) -> (Option<CardId>, f64) {
     let pl = g.player(p);
@@ -252,6 +276,11 @@ fn hold_of(g: &Game, p: PlayerId, s: &Situation, held: &[CardId]) -> (Option<Car
     if !is_main(hand_key(g, p)) {
         // outside decks: three opponents will cast something worth answering this cycle
         let n = held.iter().filter(|&&x| g.db.get(x).tag(Tag::Ctr)).count();
+        if n == 0 && pool_deck(g, p) {
+            // t5-hold-b: protection alone has its own term, not the counter floor
+            let Some(pv) = protection_hold(g, p, caution) else { return (None, 0.0) };
+            return (Some(c), pv - if s.turn <= 2 { 2.0 } else { 0.0 });
+        }
         v = v.max(1.5 + 2.5 * caution * n.min(2) as f64);
     }
     if s.turn <= 2 {
@@ -1339,8 +1368,8 @@ pub fn engine_rule(g: &Game, p: PlayerId, c: CardId, s: &Situation, near: bool) 
 /// --- c1b-engines: trace only. A Tier 6 deck stopped in its main phase: print the nonland cards it could pay for and
 /// what the cast logic made of each (its utility, or why it was not offered), with the stop's own utility. Reads the
 /// game, never changes it, draws no random numbers.
-fn stop_diag(g: &mut Game, p: PlayerId, opts: &[Opt]) {
-    if g.log.is_none() || !crate::impls::t6_plans::is_t6(g, p) {
+fn stop_diag(g: &mut Game, p: PlayerId, opts: &[Opt], post: bool) {
+    if g.log.is_none() || !(crate::impls::t6_plans::is_t6(g, p) || std::env::var_os("STOP_DIAG").is_some()) {
         return;
     }
     let s = Situation::new(g, p);
@@ -1386,7 +1415,8 @@ fn stop_diag(g: &mut Game, p: PlayerId, opts: &[Opt]) {
     let (mana, hand) = (s.mana, s.hand);
     crate::glog!(
         g,
-        "      [{n} stops (u {stop_u:.1}; hold {hold}, plan {plan:.1}, near {near}), mana {mana}, hand {hand}; payable: {}]",
+        "      [{n} stops{} (u {stop_u:.1}; hold {hold}, plan {plan:.1}, near {near}), mana {mana}, hand {hand}; payable: {}]",
+        if post { " in main 2" } else { "" },
         out.join("; ")
     );
 }
@@ -1459,7 +1489,7 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
             explain(g, p, &labels(&opts), &lbl, "decides");
             let Some(a) = &o.act else {
                 crate::gf_audit::stop(g, p, &opts, i, true); // --- ai-audit
-                stop_diag(g, p, &opts);
+                stop_diag(g, p, &opts, post);
                 return Ok(());
             };
             if act::perform(g, p, a)? {
@@ -1476,7 +1506,7 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
             let Some(a) = &o.act else {
                 explain(g, p, &labels(&opts), &o.label, "decides");
                 crate::gf_audit::stop(g, p, &opts, i, false); // --- ai-audit
-                stop_diag(g, p, &opts);
+                stop_diag(g, p, &opts, post);
                 return Ok(());
             };
             if act::perform(g, p, a)? {
