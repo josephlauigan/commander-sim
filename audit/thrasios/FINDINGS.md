@@ -8,6 +8,8 @@ nothing has been simulated on this list. The findings of the previous list (t5, 
 Monolith + Rings + Ballista deck with attack taxes) are in `FINDINGS-old-list.md`, and the retired Thanos turbo list's
 (t6) in `audit/thanos/FINDINGS-old-list.md`.
 
+Baseline 2026-11-06: pending (the run hung on one look-ahead game; re-run after the fix).
+
 ## Doomsday in the simulator (2026-11-05, before any sim)
 
 What the AI does with Doomsday (`impls/doomsday.rs`; all of it untested by games, only by `tests/doomsday.rs`):

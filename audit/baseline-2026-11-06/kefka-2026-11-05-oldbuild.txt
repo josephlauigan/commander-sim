@@ -1,0 +1,30 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  kefka                       100 cards: Full 89, Full-auto 9, Approximate 2, Partial 0, Unmodeled 0
+  opponents Tier 3 (High B3)  5 decks, 500 cards: Full 439, Full-auto 42, Approximate 19, Partial 0, Unmodeled 0
+
+2,000 games (1 tier, 2,000 per list per tier, profile loose), lookahead AI, 16 worker threads: about 6 minutes
+  progress  10.0%  0m29s elapsed, ~4m28s left
+  progress  20.0%  1m01s elapsed, ~4m05s left
+  progress  30.0%  1m29s elapsed, ~3m28s left
+  progress  40.0%  1m58s elapsed, ~2m57s left
+  progress  50.0%  2m26s elapsed, ~2m26s left
+  progress  60.0%  2m56s elapsed, ~1m57s left
+  progress  70.0%  3m25s elapsed, ~1m28s left
+  progress  80.0%  3m53s elapsed, ~0m58s left
+  progress  90.0%  4m19s elapsed, ~0m28s left
+  progress 100.0%  4m53s elapsed, ~0m00s left
+
+=== Kefka vs Tier 3 (High B3) [loose, lookahead AI, 2000 games] ===
+Win rate  17.8%   95% CI 16.2-19.5%   (even share 25%: -7.2 pts)
+Average turn (your own turn count) of wins 10.6, of losses 8.2
+Plan online (Kefka flipped into Ruler of Ruin): 15.3% of games
+Wins by: damage 100%
+  Opponent                                    seated  won when seated  eliminated you
+  Tergrid (tergrid-mono-black-disruption)      61.0%            33.6%           21.5%
+  Atraxa (atraxa-infect)                       60.4%            29.4%           10.3%
+  Aurelia (aurelia-boros-extra-combats)        60.4%            30.2%           19.9%
+  Marwyn (marwyn-mono-green-elves)             59.7%            29.1%           18.4%
+  Korvold (korvold-jund-sacrifice)             58.6%            14.0%           11.7%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(293s total)
