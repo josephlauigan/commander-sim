@@ -13,7 +13,7 @@ use crate::cards::{CardDb, Types};
 use crate::engine::cast::discard_worst;
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
-use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
+use crate::engine::stack::{ability_run, ability_run_w, ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{epow, pval};
 use crate::engine::zones::Zone;
@@ -216,15 +216,17 @@ pub(crate) fn mazemind_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> R
         }
     }
     g.perm_mut(src).tapped = true;
-    if !ability_window(g, p, Some(src), if arg == 1 { "draw a card" } else { "scry 1" }, None, None)? {
-        return Ok(true);
+    let name = if arg == 1 { "draw a card" } else { "scry 1" };
+    let resolved = ability_run(g, p, Some(src), None, name, None, None, |g| {
+        if arg == 1 {
+            draw(g, p, 1, false)
+        } else {
+            crate::cardcode::scry(g, p, 1, false).map(|_| ())
+        }
+    })?;
+    if resolved {
+        tome_page(g, src, p)?;
     }
-    if arg == 1 {
-        draw(g, p, 1, false)?;
-    } else {
-        crate::cardcode::scry(g, p, 1, false)?;
-    }
-    tome_page(g, src, p)?;
     Ok(true)
 }
 
@@ -456,13 +458,13 @@ pub(crate) fn forge_exile(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> 
     }
     g.perm_mut(src).tapped = true;
     lose_life(g, p, 1, Some(p), "life", None)?;
-    if !ability_window(g, p, Some(src), "exile the top card of your library", None, None)? {
-        return Ok(true);
-    }
-    if let Some(c) = g.player_mut(p).library.pop() {
-        g.player_mut(p).exile.push(c);
-        crate::glog!(g, "    Mystic Forge exiles {}", g.db.get(c).name);
-    }
+    ability_run(g, p, Some(src), None, "exile the top card of your library", None, None, |g| {
+        if let Some(c) = g.player_mut(p).library.pop() {
+            g.player_mut(p).exile.push(c);
+            crate::glog!(g, "    Mystic Forge exiles {}", g.db.get(c).name);
+        }
+        Ok(())
+    })?;
     Ok(true)
 }
 
@@ -756,9 +758,9 @@ pub(crate) fn fair_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     let cd = g.perm(l).card();
     crate::impls::lands::sac_land(g, p, l)?;
-    if ability_window_card(g, p, cd, "search for an artifact", None, None)? {
-        crate::impls::t1::tutor_named(g, p, &|g, c| art_card(g, c), 1, "hand", "Inventors' Fair")?;
-    }
+    ability_run(g, p, None, Some(cd), "search for an artifact", None, None, |g| {
+        crate::impls::t1::tutor_named(g, p, &|g, c| art_card(g, c), 1, "hand", "Inventors' Fair").map(|_| ())
+    })?;
     Ok(true)
 }
 
@@ -843,9 +845,7 @@ pub(crate) fn atlas_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;
-    if ability_window(g, p, Some(src), "draw a card", None, None)? {
-        draw(g, p, 1, false)?;
-    }
+    ability_run(g, p, Some(src), None, "draw a card", None, None, |g| draw(g, p, 1, false))?;
     Ok(true)
 }
 
@@ -943,9 +943,12 @@ pub(crate) fn skull_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res
     if !live(g, src) || !can_pay(g, p, 3, "", false) || !pay(g, p, 3, "", false)? {
         return Ok(false);
     }
-    if ability_window(g, p, Some(src), "return it to its owner's hand", None, None)? && live(g, src) {
-        crate::engine::zones::bounce(g, src)?;
-    }
+    ability_run(g, p, Some(src), None, "return it to its owner's hand", None, None, |g| {
+        if live(g, src) {
+            crate::engine::zones::bounce(g, src)?;
+        }
+        Ok(())
+    })?;
     Ok(true)
 }
 
@@ -1014,10 +1017,25 @@ pub(crate) fn torque_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;
-    if ability_window(g, p, Some(src), "target permanent becomes an artifact", None, Some(t))? && live(g, t) {
-        let st = g.turn_stamp();
-        g.perm_mut(t).data.set(DataKey::Artifact, Val::Stamp(st));
-    }
+    ability_run_w(g, p, Some(src), None, "target permanent becomes an artifact", None, Some(t), 0.0, |g, is_copy| {
+        let mut t = t;
+        if is_copy && crate::human::is_human(g, p) {
+            // "you may choose a new target for the copy": a nonland permanent
+            let now: Vec<PermId> =
+                crate::human::karn::targets(g, p).into_iter().filter(|&x| !g.perm(x).ttypes.contains(&"land")).collect();
+            let prompt = "The copy of Liquimetal Torque's ability: which permanent becomes an artifact?";
+            if !now.is_empty()
+                && let Some(x) = crate::human::cards::pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?
+            {
+                t = x;
+            }
+        }
+        if live(g, t) {
+            let st = g.turn_stamp();
+            g.perm_mut(t).data.set(DataKey::Artifact, Val::Stamp(st));
+        }
+        Ok(())
+    })?;
     Ok(true)
 }
 

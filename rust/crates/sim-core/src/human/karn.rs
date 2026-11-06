@@ -107,7 +107,7 @@ fn via_ability(g: &mut Game, p: PlayerId, src: PermId, f: crate::hooks::AbilityF
 }
 
 /// every nonland permanent p may target (hexproof and shroud respected for the others')
-fn targets(g: &Game, p: PlayerId) -> Vec<PermId> {
+pub(crate) fn targets(g: &Game, p: PlayerId) -> Vec<PermId> {
     g.players
         .iter()
         .filter(|q| q.alive)

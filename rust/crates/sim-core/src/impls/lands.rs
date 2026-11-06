@@ -602,9 +602,8 @@ pub(crate) fn war_room_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     g.perm_mut(l).tapped = true;
     lose_life(g, p, n, Some(p), "other", None)?;
     crate::glog!(g, "  {} uses War Room", g.player(p).name);
-    if ability_window_card(g, p, g.perm(l).card(), "draw a card", None, None)? {
-        draw(g, p, 1, false)?;
-    }
+    let cd = g.perm(l).card();
+    crate::engine::stack::ability_run(g, p, None, Some(cd), "draw a card", None, None, |g| draw(g, p, 1, false))?;
     Ok(true)
 }
 
