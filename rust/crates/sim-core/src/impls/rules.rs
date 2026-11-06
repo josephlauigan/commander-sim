@@ -107,6 +107,11 @@ pub fn veil_respond(g: &mut Game, q: PlayerId, top_id: u32) -> Res<bool> {
     if spell.controller != q || spell.countered || !crate::engine::stack::counterable(g, &spell) {
         return Ok(false);
     }
+    // only for a spell that matters (JD, 2026-11-06): a combo piece, the commander, or a spell the engine rates as
+    // important (`imp` 6 or more, the commander's level); a minor spell is let go and the Veil kept for the line
+    if !veil_worth(g, q, &spell) {
+        return Ok(false);
+    }
     let Some(v) = g.player(q).hand.iter().copied().find(|&c| &*g.db.get(c).name == VEIL) else {
         return Ok(false);
     };
@@ -121,6 +126,15 @@ pub fn veil_respond(g: &mut Game, q: PlayerId, top_id: u32) -> Res<bool> {
 }
 
 pub const VEIL: &str = "Veil of Summer";
+
+/// is q's spell worth a Veil of Summer: a modelled combo piece, q's commander, or a spell rated at the commander's
+/// importance or more (`engine::cast::CMD_IMP`)
+pub fn veil_worth(g: &Game, q: PlayerId, spell: &crate::state::StackItem) -> bool {
+    let Some(c) = spell.card else { return false };
+    crate::cardcode::is_combo_piece(g, c)
+        || g.player(q).is_commander(c)
+        || spell.imp >= crate::engine::cast::CMD_IMP
+}
 
 /// Veil of Summer resolves: "Draw a card if an opponent has cast a blue or black spell this turn. Spells you control
 /// can't be countered this turn. You and permanents you control gain hexproof from blue and from black until end of

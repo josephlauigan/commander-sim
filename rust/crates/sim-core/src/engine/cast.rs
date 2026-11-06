@@ -950,8 +950,8 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
             && (g.players.iter().any(|q| q.id != p && crate::human::is_human(g, q.id))
                 || crate::human::human::copy_window(g, p, Some(c)));
         let judged = crate::impls::cloud::judgment_watch(g, &ctx); // --- cloud-gaps: Judgment of Alexander in hand
-        // (under Veil of Summer the window stays open: Mindbreak Trap still answers the spell)
-        let open = crate::engine::stack::counterable_but_veil(g, &item);
+        // (a spell that can't be countered keeps the window open: Mindbreak Trap still exiles it)
+        let open = crate::engine::stack::trap_exilable(g, &item);
         if !(imp > 0.0 || !aff.is_empty() || human_near || judged) || !open {
             return Ok(Some((true, None, ctx.clone()))); // nobody would answer it
         }

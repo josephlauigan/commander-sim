@@ -956,6 +956,12 @@ pub fn counterable_but_veil(g: &Game, it: &StackItem) -> bool {
     !(g.db.get(c).tag(Tag::Unc) || crate::engine::hooks::any_uncounterable(g, it.controller, c) || mistrised(g, c))
 }
 
+/// can Mindbreak Trap take this item: any spell on the stack. It exiles, it does not counter, so a spell that can't be
+/// countered (an uncounterable card, Allosaurus Shepherd, Cavern of Souls, Veil of Summer) is still a legal target
+pub fn trap_exilable(_g: &Game, it: &StackItem) -> bool {
+    it.kind == StackKind::Spell && it.card.is_some()
+}
+
 /// The AI with priority: counter the spell on top of the stack (or a counterspell aimed at its own spell), or pass.
 /// Python's `ai_respond`.
 pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
@@ -1028,8 +1034,9 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
     {
         return Ok(()); // nothing to respond with
     }
-    // under Veil of Summer only Mindbreak Trap answers it (it exiles; it does not counter)
-    let veiled = !counterable(g, &top) && counterable_but_veil(g, &top) && top.ctx.counter.is_none();
+    // a spell that can't be countered (Veil of Summer, Cavern of Souls, Shepherd, an uncounterable card): only
+    // Mindbreak Trap answers it (it exiles; it does not counter)
+    let veiled = !counterable(g, &top) && trap_exilable(g, &top) && top.ctx.counter.is_none();
     if !counterable(g, &top) && !veiled {
         return Ok(());
     }

@@ -277,3 +277,35 @@ fn a_person_casts_their_own_veil_and_the_state_applies_the_same() {
     assert!(sim_core::impls::tymna_cards::hexproof_from(&g, mine, Colors::from_letters("U")));
     assert!(in_exile(&g, P1, "Counterspell") || in_gy(&g, P1, "Counterspell"));
 }
+
+#[test]
+fn mindbreak_trap_exiles_a_spell_that_cannot_be_countered() {
+    // Allosaurus Shepherd can't be countered; Mindbreak Trap exiles, it does not counter, so it still takes it
+    let mut g = game();
+    lands(&mut g, P1, "Island", 4, false);
+    let (id, _) = on_stack(&mut g, P0, "Allosaurus Shepherd");
+    let trap = hand(&mut g, P1, &["Mindbreak Trap"])[0];
+    let it = g.stack.iter().find(|x| x.id == id).unwrap();
+    assert!(!stack::counterable(&g, it), "Shepherd can't be countered");
+    assert!(stack::trap_exilable(&g, it), "but it is a spell: Mindbreak Trap can target it");
+    assert!(stack::cast_counter_spell(&mut g, P1, trap, id).unwrap());
+    let it = g.stack.iter().find(|x| x.id == id).unwrap();
+    assert!(it.countered, "Mindbreak Trap exiles it");
+    assert_eq!(it.countered_by, Some(g.db.id("Mindbreak Trap").unwrap()));
+}
+
+#[test]
+fn veil_is_kept_when_the_countered_spell_is_minor() {
+    // JD, 2026-11-06: Veil answers a counter only on a spell that matters (a combo piece, the commander, or a spell
+    // rated at the commander's importance); a Brainstorm rated 1 is let go and the Veil kept
+    let mut g = game();
+    lands(&mut g, P0, "Forest", 1, false);
+    lands(&mut g, P1, "Island", 2, false);
+    let veil = hand(&mut g, P0, &[VEIL])[0];
+    let (id, _) = on_stack(&mut g, P0, "Brainstorm");
+    g.stack.iter_mut().find(|x| x.id == id).unwrap().imp = 1.0;
+    let ctr = hand(&mut g, P1, &["Counterspell"])[0];
+    assert!(stack::cast_counter_spell(&mut g, P1, ctr, id).unwrap());
+    assert!(g.player(P0).hand.contains(&veil), "the Veil is kept for a spell that matters");
+    assert!(countered(&g, id), "the minor spell is countered");
+}
