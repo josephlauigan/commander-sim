@@ -285,11 +285,13 @@ impl<'a> Env<'a> {
     }
     /// the lock at the Oracle's cast: Silence is up, or Veil of Summer is in hand with {G} left over the Oracle's {U}{U}
     fn locked(&self, s: &S) -> bool {
-        s.silence || (self.veil_ok && s.hand.iter().any(|&c| self.kd(c) == K::Veil) && self.ok_in(s, s.u + 2, s.w, 1, s.gn))
+        s.silence
+            || (self.veil_ok && s.hand.iter().any(|&c| self.kd(c) == K::Veil) && self.ok_in(s, s.u + 2, s.w, 1, s.gn))
     }
     /// Noxious Revival is in hand with its {G} (or 2 life) left over the Oracle's {U}{U}
     fn backed(&self, s: &S) -> bool {
-        s.hand.iter().any(|&c| self.kd(c) == K::Revival) && (self.ok_in(s, s.u + 2, s.w, 1, s.gn) || s.life - 2 >= LIFE_FLOOR)
+        s.hand.iter().any(|&c| self.kd(c) == K::Revival)
+            && (self.ok_in(s, s.u + 2, s.w, 1, s.gn) || s.life - 2 >= LIFE_FLOOR)
     }
 }
 
@@ -571,10 +573,7 @@ fn try_card(e: &Env, s: &S, i: usize, led: u8, left: u8, w: Want, acts: &mut Vec
             if !e.ok_in(s, s.u + 2, s.w, 0, s.gn) {
                 return Try::Unpayable;
             }
-            if e.dev + s.dev as usize + 2 >= s.lib.len()
-                && (!w.lock || e.locked(s))
-                && (!w.backup || e.backed(s))
-            {
+            if e.dev + s.dev as usize + 2 >= s.lib.len() && (!w.lock || e.locked(s)) && (!w.backup || e.backed(s)) {
                 acts.push(a);
                 return Try::Won;
             }
@@ -1414,9 +1413,12 @@ pub fn led_use(g: &Game, p: PlayerId) -> bool {
         return false;
     }
     // (in the main phase the discarded hand can not start a pile, there being no draw: the end step is where the diamond pays)
-    g.player(p).hand.iter().copied().filter(|&c| &*g.db.get(c).name == DOOMSDAY).any(|c| {
-        [Scn::Main, Scn::EndStep].into_iter().any(|scn| led_use_in(g, p, c, scn))
-    })
+    g.player(p)
+        .hand
+        .iter()
+        .copied()
+        .filter(|&c| &*g.db.get(c).name == DOOMSDAY)
+        .any(|c| [Scn::Main, Scn::EndStep].into_iter().any(|scn| led_use_in(g, p, c, scn)))
 }
 
 fn led_use_in(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> bool {
@@ -1690,9 +1692,5 @@ pub fn revival_target(g: &Game, p: PlayerId) -> Option<CardId> {
 /// it does not stop Mindbreak Trap (an exile, not a counter), so a table that may hold Mindbreak Trap does not count. Red
 /// blasts no longer matter: once Veil resolves no counter works that turn (`rules::veil_respond`, `values::veil_shield`)
 fn veil_answers(g: &Game, p: PlayerId) -> bool {
-    !g.opps(p).any(|q| {
-        crate::ai::brain::prob_holding(g, q, |c| {
-            &*g.db.get(c).name == "Mindbreak Trap"
-        }) > 0.0
-    })
+    !g.opps(p).any(|q| crate::ai::brain::prob_holding(g, q, |c| &*g.db.get(c).name == "Mindbreak Trap") > 0.0)
 }

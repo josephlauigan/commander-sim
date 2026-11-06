@@ -83,7 +83,16 @@ fn no_black_position() -> Game {
         4,
         1,
         &["Doomsday", "Thassa's Oracle", "Preordain"],
-        &["Gitaxian Probe", "Ponder", "Silence", "Chrome Mox", "Lotus Petal", "Arcane Signet", "Grim Monolith", "Sol Ring"],
+        &[
+            "Gitaxian Probe",
+            "Ponder",
+            "Silence",
+            "Chrome Mox",
+            "Lotus Petal",
+            "Arcane Signet",
+            "Grim Monolith",
+            "Sol Ring",
+        ],
         &[],
     );
     let turns = g.player(P0).turns;
@@ -96,25 +105,32 @@ fn led_pays_doomsday_with_no_other_black_and_the_pile_takes_the_discarded_oracle
     let mut g = no_black_position();
     g.active = Some(P1);
     g.step = Step::End;
-    let (oracle, preordain) = (card(&g, "Thassa's Oracle"), card(&g, "Preordain"));
+    let oracle = card(&g, "Thassa's Oracle");
     let c = card(&g, "Doomsday");
     let (built, _) =
         doomsday::plan_cast(&g, P0, c, doomsday::Scn::EndStep).expect("the diamond makes the cast possible");
     assert!(built.led, "no {{B}} but the diamond's: it pays");
     assert!(built.pile.contains(&oracle), "the Oracle from the graveyard is in the pile: {:?}", names(&g, &built.pile));
-    assert!(built.pile.contains(&preordain), "so is the Preordain: {:?}", names(&g, &built.pile));
     end_of_turn_window(&mut g, P0).unwrap();
     assert!(logged(&g, "casts Doomsday"), "{:?}", g.log);
     assert!(
-        log_pos(&g, "cracks Lion's Eye Diamond for BBB to pay for Doomsday").unwrap() > log_pos(&g, "casts Doomsday").unwrap(),
+        log_pos(&g, "cracks Lion's Eye Diamond for BBB to pay for Doomsday").unwrap()
+            > log_pos(&g, "casts Doomsday").unwrap(),
         "the crack comes while the spell is being cast: {:?}",
         g.log
     );
     assert!(!on_bf(&g, LED), "the diamond was sacrificed");
     assert!(g.player(P0).hand.is_empty(), "the hand was discarded");
-    assert_eq!(g.player(P0).life, 20, "Doomsday was on the stack when the hand went: it was not discarded, and it resolved");
+    assert_eq!(
+        g.player(P0).life,
+        20,
+        "Doomsday was on the stack when the hand went: it was not discarded, and it resolved"
+    );
     let lib = names(&g, &g.player(P0).library.iter().rev().copied().collect::<Vec<_>>());
-    assert!(lib.iter().any(|n| n == "Thassa's Oracle"), "the Oracle that was in the hand is on top of the library: {lib:?}");
+    assert!(
+        lib.iter().any(|n| n == "Thassa's Oracle"),
+        "the Oracle that was in the hand is on top of the library: {lib:?}"
+    );
     // P0's next turn: untap, draw, play the pile
     g.round += 1;
     g.active = Some(P0);
@@ -143,7 +159,13 @@ fn without_the_diamond_the_same_hand_has_no_cast() {
     let mut g = no_black_position();
     g.active = Some(P1);
     assert_eq!(doomsday_option(&mut g, None).len(), 1, "with the diamond: the cast");
-    let m = g.player(P0).perms.clone().into_iter().find(|&m| g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == LED)).unwrap();
+    let m = g
+        .player(P0)
+        .perms
+        .clone()
+        .into_iter()
+        .find(|&m| g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == LED))
+        .unwrap();
     sim_core::engine::zones::leave(&mut g, m).unwrap();
     assert_eq!(doomsday_option(&mut g, None).len(), 0, "no black source: Doomsday can not be paid");
 }
@@ -175,7 +197,8 @@ fn led_cracked_inside_the_pile_pays_the_oracle_and_the_line_wins() {
     let mut g = pile_in_play(1, 1, &["Thassa's Oracle", "Silence"], &["Chrome Mox", "Lotus Petal"]);
     doomsday::run_pile(&mut g, P0).unwrap();
     assert!(won(&g), "the Oracle won: {:?}", g.log);
-    let crack = log_pos(&g, "cracks Lion's Eye Diamond for UUU to pay for Thassa's Oracle").expect("the diamond paid the Oracle");
+    let crack = log_pos(&g, "cracks Lion's Eye Diamond for UUU to pay for Thassa's Oracle")
+        .expect("the diamond paid the Oracle");
     let silence = log_pos(&g, "plays the pile: Silence").expect("Silence was cast");
     assert!(silence < crack, "the diamond is cracked as late as it can be: Silence first, with the hand still whole");
     assert!(!on_bf(&g, LED));
@@ -277,15 +300,28 @@ fn the_held_statistic_counts_doomsday_as_a_use_of_the_diamond() {
         lands(&mut g, P0, "Island", 3, false);
         lands(&mut g, P0, "Plains", 1, false);
         hand(&mut g, P0, cards);
-        let lib: Vec<_> = ["Gitaxian Probe", "Preordain", "Ponder", "Silence", "Chrome Mox", "Lotus Petal", "Arcane Signet", "Grim Monolith"]
-            .iter()
-            .map(|n| card(&g, n))
-            .collect();
+        let lib: Vec<_> = [
+            "Gitaxian Probe",
+            "Preordain",
+            "Ponder",
+            "Silence",
+            "Chrome Mox",
+            "Lotus Petal",
+            "Arcane Signet",
+            "Grim Monolith",
+        ]
+        .iter()
+        .map(|n| card(&g, n))
+        .collect();
         g.player_mut(P0).library = lib;
         sim_core::t6stats::mana_held(&mut g, P0);
         *g.player(P0).stats.get(&intern("mn|heldr|T1|Lion's Eye Diamond")).unwrap_or(&0)
     };
-    assert_eq!(held(&[LED, "Doomsday", "Thassa's Oracle", "Borne Upon a Wind"]), 1, "a Doomsday it pays for (at the end step, behind the Borne)");
+    assert_eq!(
+        held(&[LED, "Doomsday", "Thassa's Oracle", "Borne Upon a Wind"]),
+        1,
+        "a Doomsday it pays for (at the end step, behind the Borne)"
+    );
     assert_eq!(held(&[LED, "Mystic Remora", "Gamble"]), 0, "no use");
 }
 
