@@ -775,3 +775,70 @@ fn a_person_using_each_borrowed_ability_is_asked_and_never_gets_the_ais_choice()
     assert!(hooks.is_empty(), "borrowed as the AI's hook (the AI picks the target) for a person: {hooks:?}");
     assert!(silent.is_empty(), "a person was not asked anything: {silent:#?}");
 }
+
+// ---- spot tests: what a person picks is what happens, with Marvin as the source
+#[test]
+fn marvin_mogg_fanatic_the_person_picks_the_target_and_marvin_is_sacrificed() {
+    let (mut g, _d, m) = rich("Mogg Fanatic");
+    let name = g.player(P2).name.to_string();
+    person(&mut g, vec![rule("1 damage to which", pick_containing(name))]);
+    let before = g.player(P2).life;
+    assert!(use_ability(&mut g, m, "Marvin copies Mogg Fanatic").is_none());
+    assert_eq!(g.player(P2).life, before - 1, "the person aimed it at P2, not at the AI's pick");
+    assert!(!g.perm(m).on_bf, "Marvin was sacrificed (the cost's 'this creature')");
+}
+
+#[test]
+fn marvin_cankerbloom_the_person_picks_the_mode_and_the_target() {
+    let (mut g, _d, m) = rich("Cankerbloom");
+    let deed = perms_named(&g, P1, "Pernicious Deed")[0];
+    person(&mut g, vec![rule("choose one", pick_containing("destroy target enchantment".into())), rule("destroy which", pick_containing("Pernicious Deed".into()))]);
+    assert!(use_ability(&mut g, m, "Marvin copies Cankerbloom").is_none());
+    assert!(!g.perm(deed).on_bf, "the person's target died");
+    assert!(!g.perm(m).on_bf, "Marvin is the sacrifice");
+}
+
+#[test]
+fn marvin_chittering_witch_the_person_picks_the_creature_to_sacrifice_and_the_target() {
+    let (mut g, _d, m) = rich("Chittering Witch");
+    let angel = perms_named(&g, P1, "Serra Angel")[0];
+    person(&mut g, vec![rule("-2/-2 on which", pick_containing("(Kefka, 0/1)".into())), rule("sacrifice which", pick_containing("Mogg War Marshal".into()))]);
+    let marshals = perms_named(&g, P0, "Mogg War Marshal");
+    assert!(use_ability(&mut g, m, "Marvin copies Chittering Witch").is_none());
+    assert!(perms_named(&g, P1, "Vampire Nighthawk").is_empty(), "the 0/1 took -2/-2");
+    assert!(g.perm(angel).on_bf);
+    assert!(marshals.iter().any(|&x| !g.perm(x).on_bf), "the person's choice of sacrifice");
+}
+
+#[test]
+fn marvin_tekuthal_puts_the_indestructible_counter_on_tekuthal_and_the_person_picks_the_counters() {
+    let (mut g, tek, m) = rich("Tekuthal, Inquiry Dominus");
+    let elves = perms_named(&g, P0, "Llanowar Elves");
+    for &e in elves.iter().take(3) {
+        g.perm_mut(e).plus = 1;
+    }
+    person(&mut g, vec![rule("remove a counter", first)]);
+    assert!(use_ability(&mut g, m, "Marvin copies Tekuthal").is_none());
+    assert!(g.perm(tek).data.truthy(sim_core::state::DataKey::Indestr), "the text names Tekuthal");
+    assert!(!g.perm(m).data.truthy(sim_core::state::DataKey::Indestr));
+    assert!(elves.iter().take(3).all(|&e| g.perm(e).plus == 0), "three counters were removed");
+}
+
+#[test]
+fn marvin_does_not_borrow_what_is_not_an_activated_ability() {
+    // Muldrotha casts from the graveyard and Realmwalker from the top of the library: static permissions
+    for name in ["Muldrotha, the Gravetide", "Realmwalker", "Conspicuous Snoop"] {
+        let (mut g, _d, m) = rich(name);
+        let o = opts(&mut g, m, Some(false));
+        assert!(!o.iter().any(|x| x.label.contains(name)), "{name}: {o:?}");
+    }
+}
+
+#[test]
+fn a_person_chooses_how_the_opponents_block_with_a_brutal_hordechief_through_marvin() {
+    let (mut g, _d, m) = rich("Brutal Hordechief");
+    g.step = Step::Main1;
+    person(&mut g, vec![rule("pay {R/W}", first)]);
+    assert!(use_ability(&mut g, m, "Marvin copies Brutal Hordechief").is_none());
+    assert!(matches!(g.perm(m).data.get(sim_core::state::DataKey::Lure), Some(_)), "Marvin carries the lure for this turn");
+}

@@ -794,7 +794,6 @@ const UNPROBED: &[(&str, &str)] = &[
     ("sauron: Peter Parker's Camera", "activated: needs an ability of yours to copy; refused in the probe's table (human/urdragon.rs asks \"copy which ability?\")"),
     ("thrasios: Dauthi Voidwalker", "activated: needs an exiled card with a void counter; refused in the probe's table (human/gaps_c.rs asks \"play which exiled card for free?\")"),
     ("urdragon: Maelstrom of the Spirit Dragon", "activated: the ability never went on the stack in the probe's table (not read)"),
-    ("yshtola: Loran of the Third Path", "activated: the ability never went on the stack in the probe's table (not read)"),
     (
         "alela: Karmic Justice",
         "needs a spell or ability an opponent controls to destroy the person's noncreature permanent: no driver",
