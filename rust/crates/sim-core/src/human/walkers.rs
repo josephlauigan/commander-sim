@@ -66,7 +66,7 @@ pub fn abilities(nm: &str) -> Option<Vec<PermAbility>> {
             (-2, "choose a face-up artifact card you own in exile; put it into your hand", karn_gc_minus2),
         ]),
         "Teferi, Time Raveler" => walker(&[
-            (1, "until your next turn, you may cast sorcery spells as though they had flash (not modeled)", ttr_plus),
+            (1, "until your next turn, you may cast sorcery spells as though they had flash", ttr_plus),
             (
                 -3,
                 "return up to one target artifact, creature, or enchantment to its owner's hand; draw a card",
@@ -350,10 +350,11 @@ fn karn_gc_minus2(g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
 // ------------------------------------------------------------------ Teferi, Time Raveler
 fn ttr_plus(_g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
     go(move |g| {
+        crate::impls::doomsday::teferi_plus(g, p, _m)?;
         super::auto_note(
             g,
             p,
-            "Teferi, Time Raveler +1: casting sorceries at instant speed isn't modeled; the loyalty is all it does.",
+            "Teferi, Time Raveler +1: until your next turn you may cast sorcery spells as though they had flash.",
         );
         Ok(())
     })

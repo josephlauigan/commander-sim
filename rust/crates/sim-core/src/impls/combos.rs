@@ -126,6 +126,7 @@ pub fn all() -> &'static [&'static Combo] {
             .chain(super::t6_combos_scion::COMBOS.iter()) // --- scion
             .chain(super::mikaeus_trisk::COMBOS.iter()) // --- Mikaeus + Triskelion
             .chain(super::t45_urdragon_combos::COMBOS.iter()) // --- Ur-Dragon combos (Astral Dragon, Garth)
+            .chain(super::doomsday::COMBOS.iter()) // --- doomsday: the pile line
             .collect()
     });
     &ALL
@@ -1349,6 +1350,9 @@ fn oracle_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
 
 /// Thassa's Oracle: cast when it wins on its own
 fn oracle_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    if super::doomsday::hold_oracle(g, p) {
+        return 0; // the pile waits for Silence first
+    }
     if oracle_devotion(g, p) + 2 >= g.player(p).library.len() { 85 } else { 0 }
 }
 
