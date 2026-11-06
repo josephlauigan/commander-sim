@@ -1269,7 +1269,13 @@ pub fn tutor_named(
         })
         .collect();
     keyed.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
-    let cands: Vec<CardId> = keyed.into_iter().take(k).map(|x| x.1).collect();
+    let mut cands: Vec<CardId> = keyed.into_iter().take(k).map(|x| x.1).collect();
+    // --- t6-ai: the line planner's card (`Player::plan_tutor`), when it meets the restriction: Trophy Mage for the Monolith
+    if let Some(t) = g.player(p).plan_tutor.filter(|t| names.contains(t)) {
+        cands.retain(|&c| c != t);
+        cands.insert(0, t);
+        cands.truncate(k);
+    }
     for &c in &cands {
         remove_first(&mut g.player_mut(p).library, c);
         if let Some(a) = agent_for(g, p) {

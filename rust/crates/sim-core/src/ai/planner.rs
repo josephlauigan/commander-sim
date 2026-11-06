@@ -132,6 +132,17 @@ pub type TutorRule<'a> = (Dest, Box<dyn Fn(CardId) -> bool + 'a>);
 /// the rule `tutor_targets` applies, card by card (the goldfish report's best case reads it too)
 pub fn tutor_rule(g: &Game, c: CardId) -> Option<TutorRule<'_>> {
     let d = g.db.get(c);
+    // --- t6-ai: Trophy Mage is a creature, but a plain tutor as it enters: an artifact with mana value 3 to the hand
+    // (Basalt Monolith for Kinnan). The planner casts it for the artifact and then casts the artifact.
+    if &*d.name == "Trophy Mage" {
+        return Some((
+            Dest::Hand,
+            Box::new(move |x| {
+                let xd = g.db.get(x);
+                xd.types.has(crate::cards::Types::ARTIFACT) && xd.cmc == 3
+            }),
+        ));
+    }
     if d.land || d.perm || d.tag(Tag::Xtutor) {
         return None;
     }

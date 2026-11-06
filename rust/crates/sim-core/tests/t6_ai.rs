@@ -212,3 +212,19 @@ fn sheoldred_holds_no_mana_for_ad_nauseam_with_a_full_hand() {
     assert!(adnaus_hold("sheoldred", 3) > 0.0, "room for four: the mana is held");
     assert_eq!(adnaus_hold("sheoldred", 10), 0.0, "a full hand: nothing is held");
 }
+
+/// Trophy Mage (a creature whose enter trigger fetches an artifact with mana value 3) is a planner tutor for the Monolith:
+/// the planner casts it, then casts the Monolith it found, then goes (Kinnan + Monolith + Thrasios)
+#[test]
+fn trophy_mage_is_cast_for_basalt_monolith() {
+    let mut g = whir_table(1, 7, 0); // {2}{U} for the Mage, {3} for the Monolith, {G}{G} left for the line
+    hand(&mut g, P0, &["Trophy Mage"]);
+    let whir = card(&g, "Whir of Invention");
+    g.player_mut(P0).hand.retain(|&c| c != whir);
+    let (mage, basalt) = (card(&g, "Trophy Mage"), card(&g, "Basalt Monolith"));
+    let plan = planner::plan_this_turn(&mut g, P0).unwrap().expect("a plan with Trophy Mage");
+    assert_eq!(plan.len(), 3, "{plan:?}");
+    assert_eq!(plan[0], Step::Tutor(mage, basalt), "{plan:?}");
+    assert_eq!(plan[1], Step::Cast(basalt), "{plan:?}");
+    assert!(matches!(plan[2], Step::Go(_)));
+}
