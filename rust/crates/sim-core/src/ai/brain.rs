@@ -1192,8 +1192,11 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
         if crate::engine::mana::ritual_net(g, p, c) <= 0 {
             let mut pen = reserve_penalty(g, p, c, hold_card, hold_v, near); // --- ai-fix: C: a ritual adds more than it spends
             // --- c1b-engines: a Tier 6 draw engine is cast early whatever it leaves for the held answer; and it is
-            // never outvoted by "stop" while the held answer stays payable (see `engine_rule`)
-            if let Some(engine) = engine_rule(g, p, c, &s, near) {
+            // never outvoted by "stop" while the held answer stays payable (see `engine_rule`). `near` there is the
+            // archenemy reading only: an opposing commander that is a combo piece (`cmdr_combo`) is on the table of
+            // every cEDH pod, Kinnan or Thrasios or Tymna alone proves nothing
+
+            if let Some(engine) = engine_rule(g, p, c, &s, s.combo_near) {
                 if engine.early {
                     pen = 0.0;
                 }
