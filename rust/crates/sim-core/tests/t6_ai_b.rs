@@ -159,7 +159,11 @@ fn the_diamond_is_not_cracked_into_an_empty_plan() {
     perm(&mut g, P0, "Lion's Eye Diamond");
     hand(&mut g, P0, &["Mystic Remora", "Rhystic Study", "Gamble"]);
     let o = options(&mut g);
-    assert!(!o.iter().any(|x| x.label.contains("Lion's Eye Diamond")), "{:?}", o.iter().map(|x| &x.label).collect::<Vec<_>>());
+    assert!(
+        !o.iter().any(|x| x.label.contains("Lion's Eye Diamond")),
+        "{:?}",
+        o.iter().map(|x| &x.label).collect::<Vec<_>>()
+    );
 }
 
 /// the held statistic counts the diamond only when a crack has a use

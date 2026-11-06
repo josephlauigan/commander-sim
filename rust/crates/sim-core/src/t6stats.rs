@@ -27,7 +27,7 @@ pub const T6_KEYS: [&str; 9] = [
     "sisay-legends-toolbox",
     "godo",
     "thrasios", // --- thrasios: JD's Tymna/Thrasios Doomsday deck (cEDH; took the Thanos turbo list's t6 seat, 2026-11-05)
-    "scion",  // --- scion: JD's Scion of the Ur-Dragon deck (retired 2026-10-30, a test seat of its card code)
+    "scion",    // --- scion: JD's Scion of the Ur-Dragon deck (retired 2026-10-30, a test seat of its card code)
 ];
 
 /// is this deck key a Tier 6 deck (pool or Godo)? The one place the AI and the counters ask.
@@ -216,7 +216,12 @@ fn hold_diag(g: &mut Game, p: PlayerId, ready: bool) {
     }
     let mana = crate::engine::mana::total_mana(g, p, false);
     let crs = g.player(p).perms.iter().filter(|&&m| g.is_creature(m)).count();
-    crate::glog!(g, "      [{n} passes ({}); mana {mana}, creatures {crs}; hand: {}]", out.join(" | "), hand.join(", "));
+    crate::glog!(
+        g,
+        "      [{n} passes ({}); mana {mana}, creatures {crs}; hand: {}]",
+        out.join(" | "),
+        hand.join(", ")
+    );
 }
 
 /// p chose `label` at a main-phase decision: count it under `spx|` when a line was ready and the deck has not gone

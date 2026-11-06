@@ -4,13 +4,8 @@
 //! through `cardcode.rs`. Also ais.py's `breach_gc_options` (Breach escapes, Panoptic Mirror, Lion's Eye Diamond,
 //! Bolas's Citadel), which every deck reaches.
 
-use crate::satsum::SatSum;
 use super::lands::{can_pay_without, pay_without};
-use crate::engine::mana::restr_ok;
-use crate::engine::pool::Restr;
-use crate::engine::pool::Kind;
 use super::partials::at_once;
-use crate::engine::repl;
 use crate::ai::brain::{Situation, card_utility};
 use crate::ai::decks::{breach_candidates, wipe_eval};
 use crate::cards::{CardDb, Types};
@@ -20,25 +15,31 @@ use crate::engine::cast::{
 use crate::engine::combat::blocked;
 use crate::engine::hooks::fire_trigger;
 use crate::engine::life::{check_state, lose_life};
+use crate::engine::mana::restr_ok;
 use crate::engine::mana::{Source, Unit, can_pay, cost_of, pay, total_mana};
+use crate::engine::pool::Kind;
+use crate::engine::pool::Restr;
 use crate::engine::removal::{apply_removal, legal_targets};
+use crate::engine::repl;
 use crate::engine::stack::{
-    abilities_answered, ability_run, ability_window, ability_window_card, counter_window, equip_to, stack_window, trigger_window,
+    abilities_answered, ability_run, ability_window, ability_window_card, counter_window, equip_to, stack_window,
+    trigger_window,
 };
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{
-    card_name, card_tag, commander_out, epow, equipped, etgh, find, has, has_type, indestructible, pval,
-    stopped, threat, untargetable,
+    card_name, card_tag, commander_out, epow, equipped, etgh, find, has, has_type, indestructible, pval, stopped,
+    threat, untargetable,
 };
 use crate::engine::zones::{
-    Enter, Tokens, Zone, amass, die, discard_cards, discard_index, draw, enter, enter_token_copy, landfall,
-    leave, make_tokens, max_by, mill, min_by, to_zone_card,
+    Enter, Tokens, Zone, amass, die, discard_cards, discard_index, draw, enter, enter_token_copy, landfall, leave,
+    make_tokens, max_by, mill, min_by, to_zone_card,
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src};
 use crate::human::{cards, choices, human_of};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
+use crate::satsum::SatSum;
 use crate::state::{Ctx, DataKey, Game, StackItem, StackKind, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -649,9 +650,17 @@ fn baraddur_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     g.perm_mut(l).tapped = true;
     crate::glog!(g, "  {} uses Barad-dûr: amass Orcs {x}", g.player(p).name);
     let cd = g.perm(l).card();
-    crate::engine::stack::ability_run_w(g, p, None, Some(cd), &format!("amass Orcs {x}"), None, None, x as f64, |g, _| {
-        amass(g, p, x as i32)
-    })?;
+    crate::engine::stack::ability_run_w(
+        g,
+        p,
+        None,
+        Some(cd),
+        &format!("amass Orcs {x}"),
+        None,
+        None,
+        x as f64,
+        |g, _| amass(g, p, x as i32),
+    )?;
     Ok(true)
 }
 
@@ -896,7 +905,11 @@ pub fn kefka_borrowed(g: &mut Game, src: PermId, p: PlayerId, post: Option<bool>
         return vec![];
     }
     let utility = 1.0 + 0.5 * g.opps(p).count() as f64;
-    vec![Opt { utility, label: "Kefka: {8}, each opponent sacrifices a permanent".into(), act: Some(Action::Ability { src, f: kefka_borrowed_go, arg: kefka.0 as i64 }) }]
+    vec![Opt {
+        utility,
+        label: "Kefka: {8}, each opponent sacrifices a permanent".into(),
+        act: Some(Action::Ability { src, f: kefka_borrowed_go, arg: kefka.0 as i64 }),
+    }]
 }
 
 fn kefka_borrowed_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
@@ -915,65 +928,65 @@ pub(crate) fn kefka_ruin_do(g: &mut Game, src: PermId, p: PlayerId) -> Res<bool>
     }
     pay(g, p, 8, "", false)?;
     ability_run(g, p, Some(src), None, "{8}: each opponent sacrifices a permanent", Some(7.0), None, |g| {
-    for q in g.opps(p).collect::<Vec<_>>() {
-        if crate::human::is_human(g, q) {
-            // their choice: any permanent, a land included
-            let perms: Vec<PermId> = g.player(q).perms.iter().copied().filter(|&m| !g.perm(m).phased).collect();
-            let lands: Vec<_> = g.player(q).lands.clone();
-            let mut labels: Vec<String> = perms
-                .iter()
-                .map(|&m| crate::human::legal::describe_target(g, q, crate::human::Target::Perm(m)))
-                .collect();
-            labels.extend(lands.iter().map(|&l| format!("{} (land)", g.db.get(g.perm(l).card()).name)));
-            if labels.is_empty() {
+        for q in g.opps(p).collect::<Vec<_>>() {
+            if crate::human::is_human(g, q) {
+                // their choice: any permanent, a land included
+                let perms: Vec<PermId> = g.player(q).perms.iter().copied().filter(|&m| !g.perm(m).phased).collect();
+                let lands: Vec<_> = g.player(q).lands.clone();
+                let mut labels: Vec<String> = perms
+                    .iter()
+                    .map(|&m| crate::human::legal::describe_target(g, q, crate::human::Target::Perm(m)))
+                    .collect();
+                labels.extend(lands.iter().map(|&l| format!("{} (land)", g.db.get(g.perm(l).card()).name)));
+                if labels.is_empty() {
+                    continue;
+                }
+                let k = crate::human::choices::choose_one(
+                    g,
+                    q,
+                    "choose",
+                    "Kefka, Ruler of Ruin: sacrifice a permanent of your choice",
+                    &labels,
+                )?;
+                if k < perms.len() {
+                    die(g, perms[k], "sac")?;
+                } else {
+                    let l = lands[k - perms.len()];
+                    crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
+                }
                 continue;
             }
-            let k = crate::human::choices::choose_one(
-                g,
-                q,
-                "choose",
-                "Kefka, Ruler of Ruin: sacrifice a permanent of your choice",
-                &labels,
-            )?;
-            if k < perms.len() {
-                die(g, perms[k], "sac")?;
-            } else {
-                let l = lands[k - perms.len()];
-                crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
+            let toks: Vec<PermId> =
+                g.player(q).perms.iter().copied().filter(|&m| g.perm(m).token && !g.perm(m).phased).collect();
+            if !toks.is_empty() {
+                let m = min_by(&toks, |m| pval(g, m)).unwrap(); // their choice: the cheapest thing
+                die(g, m, "sac")?;
+            } else if g.player(q).lands.len() > 4 {
+                sac_last_land(g, q);
+            } else if !g.player(q).perms.is_empty() {
+                let perms = g.player(q).perms.clone();
+                let m = min_by(&perms, |m| pval(g, m)).unwrap();
+                die(g, m, "sac")?;
+            } else if !g.player(q).lands.is_empty() {
+                sac_last_land(g, q);
             }
-            continue;
         }
-        let toks: Vec<PermId> =
-            g.player(q).perms.iter().copied().filter(|&m| g.perm(m).token && !g.perm(m).phased).collect();
-        if !toks.is_empty() {
-            let m = min_by(&toks, |m| pval(g, m)).unwrap(); // their choice: the cheapest thing
-            die(g, m, "sac")?;
-        } else if g.player(q).lands.len() > 4 {
-            sac_last_land(g, q);
-        } else if !g.player(q).perms.is_empty() {
-            let perms = g.player(q).perms.clone();
-            let m = min_by(&perms, |m| pval(g, m)).unwrap();
-            die(g, m, "sac")?;
-        } else if !g.player(q).lands.is_empty() {
-            sac_last_land(g, q);
+        let kefka = g.perm(src).cd.is_some_and(|c| &*g.db.get(c).name == "Kefka, Court Mage // Kefka, Ruler of Ruin");
+        if kefka {
+            let t = g.player(p).turns;
+            g.player_mut(p).milestone.entry("kefka").or_insert(t);
+            let x = g.perm_mut(src);
+            x.data.set(DataKey::Ruin, Val::Bool(true));
+            (x.pow, x.tgh, x.fly) = (5, 7, true);
         }
-    }
-    let kefka = g.perm(src).cd.is_some_and(|c| &*g.db.get(c).name == "Kefka, Court Mage // Kefka, Ruler of Ruin");
-    if kefka {
-        let t = g.player(p).turns;
-        g.player_mut(p).milestone.entry("kefka").or_insert(t);
-        let x = g.perm_mut(src);
-        x.data.set(DataKey::Ruin, Val::Bool(true));
-        (x.pow, x.tgh, x.fly) = (5, 7, true);
-    }
-    crate::glog!(
-        g,
-        "  {} activates {} ({{8}}): each opponent sacrifices a permanent{}",
-        g.player(p).name,
-        if kefka { "Kefka" } else { "Kefka's ability (Marvin: nothing transforms)" },
-        if kefka { "; Kefka transforms" } else { "" }
-    );
-    Ok(())
+        crate::glog!(
+            g,
+            "  {} activates {} ({{8}}): each opponent sacrifices a permanent{}",
+            g.player(p).name,
+            if kefka { "Kefka" } else { "Kefka's ability (Marvin: nothing transforms)" },
+            if kefka { "; Kefka transforms" } else { "" }
+        );
+        Ok(())
     })?;
     Ok(true)
 }
@@ -1394,7 +1407,8 @@ fn led_wheel_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// --- t6-ai-b (stats): would a crack of the diamond c, cast now, have a use? A wheel in hand it could pay for, or a
 /// hand of lands only with a use for the mana (`led_uses`); the diamond alone in a hand with other cards has none
 pub fn led_use_open(g: &Game, p: PlayerId, led: CardId) -> bool {
-    g.player(p).hand.iter().any(|&w| w != led && led_wheel_plan(g, p, w).is_some()) || led_uses(g, p, Some(led)).is_some()
+    g.player(p).hand.iter().any(|&w| w != led && led_wheel_plan(g, p, w).is_some())
+        || led_uses(g, p, Some(led)).is_some()
 }
 
 fn led_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
@@ -3600,8 +3614,7 @@ fn loop_kills(name: &str, names: &[&str]) -> bool {
 
 /// mine.loops_blocked: graveyard hate or Hushbringer: nothing that dies comes back, or its triggers don't happen
 pub(crate) fn loops_blocked(g: &Game, p: PlayerId) -> bool {
-    repl::no_graveyard(g, p)
-        || repl::hushed(g)
+    repl::no_graveyard(g, p) || repl::hushed(g)
 }
 
 /// mine.seph_loops: the loops p can run now: (loop index, key permanents, kills)
@@ -4020,7 +4033,8 @@ fn momentary_blink_value(g: &mut Game, c: CardId, p: PlayerId, _post: Option<boo
         .collect();
     let Some((bv, m)) = first_max(&cands, |x| x.0) else { return Ok(vec![]) };
     let keep = if g.player(p).perms.iter().any(|&x| {
-        g.is_creature(x) && g.perm(x).cd.is_some_and(|cd| crate::ai::reanimate::sbomb(g, cd) >= crate::ai::reanimate::BOMB_BOARD)
+        g.is_creature(x)
+            && g.perm(x).cd.is_some_and(|cd| crate::ai::reanimate::sbomb(g, cd) >= crate::ai::reanimate::BOMB_BOARD)
     }) && from_hand
     {
         2.5
