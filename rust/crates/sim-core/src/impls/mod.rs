@@ -113,6 +113,7 @@ pub mod card_models3; // --- card models, part 3 (the pool's last Partial cards,
 pub mod generic_paths; // --- generic-paths (2026-11-01): plays only a deleted hand AI offered
 pub mod garth; // --- garth (2026-11-04): Garth One-Eye
 pub mod model_gaps_a2; // --- model-gaps-a2: Lotho and the other cards the audit rated below Full
+pub mod model_gaps_a4; // --- model-gaps-a4: five pool creatures' activated abilities
 pub mod t45_urdragon_combos; // --- urdragon-combos: the Ur-Dragon deck's three infinite combos in the catalogue
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
@@ -215,5 +216,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     generic_paths::register(&mut r, db)?; // --- generic-paths
     garth::register(&mut r, db)?; // --- garth
     model_gaps_a2::register(&mut r, db)?; // --- model-gaps-a2
+    model_gaps_a4::register(&mut r, db)?; // --- model-gaps-a4
     Ok(r)
 }

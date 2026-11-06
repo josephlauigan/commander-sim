@@ -73,7 +73,7 @@ fn grishnakh_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let Some(t) = grishnakh_victim(g, o, epow(g, a)) else { return Ok(()) };
     let name = format!("gain control of {} until end of turn", g.perm(t).name);
     if trigger_window(g, o, Some(src), &name, None)? && g.perm(t).on_bf && !g.perm(t).phased {
-        crate::impls::marchesa::steal(g, o, t, true);
+        crate::impls::marchesa::steal(g, o, t, true)?;
     }
     Ok(())
 }

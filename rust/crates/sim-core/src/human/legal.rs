@@ -468,7 +468,8 @@ pub fn alternative_counter_cost(g: &Game, p: PlayerId, ctr: CardId) -> Option<&'
 
 /// can p counter `spell` (on the stack) with ctr from hand now?
 pub fn check_counter(g: &Game, p: PlayerId, ctr: CardId, spell: CardId) -> Option<String> {
-    if !g.player(p).hand.contains(&ctr) {
+    let top = engine::stack::counter_on_top(g, p) == Some(ctr); // (Mystic Forge: cast from the top of the library)
+    if !g.player(p).hand.contains(&ctr) && !top {
         return Some(format!("{} isn't in your hand.", nm(g, ctr)));
     }
     if !g.db.get(ctr).tag(Tag::Ctr) {
@@ -480,7 +481,7 @@ pub fn check_counter(g: &Game, p: PlayerId, ctr: CardId, spell: CardId) -> Optio
     if engine::values::silenced(g, p) {
         return Some("You can't cast spells during this player's turn (Conqueror's Flail).".into());
     }
-    if g.cast_checks() && !cast::castable(g, p, ctr, "hand") {
+    if g.cast_checks() && !cast::castable(g, p, ctr, if top { "lib" } else { "hand" }) {
         return Some(format!("Something on the battlefield stops you casting {} right now.", nm(g, ctr)));
     }
     let (gn, pips) = engine::stack::counter_cost(g, ctr, Some(spell), Some(p));
@@ -668,4 +669,25 @@ pub fn what(kind: &str) -> &'static str {
         "ac" => "artifact or creature",
         _ => "target",
     }
+}
+
+/// Why p can't cast the top card of their library c under a Mystic Forge now (the timing and mana of the card's own type
+/// from the library), or None.
+pub fn check_cast_top(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
+    let name = nm(g, c).to_string();
+    if g.player(p).library.last() != Some(&c) || crate::impls::karn_engines::forge_top_card(g, p) != Some(c) {
+        return Some(format!("You can't cast {name} from the top of your library right now."));
+    }
+    if !instant_speed(g, p, c)
+        && let Some(why) = sorcery_timing(g, p)
+    {
+        return Some(why.replace("do that", &format!("cast {name}")));
+    }
+    if engine::values::silenced(g, p) {
+        return Some("You can't cast spells during this player's turn (Conqueror's Flail).".into());
+    }
+    if !cast::castable(g, p, c, "lib") {
+        return Some(format!("Something on the battlefield stops you casting {name} right now."));
+    }
+    None
 }

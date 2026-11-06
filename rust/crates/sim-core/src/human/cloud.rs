@@ -260,8 +260,7 @@ fn plaza(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     mana::pay_from_pool(g, p, 3, "");
     g.perm_mut(l).tapped = true;
     let cd = g.perm(l).real_card();
-    crate::engine::turn::remove_land(g, p, l);
-    g.player_mut(p).exile.push(cd);
+    crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Exile));
     crate::glog!(g, "  {} exiles Plaza of Heroes", g.player(p).name);
     if ability_window_card(g, p, cd, &format!("{} gains hexproof and indestructible", g.perm(t).name), None, Some(t))?
         && live(g, t)

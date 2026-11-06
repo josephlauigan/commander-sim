@@ -214,7 +214,7 @@ fn guildmage_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     pay(g, p, 2, "W", false)?;
     crate::glog!(g, "  {} activates Azorius Guildmage: tap {}", pname(g, p), g.perm(t).name);
     let name = format!("tap {}", g.perm(t).name);
-    if ability_window(g, p, Some(src), &name, None, Some(t))? {
+    if ability_window(g, p, Some(src), &name, None, Some(t))? && crate::engine::ward::pay_ward(g, p, t)? {
         g.perm_mut(t).tapped = true;
     }
     Ok(true)

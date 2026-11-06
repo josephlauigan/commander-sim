@@ -507,7 +507,7 @@ fn ray_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if protect_response(g, to, t, "steal", Some(p), Some(c))? || !on_bf(g, t) {
         return Ok(true);
     }
-    steal(g, p, t, true);
+    steal(g, p, t, true)?;
     g.perm_mut(t).data.set(DataKey::TapOnReturn, Val::Bool(true));
     Ok(true)
 }
@@ -2228,6 +2228,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Ajani Fells the Godsire")?;
     c.etb = Some(ajani);
     c.upkeep = Some(ajani_lore);
+    c.saga = Some((super::common::saga_by_choice, |g, p, m| ajani_lore(g, m, p))); // a person's proliferate
     c.prio = Some(ajani_prio);
     walker(r, db, "Venser, the Sojourner", &VENSER)?;
     let c = r.card(db, "Venser, the Sojourner")?;

@@ -980,9 +980,9 @@ pub fn braids_sacrifice(g: &mut Game, p: PlayerId) -> Res {
     match chosen {
         X::Land(l) => {
             let cd = g.perm(l).card();
-            crate::engine::turn::remove_land(g, p, l);
-            g.player_mut(p).gy.push(cd);
-            crate::engine::zones::tergrid_steal(g, p, cd, p)?;
+            if crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy)) {
+                crate::engine::zones::tergrid_steal(g, p, cd, p)?;
+            }
             crate::glog!(g, "    Braids: {} sacrifices {}", g.player(p).name, g.db.get(cd).name);
         }
         X::Perm(m) => {

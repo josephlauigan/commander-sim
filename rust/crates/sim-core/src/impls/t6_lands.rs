@@ -103,8 +103,7 @@ pub(crate) fn abstergo_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     let cd = g.perm(l).real_card();
-    crate::engine::turn::remove_land(g, p, l); // {T} and exile it as costs
-    g.player_mut(p).exile.push(cd);
+    crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Exile)); // {T} and exile it as costs
     crate::glog!(g, "  {} exiles Abstergo Entertainment", g.player(p).name);
     let t = abstergo_target(g, p);
     if ability_window_card(g, p, cd, "return a historic card, exile all graveyards", None, None)? {

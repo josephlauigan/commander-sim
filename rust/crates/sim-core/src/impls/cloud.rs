@@ -741,6 +741,9 @@ fn shuriken_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: Playe
     if !trigger_window(g, p, Some(src), "tap a creature", Some(5.0))? || !live(g, t) || !live(g, me) {
         return Ok(vec![]);
     }
+    if !crate::engine::ward::pay_ward(g, p, t)? {
+        return Ok(vec![]);
+    }
     g.perm_mut(t).tapped = true;
     let diff = epow(g, t) - epow(g, me);
     crate::glog!(g, "    Conformer Shuriken taps {}", g.perm(t).name);

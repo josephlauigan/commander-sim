@@ -519,6 +519,9 @@ pub fn leave(g: &mut Game, m: PermId) -> Res {
     }
     if on {
         g.player_mut(p).perms.retain(|&x| x != m);
+        if g.perm(m).token {
+            g.player_mut(p).lands.retain(|&x| x != m); // (a creature token land is listed in both: Astral Dragon)
+        }
         g.perm_mut(m).on_bf = false;
     }
     g.bf_ver += 1;
@@ -1060,11 +1063,14 @@ pub struct Enter {
     pub plus: i32,
     /// the copy exceptions of a token copy ("except it's a 0/1 white Illusion"); a clone's come from its `enter_copy`
     pub exc: Option<CopyExc>,
+    /// it is a token from the start (a token copy): whatever takes it away on entering (an Aura with nothing to enchant)
+    /// leaves no card behind
+    pub token: bool,
 }
 
 impl Default for Enter {
     fn default() -> Enter {
-        Enter { orig: None, sick: true, was_cast: false, undying: false, plus: 0, exc: None }
+        Enter { orig: None, sick: true, was_cast: false, undying: false, plus: 0, exc: None, token: false }
     }
 }
 
@@ -1128,6 +1134,7 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
         }
     }
     let m = g.new_perm(p, Some(cd), "Token", 0, 0);
+    g.perm_mut(m).token = how.token;
     g.enter_no += 1;
     let d = g.db.get(cd);
     let (haste, has_dsl, loyalty) = (d.tag(Tag::Haste), d.has_dsl(), d.start_loyalty);
@@ -1272,7 +1279,7 @@ pub fn enter_token_copy_with(g: &mut Game, p: PlayerId, cd: CardId, exc: Option<
     }
     // --- Tiers 4/5 (urdragon): its enter triggers wait until it is a token ("another nontoken Dragon": Miirym)
     g.resolving += 1;
-    let r = enter(g, p, cd, Enter { exc, ..Enter::default() });
+    let r = enter(g, p, cd, Enter { exc, token: true, ..Enter::default() });
     if let Ok(m) = r {
         g.perm_mut(m).token = true;
     }
@@ -1511,7 +1518,9 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
                 .filter(|&x| g.is_creature(x) && etgh(g, x) <= 1 && pval(g, x) >= 2.0 && !untargetable(g, x))
                 .collect();
             if let Some(b) = max_by(&x1, |x| pval(g, x)) {
-                die(g, b, "destroy")?;
+                if crate::engine::ward::pay_ward(g, p, b)? {
+                    die(g, b, "destroy")?;
+                }
             } else if let Some(q) = max_by(&opps, |o| threat(g, p, o)) {
                 lose_life(g, q, 1, Some(p), "triggers", None)?;
             }

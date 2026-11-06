@@ -16,7 +16,7 @@ use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, can_pay_with_rituals, cost_of, pay, seq_cost}; // --- ai-fix: C
 use crate::engine::removal::legal_targets;
-use crate::engine::stack::{ability_window, trigger_window};
+use crate::engine::stack::{ability_run_w, ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{has_type, untargetable};
 use crate::engine::zones::{Enter, die, draw, enter, max_by};
@@ -64,6 +64,9 @@ pub enum StepKind {
     Trigger,
     /// an activated ability: as Trigger (`ability_window`)
     Ability,
+    /// an equip ability (model-gaps-a4): as Ability, but the ability is a stack object the others can copy (Peter Parker's
+    /// Camera, Rings of Brighthearth): `stack::ability_run_w` runs `run` once for each copy that resolved, then for it
+    Equip,
     /// a permanent that must survive: `run` happens, then each opponent may remove or bounce one of `keys` at instant
     /// speed (`interrupted`)
     Permanent,
@@ -647,7 +650,7 @@ pub fn run_steps(g: &mut Game, p: PlayerId, cmb: &Combo) -> Res<bool> {
         g.last_counter = None;
         let ok = match st.kind {
             StepKind::Spell | StepKind::Engine => (st.run)(g, p)?,
-            StepKind::Trigger | StepKind::Ability => {
+            StepKind::Trigger | StepKind::Ability | StepKind::Equip => {
                 let (cg, cp) = st.pay;
                 if !can_pay(g, p, cg, cp, false) {
                     false
@@ -656,12 +659,23 @@ pub fn run_steps(g: &mut Game, p: PlayerId, cmb: &Combo) -> Res<bool> {
                         pay(g, p, cg, cp, false)?;
                     }
                     let src = (st.src)(g, p);
-                    let resolved = if st.kind == StepKind::Trigger {
-                        trigger_window(g, p, src, st.label, Some(6.0))?
+                    if st.kind == StepKind::Equip {
+                        // model-gaps-a4: the equip is on the stack as a copyable ability (Camera, Rings)
+                        let mut ran = false;
+                        let resolved =
+                            ability_run_w(g, p, src, None, st.label, Some(6.0), None, 0.0, |g, _| {
+                                ran = (st.run)(g, p)?;
+                                Ok(())
+                            })?;
+                        resolved && ran
                     } else {
-                        ability_window(g, p, src, st.label, Some(6.0), None)?
-                    };
-                    if resolved && !g.over { (st.run)(g, p)? } else { resolved }
+                        let resolved = if st.kind == StepKind::Trigger {
+                            trigger_window(g, p, src, st.label, Some(6.0))?
+                        } else {
+                            ability_window(g, p, src, st.label, Some(6.0), None)?
+                        };
+                        if resolved && !g.over { (st.run)(g, p)? } else { resolved }
+                    }
                 }
             }
             StepKind::Permanent => {

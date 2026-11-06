@@ -259,7 +259,7 @@ fn camera_go(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
 pub fn camera_window(g: &Game, q: PlayerId, it: &crate::state::StackItem) -> bool {
     it.controller == q
         && it.kind != StackKind::Spell
-        && it.imp >= 5.0
+        && (it.imp >= 5.0 || it.ctx.copy_worth.is_some())
         && stack::copyable(it)
         && stack::camera_ready(g, q)
         && !repeat_on(g, q)

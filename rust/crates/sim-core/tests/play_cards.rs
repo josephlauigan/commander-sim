@@ -41,7 +41,8 @@ fn once_per_turn_and_sorcery_speed() {
     let mut g = table(&["sauron", "cloud"]);
     let vr = perm(&mut g, P0, "Vraska, Betrayal's Sting");
     let idx = g.player(P0).perms.iter().position(|&x| x == vr).unwrap();
-    let h = use_perm(&mut g, P0, vr, vec![by_text("0:"), act(json!({"do": "use", "perm": idx})), by_text("0:")]);
+    // the 0 proliferates: the person chooses what (rule 701.27), here Vraska, the only permanent with a counter
+    let h = use_perm(&mut g, P0, vr, vec![by_text("0:"), pick(0), act(json!({"do": "use", "perm": idx})), by_text("0:")]);
     assert!(told_last(&h).contains("already used a loyalty ability"), "{}", told_last(&h));
     g.active = Some(P1);
     let h = use_perm(&mut g, P0, vr, vec![by_text("0:")]);

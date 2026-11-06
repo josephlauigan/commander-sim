@@ -638,10 +638,10 @@ fn mind_stone(_g: &Game) -> Vec<PermAbility> {
         crate::glog!(g, "  {} sacrifices Mind Stone: draw a card", pname(g, p));
         let cd = g.perm(m).cd;
         crate::engine::zones::die(g, m, "sac")?;
-        if let Some(cd) = cd
-            && crate::engine::stack::ability_window_card(g, p, cd, "draw a card", None, None)?
-        {
-            crate::engine::zones::draw(g, p, 1, false)?;
+        if let Some(cd) = cd {
+            crate::engine::stack::ability_run_w(g, p, None, Some(cd), "draw a card", None, None, 0.0, |g, _| {
+                crate::engine::zones::draw(g, p, 1, false)
+            })?;
         }
         Ok(None)
     })]
@@ -734,6 +734,22 @@ fn outlet(text: &'static str, effect: OutletEffect) -> Vec<PermAbility> {
         crate::engine::life::check_state(g)?;
         Ok(None)
     })]
+}
+
+/// --- model-gaps-a3: Marvin, Murderous Mimic has the sacrifice abilities of the creature outlets its controller has
+pub fn marvin_outlets(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
+    if pm_name(g, m) != crate::impls::newcards_b::MARVIN {
+        return vec![];
+    }
+    let has = |n: &str| g.player(p).perms.iter().any(|&x| x != m && g.perm(x).on_bf && !g.perm(x).phased && g.is_creature(x) && pm_name(g, x) == n);
+    let mut out = vec![];
+    if has("Carrion Feeder") {
+        out.extend(outlet("put a +1/+1 counter on Marvin", feeder));
+    }
+    if has("Viscera Seer") {
+        out.extend(outlet("scry 1", |g, p, _m, _pw| choices::scry(g, p, 1, false)));
+    }
+    out
 }
 
 fn feeder(g: &mut Game, p: PlayerId, m: PermId, _pw: i32) -> Res {
@@ -893,6 +909,9 @@ pub fn abilities(g: &Game, p: PlayerId, m: PermId) -> Option<Vec<PermAbility>> {
     if let Some(own) = super::gaps_a::abilities(g, p, m, &nm) {
         return Some(own); // the Ur-Dragon, Kefka, Sauron and Thanos cards (practice-gaps, Agent A)
     }
+    if let Some(own) = super::model_gaps_a4::abilities(g, p, m, &nm) {
+        return Some(own); // Siege-Gang Commander, Syr Konrad, Professional Face-Breaker, Tinybones, Ezuri (model-gaps-a4)
+    }
     if let Some(own) = super::walkers::abilities(&nm) {
         return Some(own); // Karn Liberated, Ugin, both Karns, Teferi, Wrenn and Six, Venser (walker-fixes)
     }
@@ -948,9 +967,8 @@ fn strip(_g: &Game) -> Vec<LandAbility> {
             .collect();
         let Some(k) = pick(g, p, "target", "Strip Mine: destroy which land?", &labels)? else { return Ok(None) };
         let (q, x) = tg[k];
-        crate::engine::turn::remove_land(g, p, l);
         let cd = g.perm(l).real_card();
-        g.player_mut(p).gy.push(cd);
+        crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
         crate::glog!(
             g,
             "  {} sacrifices Strip Mine: destroy {} ({})",
@@ -1034,9 +1052,9 @@ fn baraddur(_g: &Game) -> Vec<LandAbility> {
             g.perm_mut(l).tapped = true;
             crate::glog!(g, "  {} uses Barad-dûr: amass Orcs {}", pname(g, p), x);
             let cd = g.perm(l).card();
-            if crate::engine::stack::ability_window_card(g, p, cd, &format!("amass Orcs {x}"), None, None)? {
-                crate::engine::zones::amass(g, p, x)?;
-            }
+            crate::engine::stack::ability_run_w(g, p, None, Some(cd), &format!("amass Orcs {x}"), None, None, x as f64, |g, _| {
+                crate::engine::zones::amass(g, p, x)
+            })?;
             Ok(None)
         },
     )]
@@ -1231,10 +1249,12 @@ fn sokenzan(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
     }
     pl.gy.push(c);
     crate::glog!(g, "  {} channels Sokenzan: two 1/1 Spirits with haste", pname(g, p));
-    let mut spec = crate::engine::zones::Tokens::new(2, 1);
-    spec.sick = false;
-    spec.types = vec!["spirit"];
-    crate::engine::zones::make_tokens(g, p, spec)?;
+    crate::engine::stack::ability_run_w(g, p, None, Some(c), "two 1/1 Spirits", None, None, 0.0, |g, _| {
+        let mut spec = crate::engine::zones::Tokens::new(2, 1);
+        spec.sick = false;
+        spec.types = vec!["spirit"];
+        crate::engine::zones::make_tokens(g, p, spec).map(|_| ())
+    })?;
     Ok(None)
 }
 

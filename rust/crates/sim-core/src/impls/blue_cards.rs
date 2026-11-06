@@ -262,6 +262,9 @@ fn virtuoso_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 fn wit_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     let t = ctx.target.filter(|&t| live(g, t) && g.is_creature(t) && !crate::engine::values::untargetable(g, t));
     if let Some(t) = t.or_else(|| stun_target(g, p)) {
+        if !crate::engine::ward::pay_ward(g, p, t)? {
+            return Ok("gy"); // (a ward countered the spell: no card either)
+        }
         g.perm_mut(t).tapped = true;
         if g.active == Some(p) {
             stun(g, t);
@@ -426,8 +429,7 @@ fn fear_cost(g: &mut Game, p: PlayerId, c: CardId) -> Res {
     });
     if let Some(l) = pick {
         let cd = g.perm(l).card();
-        crate::engine::turn::remove_land(g, p, l);
-        g.player_mut(p).hand.push(cd);
+        crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Hand));
         crate::glog!(g, "    {} returns {} (Fear of Isolation)", g.player(p).name, g.db.get(cd).name);
         return Ok(());
     }
@@ -602,7 +604,7 @@ fn wasp_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: PlayerId)
         max_by(&cs, |x| pval(g, x))
     };
     let Some(t) = t else { return Ok(vec![]) };
-    if (human || trigger_window(g, p, Some(src), "tap target creature", Some(3.0))?) && live(g, t) {
+    if (human || trigger_window(g, p, Some(src), "tap target creature", Some(3.0))?) && live(g, t) && crate::engine::ward::pay_ward(g, p, t)? {
         g.perm_mut(t).tapped = true;
     }
     Ok(vec![])

@@ -1623,7 +1623,7 @@ note = ""
 tags = "leg pow=2 warrior"
 dsl = []
 status = "Full"
-note = "{G}: regenerate another Elf (saves valuable Elves); overrun before combat with 4+ Elves"
+note = "{G}: regenerate another Elf (saves valuable Elves); {2}{G}{G}{G}: Elves get +3/+3 and trample until end of turn (impls/model_gaps_a4.rs: on the stack; the AI uses it before combat only when it makes the attack lethal through the blockers or close to it, not whenever four Elves are ready; a person and Marvin use it too)"
 
 ["Fable of the Mirror-Breaker // Reflection of Kiki-Jiki"]
 types = "E"
@@ -4319,7 +4319,7 @@ note = "fear; destroys a nonartifact, nonblack creature on entry; evoke {1}{B} w
 tags = "pow=2"
 dsl = []
 status = "Full"
-note = "three Goblins; {1}{R}, sacrifice a Goblin: 2 damage"
+note = "three Goblins; {1}{R}, sacrifice a Goblin: 2 damage to any target (impls/model_gaps_a4.rs: on the stack as a copyable ability; the AI pings a player the mana and Goblins reach, a planeswalker 2 finishes or a creature worth a Goblin; a person chooses the target and the Goblin, human/model_gaps_a4.rs; Marvin borrows it)"
 
 ["Sifter of Skulls"]
 pool_remove_tags = ["tok", "tokp"] # the tok tag made a 1/1 as it entered; the card makes its Scion when a creature of yours dies (impls/common.rs `dies`) (Phase 2)
@@ -4829,7 +4829,7 @@ note = ""
 ["Syr Konrad, the Grim"]
 dsl = []
 status = "Full"
-note = "another creature dying, or a creature card milled or discarded, deals 1 to each opponent"
+note = "another creature dying, or a creature card milled or discarded, deals 1 to each opponent; {1}{B}: each player mills a card (impls/model_gaps_a4.rs: on the stack; the AI mills with spare mana when the creature cards in the libraries are worth the damage and its own library has 8 or more cards; a person and Marvin use it too)"
 
 ["Szadek, Lord of Secrets"]
 tags = "leg pow=5 tgh=5 fly"
@@ -5141,7 +5141,7 @@ note = "indestructible (flash on a commander)"
 tags = "leg pow=1 tgh=2"
 dsl = []
 status = "Full"
-note = "end step after an opponent discards: plays the best cheap permanent from their graveyard"
+note = "end step after an opponent discards: plays the best cheap permanent from their graveyard; {4}{B}{B}: each opponent with no cards in hand loses 10 life (impls/model_gaps_a4.rs: on the stack; the AI uses it when an empty-handed opponent is at 10 or less, or 20 or less as the first half of two; a person and Marvin use it too)"
 
 ["Tireless Provisioner"]
 tags = "pow=3 tgh=2"
@@ -8568,8 +8568,8 @@ status = "Full"
 note = "a token copy of the best nonland permanent (any controller's), which stays; the AI casts it on its own permanent with flash (opponent's turn or end of turn) when the copy is worth 4 or more; flashback {4}{U}{U}"
 
 ["Peter Parker's Camera"]
-status = "Approximate"
-note = "enters with three film counters; {2}, {T}, remove a counter: copy target activated or triggered ability you control (stack::copy_trigger, t6_copies::camera_copy): the copy can be countered and resolves before the original, choosing its targets anew (the AI's best). The AI copies its own important (importance 6+) triggered ability (Godo: the copy fetches Hammer of Nazahn, the original Helm of the Host) and its own compiled activated or loyalty ability worth stack::CAMERA_WORTH (a tutor: Fauna Shaman). Approximation: the copyable abilities are the triggers and the compiled activated and loyalty abilities (stack::ability_window_ex); a hand-written activated ability (card code calling stack::ability_window) cannot be copied"
+status = "Full"
+note = ""
 
 ["Volatile Stormdrake"]
 status = "Partial"
@@ -8822,7 +8822,7 @@ note = "{1},{T}, sacrifice: draw a card; a spell cast with no mana spent (a Mox,
 ["Hexing Squelcher"]
 status = "Approximate"
 paths_ok = "the compiled uncounterable (the unc tag) is \"this spell can't be countered\" (on the stack); the card code's uncounterable slot is \"spells you control can't be countered\" (on the battlefield)"
-note = "can't be countered itself and spells you control can't be countered (compiled); ward--pay 2 life on itself and your other creatures (impls/t45_krenko.rs life_ward, called from removal::apply_removal_rest with the other wards): an opponent's removal spell costs its caster 2 life (a person is asked; any life total of 2 or more can pay), or is countered (the AI at 4 life or less). Left out: ward against abilities and against spells that are not removal (the engine's wards, mana ones too, are checked only when a removal spell resolves on the permanent)"
+note = "can't be countered itself and spells you control can't be countered (compiled); ward--pay 2 life on itself and your other creatures (impls/t45_krenko.rs life_ward, from engine/ward.rs pay_ward); see data/audit.toml for the coverage. Not audited one by one: about 185 card-code effects that pick a target themselves (gap accepted by JD 2026-11-05)"
 
 ["Blood Moon"]
 status = "Full"
@@ -9200,8 +9200,8 @@ status = "Approximate"
 note = "first strike, trample, lifelink; Stagger on combat damage to a player doubles, until its controller's next turn, all damage to that player (combat and noncombat) and to their permanents (removal damage, combat kills). Gaps: sweepers with a fixed damage kind, the AI's combat estimates, lifelink of a doubled hit, and attackers resolved before Lightning in the same damage step are not doubled"
 
 ["Marvin, Murderous Mimic"]
-status = "Approximate"
-note = "has the compiled activated abilities of the creatures you control that don't share its name (dsl::borrowed_abilities: cost and effects as printed, mana, discard and sacrifice costs included, token copies too; Marvin pays the {T}, so it must be untapped and not summoning sick; one slot per ability, the same per-turn cap as a printed one; the AI and a person both get them as Marvin copies options), plus the hand-written {T} abilities of Krenko, Mob Boss and Kiki-Jiki, Mirror Breaker (impls/t45_krenko.rs) and Ioreth's two untap abilities (the Tier 6 DDR loop). Left out: any other creature's card-code ability (a hand-written one), and a copied mana ability does not pay for another cost"
+status = "Full"
+note = "has the compiled activated abilities of the creatures you control that don't share its name (dsl::borrowed_abilities: cost and effects as printed, mana, discard and sacrifice costs, token copies, the same per-turn cap; a person chooses the targets and what a sacrifice cost gives up), and the hand-written ones, with Marvin as the source: it pays the {T}, the sacrifice of 'this creature' (Marvin goes), the counters, and the effect lands on it where the text says 'this creature'. The AI uses each through the creature's options hook run with Marvin as the source (impls/newcards_b.rs marvin_options; Kefka's {8} and Tekuthal's counter are done as the other named-creature texts; Krenko, Kiki-Jiki and Ioreth's untaps; Brutal Hordechief's blocks and Drivnod's / Tekuthal's indestructible counter are carried by Marvin's own hooks). A person uses the creature's own person path with Marvin as the source and the one that pays, so the questions are the same as for the creature itself: the target, the creature or artifact or land sacrificed or tapped or returned, the mode, X, the card taken from a graveyard, library or the top cards, the Phyrexian payment, how the opponents' creatures block (human/model_gaps_a4.rs marvin_abilities and human/marvin_hooks.rs list them for Kiki-Jiki, Chatterfang, Siege-Gang Commander, Syr Konrad, Professional Face-Breaker, Tinybones, Ezuri and 92 more creatures (98 in all); the creatures whose ability has nothing to choose stay the AI's option: Allosaurus Shepherd, Battle Cry Goblin, Bristly Bill, Krenko, Warmaster, Lathliss, Shalai, Twilight Drover and the like). Also borrowed: the sacrifice outlets Carrion Feeder and Viscera Seer (AI and person), Mother of Runes and the other pool protectors, Quirion Ranger and Wirewood Symbiote untaps, and the mana of the mana creatures (the best single one: the most mana, then the most colours). Not borrowed, because they are not activated abilities: casting from the top of the library or the graveyard, prepared spells, Rivaz's and Valgavoth's permissions, Deadeye Navigator's paired grant (NOT_ACTIVATED in newcards_b.rs); a transform does nothing to Marvin (it has no other face: Bloodline Keeper, Restless Bloodseeker). Text that names its creature (rule 201.5: it means the creature that has the ability, here Marvin) is done by Marvin as that creature: Hope of Ghirapur, Hawkeye, Balan, Drivnod, Sisay, Scion of the Ur-Dragon, Thanos, Nicol Bolas, Venat, and Tekuthal (the indestructible counter goes on Marvin) and Kefka ({8}: each opponent sacrifices a permanent, and nothing transforms: a permanent that is not a double-faced card can't transform, 701.28c). Proliferate through Marvin (Cankerbloom, High Perfect Morcant) is chosen by a person like every proliferate (any number of permanents and players with counters, 701.27). Each borrowed ability is as complete as the creature's own entry says"
 
 ["Staff of Compleation"]
 paths_ok = "two sets of abilities, one path each: the options entry is {T}, pay 1 life: destroy target permanent you own (the override dropped the compiled misreading); the compiled activations are the proliferate, the draw and the untap"
@@ -9314,8 +9314,8 @@ note = "whenever another nontoken artifact you control enters, pay {2} for a tok
 
 ["Mystic Forge"]
 dsl = []
-status = "Approximate"
-note = "the earlier compiled text was wrong (it drew a card). Now: the AI casts the artifact or colourless nonland card on top of the library through the main-phase options when it would cast it from hand (card_utility plus a little), including X spells of the Tokx kind; a removal spell or a wipe on top (All Is Dust) goes through the removal and wipe options like a hand card (brain::spell_sources / source_zone); {T}, 1 life exiles the top card (used to dig past a land it does not need). Missing: a counterspell on top is never cast (the response code counts counters in the hand only; no colourless counterspell is in the karn list). (A land on top is never played: the Forge only allows artifact and colourless spells.) impls/karn_engines.rs"
+status = "Full"
+note = "the earlier compiled text was wrong (it drew a card). Now: the AI casts the artifact or colourless nonland card on top of the library through the main-phase options when it would cast it from hand (card_utility plus a little), including X spells of the Tokx kind; a removal spell or a wipe on top (All Is Dust) goes through the removal and wipe options like a hand card (brain::spell_sources / source_zone); {T}, 1 life exiles the top card (used to dig past a land it does not need). A counterspell on top (Pact of Negation, a {0} card, is the colourless one) is cast in response like a hand card, for the AI (stack::pick_counter, counter_on_top, cast_counter_spell) and for a person (a \"cast X from the top of your library\" ability on the Forge, also for any other spell of the Forge's kind; the response window opens for it). (A land on top is never played: the Forge only allows artifact and colourless spells.) impls/karn_engines.rs"
 
 ["Urza's Blueprints"]
 paths_ok = "compiled: the {T} draw; card code: echo at upkeep (karn_engines.rs)"

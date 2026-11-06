@@ -433,7 +433,7 @@ fn run_copy(g: &mut Game, t: &Trigger) -> Res {
 pub fn copyable(it: &StackItem) -> bool {
     match it.kind {
         StackKind::Trigger => it.ctx.trigger.is_some(),
-        StackKind::Ability => it.ctx.dsl_ab.is_some(),
+        StackKind::Ability => it.ctx.dsl_ab.is_some() || it.ctx.copy_worth.is_some(),
         StackKind::Spell => false,
     }
 }
@@ -457,6 +457,7 @@ fn copy_item(g: &mut Game, q: PlayerId, id: u32, any: bool) -> Res<bool> {
     cp.name = format!("copy of {}", cp.name);
     cp.ctx.trigger = None;
     cp.ctx.dsl_ab = None; // the copy cannot be copied again
+    cp.ctx.copy_worth = None;
     cp.ctx.target = None; // its targets are chosen anew as it resolves
     cp.passed = vec![];
     cp.countered = false;
@@ -687,6 +688,7 @@ pub fn ability_window_card_rc(
 /// Rings of Brighthearth copy that resolves, then once more if the ability itself was not countered. The copies
 /// resolve first and even when the original is countered (they are separate objects). `eff` chooses its targets as it
 /// runs, so a copy may take new ones. True if the original resolved. `src` None: the ability's source is the card `cd`.
+/// A Peter Parker's Camera can copy it too (a person's choice; the AI never does, its worth to it is 0).
 #[allow(clippy::too_many_arguments)]
 pub fn ability_run(
     g: &mut Game,
@@ -698,20 +700,62 @@ pub fn ability_run(
     target: Option<PermId>,
     mut eff: impl FnMut(&mut Game) -> Res,
 ) -> Res<bool> {
-    let (resolves, copies) = match (src, cd) {
-        (None, Some(cd)) => ability_window_card_rc(g, p, cd, name, imp, target)?,
-        _ => ability_window_rc(g, p, src, name, imp, target)?,
-    };
-    for _ in 0..copies {
-        eff(g)?;
+    ability_run_w(g, p, src, cd, name, imp, target, 0.0, |g, _| eff(g))
+}
+
+/// `ability_window_ex` for an ability whose source is a card, not a permanent (a land's ability, a card in hand)
+pub fn ability_window_card_ex(
+    g: &mut Game,
+    p: PlayerId,
+    cd: CardId,
+    name: &str,
+    imp: Option<f64>,
+    ctx: Ctx,
+) -> Res<AbilityRes> {
+    let target = ctx.target;
+    crate::t6stats::flow_source(g, p, Some(cd));
+    if g.over || !abilities_answered(g, Some(p)) {
+        return Ok(AbilityRes { resolves: true, target, copies: 0 });
     }
-    if copies > 0 && resolves {
+    let full = format!("{}: {name}", g.db.get(cd).name);
+    let it = new_item(g, p, Some(cd), ctx, "ability", imp.unwrap_or(3.0), StackKind::Ability, full);
+    let out = window_item(g, p, it, crate::human::is_human(g, p))?;
+    let copies = take_copies(g, out.id);
+    Ok(AbilityRes { resolves: !out.countered, target: out.ctx.target, copies })
+}
+
+/// --- model-gaps-a3: a hand-written activated ability (card code) whose cost is already paid, split from its effect:
+/// `eff(g, is_copy)` is the effect alone, run once for every copy that resolved first (Peter Parker's Camera, Rings of
+/// Brighthearth: no cost is paid again, and `eff` chooses its targets anew) and then once for the ability itself if it
+/// was not countered. `worth` is what a Camera copy is worth to the AI (`CAMERA_WORTH` and up: it copies; 0: never).
+/// True if the original resolved. `src` None: the source is the card `cd` (a land, a card in hand).
+#[allow(clippy::too_many_arguments)]
+pub fn ability_run_w(
+    g: &mut Game,
+    p: PlayerId,
+    src: Option<PermId>,
+    cd: Option<CardId>,
+    name: &str,
+    imp: Option<f64>,
+    target: Option<PermId>,
+    worth: f64,
+    mut eff: impl FnMut(&mut Game, bool) -> Res,
+) -> Res<bool> {
+    let ctx = Ctx { target, copy_worth: Some(worth), ..Ctx::default() };
+    let r = match (src, cd) {
+        (None, Some(cd)) => ability_window_card_ex(g, p, cd, name, imp, ctx)?,
+        _ => ability_window_ex(g, p, src, name, imp, ctx)?,
+    };
+    for _ in 0..r.copies {
+        eff(g, true)?;
+    }
+    if r.copies > 0 && r.resolves {
         crate::human::human::copies_priority(g, p, name)?;
     }
-    if resolves {
-        eff(g)?;
+    if r.resolves {
+        eff(g, false)?;
     }
-    Ok(resolves)
+    Ok(r.resolves)
 }
 
 /// pay equip {n} for equipment e onto m; it attaches if the ability resolves and both are still there
@@ -721,11 +765,36 @@ pub fn equip_to(g: &mut Game, p: PlayerId, e: PermId, m: PermId, n: u32) -> Res<
     if crate::impls::t6_copies::image_targeted(g, m)? && !g.perm(m).on_bf {
         return Ok(true); // --- card-models-2: a Phantasmal Image targeted by the equip
     }
-    let name = format!("equip to {}", g.perm(m).name);
-    if ability_window(g, p, Some(e), &name, None, Some(m))? && g.perm(m).on_bf && g.perm(e).on_bf {
-        g.perm_mut(e).attached = Some(m);
-    }
+    equip_ability(g, p, e, m)?;
     Ok(true)
+}
+
+/// --- model-gaps-a3: the equip ability of e aimed at m (its cost paid) on the stack and carried out. A copy of it
+/// (Peter Parker's Camera, Rings of Brighthearth) attaches too, to a new target the person may choose; the AI keeps
+/// the target (a copy is never worth a Camera to it). True if the ability resolved.
+pub fn equip_ability(g: &mut Game, p: PlayerId, e: PermId, m: PermId) -> Res<bool> {
+    let name = format!("equip to {}", g.perm(m).name);
+    ability_run_w(g, p, Some(e), None, &name, None, Some(m), 0.0, |g, is_copy| {
+        let mut t = m;
+        if is_copy && crate::human::is_human(g, p) {
+            let cre: Vec<PermId> = g
+                .player(p)
+                .perms
+                .iter()
+                .copied()
+                .filter(|&x| x != e && g.perm(x).on_bf && !g.perm(x).phased && g.is_creature(x))
+                .collect();
+            let labels: Vec<String> = cre.iter().map(|&x| g.perm(x).name.to_string()).collect();
+            let prompt = format!("The copy of the equip ability: attach {} to which creature?", g.perm(e).name);
+            if let Some(j) = crate::human::choices::choose(g, p, "target", &prompt, &labels, Some("keep the target"), None)? {
+                t = cre[j];
+            }
+        }
+        if g.perm(t).on_bf && g.perm(e).on_bf {
+            g.perm_mut(e).attached = Some(t);
+        }
+        Ok(())
+    })
 }
 
 /// Item goes on the stack and every player gets priority, p first then in turn order. A response goes on the stack
@@ -877,9 +946,9 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
     if top.controller == q
         && top.kind == StackKind::Ability
         && !top.passed.contains(&q)
-        && let Some((cd, idx)) = top.ctx.dsl_ab
         && camera_ready(g, q)
-        && crate::dsl::ability_worth(g, q, cd, idx) >= CAMERA_WORTH
+        && (top.ctx.dsl_ab.is_some_and(|(cd, idx)| crate::dsl::ability_worth(g, q, cd, idx) >= CAMERA_WORTH)
+            || top.ctx.copy_worth.is_some_and(|w| w >= CAMERA_WORTH))
     {
         // --- card-models-2: q's own valuable activated ability (a tutor ...): the Camera copies it
         let top_id = top.id;
@@ -921,7 +990,9 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
     if top.ctx.counter.is_some() && crate::impls::t6_redirects::redirect_counter(g, q, top_id)? {
         return Ok(());
     }
-    if !hand.iter().any(|&x| g.db.get(x).tag(Tag::Ctr) || &*g.db.get(x).name == "Venser, Shaper Savant") {
+    if counter_on_top(g, q).is_none()
+        && !hand.iter().any(|&x| g.db.get(x).tag(Tag::Ctr) || &*g.db.get(x).name == "Venser, Shaper Savant")
+    {
         return Ok(()); // nothing to respond with
     }
     if !counterable(g, &top) {
@@ -944,7 +1015,7 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
     if val <= 0.0 && top.aff.is_empty() {
         return Ok(());
     }
-    let nc = hand.iter().filter(|&&x| g.db.get(x).tag(Tag::Ctr)).count();
+    let nc = hand.iter().filter(|&&x| g.db.get(x).tag(Tag::Ctr)).count() + usize::from(counter_on_top(g, q).is_some());
     let key = g.player(q).key;
     let mut thr = match g.settings.counter_threshold(key) {
         Some(t) => t as f64,
@@ -1086,12 +1157,20 @@ fn pact_affordable(g: &Game, q: PlayerId) -> bool {
     lands >= 5 * (1 + g.player(q).pacts as usize) && blue >= 2
 }
 
-/// the counterspell q would use against c, if any
+/// the counterspell on top of q's library that a cast-from-the-top permission lets q cast (Mystic Forge: an artifact or
+/// colourless card). It is cast like a hand card for the response windows, from the library (`cast_counter_spell`).
+pub fn counter_on_top(g: &Game, q: PlayerId) -> Option<CardId> {
+    crate::impls::karn_engines::forge_top_card(g, q).filter(|&c| g.db.get(c).tag(Tag::Ctr))
+}
+
+/// the counterspell q would use against c, if any (the hand, and the top of the library under a Mystic Forge)
 pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
     let mut best: Option<CardId> = None;
+    let top = counter_on_top(g, q);
     let mut loose = false; // best is a pitch (Force of Will) or alternative-cost pick: any counter paid in mana beats it
     let cheaper = |best: Option<CardId>, ctr: CardId| best.is_none_or(|b| g.db.get(ctr).cmc < g.db.get(b).cmc);
-    for &ctr in &g.player(q).hand {
+    for &ctr in g.player(q).hand.iter().chain(top.iter()) {
+        let zone = if g.player(q).hand.contains(&ctr) { "hand" } else { "lib" };
         let d = g.db.get(ctr);
         let t = &d.tags;
         if !crate::ai::rules::followup_ok(g, q, ctr) {
@@ -1102,7 +1181,7 @@ pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
             && !t.has(Tag::Ctr)
         {
             let (cg, cp) = counter_cost(g, ctr, Some(c), Some(q));
-            if can_pay(g, q, cg, &cp, false) && castable(g, q, ctr, "hand") && cheaper(best, ctr) {
+            if can_pay(g, q, cg, &cp, false) && castable(g, q, ctr, zone) && cheaper(best, ctr) {
                 best = Some(ctr);
             }
             continue;
@@ -1110,7 +1189,7 @@ pub fn pick_counter(g: &Game, q: PlayerId, c: CardId) -> Option<CardId> {
         if !t.has(Tag::Ctr) || !counter_ok(g, ctr, c) {
             continue;
         }
-        if g.cast_checks() && !castable(g, q, ctr, "hand") {
+        if g.cast_checks() && !castable(g, q, ctr, zone) {
             continue;
         }
         // the free modes pay the cost increases (Defense Grid) in mana: `altcost::tax`, 0 when nothing taxes spells
@@ -1308,6 +1387,25 @@ pub fn pay_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>
 /// q casts counterspell ctr at stack item `target`. It goes on the stack (players may respond, the target's caster
 /// can counter it back), and on resolution counters the target if it's still there. True if it was cast.
 pub fn cast_counter_spell(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -> Res<bool> {
+    if !g.player(q).hand.contains(&ctr) && counter_on_top(g, q) == Some(ctr) {
+        // cast from the top of the library (Mystic Forge): it is a hand card while it is cast, and goes back on top if it
+        // is not cast after all
+        g.player_mut(q).library.pop();
+        g.player_mut(q).hand.push(ctr);
+        crate::glog!(g, "    {} casts {} from the top of the library (Mystic Forge)", g.player(q).name, g.db.get(ctr).name);
+        let r = cast_counter_spell_from_hand(g, q, ctr, target);
+        if !matches!(r, Ok(true))
+            && let Some(i) = g.player(q).hand.iter().position(|&x| x == ctr)
+        {
+            g.player_mut(q).hand.remove(i);
+            g.player_mut(q).library.push(ctr);
+        }
+        return r;
+    }
+    cast_counter_spell_from_hand(g, q, ctr, target)
+}
+
+fn cast_counter_spell_from_hand(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -> Res<bool> {
     let Some(t) = item(g, target).cloned() else { return Ok(false) };
     if !g.player(q).hand.contains(&ctr) {
         return Ok(false);

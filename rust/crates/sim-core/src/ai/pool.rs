@@ -11,7 +11,6 @@ use crate::engine::cast::{castable, discard_worst, on_cast, sac_fodder};
 use crate::engine::combat::can_block;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::{apply_removal, legal_targets};
-use crate::engine::stack::ability_window;
 use crate::engine::values::{commander_out, epow, etgh, find, has_type, pval, stopped, untargetable};
 use crate::engine::zones::{Enter, die, draw, enter, leave, max_by, min_by, searchable, teferis_protection};
 use crate::flow::Res;
@@ -686,10 +685,7 @@ fn equip_protection(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     pay(g, p, n, "", false)?;
     let en = g.perm(e).name;
     crate::glog!(g, "  {} equips {} to {}", g.player(p).name, en, g.perm(best).name);
-    let label = format!("equip to {}", g.perm(best).name);
-    if ability_window(g, p, Some(e), &label, None, Some(best))? && g.perm(best).on_bf && g.perm(e).on_bf {
-        g.perm_mut(e).attached = Some(best);
-    }
+    crate::engine::stack::equip_ability(g, p, e, best)?;
     Ok(true)
 }
 
@@ -1165,17 +1161,35 @@ fn protector_options(g: &Game, p: PlayerId, m: Option<PermId>) -> Vec<(usize, Op
     for &x in &g.player(p).perms {
         let px = g.perm(x);
         let Some(cd) = px.cd else { continue };
-        let Some(i) = protector(&g.db.get(cd).name) else { continue };
-        if PROTECTORS[i].1 == Where::Hand || px.phased || crate::cardcode::ability_locked(g, x, p) {
-            continue;
+        // --- model-gaps-a3: Marvin, Murderous Mimic has the protective abilities (Mother of Runes ...) of the other
+        // creatures p controls: each of their names is a protector with Marvin as its source
+        let mut names: Vec<&str> = vec![&g.db.get(cd).name];
+        if &*g.db.get(cd).name == crate::impls::newcards_b::MARVIN {
+            for &d in &g.player(p).perms {
+                let y = g.perm(d);
+                if d != x && y.on_bf && !y.phased && !y.neutered && g.is_creature(d) && y.name != px.name {
+                    if let Some(dc) = y.cd {
+                        let n: &str = &g.db.get(dc).name;
+                        if !names.contains(&n) {
+                            names.push(n);
+                        }
+                    }
+                }
+            }
         }
-        if PROTECTORS[i].0 == "Giver of Runes" && Some(x) == m {
-            continue; // "another target creature"
+        for n in names {
+            let Some(i) = protector(n) else { continue };
+            if PROTECTORS[i].1 == Where::Hand || px.phased || crate::cardcode::ability_locked(g, x, p) {
+                continue;
+            }
+            if PROTECTORS[i].0 == "Giver of Runes" && Some(x) == m {
+                continue; // "another target creature"
+            }
+            if PROTECTORS[i].4 == Scope::Selfish && Some(x) != m {
+                continue;
+            }
+            out.push((i, Some(x)));
         }
-        if PROTECTORS[i].4 == Scope::Selfish && Some(x) != m {
-            continue;
-        }
-        out.push((i, Some(x)));
     }
     out
 }

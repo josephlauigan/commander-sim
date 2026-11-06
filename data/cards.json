@@ -90428,9 +90428,7 @@
    "identity": "",
    "game_changer": false,
    "source": "scryfall+dsl",
-   "unparsed": [
-    "{2}, {T}, Remove a film counter from ~: Copy target activated or triggered ability you control. You may choose new targets for the copy."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 1,
     "land": false,

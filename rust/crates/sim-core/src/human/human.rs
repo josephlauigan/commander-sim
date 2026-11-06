@@ -272,6 +272,9 @@ fn can_act_abilities(g: &mut Game, q: PlayerId) -> Res<bool> {
 /// counter)?
 pub fn can_respond(g: &Game, q: PlayerId) -> bool {
     let have = engine::mana::total_mana(g, q, false) + g.player(q).pool.total();
+    if engine::stack::counter_on_top(g, q).is_some_and(|c| g.db.get(c).cmc <= have) {
+        return true; // a counterspell on top of the library under a Mystic Forge
+    }
     if g.player(q).hand.iter().any(|&c| {
         let d = g.db.get(c);
         legal::instant_speed(g, q, c) && d.cmc <= have && !d.land
@@ -719,6 +722,12 @@ pub fn abilities_of(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<(String, Ab
             out.push((label, AbilityKind::Hook(Action::Dsl { src: m, idx })));
         }
     }
+    out.extend(cards::marvin_outlets(g, p, m).into_iter().map(|a| (a.label, AbilityKind::Extra(a.act))));
+    let marvin = perm_name(g, m) == crate::impls::newcards_b::MARVIN;
+    if marvin {
+        // --- model-gaps-a4: the creatures it borrows from that have a person path: the same questions, Marvin as the source
+        out.extend(super::model_gaps_a4::marvin_abilities(g, p, m).into_iter().map(|a| (a.label, AbilityKind::Extra(a.act))));
+    }
     if let Some(own) = cards::abilities(g, p, m) {
         // your deck's card: its abilities by the rules
         out.extend(own.into_iter().map(|a| (a.label, AbilityKind::Extra(a.act))));
@@ -728,6 +737,9 @@ pub fn abilities_of(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<(String, Ab
         for (src, imp) in engine::hooks::hooked(g, Event::Options) {
             if src == m {
                 for o in (imp.options.unwrap())(g, src, p, post)? {
+                    if marvin && super::model_gaps_a4::replaced_label(&o.label) {
+                        continue; // its person path is listed above
+                    }
                     if let Some(a) = o.act {
                         out.push((o.label, AbilityKind::Hook(a)));
                     }
@@ -774,13 +786,7 @@ fn use_perm(g: &mut Game, p: PlayerId, m: PermId) -> Res<Option<String>> {
             mana::pay_from_pool(g, p, legal::equip_cost_to(g, p, m, t).unwrap_or(0), ""); // with the discounts
             crate::impls::cloud::note_equip(g, p); // Forge Anew: the first equip of the turn is spent
             crate::glog!(g, "  {} equips {} to {}", name_of(g, p), mname, perm_name(g, t));
-            let tn = perm_name(g, t);
-            if stack::ability_window(g, p, Some(m), &format!("equip to {tn}"), None, Some(t))?
-                && g.player(p).perms.contains(&t)
-                && g.player(p).perms.contains(&m)
-            {
-                g.perm_mut(m).attached = Some(t);
-            }
+            stack::equip_ability(g, p, m, t)?;
             Ok(None)
         }
         AbilityKind::Extra(f) => f(g, p, m),

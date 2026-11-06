@@ -30,11 +30,10 @@ pub fn destroy_land(g: &mut Game, q: PlayerId, l: PermId) -> Res {
     if !g.player(q).lands.contains(&l) || crate::dsl::lands_have_kw(g, q, "indestructible") || crate::engine::values::indestructible(g, l) {
         return Ok(()); // (Avacyn, Angel of Hope: q's lands are indestructible; Darksteel Citadel)
     }
-    crate::engine::turn::remove_land(g, q, l);
     let cd = g.perm(l).real_card();
-    g.player_mut(q).gy.push(cd);
+    let went =     crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
     crate::glog!(g, "    {} ({}) is destroyed", g.db.get(cd).name, pname(g, q));
-    if !g.hooks.is_empty() {
+    if went && !g.hooks.is_empty() {
         fire_trigger(g, Event::LandGy, Call::Cards { p: q, cards: vec![cd] })?;
     }
     Ok(())
@@ -697,10 +696,9 @@ fn crop_rotation(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
     let i = first_min(&(0..lands.len()).collect::<Vec<_>>(), |i| keys[i]).unwrap();
     let sac = lands[i];
     let (target, _) = crop_target(g, p);
-    crate::engine::turn::remove_land(g, p, sac);
     let cd = g.perm(sac).real_card();
-    g.player_mut(p).gy.push(cd);
-    if !g.hooks.is_empty() {
+    let went = crate::engine::turn::remove_land(g, p, sac, Some(crate::engine::zones::Zone::Gy));
+    if went && !g.hooks.is_empty() {
         fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
     }
     let Some(target) = target.filter(|t| g.player(p).library.contains(t)) else { return Ok("gy") };

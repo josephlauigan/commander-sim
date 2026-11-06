@@ -99,6 +99,9 @@ fn derevi_pick(g: &mut Game, src: PermId, p: PlayerId) -> Res<bool> {
         if !trigger_window(g, p, Some(src), "tap target permanent", None)? {
             return Ok(false);
         }
+        if !crate::engine::ward::pay_ward(g, p, m)? {
+            return Ok(true); // (a ward countered it)
+        }
         g.perm_mut(m).tapped = true;
         crate::glog!(g, "    Derevi taps {}", g.perm(m).name);
         return Ok(true);
