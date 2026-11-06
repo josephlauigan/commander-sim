@@ -3,10 +3,21 @@
 The deck's living list of strengths and weaknesses and what was tested.
 
 **List:** `decklists/JD/tymna-thrasios-doomsday.md`, the Doomsday rebuild of 2026-11-05 (cEDH; the Thanos turbo core under
-Tymna and Thrasios, Doomsday and three cantrips in). **Tiers:** t6 (`data/my_decks.toml`). **No sims yet:** Doomsday has card code, a pile builder and pile play (2026-11-05, `impls/doomsday.rs`, tested in `tests/doomsday.rs`), but
-nothing has been simulated on this list. The findings of the previous list (t5, Basalt
+Tymna and Thrasios, Doomsday and three cantrips in). **Tiers:** t6 (`data/my_decks.toml`). First baseline 2026-11-06 below. Doomsday has card code, a pile builder and pile play (2026-11-05, `impls/doomsday.rs`, tested in `tests/doomsday.rs`), but
+its first sim is the baseline below. The findings of the previous list (t5, Basalt
 Monolith + Rings + Ballista deck with attack taxes) are in `FINDINGS-old-list.md`, and the retired Thanos turbo list's
 (t6) in `audit/thanos/FINDINGS-old-list.md`.
+
+## Baseline 2026-11-06 (after the rewire, Doomsday and Phase C engine work)
+Tymna/Thrasios, **first number for the Doomsday list**, t6 (cEDH), 2,000 games, seed 500000, loose, look-ahead, integration build
+daa0bfdb (main + #271-#276 with the overnight fixes): **34.4%** (95% CI 32.3-36.5) over t6; even share 25%: +9.4 points. No old-build
+comparison (the old list played t5: 16.1% on 11-05). Wins by combo 97%, damage 2%; average own turn of wins 6.8. Plan online 80.5%.
+How it wins: Thassa's Oracle + Consultation/Pact 76% of wins, Power Artifact / Rings + Monolith 18%. It went for **Doomsday only 19
+times in 2,000 games** (the Oracle line 715 times, Monolith 130). Why it declines so often was not measured: its declines (Line 1
+in hand, life < 16, lethal on board, no pile in 50,000 search nodes, #272/#275) are the candidates to trace next. Ready in 42% (round 6), one tutor
+away in 61% (round 5); combos stopped 23% (Mindbreak Trap, Consultation in response...). Deaths: Sisay 14.8%, Kraum/Tymna 13.8%,
+Dack 12.2%. The plan file is PROVISIONAL (written from the pilot guide). The first run on the earlier integration build hung on
+one look-ahead game (the Doomsday pile builder ran at every playout decision; fixed on #275). Raw: `audit/baseline-2026-11-06/thrasios.txt`.
 
 ## Doomsday in the simulator (2026-11-05, before any sim)
 

@@ -4,6 +4,17 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run (CLAUDE.md "Swap tests explain themselves"). Newest evidence first; numbers are
 look-ahead, loose profile, vs Cloud's matched tiers (T1, T2) unless noted.
 
+## Baseline 2026-11-06 (after the rewire, Doomsday and Phase C engine work)
+Cloud, t1 / t2 / t3, 2,000 games per tier, seed 500000, loose, look-ahead, build ef343cc1: **29.4%** (27.4-31.4) / **21.6%**
+(19.8-23.4) / **22.2%** (20.4-24.1), **24.4% over t1-t3**. Old build (main 1e027077, 2026-11-05): 32.0% (30.0-34.1) / 21.2%
+(19.5-23.0) / 21.9% (20.1-23.7), 25.0% over t1-t3. Change -2.6 / +0.4 / +0.3, average -0.6. t2 and t3 are noise. **t1 is the one
+to watch:** the intervals overlap (30.0-31.4) but the drop is 2.6 points, over the 2-point rule; the 95% band for the difference of two
+runs at this n is about +-2.8, so it is still inside noise, not a finding. One seed per tier; only a re-run (another seed) would settle it.
+Engine changes that can touch this deck: C3 attack taxes no longer idle attackers (it plays Archon of Absolution, Norn's Annex and
+Windborn Muse, and faces taxes from opponents), infect/toxic as poison threats (t3 has Atraxa), and opponents casting their commander
+on time (+1.5; a possible but unproven source of the t1 drop). No C2 card is in the deck; C1/C1b and the rewire do not touch it.
+Raw: `audit/baseline-2026-11-06/cloud.txt` and `cloud-2026-11-05-oldbuild.txt`.
+
 ## Current state (2026-10-16; superseded: the newest baseline is the 2026-11-04 section at the end)
 List: C4 + Package D with substitutes (Crawlspace, Archon of Absolution), plus the 10/15 AI fixes.
 Win rate: **T1 20.6%, T2 18.2%** (was 14.0 / 11.9 on the morning of 10/15). Fair band for its tiers: 22-32%.
