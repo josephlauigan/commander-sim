@@ -21,6 +21,7 @@
 1 Demonic Consultation (ice) 121
 1 Demonic Tutor (sta) 90
 1 Diabolic Intent (ltc) 526
+1 Doomsday (sld) 1115
 1 Eladamri's Call (pls) 106
 1 Elvish Spirit Guide (sld) 423
 1 Enlightened Tutor (dmr) 412
