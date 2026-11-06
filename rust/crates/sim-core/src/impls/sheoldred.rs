@@ -1258,7 +1258,7 @@ fn tome_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
     if owner(g, src) != p || !x.on_bf || x.tapped || x.phased || x.neutered || post.is_none() {
         return Ok(vec![]);
     }
-    if pages(g, src) < 1 || !can_pay(g, p, 1, "", false) || g.player(p).library.is_empty() {
+    if pages(g, src) < 1 || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false) || g.player(p).library.is_empty() {
         return Ok(vec![]);
     }
     let u = draw_utility(g, p);
@@ -1273,10 +1273,10 @@ fn tome_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
 }
 
 fn tome_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !on_bf(g, src) || g.perm(src).tapped || pages(g, src) < 1 || !can_pay(g, p, 1, "", false) {
+    if !on_bf(g, src) || g.perm(src).tapped || pages(g, src) < 1 || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false) {
         return Ok(false);
     }
-    pay(g, p, 1, "", false)?;
+    pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)?;
     g.perm_mut(src).tapped = true;
     add_pages(g, src, -1);
     ability_run(g, p, Some(src), None, "draw a card", Some(2.0), None, |g| draw(g, p, 1, false))?;

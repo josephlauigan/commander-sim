@@ -1119,50 +1119,62 @@ fn ldg_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
 }
 
 /// Liliana, Dreadhorde General -9 for a person: they choose a permanent of each permanent type they control (one
-/// permanent can be the choice for several types) and sacrifice the rest
+/// permanent can be the choice for several types; a Treasure, Clue, Food or Blood token is an artifact, and one token
+/// of its kind stays if it is chosen) and sacrifice the rest
 fn ldg_person(g: &mut Game, q: PlayerId) -> Res {
-    let ps: Vec<PermId> = g.player(q).perms.iter().copied().filter(|&m| !g.perm(m).phased).collect();
-    let lands = g.player(q).lands.clone();
-    let mut keep: Vec<PermId> = vec![];
-    let types = [
+    let stuff = stuff_of(g, q);
+    let mut keep: Vec<Stuff> = vec![];
+    let names = [
         (Types::ARTIFACT, "artifact"),
         (Types::CREATURE, "creature"),
         (Types::ENCHANTMENT, "enchantment"),
         (Types::PLANESWALKER, "planeswalker"),
         (Types::LAND, "land"),
     ];
-    for (t, label) in types {
-        let of_type = |g: &Game, m: PermId| {
-            (t == Types::CREATURE && g.is_creature(m)) || g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(t))
-        };
-        let pool: Vec<PermId> = if t == Types::LAND { lands.clone() } else { ps.clone() };
-        if pool.iter().any(|&m| keep.contains(&m) && of_type(g, m)) {
+    for (t, label) in names {
+        if keep.iter().any(|&s| stuff_is(g, s, t)) {
             continue; // a permanent already kept is of this type
         }
-        let cands: Vec<PermId> = pool.into_iter().filter(|&m| of_type(g, m)).collect();
+        let mut cands: Vec<Stuff> = vec![];
+        for &s in &stuff {
+            if stuff_is(g, s, t) && !cands.contains(&s) {
+                cands.push(s); // (a token kind is one candidate however many there are)
+            }
+        }
         let pick = match cands.len() {
             0 => continue,
             1 => cands[0],
-            _ => crate::human::cards::pick_perm(
-                g,
-                q,
-                "choose",
-                &format!("Liliana, Dreadhorde General: choose the {label} you keep"),
-                &cands,
-                None,
-            )?
-            .unwrap_or(cands[0]),
+            _ => {
+                let labels: Vec<String> = cands
+                    .iter()
+                    .map(|&s| match s {
+                        Stuff::Perm(m) => {
+                            crate::human::legal::describe_target(g, q, crate::human::Target::Perm(m))
+                        }
+                        Stuff::Token(_) => stuff_name(g, s),
+                    })
+                    .collect();
+                let prompt = format!("Liliana, Dreadhorde General: choose the {label} you keep");
+                choices::choose(g, q, "choose", &prompt, &labels, None, None)?.map_or(cands[0], |k| cands[k])
+            }
         };
         keep.push(pick);
     }
-    for m in ps {
-        if !keep.contains(&m) && g.perm(m).on_bf {
-            die(g, m, "sac")?;
-        }
-    }
-    for l in lands {
-        if !keep.contains(&l) {
-            crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
+    let mut kept_token: Vec<&str> = vec![];
+    for s in stuff {
+        let spare = match s {
+            Stuff::Perm(_) => !keep.contains(&s),
+            Stuff::Token(k) => {
+                if keep.contains(&s) && !kept_token.contains(&k) {
+                    kept_token.push(k);
+                    false
+                } else {
+                    true
+                }
+            }
+        };
+        if spare {
+            sac_stuff(g, q, s)?;
         }
     }
     Ok(())

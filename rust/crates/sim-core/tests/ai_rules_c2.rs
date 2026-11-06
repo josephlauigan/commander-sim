@@ -522,3 +522,60 @@ fn gadgeteer_a_compiled_artifact_ability_costs_one_less() {
     perm(&mut g, P0, "Forensic Gadgeteer");
     assert!(untap(&mut g) >= 1, "{{2}} with it");
 }
+
+// ================================================================== follow-up: Liliana's tokens for a person, the sweep
+#[test]
+fn liliana_dreadhorde_the_person_may_keep_a_token_as_the_artifact() {
+    let h = Arc::new(ScriptHuman::from_fn(|r: &Request| {
+        if &*r.kind == "priority" {
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        Answer::Pick(r.choices.iter().position(|c| c.contains("Treasure")).unwrap_or(0))
+    }));
+    let mut g = table(&["kefka", "seph"]);
+    g.humans.add(P0, h.clone());
+    perm(&mut g, P0, "Sol Ring");
+    perm(&mut g, P0, "Mind Stone");
+    g.player_mut(P0).treasures = 3;
+    g.player_mut(P0).clues = 2;
+    let src = perm(&mut g, P1, "Liliana, Dreadhorde General");
+    (sim_core::impls::rules::LDG_ULT.eff)(&mut g, P1, src).unwrap();
+    let r = h.asked().into_iter().find(|r| r.prompt.contains("artifact you keep")).expect("asked for the artifact");
+    let all = r.choices.join(" | ");
+    assert!(all.contains("Treasure token") && all.contains("Clue token"), "tokens are artifacts to choose: {all}");
+    assert_eq!(r.choices.iter().filter(|c| c.contains("Treasure")).count(), 1, "a kind is one choice: {all}");
+    assert_eq!(g.player(P0).treasures, 1, "one Treasure kept");
+    assert_eq!(g.player(P0).clues, 0, "the Clues were sacrificed");
+    assert!(!on(&g, P0, "Sol Ring") && !on(&g, P0, "Mind Stone"));
+}
+
+#[test]
+fn gadgeteer_endless_atlas_costs_one_not_two() {
+    // Endless Atlas {2},{T}: draw a card. Three Islands (it needs three lands with the same name), two of them tapped
+    let mut g = table(&["kefka", "seph"]);
+    let atlas = perm(&mut g, P0, "Endless Atlas");
+    let ls = lands(&mut g, P0, "Island", 3, false);
+    g.perm_mut(ls[0]).tapped = true;
+    g.perm_mut(ls[1]).tapped = true;
+    assert!(options_of(&mut g, atlas, P0, Some(false)).is_empty(), "one untapped land is not {{2}}");
+    perm(&mut g, P0, "Forensic Gadgeteer");
+    let o = options_of(&mut g, atlas, P0, Some(false));
+    assert_eq!(o.len(), 1, "{{1}} with the Gadgeteer");
+    let hand = g.player(P0).hand.len();
+    assert!(run(&mut g, o.into_iter().next().unwrap(), P0));
+    assert_eq!(g.player(P0).hand.len(), hand + 1);
+    assert!(g.perm(ls[2]).tapped, "the untapped Island paid");
+}
+
+#[test]
+fn gadgeteer_midnight_clock_keeps_its_blue_pip() {
+    // Midnight Clock {2}{U}: with a Gadgeteer {1}{U}; two Islands pay it, one does not
+    let mut g = table(&["stella-lee-quick-draw", "seph"]);
+    let clock = perm(&mut g, P0, "Midnight Clock");
+    let ls = lands(&mut g, P0, "Island", 3, false);
+    g.perm_mut(ls[0]).tapped = true;
+    g.active = Some(P0);
+    assert!(options_of(&mut g, clock, P0, Some(false)).is_empty(), "two Islands can't pay {{2}}{{U}}");
+    perm(&mut g, P0, "Forensic Gadgeteer");
+    assert_eq!(options_of(&mut g, clock, P0, Some(false)).len(), 1, "{{1}}{{U}} with it");
+}

@@ -416,7 +416,7 @@ fn ginger_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Re
     }
     if g.perm(src).eot_kw.contains(&"haste_blockers")
         || crate::cardcode::ability_locked(g, src, p)
-        || !can_pay(g, p, 1, "", false)
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)
     {
         return Ok(vec![]);
     }
