@@ -331,6 +331,17 @@ fn target_labels(g: &Game, p: PlayerId, tg: &[Target]) -> Vec<String> {
     tg.iter().map(|&x| legal::describe_target(g, p, x)).collect()
 }
 
+/// a copy of an ability that does damage to a target (Rings of Brighthearth, Peter Parker's Camera) chooses its target
+/// anew from everything damage can hit; "keep the target" (or no other target) keeps `t`
+pub(super) fn new_damage_target(g: &Game, p: PlayerId, prompt: &str, t: Target) -> Res<Target> {
+    let tg = choices::damage_targets(g, p, Default::default());
+    if tg.is_empty() {
+        return Ok(t);
+    }
+    let labels = target_labels(g, p, &tg);
+    Ok(choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)?.map_or(t, |k| tg[k]))
+}
+
 pub(super) fn pname(g: &Game, p: PlayerId) -> String {
     g.player(p).name.to_string()
 }
@@ -390,10 +401,10 @@ pub enum Ready {
     /// the person cancelled a choice: costs nothing
     Cancel,
     /// carry this out after the loyalty is paid and the ability resolves
-    Go(Box<dyn FnOnce(&mut Game) -> Res>),
+    Go(Box<dyn Fn(&mut Game) -> Res>),
 }
 
-pub(super) fn go(f: impl FnOnce(&mut Game) -> Res + 'static) -> Res<Ready> {
+pub(super) fn go(f: impl Fn(&mut Game) -> Res + 'static) -> Res<Ready> {
     Ok(Ready::Go(Box::new(f)))
 }
 
@@ -417,17 +428,33 @@ pub(super) fn walker(list: &[(i32, &'static str, WalkEff)]) -> Vec<PermAbility> 
                 crate::impls::mine::pw_use(g, m, cost)?; // a walker at 0 loyalty is gone; the effect still happens
                 let name = format!("{cost:+}");
                 let on_table = g.player(p).perms.contains(&m);
-                let resolved = match (on_table, g.perm(m).cd) {
-                    (false, Some(cd)) => crate::engine::stack::ability_window_card(g, p, cd, &name, None, None)?,
-                    _ => crate::engine::stack::ability_window(g, p, Some(m), &name, None, None)?,
+                let (src, cd) = match (on_table, g.perm(m).cd) {
+                    (false, Some(cd)) => (None, Some(cd)),
+                    _ => (Some(m), None),
                 };
-                if !resolved {
-                    return Ok(None);
-                }
-                if let Ready::Go(f) = ready {
-                    f(g)?;
-                }
-                crate::engine::life::check_state(g)?;
+                let go_fn = match ready {
+                    Ready::Go(f) => Some(f),
+                    _ => None,
+                };
+                // a Rings of Brighthearth / Peter Parker's Camera copy: no loyalty is paid; it chooses its targets anew
+                // (the effect's own question again; cancelling it keeps the original's targets)
+                crate::engine::stack::ability_run_w(g, p, src, cd, &name, None, None, 0.0, |g, is_copy| {
+                    let mut again = None;
+                    if is_copy {
+                        super::walkers::tell_info(
+                            g,
+                            p,
+                            &format!("The copy of {} {name}: choose new targets, or cancel to keep the original's.", pm_name(g, m)),
+                        );
+                        if let Ready::Go(f2) = eff(g, p, m)? {
+                            again = Some(f2);
+                        }
+                    }
+                    if let Some(f) = again.as_ref().or(go_fn.as_ref()) {
+                        f(g)?;
+                    }
+                    crate::engine::life::check_state(g)
+                })?;
                 Ok(None)
             })
         })
@@ -660,9 +687,14 @@ fn triskelion(_g: &Game) -> Vec<PermAbility> {
         g.perm_mut(m).plus -= 1;
         crate::glog!(g, "  {} removes a counter from Triskelion", pname(g, p));
         let tp = if let Target::Perm(t) = tg[k] { Some(t) } else { None };
-        if crate::engine::stack::ability_window(g, p, Some(m), "1 damage", None, tp)? {
-            damage(g, p, tg[k], 1, "Triskelion", "triggers")?;
-        }
+        crate::engine::stack::ability_run_w(g, p, Some(m), None, "1 damage", None, tp, 0.0, |g, is_copy| {
+            let t = if is_copy {
+                new_damage_target(g, p, "The copy of Triskelion's ability: 1 damage to which target?", tg[k])?
+            } else {
+                tg[k]
+            };
+            damage(g, p, t, 1, "Triskelion", "triggers")
+        })?;
         if g.player(p).perms.contains(&m) {
             super::combos::die_if_lethal(g, m)?; // no counters left, or its own pings marked on it
         }
@@ -683,14 +715,18 @@ fn aetherflux(_g: &Game) -> Vec<PermAbility> {
         crate::engine::life::lose_life(g, p, 50, Some(p), "other", None)?;
         crate::glog!(g, "  {} pays 50 life: Aetherflux Reservoir", pname(g, p));
         let tp = if let Target::Perm(t) = tg[k] { Some(t) } else { None };
-        if !crate::engine::stack::ability_window(g, p, Some(m), "50 damage", Some(9.0), tp)? {
-            return Ok(None);
-        }
-        let pl = g.player_mut(p);
-        pl.stat(crate::sym::intern("aether_shots"), 1);
-        let turns = pl.turns;
-        pl.milestone.entry(crate::sym::intern("aether")).or_insert(turns);
-        damage(g, p, tg[k], 50, "Aetherflux Reservoir", "aether")?;
+        crate::engine::stack::ability_run_w(g, p, Some(m), None, "50 damage", Some(9.0), tp, 0.0, |g, is_copy| {
+            let t = if is_copy {
+                new_damage_target(g, p, "The copy of Aetherflux Reservoir's ability: 50 damage to which target?", tg[k])?
+            } else {
+                tg[k]
+            };
+            let pl = g.player_mut(p);
+            pl.stat(crate::sym::intern("aether_shots"), 1);
+            let turns = pl.turns;
+            pl.milestone.entry(crate::sym::intern("aether")).or_insert(turns);
+            damage(g, p, t, 50, "Aetherflux Reservoir", "aether")
+        })?;
         Ok(None)
     })]
 }
@@ -700,10 +736,10 @@ fn ste(_g: &Game) -> Vec<PermAbility> {
         crate::glog!(g, "  {} sacrifices Sakura-Tribe Elder", pname(g, p));
         let cd = g.perm(m).cd;
         crate::engine::zones::die(g, m, "sac")?;
-        if let Some(cd) = cd
-            && crate::engine::stack::ability_window_card(g, p, cd, "search for a basic land", None, None)?
-        {
-            crate::engine::zones::land_ramp(g, p, 1, true)?;
+        if let Some(cd) = cd {
+            crate::engine::stack::ability_run(g, p, None, Some(cd), "search for a basic land", None, None, |g| {
+                crate::engine::zones::land_ramp(g, p, 1, true)
+            })?;
         }
         Ok(None)
     })]
@@ -728,9 +764,7 @@ fn outlet(text: &'static str, effect: OutletEffect) -> Vec<PermAbility> {
         let pw = crate::engine::values::epow(g, x);
         crate::glog!(g, "  {} sacrifices {} to {}", pname(g, p), g.perm(x).name, outlet_name);
         crate::engine::zones::die(g, x, "sac")?;
-        if crate::engine::stack::ability_window(g, p, Some(m), text, None, None)? {
-            effect(g, p, m, pw)?;
-        }
+        crate::engine::stack::ability_run(g, p, Some(m), None, text, None, None, |g| effect(g, p, m, pw))?;
         crate::engine::life::check_state(g)?;
         Ok(None)
     })]
@@ -778,12 +812,13 @@ fn coalition(_g: &Game) -> Vec<PermAbility> {
             }
             g.perm_mut(m).tapped = true;
             crate::glog!(g, "  {} puts a charge counter on Coalition Relic", pname(g, p));
-            if crate::engine::stack::ability_window(g, p, Some(m), "a charge counter", None, None)?
-                && g.player(p).perms.contains(&m)
-            {
-                let n = g.perm(m).data.int(DataKey::Charge);
-                g.perm_mut(m).data.set(DataKey::Charge, Val::Int(n + 1));
-            }
+            crate::engine::stack::ability_run(g, p, Some(m), None, "a charge counter", None, None, |g| {
+                if g.player(p).perms.contains(&m) {
+                    let n = g.perm(m).data.int(DataKey::Charge);
+                    g.perm_mut(m).data.set(DataKey::Charge, Val::Int(n + 1));
+                }
+                Ok(())
+            })?;
             Ok(None)
         },
     )]
@@ -977,9 +1012,36 @@ fn strip(_g: &Game) -> Vec<LandAbility> {
             pname(g, q)
         );
         let what = format!("destroy {}", cname(g, g.perm(x).card()));
-        if crate::engine::stack::ability_window_card(g, p, cd, &what, None, None)? && g.player(q).lands.contains(&x) {
-            crate::impls::fixes::destroy_land(g, q, x)?;
-        }
+        crate::engine::stack::ability_run_w(g, p, None, Some(cd), &what, None, None, 0.0, |g, is_copy| {
+            let (mut q, mut x) = (q, x);
+            if is_copy {
+                // "you may choose a new target for the copy"
+                let now: Vec<(PlayerId, PermId)> = g
+                    .players
+                    .iter()
+                    .filter(|q| q.alive)
+                    .flat_map(|q| q.lands.iter().map(move |&x| (q.id, x)))
+                    .collect();
+                let labels: Vec<String> = now
+                    .iter()
+                    .map(|&(q2, x)| {
+                        format!(
+                            "{} ({})",
+                            cname(g, g.perm(x).card()),
+                            if q2 == p { "yours".to_string() } else { pname(g, q2) }
+                        )
+                    })
+                    .collect();
+                let prompt = "The copy of Strip Mine's ability: destroy which land?";
+                if let Some(j) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                    (q, x) = now[j];
+                }
+            }
+            if g.player(q).lands.contains(&x) {
+                crate::impls::fixes::destroy_land(g, q, x)?;
+            }
+            Ok(())
+        })?;
         Ok(None)
     })]
 }
@@ -999,10 +1061,10 @@ fn lighthouse(_g: &Game) -> Vec<LandAbility> {
         g.perm_mut(l).tapped = true;
         crate::glog!(g, "  {} loots with Desolate Lighthouse", pname(g, p));
         let cd = g.perm(l).card();
-        if crate::engine::stack::ability_window_card(g, p, cd, "draw, then discard", None, None)? {
+        crate::engine::stack::ability_run(g, p, None, Some(cd), "draw, then discard", None, None, |g| {
             crate::engine::zones::draw(g, p, 1, false)?;
-            crate::engine::cast::discard_worst(g, p, 1)?;
-        }
+            crate::engine::cast::discard_worst(g, p, 1)
+        })?;
         Ok(None)
     })]
 }
@@ -1015,9 +1077,9 @@ fn summit(_g: &Game) -> Vec<LandAbility> {
         super::mana::pay_from_pool(g, p, 2, "UR");
         g.perm_mut(l).tapped = true;
         let cd = g.perm(l).card();
-        if crate::engine::stack::ability_window_card(g, p, cd, "surveil 1", None, None)? {
-            choices::scry(g, p, 1, true)?;
-        }
+        crate::engine::stack::ability_run(g, p, None, Some(cd), "surveil 1", None, None, |g| {
+            choices::scry(g, p, 1, true)
+        })?;
         Ok(None)
     })]
 }
@@ -1656,9 +1718,21 @@ fn guildmage_tap(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     super::mana::pay_from_pool(g, p, 2, "W");
     crate::glog!(g, "  {} activates Azorius Guildmage: tap {}", pname(g, p), g.perm(t).name);
     let what = format!("tap {}", g.perm(t).name);
-    if crate::engine::stack::ability_window(g, p, Some(m), &what, None, Some(t))? {
+    crate::engine::stack::ability_run_w(g, p, Some(m), None, &what, None, Some(t), 0.0, |g, is_copy| {
+        let mut t = t;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let cre = creatures(g, p, false);
+            let prompt = "The copy of Azorius Guildmage's ability: tap which creature?";
+            if !cre.is_empty()
+                && let Some(x) = pick_perm(g, p, "target", prompt, &cre, Some("keep the target"))?
+            {
+                t = x;
+            }
+        }
         g.perm_mut(t).tapped = true;
-    }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -1688,11 +1762,28 @@ fn guildmage_counter(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     let (id, name, _) = abil[k].clone();
     super::mana::pay_from_pool(g, p, 2, "U");
     crate::glog!(g, "  {} activates Azorius Guildmage: counter {}", pname(g, p), name);
-    if crate::engine::stack::ability_window(g, p, Some(m), &format!("counter {name}"), None, None)? {
+    crate::engine::stack::ability_run_w(g, p, Some(m), None, &format!("counter {name}"), None, None, 0.0, |g, is_copy| {
+        let mut id = id;
+        if is_copy {
+            // "you may choose a new target for the copy": another activated ability still on the stack
+            let now: Vec<(u32, String, PlayerId)> = g
+                .stack
+                .iter()
+                .rev()
+                .filter(|it| it.kind == crate::state::StackKind::Ability)
+                .map(|it| (it.id, it.name.clone(), it.controller))
+                .collect();
+            let labels: Vec<String> = now.iter().map(|(_, n, c)| format!("{n} ({})", pname(g, *c))).collect();
+            let prompt = "The copy of Azorius Guildmage's ability: counter which ability?";
+            if let Some(j) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                id = now[j].0;
+            }
+        }
         if let Some(it) = g.stack.iter_mut().find(|it| it.id == id) {
             it.countered = true;
         }
-    }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -1714,9 +1805,9 @@ fn niv_draw(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     }
     g.perm_mut(m).tapped = true;
     crate::glog!(g, "  {} activates Niv-Mizzet, the Firemind: draw a card", pname(g, p));
-    if crate::engine::stack::ability_window(g, p, Some(m), "draw a card", None, None)? {
-        crate::engine::zones::draw(g, p, 1, false)?;
-    }
+    crate::engine::stack::ability_run(g, p, Some(m), None, "draw a card", None, None, |g| {
+        crate::engine::zones::draw(g, p, 1, false)
+    })?;
     Ok(None)
 }
 
@@ -2011,16 +2102,16 @@ fn searcher(gn: u32, cap: u32) -> Vec<PermAbility> {
             g.perm_mut(m).tapped = true;
             let nm = pm_name(g, m);
             crate::glog!(g, "  {} activates {}", pname(g, p), nm);
-            if crate::engine::stack::ability_window(
+            crate::engine::stack::ability_run(
                 g,
                 p,
                 Some(m),
+                None,
                 &format!("search for a Rebel (mana value {cap} or less)"),
                 None,
                 None,
-            )? {
-                crate::impls::galadriel::put_rebel(g, p, &nm, cap, false)?;
-            }
+                |g| crate::impls::galadriel::put_rebel(g, p, &nm, cap, false).map(|_| ()),
+            )?;
             Ok(None)
         },
     )]
@@ -2037,10 +2128,16 @@ fn blightspeaker() -> Vec<PermAbility> {
         let Some(q) = any_player(g, p, "Blightspeaker: which player loses 1 life?")? else { return Ok(None) };
         g.perm_mut(m).tapped = true;
         crate::glog!(g, "  {} activates Blightspeaker: {} loses 1 life", pname(g, p), pname(g, q));
-        if crate::engine::stack::ability_window(g, p, Some(m), "target player loses 1 life", None, None)? {
+        crate::engine::stack::ability_run_w(g, p, Some(m), None, "target player loses 1 life", None, None, 0.0, |g, is_copy| {
+            let mut q = q;
+            if is_copy
+                && let Some(x) = any_player(g, p, "The copy of Blightspeaker's ability: which player loses 1 life?")?
+            {
+                q = x;
+            }
             crate::engine::life::lose_life(g, q, 1, Some(p), "other", None)?;
-            crate::engine::life::check_state(g)?;
-        }
+            crate::engine::life::check_state(g)
+        })?;
         Ok(None)
     })];
     out.extend(searcher(4, 3));
@@ -2057,16 +2154,16 @@ fn lin_search(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     }
     g.perm_mut(m).tapped = true;
     crate::glog!(g, "  {} activates Lin Sivvi, X = {}", pname(g, p), x);
-    if crate::engine::stack::ability_window(
+    crate::engine::stack::ability_run(
         g,
         p,
         Some(m),
+        None,
         &format!("search for a Rebel (mana value {x} or less)"),
         None,
         None,
-    )? {
-        crate::impls::galadriel::put_rebel(g, p, "Lin Sivvi", x, false)?;
-    }
+        |g| crate::impls::galadriel::put_rebel(g, p, "Lin Sivvi", x, false).map(|_| ()),
+    )?;
     Ok(None)
 }
 
@@ -2093,20 +2190,27 @@ fn lin_bottom(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     }
     let c = cs[k];
     crate::glog!(g, "  {} activates Lin Sivvi: {} to the bottom of the library", pname(g, p), cname(g, c));
-    if crate::engine::stack::ability_window(
-        g,
-        p,
-        Some(m),
-        &format!("put {} on the bottom of the library", cname(g, c)),
-        None,
-        None,
-    )? {
+    let what = format!("put {} on the bottom of the library", cname(g, c));
+    crate::engine::stack::ability_run_w(g, p, Some(m), None, &what, None, None, 0.0, |g, is_copy| {
+        let mut c = c;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let gy = g.player(p).gy.clone();
+            let mut cs = crate::impls::galadriel::rebel_cards(g, p, &gy, 99);
+            cs.extend(gy.iter().copied().filter(|&c| !g.db.get(c).perm && g.db.get(c).has_subtype("rebel")));
+            let labels: Vec<String> = cs.iter().map(|&c| cname(g, c)).collect();
+            let prompt = "The copy of Lin Sivvi's ability: put which Rebel card from your graveyard on the bottom?";
+            if let Some(j) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                c = cs[j];
+            }
+        }
         let pl = g.player_mut(p);
         if let Some(i) = pl.gy.iter().position(|&x| x == c) {
             pl.gy.remove(i);
             pl.library.insert(0, c);
         }
-    }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -2134,14 +2238,27 @@ fn revivalist(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     g.perm_mut(m).tapped = true;
     crate::glog!(g, "  {} activates Ramosian Revivalist: {} returns", pname(g, p), cname(g, c));
     let what = format!("return {} to the battlefield", cname(g, c));
-    if crate::engine::stack::ability_window(g, p, Some(m), &what, None, None)?
-        && let Some(i) = g.player(p).gy.iter().position(|&x| x == c)
-    {
-        g.player_mut(p).gy.remove(i);
-        crate::glog!(g, "    Ramosian Revivalist puts {} onto the battlefield", cname(g, c));
-        g.player_mut(p).stat("rebels_fetched", 1);
-        crate::engine::zones::enter(g, p, c, crate::engine::zones::Enter::default())?;
-    }
+    crate::engine::stack::ability_run_w(g, p, Some(m), None, &what, None, None, 0.0, |g, is_copy| {
+        let mut c = c;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let gy = g.player(p).gy.clone();
+            let cs = crate::impls::galadriel::rebel_cards(g, p, &gy, 5);
+            let labels: Vec<String> =
+                cs.iter().map(|&c| format!("{} (mana value {})", cname(g, c), g.db.get(c).cmc)).collect();
+            let prompt = "The copy of Ramosian Revivalist's ability: return which Rebel permanent card?";
+            if let Some(j) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                c = cs[j];
+            }
+        }
+        if let Some(i) = g.player(p).gy.iter().position(|&x| x == c) {
+            g.player_mut(p).gy.remove(i);
+            crate::glog!(g, "    Ramosian Revivalist puts {} onto the battlefield", cname(g, c));
+            g.player_mut(p).stat("rebels_fetched", 1);
+            crate::engine::zones::enter(g, p, c, crate::engine::zones::Enter::default())?;
+        }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -2163,7 +2280,29 @@ fn bringer(colour: char, word: &'static str) -> Vec<PermAbility> {
         }
         let prompt = format!("{}: exile which {word} creature?", pm_name(g, m));
         let Some(t) = pick_perm(g, p, "target", &prompt, &cre, Some("cancel"))? else { return Ok(None) };
-        crate::impls::galadriel::bringer_use(g, p, m, t)?;
+        // the sacrifice is the cost; the exile is the ability's effect (a copy chooses another creature)
+        g.perm_mut(m).tapped = true;
+        let sname = pm_name(g, m);
+        crate::glog!(g, "  {} sacrifices {}: exile {}", pname(g, p), sname, g.perm(t).name);
+        crate::engine::zones::die(g, m, "sac")?;
+        let cd = g.perm(m).cd.unwrap();
+        let what = format!("exile {}", g.perm(t).name);
+        crate::engine::stack::ability_run_w(g, p, None, Some(cd), &what, Some(6.0), Some(t), 0.0, |g, is_copy| {
+            let mut t = t;
+            if is_copy {
+                let now: Vec<PermId> = cre.iter().copied().filter(|&x| g.perm(x).on_bf).collect();
+                let prompt = format!("The copy of {sname}'s ability: exile which {word} creature?");
+                if !now.is_empty()
+                    && let Some(x) = pick_perm(g, p, "target", &prompt, &now, Some("keep the target"))?
+                {
+                    t = x;
+                }
+            }
+            if g.perm(t).on_bf && !crate::engine::values::untargetable(g, t) {
+                crate::engine::removal::apply_removal(g, Some(p), t, "exile", None)?;
+            }
+            Ok(())
+        })?;
         Ok(None)
     })]
 }
@@ -2209,17 +2348,31 @@ fn ballista(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     g.perm_mut(m).tapped = true;
     let tn = g.perm(t).name;
     crate::glog!(g, "  {} activates Ballista Squad: {} damage to {}", pname(g, p), x, tn);
-    if crate::engine::stack::ability_window(g, p, Some(m), &format!("{x} damage to {tn}"), None, Some(t))?
-        && g.player(g.perm(t).owner).perms.contains(&t)
-    {
-        if repl::no_damage(g, t) {
-            crate::glog!(g, "    the damage to {} is prevented", tn);
-        } else if crate::engine::values::etgh(g, t) <= x as i32 {
-            crate::engine::removal::apply_removal(g, Some(p), t, &format!("dmg{x}"), None)?;
-        } else {
-            crate::glog!(g, "    {} survives", tn);
+    let what = format!("{x} damage to {tn}");
+    crate::engine::stack::ability_run_w(g, p, Some(m), None, &what, None, Some(t), 0.0, |g, is_copy| {
+        let mut t = t;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let now: Vec<PermId> = cre.iter().copied().filter(|&y| g.perm(y).on_bf).collect();
+            let prompt = "The copy of Ballista Squad's ability: damage to which attacking or blocking creature?";
+            if !now.is_empty()
+                && let Some(y) = pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?
+            {
+                t = y;
+            }
         }
-    }
+        let tn = g.perm(t).name;
+        if g.player(g.perm(t).owner).perms.contains(&t) {
+            if repl::no_damage(g, t) {
+                crate::glog!(g, "    the damage to {} is prevented", tn);
+            } else if crate::engine::values::etgh(g, t) <= x as i32 {
+                crate::engine::removal::apply_removal(g, Some(p), t, &format!("dmg{x}"), None)?;
+            } else {
+                crate::glog!(g, "    {} survives", tn);
+            }
+        }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -2243,11 +2396,23 @@ fn tapper(gn: u32, pips: &'static str, tough: i32, label: &'static str) -> Vec<P
         g.perm_mut(m).tapped = true;
         let tn = g.perm(t).name;
         crate::glog!(g, "  {} activates {}: tap {}", pname(g, p), nm, tn);
-        if crate::engine::stack::ability_window(g, p, Some(m), &format!("tap {tn}"), None, Some(t))?
-            && g.player(g.perm(t).owner).perms.contains(&t)
-        {
-            g.perm_mut(t).tapped = true;
-        }
+        crate::engine::stack::ability_run_w(g, p, Some(m), None, &format!("tap {tn}"), None, Some(t), 0.0, |g, is_copy| {
+            let mut t = t;
+            if is_copy {
+                // "you may choose a new target for the copy"
+                let now: Vec<PermId> = cre.iter().copied().filter(|&y| g.perm(y).on_bf).collect();
+                let prompt = format!("The copy of {nm}'s ability: tap which creature?");
+                if !now.is_empty()
+                    && let Some(y) = pick_perm(g, p, "target", &prompt, &now, Some("keep the target"))?
+                {
+                    t = y;
+                }
+            }
+            if g.player(g.perm(t).owner).perms.contains(&t) {
+                g.perm_mut(t).tapped = true;
+            }
+            Ok(())
+        })?;
         Ok(None)
     })]
 }
@@ -2259,9 +2424,9 @@ fn maskwood(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     super::mana::pay_from_pool(g, p, 3, "");
     g.perm_mut(m).tapped = true;
     crate::glog!(g, "  {} activates Maskwood Nexus", pname(g, p));
-    if crate::engine::stack::ability_window(g, p, Some(m), "a 2/2 Shapeshifter with changeling", None, None)? {
-        crate::impls::galadriel::shapeshifter(g, p)?;
-    }
+    crate::engine::stack::ability_run(g, p, Some(m), None, "a 2/2 Shapeshifter with changeling", None, None, |g| {
+        crate::impls::galadriel::shapeshifter(g, p).map(|_| ())
+    })?;
     Ok(None)
 }
 
@@ -2271,9 +2436,10 @@ fn mirror(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         return Ok(Some(why));
     }
     crate::glog!(g, "  {} activates Mirror Entity, X = {}", pname(g, p), x);
-    if crate::engine::stack::ability_window(g, p, Some(m), &format!("your creatures become {x}/{x}"), None, None)? {
-        crate::impls::galadriel::mirror(g, p, x as i32)?;
-    }
+    let what = format!("your creatures become {x}/{x}");
+    crate::engine::stack::ability_run(g, p, Some(m), None, &what, None, None, |g| {
+        crate::impls::galadriel::mirror(g, p, x as i32).map(|_| ())
+    })?;
     Ok(None)
 }
 
@@ -2334,10 +2500,33 @@ fn necro(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     let n = k as i32 + 1;
     crate::engine::life::lose_life(g, p, n, Some(p), "other", None)?;
     crate::glog!(g, "  {} pays {} life to Necropotence", pname(g, p), n);
-    if crate::engine::stack::ability_window(g, p, Some(m), &format!("exile the top {n} card(s) face down"), None, None)?
-        && !g.over
-    {
-        necro_exile(g, p, n as usize);
+    if n > 1 && !crate::engine::stack::rings_of(g, p).is_empty() {
+        // each of the n life payments is an activation of its own, as Walking Ballista's pings are: Rings of
+        // Brighthearth is asked once for the run
+        let q = format!("Rings of Brighthearth: pay {{2}} to copy each of the {n} activations (one more card each)?");
+        let auto = Some(choices::yes_no(g, p, &q)?);
+        crate::engine::stack::with_rings_auto(auto, || -> Res {
+            for _ in 0..n {
+                if g.over {
+                    break;
+                }
+                crate::engine::stack::ability_run(g, p, Some(m), None, "exile the top card face down", None, None, |g| {
+                    if !g.over {
+                        necro_exile(g, p, 1);
+                    }
+                    Ok(())
+                })?;
+            }
+            Ok(())
+        })?;
+    } else {
+        let what = format!("exile the top {n} card(s) face down");
+        crate::engine::stack::ability_run(g, p, Some(m), None, &what, None, None, |g| {
+            if !g.over {
+                necro_exile(g, p, n as usize);
+            }
+            Ok(())
+        })?;
     }
     crate::engine::life::check_state(g)?;
     Ok(None)

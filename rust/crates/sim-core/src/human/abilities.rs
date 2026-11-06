@@ -97,20 +97,20 @@ pub fn assault(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if let Some(why) = pay(g, p, 3, "RR", "Aggravated Assault") {
         return Ok(Some(why));
     }
-    if !stack::ability_window(g, p, Some(m), "untap, an additional combat", Some(7.0), None)? {
-        return Ok(None);
-    }
-    for x in g.player(p).perms.clone() {
-        if g.is_creature(x) {
-            g.perm_mut(x).tapped = false;
+    stack::ability_run(g, p, Some(m), None, "untap, an additional combat", Some(7.0), None, |g| {
+        for x in g.player(p).perms.clone() {
+            if g.is_creature(x) {
+                g.perm_mut(x).tapped = false;
+            }
         }
-    }
-    crate::glog!(g, "  {} activates Aggravated Assault: creatures untap, an extra combat follows", g.player(p).name);
-    if g.step == Step::Main1 {
-        g.player_mut(p).extra_combats += 1; // it comes right after this turn's combat
-    } else {
-        engine::combat::combat(g, p)?; // main 2: the extra combat now, then this main phase continues
-    }
+        crate::glog!(g, "  {} activates Aggravated Assault: creatures untap, an extra combat follows", g.player(p).name);
+        if g.step == Step::Main1 {
+            g.player_mut(p).extra_combats += 1; // it comes right after this turn's combat
+        } else {
+            engine::combat::combat(g, p)?; // main 2: the extra combat now, then this main phase continues
+        }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -145,14 +145,24 @@ pub fn tortured(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     let d = choices::pick_cards(g, p, &fodder, 1, "Tortured Existence: discard a creature card", "choose")?[0];
     zones::discard_cards(g, p, &[d])?;
     let c = tg[k];
-    if !stack::ability_window(g, p, Some(m), &format!("return {} to hand", name(g, c)), None, None)? {
-        return Ok(None);
-    }
-    if let Some(i) = g.player(p).gy.iter().position(|&x| x == c) {
-        g.player_mut(p).gy.remove(i);
-        g.player_mut(p).hand.push(c);
-    }
-    crate::glog!(g, "  {} uses Tortured Existence: {} for {}", g.player(p).name, name(g, d), name(g, c));
+    stack::ability_run_w(g, p, Some(m), None, &format!("return {} to hand", name(g, c)), None, None, 0.0, |g, is_copy| {
+        let mut c = c;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let now: Vec<CardId> = g.player(p).gy.iter().copied().filter(|&x| g.db.get(x).creature).collect();
+            let labels: Vec<String> = now.iter().map(|&x| choices::card_label(g, x)).collect();
+            let prompt = "Tortured Existence (copy): return which creature card?";
+            if let Some(j) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                c = now[j];
+            }
+        }
+        if let Some(i) = g.player(p).gy.iter().position(|&x| x == c) {
+            g.player_mut(p).gy.remove(i);
+            g.player_mut(p).hand.push(c);
+        }
+        crate::glog!(g, "  {} uses Tortured Existence: {} for {}", g.player(p).name, name(g, d), name(g, c));
+        Ok(())
+    })?;
     Ok(None)
 }
 
