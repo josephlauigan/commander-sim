@@ -1,11 +1,6 @@
 # Report model-gaps-a4 (branch model-gaps-a4)
 
-Status: items 1 and 3 done; item 2 partly (a person's choices for Marvin's Kiki-Jiki, Chatterfang, the five new abilities and 17
-other creatures with a person path; the rest in rust/agents/handoff-model-gaps-a4.md); item 4 not done (Marvin stays
-Approximate until item 2 is). Tests: `rust/crates/sim-core/tests/model_gaps_a4.rs` (17 pass) plus 36 related files (model_gaps_a3,
-karn, others, the practice_*_probe files, the pool decks' card tests, Godo/Sauron tests): all pass. `cargo build --release
---all-targets`: no warnings. `cardgen export --offline`, `audit --mine`: only Marvin and Hexing Squelcher below Full.
-Not run: the full suite and any sim.
+Status: items 1-4 done. Tests: `rust/crates/sim-core/tests/model_gaps_a4.rs` (27 pass) plus the related files (model_gaps_a3, karn, others, the practice_* files, the pool decks' card tests, Godo/Sauron tests, about 60 files): all pass. `cargo build --release --all-targets`: no warnings. `cardgen export --offline`, `audit --mine`: only Hexing Squelcher below Full (Marvin is Full). Not run: the full suite and any sim.
 
 ## 1. Five abilities (impls/model_gaps_a4.rs, human/model_gaps_a4.rs)
 Each is an `options` hook (the AI, and Marvin borrows it with Marvin as the source: marvin_options runs every other creature's hook)
@@ -32,16 +27,9 @@ the ability on the stack with `stack::ability_run_w` (cost already paid), so Pet
 Shared files: impls/mod.rs (registration), impls/t1.rs (dead Ezuri code removed), impls/rules.rs (`ezuri_none` removed),
 impls/rules2.rs (`squirrels`, `fang_go` visible), impls/t5.rs (`kiki_go` visible), human/cards.rs (dispatch), human/mod.rs.
 
-## 2. Marvin: a person chooses (part)
-`human::model_gaps_a4::BORROWED` names the creatures whose person path Marvin uses (`marvin_abilities`, listed by `abilities_of`;
-the AI-chosen hook options of those creatures are dropped for a person: `replaced_label`). New person abilities: Kiki-Jiki (the
-person picks the nonlegendary creature to copy, Marvin included) and Chatterfang (the person picks the target and X), also for the
-creatures themselves. In BORROWED: those two, the five above, Azorius Guildmage, Blightspeaker, the Ramosian searchers, Defiant
-Vanguard, Lin Sivvi, Ramosian Revivalist, Errant Doomsayers, Lawbringer, Lightbringer, Urborg Syphon-Mage, Sakura-Tribe Elder,
-Jace's Archivist. `dsl::pay_ability_cost`: a person chooses the permanent a compiled sacrifice cost sacrifices (asked after the
-mana is known payable; the AI still gives up the least valuable). Marvin's Krenko needs no choice (it stays a hook).
-Not done: the hook-only creatures listed in the handoff file (a person still gets the AI's target for those through Marvin).
-Files: human/human.rs (`abilities_of`), human/model_gaps_a4.rs, dsl/mod.rs.
+## 2. Marvin: a person chooses
+A person using any ability Marvin borrows is asked what the creature's own ability asks, with Marvin as the source and the one that pays. `human/model_gaps_a4.rs` `marvin_abilities` lists, per creature in `BORROWED` (46) or `marvin_hooks::NAMES` (52), the union of `abilities::permanent_abilities`, `karn::`, `cloud::perm_abilities` and `cards::abilities` of the donor (labels deduplicated; Kefka and Tekuthal are built with the donor captured, as the text names it); the AI hook options of those creatures are dropped for a person (`replaced_label`). New file `human/marvin_hooks.rs`: a person path (cost from the pool, every choice asked, the ability on the stack with `ability_run_w`/`aimed`, so a Camera copy picks a new target) for the 52 hook-only creatures with a choice: Amphin Pathmage, Chittering Witch, Cankerbloom, Captivating Vampire, Goblin Cratermaker, Goblin Trashmaster, Grim Hireling, Hawkeye, Hope of Ghirapur, Jagged-Scar Archers, Loran, Mogg Fanatic, Pashalik Mons, Pia Nalaar (both), Sai, Temur Sabertooth, Timberwatch Elf, Vilis, Weathered Wayfarer, Destiny Spinner, Eldrazi Displacer, Formidable Speaker, Patriot, Deathrite Shaman (both), Ioreth (both), Goblin Engineer, Goblin Welder, High Perfect Morcant, Kinnan, Loot, Magda, Magus of the Candelabra, Mina and Denn, Nullmage Shepherd, Nyx Weaver, Oboro Breezecaller, Preston, Priest of Forgotten Gods, Recruitment Officer, Ruthless Technomancer, Sisay, Skrelv, Tavern Scoundrel, Teysa, Urza (Powerstone Prodigy), Eladamri, Drivnod, Elvish Reclaimer, Brutal Hordechief, Scourge of Valkas, Lathril, Tekuthal. These are also the creatures' own person abilities (a person had only the AI's pick before). The 24 creatures with a person path elsewhere (Balan, Cid, Stoneforge, Steel Hellkite/Overseer, Forgemaster, Thrasios, Triskelion, Yawgmoth, Thanos, Scion, Kefka, Garth, Gix, Jaxis ...) were added to `BORROWED`. Creatures whose hook has nothing to choose stay the AI's option for a person (`NO_CHOICE` in the test). Also: a person chooses what a compiled sacrifice cost sacrifices (`dsl::pay_ability_cost`, a4 part 1).
+Other changes: `newcards_b::NOT_ACTIVATED`: creatures whose `options` hook is a casting permission, a prepared spell or a paired grant (Muldrotha, Realmwalker, Korlessa, Rivaz, Valgavoth, Snoop, Navigator, the prepared creatures, Restless Bloodseeker) are no longer borrowed by Marvin (they were offered as if activated abilities). Marvin carries `blocks` (Brutal Hordechief: `hordechief_blocks`, which asks a person which attacker each blocker blocks), `combat_damage` (`hope_hit`: Hope of Ghirapur's ability) and `grant_kw` (`tekuthal_kw`: Drivnod's counter) hooks, so these abilities do something when Marvin uses them (before, the data went onto Marvin and nothing read it). Shared files: impls/{newcards_b,partials,mine,rules2,t45_edgar,tymna_cards}.rs (pub(crate)/hooks), human/{mod,model_gaps_a4}.rs. Tests: `every_creature_with_an_options_hook_is_a_person_path_a_no_choice_hook_or_not_an_ability` (classifies every creature with a hook), `a_person_using_each_borrowed_ability_is_asked_and_never_gets_the_ais_choice` (walks all 98 creatures in a rich table: each is listed as a person ability, never as a hook, and a person is asked unless QUIET says why), spot tests for Mogg Fanatic, Cankerbloom, Chittering Witch, Tekuthal, Drivnod, Hordechief blocks, NOT_ACTIVATED.
 
 ## 3. Godo Helm {5} equip
 `StepKind::Equip` (impls/combos.rs): `run_steps` pays the cost, then `ability_run_w` puts the equip on the stack (copyable, answerable)
@@ -50,8 +38,7 @@ and runs the step's effect once per resolved copy and once for the ability; the 
 the AI's Camera does not copy it (no gain). Test: an equip step with a person's Camera copying it.
 
 ## 4. Marvin's status
-Not set to Full (item 2 is not finished). The Marvin note (data/card_overrides.toml, data/audit.toml) names exactly what is done and
-what is left. Camera's note is untouched. Professional Face-Breaker got a card_notes entry; the notes of the other four were updated.
+Full in data/card_overrides.toml and data/audit.toml (the note names what is borrowed, how a person is asked, what is not an activated ability, and the named-creature reading). Camera's note untouched. `cardgen export --offline`; `audit --mine`: only Hexing Squelcher below Full.
 
 ## Shared-file changes
 impls/{mod,t1,rules,rules2,t5,combos,t6_combos_godo,t6_combos_extra}.rs, human/{mod,cards,human}.rs, dsl/mod.rs; data/card_overrides.toml,
