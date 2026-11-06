@@ -1,11 +1,12 @@
 # Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
-# policy (ai/plans.rs `config`). JD's Tymna the Weaver + Thrasios, Triton Hero deck (Bant + black partners, key
-# `thrasios`, tier t5). Written in Phase 4 PR 7 from its hand AI, played when AI_HAND is off: `tymna_partners::
+# policy (ai/plans.rs `config`). JD's Tymna the Weaver + Thrasios, Triton Hero deck (key `thrasios`, tier t6 since 2026-11-05: the
+# Doomsday rebuild, decklists/JD/tymna-thrasios-doomsday.md; the Doomsday lines are a separate change). Written in Phase 4 PR 7 from its hand AI, played when AI_HAND is off: `tymna_partners::
 # partner_prio` / `combo_prio` (the prio rules), `combo_piece` / `tymna_cards::tutor_pick` (the line),
 # `protection_held` (no hold now: Blossoming Defense left 2026-11-02). The line is the catalogue's "Power Artifact /
 # Rings of Brighthearth + Monolith" as this deck plays it: the outlet is Walking Ballista or Thrasios on the
 # battlefield (`combo_piece`).
-# Left out (the schema can't express it): the tutor's other branches (a land below five lands, a sweeper when behind
+# Pruned 2026-11-05 for the new list: Bastion Protector, Faeburrow Elder and Talisman of Curiosity left the deck, so
+# their rules went. Left out (the schema can't express it): the tutor's other branches (a land below five lands, a sweeper when behind
 # on board, a finisher when ahead, the cheapest evasive creature); the evasive-creature rule's count against the
 # opponents (approximated by the creatures out); Ballista's mana gates (approximated by the lands); Baird's and
 # Lagrella's board reads; the attack spread, `commander_first`, `thrasios_sink`, the combat tricks and Ballista's
@@ -37,12 +38,12 @@ when = ["turn<=5"]
 value = 89
 
 [[prio]]
-cards = ["Sol Ring", "Arcane Signet", "Talisman of Curiosity", "Faeburrow Elder"]
+cards = ["Sol Ring", "Arcane Signet"]
 when = ["turn<=3"]
 value = 87
 
 [[prio]]
-cards = ["Sol Ring", "Arcane Signet", "Talisman of Curiosity", "Faeburrow Elder"]
+cards = ["Sol Ring", "Arcane Signet"]
 when = ["turn<=5"]
 value = 83
 
@@ -74,12 +75,6 @@ cards = ["Walking Ballista"]
 when = ["lands>=4"]
 value = 50
 else = 0
-
-[[prio]]
-cards = ["Bastion Protector"]
-when = ["out:Tymna the Weaver & out:Thrasios, Triton Hero"]
-value = 74
-else = 40
 
 [[prio]]
 creature = true
