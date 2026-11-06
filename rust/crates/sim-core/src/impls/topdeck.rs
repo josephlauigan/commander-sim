@@ -196,10 +196,10 @@ fn visions(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
 // ------------------------------------------------------------------ permanents
 /// Sensei's Divining Top: {1}: look at the top three and rearrange them (each upkeep, before the draw)
 fn top_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
-    if p != g.perm(src).owner || g.perm(src).tapped || !can_pay(g, p, 1, "", false) {
+    if p != g.perm(src).owner || g.perm(src).tapped || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false) {
         return Ok(());
     }
-    pay(g, p, 1, "", false)?;
+    pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)?;
     let top = look(g, p, 3);
     arrange(g, p, &top);
     Ok(())

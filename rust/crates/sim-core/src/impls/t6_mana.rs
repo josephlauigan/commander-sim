@@ -132,7 +132,7 @@ fn key_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<V
         return Ok(vec![]);
     }
     let mut o = vec![];
-    if can_pay(g, p, 1, "", false)
+    if can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)
         && key_untap_target(g, p, src).is_some()
         && g.player(p).hand.iter().any(|&c| !g.db.get(c).land)
     {
@@ -140,7 +140,7 @@ fn key_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<V
     }
     if post == Some(false)
         && g.active == Some(p)
-        && can_pay(g, p, 3, "", false)
+        && can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false)
         && key_unblockable_target(g, p).is_some()
     {
         o.push(ability(2.0, "unblockable (Manifold Key)", src, key_unblock, 0));
@@ -154,7 +154,7 @@ fn key_untap(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     }
     let Some(t) = key_untap_target(g, p, src) else { return Ok(false) };
     g.perm_mut(src).tapped = true;
-    if !pay(g, p, 1, "", false)? {
+    if !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)? {
         g.perm_mut(src).tapped = false;
         return Ok(false);
     }
@@ -174,7 +174,7 @@ fn key_unblock(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     }
     let Some(t) = key_unblockable_target(g, p) else { return Ok(false) };
     g.perm_mut(src).tapped = true;
-    if !pay(g, p, 3, "", false)? {
+    if !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false)? {
         g.perm_mut(src).tapped = false;
         return Ok(false);
     }
@@ -314,7 +314,7 @@ fn amulet_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Re
         || owner(g, src) != p
         || g.perm(src).tapped
         || amulet_noted(g, src).is_some()
-        || !can_pay(g, p, 1, "", false)
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)
     {
         return Ok(vec![]);
     }
@@ -464,7 +464,7 @@ fn apple_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     }
     let Some(q) = apple_target(g, p) else { return Ok(vec![]) };
     // the Apple's {T} and sacrifice are costs: its own mana can't pay for anything, and it makes none
-    if !can_pay(g, p, 3, "", false) {
+    if !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false) {
         return Ok(vec![]);
     }
     let n = g.player(q).hand.iter().filter(|&&c| !g.db.get(c).land).count().min(4);

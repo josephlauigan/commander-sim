@@ -1315,7 +1315,7 @@ fn idol_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
             act: Some(Action::Ability { src, f: idol_draw, arg: 0 }),
         });
     }
-    if post.is_none() && g.active == Some(p) && can_pay(g, p, 8, "", false) {
+    if post.is_none() && g.active == Some(p) && can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 8, 0), "", false) {
         out.push(Opt {
             utility: 3.0,
             label: "Idol of Oblivion: a 10/10 Eldrazi".into(),
@@ -1337,7 +1337,7 @@ fn idol_draw(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 }
 
 fn idol_eldrazi(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !on_bf(g, src) || g.perm(src).tapped || !pay(g, p, 8, "", false)? {
+    if !on_bf(g, src) || g.perm(src).tapped || !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 8, 0), "", false)? {
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;

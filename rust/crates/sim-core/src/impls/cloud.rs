@@ -206,6 +206,8 @@ pub fn equip_cost_full(g: &Game, p: PlayerId, e: PermId, m: PermId, base: u32) -
     if !colored {
         let shapers = g.player(p).perms.iter().filter(|&&s| live(g, s) && name_of(g, s) == STEELSHAPER).count() as u32;
         n = n.saturating_sub(shapers);
+        // Forensic Gadgeteer: an artifact's activated abilities (Equipment is one) cost {1} less, never under {1}
+        n = crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, n, 0);
     }
     n
 }

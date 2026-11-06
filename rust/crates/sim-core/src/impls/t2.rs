@@ -1189,7 +1189,7 @@ fn survival_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 /// sacrifice a creature for one with MV one higher, when it upgrades
 fn pod(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let x = g.perm(src);
-    if post.is_none() || x.tapped || x.sick || !can_pay(g, p, 1, "G", false) {
+    if post.is_none() || x.tapped || x.sick || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 1), "G", false) {
         return Ok(vec![]);
     }
     let fod: Vec<PermId> = g
@@ -1220,10 +1220,11 @@ fn pod(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>>
 fn pod_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let (m, c) = unpack(arg);
     let (m, c) = (PermId(m), CardId(c as u16));
-    if !on(g, p, m) || !g.player(p).library.contains(&c) || g.perm(src).tapped || !can_pay(g, p, 1, "G", false) {
+    let cost = crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 1); // Forensic Gadgeteer: {1}{G/P} costs {G/P}
+    if !on(g, p, m) || !g.player(p).library.contains(&c) || g.perm(src).tapped || !can_pay(g, p, cost, "G", false) {
         return Ok(false);
     }
-    pay(g, p, 1, "G", false)?;
+    pay(g, p, cost, "G", false)?;
     g.perm_mut(src).tapped = true;
     die(g, m, "sac")?;
     let label = format!("search for {}", g.db.get(c).name);
