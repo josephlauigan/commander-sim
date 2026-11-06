@@ -190,7 +190,8 @@ struct Want {
 struct Env<'a> {
     g: Cow<'a, Game>,
     p: PlayerId,
-    /// {B}s the line still owes before anything else (Doomsday itself, when it is not cast yet)
+    /// what the line still owes before anything else (Doomsday itself, when it is not cast yet): {B} pips + 16 x generic
+    /// (`doomsday_cost`: 3, 1 after a Dark Ritual, 17 = {1}{B} for a Cabal Ritual)
     b: u8,
     /// devotion to blue without Thassa's Oracle
     dev: usize,
@@ -272,14 +273,16 @@ impl<'a> Env<'a> {
             *pips -= k;
             gn = gn.saturating_sub(3 - k);
         }
+        // `b`: what the lands still pay for Doomsday, {B} pips + 16 x generic (`doomsday_cost`)
+        let (owed_b, owed_gn) = (self.b & 15, self.b >> 4);
         let pips = format!(
             "{}{}{}{}",
-            "B".repeat(self.b as usize),
+            "B".repeat(owed_b as usize),
             "U".repeat(u as usize),
             "W".repeat(w as usize),
             "G".repeat(gr as usize)
         );
-        let r = can_pay(&self.g, self.p, gn as u32, &pips, false);
+        let r = can_pay(&self.g, self.p, gn as u32 + owed_gn as u32, &pips, false);
         self.memo.borrow_mut().insert(key, r);
         r
     }
@@ -1366,8 +1369,9 @@ fn enabler(g: &Game, p: PlayerId) -> Option<CardId> {
         .find_map(|n| hand.iter().copied().find(|&c| &*g.db.get(c).name == *n))
 }
 
-/// can the player pay Doomsday (with the cost of `extra` more, an enabler) now: Some(b) is the {B} still owed when a
-/// Dark Ritual makes the rest
+/// can the player pay Doomsday (with the cost of `extra` more, an enabler) now: Some(owed) is what the lands still pay for
+/// it, as {B} pips + 16 x generic (`Env::owed_black`, `owed_generic`): 3 when they pay the {B}{B}{B}, 1 when a Dark Ritual
+/// ({B}: add {B}{B}{B}) makes them, 17 ({1}{B}) when a Cabal Ritual ({1}{B}: add {B}{B}{B}) does
 fn doomsday_cost(g: &Game, p: PlayerId, c: CardId, extra: Option<CardId>) -> Option<u8> {
     let (mut gn, mut pips) = cost_of(g, p, c);
     if let Some(e) = extra {
@@ -1378,10 +1382,18 @@ fn doomsday_cost(g: &Game, p: PlayerId, c: CardId, extra: Option<CardId>) -> Opt
     if can_pay(g, p, gn, &pips, false) {
         return Some(3);
     }
-    // a Dark Ritual ({B}: add {B}{B}{B}) pays the {B}{B}{B}
-    let ritual = rituals_in_hand(g, p, &[]).into_iter().any(|r| &*g.db.get(r).name == "Dark Ritual");
+    let rituals = rituals_in_hand(g, p, &[]);
+    let has = |n: &str| rituals.iter().any(|&r| &*g.db.get(r).name == n);
     let rest = pips.replacen("BBB", "B", 1);
-    (ritual && rest != pips && can_pay(g, p, gn, &rest, false)).then_some(1)
+    if rest == pips {
+        return None;
+    }
+    // a Dark Ritual pays the {B}{B}{B} for a {B}
+    if has("Dark Ritual") && can_pay(g, p, gn, &rest, false) {
+        return Some(1);
+    }
+    // --- doomsday-cabal: a Cabal Ritual pays them for {1}{B} (its threshold bonus is not counted: the lower bound)
+    (has("Cabal Ritual") && can_pay(g, p, gn + 1, &rest, false)).then_some(1 + 16)
 }
 
 /// the pile to build for a Doomsday in hand now, or None: Doomsday is not the line (Line 1 is in hand), it cannot be

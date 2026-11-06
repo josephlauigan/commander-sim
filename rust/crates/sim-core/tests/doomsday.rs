@@ -1154,3 +1154,59 @@ fn the_why_statistics_name_the_check_that_declined_and_change_nothing() {
         doomsday::plan_cast_why(&g, P0, c, doomsday::Scn::EndStep).is_ok()
     );
 }
+
+// ------------------------------------------------------------------ doomsday-cabal: Cabal Ritual pays the {B}{B}{B}
+/// P0 in its main phase with two Underground Seas and six Islands (two black sources: the lands alone can't make
+/// {B}{B}{B}), Doomsday, Thassa's Oracle and Gitaxian Probe in hand (Pile C), plus `extra`
+fn two_black_sources(extra: &[&str]) -> Game {
+    let mut g = table_with(&["thrasios", "sauron"], 1, 40);
+    g.log = Some(vec![]);
+    g.active = Some(P0);
+    g.step = Step::Main1;
+    lands(&mut g, P0, "Underground Sea", 2, false);
+    lands(&mut g, P0, "Island", 6, false);
+    let mut names = vec!["Doomsday", "Thassa's Oracle", "Gitaxian Probe"];
+    names.extend_from_slice(extra);
+    let h = ids(&g, &names);
+    let l = ids(&g, &["Preordain", "Ponder", "Brainstorm", "Island", "Island", "Island", "Island", "Island"]);
+    let pl = g.player_mut(P0);
+    pl.hand = h;
+    pl.library = l.into_iter().rev().collect();
+    g
+}
+
+#[test]
+fn cabal_ritual_pays_for_doomsday_when_the_lands_cannot() {
+    let c = |g: &Game| card(g, "Doomsday");
+    // the control: two black sources and no ritual, the cast is declined for the mana
+    let g = two_black_sources(&[]);
+    assert_eq!(
+        doomsday::plan_cast_why(&g, P0, c(&g), doomsday::Scn::Main).err(),
+        Some("no {B}{B}{B} (with the enabler) to pay for it")
+    );
+    // with Cabal Ritual ({1}{B}: add {B}{B}{B}) the mana is no longer the reason
+    let g = two_black_sources(&["Cabal Ritual"]);
+    let why = doomsday::plan_cast_why(&g, P0, c(&g), doomsday::Scn::Main);
+    assert_ne!(why.as_ref().err(), Some(&"no {B}{B}{B} (with the enabler) to pay for it"), "{:?}", why.as_ref().err());
+    assert!(why.is_ok(), "a pile wins with Cabal Ritual's mana: {:?}", why.err());
+    // the pile is built with the lands owing {1}{B} (17), not {B}{B}{B}: the builder agrees there is a pile
+    assert!(doomsday::build(&g, P0, doomsday::Scn::Main, 1 + 16, &[]).is_some());
+    // and the cast really goes through Cabal Ritual
+    let mut g = two_black_sources(&["Cabal Ritual"]);
+    let dd = c(&g);
+    assert!(doomsday::go_doomsday(&mut g, P0, dd.0 as i64).unwrap());
+    let log = g.log.as_ref().map(|l| l.join("\n")).unwrap_or_default();
+    // (Doomsday exiles the graveyard cards it does not keep: the ritual ends in exile)
+    assert!(log.contains("casts Cabal Ritual"), "Cabal Ritual was cast for the {{B}}{{B}}{{B}}:\n{log}");
+    assert!(won(&g), "the pile wins:\n{log}");
+    assert!(!g.player(P0).hand.contains(&dd), "Doomsday was cast");
+}
+
+#[test]
+fn dark_ritual_is_still_preferred_and_still_pays() {
+    // Dark Ritual ({B}) leaves more for the pile than Cabal Ritual ({1}{B}): the cost check owes the lands {B} only
+    let g = two_black_sources(&["Dark Ritual", "Cabal Ritual"]);
+    assert!(doomsday::plan_cast_why(&g, P0, card(&g, "Doomsday"), doomsday::Scn::Main).is_ok());
+    let g = two_black_sources(&["Dark Ritual"]);
+    assert!(doomsday::plan_cast_why(&g, P0, card(&g, "Doomsday"), doomsday::Scn::Main).is_ok());
+}
