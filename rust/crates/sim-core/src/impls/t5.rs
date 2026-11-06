@@ -344,8 +344,13 @@ fn windfall(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
     Ok("gy")
 }
 
-fn windfall_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
-    if g.player(p).hand.len() <= 2 { 50 } else { 0 }
+fn windfall_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    // --- c1b-engines: and (Tier 6) a stuck hand, `partials::t6_refill`; never over a combo piece
+    if g.player(p).hand.len() <= 2 || (super::partials::t6_refill(g, p, c) && !g.player(p).hand.iter().any(|&x| x != c && crate::cardcode::is_combo_piece(g, x))) {
+        50
+    } else {
+        0
+    }
 }
 
 // ======================================================== Kinnan, Bonder Prodigy

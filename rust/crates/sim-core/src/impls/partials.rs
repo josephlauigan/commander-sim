@@ -2614,14 +2614,39 @@ fn wheel(g: &mut Game) -> Res {
 }
 
 /// partials.wheel_prio: cast when your hand is nearly empty, never wheeling away a combo piece
-fn wheel_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
+/// --- c1b-engines: and (Tier 6) when the rest of the hand is dead weight, `t6_refill`
+pub fn wheel_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let hand = &g.player(p).hand;
     if hand.iter().any(|&x| x != c && cardcode::is_combo_piece(g, x)) {
         return 0; // don't wheel away a combo piece
     }
     let mine = hand.len() as i64 - 1;
     let theirs = g.opps(p).map(|q| g.player(q).hand.len()).max().unwrap_or(0);
-    if mine <= 2 && theirs <= 5 { 55 } else { 0 }
+    if (mine <= 2 && theirs <= 5) || t6_refill(g, p, c) { 55 } else { 0 }
+}
+
+/// --- c1b-engines: a Tier 6 wheel (Wheel of Fortune, Windfall, Timetwister) is also worth casting when the hand is
+/// stuck: at most one nonland card besides the wheel can be paid for now, the mana left after the wheel can cast some
+/// of the seven new cards (two or more), and no opponent holds more than five cards (the wheel refills them too). The
+/// old rule needed two cards or fewer in hand, which a mana-light turbo deck holding Pacts, Swan Songs and a dead
+/// Rhystic never reaches (Rograkh/Silas: Wheel of Fortune seen 18% of games by turn 8, cast 1%).
+pub fn t6_refill(g: &Game, p: PlayerId, c: CardId) -> bool {
+    if !crate::impls::t6_plans::is_t6(g, p) {
+        return false;
+    }
+    let hand = &g.player(p).hand;
+    let live = hand
+        .iter()
+        .filter(|&&x| x != c && !g.db.get(x).land)
+        .filter(|&&x| {
+            let (xg, xp) = cost_of(g, p, x);
+            can_pay(g, p, xg, &xp, false)
+        })
+        .count();
+    let (cg, cp) = cost_of(g, p, c);
+    let spare = total_mana(g, p, false) as i64 - (cg as i64 + cp.chars().count() as i64);
+    let theirs = g.opps(p).map(|q| g.player(q).hand.len()).max().unwrap_or(0);
+    live <= 1 && spare >= 2 && theirs <= 5
 }
 
 /// Wheel of Fortune (Full): each player discards their hand and draws seven (cast when your hand is nearly empty);
