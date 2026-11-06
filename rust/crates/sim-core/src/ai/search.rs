@@ -1117,6 +1117,9 @@ pub(crate) fn playout_counter(
     let res = (|| -> Res<bool> {
         let it2 = idx.filter(|&i| i < g2.stack.len()).map(|i| g2.stack[i].id);
         if counter {
+            if crate::engine::values::veil_shield(&g2, p) {
+                return Ok(false); // Veil of Summer: the spell can't be countered
+            }
             let Some(ctr) = pick_counter(&g2, q, c) else { return Ok(false) };
             if !cast_counter(&mut g2, q, ctr, Some(c))? {
                 return Ok(false);

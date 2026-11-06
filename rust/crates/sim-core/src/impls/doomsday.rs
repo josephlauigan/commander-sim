@@ -32,9 +32,9 @@
 //!   goes onto the battlefield and anything else is drawn: the library is one card shorter either way; `Act::dig`,
 //!   played by `tymna_cards::pile_dig`, the scry decided by `pile_scry` with n = 1); a devotion permanent from the hand
 //!   (`K::Dev`: Mockingbird, Mystic Remora, Rhystic Study, Valley Floodcaller: +1 devotion for their blue); Veil of Summer
-//!   held in hand with {G} open as the lock (`K::Veil`, `Env::locked`: the engine's `rules::veil_response` casts it on a
-//!   blue or black counter, so it is not cast by the line and it is not used when an opponent's deck can hold Mindbreak
-//!   Trap or a red blast, which it does not answer); and a Noxious Revival in hand when the Oracle is cast as a backup
+//!   held in hand with {G} open as the lock (`K::Veil`, `Env::locked`: the engine's `rules::veil_respond` casts it on any
+//!   counter aimed at the Oracle, so it is not cast by the line and it is not used when an opponent's deck can hold Mindbreak
+//!   Trap, which it does not answer); and a Noxious Revival in hand when the Oracle is cast as a backup
 //!   (`Want::backup`, `Built::backup`: a pile without the lock is accepted into two stoppers with it). A Revival in the
 //!   library or graveyard takes a pile slot when the line draws it in time. A pile is checked against a forced draw (an
 //!   Esper Sentinel of ours: an opponent's first noncreature spell draws us a card) and the draw step's extra cards
@@ -100,8 +100,8 @@ enum K {
     Preordain,
     Ponder,
     Borne,
-    /// Veil of Summer: not cast by the line; held in hand with {G} open it answers a blue or black counter
-    /// (`rules::veil_response`), so it is a lock for the Oracle's cast (not against Mindbreak Trap or a red blast)
+    /// Veil of Summer: not cast by the line; held in hand with {G} open it answers any counter on the Oracle
+    /// (`rules::veil_respond`: the Oracle is a combo piece), so it is a lock for the Oracle's cast (not against Mindbreak Trap)
     Veil,
     /// Noxious Revival: not cast by the line; in hand when the Oracle is countered it puts it back on top
     Revival,
@@ -1431,12 +1431,12 @@ pub fn revival_target(g: &Game, p: PlayerId) -> Option<CardId> {
 }
 
 /// does Veil of Summer answer everything the table may hold against the Oracle: it makes our spells uncounterable, but
-/// it does not stop Mindbreak Trap (an exile, not a counter) and the engine's answer (`rules::veil_response`) is to blue
-/// and black counters only, so a table that may hold Mindbreak Trap or a red blast does not count
+/// it does not stop Mindbreak Trap (an exile, not a counter), so a table that may hold Mindbreak Trap does not count. Red
+/// blasts no longer matter: once Veil resolves no counter works that turn (`rules::veil_respond`, `values::veil_shield`)
 fn veil_answers(g: &Game, p: PlayerId) -> bool {
     !g.opps(p).any(|q| {
         crate::ai::brain::prob_holding(g, q, |c| {
-            matches!(&*g.db.get(c).name, "Mindbreak Trap" | "Red Elemental Blast" | "Pyroblast")
+            &*g.db.get(c).name == "Mindbreak Trap"
         }) > 0.0
     })
 }

@@ -303,7 +303,7 @@ fn crown_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// spare)
 fn pact_plan(g: &Game, p: PlayerId) -> Option<(PlayerId, Sym, i32)> {
     for q in g.opps(p) {
-        if crate::engine::values::player_hexproof(g, q) {
+        if crate::engine::values::player_hexproof_from(g, q, crate::cards::Colors::from_letters("B")) {
             continue;
         }
         if let Some((t, n)) = main_type(g, q)

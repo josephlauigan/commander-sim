@@ -214,6 +214,17 @@ pub fn player_hexproof(g: &Game, q: PlayerId) -> bool {
     crate::engine::hooks::any_player_hexproof(g, q)
 }
 
+/// Veil of Summer has resolved for p this turn: p's spells can't be countered, and p has hexproof from blue and black
+pub fn veil_shield(g: &Game, p: PlayerId) -> bool {
+    g.player(p).veil_turn == Some(g.turn_stamp())
+}
+
+/// q can't be the target of an opponent's spell or ability of these colours: `player_hexproof`, or Veil of Summer's
+/// hexproof from blue and from black this turn
+pub fn player_hexproof_from(g: &Game, q: PlayerId, source: Colors) -> bool {
+    player_hexproof(g, q) || ((source.has('U') || source.has('B')) && veil_shield(g, q))
+}
+
 /// a permanent's colours: `chars::colors`
 #[inline]
 pub fn colors_of(g: &Game, m: PermId) -> Colors {
