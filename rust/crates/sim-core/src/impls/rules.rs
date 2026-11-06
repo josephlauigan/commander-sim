@@ -632,11 +632,6 @@ fn shepherd(g: &Game, src: Src, p: PlayerId, c: CardId) -> bool {
     p == g.perm(src).owner && g.db.get(c).pips.contains('G')
 }
 
-/// Ezuri: rules.py replaces t1's overrun with no activated abilities (its regeneration is ezuri_regen)
-fn ezuri_none(_g: &mut Game, _src: Src, _p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    Ok(vec![])
-}
-
 /// rules.ezuri_regen: {G}: regenerate another Elf (saves valuable Elves)
 pub fn ezuri_regen(g: &mut Game, m: PermId) -> Res<bool> {
     let p = g.perm(m).owner;
@@ -1505,7 +1500,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.blocks = Some(brimaz_block);
     at_once(c, Event::Blocks, false);
     r.card(db, "Allosaurus Shepherd")?.uncounterable = Some(shepherd);
-    r.card(db, "Ezuri, Renegade Leader")?.options = Some(ezuri_none);
     let c = r.card(db, "Mirkwood Bats")?;
     c.token_created = Some(bats_make);
     at_once(c, Event::TokenCreated, false);

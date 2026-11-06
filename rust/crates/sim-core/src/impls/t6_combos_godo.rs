@@ -455,7 +455,7 @@ pub(crate) const S_SQUIRE: Step = Step {
 pub(crate) const S_THEFT: Step = step("Magnetic Theft attaches Helm to Godo", StepKind::Spell, cast_theft);
 pub(crate) const S_EQUIP: Step = Step {
     label: "equip Helm of the Host to Godo",
-    kind: StepKind::Ability,
+    kind: StepKind::Equip,
     src: helm_src,
     pay: (5, ""),
     run: equip_helm,

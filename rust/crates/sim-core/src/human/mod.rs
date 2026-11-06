@@ -13,6 +13,7 @@ pub mod abilities;
 pub mod alt;
 pub mod cards;
 pub mod gaps_a;
+pub mod model_gaps_a4;
 pub mod choices;
 pub mod cloud;
 pub mod combos;
