@@ -482,3 +482,15 @@ fn answer_request(session: &Arc<Session>, seat: &str, req: &Value, io: &mut Io) 
         _ => {}
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn use_clue_food_blood_are_token_actions() {
+        for (typed, kind) in [("use clue", "Clue"), ("use Food", "Food"), ("use BLOOD", "Blood")] {
+            assert_eq!(parse(typed, &Value::Null), Cmd::Act(json!({"do": "use", "token": kind})));
+        }
+    }
+}
