@@ -9,6 +9,13 @@ combos). **Tiers:** t5 (`data/my_decks.toml`; the old cEDH list played t6). **Pl
 previous list (the cEDH turbo list, t6) are in `FINDINGS-old-list.md`; the retired decks' findings are in
 `audit/retired/karn/` and `audit/retired/urdragon/`.
 
+## Baseline B 2026-11-06 (after #278-#284; main 63d783b5; look-ahead, loose, 2,000 games per tier, seed 500000)
+**18.6%** (17.0-20.4) at t5, against 20.0% in the morning: -1.4, inside the noise (intervals overlap). Plan online 8.8% of games.
+What changed at its table since the morning: Tier 5 pool decks no longer keep mana up for protection they rarely use (624 -> 71
+held turns), and they now cast Garruk's Uprising and Welding Jar (#284); pool Urza's Whir of Invention now fetches with real X
+(#281). A table that taps out a little more and an Urza that finds its pieces could both cost a point; the run can't separate
+them from noise. Raw: `audit/baseline-2026-11-06-b/thanos.txt`.
+
 ## Baseline 2026-11-06 (after the rewire, Doomsday and Phase C engine work)
 Thanos, **first number for the new artifacts-and-Dragons list**, t5 (High B4), 2,000 games requested, seed 500000, loose, look-ahead,
 build ef343cc1: **19.7%** (95% CI 18.0-21.5) over t5, 1,978 games counted (22 hit an internal simulator error, see below). Even share is
