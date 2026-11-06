@@ -1,5 +1,5 @@
-//! The karn deck (key `karn`, JD's colourless Urza and Mishra artifacts deck; decklists/JD/karn-colorless-artifacts.md):
-//! the commander, the restricted-mana lands, the Tron lands, the creature lands and the look-ahead bonus.
+//! The Karn, Legacy Reforged cards (the `karn` deck, JD's colourless Urza and Mishra artifacts deck, was retired 2026-11-05; its list is decklists/pool/retired/karn-colorless-artifacts.md):
+//! the commander, the restricted-mana lands, the Tron lands, the creature lands.
 //!
 //! - **Karn, Legacy Reforged** (Full): power and toughness each equal the greatest mana value among the artifacts you
 //!   control (`karn_pt`, a bonus on top of the printed 1/1); at the beginning of your upkeep, {C} for each artifact you
@@ -16,8 +16,8 @@
 //!   also artifacts while animated; the AI animates one to attack when the way is open, and one to block a dangerous
 //!   attack (`block_response`, from `brain::attack_response`; any deck since generic-paths, 2026-11-01).
 //! - **The plan** (`karn_prio`, the Bauble hold, the Tron land choice, the land searches) was the deck's hand AI,
-//!   deleted on 2026-11-01 (`audit/phase4/hand-off-design.md`, "Deleted"). `search_bonus` stays: the look-ahead
-//!   (`ai/search.rs`, out of that change's scope) still names it under a "karn" key it never sees now.
+//!   deleted on 2026-11-01 (`audit/phase4/hand-off-design.md`, "Deleted"). `search_bonus` (the look-ahead bonus for
+//!   casting Karn early) went with the `karn` key on 2026-11-05.
 
 use crate::cards::{CardDb, Types};
 use crate::engine::mana::total_mana;
@@ -95,8 +95,6 @@ fn karn_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
         return Ok(());
     }
     g.player_mut(p).mana.add_art(n);
-    let turns = g.player(p).turns;
-    g.player_mut(p).milestone.entry("karn").or_insert(turns); // the plan report: Karn's first mana
     crate::glog!(g, "  {} adds {} for Karn (artifacts only)", g.player(p).name, "{C}".repeat(n as usize));
     Ok(())
 }
@@ -413,18 +411,3 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     Ok(())
 }
 
-/// look-ahead score bonus for a main-phase option of the karn deck (added to the rollout average in
-/// `search::choose_inner`): the position score can't see what Karn's upkeep mana is worth, so casting him gets a flat
-/// bonus (as early as possible: the paper plan), and each cheap artifact cast with Karn out (another {C} every
-/// upkeep) a smaller one
-pub fn search_bonus(g: &Game, p: PlayerId, o: &Opt) -> f64 {
-    let Some(Action::Cast { card, .. }) = &o.act else { return 0.0 };
-    let d = g.db.get(*card);
-    if &*d.name == KARN {
-        return 10.0;
-    }
-    if karn_of(g, p).is_some() && d.types.has(Types::ARTIFACT) && !d.land && d.cmc <= 2 {
-        return 1.5;
-    }
-    0.0
-}

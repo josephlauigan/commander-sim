@@ -9,7 +9,7 @@ use std::collections::BTreeMap;
 use std::path::{Path, PathBuf};
 
 /// your decks: key -> (owner folder in decklists/, file), as deck_files.FILES
-pub const FILES: [(&str, &str, &str); 11] = [
+pub const FILES: [(&str, &str, &str); 9] = [
     ("sauron", "JD", "sauron-grixis-amass.md"),
     ("yshtola", "JD", "yshtola-esper-drain.md"),
     ("galadriel", "Avery", "galadriel-bant-rebels.md"),
@@ -17,14 +17,12 @@ pub const FILES: [(&str, &str, &str); 11] = [
     ("kefka", "JD", "kefka-grixis-discard.md"),
     ("sheoldred", "JD", "sheoldred-mono-black.md"),
     ("cloud", "JD", "cloud-midgar-equipment.md"),
-    ("thrasios", "JD", "tymna-thrasios-partners.md"),
-    ("karn", "JD", "karn-colorless-artifacts.md"),
-    ("thanos", "JD", "thanos-five-colour-turbo.md"),
-    ("urdragon", "JD", "ur-dragon-dragon-copies.md"),
+    ("thrasios", "JD", "tymna-thrasios-doomsday.md"),
+    ("thanos", "JD", "thanos-artifacts-and-dragons.md"),
 ];
 
 /// compare.KEYS / poolmode.MINE: your decks, in the order --all-decks runs them
-pub const MINE: [&str; 11] = ["sauron", "galadriel", "yshtola", "alela", "kefka", "sheoldred", "cloud", "thrasios", "karn", "thanos", "urdragon"];
+pub const MINE: [&str; 9] = ["sauron", "galadriel", "yshtola", "alela", "kefka", "sheoldred", "cloud", "thrasios", "thanos"];
 
 pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 

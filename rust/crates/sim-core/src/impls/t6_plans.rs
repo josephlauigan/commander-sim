@@ -25,7 +25,7 @@ use crate::state::Game;
 use super::t6_plan_godo as godo;
 
 /// the nine Tier 6 deck keys: the six pool decks of `decklists/pool/t6-cedh/`, Godo (retired 2026-10-25, a test seat)
-/// and JD's Thanos (Scion, retired 2026-10-30, is a test seat)
+/// and JD's Tymna/Thrasios Doomsday deck (Scion, retired 2026-10-30, is a test seat)
 pub const T6_KEYS: [&str; 9] = [
     "dack-fayden-white-stax",
     "kinnan-bonder-mana-combo",
@@ -34,7 +34,7 @@ pub const T6_KEYS: [&str; 9] = [
     "rograkh-thrasios-creature-combo",
     "sisay-legends-toolbox",
     "godo",
-    "thanos", // --- thanos: JD's Thanos, the Mad Titan turbo deck (Scion's seat, 2026-10-30)
+    "thrasios", // --- thrasios: JD's Tymna/Thrasios Doomsday deck (cEDH; took the Thanos turbo list's t6 seat, 2026-11-05)
     "scion",  // --- scion: JD's Scion of the Ur-Dragon deck (retired 2026-10-30, a test seat of its card code)
 ];
 

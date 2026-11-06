@@ -636,15 +636,10 @@ fn rollout_vals(
     }
 }
 
-/// --- ai-rollouts: each option's deck bonus per rollout (Karn's `search_bonus`; 0 for other decks)
-fn deck_extras(g: &Game, p: PlayerId, opts: &[Opt], keyed: &[(usize, &str, usize)]) -> Vec<f64> {
-    keyed
-        .iter()
-        .map(|kk| match hand_key(g, p) {
-            "karn" => crate::impls::karn::search_bonus(g, p, &opts[kk.0]),
-            _ => 0.0,
-        })
-        .collect()
+/// --- ai-rollouts: each option's deck bonus per rollout. No deck has one now (Karn's `search_bonus` went with the
+/// `karn` key, 2026-11-05); the hook stays because `adapt_rollouts` and `pick_with` take the bonuses as a slice.
+fn deck_extras(_g: &Game, _p: PlayerId, _opts: &[Opt], keyed: &[(usize, &str, usize)]) -> Vec<f64> {
+    vec![0.0; keyed.len()]
 }
 
 /// --- ai-rollouts: the knobs of the adaptive rollouts in g's settings (None: off)
@@ -808,17 +803,6 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
             best = k;
         }
     }
-    if hand_key(g, p) == "karn" {
-        for (k, kk) in keyed.iter().enumerate() {
-            scores[k] += crate::impls::karn::search_bonus(g, p, &opts[kk.0]) * g.settings.search.rollouts as f64;
-        }
-        best = 0;
-        for k in 1..keyed.len() {
-            if scores[k] > scores[best] {
-                best = k;
-            }
-        }
-    }
     let n = g.settings.search.rollouts as f64;
     // a bonus never lifts a line above a sure win: when every playout of the best play wins, a held line that also wins
     // (the heuristic combos next turn) scored 100 plus its hold bonus and beat it, so a ready Thassa's Oracle waited
@@ -844,13 +828,7 @@ fn choose_inner(g: &mut Game, p: PlayerId, post: bool, opts: &[Opt]) -> Option<u
         && keyed[best].0 != top_u
         && let Some(ti) = keyed.iter().position(|kk| kk.0 == top_u)
     {
-        let extra = |k: usize| match hand_key(g, p) {
-            "karn" => crate::impls::karn::search_bonus(g, p, &opts[keyed[k].0]),
-            _ => 0.0,
-        };
-        let (eb, et) = (extra(best), extra(ti));
-        let d: Vec<f64> =
-            vals[best].iter().zip(&vals[ti]).map(|(a, b)| (a + eb).min(100.0) - (b + et).min(100.0)).collect();
+        let d: Vec<f64> = vals[best].iter().zip(&vals[ti]).map(|(a, b)| a.min(100.0) - b.min(100.0)).collect();
         if !margin_holds(&d, z) {
             best = ti;
         }
