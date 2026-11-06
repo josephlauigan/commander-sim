@@ -249,7 +249,7 @@ fn every_choice_of_the_owned_decks_is_asked_of_a_person() {
 /// a new gap fails the test.
 /// (2026-11-05) Doomsday has no card code yet (model-gaps PR 2, `doomsday` branch, models
 /// it); Ponder resolves without asking the person to order the top three or to shuffle (fixed in the same branch).
-const TO_FIX: &[&str] = &["thrasios: Doomsday", "thrasios: Ponder"];
+const TO_FIX: &[&str] = &[];
 
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
