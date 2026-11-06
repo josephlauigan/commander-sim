@@ -239,9 +239,11 @@ fn liliana_of_the_veil_the_person_picks_the_pile_they_sacrifice() {
     (sim_core::impls::rules::LOTV_ULT.eff)(&mut g, P1, src).unwrap();
     let r = h.asked().into_iter().find(|r| r.prompt.contains("Liliana of the Veil")).expect("the person was asked");
     assert_eq!(r.choices.len(), 2, "two piles: {:?}", r.choices);
-    let left =
-        ["Sol Ring", "Arcane Signet", "Mind Stone", "Doubling Season"].iter().filter(|n| has_perm(&g, P0, n)).count();
-    assert_eq!(left, 2, "the second pile (two permanents) was sacrificed, the first stayed");
+    let names = ["Sol Ring", "Arcane Signet", "Mind Stone", "Doubling Season"];
+    let left = names.iter().filter(|n| has_perm(&g, P0, n)).count();
+    // (the caster splits by worth, not alternately: the piles need not be of equal size)
+    let in_pile_1 = names.iter().filter(|n| r.choices[0].contains(*n)).count();
+    assert_eq!(left, in_pile_1, "the second pile was sacrificed, the first stayed");
     assert!(r.choices[0].starts_with("Pile 1") && r.choices[1].starts_with("Pile 2"));
     // the permanents named in pile 1 are the ones still there
     for n in ["Sol Ring", "Arcane Signet", "Mind Stone", "Doubling Season"] {

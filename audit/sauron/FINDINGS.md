@@ -4,6 +4,17 @@ What the simulator has taught us about the Sauron Grixis amass deck: strengths, 
 it did or didn't work. Updated after every run. Newest evidence first. Matched tiers: T3–T4 (`data/my_decks.toml`).
 Older tests: the dated folders here.
 
+## Baseline 2026-11-06 (after the rewire, Doomsday and Phase C engine work)
+Sauron, t3 / t4, 2,000 games per tier, seed 500000, loose, look-ahead, build ef343cc1: **25.3%** (23.4-27.3) / **24.2%** (22.4-26.2),
+**24.8% over t3, t4**. Old build (main 1e027077, 2026-11-05): 26.1% (24.2-28.0) / 23.7% (21.9-25.6), 24.9% over t3, t4.
+Change -0.8 / +0.5, average -0.1: noise (every interval overlaps, all under 2 points). This is also the first number for the
+list with Gilgamesh, the Urborg finders and Coffers/Urborg (the 11/04 changes, which the old-build run already had).
+Engine changes that can touch this deck: C3 attack taxes no longer idle attackers (it plays Propaganda; the t3 pool has
+Atraxa, so infect now counts as combat damage and as a poison threat in blocks and removal) and opponents cast their commander
+on time. No C2 card is in the deck. C1/C1b and the rewire do not touch it. The net is noise.
+Model coverage moved between the two runs: Approximate 1 -> Full 100 for the deck itself (the old line said Full 99, Approximate 1).
+Raw: `audit/baseline-2026-11-06/sauron.txt` and `sauron-2026-11-05-oldbuild.txt`.
+
 ## 2026-11-04: Gilgamesh, Master-at-Arms for Faerie Mastermind (JD's choice; not simulated)
 Gilgamesh (from Ur-Dragon's retired Equipment package) is a second way to find Helm of the Host or Hammer of Nazahn:
 when he enters or attacks he puts every Equipment in the top six onto the battlefield. Faerie Mastermind was a 2-mana

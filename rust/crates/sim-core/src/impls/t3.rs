@@ -1173,10 +1173,10 @@ fn ttr_minus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     draw(g, p, 1, false)
 }
 
-/// opponents cast spells only at sorcery speed (their counterspells and instant removal are off on other turns); +1
-/// has no effect here
+/// opponents cast spells only at sorcery speed (their counterspells and instant removal are off on other turns); +1 lets
+/// its controller cast sorceries as though they had flash until their next turn (`doomsday::teferi_plus`)
 static TTR: [WalkerAb; 2] = [
-    WalkerAb { delta: 1, label: "sorceries at instant speed", val: |_, _, _| Some(1.5), eff: nothing },
+    WalkerAb { delta: 1, label: "sorceries at instant speed", val: super::doomsday::teferi_plus_val, eff: super::doomsday::teferi_plus },
     WalkerAb { delta: -3, label: "bounce and draw", val: ttr_minus_val, eff: ttr_minus },
 ];
 

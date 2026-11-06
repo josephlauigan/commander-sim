@@ -208,8 +208,18 @@ fn judgment_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
     }
 }
 
-/// will of the council: each player votes for a nonland permanent they don't control (their biggest threat); every
-/// permanent with the most votes is exiled
+/// how much voter `v` wants `m` (controlled by `c`) exiled: another player's permanent by its value, more so the
+/// more threatening its controller is; v's own permanent never beats another player's (it is minus its value)
+fn judgment_score(g: &Game, v: PlayerId, (m, c): (PermId, PlayerId)) -> f64 {
+    if c == v {
+        -pval(g, m) - 1.0
+    } else {
+        pval(g, m) * (1.0 + 0.3 * threat(g, v, c))
+    }
+}
+
+/// will of the council: each player votes for a nonland permanent the caster doesn't control (their own included for
+/// everyone but the caster); every permanent with the most votes, or tied for the most, is exiled
 fn judgment(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let mut votes: Vec<(PermId, u32)> = vec![];
     let voters: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
@@ -240,21 +250,21 @@ fn judgment(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
             }
             continue;
         }
-        let mut cands: Vec<PermId> = voters
+        // an AI voter: any nonland permanent the caster doesn't control, its own included (Oracle). It votes for the one
+        // it most wants gone (another player's board, weighted by how threatening that player is); one of its own only
+        // when nothing else is legal (every own permanent scores below every other player's)
+        let cands: Vec<(PermId, PlayerId)> = voters
             .iter()
-            .filter(|&&q| q != v)
-            .flat_map(|&q| g.player(q).perms.iter().copied())
-            .filter(|&m| !g.perm(m).phased)
+            .filter(|&&q| q != p)
+            .flat_map(|&q| g.player(q).perms.iter().map(move |&m| (m, q)))
+            .filter(|&(m, _)| !g.perm(m).phased)
             .collect();
-        if v == p {
-            cands.retain(|&m| g.perm(m).owner != p);
-        }
-        let Some(pick) = max_by(&cands, |m| {
-            let o = g.perm(m).owner;
-            pval(g, m) * (1.0 + 0.3 * if o != v { threat(g, v, o) } else { 0.0 })
-        }) else {
+        let Some(&(pick, _)) =
+            cands.iter().max_by(|a, b| judgment_score(g, v, **a).total_cmp(&judgment_score(g, v, **b)))
+        else {
             continue;
         };
+        crate::glog!(g, "    {} votes for {}", pname(g, v), g.perm(pick).name);
         match votes.iter_mut().find(|x| x.0 == pick) {
             Some(x) => x.1 += 1,
             None => votes.push((pick, 1)),
@@ -860,45 +870,166 @@ fn tamiyo_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
 pub const TAMIYO_ULT: WalkerAb =
     WalkerAb { delta: -7, label: "draw three and emblem", val: |_, _, _| Some(10.0), eff: tamiyo_ult };
 
-/// Liliana of the Veil -6: the opponent with the most on the table splits it into two piles (alternating by value);
-/// it keeps the better pile and sacrifices the rest
-fn lotv_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
-    let opps: Vec<PlayerId> = g.opps(p).collect();
-    let Some(q) = max_by(&opps, |q| g.player(q).perms.iter().map(|&m| pval(g, m)).psum()) else { return Ok(()) };
-    let mut ps: Vec<PermId> = g.player(q).perms.iter().copied().filter(|&m| !g.perm(m).phased).collect();
-    sort_desc(&mut ps, |m| pval(g, m));
-    let a: Vec<PermId> = ps.iter().copied().step_by(2).collect();
-    let b: Vec<PermId> = ps.iter().copied().skip(1).step_by(2).collect();
-    if crate::human::is_human(g, q) {
-        // practice mode: the caster separated the piles; the person picks the pile they sacrifice
-        let list = |g: &Game, v: &[PermId]| -> String {
-            if v.is_empty() {
-                "(nothing)".to_string()
-            } else {
-                v.iter().map(|&m| g.perm(m).name.to_string()).collect::<Vec<_>>().join(", ")
-            }
-        };
-        let labels = vec![format!("Pile 1: {}", list(g, &a)), format!("Pile 2: {}", list(g, &b))];
-        let k = crate::human::choices::choose_one(
-            g,
-            q,
-            "choose",
-            "Liliana of the Veil: sacrifice which pile?",
-            &labels,
-        )?;
-        let pile = if k == 0 { a } else { b };
-        for m in pile {
+// ------------------------------------------------------------------ Liliana's piles and keeps: everything a player controls
+/// one thing a player controls, as Liliana of the Veil's piles and Liliana, Dreadhorde General's ultimate see it: a
+/// permanent (a land too) or one of the counted tokens (Treasure, Clue, Food, Blood: kept as counts on the player)
+#[derive(Clone, Copy, PartialEq, Debug)]
+pub enum Stuff {
+    Perm(PermId),
+    Token(&'static str),
+}
+
+const TOKEN_KINDS: [&str; 4] = ["Treasure", "Clue", "Food", "Blood"];
+
+fn token_count(g: &Game, q: PlayerId, kind: &str) -> u32 {
+    let pl = g.player(q);
+    match kind {
+        "Treasure" => pl.treasures,
+        "Clue" => pl.clues,
+        "Food" => pl.foods,
+        _ => pl.bloods,
+    }
+}
+
+/// everything q controls that isn't phased out: its permanents, its lands, one entry per token
+pub fn stuff_of(g: &Game, q: PlayerId) -> Vec<Stuff> {
+    let pl = g.player(q);
+    let mut v: Vec<Stuff> =
+        pl.perms.iter().chain(pl.lands.iter()).copied().filter(|&m| !g.perm(m).phased).map(Stuff::Perm).collect();
+    for k in TOKEN_KINDS {
+        v.extend(std::iter::repeat_n(Stuff::Token(k), token_count(g, q, k) as usize));
+    }
+    v
+}
+
+/// what keeping `s` is worth to q (the scale of `pval`): a land about a mana, a token a little
+pub fn stuff_value(g: &Game, q: PlayerId, s: Stuff) -> f64 {
+    match s {
+        Stuff::Token("Treasure") => 0.6,
+        Stuff::Token("Clue") => 0.4,
+        Stuff::Token(_) => 0.2,
+        Stuff::Perm(m) if g.player(q).lands.contains(&m) => {
+            let d = g.db.get(g.perm(m).card());
+            let cols = crate::engine::mana::land_colors_now(g, q, m).count() as f64;
+            1.0 + 0.05 * cols + (d.tags.int(Tag::Amt).unwrap_or(1) - 1).max(0) as f64 + pval(g, m)
+        }
+        Stuff::Perm(m) => pval(g, m),
+    }
+}
+
+fn stuff_name(g: &Game, s: Stuff) -> String {
+    match s {
+        Stuff::Token(k) => format!("{k} token"),
+        Stuff::Perm(m) => g.perm(m).name.to_string(),
+    }
+}
+
+/// "Swamp x4, Sol Ring": the names in a pile with repeats counted (an empty pile reads "(nothing)")
+fn stuff_list(g: &Game, v: &[Stuff]) -> String {
+    let mut names: Vec<(String, usize)> = vec![];
+    for &s in v {
+        let n = stuff_name(g, s);
+        match names.iter_mut().find(|x| x.0 == n) {
+            Some(x) => x.1 += 1,
+            None => names.push((n, 1)),
+        }
+    }
+    if names.is_empty() {
+        return "(nothing)".to_string();
+    }
+    names.iter().map(|(n, k)| if *k > 1 { format!("{n} x{k}") } else { n.clone() }).collect::<Vec<_>>().join(", ")
+}
+
+/// is `s` of permanent type `t`? (the Treasure, Clue and Food tokens are artifacts; a land counts as a land)
+fn stuff_is(g: &Game, s: Stuff, t: Types) -> bool {
+    match s {
+        Stuff::Token(_) => t == Types::ARTIFACT,
+        Stuff::Perm(m) => {
+            let x = g.perm(m);
+            (t == Types::CREATURE && g.is_creature(m))
+                || match x.cd {
+                    Some(c) => g.db.get(c).types.has(t),
+                    None => {
+                        let word = if t == Types::ARTIFACT {
+                            "artifact"
+                        } else if t == Types::ENCHANTMENT {
+                            "enchantment"
+                        } else if t == Types::PLANESWALKER {
+                            "planeswalker"
+                        } else if t == Types::LAND {
+                            "land"
+                        } else {
+                            "creature"
+                        };
+                        x.ttypes.contains(&word)
+                    }
+                }
+        }
+    }
+}
+
+/// q sacrifices `s` (a permanent dies, a land goes with its triggers, one token of the kind is removed)
+fn sac_stuff(g: &mut Game, q: PlayerId, s: Stuff) -> Res {
+    match s {
+        Stuff::Perm(m) if g.player(q).lands.contains(&m) => super::t3_korvold::sac_given_land(g, q, m),
+        Stuff::Perm(m) => {
             if controls(g, q, m) {
                 die(g, m, "sac")?;
             }
+            Ok(())
         }
-        return Ok(());
+        Stuff::Token(k) => {
+            if token_count(g, q, k) == 0 {
+                return Ok(());
+            }
+            match k {
+                "Treasure" => g.player_mut(q).sac_treasure(),
+                "Clue" => g.player_mut(q).clues -= 1,
+                "Food" => g.player_mut(q).foods -= 1,
+                _ => g.player_mut(q).bloods -= 1,
+            }
+            if !g.hooks.is_empty() {
+                crate::engine::hooks::fire_trigger(
+                    g,
+                    Event::Sacrifice,
+                    crate::hooks::Call::Sacrifice { p: q, what: crate::hooks::Sacrificed::Token(k) },
+                )?;
+            }
+            Ok(())
+        }
     }
-    let keep = if a.iter().map(|&m| pval(g, m)).psum() >= b.iter().map(|&m| pval(g, m)).psum() { a } else { b };
-    for m in ps {
-        if !keep.contains(&m) && controls(g, q, m) {
-            die(g, m, "sac")?;
+}
+
+/// Liliana of the Veil -6: "Separate all permanents target player controls into two piles. That player sacrifices all
+/// permanents in the pile of their choice." The opponent with the most on the table is the target. The caster splits
+/// everything (lands and tokens too) so the better pile is as poor as it can be (the heaviest first, each to the
+/// lighter pile); the chooser sacrifices the pile it would rather lose and keeps the other.
+fn lotv_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    let opps: Vec<PlayerId> = g.opps(p).collect();
+    let Some(q) = max_by(&opps, |q| g.player(q).perms.iter().map(|&m| pval(g, m)).psum()) else { return Ok(()) };
+    let mut items: Vec<(Stuff, f64)> = stuff_of(g, q).into_iter().map(|s| (s, stuff_value(g, q, s))).collect();
+    items.sort_by(|x, y| y.1.total_cmp(&x.1));
+    let (mut a, mut b): (Vec<Stuff>, Vec<Stuff>) = (vec![], vec![]);
+    let (mut sa, mut sb) = (0.0, 0.0);
+    for (s, v) in items {
+        if sa <= sb {
+            a.push(s);
+            sa += v;
+        } else {
+            b.push(s);
+            sb += v;
         }
+    }
+    let lose_a = if crate::human::is_human(g, q) {
+        // practice mode: the caster separated the piles; the person picks the pile they sacrifice
+        let labels = vec![format!("Pile 1: {}", stuff_list(g, &a)), format!("Pile 2: {}", stuff_list(g, &b))];
+        crate::human::choices::choose_one(g, q, "choose", "Liliana of the Veil: sacrifice which pile?", &labels)? == 0
+    } else {
+        sa < sb // the chooser keeps the pile worth more to it
+    };
+    crate::glog!(g, "    {} sacrifices pile {}: {}", pname(g, q), if lose_a { 1 } else { 2 }, stuff_list(g, if lose_a { &a } else { &b }));
+    for s in if lose_a { a } else { b } {
+        sac_stuff(g, q, s)?;
     }
     Ok(())
 }
@@ -906,54 +1037,81 @@ fn lotv_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
 pub const LOTV_ULT: WalkerAb =
     WalkerAb { delta: -6, label: "split permanents", val: |g, p, _| g.opps(p).next().map(|_| 8.0), eff: lotv_ult };
 
-/// the first letter of a card's type line as the engine stores it (Python's `m.cd.types[0]`): the stored codes put a
-/// land first, then an artifact ('LA', 'LE', 'AP'); the creatures are keyed apart
-fn first_type(g: &Game, m: PermId) -> char {
-    let Some(c) = g.perm(m).cd else { return 'T' };
-    let t = g.db.get(c).types;
-    [
-        (Types::LAND, 'L'),
-        (Types::ARTIFACT, 'A'),
-        (Types::ENCHANTMENT, 'E'),
-        (Types::PLANESWALKER, 'P'),
-        (Types::CREATURE, 'C'),
-        (Types::INSTANT, 'I'),
-        (Types::SORCERY, 'S'),
-    ]
-    .iter()
-    .find(|x| t.has(x.0))
-    .map_or('T', |x| x.1)
+/// the permanent types Liliana, Dreadhorde General's ultimate asks for
+const LDG_TYPES: [Types; 5] = [Types::ARTIFACT, Types::CREATURE, Types::ENCHANTMENT, Types::PLANESWALKER, Types::LAND];
+
+/// the set of permanents (and tokens) q keeps from "choose a permanent of each permanent type you control": one pick
+/// for each type that is present, one permanent may serve several types, and the AI takes the picks whose distinct
+/// permanents are worth the most. Each type's best few are enough: the other types use at most `types - 1` others.
+fn ldg_keep(g: &Game, q: PlayerId, stuff: &[Stuff]) -> Vec<Stuff> {
+    let mut lists: Vec<Vec<Stuff>> = vec![];
+    for t in LDG_TYPES {
+        let mut c: Vec<Stuff> = vec![];
+        for &s in stuff {
+            if stuff_is(g, s, t) && !c.contains(&s) {
+                c.push(s); // (a token kind is one candidate however many there are)
+            }
+        }
+        if !c.is_empty() {
+            c.sort_by(|a, b| stuff_value(g, q, *b).total_cmp(&stuff_value(g, q, *a)));
+            lists.push(c);
+        }
+    }
+    let k = lists.len();
+    for l in &mut lists {
+        l.truncate(k);
+    }
+    fn go(g: &Game, q: PlayerId, lists: &[Vec<Stuff>], at: usize, cur: &mut Vec<Stuff>, best: &mut (f64, Vec<Stuff>)) {
+        if at == lists.len() {
+            let v: f64 = cur.iter().map(|&s| stuff_value(g, q, s)).sum();
+            if v > best.0 {
+                *best = (v, cur.clone());
+            }
+            return;
+        }
+        for &s in &lists[at] {
+            let added = !cur.contains(&s);
+            if added {
+                cur.push(s);
+            }
+            go(g, q, lists, at + 1, cur, best);
+            if added {
+                cur.pop();
+            }
+        }
+    }
+    let mut best = (f64::NEG_INFINITY, vec![]);
+    go(g, q, &lists, 0, &mut vec![], &mut best);
+    best.1
 }
 
-/// Liliana, Dreadhorde General -9: each opponent keeps one permanent of each type (and one land)
+/// Liliana, Dreadhorde General -9: "Each opponent chooses a permanent they control of each permanent type and
+/// sacrifices the rest." An AI opponent keeps the set worth the most (`ldg_keep`); a person chooses.
 fn ldg_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     for q in g.opps(p).collect::<Vec<_>>() {
         if crate::human::is_human(g, q) {
             ldg_person(g, q)?;
             continue;
         }
-        let mut ps: Vec<PermId> = g.player(q).perms.iter().copied().filter(|&m| !g.perm(m).phased).collect();
-        sort_desc(&mut ps, |m| pval(g, m));
-        let mut keep: Vec<(char, PermId)> = vec![];
-        for m in ps {
-            let k = if g.is_creature(m) { 'C' } else { first_type(g, m) };
-            if !keep.iter().any(|x| x.0 == k) {
-                keep.push((k, m));
-            }
-        }
-        for m in g.player(q).perms.clone() {
-            if !keep.iter().any(|x| x.1 == m) {
-                die(g, m, "sac")?;
-            }
-        }
-        let lands = g.player(q).lands.clone();
-        if lands.len() > 1 {
-            let amt = |l: crate::ids::PermId| g.db.get(g.perm(l).card()).tags.int(Tag::Amt).unwrap_or(1);
-            let best = first_max(&lands, amt).unwrap();
-            for l in lands {
-                if l != best {
-                    crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
+        let stuff = stuff_of(g, q);
+        let keep = ldg_keep(g, q, &stuff);
+        crate::glog!(g, "    {} keeps {}", pname(g, q), stuff_list(g, &keep));
+        let mut kept_token: Vec<&str> = vec![];
+        for s in stuff {
+            let spare = match s {
+                Stuff::Perm(_) => !keep.contains(&s),
+                Stuff::Token(k) => {
+                    // one of a kind stays if the kind was chosen
+                    if keep.contains(&s) && !kept_token.contains(&k) {
+                        kept_token.push(k);
+                        false
+                    } else {
+                        true
+                    }
                 }
+            };
+            if spare {
+                sac_stuff(g, q, s)?;
             }
         }
     }
@@ -961,50 +1119,62 @@ fn ldg_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
 }
 
 /// Liliana, Dreadhorde General -9 for a person: they choose a permanent of each permanent type they control (one
-/// permanent can be the choice for several types) and sacrifice the rest
+/// permanent can be the choice for several types; a Treasure, Clue, Food or Blood token is an artifact, and one token
+/// of its kind stays if it is chosen) and sacrifice the rest
 fn ldg_person(g: &mut Game, q: PlayerId) -> Res {
-    let ps: Vec<PermId> = g.player(q).perms.iter().copied().filter(|&m| !g.perm(m).phased).collect();
-    let lands = g.player(q).lands.clone();
-    let mut keep: Vec<PermId> = vec![];
-    let types = [
+    let stuff = stuff_of(g, q);
+    let mut keep: Vec<Stuff> = vec![];
+    let names = [
         (Types::ARTIFACT, "artifact"),
         (Types::CREATURE, "creature"),
         (Types::ENCHANTMENT, "enchantment"),
         (Types::PLANESWALKER, "planeswalker"),
         (Types::LAND, "land"),
     ];
-    for (t, label) in types {
-        let of_type = |g: &Game, m: PermId| {
-            (t == Types::CREATURE && g.is_creature(m)) || g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(t))
-        };
-        let pool: Vec<PermId> = if t == Types::LAND { lands.clone() } else { ps.clone() };
-        if pool.iter().any(|&m| keep.contains(&m) && of_type(g, m)) {
+    for (t, label) in names {
+        if keep.iter().any(|&s| stuff_is(g, s, t)) {
             continue; // a permanent already kept is of this type
         }
-        let cands: Vec<PermId> = pool.into_iter().filter(|&m| of_type(g, m)).collect();
+        let mut cands: Vec<Stuff> = vec![];
+        for &s in &stuff {
+            if stuff_is(g, s, t) && !cands.contains(&s) {
+                cands.push(s); // (a token kind is one candidate however many there are)
+            }
+        }
         let pick = match cands.len() {
             0 => continue,
             1 => cands[0],
-            _ => crate::human::cards::pick_perm(
-                g,
-                q,
-                "choose",
-                &format!("Liliana, Dreadhorde General: choose the {label} you keep"),
-                &cands,
-                None,
-            )?
-            .unwrap_or(cands[0]),
+            _ => {
+                let labels: Vec<String> = cands
+                    .iter()
+                    .map(|&s| match s {
+                        Stuff::Perm(m) => {
+                            crate::human::legal::describe_target(g, q, crate::human::Target::Perm(m))
+                        }
+                        Stuff::Token(_) => stuff_name(g, s),
+                    })
+                    .collect();
+                let prompt = format!("Liliana, Dreadhorde General: choose the {label} you keep");
+                choices::choose(g, q, "choose", &prompt, &labels, None, None)?.map_or(cands[0], |k| cands[k])
+            }
         };
         keep.push(pick);
     }
-    for m in ps {
-        if !keep.contains(&m) && g.perm(m).on_bf {
-            die(g, m, "sac")?;
-        }
-    }
-    for l in lands {
-        if !keep.contains(&l) {
-            crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
+    let mut kept_token: Vec<&str> = vec![];
+    for s in stuff {
+        let spare = match s {
+            Stuff::Perm(_) => !keep.contains(&s),
+            Stuff::Token(k) => {
+                if keep.contains(&s) && !kept_token.contains(&k) {
+                    kept_token.push(k);
+                    false
+                } else {
+                    true
+                }
+            }
+        };
+        if spare {
+            sac_stuff(g, q, s)?;
         }
     }
     Ok(())

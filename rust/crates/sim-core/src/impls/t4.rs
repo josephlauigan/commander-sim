@@ -1244,7 +1244,11 @@ fn imprinted(g: &Game, src: PermId) -> Option<CardId> {
 
 /// {2}, {T}: cast a copy of the imprinted card (the Reversal loop itself is in the combo framework)
 fn scepter_use(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    if p != owner(g, src) || g.perm(src).tapped || g.perm(src).data.is_empty() || !can_pay(g, p, 2, "", false) {
+    if p != owner(g, src)
+        || g.perm(src).tapped
+        || g.perm(src).data.is_empty()
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false)
+    {
         return Ok(vec![]);
     }
     let Some(c) = imprinted(g, src) else { return Ok(vec![]) };
@@ -1271,11 +1275,12 @@ fn scepter_target(g: &Game, p: PlayerId, c: CardId) -> Option<Option<PermId>> {
 }
 
 fn scepter_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
-    if g.perm(src).tapped || !can_pay(g, p, 2, "", false) {
+    let cost = crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0); // Forensic Gadgeteer
+    if g.perm(src).tapped || !can_pay(g, p, cost, "", false) {
         return Ok(false);
     }
     let Some(c) = imprinted(g, src) else { return Ok(false) };
-    pay(g, p, 2, "", false)?;
+    pay(g, p, cost, "", false)?;
     g.perm_mut(src).tapped = true;
     let n = name(g, c).to_string();
     if !ability_window(g, p, Some(src), &format!("cast a copy of {n}"), None, None)? {

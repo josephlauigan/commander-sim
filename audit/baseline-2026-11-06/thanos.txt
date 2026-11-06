@@ -1,0 +1,39 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  thanos                      100 cards: Full 99, Full-auto 1, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 433, Full-auto 34, Approximate 33, Partial 0, Unmodeled 0
+
+2,000 games (1 tier, 2,000 per list per tier, profile loose), lookahead AI, 23 worker threads: about 4 minutes
+  progress  10.0%  0m40s elapsed, ~6m02s left
+  progress  20.0%  1m18s elapsed, ~5m14s left
+  progress  30.0%  2m02s elapsed, ~4m46s left
+  progress  40.0%  2m43s elapsed, ~4m05s left
+  progress  50.0%  3m22s elapsed, ~3m22s left
+  progress  60.0%  4m05s elapsed, ~2m43s left
+  progress  70.0%  4m46s elapsed, ~2m02s left
+  progress  80.0%  5m24s elapsed, ~1m21s left
+  progress  90.0%  6m05s elapsed, ~0m40s left
+  progress 100.0%  6m52s elapsed, ~0m00s left
+
+=== Thanos vs Tier 5 (High B4) [loose, lookahead AI, 1978 games] ===
+Win rate  19.7%   95% CI 18.0-21.5%   (even share 25%: -5.3 pts)
+Average turn (your own turn count) of wins 11.6, of losses 8.0
+Plan online (first combo attempt): 9.9% of games
+Wins by: damage 49%, combo 47%, timeout 3%
+  Opponent                                    seated  won when seated  eliminated you
+  Zur the Enchanter (zur-esper-enchantment-c   60.8%            25.5%           15.0%
+  Miirym (miirym-temur-dragons)                60.6%            29.4%           18.4%
+  Kinnan (kinnan-simic-mana-combo)             60.5%            32.0%           19.0%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   59.8%            20.2%           12.5%
+  Urza (urza-mono-blue-artifacts)              58.3%            26.4%           14.9%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(413s total)
+
+WARNING: 22 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 500111  panic: called `Option::unwrap()` on a `None` value (at crates/sim-core/src/engine/stack.rs:1668)
+   seed 500163  panic: called `Option::unwrap()` on a `None` value (at crates/sim-core/src/engine/stack.rs:1668)
+   seed 500222  panic: called `Option::unwrap()` on a `None` value (at crates/sim-core/src/engine/stack.rs:1668)
+   seed 500317  panic: called `Option::unwrap()` on a `None` value (at crates/sim-core/src/engine/stack.rs:1668)
+   seed 500422  panic: called `Option::unwrap()` on a `None` value (at crates/sim-core/src/engine/stack.rs:1668)
+  Please send me that output so I can fix the cause.

@@ -1,0 +1,17 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t5 Kinnan             100 cards: Full 88, Full-auto 3, Approximate 9, Partial 0, Unmodeled 0
+  t5 Miirym             100 cards: Full 82, Full-auto 10, Approximate 8, Partial 0, Unmodeled 0
+  t5 Urza               100 cards: Full 92, Full-auto 4, Approximate 4, Partial 0, Unmodeled 0
+  t5 Yawgmoth           100 cards: Full 83, Full-auto 11, Approximate 6, Partial 0, Unmodeled 0
+  t5 Zur the Enchanter  100 cards: Full 88, Full-auto 6, Approximate 6, Partial 0, Unmodeled 0
+
+
+=== Within-tier balance [loose, n=4000 games per tier; each deck is seated in ~80%] ===
+  Tier 5 (High B4): avg game 9.4 rounds, timeouts 0.3%
+    Kinnan                        27.5% (25.9-29.0)  [0.1 pts from round-cap wins]
+    Miirym                        36.6% (35.0-38.3)  HIGH  [0.1 pts from round-cap wins]
+    Urza                          24.3% (22.8-25.8)  [0.1 pts from round-cap wins]
+    Yawgmoth                      18.2% (16.9-19.6)  [0.2 pts from round-cap wins]
+    Zur the Enchanter             18.1% (16.8-19.4)  [0.0 pts from round-cap wins]
+
+(3s total)

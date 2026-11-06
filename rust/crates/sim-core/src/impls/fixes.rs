@@ -527,7 +527,7 @@ fn foundry(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<O
         return Ok(vec![]);
     }
     if g.perm(src).tapped {
-        if !can_pay(g, p, 3, "", false) || total_mana(g, p, false) < 5 {
+        if !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false) || total_mana(g, p, false) < 5 {
             return Ok(vec![]);
         }
         return Ok(vec![opt_ability(0.8, "Retrofitter Foundry untap".into(), src, foundry_untap, 0)]);
@@ -547,17 +547,18 @@ fn foundry(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<O
     {
         return Ok(vec![opt_ability(2.0, "Retrofitter Foundry: Thopter".into(), src, foundry_make, pack(1, sv.0 + 1))]);
     }
-    if can_pay(g, p, 2, "", false) {
+    if can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false) {
         return Ok(vec![opt_ability(1.5, "Retrofitter Foundry: Servo".into(), src, foundry_make, pack(2, 0))]);
     }
     Ok(vec![])
 }
 
 fn foundry_untap(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !g.perm(src).tapped || !can_pay(g, p, 3, "", false) {
+    let cost = crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0); // Forensic Gadgeteer
+    if !g.perm(src).tapped || !can_pay(g, p, cost, "", false) {
         return Ok(false);
     }
-    pay(g, p, 3, "", false)?;
+    pay(g, p, cost, "", false)?;
     if ability_window(g, p, Some(src), "untap", None, None)? {
         g.perm_mut(src).tapped = false;
     }
@@ -568,7 +569,7 @@ fn foundry_untap(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
 fn foundry_make(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let (kind, fod) = unpack(arg);
     let fod = fod.checked_sub(1).map(PermId);
-    let cost = kind;
+    let cost = crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, kind, 0); // Forensic Gadgeteer ({2} Servo costs {1}; never under {1})
     if g.perm(src).tapped || !can_pay(g, p, cost, "", false) {
         return Ok(false);
     }

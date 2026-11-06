@@ -1,0 +1,24 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  galadriel                            100 cards: Full 93, Full-auto 7, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 1 (High B2 / Low B3)  5 decks, 500 cards: Full 406, Full-auto 76, Approximate 18, Partial 0, Unmodeled 0
+  opponents Tier 2 (Mid B3)            5 decks, 500 cards: Full 428, Full-auto 56, Approximate 16, Partial 0, Unmodeled 0
+
+4,000 games (1 deck x 2 tiers (each deck in its own tiers), 2,000 per list per tier, profile loose), lookahead AI, 23 worker threads: about 9 minutes
+  progress  10.0%  2m21s elapsed, ~21m12s left
+  progress  20.0%  5m02s elapsed, ~20m10s left
+  progress  30.0%  7m30s elapsed, ~17m30s left
+  progress  40.0%  9m54s elapsed, ~14m51s left
+  progress  50.0%  12m39s elapsed, ~12m39s left
+  cell galadriel vs t1 [loose]:   6.0% (5.0-7.1)
+  progress  60.0%  15m34s elapsed, ~10m22s left
+  progress  70.0%  18m42s elapsed, ~8m01s left
+  progress  80.0%  21m33s elapsed, ~5m23s left
+  progress  90.0%  24m31s elapsed, ~2m43s left
+  progress 100.0%  28m01s elapsed, ~0m00s left
+  cell galadriel vs t2 [loose]:   7.3% (6.2-8.5)
+
+=== Win rate by deck and tier [loose profile, lookahead AI, n=2000 per cell; even share 25%; each deck only against its own tiers] ===
+  deck                       t1                 t2     average over its tiers
+  galadriel    6.0% ( 5.0- 7.1)   7.3% ( 6.2- 8.5)           6.6% over t1, t2
+
+(1681s total)
