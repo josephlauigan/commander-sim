@@ -18,6 +18,7 @@ mod fit;
 mod flow; // --- ai-flow
 mod goldfish;
 mod gf_audit; // --- ai-audit
+mod holdreport; // --- t5-hold
 mod knobs;
 mod play;
 mod poolmode;

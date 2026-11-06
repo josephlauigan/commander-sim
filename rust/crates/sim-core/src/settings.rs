@@ -177,6 +177,8 @@ pub struct Settings {
     /// Nature's Rhythm, Invasion of Ikoria) at the X its target needs, toward a line. On unless env AI_XTUTOR is `0`
     /// (`false`, `off`): then the play is origin/main's
     pub xtutor: bool,
+    /// --- t5-hold: keep the held-mana counters (`holdstats`, stats only; off: the test that they change nothing)
+    pub hold_trace: bool,
 }
 
 impl Settings {
@@ -205,6 +207,7 @@ impl Settings {
             planner: planner_default(), // --- ai-planner
             planner_progress: matches!(std::env::var("PLANNER_PROGRESS").ok().as_deref(), Some("1")), // --- ai-planner
             xtutor: xtutor_default(), // --- t6-xtutor
+            hold_trace: true,
         }
     }
 

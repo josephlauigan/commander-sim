@@ -183,6 +183,7 @@ pub fn apply_removal(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind: &st
     }
     if ai::protect_response(g, owner, m, kind, actor, spell)? {
         crate::glog!(g, "    {} protects {}", g.player(owner).name, g.perm(m).name);
+        crate::holdstats::protected(g, owner, m);
         return Ok(());
     }
     apply_removal_rest(g, actor, m, kind, spell)
@@ -220,6 +221,7 @@ pub fn apply_removal_rest(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind
     g.last_removed = Some((g.perm(m).cd, owner, kind, actor));
     if let Some(a) = actor {
         crate::t6stats::removal_hit(g, a, spell, owner);
+        crate::holdstats::removal_hit(g, a, m, spell);
     }
     if kind == "exile"
         && let Some(src) = g.rem_src

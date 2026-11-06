@@ -398,6 +398,16 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
         if !fl.is_empty() {
             print!("{}", fl.render(&|k| sim.name_of(k)));
         }
+        // --- t5-hold: the mana left up at the end of the turn, and what it did before the holder's next turn
+        let mut hold = crate::holdreport::HoldTally::default();
+        for g in &games {
+            for p in &g.players {
+                hold.add(p.key, p.stats.iter().map(|(k, v)| (*k, *v)));
+            }
+        }
+        if !hold.is_empty() {
+            print!("{}", hold.render(&|k| sim.name_of(k)));
+        }
         if !targets.is_empty() {
             println!("Target sources:");
             for st in &STATS {

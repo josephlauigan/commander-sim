@@ -326,6 +326,14 @@ pub fn welding_jar(g: &mut Game, m: PermId) -> Res<bool> {
     Ok(true)
 }
 
+/// t5-hold-b: Welding Jar costs nothing and regenerates a destroyed artifact only from the battlefield (`welding_jar`):
+/// it is cast once an artifact worth saving (`pval` 1.5 or more, as the regeneration needs) is out. The derived worth
+/// gave it 0, so it sat in hand all game in five of fifty traced Tier 5 games.
+fn jar_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    let saves = g.player(p).perms.iter().any(|&m| is_artifact(g, m) && !named(g, m, JAR) && pval(g, m) >= 1.5);
+    if saves { 40 } else { 0 }
+}
+
 // ================================================================== Forensic Gadgeteer
 /// how much less p's artifacts' activated abilities cost (one per Forensic Gadgeteer)
 pub fn artifact_discount(g: &Game, p: PlayerId) -> u32 {
@@ -997,5 +1005,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(meathook_etb);
     at_once(c, Event::Etb, true);
     c.prio = Some(meathook_prio);
+    r.card(db, JAR)?.prio = Some(jar_prio);
     Ok(())
 }

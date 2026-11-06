@@ -738,6 +738,8 @@ pub struct Player {
     pub act_uses: IndexMap<(PermId, u16), (TurnStamp, u32)>,
     /// counters for reports (Python's `p.stats`)
     pub stats: IndexMap<Sym, i64>,
+    /// --- t5-hold: the turn-end snapshot being followed to this player's next turn (`holdstats`; trace-only)
+    pub hw: Option<crate::holdstats::Watch>,
     /// rebound spells (Ephemerate) cast again at the next upkeep
     pub rebound: Vec<CardId>,
     /// Flashback (the card): the instants and sorceries in the graveyard that have flashback this turn (practice mode)
@@ -987,6 +989,7 @@ impl Player {
             unearthed: vec![],
             marchesa_batch: None,
             stats: IndexMap::new(),
+            hw: None,
         }
     }
 

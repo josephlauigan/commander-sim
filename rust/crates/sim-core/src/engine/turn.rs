@@ -1100,6 +1100,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     pl.combo_tried = false;
     pl.haste_all = false;
     crate::gf_audit::turn_start(g, p); // --- ai-audit
+    crate::holdstats::turn_start(g, p); // --- t5-hold
     crate::t6stats::flow_turn_start(g, p); // --- ai-flow
     crate::glog!(
         g,
@@ -1223,6 +1224,7 @@ fn step_main2(g: &mut Game, p: PlayerId) -> Res {
     ai::main(g, p, true)?;
     crate::gf_audit::main_end(g, p); // --- ai-audit
     crate::t6stats::mana_held(g, p);
+    crate::holdstats::snapshot(g, p); // --- t5-hold
     Ok(())
 }
 
