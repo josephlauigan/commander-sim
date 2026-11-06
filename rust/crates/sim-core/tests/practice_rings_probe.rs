@@ -3,19 +3,23 @@
 //! "Rings of Brighthearth: pay {2} to copy it?"; a "yes" must resolve a copy (the engine logs "the copy of X resolves"
 //! when it carries a copy's effect out, and no copy may be left waiting in `trig_copies`).
 //!
-//! Each card is put on the battlefield of a fresh game (untapped, not summoning sick, with lands, mana, creatures,
-//! artifacts and graveyard cards around it, so abilities that need a target or a cost can be paid; `prep` adds what one
-//! card needs). Every ability its menu lists is activated in turn (first main phase, then second main phase) with a
-//! scripted answer for every question: the first choice (never Rings itself), "yes" to Rings, a pass for every
-//! priority. A new card whose ability is not offered, or is offered and not carried out, fails the test; an exception
-//! needs a reason (`EXCEPTIONS`) and is JD's to accept.
+//! Each card is put on the battlefield (or into the hand or graveyard, for the abilities it has there: transmute,
+//! unearth, channel ...) of a fresh game, untapped and not summoning sick, with lands, mana, creatures, artifacts and
+//! graveyard cards around it, so abilities that need a target or a cost can be paid (`prep` adds what one card needs).
+//! Every ability its menu lists is activated in turn (first main phase, then second main phase) with a scripted answer
+//! for every question: the first choice (never Rings itself), "yes" to Rings, a pass for every priority.
+//!
+//! A new card whose ability is not offered, or is offered and not carried out, fails the test. A card in `EXCEPTIONS`
+//! is not an activated ability Rings can copy (a spell cast another way, a setting, a mana ability, a table shortcut)
+//! or needs a position the probe cannot set up; each has its reason, and JD decides whether it stays.
 
 use serde_json::{Value, json};
 use sim_core::control::{Answer, Request};
 use sim_core::engine::zones::{self, Enter};
+use sim_core::hooks::Opt;
 use sim_core::human::script::ScriptHuman;
 use sim_core::human::{abilities, alt, human};
-use sim_core::ids::{PermId, PlayerId};
+use sim_core::ids::{CardId, PermId, PlayerId};
 use sim_core::state::{DataKey, Game, Step, Val};
 use sim_core::testkit::*;
 use std::collections::BTreeMap;
@@ -29,6 +33,17 @@ const P1: PlayerId = PlayerId(1);
 /// added to any of them later is covered too
 const DECKS: &[&str] =
     &["karn", "thrasios", "sauron", "alela", "cloud", "galadriel", "kefka", "sheoldred", "thanos", "urdragon", "yshtola"];
+
+/// where the ability is used from
+#[derive(Debug, Clone, Copy, PartialEq)]
+enum Spot {
+    /// a permanent (the flag: a land)
+    Battlefield(bool),
+    /// the hand: transmute, channel ...
+    Hand,
+    /// the graveyard: unearth ...
+    Graveyard,
+}
 
 #[derive(Debug, Clone, PartialEq)]
 enum Out {
@@ -64,13 +79,29 @@ fn board(g: &mut Game) {
     let big = token(g, P0, 4);
     g.perm_mut(big).ttypes.push("assembly-worker");
     g.in_combat.push(big); // an attacking creature (Foundry, Angelic Page ...)
+    for _ in 0..6 {
+        token(g, P0, 1); // ten nonland permanents to sacrifice (Bolas's Citadel)
+    }
     token(g, P1, 2);
-    perm(g, P1, "Serra Angel");
+    perm(g, P1, "Serra Angel"); // white
+    perm(g, P1, "Mogg Fanatic"); // red
+    perm(g, P1, "Vampire Nighthawk"); // black
+    perm(g, P0, "Thrasios, Triton Hero"); // a legendary creature (Plaza of Heroes)
     perm(g, P0, "Sol Ring");
     perm(g, P0, "Mind Stone");
     perm(g, P0, "Arcane Signet");
     perm(g, P1, "Mind Stone");
-    for n in ["Mountain", "Island", "Lightning Bolt", "Counterspell", "Sol Ring", "Llanowar Elves"] {
+    for n in [
+        "Mountain",
+        "Island",
+        "Lightning Bolt",
+        "Counterspell",
+        "Sol Ring",
+        "Llanowar Elves",
+        "Skullclamp",              // an Equipment card (Cid)
+        "Lin Sivvi, Defiant Hero", // Rebels (Galadriel's deck)
+        "Ramosian Revivalist",
+    ] {
         let c = take(g, P0, n);
         g.player_mut(P0).gy.push(c);
     }
@@ -87,7 +118,7 @@ fn board(g: &mut Game) {
     pool(g, P0, &[('W', 6), ('U', 6), ('B', 6), ('R', 6), ('G', 6), ('C', 12)]);
 }
 
-/// what one card needs besides the board
+/// what one permanent needs besides the board
 fn prep(g: &mut Game, name: &str, m: PermId) {
     if g.perm(m).loyalty.is_some() {
         g.perm_mut(m).loyalty = Some(20); // every loyalty ability, the ultimates too
@@ -102,6 +133,8 @@ fn prep(g: &mut Game, name: &str, m: PermId) {
             g.player_mut(P0).sagas.retain(|x| x.0 != m);
             g.player_mut(P0).sagas.push((m, 2));
         }
+        "Otherworld Atlas" => g.perm_mut(m).data.set(DataKey::Charge, Val::Int(2)),
+        "Dragon's Hoard" => g.perm_mut(m).data.set(DataKey::T45Dragon, Val::Int(2)),
         "Dauthi Voidwalker" => {
             let c = take(g, P1, "Lightning Bolt");
             g.player_mut(P1).exile.push(c);
@@ -123,6 +156,27 @@ fn place(g: &mut Game, name: &str, land: bool) -> PermId {
     perm(g, P0, name)
 }
 
+/// an ability from the hand or graveyard (not a way to cast the card: transmute, channel, unearth, cycling ...)
+fn activated_way(label: &str) -> bool {
+    let l = label.to_lowercase();
+    ["unearth", "eternalize", "embalm", "encore", "scavenge", "cycling", "channel", "transmute", "ninjutsu", "bloodrush"]
+        .iter()
+        .any(|k| l.contains(k))
+}
+
+/// the card c put in P0's hand or graveyard, with the activated ways its hooks give a person
+fn ways(g: &mut Game, name: &str, spot: Spot) -> (CardId, Vec<(String, Opt)>) {
+    let c = take(g, P0, name);
+    let v = if spot == Spot::Hand {
+        g.player_mut(P0).hand.push(c);
+        alt::hand_alts(g, P0, c)
+    } else {
+        g.player_mut(P0).gy.push(c);
+        alt::gy_alts(g, P0, c)
+    };
+    (c, v.unwrap_or_default().into_iter().filter(|w| activated_way(&w.0)).collect())
+}
+
 struct Probe {
     asked_rings: bool,
     answered_which: bool,
@@ -130,16 +184,19 @@ struct Probe {
 }
 
 /// one ability of one card, activated once
-fn run_case(key: &str, name: &str, land: bool, k: usize, step: Step) -> Out {
+fn run_case(key: &str, name: &str, spot: Spot, k: usize, step: Step) -> Out {
     let r = catch_unwind(AssertUnwindSafe(|| -> Out {
         let mut g: Game = table(&[key, "seph"]);
         g.log = Some(vec![]);
-        let m = place(&mut g, name, land);
+        let land = spot == Spot::Battlefield(true);
+        let m = if matches!(spot, Spot::Battlefield(_)) { Some(place(&mut g, name, land)) } else { None };
         board(&mut g);
-        prep(&mut g, name, m);
-        let on_bf = g.player(P0).perms.contains(&m) || g.player(P0).lands.contains(&m);
-        if !on_bf {
-            return Out::NotExercised("left the battlefield on entering".into());
+        if let Some(m) = m {
+            prep(&mut g, name, m);
+            let on_bf = g.player(P0).perms.contains(&m) || g.player(P0).lands.contains(&m);
+            if !on_bf {
+                return Out::NotExercised("left the battlefield on entering".into());
+            }
         }
         g.active = Some(P0);
         g.step = step;
@@ -147,14 +204,27 @@ fn run_case(key: &str, name: &str, land: bool, k: usize, step: Step) -> Out {
         let st = state.clone();
         // the label of ability k: fetched with the person seated (the menus read the seat)
         g.humans.add(P0, Arc::new(ScriptHuman::new(vec![])));
-        let labels: Vec<String> = if land {
-            let mut v: Vec<String> = abilities::land_abilities(&g, P0, m).into_iter().map(|a| a.label).collect();
-            v.extend(alt::land_alts(&mut g, P0, m).unwrap_or_default().into_iter().map(|a| a.0));
-            v
-        } else {
-            human::abilities_of(&mut g, P0, m).map(|v| v.into_iter().map(|a| a.0).collect()).unwrap_or_default()
+        let (label, way) = match m {
+            Some(m) => {
+                let labels: Vec<String> = if land {
+                    let mut v: Vec<String> = abilities::land_abilities(&g, P0, m).into_iter().map(|a| a.label).collect();
+                    v.extend(alt::land_alts(&mut g, P0, m).unwrap_or_default().into_iter().map(|a| a.0));
+                    v
+                } else {
+                    human::abilities_of(&mut g, P0, m).map(|v| v.into_iter().map(|a| a.0).collect()).unwrap_or_default()
+                };
+                let Some(label) = labels.get(k).cloned() else { return Out::NotExercised("no such ability".into()) };
+                (label, None)
+            }
+            None => {
+                let (c, mut v) = ways(&mut g, name, spot);
+                if k >= v.len() {
+                    return Out::NotExercised("no such way".into());
+                }
+                let (label, opt) = v.remove(k);
+                (label, Some((c, opt)))
+            }
         };
-        let Some(label) = labels.get(k).cloned() else { return Out::NotExercised("no such ability".into()) };
         let want = label.clone();
         let h = Arc::new(ScriptHuman::from_fn(move |r: &Request| -> Answer {
             let mut s = st.lock().unwrap();
@@ -176,18 +246,28 @@ fn run_case(key: &str, name: &str, land: bool, k: usize, step: Step) -> Out {
             if r.choices.is_empty() {
                 return Answer::Yes;
             }
-            // the first choice that is not Rings itself (a sacrifice or a target must not remove the copier)
+            // an Equipment goes on the last creature (not the Germ it came with); otherwise the first choice that is not
+            // Rings itself (a sacrifice or a target must not remove the copier)
+            if r.prompt.starts_with("Equip ") {
+                return Answer::Pick(r.choices.len().saturating_sub(2));
+            }
             Answer::Pick(r.choices.iter().position(|c| !c.contains("Rings of Brighthearth")).unwrap_or(0))
         }));
         g.humans.add(P0, h.clone());
-        let idx = if land {
-            g.player(P0).lands.iter().position(|&x| x == m).unwrap()
-        } else {
-            g.player(P0).perms.iter().position(|&x| x == m).unwrap()
-        };
         let before = g.stack_pushes;
-        let act = if land { json!({"do": "use", "land": idx}) } else { json!({"do": "use", "perm": idx}) };
-        let res = human::apply(&mut g, P0, &act);
+        let res = match (m, way) {
+            (Some(m), _) => {
+                let idx = if land {
+                    g.player(P0).lands.iter().position(|&x| x == m).unwrap()
+                } else {
+                    g.player(P0).perms.iter().position(|&x| x == m).unwrap()
+                };
+                let act = if land { json!({"do": "use", "land": idx}) } else { json!({"do": "use", "perm": idx}) };
+                human::apply(&mut g, P0, &act)
+            }
+            (None, Some((c, opt))) => alt::run(&mut g, P0, c, &opt),
+            (None, None) => unreachable!(),
+        };
         let why = match &res {
             Ok(Some(w)) => w.clone(),
             _ => String::new(),
@@ -225,26 +305,33 @@ fn run_case(key: &str, name: &str, land: bool, k: usize, step: Step) -> Out {
     })
 }
 
-/// how many abilities does the card's menu list (first main phase)
-fn menu_len(key: &str, name: &str, land: bool) -> usize {
+/// how many abilities does the card's menu list at `spot` (first main phase)
+fn menu_len(key: &str, name: &str, spot: Spot) -> usize {
     let r = catch_unwind(AssertUnwindSafe(|| -> usize {
         let mut g: Game = table(&[key, "seph"]);
-        let m = place(&mut g, name, land);
+        let land = spot == Spot::Battlefield(true);
+        let m = if matches!(spot, Spot::Battlefield(_)) { Some(place(&mut g, name, land)) } else { None };
         board(&mut g);
-        prep(&mut g, name, m);
         g.humans.add(P0, Arc::new(ScriptHuman::new(vec![])));
         g.active = Some(P0);
         g.step = Step::Main1;
-        if land {
-            abilities::land_abilities(&g, P0, m).len() + alt::land_alts(&mut g, P0, m).map(|v| v.len()).unwrap_or(0)
-        } else {
-            human::abilities_of(&mut g, P0, m).map(|v| v.len()).unwrap_or(0)
+        match m {
+            Some(m) => {
+                prep(&mut g, name, m);
+                if land {
+                    abilities::land_abilities(&g, P0, m).len() + alt::land_alts(&mut g, P0, m).map(|v| v.len()).unwrap_or(0)
+                } else {
+                    human::abilities_of(&mut g, P0, m).map(|v| v.len()).unwrap_or(0)
+                }
+            }
+            None => ways(&mut g, name, spot).1.len(),
         }
     }));
     r.unwrap_or(0)
 }
 
-/// every ability of every card in `decks`, activated: "deck: card #k" -> what happened (the best of the two phases)
+/// every ability of every card in `decks`, activated: "deck: card #k" (or "... [hand]" / "... [graveyard]") -> what
+/// happened (the best of the two phases)
 fn sweep(decks: &[&str]) -> BTreeMap<String, Out> {
     let all = json_file("decks.json");
     let db = db();
@@ -260,38 +347,73 @@ fn sweep(decks: &[&str]) -> BTreeMap<String, Out> {
         for name in names {
             let Some(c) = db.id(&name) else { continue };
             let dd = db.get(c);
-            if !(dd.perm || dd.land) {
-                continue;
+            let mut spots = vec![Spot::Hand, Spot::Graveyard];
+            if dd.perm || dd.land {
+                spots.push(Spot::Battlefield(dd.land));
             }
-            std::panic::set_hook(Box::new(|_| {}));
-            let n = menu_len(key, &name, dd.land);
-            for k in 0..n {
-                let mut best: Option<Out> = None;
-                for step in [Step::Main1, Step::Main2] {
-                    let o = run_case(key, &name, dd.land, k, step);
-                    best = Some(match (best, o) {
-                        (None, o) => o,
-                        (Some(Out::Offered), _) | (_, Out::Offered) => Out::Offered,
-                        (Some(Out::NotExercised(_)), o) => o,
-                        (Some(b), Out::NotExercised(_)) => b,
-                        (Some(b), _) => b,
-                    });
-                    if best == Some(Out::Offered) {
-                        break;
+            for spot in spots {
+                std::panic::set_hook(Box::new(|_| {}));
+                let n = menu_len(key, &name, spot);
+                for k in 0..n {
+                    let mut best: Option<Out> = None;
+                    for step in [Step::Main1, Step::Main2] {
+                        let o = run_case(key, &name, spot, k, step);
+                        best = Some(match (best, o) {
+                            (None, o) => o,
+                            (Some(Out::Offered), _) | (_, Out::Offered) => Out::Offered,
+                            (Some(Out::NotExercised(_)), o) => o,
+                            (Some(b), Out::NotExercised(_)) => b,
+                            (Some(b), _) => b,
+                        });
+                        if best == Some(Out::Offered) {
+                            break;
+                        }
                     }
+                    let tag = match spot {
+                        Spot::Battlefield(_) => String::new(),
+                        Spot::Hand => " [hand]".into(),
+                        Spot::Graveyard => " [graveyard]".into(),
+                    };
+                    out.insert(format!("{key}: {name}{tag} #{k}"), best.unwrap());
                 }
-                out.insert(format!("{key}: {name} #{k}"), best.unwrap());
+                let _ = std::panic::take_hook();
             }
-            let _ = std::panic::take_hook();
         }
     }
     out
 }
 
-/// abilities that are not offered Rings' copy, or not exercised by the probe, each with why. These are decisions for
-/// JD: converting one means the ability's effect becomes re-runnable (see `rust/agents/report-model-gaps-b2.md`).
-/// A key here that is now offered (or no longer found) fails the test: take it off the list.
-const EXCEPTIONS: &[(&str, &str)] = &[];
+/// abilities that are not offered Rings' copy, each with why. They are decisions for JD (see
+/// `rust/agents/report-model-gaps-b2.md`): not one of them is an activated ability Rings could copy, or the probe cannot
+/// set the position up. An entry that is now offered (or no longer found) fails the test: take it off the list.
+const EXCEPTIONS: &[(&str, &str)] = &[
+    (
+        "karn: Basalt Monolith #0",
+        "\"start the loop\": a table shortcut standing for the whole Basalt Monolith + Rings loop (each pass of it is a real activation Rings copies, see play_rings.rs); not an ability itself",
+    ),
+    (
+        "thrasios: Basalt Monolith #0",
+        "\"start the loop\": a table shortcut standing for the whole Basalt Monolith + Rings loop (each pass of it is a real activation Rings copies, see play_rings.rs); not an ability itself",
+    ),
+    ("karn: Mystic Forge #1", "casting a spell from the top of the library (Mystic Forge's static permission): a spell, not an ability"),
+    ("karn: Mystic Forge #2", "casting a spell from the top of the library (Mystic Forge's static permission): a spell, not an ability"),
+    (
+        "kefka: Blazing Firesinger // Seething Song #0",
+        "prepared: casting a copy of the back-face spell (Seething Song): a spell cast, not an ability",
+    ),
+    ("kefka: Niv-Mizzet, Parun #0", "a setting (where its pings go), not an ability"),
+    ("kefka: Niv-Mizzet, the Firemind #0", "a setting (where its pings go), not an ability"),
+    (
+        "sauron: Peter Parker's Camera #0",
+        "needs another ability on the stack to copy: tested with a converted ability in play_rings.rs",
+    ),
+    (
+        "sheoldred: Bolas's Citadel #0",
+        "playing the top card of the library (Citadel's static permission): a spell cast, not an ability",
+    ),
+    ("sheoldred: Phyrexian Tower #0", "a mana ability (rule 605): Rings does not copy it"),
+    ("thanos: Lion's Eye Diamond #0", "a mana ability (rule 605): Rings does not copy it"),
+];
 
 #[test]
 fn every_ability_a_person_can_use_offers_the_rings_copy() {
@@ -300,7 +422,7 @@ fn every_ability_a_person_can_use_offers_the_rings_copy() {
     let mut stale: Vec<String> = vec![];
     let mut offered = 0;
     for (k, v) in &res {
-        let listed = EXCEPTIONS.iter().find(|e| k.starts_with(e.0));
+        let listed = EXCEPTIONS.iter().find(|e| k == e.0);
         match (v, listed) {
             (Out::Offered, None) => offered += 1,
             (Out::Offered, Some(e)) => stale.push(format!("{k}: now offered, take {:?} off EXCEPTIONS", e.0)),
@@ -309,7 +431,7 @@ fn every_ability_a_person_can_use_offers_the_rings_copy() {
         }
     }
     for e in EXCEPTIONS {
-        if !res.keys().any(|k| k.starts_with(e.0)) {
+        if !res.contains_key(e.0) {
             stale.push(format!("{:?} is not an ability any more: take it off EXCEPTIONS", e.0));
         }
     }
@@ -321,4 +443,11 @@ fn every_ability_a_person_can_use_offers_the_rings_copy() {
         eprintln!("STALE   {s}");
     }
     assert!(bad.is_empty() && stale.is_empty(), "{} ability(ies) without a copy, {} stale exception(s): see above", bad.len(), stale.len());
+}
+
+/// the karn and thrasios decks (the ones with Rings of Brighthearth) are swept by the test above; this one says so
+/// outright, so removing them from `DECKS` fails
+#[test]
+fn the_sweep_covers_the_decks_with_rings() {
+    assert!(DECKS.contains(&"karn") && DECKS.contains(&"thrasios"));
 }

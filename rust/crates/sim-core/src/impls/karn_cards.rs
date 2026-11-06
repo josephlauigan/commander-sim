@@ -1070,17 +1070,20 @@ fn leveler_unearth(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).gy.contains(&c) || !pay(g, p, 8, "", false)? {
         return Ok(false);
     }
-    if !crate::engine::stack::ability_window_card(g, p, c, "unearth", None, None)? || !g.player(p).gy.contains(&c) {
-        return Ok(true);
-    }
-    let pl = g.player_mut(p);
-    if let Some(i) = pl.gy.iter().position(|&x| x == c) {
-        pl.gy.remove(i);
-    }
-    let m = enter(g, p, c, Enter::default())?;
-    g.perm_mut(m).sick = false; // haste
-    g.perm_mut(m).data.set(DataKey::Unearth, Val::Bool(true));
-    crate::glog!(g, "  {} unearths Cityscape Leveler", g.player(p).name);
+    ability_run(g, p, None, Some(c), "unearth", None, None, |g| {
+        if !g.player(p).gy.contains(&c) {
+            return Ok(()); // a copy (a person's Rings of Brighthearth / Camera) found it already returned
+        }
+        let pl = g.player_mut(p);
+        if let Some(i) = pl.gy.iter().position(|&x| x == c) {
+            pl.gy.remove(i);
+        }
+        let m = enter(g, p, c, Enter::default())?;
+        g.perm_mut(m).sick = false; // haste
+        g.perm_mut(m).data.set(DataKey::Unearth, Val::Bool(true));
+        crate::glog!(g, "  {} unearths Cityscape Leveler", g.player(p).name);
+        Ok(())
+    })?;
     Ok(true)
 }
 

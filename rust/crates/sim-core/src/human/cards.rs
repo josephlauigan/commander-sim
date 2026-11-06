@@ -903,13 +903,19 @@ fn citadel(g: &Game, p: PlayerId) -> Vec<PermAbility> {
                 picked.push(left[k]);
             }
             g.perm_mut(m).tapped = true;
+            let cd = g.perm(m).cd;
             for x in picked {
                 crate::engine::zones::die(g, x, "sac")?;
             }
-            for q in g.opps(p).collect::<Vec<_>>() {
-                crate::engine::life::lose_life(g, q, 10, Some(p), "other", None)?;
-            }
             crate::glog!(g, "  {} sacrifices ten permanents to Bolas's Citadel: each opponent loses 10", pname(g, p));
+            // an ability on the stack (before: it took effect at once): Rings of Brighthearth / Peter Parker's Camera
+            // can copy it, and the table can answer it
+            crate::engine::stack::ability_run(g, p, None, cd, "each opponent loses 10 life", Some(8.0), None, |g| {
+                for q in g.opps(p).collect::<Vec<_>>() {
+                    crate::engine::life::lose_life(g, q, 10, Some(p), "other", None)?;
+                }
+                Ok(())
+            })?;
             crate::engine::life::check_state(g)?;
             Ok(None)
         },
@@ -1132,12 +1138,18 @@ fn mistrise(_g: &Game) -> Vec<LandAbility> {
             }
             super::mana::pay_from_pool(g, p, 0, "U");
             g.perm_mut(l).tapped = true;
-            g.player_mut(p).mistrise_next = Some(g.turn_stamp());
             crate::glog!(
                 g,
                 "  {} activates Mistrise Village: the next spell this turn can't be countered",
                 pname(g, p)
             );
+            // an ability on the stack (before: it took effect at once): Rings of Brighthearth / Peter Parker's Camera
+            // can copy it, and the table can answer it
+            let cd = g.perm(l).card();
+            crate::engine::stack::ability_run(g, p, None, Some(cd), "the next spell can't be countered", None, None, |g| {
+                g.player_mut(p).mistrise_next = Some(g.turn_stamp());
+                Ok(())
+            })?;
             Ok(None)
         },
     )]

@@ -293,7 +293,9 @@ fn staff_draw(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
             break;
         }
         let before = g.player(p).library.len();
-        let ans = if n - drawn < 2 { Some(false) } else { auto };
+        // (a single draw asks Rings' question as it is; the last draw of a longer run is never copied: it would draw
+        // one card too many)
+        let ans = if n > 1 && n - drawn < 2 { Some(false) } else { auto };
         if !stack::with_rings_auto(ans, || crate::dsl::activate(g, p, m, draw))? {
             break;
         }
