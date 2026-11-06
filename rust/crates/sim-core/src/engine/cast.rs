@@ -951,7 +951,9 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
             && (g.players.iter().any(|q| q.id != p && crate::human::is_human(g, q.id))
                 || crate::human::human::copy_window(g, p, Some(c)));
         let judged = crate::impls::cloud::judgment_watch(g, &ctx); // --- cloud-gaps: Judgment of Alexander in hand
-        if !(imp > 0.0 || !aff.is_empty() || human_near || judged) || !counterable(g, &item) {
+        // (a spell that can't be countered keeps the window open: Mindbreak Trap still exiles it)
+        let open = crate::engine::stack::trap_exilable(g, &item);
+        if !(imp > 0.0 || !aff.is_empty() || human_near || judged) || !open {
             return Ok(Some((true, None, ctx.clone()))); // nobody would answer it
         }
         let sent = (item.ctx.target, item.ctx.face);
@@ -1278,7 +1280,7 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
     }
     let rem = ctx.rem_kind.or_else(|| t.str(Tag::Rem).map(intern));
     if let Some(face) = ctx.face {
-        if !player_hexproof(g, face) {
+        if !player_hexproof_from(g, face, g.db.get(c).colors) {
             // Shalai: the burn has no legal target
             let n: i32 = rem.and_then(|k| k.strip_prefix("dmg")).and_then(|x| x.parse().ok()).unwrap_or(0);
             lose_life(g, face, n + has(g, p, Tag::Thor) as i32, Some(p), "burn", None)?;
@@ -1486,7 +1488,7 @@ pub fn spell_targets(g: &Game, p: PlayerId, c: CardId, ctx: Option<&Ctx>) -> Ctx
             .filter(|&m| g.perm(m).owner != p)
             .collect();
         let best = max_by(&tg, |m| pval(g, m));
-        let opps: Vec<PlayerId> = g.opps(p).filter(|&q| !player_hexproof(g, q)).collect();
+        let opps: Vec<PlayerId> = g.opps(p).filter(|&q| !player_hexproof_from(g, q, g.db.get(c).colors)).collect();
         if let Some(b) = best
             && !(t.has(Tag::Face) && pval(g, b) < 3.0 && !opps.is_empty())
         {

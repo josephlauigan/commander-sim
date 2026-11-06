@@ -281,9 +281,9 @@ pub fn hullbreaker_counter(g: &mut Game, q: PlayerId, c: CardId) -> Res<bool> {
     crate::impls::rules2::hullbreaker_counter(g, q, c)
 }
 
-/// rules.veil_response: p answers q's counterspell ctr with Veil of Summer
-pub fn veil_response(g: &mut Game, p: PlayerId, q: PlayerId, ctr: CardId) -> Res<bool> {
-    crate::impls::rules::veil_response(g, p, q, ctr)
+/// rules.veil_respond: q answers a counterspell aimed at its spell with Veil of Summer
+pub fn veil_respond(g: &mut Game, q: PlayerId, counter_item: u32) -> Res<bool> {
+    crate::impls::rules::veil_respond(g, q, counter_item)
 }
 
 /// t1.tutor_named for Auras (Three Dreams): k Auras with different names to hand

@@ -5391,7 +5391,7 @@ types = "I"
 tags = ""
 dsl = []
 status = "Full"
-note = "in response to a blue or black counterspell: your spells can't be countered this turn, draw a card"
+note = "draws a card if an opponent cast a blue or black spell this turn; your spells can't be countered this turn (every counterspell fails, Mindbreak Trap still exiles); you and your permanents (as it resolves) have hexproof from blue and black until end of turn. The AI casts it in response to any counterspell aimed at its spell (except the decks on the CTHRESH list); a person casts their own"
 
 ["Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal"]
 tags = "leg wizard pow=3 tgh=3"
