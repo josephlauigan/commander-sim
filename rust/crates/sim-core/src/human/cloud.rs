@@ -6,7 +6,7 @@
 
 use super::abilities::{LandAbility, PermAbility, Why, ability};
 use super::{cards, choices, mana};
-use crate::engine::stack::{ability_window, ability_window_card};
+use crate::engine::stack;
 use crate::engine::zones::{self, Enter};
 use crate::flow::Res;
 use crate::ids::{CardId, PermId, PlayerId};
@@ -83,13 +83,16 @@ fn balan(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     }
     mana::pay_from_pool(g, p, 1, "W");
     crate::glog!(g, "  {} activates Balan", g.player(p).name);
-    if ability_window(g, p, Some(m), "attach all Equipment", Some(5.0), Some(m))? && live(g, m) {
-        for e in crate::impls::cloud::my_equipment(g, p) {
-            if g.perm(e).attached != Some(m) {
-                crate::impls::cloud::attach(g, e, m);
+    stack::ability_run(g, p, Some(m), None, "attach all Equipment", Some(5.0), Some(m), |g| {
+        if live(g, m) {
+            for e in crate::impls::cloud::my_equipment(g, p) {
+                if g.perm(e).attached != Some(m) {
+                    crate::impls::cloud::attach(g, e, m);
+                }
             }
         }
-    }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -118,14 +121,32 @@ fn cid(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     mana::pay_from_pool(g, p, 2, "");
     g.perm_mut(m).tapped = true;
     crate::glog!(g, "  {} activates Cid", g.player(p).name);
-    if ability_window(g, p, Some(m), &format!("return {} to hand", g.db.get(c).name), None, None)?
-        && let Some(i) = g.player(p).gy.iter().position(|&x| x == c)
-    {
-        g.player_mut(p).gy.remove(i);
-        g.player_mut(p).hand.push(c);
-        g.player_mut(p).seen.insert(c);
-        crate::glog!(g, "    Cid returns {}", g.db.get(c).name);
-    }
+    let what = format!("return {} to hand", g.db.get(c).name);
+    stack::ability_run_w(g, p, Some(m), None, &what, None, None, 0.0, |g, is_copy| {
+        let mut c = c;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let now: Vec<CardId> = g
+                .player(p)
+                .gy
+                .iter()
+                .copied()
+                .filter(|&c| g.db.get(c).has_subtype("equipment") || g.db.get(c).has_subtype("vehicle"))
+                .collect();
+            let labels: Vec<String> = now.iter().map(|&c| choices::card_label(g, c)).collect();
+            let prompt = "The copy of Cid's ability: return which Equipment or Vehicle card?";
+            if let Some(k) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                c = now[k];
+            }
+        }
+        if let Some(i) = g.player(p).gy.iter().position(|&x| x == c) {
+            g.player_mut(p).gy.remove(i);
+            g.player_mut(p).hand.push(c);
+            g.player_mut(p).seen.insert(c);
+            crate::glog!(g, "    Cid returns {}", g.db.get(c).name);
+        }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -167,12 +188,43 @@ fn giver(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     };
     g.perm_mut(m).tapped = true;
     crate::glog!(g, "  {} activates Giver of Runes", g.player(p).name);
-    if ability_window(g, p, Some(m), &format!("{} gains protection from {}", g.perm(t).name, opts[k].0), None, Some(t))?
-        && live(g, t)
-    {
-        crate::impls::partials::eot_kw(g, t, intern(opts[k].1));
-        crate::glog!(g, "    {} gains protection from {} until end of turn", g.perm(t).name, opts[k].0);
-    }
+    let what = format!("{} gains protection from {}", g.perm(t).name, opts[k].0);
+    stack::ability_run_w(g, p, Some(m), None, &what, None, Some(t), 0.0, |g, is_copy| {
+        let (mut t, mut k) = (t, k);
+        if is_copy {
+            // the copy chooses its own target and its own colour
+            let now: Vec<PermId> =
+                g.player(p).perms.iter().copied().filter(|&x| x != m && live(g, x) && g.is_creature(x)).collect();
+            if !now.is_empty()
+                && let Some(x) = cards::pick_perm(
+                    g,
+                    p,
+                    "target",
+                    "The copy of Giver of Runes' ability: which other creature gains protection?",
+                    &now,
+                    Some("keep the target"),
+                )?
+            {
+                t = x;
+            }
+            if let Some(j) = choices::choose(
+                g,
+                p,
+                "choose",
+                "The copy of Giver of Runes' ability: protection from what?",
+                &labels,
+                Some("keep the choice"),
+                None,
+            )? {
+                k = j;
+            }
+        }
+        if live(g, t) {
+            crate::impls::partials::eot_kw(g, t, intern(opts[k].1));
+            crate::glog!(g, "    {} gains protection from {} until end of turn", g.perm(t).name, opts[k].0);
+        }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -188,31 +240,32 @@ fn stoneforge(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     mana::pay_from_pool(g, p, 1, "W");
     g.perm_mut(m).tapped = true;
     crate::glog!(g, "  {} activates Stoneforge Mystic", g.player(p).name);
-    if !ability_window(g, p, Some(m), "put an Equipment card onto the battlefield", Some(5.0), None)? {
-        return Ok(None);
-    }
-    // chosen as it resolves, from what is in the hand then
-    let eq: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).has_subtype("equipment")).collect();
-    if eq.is_empty() {
-        return Ok(None);
-    }
-    let labels: Vec<String> = eq.iter().map(|&c| choices::card_label(g, c)).collect();
-    let Some(k) = choices::choose(
-        g,
-        p,
-        "choose",
-        "Stoneforge Mystic: put which Equipment card onto the battlefield?",
-        &labels,
-        Some("none"),
-        None,
-    )?
-    else {
-        return Ok(None);
-    };
-    let c = eq[k];
-    crate::impls::partials::remove_card(&mut g.player_mut(p).hand, c);
-    zones::enter(g, p, c, Enter::default())?;
-    crate::glog!(g, "  {} puts {} onto the battlefield with Stoneforge Mystic", g.player(p).name, g.db.get(c).name);
+    stack::ability_run(g, p, Some(m), None, "put an Equipment card onto the battlefield", Some(5.0), None, |g| {
+        // chosen as it resolves, from what is in the hand then
+        let eq: Vec<CardId> =
+            g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).has_subtype("equipment")).collect();
+        if eq.is_empty() {
+            return Ok(());
+        }
+        let labels: Vec<String> = eq.iter().map(|&c| choices::card_label(g, c)).collect();
+        let Some(k) = choices::choose(
+            g,
+            p,
+            "choose",
+            "Stoneforge Mystic: put which Equipment card onto the battlefield?",
+            &labels,
+            Some("none"),
+            None,
+        )?
+        else {
+            return Ok(());
+        };
+        let c = eq[k];
+        crate::impls::partials::remove_card(&mut g.player_mut(p).hand, c);
+        zones::enter(g, p, c, Enter::default())?;
+        crate::glog!(g, "  {} puts {} onto the battlefield with Stoneforge Mystic", g.player(p).name, g.db.get(c).name);
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -262,13 +315,29 @@ fn plaza(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     let cd = g.perm(l).real_card();
     crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Exile));
     crate::glog!(g, "  {} exiles Plaza of Heroes", g.player(p).name);
-    if ability_window_card(g, p, cd, &format!("{} gains hexproof and indestructible", g.perm(t).name), None, Some(t))?
-        && live(g, t)
-    {
-        crate::impls::partials::eot_kw(g, t, intern("hexproof"));
-        crate::impls::partials::eot_kw(g, t, intern("indestructible"));
-        crate::glog!(g, "    {} gains hexproof and indestructible until end of turn", g.perm(t).name);
-    }
+    let what = format!("{} gains hexproof and indestructible", g.perm(t).name);
+    stack::ability_run_w(g, p, None, Some(cd), &what, None, Some(t), 0.0, |g, is_copy| {
+        let mut t = t;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let now: Vec<PermId> = cards::creatures(g, p, false)
+                .into_iter()
+                .filter(|&x| crate::cardcode::is_legendary(g, x))
+                .collect();
+            let prompt = "The copy of Plaza of Heroes' ability: which legendary creature?";
+            if !now.is_empty()
+                && let Some(x) = cards::pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?
+            {
+                t = x;
+            }
+        }
+        if live(g, t) {
+            crate::impls::partials::eot_kw(g, t, intern("hexproof"));
+            crate::impls::partials::eot_kw(g, t, intern("indestructible"));
+            crate::glog!(g, "    {} gains hexproof and indestructible until end of turn", g.perm(t).name);
+        }
+        Ok(())
+    })?;
     Ok(None)
 }
 

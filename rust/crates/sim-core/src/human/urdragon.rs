@@ -207,9 +207,34 @@ fn squire_go(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     let to = cre[j];
     g.perm_mut(m).tapped = true;
     crate::glog!(g, "  {} activates Brass Squire: {} to {}", pname(g, p), g.perm(e).name, g.perm(to).name);
-    if stack::ability_window(g, p, Some(m), "attach Equipment", Some(5.0), Some(to))? && live(g, e) && live(g, to) {
-        crate::impls::cloud::attach(g, e, to);
-    }
+    let (eqs0, cre0) = (eqs.clone(), cre.clone());
+    stack::ability_run_w(g, p, Some(m), None, "attach Equipment", Some(5.0), Some(to), 0.0, |g, is_copy| {
+        let (mut e, mut to) = (e, to);
+        if is_copy {
+            // "you may choose new targets for the copy": the Equipment and the creature
+            let es: Vec<PermId> = eqs0.iter().copied().filter(|&x| live(g, x)).collect();
+            if !es.is_empty() {
+                let labels: Vec<String> = es.iter().map(|&x| g.perm(x).name.to_string()).collect();
+                let prompt = "The copy of Brass Squire's ability: attach which Equipment?";
+                if let Some(i) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                    e = es[i];
+                }
+            }
+            let cs: Vec<PermId> = cre0.iter().copied().filter(|&x| live(g, x)).collect();
+            if !cs.is_empty() {
+                let labels: Vec<String> =
+                    cs.iter().map(|&c| legal::describe_target(g, p, super::Target::Perm(c))).collect();
+                let prompt = format!("The copy of Brass Squire's ability: attach {} to which creature?", g.perm(e).name);
+                if let Some(j) = choices::choose(g, p, "target", &prompt, &labels, Some("keep the target"), None)? {
+                    to = cs[j];
+                }
+            }
+        }
+        if live(g, e) && live(g, to) {
+            crate::impls::cloud::attach(g, e, to);
+        }
+        Ok(())
+    })?;
     Ok(None)
 }
 
@@ -249,9 +274,26 @@ fn camera_go(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     g.perm_mut(m).data.set(DataKey::Counters, Val::Int(n - 1));
     crate::glog!(g, "  {} activates Peter Parker's Camera: copies {}", pname(g, p), items[k].1);
     // the Camera's own ability is on the stack above it: if that is countered, nothing is copied
-    if stack::ability_window(g, p, Some(m), "copy target activated or triggered ability", Some(3.0), None)? {
-        stack::copy_trigger(g, p, items[k].0)?;
-    }
+    let target = items[k].0;
+    stack::ability_run_w(g, p, Some(m), None, "copy target activated or triggered ability", Some(3.0), None, 0.0, |g, is_copy| {
+        let mut id = target;
+        if is_copy {
+            // "you may choose a new target for the copy": another ability of yours still on the stack
+            let now: Vec<(u32, String)> = g
+                .stack
+                .iter()
+                .rev()
+                .filter(|it| it.controller == p && !it.countered && stack::copyable(it))
+                .map(|it| (it.id, it.name.clone()))
+                .collect();
+            let labels: Vec<String> = now.iter().map(|x| x.1.clone()).collect();
+            let prompt = "The copy of Peter Parker's Camera's ability: copy which ability?";
+            if let Some(j) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                id = now[j].0;
+            }
+        }
+        stack::copy_trigger(g, p, id).map(|_| ())
+    })?;
     Ok(None)
 }
 
@@ -301,16 +343,29 @@ fn jaxis_go(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     zones::discard_cards(g, p, &[d])?;
     crate::glog!(g, "  {} activates Jaxis: copy {} (discards {})", pname(g, p), g.perm(t).name, cards_name(g, d));
     let label = format!("copy {}", g.perm(t).name);
-    if !stack::ability_window(g, p, Some(m), &label, None, Some(t))? || !live(g, t) {
-        return Ok(None);
-    }
-    let cd = g.perm(t).cd.unwrap();
-    if let Some(tok) = zones::enter_token_copy(g, p, cd)? {
-        let y = g.perm_mut(tok);
-        y.sick = false; // haste
-        y.data.set(DataKey::JaxisCopy, Val::Bool(true)); // drawn for and sacrificed at the end step (Jaxis's own hook)
-    }
-    crate::engine::life::check_state(g)?;
+    stack::ability_run_w(g, p, Some(m), None, &label, None, Some(t), 0.0, |g, is_copy| {
+        let mut t = t;
+        if is_copy {
+            // "you may choose a new target for the copy"
+            let now: Vec<PermId> = cre.iter().copied().filter(|&c| live(g, c)).collect();
+            let labels: Vec<String> =
+                now.iter().map(|&c| legal::describe_target(g, p, super::Target::Perm(c))).collect();
+            let prompt = "The copy of Jaxis's ability: copy which creature?";
+            if let Some(k) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                t = now[k];
+            }
+        }
+        if !live(g, t) {
+            return Ok(());
+        }
+        let cd = g.perm(t).cd.unwrap();
+        if let Some(tok) = zones::enter_token_copy(g, p, cd)? {
+            let y = g.perm_mut(tok);
+            y.sick = false; // haste
+            y.data.set(DataKey::JaxisCopy, Val::Bool(true)); // drawn for and sacrificed at the end step (Jaxis's own hook)
+        }
+        crate::engine::life::check_state(g)
+    })?;
     Ok(None)
 }
 

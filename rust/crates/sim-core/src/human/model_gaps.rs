@@ -8,7 +8,7 @@
 
 use super::abilities::{LandAbility, Why, ability};
 use super::{choices, mana};
-use crate::engine::stack::ability_window_card;
+use crate::engine::stack::ability_run;
 use crate::engine::{self, zones};
 use crate::flow::Res;
 use crate::ids::{PermId, PlayerId};
@@ -42,31 +42,31 @@ fn maelstrom(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     let cd = g.perm(l).card();
     crate::glog!(g, "  {} sacrifices Maelstrom of the Spirit Dragon", g.player(p).name);
     crate::impls::lands::sac_land(g, p, l)?; // the sacrifice is a cost: it leaves before the ability can be answered
-    if !ability_window_card(g, p, cd, "search for a Dragon card", None, None)? {
-        return Ok(None);
-    }
-    let found = choices::search(
-        g,
-        p,
-        &|g: &Game, c| {
-            let d = g.db.get(c);
-            d.has_subtype("dragon") || d.has_kw("changeling")
-        },
-        1,
-        "Maelstrom of the Spirit Dragon: search for a Dragon card",
-        true,
-    )?;
-    let Some(&c) = found.first() else {
-        crate::glog!(g, "    {} finds nothing", g.player(p).name);
-        return Ok(None);
-    };
-    if let Some(a) = zones::agent_for(g, p) {
-        zones::agent_take(g, a, p, c); // Opposition Agent
-        return Ok(None);
-    }
-    let pl = g.player_mut(p);
-    pl.hand.push(c);
-    pl.seen.insert(c);
-    crate::glog!(g, "    {} reveals {} and puts it into their hand", g.player(p).name, g.db.get(c).name);
+    ability_run(g, p, None, Some(cd), "search for a Dragon card", None, None, |g| {
+        let found = choices::search(
+            g,
+            p,
+            &|g: &Game, c| {
+                let d = g.db.get(c);
+                d.has_subtype("dragon") || d.has_kw("changeling")
+            },
+            1,
+            "Maelstrom of the Spirit Dragon: search for a Dragon card",
+            true,
+        )?;
+        let Some(&c) = found.first() else {
+            crate::glog!(g, "    {} finds nothing", g.player(p).name);
+            return Ok(());
+        };
+        if let Some(a) = zones::agent_for(g, p) {
+            zones::agent_take(g, a, p, c); // Opposition Agent
+            return Ok(());
+        }
+        let pl = g.player_mut(p);
+        pl.hand.push(c);
+        pl.seen.insert(c);
+        crate::glog!(g, "    {} reveals {} and puts it into their hand", g.player(p).name, g.db.get(c).name);
+        Ok(())
+    })?;
     Ok(None)
 }
