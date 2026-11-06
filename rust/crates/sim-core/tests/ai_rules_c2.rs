@@ -570,12 +570,18 @@ fn gadgeteer_endless_atlas_costs_one_not_two() {
 #[test]
 fn gadgeteer_midnight_clock_keeps_its_blue_pip() {
     // Midnight Clock {2}{U}: with a Gadgeteer {1}{U}; two Islands pay it, one does not
-    let mut g = table(&["stella-lee-quick-draw", "seph"]);
+    let mut g = table(&["kefka", "seph"]);
     let clock = perm(&mut g, P0, "Midnight Clock");
+    g.perm_mut(clock).tapped = true; // (it makes mana of its own)
     let ls = lands(&mut g, P0, "Island", 3, false);
     g.perm_mut(ls[0]).tapped = true;
-    g.active = Some(P0);
-    assert!(options_of(&mut g, clock, P0, Some(false)).is_empty(), "two Islands can't pay {{2}}{{U}}");
+    g.player_mut(P0).hand.clear();
+    g.perm_mut(clock).data.set(sim_core::state::DataKey::T0Stella, sim_core::state::Val::Int(3));
+    assert!(
+        options_of(&mut g, clock, P0, Some(true)).is_empty(),
+        "two Islands can't pay {{2}}{{U}}: mana {}",
+        sim_core::engine::mana::total_mana(&g, P0, false)
+    );
     perm(&mut g, P0, "Forensic Gadgeteer");
-    assert_eq!(options_of(&mut g, clock, P0, Some(false)).len(), 1, "{{1}}{{U}} with it");
+    assert_eq!(options_of(&mut g, clock, P0, Some(true)).len(), 1, "{{1}}{{U}} with it");
 }
