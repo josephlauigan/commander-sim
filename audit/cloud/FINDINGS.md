@@ -4,6 +4,11 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run (CLAUDE.md "Swap tests explain themselves"). Newest evidence first; numbers are
 look-ahead, loose profile, vs Cloud's matched tiers (T1, T2) unless noted.
 
+## Baseline B 2026-11-06 (after #278-#284; main 63d783b5; look-ahead, loose, 2,000 games per tier, seed 500000)
+t1 **29.6%** (27.6-31.6), t2 **20.6%** (18.8-22.4), t3 **22.4%** (20.7-24.3): **24.2% over t1-t3**, against 24.4% in the morning
+(29.4 / 21.6 / 22.2): no change. The t1 drop flagged in the morning (32.0% on 11-05 -> 29.4%) holds at 29.6%. Raw:
+`audit/baseline-2026-11-06-b/cloud.txt`.
+
 ## Baseline 2026-11-06 (after the rewire, Doomsday and Phase C engine work)
 Cloud, t1 / t2 / t3, 2,000 games per tier, seed 500000, loose, look-ahead, build ef343cc1: **29.4%** (27.4-31.4) / **21.6%**
 (19.8-23.4) / **22.2%** (20.4-24.1), **24.4% over t1-t3**. Old build (main 1e027077, 2026-11-05): 32.0% (30.0-34.1) / 21.2%

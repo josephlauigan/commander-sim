@@ -4,6 +4,12 @@ What the simulator has taught us about the Sauron Grixis amass deck: strengths, 
 it did or didn't work. Updated after every run. Newest evidence first. Matched tiers: T3–T4 (`data/my_decks.toml`).
 Older tests: the dated folders here.
 
+## Baseline B 2026-11-06 (after #278-#284; main 63d783b5; look-ahead, loose, 2,000 games per tier, seed 500000)
+t3 **27.9%** (26.0-29.9), t4 **24.2%** (22.4-26.1): **26.1% over t3, t4**, against 24.8% in the morning (t3 25.3%, t4 24.2%):
++1.3, inside the noise. The rise is all at t3, where Atraxa was rebuilt from pure infect into a mixed build (#279: Tier 3 poison
+wins 23.8% -> 15.7%) and the Tier 1-5 pool decks hold protection mana less (#284). Plausible, not proven. Raw:
+`audit/baseline-2026-11-06-b/sauron.txt`.
+
 ## Baseline 2026-11-06 (after the rewire, Doomsday and Phase C engine work)
 Sauron, t3 / t4, 2,000 games per tier, seed 500000, loose, look-ahead, build ef343cc1: **25.3%** (23.4-27.3) / **24.2%** (22.4-26.2),
 **24.8% over t3, t4**. Old build (main 1e027077, 2026-11-05): 26.1% (24.2-28.0) / 23.7% (21.9-25.6), 24.9% over t3, t4.

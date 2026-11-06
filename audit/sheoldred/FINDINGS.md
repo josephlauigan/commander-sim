@@ -4,6 +4,10 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile, vs Sheoldred's matched
 tiers (T3-T5) unless noted. Older tests: README.md in this folder.
 
+## Baseline B 2026-11-06 (after #278-#284; main 63d783b5; look-ahead, loose, 2,000 games per tier, seed 500000)
+t3 **28.2%** (26.3-30.3), t4 **26.6%** (24.7-28.5): **27.4% over t3, t4**, against 27.5% in the morning: no change. It includes her
+Ad Nauseam fix (entry below) and the new Tier 3 Atraxa (#279). Raw: `audit/baseline-2026-11-06-b/sheoldred.txt`.
+
 ## 2026-11-06: Ad Nauseam held only with room for four cards (engine fix, branch t6-ai; T3-T4, loose, look-ahead, 2,000 per tier, seed 500000)
 The AI kept mana up for Ad Nauseam even with a full hand, where it would never cast it (it casts Ad Nauseam only with room
 for four cards). The Tier 6 decks already had the fix (C1b: stops held for Ad Nauseam 340 -> 144); JD approved it for

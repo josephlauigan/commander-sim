@@ -3,6 +3,11 @@
 What the simulator has taught us about the Y'shtola Esper drain deck: strengths, weaknesses, and what was tried and
 why it did or didn't work. Updated after every run. Newest evidence first. Matched tier: T5 (`data/my_decks.toml`).
 
+## Baseline B 2026-11-06 (after #278-#284; main 63d783b5; look-ahead, loose, 2,000 games per tier, seed 500000)
+**26.5%** (24.6-28.5) at t5, against 26.3% in the morning: no change. The Tier 5 table changes of #284 (no wasted protection
+holds; Garruk's Uprising and Welding Jar cast) and #281 (Urza's Whir) don't move her number. Raw:
+`audit/baseline-2026-11-06-b/yshtola.txt`.
+
 ## Baseline 2026-11-06 (after the rewire, Doomsday and Phase C engine work)
 Y'shtola, t5, 2,000 games, seed 500000, loose, look-ahead, integration build ef343cc1: **26.2%** (95% CI 24.3-28.2) over t5
 (1,994 games counted: 6 hit an internal simulator error, see below). Same command on main 1e027077 (2026-11-05, old build): **25.8%**
