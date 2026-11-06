@@ -538,9 +538,13 @@ fn maelstrom_colors(g: &Game, p: PlayerId, _l: PermId) -> Colors {
     if restr_ok(g, p, Restr::Subtype("dragon")) { g.player(p).ident } else { Colors::NONE }
 }
 
-/// the Dragon card in p's library an AI would fetch: the biggest body (`body_worth`)
-fn best_lib_dragon(g: &Game, p: PlayerId) -> Option<CardId> {
-    let cs: Vec<CardId> = crate::engine::zones::searchable(g, p).into_iter().filter(|&c| dragon_card(g, c)).collect();
+/// the Dragon card in p's library an AI would fetch: the biggest body (`body_worth`) among those of mana value 4 to
+/// `cap` (worth a land, and castable soon)
+fn best_lib_dragon(g: &Game, p: PlayerId, cap: usize) -> Option<CardId> {
+    let cs: Vec<CardId> = crate::engine::zones::searchable(g, p)
+        .into_iter()
+        .filter(|&c| dragon_card(g, c) && (4..=cap).contains(&(g.db.get(c).cmc as usize)))
+        .collect();
     crate::engine::zones::max_by(&cs, |c| body_worth(g, p, c))
 }
 
@@ -554,10 +558,8 @@ fn maelstrom_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -
     {
         return Ok(vec![]);
     }
-    let Some(c) = best_lib_dragon(g, p) else { return Ok(vec![]) };
-    let cmc = g.db.get(c).cmc as usize;
-    if cmc < 4 || cmc > n {
-        return Ok(vec![]); // not worth a land, or too big to cast soon
+    if best_lib_dragon(g, p, n).is_none() {
+        return Ok(vec![]); // no Dragon worth a land that it can cast soon
     }
     Ok(vec![Opt {
         utility: if post.is_none() { 1.4 } else { 0.7 },
@@ -571,13 +573,13 @@ fn maelstrom_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).lands.contains(&l) || g.perm(l).tapped || !pay_without(g, p, l, 4, "")? {
         return Ok(false);
     }
-    let Some(want) = best_lib_dragon(g, p) else { return Ok(false) };
+    let Some(want) = best_lib_dragon(g, p, g.player(p).lands.len()) else { return Ok(false) };
     let cd = g.perm(l).card();
     g.perm_mut(l).tapped = true;
     sac_land(g, p, l)?; // the sacrifice is a cost: it leaves before the ability can be answered
     crate::engine::stack::ability_run(g, p, None, Some(cd), "search for a Dragon card", None, None, |g| {
         // (the card is chosen now; if it has left the library, the best Dragon still there is taken)
-        let pick = if g.player(p).library.contains(&want) { want } else { best_lib_dragon(g, p).unwrap_or(want) };
+        let pick = if g.player(p).library.contains(&want) { want } else { best_lib_dragon(g, p, 99).unwrap_or(want) };
         crate::impls::t1::tutor_named(g, p, &|_, c| c == pick, 1, "hand", MAELSTROM).map(|_| ())
     })?;
     Ok(true)
