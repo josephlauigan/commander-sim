@@ -513,19 +513,24 @@ fn the_ai_declines_when_line_one_is_in_hand() {
 }
 
 #[test]
-fn the_ai_declines_with_lethal_on_the_table_and_at_low_life() {
+fn life_is_no_bar_to_doomsday_except_the_last_point() {
+    // JD, 2026-11-06: an all-or-nothing move. A board that could deal the life that is left does not stop it (a main-phase
+    // pile wins this turn; an end-step cast is in the turn just before ours), nor does a low life total; at 1 life
+    // Doomsday would take the last point, so it is not cast
     let mut g = pile_b_position();
     teferi_flash(&mut g);
     g.active = Some(P1);
     assert_eq!(opts(&mut g, None), 1);
     token(&mut g, P1, 10);
     token(&mut g, P1, 10);
-    assert_eq!(opts(&mut g, None), 0, "20 power on the other side can deal the 20 life that is left");
+    assert_eq!(opts(&mut g, None), 1, "20 power on the other side no longer stops it");
     let mut g = pile_b_position();
     teferi_flash(&mut g);
     g.active = Some(P1);
     g.player_mut(P0).life = 15;
-    assert_eq!(opts(&mut g, None), 0, "below 16 life Doomsday is not started");
+    assert_eq!(opts(&mut g, None), 1, "15 life no longer stops it");
+    g.player_mut(P0).life = 1;
+    assert_eq!(opts(&mut g, None), 0, "at 1 life Doomsday takes the last point");
 }
 
 // ------------------------------------------------------------------ a person's cantrips
@@ -690,7 +695,11 @@ fn thrasios_dig_is_a_draw_source_of_the_pile() {
     );
     perm(&mut g, P0, "Thrasios, Triton Hero");
     doomsday::run_pile(&mut g, P0).unwrap();
-    assert!(won(&g), "the pile dug down to three cards with Thrasios: {:?}", g.log.as_ref().map(|l| l.iter().rev().take(14).collect::<Vec<_>>()));
+    assert!(
+        won(&g),
+        "the pile dug down to three cards with Thrasios: {:?}",
+        g.log.as_ref().map(|l| l.iter().rev().take(14).collect::<Vec<_>>())
+    );
     assert!(logged(&g, "plays the pile: Thrasios's dig"), "Thrasios's {{4}} was played as a move of the pile");
     assert!(logged(&g, "Thrasios reveals Silence: drawn"));
     // without Thrasios the same position stalls: five cards, devotion 2, nothing to draw with
@@ -705,11 +714,8 @@ fn thrasios_dig_is_a_draw_source_of_the_pile() {
 
 #[test]
 fn thrasios_does_not_dig_by_himself_while_a_pile_is_played() {
-    let mut g = pile_in_play(
-        &["Chrome Mox"],
-        &["Silence", "Lotus Petal", "Arcane Signet", "Grim Monolith", "Sol Ring"],
-        1,
-    );
+    let mut g =
+        pile_in_play(&["Chrome Mox"], &["Silence", "Lotus Petal", "Arcane Signet", "Grim Monolith", "Sol Ring"], 1);
     perm(&mut g, P0, "Thrasios, Triton Hero");
     // no Oracle anywhere: no line, so the pile does nothing and the dig is not played
     doomsday::run_pile(&mut g, P0).unwrap();
@@ -953,18 +959,50 @@ fn hand_of(names: &[&str]) -> Game {
 fn a_hand_whose_action_cards_have_no_source_of_their_colour_goes_back() {
     use sim_core::impls::t6_plans::keep;
     // Oracle ({U}{U}) and Brainstorm ({U}) with lands that make B, G and W only
-    let g = hand_of(&["Bayou", "Overgrown Tomb", "Savannah", "Thassa's Oracle", "Brainstorm", "Silence", "Swords to Plowshares"]);
+    let g = hand_of(&[
+        "Bayou",
+        "Overgrown Tomb",
+        "Savannah",
+        "Thassa's Oracle",
+        "Brainstorm",
+        "Silence",
+        "Swords to Plowshares",
+    ]);
     assert_eq!(keep(&g, P0), Some(false), "no blue source for the Oracle or the Brainstorm");
     // the same hand with a blue land is kept
-    let g = hand_of(&["Bayou", "Overgrown Tomb", "Tundra", "Thassa's Oracle", "Brainstorm", "Silence", "Swords to Plowshares"]);
+    let g = hand_of(&[
+        "Bayou",
+        "Overgrown Tomb",
+        "Tundra",
+        "Thassa's Oracle",
+        "Brainstorm",
+        "Silence",
+        "Swords to Plowshares",
+    ]);
     assert_ne!(keep(&g, P0), Some(false), "Tundra makes {{U}}");
     // a fetch land counts for the colours of the lands left in the library (Underground Sea is in the deck)
-    let mut g = hand_of(&["Bayou", "Overgrown Tomb", "Polluted Delta", "Thassa's Oracle", "Brainstorm", "Silence", "Swords to Plowshares"]);
+    let mut g = hand_of(&[
+        "Bayou",
+        "Overgrown Tomb",
+        "Polluted Delta",
+        "Thassa's Oracle",
+        "Brainstorm",
+        "Silence",
+        "Swords to Plowshares",
+    ]);
     let sea = card(&g, "Underground Sea");
     g.player_mut(P0).library.push(sea);
     assert_ne!(keep(&g, P0), Some(false), "Polluted Delta finds the Underground Sea");
     // a Mox that makes the colours of the hand's other spells is a source once it can be cast
-    let g = hand_of(&["Bayou", "Overgrown Tomb", "Savannah", "Thassa's Oracle", "Brainstorm", "Birds of Paradise", "Swords to Plowshares"]);
+    let g = hand_of(&[
+        "Bayou",
+        "Overgrown Tomb",
+        "Savannah",
+        "Thassa's Oracle",
+        "Brainstorm",
+        "Birds of Paradise",
+        "Swords to Plowshares",
+    ]);
     assert_ne!(keep(&g, P0), Some(false), "Birds of Paradise makes every colour once cast from a green land");
 }
 
@@ -1001,12 +1039,30 @@ fn big_position(hand_names: &[&str]) -> Game {
         "Snapback",
     ];
     let fillers = [
-        "Sol Ring", "Mana Vault", "Grim Monolith", "Basalt Monolith", "Chrome Mox", "Lotus Petal", "Arcane Signet",
-        "Mox Diamond", "Underground Sea", "Scrubland", "Island", "Swamp", "Plains", "Bayou", "Tundra",
-        "Volcanic Island", "Watery Grave", "Tropical Island", "Savannah", "Badlands", "Taiga", "Plateau",
+        "Sol Ring",
+        "Mana Vault",
+        "Grim Monolith",
+        "Basalt Monolith",
+        "Chrome Mox",
+        "Lotus Petal",
+        "Arcane Signet",
+        "Mox Diamond",
+        "Underground Sea",
+        "Scrubland",
+        "Island",
+        "Swamp",
+        "Plains",
+        "Bayou",
+        "Tundra",
+        "Volcanic Island",
+        "Watery Grave",
+        "Tropical Island",
+        "Savannah",
+        "Badlands",
+        "Taiga",
+        "Plateau",
     ];
-    let lib: Vec<&str> =
-        fillers.iter().chain(useful.iter()).copied().filter(|n| !hand_names.contains(n)).collect();
+    let lib: Vec<&str> = fillers.iter().chain(useful.iter()).copied().filter(|n| !hand_names.contains(n)).collect();
     let mut g = setup(hand_names, &lib, &[]);
     lands(&mut g, P0, "Underground Sea", 6, false);
     perm(&mut g, P0, "Thrasios, Triton Hero");
@@ -1035,9 +1091,9 @@ fn the_pile_builder_finishes_quickly_on_a_full_library() {
 }
 
 #[test]
-fn a_cast_the_board_forbids_is_declined_without_a_search() {
-    // forty power on the other side can deal what Doomsday leaves, at any life total: the answer is no before any pile is
-    // searched (the look-ahead asks again at every decision of every playout)
+fn a_cast_into_a_big_board_is_offered_and_the_repeated_asks_stay_quick() {
+    // forty power on the other side no longer declines the cast before the search (JD, 2026-11-06), so the look-ahead's
+    // repeated asks now reach the pile builder: forty of them, one per life total, must stay quick
     let t = std::time::Instant::now();
     let mut g = big_position(HEAVY_HANDS[0]);
     token(&mut g, P1, 20);
@@ -1046,9 +1102,10 @@ fn a_cast_the_board_forbids_is_declined_without_a_search() {
     teferi_flash(&mut g);
     for life in 30..70 {
         g.player_mut(P0).life = life;
-        assert_eq!(opts(&mut g, None), 0, "a board that can deal what is left declines at {life} life");
-        assert!(t.elapsed().as_secs_f64() < 5.0, "the declined casts have taken {:?}", t.elapsed());
+        assert_eq!(opts(&mut g, None), 1, "a pile wins at {life} life, whatever the board");
+        assert!(t.elapsed().as_secs_f64() < 20.0, "the casts have taken {:?}", t.elapsed());
     }
+    eprintln!("40 asks: {:?}", t.elapsed());
 }
 
 #[test]
