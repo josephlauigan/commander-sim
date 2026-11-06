@@ -177,9 +177,14 @@ cards = ["Gitaxian Probe", "Preordain", "Ponder", "Brainstorm"]
 when = ["have:Doomsday & have:Thassa's Oracle"]
 score = 1.0
 
-# Keep rule, Doomsday term (the guide's keep table, hand 4: "Lots of mana, but none of it coloured: ... Doomsday {B}{B}{B}"):
-# a hand whose only line card is Doomsday and that has no land making {B} (a fetch counts) goes back. A Dark Ritual or a
-# Mox does not make the {B}{B}{B} alone. The rule runs after the shared rules above it, so it only adds a mulligan.
+# Keep rule, colours (the guide's keep table: "A hand with no coloured source for its spells goes back even if the count
+# passes"; hand 4: "Lots of mana, but none of it coloured: Ad Nauseam needs {B}{B}, Doomsday {B}{B}{B}"). `hand-castable:action`
+# counts the hand's action cards that have a source of every colour they need (impls/t6_keep.rs `hand_sources`: the hand's
+# lands, a fetch land for the colours of the lands left in the library, and the rocks and dorks the hand can cast; a
+# Dark Ritual or a Sol Ring makes no colour alone). A hand with action cards and none it can cast in colour goes back.
+# This replaces the Doomsday-only term (`have:Doomsday & hand-b-lands=0 & hand:action<=1`; the quantity `hand-b-lands`
+# still parses). It runs after the shared rules above it, so it only adds a mulligan, and a settled hand (a mulligan
+# hand with 2-4 lands) never reaches it.
 [[mulligan.rule]]
-when = ["have:Doomsday & hand-b-lands=0 & hand:action<=1"]
+when = ["hand:action>=1 & hand-castable:action=0"]
 keep = false

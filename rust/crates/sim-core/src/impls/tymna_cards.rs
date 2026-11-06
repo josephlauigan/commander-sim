@@ -126,6 +126,32 @@ fn thrasios_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+/// Thrasios's {4} played as a move of a Doomsday pile (`doomsday::run_pile`): the same ability as `thrasios_go`, which
+/// refuses while a pile is active (the AI must not draw a card off the pile on its own). False when it could not be
+/// activated (no Thrasios, no mana, an empty library)
+pub fn pile_dig(g: &mut Game, p: PlayerId) -> Res<bool> {
+    let Some(src) = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .find(|&m| g.perm(m).on_bf && !g.perm(m).phased && name_of(g, m) == THRASIOS)
+    else {
+        return Ok(false);
+    };
+    let cost = crate::impls::t6_green1::creature_ability_cost(g, p, 4);
+    if !can_pay(g, p, cost, "", false) || g.player(p).library.is_empty() {
+        return Ok(false);
+    }
+    g.player_mut(p).stat(crate::sym::intern("ty_thrasios_acts"), 1);
+    pay(g, p, cost, "", false)?;
+    if !ability_window(g, p, Some(src), "scry 1, then a land or a card", None, None)? {
+        return Ok(true); // answered (Stifle): the mana is gone, the line is re-solved
+    }
+    thrasios_resolve(g, p)?;
+    Ok(true)
+}
+
 /// what Thrasios's ability does when it resolves (the person's too: practice mode, `human::karn`): scry 1, then reveal the
 /// top card; a land goes onto the battlefield tapped, anything else is drawn
 pub(crate) fn thrasios_resolve(g: &mut Game, p: PlayerId) -> Res {

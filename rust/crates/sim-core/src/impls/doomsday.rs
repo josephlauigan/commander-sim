@@ -82,6 +82,16 @@ enum K {
     Preordain,
     Ponder,
     Borne,
+    /// Veil of Summer: not cast by the line; held in hand with {G} open it answers a blue or black counter
+    /// (`rules::veil_response`), so it is a lock for the Oracle's cast (not against Mindbreak Trap or a red blast)
+    Veil,
+    /// Noxious Revival: not cast by the line; in hand when the Oracle is countered it puts it back on top
+    Revival,
+    /// a permanent with blue in its cost and nothing else coloured (Mockingbird, Mystic Remora, Rhystic Study, Valley
+    /// Floodcaller): cast from hand it adds 1 to the devotion the Oracle counts
+    Dev,
+    /// a land (Thrasios puts a revealed land onto the battlefield instead of drawing it)
+    Land,
     Other,
 }
 
@@ -94,23 +104,36 @@ fn kind_of(n: &str) -> K {
         "Preordain" => K::Preordain,
         "Ponder" => K::Ponder,
         "Borne Upon a Wind" => K::Borne,
+        "Veil of Summer" => K::Veil,
+        REVIVAL => K::Revival,
+        "Mockingbird" | "Mystic Remora" | "Rhystic Study" | "Valley Floodcaller" => K::Dev,
         _ => K::Other,
     }
 }
 
 fn kd(g: &Game, c: CardId) -> K {
-    kind_of(&g.db.get(c).name)
+    let d = g.db.get(c);
+    match kind_of(&d.name) {
+        K::Other if d.land => K::Land,
+        k => k,
+    }
 }
 
-/// one move of a line: cast this card (a Probe for life when `life`)
+/// a card that is only filler for the pile (never a line card)
+fn plain(k: K) -> bool {
+    matches!(k, K::Other | K::Land)
+}
+
+/// one move of a line: cast this card (a Probe for life when `life`), or Thrasios's {4} dig (`dig`, no card)
 #[derive(Clone, Copy, Debug)]
 pub struct Act {
     pub card: CardId,
     pub life: bool,
+    pub dig: bool,
 }
 
 /// the position the search plays from: the hand, the library (top first), the mana the line has spent so far (as
-/// colour counts the engine can be asked about), the life left and whether Silence is up
+/// colour counts the engine can be asked about), the life left, whether Silence is up and the devotion the line added
 #[derive(Clone)]
 struct S {
     hand: Vec<CardId>,
@@ -120,6 +143,23 @@ struct S {
     gn: u8,
     life: i32,
     silence: bool,
+    /// devotion to blue added by permanents the line cast (Mockingbird ...)
+    dev: u8,
+}
+
+impl S {
+    fn new(hand: Vec<CardId>, lib: Vec<CardId>, life: i32) -> S {
+        S { hand, lib, u: 0, w: 0, gn: 0, life, silence: false, dev: 0 }
+    }
+}
+
+/// what a line must have when the Oracle is cast
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
+struct Want {
+    /// Silence up, or Veil of Summer in hand with {G} left
+    lock: bool,
+    /// a Noxious Revival in hand with its cost left (the Oracle can be put back if it is countered)
+    backup: bool,
 }
 
 struct Env<'a> {
@@ -130,28 +170,71 @@ struct Env<'a> {
     /// devotion to blue without Thassa's Oracle
     dev: usize,
     kinds: HashMap<u16, K>,
+    /// the generic mana of a devotion permanent
+    dev_gn: HashMap<u16, u8>,
+    /// Thrasios is out: the generic cost of his {4} dig
+    dig: Option<u8>,
+    /// Veil of Summer answers every stopper the table may hold (none can hold Mindbreak Trap or a red blast)
+    veil_ok: bool,
     memo: RefCell<HashMap<u32, bool>>,
 }
 
 impl<'a> Env<'a> {
     fn new(g: Cow<'a, Game>, p: PlayerId, b: u8, cards: &[CardId]) -> Env<'a> {
         let dev = super::combos::oracle_devotion(&g, p);
-        let kinds = cards.iter().map(|&c| (c.0, kd(&g, c))).collect();
-        Env { g, p, b, dev, kinds, memo: RefCell::new(HashMap::new()) }
+        let kinds: HashMap<u16, K> = cards.iter().map(|&c| (c.0, kd(&g, c))).collect();
+        let dev_gn = cards
+            .iter()
+            .filter(|&&c| kinds.get(&c.0) == Some(&K::Dev))
+            .map(|&c| (c.0, g.db.get(c).generic.min(9) as u8))
+            .collect();
+        let dig = g
+            .player(p)
+            .perms
+            .iter()
+            .any(|&m| {
+                let x = g.perm(m);
+                x.on_bf && !x.phased && x.cd.is_some_and(|c| &*g.db.get(c).name == "Thrasios, Triton Hero")
+            })
+            .then(|| crate::impls::t6_green1::creature_ability_cost(&g, p, 4).min(9) as u8);
+        let veil_ok = !g.opps(p).any(|q| {
+            crate::ai::brain::prob_holding(&g, q, |c| {
+                matches!(&*g.db.get(c).name, "Mindbreak Trap" | "Red Elemental Blast" | "Pyroblast")
+            }) > 0.0
+        });
+        Env { g, p, b, dev, kinds, dev_gn, dig, veil_ok, memo: RefCell::new(HashMap::new()) }
     }
     fn kd(&self, c: CardId) -> K {
         self.kinds.get(&c.0).copied().unwrap_or(K::Other)
     }
-    /// can the player pay {B}^b + {U}^u + {W}^w + generic gn at once
-    fn ok(&self, u: u8, w: u8, gn: u8) -> bool {
-        let key = ((((self.b as u32) * 16 + u as u32) * 16 + w as u32) * 16) + gn as u32;
+    /// can the player pay {B}^b + {U}^u + {W}^w + {G}^gr + generic gn at once
+    fn ok(&self, u: u8, w: u8, gr: u8, gn: u8) -> bool {
+        let key = (((((self.b as u32) * 16 + u as u32) * 16 + w as u32) * 16 + gr as u32) * 32) + gn as u32;
         if let Some(&r) = self.memo.borrow().get(&key) {
             return r;
         }
-        let pips = format!("{}{}{}", "B".repeat(self.b as usize), "U".repeat(u as usize), "W".repeat(w as usize));
+        let pips = format!(
+            "{}{}{}{}",
+            "B".repeat(self.b as usize),
+            "U".repeat(u as usize),
+            "W".repeat(w as usize),
+            "G".repeat(gr as usize)
+        );
         let r = can_pay(&self.g, self.p, gn as u32, &pips, false);
         self.memo.borrow_mut().insert(key, r);
         r
+    }
+    /// the lock at the Oracle's cast: Silence is up, or Veil of Summer is in hand with {G} left over the Oracle's {U}{U}
+    fn locked(&self, s: &S) -> bool {
+        s.silence
+            || (self.veil_ok
+                && s.hand.iter().any(|&c| self.kd(c) == K::Veil)
+                && self.ok(s.u + 2, s.w, 1, s.gn))
+    }
+    /// Noxious Revival is in hand with its {G} (or 2 life) left over the Oracle's {U}{U}
+    fn backed(&self, s: &S) -> bool {
+        s.hand.iter().any(|&c| self.kd(c) == K::Revival)
+            && (self.ok(s.u + 2, s.w, 1, s.gn) || s.life - 2 >= LIFE_FLOOR)
     }
 }
 
@@ -182,15 +265,13 @@ fn half_up(life: i32) -> i32 {
 /// the position now (a cantrip resolving, or the main phase of a pile turn); `exclude` is the spell that is resolving
 fn state_now(g: &Game, p: PlayerId, exclude: Option<CardId>) -> S {
     let pl = g.player(p);
-    S {
-        hand: pl.hand.iter().copied().filter(|&c| Some(c) != exclude).collect(),
-        lib: pl.library.iter().rev().copied().collect(),
-        u: 0,
-        w: 0,
-        gn: 0,
-        life: pl.life,
-        silence: silence_up(g, p),
-    }
+    let mut s = S::new(
+        pl.hand.iter().copied().filter(|&c| Some(c) != exclude).collect(),
+        pl.library.iter().rev().copied().collect(),
+        pl.life,
+    );
+    s.silence = silence_up(g, p);
+    s
 }
 
 fn env_now<'a>(g: &'a Game, p: PlayerId, s: &S) -> Env<'a> {
@@ -246,75 +327,119 @@ fn scry_variants(top: &[CardId]) -> Vec<(Vec<CardId>, Vec<CardId>)> {
     }
 }
 
-fn step_to(e: &Env, t: S, a: Act, left: u8, lock: bool, acts: &mut Vec<Act>) -> bool {
+fn act(card: CardId) -> Act {
+    Act { card, life: false, dig: false }
+}
+
+fn step_to(e: &Env, t: S, a: Act, left: u8, w: Want, acts: &mut Vec<Act>) -> bool {
     acts.push(a);
-    if dfs(e, &t, left - 1, lock, acts) {
+    if dfs(e, &t, left - 1, w, acts) {
         return true;
     }
     acts.pop();
     false
 }
 
+/// Thrasios's {4}: scry 1, then the top card is revealed; a land goes onto the battlefield (tapped: no mana this turn),
+/// anything else is drawn. Either way the library is one card shorter. The ways it can go: the top card kept or put on
+/// the bottom first
+fn dig_outcomes(e: &Env, s: &S) -> Vec<S> {
+    let mut out = vec![];
+    for bottom in [false, true] {
+        if s.lib.is_empty() || (bottom && s.lib.len() < 2) {
+            continue;
+        }
+        let mut t = s.clone();
+        if bottom {
+            let top = t.lib.remove(0);
+            t.lib.push(top);
+        }
+        if e.kd(t.lib[0]) == K::Land {
+            t.lib.remove(0);
+        } else if !draw_n(&mut t, 1) {
+            continue;
+        }
+        out.push(t);
+    }
+    out
+}
+
 /// is there a line of at most `left` more spells that ends with Thassa's Oracle on the battlefield and a devotion at
-/// least the library (`lock`: with Silence up before the Oracle)? On success `acts` holds it
-fn dfs(e: &Env, s: &S, left: u8, lock: bool, acts: &mut Vec<Act>) -> bool {
+/// least the library (`w.lock`: with Silence up or Veil of Summer held before the Oracle; `w.backup`: with Noxious
+/// Revival held)? On success `acts` holds it
+fn dfs(e: &Env, s: &S, left: u8, w: Want, acts: &mut Vec<Act>) -> bool {
     if left == 0 {
         return false;
     }
     for i in 0..s.hand.len() {
         let c = s.hand[i];
         let k = e.kd(c);
-        if k == K::Other || s.hand[..i].iter().any(|&x| x == c) {
+        if plain(k) || matches!(k, K::Veil | K::Revival) || s.hand[..i].iter().any(|&x| x == c) {
             continue;
         }
         let mut base = s.clone();
         base.hand.remove(i);
-        let a = Act { card: c, life: false };
+        let a = act(c);
         match k {
             K::Silence => {
-                if s.silence || !e.ok(s.u, s.w + 1, s.gn) {
+                if s.silence || !e.ok(s.u, s.w + 1, 0, s.gn) {
                     continue;
                 }
                 base.w += 1;
                 base.silence = true;
-                if step_to(e, base, a, left, lock, acts) {
+                if step_to(e, base, a, left, w, acts) {
                     return true;
                 }
             }
             K::Oracle => {
-                if e.ok(s.u + 2, s.w, s.gn) && e.dev + 2 >= s.lib.len() && (!lock || s.silence) {
+                if e.ok(s.u + 2, s.w, 0, s.gn)
+                    && e.dev + s.dev as usize + 2 >= s.lib.len()
+                    && (!w.lock || e.locked(s))
+                    && (!w.backup || e.backed(s))
+                {
                     acts.push(a);
                     return true;
                 }
             }
+            K::Dev => {
+                let gnc = e.dev_gn.get(&c.0).copied().unwrap_or(0);
+                if e.ok(s.u + 1, s.w, 0, s.gn + gnc) {
+                    base.u += 1;
+                    base.gn += gnc;
+                    base.dev += 1;
+                    if step_to(e, base, a, left, w, acts) {
+                        return true;
+                    }
+                }
+            }
             K::Probe => {
-                if e.ok(s.u + 1, s.w, s.gn) {
+                if e.ok(s.u + 1, s.w, 0, s.gn) {
                     let mut t = base.clone();
                     t.u += 1;
-                    if draw_n(&mut t, 1) && step_to(e, t, a, left, lock, acts) {
+                    if draw_n(&mut t, 1) && step_to(e, t, a, left, w, acts) {
                         return true;
                     }
                 }
                 if s.life - 2 >= LIFE_FLOOR {
                     let mut t = base.clone();
                     t.life -= 2;
-                    if draw_n(&mut t, 1) && step_to(e, t, Act { life: true, ..a }, left, lock, acts) {
+                    if draw_n(&mut t, 1) && step_to(e, t, Act { life: true, ..a }, left, w, acts) {
                         return true;
                     }
                 }
             }
             K::Borne => {
-                if e.ok(s.u + 1, s.w, s.gn + 1) {
+                if e.ok(s.u + 1, s.w, 0, s.gn + 1) {
                     let mut t = base.clone();
                     t.u += 1;
                     t.gn += 1;
-                    if draw_n(&mut t, 1) && step_to(e, t, a, left, lock, acts) {
+                    if draw_n(&mut t, 1) && step_to(e, t, a, left, w, acts) {
                         return true;
                     }
                 }
             }
             K::Brainstorm => {
-                if !e.ok(s.u + 1, s.w, s.gn) {
+                if !e.ok(s.u + 1, s.w, 0, s.gn) {
                     continue;
                 }
                 let mut t = base.clone();
@@ -339,14 +464,14 @@ fn dfs(e: &Env, s: &S, left: u8, lock: bool, acts: &mut Vec<Act>) -> bool {
                         t2.hand.retain(|&h| h != cx && h != cy);
                         t2.lib.insert(0, cx);
                         t2.lib.insert(0, cy);
-                        if step_to(e, t2, a, left, lock, acts) {
+                        if step_to(e, t2, a, left, w, acts) {
                             return true;
                         }
                     }
                 }
             }
             K::Preordain => {
-                if !e.ok(s.u + 1, s.w, s.gn) {
+                if !e.ok(s.u + 1, s.w, 0, s.gn) {
                     continue;
                 }
                 let n = s.lib.len().min(2);
@@ -354,13 +479,13 @@ fn dfs(e: &Env, s: &S, left: u8, lock: bool, acts: &mut Vec<Act>) -> bool {
                     let mut t = base.clone();
                     t.u += 1;
                     t.lib = keep.into_iter().chain(s.lib[n..].iter().copied()).chain(bottom).collect();
-                    if draw_n(&mut t, 1) && step_to(e, t, a, left, lock, acts) {
+                    if draw_n(&mut t, 1) && step_to(e, t, a, left, w, acts) {
                         return true;
                     }
                 }
             }
             K::Ponder => {
-                if !e.ok(s.u + 1, s.w, s.gn) {
+                if !e.ok(s.u + 1, s.w, 0, s.gn) {
                     continue;
                 }
                 let n = s.lib.len().min(3);
@@ -368,48 +493,72 @@ fn dfs(e: &Env, s: &S, left: u8, lock: bool, acts: &mut Vec<Act>) -> bool {
                     let mut t = base.clone();
                     t.u += 1;
                     t.lib = ord.into_iter().chain(s.lib[n..].iter().copied()).collect();
-                    if draw_n(&mut t, 1) && step_to(e, t, a, left, lock, acts) {
+                    if draw_n(&mut t, 1) && step_to(e, t, a, left, w, acts) {
                         return true;
                     }
                 }
             }
-            K::Other => {}
+            K::Veil | K::Revival | K::Land | K::Other => {}
+        }
+    }
+    // Thrasios's dig is a draw source of its own
+    if let Some(cost) = e.dig
+        && e.ok(s.u, s.w, 0, s.gn + cost)
+    {
+        for mut t in dig_outcomes(e, s) {
+            t.gn += cost;
+            if step_to(e, t, Act { card: CardId(0), life: false, dig: true }, left, w, acts) {
+                return true;
+            }
         }
     }
     false
 }
 
-/// the shortest line from `s`, with the lock first when `lock`
-fn solve(e: &Env, s: &S, lock: bool) -> Option<Vec<Act>> {
+/// the shortest line from `s` that meets `w`
+fn solve(e: &Env, s: &S, w: Want) -> Option<Vec<Act>> {
     let has_oracle = s.hand.iter().chain(&s.lib).any(|&c| e.kd(c) == K::Oracle);
     if !has_oracle {
         return None;
     }
-    for d in 1..=7 {
+    for d in 1..=8 {
         let mut acts = vec![];
-        if dfs(e, s, d, lock, &mut acts) {
+        if dfs(e, s, d, w, &mut acts) {
             return Some(acts);
         }
     }
     None
 }
 
+/// the best line from `s` and what it has: with `lock_first` the lock (and then the backup) are asked for before
+/// plain speed; a Noxious Revival is only asked about when one is in hand or in the library
+fn ladder(e: &Env, s: &S, lock_first: bool) -> Option<(Want, Vec<Act>)> {
+    let revival = s.hand.iter().chain(&s.lib).any(|&c| e.kd(c) == K::Revival);
+    let mut tries = vec![];
+    if lock_first {
+        if revival {
+            tries.push(Want { lock: true, backup: true });
+        }
+        tries.push(Want { lock: true, backup: false });
+        if revival {
+            tries.push(Want { lock: false, backup: true });
+        }
+    }
+    tries.push(Want { lock: false, backup: false });
+    tries.into_iter().find_map(|w| solve(e, s, w).map(|a| (w, a)))
+}
+
 /// how good a position is: (the line has the lock, minus its length); None when there is no line
 fn rank(e: &Env, s: &S) -> Option<(i32, i32)> {
-    if let Some(a) = solve(e, s, true) {
+    if let Some(a) = solve(e, s, Want { lock: true, backup: false }) {
         return Some((1, -(a.len() as i32)));
     }
-    solve(e, s, false).map(|a| (0, -(a.len() as i32)))
+    solve(e, s, Want { lock: false, backup: false }).map(|a| (0, -(a.len() as i32)))
 }
 
 /// the line from `s`: with the lock when `want_lock` and one exists
 fn line(e: &Env, s: &S, want_lock: bool) -> Option<Vec<Act>> {
-    if want_lock {
-        if let Some(a) = solve(e, s, true) {
-            return Some(a);
-        }
-    }
-    solve(e, s, false)
+    ladder(e, s, want_lock).map(|x| x.1)
 }
 
 /// how many opponents could stop one spell of ours right now
@@ -431,7 +580,10 @@ pub struct Built {
     /// the five cards, top first
     pub pile: Vec<CardId>,
     pub plan: Vec<Act>,
+    /// the line has the lock (Silence up, or Veil of Summer held) when the Oracle is cast
     pub lock: bool,
+    /// the line holds a Noxious Revival when the Oracle is cast (a countered Oracle goes back on top)
+    pub backup: bool,
     pub life_after: i32,
 }
 
@@ -487,11 +639,13 @@ fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Op
     if !in_hand_oracle && !avail.iter().any(|&c| kd(g, c) == K::Oracle) {
         return None;
     }
-    let draws = scn == Scn::EndStep
-        && !pl
-            .perms
-            .iter()
-            .any(|&m| g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == "Necropotence") && !g.perm(m).phased);
+    let necro = pl
+        .perms
+        .iter()
+        .any(|&m| g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == "Necropotence") && !g.perm(m).phased);
+    // the draw step takes the first card (and what Howling Mine / Font of Mythos add); skipped under Necropotence
+    let first_draws = if scn == Scn::EndStep && !necro { 1 + draw_step_extra(g) } else { 0 };
+    let forced = forced_draws(g, p);
     let mana: Cow<Game> = if scn == Scn::EndStep {
         // the line is played on the player's own turn: everything untaps first
         let mut g2 = g.clone();
@@ -509,12 +663,38 @@ fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Op
     let mut all = hand.clone();
     all.extend(&avail);
     let env = Env::new(mana, p, if scn == Scn::EndStep { 0 } else { b }, &all);
-    let useful: Vec<CardId> = avail.iter().copied().filter(|&c| env.kd(c) != K::Other).collect();
-    let mut fillers: Vec<CardId> = avail.iter().copied().filter(|&c| env.kd(c) == K::Other).collect();
+    // Veil of Summer takes a pile slot only when Silence cannot be the lock (not held or found, or no {W})
+    let silence_around = all.iter().any(|&c| env.kd(c) == K::Silence) && env.ok(0, 1, 0, 0);
+    let use_veil = env.veil_ok && !silence_around;
+    let is_useful = |k: K| match k {
+        K::Oracle | K::Silence | K::Probe | K::Brainstorm | K::Preordain | K::Ponder | K::Borne => true,
+        K::Veil => use_veil,
+        _ => false,
+    };
+    let useful: Vec<CardId> = avail.iter().copied().filter(|&c| is_useful(env.kd(c))).collect();
+    let mut fillers: Vec<CardId> = avail.iter().copied().filter(|&c| !is_useful(env.kd(c))).collect();
     fillers.sort_by(|&x, &y| {
         card_worth(g, p, y, false).partial_cmp(&card_worth(g, p, x, false)).unwrap_or(std::cmp::Ordering::Equal)
     });
-    let mut best: Option<((i32, i32), Built)> = None;
+    // a pile is good when it wins with the draw step (and a forced draw: an Esper Sentinel of ours) behind it; the
+    // score is (the lock, a Noxious Revival to answer a countered Oracle, fewer spells)
+    let try_pile = |pile: &[CardId]| -> Option<((i32, i32, i32), Want, Vec<Act>)> {
+        let mut s = S::new(hand.clone(), pile.to_vec(), life_after);
+        if first_draws > 0 && !draw_n(&mut s, first_draws) {
+            return None;
+        }
+        let (w, plan) = ladder(&env, &s, true)?;
+        if forced > 0 {
+            // a draw we did not plan (our Esper Sentinel, when an opponent casts a spell) must not break the line
+            let mut s2 = s.clone();
+            if !draw_n(&mut s2, forced) || ladder(&env, &s2, false).is_none() {
+                return None;
+            }
+        }
+        Some(((w.lock as i32, w.backup as i32, -(plan.len() as i32)), w, plan))
+    };
+    let revival_any = all.iter().any(|&c| env.kd(c) == K::Revival);
+    let mut best: Option<((i32, i32, i32), Built)> = None;
     for m in 0..=useful.len().min(n_pick) {
         let mut seqs: Vec<Vec<CardId>> = vec![];
         gen_seqs(&useful, m, &mut vec![], &mut seqs);
@@ -534,28 +714,63 @@ fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Op
                     pile.push(u);
                 }
             }
-            let mut s =
-                S { hand: hand.clone(), lib: pile.clone(), u: 0, w: 0, gn: 0, life: life_after, silence: false };
-            if draws && !draw_n(&mut s, 1) {
-                continue;
-            }
-            let (lock, plan) = match solve(&env, &s, true) {
-                Some(a) => (true, a),
-                None => match solve(&env, &s, false) {
-                    Some(a) => (false, a),
-                    None => continue,
-                },
-            };
-            let score = (lock as i32, -(plan.len() as i32));
+            let Some((score, w, plan)) = try_pile(&pile) else { continue };
             if best.as_ref().is_none_or(|(sc, _)| score > *sc) {
-                best = Some((score, Built { pile, plan, lock, life_after }));
+                best = Some((score, Built { pile, plan, lock: w.lock, backup: w.backup, life_after }));
             }
         }
-        if best.as_ref().is_some_and(|(sc, _)| sc.0 == 1) {
-            break; // a pile with the lock: more useful cards in it would not make it better
+        if best.as_ref().is_some_and(|(sc, _)| sc.0 == 1 && (sc.1 == 1 || !revival_any)) {
+            break; // a pile with the lock (and the backup): more useful cards in it would not make it better
+        }
+    }
+    // a Noxious Revival in the library or graveyard can take a slot of the best pile when the line draws it
+    if let Some((sc, bt)) = best.clone()
+        && !bt.backup
+        && let Some(&rev) = avail.iter().find(|&&c| env.kd(c) == K::Revival)
+    {
+        for pos in 0..n_pick {
+            let mut pile: Vec<CardId> = bt.pile.iter().copied().filter(|&c| c != rev).collect();
+            pile.insert(pos.min(pile.len()), rev);
+            pile.truncate(n_pick);
+            if !pile.contains(&rev) {
+                continue;
+            }
+            let Some((score, w, plan)) = try_pile(&pile) else { continue };
+            if w.backup && score.0 >= sc.0 && best.as_ref().is_some_and(|(b, _)| score > *b) {
+                best = Some((score, Built { pile, plan, lock: w.lock, backup: true, life_after }));
+            }
         }
     }
     best.map(|x| x.1)
+}
+
+/// extra cards the draw step brings: Howling Mine (untapped) one, Font of Mythos two, whoever controls them
+fn draw_step_extra(g: &Game) -> usize {
+    g.players
+        .iter()
+        .flat_map(|q| q.perms.iter())
+        .filter(|&&m| !g.perm(m).phased && g.perm(m).on_bf)
+        .map(|&m| match g.perm(m).cd.map(|c| &*g.db.get(c).name) {
+            Some("Howling Mine") if !g.perm(m).tapped => 1,
+            Some("Font of Mythos") => 2,
+            _ => 0,
+        })
+        .sum()
+}
+
+/// draws p's own cards force on it while the pile is played: each Esper Sentinel of p's draws when an opponent casts its
+/// first noncreature spell of the turn (unless it pays {X}); only an opponent with a card in hand can
+fn forced_draws(g: &Game, p: PlayerId) -> usize {
+    let sentinels = g
+        .player(p)
+        .perms
+        .iter()
+        .filter(|&&m| {
+            !g.perm(m).phased && g.perm(m).on_bf && g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == "Esper Sentinel")
+        })
+        .count();
+    let casters = g.opps(p).filter(|&q| g.player(q).alive && !g.player(q).hand.is_empty()).count();
+    (sentinels * casters).min(2)
 }
 
 fn gen_seqs(pool: &[CardId], m: usize, cur: &mut Vec<CardId>, out: &mut Vec<Vec<CardId>>) {
@@ -676,7 +891,7 @@ pub fn pile_probe_life(g: &Game, p: PlayerId) -> Option<bool> {
     let mut l = s.clone();
     l.life -= 2;
     let (ru, rl) = (
-        if e.ok(1, 0, 0) && draw_n(&mut u, 1) { rank(&e, &u) } else { None },
+        if e.ok(1, 0, 0, 0) && draw_n(&mut u, 1) { rank(&e, &u) } else { None },
         if s.life - 2 >= LIFE_FLOOR && draw_n(&mut l, 1) { rank(&e, &l) } else { None },
     );
     match (ru, rl) {
@@ -714,19 +929,26 @@ pub fn pile_putback(g: &Game, p: PlayerId, n: usize, exclude: Option<CardId>) ->
     best.map(|x| x.1)
 }
 
-/// Preordain's scry 2: (kept on top in order, put on the bottom)
+/// the scry of a cantrip: Preordain's scry 2 (then a draw), or Thrasios's scry 1 (then the top card is revealed: a land
+/// goes onto the battlefield, anything else is drawn). (kept on top in order, put on the bottom)
 pub fn pile_scry(g: &Game, p: PlayerId, n: usize) -> Option<(Vec<CardId>, Vec<CardId>)> {
-    if !active(g, p) || n != 2 {
+    if !active(g, p) || !(n == 1 || n == 2) {
         return None;
     }
     let s = state_now(g, p, None);
     let e = env_now(g, p, &s);
-    let k = s.lib.len().min(2);
+    let k = s.lib.len().min(n);
     let mut best: Option<((i32, i32), (Vec<CardId>, Vec<CardId>))> = None;
     for (keep, bottom) in scry_variants(&s.lib[..k]) {
         let mut t = s.clone();
         t.lib = keep.iter().copied().chain(s.lib[k..].iter().copied()).chain(bottom.iter().copied()).collect();
-        if !draw_n(&mut t, 1) {
+        let ok = if n == 1 && t.lib.first().is_some_and(|&c| e.kd(c) == K::Land) {
+            t.lib.remove(0);
+            true
+        } else {
+            draw_n(&mut t, 1)
+        };
+        if !ok {
             continue;
         }
         if let Some(r) = rank(&e, &t)
@@ -806,6 +1028,16 @@ pub fn run_pile(g: &mut Game, p: PlayerId) -> Res<bool> {
             continue;
         };
         let a = plan[0];
+        if a.dig {
+            crate::glog!(g, "    {} plays the pile: Thrasios's dig", g.player(p).name);
+            if !super::tymna_cards::pile_dig(g, p)? {
+                failed += 1;
+                if failed >= 2 {
+                    break;
+                }
+            }
+            continue;
+        }
         crate::glog!(g, "    {} plays the pile: {}", g.player(p).name, g.db.get(a.card).name);
         if !cast_one(g, p, a.card)? {
             failed += 1;
@@ -903,16 +1135,29 @@ pub fn plan_cast(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Option<(Built, O
         return None; // a board that can deal what is left
     }
     let n = stoppers(g, p);
-    if !built.lock && n >= 2 && !pl.hand.iter().any(|&h| g.db.get(h).tag(crate::tag::Tag::Ctr)) {
-        return None; // into several opponents who can stop a spell, with no lock and no counter of our own
+    if !built.lock && !built.backup && n >= 2 && !pl.hand.iter().any(|&h| g.db.get(h).tag(crate::tag::Tag::Ctr)) {
+        // into several opponents who can stop a spell, with no lock, no Noxious Revival to put a countered Oracle back and
+        // no counter of our own
+        return None;
     }
-    // the plan's go-now gate for the cast (a rule in `data/plans/thrasios.toml` naming "Doomsday cast"); the table's own
-    // "can it be stopped" check is not asked: a countered Doomsday costs the card and {B}{B}{B} only (library and graveyard
-    // are untouched), and the dangerous spells come after it, behind the lock the pile carries
+    // the plan's go-now gate for the cast (a rule in `data/plans/thrasios.toml` naming "Doomsday cast")
     if crate::impls::t6_plans::go_now(g, p, "Doomsday cast") == Some(false) {
         return None;
     }
+    // the table's check, as every Tier 6 line makes it (`t6_table::go_ok`): the cast waits when the table can stop it and
+    // there is no cover. Cover is Silence or Orim's Chant in hand (`go_risk` counts it), a free counter of our own
+    // (counted too), the lock the pile carries, or Veil of Summer held with {G} open
+    let veil = pl.hand.iter().any(|&h| &*g.db.get(h).name == "Veil of Summer") && can_pay(g, p, 0, "G", false);
+    if !risk_ok(g, p, built.lock || veil) {
+        return None;
+    }
     Some((built, en))
+}
+
+/// can the table stop the Doomsday cast (or the first spell of the pile) by more than the risk Tier 6 accepts,
+/// `covered` being cover the risk check does not see
+pub fn risk_ok(g: &Game, p: PlayerId, covered: bool) -> bool {
+    crate::ai::t6_table::go_risk_covered(g, p, covered) <= crate::ai::t6_table::go_threshold(g, p)
 }
 
 /// is an end-step line available (or being made available) for a Doomsday in hand: flash granted, Teferi on the
@@ -1031,4 +1276,13 @@ pub fn register(r: &mut Registry, db: &crate::cards::CardDb) -> Result<(), Strin
     c.prio = Some(zero_prio);
     c.hand_options = Some(doomsday_options);
     Ok(())
+}
+
+/// Noxious Revival's target while a pile is played: Noxious Revival puts the target card of a graveyard on top of its
+/// owner's library, and the card the pile needs back is the Thassa's Oracle that was countered into the graveyard
+pub fn revival_target(g: &Game, p: PlayerId) -> Option<CardId> {
+    if !active(g, p) {
+        return None;
+    }
+    g.player(p).gy.iter().copied().find(|&c| &*g.db.get(c).name == ORACLE)
 }
