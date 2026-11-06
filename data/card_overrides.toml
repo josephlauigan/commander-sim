@@ -5559,10 +5559,10 @@ note = "{W}, {T}: tap target creature; morph {W} (practice mode: cast it face do
 
 ["Whir of Invention"]
 types = "I"
-tags = ""
+tags = "xtutor"
 dsl = []
 status = "Full"
-note = "X = spare mana (improvise: untapped artifacts help pay); the best artifact with MV X or less"
+note = "X = spare mana, plus one for each untapped artifact tapped to improvise; the artifact with MV X or less goes onto the battlefield (the line planner's card when it has one, else the best). The Tier 6 planner casts it for a missing artifact piece, paying X less the artifacts it taps"
 
 ["Whirler Rogue"]
 tags = "human rogue pow=2 tgh=2"

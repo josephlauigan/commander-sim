@@ -4,18 +4,17 @@
 //! Grist's and Freyalise's first loyalty abilities (`grist_plus`, `freyalise_plus`) replace t3's in Python: t3.rs
 //! lists them.
 
-use crate::satsum::SatSum;
 use super::partials::{
     ability_window_card, at_once, auras_on, best_opp_creature, best_opp_nonland, eot_kw, exile_fodder, first_max,
     first_min, name_of, on, pack, remove_card, unpack,
 };
 use super::t3::{ability, card_is, plan};
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, on_cast};
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{Source, Unit, can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, counter_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::values::{epow, etgh, has_type, pval, untargetable};
@@ -27,6 +26,7 @@ use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
+use crate::satsum::SatSum;
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;
@@ -1011,21 +1011,28 @@ fn whir_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
     if total_mana(g, p, false) >= 5 { 55 } else { 0 }
 }
 
-/// X = spare mana (improvise: untapped artifacts help pay); the best artifact with mana value X or less
-fn whir(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
-    let mut x = ctx.x;
-    let arts: Vec<PermId> = g
-        .player(p)
+/// --- t6-ai: the untapped artifacts Whir of Invention's improvise taps: every untapped artifact that is not a mana rock
+/// (a rock is tapped for mana instead) and every artifact token. Each pays for {1} of X.
+pub fn improvise_arts(g: &Game, p: PlayerId) -> Vec<PermId> {
+    g.player(p)
         .perms
         .iter()
         .copied()
         .filter(|&m| {
             let y = g.perm(m);
             !y.tapped
+                && !y.phased
                 && ((card_is(g, m, Types::ARTIFACT) && !y.cd.is_some_and(|c| g.db.get(c).tag(Tag::Rock)))
                     || (y.token && y.ttypes.contains(&"artifact")))
         })
-        .collect();
+        .collect()
+}
+
+/// X = spare mana (improvise: untapped artifacts help pay); the best artifact with mana value X or less. The line
+/// planner's card (`Player::plan_tutor`) when it meets the restriction (--- t6-ai).
+fn whir(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
+    let mut x = ctx.x;
+    let arts = improvise_arts(g, p);
     for &m in &arts {
         g.perm_mut(m).tapped = true;
     }
@@ -1034,9 +1041,10 @@ fn whir(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
         .into_iter()
         .filter(|&y| g.db.get(y).types.has(Types::ARTIFACT) && g.db.get(y).cmc as i32 <= x)
         .collect();
-    if let Some(y) =
+    let planned = g.player(p).plan_tutor.filter(|t| g.settings.xtutor && cs.contains(t));
+    if let Some(y) = planned.or_else(|| {
         first_max(&cs, |y| (IC_COMBO_ART.contains(&&*g.db.get(y).name), card_worth(g, p, y, false), g.db.get(y).cmc))
-    {
+    }) {
         remove_card(&mut g.player_mut(p).library, y);
         shuffle_library(g, p);
         enter(g, p, y, Enter::default())?;

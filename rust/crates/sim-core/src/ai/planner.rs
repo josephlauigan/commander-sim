@@ -132,6 +132,17 @@ pub type TutorRule<'a> = (Dest, Box<dyn Fn(CardId) -> bool + 'a>);
 /// the rule `tutor_targets` applies, card by card (the goldfish report's best case reads it too)
 pub fn tutor_rule(g: &Game, c: CardId) -> Option<TutorRule<'_>> {
     let d = g.db.get(c);
+    // --- t6-ai: Trophy Mage is a creature, but a plain tutor as it enters: an artifact with mana value 3 to the hand
+    // (Basalt Monolith for Kinnan). The planner casts it for the artifact and then casts the artifact.
+    if &*d.name == "Trophy Mage" {
+        return Some((
+            Dest::Hand,
+            Box::new(move |x| {
+                let xd = g.db.get(x);
+                xd.types.has(crate::cards::Types::ARTIFACT) && xd.cmc == 3
+            }),
+        ));
+    }
     if d.land || d.perm || d.tag(Tag::Xtutor) {
         return None;
     }
@@ -141,7 +152,9 @@ pub fn tutor_rule(g: &Game, c: CardId) -> Option<TutorRule<'_>> {
             "Beseech the Mirror" => Some((Dest::Hand, Box::new(|_| true))),
             "Worldly Tutor" => Some((Dest::Top, Box::new(move |x| g.db.get(x).creature))),
             // --- c1-t6-lines: sacrifice an artifact, search an artifact, onto the battlefield for the mana difference
-            "Transmute Artifact" => Some((Dest::Hand, Box::new(move |x| g.db.get(x).types.has(crate::cards::Types::ARTIFACT)))),
+            "Transmute Artifact" => {
+                Some((Dest::Hand, Box::new(move |x| g.db.get(x).types.has(crate::cards::Types::ARTIFACT))))
+            }
             _ => None,
         };
     }
@@ -189,6 +202,8 @@ pub fn xtutor_rule(g: &Game, c: CardId) -> Option<Box<dyn Fn(CardId) -> bool + '
         "Invasion of Ikoria // Zilortha, Apex of Ikoria" => {
             Some(Box::new(move |x| creature(x) && !g.db.get(x).has_subtype("human")))
         }
+        // --- t6-ai: Whir of Invention: an artifact onto the battlefield; improvise taps artifacts for part of X (`pay_x`)
+        "Whir of Invention" => Some(Box::new(move |x| g.db.get(x).types.has(crate::cards::Types::ARTIFACT))),
         _ => None,
     }
 }
@@ -198,6 +213,18 @@ pub fn tutor_x(g: &Game, s: Step) -> u32 {
     match s {
         Step::Tutor(c, t) if xtutor_rule(g, c).is_some() => g.db.get(t).cmc,
         _ => 0,
+    }
+}
+
+/// --- t6-ai: the mana a planned tutor step pays for its X: `tutor_x`, less the artifacts Whir of Invention taps to
+/// improvise (each pays for one). The cast pays this (`Player::plan_x`); the artifacts add theirs when it resolves.
+pub fn pay_x(g: &Game, p: PlayerId, s: Step) -> u32 {
+    let x = tutor_x(g, s);
+    match s {
+        Step::Tutor(c, _) if &*g.db.get(c).name == "Whir of Invention" => {
+            x.saturating_sub(crate::impls::rules2::improvise_arts(g, p).len() as u32)
+        }
+        _ => x,
     }
 }
 
@@ -287,10 +314,14 @@ fn fodder_cast(g: &Game, p: PlayerId, hand: &[CardId], castable_now: &dyn Fn(Car
     }
     let mut cands: Vec<(CardId, &str)> = pl.cmds_in_zone().map(|c| (c, "cmd")).collect();
     cands.extend(hand.iter().copied().filter(|&c| g.db.get(c).creature).map(|c| (c, "hand")));
-    cands.into_iter().filter(|&(c, z)| g.db.get(c).creature && castable_now(c, z)).min_by_key(|&(c, z)| {
-        let (gn, pips) = cost_of(g, p, c);
-        (gn + pips.chars().count() as u32 + if z == "cmd" { pl.tax_of(c) } else { 0 }, z != "cmd")
-    }).map(|(c, _)| Step::Cast(c))
+    cands
+        .into_iter()
+        .filter(|&(c, z)| g.db.get(c).creature && castable_now(c, z))
+        .min_by_key(|&(c, z)| {
+            let (gn, pips) = cost_of(g, p, c);
+            (gn + pips.chars().count() as u32 + if z == "cmd" { pl.tax_of(c) } else { 0 }, z != "cmd")
+        })
+        .map(|(c, _)| Step::Cast(c))
 }
 
 /// The plays the planner tries from this position, in a fixed order: tutors (each for its wanted cards), pieces, mana,
@@ -298,13 +329,15 @@ fn fodder_cast(g: &Game, p: PlayerId, hand: &[CardId], castable_now: &dyn Fn(Car
 /// `eot`: the end-of-turn window before p's turn: instants only.
 fn plays(g: &Game, p: PlayerId, known: &[CardId], eot: bool) -> Vec<Step> {
     let pl = g.player(p);
-    let castable_at = |c: CardId, zone: &str, x: u32| -> bool {
+    let castable_with = |c: CardId, zone: &str, x: u32, held_ok: bool| -> bool {
         let d = g.db.get(c);
         if eot && !(d.instant || d.tag(Tag::Flash)) {
             return false;
         }
         // the deck's plan slot keeps this card in hand now (Dack waits for the table's risk to drop, or for Silence)
-        if crate::impls::t6_plans::prio(g, p, c).is_some_and(|x| x <= 0.0) {
+        // --- t6-ai: not a creature X tutor held as a finisher (Finale, Green Sun's Zenith): the search casts it only
+        // where a line is reached after it, and the line gives the finisher back (Witness returns Finale)
+        if !held_ok && crate::impls::t6_plans::prio(g, p, c).is_some_and(|x| x <= 0.0) {
             return false;
         }
         if g.cast_checks() && !crate::engine::cast::castable(g, p, c, zone) {
@@ -314,6 +347,7 @@ fn plays(g: &Game, p: PlayerId, known: &[CardId], eot: bool) -> Vec<Step> {
         let tax = if zone == "cmd" { pl.tax_of(c) } else { 0 };
         can_pay(g, p, gn + tax + x, &pips, d.tag(Tag::Convoke))
     };
+    let castable_at = |c: CardId, zone: &str, x: u32| castable_with(c, zone, x, false);
     let castable_now = |c: CardId, zone: &str| castable_at(c, zone, 0);
     let hand: Vec<CardId> = pl.hand.iter().copied().filter(|c| known.contains(c)).collect();
     let tutors: Vec<(CardId, Dest, Vec<CardId>)> =
@@ -360,7 +394,10 @@ fn plays(g: &Game, p: PlayerId, known: &[CardId], eot: bool) -> Vec<Step> {
             tried.push(name(g, *c));
             let mut n = 0;
             for &t in pieces.iter().chain(mana.iter().take(MAX_MANA_TARGETS)) {
-                if n < MAX_TARGETS && legal.contains(&t) && castable_at(*c, "hand", g.db.get(t).cmc) {
+                if n < MAX_TARGETS
+                    && legal.contains(&t)
+                    && castable_with(*c, "hand", pay_x(g, p, Step::Tutor(*c, t)), true)
+                {
                     out.push(Step::Tutor(*c, t));
                     n += 1;
                 }
@@ -436,7 +473,7 @@ pub fn perform(g: &mut Game, p: PlayerId, s: Step) -> Res<bool> {
     match s {
         Step::Cast(c) => act::perform(g, p, &Action::Cast { card: c, zone: None }),
         Step::Tutor(c, t) => {
-            let x = xtutor_rule(g, c).map(|_| g.db.get(t).cmc); // --- t6-xtutor: X = the card's mana value
+            let x = xtutor_rule(g, c).map(|_| pay_x(g, p, s)); // --- t6-xtutor: X = the card's mana value (t6-ai: less improvise)
             g.player_mut(p).plan_tutor = Some(t);
             g.player_mut(p).plan_x = x;
             let r = act::perform(g, p, &Action::Cast { card: c, zone: None });
@@ -709,7 +746,9 @@ pub fn search(g: &mut Game, p: PlayerId, this_turn: bool, next: bool, eot: bool)
     let progress = g.settings.planner_progress;
     let mut best: Option<((bool, usize, usize, usize), usize)> = None;
     for (k, n) in all.iter().enumerate().skip(1) {
-        let tutored = n.steps.iter().any(|s| matches!(s, Step::Tutor(..)));
+        // --- t6-ai: a tutor the deck holds as a finisher (Finale) is never spent only to come closer
+        let tutored = n.steps.iter().any(|s| matches!(s, Step::Tutor(..)))
+            && !n.steps.iter().any(|s| matches!(s, Step::Tutor(c, _) if crate::impls::t6_plans::prio(&n.g, p, *c).is_some_and(|x| x <= 0.0)));
         let (ready, dist) = view_next(n, p);
         if !ready && !(progress && tutored && dist < dist0) {
             continue;
