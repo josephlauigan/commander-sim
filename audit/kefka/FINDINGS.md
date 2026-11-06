@@ -3,6 +3,15 @@
 What the simulator has taught us about the Kefka Grixis discard deck: strengths, weaknesses, and what was tried and why
 it did or didn't work. Updated after every run. Newest evidence first. Matched tiers: t3–t5 (`data/my_decks.toml`).
 
+## Baseline 2026-11-06 (after the rewire, Doomsday and Phase C engine work)
+Kefka, t3 (its only tier now), 2,000 games, seed 500000, loose, look-ahead, build ef343cc1: **17.1%** (15.6-18.9) over t3.
+Old build (main 1e027077, 2026-11-05): **17.8%** (16.2-19.5). Change -0.7: noise (intervals overlap, under 2 points). Plan online
+(Kefka flipped) 14.9% (old 15.3%); wins by damage 100% in both. Deaths: Tergrid 21.5%, Aurelia 20.5%, Marwyn 20.5% (old 21.5 / 19.9 / 18.4).
+Engine changes that can touch this deck: C3 (the t3 pool has Atraxa: infect is now combat damage and a poison threat, so its
+share of eliminations moved 10.3% -> 9.1%, inside noise) and opponents casting their commander on time (+1.5). The deck has no
+attack tax and no C2 card. C1/C1b and the rewire do not touch it. The net is noise.
+Raw: `audit/baseline-2026-11-06/kefka.txt` and `kefka-2026-11-05-oldbuild.txt`.
+
 ## 2026-11-04: Sauron, the Necromancer for Contract Killing, Triple Triad for Alpharael (JD's choice; not simulated)
 Sauron, the Necromancer turns the graveyard's creatures into attacking 3/3 copies that keep their abilities (an Archon
 of Cruelty copy triggers on entering); Kefka keeps five removal spells and Counterspell. Triple Triad's free casts,

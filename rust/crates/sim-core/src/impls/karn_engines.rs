@@ -693,7 +693,7 @@ fn map_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<V
     if post.is_none() || owner(g, src) != p || !live(g, src) || g.perm(src).tapped || locked(g, src, p) {
         return Ok(vec![]);
     }
-    if !can_pay(g, p, 2, "", false) {
+    if !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false) {
         return Ok(vec![]);
     }
     let w = best_land_in_library(g, p);
@@ -704,7 +704,7 @@ fn map_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<V
 }
 
 fn map_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !live(g, src) || g.perm(src).tapped || !can_pay(g, p, 2, "", false) || !pay(g, p, 2, "", false)? {
+    if !live(g, src) || g.perm(src).tapped || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false) || !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false)? {
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;
@@ -826,7 +826,7 @@ fn atlas_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     if owner(g, src) != p || !live(g, src) || g.perm(src).tapped || locked(g, src, p) || !atlas_ready(g, p) {
         return Ok(vec![]);
     }
-    if !can_pay(g, p, 2, "", false) || g.player(p).library.len() <= 8 {
+    if !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false) || g.player(p).library.len() <= 8 {
         return Ok(vec![]);
     }
     let hand = g.player(p).hand.len() as f64;
@@ -839,8 +839,8 @@ pub(crate) fn atlas_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res
     if !live(g, src)
         || g.perm(src).tapped
         || !atlas_ready(g, p)
-        || !can_pay(g, p, 2, "", false)
-        || !pay(g, p, 2, "", false)?
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false)
+        || !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false)?
     {
         return Ok(false);
     }
@@ -940,7 +940,7 @@ fn skull_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
 }
 
 pub(crate) fn skull_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !live(g, src) || !can_pay(g, p, 3, "", false) || !pay(g, p, 3, "", false)? {
+    if !live(g, src) || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false) || !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false)? {
         return Ok(false);
     }
     ability_run(g, p, Some(src), None, "return it to its owner's hand", None, None, |g| {

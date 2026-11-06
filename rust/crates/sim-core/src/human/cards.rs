@@ -2228,7 +2228,7 @@ fn lin_bottom(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
 
 /// Ramosian Revivalist: {6}, {T}: return TARGET Rebel permanent card with mana value 5 or less from your graveyard to
 /// the battlefield. The target is chosen first (a cancelled choice costs nothing); the card comes back when the ability
-/// resolves, if it is still there. (The AI's version picks when it resolves: `galadriel::revivalist_go`.)
+/// resolves, if it is still there. (The AI fixes its target on activation too: `galadriel::revivalist_go`.)
 fn revivalist(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if let Some(why) = creature_tap_ok(g, m) {
         return Ok(Some(why));

@@ -1,0 +1,26 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  cloud                                100 cards: Full 91, Full-auto 9, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 1 (High B2 / Low B3)  5 decks, 500 cards: Full 406, Full-auto 76, Approximate 18, Partial 0, Unmodeled 0
+  opponents Tier 2 (Mid B3)            5 decks, 500 cards: Full 428, Full-auto 56, Approximate 16, Partial 0, Unmodeled 0
+  opponents Tier 3 (High B3)           5 decks, 500 cards: Full 439, Full-auto 42, Approximate 19, Partial 0, Unmodeled 0
+
+6,000 games (1 deck x 3 tiers (each deck in its own tiers), 2,000 per list per tier, profile loose), lookahead AI, 23 worker threads: about 13 minutes
+  progress  10.0%  3m21s elapsed, ~30m12s left
+  progress  20.0%  6m41s elapsed, ~26m45s left
+  progress  30.0%  10m02s elapsed, ~23m24s left
+  cell cloud vs t1 [loose]:  29.4% (27.4-31.4)
+  progress  40.0%  14m15s elapsed, ~21m22s left
+  progress  50.0%  18m09s elapsed, ~18m09s left
+  progress  60.0%  21m59s elapsed, ~14m39s left
+  cell cloud vs t2 [loose]:  21.6% (19.8-23.4)
+  progress  70.0%  25m44s elapsed, ~11m01s left
+  progress  80.0%  27m39s elapsed, ~6m54s left
+  progress  90.0%  29m33s elapsed, ~3m17s left
+  progress 100.0%  31m26s elapsed, ~0m00s left
+  cell cloud vs t3 [loose]:  22.2% (20.4-24.1)
+
+=== Win rate by deck and tier [loose profile, lookahead AI, n=2000 per cell; even share 25%; each deck only against its own tiers] ===
+  deck                       t1                 t2                 t3     average over its tiers
+  cloud       29.4% (27.4-31.4)  21.6% (19.8-23.4)  22.2% (20.4-24.1)           24.4% over t1-t3
+
+(1886s total)

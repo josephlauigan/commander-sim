@@ -163,25 +163,27 @@ fn protection(g: &Game, p: PlayerId) -> Vec<CardId> {
 
 /// P(the table stops the line `cmb` right now), with p's own protection counted
 pub fn go_risk(g: &Game, p: PlayerId) -> f64 {
+    go_risk_covered(g, p, false)
+}
+
+/// `go_risk` with cover the caller holds that `protection` does not see (`covered`: the line carries its own lock, as a
+/// Doomsday pile with Silence in it does): it counts like Silence or Orim's Chant held in hand, once
+pub fn go_risk_covered(g: &Game, p: PlayerId, covered: bool) -> f64 {
     let mut miss = 1.0;
     for q in g.opps(p) {
         miss *= 1.0 - stop_chance(g, q);
     }
     let mut risk = 1.0 - miss;
     let prot = protection(g, p);
-    if !prot.is_empty() && can_pay(g, p, 0, "W", false) {
+    if (!prot.is_empty() && can_pay(g, p, 0, "W", false)) || covered {
         risk *= 0.2; // Silence / Chant first
     }
     let mine_free = g.player(p).hand.iter().filter(|&&c| is_free_ctr(g, p, c)).count().min(2);
     risk * 0.75f64.powi(mine_free as i32)
 }
 
-/// Should p go for combo `cmb` (index into `combos::all()`) now? The plan slot decides first.
-pub fn go_ok(g: &Game, p: PlayerId, combo: &str) -> bool {
-    if let Some(v) = t6_plans::go_now(g, p, combo) {
-        return v;
-    }
-    let risk = go_risk(g, p);
+/// the risk `go_ok` accepts: it falls as the game goes on and as somebody else gets close to winning
+pub fn go_threshold(g: &Game, p: PlayerId) -> f64 {
     let other = g.opps(p).map(|q| archenemy_score(g, q)).fold(0.0, f64::max);
     // waiting costs turns, and a cEDH pod does not wait long: the bar drops as the game goes on
     let mut thr: f64 = if other >= 6.0 {
@@ -197,7 +199,15 @@ pub fn go_ok(g: &Game, p: PlayerId, combo: &str) -> bool {
     if g.round >= 6 {
         thr = 1.0;
     }
-    risk <= thr
+    thr
+}
+
+/// Should p go for combo `cmb` (index into `combos::all()`) now? The plan slot decides first.
+pub fn go_ok(g: &Game, p: PlayerId, combo: &str) -> bool {
+    if let Some(v) = t6_plans::go_now(g, p, combo) {
+        return v;
+    }
+    go_risk(g, p) <= go_threshold(g, p)
 }
 
 /// Cast Silence (two or more opponents could answer) or Orim's Chant (one) before the line starts, when the mana for

@@ -314,6 +314,7 @@ pub fn grants_flash(g: &Game, p: PlayerId, c: CardId) -> bool {
         || crate::impls::t6_blue::static_flash(g, p, d.creature)
         || (d.creature && crate::impls::t6_redirects::scout_flash_active(g, p))
         || crate::impls::t3_marwyn::yeva_flash(g, p, c) // --- Tier 3 (marwyn): Yeva, Nature's Herald
+        || (d.sorcery && crate::impls::doomsday::teferi_flash(g, p)) // Teferi, Time Raveler +1: sorceries
 }
 
 /// can p cast c right now as far as locks go (Rule of Law, Drannith Magistrate, Grand Abolisher ...)
@@ -979,7 +980,7 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
     if !ok {
         crate::t6stats::flow_countered(g, p, c); // --- ai-flow
         let last = by;
-        g.last_counter = last;
+        g.last_counter = last.or(g.last_counter); // --- c1-t6-lines: keep the card the stack window named
         let lt = last.map(|x| g.db.get(x));
         let land = g.db.get(c).land;
         let o = gy_of(&ctx, p); // its owner: a card cast from another player's deck goes back to their zones

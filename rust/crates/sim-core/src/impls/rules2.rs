@@ -1050,10 +1050,24 @@ fn transmute_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 }
 
 /// sacrifice an artifact, search an artifact: onto the battlefield if you pay the difference in mana value
-fn transmute(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+/// --- c1-t6-lines: the artifact Transmute Artifact sacrifices. For a planned target (`Player::plan_tutor`): of the cheap
+/// ones (worth under 3: a Mox, Sol Ring, a Talisman) the one with the highest mana value, so the difference to pay is
+/// smallest. Otherwise the least valuable.
+pub fn transmute_fodder(g: &Game, p: PlayerId) -> Option<PermId> {
     let arts: Vec<PermId> =
         g.player(p).perms.iter().copied().filter(|&m| card_is(g, m, Types::ARTIFACT) && !g.perm(m).phased).collect();
-    let Some(s) = min_by(&arts, |m| pval(g, m)) else { return Ok("gy") };
+    let cmc = |m: PermId| g.perm(m).cd.map_or(0, |c| g.db.get(c).cmc);
+    if g.player(p).plan_tutor.is_some() {
+        let cheap: Vec<PermId> = arts.iter().copied().filter(|&m| pval(g, m) < 3.0).collect();
+        if let Some(m) = cheap.iter().copied().max_by_key(|&m| cmc(m)) {
+            return Some(m);
+        }
+    }
+    min_by(&arts, |m| pval(g, m))
+}
+
+fn transmute(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    let Some(s) = transmute_fodder(g, p) else { return Ok("gy") };
     let mv = g.db.get(g.perm(s).cd.unwrap()).cmc;
     die(g, s, "sac")?;
     let cs: Vec<CardId> = searchable(g, p).into_iter().filter(|&y| g.db.get(y).types.has(Types::ARTIFACT)).collect();
@@ -1061,11 +1075,15 @@ fn transmute(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
         return Ok("gy");
     }
     let wish = crate::ai::plans::wish_list(g, p);
-    let best = first_max(&cs, |y| {
-        let d = g.db.get(y);
-        (wish.contains(&y) && can_pay(g, p, d.cmc.saturating_sub(mv), "", false), card_worth(g, p, y, false))
-    })
-    .unwrap();
+    // --- c1-t6-lines: the line planner named the artifact it is after
+    let planned = g.player(p).plan_tutor.filter(|t| cs.contains(t));
+    let best = planned.unwrap_or_else(|| {
+        first_max(&cs, |y| {
+            let d = g.db.get(y);
+            (wish.contains(&y) && can_pay(g, p, d.cmc.saturating_sub(mv), "", false), card_worth(g, p, y, false))
+        })
+        .unwrap()
+    });
     remove_card(&mut g.player_mut(p).library, best);
     shuffle_library(g, p);
     let diff = g.db.get(best).cmc.saturating_sub(mv);
@@ -1117,7 +1135,7 @@ pub fn wishclaw_ok(g: &Game, p: PlayerId) -> bool {
 
 /// three wishes: {1},{T} tutor (on your turn), then the most threatening opponent gains control and uses it on theirs
 fn wishclaw(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if p != g.perm(src).owner || g.perm(src).tapped || !can_pay(g, p, 1, "", false) || wishes(g, src) <= 0 {
+    if p != g.perm(src).owner || g.perm(src).tapped || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false) || wishes(g, src) <= 0 {
         return Ok(vec![]);
     }
     if g.active != Some(p) && post.is_some() {
@@ -1152,10 +1170,10 @@ fn wishclaw_search(g: &mut Game, p: PlayerId) -> Res {
 }
 
 fn wishclaw_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if g.perm(src).tapped || !can_pay(g, p, 1, "", false) {
+    if g.perm(src).tapped || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false) {
         return Ok(false);
     }
-    pay(g, p, 1, "", false)?;
+    pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)?;
     g.perm_mut(src).tapped = true;
     let w = wishes(g, src) - 1;
     g.perm_mut(src).data.set(DataKey::Wishes, Val::Int(w));
@@ -1234,7 +1252,7 @@ fn lantern_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 
 /// sacrificed for a card when no opposing graveyard holds a creature worth exiling
 fn lantern_draw(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if p != g.perm(src).owner || post.is_none() || !can_pay(g, p, 1, "", false) {
+    if p != g.perm(src).owner || post.is_none() || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false) {
         return Ok(vec![]);
     }
     if g.opps(p).flat_map(|q| g.player(q).gy.iter()).any(|&x| g.db.get(x).creature && g.db.get(x).bomb >= 5) {
@@ -1247,10 +1265,10 @@ fn lantern_draw(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
 }
 
 pub(crate) fn lantern_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !on(g, p, src) || !can_pay(g, p, 1, "", false) {
+    if !on(g, p, src) || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false) {
         return Ok(false);
     }
-    pay(g, p, 1, "", false)?;
+    pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)?;
     die(g, src, "sac")?;
     let cd = g.perm(src).cd.unwrap();
     if ability_window_card(g, p, cd, "draw a card")? {

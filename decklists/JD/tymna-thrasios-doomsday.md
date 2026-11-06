@@ -2,7 +2,7 @@
 
 > Built 2026-11-05 from JD's Thanos turbo deck and the Tymna/Thrasios partners deck. Thanos's cEDH core moves under
 > Tymna/Thrasios, the red cards and the Breach line come out, and Doomsday plus three cantrips go in. The card moves are
-> in `documents/doomsday-thanos-rebuild-swaps.md`. Not simulated yet: Doomsday has no card code.
+> in `documents/doomsday-thanos-rebuild-swaps.md`. Not simulated yet; Doomsday has card code and pile logic since 2026-11-05 (`rust/crates/sim-core/src/impls/doomsday.rs`).
 
 Thassa's Oracle wins the game three ways here: with **Demonic Consultation** or **Tainted Pact** (two cards, three or
 four mana), out of a five-card **Doomsday** pile, or after Thrasios digs through the library on unlimited mana. Fast
@@ -17,7 +17,7 @@ hand leans on fast mana.
 | **Commanders** | Tymna the Weaver ({1}{W}{B}, 2/2 lifelink) and Thrasios, Triton Hero ({G}{U}, 1/1); white-blue-black-green |
 | **Bracket** | 5 (cEDH): 22 Game Changers, Thassa's Oracle combos, free counters, Silence effects |
 | **Game Changers (22)** | Ad Nauseam, Ancient Tomb, Chrome Mox, Demonic Tutor, Enlightened Tutor, Fierce Guardianship, Force of Will, Gifts Ungiven, Grim Monolith, Imperial Seal, Intuition, Lion's Eye Diamond, Mana Vault, Mox Diamond, Mystical Tutor, Necropotence, Orcish Bowmasters, Rhystic Study, Smothering Tithe, Thassa's Oracle, Vampiric Tutor, Worldly Tutor |
-| **Simulator** | Deck key `thrasios`, tier T6 (cEDH), played from `data/plans/thrasios.toml`; findings in `audit/thrasios/FINDINGS.md` (no sims yet). Replaced the old `thrasios` list (T5) on 2026-11-05. Doomsday has no card code or pile logic yet (a separate change) |
+| **Simulator** | Deck key `thrasios`, tier T6 (cEDH), played from `data/plans/thrasios.toml`; findings in `audit/thrasios/FINDINGS.md` (no sims yet). Replaced the old `thrasios` list (T5) on 2026-11-05. Doomsday has card code, a pile builder and the play of the pile (`impls/doomsday.rs`, 2026-11-05); none of it simulated yet |
 | **Buys** | Doomsday, Brainstorm, Ponder, Preordain (none are in the binder or bulk lists) |
 
 ## Strategy
@@ -107,13 +107,15 @@ do that:
 Without one of them, cast Doomsday in your own main phase and use a pile that starts with a draw spell from your hand
 (Pile C).
 
-**Life:** Doomsday takes half your life, rounded up: 40 → 20, 25 → 12 (lose 13). Pay it only when nobody at the table
-can deal the rest to you before you win.
+**Life:** Doomsday takes half your life, rounded up: 40 → 20, 25 → 12 (lose 13). It's an all-or-nothing move: the
+pile wins this turn or you lose, so your life total and the opponents' boards don't stop it. Two limits only: at 1 life
+it takes your last point, and a Gitaxian Probe paid in life needs at least 3 life when you cast it (2 for the Probe, 1 to stay alive).
 
 **The piles.** Cards are listed top to bottom. "Lock" means **Silence** ({W}: opponents can't cast spells this turn),
-cast before Thassa's Oracle. If an opponent is likely to hold Mindbreak Trap or a red blast for Oracle, swap the lock
-for **Veil of Summer** ({G}: your spells can't be countered this turn). Veil can be cast before Oracle, or in response
-to the counter.
+cast before Thassa's Oracle. **Veil of Summer** ({G}: your spells can't be countered this turn) can stand in for the
+lock: cast it before Oracle, or in response to the counter. It stops every counter that turn, red blasts included, but
+not Mindbreak Trap (it exiles, it doesn't counter): against a likely Trap, keep Silence as the lock (Trap is a spell, so
+Silence stops it).
 
 | Pile | When | Top → bottom | How it goes | Cost after Doomsday |
 |---|---|---|---|---|
@@ -130,8 +132,11 @@ to the counter.
 - **The "any card" slots are never drawn.** Fill them with cards you can afford to lose for good, such as lands or
   spent tutors. The rest of your library is exiled anyway.
 - **Under Necropotence you skip your draw step,** so Piles A and B don't work. Use Pile C.
-- **Esper Sentinel's draw is forced.** Each forced draw takes a card off the pile. That never hurts a pile you finish
-  this turn, but don't hold a pile across an opponent's turn.
+- **Your own Esper Sentinel can force a draw.** When an opponent casts their first noncreature spell in a turn, you
+  draw unless they pay; they can let you draw, and that card comes off the pile. That never hurts a pile you finish
+  this turn, but don't hold a pile across an opponent's turn. An opponent's Esper Sentinel is a tax, not a draw: your
+  first noncreature spell each turn (in the main phase, Doomsday itself) gives its controller a card unless you pay
+  {X}, X being its power.
 
 **When Doomsday is the right line.** Line 1 is cheaper. Doomsday is for when you hold Thassa's Oracle but neither
 Consultation nor Pact (Pile B or C), or neither half but Doomsday plus a flash enabler (Pile A). In effect it is a
@@ -412,8 +417,9 @@ The cEDH field from the opponent pool: Kraum/Tymna, Kinnan, Rograkh/Thrasios, Ro
 | **Doomsday** | **Half your life, rounded up** |
 
 **Rough budget at 40 life:** the fixed costs of a turn-3 kill (two fetches, a few Tomb or Confluence taps, one
-life-paid tutor, a Phyrexian spell) come to about 10-15. Doomsday then takes half of what's left. Don't plan a Doomsday
-turn below about 16 life: it leaves you at 8 against a table that can still attack. Line 1 costs no life of its own.
+life-paid tutor, a Phyrexian spell) come to about 10-15. Doomsday then takes half of what's left. Life is no bar to a
+Doomsday turn (the pile wins or you lose either way) beyond the 3 life a life-paid Probe in the pile needs (pay 2, keep 1). Line 1
+costs no life of its own.
 
 ### Common mistakes
 

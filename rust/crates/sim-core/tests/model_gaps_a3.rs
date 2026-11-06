@@ -72,7 +72,17 @@ fn mass_sacrifice_of_lands_leaves_no_card_for_a_token() {
     let before = (copies_elsewhere(&g, P1, "Treasure Vault"), copies_elsewhere(&g, P1, "Darksteel Citadel"));
     let src = perm(&mut g, P0, "Liliana, Dreadhorde General");
     (rules::LDG_ULT.eff)(&mut g, P0, src).unwrap();
-    assert_eq!(g.player(P1).lands.len(), 1, "each opponent keeps one land");
+    // Oracle: a permanent of each permanent type. Treasure Vault and Darksteel Citadel are artifact lands, so one of them
+    // is the opponent's artifact and a land is the other pick: at most two lands stay, and one of them is an artifact
+    let kept = g.player(P1).lands.len();
+    assert!((1..=2).contains(&kept), "one permanent of each type (artifact, land): {kept} lands");
+    assert!(
+        g.player(P1)
+            .lands
+            .iter()
+            .any(|&l| g.db.get(g.perm(l).card()).types.has(sim_core::cards::Types::ARTIFACT)),
+        "an artifact land stays as the artifact"
+    );
     assert_eq!((copies_elsewhere(&g, P1, "Treasure Vault"), copies_elsewhere(&g, P1, "Darksteel Citadel")), before);
 }
 

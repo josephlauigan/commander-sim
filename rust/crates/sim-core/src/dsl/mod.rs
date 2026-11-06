@@ -2087,8 +2087,12 @@ fn discard_typed(g: &Game, p: PlayerId, t: &str) -> Vec<CardId> {
 }
 
 fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, dry: bool) -> Res<bool> {
-    let (gn, pips) = cost.mana.as_deref().map(crate::engine::cast::parse_cost).unwrap_or((0, String::new()));
+    let (mut gn, pips) = cost.mana.as_deref().map(crate::engine::cast::parse_cost).unwrap_or((0, String::new()));
     let x = g.perm(src);
+    // Forensic Gadgeteer: an artifact's activated abilities cost {1} less, never under {1} (an {X} cost is left alone)
+    if gn > 0 && cost.x.is_none() && x.cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT)) {
+        gn = crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, gn, (!pips.is_empty()) as u32);
+    }
     // --- Tiers 4/5 (krenko): Thousand-Year Elixir, "as though those creatures had haste"
     let sick = x.sick && !crate::impls::t45_krenko::elixir(g, p);
     if cost.tap == Some(true) && (x.tapped || (g.is_creature(src) && sick)) {

@@ -3,6 +3,15 @@
 What the simulator has taught us about Avery's Alela deck: strengths, weaknesses, and what was tried and why it did or
 didn't work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile, vs Alela's matched
 tier (T1) unless noted.
+## Baseline 2026-11-06 (after the rewire, Doomsday and Phase C engine work)
+Alela, t1, 2,000 games, seed 500000, loose, look-ahead, build ef343cc1: **7.0%** (5.9-8.1) over t1. Old build (main 1e027077,
+2026-11-05): **5.8%** (4.9-7.0). Change +1.2: noise (intervals overlap, under 2 points). Plan online (first Faerie made) 50.2%
+(old 48.0%); wins by damage 91% (old 86%), timeout 9% (old 14%). Wins average turn 14.7 (old 14.9). The 11/01 remeasure (4.0%) is on
+an older build. The 10/15 "Current state" number below is far older.
+Engine changes that can touch this deck: C3 attack taxes no longer idle attackers (it plays Windborn Muse, and opponents may tax it)
+and opponents casting their commander on time (+1.5). No C2 card is in the deck; C1/C1b and the rewire do not touch it. The net is noise.
+Raw: `audit/baseline-2026-11-06/alela.txt` and `alela-2026-11-05-oldbuild.txt`.
+
 
 ## Current state (2026-10-15)
 List: Avery's physical deck as of 10/15 (22 out, 19 in vs the 10/14 list; 34 lands). Every card is modeled.

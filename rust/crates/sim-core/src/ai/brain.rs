@@ -154,7 +154,14 @@ impl Situation {
             for &m in &g.player(q).perms {
                 let x = g.perm(m);
                 if g.is_creature(m) && !x.noatk && !x.phased {
-                    inc += epow(g, m) as f64 * if x.fly { 1.0 } else { 0.6 } * share;
+                    let reach = if x.fly { 1.0 } else { 0.6 } * share;
+                    let ph = crate::engine::combat::poison_hit(g, m);
+                    // --- c3: infect damage is poison: each counter is worth the share of life that ten kill
+                    let life_pow = if crate::engine::combat::kw(g, m, "infect") { 0 } else { epow(g, m) };
+                    inc += life_pow as f64 * reach;
+                    if ph > 0 && crate::engine::repl::poison_ok(g, p) {
+                        inc += ph as f64 * pl.life.max(1) as f64 / (10 - pl.poison as i32).max(1) as f64 * reach;
+                    }
                 }
             }
         }
@@ -220,7 +227,12 @@ pub fn hold_value(g: &Game, p: PlayerId, s: &Situation) -> (Option<CardId>, f64)
     let (mut hc, mut hv) = if held.is_empty() { (None, 0.0) } else { hold_of(g, p, s, &held) };
     // Ad Nauseam is cast at the end of the turn before yours: keep its mana up when it's worth casting
     for &c in &pl.hand {
-        if g.db.get(c).tag(Tag::Adnaus) && can_pay_now(g, p, c) {
+        // --- c1b-engines: Tier 6: mana is held for Ad Nauseam only while there is room to cast it (four cards under the
+        // hand cap): with a full hand it is not cast (`adnaus_cast_now`), and the hold only kept the hand full
+        if g.db.get(c).tag(Tag::Adnaus)
+            && can_pay_now(g, p, c)
+            && (!crate::impls::t6_plans::is_t6(g, p) || super::plans::adnaus_room(g, p) >= 4)
+        {
             let v = super::plans::adnaus_prio(g, p, c) as f64 / 10.0 - 1.0;
             if v > hv {
                 (hc, hv) = (Some(c), v);
@@ -346,11 +358,21 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
             u -= super::table_fixes::cmd_recast_penalty(g, p, c, s.danger, other);
         }
     }
+    // --- c3: an outside deck casts its commander the turn it can pay for it, as players do (a first cast: no tax).
+    // The sampled order left it for a later turn about two decisions in five (Tergrid 54%, Kinnan 52% of the
+    // decisions that offered it chose it), so commanders came down a turn late.
+    if !main && pl.is_commander(c) && !pl.hand.contains(&c) && pl.tax_of(c) == 0 && !crate::impls::t6_plans::is_t6(g, p)
+    {
+        u += COMMANDER_FIRST;
+    }
     if (super::values::bomb_of(g, p, c) >= 5.0 || pl.is_commander(c) || base >= 70.0) && !d.land {
         u *= 1.0 - 0.35 * s.ctr_risk; // walking into open counter mana
     }
     Some(u)
 }
+
+/// --- c3: how much more an outside deck wants to cast its commander for the first time (utility points)
+pub const COMMANDER_FIRST: f64 = 1.5;
 
 // --- ai-fix: C
 /// a spell a ritual makes castable is worth casting the ritual for when it has at least this utility (tutors, the
@@ -423,6 +445,18 @@ pub fn spare_creature(g: &Game, p: PlayerId) -> Option<PermId> {
     (worth(m) <= SPARE_VALUE).then_some(m)
 }
 
+/// --- c1-t6-lines: the creature a planned tutor sacrifices when `spare_creature` finds none worth giving. The line planner
+/// chose this tutor (`Player::plan_tutor` is set only around its cast) because the cards it finds finish a line, so any
+/// creature will do, the commander too (it is recast for the tax): a pilot one tutor from the win sacrifices Tymna to
+/// Diabolic Intent. The cheapest non-commander first.
+pub fn planned_fodder(g: &Game, p: PlayerId) -> Option<PermId> {
+    g.player(p).plan_tutor?;
+    let cands: Vec<PermId> =
+        g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased && !g.perm(m).army).collect();
+    let worth = |m: PermId| super::values::pval_for(g, p, m) + if g.perm(m).is_cmd { 100.0 } else { 0.0 };
+    min_by(&cands, worth)
+}
+
 /// a commander with mana value 0 (Rograkh, Son of Rohgahh): it is recast for the commander tax alone, so real decks
 /// sacrifice it freely (Diabolic Intent's fodder in Rograkh/Silas lists), where a costed commander stays protected
 fn free_commander(g: &Game, m: PermId) -> bool {
@@ -472,7 +506,7 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
     let mut fodder = None;
     if d.tag(Tag::Needsac) {
         // Diabolic Intent: sacrifice a creature as an additional cost
-        fodder = spare_creature(g, p);
+        fodder = spare_creature(g, p).or_else(|| planned_fodder(g, p));
         if fodder.is_none() {
             return Ok(false);
         }
@@ -741,7 +775,9 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
         .map(|&m| epow(g, m) * if double_strike(g, m) { 2 } else { 1 })
         .sum();
     let dl = g.player(d).life;
+    let mine: Vec<PermId> = atk.iter().copied().filter(|&m| g.perm(m).on_bf && g.perm(m).owner == p).collect();
     let danger = incoming as f64 >= dl as f64 * 0.5
+        || crate::engine::combat::poison_share(g, d, &mine) >= 0.5 // --- c3: infect and toxic: ten counters kill
         || atk.iter().any(|&m| g.perm(m).is_cmd && crate::engine::values::cmd_dmg_by(g, d, p, m) + epow(g, m) >= 21);
     let mut best: Option<(f64, CardId, PermId)> = None;
     for &c in &rem {
@@ -1135,6 +1171,8 @@ pub fn gandalf_hold(g: &Game, p: PlayerId, s: &Situation, opts: &mut [Opt]) {
 pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
     let s = Situation::new(g, p);
     let (hold_card, hold_v) = hold_value(g, p, &s);
+    // --- c1b-engines: what "stop" is worth, as the end of this function computes it (the engine rule reads it)
+    let stop_est = (if hold_card.is_some() { hold_v } else { -3.0 }) + crate::impls::t6_plans::hold_up(g, p).unwrap_or(0.0);
     let mut opts = vec![];
     let main = is_main(hand_key(g, p));
     let rsv = if !main && !post { pool::combat_reserve(g, p) } else { None };
@@ -1169,8 +1207,23 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
         }
         // Tier 6 near a win, or an opposing commander one card from its combo: the answer stays up
         let near = (s.combo_near && crate::impls::t6_plans::is_t6(g, p)) || s.cmdr_combo;
+        let mut engine_floor = None;
         if crate::engine::mana::ritual_net(g, p, c) <= 0 {
-            u -= reserve_penalty(g, p, c, hold_card, hold_v, near); // --- ai-fix: C: a ritual adds more than it spends
+            let mut pen = reserve_penalty(g, p, c, hold_card, hold_v, near); // --- ai-fix: C: a ritual adds more than it spends
+            // --- c1b-engines: a Tier 6 draw engine is cast early whatever it leaves for the held answer; and it is
+            // never outvoted by "stop" while the held answer stays payable (see `engine_rule`). `near` there is the
+            // archenemy reading only: an opposing commander that is a combo piece (`cmdr_combo`) is on the table of
+            // every cEDH pod, Kinnan or Thrasios or Tymna alone proves nothing
+
+            if let Some(engine) = engine_rule(g, p, c, &s, s.combo_near) {
+                if engine.early {
+                    pen = 0.0;
+                }
+                if pen == 0.0 {
+                    engine_floor = Some((stop_est + ENGINE_MARGIN, engine.early));
+                }
+            }
+            u -= pen;
         }
         if let Some((rg, rp)) = &rsv
             && !can_pay(g, p, cg + rg, &format!("{cp}{rp}"), false)
@@ -1183,6 +1236,11 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
             && s.danger < 0.8
         {
             u -= 1.5; // flash: better at the end of the turn before yours
+        }
+        if let Some((floor, early)) = engine_floor
+            && (early || !d.creature || !d.tag(Tag::Flash))
+        {
+            u = u.max(floor); // --- c1b-engines: the engine is cast before "stop"; a flash creature only on curve
         }
         opts.push(Opt { utility: u, label: d.name.to_string(), act: Some(Action::Cast { card: c, zone: None }) });
     }
@@ -1230,6 +1288,107 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
 
 fn labels(opts: &[Opt]) -> Vec<(f64, String)> {
     opts.iter().map(|o| (o.utility, o.label.clone())).collect()
+}
+
+// ------------------------------------------------------------------ c1b-engines: Tier 6 draw engines
+/// --- c1b-engines: how much more an engine cast is worth than "stop" when the held answer stays payable. Passing with
+/// mana that nothing needs is not a play: the 400-game traces (seed 900000) had Rhystic Study, Necropotence and the
+/// others offered at 6 and lost to "stop (hold mana)" at 5.5-8 with a counter or Ad Nauseam in hand.
+pub const ENGINE_MARGIN: f64 = 1.0;
+/// --- c1b-engines: through this own turn an engine is cast even when it taps the mana of the held answer (real pilots
+/// play Rhystic Study, Mystic Remora, Esper Sentinel and The One Ring on turns 1-3 into open mana)
+pub const ENGINE_EARLY_TURN: u32 = 4;
+/// --- c1b-engines: the draw and tax engines a Tier 6 deck casts early (the brief's list: `t6stats::FLOW_ENGINES` less
+/// Ad Nauseam, a finisher, plus the creature engines)
+pub const T6_ENGINES: [&str; 9] = [
+    "Rhystic Study",
+    "Mystic Remora",
+    "Esper Sentinel",
+    "Sylvan Library",
+    "The One Ring",
+    "Necropotence",
+    "Faerie Mastermind",
+    "Thrasios, Triton Hero",
+    "Consecrated Sphinx",
+];
+
+/// --- c1b-engines: what `engine_rule` grants
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct EngineRule {
+    /// own turn 1-4: the reserve for a held answer does not count against the cast
+    pub early: bool,
+}
+
+/// --- c1b-engines: a Tier 6 player's draw engine (not its commander) that no opponent is about to win against and
+/// that does not take the mana of a line of its own that is ready: it is cast before "stop" while the held answer
+/// stays payable, and early (`ENGINE_EARLY_TURN`) even when it does not. A plan that sets the card's priority to 0
+/// holds it (`card_utility` is None, the rule is never asked).
+pub fn engine_rule(g: &Game, p: PlayerId, c: CardId, s: &Situation, near: bool) -> Option<EngineRule> {
+    if near || !crate::impls::t6_plans::is_t6(g, p) || g.player(p).is_commander(c) {
+        return None;
+    }
+    if !T6_ENGINES.contains(&&*g.db.get(c).name) {
+        return None;
+    }
+    if !crate::impls::combos::ready_lines(g, p).is_empty() {
+        return None; // a line is ready: its mana comes first
+    }
+    Some(EngineRule { early: s.turn <= ENGINE_EARLY_TURN })
+}
+
+/// --- c1b-engines: trace only. A Tier 6 deck stopped in its main phase: print the nonland cards it could pay for and
+/// what the cast logic made of each (its utility, or why it was not offered), with the stop's own utility. Reads the
+/// game, never changes it, draws no random numbers.
+fn stop_diag(g: &mut Game, p: PlayerId, opts: &[Opt]) {
+    if g.log.is_none() || !crate::impls::t6_plans::is_t6(g, p) {
+        return;
+    }
+    let s = Situation::new(g, p);
+    let mut cands: Vec<CardId> = g.player(p).hand.clone();
+    cands.extend(g.player(p).cmds_in_zone());
+    let mut out = vec![];
+    for c in cands {
+        let d = g.db.get(c);
+        if d.land {
+            continue;
+        }
+        let (cg, cp) = cost_of(g, p, c);
+        g.pay_for = Some(c);
+        let ok = can_pay(g, p, cg, &cp, d.tag(Tag::Convoke));
+        g.pay_for = None;
+        if !ok {
+            continue;
+        }
+        let zone = if g.player(p).hand.contains(&c) { "hand" } else { "cmd" };
+        let why = if !castable(g, p, c, zone) {
+            "not castable".to_string()
+        } else {
+            let prio = decks::deck_prio_f(g, p, c);
+            match card_utility(g, p, &s, c) {
+                Some(u) => match opts.iter().find(|o| o.label == *d.name) {
+                    Some(o) => format!("u {u:.1} (offered {:.1}, prio {prio})", o.utility),
+                    None => format!("u {u:.1} (not offered, prio {prio})"),
+                },
+                None => format!("no utility (prio {prio})"),
+            }
+        };
+        out.push(format!("{}: {why}", d.name));
+    }
+    if out.is_empty() {
+        return;
+    }
+    let stop_u = opts.iter().find(|o| o.act.is_none()).map_or(0.0, |o| o.utility);
+    let n = g.player(p).name;
+    let (hc, hv) = hold_value(g, p, &s);
+    let hold = hc.map_or("none".to_string(), |c| format!("{} {hv:.1}", g.db.get(c).name));
+    let plan = crate::impls::t6_plans::hold_up(g, p).unwrap_or(0.0);
+    let near = s.combo_near;
+    let (mana, hand) = (s.mana, s.hand);
+    crate::glog!(
+        g,
+        "      [{n} stops (u {stop_u:.1}; hold {hold}, plan {plan:.1}, near {near}), mana {mana}, hand {hand}; payable: {}]",
+        out.join("; ")
+    );
 }
 
 /// brain.main: p's main phase. The look-ahead picks when it's on; otherwise (or if its pick can't be made) the
@@ -1300,6 +1459,7 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
             explain(g, p, &labels(&opts), &lbl, "decides");
             let Some(a) = &o.act else {
                 crate::gf_audit::stop(g, p, &opts, i, true); // --- ai-audit
+                stop_diag(g, p, &opts);
                 return Ok(());
             };
             if act::perform(g, p, a)? {
@@ -1316,6 +1476,7 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
             let Some(a) = &o.act else {
                 explain(g, p, &labels(&opts), &o.label, "decides");
                 crate::gf_audit::stop(g, p, &opts, i, false); // --- ai-audit
+                stop_diag(g, p, &opts);
                 return Ok(());
             };
             if act::perform(g, p, a)? {
@@ -1347,16 +1508,19 @@ pub fn choose_defender(g: &mut Game, p: PlayerId) -> PlayerId {
     if g.player(p).key == crate::impls::garland::KEY {
         opps = crate::impls::garland::attack_targets(g, p, opps); // never the monarch: the hit would end the steals
     }
-    let my: i32 = g
+    let able: Vec<PermId> = g
         .player(p)
         .perms
         .iter()
-        .filter(|&&m| {
+        .copied()
+        .filter(|&m| {
             let x = g.perm(m);
             g.is_creature(m) && !x.tapped && !x.noatk && !x.sick
         })
-        .map(|&m| epow(g, m))
-        .sum();
+        .collect();
+    // --- c3: infect damage is poison, not life; a tax or cap on q cuts what can be sent there
+    let pows: Vec<i32> =
+        able.iter().map(|&m| if crate::engine::combat::kw(g, m, "infect") { 0 } else { epow(g, m) }).collect();
     let key = g.player(p).key;
     let aggr = style(g, key).aggression;
     let mut items: Vec<(f64, PlayerId)> = vec![];
@@ -1365,8 +1529,12 @@ pub fn choose_defender(g: &mut Game, p: PlayerId) -> PlayerId {
         if crate::impls::t6_plans::is_t6(g, p) {
             u += 0.25 * super::t6_table::threat_bonus(g, q); // Tier 6: hit whoever is about to win
         }
-        if my as f64 >= g.player(q).life as f64 * 0.8 {
-            u += 4.0 + 2.0 * aggr; // go for the kill
+        let my = crate::engine::combat::sendable_power(g, p, q, &pows);
+        let pshare = crate::engine::combat::poison_share(g, q, &able);
+        if my as f64 >= g.player(q).life as f64 * 0.8 || pshare >= 0.8 {
+            u += 4.0 + 2.0 * aggr; // go for the kill (ten poison counters are as lethal as the life)
+        } else {
+            u += 2.0 * pshare; // --- c3: and infect hits go where they bring a player nearer ten counters
         }
         u += 0.15 * g.player(p).grudge.get(&g.player(q).key).copied().unwrap_or(0.0); // hit back whoever hit you
         if !is_main(hand_key(g, p)) {
