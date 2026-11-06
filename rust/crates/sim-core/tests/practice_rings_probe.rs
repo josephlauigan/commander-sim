@@ -138,6 +138,10 @@ fn run_case(key: &str, name: &str, land: bool, k: usize, step: Step) -> Out {
         let before = g.stack_pushes;
         let act = if land { json!({"do": "use", "land": idx}) } else { json!({"do": "use", "perm": idx}) };
         let res = human::apply(&mut g, P0, &act);
+        let why = match &res {
+            Ok(Some(w)) => w.clone(),
+            _ => String::new(),
+        };
         let pushed = g.stack_pushes > before;
         let s = state.lock().unwrap();
         let log = g.log.clone().unwrap_or_default();
@@ -157,7 +161,7 @@ fn run_case(key: &str, name: &str, land: bool, k: usize, step: Step) -> Out {
             Out::NotOffered
         } else {
             let told: Vec<String> = h.told().into_iter().map(|t| t.1).collect();
-            Out::NotExercised(format!("{label}: {}", told.first().cloned().unwrap_or_default()))
+            Out::NotExercised(format!("{label}: {}{}", told.first().cloned().unwrap_or_default(), why))
         }
     }));
     r.unwrap_or_else(|e| {

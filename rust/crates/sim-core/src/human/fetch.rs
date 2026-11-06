@@ -109,45 +109,45 @@ pub fn crack(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     if g.over || !g.player(p).alive {
         return Ok(None);
     }
-    if !stack::ability_window_card(g, p, cd, "search for a land card", None, None)? {
-        return Ok(None);
-    }
     let kinds = turn::true_fetch(&name);
-    let found = choices::search(
-        g,
-        p,
-        &move |g: &Game, c| turn::fetch_legal(g, c, kinds),
-        1,
-        &format!("{name}: search for a land card"),
-        true,
-    )?;
-    let Some(&c) = found.first() else {
-        crate::glog!(g, "    {} finds nothing", g.player(p).name);
-        return Ok(None);
-    };
-    if let Some(a) = zones::agent_for(g, p) {
-        zones::agent_take(g, a, p, c); // Opposition Agent
-        return Ok(None);
-    }
-    // the land comes in tapped unless the card says otherwise; Fabled Passage untaps it with four or more lands
-    // (the Passage is gone: three others, and the new one)
-    let forced = kinds.is_none() && !(name == "Fabled Passage" && g.player(p).lands.len() >= 3);
-    let tapped = if forced {
-        true
-    } else if let Some(n) = turn::shock_cost(g, p, c) {
-        // a shock land: the person chooses whether to pay for it to enter untapped
-        let pay = g.player(p).life >= n
-            && choices::yes_no(g, p, &format!("{}: pay {n} life so it enters untapped?", g.db.get(c).name))?;
-        if pay {
-            engine::life::lose_life(g, p, n, Some(p), "other", None)?;
+    // the search is the ability's effect: a copy (Rings of Brighthearth, Peter Parker's Camera) finds another land
+    stack::ability_run(g, p, None, Some(cd), "search for a land card", None, None, |g| {
+        let found = choices::search(
+            g,
+            p,
+            &move |g: &Game, c| turn::fetch_legal(g, c, kinds),
+            1,
+            &format!("{name}: search for a land card"),
+            true,
+        )?;
+        let Some(&c) = found.first() else {
+            crate::glog!(g, "    {} finds nothing", g.player(p).name);
+            return Ok(());
+        };
+        if let Some(a) = zones::agent_for(g, p) {
+            zones::agent_take(g, a, p, c); // Opposition Agent
+            return Ok(());
         }
-        !pay
-    } else {
-        turn::land_enters_tapped(g, p, c)
-    };
-    let l2 = g.add_land(p, c, tapped);
-    crate::glog!(g, "    cracks {} for {}", name, g.db.get(c).name);
-    crate::cardcode::land_etb(g, p, l2)?; // Bojuka Bog ...
-    zones::landfall(g, p)?;
+        // the land comes in tapped unless the card says otherwise; Fabled Passage untaps it with four or more lands
+        // (the Passage is gone: three others, and the new one)
+        let forced = kinds.is_none() && !(name == "Fabled Passage" && g.player(p).lands.len() >= 3);
+        let tapped = if forced {
+            true
+        } else if let Some(n) = turn::shock_cost(g, p, c) {
+            // a shock land: the person chooses whether to pay for it to enter untapped
+            let pay = g.player(p).life >= n
+                && choices::yes_no(g, p, &format!("{}: pay {n} life so it enters untapped?", g.db.get(c).name))?;
+            if pay {
+                engine::life::lose_life(g, p, n, Some(p), "other", None)?;
+            }
+            !pay
+        } else {
+            turn::land_enters_tapped(g, p, c)
+        };
+        let l2 = g.add_land(p, c, tapped);
+        crate::glog!(g, "    cracks {} for {}", name, g.db.get(c).name);
+        crate::cardcode::land_etb(g, p, l2)?; // Bojuka Bog ...
+        zones::landfall(g, p)
+    })?;
     Ok(None)
 }
