@@ -2,8 +2,7 @@
 
 **Retired 2026-11-05 (JD).** The deck is broken up: The Ur-Dragon and 66 other cards move to the new Thanos deck
 (`decklists/JD/thanos-artifacts-and-dragons.md`), with The Ur-Dragon in the 99, and the other 33 go to the binder; see
-`documents/doomsday-thanos-rebuild-swaps.md`. The `urdragon` key is still in the simulator until the rewire PR removes it and moves this file
-to `decklists/pool/retired/`.
+`documents/doomsday-thanos-rebuild-swaps.md`. The `urdragon` key (tier t5) left the simulator the same day (JD); its plan and Spellbook files were removed. The list is kept here as history only: it is not a pool deck, no test seats it, and it is never drawn. Findings: `audit/retired/urdragon/FINDINGS.md`.
 
 A five-colour Dragon deck that turns one Dragon into several. Miirym, Lathliss and token multipliers reward Dragons
 entering, while Dragon Tempest, Scourge of Valkas and Terror of the Peaks turn those entries into damage. Astral Dragon
@@ -16,7 +15,7 @@ Dragons but no acceleration.
 |---|---|
 | **Commander** | The Ur-Dragon ({4}{W}{U}{B}{R}{G}, 10/10, five colours) |
 | **Bracket** | 4 (16 Game Changers; three infinite combos found by Commander Spellbook, see Combos) |
-| **Simulator** | Deck key `urdragon`, Tier 5, played from `data/plans/urdragon.toml`; results in `audit/urdragon/FINDINGS.md`. |
+| **Simulator** | none (the deck key `urdragon`, tier t5, was retired 2026-11-05) |
 
 ## Strategy
 

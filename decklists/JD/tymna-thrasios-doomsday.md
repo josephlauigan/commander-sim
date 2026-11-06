@@ -17,7 +17,7 @@ hand leans on fast mana.
 | **Commanders** | Tymna the Weaver ({1}{W}{B}, 2/2 lifelink) and Thrasios, Triton Hero ({G}{U}, 1/1); white-blue-black-green |
 | **Bracket** | 5 (cEDH): 22 Game Changers, Thassa's Oracle combos, free counters, Silence effects |
 | **Game Changers (22)** | Ad Nauseam, Ancient Tomb, Chrome Mox, Demonic Tutor, Enlightened Tutor, Fierce Guardianship, Force of Will, Gifts Ungiven, Grim Monolith, Imperial Seal, Intuition, Lion's Eye Diamond, Mana Vault, Mox Diamond, Mystical Tutor, Necropotence, Orcish Bowmasters, Rhystic Study, Smothering Tithe, Thassa's Oracle, Vampiric Tutor, Worldly Tutor |
-| **Simulator** | Not wired in yet. Planned: replaces the `thrasios` list and moves it to tier T6 (cEDH), once JD approves the `data/my_decks.toml` change. Doomsday needs card code and pile logic first |
+| **Simulator** | Deck key `thrasios`, tier T6 (cEDH), played from `data/plans/thrasios.toml`; findings in `audit/thrasios/FINDINGS.md` (no sims yet). Replaced the old `thrasios` list (T5) on 2026-11-05. Doomsday has no card code or pile logic yet (a separate change) |
 | **Buys** | Doomsday, Brainstorm, Ponder, Preordain (none are in the binder or bulk lists) |
 
 ## Strategy
