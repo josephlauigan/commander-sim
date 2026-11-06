@@ -1,6 +1,7 @@
 # JD's Thanos, the Mad Titan artifacts-and-Dragons deck (decklists/JD/thanos-artifacts-and-dragons.md, tier t5, key
-# `thanos`; rewritten 2026-11-05 for the list that replaced the cEDH turbo list). The deck plays the generic pool policy
-# (it is no longer a Tier 6 key) with this plan: ramp and Thanos first, the engines (The One Ring, Rhystic Study, Mystic
+# `thanos`; rewritten 2026-11-05 for the list that replaced the cEDH turbo list). `thanos` is not a Tier 6 key (JD, 2026-11-05: the
+# `thrasios` key took the Tier 6 rules), so the generic pool policy reads this file: `[style]`, `[commander]`,
+# `[key_cards]`, `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: ramp and Thanos first, the engines (The One Ring, Rhystic Study, Mystic
 # Forge, Urza, the Karns), then one of two infinite combos or the wipe-and-finish plan. Thanos's power-up (a parity
 # wipe, Rings of Brighthearth copying it to hit both parities) is card code (impls/t6_thanos.rs), not this plan; the
 # Astral Dragon loop is the catalogue combo in impls/t45_urdragon_combos.rs; Basalt Monolith + Rings is the catalogue
