@@ -199,3 +199,268 @@ fn thrasios_can_be_activated_again_and_again() {
     assert!(g.player(P0).library.len() <= lib - 5, "a fetch land revealed may crack and take one more");
     assert_eq!(pool_total(&g, P0), 40 - 20, "{{4}} each");
 }
+
+// ================================================================== model-gaps-b2: Rings copies every ability a person has
+// (the sweep over every ability of the owned decks is `practice_rings_probe.rs`; these check the copies' effects)
+
+use std::sync::Arc;
+
+/// a seat that answers every question by rule: (a part of the prompt, a part of the choice to pick); a priority is a
+/// pass; anything else the first choice. Rings' question is a "yes" unless a rule says otherwise.
+fn smart(g: &mut Game, p: PlayerId, rules: Vec<(&'static str, &'static str)>) -> Arc<ScriptHuman> {
+    let h = Arc::new(ScriptHuman::from_fn(move |r| {
+        if &*r.kind == "priority" {
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        for (pk, ck) in &rules {
+            if r.prompt.contains(pk)
+                && let Some(i) = r.choices.iter().position(|c| c.contains(ck))
+            {
+                return Answer::Pick(i);
+            }
+        }
+        Answer::Pick(0)
+    }));
+    g.humans.add(p, h.clone());
+    h
+}
+
+fn use_it(g: &mut Game, p: PlayerId, m: PermId) -> Option<String> {
+    let i = idx(g, p, m);
+    sim_core::human::human::apply(g, p, &json!({"do": "use", "perm": i})).unwrap()
+}
+
+fn asked(h: &ScriptHuman) -> Vec<String> {
+    h.asked().iter().map(|r| r.prompt.clone()).collect()
+}
+
+fn names_in_hand(g: &Game, p: PlayerId) -> Vec<String> {
+    g.player(p).hand.iter().map(|&c| g.db.get(c).name.to_string()).collect()
+}
+
+fn gy_push(g: &mut Game, p: PlayerId, names: &[&str]) {
+    for n in names {
+        let c = take(g, p, n);
+        g.player_mut(p).gy.push(c);
+    }
+}
+
+#[test]
+fn cids_copy_returns_a_second_card_chosen_anew() {
+    let mut g = table(&["cloud", "karn"]);
+    let cid = perm(&mut g, P0, "Cid, Freeflier Pilot");
+    perm(&mut g, P0, RINGS);
+    gy_push(&mut g, P0, &["Skullclamp", "Batterskull"]);
+    pool(&mut g, P0, &[('C', 6)]);
+    let h = smart(
+        &mut g,
+        P0,
+        vec![("Cid: return which", "Skullclamp"), ("The copy of Cid's ability", "Batterskull"), ("Rings", "yes")],
+    );
+    assert_eq!(use_it(&mut g, P0, cid), None);
+    let a = asked(&h);
+    assert!(a.iter().any(|p| p.starts_with("Rings of Brighthearth: pay {2} to copy")), "{a:?}");
+    assert!(a.iter().any(|p| p.starts_with("The copy of Cid's ability")), "the copy asks for a new target: {a:?}");
+    let hand = names_in_hand(&g, P0);
+    assert!(hand.contains(&"Skullclamp".to_string()) && hand.contains(&"Batterskull".to_string()), "{hand:?}");
+    assert_eq!(pool_total(&g, P0), 6 - 2 - 2, "{{2}} for Cid and {{2}} for Rings");
+}
+
+#[test]
+fn mind_stones_copy_draws_two_cards() {
+    let mut g = table(&["karn", "cloud"]);
+    let ms = perm(&mut g, P0, "Mind Stone");
+    perm(&mut g, P0, RINGS);
+    pool(&mut g, P0, &[('C', 3)]);
+    let hand0 = g.player(P0).hand.len();
+    smart(&mut g, P0, vec![]);
+    assert_eq!(use_it(&mut g, P0, ms), None);
+    assert_eq!(g.player(P0).hand.len(), hand0 + 2, "the ability and its copy each draw a card");
+}
+
+#[test]
+fn a_fetch_lands_copy_fetches_a_second_land() {
+    let mut g = table(&["thrasios", "cloud"]);
+    let strand = lands(&mut g, P0, "Flooded Strand", 1, false)[0];
+    perm(&mut g, P0, RINGS);
+    pool(&mut g, P0, &[('C', 3)]);
+    let n0 = g.player(P0).lands.len();
+    let h = smart(&mut g, P0, vec![]);
+    let i = g.player(P0).lands.iter().position(|&x| x == strand).unwrap();
+    let r = sim_core::human::human::apply(&mut g, P0, &json!({"do": "use", "land": i})).unwrap();
+    assert_eq!(r, None);
+    let searches = h.asked().iter().filter(|r| r.prompt == "Flooded Strand: search for a land card").count();
+    assert_eq!(searches, 2, "{:?}", asked(&h));
+    assert_eq!(g.player(P0).lands.len(), n0 - 1 + 2, "the fetch land is sacrificed; two lands come back");
+}
+
+#[test]
+fn a_karn_lands_ability_urzas_saga_is_copied() {
+    let mut g = table(&["karn", "cloud"]);
+    let saga = lands(&mut g, P0, "Urza's Saga", 1, false)[0];
+    g.player_mut(P0).sagas.retain(|x| x.0 != saga);
+    g.player_mut(P0).sagas.push((saga, 2));
+    perm(&mut g, P0, RINGS);
+    pool(&mut g, P0, &[('C', 6)]);
+    let n0 = g.player(P0).perms.len();
+    let h = smart(&mut g, P0, vec![]);
+    let i = g.player(P0).lands.iter().position(|&x| x == saga).unwrap();
+    let r = sim_core::human::human::apply(&mut g, P0, &json!({"do": "use", "land": i})).unwrap();
+    assert_eq!(r, None);
+    assert!(asked(&h).iter().any(|p| p.starts_with("Rings of Brighthearth: pay {2} to copy")), "{:?}", asked(&h));
+    assert_eq!(g.player(P0).perms.len(), n0 + 2, "two Constructs: the ability and its copy");
+}
+
+#[test]
+fn a_targeted_abilitys_copy_chooses_a_new_target() {
+    // Triskelion: 1 damage to any target; the original hits the first opponent, the copy the second
+    let mut g = table(&["karn", "cloud", "sauron"]);
+    let t = perm(&mut g, P0, "Triskelion");
+    perm(&mut g, P0, RINGS);
+    g.perm_mut(t).plus = 3;
+    pool(&mut g, P0, &[('C', 3)]);
+    let (n1, n2) = (g.player(P1).name.to_string(), g.player(P2).name.to_string());
+    let (n1, n2): (&'static str, &'static str) = (Box::leak(n1.into_boxed_str()), Box::leak(n2.into_boxed_str()));
+    let h = smart(
+        &mut g,
+        P0,
+        vec![("Triskelion: 1 damage", n1), ("The copy of Triskelion's ability", n2), ("Rings", "yes")],
+    );
+    let (l1, l2) = (g.player(P1).life, g.player(P2).life);
+    assert_eq!(use_it(&mut g, P0, t), None);
+    assert!(asked(&h).iter().any(|p| p.starts_with("The copy of Triskelion's ability")), "{:?}", asked(&h));
+    assert_eq!(g.player(P1).life, l1 - 1, "the original hit the first opponent");
+    assert_eq!(g.player(P2).life, l2 - 1, "the copy hit the new target");
+}
+
+/// P1 (a person too) holds an Azorius Guildmage and counters the one ability of P0's whose name does (not) start with
+/// "copy of"
+fn guildmage_seat(g: &mut Game, counter_copy: bool) -> Arc<ScriptHuman> {
+    let gm = perm(g, P1, "Azorius Guildmage");
+    pool(g, P1, &[('U', 2), ('C', 2)]);
+    let gi = idx(g, P1, gm);
+    let mut used = false;
+    let h = Arc::new(ScriptHuman::from_fn(move |r| {
+        if &*r.kind == "priority" {
+            if !used && r.prompt.contains("activates") {
+                used = true;
+                return Answer::Action(json!({"do": "use", "perm": gi}));
+            }
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        let pick_named = |want_copy: bool| {
+            r.choices.iter().position(|c| c.contains("copy of") == want_copy && c.contains("draw")).unwrap_or(0)
+        };
+        if r.prompt.contains("counter which ability") {
+            return Answer::Pick(pick_named(counter_copy));
+        }
+        if r.prompt.ends_with("which ability?") {
+            return Answer::Pick(r.choices.iter().position(|c| c.contains("counter target")).unwrap_or(0));
+        }
+        Answer::Pick(0)
+    }));
+    g.humans.add(P1, h.clone());
+    h
+}
+
+#[test]
+fn the_original_countered_the_copy_still_resolves() {
+    let mut g = table(&["karn", "cloud"]);
+    let ms = perm(&mut g, P0, "Mind Stone");
+    perm(&mut g, P0, RINGS);
+    pool(&mut g, P0, &[('C', 3)]);
+    let hand0 = g.player(P0).hand.len();
+    smart(&mut g, P0, vec![]);
+    let h1 = guildmage_seat(&mut g, false);
+    assert_eq!(use_it(&mut g, P0, ms), None);
+    assert!(
+        h1.asked().iter().any(|r| r.prompt.contains("counter which ability")),
+        "P1 chose what to counter: {:?}",
+        asked(&h1)
+    );
+    assert_eq!(g.player(P0).hand.len(), hand0 + 1, "the original was countered; its copy drew the card");
+}
+
+#[test]
+fn the_copy_countered_the_original_still_resolves() {
+    let mut g = table(&["karn", "cloud"]);
+    let ms = perm(&mut g, P0, "Mind Stone");
+    perm(&mut g, P0, RINGS);
+    pool(&mut g, P0, &[('C', 3)]);
+    let hand0 = g.player(P0).hand.len();
+    smart(&mut g, P0, vec![]);
+    let h1 = guildmage_seat(&mut g, true);
+    assert_eq!(use_it(&mut g, P0, ms), None);
+    assert!(h1.asked().iter().any(|r| r.prompt.contains("counter which ability")), "{:?}", asked(&h1));
+    assert_eq!(g.player(P0).hand.len(), hand0 + 1, "the copy was countered; the original drew the card");
+}
+
+#[test]
+fn a_peter_parkers_camera_copy_of_a_converted_ability_chooses_a_new_target() {
+    let mut g = table(&["sauron", "karn"]);
+    let cid = perm(&mut g, P0, "Cid, Freeflier Pilot");
+    let cam = perm(&mut g, P0, "Peter Parker's Camera");
+    gy_push(&mut g, P0, &["Skullclamp", "Batterskull"]);
+    pool(&mut g, P0, &[('C', 8)]);
+    let ci = idx(&g, P0, cam);
+    let mut used = false;
+    let h = Arc::new(ScriptHuman::from_fn(move |r| {
+        if &*r.kind == "priority" {
+            if !used && r.prompt.contains("You activate") {
+                used = true;
+                return Answer::Action(json!({"do": "use", "perm": ci}));
+            }
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        let pick = |w: &str| r.choices.iter().position(|c| c.contains(w));
+        if r.prompt.contains("Cid: return which") {
+            return Answer::Pick(pick("Skullclamp").unwrap_or(0));
+        }
+        if r.prompt.contains("The copy of Cid's ability") {
+            return Answer::Pick(pick("Batterskull").unwrap_or(0));
+        }
+        if r.prompt.ends_with("which ability?") && r.prompt.starts_with("Peter Parker") {
+            return Answer::Pick(0);
+        }
+        Answer::Pick(0)
+    }));
+    g.humans.add(P0, h.clone());
+    assert_eq!(use_it(&mut g, P0, cid), None);
+    let a = asked(&h);
+    assert!(a.iter().any(|p| p.contains("copy which ability")), "the Camera was used on Cid's ability: {a:?}");
+    assert!(a.iter().any(|p| p.starts_with("The copy of Cid's ability")), "{a:?}");
+    let hand = names_in_hand(&g, P0);
+    assert!(hand.contains(&"Skullclamp".to_string()) && hand.contains(&"Batterskull".to_string()), "{hand:?}");
+}
+
+#[test]
+fn a_loyalty_abilitys_copy_pays_no_loyalty_and_asks_for_its_target_again() {
+    let mut g = table(&["karn", "cloud"]);
+    let karn = perm(&mut g, P0, "Karn Liberated");
+    perm(&mut g, P0, RINGS);
+    let a = perm(&mut g, P1, "Serra Angel");
+    let b = perm(&mut g, P1, "Vampire Nighthawk");
+    pool(&mut g, P0, &[('C', 3)]);
+    let loyalty0 = g.perm(karn).loyalty.unwrap();
+    let mut nth = 0;
+    let (na, nb) = (g.perm(a).name.to_string(), g.perm(b).name.to_string());
+    let h = Arc::new(ScriptHuman::from_fn(move |r| {
+        if &*r.kind == "priority" {
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        if r.prompt.ends_with("which ability?") {
+            return Answer::Pick(r.choices.iter().position(|c| c.starts_with("-3")).unwrap());
+        }
+        if r.prompt.starts_with("Karn Liberated -3: exile which permanent?") {
+            nth += 1;
+            let want = if nth == 1 { &na } else { &nb };
+            return Answer::Pick(r.choices.iter().position(|c| c.starts_with(want.as_str())).unwrap());
+        }
+        Answer::Pick(0)
+    }));
+    g.humans.add(P0, h.clone());
+    assert_eq!(use_it(&mut g, P0, karn), None);
+    assert!(!g.perm(a).on_bf && !g.perm(b).on_bf, "the original exiled one, the copy the other");
+    assert_eq!(g.perm(karn).loyalty.unwrap(), loyalty0 - 3, "loyalty is paid once, for the original");
+    assert_eq!(asked(&h).iter().filter(|p| p.starts_with("Karn Liberated -3: exile which")).count(), 2);
+}
