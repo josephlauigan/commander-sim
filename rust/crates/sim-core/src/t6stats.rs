@@ -161,6 +161,64 @@ pub fn away_flag(g: &mut Game, p: PlayerId, away_now: bool) {
     g.player_mut(p).stats.insert(intern("sp|away_now"), away_now as i64);
 }
 
+/// --- c1-t6-lines: trace only. The deck passed while a line was ready or one tutor away: print the hand, and for each
+/// line missing one piece group the group, how many of its cards are in the library, and which tutors in hand can
+/// legally find one of them. Reads the game, never changes it.
+fn hold_diag(g: &mut Game, p: PlayerId, ready: bool) {
+    use crate::ai::planner::{tutor_targets, xtutor_rule};
+    use crate::impls::combos as cb;
+    let hand: Vec<String> = g.player(p).hand.iter().map(|&c| card(g, c)).collect();
+    let n = g.player(p).name;
+    let mut out = vec![];
+    if ready {
+        let line = cb::audit_ready(g, p).unwrap_or("?");
+        let why = {
+            use crate::ai::t6_table as tt;
+            let opps: Vec<String> = g.opps(p).map(|q| format!("{:.2}", tt::stop_chance(g, q))).collect();
+            format!(
+                "plan go_now rule {:?} -> {:?}, go_ok {}, risk {:.2}, opp stop chances [{}], round {}",
+                crate::ai::plan_data::go_now_rule_idx(g, p, line).map(|x| x.0),
+                crate::impls::t6_plans::go_now(g, p, line),
+                tt::go_ok(g, p, line),
+                tt::go_risk(g, p),
+                opps.join(" "),
+                g.round
+            )
+        };
+        out.push(format!("ready: {line} ({why})"));
+    } else {
+        for i in cb::audit_lines(g, p) {
+            let groups = cb::audit_groups(i);
+            let miss: Vec<&&[&str]> = groups.iter().filter(|grp| !cb::group_held(g, p, grp)).collect();
+            if miss.len() != 1 {
+                continue;
+            }
+            let inlib: Vec<CardId> =
+                g.player(p).library.iter().copied().filter(|&c| miss[0].contains(&&*g.db.get(c).name)).collect();
+            if inlib.is_empty() {
+                continue;
+            }
+            let mut tut = vec![];
+            for &t in &g.player(p).hand {
+                let name = card(g, t);
+                if let Some((d, legal)) = tutor_targets(g, p, t) {
+                    let hit = legal.iter().filter(|c| inlib.contains(c)).count();
+                    tut.push(format!("{name}->{:?} finds {hit}/{}", d, inlib.len()));
+                } else if let Some(ok) = xtutor_rule(g, t) {
+                    let hit = inlib.iter().filter(|&&c| ok(c)).count();
+                    tut.push(format!("{name}(X) finds {hit}/{}", inlib.len()));
+                } else if g.db.get(t).tags.has(crate::tag::Tag::Tut) {
+                    tut.push(format!("{name}(unmodeled tutor)"));
+                }
+            }
+            out.push(format!("{} lacks {:?}; tutors: [{}]", cb::audit_name(i), miss[0], tut.join(", ")));
+        }
+    }
+    let mana = crate::engine::mana::total_mana(g, p, false);
+    let crs = g.player(p).perms.iter().filter(|&&m| g.is_creature(m)).count();
+    crate::glog!(g, "      [{n} passes ({}); mana {mana}, creatures {crs}; hand: {}]", out.join(" | "), hand.join(", "));
+}
+
 /// p chose `label` at a main-phase decision: count it under `spx|` when a line was ready and the deck has not gone
 /// yet, and under `spa|` when a line was one tutor away and none was ready
 pub fn speed_decided(g: &mut Game, p: PlayerId, label: &str) {
@@ -173,20 +231,17 @@ pub fn speed_decided(g: &mut Game, p: PlayerId, label: &str) {
     if !(ready || away) || pl.stats.contains_key(&intern("sp|go")) {
         return;
     }
+    if g.log.is_some() && label.starts_with("stop") {
+        hold_diag(g, p, ready);
+    }
     // the card or play, without target and search tags: "Cast X -> Y [search]" -> "X"
     let l = label.split(" -> ").next().unwrap_or(label).trim_end_matches(" [search]").trim_end_matches(" [must]");
     let l = l.strip_prefix("combo: ").map_or(l.to_string(), |c| format!("combo: {c}"));
     bump(g, p, format!("{}|{l}", if ready { "spx" } else { "spa" }));
     if !ready && l.starts_with("stop") {
         // passed while one tutor away: which tutors it held (`spah|<card>`, one per tutor in hand)
-        use crate::tag::Tag;
-        let held: Vec<String> = g
-            .player(p)
-            .hand
-            .iter()
-            .filter(|&&c| g.db.get(c).tags.has(Tag::Tut) || g.db.get(c).tags.has(Tag::Xtutor))
-            .map(|&c| card(g, c))
-            .collect();
+        // --- c1-t6-lines: only the tutors that could take a missing piece (`combos::useful_tutors`)
+        let held: Vec<String> = crate::impls::combos::useful_tutors(g, p).into_iter().map(|c| card(g, c)).collect();
         for t in held {
             bump(g, p, format!("spah|{t}"));
         }

@@ -423,6 +423,18 @@ pub fn spare_creature(g: &Game, p: PlayerId) -> Option<PermId> {
     (worth(m) <= SPARE_VALUE).then_some(m)
 }
 
+/// --- c1-t6-lines: the creature a planned tutor sacrifices when `spare_creature` finds none worth giving. The line planner
+/// chose this tutor (`Player::plan_tutor` is set only around its cast) because the cards it finds finish a line, so any
+/// creature will do, the commander too (it is recast for the tax): a pilot one tutor from the win sacrifices Tymna to
+/// Diabolic Intent. The cheapest non-commander first.
+pub fn planned_fodder(g: &Game, p: PlayerId) -> Option<PermId> {
+    g.player(p).plan_tutor?;
+    let cands: Vec<PermId> =
+        g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased && !g.perm(m).army).collect();
+    let worth = |m: PermId| super::values::pval_for(g, p, m) + if g.perm(m).is_cmd { 100.0 } else { 0.0 };
+    min_by(&cands, worth)
+}
+
 /// a commander with mana value 0 (Rograkh, Son of Rohgahh): it is recast for the commander tax alone, so real decks
 /// sacrifice it freely (Diabolic Intent's fodder in Rograkh/Silas lists), where a costed commander stays protected
 fn free_commander(g: &Game, m: PermId) -> bool {
@@ -472,7 +484,7 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
     let mut fodder = None;
     if d.tag(Tag::Needsac) {
         // Diabolic Intent: sacrifice a creature as an additional cost
-        fodder = spare_creature(g, p);
+        fodder = spare_creature(g, p).or_else(|| planned_fodder(g, p));
         if fodder.is_none() {
             return Ok(false);
         }

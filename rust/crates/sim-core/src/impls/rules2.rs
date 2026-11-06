@@ -1050,10 +1050,24 @@ fn transmute_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 }
 
 /// sacrifice an artifact, search an artifact: onto the battlefield if you pay the difference in mana value
-fn transmute(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+/// --- c1-t6-lines: the artifact Transmute Artifact sacrifices. For a planned target (`Player::plan_tutor`): of the cheap
+/// ones (worth under 3: a Mox, Sol Ring, a Talisman) the one with the highest mana value, so the difference to pay is
+/// smallest. Otherwise the least valuable.
+pub fn transmute_fodder(g: &Game, p: PlayerId) -> Option<PermId> {
     let arts: Vec<PermId> =
         g.player(p).perms.iter().copied().filter(|&m| card_is(g, m, Types::ARTIFACT) && !g.perm(m).phased).collect();
-    let Some(s) = min_by(&arts, |m| pval(g, m)) else { return Ok("gy") };
+    let cmc = |m: PermId| g.perm(m).cd.map_or(0, |c| g.db.get(c).cmc);
+    if g.player(p).plan_tutor.is_some() {
+        let cheap: Vec<PermId> = arts.iter().copied().filter(|&m| pval(g, m) < 3.0).collect();
+        if let Some(m) = cheap.iter().copied().max_by_key(|&m| cmc(m)) {
+            return Some(m);
+        }
+    }
+    min_by(&arts, |m| pval(g, m))
+}
+
+fn transmute(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    let Some(s) = transmute_fodder(g, p) else { return Ok("gy") };
     let mv = g.db.get(g.perm(s).cd.unwrap()).cmc;
     die(g, s, "sac")?;
     let cs: Vec<CardId> = searchable(g, p).into_iter().filter(|&y| g.db.get(y).types.has(Types::ARTIFACT)).collect();
@@ -1061,11 +1075,15 @@ fn transmute(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
         return Ok("gy");
     }
     let wish = crate::ai::plans::wish_list(g, p);
-    let best = first_max(&cs, |y| {
-        let d = g.db.get(y);
-        (wish.contains(&y) && can_pay(g, p, d.cmc.saturating_sub(mv), "", false), card_worth(g, p, y, false))
-    })
-    .unwrap();
+    // --- c1-t6-lines: the line planner named the artifact it is after
+    let planned = g.player(p).plan_tutor.filter(|t| cs.contains(t));
+    let best = planned.unwrap_or_else(|| {
+        first_max(&cs, |y| {
+            let d = g.db.get(y);
+            (wish.contains(&y) && can_pay(g, p, d.cmc.saturating_sub(mv), "", false), card_worth(g, p, y, false))
+        })
+        .unwrap()
+    });
     remove_card(&mut g.player_mut(p).library, best);
     shuffle_library(g, p);
     let diff = g.db.get(best).cmc.saturating_sub(mv);
