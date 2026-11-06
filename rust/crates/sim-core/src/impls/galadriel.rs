@@ -733,8 +733,9 @@ fn lin_back(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-/// Ramosian Revivalist: {6}, {T}: return a Rebel permanent card with mana value 5 or less from your graveyard to the
-/// battlefield
+/// Ramosian Revivalist: {6}, {T}: return target Rebel permanent card with mana value 5 or less from your graveyard to the
+/// battlefield. The AI picks the target as it activates (rule 602.2b: it is in the option's argument); the ability
+/// does nothing if that card has left the graveyard by the time it resolves.
 fn revivalist(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if !searcher_ok(g, p, src) || !when_ok(g, p, post) || !can_pay(g, p, 6, "", false) {
         return Ok(vec![]);
@@ -742,18 +743,26 @@ fn revivalist(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Ve
     let gy = g.player(p).gy.clone();
     let Some(c) = best_rebel(g, p, 5, Some(&gy)) else { return Ok(vec![]) };
     let u = fetch_u(g, p, rebel_value(g, p, c));
-    Ok(vec![ability(u, format!("Ramosian Revivalist: return {}", g.db.get(c).name), src, revivalist_go, 0)])
+    Ok(vec![ability(u, format!("Ramosian Revivalist: return {}", g.db.get(c).name), src, revivalist_go, c.0 as i64)])
 }
 
-fn revivalist_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !searcher_ok(g, p, src) || !can_pay(g, p, 6, "", false) {
-        return Ok(false);
+fn revivalist_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let c = CardId(arg as u16);
+    if !searcher_ok(g, p, src) || !can_pay(g, p, 6, "", false) || !g.player(p).gy.contains(&c) {
+        return Ok(false); // (the target must be in the graveyard to activate)
     }
     pay(g, p, 6, "", false)?;
     g.perm_mut(src).tapped = true;
-    crate::glog!(g, "  {} activates Ramosian Revivalist", pname(g, p));
-    if ability_window(g, p, Some(src), "return a Rebel from your graveyard", None, None)? {
-        put_rebel(g, p, "Ramosian Revivalist", 5, true)?;
+    crate::glog!(g, "  {} activates Ramosian Revivalist, targeting {}", pname(g, p), g.db.get(c).name);
+    if ability_window(g, p, Some(src), &format!("return {} to the battlefield", g.db.get(c).name), None, None)? {
+        // the target was fixed on activation: if it left the graveyard meanwhile, the ability does nothing
+        if remove_first(&mut g.player_mut(p).gy, c) {
+            crate::glog!(g, "    Ramosian Revivalist puts {} onto the battlefield", g.db.get(c).name);
+            g.player_mut(p).stat("rebels_fetched", 1);
+            enter(g, p, c, Enter::default())?;
+        } else {
+            crate::glog!(g, "    Ramosian Revivalist's target is gone: nothing happens");
+        }
     }
     Ok(true)
 }
