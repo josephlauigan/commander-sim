@@ -1,0 +1,156 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t3 Atraxa   100 cards: Full 87, Full-auto 10, Approximate 3, Partial 0, Unmodeled 0
+  t3 Aurelia  100 cards: Full 86, Full-auto 9, Approximate 5, Partial 0, Unmodeled 0
+  t3 Korvold  100 cards: Full 96, Full-auto 3, Approximate 1, Partial 0, Unmodeled 0
+  t3 Marwyn   100 cards: Full 79, Full-auto 12, Approximate 9, Partial 0, Unmodeled 0
+  t3 Tergrid  100 cards: Full 91, Full-auto 8, Approximate 1, Partial 0, Unmodeled 0
+
+
+=== Realism: Tier 3 (High B3) [loose, adaptive AI, 2000 games, seeds 900000-901999; 5 decks, 4 a pod] ===
+targets: data/realism/t3.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     29.9%     27.9-31.9   32.3%     30.8-33.8  FAIL
+  seat 2 share of decisive games (%)                     27.7%     25.8-29.7   27.7%     26.2-29.2  PASS
+  seat 3 share of decisive games (%)                     23.1%     21.3-25.0   22.0%     20.5-23.5  PASS
+  seat 4 share of decisive games (%)                     19.3%     17.7-21.1   18.0%     16.5-19.5  PASS
+  median round of a decisive win (rounds)                 10.0     10.0-10.0     8.0           7-9  FAIL
+  win round, 75th minus 25th percentile (rounds)           3.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                12.9%     11.5-14.4   16.5%         15-18  FAIL
+  wins by damage (combat or other) (%)                   54.2%     52.0-56.4   59.8%     58.3-61.3  FAIL
+  wins by commander damage (%)                            9.5%      8.3-10.9   14.4%     12.9-15.9  FAIL
+  wins by poison (%)                                     23.4%     21.6-25.4    9.3%      7.8-10.8  FAIL
+  deck win spread, best minus worst deck (pts)            25.4             -       -             -  no target
+  games over 15 rounds (round cap 20) (%)                 4.2%       3.5-5.2       -             -  no target
+  3 of 9 targets pass (3 statistics have no target yet)
+Games: 2000, decisive 1992 (99.6%), round-cap timeouts 0.3%
+Each deck's share of the decisive games it sat in: Atraxa 35.6% of 1605; Aurelia 34.8% of 1613; Korvold 10.3% of 1590; Marwyn 24.6% of 1552; Tergrid 19.5% of 1608
+
+--- Held mana at the end of the turn: all seats pooled, own turns 5-10 (35482 turns) ---
+  2+ mana unused and a castable card in hand: 9.8% of turns; of those the castable card is not a held kind on 7.1% (an answer held: 2.2%, nothing held: 4.9%)
+  turns ending with mana held for an answer (hold_of named a card): 4.3% (1536); idle turns (2+ unused, castable, nothing held): 4.9% (1756)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  counter held                270    0.8    4.16  2.62 |                                    4.4%     0.0%     5.9%   74.1%  15.6% |      0.23   0.05
+  protection held            1163    3.3    4.31  2.41 |                                    3.8%     3.6%     6.5%   73.5%  12.6% |      0.35   0.06
+  instant removal held        103    0.3    3.54  3.50 |                                   60.2%     0.0%     1.9%   27.2%  10.7% |      1.37   0.03
+  all held together          1536    4.3    4.23  2.52 |                                    7.7%     2.7%     6.1%   70.5%  13.0% |      0.40   0.06
+  nothing held, 2+ idle      1756    4.9    5.20  0.00 |                                    0.0%     0.0%    11.6%   72.0%  16.3% |      0.25   0.13
+  what the card that was used hit (counter: the spell countered; removal: the permanent removed; protection: the permanent saved):
+    counter held               13 hits: combo 54% (7), creature 23% (3), engine 8% (1), removal 15% (2)
+    protection held            50 hits: combo 34% (17), cmdr 40% (20), creature 6% (3), engine 20% (10)
+    instant removal held       76 hits: combo 18% (14), cmdr 9% (7), creature 28% (21), engine 45% (34)
+
+--- Held mana at the end of the turn: all seats pooled, every own turn (72221 turns) ---
+  2+ mana unused and a castable card in hand: 8.3% of turns; of those the castable card is not a held kind on 5.7% (an answer held: 1.6%, nothing held: 4.0%)
+  turns ending with mana held for an answer (hold_of named a card): 3.3% (2401); idle turns (2+ unused, castable, nothing held): 4.0% (2904)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  counter held                381    0.5    4.32  2.45 |                                    4.7%     0.0%     5.2%   73.5%  16.5% |      0.23   0.04
+  protection held            1841    2.5    4.24  2.24 |                                    3.4%     2.9%     7.2%   74.7%  11.9% |      0.34   0.07
+  instant removal held        179    0.2    3.31  3.46 |                                   60.3%     0.0%     2.2%   31.3%   6.1% |      1.28   0.03
+  all held together          2401    3.3    4.18  2.36 |                                    7.8%     2.2%     6.5%   71.3%  12.2% |      0.40   0.06
+  nothing held, 2+ idle      2904    4.0    4.87  0.00 |                                    0.0%     0.0%    11.6%   73.6%  14.8% |      0.22   0.13
+  what the card that was used hit (counter: the spell countered; removal: the permanent removed; protection: the permanent saved):
+    counter held               19 hits: combo 53% (10), cmdr 5% (1), creature 16% (3), engine 5% (1), removal 16% (3), spell 5% (1)
+    protection held            73 hits: combo 32% (23), cmdr 42% (31), creature 7% (5), engine 19% (14)
+    instant removal held      125 hits: combo 19% (24), cmdr 10% (12), creature 31% (39), engine 40% (50)
+
+--- Held mana at the end of the turn: Atraxa, own turns 5-10 (7549 turns) ---
+  2+ mana unused and a castable card in hand: 9.5% of turns; of those the castable card is not a held kind on 5.2% (an answer held: 4.1%, nothing held: 1.1%)
+  turns ending with mana held for an answer (hold_of named a card): 8.2% (618); idle turns (2+ unused, castable, nothing held): 1.1% (85)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  counter held                267    3.5    4.13  2.63 |                                    4.5%     0.0%     6.0%   73.8%  15.7% |      0.24   0.05
+  protection held             343    4.5    3.70  2.67 |                                    3.8%     1.5%     3.8%   79.0%  12.0% |      0.21   0.02
+  instant removal held          8    0.1    2.75  3.50 |                                  100.0%     0.0%     0.0%    0.0%   0.0% |      1.12   0.00
+  all held together           618    8.2    3.87  2.66 |                                    5.3%     0.8%     4.7%   75.7%  13.4% |      0.23   0.03
+  nothing held, 2+ idle        85    1.1    2.49  0.00 |                                    0.0%     0.0%     1.2%   90.6%   8.2% |      0.03   0.00
+
+--- Held mana at the end of the turn: Aurelia, own turns 5-10 (7081 turns) ---
+  2+ mana unused and a castable card in hand: 11.2% of turns; of those the castable card is not a held kind on 8.0% (an answer held: 2.9%, nothing held: 5.1%)
+  turns ending with mana held for an answer (hold_of named a card): 4.6% (325); idle turns (2+ unused, castable, nothing held): 5.1% (360)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  protection held             257    3.6    4.69  2.63 |                                    5.8%    11.3%     1.2%   76.3%   5.4% |      0.57   0.02
+  instant removal held         68    1.0    3.91  3.50 |                                   51.5%     0.0%     1.5%   38.2%   8.8% |      1.35   0.02
+  all held together           325    4.6    4.53  2.81 |                                   15.4%     8.9%     1.2%   68.3%   6.2% |      0.73   0.02
+  nothing held, 2+ idle       360    5.1    4.25  0.00 |                                    0.0%     0.0%     4.2%   84.7%  11.1% |      0.09   0.05
+
+--- Held mana at the end of the turn: Korvold, own turns 5-10 (7248 turns) ---
+  2+ mana unused and a castable card in hand: 8.0% of turns; of those the castable card is not a held kind on 5.0% (an answer held: 2.4%, nothing held: 2.6%)
+  turns ending with mana held for an answer (hold_of named a card): 4.9% (355); idle turns (2+ unused, castable, nothing held): 2.6% (186)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  protection held             329    4.5    2.84  2.64 |                                    2.4%     1.2%    12.8%   67.8%  15.8% |      0.33   0.14
+  instant removal held         26    0.4    2.85  3.50 |                                   69.2%     0.0%     3.8%    7.7%  19.2% |      1.48   0.10
+  all held together           355    4.9    2.84  2.70 |                                    7.3%     1.1%    12.1%   63.4%  16.1% |      0.41   0.14
+  nothing held, 2+ idle       186    2.6    3.22  0.00 |                                    0.0%     0.0%    42.5%   42.5%  15.1% |      0.56   0.52
+
+--- Held mana at the end of the turn: Marwyn, own turns 5-10 (6546 turns) ---
+  2+ mana unused and a castable card in hand: 11.9% of turns; of those the castable card is not a held kind on 9.5% (an answer held: 1.2%, nothing held: 8.3%)
+  turns ending with mana held for an answer (hold_of named a card): 3.5% (231); idle turns (2+ unused, castable, nothing held): 8.3% (545)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  protection held             231    3.5    6.89  1.50 |                                    3.5%     1.7%     7.4%   71.0%  16.5% |      0.31   0.07
+  all held together           231    3.5    6.89  1.50 |                                    3.5%     1.7%     7.4%   71.0%  16.5% |      0.31   0.07
+  nothing held, 2+ idle       545    8.3    7.06  0.00 |                                    0.0%     0.0%    12.7%   71.9%  15.4% |      0.33   0.14
+
+--- Held mana at the end of the turn: Tergrid, own turns 5-10 (7058 turns) ---
+  2+ mana unused and a castable card in hand: 8.6% of turns; of those the castable card is not a held kind on 8.3% (an answer held: 0.1%, nothing held: 8.2%)
+  turns ending with mana held for an answer (hold_of named a card): 0.1% (7); idle turns (2+ unused, castable, nothing held): 8.2% (580)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  counter held                  3    0.0    7.00  1.50 |                                    0.0%     0.0%     0.0%  100.0%   0.0% |      0.00   0.00
+  protection held               3    0.0    2.33  1.50 |                                    0.0%     0.0%    33.3%   33.3%  33.3% |      1.00   0.50
+  instant removal held          1    0.0    3.00  3.50 |                                  100.0%     0.0%     0.0%    0.0%   0.0% |      2.00   0.00
+  all held together             7    0.1    4.43  1.79 |                                   14.3%     0.0%    14.3%   57.1%  14.3% |      0.67   0.17
+  nothing held, 2+ idle       580    8.2    5.09  0.00 |                                    0.0%     0.0%     6.9%   71.0%  22.1% |      0.20   0.06
+
+--- Held mana at the end of the turn: Atraxa, every own turn (15367 turns) ---
+  2+ mana unused and a castable card in hand: 7.9% of turns; of those the castable card is not a held kind on 4.1% (an answer held: 2.9%, nothing held: 1.2%)
+  turns ending with mana held for an answer (hold_of named a card): 6.0% (928); idle turns (2+ unused, castable, nothing held): 1.2% (184)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  counter held                375    2.4    4.30  2.47 |                                    4.8%     0.0%     5.3%   73.6%  16.3% |      0.24   0.04
+  protection held             538    3.5    3.80  2.50 |                                    3.5%     1.1%     4.8%   79.6%  11.0% |      0.22   0.04
+  instant removal held         15    0.1    2.40  3.50 |                                  100.0%     0.0%     0.0%    0.0%   0.0% |      1.27   0.00
+  all held together           928    6.0    3.98  2.50 |                                    5.6%     0.6%     5.0%   75.9%  12.9% |      0.24   0.04
+  nothing held, 2+ idle       184    1.2    2.39  0.00 |                                    0.0%     0.0%     4.3%   91.3%   4.3% |      0.06   0.03
+
+--- Held mana at the end of the turn: Aurelia, every own turn (14365 turns) ---
+  2+ mana unused and a castable card in hand: 10.0% of turns; of those the castable card is not a held kind on 6.5% (an answer held: 2.3%, nothing held: 4.3%)
+  turns ending with mana held for an answer (hold_of named a card): 3.5% (498); idle turns (2+ unused, castable, nothing held): 4.3% (613)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  protection held             383    2.7    4.62  2.58 |                                    5.2%     9.7%     3.1%   76.0%   6.0% |      0.54   0.04
+  instant removal held        115    0.8    3.63  3.43 |                                   49.6%     0.0%     0.9%   44.3%   5.2% |      1.22   0.01
+  all held together           498    3.5    4.39  2.77 |                                   15.5%     7.4%     2.6%   68.7%   5.8% |      0.70   0.04
+  nothing held, 2+ idle       613    4.3    3.99  0.00 |                                    0.0%     0.0%     4.4%   85.8%   9.8% |      0.10   0.05
+
+--- Held mana at the end of the turn: Korvold, every own turn (14710 turns) ---
+  2+ mana unused and a castable card in hand: 7.4% of turns; of those the castable card is not a held kind on 4.2% (an answer held: 2.0%, nothing held: 2.3%)
+  turns ending with mana held for an answer (hold_of named a card): 4.2% (613); idle turns (2+ unused, castable, nothing held): 2.3% (333)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  protection held             571    3.9    3.11  2.33 |                                    2.1%     0.7%    12.3%   70.2%  14.7% |      0.32   0.14
+  instant removal held         42    0.3    2.64  3.50 |                                   69.0%     0.0%     7.1%   11.9%  11.9% |      1.35   0.11
+  all held together           613    4.2    3.08  2.41 |                                    6.7%     0.7%    11.9%   66.2%  14.5% |      0.39   0.13
+  nothing held, 2+ idle       333    2.3    3.04  0.00 |                                    0.0%     0.0%    42.9%   44.7%  12.3% |      0.56   0.51
+
+--- Held mana at the end of the turn: Marwyn, every own turn (13461 turns) ---
+  2+ mana unused and a castable card in hand: 9.4% of turns; of those the castable card is not a held kind on 7.3% (an answer held: 0.9%, nothing held: 6.4%)
+  turns ending with mana held for an answer (hold_of named a card): 2.6% (346); idle turns (2+ unused, castable, nothing held): 6.4% (861)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  protection held             346    2.6    6.40  1.31 |                                    3.2%     1.7%     6.6%   73.4%  15.0% |      0.30   0.05
+  all held together           346    2.6    6.40  1.31 |                                    3.2%     1.7%     6.6%   73.4%  15.0% |      0.30   0.05
+  nothing held, 2+ idle       861    6.4    6.50  0.00 |                                    0.0%     0.0%    11.8%   72.4%  15.8% |      0.28   0.13
+
+--- Held mana at the end of the turn: Tergrid, every own turn (14318 turns) ---
+  2+ mana unused and a castable card in hand: 6.9% of turns; of those the castable card is not a held kind on 6.5% (an answer held: 0.1%, nothing held: 6.4%)
+  turns ending with mana held for an answer (hold_of named a card): 0.1% (16); idle turns (2+ unused, castable, nothing held): 6.4% (913)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  counter held                  6    0.0    5.33  1.50 |                                    0.0%     0.0%     0.0%   66.7%  33.3% |      0.00   0.00
+  protection held               3    0.0    2.33  1.50 |                                    0.0%     0.0%    33.3%   33.3%  33.3% |      1.00   0.50
+  instant removal held          7    0.0    4.00  3.50 |                                  100.0%     0.0%     0.0%    0.0%   0.0% |      1.86   0.00
+  all held together            16    0.1    4.19  2.38 |                                   43.8%     0.0%     6.2%   31.2%  18.8% |      1.15   0.08
+  nothing held, 2+ idle       913    6.4    5.09  0.00 |                                    0.0%     0.0%     6.2%   73.4%  20.4% |      0.17   0.06
+Target sources:
+  seat1_win: Playgroup commander pages, seat win rates of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight), share of seat wins (n=21059, read 2026-10-24)
+  seat2_win: Playgroup commander pages, seat win rates of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight), share of seat wins (n=21059, read 2026-10-24)
+  seat3_win: Playgroup commander pages, seat win rates of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight), share of seat wins (n=21059, read 2026-10-24)
+  seat4_win: Playgroup commander pages, seat win rates of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight), share of seat wins (n=21059, read 2026-10-24)
+  win_round_median: Playgroup commander stats, average win turn of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight) (n=7223, read 2026-10-24)
+  win_combo_alt: Playgroup commanders.json, wins of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight) (n=3709, read 2026-10-24)
+  win_damage: Playgroup commanders.json, wins of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight) (n=3709, read 2026-10-24)
+  win_commander_damage: Playgroup commanders.json, wins of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight) (n=3709, read 2026-10-24)
+  win_poison: Playgroup commanders.json, wins of Atraxa, Aurelia, Korvold, Marwyn, Tergrid (equal weight) (n=3709, read 2026-10-24)

@@ -1,0 +1,154 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t5 Kinnan             100 cards: Full 88, Full-auto 3, Approximate 9, Partial 0, Unmodeled 0
+  t5 Miirym             100 cards: Full 82, Full-auto 10, Approximate 8, Partial 0, Unmodeled 0
+  t5 Urza               100 cards: Full 92, Full-auto 4, Approximate 4, Partial 0, Unmodeled 0
+  t5 Yawgmoth           100 cards: Full 83, Full-auto 11, Approximate 6, Partial 0, Unmodeled 0
+  t5 Zur the Enchanter  100 cards: Full 88, Full-auto 6, Approximate 6, Partial 0, Unmodeled 0
+
+
+=== Realism: Tier 5 (High B4) [loose, adaptive AI, 2000 games, seeds 900000-901999; 5 decks, 4 a pod] ===
+targets: data/realism/t5.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     29.6%     27.6-31.7   31.8%     30.3-33.3  FAIL
+  seat 2 share of decisive games (%)                     26.0%     24.1-28.0   27.8%     26.3-29.3  FAIL
+  seat 3 share of decisive games (%)                     23.8%     22.0-25.7   22.4%     20.9-23.9  PASS
+  seat 4 share of decisive games (%)                     20.6%     18.9-22.4   18.0%     16.5-19.5  FAIL
+  median round of a decisive win (rounds)                  9.0       9.0-9.0     7.0           6-8  FAIL
+  win round, 75th minus 25th percentile (rounds)           4.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                59.5%     57.4-61.7   37.9%     36.4-39.4  reference
+  wins by damage (combat or other) (%)                   36.4%     34.3-38.6   50.4%     48.9-51.9  reference
+  wins by commander damage (%)                            4.0%       3.3-5.0    9.6%      8.1-11.1  reference
+  wins by poison (%)                                      0.0%       0.0-0.2    2.2%       0.7-3.7  reference
+  deck win spread, best minus worst deck (pts)            20.9             -       -             -  no target
+  games over 15 rounds (round cap 20) (%)                 3.9%       3.1-4.8       -             -  no target
+  1 of 5 targets pass (3 statistics have no target yet; 4 reference values, not scored)
+Games: 2000, decisive 1982 (99.1%), round-cap timeouts 0.3%
+Each deck's share of the decisive games it sat in: Kinnan 23.8% of 1595; Miirym 38.6% of 1604; Urza 24.9% of 1586; Yawgmoth 17.7% of 1543; Zur the Enchanter 19.7% of 1600
+
+--- Held mana at the end of the turn: all seats pooled, own turns 5-10 (28831 turns) ---
+  2+ mana unused and a castable card in hand: 30.7% of turns; of those the castable card is not a held kind on 27.3% (an answer held: 11.5%, nothing held: 15.8%)
+  turns ending with mana held for an answer (hold_of named a card): 15.9% (4571); idle turns (2+ unused, castable, nothing held): 15.8% (4565)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  counter held               3826   13.3    6.33  4.75 |                                   54.2%     2.5%     4.7%   22.1%  16.5% |      2.01   0.07
+  protection held             624    2.2    7.57  4.80 |                                    5.1%     1.0%    11.2%   67.0%  15.7% |      0.50   0.10
+  instant removal held        121    0.4    5.50  5.42 |                                   32.2%     7.4%     5.0%   38.8%  16.5% |      1.91   0.09
+  all held together          4571   15.9    6.48  4.77 |                                   46.9%     2.4%     5.6%   28.7%  16.4% |      1.80   0.08
+  nothing held, 2+ idle      4565   15.8    7.43  0.00 |                                    0.0%     0.0%    16.3%   64.7%  18.9% |      0.77   0.15
+  what the card that was used hit (counter: the spell countered; removal: the permanent removed; protection: the permanent saved):
+    counter held             2493 hits: combo 25% (612), cmdr 2% (49), creature 12% (304), engine 33% (811), removal 10% (248), spell 19% (469)
+    protection held            34 hits: combo 56% (19), creature 26% (9), engine 18% (6)
+    instant removal held       43 hits: combo 44% (19), cmdr 12% (5), creature 40% (17), engine 5% (2)
+
+--- Held mana at the end of the turn: all seats pooled, every own turn (64138 turns) ---
+  2+ mana unused and a castable card in hand: 23.3% of turns; of those the castable card is not a held kind on 19.6% (an answer held: 8.4%, nothing held: 11.2%)
+  turns ending with mana held for an answer (hold_of named a card): 14.3% (9182); idle turns (2+ unused, castable, nothing held): 11.2% (7189)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  counter held               8101   12.6    4.62  4.00 |                                   52.8%     2.1%     4.9%   30.2%   9.9% |      1.54   0.06
+  protection held             933    1.5    6.47  4.40 |                                    3.9%     1.1%    10.5%   71.5%  13.1% |      0.42   0.09
+  instant removal held        148    0.2    5.47  5.38 |                                   35.8%     7.4%     4.1%   35.8%  16.9% |      2.01   0.09
+  all held together          9182   14.3    4.82  4.06 |                                   47.6%     2.1%     5.5%   34.5%  10.4% |      1.43   0.07
+  nothing held, 2+ idle      7189   11.2    6.89  0.00 |                                    0.0%     0.0%    16.6%   67.5%  15.9% |      0.71   0.15
+  what the card that was used hit (counter: the spell countered; removal: the permanent removed; protection: the permanent saved):
+    counter held             4869 hits: combo 24% (1186), cmdr 2% (97), creature 11% (523), engine 34% (1655), removal 9% (445), spell 20% (963)
+    protection held            41 hits: combo 54% (22), creature 32% (13), engine 15% (6)
+    instant removal held       57 hits: combo 44% (25), cmdr 14% (8), creature 39% (22), engine 4% (2)
+
+--- Held mana at the end of the turn: Kinnan, own turns 5-10 (5635 turns) ---
+  2+ mana unused and a castable card in hand: 23.3% of turns; of those the castable card is not a held kind on 17.9% (an answer held: 9.5%, nothing held: 8.3%)
+  turns ending with mana held for an answer (hold_of named a card): 17.0% (960); idle turns (2+ unused, castable, nothing held): 8.3% (470)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  counter held                955   16.9    5.36  4.67 |                                   52.0%     5.5%     6.2%   18.5%  17.7% |      2.69   0.11
+  instant removal held          5    0.1    8.60  5.29 |                                   60.0%     0.0%    20.0%    0.0%  20.0% |      3.50   0.75
+  all held together           960   17.0    5.38  4.68 |                                   52.1%     5.5%     6.2%   18.4%  17.7% |      2.70   0.12
+  nothing held, 2+ idle       470    8.3    3.86  0.00 |                                    0.0%     0.0%    27.4%   57.4%  15.1% |      1.45   0.23
+
+--- Held mana at the end of the turn: Miirym, own turns 5-10 (6252 turns) ---
+  2+ mana unused and a castable card in hand: 32.0% of turns; of those the castable card is not a held kind on 26.4% (an answer held: 14.4%, nothing held: 11.9%)
+  turns ending with mana held for an answer (hold_of named a card): 19.8% (1236); idle turns (2+ unused, castable, nothing held): 11.9% (746)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  counter held                602    9.6   14.80  4.70 |                                   58.8%     2.7%     1.8%   22.3%  14.5% |      1.72   0.03
+  protection held             624   10.0    7.57  4.80 |                                    5.1%     1.0%    11.2%   67.0%  15.7% |      0.50   0.10
+  instant removal held         10    0.2    4.10  5.53 |                                   50.0%    10.0%     0.0%   10.0%  30.0% |      2.29   0.00
+  all held together          1236   19.8   11.06  4.76 |                                   31.6%     1.9%     6.6%   44.7%  15.2% |      1.11   0.07
+  nothing held, 2+ idle       746   11.9   23.59  0.00 |                                    0.0%     0.0%     9.5%   76.3%  14.2% |      0.24   0.10
+
+--- Held mana at the end of the turn: Urza, own turns 5-10 (5392 turns) ---
+  2+ mana unused and a castable card in hand: 45.1% of turns; of those the castable card is not a held kind on 42.5% (an answer held: 17.7%, nothing held: 24.7%)
+  turns ending with mana held for an answer (hold_of named a card): 22.7% (1224); idle turns (2+ unused, castable, nothing held): 24.7% (1334)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  counter held               1182   21.9    4.97  4.73 |                                   53.7%     1.5%     4.8%   23.9%  16.1% |      2.05   0.04
+  instant removal held         42    0.8    5.90  5.39 |                                   21.4%     7.1%    11.9%   42.9%  16.7% |      2.23   0.09
+  all held together          1224   22.7    5.00  4.76 |                                   52.6%     1.7%     5.1%   24.5%  16.1% |      2.06   0.04
+  nothing held, 2+ idle      1334   24.7    3.59  0.00 |                                    0.0%     0.0%    18.8%   62.2%  19.0% |      1.29   0.09
+
+--- Held mana at the end of the turn: Yawgmoth, own turns 5-10 (5565 turns) ---
+  2+ mana unused and a castable card in hand: 16.2% of turns; of those the castable card is not a held kind on 16.1% (an answer held: 0.8%, nothing held: 15.3%)
+  turns ending with mana held for an answer (hold_of named a card): 0.8% (42); idle turns (2+ unused, castable, nothing held): 15.3% (854)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  instant removal held         42    0.8    5.88  5.42 |                                   31.0%     4.8%     0.0%   52.4%  11.9% |      1.46   0.03
+  all held together            42    0.8    5.88  5.42 |                                   31.0%     4.8%     0.0%   52.4%  11.9% |      1.46   0.03
+  nothing held, 2+ idle       854   15.3    4.75  0.00 |                                    0.0%     0.0%     9.6%   66.5%  23.9% |      0.22   0.11
+
+--- Held mana at the end of the turn: Zur the Enchanter, own turns 5-10 (5987 turns) ---
+  2+ mana unused and a castable card in hand: 36.8% of turns; of those the castable card is not a held kind on 34.1% (an answer held: 14.7%, nothing held: 19.4%)
+  turns ending with mana held for an answer (hold_of named a card): 18.5% (1109); idle turns (2+ unused, castable, nothing held): 19.4% (1161)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  counter held               1087   18.2    3.98  4.85 |                                   54.2%     0.7%     4.9%   23.3%  16.9% |      1.53   0.11
+  instant removal held         22    0.4    3.91  5.44 |                                   40.9%    13.6%     0.0%   27.3%  18.2% |      1.72   0.11
+  all held together          1109   18.5    3.98  4.86 |                                   53.9%     1.0%     4.8%   23.4%  17.0% |      1.54   0.11
+  nothing held, 2+ idle      1161   19.4    4.86  0.00 |                                    0.0%     0.0%    18.3%   61.8%  19.9% |      0.62   0.26
+
+--- Held mana at the end of the turn: Kinnan, every own turn (12655 turns) ---
+  2+ mana unused and a castable card in hand: 18.1% of turns; of those the castable card is not a held kind on 13.1% (an answer held: 6.8%, nothing held: 6.3%)
+  turns ending with mana held for an answer (hold_of named a card): 17.3% (2190); idle turns (2+ unused, castable, nothing held): 6.3% (795)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  counter held               2181   17.2    3.91  3.72 |                                   49.7%     4.4%     5.6%   30.4%   9.9% |      1.78   0.08
+  instant removal held          9    0.1    7.22  5.24 |                                   77.8%     0.0%    11.1%    0.0%  11.1% |      3.00   0.62
+  all held together          2190   17.3    3.92  3.73 |                                   49.8%     4.4%     5.6%   30.3%   9.9% |      1.78   0.08
+  nothing held, 2+ idle       795    6.3    3.62  0.00 |                                    0.0%     0.0%    23.8%   64.7%  11.6% |      1.10   0.21
+
+--- Held mana at the end of the turn: Miirym, every own turn (13493 turns) ---
+  2+ mana unused and a castable card in hand: 23.6% of turns; of those the castable card is not a held kind on 17.6% (an answer held: 10.0%, nothing held: 7.6%)
+  turns ending with mana held for an answer (hold_of named a card): 15.6% (2103); idle turns (2+ unused, castable, nothing held): 7.6% (1025)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  counter held               1157    8.6    9.81  4.27 |                                   60.4%     2.6%     2.4%   25.3%   9.2% |      1.56   0.03
+  protection held             933    6.9    6.47  4.40 |                                    3.9%     1.1%    10.5%   71.5%  13.1% |      0.42   0.09
+  instant removal held         13    0.1    4.15  5.51 |                                   53.8%     7.7%     0.0%    7.7%  30.8% |      2.44   0.00
+  all held together          2103   15.6    8.29  4.33 |                                   35.3%     1.9%     6.0%   45.7%  11.1% |      1.07   0.06
+  nothing held, 2+ idle      1025    7.6   21.79  0.00 |                                    0.0%     0.0%    12.9%   73.1%  14.0% |      0.28   0.14
+
+--- Held mana at the end of the turn: Urza, every own turn (12211 turns) ---
+  2+ mana unused and a castable card in hand: 35.5% of turns; of those the castable card is not a held kind on 31.9% (an answer held: 13.9%, nothing held: 18.0%)
+  turns ending with mana held for an answer (hold_of named a card): 22.5% (2752); idle turns (2+ unused, castable, nothing held): 18.0% (2192)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  counter held               2702   22.1    3.64  3.89 |                                   51.3%     1.0%     4.8%   33.8%   9.0% |      1.45   0.04
+  instant removal held         50    0.4    5.92  5.34 |                                   22.0%     8.0%    10.0%   42.0%  18.0% |      2.37   0.07
+  all held together          2752   22.5    3.68  3.92 |                                   50.8%     1.1%     4.9%   33.9%   9.2% |      1.46   0.04
+  nothing held, 2+ idle      2192   18.0    3.43  0.00 |                                    0.0%     0.0%    19.0%   66.6%  14.4% |      1.20   0.09
+
+--- Held mana at the end of the turn: Yawgmoth, every own turn (12473 turns) ---
+  2+ mana unused and a castable card in hand: 11.1% of turns; of those the castable card is not a held kind on 10.9% (an answer held: 0.4%, nothing held: 10.5%)
+  turns ending with mana held for an answer (hold_of named a card): 0.4% (46); idle turns (2+ unused, castable, nothing held): 10.5% (1312)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  instant removal held         46    0.4    5.74  5.40 |                                   34.8%     4.3%     0.0%   50.0%  10.9% |      1.61   0.02
+  all held together            46    0.4    5.74  5.40 |                                   34.8%     4.3%     0.0%   50.0%  10.9% |      1.61   0.02
+  nothing held, 2+ idle      1312   10.5    4.88  0.00 |                                    0.0%     0.0%     9.5%   70.4%  20.1% |      0.21   0.11
+
+--- Held mana at the end of the turn: Zur the Enchanter, every own turn (13306 turns) ---
+  2+ mana unused and a castable card in hand: 28.1% of turns; of those the castable card is not a held kind on 24.9% (an answer held: 10.9%, nothing held: 14.0%)
+  turns ending with mana held for an answer (hold_of named a card): 15.7% (2091); idle turns (2+ unused, castable, nothing held): 14.0% (1865)
+  group                     turns% turns  unused  hold | by the holder's next turn:   usedcast,misselsewhere  unused  ended | spent/avg  oinst
+  counter held               2061   15.5    3.73  4.27 |                                   53.9%     0.7%     5.7%   28.1%  11.6% |      1.39   0.10
+  instant removal held         30    0.2    4.33  5.39 |                                   40.0%    13.3%     0.0%   26.7%  20.0% |      1.58   0.08
+  all held together          2091   15.7    3.74  4.29 |                                   53.7%     0.9%     5.6%   28.1%  11.7% |      1.39   0.10
+  nothing held, 2+ idle      1865   14.0    5.57  0.00 |                                    0.0%     0.0%    17.9%   64.6%  17.5% |      0.54   0.24
+Target sources:
+  seat1_win: Playgroup commander pages, seat win rates of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight), share of seat wins (n=22224, read 2026-10-25)
+  seat2_win: Playgroup commander pages, seat win rates of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight), share of seat wins (n=22224, read 2026-10-25)
+  seat3_win: Playgroup commander pages, seat win rates of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight), share of seat wins (n=22224, read 2026-10-25)
+  seat4_win: Playgroup commander pages, seat win rates of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight), share of seat wins (n=22224, read 2026-10-25)
+  win_round_median: Playgroup commander stats, average win turn of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight) (n=8442, read 2026-10-25)
+  win_combo_alt: Playgroup commanders.json, wins of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight) (n=4303, read 2026-10-25) [reference, not scored]
+  win_damage: Playgroup commanders.json, wins of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight) (n=4303, read 2026-10-25) [reference, not scored]
+  win_commander_damage: Playgroup commanders.json, wins of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight) (n=4303, read 2026-10-25) [reference, not scored]
+  win_poison: Playgroup commanders.json, wins of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight) (n=4303, read 2026-10-25) [reference, not scored]
