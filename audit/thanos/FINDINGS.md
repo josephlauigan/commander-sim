@@ -19,6 +19,8 @@ No old-build comparison: the old list played t6 and has no 11/05 run at t5 (its 
 **The plan file `data/plans/thanos.toml` is PROVISIONAL**: written from the deck document's pilot guide, not from a paired test, so this
 number measures list plus provisional plan together. Engine changes that can touch the deck: C2 Maelstrom (t5 Miirym) and Forensic
 Gadgeteer (t5 Urza) change two opponents; C3 opponents cast their commander on time (+1.5). The rewire (#270) is the list itself.
-**Check:** the WARNING lists 22 skipped games (1.1%) on `Option::unwrap()` on None at `crates/sim-core/src/engine/stack.rs:1668` (seeds
-500111, 500163, 500222, 500317, 500422 and 17 more). Possibly tied to the C2 t5 cards above (a guess, not investigated).
-Raw: `audit/baseline-2026-11-06/thanos.txt`.
+**Re-run after the crash fix:** the 22 skipped games panicked in the look-ahead's `cast_counter` (a colourless counterspell cast
+from the top of the library under Mystic Forge, latent on main; fixed on #274). Re-run on the fixed integration build (b889e9c6,
+same command): **20.0%** (95% CI 18.3-21.8) over t5, all 2,000 games, no errors; damage 50%, combo 46%, timeout 4%; plan online
+9.8%. This is the number of record. Raw: `audit/baseline-2026-11-06/thanos-rerun.txt`.
+First run (22 games skipped): `audit/baseline-2026-11-06/thanos.txt`.

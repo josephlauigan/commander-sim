@@ -12,9 +12,11 @@ Engine changes that can touch this deck: C2 Loran of the Third Path (fires less,
 longer idle attackers (it plays Propaganda and Sphere of Safety; Toxic Deluge is not affected) and opponents cast their commander on time
 (+1.5), which changes the t5 opponents' play. C1/C1b and the rewire do not touch it. Nothing here is a measured effect of any
 one change: the net is noise.
-**Check:** the run printed a WARNING, 6 games skipped on `Option::unwrap()` on None at `crates/sim-core/src/engine/stack.rs:1668`
-(seeds 500533, 501285, 501392, 501546, 501905; one more not listed). The old-build run had none. Cause not investigated.
-Raw: `audit/baseline-2026-11-06/yshtola.txt` and `yshtola-2026-11-05-oldbuild.txt`.
+**Re-run after the crash fixes:** the 6 skipped games were the same look-ahead `cast_counter` panic as Thanos's (latent on main,
+fixed on #274); a first re-run then skipped one game on an overflow of the "life gained this turn" counter (Exquisite Blood off a
+doubled Dragon army, seed 501953), also fixed on #274. Final re-run (integration 23ecd983): **26.3%** (95% CI 24.4-28.3) over t5, all
+2,000 games, no errors; plan online 65.5%; damage 66% / combo 33%. Against the old build 25.8%: noise. This is the number of record.
+Raw: `audit/baseline-2026-11-06/yshtola-rerun.txt`; first run `audit/baseline-2026-11-06/yshtola.txt` and `yshtola-2026-11-05-oldbuild.txt`.
 
 ## Current state (2026-11-04)
 Look-ahead, loose, current list (Cabal Coffers in for a Plains): **T5 24.9%** (95% CI 23.0-26.8), 2,000 games.
