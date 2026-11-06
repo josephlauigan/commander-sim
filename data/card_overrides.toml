@@ -1623,7 +1623,7 @@ note = ""
 tags = "leg pow=2 warrior"
 dsl = []
 status = "Full"
-note = "{G}: regenerate another Elf (saves valuable Elves); overrun before combat with 4+ Elves"
+note = "{G}: regenerate another Elf (saves valuable Elves); {2}{G}{G}{G}: Elves get +3/+3 and trample until end of turn (impls/model_gaps_a4.rs: on the stack; the AI uses it before combat only when it makes the attack lethal through the blockers or close to it, not whenever four Elves are ready; a person and Marvin use it too)"
 
 ["Fable of the Mirror-Breaker // Reflection of Kiki-Jiki"]
 types = "E"
@@ -4319,7 +4319,7 @@ note = "fear; destroys a nonartifact, nonblack creature on entry; evoke {1}{B} w
 tags = "pow=2"
 dsl = []
 status = "Full"
-note = "three Goblins; {1}{R}, sacrifice a Goblin: 2 damage"
+note = "three Goblins; {1}{R}, sacrifice a Goblin: 2 damage to any target (impls/model_gaps_a4.rs: on the stack as a copyable ability; the AI pings a player the mana and Goblins reach, a planeswalker 2 finishes or a creature worth a Goblin; a person chooses the target and the Goblin, human/model_gaps_a4.rs; Marvin borrows it)"
 
 ["Sifter of Skulls"]
 pool_remove_tags = ["tok", "tokp"] # the tok tag made a 1/1 as it entered; the card makes its Scion when a creature of yours dies (impls/common.rs `dies`) (Phase 2)
@@ -4829,7 +4829,7 @@ note = ""
 ["Syr Konrad, the Grim"]
 dsl = []
 status = "Full"
-note = "another creature dying, or a creature card milled or discarded, deals 1 to each opponent"
+note = "another creature dying, or a creature card milled or discarded, deals 1 to each opponent; {1}{B}: each player mills a card (impls/model_gaps_a4.rs: on the stack; the AI mills with spare mana when the creature cards in the libraries are worth the damage and its own library has 8 or more cards; a person and Marvin use it too)"
 
 ["Szadek, Lord of Secrets"]
 tags = "leg pow=5 tgh=5 fly"
@@ -5141,7 +5141,7 @@ note = "indestructible (flash on a commander)"
 tags = "leg pow=1 tgh=2"
 dsl = []
 status = "Full"
-note = "end step after an opponent discards: plays the best cheap permanent from their graveyard"
+note = "end step after an opponent discards: plays the best cheap permanent from their graveyard; {4}{B}{B}: each opponent with no cards in hand loses 10 life (impls/model_gaps_a4.rs: on the stack; the AI uses it when an empty-handed opponent is at 10 or less, or 20 or less as the first half of two; a person and Marvin use it too)"
 
 ["Tireless Provisioner"]
 tags = "pow=3 tgh=2"
@@ -9201,7 +9201,7 @@ note = "first strike, trample, lifelink; Stagger on combat damage to a player do
 
 ["Marvin, Murderous Mimic"]
 status = "Approximate"
-note = "has the compiled activated abilities of the creatures you control that don't share its name (dsl::borrowed_abilities: cost and effects as printed, mana, discard and sacrifice costs, token copies, the same per-turn cap), the hand-written ones (each creature's `options` hook run with Marvin as the source, so Marvin pays the {T}, the sacrifice of 'this creature' and the counters: Chatterfang, Stoneforge Mystic, Priest of Forgotten Gods, Sakura-Tribe Elder, Yawgmoth, Allosaurus Shepherd, Eladamri, Elvish Warmaster, Timberwatch Elf, Cankerbloom, Skrelv ...; Kefka's {8} (it transforms Kefka, which the text names; Tekuthal's counter likewise goes on Tekuthal); Krenko, Kiki-Jiki and Ioreth's untaps; the sacrifice outlets Carrion Feeder and Viscera Seer, AI and person; Mother of Runes and the other pool protectors; Quirion Ranger and Wirewood Symbiote untaps), and the mana of the mana creatures (the best single one: the most mana, then the most colours). Left out (no ability code exists for the creature itself): Siege-Gang Commander's sacrifice-a-Goblin ping, Syr Konrad's mill, Professional Face-Breaker, Tinybones's {4}{B}{B} and Ezuri's overrun; Bloodline Keeper's transform does nothing to Marvin; a person using a borrowed hand-written ability gets the AI's choices of targets"
+note = "has the compiled activated abilities of the creatures you control that don't share its name (dsl::borrowed_abilities: cost and effects as printed, mana, discard and sacrifice costs, token copies, the same per-turn cap), the hand-written ones (each creature's `options` hook run with Marvin as the source, so Marvin pays the {T}, the sacrifice of 'this creature' and the counters: Chatterfang, Stoneforge Mystic, Priest of Forgotten Gods, Sakura-Tribe Elder, Yawgmoth, Allosaurus Shepherd, Eladamri, Elvish Warmaster, Timberwatch Elf, Cankerbloom, Skrelv ...; Kefka's {8} (it transforms Kefka, which the text names; Tekuthal's counter likewise goes on Tekuthal); Krenko, Kiki-Jiki and Ioreth's untaps; the sacrifice outlets Carrion Feeder and Viscera Seer, AI and person; Mother of Runes and the other pool protectors; Quirion Ranger and Wirewood Symbiote untaps), and the mana of the mana creatures (the best single one: the most mana, then the most colours). Siege-Gang Commander's {1}{R} sacrifice-a-Goblin ping, Syr Konrad's mill, Professional Face-Breaker's Treasure, Tinybones's {4}{B}{B} and Ezuri's overrun (impls/model_gaps_a4.rs) are borrowed too. A person uses the creature's own person path with Marvin as the source and the one that pays (the same questions) for Kiki-Jiki, Chatterfang, those five, the Rebel searchers (Blightspeaker, the Ramosians, Defiant Vanguard), Azorius Guildmage, Lin Sivvi, Errant Doomsayers, Lawbringer, Lightbringer, Urborg Syphon-Mage, Sakura-Tribe Elder and Jace's Archivist (human/model_gaps_a4.rs), and chooses what a compiled sacrifice cost sacrifices. Not yet: the other hook-only creatures' abilities a person uses through Marvin still take the AI's choice of target (list in rust/agents/handoff-model-gaps-a4.md); Bloodline Keeper's transform does nothing to Marvin"
 
 ["Staff of Compleation"]
 paths_ok = "two sets of abilities, one path each: the options entry is {T}, pay 1 life: destroy target permanent you own (the override dropped the compiled misreading); the compiled activations are the proliferate, the draw and the untap"
