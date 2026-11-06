@@ -1,100 +1,194 @@
+1x Adeline, Resplendent Cathar
+1x All Is Dust
 1x Altar of Dementia (brr)
+1x Ancient Copper Dragon
+1x Ancient Tomb
+1x Anguished Unmaking
 1x Arcane Denial (msc)
+1x Arcane Denial
 1x Arcane Sanctum
+1x Archon of Absolution
 1x Arnim Zola, Bio-Fanatic
+1x Atraxa, Grand Unifier
+1x Aura Shards
 1x Austere Command (cmr)
+1x Austere Command
+1x Aven Mindcensor
+1x Badlands
+1x Baird, Steward of Argive
+1x Baneslayer Angel
+1x Bastion Protector
+1x Batterskull
 1x Battle-Rage Blessing (dmu)
 1x Battlefield Forge
+1x Bayou
+1x Birds of Paradise
 1x Bite Down (dmu)
 1x Bitter Triumph
 1x Blood Artist (2x2)
 1x Blossoming Defense (kld)
 1x Bojuka Bog (soc)
+1x Bonders' Enclave
+1x Brain Freeze
 1x Brushland (plst)
+1x Brushland
 1x Buried Alive (ody)
+1x Buried Ruin
+1x Burnished Hart
 1x Call of the Ring
 1x Caparocti Sunborn
 1x Carnage Altar (c13)
 1x Carth the Lion
 1x Cathars' Crusade (inr)
-1x Caves of Koilos
+1x Cavern of Souls
+2x Caves of Koilos
 1x Caves of Koilos (dmu)
+1x Cecil, Dark Knight
 1x Champion's Helm (fic)
-1x Chromatic Lantern
+1x Cityscape Leveler
+1x Coiling Oracle
 1x Command Tower (cmm)
+1x Command Tower
 1x Commander's Sphere (cmm)
+1x Conjurer's Closet
 1x Conqueror's Flail (fic)
 1x Conqueror's Flail (sld)
+1x Crawlspace
 1x Cromat
+1x Crucible of Worlds
 1x Cruel Celebrant (lcc)
 1x Crumbling Necropolis
 1x Cyclonic Rift (2xm)
 1x Dakkon Blackblade
-1x Dark Ritual
-1x Darksteel Mutation
+1x Darksteel Citadel
+1x Darksteel Forge
+2x Darksteel Mutation
+1x Dauthi Voidwalker
+1x Deathcap Glade
 1x Deepwood Legate
 1x Demonic Embrace (m21)
+1x Demonic Tutor
 1x Desertion
+1x Desperate Ritual
+1x Diabolic Tutor
+1x Disdainful Stroke
 1x Disembowel (rvr)
 1x Disenchant
 1x Disenchant (ath)
 1x Dismiss
 1x Dissipate
 1x Doubling Season (fdn)
+1x Doubling Season
+1x Dragon Tempest
+1x Dragon's Hoard
+2x Dragonlord Dromoka
+1x Dragonlord Ojutai
 1x Dread Return (dmr)
+1x Drowned Catacomb
 1x Duress
-1x Eladamri's Call (pls)
-1x Elenda, the Dusk Rose
+2x Elenda, the Dusk Rose
 1x Elesh Norn, Grand Cenobite (sld)
+1x Elesh Norn, Mother of Machines
 1x Elrond, Lord of Rivendell
 1x Elspeth Tirel (sld)
+1x Elspeth, Sun's Champion
+1x Endless Atlas
+1x Ephemerate
 1x Everflowing Chalice (tsr)
-1x Fact or Fiction
+2x Fact or Fiction
+1x Faeburrow Elder
+1x Falcon and Redwing
 1x Fate of the Sun-Cryst (fin)
 1x Fellwar Stone (cmm)
 1x Fetid Imp (m21)
+1x Flickering Hound
+1x Flooded Strand
 1x Frontier Bivouac
+2x Gaea's Cradle
+1x Ganax, Astral Hunter
 1x Gandalf, Friend of the Shire
 1x Garland, Royal Kidnapper
+1x Garruk's Uprising
+1x Garth One-Eye
 1x Ghave, Guru of Spores (sld)
+1x Ghost Quarter
+1x Ghostly Prison
+1x Glacial Fortress
+1x Glorybringer
 1x Gonti, Lord of Luxury (plst)
 1x Grab the Prize (dsk)
+1x Grand Abolisher
 1x Grave Researcher // Reanimate (sos)
 1x Grave Titan (sld)
+1x Grave Titan
+1x Grim Monolith
+1x Hangarback Walker
 2x Helm of Kaldra
+1x Hero of Bladehold
 1x Heroic Intervention (sld)
+1x Hexing Squelcher
 1x Hunter's Axe
 1x Indatha Triome (iko)
+2x Inventors' Fair
 1x Isolated Chapel (soc)
+1x Isolated Chapel
 1x Jester's Cap
 1x Jodah, the Unifier
 1x Jungle Shrine
 1x Kaervek the Merciless (2x2)
+1x Karn, Legacy Reforged
+1x Kindred Dominance
 1x King Darien XLVIII
 1x Kitchen Finks (f09)
 1x Korlash, Heir to Blackblade
+1x Korvold, Fae-Cursed King
+1x Kuldotha Forgemaster
+1x Kura, the Boundless Sky
 1x Lagrella, the Magpie
 1x Lash of the Balrog
 1x Last Gasp (fra)
+1x Lathliss, Dragon Queen
 1x Latulla's Orders
+1x Liberator, Urza's Battlethopter
 1x Lightning Greaves (2xm)
 1x Lightning Greaves (fic)
+2x Lightning Greaves
+1x Liquimetal Torque
 1x Living Death (brb)
-1x Llanowar Wastes
+1x Llanowar Elves
+2x Llanowar Wastes
 1x Llanowar Wastes (soc)
 1x Love on the Battlefield
-1x Lyra Dawnbringer
+2x Lyra Dawnbringer
+1x Maelstrom of the Spirit Dragon
+1x Mana Vault
+1x Manamorphose
 1x Marchesa, the Black Rose
+1x Marsh Flats
+1x Maskwood Nexus
 1x Massacre Wurm (m21)
+1x Mazemind Tome
 1x Memory Trap (fra)
+1x Meteor Golem
+1x Miirym, Sentinel Wyrm
 1x Mirari
 1x Mirri, Weatherlight Duelist
+1x Mirrorworks
+1x Mishra's Factory
+1x Mishra's Foundry
+1x Mishra's Self-Replicator
+1x Mishra's Workshop
+1x Misty Rainforest
 1x Mordenkainen
 1x Moss Diamond
+1x Mox Jasper
 1x Muldrotha, the Gravetide (fca)
+1x Myr Battlesphere
 1x Mystic Enforcer
 1x Mystic Monastery
+1x Natural Order
 1x Nevinyrral's Disk (lea)
+1x Nightveil Predator
 1x Nightwind Glider (plst)
 1x Nim Deathmantle (som)
 1x Nomad Outpost
@@ -102,50 +196,122 @@
 1x Opulent Palace
 1x Orzhov Signet (drc)
 1x Overgrown Farmland
+1x Paradise Druid
 1x Paradox Surveyor (sos)
 1x Path of Ancestry
+1x Path to Exile
 1x Phyrexian Altar (2x2)
 1x Phyrexian Boon
 1x Pillage
+1x Pithing Needle
 1x Pitiless Plunderer (spg)
+1x Plateau
+1x Platinum Angel
+1x Polluted Delta
 1x Potioner's Trove (sos)
 1x Privileged Position
 1x Profane Tutor (mh2)
+1x Propaganda
 1x Radiant Kavu
+1x Rampant Growth
 1x Rapturous Moment (sos)
 1x Razia, Boros Archangel
+1x Reliquary Tower
+1x Resplendent Angel
 1x Restoration Angel (j22)
+1x Restoration Angel
+1x Rite of Flame
+1x Rogue's Passage
 1x Rune-Scarred Demon (cmm)
+1x Sakura-Tribe Elder
 1x Sandsteppe Citadel
 1x Sandsteppe Citadel (ltc)
 1x Savage Lands
+1x Savannah
+1x Scion of Draco
+1x Scion of the Ur-Dragon
+1x Scourge of Valkas
+1x Scrubland
+1x Sculpting Steel
 1x Seaside Citadel
+1x Seething Song
 1x Shield of Kaldra
+1x Simian Spirit Guide
+1x Skullclamp
+1x Skyclave Apparition
+2x Sol Ring
 1x Sol'kanar the Swamp King
 1x Solarium Sentry
 1x Soul Enervation (mkm)
+1x Soul-Guide Lantern
+1x Spark Double
+1x Spine of Ish Sah
 1x Spirit Link
+1x Staff of Domination
 1x Star Compass
+1x Steel Overseer
 1x Stitcher's Supplier (sld)
+1x Strip Mine
+1x Summon: Bahamut
+1x Sun Titan
 1x Sunpetal Grove (fic)
+1x Sunpetal Grove
+1x Swan Song
 1x Swiftfoot Boots (fic)
+1x Swiftfoot Boots
 1x Sword of Kaldra (mrd)
+1x Sylvan Library
 1x Szadek, Lord of Secrets
+1x Taiga
+1x Talisman of Curiosity
 1x Talisman of Hierarchy
 1x Talisman of Unity (mrd)
+1x Temple Garden
+1x Temur Ascendancy
 1x Terror (dmr)
+1x Tezzeret, Cruel Captain
 1x The Aetherspark
 1x The Eternal Wanderer (one)
-1x Thought Vessel
+1x The One Ring
+1x The Wasp, Winsome Avenger
+2x Thought Vessel
+1x Thundermaw Hellkite
 1x Tolsimir Wolfblood
 1x Tortured Existence (plst)
+1x Treasure Vault
+1x Triplicate Titan
 1x Triskelion
+1x Tropical Island
+1x Tundra
+1x Twinflame
+1x Ugin, the Ineffable
 1x Unclaimed Territory
-2x Underground River
+3x Underground River
+1x Undergrowth Stadium
 1x Underworld Breach (mb2)
+1x Underworld Breach
+1x Unstable Obelisk
+1x Urza's Blueprints
+1x Urza's Cave
+1x Urza's Factory
+1x Urza's Mine
+1x Urza's Power Plant
+1x Urza's Tome
+1x Urza's Tower
+1x Urza's Workshop
 1x Urza, Powerstone Prodigy
+1x Utvara Hellkite
+1x Vampire Nighthawk
+1x Verdant Catacombs
 1x Vivid Creek
+1x Volcanic Island
+1x War Room
+1x Windborn Muse
+1x Windswept Heath
 1x Woodland Cemetery (soc)
 1x Worldly Tutor (dmr)
+1x Worldly Tutor
+1x Worn Powerstone
+1x Yavimaya Coast
 1x Yawgmoth's Will (wc99)
 1x Zulaport Cutthroat (tsr)

@@ -60,7 +60,7 @@ const fn st(temp: f64, aggression: f64, caution: f64) -> Style {
 }
 
 /// brain.STYLE: your decks (their keys are also ais.MAIN, the decks with hand-written plans)
-const MAIN_STYLES: [(&str, Style); 10] = [
+const MAIN_STYLES: [(&str, Style); 9] = [
     ("sauron", st(1.0, 0.55, 0.75)),
     ("galadriel", st(1.0, 0.70, 0.55)),
     ("yshtola", st(1.0, 0.50, 0.75)),
@@ -70,7 +70,6 @@ const MAIN_STYLES: [(&str, Style); 10] = [
     ("omnath", st(1.0, 0.70, 0.50)),
     ("sheoldred", st(1.0, 0.60, 0.60)),
     ("cloud", st(1.0, 0.75, 0.45)),
-    ("karn", st(1.0, 0.60, 0.55)),
 ];
 
 /// one of your decks (Python: `p.key in STYLE`, `p.key in MAIN`, `p.key in E.IDENT`), not an outside deck
@@ -84,7 +83,7 @@ pub fn is_main(key: &str) -> bool {
 pub fn jd_deck(key: &str) -> bool {
     matches!(
         key,
-        "sauron" | "yshtola" | "kefka" | "omnath" | "sheoldred" | "cloud" | "thrasios" | "sephfs" | "karn"
+        "sauron" | "yshtola" | "kefka" | "omnath" | "sheoldred" | "cloud" | "sephfs"
     )
 }
 
@@ -94,10 +93,9 @@ pub fn jd_deck(key: &str) -> bool {
 /// `is_main` / `jd_deck` still name them (styles, table reads), so `hand_key` reads them as "" and every
 /// `is_main(hand_key(..))` routing site takes the generic path; `values::generic_deck` counts them as generic decks.
 /// The pool's four (brago, aurelia, sisay, dack) need no entry: no routing site names a pool deck.
-pub const HAND_DELETED: [&str; 9] =
-    ["sauron", "galadriel", "yshtola", "alela", "kefka", "sheoldred", "cloud", "karn", "thrasios"];
+pub const HAND_DELETED: [&str; 7] = ["sauron", "galadriel", "yshtola", "alela", "kefka", "sheoldred", "cloud"];
 
-/// does this deck play a hand-written AI? No for the nine in `HAND_DELETED`; any other key: yes (the pool decks have
+/// does this deck play a hand-written AI? No for the seven in `HAND_DELETED`; any other key: yes (the pool decks have
 /// nothing to switch; the retired test seats keep theirs)
 pub fn hand_ai_key(key: &str) -> bool {
     !HAND_DELETED.contains(&key)

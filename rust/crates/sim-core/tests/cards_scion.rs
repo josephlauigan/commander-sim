@@ -89,20 +89,6 @@ fn the_ai_turns_scion_into_copper_dragon_before_combat() {
     assert!(t6_scion::scion_options(&mut g, s, P0, Some(false)).unwrap().is_empty());
 }
 
-#[test]
-fn jds_urdragon_deck_uses_scions_copy_ability_through_the_card_hook() {
-    // the rebuilt Ur-Dragon (11/03) plays Scion as a non-commander: the registered hook must reach the Scion AI, not
-    // the Rivaz end-of-turn use (which does nothing without Rivaz)
-    let mut g = table(&["urdragon", "kraum-tymna-blue-breach-midrange"]);
-    lands(&mut g, P0, "Badlands", 2, false);
-    let s = perm(&mut g, P0, SCION);
-    let c = g.perm(s).cd.unwrap();
-    let options = g.registry.get(c).and_then(|i| i.options).expect("Scion has an options hook");
-    let opts = options(&mut g, s, P0, Some(false)).unwrap();
-    assert_eq!(opts.len(), 1, "one activation offered");
-    assert!(opts[0].label.contains(COPPER), "{}", opts[0].label);
-}
-
 /// spells cast before the next one this turn (the storm count), as if they had been cast
 fn cast_before(g: &mut Game, p: PlayerId, n: usize) {
     let c = card(g, "Lotus Petal");

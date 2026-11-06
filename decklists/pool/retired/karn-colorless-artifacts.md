@@ -3,7 +3,7 @@
 **Retired 2026-11-05 (JD).** The deck is broken up: 27 of its cards (Basalt Monolith, Rings of Brighthearth, Walking
 Ballista, the Karn planeswalkers, Urza's Saga, one Wastes and others) move to the new Thanos deck
 (`decklists/JD/thanos-artifacts-and-dragons.md`), and the rest go to the binder; see `documents/doomsday-thanos-rebuild-swaps.md`.
-The `karn` key is still in the simulator until the rewire PR removes it and moves this file to `decklists/pool/retired/`.
+The `karn` key (tiers t4-t5) left the simulator the same day (JD); its plan and Spellbook files were removed. The list is kept here as history only: it is not a pool deck, no test seats it, and it is never drawn. Findings: `audit/retired/karn/FINDINGS.md`.
 
 Fill the board with cheap artifacts, cast Karn, and turn his upkeep mana into big artifacts every turn. Karn adds
 {C} for each artifact you control at the start of your upkeep, so every Bauble, rock and artifact land is one more
@@ -16,7 +16,7 @@ to artifact wipes and artifact hate (Vandalblast, Collector Ouphe, Null Rod), an
 |---|---|
 | **Commander** | Karn, Legacy Reforged ({5}, legendary artifact creature, colourless) |
 | **Bracket** | 4 (five Game Changers and a two-card infinite combo) |
-| **Simulator** | deck key `karn` (colourless); opponent tiers t4-t5 (Bracket 4) |
+| **Simulator** | none (the deck key `karn`, tiers t4-t5, was retired 2026-11-05) |
 
 ## Strategy
 

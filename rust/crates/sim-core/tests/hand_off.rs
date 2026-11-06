@@ -1,5 +1,5 @@
 //! Phase 4 PR 7: the decks' hand-written AI, deleted (`audit/phase4/hand-off-design.md`, "Deleted"). The nine decks in
-//! `ai::HAND_DELETED` (JD's and Avery's: sauron, galadriel, yshtola, alela, kefka, sheoldred, cloud, karn, thrasios)
+//! `ai::HAND_DELETED` (JD's and Avery's: sauron, galadriel, yshtola, alela, kefka, sheoldred, cloud)
 //! and the pool decks whose hand code went (brago, aurelia, sisay, dack) decide through the generic policy and their
 //! plan file; no switch brings the hand AI back. JD's decks are seated with their own tiers only.
 
@@ -40,7 +40,7 @@ fn check_generic(g: &Game, key: &str) {
 /// JD's (and Avery's) decks: the generic policy and the plan file
 #[test]
 fn the_deleted_jd_decks_play_the_generic_policy() {
-    assert_eq!(ai::HAND_DELETED.len(), 9);
+    assert_eq!(ai::HAND_DELETED.len(), 7);
     for (key, t) in [
         ("sauron", "t3"),
         ("galadriel", "t1"),
@@ -49,8 +49,6 @@ fn the_deleted_jd_decks_play_the_generic_policy() {
         ("kefka", "t3"),
         ("sheoldred", "t3"),
         ("cloud", "t1"),
-        ("karn", "t4"),
-        ("thrasios", "t5"),
     ] {
         assert!(ai::HAND_DELETED.contains(&key), "{key}");
         check_generic(&seated(key, t), key);
@@ -59,7 +57,7 @@ fn the_deleted_jd_decks_play_the_generic_policy() {
 
 #[test]
 fn decks_with_nothing_to_switch_and_the_retired_test_seats_keep_what_they_have() {
-    for k in ["chulane-bant-value-combo", "urdragon", "thanos", "sephfs", "godo", "scion"] {
+    for k in ["chulane-bant-value-combo", "thrasios", "thanos", "sephfs", "godo", "scion"] {
         assert!(ai::hand_ai_key(k), "{k}");
     }
 }

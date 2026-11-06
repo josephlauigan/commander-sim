@@ -17,7 +17,7 @@ wipes and Null Rod effects, to fast combo before turn 4, and to tables that puni
 | **Commander** | Thanos, the Mad Titan ({R}{W}{B}, 4/4 deathtouch, lifelink); five colours (his power-up costs all five) |
 | **Bracket** | 4: 17 Game Changers and two infinite combos. Played against Tier 5 (High Bracket 4) |
 | **Game Changers (17)** | Ancient Tomb, Chrome Mox, Demonic Tutor, Enlightened Tutor, Force of Will, Gamble, Grim Monolith, Imperial Seal, Jeska's Will, Mana Vault, Mox Diamond, Rhystic Study, Smothering Tithe, Teferi's Protection, The One Ring, Vampiric Tutor, Worldly Tutor |
-| **Simulator** | Not wired in yet. Planned: replaces the `thanos` list at tier T5 and retires `karn` and `urdragon`, once JD approves the `data/my_decks.toml` change. Thanos's power-up already has card code (`t6_thanos.rs`); the deck needs a new T5 plan file |
+| **Simulator** | Deck key `thanos`, tier T5, played from `data/plans/thanos.toml`; findings in `audit/thanos/FINDINGS.md` (no sims yet). Thanos's power-up is card code (`t6_thanos.rs`). Replaced the old `thanos` list (T6) and retired `karn` and `urdragon` on 2026-11-05 |
 | **Buys** | None: every card comes from the Thanos, Karn and Ur-Dragon decks |
 
 ## Strategy

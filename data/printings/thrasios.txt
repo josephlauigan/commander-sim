@@ -1,94 +1,97 @@
-1 Adeline, Resplendent Cathar (fca) 1
-1 Anguished Unmaking (soc) 293
-1 Arcane Denial (all) 22b
+1 Ad Nauseam (soa) 90
+1 Ancient Tomb (zne) 21
 1 Arcane Signet (p30m) 1P
-1 Archon of Absolution (eld) 3
-1 Atraxa, Grand Unifier (fca) 49
-1 Aura Shards (inv) 233
-1 Austere Command (brc) 69
+1 Arid Mesa (spg) 114
 1 Avacyn's Pilgrim (isd) 170
-1 Aven Mindcensor (clb) 688
-1 Baird, Steward of Argive (plst) DOM-4
-1 Baneslayer Angel (m21) 6
 1 Basalt Monolith (3ed) 235
-1 Bastion Protector (msc) 122
 1 Bayou (ced) 279
-1 Birds of Paradise (dmr) 439
+1 Beseech the Mirror (sld) 2527
+1 Birds of Paradise (rvr) 432
+1 Bloodstained Mire (mh3) 352
+1 Borne Upon a Wind (sld) 2228
+1 Boseiju, Who Endures (neo) 412
 1 Breeding Pool (unf) 286
-1 Brushland (bro) 259
-1 Caves of Koilos (drc) 148
-1 Cecil, Dark Knight (fin) 525
-1 Coiling Oracle (rvr) 172
-1 Command Tower (pip) 259
-1 Crawlspace (ulg) 123
-1 Darksteel Mutation (cmm) 623
-1 Dauthi Voidwalker (tdc) 176
-1 Deathcap Glade (sos) 253
-1 Demonic Tutor (cmm) 696
-1 Diabolic Tutor (sld) 721
-1 Disdainful Stroke (soa) 147
-1 Dragonlord Dromoka (2x2) 376
-1 Drowned Catacomb (m11) 224
-1 Elenda, the Dusk Rose (2x2) 377
-1 Elesh Norn, Mother of Machines (one) 416
-1 Elspeth, Sun's Champion (ths) 9
-1 Ephemerate (sta) 68
-1 Fact or Fiction (cmm) 631
-1 Faeburrow Elder (plst) ELD-190
-1 Falcon and Redwing (msc) 14
-1 Flickering Hound (fra) 7
+1 Cabal Ritual (tor) 51
+1 Cavern of Souls (ltc) 362
+1 Chain of Vapor (slz) 256
+1 Chrome Mox (2xm) 358
+1 Command Tower (slz) 239
+1 Dark Ritual (sld) 2678
+1 Deadly Rollick (cmm) 695
+1 Demonic Consultation (ice) 121
+1 Demonic Tutor (sta) 90
+1 Diabolic Intent (ltc) 526
+1 Doomsday (sld) 1115
+1 Eladamri's Call (pls) 106
+1 Elvish Spirit Guide (sld) 423
+1 Enlightened Tutor (dmr) 412
+1 Esper Sentinel (mh2) 328
+1 Fierce Guardianship (cmm) 694
 1 Flooded Strand (mh3) 353
-1 Forest (mdd) 301
-1 Gaea's Cradle (olgc) 2022A
-1 Ghostly Prison (soc) 146
+1 Flusterstorm (soa) 18
+1 Force of Negation (2x2) 346
+1 Force of Will (all) 28
+1 Gemstone Caverns (ltc) 394
 1 Gifts Ungiven (2x2) 347
-1 Glacial Fortress (msc) 248
+1 Gitaxian Probe (sld) 2067
 1 Godless Shrine (rvr) 294
-1 Grand Abolisher (cmm) 625
-1 Grave Titan (sld) 2188
+1 Grand Abolisher (cmm) 460
+1 Grim Monolith (ulg) 126
+1 Grim Tutor (spg) 76
 1 Hallowed Fountain (rvr) 280
-1 Hero of Bladehold (mbs) 8
-6 Island (mdd) 294
-1 Isolated Chapel (isd) 242
-1 Lightning Greaves (2xm) 360
-1 Llanowar Wastes (c19) 258
-1 Lyra Dawnbringer (dmr) 413
-1 Marsh Flats (mh2) 476
+1 Imperial Seal (2x2) 354
+1 Into the Flood Maw (pw26) 8
+1 Intuition (tmp) 70
+1 Lion's Eye Diamond (mir) 307
+1 Lotho, Corrupt Shirriff (hoc) 34
+1 Lotus Petal (plst) TMP-294
+1 Mana Confluence (sld) 1012a
+1 Mana Vault (2x2) 394
+1 Marsh Flats (spg) 110
+1 Mental Misstep (slz) 22
+1 Merchant Scroll (hml) 33
+1 Mindbreak Trap (otp) 68
 1 Misty Rainforest (spg) 111
-1 Natural Order (mb2) 210
-1 Nightveil Predator (rvr) 206
+1 Mockingbird (blb) 305
+1 Mox Diamond (sth) 138
+1 Mystical Tutor (dmr) 421
+1 Mystic Remora (sld) 406
+1 Necropotence (wot) 74
+1 Noble Hierarch (2xm) 352
+1 Noxious Revival (spg) 73
+1 Orcish Bowmasters (hoc) 19
+1 Orim's Chant (mh3) 323
+1 Otawara, Soaring City (neo) 414
 1 Overgrown Tomb (rtr) 243
-1 Path to Exile (blc) 147
-2 Plains (mdd) 292
+1 Pact of Negation (ltc) 523
 1 Polluted Delta (mh3) 356
-1 Propaganda (plst) C16-94
-1 Resplendent Angel (lci) 32
-1 Restoration Angel (khc) 31
+1 Ranger-Captain of Eos (fca) 2
+1 Rhystic Study (fca) 31
 1 Rings of Brighthearth (ltc) 352
 1 Savannah (ced) 281
+1 Scalding Tarn (spg) 112
 1 Scrubland (ced) 282
-1 Skyclave Apparition (m3c) 172
+1 Silence (sld) 7003
 1 Smothering Tithe (cmm) 57
-1 Sol Ring (sld) 2093
-1 Sun Titan (afc) 73
-1 Sunpetal Grove (ltc) 336
-1 Swamp (mdd) 296
+1 Snapback (tsp) 78
+1 Sol Ring (blc) 129
 1 Swan Song (sld) 2829
 1 Swords to Plowshares (ice) 54
-1 Sylvan Library (4ed) 273
-1 Talisman of Curiosity (pip) 245
-1 Temple Garden (rvr) 300
-1 The Wasp, Winsome Avenger (msc) 39
+1 Sylvan Library (dmr) 441
+1 Tainted Pact (slc) 59
+1 Teferi, Time Raveler (blc) 92
+1 Thassa's Oracle (thb) 73
 1 Thrasios, Triton Hero (fca) 58
-1 Tropical Island (cei) 284
-1 Tundra (cei) 285
+1 Tropical Island (ced) 284
+1 Tundra (ced) 285
 1 Tymna the Weaver (fca) 18
-1 Underground River (wc98) bs362
-1 Undergrowth Stadium (cmm) 666
-1 Vampire Nighthawk (m13) 112
-1 Verdant Catacombs (zne) 8
+1 Underground Sea (ced) 286
+1 Valley Floodcaller (blb) 308
+1 Vampiric Tutor (dmr) 430
+1 Veil of Summer (soa) 60
+1 Verdant Catacombs (spg) 113
+1 Voice of Victory (tdm) 331
 1 Walking Ballista (sld) 58
-1 Windborn Muse (dmr) 415
-1 Windswept Heath (zne) 5
+1 Windswept Heath (mh3) 360
+1 Wooded Foothills (mh3) 361
 1 Worldly Tutor (dmr) 442
-1 Yavimaya Coast (c21) 409

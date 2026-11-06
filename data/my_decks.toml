@@ -52,30 +52,16 @@ tiers = ["t1", "t2", "t3"]
 
 # Two commanders with plain Partner: `commander` is the first, `commander2` the second; ident is the union.
 [thrasios]
-file = "JD/tymna-thrasios-partners.md"
+file = "JD/tymna-thrasios-doomsday.md"
 name = "Tymna/Thrasios"
 commander = "Tymna the Weaver"
 commander2 = "Thrasios, Triton Hero"
 ident = "WUBG"
-tiers = ["t5"]
-
-[karn]
-file = "JD/karn-colorless-artifacts.md"
-name = "Karn"
-commander = "Karn, Legacy Reforged"
-ident = ""
-tiers = ["t4", "t5"]
-
-[thanos]
-file = "JD/thanos-five-colour-turbo.md"
-name = "Thanos"
-commander = "Thanos, the Mad Titan"
-ident = "WUBRG"
 tiers = ["t6"]
 
-[urdragon]
-file = "JD/ur-dragon-dragon-copies.md"
-name = "The Ur-Dragon"
-commander = "The Ur-Dragon"
+[thanos]
+file = "JD/thanos-artifacts-and-dragons.md"
+name = "Thanos"
+commander = "Thanos, the Mad Titan"
 ident = "WUBRG"
 tiers = ["t5"]

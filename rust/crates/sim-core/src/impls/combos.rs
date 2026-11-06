@@ -784,8 +784,8 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
         t6_measure(g, p); // Tier 6 speed measurement: stats only
     }
     let key = hand_key(g, p);
-    if post.is_none() || (crate::ai::is_main(key) && key != "karn") {
-        return Ok(vec![]); // g.combo_decks: the outside decks (and the Karn deck: Basalt Monolith + Rings of Brighthearth)
+    if post.is_none() || crate::ai::is_main(key) {
+        return Ok(vec![]); // g.combo_decks: the outside decks
     }
     let mut out = vec![];
     // the names of p's cards in hand and on the battlefield, built once: the same test as `has_piece` for every combo
@@ -829,7 +829,7 @@ pub fn combo_options(g: &mut Game, p: PlayerId, ctr_risk: f64, post: Option<bool
 /// itself a piece of the line, or one of its casts, doesn't count.
 pub fn line_enabled_by(g: &Game, p: PlayerId, r: CardId, after: &[crate::engine::mana::Unit]) -> Option<f64> {
     let key = hand_key(g, p);
-    if crate::ai::is_main(key) && key != "karn" {
+    if crate::ai::is_main(key) {
         return None; // JD's decks run their lines from their own code (`combo_options` offers them none)
     }
     let rn = name_of(g, r);

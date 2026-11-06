@@ -1,6 +1,8 @@
 # Karn, Legacy Reforged — findings
 
-The deck's living list of strengths, weaknesses and what was tested. Deck doc: `decklists/JD/karn-colorless-artifacts.md`.
+**Retired 2026-11-05 (JD).** The Karn deck was broken up (27 cards went to the new Thanos deck, the rest to the binder) and its `karn` key left the simulator the same day. The findings below are history; the list is `decklists/pool/retired/karn-colorless-artifacts.md`.
+
+The deck's living list of strengths, weaknesses and what was tested. Deck doc: `decklists/pool/retired/karn-colorless-artifacts.md`.
 
 ## 2026-10-20: first tier run (loose, look-ahead, 1,000 games per tier, `--any-tier`)
 

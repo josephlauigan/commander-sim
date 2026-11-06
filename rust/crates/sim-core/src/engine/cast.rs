@@ -764,7 +764,7 @@ pub fn spell_imp(g: &Game, p: PlayerId, c: CardId, ctx: &Ctx) -> (f64, Vec<(Play
     if g.player(p).is_commander(c) {
         let v = match key {
             "sauron" | "najeela" => 6.0,
-            "galadriel" | "yshtola" | "alela" | "kefka" | "omnath" | "sheoldred" | "cloud" | "karn" => 7.0,
+            "galadriel" | "yshtola" | "alela" | "kefka" | "omnath" | "sheoldred" | "cloud" => 7.0,
             _ => CMD_IMP,
         };
         return (v, vec![]);

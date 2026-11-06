@@ -1503,7 +1503,7 @@ note = "draws the library, puts the best card for next turn on top, no maximum h
 
 ["Ephemerate"]
 types = "I"
-tags = "prot=blink ephemerate"
+tags = "prot=blink"
 status = "Full"
 note = "instant {W}: blinks your creature, in response to targeted removal (the spell fizzles) or for its enter effect; rebound: cast again free at your next upkeep on the best enter-effect creature"
 

@@ -32,7 +32,7 @@ struct Bot {
 impl Human for Bot {
     fn ask(&self, g: &Game, seat: PlayerId, req: Request) -> Answer {
         match &*req.kind {
-            "target" | "choose" | "block" | "search" => return Answer::Pick(0),
+            "target" | "choose" | "block" | "search" | "mode" => return Answer::Pick(0), // "mode": a modal ETB (The Mightstone and Weakstone)
             "mulligan" => return Answer::Pick(0),
             "attack" => return Answer::Picks((0..req.choices.len()).collect()),
             "priority" => {}
@@ -180,22 +180,14 @@ fn sheoldred_t4() {
 }
 // The decks the bot games didn't cover (2026-11-04): each on one of its own tiers (`data/my_decks.toml`)
 #[test]
-fn urdragon_t5() {
-    play("urdragon", "t5", 1);
+fn thanos_t5() {
+    play("thanos", "t5", 1);
 }
 #[test]
 fn kefka_t3() {
     play("kefka", "t3", 1);
 }
 #[test]
-fn thrasios_t5() {
-    play("thrasios", "t5", 1);
-}
-#[test]
-fn karn_t4() {
-    play("karn", "t4", 1);
-}
-#[test]
-fn thanos_t6() {
-    play("thanos", "t6", 1);
+fn thrasios_t6() {
+    play("thrasios", "t6", 1);
 }

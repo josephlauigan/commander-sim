@@ -861,11 +861,7 @@ const TO_FIX: &[&str] = &[];
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
     (
-        "karn: Tezzeret, Cruel Captain (Activate(2))",
-        "the -7 only gives the emblem; the emblem's target (the artifact that gets three +1/+1 counters) is chosen, and asked of a person, at the beginning of combat (t6_godo::tez_emblem, tests/model_gaps_karn.rs)",
-    ),
-    (
-        "karn: Karn, Scion of Urza (Activate(0))",
+        "thanos: Karn, Scion of Urza (Activate(0))",
         "+1 \"an opponent chooses one of them\": the opponent is an AI seat, which rightly chooses; the person is told both revealed cards and the log names which goes where. The person's choices are -1 (which silver-counter card; asked, see practice_trigger_fixes) and nothing in -2",
     ),
     (
@@ -885,15 +881,11 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
         "the probe's graveyard has no enchantment card to return, so there is no target to ask for (not read in the code)",
     ),
     (
-        "urdragon: Sakura-Tribe Elder (Activate(0))",
-        "the person is asked (\"Search for a basic land\", land_ramp), but urdragon's only basic is a single Forest, which the probe's table has already moved to the hand and graveyard, so the library has none to offer; the other decks' Elders show the question",
-    ),
-    (
         "alela: Stirring Hopesinger (Main1)",
         "no choice: it puts a counter on each creature; the word \"target\" is in the condition (a spell that targets a creature)",
     ),
     (
-        "thanos: Necropotence (Discard (state only))",
+        "thrasios: Necropotence (Discard (state only))",
         "no choice: the discarded card is exiled; the line only matched \"discard a\"",
     ),
     (
@@ -901,12 +893,8 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
         "no choice: the discarded card is exiled; the line only matched \"discard a\"",
     ),
     (
-        "urdragon: Goldspan Dragon (Combat)",
+        "thanos: Goldspan Dragon (Combat)",
         "no choice: it makes a Treasure; the word \"target\" is in the condition (becomes the target of a spell)",
-    ),
-    (
-        "urdragon: Korvold, Fae-Cursed King (SacOwn (state only))",
-        "no choice: the counter and the card are automatic; its \"sacrifice another permanent\" is asked on entering and attacking",
     ),
 ];
 

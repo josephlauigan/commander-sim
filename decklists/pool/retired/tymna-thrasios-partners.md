@@ -2,8 +2,7 @@
 
 **Retired 2026-11-05 (JD).** Replaced by the Doomsday rebuild, `decklists/JD/tymna-thrasios-doomsday.md` (cEDH, t6). Tymna,
 Thrasios and 12 other cards move to the new list, and the rest go to the binder; see `documents/doomsday-thanos-rebuild-swaps.md`. The
-`thrasios` key still plays this list until the rewire PR points it at the new file and moves this one to
-`decklists/pool/retired/`.
+`thrasios` key now plays the new list (tier t6); this one is kept here as history only: it is not a pool deck, no test seats it, and it is never drawn. Findings for this list: `audit/thrasios/FINDINGS-old-list.md`.
 
 > Built from the Tymna/Kraum deck (2026-10-19).
 
@@ -18,7 +17,7 @@ turn, to fast combo, and to falling behind on mana.
 |---|---|
 | **Commanders** | Tymna the Weaver ({1}{W}{B}, 2/2) and Thrasios, Triton Hero ({G}{U}, 1/1); white-blue-black-green |
 | **Bracket** | 4 (7 Game Changers: Worldly Tutor, Demonic Tutor, Smothering Tithe, Gifts Ungiven, Gaea's Cradle, Aura Shards, Natural Order); read Rule 0 below for the Basalt Monolith + Rings of Brighthearth loop |
-| **Simulator** | deck key `thrasios`, matched tier T5; built from the retired Tymna/Kraum deck |
+| **Simulator** | none (the deck key `thrasios`, tier T5, played this list until 2026-11-05; built from the retired Tymna/Kraum deck) |
 
 ## Strategy
 

@@ -28,7 +28,7 @@ pub fn db() -> Arc<CardDb> {
     DB.get_or_init(|| Arc::new(CardDb::load(&data_dir().join("cards.json")).unwrap())).clone()
 }
 
-/// Decks that used to be registered (thrasios, garland, omnath, godo, sephfs, retired pool decks) and now exist only for
+/// Decks that used to be registered (garland, omnath, godo, sephfs, retired pool decks) and now exist only for
 /// tests of their engine and card code: the real commanders and colour identity, a library of basic lands (omnath,
 /// godo and sephfs: their real lists). The deck AI keys on the seat key alone, so these seats still run the key-gated code.
 fn retired_decks() -> Vec<RawDeck> {
@@ -49,14 +49,6 @@ fn retired_decks() -> Vec<RawDeck> {
         cards: lib(&[c1, c2.unwrap_or("")][..if c2.is_some() { 2 } else { 1 }], basics),
     };
     vec![
-        mk(
-            "thrasios",
-            "Tymna/Thrasios",
-            "Tymna the Weaver",
-            Some("Thrasios, Triton Hero"),
-            "WUBG",
-            &["Plains", "Island", "Swamp", "Forest"],
-        ),
         mk("garland", "Garland", "Garland, Royal Kidnapper", None, "UB", &["Island", "Swamp"]),
         // pool decks retired 2026-10-25 (decklists/pool/retired/): their card tests still seat them
         mk("heliod-mono-white-stax", "Heliod", "Heliod, Sun-Crowned", None, "W", &["Plains"]),
@@ -103,6 +95,23 @@ fn retired_decks() -> Vec<RawDeck> {
             "Scion of the Ur-Dragon",
             "WUBRG",
             include_str!("../../../../decklists/pool/retired/scion-ur-dragon-turbo.md"),
+        ),
+        // JD's Karn and Ur-Dragon decks, retired 2026-11-05 (their cards went to the new Thanos deck and the binder): the
+        // tests of their card code still seat them with their real lists (decklists/pool/retired/); no deck AI or plan
+        // keys on these keys any more
+        listed(
+            "karn",
+            "Karn",
+            "Karn, Legacy Reforged",
+            "",
+            include_str!("../../../../decklists/pool/retired/karn-colorless-artifacts.md"),
+        ),
+        listed(
+            "urdragon",
+            "The Ur-Dragon",
+            "The Ur-Dragon",
+            "WUBRG",
+            include_str!("../../../../decklists/pool/retired/ur-dragon-dragon-copies.md"),
         ),
         // --- ghave: JD's Seph/Atraxa deck, retired 2026-10-30 (Ghave took its seat): the tests of its card code
         // (the loops in impls::mine, the reanimation spells, Sephiroth's cards) still seat it with its real list

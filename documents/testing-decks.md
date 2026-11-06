@@ -24,12 +24,11 @@ Each deck plays only the opponent tiers listed for it in `data/my_decks.toml` (`
 
 | Decks | Tiers |
 | --- | --- |
-| yshtola, thrasios, urdragon | t5 |
+| yshtola, thanos | t5 |
 | sheoldred, sauron | t3-t4 |
 | kefka | t3 |
 | cloud | t1-t3 |
-| karn | t4-t5 |
-| thanos | t6 |
+| thrasios (cEDH) | t6 |
 | alela (Avery's) | t1 |
 | galadriel (Avery's) | t1-t2 |
 

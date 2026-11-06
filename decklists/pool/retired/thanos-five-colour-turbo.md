@@ -3,8 +3,7 @@
 **Retired 2026-11-05 (JD).** The list is split up: 82 of its cards form the core of the Doomsday rebuild of Tymna/Thrasios
 (`decklists/JD/tymna-thrasios-doomsday.md`), Thanos and 5 other cards lead the new Thanos deck
 (`decklists/JD/thanos-artifacts-and-dragons.md`, t5), and 12 go to the binder; see `documents/doomsday-thanos-rebuild-swaps.md`. The
-`thanos` key still plays this list until the rewire PR points it at the new file and moves this one to
-`decklists/pool/retired/`.
+`thanos` key now plays the new list (tier t5); this one is kept here as history only: it is not a pool deck, no test seats it, and it is never drawn. Findings for this list: `audit/thanos/FINDINGS-old-list.md`.
 
 JD's five-colour cEDH turbo deck with Thanos, the Mad Titan as the commander. It started on 10/30 as the Scion v1 list
 (`decklists/pool/retired/scion-ur-dragon-turbo.md`, retired 10/30) minus Scion's copy targets; on 11/01 the list was
@@ -13,9 +12,8 @@ brought in line with JD's physical deck (22 cards each way, see `decklists/CHANG
 - **Commander:** Thanos, the Mad Titan
 - **Color identity:** White, Blue, Black, Red, Green (his power-up cost has all five colours)
 - **Game Changers (23):** Ad Nauseam, Ancient Tomb, Chrome Mox, Demonic Tutor, Enlightened Tutor, Fierce Guardianship, Force of Will, Gamble, Grim Monolith, Imperial Seal, Intuition, Jeska's Will, Lion's Eye Diamond, Mana Vault, Mox Diamond, Mystical Tutor, Necropotence, Orcish Bowmasters, Rhystic Study, Thassa's Oracle, Underworld Breach, Vampiric Tutor, Worldly Tutor
-- **Simulator:** deck key `thanos`, Tier 6 (Scion's seat, 10/30). The power-up is card code
-  (`rust/crates/sim-core/src/impls/t6_thanos.rs`), the plan is `data/plans/thanos.toml`; results in
-  `audit/thanos/FINDINGS.md`.
+- **Simulator:** none (the deck key `thanos` played this list at Tier 6, Scion's seat from 10/30, until 2026-11-05). The power-up is card code
+  (`rust/crates/sim-core/src/impls/t6_thanos.rs`); results in `audit/thanos/FINDINGS-old-list.md`.
 
 ## Strategy
 

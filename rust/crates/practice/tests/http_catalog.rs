@@ -25,13 +25,11 @@ fn test_your_decks() {
             "alela",
             "cloud",
             "galadriel",
-            "karn",
             "kefka",
             "sauron",
             "sheoldred",
             "thanos",
             "thrasios",
-            "urdragon",
             "yshtola"
         ]
     );

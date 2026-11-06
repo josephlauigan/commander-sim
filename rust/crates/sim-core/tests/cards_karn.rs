@@ -37,7 +37,6 @@ fn karn_adds_one_colourless_per_artifact_at_upkeep() {
     let before = g.player(P0).mana.art();
     upkeep(&mut g, P1);
     assert_eq!(g.player(P0).mana.art(), before);
-    assert_eq!(g.player(P0).milestone.get("karn").copied(), Some(g.player(P0).turns));
 }
 
 #[test]

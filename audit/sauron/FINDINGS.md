@@ -88,7 +88,7 @@ Basalt's burst mana. Rings of Brighthearth is not owned yet. Raw: `2026-10-18-ne
 
 ## 2026-10-19: Urza out to Tymna/Thrasios? (paired, loose, look-ahead, 1,000 games per tier; `2026-10-19-urza-out/`)
 **Urza, Lord High Artificer => Spell Pierce: T3 +0.5 (±3.7), T4 +1.2 (±3.5); noise.** Urza cast in 65-69% of his
-draws, Spell Pierce in 68-70%. The move tested -1.5 in Tymna/Thrasios (`audit/thrasios/FINDINGS.md`), so on both sides
+draws, Spell Pierce in 68-70%. The move tested -1.5 in Tymna/Thrasios (`audit/thrasios/FINDINGS-old-list.md`), so on both sides
 it's a wash: not adopted, Urza stays.
 
 ## 2026-10-20: Urza out, Spell Pierce back (paired, 2,000 games per tier, seed 1020; `2026-10-20-urza-out/`)

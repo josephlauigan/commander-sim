@@ -213,4 +213,4 @@ T5, adaptive AI, 1,500 games per list: before 31.0 / 33.1, after 30.9 / 32.7 (no
   needs a second hit before Lightning's controller's next turn. Not a big downgrade, but the one to watch.
 Raw: `2026-10-18-new-cards/`. JD plans to add the cards unless one is a big downgrade.
 
-**Retired: see audit/thrasios/FINDINGS.md.** (2026-10-19: the Tymna/Kraum deck became the Tymna/Thrasios deck.)
+**Retired: see audit/thrasios/FINDINGS-old-list.md.** (2026-10-19: the Tymna/Kraum deck became the Tymna/Thrasios deck.)
