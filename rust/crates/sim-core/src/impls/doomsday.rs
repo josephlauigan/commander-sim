@@ -459,12 +459,8 @@ pub fn build(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Option<
 
 fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Option<Built> {
     let pl = g.player(p);
-    let hand: Vec<CardId> = pl
-        .hand
-        .iter()
-        .copied()
-        .filter(|&c| &*g.db.get(c).name != DOOMSDAY && !skip.contains(&c))
-        .collect();
+    let hand: Vec<CardId> =
+        pl.hand.iter().copied().filter(|&c| &*g.db.get(c).name != DOOMSDAY && !skip.contains(&c)).collect();
     let avail: Vec<CardId> = pl.library.iter().chain(&pl.gy).copied().collect();
     if avail.is_empty() {
         return None;
@@ -475,9 +471,11 @@ fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Op
     if !in_hand_oracle && !avail.iter().any(|&c| kd(g, c) == K::Oracle) {
         return None;
     }
-    let draws = scn == Scn::EndStep && !pl.perms.iter().any(|&m| {
-        g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == "Necropotence") && !g.perm(m).phased
-    });
+    let draws = scn == Scn::EndStep
+        && !pl
+            .perms
+            .iter()
+            .any(|&m| g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == "Necropotence") && !g.perm(m).phased);
     let mana: Cow<Game> = if scn == Scn::EndStep {
         // the line is played on the player's own turn: everything untaps first
         let mut g2 = g.clone();
@@ -520,7 +518,8 @@ fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Op
                     pile.push(u);
                 }
             }
-            let mut s = S { hand: hand.clone(), lib: pile.clone(), u: 0, w: 0, gn: 0, life: life_after, silence: false };
+            let mut s =
+                S { hand: hand.clone(), lib: pile.clone(), u: 0, w: 0, gn: 0, life: life_after, silence: false };
             if draws && !draw_n(&mut s, 1) {
                 continue;
             }
@@ -827,7 +826,9 @@ fn opp_power(g: &Game, q: PlayerId) -> i32 {
 /// the instant-speed enabler to cast first (Valley Floodcaller, else Borne Upon a Wind), when nothing grants flash now
 fn enabler(g: &Game, p: PlayerId) -> Option<CardId> {
     let hand = &g.player(p).hand;
-    ["Valley Floodcaller", "Borne Upon a Wind"].iter().find_map(|n| hand.iter().copied().find(|&c| &*g.db.get(c).name == *n))
+    ["Valley Floodcaller", "Borne Upon a Wind"]
+        .iter()
+        .find_map(|n| hand.iter().copied().find(|&c| &*g.db.get(c).name == *n))
 }
 
 /// can the player pay Doomsday (with the cost of `extra` more, an enabler) now: Some(b) is the {B} still owed when a
@@ -850,7 +851,7 @@ fn doomsday_cost(g: &Game, p: PlayerId, c: CardId, extra: Option<CardId>) -> Opt
 
 /// the pile to build for a Doomsday in hand now, or None: Doomsday is not the line (Line 1 is in hand), it cannot be
 /// paid or cast, the life is too low, a board can deal the life that is left, or no pile wins
-fn plan_cast(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Option<(Built, Option<CardId>)> {
+pub fn plan_cast(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Option<(Built, Option<CardId>)> {
     let pl = g.player(p);
     if pl.hand.iter().any(|&h| matches!(&*g.db.get(h).name, "Demonic Consultation" | "Tainted Pact")) {
         return None; // Line 1 is cheaper
@@ -882,11 +883,13 @@ fn enabler_around(g: &Game, p: PlayerId, c: CardId) -> bool {
         || enabler(g, p).is_some()
         || g.player(p).perms.iter().any(|&m| {
             !g.perm(m).phased
-                && g.perm(m).cd.is_some_and(|x| matches!(&*g.db.get(x).name, "Teferi, Time Raveler" | "Valley Floodcaller"))
+                && g.perm(m)
+                    .cd
+                    .is_some_and(|x| matches!(&*g.db.get(x).name, "Teferi, Time Raveler" | "Valley Floodcaller"))
         })
 }
 
-fn doomsday_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+pub fn doomsday_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if crate::human::is_human(g, p) || !g.player(p).alive || active(g, p) {
         return Ok(vec![]);
     }
@@ -903,13 +906,17 @@ fn doomsday_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) ->
     let Some((built, _)) = plan_cast(g, p, c, scn) else { return Ok(vec![]) };
     Ok(vec![Opt {
         utility: 16.0,
-        label: format!("Doomsday ({} line, {} spells)", if built.lock { "locked" } else { "unlocked" }, built.plan.len()),
+        label: format!(
+            "Doomsday ({} line, {} spells)",
+            if built.lock { "locked" } else { "unlocked" },
+            built.plan.len()
+        ),
         act: Some(Action::Plan { f: go_doomsday, arg: c.0 as i64 }),
     }])
 }
 
 /// cast the rituals that make {B}{B}{B}, then Doomsday itself
-fn go_doomsday(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+pub fn go_doomsday(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if !g.player(p).hand.contains(&c) {
         return Ok(false);
