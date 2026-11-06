@@ -433,20 +433,12 @@ fn sweep(decks: &[&str]) -> BTreeMap<String, Out> {
 /// set the position up. An entry that is now offered (or no longer found) fails the test: take it off the list.
 const EXCEPTIONS: &[(&str, &str)] = &[
     (
-        "karn: Basalt Monolith #0",
-        "\"start the loop\": a table shortcut standing for the whole Basalt Monolith + Rings loop (each pass of it is a real activation Rings copies, see play_rings.rs); not an ability itself",
-    ),
-    (
         "thrasios: Basalt Monolith #0",
         "\"start the loop\": a table shortcut standing for the whole Basalt Monolith + Rings loop (each pass of it is a real activation Rings copies, see play_rings.rs); not an ability itself",
     ),
     (
-        "karn: Mystic Forge #1",
-        "casting a spell from the top of the library (Mystic Forge's static permission): a spell, not an ability",
-    ),
-    (
-        "karn: Mystic Forge #2",
-        "casting a spell from the top of the library (Mystic Forge's static permission): a spell, not an ability",
+        "thanos: Basalt Monolith #0",
+        "\"start the loop\": a table shortcut standing for the whole Basalt Monolith + Rings loop (each pass of it is a real activation Rings copies, see play_rings.rs); not an ability itself",
     ),
     (
         "kefka: Blazing Firesinger // Seething Song #0",
@@ -463,7 +455,7 @@ const EXCEPTIONS: &[(&str, &str)] = &[
         "playing the top card of the library (Citadel's static permission): a spell cast, not an ability",
     ),
     ("sheoldred: Phyrexian Tower #0", "a mana ability (rule 605): Rings does not copy it"),
-    ("thanos: Lion's Eye Diamond #0", "a mana ability (rule 605): Rings does not copy it"),
+    ("thrasios: Lion's Eye Diamond #0", "a mana ability (rule 605): Rings does not copy it"),
 ];
 
 /// both boards: a key is bad if either board shows it unanswered, offered if either board offers it

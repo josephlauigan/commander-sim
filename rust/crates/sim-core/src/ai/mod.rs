@@ -83,7 +83,7 @@ pub fn is_main(key: &str) -> bool {
 pub fn jd_deck(key: &str) -> bool {
     matches!(
         key,
-        "sauron" | "yshtola" | "kefka" | "omnath" | "sheoldred" | "cloud" | "thrasios" | "sephfs"
+        "sauron" | "yshtola" | "kefka" | "omnath" | "sheoldred" | "cloud" | "sephfs"
     )
 }
 
@@ -93,10 +93,9 @@ pub fn jd_deck(key: &str) -> bool {
 /// `is_main` / `jd_deck` still name them (styles, table reads), so `hand_key` reads them as "" and every
 /// `is_main(hand_key(..))` routing site takes the generic path; `values::generic_deck` counts them as generic decks.
 /// The pool's four (brago, aurelia, sisay, dack) need no entry: no routing site names a pool deck.
-pub const HAND_DELETED: [&str; 8] =
-    ["sauron", "galadriel", "yshtola", "alela", "kefka", "sheoldred", "cloud", "thrasios"];
+pub const HAND_DELETED: [&str; 7] = ["sauron", "galadriel", "yshtola", "alela", "kefka", "sheoldred", "cloud"];
 
-/// does this deck play a hand-written AI? No for the eight in `HAND_DELETED`; any other key: yes (the pool decks have
+/// does this deck play a hand-written AI? No for the seven in `HAND_DELETED`; any other key: yes (the pool decks have
 /// nothing to switch; the retired test seats keep theirs)
 pub fn hand_ai_key(key: &str) -> bool {
     !HAND_DELETED.contains(&key)

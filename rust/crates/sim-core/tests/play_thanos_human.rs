@@ -9,7 +9,7 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicUsize, Ordering};
 
 fn tbl() -> Game {
-    let mut g = table(&["thanos", "sauron"]);
+    let mut g = table(&["scion", "sauron"]);
     g.log = Some(vec![]);
     g
 }

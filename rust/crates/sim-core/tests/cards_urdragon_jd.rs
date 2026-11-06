@@ -60,11 +60,12 @@ fn kaldra_compleat_comes_with_a_germ_it_makes_a_five_five() {
 }
 
 #[test]
-fn the_urdragon_seat_plays_from_its_plan_file() {
-    assert!(sim_core::ai::plan_data::get("urdragon").is_some());
-    assert!(sim_core::ai::plans::plays_plan("urdragon"));
-    assert!(!sim_core::ai::is_main("urdragon"), "a plan-file deck, not a hand-written main deck");
-    let s = sim_core::ai::base_style("urdragon");
-    assert_eq!((s.aggression, s.caution), (0.72, 0.52), "the Dragon rebuild's style (11/03)");
-    assert_eq!(sim_core::ai::base_style("thanos"), sim_core::ai::base_style("scion"), "Scion's style, from data");
+fn the_thanos_seat_plays_from_its_plan_file() {
+    assert!(sim_core::ai::plan_data::get("thanos").is_some());
+    assert!(sim_core::ai::plans::plays_plan("thanos"));
+    assert!(!sim_core::ai::is_main("thanos"), "a plan-file deck, not a hand-written main deck");
+    assert!(!sim_core::t6stats::is_t6_key("thanos"), "the artifacts-and-Dragons list plays Tier 5, not as a Tier 6 deck");
+    assert!(sim_core::t6stats::is_t6_key("thrasios"), "the Doomsday list took the Tier 6 key");
+    let s = sim_core::ai::base_style("thanos");
+    assert_eq!((s.aggression, s.caution), (0.6, 0.5), "the 11/05 plan style");
 }

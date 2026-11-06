@@ -1,7 +1,7 @@
 //! The `thrasios` seat's combo cards (Walking Ballista, Basalt Monolith, Rings of Brighthearth) under the generic
 //! policy. The seat's hand AI (protection spells, the combat trick, the combo tutor) was deleted on 2026-11-01.
 
-use sim_core::ai::decks::deck_prio;
+use sim_core::ai::decks::deck_prio_f;
 use sim_core::ids::PlayerId;
 use sim_core::state::Game;
 use sim_core::testkit::*;
@@ -16,7 +16,7 @@ fn tbl() -> Game {
 
 // ---------------------------------------------------------------- the combo cards
 fn prio(g: &Game, name: &str) -> i32 {
-    deck_prio(g, P0, card(g, name))
+    deck_prio_f(g, P0, card(g, name)) as i32 // a Tier 6 key: the plan slot (since 2026-11-05)
 }
 
 #[test]
