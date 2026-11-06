@@ -1259,13 +1259,33 @@ fn led_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
             leds.push(m);
         }
     }
-    if leds.is_empty() || g.player(p).hand.iter().any(|&c| !g.db.get(c).land) {
+    if leds.is_empty() {
         return vec![];
+    }
+    // --- t6-ai-b: a wheel in hand: the crack pays for it (the wheel is on the stack, the hand it discards goes anyway)
+    let mut out = led_wheel_options(g, p);
+    if g.player(p).hand.iter().any(|&c| !g.db.get(c).land) {
+        return out;
+    }
+    let Some((best, blue)) = led_uses(g, p, None) else { return out };
+    out.push(Opt {
+        utility: best - 1.0,
+        label: "Lion's Eye Diamond".into(),
+        act: Some(Action::Plan { f: led_go, arg: ((blue as i64) << 32) | leds[0].0 as i64 }),
+    });
+    out
+}
+
+/// a use for a crack with a hand of lands only: (the best use's value, whether the mana is blue) or None. `ignore`:
+/// a card of the hand that is not there when the diamond is on the table (the diamond itself, for the statistics)
+fn led_uses(g: &Game, p: PlayerId, ignore: Option<CardId>) -> Option<(f64, bool)> {
+    let pl = g.player(p);
+    if pl.hand.iter().any(|&c| Some(c) != ignore && !g.db.get(c).land) {
+        return None;
     }
     let tot = total_mana(g, p, false);
     let avail = tot + 3;
     let mut uses: Vec<f64> = vec![];
-    let pl = g.player(p);
     if pl.cmd_in_zone {
         let (cg, cp) = cost_of(g, p, pl.cmd);
         let need = cg + cp.chars().count() as u32;
@@ -1286,15 +1306,95 @@ fn led_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
         uses.push(4.0);
     }
     if uses.is_empty() {
-        return vec![];
+        return None;
     }
     let blue = pl.cmd_in_zone && g.db.get(pl.cmd).pips.contains('U') && tot < 3;
-    let best = uses.iter().copied().fold(f64::NEG_INFINITY, f64::max);
-    vec![Opt {
-        utility: best - 1.0,
-        label: "Lion's Eye Diamond".into(),
-        act: Some(Action::Plan { f: led_go, arg: ((blue as i64) << 32) | leds[0].0 as i64 }),
-    }]
+    Some((uses.iter().copied().fold(f64::NEG_INFINITY, f64::max), blue))
+}
+
+/// --- t6-ai-b: the wheels Lion's Eye Diamond fuels: it makes the {2}{colour} they cost
+const LED_WHEELS: [&str; 3] = ["Wheel of Fortune", "Windfall", "Timetwister"];
+
+/// the colour of a wheel's single pip and what its cost still needs from other sources once three mana of that colour
+/// are made (`None`: the diamond cannot pay for it, or the other mana can't make up the rest)
+fn led_wheel_plan(g: &Game, p: PlayerId, w: CardId) -> Option<char> {
+    if !LED_WHEELS.contains(&&*g.db.get(w).name) || !castable(g, p, w, "hand") {
+        return None;
+    }
+    // the deck must want the wheel itself (its priority: a small or stuck hand, no combo piece to wheel away)
+    if crate::ai::decks::deck_prio_f(g, p, w) <= 0.0 {
+        return None;
+    }
+    // Windfall draws as many cards as the most any player discarded *to it*: the cards the diamond discards first do not
+    // count, so the crack costs draws unless an opponent's hand is at least as big as the rest of ours
+    if &*g.db.get(w).name == "Windfall" {
+        let rest = g.player(p).hand.iter().filter(|&&x| x != w && &*g.db.get(x).name != "Lion's Eye Diamond").count();
+        if rest > g.opps(p).map(|q| g.player(q).hand.len()).max().unwrap_or(0) {
+            return None;
+        }
+    }
+    let (cg, cp) = cost_of(g, p, w);
+    let colour = cp.chars().next()?;
+    if cp.chars().any(|c| c != colour) || cp.chars().count() > 3 {
+        return None;
+    }
+    let rest = (cg + cp.chars().count() as u32).saturating_sub(3);
+    (rest == 0 || can_pay(g, p, rest, "", false)).then_some(colour)
+}
+
+/// --- t6-ai-b: Lion's Eye Diamond on the table, a wheel in hand the deck wants to cast now (`card_utility`): crack the
+/// diamond as the wheel is cast. Real play puts the wheel on the stack, then pays {2}{R} / {2}{U} with the diamond's
+/// mana (discarding the rest of the hand, which the wheel would discard anyway); the three mana pay the wheel from
+/// nothing, or leave the lands for the seven new cards. Offered a little above the plain cast of the wheel; never
+/// when the deck would not cast the wheel (no empty plan: the hand would only be thrown away)
+fn led_wheel_options(g: &Game, p: PlayerId) -> Vec<Opt> {
+    let s = Situation::new(g, p);
+    let mut out = vec![];
+    for &w in &g.player(p).hand {
+        let Some(colour) = led_wheel_plan(g, p, w) else { continue };
+        let Some(u) = card_utility(g, p, &s, w) else { continue };
+        let arg = ((colour == 'U') as i64) << 32 | w.0 as i64;
+        out.push(Opt {
+            utility: u + 0.25,
+            label: format!("{} (Lion's Eye Diamond)", g.db.get(w).name),
+            act: Some(Action::Plan { f: led_wheel_go, arg }),
+        });
+    }
+    out
+}
+
+fn led_wheel_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    let w = CardId(arg as u16);
+    let leds = find(g, p, Tag::Led);
+    let Some(&m) = leds.first() else { return Ok(false) };
+    if !g.player(p).hand.contains(&w) || led_wheel_plan(g, p, w).is_none() {
+        return Ok(false);
+    }
+    let rest: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&c| c != w).collect();
+    discard_cards(g, p, &rest)?;
+    leave(g, m)?;
+    let cd = g.perm(m).cd.unwrap();
+    let pl = g.player_mut(p);
+    pl.gy.push(cd);
+    let blue = (arg >> 32) != 0;
+    pl.mana.add(if blue { Kind::U } else { Kind::R }, 3);
+    crate::glog!(
+        g,
+        "  {} cracks Lion's Eye Diamond for {} to cast {}",
+        g.player(p).name,
+        if blue { "UUU" } else { "RRR" },
+        g.db.get(w).name
+    );
+    g.player_mut(p).stat("led_used", 1);
+    g.player_mut(p).stat("led_wheel", 1);
+    crate::ai::brain::do_cast(g, p, w, None)?;
+    Ok(true)
+}
+
+/// --- t6-ai-b (stats): would a crack of the diamond c, cast now, have a use? A wheel in hand it could pay for, or a
+/// hand of lands only with a use for the mana (`led_uses`); the diamond alone in a hand with other cards has none
+pub fn led_use_open(g: &Game, p: PlayerId, led: CardId) -> bool {
+    g.player(p).hand.iter().any(|&w| w != led && led_wheel_plan(g, p, w).is_some()) || led_uses(g, p, Some(led)).is_some()
 }
 
 fn led_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
