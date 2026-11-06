@@ -587,6 +587,9 @@ fn vraska_minus9(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> 
 /// mine.proliferate_all: proliferate: your Army and other creatures' +1/+1 counters, your loyalty, opponents' poison
 /// and -1/-1 counters
 pub fn proliferate_all(g: &mut Game, p: PlayerId) -> Res {
+    if crate::human::is_human(g, p) {
+        return crate::impls::common::proliferate(g, p, 1); // a person chooses (rule 701.27: `human::proliferate`); Tekuthal too
+    }
     for m in g.player(p).perms.clone() {
         if g.perm(m).phased {
             continue;
@@ -646,9 +649,9 @@ fn baraddur_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     g.perm_mut(l).tapped = true;
     crate::glog!(g, "  {} uses Barad-dûr: amass Orcs {x}", g.player(p).name);
     let cd = g.perm(l).card();
-    if card_ability_window(g, p, cd, &format!("amass Orcs {x}"), None, None)? {
-        amass(g, p, x as i32)?;
-    }
+    crate::engine::stack::ability_run_w(g, p, None, Some(cd), &format!("amass Orcs {x}"), None, None, x as f64, |g, _| {
+        amass(g, p, x as i32)
+    })?;
     Ok(true)
 }
 
@@ -876,6 +879,37 @@ fn kefka_ruin(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Ve
 }
 
 pub fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    kefka_ruin_do(g, src, p)
+}
+
+/// Marvin, Murderous Mimic has Kefka's {8} ability while its controller has Kefka, Court Mage (not yet transformed):
+/// Marvin pays and activates it. "Transform Kefka" names the object that has the ability (rule 201.5), which is Marvin,
+/// and a permanent that is not a double-faced card can't transform (701.28c): Marvin does the sacrifices and nothing
+/// transforms. Kefka's own plan (the transformation, 5/7 flier, the draws) is not served by it, so the AI weighs it as
+/// the edict it is.
+pub fn kefka_borrowed(g: &mut Game, src: PermId, p: PlayerId, post: Option<bool>, kefka: PermId) -> Vec<Opt> {
+    let k = g.perm(kefka);
+    if !k.on_bf || k.phased || k.data.truthy(DataKey::Ruin) || p != g.perm(src).owner {
+        return vec![];
+    }
+    if post.is_none() || g.active != Some(p) || !can_pay(g, p, 8, "", false) {
+        return vec![];
+    }
+    let utility = 1.0 + 0.5 * g.opps(p).count() as f64;
+    vec![Opt { utility, label: "Kefka: {8}, each opponent sacrifices a permanent".into(), act: Some(Action::Ability { src, f: kefka_borrowed_go, arg: kefka.0 as i64 }) }]
+}
+
+fn kefka_borrowed_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let kefka = PermId(arg as u32);
+    if g.perm(kefka).data.truthy(DataKey::Ruin) || !g.perm(kefka).on_bf {
+        return Ok(false);
+    }
+    kefka_ruin_do(g, src, p)
+}
+
+/// pay {8} and activate the ability from `src`; `src` transforms if it is Kefka (Marvin, using the ability, is not a
+/// double-faced card and stays as it is)
+pub(crate) fn kefka_ruin_do(g: &mut Game, src: PermId, p: PlayerId) -> Res<bool> {
     if !g.perm(src).on_bf || g.perm(src).owner != p || !can_pay(g, p, 8, "", false) {
         return Ok(false);
     }
@@ -907,9 +941,7 @@ pub fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<b
                 die(g, perms[k], "sac")?;
             } else {
                 let l = lands[k - perms.len()];
-                crate::engine::turn::remove_land(g, q, l);
-                let cd = g.perm(l).card();
-                g.player_mut(q).gy.push(cd);
+                crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
             }
             continue;
         }
@@ -928,15 +960,20 @@ pub fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<b
             sac_last_land(g, q);
         }
     }
-    let t = g.player(p).turns;
-    g.player_mut(p).milestone.entry("kefka").or_insert(t);
-    let x = g.perm_mut(src);
-    x.data.set(DataKey::Ruin, Val::Bool(true));
-    (x.pow, x.tgh, x.fly) = (5, 7, true);
+    let kefka = g.perm(src).cd.is_some_and(|c| &*g.db.get(c).name == "Kefka, Court Mage // Kefka, Ruler of Ruin");
+    if kefka {
+        let t = g.player(p).turns;
+        g.player_mut(p).milestone.entry("kefka").or_insert(t);
+        let x = g.perm_mut(src);
+        x.data.set(DataKey::Ruin, Val::Bool(true));
+        (x.pow, x.tgh, x.fly) = (5, 7, true);
+    }
     crate::glog!(
         g,
-        "  {} activates Kefka ({{8}}): each opponent sacrifices a permanent; Kefka transforms",
-        g.player(p).name
+        "  {} activates {} ({{8}}): each opponent sacrifices a permanent{}",
+        g.player(p).name,
+        if kefka { "Kefka" } else { "Kefka's ability (Marvin: nothing transforms)" },
+        if kefka { "; Kefka transforms" } else { "" }
     );
     Ok(true)
 }
@@ -944,9 +981,7 @@ pub fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<b
 /// q's last land to the graveyard (Python: `L = q.lands.pop(); q.gy.append(L.cd)`)
 fn sac_last_land(g: &mut Game, q: PlayerId) {
     let l = *g.player(q).lands.last().unwrap();
-    crate::engine::turn::remove_land(g, q, l);
-    let cd = g.perm(l).real_card();
-    g.player_mut(q).gy.push(cd);
+    crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
 }
 
 /// Kefka, Ruler of Ruin: whenever an opponent loses life during your turn, you draw that many cards (not optional,
@@ -1760,9 +1795,8 @@ fn strip_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).lands.contains(&l) || !g.player(q).lands.contains(&x) {
         return Ok(false);
     }
-    crate::engine::turn::remove_land(g, p, l);
     let cd = g.perm(l).real_card();
-    g.player_mut(p).gy.push(cd);
+    crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
     let xn = g.db.get(g.perm(x).card()).name.to_string();
     crate::glog!(g, "  {} sacrifices Strip Mine: destroy {xn} ({})", g.player(p).name, g.player(q).name);
     if ability_window_card(g, p, cd, &format!("destroy {xn}"), None, None)? && g.player(q).lands.contains(&x) {

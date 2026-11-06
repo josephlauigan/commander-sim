@@ -153,7 +153,7 @@ fn a_donated_solar_still_counts_creatures_that_entered_before_the_donation() {
     let mut g = game();
     let solar = perm(&mut g, P0, "Radiant Solar");
     let early = perm(&mut g, P0, "Grave Titan");
-    sim_core::impls::marchesa::steal(&mut g, P1, solar, false);
+    sim_core::impls::marchesa::steal(&mut g, P1, solar, false).unwrap();
     sim_core::impls::t6_dack::mark_donated(&mut g, solar, P0);
     assert!(sim_core::impls::t6_dack::controlled_when(&g, solar, P0, early));
     let late = perm(&mut g, P0, "Grave Titan");

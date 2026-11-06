@@ -175,9 +175,7 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
         match choice {
             Choice::Land(l) => {
                 let cd = g.perm(l).card();
-                g.player_mut(p).lands.retain(|&x| x != l);
-                g.perm_mut(l).on_bf = false;
-                g.player_mut(p).gy.push(cd);
+                crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
                 if !g.hooks.is_empty() {
                     fire_trigger(g, Event::Sacrifice, Call::Sacrifice { p, what: crate::hooks::Sacrificed::Card(cd) })?;
                 }
@@ -1002,7 +1000,7 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         } else if lt.is_some_and(|x| x.tag(Tag::Ctrexile) || x.tag(Tag::Fon)) && !land {
             g.player_mut(o).exile.push(c); // Dissipate; Force of Negation ("exile it instead")
         } else if !land {
-            g.player_mut(o).gy.push(c);
+            put_in_gy(g, o, c); // (Blightsteel Colossus is shuffled into the library)
         }
         return Ok(false);
     }

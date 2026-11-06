@@ -51,7 +51,7 @@
 use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable};
-use crate::engine::control::{Duration, gain_control};
+use crate::engine::control::Duration;
 use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::removal::{apply_removal, apply_wipe};
 use crate::engine::stack::{ability_window, ability_window_card, flush_triggers, queue_triggers, trigger_window};
@@ -248,7 +248,7 @@ fn agent_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     if let Some(t) = agent_pick(g, o) {
-        gain_control(g, o, t, Duration::Permanent);
+        crate::engine::control::steal(g, o, t, Duration::Permanent)?;
     }
     Ok(())
 }

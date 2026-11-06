@@ -326,9 +326,7 @@ fn springbloom(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     let lands = g.player(o).lands.clone();
     let l = first_min(&lands, |l| (!BASICS.contains(&&*g.db.get(g.perm(l).card()).name), !g.perm(l).tapped)).unwrap();
-    crate::engine::turn::remove_land(g, o, l);
-    let cd = g.perm(l).card();
-    g.player_mut(o).gy.push(cd);
+    crate::engine::turn::remove_land(g, o, l, Some(crate::engine::zones::Zone::Gy));
     land_ramp(g, o, 2, true)
 }
 
@@ -1336,7 +1334,7 @@ fn glimpse(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
 }
 
 // ================================================================== Chatterfang
-fn squirrels(g: &Game, p: PlayerId) -> Vec<PermId> {
+pub fn squirrels(g: &Game, p: PlayerId) -> Vec<PermId> {
     g.player(p).perms.iter().copied().filter(|&m| g.perm(m).token && g.perm(m).ttypes.contains(&"squirrel")).collect()
 }
 
@@ -1355,7 +1353,7 @@ fn fang(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt
     Ok(vec![ability(pval(g, t) - 0.5 * x as f64, label, src, fang_go, pack(t.0, x.max(0) as u32))])
 }
 
-fn fang_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+pub(crate) fn fang_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let (t, x) = unpack(arg);
     let (t, x) = (PermId(t), x as i32);
     if !g.perm(t).on_bf || !can_pay(g, p, 0, "B", false) {
@@ -1369,7 +1367,7 @@ fn fang_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     if !ability_window(g, p, Some(src), &name, None, Some(t))? || !g.perm(t).on_bf {
         return Ok(true);
     }
-    if !untargetable(g, t) {
+    if !untargetable(g, t) && crate::engine::ward::pay_ward(g, p, t)? {
         super::t3::eot(g, t, x, -x);
         if etgh(g, t) <= 0 {
             die(g, t, "sba")?;
@@ -1783,7 +1781,7 @@ fn spinner(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<O
     Ok(vec![ability(0.5 * x as f64, "Destiny Spinner animates a land".into(), src, spinner_go, x as i64)])
 }
 
-fn spinner_x(g: &Game, p: PlayerId) -> i32 {
+pub(crate) fn spinner_x(g: &Game, p: PlayerId) -> i32 {
     g.player(p).perms.iter().filter(|&&m| card_is(g, m, Types::ENCHANTMENT) && !g.perm(m).phased).count() as i32
 }
 

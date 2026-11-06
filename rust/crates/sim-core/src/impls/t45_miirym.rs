@@ -3,9 +3,10 @@
 //! list are in `impls/t45_urdragon.rs`. Savage Ventmaw's "you don't lose this mana" is compiled (dsl_parse.rs,
 //! `// --- Tiers 4/5 (miirym)`): its mana is kept all turn by `dsl` add_mana (`Pool::add_kept`).
 //!
-//! - Astral Dragon: Project Image, when it enters: two token copies of the noncreature, nonland permanent worth
+//! - Astral Dragon: Project Image, when it enters: two token copies of the noncreature permanent worth
 //!   most to copy (yours, not a legendary one; or a targetable one of an opponent's), each a 3/3 flying Dragon creature
-//!   in addition to its other types, as it enters. Left out: copying a land.
+//!   in addition to its other types, as it enters. A person may also pick a land (a land token that is a creature too)
+//!   or an Aura (an Aura creature: put into the graveyard at once, rule 303.4d); the AI copies nonland, non-Aura ones.
 //! - Dragonborn Champion: a source you control deals 5 or more damage to a player: draw a card (combat and noncombat,
 //!   read where life is lost: `life::lose_life`; runs at once).
 //! - Earthquake Dragon: costs {X} less, X the total mana value of the Dragons you control (`self_cost`); {2}{G},
@@ -71,20 +72,23 @@ fn dragons_of(g: &Game, p: PlayerId) -> Vec<PermId> {
     g.player(p).perms.iter().copied().filter(|&m| is_dragon(g, m)).collect()
 }
 
+
 // ================================================================== Astral Dragon
-/// the noncreature permanents Project Image can target: nonland, not an Aura (it would have nothing to enchant), a
-/// permanent with a card to copy; yours (not a legendary one: the legend rule would keep one of three) or an
-/// opponent's that can be targeted (a legendary one of theirs is fine: the two tokens are yours, so one stays)
-fn astral_targets(g: &Game, p: PlayerId) -> Vec<PermId> {
+/// the noncreature permanents Project Image can target: yours (not a legendary one: the legend rule would keep one of
+/// three) or an opponent's that can be targeted (a legendary one of theirs is fine: the two tokens are yours, so one
+/// stays). Oracle: "any noncreature permanent", so a land (`Player::lands`) and an Aura count: `any` lists them (a
+/// person's choice); the AI's list leaves them out (`ai_ok`: a land copy is a mana creature with no better use than a
+/// nonland's, an Aura copy is a creature Aura that is put into the graveyard at once).
+fn astral_targets(g: &Game, p: PlayerId, any: bool) -> Vec<PermId> {
     g.players
         .iter()
         .filter(|q| q.alive)
-        .flat_map(|q| q.perms.iter().copied())
+        .flat_map(|q| q.perms.iter().copied().chain(if any { q.lands.clone() } else { vec![] }))
         .filter(|&m| {
             let x = g.perm(m);
             live(g, m)
                 && !g.is_creature(m)
-                && x.cd.is_some_and(|c| !g.db.get(c).land && !g.db.get(c).has_subtype("aura"))
+                && x.cd.is_some_and(|c| any || (!g.db.get(c).land && !g.db.get(c).has_subtype("aura")))
                 && if x.owner == p { !crate::cardcode::is_legendary(g, m) } else { !untargetable(g, m) }
         })
         .collect()
@@ -99,24 +103,39 @@ fn astral_worth(g: &Game, p: PlayerId, m: PermId) -> f64 {
 
 /// the best noncreature permanent to copy (the AI's target)
 pub fn astral_target(g: &Game, p: PlayerId) -> Option<PermId> {
-    max_by(&astral_targets(g, p), |m| astral_worth(g, p, m))
+    max_by(&astral_targets(g, p, false), |m| astral_worth(g, p, m))
 }
 
 /// When this creature enters, create two tokens that are copies of target noncreature permanent, except they're 3/3
 /// Dragon creatures in addition to their other types, and they have flying. The AI aims at `astral_target`; a person
 /// picks the permanent. The tokens are creatures from the moment they enter (`CopyExc::add_types`), so the enters
-/// triggers of Dragon Tempest, Terror of the Peaks and the like see 3/3 flying Dragons.
+/// triggers of Dragon Tempest, Terror of the Peaks and the like see 3/3 flying Dragons. A land copy is a land token in
+/// `Player::lands` that is also a creature in `perms` (`turn::enter_token_land_copy`): it taps for mana once it is no
+/// longer summoning sick, attacks, blocks and dies as a creature. An Aura copy is an Aura creature: it can't enchant
+/// anything (rule 303.4d), so each token enters (its enters triggers fire) and is put into the graveyard at once.
+/// the name of what m shows (a land permanent has no name of its own: its card's)
+fn shown(g: &Game, m: PermId) -> String {
+    g.perm(m).cd.map_or_else(|| g.perm(m).name.to_string(), |c| cname(g, c).to_string())
+}
+
 fn astral_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     // in a catalogued combo (`t45_urdragon_combos`) the combo's own trigger step stands in for this one
     if m != src || p != owner(g, src) || g.combo_spell {
         return Ok(());
     }
-    let cands = astral_targets(g, p);
-    let t = if crate::human::is_human(g, p) {
+    let human = crate::human::is_human(g, p);
+    let cands = astral_targets(g, p, human);
+    let t = if human {
         if cands.is_empty() {
             return Ok(());
         }
-        let labels: Vec<String> = cands.iter().map(|&x| g.perm(x).name.to_string()).collect();
+        let labels: Vec<String> = cands
+            .iter()
+            .map(|&x| {
+                let o = owner(g, x);
+                if o == p { shown(g, x) } else { format!("{} ({})", shown(g, x), g.player(o).name) }
+            })
+            .collect();
         let prompt = "Astral Dragon: create two 3/3 flying Dragon copies of which noncreature permanent?";
         match crate::human::choices::choose(g, p, "target", prompt, &labels, None, None)? {
             Some(k) => cands[k],
@@ -126,7 +145,7 @@ fn astral_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         let Some(t) = max_by(&cands, |m| astral_worth(g, p, m)) else { return Ok(()) };
         t
     };
-    let what = format!("two Dragon copies of {}", g.perm(t).name);
+    let what = format!("two Dragon copies of {}", shown(g, t));
     if !trigger_window(g, p, Some(src), &what, Some(4.0))? || !live(g, t) || g.is_creature(t) {
         return Ok(());
     }
@@ -139,8 +158,19 @@ fn astral_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         ..CopyExc::default()
     };
     crate::glog!(g, "    Astral Dragon: two 3/3 Dragon copies of {}", cname(g, c));
+    let (land, aura) = (g.db.get(c).land, g.db.get(c).has_subtype("aura"));
     for _ in 0..2 {
-        enter_token_copy_with(g, p, c, Some(exc))?;
+        if land {
+            crate::engine::turn::enter_token_land_copy(g, p, c, exc)?;
+        } else {
+            let Some(n) = enter_token_copy_with(g, p, c, Some(exc))? else { break };
+            if aura && g.perm(n).on_bf {
+                // 303.4d: an Aura that is also a creature can't enchant anything: it is put into the graveyard (a token ceases to exist)
+                crate::glog!(g, "    {} is an Aura creature: it can't enchant anything and is put into the graveyard", cname(g, c));
+                g.perm_mut(n).attached = None;
+                crate::engine::zones::die(g, n, "sba")?;
+            }
+        }
     }
     Ok(())
 }

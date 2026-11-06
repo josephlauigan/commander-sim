@@ -806,7 +806,7 @@ fn infinite_colourless(g: &mut Game, p: PlayerId) -> Res<bool> {
 
 const S_EQUIP_LOOP: Step = Step {
     label: "equip Helm of the Host to Godo (paid from the loop)",
-    kind: StepKind::Ability,
+    kind: StepKind::Equip,
     src: gd::helm_src,
     pay: (0, ""),
     run: gd::equip_helm,

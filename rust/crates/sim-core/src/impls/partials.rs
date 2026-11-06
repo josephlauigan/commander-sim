@@ -143,7 +143,7 @@ pub(crate) fn ability_window_card(g: &mut Game, p: PlayerId, cd: CardId, name: &
     stack_window(g, p, it)
 }
 
-fn turn_now(g: &Game) -> Val {
+pub(crate) fn turn_now(g: &Game) -> Val {
     Val::Stamp(g.turn_stamp())
 }
 
@@ -215,7 +215,7 @@ fn hordechief_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> 
 }
 
 /// after the activation, every untapped creature of the defender blocks, assigned where it dies without killing
-fn hordechief_blocks(
+pub(crate) fn hordechief_blocks(
     g: &mut Game,
     src: Src,
     p: PlayerId,
@@ -234,6 +234,20 @@ fn hordechief_blocks(
         .copied()
         .filter(|&b| g.is_creature(b) && !g.perm(b).tapped && !g.perm(b).phased)
         .collect();
+    if crate::human::is_human(g, p) {
+        // --- model-gaps-a4: "you choose how those creatures block": the person assigns each blocker
+        for b in bs {
+            let ok: Vec<PermId> = atk.iter().copied().filter(|&a| on(g, p, a) && crate::engine::combat::can_block(g, b, a)).collect();
+            if ok.is_empty() {
+                continue;
+            }
+            let labels: Vec<String> = ok.iter().map(|&a| crate::human::legal::describe_target(g, p, crate::human::Target::Perm(a))).collect();
+            let prompt = format!("Brutal Hordechief: {} blocks which attacker?", g.perm(b).name);
+            let k = crate::human::choices::choose_one(g, p, "choose", &prompt, &labels)?;
+            assign.push((ok[k], b));
+        }
+        return Ok(());
+    }
     for b in bs {
         let good: Vec<PermId> = atk
             .iter()
@@ -314,7 +328,7 @@ fn druid3_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         (d.tags.str(Tag::C).map_or(0, |s| s.chars().count()), !matches!(&*d.name, "Forest" | "Island"))
     })
     .unwrap();
-    crate::engine::turn::remove_land(g, p, l);
+    crate::engine::turn::remove_land(g, p, l, None); // (parked: the creature stands in for it)
     let n = g.player(p).lands.len() as i32 + 1;
     let name = intern(&g.db.get(g.perm(l).card()).name);
     let m = g.new_perm(p, None, name, n, n);
@@ -471,9 +485,7 @@ pub fn special_unit_paid(g: &mut Game, p: PlayerId, u: Unit) -> Res {
             g.perm_mut(src).data.set(DataKey::Used, now);
             let forest = g.player(p).lands.iter().copied().find(|&l| &*g.db.get(g.perm(l).card()).name == "Forest");
             if let Some(l) = forest {
-                crate::engine::turn::remove_land(g, p, l);
-                let cd = g.perm(l).card();
-                g.player_mut(p).hand.push(cd);
+                crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Hand));
             }
         }
         Source::Symbiote(src, _dork, elf) => {
@@ -1510,9 +1522,8 @@ fn chain(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
             (g.db.get(x.card()).tags.str(Tag::C).map_or(0, |s| s.chars().count()), !x.tapped)
         })
         .unwrap();
-        crate::engine::turn::remove_land(g, q, l);
         let cd = g.perm(l).card();
-        g.player_mut(q).gy.push(cd);
+        crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
         crate::glog!(g, "    {} sacrifices {} to copy Chain of Vapor", pname(g, q), g.db.get(cd).name);
         apply_removal(g, Some(q), back, "bounce", None)?;
     }
@@ -2093,7 +2104,7 @@ fn hireling_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     if !ability_window(g, p, Some(src), &label, None, Some(t))? || !g.perm(t).on_bf {
         return Ok(true);
     }
-    if !untargetable(g, t) {
+    if !untargetable(g, t) && crate::engine::ward::pay_ward(g, p, t)? {
         super::common::eot(g, t, -x, -x);
         if etgh(g, t) <= 0 {
             die(g, t, "sba")?;
@@ -2103,7 +2114,7 @@ fn hireling_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 }
 
 // ======================================================== Hope of Ghirapur
-fn hope_hit(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, _dmg: i32) -> Res {
+pub(crate) fn hope_hit(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, _dmg: i32) -> Res {
     if a == src {
         let now = turn_now(g);
         g.perm_mut(src).data.set(DataKey::Hit, Val::List(vec![now, Val::Player(d)]));
@@ -2385,9 +2396,7 @@ fn multani_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     };
     lands.sort_by_key(|&l| key(g, l)); // stable, as Python's sorted
     for l in lands.into_iter().take(2) {
-        crate::engine::turn::remove_land(g, p, l);
-        let cd = g.perm(l).card();
-        g.player_mut(p).hand.push(cd);
+        crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Hand));
     }
     if !ability_window_card(g, p, c, "return to hand")? || !g.player(p).gy.contains(&c) {
         return Ok(true);
@@ -2811,7 +2820,7 @@ fn starfield_gone(g: &mut Game, _src: Src, m: PermId) -> Res {
 }
 
 // ======================================================== Tekuthal: indestructible counter
-fn tekuthal_pool(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
+pub(crate) fn tekuthal_pool(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
     g.player(p)
         .perms
         .iter()
@@ -2835,6 +2844,11 @@ fn tekuthal(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<
 }
 
 fn tekuthal_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    tekuthal_do(g, src, p)
+}
+
+/// the indestructible counter goes on the source (rule 201.5: "Tekuthal" in the text means the permanent that has the ability, Marvin when it borrows it)
+fn tekuthal_do(g: &mut Game, src: PermId, p: PlayerId) -> Res<bool> {
     let pool = tekuthal_pool(g, p, src);
     if !can_pay(g, p, 1, "", false) {
         return Ok(false);
@@ -2865,11 +2879,11 @@ fn tekuthal_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         }
     }
     g.perm_mut(src).data.set(DataKey::Indestr, Val::Bool(true));
-    crate::glog!(g, "  {} puts an indestructible counter on Tekuthal", pname(g, p));
+    crate::glog!(g, "  {} puts an indestructible counter on {}", pname(g, p), &*g.perm(src).name);
     Ok(true)
 }
 
-fn tekuthal_kw(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
+pub(crate) fn tekuthal_kw(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
     kw == "indestructible" && m == src && g.perm(src).data.truthy(DataKey::Indestr)
 }
 
@@ -3343,4 +3357,13 @@ fn register_phase6(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(whirler_etb);
     at_once(c, Event::Etb, false);
     Ok(())
+}
+
+/// --- model-gaps-a4: the player Hope of Ghirapur (or Marvin using its ability) dealt combat damage this turn
+pub(crate) fn hit_players(g: &Game, src: PermId) -> Vec<PlayerId> {
+    let Some(Val::List(hit)) = data_val(g, src, DataKey::Hit) else { return vec![] };
+    match (&hit[0], &hit[1]) {
+        (Val::Stamp(st), Val::Player(d)) if *st == g.turn_stamp() && g.player(*d).alive => vec![*d],
+        _ => vec![],
+    }
 }

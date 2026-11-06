@@ -303,7 +303,7 @@ fn mirror_worth(g: &Game, m: PermId) -> f64 {
 }
 
 /// Whenever another nontoken artifact you control enters, you may pay {2}. If you do, create a token that's a copy of
-/// that artifact. (Nontoken artifact lands aren't spells' permanents here: Darksteel Citadel is not copied.)
+/// that artifact. (Artifact lands come in through `mirror_land`.)
 fn mirror_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let o = owner(g, src);
     if m == src
@@ -316,31 +316,8 @@ fn mirror_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let Some(c) = g.perm(m).cd else { return Ok(()) };
-    let human = crate::human::is_human(g, o);
-    if human {
-        // a person decides for any artifact, and pays from the pool or by tapping sources as at the table
-        if !art_card(g, c) || crate::human::mana::available(g, o) < 2 {
-            return Ok(());
-        }
-        if !trigger_window(g, o, Some(src), "pay {2}: a token copy of the artifact", None)? {
-            return Ok(());
-        }
-        let prompt = format!("Mirrorworks: pay {{2}} to create a token copy of {}?", g.db.get(c).name);
-        if !crate::human::mana::pay_tax_ask(g, o, 2, "Mirrorworks", Some(prompt))? {
-            return Ok(());
-        }
-    } else {
-        if !art_card(g, c) || mirror_worth(g, m) < 1.0 || !can_pay(g, o, 2, "", false) {
-            return Ok(());
-        }
-        if !trigger_window(g, o, Some(src), "pay {2}: a token copy of the artifact", None)?
-            || !can_pay(g, o, 2, "", false)
-        {
-            return Ok(());
-        }
-        if !pay(g, o, 2, "", false)? {
-            return Ok(());
-        }
+    if !mirror_pay(g, src, o, c, mirror_worth(g, m))? {
+        return Ok(());
     }
     crate::glog!(g, "    Mirrorworks copies {}", g.db.get(c).name);
     g.perm_mut(src).data.set(DataKey::Act, Val::Bool(true)); // the copy entering is not copied
@@ -350,12 +327,63 @@ fn mirror_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     Ok(())
 }
 
+/// "you may pay {2}": asks a person, or lets the AI pay when the copy is worth `worth` (1 or more) and the mana is there.
+/// True if {2} was paid.
+fn mirror_pay(g: &mut Game, src: Src, o: PlayerId, c: CardId, worth: f64) -> Res<bool> {
+    let human = crate::human::is_human(g, o);
+    if human {
+        // a person decides for any artifact, and pays from the pool or by tapping sources as at the table
+        if !art_card(g, c) || crate::human::mana::available(g, o) < 2 {
+            return Ok(false);
+        }
+        if !trigger_window(g, o, Some(src), "pay {2}: a token copy of the artifact", None)? {
+            return Ok(false);
+        }
+        let prompt = format!("Mirrorworks: pay {{2}} to create a token copy of {}?", g.db.get(c).name);
+        return crate::human::mana::pay_tax_ask(g, o, 2, "Mirrorworks", Some(prompt));
+    }
+    if !art_card(g, c) || worth < 1.0 || !can_pay(g, o, 2, "", false) {
+        return Ok(false);
+    }
+    if !trigger_window(g, o, Some(src), "pay {2}: a token copy of the artifact", None)? || !can_pay(g, o, 2, "", false) {
+        return Ok(false);
+    }
+    pay(g, o, 2, "", false)
+}
+
+/// The same for an artifact land played as the land drop (Darksteel Citadel, Treasure Vault): `land_play`, since a land
+/// does not enter through `zones::enter`. The copy is a token land of the same card (it is in `Player::lands`, taps for
+/// mana, and counts for Karn). The AI pays for a mana land (1.5), as it does for a rock.
+fn mirror_land(g: &mut Game, src: Src, p: PlayerId, c: CardId) -> Res {
+    let o = owner(g, src);
+    if p != o || !live(g, src) || !art_card(g, c) || g.perm(src).data.truthy(DataKey::Act) {
+        return Ok(());
+    }
+    if !g.player(p).lands.iter().any(|&l| g.perm(l).cd == Some(c) && !g.perm(l).token) {
+        return Ok(()); // (a fetch land or a bounce land already took it away)
+    }
+    if !mirror_pay(g, src, o, c, 1.5)? {
+        return Ok(());
+    }
+    crate::glog!(g, "    Mirrorworks copies {}", g.db.get(c).name);
+    let tapped = crate::engine::turn::land_enters_tapped(g, o, c);
+    let t = g.add_land(o, c, tapped);
+    g.perm_mut(t).token = true;
+    crate::engine::zones::landfall(g, o)
+}
+
 // ================================================================== Mystic Forge
 /// the top card of p's library, if the Forge lets p cast it: an artifact or colourless nonland card
 fn forge_top(g: &Game, p: PlayerId) -> Option<CardId> {
     let top = *g.player(p).library.last()?;
     let d = g.db.get(top);
     (!d.land && (d.types.has(Types::ARTIFACT) || d.pips.is_empty())).then_some(top)
+}
+
+/// the card p may cast from the top of the library right now: a Mystic Forge is up, and the top card is an artifact or
+/// colourless nonland card (the removal and wipe options and `forge_options` read it)
+pub fn forge_top_card(g: &Game, p: PlayerId) -> Option<CardId> {
+    forge_up(g, p).and_then(|_| forge_top(g, p))
 }
 
 fn forge_up(g: &Game, p: PlayerId) -> Option<PermId> {
@@ -375,8 +403,7 @@ fn forge_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     let d = g.db.get(top);
     if let Some(top) = forge_top(g, p)
         && post.is_some()
-        && !(d.tag(Tag::Rem) || d.tag(Tag::Wipe) || d.tag(Tag::X) || d.tag(Tag::Tokx) || d.tag(Tag::Ctr))
-        && !(d.tag(Tag::Rem) && !d.has_dsl())
+        && !(d.tag(Tag::Rem) || d.tag(Tag::Wipe) || d.tag(Tag::X) || d.tag(Tag::Ctr)) // (removal and wipes: brain.rs)
     {
         let s = crate::ai::brain::Situation::new(g, p);
         if let Some(u) = crate::ai::brain::card_utility(g, p, &s, top) {
@@ -655,9 +682,7 @@ fn cave_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     let cd = g.perm(l).card();
     crate::impls::lands::sac_land(g, p, l)?;
-    if ability_window_card(g, p, cd, "search for a land", None, None)? {
-        fetch_land(g, p, false, true)?;
-    }
+    run_w(g, p, None, Some(cd), "search for a land", None, 3.0, |g, _| fetch_land(g, p, false, true).map(|_| ()))?;
     Ok(true)
 }
 
@@ -682,9 +707,7 @@ fn map_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     }
     g.perm_mut(src).tapped = true;
     die(g, src, "sac")?;
-    if ability_window(g, p, Some(src), "search for a land", None, None)? {
-        fetch_land(g, p, true, false)?;
-    }
+    run_w(g, p, Some(src), None, "search for a land", None, 3.0, |g, _| fetch_land(g, p, true, false).map(|_| ()))?;
     Ok(true)
 }
 
@@ -778,11 +801,15 @@ fn passage_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.perm_mut(l).tapped = true;
-    if ability_window_card(g, p, g.perm(l).card(), "can't be blocked", None, Some(m))? && live(g, m) {
-        let st = g.turn_stamp();
-        g.perm_mut(m).data.set(DataKey::Unbl, Val::Stamp(st));
-        crate::glog!(g, "    {} can't be blocked this turn (Rogue's Passage)", g.perm(m).name);
-    }
+    let cd = g.perm(l).card();
+    run_w(g, p, None, Some(cd), "can't be blocked", Some(m), 0.0, |g, _| {
+        if live(g, m) {
+            let st = g.turn_stamp();
+            g.perm_mut(m).data.set(DataKey::Unbl, Val::Stamp(st));
+            crate::glog!(g, "    {} can't be blocked this turn (Rogue's Passage)", g.perm(m).name);
+        }
+        Ok(())
+    })?;
     Ok(true)
 }
 
@@ -924,8 +951,11 @@ pub(crate) fn skull_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res
 
 // ================================================================== Liquimetal Torque
 /// {T}: target nonland permanent becomes an artifact in addition to its other types until end of turn (the mark is
-/// `DataKey::Artifact` holding the turn: `t5::is_artifact` reads it). The AI never uses it (it would give up the
-/// Torque's mana for nothing it can measure); a person can.
+/// `DataKey::Artifact` holding the turn: `t5::is_artifact` reads it). The AI uses it in one case where it measurably
+/// pays for the Torque's {C}: before combat, Karn, Legacy Reforged (power and toughness equal to the greatest mana value
+/// among your artifacts) is ready to attack, and a nonartifact permanent of ours with a mana value 2 or more above that
+/// (Ugin, the Spirit Dragon; Karn Liberated) becomes an artifact, making Karn that much bigger for the attack. Otherwise
+/// it taps for mana. A person decides for themselves.
 fn torque_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if post.is_none() || owner(g, src) != p || !live(g, src) || g.perm(src).tapped || locked(g, src, p) {
         return Ok(vec![]);
@@ -940,6 +970,35 @@ fn torque_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Re
         |m| pval(g, m),
     );
     let Some(t) = t else { return Ok(vec![]) };
+    if !crate::human::is_human(g, p)
+        && post == Some(false)
+        && let Some(k) = crate::impls::karn::karn_of(g, p)
+        && !g.perm(k).tapped
+        && !g.perm(k).sick
+    {
+        // the best target for Karn: the highest mana value above his current size
+        let cur = crate::impls::karn::max_mv(g, p) as i32;
+        let best = g
+            .player(p)
+            .perms
+            .iter()
+            .copied()
+            .filter(|&m| live(g, m) && !crate::impls::t5::is_artifact(g, m))
+            .filter_map(|m| g.perm(m).cd.map(|c| (m, g.db.get(c).cmc as i32)))
+            .max_by_key(|x| x.1);
+        if let Some((m, mv)) = best
+            && mv >= cur + 2
+            && crate::impls::lands::open_attack(g, p, mv, false)
+        {
+            return Ok(vec![ability(
+                0.4 * f64::from((mv - cur).min(6)),
+                format!("Liquimetal Torque: {} becomes an artifact (Karn grows to {mv})", g.perm(m).name),
+                src,
+                torque_go,
+                m.0 as i64,
+            )]);
+        }
+    }
     Ok(vec![ability(
         -5.0,
         format!("Liquimetal Torque: {} becomes an artifact", g.perm(t).name),
@@ -1028,7 +1087,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     walker(r, db, KARN_SCION, &KARN_ABILITIES)?;
     r.card(db, MAZEMIND)?.options = Some(mazemind_options);
     r.card(db, TOME)?.options = Some(urzas_tome_options);
-    r.card(db, MIRRORWORKS)?.etb = Some(mirror_etb);
+    let c = r.card(db, MIRRORWORKS)?;
+    c.etb = Some(mirror_etb);
+    c.land_play = Some(mirror_land);
     r.card(db, FORGE)?.options = Some(forge_options);
     r.card(db, BLUEPRINTS)?.upkeep = Some(blueprints_upkeep);
     // the cards that were already in the engine
@@ -1052,4 +1113,20 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Liquimetal Torque")?.options = Some(torque_options);
     r.card(db, "Staff of Domination")?.options = Some(staff_options);
     Ok(())
+}
+
+/// --- model-gaps-a3: an activated ability of a land or artifact whose cost is paid, with its effect `eff(g, is_copy)`
+/// split from it so that a Peter Parker's Camera (or Rings) copy runs it again without paying (`stack::ability_run_w`)
+#[allow(clippy::too_many_arguments)]
+fn run_w(
+    g: &mut Game,
+    p: PlayerId,
+    src: Option<PermId>,
+    cd: Option<CardId>,
+    name: &str,
+    target: Option<PermId>,
+    worth: f64,
+    eff: impl FnMut(&mut Game, bool) -> crate::flow::Res,
+) -> crate::flow::Res<bool> {
+    crate::engine::stack::ability_run_w(g, p, src, cd, name, None, target, worth, eff)
 }

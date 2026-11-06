@@ -847,7 +847,9 @@ fn tapper_use(g: &mut Game, p: PlayerId, src: PermId, t: PermId, gen_: u32, pips
     pay(g, p, gen_, pips, false)?;
     g.perm_mut(src).tapped = true;
     crate::glog!(g, "  {} activates {}: tap {}", pname(g, p), name_of(g, src), name_of(g, t));
-    if ability_window(g, p, Some(src), &format!("tap {}", name_of(g, t)), None, Some(t))? && on_bf(g, t) {
+    if ability_window(g, p, Some(src), &format!("tap {}", name_of(g, t)), None, Some(t))? && on_bf(g, t)
+        && crate::engine::ward::pay_ward(g, p, t)?
+    {
         g.perm_mut(t).tapped = true;
     }
     Ok(true)
@@ -1158,7 +1160,7 @@ fn abduction(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         to_zone_card(g, src, Zone::Gy);
         return Ok(());
     }
-    steal(g, p, t, false);
+    steal(g, p, t, false)?;
     g.perm_mut(src).attached = Some(t);
     abduction_untap(g, p, src, t)
 }

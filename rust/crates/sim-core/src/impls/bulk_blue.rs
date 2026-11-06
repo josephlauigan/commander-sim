@@ -565,7 +565,7 @@ fn acrobatics_attack(g: &mut Game, c: CardId, p: PlayerId, atk: &[PermId], d: Pl
     let mut bs = blockers;
     bs.sort_by(|&a, &b| pval(g, b).total_cmp(&pval(g, a)));
     for &m in bs.iter().take(2) {
-        if g.perm(m).on_bf {
+        if g.perm(m).on_bf && crate::engine::ward::pay_ward(g, p, m)? {
             g.perm_mut(m).tapped = true;
             crate::glog!(g, "    {} is tapped", g.perm(m).name);
         }

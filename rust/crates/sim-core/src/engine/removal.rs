@@ -6,7 +6,7 @@ use crate::ai;
 use crate::cardcode;
 use crate::cards::{Colors, Types};
 use crate::engine::life::{check_state, gain, lose_life};
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::can_pay;
 use crate::engine::values::*;
 use crate::engine::zones::*;
 use crate::flow::Res;
@@ -195,71 +195,10 @@ pub fn apply_removal_rest(g: &mut Game, actor: Option<PlayerId>, m: PermId, kind
     if !g.perm(m).on_bf {
         return Ok(());
     }
-    let ward = g.perm(m).cd.map_or(0, |c| g.db.get(c).ward) + cardcode::aura_ward(g, m);
-    if ward > 0
-        && spell.is_some()
-        && let Some(a) = actor.filter(|&a| a != owner)
+    // ward: any spell or ability an opponent controls that targets m (`ward::pay_ward`)
+    if let Some(a) = actor.filter(|&a| a != owner)
+        && !crate::engine::ward::pay_ward(g, a, m)?
     {
-        // ward {N}: pay or it's countered
-        if !can_pay(g, a, ward, "", false) {
-            crate::glog!(g, "    ward counters the removal on {}", g.perm(m).name);
-            return Ok(());
-        }
-        pay(g, a, ward, "", false)?;
-    }
-    if card_tag(g, m, Tag::Sauron)
-        && spell.is_some()
-        && let Some(a) = actor.filter(|&a| a != owner)
-    {
-        // Sauron's ward: sacrifice a legendary artifact or creature
-        let legs = ward_legends(g, a);
-        if crate::human::is_human(g, a) && !legs.is_empty() {
-            // the person may let the spell be countered instead
-            let labels: Vec<String> = legs
-                .iter()
-                .map(|&x| crate::human::legal::describe_target(g, a, crate::human::Target::Perm(x)))
-                .collect();
-            let prompt = format!(
-                "{}: ward - sacrifice a legendary artifact or creature, or the spell is countered",
-                g.perm(m).name
-            );
-            let Some(k) =
-                crate::human::choices::choose(g, a, "choose", &prompt, &labels, Some("let it be countered"), None)?
-            else {
-                crate::glog!(g, "    ward counters the removal on {}", g.perm(m).name);
-                return Ok(());
-            };
-            die(g, legs[k], "sac")?;
-        } else {
-            let Some(x) = min_by(&legs, |x| pval(g, x)) else {
-                crate::glog!(g, "    ward counters the removal on {}", g.perm(m).name);
-                return Ok(());
-            };
-            die(g, x, "sac")?;
-        }
-    }
-    // --- Tiers 4/5 (krenko): Hexing Squelcher's "Ward—Pay 2 life" (on itself and its controller's other creatures)
-    if spell.is_some()
-        && let Some(a) = actor.filter(|&a| a != owner)
-        && !crate::impls::t45_krenko::life_ward(g, a, m)?
-    {
-        crate::glog!(g, "    ward counters the removal on {}", g.perm(m).name);
-        return Ok(());
-    }
-    // --- scion: Prismari, the Inspiration's "Ward—Pay 5 life" (Scion as a copy of it too)
-    if spell.is_some()
-        && let Some(a) = actor.filter(|&a| a != owner)
-        && !crate::impls::t6_scion::prismari_ward(g, a, m)?
-    {
-        crate::glog!(g, "    ward counters the removal on {}", g.perm(m).name);
-        return Ok(());
-    }
-    // --- Tiers 1/2 (kaalia-sythis): Valgavoth, Terror Eater's "Ward—Sacrifice three nonland permanents"
-    if spell.is_some()
-        && let Some(a) = actor.filter(|&a| a != owner)
-        && !crate::impls::t12_kaalia_sythis::sac_ward(g, a, m)?
-    {
-        crate::glog!(g, "    ward counters the removal on {}", g.perm(m).name);
         return Ok(());
     }
     if g.perm(m).cd.is_some() && spell.is_some() && actor != Some(owner) && !cardcode::removal_taxes(g, actor, m, kind)?

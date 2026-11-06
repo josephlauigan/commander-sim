@@ -152,6 +152,19 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
     Ok(())
 }
 
+/// card c goes to owner o's graveyard; Blightsteel Colossus is revealed and shuffled into o's library instead ("if it
+/// would be put into a graveyard from anywhere": milled, discarded or countered; from the battlefield `to_zone_card`)
+pub fn put_in_gy(g: &mut Game, o: PlayerId, c: CardId) {
+    if crate::impls::karn_cards::shuffles_back(g, c) {
+        crate::glog!(g, "    {} is revealed and shuffled into {}'s library instead", g.db.get(c).name, g.player(o).name);
+        let n = g.player(o).library.len() as u64;
+        let i = g.rng.below(n + 1) as usize;
+        g.player_mut(o).library.insert(i, c);
+    } else {
+        g.player_mut(o).gy.push(c);
+    }
+}
+
 pub fn mill(g: &mut Game, p: PlayerId, n: usize) -> Res {
     if !g.hooks.is_empty() && n > 0 {
         let lib = &g.player(p).library;
@@ -160,6 +173,10 @@ pub fn mill(g: &mut Game, p: PlayerId, n: usize) -> Res {
     }
     for _ in 0..n {
         let Some(c) = g.player_mut(p).library.pop() else { return Ok(()) };
+        if crate::impls::karn_cards::shuffles_back(g, c) {
+            put_in_gy(g, p, c); // Blightsteel Colossus: shuffled into the library instead
+            continue;
+        }
         g.player_mut(p).gy.push(c);
         crate::impls::t12_brago_meren::note_gy(g, c); // --- Tiers 1/2 (brago-meren): Twilight Diviner's record
         if is_keyspell(g, c) {
@@ -502,6 +519,9 @@ pub fn leave(g: &mut Game, m: PermId) -> Res {
     }
     if on {
         g.player_mut(p).perms.retain(|&x| x != m);
+        if g.perm(m).token {
+            g.player_mut(p).lands.retain(|&x| x != m); // (a creature token land is listed in both: Astral Dragon)
+        }
         g.perm_mut(m).on_bf = false;
     }
     g.bf_ver += 1;
@@ -550,6 +570,7 @@ pub fn leave(g: &mut Game, m: PermId) -> Res {
         }
     }
     if on && g.perm(m).token {
+        crate::impls::karn_cards::ugin_token_left(g, m); // Ugin, the Ineffable: the Spirit's exiled card
         crate::impls::t0_zurgo::token_left(g, p, m)?; // t0-zurgo: Zurgo Stormrender, Twilight Drover
     }
     if on {
@@ -572,6 +593,8 @@ pub enum Zone {
 
 /// a nontoken card that left goes to a zone of its owner's; a commander goes to the command zone
 pub fn to_zone_card(g: &mut Game, m: PermId, zone: Zone) {
+    // unearth: "if it would leave the battlefield, exile it instead of putting it anywhere else"
+    let zone = if g.perm(m).data.truthy(DataKey::Unearth) { Zone::Exile } else { zone };
     if zone == Zone::Exile {
         crate::impls::bulk_white::note_exile(g, m); // Ennis: cards were put into exile this turn
     }
@@ -1040,11 +1063,14 @@ pub struct Enter {
     pub plus: i32,
     /// the copy exceptions of a token copy ("except it's a 0/1 white Illusion"); a clone's come from its `enter_copy`
     pub exc: Option<CopyExc>,
+    /// it is a token from the start (a token copy): whatever takes it away on entering (an Aura with nothing to enchant)
+    /// leaves no card behind
+    pub token: bool,
 }
 
 impl Default for Enter {
     fn default() -> Enter {
-        Enter { orig: None, sick: true, was_cast: false, undying: false, plus: 0, exc: None }
+        Enter { orig: None, sick: true, was_cast: false, undying: false, plus: 0, exc: None, token: false }
     }
 }
 
@@ -1108,6 +1134,7 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
         }
     }
     let m = g.new_perm(p, Some(cd), "Token", 0, 0);
+    g.perm_mut(m).token = how.token;
     g.enter_no += 1;
     let d = g.db.get(cd);
     let (haste, has_dsl, loyalty) = (d.tag(Tag::Haste), d.has_dsl(), d.start_loyalty);
@@ -1252,7 +1279,7 @@ pub fn enter_token_copy_with(g: &mut Game, p: PlayerId, cd: CardId, exc: Option<
     }
     // --- Tiers 4/5 (urdragon): its enter triggers wait until it is a token ("another nontoken Dragon": Miirym)
     g.resolving += 1;
-    let r = enter(g, p, cd, Enter { exc, ..Enter::default() });
+    let r = enter(g, p, cd, Enter { exc, token: true, ..Enter::default() });
     if let Ok(m) = r {
         g.perm_mut(m).token = true;
     }
@@ -1491,7 +1518,9 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
                 .filter(|&x| g.is_creature(x) && etgh(g, x) <= 1 && pval(g, x) >= 2.0 && !untargetable(g, x))
                 .collect();
             if let Some(b) = max_by(&x1, |x| pval(g, x)) {
-                die(g, b, "destroy")?;
+                if crate::engine::ward::pay_ward(g, p, b)? {
+                    die(g, b, "destroy")?;
+                }
             } else if let Some(q) = max_by(&opps, |o| threat(g, p, o)) {
                 lose_life(g, q, 1, Some(p), "triggers", None)?;
             }
@@ -1923,7 +1952,7 @@ pub fn discard_cards(g: &mut Game, q: PlayerId, cards: &[CardId]) -> Res {
         if necro {
             pl.exile.push(c)
         } else {
-            pl.gy.push(c)
+            put_in_gy(g, q, c); // (Blightsteel Colossus is shuffled into the library)
         }
         if !necro {
             crate::impls::t12_brago_meren::note_gy(g, c); // --- Tiers 1/2 (brago-meren)
@@ -1960,7 +1989,7 @@ pub fn discard_index(g: &mut Game, q: PlayerId, i: usize) -> Res {
         g.player_mut(q).exile.push(c);
         return Ok(());
     }
-    g.player_mut(q).gy.push(c);
+    put_in_gy(g, q, c); // (Blightsteel Colossus is shuffled into the library)
     crate::impls::t12_brago_meren::note_gy(g, c); // --- Tiers 1/2 (brago-meren)
     crate::impls::kefka::discarded(g, q, &[c])?; // mayhem / madness
     tergrid_steal(g, q, c, q)

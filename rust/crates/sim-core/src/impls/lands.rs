@@ -86,7 +86,14 @@ pub fn land_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<Op
             continue; // Pithing Needle names this land
         }
         if let Some(f) = g.registry.get(g.perm(l).card()).and_then(|i| i.land_options) {
-            o.extend(f(g, l, p, post)?);
+            // a summoning-sick creature land (Astral Dragon's copy) can't use a {T} ability: it counts as tapped for them
+            let sick = g.perm(l).sick && !g.perm(l).tapped && g.is_creature(l);
+            g.perm_mut(l).tapped |= sick;
+            let r = f(g, l, p, post);
+            if sick {
+                g.perm_mut(l).tapped = false;
+            }
+            o.extend(r?);
         }
     }
     Ok(o)
@@ -127,11 +134,11 @@ pub fn can_pay_without(g: &mut Game, p: PlayerId, l: PermId, generic: u32, pips:
 /// lands.sac_land: p sacrifices land l (it goes to the graveyard)
 pub fn sac_land(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     let cd = g.perm(l).real_card();
+    let mut card = false; // (a token land, a Mirrorworks copy, just ceases to exist: no card goes to the graveyard)
     if has_land(g, p, l) {
-        crate::engine::turn::remove_land(g, p, l);
-        g.player_mut(p).gy.push(cd);
+        card = crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
     }
-    if !g.hooks.is_empty() {
+    if card && !g.hooks.is_empty() {
         fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
     }
     Ok(())
@@ -139,14 +146,13 @@ pub fn sac_land(g: &mut Game, p: PlayerId, l: PermId) -> Res {
 
 /// fixes.destroy_land (a copy: fixes.rs is ported separately; the same few lines)
 fn destroy_land(g: &mut Game, q: PlayerId, l: PermId) -> Res {
-    if !has_land(g, q, l) || crate::dsl::lands_have_kw(g, q, "indestructible") {
-        return Ok(()); // (Avacyn, Angel of Hope: q's lands are indestructible)
+    if !has_land(g, q, l) || crate::dsl::lands_have_kw(g, q, "indestructible") || crate::engine::values::indestructible(g, l) {
+        return Ok(()); // (Avacyn, Angel of Hope: q's lands are indestructible; Darksteel Citadel)
     }
     let cd = g.perm(l).real_card();
-    crate::engine::turn::remove_land(g, q, l);
-    g.player_mut(q).gy.push(cd);
+    let went =     crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
     crate::glog!(g, "    {} ({}) is destroyed", name_of(g, cd), g.player(q).name);
-    if !g.hooks.is_empty() {
+    if went && !g.hooks.is_empty() {
         fire_trigger(g, Event::LandGy, Call::Cards { p: q, cards: vec![cd] })?;
     }
     Ok(())
@@ -182,8 +188,7 @@ pub fn revert_animated(g: &mut Game) -> Res {
             g.perm_mut(l).on_bf = true;
             g.player_mut(p).lands.push(l);
         } else if g.perm(m).owner == p && g.player(p).alive {
-            let cd = g.perm(l).card();
-            g.player_mut(p).gy.push(cd);
+            crate::engine::zones::to_zone_card(g, l, crate::engine::zones::Zone::Gy); // (a token land just ceases to exist)
         }
     }
     Ok(())
@@ -202,7 +207,22 @@ fn l_counters_set(g: &mut Game, l: PermId, n: i32) {
 /// Python marks it summoning sick only when it is `p.last_land_cd`, an attribute nothing sets, so an animated land is
 /// never sick (the land just played doesn't offer the ability anyway).
 pub fn animate(g: &mut Game, p: PlayerId, l: PermId, pw: i32, tg: i32, kws: &[&'static str], fly: bool) -> PermId {
-    crate::engine::turn::remove_land(g, p, l);
+    if g.is_creature(l) {
+        // already a creature (a token copy made by Astral Dragon): the ability only sets its size and gives it keywords
+        // until end of turn (a later effect than the copy's 3/3), so it stays the same object
+        let (cp, ct) = (crate::engine::values::epow(g, l), crate::engine::values::etgh(g, l));
+        let plus = g.perm(l).plus;
+        let x = g.perm_mut(l);
+        x.eot_pt = (x.eot_pt.0 + pw + plus - cp, x.eot_pt.1 + tg + plus - ct);
+        for &k in kws {
+            if !x.eot_kw.contains(&k) {
+                x.eot_kw.push(k);
+            }
+        }
+        crate::glog!(g, "  {} animates {}", g.player(p).name, land_name(g, l));
+        return l;
+    }
+    crate::engine::turn::remove_land(g, p, l, None); // (parked: the creature stands in for it until the turn ends)
     let name = intern(land_name(g, l));
     let tapped = g.perm(l).tapped;
     let plus = l_counters(g, l);
@@ -278,6 +298,9 @@ fn manland_of(g: &Game, l: PermId) -> &'static Manland {
 /// lands.manland: animated to attack when it has an open attack
 fn manland_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let ml = manland_of(g, l);
+    if g.is_creature(l) {
+        return Ok(vec![]); // (a token copy that is already a creature, Astral Dragon's: animating it would only shrink it)
+    }
     if post != Some(false) || g.perm(l).tapped || !can_pay_without(g, p, l, ml.generic, ml.pips) {
         return Ok(vec![]);
     }
@@ -407,8 +430,10 @@ fn sokenzan_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     remove_first(&mut g.player_mut(p).hand, c);
     pay(g, p, cost, "R", false)?;
     g.player_mut(p).gy.push(c);
-    make_tokens(g, p, Tokens { sick: false, types: vec!["spirit"], ..Tokens::new(2, 1) })?;
     crate::glog!(g, "  {} channels Sokenzan", g.player(p).name);
+    crate::engine::stack::ability_run_w(g, p, None, Some(c), "two 1/1 Spirits", None, None, 0.0, |g, _| {
+        make_tokens(g, p, Tokens { sick: false, types: vec!["spirit"], ..Tokens::new(2, 1) }).map(|_| ())
+    })?;
     Ok(true)
 }
 

@@ -827,6 +827,26 @@ pub fn is_sac_outlet(name: &str) -> bool {
     sac_fx(name).is_some()
 }
 
+/// --- model-gaps-a3: the name of the sacrifice outlet x is for p: its own, or, for Marvin, Murderous Mimic (it has the
+/// activated abilities of the creatures p controls), that of a creature outlet p controls under another name
+pub fn outlet_name<'a>(g: &'a Game, p: PlayerId, x: PermId) -> &'a str {
+    let n = card_name(g, x);
+    if n != super::newcards_b::MARVIN || is_sac_outlet(n) {
+        return n;
+    }
+    g.player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            let y = g.perm(m);
+            m != x && y.cd.is_some() && y.on_bf && !y.phased && !y.neutered && g.is_creature(m)
+        })
+        .map(|m| card_name(g, m))
+        .find(|&c| is_sac_outlet(c) && !stopped(g, c))
+        .unwrap_or(n)
+}
+
 /// the bartist / drain hand tags among p's permanents (phased ones too, as the Python counts them)
 fn drain_tags(g: &Game, p: PlayerId) -> f64 {
     g.player(p).perms.iter().filter(|&&x| def(g, x).is_some_and(|d| d.tag(Tag::Bartist) || d.tag(Tag::Drain))).count()
@@ -868,7 +888,7 @@ pub fn outlets(g: &Game, p: PlayerId) -> Vec<PermId> {
         .iter()
         .copied()
         .filter(|&x| {
-            let n = card_name(g, x);
+            let n = outlet_name(g, p, x);
             g.perm(x).cd.is_some() && is_sac_outlet(n) && !g.perm(x).phased && !stopped(g, n)
         })
         .collect()
@@ -876,7 +896,7 @@ pub fn outlets(g: &Game, p: PlayerId) -> Vec<PermId> {
 
 /// common.sac_through: sacrifice m through outlet src
 pub fn sac_through(g: &mut Game, p: PlayerId, src: PermId, m: PermId) -> Res {
-    let fx = sac_fx(card_name(g, src)).flatten();
+    let fx = sac_fx(outlet_name(g, p, src)).flatten();
     crate::glog!(g, "  {} sacrifices {} to {}", player_name(g, p), name_of(g, m), card_name(g, src));
     die(g, m, "sac")?;
     if let Some(f) = fx {
@@ -932,7 +952,7 @@ pub fn mana_needed_now(g: &Game, p: PlayerId, extra: u32) -> bool {
 /// what one sacrifice through outlet `o` is worth by itself, beyond the death: a scry, a ping, a counter, or mana when
 /// it's p's own turn and a spell in hand waits on it
 pub fn outlet_gain(g: &Game, p: PlayerId, o: PermId) -> f64 {
-    let n = card_name(g, o);
+    let n = outlet_name(g, p, o);
     let mana = outlet_mana(n);
     if mana > 0 {
         return if g.active == Some(p) && mana_needed_now(g, p, mana) { 2.0 } else { 0.0 };
@@ -966,7 +986,7 @@ pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<
             .filter(|&m| {
                 let x = g.perm(m);
                 let cr = g.is_creature(m);
-                ((cr && !x.phased && m != src && !x.is_cmd && x.cd.is_some() && !is_sac_outlet(card_name(g, m)))
+                ((cr && !x.phased && m != src && !x.is_cmd && x.cd.is_some() && !is_sac_outlet(outlet_name(g, p, m)))
                     || (cr && x.token && !x.phased))
                     && (!tergrid || x.token || x.cd.is_none())
                     && (!keep || (!x.is_cmd && !crate::engine::values::no_sac(g, m) && !is_payoff(g, m)))
@@ -1300,9 +1320,7 @@ fn mind_stone_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
     }
     pay(g, p, 1, "", false)?;
     die(g, src, "sac")?;
-    if ability_window(g, p, Some(src), "draw a card", None, None)? {
-        draw(g, p, 1, false)?;
-    }
+    crate::engine::stack::ability_run_w(g, p, Some(src), None, "draw a card", None, None, 0.0, |g, _| draw(g, p, 1, false))?;
     Ok(true)
 }
 
@@ -2189,31 +2207,35 @@ pub fn spark_bonus(g: &Game, phys: Option<CardId>) -> i32 {
 /// the targeting tax is ward {2}. (rules.py's Frost Titan replaces both hooks.)
 fn frost(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src && trigger_window(g, owner(g, src), Some(src), "tap a creature", None)? {
-        frost_tap(g, src);
+        frost_tap(g, src)?;
     }
     Ok(())
 }
 
 fn frost_atk(g: &mut Game, src: Src, _p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
     if atk.contains(&src) && trigger_window(g, owner(g, src), Some(src), "tap a creature", None)? {
-        frost_tap(g, src);
+        frost_tap(g, src)?;
     }
     Ok(vec![])
 }
 
-fn frost_tap(g: &mut Game, src: PermId) {
+fn frost_tap(g: &mut Game, src: PermId) -> Res {
     let cands: Vec<PermId> = g
         .opps(owner(g, src))
         .flat_map(|q| g.player(q).perms.iter().copied())
         .filter(|&x| g.is_creature(x) && !g.perm(x).phased && !untargetable(g, x))
         .collect();
-    if let Some(t) = max_by(&cands, |x| pval(g, x)) {
+    let me = owner(g, src);
+    if let Some(t) = max_by(&cands, |x| pval(g, x))
+        && crate::engine::ward::pay_ward(g, me, t)?
+    {
         g.perm_mut(t).tapped = true;
         if g.perm(t).cd.is_some() {
             let turns = g.player(owner(g, t)).turns as i64 + 1;
             g.perm_mut(t).data.set(DataKey::Frozen, Val::Int(turns));
         }
     }
+    Ok(())
 }
 
 /// Dream Trawler (Approximate): draws on attack, +1/+0 per draw; the discard-for-hexproof is used by the protection
@@ -2862,7 +2884,7 @@ static NARSET: [WalkerAb; 1] =
 
 // ======================================================== proliferate
 /// the Vivid lands (lands.py: they enter with two charge counters, `DataKey::Charge`, 2 when unset)
-const VIVID: [&str; 5] = ["Vivid Creek", "Vivid Grove", "Vivid Marsh", "Vivid Meadow", "Vivid Crag"];
+pub(crate) const VIVID: [&str; 5] = ["Vivid Creek", "Vivid Grove", "Vivid Marsh", "Vivid Meadow", "Vivid Crag"];
 
 /// common.proliferate: each permanent / player with counters gets one more of each kind it has (you choose: your
 /// +1/+1, loyalty and other counters, opponents' -1/-1 and poison). Orc Armies are left to their hand tag in the four
@@ -2880,6 +2902,18 @@ pub fn proliferate(g: &mut Game, p: PlayerId, times: u32) -> Res {
     };
     let times = times as i32 * (1 + extra); // Tekuthal
     for _ in 0..times.max(0) {
+        if crate::human::is_human(g, p) {
+            // a person chooses what to proliferate (rule 701.27): `human::proliferate`
+            crate::human::proliferate::once(g, p)?;
+            if g.over || !g.player(p).alive {
+                return Ok(());
+            }
+            if g.dsl_on {
+                crate::dsl::fire(g, "proliferate", crate::dsl::Fired { player: Some(p), ..Default::default() })?;
+            }
+            crate::impls::card_models2::voidwing_return(g, p)?;
+            continue;
+        }
         let mut sagas = vec![];
         for m in g.player(p).perms.clone() {
             let x = g.perm(m);
@@ -3340,10 +3374,18 @@ pub fn make_construct(g: &mut Game, p: PlayerId, arts: i64) -> Res {
 /// turn), chapter III's search trigger can be answered with one more Construct before the Saga is sacrificed
 pub fn saga_step(g: &mut Game, p: PlayerId) -> Res {
     for (l, _) in g.player(p).sagas.clone() {
-        let Some(i) = g.player(p).sagas.iter().position(|x| x.0 == l) else { continue };
+        saga_lore_one(g, p, l)?;
+    }
+    Ok(())
+}
+
+/// one more lore counter on p's Urza's Saga `l` (the main phase's, or a person's proliferate): chapter II, chapter III
+pub fn saga_lore_one(g: &mut Game, p: PlayerId, l: PermId) -> Res {
+    {
+        let Some(i) = g.player(p).sagas.iter().position(|x| x.0 == l) else { return Ok(()) };
         if !g.player(p).lands.contains(&l) {
             g.player_mut(p).sagas.remove(i);
-            continue;
+            return Ok(());
         }
         let lore = g.player(p).sagas[i].1 + 1;
         g.player_mut(p).sagas[i].1 = lore;
@@ -3388,9 +3430,7 @@ pub fn saga_step(g: &mut Game, p: PlayerId) -> Res {
             }
             if g.player(p).lands.contains(&l) {
                 // (it may have left in response: bounced, destroyed)
-                crate::engine::turn::remove_land(g, p, l);
-                let cd = g.perm(l).card();
-                g.player_mut(p).gy.push(cd);
+                crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
             }
             if let Some(i) = g.player(p).sagas.iter().position(|x| x.0 == l) {
                 g.player_mut(p).sagas.remove(i);
@@ -3422,9 +3462,7 @@ pub fn saga_step(g: &mut Game, p: PlayerId) -> Res {
                     g.db.get(c).name
                 );
             }
-            crate::engine::turn::remove_land(g, p, l);
-            let cd = g.perm(l).card();
-            g.player_mut(p).gy.push(cd);
+            crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
             if let Some(i) = g.player(p).sagas.iter().position(|x| x.0 == l) {
                 g.player_mut(p).sagas.remove(i);
             }
@@ -3629,4 +3667,10 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
         r.card(db, name)?.pval = Some(v);
     }
     register_phase6(r, db)
+}
+
+/// `Registry::saga` for a Saga whose lore counters only a person's proliferate adds (the AI never wants one: its
+/// proliferate is unchanged): it is a counter a person may choose (`human::proliferate`)
+pub(crate) fn saga_by_choice(_: &Game, _: PlayerId, _: PermId) -> bool {
+    false
 }

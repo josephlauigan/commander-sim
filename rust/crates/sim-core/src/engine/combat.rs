@@ -668,6 +668,8 @@ pub fn resolve_blocks(
         return Ok(vec![]); // --- card-models-3: Mandate of Peace, cast once the blockers were declared
     }
     crate::impls::tymna_partners::combat_trick(g, p, &atk, &assign)?; // thrasios, kraum: Blossoming Defense, Dark Endurance
+    crate::impls::karn::combat_pumps(g, p, &atk, d, &assign)?; // Mishra's Factory / Foundry pumps
+    crate::impls::karn_cards::hellkite_pump_lethal(g, p, &atk, d, &assign, &to_walker)?; // Steel Hellkite: {2}: +1/+0
     if g.humans.any() {
         step_priority(g, "blockers", Some(d), &atk)?; // practice mode: the declare blockers step's priority
         if g.end_combat {
@@ -1112,6 +1114,13 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
         if g.player(p).emblems.contains(&"liliana_waker") {
             // Liliana, Waker of the Dead's emblem: a creature card from a graveyard, with haste (Tier 3 Tergrid)
             crate::impls::t3_korvold::liliana_emblem(g, p)?;
+            if g.over || !g.player(p).alive {
+                return Ok(());
+            }
+        }
+        if g.player(p).emblems.contains(&"tezzeret_cc") {
+            // Tezzeret, Cruel Captain's emblem: three +1/+1 counters on an artifact (a noncreature one becomes a Robot)
+            crate::impls::t6_godo::tez_emblem(g, p)?;
             if g.over || !g.player(p).alive {
                 return Ok(());
             }

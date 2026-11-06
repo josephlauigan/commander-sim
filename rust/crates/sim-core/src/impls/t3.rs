@@ -207,12 +207,13 @@ pub fn sac_worst_permanent(g: &mut Game, p: PlayerId, exclude: Option<PermId>) -
     let colours = |l: PermId| g.db.get(g.perm(l).card()).tags.str(crate::tag::Tag::C).map_or(0, |s| s.len());
     if let Some(l) = first_max(&lands, |l| (g.perm(l).tapped, std::cmp::Reverse(colours(l)))) {
         // Python: min(p.lands, key=lambda L: (not L.tapped, len(L.cd.tags.get('c', ''))))
-        crate::engine::turn::remove_land(g, p, l);
         let cd = g.perm(l).card();
-        g.player_mut(p).gy.push(cd);
+        let went = crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy));
         if !g.hooks.is_empty() {
             fire_trigger(g, Event::Sacrifice, Call::Sacrifice { p, what: Sacrificed::Card(cd) })?;
-            fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
+            if went {
+                fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
+            }
         }
         return Ok(Some(Sacrificed::Card(cd)));
     }

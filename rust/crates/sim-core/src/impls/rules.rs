@@ -632,11 +632,6 @@ fn shepherd(g: &Game, src: Src, p: PlayerId, c: CardId) -> bool {
     p == g.perm(src).owner && g.db.get(c).pips.contains('G')
 }
 
-/// Ezuri: rules.py replaces t1's overrun with no activated abilities (its regeneration is ezuri_regen)
-fn ezuri_none(_g: &mut Game, _src: Src, _p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    Ok(vec![])
-}
-
 /// rules.ezuri_regen: {G}: regenerate another Elf (saves valuable Elves)
 pub fn ezuri_regen(g: &mut Game, m: PermId) -> Res<bool> {
     let p = g.perm(m).owner;
@@ -957,9 +952,7 @@ fn ldg_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
             let best = first_max(&lands, amt).unwrap();
             for l in lands {
                 if l != best {
-                    crate::engine::turn::remove_land(g, q, l);
-                    let cd = g.perm(l).card();
-                    g.player_mut(q).gy.push(cd);
+                    crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
                 }
             }
         }
@@ -1011,9 +1004,7 @@ fn ldg_person(g: &mut Game, q: PlayerId) -> Res {
     }
     for l in lands {
         if !keep.contains(&l) {
-            crate::engine::turn::remove_land(g, q, l);
-            let cd = g.perm(l).card();
-            g.player_mut(q).gy.push(cd);
+            crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
         }
     }
     Ok(())
@@ -1509,7 +1500,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.blocks = Some(brimaz_block);
     at_once(c, Event::Blocks, false);
     r.card(db, "Allosaurus Shepherd")?.uncounterable = Some(shepherd);
-    r.card(db, "Ezuri, Renegade Leader")?.options = Some(ezuri_none);
     let c = r.card(db, "Mirkwood Bats")?;
     c.token_created = Some(bats_make);
     at_once(c, Event::TokenCreated, false);

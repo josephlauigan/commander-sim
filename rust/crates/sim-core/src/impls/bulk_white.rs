@@ -1079,7 +1079,7 @@ fn repel_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
         _ => repel_targets(g, p),
     };
     for m in tg {
-        if live(g, m) && !untargetable(g, m) {
+        if live(g, m) && !untargetable(g, m) && crate::engine::ward::pay_ward(g, p, m)? {
             g.perm_mut(m).tapped = true;
             crate::glog!(g, "    {} is tapped", g.perm(m).name);
         }

@@ -939,9 +939,9 @@ fn gitrog_up(g: &mut Game, src: Src, p: PlayerId) -> Res {
         })
         .unwrap();
         let cd = g.perm(l).card();
-        remove_land(g, p, l);
-        g.player_mut(p).gy.push(cd);
-        fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
+        if remove_land(g, p, l, Some(crate::engine::zones::Zone::Gy)) {
+            fire_trigger(g, Event::LandGy, Call::Cards { p, cards: vec![cd] })?;
+        }
     } else {
         die(g, src, "sac")?;
     }

@@ -141,7 +141,7 @@ fn assembly_worker(g: &Game, m: PermId) -> bool {
 
 // ------------------------------------------------------------------ permanents
 /// the abilities of p's permanent m that this module lists (the animated Mishra's Factory / Foundry is a token)
-pub fn perm_abilities(g: &Game, _p: PlayerId, m: PermId) -> Vec<PermAbility> {
+pub fn perm_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
     let x = g.perm(m);
     if !x.on_bf || x.phased {
         return vec![];
@@ -210,7 +210,15 @@ pub fn perm_abilities(g: &Game, _p: PlayerId, m: PermId) -> Vec<PermAbility> {
             ),
         ],
         // {T}, pay 1 life: exile the top card (the AI uses it only on a land; you may on anything)
-        "Mystic Forge" => vec![ability("{T}, pay 1 life: exile the top card of your library", forge)],
+        "Mystic Forge" => {
+            let mut v = vec![ability("{T}, pay 1 life: exile the top card of your library", forge)];
+            // You may cast artifact spells and colorless spells from the top of your library (a counterspell there in response)
+            if let Some(top) = crate::impls::karn_engines::forge_top_card(g, p) {
+                let label = format!("cast {} from the top of your library", g.db.get(top).name);
+                v.push(ability(label, move |g, p, _m| forge_cast(g, p, top)));
+            }
+            v
+        }
         "Steel Overseer" => {
             vec![ability("{T}: put a +1/+1 counter on each artifact creature you control", overseer)]
         }
@@ -444,6 +452,17 @@ fn hellkite_x(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         return Ok(Some(why));
     }
     via_ability(g, p, m, crate::impls::karn_cards::hellkite_go, x as i64, "Steel Hellkite")
+}
+
+/// Mystic Forge: cast the top card of the library (a counterspell in response to a spell on the stack, as from the hand)
+fn forge_cast(g: &mut Game, p: PlayerId, top: crate::ids::CardId) -> Res<Why> {
+    if g.db.get(top).tag(crate::tag::Tag::Ctr) {
+        return super::human::cast_counterspell(g, p, top);
+    }
+    if let Some(why) = super::legal::check_cast_top(g, p, top) {
+        return Ok(Some(why));
+    }
+    super::human::cast(g, p, top, "lib")
 }
 
 fn forge(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
@@ -957,9 +976,9 @@ fn expedition_map(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     die(g, m, "sac")?;
     let cd = g.perm(m).cd.unwrap();
     crate::glog!(g, "  {} sacrifices Expedition Map", g.player(p).name);
-    if ability_window_card(g, p, cd, "search for a land card", None, None)? {
-        crate::impls::karn_engines::fetch_land(g, p, true, false)?;
-    }
+    stack::ability_run_w(g, p, None, Some(cd), "search for a land card", None, None, 3.0, |g, _| {
+        crate::impls::karn_engines::fetch_land(g, p, true, false).map(|_| ())
+    })?;
     Ok(None)
 }
 
@@ -976,9 +995,9 @@ fn urzas_cave(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     let cd = g.perm(l).card();
     crate::glog!(g, "  {} sacrifices Urza's Cave", g.player(p).name);
     crate::impls::lands::sac_land(g, p, l)?;
-    if ability_window_card(g, p, cd, "search for a land card", None, None)? {
-        crate::impls::karn_engines::fetch_land(g, p, false, true)?;
-    }
+    stack::ability_run_w(g, p, None, Some(cd), "search for a land card", None, None, 3.0, |g, _| {
+        crate::impls::karn_engines::fetch_land(g, p, false, true).map(|_| ())
+    })?;
     Ok(None)
 }
 

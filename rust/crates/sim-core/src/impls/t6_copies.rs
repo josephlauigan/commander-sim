@@ -488,7 +488,9 @@ fn stormdrake_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     let q = g.perm(t).owner;
     {
         use crate::engine::control::{Duration, gain_control};
-        gain_control(g, o, t, Duration::Permanent); // you control the creature
+        if !crate::engine::control::steal(g, o, t, Duration::Permanent)? {
+            return Ok(()); // (a ward on it countered the exchange)
+        }
         gain_control(g, q, src, Duration::Permanent); // and they control the Drake
     }
     g.player_mut(o).energy += 4;

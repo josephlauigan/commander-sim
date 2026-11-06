@@ -42,7 +42,8 @@ pub fn coerce_attach(g: &mut Game, a: PermId, host: PermId) {
     let saved = vec![Val::Int(x.pow as i64), Val::Int(x.tgh as i64), Val::Bool(x.dt)];
     g.perm_mut(a).data.set(DataKey::Held, Val::List(saved));
     if g.perm(host).owner != p {
-        super::marchesa::steal(g, p, host, false);
+        // (the Aura came in through `apply_removal`, which has paid any ward already)
+        crate::engine::control::gain_control(g, p, host, crate::engine::control::Duration::Permanent);
     }
     g.perm_mut(a).attached = Some(host);
     let x = g.perm_mut(host);
@@ -244,8 +245,7 @@ fn lesson_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym>
     match tapped {
         Some(l) if spare && pl.lands_played < 1 => {
             let cd = g.perm(l).card();
-            crate::engine::turn::remove_land(g, p, l);
-            g.player_mut(p).hand.push(cd);
+            crate::engine::turn::remove_land(g, p, l, Some(crate::engine::zones::Zone::Hand));
             crate::glog!(g, "    {} returns {} (Tragic Lesson)", g.player(p).name, g.db.get(cd).name);
         }
         _ => crate::engine::cast::discard_worst(g, p, 1)?,

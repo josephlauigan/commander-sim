@@ -297,9 +297,7 @@ fn sba_legend(g: &mut Game) -> Res {
                     crate::glog!(g, "    legend rule: {} keeps one {}, the other goes to the graveyard", g.players[i].name, g.perm(n).name);
                     if g.players[i].lands.contains(&n) {
                         // a land (a Mirage Mirror that copies one): the card that is really there goes to the graveyard
-                        let cd = g.perm(n).real_card();
-                        crate::engine::turn::remove_land(g, pid, n);
-                        g.player_mut(pid).gy.push(cd);
+                        crate::engine::turn::remove_land(g, pid, n, Some(crate::engine::zones::Zone::Gy));
                         g.bf_ver += 1;
                     } else {
                         crate::engine::zones::die(g, n, "sba")?;

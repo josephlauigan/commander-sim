@@ -728,6 +728,10 @@ const TO_FIX: &[&str] = &[];
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
     (
+        "karn: Tezzeret, Cruel Captain (Activate(2))",
+        "the -7 only gives the emblem; the emblem's target (the artifact that gets three +1/+1 counters) is chosen, and asked of a person, at the beginning of combat (t6_godo::tez_emblem, tests/model_gaps_karn.rs)",
+    ),
+    (
         "karn: Karn, Scion of Urza (Activate(0))",
         "+1 \"an opponent chooses one of them\": the opponent is an AI seat, which rightly chooses; the person is told both revealed cards and the log names which goes where. The person's choices are -1 (which silver-counter card; asked, see practice_trigger_fixes) and nothing in -2",
     ),
@@ -790,7 +794,6 @@ const UNPROBED: &[(&str, &str)] = &[
     ("sauron: Peter Parker's Camera", "activated: needs an ability of yours to copy; refused in the probe's table (human/urdragon.rs asks \"copy which ability?\")"),
     ("thrasios: Dauthi Voidwalker", "activated: needs an exiled card with a void counter; refused in the probe's table (human/gaps_c.rs asks \"play which exiled card for free?\")"),
     ("urdragon: Maelstrom of the Spirit Dragon", "activated: the ability never went on the stack in the probe's table (not read)"),
-    ("yshtola: Loran of the Third Path", "activated: the ability never went on the stack in the probe's table (not read)"),
     (
         "alela: Karmic Justice",
         "needs a spell or ability an opponent controls to destroy the person's noncreature permanent: no driver",

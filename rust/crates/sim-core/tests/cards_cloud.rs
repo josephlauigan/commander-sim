@@ -682,7 +682,7 @@ fn anduril_narsil_city_blessing_at_ten_permanents_is_kept() {
     assert!(g.perm(a).plus - before >= 2, "two counters with the city's blessing");
     // ascend is for the rest of the game: still two after dropping below ten
     for l in g.player(P0).lands.clone() {
-        sim_core::engine::turn::remove_land(&mut g, P0, l);
+        let _ = sim_core::engine::turn::remove_land(&mut g, P0, l, None);
     }
     let before = g.perm(a).plus;
     attack_triggers(&mut g, P0, &[a], P1);

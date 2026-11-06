@@ -807,7 +807,7 @@ fn marchesa_a_stolen_creature_returns_under_your_control() {
     let mut g = jodah_table();
     perm(&mut g, P0, MARCHESA);
     let snipe = perm(&mut g, P1, "Guttersnipe");
-    M::steal(&mut g, P0, snipe, true);
+    M::steal(&mut g, P0, snipe, true).unwrap();
     combat::attack_triggers(&mut g, P0, &[snipe], P1).unwrap(); // dethrone: a +1/+1 counter
     zones::die(&mut g, snipe, "sac").unwrap();
     let gc = card(&g, "Guttersnipe");

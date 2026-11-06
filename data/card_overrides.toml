@@ -1623,7 +1623,7 @@ note = ""
 tags = "leg pow=2 warrior"
 dsl = []
 status = "Full"
-note = "{G}: regenerate another Elf (saves valuable Elves); overrun before combat with 4+ Elves"
+note = "{G}: regenerate another Elf (saves valuable Elves); {2}{G}{G}{G}: Elves get +3/+3 and trample until end of turn (impls/model_gaps_a4.rs: on the stack; the AI uses it before combat only when it makes the attack lethal through the blockers or close to it, not whenever four Elves are ready; a person and Marvin use it too)"
 
 ["Fable of the Mirror-Breaker // Reflection of Kiki-Jiki"]
 types = "E"
@@ -4319,7 +4319,7 @@ note = "fear; destroys a nonartifact, nonblack creature on entry; evoke {1}{B} w
 tags = "pow=2"
 dsl = []
 status = "Full"
-note = "three Goblins; {1}{R}, sacrifice a Goblin: 2 damage"
+note = "three Goblins; {1}{R}, sacrifice a Goblin: 2 damage to any target (impls/model_gaps_a4.rs: on the stack as a copyable ability; the AI pings a player the mana and Goblins reach, a planeswalker 2 finishes or a creature worth a Goblin; a person chooses the target and the Goblin, human/model_gaps_a4.rs; Marvin borrows it)"
 
 ["Sifter of Skulls"]
 pool_remove_tags = ["tok", "tokp"] # the tok tag made a 1/1 as it entered; the card makes its Scion when a creature of yours dies (impls/common.rs `dies`) (Phase 2)
@@ -4829,7 +4829,7 @@ note = ""
 ["Syr Konrad, the Grim"]
 dsl = []
 status = "Full"
-note = "another creature dying, or a creature card milled or discarded, deals 1 to each opponent"
+note = "another creature dying, or a creature card milled or discarded, deals 1 to each opponent; {1}{B}: each player mills a card (impls/model_gaps_a4.rs: on the stack; the AI mills with spare mana when the creature cards in the libraries are worth the damage and its own library has 8 or more cards; a person and Marvin use it too)"
 
 ["Szadek, Lord of Secrets"]
 tags = "leg pow=5 tgh=5 fly"
@@ -5141,7 +5141,7 @@ note = "indestructible (flash on a commander)"
 tags = "leg pow=1 tgh=2"
 dsl = []
 status = "Full"
-note = "end step after an opponent discards: plays the best cheap permanent from their graveyard"
+note = "end step after an opponent discards: plays the best cheap permanent from their graveyard; {4}{B}{B}: each opponent with no cards in hand loses 10 life (impls/model_gaps_a4.rs: on the stack; the AI uses it when an empty-handed opponent is at 10 or less, or 20 or less as the first half of two; a person and Marvin use it too)"
 
 ["Tireless Provisioner"]
 tags = "pow=3 tgh=2"
@@ -8568,8 +8568,8 @@ status = "Full"
 note = "a token copy of the best nonland permanent (any controller's), which stays; the AI casts it on its own permanent with flash (opponent's turn or end of turn) when the copy is worth 4 or more; flashback {4}{U}{U}"
 
 ["Peter Parker's Camera"]
-status = "Approximate"
-note = "enters with three film counters; {2}, {T}, remove a counter: copy target activated or triggered ability you control (stack::copy_trigger, t6_copies::camera_copy): the copy can be countered and resolves before the original, choosing its targets anew (the AI's best). The AI copies its own important (importance 6+) triggered ability (Godo: the copy fetches Hammer of Nazahn, the original Helm of the Host) and its own compiled activated or loyalty ability worth stack::CAMERA_WORTH (a tutor: Fauna Shaman). Approximation: the copyable abilities are the triggers and the compiled activated and loyalty abilities (stack::ability_window_ex); a hand-written activated ability (card code calling stack::ability_window) cannot be copied"
+status = "Full"
+note = ""
 
 ["Volatile Stormdrake"]
 status = "Partial"
@@ -8807,8 +8807,8 @@ note = "enters: search for an artifact and put it into the graveyard (Helm, then
 
 ["Tezzeret, Cruel Captain"]
 dsl = []
-status = "Partial"
-note = "enters with 4 loyalty; whenever an artifact you control enters, +1 loyalty; 0: untap a spent mana rock (or tapped creature), +1/+1 counter if it is an artifact creature; -3: search for an artifact with mana value 1 or less into the hand; missing: the -7 emblem (rust/agents/engine-needs-godo.md)"
+status = "Full"
+note = "enters with 4 loyalty; whenever an artifact you control enters, +1 loyalty; 0: untap a spent mana rock (or tapped creature), +1/+1 counter if it is an artifact creature; -3: search for an artifact with mana value 1 or less into the hand; -7: an emblem (Player::emblems, key tezzeret_cc) that at the beginning of combat on your turn puts three +1/+1 counters on an artifact you control (an artifact creature first, else the best non-rock; a person chooses), and a noncreature artifact becomes a 0/0 Robot artifact creature for good (impls/t6_godo.rs tez_emblem, called from engine/combat.rs beside Liliana's emblem)"
 
 ["Party Thrasher"]
 status = "Partial"
@@ -8820,9 +8820,9 @@ status = "Full"
 note = "{1},{T}, sacrifice: draw a card; a spell cast with no mana spent (a Mox, a free alternative cost, either player's) is countered as it is cast: it counts as cast and goes to its owner's graveyard"
 
 ["Hexing Squelcher"]
-status = "Partial"
+status = "Approximate"
 paths_ok = "the compiled uncounterable (the unc tag) is \"this spell can't be countered\" (on the stack); the card code's uncounterable slot is \"spells you control can't be countered\" (on the battlefield)"
-note = "can't be countered itself and spells you control can't be countered; missing: ward--pay 2 life for itself and your other creatures (the engine's ward is mana only; rust/agents/engine-needs-godo.md)"
+note = "can't be countered itself and spells you control can't be countered (compiled); ward--pay 2 life on itself and your other creatures (impls/t45_krenko.rs life_ward, from engine/ward.rs pay_ward); see data/audit.toml for the coverage. Not audited one by one: about 185 card-code effects that pick a target themselves (gap accepted by JD 2026-11-05)"
 
 ["Blood Moon"]
 status = "Full"
@@ -9030,8 +9030,8 @@ status = "Full"
 note = "the {1}-more tax per other spell the caster cast this turn is exact; a land tapped for two or more mana makes one {C} instead of any other type and amount (land_colorless slot, asked after every bonus to the land; two Spheres act once)"
 
 ["Pithing Needle"]
-status = "Approximate"
-note = "chooses a card name as it enters (the one Disruptor Flute would name) and keeps it. rules::ability_locked now asks it (so the AI-driven activated abilities of the compiled text, card code and planeswalkers of that name are stopped) and so does the land-option loop; mana abilities are not stopped. Missing: a person in practice mode can still activate the named card (the human ability menus do not check locks)"
+status = "Full"
+note = "chooses a card name as it enters (the one Disruptor Flute would name; a person picks) and keeps it. rules::ability_locked asks it, so the activated abilities (not mana abilities) of the named card are stopped for the AI (compiled text, card code, planeswalkers, unearth) and for a person: permanents (abilities_of), lands (use_land) and graveyard / hand ability options (human/alt.rs); a person can still tap the named card for mana"
 
 ["Chalice of the Void"]
 status = "Full"
@@ -9200,8 +9200,8 @@ status = "Approximate"
 note = "first strike, trample, lifelink; Stagger on combat damage to a player doubles, until its controller's next turn, all damage to that player (combat and noncombat) and to their permanents (removal damage, combat kills). Gaps: sweepers with a fixed damage kind, the AI's combat estimates, lifelink of a doubled hit, and attackers resolved before Lightning in the same damage step are not doubled"
 
 ["Marvin, Murderous Mimic"]
-status = "Partial"
-note = "2/2 for {2}; copies only the {T} abilities of Niv-Mizzet the Firemind (draw), Viashino Fangtail (1 damage), Blightspeaker (drain 1, or {4} search) and Rummaging Goblin (discard, draw) while you control that creature; one ability a turn, Marvin untapped and not summoning sick; best of them each turn, Niv's draw first; also has Ioreth's two untap abilities while its controller has an Ioreth (the Tier 6 DDR loop). Other creatures' activated abilities are not copied"
+status = "Full"
+note = "has the compiled activated abilities of the creatures you control that don't share its name (dsl::borrowed_abilities: cost and effects as printed, mana, discard and sacrifice costs, token copies, the same per-turn cap; a person chooses the targets and what a sacrifice cost gives up), and the hand-written ones, with Marvin as the source: it pays the {T}, the sacrifice of 'this creature' (Marvin goes), the counters, and the effect lands on it where the text says 'this creature'. The AI uses each through the creature's options hook run with Marvin as the source (impls/newcards_b.rs marvin_options; Kefka's {8} and Tekuthal's counter are done as the other named-creature texts; Krenko, Kiki-Jiki and Ioreth's untaps; Brutal Hordechief's blocks and Drivnod's / Tekuthal's indestructible counter are carried by Marvin's own hooks). A person uses the creature's own person path with Marvin as the source and the one that pays, so the questions are the same as for the creature itself: the target, the creature or artifact or land sacrificed or tapped or returned, the mode, X, the card taken from a graveyard, library or the top cards, the Phyrexian payment, how the opponents' creatures block (human/model_gaps_a4.rs marvin_abilities and human/marvin_hooks.rs list them for Kiki-Jiki, Chatterfang, Siege-Gang Commander, Syr Konrad, Professional Face-Breaker, Tinybones, Ezuri and 92 more creatures (98 in all); the creatures whose ability has nothing to choose stay the AI's option: Allosaurus Shepherd, Battle Cry Goblin, Bristly Bill, Krenko, Warmaster, Lathliss, Shalai, Twilight Drover and the like). Also borrowed: the sacrifice outlets Carrion Feeder and Viscera Seer (AI and person), Mother of Runes and the other pool protectors, Quirion Ranger and Wirewood Symbiote untaps, and the mana of the mana creatures (the best single one: the most mana, then the most colours). Not borrowed, because they are not activated abilities: casting from the top of the library or the graveyard, prepared spells, Rivaz's and Valgavoth's permissions, Deadeye Navigator's paired grant (NOT_ACTIVATED in newcards_b.rs); a transform does nothing to Marvin (it has no other face: Bloodline Keeper, Restless Bloodseeker). Text that names its creature (rule 201.5: it means the creature that has the ability, here Marvin) is done by Marvin as that creature: Hope of Ghirapur, Hawkeye, Balan, Drivnod, Sisay, Scion of the Ur-Dragon, Thanos, Nicol Bolas, Venat, and Tekuthal (the indestructible counter goes on Marvin) and Kefka ({8}: each opponent sacrifices a permanent, and nothing transforms: a permanent that is not a double-faced card can't transform, 701.28c). Proliferate through Marvin (Cankerbloom, High Perfect Morcant) is chosen by a person like every proliferate (any number of permanents and players with counters, 701.27). Each borrowed ability is as complete as the creature's own entry says"
 
 ["Staff of Compleation"]
 paths_ok = "two sets of abilities, one path each: the options entry is {T}, pay 1 life: destroy target permanent you own (the override dropped the compiled misreading); the compiled activations are the proliferate, the draw and the untap"
@@ -9277,8 +9277,8 @@ status = "Full"
 note = "{T}: {C}{C}{C}, spent only to cast artifact spells (not for abilities)"
 
 ["Darksteel Citadel"]
-status = "Approximate"
-note = "artifact land ({T}: {C}) that counts for Karn's artifacts; indestructible is not modeled"
+status = "Full"
+note = "artifact land ({T}: {C}) that counts for Karn's artifacts; indestructible: the land-destruction code (fixes / lands destroy_land) asks values::indestructible, so Strip Mine and the like do nothing to it"
 
 ["Urza's Factory"]
 paths_ok = "compiled: the activated ability, offered by dsl::ability_options (Phase 3: a land is a permanent in the one arena); card code: the land_etb slot is City of Traitors' check, set on every land (t6_lands.rs traitors_check)"
@@ -9293,12 +9293,12 @@ status = "Full"
 note = "power and toughness each equal the greatest mana value among your artifacts (a bonus on the printed 1/1); at your upkeep {C} for each artifact you control that can't pay for nonartifact spells (artifact spells, abilities and taxes only) and lasts until the turn ends (code: impls/karn.rs, engine::mana Floating::art / FloatArt, practice ManaPool::art); the AI casts him as early as possible (karn_prio, search_bonus)"
 
 ["Mishra's Factory"]
-status = "Approximate"
-note = "{T}: {C}; {1}: becomes a 2/2 Assembly-Worker artifact creature (the AI animates it to attack when the way is open and to block a dangerous attack, and it counts for Karn); not modeled: {T}: target Assembly-Worker gets +1/+1"
+status = "Full"
+note = "{T}: {C}; {1}: becomes a 2/2 Assembly-Worker artifact creature (the AI animates it to attack when the way is open and to block a dangerous attack, and it counts for Karn); {T}: target Assembly-Worker gets +1/+1: after blocks (karn::combat_pumps, from combat::resolve_blocks) an AI seat taps an animated Factory (a blocker, not one that attacked) or an untapped Factory land to pump a worker when that saves it or lets it kill its opponent in the fight; a person uses it from the ability menu"
 
 ["Mishra's Foundry"]
-status = "Approximate"
-note = "{T}: {C}; {2}: becomes a 2/2 Assembly-Worker artifact creature (animated to attack when open, and to block a dangerous attack; it counts for Karn); not modeled: {1},{T}: target attacking Assembly-Worker gets +2/+2"
+status = "Full"
+note = "{T}: {C}; {2}: becomes a 2/2 Assembly-Worker artifact creature (animated to attack when open, and to block a dangerous attack; it counts for Karn); {1},{T}: target attacking Assembly-Worker gets +2/+2: after blocks (karn::combat_pumps) an AI seat taps an untapped Foundry (land or animated, not attacking) and pays {1} to pump an attacking worker when that saves it or lets it kill its blocker (a gain worth 2 or more); a person uses it from the ability menu"
 ["Karn, Scion of Urza"]
 tags = "leg" # the tok tags made a 0/0 Construct as it entered (and it died at once); the card code's -2 makes the real one (impls/karn_engines.rs) (Phase 2; a tags override, as pool_remove_tags skips the cards of JD's decks)
 status = "Full"
@@ -9309,13 +9309,13 @@ status = "Full"
 note = "{T}, page counter: scry 1; {2}, {T}, page counter: draw a card; at the fourth page counter it is exiled and you gain 4 life. The AI draws when it can pay {2} and scrys only when it cannot (and the Tome is young). impls/karn_engines.rs"
 
 ["Mirrorworks"]
-status = "Approximate"
-note = "whenever another nontoken artifact you control enters, pay {2} for a token copy (not for legends, or Walking Ballista / Hangarback Walker / the Self-Replicator, whose copy would be empty; the AI wants rocks and creatures). Missing: artifact lands (Darksteel Citadel) are not copied. impls/karn_engines.rs"
+status = "Full"
+note = "whenever another nontoken artifact you control enters, pay {2} for a token copy (not for legends, or Walking Ballista / Hangarback Walker / the Self-Replicator, whose copy would be empty; the AI wants rocks and creatures). An artifact land played as the land drop (Darksteel Citadel, Treasure Vault) is copied too through the land_play slot: a token land of the same card, in the lands list, tapping for mana and counting for Karn (the AI pays for it). impls/karn_engines.rs"
 
 ["Mystic Forge"]
 dsl = []
-status = "Approximate"
-note = "the earlier compiled text was wrong (it drew a card). Now: the AI casts the artifact or colourless nonland card on top of the library through the main-phase options when it would cast it from hand (card_utility plus a little), and {T}, 1 life exiles the top card (used to dig past a land it does not need). Missing: removal, wipes, X spells and counterspells on top are left alone (their targets are chosen by the hand options); a land on top is never played (the Forge does not allow it). impls/karn_engines.rs"
+status = "Full"
+note = "the earlier compiled text was wrong (it drew a card). Now: the AI casts the artifact or colourless nonland card on top of the library through the main-phase options when it would cast it from hand (card_utility plus a little), including X spells of the Tokx kind; a removal spell or a wipe on top (All Is Dust) goes through the removal and wipe options like a hand card (brain::spell_sources / source_zone); {T}, 1 life exiles the top card (used to dig past a land it does not need). A counterspell on top (Pact of Negation, a {0} card, is the colourless one) is cast in response like a hand card, for the AI (stack::pick_counter, counter_on_top, cast_counter_spell) and for a person (a \"cast X from the top of your library\" ability on the Forge, also for any other spell of the Forge's kind; the response window opens for it). (A land on top is never played: the Forge only allows artifact and colourless spells.) impls/karn_engines.rs"
 
 ["Urza's Blueprints"]
 paths_ok = "compiled: the {T} draw; card code: echo at upkeep (karn_engines.rs)"
@@ -9370,8 +9370,8 @@ status = "Full"
 note = "{T}: add {C}. Upkeep: with three or more artifacts (artifact lands count) gain 1 life. {4}, {T}, sacrifice: search for an artifact card into your hand, only with three or more artifacts (the AI uses it with spare mana, and sooner on a small hand). The earlier engine had the mana only. impls/karn_engines.rs"
 
 ["Liquimetal Torque"]
-status = "Approximate"
-note = "{T}: add {C}. {T}: target nonland permanent becomes an artifact until end of turn (t5::is_artifact reads the mark; Karn's Construct and the artifact counts see it). The AI never uses the second ability (it would give up the mana for nothing it can measure); a person can. impls/karn_engines.rs"
+status = "Full"
+note = "{T}: add {C}. {T}: target nonland permanent becomes an artifact until end of turn (t5::is_artifact reads the mark; Karn's Construct, the artifact counts and Karn, Legacy Reforged's size (karn::max_mv) see it). The AI uses the second ability in one case, before combat: Karn, Legacy Reforged is ready to attack and a nonartifact permanent of ours has a mana value 2 or more above his size (Ugin, the Spirit Dragon; Karn Liberated), so it becomes an artifact and Karn grows; otherwise it taps for mana; a person can always use it. impls/karn_engines.rs"
 
 ["Mana Vault"]
 status = "Full"
@@ -9420,14 +9420,14 @@ note = "each player sacrifices every coloured permanent (the dust kind of impls/
 ["Blightsteel Colossus"]
 tags = "pow=11 bomb=9 trample"
 dsl = []
-status = "Approximate"
-note = "infect: combat damage to a player is poison counters (10 kills), indestructible from its keyword, shuffled into the library instead of the graveyard from the battlefield; damage to creatures is plain damage (no -1/-1 counters) and a mill or discard still puts it in the graveyard"
+status = "Full"
+note = "infect: combat damage to a player is poison counters (10 kills), damage to a creature in combat is -1/-1 counters (engine/combat.rs); indestructible from its keyword; revealed and shuffled into its owner's library instead of a graveyard from anywhere: dying (zones::to_zone_card), milled, discarded, or countered as a spell (zones::put_in_gy)"
 
 ["Cityscape Leveler"]
 tags = "pow=8 bomb=8 trample"
 dsl = []
-status = "Approximate"
-note = "when cast and on each attack it destroys the opposing nonland permanent worth most (3 or more), whose controller gets a tapped Powerstone; unearth {8} at sorcery speed (haste, exiled at the end step; the 'exile instead of leaving' clause is not modeled)"
+status = "Full"
+note = "when cast and on each attack it destroys the opposing nonland permanent worth most (3 or more), whose controller gets a tapped Powerstone; unearth {8} at sorcery speed (haste, exiled at the end step, and exiled instead of going anywhere if it would leave the battlefield: zones::to_zone_card reads the Unearth mark); the Pithing Needle stops the unearth"
 
 ["Darksteel Forge"]
 status = "Full"
@@ -9446,8 +9446,8 @@ status = "Full"
 note = "{T}, sacrifice the three cheapest other artifacts (not the commander): the best artifact card of the library onto the battlefield, then shuffle; the AI does it when the card is worth more than the three artifacts"
 
 ["Liberator, Urza's Battlethopter"]
-status = "Approximate"
-note = "flash; colourless and artifact spells can be cast as though they had flash (the AI casts them in the end-of-turn window); +1/+1 counter when the mana spent is greater than its power"
+status = "Full"
+note = "flash; colourless and artifact spells can be cast as though they had flash (the AI casts permanents in the end-of-turn window, and with it a colourless sorcery wipe or removal at the end of the turn before its own: All Is Dust); +1/+1 counter when the mana spent (the payment's record, taxes included) is greater than its power"
 
 ["Mishra's Self-Replicator"]
 tags = "pow=2"
@@ -9494,8 +9494,8 @@ note = "enter: destroys the opposing permanent worth most (2 or more); when it g
 ["Steel Hellkite"]
 tags = "pow=5 bomb=5 fly"
 dsl = []
-status = "Approximate"
-note = "{X}: destroy each nonland permanent with mana value X controlled by a player it dealt combat damage to this turn (once a turn; the AI picks the X that hits most); the {2}: +1/+0 pump is not modeled"
+status = "Full"
+note = "{X}: destroy each nonland permanent with mana value X controlled by a player it dealt combat damage to this turn (once a turn; the AI picks the X that hits most); {2}: +1/+0 until end of turn: the AI pumps an unblocked attacking Hellkite after blockers when the pumps it can pay make the attack lethal (karn_cards::hellkite_pump_lethal); a person pumps from the ability menu"
 
 ["Steel Overseer"]
 tags = "pow=1"
@@ -9512,8 +9512,8 @@ note = "when it dies: three 3/3 colourless Golem artifact creature tokens, one w
 ["Ugin, the Ineffable"]
 tags = "leg"
 dsl = []
-status = "Approximate"
-note = "colourless spells you cast cost {2} less; +1: exile the top card and make a 2/2 Spirit (the card goes to hand when that Spirit dies, or when Ugin leaves); -3: destroy the opposing coloured permanent worth most"
+status = "Full"
+note = "colourless spells you cast cost {2} less; +1: exile the top card face down and make a 2/2 colourless Spirit; the card is held by the Spirit token and goes to hand when that token leaves the battlefield (dies, exiled, bounced), whether or not Ugin is still out (karn_cards::ugin_token_left, from zones::leave); -3: destroy the opposing coloured permanent worth most"
 
 ["Unstable Obelisk"]
 tags = "rock=1:C"
@@ -9656,8 +9656,8 @@ dsl = [] # the compiled return took any creature card: card code returns a Drago
 ["Thanos, the Mad Titan"]
 tags = "leg pow=4 tgh=4 dt lifelink"
 dsl = []
-status = "Approximate"
-note = "deathtouch, lifelink; hand-written power-up (impls/t6_thanos.rs): {C}{W}{U}{B}{R}{G}, or {C}{U}{G} the turn he entered ({C} is colourless mana only), no timing restriction: two +1/+1 counters, then each other creature of the chosen parity (0 is even) is destroyed at once. The AI chooses the parity as it resolves (opponents' value lost against 1.2 times its own) and uses it in its main phase or at the end-of-turn window when that swing is worth it. Left out: once per game per player rather than per Thanos object, and a token's mana value is 0 (a token copy's is the copied card's)"
+status = "Full"
+note = "deathtouch, lifelink; the power-up (impls/t6_thanos.rs): {C}{W}{U}{B}{R}{G}, or {C}{U}{G} the turn he entered ({C} is colourless mana only), no timing restriction, once per Thanos object (a blink or recast is a new object that may power up again): two +1/+1 counters, then each other creature of the chosen parity is destroyed at once. A permanent's mana value is its card's: a token copy has the copied card's, any other token 0 (even), zero is even. The AI chooses the parity as it resolves (opponents' value lost against 1.2 times its own) and uses it in its main phase or at the end-of-turn window when that swing is worth it; a person chooses odd or even"
 
 ["Kindred Dominance"]
 tags = "wipe=dominance"
@@ -9861,6 +9861,8 @@ dsl = [] # the compiled exile never returned the card: the enter trigger is hand
 # read as 1/1 under the compiled count)
 ["Psychosis Crawler"]
 tags = "pow=0 tgh=0"
+status = "Full"
+note = "compiled: power and toughness each equal to the cards in your hand (a 0/0 with an empty hand), and whenever you draw a card each opponent loses 1 life (each card of a multi-card draw); the Kefka deck's draw engines and the Crawler loop (cards_kefka.rs) run through the engine's draw"
 
 # --- Phase 2 (doubles): cards where the compiled abilities and the card code met on one event (cardgen audit --paths)
 ["Liliana, Waker of the Dead"]
@@ -10273,3 +10275,11 @@ note = "instant: prevents all damage to its caster from opponents' sources until
 dsl = [] # the compiled reanimate had no Equipment filter (it returned the best card of any type); card code does it
 status = "Full"
 note = "enters: returns the best Equipment from the graveyard; the first equip of its controller's turn costs {0} (the AI spends it on the dearest equip), and on that turn equips can be activated at instant speed (the AI moves Equipment onto an unblocked attacker after blockers; practice mode allows it)"
+
+# --- model-gaps-a2 (rust/agents/model-gaps-a2.md)
+["Lotho, Corrupt Shirriff"]
+tags = "leg pow=2 tgh=1" # without the Scryfall treas tag: it made a Treasure as Lotho entered, which the card does not do
+dsl = []
+status = "Full"
+note = "whenever a player (you too) casts their second spell each turn, you lose 1 life and create a Treasure (impls/model_gaps_a2.rs, a cast hook; nothing happens when Lotho enters)"
+

@@ -883,38 +883,6 @@ fn tyvar(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> R
     Ok(vec![])
 }
 
-/// overrun before combat with 4+ Elves; regeneration not modeled
-/// Not registered: in Python a later module's hook for the same card and event replaces this one (rules.py's options), so it never runs.
-#[allow(dead_code)]
-fn ezuri(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false) || !can_pay(g, p, 2, "GGG", false) {
-        return Ok(vec![]);
-    }
-    let elves = g.player(p).perms.iter().filter(|&&m| ready_elf(g, m)).count();
-    if elves < 4 {
-        return Ok(vec![]);
-    }
-    Ok(vec![ability(1.0 + 0.8 * elves as f64, "Ezuri overrun", src, ezuri_go)])
-}
-
-#[allow(dead_code)]
-fn ezuri_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !can_pay(g, p, 2, "GGG", false) {
-        return Ok(false);
-    }
-    pay(g, p, 2, "GGG", false)?;
-    if !ability_window(g, p, Some(src), "Elves get +3/+3 and trample", Some(6.0), None)? {
-        return Ok(true);
-    }
-    for m in g.player(p).perms.clone() {
-        if g.is_creature(m) && has_type(g, m, "elf") {
-            eot(g, m, 3, 3);
-        }
-    }
-    g.player_mut(p).trample = true;
-    Ok(true)
-}
-
 /// uncounterable; Elves become 5/5 before combat; other green spells still counterable
 fn allosaurus(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if post != Some(false) || !can_pay(g, p, 4, "GG", false) {
@@ -1852,7 +1820,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Skemfar Avenger")?.dies = Some(skemfar);
     r.card(db, "Timberwatch Elf")?.options = Some(timberwatch);
     r.card(db, "Tyvar the Bellicose")?.attack = Some(tyvar);
-    // Ezuri, Renegade Leader: rules' options hook replaces t1's (ezuri)
+    // Ezuri, Renegade Leader: its options hook is model_gaps_a4.rs (the overrun)
     r.card(db, "Allosaurus Shepherd")?.options = Some(allosaurus);
     r.card(db, "Beastmaster Ascension")?.attack = Some(bma);
     r.card(db, "Tendershoot Dryad")?.upkeep = Some(tendershoot);

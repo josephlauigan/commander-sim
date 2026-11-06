@@ -567,7 +567,7 @@ fn cast_harrow(g: &mut Game) {
     // the additional cost (sacrifice a land) is paid in `additional_cost` before the spell resolves
     g.player_mut(P0).hand.retain(|&x| x != c);
     let l = g.player(P0).lands[0];
-    sim_core::engine::turn::remove_land(g, P0, l);
+    let _ = sim_core::engine::turn::remove_land(g, P0, l, None);
     let cd = g.perm(l).card();
     g.player_mut(P0).gy.push(cd);
     g.player_mut(P0).hand.push(c);
