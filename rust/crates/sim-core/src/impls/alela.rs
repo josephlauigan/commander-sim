@@ -29,7 +29,7 @@ use crate::engine::combat::{can_block, first_strike, has_haste, kw};
 use crate::engine::life::gain;
 use crate::engine::mana::{can_pay, cost_of, land_colors_now, pay};
 use crate::engine::removal::{apply_removal, legal_targets};
-use crate::engine::stack::{ability_window, ability_window_card, counter_window, may_window, trigger_window};
+use crate::engine::stack::{ability_run, ability_run_w, ability_window, counter_window, may_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{card_name, colors_of, epow, etgh, no_sac, pval, untargetable};
 use crate::engine::zones::{
@@ -464,13 +464,28 @@ fn transmute_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     pay(g, p, 1, "UU", false)?;
     remove_first(&mut g.player_mut(p).hand, c);
     g.player_mut(p).gy.push(c);
-    if !ability_window_card(g, p, c, "transmute", None, None)? {
-        return Ok(true);
-    }
-    remove_first(&mut g.player_mut(p).library, best);
-    shuffle_library(g, p);
-    g.player_mut(p).hand.push(best);
-    crate::glog!(g, "  {} transmutes Muddle the Mixture for {}", pname(g, p), g.db.get(best).name);
+    ability_run_w(g, p, None, Some(c), "transmute", None, None, 0.0, |g, is_copy| {
+        let mut best = best;
+        if is_copy && crate::human::is_human(g, p) {
+            // a copy (a person's Rings of Brighthearth / Peter Parker's Camera) searches for a card of its own
+            let mv = g.db.get(c).cmc;
+            let prompt = format!("The copy of transmute: search your library for a card with mana value {mv}");
+            let found =
+                crate::human::choices::search(g, p, &move |g: &Game, x| g.db.get(x).cmc == mv, 1, &prompt, true)?;
+            match found.first() {
+                Some(&x) => best = x,
+                None => return Ok(()),
+            }
+        }
+        if !g.player(p).library.contains(&best) {
+            return Ok(());
+        }
+        remove_first(&mut g.player_mut(p).library, best);
+        shuffle_library(g, p);
+        g.player_mut(p).hand.push(best);
+        crate::glog!(g, "  {} transmutes Muddle the Mixture for {}", pname(g, p), g.db.get(best).name);
+        Ok(())
+    })?;
     Ok(true)
 }
 
@@ -1165,14 +1180,17 @@ fn thopter_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).unearthed.contains(&c) {
         g.player_mut(p).unearthed.push(c);
     }
-    if !ability_window_card(g, p, c, "unearth", None, None)? || !g.player(p).gy.contains(&c) {
-        return Ok(true);
-    }
-    remove_first(&mut g.player_mut(p).gy, c);
-    let m = enter(g, p, c, Enter::default())?;
-    g.perm_mut(m).sick = false;
-    g.perm_mut(m).data.set(DataKey::Unearth, Val::Bool(true));
-    crate::glog!(g, "  {} unearths Reconstructed Thopter", pname(g, p));
+    ability_run(g, p, None, Some(c), "unearth", None, None, |g| {
+        if !g.player(p).gy.contains(&c) {
+            return Ok(()); // a copy found it already returned
+        }
+        remove_first(&mut g.player_mut(p).gy, c);
+        let m = enter(g, p, c, Enter::default())?;
+        g.perm_mut(m).sick = false;
+        g.perm_mut(m).data.set(DataKey::Unearth, Val::Bool(true));
+        crate::glog!(g, "  {} unearths Reconstructed Thopter", pname(g, p));
+        Ok(())
+    })?;
     Ok(true)
 }
 
@@ -2098,15 +2116,15 @@ pub(crate) fn chimes_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Re
     pay(g, p, 3, "", false)?;
     g.perm_mut(src).tapped = true;
     die(g, src, "sac")?;
-    if !ability_window(g, p, Some(src), "return all enchantment cards from the graveyard to hand", None, None)? {
-        return Ok(true);
-    }
-    let back = chimes_cards(g, p);
-    for &c in &back {
-        remove_first(&mut g.player_mut(p).gy, c);
-        g.player_mut(p).hand.push(c);
-    }
-    crate::glog!(g, "  {} Crystal Chimes returns {} enchantment card(s)", pname(g, p), back.len());
+    ability_run(g, p, Some(src), None, "return all enchantment cards from the graveyard to hand", None, None, |g| {
+        let back = chimes_cards(g, p);
+        for &c in &back {
+            remove_first(&mut g.player_mut(p).gy, c);
+            g.player_mut(p).hand.push(c);
+        }
+        crate::glog!(g, "  {} Crystal Chimes returns {} enchantment card(s)", pname(g, p), back.len());
+        Ok(())
+    })?;
     Ok(true)
 }
 
