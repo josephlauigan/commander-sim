@@ -557,21 +557,35 @@ pub(crate) fn sundering_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> 
     stat(g, p, "jr_venat_sunder", 1);
     crate::glog!(g, "  {} activates Hero's Sundering: exile {}, transform Venat", pname(g, p), g.perm(t).name);
     let label = format!("exile {}, transform", g.perm(t).name);
-    if !ability_window(g, p, Some(src), &label, None, Some(t))? {
-        return Ok(true);
-    }
-    if !g.perm(t).on_bf || untargetable(g, t) {
-        return Ok(true); // no legal target: it does nothing
-    }
-    let cd = g.perm(src).cd;
-    apply_removal(g, Some(p), t, "exile", cd)?;
-    if on(g, p, src) {
-        let x = g.perm_mut(src);
-        x.data.set(DataKey::Hydaelyn, Val::Bool(true));
-        x.pow = 4;
-        x.tgh = 4;
-        crate::glog!(g, "    Venat transforms into Hydaelyn, the Mothercrystal");
-    }
+    crate::engine::stack::ability_run_w(g, p, Some(src), None, &label, None, Some(t), 0.0, |g, is_copy| {
+        let mut t = t;
+        if is_copy && crate::human::is_human(g, p) {
+            // "you may choose a new target for the copy" (a person's Rings of Brighthearth / Peter Parker's Camera)
+            let now: Vec<PermId> = crate::human::karn::targets(g, p)
+                .into_iter()
+                .filter(|&x| g.perm(x).cd.is_some_and(|c| !g.db.get(c).land))
+                .collect();
+            let prompt = "The copy of Hero's Sundering: exile which nonland permanent?";
+            if !now.is_empty()
+                && let Some(x) = crate::human::cards::pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?
+            {
+                t = x;
+            }
+        }
+        if !g.perm(t).on_bf || untargetable(g, t) {
+            return Ok(()); // no legal target: it does nothing
+        }
+        let cd = g.perm(src).cd;
+        apply_removal(g, Some(p), t, "exile", cd)?;
+        if on(g, p, src) {
+            let x = g.perm_mut(src);
+            x.data.set(DataKey::Hydaelyn, Val::Bool(true));
+            x.pow = 4;
+            x.tgh = 4;
+            crate::glog!(g, "    Venat transforms into Hydaelyn, the Mothercrystal");
+        }
+        Ok(())
+    })?;
     Ok(true)
 }
 

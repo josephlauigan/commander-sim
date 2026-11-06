@@ -17,7 +17,6 @@
 use crate::cards::CardDb;
 use crate::engine::life::check_state;
 use crate::engine::mana::{can_pay, pay};
-use crate::engine::stack::ability_window;
 use crate::engine::values::{indestructible, pval};
 use crate::engine::zones::die;
 use crate::flow::Res;
@@ -134,11 +133,11 @@ pub fn thanos_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
     let born = g.perm(src).born as i64;
     let o = g.perm(src).owner;
     g.player_mut(o).stats.insert(used_key(src), born);
-    if !ability_window(g, p, Some(src), "power-up", None, None)? {
-        return Ok(true);
-    }
-    let even = if crate::human::is_human(g, p) { ask_parity(g, p, src)? } else { best_parity(g, p, src).0 };
-    resolve(g, p, src, even)?;
+    // (a copy by a person's Rings of Brighthearth / Peter Parker's Camera chooses odd or even for itself)
+    crate::engine::stack::ability_run(g, p, Some(src), None, "power-up", None, None, |g| {
+        let even = if crate::human::is_human(g, p) { ask_parity(g, p, src)? } else { best_parity(g, p, src).0 };
+        resolve(g, p, src, even)
+    })?;
     Ok(true)
 }
 

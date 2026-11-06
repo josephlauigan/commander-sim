@@ -520,9 +520,7 @@ pub fn hoard_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> 
     g.perm_mut(src).tapped = true;
     let n = gold(g, src) - 1;
     g.perm_mut(src).data.set(DataKey::T45Dragon, Val::Int(n));
-    if ability_window(g, p, Some(src), "draw a card", None, None)? {
-        draw(g, p, 1, false)?;
-    }
+    crate::engine::stack::ability_run(g, p, Some(src), None, "draw a card", None, None, |g| draw(g, p, 1, false))?;
     Ok(true)
 }
 
