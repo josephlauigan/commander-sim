@@ -140,6 +140,8 @@ pub fn tutor_rule(g: &Game, c: CardId) -> Option<TutorRule<'_>> {
         return match &*d.name {
             "Beseech the Mirror" => Some((Dest::Hand, Box::new(|_| true))),
             "Worldly Tutor" => Some((Dest::Top, Box::new(move |x| g.db.get(x).creature))),
+            // --- c1-t6-lines: sacrifice an artifact, search an artifact, onto the battlefield for the mana difference
+            "Transmute Artifact" => Some((Dest::Hand, Box::new(move |x| g.db.get(x).types.has(crate::cards::Types::ARTIFACT)))),
             _ => None,
         };
     }
@@ -257,6 +259,40 @@ fn land_drop_left(g: &Game, p: PlayerId) -> bool {
     g.active == Some(p) && matches!(g.step, TurnStep::Main1 | TurnStep::Main2) && pl.land_turn != pl.turns as i32
 }
 
+/// --- c1-t6-lines: what a tutor needs besides its mana, for the card `t` it is to find: the extra mana (Transmute
+/// Artifact: the difference in mana value to put the artifact onto the battlefield), and whether the cost can be paid
+/// at all (Transmute: an artifact to sacrifice; Diabolic Intent: a creature, the commander too). `None`: it can't.
+fn tutor_extra(g: &Game, p: PlayerId, tutor: CardId, t: CardId) -> Option<u32> {
+    let d = g.db.get(tutor);
+    if &*d.name == "Transmute Artifact" {
+        let s = crate::impls::rules2::transmute_fodder(g, p)?;
+        let sacked = g.perm(s).cd.map_or(0, |c| g.db.get(c).cmc);
+        return Some(g.db.get(t).cmc.saturating_sub(sacked));
+    }
+    if d.tag(Tag::Needsac) {
+        let any = g.player(p).perms.iter().any(|&m| g.is_creature(m) && !g.perm(m).phased && !g.perm(m).army);
+        return any.then_some(0);
+    }
+    Some(0)
+}
+
+/// --- c1-t6-lines: the creature to cast so a sacrifice tutor (Diabolic Intent) has fodder: p has one in hand and no
+/// creature on the battlefield. The cheapest castable one: a 0-cost commander (Rograkh) first.
+fn fodder_cast(g: &Game, p: PlayerId, hand: &[CardId], castable_now: &dyn Fn(CardId, &str) -> bool) -> Option<Step> {
+    let pl = g.player(p);
+    if !hand.iter().any(|&c| g.db.get(c).tag(Tag::Needsac))
+        || pl.perms.iter().any(|&m| g.is_creature(m) && !g.perm(m).phased && !g.perm(m).army)
+    {
+        return None;
+    }
+    let mut cands: Vec<(CardId, &str)> = pl.cmds_in_zone().map(|c| (c, "cmd")).collect();
+    cands.extend(hand.iter().copied().filter(|&c| g.db.get(c).creature).map(|c| (c, "hand")));
+    cands.into_iter().filter(|&(c, z)| g.db.get(c).creature && castable_now(c, z)).min_by_key(|&(c, z)| {
+        let (gn, pips) = cost_of(g, p, c);
+        (gn + pips.chars().count() as u32 + if z == "cmd" { pl.tax_of(c) } else { 0 }, z != "cmd")
+    }).map(|(c, _)| Step::Cast(c))
+}
+
 /// The plays the planner tries from this position, in a fixed order: tutors (each for its wanted cards), pieces, mana,
 /// then lands. Only cards in `known` (the hand at the start of the plan, and what its tutors found) are played.
 /// `eot`: the end-of-turn window before p's turn: instants only.
@@ -294,6 +330,12 @@ fn plays(g: &Game, p: PlayerId, known: &[CardId], eot: bool) -> Vec<Step> {
             let mut n = 0;
             for &t in pieces.iter().chain(mana.iter().take(MAX_MANA_TARGETS)) {
                 if n < MAX_TARGETS && legal.contains(&t) {
+                    // --- c1-t6-lines: the tutor's own cost (a creature or an artifact to sacrifice, the mana to put
+                    // the artifact onto the battlefield)
+                    let Some(x) = tutor_extra(g, p, *c, t) else { continue };
+                    if x > 0 && !castable_at(*c, "hand", x) {
+                        continue;
+                    }
                     out.push(Step::Tutor(*c, t));
                     n += 1;
                 }
@@ -345,6 +387,12 @@ fn plays(g: &Game, p: PlayerId, known: &[CardId], eot: bool) -> Vec<Step> {
         }
         seen.push(&d.name);
         out.push(Step::Cast(c));
+    }
+    // --- c1-t6-lines: a creature for a sacrifice tutor to eat (a free commander first)
+    if let Some(s @ Step::Cast(f)) = fodder_cast(g, p, &hand, &castable_now)
+        && !seen.contains(&&*g.db.get(f).name)
+    {
+        out.push(s);
     }
     for &c in &hand {
         let d = g.db.get(c);

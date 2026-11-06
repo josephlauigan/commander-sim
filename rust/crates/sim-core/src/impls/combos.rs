@@ -126,6 +126,7 @@ pub fn all() -> &'static [&'static Combo] {
             .chain(super::t6_combos_scion::COMBOS.iter()) // --- scion
             .chain(super::mikaeus_trisk::COMBOS.iter()) // --- Mikaeus + Triskelion
             .chain(super::t45_urdragon_combos::COMBOS.iter()) // --- Ur-Dragon combos (Astral Dragon, Garth)
+            .chain(super::doomsday::COMBOS.iter()) // --- doomsday: the pile line
             .collect()
     });
     &ALL
@@ -1221,6 +1222,10 @@ fn kinnan_basalt(g: &Game, p: PlayerId) -> Ready {
     if g.perm(b).tapped && !can_pay(g, p, 3, "", false) || !mana_sink(g, p) {
         return NOT_READY();
     }
+    // --- c1-t6-lines: the loop is Monolith's untap and Kinnan's ability: Collector Ouphe, Cursed Totem and a Needle stop them
+    if crate::cardcode::ability_locked(g, b, p) || crate::cardcode::ability_locked(g, k, p) {
+        return NOT_READY();
+    }
     (true, vec![k, b], vec![])
 }
 
@@ -1349,6 +1354,9 @@ fn oracle_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
 
 /// Thassa's Oracle: cast when it wins on its own
 fn oracle_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    if super::doomsday::hold_oracle(g, p) {
+        return 0; // the pile waits for Silence first
+    }
     if oracle_devotion(g, p) + 2 >= g.player(p).library.len() { 85 } else { 0 }
 }
 
@@ -1793,6 +1801,44 @@ pub fn line_keepers(g: &Game, p: PlayerId) -> Vec<(CardId, f64)> {
     keep
 }
 
+/// --- c1-t6-lines: can tutor `t` in p's hand take one of the `cards` (in p's library) by its own rule? Some(true/false)
+/// for a tutor the planner models (`ai::planner::tutor_rule` / `xtutor_rule`), None for a card it doesn't model as one.
+pub fn tutor_finds(g: &Game, p: PlayerId, t: CardId, cards: &[CardId]) -> Option<bool> {
+    use crate::ai::planner::{tutor_targets, xtutor_rule};
+    if let Some((_, legal)) = tutor_targets(g, p, t) {
+        return Some(cards.iter().any(|c| legal.contains(c)));
+    }
+    xtutor_rule(g, t).map(|ok| cards.iter().any(|&c| ok(c)))
+}
+
+/// --- c1-t6-lines: tutors in p's hand that can find the one missing piece of a line of its deck that is one piece
+/// away (the tutors the speed report lists when the deck passes; a tutor that can't take a missing piece is not held
+/// back, it has nothing to find). A card the planner doesn't model as a tutor counts as one.
+pub fn useful_tutors(g: &Game, p: PlayerId) -> Vec<CardId> {
+    let pl = g.player(p);
+    let mut out: Vec<CardId> = vec![];
+    for i in lines_of(g, p).iter().copied() {
+        let miss: Vec<&[&str]> = real_groups(all()[i]).iter().copied().filter(|grp| !group_held(g, p, grp)).collect();
+        if miss.len() != 1 {
+            continue;
+        }
+        let piece: Vec<CardId> = pl.library.iter().copied().filter(|&c| miss[0].contains(&name_of(g, c))).collect();
+        if piece.is_empty() {
+            continue;
+        }
+        for &t in &pl.hand {
+            let d = g.db.get(t);
+            if d.land || out.contains(&t) || !(d.tags.has(Tag::Tut) || d.tags.has(Tag::Xtutor) || tutor_finds(g, p, t, &piece).is_some()) {
+                continue;
+            }
+            if tutor_finds(g, p, t, &piece) != Some(false) {
+                out.push(t);
+            }
+        }
+    }
+    out
+}
+
 /// is `cmb` one tutor away for p (see `t6_measure`)?
 fn one_tutor_away(g: &Game, p: PlayerId, cmb: &Combo) -> bool {
     let pl = g.player(p);
@@ -1818,7 +1864,12 @@ fn one_tutor_away(g: &Game, p: PlayerId, cmb: &Combo) -> bool {
     let pc = piece.iter().map(|&c| cost_of(g, p, c)).min_by_key(|(gn, pips)| *gn + pips.len() as u32).unwrap();
     for &t in &pl.hand {
         let d = g.db.get(t);
-        if d.land || !(d.tags.has(Tag::Tut) || d.tags.has(Tag::Xtutor)) {
+        if d.land || !(d.tags.has(Tag::Tut) || d.tags.has(Tag::Xtutor) || tutor_finds(g, p, t, &piece).is_some()) {
+            continue;
+        }
+        // --- c1-t6-lines: a tutor that can't legally take the missing piece (Mystical Tutor for the Oracle, Green Sun's
+        // Zenith for Basalt Monolith) is no tutor for this line
+        if tutor_finds(g, p, t, &piece) == Some(false) {
             continue;
         }
         let tc = cost_of(g, p, t);

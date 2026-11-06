@@ -1,0 +1,39 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  yshtola                     100 cards: Full 95, Full-auto 5, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 433, Full-auto 34, Approximate 33, Partial 0, Unmodeled 0
+
+2,000 games (1 tier, 2,000 per list per tier, profile loose), lookahead AI, 23 worker threads: about 4 minutes
+  progress  10.0%  0m37s elapsed, ~5m35s left
+  progress  20.0%  1m15s elapsed, ~5m02s left
+  progress  30.0%  1m52s elapsed, ~4m21s left
+  progress  40.0%  2m27s elapsed, ~3m40s left
+  progress  50.0%  3m02s elapsed, ~3m02s left
+  progress  60.0%  3m39s elapsed, ~2m26s left
+  progress  70.0%  4m15s elapsed, ~1m49s left
+  progress  80.0%  4m49s elapsed, ~1m12s left
+  progress  90.0%  5m27s elapsed, ~0m36s left
+  progress 100.0%  6m02s elapsed, ~0m00s left
+
+=== Y'shtola vs Tier 5 (High B4) [loose, lookahead AI, 1994 games] ===
+Win rate  26.2%   95% CI 24.3-28.2%   (even share 25%: +1.2 pts)
+Average turn (your own turn count) of wins 11.1, of losses 7.7
+Plan online (first drain from Y'shtola's cast trigger): 65.4% of games
+Wins by: damage 66%, combo 34%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Zur the Enchanter (zur-esper-enchantment-c   61.0%            20.2%           12.1%
+  Kinnan (kinnan-simic-mana-combo)             60.4%            31.1%           18.8%
+  Miirym (miirym-temur-dragons)                60.3%            28.1%           17.6%
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   59.7%            19.9%           11.8%
+  Urza (urza-mono-blue-artifacts)              58.5%            23.7%           13.5%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(363s total)
+
+WARNING: 6 game(s) hit an internal simulator error and were skipped (results use the rest).
+  Replay one to see what happened:  commander-sim --deck <deck> [--swap ...] --pool <tier> --trace <seed - first seed>
+   seed 500533  panic: called `Option::unwrap()` on a `None` value (at crates/sim-core/src/engine/stack.rs:1668)
+   seed 501285  panic: called `Option::unwrap()` on a `None` value (at crates/sim-core/src/engine/stack.rs:1668)
+   seed 501392  panic: called `Option::unwrap()` on a `None` value (at crates/sim-core/src/engine/stack.rs:1668)
+   seed 501546  panic: called `Option::unwrap()` on a `None` value (at crates/sim-core/src/engine/stack.rs:1668)
+   seed 501905  panic: called `Option::unwrap()` on a `None` value (at crates/sim-core/src/engine/stack.rs:1668)
+  Please send me that output so I can fix the cause.

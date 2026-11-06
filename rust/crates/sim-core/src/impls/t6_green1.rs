@@ -253,7 +253,7 @@ fn candelabra_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> 
         return Ok(false);
     }
     let Some(ls) = candelabra_plan(g, p, creature).filter(|l| l.len() as i64 == arg) else { return Ok(false) };
-    let cost = if creature { creature_ability_cost(g, p, ls.len() as u32) } else { ls.len() as u32 };
+    let cost = if creature { creature_ability_cost(g, p, ls.len() as u32) } else { crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, ls.len() as u32, 0) };
     pay(g, p, cost, "", false)?;
     g.perm_mut(src).tapped = true; // the cost
     if !ability_window(g, p, Some(src), "untap target lands", None, None)? {

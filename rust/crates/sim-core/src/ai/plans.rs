@@ -340,10 +340,16 @@ pub fn adnaus_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
     if cards < 4.0 { 0 } else { 80.0f64.min(40.0 + 4.0 * cards) as i32 }
 }
 
+/// --- c1b-engines: the cards Ad Nauseam may draw under the hand cap (the cast itself leaves the hand); it is cast
+/// at all only with room for four (`adnaus_cast_now`), and mana is held for it only then (`brain::hold_value`)
+pub fn adnaus_room(g: &Game, p: PlayerId) -> usize {
+    (adnaus_hand_cap(g, p) + 1).saturating_sub(g.player(p).hand.len())
+}
+
 /// Ad Nauseam now: at the end of the turn before yours (your mana untaps for the cards it finds), with room for four
 /// cards under the hand cap (the cast itself leaves the hand)
 pub fn adnaus_cast_now(g: &Game, p: PlayerId) -> bool {
-    let room = (adnaus_hand_cap(g, p) + 1).saturating_sub(g.player(p).hand.len());
+    let room = adnaus_room(g, p);
     // a plan's `adnaus_main2` (--- plan-files-3): a deck that taps out on its own turn never holds 5 mana for the
     // opposing end step; its own second main phase (everything better already cast) is when the mana is idle
     if super::plan_data::adnaus_main2(g, p)

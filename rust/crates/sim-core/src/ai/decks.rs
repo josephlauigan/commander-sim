@@ -155,7 +155,7 @@ pub fn monolith_untap_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
             continue;
         }
         let n = g.perm(m).name;
-        if blocked(g, p, n) || !can_pay(g, p, 4, "", false) {
+        if blocked(g, p, n) || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 4, 0), "", false) {
             continue;
         }
         out.push(Opt {
@@ -169,10 +169,10 @@ pub fn monolith_untap_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
 
 pub(crate) fn untap_monolith(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let m = PermId(arg as u32);
-    if !g.perm(m).tapped || !g.perm(m).on_bf || g.perm(m).owner != p || !can_pay(g, p, 4, "", false) {
+    if !g.perm(m).tapped || !g.perm(m).on_bf || g.perm(m).owner != p || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 4, 0), "", false) {
         return Ok(false);
     }
-    pay(g, p, 4, "", false)?;
+    pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 4, 0), "", false)?;
     g.perm_mut(m).tapped = false;
     crate::glog!(g, "  {} untaps Grim Monolith", g.player(p).name);
     Ok(true)
