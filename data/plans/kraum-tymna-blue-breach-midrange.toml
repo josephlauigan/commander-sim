@@ -18,6 +18,8 @@ free = ["Force of Will", "Fierce Guardianship", "Pact of Negation", "Force of Ne
 # cover that stops a creature's answer too (Force of Will with another blue card to pitch)
 creature_cover = ["Pact of Negation", "Silence", "Orim's Chant"]
 fow = ["Force of Will"]
+# what Lion's Eye Diamond fuels in this list (the only card: Breach); LED is cast early only with one in hand
+led_fuel = ["Underworld Breach"]
 
 # Cast priority: Tymna draws (86, -3 per cast); Kraum only with spare cover or an empty-handed table; fast mana
 # first; the tax engines early; the combo pieces, Silence and the counters are held
@@ -36,6 +38,14 @@ else = 20
 [[prio]]
 cards = ["Sol Ring", "Mana Vault", "Mox Amber", "Mox Diamond", "Mox Opal", "Chrome Mox", "Lotus Petal", "Simian Spirit Guide", "Arcane Signet", "Fellwar Stone"]
 value = 95
+
+# Lion's Eye Diamond costs {0}: on the table early only when the hand holds what it fuels (Underworld Breach); alone it
+# is a card that discards the hand, so it waits (`mine::led_options` offers the crack)
+[[prio]]
+cards = ["Lion's Eye Diamond"]
+when = ["hand:led_fuel>=1"]
+value = 90
+else = 0
 
 [[prio]]
 cards = ["Esper Sentinel"]

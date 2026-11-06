@@ -216,12 +216,16 @@ fn can_pay_now(g: &Game, p: PlayerId, c: CardId) -> bool {
 /// brain.hold_value: the card the AI wants to keep mana up for, and how much
 pub fn hold_value(g: &Game, p: PlayerId, s: &Situation) -> (Option<CardId>, f64) {
     let pl = g.player(p);
+    // --- t6-ai-b: instant removal is held for an opposing commander that is a combo piece, but a Tier 6 table always
+    // has Kinnan, Thrasios or Tymna out: a Tier 6 deck reads the archenemy (`combo_near`) alone, as the rest of its
+    // `near` does
+    let cmdr_removal = if crate::impls::t6_plans::is_t6(g, p) { s.combo_near } else { s.cmdr_combo };
     let held: Vec<CardId> = pl
         .hand
         .iter()
         .copied()
         .filter(|&c| {
-            (held(g, c) || (s.cmdr_combo && instant_removal(g, c))) && !free_counter(g, p, c) && can_pay_now(g, p, c)
+            (held(g, c) || (cmdr_removal && instant_removal(g, c))) && !free_counter(g, p, c) && can_pay_now(g, p, c)
         })
         .collect();
     let (mut hc, mut hv) = if held.is_empty() { (None, 0.0) } else { hold_of(g, p, s, &held) };
