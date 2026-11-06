@@ -664,14 +664,7 @@ fn lathliss_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
         .collect();
     // each activation costs {1}{R}: k is what the red sources and the mana can pay, keeping two (model-gaps-b3: it was
     // the mana alone, so an offer could need more red than there was)
-    // (a person pays from their pool, with no reserve: they choose; the AI keeps two of its mana)
-    let mut k = if crate::human::is_human(g, p) {
-        let pl = g.player(p);
-        let pool = pl.pool.m.iter().chain(pl.pool.k.iter()).sum::<u32>() + pl.pool.art + pl.mana.total();
-        (pool / 2) as i32
-    } else {
-        (total_mana(g, p, false) as i32 - 2) / 2
-    };
+    let mut k = (total_mana(g, p, false) as i32 - 2) / 2;
     // (paying k times is monotone: binary search the most that can be paid)
     let (mut lo, mut hi) = (0, k.max(0));
     while lo < hi {
@@ -699,6 +692,13 @@ fn lathliss_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
         label: format!("Lathliss: Dragons +{k}/+0"),
         act: Some(Action::Ability { src, f: lathliss_go, arg: k as i64 }),
     }])
+}
+
+/// one activation's effect: Dragons you control get +1/+0 until end of turn (a person's too: `human::urdragon`)
+pub fn lathliss_pump(g: &mut Game, p: PlayerId) {
+    for m in dragons_of(g, p) {
+        crate::impls::common::eot(g, m, 1, 0);
+    }
 }
 
 fn lathliss_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {

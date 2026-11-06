@@ -326,27 +326,73 @@ fn the_ai_pump_with_plenty_of_red_is_as_before() {
     assert_eq!(sim_core::engine::values::epow(&g, gold), 4 + 2);
 }
 
+fn lathliss_use(g: &mut Game, l: PermId) -> (Option<String>, Vec<Vec<String>>, Arc<ScriptHuman>) {
+    let h = smart(g, P0, vec![("which ability?", "{1}{R}")], |_| None);
+    let i = idx(g, P0, l);
+    let r = apply(g, P0, json!({"do": "use", "perm": i}));
+    let how_many =
+        h.asked().iter().filter(|r| r.prompt.contains("how many times")).map(|r| r.choices.clone()).collect();
+    (r, how_many, h)
+}
+
 #[test]
 fn a_persons_pump_is_what_their_pool_pays() {
     let mut g = urd();
     let l = perm(&mut g, P0, "Lathliss, Dragon Queen");
     perm(&mut g, P0, "Goldspan Dragon");
-    smart(&mut g, P0, vec![], |_| None);
     pool(&mut g, P0, &[('R', 1), ('C', 3)]); // four mana but one red: one activation
-    let o = lathliss_option(&mut g, l).expect("one activation");
-    assert!(o.label.contains("+1/+0"), "{}", o.label);
-    let Some(Action::Ability { src, f, arg }) = o.act else { panic!() };
-    assert!(f(&mut g, src, P0, arg).unwrap(), "not refused");
+    let (r, how_many, _) = lathliss_use(&mut g, l);
+    assert_eq!(r, None);
+    assert_eq!(how_many.len(), 1);
+    assert_eq!(how_many[0].len(), 2, "only 1 time is offered (and cancel): {:?}", how_many[0]);
     assert_eq!(sim_core::engine::values::epow(&g, l), 6 + 1);
     assert_eq!(pool_total(&g, P0), 2);
 }
 
 #[test]
-fn a_person_with_no_red_in_the_pool_is_not_offered_the_pump() {
+fn a_persons_pump_offers_up_to_what_the_pool_pays_and_pays_each_time() {
+    let mut g = urd();
+    let l = perm(&mut g, P0, "Lathliss, Dragon Queen");
+    let gold = perm(&mut g, P0, "Goldspan Dragon");
+    pool(&mut g, P0, &[('R', 3), ('C', 3)]); // three activations
+    let h = smart(&mut g, P0, vec![("which ability?", "{1}{R}"), ("how many times", "3 times")], |_| None);
+    let i = idx(&g, P0, l);
+    assert_eq!(apply(&mut g, P0, json!({"do": "use", "perm": i})), None);
+    let many = h.asked().into_iter().find(|r| r.prompt.contains("how many times")).unwrap();
+    assert_eq!(many.choices.len(), 4, "{:?}", many.choices);
+    assert_eq!(sim_core::engine::values::epow(&g, gold), 4 + 3);
+    assert_eq!(pool_total(&g, P0), 0);
+}
+
+#[test]
+fn a_person_with_no_red_in_the_pool_is_refused_with_the_reason() {
     let mut g = urd();
     let l = perm(&mut g, P0, "Lathliss, Dragon Queen");
     perm(&mut g, P0, "Goldspan Dragon");
-    smart(&mut g, P0, vec![], |_| None);
     pool(&mut g, P0, &[('C', 6)]);
-    assert!(lathliss_option(&mut g, l).is_none());
+    let (r, how_many, _) = lathliss_use(&mut g, l);
+    assert!(r.unwrap().contains("Can't activate Lathliss"), "a reason, not 'that can't be done right now'");
+    assert!(how_many.is_empty());
+    assert_eq!(pool_total(&g, P0), 6);
+}
+
+#[test]
+fn rings_copies_each_pump_with_one_answer_for_the_run() {
+    let mut g = urd();
+    let l = perm(&mut g, P0, "Lathliss, Dragon Queen");
+    let gold = perm(&mut g, P0, "Goldspan Dragon");
+    perm(&mut g, P0, RINGS);
+    pool(&mut g, P0, &[('R', 2), ('C', 6)]);
+    let h = smart(
+        &mut g,
+        P0,
+        vec![("which ability?", "{1}{R}"), ("how many times", "2 times"), ("Rings of Brighthearth: pay", "yes")],
+        |_| None,
+    );
+    let i = idx(&g, P0, l);
+    assert_eq!(apply(&mut g, P0, json!({"do": "use", "perm": i})), None);
+    let rings = asked(&h).iter().filter(|p| p.starts_with("Rings of Brighthearth: pay")).count();
+    assert_eq!(rings, 1, "{:?}", asked(&h));
+    assert_eq!(sim_core::engine::values::epow(&g, gold), 4 + 4, "two activations, each copied");
+    assert_eq!(pool_total(&g, P0), 0);
 }

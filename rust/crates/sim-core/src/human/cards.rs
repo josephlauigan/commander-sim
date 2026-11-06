@@ -2689,7 +2689,9 @@ fn more_abilities(g: &Game, p: PlayerId, m: PermId, nm: &str) -> Option<Vec<Perm
         "Narset, Parter of Veils" => {
             walker(&[(-2, "look at the top four; take a noncreature, nonland card", narset_minus2)])
         }
-        n @ ("Brass Squire" | "Peter Parker's Camera" | "Jaxis, the Troublemaker") => return super::urdragon::abilities(n),
+        n @ ("Brass Squire" | "Peter Parker's Camera" | "Jaxis, the Troublemaker" | "Lathliss, Dragon Queen") => {
+            return super::urdragon::abilities(n);
+        }
         n => return super::gaps_c::abilities(g, p, m, n),
     })
 }
