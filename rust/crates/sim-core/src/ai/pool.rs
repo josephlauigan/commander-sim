@@ -110,6 +110,11 @@ fn generic_prio_base(g: &Game, p: PlayerId, c: CardId) -> i32 {
     {
         return r;
     }
+    // --- c1b-engines: Timetwister is a wheel like Wheel of Fortune and Windfall: a Tier 6 deck casts it by their rule
+    // (a small or stuck hand, no combo piece in it), not whenever the 46 for any draw spell beats "stop"
+    if &*d.name == "Timetwister" && crate::impls::t6_plans::is_t6(g, p) {
+        return crate::impls::partials::wheel_prio(g, p, c);
+    }
     let imp = g.registry.get(c);
     if let Some(f) = imp.and_then(|i| i.prio) {
         return f(g, p, c);

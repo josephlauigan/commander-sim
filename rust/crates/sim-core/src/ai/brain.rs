@@ -220,7 +220,12 @@ pub fn hold_value(g: &Game, p: PlayerId, s: &Situation) -> (Option<CardId>, f64)
     let (mut hc, mut hv) = if held.is_empty() { (None, 0.0) } else { hold_of(g, p, s, &held) };
     // Ad Nauseam is cast at the end of the turn before yours: keep its mana up when it's worth casting
     for &c in &pl.hand {
-        if g.db.get(c).tag(Tag::Adnaus) && can_pay_now(g, p, c) {
+        // --- c1b-engines: Tier 6: mana is held for Ad Nauseam only while there is room to cast it (four cards under the
+        // hand cap): with a full hand it is not cast (`adnaus_cast_now`), and the hold only kept the hand full
+        if g.db.get(c).tag(Tag::Adnaus)
+            && can_pay_now(g, p, c)
+            && (!crate::impls::t6_plans::is_t6(g, p) || super::plans::adnaus_room(g, p) >= 4)
+        {
             let v = super::plans::adnaus_prio(g, p, c) as f64 / 10.0 - 1.0;
             if v > hv {
                 (hc, hv) = (Some(c), v);
@@ -1147,6 +1152,8 @@ pub fn gandalf_hold(g: &Game, p: PlayerId, s: &Situation, opts: &mut [Opt]) {
 pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
     let s = Situation::new(g, p);
     let (hold_card, hold_v) = hold_value(g, p, &s);
+    // --- c1b-engines: what "stop" is worth, as the end of this function computes it (the engine rule reads it)
+    let stop_est = (if hold_card.is_some() { hold_v } else { -3.0 }) + crate::impls::t6_plans::hold_up(g, p).unwrap_or(0.0);
     let mut opts = vec![];
     let main = is_main(hand_key(g, p));
     let rsv = if !main && !post { pool::combat_reserve(g, p) } else { None };
@@ -1181,8 +1188,20 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
         }
         // Tier 6 near a win, or an opposing commander one card from its combo: the answer stays up
         let near = (s.combo_near && crate::impls::t6_plans::is_t6(g, p)) || s.cmdr_combo;
+        let mut engine_floor = None;
         if crate::engine::mana::ritual_net(g, p, c) <= 0 {
-            u -= reserve_penalty(g, p, c, hold_card, hold_v, near); // --- ai-fix: C: a ritual adds more than it spends
+            let mut pen = reserve_penalty(g, p, c, hold_card, hold_v, near); // --- ai-fix: C: a ritual adds more than it spends
+            // --- c1b-engines: a Tier 6 draw engine is cast early whatever it leaves for the held answer; and it is
+            // never outvoted by "stop" while the held answer stays payable (see `engine_rule`)
+            if let Some(engine) = engine_rule(g, p, c, &s, near) {
+                if engine.early {
+                    pen = 0.0;
+                }
+                if pen == 0.0 {
+                    engine_floor = Some((stop_est + ENGINE_MARGIN, engine.early));
+                }
+            }
+            u -= pen;
         }
         if let Some((rg, rp)) = &rsv
             && !can_pay(g, p, cg + rg, &format!("{cp}{rp}"), false)
@@ -1195,6 +1214,11 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
             && s.danger < 0.8
         {
             u -= 1.5; // flash: better at the end of the turn before yours
+        }
+        if let Some((floor, early)) = engine_floor
+            && (early || !d.creature || !d.tag(Tag::Flash))
+        {
+            u = u.max(floor); // --- c1b-engines: the engine is cast before "stop"; a flash creature only on curve
         }
         opts.push(Opt { utility: u, label: d.name.to_string(), act: Some(Action::Cast { card: c, zone: None }) });
     }
@@ -1242,6 +1266,52 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
 
 fn labels(opts: &[Opt]) -> Vec<(f64, String)> {
     opts.iter().map(|o| (o.utility, o.label.clone())).collect()
+}
+
+// ------------------------------------------------------------------ c1b-engines: Tier 6 draw engines
+/// --- c1b-engines: how much more an engine cast is worth than "stop" when the held answer stays payable. Passing with
+/// mana that nothing needs is not a play: the 400-game traces (seed 900000) had Rhystic Study, Necropotence and the
+/// others offered at 6 and lost to "stop (hold mana)" at 5.5-8 with a counter or Ad Nauseam in hand.
+pub const ENGINE_MARGIN: f64 = 1.0;
+/// --- c1b-engines: through this own turn an engine is cast even when it taps the mana of the held answer (real pilots
+/// play Rhystic Study, Mystic Remora, Esper Sentinel and The One Ring on turns 1-3 into open mana)
+pub const ENGINE_EARLY_TURN: u32 = 4;
+/// --- c1b-engines: the draw and tax engines a Tier 6 deck casts early (the brief's list: `t6stats::FLOW_ENGINES` less
+/// Ad Nauseam, a finisher, plus the creature engines)
+pub const T6_ENGINES: [&str; 9] = [
+    "Rhystic Study",
+    "Mystic Remora",
+    "Esper Sentinel",
+    "Sylvan Library",
+    "The One Ring",
+    "Necropotence",
+    "Faerie Mastermind",
+    "Thrasios, Triton Hero",
+    "Consecrated Sphinx",
+];
+
+/// --- c1b-engines: what `engine_rule` grants
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct EngineRule {
+    /// own turn 1-4: the reserve for a held answer does not count against the cast
+    pub early: bool,
+}
+
+/// --- c1b-engines: a Tier 6 player's draw engine (not its commander) that no opponent is about to win against and
+/// that does not take the mana of a line of its own that is ready: it is cast before "stop" while the held answer
+/// stays payable, and early (`ENGINE_EARLY_TURN`) even when it does not. A plan that sets the card's priority to 0
+/// holds it (`card_utility` is None, the rule is never asked).
+pub fn engine_rule(g: &Game, p: PlayerId, c: CardId, s: &Situation, near: bool) -> Option<EngineRule> {
+    if near || !crate::impls::t6_plans::is_t6(g, p) || g.player(p).is_commander(c) {
+        return None;
+    }
+    if !T6_ENGINES.contains(&&*g.db.get(c).name) {
+        return None;
+    }
+    if !crate::impls::combos::ready_lines(g, p).is_empty() {
+        return None; // a line is ready: its mana comes first
+    }
+    Some(EngineRule { early: s.turn <= ENGINE_EARLY_TURN })
 }
 
 /// --- c1b-engines: trace only. A Tier 6 deck stopped in its main phase: print the nonland cards it could pay for and
