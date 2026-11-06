@@ -419,6 +419,16 @@ fn take_copies(g: &mut Game, id: u32) -> usize {
     n
 }
 
+/// `take_copies` for an activated ability that left the stack (`ability_window_ex` and its kin): the copies that
+/// resolved are logged, one line each, as the caller carries them out
+fn ability_copies(g: &mut Game, out: &StackItem) -> usize {
+    let n = take_copies(g, out.id);
+    for _ in 0..n {
+        crate::glog!(g, "    the copy of {} resolves", out.name);
+    }
+    n
+}
+
 /// a copy of a triggered ability resolves: its hook runs again (no new stack window: it already had one)
 fn run_copy(g: &mut Game, t: &Trigger) -> Res {
     let prev = g.trig_current.replace(0); // id 0 is never on the stack: trigger_window just says "resolved"
@@ -539,7 +549,7 @@ pub fn ability_window_ex(
     let ctx = Ctx { source: src, ..ctx };
     let it = new_item(g, p, card, ctx, "ability", imp, StackKind::Ability, full);
     let out = window_item(g, p, it, crate::human::is_human(g, p))?; // the person's Rings of Brighthearth may copy it
-    let copies = take_copies(g, out.id);
+    let copies = ability_copies(g, &out);
     Ok(AbilityRes { resolves: !out.countered, target: out.ctx.target, copies })
 }
 
@@ -658,7 +668,7 @@ pub fn ability_window_rc(
     let it =
         new_item(g, p, card, Ctx { source: src, target, ..Ctx::default() }, "ability", imp, StackKind::Ability, full);
     let out = window_item(g, p, it, true)?;
-    Ok((!out.countered, take_copies(g, out.id)))
+    Ok((!out.countered, ability_copies(g, &out)))
 }
 
 /// `ability_window_card` for the person's ability whose source is a card (see `ability_window_rc`)
@@ -681,7 +691,7 @@ pub fn ability_window_card_rc(
     let ctx = Ctx { target, ..Ctx::default() };
     let it = new_item(g, p, Some(cd), ctx, "ability", imp.unwrap_or(3.0), StackKind::Ability, full);
     let out = window_item(g, p, it, true)?;
-    Ok((!out.countered, take_copies(g, out.id)))
+    Ok((!out.countered, ability_copies(g, &out)))
 }
 
 /// An activated ability of the person's (cost paid) put on the stack and carried out: `eff` runs once for each
@@ -720,7 +730,7 @@ pub fn ability_window_card_ex(
     let full = format!("{}: {name}", g.db.get(cd).name);
     let it = new_item(g, p, Some(cd), ctx, "ability", imp.unwrap_or(3.0), StackKind::Ability, full);
     let out = window_item(g, p, it, crate::human::is_human(g, p))?;
-    let copies = take_copies(g, out.id);
+    let copies = ability_copies(g, &out);
     Ok(AbilityRes { resolves: !out.countered, target: out.ctx.target, copies })
 }
 
