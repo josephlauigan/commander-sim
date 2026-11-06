@@ -1708,9 +1708,9 @@ fn skrelv_kws(ch: char) -> Option<(Sym, Sym)> {
     })
 }
 
-/// toxic from `eot_kw` (Skrelv's ability), a Mite token's keyword list, or the card's own compiled toxic N: the poison
-/// counters the combat damage to a player gives (called from `engine/combat.rs`)
-pub fn toxic_hit(g: &mut Game, a: PermId, d: PlayerId) {
+/// the toxic count of attacker `a`: from `eot_kw` (Skrelv's ability), a Mite token's keyword list, or the card's own
+/// compiled toxic N
+pub fn toxic_of(g: &Game, a: PermId) -> i32 {
     let x = g.perm(a);
     let mut k = i32::from(x.eot_kw.contains(&"toxic"));
     match x.cd {
@@ -1725,6 +1725,13 @@ pub fn toxic_hit(g: &mut Game, a: PermId, d: PlayerId) {
         // Predation, Ribskiff, Venomous Brutalizer): every card's toxic is given here
         Some(_) => k += crate::dsl::toxic_amount(g, a),
     }
+    k
+}
+
+/// toxic from `eot_kw` (Skrelv's ability), a Mite token's keyword list, or the card's own compiled toxic N: the poison
+/// counters the combat damage to a player gives (called from `engine/combat.rs`)
+pub fn toxic_hit(g: &mut Game, a: PermId, d: PlayerId) {
+    let k = toxic_of(g, a);
     if k == 0 || !repl::poison_ok(g, d) {
         return;
     }

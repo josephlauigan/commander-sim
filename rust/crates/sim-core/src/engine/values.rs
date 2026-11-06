@@ -340,6 +340,15 @@ pub fn pval(g: &Game, m: PermId) -> f64 {
     if cd.creature && v == 0.0 {
         v = 1.0 + epow(g, m) as f64 * 0.5;
     }
+    // --- c3: an infect or toxic creature is a poison clock (ten counters kill as forty life do): worth more as
+    // its victims' counters mount, so removal and blocks find it
+    if cd.creature {
+        let ph = crate::engine::combat::poison_hit(g, m);
+        if ph > 0 {
+            let worst = g.opps(p).map(|q| g.player(q).poison).max().unwrap_or(0) as f64;
+            v += 0.6 * ph.min(6) as f64 * (1.0 + 0.25 * worst);
+        }
+    }
     // a combo half is worth more with its other half out
     let with = |other: Tag, base: f64| if has(g, p, other) { base + 5.0 } else { base };
     if t.has(Tag::Vkitten) {

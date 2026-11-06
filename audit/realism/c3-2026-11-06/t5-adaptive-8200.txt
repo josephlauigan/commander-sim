@@ -1,0 +1,38 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  t5 Kinnan             100 cards: Full 88, Full-auto 3, Approximate 9, Partial 0, Unmodeled 0
+  t5 Miirym             100 cards: Full 82, Full-auto 10, Approximate 8, Partial 0, Unmodeled 0
+  t5 Urza               100 cards: Full 92, Full-auto 4, Approximate 4, Partial 0, Unmodeled 0
+  t5 Yawgmoth           100 cards: Full 83, Full-auto 11, Approximate 6, Partial 0, Unmodeled 0
+  t5 Zur the Enchanter  100 cards: Full 88, Full-auto 6, Approximate 6, Partial 0, Unmodeled 0
+
+
+=== Realism: Tier 5 (High B4) [loose, adaptive AI, 8200 games, seeds 900000-908199; 5 decks, 4 a pod] ===
+targets: data/realism/t5.toml
+  statistic                                                sim    sim 95% CI  target          band  result
+  seat 1 share of decisive games (%)                     29.9%     28.9-30.9   31.8%     30.3-33.3  FAIL
+  seat 2 share of decisive games (%)                     26.0%     25.0-26.9   27.8%     26.3-29.3  FAIL
+  seat 3 share of decisive games (%)                     23.7%     22.8-24.7   22.4%     20.9-23.9  PASS
+  seat 4 share of decisive games (%)                     20.4%     19.6-21.3   18.0%     16.5-19.5  FAIL
+  median round of a decisive win (rounds)                  9.0       9.0-9.0     7.0           6-8  FAIL
+  win round, 75th minus 25th percentile (rounds)           4.0             -       -             -  no target
+  wins by a combo or an alternate win (%)                61.3%     60.2-62.3   37.9%     36.4-39.4  reference
+  wins by damage (combat or other) (%)                   34.0%     32.9-35.0   50.4%     48.9-51.9  reference
+  wins by commander damage (%)                            4.8%       4.3-5.3    9.6%      8.1-11.1  reference
+  wins by poison (%)                                      0.0%       0.0-0.0    2.2%       0.7-3.7  reference
+  deck win spread, best minus worst deck (pts)            18.5             -       -             -  no target
+  games over 15 rounds (round cap 20) (%)                 4.3%       3.9-4.8       -             -  no target
+  1 of 5 targets pass (3 statistics have no target yet; 4 reference values, not scored)
+Games: 8200, decisive 8139 (99.3%), round-cap timeouts 0.5%
+Each deck's share of the decisive games it sat in: Kinnan 26.6% of 6504; Miirym 36.5% of 6581; Urza 24.4% of 6479; Yawgmoth 19.3% of 6409; Zur the Enchanter 18.0% of 6583
+Search cost per game (main/attack/counter/block/protect/wipe), 8200 games: all seats decisions 0.0 (0.0/0.0/0.0/0.0/0.0/0.0), steps 0 (0/0/0/0/0/0), policy 0.0 (0.0/0.0/0.0/0.0/0.0/0.0), playouts 0 (0/0/0/0/0/0); generic seats decisions 0.0 (0.0/0.0/0.0/0.0/0.0/0.0), steps 0 (0/0/0/0/0/0), policy 0.0 (0.0/0.0/0.0/0.0/0.0/0.0), playouts 0 (0/0/0/0/0/0)
+Generic seats' blocks / protection / wipe responses per game: seen 0.00/0.00/0.00, hot 0.00/0.00/0.00, acted 0.00/0.00/0.00
+Target sources:
+  seat1_win: Playgroup commander pages, seat win rates of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight), share of seat wins (n=22224, read 2026-10-25)
+  seat2_win: Playgroup commander pages, seat win rates of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight), share of seat wins (n=22224, read 2026-10-25)
+  seat3_win: Playgroup commander pages, seat win rates of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight), share of seat wins (n=22224, read 2026-10-25)
+  seat4_win: Playgroup commander pages, seat win rates of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight), share of seat wins (n=22224, read 2026-10-25)
+  win_round_median: Playgroup commander stats, average win turn of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight) (n=8442, read 2026-10-25)
+  win_combo_alt: Playgroup commanders.json, wins of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight) (n=4303, read 2026-10-25) [reference, not scored]
+  win_damage: Playgroup commanders.json, wins of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight) (n=4303, read 2026-10-25) [reference, not scored]
+  win_commander_damage: Playgroup commanders.json, wins of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight) (n=4303, read 2026-10-25) [reference, not scored]
+  win_poison: Playgroup commanders.json, wins of Kinnan, Urza, Miirym, Yawgmoth, Zur (equal weight) (n=4303, read 2026-10-25) [reference, not scored]
