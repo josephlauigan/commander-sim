@@ -121,7 +121,7 @@ fn the_danger_from_infect_attackers_is_the_poison_they_bring() {
     let calm = brain::Situation::new(&g, P1).danger;
     g.player_mut(P1).poison = 6;
     let poisoned = brain::Situation::new(&g, P1).danger;
-    assert!(calm < 0.2, "{calm}");
+    assert!((0.3..0.5).contains(&calm), "four counters of ten: {calm}"); // 0.1 when it was read as 4 life of 40
     assert!(poisoned > 0.8, "{poisoned}");
 }
 
