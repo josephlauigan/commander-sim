@@ -1289,10 +1289,40 @@ fn led_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
     out
 }
 
+/// --- doomsday-led: Lion's Eye Diamond is on the table and usable (not shut off by a Disruptor Flute)
+pub fn led_on_table(g: &Game, p: PlayerId) -> bool {
+    find(g, p, Tag::Led).iter().any(|&m| !crate::engine::values::stopped(g, g.perm(m).name))
+}
+
+/// --- doomsday-led: crack Lion's Eye Diamond for a spell that is being cast (a mana ability: the spell is on the stack,
+/// so it is not discarded): discard the hand except `keep`, sacrifice the diamond, add three mana of `kind`.
+/// False (nothing done) when there is no usable diamond
+pub fn crack_led(g: &mut Game, p: PlayerId, keep: &[CardId], kind: Kind) -> Res<bool> {
+    let Some(m) = find(g, p, Tag::Led).first().copied() else { return Ok(false) };
+    let name = g.perm(m).name;
+    if blocked(g, p, name) {
+        return Ok(false);
+    }
+    let rest: Vec<CardId> = g.player(p).hand.iter().copied().filter(|c| !keep.contains(c)).collect();
+    discard_cards(g, p, &rest)?;
+    leave(g, m)?;
+    let cd = g.perm(m).cd.unwrap();
+    let pl = g.player_mut(p);
+    pl.gy.push(cd);
+    pl.mana.add(kind, 3);
+    g.player_mut(p).stat("led_used", 1);
+    Ok(true)
+}
+
 /// a use for a crack with a hand of lands only: (the best use's value, whether the mana is blue) or None. `ignore`:
 /// a card of the hand that is not there when the diamond is on the table (the diamond itself, for the statistics)
 fn led_uses(g: &Game, p: PlayerId, ignore: Option<CardId>) -> Option<(f64, bool)> {
     let pl = g.player(p);
+    // --- doomsday-led: a Doomsday in hand the diamond pays for (its {B}{B}{B}, or mana the pile needs) is a use, whatever
+    // else the hand holds: the crack happens inside the Doomsday cast (`doomsday::go_doomsday`), not as a play of its own
+    if crate::impls::doomsday::led_use(g, p) {
+        return Some((16.0, false));
+    }
     if pl.hand.iter().any(|&c| Some(c) != ignore && !g.db.get(c).land) {
         return None;
     }

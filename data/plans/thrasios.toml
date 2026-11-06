@@ -97,12 +97,24 @@ when = ["creatures<3"]
 value = 78
 else = 66
 
+# Lion's Eye Diamond ({0}) is cast only with Doomsday (or a tutor that can fetch it) in hand: on the table it is a mana source for the
+# Doomsday cast and the pile (cracked while the spell is on the stack: `doomsday::go_doomsday`, `Act::led`), and alone it is
+# a card that discards the hand, so it waits (`mine::led_options` offers a bare crack only for a use)
+[[prio]]
+cards = ["Lion's Eye Diamond"]
+when = ["hand:led_fuel>=1"]
+value = 90
+else = 0
+
 # ---- Tier 6 sections (from the old Thanos turbo plan, cut to this list) ----
 [sets]
 tutors = ["Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Enlightened Tutor", "Worldly Tutor", "Imperial Seal", "Diabolic Intent", "Grim Tutor", "Merchant Scroll", "Eladamri's Call", "Beseech the Mirror", "Intuition", "Demonic Consultation", "Tainted Pact"]
 payoffs = ["Necropotence", "Ad Nauseam"]
 exilers = ["Demonic Consultation", "Tainted Pact"]
 enablers = ["Valley Floodcaller", "Borne Upon a Wind"]
+# what Lion's Eye Diamond fuels in this list: Doomsday (it pays the {B}{B}{B} and the discarded hand goes to the graveyard, where
+# Doomsday can take it into the pile; `impls/doomsday.rs`), and the tutors that can fetch it
+led_fuel = ["Doomsday", "Demonic Tutor", "Vampiric Tutor", "Mystical Tutor", "Imperial Seal", "Grim Tutor", "Diabolic Intent", "Beseech the Mirror", "Intuition"]
 locks = ["Silence", "Grand Abolisher", "Voice of Victory"]
 # an engine alone does not win: it counts as action only with fast mana
 engines = ["Rhystic Study", "Mystic Remora", "Esper Sentinel", "Sylvan Library"]
