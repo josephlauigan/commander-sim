@@ -668,3 +668,311 @@ fn the_ai_does_not_cast_doomsday_under_opposition_agent_or_a_one_spell_lock() {
         assert_eq!(opts(&mut g, None), 0, "{name} on the other side: no Doomsday");
     }
 }
+
+// ------------------------------------------------------------------ the pile extras (doomsday-b)
+/// a pile already in play (Doomsday resolved): the hand and the library (top first) are as given, ten Underground Seas /
+/// Scrublands plus `extra` more, Sauron at P1 with a hand
+fn pile_in_play(hand_names: &[&str], lib_top_first: &[&str], extra: usize) -> Game {
+    let mut g = setup(hand_names, lib_top_first, &[]);
+    lands(&mut g, P0, "Underground Sea", extra, false);
+    g.player_mut(P0).stats.insert("doomsday", 1);
+    g
+}
+
+#[test]
+fn thrasios_dig_is_a_draw_source_of_the_pile() {
+    // devotion 3 (Thrasios and the Oracle), five cards left, no cantrip in hand: two digs draw Silence and the Mox, then
+    // Silence and the Oracle (4 + 4 + {W} + {U}{U} = 11 mana)
+    let mut g = pile_in_play(
+        &["Thassa's Oracle"],
+        &["Silence", "Chrome Mox", "Lotus Petal", "Arcane Signet", "Grim Monolith"],
+        1,
+    );
+    perm(&mut g, P0, "Thrasios, Triton Hero");
+    doomsday::run_pile(&mut g, P0).unwrap();
+    assert!(won(&g), "the pile dug down to three cards with Thrasios: {:?}", g.log.as_ref().map(|l| l.iter().rev().take(14).collect::<Vec<_>>()));
+    assert!(logged(&g, "plays the pile: Thrasios's dig"), "Thrasios's {{4}} was played as a move of the pile");
+    assert!(logged(&g, "Thrasios reveals Silence: drawn"));
+    // without Thrasios the same position stalls: five cards, devotion 2, nothing to draw with
+    let mut g = pile_in_play(
+        &["Thassa's Oracle"],
+        &["Silence", "Chrome Mox", "Lotus Petal", "Arcane Signet", "Grim Monolith"],
+        1,
+    );
+    doomsday::run_pile(&mut g, P0).unwrap();
+    assert!(!won(&g));
+}
+
+#[test]
+fn thrasios_does_not_dig_by_himself_while_a_pile_is_played() {
+    let mut g = pile_in_play(
+        &["Chrome Mox"],
+        &["Silence", "Lotus Petal", "Arcane Signet", "Grim Monolith", "Sol Ring"],
+        1,
+    );
+    perm(&mut g, P0, "Thrasios, Triton Hero");
+    // no Oracle anywhere: no line, so the pile does nothing and the dig is not played
+    doomsday::run_pile(&mut g, P0).unwrap();
+    assert_eq!(g.player(P0).library.len(), 5, "no card was drawn off the pile");
+    assert!(!logged(&g, "Thrasios's dig"));
+}
+
+#[test]
+fn thrasios_dig_of_a_land_still_shortens_the_library() {
+    // the top card is a land: it goes onto the battlefield instead of into the hand, and the library is shorter all the same
+    let mut g = pile_in_play(
+        &["Thassa's Oracle"],
+        &["Underground Sea", "Underground Sea", "Chrome Mox", "Lotus Petal", "Arcane Signet"],
+        1,
+    );
+    perm(&mut g, P0, "Thrasios, Triton Hero");
+    doomsday::run_pile(&mut g, P0).unwrap();
+    assert!(won(&g), "two lands dug away: three cards, devotion 3");
+}
+
+#[test]
+fn a_devotion_permanent_in_hand_shortens_the_pile() {
+    // Mockingbird ({U}, blue in its cost) is one more devotion: three cards left win with it, not without
+    let lib = ["Chrome Mox", "Lotus Petal", "Arcane Signet"];
+    let mut g = pile_in_play(&["Thassa's Oracle", "Mockingbird"], &lib, 0);
+    doomsday::run_pile(&mut g, P0).unwrap();
+    assert!(won(&g), "Mockingbird first, then the Oracle with a devotion of 3");
+    assert!(logged(&g, "plays the pile: Mockingbird"));
+    let mut g = pile_in_play(&["Thassa's Oracle"], &lib, 0);
+    doomsday::run_pile(&mut g, P0).unwrap();
+    assert!(!won(&g), "three cards and a devotion of 2: no line");
+}
+
+#[test]
+fn veil_of_summer_held_is_the_lock_when_there_is_no_silence() {
+    // Doomsday in hand, Veil of Summer in the library and no Silence anywhere: the pile takes the Veil, and the line
+    // counts it as the lock (it answers a blue or black counter on the Oracle)
+    let mut g = setup(
+        &["Doomsday", "Thassa's Oracle", "Gitaxian Probe"],
+        &["Preordain", "Ponder", "Veil of Summer", "Chrome Mox", "Lotus Petal", "Arcane Signet", "Grim Monolith"],
+        &[],
+    );
+    lands(&mut g, P0, "Bayou", 1, false); // the {G}
+    let b = doomsday::build(&g, P0, doomsday::Scn::Main, 3, &[]).expect("a pile wins");
+    assert!(b.lock, "the pile carries the Veil as its lock");
+    let names: Vec<String> = b.pile.iter().map(|&c| g.db.get(c).name.to_string()).collect();
+    assert!(names.iter().any(|n| n == "Veil of Summer"), "{names:?}");
+    // with Silence about, Silence is the lock and the Veil takes no slot
+    let silence = card(&g, "Silence");
+    g.player_mut(P0).library.insert(0, silence);
+    let b = doomsday::build(&g, P0, doomsday::Scn::Main, 3, &[]).unwrap();
+    let names: Vec<String> = b.pile.iter().map(|&c| g.db.get(c).name.to_string()).collect();
+    assert!(names.iter().any(|n| n == "Silence") && !names.iter().any(|n| n == "Veil of Summer"), "{names:?}");
+}
+
+#[test]
+fn veil_of_summer_in_hand_answers_the_counter_on_the_oracle() {
+    // a two-card pile, the Oracle in hand with Veil of Summer and {G} open; the table has a Counterspell and the blue to cast it
+    let mut g = pile_in_play(&["Thassa's Oracle", "Veil of Summer"], &["Chrome Mox", "Lotus Petal"], 0);
+    lands(&mut g, P0, "Bayou", 1, false);
+    lands(&mut g, P1, "Island", 2, false);
+    hand(&mut g, P1, &["Counterspell"]);
+    doomsday::run_pile(&mut g, P0).unwrap();
+    assert!(won(&g), "the Oracle won");
+    if !in_zone(&g, &g.player(P1).hand, "Counterspell") {
+        assert!(logged(&g, "responds with Veil of Summer"), "the counter was answered by the Veil");
+    }
+}
+
+#[test]
+fn a_forced_draw_from_an_empty_library_stops_the_end_step_cast() {
+    // one card is all there is to pile: the draw step takes it and the Oracle wins. With an Esper Sentinel of ours out and
+    // an opponent who can cast a spell, a forced draw at the wrong moment would draw from an empty library: no cast
+    let mut g = setup(&["Doomsday"], &["Thassa's Oracle"], &[]);
+    teferi_flash(&mut g);
+    g.active = Some(P1);
+    assert_eq!(opts(&mut g, None), 1, "the pile wins");
+    perm(&mut g, P0, "Esper Sentinel");
+    assert_eq!(opts(&mut g, None), 0, "a forced draw would empty the library");
+}
+
+#[test]
+fn a_draw_stepping_permanent_counts_in_the_end_step_pile() {
+    // Howling Mine on the other side: the draw step takes two cards, not one. Pile A's Brainstorm, Oracle, Probe,
+    // Silence, filler leaves two cards after the draw step: Oracle (devotion 2) wins at once
+    let mut g = setup(
+        &["Doomsday", "Sol Ring", "Mana Vault"],
+        &["Brainstorm", "Thassa's Oracle", "Gitaxian Probe", "Silence", "Chrome Mox", "Lotus Petal", "Arcane Signet"],
+        &[],
+    );
+    teferi_flash(&mut g);
+    perm(&mut g, P1, "Howling Mine");
+    end_step(&mut g);
+    let pile = lib_names(&g, P0);
+    assert_eq!(pile.len(), 5, "{pile:?}");
+    assert_eq!(life(&g), 20, "Doomsday was cast");
+    next_turn(&mut g, true);
+    draw(&mut g, P0, 1, false).unwrap(); // the Howling Mine's extra card
+    play_pile_line(&mut g);
+    assert!(won(&g), "three cards drawn by the turn: the pile still wins");
+}
+
+fn life(g: &Game) -> i32 {
+    g.player(P0).life
+}
+
+#[test]
+fn borne_upon_a_wind_as_the_enabler_draws_before_the_pile_and_the_pile_is_built_after_it() {
+    // Borne is cast first at the end step: it draws a card (the top of the library, which is not the pile yet), then
+    // Doomsday builds the pile from the cards that are left. Pile B: the draw step, Probe, Preordain, Silence, Oracle
+    let mut g = setup(
+        &["Doomsday", "Thassa's Oracle", "Borne Upon a Wind"],
+        &[
+            "Silence",
+            "Gitaxian Probe",
+            "Preordain",
+            "Chrome Mox",
+            "Lotus Petal",
+            "Arcane Signet",
+            "Grim Monolith",
+            "Sol Ring",
+        ],
+        &[],
+    );
+    end_step(&mut g);
+    assert_eq!(life(&g), 20, "Doomsday was cast behind the Borne");
+    // Borne's draw took the Silence into the hand (the card was not in the pile): the pile is the five cards that were left
+    let hand_has_silence = in_zone(&g, &g.player(P0).hand, "Silence");
+    let pile = lib_names(&g, P0);
+    assert_eq!(pile.len(), 5, "{pile:?}");
+    next_turn(&mut g, true);
+    play_pile_line(&mut g);
+    assert!(won(&g), "the pile built after Borne's draw wins (Silence in hand: {hand_has_silence}): {pile:?}");
+}
+
+#[test]
+fn noxious_revival_in_hand_makes_a_pile_without_the_lock_acceptable() {
+    // no Silence or Veil anywhere: no lock. With a Noxious Revival in hand the line is backed (a countered Oracle goes back)
+    let mut g = setup(
+        &["Doomsday", "Thassa's Oracle", "Gitaxian Probe"],
+        &["Preordain", "Ponder", "Chrome Mox", "Lotus Petal", "Arcane Signet", "Grim Monolith"],
+        &[],
+    );
+    let b = doomsday::build(&g, P0, doomsday::Scn::Main, 3, &[]).expect("a pile wins");
+    assert!(!b.lock && !b.backup, "no lock, no backup");
+    let rev = card(&g, "Noxious Revival");
+    g.player_mut(P0).hand.push(rev);
+    let b = doomsday::build(&g, P0, doomsday::Scn::Main, 3, &[]).unwrap();
+    assert!(!b.lock && b.backup, "Noxious Revival in hand backs the line");
+}
+
+#[test]
+fn noxious_revival_in_the_library_takes_a_slot_of_the_pile_when_the_line_draws_it() {
+    // Pile C with a Revival to spare: Doomsday's five cards include the Revival when a draw puts it in hand in time
+    let mut g = setup(
+        &["Doomsday", "Thassa's Oracle", "Borne Upon a Wind"],
+        &["Preordain", "Ponder", "Noxious Revival", "Chrome Mox", "Lotus Petal", "Arcane Signet", "Grim Monolith"],
+        &[],
+    );
+    let b = doomsday::build(&g, P0, doomsday::Scn::Main, 3, &[]).expect("a pile wins");
+    let names: Vec<String> = b.pile.iter().map(|&c| g.db.get(c).name.to_string()).collect();
+    assert!(b.backup && names.iter().any(|n| n == "Noxious Revival"), "{names:?} backup {}", b.backup);
+    let _ = &mut g;
+}
+
+#[test]
+fn noxious_revival_puts_the_oracle_back_even_when_another_card_is_worth_more() {
+    // the graveyard holds the countered Oracle and a Demonic Tutor: Noxious Revival is aimed at the Oracle (the pile's card)
+    let mut g = setup(&["Noxious Revival"], &["Chrome Mox", "Lotus Petal"], &["Demonic Tutor", "Thassa's Oracle"]);
+    g.player_mut(P0).stats.insert("doomsday", 1);
+    let rev = card(&g, "Noxious Revival");
+    cast_card(&mut g, P0, rev, "hand", Ctx::default()).unwrap();
+    let oracle = card(&g, "Thassa's Oracle");
+    assert_eq!(g.player(P0).library.last(), Some(&oracle), "the Oracle is on top");
+    assert!(in_zone(&g, &g.player(P0).gy, "Demonic Tutor"));
+}
+
+// ------------------------------------------------------------------ the table's risk check on the cast
+/// a table where the other seats play `opps` (decks with counters), with untapped blue mana and a full hand
+fn counter_table(opps: &[&str], hand_names: &[&str], lib_top_first: &[&str]) -> Game {
+    let mut keys = vec!["thrasios"];
+    keys.extend(opps);
+    let mut g = table_with(&keys, 1, 40);
+    g.log = Some(vec![]);
+    g.active = Some(P0);
+    lands(&mut g, P0, "Underground Sea", 8, false);
+    lands(&mut g, P0, "Scrubland", 2, false);
+    let (h, l) = (ids(&g, hand_names), ids(&g, lib_top_first));
+    let pl = g.player_mut(P0);
+    pl.hand = h;
+    pl.library = l.into_iter().rev().collect();
+    for i in 1..keys.len() {
+        let q = sim_core::ids::PlayerId(i as u8);
+        lands(&mut g, q, "Island", 4, false);
+        hand(&mut g, q, &["Sol Ring", "Mana Vault", "Grim Monolith", "Chrome Mox", "Lotus Petal"]);
+    }
+    g
+}
+
+#[test]
+fn the_cast_waits_when_the_table_can_stop_it_and_there_is_no_cover() {
+    // Pile C (Oracle and Probe in hand), no Silence or Veil to find, no counter of ours: the table's stop chance is high
+    let no_cover = &["Preordain", "Ponder", "Chrome Mox", "Lotus Petal", "Arcane Signet", "Grim Monolith"];
+    let line_card = ["Doomsday", "Thassa's Oracle", "Gitaxian Probe"];
+    let with = |extra: &[&'static str]| -> Vec<&'static str> { line_card.iter().chain(extra).copied().collect() };
+    let mut g = counter_table(&["thrasios", "thrasios"], &line_card, no_cover);
+    let risk = sim_core::ai::t6_table::go_risk(&g, P0);
+    let thr = sim_core::ai::t6_table::go_threshold(&g, P0);
+    assert!(risk > thr, "the fixture: the table stops a spell more often than the bar allows ({risk} vs {thr})");
+    assert_eq!(opts(&mut g, Some(false)), 0, "the cast waits");
+    // Silence in the library: the pile carries the lock, the cast goes
+    let mut cover: Vec<&str> = vec!["Preordain", "Ponder", "Silence"];
+    cover.extend(&no_cover[2..]);
+    let mut g = counter_table(&["thrasios", "thrasios"], &line_card, &cover);
+    assert_eq!(opts(&mut g, Some(false)), 1, "a pile with the lock goes");
+    // Silence in hand: the same
+    let mut g = counter_table(&["thrasios", "thrasios"], &with(&["Silence"]), no_cover);
+    assert_eq!(opts(&mut g, Some(false)), 1, "Silence in hand is cover");
+    // Veil of Summer does not answer Mindbreak Trap (the table plays it): no cover
+    let mut g = counter_table(&["thrasios", "thrasios"], &with(&["Veil of Summer"]), no_cover);
+    lands(&mut g, P0, "Bayou", 1, false);
+    assert_eq!(opts(&mut g, Some(false)), 0, "Veil of Summer is no cover against a table with Mindbreak Trap");
+    // a table without Mindbreak Trap or a red blast: Veil of Summer held with {G} is cover
+    let mut g = counter_table(&["sauron", "sauron", "sauron"], &line_card, no_cover);
+    let (risk, thr) = (sim_core::ai::t6_table::go_risk(&g, P0), sim_core::ai::t6_table::go_threshold(&g, P0));
+    assert!(risk > thr, "the fixture: three Sauron seats stop a spell too often ({risk} vs {thr})");
+    assert_eq!(opts(&mut g, Some(false)), 0, "no cover: the cast waits");
+    let mut g = counter_table(&["sauron", "sauron", "sauron"], &with(&["Veil of Summer"]), no_cover);
+    lands(&mut g, P0, "Bayou", 1, false);
+    assert_eq!(opts(&mut g, Some(false)), 1, "Veil of Summer in hand with {{G}} open is cover");
+}
+
+// ------------------------------------------------------------------ the general coloured-source keep term
+fn hand_of(names: &[&str]) -> Game {
+    let mut g = setup(names, &["Brainstorm", "Silence"], &[]);
+    g.player_mut(P0).turns = 0;
+    g
+}
+
+#[test]
+fn a_hand_whose_action_cards_have_no_source_of_their_colour_goes_back() {
+    use sim_core::impls::t6_plans::keep;
+    // Oracle ({U}{U}) and Brainstorm ({U}) with lands that make B, G and W only
+    let g = hand_of(&["Bayou", "Overgrown Tomb", "Savannah", "Thassa's Oracle", "Brainstorm", "Silence", "Swords to Plowshares"]);
+    assert_eq!(keep(&g, P0), Some(false), "no blue source for the Oracle or the Brainstorm");
+    // the same hand with a blue land is kept
+    let g = hand_of(&["Bayou", "Overgrown Tomb", "Tundra", "Thassa's Oracle", "Brainstorm", "Silence", "Swords to Plowshares"]);
+    assert_ne!(keep(&g, P0), Some(false), "Tundra makes {{U}}");
+    // a fetch land counts for the colours of the lands left in the library (Underground Sea is in the deck)
+    let mut g = hand_of(&["Bayou", "Overgrown Tomb", "Polluted Delta", "Thassa's Oracle", "Brainstorm", "Silence", "Swords to Plowshares"]);
+    let sea = card(&g, "Underground Sea");
+    g.player_mut(P0).library.push(sea);
+    assert_ne!(keep(&g, P0), Some(false), "Polluted Delta finds the Underground Sea");
+    // a Mox that makes the colours of the hand's other spells is a source once it can be cast
+    let g = hand_of(&["Bayou", "Overgrown Tomb", "Savannah", "Thassa's Oracle", "Brainstorm", "Birds of Paradise", "Swords to Plowshares"]);
+    assert_ne!(keep(&g, P0), Some(false), "Birds of Paradise makes every colour once cast from a green land");
+}
+
+#[test]
+fn the_quantities_count_colour_gaps() {
+    use sim_core::impls::t6_keep::{colour_castable, colour_gaps};
+    let g = hand_of(&["Bayou", "Savannah", "Thassa's Oracle", "Brainstorm", "Silence", "Doomsday"]);
+    // spells need U (Oracle, Brainstorm), W (Silence) and B (Doomsday); the lands make B, G, W
+    assert_eq!(colour_gaps(&g, P0, None), 1, "only U is missing");
+    assert_eq!(colour_castable(&g, P0, None), 2, "Silence and Doomsday can be cast");
+}

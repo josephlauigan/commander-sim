@@ -27,6 +27,21 @@
 //!   cast first), else in the main phase when the pile starts from the hand; never with Demonic Consultation or
 //!   Tainted Pact in hand (Line 1 is cheaper), never below 16 life or into a board that can deal the life that is
 //!   left, and not into several opponents who can stop a spell with no lock in the pile and no counter held.
+//! * **Pile extras** (doomsday-b). Beyond the cards above the search also plays: Thrasios's {4} dig (scry 1, then a land
+//!   goes onto the battlefield and anything else is drawn: the library is one card shorter either way; `Act::dig`,
+//!   played by `tymna_cards::pile_dig`, the scry decided by `pile_scry` with n = 1); a devotion permanent from the hand
+//!   (`K::Dev`: Mockingbird, Mystic Remora, Rhystic Study, Valley Floodcaller: +1 devotion for their blue); Veil of Summer
+//!   held in hand with {G} open as the lock (`K::Veil`, `Env::locked`: the engine's `rules::veil_response` casts it on a
+//!   blue or black counter, so it is not cast by the line and it is not used when an opponent's deck can hold Mindbreak
+//!   Trap or a red blast, which it does not answer); and a Noxious Revival in hand when the Oracle is cast as a backup
+//!   (`Want::backup`, `Built::backup`: a pile without the lock is accepted into two stoppers with it). A Revival in the
+//!   library or graveyard takes a pile slot when the line draws it in time. A pile is checked against a forced draw (an
+//!   Esper Sentinel of ours: an opponent's first noncreature spell draws us a card) and the draw step's extra cards
+//!   (Howling Mine). Borne Upon a Wind as the end-step enabler draws before Doomsday resolves, so the pile is built from
+//!   the library after that draw (`ai_pile` runs when Doomsday resolves).
+//! * **The table's risk check.** `plan_cast` also asks `t6_table::go_risk_covered` against `go_threshold`, as every Tier 6
+//!   line does: the cast waits when the table can stop it and there is no cover (Silence or Chant in hand, a free counter
+//!   of ours, the pile's lock, Veil held with {G}).
 //! * **Teferi, Time Raveler +1**: "until your next turn you may cast sorcery spells as though they had flash"
 //!   (`teferi_plus`, read by `cast::grants_flash`).
 
@@ -197,11 +212,7 @@ impl<'a> Env<'a> {
                 x.on_bf && !x.phased && x.cd.is_some_and(|c| &*g.db.get(c).name == "Thrasios, Triton Hero")
             })
             .then(|| crate::impls::t6_green1::creature_ability_cost(&g, p, 4).min(9) as u8);
-        let veil_ok = !g.opps(p).any(|q| {
-            crate::ai::brain::prob_holding(&g, q, |c| {
-                matches!(&*g.db.get(c).name, "Mindbreak Trap" | "Red Elemental Blast" | "Pyroblast")
-            }) > 0.0
-        });
+        let veil_ok = veil_answers(&g, p);
         Env { g, p, b, dev, kinds, dev_gn, dig, veil_ok, memo: RefCell::new(HashMap::new()) }
     }
     fn kd(&self, c: CardId) -> K {
@@ -603,6 +614,9 @@ fn cache_key(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> u64 {
     let board: Vec<u32> = pl.perms.iter().map(|&m| m.0 as u32).collect();
     board.hash(&mut h);
     silence_up(g, p).hash(&mut h);
+    veil_answers(g, p).hash(&mut h);
+    forced_draws(g, p).hash(&mut h);
+    draw_step_extra(g).hash(&mut h);
     h.finish()
 }
 
@@ -643,7 +657,7 @@ fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Op
         .perms
         .iter()
         .any(|&m| g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == "Necropotence") && !g.perm(m).phased);
-    // the draw step takes the first card (and what Howling Mine / Font of Mythos add); skipped under Necropotence
+    // the draw step takes the first card (and what Howling Mine adds); skipped under Necropotence
     let first_draws = if scn == Scn::EndStep && !necro { 1 + draw_step_extra(g) } else { 0 };
     let forced = forced_draws(g, p);
     let mana: Cow<Game> = if scn == Scn::EndStep {
@@ -744,7 +758,7 @@ fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Op
     best.map(|x| x.1)
 }
 
-/// extra cards the draw step brings: Howling Mine (untapped) one, Font of Mythos two, whoever controls them
+/// extra cards the draw step brings: an untapped Howling Mine (whoever controls it) draws each player one
 fn draw_step_extra(g: &Game) -> usize {
     g.players
         .iter()
@@ -752,7 +766,6 @@ fn draw_step_extra(g: &Game) -> usize {
         .filter(|&&m| !g.perm(m).phased && g.perm(m).on_bf)
         .map(|&m| match g.perm(m).cd.map(|c| &*g.db.get(c).name) {
             Some("Howling Mine") if !g.perm(m).tapped => 1,
-            Some("Font of Mythos") => 2,
             _ => 0,
         })
         .sum()
@@ -1012,6 +1025,21 @@ fn cast_one(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
     cast_card(g, p, c, "hand", Ctx::default())
 }
 
+/// the mana the line from `acts` on needs, as (generic, pips): what `pile_dig` leaves untapped
+fn rest_cost(g: &Game, p: PlayerId, acts: &[Act]) -> (u32, String) {
+    let (mut gn, mut pips) = (0, String::new());
+    for a in acts {
+        if a.dig {
+            gn += crate::impls::t6_green1::creature_ability_cost(g, p, 4);
+        } else {
+            let (cg, cp) = cost_of(g, p, a.card);
+            gn += cg;
+            pips.push_str(&cp);
+        }
+    }
+    (gn, pips)
+}
+
 /// Play the pile: re-solve before every spell, cast the first move of the line, stop when there is no line, a spell
 /// cannot be cast, or the game is over. Thassa's Oracle in the graveyard comes back with Noxious Revival when there is
 /// no line. True when the game was won.
@@ -1030,7 +1058,7 @@ pub fn run_pile(g: &mut Game, p: PlayerId) -> Res<bool> {
         let a = plan[0];
         if a.dig {
             crate::glog!(g, "    {} plays the pile: Thrasios's dig", g.player(p).name);
-            if !super::tymna_cards::pile_dig(g, p)? {
+            if !super::tymna_cards::pile_dig(g, p, rest_cost(g, p, &plan[1..]))? {
                 failed += 1;
                 if failed >= 2 {
                     break;
@@ -1285,4 +1313,15 @@ pub fn revival_target(g: &Game, p: PlayerId) -> Option<CardId> {
         return None;
     }
     g.player(p).gy.iter().copied().find(|&c| &*g.db.get(c).name == ORACLE)
+}
+
+/// does Veil of Summer answer everything the table may hold against the Oracle: it makes our spells uncounterable, but
+/// it does not stop Mindbreak Trap (an exile, not a counter) and the engine's answer (`rules::veil_response`) is to blue
+/// and black counters only, so a table that may hold Mindbreak Trap or a red blast does not count
+fn veil_answers(g: &Game, p: PlayerId) -> bool {
+    !g.opps(p).any(|q| {
+        crate::ai::brain::prob_holding(g, q, |c| {
+            matches!(&*g.db.get(c).name, "Mindbreak Trap" | "Red Elemental Blast" | "Pyroblast")
+        }) > 0.0
+    })
 }

@@ -190,8 +190,8 @@ fn tag_cols(g: &Game, p: PlayerId, c: CardId) -> Colors {
 }
 
 /// the colours of mana the card makes once it is in play: a rock (`rock` = `amount:colours`), a dork (`dork` =
-/// colours), Elvish Spirit Guide ({G} from the hand), Chrome Mox (the colours of the other spells in the hand)
-fn piece_cols(g: &Game, p: PlayerId, c: CardId, hand: &[CardId]) -> Colors {
+/// colours), Elvish Spirit Guide ({G} from the hand); Chrome Mox is none
+fn piece_cols(g: &Game, p: PlayerId, c: CardId) -> Colors {
     let d = g.db.get(c);
     let ident = g.player(p).ident;
     let letters = |s: &str| if s == "A" { ident } else { Colors::from_letters(s) };
@@ -203,10 +203,8 @@ fn piece_cols(g: &Game, p: PlayerId, c: CardId, hand: &[CardId]) -> Colors {
     }
     match &*d.name {
         "Elvish Spirit Guide" => Colors::from_letters("G"),
-        "Chrome Mox" => hand
-            .iter()
-            .filter(|&&o| o != c && !g.db.get(o).land)
-            .fold(Colors::NONE, |a, &o| a.union(g.db.get(o).colors)),
+        // Chrome Mox exiles the card it imprints, so it cannot make the colour of the card that needs it: no source
+        "Chrome Mox" => Colors::NONE,
         _ => Colors::NONE,
     }
 }
@@ -238,7 +236,7 @@ pub fn hand_sources(g: &Game, p: PlayerId) -> Colors {
         let mut changed = false;
         for &c in &pieces {
             let d = g.db.get(c);
-            let cols = piece_cols(g, p, c, hand);
+            let cols = piece_cols(g, p, c);
             if cols.is_empty() || (covers(have, cols)) {
                 continue;
             }

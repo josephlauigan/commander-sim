@@ -127,9 +127,10 @@ fn thrasios_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 }
 
 /// Thrasios's {4} played as a move of a Doomsday pile (`doomsday::run_pile`): the same ability as `thrasios_go`, which
-/// refuses while a pile is active (the AI must not draw a card off the pile on its own). False when it could not be
-/// activated (no Thrasios, no mana, an empty library)
-pub fn pile_dig(g: &mut Game, p: PlayerId) -> Res<bool> {
+/// refuses while a pile is active (the AI must not draw a card off the pile on its own). `rest` is the mana the rest of
+/// the line still needs ({generic}, pips): the {4} is paid from the lands that are left over from it, so the colours of
+/// Silence and the Oracle stay untapped. False when it could not be activated (no Thrasios, no mana, an empty library)
+pub fn pile_dig(g: &mut Game, p: PlayerId, rest: (u32, String)) -> Res<bool> {
     let Some(src) = g
         .player(p)
         .perms
@@ -144,11 +145,36 @@ pub fn pile_dig(g: &mut Game, p: PlayerId) -> Res<bool> {
         return Ok(false);
     }
     g.player_mut(p).stat(crate::sym::intern("ty_thrasios_acts"), 1);
-    pay(g, p, cost, "", false)?;
+    pay_leaving(g, p, cost, &rest)?;
     if !ability_window(g, p, Some(src), "scry 1, then a land or a card", None, None)? {
         return Ok(true); // answered (Stifle): the mana is gone, the line is re-solved
     }
     thrasios_resolve(g, p)?;
+    Ok(true)
+}
+
+/// pay `generic` from the mana that `rest` (generic, pips) does not need: the units the rest would use are set aside
+/// first. Plain `pay` when a unit makes more than one mana (the leftover would be lost) or there is nothing to set aside
+fn pay_leaving(g: &mut Game, p: PlayerId, generic: u32, rest: &(u32, String)) -> Res<bool> {
+    let units = crate::engine::mana::mana_units(g, p, false);
+    let set_aside = crate::engine::mana::plan_pay(g, &units, rest.0, &rest.1);
+    let Some((reserved, _)) = set_aside.filter(|_| units.iter().all(|w| w.amt == 1)) else {
+        return pay(g, p, generic, "", false);
+    };
+    let free: Vec<Unit> = units.iter().enumerate().filter(|(i, _)| reserved[*i] == 0).map(|(_, w)| *w).collect();
+    let Some((used, col)) = crate::engine::mana::plan_pay(g, &free, generic, "") else {
+        return pay(g, p, generic, "", false);
+    };
+    g.treasure_paid = 0;
+    if !g.spent_keep {
+        g.mana_spent = 0;
+        g.mana_colored = false;
+    }
+    for (i, w) in free.iter().enumerate() {
+        if used[i] > 0 {
+            crate::engine::mana::spend_unit(g, p, *w, used[i], &col[i])?;
+        }
+    }
     Ok(true)
 }
 
