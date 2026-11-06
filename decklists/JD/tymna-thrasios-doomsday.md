@@ -107,6 +107,13 @@ do that:
 Without one of them, cast Doomsday in your own main phase and use a pile that starts with a draw spell from your hand
 (Pile C).
 
+**Lion's Eye Diamond pays for Doomsday.** Cast Doomsday, and while you pay for it crack LED (discard your hand,
+sacrifice LED) for {B}{B}{B}. Doomsday is already on the stack, so it isn't discarded, and Doomsday searches your
+graveyard too: the cards LED just discarded can still go into the pile. Use it at the end step (Pile A): an emptied hand
+in your own main phase has nothing to draw the pile with. LED can also pay for a spell inside the pile once the hand
+holds nothing the line still needs. Not with Necropotence out (it exiles the discards), and not if a tax makes Doomsday
+cost more than {B}{B}{B}.
+
 **Life:** Doomsday takes half your life, rounded up: 40 → 20, 25 → 12 (lose 13). It's an all-or-nothing move: the
 pile wins this turn or you lose, so your life total and the opponents' boards don't stop it. Two limits only: at 1 life
 it takes your last point, and a Gitaxian Probe paid in life needs at least 3 life when you cast it (2 for the Probe, 1 to stay alive).

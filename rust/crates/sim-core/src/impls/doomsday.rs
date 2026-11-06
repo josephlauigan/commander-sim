@@ -148,6 +148,9 @@ pub struct Act {
     pub card: CardId,
     pub life: bool,
     pub dig: bool,
+    /// Lion's Eye Diamond is cracked while this move is paid (the spell is on the stack): 0 not, 1 {U}{U}{U}, 2 {W}{W}{W},
+    /// 3 {G}{G}{G}. The rest of the hand is discarded
+    pub led: u8,
 }
 
 /// the position the search plays from: the hand, the library (top first), the mana the line has spent so far (as
@@ -163,11 +166,15 @@ struct S {
     silence: bool,
     /// devotion to blue added by permanents the line cast (Mockingbird ...)
     dev: u8,
+    /// Lion's Eye Diamond is on the battlefield and still uncracked (the line may crack it for a spell: `Act::led`)
+    led: bool,
+    /// the colour of the three mana a crack made (1 U, 2 W, 3 G; 0 none): it adds to what the lands pay
+    bonus: u8,
 }
 
 impl S {
     fn new(hand: Vec<CardId>, lib: Vec<CardId>, life: i32) -> S {
-        S { hand, lib, u: 0, w: 0, gn: 0, life, silence: false, dev: 0 }
+        S { hand, lib, u: 0, w: 0, gn: 0, life, silence: false, dev: 0, led: false, bonus: 0 }
     }
 }
 
@@ -240,9 +247,30 @@ impl<'a> Env<'a> {
     }
     /// can the player pay {B}^b + {U}^u + {W}^w + {G}^gr + generic gn at once
     fn ok(&self, u: u8, w: u8, gr: u8, gn: u8) -> bool {
-        let key = (((((self.b as u32) * 16 + u as u32) * 16 + w as u32) * 16 + gr as u32) * 32) + gn as u32;
+        self.okb(0, u, w, gr, gn)
+    }
+    /// `ok` in the position `s`: a crack of Lion's Eye Diamond adds its three mana to what the lands pay
+    fn ok_in(&self, s: &S, u: u8, w: u8, gr: u8, gn: u8) -> bool {
+        self.okb(s.bonus, u, w, gr, gn)
+    }
+    /// `ok` with three mana of one colour added (`bonus`: 1 U, 2 W, 3 G, 0 none). The three pay the pips of their colour
+    /// first and then generic; what the line has spent is a running total, so a crack's mana counts once
+    fn okb(&self, bonus: u8, u: u8, w: u8, gr: u8, gn: u8) -> bool {
+        let key = ((((((self.b as u32) * 16 + u as u32) * 16 + w as u32) * 16 + gr as u32) * 32) + gn as u32) * 4
+            + bonus as u32;
         if let Some(&r) = self.memo.borrow().get(&key) {
             return r;
+        }
+        let (mut u, mut w, mut gr, mut gn) = (u, w, gr, gn);
+        if bonus != 0 {
+            let pips = match bonus {
+                1 => &mut u,
+                2 => &mut w,
+                _ => &mut gr,
+            };
+            let k = (*pips).min(3);
+            *pips -= k;
+            gn = gn.saturating_sub(3 - k);
         }
         let pips = format!(
             "{}{}{}{}",
@@ -257,11 +285,13 @@ impl<'a> Env<'a> {
     }
     /// the lock at the Oracle's cast: Silence is up, or Veil of Summer is in hand with {G} left over the Oracle's {U}{U}
     fn locked(&self, s: &S) -> bool {
-        s.silence || (self.veil_ok && s.hand.iter().any(|&c| self.kd(c) == K::Veil) && self.ok(s.u + 2, s.w, 1, s.gn))
+        s.silence
+            || (self.veil_ok && s.hand.iter().any(|&c| self.kd(c) == K::Veil) && self.ok_in(s, s.u + 2, s.w, 1, s.gn))
     }
     /// Noxious Revival is in hand with its {G} (or 2 life) left over the Oracle's {U}{U}
     fn backed(&self, s: &S) -> bool {
-        s.hand.iter().any(|&c| self.kd(c) == K::Revival) && (self.ok(s.u + 2, s.w, 1, s.gn) || s.life - 2 >= LIFE_FLOOR)
+        s.hand.iter().any(|&c| self.kd(c) == K::Revival)
+            && (self.ok_in(s, s.u + 2, s.w, 1, s.gn) || s.life - 2 >= LIFE_FLOOR)
     }
 }
 
@@ -298,6 +328,7 @@ fn state_now(g: &Game, p: PlayerId, exclude: Option<CardId>) -> S {
         pl.life,
     );
     s.silence = silence_up(g, p);
+    s.led = super::mine::led_on_table(g, p);
     s
 }
 
@@ -355,7 +386,7 @@ fn scry_variants(top: &[CardId]) -> Vec<(Vec<CardId>, Vec<CardId>)> {
 }
 
 fn act(card: CardId) -> Act {
-    Act { card, life: false, dig: false }
+    Act { card, life: false, dig: false, led: 0 }
 }
 
 fn step_to(e: &Env, t: S, a: Act, left: u8, w: Want, acts: &mut Vec<Act>) -> bool {
@@ -407,7 +438,7 @@ fn state_key(s: &S, w: Want) -> u64 {
     for c in &s.lib {
         c.0.hash(&mut h);
     }
-    (s.u, s.w, s.gn, s.life, s.silence, s.dev, w.lock, w.backup, s.lib.len()).hash(&mut h);
+    (s.u, s.w, s.gn, s.life, s.silence, s.dev, w.lock, w.backup, s.lib.len(), s.led, s.bonus).hash(&mut h);
     h.finish()
 }
 
@@ -445,6 +476,27 @@ fn dfs(e: &Env, s: &S, left: u8, w: Want, acts: &mut Vec<Act>) -> bool {
     false
 }
 
+/// what trying to cast one card of the hand came to
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum Try {
+    /// a line was found (it is in `acts`)
+    Won,
+    /// the card can be cast (or is no move here) and no line follows
+    Lost,
+    /// the mana for the card is not there: only a crack of Lion's Eye Diamond could pay for it
+    Unpayable,
+}
+
+/// `s` after Lion's Eye Diamond is cracked for the cast of `keep` (the spell is on the stack; `None`: for an ability): the
+/// rest of the hand is discarded (the graveyard is out of the pile's reach), and three mana of colour `col` are added
+fn cracked(s: &S, keep: Option<CardId>, col: u8) -> S {
+    let mut t = s.clone();
+    t.hand = keep.into_iter().collect();
+    t.led = false;
+    t.bonus = col;
+    t
+}
+
 fn dfs_inner(e: &Env, s: &S, left: u8, w: Want, acts: &mut Vec<Act>) -> bool {
     for i in 0..s.hand.len() {
         let c = s.hand[i];
@@ -452,142 +504,188 @@ fn dfs_inner(e: &Env, s: &S, left: u8, w: Want, acts: &mut Vec<Act>) -> bool {
         if plain(k) || matches!(k, K::Veil | K::Revival) || s.hand[..i].iter().any(|&x| x == c) {
             continue;
         }
-        let mut base = s.clone();
-        base.hand.remove(i);
-        let a = act(c);
-        match k {
-            K::Silence => {
-                if s.silence || !e.ok(s.u, s.w + 1, 0, s.gn) {
-                    continue;
-                }
-                base.w += 1;
-                base.silence = true;
-                if step_to(e, base, a, left, w, acts) {
-                    return true;
-                }
-            }
-            K::Oracle => {
-                if e.ok(s.u + 2, s.w, 0, s.gn)
-                    && e.dev + s.dev as usize + 2 >= s.lib.len()
-                    && (!w.lock || e.locked(s))
-                    && (!w.backup || e.backed(s))
-                {
-                    acts.push(a);
-                    return true;
-                }
-            }
-            K::Dev => {
-                let gnc = e.dev_gn.get(&c.0).copied().unwrap_or(0);
-                if e.ok(s.u + 1, s.w, 0, s.gn + gnc) {
-                    base.u += 1;
-                    base.gn += gnc;
-                    base.dev += 1;
-                    if step_to(e, base, a, left, w, acts) {
-                        return true;
-                    }
-                }
-            }
-            K::Probe => {
-                if e.ok(s.u + 1, s.w, 0, s.gn) {
-                    let mut t = base.clone();
-                    t.u += 1;
-                    if draw_n(&mut t, 1) && step_to(e, t, a, left, w, acts) {
-                        return true;
-                    }
-                }
-                if s.life - 2 >= LIFE_FLOOR {
-                    let mut t = base.clone();
-                    t.life -= 2;
-                    if draw_n(&mut t, 1) && step_to(e, t, Act { life: true, ..a }, left, w, acts) {
-                        return true;
-                    }
-                }
-            }
-            K::Borne => {
-                if e.ok(s.u + 1, s.w, 0, s.gn + 1) {
-                    let mut t = base.clone();
-                    t.u += 1;
-                    t.gn += 1;
-                    if draw_n(&mut t, 1) && step_to(e, t, a, left, w, acts) {
-                        return true;
-                    }
-                }
-            }
-            K::Brainstorm => {
-                if !e.ok(s.u + 1, s.w, 0, s.gn) {
-                    continue;
-                }
-                let mut t = base.clone();
-                t.u += 1;
-                if !draw_n(&mut t, 3) {
-                    continue;
-                }
-                let mut seen: Vec<(K, K)> = vec![];
-                for x in 0..t.hand.len() {
-                    for y in 0..t.hand.len() {
-                        if x == y {
-                            continue;
-                        }
-                        let (cx, cy) = (t.hand[x], t.hand[y]);
-                        let key = (e.kd(cx), e.kd(cy));
-                        if seen.contains(&key) {
-                            continue;
-                        }
-                        seen.push(key);
-                        // cx goes back first, cy on top of it
-                        let mut t2 = t.clone();
-                        t2.hand.retain(|&h| h != cx && h != cy);
-                        t2.lib.insert(0, cx);
-                        t2.lib.insert(0, cy);
-                        if step_to(e, t2, a, left, w, acts) {
+        match try_card(e, s, i, 0, left, w, acts) {
+            Try::Won => return true,
+            Try::Lost => {}
+            // the latest the diamond can be cracked is the first spell the lands cannot pay: cracking earlier only throws
+            // the hand away sooner (the mana is a running total). Silence's {W}, the cantrips' {U} or Veil's {G}
+            Try::Unpayable => {
+                if s.led && s.bonus == 0 {
+                    for col in 1..=3 {
+                        if try_card(e, &cracked(s, Some(c), col), 0, col, left, w, acts) == Try::Won {
                             return true;
                         }
                     }
                 }
             }
-            K::Preordain => {
-                if !e.ok(s.u + 1, s.w, 0, s.gn) {
-                    continue;
-                }
-                let n = s.lib.len().min(2);
-                for (keep, bottom) in scry_variants(&s.lib[..n]) {
-                    let mut t = base.clone();
-                    t.u += 1;
-                    t.lib = keep.into_iter().chain(s.lib[n..].iter().copied()).chain(bottom).collect();
-                    if draw_n(&mut t, 1) && step_to(e, t, a, left, w, acts) {
-                        return true;
-                    }
-                }
-            }
-            K::Ponder => {
-                if !e.ok(s.u + 1, s.w, 0, s.gn) {
-                    continue;
-                }
-                let n = s.lib.len().min(3);
-                for ord in orders(&s.lib[..n]) {
-                    let mut t = base.clone();
-                    t.u += 1;
-                    t.lib = ord.into_iter().chain(s.lib[n..].iter().copied()).collect();
-                    if draw_n(&mut t, 1) && step_to(e, t, a, left, w, acts) {
-                        return true;
-                    }
-                }
-            }
-            K::Veil | K::Revival | K::Land | K::Other => {}
         }
     }
     // Thrasios's dig is a draw source of its own
-    if let Some(cost) = e.dig
-        && e.ok(s.u, s.w, 0, s.gn + cost)
-    {
-        for mut t in dig_outcomes(e, s) {
-            t.gn += cost;
-            if step_to(e, t, Act { card: CardId(0), life: false, dig: true }, left, w, acts) {
-                return true;
+    if let Some(cost) = e.dig {
+        if e.ok_in(s, s.u, s.w, 0, s.gn + cost) {
+            for mut t in dig_outcomes(e, s) {
+                t.gn += cost;
+                if step_to(e, t, Act { card: CardId(0), life: false, dig: true, led: 0 }, left, w, acts) {
+                    return true;
+                }
+            }
+        } else if s.led && s.bonus == 0 {
+            // the diamond pays for the dig when the lands cannot (its cost is an ability's: the whole hand goes)
+            for led in 1..=3 {
+                let sc = cracked(s, None, led);
+                if !e.ok_in(&sc, sc.u, sc.w, 0, sc.gn + cost) {
+                    continue;
+                }
+                for mut t in dig_outcomes(e, &sc) {
+                    t.gn += cost;
+                    if step_to(e, t, Act { card: CardId(0), life: false, dig: true, led }, left, w, acts) {
+                        return true;
+                    }
+                }
             }
         }
     }
     false
+}
+
+/// cast the card at `s.hand[i]` (with the diamond cracked for it when `led` is not 0: `s` is then the cracked position)
+fn try_card(e: &Env, s: &S, i: usize, led: u8, left: u8, w: Want, acts: &mut Vec<Act>) -> Try {
+    let c = s.hand[i];
+    let k = e.kd(c);
+    let mut base = s.clone();
+    base.hand.remove(i);
+    let a = Act { led, ..act(c) };
+    match k {
+        K::Silence => {
+            if s.silence {
+                return Try::Lost;
+            }
+            if !e.ok_in(s, s.u, s.w + 1, 0, s.gn) {
+                return Try::Unpayable;
+            }
+            base.w += 1;
+            base.silence = true;
+            if step_to(e, base, a, left, w, acts) {
+                return Try::Won;
+            }
+        }
+        K::Oracle => {
+            if !e.ok_in(s, s.u + 2, s.w, 0, s.gn) {
+                return Try::Unpayable;
+            }
+            if e.dev + s.dev as usize + 2 >= s.lib.len() && (!w.lock || e.locked(s)) && (!w.backup || e.backed(s)) {
+                acts.push(a);
+                return Try::Won;
+            }
+        }
+        K::Dev => {
+            let gnc = e.dev_gn.get(&c.0).copied().unwrap_or(0);
+            if !e.ok_in(s, s.u + 1, s.w, 0, s.gn + gnc) {
+                return Try::Unpayable;
+            }
+            base.u += 1;
+            base.gn += gnc;
+            base.dev += 1;
+            if step_to(e, base, a, left, w, acts) {
+                return Try::Won;
+            }
+        }
+        K::Probe => {
+            let mut payable = false;
+            if e.ok_in(s, s.u + 1, s.w, 0, s.gn) {
+                payable = true;
+                let mut t = base.clone();
+                t.u += 1;
+                if draw_n(&mut t, 1) && step_to(e, t, a, left, w, acts) {
+                    return Try::Won;
+                }
+            }
+            if s.life - 2 >= LIFE_FLOOR {
+                payable = true;
+                let mut t = base.clone();
+                t.life -= 2;
+                if draw_n(&mut t, 1) && step_to(e, t, Act { life: true, ..a }, left, w, acts) {
+                    return Try::Won;
+                }
+            }
+            if !payable {
+                return Try::Unpayable;
+            }
+        }
+        K::Borne => {
+            if !e.ok_in(s, s.u + 1, s.w, 0, s.gn + 1) {
+                return Try::Unpayable;
+            }
+            let mut t = base.clone();
+            t.u += 1;
+            t.gn += 1;
+            if draw_n(&mut t, 1) && step_to(e, t, a, left, w, acts) {
+                return Try::Won;
+            }
+        }
+        K::Brainstorm => {
+            if !e.ok_in(s, s.u + 1, s.w, 0, s.gn) {
+                return Try::Unpayable;
+            }
+            let mut t = base.clone();
+            t.u += 1;
+            if !draw_n(&mut t, 3) {
+                return Try::Lost;
+            }
+            let mut seen: Vec<(K, K)> = vec![];
+            for x in 0..t.hand.len() {
+                for y in 0..t.hand.len() {
+                    if x == y {
+                        continue;
+                    }
+                    let (cx, cy) = (t.hand[x], t.hand[y]);
+                    let key = (e.kd(cx), e.kd(cy));
+                    if seen.contains(&key) {
+                        continue;
+                    }
+                    seen.push(key);
+                    // cx goes back first, cy on top of it
+                    let mut t2 = t.clone();
+                    t2.hand.retain(|&h| h != cx && h != cy);
+                    t2.lib.insert(0, cx);
+                    t2.lib.insert(0, cy);
+                    if step_to(e, t2, a, left, w, acts) {
+                        return Try::Won;
+                    }
+                }
+            }
+        }
+        K::Preordain => {
+            if !e.ok_in(s, s.u + 1, s.w, 0, s.gn) {
+                return Try::Unpayable;
+            }
+            let n = s.lib.len().min(2);
+            for (keep, bottom) in scry_variants(&s.lib[..n]) {
+                let mut t = base.clone();
+                t.u += 1;
+                t.lib = keep.into_iter().chain(s.lib[n..].iter().copied()).chain(bottom).collect();
+                if draw_n(&mut t, 1) && step_to(e, t, a, left, w, acts) {
+                    return Try::Won;
+                }
+            }
+        }
+        K::Ponder => {
+            if !e.ok_in(s, s.u + 1, s.w, 0, s.gn) {
+                return Try::Unpayable;
+            }
+            let n = s.lib.len().min(3);
+            for ord in orders(&s.lib[..n]) {
+                let mut t = base.clone();
+                t.u += 1;
+                t.lib = ord.into_iter().chain(s.lib[n..].iter().copied()).collect();
+                if draw_n(&mut t, 1) && step_to(e, t, a, left, w, acts) {
+                    return Try::Won;
+                }
+            }
+        }
+        K::Veil | K::Revival | K::Land | K::Other => {}
+    }
+    Try::Lost
 }
 
 /// the shortest line from `s` that meets `w`
@@ -691,17 +789,20 @@ pub struct Built {
     /// the line holds a Noxious Revival when the Oracle is cast (a countered Oracle goes back on top)
     pub backup: bool,
     pub life_after: i32,
+    /// Doomsday is cast with Lion's Eye Diamond's {B}{B}{B}: the hand is discarded as it goes on the stack (the pile may take
+    /// those cards from the graveyard) and the lands are free for the pile
+    pub led: bool,
 }
 
 thread_local! {
     static CACHE: RefCell<HashMap<u64, Option<Built>>> = RefCell::new(HashMap::new());
 }
 
-fn cache_key(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> u64 {
+fn cache_key(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId], led_pays: bool) -> u64 {
     use std::hash::{Hash, Hasher};
     let mut h = std::collections::hash_map::DefaultHasher::new();
     let pl = g.player(p);
-    (p.0, scn as u8, b, pl.life, g.round, g.step as u8).hash(&mut h);
+    (p.0, scn as u8, b, pl.life, g.round, g.step as u8, led_pays).hash(&mut h);
     for c in pl.hand.iter().chain(&pl.library).chain(&pl.gy).chain(skip) {
         c.0.hash(&mut h);
     }
@@ -719,11 +820,22 @@ fn cache_key(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> u64 {
 /// it is not cast yet), `skip` hand cards that will be spent before it (the enabler). The pile is chosen from the
 /// cards of the library and graveyard; the hand is what the line starts with.
 pub fn build(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Option<Built> {
-    let key = cache_key(g, p, scn, b, skip);
+    build_with(g, p, scn, b, skip, false)
+}
+
+/// `build` for a Doomsday cast with Lion's Eye Diamond's {B}{B}{B} (the diamond is on the battlefield): no {B} is owed, the
+/// hand (but the cards in `skip`) is discarded as the spell goes on the stack, and what it held is in the graveyard
+/// for the pile to take (unless Necropotence exiles the discards). The line starts with an empty hand
+pub fn build_led(g: &Game, p: PlayerId, scn: Scn, skip: &[CardId]) -> Option<Built> {
+    build_with(g, p, scn, 0, skip, true)
+}
+
+fn build_with(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId], led_pays: bool) -> Option<Built> {
+    let key = cache_key(g, p, scn, b, skip, led_pays);
     if let Some(r) = CACHE.with(|c| c.borrow().get(&key).cloned()) {
         return r;
     }
-    let r = build_uncached(g, p, scn, b, skip);
+    let r = build_uncached(g, p, scn, b, skip, led_pays);
     CACHE.with(|c| {
         let mut c = c.borrow_mut();
         if c.len() > 256 {
@@ -734,11 +846,18 @@ pub fn build(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Option<
     r
 }
 
-fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Option<Built> {
+fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId], led_pays: bool) -> Option<Built> {
     let pl = g.player(p);
-    let hand: Vec<CardId> =
+    let kept: Vec<CardId> =
         pl.hand.iter().copied().filter(|&c| &*g.db.get(c).name != DOOMSDAY && !skip.contains(&c)).collect();
-    let avail: Vec<CardId> = pl.library.iter().chain(&pl.gy).copied().collect();
+    // cracked for Doomsday: the hand is discarded to the graveyard (exiled instead under Necropotence), where the pile can
+    // take it; the diamond is sacrificed into the graveyard too
+    let exiles_discards = crate::engine::values::has(g, p, crate::tag::Tag::Necro);
+    let (hand, discards): (Vec<CardId>, Vec<CardId>) = if led_pays { (vec![], kept) } else { (kept, vec![]) };
+    let mut avail: Vec<CardId> = pl.library.iter().chain(&pl.gy).copied().collect();
+    if !exiles_discards {
+        avail.extend(&discards);
+    }
     if avail.is_empty() {
         return None;
     }
@@ -755,6 +874,8 @@ fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Op
     // the draw step takes the first card (and what Howling Mine adds); skipped under Necropotence
     let first_draws = if scn == Scn::EndStep && !necro { 1 + draw_step_extra(g) } else { 0 };
     let forced = forced_draws(g, p);
+    // the diamond may still be cracked inside the pile unless it paid for Doomsday
+    let led_open = !led_pays && super::mine::led_on_table(g, p);
     let mana: Cow<Game> = if scn == Scn::EndStep {
         // the line is played on the player's own turn: everything untaps first
         let mut g2 = g.clone();
@@ -805,6 +926,7 @@ fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Op
     // score is (the lock, a Noxious Revival to answer a countered Oracle, fewer spells)
     let try_pile = |pile: &[CardId], floor: Option<(i32, i32, i32)>| -> Option<((i32, i32, i32), Want, Vec<Act>)> {
         let mut s = S::new(hand.clone(), pile.to_vec(), life_after);
+        s.led = led_open;
         if first_draws > 0 && !draw_n(&mut s, first_draws) {
             return None;
         }
@@ -847,7 +969,7 @@ fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Op
             }
             let Some((score, w, plan)) = try_pile(&pile, best.as_ref().map(|(sc, _)| *sc)) else { continue };
             if best.as_ref().is_none_or(|(sc, _)| score > *sc) {
-                best = Some((score, Built { pile, plan, lock: w.lock, backup: w.backup, life_after }));
+                best = Some((score, Built { pile, plan, lock: w.lock, backup: w.backup, life_after, led: led_pays }));
                 if score >= ceiling {
                     break 'piles; // nothing can score higher
                 }
@@ -871,7 +993,7 @@ fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Op
             }
             let Some((score, w, plan)) = try_pile(&pile, best.as_ref().map(|(sc, _)| *sc)) else { continue };
             if w.backup && score.0 >= sc.0 && best.as_ref().is_some_and(|(b, _)| score > *b) {
-                best = Some((score, Built { pile, plan, lock: w.lock, backup: true, life_after }));
+                best = Some((score, Built { pile, plan, lock: w.lock, backup: true, life_after, led: led_pays }));
             }
         }
     }
@@ -1160,6 +1282,16 @@ fn rest_cost(g: &Game, p: PlayerId, acts: &[Act]) -> (u32, String) {
     (gn, pips)
 }
 
+/// the mana a crack of the diamond makes for `Act::led`: the pool kind and its name
+fn led_kind(led: u8) -> (crate::engine::pool::Kind, &'static str) {
+    use crate::engine::pool::Kind;
+    match led {
+        1 => (Kind::U, "UUU"),
+        2 => (Kind::W, "WWW"),
+        _ => (Kind::G, "GGG"),
+    }
+}
+
 /// Play the pile: re-solve before every spell, cast the first move of the line, stop when there is no line, a spell
 /// cannot be cast, or the game is over. Thassa's Oracle in the graveyard comes back with Noxious Revival when there is
 /// no line. True when the game was won.
@@ -1176,6 +1308,22 @@ pub fn run_pile(g: &mut Game, p: PlayerId) -> Res<bool> {
             continue;
         };
         let a = plan[0];
+        if a.led != 0 {
+            // the lands cannot pay for this move: crack Lion's Eye Diamond with it on the stack (the rest of the hand goes)
+            let keep: Vec<CardId> = if a.dig { vec![] } else { vec![a.card] };
+            let (kind, name) = led_kind(a.led);
+            if !crate::impls::mine::crack_led(g, p, &keep, kind)? {
+                break;
+            }
+            crate::glog!(
+                g,
+                "    {} cracks Lion's Eye Diamond for {} to pay for {}",
+                g.player(p).name,
+                name,
+                if a.dig { "Thrasios's dig".to_string() } else { g.db.get(a.card).name.to_string() }
+            );
+            g.player_mut(p).stat("led_pile", 1);
+        }
         if a.dig {
             crate::glog!(g, "    {} plays the pile: Thrasios's dig", g.player(p).name);
             if !super::tymna_cards::pile_dig(g, p, rest_cost(g, p, &plan[1..]))? {
@@ -1237,8 +1385,53 @@ fn doomsday_cost(g: &Game, p: PlayerId, c: CardId, extra: Option<CardId>) -> Opt
 }
 
 /// the pile to build for a Doomsday in hand now, or None: Doomsday is not the line (Line 1 is in hand), it cannot be
-/// paid or cast, the life is too low, a board can deal the life that is left, or no pile wins
+/// paid or cast, the life is too low, a board can deal the life that is left, or no pile wins. With Lion's Eye Diamond on
+/// the battlefield the cast is also planned with the diamond's {B}{B}{B} (`Built::led`, see `plan_mode`); that plan is
+/// taken when the plain cast has no winning pile, or only a worse one (no lock, a longer line)
 pub fn plan_cast(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Option<(Built, Option<CardId>)> {
+    let en = pre_checks(g, p, c, scn)?;
+    let plain = plan_mode(g, p, c, scn, en, false);
+    if !super::mine::led_on_table(g, p) {
+        return plain;
+    }
+    // (the plain plan is the keeper on a tie: the diamond and the hand stay)
+    match (plain, plan_mode(g, p, c, scn, en, true)) {
+        (Some(a), Some(b)) => Some(if score_of(&b.0) > score_of(&a.0) { b } else { a }),
+        (a, b) => a.or(b),
+    }
+}
+
+/// how good a built pile is: (the lock, a Noxious Revival to answer a countered Oracle, minus the spells)
+fn score_of(b: &Built) -> (i32, i32, i32) {
+    (b.lock as i32, b.backup as i32, -(b.plan.len() as i32))
+}
+
+/// is there a Doomsday in hand that Lion's Eye Diamond's mana wins with (as if the diamond were on the battlefield: it is
+/// cast first, for nothing): the held-mana statistic and `mine::led_uses` ask
+pub fn led_use(g: &Game, p: PlayerId) -> bool {
+    if crate::human::is_human(g, p) || active(g, p) {
+        return false;
+    }
+    // (in the main phase the discarded hand can not start a pile, there being no draw: the end step is where the diamond pays)
+    g.player(p)
+        .hand
+        .iter()
+        .copied()
+        .filter(|&c| &*g.db.get(c).name == DOOMSDAY)
+        .any(|c| [Scn::Main, Scn::EndStep].into_iter().any(|scn| led_use_in(g, p, c, scn)))
+}
+
+fn led_use_in(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> bool {
+    pre_checks(g, p, c, scn).is_some_and(|en| {
+        plan_mode(g, p, c, scn, en, true).is_some_and(|led| {
+            // it is a use when the plain cast has no pile, or the diamond's pile is better
+            plan_mode(g, p, c, scn, en, false).is_none_or(|plain| score_of(&led.0) > score_of(&plain.0))
+        })
+    })
+}
+
+/// the checks of a Doomsday cast that do not depend on how it is paid; Some(the enabler to cast first) when they pass
+fn pre_checks(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Option<Option<CardId>> {
     let pl = g.player(p);
     if pl.hand.iter().any(|&h| matches!(&*g.db.get(h).name, "Demonic Consultation" | "Tainted Pact")) {
         return None; // Line 1 is cheaper
@@ -1268,7 +1461,6 @@ pub fn plan_cast(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Option<(Built, O
     }
     let flash = grants_flash(g, p, c);
     let en = if scn == Scn::EndStep && !flash { Some(enabler(g, p)?) } else { None };
-    let b = doomsday_cost(g, p, c, en)?;
     // the checks that do not need the pile come first: the builder is the expensive part, and a look-ahead asks about a
     // Doomsday in hand at every decision of every playout. No board check (JD, 2026-11-06): a main-phase pile wins this
     // turn, and an end-step cast is in the turn just before the player's own, so no opponent gets a combat first
@@ -1276,13 +1468,61 @@ pub fn plan_cast(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Option<(Built, O
     if crate::impls::t6_plans::go_now(g, p, "Doomsday cast") == Some(false) {
         return None;
     }
+    Some(en)
+}
+
+/// One way to pay for the cast. Plain: the lands (and a Dark Ritual) make {B}{B}{B}, the hand is kept for the line.
+/// With `led`: Lion's Eye Diamond makes them (a mana ability, cracked while Doomsday is on the stack: the spell is not
+/// discarded), the rest of the hand goes to the graveyard, where Doomsday can take it into the pile, and the lands stay
+/// free for the pile. The hand's own cover (Silence, Orim's Chant, a counter of ours, Veil of Summer held) is gone with the
+/// hand, so the table's check is made with the hand empty
+fn plan_mode(
+    g: &Game,
+    p: PlayerId,
+    c: CardId,
+    scn: Scn,
+    en: Option<CardId>,
+    led: bool,
+) -> Option<(Built, Option<CardId>)> {
+    let pl = g.player(p);
+    let b = if led {
+        // the diamond pays the {B}{B}{B}; a tax on the spell, and the enabler, are paid by the lands
+        let (gn, pips) = cost_of(g, p, c);
+        if gn > 0 || pips != "BBB" {
+            return None;
+        }
+        if let Some(e) = en {
+            let (eg, ep) = cost_of(g, p, e);
+            if !can_pay(g, p, eg, &ep, false) {
+                return None;
+            }
+        }
+        0
+    } else {
+        doomsday_cost(g, p, c, en)?
+    };
     // the table's check below with the most cover a pile can have: if it fails with the lock, it fails without
-    if !risk_ok(g, p, true) {
+    let bare;
+    let gr: &Game = if led {
+        bare = {
+            let mut g2 = g.clone();
+            g2.player_mut(p).hand.clear();
+            g2
+        };
+        &bare
+    } else {
+        g
+    };
+    if !risk_ok(gr, p, true) {
         return None;
     }
-    let built = build(g, p, scn, b, en.as_slice())?;
+    let built = if led { build_led(g, p, scn, en.as_slice())? } else { build(g, p, scn, b, en.as_slice())? };
     let n = stoppers(g, p);
-    if !built.lock && !built.backup && n >= 2 && !pl.hand.iter().any(|&h| g.db.get(h).tag(crate::tag::Tag::Ctr)) {
+    if !built.lock
+        && !built.backup
+        && n >= 2
+        && (led || !pl.hand.iter().any(|&h| g.db.get(h).tag(crate::tag::Tag::Ctr)))
+    {
         // into several opponents who can stop a spell, with no lock, no Noxious Revival to put a countered Oracle back and
         // no counter of our own
         return None;
@@ -1290,8 +1530,8 @@ pub fn plan_cast(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Option<(Built, O
     // the table's check, as every Tier 6 line makes it (`t6_table::go_ok`): the cast waits when the table can stop it and
     // there is no cover. Cover is Silence or Orim's Chant in hand (`go_risk` counts it), a free counter of our own
     // (counted too), the lock the pile carries, or Veil of Summer held with {G} open
-    let veil = pl.hand.iter().any(|&h| &*g.db.get(h).name == "Veil of Summer") && can_pay(g, p, 0, "G", false);
-    if !risk_ok(g, p, built.lock || veil) {
+    let veil = !led && pl.hand.iter().any(|&h| &*g.db.get(h).name == "Veil of Summer") && can_pay(g, p, 0, "G", false);
+    if !risk_ok(gr, p, built.lock || veil) {
         return None;
     }
     Some((built, en))
@@ -1342,14 +1582,15 @@ pub fn doomsday_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>
     }])
 }
 
-/// cast the rituals that make {B}{B}{B}, then Doomsday itself
+/// cast the rituals that make {B}{B}{B} (or crack Lion's Eye Diamond for them, when the plan is the diamond's), then Doomsday
+/// itself
 pub fn go_doomsday(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if !g.player(p).hand.contains(&c) {
         return Ok(false);
     }
     let scn = if g.active == Some(p) { Scn::Main } else { Scn::EndStep };
-    let Some((_, en)) = plan_cast(g, p, c, scn) else { return Ok(false) };
+    let Some((built, en)) = plan_cast(g, p, c, scn) else { return Ok(false) };
     if let Some(e) = en {
         crate::glog!(g, "  {} casts {} so Doomsday has flash", g.player(p).name, g.db.get(e).name);
         if !cast_one(g, p, e)? || !grants_flash(g, p, c) {
@@ -1357,6 +1598,23 @@ pub fn go_doomsday(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         }
     }
     let (gn, pips) = cost_of(g, p, c);
+    if built.led {
+        // Doomsday goes on the stack, the diamond is cracked for its {B}{B}{B} (the rest of the hand is discarded), and the
+        // spell is paid from the pool. A diamond that is gone (answered meanwhile) means the plain way
+        crate::glog!(g, "  {} casts Doomsday", g.player(p).name);
+        if g.player(p).hand.contains(&c) && super::mine::led_on_table(g, p) {
+            super::mine::crack_led(g, p, &[c], crate::engine::pool::Kind::B)?;
+            crate::glog!(g, "    {} cracks Lion's Eye Diamond for BBB to pay for Doomsday", g.player(p).name);
+            g.player_mut(p).stat("led_doomsday", 1);
+            if !cast_one(g, p, c)? {
+                return Ok(true);
+            }
+            if scn == Scn::Main {
+                run_pile(g, p)?;
+            }
+            return Ok(true);
+        }
+    }
     while !can_pay(g, p, gn, &pips, false) {
         let Some(&r) = rituals_in_hand(g, p, &[]).first() else { return Ok(true) };
         if !crate::ai::brain::do_cast(g, p, r, None)? {
@@ -1434,9 +1692,5 @@ pub fn revival_target(g: &Game, p: PlayerId) -> Option<CardId> {
 /// it does not stop Mindbreak Trap (an exile, not a counter), so a table that may hold Mindbreak Trap does not count. Red
 /// blasts no longer matter: once Veil resolves no counter works that turn (`rules::veil_respond`, `values::veil_shield`)
 fn veil_answers(g: &Game, p: PlayerId) -> bool {
-    !g.opps(p).any(|q| {
-        crate::ai::brain::prob_holding(g, q, |c| {
-            &*g.db.get(c).name == "Mindbreak Trap"
-        }) > 0.0
-    })
+    !g.opps(p).any(|q| crate::ai::brain::prob_holding(g, q, |c| &*g.db.get(c).name == "Mindbreak Trap") > 0.0)
 }

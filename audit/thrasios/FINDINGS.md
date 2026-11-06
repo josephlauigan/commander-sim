@@ -38,6 +38,19 @@ What the AI does with Doomsday (`impls/doomsday.rs`; all of it untested by games
   by the line) as a backup that lets a pile without the lock be accepted into two stoppers. Piles are checked against a
   forced draw (our Esper Sentinel when an opponent casts a spell) and the draw step's extra cards (Howling Mine, Font of
   Mythos). Noxious Revival is aimed at the countered Oracle, not the best-valued card of the graveyard.
+- **Lion's Eye Diamond (doomsday-led, 2026-11-06; tested in `tests/doomsday_led.rs`, not yet simulated).** Before, the
+  diamond was dead in this deck (no wheel, no Underworld Breach): the sim never cracked it. Now it is Doomsday mana. LED is
+  a mana ability, so it is cracked while the spell is on the stack and the spell is not discarded. (1) **Pays Doomsday's
+  {B}{B}{B}** when that wins where the plain cast does not (no black source, or the pile's mana is short) or gives a better
+  pile (the lock, a shorter line): the rest of the hand goes to the graveyard and Doomsday, which searches the graveyard
+  too, can take those cards into the pile; the lands stay free for the pile. The plain cast wins a tie. Under Necropotence
+  the discards are exiled, so the pile cannot take them (the guide's mistake 6). The table check for the cast is made with
+  the hand gone (no Silence / Chant / counter / Veil held as cover). (2) **Inside the pile** the search may crack it for a
+  spell or Thrasios's dig the lands cannot pay, as late as possible (the hand is lost with it), in {U}, {W} or {G}; it never
+  does when the hand holds a card the line still needs (the Oracle in hand is lost unless it is the spell being cast; a held
+  Veil / Revival goes too). (3) The plan file casts it from hand (value 90) only with Doomsday or a tutor that can fetch it
+  in hand (`led_fuel`), else holds it; the held-mana statistic counts a Doomsday it pays for as a use. Not modelled: the
+  diamond's mana being used for anything else in the Doomsday turn (a Necropotence, a tutor), and a crack in response.
 - **The cast and the table.** The Doomsday cast now makes the same `go_risk` check as the other Tier 6 lines
   (`t6_table::go_risk_covered` against `go_threshold`): it waits when the table can stop it and there is no cover (Silence
   or Chant in hand, a free counter of ours, the lock in the pile, Veil held).
