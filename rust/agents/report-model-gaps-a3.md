@@ -1,7 +1,7 @@
 # Report model-gaps-a3 (branch model-gaps-a3)
 
 Status: items 1-6 done (Marvin stays Approximate: see NEEDS JD in the reply). `cardgen audit --mine`: Marvin 1, thanos 1 (Hexing Squelcher).
-Tests: `rust/crates/sim-core/tests/model_gaps_a3.rs` (13 pass) plus ~90 existing files that touch the changed code (cards_*,
+Tests: `rust/crates/sim-core/tests/model_gaps_a3.rs` (20 pass) plus ~190 existing files that touch the changed code (cards_*,
 engine_t6_*, model_gaps_karn/others, practice_*_probe ...): all pass. `cargo build --release --all-targets`: no warnings.
 Not run: the full suite and any sim.
 
