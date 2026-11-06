@@ -1334,7 +1334,7 @@ fn glimpse(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
 }
 
 // ================================================================== Chatterfang
-pub(crate) fn squirrels(g: &Game, p: PlayerId) -> Vec<PermId> {
+pub fn squirrels(g: &Game, p: PlayerId) -> Vec<PermId> {
     g.player(p).perms.iter().copied().filter(|&m| g.perm(m).token && g.perm(m).ttypes.contains(&"squirrel")).collect()
 }
 
