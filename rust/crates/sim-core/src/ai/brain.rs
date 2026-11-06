@@ -353,11 +353,21 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
             u -= super::table_fixes::cmd_recast_penalty(g, p, c, s.danger, other);
         }
     }
+    // --- c3: an outside deck casts its commander the turn it can pay for it, as players do (a first cast: no tax).
+    // The sampled order left it for a later turn about two decisions in five (Tergrid 54%, Kinnan 52% of the
+    // decisions that offered it chose it), so commanders came down a turn late.
+    if !main && pl.is_commander(c) && !pl.hand.contains(&c) && pl.tax_of(c) == 0 && !crate::impls::t6_plans::is_t6(g, p)
+    {
+        u += COMMANDER_FIRST;
+    }
     if (super::values::bomb_of(g, p, c) >= 5.0 || pl.is_commander(c) || base >= 70.0) && !d.land {
         u *= 1.0 - 0.35 * s.ctr_risk; // walking into open counter mana
     }
     Some(u)
 }
+
+/// --- c3: how much more an outside deck wants to cast its commander for the first time (utility points)
+pub const COMMANDER_FIRST: f64 = 1.5;
 
 // --- ai-fix: C
 /// a spell a ritual makes castable is worth casting the ritual for when it has at least this utility (tutors, the
