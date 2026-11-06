@@ -1389,6 +1389,13 @@ fn doomsday_cost(g: &Game, p: PlayerId, c: CardId, extra: Option<CardId>) -> Opt
 /// the battlefield the cast is also planned with the diamond's {B}{B}{B} (`Built::led`, see `plan_mode`); that plan is
 /// taken when the plain cast has no winning pile, or only a worse one (no lock, a longer line)
 pub fn plan_cast(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Option<(Built, Option<CardId>)> {
+    plan_cast_why(g, p, c, scn).ok()
+}
+
+/// `plan_cast`, with the first check that declined the cast when there is none (--- doomsday-why: the trace-only
+/// `dd|` statistics name it; the checks and their order are `plan_cast`'s own). With Lion's Eye Diamond out and no plan
+/// either way, the plain cast's reason is given
+pub fn plan_cast_why(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Result<(Built, Option<CardId>), &'static str> {
     let en = pre_checks(g, p, c, scn)?;
     let plain = plan_mode(g, p, c, scn, en, false);
     if !super::mine::led_on_table(g, p) {
@@ -1396,8 +1403,10 @@ pub fn plan_cast(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Option<(Built, O
     }
     // (the plain plan is the keeper on a tie: the diamond and the hand stay)
     match (plain, plan_mode(g, p, c, scn, en, true)) {
-        (Some(a), Some(b)) => Some(if score_of(&b.0) > score_of(&a.0) { b } else { a }),
-        (a, b) => a.or(b),
+        (Ok(a), Ok(b)) => Ok(if score_of(&b.0) > score_of(&a.0) { b } else { a }),
+        (Ok(a), Err(_)) => Ok(a),
+        (Err(_), Ok(b)) => Ok(b),
+        (Err(e), Err(_)) => Err(e),
     }
 }
 
@@ -1422,19 +1431,20 @@ pub fn led_use(g: &Game, p: PlayerId) -> bool {
 }
 
 fn led_use_in(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> bool {
-    pre_checks(g, p, c, scn).is_some_and(|en| {
-        plan_mode(g, p, c, scn, en, true).is_some_and(|led| {
+    pre_checks(g, p, c, scn).is_ok_and(|en| {
+        plan_mode(g, p, c, scn, en, true).is_ok_and(|led| {
             // it is a use when the plain cast has no pile, or the diamond's pile is better
-            plan_mode(g, p, c, scn, en, false).is_none_or(|plain| score_of(&led.0) > score_of(&plain.0))
+            plan_mode(g, p, c, scn, en, false).ok().is_none_or(|plain| score_of(&led.0) > score_of(&plain.0))
         })
     })
 }
 
-/// the checks of a Doomsday cast that do not depend on how it is paid; Some(the enabler to cast first) when they pass
-fn pre_checks(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Option<Option<CardId>> {
+/// the checks of a Doomsday cast that do not depend on how it is paid; Ok(the enabler to cast first) when they pass, else
+/// the check that declined (`plan_cast_why`)
+fn pre_checks(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Result<Option<CardId>, &'static str> {
     let pl = g.player(p);
     if pl.hand.iter().any(|&h| matches!(&*g.db.get(h).name, "Demonic Consultation" | "Tainted Pact")) {
-        return None; // Line 1 is cheaper
+        return Err("Demonic Consultation or Tainted Pact in hand"); // Line 1 is cheaper
     }
     // the guide: never cast it under Opposition Agent (its controller would choose the pile), and one spell per turn
     // (Archon of Emeria, Deafening Silence, Rule of Law, Ethersworn Canonist) kills a pile that needs several spells
@@ -1454,21 +1464,28 @@ fn pre_checks(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Option<Option<CardI
         })
     });
     if under_lock {
-        return None;
+        return Err("an opponent's lock (Opposition Agent or a one-spell rule)");
     }
-    if pl.life < LIFE_NEEDED || !castable(g, p, c, "hand") {
-        return None;
+    if pl.life < LIFE_NEEDED {
+        return Err("at 1 life");
+    }
+    if !castable(g, p, c, "hand") {
+        return Err("not castable now");
     }
     let flash = grants_flash(g, p, c);
-    let en = if scn == Scn::EndStep && !flash { Some(enabler(g, p)?) } else { None };
+    let en = if scn == Scn::EndStep && !flash {
+        Some(enabler(g, p).ok_or("end step: no flash enabler (Teferi, Valley Floodcaller, Borne Upon a Wind)")?)
+    } else {
+        None
+    };
     // the checks that do not need the pile come first: the builder is the expensive part, and a look-ahead asks about a
     // Doomsday in hand at every decision of every playout. No board check (JD, 2026-11-06): a main-phase pile wins this
     // turn, and an end-step cast is in the turn just before the player's own, so no opponent gets a combat first
     // the plan's go-now gate for the cast (a rule in `data/plans/thrasios.toml` naming "Doomsday cast")
     if crate::impls::t6_plans::go_now(g, p, "Doomsday cast") == Some(false) {
-        return None;
+        return Err("the plan's go-now gate");
     }
-    Some(en)
+    Ok(en)
 }
 
 /// One way to pay for the cast. Plain: the lands (and a Dark Ritual) make {B}{B}{B}, the hand is kept for the line.
@@ -1483,23 +1500,23 @@ fn plan_mode(
     scn: Scn,
     en: Option<CardId>,
     led: bool,
-) -> Option<(Built, Option<CardId>)> {
+) -> Result<(Built, Option<CardId>), &'static str> {
     let pl = g.player(p);
     let b = if led {
         // the diamond pays the {B}{B}{B}; a tax on the spell, and the enabler, are paid by the lands
         let (gn, pips) = cost_of(g, p, c);
         if gn > 0 || pips != "BBB" {
-            return None;
+            return Err("Lion's Eye Diamond: Doomsday is taxed");
         }
         if let Some(e) = en {
             let (eg, ep) = cost_of(g, p, e);
             if !can_pay(g, p, eg, &ep, false) {
-                return None;
+                return Err("Lion's Eye Diamond: the enabler can't be paid");
             }
         }
         0
     } else {
-        doomsday_cost(g, p, c, en)?
+        doomsday_cost(g, p, c, en).ok_or("no {B}{B}{B} (with the enabler) to pay for it")?
     };
     // the table's check below with the most cover a pile can have: if it fails with the lock, it fails without
     let bare;
@@ -1514,9 +1531,10 @@ fn plan_mode(
         g
     };
     if !risk_ok(gr, p, true) {
-        return None;
+        return Err("the table's risk, even with a lock");
     }
-    let built = if led { build_led(g, p, scn, en.as_slice())? } else { build(g, p, scn, b, en.as_slice())? };
+    let built = if led { build_led(g, p, scn, en.as_slice()) } else { build(g, p, scn, b, en.as_slice()) }
+        .ok_or("no winning pile from the cards and mana there are")?;
     let n = stoppers(g, p);
     if !built.lock
         && !built.backup
@@ -1525,16 +1543,16 @@ fn plan_mode(
     {
         // into several opponents who can stop a spell, with no lock, no Noxious Revival to put a countered Oracle back and
         // no counter of our own
-        return None;
+        return Err("two or more stoppers, and no lock, Noxious Revival or counter");
     }
     // the table's check, as every Tier 6 line makes it (`t6_table::go_ok`): the cast waits when the table can stop it and
     // there is no cover. Cover is Silence or Orim's Chant in hand (`go_risk` counts it), a free counter of our own
     // (counted too), the lock the pile carries, or Veil of Summer held with {G} open
     let veil = !led && pl.hand.iter().any(|&h| &*g.db.get(h).name == "Veil of Summer") && can_pay(g, p, 0, "G", false);
     if !risk_ok(gr, p, built.lock || veil) {
-        return None;
+        return Err("the table's risk, with the pile's own cover");
     }
-    Some((built, en))
+    Ok((built, en))
 }
 
 /// can the table stop the Doomsday cast (or the first spell of the pile) by more than the risk Tier 6 accepts,
@@ -1556,6 +1574,52 @@ fn enabler_around(g: &Game, p: PlayerId, c: CardId) -> bool {
         })
 }
 
+/// --- doomsday-why: trace-only statistics (`dd|...` in the player's stats; no decision reads them, they draw no random
+/// numbers): each time the AI asks whether to cast a Doomsday in hand, outside the look-ahead, the answer (offered, or
+/// the first check that declined) by timing, and once per game that it was asked at all
+fn why_stat(g: &mut Game, p: PlayerId, scn: Scn, why: Result<(), &'static str>) {
+    if g.in_search {
+        return;
+    }
+    let t = if scn == Scn::EndStep { "end step" } else { "main" };
+    let what = match why {
+        Ok(()) => "offered",
+        Err(e) => e,
+    };
+    let pl = g.player_mut(p);
+    pl.stat(crate::sym::intern(&format!("dd|asked|{t}|{what}")), 1);
+    if !pl.stats.contains_key("dd|games asked") {
+        pl.stat("dd|games asked", 1);
+    }
+}
+
+/// --- doomsday-why: at the start of p's own turn (outside the look-ahead), with Doomsday in the library and a tutor in
+/// hand: what a tutor would fetch now, and whether Doomsday is on the plan's wish list at all (trace-only, as `why_stat`)
+pub fn tutor_stat(g: &mut Game, p: PlayerId) {
+    if g.in_search || crate::human::is_human(g, p) || g.player(p).key != "thrasios" {
+        return;
+    }
+    let pl = g.player(p);
+    if !pl.library.iter().any(|&c| &*g.db.get(c).name == DOOMSDAY) {
+        return;
+    }
+    let tutor = pl.hand.iter().any(|&c| {
+        matches!(
+            &*g.db.get(c).name,
+            "Demonic Tutor" | "Vampiric Tutor" | "Imperial Seal" | "Grim Tutor" | "Diabolic Intent" | "Mystical Tutor"
+        )
+    });
+    if !tutor {
+        return;
+    }
+    let pick = crate::ai::tutor_pick(g, p, "any").map(|c| g.db.get(c).name.to_string()).unwrap_or("nothing".into());
+    let wished = crate::ai::plan_data::derived_wish(g, p).iter().any(|&c| &*g.db.get(c).name == DOOMSDAY);
+    let pl = g.player_mut(p);
+    pl.stat("dd|tutor turns", 1);
+    pl.stat(crate::sym::intern(&format!("dd|tutor would fetch|{pick}")), 1);
+    pl.stat(if wished { "dd|tutor: Doomsday on the wish list" } else { "dd|tutor: Doomsday not wished" }, 1);
+}
+
 pub fn doomsday_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if crate::human::is_human(g, p) || !g.player(p).alive || active(g, p) {
         return Ok(vec![]);
@@ -1568,9 +1632,12 @@ pub fn doomsday_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>
         _ => return Ok(vec![]),
     };
     if scn == Scn::Main && enabler_around(g, p, c) && plan_cast(g, p, c, Scn::EndStep).is_some() {
+        why_stat(g, p, scn, Err("kept for the end step (a pile wins there)"));
         return Ok(vec![]); // the end step of the turn before is the better time (the guide)
     }
-    let Some((built, _)) = plan_cast(g, p, c, scn) else { return Ok(vec![]) };
+    let why = plan_cast_why(g, p, c, scn);
+    why_stat(g, p, scn, why.as_ref().map(|_| ()).map_err(|e| *e));
+    let Ok((built, _)) = why else { return Ok(vec![]) };
     Ok(vec![Opt {
         utility: 16.0,
         label: format!(
@@ -1588,6 +1655,9 @@ pub fn go_doomsday(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     if !g.player(p).hand.contains(&c) {
         return Ok(false);
+    }
+    if !g.in_search {
+        g.player_mut(p).stat("dd|chosen (cast begun)", 1); // --- doomsday-why (trace-only)
     }
     let scn = if g.active == Some(p) { Scn::Main } else { Scn::EndStep };
     let Some((built, en)) = plan_cast(g, p, c, scn) else { return Ok(false) };

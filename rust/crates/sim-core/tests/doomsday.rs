@@ -1118,3 +1118,39 @@ fn the_bounded_line_search_still_finds_the_shortest_lines() {
     let last = built.plan.last().expect("a line");
     assert_eq!(&*g.db.get(last.card).name, "Thassa's Oracle", "the Oracle is the last spell");
 }
+
+// ------------------------------------------------------------------ doomsday-why: the trace-only statistics
+#[test]
+fn the_why_statistics_name_the_check_that_declined_and_change_nothing() {
+    // an offered cast is counted as offered, once per game for "games asked"
+    let mut g = pile_b_position();
+    teferi_flash(&mut g);
+    g.active = Some(P1);
+    assert_eq!(opts(&mut g, None), 1);
+    assert_eq!(g.player(P0).stats.get("dd|asked|end step|offered"), Some(&1));
+    assert_eq!(opts(&mut g, None), 1);
+    assert_eq!(g.player(P0).stats.get("dd|games asked"), Some(&1), "counted once per game");
+    // Demonic Consultation in hand: declined, and the reason is the first check
+    let mut g = pile_b_position();
+    teferi_flash(&mut g);
+    g.active = Some(P1);
+    hand(&mut g, P0, &["Demonic Consultation"]);
+    assert_eq!(opts(&mut g, None), 0);
+    assert_eq!(g.player(P0).stats.get("dd|asked|end step|Demonic Consultation or Tainted Pact in hand"), Some(&1));
+    // the same decision inside the look-ahead records nothing
+    let mut g = pile_b_position();
+    teferi_flash(&mut g);
+    g.active = Some(P1);
+    g.in_search = true;
+    assert_eq!(opts(&mut g, None), 1);
+    assert!(!g.player(P0).stats.keys().any(|k| k.starts_with("dd|")), "nothing recorded in a search");
+    // and plan_cast agrees with plan_cast_why
+    let mut g = pile_b_position();
+    teferi_flash(&mut g);
+    g.active = Some(P1);
+    let c = card(&g, "Doomsday");
+    assert_eq!(
+        doomsday::plan_cast(&g, P0, c, doomsday::Scn::EndStep).is_some(),
+        doomsday::plan_cast_why(&g, P0, c, doomsday::Scn::EndStep).is_ok()
+    );
+}

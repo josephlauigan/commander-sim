@@ -1101,6 +1101,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     pl.haste_all = false;
     crate::gf_audit::turn_start(g, p); // --- ai-audit
     crate::holdstats::turn_start(g, p); // --- t5-hold
+    crate::impls::doomsday::tutor_stat(g, p); // --- doomsday-why (trace-only)
     crate::t6stats::flow_turn_start(g, p); // --- ai-flow
     crate::glog!(
         g,
