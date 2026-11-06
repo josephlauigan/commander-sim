@@ -1659,13 +1659,28 @@ pub fn counter_side_effects(g: &mut Game, q: PlayerId, p: PlayerId, ctr: CardId)
     Ok(())
 }
 
-/// a counterspell cast and resolved at once, outside the stack (combo interruption, the look-ahead's copies)
+/// a counterspell cast and resolved at once, outside the stack (combo interruption, the look-ahead's copies). A
+/// counterspell on top of the library (Mystic Forge: `pick_counter` offers it) is a hand card while it is cast and goes
+/// back on top if it is not cast after all; a card in neither place is not cast.
 pub fn cast_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>) -> Res<bool> {
-    if !pay_counter(g, q, ctr, spell)? {
-        return Ok(false);
+    let from_top = !g.player(q).hand.contains(&ctr);
+    if from_top {
+        if counter_on_top(g, q) != Some(ctr) {
+            return Ok(false);
+        }
+        g.player_mut(q).library.pop();
+        g.player_mut(q).hand.push(ctr);
+    }
+    let paid = pay_counter(g, q, ctr, spell);
+    if !matches!(paid, Ok(true)) {
+        if from_top && let Some(i) = g.player(q).hand.iter().position(|&x| x == ctr) {
+            g.player_mut(q).hand.remove(i);
+            g.player_mut(q).library.push(ctr);
+        }
+        return paid;
     }
     let pl = g.player_mut(q);
-    let i = pl.hand.iter().position(|&c| c == ctr).unwrap();
+    let Some(i) = pl.hand.iter().position(|&c| c == ctr) else { return Ok(false) };
     pl.hand.remove(i);
     if g.db.get(ctr).creature {
         // Mystic Snake / Venser: the counter is a creature

@@ -174,3 +174,36 @@ fn an_outside_deck_wants_its_commander_first() {
         assert!(o.utility < cmdr.utility, "{} vs {}", o.utility, cmdr.utility);
     }
 }
+
+// ------------------------------------------------------------------ the look-ahead's counter from the library top
+
+/// A Mystic Forge lets a colourless counterspell (Pact of Negation) be cast from the top of the library: `pick_counter`
+/// offers it, and the look-ahead's copy cast it with `cast_counter`, which took it out of the hand and panicked
+/// (seed 500000 Thanos Tier 5, game 111).
+#[test]
+fn a_counterspell_on_top_of_the_library_is_cast_from_there() {
+    let mut g = table(&["sauron", "cloud"]);
+    perm(&mut g, P0, "Mystic Forge");
+    lands(&mut g, P0, "Island", 5, false);
+    let pact = card(&g, "Pact of Negation");
+    g.player_mut(P0).library.push(pact);
+    let spell = card(&g, "Lightning Bolt");
+    assert_eq!(sim_core::engine::stack::pick_counter(&g, P0, spell), Some(pact), "offered from the top");
+    let hand = g.player(P0).hand.len();
+    let lib = g.player(P0).library.len();
+    assert!(sim_core::engine::stack::cast_counter(&mut g, P0, pact, Some(spell)).unwrap());
+    assert_eq!(g.player(P0).hand.len(), hand, "the hand is untouched");
+    assert_eq!(g.player(P0).library.len(), lib - 1, "taken off the top");
+    assert!(g.player(P0).gy.contains(&pact));
+}
+
+/// a counterspell that is in neither the hand nor on top is not cast (and nothing panics)
+#[test]
+fn a_counterspell_the_copy_does_not_hold_is_not_cast() {
+    let mut g = table(&["sauron", "cloud"]);
+    lands(&mut g, P0, "Island", 5, false);
+    let pact = card(&g, "Pact of Negation");
+    let spell = card(&g, "Lightning Bolt");
+    assert!(!sim_core::engine::stack::cast_counter(&mut g, P0, pact, Some(spell)).unwrap());
+    assert!(!g.player(P0).gy.contains(&pact));
+}
