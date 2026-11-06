@@ -11,7 +11,7 @@ use super::abilities::{LandAbility, PermAbility, Why, ability};
 use super::{Target, cards, choices, legal, mana};
 use crate::engine::repl;
 use crate::cards::{Colors, Types};
-use crate::engine::stack::{self, ability_window_card};
+use crate::engine::stack;
 use crate::engine::values::{epow, untargetable};
 use crate::engine::zones::{self, Tokens, die};
 use crate::flow::Res;
@@ -1160,11 +1160,23 @@ pub fn name_for_needle(g: &Game, p: PlayerId) -> Res<Option<CardId>> {
     Ok(Some(cards[k]))
 }
 
-/// Soul-Guide Lantern: when it enters, exile target card from a graveyard (any graveyard)
+/// Soul-Guide Lantern: when it enters, exile target card from a graveyard (any graveyard). A triggered ability
+/// (model-gaps-b3): it goes through `trigger_window` like the engine's other enter triggers, so the table may respond,
+/// a Peter Parker's Camera may copy it (the copy asks for a new target) and Rings of Brighthearth offers no copy
+/// (Rings copies activated abilities only). As with Spine of Ish Sah, the card is chosen after the window (the
+/// engine's probe run stops at the first window; asking before it asked twice).
 pub fn lantern_enters(g: &mut Game, src: PermId) -> Res {
     let o = g.perm(src).owner;
-    let cands: Vec<(PlayerId, CardId)> =
-        g.players.iter().filter(|q| q.alive).flat_map(|q| q.gy.iter().map(move |&c| (q.id, c))).collect();
+    let graveyards = |g: &Game| -> Vec<(PlayerId, CardId)> {
+        g.players.iter().filter(|q| q.alive).flat_map(|q| q.gy.iter().map(move |&c| (q.id, c))).collect()
+    };
+    if graveyards(g).is_empty() {
+        return Ok(()); // no target: it does not trigger
+    }
+    if !crate::engine::stack::trigger_window(g, o, Some(src), "exile a card from a graveyard", None)? {
+        return Ok(());
+    }
+    let cands = graveyards(g); // (the table may have changed them in response)
     if cands.is_empty() {
         return Ok(());
     }
@@ -1172,13 +1184,11 @@ pub fn lantern_enters(g: &mut Game, src: PermId) -> Res {
         cands.iter().map(|&(q, c)| format!("{} ({}'s graveyard)", choices::card_label(g, c), g.player(q).name)).collect();
     let k = choices::choose_one(g, o, "target", "Soul-Guide Lantern: exile which card from a graveyard?", &labels)?;
     let (q, c) = cands[k];
-    if ability_window_card(g, o, g.perm(src).card(), "exile a card from a graveyard", None, None)? {
-        let pl = g.player_mut(q);
-        if let Some(i) = pl.gy.iter().position(|&x| x == c) {
-            pl.gy.remove(i);
-            pl.exile.push(c);
-            crate::glog!(g, "    Soul-Guide Lantern exiles {}", g.db.get(c).name);
-        }
+    let pl = g.player_mut(q);
+    if let Some(i) = pl.gy.iter().position(|&x| x == c) {
+        pl.gy.remove(i);
+        pl.exile.push(c);
+        crate::glog!(g, "    Soul-Guide Lantern exiles {}", g.db.get(c).name);
     }
     Ok(())
 }

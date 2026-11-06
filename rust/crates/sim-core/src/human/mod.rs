@@ -30,6 +30,7 @@ pub mod protect;
 pub mod script;
 pub mod specs;
 pub mod thanos;
+pub mod tokens;
 pub mod gaps_c;
 pub mod gaps_t2;
 pub mod model_gaps;

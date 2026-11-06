@@ -122,6 +122,14 @@ fn player(g: &Game, p: PlayerId, me: &str) -> Value {
         d["mana_sources"] = seam::mana_sources(g, p);
         d["graveyard_playable"] = seam::graveyard_playable(g, p);
         d["exile_playable"] = seam::exile_playable(g, p);
+        // Clue, Food and Blood tokens (counts on the player): {"Clue": 2, ...}, only the kinds you have
+        let tokens: Map<String, Value> = sim_core::human::tokens::KINDS
+            .iter()
+            .map(|&k| (k, sim_core::human::tokens::count(g, p, k)))
+            .filter(|x| x.1 > 0)
+            .map(|(k, n)| (k.to_string(), n.into()))
+            .collect();
+        d["tokens"] = tokens.into();
     }
     d
 }

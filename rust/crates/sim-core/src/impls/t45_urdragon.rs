@@ -662,7 +662,27 @@ fn lathliss_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
         .into_iter()
         .filter(|&m| !g.perm(m).tapped && (!g.perm(m).sick || crate::engine::combat::has_haste(g, m)))
         .collect();
-    let k = (total_mana(g, p, false) as i32 - 2) / 2;
+    // each activation costs {1}{R}: k is what the red sources and the mana can pay, keeping two (model-gaps-b3: it was
+    // the mana alone, so an offer could need more red than there was)
+    // (a person pays from their pool, with no reserve: they choose; the AI keeps two of its mana)
+    let mut k = if crate::human::is_human(g, p) {
+        let pl = g.player(p);
+        let pool = pl.pool.m.iter().chain(pl.pool.k.iter()).sum::<u32>() + pl.pool.art + pl.mana.total();
+        (pool / 2) as i32
+    } else {
+        (total_mana(g, p, false) as i32 - 2) / 2
+    };
+    // (paying k times is monotone: binary search the most that can be paid)
+    let (mut lo, mut hi) = (0, k.max(0));
+    while lo < hi {
+        let mid = (lo + hi + 1) / 2;
+        if can_pay(g, p, mid as u32, &"R".repeat(mid as usize), false) {
+            lo = mid;
+        } else {
+            hi = mid - 1;
+        }
+    }
+    k = lo;
     if ds.is_empty() || k < 1 {
         return Ok(vec![]);
     }

@@ -289,13 +289,14 @@ fn staff_draw(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     };
     let mut drawn = 0u32;
     while drawn < n && !g.over && g.player(p).library.len() > 1 {
-        if g.perm(m).tapped && !stack::with_rings_auto(Some(false), || crate::dsl::activate(g, p, m, untap))? {
+        // the run's one Rings answer covers the {1} untap and the draw alike (a single draw asks Rings' question as it
+        // is, untap and draw each; the last draw of a longer run is never copied: it would draw one card too many, and
+        // the untap before it is not copied either)
+        let ans = if n > 1 && n - drawn < 2 { Some(false) } else { auto };
+        if g.perm(m).tapped && !stack::with_rings_auto(ans, || crate::dsl::activate(g, p, m, untap))? {
             break;
         }
         let before = g.player(p).library.len();
-        // (a single draw asks Rings' question as it is; the last draw of a longer run is never copied: it would draw
-        // one card too many)
-        let ans = if n > 1 && n - drawn < 2 { Some(false) } else { auto };
         if !stack::with_rings_auto(ans, || crate::dsl::activate(g, p, m, draw))? {
             break;
         }

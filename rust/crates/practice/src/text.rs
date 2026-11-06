@@ -134,6 +134,7 @@ const HELP: &str = "Commands:
   cast eN / land eN cast or play card N listed under From exile (Dauthi Voidwalker, Urza, Triple Triad), free
   use N             an ability of your permanent N (Equip, loyalty abilities, Jace's Archivist ...)
   use LN            an ability of your land N (Rogue's Passage, Scavenger Grounds)
+  use clue | food | blood   crack a Clue, eat a Food or use a Blood token you have
   pass              pass priority (move on)
 When asked to choose (a target, an ability, a blocker), type its number, or cancel / the last choice.
 Attacking: type the attackers' numbers (1,3), all, or none.
@@ -189,6 +190,13 @@ fn priority_prompt(req: &Value, out: &mut dyn Write) {
     if !act.is_empty() {
         let _ = writeln!(out, "  Lands with abilities: {}", act.join("  "));
     }
+    let toks: Vec<String> = me["tokens"]
+        .as_object()
+        .map(|o| o.iter().map(|(k, v)| format!("{} x{} (use {})", k, txt(v), k.to_lowercase())).collect())
+        .unwrap_or_default();
+    if !toks.is_empty() {
+        let _ = writeln!(out, "  Your tokens: {}", toks.join("  "));
+    }
     if truthy(me, "commander_in_zone") {
         let _ = writeln!(out, "  Commander in the command zone: {} (tax {})", s(me, "commander"), txt(&me["tax"]));
     }
@@ -224,6 +232,11 @@ pub fn parse(line: &str, view: &Value) -> Cmd {
         return Cmd::Act(json!({"do": "cast", "zone": "cmd"}));
     }
     if cmd == "use" {
+        if let Some(kind) = w1.as_deref().and_then(|t| ["clue", "food", "blood"].iter().find(|k| **k == t)) {
+            // a Clue, Food or Blood token (counts on the player, not permanents)
+            let name = format!("{}{}", kind[..1].to_uppercase(), &kind[1..]);
+            return Cmd::Act(json!({"do": "use", "token": name}));
+        }
         if let Some(t) = &w1
             && t.starts_with('l')
             && let Some(k) = digits(&t[1..])
