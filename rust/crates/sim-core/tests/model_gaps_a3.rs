@@ -472,3 +472,133 @@ fn a_person_copies_expedition_map_mind_stone_and_rogues_passage_with_the_camera(
     assert!(unbl(&g, a) && unbl(&g, b), "both can't be blocked this turn");
     assert!(g.perm(cam).tapped);
 }
+
+// ======================================================== item 6: Marvin borrows hand-written creature abilities
+const MARVIN: &str = "Marvin, Murderous Mimic";
+
+fn marvin_opts(g: &mut Game, marvin: PermId, post: Option<bool>) -> Vec<sim_core::hooks::Opt> {
+    let c = g.perm(marvin).cd.unwrap();
+    let f = g.registry.get(c).unwrap().options.unwrap();
+    f(g, marvin, P0, post).unwrap()
+}
+
+fn ready(g: &mut Game, m: PermId) {
+    let x = g.perm_mut(m);
+    x.sick = false;
+    x.tapped = false;
+}
+
+#[test]
+fn marvin_uses_kefkas_8_ability_and_kefka_is_the_one_that_transforms() {
+    let mut g = tbl();
+    g.active = Some(P0);
+    g.step = sim_core::state::Step::Main1;
+    let marvin = perm(&mut g, P0, MARVIN);
+    let kefka = perm(&mut g, P0, "Kefka, Court Mage // Kefka, Ruler of Ruin");
+    ready(&mut g, marvin);
+    assert!(marvin_opts(&mut g, marvin, Some(false)).iter().all(|o| !o.label.contains("Kefka")), "no {{8}}");
+    lands(&mut g, P0, "Swamp", 8, false);
+    let o = marvin_opts(&mut g, marvin, Some(false));
+    let k = o.iter().find(|o| o.label.contains("Kefka")).expect("Marvin offers Kefka's ability");
+    lands(&mut g, P1, "Island", 3, false);
+    lands(&mut g, P2, "Island", 3, false);
+    let opp_perms = g.player(P1).perms.len() + g.player(P1).lands.len();
+    assert!(sim_core::ai::act::perform(&mut g, P0, k.act.as_ref().unwrap()).unwrap());
+    let after = g.player(P1).perms.len() + g.player(P1).lands.len();
+    assert!(after < opp_perms, "an opponent sacrificed a permanent");
+    assert!(g.perm(kefka).data.truthy(sim_core::state::DataKey::Ruin), "Kefka transformed");
+    assert!(!g.perm(marvin).data.truthy(sim_core::state::DataKey::Ruin), "not Marvin");
+    assert_eq!(sim_core::engine::values::epow(&g, marvin), 2);
+    // Kefka has no activated ability once transformed: Marvin loses it
+    lands(&mut g, P0, "Swamp", 8, false);
+    assert!(marvin_opts(&mut g, marvin, Some(false)).iter().all(|o| !o.label.contains("Kefka")));
+}
+
+#[test]
+fn marvin_pays_for_priests_and_timberwatchs_hand_written_abilities() {
+    let mut g = tbl();
+    g.active = Some(P0);
+    g.step = sim_core::state::Step::Main1;
+    let marvin = perm(&mut g, P0, MARVIN);
+    perm(&mut g, P0, "Priest of Forgotten Gods");
+    let (a, b) = (perm(&mut g, P0, "Caged Zombie"), perm(&mut g, P0, "Llanowar Elves"));
+    for m in [marvin, a, b] {
+        ready(&mut g, m);
+    }
+    let o = marvin_opts(&mut g, marvin, Some(true));
+    let pr = o.iter().find(|o| o.label.contains("Priest")).expect("Marvin offers the Priest's ability");
+    let life = g.player(P1).life;
+    assert!(sim_core::ai::act::perform(&mut g, P0, pr.act.as_ref().unwrap()).unwrap());
+    assert!(g.perm(marvin).tapped, "Marvin paid the {{T}}");
+    assert!(!g.perm(a).on_bf && !g.perm(b).on_bf, "two other creatures sacrificed");
+    assert_eq!(g.player(P1).life, life - 2);
+
+    // Timberwatch Elf: {T}: target creature gets +X/+X
+    let mut g = tbl();
+    g.active = Some(P0);
+    g.step = sim_core::state::Step::Main1;
+    let marvin = perm(&mut g, P0, MARVIN);
+    let tw = perm(&mut g, P0, "Timberwatch Elf");
+    let t = perm(&mut g, P0, "Serra Angel");
+    for m in [marvin, tw, t] {
+        ready(&mut g, m);
+    }
+    g.perm_mut(tw).tapped = true; // the Elf itself is tapped: it is Marvin who uses the ability
+    let before = sim_core::engine::values::epow(&g, t);
+    let o = marvin_opts(&mut g, marvin, Some(false));
+    let o = o.iter().find(|o| o.label.contains("Timberwatch")).expect("Marvin offers Timberwatch's ability");
+    assert!(sim_core::ai::act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
+    assert!(g.perm(marvin).tapped);
+    assert!(sim_core::engine::values::epow(&g, t) > before, "+X/+X");
+}
+
+#[test]
+fn marvin_is_a_sacrifice_outlet_for_a_carrion_feeder_and_taps_for_a_dorks_mana() {
+    let mut g = tbl();
+    let marvin = perm(&mut g, P0, MARVIN);
+    perm(&mut g, P0, "Carrion Feeder");
+    let fodder = perm(&mut g, P0, "Llanowar Elves");
+    assert!(sim_core::impls::common::outlets(&g, P0).contains(&marvin), "Marvin has the sacrifice ability");
+    sim_core::impls::common::sac_through(&mut g, P0, marvin, fodder).unwrap();
+    assert!(!g.perm(fodder).on_bf);
+    assert_eq!(g.perm(marvin).plus, 1, "Carrion Feeder's +1/+1 counter went on Marvin");
+
+    // mana: Marvin taps for the {G} of a Llanowar Elves (which is itself tapped)
+    let mut g = tbl();
+    let marvin = perm(&mut g, P0, MARVIN);
+    let elf = perm(&mut g, P0, "Llanowar Elves");
+    ready(&mut g, marvin);
+    g.perm_mut(elf).tapped = true;
+    let units = sim_core::engine::mana::mana_units(&g, P0, false);
+    assert!(units.iter().any(|u| u.src == sim_core::engine::mana::Source::Perm(marvin)), "Marvin makes mana");
+    assert!(sim_core::engine::mana::can_pay(&g, P0, 0, "G", false), "{{G}} from Marvin");
+    sim_core::engine::mana::pay(&mut g, P0, 0, "G", false).unwrap();
+    assert!(g.perm(marvin).tapped);
+    // summoning sick: no mana
+    let mut g = tbl();
+    let marvin = perm(&mut g, P0, MARVIN);
+    perm(&mut g, P0, "Llanowar Elves");
+    g.perm_mut(marvin).sick = true;
+    let units = sim_core::engine::mana::mana_units(&g, P0, false);
+    assert!(!units.iter().any(|u| u.src == sim_core::engine::mana::Source::Perm(marvin)));
+}
+
+#[test]
+fn marvin_has_quirion_rangers_untap_ability() {
+    use sim_core::engine::mana::{Source, mana_units};
+    let mut g = tbl();
+    let marvin = perm(&mut g, P0, MARVIN);
+    let druid = perm(&mut g, P0, "Circle of Dreams Druid");
+    perm(&mut g, P0, "Llanowar Elves");
+    perm(&mut g, P0, "Llanowar Elves");
+    lands(&mut g, P0, "Forest", 1, false);
+    for m in [marvin, druid] {
+        ready(&mut g, m);
+    }
+    g.perm_mut(druid).tapped = true; // the Druid made its mana already
+    let quirion =
+        |g: &Game| mana_units(g, P0, false).iter().any(|u| matches!(u.src, Source::Quirion(s, _) if s == marvin));
+    assert!(!quirion(&g), "no Quirion Ranger");
+    perm(&mut g, P0, "Quirion Ranger");
+    assert!(quirion(&g), "Marvin returns a Forest to untap the Druid");
+}

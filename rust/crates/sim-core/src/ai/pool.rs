@@ -1161,17 +1161,35 @@ fn protector_options(g: &Game, p: PlayerId, m: Option<PermId>) -> Vec<(usize, Op
     for &x in &g.player(p).perms {
         let px = g.perm(x);
         let Some(cd) = px.cd else { continue };
-        let Some(i) = protector(&g.db.get(cd).name) else { continue };
-        if PROTECTORS[i].1 == Where::Hand || px.phased || crate::cardcode::ability_locked(g, x, p) {
-            continue;
+        // --- model-gaps-a3: Marvin, Murderous Mimic has the protective abilities (Mother of Runes ...) of the other
+        // creatures p controls: each of their names is a protector with Marvin as its source
+        let mut names: Vec<&str> = vec![&g.db.get(cd).name];
+        if &*g.db.get(cd).name == crate::impls::newcards_b::MARVIN {
+            for &d in &g.player(p).perms {
+                let y = g.perm(d);
+                if d != x && y.on_bf && !y.phased && !y.neutered && g.is_creature(d) && y.name != px.name {
+                    if let Some(dc) = y.cd {
+                        let n: &str = &g.db.get(dc).name;
+                        if !names.contains(&n) {
+                            names.push(n);
+                        }
+                    }
+                }
+            }
         }
-        if PROTECTORS[i].0 == "Giver of Runes" && Some(x) == m {
-            continue; // "another target creature"
+        for n in names {
+            let Some(i) = protector(n) else { continue };
+            if PROTECTORS[i].1 == Where::Hand || px.phased || crate::cardcode::ability_locked(g, x, p) {
+                continue;
+            }
+            if PROTECTORS[i].0 == "Giver of Runes" && Some(x) == m {
+                continue; // "another target creature"
+            }
+            if PROTECTORS[i].4 == Scope::Selfish && Some(x) != m {
+                continue;
+            }
+            out.push((i, Some(x)));
         }
-        if PROTECTORS[i].4 == Scope::Selfish && Some(x) != m {
-            continue;
-        }
-        out.push((i, Some(x)));
     }
     out
 }

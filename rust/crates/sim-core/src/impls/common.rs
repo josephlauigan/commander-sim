@@ -827,6 +827,26 @@ pub fn is_sac_outlet(name: &str) -> bool {
     sac_fx(name).is_some()
 }
 
+/// --- model-gaps-a3: the name of the sacrifice outlet x is for p: its own, or, for Marvin, Murderous Mimic (it has the
+/// activated abilities of the creatures p controls), that of a creature outlet p controls under another name
+pub fn outlet_name<'a>(g: &'a Game, p: PlayerId, x: PermId) -> &'a str {
+    let n = card_name(g, x);
+    if n != super::newcards_b::MARVIN || is_sac_outlet(n) {
+        return n;
+    }
+    g.player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            let y = g.perm(m);
+            m != x && y.cd.is_some() && y.on_bf && !y.phased && !y.neutered && g.is_creature(m)
+        })
+        .map(|m| card_name(g, m))
+        .find(|&c| is_sac_outlet(c) && !stopped(g, c))
+        .unwrap_or(n)
+}
+
 /// the bartist / drain hand tags among p's permanents (phased ones too, as the Python counts them)
 fn drain_tags(g: &Game, p: PlayerId) -> f64 {
     g.player(p).perms.iter().filter(|&&x| def(g, x).is_some_and(|d| d.tag(Tag::Bartist) || d.tag(Tag::Drain))).count()
@@ -868,7 +888,7 @@ pub fn outlets(g: &Game, p: PlayerId) -> Vec<PermId> {
         .iter()
         .copied()
         .filter(|&x| {
-            let n = card_name(g, x);
+            let n = outlet_name(g, p, x);
             g.perm(x).cd.is_some() && is_sac_outlet(n) && !g.perm(x).phased && !stopped(g, n)
         })
         .collect()
@@ -876,7 +896,7 @@ pub fn outlets(g: &Game, p: PlayerId) -> Vec<PermId> {
 
 /// common.sac_through: sacrifice m through outlet src
 pub fn sac_through(g: &mut Game, p: PlayerId, src: PermId, m: PermId) -> Res {
-    let fx = sac_fx(card_name(g, src)).flatten();
+    let fx = sac_fx(outlet_name(g, p, src)).flatten();
     crate::glog!(g, "  {} sacrifices {} to {}", player_name(g, p), name_of(g, m), card_name(g, src));
     die(g, m, "sac")?;
     if let Some(f) = fx {
@@ -932,7 +952,7 @@ pub fn mana_needed_now(g: &Game, p: PlayerId, extra: u32) -> bool {
 /// what one sacrifice through outlet `o` is worth by itself, beyond the death: a scry, a ping, a counter, or mana when
 /// it's p's own turn and a spell in hand waits on it
 pub fn outlet_gain(g: &Game, p: PlayerId, o: PermId) -> f64 {
-    let n = card_name(g, o);
+    let n = outlet_name(g, p, o);
     let mana = outlet_mana(n);
     if mana > 0 {
         return if g.active == Some(p) && mana_needed_now(g, p, mana) { 2.0 } else { 0.0 };
@@ -966,7 +986,7 @@ pub fn aristocrat_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<
             .filter(|&m| {
                 let x = g.perm(m);
                 let cr = g.is_creature(m);
-                ((cr && !x.phased && m != src && !x.is_cmd && x.cd.is_some() && !is_sac_outlet(card_name(g, m)))
+                ((cr && !x.phased && m != src && !x.is_cmd && x.cd.is_some() && !is_sac_outlet(outlet_name(g, p, m)))
                     || (cr && x.token && !x.phased))
                     && (!tergrid || x.token || x.cd.is_none())
                     && (!keep || (!x.is_cmd && !crate::engine::values::no_sac(g, m) && !is_payoff(g, m)))

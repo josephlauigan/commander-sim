@@ -736,6 +736,22 @@ fn outlet(text: &'static str, effect: OutletEffect) -> Vec<PermAbility> {
     })]
 }
 
+/// --- model-gaps-a3: Marvin, Murderous Mimic has the sacrifice abilities of the creature outlets its controller has
+pub fn marvin_outlets(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
+    if pm_name(g, m) != crate::impls::newcards_b::MARVIN {
+        return vec![];
+    }
+    let has = |n: &str| g.player(p).perms.iter().any(|&x| x != m && g.perm(x).on_bf && !g.perm(x).phased && g.is_creature(x) && pm_name(g, x) == n);
+    let mut out = vec![];
+    if has("Carrion Feeder") {
+        out.extend(outlet("put a +1/+1 counter on Marvin", feeder));
+    }
+    if has("Viscera Seer") {
+        out.extend(outlet("scry 1", |g, p, _m, _pw| choices::scry(g, p, 1, false)));
+    }
+    out
+}
+
 fn feeder(g: &mut Game, p: PlayerId, m: PermId, _pw: i32) -> Res {
     if g.player(p).perms.contains(&m) {
         repl::put_plus(g, m, 1);

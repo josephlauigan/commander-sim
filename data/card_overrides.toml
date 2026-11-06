@@ -8568,8 +8568,8 @@ status = "Full"
 note = "a token copy of the best nonland permanent (any controller's), which stays; the AI casts it on its own permanent with flash (opponent's turn or end of turn) when the copy is worth 4 or more; flashback {4}{U}{U}"
 
 ["Peter Parker's Camera"]
-status = "Approximate"
-note = "enters with three film counters; {2}, {T}, remove a counter: copy target activated or triggered ability you control (stack::copy_trigger, t6_copies::camera_copy): the copy can be countered and resolves before the original, choosing its targets anew (the AI's best). The AI copies its own important (importance 6+) triggered ability (Godo: the copy fetches Hammer of Nazahn, the original Helm of the Host) and its own compiled activated or loyalty ability worth stack::CAMERA_WORTH (a tutor: Fauna Shaman). Approximation: the copyable abilities are the triggers and the compiled activated and loyalty abilities (stack::ability_window_ex); a hand-written activated ability (card code calling stack::ability_window) cannot be copied"
+status = "Full"
+note = ""
 
 ["Volatile Stormdrake"]
 status = "Partial"
@@ -9201,7 +9201,7 @@ note = "first strike, trample, lifelink; Stagger on combat damage to a player do
 
 ["Marvin, Murderous Mimic"]
 status = "Approximate"
-note = "has the compiled activated abilities of the creatures you control that don't share its name (dsl::borrowed_abilities: cost and effects as printed, mana, discard and sacrifice costs included, token copies too; Marvin pays the {T}, so it must be untapped and not summoning sick; one slot per ability, the same per-turn cap as a printed one; the AI and a person both get them as Marvin copies options), plus the hand-written {T} abilities of Krenko, Mob Boss and Kiki-Jiki, Mirror Breaker (impls/t45_krenko.rs) and Ioreth's two untap abilities (the Tier 6 DDR loop). Left out: any other creature's card-code ability (a hand-written one), and a copied mana ability does not pay for another cost"
+note = "has the compiled activated abilities of the creatures you control that don't share its name (dsl::borrowed_abilities: cost and effects as printed, mana, discard and sacrifice costs, token copies, the same per-turn cap), the hand-written ones (each creature's `options` hook run with Marvin as the source, so Marvin pays the {T}, the sacrifice of 'this creature' and the counters: Chatterfang, Stoneforge Mystic, Priest of Forgotten Gods, Sakura-Tribe Elder, Yawgmoth, Allosaurus Shepherd, Eladamri, Elvish Warmaster, Timberwatch Elf, Cankerbloom, Skrelv ...; Kefka's {8} (it transforms Kefka, which the text names; Tekuthal's counter likewise goes on Tekuthal); Krenko, Kiki-Jiki and Ioreth's untaps; the sacrifice outlets Carrion Feeder and Viscera Seer, AI and person; Mother of Runes and the other pool protectors; Quirion Ranger and Wirewood Symbiote untaps), and the mana of the mana creatures (the best single one: the most mana, then the most colours). Left out (no ability code exists for the creature itself): Siege-Gang Commander's sacrifice-a-Goblin ping, Syr Konrad's mill, Professional Face-Breaker, Tinybones's {4}{B}{B} and Ezuri's overrun; Bloodline Keeper's transform does nothing to Marvin; a person using a borrowed hand-written ability gets the AI's choices of targets"
 
 ["Staff of Compleation"]
 paths_ok = "two sets of abilities, one path each: the options entry is {T}, pay 1 life: destroy target permanent you own (the override dropped the compiled misreading); the compiled activations are the proliferate, the draw and the untap"

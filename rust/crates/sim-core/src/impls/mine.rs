@@ -876,6 +876,33 @@ fn kefka_ruin(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Ve
 }
 
 pub fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
+    kefka_ruin_do(g, src, p, src)
+}
+
+/// Marvin, Murderous Mimic has Kefka's {8} ability while its controller has Kefka, Court Mage (not yet transformed):
+/// Marvin pays and activates it, and the ability transforms Kefka (it names Kefka, not its source)
+pub fn kefka_borrowed(g: &mut Game, src: PermId, p: PlayerId, post: Option<bool>, kefka: PermId) -> Vec<Opt> {
+    let k = g.perm(kefka);
+    if !k.on_bf || k.phased || k.data.truthy(DataKey::Ruin) || p != g.perm(src).owner {
+        return vec![];
+    }
+    if post.is_none() || g.active != Some(p) || !can_pay(g, p, 8, "", false) {
+        return vec![];
+    }
+    let utility = 3.0 + 0.5 * g.opps(p).count() as f64;
+    vec![Opt { utility, label: "Kefka: {8}, transform".into(), act: Some(Action::Ability { src, f: kefka_borrowed_go, arg: kefka.0 as i64 }) }]
+}
+
+fn kefka_borrowed_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let kefka = PermId(arg as u32);
+    if g.perm(kefka).data.truthy(DataKey::Ruin) || !g.perm(kefka).on_bf {
+        return Ok(false);
+    }
+    kefka_ruin_do(g, src, p, kefka)
+}
+
+/// pay {8} and activate the ability from `src`; the permanent that transforms is `kefka`
+fn kefka_ruin_do(g: &mut Game, src: PermId, p: PlayerId, kefka: PermId) -> Res<bool> {
     if !g.perm(src).on_bf || g.perm(src).owner != p || !can_pay(g, p, 8, "", false) {
         return Ok(false);
     }
@@ -928,7 +955,7 @@ pub fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<b
     }
     let t = g.player(p).turns;
     g.player_mut(p).milestone.entry("kefka").or_insert(t);
-    let x = g.perm_mut(src);
+    let x = g.perm_mut(kefka);
     x.data.set(DataKey::Ruin, Val::Bool(true));
     (x.pow, x.tgh, x.fly) = (5, 7, true);
     crate::glog!(

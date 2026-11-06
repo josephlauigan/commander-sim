@@ -722,6 +722,7 @@ pub fn abilities_of(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<(String, Ab
             out.push((label, AbilityKind::Hook(Action::Dsl { src: m, idx })));
         }
     }
+    out.extend(cards::marvin_outlets(g, p, m).into_iter().map(|a| (a.label, AbilityKind::Extra(a.act))));
     if let Some(own) = cards::abilities(g, p, m) {
         // your deck's card: its abilities by the rules
         out.extend(own.into_iter().map(|a| (a.label, AbilityKind::Extra(a.act))));

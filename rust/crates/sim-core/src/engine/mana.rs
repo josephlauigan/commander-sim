@@ -244,6 +244,10 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
             if amt > 0 {
                 u.push(Unit { src: Source::Perm(m), cols, amt });
             }
+        } else if &*d.name == crate::impls::newcards_b::MARVIN && (!x.sick || ahaste()) {
+            if let Some(unit) = marvin_mana(g, p, m) {
+                u.push(unit);
+            }
         } else if rite && d.creature && (!x.sick || ahaste()) && x.noatk {
             u.push(Unit { src: Source::Perm(m), cols: ident, amt: 1 });
         }
@@ -371,6 +375,24 @@ fn adjust_mana(g: &Game, p: PlayerId, mut u: Vec<Unit>) -> Vec<Unit> {
             u.extend(extra);
         }
     }
+    // --- model-gaps-a3: Marvin, Murderous Mimic has Quirion Ranger's and Wirewood Symbiote's untap abilities (their
+    // units, with Marvin as the source: it is Marvin that may use it once each turn)
+    for &m in &g.player(p).perms {
+        let x = g.perm(m);
+        if x.on_bf && !x.phased && !x.neutered && x.cd.is_some_and(|c| &*g.db.get(c).name == crate::impls::newcards_b::MARVIN) {
+            for donor in ["Quirion Ranger", "Wirewood Symbiote"] {
+                let cd = g.player(p).perms.iter().copied().find_map(|d| {
+                    let y = g.perm(d);
+                    (y.on_bf && !y.phased && !y.neutered && g.is_creature(d) && y.name == donor).then_some(y.cd).flatten()
+                });
+                if let Some(f) = cd.and_then(|c| g.registry.get(c)).and_then(|c| c.extra_mana) {
+                    let mut extra = f(g, m, p, &u);
+                    extra.iter_mut().for_each(triple);
+                    u.extend(extra);
+                }
+            }
+        }
+    }
     u.extend(cardcode::hand_mana(g, p)); // Spirit Guides (also added in `units` when nothing is hooked)
     u
 }
@@ -386,7 +408,7 @@ fn is_pain(g: &Game, src: Source) -> bool {
             let t = &g.db.get(g.perm(l).card()).tags;
             (t.has(Tag::Tomb) || t.has(Tag::Pain)) && !moon_land(g, l)
         }
-        Source::Perm(m) => g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Pain)),
+        Source::Perm(m) => mana_card(g, m).is_some_and(|c| g.db.get(c).tag(Tag::Pain)),
         _ => false,
     }
 }
@@ -507,7 +529,7 @@ fn float_leftover(g: &mut Game, p: PlayerId, src: Source, cols: Colors, n: u32) 
 fn source_restr(g: &Game, src: Source) -> Restr {
     match src {
         Source::Land(l) if !moon_land(g, l) => g.db.get(g.perm(l).card()).mana_restr,
-        Source::Perm(m) => g.perm(m).cd.map_or(Restr::None, |c| g.db.get(c).mana_restr),
+        Source::Perm(m) => mana_card(g, m).map_or(Restr::None, |c| g.db.get(c).mana_restr),
         _ => Restr::None,
     }
 }
@@ -517,7 +539,7 @@ fn source_restr(g: &Game, src: Source) -> Restr {
 fn mana_rider(g: &mut Game, src: Source, w: Unit) {
     let cd = match src {
         Source::Land(l) if !moon_land(g, l) => Some(g.perm(l).card()),
-        Source::Perm(m) => g.perm(m).cd,
+        Source::Perm(m) => mana_card(g, m),
         _ => None,
     };
     if let Some(cd) = cd
@@ -591,7 +613,7 @@ pub fn spend_unit(g: &mut Game, p: PlayerId, w: Unit, n: u32, col: &str) -> Res 
                     (imp.mana_tapped.unwrap())(g, src, p, m, n)?;
                 }
             }
-            if !col.is_empty() && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Pain)) {
+            if !col.is_empty() && mana_card(g, m).is_some_and(|c| g.db.get(c).tag(Tag::Pain)) {
                 lose_life(g, p, 1, Some(p), "other", Some(true))?; // Talismans
             }
         }
@@ -905,4 +927,51 @@ pub fn next_turn_mana(g: &Game, p: PlayerId) -> u32 {
         .sum();
     let drop = u32::from(pl.hand.iter().any(|&c| g.db.get(c).land));
     lands + perms + drop
+}
+
+/// --- model-gaps-a3: Marvin, Murderous Mimic has the mana abilities of the mana creatures its controller has under
+/// another name ("{T}: Add {G}" ...): it taps for the best one (the most mana, then the most colours), as that
+/// creature would make it (`dyn_mana_perm`: the mana of Priest of Titania counts Elves ...). None if there is none.
+fn marvin_mana(g: &Game, p: PlayerId, marvin: PermId) -> Option<Unit> {
+    marvin_donor(g, p, marvin).map(|b| b.0)
+}
+
+/// the unit Marvin taps for and the card whose mana ability it is (its restriction, rider and pain count)
+fn marvin_donor(g: &Game, p: PlayerId, marvin: PermId) -> Option<(Unit, crate::ids::CardId)> {
+    let ident = g.player(p).ident;
+    let me = g.perm(marvin).name;
+    let mut best: Option<(Unit, crate::ids::CardId)> = None;
+    for &c in &g.player(p).perms {
+        let y = g.perm(c);
+        let Some(cd) = y.cd else { continue };
+        if c == marvin || y.name == me || !y.on_bf || y.phased || y.neutered || !g.is_creature(c) {
+            continue;
+        }
+        let d = g.db.get(cd);
+        let Some(dork) = d.tags.str(Tag::Dork) else { continue };
+        if !restr_ok(g, p, d.mana_restr) || crate::engine::values::stopped(g, &d.name) {
+            continue;
+        }
+        let amt = cardcode::dyn_mana_perm(g, p, c).unwrap_or(1);
+        let cols = if &*d.name == "Delighted Halfling" {
+            cardcode::halfling_colors(g, p).unwrap_or(Colors::NONE)
+        } else {
+            tag_colors(dork, ident)
+        };
+        let better = best.as_ref().is_none_or(|b| (amt, cols.count()) > (b.0.amt, b.0.cols.count()));
+        if amt > 0 && better {
+            best = Some((Unit { src: Source::Perm(marvin), cols, amt }, cd));
+        }
+    }
+    best
+}
+
+/// the card whose mana ability permanent m taps for: its own, or (Marvin) the creature whose ability it uses
+fn mana_card(g: &Game, m: PermId) -> Option<crate::ids::CardId> {
+    let cd = g.perm(m).cd?;
+    if &*g.db.get(cd).name != crate::impls::newcards_b::MARVIN {
+        return Some(cd);
+    }
+    let p = g.players.iter().find(|q| q.perms.contains(&m))?.id;
+    Some(marvin_donor(g, p, m).map_or(cd, |b| b.1))
 }
