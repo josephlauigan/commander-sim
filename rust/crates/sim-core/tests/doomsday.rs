@@ -976,3 +976,88 @@ fn the_quantities_count_colour_gaps() {
     assert_eq!(colour_gaps(&g, P0, None), 1, "only U is missing");
     assert_eq!(colour_castable(&g, P0, None), 2, "Silence and Doomsday can be cast");
 }
+
+// ------------------------------------------------------------------ the builder stays cheap (a look-ahead calls it a lot)
+/// A full-size position: every card of the line among a library of fillers and devotion permanents, Thrasios out (his
+/// dig is a move of every line), sixteen lands. `hand` replaces the hand; the cards in it leave the library. Before the
+/// search had its failure table, its bounds and its node budget one build of such a position took 3 to 36 seconds, and a
+/// look-ahead game with Thrasios out (which asks for a build at every decision of every playout) did not end in half an
+/// hour (seed 500400, game 24 of `--deck thrasios --pool t6 --ai lookahead`).
+fn big_position(hand_names: &[&str]) -> Game {
+    let useful = [
+        "Thassa's Oracle",
+        "Silence",
+        "Gitaxian Probe",
+        "Brainstorm",
+        "Preordain",
+        "Ponder",
+        "Borne Upon a Wind",
+        "Veil of Summer",
+        "Mockingbird",
+        "Valley Floodcaller",
+        "Rhystic Study",
+        "Mystic Remora",
+        "Noxious Revival",
+        "Snapback",
+    ];
+    let fillers = [
+        "Sol Ring", "Mana Vault", "Grim Monolith", "Basalt Monolith", "Chrome Mox", "Lotus Petal", "Arcane Signet",
+        "Mox Diamond", "Underground Sea", "Scrubland", "Island", "Swamp", "Plains", "Bayou", "Tundra",
+        "Volcanic Island", "Watery Grave", "Tropical Island", "Savannah", "Badlands", "Taiga", "Plateau",
+    ];
+    let lib: Vec<&str> =
+        fillers.iter().chain(useful.iter()).copied().filter(|n| !hand_names.contains(n)).collect();
+    let mut g = setup(hand_names, &lib, &[]);
+    lands(&mut g, P0, "Underground Sea", 6, false);
+    perm(&mut g, P0, "Thrasios, Triton Hero");
+    g
+}
+
+const HEAVY_HANDS: [&[&str]; 4] = [
+    &["Doomsday", "Preordain", "Mystic Remora", "Rhystic Study"],
+    &["Doomsday", "Brainstorm", "Mystic Remora", "Teferi, Time Raveler"],
+    &["Doomsday", "Brainstorm", "Gitaxian Probe", "Mystic Remora"],
+    &["Doomsday", "Ponder", "Mystic Remora", "Rhystic Study", "Veil of Summer"],
+];
+
+#[test]
+fn the_pile_builder_finishes_quickly_on_a_full_library() {
+    // each position is built for the main phase and for the end step, as the cast does
+    let t = std::time::Instant::now();
+    for h in HEAVY_HANDS {
+        let g = big_position(h);
+        for scn in [doomsday::Scn::Main, doomsday::Scn::EndStep] {
+            let built = doomsday::build(&g, P0, scn, 3, &[]);
+            assert!(t.elapsed().as_secs_f64() < 10.0, "{h:?} {scn:?}: the builder has run for {:?}", t.elapsed());
+            assert!(built.is_some(), "{h:?} {scn:?}: a pile wins from these cards");
+        }
+    }
+}
+
+#[test]
+fn a_cast_the_board_forbids_is_declined_without_a_search() {
+    // forty power on the other side can deal what Doomsday leaves, at any life total: the answer is no before any pile is
+    // searched (the look-ahead asks again at every decision of every playout)
+    let t = std::time::Instant::now();
+    let mut g = big_position(HEAVY_HANDS[0]);
+    token(&mut g, P1, 20);
+    token(&mut g, P1, 20);
+    g.active = Some(P1);
+    teferi_flash(&mut g);
+    for life in 30..70 {
+        g.player_mut(P0).life = life;
+        assert_eq!(opts(&mut g, None), 0, "a board that can deal what is left declines at {life} life");
+        assert!(t.elapsed().as_secs_f64() < 5.0, "the declined casts have taken {:?}", t.elapsed());
+    }
+}
+
+#[test]
+fn the_bounded_line_search_still_finds_the_shortest_lines() {
+    // Oracle, Probe and Preordain in hand with Thrasios out: the line is short and ends with the Oracle
+    let g = big_position(&["Doomsday", "Thassa's Oracle", "Gitaxian Probe", "Preordain"]);
+    let built = doomsday::build(&g, P0, doomsday::Scn::Main, 3, &[]).expect("a pile wins from these cards");
+    assert_eq!(built.pile.len(), 5);
+    assert!(built.plan.len() <= 4, "a short line: {:?}", built.plan.len());
+    let last = built.plan.last().expect("a line");
+    assert_eq!(&*g.db.get(last.card).name, "Thassa's Oracle", "the Oracle is the last spell");
+}
