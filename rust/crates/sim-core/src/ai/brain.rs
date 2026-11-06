@@ -1244,6 +1244,61 @@ fn labels(opts: &[Opt]) -> Vec<(f64, String)> {
     opts.iter().map(|o| (o.utility, o.label.clone())).collect()
 }
 
+/// --- c1b-engines: trace only. A Tier 6 deck stopped in its main phase: print the nonland cards it could pay for and
+/// what the cast logic made of each (its utility, or why it was not offered), with the stop's own utility. Reads the
+/// game, never changes it, draws no random numbers.
+fn stop_diag(g: &mut Game, p: PlayerId, opts: &[Opt]) {
+    if g.log.is_none() || !crate::impls::t6_plans::is_t6(g, p) {
+        return;
+    }
+    let s = Situation::new(g, p);
+    let mut cands: Vec<CardId> = g.player(p).hand.clone();
+    cands.extend(g.player(p).cmds_in_zone());
+    let mut out = vec![];
+    for c in cands {
+        let d = g.db.get(c);
+        if d.land {
+            continue;
+        }
+        let (cg, cp) = cost_of(g, p, c);
+        g.pay_for = Some(c);
+        let ok = can_pay(g, p, cg, &cp, d.tag(Tag::Convoke));
+        g.pay_for = None;
+        if !ok {
+            continue;
+        }
+        let zone = if g.player(p).hand.contains(&c) { "hand" } else { "cmd" };
+        let why = if !castable(g, p, c, zone) {
+            "not castable".to_string()
+        } else {
+            let prio = decks::deck_prio_f(g, p, c);
+            match card_utility(g, p, &s, c) {
+                Some(u) => match opts.iter().find(|o| o.label == *d.name) {
+                    Some(o) => format!("u {u:.1} (offered {:.1}, prio {prio})", o.utility),
+                    None => format!("u {u:.1} (not offered, prio {prio})"),
+                },
+                None => format!("no utility (prio {prio})"),
+            }
+        };
+        out.push(format!("{}: {why}", d.name));
+    }
+    if out.is_empty() {
+        return;
+    }
+    let stop_u = opts.iter().find(|o| o.act.is_none()).map_or(0.0, |o| o.utility);
+    let n = g.player(p).name;
+    let (hc, hv) = hold_value(g, p, &s);
+    let hold = hc.map_or("none".to_string(), |c| format!("{} {hv:.1}", g.db.get(c).name));
+    let plan = crate::impls::t6_plans::hold_up(g, p).unwrap_or(0.0);
+    let near = s.combo_near;
+    let (mana, hand) = (s.mana, s.hand);
+    crate::glog!(
+        g,
+        "      [{n} stops (u {stop_u:.1}; hold {hold}, plan {plan:.1}, near {near}), mana {mana}, hand {hand}; payable: {}]",
+        out.join("; ")
+    );
+}
+
 /// brain.main: p's main phase. The look-ahead picks when it's on; otherwise (or if its pick can't be made) the
 /// heuristic samples an order and makes the first play that works.
 pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
@@ -1312,6 +1367,7 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
             explain(g, p, &labels(&opts), &lbl, "decides");
             let Some(a) = &o.act else {
                 crate::gf_audit::stop(g, p, &opts, i, true); // --- ai-audit
+                stop_diag(g, p, &opts);
                 return Ok(());
             };
             if act::perform(g, p, a)? {
@@ -1328,6 +1384,7 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
             let Some(a) = &o.act else {
                 explain(g, p, &labels(&opts), &o.label, "decides");
                 crate::gf_audit::stop(g, p, &opts, i, false); // --- ai-audit
+                stop_diag(g, p, &opts);
                 return Ok(());
             };
             if act::perform(g, p, a)? {
