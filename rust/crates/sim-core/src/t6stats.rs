@@ -76,6 +76,7 @@ fn card(g: &Game, c: CardId) -> String {
 
 /// q's counterspell `ctr` countered p's spell or ability
 pub fn counter_hit(g: &mut Game, q: PlayerId, ctr: CardId, p: PlayerId) {
+    crate::holdstats::counter_hit(g, q, p);
     if is_t6(g, q) {
         let k = format!("ix|counter|{}|{}", card(g, ctr), g.player(p).key);
         bump(g, q, k);
