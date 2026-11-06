@@ -2166,9 +2166,23 @@ fn greaves_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     crate::glog!(g, "  {} moves Lightning Greaves to {} (for an Aura)", pname(g, p), name_of(g, to));
-    if ability_window(g, p, Some(src), "equip {0}", None, Some(to))? && on_bf(g, to) {
-        g.perm_mut(src).attached = Some(to);
-    }
+    ability_run_w(g, p, Some(src), None, "equip {0}", None, Some(to), 0.0, |g, is_copy| {
+        let mut to = to;
+        if is_copy && crate::human::is_human(g, p) {
+            // "you may choose a new target for the copy" (a person's Rings of Brighthearth / Peter Parker's Camera)
+            let now: Vec<PermId> = creatures(g, p).into_iter().filter(|&m| m != src).collect();
+            let prompt = "The copy of Lightning Greaves' equip: attach it to which creature?";
+            if !now.is_empty()
+                && let Some(x) = crate::human::cards::pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?
+            {
+                to = x;
+            }
+        }
+        if on_bf(g, to) {
+            g.perm_mut(src).attached = Some(to);
+        }
+        Ok(())
+    })?;
     Ok(true)
 }
 

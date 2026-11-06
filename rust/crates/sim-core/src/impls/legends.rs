@@ -1795,23 +1795,23 @@ fn jar_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     leave(g, src)?;
     let cd = g.perm(src).cd.unwrap();
     g.player_mut(p).gy.push(cd);
-    if !ability_window_card(g, p, cd, "wheel for seven", None, None)? {
-        return Ok(true);
-    }
-    let mut due = vec![];
-    for i in 0..g.players.len() {
-        let q = PlayerId(i as u8);
-        if !g.player(q).alive {
-            continue;
+    crate::engine::stack::ability_run(g, p, None, Some(cd), "wheel for seven", None, None, |g| {
+        let mut due = vec![];
+        for i in 0..g.players.len() {
+            let q = PlayerId(i as u8);
+            if !g.player(q).alive {
+                continue;
+            }
+            let pl = g.player_mut(q);
+            let held = std::mem::take(&mut pl.hand);
+            pl.exile.extend(held.iter().copied());
+            due.push((q, held));
+            draw(g, q, 7, false)?;
         }
-        let pl = g.player_mut(q);
-        let held = std::mem::take(&mut pl.hand);
-        pl.exile.extend(held.iter().copied());
-        due.push((q, held));
-        draw(g, q, 7, false)?;
-    }
-    g.jar_due.extend(due);
-    crate::glog!(g, "  {} cracks Memory Jar", pname(g, p));
+        g.jar_due.extend(due);
+        crate::glog!(g, "  {} cracks Memory Jar", pname(g, p));
+        Ok(())
+    })?;
     Ok(true)
 }
 

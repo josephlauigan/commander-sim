@@ -69,12 +69,24 @@ fn pool(g: &mut Game, p: PlayerId, mana: &[(char, u32)]) {
     }
 }
 
+thread_local! {
+    /// the second board: an empty hand, no spare permanents and little mana, where the AI's own conditions for using an
+    /// ability (a small hand, mana to spare ...) differ from the first board's
+    static LEAN: std::cell::Cell<bool> = const { std::cell::Cell::new(false) };
+}
+
 /// the board every case starts from
 fn board(g: &mut Game) {
     for b in ["Plains", "Island", "Swamp", "Mountain", "Forest"] {
         lands(g, P0, b, 3, false);
     }
     perm(g, P0, "Rings of Brighthearth");
+    if LEAN.with(|l| l.get()) {
+        token(g, P0, 2);
+        token(g, P1, 2);
+        pool(g, P0, &[('W', 2), ('U', 2), ('B', 2), ('R', 14), ('G', 2), ('C', 4)]);
+        return;
+    }
     token(g, P0, 2);
     let big = token(g, P0, 4);
     g.perm_mut(big).ttypes.push("assembly-worker");
@@ -213,7 +225,7 @@ fn run_case(key: &str, name: &str, spot: Spot, k: usize, step: Step) -> Out {
                 } else {
                     human::abilities_of(&mut g, P0, m).map(|v| v.into_iter().map(|a| a.0).collect()).unwrap_or_default()
                 };
-                let Some(label) = labels.get(k).cloned() else { return Out::NotExercised("no such ability".into()) };
+                let Some(label) = labels.get(k).cloned() else { return Out::NotExercised(format!("no such ability (the menu: {labels:?})")) };
                 (label, None)
             }
             None => {
@@ -361,6 +373,9 @@ fn sweep(decks: &[&str]) -> BTreeMap<String, Out> {
                         best = Some(match (best, o) {
                             (None, o) => o,
                             (Some(Out::Offered), _) | (_, Out::Offered) => Out::Offered,
+                            (Some(Out::NotExercised(a)), Out::NotExercised(b)) => {
+                                Out::NotExercised(if a.starts_with("no such") { b } else { a })
+                            }
                             (Some(Out::NotExercised(_)), o) => o,
                             (Some(b), Out::NotExercised(_)) => b,
                             (Some(b), _) => b,
@@ -415,9 +430,35 @@ const EXCEPTIONS: &[(&str, &str)] = &[
     ("thanos: Lion's Eye Diamond #0", "a mana ability (rule 605): Rings does not copy it"),
 ];
 
+/// both boards: a key is bad if either board shows it unanswered, offered if either board offers it
+fn both_boards() -> BTreeMap<String, Out> {
+    let mut res = sweep(DECKS);
+    LEAN.with(|l| l.set(true));
+    let lean = sweep(DECKS);
+    LEAN.with(|l| l.set(false));
+    for (k, v) in lean {
+        let merged = match (res.remove(&k), v) {
+            (None, v) => v,
+            (Some(a), b) => {
+                let rank = |o: &Out| match o {
+                    Out::Panicked(_) => 4,
+                    Out::NotOffered => 3,
+                    Out::NoCopy => 2,
+                    Out::Offered => 1,
+                    Out::NotExercised(_) => 0,
+                };
+                // the worse of the two shows, except that a board where nothing could be exercised says nothing
+                if matches!(a, Out::NotExercised(_)) { b } else if matches!(b, Out::NotExercised(_)) { a } else if rank(&a) >= rank(&b) { a } else { b }
+            }
+        };
+        res.insert(k, merged);
+    }
+    res
+}
+
 #[test]
 fn every_ability_a_person_can_use_offers_the_rings_copy() {
-    let res = sweep(DECKS);
+    let res = both_boards();
     let mut bad: Vec<String> = vec![];
     let mut stale: Vec<String> = vec![];
     let mut offered = 0;
@@ -450,4 +491,45 @@ fn every_ability_a_person_can_use_offers_the_rings_copy() {
 #[test]
 fn the_sweep_covers_the_decks_with_rings() {
     assert!(DECKS.contains(&"karn") && DECKS.contains(&"thrasios"));
+}
+
+/// (scan) the permanents of the owned decks whose abilities reach a person through the AI's `options` hook (no person
+/// path of their own in `cards::abilities`, karn.rs or cloud.rs): their `ability_window` calls are the AI's too
+#[test]
+#[ignore]
+fn scan_option_hooks() {
+    let all = json_file("decks.json");
+    let db = db();
+    for d in all["mine"].as_array().unwrap() {
+        let key = d["key"].as_str().unwrap();
+        let mut names: Vec<String> = d["cards"].as_array().unwrap().iter().filter_map(|c| c.as_str().map(String::from)).collect();
+        names.sort();
+        names.dedup();
+        for name in names {
+            let Some(c) = db.id(&name) else { continue };
+            let dd = db.get(c);
+            if !(dd.perm || dd.land) {
+                continue;
+            }
+            let r = catch_unwind(AssertUnwindSafe(|| -> String {
+                let mut g: Game = table(&[key, "seph"]);
+                g.humans.add(P0, Arc::new(ScriptHuman::new(vec![])));
+                let m = place(&mut g, &name, dd.land);
+                let imp = g.registry.get(c).map(|i| (i.options.is_some(), i.land_options.is_some())).unwrap_or((false, false));
+                let own = if dd.land {
+                    sim_core::human::karn::owns_land(&g, m)
+                } else {
+                    sim_core::human::cards::abilities(&g, P0, m).is_some()
+                        || sim_core::human::karn::owns_perm(&g, m)
+                        || sim_core::human::cloud::owns_perm(&g, m)
+                };
+                format!("own={own} options={} land_options={}", imp.0, imp.1)
+            }));
+            if let Ok(s) = r {
+                if s.contains("options=true") || s.contains("land_options=true") {
+                    eprintln!("HOOK {key}: {name} {s}");
+                }
+            }
+        }
+    }
 }

@@ -1093,11 +1093,11 @@ fn staff_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     if !live(g, src) || !infinite_mana(g, p) {
         return Ok(false);
     }
-    if !ability_window(g, p, Some(src), "draw cards (infinite mana)", Some(8.0), None)? {
-        return Ok(true);
-    }
-    let n = staff_draw_down(g, p)?;
-    crate::glog!(g, "    {} draws {n} cards with Staff of Domination and infinite mana", pname(g, p));
+    ability_run(g, p, Some(src), None, "draw cards (infinite mana)", Some(8.0), None, |g| {
+        let n = staff_draw_down(g, p)?;
+        crate::glog!(g, "    {} draws {n} cards with Staff of Domination and infinite mana", pname(g, p));
+        Ok(())
+    })?;
     Ok(true)
 }
 

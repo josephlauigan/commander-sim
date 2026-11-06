@@ -688,11 +688,12 @@ fn lathliss_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     pay(g, p, k, &pips, false)?;
-    if ability_window(g, p, Some(src), &format!("Dragons get +{k}/+0"), None, None)? {
+    crate::engine::stack::ability_run(g, p, Some(src), None, &format!("Dragons get +{k}/+0"), None, None, |g| {
         for m in dragons_of(g, p) {
             crate::impls::common::eot(g, m, k as i32, 0);
         }
-    }
+        Ok(())
+    })?;
     Ok(true)
 }
 
