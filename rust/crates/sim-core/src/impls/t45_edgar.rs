@@ -149,7 +149,7 @@ fn steal_pick(g: &Game, p: PlayerId) -> Option<PermId> {
 }
 
 /// p takes m for good; it becomes a Vampire in addition to its other types
-fn take_as_vampire(g: &mut Game, p: PlayerId, m: PermId, by: &str) -> Res {
+pub(crate) fn take_as_vampire(g: &mut Game, p: PlayerId, m: PermId, by: &str) -> Res {
     if crate::engine::control::steal(g, p, m, Duration::Permanent)? {
         let x = g.perm_mut(m);
         if !x.ttypes.contains(&"vampire") {

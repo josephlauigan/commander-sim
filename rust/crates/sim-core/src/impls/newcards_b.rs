@@ -150,6 +150,9 @@ pub(crate) fn marvin_options(g: &mut Game, src: Src, p: PlayerId, post: Option<b
             }
             let Some(f) = g.registry.get(cd).and_then(|c| c.options) else { continue };
             let dn = g.db.get(cd).name.clone();
+            if NOT_ACTIVATED.contains(&&*dn) {
+                continue; // its `options` are casting permissions / prepared spells, not activated abilities
+            }
             for mut o in f(g, src, p, post)? {
                 // "Transform this creature" does nothing to Marvin (it has no other face): not offered
                 if &*dn == "Bloodline Keeper // Lord of Lineage" && o.label.starts_with("transform") {
@@ -181,6 +184,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     }
     if let Some(c) = card_if(r, db, MARVIN)? {
         c.options = Some(marvin_options);
+        c.combat_damage = Some(super::partials::hope_hit); // Hope of Ghirapur's ability: dealt combat damage by it
     }
     Ok(())
 }
@@ -217,3 +221,30 @@ pub fn stagger_bonus(g: &Game, p: PlayerId, q: PlayerId) -> f64 {
         .count();
     if blockers == 0 { 2.5 } else { 0.0 }
 }
+
+/// --- model-gaps-a4: creatures whose `options` hook offers what is not an activated ability (casting from the top of the
+/// library or the graveyard, a prepared copy of a spell, the paired creature's ability): Marvin does not get these
+pub const NOT_ACTIVATED: &[&str] = &[
+    "Abigale, Poet Laureate // Heroic Stanza",
+    "Blazing Firesinger",
+    "Blazing Firesinger // Seething Song",
+    "Conspicuous Snoop",
+    "Deadeye Navigator",
+    "Emeritus of Conflict // Lightning Bolt",
+    "Emeritus of Ideation // Ancestral Recall",
+    "Emeritus of Woe // Demonic Tutor",
+    "Grave Researcher // Reanimate",
+    "Korlessa, Scale Singer",
+    "Leech Collector // Bloodletting",
+    "Muldrotha, the Gravetide",
+    "Realmwalker",
+    "Restless Bloodseeker // Bloodsoaked Reveler",
+    "Rivaz of the Claw",
+    "Sanar, Unfinished Genius // Wild Idea",
+    "Silas Renn, Seeker Adept",
+    "Six",
+    "Skycoach Conductor // All Aboard",
+    "Studious First-Year",
+    "The Reality Chip",
+    "Valgavoth, Terror Eater",
+];

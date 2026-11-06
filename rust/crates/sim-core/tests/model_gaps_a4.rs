@@ -586,3 +586,192 @@ fn an_equip_step_can_be_copied_by_a_camera_and_responded_to() {
     assert!(g.perm(cam).tapped);
 }
 
+
+// ======================================================== item 2: a person chooses what Marvin borrows
+use sim_core::human::marvin_hooks::NAMES as HOOK_NAMES;
+use sim_core::human::model_gaps_a4::BORROWED;
+use std::sync::atomic::{AtomicUsize, Ordering};
+
+/// the creatures whose `options` hook offers no choice (nothing to target, pick, sacrifice or search for): they stay
+/// hooks for a person, listed by `abilities_of` as the AI's option
+const NO_CHOICE: &[&str] = &[
+    "Allosaurus Shepherd",
+    "Battle Cry Goblin",
+    "Bloodline Keeper // Lord of Lineage",
+    "Bristly Bill, Spine Sower",
+    "Deadpool, Trading Card",
+    "Elvish Clancaller",
+    "Elvish Warmaster",
+    "Gilded Goose",
+    "Incubation Druid",
+    "Joraga Treespeaker",
+    "Kaza, Roil Chaser",
+    "King Darien XLVIII",
+    "Krenko, Mob Boss",
+    "Lathliss, Dragon Queen",
+    "Pteramander",
+    "Razia, Boros Archangel",
+    "Savvy Hunter",
+    "Sawblade Scamp",
+    "Shalai, Voice of Plenty",
+    "Speaker of the Heavens",
+    "Thunderclap Drake",
+    "Tolsimir Wolfblood",
+    "Twilight Drover",
+    "Marvin, Murderous Mimic",
+];
+
+#[test]
+fn every_creature_with_an_options_hook_is_a_person_path_a_no_choice_hook_or_not_an_ability() {
+    let g = tbl();
+    let mut bad = vec![];
+    for d in g.db.iter().filter(|d| d.creature) {
+        let n: &str = &d.name;
+        let Some(cd) = g.db.id(n) else { continue };
+        if g.registry.get(cd).and_then(|c| c.options).is_none() {
+            continue;
+        }
+        let known = BORROWED.contains(&n)
+            || HOOK_NAMES.contains(&n)
+            || NO_CHOICE.contains(&n)
+            || sim_core::impls::newcards_b::NOT_ACTIVATED.contains(&n);
+        // a creature of the pool decks whose person path the Karn / Cloud / Sauron decks keep elsewhere
+        let elsewhere = matches!(n, "Walking Ballista" | "Demon of Fate's Design" | "Gingerbrute" | "Thrasios, Triton Hero");
+        if !known && !elsewhere {
+            bad.push(n.to_string());
+        }
+    }
+    assert!(bad.is_empty(), "creatures with a hook and no classification: {bad:?}");
+}
+
+/// a table with everything a borrowed ability could want: lands of every color, a full pool, cards in hands, libraries
+/// and graveyards, creatures of the types the costs ask for, opponents' creatures, artifacts, enchantments
+fn rich(donor: &str) -> (Game, PermId, PermId) {
+    let mut g = tbl();
+    main1(&mut g);
+    for l in ["Plains", "Island", "Swamp", "Mountain", "Forest"] {
+        lands(&mut g, P0, l, 3, true);
+    }
+    pool(&mut g, P0, &[('W', 6), ('U', 6), ('B', 6), ('R', 6), ('G', 6), ('C', 8)]);
+    g.player_mut(P0).treasures = 6;
+    g.player_mut(P0).foods = 2;
+    g.player_mut(P0).life = 30;
+    for _ in 0..2 {
+        let _ = perm(&mut g, P0, "Llanowar Elves");
+    }
+    for n in ["Llanowar Elves"; 12] {
+        let e = perm(&mut g, P0, n);
+        ready(&mut g, e);
+    }
+    for n in ["Goblin Guide", "Goblin Chieftain", "Mogg War Marshal", "Vampire Nighthawk", "Stromkirk Noble", "Elesh Norn, Grand Cenobite", "Mother of Runes", "Isamaru, Hound of Konda", "Sol Ring", "Mind Stone", "Relic of Progenitus"] {
+        if g.db.id(n).is_some() {
+            let x = perm(&mut g, P0, n);
+            ready(&mut g, x);
+        }
+    }
+    for n in ["Serra Angel", "Baneslayer Angel", "Grizzly Bears", "Vampire Nighthawk"] {
+        if g.db.id(n).is_some() {
+            let x = perm(&mut g, P1, n);
+            ready(&mut g, x);
+        }
+    }
+    for n in ["Sol Ring", "Pernicious Deed", "Rest in Peace"] {
+        if g.db.id(n).is_some() {
+            let _ = perm(&mut g, P1, n);
+        }
+    }
+    let ids: Vec<_> = ["Llanowar Elves", "Lightning Bolt", "Sol Ring", "Forest", "Serra Angel", "Swords to Plowshares", "Goblin Welder", "Mind Stone"]
+        .iter()
+        .filter(|n| g.db.id(n).is_some())
+        .map(|n| card(&g, n))
+        .collect();
+    for q in [P0, P1] {
+        g.player_mut(q).gy = ids.clone();
+        g.player_mut(q).hand = ids.iter().copied().take(4).collect();
+    }
+    let tops = vec![card(&g, "Llanowar Elves"); 8];
+    g.player_mut(P0).library.extend(tops);
+    let d = perm(&mut g, P0, donor);
+    ready(&mut g, d);
+    let m = perm(&mut g, P0, MARVIN);
+    ready(&mut g, m);
+    (g, d, m)
+}
+
+fn asking_person(g: &mut Game) -> Arc<AtomicUsize> {
+    let n = Arc::new(AtomicUsize::new(0));
+    let n2 = n.clone();
+    let h = ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        n2.fetch_add(1, Ordering::SeqCst);
+        if r.choices.is_empty() { Answer::Decline } else { Answer::Pick(0) }
+    });
+    g.humans.add(P0, Arc::new(h));
+    n
+}
+
+/// the borrowed abilities with a choice that stay quiet in the rich table, and why
+const QUIET: &[(&str, &str)] = &[
+    ("Balan, Wandering Knight", "attaches every Equipment: nothing to choose"),
+    ("Nicol Bolas, the Ravager", "the flip has nothing to choose"),
+    ("Resplendent Angel", "+2/+2 and lifelink: nothing to choose"),
+    ("Steel Hellkite", "the +1/+0 and the X: nothing to choose in the pump"),
+    ("Steel Overseer", "a counter on each artifact creature: nothing to choose"),
+    ("Urza, Lord High Artificer", "play the top card free: nothing to choose"),
+    ("Syr Konrad, the Grim", "each player mills: nothing to choose"),
+    ("Professional Face-Breaker", "sacrifices a Treasure: the Treasure is not a choice"),
+    ("Tinybones, Trinket Thief", "each opponent: nothing to choose"),
+    ("Ezuri, Renegade Leader", "all Elves: nothing to choose"),
+    ("Blightspeaker", "its search finds no Rebel in the test library"),
+    ("Ramosian Sergeant", "its search finds no Rebel in the test library"),
+    ("Jace's Archivist", "everyone discards and draws: nothing to choose"),
+    ("Scourge of Valkas", "{R}: +1/+0 has nothing to choose"),
+    ("Kefka, Court Mage // Kefka, Ruler of Ruin", "the opponents (AIs here) choose what they sacrifice"),
+    ("Siege-Gang Commander", "asks the target, the Goblin only when several: see its own test"),
+];
+
+#[test]
+fn a_person_using_each_borrowed_ability_is_asked_and_never_gets_the_ais_choice() {
+    let all: Vec<&str> = BORROWED.iter().chain(HOOK_NAMES.iter()).copied().collect();
+    let mut silent = vec![];
+    let mut missing = vec![];
+    let mut hooks = vec![];
+    for name in all {
+        if (name.starts_with("Ramosian") && name != "Ramosian Sergeant") || name == "Defiant Vanguard" {
+            continue; // the same Rebel searchers are walked through the Sergeant
+        }
+        let (mut g, _d, m) = rich(name);
+        let _ = asking_person(&mut g);
+        let want = format!("Marvin copies {name}:");
+        let labels: Vec<(String, bool)> = abilities_of(&mut g, P0, m)
+            .unwrap()
+            .into_iter()
+            .filter(|(l, _)| l.starts_with(&want))
+            .map(|(l, k)| (l, matches!(k, AbilityKind::Extra(_))))
+            .collect();
+        if labels.is_empty() {
+            missing.push(name);
+            continue;
+        }
+        if labels.iter().any(|(_, extra)| !extra) {
+            hooks.push(name);
+        }
+        for (i, (label, _)) in labels.iter().enumerate() {
+            let (mut g, _d, m) = rich(name);
+            let asked = asking_person(&mut g);
+            let abil = abilities_of(&mut g, P0, m).unwrap();
+            let (l2, kind) = abil.into_iter().filter(|(l, _)| l.starts_with(&want)).nth(i).unwrap();
+            assert_eq!(&l2, label);
+            let AbilityKind::Extra(f) = kind else { continue };
+            let why = f(&mut g, P0, m).unwrap_or_else(|e| panic!("{label}: {e:?}"));
+            if asked.load(Ordering::SeqCst) == 0 && why.is_none() && !QUIET.iter().any(|q| q.0 == name) {
+                silent.push(format!("{label} (done without a question)"));
+            }
+        }
+    }
+    assert!(missing.is_empty(), "no borrowed ability listed for a person: {missing:?}");
+    assert!(hooks.is_empty(), "borrowed as the AI's hook (the AI picks the target) for a person: {hooks:?}");
+    assert!(silent.is_empty(), "a person was not asked anything: {silent:#?}");
+}

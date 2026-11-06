@@ -902,7 +902,7 @@ fn kefka_borrowed_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bo
 }
 
 /// pay {8} and activate the ability from `src`; the permanent that transforms is `kefka`
-fn kefka_ruin_do(g: &mut Game, src: PermId, p: PlayerId, kefka: PermId) -> Res<bool> {
+pub(crate) fn kefka_ruin_do(g: &mut Game, src: PermId, p: PlayerId, kefka: PermId) -> Res<bool> {
     if !g.perm(src).on_bf || g.perm(src).owner != p || !can_pay(g, p, 8, "", false) {
         return Ok(false);
     }

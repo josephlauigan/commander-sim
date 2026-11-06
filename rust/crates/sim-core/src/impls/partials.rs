@@ -143,7 +143,7 @@ pub(crate) fn ability_window_card(g: &mut Game, p: PlayerId, cd: CardId, name: &
     stack_window(g, p, it)
 }
 
-fn turn_now(g: &Game) -> Val {
+pub(crate) fn turn_now(g: &Game) -> Val {
     Val::Stamp(g.turn_stamp())
 }
 
@@ -234,6 +234,20 @@ fn hordechief_blocks(
         .copied()
         .filter(|&b| g.is_creature(b) && !g.perm(b).tapped && !g.perm(b).phased)
         .collect();
+    if crate::human::is_human(g, p) {
+        // --- model-gaps-a4: "you choose how those creatures block": the person assigns each blocker
+        for b in bs {
+            let ok: Vec<PermId> = atk.iter().copied().filter(|&a| on(g, p, a) && crate::engine::combat::can_block(g, b, a)).collect();
+            if ok.is_empty() {
+                continue;
+            }
+            let labels: Vec<String> = ok.iter().map(|&a| crate::human::legal::describe_target(g, p, crate::human::Target::Perm(a))).collect();
+            let prompt = format!("Brutal Hordechief: {} blocks which attacker?", g.perm(b).name);
+            let k = crate::human::choices::choose_one(g, p, "choose", &prompt, &labels)?;
+            assign.push((ok[k], b));
+        }
+        return Ok(());
+    }
     for b in bs {
         let good: Vec<PermId> = atk
             .iter()
@@ -2100,7 +2114,7 @@ fn hireling_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 }
 
 // ======================================================== Hope of Ghirapur
-fn hope_hit(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, _dmg: i32) -> Res {
+pub(crate) fn hope_hit(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, _dmg: i32) -> Res {
     if a == src {
         let now = turn_now(g);
         g.perm_mut(src).data.set(DataKey::Hit, Val::List(vec![now, Val::Player(d)]));
@@ -2806,7 +2820,7 @@ fn starfield_gone(g: &mut Game, _src: Src, m: PermId) -> Res {
 }
 
 // ======================================================== Tekuthal: indestructible counter
-fn tekuthal_pool(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
+pub(crate) fn tekuthal_pool(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
     g.player(p)
         .perms
         .iter()
@@ -3365,4 +3379,13 @@ fn register_phase6(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.etb = Some(whirler_etb);
     at_once(c, Event::Etb, false);
     Ok(())
+}
+
+/// --- model-gaps-a4: the player Hope of Ghirapur (or Marvin using its ability) dealt combat damage this turn
+pub(crate) fn hit_players(g: &Game, src: PermId) -> Vec<PlayerId> {
+    let Some(Val::List(hit)) = data_val(g, src, DataKey::Hit) else { return vec![] };
+    match (&hit[0], &hit[1]) {
+        (Val::Stamp(st), Val::Player(d)) if *st == g.turn_stamp() && g.player(*d).alive => vec![*d],
+        _ => vec![],
+    }
 }

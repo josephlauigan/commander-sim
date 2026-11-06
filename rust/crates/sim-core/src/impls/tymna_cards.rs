@@ -1708,7 +1708,7 @@ fn skrelv_can_pay(g: &Game, p: PlayerId, floor: i32) -> bool {
 
 /// the ability: pay {W/P} and tap Skrelv; `target` (another creature of p's) gets toxic 1 and hexproof from colour
 /// `ch` until end of turn, and can't be blocked by creatures of that colour. Returns false when it isn't legal.
-fn skrelv_activate(g: &mut Game, s: PermId, p: PlayerId, target: PermId, ch: char, floor: i32) -> Res<bool> {
+pub(crate) fn skrelv_activate(g: &mut Game, s: PermId, p: PlayerId, target: PermId, ch: char, floor: i32) -> Res<bool> {
     let Some((hx, nb)) = skrelv_kws(ch) else { return Ok(false) };
     if !skrelv_ready(g, s, p)
         || target == s

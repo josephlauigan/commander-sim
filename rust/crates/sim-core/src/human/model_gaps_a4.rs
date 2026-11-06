@@ -34,7 +34,7 @@ pub fn abilities(_g: &Game, _p: PlayerId, _m: PermId, nm: &str) -> Option<Vec<Pe
         mg::EZURI => vec![ability("{2}{G}{G}{G}: Elf creatures you control get +3/+3 and trample until end of turn", ezuri)],
         KIKI => vec![ability("{T}: create a token that's a copy of target nonlegendary creature you control, with haste; sacrifice it at the next end step", kiki)],
         FANG => vec![ability("{B}, sacrifice X Squirrels: target creature gets +X/-X until end of turn", fang)],
-        _ => return None,
+        _ => return super::marvin_hooks::abilities(nm),
     })
 }
 
@@ -193,7 +193,31 @@ fn fang(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
 // ------------------------------------------------------------------ Marvin, Murderous Mimic: the person's choices
 /// the creatures whose hand-written abilities Marvin uses through the person's own path (the same questions, Marvin as
 /// the source and the one that pays); the other hand-written abilities Marvin has are the AI's options (`abilities_of`)
-pub const BORROWED: [&str; 22] = [
+pub const BORROWED: &[&str] = &[
+    "Balan, Wandering Knight",
+    "Brass Squire",
+    "Cabal Patriarch",
+    "Cid, Freeflier Pilot",
+    "Dauthi Voidwalker",
+    "Emry, Lurker of the Loch",
+    "Garth One-Eye",
+    "Gix, Yawgmoth Praetor",
+    "Jaxis, the Troublemaker",
+    "Kefka, Court Mage // Kefka, Ruler of Ruin",
+    "Kuldotha Forgemaster",
+    "Nicol Bolas, the Ravager",
+    "Resplendent Angel",
+    "Scion of the Ur-Dragon",
+    "Steel Hellkite",
+    "Steel Overseer",
+    "Stoneforge Mystic",
+    "Thanos, the Mad Titan",
+    "Thrasios, Triton Hero",
+    "Triskelion",
+    "Urza, Lord High Artificer",
+    "Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal",
+    "Whipcorder",
+    "Yawgmoth, Thran Physician",
     KIKI,
     FANG,
     mg::SIEGE,
@@ -221,7 +245,7 @@ pub const BORROWED: [&str; 22] = [
 /// is this hook option (a label from Marvin's `options`) one a borrowed person path replaces?
 pub fn replaced_label(label: &str) -> bool {
     label.starts_with("Marvin (Kiki-Jiki)")
-        || BORROWED.iter().any(|n| label.starts_with(&format!("Marvin copies {n}:")))
+        || BORROWED.iter().chain(super::marvin_hooks::NAMES.iter()).any(|n| label.starts_with(&format!("Marvin copies {n}:")))
 }
 
 /// the abilities Marvin, Murderous Mimic (m) has from the creatures p controls that are in `BORROWED`, as the person's
@@ -239,14 +263,31 @@ pub fn marvin_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
             continue;
         }
         let nm = g.db.get(x.cd.unwrap()).name.to_string();
-        if seen.contains(&x.name) || !BORROWED.contains(&nm.as_str()) || crate::engine::values::stopped(g, &nm) {
+        if seen.contains(&x.name) || !(BORROWED.contains(&nm.as_str()) || super::marvin_hooks::NAMES.contains(&nm.as_str())) || crate::engine::values::stopped(g, &nm) {
             continue;
         }
         if crate::impls::bulk_white::is_face_down(g, d) {
             continue;
         }
         seen.push(x.name);
-        for mut a in super::cards::abilities(g, p, d).unwrap_or_default() {
+        let mut list: Vec<PermAbility> = match nm.as_str() {
+            // the text names the creature: its counter / transformation is the donor's
+            "Tekuthal, Inquiry Dominus" => vec![ability("{1}{U/P}{U/P}, remove three counters from among other artifacts, creatures and planeswalkers you control: an indestructible counter on Tekuthal", move |g, p, m| super::marvin_hooks::tekuthal(g, p, m, d))],
+            "Kefka, Court Mage // Kefka, Ruler of Ruin" => vec![ability("{8}: each opponent sacrifices a permanent of their choice; transform Kefka (sorcery speed)", move |g, p, m| super::marvin_hooks::kefka(g, p, m, d))],
+            _ => vec![],
+        };
+        if list.is_empty() {
+            list.extend(super::abilities::permanent_abilities(g, p, d));
+            list.extend(super::karn::perm_abilities(g, p, d));
+            list.extend(super::cloud::perm_abilities(g, p, d));
+            list.extend(super::cards::abilities(g, p, d).unwrap_or_default());
+        }
+        let mut labels: Vec<String> = vec![];
+        for mut a in list {
+            if labels.contains(&a.label) {
+                continue;
+            }
+            labels.push(a.label.clone());
             a.label = format!("Marvin copies {nm}: {}", a.label);
             out.push(a);
         }

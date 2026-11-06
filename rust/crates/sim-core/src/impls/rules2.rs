@@ -1781,7 +1781,7 @@ fn spinner(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<O
     Ok(vec![ability(0.5 * x as f64, "Destiny Spinner animates a land".into(), src, spinner_go, x as i64)])
 }
 
-fn spinner_x(g: &Game, p: PlayerId) -> i32 {
+pub(crate) fn spinner_x(g: &Game, p: PlayerId) -> i32 {
     g.player(p).perms.iter().filter(|&&m| card_is(g, m, Types::ENCHANTMENT) && !g.perm(m).phased).count() as i32
 }
 
