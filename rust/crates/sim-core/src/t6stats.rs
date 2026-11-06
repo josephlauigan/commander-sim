@@ -240,14 +240,8 @@ pub fn speed_decided(g: &mut Game, p: PlayerId, label: &str) {
     bump(g, p, format!("{}|{l}", if ready { "spx" } else { "spa" }));
     if !ready && l.starts_with("stop") {
         // passed while one tutor away: which tutors it held (`spah|<card>`, one per tutor in hand)
-        use crate::tag::Tag;
-        let held: Vec<String> = g
-            .player(p)
-            .hand
-            .iter()
-            .filter(|&&c| g.db.get(c).tags.has(Tag::Tut) || g.db.get(c).tags.has(Tag::Xtutor))
-            .map(|&c| card(g, c))
-            .collect();
+        // --- c1-t6-lines: only the tutors that could take a missing piece (`combos::useful_tutors`)
+        let held: Vec<String> = crate::impls::combos::useful_tutors(g, p).into_iter().map(|c| card(g, c)).collect();
         for t in held {
             bump(g, p, format!("spah|{t}"));
         }
