@@ -2844,33 +2844,11 @@ fn tekuthal(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<
 }
 
 fn tekuthal_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    tekuthal_do(g, src, p, src)
+    tekuthal_do(g, src, p)
 }
 
-/// Marvin, Murderous Mimic has Tekuthal's ability while p controls Tekuthal: Marvin pays and removes the counters from
-/// the other permanents (Tekuthal's included), and the indestructible counter goes on Tekuthal, which the text names
-pub fn tekuthal_borrowed(g: &mut Game, src: PermId, p: PlayerId, post: Option<bool>, tek: PermId) -> Vec<Opt> {
-    if g.perm(tek).data.truthy(DataKey::Indestr) || post.is_none() || g.perm(src).owner != p {
-        return vec![];
-    }
-    let pool = tekuthal_pool(g, p, src);
-    let have: i32 = pool.iter().map(|&m| g.perm(m).plus).ssum()
-        + pool.iter().map(|&m| (g.perm(m).loyalty.unwrap_or(0) - 3).max(0)).ssum();
-    if have < 3 || !can_pay(g, p, 1, "", false) || (!can_pay(g, p, 1, "UU", false) && g.player(p).life < 20) {
-        return vec![];
-    }
-    vec![opt_ability(1.5 + 0.2 * pval(g, tek), "Tekuthal indestructible".into(), src, tekuthal_borrowed_go, tek.0 as i64)]
-}
-
-fn tekuthal_borrowed_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
-    let tek = PermId(arg as u32);
-    if !g.perm(tek).on_bf {
-        return Ok(false);
-    }
-    tekuthal_do(g, src, p, tek)
-}
-
-fn tekuthal_do(g: &mut Game, src: PermId, p: PlayerId, target: PermId) -> Res<bool> {
+/// the indestructible counter goes on the source (rule 201.5: "Tekuthal" in the text means the permanent that has the ability, Marvin when it borrows it)
+fn tekuthal_do(g: &mut Game, src: PermId, p: PlayerId) -> Res<bool> {
     let pool = tekuthal_pool(g, p, src);
     if !can_pay(g, p, 1, "", false) {
         return Ok(false);
@@ -2900,8 +2878,8 @@ fn tekuthal_do(g: &mut Game, src: PermId, p: PlayerId, target: PermId) -> Res<bo
             left -= 1;
         }
     }
-    g.perm_mut(target).data.set(DataKey::Indestr, Val::Bool(true));
-    crate::glog!(g, "  {} puts an indestructible counter on Tekuthal", pname(g, p));
+    g.perm_mut(src).data.set(DataKey::Indestr, Val::Bool(true));
+    crate::glog!(g, "  {} puts an indestructible counter on {}", pname(g, p), &*g.perm(src).name);
     Ok(true)
 }
 

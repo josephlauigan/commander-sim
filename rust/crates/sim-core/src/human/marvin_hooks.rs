@@ -2017,7 +2017,7 @@ fn hordechief(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     })
 }
 
-// ================================================================== batch 3: Tekuthal, Kefka (Marvin names the donor), Scourge, Lathril
+// ================================================================== batch 3: Tekuthal, Kefka, Scourge, Lathril
 /// the person pays `n` hybrid-Phyrexian pips of colour `c` ({c} or 2 life each): the mana pips and the life, or why not
 fn phyrexian(g: &Game, p: PlayerId, gn: u32, n: usize, c: char, what: &str) -> Res<Result<(String, i32), String>> {
     let mut pips = String::new();
@@ -2047,7 +2047,7 @@ fn phyrexian(g: &Game, p: PlayerId, gn: u32, n: usize, c: char, what: &str) -> R
 }
 
 /// Tekuthal: {1}{U/P}{U/P}, remove three counters from among other artifacts, creatures and planeswalkers you control:
-/// an indestructible counter on Tekuthal (`tek`, which the text names; `m` is the source: Tekuthal, or Marvin using it)
+/// an indestructible counter on it (`tek`: the source, Tekuthal, or Marvin using it, rule 201.5)
 pub fn tekuthal(g: &mut Game, p: PlayerId, m: PermId, tek: PermId) -> Res<Why> {
     const W: &str = "Tekuthal";
     if !live(g, tek) {
@@ -2105,7 +2105,8 @@ pub fn tekuthal(g: &mut Game, p: PlayerId, m: PermId, tek: PermId) -> Res<Why> {
     })
 }
 
-/// Kefka: {8}: each opponent sacrifices a permanent of their choice; transform Kefka (`kef`, which the text names)
+/// Kefka: {8}: each opponent sacrifices a permanent of their choice; "transform Kefka" is about the source (Marvin: nothing
+/// transforms, rule 201.5 and 701.28c). `kef` is the donor, which must not have transformed
 pub fn kefka(g: &mut Game, p: PlayerId, m: PermId, kef: PermId) -> Res<Why> {
     if !live(g, kef) || g.perm(kef).data.truthy(DataKey::Ruin) {
         return say("Kefka has already transformed.");
@@ -2116,7 +2117,7 @@ pub fn kefka(g: &mut Game, p: PlayerId, m: PermId, kef: PermId) -> Res<Why> {
     if let Some(w) = mana::cost_problem(g, p, 8, "") {
         return say(format!("Can't activate Kefka. {w}"));
     }
-    if !crate::impls::mine::kefka_ruin_do(g, m, p, kef)? {
+    if !crate::impls::mine::kefka_ruin_do(g, m, p)? {
         return say("Can't activate Kefka now.");
     }
     crate::engine::life::check_state(g)?;

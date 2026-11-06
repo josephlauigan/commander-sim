@@ -810,8 +810,9 @@ fn marvin_chittering_witch_the_person_picks_the_creature_to_sacrifice_and_the_ta
     assert!(marshals.iter().any(|&x| !g.perm(x).on_bf), "the person's choice of sacrifice");
 }
 
+// rule 201.5: an ability that names its object means the object that has it: the indestructible counter goes on Marvin
 #[test]
-fn marvin_tekuthal_puts_the_indestructible_counter_on_tekuthal_and_the_person_picks_the_counters() {
+fn marvin_tekuthal_puts_the_indestructible_counter_on_marvin_and_the_person_picks_the_counters() {
     let (mut g, tek, m) = rich("Tekuthal, Inquiry Dominus");
     let elves = perms_named(&g, P0, "Llanowar Elves");
     for &e in elves.iter().take(3) {
@@ -819,9 +820,68 @@ fn marvin_tekuthal_puts_the_indestructible_counter_on_tekuthal_and_the_person_pi
     }
     person(&mut g, vec![rule("remove a counter", first)]);
     assert!(use_ability(&mut g, m, "Marvin copies Tekuthal").is_none());
-    assert!(g.perm(tek).data.truthy(sim_core::state::DataKey::Indestr), "the text names Tekuthal");
-    assert!(!g.perm(m).data.truthy(sim_core::state::DataKey::Indestr));
+    assert!(g.perm(m).data.truthy(sim_core::state::DataKey::Indestr), "the counter is on Marvin");
+    assert!(!g.perm(tek).data.truthy(sim_core::state::DataKey::Indestr), "not on Tekuthal");
     assert!(elves.iter().take(3).all(|&e| g.perm(e).plus == 0), "three counters were removed");
+    assert!(sim_core::engine::values::indestructible(&g, m), "Marvin is indestructible");
+}
+
+#[test]
+fn marvin_tekuthal_the_ai_puts_the_indestructible_counter_on_marvin() {
+    let (mut g, tek, m) = rich("Tekuthal, Inquiry Dominus");
+    let elves = perms_named(&g, P0, "Llanowar Elves");
+    for &e in elves.iter().take(3) {
+        g.perm_mut(e).plus = 1;
+    }
+    let o = opts(&mut g, m, Some(false));
+    let t = o.iter().find(|x| x.label.contains("Tekuthal")).expect("Marvin offers Tekuthal's ability");
+    assert!(run(&mut g, t));
+    assert!(g.perm(m).data.truthy(sim_core::state::DataKey::Indestr), "the counter is on Marvin");
+    assert!(!g.perm(tek).data.truthy(sim_core::state::DataKey::Indestr));
+    // Marvin has it now: the ability is not offered again, Tekuthal's own still is
+    assert!(opts(&mut g, m, Some(false)).iter().all(|x| !x.label.contains("Tekuthal")));
+}
+
+// "transform Kefka" names the creature that has the ability (rule 201.5); Marvin is not a double-faced card (701.28c)
+#[test]
+fn marvin_kefka_the_ai_makes_each_opponent_sacrifice_and_nothing_transforms() {
+    let (mut g, kefka, m) = rich("Kefka, Court Mage // Kefka, Ruler of Ruin");
+    let pow = sim_core::engine::values::epow(&g, m);
+    let before: Vec<usize> = [P1, P2].iter().map(|&q| g.player(q).perms.len() + g.player(q).lands.len()).collect();
+    let o = opts(&mut g, m, Some(false));
+    let k = o.iter().find(|x| x.label.contains("Kefka")).expect("Marvin offers Kefka's ability");
+    assert!(run(&mut g, k));
+    let after: Vec<usize> = [P1, P2].iter().map(|&q| g.player(q).perms.len() + g.player(q).lands.len()).collect();
+    assert!(after.iter().zip(&before).all(|(a, b)| a < b || *b == 0), "each opponent sacrificed {before:?} {after:?}");
+    assert!(!g.perm(kefka).data.truthy(sim_core::state::DataKey::Ruin), "Kefka is not transformed");
+    assert!(!g.perm(m).data.truthy(sim_core::state::DataKey::Ruin), "nor is Marvin");
+    assert_eq!(sim_core::engine::values::epow(&g, m), pow, "Marvin is the same size");
+    assert!(!g.perm(m).fly && !g.perm(kefka).fly);
+    assert!(g.player(P0).milestone.get("kefka").is_none(), "the Kefka deck's transformation milestone is not set");
+}
+
+#[test]
+fn marvin_kefka_a_person_does_the_same_and_nothing_transforms() {
+    let (mut g, kefka, m) = rich("Kefka, Court Mage // Kefka, Ruler of Ruin");
+    let pow = sim_core::engine::values::epow(&g, m);
+    let before = g.player(P1).perms.len() + g.player(P1).lands.len();
+    person(&mut g, vec![]);
+    let why = use_ability(&mut g, m, "Marvin copies Kefka");
+    assert!(why.is_none(), "{why:?}");
+    assert!(g.player(P1).perms.len() + g.player(P1).lands.len() < before, "an opponent sacrificed a permanent");
+    assert!(!g.perm(kefka).data.truthy(sim_core::state::DataKey::Ruin));
+    assert!(!g.perm(m).data.truthy(sim_core::state::DataKey::Ruin));
+    assert_eq!(sim_core::engine::values::epow(&g, m), pow);
+    // Kefka's own ability still transforms Kefka, for the AI and a person
+    let (mut g, kefka, _m) = rich("Kefka, Court Mage // Kefka, Ruler of Ruin");
+    let o = opts(&mut g, kefka, Some(false));
+    let k = o.iter().find(|x| x.label.contains("Kefka")).expect("Kefka's own {8}");
+    assert!(run(&mut g, k));
+    assert!(g.perm(kefka).data.truthy(sim_core::state::DataKey::Ruin), "Kefka transformed");
+    let (mut g, kefka, _m) = rich("Kefka, Court Mage // Kefka, Ruler of Ruin");
+    person(&mut g, vec![]);
+    assert!(use_ability(&mut g, kefka, "transform Kefka").is_none());
+    assert!(g.perm(kefka).data.truthy(sim_core::state::DataKey::Ruin), "Kefka transformed");
 }
 
 #[test]

@@ -876,11 +876,14 @@ fn kefka_ruin(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Ve
 }
 
 pub fn kefka_ruin_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    kefka_ruin_do(g, src, p, src)
+    kefka_ruin_do(g, src, p)
 }
 
 /// Marvin, Murderous Mimic has Kefka's {8} ability while its controller has Kefka, Court Mage (not yet transformed):
-/// Marvin pays and activates it, and the ability transforms Kefka (it names Kefka, not its source)
+/// Marvin pays and activates it. "Transform Kefka" names the object that has the ability (rule 201.5), which is Marvin,
+/// and a permanent that is not a double-faced card can't transform (701.28c): Marvin does the sacrifices and nothing
+/// transforms. Kefka's own plan (the transformation, 5/7 flier, the draws) is not served by it, so the AI weighs it as
+/// the edict it is.
 pub fn kefka_borrowed(g: &mut Game, src: PermId, p: PlayerId, post: Option<bool>, kefka: PermId) -> Vec<Opt> {
     let k = g.perm(kefka);
     if !k.on_bf || k.phased || k.data.truthy(DataKey::Ruin) || p != g.perm(src).owner {
@@ -889,8 +892,8 @@ pub fn kefka_borrowed(g: &mut Game, src: PermId, p: PlayerId, post: Option<bool>
     if post.is_none() || g.active != Some(p) || !can_pay(g, p, 8, "", false) {
         return vec![];
     }
-    let utility = 3.0 + 0.5 * g.opps(p).count() as f64;
-    vec![Opt { utility, label: "Kefka: {8}, transform".into(), act: Some(Action::Ability { src, f: kefka_borrowed_go, arg: kefka.0 as i64 }) }]
+    let utility = 1.0 + 0.5 * g.opps(p).count() as f64;
+    vec![Opt { utility, label: "Kefka: {8}, each opponent sacrifices a permanent".into(), act: Some(Action::Ability { src, f: kefka_borrowed_go, arg: kefka.0 as i64 }) }]
 }
 
 fn kefka_borrowed_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
@@ -898,11 +901,12 @@ fn kefka_borrowed_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bo
     if g.perm(kefka).data.truthy(DataKey::Ruin) || !g.perm(kefka).on_bf {
         return Ok(false);
     }
-    kefka_ruin_do(g, src, p, kefka)
+    kefka_ruin_do(g, src, p)
 }
 
-/// pay {8} and activate the ability from `src`; the permanent that transforms is `kefka`
-pub(crate) fn kefka_ruin_do(g: &mut Game, src: PermId, p: PlayerId, kefka: PermId) -> Res<bool> {
+/// pay {8} and activate the ability from `src`; `src` transforms if it is Kefka (Marvin, using the ability, is not a
+/// double-faced card and stays as it is)
+pub(crate) fn kefka_ruin_do(g: &mut Game, src: PermId, p: PlayerId) -> Res<bool> {
     if !g.perm(src).on_bf || g.perm(src).owner != p || !can_pay(g, p, 8, "", false) {
         return Ok(false);
     }
@@ -953,15 +957,20 @@ pub(crate) fn kefka_ruin_do(g: &mut Game, src: PermId, p: PlayerId, kefka: PermI
             sac_last_land(g, q);
         }
     }
-    let t = g.player(p).turns;
-    g.player_mut(p).milestone.entry("kefka").or_insert(t);
-    let x = g.perm_mut(kefka);
-    x.data.set(DataKey::Ruin, Val::Bool(true));
-    (x.pow, x.tgh, x.fly) = (5, 7, true);
+    let kefka = g.perm(src).cd.is_some_and(|c| &*g.db.get(c).name == "Kefka, Court Mage // Kefka, Ruler of Ruin");
+    if kefka {
+        let t = g.player(p).turns;
+        g.player_mut(p).milestone.entry("kefka").or_insert(t);
+        let x = g.perm_mut(src);
+        x.data.set(DataKey::Ruin, Val::Bool(true));
+        (x.pow, x.tgh, x.fly) = (5, 7, true);
+    }
     crate::glog!(
         g,
-        "  {} activates Kefka ({{8}}): each opponent sacrifices a permanent; Kefka transforms",
-        g.player(p).name
+        "  {} activates {} ({{8}}): each opponent sacrifices a permanent{}",
+        g.player(p).name,
+        if kefka { "Kefka" } else { "Kefka's ability (Marvin: nothing transforms)" },
+        if kefka { "; Kefka transforms" } else { "" }
     );
     Ok(true)
 }

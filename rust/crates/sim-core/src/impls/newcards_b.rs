@@ -137,13 +137,6 @@ pub(crate) fn marvin_options(g: &mut Game, src: Src, p: PlayerId, post: Option<b
                 }
                 continue;
             }
-            if &*g.db.get(cd).name == "Tekuthal, Inquiry Dominus" {
-                for mut o in super::partials::tekuthal_borrowed(g, src, p, post, m) {
-                    o.label = format!("Marvin copies {}: {}", g.db.get(cd).name, o.label);
-                    out.push(o);
-                }
-                continue;
-            }
             if matches!(&*g.db.get(cd).name, "Krenko, Mob Boss" | "Kiki-Jiki, Mirror Breaker" | "Ioreth of the Healing House")
             {
                 continue;

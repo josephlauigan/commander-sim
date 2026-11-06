@@ -271,9 +271,9 @@ pub fn marvin_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
         }
         seen.push(x.name);
         let mut list: Vec<PermAbility> = match nm.as_str() {
-            // the text names the creature: its counter / transformation is the donor's
-            "Tekuthal, Inquiry Dominus" => vec![ability("{1}{U/P}{U/P}, remove three counters from among other artifacts, creatures and planeswalkers you control: an indestructible counter on Tekuthal", move |g, p, m| super::marvin_hooks::tekuthal(g, p, m, d))],
-            "Kefka, Court Mage // Kefka, Ruler of Ruin" => vec![ability("{8}: each opponent sacrifices a permanent of their choice; transform Kefka (sorcery speed)", move |g, p, m| super::marvin_hooks::kefka(g, p, m, d))],
+            // "transform Kefka" names the creature that has the ability, Marvin (rule 201.5), which can't transform (701.28c)
+            "Kefka, Court Mage // Kefka, Ruler of Ruin" if g.perm(d).data.truthy(crate::state::DataKey::Ruin) => vec![], // Ruler of Ruin has no activated ability
+            "Kefka, Court Mage // Kefka, Ruler of Ruin" => vec![ability("{8}: each opponent sacrifices a permanent of their choice (sorcery speed; Marvin does not transform)", move |g, p, m| super::marvin_hooks::kefka(g, p, m, d))],
             _ => vec![],
         };
         if list.is_empty() {

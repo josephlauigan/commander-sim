@@ -489,7 +489,7 @@ fn ready(g: &mut Game, m: PermId) {
 }
 
 #[test]
-fn marvin_uses_kefkas_8_ability_and_kefka_is_the_one_that_transforms() {
+fn marvin_uses_kefkas_8_ability_and_nothing_transforms() {
     let mut g = tbl();
     g.active = Some(P0);
     g.step = sim_core::state::Step::Main1;
@@ -506,11 +506,14 @@ fn marvin_uses_kefkas_8_ability_and_kefka_is_the_one_that_transforms() {
     assert!(sim_core::ai::act::perform(&mut g, P0, k.act.as_ref().unwrap()).unwrap());
     let after = g.player(P1).perms.len() + g.player(P1).lands.len();
     assert!(after < opp_perms, "an opponent sacrificed a permanent");
-    assert!(g.perm(kefka).data.truthy(sim_core::state::DataKey::Ruin), "Kefka transformed");
+    // rule 201.5: "transform Kefka" names the creature with the ability (Marvin), and Marvin is not a double-faced card (701.28c)
+    assert!(!g.perm(kefka).data.truthy(sim_core::state::DataKey::Ruin), "Kefka does not transform");
     assert!(!g.perm(marvin).data.truthy(sim_core::state::DataKey::Ruin), "not Marvin");
     assert_eq!(sim_core::engine::values::epow(&g, marvin), 2);
-    // Kefka has no activated ability once transformed: Marvin loses it
+    // Kefka, still untransformed, keeps giving Marvin the ability; once transformed it has no activated ability
     lands(&mut g, P0, "Swamp", 8, false);
+    assert!(marvin_opts(&mut g, marvin, Some(false)).iter().any(|o| o.label.contains("Kefka")), "still offered");
+    g.perm_mut(kefka).data.set(sim_core::state::DataKey::Ruin, sim_core::state::Val::Bool(true));
     assert!(marvin_opts(&mut g, marvin, Some(false)).iter().all(|o| !o.label.contains("Kefka")));
 }
 
