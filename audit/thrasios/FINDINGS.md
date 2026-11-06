@@ -27,6 +27,17 @@ under 2% each. Tutors: on 3,685 own turns with a tutor in hand and Doomsday in t
 Consultation / Pact line is the deck's first line and wins first; Doomsday is the backup, and its main-phase cast often
 lacks {B}{B}{B}. Raw: `audit/thrasios/2026-11-06-doomsday-why.txt`.
 
+
+## Baseline B 2026-11-06 (after #278-#284; main 63d783b5; look-ahead, loose, 2,000 games per tier, seed 500000)
+**33.9%** (31.9-36.0) at t6, against 34.4% in the morning baseline: -0.5, noise. Plan online 80.6% of games. Wins: Thassa's Oracle +
+Consultation / Pact 77%, Power Artifact / Rings 16%. **Doomsday is still rarely cast:** the line was attempted 19 times in 2,000
+games, the same as the morning. So neither the life rule (#278: no 16-life minimum, no board check) nor Lion's Eye Diamond as
+Doomsday mana (#283) was what held it back. The likely blockers are the "never with Consultation or Pact in hand" rule, the narrow
+tutor wish for Doomsday and the table-risk check; none is measured yet (proposed: a trace-only counter of which check blocks each cast).
+Also new for this deck since the morning: Veil of Summer as its Oracle text, and spent only for a combo piece, the commander or an
+important spell (#280); Tier 6 "close to winning" and the removal hold read the archenemy alone (#281, #282). Raw:
+`audit/baseline-2026-11-06-b/thrasios.txt`.
+
 ## Baseline 2026-11-06 (after the rewire, Doomsday and Phase C engine work)
 Tymna/Thrasios, **first number for the Doomsday list**, t6 (cEDH), 2,000 games, seed 500000, loose, look-ahead, integration build
 daa0bfdb (main + #271-#276 with the overnight fixes): **34.4%** (95% CI 32.3-36.5) over t6; even share 25%: +9.4 points. No old-build
