@@ -169,7 +169,11 @@ fn welding_jar_is_cast_once_an_artifact_is_out() {
 fn a_held_instant_removal_spell_keeps_the_old_floor() {
     // the protection term is for protection alone: with an instant removal spell held too (no counter), the old
     // outside-deck floor applies as before, even with nothing of ours on the battlefield to protect
+    // (instant removal is a held card only with an opposing combo-piece commander out: Kinnan here)
     let mut g = miirym_table();
+    let k = perm(&mut g, PlayerId(3), "Kinnan, Bonder Prodigy");
+    g.perm_mut(k).is_cmd = true;
+    assert!(brain::Situation::new(&g, P0).cmdr_combo, "Kinnan out: an opposing combo commander");
     hand(&mut g, P0, &["Beast Within"]);
     let (c, v) = held(&g);
     assert!(c.is_some(), "the removal spell's mana is still kept up");
