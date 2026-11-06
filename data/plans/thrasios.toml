@@ -176,3 +176,10 @@ score = 1.5
 cards = ["Gitaxian Probe", "Preordain", "Ponder", "Brainstorm"]
 when = ["have:Doomsday & have:Thassa's Oracle"]
 score = 1.0
+
+# Keep rule, Doomsday term (the guide's keep table, hand 4: "Lots of mana, but none of it coloured: ... Doomsday {B}{B}{B}"):
+# a hand whose only line card is Doomsday and that has no land making {B} (a fetch counts) goes back. A Dark Ritual or a
+# Mox does not make the {B}{B}{B} alone. The rule runs after the shared rules above it, so it only adds a mulligan.
+[[mulligan.rule]]
+when = ["have:Doomsday & hand-b-lands=0 & hand:action<=1"]
+keep = false

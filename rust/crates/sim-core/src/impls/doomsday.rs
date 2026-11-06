@@ -872,6 +872,26 @@ pub fn plan_cast(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Option<(Built, O
     if pl.hand.iter().any(|&h| matches!(&*g.db.get(h).name, "Demonic Consultation" | "Tainted Pact")) {
         return None; // Line 1 is cheaper
     }
+    // the guide: never cast it under Opposition Agent (its controller would choose the pile), and one spell per turn
+    // (Archon of Emeria, Deafening Silence, Rule of Law, Ethersworn Canonist) kills a pile that needs several spells
+    let under_lock = g.opps(p).any(|q| {
+        g.player(q).perms.iter().any(|&m| {
+            !g.perm(m).phased
+                && g.perm(m).cd.is_some_and(|x| {
+                    matches!(
+                        &*g.db.get(x).name,
+                        "Opposition Agent"
+                            | "Archon of Emeria"
+                            | "Deafening Silence"
+                            | "Rule of Law"
+                            | "Ethersworn Canonist"
+                    )
+                })
+        })
+    });
+    if under_lock {
+        return None;
+    }
     if pl.life < LIFE_NEEDED || !castable(g, p, c, "hand") {
         return None;
     }

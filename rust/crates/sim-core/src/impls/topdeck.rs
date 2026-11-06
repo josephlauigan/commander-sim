@@ -41,7 +41,7 @@ pub fn put_back(g: &mut Game, p: PlayerId, n: usize, exclude: Option<CardId>) ->
             p,
             &cands,
             n,
-            "Put a card from your hand on top of your library (the last card you pick ends up on top)",
+            "Brainstorm: put a card from your hand on top of your library (the last card you pick ends up on top)",
             "choose",
         )?;
         let pl = g.player_mut(p);

@@ -587,7 +587,7 @@ fn brainstorm_asks_the_person_which_two_cards_go_back() {
                 Answer::Action(json!({"do": "cast", "card": 0}))
             };
         }
-        if r.prompt.starts_with("Put a card from your hand") {
+        if r.prompt.starts_with("Brainstorm: put a card from your hand") {
             let want = if r.prompt.contains("1 of 2") { "Mana Vault" } else { "Silence" };
             return Answer::Pick(r.choices.iter().position(|c| c.starts_with(want)).unwrap());
         }
@@ -596,7 +596,11 @@ fn brainstorm_asks_the_person_which_two_cards_go_back() {
     g.humans.add(P0, h);
     human_main(&mut g, P0, false).unwrap();
     let prompts = asked.lock().unwrap().clone();
-    assert_eq!(prompts.iter().filter(|p| p.starts_with("Put a card from your hand")).count(), 2, "{prompts:?}");
+    assert_eq!(
+        prompts.iter().filter(|p| p.starts_with("Brainstorm: put a card from your hand")).count(),
+        2,
+        "{prompts:?}"
+    );
     assert_eq!(lib_names(&g, P0)[0], "Silence", "the last card chosen is on top");
     assert_eq!(lib_names(&g, P0)[1], "Mana Vault");
 }
@@ -630,4 +634,37 @@ fn gitaxian_probe_asks_the_person_to_pay_u_or_life_once() {
 
 fn logged(g: &Game, text: &str) -> bool {
     g.log.as_ref().is_some_and(|l| l.iter().any(|x| x.contains(text)))
+}
+
+// ------------------------------------------------------------------ the keep rule
+#[test]
+fn a_hand_with_doomsday_and_no_black_source_goes_back() {
+    // the guide's keep table, hand 4: lots of mana, none of it black, Doomsday the only line card
+    let mut g = setup(
+        &["Tundra", "Savannah", "Sol Ring", "Mana Vault", "Grim Monolith", "Doomsday", "Chrome Mox"],
+        &["Brainstorm", "Silence"],
+        &[],
+    );
+    g.player_mut(P0).turns = 0;
+    assert_eq!(sim_core::impls::t6_plans::keep(&g, P0), Some(false), "no {{B}} for Doomsday: back");
+    // the same hand with a land that makes {B} is kept
+    let mut g = setup(
+        &["Underground Sea", "Savannah", "Sol Ring", "Mana Vault", "Grim Monolith", "Doomsday", "Chrome Mox"],
+        &["Brainstorm", "Silence"],
+        &[],
+    );
+    g.player_mut(P0).turns = 0;
+    assert_ne!(sim_core::impls::t6_plans::keep(&g, P0), Some(false), "a black land: kept");
+}
+
+#[test]
+fn the_ai_does_not_cast_doomsday_under_opposition_agent_or_a_one_spell_lock() {
+    for name in ["Opposition Agent", "Archon of Emeria", "Deafening Silence"] {
+        let mut g = pile_b_position();
+        teferi_flash(&mut g);
+        g.active = Some(P1);
+        assert_eq!(opts(&mut g, None), 1, "{name}: the control position casts it");
+        perm(&mut g, P1, name);
+        assert_eq!(opts(&mut g, None), 0, "{name} on the other side: no Doomsday");
+    }
 }
