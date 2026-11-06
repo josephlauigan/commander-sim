@@ -56,7 +56,7 @@ use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, Game, Step as TurnStep};
 use crate::sym::Sym;
 use std::borrow::Cow;
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::collections::HashMap;
 
 pub const DOOMSDAY: &str = "Doomsday";
@@ -192,6 +192,11 @@ struct Env<'a> {
     /// Veil of Summer answers every stopper the table may hold (none can hold Mindbreak Trap or a red blast)
     veil_ok: bool,
     memo: RefCell<HashMap<u32, bool>>,
+    /// positions the search has shown to have no line: the most spells left it failed with (a transposition table, so a
+    /// position reached by several orders of the same spells, or again at a deeper limit, is searched once)
+    fail: RefCell<HashMap<u64, u8>>,
+    /// search nodes left (`NODE_BUDGET` at the start); at zero every search answers "no line"
+    budget: Cell<u32>,
 }
 
 impl<'a> Env<'a> {
@@ -213,7 +218,19 @@ impl<'a> Env<'a> {
             })
             .then(|| crate::impls::t6_green1::creature_ability_cost(&g, p, 4).min(9) as u8);
         let veil_ok = veil_answers(&g, p);
-        Env { g, p, b, dev, kinds, dev_gn, dig, veil_ok, memo: RefCell::new(HashMap::new()) }
+        Env {
+            g,
+            p,
+            b,
+            dev,
+            kinds,
+            dev_gn,
+            dig,
+            veil_ok,
+            memo: RefCell::new(HashMap::new()),
+            fail: RefCell::new(HashMap::new()),
+            budget: Cell::new(NODE_BUDGET),
+        }
     }
     fn kd(&self, c: CardId) -> K {
         self.kinds.get(&c.0).copied().unwrap_or(K::Other)
@@ -375,13 +392,61 @@ fn dig_outcomes(e: &Env, s: &S) -> Vec<S> {
     out
 }
 
+/// the search nodes one `Env` may spend (a position the failure table does not cut). A line needs a handful of spells;
+/// the budget only stops a pathological position from running for minutes inside a look-ahead playout. At zero every
+/// search answers "no line".
+const NODE_BUDGET: u32 = 50_000;
+
+/// a key for `s` and `w`: the hand as a set (the order the spells were cast in does not matter), the library in order,
+/// what the line has spent
+fn state_key(s: &S, w: Want) -> u64 {
+    use std::hash::{Hash, Hasher};
+    let mut h = std::collections::hash_map::DefaultHasher::new();
+    let mut hand: Vec<u16> = s.hand.iter().map(|c| c.0).collect();
+    hand.sort_unstable();
+    hand.hash(&mut h);
+    for c in &s.lib {
+        c.0.hash(&mut h);
+    }
+    (s.u, s.w, s.gn, s.life, s.silence, s.dev, w.lock, w.backup, s.lib.len()).hash(&mut h);
+    h.finish()
+}
+
 /// is there a line of at most `left` more spells that ends with Thassa's Oracle on the battlefield and a devotion at
 /// least the library (`w.lock`: with Silence up or Veil of Summer held before the Oracle; `w.backup`: with Noxious
-/// Revival held)? On success `acts` holds it
+/// Revival held)? On success `acts` holds it. A position that failed with at least `left` spells is not searched again
+/// (a failure is remembered only while the node budget lasts: after that it may only mean the search was cut short)
 fn dfs(e: &Env, s: &S, left: u8, w: Want, acts: &mut Vec<Act>) -> bool {
     if left == 0 {
         return false;
     }
+    let budget = e.budget.get();
+    if budget == 0 {
+        return false;
+    }
+    e.budget.set(budget - 1);
+    // the Oracle needs a devotion of at least the library, and no spell shortens the library by more than one card: with
+    // all the devotion permanents of hand and library cast, is the library still too long when the last spell is reached
+    let dev_cards = s.hand.iter().chain(&s.lib).filter(|&&c| e.kd(c) == K::Dev).count();
+    if s.lib.len() > e.dev + s.dev as usize + dev_cards + 2 + (left as usize - 1) {
+        return false;
+    }
+    let key = state_key(s, w);
+    if e.fail.borrow().get(&key).is_some_and(|&l| l >= left) {
+        return false;
+    }
+    if dfs_inner(e, s, left, w, acts) {
+        return true;
+    }
+    if e.budget.get() > 0 {
+        let mut f = e.fail.borrow_mut();
+        let l = f.entry(key).or_insert(0);
+        *l = (*l).max(left);
+    }
+    false
+}
+
+fn dfs_inner(e: &Env, s: &S, left: u8, w: Want, acts: &mut Vec<Act>) -> bool {
     for i in 0..s.hand.len() {
         let c = s.hand[i];
         let k = e.kd(c);
@@ -528,11 +593,23 @@ fn dfs(e: &Env, s: &S, left: u8, w: Want, acts: &mut Vec<Act>) -> bool {
 
 /// the shortest line from `s` that meets `w`
 fn solve(e: &Env, s: &S, w: Want) -> Option<Vec<Act>> {
+    solve_to(e, s, w, MAX_SPELLS)
+}
+
+/// the most spells a line may have
+const MAX_SPELLS: u8 = 8;
+
+/// the shortest line from `s` that meets `w`, of at most `max` spells
+fn solve_to(e: &Env, s: &S, w: Want, max: u8) -> Option<Vec<Act>> {
     let has_oracle = s.hand.iter().chain(&s.lib).any(|&c| e.kd(c) == K::Oracle);
     if !has_oracle {
         return None;
     }
-    for d in 1..=8 {
+    // a lock is Silence cast from the hand or Veil of Summer held: with neither in hand or library there is none
+    if w.lock && !s.silence && !s.hand.iter().chain(&s.lib).any(|&c| matches!(e.kd(c), K::Silence | K::Veil)) {
+        return None;
+    }
+    for d in 1..=max {
         let mut acts = vec![];
         if dfs(e, s, d, w, &mut acts) {
             return Some(acts);
@@ -544,6 +621,13 @@ fn solve(e: &Env, s: &S, w: Want) -> Option<Vec<Act>> {
 /// the best line from `s` and what it has: with `lock_first` the lock (and then the backup) are asked for before
 /// plain speed; a Noxious Revival is only asked about when one is in hand or in the library
 fn ladder(e: &Env, s: &S, lock_first: bool) -> Option<(Want, Vec<Act>)> {
+    ladder_over(e, s, lock_first, None)
+}
+
+/// `ladder`, asked only for a line that scores above `floor` (the builder's best pile so far, scored as (lock, backup,
+/// minus the spells)): a want below the floor's is skipped, and one equal to it must be shorter. The line found is the one
+/// `ladder` finds when that scores above the floor, and none otherwise
+fn ladder_over(e: &Env, s: &S, lock_first: bool, floor: Option<(i32, i32, i32)>) -> Option<(Want, Vec<Act>)> {
     let revival = s.hand.iter().chain(&s.lib).any(|&c| e.kd(c) == K::Revival);
     let mut tries = vec![];
     if lock_first {
@@ -556,7 +640,19 @@ fn ladder(e: &Env, s: &S, lock_first: bool) -> Option<(Want, Vec<Act>)> {
         }
     }
     tries.push(Want { lock: false, backup: false });
-    tries.into_iter().find_map(|w| solve(e, s, w).map(|a| (w, a)))
+    tries.into_iter().find_map(|w| {
+        let mut max = MAX_SPELLS;
+        if let Some((lock, backup, neg_len)) = floor {
+            let rank = (w.lock as i32, w.backup as i32);
+            if rank < (lock, backup) {
+                return None;
+            }
+            if rank == (lock, backup) {
+                max = max.min((-neg_len - 1).clamp(0, MAX_SPELLS as i32) as u8); // shorter than the floor's line
+            }
+        }
+        solve_to(e, s, w, max).map(|a| (w, a))
+    })
 }
 
 /// how good a position is: (the line has the lock, minus its length); None when there is no line
@@ -677,6 +773,22 @@ fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Op
     let mut all = hand.clone();
     all.extend(&avail);
     let env = Env::new(mana, p, if scn == Scn::EndStep { 0 } else { b }, &all);
+    // two things any winning line needs, checked once for all the piles: the Oracle's {U}{U} is payable after what is owed,
+    // and (without Thrasios's dig) there are enough cards that each shorten the library by one, or add a devotion, to leave
+    // it no longer than the devotion plus 2 (every spell does one of these, at most)
+    if !env.ok(2, 0, 0, 0) {
+        return None;
+    }
+    if env.dig.is_none() {
+        let gap = (n_pick - first_draws.min(n_pick)) as i64 - (env.dev as i64 + 2);
+        let reducers = all
+            .iter()
+            .filter(|&&c| matches!(env.kd(c), K::Dev | K::Probe | K::Borne | K::Brainstorm | K::Preordain | K::Ponder))
+            .count() as i64;
+        if gap > reducers {
+            return None;
+        }
+    }
     // Veil of Summer takes a pile slot only when Silence cannot be the lock (not held or found, or no {W})
     let silence_around = all.iter().any(|&c| env.kd(c) == K::Silence) && env.ok(0, 1, 0, 0);
     let use_veil = env.veil_ok && !silence_around;
@@ -692,12 +804,12 @@ fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Op
     });
     // a pile is good when it wins with the draw step (and a forced draw: an Esper Sentinel of ours) behind it; the
     // score is (the lock, a Noxious Revival to answer a countered Oracle, fewer spells)
-    let try_pile = |pile: &[CardId]| -> Option<((i32, i32, i32), Want, Vec<Act>)> {
+    let try_pile = |pile: &[CardId], floor: Option<(i32, i32, i32)>| -> Option<((i32, i32, i32), Want, Vec<Act>)> {
         let mut s = S::new(hand.clone(), pile.to_vec(), life_after);
         if first_draws > 0 && !draw_n(&mut s, first_draws) {
             return None;
         }
-        let (w, plan) = ladder(&env, &s, true)?;
+        let (w, plan) = ladder_over(&env, &s, true, floor)?;
         if forced > 0 {
             // a draw we did not plan (our Esper Sentinel, when an opponent casts a spell) must not break the line
             let mut s2 = s.clone();
@@ -708,8 +820,14 @@ fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Op
         Some(((w.lock as i32, w.backup as i32, -(plan.len() as i32)), w, plan))
     };
     let revival_any = all.iter().any(|&c| env.kd(c) == K::Revival);
+    // the best score any pile can have: the lock if Silence or Veil of Summer is around, the backup if a Noxious Revival is,
+    // and the fewest spells the library allows (one more than the cards that must shorten it)
+    let lock_around = (env.veil_ok && all.iter().any(|&c| env.kd(c) == K::Veil))
+        || (all.iter().any(|&c| env.kd(c) == K::Silence) && env.ok(0, 1, 0, 0));
+    let shortest = (n_pick as i64 - first_draws.min(n_pick) as i64 - (env.dev as i64 + 2) + 1).clamp(1, 8) as i32;
+    let ceiling = (lock_around as i32, revival_any as i32, -shortest);
     let mut best: Option<((i32, i32, i32), Built)> = None;
-    for m in 0..=useful.len().min(n_pick) {
+    'piles: for m in 0..=useful.len().min(n_pick) {
         let mut seqs: Vec<Vec<CardId>> = vec![];
         gen_seqs(&useful, m, &mut vec![], &mut seqs);
         for seq in seqs {
@@ -728,9 +846,12 @@ fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Op
                     pile.push(u);
                 }
             }
-            let Some((score, w, plan)) = try_pile(&pile) else { continue };
+            let Some((score, w, plan)) = try_pile(&pile, best.as_ref().map(|(sc, _)| *sc)) else { continue };
             if best.as_ref().is_none_or(|(sc, _)| score > *sc) {
                 best = Some((score, Built { pile, plan, lock: w.lock, backup: w.backup, life_after }));
+                if score >= ceiling {
+                    break 'piles; // nothing can score higher
+                }
             }
         }
         if best.as_ref().is_some_and(|(sc, _)| sc.0 == 1 && (sc.1 == 1 || !revival_any)) {
@@ -749,7 +870,7 @@ fn build_uncached(g: &Game, p: PlayerId, scn: Scn, b: u8, skip: &[CardId]) -> Op
             if !pile.contains(&rev) {
                 continue;
             }
-            let Some((score, w, plan)) = try_pile(&pile) else { continue };
+            let Some((score, w, plan)) = try_pile(&pile, best.as_ref().map(|(sc, _)| *sc)) else { continue };
             if w.backup && score.0 >= sc.0 && best.as_ref().is_some_and(|(b, _)| score > *b) {
                 best = Some((score, Built { pile, plan, lock: w.lock, backup: true, life_after }));
             }
@@ -1158,18 +1279,25 @@ pub fn plan_cast(g: &Game, p: PlayerId, c: CardId, scn: Scn) -> Option<(Built, O
     let flash = grants_flash(g, p, c);
     let en = if scn == Scn::EndStep && !flash { Some(enabler(g, p)?) } else { None };
     let b = doomsday_cost(g, p, c, en)?;
-    let built = build(g, p, scn, b, en.as_slice())?;
-    if g.opps(p).any(|q| g.player(q).alive && opp_power(g, q) >= built.life_after - 2) {
+    // the checks that do not need the pile come first: the builder is the expensive part, and a look-ahead asks about a
+    // Doomsday in hand at every decision of every playout (a board that can deal what is left is the usual answer)
+    let life_after = pl.life - half_up(pl.life);
+    if g.opps(p).any(|q| g.player(q).alive && opp_power(g, q) >= life_after - 2) {
         return None; // a board that can deal what is left
     }
+    // the plan's go-now gate for the cast (a rule in `data/plans/thrasios.toml` naming "Doomsday cast")
+    if crate::impls::t6_plans::go_now(g, p, "Doomsday cast") == Some(false) {
+        return None;
+    }
+    // the table's check below with the most cover a pile can have: if it fails with the lock, it fails without
+    if !risk_ok(g, p, true) {
+        return None;
+    }
+    let built = build(g, p, scn, b, en.as_slice())?;
     let n = stoppers(g, p);
     if !built.lock && !built.backup && n >= 2 && !pl.hand.iter().any(|&h| g.db.get(h).tag(crate::tag::Tag::Ctr)) {
         // into several opponents who can stop a spell, with no lock, no Noxious Revival to put a countered Oracle back and
         // no counter of our own
-        return None;
-    }
-    // the plan's go-now gate for the cast (a rule in `data/plans/thrasios.toml` naming "Doomsday cast")
-    if crate::impls::t6_plans::go_now(g, p, "Doomsday cast") == Some(false) {
         return None;
     }
     // the table's check, as every Tier 6 line makes it (`t6_table::go_ok`): the cast waits when the table can stop it and
