@@ -1326,6 +1326,7 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
     opts.extend(special_options(g, p, &s, post)?);
     opts.extend(extra_options(g, p, &s, post, true));
     opts.extend(crate::cardcode::breach_gc_options(g, p)?);
+    opts.extend(crate::impls::breach_line::breach_options(g, p, post)?); // the whole Breach line, when it finishes the table
     if g.dsl_on {
         opts.extend(crate::dsl::ability_options(g, p, true)?);
     }
