@@ -23,6 +23,7 @@ the binder and eleven bought cards (`documents/aragorn-merge-swaps.md`).
 
 ### Simulator history
 
+- **2026-11-07.** Baseline with A1 + A2 (look-ahead, loose, 10,000 games per tier, main 7c622f5f): t4 13.8%, t5 11.3%, 12.6% over t4-t5, against 9.9% before: a clear gain (`audit/aragorn/FINDINGS.md`).
 - **2026-11-06.** Card-pile packages (paired, look-ahead, loose, 1,500 games per list per tier, main b84ab9e6): A1 t4 11.1% -> 15.4% (+4.3, noise ±2.2), t5 9.4% -> 11.8% (+2.4, ±1.9), BETTER; A2 t4 -0.4 (±2.0), t5 +0.7 (±1.9), no clear effect. Both adopted.
 - **2026-11-06.** First baseline (look-ahead, loose, 2,000 games per tier): t4 10.7%, t5 7.7%, 9.2% over t4-t5 (`audit/aragorn/FINDINGS.md`).
 
@@ -71,6 +72,8 @@ Deck key `cloud`, `decklists/JD/cloud-midgar-equipment.md`.
 
 ### Simulator history
 
+- **2026-11-07.** Baseline with package C (look-ahead, loose, 10,000 games per tier, main 7c622f5f): t1 30.8%, t2 22.4%,
+  t3 23.4%, 25.6% over t1-t3, against 24.2% in Baseline B: +1.4, each tier inside the noise (`audit/cloud/FINDINGS.md`).
 - **2026-10-13.** Paired screen of the C3 + C4 list against the old list: 10.9% over all tiers against 5.1% (see the
   2026-10-13 entry above for the per-tier figures; `audit/cloud/2026-10-13/screen/C4REV-*`). The later Ultimate Magic:
   Holy swap was not simulated.
@@ -389,6 +392,8 @@ Deck key `sheoldred`, `decklists/JD/sheoldred-mono-black.md`.
 
 ### Simulator history
 
+- **2026-11-07.** Baseline with package S as adopted (look-ahead, loose, 10,000 games per tier, main 7c622f5f): t3 30.6%,
+  t4 28.2%, 29.4% over t3-t4, against 27.4% in Baseline B (11-06): +2.0, a borderline gain (`audit/sheoldred/FINDINGS.md`).
 - **2026-11-07.** Card-pile package S (paired, look-ahead, loose, 1,500 games per list per tier, main b84ab9e6; with
   Diabolic Tutor out, before JD kept it): t3 28.2% -> 30.1% (+1.9, noise ±2.7), t4 27.5% -> 27.2% (-0.3, ±2.7), no clear
   effect. Adopted with Diabolic Intent in Darksteel Plate's slot instead (untested). Entomb and Yawgmoth's Will are
@@ -651,6 +656,8 @@ Deck key `yshtola`, `decklists/JD/yshtola-esper-drain.md`.
 
 ### Simulator history
 
+- **2026-11-07.** Baseline with package Y (look-ahead, loose, 10,000 games, main 7c622f5f): 27.4% at t5, against 26.5% in
+  Baseline B: +0.9, inside the noise (`audit/yshtola/FINDINGS.md`).
 - **2026-10-14.** The leftovers swap (Triplicate Spirits for Dakkon, Shadow Slayer; a Swamp for Underground River; an Island for Adarkar Wastes) measured -0.7 over all tiers, within noise, in a paired test (T1 +0.2, T2 -4.2, T3 -1.8, T4 +2.2, T5 0.0; look-ahead, loose, 500 games per list per tier); JD chose to apply it. A pool run was pending. Previous list's figures: 41.4% over all tiers on 2026-10-12 (±0.5; rank 1 of the ten decks): T1 45.4%, T2 55.1%, T3 44.8%, T4 39.2%, T5 22.3%, 6,720 games per tier, every deck on the same code; `decklists/pool/pool-results.md` section 0d.
 - **2026-10-07 to 2026-10-09 tests.** Crux of Fate -> Augustin: -0.6 (fast AI, 1,000 pairs per tier). Secure the Wastes -> Venat: +0.1 ±0.8 (adaptive, paired, 1,000 games per tier).
 - **2026-10-05.** Enslave / Plea for Guidance / Jester's Cap -> Sphinx / Citadel / Tithe: +1.2 on average, ahead in all five tiers (1,000 paired games per tier, adaptive AI). 2026-10-04 basics change: about +1.2, positive in four of five tiers (same settings).
@@ -880,5 +887,7 @@ Deck key `thanos`, `decklists/JD/thanos-artifacts-and-dragons.md`.
 
 ### Simulator history
 
+- **2026-11-07.** Baseline with TD2 (look-ahead, loose, 10,000 games, main 7c622f5f): 18.9% at t5, against 18.6% in Baseline B:
+  no change. Wins moved from combo to damage (combo 46% -> 34% of wins, damage 50% -> 65%; `audit/thanos/FINDINGS.md`).
 - **2026-11-07.** Card-pile package TD (the same twelve cards with cheap cuts: the Baubles, Lotus Petal, Red Elemental Blast and others; paired, look-ahead, loose, 1,500 games per list, t5, main b84ab9e6): 23.0% -> 20.2% (-2.8, noise ±2.7), WORSE (borderline). It raised the average mana value 3.10 -> 3.49, half the new cards sat in hand, and the plan came online in 8.0% of games against 11.3%. Not adopted; TD2 (above) keeps the curve. TD2 itself is not measured yet.
 - **2026-11-06.** Baseline B: 18.6% at t5 (`audit/thanos/FINDINGS.md`).

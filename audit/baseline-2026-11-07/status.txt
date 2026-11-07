@@ -1,0 +1,6 @@
+baseline thanos exit=0 34m 01:59
+baseline yshtola exit=0 30m 02:30
+baseline thrasios exit=0 43m 03:14
+baseline sheoldred exit=0 53m 04:07
+baseline aragorn exit=0 73m 05:21
+baseline cloud exit=0 154m 07:55

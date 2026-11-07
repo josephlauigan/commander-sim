@@ -3,6 +3,13 @@
 What the simulator has taught us about the Y'shtola Esper drain deck: strengths, weaknesses, and what was tried and
 why it did or didn't work. Updated after every run. Newest evidence first. Matched tier: T5 (`data/my_decks.toml`).
 
+## Baseline 2026-11-07 (after package Y; main 7c622f5f; look-ahead, loose, 10,000 games, seed 500000)
+**27.4%** (26.5-28.3) at t5, against 26.5% (24.6-28.5) in Baseline B (2,000 games): +0.9, inside the noise. Package Y
+(Counterspell, Ringsight, Palantír, Mistrise Village) shows no measurable change. Plan online 61.0% of games; wins by damage
+72%, combo 27%. Who eliminates her: Miirym 17.9%, Kinnan 17.4%, Urza 15.0%, Zur 11.3%, Yawgmoth 10.9% (the Kinnan and Urza
+combos still about a third of her deaths). Analyze run: `audit/baseline-2026-11-07/yshtola-analyze.txt`. Raw:
+`audit/baseline-2026-11-07/yshtola.txt`.
+
 ## 2026-11-07: card-pile package Y, adopted untested
 Memory Trap => Counterspell, Dark Petition => Ringsight, Ill-Gotten Inheritance => Palantír of Orthanc, Island =>
 Mistrise Village (JD's spare-card pile, `audit/jd-packages/2026-11-06-card-pile/`). **Not measured:** JD stopped the runs

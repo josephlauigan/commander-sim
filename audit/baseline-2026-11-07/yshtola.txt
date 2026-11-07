@@ -1,0 +1,30 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  yshtola                     100 cards: Full 96, Full-auto 4, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 433, Full-auto 34, Approximate 33, Partial 0, Unmodeled 0
+
+10,000 games (1 tier, 10,000 per list per tier, profile loose), lookahead AI, 24 worker threads: about 21 minutes
+  progress  10.0%  3m07s elapsed, ~28m10s left
+  progress  20.0%  6m14s elapsed, ~24m58s left
+  progress  30.0%  9m23s elapsed, ~21m55s left
+  progress  40.0%  12m30s elapsed, ~18m46s left
+  progress  50.0%  15m40s elapsed, ~15m40s left
+  progress  60.0%  18m45s elapsed, ~12m30s left
+  progress  70.0%  21m47s elapsed, ~9m20s left
+  progress  80.0%  24m48s elapsed, ~6m12s left
+  progress  90.0%  27m53s elapsed, ~3m05s left
+  progress 100.0%  30m55s elapsed, ~0m00s left
+
+=== Y'shtola vs Tier 5 (High B4) [loose, lookahead AI, 10000 games] ===
+Win rate  27.4%   95% CI 26.5-28.3%   (even share 25%: +2.4 pts)
+Average turn (your own turn count) of wins 11.4, of losses 7.8
+Plan online (first drain from Y'shtola's cast trigger): 61.0% of games
+Wins by: damage 72%, combo 27%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   60.4%            18.0%           10.9%
+  Urza (urza-mono-blue-artifacts)              60.0%            25.7%           15.0%
+  Kinnan (kinnan-simic-mana-combo)             59.9%            29.0%           17.4%
+  Zur the Enchanter (zur-esper-enchantment-c   59.9%            19.2%           11.3%
+  Miirym (miirym-temur-dragons)                59.7%            29.0%           17.9%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(1856s total)

@@ -9,6 +9,14 @@ combos). **Tiers:** t5 (`data/my_decks.toml`; the old cEDH list played t6). **Pl
 previous list (the cEDH turbo list, t6) are in `FINDINGS-old-list.md`; the retired decks' findings are in
 `audit/retired/karn/` and `audit/retired/urdragon/`.
 
+## Baseline 2026-11-07 (after TD2; main 7c622f5f; look-ahead, loose, 10,000 games, seed 500000)
+**18.9%** (18.2-19.7) at t5, against 18.6% (17.0-20.4) in Baseline B (2,000 games): no change in the number. The way it
+wins changed: damage 65% of wins (was 50%), combo 34% (was 46%); plan online (first combo attempt) 6.9% of games (was
+8.8%). That is TD2's trade: hasty Dragons and Utvara for the damage win, and the combo a little less often (Lotus Petal,
+Gamble, Karn the Great Creator, Ugin and Portal gone). Who eliminates it: Miirym 19.5%, Kinnan 18.8%, Urza 16.1%, Zur 14.6%,
+Yawgmoth 12.0%. The analyze run (2,000 games) is in `audit/baseline-2026-11-07/thanos-analyze.txt`. Raw:
+`audit/baseline-2026-11-07/thanos.txt`.
+
 ## 2026-11-07: card-pile packages TD (tested, worse) and TD2 (adopted untested) (TD: paired swap run, t5, look-ahead, loose, 1,500 games per list, main b84ab9e6 with #292)
 Twelve cards from JD's spare-card pile (`audit/jd-packages/2026-11-06-card-pile/`): Scion of Draco, Crucible of Worlds,
 Strip Mine, Disdainful Stroke, Elesh Norn, Summon: Bahamut, Hangarback Walker, Meteor Golem, Glorybringer, Thundermaw

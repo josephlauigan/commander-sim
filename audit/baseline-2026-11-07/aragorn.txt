@@ -1,0 +1,24 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  aragorn                     100 cards: Full 97, Full-auto 3, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 4 (Low B4)   5 decks, 500 cards: Full 436, Full-auto 37, Approximate 27, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 433, Full-auto 34, Approximate 33, Partial 0, Unmodeled 0
+
+20,000 games (1 deck x 2 tiers (each deck in its own tiers), 10,000 per list per tier, profile loose), lookahead AI, 24 worker threads: about 42 minutes
+  progress  10.0%  8m12s elapsed, ~73m52s left
+  progress  20.0%  16m41s elapsed, ~66m46s left
+  progress  30.0%  24m57s elapsed, ~58m14s left
+  progress  40.0%  33m04s elapsed, ~49m36s left
+  progress  50.0%  41m37s elapsed, ~41m37s left
+  cell aragorn vs t4 [loose]:  13.8% (13.1-14.5)
+  progress  60.0%  47m52s elapsed, ~31m55s left
+  progress  70.0%  54m18s elapsed, ~23m16s left
+  progress  80.0%  60m50s elapsed, ~15m12s left
+  progress  90.0%  67m18s elapsed, ~7m28s left
+  progress 100.0%  73m43s elapsed, ~0m00s left
+  cell aragorn vs t5 [loose]:  11.3% (10.7-12.0)
+
+=== Win rate by deck and tier [loose profile, lookahead AI, n=10000 per cell; even share 25%; each deck only against its own tiers] ===
+  deck                       t4                 t5     average over its tiers
+  aragorn     13.8% (13.1-14.5)  11.3% (10.7-12.0)          12.6% over t4, t5
+
+(4424s total)

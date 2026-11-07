@@ -4,6 +4,12 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run (CLAUDE.md "Swap tests explain themselves"). Newest evidence first; numbers are
 look-ahead, loose profile, vs Cloud's matched tiers (T1, T2) unless noted.
 
+## Baseline 2026-11-07 (package C in the list; main 7c622f5f; look-ahead, loose, 10,000 games per tier, seed 500000)
+t1 **30.8%** (29.9-31.7), t2 **22.4%** (21.6-23.3), t3 **23.4%** (22.6-24.3): **25.6% over t1-t3**, against 24.2% in
+Baseline B (29.6 / 20.6 / 22.4; 2,000 games per tier). +1.2, +1.8 and +1.0: each inside the noise against Baseline B
+(about ±2.1 per tier), but all three the same way, so package C (Rogue's Passage, Sting) looks like a small gain, not a
+proven one. Analyze run: `audit/baseline-2026-11-07/cloud-analyze.txt`. Raw: `audit/baseline-2026-11-07/cloud.txt`.
+
 ## 2026-11-07: card-pile package C, adopted untested
 Plains => Rogue's Passage and Disenchant => Sting, the Glinting Dagger (JD's spare-card pile,
 `audit/jd-packages/2026-11-06-card-pile/`). **Not measured:** JD stopped the run before it finished and adopted it.
