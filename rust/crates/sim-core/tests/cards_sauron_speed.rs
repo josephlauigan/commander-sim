@@ -1,6 +1,6 @@
 //! Sauron's speed metrics: the `army_hit` plan milestone, the Army power snapshots and the commander timing.
 
-use sim_core::engine::{combat, turn, values};
+use sim_core::engine::{combat, values};
 use sim_core::ids::PlayerId;
 use sim_core::testkit::*;
 

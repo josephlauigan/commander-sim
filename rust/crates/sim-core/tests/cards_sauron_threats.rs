@@ -144,7 +144,9 @@ fn torment_a_low_opponent_pays_with_anything_and_a_bare_one_dies() {
 
 #[test]
 fn torment_ai_casts_it_for_a_kill_and_not_early_otherwise() {
-    let mut g = game();
+    // the Torment AI's seats are Y'shtola and Tergrid since Sauron retired (11/06)
+    let mut g = table(&["yshtola", "cloud", "seph"]);
+    g.active = Some(P0);
     lands(&mut g, P0, "Swamp", 8, false);
     let c = hand(&mut g, P0, &["Torment of Hailfire"])[0];
     g.player_mut(P1).hand.clear();
