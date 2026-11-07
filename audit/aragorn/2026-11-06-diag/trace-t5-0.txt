@@ -1,0 +1,113 @@
+Play-by-play of pool game 0 (seed 500000): Aragorn vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Aragorn, Yawgmoth, Zur the Enchanter, Kinnan
+R1  --- Aragorn turn 1: life 40, 7 cards in hand, 0 lands
+R1    Aragorn plays Exotic Orchard
+R1  --- Yawgmoth turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yawgmoth plays Swamp
+R1        [Yawgmoth decides: Dark Ritual 100%, stop 0% -> Dark Ritual [search]]
+R1    Yawgmoth casts Dark Ritual
+R1        [Yawgmoth decides: Pawn of Ulamog 53%, Marionette Apprentice 47%, Withering Torment 0%, stop 0% -> Pawn of Ulamog [search]]
+R1    Yawgmoth casts Pawn of Ulamog
+R1  --- Zur the Enchanter turn 1: life 40, 7 cards in hand, 0 lands
+R1    Zur the Enchanter plays City of Brass
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kinnan plays Flooded Grove
+R1        [Kinnan decides: Ponder 100%, stop 0% -> Ponder [search]]
+R1    Kinnan casts Ponder
+R2  --- Aragorn turn 2: life 40, 7 cards in hand, 1 lands
+R2    Aragorn plays Command Tower
+R2        [Aragorn decides: Cyclonic Rift -> Pawn of Ulamog 96%, stop 4% -> Cyclonic Rift -> Pawn of Ulamog [search]]
+R2    Aragorn casts Cyclonic Rift -> Pawn of Ulamog (Yawgmoth)
+R2      Pawn of Ulamog (Yawgmoth) is removed: bounce
+R2  --- Yawgmoth turn 2: life 40, 6 cards in hand, 1 lands
+R2    Yawgmoth plays Swamp
+R2        [Yawgmoth decides: Gravecrawler 60%, Marionette Apprentice 40%, stop 0% -> Marionette Apprentice [search]]
+R2    Yawgmoth casts Marionette Apprentice
+R2  --- Zur the Enchanter turn 2: life 40, 7 cards in hand, 1 lands
+R2    Zur the Enchanter plays Island
+R2        [Zur the Enchanter decides: Talisman of Hierarchy 57%, Demonic Tutor 43%, stop 0% -> Talisman of Hierarchy [search]]
+R2    Zur the Enchanter casts Talisman of Hierarchy
+R2  --- Kinnan turn 2: life 40, 7 cards in hand, 1 lands
+R2    Kinnan plays Forest
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 100%, stop (hold mana) 0% -> Kinnan, Bonder Prodigy [search]]
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R3  --- Aragorn turn 3: life 40, 6 cards in hand, 2 lands
+R3    Aragorn plays Island
+R3        [Aragorn decides: Chaos Warp -> Kinnan, Bonder Prodigy 95%, stop (hold mana) 5%, Skyclave Apparition 0% -> stop (hold mana) [search]]
+R3        [Aragorn decides: Chaos Warp -> Kinnan, Bonder Prodigy 95%, stop (hold mana) 5%, Skyclave Apparition 0% -> Chaos Warp -> Kinnan, Bonder Prodigy [search]]
+R3    Aragorn casts Chaos Warp -> Kinnan, Bonder Prodigy (Kinnan)
+R3      Kinnan, Bonder Prodigy (Kinnan) is removed: tuck
+R3      Kinnan reveals Finale of Devastation
+R3  --- Yawgmoth turn 3: life 40, 5 cards in hand, 2 lands
+R3    Yawgmoth plays Swamp
+R3        [Yawgmoth decides: Pawn of Ulamog 53%, Gravecrawler 47%, Withering Torment 0%, stop 0% -> Pawn of Ulamog [search]]
+R3    Yawgmoth casts Pawn of Ulamog
+R3        [Yawgmoth attacks: Aragorn 34%, Kinnan 34%, Zur the Enchanter 33% -> Zur the Enchanter]
+R3    Yawgmoth attacks Zur the Enchanter with 2 creature(s): 2 damage (life now 37)
+R3  --- Zur the Enchanter turn 3: life 37, 6 cards in hand, 2 lands
+R3    Zur the Enchanter plays Swamp
+R3        [Zur the Enchanter decides: Zur the Enchanter 97%, Demonic Tutor 3%, Toxic Deluge 0%, stop 0% -> Zur the Enchanter [search]]
+R3    Zur the Enchanter casts Zur the Enchanter
+R3  --- Kinnan turn 3: life 40, 7 cards in hand, 2 lands
+R3    Kinnan plays Forest
+R3        [Kinnan decides: Enduring Vitality 98%, stop (hold mana) 2% -> Enduring Vitality [search]]
+R3    Kinnan casts Enduring Vitality
+R4  --- Aragorn turn 4: life 40, 5 cards in hand, 3 lands
+R4    Aragorn plays Yavimaya Coast
+R4        [Aragorn decides: Aragorn, the Uniter 76%, Skyclave Apparition 18%, Smothering Tithe 6%, stop 0% -> Aragorn, the Uniter [search]]
+R4    Aragorn casts Aragorn, the Uniter
+R4  --- Yawgmoth turn 4: life 40, 4 cards in hand, 3 lands
+R4        [Yawgmoth decides: Withering Torment -> Zur the Enchanter 99%, Withering Torment 1%, Gravecrawler 0%, Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel 0% -> Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel [search]]
+R4    Yawgmoth casts Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel
+R4      Yawgmoth sacrifices Token to Sephiroth
+R4        [Yawgmoth attack plan by search: filtered at Aragorn]
+R4        [Yawgmoth holds back 2 attacker(s) that would die to blocks]
+R4    Yawgmoth attacks Zur the Enchanter with 2 creature(s): 3 damage (life now 30)
+R4  --- Zur the Enchanter turn 4: life 30, 6 cards in hand, 3 lands
+R4    Zur the Enchanter pays 2 life for an untapped Godless Shrine
+R4    Zur the Enchanter plays Godless Shrine
+R4        [Zur the Enchanter decides: Demonic Tutor 81%, Winds of Rath 13%, Esper Sentinel 6%, Toxic Deluge 0% -> Demonic Tutor [search]]
+R4    Zur the Enchanter casts Demonic Tutor
+R4      Zur the Enchanter tutors Heliod, Sun-Crowned into their hand
+R4        [Zur the Enchanter decides: Heliod, Sun-Crowned 62%, Esper Sentinel 36%, Toxic Deluge 2%, stop 0% -> Heliod, Sun-Crowned [search]]
+R4    Zur the Enchanter casts Heliod, Sun-Crowned
+R4        [Zur the Enchanter attack plan by search: filtered at Kinnan]
+R4      Zur fetches Necropotence
+R4    Zur the Enchanter attacks Kinnan with 1 creature(s): 1 damage (life now 38)
+R4    Zur the Enchanter pays 3 life to Necropotence
+R4  --- Kinnan turn 4: life 38, 6 cards in hand, 3 lands
+R4    Kinnan plays Misty Rainforest
+R4      cracks Misty Rainforest for Breeding Pool
+R4        [Kinnan decides: Springleaf Drum 99%, Kinnan, Bonder Prodigy 1%, stop (hold mana) 0% -> Springleaf Drum [search]]
+R4    Kinnan casts Springleaf Drum
+R4        [Kinnan decides: Kinnan, Bonder Prodigy 89%, stop (hold mana) 11% -> Kinnan, Bonder Prodigy [search]]
+R4    Kinnan casts Kinnan, Bonder Prodigy
+R5  --- Aragorn turn 5: life 38, 5 cards in hand, 4 lands
+R5    Aragorn plays Volcanic Island
+R5        [Aragorn decides: Skyclave Apparition 58%, Lightning Greaves 23%, Smothering Tithe 19%, stop 0% -> Skyclave Apparition [search]]
+R5    Aragorn casts Skyclave Apparition
+R5      Kinnan casts Pact of Negation at Skyclave Apparition
+R5      Kinnan counters Skyclave Apparition with Pact of Negation
+R5        [Aragorn decides: Lightning Greaves 100%, stop 0% -> stop [search]]
+R5        [Aragorn attack plan by search: filtered at Zur the Enchanter]
+R5    Aragorn attacks Zur the Enchanter with 1 creature(s): 5 damage (life now 19)
+R5        [Aragorn decides: Lightning Greaves 100%, stop 0% -> Lightning Greaves [search]]
+R5    Aragorn casts Lightning Greaves
+R5        [Aragorn decides: equip Lightning Greaves 100%, stop 0% -> equip Lightning Greaves [search]]
+R5    Aragorn equips Lightning Greaves to Aragorn, the Uniter
+R5  --- Yawgmoth turn 5: life 41, 5 cards in hand, 3 lands
+R5        [Yawgmoth decides: Withering Torment -> Zur the Enchanter 99%, Withering Torment 1%, stop (hold mana) 0%, Gravecrawler 0% -> Withering Torment -> Zur the Enchanter [search]]
+R5    Yawgmoth casts Withering Torment -> Zur the Enchanter (Zur the Enchanter)
+R5      Zur the Enchanter (Zur the Enchanter) is removed: destroy
+R5        [Yawgmoth attack plan by search: filtered at Zur the Enchanter]
+R5    Yawgmoth attacks Zur the Enchanter with 3 creature(s): 6 damage (life now 12)
+R5  --- Zur the Enchanter turn 5: life 12, 7 cards in hand, 4 lands
+R5    Zur the Enchanter plays Arcane Sanctum
+R5        [Zur the Enchanter decides: combo: Heliod, Sun-Crowned + Walking Ballista 86%, Toxic Deluge 7%, Winds of Rath 7%, Winds of Rath 0% -> combo: Heliod, Sun-Crowned + Walking Ballista [search]]
+R5    Zur the Enchanter goes for Heliod, Sun-Crowned + Walking Ballista
+R5    Zur the Enchanter casts Walking Ballista
+R5  *** Aragorn is eliminated (life 38) by Zur the Enchanter
+R5  *** Yawgmoth is eliminated (life 40) by Zur the Enchanter
+R5  *** Kinnan is eliminated (life 37) by Zur the Enchanter
+R5  *** Zur the Enchanter wins by combo
+Winner: Zur the Enchanter (combo)

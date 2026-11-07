@@ -1,0 +1,203 @@
+Play-by-play of pool game 3 (seed 500003): Aragorn vs Tier 4 (Low B4), loose profile, lookahead AI
+Seat order: Yuriko, Chulane, Prosper, Aragorn
+R1  --- Yuriko turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yuriko plays Island
+R1        [Yuriko decides: Sensei's Divining Top 100%, stop 0% -> Sensei's Divining Top [search]]
+R1    Yuriko casts Sensei's Divining Top
+R1  --- Chulane turn 1: life 40, 7 cards in hand, 0 lands
+R1    Chulane plays Spara's Headquarters
+R1  --- Prosper turn 1: life 40, 7 cards in hand, 0 lands
+R1    Prosper plays Command Tower
+R1  --- Aragorn turn 1: life 40, 7 cards in hand, 0 lands
+R1    Aragorn plays Mountain
+R1        [Aragorn decides: Skullclamp 100%, stop 0% -> Skullclamp [search]]
+R1    Aragorn casts Skullclamp
+R2  --- Yuriko turn 2: life 40, 6 cards in hand, 1 lands
+R2    Yuriko plays Sunken Hollow
+R2  --- Chulane turn 2: life 40, 7 cards in hand, 1 lands
+R2    Chulane plays Island
+R2        [Chulane decides: Drannith Magistrate 35%, Fyndhorn Elves 35%, Destiny Spinner 29%, stop 0% -> Fyndhorn Elves [search]]
+R2    Chulane casts Fyndhorn Elves
+R2  --- Prosper turn 2: life 40, 7 cards in hand, 1 lands
+R2    Prosper plays Swamp
+R2        [Prosper decides: Arcane Signet 87%, Reckless Impulse 13%, stop 0% -> Arcane Signet [search]]
+R2    Prosper casts Arcane Signet
+R2  --- Aragorn turn 2: life 40, 6 cards in hand, 1 lands
+R2    Aragorn plays Sulfur Falls
+R3  --- Yuriko turn 3: life 40, 6 cards in hand, 2 lands
+R3        [Yuriko decides: Sol Ring 100%, play Sea Gate Restoration // Sea Gate, Reborn as a land 0%, play Hydroelectric Specimen // Hydroelectric Laboratory as a land 0%, stop 0% -> Sol Ring [search]]
+R3    Yuriko casts Sol Ring
+R3        [Yuriko decides: play Sea Gate Restoration // Sea Gate, Reborn as a land 50%, play Hydroelectric Specimen // Hydroelectric Laboratory as a land 50%, stop 0% -> play Sea Gate Restoration // Sea Gate, Reborn as a land [search]]
+R3    Yuriko plays Sea Gate Restoration // Sea Gate, Reborn
+R3        [Yuriko decides: Hydroelectric Specimen // Hydroelectric Laboratory 100%, stop 0% -> Hydroelectric Specimen // Hydroelectric Laboratory [search]]
+R3    Yuriko casts Hydroelectric Specimen // Hydroelectric Laboratory
+R3  --- Chulane turn 3: life 40, 6 cards in hand, 2 lands
+R3    Chulane plays Island
+R3        [Chulane decides: Drannith Magistrate 34%, Destiny Spinner 28%, Reclamation Sage 21%, Recruiter of the Guard 9% -> Drannith Magistrate [search]]
+R3    Chulane casts Drannith Magistrate
+R3        [Chulane decides: Destiny Spinner 89%, Lightning Greaves 11%, stop 0% -> Destiny Spinner [search]]
+R3    Chulane casts Destiny Spinner
+R3  --- Prosper turn 3: life 40, 6 cards in hand, 2 lands
+R3    Prosper plays Mountain
+R3        [Prosper decides: Rakdos Signet 83%, Grim Hireling 9%, Bedevil -> Drannith Magistrate 3%, Reckless Impulse 2% -> Rakdos Signet [search]]
+R3    Prosper casts Rakdos Signet
+R3        [Prosper decides: Bedevil -> Drannith Magistrate 32%, Reckless Impulse 29%, Black Market Connections 23%, Toxic Deluge 16% -> Toxic Deluge [search]]
+R3    Prosper casts Toxic Deluge
+R3      board wipe resolves (minus)
+R3        Hydroelectric Specimen // Hydroelectric Laboratory (Yuriko) is removed by the wipe (minus)
+R3        Fyndhorn Elves (Chulane) is removed by the wipe (minus)
+R3        Drannith Magistrate (Chulane) is removed by the wipe (minus)
+R3        Destiny Spinner (Chulane) is removed by the wipe (minus)
+R3  --- Aragorn turn 3: life 40, 6 cards in hand, 2 lands
+R3    Aragorn plays Brushland
+R3        [Aragorn decides: Birds of Paradise 100%, stop (hold mana) 0%, Veyran, Voice of Duality 0% -> Birds of Paradise [search]]
+R3    Aragorn casts Birds of Paradise
+R3        [Aragorn decides: Skullclamp 70%, stop (hold mana) 30% -> Skullclamp [search]]
+R3    Aragorn Skullclamps Birds of Paradise
+R4  --- Yuriko turn 4: life 37, 4 cards in hand, 3 lands
+R4        [Yuriko decides: Skullsnatcher 100%, stop 0% -> Skullsnatcher [search]]
+R4    Yuriko casts Skullsnatcher
+R4  --- Chulane turn 4: life 40, 4 cards in hand, 3 lands
+R4        [Chulane decides: Reclamation Sage 63%, Recruiter of the Guard 26%, Aven Mindcensor 11%, stop 0% -> Reclamation Sage [search]]
+R4    Chulane casts Reclamation Sage
+R4      Sensei's Divining Top (Yuriko) is removed: destroy
+R4  --- Prosper turn 4: life 36, 4 cards in hand, 3 lands
+R4        [Prosper decides: Prosper, Tome-Bound 96%, Grim Hireling 3%, Reckless Impulse 1%, Ignite the Future 1% -> Prosper, Tome-Bound [search]]
+R4    Prosper casts Prosper, Tome-Bound
+R4  --- Aragorn turn 4: life 39, 7 cards in hand, 3 lands
+R4    Aragorn plays Stormcarved Coast
+R4        [Aragorn decides: Guttersnipe 95%, Veyran, Voice of Duality 3%, stop (hold mana) 2% -> stop (hold mana) [search]]
+R4        [Aragorn decides: Guttersnipe 95%, Veyran, Voice of Duality 3%, stop (hold mana) 2% -> Guttersnipe [search]]
+R4    Aragorn casts Guttersnipe
+R5    Yuriko casts Dismember -> Prosper, Tome-Bound (Prosper)
+R5      Prosper, Tome-Bound (Prosper) is removed: shrink5
+R5        [Yuriko end of turn: Dismember -> Prosper, Tome-Bound 100%, Snuff Out -> Guttersnipe 0%, pass 0% -> Dismember -> Prosper, Tome-Bound]
+R5    Yuriko casts Snuff Out -> Reclamation Sage (Chulane)
+R5      Reclamation Sage (Chulane) is removed: destroy
+R5        [Yuriko end of turn: Snuff Out -> Guttersnipe 97%, pass 3% -> Snuff Out -> Guttersnipe]
+R5  --- Yuriko turn 5: life 29, 2 cards in hand, 3 lands
+R5        [Yuriko decides: Imperial Seal 100%, stop 0% -> Imperial Seal [search]]
+R5    Yuriko casts Imperial Seal
+R5      Yuriko puts Dig Through Time on top of their library
+R5        [Yuriko attack plan by search: filtered at Chulane]
+R5      Skullsnatcher exiles Fyndhorn Elves from Chulane's graveyard
+R5      Skullsnatcher exiles Drannith Magistrate from Chulane's graveyard
+R5    Yuriko attacks Chulane with 1 creature(s): 2 damage (life now 38)
+R5  --- Chulane turn 5: life 38, 4 cards in hand, 3 lands
+R5        [Chulane decides: Elvish Mystic 89%, Recruiter of the Guard 7%, Aven Mindcensor 3%, stop 0% -> Elvish Mystic [search]]
+R5    Chulane casts Elvish Mystic
+R5        [Chulane decides: Lightning Greaves 100%, stop 0% -> Lightning Greaves [search]]
+R5    Chulane casts Lightning Greaves
+R5  --- Prosper turn 5: life 36, 6 cards in hand, 3 lands
+R5    Prosper plays Haunted Ridge
+R5        [Prosper decides: Prosper, Tome-Bound 60%, Grim Hireling 21%, Reckless Impulse 8%, Ignite the Future 7% -> Prosper, Tome-Bound [search]]
+R5    Prosper casts Prosper, Tome-Bound
+R5  --- Aragorn turn 5: life 39, 6 cards in hand, 4 lands
+R5    Aragorn plays Mystic Sanctuary
+R5        [Aragorn decides: Frantic Search 48%, Veyran, Voice of Duality 29%, stop (hold mana) 23% -> Frantic Search [search]]
+R5    Aragorn casts Frantic Search
+R6  --- Yuriko turn 6: life 25, 2 cards in hand, 3 lands
+R6        [Yuriko decides: Yuriko, the Tiger's Shadow 50%, Dig Through Time 50%, stop 0% -> Yuriko, the Tiger's Shadow [search]]
+R6    Yuriko casts Yuriko, the Tiger's Shadow
+R6        [Yuriko attack plan by search: filtered at Chulane]
+R6    Yuriko attacks Chulane with 1 creature(s): 0 damage (life now 36)
+R6  --- Chulane turn 6: life 36, 3 cards in hand, 3 lands
+R6        [Chulane decides: Cyclonic Rift -> Prosper, Tome-Bound 98%, Recruiter of the Guard 2%, Aven Mindcensor 1%, stop 0% -> Cyclonic Rift -> Prosper, Tome-Bound [search]]
+R6    Chulane casts Cyclonic Rift -> Yuriko, the Tiger's Shadow (Yuriko)
+R6      Yuriko, the Tiger's Shadow (Yuriko) is removed: bounce
+R6  --- Prosper turn 6: life 34, 6 cards in hand, 4 lands
+R6    Prosper plays Mountain
+R6        [Prosper decides: Grim Hireling 31%, Marionette Apprentice 31%, Reckless Impulse 16%, Ignite the Future 14% -> Reckless Impulse [search]]
+R6    Prosper casts Reckless Impulse
+R6      Aragorn casts Swan Song at Reckless Impulse
+R6      Aragorn counters Reckless Impulse with Swan Song
+R6        [Prosper decides: Grim Hireling 37%, Marionette Apprentice 37%, Ignite the Future 17%, Black Market Connections 8% -> Grim Hireling [search]]
+R6    Prosper casts Grim Hireling
+R6        [Prosper attack plan by search: filtered at Aragorn]
+R6    Prosper attacks Aragorn with 1 creature(s): 1 damage (life now 38)
+R6        [Prosper decides: Marionette Apprentice 80%, Black Market Connections 18%, Bedevil -> Guttersnipe 2%, stop 0% -> Marionette Apprentice [search]]
+R6    Prosper casts Marionette Apprentice
+R6  --- Aragorn turn 6: life 38, 4 cards in hand, 5 lands
+R6    Aragorn plays Battlefield Forge
+R6        [Aragorn decides: Aragorn, the Uniter 85%, Cyclonic Rift -> Prosper, Tome-Bound 13%, Grand Abolisher 1%, stop 0% -> Aragorn, the Uniter [search]]
+R6    Aragorn casts Aragorn, the Uniter
+R6        [Aragorn decides: Cyclonic Rift -> Prosper, Tome-Bound 100%, stop 0% -> Cyclonic Rift -> Prosper, Tome-Bound [search]]
+R6    Aragorn casts Cyclonic Rift -> Prosper, Tome-Bound (Prosper)
+R6      Prosper casts Deflecting Swat: Cyclonic Rift now targets Aragorn, the Uniter
+R6      Aragorn, the Uniter (Aragorn) is removed: bounce
+R6      Prosper protects Prosper, Tome-Bound
+R7  --- Yuriko turn 7: life 21, 3 cards in hand, 3 lands
+R7        [Yuriko decides: Dig Through Time 51%, Mist-Syndicate Naga 42%, Yuriko, the Tiger's Shadow 7%, stop 0% -> Dig Through Time [search]]
+R7    Yuriko casts Dig Through Time
+R7        [Yuriko decides: Mist-Syndicate Naga 100%, stop 0% -> Mist-Syndicate Naga [search]]
+R7    Yuriko casts Mist-Syndicate Naga
+R7  --- Chulane turn 7: life 32, 3 cards in hand, 3 lands
+R7        [Chulane decides: Recruiter of the Guard 50%, Delighted Halfling 27%, Aven Mindcensor 22%, stop 0% -> Recruiter of the Guard [search]]
+R7    Chulane casts Recruiter of the Guard
+R7      Chulane reveals Shrieking Drake and puts it into their hand
+R7        [Chulane decides: equip Lightning Greaves 100%, stop 0% -> stop [search]]
+R7        [Chulane decides: equip Lightning Greaves 100%, stop 0% -> equip Lightning Greaves [search]]
+R7    Chulane equips Lightning Greaves to Recruiter of the Guard
+R7    Prosper casts Bedevil -> Mist-Syndicate Naga (Yuriko)
+R7      Mist-Syndicate Naga (Yuriko) is removed: destroy
+R7        [Prosper end of turn: Bedevil -> Guttersnipe 93%, pass 7% -> Bedevil -> Guttersnipe]
+R7  --- Prosper turn 7: life 30, 2 cards in hand, 5 lands
+R7        [Prosper decides: Ignite the Future 47%, Mind Stone 35%, Black Market Connections 17%, stop 0% -> Ignite the Future [search]]
+R7    Prosper casts Ignite the Future
+R7      Prosper exiles 3 cards (playable until the end of next turn)
+R7        [Prosper decides: Mayhem Devil 79%, Nadier's Nightblade 7%, Mind Stone 6%, Sol Ring 6% -> Mayhem Devil [search]]
+R7    Prosper casts Mayhem Devil
+R7        [Prosper decides: Sol Ring 100%, stop 0% -> Sol Ring [search]]
+R7    Prosper casts Sol Ring
+R7        [Prosper decides: Nadier's Nightblade 45%, Mind Stone 37%, Black Market Connections 18%, stop 0% -> Nadier's Nightblade [search]]
+R7    Prosper casts Nadier's Nightblade
+R7        [Prosper attack plan by search: filtered at Aragorn]
+R7        [Prosper holds back 1 attacker(s) that would die to blocks]
+R7    Prosper attacks Aragorn with 3 creature(s): 6 damage (life now 25)
+R7    Prosper attacks Yuriko with 2 creature(s): 2 damage (life now 14)
+R7        [Prosper decides: Mind Stone 67%, Black Market Connections 33%, stop 0% -> Mind Stone [search]]
+R7    Prosper casts Mind Stone
+R7        [Prosper decides: Black Market Connections 100%, stop 0% -> Black Market Connections [search]]
+R7    Prosper casts Black Market Connections
+R7  --- Aragorn turn 7: life 17, 3 cards in hand, 6 lands
+R7    Aragorn plays Misty Rainforest
+R7      cracks Misty Rainforest for Steam Vents
+R7        [Aragorn decides: Aragorn, the Uniter 79%, Grand Abolisher 15%, stop (hold mana) 6% -> Aragorn, the Uniter [search]]
+R7    Aragorn casts Aragorn, the Uniter
+R8  --- Yuriko turn 8: life 6, 4 cards in hand, 3 lands
+R8    Yuriko plays Island
+R8        [Yuriko decides: Yuriko, the Tiger's Shadow 100%, stop 0% -> Yuriko, the Tiger's Shadow [search]]
+R8    Yuriko casts Yuriko, the Tiger's Shadow
+R8  --- Chulane turn 8: life 13, 4 cards in hand, 3 lands
+R8    Chulane plays Forest
+R8        [Chulane decides: Shrieking Drake 76%, Delighted Halfling 13%, Aven Mindcensor 11%, stop 0% -> Shrieking Drake [search]]
+R8    Chulane casts Shrieking Drake
+R8        [Chulane decides: equip Lightning Greaves 58%, Recruiter of the Guard 21%, Delighted Halfling 11%, Aven Mindcensor 10% -> equip Lightning Greaves [search]]
+R8    Chulane equips Lightning Greaves to Shrieking Drake
+R8        [Chulane decides: Recruiter of the Guard 51%, Delighted Halfling 26%, Aven Mindcensor 23%, stop 0% -> Delighted Halfling [search]]
+R8    Chulane casts Delighted Halfling
+R8        [Chulane attack plan by search: filtered at Yuriko]
+R8    Chulane attacks Yuriko with 1 creature(s): 1 damage (life now 5)
+R8  --- Prosper turn 8: life 34, 1 cards in hand, 5 lands
+R8        [Prosper decides: Storm-Kiln Artist 70%, Ignite the Future (flashback) 21%, stop (hold mana) 7%, Grim Hireling -> Guttersnipe 3% -> Storm-Kiln Artist [search]]
+R8    Prosper casts Storm-Kiln Artist
+R8        [Prosper decides: Ignite the Future (flashback) 94%, stop (hold mana) 4%, Grim Hireling -> Guttersnipe 2% -> Ignite the Future (flashback) [search]]
+R8    Prosper casts Ignite the Future
+R8      Prosper exiles 3 cards (playable until the end of next turn), free
+R8      Prosper casts Magda, Brazen Outlaw free (Ignite the Future)
+R8    Prosper casts Magda, Brazen Outlaw
+R8      Prosper casts Deadly Rollick free (Ignite the Future)
+R8    Prosper casts Deadly Rollick -> Yuriko, the Tiger's Shadow (Yuriko)
+R8      Yuriko, the Tiger's Shadow (Yuriko) is removed: exile
+R8        [Prosper decides: stop (hold mana) 72%, Grim Hireling -> Guttersnipe 28% -> stop (hold mana) [search]]
+R8    Prosper plays Mountain
+R8        [Prosper attack plan by search: filtered at Yuriko]
+R8  *** Yuriko is eliminated (life -11) by Prosper
+R8    Prosper attacks Yuriko with 7 creature(s): 12 damage (life now -11)
+R8        [Prosper decides: Magda: Bolas's Citadel 90%, stop (hold mana) 10% -> Magda: Bolas's Citadel [search]]
+R8    Prosper sacrifices five Treasures: Magda searches for Bolas's Citadel
+R8        [Prosper decides: Citadel: sacrifice ten 100%, stop (hold mana) 0% -> Citadel: sacrifice ten [search]]
+R8    Prosper sacrifices ten permanents to Bolas's Citadel
+R8  *** Chulane is eliminated (life -33) by Prosper
+R8  *** Aragorn is eliminated (life -27) by Prosper
+Winner: Prosper (damage)

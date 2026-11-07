@@ -1,0 +1,71 @@
+Play-by-play of pool game 4 (seed 500004): Aragorn vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Kinnan, Zur the Enchanter, Yawgmoth, Aragorn
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1      Kinnan plays it as Barkchannel Pathway
+R1    Kinnan plays Barkchannel Pathway // Tidechannel Pathway
+R1  --- Zur the Enchanter turn 1: life 40, 7 cards in hand, 0 lands
+R1    Zur the Enchanter plays Command Tower
+R1        [Zur the Enchanter decides: Enlightened Tutor 100%, stop 0% -> Enlightened Tutor [search]]
+R1    Zur the Enchanter casts Enlightened Tutor
+R1      Zur the Enchanter reveals Heliod, Sun-Crowned and puts it on top of their library
+R1  --- Yawgmoth turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yawgmoth plays Swamp
+R1  --- Aragorn turn 1: life 40, 7 cards in hand, 0 lands
+R1    Aragorn plays Battlefield Forge
+R2  --- Kinnan turn 2: life 40, 7 cards in hand, 1 lands
+R2    Kinnan plays Forest
+R2        [Kinnan decides: Birds of Paradise 98%, Badgermole Cub 2%, stop 0% -> Birds of Paradise [search]]
+R2    Kinnan casts Birds of Paradise
+R2  --- Zur the Enchanter turn 2: life 40, 6 cards in hand, 1 lands
+R2    Zur the Enchanter plays Reliquary Tower
+R2        [Zur the Enchanter decides: Azorius Signet 95%, Darksteel Mutation 5%, stop 0% -> Azorius Signet [search]]
+R2    Zur the Enchanter casts Azorius Signet
+R2  --- Yawgmoth turn 2: life 40, 7 cards in hand, 1 lands
+R2    Yawgmoth plays Swamp
+R2        [Yawgmoth decides: Cabal Ritual 68%, Reassembling Skeleton 32%, stop 0% -> Cabal Ritual [search]]
+R2    Yawgmoth casts Cabal Ritual
+R2        [Yawgmoth decides: Geralf's Messenger 50%, Pawn of Ulamog 33%, Reassembling Skeleton 17%, stop 0% -> Geralf's Messenger [search]]
+R2    Yawgmoth casts Geralf's Messenger
+R2  --- Aragorn turn 2: life 40, 7 cards in hand, 1 lands
+R2    Aragorn plays Seaside Citadel
+R3  --- Kinnan turn 3: life 38, 6 cards in hand, 2 lands
+R3        [Kinnan decides: Kinnan, Bonder Prodigy 78%, Badgermole Cub 22%, stop (hold mana) 0%, Endurance 0% -> Badgermole Cub [search]]
+R3    Kinnan casts Badgermole Cub
+R3  --- Zur the Enchanter turn 3: life 40, 5 cards in hand, 2 lands
+R3    Zur the Enchanter pays 2 life for an untapped Watery Grave
+R3    Zur the Enchanter plays Watery Grave
+R3        [Zur the Enchanter decides: Zur the Enchanter 99%, Heliod, Sun-Crowned 0%, Darksteel Mutation 0%, Toxic Deluge 0% -> Zur the Enchanter [search]]
+R3    Zur the Enchanter casts Zur the Enchanter
+R3  --- Yawgmoth turn 3: life 40, 5 cards in hand, 2 lands
+R3    Yawgmoth plays Nykthos, Shrine to Nyx
+R3        [Yawgmoth decides: Pawn of Ulamog 66%, Reassembling Skeleton 34%, stop 0% -> Pawn of Ulamog [search]]
+R3    Yawgmoth casts Pawn of Ulamog
+R3        [Yawgmoth attack plan by search: filtered at Kinnan]
+R3    Yawgmoth attacks Kinnan with 1 creature(s): 0 damage (life now 38)
+R3  --- Aragorn turn 3: life 40, 7 cards in hand, 2 lands
+R3    Aragorn plays Mystic Monastery
+R3        [Aragorn decides: Cyclonic Rift -> Zur the Enchanter 94%, Third Path Iconoclast 3%, Firebrand Archer 3%, stop 0% -> Cyclonic Rift -> Zur the Enchanter [search]]
+R3    Aragorn casts Cyclonic Rift -> Zur the Enchanter (Zur the Enchanter)
+R3      Zur the Enchanter (Zur the Enchanter) is removed: bounce
+R4  --- Kinnan turn 4: life 38, 6 cards in hand, 2 lands
+R4        [Kinnan decides: Kinnan, Bonder Prodigy 97%, channel Colossal Skyturtle: Badgermole Cub 3%, stop (hold mana) 0%, Endurance 0% -> Endurance [search]]
+R4    Kinnan casts Endurance
+R4  --- Zur the Enchanter turn 4: life 36, 5 cards in hand, 3 lands
+R4    Zur the Enchanter plays Raffine's Tower
+R4        [Zur the Enchanter decides: Darksteel Mutation 56%, Heliod, Sun-Crowned 43%, Toxic Deluge 1%, Darksteel Mutation -> Endurance 0% -> Darksteel Mutation [search]]
+R4    Zur the Enchanter casts Darksteel Mutation
+R4      Endurance (Kinnan) is removed: mutate
+R4      Endurance becomes a 0/1 Insect with no abilities
+R4  --- Yawgmoth turn 4: life 40, 4 cards in hand, 3 lands
+R4    Yawgmoth plays Swamp
+R4        [Yawgmoth decides: Yawgmoth, Thran Physician 86%, Bolas's Citadel 7%, Pitiless Plunderer 4%, Hancock, Ghoulish Mayor 2% -> Yawgmoth, Thran Physician [search]]
+R4    Yawgmoth casts Yawgmoth, Thran Physician
+R4        [Yawgmoth decides: Pitiless Plunderer 52%, Hancock, Ghoulish Mayor 30%, Reassembling Skeleton 18%, stop 0% -> Hancock, Ghoulish Mayor [search]]
+R4    Yawgmoth casts Hancock, Ghoulish Mayor
+R4        [Yawgmoth decides: combo: Yawgmoth + undying loop + a death payoff 100%, Reassembling Skeleton 0%, Yawgmoth: sacrifice Hancock, Ghoulish Mayor 0%, stop 0% -> combo: Yawgmoth + undying loop + a death payoff [search]]
+R4    Yawgmoth goes for Yawgmoth + undying loop + a death payoff
+R4  *** Kinnan is eliminated (life 38) by Yawgmoth
+R4  *** Zur the Enchanter is eliminated (life 36) by Yawgmoth
+R4  *** Aragorn is eliminated (life 40) by Yawgmoth
+R4  *** Yawgmoth wins by combo
+Winner: Yawgmoth (combo)

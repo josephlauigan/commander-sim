@@ -1,0 +1,180 @@
+Play-by-play of pool game 5 (seed 500005): Aragorn vs Tier 4 (Low B4), loose profile, lookahead AI
+Seat order: Edgar Markov, Krenko, Aragorn, Yuriko
+R1  --- Edgar Markov turn 1: life 40, 7 cards in hand, 0 lands
+R1    Edgar Markov pays 2 life for an untapped Sacred Foundry
+R1    Edgar Markov plays Sacred Foundry
+R1  --- Krenko turn 1: life 40, 7 cards in hand, 0 lands
+R1    Krenko plays Mountain
+R1  --- Aragorn turn 1: life 40, 7 cards in hand, 0 lands
+R1    Aragorn plays Command Tower
+R1  --- Yuriko turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yuriko plays Swamp
+R1        [Yuriko decides: Sensei's Divining Top 100%, stop 0% -> Sensei's Divining Top [search]]
+R1    Yuriko casts Sensei's Divining Top
+R2  --- Edgar Markov turn 2: life 38, 7 cards in hand, 1 lands
+R2    Edgar Markov plays Plains
+R2        [Edgar Markov decides: Whitemane Lion 69%, Sun Sentinel 17%, Glory Seeker 14%, stop 0% -> Sun Sentinel [search]]
+R2    Edgar Markov casts Sun Sentinel
+R2  --- Krenko turn 2: life 40, 7 cards in hand, 1 lands
+R2    Krenko plays Mountain
+R2        [Krenko decides: Sol Ring 96%, Impact Tremors 4%, stop 0% -> Sol Ring [search]]
+R2    Krenko casts Sol Ring
+R2        [Krenko decides: Impact Tremors 100%, stop 0% -> Impact Tremors [search]]
+R2    Krenko casts Impact Tremors
+R2  --- Aragorn turn 2: life 40, 7 cards in hand, 1 lands
+R2    Aragorn plays Plains
+R2        [Aragorn decides: Underworld Breach 66%, Young Pyromancer 34%, stop 0% -> Underworld Breach [search]]
+R2    Aragorn casts Underworld Breach
+R2  --- Yuriko turn 2: life 40, 6 cards in hand, 1 lands
+R2    Yuriko plays Drowned Catacomb
+R3  --- Edgar Markov turn 3: life 38, 6 cards in hand, 2 lands
+R3        [Edgar Markov decides: Whitemane Lion 83%, Glory Seeker 17%, stop 0% -> Glory Seeker [search]]
+R3    Edgar Markov casts Glory Seeker
+R3        [Edgar Markov attacks: Krenko 53%, Yuriko 32%, Aragorn 15% -> Yuriko]
+R3    Edgar Markov attacks Yuriko with 1 creature(s): 2 damage (life now 38)
+R3  --- Krenko turn 3: life 40, 5 cards in hand, 2 lands
+R3    Krenko plays Mountain
+R3        [Krenko decides: Krenko, Mob Boss 93%, Goblin Trashmaster 3%, Siege-Gang Commander 2%, Mana Echoes 1% -> Krenko, Mob Boss [search]]
+R3    Krenko casts Krenko, Mob Boss
+R3  --- Aragorn turn 3: life 39, 6 cards in hand, 2 lands
+R3    Aragorn plays Exotic Orchard
+R3        [Aragorn decides: Young Pyromancer 100%, stop 0% -> Young Pyromancer [search]]
+R3    Aragorn casts Young Pyromancer
+R3  --- Yuriko turn 3: life 37, 6 cards in hand, 2 lands
+R3    Yuriko plays Shipwreck Marsh
+R3        [Yuriko decides: Dimir Signet 68%, Baleful Strix 26%, Spectral Sailor 6%, Lim-Dûl's Vault 1% -> Dimir Signet [search]]
+R3    Yuriko casts Dimir Signet
+R3        [Yuriko decides: Spectral Sailor 100%, stop 0% -> Spectral Sailor [search]]
+R3    Yuriko casts Spectral Sailor
+R4  --- Edgar Markov turn 4: life 37, 6 cards in hand, 2 lands
+R4        [Edgar Markov decides: stop (hold mana) 87%, Disenchant -> Impact Tremors 13%, Whitemane Lion 0% -> stop (hold mana) [search]]
+R4        [Edgar Markov attack plan by search: filtered at Krenko]
+R4        [Edgar Markov holds back 2 attacker(s) that would die to blocks]
+R4    Edgar Markov attacks Yuriko with 2 creature(s): 4 damage (life now 33)
+R4        [Edgar Markov decides: stop (hold mana) 87%, Disenchant -> Impact Tremors 13%, Whitemane Lion 0% -> stop (hold mana) [search]]
+R4  --- Krenko turn 4: life 40, 5 cards in hand, 3 lands
+R4    Krenko plays Mountain
+R4        [Krenko decides: Goblin Trashmaster 49%, Siege-Gang Commander 17%, Mana Echoes 12%, Sting, the Glinting Dagger 11% -> Siege-Gang Commander [search]]
+R4    Krenko casts Siege-Gang Commander
+R4        [Krenko decides: Krenko: 5 Goblins 99%, stop 1% -> Krenko: 5 Goblins [search]]
+R4    Krenko makes 5 Goblins
+R4  --- Aragorn turn 4: life 30, 5 cards in hand, 3 lands
+R4    Aragorn plays Glacial Fortress
+R4        [Aragorn decides: Aragorn, the Uniter 100%, Big Score 0%, stop 0% -> Aragorn, the Uniter [search]]
+R4    Aragorn casts Aragorn, the Uniter
+R4  --- Yuriko turn 4: life 24, 4 cards in hand, 3 lands
+R4        [Yuriko decides: stop 74%, play Agadeem's Awakening // Agadeem, the Undercrypt as a land 10%, play Sea Gate Restoration // Sea Gate, Reborn as a land 10%, Baleful Strix 5% -> play Agadeem's Awakening // Agadeem, the Undercrypt as a land [search]]
+R4    Yuriko plays Agadeem's Awakening // Agadeem, the Undercrypt
+R4        [Yuriko decides: stop 93%, Baleful Strix 6%, Dauthi Voidwalker 1%, Lim-Dûl's Vault 0% -> stop [search]]
+R4        [Yuriko attack plan by search: none at Edgar Markov]
+R4        [Yuriko decides: Baleful Strix 86%, Dauthi Voidwalker 11%, Lim-Dûl's Vault 3%, stop 0% -> Baleful Strix [search]]
+R4    Yuriko casts Baleful Strix
+R5    Edgar Markov casts Whitemane Lion
+R5        [Edgar Markov end of turn: Whitemane Lion 97%, Disenchant -> Impact Tremors 3%, pass 0% -> Whitemane Lion]
+R5  --- Edgar Markov turn 5: life 28, 7 cards in hand, 2 lands
+R5        [Edgar Markov decides: stop (hold mana) 90%, Disenchant -> Impact Tremors 10%, Whitemane Lion 0% -> stop (hold mana) [search]]
+R5        [Edgar Markov attack plan by search: none at Krenko]
+R5        [Edgar Markov decides: stop (hold mana) 90%, Disenchant -> Impact Tremors 10%, Whitemane Lion 0% -> Disenchant -> Impact Tremors [search]]
+R5    Edgar Markov casts Disenchant -> Impact Tremors (Krenko)
+R5      Impact Tremors (Krenko) is removed: destroy
+R5  --- Krenko turn 5: life 40, 4 cards in hand, 4 lands
+R5    Krenko plays Mountain
+R5        [Krenko decides: Goblin Trashmaster 94%, Mana Echoes 2%, Sting, the Glinting Dagger 2%, Goblin Sharpshooter 2% -> Goblin Trashmaster [search]]
+R5    Krenko casts Goblin Trashmaster
+R5        [Krenko decides: Sting, the Glinting Dagger 46%, Goblin Sharpshooter 42%, Krenko: 11 Goblins 10%, Goblin Trashmaster 2% -> Sting, the Glinting Dagger [search]]
+R5    Krenko casts Sting, the Glinting Dagger
+R5        [Krenko decides: Krenko: 11 Goblins 84%, Goblin Trashmaster 15%, stop 0% -> Krenko: 11 Goblins [search]]
+R5    Krenko makes 11 Goblins
+R5        [Krenko decides: Goblin Trashmaster 99%, stop 1% -> Goblin Trashmaster [search]]
+R5      Sensei's Divining Top (Yuriko) is removed: destroy
+R5        [Krenko attack plan by search: filtered at Yuriko]
+R5    Krenko attacks Yuriko with 8 creature(s): 12 damage (life now 12)
+R5  --- Aragorn turn 5: life 30, 5 cards in hand, 4 lands
+R5    Aragorn plays Forest
+R5        [Aragorn decides: Big Score 100%, stop 0% -> Big Score [search]]
+R5    Aragorn casts Big Score
+R5        [Aragorn decides: stop (hold mana) 91%, Lightning Bolt -> Goblin Trashmaster 9% -> Lightning Bolt -> Goblin Trashmaster [search]]
+R5    Aragorn casts Lightning Bolt -> Goblin Trashmaster (Krenko)
+R5      Goblin Trashmaster (Krenko) is removed: dmg3
+R5        [Aragorn attack plan by search: filtered at Krenko]
+R5    Aragorn attacks Krenko with 1 creature(s): 5 damage (life now 35)
+R5  --- Yuriko turn 5: life 6, 4 cards in hand, 4 lands
+R5    Yuriko plays Island
+R5        [Yuriko decides: Dauthi Voidwalker 86%, Lim-Dûl's Vault 14%, stop 0% -> Dauthi Voidwalker [search]]
+R5    Yuriko casts Dauthi Voidwalker
+R5        [Yuriko decides: Lim-Dûl's Vault 100%, stop 0% -> Lim-Dûl's Vault [search]]
+R5    Yuriko casts Lim-Dûl's Vault
+R6  --- Edgar Markov turn 6: life 28, 7 cards in hand, 2 lands
+R6        [Edgar Markov decides: Whitemane Lion 100%, stop 0% -> Whitemane Lion [search]]
+R6    Edgar Markov casts Whitemane Lion
+R6        [Edgar Markov attack plan by search: all at Krenko]
+R6    Edgar Markov attacks Krenko with 2 creature(s): 4 damage (life now 31)
+R6  --- Krenko turn 6: life 31, 2 cards in hand, 5 lands
+R6    Krenko plays Nykthos, Shrine to Nyx
+R6        [Krenko decides: Krenko: 19 Goblins 37%, Mana Echoes 37%, Goblin Sharpshooter 22%, equip Sting, the Glinting Dagger 3% -> Krenko: 19 Goblins [search]]
+R6    Krenko makes 19 Goblins
+R6        [Krenko decides: Mana Echoes 59%, Goblin Sharpshooter 36%, equip Sting, the Glinting Dagger 5%, stop 0% -> Mana Echoes [search]]
+R6    Krenko casts Mana Echoes
+R6        [Krenko decides: Goblin Sharpshooter 87%, equip Sting, the Glinting Dagger 13%, stop 0% -> Goblin Sharpshooter [search]]
+R6    Krenko casts Goblin Sharpshooter
+R6      Mana Echoes adds 39 colourless
+R6        [Krenko decides: equip Sting, the Glinting Dagger 100%, stop 0% -> equip Sting, the Glinting Dagger [search]]
+R6    Krenko equips Sting, the Glinting Dagger to Krenko, Mob Boss
+R6      Sting untaps Krenko, Mob Boss
+R6        [Krenko attack plan by search: all at Edgar Markov]
+R6    Krenko attacks Edgar Markov with 19 creature(s): 18 damage (life now 10)
+R6  --- Aragorn turn 6: life 29, 4 cards in hand, 5 lands
+R6    Aragorn plays Shivan Reef
+R6        [Aragorn decides: Twinned Vision 100%, stop 0% -> Twinned Vision [search]]
+R6    Aragorn casts Twinned Vision
+R6        [Aragorn decides: Swords to Plowshares -> Krenko, Mob Boss 99%, stop (hold mana) 1% -> stop (hold mana) [search]]
+R6      Sting untaps Krenko, Mob Boss
+R6        [Aragorn attack plan by search: none at Edgar Markov]
+R6        [Aragorn decides: Swords to Plowshares -> Krenko, Mob Boss 99%, stop (hold mana) 1% -> Swords to Plowshares -> Krenko, Mob Boss [search]]
+R6    Aragorn casts Swords to Plowshares -> Krenko, Mob Boss (Krenko)
+R6      Krenko, Mob Boss (Krenko) is removed: exile
+R6  --- Yuriko turn 6: life 6, 2 cards in hand, 5 lands
+R6    Yuriko plays Island
+R6        [Yuriko decides: Ingenious Infiltrator 92%, Yuriko, the Tiger's Shadow 4%, Sea Gate Restoration // Sea Gate, Reborn 2%, Dauthi Voidwalker plays Goblin Trashmaster 2% -> Sea Gate Restoration // Sea Gate, Reborn [search]]
+R6    Yuriko casts Sea Gate Restoration // Sea Gate, Reborn
+R6        [Yuriko decides: Dauthi Voidwalker plays Goblin Trashmaster 100%, stop 0% -> Dauthi Voidwalker plays Goblin Trashmaster [search]]
+R6    Dauthi Voidwalker: Yuriko plays Goblin Trashmaster free
+R6      Mana Echoes adds 38 colourless
+R7  --- Edgar Markov turn 7: life 10, 7 cards in hand, 2 lands
+R7    Edgar Markov plays Marsh Flats
+R7      cracks Marsh Flats for Savai Triome
+R7        [Edgar Markov decides: Whitemane Lion 100%, stop 0% -> stop [search]]
+R7        [Edgar Markov attack plan by search: none at Krenko]
+R7        [Edgar Markov decides: Whitemane Lion 100%, stop 0% -> Whitemane Lion [search]]
+R7    Edgar Markov casts Whitemane Lion
+R7  --- Krenko turn 7: life 35, 0 cards in hand, 6 lands
+R7        [Krenko decides: Krenko, Mob Boss 89%, Goblin Lackey 9%, equip Sting, the Glinting Dagger 2%, stop 0% -> Krenko, Mob Boss [search]]
+R7    Krenko casts Krenko, Mob Boss
+R7      Mana Echoes adds 39 colourless
+R7        [Krenko decides: Goblin Lackey 83%, equip Sting, the Glinting Dagger 17%, stop 0% -> Goblin Lackey [search]]
+R7    Krenko casts Goblin Lackey
+R7      Mana Echoes adds 40 colourless
+R7        [Krenko decides: equip Sting, the Glinting Dagger 100%, stop 0% -> equip Sting, the Glinting Dagger [search]]
+R7    Krenko equips Sting, the Glinting Dagger to Token
+R7        [Krenko attack plan by search: filtered at Aragorn]
+R7  *** Aragorn is eliminated (life -3) by Krenko
+R7  *** Yuriko is eliminated (life -6) by Krenko
+R7    Krenko attacks Aragorn with 38 creature(s): 31 damage (life now -3)
+R7        [Krenko decides: equip Sting, the Glinting Dagger 100%, stop 0% -> equip Sting, the Glinting Dagger [search]]
+R7    Krenko equips Sting, the Glinting Dagger to Token
+R8  --- Edgar Markov turn 8: life 9, 7 cards in hand, 3 lands
+R8        [Edgar Markov decides: Anguished Unmaking -> Krenko, Mob Boss 99%, stop (hold mana) 1%, Whitemane Lion 0%, Welcoming Vampire 0% -> Anguished Unmaking -> Krenko, Mob Boss [search]]
+R8    Edgar Markov casts Anguished Unmaking -> Krenko, Mob Boss (Krenko)
+R8      Krenko, Mob Boss (Krenko) is removed: exile
+R8      Sting untaps Token
+R8        [Edgar Markov attack plan by search: filtered at Krenko]
+R8        [Edgar Markov keeps 1 creature(s) home as blockers]
+R8  --- Krenko turn 8: life 35, 0 cards in hand, 6 lands
+R8    Krenko plays Mountain
+R8        [Krenko decides: Krenko, Mob Boss 100%, stop 0% -> Krenko, Mob Boss [search]]
+R8    Krenko casts Krenko, Mob Boss
+R8      Mana Echoes adds 33 colourless
+R8        [Krenko attack plan by search: filtered at Edgar Markov]
+R8  *** Edgar Markov is eliminated (life -25) by Krenko
+R8    Krenko attacks Edgar Markov with 32 creature(s): 31 damage (life now -25)
+Winner: Krenko (damage)

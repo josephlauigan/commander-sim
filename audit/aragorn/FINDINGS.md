@@ -8,6 +8,35 @@ day; their findings are in `audit/retired/kefka/` and `audit/retired/sauron/`). 
 not from a paired test). **Model:** 100 cards, Full 94, Full-auto 6; Aragorn's four cast triggers are card code
 (`impls/aragorn.rs`, `tests/cards_aragorn.rs`).
 
+## 2026-11-06: why it loses (goldfish and 12 traces; diagnosis, no list change)
+
+Raw: `audit/aragorn/2026-11-06-diag/` (`goldfish.txt`: 2,000 games each against three inert seats; `trace-t4-0..5`,
+`trace-t5-0..5`: seeds 500000-500005). For scale, JD's other decks at these tiers: Sheoldred 26.6% and the retired
+Sauron 24.2% at t4, Y'shtola 26.5% and Thanos 18.6% at t5.
+
+**Too slow even unopposed.** Goldfish median kill: own turn **12** (Sheoldred 9, Thanos 10, Y'shtola 11). The t4 and
+t5 tables kill it around round 8.5, so it loses the race before interaction matters unless it slows them down.
+Mana is short in 20% of its own turns (31% of turns 1-4); in the t4-2 trace it sat on 3-4 lands from turn 4 to 7.
+
+**The AI holds burn instead of using Aragorn.** In the goldfish, Lightning Bolt was payable but never offered in 2,771
+card-turns, against three idle opponents, where each Bolt with Aragorn out is 6 damage. Nothing in the generic AI
+adds Aragorn's trigger value to a spell's worth (the spell-payoff count covers Guttersnipe-style tags, not Aragorn).
+The look-ahead also chose "stop (hold mana)" about three times a game over Skullclamp, Expressive Iteration, Lotus Petal
+and the rocks.
+
+**t5: combos at full life, often with Aragorn tapped out.** Four of the six t5 traces end in a combo in rounds 3-6
+with Aragorn at 31-40 life: Kinnan on round 3 (nothing to be done), Yawgmoth on round 4, Zur on round 5 (Aragorn had
+spent its mana equipping Lightning Greaves that turn), Urza on round 6 (Aragorn had used Mystic Confluence to bounce a
+one-drop, Esper Sentinel, and had two cards left). The counters are used on the wrong things or not held.
+
+**t4: Krenko overruns it.** Krenko won three of the six t4 traces, by 16-27 points past zero (44 creatures attacking
+in t4-2). The deck has no creature sweeper (Cyclonic Rift only); in t4-2 it held mana up on turn 6 and spent Mana
+Drain on a Goblin Ringleader while the goblins grew. Aragorn himself was removed in three of the six games.
+
+**Expectation.** Below the other decks by about half, and part of that is the simulator: the AI does not play
+Aragorn's engine (burn to the face, chaining cheap spells) and spends or holds its interaction badly. Part is the
+list: slow, few finishers (single copies), no sweepers against t4's creature decks, fragile mana in four colours.
+
 ## 2026-11-06: the Breach line restored, Aura Shards cast (engine and plan fix; t4, t5, look-ahead, loose, 2,000 games per tier, seed 500000, build in commit.txt)
 
 What changed: the Underworld Breach line (`impls/breach_line.rs`) is back for every deck holding Breach and a storm card
