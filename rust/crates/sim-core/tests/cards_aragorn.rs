@@ -137,3 +137,82 @@ fn the_plan_casts_aura_shards() {
     let c = hand(&mut g, P0, &["Aura Shards"])[0];
     assert!(sim_core::ai::decks::deck_prio(&g, P0, c) > 0);
 }
+
+// ------------------------------------------------------------------ the AI's value of the triggers
+use sim_core::impls::aragorn as ara;
+
+fn main_labels(g: &mut Game) -> Vec<String> {
+    g.active = Some(P0);
+    g.step = sim_core::state::Step::Main1;
+    sim_core::ai::brain::main_options(g, P0, false).unwrap().into_iter().map(|o| o.label).collect()
+}
+
+#[test]
+fn the_trigger_value_needs_aragorn_out_and_follows_the_colours() {
+    let mut g = table(&["aragorn", "cloud"]);
+    let bolt = card(&g, "Lightning Bolt");
+    assert_eq!(ara::cast_value(&g, P0, bolt), 0.0, "no Aragorn out: nothing");
+    let a = perm(&mut g, P0, ARAGORN);
+    g.perm_mut(a).sick = false;
+    assert_eq!(ara::red_damage(&g, P0, bolt), 3);
+    assert!(ara::cast_value(&g, P0, bolt) > 0.0);
+    assert_eq!(ara::red_damage(&g, P0, card(&g, "Sol Ring")), 0, "colourless: no trigger");
+    perm(&mut g, P0, "Veyran, Voice of Duality");
+    assert_eq!(ara::red_damage(&g, P0, bolt), 6, "Veyran: an instant triggers twice");
+    assert_eq!(ara::red_damage(&g, P0, card(&g, "Guttersnipe")), 3, "a creature spell: once");
+    perm(&mut g, P0, "Fiery Emancipation");
+    assert_eq!(ara::red_damage(&g, P0, bolt), 18, "Fiery Emancipation triples it");
+}
+
+#[test]
+fn the_damage_that_kills_is_worth_much_more() {
+    let (mut g, _) = setup();
+    let bolt = card(&g, "Lightning Bolt");
+    let plain = ara::cast_value(&g, P0, bolt);
+    g.player_mut(P1).life = 3;
+    assert!(ara::cast_value(&g, P0, bolt) > plain + 3.0);
+}
+
+#[test]
+fn with_aragorn_out_lightning_bolt_goes_to_the_face() {
+    let (mut g, _) = setup();
+    lands(&mut g, P0, "Mountain", 1, false);
+    g.player_mut(P0).hand.clear();
+    hand(&mut g, P0, &["Lightning Bolt"]);
+    let labels = main_labels(&mut g);
+    assert!(labels.iter().any(|l| l.starts_with("Lightning Bolt to the face")), "{labels:?}");
+}
+
+#[test]
+fn without_aragorn_bolt_is_not_thrown_at_a_full_life_total() {
+    let mut g = table(&["aragorn", "cloud"]);
+    lands(&mut g, P0, "Mountain", 1, false);
+    g.player_mut(P0).hand.clear();
+    hand(&mut g, P0, &["Lightning Bolt"]);
+    let labels = main_labels(&mut g);
+    assert!(!labels.iter().any(|l| l.starts_with("Lightning Bolt to the face")), "{labels:?}");
+}
+
+#[test]
+fn bolt_plus_aragorn_is_lethal_at_six() {
+    let (mut g, _) = setup();
+    lands(&mut g, P0, "Mountain", 1, false);
+    g.player_mut(P0).hand.clear();
+    hand(&mut g, P0, &["Lightning Bolt"]);
+    g.player_mut(P1).life = 6;
+    g.active = Some(P0);
+    g.step = sim_core::state::Step::Main1;
+    let opts = sim_core::ai::brain::main_options(&mut g, P0, false).unwrap();
+    let face = opts.iter().find(|o| o.label.starts_with("Lightning Bolt to the face")).expect("a face option");
+    assert_eq!(face.utility, 9.0, "the lethal burn's utility: Bolt 3 + Aragorn 3 = 6");
+}
+
+#[test]
+fn counterspells_are_still_held_with_aragorn_out() {
+    let (mut g, _) = setup();
+    lands(&mut g, P0, "Island", 2, false);
+    g.player_mut(P0).hand.clear();
+    hand(&mut g, P0, &["Counterspell"]);
+    let labels = main_labels(&mut g);
+    assert!(!labels.iter().any(|l| l.starts_with("Counterspell")), "{labels:?}");
+}

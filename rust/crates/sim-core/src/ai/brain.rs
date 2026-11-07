@@ -407,6 +407,8 @@ pub fn card_utility(g: &Game, p: PlayerId, s: &Situation, c: CardId) -> Option<f
     {
         u += COMMANDER_FIRST;
     }
+    // --- aragorn: every spell cast with Aragorn out triggers him (3 damage per red spell, a Soldier, a scry, a pump)
+    u += crate::impls::aragorn::cast_value(g, p, c);
     if (super::values::bomb_of(g, p, c) >= 5.0 || pl.is_commander(c) || base >= 70.0) && !d.land {
         u *= 1.0 - 0.35 * s.ctr_risk; // walking into open counter mana
     }
@@ -1126,11 +1128,30 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
             }
             _ => 0,
         };
+        // --- aragorn: with Aragorn out a red burn spell also triggers his 3 damage (to the lowest-life opponent) and
+        // Fiery Emancipation triples both; the burn is worth casting at the face then, lethal or not
+        let aragorn = crate::impls::aragorn::aragorn_out(g, p);
+        let low_q = s.opps.iter().copied().filter(|&q| g.player(q).life > 0).min_by_key(|&q| g.player(q).life);
         for &q in &s.opps {
             if player_hexproof_from(g, q, d.colors) {
                 continue;
             }
             let life = g.player(q).life;
+            let total = if aragorn {
+                let extra = if Some(q) == low_q { crate::impls::aragorn::red_damage(g, p, c) } else { 0 };
+                dmg.saturating_mul(crate::engine::combat::fiery(g, p)).saturating_add(extra)
+            } else {
+                dmg
+            };
+            if aragorn && life > total && Some(q) == low_q {
+                o.push(Opt {
+                    utility: (0.3 * total as f64).min(6.0),
+                    label: format!("{} to the face ({})", d.name, g.player(q).name),
+                    act: Some(Action::Face { card: c, q, kick: 0 }),
+                });
+                continue;
+            }
+            let dmg = total;
             if life <= dmg {
                 o.push(Opt {
                     utility: 9.0,
