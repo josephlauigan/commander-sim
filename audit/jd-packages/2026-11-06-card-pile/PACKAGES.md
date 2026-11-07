@@ -41,3 +41,17 @@ Left out (legal, but no slot or off-plan): Fact or Fiction, Glimpse the Unthinka
 Kefka, Kuja, Marvin, Chandra's Ignition, Sakura-Tribe Elder, Haunted Ridge, Sulfurous Springs, Underground River,
 Corroding Dragonstorm, Dragonlord Ojutai, Kindred Dominance, Kura, Niv-Mizzet the Firemind, Call of the Ring, Mauhúr,
 Sauron.
+
+## Outcome (2026-11-07)
+
+| Run | Result | Adopted |
+|---|---|---|
+| TD | WORSE: -2.8 at t5 (noise ±2.7); raised the curve 3.10 -> 3.49 | No |
+| TD2 | Not run | Yes (JD), untested |
+| A1 | BETTER: t4 +4.3, t5 +2.4 (outside noise) | Yes (PR #293) |
+| A2 | No clear effect | Yes (PR #293) |
+| S | No clear effect: t3 +1.9, t4 -0.3 (noise ±2.7); Entomb and Yawgmoth's Will rarely cast | Yes, with Diabolic Tutor kept and Darksteel Plate cut for Diabolic Intent (untested change) |
+| Y | Not run | Yes (JD), untested; Memory Trap turned out to be removal, not a counter (see audit/yshtola/FINDINGS.md) |
+| C | Stopped part-way, no result | Yes (JD), untested |
+
+Raw outputs of the runs that finished: `runs/`. Each deck's FINDINGS has the reasons.

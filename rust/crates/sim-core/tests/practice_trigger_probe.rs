@@ -864,6 +864,10 @@ const TO_FIX: &[&str] = &[];
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
     (
+        "thanos: Wayfarer's Bauble (Activate(0))",
+        "one basic land type left in the list (Forest; Wastes left on 2026-11-07, TD2), so the search has a single option and nothing to ask; it asked while Wastes was a second choice",
+    ),
+    (
         "aragorn: Tezzeret, Cruel Captain (Activate(2))",
         "the -7 only gives the emblem; the emblem's target (the artifact that gets three +1/+1 counters) is chosen, and asked of a person, at the beginning of combat (t6_godo::tez_emblem, tests/model_gaps_karn.rs)",
     ),

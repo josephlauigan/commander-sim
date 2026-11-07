@@ -96,22 +96,8 @@ fn ad_nauseam_for_sheoldred_also_goes_off_in_its_own_second_main() {
     assert!(!plans::adnaus_cast_now(&g2, P0), "other decks keep waiting for the opposing end step");
 }
 
-#[test]
-fn dark_deal_is_allowed_with_three_other_cards() {
-    use sim_core::hooks::Action;
-    let mut g = table(&["sheoldred", "seph"]);
-    perm(&mut g, P0, "Sheoldred, the Apocalypse");
-    lands(&mut g, P0, "Swamp", 3, false);
-    g.active = Some(P0);
-    g.player_mut(P1).hand = (0..5).map(|_| card(&g, "Terror")).collect();
-    let d = hand(&mut g, P0, &["Dark Deal", "Terror", "Terror", "Terror"])[0];
-    let f = g.registry.get(d).unwrap().hand_options.unwrap();
-    let opts = f(&mut g, d, P0, Some(false)).unwrap();
-    assert_eq!(opts.len(), 1);
-    assert!(matches!(opts[0].act, Some(Action::Plan { .. })));
-    hand(&mut g, P0, &["Terror"]);
-    assert!(f(&mut g, d, P0, Some(false)).unwrap().is_empty(), "four other cards: too many to throw away");
-}
+// dark_deal_is_allowed_with_three_other_cards: removed 2026-11-07, Dark Deal left the Sheoldred deck (card-pile package
+// S) and her plan may only name the deck's cards. See git history.
 
 #[test]
 fn worldly_tutor_fetches_a_mana_creature_early_and_a_big_body_late() {

@@ -55,7 +55,7 @@ cards = ["Marauding Blight-Priest"]
 score = 70
 
 [[wish]]
-cards = ["Ill-Gotten Inheritance"]
+cards = ["Palantír of Orthanc"]
 score = 60
 
 [[wish]]
@@ -111,11 +111,11 @@ value = 56
 else = 38
 
 [[prio]]
-cards = ["Ill-Gotten Inheritance", "Zur the Enchanter"]
+cards = ["Palantír of Orthanc", "Zur the Enchanter"]
 value = 54
 
 [[prio]]
-cards = ["Dark Petition", "Diabolic Tutor", "Idyllic Tutor", "Mystical Tutor", "Vampiric Tutor"]
+cards = ["Ringsight", "Diabolic Tutor", "Idyllic Tutor", "Mystical Tutor", "Vampiric Tutor"]
 value = 52
 
 [[prio]]

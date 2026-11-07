@@ -20,7 +20,6 @@
 1 Colossus Hammer (fic) 338
 1 Court of Ardenvale (woc) 29
 1 Danitha Capashen, Paragon (fca) 22
-1 Disenchant (fdn) 572
 1 Elspeth, Sun's Champion (ths) 9
 1 Enlightened Tutor (dmr) 412
 1 Evolving Wilds (fic) 389
@@ -31,7 +30,7 @@
 1 Fumigate (pkld) 15p
 1 Galadriel's Dismissal (hoc) 16
 1 Giver of Runes (plst) MH1-13
-1 Grand Abolisher (cmm) 27
+1 Grand Abolisher (cmm) 625
 1 Helitrooper (fic) 22
 1 Jocasta, Automaton Avenger (msc) 108
 1 Judgment of Alexander (fic) 455
@@ -46,16 +45,18 @@
 1 Page, Loose Leaf (sos) 250
 1 Path of Ancestry (brc) 192
 1 Path to Exile (cmm) 626
-28 Plains (mdd) 292
+27 Plains (mdd) 292
 1 Plaza of Heroes (msc) 255
 1 Puresteel Paladin (fic) 250
+1 Rogue's Passage (plst) C19-270
 1 Silverblade Paladin (avr) 36
 1 Skyclave Apparition (blc) 154
 1 Smothering Tithe (2x2) 342
 1 Sol Ring (woc) 149
 1 Solemn Simulacrum (brc) 161
 1 Sram, Senior Edificer (fca) 3
-1 Steelshaper's Gift (5dn) 19
+1 Steelshaper's Gift (cmm) 629
+1 Sting, the Glinting Dagger (ltr) 409
 1 Stoneforge Mystic (2xm) 337
 1 Stroke of Midnight (fca) 26
 1 Swiftfoot Boots (brr) 58

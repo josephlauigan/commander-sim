@@ -13,13 +13,11 @@
 # Blessing's `[[hold]]` (the commander protection hold) is gone with it.
 deck = "sheoldred"
 default = "plan"
-# the card plays her hand AI made through card code (Exsanguinate's main-phase X cast, Dark Deal, Peer into the Abyss,
-# the Atlas, the draw lands), which the generic policy offers for this deck too
+# the card plays her hand AI made through card code (Exsanguinate's main-phase X cast, Peer into the Abyss, the draw
+# lands; Dark Deal and Otherworld Atlas left the deck 2026-11-07), which the generic policy offers for this deck too
 plays = [
     "Exsanguinate",
-    "Dark Deal",
     "Peer into the Abyss",
-    "Otherworld Atlas",
     "Geier Reach Sanitarium",
     "Mikokoro, Center of the Sea",
 ]
@@ -33,7 +31,7 @@ prio = 90
 adnaus_main2 = true
 
 # Cast priorities (was sheoldred_prio): rocks first while she is not out (she comes a turn sooner); the draw tolls
-# (Underworld Dreams, Fate Unraveler) high; Howling Mine only with a toll out; Darksteel Plate onto her
+# (Underworld Dreams, Fate Unraveler) high; Howling Mine only with a toll out
 [[prio]]
 cards = ["Arcane Signet", "Fellwar Stone"]
 when = ["not commander-out"]
@@ -54,11 +52,6 @@ value = 70
 else = 0
 
 [[prio]]
-cards = ["Darksteel Plate"]
-when = ["commander-out"]
-value = 78
-
-[[prio]]
 cards = ["Perigee Beckoner"]
 value = 52
 
@@ -67,7 +60,7 @@ cards = ["Ambition's Cost"]
 when = ["life<=6"]
 value = 0
 
-# --- 2026-11-01: Darksteel Plate onto Sheoldred ahead of every other play of the turn (was sheoldred_special: utility
+# --- 2026-11-01: Equipment (Darksteel Plate then; Swiftfoot Boots since 2026-11-07) onto Sheoldred ahead of every other play of the turn (was sheoldred_special: utility
 # 9 - 0.1 x the cost; here 2.5 - 0.3 x 2 + 7)
 [equip]
 holder = "commander"

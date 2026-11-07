@@ -55,8 +55,8 @@ score = 86
 
 # cast priorities: mana and fixing first (Aragorn needs all four colours), then the draw engines, then Aragorn
 [[prio]]
-cards = ["Sol Ring", "Arcane Signet", "Lotus Petal", "Birds of Paradise", "Noble Hierarch", "Three Visits",
-    "Nature's Lore", "Growth Spiral", "Faeburrow Elder"]
+cards = ["Sol Ring", "Arcane Signet", "Lotus Petal", "Birds of Paradise", "Llanowar Elves", "Paradise Druid",
+    "Nature's Lore", "Faeburrow Elder"]
 when = ["turn<=4"]
 value = 86
 else = 44

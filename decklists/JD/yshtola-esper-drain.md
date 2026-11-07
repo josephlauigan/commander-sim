@@ -2,6 +2,10 @@
 
 Drain the table a little with every spell, then all at once. Y'shtola turns your ordinary noncreature spells into damage to every opponent and life for you, Sanguine Bond and Marauding Blight-Priest turn that life into more damage, and Exsanguinate, Debt to the Deathless and Torment of Hailfire finish the game, with Cabal Coffers and Urborg paying for a big X. Exquisite Blood with Sanguine Bond is the two-card kill the tutors look for. The deck wins slowly, so it is weak to fast creature pressure and to fast combo decks that win before the drain gets there.
 
+**Changed 2026-11-07 (JD, card-pile package Y, adopted untested):** Counterspell, Ringsight, Palantír of Orthanc and
+Mistrise Village for Memory Trap, Dark Petition, Ill-Gotten Inheritance and an Island. Evidence and reasons:
+`audit/yshtola/FINDINGS.md`.
+
 | | |
 |---|---|
 | **Commander** | Y'shtola, Night's Blessed ({1}{W}{U}{B}, 2/4, vigilance; white-blue-black) |
@@ -18,7 +22,7 @@ Y'shtola, Night's Blessed ({1}{W}{U}{B}, 2/4, vigilance): *At the beginning of e
 
 **Her draw needs 4 life lost by one player in one turn.** One trigger is only 2 to each opponent, so a draw needs a second source in the same turn:
 - **Two triggers**, such as a removal spell on an opponent's turn plus your own main-phase spell, or two spells in one turn. Cheap instants with mana value 3 (Anguished Unmaking, Generous Gift, Your Fate Ends Here) on an opponent's turn are the easiest second trigger. Cast Away Doubt does it alone: its 2 damage plus her 2 is 4 to each opponent.
-- **One trigger plus a drain**, from Sanguine Bond, Blight-Priest, Ill-Gotten Inheritance or Urborg Syphon-Mage. **Sheoldred, the Apocalypse** adds 2 to each opponent's every draw and gains you 2 on yours.
+- **One trigger plus a drain**, from Sanguine Bond, Blight-Priest, Palantír of Orthanc or Urborg Syphon-Mage. **Sheoldred, the Apocalypse** adds 2 to each opponent's every draw and gains you 2 on yours.
 - **Your own life.** Any player counts, you included. Read the Bones costs 2, Anguished Unmaking 3, and Necropotence as much as you like.
 
 She checks at *every* end step, so instant-speed triggers on opponents' turns draw too. She is a 2/4, so she dies to a lot of removal: protect her (see below), and keep casting spells of mana value 3 or more every turn while she is out.
@@ -27,7 +31,7 @@ She checks at *every* end step, so instant-speed triggers on opponents' turns dr
 
 **Turns 1 to 3: mana.** Turn 2 Sol Ring, Arcane Signet or Talisman of Progress; Coalition Relic on three (a rock *and* a trigger once she is out). Suspend Profane Tutor early: it resolves two turns later. Play Y'shtola on turn 3 or 4 with a spell to follow. Keep a cheap lock Aura or Propaganda for a hand that has to deal with attackers.
 
-**Turns 4 to 6: the engine.** Every turn cast a spell of mana value 3 or more. Prefer trigger spells first, while the opponents' life is high and blockers don't matter. Look for Sanguine Bond first, then Exquisite Blood (the tutors find them: Demonic Tutor, Diabolic Tutor, Dark Petition, Profane Tutor, Idyllic Tutor, Vampiric Tutor). Lock or remove the biggest creature and put Propaganda out so the table can't attack you.
+**Turns 4 to 6: the engine.** Every turn cast a spell of mana value 3 or more. Prefer trigger spells first, while the opponents' life is high and blockers don't matter. Look for Sanguine Bond first, then Exquisite Blood (the tutors find them: Demonic Tutor, Diabolic Tutor, Ringsight, Profane Tutor, Idyllic Tutor, Vampiric Tutor). Lock or remove the biggest creature and put Propaganda out so the table can't attack you.
 
 **Late game.** The first trigger usually lands by turn 6 to 8. Count before you cast an X spell: Exsanguinate or Debt to the Deathless plus Y'shtola's trigger plus the Blight-Priest's lifegain pings plus Bond often kills two players in one turn. If the table is not close, keep drawing and taxing.
 
@@ -35,7 +39,7 @@ She checks at *every* end step, so instant-speed triggers on opponents' turns dr
 
 - **Sanguine Bond:** whenever you gain life, target opponent loses that much. Each Y'shtola trigger becomes 2 to everyone plus 2 more to one opponent, and an X drain's lifegain becomes a second, larger drain.
 - **Marauding Blight-Priest:** whenever you gain life, each opponent loses 1. That's one more to everyone per trigger, and per drain.
-- **Ill-Gotten Inheritance:** 1 to each opponent and 1 life every upkeep (which sets off the Priest and Bond). {5}{B}, sacrifice: 4 damage to an opponent and 4 life.
+- **Palantír of Orthanc** ({3}, a mana value 3 noncreature spell, so casting it triggers her): at your end step, an influence counter and scry 2; then the opponent you target lets you draw a card, or you mill one card per counter and they lose life equal to the milled cards' total mana value.
 - **Urborg Syphon-Mage:** {2}{B}, {T}, discard a card: each other player loses 2 and you gain the total. Discard spare lands.
 - **Exquisite Blood:** whenever an opponent loses life, you gain that much. With Sanguine Bond out the two loop: each gain makes an opponent lose life, which gains you life again, until every opponent is dead. Any trigger, drain or ping starts it.
 - **Polluted Bonds:** whenever a land an opponent controls enters, they lose 2 and you gain 2. Each opponent's land drop is a drain plus a lifegain event for the Priest and Bond, and casting it triggers her too.
@@ -68,9 +72,9 @@ The second opponent dies too if they're at 12. Debt to the Deathless is the best
 Y'shtola is a 2/4 and the deck wins slowly. The table's creature decks are the main danger, so deal with attackers early.
 - **Pillowfort:** Propaganda taxes every attacker {2}, and **Sphere of Safety** ({4}{W}) taxes every attacker {X}, X being the number of enchantments you control (the deck runs 15). Cast them early against creature decks.
 - **Locks:** Arrest and Bound in Silence shut down threats (and each triggers Y'shtola as you cast it).
-- **Removal:** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Your Fate Ends Here, Skyclave Apparition, Loran of the Third Path, Prayer of Binding, Memory Trap.
+- **Removal:** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Your Fate Ends Here, Skyclave Apparition, Loran of the Third Path, Prayer of Binding.
 - **Wipes:** Austere Command, Farewell and Toxic Deluge ({2}{B}: pay X life, all creatures get -X/-X until end of turn; a cheap answer to a wide board that also triggers Y'shtola).
-- **Counters:** Dovin's Veto stops a removal spell aimed at Y'shtola. Force of Will counters any spell (a wipe, a combo piece, a Craterhoof): cast it for {3}{U}{U}, or for free by paying 1 life and exiling a blue card from your hand. Either way it is a mana value 5 noncreature spell, so it triggers Y'shtola, and the life paid counts toward her "4 life lost" draw.
+- **Counters:** Counterspell ({U}{U}) answers any spell: a combo piece, a tutor, a wipe. Dovin's Veto stops a removal spell aimed at Y'shtola. Force of Will counters any spell (a wipe, a combo piece, a Craterhoof): cast it for {3}{U}{U}, or for free by paying 1 life and exiling a blue card from your hand. Either way it is a mana value 5 noncreature spell, so it triggers Y'shtola, and the life paid counts toward her "4 life lost" draw.
 
 **Farewell** ({4}{W}{W}, sorcery) exiles, as you choose, all artifacts, all creatures, all enchantments and/or all graveyards. It is the reset button for a board you are losing to, and a trigger for Y'shtola when you cast it. Choose carefully: creatures exiles Y'shtola, enchantments exiles your own locks, Sanguine Bond and Smothering Tithe, and graveyards is the answer to a reanimation deck. Cast Teferi's Protection first and your permanents phase out and survive the wipe (Y'shtola is phased out by then, so Farewell itself won't trigger her).
 
@@ -83,12 +87,12 @@ Y'shtola is a 2/4 and the deck wins slowly. The table's creature decks are the m
 
 ### How it wins
 
-The damage comes mostly from Y'shtola's and Ill-Gotten Inheritance's triggers, then from drains (Sanguine Bond, Blight-Priest, the X spells, Syphon-Mage), and only a little from combat. Most games end with a drain: a big Debt to the Deathless or Exsanguinate with Bond and the Priest out, after the triggers have set up the kill. Combat damage and Syphon-Mage finish the rest.
+The damage comes mostly from Y'shtola's triggers, then from drains (Sanguine Bond, Blight-Priest, the X spells, Syphon-Mage), and only a little from combat. Most games end with a drain: a big Debt to the Deathless or Exsanguinate with Bond and the Priest out, after the triggers have set up the kill. Combat damage and Syphon-Mage finish the rest.
 
 ### Weak spots and how to play around them
 
 - **Creature decks (big attackers).** The deck loses almost always to combat. Land Propaganda or Sphere of Safety early, lock or remove the biggest threat, and keep Austere Command, Farewell or Toxic Deluge for the wide boards.
-- **Fast combo decks.** The drain is too slow to race a deck that wins on turn 4 to 6; hold Dovin's Veto, Force of Will and Memory Trap for the key piece (Loran answers an artifact or enchantment piece), and Notion Thief or Mystic Remora to slow their draws.
+- **Fast combo decks.** The drain is too slow to race a deck that wins on turn 4 to 6; hold Counterspell, Dovin's Veto and Force of Will for the key piece (Loran answers an artifact or enchantment piece), and Notion Thief or Mystic Remora to slow their draws.
 - **Removal on Y'shtola.** Keep Restoration Angel, Champion's Helm, Teferi's Protection, Dovin's Veto or Force of Will up while she is the engine.
 - **Cheap spells.** Spells of mana value 1 or 2 (Fatal Push, Path to Exile, Dovin's Veto) are good cards but don't trigger her: don't cast them if they cost a trigger.
 - **Slow starts.** Expect to reach full power around turns 6 to 8; mulligan hands with no mana or no spell of mana value 3.
@@ -97,14 +101,14 @@ The damage comes mostly from Y'shtola's and Ill-Gotten Inheritance's triggers, t
 
 **The opening.** Turn 2 Sol Ring, Arcane Signet or Talisman of Progress, Y'shtola on turn 3 or 4. Then every turn cast a spell of mana value 3 or more. A Coalition Relic after her is a rock *and* a trigger.
 
-**Bond first, then Blood.** Sanguine Bond is the first thing the tutors find (Demonic Tutor, Diabolic Tutor, Dark Petition, Profane Tutor, Idyllic Tutor, Vampiric Tutor). It costs 5 and Zur can't fetch it. Once it's out, every trigger drains an extra 2 and every X spell drains twice. Exquisite Blood (also 5) is the next tutor target: with Bond out, the next Y'shtola trigger kills the table. With both in hand, cast Bond first; it is useful alone, Blood mostly isn't.
+**Bond first, then Blood.** Sanguine Bond is the first thing the tutors find (Demonic Tutor, Diabolic Tutor, Ringsight, Profane Tutor, Idyllic Tutor, Vampiric Tutor). It costs 5 and Zur can't fetch it. Once it's out, every trigger drains an extra 2 and every X spell drains twice. Exquisite Blood (also 5) is the next tutor target: with Bond out, the next Y'shtola trigger kills the table. With both in hand, cast Bond first; it is useful alone, Blood mostly isn't.
 
 **Sequencing a turn.**
 - **Trigger spells first,** while opponents' life is high and blockers don't matter.
 - **The drain second,** once triggers have set up the kill.
 - **Two triggers in one turn draw a card** at the end step.
 
-**The kill.** Count before you cast an X spell: each opponent loses X (or 2X), plus 2 from Y'shtola, plus the Blight-Priest's 1 per lifegain. With Bond, the whole gain goes to one opponent on top. Dark Petition with two instants or sorceries in your graveyard adds {B}{B}{B}, which often pays for that turn's X.
+**The kill.** Count before you cast an X spell: each opponent loses X (or 2X), plus 2 from Y'shtola, plus the Blight-Priest's 1 per lifegain. With Bond, the whole gain goes to one opponent on top.
 
 **Zur in the 99.** Zur the Enchanter ({1}{W}{U}{B}, 1/4 flier) searches for an enchantment with mana value 3 or less whenever it attacks:
 - **Necropotence** early with a healthy life total;
@@ -112,7 +116,7 @@ The damage comes mostly from Y'shtola's and Ill-Gotten Inheritance's triggers, t
 - **Mystic Remora** early, for cards off the table's spells;
 - **a lock Aura** on the biggest threat. A fetched Aura isn't cast and doesn't target, so it goes around hexproof and ward.
 
-Zur can find Arrest, Bound in Silence, Memory Trap, Mystic Remora, Necropotence, Propaganda and Rhystic Study. (Zur's enchantment is put onto the battlefield, not cast, so it doesn't trigger Y'shtola.)
+Zur can find Arrest, Bound in Silence, Mystic Remora, Necropotence, Propaganda and Rhystic Study. (Zur's enchantment is put onto the battlefield, not cast, so it doesn't trigger Y'shtola.)
 
 **The Coffers turn.** With Urborg and Cabal Coffers out (Expedition Map or Urza's Cave finds the missing one), seven lands make 11 mana: Debt to the Deathless for X = 4 plus another trigger spell, or Torment of Hailfire for a big X.
 
@@ -120,12 +124,12 @@ Zur can find Arrest, Bound in Silence, Memory Trap, Mystic Remora, Necropotence,
 
 The list is exactly 100 cards.
 
-37 lands (17 nonbasic, 6 Plains, 6 Island, 8 Swamp) plus five rocks: Sol Ring, Arcane Signet, Talisman of Progress, Talisman of Hierarchy, Coalition Relic. **Serra's Sanctum** taps for {W} per enchantment you control, and that includes the removal Auras on opponents' creatures (you control the Aura), so Arrest or Bound in Silence also adds a mana. With 15 enchantments it taps for three or more by the mid-game. **Urborg, Tomb of Yawgmoth** makes every land a Swamp in addition to its other types, so every land can tap for {B}: it fixes Necropotence and Sheoldred, the Apocalypse and replaces a basic Swamp at no cost (the fetches can't find it, but they still have 8 Swamps). **Cabal Coffers** ({2}, {T}: add {B} for each Swamp you control) took a Plains slot (JD, 2026-11-04): with Urborg out every land is a Swamp, so L lands make 2L - 3 mana (11 at seven lands) for Exsanguinate, Debt to the Deathless, Torment of Hailfire or two big spells in a turn. **Urza's Cave** (an Island for a land, JD 11/04 package) taps for {C}, or for {B} with Urborg out; {3}, {T}, sacrifice it to fetch Urborg, Coffers or the colour the hand is missing.
+37 lands (18 nonbasic, 6 Plains, 5 Island, 8 Swamp) plus five rocks: Sol Ring, Arcane Signet, Talisman of Progress, Talisman of Hierarchy, Coalition Relic. **Serra's Sanctum** taps for {W} per enchantment you control, and that includes the removal Auras on opponents' creatures (you control the Aura), so Arrest or Bound in Silence also adds a mana. With 15 enchantments it taps for three or more by the mid-game. **Urborg, Tomb of Yawgmoth** makes every land a Swamp in addition to its other types, so every land can tap for {B}: it fixes Necropotence and Sheoldred, the Apocalypse and replaces a basic Swamp at no cost (the fetches can't find it, but they still have 8 Swamps). **Cabal Coffers** ({2}, {T}: add {B} for each Swamp you control) took a Plains slot (JD, 2026-11-04): with Urborg out every land is a Swamp, so L lands make 2L - 3 mana (11 at seven lands) for Exsanguinate, Debt to the Deathless, Torment of Hailfire or two big spells in a turn. **Urza's Cave** (an Island for a land, JD 11/04 package) taps for {C}, or for {B} with Urborg out; {3}, {T}, sacrifice it to fetch Urborg, Coffers or the colour the hand is missing.
 
 | Measure | Count | Note |
 | --- | --- | --- |
 | White lands | 14 | 6 Plains plus Serra's Sanctum, Adarkar Wastes, Caves of Koilos, Command Tower, Tundra, Scrubland, Hallowed Fountain, Godless Shrine |
-| Blue lands | 13 | 6 Island plus Adarkar Wastes, Command Tower, Underground River, Tundra, Underground Sea, Hallowed Fountain, Watery Grave |
+| Blue lands | 13 | 5 Island plus Mistrise Village, Adarkar Wastes, Command Tower, Underground River, Tundra, Underground Sea, Hallowed Fountain, Watery Grave |
 | Black lands | 17 (all 37 with Urborg out) | 8 Swamp plus Urborg, Tomb of Yawgmoth, Cabal Coffers (with a Swamp out), Caves of Koilos, Command Tower, Underground River, Underground Sea, Scrubland, Watery Grave, Godless Shrine |
 | Fetch lands | 3 | Flooded Strand (W/U), Polluted Delta (U/B), Marsh Flats (W/B): each finds a basic or any dual or shock of its two types, for 1 life |
 | Colourless only | 1 | Urza's Cave ({B} with Urborg out) |
@@ -142,13 +146,13 @@ Black is the main colour (Necropotence's {B}{B}{B}, the X drains' {B}{B}), so it
 - **Engines:** Necropotence, Consecrated Sphinx, Mystic Remora, Esper Sentinel, Notion Thief, and her own end-step draw (Orcish Bowmasters turns the opponents' extra draws into damage and Orcs).
 - **Mana:** Smothering Tithe's Treasures, on top of the rocks.
 - **Draw spells:** Read the Bones, Tezzeret's Gambit, Cast Away Doubt, Loran's tap; Rhystic Study as the engine.
-- **Tutors:** Demonic Tutor, Diabolic Tutor, Dark Petition, Profane Tutor (suspend 2) and Vampiric Tutor (any card; Vampiric puts it on top), Idyllic Tutor (an enchantment), Mystical Tutor (an instant or sorcery, to the top), and Zur's attacks.
+- **Tutors:** Demonic Tutor, Diabolic Tutor, Ringsight (a white, blue or black card while Y'shtola is out; the Ring tempts you first), Profane Tutor (suspend 2) and Vampiric Tutor (any card; Vampiric puts it on top), Idyllic Tutor (an enchantment), Mystical Tutor (an instant or sorcery, to the top), and Zur's attacks.
 - **Land tutors:** Expedition Map and Urza's Cave (Urborg or Cabal Coffers, or the missing colour).
 
 **Interaction.**
-- **Counterspells (two):** Dovin's Veto, Force of Will.
+- **Counterspells (three):** Counterspell, Dovin's Veto, Force of Will.
 - **Spot removal spells (six):** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Your Fate Ends Here.
-- **Removal on permanents:** Skyclave Apparition, Loran of the Third Path (an artifact or enchantment, again on every blink), Prayer of Binding, Memory Trap.
+- **Removal on permanents:** Skyclave Apparition, Loran of the Third Path (an artifact or enchantment, again on every blink), Prayer of Binding.
 - **Removal Auras (two):** Arrest, Bound in Silence.
 - **Board wipes (three):** Austere Command, Farewell, Toxic Deluge.
 - **Protection:** Teferi's Protection.
@@ -163,7 +167,7 @@ Disclose before the game:
 
 - **Necropotence**, **Notion Thief**, **Consecrated Sphinx**, **Smothering Tithe**, **Rhystic Study**, **Demonic Tutor**, **Mystical Tutor**, **Vampiric Tutor**, **Grand Arbiter Augustin IV**, **Force of Will**, **Farewell**, **Teferi's Protection**, **Orcish Bowmasters** and **Serra's Sanctum** (the fourteen Game Changers).
 - **Free counterspell and board wipe:** Force of Will (pitch a blue card) and Farewell (exiles creatures, artifacts, enchantments and graveyards as you choose).
-- **Seven tutors** (Demonic, Diabolic, Dark Petition, Profane, Idyllic, Mystical, Vampiric), Zur's enchantment search, and Expedition Map / Urza's Cave for the Coffers lands.
+- **Seven tutors** (Demonic, Diabolic, Ringsight, Profane, Idyllic, Mystical, Vampiric), Zur's enchantment search, and Expedition Map / Urza's Cave for the Coffers lands.
 - **The win is a drain:** Y'shtola pings the table on every big spell, and Exsanguinate or Debt to the Deathless with Sanguine Bond can take out two players in one turn.
 - **Two-card combo:** Exquisite Blood + Sanguine Bond drains the whole table from any life change.
 
@@ -175,15 +179,15 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Creatures (14).** Consecrated Sphinx, Displacer Kitten, Esper Sentinel, Grand Arbiter Augustin IV, Loran of the Third Path, Marauding Blight-Priest, Notion Thief, Orcish Bowmasters, Restoration Angel, Sheoldred, the Apocalypse, Skyclave Apparition, Urborg Syphon-Mage, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal, Zur the Enchanter
 
-**Enchantments (15).** Arrest, Bound in Silence, Exquisite Blood, Ill-Gotten Inheritance, Memory Trap, Mystic Remora, Necropotence, Polluted Bonds, Prayer of Binding, Propaganda, Rhystic Study, Sanguine Bond, Smothering Tithe, Sphere of Safety, Teleportation Circle
+**Enchantments (13).** Arrest, Bound in Silence, Exquisite Blood, Mystic Remora, Necropotence, Polluted Bonds, Prayer of Binding, Propaganda, Rhystic Study, Sanguine Bond, Smothering Tithe, Sphere of Safety, Teleportation Circle
 
-**Artifacts (8).** Arcane Signet, Champion's Helm, Coalition Relic, Conjurer's Closet, Expedition Map, Sol Ring, Talisman of Hierarchy, Talisman of Progress
+**Artifacts (9).** Arcane Signet, Champion's Helm, Coalition Relic, Conjurer's Closet, Expedition Map, Palantír of Orthanc, Sol Ring, Talisman of Hierarchy, Talisman of Progress
 
-**Instants (11).** Anguished Unmaking, Dovin's Veto, Fatal Push, Force of Will, Generous Gift, Go for the Throat, Mystical Tutor, Path to Exile, Teferi's Protection, Vampiric Tutor, Your Fate Ends Here
+**Instants (12).** Anguished Unmaking, Counterspell, Dovin's Veto, Fatal Push, Force of Will, Generous Gift, Go for the Throat, Mystical Tutor, Path to Exile, Teferi's Protection, Vampiric Tutor, Your Fate Ends Here
 
-**Sorceries (14).** Austere Command, Cast Away Doubt, Dark Petition, Debt to the Deathless, Demonic Tutor, Diabolic Tutor, Exsanguinate, Farewell, Idyllic Tutor, Profane Tutor, Read the Bones, Tezzeret's Gambit, Torment of Hailfire, Toxic Deluge
+**Sorceries (14).** Austere Command, Cast Away Doubt, Debt to the Deathless, Demonic Tutor, Diabolic Tutor, Exsanguinate, Farewell, Idyllic Tutor, Profane Tutor, Read the Bones, Ringsight, Tezzeret's Gambit, Torment of Hailfire, Toxic Deluge
 
-**Lands (37).** Adarkar Wastes, Cabal Coffers, Caves of Koilos, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Polluted Delta, Scrubland, Serra's Sanctum, Tundra, Underground River, Underground Sea, Urborg, Tomb of Yawgmoth, Urza's Cave, Watery Grave, 6 Plains, 6 Island, 8 Swamp
+**Lands (37).** Adarkar Wastes, Cabal Coffers, Caves of Koilos, Command Tower, Flooded Strand, Godless Shrine, Hallowed Fountain, Marsh Flats, Mistrise Village, Polluted Delta, Scrubland, Serra's Sanctum, Tundra, Underground River, Underground Sea, Urborg, Tomb of Yawgmoth, Urza's Cave, Watery Grave, 6 Plains, 5 Island, 8 Swamp
 
 ## Import list (100)
 
@@ -202,7 +206,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Command Tower
 1 Conjurer's Closet
 1 Consecrated Sphinx
-1 Dark Petition
+1 Counterspell
 1 Debt to the Deathless
 1 Demonic Tutor
 1 Diabolic Tutor
@@ -222,16 +226,16 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Grand Arbiter Augustin IV
 1 Hallowed Fountain
 1 Idyllic Tutor
-1 Ill-Gotten Inheritance
 1 Loran of the Third Path
 1 Marauding Blight-Priest
 1 Marsh Flats
-1 Memory Trap
+1 Mistrise Village
 1 Mystic Remora
 1 Mystical Tutor
 1 Necropotence
 1 Notion Thief
 1 Orcish Bowmasters
+1 Palantír of Orthanc
 1 Path to Exile
 1 Polluted Bonds
 1 Polluted Delta
@@ -241,6 +245,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Read the Bones
 1 Restoration Angel
 1 Rhystic Study
+1 Ringsight
 1 Sanguine Bond
 1 Scrubland
 1 Serra's Sanctum
@@ -268,7 +273,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Y'shtola, Night's Blessed
 1 Your Fate Ends Here
 1 Zur the Enchanter
-6 Island
+5 Island
 6 Plains
 8 Swamp
 ```

@@ -10,6 +10,10 @@ use sim_core::testkit::*;
 
 const P0: PlayerId = PlayerId(0);
 
+/// the line's own cards: never used as plain fuel
+const LINE: [&str; 11] = ["Brain Freeze", "Grapeshot", "Lotus Petal", "Dark Ritual", "Cabal Ritual", "Seething Song",
+    "Desperate Ritual", "Rite of Flame", "Lion's Eye Diamond", "Jeska's Will", "Underworld Breach"];
+
 /// P0 in its main phase with Breach out, `hand`, `n_fuel` other cards in its graveyard and `lands` untapped Volcanic
 /// Islands; each opponent has `opp_lib` cards left in its library
 fn position(key: &str, hand_names: &[&str], n_fuel: usize, lands_n: usize, opp_lib: usize) -> Game {
@@ -22,8 +26,7 @@ fn position(key: &str, hand_names: &[&str], n_fuel: usize, lands_n: usize, opp_l
     lands(&mut g, P0, "Volcanic Island", lands_n, false);
     hand(&mut g, P0, hand_names);
     // fuel: plain cards off the top of the library (no line card among them)
-    let line = ["Brain Freeze", "Grapeshot", "Lotus Petal", "Dark Ritual", "Cabal Ritual", "Seething Song",
-        "Desperate Ritual", "Rite of Flame", "Lion's Eye Diamond", "Jeska's Will", "Underworld Breach"];
+    let line = LINE;
     let mut fuel = vec![];
     while fuel.len() < n_fuel {
         let c = g.player_mut(P0).library.pop().unwrap();
@@ -71,6 +74,10 @@ fn no_line_without_fuel_or_mana() {
 fn no_line_when_it_would_not_finish_the_table() {
     // full libraries and 40 life: the pieces are there but the line falls short, so it is not offered
     let mut g = position("aragorn", &["Brain Freeze", "Rite of Flame"], 6, 3, 90);
+    // no line card left in the library either: a self-milling Brain Freeze would otherwise dig up Lotus Petal and
+    // Seething Song for Breach to escape (it did after the 2026-11-06 Aragorn list change), and the line would finish
+    let lib: Vec<_> = g.player(P0).library.iter().copied().filter(|&c| !LINE.contains(&&*g.db.get(c).name)).collect();
+    g.player_mut(P0).library = lib;
     assert!(breach_line::breach_options(&mut g, P0, false).unwrap().is_empty());
 }
 

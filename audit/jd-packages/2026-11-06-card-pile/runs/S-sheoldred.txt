@@ -1,0 +1,266 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Dreadhorde Invasion [scryfall+dsl] E 1B :: (no tags)
+      ability: triggered upkeep -> lose_life, amass
+Model status of the swapped-in cards (cardgen audit):
+  Reanimate: Full (tags: `rean=reanimate`)
+  Entomb: Full (hand-written (impls/t45_urza_yawgmoth.rs) for outside decks: cast at an opponent's end of turn or in a main phase: the best creature for a reanimation spell in hand (Unearth: mana value 3 or less), else a creature that returns by itself; JD's decks keep their own plan)
+  Diabolic Intent: Full (tags: `tut=any needsac`)
+  Massacre Wurm: Full (when it enters, each creature your opponents control with toughness 2 or less dies (-2/-2; the caster's side is untouched, tested in cards_sauron_sweepers.rs); whenever an opposing creature dies, that player loses 2 life (wurmdrain))
+  Yawgmoth's Will: Full (until end of turn: cast spells and play lands from the graveyard as it was when it resolved (reanimation spells included); cards that reach your graveyard this turn are exiled)
+  Dreadhorde Invasion: Full (upkeep: lose 1 life and amass Zombies 1; a Zombie token you control with power 6 or greater gains lifelink as it attacks (the Army counts as a Zombie while Invasion is out))
+  Barad-dûr: Full (enters tapped without a legendary creature; {T}: {B}; {X}{X}{B}, {T}: amass Orcs X after a creature died)
+
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  sheoldred                   100 cards: Full 89, Full-auto 11, Approximate 0, Partial 0, Unmodeled 0
+  sheoldred (swapped)         100 cards: Full 92, Full-auto 8, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 3 (High B3)  5 decks, 500 cards: Full 444, Full-auto 38, Approximate 18, Partial 0, Unmodeled 0
+  opponents Tier 4 (Low B4)   5 decks, 500 cards: Full 436, Full-auto 37, Approximate 27, Partial 0, Unmodeled 0
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by sheoldred's AI?
+  WARNING AI: Reanimate: priority 0 and no response path: the AI may never cast it
+  AI: Entomb: priority 0 (generic), cast as a response / removal only
+  AI: Diabolic Intent: priority 72 (generic)
+  AI: Massacre Wurm: priority 52 (generic)
+  WARNING AI: Yawgmoth's Will: priority 0 and no response path: the AI may never cast it
+  AI: Dreadhorde Invasion: priority 31 (generic)
+  AI: Barad-dûr: land (played, never cast)
+200 games (preflight dry run: swapped list, 200 per profile on t3), adaptive AI, 24 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 3 (High B3)
+  dry run: Reanimate: drawn in 19.0% of games (38), cast in 52.6% of those (20)
+  dry run: Entomb: drawn in 18.0% of games (36), cast in 16.7% of those (6)
+  dry run: Diabolic Intent: drawn in 18.5% of games (37), cast in 73.0% of those (27)
+  dry run: Massacre Wurm: drawn in 17.5% of games (35), cast in 20.0% of those (7)
+  dry run: Yawgmoth's Will: drawn in 17.5% of games (35), cast in 5.7% of those (2)
+  dry run: Dreadhorde Invasion: drawn in 16.0% of games (32), cast in 62.5% of those (20)
+  (the AI-rule warning above did not show up in the dry run; check the card's drawn / cast numbers after the main run)
+
+6,200 games (current list and the swapped one, 1,500 per list per tier, profile loose), lookahead AI, 24 worker threads: about 13 minutes
+Swaps: Raise Dead -> Reanimate; Cast Away Doubt -> Entomb; Diabolic Tutor -> Diabolic Intent; Vanquish the Weak -> Massacre Wurm; Dark Deal -> Yawgmoth's Will; Otherworld Atlas -> Dreadhorde Invasion; Swamp -> Barad-dûr
+
+=== Sheoldred vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  28.2% ->  30.1%  (delta +1.9 pts, noise ±2.7, paired)   n=1500
+               eliminated by (variant): Tergrid 17.2%  Aurelia 18.3%  Marwyn 18.1%  Atraxa 8.4%  Korvold 7.7%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sheoldred) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sheoldred: first opponent drained by Sheoldred
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          28.2% ->  30.1%  +1.9pt   ±3.3 
+    Rounds survived (or game length)                   9.12 ->   9.09   -0.04  ±0.17 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.61 ->   0.62   +0.01  ±0.06 
+    Mana available on your turn 4                      3.93 ->   3.92   -0.01  ±0.06 
+    Mana available on your turn 6                      5.48 ->   5.45   -0.03  ±0.11 
+
+  Speed
+    Games where the game plan came online             91.3% ->  91.5%  +0.1pt   ±2.0 
+    Turn the game plan came online                     4.83 ->   4.80   -0.03  ±0.11 
+    Turn the commander first resolved                  4.79 ->   4.77   -0.02  ±0.11 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.56 ->  12.17   -0.38  ±0.47 
+    Tutors resolved per game                           0.43 ->   0.42   -0.01  ±0.04 
+    Spells cast per game                               8.94 ->   8.71   -0.23  ±0.29 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.73 ->   0.60   -0.13  ±0.06*
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.53 ->   0.57   +0.04  ±0.06 
+    Your spells countered                              0.02 ->   0.02   +0.00  ±0.01 
+
+  Threat & pressure
+    Damage dealt to opponents per game                40.68 ->  40.53   -0.15  ±2.52 
+      ...of which combat damage                        6.14 ->   7.14   +1.00  ±0.68*
+      ...of which magecraft / burn                     1.08 ->   0.43   -0.65  ±0.16*
+      ...of which drain triggers                      28.50 ->  28.21   -0.29  ±1.91 
+      ...of which other triggers                       3.77 ->   3.51   -0.27  ±0.67 
+
+--- Reading it ---
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better -   ...of which combat damage (both profiles)
+    worse  -   ...of which magecraft / burn (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Reanimate                             18.0      47.4         6.8     52.6       46.1      0.00
+    Entomb                                17.1       5.8         5.1     94.2       40.0      0.00
+    Diabolic Intent                       16.4      50.8         6.2     49.2       42.4      0.00
+    Massacre Wurm                         20.0      40.3         7.8     59.7       40.5      0.01
+    Yawgmoth's Will                       18.1       8.1        10.6     91.9       68.2      0.00
+    Dreadhorde Invasion                   19.1      68.3         5.0     31.7       30.6      0.01
+    Barad-dûr                             21.7       0.0           -    100.0          -      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Raise Dead                            18.1      82.0         4.0     18.0       30.0      0.00
+    Cast Away Doubt                       17.9      69.5         5.7     30.5       31.6      0.00
+    Diabolic Tutor                        17.1      59.5         6.7     40.5       46.4      0.00
+    Vanquish the Weak                     19.5      80.5         5.7     19.5       26.0      0.00
+    Dark Deal                             18.2      16.1         7.2     83.9       38.6      0.00
+    Otherworld Atlas                      19.2      16.7         8.0     83.3       33.3      0.00
+    Swamp                                100.0       0.0           -    100.0          -      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        28.2      30.1     +1.9
+    rounds survived                                   9.12      9.09    -0.04
+    eliminated, % of games                            71.7      69.9     -1.8
+    opponents it eliminated, per game                 0.89      0.91    +0.02
+    damage dealt, per game                            39.5      39.3     -0.2
+    plan: first opponent drained by Sheoldred
+      plan online by turn 4, %                        48.2      49.1     +0.9
+      plan online by turn 6, %                        80.8      80.9     +0.1
+      plan online by turn 8, %                        89.1      89.1     +0.1
+      plan online by turn 12, %                       91.1      91.5     +0.3
+      plan online at all, %                           91.3      91.5     +0.1
+    commander resolved by turn 4, %                   49.1      50.3     +1.3
+    commander resolved by turn 6, %                   81.9      82.2     +0.3
+    commander removals, per game                      0.39      0.43    +0.04
+    lands on the battlefield, turn 4                  3.72      3.72    +0.00
+    lands on the battlefield, turn 8                  6.18      6.17    -0.01
+    mana available, turn 4                            3.93      3.92    -0.01
+    mana available, turn 8                            6.86      6.86    -0.00
+    cards in hand after the land drop, turn 4         5.68      5.69    +0.01
+    cards in hand after the land drop, turn 8         4.45      4.40    -0.05
+    wins by (current):  combo 55%, damage 45%
+    wins by (swapped):  combo 51%, damage 49%
+    eliminated by (current): Aurelia via combat 13.3%, Marwyn via combat 10.1%, Tergrid via combat 9.7%, Marwyn via combo 7.9%
+    eliminated by (swapped): Aurelia via combat 12.4%, Tergrid via combat 10.4%, Marwyn via combat 9.1%, Marwyn via combo 7.7%
+  progress 100.0%  16m42s elapsed, ~0m00s left
+Swaps: Raise Dead -> Reanimate; Cast Away Doubt -> Entomb; Diabolic Tutor -> Diabolic Intent; Vanquish the Weak -> Massacre Wurm; Dark Deal -> Yawgmoth's Will; Otherworld Atlas -> Dreadhorde Invasion; Swamp -> Barad-dûr
+
+=== Sheoldred vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  27.5% ->  27.2%  (delta -0.3 pts, noise ±2.7, paired)   n=1500
+               eliminated by (variant): Yuriko 10.9%  Edgar Markov 20.1%  Prosper 13.2%  Chulane 8.7%  Krenko 19.9%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sheoldred) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sheoldred: first opponent drained by Sheoldred
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          27.5% ->  27.2%  -0.3pt   ±3.3 
+    Rounds survived (or game length)                   8.22 ->   8.20   -0.02  ±0.15 
+
+  Mana & consistency
+    Extra mulligans per game                           0.08 ->   0.08   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.55 ->   0.56   +0.00  ±0.06 
+    Mana available on your turn 4                      3.95 ->   3.93   -0.02  ±0.05 
+    Mana available on your turn 6                      5.56 ->   5.47   -0.10  ±0.11 
+
+  Speed
+    Games where the game plan came online             87.5% ->  86.5%  -0.9pt   ±2.5 
+    Turn the game plan came online                     4.56 ->   4.54   -0.02  ±0.10 
+    Turn the commander first resolved                  4.54 ->   4.52   -0.02  ±0.10 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            10.58 ->  10.47   -0.11  ±0.40 
+    Tutors resolved per game                           0.41 ->   0.39   -0.02  ±0.04 
+    Spells cast per game                               8.08 ->   7.86   -0.22  ±0.28 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.68 ->   0.59   -0.09  ±0.06*
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.63 ->   0.66   +0.02  ±0.06 
+    Your spells countered                              0.28 ->   0.28   -0.00  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                36.50 ->  36.93   +0.43  ±2.42 
+      ...of which combat damage                        5.43 ->   6.10   +0.67  ±0.56*
+      ...of which magecraft / burn                     0.98 ->   0.40   -0.59  ±0.15*
+      ...of which drain triggers                      25.71 ->  26.32   +0.61  ±1.90 
+      ...of which other triggers                       3.24 ->   2.98   -0.26  ±0.61 
+
+--- Reading it ---
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better -   ...of which combat damage (both profiles)
+    worse  -   ...of which magecraft / burn (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Reanimate                             16.5      33.5         6.7     66.5       50.6      0.00
+    Entomb                                16.0       8.8         4.5     91.2       38.1      0.00
+    Diabolic Intent                       14.3      54.4         6.1     45.6       35.0      0.00
+    Massacre Wurm                         17.5      45.4         6.8     54.6       52.1      0.01
+    Yawgmoth's Will                       16.2       4.1        10.5     95.9       70.0      0.00
+    Dreadhorde Invasion                   16.9      66.9         4.3     33.1       32.9      0.01
+    Barad-dûr                             20.7       0.0           -    100.0          -      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Raise Dead                            17.0      84.7         3.8     15.3       29.2      0.00
+    Cast Away Doubt                       16.2      65.4         5.6     34.6       30.2      0.00
+    Diabolic Tutor                        15.0      61.3         6.5     38.7       42.8      0.00
+    Vanquish the Weak                     18.3      80.7         5.5     19.3       23.4      0.00
+    Dark Deal                             15.7      16.6         7.5     83.4       56.4      0.00
+    Otherworld Atlas                      18.1      14.0         7.6     86.0       44.7      0.00
+    Swamp                                100.0       0.0           -    100.0          -      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        27.5      27.2     -0.3
+    rounds survived                                   8.22      8.20    -0.02
+    eliminated, % of games                            72.5      72.8     +0.3
+    opponents it eliminated, per game                 0.90      0.87    -0.03
+    damage dealt, per game                            35.4      35.8     +0.4
+    plan: first opponent drained by Sheoldred
+      plan online by turn 4, %                        54.7      53.7     -1.0
+      plan online by turn 6, %                        79.5      79.8     +0.3
+      plan online by turn 8, %                        86.1      85.3     -0.8
+      plan online by turn 12, %                       87.4      86.5     -0.9
+      plan online at all, %                           87.5      86.5     -0.9
+    commander resolved by turn 4, %                   55.6      54.7     -0.9
+    commander resolved by turn 6, %                   80.3      80.7     +0.3
+    commander removals, per game                      0.51      0.51    -0.00
+    lands on the battlefield, turn 4                  3.74      3.74    -0.00
+    lands on the battlefield, turn 8                  6.25      6.22    -0.02
+    mana available, turn 4                            3.95      3.93    -0.02
+    mana available, turn 8                            6.95      6.90    -0.05
+    cards in hand after the land drop, turn 4         5.99      6.00    +0.01
+    cards in hand after the land drop, turn 8         5.38      5.50    +0.12
+    wins by (current):  damage 63%, combo 37%
+    wins by (swapped):  damage 63%, combo 37%
+    eliminated by (current): Krenko via combat 13.1%, Edgar Markov via combat 11.5%, Chulane via combo 8.3%, Yuriko via triggers 5.9%
+    eliminated by (swapped): Krenko via combat 13.7%, Edgar Markov via combat 11.1%, Chulane via combo 7.5%, Yuriko via triggers 6.3%
+
+(1002s total)

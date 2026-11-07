@@ -4,6 +4,25 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile, vs Sheoldred's matched
 tiers (T3-T5) unless noted. Older tests: README.md in this folder.
 
+## 2026-11-07: card-pile package S, adopted (paired swap run; t3, t4, look-ahead, loose, 1,500 games per list per tier, main b84ab9e6 with #292)
+Raise Dead => Reanimate, Cast Away Doubt => Entomb, Diabolic Tutor => Diabolic Intent, Vanquish the Weak => Massacre Wurm,
+Dark Deal => Yawgmoth's Will, Otherworld Atlas => Dreadhorde Invasion, Swamp => Barad-dûr (JD's spare-card pile,
+`audit/jd-packages/2026-11-06-card-pile/`). **NO CLEAR EFFECT:** t3 28.2% -> 30.1% (+1.9, noise ±2.7), t4 27.5% -> 27.2%
+(-0.3, ±2.7). Game shape unchanged: plan online 91.3% -> 91.5% (t3) and 87.5% -> 86.5% (t4), rounds survived, damage
+and who eliminates it all inside noise.
+
+Why nothing moved: the graveyard half is barely played. Entomb is cast in 6% / 9% of the games it is drawn (stuck in
+hand 94% / 91%) and Yawgmoth's Will 8% / 4% (stuck 92% / 96%): the AI has no Entomb-into-Reanimate line for this deck
+and gives Yawgmoth's Will priority 0 (the preflight warned). Reanimate is cast 47% / 34%. The cards that did play:
+Dreadhorde Invasion 68% / 67% (round 5.0 / 4.3), Diabolic Intent 51% / 54%, Massacre Wurm 40% / 45%. What left was cast
+more (Raise Dead 82-85%, Vanquish the Weak 81%) but won less when cast (Raise Dead 30% / 29% of the games it was cast in, Vanquish the Weak 26% / 23%); Dark Deal and Otherworld Atlas were
+cast in only 14-17% of their games.
+
+**Adopted by JD 2026-11-07 with one change, untested:** Diabolic Tutor stays and Diabolic Intent takes Darksteel Plate's
+slot (Swiftfoot Boots is the protection now). Open: an Entomb / Reanimate / Yawgmoth's Will line for the AI, without
+which three of the seven cards are close to dead in the sim. Raw:
+`audit/jd-packages/2026-11-06-card-pile/runs/S-sheoldred.txt`.
+
 ## Baseline B 2026-11-06 (after #278-#284; main 63d783b5; look-ahead, loose, 2,000 games per tier, seed 500000)
 t3 **28.2%** (26.3-30.3), t4 **26.6%** (24.7-28.5): **27.4% over t3, t4**, against 27.5% in the morning: no change. It includes her
 Ad Nauseam fix (entry below) and the new Tier 3 Atraxa (#279). Raw: `audit/baseline-2026-11-06-b/sheoldred.txt`.

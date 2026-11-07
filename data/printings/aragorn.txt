@@ -1,10 +1,9 @@
 1 Aragorn, the Uniter (hoc) 69
 1 Arcane Signet (p30m) 1P
 1 Aura Shards (inv) 233
+1 Austere Command (brc) 69
 1 Battlefield Forge (ori) 244
-1 Big Score (plst) SNC-102
 1 Birds of Paradise (blc) 81
-1 Blossoming Defense (kld) 146
 1 Brain Freeze (soa) 78
 1 Brushland (plst) BRO-259
 1 Chaos Warp (c19) 136
@@ -30,9 +29,7 @@
 1 Frontier Bivouac (ecc) 150
 1 Ghostly Prison (soc) 146
 1 Glacial Fortress (fic) 400
-1 Grand Abolisher (cmm) 625
 1 Grapeshot (tsr) 166
-1 Growth Spiral (trc) 476
 1 Guttersnipe (pm19) 145
 1 Heroic Intervention (sld) 1872
 1 Island (sos) 274
@@ -41,19 +38,20 @@
 1 Kitchen Finks (f09) 3
 1 Lightning Bolt (sld) 86
 1 Lightning Greaves (sld) 1662
+1 Llanowar Elves (4ed) 261
 1 Lotus Petal (p30m) 2
 1 Mana Drain (2x2) 348
 1 Manamorphose (plst) SHM-211
 1 Marsh Flats (spg) 110
 1 Misty Rainforest (spg) 111
-1 Mountain (eoe) 370
 1 Mystic Confluence (tsr) 312
 1 Mystic Monastery (trc) 543
 1 Mystic Sanctuary (soc) 388
 1 Mystical Tutor (dmr) 421
 1 Nature's Lore (trc) 467
+1 Nibelheim Aflame (fin) 339
 1 Niv-Mizzet, Parun (rvr) 376
-1 Noble Hierarch (plst) MM2-151
+1 Paradise Druid (pwar) 171
 1 Path of Ancestry (cmm) 661
 1 Path to Exile (blc) 147
 1 Plains (mdd) 292
@@ -69,7 +67,9 @@
 1 Skullclamp (fic) 355
 1 Skyclave Apparition (m3c) 172
 1 Smothering Tithe (cmm) 57
+1 Sokenzan, Crucible of Defiance (neo) 415
 1 Sol Ring (fic) 357
+1 Spark Double (rvr) 421
 1 Spirebluff Canal (kld) 249
 1 Steam Vents (rvr) 298
 1 Storm-Kiln Artist (soc) 255
@@ -85,7 +85,6 @@
 1 Temple Garden (rvr) 300
 1 Tezzeret, Cruel Captain (eoe) 2
 1 Third Path Iconoclast (tdc) 307
-1 Three Visits (msc) 181
 1 Triple Triad (fin) 340
 1 Tropical Island (ced) 284
 1 Tundra (ced) 285
@@ -94,6 +93,7 @@
 1 Verdant Catacombs (spg) 113
 1 Veyran, Voice of Duality (sld) 1915
 1 Volcanic Island (ced) 287
+1 Windborn Muse (dmr) 415
 1 Windswept Heath (mh3) 360
 1 Worldly Tutor (dmr) 442
 1 Yavimaya Coast (c21) 409

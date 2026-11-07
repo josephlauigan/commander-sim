@@ -510,9 +510,11 @@ fn recruitment_officer_finds_a_cheap_creature_in_the_top_four() {
     let mut g = game();
     let off = perm(&mut g, P0, "Recruitment Officer");
     lands(&mut g, P0, "Plains", 4, false);
-    // top of the library is the end of the list: Helitrooper in the top four
+    // top of the library is the end of the list: all four set here (the fourth used to be whatever the shuffle left on
+    // top, which broke when the Cloud list changed on 2026-11-07), Helitrooper the only cheap creature among them
     let h = take(&mut g, P0, "Helitrooper");
     let titan = take(&mut g, P0, "Stormfront Riders");
+    g.player_mut(P0).library.push(titan);
     g.player_mut(P0).library.push(titan);
     g.player_mut(P0).library.push(h);
     g.player_mut(P0).library.push(titan);

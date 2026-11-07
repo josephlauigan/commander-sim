@@ -3,6 +3,23 @@
 What the simulator has taught us about the Y'shtola Esper drain deck: strengths, weaknesses, and what was tried and
 why it did or didn't work. Updated after every run. Newest evidence first. Matched tier: T5 (`data/my_decks.toml`).
 
+## 2026-11-07: card-pile package Y, adopted untested
+Memory Trap => Counterspell, Dark Petition => Ringsight, Ill-Gotten Inheritance => Palantír of Orthanc, Island =>
+Mistrise Village (JD's spare-card pile, `audit/jd-packages/2026-11-06-card-pile/`). **Not measured:** JD stopped the runs
+and adopted it. Why: she loses about 35% of t5 games to the Kinnan and Urza combos, and Counterspell answers a combo
+piece at instant speed; Ringsight ({1}{U}{B}, a tutor for a white, blue or black card with her out) costs 3 where Dark
+Petition cost 5, and both trigger her; Palantír (mana value 3, triggers her) drains or draws every end step where
+Ill-Gotten Inheritance drained 1 a turn; Mistrise Village makes the next spell uncounterable.
+
+**A correction to the reason given when it was chosen:** Memory Trap was described as a conditional counterspell. It is
+a {2}{W} enchantment that exiles a nonland permanent an opponent controls until it leaves: removal that triggers her
+(mana value 3) and that Zur can fetch. The swap trades it for a counterspell that doesn't trigger her (mana value 2).
+JD kept it (2026-11-07) over cutting Arrest instead. **Engine fix with it:** Ringsight used to search for a blue, black
+or red card (Sauron's colours, `tut=ubr`); it now finds a nonland card that shares a colour with a legendary creature
+you control, the Ring-bearer included (`tut=legcol`, `ai::decks::tut_kind`, `tests/cards_ringsight.rs`). The preflight
+cast Ringsight in 82% of the games it was drawn and Counterspell in 57% (t5, 200 games, before the fix). To check in the
+next baseline: the combo losses (Kinnan, Urza) and Palantír's cast rate (44% in the preflight).
+
 ## Baseline B 2026-11-06 (after #278-#284; main 63d783b5; look-ahead, loose, 2,000 games per tier, seed 500000)
 **26.5%** (24.6-28.5) at t5, against 26.3% in the morning: no change. The Tier 5 table changes of #284 (no wasted protection
 holds; Garruk's Uprising and Welding Jar cast) and #281 (Urza's Whir) don't move her number. Raw:

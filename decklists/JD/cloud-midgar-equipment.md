@@ -5,6 +5,9 @@ Equipment on him, every Equipment trigger happens twice. The deck wins by hangin
 (or on a backup carrier) and hitting. It is weak to board wipes and to artifact removal, and it needs Cloud, or
 another carrier, to survive.
 
+**Changed 2026-11-07 (JD, card-pile package C, adopted untested):** Rogue's Passage for a Plains and Sting, the
+Glinting Dagger for Disenchant. Evidence: `audit/cloud/FINDINGS.md`.
+
 | | |
 |---|---|
 | **Commander** | Cloud, Midgar Mercenary ({W}{W}, 2/1, white) |
@@ -111,6 +114,9 @@ that creature indestructible.
   double strike until end of turn; with a commander out you may also choose lifelink, indestructible and protection from
   each color.
 - **Swiftfoot Boots** (hexproof and haste) protects and pushes.
+- **Sting, the Glinting Dagger** ({2}, equip {2}): +1/+1 and haste, and it untaps the equipped creature at the start of
+  each combat, so a Cloud that tapped for something still attacks.
+- **Rogue's Passage** ({4}, {T}: target creature can't be blocked this turn) puts a loaded Cloud past the blockers.
 
 ### Keeping Cloud alive
 - **Prevent.** Swiftfoot Boots (hexproof), Giver of Runes (protection from a colour for another
@@ -132,7 +138,8 @@ that creature indestructible.
 - **Single targets:** Winds of Abandon ({1}{W}, exile; overload {4}{W}{W} exiles all your opponents' creatures), Lay Down Arms ({W}: exiles a creature with mana value up to the number of Plains you control, so
   it gets better later), Swords to Plowshares and Path to Exile ({W} each: exile a creature; its controller gains life
   equal to its power, or may fetch a basic land tapped), Skyclave Apparition (mana value 4 or less) and Stroke of Midnight ({2}{W} instant: destroys any nonland permanent, and its controller gets a 1/1 Human).
-- **Artifacts and enchantments:** Disenchant.
+- **Artifacts and enchantments:** Stroke of Midnight (any nonland permanent), Austere Command's artifact and enchantment
+  modes, and Skyclave Apparition (mana value 4 or less).
 - **Attack limits and taxes:** **Archangel of Tithes** ({1}{W}{W}{W}, a 3/5 flier: while untapped, opponents pay {1} for each creature that attacks you, and while it attacks, they pay {1} for each creature that blocks). With her too,
   creatures cannot attack you unless their controller pays per attacker: Windborn Muse {2} (a 2/3 flier), Baird,
   Steward of Argive {1} (a 1/4 vigilance), Norn's Annex {W/P}, and Archon of Absolution {1} (a 3/2 flier with
@@ -183,12 +190,12 @@ that creature indestructible.
 
 ## Mana and consistency
 
-33 lands: 28 Plains plus Ash Barrens (basic landcycling {1}), Evolving Wilds, Path of Ancestry (enters tapped; scry 1
-when you cast a creature that shares a type with Cloud), Plaza of Heroes and Terminal Moraine. Ramp: Sol Ring, Mind Stone,
+33 lands: 27 Plains plus Ash Barrens (basic landcycling {1}), Evolving Wilds, Path of Ancestry (enters tapped; scry 1
+when you cast a creature that shares a type with Cloud), Plaza of Heroes, Rogue's Passage and Terminal Moraine. Ramp: Sol Ring, Mind Stone,
 Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel, Page, Loose Leaf, Solemn Simulacrum, Knight of the
 White Orchid and Loyal Warhound. Card draw: Mask of Memory, Court of Ardenvale, Puresteel Paladin and the Swords.
 Interaction: Wrath of God, Fumigate, Archangel of Tithes, Archon of Absolution, Norn's Annex, Lay Down Arms, Judgment of Alexander, Stroke of Midnight, Swords to Plowshares, Path to Exile, Skyclave
-Apparition, Winds of Abandon, Austere Command, Elspeth, Sun's Champion and Disenchant. 9 Equipment in the deck, so Cloud's search always finds one.
+Apparition, Winds of Abandon, Austere Command, Elspeth, Sun's Champion. 10 Equipment in the deck, so Cloud's search always finds one.
 
 ## Bracket and Rule 0
 
@@ -207,13 +214,13 @@ on its own. Tell the table before the game that:
 
 **Enchantments (3).** Court of Ardenvale, Forge Anew, Smothering Tithe
 
-**Artifacts (16).** Andúril, Narsil Reforged, Arcane Signet, Buster Sword, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Mask of Memory, Mind Stone, Norn's Annex, Sol Ring, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Thought Vessel
+**Artifacts (17).** Andúril, Narsil Reforged, Arcane Signet, Buster Sword, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Mask of Memory, Mind Stone, Norn's Annex, Sol Ring, Sting, the Glinting Dagger, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Thought Vessel
 
 **Sorceries (7).** Austere Command, Fumigate, Lay Down Arms, Open the Armory, Steelshaper's Gift, Winds of Abandon, Wrath of God
 
-**Instants (9).** Akroma's Will, Disenchant, Enlightened Tutor, Galadriel's Dismissal, Judgment of Alexander, Path to Exile, Stroke of Midnight, Swords to Plowshares, Teferi's Protection
+**Instants (8).** Akroma's Will, Enlightened Tutor, Galadriel's Dismissal, Judgment of Alexander, Path to Exile, Stroke of Midnight, Swords to Plowshares, Teferi's Protection
 
-**Lands (33).** Ash Barrens, Evolving Wilds, Path of Ancestry, Plaza of Heroes, Terminal Moraine, 28 Plains
+**Lands (33).** Ash Barrens, Evolving Wilds, Path of Ancestry, Plaza of Heroes, Rogue's Passage, Terminal Moraine, 27 Plains
 
 **Planeswalkers (1).** Elspeth, Sun's Champion
 
@@ -242,7 +249,6 @@ on its own. Tell the table before the game that:
 1 Colossus Hammer
 1 Court of Ardenvale
 1 Danitha Capashen, Paragon
-1 Disenchant
 1 Elspeth, Sun's Champion
 1 Enlightened Tutor
 1 Evolving Wilds
@@ -270,6 +276,7 @@ on its own. Tell the table before the game that:
 1 Path to Exile
 1 Plaza of Heroes
 1 Puresteel Paladin
+1 Rogue's Passage
 1 Silverblade Paladin
 1 Skyclave Apparition
 1 Smothering Tithe
@@ -277,6 +284,7 @@ on its own. Tell the table before the game that:
 1 Solemn Simulacrum
 1 Sram, Senior Edificer
 1 Steelshaper's Gift
+1 Sting, the Glinting Dagger
 1 Stoneforge Mystic
 1 Stroke of Midnight
 1 Swiftfoot Boots
@@ -292,5 +300,5 @@ on its own. Tell the table before the game that:
 1 Winds of Abandon
 1 Wrath of God
 1 Zack Fair
-28 Plains
+27 Plains
 ```
