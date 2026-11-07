@@ -20,7 +20,7 @@ fn every_deck_finishes_games_at_every_tier() {
             played += 1;
         }
     }
-    assert_eq!(played, 63); // nine decks of yours x seven tiers (karn and urdragon retired 2026-11-05)
+    assert_eq!(played, 49); // seven decks of yours x seven tiers (karn and urdragon retired 2026-11-05; alela and galadriel 2026-11-06)
 }
 
 #[test]

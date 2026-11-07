@@ -29,8 +29,6 @@ Each deck plays only the opponent tiers listed for it in `data/my_decks.toml` (`
 | kefka | t3 |
 | cloud | t1-t3 |
 | thrasios (cEDH) | t6 |
-| alela (Avery's) | t1 |
-| galadriel (Avery's) | t1-t2 |
 
 `--pool all`, `--all-decks`, `--analyze`, swap runs and `searchtest` use only these tiers; `--deck X --pool tN` outside
 them is refused. Report averages over the deck's own tiers and label them ("over t3-t4"). `--any-tier` lifts the

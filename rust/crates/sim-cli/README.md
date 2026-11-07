@@ -57,6 +57,6 @@ commander-sim searchtest <deck> <tier> <games> [rollouts] [top_k] [jobs]        
 commander-sim pools                                                                  # the pool decks
 ```
 
-Deck lists come from the deck files (`decklists/JD/`, `decklists/Avery/`, `decklists/pool/t*/`, or `$SIM_DECKS`), in
+Deck lists come from the deck files (`decklists/JD/`, `decklists/pool/t*/`, or `$SIM_DECKS`), in
 file order; card definitions, commanders and colour identities from `data/cards.json` and `data/decks.json`. A card
 that isn't in `data/cards.json` can't be played: run `cardgen export` after adding one to a list.

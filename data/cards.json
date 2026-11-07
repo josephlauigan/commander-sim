@@ -9218,8 +9218,7 @@
    "pips": "W",
    "tags": {
     "human": true,
-    "pow": "2",
-    "noatk": true
+    "pow": "2"
    },
    "pow": 2,
    "tgh": 2,
@@ -29735,8 +29734,7 @@
    "pips": "W",
    "tags": {
     "human": true,
-    "pow": "2",
-    "noatk": true
+    "pow": "2"
    },
    "pow": 2,
    "tgh": 2,
@@ -53157,8 +53155,7 @@
    "pips": "",
    "tags": {
     "c": "A",
-    "t": true,
-    "pain": true
+    "t": true
    },
    "pow": 0,
    "tgh": 0,
@@ -70412,8 +70409,7 @@
    "generic": 2,
    "pips": "W",
    "tags": {
-    "pow": "2",
-    "noatk": true
+    "pow": "2"
    },
    "pow": 2,
    "tgh": 2,
@@ -72260,8 +72256,7 @@
     "leg": true,
     "human": true,
     "pow": "1",
-    "tgh": "3",
-    "noatk": true
+    "tgh": "3"
    },
    "pow": 1,
    "tgh": 3,
@@ -96580,8 +96575,7 @@
    "pips": "WW",
    "tags": {
     "human": true,
-    "pow": "2",
-    "noatk": true
+    "pow": "2"
    },
    "pow": 2,
    "tgh": 2,
@@ -96626,8 +96620,7 @@
    "tags": {
     "human": true,
     "pow": "2",
-    "tgh": "4",
-    "noatk": true
+    "tgh": "4"
    },
    "pow": 2,
    "tgh": 4,
@@ -96670,8 +96663,7 @@
    "tags": {
     "human": true,
     "pow": "1",
-    "tgh": "2",
-    "noatk": true
+    "tgh": "2"
    },
    "pow": 1,
    "tgh": 2,
@@ -96767,8 +96759,7 @@
    "pips": "W",
    "tags": {
     "human": true,
-    "pow": "2",
-    "noatk": true
+    "pow": "2"
    },
    "pow": 2,
    "tgh": 2,
@@ -103318,9 +103309,10 @@
    "generic": 1,
    "pips": "G",
    "tags": {
-    "noatk": true
+    "pow": "1",
+    "tgh": "1"
    },
-   "pow": 0,
+   "pow": 1,
    "tgh": 1,
    "bomb": 0,
    "dsl": null,
@@ -103334,7 +103326,7 @@
    "ward": 0,
    "identity": null,
    "game_changer": null,
-   "source": "manual",
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 2,
@@ -140581,8 +140573,7 @@
    "pips": "WW",
    "tags": {
     "human": true,
-    "pow": "2",
-    "noatk": true
+    "pow": "2"
    },
    "pow": 2,
    "tgh": 2,

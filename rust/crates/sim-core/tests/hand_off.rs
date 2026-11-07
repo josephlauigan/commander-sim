@@ -37,15 +37,13 @@ fn check_generic(g: &Game, key: &str) {
     }
 }
 
-/// JD's (and Avery's) decks: the generic policy and the plan file
+/// JD's decks: the generic policy and the plan file
 #[test]
 fn the_deleted_jd_decks_play_the_generic_policy() {
-    assert_eq!(ai::HAND_DELETED.len(), 7);
+    assert_eq!(ai::HAND_DELETED.len(), 5);
     for (key, t) in [
         ("sauron", "t3"),
-        ("galadriel", "t1"),
         ("yshtola", "t5"),
-        ("alela", "t1"),
         ("kefka", "t3"),
         ("sheoldred", "t3"),
         ("cloud", "t1"),

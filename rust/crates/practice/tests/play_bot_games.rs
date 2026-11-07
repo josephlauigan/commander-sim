@@ -163,16 +163,8 @@ fn cloud_t1() {
     play("cloud", "t1", 1);
 }
 #[test]
-fn galadriel_t3() {
-    play("galadriel", "t3", 1);
-}
-#[test]
 fn yshtola_t3() {
     play("yshtola", "t3", 1);
-}
-#[test]
-fn alela_t3() {
-    play("alela", "t3", 2);
 }
 #[test]
 fn sheoldred_t4() {

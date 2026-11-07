@@ -1,5 +1,7 @@
 # Alela, Artful Provocateur — findings (living file)
 
+**No longer tracked 2026-11-06 (JD).** The `alela` key left the simulator; the list is in `decklists/pool/retired/` and this file is history only.
+
 What the simulator has taught us about Avery's Alela deck: strengths, weaknesses, and what was tried and why it did or
 didn't work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile, vs Alela's matched
 tier (T1) unless noted.

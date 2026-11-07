@@ -97,7 +97,7 @@ fn test_undo_switched_off() {
 fn test_a_saved_game_comes_back_the_same() {
     let s = srv!();
     let mut c = s.client();
-    start(&mut c, "alela", 500000, "lookahead", json!({"compare": true}));
+    start(&mut c, "sheoldred", 500000, "lookahead", json!({"compare": true}));
     let p = play_with(&mut c, 50, false);
     let here = p.seen.last().unwrap().clone();
     let r = c.post("/api/save", json!({}));

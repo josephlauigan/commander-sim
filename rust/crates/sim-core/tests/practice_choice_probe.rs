@@ -260,7 +260,6 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
     ("sheoldred: Invoke Despair", "the opponent chooses what to sacrifice, not the person"),
     ("sheoldred: Rooftop Assassin", "no creature was dealt damage this turn: no legal target"),
     ("cloud: Loyal Warhound", "a basic Plains: every choice is the same card"),
-    ("alela: Airlift Chaplain", "already asks; the probe's three milled cards held no Plains or cheap creature, so there was nothing to choose (practice_gaps_c.rs)"),
     ("kefka: Twinned Vision", "cast from the hand it only draws a card, nothing to choose; the flashback's discard is the person's (practice_gaps_a: twinned_vision_flashback_discards_the_card_the_person_names)"),
 ];
 

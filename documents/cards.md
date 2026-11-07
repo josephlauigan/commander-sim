@@ -78,7 +78,7 @@ What the engine can't do yet, found while modeling the Tier 6 cards, is listed i
 
 ## Deck files
 
-Every deck is a Markdown file: JD's in `decklists/JD/`, Avery's in `decklists/Avery/`, the pool in
+Every deck is a Markdown file: JD's in `decklists/JD/`, retired lists in `decklists/pool/retired/`, the pool in
 `decklists/pool/<tier folder>/`. The simulator reads the `## Import list` block (`1 Card Name` lines), the
 `- **Commander:**` line and the `**Game Changers (N)**` claim; the rest is for people. `data/my_decks.toml` maps each of
 JD's and Avery's deck keys to its file, display name, commander, colour identity and opponent tiers. `cardgen validate`
