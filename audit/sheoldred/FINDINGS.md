@@ -4,6 +4,14 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile, vs Sheoldred's matched
 tiers (T3-T5) unless noted. Older tests: README.md in this folder.
 
+## 2026-11-07: Reanimate => Animate Dead (JD's choice, not simulated)
+Animate Dead ({1}{B}, Aura; owned, from the retired Seph deck) replaces Reanimate ({B}, lose life equal to the mana
+value). One more mana, no life paid; it still takes a creature card from any graveyard and returns legendaries (Persist
+would not). The creature gets -1/-0 and is sacrificed if the Aura leaves, so enchantment removal (and Farewell) answers
+it. Model status: Full (`rean=animate`). Not measured: Reanimate won 48% of the t4 games it was cast in (+20) but was
+cast in only 5.5% of games, and the rest of the graveyard half (Entomb, Yawgmoth's Will) is barely played by the AI,
+so a paired run would say little until that AI gap is fixed. Check its drawn / cast numbers in the next `--analyze`.
+
 ## Baseline 2026-11-07 (after package S as adopted; main 7c622f5f; look-ahead, loose, 10,000 games per tier, seed 500000)
 t3 **30.6%** (29.7-31.5), t4 **28.2%** (27.3-29.0): **29.4% over t3, t4**, against 27.4% in Baseline B (t3 28.2%, t4
 26.6%; 2,000 games per tier). +2.4 and +1.6: a change against Baseline B needs about ±2.1 per tier to be clear, so this

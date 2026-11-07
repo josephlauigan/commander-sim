@@ -25,15 +25,15 @@ She is the deck's one big engine, and she does four jobs:
   alone. Every extra card an opponent draws (Howling Mine, Seizan, Memory Jar, Rhystic Study, Peer into the Abyss) is 2
   more.
 - **She gains life.** Every card you draw is 2 life. That pays for the deck's life costs (The One Ring, Phyrexian Arena,
-  Call of the Ring, Reanimate) and feeds the lifegain payoffs: Sanguine Bond, Vito, Foolish Fate, Leech Collector.
+  Call of the Ring, Phyrexian Delver) and feeds the lifegain payoffs: Sanguine Bond, Vito, Foolish Fate, Leech Collector.
 - **She blocks and attacks.** A 4/5 deathtouch body holds off nearly any attacker. Bonders' Enclave counts her as a
   creature with power 4 or more.
 - **She is the thing the table will answer.** Everything in the deck that makes the table draw is only good with her (or
   Underworld Dreams and Fate Unraveler) out. Cast her first, protect her, then start the engines.
 
 **Where she is.** She starts in the command zone, so no tutor can find her and she is never in your opening hand. Each
-recast costs {2} more per previous cast. If she dies, leave her in the graveyard when you hold Reanimate, Phyrexian Delver
-or Yawgmoth's Will: Reanimate is {B} and 4 life, Delver {3}{B}{B} and 4 life, and Yawgmoth's Will ({2}{B}) lets you cast
+recast costs {2} more per previous cast. If she dies, leave her in the graveyard when you hold Animate Dead, Phyrexian Delver
+or Yawgmoth's Will: Animate Dead is {1}{B} and no life, Delver {3}{B}{B} and 4 life, and Yawgmoth's Will ({2}{B}) lets you cast
 her from the graveyard for {2}{B}{B} with no tax. With none of those, move her to the command zone and pay the tax.
 
 **When to cast her.** Turn 3 with a rock and three lands (Arcane Signet, Fellwar Stone or Mind Stone), turn 4 off four
@@ -156,19 +156,21 @@ Creatures dying drain the table; the sacrifice outlets make them die on demand; 
 - **Barad-dûr** ({X}{X}{B}, {T}, only if a creature died this turn) turns any death into an Orc Army with X counters,
   a late use for spare mana.
 
-#### Line 6: the graveyard start (Entomb, Reanimate, Yawgmoth's Will)
+#### Line 6: the graveyard start (Entomb, Animate Dead, Yawgmoth's Will)
 
-- **Entomb + Reanimate** is two mana for a six-drop. Entomb ({B}, instant) puts a card in the graveyard, Reanimate ({B},
-  sorcery) puts any creature card from any graveyard onto the battlefield, and you lose life equal to its mana value.
-  - **Grave Titan** (lose 6): a 6/6 deathtouch and two Zombies on turn 2, two more Zombies each attack. The default.
-  - **Massacre Wurm** (lose 6): the answer to a table of small creatures (Krenko, Edgar, Marwyn, Aurelia).
-  - **Gray Merchant** (lose 5): an early drain, and a second copy for later.
-  - **Sheoldred herself** (lose 4) with Reanimate when she is in a graveyard.
-  - Entomb is an instant: use spare mana at the end of an opponent's turn, then Reanimate on yours.
+- **Entomb + Animate Dead** is three mana for a six-drop, and no life. Entomb ({B}, instant) puts a card in the
+  graveyard; Animate Dead ({1}{B}, an Aura) returns a creature card from any graveyard to the battlefield under your
+  control. The creature gets -1/-0 and is sacrificed if the Aura leaves, so enchantment removal kills it too.
+  - **Grave Titan**: a 6/6 deathtouch and two Zombies on turn 2, two more Zombies each attack. The default.
+  - **Massacre Wurm**: the answer to a table of small creatures (Krenko, Edgar, Marwyn, Aurelia).
+  - **Gray Merchant**: an early drain, and a second copy for later.
+  - **Sheoldred herself** with Animate Dead when she is in a graveyard.
+  - Entomb is an instant: use spare mana at the end of an opponent's turn, then Animate Dead on yours.
 - **Yawgmoth's Will** ({2}{B}, sorcery): until end of turn you may play lands and cast spells from your graveyard; cards
   that would go to your graveyard are exiled. Replay the turn's rituals and tutors, a spent Exsanguinate or Gray Merchant,
   or Sheoldred.
-- **Phyrexian Delver** is the creature version of Reanimate: it returns any creature card from your own graveyard.
+- **Phyrexian Delver** is the creature version: it returns a creature card from your own graveyard only, and you lose
+  life equal to its mana value.
 - Graveyard hate (Bojuka Bog, Dauthi Voidwalker, Skullsnatcher, Farewell) turns this line off. The sims barely play
   Entomb and Yawgmoth's Will (stuck in hand 91-96% of the games they are drawn), so how well they win is untested.
 
@@ -265,7 +267,7 @@ These cards are played, not drawn, so Sheoldred gains you nothing from them dire
 Sheoldred's lifegain turns on the payoffs: **Foolish Fate** (the target's controller loses 3 if you gained life this
 turn), **Leech Collector // Bloodletting** (the first lifegain each turn makes Bloodletting available for {B}: each
 opponent loses 2), **Sanguine Bond** and **Vito**. The life is also a resource: it pays for The One Ring's burden
-counters, Call of the Ring, Bolas's Citadel, Ad Nauseam and Reanimate.
+counters, Call of the Ring, Bolas's Citadel, Ad Nauseam and Phyrexian Delver.
 
 #### Drain creatures
 
@@ -290,8 +292,9 @@ opponent sacrifice a creature whenever one of yours dies, so every sacrifice for
 #### Recursion
 
 **Phyrexian Delver** returns a creature card from your graveyard to the battlefield (you lose life equal to its mana
-value): recover Sheoldred, or return Gray Merchant for another drain. **Reanimate** puts a creature card from any
-graveyard onto the battlefield; **Entomb** puts the one you want there first. **Yawgmoth's Will** lets you replay a
+value): recover Sheoldred, or return Gray Merchant for another drain. **Animate Dead** puts a creature card from any
+graveyard onto the battlefield (an Aura: if it leaves, so does the creature); **Entomb** puts the one you want there
+first. **Yawgmoth's Will** lets you replay a
 turn from the graveyard (Line 6).
 
 #### Ramp
@@ -307,7 +310,7 @@ bottom for each mulligan after the free one. Sheoldred is in the command zone, s
 
 | Hand | Keep when |
 |---|---|
-| 7 cards | 2-5 lands including a source of {B} (Swamp or Barad-dûr); a play on turns 2-4 (a rock, Dark Ritual, a two-drop, a punisher or Sheoldred's four mana by turn 4); and one reason to go: a tutor, a punisher (Underworld Dreams, Fate Unraveler), a draw engine, a drain piece or Entomb with Reanimate. A two-lander needs a rock or Dark Ritual and cheap plays. Five lands need two real spells. 0-1 lands and 6+ lands go back |
+| 7 cards | 2-5 lands including a source of {B} (Swamp or Barad-dûr); a play on turns 2-4 (a rock, Dark Ritual, a two-drop, a punisher or Sheoldred's four mana by turn 4); and one reason to go: a tutor, a punisher (Underworld Dreams, Fate Unraveler), a draw engine, a drain piece or Entomb with Animate Dead. A two-lander needs a rock or Dark Ritual and cheap plays. Five lands need two real spells. 0-1 lands and 6+ lands go back |
 | 6 or 5 cards | 2-4 lands including a {B} source, and two plays that cost 3 or less |
 | 4 cards | Keep |
 
@@ -327,7 +330,7 @@ bottom for each mulligan after the free one. Sheoldred is in the command zone, s
 | 4 | Swamp, Swamp, Mind Stone, Dark Ritual, Viscera Seer, Zulaport Cutthroat, Gray Merchant of Asphodel | Keep (close) | Two lands, but Seer on turn 1 and Mind Stone on turn 2 mean turn 3 is two Swamps, Mind Stone and Dark Ritual: 5 mana for Sheoldred with no third land |
 | 5 | Swamp, Swamp, Swamp, Swamp, Swamp, Mikokoro, Center of the Sea, Bolas's Citadel | Ship | Six lands go back, and the one spell costs 6 |
 | 6 | Swamp, Swamp, Swamp, Barad-dûr, Vito, Thorn of the Dusk Rose, Exquisite Blood, Grim Tutor | Keep | Vito on turn 3, Sheoldred on turn 4, Blood on turn 5 (needs a fifth land): the first card an opponent draws starts the loop. Grim Tutor finds Sanguine Bond or an answer |
-| 7 | Swamp, Swamp, Swamp, Entomb, Reanimate, Demonic Tutor, Howling Mine | Keep | Entomb into Reanimate is Grave Titan on turn 2 (6 life), Sheoldred when the fourth land comes. The Tutor finds the next piece; the Mine waits for a punisher |
+| 7 | Swamp, Swamp, Swamp, Entomb, Animate Dead, Demonic Tutor, Howling Mine | Keep | Entomb into Animate Dead is Grave Titan on turn 2 (no life), Sheoldred when the fourth land comes. The Tutor finds the next piece; the Mine waits for a punisher |
 | 8 | Swamp, Swamp, Ad Nauseam, Bolas's Citadel, Invoke Despair, Peer into the Abyss, Ambition's Cost | Ship | Two lands, no rock, and every spell costs 4 or more |
 
 ### What to tutor for
@@ -346,10 +349,10 @@ there. **Entomb** ({B}, instant) is the graveyard tutor. Sheoldred is in the com
 | Sheoldred out, Cabal Coffers online | Any tutor | Exsanguinate | The X spell, or Torment of Hailfire |
 | Table of small creatures (Krenko, Edgar, Marwyn, Aurelia) | Any tutor | Massacre Wurm | Kills them and costs each opponent 2 life per creature |
 | Sheoldred out, removal on the table, no protection | Any tutor | Swiftfoot Boots | Equip it on your turn |
-| Sheoldred in a graveyard | Any tutor | Reanimate, Phyrexian Delver or Yawgmoth's Will | She comes back for {B} and 4 life, or from the graveyard with no tax |
+| Sheoldred in a graveyard | Any tutor | Animate Dead, Phyrexian Delver or Yawgmoth's Will | She comes back for {1}{B} (Animate Dead) or from the graveyard with no tax |
 | No punisher, hand has a symmetric draw card | Any tutor | Underworld Dreams | Turns Howling Mine and Seizan on |
 | A creature is about to die anyway, or you have a token | Diabolic Intent | The piece you need | Sacrifice the token, a Dire Rat or the doomed creature |
-| Early turns, Reanimate in hand | Entomb (from hand) | Grave Titan (default), Massacre Wurm against small creatures | Line 6 |
+| Early turns, Animate Dead in hand | Entomb (from hand) | Grave Titan (default), Massacre Wurm against small creatures | Line 6 |
 | Opposition Agent on the battlefield | Don't tutor | Answer the Agent first | It takes whatever you search for |
 
 - **Tutor with the mana left over.** A tutor on turn 3 that leaves the next turn's mana for the found card is better than a
@@ -369,7 +372,7 @@ The deck has no counterspells. Protection is timing, tokens, a few cards and a s
 | Edicts (Sheoldred's Edict, Plaguecrafter, Fleshbag Marauder, Liliana of the Veil) | Keep tokens and cheap bodies out: Zombie tokens, the Army, Undercity Dire Rat, Viscera Seer. Sheoldred's Edict can choose nontoken creatures, so keep a cheap nontoken creature too |
 | Wipes (Damn, Toxic Deluge, Blasphemous Act, Innocent Blood) | Don't overextend while she is your only engine. Hold creatures in hand. Mikaeus's undying brings your non-Humans back |
 | Exile, bounce, Farewell, Cyclonic Rift | Recast her from the command zone. Keep Underworld Dreams, Fate Unraveler, Phyrexian Arena and the drain enchantments as engines that don't need her |
-| Steal (New Blood) or turn into an Elk (Oko) | Sacrifice in response with Viscera Seer, Ashnod's Altar, Yawgmoth or Deadly Dispute; after Oko, sacrifice the Elk and Reanimate her |
+| Steal (New Blood) or turn into an Elk (Oko) | Sacrifice in response with Viscera Seer, Ashnod's Altar, Yawgmoth or Deadly Dispute; after Oko, sacrifice the Elk and return her with Animate Dead |
 | She is dead | See "After a stopped attempt" |
 
 **The One Ring** ({4}) gives you, not her, protection from everything until your next turn: no damage and no targeted
@@ -397,7 +400,7 @@ The deck's instant-speed answers. Everything else is a sorcery.
 | Viscera Seer, Ashnod's Altar, Phyrexian Tower, Yawgmoth | Free or cheap | In response to a steal effect on one of your creatures, or to get value from a creature that is about to die |
 | Ad Nauseam | {3}{B}{B} instant | The end of the opponent's turn before yours |
 | Mikokoro, Geier Reach Sanitarium | {2}, {T} | An opponent's end step: each player draws, and Sheoldred drains the opponents |
-| Entomb, Dark Ritual | {B} instant | Entomb at their end step to set up Reanimate; Dark Ritual to pay for an instant above |
+| Entomb, Dark Ritual | {B} instant | Entomb at their end step to set up Animate Dead; Dark Ritual to pay for an instant above |
 
 - **Hold {3}{B} (four mana) on the opponent's turn** when Rooftop Assassin or a removal spell would change a fight.
 - **Don't fight what you can't answer.** The deck has no enchantment or artifact removal (Invoke Despair is a
@@ -418,11 +421,11 @@ Where numbers appear they come from older sim runs on earlier lists (`audit/sheo
 
 | Opponent | Their threat | Your plan | Cards that matter |
 |---|---|---|---|
-| Atraxa, Praetors' Voice (t3, WUBG infect and planeswalkers) | Poison: Blighted Agent (unblockable), Plague Stinger and Skithiryx (fliers), then a proliferate every turn. Ten poison kills at any life total, so your life gain doesn't help. Farewell exiles creatures, enchantments, artifacts and graveyards; Oko turns Sheoldred into an Elk; their Narset caps you at one draw a turn (the Mine and Seizan give you nothing extra; their draws still cost them). The sims show it ends about 6-8% of games | Kill the poison creatures on sight and race. Fliers and blockers: Rooftop Assassin, Screeching Soulbreaker. With Sheoldred out, don't pay Rhystic Study: their draw costs them 2. Keep a creature in hand and a second engine for after Farewell (it exiles the graveyard too, so no Reanimate after it) | Massacre Wurm, Foolish Fate, Overkill, Wander Off, Swiftfoot Boots (against Swords, Path, Assassin's Trophy), Underworld Dreams |
+| Atraxa, Praetors' Voice (t3, WUBG infect and planeswalkers) | Poison: Blighted Agent (unblockable), Plague Stinger and Skithiryx (fliers), then a proliferate every turn. Ten poison kills at any life total, so your life gain doesn't help. Farewell exiles creatures, enchantments, artifacts and graveyards; Oko turns Sheoldred into an Elk; their Narset caps you at one draw a turn (the Mine and Seizan give you nothing extra; their draws still cost them). The sims show it ends about 6-8% of games | Kill the poison creatures on sight and race. Fliers and blockers: Rooftop Assassin, Screeching Soulbreaker. With Sheoldred out, don't pay Rhystic Study: their draw costs them 2. Keep a creature in hand and a second engine for after Farewell (it exiles the graveyard too, so no Animate Dead after it) | Massacre Wurm, Foolish Fate, Overkill, Wander Off, Swiftfoot Boots (against Swords, Path, Assassin's Trophy), Underworld Dreams |
 | Aurelia, the Warleader (t3, Boros extra combats) | Hasty flying attackers (Aurelia, Hero of Bladehold, Goblin Rabblemaster, Legion Warboss) with Embercleave and extra combats; Mother of Runes and Giver of Runes protect them; Blasphemous Act. Smothering Tithe makes a Treasure for them for each card you draw unless you pay {2} | Kill Mother of Runes and Giver of Runes first. Block with Sheoldred (deathtouch). Massacre Wurm kills their small creatures. Mikaeus destroys any Human that damages you (Hero of Bladehold, Adeline, Combat Celebrant). With Tithe out, draw fewer extra cards | Massacre Wurm, Grave Pact, Mikaeus, Foolish Fate, Accursed Marauder; Boots don't stop Council's Judgment |
 | Korvold, Fae-Cursed King (t3, Jund sacrifice) | Korvold draws and grows off every sacrifice; Blood Artist, Zulaport Cutthroat, Mayhem Devil, Goblin Bombardment, Impact Tremors; Chatterfang + Pitiless Plunderer; Terror of the Peaks; Toxic Deluge and cheap removal | Their deck draws a lot (Korvold, Skullclamp), so punishers hit hard: Underworld Dreams, Fate Unraveler, then Sheoldred. Kill Korvold. Your life gain out-races their pings. Massacre Wurm clears the tokens | Underworld Dreams, Fate Unraveler, Massacre Wurm, Foolish Fate, Overkill, Wander Off (their recursive creatures), Boots |
 | Marwyn, the Nurturer (t3, mono-green elves) | A board of mana elves, then Craterhoof Behemoth once Gaea's Cradle and the elves are out (Natural Order, Green Sun's Zenith, Chord of Calling, Finale of Devastation find it). Killing Craterhoof after it enters doesn't stop its trigger | Kill the mana elves early and sweep before the swing. They draw little, so the punishers are weaker here: lean on the creatures and Exsanguinate. Fellwar Stone may only make green mana, so count it as colorless | Massacre Wurm (elves have toughness 2 or less, and each costs 2 life), Foolish Fate, Silence the Echo, Grave Pact, Sheoldred as a blocker (Craterhoof tramples over it) |
-| Tergrid, God of Fright (t3, mono-black discard and edicts) | Tergrid takes every nontoken permanent you sacrifice or discard. Edicts (Sheoldred's Edict, Plaguecrafter, Fleshbag Marauder, Innocent Blood), Liliana of the Veil, Waste Not (their gain when you discard), Painful Quandary. Their deck has its own Sheoldred (your draws cost you 2), Whispering One, Gray Merchant, Phyrexian Obliterator. Dauthi Voidwalker and Bojuka Bog hate the graveyard | Never sacrifice or discard a nontoken permanent while Tergrid is out (Deadly Dispute, Diabolic Intent, Silence the Echo, Phyrexian Tower, Geier Reach Sanitarium, Mind Stone). Edicts take your choice of creature, so keep tokens and cheap bodies (Sheoldred's Edict can force a nontoken one). Play out your hand before Liliana. Kill their Sheoldred (Reanimate takes it from a graveyard). Keep your hand to 7 | Zombie tokens (Grave Titan, Dreadhorde Invasion), Undercity Dire Rat, Foolish Fate, Overkill, Reanimate, Underworld Dreams |
+| Tergrid, God of Fright (t3, mono-black discard and edicts) | Tergrid takes every nontoken permanent you sacrifice or discard. Edicts (Sheoldred's Edict, Plaguecrafter, Fleshbag Marauder, Innocent Blood), Liliana of the Veil, Waste Not (their gain when you discard), Painful Quandary. Their deck has its own Sheoldred (your draws cost you 2), Whispering One, Gray Merchant, Phyrexian Obliterator. Dauthi Voidwalker and Bojuka Bog hate the graveyard | Never sacrifice or discard a nontoken permanent while Tergrid is out (Deadly Dispute, Diabolic Intent, Silence the Echo, Phyrexian Tower, Geier Reach Sanitarium, Mind Stone). Edicts take your choice of creature, so keep tokens and cheap bodies (Sheoldred's Edict can force a nontoken one). Play out your hand before Liliana. Kill their Sheoldred (Animate Dead takes it from a graveyard). Keep your hand to 7 | Zombie tokens (Grave Titan, Dreadhorde Invasion), Undercity Dire Rat, Foolish Fate, Overkill, Animate Dead, Underworld Dreams |
 | Chulane, Teller of Tales (t4, Bant value and Aluren) | Chulane draws and ramps off every creature spell. Aluren or Intruder Alarm with Shrieking Drake or Whitemane Lion loops creatures, draws the deck and wins with Thassa's Oracle, Laboratory Maniac or Craterhoof. Counterspell, Dovin's Veto, Swan Song, Fierce Guardianship; Cyclonic Rift; Drannith Magistrate (you can't cast Sheoldred from the command zone or the graveyard) | A punisher is your answer to the loop: with Sheoldred out each card they draw costs 2, so drawing the deck kills them. Cast creature spells into counterspell decks (Veto, Swan Song and Fierce can't hit creatures). Kill Chulane, the bouncers and Drannith Magistrate. You have almost no answer to their enchantments: race | Sheoldred, Underworld Dreams, Fate Unraveler, Foolish Fate, Overkill, Massacre Wurm (Magistrate and the small creatures), creature finishers (Gray Merchant, Mikaeus) |
 | Edgar Markov (t4, Mardu Vampires) | Eminence makes a 1/1 Vampire for every Vampire spell cast, from the command zone. Wide first-strike attacks (Edgar, Drana). Their own Sanguine Bond, Vito and Exquisite Blood loops. Cheap removal (Swords, Path, Bolt, Terminate, Fatal Push, Anguished Unmaking), Damn, New Blood, Teferi's Protection | Massacre Wurm costs them 2 per Vampire token. Sheoldred and Grave Pact hold the board. Do not pay life (Phyrexian Arena, The One Ring, Ad Nauseam, Grim Tutor) when their Exquisite Blood or Bloodthirsty Conqueror is out beside Sanguine Bond, Vito or Marauding Blight-Priest: your life loss starts their loop. Kill Vito or Blight-Priest first | Massacre Wurm, Grave Pact, Accursed Marauder, Overkill, Foolish Fate, Mikaeus (undying against their wipes), Boots |
 | Krenko, Mob Boss (t4, mono-red goblins) | Krenko doubles the Goblins each activation; Impact Tremors, Goblin Bombardment, Purphoros, Coat of Arms; haste from Lightning Greaves and Swiftfoot Boots. Thornbite Staff + an outlet is infinite. Blood Moon turns your nonbasic lands into Mountains. The sims show Krenko ended about 12% of games | Kill Krenko before he untaps (Foolish Fate and Overkill are instants). Massacre Wurm answers the whole Goblin board. Keep Sheoldred home as a blocker. Under Blood Moon only the 30 Swamps make {B} (Cabal Coffers and Barad-dûr don't) | Massacre Wurm, Foolish Fate, Overkill, Grave Pact, Accursed Marauder, Mikaeus (undying against Bombardment) |
@@ -433,12 +436,12 @@ Where numbers appear they come from older sim runs on earlier lists (`audit/sheo
 
 | What happened | Rebuild |
 |---|---|
-| Sheoldred destroyed | Reanimate ({B}, 4 life) or Phyrexian Delver, or Yawgmoth's Will, if she is in the graveyard. Otherwise recast her from the command zone for {2} more per previous cast |
+| Sheoldred destroyed | Animate Dead ({1}{B}, no life) or Phyrexian Delver, or Yawgmoth's Will, if she is in the graveyard. Otherwise recast her from the command zone for {2} more per previous cast |
 | Sheoldred exiled or bounced, or a wipe | Recast her from the command zone (or from hand). Meanwhile Underworld Dreams, Fate Unraveler, Phyrexian Arena and the drain creatures carry the damage; hold the symmetric draw cards |
 | Mikaeus or Triskelion answered | Tutor for the replacement. Mikaeus's undying still has to be on the battlefield for the loop. If Triskelion was exiled, Mikaeus alone still gives undying to the rest |
 | Exquisite Blood, Bond or Vito answered | Tutor for the missing piece. Vito is the cheapest (3 mana). Cast Blood last, once the table is tapped |
-| Peer into the Abyss countered or fizzled | Exsanguinate, or Gray Merchant off a Reanimate, as the table-wide finish. Peer is a sorcery: wait until the table is tapped out |
-| Board wiped | Reanimate (Grave Titan from the graveyard, if you used Entomb), Phyrexian Delver, Perigee Beckoner. Underworld Dreams, Arena, Bond and Blood survive a creature wipe |
+| Peer into the Abyss countered or fizzled | Exsanguinate, or Gray Merchant off Animate Dead, as the table-wide finish. Peer is a sorcery: wait until the table is tapped out |
+| Board wiped | Animate Dead (Grave Titan from the graveyard, if you used Entomb), Phyrexian Delver, Perigee Beckoner. Underworld Dreams, Arena, Bond and Blood survive a creature wipe |
 | Graveyard hate (Bojuka Bog, Voidwalker, Farewell) | Switch to hard casting: tutors, Rooftop Assassin, Massacre Wurm; Line 6 is off |
 | Counterspell on the key piece | Hold the second piece. Cast a creature next (the counters are mostly noncreature), or wait for a turn when they tap out |
 | Life too low to run the engines | Stop The One Ring, Phyrexian Arena, Ad Nauseam and the tutors that cost life. Draw with Sheoldred first, or gain with Exsanguinate or Gray Merchant |
@@ -459,7 +462,7 @@ Where numbers appear they come from older sim runs on earlier lists (`audit/sheo
 | Grim Tutor | 3 | Nothing: the card is put into your hand, not drawn |
 | Ad Nauseam | Each card's mana value (about 2 a card on average) | Nothing: put into your hand, not drawn |
 | Bolas's Citadel | The mana value of each spell played from the top | Nothing |
-| Reanimate, Phyrexian Delver | The mana value of the creature (Grave Titan 6, Sheoldred 4) | Sheoldred, Gray Merchant or Exsanguinate |
+| Phyrexian Delver | The mana value of the creature (Grave Titan 6, Sheoldred 4) | Sheoldred, Gray Merchant or Exsanguinate |
 | Yawgmoth, Thran Physician | 1 per activation | The card drawn (2 with Sheoldred) |
 | Gix | 1 per card drawn off combat damage | The card (2 with Sheoldred) |
 
@@ -468,7 +471,7 @@ Screeching Soulbreaker, Sephiroth, Sephiroth's Intervention (2), Rooftop Assassi
 ({3}{B}{B}), Exquisite Blood, and the lifelink on a grown Dreadhorde Army.
 
 **Rules of thumb.** Without Sheoldred, stop The One Ring, Ad Nauseam and Grim Tutor, and keep your life well above what
-the table can swing in one round (the sims show the t3 table can kill from about 12). Check Reanimate's cost before you
+the table can swing in one round (the sims show the t3 table can kill from about 12). Check Phyrexian Delver's cost before you
 cast it: Grave Titan is 6. Against Edgar's loop pieces, do not pay life at all.
 
 ### Common mistakes
@@ -482,7 +485,7 @@ cast it: Grave Titan is 6. Against Edgar's loop pieces, do not pay life at all.
 6. Tutoring while an opponent controls Opposition Agent.
 7. Sacrificing or discarding a nontoken permanent while Tergrid is out (Deadly Dispute, Diabolic Intent, the Sanitarium),
    or ending the turn with 8 cards.
-8. Putting Sheoldred in the command zone when you hold Reanimate, Phyrexian Delver or Yawgmoth's Will, which bring her back
+8. Putting Sheoldred in the command zone when you hold Animate Dead, Phyrexian Delver or Yawgmoth's Will, which bring her back
    cheaper, and paying the tax when she is already in the graveyard.
 9. Playing Barad-dûr late: it enters tapped unless you control a legendary creature. Play it on turn 1 or 2.
 10. Counting on Mikaeus's undying for Humans (Zulaport Cutthroat, Al Bhed Salvagers, Vault Plunderer, Leech Collector,
@@ -523,11 +526,11 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Creatures (24).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Fate Unraveler, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Massacre Wurm, Mikaeus the Unhallowed, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Sephiroth Fabled SOLDIER // Sephiroth One-Winged Angel, Triskelion, Undercity Dire Rat, Vault Plunderer, Viscera Seer, Vito Thorn of the Dusk Rose, Yawgmoth Thran Physician, Zulaport Cutthroat
 
-**Enchantments (7).** Call of the Ring, Dreadhorde Invasion, Exquisite Blood, Grave Pact, Phyrexian Arena, Sanguine Bond, Underworld Dreams
+**Enchantments (8).** Animate Dead, Call of the Ring, Dreadhorde Invasion, Exquisite Blood, Grave Pact, Phyrexian Arena, Sanguine Bond, Underworld Dreams
 
 **Artifacts (10).** Arcane Signet, Ashnod's Altar, Bolas's Citadel, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Skullclamp, Swiftfoot Boots, The One Ring
 
-**Sorceries (14).** Ambition's Cost, Cost of Brilliance, Demonic Tutor, Diabolic Intent, Diabolic Tutor, Exsanguinate, Grim Tutor, Invoke Despair, Peer into the Abyss, Reanimate, Silence the Echo, Syphon Mind, Torment of Hailfire, Yawgmoth's Will
+**Sorceries (13).** Ambition's Cost, Cost of Brilliance, Demonic Tutor, Diabolic Intent, Diabolic Tutor, Exsanguinate, Grim Tutor, Invoke Despair, Peer into the Abyss, Silence the Echo, Syphon Mind, Torment of Hailfire, Yawgmoth's Will
 
 **Instants (8).** Ad Nauseam, Dark Ritual, Deadly Dispute, Entomb, Foolish Fate, Overkill, Sephiroth's Intervention, Wander Off
 
@@ -538,6 +541,7 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Ad Nauseam
 1 Al Bhed Salvagers
 1 Ambition's Cost
+1 Animate Dead
 1 Arcane Signet
 1 Ashnod's Altar
 1 Barad-dûr
@@ -580,7 +584,6 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Phyrexian Arena
 1 Phyrexian Delver
 1 Phyrexian Tower
-1 Reanimate
 1 Rooftop Assassin
 1 Sanguine Bond
 1 Screeching Soulbreaker

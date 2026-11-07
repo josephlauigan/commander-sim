@@ -2,6 +2,7 @@
 1 Ad Nauseam (soa) 25
 1 Al Bhed Salvagers (fin) 88
 1 Ambition's Cost (c15) 113
+1 Animate Dead (4ed) 118
 1 Arcane Signet (soc) 127
 1 Ashnod's Altar (chr) 92
 1 Barad-dûr (ltr) 425
@@ -44,7 +45,6 @@
 1 Phyrexian Arena (fdn) 322
 1 Phyrexian Delver (inv) 115
 1 Phyrexian Tower (mh3) 303
-1 Reanimate (mar) 20
 1 Rooftop Assassin (otj) 103
 1 Sanguine Bond (tsr) 330
 1 Screeching Soulbreaker (fra) 65
