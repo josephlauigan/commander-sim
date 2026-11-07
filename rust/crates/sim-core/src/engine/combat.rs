@@ -13,7 +13,7 @@ use crate::cards::Types;
 use crate::engine::hooks::{self, fire_trigger};
 use crate::engine::life::{check_state, gain, lose_life, prevents_damage};
 use crate::engine::mana::{can_pay, pay};
-use crate::engine::stack::{ability_window, step_priority, trigger_window};
+use crate::engine::stack::{step_priority, trigger_window};
 use crate::engine::values::*;
 use crate::engine::zones::*;
 use crate::flow::Res;
@@ -1451,36 +1451,6 @@ pub fn combat(g: &mut Game, p: PlayerId) -> Res {
         r?;
         if g.over || !g.player(p).alive {
             return Ok(());
-        }
-        if !human
-            && g.player(p).key == "sauron"
-            && has(g, p, Tag::Assault)
-            && let Some(a) = army.filter(|&a| g.perm(a).on_bf)
-            && !blocked(g, p, "Aggravated Assault")
-        {
-            if conn.contains(&a) && equipped(g, a, Tag::Sword) && unbl.contains(&a) && can_pay(g, p, 3, "RR", false) {
-                pay(g, p, 3, "RR", false)?;
-                g.player_mut(p).stat("combo_attempt", 1);
-                let turns = g.player(p).turns;
-                g.player_mut(p).milestone.entry("combo").or_insert(turns);
-                crate::glog!(g, "  Sauron goes for Sword + Aggravated Assault infinite combats");
-                if ai::combo_interrupted(g, p, "sauron", &[a])? {
-                    g.player_mut(p).stat("combo_stopped", 1);
-                    crate::glog!(g, "    ...the combo is stopped");
-                    break;
-                }
-                return ai::win(g, p, "combo", None);
-            }
-            let again = conn.contains(&a) && equipped(g, a, Tag::Sword); // the Sword untapped the lands: again
-            if (ncomb == 1 || again) && ncomb < 12 && can_pay(g, p, 3, "RR", false) {
-                pay(g, p, 3, "RR", false)?;
-                let asl = find(g, p, Tag::Assault).first().copied();
-                if asl.is_some() && !ability_window(g, p, asl, "untap, an additional combat", Some(7.0), None)? {
-                    break;
-                }
-                untap_creatures(g, p);
-                continue;
-            }
         }
         if g.player(p).extra_combats > 0 {
             // extra combat phases granted by card abilities

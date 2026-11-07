@@ -290,8 +290,6 @@ pub struct Analysis {
     pub plan: Counter<u32>,
     /// the turn the commander first resolved
     pub cmd: Counter<u32>,
-    /// Sauron: the Army's power at the start of turns 6, 8 and 10, one entry per game (0: no Army)
-    pub army: [Vec<u32>; 3],
     /// creatures sacrificed (all games) and games in which Sephiroth flipped
     pub sacs: i64,
     pub flips: i64,
@@ -348,11 +346,6 @@ impl Analysis {
         }
         if let Some(&t) = me.milestone.get("cmd_cast") {
             self.cmd.add(t, 1);
-        }
-        if deck == "sauron" {
-            for (i, k) in ["army_p6", "army_p8", "army_p10"].into_iter().enumerate() {
-                self.army[i].push(me.milestone.get(k).copied().unwrap_or(0));
-            }
         }
         self.sacs += me.stat("creatures_sacrificed");
         self.flips += (me.stat("seph_flips") != 0) as i64;
@@ -506,7 +499,7 @@ pub fn print_analysis(
     }
     println!("  Online by turn:  {}", line.join("  "));
     println!("  Online at all: {:.1}% of games", (100 * pn) as f64 / n);
-    print_speed(r, deck);
+    print_speed(r);
     let has = |n: &str| cards.iter().any(|c| c.name == n);
     if has("Underworld Breach") && (has("Brain Freeze") || has("Grapeshot")) {
         let [held, dry, pass, exec, won] = r.bl;
@@ -662,7 +655,7 @@ fn median(v: &[u32]) -> f64 {
 }
 
 /// the commander timing lines (every deck) and the Army growth lines (Sauron)
-fn print_speed(r: &Analysis, deck: &str) {
+fn print_speed(r: &Analysis) {
     let n = r.n as f64;
     let resolved = r.cmd.total();
     if resolved != 0 {
@@ -687,19 +680,6 @@ fn print_speed(r: &Analysis, deck: &str) {
         println!("  Commander resolved by turn:  {}", line.join("  "));
     } else {
         println!("  Commander never resolved");
-    }
-    if deck == "sauron" && r.army[0].len() as i64 == r.n {
-        for (i, t) in [6, 8, 10].into_iter().enumerate() {
-            let mut v = r.army[i].clone();
-            v.sort_unstable();
-            let mean = v.iter().sum::<u32>() as f64 / n;
-            let big = v.iter().filter(|&&x| x >= 10).count();
-            println!(
-                "  Army power at the start of turn {t:2}: mean {mean:.1}, median {:.1}, 10+ in {:.1}% of games",
-                median(&v),
-                (100 * big) as f64 / n
-            );
-        }
     }
 }
 

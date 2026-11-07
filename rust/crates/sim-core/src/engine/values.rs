@@ -454,13 +454,6 @@ pub fn pval(g: &Game, m: PermId) -> f64 {
 /// how threatening q's board is to `me` (Python's `threat`)
 pub fn threat(g: &Game, _me: PlayerId, q: PlayerId) -> f64 {
     let pl = g.player(q);
-    let mut s: f64 = pl.perms.iter().filter(|&&m| !g.perm(m).phased).map(|&m| pval(g, m)).psum();
-    if pl.key == "sauron"
-        && let Some(a) = army_of(g, q)
-        && equipped(g, a, Tag::Sword)
-        && has(g, q, Tag::Assault)
-    {
-        s += 10.0;
-    }
+    let s: f64 = pl.perms.iter().filter(|&&m| !g.perm(m).phased).map(|&m| pval(g, m)).psum();
     s + (pl.life as f64 - 40.0) * 0.05
 }

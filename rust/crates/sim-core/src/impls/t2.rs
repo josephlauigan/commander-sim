@@ -1422,7 +1422,7 @@ fn prince(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 
 // ======================================================== value blinks: Ephemerate, Restoration Angel (pool decks)
 /// t2.STYLE_KEYS: your decks with their own blink play (they cast these by their own AI)
-const STYLE_KEYS: [&str; 3] = ["seph", "sauron", "najeela"];
+const STYLE_KEYS: [&str; 2] = ["seph", "najeela"];
 
 fn value_blink_cost(name: &str) -> (u32, &'static str) {
     if name == "Ephemerate" { (0, "W") } else { (3, "W") }

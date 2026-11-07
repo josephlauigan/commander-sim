@@ -1039,7 +1039,6 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     pl.extra_combats = 0;
     pl.combat_no = 0;
     pl.turns += 1;
-    crate::impls::mine::army_power_snapshot(g, p);
     let orbs = crate::impls::t45_urza_yawgmoth::untap_lock(g, p); // --- Tiers 4/5 (urza-yawgmoth): Winter / Static Orb
     for l in g.player(p).lands.clone() {
         g.perm_mut(l).tapped = false;

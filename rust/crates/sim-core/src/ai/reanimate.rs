@@ -42,9 +42,6 @@ pub fn bval(g: &Game, p: PlayerId, c: CardId) -> f64 {
     if t.has(Tag::Normgc) && g.opps(p).any(|q| g.player(q).key == "najeela") {
         v += 2.0;
     }
-    if t.has(Tag::Mother) && g.opps(p).any(|q| g.player(q).key == "sauron") {
-        v += 1.0;
-    }
     if t.has(Tag::Bahamut) {
         // Mega Flare's reach
         let mv: u32 = g.player(p).perms.iter().filter_map(|&m| g.perm(m).cd).map(|c| g.db.get(c).cmc).sum();

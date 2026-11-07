@@ -52,14 +52,28 @@ fn a_red_spell_deals_3_damage_to_an_opponent() {
 }
 
 #[test]
-fn the_ai_aims_the_damage_at_the_lowest_life_total() {
+fn the_ai_aims_the_damage_at_an_opponent_it_kills() {
     let mut g = table(&["aragorn", "cloud", "sheoldred"]);
     let a = perm(&mut g, P0, ARAGORN);
     g.perm_mut(a).sick = false;
-    g.player_mut(PlayerId(2)).life = 5;
+    g.player_mut(PlayerId(2)).life = 3;
     let l1 = g.player(P1).life;
     cast_spell(&mut g, "Lightning Bolt");
-    assert_eq!((g.player(P1).life, g.player(PlayerId(2)).life), (l1, 2));
+    assert_eq!(g.player(P1).life, l1);
+    assert!(g.player(PlayerId(2)).life <= 0, "the 3 damage kills the opponent at 3");
+}
+
+#[test]
+fn with_no_kill_the_ai_aims_the_damage_at_the_biggest_board() {
+    let mut g = table(&["aragorn", "cloud", "sheoldred"]);
+    let a = perm(&mut g, P0, ARAGORN);
+    g.perm_mut(a).sick = false;
+    perm(&mut g, PlayerId(2), "Sheoldred, the Apocalypse");
+    perm(&mut g, PlayerId(2), "Grave Titan");
+    g.player_mut(P1).life = 10; // lower life, but nothing on board
+    let l2 = g.player(PlayerId(2)).life;
+    cast_spell(&mut g, "Lightning Bolt");
+    assert_eq!((g.player(P1).life, g.player(PlayerId(2)).life), (10, l2 - 3));
 }
 
 #[test]
@@ -215,4 +229,15 @@ fn counterspells_are_still_held_with_aragorn_out() {
     hand(&mut g, P0, &["Counterspell"]);
     let labels = main_labels(&mut g);
     assert!(!labels.iter().any(|l| l.starts_with("Counterspell")), "{labels:?}");
+}
+
+#[test]
+fn on_an_opponents_combat_the_pump_goes_to_our_blocker() {
+    let (mut g, a) = setup();
+    let b = perm(&mut g, P0, "Kitchen Finks");
+    g.active = Some(P1);
+    g.step = sim_core::state::Step::Combat;
+    g.blocking = vec![b];
+    cast_spell(&mut g, "Nature's Lore");
+    assert_eq!((g.perm(b).eot_pt, g.perm(a).eot_pt), ((4, 4), (0, 0)));
 }
