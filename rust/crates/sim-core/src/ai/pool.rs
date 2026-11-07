@@ -39,8 +39,10 @@ pub fn tutor_prio(g: &Game, p: PlayerId, kind: &str, life: i32) -> i32 {
     if life > 0 && g.player(p).life - life < 6 {
         return 0; // Vampiric Tutor / Imperial Seal: 2 life is a real cost only near death
     }
-    let kind = match kind {
+    let resolved = decks::tut_kind(g, p, kind); // Ringsight: the colours of p's legendary creatures
+    let kind = match resolved.as_str() {
         "is" | "art" | "perm" | "ubr" | "cre2" | "cre" | "ench" | "ae" => kind, // --- ai-fix: B: "ae"
+        k if k.starts_with("col:") => k,
         _ => "any",
     };
     TUTOR_DEPTH.set(TUTOR_DEPTH.get() + 1);

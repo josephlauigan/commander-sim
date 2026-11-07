@@ -1583,7 +1583,8 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         // generic enter effects of auto-tagged cards
         if let Some(k) = t.str(Tag::Tut) {
             let by = g.db.get(cd).name.to_string();
-            crate::engine::tutors::tutor(g, p, k, &by)?;
+            let k = crate::ai::decks::tut_kind(g, p, k);
+            crate::engine::tutors::tutor(g, p, &k, &by)?;
         }
         if let Some(n) = t.int(Tag::Treas) {
             add_treasure(g, p, n)?;

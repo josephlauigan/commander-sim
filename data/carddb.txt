@@ -230,7 +230,7 @@ Plaza of Heroes|L|-|c=C
 Ral Zarek, Guest Lecturer|P|1BB|ralzarek
 Reconnaissance Mission|E|2UU|recon
 Rhystic Study|E|2U|rhystic
-Ringsight|S|1UB|tut=ubr ringtempt
+Ringsight|S|1UB|tut=legcol ringtempt
 Rogue's Passage|L|-|c=C passage
 Sauron, the Dark Lord|C|3UBR|sauron pow=7 leg
 Sauron, the Necromancer|C|3BB|pow=4 leg necromancer
