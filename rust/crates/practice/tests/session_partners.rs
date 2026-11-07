@@ -27,7 +27,7 @@ fn the_catalog_lists_thrasios_with_both_commanders() {
     assert_eq!(k["ident"], "WUBG");
     assert_eq!(k["name"], "Tymna the Weaver and Thrasios"); // the deck file's two commanders
     // one commander elsewhere: no second one
-    let s = cat["decks"].as_array().unwrap().iter().find(|d| d["key"] == "sauron").unwrap();
+    let s = cat["decks"].as_array().unwrap().iter().find(|d| d["key"] == "aragorn").unwrap();
     assert_eq!(s["commander2"], Value::Null);
     assert_eq!(s["commanders"].as_array().unwrap().len(), 1);
     // both commanders get their images fetched

@@ -22,9 +22,8 @@ fn test_your_decks() {
     assert_eq!(
         d.keys().copied().collect::<Vec<_>>(),
         [
+            "aragorn",
             "cloud",
-            "kefka",
-            "sauron",
             "sheoldred",
             "thanos",
             "thrasios",
@@ -47,7 +46,7 @@ fn test_your_decks() {
 fn test_win_rates_from_the_results_table() {
     let s = srv!();
     let o = s.client().get("/api/options").json();
-    for key in ["sauron", "kefka"] {
+    for key in ["yshtola", "sheoldred"] {
         // not every deck has a results row yet
         let d = o["decks"].as_array().unwrap().iter().find(|x| x["key"] == key).unwrap();
         let w = d["win_rates"].as_object().unwrap_or_else(|| panic!("no win rates for {key}"));

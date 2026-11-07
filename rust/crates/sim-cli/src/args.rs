@@ -2,7 +2,7 @@
 //! prefix of an option's name also works (`--gam 960`), --swap repeats, and a bad value is an error naming the
 //! option (exit code 2).
 
-pub const DECK_KEYS: [&str; 7] = crate::decks::MINE;
+pub const DECK_KEYS: [&str; 6] = crate::decks::MINE;
 
 #[derive(Debug, Clone, PartialEq)]
 pub struct Args {
@@ -64,7 +64,7 @@ const OPTS: [Opt; 32] = [
         &["t0", "t1", "t2", "t3", "t4", "t5", "t6", "all"],
         "",
         "play --deck against three outside decks drawn from this tier (see decklists/pool/); all = the deck's own tiers 
-         (data/my_decks.toml: e.g. cloud t1-t3, sauron t3-t4). A tier outside them is refused unless --any-tier",
+         (data/my_decks.toml: e.g. cloud t1-t3, aragorn t4-t5). A tier outside them is refused unless --any-tier",
     ),
     opt("--all-decks", true, &[], "", "run each of your decks, each only against its own tiers (deck x tier matrix)"),
     opt(
@@ -197,7 +197,7 @@ pub fn help() -> String {
           Partial, Unmodeled) and up to 5 of its Unmodeled and Partial cards, commander and engine cards first; \
           the opponent tiers of a --deck run get one summed line each. It is read from the card data once per run \
           and plays no game.\n";
-    s += "\nExamples\n  commander-sim --deck sauron --pool t2 --profile loose --games 960\n  commander-sim --deck sauron \
+    s += "\nExamples\n  commander-sim --deck aragorn --pool t2 --profile loose --games 960\n  commander-sim --deck aragorn \
           --pool t4 --swap \"Blood Artist=>Grim Tutor\"\n  commander-sim --all-decks --pool all --profile loose\n  commander-sim --goldfish thanos,t5 --games 2000   (each deck alone against three inert seats)\n  commander-sim --deck yshtola --pool t1 --any-tier   (only when asked: t1 is outside Y'shtola's tiers)\n";
     s
 }
@@ -365,15 +365,15 @@ mod tests {
 
     #[test]
     fn defaults_and_forms() {
-        let a = p("--deck sauron --pool=t1 --profile loose --gam 960 --jobs 22").unwrap();
-        assert_eq!(a.deck.as_deref(), Some("sauron"));
+        let a = p("--deck aragorn --pool=t1 --profile loose --gam 960 --jobs 22").unwrap();
+        assert_eq!(a.deck.as_deref(), Some("aragorn"));
         assert_eq!(a.pool.as_deref(), Some("t1"));
         assert_eq!(a.profiles, ["loose"]);
         assert_eq!((a.games, a.seed, a.jobs, a.ai.as_str(), a.temp), (960, 500000, 22, "lookahead", 1.0));
-        let a = p("--deck sauron --pool t3 --n 200").unwrap();
+        let a = p("--deck aragorn --pool t3 --n 200").unwrap();
         assert_eq!(a.games, 200);
         assert_eq!(a.profiles, ["loose"]); // the default (JD 2026-10-19)
-        let a = p("--deck sauron --pool t3 --profiles conservative,loose").unwrap();
+        let a = p("--deck aragorn --pool t3 --profiles conservative,loose").unwrap();
         assert_eq!(a.profiles, ["conservative", "loose"]);
         let a = p("--calibrate within").unwrap();
         assert_eq!(a.games, 1500);
@@ -381,7 +381,7 @@ mod tests {
 
     #[test]
     fn swaps_repeat_and_values_may_contain_spaces() {
-        let argv: Vec<String> = ["--deck", "sauron", "--swap", "Spell Pierce=>Negate", "--swap", "A=>B"]
+        let argv: Vec<String> = ["--deck", "aragorn", "--swap", "Spell Pierce=>Negate", "--swap", "A=>B"]
             .iter()
             .map(|s| s.to_string())
             .collect();
@@ -413,9 +413,9 @@ mod any_tier_tests {
 
     #[test]
     fn any_tier_flag_parses() {
-        assert!(!p("--deck sauron --pool t3").unwrap().any_tier);
-        assert!(p("--deck sauron --pool t1 --any-tier").unwrap().any_tier);
-        assert!(p("--deck sauron --pool t1 --any").unwrap().any_tier);
+        assert!(!p("--deck aragorn --pool t3").unwrap().any_tier);
+        assert!(p("--deck aragorn --pool t1 --any-tier").unwrap().any_tier);
+        assert!(p("--deck aragorn --pool t1 --any").unwrap().any_tier);
         assert!(p("--any-tier=x").is_err());
     }
 }
@@ -474,10 +474,10 @@ mod preflight_flag_tests {
 
     #[test]
     fn preflight_is_on_by_default_and_the_flags_turn_it_off_or_stop_after_it() {
-        let a = p(&["--deck", "kefka", "--swap", "A=>B"]).unwrap();
+        let a = p(&["--deck", "aragorn", "--swap", "A=>B"]).unwrap();
         assert!(!a.no_preflight && !a.preflight_only);
-        assert!(p(&["--deck", "kefka", "--swap", "A=>B", "--no-preflight"]).unwrap().no_preflight);
-        assert!(p(&["--deck", "kefka", "--swap", "A=>B", "--preflight-only"]).unwrap().preflight_only);
+        assert!(p(&["--deck", "aragorn", "--swap", "A=>B", "--no-preflight"]).unwrap().no_preflight);
+        assert!(p(&["--deck", "aragorn", "--swap", "A=>B", "--preflight-only"]).unwrap().preflight_only);
         assert!(help().contains("--no-preflight") && help().contains("--preflight-only"));
     }
 }

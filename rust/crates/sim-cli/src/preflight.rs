@@ -256,19 +256,21 @@ mod tests {
     }
 
     fn args(extra: &[&str]) -> Args {
-        let mut v: Vec<String> = ["--deck", "kefka", "--pool", "t3", "--swap", "A=>B"].iter().map(|s| s.to_string()).collect();
+        let mut v: Vec<String> = ["--deck", "aragorn", "--pool", "t4", "--swap", "A=>B"].iter().map(|s| s.to_string()).collect();
         v.extend(extra.iter().map(|s| s.to_string()));
         crate::args::parse(&v).unwrap()
     }
 
-    /// a Kefka card whose priority is 0 on a plain board and that is no instant: the same shape as Bribery before the
+    /// a card whose priority is 0 for the deck on a plain board and that is no instant: Underworld Breach in Thanos (no
+    /// plan rule names it, and Breach is gated on escape candidates). Kefka played this test until it was retired
+    /// (2026-11-06); its note: the same shape as Bribery before the
     /// audit gave it an arm in kefka_prio. Seed 500002: with the 10/30 list, seed 500000 reaches a board by round 7
     /// where Kefka can escape two cards with 5 mana, and kefka_prio rightly ranks Breach 56 there
     #[test]
     fn a_card_the_deck_rule_ranks_zero_gets_the_warning() {
         let s = sim();
-        let out = s.mine["kefka"].iter().find(|c| s.engine.db.id(c).is_some_and(|i| !s.engine.db.get(i).land)).unwrap().clone();
-        let r = rules_at(&s, "kefka", &out, "Underworld Breach", "t3", 500002);
+        let out = s.mine["thanos"].iter().find(|c| s.engine.db.id(c).is_some_and(|i| !s.engine.db.get(i).land)).unwrap().clone();
+        let r = rules_at(&s, "thanos", &out, "Underworld Breach", "t5", 500002);
         assert_eq!(r.prio, 0, "{r:?}");
         assert!(r.warns() && !r.response, "{r:?}");
         assert_eq!(r.line(), "WARNING AI: Underworld Breach: priority 0 and no response path: the AI may never cast it");

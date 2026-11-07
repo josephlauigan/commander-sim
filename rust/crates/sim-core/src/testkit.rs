@@ -129,6 +129,22 @@ fn retired_decks() -> Vec<RawDeck> {
             "WUG",
             include_str!("../../../../decklists/pool/retired/galadriel-bant-rebels.md"),
         ),
+        // JD's Kefka and Sauron decks, retired 2026-11-06 (merged into Aragorn, the Uniter): the tests of their card
+        // code still seat them with their real lists (decklists/pool/retired/); no deck AI or plan keys on them any more
+        listed(
+            "kefka",
+            "Kefka",
+            "Kefka, Court Mage // Kefka, Ruler of Ruin",
+            "UBR",
+            include_str!("../../../../decklists/pool/retired/kefka-grixis-discard.md"),
+        ),
+        listed(
+            "sauron",
+            "Sauron",
+            "Sauron, the Dark Lord",
+            "UBR",
+            include_str!("../../../../decklists/pool/retired/sauron-grixis-amass.md"),
+        ),
         // --- ghave: JD's Seph/Atraxa deck, retired 2026-10-30 (Ghave took its seat): the tests of its card code
         // (the loops in impls::mine, the reanimation spells, Sephiroth's cards) still seat it with its real list
         listed(

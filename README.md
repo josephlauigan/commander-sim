@@ -32,15 +32,15 @@ decks). They run from anywhere inside the repository and find `data/` and `deckl
 ## Main commands
 
 ```
-commander-sim --deck sauron --pool all                                  # the deck against each of its own tiers
-commander-sim --deck sauron --pool t3 --games 1500                      # one of its tiers
-commander-sim --deck sauron --pool t3 --swap "Spell Pierce=>Negate"     # paired A/B: the list and the variant
-commander-sim --deck sauron --pool t3 --swap "A=>B" --ai adaptive       # the same, a quick read (seconds)
-commander-sim --deck sauron --pool t4 --analyze                         # how it wins and loses there
-commander-sim --deck sauron --pool t3 --trace 7                         # play-by-play of game 7
+commander-sim --deck aragorn --pool all                                 # the deck against each of its own tiers
+commander-sim --deck aragorn --pool t4 --games 1500                     # one of its tiers
+commander-sim --deck aragorn --pool t4 --swap "Spell Pierce=>Negate"    # paired A/B: the list and the variant
+commander-sim --deck aragorn --pool t4 --swap "A=>B" --ai adaptive      # the same, a quick read (seconds)
+commander-sim --deck aragorn --pool t5 --analyze                        # how it wins and loses there
+commander-sim --deck aragorn --pool t4 --trace 7                        # play-by-play of game 7
 commander-sim --all-decks --pool all                                    # every deck against its own tiers
 commander-sim --goldfish thanos,t5 --games 2000                         # each deck alone against three inert seats
-commander-sim --deck sauron --cards                                     # every card: tags, abilities, Game Changers
+commander-sim --deck aragorn --cards                                    # every card: tags, abilities, Game Changers
 commander-sim --realism --pool t6 --games 2200                          # the sim against real-game targets
 commander-sim --realism --pool t6 --ai adaptive --knobs my-knobs.toml   # the same with the AI's values from a file
 commander-sim --fit --pool t6 --ai adaptive --games 2000                # search the knobs for the closest fit
@@ -50,10 +50,10 @@ commander-sim swaptest <pool deck> <tier> 800 "Out>In; Out>In"          # pool-d
 commander-sim searchtest <deck> <tier> 240                              # a deck with and without the look-ahead
 
 commander-practice                                                      # practice mode at http://127.0.0.1:8765
-commander-practice --text --deck sauron --tier t3                       # the same game in the terminal
+commander-practice --text --deck aragorn --tier t4                      # the same game in the terminal
 
-cardgen deck sauron new-list.txt --dry-run                              # check a new list, show what would change
-cardgen deck sauron new-list.txt --log "Why."                           # write it, and log it in the changelog
+cardgen deck aragorn new-list.txt --dry-run                              # check a new list, show what would change
+cardgen deck aragorn new-list.txt --log "Why."                           # write it, and log it in the changelog
 cardgen export                                                          # rebuild data/cards.json and data/decks.json
 cardgen audit --mine                                                    # JD's cards that aren't fully modeled
 cardgen validate                                                        # check the pool decklists
@@ -61,7 +61,7 @@ cardgen validate                                                        # check 
 
 `commander-sim --help` lists every option (`rust/crates/sim-cli/src/args.rs`). The ones that matter most:
 
-- `--deck`: `sauron`, `yshtola`, `kefka`, `sheoldred`, `cloud`, `thrasios` or
+- `--deck`: `aragorn`, `yshtola`, `sheoldred`, `cloud`, `thrasios` or
   `thanos`.
 - `--pool`: `t0` to `t6`, or `all` (the deck's own tiers). Each deck plays only its own tiers (`data/my_decks.toml`);
   `--any-tier` lifts that, only when JD asks.
@@ -100,8 +100,8 @@ the same opponents and draws.
 | JD's decks | Tiers |
 | --- | --- |
 | yshtola, thanos | t5 |
-| sheoldred, sauron | t3-t4 |
-| kefka | t3 |
+| aragorn | t4-t5 |
+| sheoldred | t3-t4 |
 | cloud | t1-t3 |
 | thrasios (cEDH) | t6 |
 
@@ -126,10 +126,10 @@ To change a list, edit the file or give `cardgen deck` the whole new list, as co
 card per line:
 
 ```
-cardgen deck sauron new-list.txt --dry-run    # check it and show what would change
-cardgen deck sauron new-list.txt              # write it
-cardgen deck sauron -                         # or paste the list, then Ctrl-D
-cardgen deck sauron new-list.txt --log "Why." # also log it (decklists/CHANGELOG.md; pool decks: decklists/pool/CHANGELOG.md)
+cardgen deck aragorn new-list.txt --dry-run    # check it and show what would change
+cardgen deck aragorn new-list.txt              # write it
+cardgen deck aragorn -                         # or paste the list, then Ctrl-D
+cardgen deck aragorn new-list.txt --log "Why." # also log it (decklists/CHANGELOG.md; pool decks: decklists/pool/CHANGELOG.md)
 cardgen export                                # then rebuild the card data
 ```
 
@@ -151,7 +151,7 @@ isn't legal, and why. After the game, a review shows where your choices and the 
 ```
 commander-practice                                  # opens http://127.0.0.1:8765
 commander-practice --port 9000 --no-browser         # another port; open it yourself
-commander-practice --text --deck sauron --tier t3   # the terminal client
+commander-practice --text --deck aragorn --tier t4  # the terminal client
 commander-practice --lan                            # a friend on your network can take a seat
 ```
 

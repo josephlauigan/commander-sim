@@ -4,11 +4,25 @@ The history of the decks in `decklists/JD/` (and of the retired ones, now in `de
 simulator results over time, and tuning notes. The deck documents themselves describe only the current list.
 `cardgen deck KEY LIST --log "Why."` adds a new entry at the top of the deck's **Changes** list.
 
-JD's decks: Cloud, Kefka, Sauron, Sheoldred, Thanos, Tymna/Thrasios, Y'shtola (Veyran retired 2026-11-01; Ghave broken
+JD's decks: Aragorn, Cloud, Sheoldred, Thanos, Tymna/Thrasios, Y'shtola (Veyran retired 2026-11-01; Ghave broken
 up 2026-11-02 and its key retired the same day; Karn and Ur-Dragon broken up 2026-11-05 and their keys retired the same
 day). On 2026-11-05 the old Tymna/Thrasios and old Thanos lists were replaced by the Tymna/Thrasios Doomsday and Thanos
-artifacts-and-Dragons rebuilds, and the `thrasios` and `thanos` keys were pointed at the new files.
+artifacts-and-Dragons rebuilds, and the `thrasios` and `thanos` keys were pointed at the new files. On 2026-11-06 Kefka
+and Sauron were merged into Aragorn, the Uniter (key `aragorn`) and their keys retired.
 Avery's decks (Alela, Galadriel) are no longer tracked from 2026-11-06 (JD); their lists are in `decklists/pool/retired/`.
+
+## Aragorn, the Uniter — Four-Colour Spell Burn
+
+Deck key `aragorn`, `decklists/JD/aragorn-uniter.md`. Tiers t4-t5. Built 2026-11-06 from the Kefka and Sauron decks,
+the binder and eleven bought cards (`documents/aragorn-merge-swaps.md`).
+
+### Changes
+
+- **2026-11-06.** New deck (JD): Kefka and Sauron merged into Aragorn, the Uniter (RGWU): 33 cards from Kefka, 11 from Sauron, 43 from the binder, 11 bought, a Forest and a Plains. Aragorn has card code (`impls/aragorn.rs`, status Full); the plan file is provisional (`data/plans/aragorn.toml`). No list change since.
+
+### Simulator history
+
+- **2026-11-06.** First baseline: see `audit/aragorn/FINDINGS.md`.
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
 
@@ -87,10 +101,13 @@ Deck key `karn` (until 2026-11-05), `decklists/JD/karn-colorless-artifacts.md` (
 
 ## Kefka, Court Mage — Grixis Discard
 
-Deck key `kefka`, `decklists/JD/kefka-grixis-discard.md`.
+Deck key `kefka` (retired), `decklists/pool/retired/kefka-grixis-discard.md`.
+
+**Retired 2026-11-06 (JD): merged into Aragorn, the Uniter** (key `aragorn`, see the Aragorn section above and `documents/aragorn-merge-swaps.md`). The entries below are the deck's history.
 
 ### Changes
 
+- **2026-11-06.** Retired (JD): the deck is broken up into Aragorn, the Uniter (`decklists/JD/aragorn-uniter.md`, t4-t5) with the other Grixis deck; the cards that move and the ones that go to the binder are in `documents/aragorn-merge-swaps.md`. The `kefka` key left the simulator the same day: out of `data/my_decks.toml`, `data/decks.json`, the CLI and the practice app and the deck guard fixture; the list moved to `decklists/pool/retired/`; its plan, printings and Spellbook files were removed (the card code stays, and the card tests still seat it: `testkit::retired_decks`); `audit/kefka` moved to `audit/retired/kefka`. No list change.
 - **2026-11-04.** Out: Alpharael, Dreaming Acolyte, Contract Killing. In: Sauron, the Necromancer, Triple Triad. JD's choice (11/04), not simulated: Sauron, the Necromancer for Contract Killing, and Triple Triad for Alpharael, Dreaming Acolyte. Necromancer turns the graveyard's creatures (Archon of Cruelty, Sheoldred) into attacking copies that keep their abilities; Triple Triad's free casts trigger Niv-Mizzet, Veyran, Guttersnipe and Young Pyromancer. Alpharael was one of six looters; Kefka keeps five other removal spells.
 - **2026-11-04.** Out: nothing. In: Cabal Coffers. Cabal Coffers for a Mountain (JD 11/04, physical deck; not simulated): with Urborg out every land is a Swamp.
 - **2026-11-02.** Out: nothing. In: Urborg, Tomb of Yawgmoth. Out: Swamp. In: Urborg, Tomb of Yawgmoth. JD's choice (11/02), not simulated: JD got another copy. Urborg is a Swamp itself and makes every land tap for {B}, so black sources don't drop, and the red and blue duals cast black spells too. Cost: one more nonbasic for the deck's own Price of Progress. Modeled in full.
@@ -130,10 +147,13 @@ Deck key `kefka`, `decklists/JD/kefka-grixis-discard.md`.
 
 ## Sauron, the Dark Lord — Grixis Amass and Godo
 
-Deck key `sauron`, `decklists/JD/sauron-grixis-amass.md`.
+Deck key `sauron` (retired), `decklists/pool/retired/sauron-grixis-amass.md`.
+
+**Retired 2026-11-06 (JD): merged into Aragorn, the Uniter** (key `aragorn`, see the Aragorn section above and `documents/aragorn-merge-swaps.md`). The entries below are the deck's history.
 
 ### Changes
 
+- **2026-11-06.** Retired (JD): the deck is broken up into Aragorn, the Uniter (`decklists/JD/aragorn-uniter.md`, t4-t5) with the other Grixis deck; the cards that move and the ones that go to the binder are in `documents/aragorn-merge-swaps.md`. The `sauron` key left the simulator the same day: out of `data/my_decks.toml`, `data/decks.json`, the CLI and the practice app and the deck guard fixture; the list moved to `decklists/pool/retired/`; its plan, printings and Spellbook files were removed (the card code stays, and the card tests still seat it: `testkit::retired_decks`); `audit/sauron` moved to `audit/retired/sauron`. No list change.
 - **2026-11-04.** Out: Faerie Mastermind. In: Gilgamesh, Master-at-Arms. JD's choice (11/04), not simulated: Gilgamesh, Master-at-Arms (from Ur-Dragon's old Equipment package) for Faerie Mastermind. Gilgamesh finds Helm of the Host and Hammer of Nazahn off the top six when he enters or attacks; Faerie Mastermind was a 2-mana flier that drew off the opponents' second draws, and Jace's Archivist, Bowmasters and the other draw cards remain.
 - **2026-11-04.** Out: Chromatic Lantern. In: Expedition Map, Urza's Cave. Urborg finders (JD 11/04; not simulated): Urza's Cave for an Island, Expedition Map for Chromatic Lantern.
 - **2026-11-04.** Out: Karn's Bastion. In: Cabal Coffers, Urborg, Tomb of Yawgmoth. Cabal Coffers and Urborg, Tomb of Yawgmoth for Karn's Bastion and a Swamp (JD 11/04, physical deck; not simulated): big mana for Exsanguinate and Torment of Hailfire.

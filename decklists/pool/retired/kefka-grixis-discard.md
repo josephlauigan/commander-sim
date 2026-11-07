@@ -1,5 +1,7 @@
 # Kefka, Court Mage — Grixis Discard
 
+**Retired 2026-11-06 (JD).** The Kefka deck is broken up: merged with the other Grixis deck, it became Aragorn, the Uniter (`decklists/JD/aragorn-uniter.md`, key `aragorn`, t4-t5); `documents/aragorn-merge-swaps.md` says which cards move and which go to the binder. The `kefka` key left the simulator the same day, and its plan, printings and Spellbook files were removed. The list is kept here so the Rust tests of its card code can still seat it (`testkit::retired_decks`, key `kefka`); it is not a pool deck and is never drawn. Findings: `audit/retired/kefka/FINDINGS.md`.
+
 A Grixis (blue-black-red) discard-and-draw deck. Kefka makes every player discard and draws you a card for each card
 type in the pile; the deck is full of cards that want to be discarded, so the symmetry costs you little. Once Kefka
 has flipped, every point of life the table loses on your turn is a card for you, and Psychosis Crawler or

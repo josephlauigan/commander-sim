@@ -89,8 +89,8 @@ pub fn replaced_tag_engine(name: &str) -> bool {
 
 // ================================================================== counters
 /// your decks' keys (engine.CTHRESH): they never answer with Veil of Summer
-const CTHRESH: [&str; 8] =
-    ["seph", "sauron", "yshtola", "kefka", "najeela", "omnath", "sheoldred", "cloud"];
+const CTHRESH: [&str; 6] =
+    ["seph", "yshtola", "najeela", "omnath", "sheoldred", "cloud"];
 
 /// Veil of Summer, the AI's answer: q's spell is the target of a counterspell (stack item `top_id`, on the stack
 /// already, its caster has paid): q casts Veil of Summer in response, whatever the counterspell is (blue, black, a red

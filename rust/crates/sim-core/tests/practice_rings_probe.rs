@@ -34,11 +34,10 @@ const P1: PlayerId = PlayerId(1);
 const DECKS: &[&str] = &[
     "karn",
     "thrasios",
-    "sauron",
     "alela",
     "cloud",
     "galadriel",
-    "kefka",
+    "aragorn",
     "sheoldred",
     "thanos",
     "urdragon",
@@ -440,16 +439,7 @@ const EXCEPTIONS: &[(&str, &str)] = &[
         "thanos: Basalt Monolith #0",
         "\"start the loop\": a table shortcut standing for the whole Basalt Monolith + Rings loop (each pass of it is a real activation Rings copies, see play_rings.rs); not an ability itself",
     ),
-    (
-        "kefka: Blazing Firesinger // Seething Song #0",
-        "prepared: casting a copy of the back-face spell (Seething Song): a spell cast, not an ability",
-    ),
-    ("kefka: Niv-Mizzet, Parun #0", "a setting (where its pings go), not an ability"),
-    ("kefka: Niv-Mizzet, the Firemind #0", "a setting (where its pings go), not an ability"),
-    (
-        "sauron: Peter Parker's Camera #0",
-        "needs another ability on the stack to copy: tested with a converted ability in play_rings.rs",
-    ),
+    ("aragorn: Niv-Mizzet, Parun #0", "a setting (where its pings go), not an ability"),
     (
         "sheoldred: Bolas's Citadel #0",
         "playing the top card of the library (Citadel's static permission): a spell cast, not an ability",

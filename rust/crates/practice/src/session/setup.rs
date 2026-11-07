@@ -10,7 +10,7 @@ use sim_core::state::Game;
 use std::sync::Arc;
 
 /// the decks people can play: every deck in data/my_decks.toml, in its order (a test checks it against decks.json)
-pub const MY_DECKS: [&str; 7] = ["sauron", "yshtola", "kefka", "sheoldred", "cloud", "thrasios", "thanos"];
+pub const MY_DECKS: [&str; 6] = ["aragorn", "yshtola", "sheoldred", "cloud", "thrasios", "thanos"];
 pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 
 /// the pool decks of a tier, sorted by key

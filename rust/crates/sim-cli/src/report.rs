@@ -50,9 +50,8 @@ pub const METRICS: [Metric; 24] = [
 /// compare.PLAN: what "the game plan came online" means for each deck
 pub fn plan_text(deck: &str) -> &'static str {
     match deck {
-        "sauron" => "first combat damage to a player by an Army",
+        "aragorn" => "first damage to an opponent from Aragorn's red-spell trigger",
         "yshtola" => "first drain from Y'shtola's cast trigger",
-        "kefka" => "Kefka flipped into Ruler of Ruin",
         "sheoldred" => "first opponent drained by Sheoldred",
         "sephfs" => "Sephiroth flipped (the fourth drain of a turn)",
         "cloud" => "first attack by an equipped Cloud",
@@ -83,9 +82,8 @@ pub fn plan_turn(me: &PlayerOut, deck: &str) -> Option<u32> {
     let ms = |k: &str| me.milestone.get(k).copied();
     let t = match deck {
         "najeela" => ms("act"),
-        "sauron" => ms("army_hit"),
+        "aragorn" => ms("aragorn"),
         "yshtola" => ms("yshtola"),
-        "kefka" => ms("kefka"),
         "sheoldred" => ms("sheoldred"),
         "sephfs" => ms("sephfs"),
         "cloud" => ms("cloud"),

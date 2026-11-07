@@ -187,6 +187,12 @@ tags = "leg human pow=1 tgh=2"
 status = "Full"
 note = "counter, then X attacking Gnome tokens (X = its +1/+1 counters)"
 
+["Aragorn, the Uniter"]
+tags = "leg human pow=5 tgh=5"
+dsl = []
+status = "Full"
+note = "whenever you cast a spell, each of its colours triggers: white, a 1/1 white Human Soldier token; blue, scry 2; red, 3 damage to target opponent (the AI hits the lowest life total; Fiery Emancipation triples it); green, target creature +4/+4 until end of turn (the AI pumps its own best ready attacker). Veyran doubles each trigger for instants and sorceries. impls/aragorn.rs, tests/cards_aragorn.rs"
+
 ["Arbor Elf"]
 tags = "pow=1 dork=G noatk"
 dsl = []

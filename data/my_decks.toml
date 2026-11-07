@@ -1,12 +1,12 @@
 # Your decks: the deck key, its file under decklists/, the name the logs use, the commander the simulator
 # plays and the colour identity of the seat, and `tiers`: the opponent tiers it is simulated against (matched power; see CLAUDE.md "Opponent tiers"). Extracted once from the old Python code; this file is now the source.
 
-[sauron]
-file = "JD/sauron-grixis-amass.md"
-name = "Sauron"
-commander = "Sauron, the Dark Lord"
-ident = "UBR"
-tiers = ["t3", "t4"]
+[aragorn]
+file = "JD/aragorn-uniter.md"
+name = "Aragorn"
+commander = "Aragorn, the Uniter"
+ident = "WURG"
+tiers = ["t4", "t5"]
 
 [yshtola]
 file = "JD/yshtola-esper-drain.md"
@@ -14,13 +14,6 @@ name = "Y'shtola"
 commander = "Y'shtola, Night's Blessed"
 ident = "WUB"
 tiers = ["t5"]
-
-[kefka]
-file = "JD/kefka-grixis-discard.md"
-name = "Kefka"
-commander = "Kefka, Court Mage // Kefka, Ruler of Ruin"
-ident = "UBR"
-tiers = ["t3"]
 
 [sheoldred]
 file = "JD/sheoldred-mono-black.md"

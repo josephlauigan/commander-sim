@@ -5055,6 +5055,50 @@
    "spell_prio": false
   },
   {
+   "name": "Aragorn, the Uniter",
+   "types": "C",
+   "generic": 0,
+   "pips": "RGWU",
+   "tags": {
+    "leg": true,
+    "human": true,
+    "pow": "5",
+    "tgh": "5"
+   },
+   "pow": 5,
+   "tgh": 5,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "scry"
+   ],
+   "subtypes": [
+    "human",
+    "noble"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "GRUW",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Arasta of the Endless Web",
    "types": "CE",
    "generic": 2,
@@ -39633,7 +39677,7 @@
    "ward": 0,
    "identity": null,
    "game_changer": null,
-   "source": "pool",
+   "source": "manual",
    "unparsed": [],
    "derived": {
     "cmc": 1,

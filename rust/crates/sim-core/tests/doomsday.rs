@@ -20,7 +20,7 @@ fn ids(g: &Game, names: &[&str]) -> Vec<sim_core::ids::CardId> {
 /// a table with `thrasios` at P0 (ten untapped lands: eight Underground Sea and two Scrubland) and Sauron at P1; the
 /// hand, the library (top first) and the graveyard are exactly what is given
 fn setup(hand_names: &[&str], lib_top_first: &[&str], gy: &[&str]) -> Game {
-    let mut g = table_with(&["thrasios", "sauron"], 1, 40);
+    let mut g = table_with(&["thrasios", "yshtola"], 1, 40);
     g.log = Some(vec![]);
     g.active = Some(P0);
     lands(&mut g, P0, "Underground Sea", 8, false);
@@ -1159,7 +1159,7 @@ fn the_why_statistics_name_the_check_that_declined_and_change_nothing() {
 /// P0 in its main phase with two Underground Seas and six Islands (two black sources: the lands alone can't make
 /// {B}{B}{B}), Doomsday, Thassa's Oracle and Gitaxian Probe in hand (Pile C), plus `extra`
 fn two_black_sources(extra: &[&str]) -> Game {
-    let mut g = table_with(&["thrasios", "sauron"], 1, 40);
+    let mut g = table_with(&["thrasios", "yshtola"], 1, 40);
     g.log = Some(vec![]);
     g.active = Some(P0);
     g.step = Step::Main1;

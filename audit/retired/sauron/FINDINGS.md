@@ -1,5 +1,7 @@
 # Sauron, the Dark Lord — findings (living file)
 
+**Retired 2026-11-06 (JD).** The deck became part of Aragorn, the Uniter (key `aragorn`) and the `sauron` key left the simulator the same day; the list is in `decklists/pool/retired/` and this file is history only.
+
 What the simulator has taught us about the Sauron Grixis amass deck: strengths, weaknesses, and what was tried and why
 it did or didn't work. Updated after every run. Newest evidence first. Matched tiers: T3–T4 (`data/my_decks.toml`).
 Older tests: the dated folders here.

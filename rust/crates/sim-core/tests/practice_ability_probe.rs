@@ -174,10 +174,7 @@ const TO_FIX: &[&str] = &[
 ];
 
 /// listed by the probe but not a gap, each with why
-const FALSE_ALARMS: &[(&str, &str)] = &[(
-    "kefka: Birgi, God of Storytelling",
-    "the one activated ability (Harnfel, Horn of Bounty: discard a card, exile the top two) is the back face of the modal double-faced card, which the engine never plays as a permanent; Birgi on the battlefield has no activated ability",
-)];
+const FALSE_ALARMS: &[(&str, &str)] = &[];
 
 /// the gaps found against the two lists: a gap on neither list is new (fails), a TO_FIX entry no longer found is
 /// fixed and must come off the list (fails), and a FALSE_ALARMS entry no longer found must come off too (fails)
