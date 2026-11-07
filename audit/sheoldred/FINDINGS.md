@@ -11,6 +11,13 @@ is a borderline gain, the first measure of package S as adopted (Diabolic Tutor 
 Intent). The paired run of the earlier version (Diabolic Tutor out) was +1.9 / -0.3. The analyze run (2,000 games per
 tier) is in `audit/baseline-2026-11-07/sheoldred-analyze.txt`. Raw: `audit/baseline-2026-11-07/sheoldred.txt`.
 
+**Analyze (2,000 games per tier).** t3: eliminated in 70.5% of games (round 8.8), mostly by combat: Aurelia 12.8% (and 4.3%
+commander damage), Marwyn 9.9% (and 8.1% combo), Tergrid 8.7%, Atraxa poison 4.3%. t4: 72.0% (round 7.8): Krenko 13.9% combat
+and 5.3% triggers, Edgar Markov 10.1% and 4.4% combo, Chulane combo 8.0%, Yuriko triggers 6.0%. Package S cards: Massacre
+Wurm wins 48% (t3) and 65% (t4, +37) of the games it is cast in, the go-wide answer it was picked for, but sits in hand
+(cast 36% of the games drawn, t3); Diabolic Intent +15 (t3); Reanimate +20 (t4); Dreadhorde Invasion +0.1 (t4, neutral).
+Entomb (cast 6-10% of the games drawn) and Yawgmoth's Will (4-5%) are still nearly never cast: the AI gap stays open.
+
 ## 2026-11-07: card-pile package S, adopted (paired swap run; t3, t4, look-ahead, loose, 1,500 games per list per tier, main b84ab9e6 with #292)
 Raise Dead => Reanimate, Cast Away Doubt => Entomb, Diabolic Tutor => Diabolic Intent, Vanquish the Weak => Massacre Wurm,
 Dark Deal => Yawgmoth's Will, Otherworld Atlas => Dreadhorde Invasion, Swamp => Barad-dûr (JD's spare-card pile,

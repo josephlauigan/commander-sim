@@ -4,3 +4,10 @@ baseline thrasios exit=0 43m 03:14
 baseline sheoldred exit=0 53m 04:07
 baseline aragorn exit=0 73m 05:21
 baseline cloud exit=0 154m 07:55
+analyze thanos exit=0 7m 08:02
+analyze yshtola exit=0 6m 08:08
+analyze thrasios exit=0 8m 08:17
+analyze sheoldred exit=0 10m 08:28
+analyze aragorn exit=0 14m 08:43
+analyze cloud exit=0 30m 09:13
+ALL DONE 09:13

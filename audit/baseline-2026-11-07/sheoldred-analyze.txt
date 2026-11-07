@@ -1,0 +1,214 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  sheoldred                   100 cards: Full 93, Full-auto 7, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 3 (High B3)  5 decks, 500 cards: Full 444, Full-auto 38, Approximate 18, Partial 0, Unmodeled 0
+  opponents Tier 4 (Low B4)   5 decks, 500 cards: Full 436, Full-auto 37, Approximate 27, Partial 0, Unmodeled 0
+
+4,000 games (analysis, 2,000 per list per tier, profile loose), lookahead AI, 24 worker threads: about 8 minutes
+  progress  10.0%  0m53s elapsed, ~8m02s left
+  progress  20.0%  1m51s elapsed, ~7m26s left
+  progress  30.0%  2m44s elapsed, ~6m24s left
+  progress  40.0%  3m37s elapsed, ~5m26s left
+  progress  50.0%  4m28s elapsed, ~4m28s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== sheoldred analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 29.5%   (4-player baseline 25%)   average rounds survived 9.0
+
+-- How it wins --
+  combo       52.8% of wins
+  damage      47.2% of wins
+  Opponents it eliminated: 0.88 per game, by
+    combo              43.6%
+    drain              41.5%
+    combat              8.4%
+    triggers            4.1%
+    other               2.2%
+    burn                0.2%
+  Damage dealt per game: 39.7, from
+    drain               28.7  (72%)
+    combat               7.0  (18%)
+    triggers             3.7  (9%)
+    burn                 0.3  (1%)
+
+-- Sephiroth --
+  Flips per game 0.031 (games with a flip 3.1%); first flip on round 7.24 on average
+  Emblem drains per game 0.27; cards drawn by Sephiroth per game 0.04; creatures sacrificed per game 1.62
+  Wipes cast per game 0.00 (Extinction Event, Necromantic Selection, Blood on the Snow, Living Death); Pestilence activations 0.00
+  Creatures stolen per game 0.00: reanimation spells 0.14, Grave Betrayal 0.00, Dread Slaver 0.00, prepared Reanimate 0.00; Kaya's Ghostform returns 0.00; Rabid Attack draws 0.00
+
+-- How it loses --
+  Eliminated in 70.5% of games, on average in round 8.8
+    by Aurelia  via combat             12.8% of games
+    by Marwyn   via combat              9.9% of games
+    by Tergrid  via combat              8.7% of games
+    by Marwyn   via combo               8.1% of games
+    by Atraxa   via poison              4.3% of games
+    by Aurelia  via commander damage    4.3% of games
+    by Atraxa   via combat              2.6% of games
+    by Tergrid  via poison              2.4% of games
+
+-- Game plan timing --
+  Plan: first opponent drained by Sheoldred
+  Online by turn:  T2 1%  T3 10%  T4 48%  T5 68%  T6 79%  T7 85%  T8 88%  T9 89%  T10 90%  T11 90%  T12 90%
+  Online at all: 90.1% of games
+  Commander resolves on turn: median 4.0, mean 4.8 (over the 90.7% of games it resolves)
+  Commander resolved by turn:  T4 50%  T5 70%  T6 80%  T7 86%  T8 89%
+  Sacrifices: 1.62 creatures per game; Sephiroth flipped to One-Winged Angel in 3.1% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Exquisite Blood                            cast in  21.6% of games, win rate when cast  67.2% (+37.7)
+    Sanguine Bond                              cast in  22.8% of games, win rate when cast  56.3% (+26.7)
+    Triskelion                                 cast in   7.5% of games, win rate when cast  55.6% (+26.1)
+    Massacre Wurm                              cast in   6.8% of games, win rate when cast  48.2% (+18.6)
+    Vito, Thorn of the Dusk Rose               cast in  16.3% of games, win rate when cast  47.5% (+18.0)
+    Mikaeus, the Unhallowed                    cast in  11.3% of games, win rate when cast  46.0% (+16.5)
+    Phyrexian Delver                           cast in   6.2% of games, win rate when cast  45.6% (+16.1)
+    Diabolic Intent                            cast in  10.0% of games, win rate when cast  44.5% (+15.0)
+    Diabolic Tutor                             cast in  12.1% of games, win rate when cast  44.0% (+14.4)
+    Howling Mine                               cast in   8.8% of games, win rate when cast  42.9% (+13.4)
+  Lowest win rate when cast:
+    Al Bhed Salvagers                          cast in  12.6% of games, win rate when cast  25.4% (-4.2)
+    Rooftop Assassin                           cast in   8.0% of games, win rate when cast  25.8% (-3.8)
+    Wander Off                                 cast in  13.6% of games, win rate when cast  26.1% (-3.4)
+    Screeching Soulbreaker                     cast in  12.4% of games, win rate when cast  26.5% (-3.0)
+    Ashnod's Altar                             cast in  10.4% of games, win rate when cast  26.8% (-2.8)
+    Leech Collector // Bloodletting            cast in  15.2% of games, win rate when cast  28.4% (-1.2)
+    Fate Unraveler                             cast in  14.4% of games, win rate when cast  28.7% (-0.8)
+    Yawgmoth, Thran Physician                  cast in  13.8% of games, win rate when cast  28.9% (-0.7)
+    Overkill                                   cast in  15.1% of games, win rate when cast  29.1% (-0.4)
+    Gix, Yawgmoth Praetor                      cast in  13.5% of games, win rate when cast  29.3% (-0.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Call of the Ring                           cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Torment of Hailfire                        cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Yawgmoth's Will                            cast   3.6% of the games it was drawn
+    Entomb                                     cast   6.3% of the games it was drawn
+    Ad Nauseam                                 cast  16.6% of the games it was drawn
+    Memory Jar                                 cast  17.4% of the games it was drawn
+    Peer into the Abyss                        cast  19.2% of the games it was drawn
+    Bolas's Citadel                            cast  32.1% of the games it was drawn
+    Exsanguinate                               cast  32.9% of the games it was drawn
+    Phyrexian Delver                           cast  34.1% of the games it was drawn
+    Triskelion                                 cast  34.1% of the games it was drawn
+    Massacre Wurm                              cast  36.0% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sheoldred, the Apocalypse                  0.42
+    Yawgmoth, Thran Physician                  0.03
+    Mind Stone                                 0.03
+    Sanguine Bond                              0.03
+    Exquisite Blood                            0.02
+    Sephiroth, Fabled SOLDIER // Sephiroth, On 0.02
+    Phyrexian Arena                            0.02
+    Gix, Yawgmoth Praetor                      0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-infect = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+  progress  60.0%  5m47s elapsed, ~3m51s left
+  progress  70.0%  7m04s elapsed, ~3m01s left
+  progress  80.0%  8m16s elapsed, ~2m04s left
+  progress  90.0%  9m32s elapsed, ~1m03s left
+  progress 100.0%  10m55s elapsed, ~0m00s left
+
+######## vs Tier 4 (Low B4) ########
+
+=========== sheoldred analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 28.0%   (4-player baseline 25%)   average rounds survived 8.1
+
+-- How it wins --
+  damage      59.2% of wins
+  combo       40.8% of wins
+  Opponents it eliminated: 0.92 per game, by
+    drain              53.7%
+    combo              29.2%
+    combat              8.2%
+    triggers            5.7%
+    other               2.7%
+    burn                0.4%
+  Damage dealt per game: 35.8, from
+    drain               25.6  (71%)
+    combat               6.4  (18%)
+    triggers             3.4  (10%)
+    burn                 0.4  (1%)
+
+-- Sephiroth --
+  Flips per game 0.041 (games with a flip 4.1%); first flip on round 6.91 on average
+  Emblem drains per game 0.35; cards drawn by Sephiroth per game 0.04; creatures sacrificed per game 0.42
+  Wipes cast per game 0.00 (Extinction Event, Necromantic Selection, Blood on the Snow, Living Death); Pestilence activations 0.00
+  Creatures stolen per game 0.00: reanimation spells 0.09, Grave Betrayal 0.00, Dread Slaver 0.00, prepared Reanimate 0.00; Kaya's Ghostform returns 0.00; Rabid Attack draws 0.00
+
+-- How it loses --
+  Eliminated in 72.0% of games, on average in round 7.8
+    by Krenko   via combat             13.9% of games
+    by Edgar Markov via combat             10.1% of games
+    by Chulane  via combo               8.0% of games
+    by Yuriko   via triggers            6.0% of games
+    by Krenko   via triggers            5.3% of games
+    by Edgar Markov via combo               4.4% of games
+    by Yuriko   via combat              4.3% of games
+    by Prosper  via triggers            3.4% of games
+
+-- Game plan timing --
+  Plan: first opponent drained by Sheoldred
+  Online by turn:  T2 1%  T3 12%  T4 50%  T5 68%  T6 78%  T7 82%  T8 84%  T9 85%  T10 85%  T11 85%  T12 85%
+  Online at all: 85.2% of games
+  Commander resolves on turn: median 4.0, mean 4.6 (over the 85.8% of games it resolves)
+  Commander resolved by turn:  T4 51%  T5 69%  T6 79%  T7 83%  T8 85%
+  Sacrifices: 0.42 creatures per game; Sephiroth flipped to One-Winged Angel in 4.1% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Exquisite Blood                            cast in  17.8% of games, win rate when cast  65.6% (+37.7)
+    Massacre Wurm                              cast in   7.5% of games, win rate when cast  64.9% (+37.0)
+    Triskelion                                 cast in   6.2% of games, win rate when cast  64.2% (+36.3)
+    Sanguine Bond                              cast in  16.9% of games, win rate when cast  57.2% (+29.3)
+    Reanimate                                  cast in   5.5% of games, win rate when cast  48.2% (+20.2)
+    Grave Titan                                cast in   5.3% of games, win rate when cast  47.2% (+19.2)
+    Mikaeus, the Unhallowed                    cast in   9.8% of games, win rate when cast  45.6% (+17.7)
+    Exsanguinate                               cast in   6.0% of games, win rate when cast  44.5% (+16.6)
+    Gray Merchant of Asphodel                  cast in   8.3% of games, win rate when cast  41.9% (+14.0)
+    Vito, Thorn of the Dusk Rose               cast in  16.1% of games, win rate when cast  41.4% (+13.5)
+  Lowest win rate when cast:
+    Phyrexian Arena                            cast in   8.4% of games, win rate when cast  26.0% (-1.9)
+    Rooftop Assassin                           cast in   7.2% of games, win rate when cast  26.4% (-1.6)
+    Wander Off                                 cast in  11.0% of games, win rate when cast  26.8% (-1.1)
+    Gix, Yawgmoth Praetor                      cast in  12.2% of games, win rate when cast  27.3% (-0.6)
+    Dreadhorde Invasion                        cast in  11.1% of games, win rate when cast  28.1% (+0.1)
+    Sephiroth's Intervention                   cast in  12.2% of games, win rate when cast  28.4% (+0.4)
+    Overkill                                   cast in  12.4% of games, win rate when cast  28.5% (+0.6)
+    Mind Stone                                 cast in  14.0% of games, win rate when cast  28.6% (+0.6)
+    Leech Collector // Bloodletting            cast in  13.3% of games, win rate when cast  28.9% (+1.0)
+    Sheoldred, the Apocalypse                  cast in  88.0% of games, win rate when cast  29.2% (+1.3)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Torment of Hailfire                        cast   0.3% of the games it was drawn
+    Call of the Ring                           cast   1.0% of the games it was drawn
+    Yawgmoth's Will                            cast   5.3% of the games it was drawn
+    Entomb                                     cast  10.2% of the games it was drawn
+    Memory Jar                                 cast  11.2% of the games it was drawn
+    Ad Nauseam                                 cast  11.4% of the games it was drawn
+    Bolas's Citadel                            cast  21.1% of the games it was drawn
+    Peer into the Abyss                        cast  23.4% of the games it was drawn
+    Ambition's Cost                            cast  27.7% of the games it was drawn
+    Invoke Despair                             cast  30.3% of the games it was drawn
+    Triskelion                                 cast  30.9% of the games it was drawn
+    Phyrexian Delver                           cast  31.3% of the games it was drawn
+  Most often removed by opponents (per game):
+    Sheoldred, the Apocalypse                  0.51
+    Yawgmoth, Thran Physician                  0.04
+    Mind Stone                                 0.03
+    Exquisite Blood                            0.02
+    Sanguine Bond                              0.02
+    Sephiroth, Fabled SOLDIER // Sephiroth, On 0.02
+    Al Bhed Salvagers                          0.01
+    Leech Collector // Bloodletting            0.01
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, edgar-markov-mardu-vampires = Edgar Markov, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+
+(656s total)

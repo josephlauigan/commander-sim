@@ -1,0 +1,109 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  thanos                      100 cards: Full 98, Full-auto 2, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 433, Full-auto 34, Approximate 33, Partial 0, Unmodeled 0
+
+2,000 games (analysis, 2,000 per list per tier, profile loose), lookahead AI, 24 worker threads: about 4 minutes
+  progress  10.0%  0m42s elapsed, ~6m23s left
+  progress  20.0%  1m24s elapsed, ~5m37s left
+  progress  30.0%  2m06s elapsed, ~4m55s left
+  progress  40.0%  2m49s elapsed, ~4m14s left
+  progress  50.0%  3m30s elapsed, ~3m30s left
+  progress  60.0%  4m10s elapsed, ~2m46s left
+  progress  70.0%  4m51s elapsed, ~2m05s left
+  progress  80.0%  5m35s elapsed, ~1m23s left
+  progress  90.0%  6m13s elapsed, ~0m41s left
+  progress 100.0%  6m59s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== thanos analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 19.1%   (4-player baseline 25%)   average rounds survived 9.1
+
+-- How it wins --
+  damage      65.8% of wins
+  combo       32.9% of wins
+  timeout      1.3% of wins
+  Opponents it eliminated: 0.56 per game, by
+    combat             56.2%
+    combo              28.8%
+    triggers           10.5%
+    commander damage    4.0%
+    drain               0.4%
+  Damage dealt per game: 24.5, from
+    combat              23.0  (94%)
+    triggers             1.4  (6%)
+    drain                0.1  (0%)
+
+-- Sephiroth --
+  Flips per game 0.000 (games with a flip 0.0%); first flip on round 0.00 on average
+  Emblem drains per game 0.00; cards drawn by Sephiroth per game 0.00; creatures sacrificed per game 0.23
+  Wipes cast per game 0.00 (Extinction Event, Necromantic Selection, Blood on the Snow, Living Death); Pestilence activations 0.00
+  Creatures stolen per game 0.00: reanimation spells 0.00, Grave Betrayal 0.00, Dread Slaver 0.00, prepared Reanimate 0.00; Kaya's Ghostform returns 0.00; Rabid Attack draws 0.00
+
+-- How it loses --
+  Eliminated in 80.8% of games, on average in round 8.5
+    by Kinnan   via combo              13.6% of games
+    by Urza     via combo              13.6% of games
+    by Zur the Enchanter via combo              11.2% of games
+    by Miirym   via combat             11.0% of games
+    by Yawgmoth via combo               8.0% of games
+    by Miirym   via triggers            7.0% of games
+    by Kinnan   via combat              4.0% of games
+    by Yawgmoth via drain               2.5% of games
+
+-- Game plan timing --
+  Plan: first combo attempt
+  Online by turn:  T2 0%  T3 0%  T4 0%  T5 1%  T6 2%  T7 3%  T8 4%  T9 4%  T10 5%  T11 5%  T12 6%
+  Online at all: 6.7% of games
+  Commander resolves on turn: median 4.0, mean 4.2 (over the 86.8% of games it resolves)
+  Commander resolved by turn:  T4 57%  T5 72%  T6 80%  T7 83%  T8 85%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Utvara Hellkite                            cast in   8.7% of games, win rate when cast  53.4% (+34.3)
+    The Ur-Dragon                              cast in   7.0% of games, win rate when cast  51.4% (+32.3)
+    Astral Dragon                              cast in  11.9% of games, win rate when cast  48.7% (+29.6)
+    Summon: Bahamut                            cast in   9.2% of games, win rate when cast  43.5% (+24.3)
+    Nicol Bolas, the Ravager                   cast in  10.4% of games, win rate when cast  40.9% (+21.7)
+    Mana Drain                                 cast in   9.6% of games, win rate when cast  40.8% (+21.7)
+    Terror of the Peaks                        cast in  13.4% of games, win rate when cast  38.7% (+19.5)
+    Goldspan Dragon                            cast in  12.4% of games, win rate when cast  37.1% (+17.9)
+    Scion of Draco                             cast in  14.5% of games, win rate when cast  36.6% (+17.4)
+    Karn, Scion of Urza                        cast in  17.6% of games, win rate when cast  36.5% (+17.3)
+  Lowest win rate when cast:
+    Thanos, the Mad Titan                      cast in  87.5% of games, win rate when cast  21.4% (+2.2)
+    Walking Ballista                           cast in  19.8% of games, win rate when cast  22.7% (+3.6)
+    The One Ring                               cast in  21.9% of games, win rate when cast  23.7% (+4.5)
+    Mox Diamond                                cast in  17.4% of games, win rate when cast  24.1% (+5.0)
+    Force of Will                              cast in  10.1% of games, win rate when cast  24.3% (+5.1)
+    Mox Jasper                                 cast in  19.2% of games, win rate when cast  24.4% (+5.3)
+    Swords to Plowshares                       cast in  15.3% of games, win rate when cast  24.8% (+5.7)
+    Chrome Mox                                 cast in  18.1% of games, win rate when cast  25.1% (+6.0)
+    Crucible of Worlds                         cast in  18.6% of games, win rate when cast  25.5% (+6.3)
+    Deflecting Swat                            cast in   5.8% of games, win rate when cast  25.6% (+6.5)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Deflecting Swat                            cast  30.1% of the games it was drawn
+    Teferi's Protection                        cast  30.9% of the games it was drawn [reactive: only cast in response]
+    The Ur-Dragon                              cast  35.0% of the games it was drawn
+    Utvara Hellkite                            cast  43.5% of the games it was drawn
+    Summon: Bahamut                            cast  43.8% of the games it was drawn
+    Force of Negation                          cast  43.9% of the games it was drawn [reactive: only cast in response]
+    Astral Dragon                              cast  44.6% of the games it was drawn
+    Disdainful Stroke                          cast  47.4% of the games it was drawn [reactive: only cast in response]
+  Most often removed by opponents (per game):
+    Thanos, the Mad Titan                      0.42
+    Wrenn and Six                              0.08
+    Karn, Scion of Urza                        0.06
+    Urza, Lord High Artificer                  0.04
+    Terror of the Peaks                        0.03
+    Rhystic Study                              0.03
+    Summon: Bahamut                            0.03
+    The One Ring                               0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, miirym-temur-dragons = Miirym, urza-mono-blue-artifacts = Urza, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(419s total)

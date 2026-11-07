@@ -10,6 +10,14 @@ why it did or didn't work. Updated after every run. Newest evidence first. Match
 combos still about a third of her deaths). Analyze run: `audit/baseline-2026-11-07/yshtola-analyze.txt`. Raw:
 `audit/baseline-2026-11-07/yshtola.txt`.
 
+**Analyze (2,000 games, t5).** Eliminated in 73.7% of games (round 8.4): combos Urza 13.2%, Kinnan 12.9%, Zur 9.4%, Yawgmoth
+8.4% (about 44%), then Miirym combat 9.9% and triggers 6.6%. Highest win rates when cast are the finishers and the combo:
+Debt to the Deathless 68% (+42), Exquisite Blood 62%, Torment of Hailfire 62%, Exsanguinate 59%, Sanguine Bond 53% (cast in
+36% of games). Lowest (cheap cards cast early, the telling ones): Teferi's Protection (-0.2), Esper Sentinel, Fatal Push and
+Mystic Remora (+4.6), Arrest +7.3. Stuck in hand most: the blink engines Conjurer's Closet (cast 19% of the games drawn) and
+Teleportation Circle (22%), then Sphere of Safety 34% and Displacer Kitten 35%. The package-Y cards (Counterspell, Ringsight,
+Palantír, Mistrise Village) are in neither list: neither notably good nor bad.
+
 ## 2026-11-07: card-pile package Y, adopted untested
 Memory Trap => Counterspell, Dark Petition => Ringsight, Ill-Gotten Inheritance => Palantír of Orthanc, Island =>
 Mistrise Village (JD's spare-card pile, `audit/jd-packages/2026-11-06-card-pile/`). **Not measured:** JD stopped the runs

@@ -1,0 +1,117 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  thrasios                     100 cards: Full 96, Full-auto 4, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 6 (cEDH, B5)  6 decks, 600 cards: Full 545, Full-auto 19, Approximate 20, Partial 16, Unmodeled 0
+
+2,000 games (analysis, 2,000 per list per tier, profile loose), lookahead AI, 24 worker threads: about 4 minutes
+  progress  10.0%  0m54s elapsed, ~8m07s left
+  progress  20.0%  1m46s elapsed, ~7m04s left
+  progress  30.0%  2m41s elapsed, ~6m15s left
+  progress  40.0%  3m36s elapsed, ~5m24s left
+  progress  50.0%  4m30s elapsed, ~4m30s left
+  progress  60.0%  5m23s elapsed, ~3m35s left
+  progress  70.0%  6m09s elapsed, ~2m38s left
+  progress  80.0%  7m04s elapsed, ~1m46s left
+  progress  90.0%  7m53s elapsed, ~0m52s left
+  progress 100.0%  8m51s elapsed, ~0m00s left
+
+######## vs Tier 6 (cEDH, B5) ########
+
+=========== thrasios analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 33.8%   (4-player baseline 25%)   average rounds survived 7.0
+
+-- How it wins --
+  combo       97.3% of wins
+  damage       2.5% of wins
+  timeout      0.1% of wins
+  Opponents it eliminated: 1.02 per game, by
+    combo              92.3%
+    combat              5.5%
+    triggers            1.5%
+    decked              0.6%
+    drain               0.1%
+  Damage dealt per game: 9.6, from
+    combat               8.7  (91%)
+    triggers             0.9  (9%)
+    drain                0.0  (0%)
+
+-- Partner decks (Tymna) --
+  Tymna cards drawn per game 1.89; Tymna turns per game 2.91; opponents hit per Tymna turn 0.69
+  Thrasios activations per game 0.43
+    ty_th_spare4_eot per game 0.20
+    ty_th_spare4_main2 per game 0.49
+    ty_th_turns_eot per game 2.22
+    ty_th_turns_main2 per game 2.94
+  Tymna_the_Weaver lands on turn 3.04 (in 85% of games)
+  Thrasios lands on turn 3.19 (in 81% of games)
+
+-- How it loses --
+  Eliminated in 66.2% of games, on average in round 7.1
+    by Sisay    via combo              12.9% of games
+    by Kraum/Tymna via combo              11.3% of games
+    by Rograkh/Silas via combo               9.9% of games
+    by Dack Fayden via combo               9.4% of games
+    by Rograkh/Thrasios via combo               6.7% of games
+    by Kinnan   via combo               4.3% of games
+    by Dack Fayden via combat              2.6% of games
+    by Kraum/Tymna via combat              2.3% of games
+
+-- Game plan timing --
+  Plan: first Tymna draw, or the infinite-mana combo going off
+  Online by turn:  T2 9%  T3 40%  T4 60%  T5 69%  T6 75%  T7 78%  T8 79%  T9 80%  T10 80%  T11 80%  T12 80%
+  Online at all: 80.5% of games
+  Commander resolves on turn: median 2.0, mean 2.4 (over the 93.3% of games it resolves)
+  Commander resolved by turn:  T4 74%  T5 76%  T6 77%  T7 77%  T8 78%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Tainted Pact                               cast in  11.6% of games, win rate when cast  89.2% (+55.5)
+    Demonic Consultation                       cast in  20.0% of games, win rate when cast  82.8% (+49.0)
+    Thassa's Oracle                            cast in  36.5% of games, win rate when cast  77.8% (+44.1)
+    Demonic Tutor                              cast in  16.4% of games, win rate when cast  48.5% (+14.7)
+    Mystical Tutor                             cast in  12.4% of games, win rate when cast  48.2% (+14.4)
+    Grim Tutor                                 cast in  13.8% of games, win rate when cast  47.3% (+13.5)
+    Rings of Brighthearth                      cast in  15.2% of games, win rate when cast  47.2% (+13.5)
+    Beseech the Mirror                         cast in   5.8% of games, win rate when cast  46.2% (+12.4)
+    Vampiric Tutor                             cast in  11.8% of games, win rate when cast  44.7% (+10.9)
+    Smothering Tithe                           cast in   9.7% of games, win rate when cast  43.3% (+9.5)
+  Lowest win rate when cast:
+    Noxious Revival                            cast in  14.1% of games, win rate when cast  23.4% (-10.3)
+    Force of Negation                          cast in  13.8% of games, win rate when cast  24.4% (-9.4)
+    Grim Monolith                              cast in  15.2% of games, win rate when cast  25.7% (-8.0)
+    Mental Misstep                             cast in  12.2% of games, win rate when cast  27.8% (-6.0)
+    Intuition                                  cast in  11.7% of games, win rate when cast  27.9% (-5.9)
+    Walking Ballista                           cast in  14.5% of games, win rate when cast  27.9% (-5.8)
+    Snapback                                   cast in  17.3% of games, win rate when cast  28.0% (-5.7)
+    Force of Will                              cast in  14.8% of games, win rate when cast  28.1% (-5.6)
+    Brainstorm                                 cast in  10.2% of games, win rate when cast  28.6% (-5.2)
+    Flusterstorm                               cast in   8.2% of games, win rate when cast  28.7% (-5.1)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Elvish Spirit Guide                        cast   0.0% of the games it was drawn [never cast by the sim: untagged]
+    Orim's Chant                               cast   2.3% of the games it was drawn
+    Ad Nauseam                                 cast   5.0% of the games it was drawn
+    Veil of Summer                             cast   7.3% of the games it was drawn
+    Doomsday                                   cast   7.9% of the games it was drawn
+    Silence                                    cast  13.3% of the games it was drawn
+    Necropotence                               cast  27.0% of the games it was drawn
+    Beseech the Mirror                         cast  31.7% of the games it was drawn
+    Valley Floodcaller                         cast  41.6% of the games it was drawn
+    Tainted Pact                               cast  42.3% of the games it was drawn
+    Flusterstorm                               cast  43.5% of the games it was drawn [reactive: only cast in response]
+    Ranger-Captain of Eos                      cast  44.1% of the games it was drawn
+  Most often removed by opponents (per game):
+    Thrasios, Triton Hero                      0.21
+    Tymna the Weaver                           0.21
+    Teferi, Time Raveler                       0.06
+    Voice of Victory                           0.04
+    Thassa's Oracle                            0.03
+    Grand Abolisher                            0.02
+    Walking Ballista                           0.02
+    Basalt Monolith                            0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: dack-fayden-white-stax = Dack Fayden, kinnan-bonder-mana-combo = Kinnan, kraum-tymna-blue-breach-midrange = Kraum/Tymna, rograkh-silas-turbo-breach = Rograkh/Silas, rograkh-thrasios-creature-combo = Rograkh/Thrasios, sisay-legends-toolbox = Sisay
+
+(531s total)
