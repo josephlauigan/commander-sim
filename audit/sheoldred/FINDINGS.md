@@ -4,6 +4,19 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile, vs Sheoldred's matched
 tiers (T3-T5) unless noted. Older tests: README.md in this folder.
 
+## 2026-11-07: Al Bhed Salvagers => Witch of the Moors (t3-t4, loose, 2,000 games per list per tier, look-ahead, paired)
+Result: **t3 31.6% -> 32.5% (+0.9), t4 25.5% -> 26.9% (+1.4), noise ±1.6 per tier: about +1.2 over t3-t4, positive
+both times but inside the noise.** Not adopted yet (JD's call). Raw: `2026-11-07-witch/salvagers-to-witch.txt`.
+Witch of the Moors (JD pulled it) was modeled for this test (Full, card code in sheoldred.rs): at your end step, if you
+gained life this turn, each opponent sacrifices a creature and a creature card comes back from your graveyard to hand.
+JD chose the cut (Al Bhed Salvagers, the lowest win rate when cast in the 11/07 analyze run, -4.2).
+Why: the fit is real (Sheoldred's own draw trigger gains 2 a turn, and Blood Artist, Zulaport, Exquisite Blood, Vito
+and Gray Merchant gain more, so the trigger is on most turns once Witch lands), but **Witch is stuck in hand in about
+half the games it's drawn (stuck 48% at t3, 51% at t4; cast around round 6.4-6.9)** against Salvagers' 37% (round
+5.0-5.9): a 5-drop competing with Sheoldred and the other late cards for mana (weakness 2). Where it lands, the games
+look better (win rate when cast 42% / 39% against Salvagers' 33% / 32%: correlation, not causation). Damage +0.6 a game,
+plan timing and the death causes unchanged. Good in this deck when cast; the question is the mana, not the card.
+
 ## 2026-11-07: Reanimate => Animate Dead (JD's choice, not simulated)
 Animate Dead ({1}{B}, Aura; owned, from the retired Seph deck) replaces Reanimate ({B}, lose life equal to the mana
 value). One more mana, no life paid; it still takes a creature card from any graveyard and returns legendaries (Persist

@@ -1,0 +1,209 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Witch of the Moors [scryfall] C 3BB :: human pow=4 dt
+Model status of the swapped-in cards (cardgen audit):
+  Witch of the Moors: Full (deathtouch; at your end step, if you gained life this turn, each opponent sacrifices a creature of their choice (edict: the least valuable) and up to one target creature card from your graveyard returns to your hand (chosen as the trigger goes on the stack: the AI takes the best one, a person picks one or none; card code in sheoldred.rs))
+
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  sheoldred                   100 cards: Full 93, Full-auto 7, Approximate 0, Partial 0, Unmodeled 0
+  sheoldred (swapped)         100 cards: Full 93, Full-auto 7, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 3 (High B3)  5 decks, 500 cards: Full 444, Full-auto 38, Approximate 18, Partial 0, Unmodeled 0
+  opponents Tier 4 (Low B4)   5 decks, 500 cards: Full 436, Full-auto 37, Approximate 27, Partial 0, Unmodeled 0
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by sheoldred's AI?
+  AI: Witch of the Moors: priority 67 (generic)
+200 games (preflight dry run: swapped list, 200 per profile on t3), adaptive AI, 24 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 3 (High B3)
+  dry run: Witch of the Moors: drawn in 21.0% of games (42), cast in 40.5% of those (17)
+
+8,200 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 24 worker threads: about 17 minutes
+Swaps: Al Bhed Salvagers -> Witch of the Moors
+
+=== Sheoldred vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  31.6% ->  32.5%  (delta +0.9 pts, noise ±1.6, paired)   n=2000
+               eliminated by (variant): Tergrid 15.6%  Atraxa 7.1%  Aurelia 19.2%  Marwyn 18.9%  Korvold 6.5%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sheoldred) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sheoldred: first opponent drained by Sheoldred
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          31.6% ->  32.5%  +0.9pt   ±3.0 
+    Rounds survived (or game length)                   9.03 ->   9.06   +0.03  ±0.15 
+
+  Mana & consistency
+    Extra mulligans per game                           0.10 ->   0.10   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.64 ->   0.64   +0.00  ±0.06 
+    Mana available on your turn 4                      3.87 ->   3.88   +0.00  ±0.05 
+    Mana available on your turn 6                      5.39 ->   5.39   +0.00  ±0.09 
+
+  Speed
+    Games where the game plan came online             89.1% ->  89.6%  +0.5pt   ±1.9 
+    Turn the game plan came online                     4.74 ->   4.74   -0.00  ±0.09 
+    Turn the commander first resolved                  4.72 ->   4.72   +0.00  ±0.09 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.18 ->  12.23   +0.05  ±0.40 
+    Tutors resolved per game                           0.54 ->   0.55   +0.00  ±0.04 
+    Spells cast per game                               8.66 ->   8.69   +0.04  ±0.25 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.62 ->   0.61   -0.01  ±0.05 
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.55 ->   0.53   -0.01  ±0.05 
+    Your spells countered                              0.02 ->   0.02   +0.00  ±0.01 
+
+  Threat & pressure
+    Damage dealt to opponents per game                40.77 ->  40.43   -0.34  ±2.28 
+      ...of which combat damage                        6.70 ->   6.71   +0.01  ±0.57 
+      ...of which magecraft / burn                     0.36 ->   0.33   -0.03  ±0.10 
+      ...of which drain triggers                      28.98 ->  28.60   -0.39  ±1.75 
+      ...of which other triggers                       3.53 ->   3.53   +0.01  ±0.61 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Witch of the Moors                    19.8      51.9         6.9     48.1       42.4      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Al Bhed Salvagers                     19.2      62.5         5.9     37.5       33.3      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        31.6      32.5     +0.9
+    rounds survived                                   9.03      9.06    +0.03
+    eliminated, % of games                            68.4      67.5     -0.9
+    opponents it eliminated, per game                 0.95      0.98    +0.03
+    damage dealt, per game                            39.6      39.2     -0.4
+    plan: first opponent drained by Sheoldred
+      plan online by turn 4, %                        49.7      50.5     +0.8
+      plan online by turn 6, %                        79.8      80.0     +0.1
+      plan online by turn 8, %                        87.1      87.2     +0.1
+      plan online by turn 12, %                       89.2      89.7     +0.5
+      plan online at all, %                           89.2      89.7     +0.5
+    commander resolved by turn 4, %                   50.3      51.1     +0.9
+    commander resolved by turn 6, %                   80.6      80.8     +0.2
+    commander removals, per game                      0.41      0.41    -0.01
+    lands on the battlefield, turn 4                  3.68      3.68    +0.00
+    lands on the battlefield, turn 8                  6.18      6.18    +0.00
+    mana available, turn 4                            3.87      3.88    +0.00
+    mana available, turn 8                            6.80      6.79    -0.00
+    cards in hand after the land drop, turn 4         5.67      5.70    +0.03
+    cards in hand after the land drop, turn 8         4.63      4.69    +0.06
+    wins by (current):  combo 53%, damage 47%, timeout 0%
+    wins by (swapped):  combo 54%, damage 46%, timeout 0%
+    eliminated by (current): Aurelia via combat 13.6%, Marwyn via combat 9.0%, Marwyn via combo 8.5%, Tergrid via combat 7.9%
+    eliminated by (swapped): Aurelia via combat 13.9%, Marwyn via combat 8.8%, Marwyn via combo 8.5%, Tergrid via combat 8.1%
+  progress 100.0%  43m47s elapsed, ~0m00s left
+Swaps: Al Bhed Salvagers -> Witch of the Moors
+
+=== Sheoldred vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  25.5% ->  26.9%  (delta +1.4 pts, noise ±1.6, paired)   n=2000
+               eliminated by (variant): Yuriko 11.6%  Chulane 8.6%  Edgar Markov 19.1%  Prosper 12.2%  Krenko 21.9%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (sheoldred) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for sheoldred: first opponent drained by Sheoldred
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          25.5% ->  26.9%  +1.4pt   ±2.8 
+    Rounds survived (or game length)                   8.06 ->   8.12   +0.06  ±0.13 
+
+  Mana & consistency
+    Extra mulligans per game                           0.10 ->   0.10   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       0.58 ->   0.58   +0.00  ±0.05 
+    Mana available on your turn 4                      3.91 ->   3.91   +0.00  ±0.05 
+    Mana available on your turn 6                      5.44 ->   5.45   +0.01  ±0.09 
+
+  Speed
+    Games where the game plan came online             86.2% ->  86.4%  +0.1pt   ±2.2 
+    Turn the game plan came online                     4.54 ->   4.54   +0.00  ±0.09 
+    Turn the commander first resolved                  4.52 ->   4.52   +0.00  ±0.09 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            10.16 ->  10.17   +0.01  ±0.34 
+    Tutors resolved per game                           0.52 ->   0.52   +0.00  ±0.04 
+    Spells cast per game                               7.60 ->   7.67   +0.07  ±0.24 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.55 ->   0.56   +0.01  ±0.04 
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.64 ->   0.64   +0.01  ±0.05 
+    Your spells countered                              0.26 ->   0.27   +0.01  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                35.25 ->  35.81   +0.56  ±2.06 
+      ...of which combat damage                        5.90 ->   6.15   +0.25  ±0.50 
+      ...of which magecraft / burn                     0.45 ->   0.45   -0.01  ±0.12 
+      ...of which drain triggers                      24.95 ->  25.29   +0.34  ±1.63 
+      ...of which other triggers                       2.84 ->   2.86   +0.02  ±0.50 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Witch of the Moors                    16.4      49.2         6.4     50.8       38.9      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Al Bhed Salvagers                     16.6      63.4         5.0     36.6       31.8      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        25.5      26.9     +1.4
+    rounds survived                                   8.06      8.12    +0.06
+    eliminated, % of games                            74.5      73.2     -1.3
+    opponents it eliminated, per game                 0.83      0.84    +0.01
+    damage dealt, per game                            34.1      34.7     +0.6
+    plan: first opponent drained by Sheoldred
+      plan online by turn 4, %                        52.4      53.4     +1.0
+      plan online by turn 6, %                        79.0      79.0     +0.0
+      plan online by turn 8, %                        85.3      85.3     +0.0
+      plan online by turn 12, %                       86.2      86.3     +0.1
+      plan online at all, %                           86.2      86.3     +0.1
+    commander resolved by turn 4, %                   53.1      54.1     +1.0
+    commander resolved by turn 6, %                   79.7      79.8     +0.1
+    commander removals, per game                      0.52      0.52    +0.00
+    lands on the battlefield, turn 4                  3.71      3.71    -0.00
+    lands on the battlefield, turn 8                  6.27      6.29    +0.02
+    mana available, turn 4                            3.91      3.91    +0.00
+    mana available, turn 8                            6.93      6.95    +0.02
+    cards in hand after the land drop, turn 4         6.00      6.02    +0.02
+    cards in hand after the land drop, turn 8         5.53      5.61    +0.08
+    wins by (current):  damage 55%, combo 45%
+    wins by (swapped):  damage 57%, combo 43%
+    eliminated by (current): Krenko via combat 13.7%, Edgar Markov via combat 10.3%, Chulane via combo 7.8%, Krenko via triggers 6.5%
+    eliminated by (swapped): Krenko via combat 12.7%, Edgar Markov via combat 11.7%, Chulane via combo 7.3%, Krenko via triggers 6.8%
+
+(2628s total)
