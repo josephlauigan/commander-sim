@@ -268,7 +268,7 @@ fn torment_x(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
 fn torment_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     // --- t3 lines: the Tier 3 Tergrid deck casts it too (Crypt Ghast, Cabal Coffers and Nykthos make a big X), and
     // Y'shtola too (2026-11-04: Cabal Coffers + Urborg package test)
-    let seat = matches!(g.player(p).key, "sauron" | "yshtola" | crate::impls::t3_lines::TERGRID_KEY);
+    let seat = matches!(g.player(p).key, "yshtola" | crate::impls::t3_lines::TERGRID_KEY);
     if post.is_none() || g.active != Some(p) || !seat || !g.player(p).hand.contains(&c) {
         return Ok(vec![]);
     }

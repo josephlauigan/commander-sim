@@ -193,7 +193,7 @@ fn removal_held(seat: &str, removal: &str, land: &str) -> bool {
     let k = perm(&mut g, PlayerId(1), "Kinnan, Bonder Prodigy");
     g.perm_mut(k).is_cmd = true;
     let s = sim_core::ai::brain::Situation::new(&g, P0);
-    assert!(s.cmdr_combo && !s.combo_near, "Kinnan is a combo-piece commander and nobody is close");
+    assert!(s.cmdr_combo, "Kinnan is a combo-piece commander on the battlefield");
     sim_core::ai::brain::hold_value(&g, P0, &s).0.is_some()
 }
 

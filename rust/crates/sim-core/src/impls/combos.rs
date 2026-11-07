@@ -1930,3 +1930,22 @@ pub fn group_out(g: &Game, p: PlayerId, grp: &[&str]) -> bool {
 pub fn plan_mana_targets(g: &Game, p: PlayerId) -> Vec<CardId> {
     mana_for_lines(g, p)
 }
+
+/// --- engine-followups (2026-11-06): how close q is to one of its catalogued combos from what the table can see: the
+/// largest share of a combo's piece groups that are on q's battlefield or are q's commander ready to cast
+/// (`public_piece`). q's hand is not read. Any deck (`deck_combos`), not only Tier 6's lines.
+pub fn public_progress(g: &Game, q: PlayerId) -> f64 {
+    let mut best = 0.0f64;
+    for i in deck_combos(g, q) {
+        let grps = real_groups(all()[i]);
+        if grps.is_empty() {
+            continue;
+        }
+        let on = grps.iter().filter(|grp| public_piece(g, q, grp)).count();
+        best = best.max(on as f64 / grps.len() as f64);
+    }
+    best
+}
+
+/// public combo progress at which an opponent counts as near a combo for the counter and hold rules (half the pieces)
+pub const PUBLIC_NEAR: f64 = 0.5;

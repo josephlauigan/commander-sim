@@ -85,7 +85,18 @@ fn burn(g: &mut Game, p: PlayerId) -> Res {
         let i = crate::human::choices::choose_one(g, p, "target", "Aragorn: 3 damage to target opponent", &labels)?;
         opps[i.min(opps.len() - 1)]
     } else {
-        *opps.iter().min_by_key(|&&q| g.player(q).life).unwrap()
+        // an opponent the damage kills (the lowest such life), else the most threatening board (the combo player)
+        let dmg = 3 * crate::engine::combat::fiery(g, p);
+        let live: Vec<PlayerId> = opps.iter().copied().filter(|&q| g.player(q).life > 0).collect();
+        let killable = live.iter().copied().filter(|&q| g.player(q).life <= dmg).min_by_key(|&q| g.player(q).life);
+        killable.unwrap_or_else(|| {
+            *live
+                .iter()
+                .max_by(|&&a, &&b| {
+                    crate::engine::values::threat(g, p, a).total_cmp(&crate::engine::values::threat(g, p, b))
+                })
+                .unwrap_or(&opps[0])
+        })
     };
     let t = g.player(p).turns;
     g.player_mut(p).milestone.entry("aragorn").or_insert(t);
@@ -118,7 +129,12 @@ fn pump(g: &mut Game, p: PlayerId) -> Res {
         let mine: Vec<PermId> = all.iter().copied().filter(|&m| g.perm(m).owner == p).collect();
         let ready: Vec<PermId> = mine.iter().copied().filter(|&m| crate::human::combat::can_attack(g, p, m)).collect();
         let pick = |v: &[PermId]| v.iter().copied().max_by_key(|&m| crate::engine::values::epow(g, m));
-        match pick(&ready).or_else(|| pick(&mine)) {
+        // an opponent's combat: our blocker (the pump saves it or kills the attacker); our own turn before combat: the
+        // best ready attacker; otherwise our best creature
+        let blockers: Vec<PermId> = mine.iter().copied().filter(|m| g.blocking.contains(m)).collect();
+        let theirs_combat = g.active != Some(p) && matches!(g.step, crate::state::Step::Combat);
+        let first = if theirs_combat { pick(&blockers) } else { pick(&ready) };
+        match first.or_else(|| pick(&mine)) {
             Some(m) => m,
             None => all
                 .iter()

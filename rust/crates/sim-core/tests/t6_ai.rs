@@ -166,7 +166,9 @@ fn hold_gap(seat: &str) -> f64 {
     g.perm_mut(k).is_cmd = true;
     let mut s = Situation::new(&g, P0);
     assert!(s.cmdr_combo, "Kinnan is a commander on the battlefield and a combo piece");
-    assert!(!s.combo_near, "no archenemy is close");
+    // outside Tier 6 Kinnan on the battlefield is also half his combo in public (combo_near, engine-followups 11/06):
+    // set it off to isolate cmdr_combo
+    s.combo_near = false;
     let mut hv = |cmdr: bool| {
         s.cmdr_combo = cmdr;
         let (held, v) = brain::hold_value(&g, P0, &s);

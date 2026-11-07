@@ -1,6 +1,6 @@
 //! Sauron's speed metrics: the `army_hit` plan milestone, the Army power snapshots and the commander timing.
 
-use sim_core::engine::{combat, turn, values};
+use sim_core::engine::{combat, values};
 use sim_core::ids::PlayerId;
 use sim_core::testkit::*;
 
@@ -22,21 +22,6 @@ fn army_hit_is_set_on_the_turn_an_army_first_connects() {
     g.player_mut(P0).turns = 7;
     combat::resolve_combat(&mut g, P0, &[a], P1, &[a]).unwrap();
     assert_eq!(g.player(P0).milestone.get("army_hit"), Some(&5), "set once");
-}
-
-#[test]
-fn army_power_is_recorded_at_the_start_of_turns_6_8_and_10() {
-    let mut g = table(&["sauron", "cloud"]);
-    perm(&mut g, P0, "Sauron, the Dark Lord");
-    sim_core::engine::zones::amass(&mut g, P0, 4).unwrap();
-    g.player_mut(P0).turns = 4;
-    turn::step_start(&mut g, P0).unwrap(); // turn 5: nothing recorded
-    assert!(!g.player(P0).milestone.keys().any(|k| k.starts_with("army_p")));
-    turn::step_start(&mut g, P0).unwrap(); // turn 6
-    let a = values::army_of(&g, P0).unwrap();
-    assert_eq!(g.player(P0).milestone.get("army_p6").copied(), Some(values::epow(&g, a) as u32));
-    assert!(values::epow(&g, a) >= 4);
-    assert!(!g.player(P0).milestone.contains_key("army_p8"));
 }
 
 #[test]

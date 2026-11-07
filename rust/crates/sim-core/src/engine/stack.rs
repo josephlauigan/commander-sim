@@ -1093,6 +1093,15 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
             }
         }
     } else {
+        // --- engine-followups (2026-11-06): with an opponent near a combo (`brain::near_combo_table`), the last two
+        // counters wait for the combo: no counter for a spell that is no combo piece, no tutor and not important
+        // (Mana Drain on a Goblin Ringleader, Mystic Confluence on an Esper Sentinel while Urza assembled his combo)
+        let d = g.db.get(c);
+        let wanted = crate::cardcode::is_combo_piece(g, c) || d.tag(Tag::Tut) || d.tag(Tag::Seal) || imp >= 7.0;
+        let near = crate::ai::brain::near_combo_table(g, q) || crate::ai::brain::combo_commander_out(g, q);
+        if !veiled && nc <= 2 && !wanted && near {
+            return Ok(());
+        }
         // the look-ahead decides counters to the active player's spell in their main phase (not one under Veil of
         // Summer: its copies play out an ordinary counterspell)
         match if veiled { None } else { ai::search_counter(g, q, top.controller, c, top.generic) } {

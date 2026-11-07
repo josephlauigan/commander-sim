@@ -165,12 +165,13 @@ impl Situation {
                 }
             }
         }
-        let has_q = |q: PlayerId, t: Tag| has(g, q, t);
-        let combo_near = t6 && super::t6_table::archenemy(g, p).is_some_and(|a| a.1 >= super::t6_table::NEAR)
-            || opps.iter().any(|&q| {
-                let k = g.player(q).key;
-                k == "sauron" && has_q(q, Tag::Sword) && has_q(q, Tag::Assault)
-            });
+        // a Tier 6 deck reads the archenemy; any other deck an opponent with half of a catalogued combo on the table
+        // (public pieces only), so it keeps a counter and its mana for the combo (--- engine-followups, 2026-11-06)
+        let combo_near = if t6 {
+            super::t6_table::archenemy(g, p).is_some_and(|a| a.1 >= super::t6_table::NEAR)
+        } else {
+            near_combo_table(g, p)
+        };
         let cmdr_combo = opps.iter().any(|&q| {
             g.player(q).perms.iter().any(|&m| {
                 let x = g.perm(m);
@@ -211,6 +212,22 @@ fn instant_removal(g: &Game, c: CardId) -> bool {
 fn can_pay_now(g: &Game, p: PlayerId, c: CardId) -> bool {
     let (cg, cp) = cost_of(g, p, c);
     can_pay(g, p, cg, &cp, false)
+}
+
+/// --- engine-followups: an opponent of p with half or more of a catalogued combo's pieces on the table (public
+/// pieces only, `combos::public_progress`)
+pub fn near_combo_table(g: &Game, p: PlayerId) -> bool {
+    g.opps(p).any(|q| crate::impls::combos::public_progress(g, q) >= crate::impls::combos::PUBLIC_NEAR)
+}
+
+/// an opponent of p has a commander on the battlefield that is a piece of a catalogued combo (Kinnan, Urza, Heliod)
+pub fn combo_commander_out(g: &Game, p: PlayerId) -> bool {
+    g.opps(p).any(|q| {
+        g.player(q).perms.iter().any(|&m| {
+            let x = g.perm(m);
+            x.is_cmd && !x.phased && x.cd.is_some_and(|c| crate::cardcode::is_combo_piece(g, c))
+        })
+    })
 }
 
 /// brain.hold_value: the card the AI wants to keep mana up for, and how much
