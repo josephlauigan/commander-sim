@@ -1,0 +1,291 @@
+Model status of the swapped-in cards (cardgen audit):
+  Marvin, Murderous Mimic: Full (has the compiled activated abilities of the creatures you control that don't share its name (dsl::borrowed_abilities: cost and effects as printed, mana, discard and sacrifice costs, token copies, the same per-turn cap; a person chooses the targets and what a sacrifice cost gives up), and the hand-written ones, with Marvin as the source: it pays the {T}, the sacrifice of 'this creature' (Marvin goes), the counters, and the effect lands on it where the text says 'this creature'. The AI uses each through the creature's options hook run with Marvin as the source (impls/newcards_b.rs marvin_options; Kefka's {8} and Tekuthal's counter are done as the other named-creature texts; Krenko, Kiki-Jiki and Ioreth's untaps; Brutal Hordechief's blocks and Drivnod's / Tekuthal's indestructible counter are carried by Marvin's own hooks). A person uses the creature's own person path with Marvin as the source and the one that pays, so the questions are the same as for the creature itself: the target, the creature or artifact or land sacrificed or tapped or returned, the mode, X, the card taken from a graveyard, library or the top cards, the Phyrexian payment, how the opponents' creatures block (human/model_gaps_a4.rs marvin_abilities and human/marvin_hooks.rs list them for Kiki-Jiki, Chatterfang, Siege-Gang Commander, Syr Konrad, Professional Face-Breaker, Tinybones, Ezuri and 92 more creatures (98 in all); the creatures whose ability has nothing to choose stay the AI's option: Allosaurus Shepherd, Battle Cry Goblin, Bristly Bill, Krenko, Warmaster, Lathliss, Shalai, Twilight Drover and the like). Also borrowed: the sacrifice outlets Carrion Feeder and Viscera Seer (AI and person), Mother of Runes and the other pool protectors, Quirion Ranger and Wirewood Symbiote untaps, and the mana of the mana creatures (the best single one: the most mana, then the most colours). Not borrowed, because they are not activated abilities: casting from the top of the library or the graveyard, prepared spells, Rivaz's and Valgavoth's permissions, Deadeye Navigator's paired grant (NOT_ACTIVATED in newcards_b.rs); a transform does nothing to Marvin (it has no other face: Bloodline Keeper, Restless Bloodseeker). Text that names its creature (rule 201.5: it means the creature that has the ability, here Marvin) is done by Marvin as that creature: Hope of Ghirapur, Hawkeye, Balan, Drivnod, Sisay, Scion of the Ur-Dragon, Thanos, Nicol Bolas, Venat, and Tekuthal (the indestructible counter goes on Marvin) and Kefka ({8}: each opponent sacrifices a permanent, and nothing transforms: a permanent that is not a double-faced card can't transform, 701.28c). Proliferate through Marvin (Cankerbloom, High Perfect Morcant) is chosen by a person like every proliferate (any number of permanents and players with counters, 701.27). Each borrowed ability is as complete as the creature's own entry says)
+
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  cloud                                100 cards: Full 91, Full-auto 9, Approximate 0, Partial 0, Unmodeled 0
+  cloud (swapped)                      100 cards: Full 91, Full-auto 9, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 1 (High B2 / Low B3)  5 decks, 500 cards: Full 406, Full-auto 76, Approximate 18, Partial 0, Unmodeled 0
+  opponents Tier 2 (Mid B3)            5 decks, 500 cards: Full 428, Full-auto 56, Approximate 16, Partial 0, Unmodeled 0
+  opponents Tier 3 (High B3)           5 decks, 500 cards: Full 444, Full-auto 38, Approximate 18, Partial 0, Unmodeled 0
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by cloud's AI?
+  AI: Marvin, Murderous Mimic: priority 54 (generic)
+200 games (preflight dry run: swapped list, 200 per profile on t1), adaptive AI, 24 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m01s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 1 (High B2 / Low B3)
+  dry run: Marvin, Murderous Mimic: drawn in 25.5% of games (51), cast in 76.5% of those (39)
+
+12,200 games (current list and the swapped one, 2,000 per list per tier, profile loose), lookahead AI, 24 worker threads: about 25 minutes
+Swaps: Page, Loose Leaf -> Marvin, Murderous Mimic
+
+=== Cloud vs Tier 1 (High B2 / Low B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  29.9% ->  30.4%  (delta +0.4 pts, noise ±1.6, paired)   n=2000
+               eliminated by (variant): Teysa Karlov 14.2%  Isshin 20.1%  Lathril 13.2%  Tatyova 9.3%  Light-Paws 12.7%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (cloud) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for cloud: first attack by an equipped Cloud
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          29.9% ->  30.4%  +0.5pt   ±2.9 
+    Rounds survived (or game length)                   9.91 ->   9.94   +0.02  ±0.18 
+
+  Mana & consistency
+    Extra mulligans per game                           0.24 ->   0.26   +0.01  ±0.05 
+    Missed land drops, turns 1-5                       0.76 ->   0.76   +0.00  ±0.06 
+    Mana available on your turn 4                      4.09 ->   4.06   -0.03  ±0.06 
+    Mana available on your turn 6                      5.79 ->   5.76   -0.03  ±0.11 
+
+  Speed
+    Games where the game plan came online             74.8% ->  75.3%  +0.5pt   ±2.7 
+    Turn the game plan came online                     5.71 ->   5.73   +0.02  ±0.16 
+    Turn the commander first resolved                  2.60 ->   2.58   -0.02  ±0.06 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            17.56 ->  17.64   +0.07  ±0.72 
+    Tutors resolved per game                           2.90 ->   2.88   -0.02  ±0.09 
+    Spells cast per game                              16.23 ->  16.25   +0.02  ±0.53 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.81 ->   0.82   +0.01  ±0.06 
+    Board wipes cast                                   0.28 ->   0.28   -0.00  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.69 ->   0.67   -0.02  ±0.06 
+    Your spells countered                              0.26 ->   0.25   -0.01  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                49.02 ->  51.06   +2.03  ±3.63 
+      ...of which combat damage                       44.83 ->  46.80   +1.97  ±3.39 
+      ...of which other triggers                       4.19 ->   4.26   +0.07  ±0.39 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Marvin, Murderous Mimic               24.1      78.2         7.8     21.8       49.6      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Page, Loose Leaf                      24.8      71.4         6.4     28.6       41.8      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        29.9      30.4     +0.4
+    rounds survived                                   9.91      9.94    +0.02
+    eliminated, % of games                            69.8      69.5     -0.3
+    opponents it eliminated, per game                 0.86      0.91    +0.04
+    damage dealt, per game                            49.0      51.1     +2.0
+    plan: first attack by an equipped Cloud
+      plan online by turn 4, %                        25.1      24.4     -0.8
+      plan online by turn 6, %                        55.4      55.3     -0.1
+      plan online by turn 8, %                        67.5      68.2     +0.8
+      plan online by turn 12, %                       73.8      74.3     +0.6
+      plan online at all, %                           74.8      75.3     +0.5
+    commander resolved by turn 4, %                   93.6      93.7     +0.1
+    commander resolved by turn 6, %                   98.5      98.5     +0.1
+    commander removals, per game                      0.35      0.34    -0.01
+    lands on the battlefield, turn 4                  3.72      3.72    +0.01
+    lands on the battlefield, turn 8                  6.70      6.67    -0.03
+    mana available, turn 4                            4.09      4.06    -0.03
+    mana available, turn 8                            7.72      7.60    -0.13
+    cards in hand after the land drop, turn 4         5.98      5.97    -0.01
+    cards in hand after the land drop, turn 8         4.78      4.81    +0.02
+    wins by (current):  damage 99%, timeout 1%
+    wins by (swapped):  damage 100%, timeout 0%
+    eliminated by (current): Isshin via combat 11.8%, Light-Paws via commander damage 9.8%, Tatyova via combat 9.2%, Lathril via combat 7.1%
+    eliminated by (swapped): Isshin via combat 11.7%, Light-Paws via commander damage 10.0%, Tatyova via combat 9.1%, Lathril via combat 6.7%
+Swaps: Page, Loose Leaf -> Marvin, Murderous Mimic
+
+=== Cloud vs Tier 2 (Mid B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  22.0% ->  22.7%  (delta +0.7 pts, noise ±1.6, paired)   n=2000
+               eliminated by (variant): Sythis 10.8%  Brago 13.8%  Kaalia of the Vast 17.2%  Meren of Clan Nel Toth 14.0%  Lord Windgrace 19.9%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (cloud) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for cloud: first attack by an equipped Cloud
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          22.0% ->  22.7%  +0.7pt   ±2.6 
+    Rounds survived (or game length)                  11.98 ->  11.94   -0.04  ±0.21 
+
+  Mana & consistency
+    Extra mulligans per game                           0.24 ->   0.26   +0.01  ±0.05 
+    Missed land drops, turns 1-5                       0.76 ->   0.74   -0.02  ±0.06 
+    Mana available on your turn 4                      4.09 ->   4.07   -0.02  ±0.07 
+    Mana available on your turn 6                      5.77 ->   5.74   -0.03  ±0.11 
+
+  Speed
+    Games where the game plan came online             74.8% ->  75.0%  +0.2pt   ±2.7 
+    Turn the game plan came online                     6.09 ->   6.08   -0.01  ±0.18 
+    Turn the commander first resolved                  2.66 ->   2.64   -0.02  ±0.07 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            18.85 ->  18.96   +0.11  ±0.64 
+    Tutors resolved per game                           3.71 ->   3.69   -0.02  ±0.10 
+    Spells cast per game                              19.16 ->  19.10   -0.06  ±0.52 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.87 ->   0.88   +0.00  ±0.05 
+    Board wipes cast                                   0.33 ->   0.33   -0.00  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           1.93 ->   1.92   -0.01  ±0.12 
+    Your spells countered                              0.15 ->   0.15   +0.00  ±0.03 
+
+  Threat & pressure
+    Damage dealt to opponents per game                46.32 ->  47.41   +1.09  ±3.31 
+      ...of which combat damage                       43.26 ->  44.34   +1.08  ±3.15 
+      ...of which other triggers                       3.06 ->   3.07   +0.01  ±0.31 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Marvin, Murderous Mimic               25.6      76.3         7.8     23.7       33.3      0.03
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Page, Loose Leaf                      27.2      67.7         7.3     32.3       29.0      0.01
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        22.0      22.7     +0.7
+    rounds survived                                  11.98     11.94    -0.04
+    eliminated, % of games                            76.5      75.7     -0.8
+    opponents it eliminated, per game                 0.74      0.76    +0.02
+    damage dealt, per game                            46.3      47.4     +1.1
+    plan: first attack by an equipped Cloud
+      plan online by turn 4, %                        21.6      21.4     -0.2
+      plan online by turn 6, %                        50.6      51.4     +0.7
+      plan online by turn 8, %                        63.6      64.1     +0.4
+      plan online by turn 12, %                       72.6      72.5     -0.1
+      plan online at all, %                           74.8      75.0     +0.2
+    commander resolved by turn 4, %                   94.0      94.3     +0.4
+    commander resolved by turn 6, %                   99.0      99.0     +0.0
+    commander removals, per game                      1.04      1.03    -0.00
+    lands on the battlefield, turn 4                  3.74      3.75    +0.01
+    lands on the battlefield, turn 8                  6.59      6.59    -0.01
+    mana available, turn 4                            4.09      4.07    -0.02
+    mana available, turn 8                            7.49      7.45    -0.04
+    cards in hand after the land drop, turn 4         5.98      5.97    -0.00
+    cards in hand after the land drop, turn 8         4.95      4.95    +0.00
+    wins by (current):  damage 98%, timeout 2%
+    wins by (swapped):  damage 98%, timeout 2%
+    eliminated by (current): Kaalia of the Vast via combat 14.1%, Brago via combat 13.5%, Lord Windgrace via combat 11.5%, Sythis via combat 8.4%
+    eliminated by (swapped): Kaalia of the Vast via combat 13.7%, Brago via combat 13.2%, Lord Windgrace via combat 11.8%, Sythis via combat 7.8%
+  progress 100.0%  83m44s elapsed, ~0m00s left
+Swaps: Page, Loose Leaf -> Marvin, Murderous Mimic
+
+=== Cloud vs Tier 3 (High B3): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  23.2% ->  22.8%  (delta -0.4 pts, noise ±1.5, paired)   n=2000
+               eliminated by (variant): Tergrid 18.8%  Atraxa 8.9%  Aurelia 20.0%  Marwyn 18.2%  Korvold 11.1%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (cloud) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for cloud: first attack by an equipped Cloud
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          23.2% ->  22.8%  -0.5pt   ±2.7 
+    Rounds survived (or game length)                   9.73 ->   9.71   -0.02  ±0.16 
+
+  Mana & consistency
+    Extra mulligans per game                           0.24 ->   0.26   +0.01  ±0.05 
+    Missed land drops, turns 1-5                       0.84 ->   0.83   -0.01  ±0.06 
+    Mana available on your turn 4                      4.01 ->   4.00   -0.01  ±0.07 
+    Mana available on your turn 6                      5.57 ->   5.53   -0.04  ±0.11 
+
+  Speed
+    Games where the game plan came online             69.6% ->  70.0%  +0.5pt   ±2.9 
+    Turn the game plan came online                     5.75 ->   5.84   +0.08  ±0.15 
+    Turn the commander first resolved                  2.91 ->   2.90   -0.02  ±0.07 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            15.50 ->  15.45   -0.05  ±0.60 
+    Tutors resolved per game                           2.84 ->   2.83   -0.00  ±0.08 
+    Spells cast per game                              14.15 ->  14.04   -0.11  ±0.44 
+
+  Interaction
+    Counterspells cast                                 0.00 ->   0.00   +0.00  ±0.00 
+    Spot removal cast                                  0.69 ->   0.69   -0.00  ±0.05 
+    Board wipes cast                                   0.21 ->   0.21   -0.00  ±0.03 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.00 ->   0.00   +0.00  ±0.00 
+    Your key permanents removed by opponents           0.65 ->   0.65   +0.00  ±0.05 
+    Your spells countered                              0.02 ->   0.02   +0.00  ±0.01 
+
+  Threat & pressure
+    Damage dealt to opponents per game                40.04 ->  39.96   -0.08  ±3.34 
+      ...of which combat damage                       36.27 ->  36.27   -0.01  ±3.11 
+      ...of which other triggers                       3.77 ->   3.69   -0.08  ±0.36 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 2000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Marvin, Murderous Mimic               20.1      71.5         6.9     28.5       43.4      0.01
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Page, Loose Leaf                      21.6      69.9         5.7     30.1       39.4      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        23.2      22.8     -0.4
+    rounds survived                                   9.73      9.71    -0.02
+    eliminated, % of games                            76.7      77.2     +0.5
+    opponents it eliminated, per game                 0.68      0.66    -0.02
+    damage dealt, per game                            40.0      40.0     -0.1
+    plan: first attack by an equipped Cloud
+      plan online by turn 4, %                        18.8      18.6     -0.2
+      plan online by turn 6, %                        50.1      49.5     -0.6
+      plan online by turn 8, %                        63.4      62.6     -0.8
+      plan online by turn 12, %                       68.8      69.2     +0.4
+      plan online at all, %                           69.6      70.0     +0.5
+    commander resolved by turn 4, %                   91.0      91.8     +0.8
+    commander resolved by turn 6, %                   98.4      98.5     +0.0
+    commander removals, per game                      0.45      0.45    +0.00
+    lands on the battlefield, turn 4                  3.64      3.65    +0.00
+    lands on the battlefield, turn 8                  6.34      6.29    -0.05
+    mana available, turn 4                            4.01      4.00    -0.01
+    mana available, turn 8                            7.21      7.10    -0.11
+    cards in hand after the land drop, turn 4         5.68      5.68    +0.00
+    cards in hand after the land drop, turn 8         4.30      4.33    +0.03
+    wins by (current):  damage 100%
+    wins by (swapped):  damage 100%
+    eliminated by (current): Aurelia via combat 14.5%, Tergrid via combat 10.5%, Marwyn via combat 9.1%, Marwyn via combo 7.9%
+    eliminated by (swapped): Aurelia via combat 13.9%, Tergrid via combat 10.4%, Marwyn via combat 8.8%, Marwyn via combo 8.1%
+
+(5025s total)
