@@ -4,6 +4,12 @@
 two lists plus `binder-cards.txt`; `documents/aragorn-merge-swaps.md` is the physical swap guide. Eleven cards are
 bought: Aragorn and ten upgrades (see "Where the cards come from"). Deck key `aragorn`, tiers t4-t5.
 
+**Changed 2026-11-06 (JD, card-pile packages A1 + A2):** Austere Command, Nibelheim Aflame, Windborn Muse and Sokenzan
+for Big Score, Blossoming Defense, Grand Abolisher and a Mountain (A1: sweepers and an attack tax against t4's go-wide
+decks; t4 +4.3, t5 +2.4, both outside the noise). Paradise Druid, Spark Double and Llanowar Elves for Noble Hierarch,
+Three Visits and Growth Spiral (A2: cards JD owns for three still to buy; no clear effect either way). Three of the
+ten buys are no longer needed. Evidence: `audit/aragorn/FINDINGS.md`.
+
 A four-colour spell deck. Every spell you cast triggers Aragorn, and red spells are the clock: 3 damage to an
 opponent each, doubled by Veyran on instants and sorceries and tripled by Fiery Emancipation. White spells make
 chump-blockers, blue spells smooth draws, and green spells pump. It keeps Kefka's Underworld Breach storm finish and
@@ -15,7 +21,7 @@ ramp, protection and creature defence from the binder replace it.
 | **Commander** | Aragorn, the Uniter ({R}{G}{W}{U}, 5/5, Legendary Creature — Human Noble) |
 | **Bracket** | 4 (11 Game Changers, see Bracket) |
 | **Simulator** | key `aragorn`, tiers t4-t5: 10.7% at t4, 7.7% at t5, 9.2% over t4-t5 (first baseline 2026-11-06, `audit/aragorn/FINDINGS.md`) |
-| **Spells** | 64 (red 23, blue 19, green 13, white 13, colourless 6; 10 multicolour), average mana value 2.55 |
+| **Spells** | 64 (red 23, blue 19, green 11, white 14, colourless 6; 9 multicolour), average mana value 2.69 |
 
 ## Strategy
 
@@ -27,21 +33,23 @@ to target opponent. Whenever you cast a green spell, target creature gets +4/+4 
 - **Cast triggers only.** Copies (Grapeshot's storm copies, Twinned Vision's copy) don't trigger him. Flashback and
   escape and rebound casts do, so Underworld Breach, Ephemerate and Mystic Sanctuary repeat triggers.
 - **A multicolour spell triggers once for each of its colours.** Twinned Vision is blue and red (scry 2 and 3 damage).
-  Kitchen Finks is green and white (a +4/+4 and a token). Growth Spiral, Third Path Iconoclast and Expressive Iteration also have two
+  Kitchen Finks is green and white (a +4/+4 and a token). Third Path Iconoclast and Expressive Iteration also have two
   colours.
 - **Veyran doubles all four triggers on instants and sorceries.** A red instant is 6 damage, a white one makes two
   Soldiers.
 - **Fiery Emancipation triples his damage:** each red spell is 9 damage (18 with Veyran on an instant or sorcery).
 - **Defence.** The white Soldiers chump-block creature decks, which killed Kefka most (Tergrid, Aurelia and Marwyn
-  were about 62% of its eliminations). Skullclamp turns each Soldier into two cards, and Aura Shards turns each into
+  were about 62% of its eliminations). Against go-wide boards (Krenko, Edgar Markov, Yuriko at t4) the deck has
+  three sweepers (Austere Command, Nibelheim Aflame: Aragorn deals 5 to each other creature; Cyclonic Rift) and
+  Windborn Muse's attack tax next to Ghostly Prison. Skullclamp turns each Soldier into two cards, and Aura Shards turns each into
   an artifact or enchantment kill.
 
 ### Game plan
-- **Turns 1 to 3.** Mana: Birds of Paradise, Noble Hierarch, Three Visits, Nature's Lore, Growth Spiral, Sol
-  Ring, Arcane Signet, Smothering Tithe. Aragorn costs one of each colour; Three Visits and Nature's Lore fetch a Forest dual
+- **Turns 1 to 3.** Mana: Birds of Paradise, Llanowar Elves, Paradise Druid, Nature's Lore, Sol
+  Ring, Arcane Signet, Smothering Tithe. Aragorn costs one of each colour; Paradise Druid makes any colour, and Nature's Lore fetches a Forest dual
   (Taiga, Tropical Island, Savannah, Temple Garden) untapped to fix it. Cheap pingers and token makers (Firebrand
   Archer, Third Path Iconoclast, Young Pyromancer) start the burn and the wall. Rhystic Study draws all game.
-- **Turns 4 to 6.** Cast Aragorn, protect him (Lightning Greaves, Heroic Intervention, Teferi's Protection, Blossoming Defense, Deflecting
+- **Turns 4 to 6.** Cast Aragorn, protect him (Lightning Greaves, Heroic Intervention, Teferi's Protection, Deflecting
   Swat), and chain cheap spells. Hold counters (Counterspell, Mana Drain, Swan Song, Fierce Guardianship, Force of Will) for
   the turn that matters.
 - **Late game.** Win with a burn turn: Jeska's Will, rituals and Underworld Breach, or Fiery Emancipation with any
@@ -80,6 +88,10 @@ to target opponent. Whenever you cast a green spell, target creature gets +4/+4 
 | Basics to add | 2 | One Forest and one Plains (not in any list or the binder) |
 
 ### The ten upgrades (bought instead of binder or Kefka filler)
+
+*2026-11-06: Noble Hierarch, Three Visits and Growth Spiral are no longer needed (replaced by Paradise Druid, Spark
+Double and Llanowar Elves, package A2), and Austere Command is back in (package A1), next to Swords to Plowshares.*
+
 | Buy | Replaces | Why |
 |---|---|---|
 | Swords to Plowshares | Austere Command | 1-mana removal instead of a 6-mana wipe, still a white trigger |
@@ -104,8 +116,8 @@ physical Kefka copy doesn't cover.
 - **Discard and looting:** Rummaging Goblin, Garrison Excavator, Stadium Tidalmage, Harmonic Prodigy, Blazing
   Firesinger, Birgi (the deck no longer wants to discard).
 - **Expensive or off-plan:** Niv-Mizzet the Firemind and Psychosis Crawler (the Kefka draw-to-damage win needed the
-  flip), Jin-Gitaxias, Inferno Titan, Gilgamesh, Godo, Bribery, Solve the Equation, Chandra's Ignition, Nibelheim
-  Aflame, Not of This World.
+  flip), Jin-Gitaxias, Inferno Titan, Gilgamesh, Godo, Bribery, Solve the Equation, Chandra's Ignition,
+  Not of This World (Nibelheim Aflame came back in on 2026-11-06, package A1).
 - **Small value:** Reality Shift, Price of Progress, Seize the Spoils, Palantír of Orthanc, Vandalblast (Aragorn's
   own rocks), Propaganda, Slip Out the Back, An Offer You Can't Refuse, the Marvel creatures, Mind Stone, Fellwar
   Stone, the Talismans.
@@ -122,7 +134,7 @@ Diamond would change that).
 
 **Commander (1).** Aragorn, the Uniter
 
-**Creatures (15).** Birds of Paradise, Faeburrow Elder, Firebrand Archer, Grand Abolisher, Guttersnipe, Kitchen Finks, Niv-Mizzet Parun, Noble Hierarch, Restoration Angel, Skyclave Apparition, Storm-Kiln Artist, Talrand Sky Summoner, Third Path Iconoclast, Veyran Voice of Duality, Young Pyromancer
+**Creatures (17).** Birds of Paradise, Faeburrow Elder, Firebrand Archer, Guttersnipe, Kitchen Finks, Llanowar Elves, Niv-Mizzet Parun, Paradise Druid, Restoration Angel, Skyclave Apparition, Spark Double, Storm-Kiln Artist, Talrand Sky Summoner, Third Path Iconoclast, Veyran Voice of Duality, Windborn Muse, Young Pyromancer
 
 **Planeswalkers (2).** Elspeth Sun's Champion, Tezzeret Cruel Captain
 
@@ -130,11 +142,11 @@ Diamond would change that).
 
 **Artifacts (5).** Arcane Signet, Lightning Greaves, Lotus Petal, Skullclamp, Sol Ring
 
-**Sorceries (6).** Expressive Iteration, Grapeshot, Jeska's Will, Nature's Lore, Rite of Flame, Three Visits
+**Sorceries (7).** Austere Command, Expressive Iteration, Grapeshot, Jeska's Will, Nature's Lore, Nibelheim Aflame, Rite of Flame
 
-**Instants (28).** Big Score, Blossoming Defense, Brain Freeze, Chaos Warp, Comet Storm, Counterspell, Cyclonic Rift, Deflecting Swat, Desperate Ritual, Ephemerate, Fact or Fiction, Fierce Guardianship, Force of Will, Frantic Search, Growth Spiral, Heroic Intervention, Lightning Bolt, Mana Drain, Manamorphose, Mystic Confluence, Mystical Tutor, Path to Exile, Seething Song, Swan Song, Swords to Plowshares, Teferi's Protection, Twinned Vision, Worldly Tutor
+**Instants (25).** Brain Freeze, Chaos Warp, Comet Storm, Counterspell, Cyclonic Rift, Deflecting Swat, Desperate Ritual, Ephemerate, Fact or Fiction, Fierce Guardianship, Force of Will, Frantic Search, Heroic Intervention, Lightning Bolt, Mana Drain, Manamorphose, Mystic Confluence, Mystical Tutor, Path to Exile, Seething Song, Swan Song, Swords to Plowshares, Teferi's Protection, Twinned Vision, Worldly Tutor
 
-**Lands (35).** Battlefield Forge, Brushland, Command Tower, Exotic Orchard, Flooded Strand, Frontier Bivouac, Glacial Fortress, Jungle Shrine, Marsh Flats, Misty Rainforest, Mystic Monastery, Mystic Sanctuary, Path of Ancestry, Plateau, Polluted Delta, Savannah, Seaside Citadel, Shivan Reef, Spirebluff Canal, Steam Vents, Stormcarved Coast, Sulfur Falls, Sunpetal Grove, Taiga, Temple Garden, Tropical Island, Tundra, Verdant Catacombs, Volcanic Island, Windswept Heath, Yavimaya Coast, 1 Forest, 1 Island, 1 Mountain, 1 Plains
+**Lands (35).** Battlefield Forge, Brushland, Command Tower, Exotic Orchard, Flooded Strand, Frontier Bivouac, Glacial Fortress, Jungle Shrine, Marsh Flats, Misty Rainforest, Mystic Monastery, Mystic Sanctuary, Path of Ancestry, Plateau, Polluted Delta, Savannah, Seaside Citadel, Shivan Reef, Sokenzan Crucible of Defiance, Spirebluff Canal, Steam Vents, Stormcarved Coast, Sulfur Falls, Sunpetal Grove, Taiga, Temple Garden, Tropical Island, Tundra, Verdant Catacombs, Volcanic Island, Windswept Heath, Yavimaya Coast, 1 Forest, 1 Island, 1 Plains
 
 ## Import list (100)
 
@@ -142,10 +154,9 @@ Diamond would change that).
 1 Aragorn, the Uniter
 1 Arcane Signet
 1 Aura Shards
+1 Austere Command
 1 Battlefield Forge
-1 Big Score
 1 Birds of Paradise
-1 Blossoming Defense
 1 Brain Freeze
 1 Brushland
 1 Chaos Warp
@@ -166,38 +177,34 @@ Diamond would change that).
 1 Firebrand Archer
 1 Flooded Strand
 1 Force of Will
-1 Forest
 1 Frantic Search
 1 Frontier Bivouac
 1 Ghostly Prison
 1 Glacial Fortress
-1 Grand Abolisher
 1 Grapeshot
-1 Growth Spiral
 1 Guttersnipe
 1 Heroic Intervention
-1 Island
 1 Jeska's Will
 1 Jungle Shrine
 1 Kitchen Finks
 1 Lightning Bolt
 1 Lightning Greaves
+1 Llanowar Elves
 1 Lotus Petal
 1 Mana Drain
 1 Manamorphose
 1 Marsh Flats
 1 Misty Rainforest
-1 Mountain
 1 Mystic Confluence
 1 Mystic Monastery
 1 Mystic Sanctuary
 1 Mystical Tutor
 1 Nature's Lore
+1 Nibelheim Aflame
 1 Niv-Mizzet, Parun
-1 Noble Hierarch
+1 Paradise Druid
 1 Path of Ancestry
 1 Path to Exile
-1 Plains
 1 Plateau
 1 Polluted Delta
 1 Restoration Angel
@@ -210,7 +217,9 @@ Diamond would change that).
 1 Skullclamp
 1 Skyclave Apparition
 1 Smothering Tithe
+1 Sokenzan, Crucible of Defiance
 1 Sol Ring
+1 Spark Double
 1 Spirebluff Canal
 1 Steam Vents
 1 Storm-Kiln Artist
@@ -226,7 +235,6 @@ Diamond would change that).
 1 Temple Garden
 1 Tezzeret, Cruel Captain
 1 Third Path Iconoclast
-1 Three Visits
 1 Triple Triad
 1 Tropical Island
 1 Tundra
@@ -235,8 +243,12 @@ Diamond would change that).
 1 Verdant Catacombs
 1 Veyran, Voice of Duality
 1 Volcanic Island
+1 Windborn Muse
 1 Windswept Heath
 1 Worldly Tutor
 1 Yavimaya Coast
 1 Young Pyromancer
+1 Forest
+1 Island
+1 Plains
 ```

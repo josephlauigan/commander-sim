@@ -8,6 +8,42 @@ day; their findings are in `audit/retired/kefka/` and `audit/retired/sauron/`). 
 not from a paired test). **Model:** 100 cards, Full 94, Full-auto 6; Aragorn's four cast triggers are card code
 (`impls/aragorn.rs`, `tests/cards_aragorn.rs`).
 
+## 2026-11-06: card-pile packages A1 and A2, both adopted (paired swap runs; t4, t5, look-ahead, loose, 1,500 games per list per tier, main b84ab9e6 with #292)
+
+From JD's spare-card pile (`audit/jd-packages/2026-11-06-card-pile/`), aimed at the losses below: t4's go-wide decks
+(Krenko, Edgar Markov, Yuriko) and short mana. JD adopted both on 2026-11-06; the list now has all seven swaps. A1 and
+A2 were tested separately against the old list, not together (they touch different cards; JD chose no combined run).
+
+**A1, sweepers and an attack tax: BETTER at both tiers.** Big Score => Austere Command, Blossoming Defense => Nibelheim
+Aflame, Grand Abolisher => Windborn Muse, Mountain => Sokenzan.
+
+| | t4 | t5 |
+|---|---|---|
+| Win rate | 11.1% -> **15.4%** (+4.3, noise ±2.2) | 9.4% -> **11.8%** (+2.4, noise ±1.9) |
+| Rounds survived | 8.60 -> 8.99 (+0.39, ±0.18) | 9.07 -> 9.33 (+0.25, ±0.24) |
+| Board wipes cast per game | 0.03 -> 0.25 | 0.04 -> 0.25 |
+| Eliminated, % of games | 88.9 -> 84.6 | 90.1 -> 87.7 |
+| Damage to opponents per game | 20.0 -> 22.4 (combat 10.1 -> 12.1) | 21.7 -> 23.5 (inside noise) |
+
+Why it helped: the deck had one sweeper (Cyclonic Rift) and now casts a wipe in a quarter of its games. At t4 the
+go-wide eliminations fall (Krenko combat 14.2% -> 12.5%, Edgar Markov combat 12.1% -> 11.2%), it lives longer, and the
+longer games give Aragorn more red-spell and combat damage. At t5 the gain is smaller: its losses there are combos
+(Urza, Kinnan), which wipes don't stop. Per card (t4 / t5, share of the games drawn): Windborn Muse is cast 81% / 75%
+(round 6.5 / 7.4); Nibelheim Aflame 65% / 50%, and the games it is cast in are won 37% at t4; Austere Command only
+50% / 58%, stuck in hand about 45% (six mana). What left was cast more but did less: Blossoming Defense (73% / 75%) won
+14.5% / 12.1% of the games it was cast in, below the deck's average. Sokenzan is a land, so the card table can't show
+whether its channel was used.
+
+**A2, owned ramp for Don't Have cards: NO CLEAR EFFECT.** Noble Hierarch => Paradise Druid, Three Visits => Spark Double,
+Growth Spiral => Llanowar Elves. t4 11.1% -> 10.7% (-0.4, ±2.0); t5 9.4% -> 10.1% (+0.7, ±1.9). Mana on turn 4 is
+unchanged (4.33 -> 4.29 at t4, 4.31 -> 4.24 at t5, inside noise); plan online 61.1% -> 58.9% / 54.1% -> 55.3% (noise
+±3.6). Paradise Druid and Llanowar Elves are cast as often and as early as what they replaced (84-87% of the games
+drawn, rounds 3.9-4.8). Spark Double is cast 72% / 67% at round 6.4 / 7.1, stuck about 30%. Adopted because the cards
+are JD's: Noble Hierarch, Three Visits and Growth Spiral no longer need buying, at no measurable cost.
+
+The list after both: average mana value 2.55 -> 2.69. Raw: the package outputs in the session scratchpad were copied to
+`audit/jd-packages/2026-11-06-card-pile/runs/` (A1-aragorn.txt, A2-aragorn.txt).
+
 ## 2026-11-06: the AI values Aragorn's triggers (AI fix; t4, t5, look-ahead, loose, 2,000 games per tier, seed 500000)
 
 What changed: with Aragorn out, every spell's worth includes its triggers (`impls::aragorn::cast_value`: 3 damage per

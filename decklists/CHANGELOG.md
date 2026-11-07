@@ -18,6 +18,7 @@ the binder and eleven bought cards (`documents/aragorn-merge-swaps.md`).
 
 ### Changes
 
+- **2026-11-06.** Out: Big Score, Blossoming Defense, Grand Abolisher, Growth Spiral, Mountain, Noble Hierarch, Three Visits. In: Austere Command, Llanowar Elves, Nibelheim Aflame, Paradise Druid, Sokenzan, Crucible of Defiance, Spark Double, Windborn Muse. Card-pile packages A1 (sweepers and Windborn Muse: t4 +4.3, t5 +2.4, both outside noise) and A2 (owned ramp for Don't Have cards: no clear effect at t4 or t5); JD 2026-11-06.
 - **2026-11-06.** New deck (JD): Kefka and Sauron merged into Aragorn, the Uniter (RGWU): 33 cards from Kefka, 11 from Sauron, 43 from the binder, 11 bought, a Forest and a Plains. Aragorn has card code (`impls/aragorn.rs`, status Full); the plan file is provisional (`data/plans/aragorn.toml`). No list change since.
 
 ### Simulator history

@@ -1,49 +1,43 @@
-# Card-pile swap packages (2026-11-06, not yet run)
+# Card-pile swap packages (2026-11-06)
 
-JD's pile of 35 spare cards (many freed by retiring Kefka and Sauron), plus commander-sim-82's Aragorn sweeper
-recommendations, built into one package per deck. JD approved these on 2026-11-06; the runs were stopped before any
-finished, so **there are no results yet**. Base: origin/main `d1763b2d` (PRs #290 and #291 merged).
+JD's pile of spare cards (bulk, a Dragon package and a Ring package, many freed by retiring Kefka and Sauron), plus
+commander-sim-82's Aragorn sweeper recommendations, built into packages for five decks (Tymna/Thrasios not looked at).
+JD's rule for cuts: take from proxy or Don't Have cards; take a Have card only for a true upgrade. Approved by JD on
+2026-11-06 and run on main `b84ab9e6` (PR #292's counterspell AI included). Results go to each deck's
+`audit/<deck>/FINDINGS.md`. This replaces the earlier P1-P8 draft, which never ran.
 
-Checks done: every card going in is Commander-legal and fits its deck's colour identity; every card coming out is in
-that deck's list in `data/decks.json` at `d1763b2d`. Preflight (`--preflight-only`) passed for all of them: every card
-is modelled Full and none was stopped by the dry run.
+Checks: every card going in is Commander-legal and fits its deck's colour identity; every card coming out is in that
+deck's list in `data/decks.json` at `b84ab9e6`. Each card going in is a separate physical copy from the pile.
 
-## The packages
+The machine-readable list is `packages.tsv` (id, deck, `Out=>In` pairs split by `|`). Each package runs as
+`commander-sim --deck <deck> --pool all --swap "Out=>In" ...` under the memory cap (own tiers, loose, explain on).
 
-Each deck runs only against its own tiers (`--pool all`), loose profile, explanations on (the defaults). Each command
-runs under the memory cap: `systemd-run --user --scope -q -p MemoryMax=24G -p MemorySwapMax=0 <command>`.
-
-| Run | Deck (tiers) | Out => In |
+| Run | Deck (tiers) | Out => In (status of the card out) |
 |---|---|---|
-| P1 | aragorn (t4-t5) | Big Score => Windborn Muse; Mystic Confluence => Disdainful Stroke; Comet Storm => Spark Double; Island => Mistrise Village; Mountain => Sokenzan, Crucible of Defiance; Blossoming Defense => Nibelheim Aflame |
-| P2 | aragorn | as P1, but Blossoming Defense => Austere Command |
-| P3 | aragorn | as P1, but Blossoming Defense => Chandra's Ignition |
-| P4 | thanos (t5) | Urza's Bauble => Crucible of Worlds; Wastes => Strip Mine; Oblivion Stone => Elesh Norn, Mother of Machines; Wayfarer's Bauble => Spark Double; Expedition Map => Paradise Druid; Ugin, the Spirit Dragon => Summon: Bahamut; Decimate => Meteor Golem; Ratchet Bomb => Hangarback Walker |
-| P5 | sheoldred (t3-t4) | Raise Dead => Reanimate; Cast Away Doubt => Entomb; Dark Deal => Yawgmoth's Will; Vanquish the Weak => Massacre Wurm; Diabolic Tutor => Diabolic Intent; Otherworld Atlas => Hangarback Walker; Howling Mine => Palantír of Orthanc |
-| P6 | yshtola (t5) | Memory Trap => Counterspell; Ill-Gotten Inheritance => Windborn Muse; Arrest => Meteor Golem; Read the Bones => Fact or Fiction; Dark Petition => Yawgmoth's Will |
-| P7 | cloud (t1-t3) | Disenchant => Sting, the Glinting Dagger; Loyal Warhound => Hangarback Walker |
-| P8 | thrasios (t6) | Mockingbird => Llanowar Elves; Snapback => Counterspell |
+| TD | thanos (t5) | Wayfarer's Bauble => Scion of Draco (proxy); Urza's Bauble => Crucible of Worlds (proxy); Wastes => Strip Mine (proxy); Red Elemental Blast => Disdainful Stroke (proxy); Oblivion Stone => Elesh Norn, Mother of Machines (proxy); Ugin, the Spirit Dragon => Summon: Bahamut (proxy); Ratchet Bomb => Hangarback Walker (proxy); Decimate => Meteor Golem (Have); Duplicant => Glorybringer (proxy); Gamble => Thundermaw Hellkite (proxy); Lotus Petal => Mox Jasper (proxy); Karn, the Great Creator => Utvara Hellkite (proxy) |
+| A1 | aragorn (t4-t5) | Big Score => Austere Command (Have); Blossoming Defense => Nibelheim Aflame (Have); Grand Abolisher => Windborn Muse (proxy); Mountain => Sokenzan, Crucible of Defiance (basic) |
+| A2 | aragorn (t4-t5) | Noble Hierarch => Paradise Druid (Don't Have); Three Visits => Spark Double (Don't Have); Growth Spiral => Llanowar Elves (Don't Have) |
+| S | sheoldred (t3-t4) | Raise Dead => Reanimate; Cast Away Doubt => Entomb; Diabolic Tutor => Diabolic Intent; Vanquish the Weak => Massacre Wurm; Dark Deal => Yawgmoth's Will; Otherworld Atlas => Dreadhorde Invasion (all Have); Swamp => Barad-dûr (basic) |
+| Y | yshtola (t5) | Memory Trap => Counterspell; Dark Petition => Ringsight; Ill-Gotten Inheritance => Palantír of Orthanc (all Have); Island => Mistrise Village (basic) |
+| C | cloud (t1-t3) | Plains => Rogue's Passage (basic); Disenchant => Sting, the Glinting Dagger (Have) |
 
-The three Aragorn variants share the Blossoming Defense cut so the sweepers compare with each other (commander-sim-82
-found Krenko, Edgar Markov and Yuriko cause about 52% of Aragorn's t4 eliminations). Vandalblast was left out: it only
-hits artifacts. Lotus Petal, the rituals and Arcane Signet stay because they feed the Breach line and the mana.
+Outside the tests: the bulk Blood Crypt replaces Thanos's proxy Blood Crypt (same card).
 
-Other choices JD made: Ugin rather than Nicol Bolas, the Ravager is cut for Bahamut. Raise Dead stays as a slot
-(JD kept it over Necrosquito on 11/04), so it becomes Reanimate and Yawgmoth's Will takes Dark Deal's slot.
+Why these packages:
+- **Thanos** (20.0% at t5; wins 50% by damage, 46% by combo; dies around turn 8 to Kinnan, Miirym, Zur, Urza and
+  Yawgmoth): cheap speed and consistency (Scion of Draco costs about {2} with the duals' land types, Crucible + Strip
+  Mine with Urza's Saga, the fetches and Wrenn and Six), interaction, and hasty Dragons for the Terror of the Peaks /
+  The Ur-Dragon fair win.
+- **Aragorn** (9.9% over t4-t5): A1 answers t4's go-wide decks (Krenko, Edgar Markov, Yuriko, about 52% of its t4
+  losses; commander-sim-82's analysis); A2 swaps Don't Have ramp for cards JD owns, and adds Spark Double (copies
+  Veyran) in place of Three Visits, so A2 has one ramp card fewer.
+- **Sheoldred**: only its combo core, finishers and tutors are proxies, so every cut is a Have card replaced by a true
+  upgrade (Reanimate for Raise Dead in the same slot; JD kept Raise Dead over Necrosquito on 11/04).
+- **Y'shtola**: noncreature spells of mana value 3+ trigger her drain (Ringsight, Palantír); Counterspell answers the
+  Kinnan and Urza combos she loses to. Exquisite Blood is a proxy in her list (it isn't in JD's paste of the deck).
+- **Cloud**: Rogue's Passage makes an equipped Cloud unblockable; Sting at JD's request.
 
-Example: `commander-sim --deck sheoldred --pool all --swap "Raise Dead=>Reanimate" --swap "Cast Away Doubt=>Entomb" ...`
-(one `--swap "Out=>In"` per pair). Expected time is about 13 minutes per two-tier package, about 1.5 hours for all eight.
-
-## Watch in the results
-
-- The AI casts some cards rarely (dry run, share of the games they were drawn): Yawgmoth's Will 9-15% (priority 0),
-  Entomb 19%, Massacre Wurm 20-26%. Low numbers for these may reflect the AI rather than the card.
-- Hangarback Walker in Cloud and Reanimate in Sheoldred also got the "priority 0" AI warning, though the dry runs cast
-  them about half the time or more.
-- Sting: the model covers the combat untap and the Goblin/Orc first strike. The Scryfall-text check listed those as
-  "not modeled", so confirm from Sting's numbers.
-
-## One copy each
-
-JD owns one copy of each, so the packages compare homes: Spark Double (P1-P3 or P4), Windborn Muse (P1-P3 or P6),
-Meteor Golem (P4 or P6), Hangarback Walker (P4, P5 or P7), Counterspell (P6 or P8), Yawgmoth's Will (P5 or P6).
+Left out (legal, but no slot or off-plan): Fact or Fiction, Glimpse the Unthinkable, Godo, Grave Titan, Inferno Titan,
+Kefka, Kuja, Marvin, Chandra's Ignition, Sakura-Tribe Elder, Haunted Ridge, Sulfurous Springs, Underground River,
+Corroding Dragonstorm, Dragonlord Ojutai, Kindred Dominance, Kura, Niv-Mizzet the Firemind, Call of the Ring, Mauhúr,
+Sauron.
