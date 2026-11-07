@@ -1,0 +1,100 @@
+1 Aragorn, the Uniter (hoc) 69
+1 Arcane Signet (p30m) 1P
+1 Aura Shards (inv) 233
+1 Battlefield Forge (ori) 244
+1 Big Score (plst) SNC-102
+1 Birds of Paradise (blc) 81
+1 Blossoming Defense (kld) 146
+1 Brain Freeze (soa) 78
+1 Brushland (plst) BRO-259
+1 Chaos Warp (c19) 136
+1 Comet Storm (c15) 146
+1 Command Tower (sld) 7030
+1 Counterspell (pf26) 5
+1 Cyclonic Rift (sld) 1869
+1 Deflecting Swat (cmm) 698
+1 Desperate Ritual (sld) 1984
+1 Elspeth, Sun's Champion (ths) 9
+1 Ephemerate (sta) 68
+1 Exotic Orchard (brc) 185
+1 Expressive Iteration (stx) 186
+1 Fact or Fiction (cmm) 631
+1 Faeburrow Elder (plst) ELD-190
+1 Fierce Guardianship (cmm) 694
+1 Fiery Emancipation (wot) 42
+1 Firebrand Archer (plst) HOU-92
+1 Flooded Strand (mh3) 353
+1 Force of Will (all) 28
+1 Forest (mdd) 301
+1 Frantic Search (ulg) 32
+1 Frontier Bivouac (ecc) 150
+1 Ghostly Prison (soc) 146
+1 Glacial Fortress (fic) 400
+1 Grand Abolisher (cmm) 625
+1 Grapeshot (tsr) 166
+1 Growth Spiral (trc) 476
+1 Guttersnipe (pm19) 145
+1 Heroic Intervention (sld) 1872
+1 Island (sos) 274
+1 Jeska's Will (soa) 109
+1 Jungle Shrine (ecc) 154
+1 Kitchen Finks (f09) 3
+1 Lightning Bolt (sld) 86
+1 Lightning Greaves (sld) 1662
+1 Lotus Petal (p30m) 2
+1 Mana Drain (2x2) 348
+1 Manamorphose (plst) SHM-211
+1 Marsh Flats (spg) 110
+1 Misty Rainforest (spg) 111
+1 Mountain (eoe) 370
+1 Mystic Confluence (tsr) 312
+1 Mystic Monastery (trc) 543
+1 Mystic Sanctuary (soc) 388
+1 Mystical Tutor (dmr) 421
+1 Nature's Lore (trc) 467
+1 Niv-Mizzet, Parun (rvr) 376
+1 Noble Hierarch (plst) MM2-151
+1 Path of Ancestry (cmm) 661
+1 Path to Exile (blc) 147
+1 Plains (mdd) 292
+1 Plateau (ced) 280
+1 Polluted Delta (mh3) 356
+1 Restoration Angel (j22) 233
+1 Rhystic Study (j22) 114
+1 Rite of Flame (csp) 96
+1 Savannah (ced) 281
+1 Seaside Citadel (cma) 269
+1 Seething Song (ddg) 70
+1 Shivan Reef (dmu) 380
+1 Skullclamp (fic) 355
+1 Skyclave Apparition (m3c) 172
+1 Smothering Tithe (cmm) 57
+1 Sol Ring (fic) 357
+1 Spirebluff Canal (kld) 249
+1 Steam Vents (rvr) 298
+1 Storm-Kiln Artist (soc) 255
+1 Stormcarved Coast (dbl) 532
+1 Sulfur Falls (isd) 248
+1 Sunpetal Grove (fic) 432
+1 Swan Song (sld) 2829
+1 Swords to Plowshares (trc) 429
+1 Sylvan Library (dmr) 441
+1 Taiga (ced) 283
+1 Talrand, Sky Summoner (tsr) 318
+1 Teferi's Protection (mar) 51
+1 Temple Garden (rvr) 300
+1 Tezzeret, Cruel Captain (eoe) 2
+1 Third Path Iconoclast (tdc) 307
+1 Three Visits (msc) 181
+1 Triple Triad (fin) 340
+1 Tropical Island (ced) 284
+1 Tundra (ced) 285
+1 Twinned Vision (fra) 157
+1 Underworld Breach (spg) 9
+1 Verdant Catacombs (spg) 113
+1 Veyran, Voice of Duality (sld) 1915
+1 Volcanic Island (ced) 287
+1 Windswept Heath (mh3) 360
+1 Worldly Tutor (dmr) 442
+1 Yavimaya Coast (c21) 409
+1 Young Pyromancer (2x2) 364
