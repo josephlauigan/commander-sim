@@ -14,7 +14,7 @@ ramp, protection and creature defence from the binder replace it.
 |---|---|
 | **Commander** | Aragorn, the Uniter ({R}{G}{W}{U}, 5/5, Legendary Creature — Human Noble) |
 | **Bracket** | 4 (11 Game Changers, see Bracket) |
-| **Simulator** | key `aragorn`, tiers t4-t5 (baseline to come) |
+| **Simulator** | key `aragorn`, tiers t4-t5: 10.7% at t4, 7.7% at t5, 9.2% over t4-t5 (first baseline 2026-11-06, `audit/aragorn/FINDINGS.md`) |
 | **Spells** | 64 (red 23, blue 19, green 13, white 13, colourless 6; 10 multicolour), average mana value 2.55 |
 
 ## Strategy

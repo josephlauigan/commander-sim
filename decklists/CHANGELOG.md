@@ -22,7 +22,7 @@ the binder and eleven bought cards (`documents/aragorn-merge-swaps.md`).
 
 ### Simulator history
 
-- **2026-11-06.** First baseline: see `audit/aragorn/FINDINGS.md`.
+- **2026-11-06.** First baseline (look-ahead, loose, 2,000 games per tier): t4 10.7%, t5 7.7%, 9.2% over t4-t5 (`audit/aragorn/FINDINGS.md`).
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
 
