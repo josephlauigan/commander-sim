@@ -1,0 +1,90 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  aragorn  100 cards: Full 94, Full-auto 6, Approximate 0, Partial 0, Unmodeled 0
+
+2,000 games (goldfish, 1 deck), lookahead AI, 24 worker threads: about 4 minutes
+  progress  10.0%  0m01s elapsed, ~0m09s left
+  progress  20.0%  0m02s elapsed, ~0m09s left
+  progress  30.0%  0m03s elapsed, ~0m08s left
+  progress  40.0%  0m04s elapsed, ~0m07s left
+  progress  50.0%  0m06s elapsed, ~0m06s left
+  progress  60.0%  0m07s elapsed, ~0m05s left
+  progress  70.0%  0m08s elapsed, ~0m03s left
+  progress  80.0%  0m10s elapsed, ~0m02s left
+  progress  90.0%  0m11s elapsed, ~0m01s left
+  progress 100.0%  0m13s elapsed, ~0m00s left
+
+=== Aragorn (aragorn) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 12.0, mean 12.4 (over the 1994 kills)
+  won by turn: T1 0.0%  T2 0.0%  T3 0.0%  T4 0.0%  T5 0.1%  T6 0.1%  T7 1.2%  T8 4.0%
+  no kill by round 20: 0.3% (of which the deck itself lost: 0.1% of games)
+How it won (share of kills): damage 86.1%, commander damage 13.7%, other 0.3%
+Mulligans: kept 7 cards 95.2% (no mulligan 78.0%, the free mulligan 17.2%), 6 cards 3.9%, 5 or fewer 0.9%
+Ready turn (the plan came online): median 6.0, mean 6.5, reached in 98.8% of games
+Protection on the kill turn: 91.1% of kills held a protection card or had a cast lock in force
+  counted (12): Counterspell, Ephemerate, Fierce Guardianship, Force of Will, Grand Abolisher, Heroic Intervention, Lightning Greaves, Mana Drain, Mystic Confluence, Restoration Angel, Swan Song, Teferi's Protection
+Commander cast: 100.0% of games, median own turn 4.0 (of the games it was cast)
+Loss accounting [ai-audit] (each own turn in one bucket, the first that matches):
+  own turns: 24826 (12.41 a game; 8000 of them turns 1-4)
+  bucket              all turns   turns 1-4  per game
+  won                      8.0%        0.0%      1.00
+  ready_not_taken          0.0%        0.0%      0.00
+  passed_castable          4.0%        1.6%      0.50
+  no_land_drop             0.2%        0.2%      0.03
+  mana_short              20.3%       30.8%      2.52
+  progressed              63.9%       67.1%      7.93
+  idle                     3.5%        0.3%      0.43
+  progressed turns, by the most useful card cast (combo piece > tutor > ritual > fast mana > draw > protection > other): other 46%, draw 15%, fast mana / rock 15%, land only 9%, ritual 7%, protection 5%, tutor 2%, abilities only 0%
+    on turns 1-4: other 49%, fast mana / rock 20%, draw 13%, ritual 8%, protection 4%, land only 4%, tutor 2%, abilities only 0%
+  passed_castable cards (card-turns, a turn can hold several): tutor 3 (0%), ritual 54 (5%), fast mana / rock 199 (17%), draw 233 (20%), protection 9 (1%), other 651 (57%)
+    most passed: Blossoming Defense 188, Expressive Iteration 115, Noble Hierarch 59, Twinned Vision 52, Veyran, Voice of Duality 50, Nature's Lore 44, Triple Triad 43, Birds of Paradise 41, Kitchen Finks 38, Skullclamp 38, Lotus Petal 37, Sol Ring 36
+  payable but never offered as a play (card-turns; in 78.1% of turns): tutor 1088 (2%), ritual 4264 (8%), draw 79 (0%), protection 26096 (47%), other 24038 (43%)
+    most held: Brain Freeze 4538, Swan Song 3541, Path to Exile 3472, Swords to Plowshares 3274, Counterspell 3079, Mana Drain 2901, Heroic Intervention 2820, Fierce Guardianship 2808, Cyclonic Rift 2781, Grapeshot 2764, Teferi's Protection 2622, Restoration Angel 2613
+  ready_not_taken, the line ready: -
+    chosen at decisions with a line ready (before going for one): -
+Cleanup discards to 7: 1162 (0.58 a game, in 20.4% of games); combo pieces 0 (in 0.0% of games); 4 that ai::discard_keep would have kept
+  by role: ritual 93 (8%), fast mana / rock 4 (0%), draw 40 (3%), protection 43 (4%), land 390 (34%), other 592 (51%)
+  most discarded: Brain Freeze 89, Grapeshot 74, Deflecting Swat 66, Swords to Plowshares 51, Desperate Ritual 48, Comet Storm 46, Path to Exile 44, Chaos Warp 42, Rite of Flame 37, Triple Triad 34, Cyclonic Rift 27, Niv-Mizzet, Parun 27
+  median kill turn: games with a combo piece discarded - (0 games), without 12.0 (2000 games) (confounded: longer games discard more)
+Main-phase stops, by who chose and the phase: the best other option by heuristic utility (count by bin)
+  main 1 look-ahead "stop": 222 (0.11 a game; 21 on turns 1-4; 0 with a line ready) | 0-3: 7, 3-6: 95, 6-10: 108, >= 10: 12
+      best other option: Skullclamp 27, Firebrand Archer 14, Young Pyromancer 11, Storm-Kiln Artist 10, Aragorn, the Uniter 9, Third Path Iconoclast 9, Skyclave Apparition 8, Guttersnipe 8
+      look-ahead score, best other minus stop: mean -2.82; within 1 point of the stop 115 of 222
+  main 1 look-ahead "stop (hold mana)": 2831 (1.42 a game; 162 on turns 1-4; 0 with a line ready) | < 0: 64, 0-3: 1726, 3-6: 894, 6-10: 141, >= 10: 6
+      best other option: Skullclamp 308, Lotus Petal 212, Blossoming Defense 191, Sol Ring 163, Arcane Signet 161, Twinned Vision (flashback) 119, Expressive Iteration 106, Noble Hierarch 99
+      look-ahead score, best other minus stop: mean 0.24; within 1 point of the stop 2205 of 2570
+  main 1 heuristic  "stop": 16778 (8.39 a game; 7341 on turns 1-4; 0 with a line ready) | nothing else offered: 16778
+      best other option: -
+  main 1 heuristic  "stop (hold mana)": 4639 (2.32 a game; 476 on turns 1-4; 0 with a line ready) | nothing else offered: 4639
+      best other option: -
+  main 2 look-ahead "stop": 25 (0.01 a game; 0 on turns 1-4; 0 with a line ready) | 3-6: 13, 6-10: 11, >= 10: 1
+      best other option: Skullclamp 4, Young Pyromancer 3, Aura Shards 3, Sylvan Library 2, Noble Hierarch 2, Seething Song 1, Three Visits 1, Lotus Petal 1
+      look-ahead score, best other minus stop: mean -2.64; within 1 point of the stop 8 of 25
+  main 2 look-ahead "stop (hold mana)": 2212 (1.11 a game; 150 on turns 1-4; 0 with a line ready) | < 0: 55, 0-3: 1472, 3-6: 648, 6-10: 22, >= 10: 15
+      best other option: Skullclamp 256, Lotus Petal 180, Blossoming Defense 175, Sol Ring 134, Arcane Signet 124, Twinned Vision (flashback) 105, Expressive Iteration 92, Noble Hierarch 66
+      look-ahead score, best other minus stop: mean -0.11; within 1 point of the stop 1641 of 1980
+  main 2 heuristic  "stop": 16379 (8.19 a game; 7389 on turns 1-4; 0 with a line ready) | nothing else offered: 16379
+      best other option: -
+  main 2 heuristic  "stop (hold mana)": 4266 (2.13 a game; 461 on turns 1-4; 0 with a line ready) | nothing else offered: 4266
+      best other option: -
+Sure-win cap (d10bbb05): changed the look-ahead's pick 0 times, in 0.0% of games
+Crude best case (a line's pieces and its mana seen; tutors aside): in 0.0% of games, median own turn -
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.0%  T4 0.0%  T5 0.0%  T6 0.0%
+  lines: -
+  kill turn - best case (0 games with both): median -, mean 0.00; < 0: 0.0%, 0: 0.0%, 1: 0.0%, 2: 0.0%, 3: 0.0%, 4-5: 0.0%, 6+: 0.0%
+  games with a best case and no kill by the round cap: 0
+Crude best case (a line's pieces and its mana seen; each seen tutor standing in for one missing piece): in 0.0% of games, median own turn -
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.0%  T4 0.0%  T5 0.0%  T6 0.0%
+  lines: -
+  kill turn - best case (0 games with both): median -, mean 0.00; < 0: 0.0%, 0: 0.0%, 1: 0.0%, 2: 0.0%, 3: 0.0%, 4-5: 0.0%, 6+: 0.0%
+  games with a best case and no kill by the round cap: 0
+Crude best case (a line's pieces and its mana seen; only tutors that can find the missing piece, one each): in 0.0% of games, median own turn -
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.0%  T4 0.0%  T5 0.0%  T6 0.0%
+  lines: -
+  kill turn - best case (0 games with both): median -, mean 0.00; < 0: 0.0%, 0: 0.0%, 1: 0.0%, 2: 0.0%, 3: 0.0%, 4-5: 0.0%, 6+: 0.0%
+  games with a best case and no kill by the round cap: 0
+
+=== Goldfish summary (own turn of the kill; no opponents interacting) ===
+  deck                                median   mean   by T1   by T2   by T3  no kill  protection
+  aragorn                               12.0   12.4    0.0%    0.0%    0.0%     0.3%       91.1%
+
+(13s total)
