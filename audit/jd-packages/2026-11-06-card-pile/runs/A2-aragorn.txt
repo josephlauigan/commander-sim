@@ -1,0 +1,230 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Paradise Druid [scryfall] C 1G :: pow=2 tgh=1 dork=A noatk
+   Spark Double [pool] C 3U :: pow=0 tgh=0
+Model status of the swapped-in cards (cardgen audit):
+  Paradise Druid: Full (hexproof while untapped; taps for any color)
+  Spark Double: Full (enters as a copy of your best creature or planeswalker with a +1 counter)
+  Llanowar Elves: Full (tags: `dork=G noatk human`)
+
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  aragorn                     100 cards: Full 94, Full-auto 6, Approximate 0, Partial 0, Unmodeled 0
+  aragorn (swapped)           100 cards: Full 96, Full-auto 4, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 4 (Low B4)   5 decks, 500 cards: Full 436, Full-auto 37, Approximate 27, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 433, Full-auto 34, Approximate 33, Partial 0, Unmodeled 0
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by aragorn's AI?
+  AI: Paradise Druid: priority 90 (generic)
+  AI: Spark Double: priority 48 (generic)
+  AI: Llanowar Elves: priority 70 (generic)
+200 games (preflight dry run: swapped list, 200 per profile on t4), adaptive AI, 24 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 4 (Low B4)
+  dry run: Paradise Druid: drawn in 18.0% of games (36), cast in 100.0% of those (36)
+  dry run: Spark Double: drawn in 16.5% of games (33), cast in 69.7% of those (23)
+  dry run: Llanowar Elves: drawn in 21.0% of games (42), cast in 88.1% of those (37)
+
+6,200 games (current list and the swapped one, 1,500 per list per tier, profile loose), lookahead AI, 24 worker threads: about 13 minutes
+Swaps: Noble Hierarch -> Paradise Druid; Three Visits -> Spark Double; Growth Spiral -> Llanowar Elves
+
+=== Aragorn vs Tier 4 (Low B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  11.1% ->  10.7%  (delta -0.4 pts, noise ±2.0, paired)   n=1500
+               eliminated by (variant): Yuriko 15.2%  Edgar Markov 21.2%  Prosper 16.6%  Chulane 11.9%  Krenko 24.4%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (aragorn) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for aragorn: first damage to an opponent from Aragorn's red-spell trigger
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          11.1% ->  10.7%  -0.4pt   ±2.3 
+    Rounds survived (or game length)                   8.60 ->   8.58   -0.02  ±0.17 
+
+  Mana & consistency
+    Extra mulligans per game                           0.11 ->   0.11   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.68 ->   0.65   -0.03  ±0.06 
+    Mana available on your turn 4                      4.33 ->   4.29   -0.04  ±0.09 
+    Mana available on your turn 6                      6.27 ->   6.17   -0.10  ±0.18 
+
+  Speed
+    Games where the game plan came online             61.1% ->  58.9%  -2.3pt   ±3.6 
+    Turn the game plan came online                     6.03 ->   6.10   +0.06  ±0.16 
+    Turn the commander first resolved                  4.39 ->   4.46   +0.07  ±0.10 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.99 ->  12.39   -0.60  ±0.60 
+    Tutors resolved per game                           0.51 ->   0.50   -0.01  ±0.05 
+    Spells cast per game                              10.19 ->   9.86   -0.33  ±0.40 
+
+  Interaction
+    Counterspells cast                                 0.62 ->   0.61   -0.01  ±0.06 
+    Spot removal cast                                  0.86 ->   0.80   -0.06  ±0.06 
+    Board wipes cast                                   0.03 ->   0.03   -0.00  ±0.01 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.01 ->   0.00   -0.00  ±0.01 
+    Your key permanents removed by opponents           0.48 ->   0.47   -0.01  ±0.05 
+    Your spells countered                              0.22 ->   0.21   -0.01  ±0.04 
+
+  Threat & pressure
+    Damage dealt to opponents per game                19.99 ->  18.80   -1.19  ±1.75 
+      ...of which combat damage                       10.14 ->   9.69   -0.45  ±1.03 
+      ...of which magecraft / burn                     4.01 ->   3.50   -0.52  ±0.61 
+      ...of which drain triggers                       0.01 ->   0.01   +0.00  ±0.02 
+      ...of which other triggers                       5.83 ->   5.61   -0.22  ±0.66 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 1500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Paradise Druid                        22.5      86.7         4.8     13.3       18.4      0.01
+    Spark Double                          19.7      72.5         6.4     27.5       20.6      0.00
+    Llanowar Elves                        19.7      84.4         3.9     15.6       12.0      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Noble Hierarch                        22.3      87.8         4.4     12.2       18.4      0.00
+    Three Visits                          21.3      88.4         5.1     11.6       19.8      0.00
+    Growth Spiral                         20.5      84.7         5.3     15.3       16.5      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        11.1      10.7     -0.4
+    rounds survived                                   8.60      8.58    -0.02
+    eliminated, % of games                            88.9      89.3     +0.4
+    opponents it eliminated, per game                 0.39      0.35    -0.03
+    damage dealt, per game                            20.0      18.8     -1.2
+    plan: first damage to an opponent from Aragorn's red-spell trigger
+      plan online by turn 4, %                        10.7       9.1     -1.5
+      plan online by turn 6, %                        42.2      39.1     -3.1
+      plan online by turn 8, %                        55.8      53.4     -2.4
+      plan online by turn 12, %                       60.7      58.6     -2.1
+      plan online at all, %                           61.1      58.9     -2.3
+    commander resolved by turn 4, %                   56.2      54.1     -2.1
+    commander resolved by turn 6, %                   84.8      83.1     -1.7
+    commander removals, per game                      0.38      0.38    +0.00
+    lands on the battlefield, turn 4                  3.89      3.77    -0.12
+    lands on the battlefield, turn 8                  6.30      6.14    -0.16
+    mana available, turn 4                            4.33      4.29    -0.04
+    mana available, turn 8                            7.92      7.69    -0.23
+    cards in hand after the land drop, turn 4         5.29      5.25    -0.04
+    cards in hand after the land drop, turn 8         4.12      4.08    -0.04
+    wins by (current):  damage 100%
+    wins by (swapped):  damage 100%
+    eliminated by (current): Krenko via combat 14.2%, Edgar Markov via combat 12.1%, Chulane via combo 10.9%, Yuriko via triggers 10.1%
+    eliminated by (swapped): Krenko via combat 13.1%, Edgar Markov via combat 12.1%, Chulane via combo 9.9%, Yuriko via triggers 8.6%
+  progress 100.0%  22m38s elapsed, ~0m00s left
+Swaps: Noble Hierarch -> Paradise Druid; Three Visits -> Spark Double; Growth Spiral -> Llanowar Elves
+
+=== Aragorn vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win   9.4% ->  10.1%  (delta +0.7 pts, noise ±1.9, paired)   n=1500
+               eliminated by (variant): Zur the Enchanter 14.0%  Miirym 23.9%  Yawgmoth 13.9%  Kinnan 20.9%  Urza 17.2%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (aragorn) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for aragorn: first damage to an opponent from Aragorn's red-spell trigger
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                           9.4% ->  10.1%  +0.7pt   ±2.2 
+    Rounds survived (or game length)                   9.07 ->   9.10   +0.02  ±0.23 
+
+  Mana & consistency
+    Extra mulligans per game                           0.11 ->   0.11   +0.00  ±0.04 
+    Missed land drops, turns 1-5                       0.65 ->   0.64   -0.02  ±0.06 
+    Mana available on your turn 4                      4.31 ->   4.24   -0.07  ±0.09 
+    Mana available on your turn 6                      6.08 ->   6.01   -0.07  ±0.18 
+
+  Speed
+    Games where the game plan came online             54.1% ->  55.3%  +1.3pt   ±3.6 
+    Turn the game plan came online                     6.17 ->   6.38   +0.21  ±0.21*
+    Turn the commander first resolved                  4.50 ->   4.61   +0.11  ±0.12 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            13.04 ->  13.13   +0.09  ±0.67 
+    Tutors resolved per game                           0.42 ->   0.43   +0.01  ±0.05 
+    Spells cast per game                              10.23 ->  10.18   -0.05  ±0.44 
+
+  Interaction
+    Counterspells cast                                 0.64 ->   0.66   +0.02  ±0.06 
+    Spot removal cast                                  0.84 ->   0.85   +0.01  ±0.06 
+    Board wipes cast                                   0.04 ->   0.03   -0.00  ±0.01 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.01 ->   0.00   -0.01  ±0.01*
+    Your key permanents removed by opponents           0.49 ->   0.46   -0.02  ±0.06 
+    Your spells countered                              0.55 ->   0.53   -0.02  ±0.06 
+
+  Threat & pressure
+    Damage dealt to opponents per game                21.73 ->  22.59   +0.87  ±1.92 
+      ...of which combat damage                       13.25 ->  13.73   +0.48  ±1.26 
+      ...of which magecraft / burn                     3.50 ->   3.26   -0.24  ±0.58 
+      ...of which drain triggers                       0.01 ->   0.02   +0.01  ±0.03 
+      ...of which other triggers                       4.97 ->   5.57   +0.60  ±0.64 
+
+--- Reading it ---
+  Speed: how fast the deck does the thing it is built to do.
+    worse  - Turn the game plan came online (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    worse  - Protection used (HI/sac/Tidebinder/counter-war) (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Paradise Druid                        20.7      85.5         4.7     14.5       14.3      0.02
+    Spark Double                          21.5      67.2         7.1     32.8       25.3      0.00
+    Llanowar Elves                        20.9      85.9         4.6     14.1       14.1      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Noble Hierarch                        21.8      83.8         4.5     16.2       16.4      0.00
+    Three Visits                          22.2      83.2         5.4     16.8       18.8      0.00
+    Growth Spiral                         20.5      84.4         5.6     15.6       18.5      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                         9.4      10.1     +0.7
+    rounds survived                                   9.07      9.10    +0.02
+    eliminated, % of games                            90.1      89.8     -0.3
+    opponents it eliminated, per game                 0.33      0.36    +0.03
+    damage dealt, per game                            21.7      22.6     +0.9
+    plan: first damage to an opponent from Aragorn's red-spell trigger
+      plan online by turn 4, %                        11.0       8.5     -2.5
+      plan online by turn 6, %                        35.1      34.3     -0.8
+      plan online by turn 8, %                        47.8      47.5     -0.3
+      plan online by turn 12, %                       53.3      54.5     +1.2
+      plan online at all, %                           54.1      55.3     +1.3
+    commander resolved by turn 4, %                   52.4      49.3     -3.1
+    commander resolved by turn 6, %                   76.2      75.7     -0.5
+    commander removals, per game                      0.37      0.35    -0.02
+    lands on the battlefield, turn 4                  3.88      3.76    -0.12
+    lands on the battlefield, turn 8                  6.38      6.15    -0.23
+    mana available, turn 4                            4.31      4.24    -0.07
+    mana available, turn 8                            7.68      7.59    -0.10
+    cards in hand after the land drop, turn 4         5.23      5.23    -0.00
+    cards in hand after the land drop, turn 8         4.15      4.17    +0.02
+    wins by (current):  damage 99%, timeout 1%
+    wins by (swapped):  damage 97%, timeout 3%
+    eliminated by (current): Urza via combo 16.7%, Kinnan via combo 14.8%, Miirym via combat 12.5%, Yawgmoth via combo 9.9%
+    eliminated by (swapped): Urza via combo 15.9%, Kinnan via combo 14.9%, Miirym via combat 13.2%, Yawgmoth via combo 9.4%
+
+(1358s total)

@@ -1,0 +1,205 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Scion of Draco [scryfall] AC 12 :: pow=4 fly
+      not modeled: Domain — This spell costs {2} less to cast for each basic land type among lands you control.
+      not modeled: Each creature you control has vigilance if it's white, hexproof if it's blue, lifelink if it's black, first strike if it's red, and trample if it's green.
+   Crucible of Worlds [pool] A 3 :: (no tags)
+   Summon: Bahamut [pool] EC 9 :: pow=9 tgh=9 fly bomb=8 bahamut
+   Hangarback Walker [scryfall+dsl] AC  :: pow=0 tgh=0
+      ability: static note -> 
+      ability: activated  -> counters
+   Meteor Golem [scryfall+dsl] AC 7 :: pow=3
+      ability: triggered etb -> destroy
+   Glorybringer [pool] C 3RR :: pow=4 fly haste
+   Thundermaw Hellkite [pool] C 3RR :: pow=5 fly haste bomb=5
+   Mox Jasper [scryfall] A  :: leg rock=1:A
+   Utvara Hellkite [scryfall+dsl] C 6RR :: pow=6 bomb=6 fly
+      ability: triggered attack -> token
+Model status of the swapped-in cards (cardgen audit):
+  Scion of Draco: Full (hand-written (impls/t45_urdragon.rs): costs {2} less per basic land type among your lands; your creatures have vigilance (white), hexproof (blue), lifelink (black), first strike (red), trample (green); flying)
+  Crucible of Worlds: Full (land drops from the graveyard)
+  Strip Mine: Full ({T}: {C}; {T}, sacrifice: destroy an opponent's key land (Cradle, Coffers, Urborg, Ancient Tomb ...))
+  Disdainful Stroke: Full (tags: `ctr=mv4`)
+  Elesh Norn, Mother of Machines: Full (tags: `bomb=7 pow=4 tgh=7 vig leg mother`)
+  Summon: Bahamut: Full (Saga: a lore counter as it enters (cast, reanimated or blinked: a new object at chapter I) and after your draw step; I, II destroy the most threatening opposing nonland permanent; III draw two; IV Mega Flare (the total mana value of your other permanents to each opponent), then it is sacrificed. Flying 9/9. Proliferate adds a lore counter (that chapter triggers) toward II or III, or to IV when Mega Flare kills or deals 10 or more)
+  Hangarback Walker: Full ({X}{X}: the AI casts it for X = a third of its mana (one to four; two mana per counter; not castable below two mana). It enters with X +1/+1 counters (green_cards::enters_with, before the 0/0 check; Hardened Scales applies); {1}, {T}: a +1/+1 counter (compiled); when it dies, a 1/1 flying Thopter artifact token per counter. The earlier engine cast it for nothing and it died as a 0/0. impls/karn_engines.rs)
+  Meteor Golem: Full (enters: destroy target nonland permanent an opponent controls (compiled))
+  Glorybringer: Full (flying, haste; exert for 4 damage to a creature)
+  Thundermaw Hellkite: Full ()
+  Mox Jasper: Full (mana only while you control a Dragon (Maskwood Nexus and changelings count))
+  Utvara Hellkite: Full-auto (compiled from Oracle text)
+
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  thanos                      100 cards: Full 99, Full-auto 1, Approximate 0, Partial 0, Unmodeled 0
+  thanos (swapped)            100 cards: Full 98, Full-auto 2, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 433, Full-auto 34, Approximate 33, Partial 0, Unmodeled 0
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by thanos's AI?
+  AI: Scion of Draco: priority 69 (generic)
+  AI: Crucible of Worlds: priority 43 (generic)
+  AI: Strip Mine: land (played, never cast)
+  AI: Disdainful Stroke: priority 0 (generic), cast as a response / removal only
+  AI: Elesh Norn, Mother of Machines: priority 49 (generic)
+  AI: Summon: Bahamut: priority 90 (generic)
+  AI: Hangarback Walker: priority 44 (generic)
+  AI: Meteor Golem: priority 87 (generic)
+  AI: Glorybringer: priority 71 (generic)
+  AI: Thundermaw Hellkite: priority 77 (generic)
+  AI: Mox Jasper: priority 75 (generic)
+  AI: Utvara Hellkite: priority 88 (generic)
+200 games (preflight dry run: swapped list, 200 per profile on t5), adaptive AI, 24 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 5 (High B4)
+  dry run: Scion of Draco: drawn in 19.0% of games (38), cast in 65.8% of those (25)
+  dry run: Crucible of Worlds: drawn in 21.0% of games (42), cast in 73.8% of those (31)
+  dry run: Disdainful Stroke: drawn in 22.0% of games (44), cast in 61.4% of those (27)
+  dry run: Elesh Norn, Mother of Machines: drawn in 19.0% of games (38), cast in 47.4% of those (18)
+  dry run: Summon: Bahamut: drawn in 22.0% of games (44), cast in 45.5% of those (20)
+  dry run: Hangarback Walker: drawn in 17.0% of games (34), cast in 91.2% of those (31)
+  dry run: Meteor Golem: drawn in 17.5% of games (35), cast in 85.7% of those (30)
+  dry run: Glorybringer: drawn in 18.0% of games (36), cast in 66.7% of those (24)
+  dry run: Thundermaw Hellkite: drawn in 22.5% of games (45), cast in 62.2% of those (28)
+  dry run: Mox Jasper: drawn in 12.0% of games (24), cast in 95.8% of those (23)
+  dry run: Utvara Hellkite: drawn in 20.5% of games (41), cast in 48.8% of those (20)
+
+3,200 games (current list and the swapped one, 1,500 per list per tier, profile loose), lookahead AI, 24 worker threads: about 7 minutes
+  progress 100.0%  10m33s elapsed, ~0m00s left
+Swaps: Wayfarer's Bauble -> Scion of Draco; Urza's Bauble -> Crucible of Worlds; Wastes -> Strip Mine; Red Elemental Blast -> Disdainful Stroke; Oblivion Stone -> Elesh Norn, Mother of Machines; Ugin, the Spirit Dragon -> Summon: Bahamut; Ratchet Bomb -> Hangarback Walker; Decimate -> Meteor Golem; Duplicant -> Glorybringer; Gamble -> Thundermaw Hellkite; Lotus Petal -> Mox Jasper; Karn, the Great Creator -> Utvara Hellkite
+
+=== Thanos vs Tier 5 (High B4): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  23.0% ->  20.2%  (delta -2.8 pts, noise ±2.7, paired)   n=1500
+               eliminated by (variant): Zur the Enchanter 13.3%  Miirym 18.9%  Yawgmoth 11.5%  Kinnan 19.4%  Urza 16.1%
+VERDICT: WORSE under the loose profile (the only one run)
+
+--- What changed, by strength axis (thanos) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for thanos: first combo attempt
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          23.0% ->  20.2%  -2.8pt   ±3.0 
+    Rounds survived (or game length)                   9.39 ->   8.94   -0.45  ±0.25*
+
+  Mana & consistency
+    Extra mulligans per game                           0.47 ->   0.58   +0.11  ±0.08*
+    Missed land drops, turns 1-5                       0.82 ->   0.85   +0.03  ±0.07 
+    Mana available on your turn 4                      4.81 ->   4.69   -0.12  ±0.13 
+    Mana available on your turn 6                      7.16 ->   7.04   -0.11  ±0.25 
+
+  Speed
+    Games where the game plan came online             11.3% ->   8.0%  -3.3pt   ±2.2*
+    Turn the game plan came online                     9.29 ->   8.62   -0.68  ±0.71 
+    Turn the commander first resolved                  4.14 ->   4.17   +0.03  ±0.13 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            13.90 ->  12.76   -1.14  ±0.67*
+    Tutors resolved per game                           0.92 ->   0.75   -0.18  ±0.06*
+    Spells cast per game                              12.04 ->  10.60   -1.44  ±0.48*
+
+  Interaction
+    Counterspells cast                                 0.48 ->   0.49   +0.02  ±0.05 
+    Spot removal cast                                  0.48 ->   0.29   -0.19  ±0.04*
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.02 ->   0.02   +0.00  ±0.01 
+    Your key permanents removed by opponents           0.75 ->   0.75   +0.00  ±0.08 
+    Your spells countered                              0.84 ->   0.70   -0.13  ±0.07*
+
+  Threat & pressure
+    Damage dealt to opponents per game                19.87 ->  24.02   +4.15  ±2.46*
+      ...of which combat damage                       18.55 ->  22.21   +3.66  ±2.04*
+      ...of which drain triggers                       0.18 ->   0.13   -0.06  ±0.13 
+      ...of which other triggers                       1.14 ->   1.68   +0.55  ±1.10 
+
+--- Reading it ---
+  Outcome: the bottom line; everything else explains why it moved.
+    worse  - Rounds survived (or game length) (both profiles)
+  Mana & consistency: can the deck cast its spells on time? Missed land drops and low mana stall everything else.
+    worse  - Extra mulligans per game (both profiles)
+  Speed: how fast the deck does the thing it is built to do.
+    worse  - Games where the game plan came online (both profiles)
+  Card flow: how many resources the deck sees; more cards seen means more options and fewer dead draws.
+    worse  - Cards drawn per game (incl. draw step) (both profiles)
+    worse  - Tutors resolved per game (both profiles)
+    worse  - Spells cast per game (both profiles)
+  Interaction: how often the deck answers what opponents do.
+    worse  - Spot removal cast (both profiles)
+  Resilience: how well the plan survives opposing interaction.
+    better - Your spells countered (both profiles)
+  Threat & pressure: how much the deck pushes the game toward a win.
+    better - Damage dealt to opponents per game (both profiles)
+    better -   ...of which combat damage (both profiles)
+  With ~40 checks per run, one or two stars can appear by chance; trust the ones that show
+  up under both profiles, or that line up with the card's job.
+  Note: per-game counts rise with game length, so check 'Rounds survived' before reading
+  more cards drawn or more spells cast as a pure gain.
+
+-- Why: paired breakdown [loose profile, 1500 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Scion of Draco                        18.5      70.9         6.5     29.1       31.5      0.01
+    Crucible of Worlds                    18.2      56.4         6.8     43.6       35.7      0.00
+    Strip Mine                            20.5       0.0           -    100.0          -      0.00
+    Disdainful Stroke                     20.1      47.0         6.9     53.0       31.7      0.00
+    Elesh Norn, Mother of Machines        17.7      41.7         7.7     58.3       32.4      0.01
+    Summon: Bahamut                       19.0      49.5         8.0     50.5       41.8      0.03
+    Hangarback Walker                     17.8      80.5         5.1     19.5       22.8      0.01
+    Meteor Golem                          17.8      63.3         8.0     36.7       37.9      0.00
+    Glorybringer                          18.3      46.9         7.5     53.1       41.9      0.01
+    Thundermaw Hellkite                   18.5      58.5         7.5     41.5       36.4      0.02
+    Mox Jasper                            18.2      91.9         4.3      8.1       25.5      0.00
+    Utvara Hellkite                       19.1      48.4         7.8     51.6       42.4      0.02
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Wayfarer's Bauble                     21.6      90.4         4.5      9.6       30.7      0.00
+    Urza's Bauble                         18.3      90.1         4.9      9.9       31.6      0.00
+    Wastes                                18.5       0.0           -    100.0          -      0.00
+    Red Elemental Blast                   22.7      87.1         6.1     12.9       26.3      0.00
+    Oblivion Stone                        20.7      68.7         6.8     31.3       36.6      0.00
+    Ugin, the Spirit Dragon               19.9      50.3         9.2     49.7       48.0      0.04
+    Ratchet Bomb                          19.6      76.5         5.5     23.5       33.8      0.00
+    Decimate                              19.7      54.9         8.1     45.1       40.7      0.00
+    Duplicant                             19.1      67.9         8.0     32.1       39.5      0.01
+    Gamble                                22.6      59.9         5.1     40.1       36.5      0.00
+    Lotus Petal                           18.5      90.3         4.9      9.7       34.8      0.00
+    Karn, the Great Creator               24.4      82.5         6.7     17.5       36.1      0.09
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        23.0      20.2     -2.8
+    rounds survived                                   9.39      8.94    -0.45
+    eliminated, % of games                            76.9      79.5     +2.5
+    opponents it eliminated, per game                 0.58      0.57    -0.01
+    damage dealt, per game                            19.9      24.0     +4.1
+    plan: first combo attempt
+      plan online by turn 4, %                         0.2       0.2     +0.0
+      plan online by turn 6, %                         2.5       1.7     -0.8
+      plan online by turn 8, %                         5.4       4.4     -1.0
+      plan online by turn 12, %                        9.3       7.3     -1.9
+      plan online at all, %                           11.3       8.0     -3.3
+    commander resolved by turn 4, %                   58.1      55.5     -2.7
+    commander resolved by turn 6, %                   78.9      78.1     -0.7
+    commander removals, per game                      0.45      0.42    -0.03
+    lands on the battlefield, turn 4                  3.66      3.58    -0.09
+    lands on the battlefield, turn 8                  6.13      5.88    -0.24
+    mana available, turn 4                            4.81      4.69    -0.12
+    mana available, turn 8                            9.24      9.31    +0.07
+    cards in hand after the land drop, turn 4         4.86      4.99    +0.13
+    cards in hand after the land drop, turn 8         4.15      4.34    +0.19
+    wins by (current):  damage 51%, combo 46%, timeout 3%
+    wins by (swapped):  damage 63%, combo 36%, timeout 1%
+    eliminated by (current): Urza via combo 13.7%, Kinnan via combo 12.9%, Zur the Enchanter via combo 10.1%, Miirym via combat 10.1%
+    eliminated by (swapped): Urza via combo 15.0%, Kinnan via combo 13.9%, Miirym via combat 10.5%, Zur the Enchanter via combo 9.5%
+
+(633s total)
