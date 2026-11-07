@@ -203,7 +203,7 @@ one).
 |---|---|---|---|
 | 1 | Underground Sea, Plateau, Wooded Foothills, Sol Ring, Rhystic Study, Force of Will, Glorybringer | Keep | Thanos on turn 3 (Plateau {R}{W}, Sea {B}; Sol Ring's {C}{C} can't pay him), Rhystic Study on turn 2, protection and a threat |
 | 2 | Ancient Tomb, Mana Vault, Thran Dynamo, Gilded Lotus, Summon: Bahamut, Utvara Hellkite, Meteor Golem | Ship | Lots of mana but no coloured source, and nothing to do before turn 4 |
-| 3 | Volcanic Island, Scrubland, Arid Mesa, Basalt Monolith, Rings of Brighthearth, Walking Ballista, Enlightened Tutor | Keep | The whole combo: Monolith turn 3, Rings turn 4, loop and Ballista on turn 5 |
+| 3 | Volcanic Island, Scrubland, Marsh Flats, Basalt Monolith, Rings of Brighthearth, Walking Ballista, Enlightened Tutor | Keep | The whole combo: Monolith turn 3, Rings turn 4, loop and Ballista on turn 5 |
 | 4 | Tundra, Taiga, Bayou, Command Tower, Steam Vents, Swords to Plowshares, Chaos Warp | Ship | Five lands and two answers: no engine, no threat |
 | 5 | Steam Vents, Volcanic Island, Mox Opal, Urza's Bauble, Wayfarer's Bauble, Mind Stone, Urza, Lord High Artificer | Keep | Turn 1: Vents, Opal and Urza's Bauble; turn 2: Mind Stone and Wayfarer's Bauble turn on metalcraft. Turn 3: both lands, Opal and Mind Stone pay for Urza |
 | 6 | Bayou, Sacred Foundry, Arcane Signet, Mystic Forge, The One Ring, Imperial Seal, Pact of Negation | Keep (close) | Signet on turn 2, then Thanos ({R}{W}{B} from Foundry, Bayou and Signet). The engines need a third land |
@@ -226,6 +226,33 @@ one).
   Mox Diamond, Mox Jasper, Urza's Bauble, Wayfarer's Bauble or Expedition Map. Chapter II makes Constructs that grow
   with your artifacts.
 
+### Protecting the win turn
+
+Both combos are mostly abilities and triggers once the pieces are down, so the spells are what get countered: Basalt
+Monolith, Rings of Brighthearth and the Walking Ballista for Combo 1; Astral Dragon for Combo 2. Order:
+
+1. **Land the first piece on a quiet turn.** Basalt Monolith or Cursed Mirror alone looks like a rock or a copy card.
+   Hold the second piece until you can cast it and finish in the same turn.
+2. **Cast it with a counter up.** Force of Will and Pact of Negation answer any spell; Force of Negation a noncreature
+   spell; Mana Drain any spell (and its mana pays for next turn); Disdainful Stroke a spell of mana value 4 or more;
+   Red Elemental Blast a blue spell. Deflecting Swat (free with Thanos out) moves a counter or a removal spell to a new
+   target.
+3. **Protect the board, not just the spell.** Teferi's Protection phases your board out against a wipe or a lethal
+   swing; The One Ring gives you protection from everything until your next turn when you cast it; Lightning Greaves
+   (equip {0}) gives Thanos or Urza shroud. Elesh Norn stops opponents' enter triggers, so their flash blockers and
+   enter-the-battlefield removal do nothing.
+
+**Timing traps:**
+
+- **Force of Negation** is free only on an opponent's turn. On your combo turn it costs {1}{U}{U}.
+- **Pact of Negation:** at your next upkeep you pay {3}{U}{U} or lose. Use it on the turn you win, or with five mana and
+  {U}{U} sure for next upkeep.
+- **Deflecting Swat** is free only while you control a commander. If Thanos died this turn, it costs {2}{R}.
+- **Mana Drain's** mana arrives at your next main phase, not this turn.
+- **Disdainful Stroke** can't hit Kinnan (mana value 2) or a cheap combo piece such as Dramatic Reversal.
+- **Removing Cursed Mirror** with an Astral Dragon trigger on the stack fizzles the trigger and ends the loop: keep a
+  counter for their removal, not only for their counters.
+
 ### Interaction
 
 | Card | Use it on |
@@ -246,6 +273,20 @@ one).
 | **Teferi's Protection** | Phase your board out and lock your life until your next turn: answers a wipe, a lethal attack or a combo kill |
 | **Lightning Greaves** | Shroud and haste for Thanos; equip {0} |
 
+### Answering stax
+
+The stax pieces at Tier 5 are Zur's (Drannith Magistrate, Opposition Agent, Grand Arbiter Augustin IV, Rule of Law,
+Rest in Peace, Narset, Parter of Veils) and Urza's Narset.
+
+| Stax piece (opponent's) | What it stops for us | Answer | What still works |
+|---|---|---|---|
+| Drannith Magistrate | Casting Thanos from the command zone | Swords, Chaos Warp, Decimate, Meteor Golem, Glorybringer's exert, an even power-up (mana value 2) | Both combos (cast from hand) |
+| Opposition Agent | Every tutor and fetch land: they take what you find | Swords, Chaos Warp, Decimate, Meteor Golem, an odd power-up (mana value 3) | Combos drawn naturally; don't tutor while it's out |
+| Grand Arbiter Augustin IV | Your spells cost {1} more | Red Elemental Blast (it's blue), Swords, Chaos Warp, Meteor Golem, an even power-up (mana value 4) | Everything, a turn slower |
+| Rule of Law | One spell per player per turn | Chaos Warp, Decimate, Meteor Golem, Summon: Bahamut | Combo 1 with Basalt and Rings already out (then one spell: the Ballista); Combo 2 (Astral Dragon is one spell, the rest are triggers) |
+| Narset, Parter of Veils | More than one draw a turn (The One Ring, Rhystic Study, Sylvan Library's extra cards) | Chaos Warp, Summon: Bahamut, Meteor Golem, attacking it | Combos, which don't draw |
+| Rest in Peace | Crucible of Worlds: lands go to exile, not the graveyard, so there is nothing to replay (Strip Mine, Urza's Saga, the fetches) | Chaos Warp, Decimate, Summon: Bahamut, Meteor Golem | Both combos (no graveyard use) |
+
 ### Matchups (Tier 5)
 
 | Opponent | Threat | Plan | Cards that matter |
@@ -255,6 +296,20 @@ one).
 | **Yawgmoth, Thran Physician** (mono-black aristocrats) | Yawgmoth + undying creatures + a death payoff | Exile, don't destroy: Swords, Chaos Warp; Elesh Norn stops their creatures' enter triggers | Wiping into a Blood Artist drains you; Teferi's Protection against a drain |
 | **Zur the Enchanter** (Esper enchantment control, Oracle) | Heliod + Walking Ballista; Thassa's Oracle with a near-empty library; stax (Drannith Magistrate, Opposition Agent, Grand Arbiter) | Remove the stax creature first, then the enchantments | Red Elemental Blast or Disdainful Stroke on Zur, Decimate, Chaos Warp, Meteor Golem, Summon: Bahamut. Drannith stops you recasting Thanos from the command zone; Opposition Agent steals your tutors and fetches |
 | **Miirym, Sentinel Wyrm** (Temur Dragons) | Copied Dragons, Terror of the Peaks, Wrathful Red Dragon + Blasphemous Act, Cyclonic Rift | Wipe when Miirym and the Dragons are out: even for Miirym (6), odd for 5-drops like Terror of the Peaks; Rings copies both | Power-up, Red Elemental Blast (Miirym is blue), Thundermaw Hellkite (taps their fliers); keep Teferi's Protection for Blasphemous Act turns |
+
+### After a stopped attempt
+
+| What happened | Rebuild |
+|---|---|
+| Basalt Monolith or Rings countered or destroyed | There is one of each and no way to get it back. Switch to Combo 2 (tutor Astral Dragon or Cursed Mirror) or the fair plan |
+| Walking Ballista countered with the loop ready | The loop's mana still has a sink: Mystic Forge (cast artifacts off the top) or Urza ({5}: play the top card free). Tutor for either with Enlightened Tutor or Demonic Tutor |
+| Astral Dragon countered | It's in the graveyard for good. Go to Combo 1 or the fair plan; keep Cursed Mirror out as a copy of your best creature |
+| Cursed Mirror removed mid-loop | The tokens already made stay: with Terror of the Peaks out they have dealt their damage; attack with the hasty ones |
+| Thanos removed | Recast him for {R}{W}{B} plus {2} per earlier cast. He's a new object, so his power-up works again; recast him the turn you can also power up ({C}{U}{G} on that turn) |
+| Your board wiped | The One Ring and Teferi's Protection save it if cast first. After a wipe: Urza's Saga's Constructs, Crucible of Worlds replaying lands, Hangarback Walker's Thopters and the hand you held |
+
+- A Pact of Negation cast in the failed turn must be paid at your next upkeep. Count that before the attempt.
+- After a stop, the next try needs more protection: the table has seen the pieces.
 
 ### Life management
 
