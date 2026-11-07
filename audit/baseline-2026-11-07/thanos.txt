@@ -1,0 +1,30 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  thanos                      100 cards: Full 98, Full-auto 2, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 433, Full-auto 34, Approximate 33, Partial 0, Unmodeled 0
+
+10,000 games (1 tier, 10,000 per list per tier, profile loose), lookahead AI, 24 worker threads: about 21 minutes
+  progress  10.0%  3m25s elapsed, ~30m52s left
+  progress  20.0%  6m51s elapsed, ~27m25s left
+  progress  30.0%  10m14s elapsed, ~23m53s left
+  progress  40.0%  13m41s elapsed, ~20m32s left
+  progress  50.0%  17m14s elapsed, ~17m14s left
+  progress  60.0%  20m41s elapsed, ~13m47s left
+  progress  70.0%  24m09s elapsed, ~10m21s left
+  progress  80.0%  27m33s elapsed, ~6m53s left
+  progress  90.0%  30m57s elapsed, ~3m26s left
+  progress 100.0%  34m34s elapsed, ~0m00s left
+
+=== Thanos vs Tier 5 (High B4) [loose, lookahead AI, 10000 games] ===
+Win rate  18.9%   95% CI 18.2-19.7%   (even share 25%: -6.1 pts)
+Average turn (your own turn count) of wins 11.4, of losses 8.0
+Plan online (first combo attempt): 6.9% of games
+Wins by: damage 65%, combo 34%, timeout 1%
+  Opponent                                    seated  won when seated  eliminated you
+  Yawgmoth (yawgmoth-mono-black-aristocrats)   60.4%            19.1%           12.0%
+  Urza (urza-mono-blue-artifacts)              60.0%            27.4%           16.1%
+  Kinnan (kinnan-simic-mana-combo)             59.9%            31.3%           18.8%
+  Zur the Enchanter (zur-esper-enchantment-c   59.9%            25.0%           14.6%
+  Miirym (miirym-temur-dragons)                59.7%            32.3%           19.5%
+  ('eliminated you' is the share of all games in which that opponent dealt the finishing blow)
+
+(2074s total)

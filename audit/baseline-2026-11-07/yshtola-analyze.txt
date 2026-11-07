@@ -1,0 +1,108 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  yshtola                     100 cards: Full 96, Full-auto 4, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 5 (High B4)  5 decks, 500 cards: Full 433, Full-auto 34, Approximate 33, Partial 0, Unmodeled 0
+
+2,000 games (analysis, 2,000 per list per tier, profile loose), lookahead AI, 24 worker threads: about 4 minutes
+  progress  10.0%  0m37s elapsed, ~5m35s left
+  progress  20.0%  1m17s elapsed, ~5m10s left
+  progress  30.0%  1m55s elapsed, ~4m28s left
+  progress  40.0%  2m31s elapsed, ~3m47s left
+  progress  50.0%  3m09s elapsed, ~3m09s left
+  progress  60.0%  3m45s elapsed, ~2m30s left
+  progress  70.0%  4m23s elapsed, ~1m52s left
+  progress  80.0%  4m57s elapsed, ~1m14s left
+  progress  90.0%  5m35s elapsed, ~0m37s left
+  progress 100.0%  6m21s elapsed, ~0m00s left
+
+######## vs Tier 5 (High B4) ########
+
+=========== yshtola analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 26.3%   (4-player baseline 25%)   average rounds survived 9.3
+
+-- How it wins --
+  damage      73.4% of wins
+  combo       25.1% of wins
+  timeout      1.5% of wins
+  Opponents it eliminated: 0.73 per game, by
+    drain              49.2%
+    combo              20.1%
+    triggers           18.0%
+    combat             11.9%
+    burn                0.7%
+  Damage dealt per game: 32.4, from
+    triggers            13.4  (41%)
+    drain               11.4  (35%)
+    combat               6.9  (21%)
+    burn                 0.8  (2%)
+
+-- How it loses --
+  Eliminated in 73.7% of games, on average in round 8.4
+    by Urza     via combo              13.2% of games
+    by Kinnan   via combo              12.9% of games
+    by Miirym   via combat              9.9% of games
+    by Zur the Enchanter via combo               9.4% of games
+    by Yawgmoth via combo               8.4% of games
+    by Miirym   via triggers            6.6% of games
+    by Kinnan   via combat              4.3% of games
+    by Miirym   via commander damage    1.6% of games
+
+-- Game plan timing --
+  Plan: first drain from Y'shtola's cast trigger
+  Online by turn:  T2 0%  T3 0%  T4 8%  T5 24%  T6 38%  T7 47%  T8 52%  T9 55%  T10 57%  T11 59%  T12 59%
+  Online at all: 60.2% of games
+  Commander resolves on turn: median 5.0, mean 5.2 (over the 78.7% of games it resolves)
+  Commander resolved by turn:  T4 34%  T5 54%  T6 64%  T7 70%  T8 74%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Debt to the Deathless                      cast in  10.2% of games, win rate when cast  68.1% (+41.8)
+    Exquisite Blood                            cast in  16.4% of games, win rate when cast  61.9% (+35.6)
+    Torment of Hailfire                        cast in  10.8% of games, win rate when cast  61.8% (+35.5)
+    Exsanguinate                               cast in  10.1% of games, win rate when cast  59.4% (+33.1)
+    Diabolic Tutor                             cast in  10.7% of games, win rate when cast  55.1% (+28.8)
+    Consecrated Sphinx                         cast in  11.2% of games, win rate when cast  54.9% (+28.6)
+    Read the Bones                             cast in   8.3% of games, win rate when cast  54.5% (+28.2)
+    Smothering Tithe                           cast in  14.2% of games, win rate when cast  54.0% (+27.7)
+    Polluted Bonds                             cast in   9.8% of games, win rate when cast  53.3% (+27.0)
+    Sanguine Bond                              cast in  36.2% of games, win rate when cast  52.5% (+26.2)
+  Lowest win rate when cast:
+    Teferi's Protection                        cast in  11.5% of games, win rate when cast  26.1% (-0.2)
+    Esper Sentinel                             cast in  16.4% of games, win rate when cast  30.8% (+4.5)
+    Fatal Push                                 cast in  15.6% of games, win rate when cast  30.9% (+4.6)
+    Mystic Remora                              cast in  14.4% of games, win rate when cast  30.9% (+4.6)
+    Urborg Syphon-Mage                         cast in  11.0% of games, win rate when cast  31.4% (+5.1)
+    Y'shtola, Night's Blessed                  cast in  80.7% of games, win rate when cast  31.6% (+5.3)
+    Arcane Signet                              cast in  15.1% of games, win rate when cast  33.4% (+7.1)
+    Arrest                                     cast in  20.9% of games, win rate when cast  33.6% (+7.3)
+    Toxic Deluge                               cast in  11.9% of games, win rate when cast  34.5% (+8.2)
+    Expedition Map                             cast in  16.9% of games, win rate when cast  34.9% (+8.6)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Conjurer's Closet                          cast  18.8% of the games it was drawn
+    Teleportation Circle                       cast  21.6% of the games it was drawn
+    Sphere of Safety                           cast  33.7% of the games it was drawn
+    Tezzeret's Gambit                          cast  34.7% of the games it was drawn
+    Displacer Kitten                           cast  34.8% of the games it was drawn
+    Exsanguinate                               cast  36.5% of the games it was drawn
+    Zur the Enchanter                          cast  37.0% of the games it was drawn
+    Read the Bones                             cast  37.0% of the games it was drawn
+    Prayer of Binding                          cast  37.6% of the games it was drawn
+    Polluted Bonds                             cast  37.9% of the games it was drawn
+    Necropotence                               cast  39.1% of the games it was drawn
+    Debt to the Deathless                      cast  39.7% of the games it was drawn
+  Most often removed by opponents (per game):
+    Y'shtola, Night's Blessed                  0.20
+    Sanguine Bond                              0.07
+    Restoration Angel                          0.04
+    Esper Sentinel                             0.03
+    Sheoldred, the Apocalypse                  0.03
+    Consecrated Sphinx                         0.03
+    Grand Arbiter Augustin IV                  0.03
+    Exquisite Blood                            0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: kinnan-simic-mana-combo = Kinnan, miirym-temur-dragons = Miirym, urza-mono-blue-artifacts = Urza, yawgmoth-mono-black-aristocrats = Yawgmoth, zur-esper-enchantment-control = Zur the Enchanter
+
+(382s total)

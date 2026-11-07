@@ -4,6 +4,20 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run (CLAUDE.md "Swap tests explain themselves"). Newest evidence first; numbers are
 look-ahead, loose profile, vs Cloud's matched tiers (T1, T2) unless noted.
 
+## Baseline 2026-11-07 (package C in the list; main 7c622f5f; look-ahead, loose, 10,000 games per tier, seed 500000)
+t1 **30.8%** (29.9-31.7), t2 **22.4%** (21.6-23.3), t3 **23.4%** (22.6-24.3): **25.6% over t1-t3**, against 24.2% in
+Baseline B (29.6 / 20.6 / 22.4; 2,000 games per tier). +1.2, +1.8 and +1.0: each inside the noise against Baseline B
+(about ±2.1 per tier), but all three the same way, so package C (Rogue's Passage, Sting) looks like a small gain, not a
+proven one. Analyze run: `audit/baseline-2026-11-07/cloud-analyze.txt`. Raw: `audit/baseline-2026-11-07/cloud.txt`.
+
+**Analyze (2,000 games per tier).** It dies in combat: t1 (69.8%, round 9.2) Isshin 11.8%, Light-Paws commander damage 9.8%,
+Tatyova 9.2%, Lathril 7.1%; t2 (76.5%, round 11.7) Kaalia 14.1%, Brago 13.5%, Lord Windgrace 11.5%, Sythis 8.4%; t3 (76.7%,
+round 9.3) Aurelia 14.5%, Tergrid 10.5%, Marwyn 9.1% and 7.9% combo. Highest win rates when cast (t1): Akroma's Will 72% (+42),
+Smothering Tithe, Elspeth and Forge Anew (+30-34). **Galadriel's Dismissal is never cast (0.0% of the games drawn, a
+response-only card): open, an AI gap or a card with no moment to use it; to check.** Teferi's Protection (25%) and Judgment
+of Alexander (27%) also sit in hand. The package-C cards don't show in the card lists (Sting appears only as removed by
+opponents, 0.03-0.10 per game).
+
 ## 2026-11-07: card-pile package C, adopted untested
 Plains => Rogue's Passage and Disenchant => Sting, the Glinting Dagger (JD's spare-card pile,
 `audit/jd-packages/2026-11-06-card-pile/`). **Not measured:** JD stopped the run before it finished and adopted it.

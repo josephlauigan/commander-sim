@@ -8,6 +8,20 @@ its first sim is the baseline below. The findings of the previous list (t5, Basa
 Monolith + Rings + Ballista deck with attack taxes) are in `FINDINGS-old-list.md`, and the retired Thanos turbo list's
 (t6) in `audit/thanos/FINDINGS-old-list.md`.
 
+## Baseline 2026-11-07 (main 7c622f5f; look-ahead, loose, 10,000 games, seed 500000; list unchanged)
+**35.1%** (34.2-36.0) at t6, against 33.9% (31.9-36.0) in Baseline B (2,000 games): +1.2, inside the noise. The list didn't
+change; this checks that the 11-06/07 engine work (#292 counters wait for the combo, the Ringsight fix) didn't move it.
+Plan online 80.6%; wins by combo 98%. Combo attempts 0.43 per game: Thassa's Oracle + Consultation / Tainted Pact 3,593,
+Power Artifact / Rings 606, Doomsday + Oracle 84. Doomsday is still rarely chosen (153 times in 10,000 games, asked in
+22.9% of games). Raw: `audit/baseline-2026-11-07/thrasios.txt`.
+
+**Analyze (2,000 games, t6).** Eliminated in 66.2% of games (round 7.1), almost all by combo: Sisay 12.9%, Kraum/Tymna 11.3%,
+Rograkh/Silas 9.9%, Dack Fayden 9.4%, Rograkh/Thrasios 6.7%, Kinnan 4.3%. Stuck in hand: Elvish Spirit Guide shows 0.0% "cast", which is expected: its mana is exiled from hand, not cast
+(`partials::HAND_MANA`), so the card report never counts it. Then Orim's Chant
+2.3%, Ad Nauseam 5.0%, Veil of Summer 7.3%, Doomsday 7.9%, Silence 13.3%. Lowest win rates when cast: Noxious Revival -10.3,
+Force of Negation -9.4, Grim Monolith -8.0 (the reactive cards are cast in the games already going badly). Raw:
+`audit/baseline-2026-11-07/thrasios-analyze.txt`.
+
 ## 2026-11-06: Cabal Ritual counted for Doomsday's {B}{B}{B} (branch doomsday-cabal; t6, look-ahead, 2,000 games, seed 500000)
 The cost check counted Dark Ritual but not Cabal Ritual ({1}{B}: add {B}{B}{B}); now both (Dark Ritual first). Effect:
 main-phase decisions declined for "no {B}{B}{B}" 3,142 -> 3,083, Doomsday chosen 31 -> 33, the line attempted 19 -> 20,

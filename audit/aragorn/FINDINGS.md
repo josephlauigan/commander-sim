@@ -8,6 +8,20 @@ day; their findings are in `audit/retired/kefka/` and `audit/retired/sauron/`). 
 not from a paired test). **Model:** 100 cards, Full 94, Full-auto 6; Aragorn's four cast triggers are card code
 (`impls/aragorn.rs`, `tests/cards_aragorn.rs`).
 
+## Baseline 2026-11-07 (A1 + A2 in the list; main 7c622f5f; look-ahead, loose, 10,000 games per tier, seed 500000)
+t4 **13.8%** (13.1-14.5), t5 **11.3%** (10.7-12.0): **12.6% over t4, t5**, against 9.9% before (t4 10.8%, t5 8.9%; the
+11-06 AI-fix run, 2,000 games per tier). +3.0 and +2.4, outside the noise (about ±1.6 per tier against a 2,000-game
+run at these win rates): a clear gain, and the first run of A1 and A2 together. It matches the A1 package test (t4 +4.3,
+t5 +2.4) with A2 neutral. Still well under an even share (25%): t4's go-wide decks and t5's combos remain the losses
+(analyze run: `audit/baseline-2026-11-07/aragorn-analyze.txt`). Raw: `audit/baseline-2026-11-07/aragorn.txt`.
+
+**Analyze (2,000 games per tier).** t4: eliminated in 86.0% of games (round 8.5): Edgar Markov combat 11.6%, Krenko combat 11.5%
+and triggers 7.6%, Yuriko triggers 10.2% and combat 6.3%, Chulane combo 9.9%. t5: 88.2% (round 8.8): Kinnan combo 16.4%,
+Urza combo 14.2%, Miirym combat 12.3% and triggers 7.0%, Zur combo 10.1%, Yawgmoth combo 9.3%. The A1 / A2 cards that show
+up: Nibelheim Aflame wins 34.5% / 33.0% of the games it is cast in (+20.6 / +21.7), Windborn Muse 31.9% (+17.9, t4), Spark
+Double 26.9% (+15.6, t5); Llanowar Elves +6. Still open: the Breach storm is almost never played (Brain Freeze cast in
+2-4% of the games drawn, Grapeshot 3-5%), and the t5 combos are half its deaths.
+
 ## 2026-11-06: card-pile packages A1 and A2, both adopted (paired swap runs; t4, t5, look-ahead, loose, 1,500 games per list per tier, main b84ab9e6 with #292)
 
 From JD's spare-card pile (`audit/jd-packages/2026-11-06-card-pile/`), aimed at the losses below: t4's go-wide decks

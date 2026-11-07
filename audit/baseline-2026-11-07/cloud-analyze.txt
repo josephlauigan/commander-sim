@@ -1,0 +1,269 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  cloud                                100 cards: Full 91, Full-auto 9, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 1 (High B2 / Low B3)  5 decks, 500 cards: Full 406, Full-auto 76, Approximate 18, Partial 0, Unmodeled 0
+  opponents Tier 2 (Mid B3)            5 decks, 500 cards: Full 428, Full-auto 56, Approximate 16, Partial 0, Unmodeled 0
+  opponents Tier 3 (High B3)           5 decks, 500 cards: Full 444, Full-auto 38, Approximate 18, Partial 0, Unmodeled 0
+
+6,000 games (analysis, 2,000 per list per tier, profile loose), lookahead AI, 24 worker threads: about 12 minutes
+  progress  10.0%  3m13s elapsed, ~29m01s left
+  progress  20.0%  6m25s elapsed, ~25m41s left
+  progress  30.0%  9m41s elapsed, ~22m37s left
+
+######## vs Tier 1 (High B2 / Low B3) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 29.9%   (4-player baseline 25%)   average rounds survived 9.9
+
+-- How it wins --
+  damage      99.5% of wins
+  timeout      0.5% of wins
+  Opponents it eliminated: 0.86 per game, by
+    commander damage   54.4%
+    combat             32.9%
+    triggers           12.6%
+    decked              0.2%
+  Damage dealt per game: 49.0, from
+    combat              44.8  (91%)
+    triggers             4.2  (9%)
+
+-- How it loses --
+  Eliminated in 69.8% of games, on average in round 9.2
+    by Isshin   via combat             11.8% of games
+    by Light-Paws via commander damage    9.8% of games
+    by Tatyova  via combat              9.2% of games
+    by Lathril  via combat              7.1% of games
+    by Teysa Karlov via drain               6.0% of games
+    by Lathril  via drain               5.9% of games
+    by Isshin   via triggers            4.8% of games
+    by Teysa Karlov via combat              3.6% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 5%  T4 25%  T5 43%  T6 55%  T7 62%  T8 67%  T9 70%  T10 72%  T11 73%  T12 74%
+  Online at all: 74.8% of games
+  Commander resolves on turn: median 2.0, mean 2.6 (over the 99.3% of games it resolves)
+  Commander resolved by turn:  T4 94%  T5 98%  T6 98%  T7 99%  T8 99%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Akroma's Will                              cast in   8.9% of games, win rate when cast  72.1% (+42.1)
+    Smothering Tithe                           cast in  11.2% of games, win rate when cast  63.7% (+33.7)
+    Elspeth, Sun's Champion                    cast in   8.8% of games, win rate when cast  63.6% (+33.7)
+    Forge Anew                                 cast in  14.0% of games, win rate when cast  60.4% (+30.4)
+    Fireshrieker                               cast in  17.4% of games, win rate when cast  58.7% (+28.8)
+    Norn's Annex                               cast in   9.8% of games, win rate when cast  58.5% (+28.5)
+    Judgment of Alexander                      cast in   6.2% of games, win rate when cast  58.4% (+28.4)
+    Court of Ardenvale                         cast in  12.7% of games, win rate when cast  57.5% (+27.5)
+    Silverblade Paladin                        cast in  14.0% of games, win rate when cast  57.1% (+27.2)
+    Buster Sword                               cast in  16.0% of games, win rate when cast  56.9% (+26.9)
+  Lowest win rate when cast:
+    Cloud, Midgar Mercenary                    cast in  99.5% of games, win rate when cast  30.1% (+0.2)
+    Wrath of God                               cast in  13.1% of games, win rate when cast  32.1% (+2.1)
+    Sword of Fire and Ice                      cast in  84.8% of games, win rate when cast  32.9% (+3.0)
+    Teferi's Protection                        cast in   6.0% of games, win rate when cast  35.8% (+5.9)
+    Sword of Feast and Famine                  cast in  70.7% of games, win rate when cast  37.4% (+7.5)
+    Colossus Hammer                            cast in  53.5% of games, win rate when cast  41.4% (+11.5)
+    Page, Loose Leaf                           cast in  17.7% of games, win rate when cast  41.8% (+11.9)
+    Auriok Steelshaper                         cast in  22.8% of games, win rate when cast  41.9% (+11.9)
+    Giver of Runes                             cast in  23.4% of games, win rate when cast  42.3% (+12.4)
+    Zack Fair                                  cast in  24.7% of games, win rate when cast  42.5% (+12.6)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Galadriel's Dismissal                      cast   0.0% of the games it was drawn [reactive: only cast in response]
+    Teferi's Protection                        cast  25.4% of the games it was drawn [reactive: only cast in response]
+    Judgment of Alexander                      cast  26.9% of the games it was drawn
+    Elspeth, Sun's Champion                    cast  36.4% of the games it was drawn
+    Akroma's Will                              cast  38.7% of the games it was drawn
+    Austere Command                            cast  39.4% of the games it was drawn
+    Norn's Annex                               cast  42.3% of the games it was drawn
+    Smothering Tithe                           cast  47.9% of the games it was drawn
+    Exalted Angel                              cast  48.1% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    0.35
+    Sword of Fire and Ice                      0.29
+    Colossus Hammer                            0.12
+    Sword of Hearth and Home                   0.08
+    Elspeth, Sun's Champion                    0.04
+    Mask of Memory                             0.04
+    Archangel of Tithes                        0.04
+    Sting, the Glinting Dagger                 0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: isshin-mardu-attack-triggers = Isshin, lathril-golgari-elves = Lathril, light-paws-aura-voltron = Light-Paws, tatyova-simic-landfall = Tatyova, teysa-orzhov-aristocrats = Teysa Karlov
+  progress  40.0%  13m30s elapsed, ~20m15s left
+  progress  50.0%  17m22s elapsed, ~17m22s left
+  progress  60.0%  21m16s elapsed, ~14m10s left
+
+######## vs Tier 2 (Mid B3) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 22.0%   (4-player baseline 25%)   average rounds survived 12.0
+
+-- How it wins --
+  damage      97.5% of wins
+  timeout      2.5% of wins
+  Opponents it eliminated: 0.74 per game, by
+    commander damage   45.6%
+    combat             43.2%
+    triggers           10.4%
+    decked              0.8%
+  Damage dealt per game: 46.3, from
+    combat              43.3  (93%)
+    triggers             3.1  (7%)
+
+-- How it loses --
+  Eliminated in 76.5% of games, on average in round 11.7
+    by Kaalia of the Vast via combat             14.1% of games
+    by Brago    via combat             13.5% of games
+    by Lord Windgrace via combat             11.5% of games
+    by Sythis   via combat              8.4% of games
+    by Lord Windgrace via drain               5.0% of games
+    by Meren of Clan Nel Toth via combat              4.0% of games
+    by Meren of Clan Nel Toth via drain               4.0% of games
+    by Meren of Clan Nel Toth via combo               3.5% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 4%  T4 22%  T5 39%  T6 51%  T7 59%  T8 64%  T9 67%  T10 70%  T11 72%  T12 73%
+  Online at all: 74.8% of games
+  Commander resolves on turn: median 2.0, mean 2.7 (over the 99.8% of games it resolves)
+  Commander resolved by turn:  T4 94%  T5 98%  T6 99%  T7 100%  T8 100%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Akroma's Will                              cast in   9.2% of games, win rate when cast  45.9% (+23.9)
+    Silverblade Paladin                        cast in  18.6% of games, win rate when cast  42.6% (+20.6)
+    Norn's Annex                               cast in  10.2% of games, win rate when cast  41.9% (+19.9)
+    Forge Anew                                 cast in  17.8% of games, win rate when cast  41.7% (+19.7)
+    Fireshrieker                               cast in  21.5% of games, win rate when cast  41.6% (+19.6)
+    Elspeth, Sun's Champion                    cast in   9.7% of games, win rate when cast  39.9% (+17.9)
+    Buster Sword                               cast in  20.6% of games, win rate when cast  39.7% (+17.7)
+    Andúril, Narsil Reforged                   cast in  32.2% of games, win rate when cast  39.4% (+17.4)
+    Jocasta, Automaton Avenger                 cast in  17.8% of games, win rate when cast  38.9% (+16.9)
+    Court of Ardenvale                         cast in  16.4% of games, win rate when cast  38.0% (+16.0)
+  Lowest win rate when cast:
+    Wrath of God                               cast in  15.4% of games, win rate when cast  20.8% (-1.2)
+    Cloud, Midgar Mercenary                    cast in  99.8% of games, win rate when cast  22.0% (+0.0)
+    Sword of Fire and Ice                      cast in  91.5% of games, win rate when cast  23.3% (+1.3)
+    Sword of Feast and Famine                  cast in  79.8% of games, win rate when cast  25.7% (+3.7)
+    Fumigate                                   cast in  14.6% of games, win rate when cast  25.7% (+3.7)
+    Sword of Hearth and Home                   cast in  66.1% of games, win rate when cast  27.2% (+5.2)
+    Kor Outfitter                              cast in  25.1% of games, win rate when cast  27.3% (+5.3)
+    Mask of Memory                             cast in  64.2% of games, win rate when cast  27.6% (+5.6)
+    Swords to Plowshares                       cast in  23.9% of games, win rate when cast  28.3% (+6.3)
+    Enlightened Tutor                          cast in  24.5% of games, win rate when cast  28.8% (+6.8)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Galadriel's Dismissal                      cast   0.0% of the games it was drawn [reactive: only cast in response]
+    Judgment of Alexander                      cast  31.4% of the games it was drawn
+    Akroma's Will                              cast  35.2% of the games it was drawn
+    Elspeth, Sun's Champion                    cast  37.8% of the games it was drawn
+    Teferi's Protection                        cast  41.2% of the games it was drawn [reactive: only cast in response]
+    Norn's Annex                               cast  43.7% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    1.04
+    Sword of Fire and Ice                      0.63
+    Sword of Hearth and Home                   0.30
+    Colossus Hammer                            0.22
+    Mask of Memory                             0.13
+    Sting, the Glinting Dagger                 0.10
+    Sword of Feast and Famine                  0.09
+    Cid, Freeflier Pilot                       0.09
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: brago-azorius-blink-control = Brago, kaalia-mardu-creature-cheat = Kaalia of the Vast, lord-windgrace-jund-lands = Lord Windgrace, meren-golgari-recursion = Meren of Clan Nel Toth, sythis-selesnya-enchantress = Sythis
+  progress  70.0%  24m38s elapsed, ~10m33s left
+  progress  80.0%  26m37s elapsed, ~6m39s left
+  progress  90.0%  28m38s elapsed, ~3m10s left
+  progress 100.0%  30m34s elapsed, ~0m00s left
+
+######## vs Tier 3 (High B3) ########
+
+=========== cloud analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 23.2%   (4-player baseline 25%)   average rounds survived 9.7
+
+-- How it wins --
+  damage     100.0% of wins
+  Opponents it eliminated: 0.68 per game, by
+    commander damage   46.1%
+    combat             37.2%
+    triggers           16.7%
+  Damage dealt per game: 40.0, from
+    combat              36.3  (91%)
+    triggers             3.8  (9%)
+
+-- How it loses --
+  Eliminated in 76.7% of games, on average in round 9.3
+    by Aurelia  via combat             14.5% of games
+    by Tergrid  via combat             10.5% of games
+    by Marwyn   via combat              9.1% of games
+    by Marwyn   via combo               7.9% of games
+    by Atraxa   via poison              4.4% of games
+    by Atraxa   via combat              3.5% of games
+    by Aurelia  via commander damage    3.2% of games
+    by Tergrid  via triggers            2.8% of games
+
+-- Game plan timing --
+  Plan: first attack by an equipped Cloud
+  Online by turn:  T2 0%  T3 4%  T4 19%  T5 38%  T6 50%  T7 59%  T8 63%  T9 66%  T10 68%  T11 68%  T12 69%
+  Online at all: 69.6% of games
+  Commander resolves on turn: median 3.0, mean 2.9 (over the 99.4% of games it resolves)
+  Commander resolved by turn:  T4 91%  T5 96%  T6 98%  T7 99%  T8 99%
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Akroma's Will                              cast in   6.7% of games, win rate when cast  58.6% (+35.4)
+    Norn's Annex                               cast in   7.2% of games, win rate when cast  54.2% (+31.0)
+    Elspeth, Sun's Champion                    cast in   6.8% of games, win rate when cast  53.7% (+30.5)
+    Fireshrieker                               cast in  12.4% of games, win rate when cast  53.2% (+30.0)
+    Buster Sword                               cast in  12.3% of games, win rate when cast  52.8% (+29.6)
+    Forge Anew                                 cast in  11.2% of games, win rate when cast  51.3% (+28.1)
+    Court of Ardenvale                         cast in  10.7% of games, win rate when cast  48.1% (+24.9)
+    Silverblade Paladin                        cast in  12.9% of games, win rate when cast  48.1% (+24.9)
+    Smothering Tithe                           cast in  10.1% of games, win rate when cast  48.0% (+24.8)
+    Thalia, the Survivor                       cast in  11.9% of games, win rate when cast  47.9% (+24.7)
+  Lowest win rate when cast:
+    Cloud, Midgar Mercenary                    cast in  99.4% of games, win rate when cast  23.3% (+0.1)
+    Sword of Fire and Ice                      cast in  83.2% of games, win rate when cast  26.3% (+3.1)
+    Wrath of God                               cast in   9.9% of games, win rate when cast  26.3% (+3.1)
+    Teferi's Protection                        cast in   5.2% of games, win rate when cast  29.8% (+6.6)
+    Zack Fair                                  cast in  21.4% of games, win rate when cast  31.0% (+7.8)
+    Sword of Feast and Famine                  cast in  61.9% of games, win rate when cast  31.1% (+7.9)
+    Lay Down Arms                              cast in  16.9% of games, win rate when cast  31.6% (+8.4)
+    Stroke of Midnight                         cast in  18.8% of games, win rate when cast  32.3% (+9.1)
+    Arcane Signet                              cast in  14.9% of games, win rate when cast  32.4% (+9.2)
+    Steelshaper's Gift                         cast in  20.7% of games, win rate when cast  33.1% (+9.9)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Galadriel's Dismissal                      cast   0.0% of the games it was drawn [reactive: only cast in response]
+    Judgment of Alexander                      cast  17.7% of the games it was drawn
+    Teferi's Protection                        cast  24.3% of the games it was drawn [reactive: only cast in response]
+    Elspeth, Sun's Champion                    cast  30.4% of the games it was drawn
+    Akroma's Will                              cast  31.2% of the games it was drawn
+    Austere Command                            cast  32.4% of the games it was drawn
+    Norn's Annex                               cast  33.3% of the games it was drawn
+    Wrath of God                               cast  44.5% of the games it was drawn
+    Fumigate                                   cast  46.4% of the games it was drawn
+    Balan, Wandering Knight                    cast  47.4% of the games it was drawn
+    Smothering Tithe                           cast  47.8% of the games it was drawn
+    Court of Ardenvale                         cast  48.4% of the games it was drawn
+  Most often removed by opponents (per game):
+    Cloud, Midgar Mercenary                    0.45
+    Sword of Fire and Ice                      0.25
+    Colossus Hammer                            0.09
+    Sword of Hearth and Home                   0.06
+    Cid, Freeflier Pilot                       0.04
+    Elspeth, Sun's Champion                    0.03
+    Danitha Capashen, Paragon                  0.03
+    Grand Abolisher                            0.03
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: atraxa-infect = Atraxa, aurelia-boros-extra-combats = Aurelia, korvold-jund-sacrifice = Korvold, marwyn-mono-green-elves = Marwyn, tergrid-mono-black-disruption = Tergrid
+
+(1835s total)

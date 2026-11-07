@@ -9,6 +9,23 @@ combos). **Tiers:** t5 (`data/my_decks.toml`; the old cEDH list played t6). **Pl
 previous list (the cEDH turbo list, t6) are in `FINDINGS-old-list.md`; the retired decks' findings are in
 `audit/retired/karn/` and `audit/retired/urdragon/`.
 
+## Baseline 2026-11-07 (after TD2; main 7c622f5f; look-ahead, loose, 10,000 games, seed 500000)
+**18.9%** (18.2-19.7) at t5, against 18.6% (17.0-20.4) in Baseline B (2,000 games): no change in the number. The way it
+wins changed: damage 65% of wins (was 50%), combo 34% (was 46%); plan online (first combo attempt) 6.9% of games (was
+8.8%). That is TD2's trade: hasty Dragons and Utvara for the damage win, and the combo a little less often (Lotus Petal,
+Gamble, Karn the Great Creator, Ugin and Portal gone). Who eliminates it: Miirym 19.5%, Kinnan 18.8%, Urza 16.1%, Zur 14.6%,
+Yawgmoth 12.0%. The analyze run (2,000 games) is in `audit/baseline-2026-11-07/thanos-analyze.txt`. Raw:
+`audit/baseline-2026-11-07/thanos.txt`.
+
+**Analyze (2,000 games, t5).** Losses (eliminated in 80.8% of games, round 8.5): the combo decks, Kinnan 13.6%, Urza 13.6%,
+Zur 11.2% and Yawgmoth 8.0% (about 46% together), then Miirym by combat 11.0% and triggers 7.0%. Wins: 94% of its damage is
+combat; 0.56 opponents eliminated per game. Plan online 6.7% of games; Thanos resolves by turn 4 in 57% (median 4.0) and is
+the card opponents remove most (0.42 per game). The new top end wins when it lands: Utvara Hellkite wins 53.4% of the
+games it is cast in (+34.3 over the deck), Summon: Bahamut 43.5% (+24.3), Scion of Draco 36.6% (+17.4), but Utvara (43.5%
+cast of the games drawn) and Bahamut (43.8%) sit in hand more than half the time, and Disdainful Stroke is cast in 47.4%.
+Low win rates when cast (cheap cards, the telling ones): Mox Jasper +5.3, Crucible of Worlds +6.3, Walking Ballista +3.6,
+The One Ring +4.5. Open: the combos rarely go (6.7%); more interaction for the combo decks is where the losses are.
+
 ## 2026-11-07: card-pile packages TD (tested, worse) and TD2 (adopted untested) (TD: paired swap run, t5, look-ahead, loose, 1,500 games per list, main b84ab9e6 with #292)
 Twelve cards from JD's spare-card pile (`audit/jd-packages/2026-11-06-card-pile/`): Scion of Draco, Crucible of Worlds,
 Strip Mine, Disdainful Stroke, Elesh Norn, Summon: Bahamut, Hangarback Walker, Meteor Golem, Glorybringer, Thundermaw
