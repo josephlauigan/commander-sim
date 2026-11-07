@@ -2,7 +2,7 @@
 # `thanos`; rewritten 2026-11-05 for the list that replaced the cEDH turbo list). `thanos` is not a Tier 6 key (JD, 2026-11-05: the
 # `thrasios` key took the Tier 6 rules), so the generic pool policy reads this file: `[style]`, `[commander]`,
 # `[key_cards]`, `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: ramp and Thanos first, the engines (The One Ring, Rhystic Study, Mystic
-# Forge, Urza, the Karns), then one of two infinite combos or the wipe-and-finish plan. Thanos's power-up (a parity
+# Forge, Urza, Karn, Crucible), then one of two infinite combos or the clear-the-way-and-finish plan (TD2, 2026-11-07). Thanos's power-up (a parity
 # wipe, Rings of Brighthearth copying it to hit both parities) is card code (impls/t6_thanos.rs), not this plan; the
 # Astral Dragon loop is the catalogue combo in impls/t45_urdragon_combos.rs; Basalt Monolith + Rings is the catalogue
 # line "Power Artifact / Rings of Brighthearth + Monolith" widened here with the sinks this list holds.
@@ -13,7 +13,7 @@
 deck = "thanos"
 default = "plan"
 engines = ["The One Ring", "Rhystic Study", "Smothering Tithe", "Mystic Forge", "Sylvan Library",
-    "Karn, Scion of Urza", "Karn, the Great Creator", "Urza, Lord High Artificer"]
+    "Karn, Scion of Urza", "Urza, Lord High Artificer", "Crucible of Worlds"]
 
 # Thanos plans to be down on turn 2-3 and then play value, not a goldfish combo: pool defaults for temperature, a little
 # above the pool's attack, less caution than the pool's 0.5 only while ahead on mana.
@@ -33,7 +33,8 @@ turn = 2
 "Mystic Forge" = 72
 "Urza, Lord High Artificer" = 74
 "Terror of the Peaks" = 70
-"Wurmcoil Engine" = 68
+"Elesh Norn, Mother of Machines" = 66
+"Summon: Bahamut" = 66
 "The Ur-Dragon" = 64
 
 # Win lines, best first: the tutors hunt the first missing piece of the closest one. Basalt Monolith + Rings is two cards
@@ -54,11 +55,12 @@ name = "Astral Dragon + Cursed Mirror + Terror of the Peaks"
 kind = "combo"
 pieces = [["Astral Dragon"], ["Cursed Mirror"], ["Terror of the Peaks"]]
 
-# The fair wins: the wipe (the power-up, Oblivion Stone, Ugin) and then a big threat
+# The fair wins (TD2, 2026-11-07): clear the way (the power-up is card code; Summon: Bahamut destroys two permanents,
+# Meteor Golem one) and then a big Dragon threat
 [[line]]
-name = "Wipe, then a big threat"
+name = "Clear the way, then a big threat"
 kind = "value"
-pieces = [["Oblivion Stone", "Ugin, the Spirit Dragon"], ["The Ur-Dragon", "Wurmcoil Engine", "Blightsteel Colossus", "Portal to Phyrexia"]]
+pieces = [["Summon: Bahamut", "Meteor Golem"], ["The Ur-Dragon", "Utvara Hellkite", "Glorybringer", "Thundermaw Hellkite"]]
 
 # What the tutors fetch (the guide's "What to tutor for"): the combo's missing piece first, an engine on turns 2-3 when
 # nothing is going, the wipe or the Rings when the board can't be beaten.
@@ -83,14 +85,14 @@ when = ["out:Cursed Mirror"]
 score = 92
 
 [[wish]]
-cards = ["Oblivion Stone", "Ugin, the Spirit Dragon", "Portal to Phyrexia"]
+cards = ["Summon: Bahamut", "Elesh Norn, Mother of Machines", "Meteor Golem"]
 when = ["opp-power>=15"]
 score = 76
 
 # Acceleration and fixing are the first plays; Thanos and the engines next; the big top end last.
 [[prio]]
-cards = ["Sol Ring", "Mana Vault", "Grim Monolith", "Chrome Mox", "Mox Diamond", "Mox Opal", "Lotus Petal",
-    "Arcane Signet", "Mind Stone", "Birds of Paradise", "Urza's Bauble", "Wayfarer's Bauble"]
+cards = ["Sol Ring", "Mana Vault", "Grim Monolith", "Chrome Mox", "Mox Diamond", "Mox Opal", "Mox Jasper",
+    "Arcane Signet", "Mind Stone", "Birds of Paradise", "Urza's Bauble", "Wayfarer's Bauble", "Scion of Draco"]
 when = ["turn<=4"]
 value = 86
 else = 46
@@ -102,7 +104,7 @@ value = 78
 else = 62
 
 [[prio]]
-cards = ["Urza, Lord High Artificer", "Karn, Scion of Urza", "Karn, the Great Creator", "Gilded Lotus", "Thran Dynamo",
+cards = ["Urza, Lord High Artificer", "Karn, Scion of Urza", "Crucible of Worlds", "Gilded Lotus", "Thran Dynamo",
     "Coalition Relic"]
 value = 74
 
@@ -140,12 +142,13 @@ when = ["have:Astral Dragon"]
 value = 80
 
 [[prio]]
-cards = ["Terror of the Peaks", "Goldspan Dragon", "Steel Hellkite", "Wurmcoil Engine", "Duplicant"]
+cards = ["Terror of the Peaks", "Goldspan Dragon", "Steel Hellkite", "Glorybringer", "Thundermaw Hellkite",
+    "Elesh Norn, Mother of Machines", "Hangarback Walker"]
 value = 68
 
 # The nine-drop and the top end: after the board is built
 [[prio]]
-cards = ["The Ur-Dragon", "Portal to Phyrexia", "Blightsteel Colossus", "Karn Liberated", "Ugin, the Spirit Dragon"]
+cards = ["The Ur-Dragon", "Summon: Bahamut", "Utvara Hellkite", "Meteor Golem"]
 when = ["lands+rocks>=7"]
 value = 66
 else = 20
@@ -156,9 +159,9 @@ protects = ["commander", "The One Ring", "Terror of the Peaks"]
 
 # The guide's keep rule: 2-5 lands (a lone land only with three fast pieces), mana by turn 2-3, and something to do.
 [sets]
-tutors = ["Demonic Tutor", "Vampiric Tutor", "Enlightened Tutor", "Worldly Tutor", "Imperial Seal", "Gamble"]
+tutors = ["Demonic Tutor", "Vampiric Tutor", "Enlightened Tutor", "Worldly Tutor", "Imperial Seal"]
 engines = ["The One Ring", "Rhystic Study", "Mystic Forge", "Urza, Lord High Artificer", "Karn, Scion of Urza",
-    "Karn, the Great Creator", "Smothering Tithe"]
+    "Crucible of Worlds", "Smothering Tithe"]
 pieces = ["Basalt Monolith", "Rings of Brighthearth", "Walking Ballista", "Astral Dragon", "Cursed Mirror"]
 
 [mulligan]

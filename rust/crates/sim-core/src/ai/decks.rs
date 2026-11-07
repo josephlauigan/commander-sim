@@ -289,14 +289,36 @@ pub fn tutor_ok(g: &Game, kind: &str, c: CardId) -> bool {
         "cre" => d.creature,
         "ench" => d.types.has(Types::ENCHANTMENT),
         "ae" => d.types.has(Types::ARTIFACT) || d.types.has(Types::ENCHANTMENT), // --- ai-fix: B: Enlightened Tutor
+        // Ringsight (`tut=legcol`), resolved for its caster by `tut_kind` to "col:<colours>": a nonland card sharing a
+        // colour with them; unresolved (no player known) it takes any nonland card
+        k if k.starts_with("col:") => !d.land && d.colors.intersects(crate::cards::Colors::from_letters(&k[4..])),
+        "legcol" => !d.land,
         _ => true,
     }
+}
+
+/// a tutor's `tut` kind as it resolves for p: Ringsight's `legcol` becomes "col:<letters>", the colours of the
+/// legendary creatures p controls (the Ring-bearer counts: the Ring makes it legendary; Ringsight tempts first).
+/// Every other kind is unchanged.
+pub fn tut_kind(g: &Game, p: PlayerId, k: &str) -> String {
+    if k != "legcol" {
+        return k.to_string();
+    }
+    let mut cols = crate::cards::Colors::NONE;
+    for &m in &g.player(p).perms {
+        if g.is_creature(m) && !g.perm(m).phased && crate::cardcode::is_legendary(g, m) {
+            cols = cols.union(crate::engine::values::colors_of(g, m)); // a token Ring-bearer has no card
+        }
+    }
+    let letters: String = "WUBRG".chars().filter(|&ch| cols.has(ch)).collect();
+    format!("col:{letters}")
 }
 
 /// the kinds TUTOR_OK knows (any other kind finds anything)
 fn tutor_ok_known(kind: &str) -> &str {
     match kind {
-        "is" | "art" | "perm" | "ubr" | "cre2" | "cre" | "ench" | "ae" => kind, // --- ai-fix: B: "ae"
+        "is" | "art" | "perm" | "ubr" | "cre2" | "cre" | "ench" | "ae" | "legcol" => kind, // --- ai-fix: B: "ae"
+        k if k.starts_with("col:") => k,
         _ => "any",
     }
 }

@@ -6,6 +6,11 @@ and Fate Unraveler beside her, and Exsanguinate, Peer into the Abyss and the San
 is weak when Sheoldred is exiled or keeps getting removed, and when the symmetric draw cards are played with no
 punisher out, because they then just refuel the table.
 
+**Changed 2026-11-07 (JD, card-pile package S):** Reanimate, Entomb, Diabolic Intent, Massacre Wurm, Yawgmoth's Will,
+Dreadhorde Invasion and Barad-dûr for Raise Dead, Cast Away Doubt, Darksteel Plate, Vanquish the Weak, Dark Deal,
+Otherworld Atlas and a Swamp. Tested with Diabolic Tutor out instead of Darksteel Plate: no clear effect (t3 +1.9,
+t4 -0.3, noise ±2.7); the AI rarely casts Entomb and Yawgmoth's Will. Evidence: `audit/sheoldred/FINDINGS.md`.
+
 | | |
 |---|---|
 | **Commander** | Sheoldred, the Apocalypse ({2}{B}{B}, 4/5 deathtouch, black) |
@@ -42,15 +47,12 @@ keep the pressure on while she is dead or not yet cast. Fate Unraveler is also a
 These are the cards that turn the punishers on. Play the symmetric ones only once a punisher is out.
 - **Howling Mine**: each player draws an extra card in their draw step, so each opponent draws two a turn (4 life with
   Sheoldred) while you draw two too (4 life back).
-- **Mikokoro, Center of the Sea** and **Geier Reach Sanitarium** (lands) and **Otherworld Atlas**: each player draws, at
-  will. Mikokoro: {2}, {T}, each player draws a card. The Sanitarium: {2}, {T}, each player draws then discards. The
-  Atlas: tap to add a charge counter, or tap to make each player draw a card per counter, so it gets bigger every turn
-  you charge it. Use them at an opponent's end step so you keep your mana.
+- **Mikokoro, Center of the Sea** and **Geier Reach Sanitarium** (lands): each player draws, at
+  will. Mikokoro: {2}, {T}, each player draws a card. The Sanitarium: {2}, {T}, each player draws then discards. Use them at an opponent's end step so you keep your mana.
 - **Seizan, Perverter of Truth**: in each player's upkeep that player loses 2 life and draws two cards. With Sheoldred
   out each opponent loses 6 per upkeep, and you take 2 and draw two (net +2 life).
-- **The wheels**: **Memory Jar** ({T}, sacrifice: each player draws seven, then discards at the end step and gets their
-  old hand back) is 14 life from each opponent with Sheoldred out, and you gain 14. **Dark Deal** has each player
-  discard their hand and draw one fewer; a big opposing hand turns into a big loss.
+- **The wheel**: **Memory Jar** ({T}, sacrifice: each player draws seven, then discards at the end step and gets their
+  old hand back) is 14 life from each opponent with Sheoldred out, and you gain 14.
 - **Hand one opponent cards**: **Cost of Brilliance** (target player draws two, loses 2, and a +1/+1 counter on a
   creature) and **Vault Plunderer** (target player draws one, loses 1). With Sheoldred out these are 6 or 3 life
   against the chosen opponent. **Peer into the Abyss** makes one opponent
@@ -100,16 +102,15 @@ attacks. The Zombies block for you and are the sacrifice fodder for Viscera Seer
 sacrifice-cost removal, and each one that dies drains with Blood Artist and Zulaport Cutthroat out.
 
 ### Protect her
-- **Swiftfoot Boots** (hexproof and haste, equip {1}) and **Darksteel Plate** (indestructible, equip {2}): equip one
-  as soon as Sheoldred lands. Boots stop targeted removal; the Plate stops destroy effects and damage, but not exile
-  or -X/-X.
+- **Swiftfoot Boots** (hexproof and haste, equip {1}): equip it as soon as Sheoldred lands. Boots stop targeted
+  removal, not wipes or edicts.
 - **Perigee Beckoner**: when it enters, another creature of yours gets +2/+0 and returns if it dies this turn. Cast it
   on Sheoldred before she attacks or blocks into a risk; warp ({1}{B}) lets you reuse it later.
-- **Recursion** (below) is the backup when protection isn't there, and **Demonic Tutor** ({1}{B}), **Diabolic Tutor** ({2}{B}{B}) or **Grim Tutor** ({1}{B}{B}) finds Sheoldred
+- **Recursion** (below) is the backup when protection isn't there, and **Demonic Tutor** ({1}{B}), **Diabolic Intent** ({1}{B}, sacrifice a creature), **Diabolic Tutor** ({2}{B}{B}) or **Grim Tutor** ({1}{B}{B}) finds Sheoldred
   again if she was exiled or shuffled away.
 
 ### Remove threats
-Seven removal spells and Grave Pact keep the board manageable: **Vanquish the Weak** (power 3 or less), **Overkill** (-0/-9999), **Foolish Fate**,
+Six removal spells, Massacre Wurm and Grave Pact keep the board manageable: **Massacre Wurm** (each opposing creature with toughness 2 or less dies, and each one that dies costs its controller 2 life: the answer to Krenko and other tokens), **Overkill** (-0/-9999), **Foolish Fate**,
 **Sephiroth's Intervention** (destroy, gain 2 life), **Wander Off** (exile), **Invoke Despair** (edict for a creature,
 an enchantment and a planeswalker, with a loss of 2 life and a card for you each time they have none; needs {B}{B}{B}{B}),
 and the sacrifice-cost cheap one **Silence the Echo** (cheap with a creature to sacrifice, or pay {3}). **Rooftop Assassin** (flash, flying, lifelink) destroys a creature that was dealt damage this turn, and
@@ -151,13 +152,14 @@ creature.
 
 ### Recursion
 **Phyrexian Delver** returns a creature card from your graveyard to the battlefield (you lose life equal to its mana
-value): recover Sheoldred, or return Gray Merchant for another drain. **Raise Dead** ({B}) returns a creature to your hand,
-not the battlefield; use it to recover Mikaeus, Triskelion, Yawgmoth, Vito or Gray Merchant, then pay to cast it again.
+value): recover Sheoldred, or return Gray Merchant for another drain. **Reanimate** ({B}) puts a creature card from any graveyard onto the battlefield (you lose life equal to its mana
+value); **Entomb** puts the one you want there first (Grave Titan, Massacre Wurm, Gix). **Yawgmoth's Will** lets you
+replay a turn of rituals, tutors and drains from the graveyard.
 Moving Sheoldred to the command zone instead makes her unavailable to these graveyard effects.
 
 ### Ramp
 Three rocks, Arcane Signet, Fellwar Stone and Mind Stone (it can cash in for a card), plus **Dark Ritual** (Sheoldred a
-turn early), Ashnod's Altar and Undercity Dire Rat (a Treasure when it dies). Memory Jar, Otherworld Atlas, The One Ring
+turn early), Ashnod's Altar and Undercity Dire Rat (a Treasure when it dies). Memory Jar, The One Ring
 and Bolas's Citadel are the bigger artifacts you cast once the rocks are out.
 
 ### How it wins
@@ -185,8 +187,8 @@ and Bolas's Citadel are the bigger artifacts you cast once the rocks are out.
 
 - **Turns 1-3:** a rock and a cheap blocker; Sheoldred on turn 3 or 4. Underworld Dreams is a fine turn-3 play on its
   own.
-- **With Sheoldred out:** equip Swiftfoot Boots or Darksteel Plate first, then the draw engines: Howling Mine, Seizan,
-  Mikokoro and Otherworld Atlas at each opponent's end step, Memory Jar the turn she's safe. Hold a protection instant
+- **With Sheoldred out:** equip Swiftfoot Boots first, then the draw engines: Howling Mine, Seizan,
+  and Mikokoro at each opponent's end step, Memory Jar the turn she's safe. Hold a protection instant
   for removal aimed at her. The One Ring and Bolas's Citadel turn her lifegain into cards.
 - **Without her:** removal, Underworld Dreams, Fate Unraveler and the drain creatures (Blood Artist, Al Bhed Salvagers,
   Screeching Soulbreaker, Gray Merchant, Zulaport Cutthroat) keep the pressure on until she
@@ -203,8 +205,8 @@ and Bolas's Citadel are the bigger artifacts you cast once the rocks are out.
 Bonders' Enclave, Mikokoro, Center of the Sea and Geier Reach Sanitarium. That is 31 black sources, plus Phyrexian
 Tower with a creature to sacrifice. **Cabal Coffers** ({2}, {T}: add {B} for each Swamp you control) took Command Tower's slot (JD, 2026-11-04): with 31 Swamps it needs no Urborg, and six Swamps out make it net {B}{B}{B}{B}, more every turn, for Exsanguinate and the big turns. Ramp: three mana rocks (Arcane Signet, Fellwar Stone, Mind Stone), Dark Ritual,
 Ashnod's Altar and Undercity Dire Rat. Tutors: Demonic
-Tutor, Diabolic Tutor and Grim Tutor.
-Interaction: seven removal spells and Grave Pact, 2 protection cards (Swiftfoot Boots, Darksteel Plate) and
+Tutor, Diabolic Intent, Diabolic Tutor and Grim Tutor.
+Interaction: six removal spells, Massacre Wurm and Grave Pact, 1 protection card (Swiftfoot Boots) and
 Perigee Beckoner.
 
 ## Bracket and Rule 0
@@ -216,24 +218,24 @@ three-card loop (it needs a second nontoken non-Human creature with toughness 2 
 Bond (or + Vito, Thorn of the Dusk Rose) is a two-card infinite drain, and Sheoldred + Peer into the
 Abyss (or Underworld Dreams + Peer into the Abyss) is a near-instant kill on an opponent whose library is large
 compared with their life. Name these before the game. Tell the table about the four Game
-Changers, and tell it that Howling Mine, Memory Jar, Dark Deal and the other draw cards are symmetric on purpose: they make everyone
+Changers, and tell it that Howling Mine, Memory Jar and the other draw cards are symmetric on purpose: they make everyone
 draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cost the opponents.
 
 ## Decklist by type (100)
 
 **Commander (1).** Sheoldred, the Apocalypse
 
-**Lands (36).** Bonders' Enclave, Cabal Coffers, Geier Reach Sanitarium, Mikokoro Center of the Sea, Phyrexian Tower, 31 Swamp
+**Lands (36).** Barad-dûr, Bonders' Enclave, Cabal Coffers, Geier Reach Sanitarium, Mikokoro Center of the Sea, Phyrexian Tower, 30 Swamp
 
-**Creatures (23).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Fate Unraveler, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Mikaeus the Unhallowed, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Sephiroth Fabled SOLDIER // Sephiroth One-Winged Angel, Triskelion, Undercity Dire Rat, Vault Plunderer, Viscera Seer, Vito Thorn of the Dusk Rose, Yawgmoth Thran Physician, Zulaport Cutthroat
+**Creatures (24).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Fate Unraveler, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Massacre Wurm, Mikaeus the Unhallowed, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Sephiroth Fabled SOLDIER // Sephiroth One-Winged Angel, Triskelion, Undercity Dire Rat, Vault Plunderer, Viscera Seer, Vito Thorn of the Dusk Rose, Yawgmoth Thran Physician, Zulaport Cutthroat
 
-**Enchantments (6).** Call of the Ring, Exquisite Blood, Grave Pact, Phyrexian Arena, Sanguine Bond, Underworld Dreams
+**Enchantments (7).** Call of the Ring, Dreadhorde Invasion, Exquisite Blood, Grave Pact, Phyrexian Arena, Sanguine Bond, Underworld Dreams
 
-**Artifacts (12).** Arcane Signet, Ashnod's Altar, Bolas's Citadel, Darksteel Plate, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Otherworld Atlas, Skullclamp, Swiftfoot Boots, The One Ring
+**Artifacts (10).** Arcane Signet, Ashnod's Altar, Bolas's Citadel, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Skullclamp, Swiftfoot Boots, The One Ring
 
-**Sorceries (14).** Ambition's Cost, Cast Away Doubt, Cost of Brilliance, Dark Deal, Demonic Tutor, Diabolic Tutor, Exsanguinate, Grim Tutor, Invoke Despair, Peer into the Abyss, Raise Dead, Silence the Echo, Syphon Mind, Torment of Hailfire
+**Sorceries (14).** Ambition's Cost, Cost of Brilliance, Demonic Tutor, Diabolic Intent, Diabolic Tutor, Exsanguinate, Grim Tutor, Invoke Despair, Peer into the Abyss, Reanimate, Silence the Echo, Syphon Mind, Torment of Hailfire, Yawgmoth's Will
 
-**Instants (8).** Ad Nauseam, Dark Ritual, Deadly Dispute, Foolish Fate, Overkill, Sephiroth's Intervention, Vanquish the Weak, Wander Off
+**Instants (8).** Ad Nauseam, Dark Ritual, Deadly Dispute, Entomb, Foolish Fate, Overkill, Sephiroth's Intervention, Wander Off
 
 ## Import list (100)
 
@@ -244,19 +246,20 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Ambition's Cost
 1 Arcane Signet
 1 Ashnod's Altar
+1 Barad-dûr
 1 Blood Artist
 1 Bolas's Citadel
 1 Bonders' Enclave
 1 Cabal Coffers
 1 Call of the Ring
-1 Cast Away Doubt
 1 Cost of Brilliance
-1 Dark Deal
 1 Dark Ritual
-1 Darksteel Plate
 1 Deadly Dispute
 1 Demonic Tutor
+1 Diabolic Intent
 1 Diabolic Tutor
+1 Dreadhorde Invasion
+1 Entomb
 1 Exquisite Blood
 1 Exsanguinate
 1 Fate Unraveler
@@ -271,19 +274,19 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Howling Mine
 1 Invoke Despair
 1 Leech Collector // Bloodletting
+1 Massacre Wurm
 1 Memory Jar
 1 Mikaeus, the Unhallowed
 1 Mikokoro, Center of the Sea
 1 Mind Stone
 1 Ob Nixilis, the Fallen
-1 Otherworld Atlas
 1 Overkill
 1 Peer into the Abyss
 1 Perigee Beckoner
 1 Phyrexian Arena
 1 Phyrexian Delver
 1 Phyrexian Tower
-1 Raise Dead
+1 Reanimate
 1 Rooftop Assassin
 1 Sanguine Bond
 1 Screeching Soulbreaker
@@ -300,12 +303,12 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Triskelion
 1 Undercity Dire Rat
 1 Underworld Dreams
-1 Vanquish the Weak
 1 Vault Plunderer
 1 Viscera Seer
 1 Vito, Thorn of the Dusk Rose
 1 Wander Off
+1 Yawgmoth's Will
 1 Yawgmoth, Thran Physician
 1 Zulaport Cutthroat
-31 Swamp
+30 Swamp
 ```

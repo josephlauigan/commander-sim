@@ -117,6 +117,12 @@ fn name(g: &Game, c: CardId) -> &str {
 /// else its ability-language search filter (Enlightened Tutor: an artifact or enchantment), else its `tut` tag.
 pub fn tutor_targets(g: &Game, p: PlayerId, c: CardId) -> Option<(Dest, Vec<CardId>)> {
     let (dest, ok) = tutor_rule(g, c)?;
+    // Ringsight (`tut=legcol`): what it finds depends on p's legendary creatures, which `tutor_rule` can't see
+    let legcol = (g.db.get(c).tags.str(Tag::Tut) == Some("legcol")).then(|| crate::ai::decks::tut_kind(g, p, "legcol"));
+    let ok = |x: CardId| match &legcol {
+        Some(k) => crate::ai::decks::tutor_ok(g, k, x),
+        None => ok(x),
+    };
     let mut v: Vec<CardId> = vec![];
     for x in crate::engine::zones::searchable(g, p) {
         if ok(x) && !v.contains(&x) {

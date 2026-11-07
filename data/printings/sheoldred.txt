@@ -4,19 +4,20 @@
 1 Ambition's Cost (c15) 113
 1 Arcane Signet (soc) 127
 1 Ashnod's Altar (chr) 92
+1 Barad-dûr (ltr) 425
 1 Blood Artist (2x2) 352
 1 Bolas's Citadel (plg21) 3
 1 Bonders' Enclave (fic) 376
 1 Cabal Coffers (prm) 91393
 1 Call of the Ring (ltr) 79
-1 Cast Away Doubt (fra) 51
 1 Cost of Brilliance (sos) 77
-1 Dark Deal (frf) 66
 1 Dark Ritual (itp) 19
-1 Darksteel Plate (fic) 342
 1 Deadly Dispute (sld) 2091
 1 Demonic Tutor (cmm) 696
+1 Diabolic Intent (fca) 34
 1 Diabolic Tutor (sld) 721
+1 Dreadhorde Invasion (mic) 114
+1 Entomb (dmr) 426
 1 Exquisite Blood (sld) 206
 1 Exsanguinate (som) 61
 1 Fate Unraveler (bng) 68
@@ -25,25 +26,25 @@
 1 Geier Reach Sanitarium (emn) 203
 1 Gix, Yawgmoth Praetor (fca) 35
 1 Grave Pact (cmm) 639
-1 Grave Titan (ecc) 74
+1 Grave Titan (sld) 223
 1 Gray Merchant of Asphodel (ths) 89
 1 Grim Tutor (s99) 79
 1 Howling Mine (brr) 83
 1 Invoke Despair (neo) 506
 1 Leech Collector // Bloodletting (sos) 88
+1 Massacre Wurm (m21) 316
 1 Memory Jar (ulg) 129
 1 Mikaeus, the Unhallowed (cmm) 1061
 1 Mikokoro, Center of the Sea (dmc) 217
 1 Mind Stone (dmr) 385
 1 Ob Nixilis, the Fallen (slc) 15
-1 Otherworld Atlas (avr) 219
 1 Overkill (fin) 109
 1 Peer into the Abyss (plst) M21-117
 1 Perigee Beckoner (eoe) 112
 1 Phyrexian Arena (fdn) 322
 1 Phyrexian Delver (inv) 115
 1 Phyrexian Tower (mh3) 303
-1 Raise Dead (plst) P02-86
+1 Reanimate (mar) 20
 1 Rooftop Assassin (otj) 103
 1 Sanguine Bond (tsr) 330
 1 Screeching Soulbreaker (fra) 65
@@ -53,7 +54,7 @@
 1 Sheoldred, the Apocalypse (dmu) 436
 1 Silence the Echo (fra) 66
 1 Skullclamp (sld) 1663
-31 Swamp (mdd) 296
+30 Swamp (mdd) 296
 1 Swiftfoot Boots (brr) 121
 1 Syphon Mind (scd) 111
 1 The One Ring (ltr) 451
@@ -61,10 +62,10 @@
 1 Triskelion (dmr) 389
 1 Undercity Dire Rat (fin) 123
 1 Underworld Dreams (thb) 121
-1 Vanquish the Weak (xln) 127
 1 Vault Plunderer (otj) 114
 1 Viscera Seer (soc) 229
 1 Vito, Thorn of the Dusk Rose (j22) 487
 1 Wander Off (sos) 104
 1 Yawgmoth, Thran Physician (fca) 11
+1 Yawgmoth's Will (wc99) js171
 1 Zulaport Cutthroat (sld) 1982

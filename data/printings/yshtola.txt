@@ -12,7 +12,7 @@
 1 Command Tower (sld) 1697
 1 Conjurer's Closet (inr) 321
 1 Consecrated Sphinx (sld) 1657
-1 Dark Petition (sch) 19
+1 Counterspell (wc00) tvdl61b
 1 Debt to the Deathless (rvr) 364
 1 Demonic Tutor (sta) 90
 1 Diabolic Tutor (sld) 1592
@@ -20,7 +20,7 @@
 1 Dovin's Veto (p30a) 27
 1 Esper Sentinel (mh2) 328
 1 Expedition Map (fdn) 724
-1 Exquisite Blood (sld) 206
+1 Exquisite Blood (lcc) 195
 1 Exsanguinate (cmm) 638
 1 Farewell (neo) 436
 1 Fatal Push (fca) 9
@@ -32,17 +32,17 @@
 1 Grand Arbiter Augustin IV (2x2) 379
 1 Hallowed Fountain (clu) 277
 1 Idyllic Tutor (thb) 24
-1 Ill-Gotten Inheritance (rvr) 77
-6 Island (trk) 320
+5 Island (trk) 320
 1 Loran of the Third Path (fca) 24
 1 Marauding Blight-Priest (znr) 112
 1 Marsh Flats (mh2) 476
-1 Memory Trap (fra) 15
+1 Mistrise Village (tdm) 397
 1 Mystic Remora (dmr) 420
 1 Mystical Tutor (dmr) 421
 1 Necropotence (wot) 74
 1 Notion Thief (spg) 36
 1 Orcish Bowmasters (hoc) 19
+1 Palantír of Orthanc (hoc) 45
 1 Path to Exile (ss2) 3
 6 Plains (trk) 318
 1 Polluted Bonds (wot) 75
@@ -53,6 +53,7 @@
 1 Read the Bones (cmm) 182
 1 Restoration Angel (2x2) 421
 1 Rhystic Study (pcy) 45
+1 Ringsight (ltr) 220
 1 Sanguine Bond (tsr) 330
 1 Scrubland (cei) 282
 1 Serra's Sanctum (usg) 325

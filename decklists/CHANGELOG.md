@@ -31,6 +31,7 @@ Deck key `cloud`, `decklists/JD/cloud-midgar-equipment.md`.
 
 ### Changes
 
+- **2026-11-07.** Out: Disenchant. In: Rogue's Passage, Sting, the Glinting Dagger. Card-pile package C, adopted untested by JD 2026-11-07 (Rogue's Passage makes an equipped Cloud unblockable; Sting at JD's request).
 - **2026-11-03.** Out: Day of Judgment, Forum Familiar. In: Steelshaper's Gift, Stoneforge Mystic. JD approved: Forum Familiar -> Stoneforge Mystic; Day of Judgment -> Steelshaper's Gift, adding Equipment access while retaining Exalted Angel. Printings: 2xm 337 and 5dn 19. Not simulated.
 - **2026-11-02.** Out: Champion's Helm, Fate of the Sun-Cryst, Sword of Kaldra. In: Galadriel's Dismissal, Path to Exile, Swords to Plowshares. Ghave breakup (JD, 11/02), not simulated: the Ghave deck is broken up and its cards placed as upgrades; the cards in come from Ghave, the cards out go to the binder. Galadriel's Dismissal comes back (it phases out Cloud with his Equipment) for Champion's Helm; Swords to Plowshares and Path to Exile for Fate of the Sun-Cryst and Sword of Kaldra (stuck in hand in the 10/13 reports).
 - **2026-11-01.** Out: Stand Up for Yourself. In: Judgment of Alexander. JD's choice (11/01), not simulated: Judgment of Alexander for Stand Up for Yourself. Defense is the deck's one proven lever; it's an instant that prevents all damage opponents' sources would deal to you this turn, and an equipped Cloud deals damage equal to his power to each creature whose damage was prevented, without wiping your own carriers. Judgment of Alexander is unmodeled.
@@ -338,6 +339,7 @@ Deck key `sheoldred`, `decklists/JD/sheoldred-mono-black.md`.
 
 ### Changes
 
+- **2026-11-07.** Out: Cast Away Doubt, Dark Deal, Darksteel Plate, Otherworld Atlas, Raise Dead, Vanquish the Weak. In: Barad-dûr, Diabolic Intent, Dreadhorde Invasion, Entomb, Massacre Wurm, Reanimate, Yawgmoth's Will. Card-pile package S (Diabolic Intent takes Darksteel Plate's slot, JD kept Diabolic Tutor): tested with Diabolic Tutor out, no clear effect (t3 +1.9, t4 -0.3, noise 2.7); JD adopted 2026-11-07.
 - **2026-11-04.** Out: Necrosquito. In: Raise Dead. Coffers drain package revised (JD 11/04; not simulated): Necrosquito leaves instead of Raise Dead, which stays for cheap creature recovery.
 - **2026-11-04.** Out: Burrog Banemaker, Lethal Throwdown, Phyrexian Rager, Raise Dead, Seymour Flux. In: Exquisite Blood, Grim Tutor, Sanguine Bond, Torment of Hailfire, Vito, Thorn of the Dusk Rose. Coffers drain package (JD 11/04; not simulated): Sanguine Bond, Exquisite Blood, Vito, Grim Tutor, Torment of Hailfire for Seymour Flux, Lethal Throwdown, Raise Dead, Phyrexian Rager, Burrog Banemaker.
 - **2026-11-04.** Out: Command Tower. In: Cabal Coffers. Cabal Coffers for Command Tower (JD 11/04, physical deck; not simulated): 31 Swamps make Coffers a big-mana land without Urborg.
@@ -618,6 +620,7 @@ Deck key `yshtola`, `decklists/JD/yshtola-esper-drain.md`.
 
 ### Changes
 
+- **2026-11-07.** Out: Dark Petition, Ill-Gotten Inheritance, Memory Trap. In: Counterspell, Mistrise Village, Palantír of Orthanc, Ringsight. Card-pile package Y, adopted untested by JD 2026-11-07 (Counterspell against the t5 combos; Ringsight and Palantir trigger her drain at mana value 3; Mistrise Village).
 - **2026-11-04.** Out: Bribery, Hostage Taker. In: Loran of the Third Path, Profane Tutor. JD's physical list 11/04 (Demonic Tutor for Bribery, Profane Tutor for Hostage Taker), so the package's Deep Analysis slot goes to Loran of the Third Path, a blink target whose enter trigger destroys an artifact or enchantment; not simulated.
 - **2026-11-04.** Out: Chromatic Lantern, Deep Analysis, Prison Sentence, Static Net. In: Demonic Tutor, Expedition Map, Exquisite Blood, Torment of Hailfire, Urza's Cave. Coffers package (JD 11/04): Demonic Tutor, Exquisite Blood, Torment of Hailfire, Expedition Map, Urza's Cave for Deep Analysis, Prison Sentence, Chromatic Lantern, Static Net, an Island. Tested vs T5: +1.3 (noise ±2.4), no clear effect.
 - **2026-11-04.** Out: nothing. In: Cabal Coffers. Cabal Coffers for a Plains (JD 11/04, physical deck): Urborg makes every land a Swamp, the big-mana engine for the Exsanguinate / Sanguine Bond package.
@@ -861,3 +864,11 @@ t3-t4 (Seph's seat from 2026-10-30).
   goldfish median 11. Ghave plays from its plan file with no deck AI; the first combo attempt comes in only 6-8% of
   games at the table, so it mostly dies (to Tergrid, Aurelia, Edgar, Krenko) before a loop. Details: the ghave
   FINDINGS (audit/ghave/).
+
+## Thanos, the Mad Titan — Five-Colour Artifacts and Dragons (High Bracket 4)
+
+Deck key `thanos`, `decklists/JD/thanos-artifacts-and-dragons.md`.
+
+### Changes
+
+- **2026-11-07.** Out: Blightsteel Colossus, Duplicant, Gamble, Karn Liberated, Karn, the Great Creator, Lotus Petal, Oblivion Stone, Portal to Phyrexia, Ratchet Bomb, Ugin, the Spirit Dragon, Wastes, Wurmcoil Engine. In: Crucible of Worlds, Disdainful Stroke, Elesh Norn, Mother of Machines, Glorybringer, Hangarback Walker, Meteor Golem, Mox Jasper, Scion of Draco, Strip Mine, Summon: Bahamut, Thundermaw Hellkite, Utvara Hellkite. Card-pile package TD2 (the TD cards with cuts matched on mana value, so the curve stays 3.10 -> 3.07; TD itself raised it to 3.49 and lost -2.8), adopted untested by JD 2026-11-07.

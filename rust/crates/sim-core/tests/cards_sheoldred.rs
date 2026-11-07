@@ -5,7 +5,7 @@ use sim_core::engine::life::gain;
 use sim_core::engine::{cast, turn, values, zones};
 use sim_core::hooks::{Action, Opt};
 use sim_core::ids::{CardId, PermId, PlayerId};
-use sim_core::state::{Ctx, DataKey, Game, Val};
+use sim_core::state::{Ctx, Game};
 use sim_core::testkit::*;
 
 const P0: PlayerId = PlayerId(0);
@@ -784,19 +784,8 @@ fn painful_lesson_draws_two_then_loses_two() {
     assert_eq!(life(&g, P0), 40);
 }
 
-#[test]
-fn the_ai_casts_dark_deal_only_with_sheoldred_out_and_many_opposing_cards() {
-    let mut g = game();
-    lands(&mut g, P0, "Swamp", 3, false);
-    let c = hand(&mut g, P0, &["Dark Deal"])[0];
-    hand(&mut g, P1, &["Terror", "Terror", "Terror", "Terror", "Terror"]);
-    assert!(card_opts(&mut g, c, P0, Some(false)).is_empty(), "no Sheoldred: held");
-    perm(&mut g, P0, SHEO);
-    let o = card_opts(&mut g, c, P0, Some(false));
-    assert_eq!(o.len(), 1);
-    g.player_mut(P1).hand.truncate(3);
-    assert!(card_opts(&mut g, c, P0, Some(false)).is_empty(), "too few opposing cards to matter");
-}
+// the_ai_casts_dark_deal_only_with_sheoldred_out_and_many_opposing_cards: removed 2026-11-07, Dark Deal left the deck
+// (card-pile package S) and the plan may only name the deck's cards. See git history.
 
 #[test]
 fn the_four_upgrade_cards_resolve_from_the_card_data_not_a_bare_scryfall_body() {
@@ -810,7 +799,6 @@ fn the_four_upgrade_cards_resolve_from_the_card_data_not_a_bare_scryfall_body() 
 // ------------------------------------------------------------------ the second upgrade package
 const MINE: &str = "Howling Mine";
 const BELL: &str = "Temple Bell";
-const ATLAS: &str = "Otherworld Atlas";
 const UNRAV: &str = "Fate Unraveler";
 const PEER: &str = "Peer into the Abyss";
 const GEIER: &str = "Geier Reach Sanitarium";
@@ -953,52 +941,8 @@ fn geier_reach_sanitarium_taps_for_colourless_and_loots_everyone() {
     assert!(f(&mut g, sani, P0, None).unwrap().is_empty(), "no spare mana for the {{2}}");
 }
 
-fn charge(g: &Game, m: PermId) -> i64 {
-    g.perm(m).data.int(DataKey::Charge)
-}
-
-#[test]
-fn otherworld_atlas_stores_counters_then_makes_each_player_draw_that_many() {
-    // no punisher: a counter at the end of an opponent's turn, never in our own turn
-    let mut g = game();
-    let atlas = perm(&mut g, P0, ATLAS);
-    g.active = Some(P0);
-    assert!(perm_opts(&mut g, atlas, P0, None).is_empty(), "nothing in our own turn");
-    g.active = Some(P1);
-    let o = perm_opts(&mut g, atlas, P0, None);
-    assert_eq!(o.len(), 1);
-    assert!(o[0].label.contains("charge counter"), "{}", o[0].label);
-    assert!(run_plan(&mut g, P0, &o[0]));
-    assert!(g.perm(atlas).tapped);
-    assert_eq!(charge(&g, atlas), 1);
-    // Sheoldred out, one counter, no kill: grow it instead
-    g.perm_mut(atlas).tapped = false;
-    perm(&mut g, P0, SHEO);
-    let o = perm_opts(&mut g, atlas, P0, None);
-    assert!(o[0].label.contains("charge counter"), "{}", o[0].label);
-    // two counters: each player draws two
-    g.perm_mut(atlas).data.set(DataKey::Charge, Val::Int(2));
-    let (h0, h1) = (hand_len(&g, P0), hand_len(&g, P1));
-    let o = perm_opts(&mut g, atlas, P0, None);
-    assert!(o[0].label.contains("draws 2"), "{}", o[0].label);
-    assert!(run_plan(&mut g, P0, &o[0]));
-    assert_eq!((hand_len(&g, P0), hand_len(&g, P1)), (h0 + 2, h1 + 2));
-    assert_eq!(life(&g, P1), 36, "Sheoldred: 2 for each of the opponent's draws");
-    assert_eq!(life(&g, P0), 44, "and 2 back for each of ours");
-    assert_eq!(charge(&g, atlas), 2, "the counters stay");
-    // one counter that kills: draw in our own main phase
-    let mut g = game();
-    let atlas = perm(&mut g, P0, ATLAS);
-    perm(&mut g, P0, SHEO);
-    g.perm_mut(atlas).data.set(DataKey::Charge, Val::Int(1));
-    g.player_mut(P1).life = 2;
-    g.active = Some(P0);
-    let o = perm_opts(&mut g, atlas, P0, Some(false));
-    assert_eq!(o.len(), 1);
-    assert!(o[0].label.contains("draws 1"), "{}", o[0].label);
-    assert!(run_plan(&mut g, P0, &o[0]));
-    assert!(life(&g, P1) <= 0, "Sheoldred: 2 for the draw");
-}
+// otherworld_atlas_stores_counters_then_makes_each_player_draw_that_many: removed 2026-11-07, Otherworld Atlas left the
+// deck (card-pile package S) and the plan may only name the deck's cards. See git history.
 
 #[test]
 fn mikokoro_taps_for_colourless_and_makes_each_player_draw() {

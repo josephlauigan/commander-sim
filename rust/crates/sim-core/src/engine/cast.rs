@@ -1207,10 +1207,11 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
     }
     if let Some(k) = t.str(Tag::Tut) {
         let by = g.db.get(c).name.to_string();
+        let k = crate::ai::decks::tut_kind(g, p, k); // Ringsight: after the tempt, so the Ring-bearer counts
         if t.has(Tag::Top) {
-            tutor_to_top(g, p, k, 0, &by)?; // Mystical Tutor: on top of the library
+            tutor_to_top(g, p, &k, 0, &by)?; // Mystical Tutor: on top of the library
         } else {
-            tutor(g, p, k, &by)?;
+            tutor(g, p, &k, &by)?;
         }
     }
     if t.has(Tag::Gifts) {

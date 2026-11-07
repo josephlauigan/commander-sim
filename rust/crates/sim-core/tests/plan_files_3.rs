@@ -181,7 +181,7 @@ fn yshtola_the_helm_goes_on_her() {
 #[test]
 fn yshtola_her_trigger_raises_the_mv3_noncreature_spells() {
     let mut g = seated("yshtola", "t5");
-    let c = hand(&mut g, P, &["Ill-Gotten Inheritance"])[0];
+    let c = hand(&mut g, P, &["Palantír of Orthanc"])[0]; // Ill-Gotten Inheritance until 2026-11-07
     let prio = |g: &Game| ai::decks::deck_prio(g, P, c);
     let off0 = prio(&g);
     assert_eq!(off0, 54, "the plan's prio rule");
@@ -219,20 +219,8 @@ fn sheoldred_the_plate_goes_on_her_first() {
     assert!((u - hand_u).abs() < 0.2, "about the deleted hand AI's utility: {u} vs {hand_u}");
 }
 
-/// was the gate on otherworld Atlas's options: at the end of an opponent's turn it adds a counter
-#[test]
-fn sheoldred_the_atlas_is_used() {
-    let mut g = seated("sheoldred", "t3");
-    let a = perm(&mut g, P, "Otherworld Atlas");
-    g.active = Some(Q);
-    let off: Vec<String> = perm_options(&mut g, a, None).into_iter().map(|o| o.label).collect();
-    assert!(!off.is_empty(), "the plan's plays");
-    // a deck whose plan doesn't list it: no play
-    let mut g = seated("kefka", "t3");
-    let a = perm(&mut g, P, "Otherworld Atlas");
-    g.active = Some(Q);
-    assert!(perm_options(&mut g, a, None).is_empty());
-}
+// sheoldred_the_atlas_is_used: removed 2026-11-07, Otherworld Atlas left the deck (card-pile package S); the plan may
+// only name the deck's cards (plans.rs every_plan_file_fits_its_deck). See git history.
 
 /// was the sheoldred arm of adnaus_cast_now: Ad Nauseam in her own second main phase
 #[test]

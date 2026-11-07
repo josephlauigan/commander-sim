@@ -9,6 +9,30 @@ combos). **Tiers:** t5 (`data/my_decks.toml`; the old cEDH list played t6). **Pl
 previous list (the cEDH turbo list, t6) are in `FINDINGS-old-list.md`; the retired decks' findings are in
 `audit/retired/karn/` and `audit/retired/urdragon/`.
 
+## 2026-11-07: card-pile packages TD (tested, worse) and TD2 (adopted untested) (TD: paired swap run, t5, look-ahead, loose, 1,500 games per list, main b84ab9e6 with #292)
+Twelve cards from JD's spare-card pile (`audit/jd-packages/2026-11-06-card-pile/`): Scion of Draco, Crucible of Worlds,
+Strip Mine, Disdainful Stroke, Elesh Norn, Summon: Bahamut, Hangarback Walker, Meteor Golem, Glorybringer, Thundermaw
+Hellkite, Mox Jasper, Utvara Hellkite (cheap speed and interaction, plus hasty Dragons for the Terror / Ur-Dragon damage
+win, which is half the deck's wins).
+
+**TD, with cheap cuts: WORSE (borderline).** Out: Wayfarer's Bauble, Urza's Bauble, Wastes, Red Elemental Blast,
+Oblivion Stone, Ugin, Ratchet Bomb, Decimate, Duplicant, Gamble, Lotus Petal, Karn the Great Creator. 23.0% -> 20.2%
+(-2.8, noise ±2.7; the game-shape table's band is ±3.0, so it is at the edge). Outside noise: plan online 11.3% -> 8.0%,
+cards drawn 13.9 -> 12.8, spells cast 12.0 -> 10.6, tutors resolved 0.92 -> 0.75, rounds survived 9.39 -> 8.94, and
+damage to opponents 19.9 -> 24.0 (almost all combat). Why: the cuts averaged mana value 2.73 and the cards in 5.09, so
+the deck's average rose 3.10 -> 3.49. The cards out were cast in about 90% of their games (the Baubles, Lotus Petal,
+Red Elemental Blast) and fed Urza, Mystic Forge and the combos; half the cards in sat in hand (stuck: Elesh Norn 58%,
+Glorybringer 53%, Disdainful Stroke 53%, Utvara 52%, Bahamut 51%, Crucible 44%). The Dragons hit harder but the combo
+was slower. Played well: Mox Jasper (cast 92%, round 4.3), Hangarback Walker (81%), Scion of Draco (71%). Raw:
+`audit/jd-packages/2026-11-06-card-pile/runs/TD-thanos.txt`.
+
+**TD2, the same cards with cuts matched on mana value: adopted by JD 2026-11-07, not measured** (the run was stopped
+before it started). Out, all proxies: Blightsteel Colossus, Oblivion Stone, Wastes, Gamble, Wurmcoil Engine, Portal to
+Phyrexia, Ratchet Bomb, Karn Liberated, Duplicant, Karn the Great Creator, Lotus Petal, Ugin. Cuts average 5.27 against
+5.09 in; the deck's average stays 3.10 -> 3.07, and the cheap cards TD cut stay. It swaps the old fair-win top end
+(Wurmcoil, Portal, Karn Liberated, Blightsteel, Ugin) for the new one. 16 Game Changers (Gamble left). To measure in the
+next baseline: the stuck-in-hand numbers of the 5-9 drops, and plan timing against the 11/06 baseline.
+
 ## Baseline B 2026-11-06 (after #278-#284; main 63d783b5; look-ahead, loose, 2,000 games per tier, seed 500000)
 **18.6%** (17.0-20.4) at t5, against 20.0% in the morning: -1.4, inside the noise (intervals overlap). Plan online 8.8% of games.
 What changed at its table since the morning: Tier 5 pool decks no longer keep mana up for protection they rarely use (624 -> 71

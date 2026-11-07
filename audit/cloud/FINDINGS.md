@@ -4,6 +4,15 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run (CLAUDE.md "Swap tests explain themselves"). Newest evidence first; numbers are
 look-ahead, loose profile, vs Cloud's matched tiers (T1, T2) unless noted.
 
+## 2026-11-07: card-pile package C, adopted untested
+Plains => Rogue's Passage and Disenchant => Sting, the Glinting Dagger (JD's spare-card pile,
+`audit/jd-packages/2026-11-06-card-pile/`). **Not measured:** JD stopped the run before it finished and adopted it.
+Why: the deck dies to combat races (Weaknesses below), and Rogue's Passage ({4}, {T}: a creature can't be blocked)
+puts a loaded Cloud through blockers to close faster; Sting (+1/+1, haste, untaps the equipped creature each combat) at
+JD's request. What it costs: Disenchant was the only dedicated artifact/enchantment answer (Stroke of Midnight, Austere
+Command and Skyclave Apparition still cover them). The preflight cast Sting in 72% of the games it was drawn (t1, 200
+games). To check in the next baseline: Sting's cast and stuck numbers, and whether Rogue's Passage is used.
+
 ## Baseline B 2026-11-06 (after #278-#284; main 63d783b5; look-ahead, loose, 2,000 games per tier, seed 500000)
 t1 **29.6%** (27.6-31.6), t2 **20.6%** (18.8-22.4), t3 **22.4%** (20.7-24.3): **24.2% over t1-t3**, against 24.4% in the morning
 (29.4 / 21.6 / 22.2): no change. The t1 drop flagged in the morning (32.0% on 11-05 -> 29.4%) holds at 29.6%. Raw:
