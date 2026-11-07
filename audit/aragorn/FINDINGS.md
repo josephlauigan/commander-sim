@@ -8,6 +8,23 @@ day; their findings are in `audit/retired/kefka/` and `audit/retired/sauron/`). 
 not from a paired test). **Model:** 100 cards, Full 94, Full-auto 6; Aragorn's four cast triggers are card code
 (`impls/aragorn.rs`, `tests/cards_aragorn.rs`).
 
+## 2026-11-06: the AI values Aragorn's triggers (AI fix; t4, t5, look-ahead, loose, 2,000 games per tier, seed 500000)
+
+What changed: with Aragorn out, every spell's worth includes its triggers (`impls::aragorn::cast_value`: 3 damage per
+red spell, more when it kills; a Soldier; a scry; a pump before combat; Veyran and Fiery Emancipation counted), and a
+red burn spell is offered at the face (Aragorn's 3 included in the lethal check). Raw:
+`audit/aragorn/2026-11-06-trigger-value/` (`goldfish.txt`, `analyze-t4.txt`, `analyze-t5.txt`).
+
+t4 **10.8%** (before 11.1%), t5 **8.9%** (before 8.6%): **9.9% over t4, t5**, unchanged. Goldfish kill: own turn 12
+(unchanged). Lightning Bolt is no longer among the cards held unused (2,771 card-turns before), so the AI now plays
+it, but one burn spell does not change the clock.
+
+**What this rules out.** The AI not valuing Aragorn's triggers was not what holds the deck back: the spells it casts
+with Aragorn out were mostly being cast already. The deck is slow by construction (about 20 damage a game; a kill on
+turn 12 against nobody), short of mana a fifth of the time, has no sweeper for t4's creature decks, and spends or
+holds its counters badly against t5's combos. The next steps are the list (sweepers, ramp, faster damage) and, if JD
+wants it, the shared AI's counterspell use.
+
 ## 2026-11-06: why it loses (goldfish and 12 traces; diagnosis, no list change)
 
 Raw: `audit/aragorn/2026-11-06-diag/` (`goldfish.txt`: 2,000 games each against three inert seats; `trace-t4-0..5`,
