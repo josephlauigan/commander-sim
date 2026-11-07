@@ -1,0 +1,109 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  aragorn                    100 cards: Full 94, Full-auto 6, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 4 (Low B4)  5 decks, 500 cards: Full 436, Full-auto 37, Approximate 27, Partial 0, Unmodeled 0
+
+2,000 games (analysis, 2,000 per list per tier, profile loose), lookahead AI, 24 worker threads: about 4 minutes
+  progress  10.0%  0m43s elapsed, ~6m27s left
+  progress  20.0%  1m31s elapsed, ~6m06s left
+  progress  30.0%  2m18s elapsed, ~5m22s left
+  progress  40.0%  3m02s elapsed, ~4m34s left
+  progress  50.0%  3m49s elapsed, ~3m49s left
+  progress  60.0%  4m33s elapsed, ~3m02s left
+  progress  70.0%  5m19s elapsed, ~2m16s left
+  progress  80.0%  6m08s elapsed, ~1m32s left
+  progress  90.0%  6m55s elapsed, ~0m46s left
+  progress 100.0%  7m48s elapsed, ~0m00s left
+
+######## vs Tier 4 (Low B4) ########
+
+=========== aragorn analysis [loose profile, lookahead AI, 2000 games] ===========
+Win rate 11.1%   (4-player baseline 25%)   average rounds survived 8.5
+
+-- How it wins --
+  damage     100.0% of wins
+  Opponents it eliminated: 0.41 per game, by
+    triggers           50.9%
+    combat             26.6%
+    burn               20.5%
+    commander damage    1.6%
+    decked              0.4%
+  Damage dealt per game: 20.2, from
+    combat              10.3  (51%)
+    triggers             5.9  (29%)
+    burn                 4.1  (20%)
+    drain                0.0  (0%)
+
+-- How it loses --
+  Eliminated in 88.9% of games, on average in round 8.3
+    by Krenko   via combat             13.3% of games
+    by Edgar Markov via combat             10.9% of games
+    by Yuriko   via triggers           10.8% of games
+    by Chulane  via combo              10.8% of games
+    by Krenko   via triggers            8.2% of games
+    by Yuriko   via combat              5.8% of games
+    by Prosper  via triggers            4.8% of games
+    by Edgar Markov via drain               3.9% of games
+
+-- Game plan timing --
+  Plan: first damage to an opponent from Aragorn's red-spell trigger
+  Online by turn:  T2 0%  T3 1%  T4 10%  T5 24%  T6 40%  T7 48%  T8 53%  T9 56%  T10 57%  T11 58%  T12 58%
+  Online at all: 58.8% of games
+  Commander resolves on turn: median 4.0, mean 4.4 (over the 89.8% of games it resolves)
+  Commander resolved by turn:  T4 55%  T5 76%  T6 84%  T7 87%  T8 89%
+  Breach line: Breach and a storm card held on our turn in 6.5% of games
+    dry run tried in 6.1%, passed in 1.4%, executed in 1.4%, won (table dead or decked) in 1.4%
+    last failed dry run fell short of: mana 2.0%, blue mana 0.2%, graveyard fuel 1.1%, storm count / other 1.6% of games
+
+-- Card report (correlation, not causation: see notes) --
+  Highest win rate when cast (cast in at least 100 games):
+    Niv-Mizzet, Parun                          cast in   8.0% of games, win rate when cast  46.2% (+35.2)
+    Comet Storm                                cast in   6.5% of games, win rate when cast  38.9% (+27.9)
+    Fiery Emancipation                         cast in  12.3% of games, win rate when cast  37.2% (+26.2)
+    Rhystic Study                              cast in  15.8% of games, win rate when cast  30.5% (+19.4)
+    Fact or Fiction                            cast in  10.8% of games, win rate when cast  28.1% (+17.1)
+    Ephemerate                                 cast in   6.3% of games, win rate when cast  27.8% (+16.7)
+    Jeska's Will                               cast in  16.7% of games, win rate when cast  27.2% (+16.2)
+    Elspeth, Sun's Champion                    cast in   8.7% of games, win rate when cast  26.0% (+15.0)
+    Ghostly Prison                             cast in  16.2% of games, win rate when cast  24.4% (+13.3)
+    Deflecting Swat                            cast in   6.6% of games, win rate when cast  24.2% (+13.2)
+  Lowest win rate when cast:
+    Aragorn, the Uniter                        cast in  90.5% of games, win rate when cast  12.1% (+1.0)
+    Blossoming Defense                         cast in  14.8% of games, win rate when cast  13.9% (+2.8)
+    Teferi's Protection                        cast in   5.6% of games, win rate when cast  14.3% (+3.2)
+    Arcane Signet                              cast in  16.4% of games, win rate when cast  14.7% (+3.6)
+    Lotus Petal                                cast in  28.2% of games, win rate when cast  15.1% (+4.0)
+    Sylvan Library                             cast in  19.7% of games, win rate when cast  15.2% (+4.2)
+    Counterspell                               cast in  12.4% of games, win rate when cast  15.3% (+4.3)
+    Rite of Flame                              cast in   8.1% of games, win rate when cast  15.5% (+4.5)
+    Lightning Bolt                             cast in  16.8% of games, win rate when cast  15.8% (+4.7)
+    Frantic Search                             cast in  13.6% of games, win rate when cast  15.9% (+4.8)
+  Often stuck in hand (drawn, but cast in under half of those games):
+    Brain Freeze                               cast   3.9% of the games it was drawn
+    Grapeshot                                  cast   5.9% of the games it was drawn
+    Heroic Intervention                        cast  13.6% of the games it was drawn [reactive: only cast in response]
+    Restoration Angel                          cast  15.2% of the games it was drawn [reactive: only cast in response]
+    Triple Triad                               cast  25.8% of the games it was drawn
+    Desperate Ritual                           cast  29.5% of the games it was drawn
+    Teferi's Protection                        cast  30.1% of the games it was drawn [reactive: only cast in response]
+    Comet Storm                                cast  34.0% of the games it was drawn
+    Niv-Mizzet, Parun                          cast  34.9% of the games it was drawn
+    Ephemerate                                 cast  35.5% of the games it was drawn [reactive: only cast in response]
+    Deflecting Swat                            cast  36.2% of the games it was drawn
+    Rite of Flame                              cast  40.0% of the games it was drawn
+  Most often removed by opponents (per game):
+    Aragorn, the Uniter                        0.36
+    Tezzeret, Cruel Captain                    0.07
+    Firebrand Archer                           0.05
+    Lightning Greaves                          0.04
+    Elspeth, Sun's Champion                    0.03
+    Guttersnipe                                0.03
+    Grand Abolisher                            0.02
+    Sylvan Library                             0.02
+
+  Notes: a high win rate when cast can mean the card helps, or that it only gets cast in
+  games that were already going well (expensive cards, finishers). Low numbers on cheap cards
+  that are cast early are the most telling. Use the list to pick swaps, then confirm each one
+  with a normal paired comparison.
+  Opponent keys: chulane-bant-value-combo = Chulane, edgar-markov-mardu-vampires = Edgar Markov, krenko-mono-red-goblins = Krenko, prosper-rakdos-exile-treasure = Prosper, yuriko-dimir-ninjas = Yuriko
+
+(468s total)

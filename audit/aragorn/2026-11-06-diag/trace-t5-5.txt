@@ -1,0 +1,231 @@
+Play-by-play of pool game 5 (seed 500005): Aragorn vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Miirym, Urza, Aragorn, Zur the Enchanter
+R1  --- Miirym turn 1: life 40, 7 cards in hand, 0 lands
+R1    Miirym plays Path of Ancestry
+R1  --- Urza turn 1: life 40, 7 cards in hand, 0 lands
+R1    Urza plays Island
+R1        [Urza decides: Manifold Key 91%, Ornithopter 9%, stop 0% -> Manifold Key [search]]
+R1    Urza casts Manifold Key
+R1        [Urza decides: Ornithopter 100%, stop 0% -> Ornithopter [search]]
+R1    Urza casts Ornithopter
+R1  --- Aragorn turn 1: life 40, 7 cards in hand, 0 lands
+R1    Aragorn plays Command Tower
+R1  --- Zur the Enchanter turn 1: life 40, 6 cards in hand, 0 lands
+R1    Zur the Enchanter plays Raffine's Tower
+R2  --- Miirym turn 2: life 40, 7 cards in hand, 1 lands
+R2    Miirym plays Mountain
+R2  --- Urza turn 2: life 40, 5 cards in hand, 1 lands
+R2    Urza plays Island
+R2  --- Aragorn turn 2: life 40, 7 cards in hand, 1 lands
+R2    Aragorn plays Plains
+R2        [Aragorn decides: Young Pyromancer 63%, Underworld Breach 37%, stop 0% -> Young Pyromancer [search]]
+R2    Aragorn casts Young Pyromancer
+R2  --- Zur the Enchanter turn 2: life 40, 6 cards in hand, 1 lands
+R2    Zur the Enchanter plays Island
+R2        [Zur the Enchanter decides: Talisman of Dominance 100%, stop 0% -> Talisman of Dominance [search]]
+R2    Zur the Enchanter casts Talisman of Dominance
+R3  --- Miirym turn 3: life 40, 7 cards in hand, 2 lands
+R3    Miirym plays Island
+R3        [Miirym decides: Dragonspeaker Shaman 85%, Rhystic Study 13%, Elemental Bond 2%, stop 0% -> Dragonspeaker Shaman [search]]
+R3    Miirym casts Dragonspeaker Shaman
+R3    Urza casts Cyclonic Rift -> Young Pyromancer (Aragorn)
+R3      Young Pyromancer (Aragorn) is removed: bounce
+R3        [Urza end of turn: Cyclonic Rift -> Dragonspeaker Shaman 86%, pass 14% -> Cyclonic Rift -> Dragonspeaker Shaman]
+R3  --- Urza turn 3: life 40, 4 cards in hand, 2 lands
+R3    Urza plays Uthros, Titanic Godcore
+R3  --- Aragorn turn 3: life 40, 7 cards in hand, 2 lands
+R3    Aragorn plays Glacial Fortress
+R3        [Aragorn decides: Young Pyromancer 53%, Underworld Breach 47%, stop 0% -> Young Pyromancer [search]]
+R3    Aragorn casts Young Pyromancer
+R3      Urza casts Counterspell at Young Pyromancer
+R3      Urza counters Young Pyromancer with Counterspell
+R3  --- Zur the Enchanter turn 3: life 40, 5 cards in hand, 2 lands
+R3    Zur the Enchanter plays Island
+R3        [Zur the Enchanter decides: Zur the Enchanter 95%, Grand Arbiter Augustin IV 4%, Ghostly Prison 0%, Rest in Peace 0% -> Grand Arbiter Augustin IV [search]]
+R3    Zur the Enchanter casts Grand Arbiter Augustin IV
+R4  --- Miirym turn 4: life 40, 6 cards in hand, 3 lands
+R4    Miirym plays Mountain
+R4        [Miirym decides: Rhystic Study 84%, Elemental Bond 16%, stop 0% -> Rhystic Study [search]]
+R4    Miirym casts Rhystic Study
+R4        [Miirym attack plan by search: filtered at Zur the Enchanter]
+R4        [Miirym holds back 1 attacker(s) that would die to blocks]
+R4    Miirym attacks Aragorn with 1 creature(s): 2 damage (life now 38)
+R4  --- Urza turn 4: life 40, 3 cards in hand, 3 lands
+R4        [Urza decides: Welding Jar 100%, stop 0% -> Welding Jar [search]]
+R4    Urza casts Welding Jar
+R4  --- Aragorn turn 4: life 38, 6 cards in hand, 3 lands
+R4    Aragorn plays Exotic Orchard
+R4        [Aragorn decides: Underworld Breach 100%, stop 0% -> Underworld Breach [search]]
+R4    Aragorn casts Underworld Breach
+R4  --- Zur the Enchanter turn 4: life 40, 4 cards in hand, 3 lands
+R4    Zur the Enchanter plays Adarkar Wastes
+R4        [Zur the Enchanter decides: Zur the Enchanter 99%, Ghostly Prison 0%, Rest in Peace 0%, Steel of the Godhead 0% -> Zur the Enchanter [search]]
+R4    Zur the Enchanter casts Zur the Enchanter
+R4        [Zur the Enchanter decides: Ghostly Prison 46%, Rest in Peace 46%, Steel of the Godhead 9%, stop 0% -> Ghostly Prison [search]]
+R4    Zur the Enchanter casts Ghostly Prison
+R4        [Zur the Enchanter attack plan by search: filtered at Urza]
+R4    Zur the Enchanter attacks Urza with 1 creature(s): 2 damage (life now 38)
+R5  --- Miirym turn 5: life 40, 7 cards in hand, 4 lands
+R5    Miirym plays Forest
+R5        [Miirym decides: Miirym, Sentinel Wyrm 100%, Korlessa, Scale Singer 0%, Elemental Bond 0%, stop 0% -> Miirym, Sentinel Wyrm [search]]
+R5    Miirym casts Miirym, Sentinel Wyrm
+R5        [Miirym attack plan by search: filtered at Aragorn]
+R5    Miirym attacks Aragorn with 1 creature(s): 2 damage (life now 36)
+R5  --- Urza turn 5: life 38, 3 cards in hand, 3 lands
+R5  --- Aragorn turn 5: life 36, 5 cards in hand, 4 lands
+R5    Aragorn plays Forest
+R5        [Aragorn decides: Aragorn, the Uniter 99%, Big Score 1%, stop 0% -> Aragorn, the Uniter [search]]
+R5    Aragorn casts Aragorn, the Uniter
+R5  --- Zur the Enchanter turn 5: life 38, 3 cards in hand, 4 lands
+R5    Zur the Enchanter plays Watery Grave
+R5        [Zur the Enchanter decides: Rest in Peace 51%, Mystic Remora 39%, Steel of the Godhead 10%, stop 0% -> Rest in Peace [search]]
+R5    Zur the Enchanter casts Rest in Peace
+R5      Urza casts An Offer You Can't Refuse at Rest in Peace
+R5      Urza counters Rest in Peace with An Offer You Can't Refuse
+R5        [Zur the Enchanter decides: Mystic Remora 95%, Steel of the Godhead 5%, stop 0% -> Mystic Remora [search]]
+R5    Zur the Enchanter casts Mystic Remora
+R5        [Zur the Enchanter decides: Steel of the Godhead 100%, stop 0% -> Steel of the Godhead [search]]
+R5    Zur the Enchanter casts Steel of the Godhead
+R5      Steel of the Godhead enchants Zur the Enchanter
+R5        [Zur the Enchanter attack plan by search: filtered at Miirym]
+R5        [Zur the Enchanter holds back 1 attacker(s) that would die to blocks]
+R5      Zur fetches Necropotence
+R5    Zur the Enchanter attacks Miirym with 1 creature(s): 3 damage (life now 37)
+R5    Zur the Enchanter attacks Urza with 1 creature(s): 2 damage (life now 36)
+R5    Zur the Enchanter pays 8 life to Necropotence
+R6  --- Miirym turn 6: life 37, 8 cards in hand, 5 lands
+R6    Miirym plays Hinterland Harbor
+R6        [Miirym decides: Ureni of the Unwritten 66%, Savage Ventmaw 24%, Klauth, Unrivaled Ancient 7%, Korlessa, Scale Singer 1% -> Klauth, Unrivaled Ancient [search]]
+R6    Miirym casts Klauth, Unrivaled Ancient
+R6        [Miirym attack plan by search: filtered at Aragorn]
+R6        [Miirym holds back 1 attacker(s) that would die to blocks]
+R6      Klauth adds 16 mana
+R6      Klauth adds 16 mana
+R6    Miirym attacks Aragorn with 3 creature(s): 14 damage (life now 22)
+R6    Miirym attacks Urza with 1 creature(s): 2 damage (life now 34)
+R6        [Miirym decides: Ureni of the Unwritten 71%, Savage Ventmaw 26%, Korlessa, Scale Singer 1%, Elemental Bond 1% -> Ureni of the Unwritten [search]]
+R6    Miirym casts Ureni of the Unwritten
+R6      Ureni puts Ancient Copper Dragon onto the battlefield
+R6        [Miirym decides: Savage Ventmaw 91%, Korlessa, Scale Singer 5%, Elemental Bond 2%, Cultivate 2% -> Savage Ventmaw [search]]
+R6    Miirym casts Savage Ventmaw
+R6        [Miirym decides: Korlessa, Scale Singer 55%, Elemental Bond 25%, Cultivate 20%, stop 0% -> Korlessa, Scale Singer [search]]
+R6    Miirym casts Korlessa, Scale Singer
+R6        [Miirym decides: Elemental Bond 55%, Cultivate 45%, stop 0% -> Elemental Bond [search]]
+R6    Miirym casts Elemental Bond
+R6        [Miirym decides: Cultivate 100%, stop 0% -> Cultivate [search]]
+R6    Miirym casts Cultivate
+R6      Miirym reveals Island and puts it into their hand
+R6  --- Urza turn 6: life 34, 3 cards in hand, 3 lands
+R6  --- Aragorn turn 6: life 22, 5 cards in hand, 5 lands
+R6    Aragorn plays Mystic Monastery
+R6        [Aragorn decides: stop (hold mana) 68%, Lightning Bolt -> Grand Arbiter Augustin IV 32%, Big Score 0% -> stop (hold mana) [search]]
+R6        [Aragorn attack plan by search: filtered at Miirym]
+R6        [Aragorn keeps 1 creature(s) home as blockers]
+R6        [Aragorn decides: stop (hold mana) 68%, Lightning Bolt -> Grand Arbiter Augustin IV 32%, Big Score 0% -> stop (hold mana) [search]]
+R6  --- Zur the Enchanter turn 6: life 32, 7 cards in hand, 5 lands
+R6    Zur the Enchanter plays Underground River
+R6        [Zur the Enchanter decides: Mirrormade 68%, Smothering Tithe 10%, Rule of Law 8%, Eidolon of Rhetoric 7% -> Mirrormade [search]]
+R6    Zur the Enchanter casts Mirrormade
+R6      Mirrormade enters as a copy of Necropotence
+R6        [Zur the Enchanter decides: Smothering Tithe 34%, Rule of Law 26%, Eidolon of Rhetoric 22%, Opposition Agent 17% -> Smothering Tithe [search]]
+R6    Zur the Enchanter casts Smothering Tithe
+R6        [Zur the Enchanter attack plan by search: filtered at Miirym]
+R6        [Zur the Enchanter keeps 1 creature(s) home as blockers]
+R6      Ethereal Armor enchants Zur the Enchanter
+R6      Zur fetches Ethereal Armor
+R6    Zur the Enchanter attacks Miirym with 1 creature(s): 10 damage (life now 27)
+R7  --- Miirym turn 7: life 27, 4 cards in hand, 7 lands
+R7    Miirym plays Spire Garden
+R7        [Miirym decides: Farseek 100%, stop 0% -> Farseek [search]]
+R7    Miirym casts Farseek
+R7      Farseek finds Steam Vents
+R7        [Miirym attack plan by search: filtered at Zur the Enchanter]
+R7    Miirym pays 2 to attack Zur the Enchanter with 1
+R7    Miirym sends 8 more creature(s) at Aragorn (kept off their first defender by a tax)
+R7    Miirym sends 2 more creature(s) at Urza (kept off their first defender by a tax)
+R7      Klauth adds 52 mana
+R7      Klauth adds 52 mana
+R7      Ureni puts Atarka, World Render onto the battlefield
+R7      Ureni puts Old Gnawbone onto the battlefield
+R7    Miirym attacks Zur the Enchanter with 1 creature(s): 7 damage (life now 34)
+R7    Miirym attacks Urza with 3 creature(s): 4 damage (life now 30)
+R7  *** Aragorn is eliminated (life -19) by Miirym
+R7      Ancient Copper Dragon rolls 20: 20 Treasures
+R7      Ancient Copper Dragon rolls 17: 17 Treasures
+R7    Miirym attacks Aragorn with 8 creature(s): 41 damage (life now -19)
+R7        [Miirym decides: channel Boseiju 48%, Dragonlord's Servant 36%, stop (hold mana) 16% -> channel Boseiju [search]]
+R7    Miirym channels Boseiju
+R7      Necropotence (Zur the Enchanter) is removed: destroy
+R7        [Miirym decides: Dragonlord's Servant 69%, stop (hold mana) 31% -> Dragonlord's Servant [search]]
+R7    Miirym casts Dragonlord's Servant
+R7  --- Urza turn 7: life 30, 4 cards in hand, 3 lands
+R7        [Urza decides: Aether Spellbomb 100%, stop 0% -> Aether Spellbomb [search]]
+R7    Urza casts Aether Spellbomb
+R7  --- Zur the Enchanter turn 7: life 34, 6 cards in hand, 6 lands
+R7    Zur the Enchanter plays Hallowed Fountain
+R7        [Zur the Enchanter decides: Opposition Agent 33%, stop (hold mana) 30%, Eidolon of Rhetoric 19%, Rule of Law 13% -> Opposition Agent [search]]
+R7    Zur the Enchanter casts Opposition Agent
+R7        [Zur the Enchanter decides: stop (hold mana) 100%, Eidolon of Rhetoric 0%, Rule of Law 0% -> stop (hold mana) [search]]
+R7        [Zur the Enchanter attack plan by search: filtered at Miirym]
+R7        [Zur the Enchanter keeps 1 creature(s) home as blockers]
+R7      Zur fetches Propaganda
+R7  *** Miirym is eliminated (life 17) by Zur the Enchanter
+R7    Zur the Enchanter attacks Miirym with 1 creature(s): 10 damage (life now 17)
+R7        [Zur the Enchanter decides: Eidolon of Rhetoric 45%, stop (hold mana) 37%, Rule of Law 18% -> stop (hold mana) [search]]
+R7    Zur the Enchanter pays 4 life to Necropotence
+R8  --- Urza turn 8: life 30, 4 cards in hand, 3 lands
+R8    Urza plays Seat of the Synod
+R8        [Urza decides: Aether Spellbomb ability 99%, Rhystic Study 1%, Aether Spellbomb ability 0%, stop 0% -> Aether Spellbomb ability [search]]
+R8    Urza activates Aether Spellbomb
+R8      Zur the Enchanter (Zur the Enchanter) is removed: bounce
+R8  --- Zur the Enchanter turn 8: life 40, 7 cards in hand, 7 lands
+R8        [Zur the Enchanter decides: Zur the Enchanter 72%, Eidolon of Rhetoric 10%, Rule of Law 6%, Drannith Magistrate 6% -> Zur the Enchanter [search]]
+R8    Zur the Enchanter casts Zur the Enchanter
+R8        [Zur the Enchanter decides: Drannith Magistrate 76%, stop (hold mana) 12%, Eidolon of Rhetoric 6%, Rule of Law 4% -> Drannith Magistrate [search]]
+R8    Zur the Enchanter casts Drannith Magistrate
+R8        [Zur the Enchanter attack plan by search: filtered at Urza]
+R8    Zur the Enchanter attacks Urza with 2 creature(s): 5 damage (life now 25)
+R8    Zur the Enchanter pays 2 life to Necropotence
+R9  --- Urza turn 9: life 25, 4 cards in hand, 4 lands
+R9    Urza plays Island
+R9        [Urza decides: Rhystic Study 82%, Efficient Construction 18%, stop 0% -> Rhystic Study [search]]
+R9    Urza casts Rhystic Study
+R9  --- Zur the Enchanter turn 9: life 36, 8 cards in hand, 7 lands
+R9      Zur the Enchanter sacrifices Mystic Remora (cumulative upkeep 4)
+R9        [Zur the Enchanter decides: Grand Abolisher 37%, Eidolon of Rhetoric 33%, Rule of Law 13%, Lightning Greaves 9% -> Grand Abolisher [search]]
+R9    Zur the Enchanter casts Grand Abolisher
+R9        [Zur the Enchanter decides: Eidolon of Rhetoric 52%, Rule of Law 21%, Lightning Greaves 14%, Mesa Enchantress 7% -> Eidolon of Rhetoric [search]]
+R9    Zur the Enchanter casts Eidolon of Rhetoric
+R9        [Zur the Enchanter attack plan by search: filtered at Urza]
+R9      Zur fetches Aura of Silence
+R9    Zur the Enchanter attacks Urza with 4 creature(s): 7 damage (life now 18)
+R9        [Zur the Enchanter decides: stop (hold mana) 84%, sacrifice Aura of Silence -> Rhystic Study 16% -> stop (hold mana) [search]]
+R9    Zur the Enchanter pays 2 life to Necropotence
+R10 --- Urza turn 10: life 18, 3 cards in hand, 5 lands
+R10       [Urza decides: Emry, Lurker of the Loch 100%, stop 0% -> stop [search]]
+R10       [Urza decides: Emry, Lurker of the Loch 100%, stop 0% -> Emry, Lurker of the Loch [search]]
+R10   Urza casts Emry, Lurker of the Loch
+R10       [Urza decides: Uthros: station with Emry, Lurker of the Loch (1 charge counters) 100%, stop 0% -> stop [search]]
+R10     Rhystic Study (Urza) is removed: destroy
+R10       [Zur the Enchanter end of turn: sacrifice Aura of Silence -> Rhystic Study 99%, pass 1% -> sacrifice Aura of Silence -> Rhystic Study]
+R10 --- Zur the Enchanter turn 10: life 33, 7 cards in hand, 7 lands
+R10   Zur the Enchanter plays Hall of Heliod's Generosity
+R10       [Zur the Enchanter decides: Rule of Law 38%, Lightning Greaves 25%, Rhystic Study 15%, Mesa Enchantress 13% -> Rule of Law [search]]
+R10   Zur the Enchanter casts Rule of Law
+R10       [Zur the Enchanter attack plan by search: filtered at Urza]
+R10     Zur fetches Copy Enchantment
+R10   Zur the Enchanter attacks Urza with 6 creature(s): 5 damage (life now 13)
+R10   Zur the Enchanter pays 3 life to Necropotence
+R11 --- Urza turn 11: life 13, 3 cards in hand, 5 lands
+R11       [Urza decides: Efficient Construction 100%, stop 0% -> Efficient Construction [search]]
+R11   Urza casts Efficient Construction
+R11 --- Zur the Enchanter turn 11: life 29, 7 cards in hand, 8 lands
+R11       [Zur the Enchanter decides: stop (hold mana) 45%, Walking Ballista 26%, Lightning Greaves 13%, Rhystic Study 8% -> stop (hold mana) [search]]
+R11     Zur fetches Heliod, Sun-Crowned
+R11   Zur the Enchanter attacks Urza with 6 creature(s): 10 damage (life now 3)
+R11       [Zur the Enchanter decides: combo: Heliod, Sun-Crowned + Walking Ballista 100%, stop (hold mana) 0%, Walking Ballista 0%, Lightning Greaves 0% -> combo: Heliod, Sun-Crowned + Walking Ballista [search]]
+R11   Zur the Enchanter goes for Heliod, Sun-Crowned + Walking Ballista
+R11   Zur the Enchanter casts Walking Ballista
+R11 *** Urza is eliminated (life 3) by Zur the Enchanter
+R11 *** Zur the Enchanter wins by combo
+Winner: Zur the Enchanter (combo)

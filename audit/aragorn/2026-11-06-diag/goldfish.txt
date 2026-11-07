@@ -1,0 +1,304 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  aragorn    100 cards: Full 94, Full-auto 6, Approximate 0, Partial 0, Unmodeled 0
+  sheoldred  100 cards: Full 89, Full-auto 11, Approximate 0, Partial 0, Unmodeled 0
+  yshtola    100 cards: Full 95, Full-auto 5, Approximate 0, Partial 0, Unmodeled 0
+  thanos     100 cards: Full 99, Full-auto 1, Approximate 0, Partial 0, Unmodeled 0
+
+8,000 games (goldfish, 4 decks), lookahead AI, 24 worker threads: about 17 minutes
+  progress  10.0%  0m05s elapsed, ~0m45s left
+  progress  20.0%  0m09s elapsed, ~0m39s left
+
+=== Aragorn (aragorn) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 12.0, mean 12.5 (over the 1995 kills)
+  won by turn: T1 0.0%  T2 0.0%  T3 0.0%  T4 0.0%  T5 0.1%  T6 0.2%  T7 1.1%  T8 4.4%
+  no kill by round 20: 0.2% (of which the deck itself lost: 0.1% of games)
+How it won (share of kills): damage 86.8%, commander damage 12.8%, other 0.4%
+Mulligans: kept 7 cards 95.2% (no mulligan 78.0%, the free mulligan 17.2%), 6 cards 3.9%, 5 or fewer 0.9%
+Ready turn (the plan came online): median 6.0, mean 6.7, reached in 98.2% of games
+Protection on the kill turn: 91.2% of kills held a protection card or had a cast lock in force
+  counted (12): Counterspell, Ephemerate, Fierce Guardianship, Force of Will, Grand Abolisher, Heroic Intervention, Lightning Greaves, Mana Drain, Mystic Confluence, Restoration Angel, Swan Song, Teferi's Protection
+Commander cast: 99.9% of games, median own turn 4.0 (of the games it was cast)
+Loss accounting [ai-audit] (each own turn in one bucket, the first that matches):
+  own turns: 25053 (12.53 a game; 8000 of them turns 1-4)
+  bucket              all turns   turns 1-4  per game
+  won                      8.0%        0.0%      1.00
+  ready_not_taken          0.0%        0.0%      0.00
+  passed_castable          4.8%        1.6%      0.60
+  no_land_drop             0.3%        0.2%      0.03
+  mana_short              20.3%       30.9%      2.54
+  progressed              62.9%       67.1%      7.88
+  idle                     3.8%        0.2%      0.47
+  progressed turns, by the most useful card cast (combo piece > tutor > ritual > fast mana > draw > protection > other): other 46%, draw 15%, fast mana / rock 15%, land only 9%, ritual 7%, protection 5%, tutor 2%, abilities only 0%
+    on turns 1-4: other 49%, fast mana / rock 20%, draw 13%, ritual 8%, land only 4%, protection 4%, tutor 2%, abilities only 0%
+  passed_castable cards (card-turns, a turn can hold several): tutor 2 (0%), ritual 90 (6%), fast mana / rock 208 (15%), draw 319 (23%), protection 9 (1%), other 761 (55%)
+    most passed: Expressive Iteration 189, Blossoming Defense 189, Triple Triad 60, Noble Hierarch 59, Twinned Vision 59, Kitchen Finks 57, Nature's Lore 52, Skullclamp 42, Skyclave Apparition 42, Lotus Petal 39, Tezzeret, Cruel Captain 39, Veyran, Voice of Duality 38
+  payable but never offered as a play (card-turns; in 78.8% of turns): tutor 1105 (2%), ritual 4268 (7%), draw 75 (0%), protection 26654 (45%), other 26552 (45%)
+    most held: Brain Freeze 4656, Swan Song 3582, Path to Exile 3536, Swords to Plowshares 3367, Counterspell 3174, Mana Drain 2987, Fierce Guardianship 2899, Cyclonic Rift 2871, Heroic Intervention 2841, Lightning Bolt 2771, Grapeshot 2766, Teferi's Protection 2710
+  ready_not_taken, the line ready: -
+    chosen at decisions with a line ready (before going for one): -
+Cleanup discards to 7: 1329 (0.66 a game, in 22.1% of games); combo pieces 0 (in 0.0% of games); 3 that ai::discard_keep would have kept
+  by role: ritual 119 (9%), fast mana / rock 4 (0%), draw 53 (4%), protection 56 (4%), land 425 (32%), other 672 (51%)
+  most discarded: Brain Freeze 101, Deflecting Swat 80, Grapeshot 74, Desperate Ritual 68, Comet Storm 56, Swords to Plowshares 52, Triple Triad 44, Path to Exile 43, Rite of Flame 41, Chaos Warp 38, Cyclonic Rift 32, Lightning Bolt 29
+  median kill turn: games with a combo piece discarded - (0 games), without 12.0 (2000 games) (confounded: longer games discard more)
+Main-phase stops, by who chose and the phase: the best other option by heuristic utility (count by bin)
+  main 1 look-ahead "stop": 228 (0.11 a game; 19 on turns 1-4; 0 with a line ready) | 0-3: 17, 3-6: 95, 6-10: 105, >= 10: 11
+      best other option: Skullclamp 34, Firebrand Archer 17, Storm-Kiln Artist 16, Niv-Mizzet, Parun 11, Young Pyromancer 11, Aragorn, the Uniter 9, Third Path Iconoclast 8, Grand Abolisher 8
+      look-ahead score, best other minus stop: mean -3.11; within 1 point of the stop 130 of 228
+  main 1 look-ahead "stop (hold mana)": 3184 (1.59 a game; 160 on turns 1-4; 0 with a line ready) | < 0: 89, 0-3: 2020, 3-6: 942, 6-10: 128, >= 10: 5
+      best other option: Skullclamp 344, Expressive Iteration 225, Lotus Petal 212, Blossoming Defense 201, Sol Ring 169, Arcane Signet 160, Twinned Vision 110, Manamorphose 105
+      look-ahead score, best other minus stop: mean 0.29; within 1 point of the stop 2507 of 2875
+  main 1 heuristic  "stop": 16788 (8.39 a game; 7346 on turns 1-4; 0 with a line ready) | nothing else offered: 16788
+      best other option: -
+  main 1 heuristic  "stop (hold mana)": 4531 (2.27 a game; 475 on turns 1-4; 0 with a line ready) | nothing else offered: 4531
+      best other option: -
+  main 2 look-ahead "stop": 27 (0.01 a game; 0 on turns 1-4; 0 with a line ready) | 3-6: 16, 6-10: 11
+      best other option: Young Pyromancer 3, Lightning Bolt to the face (Goldfish 4) 3, Aura Shards 3, Storm-Kiln Artist 2, Skullclamp 2, Tezzeret, Cruel Captain -3 2, Underworld Breach 2, Three Visits 1
+      look-ahead score, best other minus stop: mean -2.03; within 1 point of the stop 11 of 27
+  main 2 look-ahead "stop (hold mana)": 2521 (1.26 a game; 151 on turns 1-4; 0 with a line ready) | < 0: 71, 0-3: 1715, 3-6: 694, 6-10: 26, >= 10: 15
+      best other option: Skullclamp 276, Blossoming Defense 189, Expressive Iteration 183, Lotus Petal 172, Sol Ring 127, Arcane Signet 124, Twinned Vision 96, Manamorphose 94
+      look-ahead score, best other minus stop: mean 0.05; within 1 point of the stop 1882 of 2254
+  main 2 heuristic  "stop": 16396 (8.20 a game; 7392 on turns 1-4; 0 with a line ready) | nothing else offered: 16396
+      best other option: -
+  main 2 heuristic  "stop (hold mana)": 4159 (2.08 a game; 457 on turns 1-4; 0 with a line ready) | nothing else offered: 4159
+      best other option: -
+Sure-win cap (d10bbb05): changed the look-ahead's pick 0 times, in 0.0% of games
+Crude best case (a line's pieces and its mana seen; tutors aside): in 0.0% of games, median own turn -
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.0%  T4 0.0%  T5 0.0%  T6 0.0%
+  lines: -
+  kill turn - best case (0 games with both): median -, mean 0.00; < 0: 0.0%, 0: 0.0%, 1: 0.0%, 2: 0.0%, 3: 0.0%, 4-5: 0.0%, 6+: 0.0%
+  games with a best case and no kill by the round cap: 0
+Crude best case (a line's pieces and its mana seen; each seen tutor standing in for one missing piece): in 0.0% of games, median own turn -
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.0%  T4 0.0%  T5 0.0%  T6 0.0%
+  lines: -
+  kill turn - best case (0 games with both): median -, mean 0.00; < 0: 0.0%, 0: 0.0%, 1: 0.0%, 2: 0.0%, 3: 0.0%, 4-5: 0.0%, 6+: 0.0%
+  games with a best case and no kill by the round cap: 0
+Crude best case (a line's pieces and its mana seen; only tutors that can find the missing piece, one each): in 0.0% of games, median own turn -
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.0%  T4 0.0%  T5 0.0%  T6 0.0%
+  lines: -
+  kill turn - best case (0 games with both): median -, mean 0.00; < 0: 0.0%, 0: 0.0%, 1: 0.0%, 2: 0.0%, 3: 0.0%, 4-5: 0.0%, 6+: 0.0%
+  games with a best case and no kill by the round cap: 0
+  progress  30.0%  0m15s elapsed, ~0m35s left
+  progress  40.0%  0m19s elapsed, ~0m29s left
+  progress  50.0%  0m24s elapsed, ~0m24s left
+
+=== Sheoldred (sheoldred) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 9.0, mean 8.9 (over the 2000 kills)
+  won by turn: T1 0.0%  T2 0.0%  T3 0.0%  T4 0.1%  T5 1.8%  T6 6.3%  T7 17.1%  T8 39.0%
+  no kill by round 20: 0.0% (of which the deck itself lost: 0.0% of games)
+How it won (share of kills): damage 56.9%, combo (unnamed) 39.5%, other 3.6%
+Mulligans: kept 7 cards 96.0% (no mulligan 79.2%, the free mulligan 16.9%), 6 cards 3.1%, 5 or fewer 0.8%
+Ready turn (the plan came online): median 4.0, mean 4.2, reached in 97.5% of games
+Protection on the kill turn: 8.4% of kills held a protection card or had a cast lock in force
+  counted (1): Swiftfoot Boots
+Commander cast: 97.5% of games, median own turn 4.0 (of the games it was cast)
+Loss accounting [ai-audit] (each own turn in one bucket, the first that matches):
+  own turns: 17845 (8.92 a game; 8000 of them turns 1-4)
+  bucket              all turns   turns 1-4  per game
+  won                     11.2%        0.0%      1.00
+  ready_not_taken          0.0%        0.0%      0.00
+  passed_castable          1.5%        0.2%      0.14
+  no_land_drop             1.1%        0.3%      0.10
+  mana_short              13.2%       28.2%      1.18
+  progressed              71.9%       70.4%      6.42
+  idle                     1.1%        0.9%      0.10
+  progressed turns, by the most useful card cast (combo piece > tutor > ritual > fast mana > draw > protection > other): other 55%, combo piece 19%, tutor 6%, draw 6%, fast mana / rock 6%, land only 5%, ritual 2%, protection 1%, abilities only 0%
+    on turns 1-4: other 61%, combo piece 9%, land only 9%, fast mana / rock 9%, tutor 5%, ritual 3%, draw 3%, protection 0%, abilities only 0%
+  passed_castable cards (card-turns, a turn can hold several): combo piece 71 (14%), tutor 26 (5%), ritual 4 (1%), fast mana / rock 26 (5%), draw 32 (7%), protection 16 (3%), other 317 (64%)
+    most passed: Silence the Echo 44, Wander Off 26, Sanguine Bond 24, Vanquish the Weak 20, Otherworld Atlas 19, Ashnod's Altar 16, Swiftfoot Boots 16, Sephiroth's Intervention 15, Arcane Signet 14, Phyrexian Delver 14, Accursed Marauder 13, Vito, Thorn of the Dusk Rose 13
+  payable but never offered as a play (card-turns; in 50.3% of turns): draw 1915 (14%), protection 412 (3%), other 11385 (83%)
+    most held: Call of the Ring 1736, Torment of Hailfire 1704, Exsanguinate 1647, Overkill 1489, Foolish Fate 1339, Deadly Dispute 1302, Dark Deal 1139, Cost of Brilliance 914, Silence the Echo 650, Ad Nauseam 613, Howling Mine 574, Swiftfoot Boots 412
+  ready_not_taken, the line ready: -
+    chosen at decisions with a line ready (before going for one): combo: Sanguine Bond + Exquisite Blood 353, combo: Vito / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror 198, combo: Mikaeus + Triskelion 177, combo: Yawgmoth + undying loop + a death payoff 62, Exsanguinate (X = 8) 1, Exsanguinate (X = 5) 1
+Cleanup discards to 7: 3863 (1.93 a game, in 44.4% of games); combo pieces 0 (in 0.0% of games); 87 that ai::discard_keep would have kept
+  by role: tutor 5 (0%), ritual 20 (1%), fast mana / rock 95 (2%), draw 185 (5%), land 1222 (32%), other 2336 (60%)
+  most discarded: Swamp 1059, Call of the Ring 164, Torment of Hailfire 164, Dark Deal 150, Peer into the Abyss 138, Exsanguinate 131, Wander Off 128, Sephiroth's Intervention 117, Vanquish the Weak 110, Silence the Echo 105, Overkill 101, Foolish Fate 93
+  median kill turn: games with a combo piece discarded - (0 games), without 9.0 (2000 games) (confounded: longer games discard more)
+Main-phase stops, by who chose and the phase: the best other option by heuristic utility (count by bin)
+  main 1 look-ahead "stop": 675 (0.34 a game; 23 on turns 1-4; 0 with a line ready) | < 0: 2, 0-3: 58, 3-6: 392, 6-10: 207, >= 10: 16
+      best other option: Citadel: play Swamp 44, Silence the Echo 31, The One Ring 27, Accursed Marauder 15, Citadel: cast Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel 14, Citadel: cast Grim Tutor 12, Citadel: cast Yawgmoth, Thran Physician 11, Citadel: cast Screeching Soulbreaker 10
+      look-ahead score, best other minus stop: mean -58.95; within 1 point of the stop 135 of 675
+  main 1 look-ahead "stop (hold mana)": 207 (0.10 a game; 4 on turns 1-4; 0 with a line ready) | < 0: 17, 0-3: 72, 3-6: 108, 6-10: 10
+      best other option: The One Ring 18, Sanguine Bond 14, Bloodletting (prepared copy) 12, Deadly Dispute 9, Diabolic Tutor 7, Ob Nixilis, the Fallen 7, Zulaport Cutthroat 6, Vito, Thorn of the Dusk Rose 6
+      look-ahead score, best other minus stop: mean -0.49; within 1 point of the stop 164 of 203
+  main 1 heuristic  "stop": 15899 (7.95 a game; 7972 on turns 1-4; 0 with a line ready) | nothing else offered: 15899
+      best other option: -
+  main 1 heuristic  "stop (hold mana)": 10 (0.01 a game; 0 on turns 1-4; 0 with a line ready) | nothing else offered: 10
+      best other option: -
+  main 2 look-ahead "stop": 396 (0.20 a game; 1 on turns 1-4; 0 with a line ready) | < 0: 1, 0-3: 42, 3-6: 235, 6-10: 118
+      best other option: Citadel: play Swamp 29, Silence the Echo 28, Citadel: cast Grim Tutor 11, Citadel: cast Raise Dead 10, Citadel: cast Otherworld Atlas 10, Citadel: cast Rooftop Assassin 10, Citadel: cast Undercity Dire Rat 9, Citadel: cast Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel 9
+      look-ahead score, best other minus stop: mean -91.23; within 1 point of the stop 32 of 396
+  main 2 look-ahead "stop (hold mana)": 113 (0.06 a game; 4 on turns 1-4; 0 with a line ready) | 6-10: 112, >= 10: 1
+      best other option: Ad Nauseam 111, Exsanguinate (X = 5) 1, Bloodletting (prepared copy) 1
+      look-ahead score, best other minus stop: mean -5.22; within 1 point of the stop 4 of 113
+  main 2 heuristic  "stop": 15638 (7.82 a game; 7994 on turns 1-4; 0 with a line ready) | nothing else offered: 15638
+      best other option: -
+Sure-win cap (d10bbb05): changed the look-ahead's pick 0 times, in 0.0% of games
+Crude best case (a line's pieces and its mana seen; tutors aside): in 3.0% of games, median own turn 9.0
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.0%  T4 0.0%  T5 0.0%  T6 0.1%
+  lines: Vito / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror 41, Sanguine Bond + Exquisite Blood 8, Mikaeus + Triskelion 6, Yawgmoth + undying loop + a death payoff 5
+  kill turn - best case (60 games with both): median 0.0, mean 0.18; < 0: 0.0%, 0: 81.7%, 1: 18.3%, 2: 0.0%, 3: 0.0%, 4-5: 0.0%, 6+: 0.0%
+  games with a best case and no kill by the round cap: 0
+Crude best case (a line's pieces and its mana seen; each seen tutor standing in for one missing piece): in 7.3% of games, median own turn 9.0
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.0%  T4 0.0%  T5 0.0%  T6 0.1%
+  lines: Vito / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror 70, Yawgmoth + undying loop + a death payoff 54, Sanguine Bond + Exquisite Blood 17, Mikaeus + Triskelion 5
+  kill turn - best case (146 games with both): median 0.0, mean 0.27; < 0: 0.0%, 0: 74.7%, 1: 23.3%, 2: 2.1%, 3: 0.0%, 4-5: 0.0%, 6+: 0.0%
+  games with a best case and no kill by the round cap: 0
+Crude best case (a line's pieces and its mana seen; only tutors that can find the missing piece, one each): in 7.3% of games, median own turn 9.0
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.0%  T4 0.0%  T5 0.0%  T6 0.1%
+  lines: Vito / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror 70, Yawgmoth + undying loop + a death payoff 54, Sanguine Bond + Exquisite Blood 17, Mikaeus + Triskelion 5
+  kill turn - best case (146 games with both): median 0.0, mean 0.27; < 0: 0.0%, 0: 74.7%, 1: 23.3%, 2: 2.1%, 3: 0.0%, 4-5: 0.0%, 6+: 0.0%
+  games with a best case and no kill by the round cap: 0
+  progress  60.0%  0m29s elapsed, ~0m19s left
+  progress  70.0%  0m34s elapsed, ~0m14s left
+
+=== Y'shtola (yshtola) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 11.0, mean 10.8 (over the 1996 kills)
+  won by turn: T1 0.0%  T2 0.0%  T3 0.1%  T4 0.2%  T5 1.4%  T6 4.3%  T7 7.5%  T8 15.2%
+  no kill by round 20: 0.2% (of which the deck itself lost: 0.0% of games)
+How it won (share of kills): damage 74.0%, combo (unnamed) 26.0%
+Mulligans: kept 7 cards 96.2% (no mulligan 80.8%, the free mulligan 15.4%), 6 cards 3.1%, 5 or fewer 0.7%
+Ready turn (the plan came online): median 6.0, mean 6.3, reached in 96.3% of games
+Protection on the kill turn: 67.1% of kills held a protection card or had a cast lock in force
+  counted (4): Dovin's Veto, Force of Will, Restoration Angel, Teferi's Protection
+Commander cast: 96.3% of games, median own turn 5.0 (of the games it was cast)
+Loss accounting [ai-audit] (each own turn in one bucket, the first that matches):
+  own turns: 21581 (10.79 a game; 7998 of them turns 1-4)
+  bucket              all turns   turns 1-4  per game
+  won                      9.2%        0.1%      1.00
+  ready_not_taken          0.0%        0.0%      0.00
+  passed_castable          2.9%        0.7%      0.31
+  no_land_drop             0.1%        0.2%      0.01
+  mana_short              15.8%       38.0%      1.71
+  progressed              71.0%       60.6%      7.66
+  idle                     0.9%        0.5%      0.10
+  progressed turns, by the most useful card cast (combo piece > tutor > ritual > fast mana > draw > protection > other): other 46%, combo piece 16%, draw 12%, fast mana / rock 11%, tutor 8%, land only 6%, protection 1%, abilities only 0%
+    on turns 1-4: other 48%, fast mana / rock 17%, draw 14%, land only 9%, tutor 7%, combo piece 4%, protection 1%, abilities only 0%
+  passed_castable cards (card-turns, a turn can hold several): combo piece 9 (1%), tutor 37 (4%), fast mana / rock 115 (13%), draw 177 (20%), protection 11 (1%), other 524 (60%)
+    most passed: Your Fate Ends Here 85, Memory Trap 66, Tezzeret's Gambit 51, Skyclave Apparition 48, Mystic Remora 41, Esper Sentinel 40, Champion's Helm 37, Arcane Signet 36, Teleportation Circle 35, Read the Bones 33, Expedition Map 29, Loran of the Third Path 29
+  payable but never offered as a play (card-turns; in 67.3% of turns): tutor 2788 (8%), draw 150 (0%), protection 7053 (21%), other 23773 (70%)
+    most held: Dovin's Veto 2713, Fatal Push 2447, Teferi's Protection 2385, Go for the Throat 2363, Path to Exile 2297, Generous Gift 2283, Arrest 2271, Bound in Silence 2218, Anguished Unmaking 2149, Force of Will 1955, Toxic Deluge 1710, Torment of Hailfire 1566
+  ready_not_taken, the line ready: -
+    chosen at decisions with a line ready (before going for one): combo: Sanguine Bond + Exquisite Blood 442, combo: Vito / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror 85, Debt to the Deathless (X = 7) 2, Torment of Hailfire (X = 13) 2, Debt to the Deathless (X = 15) 1, Exsanguinate (X = 23) 1, Debt to the Deathless (X = 8) 1, Urborg Syphon-Mage (discard Anguished Unmaking) 1, Debt to the Deathless (X = 4) 1, Debt to the Deathless (X = 5) 1
+Cleanup discards to 7: 6737 (3.37 a game, in 68.3% of games); combo pieces 0 (in 0.0% of games); 39 that ai::discard_keep would have kept
+  by role: tutor 110 (2%), fast mana / rock 141 (2%), draw 225 (3%), protection 36 (1%), land 2512 (37%), other 3713 (55%)
+  most discarded: Swamp 531, Island 418, Plains 400, Farewell 305, Austere Command 300, Torment of Hailfire 282, Toxic Deluge 273, Debt to the Deathless 245, Exsanguinate 220, Bound in Silence 191, Arrest 187, Generous Gift 179
+  median kill turn: games with a combo piece discarded - (0 games), without 11.0 (2000 games) (confounded: longer games discard more)
+Main-phase stops, by who chose and the phase: the best other option by heuristic utility (count by bin)
+  main 1 look-ahead "stop": 191 (0.10 a game; 8 on turns 1-4; 0 with a line ready) | < 0: 1, 0-3: 35, 3-6: 65, 6-10: 60, >= 10: 30
+      best other option: Ill-Gotten Inheritance 8, Expedition Map: find a land 8, Debt to the Deathless (X = 3) 7, Sanguine Bond 7, Y'shtola, Night's Blessed 7, Necropotence 6, Mystic Remora 6, Expedition Map 6
+      look-ahead score, best other minus stop: mean -2.32; within 1 point of the stop 96 of 191
+  main 1 look-ahead "stop (hold mana)": 1427 (0.71 a game; 75 on turns 1-4; 0 with a line ready) | < 0: 243, 0-3: 929, 3-6: 187, 6-10: 60, >= 10: 8
+      best other option: suspend Profane Tutor 160, Arcane Signet 106, Expedition Map 94, Talisman of Progress 93, Restoration Angel 88, Talisman of Hierarchy 76, Your Fate Ends Here 69, Esper Sentinel 65
+      look-ahead score, best other minus stop: mean -0.54; within 1 point of the stop 1029 of 1377
+  main 1 heuristic  "stop": 17459 (8.73 a game; 7764 on turns 1-4; 0 with a line ready) | nothing else offered: 17459
+      best other option: -
+  main 1 heuristic  "stop (hold mana)": 1361 (0.68 a game; 146 on turns 1-4; 0 with a line ready) | nothing else offered: 1361
+      best other option: -
+  main 2 look-ahead "stop": 27 (0.01 a game; 1 on turns 1-4; 0 with a line ready) | < 0: 1, 0-3: 7, 3-6: 12, 6-10: 4, >= 10: 3
+      best other option: suspend Profane Tutor 4, Expedition Map: find a land 2, Sphere of Safety 1, Exsanguinate (X = 4) 1, Mystic Remora 1, Expedition Map 1, Teleportation Circle 1, Exsanguinate (X = 6) 1
+      look-ahead score, best other minus stop: mean -3.13; within 1 point of the stop 10 of 27
+  main 2 look-ahead "stop (hold mana)": 1137 (0.57 a game; 70 on turns 1-4; 0 with a line ready) | < 0: 207, 0-3: 779, 3-6: 126, 6-10: 23, >= 10: 2
+      best other option: suspend Profane Tutor 145, Arcane Signet 90, Talisman of Progress 79, Expedition Map 77, Restoration Angel 71, Talisman of Hierarchy 58, Your Fate Ends Here 55, Esper Sentinel 51
+      look-ahead score, best other minus stop: mean -0.60; within 1 point of the stop 739 of 1089
+  main 2 heuristic  "stop": 17233 (8.62 a game; 7776 on turns 1-4; 0 with a line ready) | nothing else offered: 17233
+      best other option: -
+  main 2 heuristic  "stop (hold mana)": 1337 (0.67 a game; 146 on turns 1-4; 0 with a line ready) | nothing else offered: 1337
+      best other option: -
+Sure-win cap (d10bbb05): changed the look-ahead's pick 0 times, in 0.0% of games
+Crude best case (a line's pieces and its mana seen; tutors aside): in 3.5% of games, median own turn 10.0
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.0%  T4 0.0%  T5 0.0%  T6 0.1%
+  lines: Vito / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror 51, Sanguine Bond + Exquisite Blood 18
+  kill turn - best case (69 games with both): median 0.0, mean 0.41; < 0: 0.0%, 0: 59.4%, 1: 40.6%, 2: 0.0%, 3: 0.0%, 4-5: 0.0%, 6+: 0.0%
+  games with a best case and no kill by the round cap: 0
+Crude best case (a line's pieces and its mana seen; each seen tutor standing in for one missing piece): in 38.2% of games, median own turn 10.0
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.0%  T4 0.0%  T5 0.1%  T6 0.5%
+  lines: Vito / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror 589, Sanguine Bond + Exquisite Blood 176
+  kill turn - best case (763 games with both): median 1.0, mean 1.39; < 0: 0.0%, 0: 26.5%, 1: 37.1%, 2: 19.9%, 3: 9.4%, 4-5: 5.8%, 6+: 1.3%
+  games with a best case and no kill by the round cap: 2
+Crude best case (a line's pieces and its mana seen; only tutors that can find the missing piece, one each): in 21.0% of games, median own turn 10.0
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.0%  T4 0.0%  T5 0.1%  T6 0.1%
+  lines: Vito / Sanguine Bond / Marauding Blight-Priest + Exquisite Blood / Bloodthirsty Conqueror 310, Sanguine Bond + Exquisite Blood 110
+  kill turn - best case (419 games with both): median 1.0, mean 0.83; < 0: 0.0%, 0: 46.5%, 1: 36.3%, 2: 10.5%, 3: 4.3%, 4-5: 1.7%, 6+: 0.7%
+  games with a best case and no kill by the round cap: 1
+  progress  80.0%  0m48s elapsed, ~0m12s left
+  progress  90.0%  1m10s elapsed, ~0m07s left
+  progress 100.0%  1m35s elapsed, ~0m00s left
+
+=== Thanos (thanos) goldfish [lookahead AI, 2000 games from seed 500000; three inert seats at 40 life; round cap 20] ===
+Kill turn (own turn): median 10.0, mean 10.6 (over the 1992 kills)
+  won by turn: T1 0.0%  T2 0.0%  T3 0.1%  T4 0.6%  T5 1.9%  T6 5.7%  T7 11.1%  T8 21.1%
+  no kill by round 20: 0.4% (of which the deck itself lost: 0.1% of games)
+How it won (share of kills): damage 45.4%, combo (unnamed) 42.2%, poison 9.5%, other 2.4%, commander damage 0.4%
+Mulligans: kept 7 cards 80.5% (no mulligan 54.8%, the free mulligan 25.7%), 6 cards 11.0%, 5 or fewer 8.5%
+Ready turn (the plan came online): median none, mean 9.4, reached in 42.0% of games
+Protection on the kill turn: 73.6% of kills held a protection card or had a cast lock in force
+  counted (7): Force of Negation, Force of Will, Lightning Greaves, Mana Drain, Pact of Negation, Red Elemental Blast, Teferi's Protection
+Commander cast: 97.4% of games, median own turn 4.0 (of the games it was cast)
+Loss accounting [ai-audit] (each own turn in one bucket, the first that matches):
+  own turns: 21283 (10.64 a game; 7999 of them turns 1-4)
+  bucket              all turns   turns 1-4  per game
+  won                      9.4%        0.2%      1.00
+  ready_not_taken          0.0%        0.0%      0.00
+  passed_castable          3.5%        1.1%      0.37
+  no_land_drop             0.7%        0.2%      0.07
+  mana_short              14.5%       21.6%      1.55
+  progressed              71.0%       76.6%      7.55
+  idle                     1.0%        0.3%      0.10
+  progressed turns, by the most useful card cast (combo piece > tutor > ritual > fast mana > draw > protection > other): other 35%, combo piece 23%, fast mana / rock 21%, tutor 7%, draw 6%, land only 4%, ritual 2%, protection 1%, abilities only 0%
+    on turns 1-4: other 35%, fast mana / rock 24%, combo piece 19%, tutor 10%, draw 7%, ritual 2%, land only 2%, protection 1%, abilities only 0%
+  passed_castable cards (card-turns, a turn can hold several): combo piece 144 (15%), tutor 136 (14%), ritual 43 (5%), fast mana / rock 215 (23%), draw 36 (4%), protection 30 (3%), other 343 (36%)
+    most passed: Gamble 109, Oblivion Stone 59, Rings of Brighthearth 57, Chromatic Lantern 53, Nature's Lore 43, Ratchet Bomb 33, Lightning Greaves 30, Grim Monolith 29, Expedition Map 29, Jeska's Will 29, Wrenn and Six 27, Birds of Paradise 26
+  payable but never offered as a play (card-turns; in 58.0% of turns): combo piece 48 (0%), tutor 1864 (8%), ritual 5 (0%), draw 20 (0%), protection 12832 (58%), other 7501 (34%)
+    most held: Pact of Negation 2590, Red Elemental Blast 2553, Swords to Plowshares 2058, Mana Drain 2049, Teferi's Protection 1892, Force of Negation 1859, Chaos Warp 1853, Deflecting Swat 1767, Decimate 1711, Force of Will 1438, Vampiric Tutor 858, Worldly Tutor 749
+  ready_not_taken, the line ready: -
+    chosen at decisions with a line ready (before going for one): combo: Power Artifact / Rings of Brighthearth + Monolith 579, combo: Astral Dragon + Cursed Mirror 262
+Cleanup discards to 7: 1341 (0.67 a game, in 16.9% of games); combo pieces 3 (in 0.1% of games); 4 that ai::discard_keep would have kept
+  by role: combo piece 3 (0%), tutor 24 (2%), ritual 21 (2%), fast mana / rock 53 (4%), draw 1 (0%), protection 54 (4%), land 749 (56%), other 436 (33%)
+  most discarded: Decimate 56, Swords to Plowshares 50, Chaos Warp 47, Deflecting Swat 47, Blightsteel Colossus 43, Misty Rainforest 40, Teferi's Protection 34, Verdant Catacombs 34, Polluted Delta 32, Marsh Flats 32, Wooded Foothills 31, Urza's Saga 30
+  median kill turn: games with a combo piece discarded 12.0 (3 games), without 10.0 (1997 games) (confounded: longer games discard more)
+Main-phase stops, by who chose and the phase: the best other option by heuristic utility (count by bin)
+  main 1 look-ahead "stop": 1055 (0.53 a game; 74 on turns 1-4; 0 with a line ready) | < 0: 43, 0-3: 383, 3-6: 326, 6-10: 288, >= 10: 15
+      best other option: Mystic Forge: exile the top land 264, Basalt Monolith ability 42, Urza: free card 36, Mystic Forge: cast Urza's Bauble 29, Mystic Forge: cast Mox Diamond 27, Mystic Forge: cast Mox Opal 19, Wrenn and Six +1 19, Mystic Forge: cast Grim Monolith 17
+      look-ahead score, best other minus stop: mean -35.86; within 1 point of the stop 333 of 1055
+  main 1 look-ahead "stop (hold mana)": 4116 (2.06 a game; 196 on turns 1-4; 0 with a line ready) | < 0: 438, 0-3: 2609, 3-6: 784, 6-10: 281, >= 10: 4
+      best other option: Karn, the Great Creator +1 535, Basalt Monolith ability 414, Wrenn and Six +1 344, Ratchet Bomb (charge counter) 278, Urza: free card 198, Mystic Forge: exile the top land 191, Expedition Map: find a land 174, The One Ring 160
+      look-ahead score, best other minus stop: mean -5.81; within 1 point of the stop 3344 of 4031
+  main 1 heuristic  "stop": 12842 (6.42 a game; 6948 on turns 1-4; 0 with a line ready) | nothing else offered: 12842
+      best other option: -
+  main 1 heuristic  "stop (hold mana)": 2176 (1.09 a game; 770 on turns 1-4; 0 with a line ready) | nothing else offered: 2160, < 0: 2, 0-3: 6, 3-6: 8
+      best other option: Ugin, the Spirit Dragon +2 3, Wrenn and Six +1 3, Karn, Scion of Urza +1 2, Basalt Monolith ability 2, Grim Monolith 1, Jeska's Will 1, Mystic Forge: cast Mana Vault 1, Karn, Scion of Urza -2 1
+  main 2 look-ahead "stop": 593 (0.30 a game; 31 on turns 1-4; 0 with a line ready) | < 0: 12, 0-3: 266, 3-6: 190, 6-10: 123, >= 10: 2
+      best other option: Mystic Forge: exile the top land 218, Mystic Forge: cast Urza's Bauble 24, Mystic Forge: cast Mox Diamond 20, Mystic Forge: cast Mox Opal 17, Mystic Forge: cast Chrome Mox 15, Mystic Forge: cast Chromatic Lantern 14, Mystic Forge: cast Ratchet Bomb 13, Mystic Forge: cast Grim Monolith 13
+      look-ahead score, best other minus stop: mean -72.37; within 1 point of the stop 85 of 593
+  main 2 look-ahead "stop (hold mana)": 3519 (1.76 a game; 190 on turns 1-4; 0 with a line ready) | < 0: 415, 0-3: 2459, 3-6: 528, 6-10: 115, >= 10: 2
+      best other option: Karn, the Great Creator +1 414, Basalt Monolith ability 393, Wrenn and Six +1 282, Ratchet Bomb (charge counter) 278, Urza: free card 266, Mystic Forge: exile the top land 202, Expedition Map: find a land 155, The One Ring 134
+      look-ahead score, best other minus stop: mean -7.36; within 1 point of the stop 2850 of 3442
+  main 2 heuristic  "stop": 12940 (6.47 a game; 6982 on turns 1-4; 0 with a line ready) | nothing else offered: 12940
+      best other option: -
+  main 2 heuristic  "stop (hold mana)": 2266 (1.13 a game; 784 on turns 1-4; 0 with a line ready) | nothing else offered: 2255, < 0: 2, 0-3: 6, 3-6: 3
+      best other option: Ugin, the Spirit Dragon +2 2, Basalt Monolith ability 2, Karn, the Great Creator +1 2, The One Ring 1, Chromatic Lantern 1, crack Mind Stone 1, Wrenn and Six +1 1, The Mightstone and Weakstone 1
+Sure-win cap (d10bbb05): changed the look-ahead's pick 0 times, in 0.0% of games
+Crude best case (a line's pieces and its mana seen; tutors aside): in 8.4% of games, median own turn 9.0
+  best case by turn (share of all games): T1 0.0%  T2 0.0%  T3 0.1%  T4 0.2%  T5 0.3%  T6 0.6%
+  lines: Power Artifact / Rings of Brighthearth + Monolith 88, Astral Dragon + Cursed Mirror 80
+  kill turn - best case (166 games with both): median 1.0, mean 1.11; < 0: 0.0%, 0: 45.2%, 1: 29.5%, 2: 14.5%, 3: 4.2%, 4-5: 3.6%, 6+: 3.0%
+  games with a best case and no kill by the round cap: 2
+Crude best case (a line's pieces and its mana seen; each seen tutor standing in for one missing piece): in 55.5% of games, median own turn 9.0
+  best case by turn (share of all games): T1 0.0%  T2 0.1%  T3 0.5%  T4 1.9%  T5 4.8%  T6 11.2%
+  lines: Power Artifact / Rings of Brighthearth + Monolith 881, Astral Dragon + Cursed Mirror 228
+  kill turn - best case (1101 games with both): median 2.0, mean 2.24; < 0: 0.0%, 0: 22.2%, 1: 25.2%, 2: 19.3%, 3: 11.6%, 4-5: 12.2%, 6+: 9.4%
+  games with a best case and no kill by the round cap: 8
+Crude best case (a line's pieces and its mana seen; only tutors that can find the missing piece, one each): in 43.5% of games, median own turn 9.0
+  best case by turn (share of all games): T1 0.0%  T2 0.1%  T3 0.1%  T4 0.8%  T5 2.5%  T6 6.5%
+  lines: Power Artifact / Rings of Brighthearth + Monolith 623, Astral Dragon + Cursed Mirror 246
+  kill turn - best case (863 games with both): median 1.0, mean 1.82; < 0: 0.0%, 0: 32.2%, 1: 24.1%, 2: 17.4%, 3: 9.4%, 4-5: 10.5%, 6+: 6.4%
+  games with a best case and no kill by the round cap: 6
+
+=== Goldfish summary (own turn of the kill; no opponents interacting) ===
+  deck                                median   mean   by T1   by T2   by T3  no kill  protection
+  aragorn                               12.0   12.5    0.0%    0.0%    0.0%     0.2%       91.2%
+  sheoldred                              9.0    8.9    0.0%    0.0%    0.0%     0.0%        8.4%
+  yshtola                               11.0   10.8    0.0%    0.0%    0.1%     0.2%       67.1%
+  thanos                                10.0   10.6    0.0%    0.0%    0.1%     0.4%       73.6%
+
+(95s total)

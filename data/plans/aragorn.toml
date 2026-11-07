@@ -84,6 +84,14 @@ when = ["commander-out", "have:Guttersnipe", "out:Guttersnipe"]
 value = 76
 else = 50
 
+# Aura Shards (each creature entering, ours or a token, destroys an artifact or enchantment): no generic rule casts it
+# (it sat in hand in every game of the 11/06 analysis); cast once the board can start making creatures
+[[prio]]
+cards = ["Aura Shards"]
+when = ["turn>=3"]
+value = 58
+else = 30
+
 [[hold]]
 card = "Teferi's Protection"
 protects = ["commander", "Fiery Emancipation", "Underworld Breach"]

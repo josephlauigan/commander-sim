@@ -1,0 +1,56 @@
+Play-by-play of pool game 3 (seed 500003): Aragorn vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Zur the Enchanter, Kinnan, Yawgmoth, Aragorn
+R1  --- Zur the Enchanter turn 1: life 40, 7 cards in hand, 0 lands
+R1    Zur the Enchanter plays Adarkar Wastes
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kinnan plays Rejuvenating Springs
+R1        [Kinnan decides: Sol Ring 50%, Mana Vault 50%, stop 0% -> Sol Ring [search]]
+R1    Kinnan casts Sol Ring
+R1        [Kinnan decides: Mana Vault 99%, Moonsilver Key 1%, stop 0% -> Mana Vault [search]]
+R1    Kinnan casts Mana Vault
+R1        [Kinnan decides: Moonsilver Key 100%, stop 0% -> Moonsilver Key [search]]
+R1    Kinnan casts Moonsilver Key
+R1        [Kinnan decides: Moonsilver Key ability 100%, stop 0% -> Moonsilver Key ability [search]]
+R1    Kinnan activates Moonsilver Key
+R1      Kinnan reveals Walking Ballista and puts it into their hand
+R1  --- Yawgmoth turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yawgmoth plays Swamp
+R1  --- Aragorn turn 1: life 40, 7 cards in hand, 0 lands
+R1    Aragorn plays Mountain
+R1        [Aragorn decides: Skullclamp 100%, stop 0% -> Skullclamp [search]]
+R1    Aragorn casts Skullclamp
+R2  --- Zur the Enchanter turn 2: life 40, 7 cards in hand, 1 lands
+R2    Zur the Enchanter plays Plains
+R2  --- Kinnan turn 2: life 40, 5 cards in hand, 1 lands
+R2    Kinnan plays Island
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 97%, Fabricate 3%, Walking Ballista 0%, stop 0% -> Fabricate [search]]
+R2    Kinnan casts Fabricate
+R2      Kinnan reveals Basalt Monolith and puts it into their hand
+R2    Yawgmoth casts Vampiric Tutor
+R2      Yawgmoth puts Mikaeus, the Unhallowed on top of their library
+R2        [Yawgmoth end of turn: Vampiric Tutor 100%, pass 0% -> Vampiric Tutor]
+R2  --- Yawgmoth turn 2: life 38, 6 cards in hand, 1 lands
+R2    Yawgmoth plays Takenuma, Abandoned Mire
+R2        [Yawgmoth decides: Nether Traitor 100%, stop 0% -> Nether Traitor [search]]
+R2    Yawgmoth casts Nether Traitor
+R2        [Yawgmoth attacks: Kinnan 58%, Zur the Enchanter 21%, Aragorn 21% -> Kinnan]
+R2    Yawgmoth attacks Kinnan with 1 creature(s): 1 damage (life now 38)
+R2  --- Aragorn turn 2: life 40, 6 cards in hand, 1 lands
+R2    Aragorn plays Sulfur Falls
+R3  --- Zur the Enchanter turn 3: life 40, 7 cards in hand, 2 lands
+R3    Zur the Enchanter plays Glacial Fortress
+R3        [Zur the Enchanter decides: Darksteel Mutation 100%, stop 0% -> Darksteel Mutation [search]]
+R3    Zur the Enchanter casts Darksteel Mutation
+R3  --- Kinnan turn 3: life 38, 5 cards in hand, 2 lands
+R3    Kinnan plays Forest
+R3        [Kinnan decides: Basalt Monolith 86%, Kinnan, Bonder Prodigy 13%, Walking Ballista 1%, stop (hold mana) 0% -> Basalt Monolith [search]]
+R3    Kinnan casts Basalt Monolith
+R3        [Kinnan decides: Kinnan, Bonder Prodigy 100%, Walking Ballista 0%, Basalt Monolith ability 0%, stop 0% -> Kinnan, Bonder Prodigy [search]]
+R3    Kinnan casts Kinnan, Bonder Prodigy
+R3        [Kinnan decides: combo: Kinnan + Basalt Monolith 100%, Walking Ballista 0%, Basalt Monolith ability 0%, stop 0% -> combo: Kinnan + Basalt Monolith [search]]
+R3    Kinnan goes for Kinnan + Basalt Monolith
+R3  *** Zur the Enchanter is eliminated (life 40) by Kinnan
+R3  *** Yawgmoth is eliminated (life 38) by Kinnan
+R3  *** Aragorn is eliminated (life 40) by Kinnan
+R3  *** Kinnan wins by combo
+Winner: Kinnan (combo)

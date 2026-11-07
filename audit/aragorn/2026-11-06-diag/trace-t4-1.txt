@@ -1,0 +1,211 @@
+Play-by-play of pool game 1 (seed 500001): Aragorn vs Tier 4 (Low B4), loose profile, lookahead AI
+Seat order: Chulane, Aragorn, Yuriko, Krenko
+R1  --- Chulane turn 1: life 40, 7 cards in hand, 0 lands
+R1    Chulane plays Command Tower
+R1  --- Aragorn turn 1: life 40, 7 cards in hand, 0 lands
+R1    Aragorn plays Windswept Heath
+R1      cracks Windswept Heath for Tropical Island
+R1        [Aragorn decides: Birds of Paradise 100%, stop 0% -> Birds of Paradise [search]]
+R1    Aragorn casts Birds of Paradise
+R1  --- Yuriko turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yuriko plays Exotic Orchard
+R1        [Yuriko decides: Spectral Sailor 89%, Brainstorm 11%, stop 0% -> Spectral Sailor [search]]
+R1    Yuriko casts Spectral Sailor
+R1  --- Krenko turn 1: life 40, 7 cards in hand, 0 lands
+R1    Krenko plays Mountain
+R2  --- Chulane turn 2: life 40, 7 cards in hand, 1 lands
+R2    Chulane plays Forest
+R2        [Chulane decides: Paradise Druid 100%, stop 0% -> Paradise Druid [search]]
+R2    Chulane casts Paradise Druid
+R2  --- Aragorn turn 2: life 39, 6 cards in hand, 1 lands
+R2    Aragorn pays 2 life for an untapped Temple Garden
+R2    Aragorn plays Temple Garden
+R2        [Aragorn decides: Faeburrow Elder 100%, stop 0% -> Faeburrow Elder [search]]
+R2    Aragorn casts Faeburrow Elder
+R2  --- Yuriko turn 2: life 40, 6 cards in hand, 1 lands
+R2    Yuriko plays Island
+R2        [Yuriko decides: stop 97%, Brainstorm 3% -> stop [search]]
+R2        [Yuriko attack plan by search: filtered at Aragorn]
+R2    Yuriko attacks Aragorn with 1 creature(s): 1 damage (life now 36)
+R2        [Yuriko decides: Brainstorm 100%, stop 0% -> Brainstorm [search]]
+R2    Yuriko casts Brainstorm
+R2        [Yuriko decides: Sol Ring 100%, stop 0% -> Sol Ring [search]]
+R2    Yuriko casts Sol Ring
+R2    Krenko casts Lightning Bolt -> Faeburrow Elder (Aragorn)
+R2      Faeburrow Elder (Aragorn) is removed: dmg3
+R2        [Krenko end of turn: Lightning Bolt -> Faeburrow Elder 91%, pass 9% -> Lightning Bolt -> Faeburrow Elder]
+R2  --- Krenko turn 2: life 40, 6 cards in hand, 1 lands
+R2    Krenko plays Mountain
+R2        [Krenko decides: Grenzo, Havoc Raiser 52%, Impact Tremors 47%, stop 0% -> Grenzo, Havoc Raiser [search]]
+R2    Krenko casts Grenzo, Havoc Raiser
+R3  --- Chulane turn 3: life 40, 6 cards in hand, 2 lands
+R3    Chulane plays Sunpetal Grove
+R3        [Chulane decides: Delighted Halfling 57%, Beast Whisperer 22%, Tireless Provisioner 20%, Swords to Plowshares -> Grenzo, Havoc Raiser 0% -> Tireless Provisioner [search]]
+R3    Chulane casts Tireless Provisioner
+R3        [Chulane decides: Delighted Halfling 100%, Swords to Plowshares -> Grenzo, Havoc Raiser 0%, Path to Exile -> Grenzo, Havoc Raiser 0%, stop 0% -> Delighted Halfling [search]]
+R3    Chulane casts Delighted Halfling
+R3  --- Aragorn turn 3: life 36, 5 cards in hand, 2 lands
+R3    Aragorn plays Volcanic Island
+R3        [Aragorn decides: Aragorn, the Uniter 100%, Fact or Fiction 0%, Expressive Iteration 0%, stop 0% -> Aragorn, the Uniter [search]]
+R3    Aragorn casts Aragorn, the Uniter
+R3  --- Yuriko turn 3: life 40, 5 cards in hand, 2 lands
+R3    Yuriko plays Flooded Strand
+R3      cracks Flooded Strand for Sunken Hollow
+R3        [Yuriko decides: stop 95%, Demonic Tutor 3%, Spectral Sailor ability 1%, Silver-Fur Master 0% -> Silver-Fur Master [search]]
+R3    Yuriko casts Silver-Fur Master
+R3        [Yuriko attack plan by search: filtered at Chulane]
+R3    Yuriko attacks Chulane with 1 creature(s): 1 damage (life now 39)
+R3  --- Krenko turn 3: life 40, 5 cards in hand, 2 lands
+R3    Krenko plays Mountain
+R3        [Krenko decides: Impact Tremors 95%, Goblin Chirurgeon 5%, stop 0% -> Impact Tremors [search]]
+R3    Krenko casts Impact Tremors
+R3        [Krenko decides: Goblin Chirurgeon 100%, stop 0% -> Goblin Chirurgeon [search]]
+R3    Krenko casts Goblin Chirurgeon
+R3        [Krenko attack plan by search: filtered at Yuriko]
+R3      Krenko sacrifices Goblin Chirurgeon to Goblin Chirurgeon
+R3      Grenzo, Havoc Raiser regenerates
+R3    Krenko attacks Yuriko with 1 creature(s): 0 damage (life now 38)
+R4  --- Chulane turn 4: life 38, 4 cards in hand, 3 lands
+R4    Chulane plays Hinterland Harbor
+R4        [Chulane decides: Chulane, Teller of Tales 95%, Beast Whisperer 3%, Swords to Plowshares -> Aragorn, the Uniter 1%, Path to Exile -> Aragorn, the Uniter 1% -> Chulane, Teller of Tales [search]]
+R4    Chulane casts Chulane, Teller of Tales
+R4        [Chulane decides: Swords to Plowshares -> Aragorn, the Uniter 50%, Path to Exile -> Aragorn, the Uniter 50%, stop 0% -> Swords to Plowshares -> Aragorn, the Uniter [search]]
+R4    Chulane casts Swords to Plowshares -> Aragorn, the Uniter (Aragorn)
+R4      Aragorn, the Uniter (Aragorn) is removed: exile
+R4        [Chulane attacks: Krenko 75%, Yuriko 14%, Aragorn 11% -> Aragorn]
+R4    Chulane attacks Aragorn with 1 creature(s): 3 damage (life now 37)
+R4  --- Aragorn turn 4: life 37, 5 cards in hand, 3 lands
+R4    Aragorn plays Savannah
+R4        [Aragorn decides: Fact or Fiction 85%, Expressive Iteration 15%, stop 0% -> Fact or Fiction [search]]
+R4    Aragorn casts Fact or Fiction
+R4        [Aragorn decides: Swords to Plowshares -> Chulane, Teller of Tales 100%, stop (hold mana) 0%, Skullclamp 0% -> Swords to Plowshares -> Chulane, Teller of Tales [search]]
+R4    Aragorn casts Swords to Plowshares -> Chulane, Teller of Tales (Chulane)
+R4      Chulane, Teller of Tales (Chulane) is removed: exile
+R4    Yuriko casts Mystical Tutor
+R4      Yuriko reveals Dig Through Time and puts it on top of their library
+R4        [Yuriko end of turn: Mystical Tutor 100%, pass 0% -> Mystical Tutor]
+R4  --- Yuriko turn 4: life 38, 3 cards in hand, 3 lands
+R4        [Yuriko decides: stop 84%, play Sea Gate Restoration // Sea Gate, Reborn as a land 11%, Demonic Tutor 3%, Spectral Sailor ability 1% -> stop [search]]
+R4        [Yuriko attack plan by search: filtered at Chulane]
+R4      ninjutsu: Yuriko, the Tiger's Shadow replaces Spectral Sailor
+R4      Yuriko reveals Faerie Seer: each opponent loses 1
+R4    Yuriko attacks Chulane with 1 creature(s): 1 damage (life now 38)
+R4        [Yuriko decides: Faerie Seer 81%, Spectral Sailor 18%, play Sea Gate Restoration // Sea Gate, Reborn as a land 0%, stop 0% -> Faerie Seer [search]]
+R4    Yuriko casts Faerie Seer
+R4        [Yuriko decides: play Sea Gate Restoration // Sea Gate, Reborn as a land 100%, stop 0% -> play Sea Gate Restoration // Sea Gate, Reborn as a land [search]]
+R4    Yuriko plays Sea Gate Restoration // Sea Gate, Reborn
+R4  --- Krenko turn 4: life 39, 3 cards in hand, 3 lands
+R4    Krenko plays Mountain
+R4        [Krenko decides: Krenko, Mob Boss 100%, Jeska's Will 0%, stop 0% -> Krenko, Mob Boss [search]]
+R4    Krenko casts Krenko, Mob Boss
+R4        [Krenko attack plan by search: filtered at Yuriko]
+R4      Yuriko, the Tiger's Shadow is goaded by Krenko
+R4    Krenko attacks Yuriko with 1 creature(s): 2 damage (life now 35)
+R5  --- Chulane turn 5: life 37, 3 cards in hand, 4 lands
+R5        [Chulane decides: Path to Exile -> Krenko, Mob Boss 94%, Shrieking Drake 2%, Beast Whisperer 2%, stop (hold mana) 1% -> Path to Exile -> Krenko, Mob Boss [search]]
+R5    Chulane casts Path to Exile -> Yuriko, the Tiger's Shadow (Yuriko)
+R5      Yuriko, the Tiger's Shadow (Yuriko) is removed: exile
+R5        [Chulane decides: Shrieking Drake 49%, Beast Whisperer 43%, Mana Breach 9%, stop 0% -> Beast Whisperer [search]]
+R5    Chulane casts Beast Whisperer
+R5        [Chulane decides: Shrieking Drake 100%, stop 0% -> Shrieking Drake [search]]
+R5    Chulane casts Shrieking Drake
+R5    Chulane plays Glacial Fortress
+R5        [Chulane attack plan by search: filtered at Krenko]
+R5    Chulane attacks Krenko with 1 creature(s): 3 damage (life now 36)
+R5        [Chulane decides: Shrieking Drake 100%, stop 0% -> Shrieking Drake [search]]
+R5    Chulane casts Shrieking Drake
+R5  --- Aragorn turn 5: life 35, 6 cards in hand, 4 lands
+R5    Aragorn plays Mystic Sanctuary
+R5        [Aragorn decides: Third Path Iconoclast 87%, Skullclamp 11%, Expressive Iteration 2%, stop 0% -> Third Path Iconoclast [search]]
+R5    Aragorn casts Third Path Iconoclast
+R5        [Aragorn decides: Skullclamp 100%, stop 0% -> Skullclamp [search]]
+R5    Aragorn casts Skullclamp
+R5        [Aragorn decides: Skullclamp 100%, stop 0% -> Skullclamp [search]]
+R5    Aragorn Skullclamps Birds of Paradise
+R5  --- Yuriko turn 5: life 35, 4 cards in hand, 5 lands
+R5        [Yuriko decides: Demonic Tutor 54%, Spectral Sailor 26%, Dig Through Time 7%, Skullsnatcher 7% -> Demonic Tutor [search]]
+R5    Yuriko casts Demonic Tutor
+R5      Yuriko tutors Scroll Rack into their hand
+R5        [Yuriko decides: Spectral Sailor 79%, stop 13%, Scroll Rack 8%, Dig Through Time 0% -> Spectral Sailor [search]]
+R5    Yuriko casts Spectral Sailor
+R5        [Yuriko decides: stop 61%, Scroll Rack 37%, Spectral Sailor ability 1%, Dig Through Time 0% -> stop [search]]
+R5        [Yuriko attack plan by search: filtered at Chulane]
+R5      ninjutsu: Yuriko, the Tiger's Shadow replaces Faerie Seer
+R5      Yuriko reveals Mist-Cloaked Herald: each opponent loses 1
+R5    Yuriko attacks Chulane with 1 creature(s): 1 damage (life now 35)
+R5        [Yuriko decides: Scroll Rack 100%, stop 0% -> Scroll Rack [search]]
+R5    Yuriko casts Scroll Rack
+R5  --- Krenko turn 5: life 35, 3 cards in hand, 4 lands
+R5    Krenko plays Mountain
+R5        [Krenko decides: Jeska's Will 97%, Krenko: 2 Goblins 3%, stop 0% -> Jeska's Will [search]]
+R5    Krenko casts Jeska's Will
+R5      Jeska's Will adds 6 red mana
+R5      Jeska's Will exiles Krenko's Command, Muxus, Goblin Grandee, Staff of Domination (playable this turn)
+R5        [Krenko decides: Muxus, Goblin Grandee 49%, Staff of Domination 48%, Krenko's Command 2%, Krenko: 2 Goblins 0% -> Muxus, Goblin Grandee [search]]
+R5    Krenko casts Muxus, Goblin Grandee
+R5        [Krenko decides: Krenko: 5 Goblins 84%, Krenko's Command 11%, Kiki-Jiki copies Goblin Chieftain 5%, stop 0% -> Krenko's Command [search]]
+R5    Krenko casts Krenko's Command
+R5        [Krenko decides: Krenko: 7 Goblins 98%, Kiki-Jiki copies Goblin Chieftain 2%, stop 0% -> Krenko: 7 Goblins [search]]
+R5    Krenko makes 7 Goblins
+R5        [Krenko decides: Kiki-Jiki copies Goblin Chieftain 99%, stop 1% -> Kiki-Jiki copies Goblin Chieftain [search]]
+R5        [Krenko attack plan by search: filtered at Aragorn]
+R5  *** Aragorn is eliminated (life -16) by Krenko
+R5    Krenko attacks Aragorn with 13 creature(s): 37 damage (life now -16)
+R6  --- Chulane turn 6: life 22, 3 cards in hand, 5 lands
+R6        [Chulane decides: Chulane, Teller of Tales 86%, Shrieking Drake 9%, Recruiter of the Guard 3%, Mana Breach 2% -> Shrieking Drake [search]]
+R6    Chulane casts Shrieking Drake
+R6        [Chulane decides: Shrieking Drake 66%, Recruiter of the Guard 22%, Mana Breach 12%, stop 0% -> Shrieking Drake [search]]
+R6    Chulane casts Shrieking Drake
+R6        [Chulane decides: Shrieking Drake 66%, Recruiter of the Guard 22%, Mana Breach 12%, stop 0% -> Shrieking Drake [search]]
+R6    Chulane casts Shrieking Drake
+R6        [Chulane decides: Shrieking Drake 46%, Rhystic Study 31%, Recruiter of the Guard 15%, Mana Breach 8% -> Shrieking Drake [search]]
+R6    Chulane casts Shrieking Drake
+R6        [Chulane decides: Recruiter of the Guard 100%, stop 0% -> Recruiter of the Guard [search]]
+R6    Chulane casts Recruiter of the Guard
+R6      Chulane reveals Reclamation Sage and puts it into their hand
+R6    Chulane plays Island
+R6        [Chulane attack plan by search: filtered at Yuriko]
+R6        [Chulane keeps 1 creature(s) home as blockers]
+R6    Chulane attacks Yuriko with 1 creature(s): 3 damage (life now 19)
+R6        [Chulane decides: Shrieking Drake 100%, stop 0% -> Shrieking Drake [search]]
+R6    Chulane casts Shrieking Drake
+R6  --- Yuriko turn 6: life 19, 5 cards in hand, 5 lands
+R6    Yuriko uses Scroll Rack: Dig Through Time on top
+R6        [Yuriko decides: Faerie Seer 40%, Skullsnatcher 29%, Dig Through Time 18%, stop 11% -> Faerie Seer [search]]
+R6    Yuriko casts Faerie Seer
+R6        [Yuriko decides: Skullsnatcher 49%, Dig Through Time 30%, stop 18%, Mist-Cloaked Herald 4% -> Dig Through Time [search]]
+R6    Yuriko casts Dig Through Time
+R6        [Yuriko attack plan by search: none at Chulane]
+R6  --- Krenko turn 6: life 35, 2 cards in hand, 5 lands
+R6    Krenko plays Mountain
+R6        [Krenko decides: Krenko: 14 Goblins 97%, Goblin Ringleader 3%, Kiki-Jiki copies Goblin Chieftain 0%, stop 0% -> Krenko: 14 Goblins [search]]
+R6    Krenko makes 14 Goblins
+R6        [Krenko decides: Goblin Ringleader 95%, Kiki-Jiki copies Goblin Chieftain 5%, stop 0% -> Goblin Ringleader [search]]
+R6    Krenko casts Goblin Ringleader
+R6        [Krenko decides: Goblin Recruiter 60%, Kiki-Jiki copies Goblin Ringleader 40%, stop 0% -> Goblin Recruiter [search]]
+R6    Krenko casts Goblin Recruiter
+R6        [Krenko decides: Kiki-Jiki copies Goblin Ringleader 100%, stop 0% -> Kiki-Jiki copies Goblin Ringleader [search]]
+R6        [Krenko attack plan by search: filtered at Chulane]
+R6  *** Chulane is eliminated (life -49) by Krenko
+R6    Krenko attacks Chulane with 28 creature(s): 54 damage (life now -49)
+R6    Krenko attacks Yuriko with 1 creature(s): 0 damage (life now 2)
+R7  --- Yuriko turn 7: life 2, 6 cards in hand, 5 lands
+R7    Yuriko uses Scroll Rack: Silent-Blade Oni on top
+R7    Yuriko plays Swamp
+R7        [Yuriko decides: Slither Blade 53%, Skullsnatcher 29%, stop 14%, Mist-Cloaked Herald 3% -> Slither Blade [search]]
+R7    Yuriko casts Slither Blade
+R7        [Yuriko decides: Skullsnatcher 63%, stop 31%, Mist-Cloaked Herald 6% -> Skullsnatcher [search]]
+R7    Yuriko casts Skullsnatcher
+R7        [Yuriko decides: stop 100%, Mist-Cloaked Herald 0% -> stop [search]]
+R7        [Yuriko attack plan by search: filtered at Krenko]
+R7        [Yuriko keeps 1 creature(s) home as blockers]
+R7    Yuriko attacks Krenko with 1 creature(s): 1 damage (life now 34)
+R7        [Yuriko decides: Mist-Cloaked Herald 100%, stop 0% -> Mist-Cloaked Herald [search]]
+R7    Yuriko casts Mist-Cloaked Herald
+R7  --- Krenko turn 7: life 34, 5 cards in hand, 6 lands
+R7        [Krenko decides: Krenko: 30 Goblins 99%, Hobgoblin Bandit Lord 0%, Goblin King 0%, Goblin Trashmaster 0% -> Krenko: 30 Goblins [search]]
+R7    Krenko makes 30 Goblins
+R7        [Krenko decides: Hobgoblin Bandit Lord 25%, Goblin King 25%, Goblin Trashmaster 25%, Rundvelt Hordemaster 25% -> Hobgoblin Bandit Lord [search]]
+R7    Krenko casts Hobgoblin Bandit Lord
+R7  *** Yuriko is eliminated (life -28) by Krenko
+Winner: Krenko (damage)

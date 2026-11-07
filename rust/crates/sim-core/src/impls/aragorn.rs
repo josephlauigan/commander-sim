@@ -147,3 +147,53 @@ fn targetable(g: &Game, m: PermId, p: PlayerId) -> bool {
         !crate::engine::values::untargetable(g, m)
     }
 }
+
+// ------------------------------------------------------------------ the AI's value of Aragorn's triggers
+/// p's Aragorn on the battlefield (not phased out)
+pub fn aragorn_out(g: &Game, p: PlayerId) -> bool {
+    g.player(p).perms.iter().any(|&m| live(g, m) && &*g.perm(m).name == ARAGORN)
+}
+
+/// the damage Aragorn's red trigger deals for spell c (0 for a spell with no red, or with no Aragorn out): 3 per
+/// trigger, Veyran's extra trigger on an instant or sorcery, Fiery Emancipation's tripling
+pub fn red_damage(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    if !aragorn_out(g, p) || !g.db.get(c).colors.has('R') {
+        return 0;
+    }
+    3 * trigger_count(g, p, c) as i32 * crate::engine::combat::fiery(g, p)
+}
+
+/// what casting spell c is worth for Aragorn's triggers (AI utility points, added to the spell's own worth by
+/// `ai::brain::card_utility`; 0 with no Aragorn out). Red: 3 damage to the lowest-life opponent, worth much more when
+/// it kills; white: a 1/1 Soldier; blue: scry 2; green: +4/+4 to an attacker, only before combat on our turn
+pub fn cast_value(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    if !aragorn_out(g, p) {
+        return 0.0;
+    }
+    let d = g.db.get(c);
+    if d.land {
+        return 0.0;
+    }
+    let n = trigger_count(g, p, c) as f64;
+    let cols = d.colors;
+    let mut v = 0.0;
+    if cols.has('R') {
+        let dmg = red_damage(g, p, c);
+        let low = g.opps(p).map(|q| g.player(q).life).filter(|&l| l > 0).min().unwrap_or(i32::MAX);
+        v += if dmg >= low { 4.0 } else { 0.12 * dmg as f64 };
+    }
+    if cols.has('W') {
+        v += 0.4 * n;
+    }
+    if cols.has('U') {
+        v += 0.25 * n;
+    }
+    if cols.has('G') {
+        let precombat = g.active == Some(p) && matches!(g.step, crate::state::Step::Main1);
+        let ready = g.player(p).perms.iter().any(|&m| crate::human::combat::can_attack(g, p, m));
+        if precombat && ready {
+            v += 0.5 * n;
+        }
+    }
+    v
+}
