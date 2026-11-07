@@ -28,7 +28,7 @@ use std::fs;
 /// included combos whose cards are all catalogue pieces but that no line plays, in decks that hold them
 /// (deck key, Spellbook variant id): the audit's list, not to model in this PR
 const KNOWN_GAPS: &[(&str, &str)] = &[
-    ("kefka", "1368-1414-4856"),                // Underworld Breach + Lotus Petal + Brain Freeze
+    ("aragorn", "1368-1414-4856"),              // Underworld Breach + Lotus Petal + Brain Freeze (Kefka's gap until 11/06)
     ("thanos", "1368-1414-4856"),               // Underworld Breach + Lotus Petal + Brain Freeze
     ("krenko-mono-red-goblins", "38-659-2645"), // Skirk Prospector + Krenko, Mob Boss + Staff of Domination
     ("krenko-mono-red-goblins", "38-659-2816"), // Skirk Prospector + Krenko, Mob Boss + Umbral Mantle

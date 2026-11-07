@@ -1,0 +1,195 @@
+Play-by-play of pool game 1 (seed 500001): Aragorn vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Kinnan, Aragorn, Zur the Enchanter, Urza
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kinnan plays Rejuvenating Springs
+R1        [Kinnan decides: Delighted Halfling 53%, Fyndhorn Elves 47%, stop 0% -> Delighted Halfling [search]]
+R1    Kinnan casts Delighted Halfling
+R1  --- Aragorn turn 1: life 40, 7 cards in hand, 0 lands
+R1    Aragorn plays Marsh Flats
+R1      cracks Marsh Flats for Savannah
+R1        [Aragorn decides: Birds of Paradise 100%, stop 0% -> Birds of Paradise [search]]
+R1    Aragorn casts Birds of Paradise
+R1  --- Zur the Enchanter turn 1: life 40, 7 cards in hand, 0 lands
+R1    Zur the Enchanter plays City of Brass
+R1  --- Urza turn 1: life 40, 6 cards in hand, 0 lands
+R1    Urza plays Island
+R1        [Urza decides: Mox Opal 100%, stop 0% -> Mox Opal [search]]
+R1    Urza casts Mox Opal
+R2  --- Kinnan turn 2: life 40, 6 cards in hand, 1 lands
+R2    Kinnan plays Island
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 95%, Talisman of Curiosity 3%, Fyndhorn Elves 2%, stop 0% -> Kinnan, Bonder Prodigy [search]]
+R2    Kinnan casts Kinnan, Bonder Prodigy
+R2        [Kinnan decides: Talisman of Curiosity 100%, stop 0% -> Talisman of Curiosity [search]]
+R2    Kinnan casts Talisman of Curiosity
+R2        [Kinnan decides: Fyndhorn Elves 100%, stop 0% -> Fyndhorn Elves [search]]
+R2    Kinnan casts Fyndhorn Elves
+R2  --- Aragorn turn 2: life 39, 6 cards in hand, 1 lands
+R2    Aragorn plays Windswept Heath
+R2      cracks Windswept Heath for Tundra
+R2        [Aragorn decides: Faeburrow Elder 50%, Growth Spiral 50%, stop 0% -> Faeburrow Elder [search]]
+R2    Aragorn casts Faeburrow Elder
+R2    Zur the Enchanter casts Swords to Plowshares -> Kinnan, Bonder Prodigy (Kinnan)
+R2      Kinnan, Bonder Prodigy (Kinnan) is removed: exile
+R2        [Zur the Enchanter end of turn: Swords to Plowshares -> Kinnan, Bonder Prodigy 100%, pass 0% -> Swords to Plowshares -> Kinnan, Bonder Prodigy]
+R2  --- Zur the Enchanter turn 2: life 39, 6 cards in hand, 1 lands
+R2    Zur the Enchanter plays Plains
+R2        [Zur the Enchanter decides: Talisman of Dominance 77%, Rest in Peace 23%, stop 0% -> Talisman of Dominance [search]]
+R2    Zur the Enchanter casts Talisman of Dominance
+R2  --- Urza turn 2: life 40, 5 cards in hand, 1 lands
+R2    Urza plays Island
+R2        [Urza decides: Everflowing Chalice x1 100%, stop 0% -> Everflowing Chalice x1 [search]]
+R2    Urza casts Everflowing Chalice kicked 1 times
+R3  --- Kinnan turn 3: life 41, 4 cards in hand, 2 lands
+R3    Kinnan plays Forest
+R3        [Kinnan decides: Kinnan, Bonder Prodigy 75%, Nature's Rhythm 24%, stop (hold mana) 1%, Cyclonic Rift -> Faeburrow Elder 0% -> Kinnan, Bonder Prodigy [search]]
+R3    Kinnan casts Kinnan, Bonder Prodigy
+R3        [Kinnan decides: stop (hold mana) 98%, Cyclonic Rift -> Faeburrow Elder 2% -> stop (hold mana) [search]]
+R3        [Kinnan decides: stop (hold mana) 98%, Cyclonic Rift -> Faeburrow Elder 2% -> stop (hold mana) [search]]
+R3  --- Aragorn turn 3: life 38, 5 cards in hand, 2 lands
+R3    Aragorn pays 2 life for an untapped Temple Garden
+R3    Aragorn plays Temple Garden
+R3        [Aragorn decides: Aragorn, the Uniter 71%, Growth Spiral 14%, Three Visits 14%, Fact or Fiction 1% -> Aragorn, the Uniter [search]]
+R3    Aragorn casts Aragorn, the Uniter
+R3      Kinnan casts Pact of Negation at Aragorn, the Uniter
+R3      Kinnan counters Aragorn, the Uniter with Pact of Negation
+R3        [Aragorn decides: Three Visits 100%, stop 0% -> Three Visits [search]]
+R3    Aragorn casts Three Visits
+R3  --- Zur the Enchanter turn 3: life 38, 5 cards in hand, 2 lands
+R3    Zur the Enchanter plays Command Tower
+R3        [Zur the Enchanter decides: Zur the Enchanter 97%, Smothering Tithe 1%, Rest in Peace 1%, Esper Sentinel 0% -> Zur the Enchanter [search]]
+R3    Zur the Enchanter casts Zur the Enchanter
+R3  --- Urza turn 3: life 40, 4 cards in hand, 2 lands
+R3    Urza plays Island
+R3        [Urza decides: stop (hold mana) 99%, Urza, Lord High Artificer 1%, The One Ring 0% -> stop (hold mana) [search]]
+R3        [Urza decides: stop (hold mana) 99%, Urza, Lord High Artificer 1%, The One Ring 0% -> stop (hold mana) [search]]
+R4    Kinnan casts Cyclonic Rift -> Zur the Enchanter (Zur the Enchanter)
+R4      Zur the Enchanter (Zur the Enchanter) is removed: bounce
+R4        [Kinnan end of turn: Cyclonic Rift -> Zur the Enchanter 100%, Otawara -> Zur the Enchanter 0%, pass 0% -> Cyclonic Rift -> Zur the Enchanter]
+R4  --- Kinnan turn 4: life 40, 2 cards in hand, 3 lands
+R4    Kinnan plays Otawara, Soaring City
+R4        [Kinnan decides: Ilysian Caryatid 98%, Nature's Rhythm 2%, stop 0% -> Ilysian Caryatid [search]]
+R4    Kinnan casts Ilysian Caryatid
+R4        [Kinnan attacks: Aragorn 65%, Urza 18%, Zur the Enchanter 17% -> Aragorn]
+R4    Kinnan attacks Aragorn with 1 creature(s): 2 damage (life now 34)
+R4  --- Aragorn turn 4: life 34, 4 cards in hand, 4 lands
+R4    Aragorn plays Exotic Orchard
+R4        [Aragorn decides: Growth Spiral 70%, Aragorn, the Uniter 26%, Fact or Fiction 4%, stop 0% -> Growth Spiral [search]]
+R4    Aragorn casts Growth Spiral
+R4      cracks Misty Rainforest for Taiga
+R4        [Aragorn decides: Rhystic Study 54%, Aragorn, the Uniter 40%, Fact or Fiction 6%, Expressive Iteration 1% -> Rhystic Study [search]]
+R4    Aragorn casts Rhystic Study
+R4      Urza casts Fierce Guardianship at Rhystic Study
+R4      Urza counters Rhystic Study with Fierce Guardianship
+R4        [Aragorn decides: Fact or Fiction 82%, Expressive Iteration 18%, stop 0% -> Fact or Fiction [search]]
+R4    Aragorn casts Fact or Fiction
+R4  --- Zur the Enchanter turn 4: life 36, 5 cards in hand, 3 lands
+R4    Zur the Enchanter plays Exotic Orchard
+R4        [Zur the Enchanter decides: Necropotence 66%, Rest in Peace 17%, Smothering Tithe 10%, Esper Sentinel 7% -> Necropotence [search]]
+R4    Zur the Enchanter casts Necropotence
+R4        [Zur the Enchanter decides: Rest in Peace 69%, Esper Sentinel 31%, stop 0% -> Rest in Peace [search]]
+R4    Zur the Enchanter casts Rest in Peace
+R4      Kinnan's graveyard is exiled by Rest in Peace
+R4      Aragorn's graveyard is exiled by Rest in Peace
+R4      Zur the Enchanter's graveyard is exiled by Rest in Peace
+R4      Urza's graveyard is exiled by Rest in Peace
+R4    Zur the Enchanter pays 5 life to Necropotence
+R4  --- Urza turn 4: life 40, 3 cards in hand, 3 lands
+R4    Urza plays Island
+R4        [Urza decides: Urza, Lord High Artificer 99%, Trinket Mage 1%, The One Ring 0%, stop 0% -> The One Ring [search]]
+R4    Urza casts The One Ring
+R4      The One Ring cast in Main1 step of Urza's turn (life 40)
+R4      Urza gains protection from everything until their next turn
+R4        [Urza decides: The One Ring 100%, stop 0% -> The One Ring [search]]
+R4    Urza taps The One Ring: burden 1, life 40, Main1 step of Urza's turn
+R4        [Urza decides: Mana Vault 100%, stop 0% -> Mana Vault [search]]
+R4    Urza casts Mana Vault
+R4        [Urza decides: Trinket Mage 100%, stop 0% -> Trinket Mage [search]]
+R4    Urza casts Trinket Mage
+R4      Urza reveals Basalt Monolith and puts it into their hand
+R5  --- Kinnan turn 5: life 40, 1 cards in hand, 4 lands
+R5    Kinnan plays Flooded Grove
+R5        [Kinnan decides: Nature's Rhythm 97%, Kinnan: dig five 3%, stop 0% -> stop [search]]
+R5        [Kinnan attack plan by search: filtered at Aragorn]
+R5    Kinnan attacks Aragorn with 1 creature(s): 2 damage (life now 31)
+R5        [Kinnan decides: Nature's Rhythm 66%, Kinnan: dig five 34%, stop 0% -> Nature's Rhythm [search]]
+R5    Kinnan casts Nature's Rhythm
+R5  --- Aragorn turn 5: life 31, 3 cards in hand, 6 lands
+R5    Aragorn plays Island
+R5        [Aragorn attack plan by search: filtered at Kinnan]
+R5        [Aragorn holds back 1 attacker(s) that would die to blocks]
+R5    Aragorn attacks Zur the Enchanter with 1 creature(s): 2 damage (life now 27)
+R5  --- Zur the Enchanter turn 5: life 27, 7 cards in hand, 4 lands
+R5    Zur the Enchanter plays Isolated Chapel
+R5        [Zur the Enchanter decides: stop (hold mana) 78%, Esper Sentinel 22% -> Esper Sentinel [search]]
+R5    Zur the Enchanter casts Esper Sentinel
+R5      Aragorn casts Mystic Confluence at Esper Sentinel
+R5      Zur the Enchanter pays 3
+R5    Zur the Enchanter pays 3 life to Necropotence
+R5  --- Urza turn 5: life 40, 2 cards in hand, 4 lands
+R5    Urza no longer has protection from everything
+R5    Urza loses 1 life to The One Ring's burden (life 40)
+R5        [Urza decides: Basalt Monolith 100%, The One Ring 0%, stop 0% -> stop [search]]
+R5        [Urza attack plan by search: none at Kinnan]
+R5        [Urza decides: Basalt Monolith 100%, The One Ring 0%, stop 0% -> Basalt Monolith [search]]
+R5    Urza casts Basalt Monolith
+R5        [Urza decides: The One Ring 99%, Basalt Monolith ability 1%, stop 0% -> The One Ring [search]]
+R5    Urza taps The One Ring: burden 2, life 38, Main2 step of Urza's turn
+R5        [Urza decides: Sol Ring 96%, Rhystic Study 4%, Basalt Monolith ability 0%, stop 0% -> Sol Ring [search]]
+R5    Urza casts Sol Ring
+R5        [Urza decides: Rhystic Study 100%, Basalt Monolith ability 0%, stop 0% -> Rhystic Study [search]]
+R5    Urza casts Rhystic Study
+R5        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R5    Urza activates Basalt Monolith
+R5        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R5    Urza activates Basalt Monolith
+R5        [Urza decides: Basalt Monolith ability 97%, stop 3% -> Basalt Monolith ability [search]]
+R5    Urza activates Basalt Monolith
+R6  --- Kinnan turn 6: life 40, 0 cards in hand, 5 lands
+R6    Kinnan plays Tropical Island
+R6        [Kinnan decides: Kinnan: dig five 100%, stop 0% -> Kinnan: dig five [search]]
+R6        [Kinnan decides: Kinnan: dig five 100%, stop 0% -> Kinnan: dig five [search]]
+R6        [Kinnan attack plan by search: all at Urza]
+R6    Kinnan attacks Urza with 2 creature(s): 11 damage (life now 27)
+R6  --- Aragorn turn 6: life 31, 2 cards in hand, 7 lands
+R6    Aragorn plays Mystic Monastery
+R6        [Aragorn attack plan by search: filtered at Zur the Enchanter]
+R6    Aragorn attacks Zur the Enchanter with 1 creature(s): 2 damage (life now 21)
+R6  --- Zur the Enchanter turn 6: life 21, 7 cards in hand, 5 lands
+R6    Zur the Enchanter plays Island
+R6        [Zur the Enchanter decides: Imprisoned in the Moon -> Void Winnower 55%, Sol Ring 42%, Imprisoned in the Moon 3%, stop 0% -> Imprisoned in the Moon -> Void Winnower [search]]
+R6    Zur the Enchanter casts Imprisoned in the Moon -> Void Winnower (Kinnan)
+R6      Void Winnower (Kinnan) is removed: moon
+R6      Void Winnower becomes a Wastes
+R6        [Zur the Enchanter decides: Sol Ring 99%, Cyclonic Rift -> Colossal Skyturtle 0%, Smothering Tithe 0%, Walking Ballista 0% -> Sol Ring [search]]
+R6    Zur the Enchanter casts Sol Ring
+R6        [Zur the Enchanter decides: Cyclonic Rift -> Colossal Skyturtle 37%, Smothering Tithe 25%, Walking Ballista 25%, Lightning Greaves 13% -> Cyclonic Rift -> Colossal Skyturtle [search]]
+R6    Zur the Enchanter casts Cyclonic Rift -> Colossal Skyturtle (Kinnan)
+R6      Colossal Skyturtle (Kinnan) is removed: bounce
+R6        [Zur the Enchanter attack plan by search: filtered at Aragorn]
+R6        [Zur the Enchanter holds back 1 attacker(s) that would die to blocks]
+R6    Zur the Enchanter attacks Urza with 1 creature(s): 1 damage (life now 26)
+R6    Zur the Enchanter pays 5 life to Necropotence
+R6    Urza activates Basalt Monolith
+R6        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R6    Urza activates Basalt Monolith
+R6        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R6    Urza activates Basalt Monolith
+R6        [Urza end of turn: Basalt Monolith ability 81%, pass 19% -> Basalt Monolith ability]
+R6  --- Urza turn 6: life 26, 4 cards in hand, 4 lands
+R6    Urza loses 2 life to The One Ring's burden (life 26)
+R6        [Urza decides: Urza, Lord High Artificer 98%, Arcane Signet 1%, Sensei's Divining Top 0%, The One Ring 0% -> Urza, Lord High Artificer [search]]
+R6    Urza casts Urza, Lord High Artificer
+R6        [Urza decides: Arcane Signet 81%, Sensei's Divining Top 13%, The One Ring 4%, stop (hold mana) 1% -> Arcane Signet [search]]
+R6    Urza casts Arcane Signet
+R6        [Urza decides: Sensei's Divining Top 66%, The One Ring 22%, stop (hold mana) 8%, Ornithopter 3% -> Sensei's Divining Top [search]]
+R6    Urza casts Sensei's Divining Top
+R6        [Urza decides: The One Ring 67%, stop (hold mana) 22%, Ornithopter 10%, Urza: free card 1% -> The One Ring [search]]
+R6    Urza taps The One Ring: burden 3, life 23, Main1 step of Urza's turn
+R6        [Urza decides: combo: Basalt Monolith + Forensic Gadgeteer 100%, Forensic Gadgeteer 0%, Whir of Invention 0%, Efficient Construction 0% -> combo: Basalt Monolith + Forensic Gadgeteer [search]]
+R6    Urza goes for Basalt Monolith + Forensic Gadgeteer
+R6    Urza casts Forensic Gadgeteer
+R6  *** Kinnan is eliminated (life 40) by Urza
+R6  *** Aragorn is eliminated (life 31) by Urza
+R6  *** Zur the Enchanter is eliminated (life 14) by Urza
+R6  *** Urza wins by combo
+Winner: Urza (combo)

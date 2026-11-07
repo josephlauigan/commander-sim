@@ -1,8 +1,8 @@
-# Aragorn, the Uniter — Four-Colour Spell Burn (DRAFT)
+# Aragorn, the Uniter — Four-Colour Spell Burn
 
-**Draft 2026-11-06, for JD's review.** This deck replaces Kefka (being retired) and is built from the Kefka and Sauron
-lists plus `binder-cards.txt`. Nothing is simulated yet: Aragorn has no card model, and the deck has no key in
-`data/my_decks.toml`. Eleven cards are bought: Aragorn and ten upgrades (see "Where the cards come from"). The comparison with Breya is at https://claude.ai/artifact/6FuSDkmvBZo23hjoECKygS.
+**Built 2026-11-06 (JD).** This deck replaces Kefka and Sauron, which are retired the same day, and is built from those
+two lists plus `binder-cards.txt`; `documents/aragorn-merge-swaps.md` is the physical swap guide. Eleven cards are
+bought: Aragorn and ten upgrades (see "Where the cards come from"). Deck key `aragorn`, tiers t4-t5.
 
 A four-colour spell deck. Every spell you cast triggers Aragorn, and red spells are the clock: 3 damage to an
 opponent each, doubled by Veyran on instants and sorceries and tripled by Fiery Emancipation. White spells make
@@ -14,7 +14,7 @@ ramp, protection and creature defence from the binder replace it.
 |---|---|
 | **Commander** | Aragorn, the Uniter ({R}{G}{W}{U}, 5/5, Legendary Creature — Human Noble) |
 | **Bracket** | 4 (11 Game Changers, see Bracket) |
-| **Simulator** | none yet: Aragorn needs a model and a deck key (proposed tiers t3-t4, JD to confirm) |
+| **Simulator** | key `aragorn`, tiers t4-t5: 10.7% at t4, 7.7% at t5, 9.2% over t4-t5 (first baseline 2026-11-06, `audit/aragorn/FINDINGS.md`) |
 | **Spells** | 64 (red 23, blue 19, green 13, white 13, colourless 6; 10 multicolour), average mana value 2.55 |
 
 ## Strategy

@@ -147,12 +147,12 @@ fn play(deck: &str, tier: &str, seed: u64) {
 }
 
 #[test]
-fn sauron_t2() {
-    play("sauron", "t2", 2); // seed 1 deals the 10-13 list a round-4 loss with 3 cards drawn: too short a game to test
+fn aragorn_t4() {
+    play("aragorn", "t4", 2);
 }
 #[test]
-fn sauron_t4() {
-    play("sauron", "t4", 2);
+fn aragorn_t5() {
+    play("aragorn", "t5", 2);
 }
 #[test]
 fn sheoldred_t3() {
@@ -174,10 +174,6 @@ fn sheoldred_t4() {
 #[test]
 fn thanos_t5() {
     play("thanos", "t5", 1);
-}
-#[test]
-fn kefka_t3() {
-    play("kefka", "t3", 1);
 }
 #[test]
 fn thrasios_t6() {

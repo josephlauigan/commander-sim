@@ -253,14 +253,12 @@ const TO_FIX: &[&str] = &[];
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
     ("yshtola: Urza's Cave", "an activated ability, not used as it enters (its activation is driven by practice_trigger_probe's Activate pass, which asks the search)"),
-    ("sauron: Urza's Cave", "an activated ability, not used as it enters (its activation is driven by practice_trigger_probe's Activate pass, which asks the search)"),
-    ("sauron: Deflecting Swat", "new targets for a spell on the stack: the probe has none"),
+    ("aragorn: Deflecting Swat", "new targets for a spell on the stack: the probe has none"),
     ("thanos: Deflecting Swat", "new targets for a spell on the stack: the probe has none"),
-    ("sauron: Not of This World", "counters a spell targeting your permanent: the probe has none"),
     ("sheoldred: Invoke Despair", "the opponent chooses what to sacrifice, not the person"),
     ("sheoldred: Rooftop Assassin", "no creature was dealt damage this turn: no legal target"),
     ("cloud: Loyal Warhound", "a basic Plains: every choice is the same card"),
-    ("kefka: Twinned Vision", "cast from the hand it only draws a card, nothing to choose; the flashback's discard is the person's (practice_gaps_a: twinned_vision_flashback_discards_the_card_the_person_names)"),
+    ("aragorn: Twinned Vision", "cast from the hand it only draws a card, nothing to choose; the flashback's discard is the person's (practice_gaps_a: twinned_vision_flashback_discards_the_card_the_person_names)"),
 ];
 
 /// the gaps found against the two lists: a gap on neither list is new (fails), a TO_FIX entry no longer found is

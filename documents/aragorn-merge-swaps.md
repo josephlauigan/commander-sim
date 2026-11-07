@@ -3,7 +3,7 @@
 This guide turns two built decks (Kefka and Sauron) plus binder cards and eleven bought cards into one new deck, and
 sends everything else to the binder. The new list has exactly 100 cards.
 
-- **New Aragorn, the Uniter** (Bracket 4, draft): `decklists/JD/aragorn-uniter-draft.md`
+- **New Aragorn, the Uniter** (Bracket 4): `decklists/JD/aragorn-uniter.md`
 
 Where both old decks hold a copy of the same card, New Aragorn takes the Kefka copy and the Sauron copy goes to the
 binder (listed under "Spare copies" in step 2). Cards that are in the binder and also in the Sauron box come from
@@ -289,7 +289,7 @@ Coiling Oracle, Lagrella, the Magpie, Llanowar Elves, Paradise Druid, Rampant Gr
 ## 4. Check the counts
 
 - **New Aragorn:** 33 from Kefka + 11 from Sauron + 43 from the binder + 11 bought + a Forest and a Plains = 100.
-- Check the pile against the import list at the end of `decklists/JD/aragorn-uniter-draft.md`. Every card appears
+- Check the pile against the import list at the end of `decklists/JD/aragorn-uniter.md`. Every card appears
   once. The only basics are one Forest, one Island, one Mountain and one Plains.
 - **Binder:** gains 156 cards (67 from Kefka and 89 from Sauron, basics included) and loses the 43 above.
 
@@ -302,9 +302,11 @@ Coiling Oracle, Lagrella, the Magpie, Llanowar Elves, Paradise Druid, Rampant Gr
 - **Underworld Breach, Brain Freeze and Skullclamp** are in Kefka and the binder: New Aragorn takes the Kefka copy.
 - **Lion's Eye Diamond** (optional upgrade for Rite of Flame) isn't in this guide. The only copy is in New Tymna.
 
-## 6. Not done yet
+## 6. In the repository (2026-11-06)
 
-- `binder-cards.txt`, `data/my_decks.toml` and `decklists/CHANGELOG.md` haven't been updated, and the Kefka and
-  Sauron lists don't have retirement notes yet. The simulator still plays the old Kefka and Sauron lists until
-  those changes are approved and made.
-- Aragorn has no card model, so the new deck can't be simulated yet.
+- `binder-cards.txt` has the 126 cards the two boxes send to the binder (basics are not listed there) and no longer
+  lists the 43 binder cards above.
+- The simulator plays Aragorn (key `aragorn`, tiers t4-t5); the `kefka` and `sauron` keys are retired, and their lists
+  are in `decklists/pool/retired/` with retirement notes.
+- Aragorn's four cast triggers have card code (`impls/aragorn.rs`, status Full). Its plan file
+  (`data/plans/aragorn.toml`) is provisional.

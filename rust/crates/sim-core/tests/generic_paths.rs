@@ -282,18 +282,6 @@ fn susurian_voidborn_is_cast_from_exile_on_a_later_turn_after_its_warp() {
 }
 
 #[test]
-fn exsanguinate_is_offered_to_sauron_through_its_plan_plays() {
-    let mut g = seated("sauron");
-    lands(&mut g, P, "Swamp", 12, false);
-    g.player_mut(Q).life = 5;
-    let c = hand(&mut g, P, &["Exsanguinate"])[0];
-    assert!(sim_core::ai::plan_data::plays(&g, P, "Exsanguinate"));
-    assert!(!hand_options(&mut g, c, Some(false)).is_empty(), "the X drain for the kill");
-    g.active = Some(Q);
-    assert!(hand_options(&mut g, c, Some(false)).is_empty(), "a sorcery: not on another player's turn");
-}
-
-#[test]
 fn underworld_breach_is_cast_only_with_an_escape_to_make() {
     let mut g = seated("kefka");
     lands(&mut g, P, "Mountain", 4, false);

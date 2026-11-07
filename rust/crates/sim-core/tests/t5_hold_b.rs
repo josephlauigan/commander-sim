@@ -125,8 +125,8 @@ fn a_held_counter_is_unchanged() {
 
 #[test]
 fn jd_and_tier_six_decks_keep_the_old_floor() {
-    // sauron (JD's), cloud (JD's) and a Tier 6 deck hold Heroic Intervention with nothing out and nobody to answer
-    for key in ["sauron", "cloud", "kinnan-bonder-mana-combo", "thrasios"] {
+    // sheoldred (JD's), cloud (JD's) and a Tier 6 deck hold Heroic Intervention with nothing out and nobody to answer
+    for key in ["sheoldred", "cloud", "kinnan-bonder-mana-combo", "thrasios"] {
         let mut g = table(&[key, ZUR, "urza-mono-blue-artifacts", "kinnan-simic-mana-combo"]);
         g.player_mut(P0).turns = 7;
         g.player_mut(P0).hand.clear();

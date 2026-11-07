@@ -39,6 +39,10 @@ pub struct DslCtx {
     pub x: i32,
     /// a target chosen as the spell was cast
     pub target: Option<PermId>,
+    /// practice mode: the target a person picked for an earlier effect of this ability, with its selection. A later
+    /// effect with the same selection ("Target creature you control gets +2/+2 and gains hexproof", which compiles to
+    /// two effects) reuses it instead of asking again; the AI already picks the same creature both times
+    pub picked: std::cell::RefCell<Option<(Sel, PermId)>>,
     /// a player target a person chose as the spell was cast (practice mode: Glimpse the Unthinkable)
     pub face: Option<PlayerId>,
     /// the last target's power, toughness and mana value as it was hit
@@ -430,7 +434,18 @@ pub fn choose_target(
         })
         .collect();
     if crate::human::is_human(g, p) && !cands.is_empty() {
-        return ask_target(g, p, &cands, sel, src, spell); // practice mode: the person picks
+        // the same selection as an earlier effect of this ability: the same target, not a second question
+        if let Some((s, m)) = ctx.picked.borrow().clone()
+            && s == *sel
+            && cands.contains(&m)
+        {
+            return Some(m);
+        }
+        let t = ask_target(g, p, &cands, sel, src, spell); // practice mode: the person picks
+        if let Some(m) = t {
+            *ctx.picked.borrow_mut() = Some((sel.clone(), m));
+        }
+        return t;
     }
     if harmful {
         let opp: Vec<PermId> = cands.iter().copied().filter(|&m| g.perm(m).owner != p).collect();

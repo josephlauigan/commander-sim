@@ -12,7 +12,6 @@ use sim_core::testkit::*;
 const P0: PlayerId = PlayerId(0);
 const P1: PlayerId = PlayerId(1);
 const P2: PlayerId = PlayerId(2);
-const CRAWLER: &str = "Psychosis Crawler";
 const NIV: &str = "Niv-Mizzet, the Firemind";
 
 fn opts_of(g: &mut Game, p: PlayerId, post: bool) -> Vec<Opt> {
@@ -81,22 +80,6 @@ fn purge_is_offered_on_a_big_creature_and_counted_as_cast() {
 }
 
 // ======================================================== Psychosis Crawler and Niv-Mizzet: the priority ladder
-#[test]
-fn the_crawler_now_beats_ordinary_five_drops_in_the_main_phase() {
-    let mut g = table2();
-    lands(&mut g, P0, "Swamp", 3, false);
-    lands(&mut g, P0, "Mountain", 2, false);
-    kefka_out(&mut g, P0, false);
-    hand(&mut g, P0, &[CRAWLER, "Alpharael, Dreaming Acolyte", "Shimmercreep"]);
-    let opts = opts_of(&mut g, P0, false);
-    let u = |l: &str| opts.iter().find(|o| o.label.starts_with(l)).map(|o| o.utility).unwrap_or(-9.0);
-    assert!(
-        u(CRAWLER) > u("Alpharael") && u(CRAWLER) > u("Shimmercreep"),
-        "{:?}",
-        opts.iter().map(|o| (&o.label, o.utility)).collect::<Vec<_>>()
-    );
-}
-
 // ======================================================== the engine guard: Niv-Mizzet with the flipped Kefka
 fn niv_table(life: i32, library: usize) -> Game {
     let mut g = table(&["kefka", "cloud", "seph"]);

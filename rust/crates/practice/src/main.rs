@@ -135,7 +135,7 @@ fn text_game(data: &std::path::Path, arg: &dyn Fn(&str) -> Option<String>, step:
             return 1;
         }
     };
-    let mut o = Options::new(engine, &arg("--deck").unwrap_or("sauron".into()), &arg("--tier").unwrap_or("t1".into()));
+    let mut o = Options::new(engine, &arg("--deck").unwrap_or("aragorn".into()), &arg("--tier").unwrap_or("t1".into()));
     o.seed = arg("--seed").and_then(|s| s.parse().ok());
     o.seat = arg("--seat").and_then(|s| s.parse().ok());
     o.opponents = arg("--opponents").map(|s| s.split(',').map(str::to_string).collect());

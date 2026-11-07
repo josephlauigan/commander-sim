@@ -83,7 +83,7 @@ fn relevant(t: &str) -> bool {
 }
 
 // ------------------------------------------------------------------------------------------------ the table
-const P0_KEY: &str = "kefka";
+const P0_KEY: &str = "aragorn";
 
 fn build(key1: &str) -> (Game, Arc<ScriptHuman>) {
     let mut g: Game = table(&[P0_KEY, key1]);
@@ -798,6 +798,10 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
         "the donated All-Fates Stalker enters under P1, so its enter trigger is P1's and P1 chooses the person's creature to exile; the rules say so",
     ),
     ("Deathrite Shaman", "P1's ability targets a card in the person's graveyard: P1's choice"),
+    (
+        "Etali, Primal Storm",
+        "it exiles the top card of each library and P1 may cast the spells among them: a removal spell from the person's library (Swords to Plowshares) is P1's spell with P1's target; no choice for the person",
+    ),
     (
         "Delayed Blast Fireball",
         "2 damage to each creature the person controls: a mass effect, the creatures with toughness 2 or less die, no choice",

@@ -1,0 +1,285 @@
+Play-by-play of pool game 0 (seed 500000): Aragorn vs Tier 4 (Low B4), loose profile, lookahead AI
+Seat order: Aragorn, Prosper, Yuriko, Chulane
+R1  --- Aragorn turn 1: life 40, 7 cards in hand, 0 lands
+R1    Aragorn plays Exotic Orchard
+R1  --- Prosper turn 1: life 40, 7 cards in hand, 0 lands
+R1    Prosper plays Mountain
+R1  --- Yuriko turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yuriko plays Island
+R1        [Yuriko decides: Spectral Sailor 100%, stop 0% -> Spectral Sailor [search]]
+R1    Yuriko casts Spectral Sailor
+R1  --- Chulane turn 1: life 40, 7 cards in hand, 0 lands
+R1    Chulane plays Rejuvenating Springs
+R1        [Chulane decides: Delighted Halfling 100%, stop 0% -> Delighted Halfling [search]]
+R1    Chulane casts Delighted Halfling
+R1      Yuriko casts Force of Will at Delighted Halfling
+R1      Yuriko counters Delighted Halfling with Force of Will
+R2  --- Aragorn turn 2: life 40, 7 cards in hand, 1 lands
+R2    Aragorn plays Command Tower
+R2  --- Prosper turn 2: life 40, 7 cards in hand, 1 lands
+R2    Prosper plays Swamp
+R2        [Prosper decides: Demonic Tutor 100%, stop 0% -> Demonic Tutor [search]]
+R2    Prosper casts Demonic Tutor
+R2      Prosper tutors Bolas's Citadel into their hand
+R2  --- Yuriko turn 2: life 39, 4 cards in hand, 1 lands
+R2    Yuriko plays Swamp
+R2        [Yuriko decides: stop 92%, Arcane Signet 8%, Scroll Rack 0% -> Arcane Signet [search]]
+R2    Yuriko casts Arcane Signet
+R2        [Yuriko attacks: Aragorn 33%, Prosper 33%, Chulane 33% -> Prosper]
+R2    Yuriko attacks Prosper with 1 creature(s): 1 damage (life now 39)
+R2  --- Chulane turn 2: life 40, 6 cards in hand, 1 lands
+R2    Chulane plays Island
+R2        [Chulane decides: Destiny Spinner 100%, stop 0% -> Destiny Spinner [search]]
+R2    Chulane casts Destiny Spinner
+R3    Aragorn casts Cyclonic Rift -> Destiny Spinner (Chulane)
+R3      Destiny Spinner (Chulane) is removed: bounce
+R3        [Aragorn end of turn: Cyclonic Rift -> Destiny Spinner 100%, pass 0% -> Cyclonic Rift -> Destiny Spinner]
+R3  --- Aragorn turn 3: life 40, 6 cards in hand, 2 lands
+R3    Aragorn plays Volcanic Island
+R3  --- Prosper turn 3: life 39, 7 cards in hand, 2 lands
+R3    Prosper plays Mountain
+R3        [Prosper decides: Academy Manufactor 100%, stop 0% -> Academy Manufactor [search]]
+R3    Prosper casts Academy Manufactor
+R3  --- Yuriko turn 3: life 39, 3 cards in hand, 2 lands
+R3        [Yuriko decides: Gingerbrute 64%, stop 35%, Rhystic Study 0%, Scroll Rack 0% -> stop [search]]
+R3        [Yuriko attack plan by search: filtered at Prosper]
+R3      ninjutsu: Yuriko, the Tiger's Shadow replaces Spectral Sailor
+R3      Yuriko reveals Silver-Fur Master: each opponent loses 2
+R3    Yuriko attacks Prosper with 1 creature(s): 1 damage (life now 36)
+R3        [Yuriko decides: Spectral Sailor 65%, Gingerbrute 35%, stop 0% -> Spectral Sailor [search]]
+R3    Yuriko casts Spectral Sailor
+R3  --- Chulane turn 3: life 38, 6 cards in hand, 2 lands
+R3        [Chulane decides: Destiny Spinner 100%, stop 0% -> Destiny Spinner [search]]
+R3    Chulane casts Destiny Spinner
+R4    Aragorn casts Chaos Warp -> Yuriko, the Tiger's Shadow (Yuriko)
+R4      Yuriko, the Tiger's Shadow (Yuriko) is removed: tuck
+R4      Yuriko reveals Faerie Seer
+R4        [Aragorn end of turn: Chaos Warp -> Yuriko, the Tiger's Shadow 100%, pass 0% -> Chaos Warp -> Yuriko, the Tiger's Shadow]
+R4  --- Aragorn turn 4: life 38, 5 cards in hand, 3 lands
+R4    Aragorn plays Island
+R4        [Aragorn decides: Aragorn, the Uniter 93%, Smothering Tithe 7%, stop 0% -> Smothering Tithe [search]]
+R4    Aragorn casts Smothering Tithe
+R4  --- Prosper turn 4: life 36, 6 cards in hand, 3 lands
+R4    Prosper plays Command Tower
+R4        [Prosper attack plan by search: filtered at Yuriko]
+R4    Prosper attacks Yuriko with 1 creature(s): 1 damage (life now 38)
+R4  --- Yuriko turn 4: life 38, 5 cards in hand, 2 lands
+R4        [Yuriko decides: Gingerbrute 61%, stop 34%, play Hydroelectric Specimen // Hydroelectric Laboratory as a land 5%, Rhystic Study 0% -> Gingerbrute [search]]
+R4    Yuriko casts Gingerbrute
+R4        [Yuriko decides: stop 85%, play Hydroelectric Specimen // Hydroelectric Laboratory as a land 11%, Gingerbrute: evasion 2%, Silver-Fur Master 1% -> stop [search]]
+R4        [Yuriko attack plan by search: filtered at Aragorn]
+R4      ninjutsu: Yuriko, the Tiger's Shadow replaces Spectral Sailor
+R4      Yuriko reveals Sensei's Divining Top: each opponent loses 1
+R4    Yuriko attacks Aragorn with 3 creature(s): 3 damage (life now 34)
+R4        [Yuriko decides: play Hydroelectric Specimen // Hydroelectric Laboratory as a land 100%, stop 0% -> play Hydroelectric Specimen // Hydroelectric Laboratory as a land [search]]
+R4    Yuriko plays Hydroelectric Specimen // Hydroelectric Laboratory
+R4        [Yuriko decides: Sensei's Divining Top 69%, Spectral Sailor 31%, stop 0% -> stop [search]]
+R4  --- Chulane turn 4: life 37, 6 cards in hand, 2 lands
+R4        [Chulane attacks: Yuriko 84%, Aragorn 11%, Prosper 5% -> Yuriko]
+R4    Chulane attacks Yuriko with 1 creature(s): 2 damage (life now 33)
+R5  --- Aragorn turn 5: life 34, 4 cards in hand, 4 lands
+R5    Aragorn plays Yavimaya Coast
+R5        [Aragorn decides: Aragorn, the Uniter 79%, Skyclave Apparition 20%, Lightning Greaves 1%, stop 0% -> Aragorn, the Uniter [search]]
+R5    Aragorn casts Aragorn, the Uniter
+R5        [Aragorn decides: Skyclave Apparition 71%, Lightning Greaves 29%, stop 0% -> Skyclave Apparition [search]]
+R5    Aragorn casts Skyclave Apparition
+R5      Yuriko, the Tiger's Shadow (Yuriko) is removed: exile
+R5  --- Prosper turn 5: life 35, 6 cards in hand, 4 lands
+R5    Prosper plays Swamp
+R5        [Prosper decides: Prosper, Tome-Bound 92%, Wild-Magic Sorcerer 3%, Chandra, Torch of Defiance 2%, Rain of Riches 2% -> Wild-Magic Sorcerer [search]]
+R5    Prosper casts Wild-Magic Sorcerer
+R5        [Prosper attack plan by search: filtered at Aragorn]
+R5        [Prosper holds back 1 attacker(s) that would die to blocks]
+R5    Prosper attacks Chulane with 1 creature(s): 1 damage (life now 36)
+R5    Yuriko casts Spectral Sailor
+R5        [Yuriko end of turn: Spectral Sailor 100%, pass 0% -> Spectral Sailor]
+R5  --- Yuriko turn 5: life 33, 5 cards in hand, 3 lands
+R5        [Yuriko decides: Sensei's Divining Top 40%, stop (hold mana) 30%, Silver-Fur Master 26%, Scroll Rack 3% -> Silver-Fur Master [search]]
+R5    Yuriko casts Silver-Fur Master
+R5        [Yuriko decides: stop 97%, Gingerbrute: evasion 3%, Sensei's Divining Top 0%, Gingerbrute ability 0% -> stop [search]]
+R5        [Yuriko attack plan by search: filtered at Aragorn]
+R5      ninjutsu: Yuriko, the Tiger's Shadow replaces Faerie Seer
+R5      Yuriko reveals Sea Gate Restoration // Sea Gate, Reborn: each opponent loses 7
+R5    Yuriko attacks Aragorn with 2 creature(s): 3 damage (life now 23)
+R5    Yuriko attacks Chulane with 1 creature(s): 1 damage (life now 28)
+R5        [Yuriko decides: play Sea Gate Restoration // Sea Gate, Reborn as a land 100%, stop 0% -> play Sea Gate Restoration // Sea Gate, Reborn as a land [search]]
+R5    Yuriko plays Sea Gate Restoration // Sea Gate, Reborn
+R5        [Yuriko decides: Faerie Seer 73%, Sensei's Divining Top 27%, stop 0% -> Faerie Seer [search]]
+R5    Yuriko casts Faerie Seer
+R5  --- Chulane turn 5: life 28, 7 cards in hand, 2 lands
+R5        [Chulane decides: Fyndhorn Elves 100%, stop 0% -> Fyndhorn Elves [search]]
+R5    Chulane casts Fyndhorn Elves
+R5        [Chulane attack plan by search: none at Aragorn]
+R6  --- Aragorn turn 6: life 23, 3 cards in hand, 5 lands
+R6    Aragorn plays Frontier Bivouac
+R6        [Aragorn decides: Lightning Greaves 96%, Three Visits 4%, stop 0% -> Lightning Greaves [search]]
+R6    Aragorn casts Lightning Greaves
+R6        [Aragorn decides: Three Visits 55%, equip Lightning Greaves 45%, stop 0% -> Three Visits [search]]
+R6    Aragorn casts Three Visits
+R6        [Aragorn decides: equip Lightning Greaves 100%, stop 0% -> equip Lightning Greaves [search]]
+R6    Aragorn equips Lightning Greaves to Aragorn, the Uniter
+R6        [Aragorn attack plan by search: filtered at Yuriko]
+R6        [Aragorn holds back 1 attacker(s) that would die to blocks]
+R6      Yuriko gets a 3/3 Illusion
+R6    Aragorn attacks Yuriko with 2 creature(s): 9 damage (life now 21)
+R6  --- Prosper turn 6: life 28, 5 cards in hand, 5 lands
+R6    Prosper plays Mountain
+R6        [Prosper decides: Prosper, Tome-Bound 92%, Bolas's Citadel 6%, Chandra, Torch of Defiance 1%, Rain of Riches 1% -> Prosper, Tome-Bound [search]]
+R6    Prosper casts Prosper, Tome-Bound
+R6        [Prosper decides: Talisman of Indulgence 100%, stop 0% -> Talisman of Indulgence [search]]
+R6    Prosper casts Talisman of Indulgence
+R6        [Prosper attack plan by search: filtered at Aragorn]
+R6    Prosper attacks Aragorn with 2 creature(s): 1 damage (life now 21)
+R6  --- Yuriko turn 6: life 21, 5 cards in hand, 4 lands
+R6        [Yuriko decides: Fell the Profane // Fell Mire -> Prosper, Tome-Bound 58%, Sensei's Divining Top 17%, stop (hold mana) 13%, Scroll Rack 6% -> Fell the Profane // Fell Mire -> Prosper, Tome-Bound [search]]
+R6    Yuriko casts Fell the Profane // Fell Mire -> Destiny Spinner (Chulane)
+R6      Destiny Spinner (Chulane) is removed: destroy
+R6        [Yuriko decides: stop 97%, Gingerbrute: evasion 3%, Sensei's Divining Top 0% -> stop [search]]
+R6        [Yuriko attack plan by search: none at Aragorn]
+R6        [Yuriko decides: Sensei's Divining Top 100%, stop 0% -> Sensei's Divining Top [search]]
+R6    Yuriko casts Sensei's Divining Top
+R6  --- Chulane turn 6: life 28, 7 cards in hand, 2 lands
+R6        [Chulane decides: Shrieking Drake 91%, Eternal Witness 9%, stop 0% -> Eternal Witness [search]]
+R6    Chulane casts Eternal Witness
+R6      Yuriko sacrifices Spectral Sailor
+R6      Yuriko casts Flare of Denial at Eternal Witness
+R6      Yuriko counters Eternal Witness with Flare of Denial
+R7  --- Aragorn turn 7: life 21, 1 cards in hand, 7 lands
+R7    Aragorn plays Seaside Citadel
+R7        [Aragorn decides: Underworld Breach 100%, stop 0% -> Underworld Breach [search]]
+R7    Aragorn casts Underworld Breach
+R7        [Aragorn decides: escape Skyclave Apparition 95%, escape Chaos Warp 4%, escape Three Visits 1%, stop 0% -> escape Skyclave Apparition [search]]
+R7    Aragorn escapes Skyclave Apparition with Underworld Breach
+R7    Aragorn casts Skyclave Apparition -> Prosper, Tome-Bound (Prosper)
+R7      Prosper, Tome-Bound (Prosper) is removed: exile
+R7        [Aragorn attack plan by search: none at Prosper]
+R7  --- Prosper turn 7: life 28, 5 cards in hand, 6 lands
+R7    Prosper plays Dragonskull Summit
+R7        [Prosper decides: Prosper, Tome-Bound 45%, Bolas's Citadel 39%, Chaos Warp -> Yuriko, the Tiger's Shadow 6%, Ignite the Future 4% -> Ignite the Future [search]]
+R7    Prosper casts Ignite the Future
+R7      Wild-Magic Sorcerer reveals Nadier's Nightblade (1 other cards): cast free
+R7    Prosper casts Nadier's Nightblade
+R7      Prosper exiles 3 cards (playable until the end of next turn)
+R7        [Prosper decides: Chaos Warp -> Yuriko, the Tiger's Shadow 41%, Weftstalker Ardent 31%, Chandra, Torch of Defiance 19%, Sol Ring 9% -> Chaos Warp -> Yuriko, the Tiger's Shadow [search]]
+R7    Prosper casts Chaos Warp -> Yuriko, the Tiger's Shadow (Yuriko)
+R7      Yuriko, the Tiger's Shadow (Yuriko) is removed: tuck
+R7      Yuriko reveals Exotic Orchard
+R7        [Prosper decides: Sol Ring 100%, stop 0% -> Sol Ring [search]]
+R7    Prosper casts Sol Ring
+R7        [Prosper attack plan by search: filtered at Aragorn]
+R7        [Prosper holds back 2 attacker(s) that would die to blocks]
+R7    Prosper attacks Chulane with 2 creature(s): 5 damage (life now 23)
+R7  --- Yuriko turn 7: life 18, 3 cards in hand, 5 lands
+R7        [Yuriko decides: Yuriko, the Tiger's Shadow 33%, Rhystic Study 30%, Dig Through Time 20%, stop 12% -> Yuriko, the Tiger's Shadow [search]]
+R7    Yuriko casts Yuriko, the Tiger's Shadow
+R7        [Yuriko decides: stop 97%, Gingerbrute: evasion 3%, Gingerbrute ability 0%, Scroll Rack 0% -> stop [search]]
+R7        [Yuriko attack plan by search: filtered at Prosper]
+R7      ninjutsu: Ingenious Infiltrator replaces Faerie Seer
+R7      Yuriko reveals Demonic Tutor: each opponent loses 2
+R7    Yuriko attacks Prosper with 1 creature(s): 2 damage (life now 24)
+R7    Yuriko attacks Chulane with 2 creature(s): 4 damage (life now 17)
+R7  --- Chulane turn 7: life 17, 7 cards in hand, 2 lands
+R7    Chulane plays Boseiju, Who Endures
+R7        [Chulane decides: Shrieking Drake 100%, stop 0% -> Shrieking Drake [search]]
+R7    Chulane casts Shrieking Drake
+R7        [Chulane decides: Shrieking Drake 100%, stop 0% -> Shrieking Drake [search]]
+R7    Chulane casts Shrieking Drake
+R8  --- Aragorn turn 8: life 19, 0 cards in hand, 8 lands
+R8        [Aragorn decides: Comet Storm (X = 6, 9 kick(s)) 100%, stop 0% -> Comet Storm (X = 6, 9 kick(s)) [search]]
+R8    Aragorn casts Comet Storm
+R8      Comet Storm (X = 6, 9 kick(s))
+R8      Yuriko, the Tiger's Shadow (Yuriko) is removed: dmg6
+R8      Wild-Magic Sorcerer (Prosper) is removed: dmg6
+R8      Nadier's Nightblade (Prosper) is removed: dmg6
+R8      Gingerbrute (Yuriko) is removed: dmg6
+R8      Ingenious Infiltrator (Yuriko) is removed: dmg6
+R8        Chulane takes 6
+R8        Yuriko takes 6
+R8        Prosper takes 6
+R8      Academy Manufactor (Prosper) is removed: dmg6
+R8      Fyndhorn Elves (Chulane) is removed: dmg6
+R8        [Aragorn attack plan by search: all at Yuriko]
+R8    Aragorn attacks Yuriko with 3 creature(s): 8 damage (life now 4)
+R8  --- Prosper turn 8: life 18, 5 cards in hand, 7 lands
+R8    Prosper plays Sulfurous Springs
+R8        [Prosper decides: Prosper, Tome-Bound 74%, Xorn 9%, Weftstalker Ardent 6%, Rain of Riches 4% -> Prosper, Tome-Bound [search]]
+R8    Prosper casts Prosper, Tome-Bound
+R8        [Prosper decides: Xorn 57%, Weftstalker Ardent 43%, stop 0% -> Xorn [search]]
+R8    Prosper casts Xorn
+R8  --- Yuriko turn 8: life 4, 6 cards in hand, 5 lands
+R8    Yuriko plays Rogue's Passage
+R8        [Yuriko decides: Faerie Seer 63%, Demonic Tutor 29%, Rhystic Study 4%, Dig Through Time 3% -> Dig Through Time [search]]
+R8    Yuriko casts Dig Through Time
+R8        [Yuriko decides: Faerie Seer 75%, Demonic Tutor 12%, Nashi, Moon Sage's Scion 6%, Rhystic Study 5% -> Faerie Seer [search]]
+R8    Yuriko casts Faerie Seer
+R8        [Yuriko decides: Demonic Tutor 73%, Nashi, Moon Sage's Scion 13%, Rhystic Study 10%, Mistblade Shinobi 2% -> Nashi, Moon Sage's Scion [search]]
+R8    Yuriko casts Nashi, Moon Sage's Scion
+R8        [Yuriko attack plan by search: filtered at Prosper]
+R8        [Yuriko keeps 1 creature(s) home as blockers]
+R8  --- Chulane turn 8: life 8, 7 cards in hand, 3 lands
+R8    Chulane plays Sea of Clouds
+R8        [Chulane decides: Path to Exile -> Prosper, Tome-Bound 71%, Shrieking Drake 21%, Esper Sentinel 7%, stop 0% -> Esper Sentinel [search]]
+R8    Chulane casts Esper Sentinel
+R8        [Chulane decides: Shrieking Drake 100%, stop 0% -> Shrieking Drake [search]]
+R8    Chulane casts Shrieking Drake
+R8        [Chulane decides: Shrieking Drake 100%, stop 0% -> Shrieking Drake [search]]
+R8    Chulane casts Shrieking Drake
+R9  --- Aragorn turn 9: life 19, 0 cards in hand, 8 lands
+R9    Aragorn plays Path of Ancestry
+R9        [Aragorn attack plan by search: filtered at Prosper]
+R9        [Aragorn holds back 2 attacker(s) that would die to blocks]
+R9    Aragorn attacks Prosper with 1 creature(s): 5 damage (life now 13)
+R9    Aragorn attacks Chulane with 2 creature(s): 1 damage (life now 7)
+R9  --- Prosper turn 9: life 13, 4 cards in hand, 8 lands
+R9        [Prosper decides: Magda, Brazen Outlaw 90%, Ignite the Future (flashback) 4%, Rain of Riches 3%, Chandra, Torch of Defiance 2% -> Magda, Brazen Outlaw [search]]
+R9    Prosper casts Magda, Brazen Outlaw
+R9        [Prosper decides: Ignite the Future (flashback) 37%, Rain of Riches 30%, Chandra, Torch of Defiance 20%, Revel in Riches 13% -> Ignite the Future (flashback) [search]]
+R9    Prosper casts Ignite the Future
+R9      Prosper exiles 3 cards (playable until the end of next turn), free
+R9      Prosper casts Beseech the Mirror free (Ignite the Future)
+R9    Prosper casts Beseech the Mirror
+R9      Prosper tutors Sensei's Divining Top into their hand
+R9      bargained: Sensei's Divining Top is cast free
+R9    Prosper casts Sensei's Divining Top
+R9    Prosper plays Foreboding Ruins
+R9        [Prosper attack plan by search: none at Aragorn]
+R9  --- Yuriko turn 9: life 4, 5 cards in hand, 6 lands
+R9        [Yuriko decides: Demonic Tutor 82%, Rhystic Study 9%, stop 6%, Mistblade Shinobi 2% -> Demonic Tutor [search]]
+R9    Yuriko casts Demonic Tutor
+R9      Yuriko tutors Mystic Remora into their hand
+R9        [Yuriko decides: stop 60%, Mystic Remora 27%, Scroll Rack 12%, Rhystic Study 0% -> stop [search]]
+R9        [Yuriko attack plan by search: all at Aragorn]
+R9      ninjutsu: Yuriko, the Tiger's Shadow replaces Token
+R9      ninjutsu: Mistblade Shinobi replaces Faerie Seer
+R9      Yuriko reveals Sol Ring: each opponent loses 1
+R9      Yuriko reveals Temporal Mastery: each opponent loses 7
+R9      Yuriko reveals Skullsnatcher: each opponent loses 2
+R9      Prosper gets a 4/4 Illusion
+R9  *** Chulane is eliminated (life -3) by Yuriko
+R9    Yuriko attacks Aragorn with 3 creature(s): 5 damage (life now 4)
+R9        [Yuriko decides: Faerie Seer 87%, Sol Ring 8%, Mystic Remora 5%, stop 0% -> Faerie Seer [search]]
+R9    Yuriko casts Faerie Seer
+R10 --- Aragorn turn 10: life 4, 1 cards in hand, 9 lands
+R10       [Aragorn decides: Skyclave Apparition 90%, Fiery Emancipation 10%, stop 0% -> Skyclave Apparition [search]]
+R10   Aragorn casts Skyclave Apparition
+R10     Prosper, Tome-Bound (Prosper) is removed: exile
+R10       [Aragorn decides: Fiery Emancipation 100%, stop 0% -> Fiery Emancipation [search]]
+R10   Aragorn casts Fiery Emancipation
+R10 *** Prosper is eliminated (life 0) by Aragorn
+R10       [Aragorn attack plan by search: all at Yuriko]
+R10   Aragorn attacks Yuriko with 2 creature(s): 1 damage (life now 1)
+R10 --- Yuriko turn 10: life 1, 7 cards in hand, 6 lands
+R10       [Yuriko decides: Fallen Shinobi 63%, Treasure Cruise 14%, Skullsnatcher 12%, Rhystic Study 4% -> Fallen Shinobi [search]]
+R10   Yuriko casts Fallen Shinobi
+R10       [Yuriko decides: Sol Ring 54%, Mystic Remora 46%, stop 0% -> Sol Ring [search]]
+R10   Yuriko casts Sol Ring
+R10       [Yuriko decides: Scroll Rack 100%, stop 0% -> Scroll Rack [search]]
+R10   Yuriko casts Scroll Rack
+R10       [Yuriko attack plan by search: filtered at Aragorn]
+R10       [Yuriko keeps 1 creature(s) home as blockers]
+R10   Yuriko attacks Aragorn with 2 creature(s): 0 damage (life now 4)
+R11 --- Aragorn turn 11: life 4, 0 cards in hand, 9 lands
+R11       [Aragorn decides: Guttersnipe 100%, stop 0% -> Guttersnipe [search]]
+R11   Aragorn casts Guttersnipe
+R11 *** Yuriko is eliminated (life -8) by Aragorn
+Winner: Aragorn (damage)

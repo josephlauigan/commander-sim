@@ -1,5 +1,7 @@
 # Sauron, the Dark Lord — Grixis Amass and Godo
 
+**Retired 2026-11-06 (JD).** The Sauron deck is broken up: merged with the other Grixis deck, it became Aragorn, the Uniter (`decklists/JD/aragorn-uniter.md`, key `aragorn`, t4-t5); `documents/aragorn-merge-swaps.md` says which cards move and which go to the binder. The `sauron` key left the simulator the same day, and its plan, printings and Spellbook files were removed. The list is kept here so the Rust tests of its card code can still seat it (`testkit::retired_decks`, key `sauron`); it is not a pool deck and is never drawn. Findings: `audit/retired/sauron/FINDINGS.md`.
+
 A Grixis (blue-black-red) deck that lets the whole table feed one enormous Orc Army. Sauron amasses every time an
 opponent casts a spell, the deck multiplies and protects the counters, and a Grixis control shell of one-sided
 removal and counters keeps the Army alive. The Army connects, the Ring tempts you, and you refill your hand. A compact

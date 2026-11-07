@@ -1,0 +1,245 @@
+Play-by-play of pool game 2 (seed 500002): Aragorn vs Tier 5 (High B4), loose profile, lookahead AI
+Seat order: Zur the Enchanter, Urza, Kinnan, Aragorn
+R1  --- Zur the Enchanter turn 1: life 40, 7 cards in hand, 0 lands
+R1    Zur the Enchanter plays Underground River
+R1  --- Urza turn 1: life 40, 7 cards in hand, 0 lands
+R1    Urza plays Island
+R1        [Urza decides: Sol Ring 100%, stop 0% -> stop [search]]
+R1        [Urza decides: Sol Ring 100%, stop 0% -> Sol Ring [search]]
+R1    Urza casts Sol Ring
+R1  --- Kinnan turn 1: life 40, 7 cards in hand, 0 lands
+R1    Kinnan plays Forest
+R1        [Kinnan decides: Delighted Halfling 53%, Elvish Mystic 47%, stop 0% -> Delighted Halfling [search]]
+R1    Kinnan casts Delighted Halfling
+R1  --- Aragorn turn 1: life 40, 7 cards in hand, 0 lands
+R1    Aragorn pays 2 life for an untapped Temple Garden
+R1    Aragorn plays Temple Garden
+R2    Zur the Enchanter casts Mystical Tutor
+R2      Zur the Enchanter reveals Idyllic Tutor and puts it on top of their library
+R2        [Zur the Enchanter end of turn: Mystical Tutor 100%, pass 0% -> Mystical Tutor]
+R2  --- Zur the Enchanter turn 2: life 39, 6 cards in hand, 1 lands
+R2    Zur the Enchanter plays Plains
+R2  --- Urza turn 2: life 40, 6 cards in hand, 1 lands
+R2    Urza plays Urza's Saga
+R2        [Urza decides: Foundry Inspector 78%, Tribute Mage 13%, Sensei's Divining Top 9%, Efficient Construction 1% -> Foundry Inspector [search]]
+R2    Urza casts Foundry Inspector
+R2        [Urza decides: Sensei's Divining Top 82%, Welding Jar 18%, stop 0% -> Sensei's Divining Top [search]]
+R2    Urza casts Sensei's Divining Top
+R2        [Urza decides: Welding Jar 100%, stop 0% -> Welding Jar [search]]
+R2    Urza casts Welding Jar
+R2  --- Kinnan turn 2: life 40, 6 cards in hand, 1 lands
+R2      Kinnan plays it as Tidechannel Pathway
+R2    Kinnan plays Barkchannel Pathway // Tidechannel Pathway
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 91%, Elvish Mystic 9%, Ponder 0%, stop (hold mana) 0% -> Elvish Mystic [search]]
+R2    Kinnan casts Elvish Mystic
+R2        [Kinnan decides: Kinnan, Bonder Prodigy 100%, Ponder 0%, stop (hold mana) 0% -> Ponder [search]]
+R2    Kinnan casts Ponder
+R2    Aragorn casts Path to Exile -> Foundry Inspector (Urza)
+R2      Foundry Inspector (Urza) is removed: exile
+R2        [Aragorn end of turn: Path to Exile -> Foundry Inspector 86%, pass 14% -> Path to Exile -> Foundry Inspector]
+R2  --- Aragorn turn 2: life 38, 6 cards in hand, 1 lands
+R2    Aragorn plays Tundra
+R3  --- Zur the Enchanter turn 3: life 39, 6 cards in hand, 2 lands
+R3    Zur the Enchanter plays Polluted Delta
+R3      cracks Polluted Delta for Raffine's Tower
+R3  --- Urza turn 3: life 40, 3 cards in hand, 3 lands
+R3      Urza's Saga: Urza makes a Construct (4/4)
+R3        [Urza decides: Mox Opal 100%, stop 0% -> Mox Opal [search]]
+R3    Urza casts Mox Opal
+R3  --- Kinnan turn 3: life 40, 5 cards in hand, 2 lands
+R3    Kinnan pays 2 life for an untapped Breeding Pool
+R3    Kinnan plays Breeding Pool
+R3        [Kinnan decides: Kinnan, Bonder Prodigy 87%, Enduring Vitality 9%, Trophy Mage 3%, stop (hold mana) 0% -> Kinnan, Bonder Prodigy [search]]
+R3    Kinnan casts Kinnan, Bonder Prodigy
+R3        [Kinnan decides: Enduring Vitality 97%, stop (hold mana) 2%, Trophy Mage 2% -> Enduring Vitality [search]]
+R3    Kinnan casts Enduring Vitality
+R3  --- Aragorn turn 3: life 38, 6 cards in hand, 2 lands
+R3    Aragorn plays Forest
+R3        [Aragorn decides: Tezzeret, Cruel Captain 87%, Frantic Search 13%, stop 0% -> Tezzeret, Cruel Captain [search]]
+R3    Aragorn casts Tezzeret, Cruel Captain
+R3        [Aragorn decides: Tezzeret, Cruel Captain -3 100%, stop 0% -> Tezzeret, Cruel Captain -3 [search]]
+R3    Aragorn uses Tezzeret, Cruel Captain (-3): search for an artifact with mana value 1 or less
+R3      Aragorn reveals Lotus Petal and puts it into their hand
+R3        [Aragorn decides: Lotus Petal 100%, stop 0% -> Lotus Petal [search]]
+R3    Aragorn casts Lotus Petal
+R4  --- Zur the Enchanter turn 4: life 38, 6 cards in hand, 3 lands
+R4    Zur the Enchanter plays Drowned Catacomb
+R4        [Zur the Enchanter decides: Zur the Enchanter 72%, Supreme Verdict 22%, Idyllic Tutor 3%, Rhystic Study 2% -> Idyllic Tutor [search]]
+R4    Zur the Enchanter casts Idyllic Tutor
+R4      Zur the Enchanter reveals Heliod, Sun-Crowned and puts it into their hand
+R4        [Zur the Enchanter decides: Dark Ritual 100%, stop 0% -> Dark Ritual [search]]
+R4    Zur the Enchanter casts Dark Ritual
+R4        [Zur the Enchanter decides: Rhystic Study 39%, Eidolon of Rhetoric 26%, Ghostly Prison 20%, Heliod, Sun-Crowned 15% -> Rhystic Study [search]]
+R4    Zur the Enchanter casts Rhystic Study
+R4  --- Urza turn 4: life 40, 3 cards in hand, 3 lands
+R4      Urza's Saga: Urza makes a Construct (6/6)
+R4      Urza's Saga: Urza puts Everflowing Chalice onto the battlefield
+R4        [Urza decides: Arcane Signet 100%, stop 0% -> Arcane Signet [search]]
+R4    Urza casts Arcane Signet
+R4        [Urza attack plan by search: filtered at Zur the Enchanter]
+R4    Urza attacks Zur the Enchanter with 1 creature(s): 8 damage (life now 29)
+R4  --- Kinnan turn 4: life 38, 4 cards in hand, 3 lands
+R4    Kinnan plays Island
+R4        [Kinnan decides: Nezahal, Primal Tide 93%, Finale of Devastation 4%, Trophy Mage 2%, stop (hold mana) 0% -> Nezahal, Primal Tide [search]]
+R4    Kinnan casts Nezahal, Primal Tide
+R4        [Kinnan decides: stop (hold mana) 51%, Trophy Mage 49% -> stop (hold mana) [search]]
+R4        [Kinnan attack plan by search: filtered at Zur the Enchanter]
+R4    Kinnan attacks Zur the Enchanter with 1 creature(s): 3 damage (life now 26)
+R4        [Kinnan decides: stop (hold mana) 51%, Trophy Mage 49% -> stop (hold mana) [search]]
+R4  --- Aragorn turn 4: life 38, 5 cards in hand, 3 lands
+R4        [Aragorn decides: Lightning Bolt -> Kinnan, Bonder Prodigy 85%, stop (hold mana) 12%, Frantic Search 3%, Aragorn, the Uniter 0% -> Lightning Bolt -> Kinnan, Bonder Prodigy [search]]
+R4    Aragorn casts Lightning Bolt -> Kinnan, Bonder Prodigy (Kinnan)
+R4      Kinnan casts Flusterstorm at Lightning Bolt
+R4      Aragorn pays 1
+R4      Kinnan, Bonder Prodigy (Kinnan) is removed: dmg3
+R5  --- Zur the Enchanter turn 5: life 26, 7 cards in hand, 4 lands
+R5    Zur the Enchanter pays 2 life for an untapped Watery Grave
+R5    Zur the Enchanter plays Watery Grave
+R5        [Zur the Enchanter decides: Grasp of Fate -> Nezahal, Primal Tide 91%, Zur the Enchanter 3%, Supreme Verdict 1%, Winds of Rath 1% -> Grasp of Fate -> Nezahal, Primal Tide [search]]
+R5    Zur the Enchanter casts Grasp of Fate -> Nezahal, Primal Tide (Kinnan)
+R5      Sensei's Divining Top (Urza) is removed: exile
+R5      Kinnan exiles Nezahal until the next end step
+R5      Kinnan protects Nezahal, Primal Tide
+R5      Tezzeret, Cruel Captain (Aragorn) is removed: exile
+R5      Nezahal, Primal Tide returns to the battlefield (Eerie Interlude)
+R5  --- Urza turn 5: life 40, 3 cards in hand, 2 lands
+R5    Urza plays Darksteel Citadel
+R5        [Urza decides: Urza, Lord High Artificer 98%, Tribute Mage 1%, Efficient Construction 0%, stop 0% -> Urza, Lord High Artificer [search]]
+R5    Urza casts Urza, Lord High Artificer
+R5      Zur the Enchanter casts Mana Drain at Urza, Lord High Artificer
+R5      Zur the Enchanter counters Urza, Lord High Artificer with Mana Drain
+R5        [Urza decides: Tribute Mage 100%, stop 0% -> Tribute Mage [search]]
+R5    Urza casts Tribute Mage
+R5      Urza reveals Isochron Scepter and puts it into their hand
+R5        [Urza attack plan by search: filtered at Zur the Enchanter]
+R5    Urza attacks Zur the Enchanter with 2 creature(s): 14 damage (life now 9)
+R5  --- Kinnan turn 5: life 38, 2 cards in hand, 4 lands
+R5    Kinnan plays Flooded Grove
+R5        [Kinnan decides: Kinnan, Bonder Prodigy 84%, Freed from the Real 16%, stop 0% -> Kinnan, Bonder Prodigy [search]]
+R5    Kinnan casts Kinnan, Bonder Prodigy
+R5        [Kinnan decides: Freed from the Real 100%, stop 0% -> Freed from the Real [search]]
+R5    Kinnan casts Freed from the Real
+R5  --- Aragorn turn 5: life 38, 5 cards in hand, 3 lands
+R5        [Aragorn decides: Frantic Search 100%, stop 0% -> Frantic Search [search]]
+R5    Aragorn casts Frantic Search
+R5        [Aragorn decides: Twinned Vision 100%, stop 0% -> Twinned Vision [search]]
+R5    Aragorn casts Twinned Vision
+R5    Aragorn plays Stormcarved Coast
+R6  --- Zur the Enchanter turn 6: life 9, 8 cards in hand, 5 lands
+R6    Zur the Enchanter plays Reliquary Tower
+R6        [Zur the Enchanter decides: Supreme Verdict 48%, Winds of Rath 48%, Zur the Enchanter 3%, Supreme Verdict 1% -> Supreme Verdict [search]]
+R6    Zur the Enchanter casts Supreme Verdict
+R6      Token regenerates (Welding Jar)
+R6      Kinnan returns as an enchantment (Enduring Vitality)
+R6        [Zur the Enchanter decides: Azorius Signet 100%, stop 0% -> Azorius Signet [search]]
+R6    Zur the Enchanter casts Azorius Signet
+R6        [Zur the Enchanter decides: Zur the Enchanter 99%, Eidolon of Rhetoric 1%, Ghostly Prison 0%, Heliod, Sun-Crowned 0% -> Zur the Enchanter [search]]
+R6    Zur the Enchanter casts Zur the Enchanter
+R6  --- Urza turn 6: life 40, 3 cards in hand, 3 lands
+R6        [Urza decides: Urza, Lord High Artificer 55%, Isochron Scepter 44%, Efficient Construction 1%, Phyrexian Metamorph 0% -> Urza, Lord High Artificer [search]]
+R6    Urza casts Urza, Lord High Artificer
+R6        [Urza decides: Isochron Scepter 100%, Phyrexian Metamorph 0%, stop 0% -> Isochron Scepter [search]]
+R6    Urza casts Isochron Scepter
+R6      Isochron Scepter imprints Dramatic Reversal
+R6  --- Kinnan turn 6: life 38, 4 cards in hand, 5 lands
+R6    Kinnan plays Island
+R6        [Kinnan decides: stop (hold mana) 100%, Kinnan, Bonder Prodigy 0% -> stop (hold mana) [search]]
+R6        [Kinnan decides: stop (hold mana) 100%, Kinnan, Bonder Prodigy 0% -> stop (hold mana) [search]]
+R6  --- Aragorn turn 6: life 38, 4 cards in hand, 4 lands
+R6    Aragorn plays Polluted Delta
+R6      cracks Polluted Delta for Volcanic Island
+R6        [Aragorn decides: Sol Ring 59%, stop (hold mana) 39%, Twinned Vision (flashback) 1%, Aragorn, the Uniter 1% -> Sol Ring [search]]
+R6    Aragorn casts Sol Ring
+R6      Kinnan casts Counterspell at Sol Ring
+R6      Kinnan counters Sol Ring with Counterspell
+R6        [Aragorn decides: stop (hold mana) 97%, Twinned Vision (flashback) 3% -> stop (hold mana) [search]]
+R6        [Aragorn decides: stop (hold mana) 97%, Twinned Vision (flashback) 3% -> stop (hold mana) [search]]
+R7  --- Zur the Enchanter turn 7: life 8, 6 cards in hand, 6 lands
+R7    Zur the Enchanter plays Hallowed Fountain
+R7        [Zur the Enchanter decides: stop (hold mana) 44%, Eidolon of Rhetoric 19%, Heliod, Sun-Crowned 16%, Ghostly Prison 12% -> Winds of Rath [search]]
+R7    Zur the Enchanter casts Winds of Rath
+R7  --- Urza turn 7: life 40, 2 cards in hand, 3 lands
+R7    Urza plays Otawara, Soaring City
+R7        [Urza decides: Urza, Lord High Artificer 81%, Efficient Construction 15%, Phyrexian Metamorph 4%, stop 0% -> Urza, Lord High Artificer [search]]
+R7    Urza casts Urza, Lord High Artificer
+R7      Aragorn casts Mana Drain at Urza, Lord High Artificer
+R7      Aragorn counters Urza, Lord High Artificer with Mana Drain
+R7  --- Kinnan turn 7: life 38, 3 cards in hand, 6 lands
+R7    Kinnan plays Forest
+R7        [Kinnan decides: Kinnan, Bonder Prodigy 96%, Arcane Signet 4%, stop 0% -> Arcane Signet [search]]
+R7    Kinnan casts Arcane Signet
+R7  --- Aragorn turn 7: life 37, 2 cards in hand, 5 lands
+R7        [Aragorn decides: Aragorn, the Uniter 98%, Lightning Greaves 2%, Comet Storm (X = 5, 2 kick(s)) 0%, Twinned Vision (flashback) 0% -> Aragorn, the Uniter [search]]
+R7    Aragorn casts Aragorn, the Uniter
+R7        [Aragorn decides: Lightning Greaves 100%, stop 0% -> Lightning Greaves [search]]
+R7    Aragorn casts Lightning Greaves
+R7      Zur the Enchanter casts Dovin's Veto at Lightning Greaves
+R7      Zur the Enchanter counters Lightning Greaves with Dovin's Veto
+R8  --- Zur the Enchanter turn 8: life 7, 6 cards in hand, 7 lands
+R8    Zur the Enchanter plays Glacial Fortress
+R8        [Zur the Enchanter decides: Enlightened Tutor 49%, Zur the Enchanter 38%, Eidolon of Rhetoric 5%, Heliod, Sun-Crowned 4% -> Enlightened Tutor [search]]
+R8    Zur the Enchanter casts Enlightened Tutor
+R8      Zur the Enchanter reveals Walking Ballista and puts it on top of their library
+R8        [Zur the Enchanter decides: Eidolon of Rhetoric 35%, Heliod, Sun-Crowned 27%, Ghostly Prison 16%, Zur the Enchanter 13% -> Eidolon of Rhetoric [search]]
+R8    Zur the Enchanter casts Eidolon of Rhetoric
+R8  --- Urza turn 8: life 40, 2 cards in hand, 4 lands
+R8    Urza plays Inventors' Fair
+R8        [Urza decides: Efficient Construction 56%, Phyrexian Metamorph 22%, Inventors' Fair: search for an artifact 22%, stop 0% -> Efficient Construction [search]]
+R8    Urza casts Efficient Construction
+R8  --- Kinnan turn 8: life 38, 2 cards in hand, 7 lands
+R8    Kinnan plays Island
+R8        [Kinnan decides: Kinnan, Bonder Prodigy 96%, Birds of Paradise 4%, stop 0% -> Kinnan, Bonder Prodigy [search]]
+R8    Kinnan casts Kinnan, Bonder Prodigy
+R8  --- Aragorn turn 8: life 37, 2 cards in hand, 5 lands
+R8    Aragorn plays Tropical Island
+R8        [Aragorn decides: Twinned Vision (flashback) 99%, stop 1% -> Twinned Vision (flashback) [search]]
+R8    Aragorn casts Twinned Vision
+R8      Zur the Enchanter casts Fierce Guardianship at Twinned Vision
+R8      Zur the Enchanter counters Twinned Vision with Fierce Guardianship
+R8        [Aragorn attack plan by search: filtered at Kinnan]
+R8    Aragorn attacks Kinnan with 1 creature(s): 5 damage (life now 33)
+R9  --- Zur the Enchanter turn 9: life 6, 4 cards in hand, 8 lands
+R9        [Zur the Enchanter decides: Heliod, Sun-Crowned 70%, Zur the Enchanter 26%, Walking Ballista 2%, Ghostly Prison 1% -> Heliod, Sun-Crowned [search]]
+R9    Zur the Enchanter casts Heliod, Sun-Crowned
+R9        [Zur the Enchanter decides: combo: Heliod, Sun-Crowned + Walking Ballista 100%, stop 0% -> combo: Heliod, Sun-Crowned + Walking Ballista [search]]
+R9    Zur the Enchanter goes for Heliod, Sun-Crowned + Walking Ballista
+R9        (Zur the Enchanter couldn't play combo: Heliod, Sun-Crowned + Walking Ballista)
+R9        [Zur the Enchanter decides: combo: Heliod, Sun-Crowned + Walking Ballista 100%, stop 0% -> stop]
+R9        [Zur the Enchanter attack plan by search: none at Urza]
+R9  --- Urza turn 9: life 40, 1 cards in hand, 5 lands
+R9        [Urza decides: Phyrexian Metamorph 50%, Inventors' Fair: search for an artifact 50%, stop 0% -> Phyrexian Metamorph [search]]
+R9    Urza casts Phyrexian Metamorph
+R9  --- Kinnan turn 9: life 33, 2 cards in hand, 8 lands
+R9    Kinnan plays Tropical Island
+R9        [Kinnan decides: Colossal Skyturtle 94%, channel Colossal Skyturtle: bounce 3%, Kinnan: dig five 2%, Birds of Paradise 1% -> Colossal Skyturtle [search]]
+R9    Kinnan casts Colossal Skyturtle
+R9        [Kinnan attack plan by search: none at Zur the Enchanter]
+R9  --- Aragorn turn 9: life 37, 1 cards in hand, 6 lands
+R9        [Aragorn decides: Rhystic Study 100%, stop 0% -> Rhystic Study [search]]
+R9    Aragorn casts Rhystic Study
+R9        [Aragorn attack plan by search: filtered at Kinnan]
+R9    Aragorn attacks Kinnan with 1 creature(s): 5 damage (life now 28)
+R10 --- Zur the Enchanter turn 10: life 6, 5 cards in hand, 8 lands
+R10   Zur the Enchanter plays Marsh Flats
+R10     cracks Marsh Flats for Godless Shrine
+R10       [Zur the Enchanter decides: combo: Heliod, Sun-Crowned + Walking Ballista 100%, Zur the Enchanter 0%, Walking Ballista 0%, Ghostly Prison 0% -> combo: Heliod, Sun-Crowned + Walking Ballista [search]]
+R10   Zur the Enchanter goes for Heliod, Sun-Crowned + Walking Ballista
+R10   Zur the Enchanter casts Walking Ballista
+R10 *** Urza is eliminated (life 41) by Zur the Enchanter
+R10 *** Kinnan is eliminated (life 28) by Zur the Enchanter
+R10     Aragorn casts Teferi's Protection: life can't change, protection from everything, all phased out
+R10     Aragorn survives: its life total can't change
+R10 *** Zur the Enchanter goes off, but Aragorn survive
+R10       [Zur the Enchanter attack plan by search: none at Aragorn]
+R10 --- Aragorn turn 10: life 37, 0 cards in hand, 6 lands
+R10   Aragorn no longer has protection from everything
+R10       [Aragorn decides: Seething Song 100%, stop 0% -> Seething Song [search]]
+R10   Aragorn casts Seething Song
+R10       [Aragorn attack plan by search: filtered at Zur the Enchanter]
+R10   Aragorn attacks Zur the Enchanter with 2 creature(s): 1 damage (life now 1)
+R11 --- Zur the Enchanter turn 11: life 1, 5 cards in hand, 9 lands
+R11       [Zur the Enchanter decides: combo: Heliod, Sun-Crowned + Walking Ballista 100%, Zur the Enchanter 0%, Imprisoned in the Moon -> Aragorn, the Uniter 0%, Imprisoned in the Moon 0% -> combo: Heliod, Sun-Crowned + Walking Ballista [search]]
+R11   Zur the Enchanter goes for Heliod, Sun-Crowned + Walking Ballista
+R11 *** Aragorn is eliminated (life 37) by Zur the Enchanter
+R11 *** Zur the Enchanter wins by combo
+Winner: Zur the Enchanter (combo)

@@ -40,7 +40,7 @@ fn after_reset(c: &mut Client, since: u64) -> Vec<Value> {
 fn test_undo_asks_the_last_decision_again_with_the_same_table() {
     let s = srv!();
     let mut c = s.client();
-    start(&mut c, "sauron", 11, "adaptive", json!({}));
+    start(&mut c, "aragorn", 11, "adaptive", json!({}));
     let (seen, last) = play(&mut c, 40, false);
     assert_eq!(seen.len(), 41);
     let r = c.post("/api/undo", json!({"n": 3}));
@@ -54,7 +54,7 @@ fn test_undo_asks_the_last_decision_again_with_the_same_table() {
 fn test_replayed_history_is_marked() {
     let s = srv!();
     let mut c = s.client();
-    start(&mut c, "sauron", 11, "adaptive", json!({}));
+    start(&mut c, "aragorn", 11, "adaptive", json!({}));
     let (_, last) = play(&mut c, 15, false);
     assert_eq!(c.post("/api/undo", json!({"n": 1})).status, 200);
     // card images arrive from a background thread whenever they are fetched: not part of the replay
@@ -72,7 +72,7 @@ fn test_replayed_history_is_marked() {
 fn test_nothing_to_undo() {
     let s = srv!();
     let mut c = s.client();
-    start(&mut c, "sauron", 11, "adaptive", json!({}));
+    start(&mut c, "aragorn", 11, "adaptive", json!({}));
     wait_for(&mut c, 0, is_request);
     let r = c.post("/api/undo", json!({}));
     assert_eq!(r.status, 409);
@@ -84,7 +84,7 @@ fn test_nothing_to_undo() {
 fn test_undo_switched_off() {
     let s = srv!();
     let mut c = s.client();
-    start(&mut c, "sauron", 11, "adaptive", json!({"undo": false}));
+    start(&mut c, "aragorn", 11, "adaptive", json!({"undo": false}));
     let mull = wait_for(&mut c, 0, is_request);
     c.answer(mull["id"].as_u64().unwrap(), json!("keep"));
     let r = c.post("/api/undo", json!({}));
@@ -124,9 +124,9 @@ fn test_a_saved_game_comes_back_the_same() {
 fn test_hints_change_nothing() {
     let s = srv!();
     let mut c = s.client();
-    start(&mut c, "sauron", 11, "lookahead", json!({"compare": false}));
+    start(&mut c, "aragorn", 11, "lookahead", json!({"compare": false}));
     let with = play_with(&mut c, 60, true);
-    start(&mut c, "sauron", 11, "lookahead", json!({"compare": false}));
+    start(&mut c, "aragorn", 11, "lookahead", json!({"compare": false}));
     let without = play_with(&mut c, 60, false);
     assert_eq!(with.seen, without.seen);
     let main: Vec<&Value> = with
@@ -148,12 +148,12 @@ fn test_hints_change_nothing() {
 fn test_comparisons_change_nothing_and_the_review_waits() {
     let s = srv!();
     let mut c = s.client();
-    start(&mut c, "sauron", 11, "lookahead", json!({"compare": true}));
+    start(&mut c, "aragorn", 11, "lookahead", json!({"compare": true}));
     let with = play_with(&mut c, 70, false);
     let r = c.get("/api/review");
     assert_eq!(r.status, 409); // hidden until the game ends
     assert!(r.error().contains("when the game ends"), "{}", r.error());
-    start(&mut c, "sauron", 11, "lookahead", json!({"compare": false}));
+    start(&mut c, "aragorn", 11, "lookahead", json!({"compare": false}));
     let without = play_with(&mut c, 70, false);
     assert_eq!(with.seen, without.seen); // the game is the same with the comparison on
     c.quit();
@@ -163,7 +163,7 @@ fn test_comparisons_change_nothing_and_the_review_waits() {
 fn test_review_and_try_it() {
     let s = srv!();
     let mut c = s.client();
-    start(&mut c, "sauron", 11, "adaptive", json!({"compare": true}));
+    start(&mut c, "aragorn", 11, "adaptive", json!({"compare": true}));
     let (end, n) = play_out(&mut c, 900);
     assert_eq!(end["kind"], "over", "{end}");
     assert!(n > 0);
@@ -201,7 +201,7 @@ fn test_review_and_try_it() {
 fn test_try_it_needs_a_compared_decision() {
     let s = srv!();
     let mut c = s.client();
-    start(&mut c, "sauron", 11, "adaptive", json!({"compare": true}));
+    start(&mut c, "aragorn", 11, "adaptive", json!({"compare": true}));
     wait_for(&mut c, 0, is_request);
     let r = c.post("/api/tryit", json!({"n": 5}));
     assert_eq!(r.status, 409);

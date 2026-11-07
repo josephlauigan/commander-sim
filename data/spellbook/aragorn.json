@@ -1,0 +1,2286 @@
+{
+  "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
+  "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
+  "fetched": "2026-11-07",
+  "deck": "aragorn",
+  "commanders": [
+    "Aragorn, the Uniter"
+  ],
+  "request_sha256": "48c6dca8a5824b2b61d08694817f2d5d901cbd7c654870303a872fc58b1841eb",
+  "identity": "RGWU",
+  "included": [
+    {
+      "id": "1368-1414-4856",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "H",
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least six other cards in your graveyard, plus an additional four cards if Brain Freeze is in your graveyard.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 119073
+    }
+  ],
+  "included_by_changing_commanders": [],
+  "almost_included": [
+    {
+      "id": "513-5034--46",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [
+        "Permanent Castable for {C}"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 366425,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "1368-3518-4856",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lion's Eye Diamond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite colored mana",
+        "Near-infinite mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least six other cards in hand and/or graveyard.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 96611,
+      "missing": [
+        "Lion's Eye Diamond"
+      ]
+    },
+    {
+      "id": "1368-1878-2706",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wheel of Fortune",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Jeska's Will",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting for all players"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least six additional cards in your graveyard, plus an additional six cards between your hand and/or graveyard.\nAn opponent has at least six cards in hand.",
+      "mana": "{2}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 91239,
+      "missing": [
+        "Wheel of Fortune"
+      ]
+    },
+    {
+      "id": "1089-2353",
+      "cards": [
+        {
+          "name": "Curiosity",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Curiosity attached to Niv-Mizzet.\nYou have a way to draw a card.\nYour library is greater than opponent life total.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 69263,
+      "missing": [
+        "Curiosity"
+      ]
+    },
+    {
+      "id": "1090-2781",
+      "cards": [
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Felidar Guardian",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 55621,
+      "missing": [
+        "Felidar Guardian"
+      ]
+    },
+    {
+      "id": "2353-6092",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, Visionary",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 50089,
+      "missing": [
+        "Niv-Mizzet, Visionary"
+      ]
+    },
+    {
+      "id": "1368-3698--44",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grinding Station",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite mana among colors of legendary creatures and planeswalkers you control"
+      ],
+      "requires": [
+        "Artifact Castable for {0} that survives"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 41313,
+      "missing": [
+        "Grinding Station"
+      ]
+    },
+    {
+      "id": "2353-2396",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ophidian Eye",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Ophidian Eye attached to Niv-Mizzet.\nYou have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 39004,
+      "missing": [
+        "Ophidian Eye"
+      ]
+    },
+    {
+      "id": "1878-3368",
+      "cards": [
+        {
+          "name": "Reiterate",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jeska's Will",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Exile your library with the ability to play the exiled cards until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has six or more cards in their hand.",
+      "mana": "{6}{R}{R}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 38586,
+      "missing": [
+        "Reiterate"
+      ]
+    },
+    {
+      "id": "542-5034",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 38005,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "406-2353",
+      "cards": [
+        {
+          "name": "Tandem Lookout",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Tandem Lookout paired with Niv-Mizzet.\nYou have a way to draw a card.\nYour library is greater than opponent life total.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 34331,
+      "missing": [
+        "Tandem Lookout"
+      ]
+    },
+    {
+      "id": "3368-4036-5195",
+      "cards": [
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Seething Song",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Reiterate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite copies of instant and sorcery spells on the stack",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{6}{R}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 29866,
+      "missing": [
+        "Reiterate"
+      ]
+    },
+    {
+      "id": "3940-5195",
+      "cards": [
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Haze of Rage",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinitely powerful creatures you control until end of turn",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have cast at least three spells this turn.",
+      "mana": "{3}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 27705,
+      "missing": [
+        "Haze of Rage"
+      ]
+    },
+    {
+      "id": "1368-2706-4682",
+      "cards": [
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wheel of Fortune",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting for all players",
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "At least one opponent is unable to pay for Smothering Tithe's trigger.\nYou have at least three other cards in your graveyard, plus an additional three cards between your graveyard and/or hand.",
+      "mana": "{2}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 26135,
+      "missing": [
+        "Wheel of Fortune"
+      ]
+    },
+    {
+      "id": "553-2856",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mystical Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "{12}{W}{W}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 25790,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "372-1090-5144",
+      "cards": [
+        {
+          "name": "Abdel Adrian, Gorion's Ward",
+          "zones": [
+            "H",
+            "C"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W} plus enough mana to pay for command tax, if applicable",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 17393,
+      "missing": [
+        "Abdel Adrian, Gorion's Ward"
+      ]
+    },
+    {
+      "id": "3779-6323",
+      "cards": [
+        {
+          "name": "Swords to Plowshares",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jumbo Cactuar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "Jumbo Cactuar does not have summoning sickness.",
+      "mana": "{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 12148,
+      "missing": [
+        "Jumbo Cactuar"
+      ]
+    },
+    {
+      "id": "1368-2196-3766",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Frantic Search",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Dragon's Rage Channeler",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite looting",
+        "Near-infinite self-mill",
+        "Near-infinite surveil"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three other cards in your graveyard.\nYou control up to three lands that can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 12096,
+      "missing": [
+        "Dragon's Rage Channeler"
+      ]
+    },
+    {
+      "id": "570-4222",
+      "cards": [
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Freed from the Real attached to Faeburrow Elder.\nFaeburrow Elder does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10209,
+      "missing": [
+        "Freed from the Real"
+      ]
+    },
+    {
+      "id": "1368-2196-3584",
+      "cards": [
+        {
+          "name": "Frantic Search",
+          "zones": [
+            "H",
+            "G"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thousand-Year Storm",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting",
+        "Near-infinite mana lands you control can produce",
+        "Near-infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You have an additional three cards in your graveyard if Frantic Search is in your graveyard.\nYou control up to three lands that can tap to produce at least {1}{U}.\nYou have cast at least one instant or sorcery spell this turn.",
+      "mana": "{1} at most",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 10205,
+      "missing": [
+        "Thousand-Year Storm"
+      ]
+    },
+    {
+      "id": "1090-4200",
+      "cards": [
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Icewind Stalwart",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 9763,
+      "missing": [
+        "Icewind Stalwart"
+      ]
+    },
+    {
+      "id": "2655-5195",
+      "cards": [
+        {
+          "name": "Fury Storm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You have cast your commander from your command zone this game.\nAn additional instant or sorcery in hand with the mana to cast it, or an opponent has cast an as of yet unresolved instant or sorcery spell.",
+      "mana": "{2}{R}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 9637,
+      "missing": [
+        "Fury Storm"
+      ]
+    },
+    {
+      "id": "790-1368-4682",
+      "cards": [
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Windfall",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting for all players",
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "A player has at least three cards in hand.\nThere are at least three additional cards in your graveyard.\nAt least one opponent is unable to pay for Smothering Tithe's trigger.",
+      "mana": "{2}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 8442,
+      "missing": [
+        "Windfall"
+      ]
+    },
+    {
+      "id": "1025-4682",
+      "cards": [
+        {
+          "name": "Stasis",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 8405,
+      "missing": [
+        "Stasis"
+      ]
+    },
+    {
+      "id": "1368-2196-2492",
+      "cards": [
+        {
+          "name": "Frantic Search",
+          "zones": [
+            "H",
+            "G"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bonus Round",
+          "zones": [
+            "H",
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting",
+        "Near-infinite mana lands you control can produce",
+        "Near-infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You have an additional six cards in your graveyard if both Bonus Round and Frantic Search are in your graveyard, or you have an additional three cards in your graveyard if either card is in your graveyard.\nYou control up to three lands that can tap to produce at least {1}{U}.",
+      "mana": "{2}{R}{R} at most",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7817,
+      "missing": [
+        "Bonus Round"
+      ]
+    },
+    {
+      "id": "147-5144",
+      "cards": [
+        {
+          "name": "Dualcaster Mage",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There are legal target(s) for Ephemerate.",
+      "mana": "{1}{R}{R}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7358,
+      "missing": [
+        "Dualcaster Mage"
+      ]
+    },
+    {
+      "id": "700-2353",
+      "cards": [
+        {
+          "name": "Body of Knowledge",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6452,
+      "missing": [
+        "Body of Knowledge"
+      ]
+    },
+    {
+      "id": "618-1090",
+      "cards": [
+        {
+          "name": "Kiki-Jiki, Mirror Breaker",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 5928,
+      "missing": [
+        "Kiki-Jiki, Mirror Breaker"
+      ]
+    },
+    {
+      "id": "693-1368",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Path of the Pyromancer",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite rummaging",
+        "Near-infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least five cards in hand.\nYou have at least three additional cards in your graveyard.",
+      "mana": "{4}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5576,
+      "missing": [
+        "Path of the Pyromancer"
+      ]
+    },
+    {
+      "id": "570-3525",
+      "cards": [
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pemmin's Aura",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Pemmin's Aura attached to Faeburrow Elder.\nFaeburrow Elder does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5185,
+      "missing": [
+        "Pemmin's Aura"
+      ]
+    },
+    {
+      "id": "570-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Faeburrow Elder does not have summoning sickness. You control a permanent of each color.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4007,
+      "missing": [
+        "Staff of Domination"
+      ]
+    },
+    {
+      "id": "876-4944",
+      "cards": [
+        {
+          "name": "Crackdown Construct",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature.",
+      "mana": "",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 3949,
+      "missing": [
+        "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "1368-2172-5195",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Burning Inquiry",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have at least three other cards in your graveyard.",
+      "mana": "{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 3638,
+      "missing": [
+        "Burning Inquiry"
+      ]
+    },
+    {
+      "id": "776-1368-2196",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Frantic Search",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Jeskai Ascendancy",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting",
+        "Near-infinite mana creatures you control can produce",
+        "Near-infinite untap of creatures you control",
+        "Near-infinitely large creatures until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three other cards in your graveyard.\nYou control up to three lands that can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 3565,
+      "missing": [
+        "Jeskai Ascendancy"
+      ]
+    },
+    {
+      "id": "2548-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Obliterate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{R}{R}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2359,
+      "missing": [
+        "Obliterate"
+      ]
+    },
+    {
+      "id": "570-876-4499",
+      "cards": [
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least four colors among permanents you control.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2345,
+      "missing": [
+        "Emiel the Blessed"
+      ]
+    },
+    {
+      "id": "876-2904",
+      "cards": [
+        {
+          "name": "Cephalid Illusionist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2267,
+      "missing": [
+        "Cephalid Illusionist"
+      ]
+    },
+    {
+      "id": "249-5141",
+      "cards": [
+        {
+          "name": "Zethi, Arcane Blademaster",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Your life total can't change during your opponents' turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{W} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2134,
+      "missing": [
+        "Zethi, Arcane Blademaster"
+      ]
+    },
+    {
+      "id": "3765-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Worldfire",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Each opponent's life total becomes 1",
+        "Exile all permanents opponents control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{R}{R}{R}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 2104,
+      "missing": [
+        "Worldfire"
+      ]
+    },
+    {
+      "id": "141-5144",
+      "cards": [
+        {
+          "name": "Naru Meha, Master Wizard",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There are legal target(s) for Ephemerate.",
+      "mana": "{2}{W}{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2079,
+      "missing": [
+        "Naru Meha, Master Wizard"
+      ]
+    },
+    {
+      "id": "1878-4560",
+      "cards": [
+        {
+          "name": "Soulfire Grand Master",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Jeska's Will",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Exile your library with the ability to play the exiled cards until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has at least seven cards in hand.",
+      "mana": "{4}{U/R}{U/R}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1966,
+      "missing": [
+        "Soulfire Grand Master"
+      ]
+    },
+    {
+      "id": "1368-1846-2196-4856",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Frantic Search",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "High Tide",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite blue mana",
+        "Near-infinite looting",
+        "Near-infinite mill",
+        "Near-infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three other cards in your graveyard.\nYou control at least three Islands.",
+      "mana": "{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1893,
+      "missing": [
+        "High Tide"
+      ]
+    },
+    {
+      "id": "1090-4344-5144",
+      "cards": [
+        {
+          "name": "Lumbering Battlement",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Restoration Angel",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1695,
+      "missing": [
+        "Lumbering Battlement"
+      ]
+    },
+    {
+      "id": "1328-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Spellbinder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Your life total can't change during your opponents' turns"
+      ],
+      "requires": [],
+      "prerequisites": "Spellbinder attached to a creature that can attack this turn and that cannot be blocked and killed by an opponent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1424,
+      "missing": [
+        "Spellbinder"
+      ]
+    },
+    {
+      "id": "148-2353",
+      "cards": [
+        {
+          "name": "Keen Sense",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Keen Sense attached to Niv-Mizzet.\nYou have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1250,
+      "missing": [
+        "Keen Sense"
+      ]
+    },
+    {
+      "id": "1368-2196-7437",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Frantic Search",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Exhibition Tidecaller",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite looting",
+        "Near-infinite mill",
+        "Near-infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to three lands that can tap to produce at least {2}{U}.\nYou have at least three other cards in your graveyard.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1195,
+      "missing": [
+        "Exhibition Tidecaller"
+      ]
+    },
+    {
+      "id": "570-4896",
+      "cards": [
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "High Alert",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite green mana",
+        "Infinite black mana",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Faeburrow Elder does not have summoning sickness.\nYou control a black and a red permanent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1081,
+      "missing": [
+        "High Alert"
+      ]
+    },
+    {
+      "id": "1368-4682-4950",
+      "cards": [
+        {
+          "name": "Smothering Tithe",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Reforge the Soul",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting for all players",
+        "Near-infinite colored mana",
+        "Near-infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "At least one opponent is unable to pay for Smothering Tithe's trigger.\nYou have at least three other cards in your graveyard, plus an additional three cards between your graveyard and/or hand.",
+      "mana": "{3}{R}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 885,
+      "missing": [
+        "Reforge the Soul"
+      ]
+    },
+    {
+      "id": "570-4019",
+      "cards": [
+        {
+          "name": "Vigean Graftmage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Faeburrow Elder does not have summoning sickness.\nFaeburrow Elder has at least one +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 869,
+      "missing": [
+        "Vigean Graftmage"
+      ]
+    },
+    {
+      "id": "70-5141",
+      "cards": [
+        {
+          "name": "Balancing Act",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{W}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 758,
+      "missing": [
+        "Balancing Act"
+      ]
+    },
+    {
+      "id": "2353-3311",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Snake Umbra",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Snake Umbra attached to Niv-Mizzet.\nYou have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 747,
+      "missing": [
+        "Snake Umbra"
+      ]
+    },
+    {
+      "id": "4274-5141",
+      "cards": [
+        {
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Apocalypse",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Exile all permanents opponents control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{R}{R}{R}{W}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 620,
+      "missing": [
+        "Apocalypse"
+      ]
+    },
+    {
+      "id": "1858-4280-5195",
+      "cards": [
+        {
+          "name": "Veyran, Voice of Duality",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "View from Above",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control a white permanent.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 562,
+      "missing": [
+        "View from Above"
+      ]
+    },
+    {
+      "id": "570-5200",
+      "cards": [
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least four colors among permanents you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 537,
+      "missing": [
+        "Sword of the Paruns"
+      ]
+    },
+    {
+      "id": "570-876-7070",
+      "cards": [
+        {
+          "name": "Monk Gyatso",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 534,
+      "missing": [
+        "Monk Gyatso"
+      ]
+    },
+    {
+      "id": "195-570",
+      "cards": [
+        {
+          "name": "Chain Stasis",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Faeburrow Elder does not have summoning sickness.There are at least four colors among permanents you control, one of which must be blue.",
+      "mana": "{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 490,
+      "missing": [
+        "Chain Stasis"
+      ]
+    },
+    {
+      "id": "1368-1414-3075-4856",
+      "cards": [
+        {
+          "name": "Mizzix of the Izmagnus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least one experience counter.\nYou have a storm count of at least one.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 416,
+      "missing": [
+        "Mizzix of the Izmagnus"
+      ]
+    },
+    {
+      "id": "570-1995",
+      "cards": [
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gauntlets of Light",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-white mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Gauntlets of Light attached to Faeburrow Elder.\nFaeburrow Elder does not have summoning sickness.\nThere are at least four colors among permanents you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 397,
+      "missing": [
+        "Gauntlets of Light"
+      ]
+    },
+    {
+      "id": "1368-2196-4684",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Frantic Search",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Mesmeric Orb",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite looting",
+        "Near-infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three other cards in your graveyard.\nYou control up to three lands that can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 372,
+      "missing": [
+        "Mesmeric Orb"
+      ]
+    },
+    {
+      "id": "352-4036-5195",
+      "cards": [
+        {
+          "name": "Nivix Guildmage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Seething Song",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{U/R}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 293,
+      "missing": [
+        "Nivix Guildmage"
+      ]
+    },
+    {
+      "id": "1368-5195-6321",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Malevolent Rumble",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three other cards in your graveyard.",
+      "mana": "{1}{G}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 231,
+      "missing": [
+        "Malevolent Rumble"
+      ]
+    },
+    {
+      "id": "876-2796",
+      "cards": [
+        {
+          "name": "Cephalid Aristocrat",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You control an additional creature.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 203,
+      "missing": [
+        "Cephalid Aristocrat"
+      ]
+    },
+    {
+      "id": "5071-7439",
+      "cards": [
+        {
+          "name": "Yavimaya Bloomsage // Channel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Comet Storm",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{R}{R}{G}{G}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 170,
+      "missing": [
+        "Yavimaya Bloomsage // Channel"
+      ]
+    },
+    {
+      "id": "760-2353",
+      "cards": [
+        {
+          "name": "Swans of Bryn Argoll",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, Parun",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 164,
+      "missing": [
+        "Swans of Bryn Argoll"
+      ]
+    },
+    {
+      "id": "3718-5195",
+      "cards": [
+        {
+          "name": "Storm-Kiln Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Chain of Acid",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control an indestructible non-creature permanent.",
+      "mana": "{3}{G}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 149,
+      "missing": [
+        "Chain of Acid"
+      ]
+    },
+    {
+      "id": "279-1368-2196",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Frantic Search",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Drowned Secrets",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite looting",
+        "Near-infinite mill",
+        "Near-infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least three other cards in your graveyard.\nYou control up to three lands that can tap to produce at least {2}{U}.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 50,
+      "missing": [
+        "Drowned Secrets"
+      ]
+    },
+    {
+      "id": "3718-4280",
+      "cards": [
+        {
+          "name": "Chain of Acid",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Veyran, Voice of Duality",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinitely large creature until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "You control an indestructible noncreature permanent.",
+      "mana": "{3}{G}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 41,
+      "missing": [
+        "Chain of Acid"
+      ]
+    },
+    {
+      "id": "1261-6717",
+      "cards": [
+        {
+          "name": "Time Vault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tezzeret, Cruel Captain",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Time Vault"
+      ]
+    },
+    {
+      "id": "1172-5071",
+      "cards": [
+        {
+          "name": "Channel",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Comet Storm",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{R}{R}{G}{G}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Channel"
+      ]
+    },
+    {
+      "id": "1368-4808-4856",
+      "cards": [
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Black Lotus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite colored mana",
+        "Near-infinite mill"
+      ],
+      "requires": [],
+      "prerequisites": "You've cast a spell this turn.\nYou have three or more other cards in your graveyard.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Black Lotus"
+      ]
+    }
+  ]
+}

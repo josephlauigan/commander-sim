@@ -40,11 +40,9 @@ fn check_generic(g: &Game, key: &str) {
 /// JD's decks: the generic policy and the plan file
 #[test]
 fn the_deleted_jd_decks_play_the_generic_policy() {
-    assert_eq!(ai::HAND_DELETED.len(), 5);
+    assert_eq!(ai::HAND_DELETED.len(), 3);
     for (key, t) in [
-        ("sauron", "t3"),
         ("yshtola", "t5"),
-        ("kefka", "t3"),
         ("sheoldred", "t3"),
         ("cloud", "t1"),
     ] {

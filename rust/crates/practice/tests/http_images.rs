@@ -24,7 +24,7 @@ macro_rules! rust_srv {
 }
 
 fn images_event(c: &mut Client, images: bool) -> (Vec<serde_json::Value>, serde_json::Value) {
-    let r = c.post("/api/new", json!({"deck": "sauron", "tier": "t2", "seed": 5, "ai": "adaptive", "images": images}));
+    let r = c.post("/api/new", json!({"deck": "aragorn", "tier": "t2", "seed": 5, "ai": "adaptive", "images": images}));
     assert_eq!(r.status, 200, "{}", String::from_utf8_lossy(&r.body));
     let mut evs = c.stream(0, None).until(120, |e| e["kind"] == "images");
     let img = evs.pop().unwrap();
@@ -64,11 +64,11 @@ fn test_cards_tokens_and_progress() {
     // progress: loading events count up to the total
     let last = loading.iter().rev().find(|e| e["kind"] == "loading").expect("loading events");
     assert_eq!(last["done"], last["total"]);
-    // your deck's own printings (data/printings/sauron.txt): every copy by set and collector number
-    let own = img["printed"]["sauron"].as_object().expect("Sauron's printings");
-    let swamps = own["Swamp"].as_array().expect("Swamp copies");
-    assert_eq!(swamps.len(), 5); // 5 Swamps since Urborg took one (JD 11/04)
-    assert!(swamps[0][0].as_str().unwrap().starts_with("print-2ed-"), "{swamps:?}");
+    // your deck's own printings (data/printings/aragorn.txt): every copy by set and collector number
+    let own = img["printed"]["aragorn"].as_object().expect("Aragorn's printings");
+    let islands = own["Island"].as_array().expect("Island copies");
+    assert_eq!(islands.len(), 1); // one Island (sos 274)
+    assert!(islands[0][0].as_str().unwrap().starts_with("print-sos-"), "{islands:?}");
     let f = own["Sol Ring"][0][0].as_str().unwrap();
     assert_eq!(c.get(&format!("/images/{f}")).status, 200);
     c.quit();

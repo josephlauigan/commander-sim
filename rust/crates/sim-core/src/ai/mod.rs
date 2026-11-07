@@ -60,10 +60,8 @@ const fn st(temp: f64, aggression: f64, caution: f64) -> Style {
 }
 
 /// brain.STYLE: your decks (their keys are also ais.MAIN, the decks with hand-written plans)
-const MAIN_STYLES: [(&str, Style); 7] = [
-    ("sauron", st(1.0, 0.55, 0.75)),
+const MAIN_STYLES: [(&str, Style); 5] = [
     ("yshtola", st(1.0, 0.50, 0.75)),
-    ("kefka", st(1.0, 0.65, 0.55)),
     ("najeela", st(1.0, 0.90, 0.30)),
     ("omnath", st(1.0, 0.70, 0.50)),
     ("sheoldred", st(1.0, 0.60, 0.60)),
@@ -81,7 +79,7 @@ pub fn is_main(key: &str) -> bool {
 pub fn jd_deck(key: &str) -> bool {
     matches!(
         key,
-        "sauron" | "yshtola" | "kefka" | "omnath" | "sheoldred" | "cloud" | "sephfs"
+        "yshtola" | "omnath" | "sheoldred" | "cloud" | "sephfs"
     )
 }
 
@@ -91,9 +89,9 @@ pub fn jd_deck(key: &str) -> bool {
 /// `is_main` / `jd_deck` still name them (styles, table reads), so `hand_key` reads them as "" and every
 /// `is_main(hand_key(..))` routing site takes the generic path; `values::generic_deck` counts them as generic decks.
 /// The pool's four (brago, aurelia, sisay, dack) need no entry: no routing site names a pool deck.
-pub const HAND_DELETED: [&str; 5] = ["sauron", "yshtola", "kefka", "sheoldred", "cloud"];
+pub const HAND_DELETED: [&str; 3] = ["yshtola", "sheoldred", "cloud"];
 
-/// does this deck play a hand-written AI? No for the five in `HAND_DELETED`; any other key: yes (the pool decks have
+/// does this deck play a hand-written AI? No for the three in `HAND_DELETED`; any other key: yes (the pool decks have
 /// nothing to switch; the retired test seats keep theirs)
 pub fn hand_ai_key(key: &str) -> bool {
     !HAND_DELETED.contains(&key)

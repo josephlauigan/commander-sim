@@ -1,0 +1,125 @@
+# Deck plan (audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic policy
+# (ai/plans.rs `config`). JD's Aragorn, the Uniter deck (four-colour spell burn, key `aragorn`, tiers t4-t5), built
+# 2026-11-06 from the Kefka and Sauron decks. PROVISIONAL: written from the deck document's game plan
+# (decklists/JD/aragorn-uniter.md, "Game plan" and "How it wins"), not from a paired test. The Breach line and its
+# rituals are Kefka's old plan (data/plans/kefka.toml, retired the same day).
+# Left out (the schema can't express it): the Breach turn's own gate (two escape candidates and five mana, held for
+# the storm turn); casting cheap red spells after Aragorn for his 3 damage each (the generic policy casts what it can).
+deck = "aragorn"
+default = "plan"
+engines = ["Rhystic Study", "Smothering Tithe", "Sylvan Library", "Niv-Mizzet, Parun", "Talrand, Sky Summoner",
+    "Fiery Emancipation", "Guttersnipe", "Storm-Kiln Artist"]
+
+[style]
+temp = 1.0
+aggression = 0.65
+caution = 0.55
+
+# Aragorn is the engine: every spell after him triggers; cast him as soon as {R}{G}{W}{U} is up
+[commander]
+prio = 90
+turn = 3
+
+[key_cards]
+"Underworld Breach" = 74
+"Fiery Emancipation" = 72
+"Jeska's Will" = 66
+"Niv-Mizzet, Parun" = 64
+"Talrand, Sky Summoner" = 62
+
+# win lines, best first: the tutors want the first missing piece of the closest one
+[[line]]
+name = "Underworld Breach + a storm card + a ritual"
+kind = "combo"
+pieces = [["Underworld Breach"], ["Brain Freeze", "Grapeshot"], ["Seething Song", "Desperate Ritual", "Rite of Flame", "Lotus Petal", "Manamorphose"]]
+
+[[line]]
+name = "Fiery Emancipation + red spells"
+kind = "value"
+pieces = [["Fiery Emancipation"], ["Guttersnipe", "Firebrand Archer", "Young Pyromancer", "Storm-Kiln Artist"]]
+
+[[wish]]
+cards = ["Rhystic Study", "Smothering Tithe", "Sylvan Library"]
+when = ["turn<=3"]
+score = 80
+
+[[wish]]
+cards = ["Underworld Breach"]
+when = ["commander-out & lands+rocks>=5"]
+score = 90
+
+[[wish]]
+cards = ["Fiery Emancipation"]
+when = ["commander-out & lands+rocks>=6"]
+score = 86
+
+# cast priorities: mana and fixing first (Aragorn needs all four colours), then the draw engines, then Aragorn
+[[prio]]
+cards = ["Sol Ring", "Arcane Signet", "Lotus Petal", "Birds of Paradise", "Noble Hierarch", "Three Visits",
+    "Nature's Lore", "Growth Spiral", "Faeburrow Elder"]
+when = ["turn<=4"]
+value = 86
+else = 44
+
+[[prio]]
+cards = ["Rhystic Study", "Smothering Tithe", "Sylvan Library"]
+when = ["turn<=6"]
+value = 78
+else = 60
+
+[[prio]]
+cards = ["Lightning Greaves"]
+when = ["commander-out"]
+value = 80
+else = 50
+
+[[prio]]
+cards = ["Guttersnipe", "Firebrand Archer", "Third Path Iconoclast", "Young Pyromancer", "Storm-Kiln Artist",
+    "Talrand, Sky Summoner", "Niv-Mizzet, Parun"]
+value = 66
+
+[[prio]]
+cards = ["Fiery Emancipation"]
+when = ["commander-out", "have:Guttersnipe", "out:Guttersnipe"]
+value = 76
+else = 50
+
+# Aura Shards (each creature entering, ours or a token, destroys an artifact or enchantment): no generic rule casts it
+# (it sat in hand in every game of the 11/06 analysis); cast once the board can start making creatures
+[[prio]]
+cards = ["Aura Shards"]
+when = ["turn>=3"]
+value = 58
+else = 30
+
+[[hold]]
+card = "Teferi's Protection"
+protects = ["commander", "Fiery Emancipation", "Underworld Breach"]
+
+[[hold]]
+card = "Heroic Intervention"
+protects = ["commander", "Fiery Emancipation"]
+
+[sets]
+tutors = ["Mystical Tutor", "Worldly Tutor"]
+engines = ["Rhystic Study", "Smothering Tithe", "Sylvan Library", "Niv-Mizzet, Parun", "Talrand, Sky Summoner"]
+pieces = ["Underworld Breach", "Brain Freeze", "Grapeshot", "Fiery Emancipation", "Jeska's Will"]
+
+[mulligan]
+fast_mana = true
+
+[[mulligan.rule]]
+when = ["hand-lands>=6"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands=0"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands=1 & fast<2"]
+keep = false
+
+[[mulligan.rule]]
+when = ["mana<2"]
+keep = false

@@ -31,10 +31,6 @@ fn options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
     brain::main_options(g, p, false).unwrap()
 }
 
-fn utility(opts: &[Opt], label: &str) -> f64 {
-    opts.iter().find(|o| o.label == label).unwrap_or_else(|| panic!("no option {label:?}")).utility
-}
-
 /// make the option with this label
 fn take_option(g: &mut Game, p: PlayerId, label: &str) -> bool {
     let opts = options(g, p);
@@ -93,15 +89,6 @@ fn rhystic_study() {
     perm(&mut g, P0, "Rhystic Study");
     on_cast(&mut g, P1, "Lightning Bolt"); // the caster has no mana to pay {1}
     assert_eq!(g.player(P0).hand.len(), 1);
-}
-
-#[test]
-fn sauron_casts_sheoldred_early() {
-    let mut g = table(&["sauron", "cloud"]);
-    lands(&mut g, P0, "Swamp", 4, false);
-    hand(&mut g, P0, &["Sheoldred, the Apocalypse", "Night's Whisper"]);
-    let opts = options(&mut g, P0);
-    assert!(utility(&opts, "Sheoldred, the Apocalypse") > utility(&opts, "Night's Whisper"));
 }
 
 #[test]

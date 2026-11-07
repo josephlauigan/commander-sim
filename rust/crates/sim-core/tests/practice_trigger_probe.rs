@@ -158,11 +158,13 @@ enum Sc {
 
 /// the moments to drive for these trigger conditions, and the lines no moment fits
 fn scenarios(lines: &[TLine]) -> (BTreeSet<Sc>, Vec<String>) {
-    let mut out = BTreeSet::new();
+    let mut acc = BTreeSet::new();
     let mut none = vec![];
     for t in lines {
+        // this line's own moments (a moment an earlier line already needs still counts for this one)
+        let mut out = BTreeSet::new();
         let lc = &t.cond;
-        let n0 = out.len();
+        let n0 = 0;
         let has = |w: &str| lc.contains(w);
         // another player's turn: "each opponent's upkeep", "an opponent casts", "attacks you"
         let opp = [
@@ -249,8 +251,9 @@ fn scenarios(lines: &[TLine]) -> (BTreeSet<Sc>, Vec<String>) {
         if out.len() == n0 {
             none.push(t.full.clone());
         }
+        acc.extend(out);
     }
-    (out, none)
+    (acc, none)
 }
 
 struct Rec {
@@ -861,12 +864,12 @@ const TO_FIX: &[&str] = &[];
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
     (
-        "thanos: Karn, Scion of Urza (Activate(0))",
-        "+1 \"an opponent chooses one of them\": the opponent is an AI seat, which rightly chooses; the person is told both revealed cards and the log names which goes where. The person's choices are -1 (which silver-counter card; asked, see practice_trigger_fixes) and nothing in -2",
+        "aragorn: Tezzeret, Cruel Captain (Activate(2))",
+        "the -7 only gives the emblem; the emblem's target (the artifact that gets three +1/+1 counters) is chosen, and asked of a person, at the beginning of combat (t6_godo::tez_emblem, tests/model_gaps_karn.rs)",
     ),
     (
-        "kefka: Blightspeaker (Activate(1))",
-        "the Rebel search ({4},{T}) asks which Rebel (practice_trigger_fixes), but the probe's library holds no Rebel with mana value 3 or less, so there is nothing to choose and it only logs that none was found",
+        "thanos: Karn, Scion of Urza (Activate(0))",
+        "+1 \"an opponent chooses one of them\": the opponent is an AI seat, which rightly chooses; the person is told both revealed cards and the log names which goes where. The person's choices are -1 (which silver-counter card; asked, see practice_trigger_fixes) and nothing in -2",
     ),
     (
         "thrasios: Necropotence (Discard (state only))",

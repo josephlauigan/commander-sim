@@ -9,6 +9,8 @@ use crate::cards::CardDb;
 use crate::hooks::Registry;
 
 pub mod alela;
+pub mod aragorn; // --- aragorn (2026-11-06): Aragorn, the Uniter's four cast triggers
+pub mod breach_line; // --- aragorn-ai (2026-11-06): the Underworld Breach line, restored for every deck
 pub mod combos;
 pub mod common;
 pub mod fixes;
@@ -143,6 +145,7 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     galadriel::register(&mut r, db)?;
     yshtola::register(&mut r, db)?;
     alela::register(&mut r, db)?;
+    aragorn::register(&mut r, db)?;
     legends::register(&mut r, db)?;
     kefka::register(&mut r, db)?;
     bites::register(&mut r, db)?;

@@ -15,8 +15,8 @@ macro_rules! srv {
     };
 }
 
-fn new_sauron(c: &mut Client, seed: u64) -> Value {
-    let r = c.new_game("sauron", "t2", seed);
+fn new_aragorn(c: &mut Client, seed: u64) -> Value {
+    let r = c.new_game("aragorn", "t2", seed);
     assert_eq!(r.status, 200, "{}", String::from_utf8_lossy(&r.body));
     r.json()
 }
@@ -53,14 +53,14 @@ fn test_the_page_sets_a_seat_cookie() {
 fn test_hint() {
     let s = srv!();
     let mut c = s.client();
-    new_sauron(&mut c, 4);
+    new_aragorn(&mut c, 4);
     wait_for(&mut c, 0, is_request);
     let r = c.post("/api/hint", json!({}));
     assert_eq!(r.status, 200);
     assert!(r.json().get("text").is_some()); // mulligan: no hint for it yet
     c.post(
         "/api/new",
-        json!({"deck": "sauron", "tier": "t2", "seed": 4, "ai": "adaptive", "images": false, "tools": {"hint": false}}),
+        json!({"deck": "aragorn", "tier": "t2", "seed": 4, "ai": "adaptive", "images": false, "tools": {"hint": false}}),
     );
     wait_for(&mut c, 0, is_request);
     let r = c.post("/api/hint", json!({}));
@@ -84,7 +84,7 @@ fn test_no_decision_waiting_for_a_hint() {
 fn test_review_waits_for_the_end() {
     let s = srv!();
     let mut c = s.client();
-    new_sauron(&mut c, 4);
+    new_aragorn(&mut c, 4);
     wait_for(&mut c, 0, is_request);
     let r = c.get("/api/review");
     assert_eq!(r.status, 409);
@@ -96,7 +96,7 @@ fn test_review_waits_for_the_end() {
 fn test_save_list_and_load() {
     let s = srv!();
     let mut c = s.client();
-    new_sauron(&mut c, 4);
+    new_aragorn(&mut c, 4);
     let mull = wait_for(&mut c, 0, is_request);
     c.answer(mull["id"].as_u64().unwrap(), json!("keep"));
     let nxt = wait_for(&mut c, mull["id"].as_u64().unwrap(), is_request);
@@ -152,7 +152,7 @@ fn test_the_game_saves_itself_at_each_of_your_decisions() {
         }
         panic!("no autosave with {answers} answers");
     };
-    new_sauron(&mut c, 4);
+    new_aragorn(&mut c, 4);
     let mull = wait_for(&mut c, 0, is_request);
     assert_eq!(autosaved(0)["seed"], 4);
     c.answer(mull["id"].as_u64().unwrap(), json!("keep"));
@@ -160,7 +160,7 @@ fn test_the_game_saves_itself_at_each_of_your_decisions() {
     autosaved(1);
     let listed = c.get("/api/saves").json();
     assert!(listed["saves"].as_array().unwrap().iter().all(|x| x["name"] != "autosave.json")); // not among your saved games
-    assert_eq!((listed["autosave"]["deck"].as_str(), listed["autosave"]["seed"].as_u64()), (Some("sauron"), Some(4)));
+    assert_eq!((listed["autosave"]["deck"].as_str(), listed["autosave"]["seed"].as_u64()), (Some("aragorn"), Some(4)));
     // the app closed by iOS: the game is gone, its autosave isn't (loading replaces the running game, as a restart does)
     assert!(s.save_file("autosave.json").is_some());
     assert_eq!(c.post("/api/load", json!({"name": "autosave.json", "images": false})).status, 200);
@@ -202,7 +202,7 @@ fn test_catching_up_sends_only_the_last_table() {
     // last table (one event with a "view")
     let s = srv!();
     let mut c = s.client();
-    new_sauron(&mut c, 4);
+    new_aragorn(&mut c, 4);
     let (_, last) = play(&mut c, 6, false);
     let mut late = c.stream(0, None);
     let evs = late.until(60, |e| e["id"].as_u64() == Some(last));
@@ -224,7 +224,7 @@ fn test_options() {
     let d = r.json();
     let mut decks: Vec<&str> = d["decks"].as_array().unwrap().iter().map(|x| x["key"].as_str().unwrap()).collect();
     decks.sort();
-    assert_eq!(decks, ["cloud", "kefka", "sauron", "sheoldred", "thanos", "thrasios", "yshtola"]);
+    assert_eq!(decks, ["aragorn", "cloud", "sheoldred", "thanos", "thrasios", "yshtola"]);
     let tiers: Vec<&str> = d["tiers"].as_array().unwrap().iter().map(|x| x["key"].as_str().unwrap()).collect();
     assert_eq!(tiers, ["t0", "t1", "t2", "t3", "t4", "t5", "t6"]);
     assert_eq!(d["tiers"][2]["decks"].as_array().unwrap().len(), 5);
@@ -322,8 +322,8 @@ fn test_auto_pass() {
 fn test_a_game_from_the_browser() {
     let s = srv!();
     let mut c = s.client();
-    let r = new_sauron(&mut c, 7);
-    assert!(r["seats"].as_array().unwrap().iter().any(|x| x == "sauron"));
+    let r = new_aragorn(&mut c, 7);
+    assert!(r["seats"].as_array().unwrap().iter().any(|x| x == "aragorn"));
     assert_eq!(r["seed"], 7);
     let mull = wait_for(&mut c, 0, is_request);
     assert_eq!(mull["request"]["kind"], "mulligan");
@@ -339,7 +339,7 @@ fn test_a_game_from_the_browser() {
     let view = &state["view"];
     let players = view["players"].as_array().unwrap();
     let me = players.iter().find(|p| p["you"] == true).unwrap();
-    assert_eq!(me["key"], "sauron");
+    assert_eq!(me["key"], "aragorn");
     assert!(me.get("hand").is_some());
     assert!(players.iter().filter(|p| p["you"] != true).all(|p| p.get("hand").is_none())); // their hands are counts only
     for k in ["game", "busy", "host", "lan", "lobby", "view", "pending", "images", "last_event", "proposal"] {
@@ -353,7 +353,7 @@ fn test_a_game_from_the_browser() {
 fn test_events_have_increasing_ids_and_known_kinds() {
     let s = srv!();
     let mut c = s.client();
-    new_sauron(&mut c, 7);
+    new_aragorn(&mut c, 7);
     let mut st = c.stream(0, None);
     assert_eq!(st.status, 200);
     assert!(st.content_type.contains("text/event-stream"), "{}", st.content_type);

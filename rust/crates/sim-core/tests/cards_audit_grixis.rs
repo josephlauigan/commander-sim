@@ -28,24 +28,6 @@ fn sauron_tutor_never_takes_the_old_list_or_a_lone_assault() {
 }
 
 #[test]
-fn sauron_tutor_ringsight_wants_the_archivist_with_bowmasters_out() {
-    let mut g = sauron_table();
-    perm(&mut g, P0, "The Ozolith");
-    perm(&mut g, P0, "Orcish Bowmasters");
-    zones::amass(&mut g, P0, 2).unwrap();
-    assert_eq!(decks::tutor_pick(&g, P0, "ubr"), Some(card(&g, "Jace's Archivist")));
-}
-
-#[test]
-fn sauron_tutor_fetches_sol_ring_when_short_of_mana() {
-    let mut g = table(&["sauron", "cloud"]);
-    lands(&mut g, P0, "Island", 2, false);
-    g.player_mut(P0).turns = 3;
-    zones::amass(&mut g, P0, 1).unwrap();
-    assert_eq!(decks::tutor_pick(&g, P0, "any"), Some(card(&g, "Sol Ring")));
-}
-
-#[test]
 fn sauron_holds_mana_up_for_two_counters_more_than_for_one() {
     use sim_core::ai::brain;
     let mut g = sauron_table();

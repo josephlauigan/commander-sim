@@ -189,7 +189,7 @@ impl Settings {
             Profile::Loose => (6, 6, 0),
         };
         let cthresh: HashMap<String, i32> =
-            ["sauron", "yshtola", "kefka", "omnath", "sheoldred", "cloud"]
+            ["yshtola", "omnath", "sheoldred", "cloud"]
                 .iter()
                 .map(|k| (k.to_string(), mine))
                 .collect();

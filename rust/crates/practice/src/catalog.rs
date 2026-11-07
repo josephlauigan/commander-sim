@@ -11,10 +11,9 @@ use std::path::{Path, PathBuf};
 
 pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 /// the decks the setup screen offers, in the order of data/my_decks.toml (error messages list them so)
-pub const MY_DECKS: [&str; 7] = [
-    "sauron",
+pub const MY_DECKS: [&str; 6] = [
+    "aragorn",
     "yshtola",
-    "kefka",
     "sheoldred",
     "cloud",
     "thrasios",
@@ -113,9 +112,8 @@ pub fn win_rates(text: &str) -> BTreeMap<String, Vec<f64>> {
         }
         let cells: Vec<&str> = line.trim().trim_matches('|').split('|').map(str::trim).collect();
         let key = match cells[0].to_lowercase().as_str() {
-            "sauron" => "sauron",
+            "aragorn" => "aragorn",
             "y'shtola" | "yshtola" => "yshtola",
-            "kefka" => "kefka",
             "sheoldred" => "sheoldred",
             "cloud" => "cloud",
             _ => continue,
@@ -363,10 +361,10 @@ mod tests {
 
     #[test]
     fn results_table() {
-        let t = "### 0d. Look-ahead\n| Deck | T1 | T2 | T3 | T4 | T5 |\n| Sauron | 39.7% (a) | 51.2% | 38.5% | 33.9% | 22.2% |\n\
-                 | Sauron | 1% | 1% | 1% | 1% | 1% |\n| Alela | 10% | 20% | x | 1% | 2% |\n## next\n| Najeela | 1% | 1% | 1% | 1% | 1% |\n";
+        let t = "### 0d. Look-ahead\n| Deck | T1 | T2 | T3 | T4 | T5 |\n| Aragorn | 39.7% (a) | 51.2% | 38.5% | 33.9% | 22.2% |\n\
+                 | Aragorn | 1% | 1% | 1% | 1% | 1% |\n| Alela | 10% | 20% | x | 1% | 2% |\n## next\n| Najeela | 1% | 1% | 1% | 1% | 1% |\n";
         let r = win_rates(t);
-        assert_eq!(r["sauron"], vec![39.7, 51.2, 38.5, 33.9, 22.2]);
+        assert_eq!(r["aragorn"], vec![39.7, 51.2, 38.5, 33.9, 22.2]);
         assert!(!r.contains_key("alela") && !r.contains_key("najeela"));
     }
 }

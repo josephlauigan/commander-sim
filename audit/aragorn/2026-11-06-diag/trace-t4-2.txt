@@ -1,0 +1,217 @@
+Play-by-play of pool game 2 (seed 500002): Aragorn vs Tier 4 (Low B4), loose profile, lookahead AI
+Seat order: Yuriko, Krenko, Chulane, Aragorn
+R1  --- Yuriko turn 1: life 40, 7 cards in hand, 0 lands
+R1    Yuriko plays Exotic Orchard
+R1  --- Krenko turn 1: life 40, 7 cards in hand, 0 lands
+R1    Krenko plays Mountain
+R1  --- Chulane turn 1: life 40, 7 cards in hand, 0 lands
+R1    Chulane plays Sea of Clouds
+R1  --- Aragorn turn 1: life 40, 7 cards in hand, 0 lands
+R1    Aragorn plays Tundra
+R2  --- Yuriko turn 2: life 40, 7 cards in hand, 1 lands
+R2    Yuriko plays Otawara, Soaring City
+R2        [Yuriko decides: Tetsuko Umezawa, Fugitive 100%, stop 0% -> Tetsuko Umezawa, Fugitive [search]]
+R2    Yuriko casts Tetsuko Umezawa, Fugitive
+R2  --- Krenko turn 2: life 40, 7 cards in hand, 1 lands
+R2    Krenko plays Arena of Glory
+R2        [Krenko decides: Legion Warboss 34%, Marvin, Murderous Mimic 34%, Impact Tremors 31%, stop 0% -> Legion Warboss [search]]
+R2    Krenko casts Legion Warboss
+R2  --- Chulane turn 2: life 40, 7 cards in hand, 1 lands
+R2    Chulane plays Forest
+R2        [Chulane decides: Destiny Spinner 100%, Swords to Plowshares -> Tetsuko Umezawa, Fugitive 0%, stop 0% -> Destiny Spinner [search]]
+R2    Chulane casts Destiny Spinner
+R2    Aragorn casts Path to Exile -> Destiny Spinner (Chulane)
+R2      Destiny Spinner (Chulane) is removed: exile
+R2        [Aragorn end of turn: Path to Exile -> Destiny Spinner 100%, pass 0% -> Path to Exile -> Destiny Spinner]
+R2  --- Aragorn turn 2: life 40, 6 cards in hand, 1 lands
+R2    Aragorn plays Forest
+R3  --- Yuriko turn 3: life 40, 6 cards in hand, 2 lands
+R3    Yuriko plays Island
+R3        [Yuriko attack plan by search: none at Krenko]
+R3  --- Krenko turn 3: life 40, 6 cards in hand, 2 lands
+R3    Krenko plays Mountain
+R3        [Krenko decides: Krenko, Mob Boss 66%, Sol Ring 28%, Marvin, Murderous Mimic 3%, Impact Tremors 3% -> Impact Tremors [search]]
+R3    Krenko casts Impact Tremors
+R3      Yuriko casts Counterspell at Impact Tremors
+R3      Yuriko counters Impact Tremors with Counterspell
+R3        [Krenko decides: Sol Ring 93%, Marvin, Murderous Mimic 7%, stop 0% -> Sol Ring [search]]
+R3    Krenko casts Sol Ring
+R3        [Krenko decides: Marvin, Murderous Mimic 100%, stop 0% -> Marvin, Murderous Mimic [search]]
+R3    Krenko casts Marvin, Murderous Mimic
+R3        [Krenko attack plan by search: filtered at Chulane]
+R3    Krenko attacks Chulane with 2 creature(s): 4 damage (life now 36)
+R3  --- Chulane turn 3: life 36, 6 cards in hand, 3 lands
+R3    Chulane plays Flooded Strand
+R3      cracks Flooded Strand for Spara's Headquarters
+R3        [Chulane decides: Sol Ring 98%, Oko, Thief of Crowns 2%, Swords to Plowshares -> Tetsuko Umezawa, Fugitive 0%, stop 0% -> Sol Ring [search]]
+R3    Chulane casts Sol Ring
+R3        [Chulane decides: Oko, Thief of Crowns 100%, Swords to Plowshares -> Tetsuko Umezawa, Fugitive 0%, stop 0% -> Oko, Thief of Crowns [search]]
+R3    Chulane casts Oko, Thief of Crowns
+R3        [Chulane decides: Oko, Thief of Crowns +2 100%, stop 0% -> Oko, Thief of Crowns +2 [search]]
+R3    Chulane uses Oko, Thief of Crowns (+2): Food
+R3  --- Aragorn turn 3: life 40, 6 cards in hand, 2 lands
+R3    Aragorn pays 2 life for an untapped Temple Garden
+R3    Aragorn plays Temple Garden
+R3        [Aragorn decides: Tezzeret, Cruel Captain 87%, Frantic Search 13%, stop 0% -> Tezzeret, Cruel Captain [search]]
+R3    Aragorn casts Tezzeret, Cruel Captain
+R3        [Aragorn decides: Tezzeret, Cruel Captain -3 100%, stop 0% -> Tezzeret, Cruel Captain -3 [search]]
+R3    Aragorn uses Tezzeret, Cruel Captain (-3): search for an artifact with mana value 1 or less
+R3      Aragorn reveals Lotus Petal and puts it into their hand
+R3        [Aragorn decides: Lotus Petal 100%, stop 0% -> Lotus Petal [search]]
+R3    Aragorn casts Lotus Petal
+R4  --- Yuriko turn 4: life 40, 5 cards in hand, 3 lands
+R4    Yuriko pays 2 life for an untapped Watery Grave
+R4    Yuriko plays Watery Grave
+R4        [Yuriko decides: stop 99%, Kaito, Bane of Nightmares 1% -> stop [search]]
+R4        [Yuriko attack plan by search: none at Krenko]
+R4        [Yuriko decides: Kaito, Bane of Nightmares 100%, stop 0% -> Kaito, Bane of Nightmares [search]]
+R4    Yuriko casts Kaito, Bane of Nightmares
+R4        [Yuriko decides: Kaito, Bane of Nightmares +1 54%, Kaito, Bane of Nightmares -2 25%, Kaito, Bane of Nightmares +0 21%, stop 0% -> Kaito, Bane of Nightmares +1 [search]]
+R4    Yuriko uses Kaito, Bane of Nightmares (+1): emblem: Ninjas +1/+1
+R4      Yuriko gets an emblem: Ninjas they control get +1/+1
+R4  --- Krenko turn 4: life 40, 3 cards in hand, 3 lands
+R4    Krenko plays Mountain
+R4        [Krenko decides: Krenko, Mob Boss 98%, Siege-Gang Commander 2%, stop 0% -> Krenko, Mob Boss [search]]
+R4    Krenko casts Krenko, Mob Boss
+R4        [Krenko decides: Marvin (Krenko): Krenko: 4 Goblins 99%, stop 1% -> Marvin (Krenko): Krenko: 4 Goblins [search]]
+R4    Krenko makes 4 Goblins
+R4        [Krenko attack plan by search: filtered at Chulane]
+R4      Legion Warboss deals 2 to Oko, Thief of Crowns (loyalty 4)
+R4      Token deals 2 to Oko, Thief of Crowns (loyalty 2)
+R4      Token deals 2 to Oko, Thief of Crowns (loyalty 0)
+R4    Krenko attacks Chulane with 3 creature(s): 6 damage (life now 35)
+R4  --- Chulane turn 4: life 35, 4 cards in hand, 4 lands
+R4        [Chulane decides: Priest of Titania 43%, Chulane, Teller of Tales 29%, Swords to Plowshares -> Krenko, Mob Boss 24%, Tatyova, Benthic Druid 2% -> Enduring Vitality [search]]
+R4    Chulane casts Enduring Vitality
+R4        [Chulane decides: Swords to Plowshares -> Krenko, Mob Boss 98%, stop (hold mana) 2%, Lightning Greaves 0% -> Swords to Plowshares -> Krenko, Mob Boss [search]]
+R4    Chulane casts Swords to Plowshares -> Krenko, Mob Boss (Krenko)
+R4      Krenko, Mob Boss (Krenko) is removed: exile
+R4        [Chulane decides: Lightning Greaves 100%, stop 0% -> Lightning Greaves [search]]
+R4    Chulane casts Lightning Greaves
+R4        [Chulane decides: equip Lightning Greaves 100%, stop 0% -> equip Lightning Greaves [search]]
+R4    Chulane equips Lightning Greaves to Enduring Vitality
+R4        [Chulane attack plan by search: none at Yuriko]
+R4  --- Aragorn turn 4: life 38, 5 cards in hand, 3 lands
+R4        [Aragorn decides: Aragorn, the Uniter 91%, Smothering Tithe 6%, Grand Abolisher 2%, stop (hold mana) 0% -> Aragorn, the Uniter [search]]
+R4    Aragorn casts Aragorn, the Uniter
+R5  --- Yuriko turn 5: life 38, 4 cards in hand, 4 lands
+R5        [Yuriko decides: stop 81%, Kaito, Bane of Nightmares -2 8%, Kaito, Bane of Nightmares +1 8%, Kaito, Bane of Nightmares +0 3% -> stop [search]]
+R5        [Yuriko attack plan by search: all at Krenko]
+R5      ninjutsu: Yuriko, the Tiger's Shadow replaces Tetsuko Umezawa, Fugitive
+R5      Yuriko reveals Faerie Seer: each opponent loses 1
+R5      Yuriko reveals An Offer You Can't Refuse: each opponent loses 1
+R5    Yuriko attacks Krenko with 2 creature(s): 6 damage (life now 35)
+R5        [Yuriko decides: Faerie Seer 65%, Kaito, Bane of Nightmares +0 24%, Tetsuko Umezawa, Fugitive 4%, stop (hold mana) 3% -> Kaito, Bane of Nightmares +0 [search]]
+R5    Yuriko uses Kaito, Bane of Nightmares (+0): surveil 2, draw per opponent hurt
+R5        [Yuriko decides: Faerie Seer 90%, Tetsuko Umezawa, Fugitive 5%, stop (hold mana) 4% -> Faerie Seer [search]]
+R5    Yuriko casts Faerie Seer
+R5  --- Krenko turn 5: life 35, 3 cards in hand, 4 lands
+R5    Krenko plays Mountain
+R5        [Krenko decides: Krenko, Mob Boss 69%, Siege-Gang Commander 17%, Jeska's Will 14%, stop 0% -> Krenko, Mob Boss [search]]
+R5    Krenko casts Krenko, Mob Boss
+R5        [Krenko decides: Marvin (Krenko): Krenko: 9 Goblins 100%, stop 0% -> Marvin (Krenko): Krenko: 9 Goblins [search]]
+R5    Krenko makes 9 Goblins
+R5        [Krenko attack plan by search: none at Yuriko]
+R5  --- Chulane turn 5: life 33, 2 cards in hand, 4 lands
+R5        [Chulane decides: Chulane, Teller of Tales 78%, Priest of Titania 17%, Tatyova, Benthic Druid 5%, Esper Sentinel 1% -> Chulane, Teller of Tales [search]]
+R5    Chulane casts Chulane, Teller of Tales
+R5        [Chulane decides: Priest of Titania 82%, Esper Sentinel 18%, stop 0% -> Priest of Titania [search]]
+R5    Chulane casts Priest of Titania
+R5  --- Aragorn turn 5: life 36, 6 cards in hand, 3 lands
+R5    Aragorn plays Seaside Citadel
+R5        [Aragorn decides: Grand Abolisher 92%, Frantic Search 8%, stop 0% -> Grand Abolisher [search]]
+R5    Aragorn casts Grand Abolisher
+R5        [Aragorn attack plan by search: none at Yuriko]
+R6  --- Yuriko turn 6: life 38, 7 cards in hand, 4 lands
+R6    Yuriko plays Swamp
+R6        [Yuriko decides: Ornithopter 37%, Dig Through Time 17%, stop (hold mana) 17%, Treasure Cruise 14% -> Ornithopter [search]]
+R6    Yuriko casts Ornithopter
+R6        [Yuriko decides: Dig Through Time 27%, stop (hold mana) 27%, Treasure Cruise 22%, Tetsuko Umezawa, Fugitive 18% -> Dig Through Time [search]]
+R6    Yuriko casts Dig Through Time
+R6        [Yuriko decides: Deadly Rollick -> Chulane, Teller of Tales 90%, stop (hold mana) 8%, Kaito, Bane of Nightmares -2 1%, Kaito, Bane of Nightmares +1 1% -> Deadly Rollick -> Chulane, Teller of Tales [search]]
+R6    Yuriko casts Deadly Rollick -> Krenko, Mob Boss (Krenko)
+R6      Krenko, Mob Boss (Krenko) is removed: exile
+R6        [Yuriko decides: stop (hold mana) 76%, Kaito, Bane of Nightmares -2 12%, Kaito, Bane of Nightmares +1 10%, Kaito, Bane of Nightmares +0 2% -> stop (hold mana) [search]]
+R6        [Yuriko attack plan by search: all at Chulane]
+R6      ninjutsu: Ingenious Infiltrator replaces Faerie Seer
+R6      Yuriko reveals Arcane Signet: each opponent loses 2
+R6      Yuriko reveals Brainstorm: each opponent loses 1
+R6    Yuriko attacks Chulane with 3 creature(s): 5 damage (life now 25)
+R6        [Yuriko decides: Snuff Out -> Chulane, Teller of Tales 91%, Kaito, Bane of Nightmares +0 7%, Kaito, Bane of Nightmares +1 1%, Kaito, Bane of Nightmares -2 1% -> Snuff Out -> Chulane, Teller of Tales [search]]
+R6    Yuriko casts Snuff Out -> Chulane, Teller of Tales (Chulane)
+R6      Chulane, Teller of Tales (Chulane) is removed: destroy
+R6        [Yuriko decides: Kaito, Bane of Nightmares +0 79%, Kaito, Bane of Nightmares +1 15%, Kaito, Bane of Nightmares -2 6%, stop 0% -> Kaito, Bane of Nightmares +0 [search]]
+R6    Yuriko uses Kaito, Bane of Nightmares (+0): surveil 2, draw per opponent hurt
+R6  --- Krenko turn 6: life 32, 3 cards in hand, 5 lands
+R6    Krenko plays Mountain
+R6        [Krenko decides: Krenko, Mob Boss 55%, Siege-Gang Commander 41%, Jeska's Will 4%, stop 0% -> Krenko, Mob Boss [search]]
+R6    Krenko casts Krenko, Mob Boss
+R6        [Krenko decides: Marvin (Krenko): Krenko: 19 Goblins 100%, stop 0% -> Marvin (Krenko): Krenko: 19 Goblins [search]]
+R6    Krenko makes 19 Goblins
+R6        [Krenko attack plan by search: filtered at Chulane]
+R6    Krenko attacks Chulane with 18 creature(s): 22 damage (life now 3)
+R6  --- Chulane turn 6: life 3, 3 cards in hand, 4 lands
+R6    Chulane plays Forest
+R6        [Chulane decides: Chulane, Teller of Tales 53%, Tatyova, Benthic Druid 36%, Lotus Cobra 9%, Esper Sentinel 2% -> Chulane, Teller of Tales [search]]
+R6    Chulane casts Chulane, Teller of Tales
+R6        [Chulane decides: Esper Sentinel 100%, stop 0% -> Esper Sentinel [search]]
+R6    Chulane casts Esper Sentinel
+R6  --- Aragorn turn 6: life 33, 5 cards in hand, 4 lands
+R6        [Aragorn decides: stop (hold mana) 100%, Smothering Tithe 0%, Frantic Search 0% -> stop (hold mana) [search]]
+R6        [Aragorn attack plan by search: none at Yuriko]
+R6        [Aragorn decides: stop (hold mana) 100%, Smothering Tithe 0%, Frantic Search 0% -> stop (hold mana) [search]]
+R7  --- Yuriko turn 7: life 34, 7 cards in hand, 5 lands
+R7    Yuriko plays Swamp
+R7        [Yuriko decides: Sink into Stupor // Soporific Springs -> Chulane, Teller of Tales 73%, Faerie Seer 15%, stop (hold mana) 7%, Spectral Sailor 3% -> Sink into Stupor // Soporific Springs -> Chulane, Teller of Tales [search]]
+R7    Yuriko casts Sink into Stupor // Soporific Springs -> Chulane, Teller of Tales (Chulane)
+R7      Chulane, Teller of Tales (Chulane) is removed: bounce
+R7        [Yuriko decides: stop (hold mana) 77%, Kaito, Bane of Nightmares +1 12%, Kaito, Bane of Nightmares -2 9%, Kaito, Bane of Nightmares +0 2% -> stop (hold mana) [search]]
+R7        [Yuriko attack plan by search: filtered at Krenko]
+R7      Yuriko reveals Hydroelectric Specimen // Hydroelectric Laboratory: each opponent loses 3
+R7      Yuriko reveals Temporal Mastery: each opponent loses 7
+R7  *** Chulane is eliminated (life -7) by Yuriko
+R7    Yuriko attacks Krenko with 3 creature(s): 5 damage (life now 17)
+R7        [Yuriko decides: Cyclonic Rift -> Krenko, Mob Boss 98%, stop (hold mana) 1%, Kaito, Bane of Nightmares +0 0%, Kaito, Bane of Nightmares +1 0% -> Arcane Signet [search]]
+R7    Yuriko casts Arcane Signet
+R7        [Yuriko decides: stop (hold mana) 65%, Kaito, Bane of Nightmares +0 16%, Kaito, Bane of Nightmares +1 10%, Kaito, Bane of Nightmares -2 8% -> Kaito, Bane of Nightmares +1 [search]]
+R7    Yuriko uses Kaito, Bane of Nightmares (+1): emblem: Ninjas +1/+1
+R7      Yuriko gets an emblem: Ninjas they control get +1/+1
+R7        [Yuriko decides: stop (hold mana) 100%, Faerie Seer 0%, Spectral Sailor 0% -> stop (hold mana) [search]]
+R7  --- Krenko turn 7: life 17, 3 cards in hand, 6 lands
+R7        [Krenko decides: Marvin (Krenko): Krenko: 38 Goblins 49%, Krenko: 38 Goblins 49%, Goblin Ringleader 1%, Siege-Gang Commander 1% -> stop [search]]
+R7        [Krenko attack plan by search: filtered at Yuriko]
+R7        [Krenko keeps 4 creature(s) home as blockers]
+R7  *** Yuriko is eliminated (life -6) by Krenko
+R7    Krenko attacks Yuriko with 35 creature(s): 40 damage (life now -6)
+R7        [Krenko decides: Goblin Ringleader 46%, Siege-Gang Commander 38%, Jeska's Will 15%, stop 0% -> Goblin Ringleader [search]]
+R7    Krenko casts Goblin Ringleader
+R7      Aragorn casts Mana Drain at Goblin Ringleader
+R7      Aragorn counters Goblin Ringleader with Mana Drain
+R7        [Krenko decides: Siege-Gang Commander 71%, Jeska's Will 29%, stop 0% -> Siege-Gang Commander [search]]
+R7    Krenko casts Siege-Gang Commander
+R7  --- Aragorn turn 7: life 23, 5 cards in hand, 4 lands
+R7        [Aragorn decides: Smothering Tithe 80%, Three Visits 16%, Frantic Search 3%, stop 0% -> Smothering Tithe [search]]
+R7    Aragorn casts Smothering Tithe
+R7        [Aragorn decides: Three Visits 83%, Frantic Search 17%, stop 0% -> Three Visits [search]]
+R7    Aragorn casts Three Visits
+R7        [Aragorn decides: Frantic Search 100%, stop 0% -> Frantic Search [search]]
+R7    Aragorn casts Frantic Search
+R7        [Aragorn decides: Skullclamp 52%, Noble Hierarch 47%, stop 0% -> Skullclamp [search]]
+R7    Aragorn casts Skullclamp
+R7        [Aragorn decides: Skullclamp 38%, Noble Hierarch 33%, Tezzeret, Cruel Captain -3 29%, stop 0% -> Skullclamp [search]]
+R7    Aragorn Skullclamps Token
+R7        [Aragorn decides: Skullclamp 38%, Noble Hierarch 33%, Tezzeret, Cruel Captain -3 29%, stop 0% -> Skullclamp [search]]
+R7    Aragorn Skullclamps Token
+R7        [Aragorn decides: Tezzeret, Cruel Captain -3 100%, stop 0% -> Tezzeret, Cruel Captain -3 [search]]
+R7    Aragorn uses Tezzeret, Cruel Captain (-3): search for an artifact with mana value 1 or less
+R7      Aragorn reveals Sol Ring and puts it into their hand
+R7    Aragorn plays Brushland
+R7        [Aragorn attack plan by search: none at Krenko]
+R7        [Aragorn decides: Noble Hierarch 50%, Sol Ring 50%, stop 0% -> stop [search]]
+R8  --- Krenko turn 8: life 17, 2 cards in hand, 6 lands
+R8    Krenko plays Mountain
+R8        [Krenko decides: Marvin (Krenko): Krenko: 43 Goblins 50%, Krenko: 43 Goblins 50%, Jeska's Will 1%, Marvin copies Siege-Gang Commander: Marvin, Murderous Mimic -> Grand Abolisher 0% -> stop [search]]
+R8        [Krenko attack plan by search: filtered at Aragorn]
+R8  *** Aragorn is eliminated (life -26) by Krenko
+R8    Krenko attacks Aragorn with 44 creature(s): 49 damage (life now -26)
+Winner: Krenko (damage)
