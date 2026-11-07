@@ -8,6 +8,32 @@ day; their findings are in `audit/retired/kefka/` and `audit/retired/sauron/`). 
 not from a paired test). **Model:** 100 cards, Full 94, Full-auto 6; Aragorn's four cast triggers are card code
 (`impls/aragorn.rs`, `tests/cards_aragorn.rs`).
 
+## 2026-11-06: the Breach line restored, Aura Shards cast (engine and plan fix; t4, t5, look-ahead, loose, 2,000 games per tier, seed 500000, build in commit.txt)
+
+What changed: the Underworld Breach line (`impls/breach_line.rs`) is back for every deck holding Breach and a storm card
+(it had been deleted with Kefka's and Sauron's hand AI on 11/01), and the plan file casts Aura Shards. Raw:
+`audit/aragorn/2026-11-06-breach-line/analyze-t4.txt`, `analyze-t5.txt`.
+
+t4 **11.1%** (before 10.7%), t5 **8.6%** (before 7.7%): **9.9% over t4, t5** (before 9.2%). Both moves are inside the
+noise (intervals about +-1.3 points); same seeds, so the direction is real but small.
+
+**Why so little.** The line works when it comes up: every Breach line the deck executed won (dead or decked table),
+1.4% of games at t4 and 0.8% at t5. It rarely comes up: Breach and a storm card are both held on the deck's turn in
+only 6.5% (t4) and 4.6% (t5) of games, and the dry run passes in about a quarter of those (falling short mostly on
+mana, then graveyard fuel). Brain Freeze and Grapeshot are now cast in 3-6% of the games they are drawn (before about
+1%): one Breach and two storm cards in 100 is a thin line. Aura Shards is no longer stuck in hand.
+
+The rest of the picture is unchanged: Aragorn resolves in 90% / 85% of games (median turn 4); his red damage comes
+online in 59% / 54%; the deck dies to t4's go-wide decks (Krenko, Edgar Markov, Yuriko) and t5's combos (Kinnan, Urza,
+Zur, Yawgmoth: about 52%).
+
+**Next.** The win rate is now a fair read of the list. The swaps to test: more ways to find or rebuild the Breach line
+(tutors that find Breach or a storm card, more self-mill or fuel), more early interaction against t4's creature
+decks, and more stack interaction or graveyard-free answers to t5's combos.
+
+**Other decks.** The line now also plays for the pool's Breach decks (kraum-tymna-blue-breach-midrange,
+rograkh-silas-turbo-breach), so Tier 5 and Tier 6 tables are a little stronger than in the 11/06 baselines.
+
 ## Baseline 2026-11-06 (first run; look-ahead, loose, 2,000 games per tier, seed 500000, build d0672b24)
 
 t4 **10.7%** (9.4-12.1), t5 **7.7%** (6.6-9.0): **9.2% over t4, t5** (even share 25%). Raw:
