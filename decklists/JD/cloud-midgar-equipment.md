@@ -5,9 +5,6 @@ Equipment on him, every Equipment trigger happens twice. The deck wins by hangin
 (or on a backup carrier) and hitting. It is weak to board wipes and to artifact removal, and it needs Cloud, or
 another carrier, to survive.
 
-**Changed 2026-11-07 (JD, card-pile package C, adopted untested):** Rogue's Passage for a Plains and Sting, the
-Glinting Dagger for Disenchant. Evidence: `audit/cloud/FINDINGS.md`.
-
 | | |
 |---|---|
 | **Commander** | Cloud, Midgar Mercenary ({W}{W}, 2/1, white) |

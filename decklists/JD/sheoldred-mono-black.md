@@ -6,11 +6,6 @@ and Fate Unraveler beside her, and Exsanguinate, Peer into the Abyss and the San
 is weak when Sheoldred is exiled or keeps getting removed, and when the symmetric draw cards are played with no
 punisher out, because they then just refuel the table.
 
-**Changed 2026-11-07 (JD, card-pile package S):** Reanimate, Entomb, Diabolic Intent, Massacre Wurm, Yawgmoth's Will,
-Dreadhorde Invasion and Barad-dûr for Raise Dead, Cast Away Doubt, Darksteel Plate, Vanquish the Weak, Dark Deal,
-Otherworld Atlas and a Swamp. Tested with Diabolic Tutor out instead of Darksteel Plate: no clear effect (t3 +1.9,
-t4 -0.3, noise ±2.7); the AI rarely casts Entomb and Yawgmoth's Will. Evidence: `audit/sheoldred/FINDINGS.md`.
-
 | | |
 |---|---|
 | **Commander** | Sheoldred, the Apocalypse ({2}{B}{B}, 4/5 deathtouch, black) |

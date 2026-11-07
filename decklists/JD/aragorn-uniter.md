@@ -1,14 +1,8 @@
 # Aragorn, the Uniter — Four-Colour Spell Burn
 
 **Built 2026-11-06 (JD).** This deck replaces Kefka and Sauron, which are retired the same day, and is built from those
-two lists plus `binder-cards.txt`; `documents/aragorn-merge-swaps.md` is the physical swap guide. Eleven cards are
-bought: Aragorn and ten upgrades (see "Where the cards come from"). Deck key `aragorn`, tiers t4-t5.
-
-**Changed 2026-11-06 (JD, card-pile packages A1 + A2):** Austere Command, Nibelheim Aflame, Windborn Muse and Sokenzan
-for Big Score, Blossoming Defense, Grand Abolisher and a Mountain (A1: sweepers and an attack tax against t4's go-wide
-decks; t4 +4.3, t5 +2.4, both outside the noise). Paradise Druid, Spark Double and Llanowar Elves for Noble Hierarch,
-Three Visits and Growth Spiral (A2: cards JD owns for three still to buy; no clear effect either way). Three of the
-ten buys are no longer needed. Evidence: `audit/aragorn/FINDINGS.md`.
+two lists plus `binder-cards.txt`; `documents/aragorn-merge-swaps.md` is the physical swap guide. Eight cards are
+bought: Aragorn and seven upgrades (see "Where the cards come from"). Deck key `aragorn`, tiers t4-t5.
 
 A four-colour spell deck. Every spell you cast triggers Aragorn, and red spells are the clock: 3 damage to an
 opponent each, doubled by Veyran on instants and sorceries and tripled by Fiery Emancipation. White spells make
@@ -79,34 +73,29 @@ to target opponent. Whenever you cast a green spell, target creature gets +4/+4 
 
 | Source | Cards | Notes |
 |---|---|---|
-| Kefka only | 20 | Grapeshot, Jeska's Will, Lightning Bolt, Big Score, Guttersnipe, Veyran, Niv-Mizzet Parun, Young Pyromancer, Firebrand Archer, Storm-Kiln Artist, Triple Triad, Fiery Emancipation, Mystical Tutor, Frantic Search, Expressive Iteration, Twinned Vision, Lotus Petal, Spirebluff Canal, Stormcarved Coast, Mystic Sanctuary |
-| Kefka and Sauron | 9 | Counterspell, Chaos Warp, Arcane Signet, Exotic Orchard, Steam Vents, Shivan Reef, Sulfur Falls, Island, Mountain |
+| Kefka only | 19 | Grapeshot, Jeska's Will, Lightning Bolt, Guttersnipe, Veyran, Niv-Mizzet Parun, Young Pyromancer, Firebrand Archer, Storm-Kiln Artist, Triple Triad, Fiery Emancipation, Mystical Tutor, Frantic Search, Expressive Iteration, Twinned Vision, Lotus Petal, Spirebluff Canal, Stormcarved Coast, Mystic Sanctuary |
+| Kefka and Sauron | 8 | Counterspell, Chaos Warp, Arcane Signet, Exotic Orchard, Steam Vents, Shivan Reef, Sulfur Falls, Island |
 | Sauron only | 6 | Talrand, Comet Storm, Mana Drain, Force of Will, Mystic Confluence, Deflecting Swat |
 | Binder (also in Kefka or Sauron) | 9 | Underworld Breach, Brain Freeze, Skullclamp, Cyclonic Rift, Fact or Fiction, Sol Ring, Lightning Greaves, Command Tower, Path of Ancestry: the binder has a spare copy, so these don't need to come out of Sauron |
-| Binder only | 43 | The other white and green cards, Tezzeret, the rituals and Manamorphose, Swan Song, and most lands |
-| To buy | 11 | Aragorn, the Uniter, plus the ten upgrades below |
+| Binder only | 41 | The other white and green cards, Tezzeret, the rituals and Manamorphose, Swan Song, and most lands |
+| JD's spare-card pile | 7 | Austere Command, Nibelheim Aflame, Windborn Muse, Sokenzan, Paradise Druid, Spark Double, Llanowar Elves |
+| To buy | 8 | Aragorn, the Uniter, plus the seven upgrades below |
 | Basics to add | 2 | One Forest and one Plains (not in any list or the binder) |
 
-### The ten upgrades (bought instead of binder or Kefka filler)
-
-*2026-11-06: Noble Hierarch, Three Visits and Growth Spiral are no longer needed (replaced by Paradise Druid, Spark
-Double and Llanowar Elves, package A2), and Austere Command is back in (package A1), next to Swords to Plowshares.*
+### The seven upgrades (bought instead of binder or Kefka filler)
 
 | Buy | Replaces | Why |
 |---|---|---|
-| Swords to Plowshares | Austere Command | 1-mana removal instead of a 6-mana wipe, still a white trigger |
+| Swords to Plowshares | Austere Command | 1-mana removal instead of a 6-mana wipe, still a white trigger (Austere Command is in the deck too, from the spare-card pile) |
 | Teferi's Protection | Lagrella, the Magpie | Protects Aragorn and the combo turn |
-| Smothering Tithe | Paradise Druid | Treasure from every opponent's draw |
-| Noble Hierarch | Llanowar Elves | Makes three of Aragorn's four colours, plus exalted |
-| Three Visits | Rampant Growth | Fetches a Forest dual (Taiga, Tropical Island, Savannah, Temple Garden) untapped |
-| Nature's Lore | Sakura-Tribe Elder | The same as Three Visits; the land comes in untapped, where Sakura-Tribe Elder's comes in tapped |
-| Growth Spiral | Coiling Oracle | Instant ramp and a card: green and blue triggers |
+| Smothering Tithe | Paradise Druid | Treasure from every opponent's draw (Paradise Druid is in the deck too, from the spare-card pile) |
+| Nature's Lore | Sakura-Tribe Elder | Fetches a Forest dual (Taiga, Tropical Island, Savannah, Temple Garden) untapped, where Sakura-Tribe Elder's land comes in tapped |
 | Fierce Guardianship | Arcane Denial | Free with Aragorn out, no cards for opponents |
 | Third Path Iconoclast | Kessig Flamebreather | Red and blue on cast, and a Soldier token for every noncreature spell |
 | Rhystic Study | Think Twice | Card draw all game |
 
-All ten are Commander-legal and inside Aragorn's colours. New Tymna already runs Swords, Tithe, Rhystic Study, Fierce
-Guardianship and Noble Hierarch, so these are new copies. **Optional:** Lion's Eye Diamond for Rite of Flame would make
+All seven are Commander-legal and inside Aragorn's colours. New Tymna already runs Swords, Tithe, Rhystic Study and Fierce
+Guardianship, so these are new copies. **Optional:** Lion's Eye Diamond for Rite of Flame would make
 Breach + LED + Brain Freeze a real combo (not chosen yet; the New Tymna copy is the only one).
 
 **If Sauron stays a deck,** only the six "Sauron only" cards conflict, plus whichever of the nine shared cards the
@@ -117,7 +106,7 @@ physical Kefka copy doesn't cover.
   Firesinger, Birgi (the deck no longer wants to discard).
 - **Expensive or off-plan:** Niv-Mizzet the Firemind and Psychosis Crawler (the Kefka draw-to-damage win needed the
   flip), Jin-Gitaxias, Inferno Titan, Gilgamesh, Godo, Bribery, Solve the Equation, Chandra's Ignition,
-  Not of This World (Nibelheim Aflame came back in on 2026-11-06, package A1).
+  Not of This World.
 - **Small value:** Reality Shift, Price of Progress, Seize the Spoils, Palantír of Orthanc, Vandalblast (Aragorn's
   own rocks), Propaganda, Slip Out the Back, An Offer You Can't Refuse, the Marvel creatures, Mind Stone, Fellwar
   Stone, the Talismans.

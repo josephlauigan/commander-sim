@@ -12,13 +12,6 @@ It wins with one of two infinite combos, **Basalt Monolith + Rings of Brighthear
 Ur-Dragon and its Dragons (Glorybringer, Thundermaw Hellkite, Utvara Hellkite), Summon: Bahamut and Elesh Norn. It is weak to artifact
 wipes and Null Rod effects, to fast combo before turn 4, and to tables that punish slow, expensive top end.
 
-**Changed 2026-11-07 (JD, card-pile package TD2, adopted untested):** Scion of Draco, Crucible of Worlds, Strip Mine,
-Disdainful Stroke, Elesh Norn, Summon: Bahamut, Hangarback Walker, Meteor Golem, Glorybringer, Thundermaw Hellkite,
-Mox Jasper and Utvara Hellkite for Blightsteel Colossus, Oblivion Stone, Wastes, Gamble, Wurmcoil Engine, Portal to
-Phyrexia, Ratchet Bomb, Karn Liberated, Duplicant, Karn, the Great Creator, Lotus Petal and Ugin: each card out has about
-the new card's mana value, so the curve stays (3.10 -> 3.07). The same cards with cheap cuts (package TD) raised it to
-3.49 and tested worse (-2.8 at t5). Evidence: `audit/thanos/FINDINGS.md`.
-
 | | |
 |---|---|
 | **Commander** | Thanos, the Mad Titan ({R}{W}{B}, 4/4 deathtouch, lifelink); five colours (his power-up costs all five) |

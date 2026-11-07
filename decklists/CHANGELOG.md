@@ -18,11 +18,12 @@ the binder and eleven bought cards (`documents/aragorn-merge-swaps.md`).
 
 ### Changes
 
-- **2026-11-06.** Out: Big Score, Blossoming Defense, Grand Abolisher, Growth Spiral, Mountain, Noble Hierarch, Three Visits. In: Austere Command, Llanowar Elves, Nibelheim Aflame, Paradise Druid, Sokenzan, Crucible of Defiance, Spark Double, Windborn Muse. Card-pile packages A1 (sweepers and Windborn Muse: t4 +4.3, t5 +2.4, both outside noise) and A2 (owned ramp for Don't Have cards: no clear effect at t4 or t5); JD 2026-11-06.
+- **2026-11-06.** Out: Big Score, Blossoming Defense, Grand Abolisher, Growth Spiral, Mountain, Noble Hierarch, Three Visits. In: Austere Command, Llanowar Elves, Nibelheim Aflame, Paradise Druid, Sokenzan, Crucible of Defiance, Spark Double, Windborn Muse. Card-pile packages A1 (sweepers and Windborn Muse: t4 +4.3, t5 +2.4, both outside noise) and A2 (owned ramp for Don't Have cards: no clear effect at t4 or t5); JD 2026-11-06. A1 answers t4's go-wide decks (Krenko, Edgar Markov, Yuriko: about 52% of its t4 losses) with sweepers and an attack tax; A2 replaces three cards still to buy (Noble Hierarch, Three Visits, Growth Spiral) with cards JD owns, so eight cards are bought instead of eleven. A1 and A2 were tested separately, not together. Cards from JD's spare-card pile; record in `audit/jd-packages/2026-11-06-card-pile/`, evidence in `audit/aragorn/FINDINGS.md`.
 - **2026-11-06.** New deck (JD): Kefka and Sauron merged into Aragorn, the Uniter (RGWU): 33 cards from Kefka, 11 from Sauron, 43 from the binder, 11 bought, a Forest and a Plains. Aragorn has card code (`impls/aragorn.rs`, status Full); the plan file is provisional (`data/plans/aragorn.toml`). No list change since.
 
 ### Simulator history
 
+- **2026-11-06.** Card-pile packages (paired, look-ahead, loose, 1,500 games per list per tier, main b84ab9e6): A1 t4 11.1% -> 15.4% (+4.3, noise ±2.2), t5 9.4% -> 11.8% (+2.4, ±1.9), BETTER; A2 t4 -0.4 (±2.0), t5 +0.7 (±1.9), no clear effect. Both adopted.
 - **2026-11-06.** First baseline (look-ahead, loose, 2,000 games per tier): t4 10.7%, t5 7.7%, 9.2% over t4-t5 (`audit/aragorn/FINDINGS.md`).
 
 ## Cloud, Midgar Mercenary — Mono-White Equipment
@@ -31,7 +32,7 @@ Deck key `cloud`, `decklists/JD/cloud-midgar-equipment.md`.
 
 ### Changes
 
-- **2026-11-07.** Out: Disenchant. In: Rogue's Passage, Sting, the Glinting Dagger. Card-pile package C, adopted untested by JD 2026-11-07 (Rogue's Passage makes an equipped Cloud unblockable; Sting at JD's request).
+- **2026-11-07.** Out: Disenchant. In: Rogue's Passage, Sting, the Glinting Dagger. Card-pile package C, adopted untested by JD 2026-11-07 (Rogue's Passage makes an equipped Cloud unblockable; Sting at JD's request). Disenchant was the only dedicated artifact/enchantment answer; Stroke of Midnight, Austere Command and Skyclave Apparition still cover them. The run was stopped part-way, so nothing is measured yet (`audit/cloud/FINDINGS.md`).
 - **2026-11-03.** Out: Day of Judgment, Forum Familiar. In: Steelshaper's Gift, Stoneforge Mystic. JD approved: Forum Familiar -> Stoneforge Mystic; Day of Judgment -> Steelshaper's Gift, adding Equipment access while retaining Exalted Angel. Printings: 2xm 337 and 5dn 19. Not simulated.
 - **2026-11-02.** Out: Champion's Helm, Fate of the Sun-Cryst, Sword of Kaldra. In: Galadriel's Dismissal, Path to Exile, Swords to Plowshares. Ghave breakup (JD, 11/02), not simulated: the Ghave deck is broken up and its cards placed as upgrades; the cards in come from Ghave, the cards out go to the binder. Galadriel's Dismissal comes back (it phases out Cloud with his Equipment) for Champion's Helm; Swords to Plowshares and Path to Exile for Fate of the Sun-Cryst and Sword of Kaldra (stuck in hand in the 10/13 reports).
 - **2026-11-01.** Out: Stand Up for Yourself. In: Judgment of Alexander. JD's choice (11/01), not simulated: Judgment of Alexander for Stand Up for Yourself. Defense is the deck's one proven lever; it's an instant that prevents all damage opponents' sources would deal to you this turn, and an equipped Cloud deals damage equal to his power to each creature whose damage was prevented, without wiping your own carriers. Judgment of Alexander is unmodeled.
@@ -339,7 +340,7 @@ Deck key `sheoldred`, `decklists/JD/sheoldred-mono-black.md`.
 
 ### Changes
 
-- **2026-11-07.** Out: Cast Away Doubt, Dark Deal, Darksteel Plate, Otherworld Atlas, Raise Dead, Vanquish the Weak. In: Barad-dûr, Diabolic Intent, Dreadhorde Invasion, Entomb, Massacre Wurm, Reanimate, Yawgmoth's Will. Card-pile package S (Diabolic Intent takes Darksteel Plate's slot, JD kept Diabolic Tutor): tested with Diabolic Tutor out, no clear effect (t3 +1.9, t4 -0.3, noise 2.7); JD adopted 2026-11-07.
+- **2026-11-07.** Out: Cast Away Doubt, Dark Deal, Darksteel Plate, Otherworld Atlas, Raise Dead, Vanquish the Weak. In: Barad-dûr, Diabolic Intent, Dreadhorde Invasion, Entomb, Massacre Wurm, Reanimate, Yawgmoth's Will. Card-pile package S (Diabolic Intent takes Darksteel Plate's slot, JD kept Diabolic Tutor): tested with Diabolic Tutor out, no clear effect (t3 +1.9, t4 -0.3, noise 2.7); JD adopted 2026-11-07. Reanimate takes Raise Dead's slot, Entomb and Yawgmoth's Will add a graveyard line, Massacre Wurm answers Krenko's tokens, Dreadhorde Invasion is a fresh sacrifice body each upkeep, and Barad-dûr replaces a Swamp. The AI rarely casts Entomb (6-9% of the games drawn) and Yawgmoth's Will (4-8%): an open AI gap (`audit/sheoldred/FINDINGS.md`).
 - **2026-11-04.** Out: Necrosquito. In: Raise Dead. Coffers drain package revised (JD 11/04; not simulated): Necrosquito leaves instead of Raise Dead, which stays for cheap creature recovery.
 - **2026-11-04.** Out: Burrog Banemaker, Lethal Throwdown, Phyrexian Rager, Raise Dead, Seymour Flux. In: Exquisite Blood, Grim Tutor, Sanguine Bond, Torment of Hailfire, Vito, Thorn of the Dusk Rose. Coffers drain package (JD 11/04; not simulated): Sanguine Bond, Exquisite Blood, Vito, Grim Tutor, Torment of Hailfire for Seymour Flux, Lethal Throwdown, Raise Dead, Phyrexian Rager, Burrog Banemaker.
 - **2026-11-04.** Out: Command Tower. In: Cabal Coffers. Cabal Coffers for Command Tower (JD 11/04, physical deck; not simulated): 31 Swamps make Coffers a big-mana land without Urborg.
@@ -388,6 +389,10 @@ Deck key `sheoldred`, `decklists/JD/sheoldred-mono-black.md`.
 
 ### Simulator history
 
+- **2026-11-07.** Card-pile package S (paired, look-ahead, loose, 1,500 games per list per tier, main b84ab9e6; with
+  Diabolic Tutor out, before JD kept it): t3 28.2% -> 30.1% (+1.9, noise ±2.7), t4 27.5% -> 27.2% (-0.3, ±2.7), no clear
+  effect. Adopted with Diabolic Intent in Darksteel Plate's slot instead (untested). Entomb and Yawgmoth's Will are
+  rarely cast (`audit/sheoldred/FINDINGS.md`).
 - **2026-10-12.** 30.8% over all tiers (±0.5; rank 3 of the ten decks): T1 26.5%, T2 39.7%, T3 32.5%, T4 30.9%, T5
   24.4%. Look-ahead AI, loose profile, 6,720 games per tier, every deck on the same code;
   `decklists/pool/pool-results.md` section 0d.
@@ -620,7 +625,7 @@ Deck key `yshtola`, `decklists/JD/yshtola-esper-drain.md`.
 
 ### Changes
 
-- **2026-11-07.** Out: Dark Petition, Ill-Gotten Inheritance, Memory Trap. In: Counterspell, Mistrise Village, Palantír of Orthanc, Ringsight. Card-pile package Y, adopted untested by JD 2026-11-07 (Counterspell against the t5 combos; Ringsight and Palantir trigger her drain at mana value 3; Mistrise Village).
+- **2026-11-07.** Out: Dark Petition, Ill-Gotten Inheritance, Memory Trap. In: Counterspell, Mistrise Village, Palantír of Orthanc, Ringsight. Card-pile package Y, adopted untested by JD 2026-11-07 (Counterspell against the t5 combos; Ringsight and Palantir trigger her drain at mana value 3; Mistrise Village). Correction to the reason given when it was chosen: Memory Trap is not a counterspell but a {2}{W} enchantment that exiles a nonland permanent (removal that triggered her and that Zur could fetch); JD kept the swap. Ringsight now finds a card sharing a colour with Y'shtola (it used to look for blue, black or red; engine fix in #294). Evidence: `audit/yshtola/FINDINGS.md`.
 - **2026-11-04.** Out: Bribery, Hostage Taker. In: Loran of the Third Path, Profane Tutor. JD's physical list 11/04 (Demonic Tutor for Bribery, Profane Tutor for Hostage Taker), so the package's Deep Analysis slot goes to Loran of the Third Path, a blink target whose enter trigger destroys an artifact or enchantment; not simulated.
 - **2026-11-04.** Out: Chromatic Lantern, Deep Analysis, Prison Sentence, Static Net. In: Demonic Tutor, Expedition Map, Exquisite Blood, Torment of Hailfire, Urza's Cave. Coffers package (JD 11/04): Demonic Tutor, Exquisite Blood, Torment of Hailfire, Expedition Map, Urza's Cave for Deep Analysis, Prison Sentence, Chromatic Lantern, Static Net, an Island. Tested vs T5: +1.3 (noise ±2.4), no clear effect.
 - **2026-11-04.** Out: nothing. In: Cabal Coffers. Cabal Coffers for a Plains (JD 11/04, physical deck): Urborg makes every land a Swamp, the big-mana engine for the Exsanguinate / Sanguine Bond package.
@@ -871,4 +876,9 @@ Deck key `thanos`, `decklists/JD/thanos-artifacts-and-dragons.md`.
 
 ### Changes
 
-- **2026-11-07.** Out: Blightsteel Colossus, Duplicant, Gamble, Karn Liberated, Karn, the Great Creator, Lotus Petal, Oblivion Stone, Portal to Phyrexia, Ratchet Bomb, Ugin, the Spirit Dragon, Wastes, Wurmcoil Engine. In: Crucible of Worlds, Disdainful Stroke, Elesh Norn, Mother of Machines, Glorybringer, Hangarback Walker, Meteor Golem, Mox Jasper, Scion of Draco, Strip Mine, Summon: Bahamut, Thundermaw Hellkite, Utvara Hellkite. Card-pile package TD2 (the TD cards with cuts matched on mana value, so the curve stays 3.10 -> 3.07; TD itself raised it to 3.49 and lost -2.8), adopted untested by JD 2026-11-07.
+- **2026-11-07.** Out: Blightsteel Colossus, Duplicant, Gamble, Karn Liberated, Karn, the Great Creator, Lotus Petal, Oblivion Stone, Portal to Phyrexia, Ratchet Bomb, Ugin, the Spirit Dragon, Wastes, Wurmcoil Engine. In: Crucible of Worlds, Disdainful Stroke, Elesh Norn, Mother of Machines, Glorybringer, Hangarback Walker, Meteor Golem, Mox Jasper, Scion of Draco, Strip Mine, Summon: Bahamut, Thundermaw Hellkite, Utvara Hellkite. Card-pile package TD2 (the TD cards with cuts matched on mana value, so the curve stays 3.10 -> 3.07; TD itself raised it to 3.49 and lost -2.8), adopted untested by JD 2026-11-07. Scion of Draco (usually {2} with the duals' land types), Crucible of Worlds + Strip Mine (Urza's Saga, the fetches, Wrenn and Six) and Mox Jasper speed it up; Disdainful Stroke, Meteor Golem, Glorybringer and Summon: Bahamut add interaction; the hasty Dragons and Utvara Hellkite feed the Terror of the Peaks / Ur-Dragon damage win (half its wins). It swaps the old fair-win top end (Wurmcoil, Portal, Karn Liberated, Blightsteel, Ugin) for the new one; 16 Game Changers (Gamble left). The bulk Blood Crypt replaces the proxy copy (same card). Evidence: `audit/thanos/FINDINGS.md`.
+
+### Simulator history
+
+- **2026-11-07.** Card-pile package TD (the same twelve cards with cheap cuts: the Baubles, Lotus Petal, Red Elemental Blast and others; paired, look-ahead, loose, 1,500 games per list, t5, main b84ab9e6): 23.0% -> 20.2% (-2.8, noise ±2.7), WORSE (borderline). It raised the average mana value 3.10 -> 3.49, half the new cards sat in hand, and the plan came online in 8.0% of games against 11.3%. Not adopted; TD2 (above) keeps the curve. TD2 itself is not measured yet.
+- **2026-11-06.** Baseline B: 18.6% at t5 (`audit/thanos/FINDINGS.md`).

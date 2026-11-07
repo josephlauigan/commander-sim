@@ -2,10 +2,6 @@
 
 Drain the table a little with every spell, then all at once. Y'shtola turns your ordinary noncreature spells into damage to every opponent and life for you, Sanguine Bond and Marauding Blight-Priest turn that life into more damage, and Exsanguinate, Debt to the Deathless and Torment of Hailfire finish the game, with Cabal Coffers and Urborg paying for a big X. Exquisite Blood with Sanguine Bond is the two-card kill the tutors look for. The deck wins slowly, so it is weak to fast creature pressure and to fast combo decks that win before the drain gets there.
 
-**Changed 2026-11-07 (JD, card-pile package Y, adopted untested):** Counterspell, Ringsight, Palantír of Orthanc and
-Mistrise Village for Memory Trap, Dark Petition, Ill-Gotten Inheritance and an Island. Evidence and reasons:
-`audit/yshtola/FINDINGS.md`.
-
 | | |
 |---|---|
 | **Commander** | Y'shtola, Night's Blessed ({1}{W}{U}{B}, 2/4, vigilance; white-blue-black) |
