@@ -8,6 +8,20 @@ its first sim is the baseline below. The findings of the previous list (t5, Basa
 Monolith + Rings + Ballista deck with attack taxes) are in `FINDINGS-old-list.md`, and the retired Thanos turbo list's
 (t6) in `audit/thanos/FINDINGS-old-list.md`.
 
+## 2026-11-07: more black mana for Doomsday (swap tests; main 7d4d5b35; look-ahead, loose, 5,000 games per list, seed 500000, t6)
+Why: Doomsday in hand in the main phase but not cast was "no {B}{B}{B}" 42% of the time (2026-11-06 below), and the
+only U/B land was Underground Sea, while three duals make no black (Savannah, Breeding Pool, Hallowed Fountain). All
+cards checked: Commander-legal, inside WUBG, the cuts in the current list.
+- **S1, Savannah => Watery Grave:** 34.7% -> 35.6%, **+1.0** (noise ±1.5): no clear effect. Mana on turn 4 unchanged
+  (4.25 -> 4.22); plan online by turn 4 60.4% -> 61.0%.
+- **S2, S1 + Breeding Pool => Swamp:** 34.7% -> 36.2%, **+1.6** (noise ±1.6): at the edge of the noise, not clear.
+  Plan online by turn 4 60.4% -> 63.0% (+2.6); mana on turn 8 6.46 -> 6.55; eliminated 65.3% -> 63.7% of games.
+  Lands on the battlefield unchanged (3.33 at turn 4), so the gain, if real, is colour (black on time), not quantity.
+Why so small: the Consultation / Pact line wins first (77% of wins) and needs only {B} or {U}{B}; Doomsday was chosen 153
+times in 10,000 games (baseline below), so even fixing every missing {B}{B}{B} moves little. The swap report doesn't count Doomsday's
+reasons, so whether "no {B}{B}{B}" fell isn't measured here (an `--analyze` run of the S2 list would show it).
+Not adopted: JD's call. Raw: `audit/thrasios/2026-11-07-black-mana/`.
+
 ## Baseline 2026-11-07 (main 7c622f5f; look-ahead, loose, 10,000 games, seed 500000; list unchanged)
 **35.1%** (34.2-36.0) at t6, against 33.9% (31.9-36.0) in Baseline B (2,000 games): +1.2, inside the noise. The list didn't
 change; this checks that the 11-06/07 engine work (#292 counters wait for the combo, the Ringsight fix) didn't move it.
