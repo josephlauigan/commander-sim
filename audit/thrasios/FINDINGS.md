@@ -20,7 +20,8 @@ cards checked: Commander-legal, inside WUBG, the cuts in the current list.
 Why so small: the Consultation / Pact line wins first (77% of wins) and needs only {B} or {U}{B}; Doomsday was chosen 153
 times in 10,000 games (baseline below), so even fixing every missing {B}{B}{B} moves little. The swap report doesn't count Doomsday's
 reasons, so whether "no {B}{B}{B}" fell isn't measured here (an `--analyze` run of the S2 list would show it).
-Not adopted: JD's call. Raw: `audit/thrasios/2026-11-07-black-mana/`.
+**S2 adopted by JD (2026-11-07):** Savannah and Breeding Pool out, Watery Grave and Swamp in. Raw:
+`audit/thrasios/2026-11-07-black-mana/`.
 
 ## Baseline 2026-11-07 (main 7c622f5f; look-ahead, loose, 10,000 games, seed 500000; list unchanged)
 **35.1%** (34.2-36.0) at t6, against 33.9% (31.9-36.0) in Baseline B (2,000 games): +1.2, inside the noise. The list didn't
