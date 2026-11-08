@@ -4,6 +4,17 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile, vs Sheoldred's matched
 tiers (T3-T5) unless noted. Older tests: README.md in this folder.
 
+## 2026-11-07: Screeching Soulbreaker => Reanimate (JD's choice, not simulated)
+Reanimate ({B}, owned; it left the list for Animate Dead earlier today) comes back next to Animate Dead, so the
+graveyard start has two reanimation spells: Entomb into either is a six-drop on turn 2. It takes a creature card from
+any graveyard; you lose life equal to its mana value. Model status: Full. Screeching Soulbreaker ({2}{B} 1/4 flier,
+drain 1 on attack) was the cut: win rate when cast -3.0 in the 11/07 analyze run, never tested.
+Not measured, for the reason given for Animate Dead below: the AI has no Entomb-into-reanimation line and barely casts
+Entomb (6-10% of the games drawn) or Yawgmoth's Will (4-5%), so a paired run would measure Reanimate only as a late
+answer to a dead creature (it was cast in about 5.5% of games when it was in the list, winning 48% of those at t4,
++20). The deck loses a flying blocker and a drain creature. Check Reanimate's and Animate Dead's drawn / cast numbers
+in the next `--analyze`; a real measure waits on the graveyard AI line (follow-up 1).
+
 ## 2026-11-07: Al Bhed Salvagers => Witch of the Moors (t3-t4, loose, 2,000 games per list per tier, look-ahead, paired)
 Result: **t3 31.6% -> 32.5% (+0.9), t4 25.5% -> 26.9% (+1.4), noise ±1.6 per tier: about +1.2 over t3-t4, positive
 both times but inside the noise.** **Adopted (JD's pick, 2026-11-07): Witch of the Moors is in the list.** Raw: `2026-11-07-witch/salvagers-to-witch.txt`.
