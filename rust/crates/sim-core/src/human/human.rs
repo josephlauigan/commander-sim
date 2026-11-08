@@ -16,7 +16,6 @@
 //!
 //! The `view` the page wants in `data` is added by the `Human` itself (see `human/mod.rs`).
 
-use crate::satsum::SatSum;
 use super::mana::Spending;
 use super::{Target, abilities, cards, choices, human_of, legal, mana, specs};
 use crate::control::{Answer, Human, Request};
@@ -28,6 +27,7 @@ use crate::flow::Res;
 use crate::flow::Stop;
 use crate::hooks::{Action, Event};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::{Ctx, Game, StackItem, StackKind, Step};
 use crate::sym::intern;
 use crate::tag::Tag;
@@ -339,7 +339,8 @@ fn respond_loop(g: &mut Game, q: PlayerId, prompt: &str, spell: Option<CardId>, 
         if do_of(&act) == "cast" && !g.stack.is_empty() && act.get("zone").and_then(Value::as_str) == Some("ex") {
             // an exiled card played free this turn (Urza's {5}, Triple Triad): a counterspell goes on the stack at a spell
             let c = act.get("card").and_then(Value::as_u64).map(|i| CardId(i as u16));
-            if let Some(c) = c.filter(|&c| g.db.get(c).tag(Tag::Ctr) && g.players.iter().any(|x| x.exile.contains(&c))) {
+            if let Some(c) = c.filter(|&c| g.db.get(c).tag(Tag::Ctr) && g.players.iter().any(|x| x.exile.contains(&c)))
+            {
                 if let Some(why) = cast_counterspell_free(g, q, c)? {
                     tell_invalid(&h, q, &why);
                     continue;
@@ -735,7 +736,11 @@ pub fn abilities_of(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<(String, Ab
             .min()
             .unwrap_or(n);
         out.push((
-            if least < n { format!("Equip {{{n}}} ({{{least}}} onto the right creature)") } else { format!("Equip {{{n}}}") },
+            if least < n {
+                format!("Equip {{{n}}} ({{{least}}} onto the right creature)")
+            } else {
+                format!("Equip {{{n}}}")
+            },
             AbilityKind::Equip,
         ));
     }
@@ -762,7 +767,9 @@ pub fn abilities_of(g: &mut Game, p: PlayerId, m: PermId) -> Res<Vec<(String, Ab
     let marvin = perm_name(g, m) == crate::impls::newcards_b::MARVIN;
     if marvin {
         // --- model-gaps-a4: the creatures it borrows from that have a person path: the same questions, Marvin as the source
-        out.extend(super::model_gaps_a4::marvin_abilities(g, p, m).into_iter().map(|a| (a.label, AbilityKind::Extra(a.act))));
+        out.extend(
+            super::model_gaps_a4::marvin_abilities(g, p, m).into_iter().map(|a| (a.label, AbilityKind::Extra(a.act))),
+        );
     }
     if let Some(own) = cards::abilities(g, p, m) {
         // your deck's card: its abilities by the rules
@@ -862,6 +869,25 @@ pub fn use_land(g: &mut Game, p: PlayerId, l: PermId) -> Res<Option<String>> {
 }
 
 // ------------------------------------------------------------------ casting
+/// Mockingbird: "You may have Mockingbird enter as a copy of any creature on the battlefield with mana value less than
+/// or equal to the amount of mana spent to cast Mockingbird". The person picks it as they cast (the AI does the same:
+/// `t6_copies::mockingbird_go`); `t6_copies::clone_copy` reads it back from `Ctx::target`.
+fn mockingbird_pick(g: &mut Game, p: PlayerId, spent: u32, ctx: &mut Ctx) -> Res {
+    let cands: Vec<PermId> = crate::impls::t6_copies::creature_copies(g, p)
+        .into_iter()
+        .filter(|&m| g.perm(m).cd.is_some_and(|cd| g.db.get(cd).cmc <= spent))
+        .collect();
+    if cands.is_empty() {
+        return Ok(());
+    }
+    let mut labels: Vec<String> = cands.iter().map(|&m| format!("a copy of {}", perm_name(g, m))).collect();
+    labels.push("itself (a 1/1 flying Bird)".into());
+    let prompt = format!("Mockingbird enters as (mana value {spent} or less):");
+    let k = choices::choose(g, p, "choose", &prompt, &labels, None, None)?.unwrap_or(cands.len());
+    ctx.target = cands.get(k).copied();
+    Ok(())
+}
+
 /// cast card c from zone (its costs from your pool); restricted mana (Secluded Courtyard) may pay for it if it's a
 /// creature spell of the named type
 pub fn cast(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<String>> {
@@ -912,7 +938,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         pips = mp;
         match kind {
             legal::GyKind::Escape => zone = "escape".into(), // Underworld Breach: back to the graveyard afterwards
-            legal::GyKind::Retrace => zone = "mgy".into(), // --- urdragon: back to the graveyard as it resolves
+            legal::GyKind::Retrace => zone = "mgy".into(),   // --- urdragon: back to the graveyard as it resolves
             legal::GyKind::Muldrotha => {
                 // which of its types this uses up (an artifact creature ...)
                 let ts = crate::impls::mine::muld_types(g, p, c);
@@ -1177,22 +1203,37 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         ctx.x = k as i32;
     }
     specs::choose_post(g, p, c, &mut ctx)?;
-    if d.tags.has(Tag::Tokx) || d.tags.has(Tag::Xtutor) || d.tags.has(Tag::Xdrain) {
-        // X: up to what's left in the pool
-        let top = g.player(p).pool.total();
+    let tagged_x = d.tags.has(Tag::Tokx) || d.tags.has(Tag::Xtutor) || d.tags.has(Tag::Xdrain);
+    // a spell whose own asks choose X (Stargaze, Comet Storm) or Crackle with Power (above) is not asked again
+    let spec_x = specs::spec(&d.name).is_some_and(|a| a.iter().any(|k| matches!(k, specs::Ask::X | specs::Ask::Comet)));
+    if tagged_x || (d.xcount > 0 && !d.tags.has(Tag::Crackle) && !spec_x && !free) {
+        // X: up to what's left in the pool. Every {X} in the cost costs X ({X}{X}: 2X each). Before 2026-11-07 only
+        // the three tags asked, so Torment of Hailfire, Hangarback Walker and Mockingbird were cast with X = 0 in
+        // practice mode. (A spell cast without paying its mana cost has X = 0, rule 107.3b: `free` is not asked.)
+        let per = d.xcount.max(1);
+        let top = g.player(p).pool.total() / per;
         let x = if top > 0 {
             // every number up to 24, then round ones and the whole pool (infinite mana)
             let xs = choices::amount_choices(top);
             let labels: Vec<String> = xs.iter().map(|x| format!("X = {x}")).collect();
-            let prompt = format!("{cname}: choose X (paid from what is left in your pool)");
+            let each = if per > 1 { format!(", {per} mana for each") } else { String::new() };
+            let prompt = format!("{cname}: choose X (paid from what is left in your pool{each})");
             xs[choices::choose(g, p, "choose", &prompt, &labels, None, None)?.unwrap_or(0)]
         } else {
             0
         };
-        mana::pay_from_pool(g, p, x, "");
+        mana::pay_from_pool(g, p, per * x, "");
         ctx.x = x as i32;
         if d.tags.has(Tag::Xtutor) {
-            g.last_x = x as i32;
+            g.last_x = (per * x) as i32; // Walking Ballista reads the X mana paid (`karn_engines::enters_with`)
+        }
+        if !tagged_x {
+            // the mana spent on it, which an enters effect reads (Hangarback Walker: X counters from half of it); the
+            // pool payment keeps no such record
+            g.mana_spent = gn + pips.chars().count() as u32 + per * x;
+        }
+        if &*d.name == "Mockingbird" {
+            mockingbird_pick(g, p, gn + pips.chars().count() as u32 + per * x, &mut ctx)?;
         }
     }
     specs::pay_costs(g, p, c, &spec_costs)?;
@@ -1246,9 +1287,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         zones::discard_cards(g, p, &[x])?;
         ctx.paid_otherwise = true;
     }
-    if free
-        && let Some(q) = g.players.iter().find(|q| q.exile.contains(&c)).map(|q| q.id)
-    {
+    if free && let Some(q) = g.players.iter().find(|q| q.exile.contains(&c)).map(|q| q.id) {
         g.player_mut(q).exile.take(c);
         ctx.owner = Some(q); // still theirs: it goes back to their graveyard
     }

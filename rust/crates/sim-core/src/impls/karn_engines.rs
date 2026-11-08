@@ -858,6 +858,9 @@ fn hangar_x(g: &Game, p: PlayerId) -> i32 {
 
 /// {X}{X}: two generic mana per X (the data has no mana cost for it); uncastable when it cannot pay for X = 1
 fn hangar_cost(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    if crate::human::is_human(g, p) {
+        return 0; // practice mode asks the person for X and charges 2X then (`human::cast_inner`)
+    }
     match hangar_x(g, p) {
         0 => 99,
         x => 2 * x,

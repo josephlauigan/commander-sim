@@ -289,6 +289,8 @@ pub struct CardDef {
     pub source: Box<str>,
     /// the colours of its Phyrexian mana symbols, in cost order ("BB" for {B/P}{B/P})
     pub phyrexian: Box<str>,
+    /// how many {X} symbols its printed cost has (practice mode asks the person for X when it is not 0)
+    pub xcount: u32,
     /// the condition a land enters untapped under, if its text has one
     pub enters_rule: Option<EnterRule>,
     /// a land's basic land types, as colours (Plains W ... Forest G)
@@ -370,6 +372,7 @@ impl CardDef {
             game_changer: r.game_changer == Some(true),
             source: r.source.as_str().into(),
             phyrexian: r.phyrexian.as_str().into(),
+            xcount: r.xcount,
             enters_rule: match &r.enters_rule {
                 Some(v) => Some(EnterRule::from_json(v).map_err(at)?),
                 None => None,
@@ -417,6 +420,7 @@ pub fn engine_made() -> Vec<RawCard> {
             perm: false,
         },
         phyrexian: String::new(),
+        xcount: 0,
         enters_rule: None,
         land_types: vec![],
         basic: false,

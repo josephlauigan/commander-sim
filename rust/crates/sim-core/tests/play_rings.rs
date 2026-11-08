@@ -125,7 +125,8 @@ fn ballista_cast_for_a_big_x_pings_the_table_dead() {
         P0,
         vec![
             act(json!({"do": "cast", "card": hand_i})),
-            by_text("X = 999"),
+            // {X}{X}: X is the real X now, 2 mana each (2026-11-07; before, the question asked for the mana paid, 999)
+            by_text("X = 499"),
             // the permanent's index is only known once it is out: use the last permanent
             Box::new(|_| Answer::Action(json!({"do": "use", "perm": 2}))),
             by_text("remove a +1/+1"),

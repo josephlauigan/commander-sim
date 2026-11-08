@@ -51,6 +51,9 @@ pub struct RawCard {
     pub derived: Derived,
     /// the colours of its Phyrexian mana symbols ("B" for {B/P})
     pub phyrexian: String,
+    /// how many {X} symbols its printed cost has (0 for none; older exports have no field)
+    #[serde(default)]
+    pub xcount: u32,
     /// the condition a land enters untapped under ([kind, args...]), from its Oracle text
     pub enters_rule: Option<Vec<serde_json::Value>>,
     /// a land's basic land types ("island", "swamp" ...) and whether it's a basic land
