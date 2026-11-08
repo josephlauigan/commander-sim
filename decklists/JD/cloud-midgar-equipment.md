@@ -483,7 +483,7 @@ on its own. Tell the table before the game that:
 
 **Commander (1).** Cloud, Midgar Mercenary
 
-**Creatures (30).** Adelbert Steiner, Archangel of Tithes, Archon of Absolution, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird, Steward of Argive, Balan, Wandering Knight, Bastion Protector, Cid, Freeflier Pilot, Danitha Capashen, Paragon, Exalted Angel, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta, Automaton Avenger, Knight of the White Orchid, Kor Outfitter, Loyal Warhound, Page, Loose Leaf, Puresteel Paladin, Silverblade Paladin, Skyclave Apparition, Solemn Simulacrum, Sram, Senior Edificer, Stoneforge Mystic, Thalia, the Survivor, Windborn Muse, Zack Fair
+**Creatures (30).** Adelbert Steiner, Archangel of Tithes, Archon of Absolution, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird, Steward of Argive, Balan, Wandering Knight, Bastion Protector, Cid, Freeflier Pilot, Danitha Capashen, Paragon, Exalted Angel, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta, Automaton Avenger, Knight of the White Orchid, Kor Outfitter, Loyal Warhound, Marvin, Murderous Mimic, Puresteel Paladin, Silverblade Paladin, Skyclave Apparition, Solemn Simulacrum, Sram, Senior Edificer, Stoneforge Mystic, Thalia, the Survivor, Windborn Muse, Zack Fair
 
 **Enchantments (3).** Court of Ardenvale, Forge Anew, Smothering Tithe
 
@@ -540,11 +540,11 @@ on its own. Tell the table before the game that:
 1 Kor Outfitter
 1 Lay Down Arms
 1 Loyal Warhound
+1 Marvin, Murderous Mimic
 1 Mask of Memory
 1 Mind Stone
 1 Norn's Annex
 1 Open the Armory
-1 Page, Loose Leaf
 1 Path of Ancestry
 1 Path to Exile
 1 Plaza of Heroes

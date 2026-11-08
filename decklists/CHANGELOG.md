@@ -33,6 +33,7 @@ Deck key `cloud`, `decklists/JD/cloud-midgar-equipment.md`.
 
 ### Changes
 
+- **2026-11-07.** Out: Page, Loose Leaf. In: Marvin, Murderous Mimic. Page, Loose Leaf => Marvin, Murderous Mimic (JD's pick; swap test neutral, +0.2 over t1-t3, audit/cloud/FINDINGS.md).
 - **2026-11-07.** Out: Disenchant. In: Rogue's Passage, Sting, the Glinting Dagger. Card-pile package C, adopted untested by JD 2026-11-07 (Rogue's Passage makes an equipped Cloud unblockable; Sting at JD's request). Disenchant was the only dedicated artifact/enchantment answer; Stroke of Midnight, Austere Command and Skyclave Apparition still cover them. The run was stopped part-way, so nothing is measured yet (`audit/cloud/FINDINGS.md`).
 - **2026-11-03.** Out: Day of Judgment, Forum Familiar. In: Steelshaper's Gift, Stoneforge Mystic. JD approved: Forum Familiar -> Stoneforge Mystic; Day of Judgment -> Steelshaper's Gift, adding Equipment access while retaining Exalted Angel. Printings: 2xm 337 and 5dn 19. Not simulated.
 - **2026-11-02.** Out: Champion's Helm, Fate of the Sun-Cryst, Sword of Kaldra. In: Galadriel's Dismissal, Path to Exile, Swords to Plowshares. Ghave breakup (JD, 11/02), not simulated: the Ghave deck is broken up and its cards placed as upgrades; the cards in come from Ghave, the cards out go to the binder. Galadriel's Dismissal comes back (it phases out Cloud with his Equipment) for Champion's Helm; Swords to Plowshares and Path to Exile for Fate of the Sun-Cryst and Sword of Kaldra (stuck in hand in the 10/13 reports).

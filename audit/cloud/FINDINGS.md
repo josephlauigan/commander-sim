@@ -6,7 +6,7 @@ look-ahead, loose profile, vs Cloud's matched tiers (T1, T2) unless noted.
 
 ## 2026-11-07: Page, Loose Leaf => Marvin, Murderous Mimic (t1-t3, loose, 2,000 games per list per tier, look-ahead, paired)
 Result: **t1 29.9% -> 30.4% (+0.4), t2 22.0% -> 22.7% (+0.7), t3 23.2% -> 22.8% (-0.4), noise ±1.5-1.6 per tier:
-+0.2 over t1-t3, neutral.** Not adopted (JD's call). Raw: `2026-11-07-marvin/page-to-marvin.txt`.
++0.2 over t1-t3, neutral.** **Adopted (JD's pick, 2026-11-07): Marvin is in the list.** Raw: `2026-11-07-marvin/page-to-marvin.txt`.
 Marvin (JD pulled it; colorless, Full) has the activated abilities of Cloud's other creatures: Stoneforge Mystic's
 {1}{W},{T}: an Equipment onto the battlefield, Giver of Runes' protection, Balan's, Cid's and Zack Fair's abilities.
 Page was the cut (41.8% win rate when cast, +11.9: one of the weakest in the 11/07 analyze run).
