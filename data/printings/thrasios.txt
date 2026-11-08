@@ -1,6 +1,6 @@
 1 Ad Nauseam (2xm) 76
 1 Ancient Tomb (tmp) 315
-1 Arcane Signet (p30m) 1P
+1 Arcane Signet (lcc) 104
 1 Arid Mesa (spg) 114
 1 Avacyn's Pilgrim (isd) 170
 1 Basalt Monolith (3ed) 235
@@ -11,7 +11,6 @@
 1 Borne Upon a Wind (sld) 2228
 1 Boseiju, Who Endures (neo) 412
 1 Brainstorm (fca) 28
-1 Breeding Pool (unf) 286
 1 Cabal Ritual (tor) 51
 1 Cavern of Souls (ltc) 362
 1 Chain of Vapor (ons) 73
@@ -71,13 +70,13 @@
 1 Ranger-Captain of Eos (fca) 2
 1 Rhystic Study (wot) 71
 1 Rings of Brighthearth (ltc) 352
-1 Savannah (ced) 281
 1 Scalding Tarn (spg) 112
 1 Scrubland (ced) 282
 1 Silence (sld) 7003
 1 Smothering Tithe (cmm) 57
 1 Snapback (tsp) 78
 1 Sol Ring (brc) 160
+1 Swamp (tdm) 289
 1 Swan Song (sld) 2829
 1 Swords to Plowshares (ice) 54
 1 Sylvan Library (dmr) 441
@@ -95,6 +94,7 @@
 1 Verdant Catacombs (spg) 113
 1 Voice of Victory (tdm) 331
 1 Walking Ballista (sld) 58
+1 Watery Grave (rvr) 301
 1 Windswept Heath (mh3) 360
 1 Wooded Foothills (mh3) 361
 1 Worldly Tutor (dmr) 442

@@ -236,7 +236,7 @@ bottom for each mulligan after the free one.
 | 2 | Bayou, Scalding Tarn, Dark Ritual, Doomsday, Valley Floodcaller, Gitaxian Probe, Preordain | Keep | Floodcaller lets Doomsday go at an end step; Dark Ritual makes the {B}{B}{B}; the cantrips are Pile B or C pieces |
 | 3 | Tundra, Mox Diamond, Chrome Mox, Silence, Force of Will, Pact of Negation, Fierce Guardianship | Ship | All protection, no line card or tutor, and Mox Diamond has no spare land |
 | 4 | Ancient Tomb, Sol Ring, Mana Vault, Grim Monolith, Ad Nauseam, Doomsday, Tainted Pact | Ship | Lots of mana, but none of it coloured: Ad Nauseam needs {B}{B}, Doomsday {B}{B}{B} |
-| 5 | Savannah, Tropical Island, Misty Rainforest, Windswept Heath, Command Tower, Vampiric Tutor, Thrasios | Ship | Five lands go back, whatever the tutor |
+| 5 | Watery Grave, Tropical Island, Misty Rainforest, Windswept Heath, Command Tower, Vampiric Tutor, Thrasios | Ship | Five lands go back, whatever the tutor |
 | 6 | Mana Confluence, Flooded Strand, Birds of Paradise, Rhystic Study, Sylvan Library, Esper Sentinel, Swan Song | Keep (close) | 3 mana on turn 2, and Sylvan Library counts as dig. No line card, so expect a slow start |
 | 7 | Lotus Petal, Chrome Mox, Elvish Spirit Guide, Dark Ritual, Demonic Tutor, Thassa's Oracle, Brainstorm | Keep (close) | 0 lands but four fast-mana cards. Chrome Mox imprinting Brainstorm is a blue source. It wants a land soon: the one-shot mana runs out after one big turn |
 | 8 | Scrubland, Marsh Flats, Dark Ritual, Vampiric Tutor, Silence, Esper Sentinel, Lotho (on 6) | Keep, bottom Lotho | 6-card rule: 3 mana cards and a tutor |
@@ -451,15 +451,17 @@ costs no life of its own.
 Arcane Signet, Lion's Eye Diamond, Dark Ritual, Cabal Ritual, Elvish Spirit Guide, three mana creatures (Birds of
 Paradise, Noble Hierarch, Avacyn's Pilgrim), and Treasures from Lotho and Smothering Tithe.
 
-- **Original duals:** Underground Sea, Bayou, Scrubland, Tundra, Tropical Island, Savannah.
-- **Shock lands:** Overgrown Tomb, Godless Shrine, Hallowed Fountain, Breeding Pool.
+- **Original duals:** Underground Sea, Bayou, Scrubland, Tundra, Tropical Island.
+- **Shock lands:** Overgrown Tomb, Godless Shrine, Hallowed Fountain, Watery Grave.
+- **Basic:** Swamp (any black fetch finds it; safe against Blood Moon and Back to Basics).
 - **Fetch lands (10):** Flooded Strand, Polluted Delta, Misty Rainforest, Verdant Catacombs, Windswept Heath, Marsh Flats,
   Arid Mesa, Scalding Tarn, Bloodstained Mire, Wooded Foothills. Each fetch also finds a dual with one of its land
   types; the ones naming Mountain still find the Plains, Island, Swamp or Forest half.
 - **Others:** Command Tower, Mana Confluence, Gemstone Caverns, Cavern of Souls (name Wizard), Ancient Tomb, Boseiju,
   Otawara.
-- **{B}{B}{B} for Doomsday:** Underground Sea, Bayou, Scrubland, Overgrown Tomb and Godless Shrine are Swamps. Dark
-  Ritual turns one {B} into three, and Cabal Ritual does the same once you have seven cards in your graveyard.
+- **{B}{B}{B} for Doomsday:** Underground Sea, Bayou, Scrubland, Overgrown Tomb, Godless Shrine, Watery Grave and the
+  basic Swamp are Swamps. Dark Ritual turns one {B} into three, and Cabal Ritual does the same once you have seven
+  cards in your graveyard.
 
 ## Bracket and Rule 0
 
@@ -483,7 +485,7 @@ deck.
 
 **Sorceries (10).** Beseech the Mirror, Demonic Tutor, Diabolic Intent, Doomsday, Gitaxian Probe, Grim Tutor, Imperial Seal, Merchant Scroll, Ponder, Preordain
 
-**Lands (27).** Ancient Tomb, Arid Mesa, Bayou, Bloodstained Mire, Boseiju, Who Endures, Breeding Pool, Cavern of Souls, Command Tower, Flooded Strand, Gemstone Caverns, Godless Shrine, Hallowed Fountain, Mana Confluence, Marsh Flats, Misty Rainforest, Otawara, Soaring City, Overgrown Tomb, Polluted Delta, Savannah, Scalding Tarn, Scrubland, Tropical Island, Tundra, Underground Sea, Verdant Catacombs, Windswept Heath, Wooded Foothills
+**Lands (27).** Ancient Tomb, Arid Mesa, Bayou, Bloodstained Mire, Boseiju, Who Endures, Cavern of Souls, Command Tower, Flooded Strand, Gemstone Caverns, Godless Shrine, Hallowed Fountain, Mana Confluence, Marsh Flats, Misty Rainforest, Otawara, Soaring City, Overgrown Tomb, Polluted Delta, Scalding Tarn, Scrubland, Swamp, Tropical Island, Tundra, Underground Sea, Verdant Catacombs, Watery Grave, Windswept Heath, Wooded Foothills
 
 ## Import list (100)
 
@@ -501,7 +503,6 @@ deck.
 1 Borne Upon a Wind
 1 Boseiju, Who Endures
 1 Brainstorm
-1 Breeding Pool
 1 Cabal Ritual
 1 Cavern of Souls
 1 Chain of Vapor
@@ -561,13 +562,13 @@ deck.
 1 Ranger-Captain of Eos
 1 Rhystic Study
 1 Rings of Brighthearth
-1 Savannah
 1 Scalding Tarn
 1 Scrubland
 1 Silence
 1 Smothering Tithe
 1 Snapback
 1 Sol Ring
+1 Swamp
 1 Swan Song
 1 Swords to Plowshares
 1 Sylvan Library
@@ -585,6 +586,7 @@ deck.
 1 Verdant Catacombs
 1 Voice of Victory
 1 Walking Ballista
+1 Watery Grave
 1 Windswept Heath
 1 Wooded Foothills
 1 Worldly Tutor
