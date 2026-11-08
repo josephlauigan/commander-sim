@@ -278,7 +278,7 @@ fn rule_text(g: &Game, p: PlayerId, n_lands: usize, why: Option<&KeepWhy>) -> Ru
     let deck = g.player(p).name.to_string();
     let Some(why) = why else {
         return RuleText {
-            short: format!("{n_lands} land(s); the default rule keeps 2 to 5"),
+            short: "the default rule keeps 2 to 5 lands".to_string(),
             full: format!(
                 "Rule: {deck} has no keep table of its own, so the AI's default applies: keep a hand with 2 to 5 lands (this one has {n_lands}). It does not look at tutors, ramp or win lines, so judge those yourself below."
             ),
@@ -317,7 +317,7 @@ fn rule_text(g: &Game, p: PlayerId, n_lands: usize, why: Option<&KeepWhy>) -> Ru
             }
         }
         (KeepBy::Lands { lo, hi }, _) => RuleText {
-            short: format!("{n_lands} land(s) is outside {lo} to {hi}"),
+            short: format!("outside the plan's {lo} to {hi} lands"),
             full: format!("Rule: {deck}'s plan keeps a hand of {lo} to {hi} lands only; this one has {n_lands}."),
         },
         (KeepBy::Pieces { need, have }, _) => RuleText {
@@ -868,10 +868,10 @@ pub fn verdict(g: &Game, p: PlayerId, prompt: &str) -> (bool, String) {
     let keeps = keeps_hand(g, p);
     let rule = rule_text(g, p, n, plan_data::keeps_hand_why(g, p).as_ref());
     if keeps {
-        (true, format!("Keep ({})", rule.short))
+        (true, format!("Keep ({}; {})", plural(n, "land", "lands"), rule.short))
     } else if bottom >= 2 {
         (true, format!("Keep (the AI keeps its fourth hand whatever it holds; this one has {n} lands)"))
     } else {
-        (false, format!("Mulligan ({})", rule.short))
+        (false, format!("Mulligan ({}; {})", plural(n, "land", "lands"), rule.short))
     }
 }
