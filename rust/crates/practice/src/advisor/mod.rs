@@ -45,8 +45,99 @@ fn label(lbl: &str, hand: &HashSet<String>) -> String {
     lbl.to_string()
 }
 
+/// the land drop the AI would make now, played on the copy g2, with why: (the hint's line, its detail lines). None when
+/// no land in hand can be played (the Play-land button's own check)
+fn land_drop(g: &Game, g2: &mut Game, p: PlayerId) -> Option<(String, Vec<String>)> {
+    use sim_core::ai::planner;
+    use sim_core::engine::turn;
+    let can =
+        g.player(p).hand.iter().any(|&c| g.db.get(c).land && sim_core::human::legal::check_land(g, p, c).is_none());
+    if !can {
+        return None;
+    }
+    let nm = |g: &Game, c| g.db.get(c).name.to_string();
+    // the copy has no people in it: the AI's own reading of your seat (no prompts; fetch lands crack at once)
+    let ranked = turn::land_reasons(g2, p);
+    let plan = if planner::applies(g2, p) { planner::land_plan_why(g2, p).ok().flatten() } else { None };
+    let (c, t, plan_why) = match plan {
+        Some((c, t, w)) => (c, t, Some(w)),
+        None => (ranked.first()?.card, None, None),
+    };
+    let before: Vec<String> = g2.player(p).lands.iter().map(|&l| nm(g2, g2.perm(l).card())).collect();
+    if g2.player(p).hand.contains(&c) {
+        planner::play_land_for(g2, p, c, t).ok()?;
+    } else {
+        turn::play_land(g2, p).ok()?; // a land from the graveyard (Yawgmoth's Will, Muldrotha)
+    }
+    let mut after: Vec<String> = g2.player(p).lands.iter().map(|&l| nm(g2, g2.perm(l).card())).collect();
+    for b in &before {
+        if let Some(i) = after.iter().position(|a| a == b) {
+            after.remove(i);
+        }
+    }
+    let land = nm(g, c);
+    let found = after.into_iter().find(|a| *a != land);
+    let line = match &found {
+        Some(f) => format!("Play {land} and crack it for {f}"),
+        None => format!("Play {land}"),
+    };
+    let mut d = vec![format!("Land first (the AI plays its land before it casts anything): {land}.")];
+    let why_parts = |w: &turn::LandWhy| -> String {
+        // the colour and untapped parts always; the rest when they count
+        w.parts
+            .iter()
+            .enumerate()
+            .filter(|(i, x)| *i < 2 || x.0 != 0.0)
+            .map(|(_, x)| if x.0 < 0.0 { format!("{} ({:+.0})", x.1, x.0) } else { x.1.clone() })
+            .collect::<Vec<_>>()
+            .join("; ")
+    };
+    match (&plan_why, ranked.iter().find(|w| w.card == c || nm(g2, w.card) == land)) {
+        (Some(w), _) => {
+            d.push(format!("Why: {w}."));
+            if let Some(top) = ranked.first() {
+                d.push(format!("(By points alone the pick would be {}: {}.)", nm(g2, top.card), why_parts(top)));
+            }
+        }
+        (None, Some(w)) => d.push(format!("Why: {} — {:.1} points.", why_parts(w), w.score)),
+        _ => {}
+    }
+    let others: Vec<String> = ranked
+        .iter()
+        .filter(|w| nm(g2, w.card) != land)
+        .map(|w| format!("{} {:.1} ({})", nm(g2, w.card), w.score, why_parts(w)))
+        .collect();
+    if !others.is_empty() {
+        d.push(format!("Your other lands, by points: {}.", others.join("; ")));
+    }
+    Some((line, d))
+}
+
 fn main_phase(g: &mut Game, p: PlayerId) -> Value {
     let mut g2 = copy(g, p);
+    let land = land_drop(g, &mut g2, p);
+    let mut v = main_phase_on(g, g2, p);
+    if let Some((line, mut d)) = land {
+        let then = v["text"].as_str().unwrap_or("").to_string();
+        let then = if then.starts_with("Pass") || then.starts_with("Nothing to do") {
+            "then pass".to_string()
+        } else {
+            let mut cs = then.chars();
+            let first = cs.next().map(|c| c.to_lowercase().collect::<String>()).unwrap_or_default();
+            format!("then {first}{}", cs.as_str())
+        };
+        v["text"] = json!(format!("{line}, {then}"));
+        if let Some(rest) = v["detail"].as_array() {
+            d.extend(rest.iter().filter_map(|x| x.as_str().map(String::from)));
+        }
+        v["detail"] = json!(d);
+        v["land"] = json!(line);
+    }
+    v
+}
+
+/// the AI's main-phase play on the copy g2 (the land drop, if any, already made there)
+fn main_phase_on(g: &Game, mut g2: Game, p: PlayerId) -> Value {
     let post = g.step == Step::Main2;
     let opts = match brain::main_options(&mut g2, p, post) {
         Ok(o) => o,
