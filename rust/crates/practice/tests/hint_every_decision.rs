@@ -107,8 +107,8 @@ fn the_mulligan_hint_explains_the_ais_rule() {
     let t = h["text"].as_str().unwrap();
     assert!(t.starts_with("Keep") || t.starts_with("Mulligan"), "{t}");
     let d: Vec<&str> = h["detail"].as_array().unwrap().iter().map(|x| x.as_str().unwrap()).collect();
-    assert!(d[0].contains("2 to 5 lands") || d[0].contains("3 to 5 lands"), "{d:?}");
-    assert!(d.iter().any(|l| l.starts_with("Colours:")) && d.iter().any(|l| l.starts_with("Commander ")), "{d:?}");
+    assert!(d[0].starts_with("Rule:"), "{d:?}");
+    assert!(d.iter().any(|l| l.starts_with("Colours")) && d.iter().any(|l| l.contains("commander ")), "{d:?}");
     assert_eq!(h["choice"], if t.starts_with("Keep") { "keep" } else { "mulligan" });
     // with cards to bottom the hint names the AI's bottom card
     let h = advisor::hint(

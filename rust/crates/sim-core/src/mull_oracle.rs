@@ -208,3 +208,99 @@ pub fn score(g: &Game) -> u32 {
     let won = g.winner == Some(P0) && g.wintype.is_none_or(|w| &*w != "timeout");
     if won { g.player(P0).turns.min(NO_KILL) } else { NO_KILL }
 }
+
+// ------------------------------------------------------------------ the playouts and their reading, shared with practice
+/// one goldfish playout of an arm to turn `ROUNDS`: the deck's score (its kill turn, `NO_KILL` for none)
+pub fn play_arm(
+    db: &Arc<CardDb>,
+    registry: &Arc<crate::hooks::Registry>,
+    settings: &Arc<Settings>,
+    seats: &[Seat],
+    name: &str,
+    diag_seed: u64,
+    arm: &Arm,
+) -> u32 {
+    let mut g = setup_playout(db, registry, settings, seats, name, diag_seed, arm);
+    crate::engine::turn::run_rounds(&mut g, ROUNDS);
+    score(&g)
+}
+
+/// The paired playouts `j` in `js` of one dealt hand: for each, the KEEP score and the MULLIGAN score from the same
+/// streams (`mo:{seed}:{tries}:{j}`). `threads` > 1 plays the playouts on that many threads (the result is the same in
+/// `js` order). None: a playout panicked.
+#[allow(clippy::too_many_arguments)]
+pub fn paired_scores(
+    db: &Arc<CardDb>,
+    registry: &Arc<crate::hooks::Registry>,
+    settings: &Arc<Settings>,
+    seats: &[Seat],
+    hand: &[CardId],
+    tries: i64,
+    seed: u64,
+    js: std::ops::Range<u64>,
+    threads: usize,
+) -> Option<(Vec<u32>, Vec<u32>)> {
+    let one = |j: u64| {
+        let name = format!("mo:{seed}:{tries}:{j}");
+        let diag = seed.wrapping_mul(1_000_000).wrapping_add(tries as u64 * 1000 + j);
+        let k = play_arm(db, registry, settings, seats, &name, diag, &Arm::Keep { hand, tries });
+        let m = play_arm(db, registry, settings, seats, &name, diag, &Arm::Mull { from_try: tries + 1 });
+        (k, m)
+    };
+    let all: Vec<u64> = js.collect();
+    let threads = threads.clamp(1, all.len().max(1));
+    if threads == 1 {
+        let r: Vec<(u32, u32)> = all.iter().map(|&j| one(j)).collect();
+        return Some(r.into_iter().unzip());
+    }
+    let chunks: Vec<&[u64]> = all.chunks(all.len().div_ceil(threads)).collect();
+    let parts: Vec<Option<Vec<(u32, u32)>>> = std::thread::scope(|sc| {
+        let hs: Vec<_> = chunks
+            .iter()
+            .map(|c| {
+                let one = &one;
+                std::thread::Builder::new()
+                    .stack_size(256 << 20)
+                    .spawn_scoped(sc, move || c.iter().map(|&j| one(j)).collect::<Vec<_>>())
+                    .expect("spawn a playout thread")
+            })
+            .collect();
+        hs.into_iter().map(|h| h.join().ok()).collect()
+    });
+    let mut out = vec![];
+    for p in parts {
+        out.extend(p?);
+    }
+    Some(out.into_iter().unzip())
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Verdict {
+    Keep,
+    Mull,
+    Unclear,
+}
+
+/// the oracle's reading of two paired lists of scores: (keep mean, mull mean, mean difference mull - keep, its
+/// standard error, verdict). Fewer than two playouts give no standard error: unclear.
+pub fn judge(keep: &[u32], mull: &[u32]) -> (f64, f64, f64, f64, Verdict) {
+    let m = keep.len().min(mull.len());
+    let mean = |v: &[u32]| v.iter().map(|&x| x as f64).sum::<f64>() / v.len().max(1) as f64;
+    let (km, mm) = (mean(&keep[..m]), mean(&mull[..m]));
+    let d: Vec<f64> = (0..m).map(|j| mull[j] as f64 - keep[j] as f64).collect();
+    let dm = d.iter().sum::<f64>() / m.max(1) as f64;
+    let se = if m < 2 {
+        f64::INFINITY
+    } else {
+        let var = d.iter().map(|x| (x - dm).powi(2)).sum::<f64>() / (m - 1) as f64;
+        (var / m as f64).sqrt()
+    };
+    let verdict = if dm < -2.0 * se {
+        Verdict::Mull
+    } else if dm > 2.0 * se {
+        Verdict::Keep
+    } else {
+        Verdict::Unclear
+    };
+    (km, mm, dm, se, verdict)
+}
