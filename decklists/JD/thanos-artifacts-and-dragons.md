@@ -1,9 +1,5 @@
 # Thanos, the Mad Titan — Five-Colour Artifacts and Dragons (High Bracket 4)
 
-> Built 2026-11-05 from three of JD's decks: what the Tymna/Thrasios Doomsday rebuild leaves of the Thanos turbo deck,
-> the Karn colourless artifacts deck, and The Ur-Dragon Dragon deck. The Ur-Dragon moves into the 99. The card moves
-> are in `documents/doomsday-thanos-rebuild-swaps.md`. Not simulated yet.
-
 Fast artifact mana puts Thanos down on turn 2 or 3. Thanos is a cheap 4/4 with deathtouch and lifelink, he makes
 Deflecting Swat free and gives Jeska's Will both modes, and his power-up is a wipe you aim at the opponents' side.
 Behind him the deck builds card advantage with The One Ring, Rhystic Study, Smothering Tithe, Mystic Forge and Urza.
@@ -17,8 +13,8 @@ wipes and Null Rod effects, to fast combo before turn 4, and to tables that puni
 | **Commander** | Thanos, the Mad Titan ({R}{W}{B}, 4/4 deathtouch, lifelink); five colours (his power-up costs all five) |
 | **Bracket** | 4: 16 Game Changers and two infinite combos. Played against Tier 5 (High Bracket 4) |
 | **Game Changers (16)** | Ancient Tomb, Chrome Mox, Demonic Tutor, Enlightened Tutor, Force of Will, Grim Monolith, Imperial Seal, Jeska's Will, Mana Vault, Mox Diamond, Rhystic Study, Smothering Tithe, Teferi's Protection, The One Ring, Vampiric Tutor, Worldly Tutor |
-| **Simulator** | Deck key `thanos`, tier T5, played from `data/plans/thanos.toml`; findings in `audit/thanos/FINDINGS.md` (no sims yet). Thanos's power-up is card code (`t6_thanos.rs`). Replaced the old `thanos` list (T6) and retired `karn` and `urdragon` on 2026-11-05 |
-| **Buys** | None: every card comes from the Thanos, Karn and Ur-Dragon decks |
+| **Simulator** | Deck key `thanos`, tier T5, played from `data/plans/thanos.toml`; findings in `audit/thanos/FINDINGS.md`, history in `decklists/CHANGELOG.md`. Thanos's power-up is card code (`t6_thanos.rs`) |
+| **Buys** | None |
 
 ## Strategy
 
@@ -129,7 +125,7 @@ The power-up and the other wipes clear the board, and these finish:
 - **The Ur-Dragon** ({4}{W}{U}{B}{R}{G}, 10/10 flier). Whenever your Dragons attack, draw that many cards, then put a
   permanent card from your hand onto the battlefield free: Summon: Bahamut, Utvara Hellkite, Elesh Norn, Meteor
   Golem, Astral Dragon. While it's on the battlefield, your other Dragon spells cost {1} less (Goldspan, Terror,
-  Astral, Steel Hellkite, Nicol Bolas, Glorybringer, Thundermaw, Utvara, Scion of Draco and Bahamut are Dragons). It's in the 99 now, so it costs the full nine. Cast it off
+  Astral, Steel Hellkite, Nicol Bolas, Glorybringer, Thundermaw, Utvara, Scion of Draco and Bahamut are Dragons). In the 99 it costs the full nine. Cast it off
   Gilded Lotus, Thran Dynamo, Coalition Relic or a Basalt Monolith turn.
 - **Hasty Dragons:** **Glorybringer** ({3}{R}{R}, flying, haste; exert it as it attacks for 4 damage to a non-Dragon
   creature: Kinnan, Urza, a blocker) and **Thundermaw Hellkite** ({3}{R}{R}, flying, haste; it taps and pings the
