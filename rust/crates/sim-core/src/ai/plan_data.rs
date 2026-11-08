@@ -1369,6 +1369,149 @@ pub fn keeps_hand(g: &Game, p: PlayerId) -> Option<bool> {
     keep_for(active(g, p)?, g, p)
 }
 
+// ------------------------------------------------------------------ why a hand is kept (practice mode's explanation)
+/// which part of the plan's keep rule decided a hand (`keep_for` with the reason; its result is the same)
+#[derive(Debug, Clone, PartialEq)]
+pub enum KeepBy {
+    /// `fast_mana`: a mulligan hand with a settled land count (`t6_keep::Mana::settle`)
+    Settled,
+    /// row `idx` (1-based) of the table held, through this alternative of its `when` (the condition text)
+    Row { idx: usize, alt: String },
+    /// no row held: the table's `otherwise` (default keep)
+    Otherwise,
+    /// no table, the land range `lo..=hi` decided (the hand's lands are outside it)
+    Lands { lo: usize, hi: usize },
+    /// no table, lands inside the range; `need` cards of the lines or engines counted against `have`
+    Pieces { need: usize, have: usize },
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct KeepWhy {
+    pub by: KeepBy,
+    pub keep: bool,
+    /// rows in the table (0 without a table)
+    pub rows: usize,
+}
+
+impl Cond {
+    /// the first alternative (counting across the `when` strings, as `parse_with` lays them out) that holds
+    fn first_true(&self, g: &Game, p: PlayerId, cx: Cx) -> Option<usize> {
+        self.0.iter().position(|all| all.iter().all(|a| eval(g, p, a, cx)))
+    }
+}
+
+/// the alternatives of a `when` list as text, in `Cond`'s order
+fn alt_texts(when: &[String]) -> Vec<String> {
+    when.iter().flat_map(|w| split_top(w, '|')).map(|a| a.trim().to_string()).collect()
+}
+
+/// `keep_for` with the reason: which row of the plan's mulligan table held (its alternative), or why the land range
+/// or the piece count decided. The `keep` field is `keep_for`'s result (a test holds the two together).
+pub fn keep_why(l: &Loaded, g: &Game, p: PlayerId) -> Option<KeepWhy> {
+    let m = l.plan.mulligan.as_ref()?;
+    let rows = m.rule.len();
+    if m.fast_mana && crate::impls::t6_keep::mana(g, p).settle() {
+        return Some(KeepWhy { by: KeepBy::Settled, keep: true, rows });
+    }
+    if !m.rule.is_empty() {
+        let cx = Cx { plan: Some(l), ..Cx::default() };
+        for (i, (r, w)) in m.rule.iter().zip(&l.mull_when).enumerate() {
+            if let Some(a) = w.first_true(g, p, cx) {
+                let alt = alt_texts(&r.when).get(a).cloned().unwrap_or_default();
+                return Some(KeepWhy { by: KeepBy::Row { idx: i + 1, alt }, keep: r.keep, rows });
+            }
+        }
+        return Some(KeepWhy { by: KeepBy::Otherwise, keep: m.otherwise.unwrap_or(true), rows });
+    }
+    let hand = &g.player(p).hand;
+    let lands = hand.iter().filter(|&&c| g.db.get(c).land).count();
+    let [lo, hi] = m.lands.unwrap_or([2, 5]);
+    if !(lo..=hi).contains(&lands) {
+        return Some(KeepWhy { by: KeepBy::Lands { lo, hi }, keep: false, rows });
+    }
+    let piece = |c: CardId| {
+        let n = name(g, c);
+        l.lines.iter().any(|(gs, _)| gs.iter().flatten().any(|x| x == n)) || l.plan.engines.iter().any(|x| x == n)
+    };
+    let have = hand.iter().filter(|&&c| piece(c)).count();
+    Some(KeepWhy { by: KeepBy::Pieces { need: m.pieces, have }, keep: have >= m.pieces, rows })
+}
+
+/// `keeps_hand` with the reason (None: no plan, or no mulligan section: the generic 2-5 lands rule decides)
+pub fn keeps_hand_why(g: &Game, p: PlayerId) -> Option<KeepWhy> {
+    keep_why(active(g, p)?, g, p)
+}
+
+/// one condition of a fired row, with the value it was compared at
+#[derive(Debug, Clone, PartialEq)]
+pub struct KeepTerm {
+    /// the condition as written in the plan file
+    pub text: String,
+    /// `quantity op number` conditions: the quantity as written (`hand-lands`, `fast`, `hand:tutors`, ...)
+    pub lhs: String,
+    pub op: String,
+    pub rhs: String,
+    /// the quantity's value for this hand
+    pub value: Option<f64>,
+}
+
+/// the conditions of one alternative (`a & b & c`), each with the value of its quantity for p's hand
+pub fn keep_terms(l: &Loaded, g: &Game, p: PlayerId, alt: &str) -> Vec<KeepTerm> {
+    let sets: Vec<&str> = l.plan.sets.keys().map(|k| k.as_str()).collect();
+    let cx = Cx { plan: Some(l), ..Cx::default() };
+    split_top(alt, '&')
+        .into_iter()
+        .map(|t| {
+            let text = t.trim().to_string();
+            let mut term =
+                KeepTerm { text: text.clone(), lhs: String::new(), op: String::new(), rhs: String::new(), value: None };
+            if let Ok(Atom::Num(qs, _, _)) = atom(&text, &sets) {
+                for op in [">=", "<=", ">", "<", "="] {
+                    if let Some((k, v)) = text.split_once(op) {
+                        term.lhs = k.trim().to_string();
+                        term.op = op.to_string();
+                        term.rhs = v.trim().to_string();
+                        break;
+                    }
+                }
+                term.value = Some(qs.iter().map(|(s, q)| s * quantity(g, p, *q, cx)).sum());
+            }
+            term
+        })
+        .collect()
+}
+
+/// how far each of the plan's lines is from complete in p's hand (and on its battlefield): per line, its groups with the
+/// cards of each, how many the line needs and how many p holds
+#[derive(Debug, Clone, PartialEq)]
+pub struct LineStatus {
+    pub name: String,
+    pub groups: Vec<LineGroup>,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct LineGroup {
+    pub cards: Vec<String>,
+    pub need: usize,
+    pub held: usize,
+}
+
+pub fn line_status(l: &Loaded, g: &Game, p: PlayerId) -> Vec<LineStatus> {
+    l.lines
+        .iter()
+        .zip(&l.groups)
+        .enumerate()
+        .map(|(i, ((names, _), groups))| LineStatus {
+            name: l.plan.line[i].name.clone(),
+            groups: names
+                .iter()
+                .zip(groups)
+                .map(|(n, grp)| LineGroup { cards: n.clone(), need: grp.need, held: group_held(g, p, grp, &[], l) })
+                .collect(),
+        })
+        .collect()
+}
+
 /// --- phase4-cedh: the hold-up utility of the plan (first rule that holds), None: no opinion
 pub fn hold_up_for(l: &Loaded, g: &Game, p: PlayerId) -> Option<f64> {
     let cx = Cx { plan: Some(l), ..Cx::default() };

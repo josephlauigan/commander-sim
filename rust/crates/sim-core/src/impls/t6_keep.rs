@@ -54,7 +54,7 @@ fn nm(g: &Game, c: CardId) -> &str {
 }
 
 /// is this a mana piece of the hand (a rock or dork or ritual-like source) rather than a spell?
-fn is_piece(g: &Game, c: CardId) -> bool {
+pub fn is_piece(g: &Game, c: CardId) -> bool {
     let d = g.db.get(c);
     !d.land
         && (d.tag(Tag::Rock)
@@ -63,6 +63,36 @@ fn is_piece(g: &Game, c: CardId) -> bool {
             || d.tag(Tag::Lr)
             || d.tag(Tag::Chromemox)
             || matches!(d.name.as_ref(), "Lotus Petal" | "Chrome Mox" | "Mox Diamond"))
+}
+
+/// what one mana piece of the hand makes by turn 2 from this hand (the table in the module doc), and whether it makes it
+/// without a land. `lands`, `spells` and `starts` are the hand's: its lands, its cards that are neither lands nor mana
+/// pieces, and whether a Lotus Petal can pay for the first rock.
+fn piece_value(g: &Game, p: PlayerId, c: CardId, lands: usize, spells: usize, starts: bool) -> (f64, bool) {
+    let d = g.db.get(c);
+    match nm(g, c) {
+        "Mox Diamond" => (if lands >= 2 { 0.5 } else { 0.0 }, false),
+        "Chrome Mox" => (if spells >= 2 { 1.0 } else { 0.0 }, false),
+        "Lotus Petal" => (0.7, true),
+        // needs a legendary creature or planeswalker: the Rograkh decks cast their {0} commander first
+        "Mox Amber" => (if g.player(p).key.starts_with("rograkh") { 1.0 } else { 0.5 }, false),
+        "Mox Opal" => (0.0, false), // metalcraft: three artifacts
+        "Sol Ring" => (if lands >= 1 || starts { 2.0 } else { 0.0 }, false),
+        _ if d.cmc == 0 => (1.0, true),
+        _ if d.cmc == 1 => (if lands >= 1 { if d.tag(Tag::Dork) { 0.8 } else { 1.0 } } else { 0.0 }, false),
+        _ if d.cmc == 2 => (if lands >= 2 { if d.tag(Tag::Dork) { 0.8 } else { 1.0 } } else { 0.0 }, false),
+        _ => (0.0, false),
+    }
+}
+
+/// the hand's mana pieces with what each makes by turn 2 (0.0: nothing, from this hand), for explaining a hand
+pub fn piece_values(g: &Game, p: PlayerId) -> Vec<(CardId, f64)> {
+    let hand = &g.player(p).hand;
+    let lands = hand.iter().filter(|&&c| g.db.get(c).land).count();
+    let pieces: Vec<CardId> = hand.iter().copied().filter(|&c| is_piece(g, c)).collect();
+    let spells = hand.len() - lands - pieces.len();
+    let starts = pieces.iter().any(|&c| g.db.get(c).cmc == 0 && nm(g, c) == "Lotus Petal");
+    pieces.iter().map(|&c| (c, piece_value(g, p, c, lands, spells, starts).0)).collect()
 }
 
 pub fn mana(g: &Game, p: PlayerId) -> Mana {
@@ -81,64 +111,10 @@ pub fn mana(g: &Game, p: PlayerId) -> Mana {
         }
     }
     for &c in &pieces {
-        let d = g.db.get(c);
-        let n = nm(g, c);
         let before = eff;
-        eff += match n {
-            "Mox Diamond" => {
-                if lands >= 2 {
-                    0.5
-                } else {
-                    0.0
-                }
-            }
-            "Chrome Mox" => {
-                if spells >= 2 {
-                    1.0
-                } else {
-                    0.0
-                }
-            }
-            "Lotus Petal" => {
-                free += 1;
-                0.7
-            }
-            // needs a legendary creature or planeswalker: the Rograkh decks cast their {0} commander first
-            "Mox Amber" => {
-                if g.player(p).key.starts_with("rograkh") {
-                    1.0
-                } else {
-                    0.5
-                }
-            }
-            "Mox Opal" => 0.0, // metalcraft: three artifacts
-            "Sol Ring" => {
-                if lands >= 1 || starts {
-                    2.0
-                } else {
-                    0.0
-                }
-            }
-            _ if d.cmc == 0 => {
-                free += 1;
-                1.0
-            }
-            _ if d.cmc == 1 => {
-                if lands >= 1 {
-                    if d.tag(Tag::Dork) { 0.8 } else { 1.0 }
-                } else {
-                    0.0
-                }
-            }
-            _ if d.cmc == 2 => {
-                if lands >= 2 {
-                    if d.tag(Tag::Dork) { 0.8 } else { 1.0 }
-                } else {
-                    0.0
-                }
-            }
-            _ => 0.0,
-        };
+        let (v, no_land) = piece_value(g, p, c, lands, spells, starts);
+        eff += v;
+        free += no_land as usize;
         n_mana += (eff > before) as usize;
     }
     Mana { lands, eff, free, spells, n_mana, tries: g.player(p).stats.get("mull_try").copied().unwrap_or(0) }
@@ -181,7 +157,7 @@ pub fn bottom_pick(g: &Game, p: PlayerId) -> Option<CardId> {
 
 // ------------------------------------------------------------------ the colours a hand can make
 /// the colours a land card taps for (`Tag::C`: letters, `A` the player's whole identity, `C` none)
-fn tag_cols(g: &Game, p: PlayerId, c: CardId) -> Colors {
+pub fn tag_cols(g: &Game, p: PlayerId, c: CardId) -> Colors {
     match g.db.get(c).tags.str(Tag::C) {
         Some("A") => g.player(p).ident,
         Some(s) => Colors::from_letters(s),
@@ -191,7 +167,7 @@ fn tag_cols(g: &Game, p: PlayerId, c: CardId) -> Colors {
 
 /// the colours of mana the card makes once it is in play: a rock (`rock` = `amount:colours`), a dork (`dork` =
 /// colours), Elvish Spirit Guide ({G} from the hand); Chrome Mox is none
-fn piece_cols(g: &Game, p: PlayerId, c: CardId) -> Colors {
+pub fn piece_cols(g: &Game, p: PlayerId, c: CardId) -> Colors {
     let d = g.db.get(c);
     let ident = g.player(p).ident;
     let letters = |s: &str| if s == "A" { ident } else { Colors::from_letters(s) };
@@ -209,7 +185,7 @@ fn piece_cols(g: &Game, p: PlayerId, c: CardId) -> Colors {
     }
 }
 
-fn covers(have: Colors, need: Colors) -> bool {
+pub fn covers(have: Colors, need: Colors) -> bool {
     "WUBRG".chars().all(|ch| !need.has(ch) || have.has(ch))
 }
 

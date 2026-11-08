@@ -16,18 +16,14 @@
 use crate::args::Args;
 use crate::goldfish::{deck_keys, list_of, seats, settings_of};
 use crate::play::{Sim, ai_name, profile};
-use sim_core::engine::turn::{Seat, run_rounds};
-use sim_core::mull_oracle::{Arm, NO_KILL, ROUNDS, TryHand, opening_tries, score, setup_playout};
+use sim_core::engine::turn::Seat;
+use sim_core::mull_oracle::{NO_KILL, ROUNDS, TryHand, opening_tries, paired_scores};
 use sim_core::settings::Settings;
 use std::sync::Arc;
 use std::time::Instant;
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum Verdict {
-    Keep,
-    Mull,
-    Unclear,
-}
+// the verdict and its reading moved to sim-core (practice mode's hint plays the same playouts)
+pub use sim_core::mull_oracle::{Verdict, judge};
 
 /// one dealt hand with the rule's decision and the oracle's
 #[derive(Debug, Clone, PartialEq)]
@@ -56,30 +52,6 @@ impl TryRes {
     }
 }
 
-/// the oracle's reading of two paired lists of scores: (keep mean, mull mean, mean difference mull - keep, its
-/// standard error, verdict). Fewer than two playouts give no standard error: unclear.
-pub fn judge(keep: &[u32], mull: &[u32]) -> (f64, f64, f64, f64, Verdict) {
-    let m = keep.len().min(mull.len());
-    let mean = |v: &[u32]| v.iter().map(|&x| x as f64).sum::<f64>() / v.len().max(1) as f64;
-    let (km, mm) = (mean(&keep[..m]), mean(&mull[..m]));
-    let d: Vec<f64> = (0..m).map(|j| mull[j] as f64 - keep[j] as f64).collect();
-    let dm = d.iter().sum::<f64>() / m.max(1) as f64;
-    let se = if m < 2 {
-        f64::INFINITY
-    } else {
-        let var = d.iter().map(|x| (x - dm).powi(2)).sum::<f64>() / (m - 1) as f64;
-        (var / m as f64).sqrt()
-    };
-    let verdict = if dm < -2.0 * se {
-        Verdict::Mull
-    } else if dm > 2.0 * se {
-        Verdict::Keep
-    } else {
-        Verdict::Unclear
-    };
-    (km, mm, dm, se, verdict)
-}
-
 /// what one deck's run needs
 pub struct Ctx<'a> {
     pub sim: &'a Sim,
@@ -89,21 +61,12 @@ pub struct Ctx<'a> {
 }
 
 impl Ctx<'_> {
-    fn play(&self, name: &str, diag: u64, arm: &Arm) -> u32 {
-        let e = &self.sim.engine;
-        let mut g = setup_playout(&e.db, &e.registry, &self.settings, &self.seats, name, diag, arm);
-        run_rounds(&mut g, ROUNDS);
-        score(&g)
-    }
-
     fn grade(&self, seed: u64, th: &TryHand) -> TryRes {
-        let (mut keep, mut mull) = (vec![], vec![]);
-        for j in 0..self.playouts {
-            let name = format!("mo:{seed}:{}:{j}", th.tries);
-            let diag = seed.wrapping_mul(1_000_000).wrapping_add(th.tries as u64 * 1000 + j);
-            keep.push(self.play(&name, diag, &Arm::Keep { hand: &th.hand, tries: th.tries }));
-            mull.push(self.play(&name, diag, &Arm::Mull { from_try: th.tries + 1 }));
-        }
+        let e = &self.sim.engine;
+        // the paired playouts are sim-core's (practice mode's hint plays the same ones); one thread: the hands run in parallel
+        let (keep, mull) =
+            paired_scores(&e.db, &e.registry, &self.settings, &self.seats, &th.hand, th.tries, seed, 0..self.playouts, 1)
+                .expect("a playout panicked");
         let (keep_mean, mull_mean, diff, se, verdict) = judge(&keep, &mull);
         let db = &self.sim.engine.db;
         let mut cards: Vec<String> = th.hand.iter().map(|&c| db.get(c).name.to_string()).collect();
@@ -388,6 +351,7 @@ mod tests {
     use crate::play::RunOpts;
     use sim_core::engine::turn::setup_game;
     use sim_core::ids::PlayerId;
+    use sim_core::mull_oracle::{Arm, setup_playout};
     use sim_core::settings::AiMode;
 
     fn sim() -> Sim {
