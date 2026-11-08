@@ -1438,7 +1438,7 @@ fn opp_discard(g: &mut Game, src: Src, q: PlayerId, c: CardId) -> Res {
             if d.creature {
                 tokens(g, o, 1, 2, 2, "B", &["zombie"]).map(|_| ())
             } else if d.land {
-                g.player_mut(o).mana.add(Kind::Any, 2);
+                g.player_mut(o).mana.add(Kind::B, 2); // {B}{B}
                 Ok(())
             } else {
                 draw(g, o, 1, false)

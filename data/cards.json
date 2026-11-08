@@ -16251,7 +16251,8 @@
      "effects": [
       {
        "do": "add_mana",
-       "n": "type_all:goblin"
+       "n": "type_all:goblin",
+       "color": "R"
       }
      ]
     }
@@ -27443,7 +27444,8 @@
      "effects": [
       {
        "do": "add_mana",
-       "n": 4
+       "n": 4,
+       "color": "BBBB"
       }
      ]
     }
@@ -28691,7 +28693,8 @@
      "effects": [
       {
        "do": "add_mana",
-       "n": 3
+       "n": 3,
+       "color": "BBB"
       }
      ]
     }
@@ -63425,7 +63428,8 @@
      "effects": [
       {
        "do": "add_mana",
-       "n": 3
+       "n": 3,
+       "color": "RRR"
       }
      ]
     }
@@ -70796,7 +70800,8 @@
      "effects": [
       {
        "do": "add_mana",
-       "n": 2
+       "n": 2,
+       "color": "CC"
       }
      ],
      "sorcery": false,
@@ -95737,7 +95742,8 @@
      "effects": [
       {
        "do": "add_mana",
-       "n": 3
+       "n": 3,
+       "color": "BBB"
       }
      ]
     }
@@ -97429,7 +97435,8 @@
      "effects": [
       {
        "do": "add_mana",
-       "n": 3
+       "n": 3,
+       "color": "RRR"
       }
      ]
     }
@@ -99751,7 +99758,8 @@
       },
       {
        "do": "add_mana",
-       "n": 5
+       "n": 5,
+       "color": "UURRR"
       }
      ]
     }
@@ -103707,7 +103715,8 @@
      "effects": [
       {
        "do": "add_mana",
-       "n": 2
+       "n": 2,
+       "color": "RR"
       }
      ]
     }
@@ -107105,7 +107114,8 @@
      "effects": [
       {
        "do": "add_mana",
-       "n": 6
+       "n": 6,
+       "color": "RRRGGG"
       }
      ],
      "event": "attack",
@@ -109245,7 +109255,8 @@
      "effects": [
       {
        "do": "add_mana",
-       "n": 5
+       "n": 5,
+       "color": "RRRRR"
       }
      ]
     }
@@ -114438,7 +114449,8 @@
      "effects": [
       {
        "do": "add_mana",
-       "n": 1
+       "n": 1,
+       "color": "R"
       }
      ],
      "sorcery": false,
@@ -132498,7 +132510,8 @@
      "effects": [
       {
        "do": "add_mana",
-       "n": 2
+       "n": 2,
+       "color": "RR"
       }
      ],
      "sorcery": false,

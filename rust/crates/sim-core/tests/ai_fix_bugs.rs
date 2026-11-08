@@ -118,48 +118,52 @@ fn labels(g: &mut Game) -> Vec<(String, f64)> {
     ai::brain::main_options(g, P0, false).unwrap().into_iter().map(|o| (o.label, o.utility)).collect()
 }
 
-/// Two lands and Dark Ritual pay for Thassa's Oracle + Demonic Consultation (UU + B): the line counts the ritual's net
-/// mana, so it is offered and won this turn. The old check saw two mana and never offered it.
+/// Two lands and Dark Ritual do NOT pay for Thassa's Oracle + Demonic Consultation (UU + B). The ritual's three mana are
+/// {B}{B}{B}, the other land makes one {U}: that is {B}{B}{B}{U}, not {U}{U}{B}. (This test used to expect the line to
+/// be offered and won: the engine floated Dark Ritual's mana as any colour, the bug of `ritual_colours.rs`.)
 #[test]
-fn c_a_ritual_in_hand_makes_the_line_affordable() {
+fn c_a_black_ritual_does_not_make_a_blue_line_affordable() {
     let mut g = scion_goldfish();
     lands(&mut g, P0, "Underground Sea", 2, false);
     hand(&mut g, P0, &["Thassa's Oracle", "Demonic Consultation", "Dark Ritual"]);
     let opts = labels(&mut g);
-    assert!(opts.iter().any(|o| o.0.starts_with("combo: Thassa's Oracle")), "{opts:?}");
+    assert!(!opts.iter().any(|o| o.0.starts_with("combo: Thassa's Oracle")), "{opts:?}");
     ai::brain::main(&mut g, P0, false).unwrap();
-    assert!(g.over && g.winner == Some(P0), "the line wins with the ritual's mana");
+    assert!(!(g.over && g.winner == Some(P0)), "UU + B can't be paid with BBB + U");
 }
 
-/// One land pays Dark Ritual, whose three mana (any colour) pay UU + B exactly; with no land the ritual itself can't be
-/// cast, so the line is not offered
+/// The ritual must itself be castable to count: one black land casts Dark Ritual ({B}: {B}{B}{B}), which pays for
+/// Demonic Tutor ({1}{B}) and it is offered; one Island can't cast it and it is not.
 #[test]
 fn c_the_ritual_must_itself_be_castable() {
-    let mut g = scion_goldfish();
-    lands(&mut g, P0, "Underground Sea", 1, false);
-    hand(&mut g, P0, &["Thassa's Oracle", "Demonic Consultation", "Dark Ritual"]);
-    let opts = labels(&mut g);
-    assert!(opts.iter().any(|o| o.0.starts_with("combo: Thassa's Oracle")), "one land and Dark Ritual: {opts:?}");
-    let mut g = scion_goldfish();
-    hand(&mut g, P0, &["Thassa's Oracle", "Demonic Consultation", "Dark Ritual"]);
-    let opts = labels(&mut g);
-    assert!(!opts.iter().any(|o| o.0.starts_with("combo:")), "no land: the ritual can't be cast: {opts:?}");
+    for (land, offered) in [("Underground Sea", true), ("Island", false)] {
+        let mut g = scion_goldfish();
+        lands(&mut g, P0, land, 1, false);
+        hand(&mut g, P0, &["Dark Ritual", "Demonic Tutor", "Demonic Consultation"]);
+        let oracle = card(&g, "Thassa's Oracle");
+        g.player_mut(P0).library.insert(0, oracle); // the tutor has the line's missing piece to find
+        let opts = labels(&mut g);
+        assert_eq!(opts.iter().any(|o| o.0 == "Dark Ritual"), offered, "{land}: {opts:?}");
+    }
 }
 
-/// Cabal Ritual had priority 0 and was never cast outside a line. With four lands it makes the commander castable
-/// this turn (WUBRG from two Underground Seas and the ritual's three), so it is worth the commander less a little.
+/// Cabal Ritual had priority 0 and was never cast outside a line. With three black lands it pays for Diabolic Tutor
+/// ({2}{B}{B}) this turn (two lands cast it, its {B}{B}{B} and the third land make four), so it is worth the tutor less
+/// a little. (It was a commander test: Cabal Ritual's {B}{B}{B} can't pay a five-colour commander, which the old
+/// any-colour ritual mana did.)
 #[test]
-fn c_cabal_ritual_is_cast_for_the_commander() {
+fn c_cabal_ritual_is_cast_for_a_tutor() {
     let mut g = scion_goldfish();
-    lands(&mut g, P0, "Underground Sea", 4, false);
-    hand(&mut g, P0, &["Cabal Ritual"]);
-    g.player_mut(P0).turns = 3; // the commander waits for turn 2 (`cmd_turn`)
+    lands(&mut g, P0, "Underground Sea", 3, false);
+    hand(&mut g, P0, &["Cabal Ritual", "Diabolic Tutor", "Demonic Consultation"]);
+    let oracle = card(&g, "Thassa's Oracle");
+    g.player_mut(P0).library.insert(0, oracle);
+    g.player_mut(P0).turns = 3;
     let s = ai::brain::Situation::new(&g, P0);
-    let c = g.player(P0).cmd;
-    let u = ai::brain::card_utility(&g, P0, &s, c).expect("the commander has a utility");
+    let t = card(&g, "Diabolic Tutor");
+    let u = ai::brain::card_utility(&g, P0, &s, t).expect("the tutor has a utility");
     let opts = labels(&mut g);
-    let cmd = g.db.get(g.player(P0).cmd).name.to_string();
-    assert!(!opts.iter().any(|o| o.0 == cmd), "four Seas can't pay WUBRG: {opts:?}");
+    assert!(!opts.iter().any(|o| o.0 == "Diabolic Tutor"), "three lands can't pay {{2}}{{B}}{{B}}: {opts:?}");
     let r = opts.iter().find(|o| o.0 == "Cabal Ritual").unwrap_or_else(|| panic!("{opts:?}"));
     assert!((r.1 - (u - ai::brain::RITUAL_DISCOUNT)).abs() < 1e-9, "{} against {u}", r.1);
 }

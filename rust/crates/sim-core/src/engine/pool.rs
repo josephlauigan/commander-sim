@@ -62,6 +62,16 @@ impl Kind {
         }
     }
 
+    /// The mana a card prints when it adds `k` mana: `color` is the printed symbols ("BBB", "RRRGGG"; "R" alone is `k`
+    /// of {R}, as Brightstone Ritual counts), None or anything else the player's choice of colour as it is spent.
+    pub fn printed(color: Option<&str>, k: u32) -> Vec<(Kind, u32)> {
+        match color {
+            Some(s) if s.chars().count() == 1 => vec![(Kind::of_letter(s.chars().next().unwrap()), k)],
+            Some(s) if s.chars().count() as u32 == k => s.chars().map(|c| (Kind::of_letter(c), 1)).collect(),
+            _ => vec![(Kind::Any, k)],
+        }
+    }
+
     /// The kind that keeps what a source that can make `cols` made beyond what a payment used: one colour floats as
     /// that colour, none as {C}, several as any.
     pub fn of_leftover(cols: Colors) -> Kind {

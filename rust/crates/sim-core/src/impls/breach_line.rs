@@ -4,9 +4,9 @@
 //!
 //! Dry run first: the whole line played on a copy of the game with the opponents' hands removed; offered only when it
 //! finishes every opponent (burned out or milled out). Then cast for real, one spell at a time (each can be countered).
-//! Rituals carry their colour: the engine floats ritual mana as any colour, but Dark and Cabal Ritual make only {B}
-//! and the red rituals (Seething Song, Desperate Ritual, Rite of Flame) only {R}; the line tracks the red share
-//! (`Game::line_red`), so black ritual mana never pays Grapeshot's {R}, and neither pays Brain Freeze's {U}.
+//! Rituals carry their colour: Dark and Cabal Ritual float only {B} and the red rituals (Seething Song, Desperate
+//! Ritual, Rite of Flame) only {R} (the pool keeps them as black and red mana), so black ritual mana never pays
+//! Grapeshot's {R}, and neither pays Brain Freeze's {U}.
 
 use crate::engine::cast::{castable, cast_card, casts_this_turn};
 use crate::engine::life::check_state;
@@ -59,17 +59,11 @@ const LINE_CARDS: [&str; N_LINE] = [
     JESKA,
 ];
 
-/// the red share of the floating mana this turn (`Game::line_red`), at most the float
-fn red_float(g: &Game, p: PlayerId) -> u32 {
-    let fl = g.player(p).mana.get(Kind::Any);
-    match g.line_red {
-        Some((st, n)) if st == g.turn_stamp() => n.min(fl),
-        _ => 0,
-    }
-}
-
-fn set_red_float(g: &mut Game, n: u32) {
-    g.line_red = Some((g.turn_stamp(), n));
+/// the floating ritual mana: (black, red, any colour). Rituals float {B} or {R}; a Lotus Petal sacrificed for "any colour"
+/// floats as any (counted with the black).
+fn ritual_float(g: &Game, p: PlayerId) -> (u32, u32, u32) {
+    let m = &g.player(p).mana;
+    (m.get(Kind::B), m.get(Kind::R), m.get(Kind::Any))
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -78,9 +72,8 @@ enum Wh {
     Gy,
 }
 
-/// mine._line_state: the numbers the Breach line decides on. Ritual mana floats as any colour in the engine, but a
-/// real ritual makes only its own colour ({B} or {R}, `float_r` is the red share): it pays generic costs and pips of
-/// its colour, never Brain Freeze's {U}
+/// mine._line_state: the numbers the Breach line decides on. A ritual makes only its own colour ({B} or {R}, `float_r`
+/// is the red share): it pays generic costs and pips of its colour, never Brain Freeze's {U}
 struct LineState {
     land: u32,
     float: u32,
@@ -149,7 +142,12 @@ fn perm_named(g: &Game, p: PlayerId, name: &str, live: bool) -> Option<PermId> {
 }
 
 fn line_state(g: &Game, p: PlayerId) -> LineState {
-    let real: Vec<_> = mana_units(g, p, false).into_iter().filter(|u| u.src != Source::float(Kind::Any)).collect();
+    let ritual_mana = |k: Kind| matches!(k, Kind::B | Kind::R | Kind::Any);
+    let real: Vec<_> = mana_units(g, p, false)
+        .into_iter()
+        .filter(|u| !matches!(u.src, Source::Pool(key) if ritual_mana(key.kind)))
+        .collect();
+    let (fb, fr, fa) = ritual_float(g, p);
     let opps: Vec<PlayerId> = g.opps(p).collect();
     let bf = g.db.id(BRAIN_FREEZE).unwrap();
     let gy_ok = !g.cast_checks() || castable(g, p, bf, "gy"); // a lock on casting from graveyards stops escapes
@@ -189,8 +187,8 @@ fn line_state(g: &Game, p: PlayerId) -> LineState {
     }
     LineState {
         land: real.iter().map(|u| u.amt).sum(),
-        float: pl.mana.get(Kind::Any),
-        float_r: red_float(g, p),
+        float: fb + fr + fa,
+        float_r: fr,
         u: colour('U'),
         b: colour('B'),
         r: colour('R'),
@@ -386,22 +384,21 @@ fn line_step(st: &LineState) -> Option<LineAct> {
 /// mine._pay_line: pay for a spell of the line: the pip from a real source ({B} may use ritual mana), generic from
 /// ritual mana first
 fn pay_line(g: &mut Game, p: PlayerId, gn: u32, col: &str) -> Res<bool> {
-    let (fl, fr) = (g.player(p).mana.get(Kind::Any), red_float(g, p));
-    let mut red = fr;
-    if col == "B" && fl > fr {
-        g.player_mut(p).mana.take_kind(Kind::Any, 1); // black ritual mana
+    let (fb, fr, fa) = ritual_float(g, p);
+    if col == "B" && fb + fa > 0 {
+        g.player_mut(p).mana.take_kind(if fb > 0 { Kind::B } else { Kind::Any }, 1); // black ritual mana
     } else if col == "R" && fr > 0 {
-        g.player_mut(p).mana.take_kind(Kind::Any, 1); // red ritual mana
-        red -= 1;
+        g.player_mut(p).mana.take_kind(Kind::R, 1); // red ritual mana
     } else if !pay(g, p, 0, col, false)? {
         return Ok(false);
     }
     // generic from ritual mana, black first (red also pays Grapeshot, Breach and the red rituals)
-    let left = g.player(p).mana.get(Kind::Any);
-    let k = left.min(gn);
-    let from_red = k.saturating_sub(left - red.min(left));
-    g.player_mut(p).mana.take_kind(Kind::Any, k);
-    set_red_float(g, red - from_red.min(red));
+    let mut k = 0;
+    for kind in [Kind::B, Kind::Any, Kind::R] {
+        let t = g.player(p).mana.get(kind).min(gn - k);
+        g.player_mut(p).mana.take_kind(kind, t);
+        k += t;
+    }
     Ok(gn - k == 0 || pay(g, p, gn - k, "", false)?)
 }
 
@@ -460,7 +457,10 @@ fn dry_run(g: &mut Game, p: PlayerId) -> Res<bool> {
     let pl = g.player(p);
     let mut key = vec![
         total_mana(g, p, false),
-        pl.mana.get(Kind::Any),
+        {
+            let (b, r, a) = ritual_float(g, p);
+            b + r + a
+        },
         pl.gy.len() as u32,
         pl.hand.len() as u32,
         pl.library.len() as u32,
@@ -624,13 +624,7 @@ pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
                 if act == BRAIN_FREEZE {
                     ctx.mill = mill_plan(p, &line_state(g, p), st.storm as i64 + 1); // as paid for
                 }
-                let (before, red_before) = (g.player(p).mana.get(Kind::Any), red_float(g, p));
-                cast_card(g, p, c, zone_sym(zone), ctx)?;
-                if RITUALS.iter().any(|r| r.0 == act && r.4 == "R") {
-                    // a red ritual: what it made floats as red
-                    let made = g.player(p).mana.get(Kind::Any).saturating_sub(before);
-                    set_red_float(g, red_before + made);
-                }
+                cast_card(g, p, c, zone_sym(zone), ctx)?; // a ritual floats its own colour (black or red)
                 if act == PETAL
                     && let Some(m) = perm_named(g, p, PETAL, false)
                 {
