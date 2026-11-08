@@ -1,0 +1,73 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  yshtola  100 cards: Full 96, Full-auto 4, Approximate 0, Partial 0, Unmodeled 0
+
+Mulligan oracle: 1 deck, 1000 hands each from seed 500000, 40 playouts per arm (2 arms, up to 2 tries per hand: at most 160000 games per deck, adaptive AI, 24 threads)
+  progress  10.0%  0m00s elapsed, ~0m05s left
+  progress  20.0%  0m01s elapsed, ~0m04s left
+  progress  30.0%  0m01s elapsed, ~0m04s left
+  progress  40.0%  0m02s elapsed, ~0m03s left
+  progress  50.0%  0m03s elapsed, ~0m03s left
+  progress  60.0%  0m03s elapsed, ~0m02s left
+  progress  70.0%  0m04s elapsed, ~0m01s left
+  progress  80.0%  0m05s elapsed, ~0m01s left
+  progress  90.0%  0m05s elapsed, ~0m00s left
+  progress 100.0%  0m06s elapsed, ~0m00s left
+
+=== Y'shtola (yshtola) mulligan oracle [adaptive AI; 1000 hands from seed 500000, 40 playouts per arm; kill turn, 11 = none by turn 10] ===
+
+Try 0 (the first seven): 1000 hands, the rule keeps 80.1%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                  98         129       574     801
+  rule MULLIGANS              13         111        75     199
+  agreement: 59.5% of the 351 hands the oracle settles (85.8% of all 1000 hands counting unclear as no disagreement: 858)
+  mean kill turn over these hands: KEEP 10.26, MULLIGAN 10.23
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:     0     0     0 | rule mulls:    13   109    65
+  2          | rule keeps:    24    80   176 | rule mulls:     0     0     0
+  3          | rule keeps:    46    29   204 | rule mulls:     0     0     0
+  4          | rule keeps:    24    17   149 | rule mulls:     0     0     0
+  5+         | rule keeps:     4     3    45 | rule mulls:     0     2    10
+
+Try 1 (the second seven, dealt when the rule mulligans the first): 199 hands, the rule keeps 80.4%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                  23          19       118     160
+  rule MULLIGANS               4          16        19      39
+  agreement: 62.9% of the 62 hands the oracle settles (88.4% of all 199 hands counting unclear as no disagreement: 176)
+  mean kill turn over these hands: KEEP 10.20, MULLIGAN 10.29
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:     0     0     0 | rule mulls:     4    16    15
+  2          | rule keeps:     6    11    47 | rule mulls:     0     0     0
+  3          | rule keeps:    14     6    37 | rule mulls:     0     0     0
+  4          | rule keeps:     3     1    26 | rule mulls:     0     0     0
+  5+         | rule keeps:     0     1     8 | rule mulls:     0     0     4
+
+Worst disagreements, the rule KEEPS and the oracle says MULLIGAN (top 5):
+    seed 500204 try 0: 2 lands; keep 10.82, mull 9.72, gap +1.10 turns against the rule (se 0.29)
+      Displacer Kitten, Dovin's Veto, Esper Sentinel, Godless Shrine, Mystical Tutor, Restoration Angel, Underground River
+    seed 500124 try 0: 2 lands; keep 10.80, mull 9.72, gap +1.08 turns against the rule (se 0.31)
+      Consecrated Sphinx, Dovin's Veto, Fatal Push, Island x2, Prayer of Binding, Sheoldred, the Apocalypse
+    seed 500159 try 0: 2 lands; keep 10.88, mull 9.85, gap +1.03 turns against the rule (se 0.28)
+      Force of Will, Polluted Bonds, Prayer of Binding, Rhystic Study, Swamp, Tezzeret's Gambit, Watery Grave
+    seed 500487 try 0: 3 lands; keep 10.90, mull 9.88, gap +1.03 turns against the rule (se 0.27)
+      Dovin's Veto, Generous Gift, Marsh Flats, Plains, Sphere of Safety, Teleportation Circle, Urborg, Tomb of Yawgmoth
+    seed 500757 try 0: 2 lands; keep 10.93, mull 9.93, gap +1.00 turns against the rule (se 0.27)
+      Anguished Unmaking, Command Tower, Expedition Map, Generous Gift, Island, Read the Bones, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal
+
+Worst disagreements, the rule MULLIGANS and the oracle says KEEP (top 5):
+    seed 500658 try 0: 1 lands; keep 6.65, mull 10.53, gap +3.88 turns against the rule (se 0.38)
+      Exquisite Blood, Go for the Throat, Godless Shrine, Prayer of Binding, Ringsight, Sanguine Bond, Sol Ring
+    seed 500586 try 1: 1 lands; keep 7.33, mull 10.45, gap +3.12 turns against the rule (se 0.38)
+      Conjurer's Closet, Expedition Map, Exquisite Blood, Go for the Throat, Marauding Blight-Priest, Teferi's Protection, Underground River
+    seed 500131 try 1: 1 lands; keep 7.90, mull 10.30, gap +2.40 turns against the rule (se 0.37)
+      Debt to the Deathless, Exquisite Blood, Orcish Bowmasters, Serra's Sanctum, Smothering Tithe, Sol Ring, Zur the Enchanter
+    seed 500116 try 0: 1 lands; keep 8.10, mull 10.28, gap +2.18 turns against the rule (se 0.26)
+      Anguished Unmaking, Arcane Signet, Exquisite Blood, Profane Tutor, Skyclave Apparition, Swamp, Teleportation Circle
+    seed 500927 try 0: 1 lands; keep 8.93, mull 10.47, gap +1.55 turns against the rule (se 0.23)
+      Displacer Kitten, Esper Sentinel, Exquisite Blood, Go for the Throat, Mystical Tutor, Profane Tutor, Urborg, Tomb of Yawgmoth
+
+Hands the oracle settles against the rule: 165 of 1199 (13.8%), costing 0.73 turns each on average (0.100 turns per hand over all)
+Run time: 7s
+
+(7s total)

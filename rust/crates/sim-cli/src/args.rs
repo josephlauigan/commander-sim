@@ -35,6 +35,12 @@ pub struct Args {
     pub preflight_only: bool,
     /// --goldfish KEYS: these decks alone against three inert seats (goldfish.rs)
     pub goldfish: Option<String>,
+    /// --mulligan-oracle KEYS: grade the keep/mulligan rule against goldfish playouts (mull_oracle.rs)
+    pub mulligan_oracle: Option<String>,
+    /// --hands N: opening hands sampled per deck by --mulligan-oracle
+    pub hands: u64,
+    /// --playouts M: goldfish playouts per arm and hand for --mulligan-oracle
+    pub playouts: u64,
 }
 
 struct Opt {
@@ -55,7 +61,7 @@ const fn opt(
     Opt { name, flag, choices, metavar, help }
 }
 
-const OPTS: [Opt; 32] = [
+const OPTS: [Opt; 35] = [
     opt("--deck", false, &DECK_KEYS, "", "the deck to measure"),
     opt("--swap", false, &[], "\"OUT=>IN\"", "\"Card Out=>Card In\" (repeat for several): paired A/B run"),
     opt(
@@ -77,6 +83,18 @@ const OPTS: [Opt; 32] = [
          kill turn (median, mean, share by turn 1-8), how it won, mulligans, the ready turn and protection held on \
          the kill turn. With --trace GAME: one game's play-by-play",
     ),
+    opt(
+        "--mulligan-oracle",
+        false,
+        &[],
+        "KEYS",
+        "trace-only report grading the AI's keep/mulligan rule (same keys as --goldfish): for each sampled opening \
+         hand, goldfish playouts from KEEP and from MULLIGAN (same play seeds, the library reshuffled) say which \
+         kills faster; then the rule x oracle agreement tables, split by land count, and the worst disagreements. \
+         Changes no game. Defaults: --hands 1000 --playouts 40 --ai adaptive",
+    ),
+    opt("--hands", false, &[], "N", "with --mulligan-oracle: opening hands sampled per deck, from seed S on (default 1000)"),
+    opt("--playouts", false, &[], "M", "with --mulligan-oracle: goldfish playouts per arm and hand (default 40)"),
     opt("--calibrate", false, &["within", "ordering", "all"], "", "pool balance checks (no --deck needed)"),
     opt(
         "--realism",
@@ -167,7 +185,7 @@ const OPTS: [Opt; 32] = [
 
 pub fn usage() -> &'static str {
     "usage: commander-sim [-h] [--deck KEY] [--swap \"OUT=>IN\"] [--pool TIER] [--all-decks] [--calibrate WHICH] [--realism]\n\
-     \x20                    [--goldfish KEYS]\n\
+     \x20                    [--goldfish KEYS] [--mulligan-oracle KEYS [--hands N] [--playouts M]]\n\
      \x20                    [--knobs FILE|builtin] [--fit [--fit-scope shared|deck] [--fit-gens N] [--fit-stats LIST] [--fit-out FILE]]\n\
      \x20                    [--games N] [--seed SEED] [--profiles LIST | --profile NAME] [--analyze] [--trace GAME]\n\
      \x20                    [--cards] [--brief] [--no-explain] [--no-preflight | --preflight-only] [--ai {lookahead,adaptive}]\n\
@@ -262,8 +280,12 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
         no_preflight: false,
         preflight_only: false,
         goldfish: None,
+        mulligan_oracle: None,
+        hands: 1000,
+        playouts: 40,
     };
     let (mut games, mut n, mut profiles, mut profile, mut jobs) = (None, None, None, None, None);
+    let mut ai_given = false;
     let mut i = 0;
     while i < argv.len() {
         let tok = &argv[i];
@@ -306,6 +328,9 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
             "--no-preflight" => a.no_preflight = true,
             "--preflight-only" => a.preflight_only = true,
             "--goldfish" => a.goldfish = Some(val),
+            "--mulligan-oracle" => a.mulligan_oracle = Some(val),
+            "--hands" => a.hands = int(o.name, &val)?,
+            "--playouts" => a.playouts = int(o.name, &val)?,
             "--calibrate" => a.calibrate = Some(val),
             "--realism" => a.realism = true,
             "--knobs" => a.knobs = Some(val),
@@ -323,7 +348,10 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
             "--trace" => a.trace = Some(int(o.name, &val)?),
             "--cards" => a.cards = true,
             "--brief" => a.brief = true,
-            "--ai" => a.ai = val,
+            "--ai" => {
+                a.ai = val;
+                ai_given = true;
+            }
             "--temp" => {
                 a.temp = val.parse().map_err(|_| usage_err(format!("argument --temp: invalid float value: '{val}'")))?
             }
@@ -350,6 +378,9 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
         None => profiles.unwrap_or_else(|| "loose".into()).split(',').map(|s| s.to_string()).collect(),
     };
     a.profiles = profs;
+    if a.mulligan_oracle.is_some() && !ai_given {
+        a.ai = "adaptive".into(); // --mulligan-oracle plays thousands of games: the fast AI unless --ai says otherwise
+    }
     let cores = std::thread::available_parallelism().map_or(1, |n| n.get());
     a.jobs = jobs.filter(|&j| j != 0).unwrap_or(cores).max(1);
     Ok(a)
@@ -431,6 +462,19 @@ mod goldfish_flag_tests {
         assert_eq!((a.goldfish.as_deref(), a.games), (Some("thanos,t5"), 50));
         assert!(help().contains("--goldfish KEYS") && usage().contains("--goldfish"));
         assert_eq!(parse(&["--goldfish".to_string()]).unwrap_err().code, 2);
+    }
+
+    // --- c4-mulligan-oracle
+    #[test]
+    fn mulligan_oracle_flags_default_to_the_fast_ai() {
+        let p = |s: &str| parse(&s.split_whitespace().map(|x| x.to_string()).collect::<Vec<_>>()).unwrap();
+        let a = p("--mulligan-oracle thanos,t6");
+        assert_eq!((a.mulligan_oracle.as_deref(), a.hands, a.playouts, a.ai.as_str()), (Some("thanos,t6"), 1000, 40, "adaptive"));
+        let a = p("--mulligan-oracle aragorn --hands 20 --playouts 8 --seed 7 --ai lookahead");
+        assert_eq!((a.hands, a.playouts, a.seed, a.ai.as_str()), (20, 8, 7, "lookahead"));
+        // every other mode keeps the lookahead default
+        assert_eq!(p("--goldfish thanos").ai, "lookahead");
+        assert!(help().contains("--mulligan-oracle KEYS") && usage().contains("--mulligan-oracle"));
     }
 }
 

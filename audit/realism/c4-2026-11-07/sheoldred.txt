@@ -1,0 +1,73 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  sheoldred  100 cards: Full 93, Full-auto 7, Approximate 0, Partial 0, Unmodeled 0
+
+Mulligan oracle: 1 deck, 1000 hands each from seed 500000, 40 playouts per arm (2 arms, up to 2 tries per hand: at most 160000 games per deck, adaptive AI, 24 threads)
+  progress  10.0%  0m00s elapsed, ~0m05s left
+  progress  20.0%  0m01s elapsed, ~0m04s left
+  progress  30.0%  0m01s elapsed, ~0m04s left
+  progress  40.0%  0m02s elapsed, ~0m03s left
+  progress  50.0%  0m02s elapsed, ~0m02s left
+  progress  60.0%  0m03s elapsed, ~0m02s left
+  progress  70.0%  0m04s elapsed, ~0m01s left
+  progress  80.0%  0m04s elapsed, ~0m01s left
+  progress  90.0%  0m05s elapsed, ~0m00s left
+  progress 100.0%  0m06s elapsed, ~0m00s left
+
+=== Sheoldred (sheoldred) mulligan oracle [adaptive AI; 1000 hands from seed 500000, 40 playouts per arm; kill turn, 11 = none by turn 10] ===
+
+Try 0 (the first seven): 1000 hands, the rule keeps 79.6%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                 144         158       494     796
+  rule MULLIGANS              10         138        56     204
+  agreement: 62.7% of the 450 hands the oracle settles (83.2% of all 1000 hands counting unclear as no disagreement: 832)
+  mean kill turn over these hands: KEEP 9.45, MULLIGAN 9.30
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:     0     0     0 | rule mulls:    10   138    47
+  2          | rule keeps:    31   105   156 | rule mulls:     0     0     0
+  3          | rule keeps:    58    33   173 | rule mulls:     0     0     0
+  4          | rule keeps:    45    15   126 | rule mulls:     0     0     0
+  5+         | rule keeps:    10     5    39 | rule mulls:     0     0     9
+
+Try 1 (the second seven, dealt when the rule mulligans the first): 204 hands, the rule keeps 82.4%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                  29          35       104     168
+  rule MULLIGANS               1          25        10      36
+  agreement: 60.0% of the 90 hands the oracle settles (82.4% of all 204 hands counting unclear as no disagreement: 168)
+  mean kill turn over these hands: KEEP 9.51, MULLIGAN 9.41
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:     0     0     0 | rule mulls:     1    24     9
+  2          | rule keeps:     8    25    31 | rule mulls:     0     0     0
+  3          | rule keeps:    10     8    37 | rule mulls:     0     0     0
+  4          | rule keeps:     7     2    26 | rule mulls:     0     0     0
+  5+         | rule keeps:     4     0    10 | rule mulls:     0     1     1
+
+Worst disagreements, the rule KEEPS and the oracle says MULLIGAN (top 5):
+    seed 500633 try 0: 2 lands; keep 10.57, mull 8.95, gap +1.62 turns against the rule (se 0.30)
+      Cabal Coffers, Dark Ritual, Entomb, Overkill, Perigee Beckoner, Swamp, Yawgmoth's Will
+    seed 500806 try 0: 2 lands; keep 10.65, mull 9.05, gap +1.60 turns against the rule (se 0.31)
+      Blood Artist, Cabal Coffers, Invoke Despair, Ob Nixilis, the Fallen, Rooftop Assassin, Swamp, Yawgmoth's Will
+    seed 500533 try 0: 2 lands; keep 10.43, mull 8.90, gap +1.53 turns against the rule (se 0.23)
+      Blood Artist, Geier Reach Sanitarium, Grave Titan, Massacre Wurm, Sephiroth's Intervention, Swamp, Zulaport Cutthroat
+    seed 500946 try 0: 2 lands; keep 10.55, mull 9.03, gap +1.53 turns against the rule (se 0.26)
+      Accursed Marauder, Grave Pact, Massacre Wurm, Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel, Swamp x2, Swiftfoot Boots
+    seed 500301 try 0: 2 lands; keep 10.62, mull 9.12, gap +1.50 turns against the rule (se 0.24)
+      Entomb, Exsanguinate, Sephiroth's Intervention, Silence the Echo, Swamp x2, Swiftfoot Boots
+
+Worst disagreements, the rule MULLIGANS and the oracle says KEEP (top 5):
+    seed 500510 try 1: 1 lands; keep 7.50, mull 9.93, gap +2.43 turns against the rule (se 0.44)
+      Barad-dûr, Dark Ritual, Fellwar Stone, Grim Tutor, Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel, Torment of Hailfire, Vito, Thorn of the Dusk Rose
+    seed 500619 try 0: 1 lands; keep 7.65, mull 9.40, gap +1.75 turns against the rule (se 0.43)
+      Arcane Signet, Dark Ritual, Grim Tutor, Perigee Beckoner, Sephiroth's Intervention, Swamp, Vito, Thorn of the Dusk Rose
+    seed 500669 try 0: 1 lands; keep 8.40, mull 9.68, gap +1.28 turns against the rule (se 0.42)
+      Demonic Tutor, Fellwar Stone, Gray Merchant of Asphodel, Invoke Despair, Sanguine Bond, Skullclamp, Swamp
+    seed 500281 try 0: 1 lands; keep 8.30, mull 9.50, gap +1.20 turns against the rule (se 0.33)
+      Diabolic Tutor, Fellwar Stone, Gix, Yawgmoth Praetor, Peer into the Abyss, Seizan, Perverter of Truth, Swamp, Vito, Thorn of the Dusk Rose
+    seed 500594 try 0: 1 lands; keep 8.32, mull 9.50, gap +1.18 turns against the rule (se 0.38)
+      Demonic Tutor, Rooftop Assassin, Seizan, Perverter of Truth, Swamp, Undercity Dire Rat, Vault Plunderer, Vito, Thorn of the Dusk Rose
+
+Hands the oracle settles against the rule: 204 of 1204 (16.9%), costing 0.92 turns each on average (0.155 turns per hand over all)
+Run time: 6s
+
+(6s total)

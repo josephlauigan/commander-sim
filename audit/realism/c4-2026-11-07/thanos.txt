@@ -1,0 +1,73 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  thanos  100 cards: Full 98, Full-auto 2, Approximate 0, Partial 0, Unmodeled 0
+
+Mulligan oracle: 1 deck, 1000 hands each from seed 500000, 40 playouts per arm (2 arms, up to 2 tries per hand: at most 160000 games per deck, adaptive AI, 24 threads)
+  progress  10.0%  0m01s elapsed, ~0m14s left
+  progress  20.0%  0m03s elapsed, ~0m13s left
+  progress  30.0%  0m05s elapsed, ~0m11s left
+  progress  40.0%  0m06s elapsed, ~0m09s left
+  progress  50.0%  0m08s elapsed, ~0m08s left
+  progress  60.0%  0m10s elapsed, ~0m06s left
+  progress  70.0%  0m11s elapsed, ~0m05s left
+  progress  80.0%  0m13s elapsed, ~0m03s left
+  progress  90.0%  0m14s elapsed, ~0m01s left
+  progress 100.0%  0m16s elapsed, ~0m00s left
+
+=== Thanos (thanos) mulligan oracle [adaptive AI; 1000 hands from seed 500000, 40 playouts per arm; kill turn, 11 = none by turn 10] ===
+
+Try 0 (the first seven): 1000 hands, the rule keeps 53.0%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                 125          58       347     530
+  rule MULLIGANS              50         138       282     470
+  agreement: 70.9% of the 371 hands the oracle settles (89.2% of all 1000 hands counting unclear as no disagreement: 892)
+  mean kill turn over these hands: KEEP 10.16, MULLIGAN 10.20
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:     0     0     0 | rule mulls:    34    84   125
+  2          | rule keeps:    64    30   155 | rule mulls:     9    17    36
+  3          | rule keeps:    43    17   116 | rule mulls:     5    23    62
+  4          | rule keeps:    17     9    62 | rule mulls:     2    10    38
+  5+         | rule keeps:     1     2    14 | rule mulls:     0     4    21
+
+Try 1 (the second seven, dealt when the rule mulligans the first): 470 hands, the rule keeps 53.4%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                  75          19       157     251
+  rule MULLIGANS              27          41       151     219
+  agreement: 71.6% of the 162 hands the oracle settles (90.2% of all 470 hands counting unclear as no disagreement: 424)
+  mean kill turn over these hands: KEEP 10.18, MULLIGAN 10.36
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:     0     0     0 | rule mulls:    21    25    85
+  2          | rule keeps:    34    15    78 | rule mulls:     1     6    20
+  3          | rule keeps:    30     4    53 | rule mulls:     3     4    26
+  4          | rule keeps:    10     0    19 | rule mulls:     1     5    14
+  5+         | rule keeps:     1     0     7 | rule mulls:     1     1     6
+
+Worst disagreements, the rule KEEPS and the oracle says MULLIGAN (top 5):
+    seed 500011 try 1: 2 lands; keep 10.90, mull 9.75, gap +1.15 turns against the rule (se 0.30)
+      Blood Crypt, Disdainful Stroke, Red Elemental Blast, Rhystic Study, Stomping Ground, Urza's Bauble, Vampiric Tutor
+    seed 500359 try 0: 3 lands; keep 10.85, mull 9.75, gap +1.10 turns against the rule (se 0.29)
+      Forest, Mind Stone, Misty Rainforest, Rhystic Study, Solemn Simulacrum, Verdant Catacombs, Walking Ballista
+    seed 500154 try 0: 4 lands; keep 10.65, mull 9.57, gap +1.08 turns against the rule (se 0.28)
+      Deflecting Swat, Forest, Hallowed Fountain, Temple Garden, The Ur-Dragon, Volcanic Island, Worldly Tutor
+    seed 500467 try 0: 2 lands; keep 10.88, mull 9.88, gap +1.00 turns against the rule (se 0.26)
+      Birds of Paradise, Forest, Red Elemental Blast, Rhystic Study, Strip Mine, Swords to Plowshares, Worldly Tutor
+    seed 500664 try 0: 2 lands; keep 10.93, mull 9.93, gap +1.00 turns against the rule (se 0.27)
+      Blood Crypt, Gilded Lotus, Lightning Greaves, Mana Drain, Meteor Golem, Rhystic Study, Sacred Foundry
+
+Worst disagreements, the rule MULLIGANS and the oracle says KEEP (top 5):
+    seed 500565 try 0: 1 lands; keep 6.40, mull 10.40, gap +4.00 turns against the rule (se 0.36)
+      Astral Dragon, Bloodstained Mire, Cursed Mirror, Force of Negation, Mox Diamond, Ragavan, Nimble Pilferer, Thran Dynamo
+    seed 500187 try 1: 1 lands; keep 7.12, mull 10.32, gap +3.20 turns against the rule (se 0.34)
+      Astral Dragon, Crucible of Worlds, Cursed Mirror, Gilded Lotus, Grim Monolith, Solemn Simulacrum, Wooded Foothills
+    seed 500662 try 0: 1 lands; keep 7.90, mull 10.25, gap +2.35 turns against the rule (se 0.32)
+      Basalt Monolith, Deflecting Swat, Grim Monolith, Karn, Scion of Urza, Mana Vault, Summon: Bahamut, Temple Garden
+    seed 500596 try 0: 1 lands; keep 7.95, mull 10.18, gap +2.23 turns against the rule (se 0.29)
+      Basalt Monolith, Grim Monolith, Karn, Scion of Urza, Scion of Draco, Sol Ring, Urza's Bauble, Windswept Heath
+    seed 500675 try 1: 1 lands; keep 7.97, mull 10.20, gap +2.22 turns against the rule (se 0.37)
+      Basalt Monolith, Deflecting Swat, Elesh Norn, Mother of Machines, Mystic Forge, Rings of Brighthearth, Sol Ring, Verdant Catacombs
+
+Hands the oracle settles against the rule: 154 of 1470 (10.5%), costing 0.91 turns each on average (0.096 turns per hand over all)
+Run time: 17s
+
+(17s total)
