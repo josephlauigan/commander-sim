@@ -1,0 +1,447 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  dack-fayden-white-stax            100 cards: Full 83, Full-auto 6, Approximate 6, Partial 5, Unmodeled 0 | Partial: All-Fates Stalker, Bilbo's Gambit, Soul Partition, Petrified Hamlet, The Mycosynth Gardens
+  kinnan-bonder-mana-combo          100 cards: Full 97, Full-auto 1, Approximate 2, Partial 0, Unmodeled 0
+  kraum-tymna-blue-breach-midrange  100 cards: Full 95, Full-auto 4, Approximate 0, Partial 1, Unmodeled 0 | Partial: Exhibition Tidecaller
+  rograkh-silas-turbo-breach        100 cards: Full 94, Full-auto 4, Approximate 2, Partial 0, Unmodeled 0
+  rograkh-thrasios-creature-combo   100 cards: Full 86, Full-auto 1, Approximate 8, Partial 5, Unmodeled 0 | Partial: Biomancer's Familiar, Sowing Mycospawn, Springheart Nantuko, Training Grounds, Vibrance
+  sisay-legends-toolbox             100 cards: Full 90, Full-auto 3, Approximate 2, Partial 5, Unmodeled 0 | Partial: Agatha's Soul Cauldron, Deadpool, Trading Card, Derevi, Empyrial Tactician, Shang-Chi, Master of Kung Fu, Teferi, Who Slows the Sunset
+
+Mulligan oracle: 6 decks, 1000 hands each from seed 500000, 40 playouts per arm (2 arms, up to 2 tries per hand: at most 160000 games per deck, adaptive AI, 24 threads)
+  progress  10.0%  0m13s elapsed, ~2m00s left
+
+=== Dack Fayden (dack-fayden-white-stax) mulligan oracle [adaptive AI; 1000 hands from seed 500000, 40 playouts per arm; kill turn, 11 = none by turn 10] ===
+
+Try 0 (the first seven): 1000 hands, the rule keeps 49.9%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                  77         169       253     499
+  rule MULLIGANS              23         297       181     501
+  agreement: 66.1% of the 566 hands the oracle settles (80.8% of all 1000 hands counting unclear as no disagreement: 808)
+  mean kill turn over these hands: KEEP 9.65, MULLIGAN 9.03
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:     5    11     9 | rule mulls:    12   212   110
+  2          | rule keeps:    17    63    92 | rule mulls:     8    83    65
+  3          | rule keeps:    44    74   104 | rule mulls:     2     2     6
+  4          | rule keeps:    10    18    41 | rule mulls:     0     0     0
+  5+         | rule keeps:     1     3     7 | rule mulls:     1     0     0
+  by effective mana (t6_keep: lands plus the mana the hand makes by turn 2):
+  eff mana   | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  <2         | rule keeps:     0     0     0 | rule mulls:     5   187    89
+  2-2.9      | rule keeps:     0     0     0 | rule mulls:    13    97    79
+  3-3.9      | rule keeps:    21    88   125 | rule mulls:     3    12     8
+  4-4.9      | rule keeps:    25    55    84 | rule mulls:     1     0     4
+  5+         | rule keeps:    31    26    44 | rule mulls:     1     1     1
+
+Try 1 (the second seven, dealt when the rule mulligans the first): 501 hands, the rule keeps 46.1%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                  36          84       111     231
+  rule MULLIGANS               7         158       105     270
+  agreement: 68.1% of the 285 hands the oracle settles (81.8% of all 501 hands counting unclear as no disagreement: 410)
+  mean kill turn over these hands: KEEP 9.66, MULLIGAN 8.94
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:     4     6     9 | rule mulls:     3   111    53
+  2          | rule keeps:     4    32    34 | rule mulls:     3    42    49
+  3          | rule keeps:    16    34    43 | rule mulls:     0     5     2
+  4          | rule keeps:    10    11    23 | rule mulls:     0     0     1
+  5+         | rule keeps:     2     1     2 | rule mulls:     1     0     0
+  by effective mana (t6_keep: lands plus the mana the hand makes by turn 2):
+  eff mana   | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  <2         | rule keeps:     0     0     0 | rule mulls:     2    98    46
+  2-2.9      | rule keeps:     0     1     2 | rule mulls:     4    53    51
+  3-3.9      | rule keeps:    11    47    45 | rule mulls:     0     5     7
+  4-4.9      | rule keeps:    10    20    42 | rule mulls:     0     0     1
+  5+         | rule keeps:    15    16    22 | rule mulls:     1     2     0
+
+Worst disagreements, the rule KEEPS and the oracle says MULLIGAN (top 5):
+    seed 500167 try 0: 3 lands, eff mana 3.0; keep 10.95, mull 7.53, gap +3.42 turns against the rule (se 0.56)
+      Chalice of the Void, Command Beacon, Crystal Vein, Eiganjo, Seat of the Empire, Karn, the Great Creator, Radiant Solar, Soul Partition
+    seed 500775 try 0: 2 lands, eff mana 3.0; keep 10.95, mull 7.58, gap +3.37 turns against the rule (se 0.57)
+      Eiganjo, Seat of the Empire, Emergence Zone, Fiend Hunter, Mana Vault, Manifold Key, Razorgrass Ambush // Razorgrass Field, Thorn of Amethyst
+    seed 500223 try 0: 3 lands, eff mana 3.0; keep 11.00, mull 7.85, gap +3.15 turns against the rule (se 0.54)
+      Damping Sphere, Emergence Zone, Gleaming Splendor, Manifold Key, Plains x2, Werefox Bodyguard
+    seed 500274 try 1: 2 lands, eff mana 3.0; keep 10.90, mull 7.75, gap +3.15 turns against the rule (se 0.54)
+      All-Fates Stalker, Crystal Vein, Emergence Zone, Enlightened Tutor, Path to Exile, Prismatic Lens, Radiant Solar
+    seed 500372 try 0: 3 lands, eff mana 3.5; keep 10.97, mull 7.88, gap +3.10 turns against the rule (se 0.54)
+      Cloudshift, Eiganjo, Seat of the Empire, Mishra's Workshop, Mox Diamond, Snow-Covered Plains, Thorn of Amethyst, Werefox Bodyguard
+
+Worst disagreements, the rule MULLIGANS and the oracle says KEEP (top 5):
+    seed 500212 try 0: 2 lands, eff mana 2.0; keep 6.78, mull 9.32, gap +2.55 turns against the rule (se 0.56)
+      Cloudshift, Get Lost, Paladin Class, Plains, Remote Farm, Swords to Plowshares, Tezzeret, Cruel Captain
+    seed 500350 try 1: 2 lands, eff mana 2.0; keep 6.47, mull 8.85, gap +2.38 turns against the rule (se 0.75)
+      Basalt Monolith, Blind Obedience, Deafening Silence, Eiganjo, Seat of the Empire, March of Otherworldly Light, Pearl Medallion, Plains
+    seed 500544 try 0: 2 lands, eff mana 2.0; keep 6.83, mull 9.18, gap +2.35 turns against the rule (se 0.81)
+      Ancient Den, Ephemerate, Erode, Jeweled Amulet, Ruins of Trokair, Smothering Tithe, Void Mirror
+    seed 500571 try 0: 1 lands, eff mana 3.0; keep 6.60, mull 8.80, gap +2.20 turns against the rule (se 0.67)
+      Basalt Monolith, Coalition Relic, Cursed Totem, Paladin Class, Sol Ring, Urza's Cave, Voltaic Key
+    seed 500654 try 0: 1 lands, eff mana 1.0; keep 7.90, mull 10.07, gap +2.17 turns against the rule (se 0.55)
+      Disruptor Flute, Mox Opal, Pearl Medallion, Razorgrass Ambush // Razorgrass Field, The One Ring, Trinisphere, Urza's Saga
+
+Hands the oracle settles against the rule: 283 of 1501 (18.9%), costing 1.85 turns each on average (0.348 turns per hand over all)
+Run time: 23s
+  progress  20.0%  0m29s elapsed, ~1m59s left
+  progress  30.0%  0m51s elapsed, ~1m59s left
+
+=== Kinnan (kinnan-bonder-mana-combo) mulligan oracle [adaptive AI; 1000 hands from seed 500000, 40 playouts per arm; kill turn, 11 = none by turn 10] ===
+
+Try 0 (the first seven): 1000 hands, the rule keeps 56.9%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                 138          94       337     569
+  rule MULLIGANS              40         211       180     431
+  agreement: 72.3% of the 483 hands the oracle settles (86.6% of all 1000 hands counting unclear as no disagreement: 866)
+  mean kill turn over these hands: KEEP 8.78, MULLIGAN 8.61
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:     8     7    18 | rule mulls:    40   200   168
+  2          | rule keeps:    79    57   181 | rule mulls:     0     5     4
+  3          | rule keeps:    44    24   111 | rule mulls:     0     3     4
+  4          | rule keeps:     7     6    27 | rule mulls:     0     0     2
+  5+         | rule keeps:     0     0     0 | rule mulls:     0     3     2
+  by effective mana (t6_keep: lands plus the mana the hand makes by turn 2):
+  eff mana   | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  <2         | rule keeps:     0     0     0 | rule mulls:    14   181   119
+  2-2.9      | rule keeps:    21    31    64 | rule mulls:    21    23    47
+  3-3.9      | rule keeps:    60    41   142 | rule mulls:     3     4     8
+  4-4.9      | rule keeps:    45    20    88 | rule mulls:     1     0     4
+  5+         | rule keeps:    12     2    43 | rule mulls:     1     3     2
+
+Try 1 (the second seven, dealt when the rule mulligans the first): 431 hands, the rule keeps 56.8%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                  73          42       130     245
+  rule MULLIGANS              21          76        89     186
+  agreement: 70.3% of the 212 hands the oracle settles (85.4% of all 431 hands counting unclear as no disagreement: 368)
+  mean kill turn over these hands: KEEP 8.85, MULLIGAN 8.82
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:     7     1    14 | rule mulls:    20    76    85
+  2          | rule keeps:    41    28    65 | rule mulls:     0     0     0
+  3          | rule keeps:    20    10    41 | rule mulls:     0     0     0
+  4          | rule keeps:     4     3     8 | rule mulls:     0     0     0
+  5+         | rule keeps:     1     0     2 | rule mulls:     1     0     4
+  by effective mana (t6_keep: lands plus the mana the hand makes by turn 2):
+  eff mana   | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  <2         | rule keeps:     0     0     0 | rule mulls:    13    71    65
+  2-2.9      | rule keeps:    16    18    38 | rule mulls:     7     5    18
+  3-3.9      | rule keeps:    27    14    56 | rule mulls:     0     0     2
+  4-4.9      | rule keeps:    20     9    26 | rule mulls:     0     0     0
+  5+         | rule keeps:    10     1    10 | rule mulls:     1     0     4
+
+Worst disagreements, the rule KEEPS and the oracle says MULLIGAN (top 5):
+    seed 500092 try 0: 2 lands, eff mana 2.0; keep 10.47, mull 8.00, gap +2.47 turns against the rule (se 0.40)
+      An Offer You Can't Refuse, City of Brass, Clever Impersonator, Copy Artifact, Mental Misstep, Sylvan Library, Windswept Heath
+    seed 500229 try 0: 2 lands, eff mana 2.0; keep 10.38, mull 8.15, gap +2.22 turns against the rule (se 0.43)
+      Breeding Pool, Copy Artifact, Fierce Guardianship, Flash Photography, Gemstone Caverns, Hidden Strings, Mystic Remora
+    seed 500277 try 0: 2 lands, eff mana 2.8; keep 10.05, mull 7.85, gap +2.20 turns against the rule (se 0.33)
+      Clever Impersonator, Elvish Mystic, High Fae Trickster, Island, Mystic Remora, The Cabbage Merchant, Waterlogged Grove
+    seed 500838 try 0: 3 lands, eff mana 3.0; keep 10.40, mull 8.20, gap +2.20 turns against the rule (se 0.47)
+      An Offer You Can't Refuse, City of Brass, Disrupting Shoal, Elvish Spirit Guide, Flusterstorm, Island, Wooded Foothills
+    seed 500419 try 0: 3 lands, eff mana 4.0; keep 10.00, mull 7.85, gap +2.15 turns against the rule (se 0.49)
+      Borne Upon a Wind, City of Brass, Finale of Devastation, Mana Vault, Otawara, Soaring City, Veil of Summer, Wooded Foothills
+
+Worst disagreements, the rule MULLIGANS and the oracle says KEEP (top 5):
+    seed 500526 try 1: 1 lands, eff mana 2.0; keep 5.30, mull 8.78, gap +3.48 turns against the rule (se 0.40)
+      Chrome Mox, Commandeer, Consecrated Sphinx, Fellwar Stone, Forest, Hullbreaker Horror, Mockingbird
+    seed 500409 try 0: 1 lands, eff mana 2.6; keep 5.20, mull 8.65, gap +3.45 turns against the rule (se 0.41)
+      Basalt Monolith, Birds of Paradise, Elvish Mystic, Endurance, Hidden Strings, Thrasios, Triton Hero, Yavimaya Coast
+    seed 500794 try 0: 1 lands, eff mana 1.8; keep 5.35, mull 8.78, gap +3.43 turns against the rule (se 0.36)
+      Arcane Signet, Birds of Paradise, Command Tower, Disrupting Shoal, Hullbreaker Horror, Nature's Rhythm, Trophy Mage
+    seed 500610 try 0: 1 lands, eff mana 2.3; keep 5.12, mull 8.50, gap +3.38 turns against the rule (se 0.46)
+      Borne Upon a Wind, Cryptolith Rite, Fyndhorn Elves, Hullbreaker Horror, Mox Amber, Trophy Mage, Waterlogged Grove
+    seed 500471 try 1: 1 lands, eff mana 2.0; keep 5.95, mull 9.20, gap +3.25 turns against the rule (se 0.39)
+      Basalt Monolith, Invasion of Ikoria // Zilortha, Apex of Ikoria, Mana Vault, Snapback, Tarnished Citadel, The One Ring, Whir of Invention
+
+Hands the oracle settles against the rule: 197 of 1431 (13.8%), costing 1.43 turns each on average (0.197 turns per hand over all)
+Run time: 36s
+  progress  40.0%  1m09s elapsed, ~1m43s left
+  progress  50.0%  1m25s elapsed, ~1m25s left
+
+=== Kraum/Tymna (kraum-tymna-blue-breach-midrange) mulligan oracle [adaptive AI; 1000 hands from seed 500000, 40 playouts per arm; kill turn, 11 = none by turn 10] ===
+
+Try 0 (the first seven): 1000 hands, the rule keeps 49.9%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                 130          77       292     499
+  rule MULLIGANS              29         249       223     501
+  agreement: 78.1% of the 485 hands the oracle settles (89.4% of all 1000 hands counting unclear as no disagreement: 894)
+  mean kill turn over these hands: KEEP 8.91, MULLIGAN 8.69
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:     6    10    15 | rule mulls:    26   219   155
+  2          | rule keeps:    57    50   169 | rule mulls:     3    22    30
+  3          | rule keeps:    48    14    77 | rule mulls:     0     6    20
+  4          | rule keeps:    19     2    31 | rule mulls:     0     2    11
+  5+         | rule keeps:     0     1     0 | rule mulls:     0     0     7
+  by effective mana (t6_keep: lands plus the mana the hand makes by turn 2):
+  eff mana   | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  <2         | rule keeps:     0     0     0 | rule mulls:    20   185   134
+  2-2.9      | rule keeps:    31    32    92 | rule mulls:     9    48    42
+  3-3.9      | rule keeps:    51    34    96 | rule mulls:     0    11    22
+  4-4.9      | rule keeps:    32     6    67 | rule mulls:     0     5    16
+  5+         | rule keeps:    16     5    37 | rule mulls:     0     0     9
+
+Try 1 (the second seven, dealt when the rule mulligans the first): 501 hands, the rule keeps 57.7%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                  78          36       175     289
+  rule MULLIGANS              16          96       100     212
+  agreement: 77.0% of the 226 hands the oracle settles (89.6% of all 501 hands counting unclear as no disagreement: 449)
+  mean kill turn over these hands: KEEP 8.92, MULLIGAN 9.00
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:     3     1     9 | rule mulls:    16    96    97
+  2          | rule keeps:    40    26    88 | rule mulls:     0     0     0
+  3          | rule keeps:    28     5    55 | rule mulls:     0     0     0
+  4          | rule keeps:     6     4    22 | rule mulls:     0     0     0
+  5+         | rule keeps:     1     0     1 | rule mulls:     0     0     3
+  by effective mana (t6_keep: lands plus the mana the hand makes by turn 2):
+  eff mana   | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  <2         | rule keeps:     0     0     0 | rule mulls:    12    87    83
+  2-2.9      | rule keeps:    28    16    51 | rule mulls:     4     9    14
+  3-3.9      | rule keeps:    29    10    55 | rule mulls:     0     0     0
+  4-4.9      | rule keeps:    14     6    51 | rule mulls:     0     0     0
+  5+         | rule keeps:     7     4    18 | rule mulls:     0     0     3
+
+Worst disagreements, the rule KEEPS and the oracle says MULLIGAN (top 5):
+    seed 500654 try 0: 2 lands, eff mana 2.7; keep 10.50, mull 8.12, gap +2.38 turns against the rule (se 0.42)
+      Arid Mesa, Commandeer, Fierce Guardianship, Lotus Petal, Pact of Negation, Scrubland, Simian Spirit Guide
+    seed 500570 try 0: 2 lands, eff mana 2.0; keep 9.80, mull 7.55, gap +2.25 turns against the rule (se 0.49)
+      Deflecting Swat, Exotic Orchard, Misdirection, Pact of Negation, Rhystic Study, Scrubland, Sevinne's Reclamation
+    seed 500717 try 1: 2 lands, eff mana 2.0; keep 10.30, mull 8.10, gap +2.20 turns against the rule (se 0.44)
+      An Offer You Can't Refuse, Beseech the Mirror, Mental Misstep, Mockingbird, Mystic Remora, Scalding Tarn, Verdant Catacombs
+    seed 500330 try 0: 1 lands, eff mana 3.0; keep 10.22, mull 8.12, gap +2.10 turns against the rule (se 0.52)
+      An Offer You Can't Refuse, Ancient Tomb, Commandeer, Culling the Weak, Fellwar Stone, Mana Vault, Vampiric Tutor
+    seed 500765 try 0: 2 lands, eff mana 2.0; keep 10.35, mull 8.25, gap +2.10 turns against the rule (se 0.44)
+      Ad Nauseam, Gemstone Caverns, Misdirection, Orcish Bowmasters, Snapback, Swan Song, Verdant Catacombs
+
+Worst disagreements, the rule MULLIGANS and the oracle says KEEP (top 5):
+    seed 500037 try 1: 1 lands, eff mana 1.0; keep 2.23, mull 8.93, gap +6.70 turns against the rule (se 0.41)
+      Command Tower, Dark Ritual, Lion's Eye Diamond, Mox Opal, Sevinne's Reclamation, Thassa's Oracle, Vampiric Tutor
+    seed 500756 try 1: 1 lands, eff mana 2.0; keep 2.33, mull 8.75, gap +6.42 turns against the rule (se 0.43)
+      Chrome Mox, Diabolic Intent, Imperial Seal, Simian Spirit Guide, Tainted Pact, Thassa's Oracle, Underground Sea
+    seed 500615 try 0: 1 lands, eff mana 2.0; keep 4.42, mull 8.68, gap +4.25 turns against the rule (se 0.53)
+      Badlands, Chrome Mox, Demonic Consultation, Demonic Tutor, Fierce Guardianship, Tataru Taru, Voice of Victory
+    seed 500912 try 0: 1 lands, eff mana 1.7; keep 5.15, mull 8.90, gap +3.75 turns against the rule (se 0.61)
+      Demonic Consultation, Fierce Guardianship, Into the Flood Maw, Lotus Petal, Otawara, Soaring City, Tainted Pact, Thassa's Oracle
+    seed 500043 try 0: 1 lands, eff mana 1.0; keep 4.92, mull 8.55, gap +3.63 turns against the rule (se 0.57)
+      Dark Ritual, Deflecting Swat, Mystical Tutor, Red Elemental Blast, Tataru Taru, Thassa's Oracle, Tundra
+
+Hands the oracle settles against the rule: 158 of 1501 (10.5%), costing 1.59 turns each on average (0.168 turns per hand over all)
+Run time: 27s
+  progress  60.0%  1m41s elapsed, ~1m07s left
+
+=== Rograkh/Silas (rograkh-silas-turbo-breach) mulligan oracle [adaptive AI; 1000 hands from seed 500000, 40 playouts per arm; kill turn, 11 = none by turn 10] ===
+
+Try 0 (the first seven): 1000 hands, the rule keeps 58.9%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                 125         130       334     589
+  rule MULLIGANS              32         183       196     411
+  agreement: 65.5% of the 470 hands the oracle settles (83.8% of all 1000 hands counting unclear as no disagreement: 838)
+  mean kill turn over these hands: KEEP 8.96, MULLIGAN 8.84
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:    21    35    62 | rule mulls:    32   147   153
+  2          | rule keeps:    62    66   164 | rule mulls:     0    16     9
+  3          | rule keeps:    37    26    88 | rule mulls:     0    12    20
+  4          | rule keeps:     4     3    20 | rule mulls:     0     5    12
+  5+         | rule keeps:     1     0     0 | rule mulls:     0     3     2
+  by effective mana (t6_keep: lands plus the mana the hand makes by turn 2):
+  eff mana   | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  <2         | rule keeps:     4     8    17 | rule mulls:    24   122   126
+  2-2.9      | rule keeps:    33    41    86 | rule mulls:     8    31    29
+  3-3.9      | rule keeps:    55    48   131 | rule mulls:     0    15    15
+  4-4.9      | rule keeps:    20    19    70 | rule mulls:     0     6    12
+  5+         | rule keeps:    13    14    30 | rule mulls:     0     9    14
+
+Try 1 (the second seven, dealt when the rule mulligans the first): 411 hands, the rule keeps 60.6%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                  63          32       154     249
+  rule MULLIGANS              21          55        86     162
+  agreement: 69.0% of the 171 hands the oracle settles (87.1% of all 411 hands counting unclear as no disagreement: 358)
+  mean kill turn over these hands: KEEP 8.86, MULLIGAN 9.06
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:    10     4    17 | rule mulls:    21    55    83
+  2          | rule keeps:    30    17    76 | rule mulls:     0     0     0
+  3          | rule keeps:    16     9    46 | rule mulls:     0     0     0
+  4          | rule keeps:     6     2    15 | rule mulls:     0     0     0
+  5+         | rule keeps:     1     0     0 | rule mulls:     0     0     3
+  by effective mana (t6_keep: lands plus the mana the hand makes by turn 2):
+  eff mana   | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  <2         | rule keeps:     4     1     3 | rule mulls:    16    47    66
+  2-2.9      | rule keeps:    14     9    50 | rule mulls:     5     5    15
+  3-3.9      | rule keeps:    21    15    54 | rule mulls:     0     3     2
+  4-4.9      | rule keeps:    15     3    30 | rule mulls:     0     0     0
+  5+         | rule keeps:     9     4    17 | rule mulls:     0     0     3
+
+Worst disagreements, the rule KEEPS and the oracle says MULLIGAN (top 5):
+    seed 500008 try 0: 1 lands, eff mana 2.0; keep 10.55, mull 7.92, gap +2.63 turns against the rule (se 0.55)
+      An Offer You Can't Refuse, Final Fortune, Jeska's Will, Paradise Mantle, Phyrexian Tower, Red Elemental Blast, Wheel of Fortune
+    seed 500345 try 0: 2 lands, eff mana 2.0; keep 10.68, mull 8.07, gap +2.60 turns against the rule (se 0.49)
+      Chain of Vapor, Force of Will, Into the Flood Maw, Last Chance, Mana Confluence, Verdant Catacombs, Yawgmoth's Will
+    seed 500465 try 0: 1 lands, eff mana 3.0; keep 10.25, mull 7.70, gap +2.55 turns against the rule (se 0.57)
+      City of Traitors, Into the Flood Maw, Jeska's Will, Mental Misstep, Necropotence, Paradise Mantle, Simian Spirit Guide
+    seed 500824 try 0: 1 lands, eff mana 3.0; keep 10.47, mull 7.97, gap +2.50 turns against the rule (se 0.57)
+      City of Traitors, Gitaxian Probe, Into the Flood Maw, Mana Vault, Rain of Filth, Rhystic Study, Yawgmoth's Will
+    seed 500600 try 0: 2 lands, eff mana 3.0; keep 10.53, mull 8.07, gap +2.45 turns against the rule (se 0.50)
+      Ancient Tomb, Culling the Weak, Deflecting Swat, Mystical Tutor, Swan Song, Wooded Foothills, Yawgmoth's Will
+
+Worst disagreements, the rule MULLIGANS and the oracle says KEEP (top 5):
+    seed 500986 try 0: 1 lands, eff mana 2.0; keep 2.00, mull 8.78, gap +6.78 turns against the rule (se 0.44)
+      Arcane Signet, City of Brass, Gitaxian Probe, Mystical Tutor, Paradise Mantle, Praetor's Grasp, Thassa's Oracle
+    seed 500564 try 0: 1 lands, eff mana 1.0; keep 1.98, mull 8.40, gap +6.43 turns against the rule (se 0.46)
+      Culling the Weak, Demonic Consultation, Flare of Duplication, Imperial Seal, Marsh Flats, Snapback, Thassa's Oracle
+    seed 500077 try 0: 1 lands, eff mana 2.0; keep 2.75, mull 8.78, gap +6.03 turns against the rule (se 0.42)
+      Blood Crypt, Demonic Consultation, Demonic Counsel, Lion's Eye Diamond, Springleaf Drum, Talisman of Dominance, Thassa's Oracle
+    seed 500040 try 0: 1 lands, eff mana 2.0; keep 4.22, mull 9.28, gap +5.05 turns against the rule (se 0.51)
+      Command Tower, Demonic Consultation, Demonic Counsel, Demonic Tutor, Mox Amber, Mox Diamond, Tainted Pact
+    seed 500601 try 1: 0 lands, eff mana 1.0; keep 4.22, mull 9.22, gap +5.00 turns against the rule (se 0.61)
+      Arcane Signet, Cabal Ritual, Demonic Counsel, Mystical Tutor, Paradise Mantle, Rhystic Study, Thassa's Oracle
+
+Hands the oracle settles against the rule: 215 of 1411 (15.2%), costing 1.79 turns each on average (0.273 turns per hand over all)
+Run time: 27s
+  progress  70.0%  1m58s elapsed, ~0m50s left
+  progress  80.0%  2m17s elapsed, ~0m34s left
+
+=== Rograkh/Thrasios (rograkh-thrasios-creature-combo) mulligan oracle [adaptive AI; 1000 hands from seed 500000, 40 playouts per arm; kill turn, 11 = none by turn 10] ===
+
+Try 0 (the first seven): 1000 hands, the rule keeps 64.6%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                 136         111       399     646
+  rule MULLIGANS              28         167       159     354
+  agreement: 68.6% of the 442 hands the oracle settles (86.1% of all 1000 hands counting unclear as no disagreement: 861)
+  mean kill turn over these hands: KEEP 9.47, MULLIGAN 9.37
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:     8     5    21 | rule mulls:    28   156   154
+  2          | rule keeps:    65    66   197 | rule mulls:     0     9     3
+  3          | rule keeps:    50    30   116 | rule mulls:     0     2     1
+  4          | rule keeps:    10     8    53 | rule mulls:     0     0     0
+  5+         | rule keeps:     3     2    12 | rule mulls:     0     0     1
+  by effective mana (t6_keep: lands plus the mana the hand makes by turn 2):
+  eff mana   | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  <2         | rule keeps:     0     0     0 | rule mulls:    16   120    97
+  2-2.9      | rule keeps:    32    39   106 | rule mulls:    12    42    54
+  3-3.9      | rule keeps:    52    40   146 | rule mulls:     0     4     6
+  4-4.9      | rule keeps:    35    27    90 | rule mulls:     0     1     1
+  5+         | rule keeps:    17     5    57 | rule mulls:     0     0     1
+
+Try 1 (the second seven, dealt when the rule mulligans the first): 354 hands, the rule keeps 71.2%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                  66          29       157     252
+  rule MULLIGANS              13          37        52     102
+  agreement: 71.0% of the 145 hands the oracle settles (88.1% of all 354 hands counting unclear as no disagreement: 312)
+  mean kill turn over these hands: KEEP 9.45, MULLIGAN 9.59
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:     8     3     7 | rule mulls:    12    37    52
+  2          | rule keeps:    25    23    84 | rule mulls:     0     0     0
+  3          | rule keeps:    24     2    46 | rule mulls:     0     0     0
+  4          | rule keeps:     8     1    15 | rule mulls:     0     0     0
+  5+         | rule keeps:     1     0     5 | rule mulls:     1     0     0
+  by effective mana (t6_keep: lands plus the mana the hand makes by turn 2):
+  eff mana   | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  <2         | rule keeps:     0     0     0 | rule mulls:     6    33    37
+  2-2.9      | rule keeps:    16    15    50 | rule mulls:     4     4    14
+  3-3.9      | rule keeps:    25    11    51 | rule mulls:     1     0     1
+  4-4.9      | rule keeps:    15     3    37 | rule mulls:     0     0     0
+  5+         | rule keeps:    10     0    19 | rule mulls:     2     0     0
+
+Worst disagreements, the rule KEEPS and the oracle says MULLIGAN (top 5):
+    seed 500935 try 0: 2 lands, eff mana 4.0; keep 10.88, mull 9.00, gap +1.88 turns against the rule (se 0.26)
+      Ancient Tomb, Earthcraft, Emergence Zone, Mana Vault, Mental Misstep, Pact of Negation, Rhystic Study
+    seed 500682 try 0: 2 lands, eff mana 2.0; keep 10.57, mull 8.78, gap +1.80 turns against the rule (se 0.38)
+      Dryad Arbor, Earthcraft, Force of Negation, Mental Misstep, Pact of Negation, Sowing Mycospawn, Volcanic Island
+    seed 500779 try 0: 3 lands, eff mana 3.8; keep 10.53, mull 8.78, gap +1.75 turns against the rule (se 0.41)
+      Deflecting Swat, Emergence Zone, Llanowar Elves, Louisoix's Sacrifice, Minamo, School at Water's Edge, Prismatic Vista, The Cabbage Merchant
+    seed 500316 try 1: 3 lands, eff mana 4.0; keep 10.65, mull 8.93, gap +1.72 turns against the rule (se 0.37)
+      Ancient Tomb, Deserted Temple, Fierce Guardianship, Flare of Duplication, Mindbreak Trap, Otawara, Soaring City, The Cabbage Merchant
+    seed 500370 try 0: 2 lands, eff mana 2.8; keep 10.55, mull 8.90, gap +1.65 turns against the rule (se 0.39)
+      Delighted Halfling, Emergence Zone, Fierce Guardianship, Flare of Denial, Island, Pact of Negation, Phyrexian Metamorph
+
+Worst disagreements, the rule MULLIGANS and the oracle says KEEP (top 5):
+    seed 500978 try 0: 1 lands, eff mana 2.0; keep 6.78, mull 10.07, gap +3.30 turns against the rule (se 0.43)
+      Biomancer's Familiar, Chord of Calling, Expedition Map, Misty Rainforest, Sowing Mycospawn, Sylvan Scrying, Wild Growth
+    seed 500801 try 1: 1 lands, eff mana 2.0; keep 6.72, mull 9.80, gap +3.08 turns against the rule (se 0.39)
+      Candelabra of Tawnos, Fierce Guardianship, Finale of Devastation, Mox Amber, Prismatic Vista, Spellseeker, Sylvan Scrying
+    seed 500732 try 0: 1 lands, eff mana 2.6; keep 6.80, mull 9.55, gap +2.75 turns against the rule (se 0.42)
+      Birds of Paradise, Elvish Spirit Guide, Flare of Duplication, Growing Rites of Itlimoc // Itlimoc, Cradle of the Sun, Llanowar Elves, Snap, Windswept Heath
+    seed 500618 try 0: 1 lands, eff mana 1.8; keep 6.42, mull 9.12, gap +2.70 turns against the rule (se 0.48)
+      Cloud of Faeries, Fierce Guardianship, Flare of Denial, Formidable Speaker, Gaea's Cradle, Gene Pollinator, Snap
+    seed 500707 try 0: 0 lands, eff mana 1.0; keep 6.67, mull 9.32, gap +2.65 turns against the rule (se 0.52)
+      Borne Upon a Wind, Eternal Witness, Mox Amber, Nature's Rhythm, Snap, Sylvan Scrying, Valley Floodcaller
+
+Hands the oracle settles against the rule: 181 of 1354 (13.4%), costing 1.17 turns each on average (0.156 turns per hand over all)
+Run time: 31s
+  progress  90.0%  2m34s elapsed, ~0m17s left
+  progress 100.0%  2m49s elapsed, ~0m00s left
+
+=== Sisay (sisay-legends-toolbox) mulligan oracle [adaptive AI; 1000 hands from seed 500000, 40 playouts per arm; kill turn, 11 = none by turn 10] ===
+
+Try 0 (the first seven): 1000 hands, the rule keeps 59.9%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                 206         120       273     599
+  rule MULLIGANS              32         237       132     401
+  agreement: 74.5% of the 595 hands the oracle settles (84.8% of all 1000 hands counting unclear as no disagreement: 848)
+  mean kill turn over these hands: KEEP 8.03, MULLIGAN 7.73
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:    11     5    15 | rule mulls:    19   200    85
+  2          | rule keeps:    73    69   110 | rule mulls:     3    34    34
+  3          | rule keeps:    93    40   103 | rule mulls:     0     0     0
+  4          | rule keeps:    29     6    45 | rule mulls:     0     0     0
+  5+         | rule keeps:     0     0     0 | rule mulls:    10     3    13
+  by effective mana (t6_keep: lands plus the mana the hand makes by turn 2):
+  eff mana   | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  <2         | rule keeps:     0     0     0 | rule mulls:    12   176    59
+  2-2.9      | rule keeps:    26    38    63 | rule mulls:    10    58    60
+  3-3.9      | rule keeps:    95    52   102 | rule mulls:     0     0     0
+  4-4.9      | rule keeps:    62    17    81 | rule mulls:     0     0     0
+  5+         | rule keeps:    23    13    27 | rule mulls:    10     3    13
+
+Try 1 (the second seven, dealt when the rule mulligans the first): 401 hands, the rule keeps 68.1%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                 106          42       125     273
+  rule MULLIGANS              19          78        31     128
+  agreement: 75.1% of the 245 hands the oracle settles (84.8% of all 401 hands counting unclear as no disagreement: 340)
+  mean kill turn over these hands: KEEP 7.99, MULLIGAN 8.00
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:     5     5    17 | rule mulls:    11    77    28
+  2          | rule keeps:    38    32    57 | rule mulls:     0     0     0
+  3          | rule keeps:    48     4    38 | rule mulls:     0     0     0
+  4          | rule keeps:    15     1    13 | rule mulls:     0     0     0
+  5+         | rule keeps:     0     0     0 | rule mulls:     8     1     3
+  by effective mana (t6_keep: lands plus the mana the hand makes by turn 2):
+  eff mana   | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  <2         | rule keeps:     0     0     0 | rule mulls:     7    71    22
+  2-2.9      | rule keeps:    17    24    45 | rule mulls:     4     6     6
+  3-3.9      | rule keeps:    53    12    45 | rule mulls:     0     0     0
+  4-4.9      | rule keeps:    29     4    22 | rule mulls:     0     0     0
+  5+         | rule keeps:     7     2    13 | rule mulls:     8     1     3
+
+Worst disagreements, the rule KEEPS and the oracle says MULLIGAN (top 5):
+    seed 500616 try 0: 2 lands, eff mana 3.0; keep 9.85, mull 7.05, gap +2.80 turns against the rule (se 0.34)
+      Ancient Tomb, Chord of Calling, Gemstone Caverns, Into the Flood Maw, Kinnan, Bonder Prodigy, Pact of Negation, Silence
+    seed 500976 try 0: 2 lands, eff mana 3.0; keep 10.55, mull 7.90, gap +2.65 turns against the rule (se 0.35)
+      Abrupt Decay, Ancient Tomb, Cryptolith Rite, Deflecting Swat, Ertai Resurrected, Gemstone Caverns, Orcish Bowmasters
+    seed 500902 try 0: 2 lands, eff mana 5.7; keep 9.85, mull 7.30, gap +2.55 turns against the rule (se 0.42)
+      Ancient Tomb, Command Tower, Deafening Silence, Force of Negation, Lotus Petal, Orcish Bowmasters, Sol Ring
+    seed 500800 try 0: 1 lands, eff mana 3.0; keep 9.90, mull 7.55, gap +2.35 turns against the rule (se 0.42)
+      Mindbreak Trap, Misty Rainforest, Rhystic Study, Sol Ring, Swan Song, Teferi, Who Slows the Sunset, The Cabbage Merchant
+    seed 500077 try 0: 2 lands, eff mana 2.5; keep 9.12, mull 6.78, gap +2.35 turns against the rule (se 0.35)
+      City of Brass, Command Tower, Deadpool, Trading Card, Enduring Vitality, Mox Diamond, Mystic Remora, Relic of Legends
+
+Worst disagreements, the rule MULLIGANS and the oracle says KEEP (top 5):
+    seed 500005 try 0: 1 lands, eff mana 2.0; keep 5.03, mull 8.40, gap +3.38 turns against the rule (se 0.32)
+      Bloom Tender, Chrome Mox, Command Tower, Lavinia, Azorius Renegade, Lotho, Corrupt Shirriff, Selvala, Heart of the Wilds, Tyvar, Jubilant Brawler
+    seed 500745 try 0: 1 lands, eff mana 2.5; keep 5.17, mull 8.25, gap +3.08 turns against the rule (se 0.38)
+      Bloom Tender, Chrome Mox, Elvish Spirit Guide, Green Sun's Zenith, Misty Rainforest, Mox Amber, Teferi, Time Raveler
+    seed 500896 try 1: 1 lands, eff mana 2.0; keep 5.08, mull 7.72, gap +2.65 turns against the rule (se 0.29)
+      Bloom Tender, Chrome Mox, Deadpool, Trading Card, Demonic Tutor, Emiel the Blessed, Silence, Tarnished Citadel
+    seed 500051 try 0: 5 lands, eff mana 5.8; keep 5.90, mull 8.53, gap +2.62 turns against the rule (se 0.32)
+      Bloom Tender, Colossal Skyturtle, Command Tower, Flooded Strand, Plateau, Verdant Catacombs, Volcanic Island
+    seed 500739 try 1: 1 lands, eff mana 1.7; keep 5.97, mull 8.50, gap +2.53 turns against the rule (se 0.32)
+      Bloom Tender, Cryptolith Rite, Legolas's Quick Reflexes, Lotus Petal, Marvin, Murderous Mimic, Smothering Tithe, Tarnished Citadel
+
+Hands the oracle settles against the rule: 213 of 1401 (15.2%), costing 1.43 turns each on average (0.217 turns per hand over all)
+Run time: 27s
+
+(170s total)

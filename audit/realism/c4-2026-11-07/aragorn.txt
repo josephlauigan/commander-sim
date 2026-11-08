@@ -1,0 +1,73 @@
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  aragorn  100 cards: Full 97, Full-auto 3, Approximate 0, Partial 0, Unmodeled 0
+
+Mulligan oracle: 1 deck, 1000 hands each from seed 500000, 40 playouts per arm (2 arms, up to 2 tries per hand: at most 160000 games per deck, adaptive AI, 24 threads)
+  progress  10.0%  0m00s elapsed, ~0m05s left
+  progress  20.0%  0m01s elapsed, ~0m05s left
+  progress  30.0%  0m02s elapsed, ~0m04s left
+  progress  40.0%  0m02s elapsed, ~0m04s left
+  progress  50.0%  0m03s elapsed, ~0m03s left
+  progress  60.0%  0m04s elapsed, ~0m02s left
+  progress  70.0%  0m04s elapsed, ~0m02s left
+  progress  80.0%  0m05s elapsed, ~0m01s left
+  progress  90.0%  0m06s elapsed, ~0m00s left
+  progress 100.0%  0m07s elapsed, ~0m00s left
+
+=== Aragorn (aragorn) mulligan oracle [adaptive AI; 1000 hands from seed 500000, 40 playouts per arm; kill turn, 11 = none by turn 10] ===
+
+Try 0 (the first seven): 1000 hands, the rule keeps 74.9%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                  77          70       602     749
+  rule MULLIGANS               9          71       171     251
+  agreement: 65.2% of the 227 hands the oracle settles (92.1% of all 1000 hands counting unclear as no disagreement: 921)
+  mean kill turn over these hands: KEEP 10.80, MULLIGAN 10.78
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:     0     1     6 | rule mulls:     8    69   164
+  2          | rule keeps:    26    39   228 | rule mulls:     0     0     0
+  3          | rule keeps:    32    19   215 | rule mulls:     0     0     0
+  4          | rule keeps:    18    11   116 | rule mulls:     0     0     0
+  5+         | rule keeps:     1     0    37 | rule mulls:     1     2     7
+
+Try 1 (the second seven, dealt when the rule mulligans the first): 251 hands, the rule keeps 78.5%
+                     oracle KEEP oracle MULL   unclear   total
+  rule KEEPS                  22           5       170     197
+  rule MULLIGANS               2           7        45      54
+  agreement: 80.6% of the 36 hands the oracle settles (97.2% of all 251 hands counting unclear as no disagreement: 244)
+  mean kill turn over these hands: KEEP 10.79, MULLIGAN 10.86
+  by lands in the hand:
+  lands      | rule keeps:  keep  mull   unc | rule mulls:  keep  mull   unc   (cells: oracle keep / mull / unclear)
+  0-1        | rule keeps:     0     0     2 | rule mulls:     2     7    43
+  2          | rule keeps:     5     4    54 | rule mulls:     0     0     0
+  3          | rule keeps:    11     0    70 | rule mulls:     0     0     0
+  4          | rule keeps:     4     1    31 | rule mulls:     0     0     0
+  5+         | rule keeps:     2     0    13 | rule mulls:     0     0     2
+
+Worst disagreements, the rule KEEPS and the oracle says MULLIGAN (top 5):
+    seed 500124 try 0: 4 lands; keep 10.93, mull 10.40, gap +0.53 turns against the rule (se 0.18)
+      Exotic Orchard, Flooded Strand, Guttersnipe, Plateau, Swords to Plowshares, Taiga, Talrand, Sky Summoner
+    seed 500189 try 0: 2 lands; keep 10.95, mull 10.45, gap +0.50 turns against the rule (se 0.17)
+      Austere Command, Guttersnipe, Lightning Greaves, Lotus Petal, Shivan Reef, Spark Double, Verdant Catacombs
+    seed 500712 try 1: 2 lands; keep 10.97, mull 10.50, gap +0.47 turns against the rule (se 0.19)
+      Chaos Warp, Counterspell, Cyclonic Rift, Glacial Fortress, Mystic Confluence, Restoration Angel, Stormcarved Coast
+    seed 500423 try 0: 3 lands; keep 10.93, mull 10.47, gap +0.45 turns against the rule (se 0.18)
+      Brain Freeze, Forest, Nibelheim Aflame, Rhystic Study, Seaside Citadel, Underworld Breach, Verdant Catacombs
+    seed 500697 try 0: 2 lands; keep 11.00, mull 10.57, gap +0.43 turns against the rule (se 0.16)
+      Cyclonic Rift, Elspeth, Sun's Champion, Guttersnipe, Mystic Sanctuary, Polluted Delta, Storm-Kiln Artist, Swords to Plowshares
+
+Worst disagreements, the rule MULLIGANS and the oracle says KEEP (top 5):
+    seed 500076 try 0: 1 lands; keep 9.68, mull 10.97, gap +1.30 turns against the rule (se 0.17)
+      Birds of Paradise, Fiery Emancipation, Manamorphose, Nature's Lore, Niv-Mizzet, Parun, Temple Garden, Veyran, Voice of Duality
+    seed 500122 try 0: 1 lands; keep 9.85, mull 10.93, gap +1.08 turns against the rule (se 0.17)
+      Arcane Signet, Comet Storm, Elspeth, Sun's Champion, Fiery Emancipation, Jeska's Will, Mystic Monastery, Triple Triad
+    seed 500617 try 0: 6 lands; keep 9.90, mull 10.82, gap +0.92 turns against the rule (se 0.17)
+      Command Tower, Fiery Emancipation, Path of Ancestry, Seaside Citadel, Sokenzan, Crucible of Defiance, Taiga, Tropical Island
+    seed 500710 try 0: 1 lands; keep 10.07, mull 10.85, gap +0.78 turns against the rule (se 0.19)
+      Birds of Paradise, Fiery Emancipation, Mana Drain, Paradise Druid, Sylvan Library, Yavimaya Coast, Young Pyromancer
+    seed 500021 try 0: 1 lands; keep 10.18, mull 10.75, gap +0.57 turns against the rule (se 0.19)
+      Brain Freeze, Counterspell, Desperate Ritual, Faeburrow Elder, Fiery Emancipation, Path of Ancestry, Spark Double
+
+Hands the oracle settles against the rule: 86 of 1251 (6.9%), costing 0.32 turns each on average (0.022 turns per hand over all)
+Run time: 7s
+
+(7s total)
