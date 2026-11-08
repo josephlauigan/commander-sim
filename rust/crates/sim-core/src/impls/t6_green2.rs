@@ -307,7 +307,7 @@ fn vitality_mana(g: &Game, src: Src, p: PlayerId, units: &[Unit]) -> Vec<Unit> {
                 && !x.sick
                 && !units.iter().any(|u| u.src == Source::Perm(m))
         })
-        .map(|m| Unit { src: Source::Perm(m), cols: Colors::from_letters("WUBRG"), amt: 1 })
+        .map(|m| Unit::free(Source::Perm(m), Colors::from_letters("WUBRG"), 1))
         .collect()
 }
 
@@ -386,7 +386,7 @@ fn merchant_mana(g: &Game, src: Src, p: PlayerId, _units: &[Unit]) -> Vec<Unit> 
     if pairs == 0 {
         return vec![];
     }
-    vec![Unit { src: Source::Perm(src), cols: Colors::from_letters("WUBRG"), amt: pairs }]
+    vec![Unit::free(Source::Perm(src), Colors::from_letters("WUBRG"), pairs)]
 }
 
 fn merchant_tapped(g: &mut Game, p: PlayerId, m: PermId, used: u32) -> Res {

@@ -262,7 +262,7 @@ fn ogre_mana(g: &Game, src: Src, p: PlayerId, _u: &[Unit]) -> Vec<Unit> {
     if k == 0 {
         return vec![];
     }
-    vec![Unit { src: Source::Perm(src), cols: Colors::from_letters("R"), amt: k }]
+    vec![Unit::free(Source::Perm(src), Colors::from_letters("R"), k)]
 }
 
 /// the Ogre's mana was used: 3 life per mana (the Ogre does not tap)
@@ -352,7 +352,7 @@ fn amulet_mana(g: &Game, src: Src, _p: PlayerId, _u: &[Unit]) -> Vec<Unit> {
     match amulet_noted(g, src) {
         Some(s) => {
             let cols = if &*s == "C" { Colors::NONE } else { Colors::from_letters(&s) };
-            vec![Unit { src: Source::Perm(src), cols, amt: 1 }]
+            vec![Unit::free(Source::Perm(src), cols, 1)]
         }
         None => vec![],
     }

@@ -1388,7 +1388,7 @@ fn carpet(g: &mut Game, src: Src, p: PlayerId) -> Res {
         .unwrap_or(0) as u32;
     if x != 0 && trigger_window(g, p, Some(src), &format!("add {x} mana"), Some(2.0))? {
         // "X mana of any one color": one colour for all of it, chosen to suit the hand
-        let k = crate::engine::mana::choose_one_colour(g, p, x);
+        let k = crate::engine::mana::pick_one_colour(g, p, x)?;
         g.player_mut(p).mana.add(k, x);
     }
     Ok(())

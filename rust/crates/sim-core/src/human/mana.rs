@@ -4,7 +4,7 @@
 //! The AI seats keep the engine's automatic payment (`engine::mana::pay`). A tapped source goes through
 //! `engine::mana::spend_unit`, so pain lands, Treasures and on-tap triggers behave exactly as they do for the AI.
 
-use crate::engine::mana::{Source, Unit, mana_units, spend_unit};
+use crate::engine::mana::{Shape, Source, Unit, mana_units, spend_unit};
 use crate::engine::pool::Kind;
 use crate::engine::values::has_type;
 use crate::flow::Res;
@@ -308,6 +308,8 @@ pub struct SourceInfo {
     /// Secluded Courtyard: the creature type its mana is restricted to
     pub restricted: Option<Sym>,
     pub treasure: bool,
+    /// a pair (a Karoo, a Signet): tapping it makes one mana of each of its colours, so there is nothing to choose
+    pub pair: bool,
     /// the index among p's lands / permanents, for the browser
     pub land: Option<usize>,
     pub perm: Option<usize>,
@@ -382,6 +384,7 @@ pub fn sources(g: &Game, p: PlayerId) -> Vec<SourceInfo> {
             amount: u.amt,
             restricted: None,
             treasure: false,
+            pair: u.shape == Shape::Each,
             land: None,
             perm: None,
         };
@@ -426,6 +429,25 @@ pub fn tap(g: &mut Game, p: PlayerId, source_id: i64, colour: Option<char>) -> R
             col,
             super::legal::title(kt)
         );
+        return Ok(None);
+    }
+    if u.shape == Shape::Each {
+        // a Karoo, a Signet: one mana of each colour it makes (whole sets of them), whichever button was pressed; the
+        // few mana beyond whole sets are of the colour asked for, or the first
+        let cols: Vec<char> = "WUBRG".chars().filter(|&c| u.cols.has(c)).collect();
+        let sets = u.amt / cols.len() as u32;
+        let spare = u.amt - sets * cols.len() as u32;
+        let extra = colour.filter(|c| cols.contains(c)).unwrap_or(cols[0]);
+        let paid: String = cols.iter().collect();
+        spend_unit(g, p, u, u.amt, &paid)?;
+        let mut shown = String::new();
+        for &c in &cols {
+            let n = sets + if c == extra { spare } else { 0 };
+            g.player_mut(p).pool.add(c, n);
+            shown.extend((0..n).map(|_| format!("{{{c}}}")));
+        }
+        let sn = unit_label(g, u.src);
+        crate::glog!(g, "  {} taps {} for {}", name, sn, shown);
         return Ok(None);
     }
     let cols = unit_colours(g, &u);

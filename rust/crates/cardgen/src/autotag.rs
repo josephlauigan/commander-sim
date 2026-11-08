@@ -331,6 +331,11 @@ pub fn autotag(rec: &J) -> AutoTags {
                     if c.is_empty() { "C".into() } else { c }
                 };
                 let amt = if !add_s.contains(" or ") { findall(r"\{[wubrgc]\}", add_s).len() as i64 } else { 1 };
+                // "three mana of any one color" / "X mana of any one color": all of it one colour, chosen as the
+                // source is tapped (the engine's `Shape::One`); "in any combination of colors" is not
+                if add_s.contains("any one color") || add_s.contains("any one type") {
+                    add!("oneclr");
+                }
                 if land {
                     let prev = mana_c.clone().unwrap_or_default();
                     mana_c = Some(if prev == "A" || cols == "A" {

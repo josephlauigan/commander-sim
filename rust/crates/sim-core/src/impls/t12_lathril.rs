@@ -656,7 +656,7 @@ fn tyvar_mana(g: &Game, src: Src, p: PlayerId, u: &[Unit]) -> Vec<Unit> {
         {
             continue;
         }
-        out.push(Unit { src: Source::Perm(m), cols: Colors::from_letters("B"), amt: 1 });
+        out.push(Unit::free(Source::Perm(m), Colors::from_letters("B"), 1));
     }
     out
 }

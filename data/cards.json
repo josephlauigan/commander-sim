@@ -7270,7 +7270,8 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "rock": "1:A"
+    "rock": "1:A",
+    "oneclr": true
    },
    "pow": 0,
    "tgh": 0,
@@ -11938,7 +11939,8 @@
    "generic": 0,
    "pips": "",
    "tags": {
-    "rock": "3:A"
+    "rock": "3:A",
+    "oneclr": true
    },
    "pow": 0,
    "tgh": 0,
@@ -51001,7 +51003,8 @@
    "generic": 5,
    "pips": "",
    "tags": {
-    "rock": "3:A"
+    "rock": "3:A",
+    "oneclr": true
    },
    "pow": 0,
    "tgh": 0,
@@ -62947,7 +62950,8 @@
     "pow": "0",
     "tgh": "2",
     "dork": "A",
-    "noatk": true
+    "noatk": true,
+    "oneclr": true
    },
    "pow": 0,
    "tgh": 2,
@@ -75196,7 +75200,8 @@
    "tags": {
     "c": "A",
     "t": true,
-    "amt": "3"
+    "amt": "3",
+    "oneclr": true
    },
    "pow": 0,
    "tgh": 0,
@@ -87938,7 +87943,8 @@
    "pips": "",
    "tags": {
     "leg": true,
-    "c": "A"
+    "c": "A",
+    "oneclr": true
    },
    "pow": 0,
    "tgh": 0,
@@ -106045,6 +106051,7 @@
    "tags": {
     "pow": "0",
     "tgh": "2",
+    "oneclr": true,
     "dork": "A",
     "noatk": true
    },
@@ -111036,6 +111043,7 @@
     "human": true,
     "warrior": true,
     "pow": "2",
+    "oneclr": true,
     "dork": "C",
     "noatk": true
    },
@@ -145117,7 +145125,8 @@
    "tags": {
     "pow": "2",
     "dork": "A",
-    "noatk": true
+    "noatk": true,
+    "oneclr": true
    },
    "pow": 2,
    "tgh": 2,
