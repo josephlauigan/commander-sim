@@ -6,7 +6,7 @@ tiers (T3-T5) unless noted. Older tests: README.md in this folder.
 
 ## 2026-11-07: Al Bhed Salvagers => Witch of the Moors (t3-t4, loose, 2,000 games per list per tier, look-ahead, paired)
 Result: **t3 31.6% -> 32.5% (+0.9), t4 25.5% -> 26.9% (+1.4), noise ±1.6 per tier: about +1.2 over t3-t4, positive
-both times but inside the noise.** Not adopted yet (JD's call). Raw: `2026-11-07-witch/salvagers-to-witch.txt`.
+both times but inside the noise.** **Adopted (JD's pick, 2026-11-07): Witch of the Moors is in the list.** Raw: `2026-11-07-witch/salvagers-to-witch.txt`.
 Witch of the Moors (JD pulled it) was modeled for this test (Full, card code in sheoldred.rs): at your end step, if you
 gained life this turn, each opponent sacrifices a creature and a creature card comes back from your graveyard to hand.
 JD chose the cut (Al Bhed Salvagers, the lowest win rate when cast in the 11/07 analyze run, -4.2).

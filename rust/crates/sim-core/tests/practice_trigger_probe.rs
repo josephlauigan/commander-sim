@@ -373,6 +373,12 @@ fn precondition(g: &mut Game, name: &str, sc: Sc, e0: PermId, e1: PermId) -> Opt
                 let st = g.turn_stamp();
                 g.player_mut(P0).flag_turn.insert(intern("hit1"), st);
             }
+            // the person gained life this turn and has a creature card to take back
+            ("Witch of the Moors", Sc::Main2End) => {
+                life::gain(g, P0, 1).unwrap();
+                let c = sim_core::testkit::take(g, P0, "Blood Artist");
+                g.player_mut(P0).gy.push(c);
+            }
             // an ability of the person's that Rings of Brighthearth copies (karn.rs: monolith)
             ("Rings of Brighthearth", Sc::UseAbility) => {
                 let mon = perm(g, P0, "Grim Monolith");
