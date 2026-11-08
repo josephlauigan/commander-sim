@@ -451,11 +451,17 @@ fn adjust_mana(g: &Game, p: PlayerId, mut u: Vec<Unit>) -> Vec<Unit> {
     // units, with Marvin as the source: it is Marvin that may use it once each turn)
     for &m in &g.player(p).perms {
         let x = g.perm(m);
-        if x.on_bf && !x.phased && !x.neutered && x.cd.is_some_and(|c| &*g.db.get(c).name == crate::impls::newcards_b::MARVIN) {
+        if x.on_bf
+            && !x.phased
+            && !x.neutered
+            && x.cd.is_some_and(|c| &*g.db.get(c).name == crate::impls::newcards_b::MARVIN)
+        {
             for donor in ["Quirion Ranger", "Wirewood Symbiote"] {
                 let cd = g.player(p).perms.iter().copied().find_map(|d| {
                     let y = g.perm(d);
-                    (y.on_bf && !y.phased && !y.neutered && g.is_creature(d) && y.name == donor).then_some(y.cd).flatten()
+                    (y.on_bf && !y.phased && !y.neutered && g.is_creature(d) && y.name == donor)
+                        .then_some(y.cd)
+                        .flatten()
                 });
                 if let Some(f) = cd.and_then(|c| g.registry.get(c)).and_then(|c| c.extra_mana) {
                     let mut extra = f(g, m, p, &u);
@@ -554,7 +560,14 @@ pub fn plan_pay(g: &Game, u: &[Unit], generic: u32, pips: &str) -> Option<(Vec<u
             }
             let waste = if used[i] > 0 { 0 } else { rem[i].saturating_sub(need) };
             let scarce = avail.iter().filter(|(c, _)| w.cols.has(*c)).map(|x| x.1).min().unwrap_or(0);
-            let k = (!restricted_float(w.src), last_resort(w.src), is_pain(g, w.src), waste, w.cols.count(), -(scarce as i64));
+            let k = (
+                !restricted_float(w.src),
+                last_resort(w.src),
+                is_pain(g, w.src),
+                waste,
+                w.cols.count(),
+                -(scarce as i64),
+            );
             if best.is_none_or(|b| k < b.1) {
                 best = Some((i, k));
             }
@@ -641,15 +654,18 @@ fn leftover_groups(w: &Unit, n: u32, pips: &str, elsewhere: impl Fn(char) -> u32
         Shape::Free => vec![(w.cols, left)],
         Shape::One => {
             // the colour it was tapped for: the colour of the pips it paid, else the scarcest the player has elsewhere
-            let c = pips.chars().next().filter(|&c| c != 'C').or_else(|| {
-                WUBRG.iter().copied().filter(|&c| w.cols.has(c)).min_by_key(|&c| elsewhere(c))
-            });
+            let c = pips
+                .chars()
+                .next()
+                .filter(|&c| c != 'C')
+                .or_else(|| WUBRG.iter().copied().filter(|&c| w.cols.has(c)).min_by_key(|&c| elsewhere(c)));
             vec![(c.map_or(Colors::NONE, one), left)]
         }
         Shape::Each => {
             let sets = w.sets();
             let mut spare = w.amt - sets * w.cols.count(); // mana beyond whole sets: any of the colours
-            let mut rem: Vec<(char, u32)> = WUBRG.iter().copied().filter(|&c| w.cols.has(c)).map(|c| (c, sets)).collect();
+            let mut rem: Vec<(char, u32)> =
+                WUBRG.iter().copied().filter(|&c| w.cols.has(c)).map(|c| (c, sets)).collect();
             for pip in pips.chars() {
                 if let Some(r) = rem.iter_mut().find(|r| r.0 == pip && r.1 > 0) {
                     r.1 -= 1;
@@ -992,8 +1008,7 @@ pub fn units_after_ritual(g: &Game, p: PlayerId, c: CardId, u: &[Unit]) -> Optio
     let made = ritual_mana(g, p, c)?;
     let (gn, pips) = cost_of(g, p, c);
     let (used, col) = plan_pay(g, u, gn, &pips)?;
-    let mut v: Vec<Unit> =
-        units_left(u, &used, &col);
+    let mut v: Vec<Unit> = units_left(u, &used, &col);
     // each kind floats as that colour (the same units `mana_units` makes of the pool)
     let ident = g.player(p).ident;
     for (kind, k) in made {
@@ -1047,8 +1062,7 @@ pub fn units_after_cast(g: &Game, p: PlayerId, c: CardId, u: &[Unit]) -> Option<
     }
     let (gn, pips) = cost_of(g, p, c);
     let (used, col) = plan_pay(g, u, gn, &pips)?;
-    let mut v: Vec<Unit> =
-        units_left(u, &used, &col);
+    let mut v: Vec<Unit> = units_left(u, &used, &col);
     let d = g.db.get(c);
     if !d.creature
         && let Some(rock) = d.tags.str(Tag::Rock)

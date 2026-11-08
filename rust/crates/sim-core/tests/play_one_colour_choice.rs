@@ -15,12 +15,11 @@ fn five_colour_person(colour: &'static str) -> (Game, Arc<ScriptHuman>) {
     let mut g = table(&["scion", "kraum-tymna-blue-breach-midrange"]);
     g.active = Some(P0);
     g.player_mut(P0).hand.clear();
-    let h = Arc::new(ScriptHuman::from_fn(move |r: &Request| {
-        match r.choices.iter().position(|c| c.as_str() == colour) {
+    let h =
+        Arc::new(ScriptHuman::from_fn(move |r: &Request| match r.choices.iter().position(|c| c.as_str() == colour) {
             Some(i) => Answer::Pick(i),
             None => Answer::Yes,
-        }
-    }));
+        }));
     g.humans.add(P0, h.clone());
     (g, h)
 }

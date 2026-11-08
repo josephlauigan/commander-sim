@@ -521,11 +521,14 @@ pub fn tap_to_pay(g: &mut Game, p: PlayerId, generic: u32, pips: &str) -> Res<bo
         if pool_can_pay(g, p, generic, pips) {
             return Ok(true);
         }
-        let lacking: Vec<char> = g.player(p).pool.missing(generic, pips).chars().filter(|c| c.is_alphabetic()).collect();
+        let lacking: Vec<char> =
+            g.player(p).pool.missing(generic, pips).chars().filter(|c| c.is_alphabetic()).collect();
         let srcs = sources(g, p);
         let pick = lacking
             .iter()
-            .find_map(|&c| srcs.iter().find(|s| s.colours.contains(c) && s.restricted.is_none()).map(|s| (s.id, Some(c))))
+            .find_map(|&c| {
+                srcs.iter().find(|s| s.colours.contains(c) && s.restricted.is_none()).map(|s| (s.id, Some(c)))
+            })
             .or_else(|| srcs.iter().find(|s| s.restricted.is_none()).map(|s| (s.id, None)));
         let Some((id, colour)) = pick else { return Ok(false) };
         if tap(g, p, id as i64, colour)?.is_some() {
