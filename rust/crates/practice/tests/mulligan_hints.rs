@@ -91,10 +91,32 @@ fn thrasios_no_lands_with_fast_mana_and_a_tutor_is_kept_by_row_2() {
     assert!(rule.contains("Tutors: at least 1") && rule.contains("Vampiric Tutor"), "{rule}");
     assert!(!has(&h, "keep a hand with 2 to 5 lands"), "the generic rule must not be described: {h}");
     // mana, key cards, colours and the line
-    assert!(has(&h, "Mana by turn 2:"), "{h}");
+    assert!(has(&h, "Mana on turn 2:"), "{h}");
     assert!(has(&h, "Key cards:") && has(&h, "win-line pieces"), "{h}");
     assert!(has(&h, "Black:"), "{h}");
     assert!(has(&h, "the hand holds all of \"Thassa's Oracle + Demonic Consultation / Tainted Pact\""), "{h}");
+}
+
+/// turn-2 mana is what you can have then (two land drops at most), not the keep rule's count of every land in hand
+#[test]
+fn three_lands_and_sol_ring_make_four_mana_on_turn_2_not_five() {
+    let (mut g, p) = game_with(
+        "thrasios",
+        &["Tundra", "Watery Grave", "Underground Sea", "Sol Ring", "Vampiric Tutor", "Thassa's Oracle", "Brainstorm"],
+    );
+    let h = hint(&mut g, p);
+    let d = lines(&h);
+    assert!(d.iter().any(|l| l.starts_with("Mana on turn 2: 4 = 2 lands + Sol Ring 2 (cast turn 1)")), "{h}");
+    assert!(!d.iter().any(|l| l.contains("Mana on turn 2: 5")), "{h}");
+    assert!(d.iter().any(|l| l.starts_with("The keep rule counts this hand as 5 mana")), "{h}");
+    // the speed line never has more lands than the turn number: Tymna (cost 3) needs turn 2 here (2 lands + Sol Ring)
+    assert!(d.iter().any(|l| l.contains("Tymna the Weaver (cost 3) turn 2")), "{h}");
+    // no rocks: a four-drop commander needs four turns, one land a turn
+    let (mut g, p) =
+        game_with("aragorn", &["Plains", "Island", "Forest", "Tundra", "Taiga", "Savannah", "Counterspell"]);
+    let h = hint(&mut g, p);
+    assert!(lines(&h).iter().any(|l| l.contains("Aragorn, the Uniter (cost 4) turn 4")), "{h}");
+    assert!(lines(&h).iter().any(|l| l.starts_with("Mana on turn 2: 2 = 2 lands.")), "{h}");
 }
 
 #[test]

@@ -152,7 +152,7 @@ fn with_names(count: String, g: &Game, ids: &[CardId]) -> String {
     if ids.is_empty() { count } else { format!("{count}: {}", names(g, ids)) }
 }
 
-/// the mana line's breakdown: "3.5 = 2 lands + Mox Diamond 0.5 + Sol Ring 2"
+/// the keep rule's mana count in words: "3.5 = 2 lands + Mox Diamond 0.5 + Sol Ring 2" (every land in hand, not turn-2 mana)
 fn mana_breakdown(g: &Game, p: PlayerId) -> String {
     let m = t6_keep::mana(g, p);
     let mut parts = vec![plural(m.lands, "land", "lands")];
@@ -203,7 +203,7 @@ fn item_of(g: &Game, p: PlayerId, l: &Loaded, t: &KeepTerm) -> Option<Item> {
             } else {
                 String::new()
             };
-            item("Mana by turn 2", format!("{} ({}{extra})", num(value), mana_breakdown(g, p)))
+            item("Mana as the keep rule counts it", format!("{} ({}{extra})", num(value), mana_breakdown(g, p)))
         }
         s if s.starts_with("hand:") => {
             let set = &s["hand:".len()..];
@@ -415,7 +415,8 @@ fn hand_lines(g: &Game, p: PlayerId, l: Option<&Loaded>) -> Vec<String> {
     // mana by turn 2, counted honestly (t6_keep)
     let m = t6_keep::mana(g, p);
     let pieces = t6_keep::piece_values(g, p);
-    let mut line = format!("Mana by turn 2: {}.", mana_breakdown(g, p));
+    let curve = Curve::of(g, p, m.lands);
+    let mut line = format!("Mana on turn 2: {}.", curve.turn2_breakdown(g));
     let dead: Vec<String> = pieces
         .iter()
         .filter(|x| x.1 <= 0.0)
@@ -432,6 +433,13 @@ fn hand_lines(g: &Game, p: PlayerId, l: Option<&Loaded>) -> Vec<String> {
         );
     }
     d.push(line);
+    if (m.eff - curve.real(2)).abs() > 0.05 {
+        d.push(format!(
+            "The keep rule counts this hand as {} mana (all {} in hand plus the rocks that count), not what you have on turn 2.",
+            num(m.eff),
+            plural(m.lands, "land", "lands")
+        ));
+    }
     let k = key_cards(g, p, l);
     let mut keys = vec![];
     if !k.tutors.is_empty() {
@@ -545,24 +553,89 @@ fn capital(s: &str) -> String {
 }
 
 // ------------------------------------------------------------------ speed
-/// the mana available on turn `t` if every land drop hits: one land a turn, the free pieces from turn 1 and the rest
-/// of what the hand's pieces make from turn 2 (a rounded count, mana only)
+/// a mana piece the hand casts: what it makes (`t6_keep`'s value), the turn it is cast and the first turn it gives mana
+struct Played {
+    card: CardId,
+    v: f64,
+    cast: usize,
+    from: usize,
+}
+
+/// The mana the hand has on turn `t`, turn by turn: at most `cap` lands in all and one land drop a turn (never more
+/// lands than the turn number), the double-mana lands, and the pieces the hand casts with the mana it has (cheapest
+/// first; a piece cast on turn `n` gives mana from turn `n + 1`, a free Mox the turn it is cast). Mana only: colours
+/// and opponents are ignored.
 struct Curve {
-    free: f64,
-    rest: f64,
+    cap: usize,
+    extra: f64,
+    played: Vec<Played>,
+    mana: Vec<f64>,
 }
 
 impl Curve {
-    fn of(g: &Game, p: PlayerId) -> Curve {
+    fn of(g: &Game, p: PlayerId, cap: usize) -> Curve {
         let m = t6_keep::mana(g, p);
         let pv = t6_keep::piece_values(g, p);
         let sum: f64 = pv.iter().map(|x| x.1).sum();
-        let free: f64 = pv.iter().filter(|&&(c, _)| g.db.get(c).cmc == 0).map(|x| x.1).sum();
-        Curve { free, rest: sum + (m.eff - m.lands as f64 - sum).max(0.0) }
+        let extra = (m.eff - m.lands as f64 - sum).max(0.0);
+        let mut left: Vec<(CardId, f64, usize)> =
+            pv.iter().filter(|x| x.1 > 0.0).map(|&(c, v)| (c, v, g.db.get(c).cmc as usize)).collect();
+        left.sort_by(|a, b| a.2.cmp(&b.2).then(b.1.total_cmp(&a.1)));
+        let mut played: Vec<Played> = vec![];
+        let mut mana = vec![];
+        for t in 1..=10usize {
+            let lands = t.min(cap);
+            let ex = if lands >= 1 { extra } else { 0.0 };
+            let mut rem = lands as f64 + ex + played.iter().filter(|x| x.from <= t).map(|x| x.v).sum::<f64>();
+            let mut i = 0;
+            while i < left.len() {
+                let (c, v, cmc) = left[i];
+                if cmc as f64 <= rem + 1e-9 {
+                    rem -= cmc as f64;
+                    let from = if cmc == 0 { t } else { t + 1 };
+                    if from == t {
+                        rem += v;
+                    }
+                    played.push(Played { card: c, v, cast: t, from });
+                    left.remove(i);
+                } else {
+                    i += 1;
+                }
+            }
+            mana.push(lands as f64 + ex + played.iter().filter(|x| x.from <= t).map(|x| x.v).sum::<f64>());
+        }
+        Curve { cap, extra, played, mana }
+    }
+
+    fn real(&self, t: usize) -> f64 {
+        self.mana[t - 1]
     }
 
     fn at(&self, t: usize) -> usize {
-        (t as f64 + if t == 1 { self.free } else { self.rest }).round() as usize
+        self.real(t).round() as usize
+    }
+
+    /// the real mana on turn 2 in words: "4 = 2 lands + Sol Ring 2 (cast turn 1)"
+    fn turn2_breakdown(&self, g: &Game) -> String {
+        let mut parts = vec![plural(2.min(self.cap), "land", "lands")];
+        for x in self.played.iter().filter(|x| x.from <= 2) {
+            let when = if g.db.get(x.card).cmc > 0 { format!(" (cast turn {})", x.cast) } else { String::new() };
+            parts.push(format!("{} {}{when}", name_of(g, x.card), num(x.v)));
+        }
+        if self.extra > 0.01 && self.cap >= 1 {
+            parts.push(format!("{} from double-mana lands", num(self.extra)));
+        }
+        let later: Vec<String> = self
+            .played
+            .iter()
+            .filter(|x| x.from > 2)
+            .map(|x| format!("{} (cast turn {}, makes mana from turn {})", name_of(g, x.card), x.cast, x.from))
+            .collect();
+        let mut s = format!("{} = {}", num(self.real(2)), parts.join(" + "));
+        if !later.is_empty() {
+            s += &format!("; not yet on turn 2: {}", later.join(", "));
+        }
+        s
     }
 
     /// the first turn with at least `cost` mana
@@ -599,7 +672,7 @@ fn turn_words(t: Option<usize>) -> String {
 
 fn speed_lines(g: &Game, p: PlayerId, l: Option<&Loaded>) -> Vec<String> {
     let mut d = vec![];
-    let curve = Curve::of(g, p);
+    let curve = Curve::of(g, p, 10);
     let pl = g.player(p);
     let mut cmd = vec![];
     for c in pl.commanders() {
