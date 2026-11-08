@@ -225,6 +225,27 @@ fn hold_diag(g: &mut Game, p: PlayerId, ready: bool) {
     );
 }
 
+/// --- thrasios-tutor-measure: the kind of a tutor held at a main-phase pass. An instant, or a tutor that puts the card
+/// on top, gains nothing by being cast in the main phase (the planner keeps an instant tutor for the end-of-turn window);
+/// a sorcery that puts the card in hand is the one worth a look.
+pub const HELD_INSTANT_OR_TOP: &str = "instant or to the top";
+pub const HELD_SORCERY_TO_HAND: &str = "sorcery to hand";
+pub const HELD_UNMODELED: &str = "unmodeled";
+
+fn held_tutor_kind(g: &Game, p: PlayerId, c: CardId) -> &'static str {
+    use crate::ai::planner::{tutor_targets, xtutor_rule, Dest};
+    let instant = g.db.get(c).instant;
+    match tutor_targets(g, p, c) {
+        Some((Dest::Top, _)) => HELD_INSTANT_OR_TOP,
+        Some(_) if instant => HELD_INSTANT_OR_TOP,
+        Some(_) => HELD_SORCERY_TO_HAND,
+        None if xtutor_rule(g, c).is_some() => {
+            if instant { HELD_INSTANT_OR_TOP } else { HELD_SORCERY_TO_HAND }
+        }
+        None => HELD_UNMODELED,
+    }
+}
+
 /// p chose `label` at a main-phase decision: count it under `spx|` when a line was ready and the deck has not gone
 /// yet, and under `spa|` when a line was one tutor away and none was ready
 pub fn speed_decided(g: &mut Game, p: PlayerId, label: &str) {
@@ -247,9 +268,16 @@ pub fn speed_decided(g: &mut Game, p: PlayerId, label: &str) {
     if !ready && l.starts_with("stop") {
         // passed while one tutor away: which tutors it held (`spah|<card>`, one per tutor in hand)
         // --- c1-t6-lines: only the tutors that could take a missing piece (`combos::useful_tutors`)
-        let held: Vec<String> = crate::impls::combos::useful_tutors(g, p).into_iter().map(|c| card(g, c)).collect();
-        for t in held {
+        // --- thrasios-tutor-measure: also by kind (`spahk|`: one per tutor and decision) and per game (`spahg|<card>`,
+        // 1 in each game it was held at such a pass)
+        let held: Vec<(String, &str)> = crate::impls::combos::useful_tutors(g, p)
+            .into_iter()
+            .map(|c| (card(g, c), held_tutor_kind(g, p, c)))
+            .collect();
+        for (t, kind) in held {
             bump(g, p, format!("spah|{t}"));
+            bump(g, p, format!("spahk|{kind}"));
+            g.player_mut(p).stats.insert(intern(&format!("spahg|{t}")), 1);
         }
     }
 }

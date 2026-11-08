@@ -1811,9 +1811,26 @@ pub fn tutor_finds(g: &Game, p: PlayerId, t: CardId, cards: &[CardId]) -> Option
     xtutor_rule(g, t).map(|ok| cards.iter().any(|&c| ok(c)))
 }
 
+/// --- thrasios-tutor-measure: is card `t` in p's hand a tutor that can take one of `piece` (the speed measure's
+/// `one_tutor_away` and `useful_tutors`)? A tutor the planner models: by its own rule (`tutor_finds`). Otherwise a
+/// card tagged as a tutor (`tut`, or an `xtutor` spell with no rule, like Reshape) counts as one. A permanent tagged
+/// `xtutor` with no rule searches nothing (Walking Ballista, Genesis Hydra): before this, Ballista made every hand
+/// with one piece of a line "one tutor away".
+pub fn tutor_for_piece(g: &Game, p: PlayerId, t: CardId, piece: &[CardId]) -> bool {
+    let d = g.db.get(t);
+    if d.land {
+        return false;
+    }
+    match tutor_finds(g, p, t, piece) {
+        Some(finds) => finds,
+        None => d.tags.has(Tag::Tut) || (d.tags.has(Tag::Xtutor) && !d.perm),
+    }
+}
+
 /// --- c1-t6-lines: tutors in p's hand that can find the one missing piece of a line of its deck that is one piece
 /// away (the tutors the speed report lists when the deck passes; a tutor that can't take a missing piece is not held
-/// back, it has nothing to find). A card the planner doesn't model as a tutor counts as one.
+/// back, it has nothing to find). A card tagged as a tutor that the planner doesn't model counts as one
+/// (`tutor_for_piece`).
 pub fn useful_tutors(g: &Game, p: PlayerId) -> Vec<CardId> {
     let pl = g.player(p);
     let mut out: Vec<CardId> = vec![];
@@ -1827,11 +1844,7 @@ pub fn useful_tutors(g: &Game, p: PlayerId) -> Vec<CardId> {
             continue;
         }
         for &t in &pl.hand {
-            let d = g.db.get(t);
-            if d.land || out.contains(&t) || !(d.tags.has(Tag::Tut) || d.tags.has(Tag::Xtutor) || tutor_finds(g, p, t, &piece).is_some()) {
-                continue;
-            }
-            if tutor_finds(g, p, t, &piece) != Some(false) {
+            if !out.contains(&t) && tutor_for_piece(g, p, t, &piece) {
                 out.push(t);
             }
         }
@@ -1863,13 +1876,9 @@ fn one_tutor_away(g: &Game, p: PlayerId, cmb: &Combo) -> bool {
     }
     let pc = piece.iter().map(|&c| cost_of(g, p, c)).min_by_key(|(gn, pips)| *gn + pips.len() as u32).unwrap();
     for &t in &pl.hand {
-        let d = g.db.get(t);
-        if d.land || !(d.tags.has(Tag::Tut) || d.tags.has(Tag::Xtutor) || tutor_finds(g, p, t, &piece).is_some()) {
-            continue;
-        }
         // --- c1-t6-lines: a tutor that can't legally take the missing piece (Mystical Tutor for the Oracle, Green Sun's
-        // Zenith for Basalt Monolith) is no tutor for this line
-        if tutor_finds(g, p, t, &piece) == Some(false) {
+        // Zenith for Basalt Monolith) is no tutor for this line; nor is a card that searches nothing (`tutor_for_piece`)
+        if !tutor_for_piece(g, p, t, &piece) {
             continue;
         }
         let tc = cost_of(g, p, t);
