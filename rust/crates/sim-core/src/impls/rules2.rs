@@ -864,7 +864,7 @@ fn joraga_elves(g: &Game, src: Src, p: PlayerId, units: &[Unit]) -> Vec<Unit> {
                 && !x.sick
                 && !units.iter().any(|u| u.src == Source::Perm(m))
         })
-        .map(|m| Unit { src: Source::Perm(m), cols: Colors::from_letters("G"), amt: 2 })
+        .map(|m| Unit::free(Source::Perm(m), Colors::from_letters("G"), 2))
         .collect()
 }
 

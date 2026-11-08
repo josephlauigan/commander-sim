@@ -107,7 +107,7 @@ fn urza_mana(g: &Game, _src: Src, p: PlayerId, u: &[Unit]) -> Vec<Unit> {
         .copied()
         .filter(|&m| is_artifact(g, m) && !g.perm(m).tapped && !g.perm(m).phased && !used.contains(&m))
         .filter(|&m| !crate::impls::t45_urza_yawgmoth::orb(g, m)) // --- Tiers 4/5 (urza-yawgmoth): Orbs stay untapped
-        .map(|m| Unit { src: Source::Perm(m), cols: Colors::from_letters("U"), amt: 1 })
+        .map(|m| Unit::free(Source::Perm(m), Colors::from_letters("U"), 1))
         .collect()
 }
 
@@ -388,15 +388,20 @@ fn kinnan_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-/// one mana per colour among your permanents
-fn bloom_tender(g: &Game, p: PlayerId, _m: PermId) -> u32 {
+/// the colours among your permanents (by their costs): Bloom Tender makes one mana of each
+pub fn bloom_tender_colours(g: &Game, p: PlayerId) -> Colors {
     let mut cols = Colors::NONE;
     for &x in &g.player(p).perms {
         if let Some(c) = g.perm(x).cd {
             cols = cols.union(Colors::from_letters(&g.db.get(c).pips));
         }
     }
-    (cols.count() as u32).max(1)
+    cols
+}
+
+/// one mana per colour among your permanents
+fn bloom_tender(g: &Game, p: PlayerId, _m: PermId) -> u32 {
+    bloom_tender_colours(g, p).count().max(1)
 }
 
 /// three mana once it has a counter (adapt not activated)

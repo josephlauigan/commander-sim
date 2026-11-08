@@ -381,6 +381,8 @@ fn photon_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, dm
     } else {
         [Kind::W, Kind::U, Kind::B, Kind::R, Kind::G][best]
     };
+    // a person chooses the colour (practice mode); the AI uses the one its hand wants
+    let kind = if crate::human::is_human(g, p) { crate::engine::mana::pick_one_colour(g, p, n)? } else { kind };
     g.player_mut(p).mana.add_kept(kind, n); // kept until the end of the turn
     crate::glog!(g, "    Photon adds {n} mana");
     Ok(())
@@ -415,18 +417,20 @@ fn elder_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 }
 
 /// **Faeburrow Elder**: {T}: for each colour among permanents you control, add one mana of that colour. One unit of
-/// mana per colour, all from the same untapped source (using any of them taps it, so the others are lost).
+/// mana per colour, in ONE unit of `Shape::Each`: one source, tapped once, making one mana of each colour (the other
+/// mana are floated when only some pay).
 fn elder_mana(g: &Game, src: Src, p: PlayerId, _u: &[Unit]) -> Vec<Unit> {
     let x = g.perm(src);
     if x.owner != p || x.tapped || x.sick || x.phased || !x.on_bf {
         return vec![];
     }
     let cols = colors_among(g, p);
-    ['W', 'U', 'B', 'R', 'G']
-        .into_iter()
-        .filter(|&c| cols.has(c))
-        .map(|c| Unit { src: Source::Perm(src), cols: Colors::from_letters(&c.to_string()), amt: 1 })
-        .collect()
+    let n = cols.count();
+    if n == 0 {
+        return vec![];
+    }
+    let shape = if n >= 2 { crate::engine::mana::Shape::Each } else { crate::engine::mana::Shape::Free };
+    vec![Unit { src: Source::Perm(src), cols, amt: n, shape }]
 }
 
 // ================================================================== Paradox Surveyor

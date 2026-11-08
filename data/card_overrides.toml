@@ -2401,7 +2401,7 @@ status = "Full"
 note = ""
 
 ["Incubation Druid"]
-tags = "pow=0 tgh=2 dork=A noatk"
+tags = "pow=0 tgh=2 dork=A noatk oneclr"
 dsl = []
 status = "Full"
 note = "taps for one mana of a colour a land could make; three once it has a counter; adapt 3 for {3}{G}{G}"
@@ -3391,6 +3391,7 @@ status = "Full"
 note = "opponents' extra draws become yours"
 
 ["Nykthos, Shrine to Nyx"]
+add_tags = ["oneclr"]
 status = "Full"
 note = "{2},{T}: mana equal to devotion"
 
@@ -4126,7 +4127,7 @@ status = "Full"
 note = "enters prepared (a Wild Idea copy for {3}{U}{R} finds an instant or sorcery); taps for a Treasure once you have cast an instant or sorcery that turn"
 
 ["Sanctum Weaver"]
-pool_add_tags = ["dork=A"]
+pool_add_tags = ["dork=A", "oneclr"]
 status = "Full"
 note = "{T}: X mana of one colour, X = enchantments you control"
 
@@ -5621,7 +5622,7 @@ status = "Full"
 note = "each non-Human attacker: a Human from the top six onto the battlefield attacking and indestructible (ETBs fire)"
 
 ["Wirewood Channeler"]
-tags = "pow=2 dork=A noatk"
+tags = "pow=2 dork=A noatk oneclr"
 status = "Full"
 note = "taps for its full scaling amount"
 
@@ -9266,7 +9267,7 @@ status = "Full"
 note = "enters: the AI kills the best opposing creature -5/-5 can handle when it is worth a card, else draws two (a person chooses); {T}: {C}{C} that can't be spent to cast nonartifact spells (artifact spells and abilities)"
 
 ["Gilded Lotus"]
-tags = "rock=3:A"
+tags = "rock=3:A oneclr"
 status = "Full"
 note = "{T}: three mana of any one colour (colourless in the colourless Karn deck)"
 
@@ -9809,7 +9810,7 @@ note = "bounce land: enters tapped, returns a land you control to its owner's ha
 
 ["Lotus Field"]
 types = "L"
-tags = "c=A t amt=3"
+tags = "c=A t amt=3 oneclr"
 dsl = []
 status = "Full"
 note = "hexproof; enters tapped; when it enters, sacrifice two lands (hand-written: the least useful others, itself if there aren't two); taps for three mana of any one colour"
@@ -10222,7 +10223,7 @@ status = "Full"
 note = "whenever one or more creatures an opponent controls deal combat damage to you, that opponent gets a poison counter (once per combat and opponent); whenever a player attacks a poisoned player, the attacking player draws a card (card_models2.rs)"
 
 ["Astral Cornucopia"]
-tags = "rock=1:A"
+tags = "rock=1:A oneclr"
 dsl = []
 status = "Full"
 note = "{X}{X}{X}: the AI casts it in its main phase for the largest X its mana pays (X >= 1; a hand option, never at X = 0), and it enters with X charge counters (Doubling Season and the like apply); {T}: X mana of one colour, X = its charge counters, which proliferate adds to (card_models3.rs, card-models-3). A person's cast through the normal path is X = 0"
@@ -10255,7 +10256,7 @@ status = "Full"
 note = "{T}: choose one of Disenchant, Braingeyser, Terror, Shivan Dragon, Regrowth, Black Lotus not yet chosen by this Garth, create a copy and cast it, paying its costs (eminence applies); an uncast copy ceases to exist; the AI taps it only for a copy it can cast and use now (impls/garth.rs)"
 
 ["Black Lotus"]
-tags = "rock=3:A"
+tags = "rock=3:A oneclr"
 dsl = []
 status = "Full"
 note = "{T}, sacrifice: three mana of any one colour (garth.rs: only ever cast as a Garth One-Eye copy, a token)"

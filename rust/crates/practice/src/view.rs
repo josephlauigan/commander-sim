@@ -170,6 +170,9 @@ pub mod seam {
                 if s.treasure {
                     d["treasure"] = true.into();
                 }
+                if s.pair {
+                    d["pair"] = true.into(); // one mana of each colour: the page shows one button
+                }
                 if let Some(l) = s.land {
                     d["land"] = l.into();
                 }

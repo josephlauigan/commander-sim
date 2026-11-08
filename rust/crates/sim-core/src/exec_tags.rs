@@ -93,7 +93,7 @@ pub const PERM_RESOLVE_TAGS: [Tag; 2] = [Tag::Moxd, Tag::Lr];
 /// `engine/stack.rs`: the spell can't be countered
 pub const CAST_TAGS: [Tag; 1] = [Tag::Unc];
 /// `engine/mana.rs`: mana sources and what tapping them costs
-pub const MANA_TAGS: [Tag; 9] = [
+pub const MANA_TAGS: [Tag; 10] = [
     Tag::Rock,
     Tag::Dork,
     Tag::Chromemox,
@@ -103,6 +103,7 @@ pub const MANA_TAGS: [Tag; 9] = [
     Tag::Rite,
     Tag::Lantern,
     Tag::Worldtree,
+    Tag::Oneclr,
 ];
 /// `engine/mana.rs` `cost_of`: the card's own cost
 pub const SELF_COST_TAGS: [Tag; 4] = [Tag::PerCreature, Tag::Eris, Tag::Dawning, Tag::Spectacle];

@@ -637,7 +637,7 @@ fn rishkar_mana(g: &Game, _src: Src, p: PlayerId, u: &[Unit]) -> Vec<Unit> {
                 && !u.iter().any(|w| w.src == Source::Perm(m))
                 && !x.cd.is_some_and(|c| g.db.get(c).tag(Tag::Dork))
         })
-        .map(|m| Unit { src: Source::Perm(m), cols: Colors::from_letters("G"), amt: 1 })
+        .map(|m| Unit::free(Source::Perm(m), Colors::from_letters("G"), 1))
         .collect()
 }
 

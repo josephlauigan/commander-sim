@@ -171,6 +171,7 @@ pub enum Tag {
     Normgc,
     Nountap,
     Offer,
+    Oneclr,
     Onering,
     Opus3,
     Ozolith,
@@ -312,7 +313,7 @@ pub enum TagKind {
     Str,
 }
 
-pub const TAG_COUNT: usize = 296;
+pub const TAG_COUNT: usize = 297;
 
 /// (tag, its name in the Python code and the export, the kind of value it takes), in `Tag` order.
 pub const TAGS: [(Tag, &str, TagKind); TAG_COUNT] = [
@@ -480,6 +481,7 @@ pub const TAGS: [(Tag, &str, TagKind); TAG_COUNT] = [
     (Tag::Normgc, "normgc", TagKind::Flag),
     (Tag::Nountap, "nountap", TagKind::Flag),
     (Tag::Offer, "offer", TagKind::Flag),
+    (Tag::Oneclr, "oneclr", TagKind::Flag),
     (Tag::Onering, "onering", TagKind::Flag),
     (Tag::Opus3, "opus3", TagKind::Flag),
     (Tag::Ozolith, "ozolith", TagKind::Flag),

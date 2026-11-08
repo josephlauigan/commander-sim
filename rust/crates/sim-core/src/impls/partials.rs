@@ -456,7 +456,7 @@ pub fn hand_mana(g: &Game, p: PlayerId) -> Vec<Unit> {
         .iter()
         .filter_map(|&c| {
             let n = &*g.db.get(c).name;
-            HAND_MANA.iter().find(|h| h.0 == n).map(|h| Unit { src: Source::HandCard(c), cols: Colors::from_letters(h.1), amt: 1 })
+            HAND_MANA.iter().find(|h| h.0 == n).map(|h| Unit::free(Source::HandCard(c), Colors::from_letters(h.1), 1))
         })
         .collect()
 }
@@ -2642,7 +2642,7 @@ fn quirion(g: &Game, src: Src, p: PlayerId, _u: &[Unit]) -> Vec<Unit> {
     if amt < 2 {
         return vec![];
     }
-    vec![Unit { src: Source::Quirion(src, d), cols: Colors::from_letters("G"), amt }]
+    vec![Unit::free(Source::Quirion(src, d), Colors::from_letters("G"), amt)]
 }
 
 /// Full: returns a cheap Elf to untap the best mana creature, once a turn
@@ -2661,7 +2661,7 @@ fn symbiote(g: &Game, src: Src, p: PlayerId, _u: &[Unit]) -> Vec<Unit> {
     if amt < 3 {
         return vec![];
     }
-    vec![Unit { src: Source::Symbiote(src, d, elf), cols: Colors::from_letters("G"), amt }]
+    vec![Unit::free(Source::Symbiote(src, d, elf), Colors::from_letters("G"), amt)]
 }
 
 // ======================================================== Ranger-Captain of Eos: silence for a combo turn
@@ -3207,7 +3207,7 @@ fn voltaic_key(g: &Game, src: Src, p: PlayerId, _u: &[Unit]) -> Vec<Unit> {
     if best < 2 {
         return vec![];
     }
-    vec![Unit { src: Source::Perm(src), cols: Colors::NONE, amt: best - 1 }]
+    vec![Unit::free(Source::Perm(src), Colors::NONE, best - 1)]
 }
 
 // ======================================================== Whirler Rogue

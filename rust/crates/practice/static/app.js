@@ -146,6 +146,7 @@ function showStack(req) {
 
 // ------------------------------------------------------------------ acting on the table (your priority)
 function tapButtons(x) {
+  if (x.pair) return [btn(`${x.name} ${[...x.colours].map((c) => `{${c}}`).join('')}`, { do: 'tap', source: x.id })]; // one of each colour
   return x.colours.length > 1 ? [...x.colours].map((c) => btn(`${x.name} {${c}}`, { do: 'tap', source: x.id, colour: c }))
     : [btn(`${x.name} {${x.colours}}`, { do: 'tap', source: x.id })];
 }
@@ -191,7 +192,9 @@ function act(e, title, items, otherwise) {
   menu(e, title, items);
 }
 
-const tapItems = (srcs, where) => srcs.flatMap((x) => x.colours.length > 1
+const tapItems = (srcs, where) => srcs.flatMap((x) => x.pair
+  ? [[`Tap for ${[...x.colours].map((c) => `{${c}}`).join('')}`, { do: 'tap', source: x.id }, where]]
+  : x.colours.length > 1
   ? [...x.colours].map((c) => [`Tap for {${c}}`, { do: 'tap', source: x.id, colour: c }, where])
   : [[`Tap for {${x.colours}}`, { do: 'tap', source: x.id }, where]]);
 

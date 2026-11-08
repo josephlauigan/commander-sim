@@ -45,12 +45,58 @@ impl Source {
     }
 }
 
+/// How the `amt` mana of one unit divide among the colours in `cols` (one permanent that makes several mana).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum Shape {
+    /// each mana is any one of `cols`, chosen separately (a dork, a Treasure, one mana of a land)
+    #[default]
+    Free,
+    /// all `amt` mana are ONE colour of `cols`, chosen as the source is tapped: "three mana of any one color" (Gilded
+    /// Lotus, Lotus Field, Black Lotus, Sanctum Weaver; the card tag `oneclr`)
+    One,
+    /// `amt / cols.count()` whole sets of one mana of EACH colour in `cols` (Karoos {B}{G}, Signets, Faeburrow Elder,
+    /// Bloom Tender); the few mana beyond whole sets (Kinnan's extra) are `Free`
+    Each,
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Unit {
     pub src: Source,
     /// the colours it can make; empty for colourless
     pub cols: Colors,
     pub amt: u32,
+    /// how the mana split among `cols` (`Free` unless it is several mana from one source)
+    pub shape: Shape,
+}
+
+impl Unit {
+    /// `amt` mana, each any one of `cols`
+    pub const fn free(src: Source, cols: Colors, amt: u32) -> Unit {
+        Unit { src, cols, amt, shape: Shape::Free }
+    }
+
+    /// whole sets of one mana of each colour an `Each` unit makes
+    fn sets(&self) -> u32 {
+        match self.shape {
+            Shape::Each => self.amt / self.cols.count().max(1),
+            _ => 0,
+        }
+    }
+}
+
+/// The shape of the several mana a permanent makes. `printed` is the amount its ability prints (before Nyxbloom,
+/// Kinnan or a count), `letters` its colour tag: an explicit set that prints as many mana as it has colours is one of
+/// each ({B}{G}); "any one color" (`oneclr`) is all one colour; anything else is free.
+fn shape_of(t: &crate::cards::Tags, letters: &str, cols: Colors, printed: u32, amt: u32, rock_or_land: bool) -> Shape {
+    if amt < 2 || cols.count() < 2 {
+        Shape::Free
+    } else if t.has(Tag::Oneclr) {
+        Shape::One
+    } else if rock_or_land && letters != "A" && printed >= 2 && cols.count() == printed {
+        Shape::Each
+    } else {
+        Shape::Free
+    }
 }
 
 pub const BASIC_NAMES: [&str; 11] = [
@@ -171,7 +217,16 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
             cols = Colors::NONE; // Damping Sphere: one {C} instead of any other type and amount
             amt = 1;
         }
-        u.push(Unit { src: Source::Land(l), cols, amt: amt.max(0) as u32 });
+        let amt = amt.max(0) as u32;
+        // several mana from one land: all one colour (Lotus Field), or one of each colour of its pair (a Karoo). Only
+        // its own tagged colours: a land turned any-colour by a Lantern, Dryad or a card's rule stays free
+        let shape = if amt >= 2 && !anyc && !dryad && !plain && cardcode::land_colors(g, p, l).is_none() {
+            let printed = t.int(Tag::Amt).unwrap_or(1).max(0) as u32;
+            shape_of(t, t.str(Tag::C).unwrap_or("C"), cols, printed, amt, true)
+        } else {
+            Shape::Free
+        };
+        u.push(Unit { src: Source::Land(l), cols, amt, shape });
     }
     let rite = has(g, p, Tag::Rite);
     let no_art_mana = hooked && hooks::total_count(g, Event::NoArtifactMana, p) != 0;
@@ -187,11 +242,11 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
         }
         let Some(c) = x.cd else {
             if rite && (!x.sick || ahaste()) {
-                u.push(Unit { src: Source::Perm(m), cols: ident, amt: 1 });
+                u.push(Unit::free(Source::Perm(m), ident, 1));
             } else if let Some(Val::Str(cols)) = x.data.get(DataKey::Manatok).filter(|_| !x.sick || ahaste()) {
-                u.push(Unit { src: Source::Perm(m), cols: Colors::from_letters(cols), amt: 1 });
+                u.push(Unit::free(Source::Perm(m), Colors::from_letters(cols), 1));
             } else if x.ttypes.contains(&"scion") || x.ttypes.contains(&"spawn") {
-                u.push(Unit { src: Source::Scion(m), cols: Colors::NONE, amt: 1 });
+                u.push(Unit::free(Source::Scion(m), Colors::NONE, 1));
             }
             continue;
         };
@@ -200,7 +255,7 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
         if t.has(Tag::Chromemox) {
             // Chrome Mox: one mana of the imprinted card's colours (none if nothing imprinted)
             if !x.colors.is_empty() {
-                u.push(Unit { src: Source::Perm(m), cols: x.colors, amt: 1 });
+                u.push(Unit::free(Source::Perm(m), x.colors, 1));
             }
             continue;
         }
@@ -229,41 +284,58 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
                 }
             }
             if amt > 0 {
-                u.push(Unit { src: Source::Perm(m), cols, amt });
+                // Gilded Lotus: all of it one colour; a Signet: one of each colour of its pair
+                let shape = shape_of(t, col, cols, a.parse().unwrap_or(1), amt, true);
+                u.push(Unit { src: Source::Perm(m), cols, amt, shape });
             }
         } else if let Some(dork) = t.str(Tag::Dork).filter(|_| !x.sick || ahaste()) {
             if !restr_ok(g, p, d.mana_restr) {
                 continue; // Giada (Angel spells), Hydro-Channeler (instants and sorceries), Rivaz (Dragon creatures)
             }
             let amt = cardcode::dyn_mana_perm(g, p, m).unwrap_or(1);
+            let mut each = false;
             let cols = if &*d.name == "Delighted Halfling" {
                 cardcode::halfling_colors(g, p).unwrap_or(Colors::NONE)
+            } else if &*d.name == "Bloom Tender" {
+                // one mana of each colour among your permanents (never more than those colours: `amt` counts them)
+                each = true;
+                let c = crate::impls::t5::bloom_tender_colours(g, p);
+                if c.is_empty() { tag_colors(dork, ident) } else { c }
             } else {
                 tag_colors(dork, ident)
             };
             if amt > 0 {
-                u.push(Unit { src: Source::Perm(m), cols, amt });
+                // Sanctum Weaver, Wirewood Channeler: X mana of any one colour
+                let shape = if each && cols.count() == amt && amt >= 2 {
+                    Shape::Each
+                } else {
+                    shape_of(t, dork, cols, 1, amt, false)
+                };
+                u.push(Unit { src: Source::Perm(m), cols, amt, shape });
             }
         } else if &*d.name == crate::impls::newcards_b::MARVIN && (!x.sick || ahaste()) {
             if let Some(unit) = marvin_mana(g, p, m) {
                 u.push(unit);
             }
         } else if rite && d.creature && (!x.sick || ahaste()) && x.noatk {
-            u.push(Unit { src: Source::Perm(m), cols: ident, amt: 1 });
+            u.push(Unit::free(Source::Perm(m), ident, 1));
         }
     }
     if crate::impls::t6_blue::rain_of_filth_active(g, p) {
         // --- card-models-2: Rain of Filth: every land p controls, tapped or not, can be sacrificed for {B}
         for &l in &pl.lands {
-            u.push(Unit { src: Source::SacLand(l), cols: Colors::from_letters("B"), amt: 1 });
+            u.push(Unit::free(Source::SacLand(l), Colors::from_letters("B"), 1));
         }
     }
     let tre = if no_art_mana { 0 } else { pl.live_treasures() };
     let bonus = if hooked { hooks::total_count(g, Event::TreasureBonus, p) } else { 0 };
     // one unit per Treasure, at most 1000: a doubling loop (Miirym t5: Thrakkus copies doubling the power of Old
     // Gnawbone copies) can make billions, and a unit each ran the game out of memory; 1000 mana pays for anything
+    let tre_amt = (1 + bonus).max(0) as u32;
+    // Goldspan Dragon: "two mana of any one color", not two single mana
+    let tre_shape = if tre_amt >= 2 && ident.count() >= 2 { Shape::One } else { Shape::Free };
     for _ in 0..tre.min(1000) {
-        u.push(Unit { src: Source::Treasure, cols: ident, amt: (1 + bonus).max(0) as u32 });
+        u.push(Unit { src: Source::Treasure, cols: ident, amt: tre_amt, shape: tre_shape });
     }
     if hooked {
         u = adjust_mana(g, p, u);
@@ -275,7 +347,7 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
     for m in pl.mana.iter() {
         if restr_ok(g, p, m.key.restr) {
             let cols = m.key.kind.cols(ident);
-            u.extend((0..m.amt.min(1000)).map(|_| Unit { src: Source::Pool(m.key), cols, amt: 1 }));
+            u.extend((0..m.amt.min(1000)).map(|_| Unit::free(Source::Pool(m.key), cols, 1)));
         }
     }
     if convoke {
@@ -283,7 +355,7 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
         for &m in &pl.perms {
             let x = g.perm(m);
             if g.is_creature(m) && !x.tapped && !x.phased && !u.iter().any(|w| w.src == Source::Perm(m)) {
-                u.push(Unit { src: Source::Perm(m), cols: ident, amt: 1 });
+                u.push(Unit::free(Source::Perm(m), ident, 1));
             }
         }
     }
@@ -379,11 +451,17 @@ fn adjust_mana(g: &Game, p: PlayerId, mut u: Vec<Unit>) -> Vec<Unit> {
     // units, with Marvin as the source: it is Marvin that may use it once each turn)
     for &m in &g.player(p).perms {
         let x = g.perm(m);
-        if x.on_bf && !x.phased && !x.neutered && x.cd.is_some_and(|c| &*g.db.get(c).name == crate::impls::newcards_b::MARVIN) {
+        if x.on_bf
+            && !x.phased
+            && !x.neutered
+            && x.cd.is_some_and(|c| &*g.db.get(c).name == crate::impls::newcards_b::MARVIN)
+        {
             for donor in ["Quirion Ranger", "Wirewood Symbiote"] {
                 let cd = g.player(p).perms.iter().copied().find_map(|d| {
                     let y = g.perm(d);
-                    (y.on_bf && !y.phased && !y.neutered && g.is_creature(d) && y.name == donor).then_some(y.cd).flatten()
+                    (y.on_bf && !y.phased && !y.neutered && g.is_creature(d) && y.name == donor)
+                        .then_some(y.cd)
+                        .flatten()
                 });
                 if let Some(f) = cd.and_then(|c| g.registry.get(c)).and_then(|c| c.extra_mana) {
                     let mut extra = f(g, m, p, &u);
@@ -422,6 +500,25 @@ fn last_resort(s: Source) -> bool {
     matches!(s, Source::Treasure | Source::SacLand(_))
 }
 
+/// May a unit that is `Shape::One` or `Each`, which has paid pips `col` already, pay one more pip of colour `c`
+/// (which it can make)? `One`: only the colour it is paying. `Each`: at most one of each colour per whole set, the few
+/// mana beyond whole sets standing in for any of its colours.
+fn fits_shape(w: &Unit, col: &str, c: char) -> bool {
+    match w.shape {
+        Shape::Free => true,
+        Shape::One => col.is_empty() || col.starts_with(c),
+        Shape::Each => {
+            let (k, spare) = (w.sets(), w.amt - w.sets() * w.cols.count());
+            let over: u32 = WUBRG
+                .iter()
+                .filter(|&&x| w.cols.has(x))
+                .map(|&x| (col.chars().filter(|&y| y == x).count() as u32 + u32::from(x == c)).saturating_sub(k))
+                .sum();
+            over <= spare
+        }
+    }
+}
+
 pub fn plan_pay(g: &Game, u: &[Unit], generic: u32, pips: &str) -> Option<(Vec<u32>, Vec<String>)> {
     let mut rem: Vec<u32> = u.iter().map(|w| w.amt).collect();
     let mut used = vec![0u32; u.len()];
@@ -433,8 +530,12 @@ pub fn plan_pay(g: &Game, u: &[Unit], generic: u32, pips: &str) -> Option<(Vec<u
     for c in order {
         let mut best: Option<(usize, (bool, u32))> = None;
         for (i, w) in u.iter().enumerate() {
-            if rem[i] > 0 && fits(w, c) {
-                let k = (last_resort(w.src), w.cols.count());
+            // a unit of several mana pays only the colours it can make together (`Shape`): one colour for a Lotus, one
+            // of each for a Karoo; the plain case (the common one) is just `fits`
+            if rem[i] > 0 && fits(w, c) && (w.shape == Shape::Free || fits_shape(w, &col[i], c)) {
+                // a Lotus already paying a colour is that colour only
+                let colours = if w.shape == Shape::One && !col[i].is_empty() { 1 } else { w.cols.count() };
+                let k = (last_resort(w.src), colours);
                 if best.is_none_or(|b| k < b.1) {
                     best = Some((i, k));
                 }
@@ -459,7 +560,14 @@ pub fn plan_pay(g: &Game, u: &[Unit], generic: u32, pips: &str) -> Option<(Vec<u
             }
             let waste = if used[i] > 0 { 0 } else { rem[i].saturating_sub(need) };
             let scarce = avail.iter().filter(|(c, _)| w.cols.has(*c)).map(|x| x.1).min().unwrap_or(0);
-            let k = (!restricted_float(w.src), last_resort(w.src), is_pain(g, w.src), waste, w.cols.count(), -(scarce as i64));
+            let k = (
+                !restricted_float(w.src),
+                last_resort(w.src),
+                is_pain(g, w.src),
+                waste,
+                w.cols.count(),
+                -(scarce as i64),
+            );
             if best.is_none_or(|b| k < b.1) {
                 best = Some((i, k));
             }
@@ -507,7 +615,7 @@ pub fn pay(g: &mut Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -
             spend_unit(g, p, *w, used[i], &col[i])?;
             let on_demand = matches!(w.src, Source::Perm(m) if crate::impls::t6_mana::mana_on_demand(g, m));
             if used[i] < w.amt && matches!(w.src, Source::Land(_) | Source::Perm(_)) && !on_demand {
-                float_leftover(g, p, w.src, w.cols, w.amt - used[i]);
+                float_leftover(g, p, &u, &used, i, &col[i]);
             }
         }
     }
@@ -518,10 +626,89 @@ pub fn pay(g: &mut Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -
 /// tapped for four paid one {G} of Sisay's {W}{U}{B}{R}{G} and the other three were lost, so a line that was
 /// affordable stopped after its first step. It empties as the step ends (rule 500.4). One colour floats as that
 /// colour, none as {C}, several as any; mana of a restricted source keeps its restriction (Mishra's Workshop's
-/// {C}{C} after a one-mana artifact still pays only for artifact spells).
-fn float_leftover(g: &mut Game, p: PlayerId, src: Source, cols: Colors, n: u32) {
-    let restr = source_restr(g, src);
-    g.player_mut(p).mana.add_key(Key { restr, kind: Kind::of_leftover(cols), keep: Keep::Step }, n);
+/// {C}{C} after a one-mana artifact still pays only for artifact spells). A source of several mana floats what it could
+/// really make: a Lotus tapped for {U}{U}{U} floats blue, a Karoo that paid its {B} floats the {G} (`leftover_groups`).
+fn float_leftover(g: &mut Game, p: PlayerId, u: &[Unit], used: &[u32], i: usize, pips: &str) {
+    let w = &u[i];
+    let restr = source_restr(g, w.src);
+    // how much of each colour the player still has from the other units: a Lotus's free choice keeps the scarcer colour
+    let elsewhere = |c: char| -> u32 {
+        (0..u.len()).filter(|&j| j != i && u[j].cols.has(c)).map(|j| u[j].amt - used[j].min(u[j].amt)).sum()
+    };
+    for (cols, n) in leftover_groups(w, used[i], pips, elsewhere) {
+        g.player_mut(p).mana.add_key(Key { restr, kind: Kind::of_leftover(cols), keep: Keep::Step }, n);
+    }
+}
+
+/// What unit `w` has left once `n` of its mana paid the coloured `pips` and generic mana, as groups of mana each
+/// of which can make `Colors` (a group of one colour is that colour; several colours, any of them): for a unit
+/// of several mana only what it could make. `elsewhere(c)`: how much mana of colour `c` the player has from other
+/// units, to choose among colours the payment left open.
+fn leftover_groups(w: &Unit, n: u32, pips: &str, elsewhere: impl Fn(char) -> u32) -> Vec<(Colors, u32)> {
+    let left = w.amt.saturating_sub(n);
+    if left == 0 {
+        return vec![];
+    }
+    let one = |c: char| Colors::from_letters(&c.to_string());
+    match w.shape {
+        Shape::Free => vec![(w.cols, left)],
+        Shape::One => {
+            // the colour it was tapped for: the colour of the pips it paid, else the scarcest the player has elsewhere
+            let c = pips
+                .chars()
+                .next()
+                .filter(|&c| c != 'C')
+                .or_else(|| WUBRG.iter().copied().filter(|&c| w.cols.has(c)).min_by_key(|&c| elsewhere(c)));
+            vec![(c.map_or(Colors::NONE, one), left)]
+        }
+        Shape::Each => {
+            let sets = w.sets();
+            let mut spare = w.amt - sets * w.cols.count(); // mana beyond whole sets: any of the colours
+            let mut rem: Vec<(char, u32)> =
+                WUBRG.iter().copied().filter(|&c| w.cols.has(c)).map(|c| (c, sets)).collect();
+            for pip in pips.chars() {
+                if let Some(r) = rem.iter_mut().find(|r| r.0 == pip && r.1 > 0) {
+                    r.1 -= 1;
+                } else {
+                    spare = spare.saturating_sub(1); // a pip past its colour's set was paid by a spare mana
+                }
+            }
+            // generic mana took the spare first, then colours the player has most of elsewhere
+            let mut generic = n.saturating_sub(pips.chars().count() as u32);
+            let took = generic.min(spare);
+            spare -= took;
+            generic -= took;
+            while generic > 0 {
+                let Some(r) = rem.iter_mut().filter(|r| r.1 > 0).max_by_key(|r| elsewhere(r.0)) else { break };
+                r.1 -= 1;
+                generic -= 1;
+            }
+            let mut out: Vec<(Colors, u32)> = rem.into_iter().filter(|r| r.1 > 0).map(|r| (one(r.0), r.1)).collect();
+            if spare > 0 {
+                out.push((w.cols, spare));
+            }
+            out
+        }
+    }
+}
+
+/// The units left once a payment `plan_pay` planned is made (for a look ahead; `pay` floats the same mana): a unit it
+/// did not touch stays as it is, one it used keeps what it could still make (`leftover_groups`).
+fn units_left(u: &[Unit], used: &[u32], col: &[String]) -> Vec<Unit> {
+    let mut v = Vec::with_capacity(u.len());
+    for (i, w) in u.iter().enumerate() {
+        if used[i] == 0 {
+            v.push(*w);
+            continue;
+        }
+        let elsewhere = |c: char| -> u32 {
+            (0..u.len()).filter(|&j| j != i && u[j].cols.has(c)).map(|j| u[j].amt - used[j].min(u[j].amt)).sum()
+        };
+        for (cols, amt) in leftover_groups(w, used[i], &col[i], elsewhere) {
+            v.push(Unit { src: w.src, cols, amt, shape: Shape::Free });
+        }
+    }
+    v
 }
 
 /// the restriction on the mana a land or permanent makes by its own ability (none for a land under Blood Moon: a
@@ -820,13 +1007,12 @@ pub fn ritual_net(g: &Game, p: PlayerId, c: CardId) -> i32 {
 pub fn units_after_ritual(g: &Game, p: PlayerId, c: CardId, u: &[Unit]) -> Option<Vec<Unit>> {
     let made = ritual_mana(g, p, c)?;
     let (gn, pips) = cost_of(g, p, c);
-    let (used, _) = plan_pay(g, u, gn, &pips)?;
-    let mut v: Vec<Unit> =
-        u.iter().zip(&used).filter(|(w, n)| w.amt > **n).map(|(w, n)| Unit { amt: w.amt - n, ..*w }).collect();
+    let (used, col) = plan_pay(g, u, gn, &pips)?;
+    let mut v: Vec<Unit> = units_left(u, &used, &col);
     // each kind floats as that colour (the same units `mana_units` makes of the pool)
     let ident = g.player(p).ident;
     for (kind, k) in made {
-        v.extend((0..k).map(|_| Unit { src: Source::float(kind), cols: kind.cols(ident), amt: 1 }));
+        v.extend((0..k).map(|_| Unit::free(Source::float(kind), kind.cols(ident), 1)));
     }
     Some(v)
 }
@@ -875,16 +1061,16 @@ pub fn units_after_cast(g: &Game, p: PlayerId, c: CardId, u: &[Unit]) -> Option<
         return units_after_ritual(g, p, c, u);
     }
     let (gn, pips) = cost_of(g, p, c);
-    let (used, _) = plan_pay(g, u, gn, &pips)?;
-    let mut v: Vec<Unit> =
-        u.iter().zip(&used).filter(|(w, n)| w.amt > **n).map(|(w, n)| Unit { amt: w.amt - n, ..*w }).collect();
+    let (used, col) = plan_pay(g, u, gn, &pips)?;
+    let mut v: Vec<Unit> = units_left(u, &used, &col);
     let d = g.db.get(c);
     if !d.creature
         && let Some(rock) = d.tags.str(Tag::Rock)
     {
         let (a, col) = rock.split_once(':').unwrap_or((rock, "C"));
         let amt: u32 = a.parse().unwrap_or(1);
-        v.push(Unit { src: Source::float(Kind::Any), cols: tag_colors(col, g.player(p).ident), amt });
+        let cols = tag_colors(col, g.player(p).ident);
+        v.push(Unit { src: Source::float(Kind::Any), cols, amt, shape: shape_of(&d.tags, col, cols, amt, amt, true) });
     }
     Some(v)
 }
@@ -908,13 +1094,10 @@ pub fn units_pay_with_rituals(g: &Game, p: PlayerId, u: &[Unit], generic: u32, p
 
 /// The one colour p picks for "add N mana of any one color" (Carpet of Flowers, The Aetherspark): all N mana are that
 /// colour, never split. The colour of p's identity that makes the most cards in hand (and its commander) payable that
-/// can't be paid now, then the one the unpayable cards ask for most, then the first colour of the identity. A person
-/// chooses as the mana is spent (`Kind::Any`); a colourless identity makes {C}.
+/// can't be paid now, then the one the unpayable cards ask for most, then the first colour of the identity. A colourless
+/// identity makes {C}. This is the AI's choice; a person's seat goes through `pick_one_colour`, which asks.
 pub fn choose_one_colour(g: &Game, p: PlayerId, n: u32) -> Kind {
     let ident = g.player(p).ident;
-    if crate::human::is_human(g, p) {
-        return Kind::Any;
-    }
     if ident.is_empty() {
         return Kind::C;
     }
@@ -936,7 +1119,7 @@ pub fn choose_one_colour(g: &Game, p: PlayerId, n: u32) -> Kind {
         }
         let k = Kind::of_letter(ch);
         let mut v = u.clone();
-        v.extend((0..n.min(60)).map(|_| Unit { src: Source::float(k), cols: k.cols(ident), amt: 1 }));
+        v.extend((0..n.min(60)).map(|_| Unit::free(Source::float(k), k.cols(ident), 1)));
         let (mut enabled, mut asked) = (0, 0);
         for (gn, pips, now) in &want {
             if *now {
@@ -954,13 +1137,42 @@ pub fn choose_one_colour(g: &Game, p: PlayerId, n: u32) -> Kind {
     best.map_or(Kind::C, |b| b.0)
 }
 
+/// The colour of "add N mana of any one color" (Carpet of Flowers, The Aetherspark, Photon) for the seat that makes it:
+/// the AI's choice (`choose_one_colour`), or, in practice mode, the person's own, asked here among the colours of their
+/// identity (no question when they have one colour or none). All N mana are then that colour.
+pub fn pick_one_colour(g: &mut Game, p: PlayerId, n: u32) -> Res<Kind> {
+    if !crate::human::is_human(g, p) {
+        return Ok(choose_one_colour(g, p, n));
+    }
+    let ident = g.player(p).ident;
+    let cols: Vec<char> = WUBRG.iter().copied().filter(|&c| ident.has(c)).collect();
+    match cols.len() {
+        0 => return Ok(Kind::C),
+        1 => return Ok(Kind::of_letter(cols[0])),
+        _ => {}
+    }
+    let name = |c: char| match c {
+        'W' => "white",
+        'U' => "blue",
+        'B' => "black",
+        'R' => "red",
+        _ => "green",
+    };
+    let labels: Vec<String> = cols.iter().map(|&c| name(c).to_string()).collect();
+    let prompt = format!("Add {n} mana of one colour: which colour?");
+    let i = crate::human::choices::choose_one(g, p, "choose", &prompt, &labels)?;
+    Ok(Kind::of_letter(cols[i.min(cols.len() - 1)]))
+}
+
 // --- ai-fix: B
 /// the mana a land card would add once played, as a unit: its tagged colours (`A`: p's identity) and amount. A guess
 /// for a card not yet on the battlefield: no Blood Moon, no enters-tapped rule.
 pub fn land_card_unit(g: &Game, p: PlayerId, c: CardId) -> Unit {
     let t = &g.db.get(c).tags;
     let amt = t.int(Tag::Amt).unwrap_or(1).max(0) as u32;
-    Unit { src: Source::float(Kind::Any), cols: tag_colors(t.str(Tag::C).unwrap_or("C"), g.player(p).ident), amt }
+    let letters = t.str(Tag::C).unwrap_or("C");
+    let cols = tag_colors(letters, g.player(p).ident);
+    Unit { src: Source::float(Kind::Any), cols, amt, shape: shape_of(t, letters, cols, amt, amt, true) }
 }
 
 // --- ai-fix: B
@@ -1025,7 +1237,7 @@ fn marvin_donor(g: &Game, p: PlayerId, marvin: PermId) -> Option<(Unit, crate::i
         };
         let better = best.as_ref().is_none_or(|b| (amt, cols.count()) > (b.0.amt, b.0.cols.count()));
         if amt > 0 && better {
-            best = Some((Unit { src: Source::Perm(marvin), cols, amt }, cd));
+            best = Some((Unit::free(Source::Perm(marvin), cols, amt), cd));
         }
     }
     best

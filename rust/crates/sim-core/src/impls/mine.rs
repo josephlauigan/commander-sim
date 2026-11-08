@@ -4106,7 +4106,7 @@ fn relic_mana(g: &Game, src: Src, p: PlayerId, units: &[Unit]) -> Vec<Unit> {
                 && x.cd.is_some_and(|c| g.db.get(c).tag(Tag::Leg))
                 && (x.sick || free_now)
         })
-        .map(|m| Unit { src: Source::Perm(m), cols: g.player(p).ident, amt: 1 })
+        .map(|m| Unit::free(Source::Perm(m), g.player(p).ident, 1))
         .collect()
 }
 

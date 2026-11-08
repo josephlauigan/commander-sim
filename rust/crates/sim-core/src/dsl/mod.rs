@@ -1107,7 +1107,7 @@ fn run(
             // the mana the card prints (`color`: "BBB", "RRRGGG", "R" for each of k; {C} is colourless); none: any colour
             // no printed colour: "one mana of any color" (k = 1) or "k mana of any one color", all of one chosen colour
             let kinds = if e.color.is_none() && k > 1 {
-                vec![(crate::engine::mana::choose_one_colour(g, p, k), k)]
+                vec![(crate::engine::mana::pick_one_colour(g, p, k)?, k)]
             } else {
                 Kind::printed(e.color.as_deref(), k)
             };
