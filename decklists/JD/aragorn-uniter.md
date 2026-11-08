@@ -1,8 +1,5 @@
 # Aragorn, the Uniter — Four-Colour Spell Burn
 
-> Deck key `aragorn`, tiers t4-t5. Built from the Kefka and Sauron lists plus binder cards: "Where the cards come from"
-> (after the guide) lists the sources, and `documents/aragorn-merge-swaps.md` is the physical swap guide.
-
 A four-colour spell deck. Aragorn makes every spell you cast do something: a red spell is 3 damage to an opponent, a
 white spell is a 1/1 Soldier, a blue spell is scry 2, a green spell is +4/+4. So the deck is full of cheap spells:
 rituals, cantrips, burn, free counters. It wins three ways: an **Underworld Breach storm** (Brain Freeze, Grapeshot), a
@@ -15,7 +12,7 @@ it is weak to graveyard hate, one-spell-per-turn effects, Blood Moon and Back to
 |---|---|
 | **Commander** | Aragorn, the Uniter ({R}{G}{W}{U}, 5/5, Legendary Creature — Human Noble) |
 | **Bracket** | 4 (11 Game Changers, see Bracket) |
-| **Simulator** | key `aragorn`, tiers t4-t5: 10.7% at t4, 7.7% at t5, 9.2% over t4-t5 (first baseline 2026-11-06, `audit/aragorn/FINDINGS.md`) |
+| **Simulator** | Deck key `aragorn`, tiers T4-T5, played from `data/plans/aragorn.toml`; findings in `audit/aragorn/FINDINGS.md`, history in `decklists/CHANGELOG.md` |
 | **Spells** | 64 (red 23, blue 19, green 11, white 14, colourless 6; 9 multicolour), average mana value 2.69 |
 
 ## Strategy
@@ -444,49 +441,6 @@ creature when life matters.
 Guardianship** and **Rhystic Study**. That is well past Bracket 3's limit of three, so the deck is Bracket 4 only.
 There's no two-card infinite combo. The Breach line needs the graveyard to fill first, as in Kefka (Lion's Eye
 Diamond would change that).
-
-## Where the cards come from
-
-| Source | Cards | Notes |
-|---|---|---|
-| Kefka only | 19 | Grapeshot, Jeska's Will, Lightning Bolt, Guttersnipe, Veyran, Niv-Mizzet Parun, Young Pyromancer, Firebrand Archer, Storm-Kiln Artist, Triple Triad, Fiery Emancipation, Mystical Tutor, Frantic Search, Expressive Iteration, Twinned Vision, Lotus Petal, Spirebluff Canal, Stormcarved Coast, Mystic Sanctuary |
-| Kefka and Sauron | 8 | Counterspell, Chaos Warp, Arcane Signet, Exotic Orchard, Steam Vents, Shivan Reef, Sulfur Falls, Island |
-| Sauron only | 6 | Talrand, Comet Storm, Mana Drain, Force of Will, Mystic Confluence, Deflecting Swat |
-| Binder (also in Kefka or Sauron) | 9 | Underworld Breach, Brain Freeze, Skullclamp, Cyclonic Rift, Fact or Fiction, Sol Ring, Lightning Greaves, Command Tower, Path of Ancestry: the binder has a spare copy, so these don't need to come out of Sauron |
-| Binder only | 41 | The other white and green cards, Tezzeret, the rituals and Manamorphose, Swan Song, and most lands |
-| JD's spare-card pile | 7 | Austere Command, Nibelheim Aflame, Windborn Muse, Sokenzan, Paradise Druid, Spark Double, Llanowar Elves |
-| To buy | 8 | Aragorn, the Uniter, plus the seven upgrades below |
-| Basics to add | 2 | One Forest and one Plains (not in any list or the binder) |
-
-### The seven upgrades (bought instead of binder or Kefka filler)
-
-| Buy | Replaces | Why |
-|---|---|---|
-| Swords to Plowshares | Austere Command | 1-mana removal instead of a 6-mana wipe, still a white trigger (Austere Command is in the deck too, from the spare-card pile) |
-| Teferi's Protection | Lagrella, the Magpie | Protects Aragorn and the combo turn |
-| Smothering Tithe | Paradise Druid | Treasure from every opponent's draw (Paradise Druid is in the deck too, from the spare-card pile) |
-| Nature's Lore | Sakura-Tribe Elder | Fetches a Forest dual (Taiga, Tropical Island, Savannah, Temple Garden) untapped, where Sakura-Tribe Elder's land comes in tapped |
-| Fierce Guardianship | Arcane Denial | Free with Aragorn out, no cards for opponents |
-| Third Path Iconoclast | Kessig Flamebreather | Red and blue on cast, and a Soldier token for every noncreature spell |
-| Rhystic Study | Think Twice | Card draw all game |
-
-All seven are Commander-legal and inside Aragorn's colours. New Tymna already runs Swords, Tithe, Rhystic Study and Fierce
-Guardianship, so these are new copies. **Optional:** Lion's Eye Diamond for Rite of Flame would make
-Breach + LED + Brain Freeze a real combo (not chosen yet; the New Tymna copy is the only one).
-
-**If Sauron stays a deck,** only the six "Sauron only" cards conflict, plus whichever of the nine shared cards the
-physical Kefka copy doesn't cover.
-
-## Main cuts from Kefka and Sauron (legal but left out)
-- **Discard and looting:** Rummaging Goblin, Garrison Excavator, Stadium Tidalmage, Harmonic Prodigy, Blazing
-  Firesinger, Birgi (the deck no longer wants to discard).
-- **Expensive or off-plan:** Niv-Mizzet the Firemind and Psychosis Crawler (the Kefka draw-to-damage win needed the
-  flip), Jin-Gitaxias, Inferno Titan, Gilgamesh, Godo, Bribery, Solve the Equation, Chandra's Ignition,
-  Not of This World.
-- **Small value:** Reality Shift, Price of Progress, Seize the Spoils, Palantír of Orthanc, Vandalblast (Aragorn's
-  own rocks), Propaganda, Slip Out the Back, An Offer You Can't Refuse, the Marvel creatures, Mind Stone, Fellwar
-  Stone, the Talismans.
-- **Karn leftovers:** none besides Tezzeret and Skullclamp. Aragorn's triggers need coloured spells.
 
 ## Decklist by type (100)
 

@@ -310,3 +310,46 @@ Coiling Oracle, Lagrella, the Magpie, Llanowar Elves, Paradise Druid, Rampant Gr
   are in `decklists/pool/retired/` with retirement notes.
 - Aragorn's four cast triggers have card code (`impls/aragorn.rs`, status Full). Its plan file
   (`data/plans/aragorn.toml`) is provisional.
+
+## 7. Where the cards come from (moved from the deck guide, 2026-11-08)
+
+| Source | Cards | Notes |
+|---|---|---|
+| Kefka only | 19 | Grapeshot, Jeska's Will, Lightning Bolt, Guttersnipe, Veyran, Niv-Mizzet Parun, Young Pyromancer, Firebrand Archer, Storm-Kiln Artist, Triple Triad, Fiery Emancipation, Mystical Tutor, Frantic Search, Expressive Iteration, Twinned Vision, Lotus Petal, Spirebluff Canal, Stormcarved Coast, Mystic Sanctuary |
+| Kefka and Sauron | 8 | Counterspell, Chaos Warp, Arcane Signet, Exotic Orchard, Steam Vents, Shivan Reef, Sulfur Falls, Island |
+| Sauron only | 6 | Talrand, Comet Storm, Mana Drain, Force of Will, Mystic Confluence, Deflecting Swat |
+| Binder (also in Kefka or Sauron) | 9 | Underworld Breach, Brain Freeze, Skullclamp, Cyclonic Rift, Fact or Fiction, Sol Ring, Lightning Greaves, Command Tower, Path of Ancestry: the binder has a spare copy, so these don't need to come out of Sauron |
+| Binder only | 41 | The other white and green cards, Tezzeret, the rituals and Manamorphose, Swan Song, and most lands |
+| JD's spare-card pile | 7 | Austere Command, Nibelheim Aflame, Windborn Muse, Sokenzan, Paradise Druid, Spark Double, Llanowar Elves |
+| To buy | 8 | Aragorn, the Uniter, plus the seven upgrades below |
+| Basics to add | 2 | One Forest and one Plains (not in any list or the binder) |
+
+### The seven upgrades (bought instead of binder or Kefka filler)
+
+| Buy | Replaces | Why |
+|---|---|---|
+| Swords to Plowshares | Austere Command | 1-mana removal instead of a 6-mana wipe, still a white trigger (Austere Command is in the deck too, from the spare-card pile) |
+| Teferi's Protection | Lagrella, the Magpie | Protects Aragorn and the combo turn |
+| Smothering Tithe | Paradise Druid | Treasure from every opponent's draw (Paradise Druid is in the deck too, from the spare-card pile) |
+| Nature's Lore | Sakura-Tribe Elder | Fetches a Forest dual (Taiga, Tropical Island, Savannah, Temple Garden) untapped, where Sakura-Tribe Elder's land comes in tapped |
+| Fierce Guardianship | Arcane Denial | Free with Aragorn out, no cards for opponents |
+| Third Path Iconoclast | Kessig Flamebreather | Red and blue on cast, and a Soldier token for every noncreature spell |
+| Rhystic Study | Think Twice | Card draw all game |
+
+All seven are Commander-legal and inside Aragorn's colours. New Tymna already runs Swords, Tithe, Rhystic Study and Fierce
+Guardianship, so these are new copies. **Optional:** Lion's Eye Diamond for Rite of Flame would make
+Breach + LED + Brain Freeze a real combo (not chosen yet; the New Tymna copy is the only one).
+
+**If Sauron stays a deck,** only the six "Sauron only" cards conflict, plus whichever of the nine shared cards the
+physical Kefka copy doesn't cover.
+
+## 8. Main cuts from Kefka and Sauron (legal but left out)
+- **Discard and looting:** Rummaging Goblin, Garrison Excavator, Stadium Tidalmage, Harmonic Prodigy, Blazing
+  Firesinger, Birgi (the deck no longer wants to discard).
+- **Expensive or off-plan:** Niv-Mizzet the Firemind and Psychosis Crawler (the Kefka draw-to-damage win needed the
+  flip), Jin-Gitaxias, Inferno Titan, Gilgamesh, Godo, Bribery, Solve the Equation, Chandra's Ignition,
+  Not of This World.
+- **Small value:** Reality Shift, Price of Progress, Seize the Spoils, Palantír of Orthanc, Vandalblast (Aragorn's
+  own rocks), Propaganda, Slip Out the Back, An Offer You Can't Refuse, the Marvel creatures, Mind Stone, Fellwar
+  Stone, the Talismans.
+- **Karn leftovers:** none besides Tezzeret and Skullclamp. Aragorn's triggers need coloured spells.

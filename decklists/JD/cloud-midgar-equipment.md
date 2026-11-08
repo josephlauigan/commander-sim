@@ -173,9 +173,8 @@ White Orchid** and **Loyal Warhound** are worth a second enter if Sword of Heart
 
 ### Game plan
 
-The sims point at deployment as the deck's bottleneck: in earlier runs the plan (an equipped Cloud attacking) was online
-by turn 4 in only about a quarter of the games, by turn 6 in about 58%, and cards sat stuck in hand. So spend all your
-mana every turn, and slow the table down so the plan has time to come online.
+Deployment is the deck's bottleneck: an equipped Cloud attacking is often not online by turn 4, or even turn 6, and cards
+get stuck in hand. So spend all your mana every turn, and slow the table down so the plan has time to come online.
 
 **Turns 1-3.**
 
@@ -194,8 +193,7 @@ mana every turn, and slow the table down so the plan has time to come online.
 - Equip the Sword, attack, and cast a second piece: Mask of Memory, Buster Sword, Fireshrieker or Swiftfoot Boots.
 - Add a free-equip piece (Ardenn, Kor Outfitter, Puresteel Paladin) before the big Equipment.
 - Add defence: a tax creature (Archangel of Tithes at four mana, Windborn Muse, Baird, Archon of Absolution) or Court of
-  Ardenvale. Defence was the deck's biggest sim gain: slowing the race that kills Cloud is worth more than another
-  Equipment.
+  Ardenvale. Defence matters most here: slowing the race that kills Cloud is worth more than another Equipment.
 - Open the Armory and Enlightened Tutor find the next piece.
 
 **Late (turn 7+).**
