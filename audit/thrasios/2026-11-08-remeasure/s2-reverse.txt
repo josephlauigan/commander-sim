@@ -1,0 +1,122 @@
+Cards modeled from Scryfall text (check the abilities below):
+   Savannah [scryfall] L  :: c=WG
+   Breeding Pool [scryfall] L  :: c=UG t
+Model status of the swapped-in cards (cardgen audit):
+  Savannah: Full (mana only)
+  Breeding Pool: Full (mana only)
+
+Model coverage (cardgen audit statuses of the 99 + commander; names: Unmodeled, then Partial, commander and engine cards first, at most 5):
+  thrasios                     100 cards: Full 96, Full-auto 4, Approximate 0, Partial 0, Unmodeled 0
+  thrasios (swapped)           100 cards: Full 96, Full-auto 4, Approximate 0, Partial 0, Unmodeled 0
+  opponents Tier 6 (cEDH, B5)  6 decks, 600 cards: Full 545, Full-auto 19, Approximate 20, Partial 16, Unmodeled 0
+
+Preflight (--no-preflight skips it): is each swapped-in card ever cast by thrasios's AI?
+  AI: Savannah: land (played, never cast)
+  AI: Breeding Pool: land (played, never cast)
+200 games (preflight dry run: swapped list, 200 per profile on t6), adaptive AI, 24 worker threads: about 0 seconds
+  progress  10.0%  0m00s elapsed, ~0m00s left
+  progress  20.0%  0m00s elapsed, ~0m00s left
+  progress  30.0%  0m00s elapsed, ~0m00s left
+  progress  40.0%  0m00s elapsed, ~0m00s left
+  progress  50.0%  0m00s elapsed, ~0m00s left
+  progress  60.0%  0m00s elapsed, ~0m00s left
+  progress  70.0%  0m00s elapsed, ~0m00s left
+  progress  80.0%  0m00s elapsed, ~0m00s left
+  progress  90.0%  0m00s elapsed, ~0m00s left
+  progress 100.0%  0m00s elapsed, ~0m00s left
+  dry run: 200 adaptive-AI games per profile (loose) of the swapped list vs Tier 6 (cEDH, B5)
+
+10,200 games (current list and the swapped one, 5,000 per list per tier, profile loose), lookahead AI, 24 worker threads: about 21 minutes
+  progress 100.0%  45m50s elapsed, ~0m00s left
+Swaps: Watery Grave -> Savannah; Swamp -> Breeding Pool
+
+=== Tymna/Thrasios vs Tier 6 (cEDH, B5): baseline vs variant (paired, same opponents and draws) ===
+[loose       ] win  34.4% ->  35.6%  (delta +1.2 pts, noise ±1.6, paired)   n=5000
+               eliminated by (variant): Dack Fayden 13.4%  Kinnan 6.5%  Rograkh/Silas 9.1%  Rograkh/Thrasios 8.5%  Kraum/Tymna 13.4%  Sisay 13.3%
+VERDICT: NO CLEAR EFFECT (within noise)
+
+--- What changed, by strength axis (thrasios) ---
+  Each cell: current -> new, change, and the noise band (±2 standard errors) for that change.
+  * = the change is larger than its noise band, so it is unlikely to be luck.
+  game plan for thrasios: first Tymna draw, or the infinite-mana combo going off
+                                                                     [loose]                
+
+  Outcome
+    Win rate                                          34.4% ->  35.6%  +1.2pt   ±1.9 
+    Rounds survived (or game length)                   7.09 ->   7.07   -0.02  ±0.12 
+
+  Mana & consistency
+    Extra mulligans per game                           0.32 ->   0.32   +0.00  ±0.03 
+    Missed land drops, turns 1-5                       1.05 ->   1.08   +0.03  ±0.04 
+    Mana available on your turn 4                      4.25 ->   4.23   -0.02  ±0.07 
+    Mana available on your turn 6                      5.59 ->   5.58   -0.02  ±0.12 
+
+  Speed
+    Games where the game plan came online             80.0% ->  78.9%  -1.1pt   ±1.6 
+    Turn the game plan came online                     3.95 ->   4.01   +0.06  ±0.07 
+    Turn the commander first resolved                  2.46 ->   2.47   +0.01  ±0.05 
+
+  Card flow
+    Cards drawn per game (incl. draw step)            12.94 ->  12.91   -0.03  ±0.36 
+    Tutors resolved per game                           1.56 ->   1.52   -0.04  ±0.05 
+    Spells cast per game                              10.41 ->  10.35   -0.06  ±0.23 
+
+  Interaction
+    Counterspells cast                                 0.93 ->   0.92   -0.00  ±0.04 
+    Spot removal cast                                  0.65 ->   0.67   +0.01  ±0.03 
+    Board wipes cast                                   0.00 ->   0.00   +0.00  ±0.00 
+
+  Resilience
+    Protection used (HI/sac/Tidebinder/counter-war)    0.03 ->   0.03   +0.00  ±0.01 
+    Your key permanents removed by opponents           0.23 ->   0.22   -0.01  ±0.02 
+    Your spells countered                              0.99 ->   0.97   -0.02  ±0.05 
+
+  Threat & pressure
+    Damage dealt to opponents per game                 9.49 ->   9.40   -0.09  ±0.50 
+      ...of which combat damage                        8.46 ->   8.38   -0.08  ±0.41 
+      ...of which drain triggers                       0.04 ->   0.04   +0.00  ±0.01 
+      ...of which other triggers                       0.99 ->   0.97   -0.02  ±0.17 
+
+--- Reading it ---
+  No axis moved beyond noise under the loose profile: the swap is roughly a like-for-like
+  trade in this pod, or the new card rarely matters. To resolve smaller effects, about 4x the games halves the noise (--ai adaptive makes that cheap).
+
+-- Why: paired breakdown [loose profile, 5000 games per list, same seeds] --
+  Swapped IN (from the swapped list)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Savannah                              19.4       0.0           -    100.0          -      0.00
+    Breeding Pool                         18.6       0.0           -    100.0          -      0.00
+  Swapped OUT (from the current list, what they were doing)
+    card                                drawn%    cast%*   avg round   stuck%   win%cast lost/game
+    Watery Grave                          17.8       0.0           -    100.0          -      0.00
+    Swamp                                 21.2       0.0           -    100.0          -      0.00
+    (*cast% = share of the games the card was drawn in; avg round = own-turn count of the first cast;
+     lost/game = times opponents removed it. A land is never 'cast'. Correlation, not causation.)
+
+  Game shape                                       current   swapped   change
+    win rate %                                        34.4      35.6     +1.2
+    rounds survived                                   7.09      7.07    -0.02
+    eliminated, % of games                            65.5      64.4     -1.2
+    opponents it eliminated, per game                 1.04      1.07    +0.03
+    damage dealt, per game                             9.5       9.4     -0.1
+    plan: first Tymna draw, or the infinite-mana combo going off
+      plan online by turn 4, %                        59.7      58.5     -1.2
+      plan online by turn 6, %                        74.3      73.1     -1.2
+      plan online by turn 8, %                        78.5      77.0     -1.4
+      plan online by turn 12, %                       79.8      78.7     -1.1
+      plan online at all, %                           80.0      78.9     -1.1
+    commander resolved by turn 4, %                   74.6      75.5     +0.9
+    commander resolved by turn 6, %                   78.2      79.3     +1.1
+    commander removals, per game                      0.41      0.42    +0.01
+    lands on the battlefield, turn 4                  3.33      3.32    -0.01
+    lands on the battlefield, turn 8                  5.30      5.21    -0.09
+    mana available, turn 4                            4.25      4.23    -0.02
+    mana available, turn 8                            6.55      6.32    -0.23
+    cards in hand after the land drop, turn 4         5.43      5.43    -0.00
+    cards in hand after the land drop, turn 8         5.68      5.70    +0.02
+    wins by (current):  combo 98%, damage 2%, timeout 0%
+    wins by (swapped):  combo 98%, damage 2%, timeout 0%
+    eliminated by (current): Sisay via combo 11.5%, Kraum/Tymna via combo 10.6%, Dack Fayden via combo 10.0%, Rograkh/Silas via combo 8.6%
+    eliminated by (swapped): Sisay via combo 11.5%, Kraum/Tymna via combo 11.0%, Dack Fayden via combo 10.3%, Rograkh/Silas via combo 8.5%
+
+(2750s total)

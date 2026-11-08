@@ -8,6 +8,24 @@ its first sim is the baseline below. The findings of the previous list (t5, Basa
 Monolith + Rings + Ballista deck with attack taxes) are in `FINDINGS-old-list.md`, and the retired Thanos turbo list's
 (t6) in `audit/thanos/FINDINGS-old-list.md`.
 
+## 2026-11-08: re-measure after the mana-colour fixes (#305, #308; main 502f7ddc; look-ahead, loose, seed 500000, t6)
+Why: #305 (rituals made mana of any colour; Kinnan + Basalt made coloured mana; Carpet of Flowers and Aetherspark made
+every colour) and #308 (one source of several mana paid any colour: Lotus Petal, Signets, Karoo lands) fixed engine
+bugs that let ritual and combo lines pay colours they couldn't. Every Thrasios number before them may be inflated.
+- **Baseline, current (S2) list, 10,000 games: 34.5%** (33.6-35.5). The 11-07 baseline (old list, before the fixes) was
+  35.1% (34.2-36.0): -0.6, inside the noise. Plan online 80.7% of games; wins: Oracle + Consultation/Pact 78%,
+  Power Artifact/Rings + Monolith 17%; 42.3% of hands mulliganed. Raw: `audit/thrasios/2026-11-08-remeasure/baseline.txt`.
+- **S2 rechecked (5,000 games, paired; run as the reverse swap, Watery Grave => Savannah and Swamp => Breeding Pool):**
+  S2 list 34.4%, old list 35.6%, so **S2 is -1.2** (noise ±1.6): no clear effect, now leaning the other way. Before the
+  fixes it read +1.6 (±1.6). The two runs average about +0.2: S2 makes no measurable difference. With S2, the plan comes
+  online a little more often (80.0% vs 78.9%) and by turn 4 (59.7% vs 58.5%), both inside the noise; mana on turn 8 is
+  6.55 vs 6.32. Raw: `audit/thrasios/2026-11-08-remeasure/s2-reverse.txt`.
+- **Why S2 didn't help:** its point was to fix Doomsday's missing {B}{B}{B}, and it didn't. In the 10,000-game baseline,
+  "no {B}{B}{B} (with the enabler)" is still 43% of the main-phase decisions where Doomsday is in hand (42% on 11-06,
+  before S2). Doomsday was chosen 139 times in 10,000 games (153 on 11-07). The deck rarely has three black sources at
+  once whether two of its duals make black or not, and Consultation/Pact (77-78% of wins) needs only one {B}.
+- **Decided by JD (2026-11-08): keep S2.** Neither list is measurably better, and S2 stays in the list (adopted 11-07).
+
 ## 2026-11-07: more black mana for Doomsday (swap tests; main 7d4d5b35; look-ahead, loose, 5,000 games per list, seed 500000, t6)
 Why: Doomsday in hand in the main phase but not cast was "no {B}{B}{B}" 42% of the time (2026-11-06 below), and the
 only U/B land was Underground Sea, while three duals make no black (Savannah, Breeding Pool, Hallowed Fountain). All
