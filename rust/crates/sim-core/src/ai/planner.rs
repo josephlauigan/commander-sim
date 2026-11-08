@@ -969,6 +969,31 @@ fn line_colours(g: &Game, p: PlayerId) -> usize {
 /// land) is played on a copy and the plan read from there (`land_score`). None when the usual choice
 /// (`turn::play_land`) scores as well as the best, or there is no choice: the usual choice stands.
 pub fn choose_land(g: &mut Game, p: PlayerId) -> Res<Option<(CardId, Option<CardId>)>> {
+    let options = land_options(g, p);
+    if options.len() < 2 {
+        return Ok(None);
+    }
+    bump(g, p, "plan|land_choices");
+    let (_, best) = land_best(g, p, &options)?;
+    if let Some((_, (c, t))) = best {
+        bump(g, p, "plan|land_changed");
+        let what = t.map_or(String::new(), |t| format!(" for {}", name(g, t)));
+        crate::glog!(
+            g,
+            "      [{} plays {}{} [plan: the land drop the plan wants]]",
+            g.player(p).name,
+            name(g, c),
+            what
+        );
+    }
+    Ok(best.map(|b| b.1))
+}
+
+/// how far the plan gets after a land drop (`land_score`), then the closest line's coloured pips the lands make
+type LandPos = ((u8, usize), usize);
+
+/// the land drops to try: each land in hand once (Glacial Chasm aside), and for a fetch land each land it can find
+fn land_options(g: &Game, p: PlayerId) -> Vec<(CardId, Option<CardId>)> {
     let pl = g.player(p);
     let mut lands: Vec<CardId> = vec![];
     for &c in &pl.hand {
@@ -998,10 +1023,16 @@ pub fn choose_land(g: &mut Game, p: PlayerId) -> Res<Option<(CardId, Option<Card
             None => options.push((c, None)),
         }
     }
-    if options.len() < 2 {
-        return Ok(None);
-    }
-    bump(g, p, "plan|land_choices");
+    options
+}
+
+/// the usual choice's position (the bar) and the best option that beats it
+#[allow(clippy::type_complexity)]
+fn land_best(
+    g: &mut Game,
+    p: PlayerId,
+    options: &[(CardId, Option<CardId>)],
+) -> Res<(LandPos, Option<(LandPos, (CardId, Option<CardId>))>)> {
     let main1 = |g2: &mut Game| {
         g2.step = TurnStep::Main1;
         g2.active = Some(p);
@@ -1011,8 +1042,8 @@ pub fn choose_land(g: &mut Game, p: PlayerId) -> Res<Option<(CardId, Option<Card
     crate::engine::turn::play_land(&mut d, p)?;
     main1(&mut d);
     let bar = (land_score(&mut d, p)?, line_colours(&d, p));
-    let mut best: Option<(((u8, usize), usize), (CardId, Option<CardId>))> = None;
-    for &(c, t) in &options {
+    let mut best: Option<(LandPos, (CardId, Option<CardId>))> = None;
+    for &(c, t) in options {
         let mut g2 = copy(g, p);
         if play_land_for(&mut g2, p, c, t).is_err() || g2.over {
             continue;
@@ -1023,16 +1054,35 @@ pub fn choose_land(g: &mut Game, p: PlayerId) -> Res<Option<(CardId, Option<Card
             best = Some((s, (c, t)));
         }
     }
-    if let Some((_, (c, t))) = best {
-        bump(g, p, "plan|land_changed");
-        let what = t.map_or(String::new(), |t| format!(" for {}", name(g, t)));
-        crate::glog!(
-            g,
-            "      [{} plays {}{} [plan: the land drop the plan wants]]",
-            g.player(p).name,
-            name(g, c),
-            what
-        );
+    Ok((bar, best))
+}
+
+/// practice mode's hint: the land the planner plays instead of the usual choice, the land a fetch land finds, and
+/// why (None: the usual choice stands). Asked on a copy; the same reading as `choose_land`
+pub fn land_plan_why(g: &mut Game, p: PlayerId) -> Res<Option<(CardId, Option<CardId>, String)>> {
+    let options = land_options(g, p);
+    if options.len() < 2 {
+        return Ok(None);
     }
-    Ok(best.map(|b| b.1))
+    let (bar, best) = land_best(g, p, &options)?;
+    let Some((s, (c, t))) = best else { return Ok(None) };
+    let reach = |x: LandPos| match x.0 {
+        (3, _) => "a win line goes off this turn",
+        (2, usize::MAX) => "a win line is ready to go",
+        (2, _) => "a win line is ready next turn",
+        (1, _) => "a finishing line is ready next turn",
+        _ => "no win line is close",
+    };
+    let steps = |x: LandPos| usize::MAX - x.0.1;
+    let why = if s.0.0 > bar.0.0 {
+        format!("the plan: with it {}; with the usual pick, {}", reach(s), reach(bar))
+    } else if s.0 > bar.0 {
+        format!("the plan: a shorter win line ({} steps, against {} with the usual pick)", steps(s), steps(bar))
+    } else {
+        format!(
+            "the plan: your lands then make {} of the coloured mana your closest win line needs, against {} with the usual pick",
+            s.1, bar.1
+        )
+    };
+    Ok(Some((c, t, why)))
 }

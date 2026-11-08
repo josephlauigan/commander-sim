@@ -146,27 +146,8 @@ pub fn play_land(g: &mut Game, p: PlayerId) -> Res {
     {
         return ai::planner::play_land_for(g, p, c, t);
     }
-    let pl = g.player(p);
-    let mut lands: Vec<CardId> = pl.hand.iter().copied().filter(|&c| g.db.get(c).land).collect();
-    if pl.yawg {
-        // Yawgmoth's Will: lands from the graveyard too
-        lands.extend(pl.gy.iter().copied().filter(|&c| g.db.get(c).land && pl.yawg_gy.contains(&c)));
-    }
+    let lands = land_candidates(g, p);
     let muld = cardcode::muldrotha_on(g, p);
-    if muld {
-        let more: Vec<CardId> = pl
-            .gy
-            .iter()
-            .copied()
-            .filter(|&c| g.db.get(c).land && !lands.contains(&c) && cardcode::muld_types(g, p, c))
-            .collect();
-        lands.extend(more); // Muldrotha
-    }
-    let chasm_card = |c: CardId| g.db.get(c).tag(Tag::Chasm);
-    if lands.iter().any(|&c| chasm_card(c)) && !(g.player(p).lands.len() >= 4 && chasm_threatened(g, p) && !chasm(g, p))
-    {
-        lands.retain(|&c| !chasm_card(c)); // hold Glacial Chasm until it's needed
-    }
     if lands.is_empty() {
         return Ok(());
     }
@@ -198,50 +179,163 @@ pub fn play_land(g: &mut Game, p: PlayerId) -> Res {
     play_land_card(g, p, c, "plays")
 }
 
+/// the lands p's usual land drop chooses from: the hand, the graveyard with Yawgmoth's Will or Muldrotha, and Glacial
+/// Chasm only once it is needed
+fn land_candidates(g: &Game, p: PlayerId) -> Vec<CardId> {
+    let pl = g.player(p);
+    let mut lands: Vec<CardId> = pl.hand.iter().copied().filter(|&c| g.db.get(c).land).collect();
+    if pl.yawg {
+        // Yawgmoth's Will: lands from the graveyard too
+        lands.extend(pl.gy.iter().copied().filter(|&c| g.db.get(c).land && pl.yawg_gy.contains(&c)));
+    }
+    if cardcode::muldrotha_on(g, p) {
+        let more: Vec<CardId> = pl
+            .gy
+            .iter()
+            .copied()
+            .filter(|&c| g.db.get(c).land && !lands.contains(&c) && cardcode::muld_types(g, p, c))
+            .collect();
+        lands.extend(more); // Muldrotha
+    }
+    let chasm_card = |c: CardId| g.db.get(c).tag(Tag::Chasm);
+    if lands.iter().any(|&c| chasm_card(c)) && !(g.player(p).lands.len() >= 4 && chasm_threatened(g, p) && !chasm(g, p))
+    {
+        lands.retain(|&c| !chasm_card(c)); // hold Glacial Chasm until it's needed
+    }
+    lands
+}
+
+/// one land of the usual land drop, scored: its points and why (practice mode's hint shows them)
+#[derive(Debug, Clone)]
+pub struct LandWhy {
+    pub card: CardId,
+    pub score: f64,
+    /// each part of the score with what it is for, in the order they are added
+    pub parts: Vec<(f64, String)>,
+}
+
+/// every land p's usual land drop chooses from, best first (ties keep hand order, the AI breaks them at random)
+pub fn land_reasons(g: &Game, p: PlayerId) -> Vec<LandWhy> {
+    let have = colors_have(g, p, None);
+    let mut out: Vec<LandWhy> = vec![];
+    for c in land_candidates(g, p) {
+        if out.iter().any(|w| g.db.get(w.card).name == g.db.get(c).name) {
+            continue;
+        }
+        let parts = land_parts(g, p, c, have);
+        out.push(LandWhy { card: c, score: sum_parts(&parts), parts });
+    }
+    out.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap_or(std::cmp::Ordering::Equal));
+    out
+}
+
+fn colour_words(cs: impl Iterator<Item = char>) -> String {
+    let v: Vec<&str> = cs
+        .map(|ch| match ch {
+            'W' => "white",
+            'U' => "blue",
+            'B' => "black",
+            'R' => "red",
+            _ => "green",
+        })
+        .collect();
+    match v.len() {
+        0 => String::new(),
+        1 => v[0].to_string(),
+        n => format!("{} and {}", v[..n - 1].join(", "), v[n - 1]),
+    }
+}
+
+/// the points, added in this order (the same order as before, so the sum is the same to the last bit)
+fn sum_parts(parts: &[(f64, String)]) -> f64 {
+    parts.iter().fold(0.0, |s, x| s + x.0)
+}
+
 fn land_score(g: &Game, p: PlayerId, c: CardId, have: crate::cards::Colors) -> f64 {
-    let t = &g.db.get(c).tags;
+    sum_parts(&land_parts(g, p, c, have))
+}
+
+fn land_parts(g: &Game, p: PlayerId, c: CardId, have: crate::cards::Colors) -> Vec<(f64, String)> {
+    let d = g.db.get(c);
+    let t = &d.tags;
     let life = g.player(p).life;
     let cols = tag_cols(g, p, c);
-    let new_cols = "WUBRG".chars().filter(|&ch| cols.has(ch) && !have.has(ch)).count() as f64;
-    let mut s = new_cols * 2.0 + if land_enters_tapped(g, p, c) { 0.0 } else { 3.0 };
-    s += crate::impls::titania::land_adjust(g, p, c); // the titania deck: fetch lands while Titania is out or about to be
+    let new: Vec<char> = "WUBRG".chars().filter(|&ch| cols.has(ch) && !have.has(ch)).collect();
+    let new_cols = new.len() as f64;
+    let mut parts: Vec<(f64, String)> = vec![];
+    let colour_why = if !new.is_empty() {
+        format!("makes {}, which your lands don't make yet (+2 a colour)", colour_words(new.iter().copied()))
+    } else if cols.count() > 0 {
+        format!("no new colour: your lands already make {}", colour_words("WUBRG".chars().filter(|&ch| cols.has(ch))))
+    } else {
+        "makes no coloured mana".to_string()
+    };
+    parts.push((new_cols * 2.0, colour_why));
+    let tapped = land_enters_tapped(g, p, c);
+    let pay = match d.enters_rule {
+        Some(EnterRule::Pay(n)) => Some(n),
+        _ => None,
+    };
+    let tap_why = match (tapped, pay) {
+        (false, Some(n)) => format!("enters untapped for {n} life (+3): the extra mana casts something now"),
+        (false, None) => "enters untapped (+3)".to_string(),
+        (true, Some(n)) => {
+            format!("enters tapped: {n} life isn't worth it now (nothing to cast with the extra mana, or life is low)")
+        }
+        (true, None) if t.has(Tag::F) => "a fetch land: cracked at once for a land, so it counts as tapped".to_string(),
+        (true, None) => "enters tapped".to_string(),
+    };
+    parts.push((if tapped { 0.0 } else { 3.0 }, tap_why));
+    // the titania deck: fetch lands while Titania is out or about to be
+    parts.push((crate::impls::titania::land_adjust(g, p, c), "Titania's land rule".to_string()));
     // --- casual speed: a bounceland with no other land to return returns itself (a lost land drop, every turn
     // it's chosen again), and Lotus Field with fewer than two others sacrifices itself: any other land goes first
     if t.has(Tag::Bounceland)
         && !g.player(p).lands.iter().any(|&x| g.perm(x).on_bf && !g.db.get(g.perm(x).card()).tag(Tag::Bounceland))
     {
-        s -= 20.0;
+        parts.push((-20.0, "no other land to return, so it would return itself: a lost land drop".to_string()));
     }
-    s += crate::impls::t12_windgrace::land_adjust(g, p, c);
+    parts.push((crate::impls::t12_windgrace::land_adjust(g, p, c), "Lord Windgrace's land rule".to_string()));
     if t.has(Tag::Chasm) {
-        s += 10.0;
+        parts.push((10.0, "Glacial Chasm: the table is about to kill you, and it stops the damage".to_string()));
     }
     let amt = t.int(Tag::Amt).unwrap_or(1).max(1);
     if amt > 1 && !t.has(Tag::Workshop) {
-        s += 1.5 * (amt - 1) as f64
-            - if life > 15 {
-                0.0
-            } else if life > 6 {
-                1.5
-            } else {
-                6.0
-            };
+        let pen = if life > 15 {
+            0.0
+        } else if life > 6 {
+            1.5
+        } else {
+            6.0
+        };
+        let why = if pen > 0.0 {
+            format!("makes {amt} mana (+1.5 for each extra), less its cost at {life} life")
+        } else {
+            format!("makes {amt} mana (+1.5 for each extra)")
+        };
+        parts.push((1.5 * (amt - 1) as f64 - pen, why));
     }
     if t.has(Tag::Workshop) {
         let arts =
             g.player(p).hand.iter().filter(|&&x| g.db.get(x).types.has(Types::ARTIFACT) && !g.db.get(x).land).count();
-        s += 2.0 * arts.min(2) as f64 - 2.0;
+        parts.push((2.0 * arts.min(2) as f64 - 2.0, format!("its mana is for artifacts: {arts} in hand")));
     }
-    if &*g.db.get(c).name == "Gaea's Cradle" {
-        s += g.player(p).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count() as f64 - 1.0;
+    if &*d.name == "Gaea's Cradle" {
+        let n = g.player(p).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).phased).count();
+        parts.push((n as f64 - 1.0, format!("one mana for each of your {n} creatures")));
     }
     if t.has(Tag::Tabernacle) {
         let mine = g.player(p).perms.iter().filter(|&&m| g.is_creature(m)).count();
         let theirs =
             g.opps(p).map(|q| g.player(q).perms.iter().filter(|&&m| g.is_creature(m)).count()).max().unwrap_or(0);
-        s += if theirs >= mine + 3 { 4.0 } else { -6.0 };
+        let why = if theirs >= mine + 3 {
+            "the Tabernacle taxes an opponent's board far bigger than yours"
+        } else {
+            "the Tabernacle would tax your own creatures as much as theirs"
+        };
+        parts.push((if theirs >= mine + 3 { 4.0 } else { -6.0 }, why.to_string()));
     }
-    s
+    parts
 }
 
 /// put land card c (already taken from its zone) onto the battlefield as p's land drop. Python's `play_land_card`.
