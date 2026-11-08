@@ -159,6 +159,9 @@ extra Equipment.
   Equipment from the graveyard to your hand.
 - **Stoneforge Mystic** ({1}{W}, {T}): puts an Equipment from your hand onto the battlefield. Do it at the end of an
   opponent's turn.
+- **Marvin, Murderous Mimic** ({2}, colorless 2/2) has the activated abilities of your other creatures: with Stoneforge
+  Mystic out it is a second {1}{W}, {T}: an Equipment onto the battlefield; with Giver of Runes out it is a second
+  {T}: protection for Cloud. It needs one of them on the board; alone it is a 2/2 (and a body against edicts).
 
 #### Making Cloud enter again
 
@@ -232,7 +235,7 @@ bottom for each mulligan after the free one.
 
 | Hand | Keep when |
 |---|---|
-| 7 cards | 3-5 lands, or 2 lands plus a rock or a cheap creature (Sol Ring, Mind Stone, Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel, Giver of Runes, Zack Fair, Knight of the White Orchid, Loyal Warhound, Puresteel Paladin, Kor Outfitter, Auriok Steelshaper, Grand Abolisher, Ardenn, Page, Loose Leaf); and {W}{W} by turn 3 from Plains, Path of Ancestry or Plaza of Heroes |
+| 7 cards | 3-5 lands, or 2 lands plus a rock or a cheap creature (Sol Ring, Mind Stone, Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel, Giver of Runes, Zack Fair, Knight of the White Orchid, Loyal Warhound, Puresteel Paladin, Kor Outfitter, Auriok Steelshaper, Grand Abolisher, Ardenn); and {W}{W} by turn 3 from Plains, Path of Ancestry or Plaza of Heroes |
 | 6 or 5 cards | 2-4 lands that make {W}{W}, and any play (a rock, a cheap creature, a tutor, removal) |
 | 4 cards | Keep |
 
@@ -322,7 +325,7 @@ Cloud is the key permanent: the Equipment is only as good as its carrier. Order 
   zone until the table has shown its hand.
 - Exile (Swords to Plowshares, Path to Exile) goes round indestructible: hexproof, protection and phasing are the answers.
 - Edicts (Plaguecrafter, Fleshbag Marauder, Sheoldred's Edict, Grave Pact, Dictate of Erebos) take Cloud when he is the
-  only creature. Keep tokens or Page, Loose Leaf around.
+  only creature. Keep tokens or another cheap creature (Marvin, Giver of Runes, Zack Fair) around.
 
 ### Interaction on opponents' turns
 
@@ -459,7 +462,7 @@ Cloud, Kor Outfitter, Puresteel Paladin, Knight of the White Orchid and Grand Ab
 needs {W}{W}{W}.
 
 - **Rocks (6):** Sol Ring, Mind Stone, Arcane Signet, Fellwar Stone, Coalition Relic, Thought Vessel.
-- **Other ramp:** Page, Loose Leaf (a 0/2 artifact creature that taps for {C}); Solemn Simulacrum; Knight of the White
+- **Other ramp:** Solemn Simulacrum; Knight of the White
   Orchid and Loyal Warhound, which fetch a Plains when an opponent controls more lands than you; Smothering Tithe makes
   Treasures when opponents draw and don't pay {2}.
 - **Card draw:** Mask of Memory, Court of Ardenvale, Puresteel Paladin, Sram, Buster Sword, Sword of Fire and Ice and
@@ -483,7 +486,7 @@ on its own. Tell the table before the game that:
 
 **Commander (1).** Cloud, Midgar Mercenary
 
-**Creatures (30).** Adelbert Steiner, Archangel of Tithes, Archon of Absolution, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird, Steward of Argive, Balan, Wandering Knight, Bastion Protector, Cid, Freeflier Pilot, Danitha Capashen, Paragon, Exalted Angel, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta, Automaton Avenger, Knight of the White Orchid, Kor Outfitter, Loyal Warhound, Page, Loose Leaf, Puresteel Paladin, Silverblade Paladin, Skyclave Apparition, Solemn Simulacrum, Sram, Senior Edificer, Stoneforge Mystic, Thalia, the Survivor, Windborn Muse, Zack Fair
+**Creatures (30).** Adelbert Steiner, Archangel of Tithes, Archon of Absolution, Ardenn, Intrepid Archaeologist, Armored Skyhunter, Armory Automaton, Auriok Steelshaper, Baird, Steward of Argive, Balan, Wandering Knight, Bastion Protector, Cid, Freeflier Pilot, Danitha Capashen, Paragon, Exalted Angel, Giver of Runes, Grand Abolisher, Helitrooper, Jocasta, Automaton Avenger, Knight of the White Orchid, Kor Outfitter, Loyal Warhound, Marvin, Murderous Mimic, Puresteel Paladin, Silverblade Paladin, Skyclave Apparition, Solemn Simulacrum, Sram, Senior Edificer, Stoneforge Mystic, Thalia, the Survivor, Windborn Muse, Zack Fair
 
 **Enchantments (3).** Court of Ardenvale, Forge Anew, Smothering Tithe
 
@@ -540,11 +543,11 @@ on its own. Tell the table before the game that:
 1 Kor Outfitter
 1 Lay Down Arms
 1 Loyal Warhound
+1 Marvin, Murderous Mimic
 1 Mask of Memory
 1 Mind Stone
 1 Norn's Annex
 1 Open the Armory
-1 Page, Loose Leaf
 1 Path of Ancestry
 1 Path to Exile
 1 Plaza of Heroes

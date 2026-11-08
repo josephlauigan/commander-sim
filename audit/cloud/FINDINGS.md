@@ -4,6 +4,18 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run (CLAUDE.md "Swap tests explain themselves"). Newest evidence first; numbers are
 look-ahead, loose profile, vs Cloud's matched tiers (T1, T2) unless noted.
 
+## 2026-11-07: Page, Loose Leaf => Marvin, Murderous Mimic (t1-t3, loose, 2,000 games per list per tier, look-ahead, paired)
+Result: **t1 29.9% -> 30.4% (+0.4), t2 22.0% -> 22.7% (+0.7), t3 23.2% -> 22.8% (-0.4), noise ±1.5-1.6 per tier:
++0.2 over t1-t3, neutral.** **Adopted (JD's pick, 2026-11-07): Marvin is in the list.** Raw: `2026-11-07-marvin/page-to-marvin.txt`.
+Marvin (JD pulled it; colorless, Full) has the activated abilities of Cloud's other creatures: Stoneforge Mystic's
+{1}{W},{T}: an Equipment onto the battlefield, Giver of Runes' protection, Balan's, Cid's and Zack Fair's abilities.
+Page was the cut (41.8% win rate when cast, +11.9: one of the weakest in the 11/07 analyze run).
+Why: Marvin is cast a little more often than Page (72-78% of the games drawn against 68-71%, stuck 22-29%) but later
+(round 6.9-7.8 against 5.7-7.3), and it needs the right creature beside it to do anything: without Stoneforge or Giver
+on the board it is a 2/2. Damage +2.0 a game at t1, +1.1 at t2, flat at t3; plan timing (Cloud equipped by turn 4),
+mana and the death causes unchanged. Same story as weakness 1: a cheap card that comes down late adds little. The run
+doesn't show how often Marvin used a borrowed ability (the breakdown counts casts only).
+
 ## Baseline 2026-11-07 (package C in the list; main 7c622f5f; look-ahead, loose, 10,000 games per tier, seed 500000)
 t1 **30.8%** (29.9-31.7), t2 **22.4%** (21.6-23.3), t3 **23.4%** (22.6-24.3): **25.6% over t1-t3**, against 24.2% in
 Baseline B (29.6 / 20.6 / 22.4; 2,000 games per tier). +1.2, +1.8 and +1.0: each inside the noise against Baseline B

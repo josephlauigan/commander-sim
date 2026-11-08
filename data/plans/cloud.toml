@@ -20,7 +20,7 @@ engines = ["Mask of Memory", "Colossus Hammer"]
 [sets]
 equipment = ["Andúril, Narsil Reforged", "Buster Sword", "Colossus Hammer", "Fireshrieker", "Mask of Memory", "Swiftfoot Boots", "Sword of Feast and Famine", "Sword of Fire and Ice", "Sword of Hearth and Home"]
 # what makes a two-land hand a keep: a mana rock or a creature of mana value two or less
-keep2 = ["Arcane Signet", "Coalition Relic", "Fellwar Stone", "Mind Stone", "Sol Ring", "Thought Vessel", "Giver of Runes", "Zack Fair", "Knight of the White Orchid", "Loyal Warhound", "Puresteel Paladin", "Kor Outfitter", "Auriok Steelshaper", "Grand Abolisher", "Ardenn, Intrepid Archaeologist", "Page, Loose Leaf"]
+keep2 = ["Arcane Signet", "Coalition Relic", "Fellwar Stone", "Mind Stone", "Sol Ring", "Thought Vessel", "Giver of Runes", "Zack Fair", "Knight of the White Orchid", "Loyal Warhound", "Puresteel Paladin", "Kor Outfitter", "Auriok Steelshaper", "Grand Abolisher", "Ardenn, Intrepid Archaeologist"]
 # the Equipment with a combat trigger Cloud doubles: wearing one, he attacks unless a blocker would kill him
 trigger_gear = ["Sword of Fire and Ice", "Sword of Hearth and Home", "Sword of Feast and Famine"]
 
