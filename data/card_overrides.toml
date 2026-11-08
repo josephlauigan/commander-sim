@@ -9254,10 +9254,10 @@ note = "lifelink 2/2; with K'rrik out, each {B} of a black spell may be paid wit
 ["Priest of Gix"]
 tags = "pow=2 tgh=1"
 dsl = [
-  { type = "triggered", event = "etb", source = "self", effects = [{ do = "add_mana", n = 3 }] },
+  { type = "triggered", event = "etb", source = "self", effects = [{ do = "add_mana", n = 3, color = "BBB" }] },
 ]
-status = "Approximate"
-note = "enters: adds three mana right away (BBB in the paper card; the sim's pool treats it as any colour). A flicker or Nim Deathmantle gets it again; Seph/Atraxa's Nim Deathmantle + Ashnod's Altar loop uses it"
+status = "Full"
+note = "enters: adds {B}{B}{B} right away (black mana in the pool, as printed: it pays {B} and generic, never {U}). A flicker or Nim Deathmantle gets it again; Seph/Atraxa's Nim Deathmantle + Ashnod's Altar loop uses it"
 
 ["The Mightstone and Weakstone"]
 add_tags = ["pstone"]

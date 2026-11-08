@@ -828,7 +828,7 @@ fn kingpin(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) ->
 /// Battle Hymn (Approximate: adds R per creature; used only with a big hand)
 fn hymn(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let n = g.player(p).perms.iter().filter(|&&m| g.is_creature(m)).count() as u32;
-    g.player_mut(p).mana.add(Kind::Any, n);
+    g.player_mut(p).mana.add(Kind::R, n); // {R} for each creature: red mana
     Ok("gy")
 }
 

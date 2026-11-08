@@ -752,24 +752,24 @@ pub fn seq_cost(g: &Game, p: PlayerId, cards: &[CardId]) -> (u32, String) {
 }
 
 // --- ai-fix: C: rituals in hand counted as mana
-/// The mana ritual `c` adds as it resolves: (amount, colours). A ritual is an instant or sorcery whose only effect adds
-/// mana and that needs no additional cost (Culling the Weak's sacrifice is left out), or one of the hand-written ones:
-/// Cabal Ritual (five with threshold), Rite of Flame (two, plus one for each in a graveyard), Desperate Ritual. The
-/// ability language's rituals add mana of any of p's colours, as `add_mana` does.
-pub fn ritual_out(g: &Game, p: PlayerId, c: CardId) -> Option<(u32, Colors)> {
+/// The mana ritual `c` adds as it resolves, as the kinds it floats (an amount of each): the colours the card prints. A
+/// ritual is an instant or sorcery whose only effect adds mana and that needs no additional cost (Culling the Weak's
+/// sacrifice is left out), or one of the hand-written ones: Cabal Ritual ({B}{B}{B}, five with threshold), Rite of Flame
+/// (two {R}, plus one for each in a graveyard), Desperate Ritual ({R}{R}{R}). Dark Ritual's mana is black: it pays {B}
+/// and generic costs, never {U}. `Kind::Any` is only what a card lets the player choose (none of these does).
+pub fn ritual_mana(g: &Game, p: PlayerId, c: CardId) -> Option<Vec<(Kind, u32)>> {
     use crate::dsl::model::{Ability, Num};
     let d = g.db.get(c);
     if d.land || !(d.instant || d.sorcery) {
         return None;
     }
-    let red = Colors::from_letters("R");
     match &*d.name {
-        "Cabal Ritual" => return Some((if g.player(p).gy.len() >= 7 { 5 } else { 3 }, g.player(p).ident)),
+        "Cabal Ritual" => return Some(vec![(Kind::B, if g.player(p).gy.len() >= 7 { 5 } else { 3 })]),
         "Rite of Flame" => {
             let copies = g.players.iter().flat_map(|q| q.gy.iter()).filter(|&&x| &*g.db.get(x).name == "Rite of Flame");
-            return Some((2 + copies.count() as u32, red));
+            return Some(vec![(Kind::R, 2 + copies.count() as u32)]);
         }
-        "Desperate Ritual" => return Some((3, red)),
+        "Desperate Ritual" => return Some(vec![(Kind::R, 3)]),
         _ => {}
     }
     if g.registry.get(c).is_some_and(|i| i.resolve.is_some()) {
@@ -783,16 +783,29 @@ pub fn ritual_out(g: &Game, p: PlayerId, c: CardId) -> Option<(u32, Colors)> {
                 if effects.is_empty() || !effects.iter().all(|e| e.kind == "add_mana") {
                     return None;
                 }
-                let n: i32 = effects.iter().map(|e| if let Some(Num::Int(k)) = &e.n { *k } else { 0 }).sum();
-                if n <= 0 {
+                let mut v: Vec<(Kind, u32)> = vec![];
+                for e in effects {
+                    let k = if let Some(Num::Int(k)) = &e.n { *k } else { 0 };
+                    if k > 0 {
+                        v.extend(Kind::printed(e.color.as_deref(), k as u32));
+                    }
+                }
+                if v.is_empty() {
                     return None;
                 }
-                out = Some((n as u32, g.player(p).ident));
+                out = Some(v);
             }
             _ => {}
         }
     }
     out
+}
+
+/// The mana ritual `c` adds as it resolves: (amount, the colours it can pay as). See `ritual_mana`.
+pub fn ritual_out(g: &Game, p: PlayerId, c: CardId) -> Option<(u32, Colors)> {
+    let v = ritual_mana(g, p, c)?;
+    let ident = g.player(p).ident;
+    Some((v.iter().map(|x| x.1).sum(), v.iter().fold(Colors::NONE, |a, x| a.union(x.0.cols(ident)))))
 }
 
 /// what a ritual nets: the mana it adds less its cost now (0 for a card that is no ritual)
@@ -805,13 +818,16 @@ pub fn ritual_net(g: &Game, p: PlayerId, c: CardId) -> i32 {
 /// p's mana units once ritual `c` is cast from `u`: its cost paid, its mana added. None: no ritual, or `u` can't pay
 /// for it. A source that made more than the cost used keeps the rest (it floats, as `pay` leaves it).
 pub fn units_after_ritual(g: &Game, p: PlayerId, c: CardId, u: &[Unit]) -> Option<Vec<Unit>> {
-    let (out, cols) = ritual_out(g, p, c)?;
+    let made = ritual_mana(g, p, c)?;
     let (gn, pips) = cost_of(g, p, c);
     let (used, _) = plan_pay(g, u, gn, &pips)?;
     let mut v: Vec<Unit> =
         u.iter().zip(&used).filter(|(w, n)| w.amt > **n).map(|(w, n)| Unit { amt: w.amt - n, ..*w }).collect();
-    let src = Source::float(if cols == Colors::from_letters("R") { Kind::R } else { Kind::Any });
-    v.extend((0..out).map(|_| Unit { src, cols, amt: 1 }));
+    // each kind floats as that colour (the same units `mana_units` makes of the pool)
+    let ident = g.player(p).ident;
+    for (kind, k) in made {
+        v.extend((0..k).map(|_| Unit { src: Source::float(kind), cols: kind.cols(ident), amt: 1 }));
+    }
     Some(v)
 }
 
@@ -888,6 +904,54 @@ pub fn units_pay_with_rituals(g: &Game, p: PlayerId, u: &[Unit], generic: u32, p
         }
     }
     false
+}
+
+/// The one colour p picks for "add N mana of any one color" (Carpet of Flowers, The Aetherspark): all N mana are that
+/// colour, never split. The colour of p's identity that makes the most cards in hand (and its commander) payable that
+/// can't be paid now, then the one the unpayable cards ask for most, then the first colour of the identity. A person
+/// chooses as the mana is spent (`Kind::Any`); a colourless identity makes {C}.
+pub fn choose_one_colour(g: &Game, p: PlayerId, n: u32) -> Kind {
+    let ident = g.player(p).ident;
+    if crate::human::is_human(g, p) {
+        return Kind::Any;
+    }
+    if ident.is_empty() {
+        return Kind::C;
+    }
+    let u = mana_units(g, p, false);
+    let pl = g.player(p);
+    let cards: Vec<CardId> = pl.hand.iter().copied().filter(|&c| !g.db.get(c).land).chain(pl.cmds_in_zone()).collect();
+    let want: Vec<(u32, String, bool)> = cards
+        .iter()
+        .map(|&c| {
+            let (gn, pips) = cost_of(g, p, c);
+            let now = plan_pay(g, &u, gn, &pips).is_some();
+            (gn, pips, now)
+        })
+        .collect();
+    let mut best: Option<(Kind, (u32, u32))> = None;
+    for ch in WUBRG {
+        if !ident.has(ch) {
+            continue;
+        }
+        let k = Kind::of_letter(ch);
+        let mut v = u.clone();
+        v.extend((0..n.min(60)).map(|_| Unit { src: Source::float(k), cols: k.cols(ident), amt: 1 }));
+        let (mut enabled, mut asked) = (0, 0);
+        for (gn, pips, now) in &want {
+            if *now {
+                continue;
+            }
+            if plan_pay(g, &v, *gn, pips).is_some() {
+                enabled += 1;
+            }
+            asked += pips.chars().filter(|&x| x == ch).count() as u32;
+        }
+        if best.is_none_or(|b| (enabled, asked) > b.1) {
+            best = Some((k, (enabled, asked)));
+        }
+    }
+    best.map_or(Kind::C, |b| b.0)
 }
 
 // --- ai-fix: B

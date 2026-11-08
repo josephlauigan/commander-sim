@@ -1379,8 +1379,6 @@ pub struct Game {
     pub line_no_setup: bool,
     /// the Breach line's dry run for a position: (its turn, the position's numbers, does it finish the table)
     pub breach_dry: Option<(TurnStamp, Vec<u32>, bool)>,
-    /// the Breach line: how much of the floating ritual mana is red (the red rituals'), this turn; the rest is black
-    pub line_red: Option<(TurnStamp, u32)>,
     /// --- ai-fix: E: in a look-ahead copy, the deciding player's own-turn count when the playout began (a win scores
     /// by how many of its own turns later it came)
     pub search_from: u32,
@@ -1574,7 +1572,6 @@ impl Game {
             jeska_mana: false,
             line_no_setup: false,
             breach_dry: None,
-            line_red: None,
             search_from: 0, // --- ai-fix: E
             log: None,
             humans: Humans::none(),

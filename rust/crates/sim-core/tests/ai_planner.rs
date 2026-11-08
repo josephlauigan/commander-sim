@@ -50,18 +50,29 @@ fn log_has(g: &Game, s: &str) -> bool {
     g.log.as_ref().is_some_and(|l| l.iter().any(|x| x.contains(s)))
 }
 
-/// Turn 2, two lands, Thassa's Oracle + Demonic Consultation and Dark Ritual: the line is reached now (the ritual's
-/// mana counted), so the plan is to go, and the main phase wins with it.
+/// Turn 2, two lands, Thassa's Oracle + Demonic Consultation and Dark Ritual: NOT a kill. The ritual's three mana are
+/// {B}{B}{B} and the other land makes one {U}: {U}{U}{B} can't be paid, so there is no plan to go and the main phase
+/// does not win. (This test used to expect the kill: the engine floated the ritual's mana as any colour.) With three
+/// lands the line is paid by the lands alone, with the ritual left in hand, and it goes.
 #[test]
-fn a_turn_two_oracle_kill_through_a_ritual() {
+fn no_turn_two_oracle_kill_through_a_black_ritual() {
     let mut g = scion_goldfish();
     g.player_mut(P0).turns = 2;
     lands(&mut g, P0, "Underground Sea", 2, false);
     hand(&mut g, P0, &["Thassa's Oracle", "Demonic Consultation", "Dark Ritual"]);
     let plan = planner::plan_this_turn(&mut g, P0).unwrap();
+    assert_ne!(plan, Some(vec![Step::Go(oracle_line())]), "UU + B can't be paid with BBB + U");
+    ai::brain::main(&mut g, P0, false).unwrap();
+    assert!(!(g.over && g.winner == Some(P0)), "no kill with two lands and a black ritual");
+
+    let mut g = scion_goldfish();
+    g.player_mut(P0).turns = 2;
+    lands(&mut g, P0, "Underground Sea", 3, false);
+    hand(&mut g, P0, &["Thassa's Oracle", "Demonic Consultation", "Dark Ritual"]);
+    let plan = planner::plan_this_turn(&mut g, P0).unwrap();
     assert_eq!(plan, Some(vec![Step::Go(oracle_line())]));
     ai::brain::main(&mut g, P0, false).unwrap();
-    assert!(g.over && g.winner == Some(P0), "the ritual pays for the line");
+    assert!(g.over && g.winner == Some(P0), "three lands pay for the line");
     assert!(log_has(&g, "[plan: combo: Thassa's Oracle"), "the trace names the plan");
 }
 

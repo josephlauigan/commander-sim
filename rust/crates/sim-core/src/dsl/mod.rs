@@ -1104,7 +1104,16 @@ fn run(
             let k = n(g, ctx).max(0) as u32;
             // Savage Ventmaw: "until end of turn, you don't lose this mana as steps and phases end" (the parser drops it)
             let kept = src.and_then(|m| g.perm(m).cd).is_some_and(|c| &*g.db.get(c).name == "Savage Ventmaw");
-            if kept { g.player_mut(p).mana.add_kept(Kind::Any, k) } else { g.player_mut(p).mana.add(Kind::Any, k) }
+            // the mana the card prints (`color`: "BBB", "RRRGGG", "R" for each of k; {C} is colourless); none: any colour
+            // no printed colour: "one mana of any color" (k = 1) or "k mana of any one color", all of one chosen colour
+            let kinds = if e.color.is_none() && k > 1 {
+                vec![(crate::engine::mana::choose_one_colour(g, p, k), k)]
+            } else {
+                Kind::printed(e.color.as_deref(), k)
+            };
+            for (kind, amt) in kinds {
+                if kept { g.player_mut(p).mana.add_kept(kind, amt) } else { g.player_mut(p).mana.add(kind, amt) }
+            }
         }
         "extra_combat" => g.player_mut(p).extra_combats += 1,
         "ring_tempt" => crate::cardcode::ring_tempt(g, p)?, // --- Tiers 4/5 (winota): "the Ring tempts you"

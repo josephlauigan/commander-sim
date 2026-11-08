@@ -1021,7 +1021,7 @@ fn wishclaw_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 /// adds BBB (BBBBB with threshold) when mana is short
 fn cabal(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let n = if g.player(p).gy.len() >= 7 { 5 } else { 3 };
-    g.player_mut(p).mana.add(Kind::Any, n);
+    g.player_mut(p).mana.add(Kind::B, n); // {B}{B}{B}: black mana, never {U}
     Ok("gy")
 }
 

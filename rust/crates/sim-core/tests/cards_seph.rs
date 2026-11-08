@@ -926,11 +926,13 @@ fn mind_stone_harness_and_end_step_blink() {
 #[test]
 fn priest_of_gix_adds_three_mana_each_time_it_enters() {
     let mut g = table(&["seph", "cloud", "sauron"]);
-    let before = g.player(P0).mana.get(Kind::Any);
+    // {B}{B}{B}: black mana, as printed (it used to float as any colour)
+    let before = g.player(P0).mana.get(Kind::B);
     let m = perm(&mut g, P0, "Priest of Gix");
-    assert_eq!(g.player(P0).mana.get(Kind::Any), before + 3);
+    assert_eq!(g.player(P0).mana.get(Kind::B), before + 3);
+    assert_eq!(g.player(P0).mana.get(Kind::Any), 0);
     mine::t2_blink(&mut g, P0, m).unwrap(); // re-entering (Deathmantle, a flicker) adds three more
-    assert_eq!(g.player(P0).mana.get(Kind::Any), before + 6);
+    assert_eq!(g.player(P0).mana.get(Kind::B), before + 6);
 }
 
 #[test]

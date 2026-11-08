@@ -692,7 +692,10 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
             } else {
                 return Some(eff(obj! {"do" => "add_mana", "n" => n_(py::first(s, " "))}));
             };
-            Some(eff(obj! {"do" => "add_mana", "n" => n}))
+            // the mana the card prints ("add {B}{B}{B}" is BBB): the engine floats exactly those colours. "One mana of
+            // any color" has none (the player chooses as it is spent)
+            let color: String = s.chars().filter(|c| c.is_ascii_alphabetic()).map(|c| c.to_ascii_uppercase()).collect();
+            Some(eff(obj! {"do" => "add_mana", "n" => n, "color" => color}))
         },
     ),
     (
@@ -815,7 +818,7 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         if !n.as_str().is_some_and(|s| s.starts_with("type_") || s == "creatures_you_control") {
             return None;
         }
-        Some(eff(obj! {"do" => "add_mana", "n" => n}))
+        Some(eff(obj! {"do" => "add_mana", "n" => n, "color" => m.gs(1).to_ascii_uppercase()}))
     }),
     (
         r"^~ deals damage equal to (?:that spell's mana value|its power|the number of [^.]+) to (any target|each opponent|target creature|target opponent)$",

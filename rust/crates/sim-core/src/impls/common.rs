@@ -757,9 +757,10 @@ fn ashnod(g: &mut Game, p: PlayerId, _src: PermId, _m: PermId) -> Res {
     Ok(())
 }
 
-/// Phyrexian Altar (and t4's Skirk Prospector): one mana of any colour
-fn altar(g: &mut Game, p: PlayerId, _src: PermId, _m: PermId) -> Res {
-    g.player_mut(p).mana.add(Kind::Any, 1);
+/// Phyrexian Altar: one mana of any colour; Skirk Prospector: {R}
+fn altar(g: &mut Game, p: PlayerId, src: PermId, _m: PermId) -> Res {
+    let prospector = g.perm(src).cd.is_some_and(|c| &*g.db.get(c).name == "Skirk Prospector");
+    g.player_mut(p).mana.add(if prospector { Kind::R } else { Kind::Any }, 1);
     Ok(())
 }
 
