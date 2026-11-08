@@ -14,6 +14,7 @@ pub mod holdstats;
 pub mod goldfish; // --- scion: commander-sim --goldfish
 pub mod gf_audit; // --- ai-audit: goldfish loss accounting (stats only)
 pub mod mull_oracle; // --- c4-mulligan-oracle: trace-only setup for --mulligan-oracle
+pub mod mull_oracle_tier; // --- c5-oracle-vs-tier: the real-game arm of --mulligan-oracle
 pub mod hooks;
 pub mod human;
 pub mod ids;
