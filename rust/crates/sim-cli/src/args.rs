@@ -41,6 +41,12 @@ pub struct Args {
     pub hands: u64,
     /// --playouts M: goldfish playouts per arm and hand for --mulligan-oracle
     pub playouts: u64,
+    /// --vs-tier (with --mulligan-oracle): the real-game arm, win rate against the deck's own tiers (mull_oracle_tier.rs)
+    pub vs_tier: bool,
+    /// --recheck K: with --vs-tier, rerun K random hands with the look-ahead AI
+    pub recheck: u64,
+    /// --out FILE: with --vs-tier, the per-hand CSV
+    pub out: Option<String>,
 }
 
 struct Opt {
@@ -61,7 +67,7 @@ const fn opt(
     Opt { name, flag, choices, metavar, help }
 }
 
-const OPTS: [Opt; 35] = [
+const OPTS: [Opt; 38] = [
     opt("--deck", false, &DECK_KEYS, "", "the deck to measure"),
     opt("--swap", false, &[], "\"OUT=>IN\"", "\"Card Out=>Card In\" (repeat for several): paired A/B run"),
     opt(
@@ -95,6 +101,17 @@ const OPTS: [Opt; 35] = [
     ),
     opt("--hands", false, &[], "N", "with --mulligan-oracle: opening hands sampled per deck, from seed S on (default 1000)"),
     opt("--playouts", false, &[], "M", "with --mulligan-oracle: goldfish playouts per arm and hand (default 40)"),
+    opt(
+        "--vs-tier",
+        true,
+        &[],
+        "",
+        "with --mulligan-oracle: the real-game arm. KEEP and MULLIGAN each play real pod games against three opponents \
+         from the deck's own tiers (data/my_decks.toml; --pool tN or all), judged by win rate. Your deck keys only, loose \
+         profile only, no --any-tier. Defaults: --hands 100 --playouts 40 --ai adaptive",
+    ),
+    opt("--recheck", false, &[], "K", "with --vs-tier: rerun K random hands with the look-ahead AI and print how often the verdicts agree"),
+    opt("--out", false, &[], "FILE", "with --vs-tier: write the per-hand CSV (hand x tier) here"),
     opt("--calibrate", false, &["within", "ordering", "all"], "", "pool balance checks (no --deck needed)"),
     opt(
         "--realism",
@@ -185,7 +202,7 @@ const OPTS: [Opt; 35] = [
 
 pub fn usage() -> &'static str {
     "usage: commander-sim [-h] [--deck KEY] [--swap \"OUT=>IN\"] [--pool TIER] [--all-decks] [--calibrate WHICH] [--realism]\n\
-     \x20                    [--goldfish KEYS] [--mulligan-oracle KEYS [--hands N] [--playouts M]]\n\
+     \x20                    [--goldfish KEYS] [--mulligan-oracle KEYS [--hands N] [--playouts M] [--vs-tier [--recheck K] [--out FILE]]]\n\
      \x20                    [--knobs FILE|builtin] [--fit [--fit-scope shared|deck] [--fit-gens N] [--fit-stats LIST] [--fit-out FILE]]\n\
      \x20                    [--games N] [--seed SEED] [--profiles LIST | --profile NAME] [--analyze] [--trace GAME]\n\
      \x20                    [--cards] [--brief] [--no-explain] [--no-preflight | --preflight-only] [--ai {lookahead,adaptive}]\n\
@@ -283,9 +300,13 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
         mulligan_oracle: None,
         hands: 1000,
         playouts: 40,
+        vs_tier: false,
+        recheck: 0,
+        out: None,
     };
     let (mut games, mut n, mut profiles, mut profile, mut jobs) = (None, None, None, None, None);
     let mut ai_given = false;
+    let mut hands_given = false;
     let mut i = 0;
     while i < argv.len() {
         let tok = &argv[i];
@@ -329,8 +350,14 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
             "--preflight-only" => a.preflight_only = true,
             "--goldfish" => a.goldfish = Some(val),
             "--mulligan-oracle" => a.mulligan_oracle = Some(val),
-            "--hands" => a.hands = int(o.name, &val)?,
+            "--hands" => {
+                a.hands = int(o.name, &val)?;
+                hands_given = true;
+            }
             "--playouts" => a.playouts = int(o.name, &val)?,
+            "--vs-tier" => a.vs_tier = true,
+            "--recheck" => a.recheck = int(o.name, &val)?,
+            "--out" => a.out = Some(val),
             "--calibrate" => a.calibrate = Some(val),
             "--realism" => a.realism = true,
             "--knobs" => a.knobs = Some(val),
@@ -380,6 +407,16 @@ pub fn parse(argv: &[String]) -> Result<Args, Exit> {
     a.profiles = profs;
     if a.mulligan_oracle.is_some() && !ai_given {
         a.ai = "adaptive".into(); // --mulligan-oracle plays thousands of games: the fast AI unless --ai says otherwise
+    }
+    if a.vs_tier {
+        if a.mulligan_oracle.is_none() {
+            return Err(usage_err("--vs-tier needs --mulligan-oracle KEYS".into()));
+        }
+        if !hands_given {
+            a.hands = 100; // each hand plays real pod games against every tier
+        }
+    } else if a.recheck != 0 || a.out.is_some() {
+        return Err(usage_err("--recheck and --out belong to --mulligan-oracle --vs-tier".into()));
     }
     let cores = std::thread::available_parallelism().map_or(1, |n| n.get());
     a.jobs = jobs.filter(|&j| j != 0).unwrap_or(cores).max(1);

@@ -21,6 +21,7 @@ mod gf_audit; // --- ai-audit
 mod holdreport; // --- t5-hold
 mod knobs;
 mod mull_oracle; // --- c4-mulligan-oracle
+mod mull_oracle_tier; // --- c5-oracle-vs-tier
 mod play;
 mod poolmode;
 mod progress;
@@ -142,6 +143,9 @@ fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
         return goldfish::main(sim, &a).map(|()| 0);
     }
     if a.mulligan_oracle.is_some() {
+        if a.vs_tier {
+            return mull_oracle_tier::main(sim, &a).map(|()| 0); // --- c5-oracle-vs-tier
+        }
         return mull_oracle::main(sim, &a).map(|()| 0); // --- c4-mulligan-oracle
     }
     let mut swaps = vec![];

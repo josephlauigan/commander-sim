@@ -182,11 +182,11 @@ pub fn tally<'a>(rs: impl Iterator<Item = &'a TryRes>) -> Agree {
     a
 }
 
-fn pct(k: usize, n: usize) -> f64 {
+pub(crate) fn pct(k: usize, n: usize) -> f64 {
     100.0 * k as f64 / n.max(1) as f64
 }
 
-fn table(a: &Agree) -> String {
+pub(crate) fn table(a: &Agree) -> String {
     let mut o = format!("  {:18} {:>11} {:>11} {:>9} {:>7}\n", "", "oracle KEEP", "oracle MULL", "unclear", "total");
     for (name, c) in [("rule KEEPS", a.rule_keep), ("rule MULLIGANS", a.rule_mull)] {
         o += &format!("  {name:18} {:>11} {:>11} {:>9} {:>7}\n", c.keep, c.mull, c.unclear, c.total());
@@ -205,14 +205,14 @@ fn table(a: &Agree) -> String {
     o
 }
 
-fn split_row(label: &str, a: &Agree) -> String {
+pub(crate) fn split_row(label: &str, a: &Agree) -> String {
     format!(
         "  {label:10} | rule keeps: {:>5} {:>5} {:>5} | rule mulls: {:>5} {:>5} {:>5}\n",
         a.rule_keep.keep, a.rule_keep.mull, a.rule_keep.unclear, a.rule_mull.keep, a.rule_mull.mull, a.rule_mull.unclear
     )
 }
 
-fn split_head(by: &str) -> String {
+pub(crate) fn split_head(by: &str) -> String {
     format!(
         "  {:10} | rule keeps: {:>5} {:>5} {:>5} | rule mulls: {:>5} {:>5} {:>5}   (cells: oracle keep / mull / unclear)\n",
         by, "keep", "mull", "unc", "keep", "mull", "unc"
