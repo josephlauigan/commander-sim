@@ -26,6 +26,12 @@ pub fn phyrexian(cache: &Cache, cd: &Cd) -> String {
     }
 }
 
+/// how many {X} symbols the printed cost has (Torment of Hailfire 1, Hangarback Walker 2): practice mode asks for X
+pub fn xcount(cache: &Cache, cd: &Cd) -> usize {
+    let cost = rec(cache, &cd.name).and_then(|r| r.s("mana_cost")).unwrap_or("");
+    cost.matches("{X}").count()
+}
+
 /// (basic land types, is basic) from the type line ('Land — Island Swamp')
 pub fn land_types(cache: &Cache, name: &str) -> (Vec<String>, bool) {
     let tl = rec(cache, name).and_then(|r| r.s("type_line")).unwrap_or("").to_lowercase();

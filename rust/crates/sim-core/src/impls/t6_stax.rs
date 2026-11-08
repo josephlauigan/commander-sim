@@ -291,6 +291,9 @@ pub fn chalice_x(g: &Game, p: PlayerId) -> Option<i32> {
 
 /// {X}{X}: two generic mana per X the AI chose (the data has no mana cost for it); uncastable when it can't pay for X = 1
 fn chalice_cost(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    if crate::human::is_human(g, p) {
+        return 0; // practice mode asks the person for X and charges 2X then (`human::cast_inner`)
+    }
     chalice_x(g, p).map_or(99, |x| 2 * x)
 }
 
