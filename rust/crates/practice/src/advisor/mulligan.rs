@@ -307,13 +307,35 @@ fn rule_text(g: &Game, p: PlayerId, n_lands: usize, why: Option<&KeepWhy>) -> Ru
         }
         (KeepBy::Otherwise, l) => {
             let keeps_rows = l.map_or(String::new(), |l| keep_rows_words(g, p, l));
-            let def = if why.keep { "keep" } else { "mulligan" };
-            RuleText {
-                short: format!("no row of the keep table fits, so the default is to {def}"),
-                full: format!(
-                    "Rule: none of the {} rows of {deck}'s keep table fits this hand, so the table's default decides: {def}.{keeps_rows}",
-                    why.rows
-                ),
+            // the rows that keep and the rows that mulligan: a table of only mulligan rows is a list of reasons to
+            // ship a hand, so a hand none of them fits is kept (and the other way round)
+            let (n_keep, n_mull) = l.and_then(|l| l.plan.mulligan.as_ref()).map_or((0, 0), |m| {
+                m.rule.iter().fold((0, 0), |(k, m), r| if r.keep { (k + 1, m) } else { (k, m + 1) })
+            });
+            let n = why.rows;
+            let s = if n == 1 { "" } else { "s" };
+            match (why.keep, n_keep, n_mull) {
+                (true, 0, _) => RuleText {
+                    short: format!("none of the {n} reason{s} to mulligan fits, so keep"),
+                    full: format!(
+                        "Rule: none of {deck}'s {n} reason{s} to mulligan fits this hand, so keep it. (Its keep table lists only hands to send back; a hand that passes them all is kept.)"
+                    ),
+                },
+                (false, _, 0) => RuleText {
+                    short: format!("none of the {n} kind{s} of hand it keeps fits, so mulligan"),
+                    full: format!(
+                        "Rule: none of the {n} kind{s} of hand {deck} keeps fits this one, so mulligan it. (Its keep table lists only hands to keep; any other hand goes back.){keeps_rows}"
+                    ),
+                },
+                _ => {
+                    let (done, act) = if why.keep { ("kept", "keep it") } else { ("sent back", "mulligan it") };
+                    RuleText {
+                        short: format!("no row of the keep table fits; a hand no row covers is {done}"),
+                        full: format!(
+                            "Rule: none of the {n} rows of {deck}'s keep table fits this hand ({n_keep} keep a hand, {n_mull} send one back). A hand no row covers is {done}, so {act}.{keeps_rows}"
+                        ),
+                    }
+                }
             }
         }
         (KeepBy::Lands { lo, hi }, _) => RuleText {

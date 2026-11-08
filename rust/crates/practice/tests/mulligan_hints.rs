@@ -236,7 +236,8 @@ fn cloud_two_lands_need_a_cheap_play_and_say_what_would_have_kept_it() {
     assert_eq!(h["choice"], "mulligan", "{h}");
     let rule = &lines(&h)[0];
     assert!(
-        rule.contains("default decides: mulligan")
+        rule.contains("kinds of hand Cloud")
+            && rule.contains("so mulligan it")
             && rule.contains("The table keeps:")
             && rule.contains("Lands: 3 to 5"),
         "{rule}"
@@ -418,4 +419,47 @@ fn print_example_hints() {
             println!("  - {l}");
         }
     }
+}
+
+/// a hand no row fits: the hint says what the rows are (reasons to mulligan, hands to keep, or both) and what that
+/// means for the hand, not "the default decides"
+#[test]
+fn a_hand_no_row_fits_says_why_it_is_kept() {
+    // Aragorn's rows are all reasons to mulligan: passing them all keeps the hand
+    let (mut g, p) = game_with(
+        "aragorn",
+        &[
+            "Steam Vents",
+            "Glacial Fortress",
+            "Yavimaya Coast",
+            "Counterspell",
+            "Mana Drain",
+            "Rhystic Study",
+            "Grapeshot",
+        ],
+    );
+    let h = hint(&mut g, p);
+    verdict_unchanged(&mut g, p, &h);
+    assert_eq!(h["choice"], "keep", "{h}");
+    let rule = &lines(&h)[0];
+    assert!(rule.contains("reasons to mulligan fits this hand, so keep it"), "{rule}");
+    assert!(!rule.contains("default"), "{rule}");
+    // Tymna/Thrasios's rows both keep and mulligan: the hint counts them
+    let (mut g, p) = game_with(
+        "thrasios",
+        &[
+            "Tundra",
+            "Underground Sea",
+            "Watery Grave",
+            "Sol Ring",
+            "Demonic Consultation",
+            "Vampiric Tutor",
+            "Thassa's Oracle",
+        ],
+    );
+    let h = hint(&mut g, p);
+    verdict_unchanged(&mut g, p, &h);
+    assert_eq!(h["choice"], "keep", "{h}");
+    let rule = &lines(&h)[0];
+    assert!(rule.contains("keep a hand,") && rule.contains("send one back") && rule.contains("so keep it"), "{rule}");
 }
