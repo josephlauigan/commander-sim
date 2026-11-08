@@ -133,7 +133,7 @@ pub fn seats(sim: &Sim, deck: &Seat) -> Result<Vec<Seat>, String> {
 }
 
 /// a deck's list: yours from decklists/<owner>/, a pool deck's from its file
-fn list_of(sim: &Sim, key: &str) -> Result<Vec<String>, String> {
+pub(crate) fn list_of(sim: &Sim, key: &str) -> Result<Vec<String>, String> {
     if let Some(l) = sim.mine.get(key) {
         return Ok(l.clone());
     }
@@ -142,7 +142,7 @@ fn list_of(sim: &Sim, key: &str) -> Result<Vec<String>, String> {
 
 /// A goldfish has no table: a pool deck plays with its own tier's default knobs (style and [table]), one of your decks
 /// with the built-in table knobs (and its own built-in style).
-fn settings_of(sim: &Sim, key: &str, prof: sim_core::settings::Profile) -> sim_core::settings::Settings {
+pub(crate) fn settings_of(sim: &Sim, key: &str, prof: sim_core::settings::Profile) -> sim_core::settings::Settings {
     sim.settings_in(prof, sim.pool.iter().find(|d| d.key == key).map(|d| d.tier.as_str()))
 }
 

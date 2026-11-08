@@ -20,6 +20,7 @@ mod goldfish;
 mod gf_audit; // --- ai-audit
 mod holdreport; // --- t5-hold
 mod knobs;
+mod mull_oracle; // --- c4-mulligan-oracle
 mod play;
 mod poolmode;
 mod progress;
@@ -139,6 +140,9 @@ fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
     }
     if a.goldfish.is_some() {
         return goldfish::main(sim, &a).map(|()| 0);
+    }
+    if a.mulligan_oracle.is_some() {
+        return mull_oracle::main(sim, &a).map(|()| 0); // --- c4-mulligan-oracle
     }
     let mut swaps = vec![];
     let (mut base, mut var) = (vec![], vec![]);
