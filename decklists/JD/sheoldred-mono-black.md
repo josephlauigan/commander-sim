@@ -59,7 +59,7 @@ trigger as Bond on a creature body.
    Blood gains N again. It repeats until every opponent is dead (each trigger picks a new target as they die).
 3. Cheap starters: Sheoldred's trigger in anyone's draw step; cashing in Mind Stone with Sheoldred out (a draw, 2 life);
    Sephiroth's Intervention (gain 2); any drain creature (Blood Artist, Zulaport Cutthroat, Screeching Soulbreaker,
-   Al Bhed Salvagers, Gray Merchant); Leech Collector's Bloodletting.
+   Gray Merchant); Leech Collector's Bloodletting.
 
 Mana: Blood 5, Bond 5, Vito 3. Vito plus Blood is 8 mana across two turns. With Cabal Coffers (see Line 4) both big
 pieces come down in one turn.
@@ -91,7 +91,7 @@ target.* Twelve mana across two turns.
 - **If Mikaeus is answered mid-loop,** Triskelion has no undying and the loop ends. Pings already dealt stay dealt.
 - Demonic Tutor, Diabolic Tutor or Grim Tutor finds the missing half. Mikaeus has intimidate, and destroys any Human
   that deals damage to you.
-- Humans don't get Mikaeus's bonus: Al Bhed Salvagers, Zulaport Cutthroat, Vault Plunderer, Leech Collector, Sephiroth,
+- Humans don't get Mikaeus's bonus: Witch of the Moors, Zulaport Cutthroat, Vault Plunderer, Leech Collector, Sephiroth,
   Yawgmoth. Everything else does, Sheoldred included (see "Protecting Sheoldred").
 
 #### Line 3: Peer into the Abyss
@@ -137,7 +137,7 @@ so it adds one mana, not one more from Coffers.)
 
 Creatures dying drain the table; the sacrifice outlets make them die on demand; Mikaeus makes them come back.
 
-- **Drain on death:** Blood Artist, Zulaport Cutthroat, Al Bhed Salvagers (each death, 1 each), **Sephiroth, Fabled
+- **Drain on death:** Blood Artist, Zulaport Cutthroat (each death, 1 each), **Sephiroth, Fabled
   SOLDIER** (1 for each other creature that dies; the fourth in a turn transforms him, and then every creature death
   drains for the rest of the game), Massacre Wurm (2 per opposing creature that dies).
 - **Outlets:** Viscera Seer, Ashnod's Altar, Phyrexian Tower (a land: {T}, sacrifice a creature for {B}{B}), Yawgmoth,
@@ -271,12 +271,18 @@ counters, Call of the Ring, Bolas's Citadel, Ad Nauseam and Phyrexian Delver.
 
 #### Drain creatures
 
-**Blood Artist**, **Al Bhed Salvagers** and **Screeching Soulbreaker** (drain 1 each attack) keep the pressure on when
+**Blood Artist** and **Screeching Soulbreaker** (drain 1 each attack) keep the pressure on when
 Sheoldred is gone. **Ob Nixilis, the Fallen** ({3}{B}{B}, 3/3) makes a player lose 3 life each time a land enters under
 your control and grows by three +1/+1 counters: one land drop a turn is 3 to an opponent and a bigger threat.
 **Zulaport Cutthroat** drains each opponent 1 (and gains you 1) whenever a creature you control dies. Every point these
 drain creatures gain you is also a Sanguine Bond or Vito trigger. **Dreadhorde Invasion** gives you an Army body that
 grows every upkeep, a sacrifice-fodder token, and lifelink once it reaches power 6.
+
+**Witch of the Moors** ({3}{B}{B}, 4/4 deathtouch): at the beginning of your end step, if you gained life this turn,
+each opponent sacrifices a creature and you return up to one creature card from your graveyard to your hand. With
+Sheoldred out you gain 2 on every draw, so it is a repeatable edict and a card back each turn; the drain creatures,
+Exquisite Blood and Vito turn it on without her. It is a 5-drop that the sim leaves in hand in about half the games it
+is drawn: cast it as soon as the mana allows, after Sheoldred.
 
 #### Remove threats
 
@@ -466,7 +472,7 @@ Where numbers appear they come from older sim runs on earlier lists (`audit/sheo
 | Yawgmoth, Thran Physician | 1 per activation | The card drawn (2 with Sheoldred) |
 | Gix | 1 per card drawn off combat damage | The card (2 with Sheoldred) |
 
-Sources of life: Sheoldred (2 per draw), Exsanguinate, Gray Merchant, Blood Artist, Zulaport Cutthroat, Al Bhed Salvagers,
+Sources of life: Sheoldred (2 per draw), Exsanguinate, Gray Merchant, Blood Artist, Zulaport Cutthroat,
 Screeching Soulbreaker, Sephiroth, Sephiroth's Intervention (2), Rooftop Assassin (lifelink), Vito's lifelink ability
 ({3}{B}{B}), Exquisite Blood, and the lifelink on a grown Dreadhorde Army.
 
@@ -488,7 +494,7 @@ cast it: Grave Titan is 6. Against Edgar's loop pieces, do not pay life at all.
 8. Putting Sheoldred in the command zone when you hold Animate Dead, Phyrexian Delver or Yawgmoth's Will, which bring her back
    cheaper, and paying the tax when she is already in the graveyard.
 9. Playing Barad-dûr late: it enters tapped unless you control a legendary creature. Play it on turn 1 or 2.
-10. Counting on Mikaeus's undying for Humans (Zulaport Cutthroat, Al Bhed Salvagers, Vault Plunderer, Leech Collector,
+10. Counting on Mikaeus's undying for Humans (Zulaport Cutthroat, Witch of the Moors, Vault Plunderer, Leech Collector,
     Sephiroth, Yawgmoth), or casting Triskelion before Mikaeus is safe.
 
 ## Mana
@@ -524,7 +530,7 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Lands (36).** Barad-dûr, Bonders' Enclave, Cabal Coffers, Geier Reach Sanitarium, Mikokoro Center of the Sea, Phyrexian Tower, 30 Swamp
 
-**Creatures (24).** Accursed Marauder, Al Bhed Salvagers, Blood Artist, Fate Unraveler, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Massacre Wurm, Mikaeus the Unhallowed, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Sephiroth Fabled SOLDIER // Sephiroth One-Winged Angel, Triskelion, Undercity Dire Rat, Vault Plunderer, Viscera Seer, Vito Thorn of the Dusk Rose, Yawgmoth Thran Physician, Zulaport Cutthroat
+**Creatures (24).** Accursed Marauder, Blood Artist, Fate Unraveler, Gix Yawgmoth Praetor, Grave Titan, Gray Merchant of Asphodel, Leech Collector // Bloodletting, Massacre Wurm, Mikaeus the Unhallowed, Ob Nixilis the Fallen, Perigee Beckoner, Phyrexian Delver, Rooftop Assassin, Screeching Soulbreaker, Seizan Perverter of Truth, Sephiroth Fabled SOLDIER // Sephiroth One-Winged Angel, Triskelion, Undercity Dire Rat, Vault Plunderer, Viscera Seer, Vito Thorn of the Dusk Rose, Witch of the Moors, Yawgmoth Thran Physician, Zulaport Cutthroat
 
 **Enchantments (8).** Animate Dead, Call of the Ring, Dreadhorde Invasion, Exquisite Blood, Grave Pact, Phyrexian Arena, Sanguine Bond, Underworld Dreams
 
@@ -539,7 +545,6 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 ```
 1 Accursed Marauder
 1 Ad Nauseam
-1 Al Bhed Salvagers
 1 Ambition's Cost
 1 Animate Dead
 1 Arcane Signet
@@ -604,6 +609,7 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Viscera Seer
 1 Vito, Thorn of the Dusk Rose
 1 Wander Off
+1 Witch of the Moors
 1 Yawgmoth's Will
 1 Yawgmoth, Thran Physician
 1 Zulaport Cutthroat

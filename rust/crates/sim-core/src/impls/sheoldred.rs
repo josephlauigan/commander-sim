@@ -1391,6 +1391,50 @@ fn moseo_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
     Ok(())
 }
 
+// ------------------------------------------------------------------ Witch of the Moors
+/// At the beginning of your end step, if you gained life this turn, each opponent sacrifices a creature of their
+/// choice and you return up to one target creature card from your graveyard to your hand. The target is chosen as
+/// the trigger goes on the stack (before the opponents sacrifice); the AI takes its best creature card, a person
+/// picks one or none ("up to one"). The opponents' sacrifices are `edict` (each picks its least valuable creature).
+fn witch_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if p != owner(g, src) || !on_bf(g, src) || !gained_life(g, p) {
+        return Ok(());
+    }
+    let cs = gy_creatures(g, p);
+    let target = if human(g, p) && !cs.is_empty() {
+        let mut labels: Vec<String> = cs.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
+        labels.push("No card".to_string());
+        let k = crate::human::choices::choose_one(
+            g,
+            p,
+            "target",
+            "Witch of the Moors: return which creature card from your graveyard to your hand?",
+            &labels,
+        )?;
+        cs.get(k).copied()
+    } else {
+        max_by(&cs, |c| cv(g, c))
+    };
+    let opp_creatures = g.opps(p).any(|q| g.player(q).perms.iter().any(|&m| g.is_creature(m) && !g.perm(m).phased));
+    let imp = if opp_creatures { 5.0 } else { 0.0 } + target.map_or(0.0, |c| cv(g, c).max(0.0));
+    if !trigger_window(g, p, Some(src), "each opponent sacrifices a creature; a creature card back to hand", Some(imp))? {
+        return Ok(());
+    }
+    let qs: Vec<PlayerId> = g.opps(p).collect();
+    for q in qs {
+        crate::engine::zones::edict(g, q, false)?;
+    }
+    if let Some(c) = target
+        && let Some(i) = g.player(p).gy.iter().position(|&x| x == c)
+    {
+        let pl = g.player_mut(p);
+        pl.gy.remove(i);
+        pl.hand.push(c);
+        crate::glog!(g, "    {} returns {} to hand", pname(g, p), name_of(g, c));
+    }
+    Ok(())
+}
+
 // ------------------------------------------------------------------ Lethal Throwdown
 /// the creature p would sacrifice to Lethal Throwdown: a modified one is best (the extra card), otherwise the cheapest
 fn throwdown_fodder(g: &Game, p: PlayerId, target: PermId) -> Option<PermId> {
@@ -1533,6 +1577,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.gain_life = Some(leech_gain);
     c.options = Some(leech_options);
     r.card(db, "Moseo, Vein's New Dean")?.end_step = Some(moseo_end);
+    r.card(db, "Witch of the Moors")?.end_step = Some(witch_end);
     let c = r.card(db, "Lethal Throwdown")?;
     c.resolve = Some(throwdown_resolve);
     c.hand_options = Some(throwdown_options);

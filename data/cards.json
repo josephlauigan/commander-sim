@@ -142240,6 +142240,49 @@
    "spell_prio": false
   },
   {
+   "name": "Witch of the Moors",
+   "types": "C",
+   "generic": 3,
+   "pips": "BB",
+   "tags": {
+    "human": true,
+    "pow": "4",
+    "dt": true
+   },
+   "pow": 4,
+   "tgh": 4,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "deathtouch"
+   ],
+   "subtypes": [
+    "human",
+    "warlock"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "B",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Witch's Oven",
    "types": "A",
    "generic": 1,

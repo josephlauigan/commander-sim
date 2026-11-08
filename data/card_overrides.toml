@@ -6728,6 +6728,10 @@ paths_ok = "tok tag: the Pest token on entering (zones::etb_once); card code: th
 status = "Full"
 note = "flying; a Pest token entering; at your end step, if you gained life this turn, returns the best creature card with mana value at most the life gained from your graveyard"
 
+["Witch of the Moors"]
+status = "Full"
+note = "deathtouch; at your end step, if you gained life this turn, each opponent sacrifices a creature of their choice (edict: the least valuable) and up to one target creature card from your graveyard returns to your hand (chosen as the trigger goes on the stack: the AI takes the best one, a person picks one or none; card code in sheoldred.rs)"
+
 ["Lethal Throwdown"]
 tags = ""
 dsl = []

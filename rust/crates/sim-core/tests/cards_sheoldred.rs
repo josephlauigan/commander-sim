@@ -529,6 +529,34 @@ fn moseo_returns_a_creature_up_to_the_life_gained() {
 }
 
 #[test]
+fn witch_of_the_moors_edicts_each_opponent_and_regrows_after_lifegain() {
+    let mut g = game3();
+    perm(&mut g, P0, "Witch of the Moors");
+    let a = token(&mut g, P1, 1);
+    let b = token(&mut g, P2, 1);
+    let big = take(&mut g, P0, "Gravblade Heavy");
+    g.player_mut(P0).gy.push(big);
+    turn::end_step(&mut g, P0).unwrap();
+    assert!(g.perm(a).on_bf && g.perm(b).on_bf, "no lifegain, no trigger");
+    assert!(in_gy(&g, P0, "Gravblade Heavy"));
+    gain(&mut g, P0, 1).unwrap();
+    turn::end_step(&mut g, P0).unwrap();
+    assert!(!g.perm(a).on_bf && !g.perm(b).on_bf, "each opponent sacrifices a creature");
+    assert!(in_hand(&g, P0, "Gravblade Heavy"), "the creature card returns to hand");
+    assert!(on_bf(&g, P0, "Witch of the Moors").is_some(), "Witch itself stays");
+}
+
+#[test]
+fn witch_of_the_moors_does_nothing_on_an_opponents_end_step() {
+    let mut g = game();
+    perm(&mut g, P0, "Witch of the Moors");
+    let a = token(&mut g, P1, 1);
+    gain(&mut g, P0, 2).unwrap();
+    turn::end_step(&mut g, P1).unwrap();
+    assert!(g.perm(a).on_bf, "only your own end step");
+}
+
+#[test]
 fn lethal_throwdown_pays_its_sacrifice_and_draws_for_a_modified_creature() {
     let mut g = game();
     lands(&mut g, P0, "Swamp", 2, false);

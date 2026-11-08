@@ -63,6 +63,8 @@ impl Inputs {
         extra.extend(["Studious First-Year", "Infestation Expert"].map(String::from));
         // cards modeled before any deck plays them (swap tests name them): Priest of Gix (2026-10-19)
         extra.insert("Priest of Gix".to_string());
+        // Witch of the Moors (2026-11-07: JD pulled it; tested in Sheoldred with --swap)
+        extra.insert("Witch of the Moors".to_string());
         // the six cards Garth One-Eye names (2026-11-04); Disenchant and Terror are in pool lists, the other four in none
         extra.extend(["Black Lotus", "Braingeyser", "Regrowth", "Shivan Dragon"].map(String::from));
         Wanted { main, played, extra }
