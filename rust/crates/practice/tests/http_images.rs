@@ -67,8 +67,8 @@ fn test_cards_tokens_and_progress() {
     // your deck's own printings (data/printings/aragorn.txt): every copy by set and collector number
     let own = img["printed"]["aragorn"].as_object().expect("Aragorn's printings");
     let islands = own["Island"].as_array().expect("Island copies");
-    assert_eq!(islands.len(), 1); // one Island (sos 274)
-    assert!(islands[0][0].as_str().unwrap().starts_with("print-sos-"), "{islands:?}");
+    assert_eq!(islands.len(), 1); // one Island (tdm 288)
+    assert!(islands[0][0].as_str().unwrap().starts_with("print-tdm-"), "{islands:?}");
     let f = own["Sol Ring"][0][0].as_str().unwrap();
     assert_eq!(c.get(&format!("/images/{f}")).status, 200);
     c.quit();

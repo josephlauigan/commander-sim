@@ -1,8 +1,7 @@
 1 Accursed Marauder (mh3) 80
 1 Ad Nauseam (soa) 25
-1 Al Bhed Salvagers (fin) 88
 1 Ambition's Cost (c15) 113
-1 Animate Dead (4ed) 118
+1 Animate Dead (plst) EMA-78
 1 Arcane Signet (soc) 127
 1 Ashnod's Altar (chr) 92
 1 Barad-dûr (ltr) 425
@@ -45,9 +44,9 @@
 1 Phyrexian Arena (fdn) 322
 1 Phyrexian Delver (inv) 115
 1 Phyrexian Tower (mh3) 303
+1 Reanimate (mar) 20
 1 Rooftop Assassin (otj) 103
 1 Sanguine Bond (tsr) 330
-1 Screeching Soulbreaker (fra) 65
 1 Seizan, Perverter of Truth (mul) 145
 1 Sephiroth, Fabled SOLDIER // Sephiroth, One-Winged Angel (fin) 382
 1 Sephiroth's Intervention (fin) 116
@@ -66,6 +65,7 @@
 1 Viscera Seer (soc) 229
 1 Vito, Thorn of the Dusk Rose (j22) 487
 1 Wander Off (sos) 104
+1 Witch of the Moors (jmp) 18
 1 Yawgmoth, Thran Physician (fca) 11
 1 Yawgmoth's Will (wc99) js171
 1 Zulaport Cutthroat (sld) 1982

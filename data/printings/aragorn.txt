@@ -24,7 +24,7 @@
 1 Firebrand Archer (plst) HOU-92
 1 Flooded Strand (mh3) 353
 1 Force of Will (all) 28
-1 Forest (mdd) 301
+1 Forest (tdm) 291
 1 Frantic Search (ulg) 32
 1 Frontier Bivouac (ecc) 150
 1 Ghostly Prison (soc) 146
@@ -32,7 +32,7 @@
 1 Grapeshot (tsr) 166
 1 Guttersnipe (pm19) 145
 1 Heroic Intervention (sld) 1872
-1 Island (sos) 274
+1 Island (tdm) 288
 1 Jeska's Will (soa) 109
 1 Jungle Shrine (ecc) 154
 1 Kitchen Finks (f09) 3
@@ -54,7 +54,7 @@
 1 Paradise Druid (pwar) 171
 1 Path of Ancestry (cmm) 661
 1 Path to Exile (blc) 147
-1 Plains (mdd) 292
+1 Plains (tdm) 287
 1 Plateau (ced) 280
 1 Polluted Delta (mh3) 356
 1 Restoration Angel (j22) 233
@@ -84,7 +84,7 @@
 1 Teferi's Protection (mar) 51
 1 Temple Garden (rvr) 300
 1 Tezzeret, Cruel Captain (eoe) 2
-1 Third Path Iconoclast (tdc) 307
+1 Third Path Iconoclast (bro) 223
 1 Triple Triad (fin) 340
 1 Tropical Island (ced) 284
 1 Tundra (ced) 285
