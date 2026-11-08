@@ -906,6 +906,54 @@ pub fn units_pay_with_rituals(g: &Game, p: PlayerId, u: &[Unit], generic: u32, p
     false
 }
 
+/// The one colour p picks for "add N mana of any one color" (Carpet of Flowers, The Aetherspark): all N mana are that
+/// colour, never split. The colour of p's identity that makes the most cards in hand (and its commander) payable that
+/// can't be paid now, then the one the unpayable cards ask for most, then the first colour of the identity. A person
+/// chooses as the mana is spent (`Kind::Any`); a colourless identity makes {C}.
+pub fn choose_one_colour(g: &Game, p: PlayerId, n: u32) -> Kind {
+    let ident = g.player(p).ident;
+    if crate::human::is_human(g, p) {
+        return Kind::Any;
+    }
+    if ident.is_empty() {
+        return Kind::C;
+    }
+    let u = mana_units(g, p, false);
+    let pl = g.player(p);
+    let cards: Vec<CardId> = pl.hand.iter().copied().filter(|&c| !g.db.get(c).land).chain(pl.cmds_in_zone()).collect();
+    let want: Vec<(u32, String, bool)> = cards
+        .iter()
+        .map(|&c| {
+            let (gn, pips) = cost_of(g, p, c);
+            let now = plan_pay(g, &u, gn, &pips).is_some();
+            (gn, pips, now)
+        })
+        .collect();
+    let mut best: Option<(Kind, (u32, u32))> = None;
+    for ch in WUBRG {
+        if !ident.has(ch) {
+            continue;
+        }
+        let k = Kind::of_letter(ch);
+        let mut v = u.clone();
+        v.extend((0..n.min(60)).map(|_| Unit { src: Source::float(k), cols: k.cols(ident), amt: 1 }));
+        let (mut enabled, mut asked) = (0, 0);
+        for (gn, pips, now) in &want {
+            if *now {
+                continue;
+            }
+            if plan_pay(g, &v, *gn, pips).is_some() {
+                enabled += 1;
+            }
+            asked += pips.chars().filter(|&x| x == ch).count() as u32;
+        }
+        if best.is_none_or(|b| (enabled, asked) > b.1) {
+            best = Some((k, (enabled, asked)));
+        }
+    }
+    best.map_or(Kind::C, |b| b.0)
+}
+
 // --- ai-fix: B
 /// the mana a land card would add once played, as a unit: its tagged colours (`A`: p's identity) and amount. A guess
 /// for a card not yet on the battlefield: no Blood Moon, no enters-tapped rule.

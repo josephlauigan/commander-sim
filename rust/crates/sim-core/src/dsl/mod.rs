@@ -1105,7 +1105,13 @@ fn run(
             // Savage Ventmaw: "until end of turn, you don't lose this mana as steps and phases end" (the parser drops it)
             let kept = src.and_then(|m| g.perm(m).cd).is_some_and(|c| &*g.db.get(c).name == "Savage Ventmaw");
             // the mana the card prints (`color`: "BBB", "RRRGGG", "R" for each of k; {C} is colourless); none: any colour
-            for (kind, amt) in Kind::printed(e.color.as_deref(), k) {
+            // no printed colour: "one mana of any color" (k = 1) or "k mana of any one color", all of one chosen colour
+            let kinds = if e.color.is_none() && k > 1 {
+                vec![(crate::engine::mana::choose_one_colour(g, p, k), k)]
+            } else {
+                Kind::printed(e.color.as_deref(), k)
+            };
+            for (kind, amt) in kinds {
                 if kept { g.player_mut(p).mana.add_kept(kind, amt) } else { g.player_mut(p).mana.add(kind, amt) }
             }
         }

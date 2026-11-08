@@ -623,6 +623,22 @@ fn heat_shimmer_on_an_opposing_kinnan_with_basalt_funds_godo() {
     assert!(worn_by_godo(&g), "equipped from the loop's mana");
 }
 
+/// The loop makes only {C} (Basalt Monolith {C}{C}{C} and the copy's extra {C}): Godo's {R} needs a real red source.
+/// One Mountain pays Heat Shimmer's {R} (the untapped Basalt pays its {2}) and leaves no red for Godo: the line is not
+/// ready (it used to be, with 60 mana of any colour); the second Mountain is the {R}.
+#[test]
+fn the_loops_colourless_mana_cannot_pay_godos_red() {
+    let mut g = tbl(&["godo", "kinnan-bonder-mana-combo"]);
+    perm(&mut g, P0, "Basalt Monolith");
+    perm(&mut g, P1, "Kinnan, Bonder Prodigy");
+    hand(&mut g, P0, &["Heat Shimmer"]);
+    mountains(&mut g, 1);
+    assert!(not_ready(&g, KCOPY), "one Mountain: Shimmer's red and no red for Godo");
+    mountains(&mut g, 1);
+    go(&mut g, KCOPY);
+    assert_eq!(g.winner, Some(P0));
+}
+
 #[test]
 fn the_kinnan_copy_needs_a_kinnan_across_the_table_and_a_copier() {
     let mut g = kinnan_copy_table();

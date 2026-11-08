@@ -777,9 +777,9 @@ fn kinnan_copier(g: &Game, p: PlayerId) -> Option<CardId> {
 fn ready_basalt_kinnan(g: &Game, p: PlayerId) -> Ready {
     let Some(godo) = gd::godo_base(g, p) else { return no() };
     let (Some(_), Some(_), Some(c)) = (bf(g, p, BASALT), opp_kinnan(g, p), kinnan_copier(g, p)) else { return no() };
-    // the copier is paid from lands; Godo's cost is paid from the loop (its {R} too)
-    let _ = godo;
-    if !castable(g, p, c, "hand") || !affordable(g, p, &[cost(g, p, c)]) {
+    // The copier is paid from lands, and so are Godo's coloured pips: the loop makes only colourless mana (Basalt
+    // Monolith {C}{C}{C}, the copy adds one more {C}), which pays Godo's generic part and the equip, never his {R}.
+    if !castable(g, p, c, "hand") || !affordable(g, p, &[cost(g, p, c), gd::extra(0, &godo.1)]) {
         return no();
     }
     ok_ready()
@@ -787,6 +787,12 @@ fn ready_basalt_kinnan(g: &Game, p: PlayerId) -> Ready {
 
 fn copy_kinnan(g: &mut Game, p: PlayerId) -> Res<bool> {
     let Some(k) = opp_kinnan(g, p) else { return Ok(false) };
+    // Basalt Monolith is tapped for {C}{C}{C} first and pays the copier's generic cost, so the lands keep the coloured
+    // pips (the copier's {R} and Godo's {R}) that `ready_basalt_kinnan` counted on them
+    if let Some(b) = bf(g, p, BASALT).filter(|&b| !g.perm(b).tapped) {
+        g.perm_mut(b).tapped = true;
+        g.player_mut(p).mana.add(Kind::C, 3);
+    }
     if let Some(c) = in_hand(g, p, SHIMMER) {
         return Ok(gd::cast_copy_spell(g, p, c, k, true)? && bf(g, p, KINNAN).is_some());
     }
@@ -799,7 +805,7 @@ fn copied_kinnan_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
 
 /// tap Basalt for {C}{C}{C}, Kinnan's copy adds {C}{C}{C}, pay {3} to untap: unlimited colourless mana
 fn infinite_colourless(g: &mut Game, p: PlayerId) -> Res<bool> {
-    g.player_mut(p).mana.add(Kind::Any, 60);
+    g.player_mut(p).mana.add(Kind::C, 60); // colourless: coloured pips come from real sources
     crate::glog!(g, "    Basalt Monolith + Kinnan: unlimited mana");
     Ok(true)
 }
