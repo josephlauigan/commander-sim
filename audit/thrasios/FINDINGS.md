@@ -24,7 +24,7 @@ bugs that let ritual and combo lines pay colours they couldn't. Every Thrasios n
   "no {B}{B}{B} (with the enabler)" is still 43% of the main-phase decisions where Doomsday is in hand (42% on 11-06,
   before S2). Doomsday was chosen 139 times in 10,000 games (153 on 11-07). The deck rarely has three black sources at
   once whether two of its duals make black or not, and Consultation/Pact (77-78% of wins) needs only one {B}.
-- **Not changed:** S2 stays in the list (JD adopted it 11-07); reverting it is JD's call. Neither list is measurably better.
+- **Decided by JD (2026-11-08): keep S2.** Neither list is measurably better, and S2 stays in the list (adopted 11-07).
 
 ## 2026-11-07: more black mana for Doomsday (swap tests; main 7d4d5b35; look-ahead, loose, 5,000 games per list, seed 500000, t6)
 Why: Doomsday in hand in the main phase but not cast was "no {B}{B}{B}" 42% of the time (2026-11-06 below), and the
