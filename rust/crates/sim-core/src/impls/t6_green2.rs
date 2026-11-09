@@ -20,9 +20,7 @@ use crate::engine::mana::{can_pay, pay};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::turn::land_enters_tapped;
 use crate::engine::tutors::{card_worth, shuffle_library};
-use crate::engine::zones::{
-    Enter, die, discard_cards, draw, enter, make_artifact_tokens, max_by, min_by,
-};
+use crate::engine::zones::{Enter, die, discard_cards, draw, enter, make_artifact_tokens, max_by, min_by};
 use crate::engine::zones::{landfall, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -598,8 +596,7 @@ pub fn ikoria_pick(g: &Game, p: PlayerId, x: i32) -> Option<(CardId, bool)> {
     // Tier 6: the card that completes one of the deck's lines (Oboro) comes before the wish list's other creatures
     if super::t6_plans::is_t6(g, p) && !crate::human::is_human(g, p) {
         let held = super::t6_pieces::held_names(g, p);
-        if let Some(&b) =
-            cands.iter().find(|(c, _)| super::t6_pieces::completes_line(g, p, &g.db.get(*c).name, &held))
+        if let Some(&b) = cands.iter().find(|(c, _)| super::t6_pieces::completes_line(g, p, &g.db.get(*c).name, &held))
         {
             return Some(b);
         }

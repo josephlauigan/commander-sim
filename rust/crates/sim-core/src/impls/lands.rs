@@ -7,13 +7,12 @@
 //! player's lands while animated and comes back at the start of the next turn; if the creature died, the land goes
 //! to the graveyard.
 
-use crate::satsum::SatSum;
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::hooks::fire_trigger;
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::ability_window_card;
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{epow, etgh, pval, threat, untargetable};
@@ -21,6 +20,7 @@ use crate::engine::zones::{Enter, Tokens, draw, enter, land_ramp, make_tokens, m
 use crate::flow::Res;
 use crate::hooks::{Action, Assign, Call, Event, LandOptionsFn, Opt, Registry};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::{DataKey, Game, Val};
 use crate::sym::intern;
 use crate::tag::Tag;
@@ -146,11 +146,14 @@ pub fn sac_land(g: &mut Game, p: PlayerId, l: PermId) -> Res {
 
 /// fixes.destroy_land (a copy: fixes.rs is ported separately; the same few lines)
 fn destroy_land(g: &mut Game, q: PlayerId, l: PermId) -> Res {
-    if !has_land(g, q, l) || crate::dsl::lands_have_kw(g, q, "indestructible") || crate::engine::values::indestructible(g, l) {
+    if !has_land(g, q, l)
+        || crate::dsl::lands_have_kw(g, q, "indestructible")
+        || crate::engine::values::indestructible(g, l)
+    {
         return Ok(()); // (Avacyn, Angel of Hope: q's lands are indestructible; Darksteel Citadel)
     }
     let cd = g.perm(l).real_card();
-    let went =     crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
+    let went = crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
     crate::glog!(g, "    {} ({}) is destroyed", name_of(g, cd), g.player(q).name);
     if went && !g.hooks.is_empty() {
         fire_trigger(g, Event::LandGy, Call::Cards { p: q, cards: vec![cd] })?;
@@ -513,10 +516,18 @@ pub(crate) fn ld_land_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
                 g.players.iter().filter(|x| x.alive).flat_map(|x| x.lands.iter().map(move |&y| (x.id, y))).collect();
             let labels: Vec<String> = now
                 .iter()
-                .map(|&(o, x)| format!("{} ({})", land_name(g, x), if o == p { "yours".to_string() } else { g.player(o).name.to_string() }))
+                .map(|&(o, x)| {
+                    format!(
+                        "{} ({})",
+                        land_name(g, x),
+                        if o == p { "yours".to_string() } else { g.player(o).name.to_string() }
+                    )
+                })
                 .collect();
             let prompt = "The copy of the land's ability: destroy which land?";
-            if let Some(k) = crate::human::choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+            if let Some(k) =
+                crate::human::choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)?
+            {
                 (q, t) = now[k];
             }
         }

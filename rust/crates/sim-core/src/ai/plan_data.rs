@@ -762,10 +762,12 @@ fn quantity(g: &Game, p: PlayerId, q: Q, cx: Cx) -> f64 {
         Q::CmdBlockers => cmd_perm(g, p, cx).map_or(0, |m| cmd_blockers(g, p, m, cx, false)) as f64,
         Q::CmdKillers => cmd_perm(g, p, cx).map_or(0, |m| cmd_blockers(g, p, m, cx, true)) as f64,
         Q::AtkPower => cx.atk.iter().map(|&m| crate::engine::values::epow(g, m)).ssum() as f64,
-        Q::DefLife => (match cx.def {
-            Some(d) => g.player(d).life,
-            None => g.opps(p).map(|q| g.player(q).life).min().unwrap_or(0),
-        }) as f64,
+        Q::DefLife => {
+            (match cx.def {
+                Some(d) => g.player(d).life,
+                None => g.opps(p).map(|q| g.player(q).life).min().unwrap_or(0),
+            }) as f64
+        }
         Q::CmdWears(i) => cx.plan.zip(cmd_perm(g, p, cx)).map_or(0, |(l, m)| {
             pl.perms
                 .iter()

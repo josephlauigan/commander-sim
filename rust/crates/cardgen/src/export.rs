@@ -165,12 +165,10 @@ pub fn decks_doc(inp: &Inputs) -> Result<J, String> {
             .ok_or(format!("pool deck {}: commander {} is not in the card cache", d.key, d.commander))?;
         let mut ids: Vec<char> = rec.strs("color_identity").iter().flat_map(|s| s.chars()).collect();
         let mut o = obj! {"tier" => d.tier.as_str(), "key" => d.key.as_str(), "name" => decks::display_name(&d.commander, d.commander2.as_deref()),
-            "commander" => d.commander.as_str()};
+        "commander" => d.commander.as_str()};
         if let Some(c2) = &d.commander2 {
-            let rec2 = inp
-                .cache
-                .get(c2)
-                .ok_or(format!("pool deck {}: commander {} is not in the card cache", d.key, c2))?;
+            let rec2 =
+                inp.cache.get(c2).ok_or(format!("pool deck {}: commander {} is not in the card cache", d.key, c2))?;
             ids.extend(rec2.strs("color_identity").iter().flat_map(|s| s.chars()));
             o.0.push(("commander2".to_string(), J::from(c2.as_str()))); // partner pairs only, as for your decks
         }

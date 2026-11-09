@@ -539,4 +539,3 @@ fn teferis_protection_is_not_spent_on_one_removal_spell() {
     assert!(!saved && !g.player(P0).life_locked, "one small piece of a big board: kept for the wipe");
     assert!(g.player(P0).hand.iter().any(|&c| &*g.db.get(c).name == "Teferi's Protection"));
 }
-

@@ -50,7 +50,8 @@ fn json_of(p: &Path) -> Value {
 fn test_first_launch_copies_then_the_same_stamp_does_not() {
     let (b, app) = (bundle("b1", "one"), temp("a1"));
     assert!(sync_data(&b, &app).unwrap());
-    for f in ["cards.json", "decks.json", "my_decks.toml", "scryfall_cache.json", "bundle.json", "printings/aragorn.txt"]
+    for f in
+        ["cards.json", "decks.json", "my_decks.toml", "scryfall_cache.json", "bundle.json", "printings/aragorn.txt"]
     {
         assert!(app.join("data").join(f).exists(), "{f}");
     }

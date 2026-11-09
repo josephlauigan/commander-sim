@@ -7,11 +7,11 @@
 //! stack); "enters with" replacements and statics run at once.
 
 use super::common::proliferate;
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors};
 use crate::engine::life::gain;
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::removal::{apply_removal, legal_targets};
+use crate::engine::repl;
 use crate::engine::stack::trigger_window;
 use crate::engine::tutors::shuffle_library;
 use crate::engine::values::{colors_of, commander_out, etgh, has_type, pval};

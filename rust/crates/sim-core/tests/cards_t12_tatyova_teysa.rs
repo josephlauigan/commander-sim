@@ -3,8 +3,8 @@
 //! Oracle text.
 
 use sim_core::dsl::{Fired, fire, has_kw};
-use sim_core::engine::pool::Kind;
 use sim_core::engine::cast;
+use sim_core::engine::pool::Kind;
 use sim_core::engine::repl::trigger_copies as total_trigger_copies;
 use sim_core::engine::values::{colors_of, epow, etgh, indestructible};
 use sim_core::engine::zones;
@@ -351,8 +351,21 @@ fn teysa_orzhov_scion_spirits_and_exile() {
 fn whole_games_with_the_new_cards() {
     let keys = [TATYOVA, TEYSA, "isshin-mardu-attack-triggers", "lathril-golgari-elves"];
     let marks = [
-        "Fertile Footsteps", "Beau", "Summer Bloom", "Wrenn and Seven", "Loot", "Entish", "Roiling", "Black Market",
-        "Drivnod", "Indebted", "Broodmoth", "Orzhov Scion", "Treefolk", "Mossborn", "afterlife",
+        "Fertile Footsteps",
+        "Beau",
+        "Summer Bloom",
+        "Wrenn and Seven",
+        "Loot",
+        "Entish",
+        "Roiling",
+        "Black Market",
+        "Drivnod",
+        "Indebted",
+        "Broodmoth",
+        "Orzhov Scion",
+        "Treefolk",
+        "Mossborn",
+        "afterlife",
     ];
     let mut seen = 0;
     for seed in 1..=8 {

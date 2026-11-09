@@ -41,12 +41,12 @@
 //! - Worldsoul's Rage: X (all spare mana, tag `tokx`) damage to the best target; then up to X land cards from hand
 //!   and graveyard onto the battlefield tapped.
 
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, castable, on_cast};
 use crate::engine::hooks::hooked;
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, land_colors_now, pay, total_mana};
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, ability_window_card, counter_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::epow;
@@ -659,7 +659,6 @@ fn emblem_retrace_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     cast_card(g, p, c, "mgy", ctx)?;
     Ok(true)
 }
-
 
 // ================================================================== Soul of Windgrace
 /// the best land card in any graveyard for p: (its owner, the card)

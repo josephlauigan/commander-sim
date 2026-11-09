@@ -617,7 +617,13 @@ fn gix(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
             if play && land_ok {
                 engine::turn::play_land_card(g, p, c, "plays (Gix)")?;
             } else if play {
-                engine::cast::cast_card(g, p, c, "lib".into(), crate::state::Ctx { owner: Some(q), ..Default::default() })?;
+                engine::cast::cast_card(
+                    g,
+                    p,
+                    c,
+                    "lib".into(),
+                    crate::state::Ctx { owner: Some(q), ..Default::default() },
+                )?;
             } else {
                 g.player_mut(q).exile.push(c);
             }

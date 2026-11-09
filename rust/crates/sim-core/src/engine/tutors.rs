@@ -1,9 +1,9 @@
 //! Tutors and the Game Changer mechanics (engine.py: tutor, atraxa_reveal ... ad_nauseam).
 
 use crate::ai;
-use crate::engine::pool::Kind;
 use crate::engine::life::lose_life;
 use crate::engine::mana::total_mana;
+use crate::engine::pool::Kind;
 use crate::engine::values::{commander_out, threat};
 use crate::engine::zones::*;
 use crate::flow::Res;

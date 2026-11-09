@@ -60,8 +60,8 @@ fn main() {
         }
     }
     let root = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../..");
-    let data =
-        data.unwrap_or_else(|| if PathBuf::from("data/decks.json").exists() { "data".into() } else { root.join("data") });
+    let data = data
+        .unwrap_or_else(|| if PathBuf::from("data/decks.json").exists() { "data".into() } else { root.join("data") });
     if text {
         let arg = |k: &str| opts.get(k).cloned();
         std::process::exit(text_game(&data, &arg, step));

@@ -1,13 +1,13 @@
 //! Board reading: what a permanent is (power, toughness, types, keywords, protection) and what it's worth.
 //! engine.py's "helpers" and "values / threat" sections, in the same order.
 
-use crate::satsum::SatSum;
 use crate::cardcode;
 use crate::cards::Colors;
 use crate::dsl;
 use crate::engine::chars;
 use crate::ids::{PermId, PlayerId};
 use crate::pysum::PySum;
+use crate::satsum::SatSum;
 use crate::state::{DataKey, Game, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;

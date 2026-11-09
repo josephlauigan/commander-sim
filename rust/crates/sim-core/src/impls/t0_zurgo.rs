@@ -16,11 +16,11 @@
 //!     (`divine_visitation`, read by `make_tokens`), which also apply to the token copies made here,
 //!   - "a creature token leaves the battlefield" (`token_left`, called by `zones::leave`): Zurgo, Twilight Drover.
 
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors};
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::{apply_removal, legal_targets};
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
 use crate::engine::values::{card_name, commander_out, epow, etgh, has_type, pval};
 use crate::engine::zones::{Tokens, die, draw, enter_token_copy, exile_perm, make_tokens, max_by, min_by};
@@ -1315,7 +1315,10 @@ fn idol_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
             act: Some(Action::Ability { src, f: idol_draw, arg: 0 }),
         });
     }
-    if post.is_none() && g.active == Some(p) && can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 8, 0), "", false) {
+    if post.is_none()
+        && g.active == Some(p)
+        && can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 8, 0), "", false)
+    {
         out.push(Opt {
             utility: 3.0,
             label: "Idol of Oblivion: a 10/10 Eldrazi".into(),
@@ -1337,7 +1340,10 @@ fn idol_draw(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 }
 
 fn idol_eldrazi(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !on_bf(g, src) || g.perm(src).tapped || !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 8, 0), "", false)? {
+    if !on_bf(g, src)
+        || g.perm(src).tapped
+        || !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 8, 0), "", false)?
+    {
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;

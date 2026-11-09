@@ -46,4 +46,3 @@ fn basalt_is_always_ramp_and_rings_waits_for_a_basalt() {
     hand(&mut g2, P0, &["Rings of Brighthearth"]);
     assert!(with_basalt >= 70 && with_basalt > prio(&g2, "Rings of Brighthearth"));
 }
-

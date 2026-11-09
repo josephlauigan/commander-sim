@@ -18,12 +18,14 @@
 //! - Valley Floodcaller: the cast trigger pumps and untaps its Birds, Frogs, Otters and Rats; the noncreature flash is `static_flash`.
 
 use crate::cards::{CardDb, Colors, Types};
-use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::stack::trigger_window;
+use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::values::{colors_of, has_type, pval, untargetable};
-use crate::engine::zones::{Enter, Tokens, discard_cards, agent_for, agent_take, draw, enter, make_tokens, max_by, mill, searchable};
+use crate::engine::zones::{
+    Enter, Tokens, agent_for, agent_take, discard_cards, draw, enter, make_tokens, max_by, mill, searchable,
+};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
@@ -102,7 +104,6 @@ fn timetwister_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res
     Ok("gy")
 }
 
-
 // ================================================================== Demonic Counsel
 /// Demonic Counsel: search for a Demon card (any card with delirium: four or more card types in your graveyard),
 /// reveal it, put it into your hand, then shuffle. Delirium searches use the deck's own tutor pick; a plain Demon
@@ -114,7 +115,14 @@ fn counsel_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym
     }
     let is_demon = |g: &Game, c: CardId| g.db.get(c).has_subtype("demon");
     if crate::human::is_human(g, p) {
-        let found = crate::human::choices::search(g, p, &|g: &Game, c: CardId| is_demon(g, c), 1, "Search your library for a Demon", true)?;
+        let found = crate::human::choices::search(
+            g,
+            p,
+            &|g: &Game, c: CardId| is_demon(g, c),
+            1,
+            "Search your library for a Demon",
+            true,
+        )?;
         for c in found {
             let pl = g.player_mut(p);
             pl.hand.push(c);
@@ -143,7 +151,6 @@ fn counsel_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym
     Ok("gy")
 }
 
-
 // ================================================================== Rain of Filth
 const RAIN_FLAG: &str = "rain_of_filth";
 
@@ -159,7 +166,6 @@ fn rain_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     set_turn_flag(g, p, RAIN_FLAG);
     Ok("gy")
 }
-
 
 /// --- card-models-2: the card in p's hand Rain of Filth would let p cast now: one worth casting (the deck's priority
 /// 50 or more) that p can't pay for, but could with the lands' {B} (Rain's own {B} paid first)
@@ -212,8 +218,13 @@ fn rain_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {
 /// the permanent card with mana value 3 or less in p's graveyard the AI returns: creatures by power, then other
 /// permanents by mana value; a land only when nothing else is there
 fn reclaim_pick(g: &Game, p: PlayerId) -> Option<CardId> {
-    let cs: Vec<CardId> =
-        g.player(p).gy.iter().copied().filter(|&c| (g.db.get(c).perm || g.db.get(c).land) && g.db.get(c).cmc <= 3).collect();
+    let cs: Vec<CardId> = g
+        .player(p)
+        .gy
+        .iter()
+        .copied()
+        .filter(|&c| (g.db.get(c).perm || g.db.get(c).land) && g.db.get(c).cmc <= 3)
+        .collect();
     let key = |c: CardId| {
         let d = g.db.get(c);
         (!d.land) as i32 as f64 * 10000.0 + d.creature as i32 as f64 * 1000.0 + d.pow as f64 * 10.0 + d.cmc as f64
@@ -249,7 +260,6 @@ fn reclamation_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<
     }
     Ok("gy")
 }
-
 
 // ================================================================== Exhibition Tidecaller
 /// the mana spent on the spell being cast (c): its mana value plus X, or nothing when an alternative cost was paid.
@@ -288,7 +298,6 @@ fn tidecaller_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     mill(g, t, n)
 }
 
-
 // ================================================================== Voice of Victory
 /// Voice of Victory (Mobilize 2): whenever it attacks, two tapped and attacking 1/1 red Warrior tokens, sacrificed at
 /// the beginning of the next end step (`DataKey::EotSac`, as Zurgo's, `t0_zurgo::zurgo_attack`)
@@ -323,7 +332,6 @@ fn voice_can_cast(g: &Game, src: Src, p: PlayerId, _c: CardId, _zone: Sym) -> bo
     !(p != o && g.active == Some(o) && g.perm(src).on_bf && !g.perm(src).phased)
 }
 
-
 // ================================================================== High Fae Trickster / Valley Floodcaller: flash
 /// may p cast a spell as though it had flash because of a permanent (High Fae Trickster: every spell; Valley
 /// Floodcaller: noncreature spells), or the one-turn grant of Borne Upon a Wind? `creature_spell` says whether the
@@ -342,7 +350,6 @@ pub fn static_flash(g: &Game, p: PlayerId, creature_spell: bool) -> bool {
                 }
         })
 }
-
 
 // ================================================================== Drift of Phantasms
 /// the card with mana value 3 in p's library the AI transmutes for: the best by `card_worth` (no land: a land has
@@ -403,7 +410,6 @@ fn drift_transmute(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-
 // ================================================================== Emrakul, the Promised End
 /// the number of card types among the cards in p's graveyard (land, creature, instant, sorcery, artifact,
 /// enchantment, planeswalker: the engine's card data has no battle or kindred type)
@@ -432,7 +438,6 @@ pub fn graveyard_types(g: &Game, p: PlayerId) -> u32 {
 fn emrakul_cost(g: &Game, p: PlayerId, _c: CardId) -> i32 {
     -(graveyard_types(g, p) as i32)
 }
-
 
 // ================================================================== Silas Renn, Seeker Adept
 fn silas_key(c: CardId) -> Sym {
@@ -515,7 +520,6 @@ fn silas_cast(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
-
 // ================================================================== Hidden Strings
 /// p's tapped mana sources, the best first: a rock (more mana first), a dork, then lands
 fn tapped_mana_sources(g: &Game, p: PlayerId) -> Vec<(Option<PermId>, Option<crate::ids::PermId>)> {
@@ -582,7 +586,6 @@ fn strings_effect(g: &mut Game, p: PlayerId) -> Res {
     Ok(())
 }
 
-
 // ================================================================== Valley Floodcaller
 /// Valley Floodcaller: whenever you cast a noncreature spell, Birds, Frogs, Otters and Rats you control get +1/+1
 /// until end of turn and untap. (The flash for noncreature spells is `static_flash`; flash itself is data.)
@@ -597,12 +600,12 @@ fn floodcaller_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res 
         .iter()
         .copied()
         .filter(|&m| {
-            g.perm(m).on_bf
-                && !g.perm(m).phased
-                && ["bird", "frog", "otter", "rat"].iter().any(|t| has_type(g, m, t))
+            g.perm(m).on_bf && !g.perm(m).phased && ["bird", "frog", "otter", "rat"].iter().any(|t| has_type(g, m, t))
         })
         .collect();
-    if mine.is_empty() || !trigger_window(g, o, Some(src), "Birds, Frogs, Otters and Rats get +1/+1 and untap", Some(2.0))? {
+    if mine.is_empty()
+        || !trigger_window(g, o, Some(src), "Birds, Frogs, Otters and Rats get +1/+1 and untap", Some(2.0))?
+    {
         return Ok(());
     }
     for m in mine {
@@ -612,7 +615,6 @@ fn floodcaller_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res 
     }
     Ok(())
 }
-
 
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {

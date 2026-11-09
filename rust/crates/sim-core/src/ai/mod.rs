@@ -19,29 +19,29 @@ pub mod act;
 pub mod brain;
 pub mod decks;
 pub mod evdiag; // --- ai-eval
+pub mod ismcts; // --- phase4-search
+pub mod learned; // --- phase4-eval
 pub mod plan_data; // --- phase4-plans
-pub mod plans;
 pub mod planner; // --- ai-planner
+pub mod plans;
 pub mod pool;
-pub mod search;
 pub mod reanimate;
 pub mod rules; // --- phase4-rules
-pub mod t6_table;
+pub mod search;
 pub mod t6_stops; // --- t6-stops
+pub mod t6_table;
 pub mod table_fixes; // --- ai-table-fixes
 pub mod tape;
 pub mod topdeck;
-pub mod ismcts; // --- phase4-search
-pub mod learned; // --- phase4-eval
 pub mod values; // --- phase4-values
 
-use crate::satsum::SatSum;
 use crate::engine::repl;
 use crate::engine::values::epow;
 use crate::flow::Res;
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
 use crate::rng::Rng;
+use crate::satsum::SatSum;
 use crate::state::{Ctx, Game};
 use crate::sym::Sym;
 
@@ -77,10 +77,7 @@ pub fn is_main(key: &str) -> bool {
 /// replaced by the generic ability value
 /// JD's own ten decks (the 10/18 AI audit scope; Avery's Alela and Galadriel are not included)
 pub fn jd_deck(key: &str) -> bool {
-    matches!(
-        key,
-        "yshtola" | "omnath" | "sheoldred" | "cloud" | "sephfs"
-    )
+    matches!(key, "yshtola" | "omnath" | "sheoldred" | "cloud" | "sephfs")
 }
 
 // --- phase4-hand-off: the decks whose hand-written AI was deleted (`audit/phase4/hand-off-design.md`, "Deleted")

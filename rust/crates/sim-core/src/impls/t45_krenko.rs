@@ -36,11 +36,11 @@
 //! Mana Echoes (unbounded Goblins and mana; it wins through a payoff or hasty Goblins before combat).
 
 use crate::cards::{CardDb, Colors, Types};
-use crate::engine::pool::Kind;
 use crate::engine::combat::has_haste;
 use crate::engine::control::{Duration, gain_control};
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::pool::Kind;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::values::{card_name, has_type, pval, subtypes, threat};
 use crate::engine::zones::{Enter, Tokens, die, enter, make_tokens, max_by, min_by, sac_worth};
@@ -380,7 +380,11 @@ fn untap_gain(g: &mut Game, p: PlayerId, m: PermId, post: Option<bool>) -> Res<f
 }
 
 fn untapper_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>, legendary: bool) -> Res<Vec<Opt>> {
-    if owner(g, src) != p || !live(g, src) || g.perm(src).tapped || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false) {
+    if owner(g, src) != p
+        || !live(g, src)
+        || g.perm(src).tapped
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)
+    {
         return Ok(vec![]);
     }
     let cands: Vec<PermId> = g
@@ -417,7 +421,11 @@ fn elixir_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Re
 
 fn untap_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let m = PermId(arg as u32);
-    if g.perm(src).tapped || !live(g, m) || owner(g, m) != p || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false) {
+    if g.perm(src).tapped
+        || !live(g, m)
+        || owner(g, m) != p
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)
+    {
         return Ok(false);
     }
     pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)?;

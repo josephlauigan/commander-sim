@@ -935,9 +935,9 @@ impl Player {
             delayed_draws: 0,
             to_top: false,
             known_top: vec![], // --- ai-fix: B
-            tutored: vec![], // --- phase4-rules
-            plan_tutor: None, // --- ai-planner
-            plan_x: None, // --- t6-xtutor
+            tutored: vec![],   // --- phase4-rules
+            plan_tutor: None,  // --- ai-planner
+            plan_x: None,      // --- t6-xtutor
             last_turn_end: 0,
             gy_start: vec![],
             chasm_age: 0,
@@ -1037,7 +1037,13 @@ impl Player {
 
     /// the commander tax of this commander card (+2 for each earlier cast from the command zone)
     pub fn tax_of(&self, c: CardId) -> u32 {
-        if c == self.cmd { self.tax } else if self.cmd2 == Some(c) { self.tax2 } else { 0 }
+        if c == self.cmd {
+            self.tax
+        } else if self.cmd2 == Some(c) {
+            self.tax2
+        } else {
+            0
+        }
     }
 
     pub fn add_tax(&mut self, c: CardId) {

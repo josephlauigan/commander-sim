@@ -4,21 +4,21 @@
 //! The choices the heuristic AI makes here (which player to attack, which creatures stay home, chump blocks) are
 //! `ai.rs`'s; the look-ahead's attack plan comes in M4.
 
-use crate::satsum::SatSum;
-use crate::ai::hand_key; // --- phase4-hand-off
-use crate::engine::repl;
 use crate::ai;
+use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cardcode;
 use crate::cards::Types;
 use crate::engine::hooks::{self, fire_trigger};
 use crate::engine::life::{check_state, gain, lose_life, prevents_damage};
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::repl;
 use crate::engine::stack::{step_priority, trigger_window};
 use crate::engine::values::*;
 use crate::engine::zones::*;
 use crate::flow::Res;
 use crate::hooks::{Call, Event};
 use crate::ids::{PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::{DataKey, Game, Val};
 use crate::tag::Tag;
 
@@ -115,7 +115,8 @@ pub fn can_block(g: &Game, b: PermId, a: PermId) -> bool {
         return false; // Speed, Young Avenger: only creatures with haste can block it
     }
     if cardcode::granted_kw(g, a, "forestwalk")
-        && g.player(xb.owner).lands.iter().any(|&l| crate::impls::t3_marwyn::is_forest(g, l)) // Yavimaya: every land
+        && g.player(xb.owner).lands.iter().any(|&l| crate::impls::t3_marwyn::is_forest(g, l))
+    // Yavimaya: every land
     {
         return false;
     }
@@ -281,7 +282,11 @@ fn redirect_dropped(
 ) -> Res {
     let from: Vec<PlayerId> = dropped.iter().map(|x| x.0).collect();
     let mut pool: Vec<PermId> = dropped.iter().map(|x| x.1).filter(|&m| g.perm(m).on_bf && !g.perm(m).tapped).collect();
-    if pool.is_empty() || pool.iter().chain(kept.iter().flat_map(|x| x.1.iter())).any(|&m| card_name(g, m) == Some("Master of Cruelties"))
+    if pool.is_empty()
+        || pool
+            .iter()
+            .chain(kept.iter().flat_map(|x| x.1.iter()))
+            .any(|&m| card_name(g, m) == Some("Master of Cruelties"))
     {
         return Ok(()); // attacks alone: the rest stays home
     }
@@ -308,7 +313,13 @@ fn redirect_dropped(
             continue;
         }
         pool.retain(|m| !go.contains(m));
-        crate::glog!(g, "  {} sends {} more creature(s) at {} (kept off their first defender by a tax)", g.player(p).name, go.len(), g.player(q).name);
+        crate::glog!(
+            g,
+            "  {} sends {} more creature(s) at {} (kept off their first defender by a tax)",
+            g.player(p).name,
+            go.len(),
+            g.player(q).name
+        );
         match kept.iter_mut().find(|x| x.0 == q) {
             Some(x) => x.1.extend(go),
             None => kept.push((q, go)),
@@ -355,7 +366,8 @@ pub fn split_attack(
     }
     let hooked = !g.hooks.is_empty();
     let tax = |q: PlayerId| if hooked { attack_restrictions(g, p, q).0 } else { 0 };
-    let hit = |a: PermId| epow(g, a).saturating_mul(if double_strike(g, a) { 2 } else { 1 }).saturating_mul(fiery(g, p));
+    let hit =
+        |a: PermId| epow(g, a).saturating_mul(if double_strike(g, a) { 2 } else { 1 }).saturating_mul(fiery(g, p));
     // `to`: where each attacker goes, in the order Python's dict keeps (attackers first, then held ones as moved)
     let mut to: Vec<(PermId, PlayerId)> = atk.iter().map(|&a| (a, d)).collect();
     let dest = |to: &[(PermId, PlayerId)], a: PermId| to.iter().find(|x| x.0 == a).map(|x| x.1);
@@ -626,11 +638,14 @@ pub fn ai_blocks(
 ) -> Vec<(PermId, PermId)> {
     let blockers: Vec<PermId> = untapped_creatures(g, d).collect();
     // --- c3: infect damage is poison counters, not life
-    let life_dmg = |m: PermId| if kw(g, m, "infect") { 0 } else { epow(g, m).saturating_mul(if double_strike(g, m) { 2 } else { 1 }) };
+    let life_dmg = |m: PermId| {
+        if kw(g, m, "infect") { 0 } else { epow(g, m).saturating_mul(if double_strike(g, m) { 2 } else { 1 }) }
+    };
     let mut incoming: i32 = atk.iter().map(|&m| life_dmg(m)).ssum();
     let (fd, fp) = (fiery(g, d), fiery(g, p));
     // --- c3: infect and toxic attackers threaten d's poison, not its life: ten counters end the game as forty life do
-    let mut poison_in: i32 = if crate::engine::repl::poison_ok(g, d) { atk.iter().map(|&m| poison_hit(g, m)).ssum() } else { 0 };
+    let mut poison_in: i32 =
+        if crate::engine::repl::poison_ok(g, d) { atk.iter().map(|&m| poison_hit(g, m)).ssum() } else { 0 };
     let poison_left = (10 - g.player(d).poison as i32).max(1) as f64;
     let mut assign = vec![];
     let mut used: Vec<PermId> = vec![];
@@ -652,7 +667,10 @@ pub fn ai_blocks(
         let good: Vec<PermId> = cands
             .iter()
             .copied()
-            .filter(|&b| (epow(g, b).saturating_mul(fd) >= at || g.perm(b).dt) && !(ap.saturating_mul(fp) >= etgh(g, b) || g.perm(a).dt))
+            .filter(|&b| {
+                (epow(g, b).saturating_mul(fd) >= at || g.perm(b).dt)
+                    && !(ap.saturating_mul(fp) >= etgh(g, b) || g.perm(a).dt)
+            })
             .collect();
         let b = if let Some(b) = min_by(&good, |x| pval(g, x)) {
             b
@@ -660,7 +678,9 @@ pub fn ai_blocks(
             let trade: Vec<PermId> = cands
                 .iter()
                 .copied()
-                .filter(|&b| epow(g, b).saturating_mul(fd) >= at || g.perm(b).dt || card_name(g, b) == Some("Defiant Vanguard"))
+                .filter(|&b| {
+                    epow(g, b).saturating_mul(fd) >= at || g.perm(b).dt || card_name(g, b) == Some("Defiant Vanguard")
+                })
                 .collect();
             if !trade.is_empty() && pval(g, a) >= trade.iter().map(|&x| pval(g, x)).fold(f64::INFINITY, f64::min) {
                 min_by(&trade, |x| pval(g, x)).unwrap()
@@ -822,17 +842,27 @@ pub fn resolve_blocks(
                     let bt = etgh(g, b);
                     let t0 = crate::impls::t0_giada::combat_proof;
                     let gs = crate::impls::t3_aurelia::gisela_scale; // Gisela, Blade of Goldnight
-                    let mut a_dies = (gs(g, p, epow(g, b)
-                        .saturating_mul(crate::impls::kuja::flare_star(g, Some(b)))
-                        .saturating_mul(fiery(g, d))
-                        .saturating_mul(crate::engine::life::stagger_mult(g, p))) >= etgh(g, a) || g.perm(b).dt)
+                    let mut a_dies = (gs(
+                        g,
+                        p,
+                        epow(g, b)
+                            .saturating_mul(crate::impls::kuja::flare_star(g, Some(b)))
+                            .saturating_mul(fiery(g, d))
+                            .saturating_mul(crate::engine::life::stagger_mult(g, p)),
+                    ) >= etgh(g, a)
+                        || g.perm(b).dt)
                         && !protected_from(g, a, colors_of(g, b))
                         && !repl::no_damage(g, a)
                         && !t0(g, a);
                     if repl::source_prevented(g, b) {
                         a_dies = false;
                     }
-                    let mut b_dies = (gs(g, d, ap.saturating_mul(fiery(g, p)).saturating_mul(crate::engine::life::stagger_mult(g, d))) >= bt || g.perm(a).dt)
+                    let mut b_dies = (gs(
+                        g,
+                        d,
+                        ap.saturating_mul(fiery(g, p)).saturating_mul(crate::engine::life::stagger_mult(g, d)),
+                    ) >= bt
+                        || g.perm(a).dt)
                         && !protected_from(g, b, colors_of(g, a))
                         && !repl::no_damage(g, b)
                         && !t0(g, b);
@@ -951,9 +981,7 @@ pub fn resolve_blocks(
                 dmg = 0; // --- Tiers 1/2 (lightpaws): Pariah: dealt to the enchanted creature instead
             }
             // --- Tiers 1/2 (kaalia-sythis): Serra's Emissary (protection from creatures)
-            if dmg > 0
-                && (prevents_damage(g, d, Some(p)) || crate::impls::t12_kaalia_sythis::emissary_shields(g, d))
-            {
+            if dmg > 0 && (prevents_damage(g, d, Some(p)) || crate::impls::t12_kaalia_sythis::emissary_shields(g, d)) {
                 // protection / Glacial Chasm: no damage, lifelink, commander damage or triggers
                 if crate::impls::cloud::judgment_shield(g, d, Some(p)) {
                     let twice = double_strike(g, a) && blocker_of(&assign, a).is_none() && dmg % 2 == 0;
@@ -1138,8 +1166,7 @@ pub fn walker_attacks(
         if !battle && pval(g, w) < 4.0 && cardcode::ult_pressure(g, w) < 0.6 {
             continue;
         }
-        let mut need =
-            if battle { crate::impls::card_models3::defense(g, w) } else { g.perm(w).loyalty.unwrap_or(0) };
+        let mut need = if battle { crate::impls::card_models3::defense(g, w) } else { g.perm(w).loyalty.unwrap_or(0) };
         let wanderer = card_name(g, w) == Some("The Eternal Wanderer"); // no more than one creature can attack it
         let mut cap = if wanderer { 1 } else { 99 };
         let mut avail: Vec<PermId> = free.iter().copied().filter(|a| !out.iter().any(|x| x.0 == *a)).collect();

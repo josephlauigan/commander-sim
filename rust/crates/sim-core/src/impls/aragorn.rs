@@ -119,10 +119,8 @@ fn pump(g: &mut Game, p: PlayerId) -> Res {
         return Ok(());
     }
     let m = if crate::human::is_human(g, p) {
-        let labels: Vec<String> = all
-            .iter()
-            .map(|&m| format!("{} ({})", g.perm(m).name, g.player(g.perm(m).owner).name))
-            .collect();
+        let labels: Vec<String> =
+            all.iter().map(|&m| format!("{} ({})", g.perm(m).name, g.player(g.perm(m).owner).name)).collect();
         let i = crate::human::choices::choose_one(g, p, "target", "Aragorn: target creature gets +4/+4", &labels)?;
         all[i.min(all.len() - 1)]
     } else {

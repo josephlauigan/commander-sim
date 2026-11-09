@@ -2,21 +2,21 @@
 //! card tags, per-deck configuration (`plans`), protection and wipe answers from a table of protectors, generic plays
 //! (equip, Skullclamp, Deadly Dispute, reanimation, X spells) and attack rules.
 
-use crate::satsum::SatSum;
 use super::brain::Situation;
 use super::{Style, decks, plans};
-use crate::engine::repl;
 use crate::cards::Types;
 use crate::engine::cast::{castable, discard_worst, on_cast, sac_fodder};
 use crate::engine::combat::can_block;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::{apply_removal, legal_targets};
+use crate::engine::repl;
 use crate::engine::values::{commander_out, epow, etgh, find, has_type, pval, stopped, untargetable};
 use crate::engine::zones::{Enter, die, draw, enter, leave, max_by, min_by, searchable, teferis_protection};
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
+use crate::satsum::SatSum;
 use crate::state::{Ctx, Game};
 use crate::sym::Sym;
 use crate::tag::Tag;
@@ -73,16 +73,16 @@ pub fn tutor_prio(g: &Game, p: PlayerId, kind: &str, life: i32) -> i32 {
 pub fn search_kind(g: &Game, c: CardId) -> Option<&'static str> {
     use crate::dsl::model::Ability;
     g.db.get(c).abilities.iter().find_map(|a| match a {
-        Ability::Spell { effects } => effects.iter().filter(|e| e.kind == "search").find_map(|e| {
-            match e.filter.as_ref()?.kind.as_deref()? {
+        Ability::Spell { effects } => {
+            effects.iter().filter(|e| e.kind == "search").find_map(|e| match e.filter.as_ref()?.kind.as_deref()? {
                 "ae" => Some("ae"),
                 "artifact" => Some("art"),
                 "enchantment" => Some("ench"),
                 "creature" => Some("cre"),
                 "instant_or_sorcery" => Some("is"),
                 _ => None,
-            }
-        }),
+            })
+        }
         _ => None,
     })
 }
@@ -140,8 +140,15 @@ fn generic_prio_base(g: &Game, p: PlayerId, c: CardId) -> i32 {
     // The derived worth could not see the engine, and it sat in Miirym's hand for eight turns with 14 mana spare.
     if t.has(Tag::Uprising) && !d.creature {
         let big = |m: &PermId| g.is_creature(*m) && !g.perm(*m).phased && epow(g, *m) >= 4;
-        let coming = pl.hand.iter().filter(|&&x| !g.db.get(x).land && g.db.get(x).creature && g.db.get(x).pow >= 4).count();
-        return if pl.perms.iter().any(big) { 60 } else if coming >= 2 { 50 } else { 0 };
+        let coming =
+            pl.hand.iter().filter(|&&x| !g.db.get(x).land && g.db.get(x).creature && g.db.get(x).pow >= 4).count();
+        return if pl.perms.iter().any(big) {
+            60
+        } else if coming >= 2 {
+            50
+        } else {
+            0
+        };
     }
     if super::values::on(g, p) {
         return derived_prio(g, p, c); // --- phase4-values
@@ -472,7 +479,11 @@ pub fn derived_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     if d.perm && crate::cardcode::is_combo_piece(g, c) {
         return derived().max(48);
     }
-    if d.perm && !d.creature && g.registry.get(c).is_some_and(|i| i.live()) && let Some(v) = cfg.hooked_prio {
+    if d.perm
+        && !d.creature
+        && g.registry.get(c).is_some_and(|i| i.live())
+        && let Some(v) = cfg.hooked_prio
+    {
         return v; // the plan file's knob
     }
     derived()
@@ -728,7 +739,12 @@ pub fn spell_options(g: &Game, p: PlayerId, s: &Situation, post: Option<bool>) -
         let d = g.db.get(c);
         let t = &d.tags;
         let fill = t.str(Tag::Fill);
-        let payable = || castable(g, p, c, "hand") && { let (cg, cp) = cost_of(g, p, c); can_pay(g, p, cg, &cp, false) };
+        let payable = || {
+            castable(g, p, c, "hand") && {
+                let (cg, cp) = cost_of(g, p, c);
+                can_pay(g, p, cg, &cp, false)
+            }
+        };
         if fill == Some("grisly")
             && payable()
             && (pl.lands.len() < 6
@@ -760,7 +776,8 @@ pub fn spell_options(g: &Game, p: PlayerId, s: &Situation, post: Option<bool>) -
         if let Some(r) = t.str(Tag::Rean)
             && matches!(r, "animate" | "reanimate" | "evil" | "zombify")
             && payable()
-            && !crate::impls::t45_winota::jailed(g) // --- Tiers 4/5 (winota): Soulless Jailer
+            && !crate::impls::t45_winota::jailed(g)
+        // --- Tiers 4/5 (winota): Soulless Jailer
         {
             let mut tg = decks::rean_targets(g, p, r);
             if r == "reanimate" {
@@ -1095,7 +1112,7 @@ const PROTECTORS: [Protector; 31] = [
     ("Alseid of Life's Bounty", Where::BfSac, Some((1, "")), How::Color, Scope::One, false),
     ("Siren Stormtamer", Where::BfSac, Some((0, "U")), How::AllTargeted, Scope::One, false), // rules.py
     ("Cartel Aristocrat", Where::BfSacOther, None, How::Color, Scope::Selfish, false),       // rules2.py
-    ("Ainok Strike Leader", Where::BfSac, None, How::TokenIndes, Scope::Creatures, false), // t0_zurgo
+    ("Ainok Strike Leader", Where::BfSac, None, How::TokenIndes, Scope::Creatures, false),   // t0_zurgo
     // --- Tier 3 (marwyn): hexproof until end of turn (split second: no response)
     ("Legolas's Quick Reflexes", Where::Hand, Some((0, "G")), How::AllTargeted, Scope::One, false),
     // --- Tiers 4/5 (winota): Flare of Fortitude (or a nontoken white creature sacrificed: `use_protector`; life
@@ -1151,7 +1168,9 @@ pub(super) fn worth_holding_for(g: &Game, p: PlayerId, m: PermId) -> bool {
     x.is_cmd
         || x.cd.is_some_and(|c| {
             let n = &g.db.get(c).name;
-            crate::cardcode::is_combo_piece(g, c) || kc.iter().any(|k| *k.0 == **n) || super::plan_data::protects(g, p, n)
+            crate::cardcode::is_combo_piece(g, c)
+                || kc.iter().any(|k| *k.0 == **n)
+                || super::plan_data::protects(g, p, n)
         })
 }
 
@@ -1162,7 +1181,11 @@ fn saves(g: &Game, how: How, kind: &str, m: Option<PermId>, spell: Option<CardId
         How::HexproofIndes => targeted || WIPE_INDES.contains(&kind),
         How::Indes => destroyish(kind) || (!targeted && WIPE_INDES.contains(&kind)),
         How::TokenIndes => {
-            if targeted { destroyish(kind) && m.is_some_and(|m| g.perm(m).token) } else { WIPE_INDES.contains(&kind) }
+            if targeted {
+                destroyish(kind) && m.is_some_and(|m| g.perm(m).token)
+            } else {
+                WIPE_INDES.contains(&kind)
+            }
         }
         // --- generic-paths: Eerie Interlude exiles every nontoken creature from a wipe that hits creatures
         How::Interlude if !targeted => !matches!(kind, "vandal" | "evac"),
@@ -1615,7 +1638,9 @@ fn wipe_heuristic(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> Res
 
 // ------------------------------------------------------------------ attacking (outside decks)
 fn evasive(g: &Game, m: PermId) -> bool {
-    crate::dsl::has_kw(g, m, "unblockable") || g.perm(m).fly || crate::dsl::has_kw(g, m, "flying")
+    crate::dsl::has_kw(g, m, "unblockable")
+        || g.perm(m).fly
+        || crate::dsl::has_kw(g, m, "flying")
         || crate::impls::t45_yuriko::evasive(g, m) // Tiers 4/5 (yuriko): fear, Mothdust Changeling
 }
 
@@ -1664,9 +1689,7 @@ pub fn attack_filter(g: &mut Game, p: PlayerId, atk: Vec<PermId>, d: PlayerId) -
     // --- casual speed: the good blockers only (one that kills a risky attacker and survives it), not every creature
     // that can block one: each blocks a single attacker, so the rest of the risky ones get through
     let good_vs = |b: PermId, a: PermId| {
-        can_block(g, b, a)
-            && (epow(g, b) >= etgh(g, a) || g.perm(b).dt)
-            && !(epow(g, a) >= etgh(g, b) || g.perm(a).dt)
+        can_block(g, b, a) && (epow(g, b) >= etgh(g, a) || g.perm(b).dt) && !(epow(g, a) >= etgh(g, b) || g.perm(a).dt)
     };
     let n_good_blockers = blockers.iter().filter(|&&b| risky.iter().any(|&a| good_vs(b, a))).count();
     if risky.len() > n_good_blockers + 1 {

@@ -33,10 +33,10 @@
 //!   until end of turn; 0 a 1/1 Elf Warrior; -6 the emblem (an Elf spell you cast: draw two, and it has haste that
 //!   turn: engine/combat.rs `has_haste`).
 
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::life::{check_state, lose_life};
 use crate::engine::mana::{Source, Unit, can_pay, pay, total_mana};
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{epow, etgh, has_type, no_sac, pval, untargetable};

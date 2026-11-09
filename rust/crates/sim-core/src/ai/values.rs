@@ -194,7 +194,8 @@ fn effects_into(pr: &mut Profile, effects: &[Effect], rep: bool) {
             "extra_land" | "put_land" => pr.mana += 0.7,
             // a land of your own sacrificed (Roiling Regrowth): a land less
             "sacrifice"
-                if e.who.as_deref() == Some("you") && e.filter.as_ref().and_then(|f| f.kind.as_deref()) == Some("land") =>
+                if e.who.as_deref() == Some("you")
+                    && e.filter.as_ref().and_then(|f| f.kind.as_deref()) == Some("land") =>
             {
                 pr.mana -= n
             }
@@ -596,7 +597,13 @@ pub fn worth_parts(g: &Game, p: PlayerId, c: CardId, held: bool) -> [f64; 8] {
     if pr.removal && (held || d.perm) {
         let b = best_target(g, p, c);
         // no target now: worth keeping (held), nothing to cast it at (Seal of Cleansing with no artifact out)
-        removal += if b > 0.0 { 2.5 + 0.35 * b } else if held { 1.5 } else { 0.0 };
+        removal += if b > 0.0 {
+            2.5 + 0.35 * b
+        } else if held {
+            1.5
+        } else {
+            0.0
+        };
     }
     if pr.sweep && (held || !held_spell) {
         let theirs: f64 = g.opps(p).flat_map(|q| g.player(q).perms.iter().copied()).map(|m| pval_for(g, p, m)).sum();

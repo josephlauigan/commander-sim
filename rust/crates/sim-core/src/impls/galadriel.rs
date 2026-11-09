@@ -21,27 +21,27 @@
 //! of this file.
 
 use super::partials::at_once;
-use crate::engine::mana::restr_ok;
-use crate::engine::pool::Restr;
-use crate::engine::pool::Kind;
-use crate::engine::repl;
 use crate::ai::decks::protect_response;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::cast_card;
+use crate::engine::mana::restr_ok;
 use crate::engine::mana::{can_pay, pay, total_mana};
+use crate::engine::pool::Kind;
+use crate::engine::pool::Restr;
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{
-    ALL_TYPES, card_name, colors_of, epow, etgh, has_type, maskwood as maskwood_on,
-    once_per_turn, protected_from, pval, subtypes, untargetable,
+    ALL_TYPES, card_name, colors_of, epow, etgh, has_type, maskwood as maskwood_on, once_per_turn, protected_from,
+    pval, subtypes, untargetable,
 };
 use crate::engine::zones::{
     Enter, Tokens, Zone, die, draw, enter, landfall, leave, make_tokens, max_by, searchable, to_zone_card,
 };
 use crate::flow::Res;
-use crate::human::{cards, choices, human_of};
 use crate::hooks::{Action, Event, Opt, Registry, Src};
+use crate::human::{cards, choices, human_of};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, DataKey, Game, Step, Val};
 use crate::sym::{Sym, intern};
@@ -185,12 +185,8 @@ pub fn choose_type(g: &Game, p: PlayerId, what: &str) -> Res<Sym> {
             return Ok(ts[k]);
         }
         // any creature type: every one on a creature card in the card database, A to Z
-        let mut all: Vec<Sym> = g
-            .db
-            .iter()
-            .filter(|d| d.creature)
-            .flat_map(|d| d.subtypes.iter().map(|t| intern(t)))
-            .collect();
+        let mut all: Vec<Sym> =
+            g.db.iter().filter(|d| d.creature).flat_map(|d| d.subtypes.iter().map(|t| intern(t))).collect();
         all.sort_unstable();
         all.dedup();
         let labels: Vec<String> = all.iter().map(|&t| title(t)).collect();
@@ -346,7 +342,13 @@ pub fn shapeshifter(g: &mut Game, p: PlayerId) -> Res {
 /// Shapeshifter with changeling, with spare mana at an opponent's end step
 fn maskwood_ai(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let x = g.perm(src);
-    if p != x.owner || x.tapped || x.phased || post.is_some() || g.active == Some(p) || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false) {
+    if p != x.owner
+        || x.tapped
+        || x.phased
+        || post.is_some()
+        || g.active == Some(p)
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false)
+    {
         return Ok(vec![]);
     }
     Ok(vec![ability(1.6 + fetch_bonus(g, p), "Maskwood Nexus: a Shapeshifter".into(), src, maskwood_go, 0)])
@@ -857,7 +859,8 @@ fn tapper_use(g: &mut Game, p: PlayerId, src: PermId, t: PermId, gen_: u32, pips
     pay(g, p, gen_, pips, false)?;
     g.perm_mut(src).tapped = true;
     crate::glog!(g, "  {} activates {}: tap {}", pname(g, p), name_of(g, src), name_of(g, t));
-    if ability_window(g, p, Some(src), &format!("tap {}", name_of(g, t)), None, Some(t))? && on_bf(g, t)
+    if ability_window(g, p, Some(src), &format!("tap {}", name_of(g, t)), None, Some(t))?
+        && on_bf(g, t)
         && crate::engine::ward::pay_ward(g, p, t)?
     {
         g.perm_mut(t).tapped = true;
@@ -1450,10 +1453,8 @@ fn genesis(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
         if !lands.is_empty() {
             let names: Vec<String> = top.iter().map(|&x| g.db.get(x).name.to_string()).collect();
             let labels: Vec<String> = lands.iter().map(|&x| g.db.get(x).name.to_string()).collect();
-            let prompt = format!(
-                "Planar Genesis: put a land onto the battlefield tapped? (top four: {})",
-                names.join(", ")
-            );
+            let prompt =
+                format!("Planar Genesis: put a land onto the battlefield tapped? (top four: {})", names.join(", "));
             land = choices::choose(g, p, "choose", &prompt, &labels, Some("no land"), None)?.map(|k| lands[k]);
         }
         if land.is_none() && !top.is_empty() {

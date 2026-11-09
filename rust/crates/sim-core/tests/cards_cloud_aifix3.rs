@@ -73,4 +73,3 @@ fn open_the_armory_with_no_equipment_in_the_library_fetches_nothing() {
     sim_core::engine::cast::cast_card(&mut g, P0, c, "hand", sim_core::state::Ctx::default()).unwrap();
     assert!(g.player(P0).hand.is_empty());
 }
-

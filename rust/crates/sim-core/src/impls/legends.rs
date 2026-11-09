@@ -12,16 +12,16 @@
 //! engine._land_cols calls by name) are here too.
 
 use super::common::{WalkerAb, best_opp_creature, best_opp_nonland, oring_exile, oring_return, walker};
-use crate::engine::mana::restr_ok;
-use crate::engine::pool::Restr;
 use super::lands::{can_pay_without, sac_land};
 use super::partials::{at_once, eot_kw, first_max, first_min, on, pack, remove_card, unpack};
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, copy_spell, on_cast};
 use crate::engine::life::{check_state, gain, lose_life};
+use crate::engine::mana::restr_ok;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::pool::Restr;
 use crate::engine::removal::{apply_removal, legal_targets};
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, ability_window_card, counter_window, equip_to, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::values::{

@@ -223,18 +223,27 @@ pub fn bolas_flip(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool
     crate::glog!(g, "  {} activates Nicol Bolas: exile him, return him transformed", g.player(p).name);
     // (a copy by a person's Rings of Brighthearth / Peter Parker's Camera does it first; the ability itself then finds
     // Bolas gone, as the rules have it: the new object is not the one it was to exile)
-    crate::engine::stack::ability_run(g, p, Some(src), None, "exile Nicol Bolas, return him transformed", None, None, |g| {
-        if !g.perm(src).on_bf {
-            return Ok(());
-        }
-        let front = g.perm(src).cd;
-        crate::engine::zones::leave(g, src)?;
-        let m = crate::engine::zones::enter(g, p, back, Enter::default())?;
-        // a transformed card is its front face in every other zone: if the Arisen leaves, the creature card goes there
-        g.perm_mut(m).phys = front;
-        crate::glog!(g, "    Nicol Bolas, the Arisen enters with 7 loyalty");
-        Ok(())
-    })?;
+    crate::engine::stack::ability_run(
+        g,
+        p,
+        Some(src),
+        None,
+        "exile Nicol Bolas, return him transformed",
+        None,
+        None,
+        |g| {
+            if !g.perm(src).on_bf {
+                return Ok(());
+            }
+            let front = g.perm(src).cd;
+            crate::engine::zones::leave(g, src)?;
+            let m = crate::engine::zones::enter(g, p, back, Enter::default())?;
+            // a transformed card is its front face in every other zone: if the Arisen leaves, the creature card goes there
+            g.perm_mut(m).phys = front;
+            crate::glog!(g, "    Nicol Bolas, the Arisen enters with 7 loyalty");
+            Ok(())
+        },
+    )?;
     Ok(true)
 }
 

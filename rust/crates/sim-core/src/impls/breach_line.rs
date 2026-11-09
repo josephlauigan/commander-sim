@@ -8,7 +8,7 @@
 //! Ritual, Rite of Flame) only {R} (the pool keeps them as black and red mana), so black ritual mana never pays
 //! Grapeshot's {R}, and neither pays Brain Freeze's {U}.
 
-use crate::engine::cast::{castable, cast_card, casts_this_turn};
+use crate::engine::cast::{cast_card, castable, casts_this_turn};
 use crate::engine::life::check_state;
 use crate::engine::mana::{Source, mana_units, pay, total_mana};
 use crate::engine::pool::Kind;

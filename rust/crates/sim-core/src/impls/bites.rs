@@ -15,11 +15,11 @@
 //! Tests: tests/cards_bites.rs.
 
 use super::partials::eot_kw;
-use crate::engine::repl;
 use crate::cards::CardDb;
 use crate::engine::cast::{castable, is_casts};
 use crate::engine::mana::{can_pay, cost_of};
 use crate::engine::removal::{apply_removal, legal_targets};
+use crate::engine::repl;
 use crate::engine::stack::{may_window, trigger_window};
 use crate::engine::values::{epow, etgh, once_per_turn, pval};
 use crate::engine::zones::{Zone, die, draw, leave, max_by, to_zone_card};

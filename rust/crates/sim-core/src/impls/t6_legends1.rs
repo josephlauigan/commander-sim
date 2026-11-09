@@ -2,10 +2,10 @@
 //! Marvin, Shang-Chi, Tyvar, Loki's Scepter). Cards only: no shared engine code is changed here (what the engine
 //! must still learn is in rust/agents/engine-needs-legends1.md). Each card's doc comment says how it is modeled.
 
+use crate::engine::mana::{can_pay, pay};
 use crate::engine::repl;
 use crate::engine::stack::trigger_window;
 use crate::engine::values::{epow, pval, untargetable};
-use crate::engine::mana::{can_pay, pay};
 use crate::engine::zones::{die, draw, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -127,7 +127,6 @@ fn derevi_hit(g: &mut Game, src: Src, p: PlayerId, _a: PermId, d: PlayerId, _dmg
     Ok(())
 }
 
-
 // ================================================================== Emiel the Blessed
 /// **Emiel the Blessed**: {3}: blink another creature you control (compiled from the Oracle text). Whenever another
 /// creature you control enters, you may pay {G/W} (paid with W, else G) to put a +1/+1 counter on it (two if it is a
@@ -161,7 +160,8 @@ fn selvala_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         return Ok(());
     }
     let pw = epow(g, m);
-    let all: Vec<PermId> = std::iter::once(p).chain(g.opps(p))
+    let all: Vec<PermId> = std::iter::once(p)
+        .chain(g.opps(p))
         .flat_map(|q| g.player(q).perms.clone())
         .filter(|&x| x != m && live(g, x) && g.is_creature(x))
         .collect();
@@ -175,7 +175,8 @@ fn selvala_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
 }
 
 fn selvala_mana(g: &Game, p: PlayerId, _m: PermId) -> u32 {
-    let x = g.player(p).perms.iter().filter(|&&y| live(g, y) && g.is_creature(y)).map(|&y| epow(g, y)).max().unwrap_or(0);
+    let x =
+        g.player(p).perms.iter().filter(|&&y| live(g, y) && g.is_creature(y)).map(|&y| epow(g, y)).max().unwrap_or(0);
     (x - 1).max(0) as u32
 }
 
@@ -237,7 +238,8 @@ fn cauldron_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 /// (life 6 or less) with {3} spare. Not modeled: "as it enters, you may exchange its text box and another creature's"
 /// (see engine-needs-legends1.md).
 fn deadpool_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post == Some(true) || !live(g, src) || owner(g, src) != p || g.player(p).life > 6 || !can_pay(g, p, 3, "", false) {
+    if post == Some(true) || !live(g, src) || owner(g, src) != p || g.player(p).life > 6 || !can_pay(g, p, 3, "", false)
+    {
         return Ok(vec![]);
     }
     Ok(vec![Opt {

@@ -19,7 +19,6 @@
 //! - Slayers' Stronghold, Sunhome, Fortress of the Legion: the lands' pump abilities.
 //! - Sunforger: {R}{W}, unattach: cast a red or white instant with mana value 4 or less from the library, free.
 
-use crate::satsum::SatSum;
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::{cast_card, spell_targets};
 use crate::engine::combat::{can_block, first_strike, has_haste};
@@ -33,6 +32,7 @@ use crate::engine::zones::{Enter, draw, enter, max_by, searchable};
 use crate::flow::Res;
 use crate::hooks::{Action, Assign, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;

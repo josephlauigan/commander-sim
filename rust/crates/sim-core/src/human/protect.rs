@@ -50,7 +50,9 @@ fn pick_item(g: &Game, q: PlayerId, what: &str, items: &[(u32, CardId, PermId)])
 pub fn not_of_this_world(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<String>> {
     let items: Vec<(u32, CardId, PermId)> = targeted(g).into_iter().filter(|&(_, _, t)| mine(g, q, t)).collect();
     if items.is_empty() {
-        return Ok(Some(format!("{NOTW} counters a spell or ability that targets a permanent you control: there is none.")));
+        return Ok(Some(format!(
+            "{NOTW} counters a spell or ability that targets a permanent you control: there is none."
+        )));
     }
     let Some(k) = pick_item(g, q, NOTW, &items)? else { return Ok(Some("Cancelled.".into())) };
     let (id, _, t) = items[k];

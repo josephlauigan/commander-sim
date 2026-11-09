@@ -66,11 +66,8 @@ pub fn recrown_value(g: &Game, p: PlayerId) -> f64 {
         return 0.0;
     }
     let mon = g.monarch;
-    let cand = g
-        .opps(p)
-        .filter(|&q| g.player(q).alive && Some(q) != mon)
-        .map(|q| steal_value(g, p, q))
-        .fold(0.0, f64::max);
+    let cand =
+        g.opps(p).filter(|&q| g.player(q).alive && Some(q) != mon).map(|q| steal_value(g, p, q)).fold(0.0, f64::max);
     if cand <= 0.0 {
         return 0.0;
     }
@@ -136,14 +133,26 @@ pub fn garland_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     match &*d.name {
         // the creatures are bodies in their own right: a floor of the generic order, more when Garland re-enters
         "Peerless Ropemaster" => {
-            if v >= 2.5 && garland_of(g, p).is_some_and(|m| g.perm(m).tapped) { base.max(70) } else { base }
+            if v >= 2.5 && garland_of(g, p).is_some_and(|m| g.perm(m).tapped) {
+                base.max(70)
+            } else {
+                base
+            }
         }
         "Rescue, Pepper Potts" | "Matterbending Mage" | "Specimen Freighter" | "Skycoach Conductor // All Aboard" => {
-            if v >= 2.0 { base.max(70) } else { base }
+            if v >= 2.0 {
+                base.max(70)
+            } else {
+                base
+            }
         }
         // spells that exist for the re-entry
         _ => {
-            if v >= 2.0 { 66 } else { 0 }
+            if v >= 2.0 {
+                66
+            } else {
+                0
+            }
         }
     }
 }

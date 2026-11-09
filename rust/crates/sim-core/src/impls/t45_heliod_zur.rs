@@ -41,12 +41,12 @@
 //! - Imprisoned in the Moon: removal kind `moon` (data/card_overrides.toml): the creature or planeswalker becomes a
 //!   colourless land (a Wastes) for good.
 
-use crate::engine::repl;
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::cast_card;
 use crate::engine::life::gain;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::trigger_window;
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{epow, pval, untargetable};

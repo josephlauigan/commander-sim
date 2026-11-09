@@ -1,15 +1,15 @@
 //! Casting: costs beyond mana, what may be cast, what happens on a cast (cast triggers, magecraft, copies), casting a
 //! card through the stack, and resolving it (engine.py's "casting" section, cast_card, resolve).
 
-use crate::engine::repl;
-use crate::engine::pool::Kind;
 use crate::ai;
 use crate::cardcode;
 use crate::cards::Types;
 use crate::engine::hooks::{self, fire_trigger};
 use crate::engine::life::{check_state, gain, lose_life};
 use crate::engine::mana::{can_pay, pay, total_mana};
+use crate::engine::pool::Kind;
 use crate::engine::removal::{apply_removal, apply_wipe, legal_targets};
+use crate::engine::repl;
 use crate::engine::stack::{counter_window, counterable, stack_window_item, trigger_window};
 use crate::engine::tutors::{ad_nauseam, card_worth, jeskas_will, pile_tutor, tutor, tutor_to_top};
 use crate::engine::values::*;
@@ -683,8 +683,11 @@ pub fn discard_worst(g: &mut Game, p: PlayerId, n: u32) -> Res {
         let hand = ai::rules::spare_tutored(g, p, &hand).unwrap_or(hand); // --- phase4-rules: not a card just tutored
         // Tergrid, God of Fright takes a discarded permanent card: an instant or sorcery goes first, else the cheapest
         if g.opps(p).any(|q| crate::engine::values::has(g, q, crate::tag::Tag::Tergrid)) {
-            let spells: Vec<CardId> = hand.iter().copied().filter(|&x| !g.db.get(x).perm && !g.db.get(x).land).collect();
-            let pick = |v: &[CardId]| min_by(v, |x: CardId| g.db.get(x).cmc as f64 + if keep.contains(&x) { 100.0 } else { 0.0 });
+            let spells: Vec<CardId> =
+                hand.iter().copied().filter(|&x| !g.db.get(x).perm && !g.db.get(x).land).collect();
+            let pick = |v: &[CardId]| {
+                min_by(v, |x: CardId| g.db.get(x).cmc as f64 + if keep.contains(&x) { 100.0 } else { 0.0 })
+            };
             if let Some(x) = pick(&spells).or_else(|| pick(&hand)) {
                 discard_cards(g, p, &[x])?;
                 continue;
@@ -1126,7 +1129,10 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         }
         return Ok(());
     }
-    if !perm && &*d.name == "Dark Endurance" && let Some(t) = ctx.target.filter(|&t| g.perm(t).on_bf) {
+    if !perm
+        && &*d.name == "Dark Endurance"
+        && let Some(t) = ctx.target.filter(|&t| g.perm(t).on_bf)
+    {
         // a person chose its target as they cast it (the AI casts it through `endurance_protect`, never here)
         crate::impls::tymna_cards::endurance_apply(g, t);
     }
@@ -1183,7 +1189,13 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
                 .iter()
                 .map(|&q| crate::human::legal::describe_target(g, p, crate::human::Target::Player(q)))
                 .collect();
-            ps[crate::human::choices::choose_one(g, p, "target", "Deep Analysis: which player draws two cards?", &labels)?]
+            ps[crate::human::choices::choose_one(
+                g,
+                p,
+                "target",
+                "Deep Analysis: which player draws two cards?",
+                &labels,
+            )?]
         } else {
             p
         };

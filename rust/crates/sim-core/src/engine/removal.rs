@@ -1,12 +1,12 @@
 //! Removal and wipes (engine.py's "removal" section): legal targets, removing a permanent (with protection, ward and
 //! taxes), enters-the-battlefield removal and Auras that lock their target, board wipes.
 
-use crate::engine::repl;
 use crate::ai;
 use crate::cardcode;
 use crate::cards::{Colors, Types};
 use crate::engine::life::{check_state, gain, lose_life};
 use crate::engine::mana::can_pay;
+use crate::engine::repl;
 use crate::engine::values::*;
 use crate::engine::zones::*;
 use crate::flow::Res;
@@ -467,79 +467,76 @@ pub fn wipe_victim(
     if prot == Some("all") {
         return Ok(());
     }
-        let (mut biggest, mut x_dmg) = (None, 0);
-        if kind == "nib" {
-            let cr: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m)).collect();
-            biggest = NIB_SRC
-                .with(|c| c.get())
-                .filter(|m| cr.contains(m))
-                .or_else(|| max_by(&cr, |m| epow(g, m) as f64));
-            x_dmg = biggest.map_or(0, |b| epow(g, b));
+    let (mut biggest, mut x_dmg) = (None, 0);
+    if kind == "nib" {
+        let cr: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m)).collect();
+        biggest = NIB_SRC.with(|c| c.get()).filter(|m| cr.contains(m)).or_else(|| max_by(&cr, |m| epow(g, m) as f64));
+        x_dmg = biggest.map_or(0, |b| epow(g, b));
+    }
+    for m in g.player(q).perms.clone() {
+        if !g.perm(m).on_bf {
+            continue;
         }
-        for m in g.player(q).perms.clone() {
-            if !g.perm(m).on_bf {
-                continue;
-            }
-            if g.perm(m).phased || (prot == Some("indes") && destroyish.contains(&kind)) {
-                continue;
-            }
-            let ty = crate::engine::values::ptypes(g, m);
-            let cre = g.is_creature(m);
-            let cmc = g.perm(m).cd.map(|c| g.db.get(c).cmc);
-            let wiped = g.perm(m).name.to_string();
-            match kind {
-                "vandal" => {
-                    if ty.has(Types::ARTIFACT) {
-                        die(g, m, "destroy")?;
-                    }
-                }
-                "farewell" | "austere2" => {
-                    let has_mode = |k: &str| modes.contains(&k);
-                    let hit = (has_mode("art") && ty.has(Types::ARTIFACT))
-                        || (has_mode("ench") && ty.has(Types::ENCHANTMENT))
-                        || (has_mode("cre") && cre)
-                        || (has_mode("le3") && cre && cmc.is_none_or(|c| c <= 3))
-                        || (has_mode("ge4") && cre && cmc.is_some_and(|c| c >= 4));
-                    if hit {
-                        if kind == "farewell" { exile_perm(g, m)? } else { die(g, m, "destroy")? }
-                    }
-                }
-                "rift" | "rebuke" => {
-                    if g.perm(m).token {
-                        leave(g, m)?
-                    } else {
-                        bounce(g, m)?
-                    }
-                }
-                _ if !cre => {}
-                "evac" => {
-                    // Evacuation: all creatures to owners' hands
-                    if g.perm(m).token { leave(g, m)? } else { bounce(g, m)? }
-                }
-                "minus" if deluge_x.is_some() => {
-                    if etgh(g, m) <= deluge_x.unwrap() {
-                        die(g, m, "destroy")?; // -X/-X: only toughness X or less
-                    }
-                }
-                "destroy" | "minus" => die(g, m, "destroy")?,
-                "exile" => exile_perm(g, m)?,
-                "dmg13" => {
-                    if etgh(g, m) <= 13 && !repl::no_damage(g, m) {
-                        die(g, m, "destroy")?;
-                    }
-                }
-                "austere" => {
-                    if cmc.is_some_and(|c| c >= 4) {
-                        die(g, m, "destroy")?;
-                    }
-                }
-                "nib" if Some(m) != biggest && etgh(g, m) <= x_dmg && !repl::no_damage(g, m) => die(g, m, "destroy")?,
-                _ => {}
-            }
-            if !g.perm(m).on_bf && !g.perm(m).phased {
-                crate::glog!(g, "      {} ({}) is removed by the wipe ({})", wiped, g.player(q).name, kind);
-            }
+        if g.perm(m).phased || (prot == Some("indes") && destroyish.contains(&kind)) {
+            continue;
         }
+        let ty = crate::engine::values::ptypes(g, m);
+        let cre = g.is_creature(m);
+        let cmc = g.perm(m).cd.map(|c| g.db.get(c).cmc);
+        let wiped = g.perm(m).name.to_string();
+        match kind {
+            "vandal" => {
+                if ty.has(Types::ARTIFACT) {
+                    die(g, m, "destroy")?;
+                }
+            }
+            "farewell" | "austere2" => {
+                let has_mode = |k: &str| modes.contains(&k);
+                let hit = (has_mode("art") && ty.has(Types::ARTIFACT))
+                    || (has_mode("ench") && ty.has(Types::ENCHANTMENT))
+                    || (has_mode("cre") && cre)
+                    || (has_mode("le3") && cre && cmc.is_none_or(|c| c <= 3))
+                    || (has_mode("ge4") && cre && cmc.is_some_and(|c| c >= 4));
+                if hit {
+                    if kind == "farewell" { exile_perm(g, m)? } else { die(g, m, "destroy")? }
+                }
+            }
+            "rift" | "rebuke" => {
+                if g.perm(m).token {
+                    leave(g, m)?
+                } else {
+                    bounce(g, m)?
+                }
+            }
+            _ if !cre => {}
+            "evac" => {
+                // Evacuation: all creatures to owners' hands
+                if g.perm(m).token { leave(g, m)? } else { bounce(g, m)? }
+            }
+            "minus" if deluge_x.is_some() => {
+                if etgh(g, m) <= deluge_x.unwrap() {
+                    die(g, m, "destroy")?; // -X/-X: only toughness X or less
+                }
+            }
+            "destroy" | "minus" => die(g, m, "destroy")?,
+            "exile" => exile_perm(g, m)?,
+            "dmg13" => {
+                if etgh(g, m) <= 13 && !repl::no_damage(g, m) {
+                    die(g, m, "destroy")?;
+                }
+            }
+            "austere" => {
+                if cmc.is_some_and(|c| c >= 4) {
+                    die(g, m, "destroy")?;
+                }
+            }
+            "nib" if Some(m) != biggest && etgh(g, m) <= x_dmg && !repl::no_damage(g, m) => die(g, m, "destroy")?,
+            _ => {}
+        }
+        if !g.perm(m).on_bf && !g.perm(m).phased {
+            crate::glog!(g, "      {} ({}) is removed by the wipe ({})", wiped, g.player(q).name, kind);
+        }
+    }
     Ok(())
 }
 

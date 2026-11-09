@@ -23,7 +23,7 @@ use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::stack::ability_run_w;
 use crate::engine::values::{
-    colors_of, epow, etgh, has_type, hand_count, indestructible, no_sac, protected_from, pval, untargetable,
+    colors_of, epow, etgh, hand_count, has_type, indestructible, no_sac, protected_from, pval, untargetable,
 };
 use crate::engine::zones::{die, mill};
 use crate::flow::Res;
@@ -157,7 +157,9 @@ fn siege_plan(g: &Game, p: PlayerId, src: PermId) -> Option<(Tgt, f64)> {
     // a player the pings finish: the one with the least life
     let mut best: Option<(Tgt, f64)> = None;
     let mut lethal = g.opps(p).filter(|&q| ping_legal(g, p, src, Tgt::Player(q)) && g.player(q).life <= 2 * k as i32);
-    if let Some(q) = lethal.next().map(|first| lethal.fold(first, |a, b| if g.player(b).life < g.player(a).life { b } else { a })) {
+    if let Some(q) =
+        lethal.next().map(|first| lethal.fold(first, |a, b| if g.player(b).life < g.player(a).life { b } else { a }))
+    {
         best = Some((Tgt::Player(q), 8.5));
     }
     // a planeswalker 2 damage finishes, a creature it kills that is worth a Goblin
@@ -220,22 +222,35 @@ pub fn siege_resolve(g: &mut Game, p: PlayerId, src: PermId, t: Tgt, worth_a_cop
     };
     let tp = if let Tgt::Perm(m) = t { Some(m) } else { None };
     let human = crate::human::is_human(g, p);
-    ability_run_w(g, p, Some(src), None, &format!("2 damage to {what}"), Some(6.0), tp, if worth_a_copy { 3.0 } else { 0.0 }, |g, is_copy| {
-        let mut t = t;
-        if is_copy && human {
-            // a copy chooses its target anew
-            let cands = crate::human::choices::damage_targets(g, p, colors_of(g, src));
-            let labels: Vec<String> = cands.iter().map(|&x| crate::human::legal::describe_target(g, p, x)).collect();
-            let prompt = format!("The copy of {}'s ability: 2 damage to which target?", g.perm(src).name);
-            if let Some(k) = crate::human::choices::choose(g, p, "target", &prompt, &labels, Some("keep the target"), None)? {
-                t = match cands[k] {
-                    Target::Player(q) => Tgt::Player(q),
-                    Target::Perm(m) => Tgt::Perm(m),
-                };
+    ability_run_w(
+        g,
+        p,
+        Some(src),
+        None,
+        &format!("2 damage to {what}"),
+        Some(6.0),
+        tp,
+        if worth_a_copy { 3.0 } else { 0.0 },
+        |g, is_copy| {
+            let mut t = t;
+            if is_copy && human {
+                // a copy chooses its target anew
+                let cands = crate::human::choices::damage_targets(g, p, colors_of(g, src));
+                let labels: Vec<String> =
+                    cands.iter().map(|&x| crate::human::legal::describe_target(g, p, x)).collect();
+                let prompt = format!("The copy of {}'s ability: 2 damage to which target?", g.perm(src).name);
+                if let Some(k) =
+                    crate::human::choices::choose(g, p, "target", &prompt, &labels, Some("keep the target"), None)?
+                {
+                    t = match cands[k] {
+                        Target::Player(q) => Tgt::Player(q),
+                        Target::Perm(m) => Tgt::Perm(m),
+                    };
+                }
             }
-        }
-        ping(g, p, src, t, 2)
-    })?;
+            ping(g, p, src, t, 2)
+        },
+    )?;
     Ok(())
 }
 
@@ -321,10 +336,20 @@ pub fn exile_top_playable(g: &mut Game, p: PlayerId) -> Option<crate::ids::CardI
 
 /// the ability after its cost: on the stack, then the exile
 pub fn face_breaker_resolve(g: &mut Game, p: PlayerId, src: PermId) -> Res {
-    ability_run_w(g, p, Some(src), None, "exile the top card, you may play it this turn", Some(4.0), None, 0.0, |g, _| {
-        exile_top_playable(g, p);
-        Ok(())
-    })?;
+    ability_run_w(
+        g,
+        p,
+        Some(src),
+        None,
+        "exile the top card, you may play it this turn",
+        Some(4.0),
+        None,
+        0.0,
+        |g, _| {
+            exile_top_playable(g, p);
+            Ok(())
+        },
+    )?;
     Ok(())
 }
 
@@ -397,14 +422,24 @@ fn tinybones_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> 
 /// the ability on the stack, then each opponent with no cards in hand (as it resolves) loses 10 life
 pub fn tinybones_resolve(g: &mut Game, p: PlayerId, src: PermId) -> Res {
     let worth = if tinybones_victims(g, p).iter().any(|&q| g.player(q).life <= 10) { 3.0 } else { 0.0 };
-    ability_run_w(g, p, Some(src), None, "each opponent with no cards in hand loses 10 life", Some(7.0), None, worth, |g, _| {
-        for q in g.opps(p).collect::<Vec<_>>() {
-            if g.player(q).alive && hand_count(g, q) == 0 && !g.over {
-                lose_life(g, q, 10, Some(p), "other", None)?;
+    ability_run_w(
+        g,
+        p,
+        Some(src),
+        None,
+        "each opponent with no cards in hand loses 10 life",
+        Some(7.0),
+        None,
+        worth,
+        |g, _| {
+            for q in g.opps(p).collect::<Vec<_>>() {
+                if g.player(q).alive && hand_count(g, q) == 0 && !g.over {
+                    lose_life(g, q, 10, Some(p), "other", None)?;
+                }
             }
-        }
-        crate::engine::life::check_state(g)
-    })?;
+            crate::engine::life::check_state(g)
+        },
+    )?;
     Ok(())
 }
 
@@ -431,13 +466,8 @@ fn damage_through(g: &Game, p: PlayerId, q: PlayerId, pumped: bool) -> i32 {
         }
     }
     atk.sort_by_key(|a| -a.1);
-    let mut blockers: Vec<PermId> = g
-        .player(q)
-        .perms
-        .iter()
-        .copied()
-        .filter(|&b| live(g, b) && g.is_creature(b) && !g.perm(b).tapped)
-        .collect();
+    let mut blockers: Vec<PermId> =
+        g.player(q).perms.iter().copied().filter(|&b| live(g, b) && g.is_creature(b) && !g.perm(b).tapped).collect();
     let mut total = 0;
     for (a, pw, trample) in atk {
         let mut cand: Vec<PermId> = blockers.iter().copied().filter(|&b| can_block(g, b, a)).collect();

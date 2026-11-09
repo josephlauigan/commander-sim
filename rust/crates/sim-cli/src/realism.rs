@@ -266,7 +266,13 @@ pub fn render(m: &BTreeMap<&'static str, Measured>, targets: &Targets) -> (Strin
                     num(v.value, st.unit),
                     num(t.value, st.unit),
                     format!("{}-{}", t.lo, t.hi),
-                    if !t.scored { "reference" } else if ok { "PASS" } else { "FAIL" }
+                    if !t.scored {
+                        "reference"
+                    } else if ok {
+                        "PASS"
+                    } else {
+                        "FAIL"
+                    }
                 );
             }
             None => {
@@ -475,12 +481,17 @@ date = "2026-10-22"
 
     #[test]
     fn a_reference_value_is_printed_but_not_scored() {
-        let t = parse_targets(&GOOD.replace("date = \"2026-10-22\"", "date = \"2026-10-22\"\nscored = false"), "t6", "t6.toml")
-            .unwrap();
+        let t = parse_targets(
+            &GOOD.replace("date = \"2026-10-22\"", "date = \"2026-10-22\"\nscored = false"),
+            "t6",
+            "t6.toml",
+        )
+        .unwrap();
         assert!(!t["seat1_win"].scored);
         assert!(parse_targets(GOOD, "t6", "t6.toml").unwrap()["seat1_win"].scored, "scored by default");
-        let e = parse_targets(&GOOD.replace("date = \"2026-10-22\"", "date = \"2026-10-22\"\nscored = 0"), "t6", "t6.toml")
-            .unwrap_err();
+        let e =
+            parse_targets(&GOOD.replace("date = \"2026-10-22\"", "date = \"2026-10-22\"\nscored = 0"), "t6", "t6.toml")
+                .unwrap_err();
         assert!(e.contains("`scored` must be true or false"), "{e}");
         let m: BTreeMap<&'static str, Measured> =
             STATS.iter().map(|s| (s.key, Measured { value: 30.0, ci: None })).collect();

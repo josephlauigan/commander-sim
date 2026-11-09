@@ -5,10 +5,10 @@
 //! - `AI_SEARCH_DIAG=1`: one line on stderr per look-ahead decision of a generic-policy deck (`SRD ...`), with the
 //!   stakes facts and whether the look-ahead's pick differs from the policy's. Stats only: play is unchanged.
 
-use crate::satsum::SatSum;
 use crate::engine::values::epow;
 use crate::hooks::{Action, Opt};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::{Game, SearchCost};
 use crate::sym::Sym;
 use std::cell::RefCell;
@@ -400,18 +400,17 @@ pub fn search_root(
     nodes.extend(keys.into_iter().map(|key| Node { key, visits: 0, avail: 0, sum: 0.0, kids: vec![] }));
     let top_k = g.settings.search.top_k;
     TREE.with(|t| {
-        *t.borrow_mut() =
-            Some(Tree {
-                seat: p,
-                nodes,
-                cur: None,
-                path: vec![],
-                depth: 0,
-                expanded: false,
-                opp_done: false,
-                knobs: kn,
-                top_k,
-            })
+        *t.borrow_mut() = Some(Tree {
+            seat: p,
+            nodes,
+            cur: None,
+            path: vec![],
+            depth: 0,
+            expanded: false,
+            opp_done: false,
+            knobs: kn,
+            top_k,
+        })
     });
     let w0 = g.search_work;
     let mut vals: Vec<Vec<f64>> = vec![vec![]; nk];
@@ -630,10 +629,7 @@ pub fn note_blocks(g: &mut Game, atk: &[PermId], d: PlayerId, unbl: &[PermId], a
         !unbl.contains(&a)
             && g.perm(a).on_bf
             && g.player(d).perms.iter().any(|&b| {
-                g.is_creature(b)
-                    && !g.perm(b).tapped
-                    && !g.perm(b).phased
-                    && crate::engine::combat::can_block(g, b, a)
+                g.is_creature(b) && !g.perm(b).tapped && !g.perm(b).phased && crate::engine::combat::can_block(g, b, a)
             })
     });
     if !can {
@@ -752,15 +748,11 @@ pub fn block_plans(
     let (fd, fp) = (fiery(g, d), fiery(g, p));
     let kills = |b: PermId, a: PermId| epow(g, b).saturating_mul(fd) >= etgh(g, a) || g.perm(b).dt;
     let dies = |b: PermId, a: PermId| epow(g, a).saturating_mul(fp) >= etgh(g, b) || g.perm(a).dt;
-    let mut order: Vec<PermId> = atk
-        .iter()
-        .copied()
-        .filter(|&a| g.perm(a).on_bf && !unbl.contains(&a) && !kw(g, a, "menace"))
-        .collect();
+    let mut order: Vec<PermId> =
+        atk.iter().copied().filter(|&a| g.perm(a).on_bf && !unbl.contains(&a) && !kw(g, a, "menace")).collect();
     order.sort_by_key(|&a| -epow(g, a));
-    let cheapest = |c: Vec<PermId>| -> Option<PermId> {
-        c.into_iter().min_by(|&x, &y| pval(g, x).total_cmp(&pval(g, y)))
-    };
+    let cheapest =
+        |c: Vec<PermId>| -> Option<PermId> { c.into_iter().min_by(|&x, &y| pval(g, x).total_cmp(&pval(g, y))) };
     let free = |used: &[(PermId, PermId)], a: PermId, f: &dyn Fn(PermId) -> bool| -> Option<PermId> {
         cheapest(
             blockers
@@ -929,12 +921,7 @@ pub fn choose_protect(
 /// q's answer to a wipe of `kind` by search: Some(answer) searched, None not searched (the heuristic decides).
 /// Searched when a board-wide protector (or Golgari Charm's regeneration) would save q's board, inside an ordinary
 /// wipe (`removal::apply_wipe_inner`; the three sweepers of `impls::sweepers` keep the heuristic).
-pub fn choose_wipe(
-    g: &mut Game,
-    q: PlayerId,
-    kind: Sym,
-    caster: PlayerId,
-) -> crate::flow::Res<Option<Option<Sym>>> {
+pub fn choose_wipe(g: &mut Game, q: PlayerId, kind: Sym, caster: PlayerId) -> crate::flow::Res<Option<Option<Sym>>> {
     use crate::engine::removal::{WIPE_CTX, wipe_finish, wipe_victim};
     let Some(ctx) = WIPE_CTX.with(|w| w.borrow().clone()).filter(|c| c.kind == kind && c.caster == caster) else {
         return Ok(None);
@@ -961,9 +948,7 @@ pub fn choose_wipe(
     let ti = if regen {
         1
     } else {
-        opts.iter()
-            .position(|o| super::pool::wipe_heuristic_takes(g, q, o.1))
-            .map_or(0, |i| i + off)
+        opts.iter().position(|o| super::pool::wipe_heuristic_takes(g, q, o.1)).map_or(0, |i| i + off)
     };
     let best = search_b(g, q, SearchCost::WIPE, "wipe", keys, ti, |g, k, seed, r| {
         let ctx = ctx.clone();

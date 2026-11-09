@@ -131,8 +131,7 @@ pub fn keep_reasons(g: &Game, p: PlayerId) -> (bool, Vec<String>) {
     let sources = lands + accel;
     let tutor = count(g, p, &["Gamble", "Imperial Recruiter", "Goblin Engineer"]);
     let in_hand = |names: &[&str]| -> String {
-        let v: Vec<&str> =
-            g.player(p).hand.iter().map(|&c| cname(g, c)).filter(|n| names.contains(n)).collect();
+        let v: Vec<&str> = g.player(p).hand.iter().map(|&c| cname(g, c)).filter(|n| names.contains(n)).collect();
         if v.is_empty() { "none".to_string() } else { v.join(", ") }
     };
     let mut why = vec![

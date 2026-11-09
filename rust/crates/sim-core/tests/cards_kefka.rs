@@ -2,8 +2,8 @@
 //! Psychosis Crawler loop and the deck's AI choices.
 
 use sim_core::ai::{act, brain, decks};
-use sim_core::engine::pool::Kind;
 use sim_core::engine::life::lose_life;
+use sim_core::engine::pool::Kind;
 use sim_core::engine::{cast, hooks, values, zones};
 use sim_core::hooks::{Call, Event, Opt};
 use sim_core::ids::{CardId, PermId, PlayerId};
@@ -746,7 +746,9 @@ fn oppression_makes_every_caster_discard_a_card() {
     let c = g.player(P1).hand[0];
     let gy0 = g.player(P1).gy.len();
     let before = g.player(P1).hand.len();
-    assert!(cast::cast_card(&mut g, P1, c, "hand", Ctx::default()).unwrap_or(false) || g.player(P1).hand.len() < before);
+    assert!(
+        cast::cast_card(&mut g, P1, c, "hand", Ctx::default()).unwrap_or(false) || g.player(P1).hand.len() < before
+    );
     // the spell left the hand, then one card was discarded (the spell itself may fizzle: only the discard is checked)
     assert_eq!(g.player(P1).hand.len(), before - 2, "the spell and a discarded card");
     assert!(g.player(P1).gy.len() >= gy0 + 1);
@@ -820,4 +822,3 @@ fn marvin_uses_nivs_draw_only_while_niv_is_out() {
     assert!(act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
     assert!(g.player(P1).life < life || g.player(P0).life < 40, "Fangtail's ping went somewhere");
 }
-

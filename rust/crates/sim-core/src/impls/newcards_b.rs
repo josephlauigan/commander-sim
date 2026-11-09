@@ -137,8 +137,10 @@ pub(crate) fn marvin_options(g: &mut Game, src: Src, p: PlayerId, post: Option<b
                 }
                 continue;
             }
-            if matches!(&*g.db.get(cd).name, "Krenko, Mob Boss" | "Kiki-Jiki, Mirror Breaker" | "Ioreth of the Healing House")
-            {
+            if matches!(
+                &*g.db.get(cd).name,
+                "Krenko, Mob Boss" | "Kiki-Jiki, Mirror Breaker" | "Ioreth of the Healing House"
+            ) {
                 continue;
             }
             let Some(f) = g.registry.get(cd).and_then(|c| c.options) else { continue };

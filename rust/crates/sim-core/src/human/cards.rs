@@ -444,7 +444,10 @@ pub(super) fn walker(list: &[(i32, &'static str, WalkEff)]) -> Vec<PermAbility> 
                         super::walkers::tell_info(
                             g,
                             p,
-                            &format!("The copy of {} {name}: choose new targets, or cancel to keep the original's.", pm_name(g, m)),
+                            &format!(
+                                "The copy of {} {name}: choose new targets, or cancel to keep the original's.",
+                                pm_name(g, m)
+                            ),
                         );
                         if let Ready::Go(f2) = eff(g, p, m)? {
                             again = Some(f2);
@@ -717,7 +720,12 @@ fn aetherflux(_g: &Game) -> Vec<PermAbility> {
         let tp = if let Target::Perm(t) = tg[k] { Some(t) } else { None };
         crate::engine::stack::ability_run_w(g, p, Some(m), None, "50 damage", Some(9.0), tp, 0.0, |g, is_copy| {
             let t = if is_copy {
-                new_damage_target(g, p, "The copy of Aetherflux Reservoir's ability: 50 damage to which target?", tg[k])?
+                new_damage_target(
+                    g,
+                    p,
+                    "The copy of Aetherflux Reservoir's ability: 50 damage to which target?",
+                    tg[k],
+                )?
             } else {
                 tg[k]
             };
@@ -775,7 +783,12 @@ pub fn marvin_outlets(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
     if pm_name(g, m) != crate::impls::newcards_b::MARVIN {
         return vec![];
     }
-    let has = |n: &str| g.player(p).perms.iter().any(|&x| x != m && g.perm(x).on_bf && !g.perm(x).phased && g.is_creature(x) && pm_name(g, x) == n);
+    let has = |n: &str| {
+        g.player(p)
+            .perms
+            .iter()
+            .any(|&x| x != m && g.perm(x).on_bf && !g.perm(x).phased && g.is_creature(x) && pm_name(g, x) == n)
+    };
     let mut out = vec![];
     if has("Carrion Feeder") {
         out.extend(outlet("put a +1/+1 counter on Marvin", feeder));
@@ -1120,9 +1133,17 @@ fn baraddur(_g: &Game) -> Vec<LandAbility> {
             g.perm_mut(l).tapped = true;
             crate::glog!(g, "  {} uses Barad-dûr: amass Orcs {}", pname(g, p), x);
             let cd = g.perm(l).card();
-            crate::engine::stack::ability_run_w(g, p, None, Some(cd), &format!("amass Orcs {x}"), None, None, x as f64, |g, _| {
-                crate::engine::zones::amass(g, p, x)
-            })?;
+            crate::engine::stack::ability_run_w(
+                g,
+                p,
+                None,
+                Some(cd),
+                &format!("amass Orcs {x}"),
+                None,
+                None,
+                x as f64,
+                |g, _| crate::engine::zones::amass(g, p, x),
+            )?;
             Ok(None)
         },
     )]
@@ -1146,10 +1167,19 @@ fn mistrise(_g: &Game) -> Vec<LandAbility> {
             // an ability on the stack (before: it took effect at once): Rings of Brighthearth / Peter Parker's Camera
             // can copy it, and the table can answer it
             let cd = g.perm(l).card();
-            crate::engine::stack::ability_run(g, p, None, Some(cd), "the next spell can't be countered", None, None, |g| {
-                g.player_mut(p).mistrise_next = Some(g.turn_stamp());
-                Ok(())
-            })?;
+            crate::engine::stack::ability_run(
+                g,
+                p,
+                None,
+                Some(cd),
+                "the next spell can't be countered",
+                None,
+                None,
+                |g| {
+                    g.player_mut(p).mistrise_next = Some(g.turn_stamp());
+                    Ok(())
+                },
+            )?;
             Ok(None)
         },
     )]
@@ -1774,28 +1804,38 @@ fn guildmage_counter(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     let (id, name, _) = abil[k].clone();
     super::mana::pay_from_pool(g, p, 2, "U");
     crate::glog!(g, "  {} activates Azorius Guildmage: counter {}", pname(g, p), name);
-    crate::engine::stack::ability_run_w(g, p, Some(m), None, &format!("counter {name}"), None, None, 0.0, |g, is_copy| {
-        let mut id = id;
-        if is_copy {
-            // "you may choose a new target for the copy": another activated ability still on the stack
-            let now: Vec<(u32, String, PlayerId)> = g
-                .stack
-                .iter()
-                .rev()
-                .filter(|it| it.kind == crate::state::StackKind::Ability)
-                .map(|it| (it.id, it.name.clone(), it.controller))
-                .collect();
-            let labels: Vec<String> = now.iter().map(|(_, n, c)| format!("{n} ({})", pname(g, *c))).collect();
-            let prompt = "The copy of Azorius Guildmage's ability: counter which ability?";
-            if let Some(j) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
-                id = now[j].0;
+    crate::engine::stack::ability_run_w(
+        g,
+        p,
+        Some(m),
+        None,
+        &format!("counter {name}"),
+        None,
+        None,
+        0.0,
+        |g, is_copy| {
+            let mut id = id;
+            if is_copy {
+                // "you may choose a new target for the copy": another activated ability still on the stack
+                let now: Vec<(u32, String, PlayerId)> = g
+                    .stack
+                    .iter()
+                    .rev()
+                    .filter(|it| it.kind == crate::state::StackKind::Ability)
+                    .map(|it| (it.id, it.name.clone(), it.controller))
+                    .collect();
+                let labels: Vec<String> = now.iter().map(|(_, n, c)| format!("{n} ({})", pname(g, *c))).collect();
+                let prompt = "The copy of Azorius Guildmage's ability: counter which ability?";
+                if let Some(j) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                    id = now[j].0;
+                }
             }
-        }
-        if let Some(it) = g.stack.iter_mut().find(|it| it.id == id) {
-            it.countered = true;
-        }
-        Ok(())
-    })?;
+            if let Some(it) = g.stack.iter_mut().find(|it| it.id == id) {
+                it.countered = true;
+            }
+            Ok(())
+        },
+    )?;
     Ok(None)
 }
 
@@ -1929,8 +1969,10 @@ pub fn jeskas_will(g: &mut Game, p: PlayerId) -> Res<bool> {
     if k == 0 || k == 2 {
         let opps: Vec<PlayerId> = g.opps(p).collect();
         if !opps.is_empty() {
-            let labels: Vec<String> =
-                opps.iter().map(|&q| format!("{} ({} cards)", pname(g, q), crate::engine::values::hand_count(g, q))).collect();
+            let labels: Vec<String> = opps
+                .iter()
+                .map(|&q| format!("{} ({} cards)", pname(g, q), crate::engine::values::hand_count(g, q)))
+                .collect();
             let j = choices::choose_one(g, p, "target", "Jeska's Will: which opponent's hand?", &labels)?;
             let n = crate::engine::values::hand_count(g, opps[j]) as u32;
             g.player_mut(p).pool.add('R', n);
@@ -2140,16 +2182,27 @@ fn blightspeaker() -> Vec<PermAbility> {
         let Some(q) = any_player(g, p, "Blightspeaker: which player loses 1 life?")? else { return Ok(None) };
         g.perm_mut(m).tapped = true;
         crate::glog!(g, "  {} activates Blightspeaker: {} loses 1 life", pname(g, p), pname(g, q));
-        crate::engine::stack::ability_run_w(g, p, Some(m), None, "target player loses 1 life", None, None, 0.0, |g, is_copy| {
-            let mut q = q;
-            if is_copy
-                && let Some(x) = any_player(g, p, "The copy of Blightspeaker's ability: which player loses 1 life?")?
-            {
-                q = x;
-            }
-            crate::engine::life::lose_life(g, q, 1, Some(p), "other", None)?;
-            crate::engine::life::check_state(g)
-        })?;
+        crate::engine::stack::ability_run_w(
+            g,
+            p,
+            Some(m),
+            None,
+            "target player loses 1 life",
+            None,
+            None,
+            0.0,
+            |g, is_copy| {
+                let mut q = q;
+                if is_copy
+                    && let Some(x) =
+                        any_player(g, p, "The copy of Blightspeaker's ability: which player loses 1 life?")?
+                {
+                    q = x;
+                }
+                crate::engine::life::lose_life(g, q, 1, Some(p), "other", None)?;
+                crate::engine::life::check_state(g)
+            },
+        )?;
         Ok(None)
     })];
     out.extend(searcher(4, 3));
@@ -2238,8 +2291,7 @@ fn revivalist(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if cs.is_empty() {
         return Ok(Some("There is no Rebel permanent card with mana value 5 or less in your graveyard.".into()));
     }
-    let labels: Vec<String> =
-        cs.iter().map(|&c| format!("{} (mana value {})", cname(g, c), g.db.get(c).cmc)).collect();
+    let labels: Vec<String> = cs.iter().map(|&c| format!("{} (mana value {})", cname(g, c), g.db.get(c).cmc)).collect();
     let Some(k) = pick(g, p, "target", "Ramosian Revivalist: return which Rebel permanent card?", &labels)? else {
         return Ok(None);
     };
@@ -2408,23 +2460,33 @@ fn tapper(gn: u32, pips: &'static str, tough: i32, label: &'static str) -> Vec<P
         g.perm_mut(m).tapped = true;
         let tn = g.perm(t).name;
         crate::glog!(g, "  {} activates {}: tap {}", pname(g, p), nm, tn);
-        crate::engine::stack::ability_run_w(g, p, Some(m), None, &format!("tap {tn}"), None, Some(t), 0.0, |g, is_copy| {
-            let mut t = t;
-            if is_copy {
-                // "you may choose a new target for the copy"
-                let now: Vec<PermId> = cre.iter().copied().filter(|&y| g.perm(y).on_bf).collect();
-                let prompt = format!("The copy of {nm}'s ability: tap which creature?");
-                if !now.is_empty()
-                    && let Some(y) = pick_perm(g, p, "target", &prompt, &now, Some("keep the target"))?
-                {
-                    t = y;
+        crate::engine::stack::ability_run_w(
+            g,
+            p,
+            Some(m),
+            None,
+            &format!("tap {tn}"),
+            None,
+            Some(t),
+            0.0,
+            |g, is_copy| {
+                let mut t = t;
+                if is_copy {
+                    // "you may choose a new target for the copy"
+                    let now: Vec<PermId> = cre.iter().copied().filter(|&y| g.perm(y).on_bf).collect();
+                    let prompt = format!("The copy of {nm}'s ability: tap which creature?");
+                    if !now.is_empty()
+                        && let Some(y) = pick_perm(g, p, "target", &prompt, &now, Some("keep the target"))?
+                    {
+                        t = y;
+                    }
                 }
-            }
-            if g.player(g.perm(t).owner).perms.contains(&t) {
-                g.perm_mut(t).tapped = true;
-            }
-            Ok(())
-        })?;
+                if g.player(g.perm(t).owner).perms.contains(&t) {
+                    g.perm_mut(t).tapped = true;
+                }
+                Ok(())
+            },
+        )?;
         Ok(None)
     })]
 }
@@ -2522,12 +2584,21 @@ fn necro(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
                 if g.over {
                     break;
                 }
-                crate::engine::stack::ability_run(g, p, Some(m), None, "exile the top card face down", None, None, |g| {
-                    if !g.over {
-                        necro_exile(g, p, 1);
-                    }
-                    Ok(())
-                })?;
+                crate::engine::stack::ability_run(
+                    g,
+                    p,
+                    Some(m),
+                    None,
+                    "exile the top card face down",
+                    None,
+                    None,
+                    |g| {
+                        if !g.over {
+                            necro_exile(g, p, 1);
+                        }
+                        Ok(())
+                    },
+                )?;
             }
             Ok(())
         })?;

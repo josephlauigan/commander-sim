@@ -1143,7 +1143,11 @@ pub fn wishclaw_ok(g: &Game, p: PlayerId) -> bool {
 
 /// three wishes: {1},{T} tutor (on your turn), then the most threatening opponent gains control and uses it on theirs
 fn wishclaw(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if p != g.perm(src).owner || g.perm(src).tapped || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false) || wishes(g, src) <= 0 {
+    if p != g.perm(src).owner
+        || g.perm(src).tapped
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)
+        || wishes(g, src) <= 0
+    {
         return Ok(vec![]);
     }
     if g.active != Some(p) && post.is_some() {
@@ -1260,7 +1264,10 @@ fn lantern_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 
 /// sacrificed for a card when no opposing graveyard holds a creature worth exiling
 fn lantern_draw(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if p != g.perm(src).owner || post.is_none() || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false) {
+    if p != g.perm(src).owner
+        || post.is_none()
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)
+    {
         return Ok(vec![]);
     }
     if g.opps(p).flat_map(|q| g.player(q).gy.iter()).any(|&x| g.db.get(x).creature && g.db.get(x).bomb >= 5) {

@@ -21,12 +21,12 @@
 //! - **Exsanguinate** is yshtola.rs's X drain (its option ran for the Sauron seat until 2026-11-01); Talisman of
 //!   Indulgence, Rakdos Signet and Fellwar Stone are modeled elsewhere (mine.rs, the rock tags, mana.rs).
 
-use crate::engine::repl;
 use crate::cards::CardDb;
 use crate::engine::cast::{cast_card, copy_spell};
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::trigger_window;
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{army_of, epow, etgh, pval, untargetable};
@@ -198,7 +198,9 @@ fn torment_human(g: &mut Game, p: PlayerId, q: PlayerId, i: i32, x: i32) -> Res 
         g,
         q,
         "choose",
-        &format!("Torment of Hailfire: lose 3 life unless you sacrifice a nonland permanent or discard a card ({i} of {x})"),
+        &format!(
+            "Torment of Hailfire: lose 3 life unless you sacrifice a nonland permanent or discard a card ({i} of {x})"
+        ),
         &labels,
     )?;
     match kinds[k] {
@@ -375,7 +377,12 @@ fn comet_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     crate::glog!(g, "    Comet Storm (X = {x}, {} kick(s))", ctx.kicks);
     if crate::human::is_human(g, p) {
         // the targets the person chose as they cast it
-        let ts: Vec<crate::human::Target> = ctx.perms.iter().map(|&m| crate::human::Target::Perm(m)).chain(ctx.faces.iter().map(|&q| crate::human::Target::Player(q))).collect();
+        let ts: Vec<crate::human::Target> = ctx
+            .perms
+            .iter()
+            .map(|&m| crate::human::Target::Perm(m))
+            .chain(ctx.faces.iter().map(|&q| crate::human::Target::Player(q)))
+            .collect();
         for t in ts {
             if g.over {
                 break;

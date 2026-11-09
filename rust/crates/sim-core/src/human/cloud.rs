@@ -320,10 +320,8 @@ fn plaza(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
         let mut t = t;
         if is_copy {
             // "you may choose a new target for the copy"
-            let now: Vec<PermId> = cards::creatures(g, p, false)
-                .into_iter()
-                .filter(|&x| crate::cardcode::is_legendary(g, x))
-                .collect();
+            let now: Vec<PermId> =
+                cards::creatures(g, p, false).into_iter().filter(|&x| crate::cardcode::is_legendary(g, x)).collect();
             let prompt = "The copy of Plaza of Heroes' ability: which legendary creature?";
             if !now.is_empty()
                 && let Some(x) = cards::pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?

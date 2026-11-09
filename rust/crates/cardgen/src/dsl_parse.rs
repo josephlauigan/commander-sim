@@ -433,8 +433,7 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
         r"^(?:return|put) (?:target |up to one target |another target )?([^.]*?)cards? from (your|a|an opponent's|target player's) graveyard (?:to|onto) the battlefield(?: under your control)?(?: tapped)?(?: with (?:a|two|three) (?:additional )?\+1/\+1 counters? on it)?$",
         |m| {
             let g1 = if m.gs(1).is_empty() { "creature" } else { m.gs(1) };
-            let mut o =
-                obj! {"do" => "reanimate", "filter" => filt(g1), "from" => if m.gs(2) == "your" { "yours" } else { "any" }};
+            let mut o = obj! {"do" => "reanimate", "filter" => filt(g1), "from" => if m.gs(2) == "your" { "yours" } else { "any" }};
             // --- Tiers 1/2 (kaalia-sythis): "return all enchantment cards from your graveyard to the battlefield"
             // (Resurgent Belief, Splendid Reclamation, World Shaper): every one of them, tapped if it says so
             if g1.starts_with("all ") && m.gs(2) == "your" {
@@ -804,13 +803,10 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
     ),
     // "~ deals damage to each player equal to twice the number of nonbasic lands that player controls" (Price of
     // Progress): each player, you too, takes its own count
-    (
-        r"^~ deals damage to each player equal to twice the number of nonbasic lands that player controls$",
-        |_| {
-            let to = obj! {"sel" => "player", "who" => "each_player"};
-            Some(eff(obj! {"do" => "damage", "n" => "that_player_nonbasic_lands", "mult" => 2, "to" => to}))
-        },
-    ),
+    (r"^~ deals damage to each player equal to twice the number of nonbasic lands that player controls$", |_| {
+        let to = obj! {"sel" => "player", "who" => "each_player"};
+        Some(eff(obj! {"do" => "damage", "n" => "that_player_nonbasic_lands", "mult" => 2, "to" => to}))
+    }),
     // "add {R} for each Goblin on the battlefield" (Brightstone Ritual): a count of creatures only (not Rousing
     // Refrain's "each card in target opponent's hand")
     (r"^add \{([wubrgc])\} for each (.+)$", |m| {
@@ -889,7 +885,9 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
     // --- Tier 3 (aurelia)
     // "~ deals 3 damage to each of your opponents" (Aurelia, the Law Above): each opponent
     (r"^(?:~ )?deals? (\d+|x) damage to each of your opponents$", |m| {
-        Some(eff(obj! {"do" => "damage", "n" => n_(m.gs(1)), "to" => obj!{"sel" => "player", "who" => "each_opponent"}}))
+        Some(eff(
+            obj! {"do" => "damage", "n" => n_(m.gs(1)), "to" => obj!{"sel" => "player", "who" => "each_opponent"}},
+        ))
     }),
     // --- Tier 3 (marwyn): "put a +1/+1 counter on target creature for each Elf you control" (Immaculate Magistrate)
     (
@@ -903,7 +901,9 @@ static EFFECT_RULES: &[(&str, RuleFn)] = &[
     }),
     // "that creature deals 1 damage to each opponent" (Ingris Stingerquill): each opponent takes it
     (r"^that creature deals (\d+) damage to each opponent$", |m| {
-        Some(eff(obj! {"do" => "damage", "n" => n_(m.gs(1)), "to" => obj!{"sel" => "player", "who" => "each_opponent"}}))
+        Some(eff(
+            obj! {"do" => "damage", "n" => n_(m.gs(1)), "to" => obj!{"sel" => "player", "who" => "each_opponent"}},
+        ))
     }),
     // --- Tiers 4/5 (prosper): "each creature deals 1 damage to its controller" (Rakdos Charm)
     (r"^each creature deals 1 damage to its controller$", |_| Some(eff(obj! {"do" => "creature_backlash"}))),
@@ -1109,9 +1109,8 @@ pub fn parse_effects(text: &str) -> (Fx, Vec<String>) {
         }
         // --- Tiers 1/2 (tatyova-teysa): "you may sacrifice a land" (Tenured Tethermage) is a choice the AI would not
         // weigh (it ignores the "may"): left to card code, as before the plain "sacrifice a land" compiled
-        let own_sac = |e: &Obj| {
-            e.get("do") == Some(&J::Str("sacrifice".into())) && e.get("who") == Some(&J::Str("you".into()))
-        };
+        let own_sac =
+            |e: &Obj| e.get("do") == Some(&J::Str("sacrifice".into())) && e.get("who") == Some(&J::Str("you".into()));
         if dep == Dep::May && got.as_ref().is_some_and(|v| v.iter().any(own_sac)) {
             bad.push(format!("{pre}{cl}"));
             continue;
@@ -1275,9 +1274,10 @@ static TRIGGERS: &[(&str, TrigFn)] = &[
         vec![obj! {"event" => "attack", "source" => "self", "min_atk" => n_(m.gs(1)).as_i64().unwrap_or(2) + 1}]
     }),
     // --- Tiers 4/5 (krenko): "one or more Goblins you control attack" (General Kreat): once per attack that has one
-    (r"^one or more (goblins|elves|zombies|humans|soldiers|warriors|knights|dragons|vampires) you control attack$", |m, _| {
-        vec![obj! {"event" => "attack", "source" => "you_any", "subtype" => singular(m.gs(1))}]
-    }),
+    (
+        r"^one or more (goblins|elves|zombies|humans|soldiers|warriors|knights|dragons|vampires) you control attack$",
+        |m, _| vec![obj! {"event" => "attack", "source" => "you_any", "subtype" => singular(m.gs(1))}],
+    ),
     // "a player attacks with N or more creatures" (Aurelia, the Law Above): anyone's attack, counted whole
     (r"^a player attacks with (two|three|four|five|six) or more creatures$", |m, _| {
         vec![obj! {"event" => "attack", "source" => "any_player", "min_atk" => n_(m.gs(1))}]
@@ -1308,7 +1308,9 @@ static TRIGGERS: &[(&str, TrigFn)] = &[
         r"^(~ or another|a|an|another) (elf|goblin|zombie|human|vampire|merfolk|dragon|angel|sliver|knight|soldier|wizard|cleric|rogue|ninja|faerie|spirit|dinosaur|squirrel|rat|cat|dog|dwarf) you control (dies|enters)$",
         |m, _| {
             let ev = if m.gs(3) == "dies" { "dies" } else { "etb" };
-            vec![obj! {"event" => ev, "source" => "you_creature", "other" => m.gs(1) == "another", "subtype" => m.gs(2)}]
+            vec![
+                obj! {"event" => ev, "source" => "you_creature", "other" => m.gs(1) == "another", "subtype" => m.gs(2)},
+            ]
         },
     ),
 ];
@@ -1550,8 +1552,10 @@ static STATICS: &[(&str, StaticFn)] = &[
     // --- Tiers 4/5 (heliod-zur)
     // "white creature spells you cast cost {1} less to cast" (Oketra's Monument)
     (r"^(white|blue|black|red|green) creature spells you cast cost \{(\d+)\} less to cast$", |m| {
-        Some(eff(obj! {"type" => "static", "static" => "cost", "who" => "you", "spell" => format!("{}_creature", m.gs(1)),
-        "amount" => -int(m.gs(2))}))
+        Some(eff(
+            obj! {"type" => "static", "static" => "cost", "who" => "you", "spell" => format!("{}_creature", m.gs(1)),
+            "amount" => -int(m.gs(2))},
+        ))
     }),
     // "if you would gain life, you gain that much life plus 1 instead" (Cleric Class, Angel of Vitality's wording)
     (r"^if you would gain life, you gain that much life plus (\d+) instead$", |m| {
@@ -1694,8 +1698,8 @@ pub fn compile_card(name: &str, oracle: &str, types: &str, _loyalty: Option<&str
         // white and black Spirit tokens with flying
         if let Some(m) = rmatch(r"^afterlife (\d+)(?: \(.*\))?$", l) {
             abil.push(obj! {"type" => "triggered", "event" => "dies", "source" => "self", "effects" => vec![jo!{
-                "do" => "token", "n" => int(m.gs(1)), "pow" => 1, "tgh" => 1, "keywords" => vec![J::from("flying")],
-                "attacking" => false, "warrior" => false, "types" => vec![J::from("spirit")], "color" => "WB"}]});
+            "do" => "token", "n" => int(m.gs(1)), "pow" => 1, "tgh" => 1, "keywords" => vec![J::from("flying")],
+            "attacking" => false, "warrior" => false, "types" => vec![J::from("spirit")], "color" => "WB"}]});
             continue;
         }
         // --- Tiers 1/2 (lathril): "vigilance; menace" (Abomination of Llanowar) is a keyword line too

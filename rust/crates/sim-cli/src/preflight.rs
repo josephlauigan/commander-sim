@@ -52,10 +52,7 @@ impl AiRule {
             return format!("AI: {}: land (played, never cast)", self.card);
         }
         if self.warns() {
-            return format!(
-                "WARNING AI: {}: priority 0 and no response path: the AI may never cast it",
-                self.card
-            );
+            return format!("WARNING AI: {}: priority 0 and no response path: the AI may never cast it", self.card);
         }
         let src = if self.deck_rule { "deck rule" } else { "generic" };
         let resp = if self.response && self.prio <= 0 { ", cast as a response / removal only" } else { "" };
@@ -65,7 +62,14 @@ impl AiRule {
 
 /// The deck's priority for each swapped-in card on mid-game boards of the swapped list (rounds 4 and 7 of two games
 /// against the first tier's decks, adaptive AI): the best value seen, since a rule may wait for a graveyard or mana.
-pub fn ai_rules(sim: &Sim, deck: &str, var: &[String], ins: &[String], opp_keys: &[String], seed0: u64) -> Result<Vec<AiRule>, String> {
+pub fn ai_rules(
+    sim: &Sim,
+    deck: &str,
+    var: &[String],
+    ins: &[String],
+    opp_keys: &[String],
+    seed0: u64,
+) -> Result<Vec<AiRule>, String> {
     let vseat = sim.seat(deck, var)?;
     let settings = Arc::new(Settings::new(profile("loose")?, AiMode::Adaptive, sim.opts.temp));
     let mut best: Vec<i32> = vec![i32::MIN; ins.len()];
@@ -74,7 +78,8 @@ pub fn ai_rules(sim: &Sim, deck: &str, var: &[String], ins: &[String], opp_keys:
     for seed in [seed0, seed0 + 1] {
         for rounds in [4u32, 7] {
             let seats = sim.seats_for(seed, Some(deck), Some(&vseat), opp_keys, 3);
-            let mut g = setup_game(sim.engine.db.clone(), sim.engine.registry.clone(), settings.clone(), seed, &seats, false);
+            let mut g =
+                setup_game(sim.engine.db.clone(), sim.engine.registry.clone(), settings.clone(), seed, &seats, false);
             run_rounds(&mut g, rounds);
             let Some(me) = g.players.iter().position(|p| p.key == deck) else { continue };
             let me = PlayerId(me as u8);
@@ -193,7 +198,11 @@ pub fn run(sim: &Sim, a: &Args, swaps: &[(String, String)], var: &[String]) -> R
     {
         let mut pr = sim.prog.lock().unwrap();
         pr.plan(DRY_GAMES * a.profiles.len() as u64);
-        pr.announce(&format!("preflight dry run: swapped list, {DRY_GAMES} per profile on {tier}"), "adaptive", sim.opts.jobs);
+        pr.announce(
+            &format!("preflight dry run: swapped list, {DRY_GAMES} per profile on {tier}"),
+            "adaptive",
+            sim.opts.jobs,
+        );
     }
     for prof in &a.profiles {
         sim.prog.lock().unwrap().label = format!("preflight {tier} / {prof}");
@@ -222,7 +231,9 @@ pub fn run(sim: &Sim, a: &Args, swaps: &[(String, String)], var: &[String]) -> R
         return Ok(Outcome::Stop(EXIT_STOP));
     }
     if bad {
-        println!("  (the AI-rule warning above did not show up in the dry run; check the card's drawn / cast numbers after the main run)");
+        println!(
+            "  (the AI-rule warning above did not show up in the dry run; check the card's drawn / cast numbers after the main run)"
+        );
     }
     if a.preflight_only {
         return Ok(Outcome::Stop(0));
@@ -256,7 +267,8 @@ mod tests {
     }
 
     fn args(extra: &[&str]) -> Args {
-        let mut v: Vec<String> = ["--deck", "aragorn", "--pool", "t4", "--swap", "A=>B"].iter().map(|s| s.to_string()).collect();
+        let mut v: Vec<String> =
+            ["--deck", "aragorn", "--pool", "t4", "--swap", "A=>B"].iter().map(|s| s.to_string()).collect();
         v.extend(extra.iter().map(|s| s.to_string()));
         crate::args::parse(&v).unwrap()
     }
@@ -269,18 +281,29 @@ mod tests {
     #[test]
     fn a_card_the_deck_rule_ranks_zero_gets_the_warning() {
         let s = sim();
-        let out = s.mine["thanos"].iter().find(|c| s.engine.db.id(c).is_some_and(|i| !s.engine.db.get(i).land)).unwrap().clone();
+        let out = s.mine["thanos"]
+            .iter()
+            .find(|c| s.engine.db.id(c).is_some_and(|i| !s.engine.db.get(i).land))
+            .unwrap()
+            .clone();
         let r = rules_at(&s, "thanos", &out, "Underworld Breach", "t5", 500002);
         assert_eq!(r.prio, 0, "{r:?}");
         assert!(r.warns() && !r.response, "{r:?}");
-        assert_eq!(r.line(), "WARNING AI: Underworld Breach: priority 0 and no response path: the AI may never cast it");
+        assert_eq!(
+            r.line(),
+            "WARNING AI: Underworld Breach: priority 0 and no response path: the AI may never cast it"
+        );
     }
 
     #[test]
     fn a_card_the_deck_ranks_positive_does_not() {
         // Sheoldred plays the generic policy and her plan file (her hand AI was deleted on 2026-11-01)
         let s = sim();
-        let out = s.mine["sheoldred"].iter().find(|c| s.engine.db.id(c).is_some_and(|i| !s.engine.db.get(i).land)).unwrap().clone();
+        let out = s.mine["sheoldred"]
+            .iter()
+            .find(|c| s.engine.db.id(c).is_some_and(|i| !s.engine.db.get(i).land))
+            .unwrap()
+            .clone();
         // Underworld Dreams: her plan file ranks it (a `[[prio]]` rule, which the generic policy reads), so no warning
         let dreams = rules(&s, "sheoldred", &out, "Underworld Dreams", "t3");
         assert!(!dreams.warns() && dreams.prio > 0 && !dreams.deck_rule, "{dreams:?}");

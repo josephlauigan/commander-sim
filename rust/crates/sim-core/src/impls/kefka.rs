@@ -12,16 +12,16 @@
 //!   wish) was deleted on 2026-11-01 (`audit/phase4/hand-off-design.md`, "Deleted").
 
 use super::common::{AURA, AuraSpec, aura};
-use crate::engine::pool::Kind;
 use super::lands::sac_land;
 use super::partials::remove_card;
 use super::yshtola::take_card;
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, copy_spell};
 use crate::engine::life::{check_state, gain, lose_life};
 use crate::engine::mana::{can_pay, pay, total_mana};
+use crate::engine::pool::Kind;
 use crate::engine::removal::{apply_removal, legal_targets};
+use crate::engine::repl;
 use crate::engine::stack::{may_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{etgh, pval, untargetable};
@@ -1067,8 +1067,12 @@ fn alpharael_person(g: &mut Game, o: PlayerId) -> Res {
         return Ok(());
     }
     if !arts.is_empty() {
-        let mut labels: Vec<String> =
-            arts.iter().map(|&c| format!("discard {} (an artifact card) and nothing else", crate::human::choices::card_label(g, c))).collect();
+        let mut labels: Vec<String> = arts
+            .iter()
+            .map(|&c| {
+                format!("discard {} (an artifact card) and nothing else", crate::human::choices::card_label(g, c))
+            })
+            .collect();
         labels.push(format!("discard {two} card{}", if two == 1 { "" } else { "s" }));
         let k = crate::human::choices::choose_one(
             g,

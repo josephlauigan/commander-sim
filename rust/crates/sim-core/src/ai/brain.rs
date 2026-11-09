@@ -12,8 +12,8 @@
 //! The temperature sets how human the AI is: low is near-optimal and predictable, high is looser. Each deck also has
 //! a play style (aggression, caution) that shifts the utilities.
 
-use super::{hand_key, jd_deck}; // --- phase4-hand-off
 use super::{act, decks, explain, gumbel_order, is_main, pool, sample, search, sig, style, temp};
+use super::{hand_key, jd_deck}; // --- phase4-hand-off
 use crate::cards::Types;
 use crate::engine::altcost;
 use crate::engine::cast::{additional_cost, cast_card, castable, on_cast, pact_affordable, parse_cost};
@@ -22,7 +22,9 @@ use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, cost_of, mana_units, pay, phyrexian_life, seq_cost, total_mana};
 use crate::engine::removal::legal_targets;
 use crate::engine::stack::free_counter;
-use crate::engine::values::{commander_out, epow, etgh, has, player_hexproof_from, pval, shielded, threat, untargetable};
+use crate::engine::values::{
+    commander_out, epow, etgh, has, player_hexproof_from, pval, shielded, threat, untargetable,
+};
 use crate::engine::zones::{die, draw, max_by, min_by, sac_worth};
 use crate::flow::Res;
 use crate::hooks::{Action, Event, Opt};
@@ -281,7 +283,8 @@ fn pool_deck(g: &Game, p: PlayerId) -> bool {
 /// instant speed (`removal_risk`); then it grows with that risk. The old floor held 4.8 mana on 2% of Tier 5 turns
 /// (Miirym mostly) and the protection was used 5% of the time (audit/realism/t5-hold-2026-11-06).
 fn protection_hold(g: &Game, p: PlayerId, caution: f64) -> Option<f64> {
-    let worth = g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && !g.perm(m).phased && pool::worth_holding_for(g, p, m));
+    let worth =
+        g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && !g.perm(m).phased && pool::worth_holding_for(g, p, m));
     if !worth {
         return None;
     }

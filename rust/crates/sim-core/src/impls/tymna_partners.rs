@@ -210,7 +210,8 @@ pub fn spread(
     if hand_key(g, p) != "kraum" || !hit_engine_out(g, p) {
         return groups;
     }
-    let hit = |a: PermId| epow(g, a).saturating_mul(if double_strike(g, a) { 2 } else { 1 }).saturating_mul(fiery(g, p));
+    let hit =
+        |a: PermId| epow(g, a).saturating_mul(if double_strike(g, a) { 2 } else { 1 }).saturating_mul(fiery(g, p));
     let mut groups = groups;
     let opps: Vec<PlayerId> =
         g.opps(p).filter(|&q| g.player(q).alive && !shielded(g, q) && attack_restrictions(g, p, q).0 == 0).collect();
@@ -359,7 +360,8 @@ pub fn combat_trick(g: &mut Game, p: PlayerId, atk: &[PermId], assign: &[(PermId
         {
             continue;
         }
-        let (pa, ta, pb, tb) = (epow(g, a), crate::engine::values::etgh(g, a), epow(g, b), crate::engine::values::etgh(g, b));
+        let (pa, ta, pb, tb) =
+            (epow(g, a), crate::engine::values::etgh(g, a), epow(g, b), crate::engine::values::etgh(g, b));
         let dt = g.perm(b).dt;
         let a_dies = pb >= ta || dt;
         let b_dies = pa >= tb;
@@ -383,4 +385,3 @@ pub fn combat_trick(g: &mut Game, p: PlayerId, atk: &[PermId], assign: &[(PermId
 fn first_strike_either(g: &Game, a: PermId, b: PermId) -> bool {
     crate::engine::combat::first_strike(g, a) || crate::engine::combat::first_strike(g, b)
 }
-

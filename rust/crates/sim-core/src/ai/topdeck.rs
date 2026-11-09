@@ -87,9 +87,7 @@ pub fn scry(g: &mut Game, p: PlayerId, n: i32, surveil: bool) -> Res {
         return crate::human::choices::scry(g, p, n as usize, surveil);
     }
     // Doomsday pile: the cards that keep the line winning stay on top
-    if !surveil
-        && let Some((keep, bottom)) = crate::impls::doomsday::pile_scry(g, p, n as usize)
-    {
+    if !surveil && let Some((keep, bottom)) = crate::impls::doomsday::pile_scry(g, p, n as usize) {
         look(g, p, keep.len() + bottom.len());
         let pl = g.player_mut(p);
         pl.library.splice(0..0, bottom);

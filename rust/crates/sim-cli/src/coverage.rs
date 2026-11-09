@@ -151,7 +151,9 @@ pub fn lines(entries: &[Entry]) -> Result<Vec<String>, String> {
                         most = Some((u, d.label.as_str()));
                     }
                 }
-                let most = most.filter(|(u, _)| *u > 0).map_or(String::new(), |(u, l)| format!(" | most Unmodeled: {l} ({u})"));
+                let most = most
+                    .filter(|(u, _)| *u > 0)
+                    .map_or(String::new(), |(u, l)| format!(" | most Unmodeled: {l} ({u})"));
                 out.push(format!(
                     "  {:w$}  {} decks, {}{most}",
                     format!("opponents {t}"),
@@ -189,7 +191,13 @@ pub fn tier_blocks(sim: &Sim, tiers: &[&str]) -> Vec<Entry> {
 
 /// what a pool-mode run plays (--deck, --all-decks, --calibrate, --analyze, --swap): your decks a line each (a
 /// swapped list a second line), the opponent tiers a line each; --calibrate, every deck of its tiers
-pub fn pool_run(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String], var: &[String]) -> Result<Vec<Entry>, String> {
+pub fn pool_run(
+    sim: &Sim,
+    a: &Args,
+    swaps: &[(String, String)],
+    base: &[String],
+    var: &[String],
+) -> Result<Vec<Entry>, String> {
     if a.calibrate.is_some() {
         let tiers: Vec<&str> =
             TIERS.iter().copied().filter(|t| a.pool.as_deref().is_none_or(|p| p == "all" || p == *t)).collect();
@@ -198,7 +206,8 @@ pub fn pool_run(sim: &Sim, a: &Args, swaps: &[(String, String)], base: &[String]
     let plan = crate::poolmode::tier_plan(sim, a)?;
     let mut out = vec![];
     for (d, _) in &plan.per_deck {
-        let list = if a.deck.as_deref() == Some(d.as_str()) && !base.is_empty() { base.to_vec() } else { sim.mine[d].clone() };
+        let list =
+            if a.deck.as_deref() == Some(d.as_str()) && !base.is_empty() { base.to_vec() } else { sim.mine[d].clone() };
         out.push(Entry::Deck(deck_list(sim, d, &list, None)));
         if !swaps.is_empty() && a.deck.as_deref() == Some(d.as_str()) {
             out.push(Entry::Deck(deck_list(sim, d, var, Some(format!("{d} (swapped)")))));
@@ -219,9 +228,8 @@ mod tests {
 
     #[test]
     fn the_names_are_capped_unmodeled_first() {
-        let w: Vec<(String, &'static str)> = (0..7)
-            .map(|i| (format!("C{i}"), if i < 2 { "Unmodeled" } else { "Partial" }))
-            .collect();
+        let w: Vec<(String, &'static str)> =
+            (0..7).map(|i| (format!("C{i}"), if i < 2 { "Unmodeled" } else { "Partial" })).collect();
         assert_eq!(names_text(&w), " | Unmodeled: C0, C1; Partial: C2, C3, C4 (+2 more)");
         assert_eq!(names_text(&[]), "");
     }
@@ -229,8 +237,7 @@ mod tests {
     #[test]
     fn every_deck_line_counts_its_99_and_commander() {
         let sim = Sim::load(RunOpts { ai: AiMode::Adaptive, temp: 1.0, jobs: 2 }).unwrap();
-        let mut entries: Vec<Entry> =
-            sim.mine.iter().map(|(k, l)| Entry::Deck(deck_list(&sim, k, l, None))).collect();
+        let mut entries: Vec<Entry> = sim.mine.iter().map(|(k, l)| Entry::Deck(deck_list(&sim, k, l, None))).collect();
         entries.extend(tier_blocks(&sim, &["t3"]));
         let n = entries.len();
         let l = lines(&entries).unwrap();

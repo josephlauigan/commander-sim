@@ -410,4 +410,3 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     }
     Ok(())
 }
-

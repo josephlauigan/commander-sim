@@ -312,7 +312,6 @@ fn crackling_doom_takes_the_greatest_power() {
     assert_eq!((g.player(P1).life, g.player(P2).life), (38, 38));
 }
 
-
 // ------------------------------------------------------------------ rules: the rest
 #[test]
 fn ugin_skips_a_permanent_discarded_on_the_way() {

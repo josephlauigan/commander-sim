@@ -70,7 +70,11 @@ fn urzas_saga_chapter_three_without_an_answer_still_searches_and_is_sacrificed()
 
 // ------------------------------------------------------------------ Garth One-Eye's copies
 /// a person at seat 0 who uses Garth (the perm at index `i`), names `card`, and answers the rest with `pick`
-fn garth_person(i: usize, card: &'static str, pick: impl Fn(&Request) -> Option<usize> + Send + 'static) -> Arc<ScriptHuman> {
+fn garth_person(
+    i: usize,
+    card: &'static str,
+    pick: impl Fn(&Request) -> Option<usize> + Send + 'static,
+) -> Arc<ScriptHuman> {
     let first = Mutex::new(true);
     Arc::new(ScriptHuman::from_fn(move |r: &Request| {
         if &*r.kind == "priority" {
@@ -228,7 +232,12 @@ fn mirage_mirror_can_copy_your_own_legend_and_you_choose_which_to_keep() {
         vec![("become a copy of which", "Emry"), ("legend rule", "Emry")],
     );
     assert!(h.asked().iter().any(|r| r.prompt.contains("legend rule")), "the person keeps one: {:?}", h.told());
-    let emrys = g.player(P0).perms.iter().filter(|&&m| g.perm(m).on_bf && &*g.perm(m).name == "Emry, Lurker of the Loch").count();
+    let emrys = g
+        .player(P0)
+        .perms
+        .iter()
+        .filter(|&&m| g.perm(m).on_bf && &*g.perm(m).name == "Emry, Lurker of the Loch")
+        .count();
     assert_eq!(emrys, 1, "one Emry left");
     assert!(g.perm(emry).on_bf != g.perm(mm).on_bf, "the other went to the graveyard");
 }
@@ -294,7 +303,10 @@ fn mystic_confluence_with_nothing_to_counter_draws_and_bounces() {
     assert!(h.asked().iter().any(|r| r.prompt.contains("choose mode 3")), "{:?}", h.told());
     assert!(!g.player(P1).perms.contains(&elf), "the Elves went back to their owner's hand");
     assert_eq!(g.player(P0).hand.len(), before - 1 + 2, "cast it, drew two");
-    assert!(pool_total(&g, P0) <= 1, "its cost was paid from the pool (data/carddb.txt has {{3}}{{U}}{{U}}{{U}}, Scryfall {{3}}{{U}}{{U}})");
+    assert!(
+        pool_total(&g, P0) <= 1,
+        "its cost was paid from the pool (data/carddb.txt has {{3}}{{U}}{{U}}{{U}}, Scryfall {{3}}{{U}}{{U}})"
+    );
 }
 
 #[test]
@@ -340,7 +352,11 @@ fn spark_double_of_a_legend_is_not_legendary_and_the_person_picks_it() {
     hand(&mut g, P0, &["Spark Double"]);
     pool(&mut g, P0, &[('U', 1), ('C', 3)]);
     let h = act_main(&mut g, json!({"do": "cast", "card": 0}), vec![("Spark Double: enter as a copy", "Garth")]);
-    assert!(h.asked().iter().any(|r| r.prompt.contains("Spark Double: enter as a copy")), "asked {:?}", h.asked().iter().map(|r| r.prompt.clone()).collect::<Vec<_>>());
+    assert!(
+        h.asked().iter().any(|r| r.prompt.contains("Spark Double: enter as a copy")),
+        "asked {:?}",
+        h.asked().iter().map(|r| r.prompt.clone()).collect::<Vec<_>>()
+    );
     let garths = g.player(P0).perms.iter().filter(|&&m| g.perm(m).on_bf && &*g.perm(m).name == "Garth One-Eye").count();
     assert_eq!(garths, 2, "\"it isn't legendary\": the legend rule leaves both");
     assert!(g.player(P0).perms.contains(&garth));

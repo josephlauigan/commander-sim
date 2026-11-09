@@ -6,8 +6,8 @@ use sim_core::engine::turn;
 use sim_core::engine::values::{epow, etgh, indestructible, untargetable};
 use sim_core::engine::{cast, zones};
 use sim_core::hooks::{Action, Opt};
-use sim_core::impls::bulk_white::{white_protect, white_wipe_response};
 use sim_core::ids::{CardId, PermId, PlayerId};
+use sim_core::impls::bulk_white::{white_protect, white_wipe_response};
 use sim_core::state::{Ctx, Game};
 use sim_core::testkit::*;
 

@@ -11,10 +11,10 @@
 //!   Hellkite, Triplicate Titan, Cityscape Leveler, Spine of Ish Sah, Portal to Phyrexia, Unstable Obelisk and Ugin.
 
 use super::common::{WalkerAb, best_opp_nonland, make_powerstone, walker};
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::life::check_state;
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::repl;
 use crate::engine::stack::{ability_run, ability_run_w, ability_window, trigger_window};
 use crate::engine::tutors::shuffle_library;
 use crate::engine::values::{card_name, colors_of, epow, indestructible, ptypes, pval, untargetable};
@@ -278,7 +278,12 @@ fn stone_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
 /// {4}, {T}: put a fate counter on target permanent
 pub(crate) fn stone_mark(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let t = PermId(arg as u32);
-    if !live(g, src) || owner(g, src) != p || g.perm(src).tapped || !live(g, t) || !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 4, 0), "", false)? {
+    if !live(g, src)
+        || owner(g, src) != p
+        || g.perm(src).tapped
+        || !live(g, t)
+        || !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 4, 0), "", false)?
+    {
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;
@@ -289,8 +294,7 @@ pub(crate) fn stone_mark(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Re
             let now = crate::human::karn::targets(g, p);
             let prompt = "The copy of Oblivion Stone's ability: a fate counter on which permanent?";
             if !now.is_empty()
-                && let Some(x) =
-                    crate::human::cards::pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?
+                && let Some(x) = crate::human::cards::pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?
             {
                 t = x;
             }
@@ -307,14 +311,25 @@ pub(crate) fn stone_mark(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Re
 
 /// {5}, {T}, sacrifice: destroy each nonland permanent without a fate counter, then remove all fate counters
 pub(crate) fn stone_wipe(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !live(g, src) || owner(g, src) != p || g.perm(src).tapped || !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 5, 0), "", false)? {
+    if !live(g, src)
+        || owner(g, src) != p
+        || g.perm(src).tapped
+        || !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 5, 0), "", false)?
+    {
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;
     die(g, src, "sac")?;
-    ability_run(g, p, Some(src), None, "destroy each nonland permanent without a fate counter", Some(8.0), None, |g| {
-        run(g, p, Wipe::Stone, Some(src))
-    })?;
+    ability_run(
+        g,
+        p,
+        Some(src),
+        None,
+        "destroy each nonland permanent without a fate counter",
+        Some(8.0),
+        None,
+        |g| run(g, p, Wipe::Stone, Some(src)),
+    )?;
     Ok(true)
 }
 

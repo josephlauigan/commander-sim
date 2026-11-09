@@ -212,7 +212,9 @@ fn probe_7_edict_takes_the_only_creature() {
     let before = g.perm(cl).on_bf;
     sim_core::engine::zones::edict(&mut g, P0, false).unwrap();
     println!("== 7: Cloud alone, edict: still on the battlefield {} (was {before})", g.perm(cl).on_bf);
-    println!("   the trace prints no line for a sacrifice, so a game where Cloud vanishes with no 'is removed' line is an edict");
+    println!(
+        "   the trace prints no line for a sacrifice, so a game where Cloud vanishes with no 'is removed' line is an edict"
+    );
 }
 
 #[test]

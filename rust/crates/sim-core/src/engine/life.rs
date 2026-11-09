@@ -1,7 +1,7 @@
 //! Life, damage to players, state-based checks and elimination (engine.py: lose_life ... eliminate).
 
-use crate::engine::repl;
 use crate::engine::hooks;
+use crate::engine::repl;
 use crate::engine::values::chasm;
 use crate::flow::Res;
 use crate::hooks::{Call, Event};
@@ -180,7 +180,10 @@ pub fn check_state(g: &mut Game) -> Res {
                 || pl.decked
                 || pl.cmd_dmg.iter().chain(pl.cmd2_dmg.iter()).any(|&d| d >= 21)
                 || pl.poison >= 10);
-        if dying && crate::impls::t6_plans::is_t6(g, PlayerId(i as u8)) && !crate::impls::t6_stax::grace_active(g, PlayerId(i as u8)) {
+        if dying
+            && crate::impls::t6_plans::is_t6(g, PlayerId(i as u8))
+            && !crate::impls::t6_stax::grace_active(g, PlayerId(i as u8))
+        {
             crate::ai::t6_table::grace_save(g, PlayerId(i as u8)); // Angel's Grace, if it holds one and {W} is open
         }
         if dying
@@ -275,7 +278,9 @@ fn sba_legend(g: &mut Game) -> Res {
             let score = |n: crate::ids::PermId| -> f64 {
                 let x = g.perm(n);
                 let gear = g.players[i].perms.iter().filter(|&&e| g.perm(e).attached == Some(n)).count();
-                crate::engine::values::epow(g, n) as f64 * 0.25 + if x.tapped { 0.0 } else { 2.0 } + 1.5 * gear as f64
+                crate::engine::values::epow(g, n) as f64 * 0.25
+                    + if x.tapped { 0.0 } else { 2.0 }
+                    + 1.5 * gear as f64
                     + 0.5 * x.plus.max(0) as f64
                     + if x.token { 0.0 } else { 0.25 }
                     - x.born as f64 * 1e-6
@@ -294,7 +299,12 @@ fn sba_legend(g: &mut Game) -> Res {
             };
             for n in same {
                 if n != keep && g.perm(n).on_bf {
-                    crate::glog!(g, "    legend rule: {} keeps one {}, the other goes to the graveyard", g.players[i].name, g.perm(n).name);
+                    crate::glog!(
+                        g,
+                        "    legend rule: {} keeps one {}, the other goes to the graveyard",
+                        g.players[i].name,
+                        g.perm(n).name
+                    );
                     if g.players[i].lands.contains(&n) {
                         // a land (a Mirage Mirror that copies one): the card that is really there goes to the graveyard
                         crate::engine::turn::remove_land(g, pid, n, Some(crate::engine::zones::Zone::Gy));

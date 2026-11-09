@@ -683,7 +683,10 @@ fn memory_jar_follows_its_own_rule_even_with_sheoldred_out() {
     g.active = Some(P0);
     let jar = perm(&mut g, P0, "Memory Jar");
     hand(&mut g, P0, &["Hullcarver", "Locust Spray", "Ribskiff", "Diary of Dreams", "Tome of Legends"]);
-    assert!(perm_opts(&mut g, jar, P0, Some(false)).is_empty(), "five cards and no mana: Memory Jar's own rule says no");
+    assert!(
+        perm_opts(&mut g, jar, P0, Some(false)).is_empty(),
+        "five cards and no mana: Memory Jar's own rule says no"
+    );
     perm(&mut g, P0, SHEO);
     assert!(perm_opts(&mut g, jar, P0, Some(false)).is_empty(), "and Sheoldred out changes nothing");
 }

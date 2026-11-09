@@ -222,8 +222,12 @@ fn planner_off_is_the_step_one_ai() {
 /// wait), so the ready line is no plan and the main phase doesn't go for it
 #[test]
 fn with_a_counter_visible_and_go_ok_false_the_planner_does_not_go() {
-    let mut g =
-        table(&["thrasios", "kraum-tymna-blue-breach-midrange", "rograkh-silas-turbo-breach", "kinnan-bonder-mana-combo"]);
+    let mut g = table(&[
+        "thrasios",
+        "kraum-tymna-blue-breach-midrange",
+        "rograkh-silas-turbo-breach",
+        "kinnan-bonder-mana-combo",
+    ]);
     g.log = Some(vec![]);
     for i in 1..4 {
         let q = PlayerId(i);
@@ -246,4 +250,3 @@ fn with_a_counter_visible_and_go_ok_false_the_planner_does_not_go() {
     assert!(g.player(P0).hand.contains(&card(&g, "Thassa's Oracle")));
     assert!(!log_has(&g, "[plan: combo:"));
 }
-

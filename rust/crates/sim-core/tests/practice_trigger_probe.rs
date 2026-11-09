@@ -657,7 +657,9 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
     let fired = reqs.iter().any(|q| {
         (q.kind == "priority"
             && (q.prompt.contains(&window) || (q.prompt.starts_with("You activate") && q.prompt.contains(name))))
-            || (q.kind != "priority" && q.prompt.starts_with(name) && (!is_act || !q.prompt.ends_with(": which ability?"))) // (a refused activation only asked which ability)
+            || (q.kind != "priority"
+                && q.prompt.starts_with(name)
+                && (!is_act || !q.prompt.ends_with(": which ability?"))) // (a refused activation only asked which ability)
     });
     // only the probed card's questions: not the structure of the probe's own plays, nor a prompt headed by another card
     let other =
@@ -901,8 +903,7 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
 /// Walking Ballista) give each card what its trigger waits for. Rings of Brighthearth is driven with Grim Monolith's
 /// untap: the person's Rings offer exists only for the abilities that carry out their copies (`stack::ability_run`,
 /// `ability_window_ex`, `ability_window_rc`), see `tests/play_rings.rs`.
-const UNPROBED: &[(&str, &str)] = &[
-];
+const UNPROBED: &[(&str, &str)] = &[];
 
 fn check(found: &BTreeMap<String, Vec<String>>) {
     let found: BTreeSet<String> = found

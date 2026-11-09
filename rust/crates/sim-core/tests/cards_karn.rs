@@ -196,4 +196,3 @@ fn mishras_factory_animates_as_an_artifact_creature() {
     let m = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).name == "Mishra's Factory").unwrap();
     assert_eq!((epow(&g, m), etgh(&g, m)), (2, 2));
 }
-

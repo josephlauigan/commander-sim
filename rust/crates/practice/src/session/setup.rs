@@ -15,7 +15,8 @@ pub const TIERS: [&str; 7] = ["t0", "t1", "t2", "t3", "t4", "t5", "t6"];
 
 /// the pool decks of a tier, sorted by key
 pub fn pool_keys(e: &Engine, tier: &str) -> Vec<String> {
-    let mut v: Vec<String> = e.decks.values().filter(|d| d.tier.as_deref() == Some(tier)).map(|d| d.key.clone()).collect();
+    let mut v: Vec<String> =
+        e.decks.values().filter(|d| d.tier.as_deref() == Some(tier)).map(|d| d.key.clone()).collect();
     v.sort();
     v
 }
@@ -125,12 +126,9 @@ pub fn build_game(
             e.seat(k, &d.cards, &d.commander)
         })
         .collect::<Result<Vec<_>, _>>()?;
-    let players = specs
-        .iter()
-        .enumerate()
-        .map(|(i, s)| s.player(PlayerId(i as u8)))
-        .collect();
-    let mut g = Game::new(e.db.clone(), e.registry.clone(), Arc::new(settings), players, Rng::named(&format!("play:{seed}")));
+    let players = specs.iter().enumerate().map(|(i, s)| s.player(PlayerId(i as u8))).collect();
+    let mut g =
+        Game::new(e.db.clone(), e.registry.clone(), Arc::new(settings), players, Rng::named(&format!("play:{seed}")));
     let mut mull = vec![];
     for i in 0..g.players.len() {
         let p = PlayerId(i as u8);

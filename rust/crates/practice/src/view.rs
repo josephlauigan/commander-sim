@@ -69,7 +69,8 @@ fn player(g: &Game, p: PlayerId, me: &str) -> Value {
         .filter(|q| pl.cmd_dmg_from(q.id.index()) != 0)
         .map(|q| (q.name.to_string(), pl.cmd_dmg_from(q.id.index()).into()))
         .collect();
-    let names = |v: &[sim_core::ids::CardId]| -> Vec<String> { v.iter().map(|&c| g.db.get(c).name.to_string()).collect() };
+    let names =
+        |v: &[sim_core::ids::CardId]| -> Vec<String> { v.iter().map(|&c| g.db.get(c).name.to_string()).collect() };
     let battlefield: Vec<Value> = pl
         .perms
         .iter()

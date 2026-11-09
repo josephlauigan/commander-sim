@@ -1,9 +1,6 @@
 //! The turn (Python's `ais.py` "turn structure" section and the turn loop): lands entering tapped or not, playing
 //! lands, upkeep, the end step, the five steps of a turn, mulligans, and a whole game.
 
-use crate::satsum::SatSum;
-use crate::engine::repl;
-use crate::engine::pool::Kind;
 use crate::ai;
 use crate::cardcode;
 use crate::cards::{EnterRule, Types};
@@ -11,12 +8,15 @@ use crate::engine::combat::{blocked, combat};
 use crate::engine::hooks::fire_trigger;
 use crate::engine::life::{check_state, lose_life};
 use crate::engine::mana::{can_pay, land_colors_now, pay, total_mana};
+use crate::engine::pool::Kind;
+use crate::engine::repl;
 use crate::engine::stack::{step_priority, trigger_window};
 use crate::engine::values::*;
 use crate::engine::zones::*;
 use crate::flow::{Res, Stop};
 use crate::hooks::{Call, Event};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::{Game, Step};
 use crate::sym::Sym;
 use crate::tag::Tag;
@@ -94,7 +94,10 @@ fn untapped_by_rule(g: &Game, p: PlayerId, cd: CardId, rule: EnterRule) -> bool 
             }
             let prompt = format!("{}: reveal a card from your hand? If you don't, it enters tapped", g.db.get(cd).name);
             let labels: Vec<String> = labels.into_iter().map(|l| format!("reveal {l}")).collect();
-            matches!(crate::human::choices::choose(g, p, "choose", &prompt, &labels, Some("don't reveal"), None), Ok(Some(_)))
+            matches!(
+                crate::human::choices::choose(g, p, "choose", &prompt, &labels, Some("don't reveal"), None),
+                Ok(Some(_))
+            )
         }
         EnterRule::Legendary => pl.perms.iter().any(|&m| g.is_creature(m) && card_tag(g, m, Tag::Leg)),
         EnterRule::Pay(n) => pays_for_land(g, p, cd, n),
@@ -496,7 +499,8 @@ pub fn remove_land(g: &mut Game, p: PlayerId, l: PermId, to: Option<crate::engin
 }
 
 /// fetch lands' basic land types (Prismatic Vista fetches a basic)
-pub fn true_fetch(name: &str) -> Option<&'static str> { // --- ai-planner: pub (the planner's land choice)
+pub fn true_fetch(name: &str) -> Option<&'static str> {
+    // --- ai-planner: pub (the planner's land choice)
     Some(match name {
         "Polluted Delta" => "UB",
         "Flooded Strand" => "WU",
@@ -1446,11 +1450,7 @@ pub fn setup_game_for(
     human: &[&str],
 ) -> (Game, Vec<(PlayerId, crate::rng::Rng)>) {
     let mut mull_rngs = vec![];
-    let players = seats
-        .iter()
-        .enumerate()
-        .map(|(i, s)| s.player(PlayerId(i as u8)))
-        .collect();
+    let players = seats.iter().enumerate().map(|(i, s)| s.player(PlayerId(i as u8))).collect();
     let mut g = Game::new(db, registry, settings, players, crate::rng::Rng::named(&format!("play:{seed}")));
     if trace {
         let names: Vec<&str> = g.players.iter().map(|q| q.name).collect();

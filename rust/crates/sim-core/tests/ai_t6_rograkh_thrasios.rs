@@ -57,7 +57,13 @@ fn scenario_12_oboro_and_the_finishers_stay_in_hand_and_rograkh_comes_first() {
     let mut g = tbl();
     set_hand(
         &mut g,
-        &["Oboro Breezecaller", "Finale of Devastation", "Eternal Witness", "Gene Pollinator", "Rograkh, Son of Rohgahh"],
+        &[
+            "Oboro Breezecaller",
+            "Finale of Devastation",
+            "Eternal Witness",
+            "Gene Pollinator",
+            "Rograkh, Son of Rohgahh",
+        ],
     );
     let by = |g: &Game, n: &str| deck_prio_f(g, P0, card(g, n));
     assert!(by(&g, "Oboro Breezecaller") <= 0.0);

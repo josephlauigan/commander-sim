@@ -35,7 +35,7 @@ pub const T6_KEYS: [&str; 9] = [
     "sisay-legends-toolbox",
     "godo",
     "thrasios", // --- thrasios: JD's Tymna/Thrasios Doomsday deck (cEDH; took the Thanos turbo list's t6 seat, 2026-11-05)
-    "scion",  // --- scion: JD's Scion of the Ur-Dragon deck (retired 2026-10-30, a test seat of its card code)
+    "scion",    // --- scion: JD's Scion of the Ur-Dragon deck (retired 2026-10-30, a test seat of its card code)
 ];
 
 /// the one gate: is this deck key a Tier 6 deck?

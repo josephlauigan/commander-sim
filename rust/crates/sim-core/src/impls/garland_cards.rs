@@ -164,7 +164,9 @@ fn freighter_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     {
         picks.push(t);
     }
-    if picks.is_empty() || !trigger_window(g, p, Some(src), "return up to two creatures to their owners' hands", Some(4.0))? {
+    if picks.is_empty()
+        || !trigger_window(g, p, Some(src), "return up to two creatures to their owners' hands", Some(4.0))?
+    {
         return Ok(());
     }
     for t in picks {
@@ -226,7 +228,10 @@ fn freighter_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> 
 
 /// whenever it attacks, defending player mills four cards
 fn freighter_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: PlayerId) -> Res<Vec<PermId>> {
-    if atk.contains(&src) && p == owner(g, src) && trigger_window(g, p, Some(src), "defending player mills four", Some(2.0))? {
+    if atk.contains(&src)
+        && p == owner(g, src)
+        && trigger_window(g, p, Some(src), "defending player mills four", Some(2.0))?
+    {
         mill(g, d, 4)?;
     }
     Ok(vec![])
@@ -267,7 +272,8 @@ fn pathmage_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
 }
 
 fn pathmage_target(g: &Game, p: PlayerId) -> Option<PermId> {
-    let blockers = g.opps(p).any(|q| g.player(q).perms.iter().any(|&m| live(g, m) && g.is_creature(m) && !g.perm(m).tapped));
+    let blockers =
+        g.opps(p).any(|q| g.player(q).perms.iter().any(|&m| live(g, m) && g.is_creature(m) && !g.perm(m).tapped));
     if !blockers {
         return None;
     }
@@ -279,7 +285,12 @@ fn pathmage_target(g: &Game, p: PlayerId) -> Option<PermId> {
         .copied()
         .filter(|&m| {
             let x = g.perm(m);
-            live(g, m) && g.is_creature(m) && !x.tapped && !x.sick && !x.noatk && x.data.get(DataKey::Unbl) != Some(&Val::Stamp(st))
+            live(g, m)
+                && g.is_creature(m)
+                && !x.tapped
+                && !x.sick
+                && !x.noatk
+                && x.data.get(DataKey::Unbl) != Some(&Val::Stamp(st))
                 && epow(g, m) >= 3
                 && !x.fly
         })
@@ -353,7 +364,9 @@ fn lazav_sacrifice(g: &mut Game, src: Src, p: PlayerId, what: crate::hooks::Sacr
     };
     let db = g.db.clone();
     let d = db.get(c);
-    if d.pow + d.tgh <= cur.0 + cur.1 || !trigger_window(g, p, Some(src), "become a copy of a creature card exiled with it", Some(3.0))? {
+    if d.pow + d.tgh <= cur.0 + cur.1
+        || !trigger_window(g, p, Some(src), "become a copy of a creature card exiled with it", Some(3.0))?
+    {
         return Ok(());
     }
     let (dp, dt) = (d.pow - cur.0, d.tgh - cur.1);
@@ -417,7 +430,11 @@ fn trove_cast(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
 
 fn trove_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let st = g.turn_stamp();
-    if p != owner(g, src) || g.perm(src).tapped || g.perm(src).phased || g.perm(src).data.get(DataKey::Hit) != Some(&Val::Stamp(st)) {
+    if p != owner(g, src)
+        || g.perm(src).tapped
+        || g.perm(src).phased
+        || g.perm(src).data.get(DataKey::Hit) != Some(&Val::Stamp(st))
+    {
         return Ok(vec![]);
     }
     let u = if post.is_none() { 1.5 } else { 0.4 };

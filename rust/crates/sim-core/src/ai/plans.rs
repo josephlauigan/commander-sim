@@ -352,11 +352,7 @@ pub fn adnaus_cast_now(g: &Game, p: PlayerId) -> bool {
     let room = adnaus_room(g, p);
     // a plan's `adnaus_main2` (--- plan-files-3): a deck that taps out on its own turn never holds 5 mana for the
     // opposing end step; its own second main phase (everything better already cast) is when the mana is idle
-    if super::plan_data::adnaus_main2(g, p)
-        && g.active == Some(p)
-        && g.step == crate::state::Step::Main2
-        && room >= 4
-    {
+    if super::plan_data::adnaus_main2(g, p) && g.active == Some(p) && g.step == crate::state::Step::Main2 && room >= 4 {
         return true;
     }
     g.active != Some(p) && room >= 4

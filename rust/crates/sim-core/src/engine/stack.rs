@@ -5,7 +5,6 @@
 //! find out whether it really triggers, then pushed, then run for real top first: its `trigger_window` gives every
 //! player priority on it and says whether it was countered.
 
-use crate::satsum::SatSum;
 use crate::ai;
 use crate::engine::altcost;
 use crate::engine::cast::discard_worst;
@@ -18,6 +17,7 @@ use crate::engine::zones::{Enter, Tokens, add_treasure, draw, enter, make_tokens
 use crate::flow::{Probe, Res, Stop};
 use crate::hooks::{TrigAct, Trigger};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::{Ctx, Game, StackItem, StackKind};
 use crate::sym::Sym;
 use crate::tag::Tag;
@@ -803,7 +803,9 @@ pub fn equip_ability(g: &mut Game, p: PlayerId, e: PermId, m: PermId) -> Res<boo
                 .collect();
             let labels: Vec<String> = cre.iter().map(|&x| g.perm(x).name.to_string()).collect();
             let prompt = format!("The copy of the equip ability: attach {} to which creature?", g.perm(e).name);
-            if let Some(j) = crate::human::choices::choose(g, p, "target", &prompt, &labels, Some("keep the target"), None)? {
+            if let Some(j) =
+                crate::human::choices::choose(g, p, "target", &prompt, &labels, Some("keep the target"), None)?
+            {
                 t = cre[j];
             }
         }
@@ -870,7 +872,8 @@ fn take_priority(g: &mut Game, q: PlayerId, _id: u32) -> Res<bool> {
         || g.over
         || crate::engine::values::silenced(g, q)
         || (g.locks_used && crate::engine::cast::split_second_up(g))
-        || g.plan_for.is_some_and(|x| x != q) // --- ai-planner: a planner's copy: only its player acts
+        || g.plan_for.is_some_and(|x| x != q)
+    // --- ai-planner: a planner's copy: only its player acts
     {
         return Ok(false);
     }
@@ -1463,7 +1466,12 @@ pub fn cast_counter_spell(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -
         // is not cast after all
         g.player_mut(q).library.pop();
         g.player_mut(q).hand.push(ctr);
-        crate::glog!(g, "    {} casts {} from the top of the library (Mystic Forge)", g.player(q).name, g.db.get(ctr).name);
+        crate::glog!(
+            g,
+            "    {} casts {} from the top of the library (Mystic Forge)",
+            g.player(q).name,
+            g.db.get(ctr).name
+        );
         let r = cast_counter_spell_from_hand(g, q, ctr, target);
         if !matches!(r, Ok(true))
             && let Some(i) = g.player(q).hand.iter().position(|&x| x == ctr)
@@ -1565,8 +1573,7 @@ fn resolve_counter_with(g: &mut Game, q: PlayerId, ctr: CardId, target: u32, sof
     let mut soft = soft_n.unwrap_or_else(|| d.tags.int(Tag::Soft).unwrap_or(0));
     if &*d.name == "Flusterstorm" {
         // storm: a copy per spell cast before it this turn
-        soft = g.players.iter().filter(|x| x.alive).map(|x| crate::engine::cast::casts_this_turn(g, x.id)).ssum()
-            - 1;
+        soft = g.players.iter().filter(|x| x.alive).map(|x| crate::engine::cast::casts_this_turn(g, x.id)).ssum() - 1;
     }
     if soft > 0 && can_pay(g, p, soft as u32, "", false) {
         // Spell Pierce / Mystic Confluence: pay and it resolves (a person may decline)

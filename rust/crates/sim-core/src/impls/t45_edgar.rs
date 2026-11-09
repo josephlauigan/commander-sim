@@ -46,15 +46,15 @@
 //! Combos: a life-gain drain (Sanguine Bond, Vito, Marauding Blight-Priest) with a life-loss gain (Exquisite Blood,
 //! Bloodthirsty Conqueror): an unbounded drain. Sanguine Bond + Exquisite Blood is combos.rs's own entry.
 
-use crate::engine::repl;
-use crate::engine::mana::restr_ok;
-use crate::engine::pool::Restr;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::cast_card;
 use crate::engine::control::Duration;
 use crate::engine::life::{gain, lose_life};
+use crate::engine::mana::restr_ok;
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::pool::Restr;
 use crate::engine::removal::{apply_removal, apply_wipe};
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::values::{epow, etgh, has_type, indestructible, pval, threat, untargetable};
@@ -501,7 +501,9 @@ fn emeritus_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.perm_mut(src).data.set(DataKey::Prepared, Val::Bool(false));
-    crate::impls::mine::cast_copy_with(g, p, None, Some("Demonic Tutor"), false, 5.0, &mut |g| tutor(g, p, "any", "Demonic Tutor"))?;
+    crate::impls::mine::cast_copy_with(g, p, None, Some("Demonic Tutor"), false, 5.0, &mut |g| {
+        tutor(g, p, "any", "Demonic Tutor")
+    })?;
     Ok(true)
 }
 

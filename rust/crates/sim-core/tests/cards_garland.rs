@@ -177,7 +177,14 @@ fn skycoach_conductor_enters_prepared_and_all_aboard_blinks_garland() {
     let c = perm(&mut g, P0, "Skycoach Conductor // All Aboard");
     assert!(g.perm(c).data.truthy(DataKey::Prepared), "enters prepared");
     let o = options(&mut g, c, P0, Some(false));
-    assert_eq!(o.len(), 1, "recrown {} steal(P2) {} held {:?}", G::recrown_value(&g, P0), G::steal_value(&g, P0, P2), g.garland_list);
+    assert_eq!(
+        o.len(),
+        1,
+        "recrown {} steal(P2) {} held {:?}",
+        G::recrown_value(&g, P0),
+        G::steal_value(&g, P0, P2),
+        g.garland_list
+    );
     assert!(run(&mut g, P0, &o[0]));
     assert!(!g.perm(c).data.truthy(DataKey::Prepared), "casting the copy unprepares it");
     let _ = (gar, s);
@@ -226,7 +233,11 @@ fn tragic_lesson_draws_two_then_discards_or_returns_a_land() {
     hand(&mut g, P0, &["Island", "Island"]);
     let n = g.player(P0).hand.len();
     cast_free(&mut g, P0, "Tragic Lesson", Ctx::default());
-    assert_eq!(g.player(P0).hand.len(), n + 2 - 1, "drew two, discarded one: lands are needed in hand, not on the table");
+    assert_eq!(
+        g.player(P0).hand.len(),
+        n + 2 - 1,
+        "drew two, discarded one: lands are needed in hand, not on the table"
+    );
     assert_eq!(g.player(P0).lands.len(), 2);
 }
 

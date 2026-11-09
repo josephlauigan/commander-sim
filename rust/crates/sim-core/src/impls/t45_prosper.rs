@@ -42,12 +42,12 @@
 //!   before the Sorcerer arrived still counts as the first.
 //! - Bolas's Citadel + Sensei's Divining Top + Aetherflux Reservoir: the combo (`COMBOS`).
 
-use crate::engine::repl;
-use crate::engine::pool::Kind;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, land_colors_now, pay};
+use crate::engine::pool::Kind;
+use crate::engine::repl;
 use crate::engine::stack::trigger_window;
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{epow, etgh, indestructible, pval, threat};

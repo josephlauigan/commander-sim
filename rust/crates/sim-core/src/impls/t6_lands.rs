@@ -5,12 +5,12 @@
 //! mana through `land_cols`, `dyn_mana_land` and `on_tap_land` (see impls/lands.rs).
 
 use super::lands::{can_pay_without, pay_without};
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst, on_cast};
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::{ability_window_card, counter_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{etgh, pval, threat, untargetable};

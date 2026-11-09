@@ -1,15 +1,14 @@
 //! Python's `cards/impl/fixes.py`: corrections for cards the ability compiler reads wrongly, each a hand-written
 //! implementation (the Tier 1 and Sauron cards and Deathrite Shaman for M5, the rest in phase 6: `register_phase6`).
 
-use crate::satsum::SatSum;
 use super::partials::{at_once, best_opp_nonland, first_max, first_min, of_type, on, pack, remove_card, unpack};
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::hooks::{fire_trigger, hooked};
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{Source, Unit, can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, counter_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::values::{epow, has_type, pval, threat};
@@ -17,6 +16,7 @@ use crate::engine::zones::{Enter, Tokens, bounce, die, enter, landfall, leave, m
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::{Ctx, Game};
 use crate::sym::Sym;
 use crate::tag::Tag;
@@ -27,11 +27,14 @@ fn pname(g: &Game, p: PlayerId) -> Sym {
 
 /// fixes.destroy_land: q's land is destroyed (its card to the graveyard)
 pub fn destroy_land(g: &mut Game, q: PlayerId, l: PermId) -> Res {
-    if !g.player(q).lands.contains(&l) || crate::dsl::lands_have_kw(g, q, "indestructible") || crate::engine::values::indestructible(g, l) {
+    if !g.player(q).lands.contains(&l)
+        || crate::dsl::lands_have_kw(g, q, "indestructible")
+        || crate::engine::values::indestructible(g, l)
+    {
         return Ok(()); // (Avacyn, Angel of Hope: q's lands are indestructible; Darksteel Citadel)
     }
     let cd = g.perm(l).real_card();
-    let went =     crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
+    let went = crate::engine::turn::remove_land(g, q, l, Some(crate::engine::zones::Zone::Gy));
     crate::glog!(g, "    {} ({}) is destroyed", g.db.get(cd).name, pname(g, q));
     if went && !g.hooks.is_empty() {
         fire_trigger(g, Event::LandGy, Call::Cards { p: q, cards: vec![cd] })?;
@@ -527,7 +530,9 @@ fn foundry(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<O
         return Ok(vec![]);
     }
     if g.perm(src).tapped {
-        if !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false) || total_mana(g, p, false) < 5 {
+        if !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false)
+            || total_mana(g, p, false) < 5
+        {
             return Ok(vec![]);
         }
         return Ok(vec![opt_ability(0.8, "Retrofitter Foundry untap".into(), src, foundry_untap, 0)]);

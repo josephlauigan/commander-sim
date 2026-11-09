@@ -6,7 +6,7 @@ use play_common::*;
 use sim_core::engine::zones::{self, Enter, Tokens};
 use sim_core::human::human::human_main;
 use sim_core::human::{Target, legal};
-use sim_core::ids::{PermId};
+use sim_core::ids::PermId;
 use sim_core::state::{DataKey, Val};
 
 /// an answer that picks the choice describing x
@@ -257,7 +257,12 @@ fn walking_ballista_grows_and_pings() {
     assert_eq!(g.perm(b).plus, 3);
     let before = g.player(P1).life;
     let pt = pick_target(&g, P0, Target::Player(P1));
-    use_perm(&mut g, b, "remove a +1/+1", vec![pt, pick(0)] /* 1 counter: the count is asked while it has more than one */);
+    use_perm(
+        &mut g,
+        b,
+        "remove a +1/+1",
+        vec![pt, pick(0)], /* 1 counter: the count is asked while it has more than one */
+    );
     assert_eq!((g.perm(b).plus, g.player(P1).life), (2, before - 1));
     // a creature it kills
     let x = token(&mut g, P1, 1);

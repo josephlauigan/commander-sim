@@ -17,15 +17,15 @@
 //!
 //! The person's choices (practice mode) are the `human_of` branches.
 
-use crate::engine::repl;
-use crate::engine::pool::Kind;
 use crate::ai::plans::wish_list;
 use crate::ai::pool::generic_prio;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::cast_card;
 use crate::engine::life::{check_state, gain, lose_life, prevents_damage};
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::pool::Kind;
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::{ability_window_card, may_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::values::{card_name, epow, protected_from, pval, threat, untargetable};
@@ -340,7 +340,8 @@ fn x_option(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec
     if post.is_none()
         || g.active != Some(p)
         || !hand_has(g, p, c)
-        || !crate::ai::plan_data::plays(g, p, &g.db.get(c).name) // --- plan-files-3: a plan's `plays`
+        || !crate::ai::plan_data::plays(g, p, &g.db.get(c).name)
+    // --- plan-files-3: a plan's `plays`
     {
         return Ok(vec![]);
     }
@@ -439,7 +440,9 @@ pub fn inheritance_sac(g: &mut Game, p: PlayerId, src: PermId, t: PlayerId) -> R
             let now: Vec<PlayerId> = g.opps(p).filter(|&q| g.player(q).alive).collect();
             let labels: Vec<String> = now.iter().map(|&q| g.player(q).name.to_string()).collect();
             let prompt = "The copy of Ill-Gotten Inheritance's ability: 4 damage to which opponent?";
-            if let Some(k) = crate::human::choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+            if let Some(k) =
+                crate::human::choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)?
+            {
                 t = now[k];
             }
         }
@@ -771,7 +774,11 @@ fn taker_leaves(g: &mut Game, _src: Src, m: PermId) -> Res {
 /// yshtola._cap: {2}, {T}, sacrifice: search target player's library for three cards and exile them (main 2, or an
 /// opponent's end step: the opponent whose best three cards matter most)
 pub fn cap_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if p != g.perm(src).owner || human(g, p) || g.perm(src).tapped || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false) {
+    if p != g.perm(src).owner
+        || human(g, p)
+        || g.perm(src).tapped
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false)
+    {
         return Ok(vec![]);
     }
     if post == Some(false) || (post.is_none() && g.active == Some(p)) {
@@ -985,4 +992,3 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Champion's Helm")?.options = Some(helm);
     Ok(())
 }
-

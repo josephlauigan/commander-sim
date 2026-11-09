@@ -43,7 +43,8 @@ fn the_altar_skeleton_pawn_loop_is_run_and_wins_with_a_drain() {
     assert_eq!(sephfs::altar_loop_need(&g, P0).len(), 3); // Blood Artist, Zulaport, Bastion
     perm(&mut g, P0, "Blood Artist");
     assert!(sephfs::altar_loop(&g, P0).is_some());
-    let o = brain::main_options(&mut g, P0, false).unwrap().into_iter().find(|o| o.label == "Altar + Skeleton + Pawn loop");
+    let o =
+        brain::main_options(&mut g, P0, false).unwrap().into_iter().find(|o| o.label == "Altar + Skeleton + Pawn loop");
     let o = o.expect("the loop is offered");
     assert!(o.utility >= 8.0);
     sim_core::ai::act::perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap();

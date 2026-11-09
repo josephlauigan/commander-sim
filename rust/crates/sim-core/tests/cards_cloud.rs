@@ -667,7 +667,11 @@ fn anduril_narsil_puts_counters_on_every_creature_and_two_with_the_blessing() {
     assert_eq!((g.perm(a).plus, g.perm(b).plus), (0, 0));
     // the equipped creature attacks: one counter on each (fewer than ten permanents)
     attack_triggers(&mut g, P0, &[a], P1);
-    assert_eq!((g.perm(a).plus, g.perm(b).plus), (2, 2), "one counter each, doubled: Narsil is on Cloud, who doubles its trigger");
+    assert_eq!(
+        (g.perm(a).plus, g.perm(b).plus),
+        (2, 2),
+        "one counter each, doubled: Narsil is on Cloud, who doubles its trigger"
+    );
 }
 
 #[test]

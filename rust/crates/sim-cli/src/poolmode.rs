@@ -249,7 +249,15 @@ impl Ctx<'_> {
     }
 
     /// analyze with these settings (the preflight dry run plays the adaptive AI whatever --ai says)
-    pub fn analyze_with(&self, me: &str, my_seat: &Seat, opp_keys: &[String], st: Settings, n: u64, seed0: u64) -> Analysis {
+    pub fn analyze_with(
+        &self,
+        me: &str,
+        my_seat: &Seat,
+        opp_keys: &[String],
+        st: Settings,
+        n: u64,
+        seed0: u64,
+    ) -> Analysis {
         let sim = self.sim;
         let games = sim.run_seeds(&Self::seeds(n, seed0), |s| {
             let seats = sim.seats_for(s, Some(me), Some(my_seat), opp_keys, 3);

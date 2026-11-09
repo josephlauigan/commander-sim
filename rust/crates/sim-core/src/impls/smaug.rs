@@ -6,11 +6,11 @@
 //!   the least life), else the most valuable creature or planeswalker X damage kills (an opposing flier or reach
 //!   creature that could block Smaug counts extra), else the opponent with the least life. X = 0 does nothing.
 
-use crate::engine::repl;
 use crate::cards::{CardDb, Types};
 use crate::dsl::has_kw;
 use crate::engine::life::{check_state, lose_life};
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::trigger_window;
 use crate::engine::values::{etgh, indestructible, pval, untargetable};
 use crate::flow::Res;

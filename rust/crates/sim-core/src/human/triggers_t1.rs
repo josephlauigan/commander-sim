@@ -285,7 +285,9 @@ pub fn allow_free_play(g: &mut Game, p: PlayerId, c: CardId, from: PlayerId, sou
     tell_info(
         g,
         p,
-        &format!("{source}: you may play {name}{whose} this turn without paying its mana cost (see Exile (this turn))."),
+        &format!(
+            "{source}: you may play {name}{whose} this turn without paying its mana cost (see Exile (this turn))."
+        ),
     );
     true
 }

@@ -3,8 +3,8 @@
 //! Prints, per deck, the cards this changes and the 0-priority cards that still get the ability value
 //! (`--nocapture`).
 use sim_core::ai::brain::{self, Situation};
-use sim_core::tag::Tag;
 use sim_core::ids::PlayerId;
+use sim_core::tag::Tag;
 use sim_core::testkit::*;
 
 /// the decks with their own priority functions (nine decks lost theirs, the last three on 2026-11-01)
@@ -28,7 +28,8 @@ fn a_held_zero_from_a_jd_deck_is_never_replaced_by_the_generic_value() {
                     continue;
                 }
                 let ritual = d.name.as_ref() == "Dark Ritual";
-                let held_kind = !ritual && (d.instant || d.tag(Tag::Rem) || d.tag(Tag::Wipe) || d.tag(Tag::Ctr) || d.tag(Tag::Prot));
+                let held_kind = !ritual
+                    && (d.instant || d.tag(Tag::Rem) || d.tag(Tag::Wipe) || d.tag(Tag::Ctr) || d.tag(Tag::Prot));
                 if held_kind {
                     held.insert(d.name.to_string());
                     assert_eq!(brain::card_utility(&g, PlayerId(0), &s, c), None, "{key}: {}", d.name);

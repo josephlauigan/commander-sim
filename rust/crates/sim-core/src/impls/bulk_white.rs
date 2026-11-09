@@ -16,12 +16,12 @@
 //!   **Recruitment Officer**, **Repel the Darkness**.
 
 use super::common::{AURA, AuraSpec, aura};
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::gain;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::{apply_removal, legal_targets};
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, counter_window, may_window, trigger_window};
 use crate::engine::tutors::shuffle_library;
 use crate::engine::values::{card_name, epow, pval, untargetable};
@@ -1581,8 +1581,7 @@ fn skyhunter_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Pla
         if !human {
             return Ok(super::cloud::best_holder(g, p));
         }
-        let mine: Vec<PermId> =
-            g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).collect();
+        let mine: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| live(g, m) && g.is_creature(m)).collect();
         crate::human::gaps_t2::pick_target(
             g,
             p,

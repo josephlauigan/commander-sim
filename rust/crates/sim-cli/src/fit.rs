@@ -61,7 +61,25 @@ impl Cma {
         let c1 = (sep * 2.0 / ((nf + 1.3).powi(2) + mueff)).min(1.0);
         let cmu = (sep * 2.0 * (mueff - 2.0 + 1.0 / mueff) / ((nf + 2.0).powi(2) + mueff)).min(1.0 - c1);
         let chin = nf.sqrt() * (1.0 - 1.0 / (4.0 * nf) + 1.0 / (21.0 * nf * nf));
-        Cma { n, lam, mu, w, mueff, cs, ds, cc, c1, cmu, chin, m, sigma, c: vec![1.0; n], ps: vec![0.0; n], pc: vec![0.0; n], generation: 0 }
+        Cma {
+            n,
+            lam,
+            mu,
+            w,
+            mueff,
+            cs,
+            ds,
+            cc,
+            c1,
+            cmu,
+            chin,
+            m,
+            sigma,
+            c: vec![1.0; n],
+            ps: vec![0.0; n],
+            pc: vec![0.0; n],
+            generation: 0,
+        }
     }
 
     /// this generation's candidates (not clamped: `clamp` them to evaluate)
@@ -103,7 +121,8 @@ impl Cma {
                 .map(|(k, &j)| self.w[k] * ((xs[j][i] - old[i]) / self.sigma).powi(2))
                 .sum();
             let lost = if hs { 0.0 } else { self.cc * (2.0 - self.cc) * self.c[i] };
-            self.c[i] = (1.0 - self.c1 - self.cmu) * self.c[i] + self.c1 * (self.pc[i].powi(2) + lost) + self.cmu * rank_mu;
+            self.c[i] =
+                (1.0 - self.c1 - self.cmu) * self.c[i] + self.c1 * (self.pc[i].powi(2) + lost) + self.cmu * rank_mu;
         }
         self.sigma *= ((self.cs / self.ds) * (ps_norm / self.chin - 1.0)).exp();
         self.m = m;
@@ -180,7 +199,8 @@ impl Dim {
 
 fn dims(tier: &str, keys: &[String], scope: &str, st: &sim_core::settings::Settings) -> Vec<Dim> {
     let mut out = vec![];
-    let style = |name: String, field, decks: Vec<String>, lo, hi, base| Dim { name, field, decks, lo, hi, int: false, base };
+    let style =
+        |name: String, field, decks: Vec<String>, lo, hi, base| Dim { name, field, decks, lo, hi, int: false, base };
     let start = |k: &str| st.styles.get(k).copied().unwrap_or_else(|| sim_core::ai::base_style(k)); // the default knobs' style, else the built-in one
     let mean = |f: &dyn Fn(sim_core::ai::Style) -> f64| {
         keys.iter().map(|k| f(start(k))).sum::<f64>() / keys.len().max(1) as f64
@@ -197,7 +217,8 @@ fn dims(tier: &str, keys: &[String], scope: &str, st: &sim_core::settings::Setti
         out.push(style("aggression".into(), Field::Aggression, keys.to_vec(), 0.0, 1.0, mean(&|s| s.aggression)));
         out.push(style("caution".into(), Field::Caution, keys.to_vec(), 0.0, 1.0, mean(&|s| s.caution)));
     }
-    let int = |name: &str, field, lo, hi, base| Dim { name: name.into(), field, decks: vec![], lo, hi, int: true, base };
+    let int =
+        |name: &str, field, lo, hi, base| Dim { name: name.into(), field, decks: vec![], lo, hi, int: true, base };
     out.push(int("cthresh_default", Field::Cthresh, 3.0, 10.0, st.cthresh_default as f64));
     out.push(int("instant_extra", Field::InstantExtra, 0.0, 4.0, st.instant_extra as f64));
     if tier == "t6" {
@@ -256,7 +277,9 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
         _ => return Err("--fit needs --pool with one tier (t0..t6): it fits that tier's own decks".into()),
     };
     if a.deck.is_some() || a.calibrate.is_some() || a.all_decks || !a.swap.is_empty() || a.realism {
-        return Err("--fit plays the tier's own decks: drop --deck, --swap, --all-decks, --calibrate and --realism".into());
+        return Err(
+            "--fit plays the tier's own decks: drop --deck, --swap, --all-decks, --calibrate and --realism".into()
+        );
     }
     if !["shared", "deck"].contains(&a.fit_scope.as_str()) {
         return Err(format!("--fit-scope must be shared or deck, not {}", a.fit_scope));
@@ -269,7 +292,9 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
     if let Some(list) = &a.fit_stats {
         let want: Vec<&str> = list.split(',').map(str::trim).filter(|s| !s.is_empty()).collect();
         if let Some(bad) = want.iter().find(|w| refs.iter().any(|r| r == **w)) {
-            return Err(format!("--fit-stats: {bad} is a reference value in data/realism/{tier}.toml (scored = false), not fitted"));
+            return Err(format!(
+                "--fit-stats: {bad} is a reference value in data/realism/{tier}.toml (scored = false), not fitted"
+            ));
         }
         if let Some(bad) = want.iter().find(|w| !targets.contains_key(**w)) {
             return Err(format!("--fit-stats: {bad} has no target in data/realism/{tier}.toml"));
@@ -293,7 +318,13 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
         pr.on = !a.quiet;
         pr.plan(n * evals);
         pr.announce(
-            &format!("fit: {tier}, {} knobs ({} scope), {} generations of {}, {n} games each", ds.len(), a.fit_scope, a.fit_gens, cma.lam),
+            &format!(
+                "fit: {tier}, {} knobs ({} scope), {} generations of {}, {n} games each",
+                ds.len(),
+                a.fit_scope,
+                a.fit_gens,
+                cma.lam
+            ),
             ctx.ai(),
             sim.opts.jobs,
         );
@@ -307,7 +338,12 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
     };
     let base_u: Vec<f64> = cma.m.clone();
     let (base_loss, base_m) = eval(&base_u);
-    println!("\n=== Fit: {} [{prof}, {} AI, {n} games a candidate, seeds {seed0}-{}] ===", tier_label(tier), ctx.ai(), seed0 + n.max(1) - 1);
+    println!(
+        "\n=== Fit: {} [{prof}, {} AI, {n} games a candidate, seeds {seed0}-{}] ===",
+        tier_label(tier),
+        ctx.ai(),
+        seed0 + n.max(1) - 1
+    );
     println!("knobs ({}): {}", ds.len(), ds.iter().map(|d| d.name.as_str()).collect::<Vec<_>>().join(", "));
     println!("starting values (the knobs in force: {tier}'s defaults, or --knobs FILE / builtin): loss {base_loss:.2}");
     let (mut best_u, mut best_loss, mut best_m) = (base_u.clone(), base_loss, base_m.clone());
@@ -324,7 +360,11 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
         }
         cma.tell(&xs, &losses);
         let mean = losses.iter().sum::<f64>() / losses.len() as f64;
-        println!("  generation {g:>2}: best so far {best_loss:.2}, this generation {:.2} (mean {mean:.2}), step {:.3}", losses.iter().cloned().fold(f64::INFINITY, f64::min), cma.sigma);
+        println!(
+            "  generation {g:>2}: best so far {best_loss:.2}, this generation {:.2} (mean {mean:.2}), step {:.3}",
+            losses.iter().cloned().fold(f64::INFINITY, f64::min),
+            cma.sigma
+        );
     }
     let best = knobs_of(tier, &ds, &best_u);
     println!("\n  statistic                                           start        best      target       band");
@@ -344,10 +384,21 @@ pub fn run(sim: &Sim, a: &Args) -> Result<(), String> {
         std::fs::create_dir_all(dir).map_err(|e| format!("{}: {e}", dir.display()))?;
     }
     let header = vec![
-        format!("Knobs fitted by commander-sim --fit --pool {tier} --fit-scope {} ({} AI, {prof} profile)", a.fit_scope, ctx.ai()),
-        format!("{} generations of {}, {n} games a candidate on seeds {seed0}-{}", a.fit_gens, cma.lam, seed0 + n.max(1) - 1),
+        format!(
+            "Knobs fitted by commander-sim --fit --pool {tier} --fit-scope {} ({} AI, {prof} profile)",
+            a.fit_scope,
+            ctx.ai()
+        ),
+        format!(
+            "{} generations of {}, {n} games a candidate on seeds {seed0}-{}",
+            a.fit_gens,
+            cma.lam,
+            seed0 + n.max(1) - 1
+        ),
         format!("Scored statistics: {}", targets.keys().cloned().collect::<Vec<_>>().join(", ")),
-        format!("Loss: sum over the scored targets of ((sim - target) / half the band)^2; the win types at {WIN_TYPE_WEIGHT}"),
+        format!(
+            "Loss: sum over the scored targets of ((sim - target) / half the band)^2; the win types at {WIN_TYPE_WEIGHT}"
+        ),
     ];
     let fit = vec![
         ("loss".into(), format!("{best_loss:.3}")),
@@ -381,8 +432,14 @@ mod tests {
 
     #[test]
     fn a_fit_repeats_exactly_from_its_seed() {
-        let a: Vec<f64> = { let mut r = Normal::new("fit:t6:500000"); (0..5).map(|_| r.next()).collect() };
-        let b: Vec<f64> = { let mut r = Normal::new("fit:t6:500000"); (0..5).map(|_| r.next()).collect() };
+        let a: Vec<f64> = {
+            let mut r = Normal::new("fit:t6:500000");
+            (0..5).map(|_| r.next()).collect()
+        };
+        let b: Vec<f64> = {
+            let mut r = Normal::new("fit:t6:500000");
+            (0..5).map(|_| r.next()).collect()
+        };
         assert_eq!(a, b);
         assert!(a.iter().all(|x| x.is_finite() && x.abs() < 6.0));
     }

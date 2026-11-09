@@ -11,14 +11,13 @@
 //! Engine hooks into this file (each a one-line call): stack.rs `spree_extra`/`spirit_token`/`acrobatics_tap`,
 //! cast.rs `spell_to_library`, removal.rs `top_or_bottom`, zur.rs `kasmina_attach`, common.rs `kasmina_detach`.
 
-use crate::satsum::SatSum;
 use super::common::{AURA, AuraSpec, WalkerAb, aura, eot, walker};
 use super::galadriel::blink_value;
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, cast_spell_copy, castable, discard_worst, on_cast};
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::{apply_removal, legal_targets};
+use crate::engine::repl;
 use crate::engine::stack::{counter_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{card_name, epow, pval, untargetable};
@@ -26,6 +25,7 @@ use crate::engine::zones::{Tokens, Zone, draw, enter_token_copy, leave, make_tok
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, PlanFn, Registry};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::{Ctx, DataKey, Game, PermData, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;
@@ -377,7 +377,9 @@ fn token_copy(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     let Some(cd) = g.perm(m).cd else { return Ok(()) };
     crate::glog!(g, "    {} creates a token copy of {}", pname(g, p), g.perm(m).name);
     let tok = enter_token_copy(g, p, cd)?;
-    if let Some(t) = tok.filter(|&t| super::garland::is_my_garland(g, t) && super::garland::garland_of(g, p).is_some_and(|o| o != t)) {
+    if let Some(t) =
+        tok.filter(|&t| super::garland::is_my_garland(g, t) && super::garland::garland_of(g, p).is_some_and(|o| o != t))
+    {
         // the legend rule: one Garland stays (the card); his enter trigger has been put on the stack by the copy
         crate::engine::zones::leave(g, t)?;
     }
@@ -501,7 +503,12 @@ fn whoosh_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> R
         && let Some(m) = super::garland::own_turn_recrown(g, p, gn + pips.len() as u32)
     {
         // Garland's crown has stalled: bounce him after combat and cast him again (no kicker: the mana is for Garland)
-        out.push(plan(super::garland::recrown_value(g, p), "Whoosh! (bounce Garland, crown stalled)".into(), whoosh_go, pack(c, Some(m))));
+        out.push(plan(
+            super::garland::recrown_value(g, p),
+            "Whoosh! (bounce Garland, crown stalled)".into(),
+            whoosh_go,
+            pack(c, Some(m)),
+        ));
     }
     if post == Some(true) && kick_ok {
         let tg = legal_targets(g, p, "bounce", "nl", false, Some(c));
@@ -525,7 +532,11 @@ fn whoosh_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     };
     let (gn, pips) = cost_of(g, p, c);
-    let spare = g.active == Some(p) && super::garland::own_turn_recrown(g, p, gn + 2 + pips.len() as u32).is_none() && g.player(p).key == super::garland::KEY && g.perm(t).owner == p && super::garland::is_my_garland(g, t);
+    let spare = g.active == Some(p)
+        && super::garland::own_turn_recrown(g, p, gn + 2 + pips.len() as u32).is_none()
+        && g.player(p).key == super::garland::KEY
+        && g.perm(t).owner == p
+        && super::garland::is_my_garland(g, t);
     let kick = !spare && can_pay(g, p, gn + 1, &format!("{pips}U"), false);
     let ctx = Ctx { target: Some(t), mode: kick.then_some("kick"), ..Ctx::default() };
     cast_paid(g, p, c, if kick { 1 } else { 0 }, if kick { "U" } else { "" }, ctx)

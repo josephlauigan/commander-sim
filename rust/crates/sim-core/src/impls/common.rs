@@ -8,14 +8,13 @@
 //! grants). Phase 6: the rest (pillowfort taxes, stax pieces, the four planeswalkers, Urza's Saga, Walking Ballista,
 //! graveyard hate, proliferate, the dynamic mana cards ...), registered by `register_phase6`.
 
-use crate::satsum::SatSum;
 use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::{CardDb, CardDef, Colors, Types};
-use crate::engine::pool::Kind;
 use crate::engine::cast::{cast_card, castable, on_cast};
 use crate::engine::hooks::{fire_trigger, hooked};
 use crate::engine::life::{check_state, gain, lose_life};
 use crate::engine::mana::{can_pay, pay, total_mana};
+use crate::engine::pool::Kind;
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl::{self, Ctr, On, Path};
 use crate::engine::stack::{ability_window, ability_window_card, counter_window, trigger_window};
@@ -30,6 +29,7 @@ use crate::hooks::{Action, Call, Event, Opt, Registry, Sacrificed, Src};
 use crate::human::{cards, choices, human_of};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
+use crate::satsum::SatSum;
 use crate::state::{Ctx, DataKey, Game, TurnStamp, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -1032,8 +1032,7 @@ pub fn sac_in_response(g: &mut Game, p: PlayerId, m: PermId, kind: Sym) -> Res<b
     if crate::ai::table_fixes::steal_cost(g, p, m) > 0.0 {
         return Ok(false); // --- ai-table-fixes: AI_SACSTEAL: an opposing Tergrid would take it
     }
-    let dying =
-        crate::ai::is_main(hand_key(g, p)) && (matches!(kind, "destroy" | "wipe") || kind.starts_with("dmg"));
+    let dying = crate::ai::is_main(hand_key(g, p)) && (matches!(kind, "destroy" | "wipe") || kind.starts_with("dmg"));
     if !g.is_creature(m) || !(dying || matches!(kind, "exile" | "bounce" | "tuck")) || g.perm(m).is_cmd {
         return Ok(false);
     }
@@ -1321,7 +1320,9 @@ fn mind_stone_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
     }
     pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)?;
     die(g, src, "sac")?;
-    crate::engine::stack::ability_run_w(g, p, Some(src), None, "draw a card", None, None, 0.0, |g, _| draw(g, p, 1, false))?;
+    crate::engine::stack::ability_run_w(g, p, Some(src), None, "draw a card", None, None, 0.0, |g, _| {
+        draw(g, p, 1, false)
+    })?;
     Ok(true)
 }
 
@@ -2173,7 +2174,11 @@ fn spark_copy(g: &mut Game, p: PlayerId, _c: CardId) -> Option<crate::state::Cop
         .copied()
         .filter(|&x| {
             let y = g.perm(x);
-            y.on_bf && !y.phased && y.cd.is_some() && (g.is_creature(x) || card_is(g, x, Types::PLANESWALKER)) && !y.token
+            y.on_bf
+                && !y.phased
+                && y.cd.is_some()
+                && (g.is_creature(x) || card_is(g, x, Types::PLANESWALKER))
+                && !y.token
         })
         .collect();
     let best = if crate::human::is_human(g, p) {
@@ -2424,8 +2429,17 @@ fn bog(g: &mut Game, p: PlayerId, _l: PermId) -> Res {
     if crate::human::is_human(g, p) {
         // "exile target player's graveyard": the person picks whose (or none)
         let ps: Vec<PlayerId> = g.players.iter().filter(|q| q.alive && !q.gy.is_empty()).map(|q| q.id).collect();
-        let labels: Vec<String> = ps.iter().map(|&q| format!("{} ({} cards)", g.player(q).name, g.player(q).gy.len())).collect();
-        if let Some(k) = crate::human::choices::choose(g, p, "target", "Bojuka Bog: exile which graveyard?", &labels, Some("none"), None)? {
+        let labels: Vec<String> =
+            ps.iter().map(|&q| format!("{} ({} cards)", g.player(q).name, g.player(q).gy.len())).collect();
+        if let Some(k) = crate::human::choices::choose(
+            g,
+            p,
+            "target",
+            "Bojuka Bog: exile which graveyard?",
+            &labels,
+            Some("none"),
+            None,
+        )? {
             exile_gy(g, ps[k], Some("Bojuka Bog"));
         }
         return Ok(());
@@ -3180,10 +3194,7 @@ fn ballista_ping(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     let lethal = os.iter().copied().find(|&q| g.player(q).life <= plus);
     let tg = os.iter().flat_map(|&q| g.player(q).perms.iter().copied()).find(|&m| {
         let v = pval(g, m);
-        g.is_creature(m)
-            && etgh(g, m) <= 1
-            && !untargetable(g, m)
-            && v >= 2.5
+        g.is_creature(m) && etgh(g, m) <= 1 && !untargetable(g, m) && v >= 2.5
     });
     if lethal.is_none() && tg.is_none() {
         return Ok(vec![]);
@@ -3412,16 +3423,16 @@ pub fn saga_lore_one(g: &mut Game, p: PlayerId, l: PermId) -> Res {
                 vec![]
             } else {
                 crate::human::choices::search(
-                g,
-                p,
-                &|g: &Game, c: CardId| {
-                    let d = g.db.get(c);
-                    d.types.has(Types::ARTIFACT) && d.cmc <= 1 && !d.land && !d.tag(Tag::X)
-                },
-                1,
-                "Urza's Saga: search for an artifact card with mana cost {0} or {1}",
-                true,
-            )?
+                    g,
+                    p,
+                    &|g: &Game, c: CardId| {
+                        let d = g.db.get(c);
+                        d.types.has(Types::ARTIFACT) && d.cmc <= 1 && !d.land && !d.tag(Tag::X)
+                    },
+                    1,
+                    "Urza's Saga: search for an artifact card with mana cost {0} or {1}",
+                    true,
+                )?
             };
             if let Some(&c) = got.first() {
                 enter(g, p, c, Enter::default())?;

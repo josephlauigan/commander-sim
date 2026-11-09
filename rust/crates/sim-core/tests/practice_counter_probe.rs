@@ -16,7 +16,8 @@ fn json_file(file: &str) -> Value {
 }
 
 /// the opponent's spells to answer, in the order tried: one each of the kinds counterspells name
-const SPELLS: &[&str] = &["Grave Titan", "Demonic Tutor", "Brainstorm", "Rhystic Study", "Sol Ring", "Swords to Plowshares"];
+const SPELLS: &[&str] =
+    &["Grave Titan", "Demonic Tutor", "Brainstorm", "Rhystic Study", "Sol Ring", "Swords to Plowshares"];
 
 /// (countered, the person's questions, what they were told) for counterspell `name` against `spell`
 fn try_counter(key: &str, name: &str, spell: &str) -> (bool, Vec<String>, Vec<String>) {
@@ -41,7 +42,14 @@ fn try_counter(key: &str, name: &str, spell: &str) -> (bool, Vec<String>, Vec<St
     g.humans.add(P0, h.clone());
     let s = hand(&mut g, P1, &[spell])[0];
     // cast_card: true when the spell resolved, false when it was countered
-    let resolved = sim_core::engine::cast::cast_card(&mut g, P1, s, "hand", Ctx { target: (spell == "Swords to Plowshares").then_some(elf), ..Ctx::default() }).unwrap_or(true);
+    let resolved = sim_core::engine::cast::cast_card(
+        &mut g,
+        P1,
+        s,
+        "hand",
+        Ctx { target: (spell == "Swords to Plowshares").then_some(elf), ..Ctx::default() },
+    )
+    .unwrap_or(true);
     let countered = !resolved;
     if std::env::var("PROBE_DUMP").is_ok_and(|v| name.contains(v.as_str())) {
         for r in h.asked() {
@@ -81,10 +89,18 @@ fn every_counterspell_of_the_owned_decks_works_for_a_person() {
                 let _ = std::panic::take_hook();
                 match r {
                     Ok((true, asked, _)) => {
-                        result = Some(format!("countered {spell}; asked: {}", if asked.is_empty() { "nothing".into() } else { asked.join(" || ") }));
+                        result = Some(format!(
+                            "countered {spell}; asked: {}",
+                            if asked.is_empty() { "nothing".into() } else { asked.join(" || ") }
+                        ));
                         break;
                     }
-                    Ok((false, _, told)) => result = result.or(Some(format!("NOT countered (last told: {})", told.last().cloned().unwrap_or_default()))),
+                    Ok((false, _, told)) => {
+                        result = result.or(Some(format!(
+                            "NOT countered (last told: {})",
+                            told.last().cloned().unwrap_or_default()
+                        )))
+                    }
                     Err(_) => result = result.or(Some("panicked".into())),
                 }
             }
@@ -156,7 +172,8 @@ fn every_protection_card_of_the_owned_decks_saves_a_persons_creature() {
         }));
         g.humans.add(P0, h.clone());
         let grasp = hand(&mut g, P1, &["Infernal Grasp"])[0];
-        let _ = sim_core::engine::cast::cast_card(&mut g, P1, grasp, "hand", Ctx { target: Some(elf), ..Ctx::default() });
+        let _ =
+            sim_core::engine::cast::cast_card(&mut g, P1, grasp, "hand", Ctx { target: Some(elf), ..Ctx::default() });
         // the Elves (or the creature blinked back) are still the person's
         // (or exiled to come back at the end step: Eerie Interlude)
         let alive = g.player(P0).perms.iter().any(|&m| &*g.perm(m).name == "Llanowar Elves")

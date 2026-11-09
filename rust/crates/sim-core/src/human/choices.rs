@@ -6,10 +6,10 @@
 //! `Err(Stop::Cancelled)`, which unwinds the whole game through the engine's `?`.
 
 use super::{Target, human_of, legal};
-use crate::engine::repl;
 use crate::cards::Types;
 use crate::control::{Answer, Request};
 use crate::dsl::model::{Effect, Num, To};
+use crate::engine::repl;
 use crate::engine::values::{etgh, protected_from, untargetable};
 use crate::engine::zones::{self, Zone};
 use crate::engine::{self};
@@ -486,8 +486,10 @@ pub fn deal_damage_batched(g: &mut Game, p: PlayerId, n: i32, source: &str, kind
     }
     if !b.asked {
         b.asked = true;
-        let prompt = format!("{source}: this triggers once for each creature that enters. Aim all of them at the same target?");
-        let labels = vec!["yes, the same target for all of them".to_string(), "no, I'll choose each target".to_string()];
+        let prompt =
+            format!("{source}: this triggers once for each creature that enters. Aim all of them at the same target?");
+        let labels =
+            vec!["yes, the same target for all of them".to_string(), "no, I'll choose each target".to_string()];
         if !tg.is_empty() && choose_one(g, p, "choose", &prompt, &labels)? == 0 {
             let tl: Vec<String> = tg.iter().map(|&x| legal::describe_target(g, p, x)).collect();
             let k = choose_one(g, p, "target", &format!("{source}: which target for all of them?"), &tl)?;

@@ -402,7 +402,8 @@ pub fn choose_pre(g: &Game, p: PlayerId, c: CardId, ctx: &mut Ctx) -> Res<Pre> {
                         "cast it for {1}{W}: exile target creature you don't control".to_string(),
                         "overload {4}{W}{W}: exile each creature you don't control".to_string(),
                     ];
-                    let Some(k) = choices::choose(g, p, "choose", &format!("{name}: how?"), &labels, Some("cancel"), None)?
+                    let Some(k) =
+                        choices::choose(g, p, "choose", &format!("{name}: how?"), &labels, Some("cancel"), None)?
                     else {
                         return Ok(Pre::Cancel);
                     };
@@ -433,7 +434,8 @@ pub fn choose_pre(g: &Game, p: PlayerId, c: CardId, ctx: &mut Ctx) -> Res<Pre> {
                         "cast it for {W}: target creature phases out".to_string(),
                         "kicker {2}{W}: each creature target player controls phases out".to_string(),
                     ];
-                    let Some(k) = choices::choose(g, p, "choose", &format!("{name}: kicker?"), &labels, Some("cancel"), None)?
+                    let Some(k) =
+                        choices::choose(g, p, "choose", &format!("{name}: kicker?"), &labels, Some("cancel"), None)?
                     else {
                         return Ok(Pre::Cancel);
                     };

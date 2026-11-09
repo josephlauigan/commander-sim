@@ -65,11 +65,14 @@ fn choice_lines(text: &str, land: bool, spell: bool) -> Vec<String> {
         .filter(|l| {
             let lc = l.to_lowercase();
             // "you may cast spells as though they had flash", "you may choose new targets": a permission, not a choice
-            let permission = ["you may cast", "you may play", "choose new targets", "without paying"].iter().any(|w| lc.contains(w));
+            let permission =
+                ["you may cast", "you may play", "choose new targets", "without paying"].iter().any(|w| lc.contains(w));
             if !WORDS.iter().any(|w| lc.contains(w) && !(permission && *w == "you may")) {
                 return false;
             }
-            let activated = l.split_once(':').is_some_and(|(c, _)| c.contains('{') || c.starts_with("Sacrifice") || c.starts_with("Pay"));
+            let activated = l
+                .split_once(':')
+                .is_some_and(|(c, _)| c.contains('{') || c.starts_with("Sacrifice") || c.starts_with("Pay"));
             if activated {
                 return land && lc.contains("search your library"); // a fetch land, cracked as it enters
             }
@@ -160,12 +163,19 @@ fn play_it(key: &str, name: &str, land: bool) -> (Vec<String>, Vec<String>, bool
     g.humans.add(P0, h.clone());
     let _ = sim_core::human::human::human_main(&mut g, P0, false);
     // only this card's questions: a prompt headed by another card's name ("Ad Nauseam: ...", a trigger elsewhere) is not it
-    let other = |p: &str| p.split_once(':').is_some_and(|(h, _)| h != name && !name.starts_with(h) && g.db.id(h).is_some());
+    let other =
+        |p: &str| p.split_once(':').is_some_and(|(h, _)| h != name && !name.starts_with(h) && g.db.id(h).is_some());
     let asked: Vec<String> = h
         .asked()
         .iter()
         .filter(|r| r.kind != "priority" && !other(&r.prompt) && !(fetch && r.prompt.ends_with("which ability?")))
-        .map(|r| if std::env::var("PROBE_CHOICES").is_ok() { format!("{}: {} {:?}", r.kind, r.prompt, r.choices) } else { format!("{}: {}", r.kind, r.prompt) })
+        .map(|r| {
+            if std::env::var("PROBE_CHOICES").is_ok() {
+                format!("{}: {} {:?}", r.kind, r.prompt, r.choices)
+            } else {
+                format!("{}: {}", r.kind, r.prompt)
+            }
+        })
         .collect();
     let refused = h.told_kind("invalid");
     let left_hand = !g.player(P0).hand.contains(&c);
@@ -252,13 +262,19 @@ const TO_FIX: &[&str] = &[];
 
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
-    ("yshtola: Urza's Cave", "an activated ability, not used as it enters (its activation is driven by practice_trigger_probe's Activate pass, which asks the search)"),
+    (
+        "yshtola: Urza's Cave",
+        "an activated ability, not used as it enters (its activation is driven by practice_trigger_probe's Activate pass, which asks the search)",
+    ),
     ("aragorn: Deflecting Swat", "new targets for a spell on the stack: the probe has none"),
     ("thanos: Deflecting Swat", "new targets for a spell on the stack: the probe has none"),
     ("sheoldred: Invoke Despair", "the opponent chooses what to sacrifice, not the person"),
     ("sheoldred: Rooftop Assassin", "no creature was dealt damage this turn: no legal target"),
     ("cloud: Loyal Warhound", "a basic Plains: every choice is the same card"),
-    ("aragorn: Twinned Vision", "cast from the hand it only draws a card, nothing to choose; the flashback's discard is the person's (practice_gaps_a: twinned_vision_flashback_discards_the_card_the_person_names)"),
+    (
+        "aragorn: Twinned Vision",
+        "cast from the hand it only draws a card, nothing to choose; the flashback's discard is the person's (practice_gaps_a: twinned_vision_flashback_discards_the_card_the_person_names)",
+    ),
 ];
 
 /// the gaps found against the two lists: a gap on neither list is new (fails), a TO_FIX entry no longer found is
@@ -279,5 +295,10 @@ fn check(found: &BTreeMap<String, Vec<String>>) {
         eprintln!("NO LONGER FOUND (take it off the list): {s}");
     }
     eprintln!("{} found: {} to fix, {} false alarms", found.len(), TO_FIX.len(), FALSE_ALARMS.len());
-    assert!(new.is_empty() && fixed.is_empty(), "{} new gap(s), {} list entr(ies) to remove: see above", new.len(), fixed.len());
+    assert!(
+        new.is_empty() && fixed.is_empty(),
+        "{} new gap(s), {} list entr(ies) to remove: see above",
+        new.len(),
+        fixed.len()
+    );
 }

@@ -1,8 +1,8 @@
 //! The counter-on-cast hook (`Event::CastCounter`, engine/cast.rs `cast_card`) and the record of the mana spent on a
 //! cast (`Ctx::mana_spent`, `Ctx::mana_colored`): Vexing Bauble, Chalice of the Void, Void Mirror.
 
-use sim_core::engine::mana::{cost_of, pay};
 use sim_core::engine::cast;
+use sim_core::engine::mana::{cost_of, pay};
 use sim_core::ids::{CardId, PlayerId};
 use sim_core::state::{Ctx, Game};
 use sim_core::testkit::*;

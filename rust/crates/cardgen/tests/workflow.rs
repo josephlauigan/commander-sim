@@ -137,8 +137,8 @@ fn updating_a_deck_rewrites_its_file_and_the_guard_fixture() {
     let fixture = std::fs::read_to_string(p.root.join("tests/fixtures/my_decks_parsed.json")).unwrap();
     assert!(fixture.contains("\"Mind Stone\""));
     // a bad list stops before any file is touched
-    let o =
-        run(&p, "aragorn", &format!("{text}\n1 Mind Stone"), &Options { dry: false, log: None, offline: true }).unwrap();
+    let o = run(&p, "aragorn", &format!("{text}\n1 Mind Stone"), &Options { dry: false, log: None, offline: true })
+        .unwrap();
     assert!(!o.ok);
     assert!(o.text.contains("101 cards, expected 100") && o.text.contains("not singleton: Mind Stone"), "{}", o.text);
     assert_eq!(std::fs::read_to_string(&path).unwrap(), after);
@@ -165,7 +165,8 @@ fn the_audit_runs_on_the_scratch_data() {
 #[test]
 fn a_pool_deck_with_two_commanders_carries_both() {
     let real = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("../../..");
-    let d = cardgen::decks::load_pool_deck(&real.join("decklists/pool/t6-cedh/kraum-tymna-blue-breach-midrange.md")).unwrap();
+    let d = cardgen::decks::load_pool_deck(&real.join("decklists/pool/t6-cedh/kraum-tymna-blue-breach-midrange.md"))
+        .unwrap();
     assert_eq!(d.tier, "t6");
     assert_eq!(d.commander, "Kraum, Ludevic's Opus");
     assert_eq!(d.commander2.as_deref(), Some("Tymna the Weaver"));
@@ -173,7 +174,8 @@ fn a_pool_deck_with_two_commanders_carries_both() {
     let d = cardgen::decks::load_pool_deck(&real.join("decklists/pool/t6-cedh/sisay-legends-toolbox.md")).unwrap();
     assert_eq!((d.commander.as_str(), d.commander2), ("Sisay, Weatherlight Captain", None));
     // the exported decks.json lists both for the pair, and the seat's colours are their union
-    let decks: serde_json::Value = serde_json::from_str(&std::fs::read_to_string(real.join("data/decks.json")).unwrap()).unwrap();
+    let decks: serde_json::Value =
+        serde_json::from_str(&std::fs::read_to_string(real.join("data/decks.json")).unwrap()).unwrap();
     let k = decks["pool"].as_array().unwrap().iter().find(|x| x["key"] == "kraum-tymna-blue-breach-midrange").unwrap();
     assert_eq!(k["commander2"], "Tymna the Weaver");
     assert_eq!(k["ident"], "WUBR");

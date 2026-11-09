@@ -1,8 +1,8 @@
 //! Your decks' AI pieces from Python's `ais.py`: cast priorities (Sauron's in full; the others in phase 6), tutor
 //! targets, Disruptor Flute's name, the wipe evaluation and mode choice, and the answers to removal and wipes.
 
-use crate::ai::hand_key; // --- phase4-hand-off
 use super::{is_main, pool};
+use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::Types;
 use crate::engine::cast::on_cast;
 use crate::engine::combat::blocked;
@@ -169,7 +169,11 @@ pub fn monolith_untap_options(g: &mut Game, p: PlayerId) -> Vec<Opt> {
 
 pub(crate) fn untap_monolith(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let m = PermId(arg as u32);
-    if !g.perm(m).tapped || !g.perm(m).on_bf || g.perm(m).owner != p || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 4, 0), "", false) {
+    if !g.perm(m).tapped
+        || !g.perm(m).on_bf
+        || g.perm(m).owner != p
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 4, 0), "", false)
+    {
         return Ok(false);
     }
     pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 4, 0), "", false)?;
@@ -723,7 +727,8 @@ pub fn wipe_modes(g: &Game, p: PlayerId, kind: &str) -> Vec<Sym> {
         }
         v
     };
-    let ty = |m: PermId, t: Types| g.perm(m).cd.map_or(t == Types::CREATURE, |_| crate::engine::values::ptypes(g, m).has(t));
+    let ty =
+        |m: PermId, t: Types| g.perm(m).cd.map_or(t == Types::CREATURE, |_| crate::engine::values::ptypes(g, m).has(t));
     let cmc = |m: PermId| g.perm(m).cd.map(|c| g.db.get(c).cmc);
     let mut opts: Vec<(Sym, f64)> =
         vec![("art", val(&|m| ty(m, Types::ARTIFACT))), ("ench", val(&|m| ty(m, Types::ENCHANTMENT)))];
@@ -792,11 +797,7 @@ pub fn protect_response(
     if protect_main(g, owner, m, kind, actor, spell)? {
         return Ok(true);
     }
-    if g.humans.get(owner).is_some()
-        || !is_main(hand_key(g, owner))
-        || silenced(g, owner)
-        || !g.perm(m).on_bf
-    {
+    if g.humans.get(owner).is_some() || !is_main(hand_key(g, owner)) || silenced(g, owner) || !g.perm(m).on_bf {
         return Ok(false); // (the pools sacrifice in pool::protect)
     }
     crate::cardcode::sac_in_response(g, owner, m, kind)
@@ -827,9 +828,7 @@ fn protect_main(
         if crate::impls::t45_chulane_kinnan::protect(g, owner, m, kind, actor, spell)? {
             return Ok(true); // --- Tiers 4/5 (chulane-kinnan): Spellskite redirects, Nezahal exiles itself
         }
-        if key == "kraum"
-            && crate::impls::bulk_white::white_protect(g, owner, m, kind, actor, spell)?
-        {
+        if key == "kraum" && crate::impls::bulk_white::white_protect(g, owner, m, kind, actor, spell)? {
             return Ok(true); // Shardmage's Rescue, Ultimate Magic: Holy for Tymna and the partners
         }
         if crate::impls::t12_lightpaws::protect(g, owner, m, kind, actor, spell)? {
@@ -973,9 +972,12 @@ pub fn braids_sacrifice(g: &mut Game, p: PlayerId) -> Res {
     }
     let chosen = if crate::human::is_human(g, p) {
         // practice mode: the person picks what to sacrifice
-        let cands: Vec<PermId> = opts.iter().map(|o| match o.1 {
-            X::Perm(m) | X::Land(m) => m,
-        }).collect();
+        let cands: Vec<PermId> = opts
+            .iter()
+            .map(|o| match o.1 {
+                X::Perm(m) | X::Land(m) => m,
+            })
+            .collect();
         if cands.is_empty() {
             return Ok(());
         }
@@ -1100,4 +1102,3 @@ fn behind_on_board(g: &Game, p: PlayerId) -> bool {
     let theirs = g.opps(p).filter(|&q| g.player(q).alive).map(pow).max().unwrap_or(0);
     theirs >= pow(p) + 6
 }
-

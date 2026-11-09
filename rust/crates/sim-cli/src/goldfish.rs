@@ -117,7 +117,7 @@ impl GfGame {
             go,
             cmd_turn: p.milestone.get("cmd_cast").copied(),
             extra,
-            own_turns: p.turns, // --- ai-audit
+            own_turns: p.turns,                        // --- ai-audit
             audit: sim_core::gf_audit::report(g, won), // --- ai-audit
             // --- ai-flow
             flow,

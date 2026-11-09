@@ -218,11 +218,7 @@ pub(crate) fn mazemind_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> R
     g.perm_mut(src).tapped = true;
     let name = if arg == 1 { "draw a card" } else { "scry 1" };
     let resolved = ability_run(g, p, Some(src), None, name, None, None, |g| {
-        if arg == 1 {
-            draw(g, p, 1, false)
-        } else {
-            crate::cardcode::scry(g, p, 1, false).map(|_| ())
-        }
+        if arg == 1 { draw(g, p, 1, false) } else { crate::cardcode::scry(g, p, 1, false).map(|_| ()) }
     })?;
     if resolved {
         tome_page(g, src, p)?;
@@ -347,7 +343,8 @@ fn mirror_pay(g: &mut Game, src: Src, o: PlayerId, c: CardId, worth: f64) -> Res
     if !art_card(g, c) || worth < 1.0 || !can_pay(g, o, 2, "", false) {
         return Ok(false);
     }
-    if !trigger_window(g, o, Some(src), "pay {2}: a token copy of the artifact", None)? || !can_pay(g, o, 2, "", false) {
+    if !trigger_window(g, o, Some(src), "pay {2}: a token copy of the artifact", None)? || !can_pay(g, o, 2, "", false)
+    {
         return Ok(false);
     }
     pay(g, o, 2, "", false)
@@ -405,7 +402,8 @@ fn forge_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     let d = g.db.get(top);
     if let Some(top) = forge_top(g, p)
         && post.is_some()
-        && !(d.tag(Tag::Rem) || d.tag(Tag::Wipe) || d.tag(Tag::X) || d.tag(Tag::Ctr)) // (removal and wipes: brain.rs)
+        && !(d.tag(Tag::Rem) || d.tag(Tag::Wipe) || d.tag(Tag::X) || d.tag(Tag::Ctr))
+    // (removal and wipes: brain.rs)
     {
         let s = crate::ai::brain::Situation::new(g, p);
         if let Some(u) = crate::ai::brain::card_utility(g, p, &s, top) {
@@ -544,7 +542,11 @@ fn board_land_want(g: &Game, p: PlayerId, c: CardId) -> f64 {
             w += (lands - swamps).max(0.0) + hungry;
         }
         "Serra's Sanctum" if !held(name) => {
-            w += pl.perms.iter().filter(|&&m| g.perm(m).on_bf && crate::engine::values::ptypes(g, m).has(Types::ENCHANTMENT)).count() as f64;
+            w += pl
+                .perms
+                .iter()
+                .filter(|&&m| g.perm(m).on_bf && crate::engine::values::ptypes(g, m).has(Types::ENCHANTMENT))
+                .count() as f64;
         }
         _ => {}
     }
@@ -704,7 +706,11 @@ fn map_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<V
 }
 
 fn map_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !live(g, src) || g.perm(src).tapped || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false) || !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false)? {
+    if !live(g, src)
+        || g.perm(src).tapped
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false)
+        || !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false)?
+    {
         return Ok(false);
     }
     g.perm_mut(src).tapped = true;
@@ -826,7 +832,9 @@ fn atlas_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     if owner(g, src) != p || !live(g, src) || g.perm(src).tapped || locked(g, src, p) || !atlas_ready(g, p) {
         return Ok(vec![]);
     }
-    if !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false) || g.player(p).library.len() <= 8 {
+    if !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false)
+        || g.player(p).library.len() <= 8
+    {
         return Ok(vec![]);
     }
     let hand = g.player(p).hand.len() as f64;
@@ -943,7 +951,10 @@ fn skull_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
 }
 
 pub(crate) fn skull_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !live(g, src) || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false) || !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false)? {
+    if !live(g, src)
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false)
+        || !pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false)?
+    {
         return Ok(false);
     }
     ability_run(g, p, Some(src), None, "return it to its owner's hand", None, None, |g| {
@@ -1024,8 +1035,10 @@ pub(crate) fn torque_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res
         let mut t = t;
         if is_copy && crate::human::is_human(g, p) {
             // "you may choose a new target for the copy": a nonland permanent
-            let now: Vec<PermId> =
-                crate::human::karn::targets(g, p).into_iter().filter(|&x| !g.perm(x).ttypes.contains(&"land")).collect();
+            let now: Vec<PermId> = crate::human::karn::targets(g, p)
+                .into_iter()
+                .filter(|&x| !g.perm(x).ttypes.contains(&"land"))
+                .collect();
             let prompt = "The copy of Liquimetal Torque's ability: which permanent becomes an artifact?";
             if !now.is_empty()
                 && let Some(x) = crate::human::cards::pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?

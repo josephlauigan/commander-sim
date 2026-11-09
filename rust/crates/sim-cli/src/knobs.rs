@@ -147,7 +147,8 @@ pub fn parse(text: &str, file: &str, decks: &[&str]) -> Result<Knobs, String> {
                 let tb = table(v, "search").map_err(at)?;
                 only(tb, "search", &["combo_w", "ramp_w", "hold_w", "top_k", "rollouts", "horizon"]).map_err(at)?;
                 let s = &mut k.search;
-                for (name, slot) in [("combo_w", &mut s.combo_w), ("ramp_w", &mut s.ramp_w), ("hold_w", &mut s.hold_w)] {
+                for (name, slot) in [("combo_w", &mut s.combo_w), ("ramp_w", &mut s.ramp_w), ("hold_w", &mut s.hold_w)]
+                {
                     if let Some(x) = tb.get(name) {
                         *slot = Some(float(x, name, (0.0, 1000.0)).map_err(at)?);
                     }
@@ -167,7 +168,8 @@ pub fn parse(text: &str, file: &str, decks: &[&str]) -> Result<Knobs, String> {
                     deck(d, "style").map_err(at)?;
                     let tb = table(sv, &format!("style.{d}")).map_err(at)?;
                     only(tb, &format!("style.{d}"), &["temp", "aggression", "caution"]).map_err(at)?;
-                    let get = |name: &str, r| tb.get(name).map(|x| float(x, &format!("style.{d}.{name}"), r)).transpose();
+                    let get =
+                        |name: &str, r| tb.get(name).map(|x| float(x, &format!("style.{d}.{name}"), r)).transpose();
                     let sk = StyleKnob {
                         temp: get("temp", TEMP_RANGE).map_err(at)?,
                         aggression: get("aggression", UNIT_RANGE).map_err(at)?,
@@ -450,7 +452,8 @@ mod tests {
 
     #[test]
     fn written_knobs_read_back_the_same() {
-        let mut k = Knobs { tier: Some("t6".into()), cthresh_default: Some(5), instant_extra: Some(0), ..Default::default() };
+        let mut k =
+            Knobs { tier: Some("t6".into()), cthresh_default: Some(5), instant_extra: Some(0), ..Default::default() };
         k.style.insert(
             "sisay-legends-toolbox".into(),
             StyleKnob { temp: Some(1.25), aggression: Some(0.5), caution: Some(0.125) },

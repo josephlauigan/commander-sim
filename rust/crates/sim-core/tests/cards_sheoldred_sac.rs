@@ -2,10 +2,10 @@
 //! Feeder), Carnage Altar, Common Crook, Callous Inspector and the AI rules for using them. Seat 0 plays the
 //! sheoldred deck, seat 1 the seph deck.
 
-use sim_core::engine::pool::Kind;
 use sim_core::cardcode;
 use sim_core::dsl;
 use sim_core::engine::mana;
+use sim_core::engine::pool::Kind;
 use sim_core::engine::zones::{self, die};
 use sim_core::hooks::{Action, Opt};
 use sim_core::ids::{PermId, PlayerId};

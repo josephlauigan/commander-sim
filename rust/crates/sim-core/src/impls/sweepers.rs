@@ -7,11 +7,11 @@
 //! creature is not tracked (as for every damage effect in the engine), so a creature is hit when the damage is at
 //! least its toughness.
 
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::discard_worst;
 use crate::engine::life::{check_state, lose_life};
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::trigger_window;
 use crate::engine::values::{army_of, epow, etgh, has_type, indestructible, pval, subtypes, untargetable};
 use crate::engine::zones::{Tokens, amass, die, make_tokens, max_by};
@@ -190,7 +190,12 @@ pub fn resolve(g: &mut Game, p: PlayerId, kind: Sym, ctx: &crate::state::Ctx) ->
         person_choices(g, p, kind, &mut rule, ctx)?;
     }
     if kind == "fear" || kind == "dominance" {
-        crate::glog!(g, "    {} names {}", if kind == "fear" { "Crippling Fear" } else { "Kindred Dominance" }, rule.ty);
+        crate::glog!(
+            g,
+            "    {} names {}",
+            if kind == "fear" { "Crippling Fear" } else { "Kindred Dominance" },
+            rule.ty
+        );
     }
     if kind == "ignite" && rule.src.is_none() {
         return Ok(()); // no creature of yours to deal the damage
@@ -248,7 +253,14 @@ fn person_choices(g: &Game, p: PlayerId, kind: Sym, rule: &mut Sweep, ctx: &crat
         let n = |t: Sym| live_creatures(g).iter().filter(|&&(_, m)| of_type(g, m, t)).count();
         let labels: Vec<String> = types
             .iter()
-            .map(|&t| format!("{} ({} creature{} survive)", crate::human::legal::title(t), n(t), if n(t) == 1 { "" } else { "s" }))
+            .map(|&t| {
+                format!(
+                    "{} ({} creature{} survive)",
+                    crate::human::legal::title(t),
+                    n(t),
+                    if n(t) == 1 { "" } else { "s" }
+                )
+            })
             .collect();
         let k = crate::human::choices::choose_one(
             g,

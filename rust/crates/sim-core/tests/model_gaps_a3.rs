@@ -77,10 +77,7 @@ fn mass_sacrifice_of_lands_leaves_no_card_for_a_token() {
     let kept = g.player(P1).lands.len();
     assert!((1..=2).contains(&kept), "one permanent of each type (artifact, land): {kept} lands");
     assert!(
-        g.player(P1)
-            .lands
-            .iter()
-            .any(|&l| g.db.get(g.perm(l).card()).types.has(sim_core::cards::Types::ARTIFACT)),
+        g.player(P1).lands.iter().any(|&l| g.db.get(g.perm(l).card()).types.has(sim_core::cards::Types::ARTIFACT)),
         "an artifact land stays as the artifact"
     );
     assert_eq!((copies_elsewhere(&g, P1, "Treasure Vault"), copies_elsewhere(&g, P1, "Darksteel Citadel")), before);

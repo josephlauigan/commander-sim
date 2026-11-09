@@ -2,8 +2,8 @@
 //! Murderous Mimic, Shang-Chi, Master of Kung Fu, Tyvar, Jubilant Brawler, Loki's Scepter). Cards only: no engine
 //! file is touched; what the engine still has to do is in rust/agents/engine-needs-legends1b.md.
 
-use super::common::{WalkerAb, walker};
 use super::common::best_opp_nonland;
+use super::common::{WalkerAb, walker};
 use crate::cards::CardDb;
 use crate::engine::hooks as eh;
 use crate::engine::stack::{ability_window, trigger_window};
@@ -138,11 +138,7 @@ fn untap_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     }
     let Some((arg, w)) = untap_plan(g, p, src) else { return Ok(vec![]) };
     let label = format!("untap ({})", name_of(g, src));
-    Ok(vec![Opt {
-        utility: 1.5 + 0.5 * w,
-        label,
-        act: Some(Action::Ability { src, f: untap_go, arg }),
-    }])
+    Ok(vec![Opt { utility: 1.5 + 0.5 * w, label, act: Some(Action::Ability { src, f: untap_go, arg }) }])
 }
 
 /// **Ioreth of the Healing House** ({2}{U}, 1/4): "{T}: Untap another target permanent." and "{T}: Untap two other

@@ -25,7 +25,12 @@ fn says_reveal(oracle: &str) -> bool {
 fn the_reveal_list_matches_the_oracle_text() {
     let cache = json("scryfall_cache.json");
     let oracle = |name: &str| -> Option<String> {
-        cache.as_object().unwrap().values().find(|r| r["name"] == name).and_then(|r| r["oracle_text"].as_str().map(String::from))
+        cache
+            .as_object()
+            .unwrap()
+            .values()
+            .find(|r| r["name"] == name)
+            .and_then(|r| r["oracle_text"].as_str().map(String::from))
     };
     for &n in tutors::REVEALS {
         let t = oracle(n).unwrap_or_else(|| panic!("{n}: not in the Scryfall cache"));
