@@ -23,15 +23,28 @@ investigation needs no approval: reading files, `git log`/`diff`/`fetch`, `grep`
 
 ## Models
 
-- The main agent runs on **Opus 5.5** (`claude-opus-5-5`), set in `.claude/settings.json`.
-- **Every subagent runs on Sonnet 5.5** (`claude-sonnet-5-5`), set by `CLAUDE_CODE_SUBAGENT_MODEL` in the same file.
-  Don't override it: leave the Agent tool's `model` unset (or pass `"sonnet"`).
-- **Every subagent runs at high effort** (JD, 2026-11-01): pass `effort: "high"` on every Agent call, workflow
-  agents included. No setting does this for subagents alone (`CLAUDE_CODE_EFFORT_LEVEL` would also change the main
-  session), so it goes on each call.
-- **Pass `model: "sonnet"` on every Agent call too** (JD, 2026-11-01): `CLAUDE_CODE_SUBAGENT_MODEL` loads only in
-  sessions started inside `commander-sim/`; a session started in a parent folder otherwise gives its agents the main
-  model (Opus).
+This follows the general model organization in JD's `~/.claude/CLAUDE.md` (JD, 2026-11-08). The roles are repeated
+here so sessions without that file (cloud, other machines) follow them too.
+
+- The main agent runs on **Sonnet 5.5** (`claude-sonnet-5-5`, high effort), set in `.claude/settings.json` (effort in
+  `~/.claude/settings.json`). It plans, coordinates, implements what it doesn't delegate, and talks to JD.
+- **Opus 5.5 is the advisor**: an Agent call with `model: "opus"`, `effort: "high"`, one short consult that ends when
+  it answers. Send it the code, files and evidence, not your conclusion. Consult it for: a plan before it goes to JD;
+  a recommendation JD will act on; surprising or conflicting evidence; accepting any limitation or "out of scope";
+  the design of a tricky or cross-cutting change before building it; a bug that survived two fix attempts; the final
+  diff review before a merge; changes to rule or config files. Not for routine edits, status updates or Haiku
+  results. In this repository that also means:
+  - deck swap, cut and buy proposals, and package adoption (it reads the swap breakdown, not just the `delta` line);
+  - surprising sim deltas, regressions against the recorded baseline, numbers that contradict `FINDINGS.md`;
+  - any card left below Full, before it is put to JD;
+  - modelling a card with tricky Oracle text (replacement effects, layers, stack timing) before building it.
+- **Haiku 5.5 does procedural work**: Agent calls with `model: "haiku"`, `effort: "low"`, for searching, grepping,
+  `cardgen audit`, file reads, legality and colour-identity lookups, and summarizing sim output. No card modelling,
+  rules judgements or deck advice. Sonnet checks every Haiku result before using it (open the cited files and lines,
+  re-run the key search or lookup) and never passes it on unchecked.
+- **Every other subagent runs on Sonnet 5.5 at high effort**: pass `model: "sonnet"` and `effort: "high"` on every
+  other Agent call, workflow agents included. `CLAUDE_CODE_SUBAGENT_MODEL` (same file) is only the default and loads
+  only in sessions started inside `commander-sim/`, so the explicit `model` is still needed.
 - **An agent is open no longer than its work needs** (JD, 2026-11-01: "My usage is completely getting eaten up"). No
   agent waits on sims or long builds: an agent writes code or a queue script and stops; the coordinator runs the
   queue as a background script with a watcher on its "all done" line, and a new short agent reads the outputs and
