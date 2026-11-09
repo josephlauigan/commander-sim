@@ -456,8 +456,13 @@ fn hand_lines(g: &Game, p: PlayerId, l: Option<&Loaded>) -> Vec<String> {
     }
     d.push(line);
     if (m.eff - curve.real(2)).abs() > 0.05 {
+        let petal = if curve.petal_card.is_some() {
+            " (it counts a Lotus Petal as 0.7; the turn-by-turn line counts it as 1 mana, once)"
+        } else {
+            ""
+        };
         d.push(format!(
-            "The keep rule counts this hand as {} mana (all {} in hand plus the rocks that count), not what you have on turn 2.",
+            "The keep rule counts this hand as {} mana (all {} in hand plus the rocks that count{petal}), not what you have on turn 2.",
             num(m.eff),
             plural(m.lands, "land", "lands")
         ));

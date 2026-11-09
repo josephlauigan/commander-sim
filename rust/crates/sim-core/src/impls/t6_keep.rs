@@ -103,14 +103,17 @@ pub fn dragon_cast(g: &Game, p: PlayerId, cap: usize) -> Option<(usize, CardId)>
     let starts = all.iter().any(|&c| g.db.get(c).cmc == 0 && nm(g, c) == "Lotus Petal");
     let doubles =
         hand.iter().filter(|&&c| g.db.get(c).land && matches!(nm(g, c), "Ancient Tomb" | "City of Traitors")).count();
-    // castable in colour from the hand's lands and the pieces it can cast, not counting Jasper itself
-    let have = sources(g, p, false);
-    let dragon = hand
+    let dragons: Vec<CardId> = hand
         .iter()
         .copied()
         .filter(|&c| g.db.get(c).creature && crate::impls::t45_urdragon::dragon_card(g, c))
-        .filter(|&c| covers(have, g.db.get(c).colors))
-        .min_by_key(|&c| g.db.get(c).cmc)?;
+        .collect();
+    if dragons.is_empty() {
+        return None;
+    }
+    // castable in colour from the hand's lands and the pieces it can cast, not counting Jasper itself
+    let have = sources(g, p, false);
+    let dragon = dragons.into_iter().filter(|&c| covers(have, g.db.get(c).colors)).min_by_key(|&c| g.db.get(c).cmc)?;
     let need = g.db.get(dragon).cmc as f64;
     let petal = all.iter().any(|&c| nm(g, c) == "Lotus Petal");
     // (cost, mana made) of the other pieces, cheapest first; Jasper is left out so nothing loops
@@ -278,8 +281,13 @@ pub fn covers(have: Colors, need: Colors) -> bool {
 /// the colours the hand can make: its lands (a fetch land: the colours of the lands left in the library), then the rocks
 /// and dorks it can cast with what it has so far (their colours and a Mox's own cost, repeated until nothing is added)
 pub fn hand_sources(g: &Game, p: PlayerId) -> Colors {
-    let lands = g.player(p).hand.iter().filter(|&&c| g.db.get(c).land).count();
-    sources(g, p, dragon_cast(g, p, lands).is_some())
+    let hand = &g.player(p).hand;
+    if !hand.iter().any(|&c| nm(g, c) == "Mox Jasper") {
+        return sources(g, p, false);
+    }
+    // like `piece_value`: Jasper is a source when a Dragon can be cast by turn 2
+    let lands = hand.iter().filter(|&&c| g.db.get(c).land).count();
+    sources(g, p, dragon_cast(g, p, lands).is_some_and(|x| x.0 <= 2))
 }
 
 /// `hand_sources`, with Mox Jasper's colours only when `jasper` (it makes mana only once a Dragon is cast)

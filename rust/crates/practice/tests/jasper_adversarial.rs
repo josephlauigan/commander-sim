@@ -306,3 +306,41 @@ fn a_spent_petal_is_not_counted_again() {
     assert!(line.starts_with("Mana on turn 2: 4 ="), "{line}");
     assert!(!line.contains("Lotus Petal"), "{line}");
 }
+
+/// a Petal that pays for the Dragon (Forest + Petal cast Korlessa, 2) on turn 1 is gone from turn 2
+#[test]
+fn a_petal_spent_on_the_dragon_is_gone_from_turn_two() {
+    let (mut g, p) =
+        fixture(&["Forest", "Island", "Lotus Petal", "Korlessa, Scale Singer", "Mox Jasper", "Counterspell"]);
+    let line = mana_line(&mut g, p);
+    assert!(line.starts_with("Mana on turn 2: 3 = 2 lands"), "{line}");
+    assert!(!line.contains("Lotus Petal"), "{line}");
+}
+
+/// a Petal and nothing else to spend it on stays one mana, not 0.7 and not more than one
+#[test]
+fn a_petal_alone_is_one_mana_on_turn_two() {
+    let (mut g, p) = fixture(&["Forest", "Island", "Lotus Petal", "Counterspell", "Brainstorm"]);
+    let line = mana_line(&mut g, p);
+    assert!(line.starts_with("Mana on turn 2: 3 = 2 lands + Lotus Petal 1 (once)"), "{line}");
+}
+
+/// a hand with no Mox Jasper: hand_sources is just the lands and the pieces (a fetch land makes the colours of the
+/// lands left in the library), Dragon or not
+#[test]
+fn hand_sources_without_jasper_are_unchanged_by_a_dragon() {
+    let (g, p) = fixture(&["Verdant Catacombs", "Mothdust Changeling", "Counterspell"]);
+    let with_dragon = t6_keep::hand_sources(&g, p);
+    let (g2, p2) = fixture(&["Verdant Catacombs", "Counterspell"]);
+    assert_eq!(with_dragon, t6_keep::hand_sources(&g2, p2));
+}
+
+/// Jasper is a colour source on the same terms the keep rule counts it as mana: a Dragon castable by turn 2. Realmwalker
+/// (3) with a Mind Stone cast turn 2 only comes down on turn 3
+#[test]
+fn jasper_is_a_colour_source_only_when_the_dragon_is_castable_by_turn_two() {
+    let (g, p) = fixture(&["Forest", "Island", "Mox Jasper", "Mind Stone", "Realmwalker"]);
+    assert_eq!(t6_keep::dragon_cast(&g, p, 2).map(|x| x.0), Some(3));
+    assert_eq!(jasper_values(&g, p), vec![0.0]);
+    assert!(!t6_keep::hand_sources(&g, p).has('R'), "turn 3 is too late for Jasper to count as a source");
+}
