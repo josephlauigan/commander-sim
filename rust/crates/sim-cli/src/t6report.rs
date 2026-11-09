@@ -305,23 +305,26 @@ fn render_doomsday(d: &DeckT6) -> String {
     for t in ["end step", "main"] {
         let pre = format!("asked|{t}|");
         let mut v: Vec<(String, i64)> =
-            d.dd.most_common().into_iter().filter_map(|(k, n)| k.strip_prefix(&pre).map(|r| (r.to_string(), n))).collect();
+            d.dd.most_common()
+                .into_iter()
+                .filter_map(|(k, n)| k.strip_prefix(&pre).map(|r| (r.to_string(), n)))
+                .collect();
         if v.is_empty() {
             continue;
         }
         let tot: i64 = v.iter().map(|x| x.1).sum();
         v.sort_by(|a, b| b.1.cmp(&a.1));
-        let parts: Vec<String> = v.iter().map(|(r, n)| format!("{r} {n} ({:.0}%)", pct(*n as u64, tot as u64))).collect();
+        let parts: Vec<String> =
+            v.iter().map(|(r, n)| format!("{r} {n} ({:.0}%)", pct(*n as u64, tot as u64))).collect();
         o += &format!("        {t}, {tot} decisions: {}\n", parts.join("; "));
     }
     let turns = g("tutor turns");
     if turns > 0 {
-        let mut picks: Vec<(String, i64)> = d
-            .dd
-            .most_common()
-            .into_iter()
-            .filter_map(|(k, n)| k.strip_prefix("tutor would fetch|").map(|r| (r.to_string(), n)))
-            .collect();
+        let mut picks: Vec<(String, i64)> =
+            d.dd.most_common()
+                .into_iter()
+                .filter_map(|(k, n)| k.strip_prefix("tutor would fetch|").map(|r| (r.to_string(), n)))
+                .collect();
         picks.sort_by(|a, b| b.1.cmp(&a.1));
         let top: Vec<String> = picks.iter().take(6).map(|(r, n)| format!("{r} {n}")).collect();
         o += &format!(
@@ -337,7 +340,11 @@ fn render_doomsday(d: &DeckT6) -> String {
 fn render_speed(d: &DeckT6) -> String {
     let n = d.seated.max(1);
     let one = |v: &[u32]| {
-        if v.is_empty() { "-".to_string() } else { format!("{:.1} ({:.0}% of games)", median(v), pct(v.len() as u64, n)) }
+        if v.is_empty() {
+            "-".to_string()
+        } else {
+            format!("{:.1} ({:.0}% of games)", median(v), pct(v.len() as u64, n))
+        }
     };
     let mut o = format!(
         "      speed (median round): ready {}, one tutor away {}, went for a line {}, won {}\n",
@@ -421,7 +428,13 @@ fn render_mana(d: &DeckT6) -> String {
             let w = |k: &str| d.mn.get(&format!("eotw|{k}")) as f64;
             format!(
                 "      Thrasios digs per seated game: end of the turn before its own {:.2}, own turn {:.2} (of which a land onto the battlefield {:.2}); end-of-turn windows per game {:.1}, untapped mana at them {:.1}, windows with Thrasios in play {:.1} offering {:.2} digs each\n",
-                g("eot"), g("own"), g("land"), w("n") / n, w("mana") / w("n").max(1.0), w("thr") / n, w("can") / w("thr").max(1.0)
+                g("eot"),
+                g("own"),
+                g("land"),
+                w("n") / n,
+                w("mana") / w("n").max(1.0),
+                w("thr") / n,
+                w("can") / w("thr").max(1.0)
             )
         } else {
             String::new()
@@ -442,7 +455,9 @@ fn render_mana(d: &DeckT6) -> String {
 
 /// the per-seat block: win round, mulligans, tries, stops, removal taken, deaths
 fn render_seats(t: &T6Tally) -> String {
-    let mut o = String::from("  by seat (1 goes first): wins, win round avg/median, mulligan hands, combo tries per game, stopped, removal+counters taken per game, died, death round avg, first out\n");
+    let mut o = String::from(
+        "  by seat (1 goes first): wins, win round avg/median, mulligan hands, combo tries per game, stopped, removal+counters taken per game, died, death round avg, first out\n",
+    );
     for (i, s) in t.seats.iter().enumerate() {
         if s.games == 0 {
             continue;

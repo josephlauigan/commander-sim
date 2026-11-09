@@ -145,10 +145,8 @@ pub fn thanos_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool>
 fn ask_parity(g: &Game, p: PlayerId, src: PermId) -> Res<bool> {
     let label = |even: bool| {
         let v = victims(g, src, even);
-        let names: Vec<String> = v
-            .iter()
-            .map(|&(q, m)| format!("{}{}", g.perm(m).name, if q == p { " (yours)" } else { "" }))
-            .collect();
+        let names: Vec<String> =
+            v.iter().map(|&(q, m)| format!("{}{}", g.perm(m).name, if q == p { " (yours)" } else { "" })).collect();
         let what = if even { "even (0, 2, 4 ...)" } else { "odd (1, 3, 5 ...)" };
         if names.is_empty() { format!("{what}: no creature") } else { format!("{what}: {}", names.join(", ")) }
     };

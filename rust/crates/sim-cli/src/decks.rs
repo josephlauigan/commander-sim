@@ -213,7 +213,8 @@ mod tests {
 
     #[test]
     fn import_list_keeps_order_and_counts() {
-        let txt = "# X\n\n## Import list\n\n```\n1 Sol Ring\n3 Island\n1 Counterspell\n```\n\n## Notes\n```\n1 Nope\n```";
+        let txt =
+            "# X\n\n## Import list\n\n```\n1 Sol Ring\n3 Island\n1 Counterspell\n```\n\n## Notes\n```\n1 Nope\n```";
         assert_eq!(parse_import_list(txt).unwrap(), ["Sol Ring", "Island", "Island", "Island", "Counterspell"]);
     }
 

@@ -2,8 +2,8 @@
 //! expectation. Tymna the Weaver herself is tested in cards_legends.rs.
 
 use sim_core::ai::{act, decks};
-use sim_core::engine::pool::Kind;
 use sim_core::cards::Colors;
+use sim_core::engine::pool::Kind;
 use sim_core::engine::{cast, combat, removal, values, zones};
 use sim_core::hooks::Opt;
 use sim_core::ids::{CardId, PermId, PlayerId};
@@ -1359,10 +1359,8 @@ fn godo_fetches_one_equipment_onto_the_battlefield_unattached() {
     set_library(&mut g, P0, &["Mountain", "Conqueror's Flail", "Helm of Kaldra", "Shield of Kaldra", "Island"]);
     let before = g.player(P0).library.len();
     let godo = godo_cast(&mut g);
-    let got: Vec<_> = ["Conqueror's Flail", "Helm of Kaldra", "Shield of Kaldra"]
-        .iter()
-        .filter_map(|n| on_bf(&g, P0, n))
-        .collect();
+    let got: Vec<_> =
+        ["Conqueror's Flail", "Helm of Kaldra", "Shield of Kaldra"].iter().filter_map(|n| on_bf(&g, P0, n)).collect();
     assert_eq!(got.len(), 1, "exactly one Equipment");
     assert_eq!(g.perm(got[0]).attached, None, "not attached to Godo");
     assert_eq!(g.player(P0).library.len(), before - 1);
@@ -1481,4 +1479,3 @@ fn lightning_stagger_doubles_all_damage_to_the_player_and_their_permanents_until
     lose_life(&mut g, P1, 3, Some(P2), "burn", Some(true)).unwrap();
     assert_eq!(g.player(P1).life, 22);
 }
-

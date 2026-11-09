@@ -37,4 +37,3 @@ fn kefka_does_not_discard_the_pieces_the_line_waits_for() {
     let h = hand(&mut g, P0, &["Brain Freeze", "Island", "Swamp"]);
     let _ = kefka::discard_choice(&g, P0, &h, 0).unwrap();
 }
-

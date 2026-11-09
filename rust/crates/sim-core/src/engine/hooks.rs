@@ -135,7 +135,8 @@ pub fn allowed(g: &Game, p: PlayerId, c: crate::ids::CardId, zone: &str) -> bool
 
 /// a battlefield card counters c as p casts it (Vexing Bauble, Chalice of the Void, Void Mirror)
 pub fn cast_countered(g: &Game, p: PlayerId, c: crate::ids::CardId, ctx: &crate::state::Ctx) -> bool {
-    !g.hooks.is_empty() && hooked(g, Event::CastCounter).iter().any(|(src, imp)| (imp.cast_counter.unwrap())(g, *src, p, c, ctx))
+    !g.hooks.is_empty()
+        && hooked(g, Event::CastCounter).iter().any(|(src, imp)| (imp.cast_counter.unwrap())(g, *src, p, c, ctx))
 }
 
 /// Would a battlefield cast-counter counter c as p casts it having spent `spent` mana, `colored` of it coloured? The AI
@@ -248,4 +249,3 @@ pub fn run_hook(g: &mut Game, src: PermId, e: Event, call: &Call) -> Res {
         (e, c) => panic!("hook call {e:?} with {c:?}: no such pairing"),
     }
 }
-

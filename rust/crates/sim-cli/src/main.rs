@@ -16,16 +16,16 @@ mod decks;
 mod explain;
 mod fit;
 mod flow; // --- ai-flow
-mod goldfish;
 mod gf_audit; // --- ai-audit
+mod goldfish;
 mod holdreport; // --- t5-hold
 mod knobs;
 mod mull_oracle; // --- c4-mulligan-oracle
 mod mull_oracle_tier; // --- c5-oracle-vs-tier
 mod play;
 mod poolmode;
-mod progress;
 mod preflight;
+mod progress;
 mod pyrand;
 mod realism;
 mod report;
@@ -161,8 +161,7 @@ fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
                 s.1 = full; // the front face alone names a double-faced card
             }
         }
-        let missing: Vec<&str> =
-            swaps.iter().map(|(_, b)| b.as_str()).filter(|b| sim.raw_card(b).is_none()).collect();
+        let missing: Vec<&str> = swaps.iter().map(|(_, b)| b.as_str()).filter(|b| sim.raw_card(b).is_none()).collect();
         if !missing.is_empty() {
             return Err(format!(
                 "Not in data/cards.json (check the spelling; a card no list has played yet needs a card-data export \
@@ -181,8 +180,7 @@ fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
             return Err(format!("Outside {deck}'s color identity ({ident}): {}", bad.join(", ")));
         }
         // compare.show_auto
-        let auto: Vec<_> =
-            swaps.iter().filter_map(|(_, b)| sim.raw_card(b)).filter(|c| c.source != "manual").collect();
+        let auto: Vec<_> = swaps.iter().filter_map(|(_, b)| sim.raw_card(b)).filter(|c| c.source != "manual").collect();
         if !auto.is_empty() {
             println!("Cards modeled from Scryfall text (check the abilities below):");
             for c in auto {
@@ -207,9 +205,11 @@ fn run(sim: &Sim, mut a: Args) -> Result<i32, String> {
     }
 
     if a.pool.is_none() && a.calibrate.is_none() && !a.all_decks {
-        return Err("--pool t1..t5|all is required (or --all-decks / --calibrate). The four-deck head-to-head mode was \
+        return Err(
+            "--pool t1..t5|all is required (or --all-decks / --calibrate). The four-deck head-to-head mode was \
                     removed; decks are measured against the opponent pools."
-            .into());
+                .into(),
+        );
     }
     if a.all_decks && a.pool.is_none() {
         a.pool = Some("all".into());
@@ -256,7 +256,11 @@ fn print_cards(sim: &Sim, deck: &str, list: &[String]) {
         println!("\n(Game Changer check unavailable: data/cards.json has no Game Changer flag for every card)");
     } else {
         let gcs: Vec<&str> = known.iter().filter(|c| c.game_changer == Some(true)).map(|c| c.name.as_str()).collect();
-        println!("\nGame Changers per Scryfall ({}): {}", gcs.len(), if gcs.is_empty() { "none".into() } else { gcs.join(", ") });
+        println!(
+            "\nGame Changers per Scryfall ({}): {}",
+            gcs.len(),
+            if gcs.is_empty() { "none".into() } else { gcs.join(", ") }
+        );
     }
 }
 

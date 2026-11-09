@@ -83,7 +83,12 @@ impl GameOut {
                     cast_turns: if with_cards {
                         let t = p.turns;
                         let rest = p.cast_names.iter().skip(p.cast_logged).map(|c| (*c, t));
-                        p.cast_turns.iter().copied().chain(rest).map(|(c, t)| (g.db.get(c).name.to_string(), t)).collect()
+                        p.cast_turns
+                            .iter()
+                            .copied()
+                            .chain(rest)
+                            .map(|(c, t)| (g.db.get(c).name.to_string(), t))
+                            .collect()
                     } else {
                         vec![]
                     },
@@ -162,7 +167,8 @@ impl Sim {
         let engine = Engine::load(&data).map_err(|e| format!("loading {}: {e}", data.display()))?;
         let mine = decks::load_mine(&root)?;
         let pool = decks::load_pool(&root)?;
-        let raw = sim_core::export::load_cards(&data.join("cards.json")).map_err(|e| format!("data/cards.json: {e}"))?;
+        let raw =
+            sim_core::export::load_cards(&data.join("cards.json")).map_err(|e| format!("data/cards.json: {e}"))?;
         let raw = raw.into_iter().map(|c| (c.name.clone(), c)).collect();
         let mut sim = Sim {
             engine,
@@ -274,7 +280,8 @@ impl Sim {
     /// the cards of a deck file that differ from data/decks.json: the export is out of date (a warning only; the
     /// games use the deck files, and every card has to be in data/cards.json)
     fn warn_stale_export(&self) {
-        let lists = self.mine.iter().map(|(k, v)| (k.as_str(), v)).chain(self.pool.iter().map(|d| (d.key.as_str(), &d.cards)));
+        let lists =
+            self.mine.iter().map(|(k, v)| (k.as_str(), v)).chain(self.pool.iter().map(|d| (d.key.as_str(), &d.cards)));
         let stale: Vec<&str> = lists
             .filter(|(k, v)| {
                 let mut a: Vec<&String> = v.iter().collect();
@@ -298,7 +305,14 @@ impl Sim {
 
     /// poolmode.play: the seats for this seed (me and k opponents drawn from opp_keys, or k pool decks when me is
     /// None), my seat with my_seat's cards
-    pub fn seats_for(&self, seed: u64, me: Option<&str>, my_seat: Option<&Seat>, opp_keys: &[String], k: usize) -> Vec<Seat> {
+    pub fn seats_for(
+        &self,
+        seed: u64,
+        me: Option<&str>,
+        my_seat: Option<&Seat>,
+        opp_keys: &[String],
+        k: usize,
+    ) -> Vec<Seat> {
         draw_seats(seed, opp_keys, me, k)
             .iter()
             .map(|s| match (me, my_seat) {

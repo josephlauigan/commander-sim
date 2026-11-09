@@ -148,7 +148,8 @@ fn is_cmd_line(l: &str) -> bool {
 /// `decks::load_pool_deck` reads it; a double-faced card's `A // B` has no spaced single slash)
 pub fn commander2_of(inp: &Inputs, path: &Path, text: &str) -> Option<String> {
     let base = path.file_name().map(|s| s.to_string_lossy().to_string()).unwrap_or_default();
-    if let Some(d) = inp.my.iter().find(|d| Path::new(&d.file).file_name().is_some_and(|f| f.to_string_lossy() == base)) {
+    if let Some(d) = inp.my.iter().find(|d| Path::new(&d.file).file_name().is_some_and(|f| f.to_string_lossy() == base))
+    {
         return d.commander2.clone();
     }
     pool_commander_line(text).and_then(|l| split_pair(&l).1)
@@ -753,7 +754,10 @@ mod tests {
     #[test]
     fn a_pool_partner_line_is_two_commanders() {
         let pair = |a: &str, b: Option<&str>| (a.to_string(), b.map(String::from));
-        assert_eq!(split_pair("Kraum, Ludevic's Opus / Tymna the Weaver"), pair("Kraum, Ludevic's Opus", Some("Tymna the Weaver")));
+        assert_eq!(
+            split_pair("Kraum, Ludevic's Opus / Tymna the Weaver"),
+            pair("Kraum, Ludevic's Opus", Some("Tymna the Weaver"))
+        );
         assert_eq!(split_pair("Kinnan, Bonder Prodigy"), pair("Kinnan, Bonder Prodigy", None));
         // a double-faced card's name is one commander
         let esika = "Esika, God of the Tree // The Prismatic Bridge";

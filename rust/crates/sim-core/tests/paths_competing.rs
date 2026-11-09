@@ -9,9 +9,9 @@
 //! the nine split lines PR 5b found to be doubles (an enters tag beside card code; Doubling Season's loyalty).
 
 use sim_core::ai::act::perform;
-use sim_core::engine::pool::Kind;
 use sim_core::cardcode;
 use sim_core::dsl::{self, model::Ability};
+use sim_core::engine::pool::Kind;
 use sim_core::engine::{cast, stack};
 use sim_core::hooks::{Action, Opt};
 use sim_core::ids::{CardId, PermId, PlayerId};
@@ -339,7 +339,11 @@ fn desperate_ritual_adds_exactly_three_red() {
     let (r, any) = (g.player(P0).mana.get(Kind::R), g.player(P0).mana.get(Kind::Any));
     let c = take(&mut g, P0, "Desperate Ritual");
     cast::resolve(&mut g, P0, c, &Ctx::default(), "hand").unwrap();
-    assert_eq!((g.player(P0).mana.get(Kind::R), g.player(P0).mana.get(Kind::Any)), (r + 3, any), "{{R}}{{R}}{{R}}, once");
+    assert_eq!(
+        (g.player(P0).mana.get(Kind::R), g.player(P0).mana.get(Kind::Any)),
+        (r + 3, any),
+        "{{R}}{{R}}{{R}}, once"
+    );
 }
 
 // ======================================================== split lines that were doubles (found by the splits pass)

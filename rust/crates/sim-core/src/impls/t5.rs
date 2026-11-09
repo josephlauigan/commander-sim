@@ -2,15 +2,15 @@
 //! are `combos.rs`.
 
 use super::common::{WalkerAb, best_opp_nonland, death_value};
-use crate::engine::pool::Kind;
 use super::partials::{at_once, eot_kw, first_max, first_min, on, remove_card};
 use super::t2::{blink, blink_value};
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst};
 use crate::engine::life::lose_life;
 use crate::engine::mana::{Source, Unit, can_pay, pay, total_mana};
+use crate::engine::pool::Kind;
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library, tutor, tutor_to_top};
 use crate::engine::values::{epow, etgh, has_type, pval, threat, untargetable};
@@ -333,7 +333,11 @@ fn whir_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 /// each player discards their hand and draws as many as the largest hand
 fn windfall(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
     let qs: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
-    let n = qs.iter().map(|&q| crate::engine::values::hand_count(g, q) as i64 - if q == p { 1 } else { 0 }).max().unwrap_or(0);
+    let n = qs
+        .iter()
+        .map(|&q| crate::engine::values::hand_count(g, q) as i64 - if q == p { 1 } else { 0 })
+        .max()
+        .unwrap_or(0);
     for &q in &qs {
         let cards: Vec<CardId> = g.player(q).hand.iter().copied().filter(|&x| x != c).collect();
         discard_cards(g, q, &cards)?;
@@ -346,7 +350,10 @@ fn windfall(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
 
 fn windfall_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     // --- c1b-engines: and (Tier 6) a stuck hand, `partials::t6_refill`; never over a combo piece
-    if g.player(p).hand.len() <= 2 || (super::partials::t6_refill(g, p, c) && !g.player(p).hand.iter().any(|&x| x != c && crate::cardcode::is_combo_piece(g, x))) {
+    if g.player(p).hand.len() <= 2
+        || (super::partials::t6_refill(g, p, c)
+            && !g.player(p).hand.iter().any(|&x| x != c && crate::cardcode::is_combo_piece(g, x)))
+    {
         50
     } else {
         0

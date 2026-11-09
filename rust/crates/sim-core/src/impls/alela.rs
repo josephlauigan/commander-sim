@@ -14,14 +14,12 @@
 //! The person's choices (practice mode) are in `human/abilities.rs`. Daydream, Venser and Ray of Command use the stand-ins
 //! for t2.blink / blink_value and marchesa.best_steal / steal in `galadriel.rs`.
 
-use crate::satsum::SatSum;
 use super::common::{
     AURA, AuraSpec, WalkerAb, allowed, aura, best_opp_creature, best_opp_nonland, oring_exile, oring_return,
     round_stamp, uses, walker,
 };
 use super::galadriel::{best_steal, blink, blink_value, steal};
 use super::partials::at_once;
-use crate::engine::repl;
 use crate::ai::decks::protect_response;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, on_cast};
@@ -29,6 +27,7 @@ use crate::engine::combat::{can_block, first_strike, has_haste, kw};
 use crate::engine::life::gain;
 use crate::engine::mana::{can_pay, cost_of, land_colors_now, pay};
 use crate::engine::removal::{apply_removal, legal_targets};
+use crate::engine::repl;
 use crate::engine::stack::{ability_run, ability_run_w, ability_window, counter_window, may_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{card_name, colors_of, epow, etgh, no_sac, pval, untargetable};
@@ -40,6 +39,7 @@ use crate::flow::Res;
 use crate::hooks::{Action, Assign, Event, Opt, Registry, Src};
 use crate::human::human_of;
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::{Ctx, DataKey, Game, PermData, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;
@@ -301,10 +301,7 @@ fn plan_etb_person(g: &mut Game, src: PermId, o: PlayerId) -> Res {
         .flat_map(|q| q.perms.iter().copied())
         .filter(|&t| {
             let x = g.perm(t);
-            t != src
-                && !x.phased
-                && x.cd.is_none_or(|c| !g.db.get(c).land)
-                && !(x.owner != o && untargetable(g, t))
+            t != src && !x.phased && x.cd.is_none_or(|c| !g.db.get(c).land) && !(x.owner != o && untargetable(g, t))
         })
         .collect();
     if cands.is_empty() {
@@ -898,7 +895,13 @@ fn jackdaw_return(g: &mut Game, o: PlayerId, src: PermId, dead: PermId) -> Res {
         if cs.is_empty() || !trigger_window(g, o, Some(src), "return a creature card", Some(3.0))? {
             return Ok(());
         }
-        crate::human::gaps_t2::pick_card(g, o, &cs, "Jackdaw Savior: return which creature card to the battlefield?", None)?
+        crate::human::gaps_t2::pick_card(
+            g,
+            o,
+            &cs,
+            "Jackdaw Savior: return which creature card to the battlefield?",
+            None,
+        )?
     } else {
         best
     };
@@ -1519,7 +1522,12 @@ fn junk_in_hand(g: &Game, p: PlayerId) -> Vec<CardId> {
 /// of the turn or after combat.
 fn voucher_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let x = g.perm(src);
-    if x.owner != p || !x.on_bf || x.tapped || x.phased || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false) {
+    if x.owner != p
+        || !x.on_bf
+        || x.tapped
+        || x.phased
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false)
+    {
         return Ok(vec![]);
     }
     let junk = junk_in_hand(g, p).len();
@@ -1532,7 +1540,11 @@ fn voucher_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> R
 
 fn voucher_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     let junk = junk_in_hand(g, p);
-    if !controls(g, p, src) || g.perm(src).tapped || junk.is_empty() || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false) {
+    if !controls(g, p, src)
+        || g.perm(src).tapped
+        || junk.is_empty()
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false)
+    {
         return Ok(false);
     }
     pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false)?;
@@ -1655,7 +1667,10 @@ fn mirror_targets(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
 /// pay {2} and become a copy of t until end of turn
 fn mirror_become(g: &mut Game, src: PermId, p: PlayerId, t: PermId) -> Res<bool> {
     let Some(tcd) = g.perm(t).cd else { return Ok(false) };
-    if !controls(g, p, src) || !on_bf(g, t) || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false) {
+    if !controls(g, p, src)
+        || !on_bf(g, t)
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false)
+    {
         return Ok(false);
     }
     pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 2, 0), "", false)?;
@@ -2095,7 +2110,12 @@ pub fn serra_floor(g: &Game, p: PlayerId, n: &mut i32) -> bool {
 /// (Opposition, Karmic Justice, Auras ... all come back at once).
 fn chimes_options(g: &mut Game, src: Src, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
     let x = g.perm(src);
-    if x.owner != p || !x.on_bf || x.tapped || x.phased || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false) {
+    if x.owner != p
+        || !x.on_bf
+        || x.tapped
+        || x.phased
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false)
+    {
         return Ok(vec![]);
     }
     let n = chimes_cards(g, p).len();
@@ -2110,7 +2130,10 @@ fn chimes_cards(g: &Game, p: PlayerId) -> Vec<CardId> {
 }
 
 pub(crate) fn chimes_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !controls(g, p, src) || g.perm(src).tapped || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false) {
+    if !controls(g, p, src)
+        || g.perm(src).tapped
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false)
+    {
         return Ok(false);
     }
     pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 3, 0), "", false)?;

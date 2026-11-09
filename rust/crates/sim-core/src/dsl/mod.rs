@@ -10,12 +10,11 @@
 
 pub mod model;
 
-use crate::satsum::SatSum;
 use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::{Colors, Types};
-use crate::engine::pool::Kind;
 use crate::engine::life::{check_state, gain, lose_life};
 use crate::engine::mana::{can_pay, pay, total_mana};
+use crate::engine::pool::Kind;
 use crate::engine::removal::apply_removal;
 use crate::engine::repl::{self, Ctr, On, Path};
 use crate::engine::values::{colors_of, epow, etgh, has, has_type, protected_from, pval, threat, untargetable};
@@ -24,6 +23,7 @@ use crate::flow::Res;
 use crate::hooks::{TrigAct, Trigger};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
+use crate::satsum::SatSum;
 use crate::state::{Ctx, Game};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -581,9 +581,9 @@ fn mill_target(g: &Game, p: PlayerId, k: i32, cols: Colors) -> Option<PlayerId> 
     if gy_payoff(g, p) && g.player(p).library.len() as i32 > k + 5 {
         return Some(p);
     }
-    let opps: Vec<PlayerId> =
-        g.opps(p).filter(|&q| !crate::engine::values::player_hexproof_from(g, q, cols)).collect();
-    if let Some(q) = min_by(&opps, |q| g.player(q).library.len() as f64).filter(|&q| g.player(q).library.len() as i32 <= k)
+    let opps: Vec<PlayerId> = g.opps(p).filter(|&q| !crate::engine::values::player_hexproof_from(g, q, cols)).collect();
+    if let Some(q) =
+        min_by(&opps, |q| g.player(q).library.len() as f64).filter(|&q| g.player(q).library.len() as i32 <= k)
     {
         return Some(q);
     }
@@ -913,7 +913,8 @@ fn run(
             let f = e.filter.clone().unwrap_or(Filter { kind: Some("creature".into()), ..Filter::default() });
             if e.all == Some(true) {
                 // --- Tiers 1/2 (kaalia-sythis): "return all ... cards from your graveyard to the battlefield"
-                let cs: Vec<CardId> = g.player(p).gy.iter().copied().filter(|&c| card_matches(g, c, Some(&f))).collect();
+                let cs: Vec<CardId> =
+                    g.player(p).gy.iter().copied().filter(|&c| card_matches(g, c, Some(&f))).collect();
                 let tapped = e.tapped == Some(true);
                 let mut lands = 0;
                 for c in cs {
@@ -1766,7 +1767,9 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
         // Thune): fired by engine/life.rs `gain`, once per life-gain event
         "gain_life" => match w {
             Some("you") | None if kw.player == Some(q) => out.push(base),
-            Some("opponent") if kw.player.is_some_and(|x| x != q) => out.push(DslCtx { event_player: kw.player, ..base }),
+            Some("opponent") if kw.player.is_some_and(|x| x != q) => {
+                out.push(DslCtx { event_player: kw.player, ..base })
+            }
             _ => {}
         },
         _ => {}
@@ -1776,7 +1779,10 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
 
 // ------------------------------------------------------------------ static abilities
 /// (controller, source, ability) for every static or replacement ability of this kind on the battlefield
-pub(crate) fn statics<'a>(g: &'a Game, kind: &'a str) -> impl Iterator<Item = (PlayerId, PermId, Arc<[Ability]>, usize)> + 'a {
+pub(crate) fn statics<'a>(
+    g: &'a Game,
+    kind: &'a str,
+) -> impl Iterator<Item = (PlayerId, PermId, Arc<[Ability]>, usize)> + 'a {
     g.players.iter().filter(|q| q.alive).flat_map(move |q| {
         q.perms
             .iter()
@@ -2181,7 +2187,11 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
     let land = g.player(p).lands.contains(&src);
     let land_tap = land && cost.tap == Some(true);
     let can = |g: &mut Game, n: u32| {
-        if land_tap { crate::impls::lands::can_pay_without(g, p, src, n, &pips) } else { can_pay(g, p, n, &pips, false) }
+        if land_tap {
+            crate::impls::lands::can_pay_without(g, p, src, n, &pips)
+        } else {
+            can_pay(g, p, n, &pips, false)
+        }
     };
     let mut gn = gn;
     if let Some(k) = cost.x.filter(|&k| k > 0) {
@@ -2359,9 +2369,16 @@ pub fn ability_options(g: &mut Game, p: PlayerId, sorcery_ok: bool) -> Res<Vec<c
         for (i, a) in abilities(g, cd).iter().enumerate() {
             match a {
                 Ability::Activated { cost, effects, sorcery, once, ai_min } => {
-                    if let Some(u) =
-                        activated_utility(g, p, src, i as u16, land, (cost, effects, *sorcery, *once, *ai_min), sorcery_ok, stamp)?
-                    {
+                    if let Some(u) = activated_utility(
+                        g,
+                        p,
+                        src,
+                        i as u16,
+                        land,
+                        (cost, effects, *sorcery, *once, *ai_min),
+                        sorcery_ok,
+                        stamp,
+                    )? {
                         out.push(Opt {
                             utility: u,
                             label: format!("{name} ability"),
@@ -2713,7 +2730,13 @@ pub fn borrowed_abilities(g: &Game, p: PlayerId, src: PermId) -> Vec<(CardId, u1
     for &m in &g.player(p).perms {
         let x = g.perm(m);
         let Some(cd) = x.cd else { continue };
-        if m == src || x.name == me || !x.on_bf || x.phased || x.neutered || !g.is_creature(m) || !g.db.get(cd).has_dsl()
+        if m == src
+            || x.name == me
+            || !x.on_bf
+            || x.phased
+            || x.neutered
+            || !g.is_creature(m)
+            || !g.db.get(cd).has_dsl()
         {
             continue;
         }

@@ -130,7 +130,8 @@ pub fn cut(s: &str, n: usize) -> String {
     s.chars().take(n).collect()
 }
 
-const SIMPLE_KW: [&str; 9] = ["flying", "deathtouch", "vigilance", "lifelink", "haste", "trample", "reach", "flash", "infect"];
+const SIMPLE_KW: [&str; 9] =
+    ["flying", "deathtouch", "vigilance", "lifelink", "haste", "trample", "reach", "flash", "infect"];
 
 /// Oracle text minus reminder text and lines made only of keywords the engine models
 pub fn rules_text(oracle: &str) -> String {
@@ -550,7 +551,9 @@ pub fn check_md_target_for(path: &str, header: &str) -> Result<(), String> {
     let p = std::path::Path::new(path);
     let abs = std::fs::canonicalize(p).unwrap_or_else(|_| p.to_path_buf());
     if p.components().chain(abs.components()).any(|c| c.as_os_str() == "decklists") {
-        return Err(format!("{path}: cardgen audit never writes into decklists/ (deck docs must keep their import list)"));
+        return Err(format!(
+            "{path}: cardgen audit never writes into decklists/ (deck docs must keep their import list)"
+        ));
     }
     if let Ok(text) = std::fs::read_to_string(p)
         && !text.trim().is_empty()

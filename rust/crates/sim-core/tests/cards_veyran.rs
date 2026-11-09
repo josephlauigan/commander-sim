@@ -446,4 +446,3 @@ fn whole_games_with_veyrans_cards_finish() {
         assert!(g.over || g.round >= 20, "seed {seed}");
     }
 }
-

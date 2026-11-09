@@ -104,7 +104,13 @@ fn hammer_attaches_another_equipment_that_enters_to_godo() {
     let other = token(&mut g, P0, 4);
     perm(&mut g, P0, "Hammer of Nazahn");
     let godo = perm(&mut g, P0, "Godo, Bandit Warlord"); // its fetch finds Helm, which Hammer attaches
-    let helm = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == "Helm of the Host")).unwrap();
+    let helm = g
+        .player(P0)
+        .perms
+        .iter()
+        .copied()
+        .find(|&m| g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == "Helm of the Host"))
+        .unwrap();
     assert_eq!(attached_to(&g, helm), Some(godo), "Godo is preferred over a bigger creature ({other:?})");
 }
 
@@ -136,7 +142,13 @@ fn prio(g: &Game, p: PlayerId, name: &str) -> i32 {
 fn magnetic_theft_attaches_a_loose_equipment_to_the_creature() {
     let mut g = tbl();
     let godo = perm(&mut g, P0, "Godo, Bandit Warlord"); // Helm comes out unattached (no Hammer)
-    let helm = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == "Helm of the Host")).unwrap();
+    let helm = g
+        .player(P0)
+        .perms
+        .iter()
+        .copied()
+        .find(|&m| g.perm(m).cd.is_some_and(|c| &*g.db.get(c).name == "Helm of the Host"))
+        .unwrap();
     assert_eq!(attached_to(&g, helm), None);
     assert!(prio(&g, P0, "Magnetic Theft") > 0, "worth casting");
     cast_resolve(&mut g, P0, "Magnetic Theft");
@@ -259,7 +271,11 @@ fn engineer_sacrifices_a_rock_to_return_a_cheap_artifact_for_r() {
     assert!(on(&g, P0, "Cursed Mirror"), "returned to the battlefield");
     assert!(!g.perm(rock).on_bf, "sacrificed as a cost");
     assert!(g.perm(e).tapped);
-    assert_eq!(sim_core::engine::mana::total_mana(&g, P0, false), 2, "paid {{R}}: one Mountain left, plus Cursed Mirror taps for {{R}}");
+    assert_eq!(
+        sim_core::engine::mana::total_mana(&g, P0, false),
+        2,
+        "paid {{R}}: one Mountain left, plus Cursed Mirror taps for {{R}}"
+    );
 }
 
 #[test]
@@ -338,7 +354,8 @@ fn thrasher_discards_a_spare_card_and_lets_you_play_one_of_the_top_two() {
     let mut g = tbl();
     let t = perm(&mut g, P0, "Party Thrasher");
     hand(&mut g, P0, &["Mountain", "Mountain", "Sol Ring"]);
-    let (hand_before, lib_before, gy_before) = (g.player(P0).hand.len(), g.player(P0).library.len(), g.player(P0).gy.len());
+    let (hand_before, lib_before, gy_before) =
+        (g.player(P0).hand.len(), g.player(P0).library.len(), g.player(P0).gy.len());
     main1(&mut g, t, P0);
     assert_eq!(g.player(P0).gy.len(), gy_before + 1, "discarded a card");
     assert_eq!(g.player(P0).library.len(), lib_before - 2, "two cards exiled");

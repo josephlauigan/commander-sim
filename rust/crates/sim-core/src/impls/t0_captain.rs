@@ -17,13 +17,13 @@
 //! - **Avenge / Heroic Return**: their cost reductions read who attacked whom (`T0c::attacked`).
 //! - **Dismantling Wave** (hard cycling), **Raise the Palisade**, **Heroic Sacrifice**, **Avengers Tower**.
 
-use crate::engine::repl;
-use crate::engine::mana::restr_ok;
-use crate::engine::pool::Restr;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::life::{gain, lose_life};
+use crate::engine::mana::restr_ok;
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::pool::Restr;
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
 use crate::engine::values::{card_name, epow, etgh, has_type, once_per_turn, pval, subtypes, untargetable};
 use crate::engine::zones::{Enter, bounce, die, draw, enter, max_by};

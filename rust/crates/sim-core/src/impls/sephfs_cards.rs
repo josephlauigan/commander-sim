@@ -14,10 +14,10 @@
 //! games reads the creature type of a creature that has already been returned.
 
 use super::common::{AURA, AuraSpec};
-use crate::engine::repl;
 use crate::cards::CardDb;
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::repl;
 use crate::engine::values::{etgh, indestructible, pval};
 use crate::engine::zones::{Enter, Zone, die, draw, enter, exile_perm, leave, to_zone_card};
 use crate::flow::Res;
@@ -185,11 +185,29 @@ fn necro_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
     stat(g, p, "sf_wipes", 1);
     if crate::human::is_human(g, p) {
         // the person picks which creature card put into a graveyard this way comes back (or none)
-        let labels: Vec<String> = died.iter().map(|&(c, o)| format!("{} (from {}'s graveyard)", g.db.get(c).name, g.player(o).name)).collect();
-        if !labels.is_empty() && let Some(k) = crate::human::choices::choose(g, p, "choose", "Necromantic Selection: return which creature card under your control?", &labels, Some("none"), None)? {
+        let labels: Vec<String> = died
+            .iter()
+            .map(|&(c, o)| format!("{} (from {}'s graveyard)", g.db.get(c).name, g.player(o).name))
+            .collect();
+        if !labels.is_empty()
+            && let Some(k) = crate::human::choices::choose(
+                g,
+                p,
+                "choose",
+                "Necromantic Selection: return which creature card under your control?",
+                &labels,
+                Some("none"),
+                None,
+            )?
+        {
             let (c, o) = died[k];
             if let Some(m) = take_from_gy(g, p, c, o)? {
-                crate::glog!(g, "    Necromantic Selection returns {} under {}'s control", g.perm(m).name, g.player(p).name);
+                crate::glog!(
+                    g,
+                    "    Necromantic Selection returns {} under {}'s control",
+                    g.perm(m).name,
+                    g.player(p).name
+                );
                 stat(g, p, "sf_steals", 1);
             }
         }
@@ -869,7 +887,9 @@ fn blood_person(g: &mut Game, p: PlayerId, ctx: &Ctx) -> Res<Sym> {
             .iter()
             .filter(|q| q.alive)
             .flat_map(|q| q.perms.clone())
-            .filter(|&m| live(g, m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(crate::cards::Types::PLANESWALKER)))
+            .filter(|&m| {
+                live(g, m) && g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(crate::cards::Types::PLANESWALKER))
+            })
             .collect();
         kill_all(g, ms, "destroy")?;
     } else {
@@ -945,17 +965,30 @@ fn gix_chapter(g: &mut Game, src: PermId, p: PlayerId, n: i64) -> Res {
     let human = crate::human::is_human(g, p);
     match n {
         1 => {
-            if !crate::engine::stack::trigger_window(g, p, Some(src), "chapter I: look at a hand, discard a creature or planeswalker", Some(3.0))? {
+            if !crate::engine::stack::trigger_window(
+                g,
+                p,
+                Some(src),
+                "chapter I: look at a hand, discard a creature or planeswalker",
+                Some(3.0),
+            )? {
                 return Ok(());
             }
             let pick = if human {
                 let q = crate::human::choices::target_opponent(g, p, GIX)?;
-                let cands: Vec<CardId> = g.player(q).hand.iter().copied().filter(|&c| g.db.get(c).creature || is_pw(g, c)).collect();
+                let cands: Vec<CardId> =
+                    g.player(q).hand.iter().copied().filter(|&c| g.db.get(c).creature || is_pw(g, c)).collect();
                 let labels: Vec<String> = cands.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
                 if labels.is_empty() {
                     None
                 } else {
-                    let k = crate::human::choices::choose_one(g, p, "choose", "The Cruelty of Gix: that player discards which creature or planeswalker card?", &labels)?;
+                    let k = crate::human::choices::choose_one(
+                        g,
+                        p,
+                        "choose",
+                        "The Cruelty of Gix: that player discards which creature or planeswalker card?",
+                        &labels,
+                    )?;
                     Some((q, cands[k]))
                 }
             } else {
@@ -980,18 +1013,34 @@ fn gix_chapter(g: &mut Game, src: PermId, p: PlayerId, n: i64) -> Res {
             if cands.is_empty() {
                 return Ok(());
             }
-            if !crate::engine::stack::trigger_window(g, p, Some(src), "chapter III: a creature card from a graveyard to the battlefield", Some(3.0))? {
+            if !crate::engine::stack::trigger_window(
+                g,
+                p,
+                Some(src),
+                "chapter III: a creature card from a graveyard to the battlefield",
+                Some(3.0),
+            )? {
                 return Ok(());
             }
             let pick = if human {
                 let labels: Vec<String> = cands
                     .iter()
                     .map(|&(c, q)| {
-                        let whose = if q == p { "your graveyard".to_string() } else { format!("{}'s graveyard", g.player(q).name) };
+                        let whose = if q == p {
+                            "your graveyard".to_string()
+                        } else {
+                            format!("{}'s graveyard", g.player(q).name)
+                        };
                         format!("{} ({whose})", crate::human::choices::card_label(g, c))
                     })
                     .collect();
-                let k = crate::human::choices::choose_one(g, p, "target", "The Cruelty of Gix: put which creature card onto the battlefield under your control?", &labels)?;
+                let k = crate::human::choices::choose_one(
+                    g,
+                    p,
+                    "target",
+                    "The Cruelty of Gix: put which creature card onto the battlefield under your control?",
+                    &labels,
+                )?;
                 Some(cands[k])
             } else {
                 cands.iter().copied().max_by(|a, b| steal_value(g, a.0).total_cmp(&steal_value(g, b.0)))
@@ -999,7 +1048,12 @@ fn gix_chapter(g: &mut Game, src: PermId, p: PlayerId, n: i64) -> Res {
             if let Some((c, o)) = pick
                 && let Some(m) = take_from_gy(g, p, c, o)?
             {
-                crate::glog!(g, "    The Cruelty of Gix returns {} under {}'s control", g.perm(m).name, g.player(p).name);
+                crate::glog!(
+                    g,
+                    "    The Cruelty of Gix returns {} under {}'s control",
+                    g.perm(m).name,
+                    g.player(p).name
+                );
                 stat(g, p, "sf_gix_returns", 1);
             }
         }
@@ -1024,7 +1078,13 @@ fn gix_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         .iter()
         .map(|s| s.to_string())
         .collect();
-        1 + crate::human::choices::choose_one(g, o, "choose", "The Cruelty of Gix (read ahead): start on which chapter?", &labels)? as i64
+        1 + crate::human::choices::choose_one(
+            g,
+            o,
+            "choose",
+            "The Cruelty of Gix (read ahead): start on which chapter?",
+            &labels,
+        )? as i64
     } else {
         gix_start(g, o)
     };

@@ -233,14 +233,18 @@ pub const HELD_SORCERY_TO_HAND: &str = "sorcery to hand";
 pub const HELD_UNMODELED: &str = "unmodeled";
 
 fn held_tutor_kind(g: &Game, p: PlayerId, c: CardId) -> &'static str {
-    use crate::ai::planner::{tutor_targets, xtutor_rule, Dest};
+    use crate::ai::planner::{Dest, tutor_targets, xtutor_rule};
     let instant = g.db.get(c).instant;
     match tutor_targets(g, p, c) {
         Some((Dest::Top, _)) => HELD_INSTANT_OR_TOP,
         Some(_) if instant => HELD_INSTANT_OR_TOP,
         Some(_) => HELD_SORCERY_TO_HAND,
         None if xtutor_rule(g, c).is_some() => {
-            if instant { HELD_INSTANT_OR_TOP } else { HELD_SORCERY_TO_HAND }
+            if instant {
+                HELD_INSTANT_OR_TOP
+            } else {
+                HELD_SORCERY_TO_HAND
+            }
         }
         None => HELD_UNMODELED,
     }

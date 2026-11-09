@@ -65,7 +65,11 @@ fn first(_: &sim_core::control::Request) -> Answer {
 }
 
 fn pick_containing(word: String) -> impl Fn(&sim_core::control::Request) -> Answer + Send + 'static {
-    move |r| Answer::Pick(r.choices.iter().position(|c| c.contains(&word)).unwrap_or_else(|| panic!("{word:?} in {:?}", r.choices)))
+    move |r| {
+        Answer::Pick(
+            r.choices.iter().position(|c| c.contains(&word)).unwrap_or_else(|| panic!("{word:?} in {:?}", r.choices)),
+        )
+    }
 }
 
 /// a person at P0 with these answers
@@ -78,10 +82,8 @@ fn person(g: &mut Game, rules: Vec<Rule>) -> Arc<ScriptHuman> {
 /// run the person's ability whose label contains `word` on permanent m (Marvin's included)
 fn use_ability(g: &mut Game, m: PermId, word: &str) -> Option<String> {
     let abil = abilities_of(g, P0, m).unwrap();
-    let (_, kind) = abil
-        .into_iter()
-        .find(|(l, _)| l.contains(word))
-        .unwrap_or_else(|| panic!("no ability with {word:?}"));
+    let (_, kind) =
+        abil.into_iter().find(|(l, _)| l.contains(word)).unwrap_or_else(|| panic!("no ability with {word:?}"));
     match kind {
         AbilityKind::Extra(f) => f(g, P0, m).unwrap(),
         _ => panic!("not an extra ability"),
@@ -456,7 +458,8 @@ fn a_person_chooses_the_target_and_x_of_marvins_chatterfang() {
     let victim = perm(&mut g, P1, "Llanowar Elves");
     let other = perm(&mut g, P1, "Serra Angel");
     for _ in 0..3 {
-        let spec = sim_core::engine::zones::Tokens { types: vec!["squirrel"], ..sim_core::engine::zones::Tokens::new(1, 1) };
+        let spec =
+            sim_core::engine::zones::Tokens { types: vec!["squirrel"], ..sim_core::engine::zones::Tokens::new(1, 1) };
         sim_core::engine::zones::make_tokens(&mut g, P0, spec).unwrap();
     }
     let sq = sim_core::impls::rules2::squirrels(&g, P0).len();
@@ -586,7 +589,6 @@ fn an_equip_step_can_be_copied_by_a_camera_and_responded_to() {
     assert!(g.perm(cam).tapped);
 }
 
-
 // ======================================================== item 2: a person chooses what Marvin borrows
 use sim_core::human::marvin_hooks::NAMES as HOOK_NAMES;
 use sim_core::human::model_gaps_a4::BORROWED;
@@ -636,7 +638,8 @@ fn every_creature_with_an_options_hook_is_a_person_path_a_no_choice_hook_or_not_
             || NO_CHOICE.contains(&n)
             || sim_core::impls::newcards_b::NOT_ACTIVATED.contains(&n);
         // a creature of the pool decks whose person path the Karn / Cloud / Sauron decks keep elsewhere
-        let elsewhere = matches!(n, "Walking Ballista" | "Demon of Fate's Design" | "Gingerbrute" | "Thrasios, Triton Hero");
+        let elsewhere =
+            matches!(n, "Walking Ballista" | "Demon of Fate's Design" | "Gingerbrute" | "Thrasios, Triton Hero");
         if !known && !elsewhere {
             bad.push(n.to_string());
         }
@@ -663,7 +666,19 @@ fn rich(donor: &str) -> (Game, PermId, PermId) {
         let e = perm(&mut g, P0, n);
         ready(&mut g, e);
     }
-    for n in ["Goblin Guide", "Goblin Chieftain", "Mogg War Marshal", "Vampire Nighthawk", "Stromkirk Noble", "Elesh Norn, Grand Cenobite", "Mother of Runes", "Isamaru, Hound of Konda", "Sol Ring", "Mind Stone", "Relic of Progenitus"] {
+    for n in [
+        "Goblin Guide",
+        "Goblin Chieftain",
+        "Mogg War Marshal",
+        "Vampire Nighthawk",
+        "Stromkirk Noble",
+        "Elesh Norn, Grand Cenobite",
+        "Mother of Runes",
+        "Isamaru, Hound of Konda",
+        "Sol Ring",
+        "Mind Stone",
+        "Relic of Progenitus",
+    ] {
         if g.db.id(n).is_some() {
             let x = perm(&mut g, P0, n);
             ready(&mut g, x);
@@ -680,11 +695,20 @@ fn rich(donor: &str) -> (Game, PermId, PermId) {
             let _ = perm(&mut g, P1, n);
         }
     }
-    let ids: Vec<_> = ["Llanowar Elves", "Lightning Bolt", "Sol Ring", "Forest", "Serra Angel", "Swords to Plowshares", "Goblin Welder", "Mind Stone"]
-        .iter()
-        .filter(|n| g.db.id(n).is_some())
-        .map(|n| card(&g, n))
-        .collect();
+    let ids: Vec<_> = [
+        "Llanowar Elves",
+        "Lightning Bolt",
+        "Sol Ring",
+        "Forest",
+        "Serra Angel",
+        "Swords to Plowshares",
+        "Goblin Welder",
+        "Mind Stone",
+    ]
+    .iter()
+    .filter(|n| g.db.id(n).is_some())
+    .map(|n| card(&g, n))
+    .collect();
     for q in [P0, P1] {
         g.player_mut(q).gy = ids.clone();
         g.player_mut(q).hand = ids.iter().copied().take(4).collect();
@@ -792,7 +816,13 @@ fn marvin_mogg_fanatic_the_person_picks_the_target_and_marvin_is_sacrificed() {
 fn marvin_cankerbloom_the_person_picks_the_mode_and_the_target() {
     let (mut g, _d, m) = rich("Cankerbloom");
     let deed = perms_named(&g, P1, "Pernicious Deed")[0];
-    person(&mut g, vec![rule("choose one", pick_containing("destroy target enchantment".into())), rule("destroy which", pick_containing("Pernicious Deed".into()))]);
+    person(
+        &mut g,
+        vec![
+            rule("choose one", pick_containing("destroy target enchantment".into())),
+            rule("destroy which", pick_containing("Pernicious Deed".into())),
+        ],
+    );
     assert!(use_ability(&mut g, m, "Marvin copies Cankerbloom").is_none());
     assert!(!g.perm(deed).on_bf, "the person's target died");
     assert!(!g.perm(m).on_bf, "Marvin is the sacrifice");
@@ -802,7 +832,13 @@ fn marvin_cankerbloom_the_person_picks_the_mode_and_the_target() {
 fn marvin_chittering_witch_the_person_picks_the_creature_to_sacrifice_and_the_target() {
     let (mut g, _d, m) = rich("Chittering Witch");
     let angel = perms_named(&g, P1, "Serra Angel")[0];
-    person(&mut g, vec![rule("-2/-2 on which", pick_containing("(Kefka, 0/1)".into())), rule("sacrifice which", pick_containing("Mogg War Marshal".into()))]);
+    person(
+        &mut g,
+        vec![
+            rule("-2/-2 on which", pick_containing("(Kefka, 0/1)".into())),
+            rule("sacrifice which", pick_containing("Mogg War Marshal".into())),
+        ],
+    );
     let marshals = perms_named(&g, P0, "Mogg War Marshal");
     assert!(use_ability(&mut g, m, "Marvin copies Chittering Witch").is_none());
     assert!(perms_named(&g, P1, "Vampire Nighthawk").is_empty(), "the 0/1 took -2/-2");
@@ -900,7 +936,10 @@ fn a_person_chooses_how_the_opponents_block_with_a_brutal_hordechief_through_mar
     g.step = Step::Main1;
     person(&mut g, vec![rule("pay {R/W}", first)]);
     assert!(use_ability(&mut g, m, "Marvin copies Brutal Hordechief").is_none());
-    assert!(matches!(g.perm(m).data.get(sim_core::state::DataKey::Lure), Some(_)), "Marvin carries the lure for this turn");
+    assert!(
+        matches!(g.perm(m).data.get(sim_core::state::DataKey::Lure), Some(_)),
+        "Marvin carries the lure for this turn"
+    );
 }
 
 #[test]
@@ -909,7 +948,8 @@ fn marvins_hordechief_ability_lets_the_person_assign_every_block() {
     person(&mut g, vec![rule("pay {R/W}", first)]);
     assert!(use_ability(&mut g, m, "Marvin copies Brutal Hordechief").is_none());
     // P1's untapped creatures must block; the person (P0) says which attacker each blocks
-    let atk: Vec<PermId> = perms_named(&g, P0, "Goblin Guide").into_iter().chain(perms_named(&g, P0, "Goblin Chieftain")).collect();
+    let atk: Vec<PermId> =
+        perms_named(&g, P0, "Goblin Guide").into_iter().chain(perms_named(&g, P0, "Goblin Chieftain")).collect();
     assert_eq!(atk.len(), 2);
     let asked = asking_person(&mut g);
     let cd = g.perm(m).cd.unwrap();
@@ -924,7 +964,8 @@ fn marvins_hordechief_ability_lets_the_person_assign_every_block() {
 #[test]
 fn marvins_drivnod_counter_makes_marvin_indestructible_and_the_person_picks_the_three_cards() {
     let (mut g, _d, m) = rich("Drivnod, Carnage Dominus");
-    let gy: Vec<_> = ["Llanowar Elves", "Goblin Guide", "Serra Angel", "Vampire Nighthawk"].iter().map(|n| card(&g, n)).collect();
+    let gy: Vec<_> =
+        ["Llanowar Elves", "Goblin Guide", "Serra Angel", "Vampire Nighthawk"].iter().map(|n| card(&g, n)).collect();
     g.player_mut(P0).gy = gy;
     let asked = asking_person(&mut g);
     assert!(!sim_core::dsl::has_kw(&g, m, "indestructible"));

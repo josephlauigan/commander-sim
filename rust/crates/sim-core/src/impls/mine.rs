@@ -4320,7 +4320,6 @@ pub fn army_hit_milestone(g: &mut Game, p: PlayerId) {
     g.player_mut(p).milestone.entry("army_hit").or_insert(turns);
 }
 
-
 /// Deflecting Swat: cast for {2}{R}, or free with the commander out, it sends the targeted spell at the best
 /// permanent the caster has. True if it did.
 fn veyran_protect_swat(g: &mut Game, owner: PlayerId, kind: Sym, actor: PlayerId, spell: CardId) -> Res<bool> {

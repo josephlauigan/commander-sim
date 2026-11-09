@@ -439,10 +439,12 @@ pub(crate) const fn step(label: &'static str, kind: StepKind, run: fn(&mut Game,
 }
 
 pub(crate) const S_CAST: Step = step("cast Godo", StepKind::Spell, cast_godo);
-pub(crate) const S_FETCH_HELM: Step = step("Godo's enter trigger fetches Helm of the Host", StepKind::Engine, helm_fetched);
+pub(crate) const S_FETCH_HELM: Step =
+    step("Godo's enter trigger fetches Helm of the Host", StepKind::Engine, helm_fetched);
 pub(crate) const S_FETCH_BOTH: Step =
     step("the copied enter trigger fetches Hammer, the original Helm", StepKind::Engine, both_fetched);
-pub(crate) const S_FETCH_HAMMER: Step = step("Godo's enter trigger fetches Hammer of Nazahn", StepKind::Engine, hammer_fetched);
+pub(crate) const S_FETCH_HAMMER: Step =
+    step("Godo's enter trigger fetches Hammer of Nazahn", StepKind::Engine, hammer_fetched);
 pub(crate) const S_WORN: Step = step("Hammer's trigger attaches Helm to Godo", StepKind::Engine, worn);
 pub(crate) const S_SQUIRE: Step = Step {
     label: "Brass Squire attaches Helm to Godo",

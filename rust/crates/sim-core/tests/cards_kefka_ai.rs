@@ -170,4 +170,3 @@ fn mystic_confluence_draw_three_is_offered_at_the_end_of_an_opponents_turn_and_c
     assert_eq!(g.player(P0).hand.len(), n - 1 + 3);
     assert!(g.player(P0).cast_names.contains(&c), "counted as cast in the card report");
 }
-

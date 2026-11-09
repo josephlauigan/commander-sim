@@ -8,8 +8,6 @@
 //! `KAITO_ULT`, `TEZZ_ULT` and `JWOM_ULT` once those modules are ported.
 
 use super::common::WalkerAb;
-use crate::engine::mana::restr_ok;
-use crate::engine::pool::Restr;
 use super::partials::{
     at_once, best_opp_creature, best_opp_nonland, eot_kw, first_max, first_min, name_of, of_type, on, pack,
     remove_card, unpack,
@@ -19,7 +17,9 @@ use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::discard_worst;
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::{check_state, gain, lose_life};
+use crate::engine::mana::restr_ok;
 use crate::engine::mana::{can_pay, pay, total_mana};
+use crate::engine::pool::Restr;
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{counter_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
@@ -89,8 +89,7 @@ pub fn replaced_tag_engine(name: &str) -> bool {
 
 // ================================================================== counters
 /// your decks' keys (engine.CTHRESH): they never answer with Veil of Summer
-const CTHRESH: [&str; 6] =
-    ["seph", "yshtola", "najeela", "omnath", "sheoldred", "cloud"];
+const CTHRESH: [&str; 6] = ["seph", "yshtola", "najeela", "omnath", "sheoldred", "cloud"];
 
 /// Veil of Summer, the AI's answer: q's spell is the target of a counterspell (stack item `top_id`, on the stack
 /// already, its caster has paid): q casts Veil of Summer in response, whatever the counterspell is (blue, black, a red
@@ -131,9 +130,7 @@ pub const VEIL: &str = "Veil of Summer";
 /// importance or more (`engine::cast::CMD_IMP`)
 pub fn veil_worth(g: &Game, q: PlayerId, spell: &crate::state::StackItem) -> bool {
     let Some(c) = spell.card else { return false };
-    crate::cardcode::is_combo_piece(g, c)
-        || g.player(q).is_commander(c)
-        || spell.imp >= crate::engine::cast::CMD_IMP
+    crate::cardcode::is_combo_piece(g, c) || g.player(q).is_commander(c) || spell.imp >= crate::engine::cast::CMD_IMP
 }
 
 /// Veil of Summer resolves: "Draw a card if an opponent has cast a blue or black spell this turn. Spells you control
@@ -259,11 +256,7 @@ fn judgment_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 /// how much voter `v` wants `m` (controlled by `c`) exiled: another player's permanent by its value, more so the
 /// more threatening its controller is; v's own permanent never beats another player's (it is minus its value)
 fn judgment_score(g: &Game, v: PlayerId, (m, c): (PermId, PlayerId)) -> f64 {
-    if c == v {
-        -pval(g, m) - 1.0
-    } else {
-        pval(g, m) * (1.0 + 0.3 * threat(g, v, c))
-    }
+    if c == v { -pval(g, m) - 1.0 } else { pval(g, m) * (1.0 + 0.3 * threat(g, v, c)) }
 }
 
 /// will of the council: each player votes for a nonland permanent the caster doesn't control (their own included for
@@ -1075,7 +1068,13 @@ fn lotv_ult(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     } else {
         sa < sb // the chooser keeps the pile worth more to it
     };
-    crate::glog!(g, "    {} sacrifices pile {}: {}", pname(g, q), if lose_a { 1 } else { 2 }, stuff_list(g, if lose_a { &a } else { &b }));
+    crate::glog!(
+        g,
+        "    {} sacrifices pile {}: {}",
+        pname(g, q),
+        if lose_a { 1 } else { 2 },
+        stuff_list(g, if lose_a { &a } else { &b })
+    );
     for s in if lose_a { a } else { b } {
         sac_stuff(g, q, s)?;
     }
@@ -1196,9 +1195,7 @@ fn ldg_person(g: &mut Game, q: PlayerId) -> Res {
                 let labels: Vec<String> = cands
                     .iter()
                     .map(|&s| match s {
-                        Stuff::Perm(m) => {
-                            crate::human::legal::describe_target(g, q, crate::human::Target::Perm(m))
-                        }
+                        Stuff::Perm(m) => crate::human::legal::describe_target(g, q, crate::human::Target::Perm(m)),
                         Stuff::Token(_) => stuff_name(g, s),
                     })
                     .collect();

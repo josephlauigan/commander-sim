@@ -4,12 +4,12 @@
 //! rust/agents/engine-needs-mana.md).
 
 use super::partials::at_once;
-use crate::engine::pool::Kind;
 use crate::ai::brain::do_cast;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::life::lose_life;
 use crate::engine::mana::{Source, Unit, mana_units, plan_pay};
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::pool::Kind;
 use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{epow, pval};

@@ -45,7 +45,10 @@ fn the_hint_names_a_play() {
     }
     let (mut g, p) = main_phase_game("adaptive");
     let h = advisor::hint(&mut g, p, &req("mulligan"));
-    assert!(h["text"].as_str().unwrap().starts_with("Keep") || h["text"].as_str().unwrap().starts_with("Mulligan"), "{h}");
+    assert!(
+        h["text"].as_str().unwrap().starts_with("Keep") || h["text"].as_str().unwrap().starts_with("Mulligan"),
+        "{h}"
+    );
     g.step = Step::Combat;
     let h = advisor::hint(&mut g, p, &req("priority"));
     assert_eq!(h["text"], "Pass, unless you have an instant you want to use now.");
@@ -95,7 +98,8 @@ fn the_comparison_scores_what_you_did_against_the_ai() {
 
 #[test]
 fn the_ais_choice_becomes_your_answer_when_it_is_one_action() {
-    let mut e = Entry { n: 3, kind: "main".into(), hand: vec!["Sol Ring".into(), "Island".into()], ..Default::default() };
+    let mut e =
+        Entry { n: 3, kind: "main".into(), hand: vec!["Sol Ring".into(), "Island".into()], ..Default::default() };
     e.ai = Some("Island -> x".into());
     assert_eq!(e.ai_answer(), Some(Answer::Action(json!({"do": "cast", "card": 1}))));
     e.ai = Some("stop (hold mana)".into());

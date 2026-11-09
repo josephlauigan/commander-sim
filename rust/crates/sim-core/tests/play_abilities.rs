@@ -225,7 +225,11 @@ fn wayfarers_bauble_from_the_pool() {
     let b = perm(&mut g, P0, "Wayfarer's Bauble");
     tap_all(&mut g, P0);
     let abil = abilities_of(&mut g, P0, b).unwrap();
-    assert!(abil.iter().any(|a| a.0.starts_with("{2}, {T}, sacrifice it")), "{:?}", abil.iter().map(|a| &a.0).collect::<Vec<_>>());
+    assert!(
+        abil.iter().any(|a| a.0.starts_with("{2}, {T}, sacrifice it")),
+        "{:?}",
+        abil.iter().map(|a| &a.0).collect::<Vec<_>>()
+    );
     let i = g.player(P0).perms.iter().position(|&x| x == b).unwrap();
     // use the Bauble, its ability (0), the basic land to fetch (0: the only kind, Wastes), then pass
     seat(&mut g, P0, vec![act(json!({"do": "use", "perm": i})), pick(0), pick(0), pass()]);
@@ -259,7 +263,12 @@ fn arrest_from_the_person_locks_the_creatures_activated_abilities() {
     let k = g.player(P0).hand.iter().position(|&c| c == ar).unwrap();
     let h = seat(&mut g, P0, vec![act(json!({"do": "cast", "card": k})), pt, pass()]);
     human_main(&mut g, P0, false).unwrap();
-    assert!(sim_core::cardcode::ability_locked(&g, b, P1), "Arrest locks its activated abilities; asked {:?}, told {:?}", h.asked().iter().map(|r| r.kind.to_string()).collect::<Vec<_>>(), h.told());
+    assert!(
+        sim_core::cardcode::ability_locked(&g, b, P1),
+        "Arrest locks its activated abilities; asked {:?}, told {:?}",
+        h.asked().iter().map(|r| r.kind.to_string()).collect::<Vec<_>>(),
+        h.told()
+    );
 }
 
 #[test]

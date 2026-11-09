@@ -78,7 +78,8 @@ fn scarlet_witch_casts_an_x_spell_for_x_zero_even_with_mana_floating() {
     g.player_mut(P0).library.extend([island, drain]);
     pool(&mut g, P0, &[('B', 4)]);
     let before = g.player(P1).life;
-    let log = person(&mut g, |r| if r.prompt.starts_with("Scarlet Witch") { Some(text(r, "Exsanguinate")) } else { None });
+    let log =
+        person(&mut g, |r| if r.prompt.starts_with("Scarlet Witch") { Some(text(r, "Exsanguinate")) } else { None });
     hooks::fire_trigger(&mut g, Event::CombatDamage, Call::CombatDamage { p: P0, a: witch, d: P1, dmg: 3 }).unwrap();
     assert!(!asked(&log, "choose X"), "no X question: {}", dump(&log));
     assert_eq!(g.player(P1).life, before, "X = 0 drains nothing: {}", dump(&log));
@@ -259,5 +260,8 @@ fn mirage_mirror_offers_a_land_with_abilities_of_its_own_too() {
     let l = dump(&log);
     let q = l.lines().find(|x| x.contains("become a copy of which")).unwrap();
     assert!(q.contains("Island") && q.contains("Sol Ring"), "{q}");
-    assert!(q.contains("Flooded Strand"), "a fetch land is offered too (tests/practice_simplifications.rs cracks one): {q}");
+    assert!(
+        q.contains("Flooded Strand"),
+        "a fetch land is offered too (tests/practice_simplifications.rs cracks one): {q}"
+    );
 }

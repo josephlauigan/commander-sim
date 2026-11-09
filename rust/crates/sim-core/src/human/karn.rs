@@ -9,8 +9,8 @@
 
 use super::abilities::{LandAbility, PermAbility, Why, ability};
 use super::{Target, cards, choices, legal, mana};
-use crate::engine::repl;
 use crate::cards::{Colors, Types};
+use crate::engine::repl;
 use crate::engine::stack;
 use crate::engine::values::{epow, untargetable};
 use crate::engine::zones::{self, Tokens, die};
@@ -228,7 +228,10 @@ pub fn perm_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
             forgemaster,
         )],
         "Thrasios, Triton Hero" => vec![
-            ability("{4}: scry 1, then reveal the top card: a land goes onto the battlefield tapped, else draw it", |g, p, m| thrasios(g, p, m, 1)),
+            ability(
+                "{4}: scry 1, then reveal the top card: a land goes onto the battlefield tapped, else draw it",
+                |g, p, m| thrasios(g, p, m, 1),
+            ),
             ability("{4}, again and again: activate it N times", |g, p, m| thrasios_many(g, p, m)),
         ],
         "Walking Ballista" => vec![
@@ -238,7 +241,10 @@ pub fn perm_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
         "Batterskull" => vec![ability("{3}: return Batterskull to its owner's hand", skull)],
         "Endless Atlas" => vec![ability("{2}, {T}: draw a card (three or more lands with the same name)", atlas)],
         "Expedition Map" => {
-            vec![ability("{2}, {T}, sacrifice: search your library for a land card, put it into your hand", expedition_map)]
+            vec![ability(
+                "{2}, {T}, sacrifice: search your library for a land card, put it into your hand",
+                expedition_map,
+            )]
         }
         "Urza's Tome" => vec![ability(
             "{3}, {T}: draw a card, then discard a card unless you exile a historic card from your graveyard",
@@ -319,36 +325,50 @@ fn bauble(g: &mut Game, p: PlayerId, m: PermId, hand: bool) -> Res<Why> {
     die(g, m, "sac")?;
     crate::glog!(g, "  {} sacrifices {} (draws at the next upkeep)", g.player(p).name, nm);
     let cd = g.perm(m).cd.unwrap();
-    stack::ability_run_w(g, p, None, Some(cd), "look at a card; draw at the next upkeep", None, None, 0.0, |g, is_copy| {
-        let mut q = q;
-        if is_copy {
-            // "you may choose a new target for the copy"
-            let labels: Vec<String> = who.iter().map(|&x| legal::describe_target(g, p, Target::Player(x))).collect();
-            let prompt = format!("The copy of {nm}'s ability: look at {} of which player?", if hand { "a random card in the hand" } else { "the top card of the library" });
-            if let Some(k) = choices::choose(g, p, "target", &prompt, &labels, Some("keep the target"), None)? {
-                q = who[k];
+    stack::ability_run_w(
+        g,
+        p,
+        None,
+        Some(cd),
+        "look at a card; draw at the next upkeep",
+        None,
+        None,
+        0.0,
+        |g, is_copy| {
+            let mut q = q;
+            if is_copy {
+                // "you may choose a new target for the copy"
+                let labels: Vec<String> =
+                    who.iter().map(|&x| legal::describe_target(g, p, Target::Player(x))).collect();
+                let prompt = format!(
+                    "The copy of {nm}'s ability: look at {} of which player?",
+                    if hand { "a random card in the hand" } else { "the top card of the library" }
+                );
+                if let Some(k) = choices::choose(g, p, "target", &prompt, &labels, Some("keep the target"), None)? {
+                    q = who[k];
+                }
             }
-        }
-        let seen = if hand {
-            let h = g.player(q).hand.clone();
-            (!h.is_empty()).then(|| h[g.rng.below(h.len() as u64) as usize])
-        } else {
-            g.player(q).library.last().copied()
-        };
-        let qn = g.player(q).name.to_string();
-        let text = match seen {
-            Some(c) => format!(
-                "{nm}: {}'s {} is {}. You draw a card at the beginning of the next upkeep.",
-                qn,
-                if hand { "random card" } else { "top card" },
-                g.db.get(c).name
-            ),
-            None => format!("{nm}: {qn} has no card there. You draw a card at the beginning of the next upkeep."),
-        };
-        choices::choose_one(g, p, "choose", &text, &["OK".to_string()])?;
-        g.player_mut(p).delayed_draws += 1;
-        Ok(())
-    })?;
+            let seen = if hand {
+                let h = g.player(q).hand.clone();
+                (!h.is_empty()).then(|| h[g.rng.below(h.len() as u64) as usize])
+            } else {
+                g.player(q).library.last().copied()
+            };
+            let qn = g.player(q).name.to_string();
+            let text = match seen {
+                Some(c) => format!(
+                    "{nm}: {}'s {} is {}. You draw a card at the beginning of the next upkeep.",
+                    qn,
+                    if hand { "random card" } else { "top card" },
+                    g.db.get(c).name
+                ),
+                None => format!("{nm}: {qn} has no card there. You draw a card at the beginning of the next upkeep."),
+            };
+            choices::choose_one(g, p, "choose", &text, &["OK".to_string()])?;
+            g.player_mut(p).delayed_draws += 1;
+            Ok(())
+        },
+    )?;
     Ok(None)
 }
 
@@ -594,7 +614,8 @@ fn ballista_ping(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     let plus = g.perm(m).plus as u32;
     let n = if plus > 1 {
         let xs: Vec<u32> = choices::amount_choices(plus).into_iter().filter(|&x| x >= 1).collect();
-        let labels: Vec<String> = xs.iter().map(|x| format!("{x} counter{}: {x} damage", if *x == 1 { "" } else { "s" })).collect();
+        let labels: Vec<String> =
+            xs.iter().map(|x| format!("{x} counter{}: {x} damage", if *x == 1 { "" } else { "s" })).collect();
         let prompt = format!(
             "Walking Ballista: remove how many counters (it has {plus}; each is a separate activation dealing 1 damage to {})?",
             legal::describe_target(g, p, t)
@@ -608,7 +629,9 @@ fn ballista_ping(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     };
     // Rings of Brighthearth: one answer for all of the activations ({2} for each copy)
     let auto = if n > 1 && !stack::rings_of(g, p).is_empty() {
-        let q = format!("Rings of Brighthearth: pay {{2}} to copy each of the {n} activations (2 damage for each counter)?");
+        let q = format!(
+            "Rings of Brighthearth: pay {{2}} to copy each of the {n} activations (2 damage for each counter)?"
+        );
         Some(choices::yes_no(g, p, &q)?)
     } else {
         None
@@ -1006,7 +1029,10 @@ fn thrasios_many(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     let room = (mana_in_pool(g, p) / cost).min(g.player(p).library.len() as u32);
     let xs: Vec<u32> = choices::amount_choices(room).into_iter().filter(|&x| x >= 1).collect();
     if xs.is_empty() {
-        return Ok(Some(format!("Can't activate Thrasios. It costs {{{cost}}}; your mana pool has {}.", mana_in_pool(g, p))));
+        return Ok(Some(format!(
+            "Can't activate Thrasios. It costs {{{cost}}}; your mana pool has {}.",
+            mana_in_pool(g, p)
+        )));
     }
     let labels: Vec<String> = xs.iter().map(|x| format!("{x} time{}", if *x == 1 { "" } else { "s" })).collect();
     let prompt = format!("Thrasios: activate it how many times ({{{cost}}} each, from your pool)?");
@@ -1090,33 +1116,49 @@ fn urzas_tome(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     g.perm_mut(m).tapped = true;
     crate::glog!(g, "  {} activates Urza's Tome", g.player(p).name);
     let cd = g.perm(m).cd.unwrap();
-    stack::ability_run(g, p, None, Some(cd), "draw a card, then discard unless you exile a historic card", None, None, |g| {
-        zones::draw(g, p, 1, false)?;
-        let hist: Vec<CardId> =
-            g.player(p).gy.iter().copied().filter(|&c| crate::impls::karn_engines::historic(g, c)).collect();
-        let mut labels: Vec<String> = hist.iter().map(|&c| format!("exile {}", choices::card_label(g, c))).collect();
-        let hand = g.player(p).hand.clone();
-        if !hand.is_empty() {
-            labels.push("discard a card".into());
-        }
-        if labels.is_empty() {
-            return Ok(()); // nothing to exile and nothing to discard
-        }
-        let k = choices::choose_one(g, p, "choose", "Urza's Tome: exile a historic card from your graveyard, or discard a card?", &labels)?;
-        if k < hist.len() {
-            let c = hist[k];
-            let pl = g.player_mut(p);
-            if let Some(i) = pl.gy.iter().position(|&x| x == c) {
-                pl.gy.remove(i);
-                pl.exile.push(c);
+    stack::ability_run(
+        g,
+        p,
+        None,
+        Some(cd),
+        "draw a card, then discard unless you exile a historic card",
+        None,
+        None,
+        |g| {
+            zones::draw(g, p, 1, false)?;
+            let hist: Vec<CardId> =
+                g.player(p).gy.iter().copied().filter(|&c| crate::impls::karn_engines::historic(g, c)).collect();
+            let mut labels: Vec<String> =
+                hist.iter().map(|&c| format!("exile {}", choices::card_label(g, c))).collect();
+            let hand = g.player(p).hand.clone();
+            if !hand.is_empty() {
+                labels.push("discard a card".into());
             }
-            crate::glog!(g, "    Urza's Tome: {} exiles {} from the graveyard", g.player(p).name, g.db.get(c).name);
-        } else {
-            let d = choices::pick_cards(g, p, &hand, 1, "Urza's Tome: discard which card?", "choose")?[0];
-            zones::discard_cards(g, p, &[d])?;
-        }
-        Ok(())
-    })?;
+            if labels.is_empty() {
+                return Ok(()); // nothing to exile and nothing to discard
+            }
+            let k = choices::choose_one(
+                g,
+                p,
+                "choose",
+                "Urza's Tome: exile a historic card from your graveyard, or discard a card?",
+                &labels,
+            )?;
+            if k < hist.len() {
+                let c = hist[k];
+                let pl = g.player_mut(p);
+                if let Some(i) = pl.gy.iter().position(|&x| x == c) {
+                    pl.gy.remove(i);
+                    pl.exile.push(c);
+                }
+                crate::glog!(g, "    Urza's Tome: {} exiles {} from the graveyard", g.player(p).name, g.db.get(c).name);
+            } else {
+                let d = choices::pick_cards(g, p, &hand, 1, "Urza's Tome: discard which card?", "choose")?[0];
+                zones::discard_cards(g, p, &[d])?;
+            }
+            Ok(())
+        },
+    )?;
     crate::engine::life::check_state(g)?;
     Ok(None)
 }
@@ -1181,8 +1223,10 @@ pub fn lantern_enters(g: &mut Game, src: PermId) -> Res {
     if cands.is_empty() {
         return Ok(());
     }
-    let labels: Vec<String> =
-        cands.iter().map(|&(q, c)| format!("{} ({}'s graveyard)", choices::card_label(g, c), g.player(q).name)).collect();
+    let labels: Vec<String> = cands
+        .iter()
+        .map(|&(q, c)| format!("{} ({}'s graveyard)", choices::card_label(g, c), g.player(q).name))
+        .collect();
     let k = choices::choose_one(g, o, "target", "Soul-Guide Lantern: exile which card from a graveyard?", &labels)?;
     let (q, c) = cands[k];
     let pl = g.player_mut(q);
@@ -1214,8 +1258,7 @@ pub fn spine_enters(g: &mut Game, src: PermId) -> Res {
     if cands.is_empty() {
         return Ok(());
     }
-    let labels: Vec<String> =
-        cands.iter().map(|&(_, m)| legal::describe_target(g, o, Target::Perm(m))).collect();
+    let labels: Vec<String> = cands.iter().map(|&(_, m)| legal::describe_target(g, o, Target::Perm(m))).collect();
     let k = choices::choose_one(g, o, "target", "Spine of Ish Sah: destroy which permanent?", &labels)?;
     let (q, t) = cands[k];
     if g.player(q).lands.contains(&t) {

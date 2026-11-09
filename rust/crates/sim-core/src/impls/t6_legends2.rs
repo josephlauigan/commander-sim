@@ -5,13 +5,13 @@
 use super::common::{WalkerAb, walker};
 use super::partials::{at_once, best_opp_creature, best_opp_nonland, eot_kw, first_max, on};
 use super::t5::is_artifact;
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::discard_worst;
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::gain;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, ability_window_card, counter_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{card_name, once_per_turn, pval, threat, untargetable};

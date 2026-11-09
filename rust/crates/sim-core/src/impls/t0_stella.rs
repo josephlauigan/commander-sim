@@ -12,13 +12,13 @@
 //! mana" blindly), free casts take the spells worth the most and skip counterspells, spells that need a target nobody
 //! has, and board wipes.
 
-use crate::engine::repl;
-use crate::engine::pool::Kind;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, casts_this_turn, copy_spell, is_casts, spell_targets};
 use crate::engine::life::check_state;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::pool::Kind;
 use crate::engine::removal::{apply_removal, legal_targets};
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{epow, has_type, pval};

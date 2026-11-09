@@ -9,13 +9,13 @@
 //! look-ahead's reading of a combo in the making) are here too.
 
 use crate::ai::hand_key; // --- phase4-hand-off
-use crate::engine::repl;
 use crate::ai::plans::DRAIN_PAYOFFS;
 use crate::cards::CardDb;
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, can_pay_with_rituals, cost_of, pay, seq_cost}; // --- ai-fix: C
 use crate::engine::removal::legal_targets;
+use crate::engine::repl;
 use crate::engine::stack::{ability_run_w, ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{has_type, untargetable};
@@ -484,9 +484,7 @@ fn stop_by(g: &Game, what: &str, earlier: Option<CardId>) -> String {
 /// as mana for the line)
 fn line_cards(g: &Game, p: PlayerId, cmb: &Combo, casts: &[CardId]) -> Vec<CardId> {
     let mut v: Vec<CardId> = casts.to_vec();
-    v.extend(
-        g.player(p).hand.iter().copied().filter(|&c| cmb.groups.iter().any(|grp| grp.contains(&name_of(g, c)))),
-    );
+    v.extend(g.player(p).hand.iter().copied().filter(|&c| cmb.groups.iter().any(|grp| grp.contains(&name_of(g, c)))));
     v
 }
 
@@ -663,11 +661,10 @@ pub fn run_steps(g: &mut Game, p: PlayerId, cmb: &Combo) -> Res<bool> {
                     if st.kind == StepKind::Equip {
                         // model-gaps-a4: the equip is on the stack as a copyable ability (Camera, Rings)
                         let mut ran = false;
-                        let resolved =
-                            ability_run_w(g, p, src, None, st.label, Some(6.0), None, 0.0, |g, _| {
-                                ran = (st.run)(g, p)?;
-                                Ok(())
-                            })?;
+                        let resolved = ability_run_w(g, p, src, None, st.label, Some(6.0), None, 0.0, |g, _| {
+                            ran = (st.run)(g, p)?;
+                            Ok(())
+                        })?;
                         resolved && ran
                     } else {
                         let resolved = if st.kind == StepKind::Trigger {
@@ -1622,7 +1619,8 @@ pub fn answerable_steps(cmb: &Combo, casts: &[CardId]) -> usize {
 /// True: the line was stopped, the action does not happen. Not used while the player is in `attempt` (its steps have
 /// their own windows).
 pub fn normal_play_window(g: &mut Game, p: PlayerId, acting: PermId) -> Res<bool> {
-    if g.over || g.trig_probe || g.t6_going == Some(p) || !crate::impls::t6_plans::is_t6(g, p) || !g.perm(acting).on_bf {
+    if g.over || g.trig_probe || g.t6_going == Some(p) || !crate::impls::t6_plans::is_t6(g, p) || !g.perm(acting).on_bf
+    {
         return Ok(false);
     }
     let Some(cd) = g.perm(acting).cd else { return Ok(false) };
@@ -1709,7 +1707,9 @@ pub fn audit_ready(g: &Game, p: PlayerId) -> Option<&'static str> {
         s
     };
     for (i, &cmb) in all().iter().enumerate() {
-        if !mine.contains(&i) && !cmb.groups.iter().any(|grp| grp.iter().any(|n| held.contains(n))) && cmb.steps.is_empty()
+        if !mine.contains(&i)
+            && !cmb.groups.iter().any(|grp| grp.iter().any(|n| held.contains(n)))
+            && cmb.steps.is_empty()
         {
             continue;
         }
@@ -1858,9 +1858,8 @@ fn one_tutor_away(g: &Game, p: PlayerId, cmb: &Combo) -> bool {
     let cmd_in_zone: Vec<&str> = pl.cmds_in_zone().map(|c| name_of(g, c)).collect();
     // --- t6 rograkh-thrasios: the real groups (a quiet line's `QUIET` marker is never held, so no quiet line was
     // ever one tutor away), and a land piece on the battlefield is held (lands are not on `perms`: Gaea's Cradle)
-    let land_out = |grp: &[&str]| {
-        pl.lands.iter().any(|&l| g.perm(l).on_bf && grp.contains(&name_of(g, g.perm(l).card())))
-    };
+    let land_out =
+        |grp: &[&str]| pl.lands.iter().any(|&l| g.perm(l).on_bf && grp.contains(&name_of(g, g.perm(l).card())));
     let miss: Vec<&[&str]> = real_groups(cmb)
         .iter()
         .copied()
@@ -1869,8 +1868,7 @@ fn one_tutor_away(g: &Game, p: PlayerId, cmb: &Combo) -> bool {
     if miss.len() != 1 {
         return false;
     }
-    let piece: Vec<CardId> =
-        pl.library.iter().copied().filter(|&c| miss[0].contains(&name_of(g, c))).collect();
+    let piece: Vec<CardId> = pl.library.iter().copied().filter(|&c| miss[0].contains(&name_of(g, c))).collect();
     if piece.is_empty() {
         return false;
     }

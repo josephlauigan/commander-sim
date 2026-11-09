@@ -27,13 +27,13 @@
 //! - Teysa, Orzhov Scion: sacrifice three white creatures: exile target creature; another black creature of yours
 //!   dies: a 1/1 white Spirit with flying.
 
-use crate::engine::repl;
-use crate::engine::pool::Kind;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::on_cast;
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::pool::Kind;
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, counter_window, trigger_window};
 use crate::engine::tutors::shuffle_library;
 use crate::engine::values::{colors_of, epow, pval, untargetable};

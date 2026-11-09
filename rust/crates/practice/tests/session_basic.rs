@@ -93,7 +93,8 @@ fn undo_replays_to_the_same_game() {
     // a different answer: mulligan once (then keep): a different game
     assert_eq!(s.undo(all, "aragorn"), None);
     let (_, evs3) = drive(&s, c2, LIMIT, &|_, i| if i == 1 { Some(json!(1)) } else { None });
-    let hand = |e: &Value| e["view"]["players"].as_array().unwrap().iter().find(|p| p["you"] == true).unwrap()["hand"].clone();
+    let hand =
+        |e: &Value| e["view"]["players"].as_array().unwrap().iter().find(|p| p["you"] == true).unwrap()["hand"].clone();
     // (until the person's own turns are in the engine the game itself doesn't depend on the hand)
     assert!(hand(over(&evs3)) != hand(over(&evs)), "a different opening hand");
     s.close(Duration::from_secs(10));

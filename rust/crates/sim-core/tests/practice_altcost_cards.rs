@@ -245,13 +245,17 @@ fn baleful_mastery_you_choose_which_opponent_draws() {
     pool(&mut g, P0, &[('B', 2)]);
     let (h1, h2) = (g.player(P1).hand.len(), g.player(P2).hand.len());
     let who = g.player(P2).name.to_string();
-    let h = main(&mut g, P0, vec![
-        act(json!({"do": "cast", "card": 0})),
-        by_text("Grave Titan"),
-        Box::new(move |r: &Request| {
-            Answer::Pick(r.choices.iter().position(|x| *x == who).expect("the opponents listed"))
-        }),
-    ]);
+    let h = main(
+        &mut g,
+        P0,
+        vec![
+            act(json!({"do": "cast", "card": 0})),
+            by_text("Grave Titan"),
+            Box::new(move |r: &Request| {
+                Answer::Pick(r.choices.iter().position(|x| *x == who).expect("the opponents listed"))
+            }),
+        ],
+    );
     assert!(asked(&h).iter().any(|a| a.contains("which opponent draws")), "asked {:?}", asked(&h));
     assert_eq!((g.player(P1).hand.len(), g.player(P2).hand.len()), (h1, h2 + 1), "the one you chose drew");
 }
@@ -346,7 +350,12 @@ fn nibelheim_aflame_flashback_discards_your_hand() {
     hand(&mut g, P0, &["Sol Ring", "Mind Stone"]);
     pool(&mut g, P0, &[('R', 7)]);
     let h = main(&mut g, P0, vec![gy_cast(), by_text("Grave Titan")]);
-    assert!(!has_perm(&g, P1, "Llanowar Elves"), "6 damage to each other creature; asked {:?} told {:?}", asked(&h), told(&h));
+    assert!(
+        !has_perm(&g, P1, "Llanowar Elves"),
+        "6 damage to each other creature; asked {:?} told {:?}",
+        asked(&h),
+        told(&h)
+    );
     assert!(in_gy(&g, P0, "Sol Ring") && in_gy(&g, P0, "Mind Stone"), "discarded your hand");
     assert!(in_exile(&g, P0, "Nibelheim Aflame"), "exiled after flashback");
 }

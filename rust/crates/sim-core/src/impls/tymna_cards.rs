@@ -10,15 +10,14 @@
 //!   `ai::decks::protect_response` / `wipe_response`.
 //! - Tymna the Weaver herself is in `legends.rs`.
 
-use crate::satsum::SatSum;
-use crate::ai::hand_key; // --- phase4-hand-off
 use super::partials::eot_kw;
-use crate::engine::pool::Kind;
-use crate::engine::repl;
+use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{castable, casts_this_turn};
 use crate::engine::mana::{Source, Unit, can_pay, pay};
+use crate::engine::pool::Kind;
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{colors_of, epow, etgh, once_per_turn, pval, silenced, untargetable};
@@ -26,6 +25,7 @@ use crate::engine::zones::{Enter, Tokens, die, draw, enter, landfall, make_token
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::{DataKey, Game, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -94,7 +94,9 @@ fn thrasios_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
             .player(p)
             .hand
             .iter()
-            .filter(|&&c| g.db.get(c).tag(Tag::Ctr) && !g.db.get(c).creature || super::tymna_partners::protection_held(g, p, c))
+            .filter(|&&c| {
+                g.db.get(c).tag(Tag::Ctr) && !g.db.get(c).creature || super::tymna_partners::protection_held(g, p, c)
+            })
             .map(|&c| g.db.get(c).cmc)
             .min()
             .unwrap_or(0);
@@ -110,7 +112,11 @@ fn thrasios_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
 
 fn thrasios_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     let cost = crate::impls::t6_green1::creature_ability_cost(g, p, 4);
-    if !g.perm(src).on_bf || !can_pay(g, p, cost, "", false) || g.player(p).library.len() < 3 || super::doomsday::active(g, p) {
+    if !g.perm(src).on_bf
+        || !can_pay(g, p, cost, "", false)
+        || g.player(p).library.len() < 3
+        || super::doomsday::active(g, p)
+    {
         return Ok(false);
     }
     g.player_mut(p).stat(crate::sym::intern("ty_thrasios_acts"), 1);
@@ -131,12 +137,8 @@ fn thrasios_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 /// the line still needs ({generic}, pips): the {4} is paid from the lands that are left over from it, so the colours of
 /// Silence and the Oracle stay untapped. False when it could not be activated (no Thrasios, no mana, an empty library)
 pub fn pile_dig(g: &mut Game, p: PlayerId, rest: (u32, String)) -> Res<bool> {
-    let Some(src) = g
-        .player(p)
-        .perms
-        .iter()
-        .copied()
-        .find(|&m| g.perm(m).on_bf && !g.perm(m).phased && name_of(g, m) == THRASIOS)
+    let Some(src) =
+        g.player(p).perms.iter().copied().find(|&m| g.perm(m).on_bf && !g.perm(m).phased && name_of(g, m) == THRASIOS)
     else {
         return Ok(false);
     };
@@ -1416,9 +1418,7 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<C
     let theirs: i32 = g
         .opps(p)
         .filter(|&q| g.player(q).alive)
-        .map(|q| {
-            g.player(q).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).map(|&m| epow(g, m)).ssum()
-        })
+        .map(|q| g.player(q).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m)).map(|&m| epow(g, m)).ssum())
         .max()
         .unwrap_or(0);
     const WIPES: [&str; 4] = ["Austere Command", "Elspeth, Sun's Champion", "Sunblast Angel", "Toxic Deluge"];
@@ -1450,7 +1450,9 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<C
             .filter_map(|n| g.db.id(n))
             .filter(|c| okn.contains(c) && !held(&g.db.get(*c).name))
             .collect();
-        if let Some(&c) = fin.iter().find(|&&c| g.db.get(c).cmc <= reach).or_else(|| fin.iter().min_by_key(|&&c| g.db.get(c).cmc)) {
+        if let Some(&c) =
+            fin.iter().find(|&&c| g.db.get(c).cmc <= reach).or_else(|| fin.iter().min_by_key(|&&c| g.db.get(c).cmc))
+        {
             return Some(c);
         }
         if !held(FLAIL)
@@ -2065,13 +2067,7 @@ pub fn endurance_apply(g: &mut Game, m: PermId) {
 /// indestructible until end of turn. The kraum seat casts it in response to destroy or damage removal aimed at a
 /// commander or a permanent worth 4 or more (Tymna is the most-removed card of the deck); exile, -X/-X and sacrifice
 /// are not stopped by indestructible, so it isn't cast against those. Never for another seat.
-fn endurance_protect(
-    g: &mut Game,
-    owner_p: PlayerId,
-    m: PermId,
-    kind: Sym,
-    actor: Option<PlayerId>,
-) -> Res<bool> {
+fn endurance_protect(g: &mut Game, owner_p: PlayerId, m: PermId, kind: Sym, actor: Option<PlayerId>) -> Res<bool> {
     const ENDURANCE: &str = "Dark Endurance";
     if hand_key(g, owner_p) != "kraum"
         || actor.is_none()
@@ -2088,7 +2084,10 @@ fn endurance_protect(
     let Some(c) = g.player(owner_p).hand.iter().copied().find(|&x| &*g.db.get(x).name == ENDURANCE) else {
         return Ok(false);
     };
-    if !(g.perm(m).is_cmd || pval(g, m) >= 4.0) || !castable(g, owner_p, c, "hand") || !can_pay(g, owner_p, 1, "B", false) {
+    if !(g.perm(m).is_cmd || pval(g, m) >= 4.0)
+        || !castable(g, owner_p, c, "hand")
+        || !can_pay(g, owner_p, 1, "B", false)
+    {
         return Ok(false);
     }
     cast_endurance(g, owner_p, c, m)

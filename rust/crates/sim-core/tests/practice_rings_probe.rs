@@ -31,18 +31,8 @@ const P1: PlayerId = PlayerId(1);
 
 /// the decks with Rings of Brighthearth (karn, thrasios) or Peter Parker's Camera (sauron) first, then the rest: a card
 /// added to any of them later is covered too
-const DECKS: &[&str] = &[
-    "karn",
-    "thrasios",
-    "alela",
-    "cloud",
-    "galadriel",
-    "aragorn",
-    "sheoldred",
-    "thanos",
-    "urdragon",
-    "yshtola",
-];
+const DECKS: &[&str] =
+    &["karn", "thrasios", "alela", "cloud", "galadriel", "aragorn", "sheoldred", "thanos", "urdragon", "yshtola"];
 
 /// where the ability is used from
 #[derive(Debug, Clone, Copy, PartialEq)]

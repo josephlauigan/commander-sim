@@ -463,3 +463,19 @@ fn a_hand_no_row_fits_says_why_it_is_kept() {
     let rule = &lines(&h)[0];
     assert!(rule.contains("keep a hand,") && rule.contains("send one back") && rule.contains("so keep it"), "{rule}");
 }
+
+/// Mox Jasper makes mana only while you control a Dragon: with a Dragon the hand cannot cast (Scion of Draco, 9) it
+/// makes nothing, so turn 2 has 2 lands and Mind Stone (cost 2) is cast on turn 2, not turn 1
+#[test]
+fn mox_jasper_makes_no_mana_without_a_dragon_the_hand_can_cast() {
+    let (mut g, p) = game_with(
+        "thanos",
+        &["Plateau", "Taiga", "Mox Jasper", "Mind Stone", "Scion of Draco", "Vampiric Tutor", "Swords to Plowshares"],
+    );
+    let h = hint(&mut g, p);
+    let d = lines(&h);
+    assert!(d.iter().any(|l| l.starts_with("Mana on turn 2: 2 = 2 lands")), "{h}");
+    assert!(has(&h, "Mox Jasper (needs a Dragon you can cast first)"), "{h}");
+    assert!(has(&h, "Mind Stone (cast turn 2, makes mana from turn 3)"), "{h}");
+    assert!(!d.iter().any(|l| l.contains("Mind Stone 1 (cast turn 1)")), "{h}");
+}

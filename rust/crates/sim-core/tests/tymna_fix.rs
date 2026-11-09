@@ -56,4 +56,3 @@ fn witherbloom_charm_is_offered_as_a_hand_play() {
     assert!(o.iter().any(|x| x.label.contains("draw two")), "{:?}", o.iter().map(|x| &x.label).collect::<Vec<_>>());
     assert!(o.iter().all(|x| matches!(x.act, Some(Action::Plan { .. }))));
 }
-

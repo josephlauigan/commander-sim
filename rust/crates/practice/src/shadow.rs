@@ -12,10 +12,10 @@
 //! recorded without a score.
 
 use crate::view::{seam::pool_total, step_name};
-use sim_core::engine::pool::Kind;
 use serde_json::{Value, json};
 use sim_core::ai::{brain, search};
 use sim_core::control::{Answer, Request};
+use sim_core::engine::pool::Kind;
 use sim_core::ids::PlayerId;
 use sim_core::state::{Game, Step};
 use sim_core::sym::intern;
@@ -78,7 +78,10 @@ impl Entry {
         let bad = || "a saved game with a damaged comparison log".to_string();
         let s = |k: &str| d.get(k).and_then(Value::as_str).map(str::to_string);
         let strs = |k: &str| -> Vec<String> {
-            d.get(k).and_then(Value::as_array).map(|a| a.iter().filter_map(|x| x.as_str().map(str::to_string)).collect()).unwrap_or_default()
+            d.get(k)
+                .and_then(Value::as_array)
+                .map(|a| a.iter().filter_map(|x| x.as_str().map(str::to_string)).collect())
+                .unwrap_or_default()
         };
         Ok(Entry {
             n: d.get("n").and_then(Value::as_u64).ok_or_else(bad)? as usize,
@@ -91,7 +94,9 @@ impl Entry {
             scores: d
                 .get("scores")
                 .and_then(Value::as_array)
-                .map(|a| a.iter().filter_map(|p| Some((p.get(0)?.as_str()?.to_string(), p.get(1)?.as_f64()?))).collect())
+                .map(|a| {
+                    a.iter().filter_map(|p| Some((p.get(0)?.as_str()?.to_string(), p.get(1)?.as_f64()?))).collect()
+                })
                 .unwrap_or_default(),
             scored: d.get("scored").and_then(Value::as_bool).unwrap_or(false),
             note: s("note").unwrap_or_default(),
@@ -99,7 +104,9 @@ impl Entry {
             hand: strs("hand"),
             cmd: s("cmd"),
             cmd2: s("cmd2"),
-            ai_plan: d.get("ai_plan").and_then(|p| Some((p.get(0)?.as_u64()? as usize, p.get(1)?.as_str()?.to_string()))),
+            ai_plan: d
+                .get("ai_plan")
+                .and_then(|p| Some((p.get(0)?.as_u64()? as usize, p.get(1)?.as_str()?.to_string()))),
             n_choices: d.get("n_choices").and_then(Value::as_u64).unwrap_or(0) as usize,
             ai_note: s("ai_note").unwrap_or_default(),
         })
@@ -163,12 +170,12 @@ impl Entry {
             self.ai.as_deref() != yk
         } else {
             self.scored
-            && self.ai.as_deref() != yk
-            && yk.is_some_and(|k| self.score(k).is_some())
-            && match (score_ai, score_yours) {
-                (Some(a), Some(y)) => a - y >= SAME,
-                _ => false,
-            }
+                && self.ai.as_deref() != yk
+                && yk.is_some_and(|k| self.score(k).is_some())
+                && match (score_ai, score_yours) {
+                    (Some(a), Some(y)) => a - y >= SAME,
+                    _ => false,
+                }
         };
         json!({
             "n": self.n, "round": self.round, "step": self.step, "kind": self.kind, "situation": self.situation,
@@ -392,8 +399,9 @@ impl Shadow {
                     g = self.cv.wait_timeout(g, Duration::from_millis(200)).unwrap().0;
                 }
             };
-            let out = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| run_job(n, job)))
-                .unwrap_or_else(|_| Done { note: Some("not compared: the comparison failed".into()), ..Done::default() });
+            let out = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| run_job(n, job))).unwrap_or_else(|_| {
+                Done { note: Some("not compared: the comparison failed".into()), ..Done::default() }
+            });
             let mut g = self.inner.lock().unwrap();
             if let Some(s) = g.slots.iter_mut().find(|s| s.e.n == n && s.running) {
                 out.apply(&mut s.e);
@@ -515,7 +523,8 @@ fn run_job(n: usize, job: Job) -> Done {
                     tot[k] += search::playout_main(&mut snap, sp, post, lb, 0, base, r);
                 }
             }
-            let scores: Vec<(String, f64)> = labels.iter().zip(&tot).map(|(l, t)| (l.clone(), t / rollouts as f64)).collect();
+            let scores: Vec<(String, f64)> =
+                labels.iter().zip(&tot).map(|(l, t)| (l.clone(), t / rollouts as f64)).collect();
             let sc = |l: &str| scores.iter().find(|x| x.0 == l).map_or(f64::NEG_INFINITY, |x| x.1);
             let mut best = &ai_set[0];
             for l in &ai_set {
@@ -642,7 +651,8 @@ fn attack_text(req: &Request, ans: &Answer) -> String {
     if picked.is_empty() {
         return "No attack".into();
     }
-    let names: Vec<&str> = picked.iter().filter_map(|&i| req.choices.get(i)).map(|c| c.split(" (").next().unwrap_or("")).collect();
+    let names: Vec<&str> =
+        picked.iter().filter_map(|&i| req.choices.get(i)).map(|c| c.split(" (").next().unwrap_or("")).collect();
     format!("Attack with {}", names.join(", "))
 }
 

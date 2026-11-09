@@ -25,13 +25,12 @@
 //! - Umbral Mantle: the combo with a mana creature making four or more (Marwyn grows by itself) and Ezuri: infinite
 //!   mana and infinite overruns win before combat. Its plain +2/+2 pump outside the loop is not used.
 
-use crate::satsum::SatSum;
-use crate::engine::repl;
-use crate::engine::pool::Kind;
 use crate::ai::brain::{Situation, card_utility, do_cast_with};
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::pool::Kind;
+use crate::engine::repl;
 use crate::engine::stack::ability_window;
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{epow, etgh, has_type, once_per_turn, pval, untargetable};
@@ -40,6 +39,7 @@ use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::combos::{Combo, Ready};
+use crate::satsum::SatSum;
 use crate::state::{Ctx, DataKey, Game, Step, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -300,16 +300,12 @@ fn top_ok(g: &Game, src: PermId, c: CardId) -> bool {
 /// the first of p's permanents that lets it cast the top card (one option set per player)
 fn top_source(g: &Game, p: PlayerId) -> Option<PermId> {
     let &top = g.player(p).library.last()?;
-    g.player(p)
-        .perms
-        .iter()
-        .copied()
-        .find(|&m| {
-            // --- Tiers 1/2 (lathril): Elven Chorus casts creature spells from the top too
-            live(g, m)
-                && (named(g, m, ELADAMRI) || named(g, m, REALMWALKER) || named(g, m, "Elven Chorus"))
-                && top_ok(g, m, top)
-        })
+    g.player(p).perms.iter().copied().find(|&m| {
+        // --- Tiers 1/2 (lathril): Elven Chorus casts creature spells from the top too
+        live(g, m)
+            && (named(g, m, ELADAMRI) || named(g, m, REALMWALKER) || named(g, m, "Elven Chorus"))
+            && top_ok(g, m, top)
+    })
 }
 
 /// You may cast creature spells from the top of your library: the AI casts the top card when it would cast it from the

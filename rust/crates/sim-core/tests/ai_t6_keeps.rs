@@ -107,7 +107,11 @@ fn a_one_lander_with_a_mox_diamond_or_a_chrome_mox_is_shipped() {
         "dack-fayden-white-stax",
     ] {
         let mut g = tbl(key);
-        hand(&mut g, P0, &["Plains", "Mox Diamond", "Rhystic Study", "Demonic Tutor", "Ad Nauseam", "Dispel", "Silence"]);
+        hand(
+            &mut g,
+            P0,
+            &["Plains", "Mox Diamond", "Rhystic Study", "Demonic Tutor", "Ad Nauseam", "Dispel", "Silence"],
+        );
         assert_eq!(t6_plans::keep(&g, P0), Some(false), "{key}: land + Mox Diamond is one land");
     }
 }
@@ -117,7 +121,11 @@ fn a_one_lander_with_free_moxen_and_a_sol_ring_is_kept_on_the_first_seven() {
     // land + Sol Ring (2) + Petal + Amber is about 5 mana on turn 2, and the hand has things to do
     for key in ["kraum-tymna-blue-breach-midrange", "rograkh-silas-turbo-breach"] {
         let mut g = tbl(key);
-        hand(&mut g, P0, &["Scrubland", "Sol Ring", "Lotus Petal", "Mox Amber", "Demonic Tutor", "Ad Nauseam", "Rhystic Study"]);
+        hand(
+            &mut g,
+            P0,
+            &["Scrubland", "Sol Ring", "Lotus Petal", "Mox Amber", "Demonic Tutor", "Ad Nauseam", "Rhystic Study"],
+        );
         assert_eq!(t6_plans::keep(&g, P0), Some(true), "{key}");
     }
 }

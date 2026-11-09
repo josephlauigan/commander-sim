@@ -260,7 +260,6 @@ fn conditions_nest_and_sum() {
     );
 }
 
-
 /// a pool deck's plan file is read by the generic policy only: the Tier 6 slots have no opinion for it (they once
 /// answered for Kaalia, Chulane and Yawgmoth too, bypassing their key cards and their wish list's mana step)
 #[test]

@@ -1,9 +1,7 @@
 //! Python's `cards/impl/partials.py`: the abilities the audit listed as missing, implemented from their rules text
 //! (the Tier 1 and Sauron cards for M5, the rest in phase 6: `register_phase6`).
 
-use crate::satsum::SatSum;
 use super::common;
-use crate::engine::repl;
 use crate::cardcode;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, casts_this_turn, on_cast};
@@ -11,6 +9,7 @@ use crate::engine::hooks::fire_trigger;
 use crate::engine::life::{check_state, gain, lose_life};
 use crate::engine::mana::{Source, Unit, can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::{abilities_answered, ability_window, counter_window, stack_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{epow, etgh, has_type, indestructible, once_per_turn, pval, threat, untargetable};
@@ -21,6 +20,7 @@ use crate::flow::Res;
 use crate::hooks::{Action, Call, CardImpl, Event, Opt, Registry, Sacrificed, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
+use crate::satsum::SatSum;
 use crate::state::{Ctx, DataKey, Game, StackItem, StackKind, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -237,11 +237,13 @@ pub(crate) fn hordechief_blocks(
     if crate::human::is_human(g, p) {
         // --- model-gaps-a4: "you choose how those creatures block": the person assigns each blocker
         for b in bs {
-            let ok: Vec<PermId> = atk.iter().copied().filter(|&a| on(g, p, a) && crate::engine::combat::can_block(g, b, a)).collect();
+            let ok: Vec<PermId> =
+                atk.iter().copied().filter(|&a| on(g, p, a) && crate::engine::combat::can_block(g, b, a)).collect();
             if ok.is_empty() {
                 continue;
             }
-            let labels: Vec<String> = ok.iter().map(|&a| crate::human::legal::describe_target(g, p, crate::human::Target::Perm(a))).collect();
+            let labels: Vec<String> =
+                ok.iter().map(|&a| crate::human::legal::describe_target(g, p, crate::human::Target::Perm(a))).collect();
             let prompt = format!("Brutal Hordechief: {} blocks which attacker?", g.perm(b).name);
             let k = crate::human::choices::choose_one(g, p, "choose", &prompt, &labels)?;
             assign.push((ok[k], b));
@@ -1587,7 +1589,8 @@ fn chain_person(g: &mut Game, q: PlayerId) -> Res<Option<PlayerId>> {
         return Ok(None);
     }
     let lands = g.player(q).lands.clone();
-    let Some(l) = crate::human::cards::pick_perm(g, q, "choose", "Chain of Vapor: sacrifice which land?", &lands, None)?
+    let Some(l) =
+        crate::human::cards::pick_perm(g, q, "choose", "Chain of Vapor: sacrifice which land?", &lands, None)?
     else {
         return Ok(None);
     };
@@ -1736,7 +1739,10 @@ fn snoop(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt
         o.push(opt_ability(2.0 + card_worth(g, p, top, false) / 20.0, label, src, snoop_go, top.0 as i64));
     }
     // a Snoop on top has no other abilities than this one (borrowing it would call snoop on itself forever)
-    if goblin && &*d.name != "Conspicuous Snoop" && let Some(f) = g.registry.get(top).and_then(|i| i.options) {
+    if goblin
+        && &*d.name != "Conspicuous Snoop"
+        && let Some(f) = g.registry.get(top).and_then(|i| i.options)
+    {
         o.extend(f(g, src, p, post)?);
     }
     Ok(o)
@@ -1968,8 +1974,7 @@ fn gix_target(g: &Game, p: PlayerId) -> Option<PlayerId> {
 /// opponent's (their graveyard afterwards); a land played this way counts as yours when it leaves (lands have one
 /// owner field, which is also their controller).
 fn gix(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if g.perm(src).owner != p || post != Some(false)
-        || !can_pay(g, p, 4, "BBB", false) {
+    if g.perm(src).owner != p || post != Some(false) || !can_pay(g, p, 4, "BBB", false) {
         return Ok(vec![]);
     }
     let junk = gix_junk(g, p);
@@ -3056,7 +3061,13 @@ fn ring(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
             return Ok(());
         }
         g.player_mut(o).ring_prot = true;
-        crate::glog!(g, "    The One Ring cast in {:?} step of {}'s turn (life {})", g.step, g.active.map_or("nobody", |a| &*g.player(a).name), g.player(o).life);
+        crate::glog!(
+            g,
+            "    The One Ring cast in {:?} step of {}'s turn (life {})",
+            g.step,
+            g.active.map_or("nobody", |a| &*g.player(a).name),
+            g.player(o).life
+        );
         crate::glog!(g, "    {} gains protection from everything until their next turn", pname(g, o));
     }
     Ok(())
@@ -3116,7 +3127,14 @@ fn ring_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
             placed = true;
             let b = burden(g, src) + 1;
             g.perm_mut(src).data.set(DataKey::Burden, Val::Int(b));
-            crate::glog!(g, "  {} taps The One Ring: burden {b}, life {}, {:?} step of {}'s turn", pname(g, p), g.player(p).life, g.step, g.active.map_or("nobody", |a| &*g.player(a).name));
+            crate::glog!(
+                g,
+                "  {} taps The One Ring: burden {b}, life {}, {:?} step of {}'s turn",
+                pname(g, p),
+                g.player(p).life,
+                g.step,
+                g.active.map_or("nobody", |a| &*g.player(a).name)
+            );
         }
         draw(g, p, burden(g, src) as u32, false)
     })?;

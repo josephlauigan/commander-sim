@@ -35,13 +35,13 @@
 //! - The Raven Man: each end step, if a player discarded this turn, a 1/1 flying Bird that can't block (its {3}{B}
 //!   activation is compiled).
 
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst};
 use crate::engine::combat::has_haste;
 use crate::engine::life::{check_state, gain, lose_life};
 use crate::engine::mana::{can_pay, pay};
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
 use crate::engine::values::{epow, etgh, has, indestructible, no_sac, pval, untargetable};
 use crate::engine::zones::{

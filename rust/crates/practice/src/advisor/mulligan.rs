@@ -456,8 +456,13 @@ fn hand_lines(g: &Game, p: PlayerId, l: Option<&Loaded>) -> Vec<String> {
     }
     d.push(line);
     if (m.eff - curve.real(2)).abs() > 0.05 {
+        let petal = if curve.petal_card.is_some() {
+            " (it counts a Lotus Petal as 0.7; the turn-by-turn line counts it as 1 mana, once)"
+        } else {
+            ""
+        };
         d.push(format!(
-            "The keep rule counts this hand as {} mana (all {} in hand plus the rocks that count), not what you have on turn 2.",
+            "The keep rule counts this hand as {} mana (all {} in hand plus the rocks that count{petal}), not what you have on turn 2.",
             num(m.eff),
             plural(m.lands, "land", "lands")
         ));
@@ -491,6 +496,7 @@ fn why_no_mana(g: &Game, c: CardId, lands: usize, spells: usize) -> &'static str
         "Mox Diamond" => "needs a second land to discard",
         "Chrome Mox" if spells < 2 => "needs two other spells, one to imprint",
         "Mox Opal" => "needs three artifacts for metalcraft",
+        "Mox Jasper" => "needs a Dragon you can cast first",
         "Lion's Eye Diamond" => "only fuels one spell",
         _ if d.cmc == 1 && lands < 1 => "needs a land to cast it",
         _ if d.cmc == 2 && lands < 2 => "needs two lands to cast it",
@@ -581,6 +587,8 @@ struct Played {
     v: f64,
     cast: usize,
     from: usize,
+    /// Mox Jasper: the Dragon whose casting on turn `cast` switches it on
+    dragon: Option<CardId>,
 }
 
 /// The mana the hand has on turn `t`, turn by turn: at most `cap` lands in all and one land drop a turn (never more
@@ -592,6 +600,9 @@ struct Curve {
     extra: f64,
     played: Vec<Played>,
     mana: Vec<f64>,
+    /// per turn: is the Lotus Petal's one mana still there (counted in `mana` that turn)
+    petal: Vec<bool>,
+    petal_card: Option<CardId>,
 }
 
 impl Curve {
@@ -600,33 +611,73 @@ impl Curve {
         let pv = t6_keep::piece_values(g, p);
         let sum: f64 = pv.iter().map(|x| x.1).sum();
         let extra = (m.eff - m.lands as f64 - sum).max(0.0);
-        let mut left: Vec<(CardId, f64, usize)> =
-            pv.iter().filter(|x| x.1 > 0.0).map(|&(c, v)| (c, v, g.db.get(c).cmc as usize)).collect();
+        let jasper = |c: CardId| &*g.db.get(c).name == "Mox Jasper";
+        let is_petal = |c: CardId| &*g.db.get(c).name == "Lotus Petal";
+        // Lotus Petal is one mana, once: it is there each turn until it pays for something
+        let petal_card = pv.iter().find(|x| x.1 > 0.0 && is_petal(x.0)).map(|x| x.0);
+        let mut petal_left = petal_card.is_some();
+        let mut petal = vec![];
+        let mut left: Vec<(CardId, f64, usize)> = pv
+            .iter()
+            .filter(|x| x.1 > 0.0 && !jasper(x.0) && !is_petal(x.0))
+            .map(|&(c, v)| (c, v, g.db.get(c).cmc as usize))
+            .collect();
+        // Mox Jasper is not mana until a Dragon is cast: the turn the hand can cast one (its cost leaves that turn's
+        // mana, and Jasper makes mana from the next turn)
+        let dragon = if pv.iter().any(|x| jasper(x.0)) { t6_keep::dragon_cast(g, p, cap) } else { None };
         left.sort_by(|a, b| a.2.cmp(&b.2).then(b.1.total_cmp(&a.1)));
         let mut played: Vec<Played> = vec![];
         let mut mana = vec![];
         for t in 1..=10usize {
             let lands = t.min(cap);
             let ex = if lands >= 1 { extra } else { 0.0 };
-            let mut rem = lands as f64 + ex + played.iter().filter(|x| x.from <= t).map(|x| x.v).sum::<f64>();
+            // the mana without the Petal, and what this turn spends of it (the Petal is spent once that passes the rest)
+            let start = lands as f64 + ex + played.iter().filter(|x| x.from <= t).map(|x| x.v).sum::<f64>();
+            let petal_now = petal_left as u8 as f64;
+            let (mut rem, mut added, mut spent) = (start + petal_now, 0.0, 0.0);
+            // the Dragon's cost leaves this turn's mana after the zero-cost pieces have added theirs (they are first in
+            // `left`, which is sorted by cost)
+            let mut reserve = None;
+            if let Some((dt, dc)) = dragon.filter(|x| x.0 == t) {
+                reserve = Some(g.db.get(dc).cmc as f64);
+                for &(c, _) in pv.iter().filter(|x| jasper(x.0)) {
+                    played.push(Played { card: c, v: 1.0, cast: dt, from: dt + 1, dragon: Some(dc) });
+                }
+            }
             let mut i = 0;
             while i < left.len() {
                 let (c, v, cmc) = left[i];
+                if cmc > 0 {
+                    if let Some(cost) = reserve.take() {
+                        let pay = cost.min(rem);
+                        rem -= pay;
+                        spent += pay;
+                    }
+                }
                 if cmc as f64 <= rem + 1e-9 {
                     rem -= cmc as f64;
+                    spent += cmc as f64;
                     let from = if cmc == 0 { t } else { t + 1 };
                     if from == t {
                         rem += v;
+                        added += v;
                     }
-                    played.push(Played { card: c, v, cast: t, from });
+                    played.push(Played { card: c, v, cast: t, from, dragon: None });
                     left.remove(i);
                 } else {
                     i += 1;
                 }
             }
-            mana.push(lands as f64 + ex + played.iter().filter(|x| x.from <= t).map(|x| x.v).sum::<f64>());
+            if let Some(cost) = reserve.take() {
+                spent += cost.min(rem);
+            }
+            mana.push(lands as f64 + ex + played.iter().filter(|x| x.from <= t).map(|x| x.v).sum::<f64>() + petal_now);
+            petal.push(petal_left);
+            if spent > start + added + 1e-9 {
+                petal_left = false;
+            }
         }
-        Curve { cap, extra, played, mana }
+        Curve { cap, extra, played, mana, petal, petal_card }
     }
 
     fn real(&self, t: usize) -> f64 {
@@ -641,8 +692,15 @@ impl Curve {
     fn turn2_breakdown(&self, g: &Game) -> String {
         let mut parts = vec![plural(2.min(self.cap), "land", "lands")];
         for x in self.played.iter().filter(|x| x.from <= 2) {
-            let when = if g.db.get(x.card).cmc > 0 { format!(" (cast turn {})", x.cast) } else { String::new() };
+            let when = match x.dragon {
+                Some(d) => format!(" (once {} is cast turn {})", name_of(g, d), x.cast),
+                None if g.db.get(x.card).cmc > 0 => format!(" (cast turn {})", x.cast),
+                None => String::new(),
+            };
             parts.push(format!("{} {}{when}", name_of(g, x.card), num(x.v)));
+        }
+        if let Some(c) = self.petal_card.filter(|_| self.petal.get(1) == Some(&true)) {
+            parts.push(format!("{} 1 (once)", name_of(g, c)));
         }
         if self.extra > 0.01 && self.cap >= 1 {
             parts.push(format!("{} from double-mana lands", num(self.extra)));
@@ -651,7 +709,16 @@ impl Curve {
             .played
             .iter()
             .filter(|x| x.from > 2)
-            .map(|x| format!("{} (cast turn {}, makes mana from turn {})", name_of(g, x.card), x.cast, x.from))
+            .map(|x| match x.dragon {
+                Some(d) => format!(
+                    "{} (once {} is cast turn {}, makes mana from turn {})",
+                    name_of(g, x.card),
+                    name_of(g, d),
+                    x.cast,
+                    x.from
+                ),
+                None => format!("{} (cast turn {}, makes mana from turn {})", name_of(g, x.card), x.cast, x.from),
+            })
             .collect();
         let mut s = format!("{} = {}", num(self.real(2)), parts.join(" + "));
         if !later.is_empty() {

@@ -77,20 +77,36 @@ fn archivist_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> 
     let t = g.player(p).turns;
     g.player_mut(p).arch_t = Some(t);
     crate::glog!(g, "  {} activates Jace's Archivist", g.player(p).name);
-    crate::engine::stack::ability_run_w(g, p, Some(src), None, "each player discards their hand, then draws", None, None, 0.0, |g, _| {
-        let n = g.players.iter().filter(|q| q.alive).map(|q| crate::engine::values::hand_count(g, q.id)).max().unwrap_or(0) as u32;
-        let alive: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
-        for &q in &alive {
-            let hand = g.player(q).hand.clone();
-            discard_cards(g, q, &hand)?;
-        }
-        for &q in &alive {
-            if g.player(q).alive && !g.over {
-                draw(g, q, n, false)?;
+    crate::engine::stack::ability_run_w(
+        g,
+        p,
+        Some(src),
+        None,
+        "each player discards their hand, then draws",
+        None,
+        None,
+        0.0,
+        |g, _| {
+            let n = g
+                .players
+                .iter()
+                .filter(|q| q.alive)
+                .map(|q| crate::engine::values::hand_count(g, q.id))
+                .max()
+                .unwrap_or(0) as u32;
+            let alive: Vec<PlayerId> = g.players.iter().filter(|q| q.alive).map(|q| q.id).collect();
+            for &q in &alive {
+                let hand = g.player(q).hand.clone();
+                discard_cards(g, q, &hand)?;
             }
-        }
-        Ok(())
-    })?;
+            for &q in &alive {
+                if g.player(q).alive && !g.over {
+                    draw(g, q, n, false)?;
+                }
+            }
+            Ok(())
+        },
+    )?;
     Ok(true)
 }
 

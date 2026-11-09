@@ -41,11 +41,7 @@ fn check_generic(g: &Game, key: &str) {
 #[test]
 fn the_deleted_jd_decks_play_the_generic_policy() {
     assert_eq!(ai::HAND_DELETED.len(), 3);
-    for (key, t) in [
-        ("yshtola", "t5"),
-        ("sheoldred", "t3"),
-        ("cloud", "t1"),
-    ] {
+    for (key, t) in [("yshtola", "t5"), ("sheoldred", "t3"), ("cloud", "t1")] {
         assert!(ai::HAND_DELETED.contains(&key), "{key}");
         check_generic(&seated(key, t), key);
     }

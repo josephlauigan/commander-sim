@@ -335,4 +335,3 @@ pub fn must_option(g: &Game, p: PlayerId, opts: &[crate::hooks::Opt]) -> Option<
     }
     best.map(|b| b.2)
 }
-

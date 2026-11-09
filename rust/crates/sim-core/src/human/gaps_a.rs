@@ -368,10 +368,19 @@ fn ranger_silence(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         "  {} sacrifices Ranger-Captain of Eos: opponents can't cast noncreature spells this turn",
         pname(g, p)
     );
-    stack::ability_run(g, p, None, Some(cd), "your opponents can't cast noncreature spells this turn", None, None, |g| {
-        g.silence = Some((g.turn_stamp(), p));
-        Ok(())
-    })?;
+    stack::ability_run(
+        g,
+        p,
+        None,
+        Some(cd),
+        "your opponents can't cast noncreature spells this turn",
+        None,
+        None,
+        |g| {
+            g.silence = Some((g.turn_stamp(), p));
+            Ok(())
+        },
+    )?;
     Ok(None)
 }
 

@@ -185,7 +185,10 @@ impl LogSink for Sink {
 }
 
 fn panic_text(p: &(dyn std::any::Any + Send)) -> String {
-    p.downcast_ref::<String>().cloned().or_else(|| p.downcast_ref::<&str>().map(|s| s.to_string())).unwrap_or_else(|| "panic".into())
+    p.downcast_ref::<String>()
+        .cloned()
+        .or_else(|| p.downcast_ref::<&str>().map(|s| s.to_string()))
+        .unwrap_or_else(|| "panic".into())
 }
 
 impl Session {
@@ -211,7 +214,8 @@ impl Session {
         }
         let humans: Vec<String> = std::iter::once(o.deck.clone()).chain(o.partner.clone()).collect();
         let seed = o.seed.unwrap_or_else(|| {
-            let t = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(1, |d| d.as_nanos() as u64);
+            let t =
+                std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(1, |d| d.as_nanos() as u64);
             1 + sim_core::rng::Rng::from_u64(t).below(999_999)
         });
         let seats = setup::choose_seats(
@@ -435,7 +439,8 @@ impl Session {
                 round: g.round,
             });
         }
-        let mut ev = json!({"kind": "over", "winner": winner.map(|w| w.key.to_string()), "how": g.wintype.unwrap_or("")});
+        let mut ev =
+            json!({"kind": "over", "winner": winner.map(|w| w.key.to_string()), "how": g.wintype.unwrap_or("")});
         self.with_views(&mut ev, &g);
         self.emit(ev);
     }
@@ -496,7 +501,8 @@ impl Session {
 
     /// a rewind to answer `to`: the replay keeps the settings it had; the setting now applies from there on
     fn autopass_rewind(&self, st: &mut State, to: usize) {
-        let latest: Vec<(String, String)> = self.humans.iter().map(|k| (k.clone(), autopass_of(st, k, Some(usize::MAX / 2)))).collect();
+        let latest: Vec<(String, String)> =
+            self.humans.iter().map(|k| (k.clone(), autopass_of(st, k, Some(usize::MAX / 2)))).collect();
         st.autopass_log.retain(|e| e.0 <= to);
         for (k, m) in latest {
             if autopass_of(st, &k, Some(to + 1)) != m {
@@ -589,7 +595,9 @@ impl Session {
     /// the AI comparison for a seat (yours), once the game is over (it stays hidden while you play)
     pub fn review(&self, seat: &str) -> Result<Value, String> {
         let st = self.st.lock().unwrap();
-        let (Some(o), true) = (&st.outcome, st.finished) else { return Err("The review opens when the game ends.".into()) };
+        let (Some(o), true) = (&st.outcome, st.finished) else {
+            return Err("The review opens when the game ends.".into());
+        };
         let Some(sh) = self.shadows.get(seat) else { return Err("You have no seat in this game.".into()) };
         let ds = sh.review();
         let scored: Vec<&Value> = ds.iter().filter(|d| d["scored"] == true).collect();
@@ -641,7 +649,12 @@ impl Session {
         o.views = views;
         o.compare = compare;
         o.seats = Some(
-            data.get("seats").and_then(Value::as_array).ok_or_else(damaged)?.iter().filter_map(|x| x.as_str().map(str::to_string)).collect(),
+            data.get("seats")
+                .and_then(Value::as_array)
+                .ok_or_else(damaged)?
+                .iter()
+                .filter_map(|x| x.as_str().map(str::to_string))
+                .collect(),
         );
         o.partner = data.get("partner").and_then(Value::as_str).map(str::to_string);
         let sess = Session::new(o)?;
@@ -652,7 +665,10 @@ impl Session {
             }
         }
         let entries = |k: &str| -> Result<Vec<Entry>, String> {
-            data.get(k).and_then(Value::as_array).map(|a| a.iter().map(Entry::from_saved).collect()).unwrap_or(Ok(vec![]))
+            data.get(k)
+                .and_then(Value::as_array)
+                .map(|a| a.iter().map(Entry::from_saved).collect())
+                .unwrap_or(Ok(vec![]))
         };
         sess.shadows[&sess.deck].load(entries("shadow")?);
         if let Some(p) = &sess.partner {
@@ -671,17 +687,18 @@ impl Session {
             .and_then(Value::as_array)
             .map(|a| {
                 a.iter()
-                    .filter_map(|e| Some((e.get(0)?.as_u64()? as usize, e.get(1)?.as_str()?.to_string(), e.get(2)?.as_str()?.to_string())))
+                    .filter_map(|e| {
+                        Some((
+                            e.get(0)?.as_u64()? as usize,
+                            e.get(1)?.as_str()?.to_string(),
+                            e.get(2)?.as_str()?.to_string(),
+                        ))
+                    })
                     .collect()
             })
             .unwrap_or_default();
-        st.replay = data
-            .get("answers")
-            .and_then(Value::as_array)
-            .ok_or_else(damaged)?
-            .iter()
-            .map(answer_from_json)
-            .collect();
+        st.replay =
+            data.get("answers").and_then(Value::as_array).ok_or_else(damaged)?.iter().map(answer_from_json).collect();
         if let Some(a) = data.get("answer_seats").and_then(Value::as_array) {
             // (a two-player save knows whose answer each one is; replay re-derives it, so this only checks the shape)
             if a.len() != st.replay.len() {
@@ -749,7 +766,11 @@ fn tape_from_json(v: &Value) -> Option<TapeEntry> {
     let r = v.get(1)?;
     let work = v.get(2)?.as_u64()?;
     let result = match kind {
-        "main" => Taped::Main(if r.is_null() { None } else { Some((r.get(0)?.as_str()?.to_string(), r.get(1)?.as_u64()? as usize)) }),
+        "main" => Taped::Main(if r.is_null() {
+            None
+        } else {
+            Some((r.get(0)?.as_str()?.to_string(), r.get(1)?.as_u64()? as usize))
+        }),
         "attack" => Taped::Attack(if r.is_null() {
             None
         } else {

@@ -59,7 +59,9 @@ fn activated(text: &str) -> Vec<String> {
             let effect = effect.trim();
             let loyalty = cost.starts_with(['+', '−', '-', '0']) && cost.len() <= 4;
             let costy = cost.contains('{')
-                || ["Sacrifice", "Exile", "Pay", "Remove", "Discard", "Tap", "Return"].iter().any(|w| cost.starts_with(w));
+                || ["Sacrifice", "Exile", "Pay", "Remove", "Discard", "Tap", "Return"]
+                    .iter()
+                    .any(|w| cost.starts_with(w));
             if !(loyalty || costy) {
                 return None;
             }
@@ -106,7 +108,10 @@ fn offered(key: &str, name: &str, land: bool, active: PlayerId, step: Step) -> R
         n
     }));
     r.map_err(|e| {
-        e.downcast_ref::<String>().cloned().or_else(|| e.downcast_ref::<&str>().map(|s| s.to_string())).unwrap_or_default()
+        e.downcast_ref::<String>()
+            .cloned()
+            .or_else(|| e.downcast_ref::<&str>().map(|s| s.to_string()))
+            .unwrap_or_default()
     })
 }
 
@@ -120,7 +125,8 @@ fn every_activated_ability_of_the_owned_decks_is_offered_to_a_person() {
     let mut probed = 0;
     for d in decks["mine"].as_array().unwrap() {
         let key = d["key"].as_str().unwrap();
-        let mut names: Vec<String> = d["cards"].as_array().unwrap().iter().filter_map(|c| c.as_str().map(String::from)).collect();
+        let mut names: Vec<String> =
+            d["cards"].as_array().unwrap().iter().filter_map(|c| c.as_str().map(String::from)).collect();
         names.sort();
         names.dedup();
         for name in names {
@@ -149,7 +155,9 @@ fn every_activated_ability_of_the_owned_decks_is_offered_to_a_person() {
             if best == 0 {
                 match err {
                     Some(e) => errors.push(format!("{key}: {name}: probe panicked: {e}")),
-                    None => gaps.entry(key.to_string()).or_default().push(format!("{name}  |  {}", lines.join("  /  "))),
+                    None => {
+                        gaps.entry(key.to_string()).or_default().push(format!("{name}  |  {}", lines.join("  /  ")))
+                    }
                 }
             }
         }
@@ -170,8 +178,7 @@ fn every_activated_ability_of_the_owned_decks_is_offered_to_a_person() {
 
 /// gaps found on 2026-11-04 and not yet fixed: the person cannot activate these in practice mode (or only when the AI's
 /// own conditions say so). Fixing one means taking it off this list; a new gap fails the test.
-const TO_FIX: &[&str] = &[
-];
+const TO_FIX: &[&str] = &[];
 
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[];
@@ -194,5 +201,10 @@ fn check(found: &BTreeMap<String, Vec<String>>) {
         eprintln!("NO LONGER FOUND (take it off the list): {s}");
     }
     eprintln!("{} found: {} to fix, {} false alarms", found.len(), TO_FIX.len(), FALSE_ALARMS.len());
-    assert!(new.is_empty() && fixed.is_empty(), "{} new gap(s), {} list entr(ies) to remove: see above", new.len(), fixed.len());
+    assert!(
+        new.is_empty() && fixed.is_empty(),
+        "{} new gap(s), {} list entr(ies) to remove: see above",
+        new.len(),
+        fixed.len()
+    );
 }

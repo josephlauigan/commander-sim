@@ -36,12 +36,11 @@ fn in_gy(g: &Game, p: PlayerId, name: &str) -> bool {
 
 /// a person who answers prompts starting with a key by that pick, and declines the rest
 fn person(g: &mut Game, p: PlayerId, picks: Vec<(&'static str, usize)>) -> std::sync::Arc<ScriptHuman> {
-    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
-        match picks.iter().find(|(s, _)| r.prompt.starts_with(s)) {
+    let h =
+        std::sync::Arc::new(ScriptHuman::from_fn(move |r| match picks.iter().find(|(s, _)| r.prompt.starts_with(s)) {
             Some(&(_, i)) => Answer::Pick(i),
             None => Answer::Decline,
-        }
-    }));
+        }));
     g.humans.add(p, h.clone());
     h
 }

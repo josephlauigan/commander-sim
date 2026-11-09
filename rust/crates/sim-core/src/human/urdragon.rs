@@ -224,7 +224,8 @@ fn squire_go(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
             if !cs.is_empty() {
                 let labels: Vec<String> =
                     cs.iter().map(|&c| legal::describe_target(g, p, super::Target::Perm(c))).collect();
-                let prompt = format!("The copy of Brass Squire's ability: attach {} to which creature?", g.perm(e).name);
+                let prompt =
+                    format!("The copy of Brass Squire's ability: attach {} to which creature?", g.perm(e).name);
                 if let Some(j) = choices::choose(g, p, "target", &prompt, &labels, Some("keep the target"), None)? {
                     to = cs[j];
                 }
@@ -275,25 +276,35 @@ fn camera_go(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     crate::glog!(g, "  {} activates Peter Parker's Camera: copies {}", pname(g, p), items[k].1);
     // the Camera's own ability is on the stack above it: if that is countered, nothing is copied
     let target = items[k].0;
-    stack::ability_run_w(g, p, Some(m), None, "copy target activated or triggered ability", Some(3.0), None, 0.0, |g, is_copy| {
-        let mut id = target;
-        if is_copy {
-            // "you may choose a new target for the copy": another ability of yours still on the stack
-            let now: Vec<(u32, String)> = g
-                .stack
-                .iter()
-                .rev()
-                .filter(|it| it.controller == p && !it.countered && stack::copyable(it))
-                .map(|it| (it.id, it.name.clone()))
-                .collect();
-            let labels: Vec<String> = now.iter().map(|x| x.1.clone()).collect();
-            let prompt = "The copy of Peter Parker's Camera's ability: copy which ability?";
-            if let Some(j) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
-                id = now[j].0;
+    stack::ability_run_w(
+        g,
+        p,
+        Some(m),
+        None,
+        "copy target activated or triggered ability",
+        Some(3.0),
+        None,
+        0.0,
+        |g, is_copy| {
+            let mut id = target;
+            if is_copy {
+                // "you may choose a new target for the copy": another ability of yours still on the stack
+                let now: Vec<(u32, String)> = g
+                    .stack
+                    .iter()
+                    .rev()
+                    .filter(|it| it.controller == p && !it.countered && stack::copyable(it))
+                    .map(|it| (it.id, it.name.clone()))
+                    .collect();
+                let labels: Vec<String> = now.iter().map(|x| x.1.clone()).collect();
+                let prompt = "The copy of Peter Parker's Camera's ability: copy which ability?";
+                if let Some(j) = choices::choose(g, p, "target", prompt, &labels, Some("keep the target"), None)? {
+                    id = now[j].0;
+                }
             }
-        }
-        stack::copy_trigger(g, p, id).map(|_| ())
-    })?;
+            stack::copy_trigger(g, p, id).map(|_| ())
+        },
+    )?;
     Ok(None)
 }
 
@@ -384,7 +395,10 @@ pub fn abilities(nm: &str) -> Option<Vec<PermAbility>> {
             jaxis_go,
         )],
         "Lathliss, Dragon Queen" => {
-            vec![ability("{1}{R}: Dragons you control get +1/+0 until end of turn (as many times as you can pay)", lathliss_go)]
+            vec![ability(
+                "{1}{R}: Dragons you control get +1/+0 until end of turn (as many times as you can pay)",
+                lathliss_go,
+            )]
         }
         _ => return None,
     })
@@ -419,7 +433,8 @@ fn lathliss_go(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         }
     }
     let xs: Vec<u32> = choices::amount_choices(lo).into_iter().filter(|&x| x >= 1).collect();
-    let labels: Vec<String> = xs.iter().map(|x| format!("{x} time{}: Dragons get +{x}/+0", if *x == 1 { "" } else { "s" })).collect();
+    let labels: Vec<String> =
+        xs.iter().map(|x| format!("{x} time{}: Dragons get +{x}/+0", if *x == 1 { "" } else { "s" })).collect();
     let Some(i) = choices::choose(
         g,
         p,
@@ -434,7 +449,11 @@ fn lathliss_go(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     };
     let n = xs[i];
     let auto = if n > 1 && !stack::rings_of(g, p).is_empty() {
-        Some(choices::yes_no(g, p, "Rings of Brighthearth: pay {2} to copy each activation (two pumps for each {1}{R})?")?)
+        Some(choices::yes_no(
+            g,
+            p,
+            "Rings of Brighthearth: pay {2} to copy each activation (two pumps for each {1}{R})?",
+        )?)
     } else {
         None
     };
@@ -688,7 +707,8 @@ fn attackers_needed(g: &Game, p: PlayerId, pow: i32) -> usize {
     let pow = pow.max(1) as usize;
     let mut n = 3;
     for q in g.opps(p).filter(|&q| g.player(q).alive) {
-        let blockers = g.player(q).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m) && !g.perm(m).tapped).count();
+        let blockers =
+            g.player(q).perms.iter().filter(|&&m| live(g, m) && g.is_creature(m) && !g.perm(m).tapped).count();
         n += (g.player(q).life.max(0) as usize).div_ceil(pow) + blockers;
     }
     n.clamp(5, crate::engine::zones::TOKEN_CAP)
@@ -901,10 +921,16 @@ fn garth_spare(g: &mut Game, p: PlayerId, batch: &[PermId]) -> Res {
         let labels: Vec<String> = ["no Braingeyser".to_string()]
             .into_iter()
             .chain(who.iter().map(|&q| {
-                if q == p { "Braingeyser: you draw X cards".to_string() } else { format!("Braingeyser: {} draws X cards", pname(g, q)) }
+                if q == p {
+                    "Braingeyser: you draw X cards".to_string()
+                } else {
+                    format!("Braingeyser: {} draws X cards", pname(g, q))
+                }
             }))
             .collect();
-        let prompt = format!("Garth loop: one of the {k} tapped Garths can choose Braingeyser ({{X}}{{U}}{{U}} out of the Lotuses' mana). Cast it?");
+        let prompt = format!(
+            "Garth loop: one of the {k} tapped Garths can choose Braingeyser ({{X}}{{U}}{{U}} out of the Lotuses' mana). Cast it?"
+        );
         let w = choices::choose_one(g, p, "choose", &prompt, &labels)?;
         if w > 0 {
             let target = who[w - 1];
@@ -913,7 +939,8 @@ fn garth_spare(g: &mut Game, p: PlayerId, batch: &[PermId]) -> Res {
             let max_x = budget.saturating_sub(2).min(g.player(target).library.len() as u32);
             let xs = choices::amount_choices(max_x);
             let xl: Vec<String> = xs.iter().map(|x| format!("X = {x}")).collect();
-            let prompt = format!("Braingeyser: {} draws X cards ({{X}}{{U}}{{U}} of the {budget} mana)", pname(g, target));
+            let prompt =
+                format!("Braingeyser: {} draws X cards ({{X}}{{U}}{{U}} of the {budget} mana)", pname(g, target));
             let x = xs[choices::choose_one(g, p, "choose", &prompt, &xl)?];
             if x > 0 {
                 budget -= x + 2;

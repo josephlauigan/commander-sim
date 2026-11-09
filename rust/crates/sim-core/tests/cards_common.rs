@@ -3,8 +3,8 @@
 //! suite has no tests of these cards; each expectation comes from the card's Oracle text as the Python models it.
 
 use sim_core::cardcode;
-use sim_core::engine::pool::Kind;
 use sim_core::dsl;
+use sim_core::engine::pool::Kind;
 use sim_core::engine::{cast, hooks, mana, removal, values, zones};
 use sim_core::hooks::{Call, Event, Opt};
 use sim_core::ids::{PermId, PlayerId};

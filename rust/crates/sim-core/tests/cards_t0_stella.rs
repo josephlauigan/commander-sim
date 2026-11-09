@@ -2,8 +2,8 @@
 //! seat 1 the seph deck.
 
 use sim_core::ai::act;
-use sim_core::engine::pool::Kind;
 use sim_core::engine::hooks::fire_trigger;
+use sim_core::engine::pool::Kind;
 use sim_core::engine::{cast, mana, values};
 use sim_core::hooks::{Call, Event, Opt};
 use sim_core::ids::{CardId, PermId, PlayerId};

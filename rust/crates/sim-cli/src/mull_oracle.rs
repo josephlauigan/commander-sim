@@ -64,9 +64,18 @@ impl Ctx<'_> {
     fn grade(&self, seed: u64, th: &TryHand) -> TryRes {
         let e = &self.sim.engine;
         // the paired playouts are sim-core's (practice mode's hint plays the same ones); one thread: the hands run in parallel
-        let (keep, mull) =
-            paired_scores(&e.db, &e.registry, &self.settings, &self.seats, &th.hand, th.tries, seed, 0..self.playouts, 1)
-                .expect("a playout panicked");
+        let (keep, mull) = paired_scores(
+            &e.db,
+            &e.registry,
+            &self.settings,
+            &self.seats,
+            &th.hand,
+            th.tries,
+            seed,
+            0..self.playouts,
+            1,
+        )
+        .expect("a playout panicked");
         let (keep_mean, mull_mean, diff, se, verdict) = judge(&keep, &mull);
         let db = &self.sim.engine.db;
         let mut cards: Vec<String> = th.hand.iter().map(|&c| db.get(c).name.to_string()).collect();
@@ -89,7 +98,10 @@ impl Ctx<'_> {
     /// the graded hands of one seed: try 0, and try 1 when the rule mulligans try 0
     pub fn hand_job(&self, seed: u64) -> Vec<TryRes> {
         let e = &self.sim.engine;
-        opening_tries(&e.db, &e.registry, &self.settings, seed, &self.seats).iter().map(|th| self.grade(seed, th)).collect()
+        opening_tries(&e.db, &e.registry, &self.settings, seed, &self.seats)
+            .iter()
+            .map(|th| self.grade(seed, th))
+            .collect()
     }
 }
 
@@ -102,7 +114,14 @@ pub fn ctx_for<'a>(sim: &'a Sim, key: &str, prof: &str, playouts: u64) -> Result
 }
 
 /// all graded hands of a deck (seeds seed0 .. seed0+hands), in seed order; the progress moves per hand
-pub fn run_deck(sim: &Sim, key: &str, prof: &str, hands: u64, playouts: u64, seed0: u64) -> Result<Vec<TryRes>, String> {
+pub fn run_deck(
+    sim: &Sim,
+    key: &str,
+    prof: &str,
+    hands: u64,
+    playouts: u64,
+    seed0: u64,
+) -> Result<Vec<TryRes>, String> {
     let ctx = ctx_for(sim, key, prof, playouts)?;
     let seeds: Vec<u64> = (seed0..seed0 + hands).collect();
     Ok(sim.run_seeds(&seeds, |s| ctx.hand_job(s)).into_iter().flat_map(|x| x.1).collect())
@@ -171,7 +190,12 @@ pub(crate) fn table(a: &Agree) -> String {
 pub(crate) fn split_row(label: &str, a: &Agree) -> String {
     format!(
         "  {label:10} | rule keeps: {:>5} {:>5} {:>5} | rule mulls: {:>5} {:>5} {:>5}\n",
-        a.rule_keep.keep, a.rule_keep.mull, a.rule_keep.unclear, a.rule_mull.keep, a.rule_mull.mull, a.rule_mull.unclear
+        a.rule_keep.keep,
+        a.rule_keep.mull,
+        a.rule_keep.unclear,
+        a.rule_mull.keep,
+        a.rule_mull.mull,
+        a.rule_mull.unclear
     )
 }
 
@@ -230,7 +254,16 @@ fn hand_line(r: &TryRes) -> String {
 }
 
 /// the report of one deck
-pub fn render(sim: &Sim, key: &str, rs: &[TryRes], hands: u64, playouts: u64, ai: &str, seed0: u64, secs: f64) -> String {
+pub fn render(
+    sim: &Sim,
+    key: &str,
+    rs: &[TryRes],
+    hands: u64,
+    playouts: u64,
+    ai: &str,
+    seed0: u64,
+    secs: f64,
+) -> String {
     let mut o = format!(
         "\n=== {} ({key}) mulligan oracle [{ai} AI; {hands} hands from seed {seed0}, {playouts} playouts per arm; kill turn, {NO_KILL} = none by turn {ROUNDS}] ===\n",
         sim.name_of(key)
@@ -262,7 +295,10 @@ pub fn render(sim: &Sim, key: &str, rs: &[TryRes], hands: u64, playouts: u64, ai
             }
         }
         if t6 {
-            o += &format!("  by effective mana (t6_keep: lands plus the mana the hand makes by turn 2):\n{}", split_head("eff mana"));
+            o += &format!(
+                "  by effective mana (t6_keep: lands plus the mana the hand makes by turn 2):\n{}",
+                split_head("eff mana")
+            );
             for (b, name) in EFF_BUCKETS.iter().enumerate() {
                 let t = tally(sub.iter().copied().filter(|r| r.eff.is_some_and(|e| eff_bucket(e) == b)));
                 if t.rule_keep.total() + t.rule_mull.total() > 0 {
@@ -401,7 +437,11 @@ mod tests {
                     &Arm::Mull { from_try: 0 },
                 );
                 let (a, b) = (real.player(PlayerId(0)), mine.player(PlayerId(0)));
-                assert_eq!((&a.hand, &a.library, a.stats.get("mull_n")), (&b.hand, &b.library, b.stats.get("mull_n")), "{key} {seed}");
+                assert_eq!(
+                    (&a.hand, &a.library, a.stats.get("mull_n")),
+                    (&b.hand, &b.library, b.stats.get("mull_n")),
+                    "{key} {seed}"
+                );
                 // the tries: the last one dealt is the real hand when it was kept
                 let tries = opening_tries(&e.db, &e.registry, &ctx.settings, seed, &ctx.seats);
                 let last = tries.last().unwrap();
@@ -410,7 +450,10 @@ mod tests {
                     assert_eq!(a.stats.get("mull_n").copied().unwrap_or(0), last.tries, "{key} {seed}");
                 } else {
                     assert_eq!(tries.len(), 2);
-                    assert!(a.stats.get("mull_n").copied().unwrap_or(0) >= 2, "{key} {seed}: mulliganed past the second seven");
+                    assert!(
+                        a.stats.get("mull_n").copied().unwrap_or(0) >= 2,
+                        "{key} {seed}: mulliganed past the second seven"
+                    );
                 }
             }
         }
@@ -423,7 +466,17 @@ mod tests {
         let ctx = ctx_for(&sim, key, "loose", 2).unwrap();
         let e = &sim.engine;
         let th = &opening_tries(&e.db, &e.registry, &ctx.settings, 500003, &ctx.seats)[0];
-        let mk = |name: &str| setup_playout(&e.db, &e.registry, &ctx.settings, &ctx.seats, name, 1, &Arm::Keep { hand: &th.hand, tries: 0 });
+        let mk = |name: &str| {
+            setup_playout(
+                &e.db,
+                &e.registry,
+                &ctx.settings,
+                &ctx.seats,
+                name,
+                1,
+                &Arm::Keep { hand: &th.hand, tries: 0 },
+            )
+        };
         let (a, b) = (mk("x:1"), mk("x:2"));
         let (pa, pb) = (a.player(PlayerId(0)), b.player(PlayerId(0)));
         assert_eq!(pa.hand, th.hand);
@@ -450,11 +503,15 @@ mod tests {
             for r in rs.iter().filter(|r| r.tries == 1) {
                 assert!(rs.iter().any(|x| x.seed == r.seed && x.tries == 0 && !x.rule_keeps));
             }
-            assert!(rs.iter().all(|r| r.keep_mean >= 1.0 && r.keep_mean <= NO_KILL as f64 && r.mull_mean <= NO_KILL as f64));
+            assert!(
+                rs.iter().all(|r| r.keep_mean >= 1.0 && r.keep_mean <= NO_KILL as f64 && r.mull_mean <= NO_KILL as f64)
+            );
             let again = run_deck(&sim, &key, "loose", 4, 2, 500000).unwrap();
             assert_eq!(rs, again, "the same seed gives the same report");
             let text = render(&sim, &key, &rs, 4, 2, "adaptive", 500000, 0.0);
-            assert!(text.contains("mulligan oracle") && text.contains("Try 0") && text.contains("by lands in the hand"));
+            assert!(
+                text.contains("mulligan oracle") && text.contains("Try 0") && text.contains("by lands in the hand")
+            );
             assert!(text.contains("Worst disagreements, the rule KEEPS"));
             assert_eq!(text.contains("by effective mana"), sim_core::impls::t6_plans::is_t6_key(&key));
         }

@@ -10,20 +10,20 @@
 //! - Orim's Chant also sets `stax_no_attack` when kicked (`attack_lock`).
 //! - Angel's Grace: the turn flag `grace_active`.
 
-use crate::satsum::SatSum;
+use super::t5::is_artifact;
 use crate::cards::CardDb;
-use crate::engine::zones::max_by;
-use crate::flow::Res;
+use crate::engine::cast::{casts_this_turn, lock_this_turn};
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, pay, total_mana};
 use crate::engine::stack::trigger_window;
-use crate::engine::cast::{casts_this_turn, lock_this_turn};
+use crate::engine::zones::max_by;
+use crate::flow::Res;
 use crate::hooks::{Event, Registry, Src};
-use crate::state::{DataKey, LockKind, Val};
 use crate::ids::PermId;
-use super::t5::is_artifact;
 use crate::ids::{CardId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::{Ctx, Game};
+use crate::state::{DataKey, LockKind, Val};
 use crate::sym::{Sym, intern};
 
 fn pname(g: &Game, p: PlayerId) -> Sym {
@@ -59,7 +59,6 @@ fn silence_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym
     Ok("gy")
 }
 
-
 /// the turn flag a kicked Orim's Chant sets on its caster: creatures can't attack this turn (the engine's attack
 /// declaration returns no attackers for anyone while it is set: `combat::combat`)
 pub fn attack_lock(g: &Game) -> bool {
@@ -85,7 +84,6 @@ fn chant_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     Ok("gy")
 }
 
-
 // ================================================================== Mandate of Peace
 /// is it combat (creatures are attacking), the only time Mandate of Peace may be cast; for the engine's cast check
 /// and the AI once either offers it
@@ -109,7 +107,6 @@ fn mandate_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym
     Ok("gy")
 }
 
-
 // ================================================================== Angel's Grace
 /// Angel's Grace is in force for p this turn: p can't lose the game and p's opponents can't win it (the engine's
 /// `check_state` should skip eliminating p, as it does for Herald of Eternal Dawn via `t0_giada::cant_lose`)
@@ -132,7 +129,6 @@ fn grace_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
     crate::glog!(g, "    {} can't lose the game this turn (Angel's Grace)", pname(g, p));
     Ok("gy")
 }
-
 
 // ================================================================== Blind Obedience
 fn owner(g: &Game, m: PermId) -> PlayerId {
@@ -184,7 +180,6 @@ fn obedience_extort(g: &mut Game, src: Src, caster: PlayerId, _c: CardId) -> Res
     Ok(())
 }
 
-
 // ================================================================== Damping Sphere
 /// is `src` the Damping Sphere that counts: with two out, the land rule applies once (it is one replacement,
 /// "produces {C} instead", not two reductions), so only the earliest one acts
@@ -210,7 +205,6 @@ fn sphere_land(g: &Game, src: Src, _p: PlayerId, _l: crate::ids::PermId, _n: u32
 fn sphere_cost(g: &Game, _src: Src, caster: PlayerId, c: CardId) -> i32 {
     if g.db.get(c).land { 0 } else { casts_this_turn(g, caster) }
 }
-
 
 // ================================================================== Pithing Needle
 /// the card name a Pithing Needle was set to as it entered (`DataKey::Imprint` holds the named card), if it named one
@@ -261,7 +255,6 @@ fn needle_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     Ok(())
 }
-
 
 // ================================================================== Chalice of the Void
 /// the most X the AI casts Chalice of the Void for: three (it stops Sol Ring and the Moxen at one, the usual cEDH
@@ -316,7 +309,6 @@ fn chalice_counter(g: &Game, src: Src, _p: PlayerId, c: CardId, _ctx: &Ctx) -> b
     let d = g.db.get(c);
     g.perm(src).on_bf && !d.land && d.cmc as i32 == chalice_counters(g, src)
 }
-
 
 // ================================================================== Void Mirror
 /// **Void Mirror** ({2} artifact): whenever a player casts a spell, if no coloured mana was spent to cast it, counter

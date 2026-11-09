@@ -1,18 +1,18 @@
 //! Zones: drawing, milling, tokens, permanents entering, leaving and dying, lands, discards
 //! (engine.py's "zones" section, and enter / do_etb / etb_once / lands / discards from later in the file).
 
-use crate::satsum::SatSum;
-use crate::engine::repl;
 use crate::ai;
 use crate::cardcode;
 use crate::cards::Colors;
 use crate::engine::hooks::{self, fire_trigger};
 use crate::engine::life::{gain, lose_life};
+use crate::engine::repl;
 use crate::engine::stack::{queue_triggers, trigger_window};
 use crate::engine::values::*;
 use crate::flow::Res;
 use crate::hooks::{Call, Event, Sacrificed, TrigAct, Trigger};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::{CopyExc, CopyOf, DataKey, Game, PermData, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;
@@ -156,7 +156,12 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
 /// would be put into a graveyard from anywhere": milled, discarded or countered; from the battlefield `to_zone_card`)
 pub fn put_in_gy(g: &mut Game, o: PlayerId, c: CardId) {
     if crate::impls::karn_cards::shuffles_back(g, c) {
-        crate::glog!(g, "    {} is revealed and shuffled into {}'s library instead", g.db.get(c).name, g.player(o).name);
+        crate::glog!(
+            g,
+            "    {} is revealed and shuffled into {}'s library instead",
+            g.db.get(c).name,
+            g.player(o).name
+        );
         let n = g.player(o).library.len() as u64;
         let i = g.rng.below(n + 1) as usize;
         g.player_mut(o).library.insert(i, c);
@@ -397,10 +402,8 @@ pub fn shards_trigger(g: &mut Game, p: PlayerId, k: i32) -> Res {
             if tg.is_empty() {
                 return Ok(());
             }
-            let labels: Vec<String> = tg
-                .iter()
-                .map(|&m| crate::human::legal::describe_target(g, p, crate::human::Target::Perm(m)))
-                .collect();
+            let labels: Vec<String> =
+                tg.iter().map(|&m| crate::human::legal::describe_target(g, p, crate::human::Target::Perm(m))).collect();
             let prompt = "Aura Shards: destroy target artifact or enchantment?";
             let Some(k2) = crate::human::choices::choose(g, p, "target", prompt, &labels, Some("none"), None)? else {
                 return Ok(());
@@ -936,7 +939,8 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
         // Oracle: colorless Phyrexian Wurm *artifact* creature tokens (they count for Karn, Mirrorworks, a Construct)
         let mut art = PermData::default();
         art.set(DataKey::Artifact, Val::Bool(true));
-        let wurm = Tokens { color: Some(Colors::NONE), types: vec!["phyrexian", "wurm"], data: art, ..Tokens::new(1, 3) };
+        let wurm =
+            Tokens { color: Some(Colors::NONE), types: vec!["phyrexian", "wurm"], data: art, ..Tokens::new(1, 3) };
         make_tokens(g, p, Tokens { dt: true, ..wurm.clone() })?;
         make_tokens(g, p, Tokens { lifelink: true, ..wurm })?;
     }
@@ -972,12 +976,7 @@ fn die_rest(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, creature: bool) ->
         return Ok(());
     }
     let (undying, persist) = (d.has_kw("undying"), d.has_kw("persist"));
-    if (undying || persist)
-        && x.orig == p
-        && !is_cmd_card
-        && !repl::no_graveyard(g, p)
-        && returns_left(g, cd)
-    {
+    if (undying || persist) && x.orig == p && !is_cmd_card && !repl::no_graveyard(g, p) && returns_left(g, cd) {
         if undying && x.plus <= 0 && trigger_window(g, p, Some(m), "undying", None)? {
             enter(g, p, cd, Enter { undying: true, ..Enter::default() })?; // back with a +1/+1 counter
             g.player_mut(p).stat("undying", 1);
@@ -1740,9 +1739,11 @@ pub fn lands_entered(g: &mut Game, p: PlayerId) -> Res {
         if crate::engine::mana::moon_land(g, l) {
             continue; // Blood Moon: a plain Mountain has no enters trigger
         }
-        let etb = g.db.get(g.perm(l).card()).abilities.iter().any(|a| {
-            matches!(a, crate::dsl::model::Ability::Triggered { event, .. } if event == "etb")
-        });
+        let etb =
+            g.db.get(g.perm(l).card())
+                .abilities
+                .iter()
+                .any(|a| matches!(a, crate::dsl::model::Ability::Triggered { event, .. } if event == "etb"));
         if etb && !g.over {
             crate::dsl::fire(g, "etb", crate::dsl::Fired { perm: Some(l), owner: Some(p), ..Default::default() })?;
         }
@@ -1910,7 +1911,8 @@ pub fn sun_titan(g: &mut Game, p: PlayerId, src: PermId) -> Res {
         }
         let cs: Vec<CardId> = cs.iter().copied().filter(|c| g.player(p).gy.contains(c)).collect(); // (the window)
         let labels: Vec<String> = cs.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
-        let prompt = "Sun Titan: return which permanent card with mana value 3 or less from your graveyard to the battlefield?";
+        let prompt =
+            "Sun Titan: return which permanent card with mana value 3 or less from your graveyard to the battlefield?";
         match crate::human::choices::choose(g, p, "target", prompt, &labels, Some("none"), None)? {
             Some(k) => cs[k],
             None => return Ok(()),

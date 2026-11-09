@@ -166,7 +166,10 @@ fn the_ai_makes_ugin_an_artifact_before_combat_so_karn_grows() {
     let t = perm(&mut g, P0, "Liquimetal Torque");
     let before = sim_core::engine::values::epow(&g, k);
     let os = options(&mut g, t, P0, Some(false));
-    let o = os.iter().find(|o| o.label.contains("Ugin")).unwrap_or_else(|| panic!("{:?}", os.iter().map(|o| &o.label).collect::<Vec<_>>()));
+    let o = os
+        .iter()
+        .find(|o| o.label.contains("Ugin"))
+        .unwrap_or_else(|| panic!("{:?}", os.iter().map(|o| &o.label).collect::<Vec<_>>()));
     assert!(o.utility > -3.0, "worth more than stopping");
     assert!(run(&mut g, P0, o));
     assert!(sim_core::impls::t5::is_artifact(&g, ugin));
@@ -267,7 +270,10 @@ fn a_foundry_pumps_an_attacking_worker_for_one_mana_and_only_an_attacking_one() 
     karn::combat_pumps(&mut g, P0, &[f], P1, &[(f, a)]).unwrap();
     assert!(g.perm(foundry).tapped);
     assert_eq!(g.perm(f).eot_pt, (2, 2));
-    assert!(g.player(P0).lands.iter().any(|&l| g.perm(l).tapped && g.perm(l).cd == Some(card(&g, "Wastes"))), "{{1}} paid");
+    assert!(
+        g.player(P0).lands.iter().any(|&l| g.perm(l).tapped && g.perm(l).cd == Some(card(&g, "Wastes"))),
+        "{{1}} paid"
+    );
 }
 
 // ======================================================== Steel Hellkite
@@ -311,9 +317,10 @@ fn the_ai_casts_all_is_dust_from_the_top_of_the_library_with_a_mystic_forge() {
     perm(&mut g, P0, "Wurmcoil Engine");
     let n = g.player(P0).library.len();
     let opts = brain::main_options(&mut g, P0, false).unwrap();
-    let o = opts.iter().find(|o| o.label == "All Is Dust").unwrap_or_else(|| {
-        panic!("{:?}", opts.iter().map(|o| (&o.label, o.utility)).collect::<Vec<_>>())
-    });
+    let o = opts
+        .iter()
+        .find(|o| o.label == "All Is Dust")
+        .unwrap_or_else(|| panic!("{:?}", opts.iter().map(|o| (&o.label, o.utility)).collect::<Vec<_>>()));
     assert!(run(&mut g, P0, o));
     assert!(!g.perm(titan).on_bf, "the coloured permanents were sacrificed");
     assert_eq!(g.player(P0).library.len(), n - 1, "cast from the top");
@@ -388,7 +395,10 @@ fn tezzerets_minus_seven_gives_an_emblem_that_makes_a_robot_with_three_counters(
     let stone = perm(&mut g, P0, "Mind Stone");
     g.perm_mut(tez).loyalty = Some(7); // (after the Stone: an artifact entering adds a loyalty counter)
     let os = options(&mut g, tez, P0, Some(false));
-    let ult = os.iter().find(|o| o.label.contains("-7")).unwrap_or_else(|| panic!("{:?}", os.iter().map(|o| &o.label).collect::<Vec<_>>()));
+    let ult = os
+        .iter()
+        .find(|o| o.label.contains("-7"))
+        .unwrap_or_else(|| panic!("{:?}", os.iter().map(|o| &o.label).collect::<Vec<_>>()));
     assert!(run(&mut g, P0, ult));
     assert_eq!(g.perm(tez).loyalty, Some(0));
     assert!(g.player(P0).emblems.contains(&t6_godo::TEZ_EMBLEM));

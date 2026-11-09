@@ -329,7 +329,15 @@ impl Analysis {
             self.dmg.add(k, me.stat(&format!("dmgk_{k}")));
         }
         for (k, v) in &me.stats {
-            if k.starts_with("ty_") || k.starts_with("gl_") || k.starts_with("jr_garland") || *k == "jr_tymna_draws" || k.starts_with("sf_") || *k == "creatures_sacrificed" || *k == "rean_resolved" || *k == "rean_cast" {
+            if k.starts_with("ty_")
+                || k.starts_with("gl_")
+                || k.starts_with("jr_garland")
+                || *k == "jr_tymna_draws"
+                || k.starts_with("sf_")
+                || *k == "creatures_sacrificed"
+                || *k == "rean_resolved"
+                || *k == "rean_cast"
+            {
                 *self.ty.entry(k.to_string()).or_insert(0) += v;
             }
         }
@@ -435,11 +443,33 @@ pub fn print_analysis(
     if deck_is_garland(r) {
         let get = |k: &str| r.ty.get(k).copied().unwrap_or(0) as f64;
         println!("\n-- Garland --");
-        println!("  Garland entries per game {:.2} (cast {:.2}, token copies {:.2})", get("gl_entries") / n, get("gl_casts") / n, get("gl_copies") / n);
-        println!("  Steals per game {:.2}; a steal lasts {:.2} rounds on average; steals ended by the crown moving {:.2} per game", get("jr_garland_steals") / n, get("jr_garland_rounds") / get("jr_garland_back").max(1.0), get("jr_garland_back") / n);
-        println!("  Crown changes per game {:.2}; we became the monarch {:.2} times per game", get("gl_crown_changes") / n, get("gl_we_monarch") / n);
-        println!("  Damage by stolen creatures per game {:.2} (a stolen creature hit a player {:.2} times per game)", get("jr_garland_dmg") / n, get("jr_garland_hit") / n);
-        println!("  steals ended because the creature left: {:.2} per game; took the crown back (ended steals): {:.2} per game", get("jr_garland_gone") / n, get("jr_garland_back_me") / n);
+        println!(
+            "  Garland entries per game {:.2} (cast {:.2}, token copies {:.2})",
+            get("gl_entries") / n,
+            get("gl_casts") / n,
+            get("gl_copies") / n
+        );
+        println!(
+            "  Steals per game {:.2}; a steal lasts {:.2} rounds on average; steals ended by the crown moving {:.2} per game",
+            get("jr_garland_steals") / n,
+            get("jr_garland_rounds") / get("jr_garland_back").max(1.0),
+            get("jr_garland_back") / n
+        );
+        println!(
+            "  Crown changes per game {:.2}; we became the monarch {:.2} times per game",
+            get("gl_crown_changes") / n,
+            get("gl_we_monarch") / n
+        );
+        println!(
+            "  Damage by stolen creatures per game {:.2} (a stolen creature hit a player {:.2} times per game)",
+            get("jr_garland_dmg") / n,
+            get("jr_garland_hit") / n
+        );
+        println!(
+            "  steals ended because the creature left: {:.2} per game; took the crown back (ended steals): {:.2} per game",
+            get("jr_garland_gone") / n,
+            get("jr_garland_back_me") / n
+        );
         let mut took: Vec<(&String, &i64)> = r.ty.iter().filter(|x| x.0.starts_with("jr_garland_took:")).collect();
         took.sort_by(|a, b| b.1.cmp(a.1));
         for (k, v) in took.into_iter().take(8) {
@@ -450,16 +480,46 @@ pub fn print_analysis(
     if deck_is_sephfs(r) {
         let get = |k: &str| r.ty.get(k).copied().unwrap_or(0) as f64;
         println!("\n-- Sephiroth --");
-        println!("  Flips per game {:.3} (games with a flip {:.1}%); first flip on round {:.2} on average", get("sf_flips") / n, 100.0 * get("sf_first_flips") / n, get("sf_first_flip_round") / get("sf_first_flips").max(1.0));
-        println!("  Emblem drains per game {:.2}; cards drawn by Sephiroth per game {:.2}; creatures sacrificed per game {:.2}", get("sf_emblem_drains") / n, get("sf_seph_draws") / n, get("creatures_sacrificed") / n);
-        println!("  Wipes cast per game {:.2} (Extinction Event, Necromantic Selection, Blood on the Snow, Living Death); Pestilence activations {:.2}", get("sf_wipes") / n, get("sf_pestilence") / n);
-        println!("  Creatures stolen per game {:.2}: reanimation spells {:.2}, Grave Betrayal {:.2}, Dread Slaver {:.2}, prepared Reanimate {:.2}; Kaya's Ghostform returns {:.2}; Rabid Attack draws {:.2}", get("sf_steals") / n, get("rean_resolved") / n, get("sf_betrayals") / n, get("sf_slaver") / n, get("sf_reanimate") / n, get("sf_ghostform") / n, get("sf_rabid_draws") / n);
+        println!(
+            "  Flips per game {:.3} (games with a flip {:.1}%); first flip on round {:.2} on average",
+            get("sf_flips") / n,
+            100.0 * get("sf_first_flips") / n,
+            get("sf_first_flip_round") / get("sf_first_flips").max(1.0)
+        );
+        println!(
+            "  Emblem drains per game {:.2}; cards drawn by Sephiroth per game {:.2}; creatures sacrificed per game {:.2}",
+            get("sf_emblem_drains") / n,
+            get("sf_seph_draws") / n,
+            get("creatures_sacrificed") / n
+        );
+        println!(
+            "  Wipes cast per game {:.2} (Extinction Event, Necromantic Selection, Blood on the Snow, Living Death); Pestilence activations {:.2}",
+            get("sf_wipes") / n,
+            get("sf_pestilence") / n
+        );
+        println!(
+            "  Creatures stolen per game {:.2}: reanimation spells {:.2}, Grave Betrayal {:.2}, Dread Slaver {:.2}, prepared Reanimate {:.2}; Kaya's Ghostform returns {:.2}; Rabid Attack draws {:.2}",
+            get("sf_steals") / n,
+            get("rean_resolved") / n,
+            get("sf_betrayals") / n,
+            get("sf_slaver") / n,
+            get("sf_reanimate") / n,
+            get("sf_ghostform") / n,
+            get("sf_rabid_draws") / n
+        );
     }
 
-    if r.ty.keys().any(|k| !k.starts_with("sf_") && k != "creatures_sacrificed" && !k.starts_with("rean_")) && !deck_is_garland(r) {
+    if r.ty.keys().any(|k| !k.starts_with("sf_") && k != "creatures_sacrificed" && !k.starts_with("rean_"))
+        && !deck_is_garland(r)
+    {
         println!("\n-- Partner decks (Tymna) --");
         let get = |k: &str| r.ty.get(k).copied().unwrap_or(0) as f64;
-        println!("  Tymna cards drawn per game {:.2}; Tymna turns per game {:.2}; opponents hit per Tymna turn {:.2}", get("jr_tymna_draws") / n, get("ty_tymna_turns") / n, get("ty_opps_hit") / get("ty_tymna_turns").max(1.0));
+        println!(
+            "  Tymna cards drawn per game {:.2}; Tymna turns per game {:.2}; opponents hit per Tymna turn {:.2}",
+            get("jr_tymna_draws") / n,
+            get("ty_tymna_turns") / n,
+            get("ty_opps_hit") / get("ty_tymna_turns").max(1.0)
+        );
         println!("  Thrasios activations per game {:.2}", get("ty_thrasios_acts") / n);
         let mut th: Vec<(&String, &i64)> = r.ty.iter().filter(|x| x.0.starts_with("ty_th_")).collect();
         th.sort();
@@ -469,7 +529,11 @@ pub fn print_analysis(
         for who in ["Tymna_the_Weaver", "Thrasios", "Kraum"] {
             let c = get(&format!("ty_tn_{who}"));
             if c > 0.0 {
-                println!("  {who} lands on turn {:.2} (in {:.0}% of games)", get(&format!("ty_tt_{who}")) / c, 100.0 * c / n);
+                println!(
+                    "  {who} lands on turn {:.2} (in {:.0}% of games)",
+                    get(&format!("ty_tt_{who}")) / c,
+                    100.0 * c / n
+                );
             }
         }
     }

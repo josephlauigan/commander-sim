@@ -292,7 +292,9 @@ pub const KNOWN_FILE: &str = "paths_known.txt";
 
 impl Class {
     pub fn from_name(s: &str) -> Option<Class> {
-        [Class::Hard, Class::Shadowed, Class::Competing, Class::Split, Class::SplitOk].into_iter().find(|c| c.name() == s)
+        [Class::Hard, Class::Shadowed, Class::Competing, Class::Split, Class::SplitOk]
+            .into_iter()
+            .find(|c| c.name() == s)
     }
 }
 

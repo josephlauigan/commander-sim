@@ -20,12 +20,12 @@
 //!   The AI's target: an opponent it kills, else the best non-Dragon creature it kills, else the opponent with the
 //!   least life. Left out: a person controlling it gets the AI's choice.
 
-use crate::engine::repl;
 use crate::ai::brain::{Situation, card_utility, do_cast_with};
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::castable;
 use crate::engine::mana::{can_pay, cost_of};
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::trigger_window;
 use crate::engine::values::{card_name, epow, etgh, has_type, pval, untargetable};
 use crate::engine::zones::{draw, enter_token_copy_with, max_by};
@@ -71,7 +71,6 @@ fn is_dragon(g: &Game, m: PermId) -> bool {
 fn dragons_of(g: &Game, p: PlayerId) -> Vec<PermId> {
     g.player(p).perms.iter().copied().filter(|&m| is_dragon(g, m)).collect()
 }
-
 
 // ================================================================== Astral Dragon
 /// the noncreature permanents Project Image can target: yours (not a legendary one: the legend rule would keep one of
@@ -166,7 +165,11 @@ fn astral_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
             let Some(n) = enter_token_copy_with(g, p, c, Some(exc))? else { break };
             if aura && g.perm(n).on_bf {
                 // 303.4d: an Aura that is also a creature can't enchant anything: it is put into the graveyard (a token ceases to exist)
-                crate::glog!(g, "    {} is an Aura creature: it can't enchant anything and is put into the graveyard", cname(g, c));
+                crate::glog!(
+                    g,
+                    "    {} is an Aura creature: it can't enchant anything and is put into the graveyard",
+                    cname(g, c)
+                );
                 g.perm_mut(n).attached = None;
                 crate::engine::zones::die(g, n, "sba")?;
             }

@@ -39,9 +39,20 @@ fn needled(g: &Game, c: CardId) -> bool {
 /// a hook option that is an activated ability (unearth, cycling ...) and not a way to cast the card
 fn activated_label(label: &str) -> bool {
     let l = label.to_lowercase();
-    ["unearth", "eternalize", "embalm", "encore", "scavenge", "cycling", "channel", "transmute", "ninjutsu", "bloodrush"]
-        .iter()
-        .any(|k| l.contains(k))
+    [
+        "unearth",
+        "eternalize",
+        "embalm",
+        "encore",
+        "scavenge",
+        "cycling",
+        "channel",
+        "transmute",
+        "ninjutsu",
+        "bloodrush",
+    ]
+    .iter()
+    .any(|k| l.contains(k))
 }
 
 /// The hook options for a card in p's hand, as (label, option).

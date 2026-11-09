@@ -7,10 +7,10 @@
 //! an untap effect only when the land it untaps makes clearly more mana than the effect costs.
 
 use super::partials::{pack, unpack};
-use crate::engine::pool::Kind;
 use crate::cards::CardDb;
 use crate::engine::hooks as eh;
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::pool::Kind;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::turn::remove_land;
 use crate::engine::zones::min_by;
@@ -212,7 +212,12 @@ fn earthcraft_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> 
 /// whether permanent m's {T} ability can be used now (untapped; a creature must not be summoning sick)
 fn can_tap(g: &Game, m: PermId) -> bool {
     let x = g.perm(m);
-    live(g, m) && !x.tapped && (!x.sick || !g.is_creature(m) || crate::dsl::has_kw(g, m, "haste") || crate::impls::t6_legends1b::ability_haste(g, x.owner))
+    live(g, m)
+        && !x.tapped
+        && (!x.sick
+            || !g.is_creature(m)
+            || crate::dsl::has_kw(g, m, "haste")
+            || crate::impls::t6_legends1b::ability_haste(g, x.owner))
 }
 
 /// the tapped lands to untap for "{X},{T}: untap X target lands": the X best ones, and X, chosen to maximise the mana
@@ -253,7 +258,11 @@ fn candelabra_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> 
         return Ok(false);
     }
     let Some(ls) = candelabra_plan(g, p, creature).filter(|l| l.len() as i64 == arg) else { return Ok(false) };
-    let cost = if creature { creature_ability_cost(g, p, ls.len() as u32) } else { crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, ls.len() as u32, 0) };
+    let cost = if creature {
+        creature_ability_cost(g, p, ls.len() as u32)
+    } else {
+        crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, ls.len() as u32, 0)
+    };
     pay(g, p, cost, "", false)?;
     g.perm_mut(src).tapped = true; // the cost
     if !ability_window(g, p, Some(src), "untap target lands", None, None)? {
@@ -413,7 +422,9 @@ fn vibrance_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         let want = vibrance_land_wanted(g, p);
         let key = |g: &Game, c: CardId| {
             let n = &*g.db.get(c).name;
-            n == "Gaea's Cradle" || (n == "Talon Gates of Madara" && !g.player(p).library.iter().any(|&x| &*g.db.get(x).name == "Gaea's Cradle"))
+            n == "Gaea's Cradle"
+                || (n == "Talon Gates of Madara"
+                    && !g.player(p).library.iter().any(|&x| &*g.db.get(x).name == "Gaea's Cradle"))
         };
         super::t1::tutor_named(g, p, &|g, c| g.db.get(c).land && (!want || key(g, c)), 1, "hand", "Vibrance")?;
         crate::engine::life::gain(g, p, 2)?;

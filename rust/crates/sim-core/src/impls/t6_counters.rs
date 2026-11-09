@@ -12,7 +12,6 @@
 //! - Effects on a spell on the stack, by stack item id: `misdirect`, `commandeer`, `substitute`, `bilbo_bounce`,
 //!   `mindbreak_exile`, and Tibalt's Trickery's side effect (`tibalt_after`).
 
-use crate::satsum::SatSum;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, castable, casts_this_turn, on_cast, spell_targets};
 use crate::engine::mana::{can_pay, cost_of, pay};
@@ -24,6 +23,7 @@ use crate::engine::zones::{Tokens, die, draw, make_tokens, max_by, min_by, sac_w
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::{Ctx, Game, StackKind};
 use crate::sym::Sym;
 

@@ -63,4 +63,3 @@ fn grand_abolisher_stops_an_opponents_creature_ability_on_your_turn_only() {
     g.active = Some(P1);
     assert!(!sim_core::cardcode::ability_locked(&g, seer, P1));
 }
-

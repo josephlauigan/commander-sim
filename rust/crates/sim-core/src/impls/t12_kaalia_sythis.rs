@@ -39,11 +39,11 @@
 //!   enchantment spell while you control Enchantress's Presence, Sythis or Eidolon of Blossoms, a card more. Left out:
 //!   copies of other triggered and activated abilities.
 
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, casts_this_turn};
 use crate::engine::life::{check_state, lose_life};
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{epow, etgh, pval, threat};
@@ -327,7 +327,10 @@ fn rakdos_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
             && crate::human::choices::yes_no(
                 g,
                 q,
-                &format!("Rakdos: sacrifice two nonland, nontoken permanents? (otherwise {} draws two cards)", pname(g, o)),
+                &format!(
+                    "Rakdos: sacrifice two nonland, nontoken permanents? (otherwise {} draws two cards)",
+                    pname(g, o)
+                ),
             )?
         {
             for m in crate::human::cards::pick_perms(g, q, "choose", "Rakdos: sacrifice which permanent?", &cands, 2)? {

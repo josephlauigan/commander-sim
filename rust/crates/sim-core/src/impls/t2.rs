@@ -5,13 +5,13 @@
 use super::common::{WalkerAb, best_opp_creature, best_opp_nonland, death_value, n_ench, oring_exile, oring_return};
 use super::partials::{at_once, eot_kw, first_max, first_min, on, pack, remove_card, unpack};
 use super::t1::count_type;
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::hooks::fire_trigger;
 use crate::engine::life::{gain, lose_life, prevents_damage};
 use crate::engine::mana::{can_pay, cost_of, pay};
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::turn::{crack_fetch, remove_land};
 use crate::engine::tutors::{card_worth, shuffle_library};
@@ -1188,7 +1188,11 @@ fn survival_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 /// sacrifice a creature for one with MV one higher, when it upgrades
 fn pod(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let x = g.perm(src);
-    if post.is_none() || x.tapped || x.sick || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 1), "G", false) {
+    if post.is_none()
+        || x.tapped
+        || x.sick
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 1), "G", false)
+    {
         return Ok(vec![]);
     }
     let fod: Vec<PermId> = g

@@ -3,14 +3,15 @@
 //! card's doc comment says how it is modeled and what is left out; what needs the shared engine is in
 //! rust/agents/engine-needs-godo.md). Helm of the Host itself is already modeled (`t3::helm`, `combat_start`).
 
-use crate::engine::repl;
+use super::t5::is_artifact;
 use crate::cards::{CardDb, Types};
-use crate::engine::mana::{can_pay, pay};
 use crate::engine::cast::discard_worst;
+use crate::engine::mana::{can_pay, pay};
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::shuffle_library;
-use crate::engine::values::once_per_turn;
 use crate::engine::values::epow;
+use crate::engine::values::once_per_turn;
 use crate::engine::zones::{Enter, die, enter, max_by, min_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
@@ -19,7 +20,6 @@ use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, Game};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
-use super::t5::is_artifact;
 
 fn owner(g: &Game, m: PermId) -> PlayerId {
     g.perm(m).owner
@@ -167,7 +167,6 @@ fn godo_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId
     Ok(vec![])
 }
 
-
 // ================================================================== Hammer of Nazahn
 /// the creature an Equipment is attached to: Godo first (Helm's token copies the equipped creature, so Godo is the
 /// one to wear it), else the strongest creature that can attack (not summoning sick), else the strongest
@@ -291,9 +290,7 @@ fn gy_pick(g: &Game, p: PlayerId, max: Option<u32>) -> Option<CardId> {
         .copied()
         .filter(|&c| {
             let d = g.db.get(c);
-            is_artifact_card(g, c)
-                && max.is_none_or(|k| d.cmc <= k)
-                && !(d.tag(Tag::Leg) && on_bf_named(g, p, &d.name))
+            is_artifact_card(g, c) && max.is_none_or(|k| d.cmc <= k) && !(d.tag(Tag::Leg) && on_bf_named(g, p, &d.name))
         })
         .collect();
     max_by(&cs, |c| art_value(g, c))
@@ -461,7 +458,13 @@ fn tez_untap_target(g: &Game, p: PlayerId, src: PermId) -> Option<(PermId, f64)>
         .collect();
     let worth = |m: PermId| {
         let r = if is_artifact(g, m) { rock_amt(g, p, m) } else { 0 };
-        if r >= 2 { 5.0 } else if r == 1 { 3.0 } else { 0.0 }
+        if r >= 2 {
+            5.0
+        } else if r == 1 {
+            3.0
+        } else {
+            0.0
+        }
     };
     let b = max_by(&xs, worth)?;
     (worth(b) > 0.0).then(|| (b, worth(b)))
@@ -494,7 +497,14 @@ fn tez_three_val(g: &Game, p: PlayerId, src: PermId) -> Option<f64> {
 }
 
 fn tez_three(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
-    super::t1::tutor_named(g, p, &|g, c| is_artifact_card(g, c) && g.db.get(c).cmc <= 1, 1, "hand", "Tezzeret, Cruel Captain")?;
+    super::t1::tutor_named(
+        g,
+        p,
+        &|g, c| is_artifact_card(g, c) && g.db.get(c).cmc <= 1,
+        1,
+        "hand",
+        "Tezzeret, Cruel Captain",
+    )?;
     Ok(())
 }
 
@@ -554,7 +564,9 @@ pub fn tez_emblem(g: &mut Game, p: PlayerId) -> Res {
             let Some(t) = tez_emblem_pick(g, p) else { return Ok(()) };
             t
         };
-        if !trigger_window(g, p, None, "Tezzeret's emblem: three +1/+1 counters on an artifact", Some(5.0))? || !live(g, t) {
+        if !trigger_window(g, p, None, "Tezzeret's emblem: three +1/+1 counters on an artifact", Some(5.0))?
+            || !live(g, t)
+        {
             continue;
         }
         if !g.is_creature(t) {
@@ -573,8 +585,18 @@ pub fn tez_emblem(g: &mut Game, p: PlayerId) -> Res {
 
 static TEZZERET: [super::common::WalkerAb; 3] = [
     super::common::WalkerAb { delta: 0, label: "untap an artifact or creature", val: tez_zero_val, eff: tez_zero },
-    super::common::WalkerAb { delta: -3, label: "search for an artifact with mana value 1 or less", val: tez_three_val, eff: tez_three },
-    super::common::WalkerAb { delta: -7, label: "emblem: three +1/+1 counters on an artifact each combat", val: tez_ult_val, eff: tez_ult },
+    super::common::WalkerAb {
+        delta: -3,
+        label: "search for an artifact with mana value 1 or less",
+        val: tez_three_val,
+        eff: tez_three,
+    },
+    super::common::WalkerAb {
+        delta: -7,
+        label: "emblem: three +1/+1 counters on an artifact each combat",
+        val: tez_ult_val,
+        eff: tez_ult,
+    },
 ];
 
 /// whenever an artifact you control enters, put a loyalty counter on Tezzeret
@@ -594,7 +616,8 @@ fn tez_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 /// is there a card in p's hand the AI is glad to lose: a second land, or a spell too expensive to ever cast
 fn thrasher_spare(g: &Game, p: PlayerId) -> bool {
     let hand = &g.player(p).hand;
-    hand.iter().filter(|&&c| g.db.get(c).land).count() >= 2 || hand.iter().any(|&c| !g.db.get(c).land && g.db.get(c).cmc >= 7)
+    hand.iter().filter(|&&c| g.db.get(c).land).count() >= 2
+        || hand.iter().any(|&c| !g.db.get(c).land && g.db.get(c).cmc >= 7)
 }
 
 /// **Party Thrasher** ({1}{R}, 1/4): at the beginning of your first main phase, you may discard a card; if you do,
@@ -681,7 +704,12 @@ fn grid_tax(g: &Game, src: Src, caster: PlayerId, _c: CardId) -> i32 {
 /// beginning of that turn's end step, you lose the game. The resolve queues the extra turn flagged as losing
 /// (`turn::add_extra_turn`; `turn::end_step` ends the game for its taker). Nothing about Oracle is left out.
 fn extra_turn_spell(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
-    crate::glog!(g, "  {}: {} resolves (an extra turn follows; the caster loses at its end step)", g.player(p).name, g.db.get(c).name);
+    crate::glog!(
+        g,
+        "  {}: {} resolves (an extra turn follows; the caster loses at its end step)",
+        g.player(p).name,
+        g.db.get(c).name
+    );
     crate::engine::turn::add_extra_turn(g, p, true);
     Ok("gy")
 }
@@ -709,7 +737,11 @@ fn extra_turn_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     if !godo_cmd && !godo_hand {
         return 0;
     }
-    let godo_card = if godo_cmd { pl.cmd } else { pl.hand.iter().copied().find(|&h| &*g.db.get(h).name == "Godo, Bandit Warlord").unwrap() };
+    let godo_card = if godo_cmd {
+        pl.cmd
+    } else {
+        pl.hand.iter().copied().find(|&h| &*g.db.get(h).name == "Godo, Bandit Warlord").unwrap()
+    };
     let (gn, pips) = crate::engine::mana::cost_of(g, p, godo_card);
     let need = gn + pips.len() as u32 + 2; // Godo and an equip
     let fortune = crate::engine::mana::cost_of(g, p, c);
@@ -719,7 +751,11 @@ fn extra_turn_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let all = crate::engine::mana::total_mana(g, p, false) + tapped;
     let equip = on_bf_named(g, p, "Helm of the Host")
         || on_bf_named(g, p, "Hammer of Nazahn")
-        || pl.hand.iter().chain(pl.library.iter()).any(|&h| matches!(&*g.db.get(h).name, "Helm of the Host" | "Hammer of Nazahn"));
+        || pl
+            .hand
+            .iter()
+            .chain(pl.library.iter())
+            .any(|&h| matches!(&*g.db.get(h).name, "Helm of the Host" | "Hammer of Nazahn"));
     if equip && now < need && all >= need { 85 } else { 0 }
 }
 

@@ -14,8 +14,8 @@
 //! 15 keeps the AI out of one-round kill range and above the 10 the existing Phyrexian rule uses, while each
 //! paid pip is worth a whole mana. Tests: tests/cards_krrik.rs.
 
-use crate::engine::repl;
 use crate::cards::CardDb;
+use crate::engine::repl;
 use crate::flow::Res;
 use crate::hooks::{Registry, Src};
 use crate::ids::{CardId, PlayerId};

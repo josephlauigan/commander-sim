@@ -87,7 +87,9 @@ impl Progress {
             fmt(est)
         );
         if ai == "lookahead" && est > 3600.0 {
-            eprintln!("  (for a quick read: --ai adaptive is about 60x faster; --games 240 --profile loose also cut it down)");
+            eprintln!(
+                "  (for a quick read: --ai adaptive is about 60x faster; --games 240 --profile loose also cut it down)"
+            );
         }
         self.t0 = Some(Instant::now());
         self.update(0);
@@ -102,7 +104,8 @@ impl Progress {
         }
         let pct = 100.0 * self.done as f64 / self.total as f64;
         let el = (now - t0).as_secs_f64();
-        let left = if self.done > 0 { el / self.done as f64 * (self.total - self.done.min(self.total)) as f64 } else { 0.0 };
+        let left =
+            if self.done > 0 { el / self.done as f64 * (self.total - self.done.min(self.total)) as f64 } else { 0.0 };
         let mut err = std::io::stderr().lock();
         if self.tty {
             if let Some(last) = self.last

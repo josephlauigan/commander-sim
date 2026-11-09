@@ -2,8 +2,8 @@
 //! `// --- Tiers 4/5 (krenko)`) on hand-built positions. Each expectation follows the card's Oracle text.
 
 use sim_core::cardcode;
-use sim_core::engine::pool::Kind;
 use sim_core::dsl::{Fired, fire, has_kw};
+use sim_core::engine::pool::Kind;
 use sim_core::engine::{cast, combat, life, removal, values::epow, zones};
 use sim_core::hooks::{Action, Opt};
 use sim_core::ids::{PermId, PlayerId};

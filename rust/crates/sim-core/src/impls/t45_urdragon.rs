@@ -45,14 +45,13 @@
 //!   battlefield, the rest to the bottom in a random order.
 //! - Urza's Incubator: names a creature type as it enters; creature spells of that type cost {2} less.
 
-use crate::satsum::SatSum;
-use crate::engine::repl;
-use crate::engine::mana::restr_ok;
-use crate::engine::pool::Restr;
-use crate::engine::pool::Kind;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::cast_card;
+use crate::engine::mana::restr_ok;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::pool::Kind;
+use crate::engine::pool::Restr;
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{card_name, colors_of, epow, has_type};
@@ -62,6 +61,7 @@ use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::lands::{can_pay_without, pay_without, sac_land};
 use crate::impls::partials::eot_kw;
+use crate::satsum::SatSum;
 use crate::state::{CopyExc, Ctx, DataKey, Game, Val};
 use crate::sym::Sym;
 

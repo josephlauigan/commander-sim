@@ -2,9 +2,9 @@
 //! `// --- Tiers 4/5 (prosper)`) on hand-built positions. Each expectation follows the card's Oracle text.
 
 use sim_core::engine::cast;
-use sim_core::engine::pool::Kind;
 use sim_core::engine::hooks::fire_trigger;
 use sim_core::engine::life::lose_life;
+use sim_core::engine::pool::Kind;
 use sim_core::engine::zones;
 use sim_core::hooks::{Action, Call, Event, Opt, Sacrificed};
 use sim_core::ids::{CardId, PermId, PlayerId};

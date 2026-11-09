@@ -19,11 +19,11 @@
 //! Creatures that return a creature (Matterbending Mage, Rescue, Fear of Isolation) pick the best
 //! enter-the-battlefield creature (`best_own_etb`) unless an opponent's creature is the better target.
 
-use crate::engine::repl;
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::cast_card;
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::repl;
 use crate::engine::stack::trigger_window;
 use crate::engine::values::{card_name, epow, etgh, pval};
 use crate::engine::zones::{bounce, draw, exile_perm, max_by};
@@ -90,7 +90,6 @@ fn mana_spent(g: &Game, p: PlayerId, c: CardId) -> u32 {
 fn is_artifact(g: &Game, m: PermId) -> bool {
     g.perm(m).cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT))
 }
-
 
 // ================================================================== the Ring
 /// Gandalf, Friend of the Shire: whenever the Ring tempts you, if you chose a creature other than Gandalf as your
@@ -566,8 +565,15 @@ fn wasp_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
             })
             .collect();
         if all.len() > 1 {
-            crate::human::cards::pick_perm(g, p, "target", "The Wasp: which Hero gains hexproof until end of turn?", &all, None)?
-                .unwrap_or(src)
+            crate::human::cards::pick_perm(
+                g,
+                p,
+                "target",
+                "The Wasp: which Hero gains hexproof until end of turn?",
+                &all,
+                None,
+            )?
+            .unwrap_or(src)
         } else {
             src
         }
@@ -604,7 +610,10 @@ fn wasp_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: PlayerId)
         max_by(&cs, |x| pval(g, x))
     };
     let Some(t) = t else { return Ok(vec![]) };
-    if (human || trigger_window(g, p, Some(src), "tap target creature", Some(3.0))?) && live(g, t) && crate::engine::ward::pay_ward(g, p, t)? {
+    if (human || trigger_window(g, p, Some(src), "tap target creature", Some(3.0))?)
+        && live(g, t)
+        && crate::engine::ward::pay_ward(g, p, t)?
+    {
         g.perm_mut(t).tapped = true;
     }
     Ok(vec![])

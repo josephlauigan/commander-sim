@@ -11,8 +11,19 @@ use sim_core::testkit::*;
 const P0: PlayerId = PlayerId(0);
 
 /// the line's own cards: never used as plain fuel
-const LINE: [&str; 11] = ["Brain Freeze", "Grapeshot", "Lotus Petal", "Dark Ritual", "Cabal Ritual", "Seething Song",
-    "Desperate Ritual", "Rite of Flame", "Lion's Eye Diamond", "Jeska's Will", "Underworld Breach"];
+const LINE: [&str; 11] = [
+    "Brain Freeze",
+    "Grapeshot",
+    "Lotus Petal",
+    "Dark Ritual",
+    "Cabal Ritual",
+    "Seething Song",
+    "Desperate Ritual",
+    "Rite of Flame",
+    "Lion's Eye Diamond",
+    "Jeska's Will",
+    "Underworld Breach",
+];
 
 /// P0 in its main phase with Breach out, `hand`, `n_fuel` other cards in its graveyard and `lands` untapped Volcanic
 /// Islands; each opponent has `opp_lib` cards left in its library

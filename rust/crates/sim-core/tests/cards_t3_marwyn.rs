@@ -2,8 +2,8 @@
 //! language): each card on a small position, its Oracle text as the expectation.
 
 use sim_core::ai::act;
-use sim_core::engine::pool::Kind;
 use sim_core::engine::mana::{cost_of, total_mana};
+use sim_core::engine::pool::Kind;
 use sim_core::engine::values::{epow, etgh};
 use sim_core::hooks::Opt;
 use sim_core::ids::{CardId, PermId, PlayerId};

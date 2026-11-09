@@ -10,6 +10,7 @@
 //! - a two-mana rock (Talisman, Signet): 1 with two lands, else 0;
 //! - Mox Diamond: needs a second land to discard, and then only brings the mana a turn earlier: 0.5 with two lands;
 //! - Chrome Mox: 1 when two other non-land, non-mana cards can imprint one of them (a spare), else 0;
+//! - Mox Jasper: 1 when the hand can cast a Dragon creature by turn 2 without it (`dragon_cast`), else 0;
 //! - Lion's Eye Diamond, rituals and spirit guides: 0 (they only fuel a spell).
 
 use crate::cards::Colors;
@@ -77,12 +78,100 @@ fn piece_value(g: &Game, p: PlayerId, c: CardId, lands: usize, spells: usize, st
         // needs a legendary creature or planeswalker: the Rograkh decks cast their {0} commander first
         "Mox Amber" => (if g.player(p).key.starts_with("rograkh") { 1.0 } else { 0.5 }, false),
         "Mox Opal" => (0.0, false), // metalcraft: three artifacts
+        // only while you control a Dragon: it makes mana from the turn after the hand can cast one, so it counts (like a
+        // two-mana rock cast on turn 2) when that is turn 2 or earlier
+        "Mox Jasper" => (if dragon_cast(g, p, lands).is_some_and(|x| x.0 <= 2) { 1.0 } else { 0.0 }, false),
         "Sol Ring" => (if lands >= 1 || starts { 2.0 } else { 0.0 }, false),
         _ if d.cmc == 0 => (1.0, true),
         _ if d.cmc == 1 => (if lands >= 1 { if d.tag(Tag::Dork) { 0.8 } else { 1.0 } } else { 0.0 }, false),
         _ if d.cmc == 2 => (if lands >= 2 { if d.tag(Tag::Dork) { 0.8 } else { 1.0 } } else { 0.0 }, false),
         _ => (0.0, false),
     }
+}
+
+/// The first turn (1 to 10) on which this hand can cast a Dragon creature (a changeling counts) without Mox Jasper, and
+/// which Dragon it is (the cheapest). `cap` is how many lands the hand may play, one a turn. Mana is stepped the way
+/// the hint's `Curve` steps it: Ancient Tomb and City of Traitors give two, a zero-cost piece gives its mana the turn it
+/// is cast, any other piece from the next turn, and Lotus Petal is one mana, once (kept for the Dragon or spent on the
+/// first rock, whichever is earlier). Printed costs only: cost reductions are ignored, colours are not (the Dragon must be
+/// castable in colour from the hand's other sources).
+pub fn dragon_cast(g: &Game, p: PlayerId, cap: usize) -> Option<(usize, CardId)> {
+    let hand = &g.player(p).hand;
+    let lands = hand.iter().filter(|&&c| g.db.get(c).land).count();
+    let all: Vec<CardId> = hand.iter().copied().filter(|&c| is_piece(g, c)).collect();
+    let spells = hand.len() - lands - all.len();
+    let starts = all.iter().any(|&c| g.db.get(c).cmc == 0 && nm(g, c) == "Lotus Petal");
+    let doubles =
+        hand.iter().filter(|&&c| g.db.get(c).land && matches!(nm(g, c), "Ancient Tomb" | "City of Traitors")).count();
+    let dragons: Vec<CardId> = hand
+        .iter()
+        .copied()
+        .filter(|&c| g.db.get(c).creature && crate::impls::t45_urdragon::dragon_card(g, c))
+        .collect();
+    if dragons.is_empty() {
+        return None;
+    }
+    // castable in colour from the hand's lands and the pieces it can cast, not counting Jasper itself
+    let have = sources(g, p, false);
+    let dragon = dragons.into_iter().filter(|&c| covers(have, g.db.get(c).colors)).min_by_key(|&c| g.db.get(c).cmc)?;
+    let need = g.db.get(dragon).cmc as f64;
+    let petal = all.iter().any(|&c| nm(g, c) == "Lotus Petal");
+    // (cost, mana made) of the other pieces, cheapest first; Jasper is left out so nothing loops
+    let mut pieces: Vec<(f64, f64)> = all
+        .iter()
+        .filter(|&&c| !matches!(nm(g, c), "Mox Jasper" | "Lotus Petal"))
+        .map(|&c| {
+            let v = piece_value(g, p, c, lands, spells, starts).0;
+            // a dork's summoning sickness is the "from the next turn" below, so it is a whole mana here (the table's 0.8
+            // would count it twice and never reach a whole cost)
+            (g.db.get(c).cmc as f64, if v > 0.0 && g.db.get(c).tag(Tag::Dork) { 1.0 } else { v })
+        })
+        .filter(|x| x.1 > 0.0)
+        .collect();
+    pieces.sort_by(|a, b| a.0.total_cmp(&b.0).then(b.1.total_cmp(&a.1)));
+    let run = |petal_early: bool| -> Option<usize> {
+        let mut left = pieces.clone();
+        let mut online: Vec<(usize, f64)> = vec![]; // (first turn it makes mana, mana)
+        let mut petal_left = petal;
+        for t in 1..=10usize {
+            let n = t.min(cap);
+            let mut base = n as f64 + doubles.min(n) as f64;
+            // zero-cost pieces first: they cost nothing and make their mana at once
+            left.retain(|&(cost, v)| {
+                if cost == 0.0 {
+                    base += v;
+                    false
+                } else {
+                    true
+                }
+            });
+            base += online.iter().filter(|x| x.0 <= t).map(|x| x.1).sum::<f64>();
+            if need <= base + petal_left as u8 as f64 + 1e-9 {
+                return Some(t);
+            }
+            let mut rem = base + (petal_early && petal_left) as u8 as f64;
+            let before = rem;
+            let mut i = 0;
+            while i < left.len() {
+                if left[i].0 <= rem + 1e-9 {
+                    rem -= left[i].0;
+                    online.push((t + 1, left[i].1));
+                    left.remove(i);
+                } else {
+                    i += 1;
+                }
+            }
+            if petal_early && petal_left && before - rem > base + 1e-9 {
+                petal_left = false;
+            }
+        }
+        None
+    };
+    let t = match (run(false), if petal { run(true) } else { None }) {
+        (Some(a), Some(b)) => a.min(b),
+        (a, b) => a.or(b)?,
+    };
+    Some((t, dragon))
 }
 
 /// the hand's mana pieces with what each makes by turn 2 (0.0: nothing, from this hand), for explaining a hand
@@ -193,6 +282,17 @@ pub fn covers(have: Colors, need: Colors) -> bool {
 /// and dorks it can cast with what it has so far (their colours and a Mox's own cost, repeated until nothing is added)
 pub fn hand_sources(g: &Game, p: PlayerId) -> Colors {
     let hand = &g.player(p).hand;
+    if !hand.iter().any(|&c| nm(g, c) == "Mox Jasper") {
+        return sources(g, p, false);
+    }
+    // like `piece_value`: Jasper is a source when a Dragon can be cast by turn 2
+    let lands = hand.iter().filter(|&&c| g.db.get(c).land).count();
+    sources(g, p, dragon_cast(g, p, lands).is_some_and(|x| x.0 <= 2))
+}
+
+/// `hand_sources`, with Mox Jasper's colours only when `jasper` (it makes mana only once a Dragon is cast)
+fn sources(g: &Game, p: PlayerId, jasper: bool) -> Colors {
+    let hand = &g.player(p).hand;
     let lib_cols = || {
         g.player(p)
             .library
@@ -206,7 +306,8 @@ pub fn hand_sources(g: &Game, p: PlayerId) -> Colors {
         n_lands += 1;
         have = have.union(if g.db.get(c).tag(Tag::F) { lib_cols() } else { tag_cols(g, p, c) });
     }
-    let pieces: Vec<CardId> = hand.iter().copied().filter(|&c| !g.db.get(c).land).collect();
+    let pieces: Vec<CardId> =
+        hand.iter().copied().filter(|&c| !g.db.get(c).land && (jasper || nm(g, c) != "Mox Jasper")).collect();
     let mut free = 0; // zero-cost pieces make the mana for a generic cost
     for _ in 0..4 {
         let mut changed = false;

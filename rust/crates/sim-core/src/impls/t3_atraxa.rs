@@ -22,9 +22,9 @@
 //! - **Drown in Ichor**: -4/-4 on the best opposing creature it kills, then proliferate. Left out: the shrink on a
 //!   creature it doesn't kill.
 
-use crate::engine::repl;
 use crate::cards::{CardDb, Types};
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::repl;
 use crate::engine::values::{etgh, pval, untargetable};
 use crate::engine::zones::{die, draw, landfall};
 use crate::flow::Res;
@@ -213,7 +213,10 @@ fn outbreak_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sy
             }
         }
     }
-    crate::glog!(g, "    Phyresis Outbreak: each opponent gets a poison counter; their creatures shrink by their poison");
+    crate::glog!(
+        g,
+        "    Phyresis Outbreak: each opponent gets a poison counter; their creatures shrink by their poison"
+    );
     crate::engine::life::check_state(g)?;
     Ok(intern("gy"))
 }
@@ -286,7 +289,6 @@ fn bite_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 }
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
-
     if let Some(c) = card_if(r, db, "Ezuri, Stalker of Spheres")? {
         c.etb = Some(ezuri_etb);
     }

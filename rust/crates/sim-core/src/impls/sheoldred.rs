@@ -6,14 +6,14 @@
 //! Several cards here came with the retired candidate decks (glissa, gix, yawgmoth), whose card code was deleted while
 //! their `Full` verdicts stayed in the overrides; they are modeled here again, keyed by card name.
 
-use crate::engine::repl;
-use crate::engine::pool::Kind;
 use crate::ai::plan_data::plays;
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst};
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::pool::Kind;
 use crate::engine::removal::{apply_removal, legal_targets};
+use crate::engine::repl;
 use crate::engine::stack::{ability_run, may_window, may_window_ask, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{epow, etgh, pval, untargetable};
@@ -1258,7 +1258,10 @@ fn tome_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
     if owner(g, src) != p || !x.on_bf || x.tapped || x.phased || x.neutered || post.is_none() {
         return Ok(vec![]);
     }
-    if pages(g, src) < 1 || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false) || g.player(p).library.is_empty() {
+    if pages(g, src) < 1
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)
+        || g.player(p).library.is_empty()
+    {
         return Ok(vec![]);
     }
     let u = draw_utility(g, p);
@@ -1273,7 +1276,11 @@ fn tome_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
 }
 
 fn tome_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
-    if !on_bf(g, src) || g.perm(src).tapped || pages(g, src) < 1 || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false) {
+    if !on_bf(g, src)
+        || g.perm(src).tapped
+        || pages(g, src) < 1
+        || !can_pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)
+    {
         return Ok(false);
     }
     pay(g, p, crate::impls::t45_urza_yawgmoth::artifact_cost(g, p, 1, 0), "", false)?;
@@ -1417,7 +1424,8 @@ fn witch_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
     };
     let opp_creatures = g.opps(p).any(|q| g.player(q).perms.iter().any(|&m| g.is_creature(m) && !g.perm(m).phased));
     let imp = if opp_creatures { 5.0 } else { 0.0 } + target.map_or(0.0, |c| cv(g, c).max(0.0));
-    if !trigger_window(g, p, Some(src), "each opponent sacrifices a creature; a creature card back to hand", Some(imp))? {
+    if !trigger_window(g, p, Some(src), "each opponent sacrifices a creature; a creature card back to hand", Some(imp))?
+    {
         return Ok(());
     }
     let qs: Vec<PlayerId> = g.opps(p).collect();
@@ -1858,10 +1866,11 @@ fn atlas_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     let kills = toll > 0 && k > 0 && g.opps(p).any(|q| g.player(q).life as i64 <= toll * k);
     let safe = g.player(p).library.len() as i64 >= k + 4;
     if k > 0 && safe && (k >= 2 || kills) {
-        if let Some(u) =
-            punish_window_utility(g, p, post, g.perm(src).name)
-                .or(if kills && g.active == Some(p) { Some(7.0) } else { None })
-        {
+        if let Some(u) = punish_window_utility(g, p, post, g.perm(src).name).or(if kills && g.active == Some(p) {
+            Some(7.0)
+        } else {
+            None
+        }) {
             return Ok(vec![Opt {
                 utility: u,
                 label: format!("Otherworld Atlas: each player draws {k}"),
@@ -2326,4 +2335,3 @@ fn register_seph(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.grant_kw = Some(seph_kw);
     Ok(())
 }
-

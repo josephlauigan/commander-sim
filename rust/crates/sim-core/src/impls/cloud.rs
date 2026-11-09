@@ -17,9 +17,9 @@
 //! look-ahead bonuses) was deleted on 2026-11-01: it plays the generic policy and `data/plans/cloud.toml`
 //! (`audit/phase4/hand-off-design.md`, "Deleted, part 2").
 
-use crate::engine::repl;
 use crate::cards::{CardDb, Types};
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, may_window, may_window_card, trigger_window};
 use crate::engine::values::{epow, etgh, has_type, pval};
 use crate::engine::zones::{Enter, Tokens, draw, enter, make_tokens, max_by};
@@ -862,34 +862,44 @@ pub fn zack_sacrifice(g: &mut Game, src: PermId, p: PlayerId, target: i64) -> Re
     let counters = g.perm(src).plus.max(0);
     let worn = equipment_on(g, src);
     crate::engine::zones::die(g, src, intern("sac"))?; // Zack is sacrificed as a cost: it happens first
-    crate::engine::stack::ability_run_w(g, p, Some(src), None, "sacrifice: indestructible", Some(8.0), Some(t), 0.0, |g, is_copy| {
-        let mut t = t;
-        if is_copy && crate::human::is_human(g, p) {
-            // "you may choose a new target for the copy": another creature you control
-            let now: Vec<PermId> = g
-                .player(p)
-                .perms
-                .iter()
-                .copied()
-                .filter(|&x| x != src && live(g, x) && g.is_creature(x))
-                .collect();
-            let prompt = "The copy of Zack Fair's ability: which creature gains indestructible?";
-            if !now.is_empty()
-                && let Some(x) = crate::human::cards::pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?
-            {
-                t = x;
+    crate::engine::stack::ability_run_w(
+        g,
+        p,
+        Some(src),
+        None,
+        "sacrifice: indestructible",
+        Some(8.0),
+        Some(t),
+        0.0,
+        |g, is_copy| {
+            let mut t = t;
+            if is_copy && crate::human::is_human(g, p) {
+                // "you may choose a new target for the copy": another creature you control
+                let now: Vec<PermId> =
+                    g.player(p).perms.iter().copied().filter(|&x| x != src && live(g, x) && g.is_creature(x)).collect();
+                let prompt = "The copy of Zack Fair's ability: which creature gains indestructible?";
+                if !now.is_empty()
+                    && let Some(x) =
+                        crate::human::cards::pick_perm(g, p, "target", prompt, &now, Some("keep the target"))?
+                {
+                    t = x;
+                }
             }
-        }
-        if live(g, t) {
-            super::partials::eot_kw(g, t, "indestructible");
-            repl::put_plus(g, t, counters);
-            for &e in &worn {
-                attach(g, e, t);
+            if live(g, t) {
+                super::partials::eot_kw(g, t, "indestructible");
+                repl::put_plus(g, t, counters);
+                for &e in &worn {
+                    attach(g, e, t);
+                }
+                crate::glog!(
+                    g,
+                    "    {} gains indestructible; Zack's counters and Equipment move to it",
+                    g.perm(t).name
+                );
             }
-            crate::glog!(g, "    {} gains indestructible; Zack's counters and Equipment move to it", g.perm(t).name);
-        }
-        Ok(())
-    })?;
+            Ok(())
+        },
+    )?;
     Ok(true)
 }
 
@@ -1307,11 +1317,8 @@ fn judgment_defend(
     if judgment_up(g, d) || !g.player(d).hand.contains(&c) {
         return Ok(());
     }
-    let hits: Vec<PermId> = atk
-        .iter()
-        .copied()
-        .filter(|&a| live(g, a) && owner(g, a) == p && !assign.iter().any(|x| x.0 == a))
-        .collect();
+    let hits: Vec<PermId> =
+        atk.iter().copied().filter(|&a| live(g, a) && owner(g, a) == p && !assign.iter().any(|x| x.0 == a)).collect();
     let dmg: i32 = hits
         .iter()
         .map(|&a| epow(g, a).saturating_mul(if crate::engine::combat::double_strike(g, a) { 2 } else { 1 }))
@@ -1321,14 +1328,10 @@ fn judgment_defend(
     }
     let life = g.player(d).life;
     let cmd_pow: i32 = cmd_creatures(g, d).iter().map(|&m| epow(g, m).max(0)).ssum();
-    let cmd_dmg_lethal = hits.iter().any(|&a| {
-        g.perm(a).is_cmd && crate::engine::values::cmd_dmg_by(g, d, p, a) + epow(g, a) >= 21
-    });
-    let killed: f64 = if cmd_pow > 0 {
-        hits.iter().filter(|&&a| etgh(g, a) <= cmd_pow).map(|&a| pval(g, a)).sum()
-    } else {
-        0.0
-    };
+    let cmd_dmg_lethal =
+        hits.iter().any(|&a| g.perm(a).is_cmd && crate::engine::values::cmd_dmg_by(g, d, p, a) + epow(g, a) >= 21);
+    let killed: f64 =
+        if cmd_pow > 0 { hits.iter().filter(|&&a| etgh(g, a) <= cmd_pow).map(|&a| pval(g, a)).sum() } else { 0.0 };
     let lethal = dmg >= life || cmd_dmg_lethal;
     let heavy = dmg as f64 >= (6.0f64).max(life as f64 * 0.4);
     if lethal || heavy || (killed >= 5.0 && dmg >= 3) {
@@ -1470,9 +1473,11 @@ fn forge_move(g: &Game, p: PlayerId, unbl: &[PermId], atk: &[PermId]) -> Option<
             continue; // already on an attacker: leave it
         }
         let gain = equip_gain(g, e);
-        let Some(t) = max_by(&unbl.iter().copied().filter(|&t| g.perm(e).attached != Some(t)).collect::<Vec<_>>(), |t| {
-            holder_score(g, t)
-        }) else {
+        let Some(t) =
+            max_by(&unbl.iter().copied().filter(|&t| g.perm(e).attached != Some(t)).collect::<Vec<_>>(), |t| {
+                holder_score(g, t)
+            })
+        else {
             continue;
         };
         let cost = equip_cost(g, p, e, t, base);

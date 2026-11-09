@@ -14,13 +14,13 @@
 //!   (`rean_targets`).
 //! - Stats for `--analyze`: `sf_*` counters (flips, wipes, steals by card, sacrifices, cards drawn by Sephiroth).
 
-use crate::satsum::SatSum;
 use super::sephfs_cards::{all_creatures, cmc_of, flipped, is_seph, parity_choice, steal_targets, steal_value};
 use crate::ai::pool::generic_prio;
 use crate::cards::CardDb;
 use crate::engine::values::pval;
 use crate::hooks::Registry;
 use crate::ids::{CardId, CardId as C, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::{DataKey, Game, Val};
 use crate::tag::Tag;
 
@@ -91,7 +91,7 @@ pub fn sephfs_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         return if times + deaths >= 4 { 92 } else { 20 };
     }
     match n {
-        "Rabid Attack" => return 0, // cast through `options`, ahead of a sweeper
+        "Rabid Attack" => return 0,  // cast through `options`, ahead of a sweeper
         "Presumed Dead" => return 0, // cast through `options` or in response to removal
         "Rewrite Regrets" => {
             return match super::sephfs_cards::regrets_target(g, p) {
@@ -267,11 +267,20 @@ fn exsanguinate_option(g: &Game, p: PlayerId) -> Option<crate::hooks::Opt> {
         return None;
     }
     let (u, label) = super::yshtola::x_drain_option(g, p, c)?;
-    let threat: i32 = g.opps(p).flat_map(|q| g.player(q).perms.iter().copied()).filter(|&m| g.perm(m).on_bf && g.is_creature(m)).map(|m| crate::engine::values::epow(g, m)).ssum();
+    let threat: i32 = g
+        .opps(p)
+        .flat_map(|q| g.player(q).perms.iter().copied())
+        .filter(|&m| g.perm(m).on_bf && g.is_creature(m))
+        .map(|m| crate::engine::values::epow(g, m))
+        .ssum();
     if u < 7.0 && threat * 3 >= g.player(p).life {
         return None;
     }
-    Some(crate::hooks::Opt { utility: u, label, act: Some(crate::hooks::Action::Plan { f: super::yshtola::x_drain_go, arg: c.0 as i64 }) })
+    Some(crate::hooks::Opt {
+        utility: u,
+        label,
+        act: Some(crate::hooks::Action::Plan { f: super::yshtola::x_drain_go, arg: c.0 as i64 }),
+    })
 }
 
 fn rabid_option(g: &mut Game, p: PlayerId) -> Option<crate::hooks::Opt> {
@@ -403,7 +412,6 @@ fn gray_merchant_prio(g: &Game, p: PlayerId) -> i32 {
     (38 + 4 * dev).min(84)
 }
 
-
 // ------------------------------------------------------------------ tutors (Demonic Tutor, Vampiric Tutor, Rune-Scarred Demon)
 /// the tutor's pick from board state, or None for the generic pick (best priority early, biggest body late):
 /// the finisher when it kills; a sweeper when the opponents are ahead on board; an outlet or Kaya's Ghostform when
@@ -421,10 +429,14 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<C
     };
     // 1. the finisher that kills: X = lands - 2 for Exsanguinate, the devotion for Gray Merchant
     let low = g.opps(p).map(|q| g.player(q).life).min().unwrap_or(40);
-    if low <= lands - 2 && let Some(c) = first(&["Exsanguinate"]) {
+    if low <= lands - 2
+        && let Some(c) = first(&["Exsanguinate"])
+    {
         return Some(c);
     }
-    if low <= devotion(g, p) && let Some(c) = first(&["Gray Merchant of Asphodel"]) {
+    if low <= devotion(g, p)
+        && let Some(c) = first(&["Gray Merchant of Asphodel"])
+    {
         return Some(c);
     }
     // 2. the opponents are ahead on board
@@ -444,14 +456,19 @@ pub fn tutor_pick(g: &Game, p: PlayerId, kind: &str, okn: &[CardId]) -> Option<C
             {
                 return Some(c);
             }
-            if !fl && !held("Kaya's Ghostform") && let Some(c) = first(&["Kaya's Ghostform"]) {
+            if !fl
+                && !held("Kaya's Ghostform")
+                && let Some(c) = first(&["Kaya's Ghostform"])
+            {
                 return Some(c);
             }
         }
     }
     // 4. short of mana
     if lands < 3 && !pl.hand.iter().any(|&c| g.db.get(c).land) {
-        if lands >= 1 && let Some(c) = first(&["Sol Ring"]) {
+        if lands >= 1
+            && let Some(c) = first(&["Sol Ring"])
+        {
             return Some(c);
         }
         return okn.iter().copied().find(|&c| g.db.get(c).land && name(g, c) == "Swamp");
@@ -492,7 +509,8 @@ fn dread_flashback_option(g: &Game, p: PlayerId) -> Option<crate::hooks::Opt> {
     if fod.len() < 3 {
         return None;
     }
-    let payoffs = LOOP_DRAINS.iter().filter(|n| bf_named(g, p, n).is_some()).count() + usize::from(seph_state(g, p).is_some());
+    let payoffs =
+        LOOP_DRAINS.iter().filter(|n| bf_named(g, p, n).is_some()).count() + usize::from(seph_state(g, p).is_some());
     let lost: f64 = fod.iter().map(|&m| if g.perm(m).token { 0.0 } else { pval(g, m) * 0.5 }).sum();
     let u = val + 3.0 * payoffs as f64 * 0.6 - lost;
     if u < 3.0 {
@@ -534,7 +552,12 @@ fn dread_flashback_go(g: &mut Game, p: PlayerId, arg: i64) -> crate::flow::Res<b
     pl.stat("sf_dread_flashback", 1);
     pl.stat("spells_cast", 1);
     pl.cast_names.insert(c);
-    crate::glog!(g, "  {} flashes back Dread Return (sacrificing three creatures) for {}", g.player(p).name, g.db.get(cd).name);
+    crate::glog!(
+        g,
+        "  {} flashes back Dread Return (sacrificing three creatures) for {}",
+        g.player(p).name,
+        g.db.get(cd).name
+    );
     if crate::engine::stack::counter_window(g, p, c, val, vec![])? {
         let still = g.player(src).gy.contains(&cd);
         if still {

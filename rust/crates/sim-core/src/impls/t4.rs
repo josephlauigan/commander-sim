@@ -5,15 +5,14 @@
 //! replaced in Python by rules2.py's for the same card and event, so they never run and aren't ported: Rionya, Fire
 //! Dancer's combat_start, Valakut Exploration's landfall and end_step, and Purphoros, God of the Forge's etb.
 
-use crate::satsum::SatSum;
-use crate::engine::repl;
-use crate::engine::pool::Kind;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, discard_worst};
 use crate::engine::hooks::hooked;
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::pool::Kind;
 use crate::engine::removal::{apply_removal, legal_targets};
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{epow, etgh, has_type, once_per_turn, pval, threat, untargetable};
@@ -25,6 +24,7 @@ use crate::hooks::{Action, Event, Opt, Registry, Src};
 use crate::human::{choices, human_of};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::common::{AURA, AuraSpec, WalkerAb, best_opp_creature, best_opp_nonland, walker};
+use crate::satsum::SatSum;
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -446,7 +446,14 @@ fn oni(g: &mut Game, src: Src, p: PlayerId, a: PermId, d: PlayerId, _dmg: i32) -
 /// ninjutsu {2}{U}{U}: searches for a Ninja on combat damage
 fn higure(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _dmg: i32) -> Res {
     if a == src && trigger_window(g, p, Some(src), "search for a Ninja", None)? {
-        crate::impls::t1::tutor_named(g, p, &|g, c| g.db.get(c).has_subtype("ninja"), 1, "hand", "Higure, the Still Wind")?;
+        crate::impls::t1::tutor_named(
+            g,
+            p,
+            &|g, c| g.db.get(c).has_subtype("ninja"),
+            1,
+            "hand",
+            "Higure, the Still Wind",
+        )?;
     }
     Ok(())
 }
@@ -1341,8 +1348,7 @@ pub fn bond_target_for(g: &Game, p: PlayerId, n: i32, card: &str) -> Res<PlayerI
     if human_of(g, p).is_some() && os.len() > 1 {
         let labels: Vec<String> =
             os.iter().map(|&q| format!("{} ({} life)", g.player(q).name, g.player(q).life)).collect();
-        let k =
-            choices::choose_one(g, p, "target", &format!("{card}: which opponent loses {n} life?"), &labels)?;
+        let k = choices::choose_one(g, p, "target", &format!("{card}: which opponent loses {n} life?"), &labels)?;
         return Ok(os[k]);
     }
     let dead: Vec<PlayerId> =

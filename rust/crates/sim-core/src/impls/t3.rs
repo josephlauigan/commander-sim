@@ -7,17 +7,16 @@
 //! Joraga Treespeaker's options and mana (rules2), Legion Loyalist's attack (rules), Painful Quandary's cast trigger
 //! (rules), Finale of Devastation (rules2), Embercleave's cast priority (rules2: 0).
 
-use crate::satsum::SatSum;
 use super::common::{WalkerAb, best_opp_creature, best_opp_nonland, death_value, outlets, sac_food, walker};
-use crate::engine::pool::Kind;
 use super::partials::{at_once, eot_kw, first_max, name_of, remove_card};
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{discard_worst, on_cast};
 use crate::engine::hooks::fire_trigger;
 use crate::engine::life::{gain, lose_life};
 use crate::engine::mana::{can_pay, pay, total_mana};
+use crate::engine::pool::Kind;
 use crate::engine::removal::apply_removal;
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, ability_window_card, counter_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{epow, etgh, has_type, once_per_turn, pval, threat, untargetable};
@@ -30,6 +29,7 @@ use crate::hooks::{Action, Assign, Call, Event, Opt, Registry, Sacrificed, Src};
 use crate::human::{choices, human_of};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::pysum::PySum;
+use crate::satsum::SatSum;
 use crate::state::{CopyExc, Ctx, DataKey, Game, PermData, TurnStamp, Val};
 use crate::sym::{Sym, intern};
 
@@ -183,9 +183,8 @@ pub fn sac_worst_permanent(g: &mut Game, p: PlayerId, exclude: Option<PermId>) -
     let tokens: Vec<PermId> = cands.iter().copied().filter(|&m| g.perm(m).cd.is_none()).collect();
     // creature tokens, then (with five lands or more) a land, then the cheapest card (Python: the cheapest permanent
     // first, so Korvold gave up its Altars and Bombardment with lands to spare)
-    let mut pick = min_by(&tokens, |m| pval(g, m)).or_else(|| {
-        (lands.len() < SPARE_LANDS).then(|| min_by(&cands, |m| pval(g, m))).flatten()
-    });
+    let mut pick = min_by(&tokens, |m| pval(g, m))
+        .or_else(|| (lands.len() < SPARE_LANDS).then(|| min_by(&cands, |m| pval(g, m))).flatten());
     // --- ai-table-fixes (AI_SACSTEAL): an opposing Tergrid takes every nontoken permanent sacrificed, a land too: with
     // no token to give, the cheapest is the one worth least to her as well as to us (a land is worth one point to her)
     if pick.is_none_or(|m| !tokens.contains(&m))
@@ -1176,7 +1175,12 @@ fn ttr_minus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
 /// opponents cast spells only at sorcery speed (their counterspells and instant removal are off on other turns); +1 lets
 /// its controller cast sorceries as though they had flash until their next turn (`doomsday::teferi_plus`)
 static TTR: [WalkerAb; 2] = [
-    WalkerAb { delta: 1, label: "sorceries at instant speed", val: super::doomsday::teferi_plus_val, eff: super::doomsday::teferi_plus },
+    WalkerAb {
+        delta: 1,
+        label: "sorceries at instant speed",
+        val: super::doomsday::teferi_plus_val,
+        eff: super::doomsday::teferi_plus,
+    },
     WalkerAb { delta: -3, label: "bounce and draw", val: ttr_minus_val, eff: ttr_minus },
 ];
 

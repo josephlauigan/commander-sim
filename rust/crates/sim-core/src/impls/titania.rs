@@ -19,7 +19,6 @@
 //! fetch lands cracked in response when nothing saves her); Arachnogenesis against a big attack; Overwhelming Stampede
 //! and End-Raze Forerunners when the attack is lethal through the blockers.
 
-use crate::satsum::SatSum;
 use crate::cards::CardDb;
 use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
 use crate::engine::removal::apply_removal;
@@ -29,6 +28,7 @@ use crate::engine::zones::{Tokens, make_tokens, max_by};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry, Src};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::satsum::SatSum;
 use crate::state::{Ctx, DataKey, Game, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -63,7 +63,8 @@ pub fn titania_of(g: &Game, p: PlayerId) -> Option<PermId> {
 
 /// p's Omnath, Locus of Rage, if she is out (each fetch land cracked is a landfall for her)
 fn omnath_out(g: &Game, p: PlayerId) -> bool {
-    g.player(p).key == OMNATH_KEY && g.player(p).perms.iter().any(|&m| live(g, m) && card_name(g, m) == Some("Omnath, Locus of Rage"))
+    g.player(p).key == OMNATH_KEY
+        && g.player(p).perms.iter().any(|&m| live(g, m) && card_name(g, m) == Some("Omnath, Locus of Rage"))
 }
 
 fn is_fetch(g: &Game, c: CardId) -> bool {
@@ -432,8 +433,10 @@ pub fn attack_fog(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Res
         return Ok(false);
     }
     let mine: Vec<PermId> = atk.iter().copied().filter(|&m| live(g, m) && g.perm(m).owner == p).collect();
-    let incoming: i32 =
-        mine.iter().map(|&m| epow(g, m).saturating_mul(if crate::engine::combat::double_strike(g, m) { 2 } else { 1 })).ssum();
+    let incoming: i32 = mine
+        .iter()
+        .map(|&m| epow(g, m).saturating_mul(if crate::engine::combat::double_strike(g, m) { 2 } else { 1 }))
+        .ssum();
     let life = g.player(d).life;
     let cmd_threat = mine.iter().any(|&m| g.perm(m).is_cmd && g.player(d).cmd_dmg[p.index()] + epow(g, m) >= 21);
     // a fifth of the life, three or more attackers (three Spider blockers and a fogged turn) or a 12-point swing
@@ -599,7 +602,8 @@ pub fn titania_protect(
     if !is_titania && pval(g, m) < 5.0 {
         return Ok(false);
     }
-    if cast_protect(g, p, ROYAL, m, super::green_cards::royal_apply)? || cast_protect(g, p, BLOSSOM, m, blossom_apply)? {
+    if cast_protect(g, p, ROYAL, m, super::green_cards::royal_apply)? || cast_protect(g, p, BLOSSOM, m, blossom_apply)?
+    {
         return Ok(true);
     }
     if is_titania {
@@ -717,7 +721,11 @@ pub fn titania_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         }
         // ramp and landfall in one card (two lands from the top seven, tapped): early, before the threats
         "Cartographer's Survey" => {
-            if pl.lands.len() <= 7 { 74 } else { base.max(40) }
+            if pl.lands.len() <= 7 {
+                74
+            } else {
+                base.max(40)
+            }
         }
         // a 6/6 trampling haste threat that doubles every counter the deck makes: ahead of the other top-end cards
         "Vorinclex, Monstrous Raider" => base.max(62),
@@ -739,7 +747,10 @@ pub fn worldly_pick(g: &Game, p: PlayerId, okn: &[CardId]) -> Option<CardId> {
     let pl = g.player(p);
     let first = |ns: &[&str]| ns.iter().filter_map(|n| g.db.id(n)).find(|c| okn.contains(c));
     let mana = pl.lands.len()
-        + pl.perms.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Dork))).count();
+        + pl.perms
+            .iter()
+            .filter(|&&m| g.perm(m).on_bf && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Dork)))
+            .count();
     let fetch_in_gy = pl.gy.iter().any(|&x| g.db.get(x).land && is_fetch(g, x));
     if titania_of(g, p).is_none() && mana < 5 {
         if mana <= 3 {
@@ -752,9 +763,7 @@ pub fn worldly_pick(g: &Game, p: PlayerId, okn: &[CardId]) -> Option<CardId> {
         if let Some(c) = first(&["Fblthp, Knows the Way", "Studious First-Year", "Spider-Man, Brooklyn Visionary"]) {
             return Some(c);
         }
-        if !fetch_in_gy
-            && let Some(c) = first(&["Satyr Wayfinder"])
-        {
+        if !fetch_in_gy && let Some(c) = first(&["Satyr Wayfinder"]) {
             return Some(c);
         }
         return first(&["Boughside Wanderers", "Topiary Lecturer", "Hardbristle Bandit"]);
@@ -857,11 +866,7 @@ fn titan_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerI
 /// the library) two 5/3s a swing; ahead of the other top-end cards, behind Titania herself
 fn titan_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
     let fetch_left = g.player(p).library.iter().any(|&x| is_fetch(g, x));
-    if titania_of(g, p).is_some() && fetch_left {
-        72
-    } else {
-        64
-    }
+    if titania_of(g, p).is_some() && fetch_left { 72 } else { 64 }
 }
 
 fn register_titan(r: &mut Registry, db: &CardDb) -> Result<(), String> {

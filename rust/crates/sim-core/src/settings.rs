@@ -133,11 +133,11 @@ impl Default for Search {
                 .unwrap_or(MARGIN), // --- ai-eval
             det: planner_from(std::env::var("AI_EVAL_DET").ok().as_deref()),       // --- ai-eval
             short: matches!(std::env::var("AI_EVAL_SHORT").ok().as_deref(), Some("1")), // --- ai-eval
-            adapt: planner_from(std::env::var("AI_EVAL_ADAPT").ok().as_deref()), // --- ai-rollouts
-            adapt_cap: env_num("AI_EVAL_ADAPT_CAP", ADAPT_CAP),                          // --- ai-rollouts
-            adapt_batch: env_num("AI_EVAL_ADAPT_BATCH", ADAPT_BATCH),                    // --- ai-rollouts
-            adapt_stop: env_num("AI_EVAL_ADAPT_STOP", ADAPT_STOP),                       // --- ai-rollouts
-            adapt_z: env_num("AI_EVAL_ADAPT_Z", ADAPT_Z),                                // --- ai-rollouts
+            adapt: planner_from(std::env::var("AI_EVAL_ADAPT").ok().as_deref()),   // --- ai-rollouts
+            adapt_cap: env_num("AI_EVAL_ADAPT_CAP", ADAPT_CAP),                    // --- ai-rollouts
+            adapt_batch: env_num("AI_EVAL_ADAPT_BATCH", ADAPT_BATCH),              // --- ai-rollouts
+            adapt_stop: env_num("AI_EVAL_ADAPT_STOP", ADAPT_STOP),                 // --- ai-rollouts
+            adapt_z: env_num("AI_EVAL_ADAPT_Z", ADAPT_Z),                          // --- ai-rollouts
             playout_work: 2_000,
             game_decisions: 1000,
             board_limit: 150,
@@ -189,10 +189,7 @@ impl Settings {
             Profile::Loose => (6, 6, 0),
         };
         let cthresh: HashMap<String, i32> =
-            ["yshtola", "omnath", "sheoldred", "cloud"]
-                .iter()
-                .map(|k| (k.to_string(), mine))
-                .collect();
+            ["yshtola", "omnath", "sheoldred", "cloud"].iter().map(|k| (k.to_string(), mine)).collect();
         Settings {
             profile,
             ai,
@@ -206,7 +203,7 @@ impl Settings {
             t6_moxd_lands: 3,
             planner: planner_default(), // --- ai-planner
             planner_progress: matches!(std::env::var("PLANNER_PROGRESS").ok().as_deref(), Some("1")), // --- ai-planner
-            xtutor: xtutor_default(), // --- t6-xtutor
+            xtutor: xtutor_default(),   // --- t6-xtutor
             hold_trace: true,
         }
     }

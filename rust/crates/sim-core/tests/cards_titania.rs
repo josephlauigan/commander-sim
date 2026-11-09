@@ -508,5 +508,9 @@ fn the_ai_casts_primeval_titan() {
     hand(&mut g, P0, &["Primeval Titan"]);
     lands(&mut g, P0, "Forest", 6, false);
     let o = options(&mut g, P0, false);
-    assert!(o.iter().any(|o| o.label.contains("Primeval Titan")), "castable: {:?}", o.iter().map(|o| &o.label).collect::<Vec<_>>());
+    assert!(
+        o.iter().any(|o| o.label.contains("Primeval Titan")),
+        "castable: {:?}",
+        o.iter().map(|o| &o.label).collect::<Vec<_>>()
+    );
 }

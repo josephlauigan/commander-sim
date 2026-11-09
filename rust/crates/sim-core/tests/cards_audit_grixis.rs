@@ -68,4 +68,3 @@ fn kefka_keeps_protection_over_a_land() {
     let g = kefka_hand(&["Deflecting Swat", "Slip Out the Back", "Island"]);
     assert_eq!(kefka_discards(&g), "Island");
 }
-

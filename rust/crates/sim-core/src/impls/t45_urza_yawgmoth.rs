@@ -48,8 +48,8 @@
 //! Urza or Sol Ring and free artifacts cast between each other; Reassembling Skeleton / Gravecrawler + Pitiless
 //! Plunderer + an altar or Warren Soultrader + a death payoff.
 
-use crate::ai::hand_key; // --- phase4-hand-off
 use crate::ai::brain::{Situation, card_utility, do_cast_with};
+use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, grants_flash};
 use crate::engine::life::{check_state, gain};

@@ -29,10 +29,18 @@ pub fn abilities(_g: &Game, _p: PlayerId, _m: PermId, nm: &str) -> Option<Vec<Pe
     Some(match nm {
         mg::SIEGE => vec![ability("{1}{R}, sacrifice a Goblin: 2 damage to any target", siege)],
         mg::KONRAD => vec![ability("{1}{B}: each player mills a card", konrad)],
-        mg::FACE_BREAKER => vec![ability("sacrifice a Treasure: exile the top card of your library, you may play it this turn", face_breaker)],
+        mg::FACE_BREAKER => vec![ability(
+            "sacrifice a Treasure: exile the top card of your library, you may play it this turn",
+            face_breaker,
+        )],
         mg::TINYBONES => vec![ability("{4}{B}{B}: each opponent with no cards in hand loses 10 life", tinybones)],
-        mg::EZURI => vec![ability("{2}{G}{G}{G}: Elf creatures you control get +3/+3 and trample until end of turn", ezuri)],
-        KIKI => vec![ability("{T}: create a token that's a copy of target nonlegendary creature you control, with haste; sacrifice it at the next end step", kiki)],
+        mg::EZURI => {
+            vec![ability("{2}{G}{G}{G}: Elf creatures you control get +3/+3 and trample until end of turn", ezuri)]
+        }
+        KIKI => vec![ability(
+            "{T}: create a token that's a copy of target nonlegendary creature you control, with haste; sacrifice it at the next end step",
+            kiki,
+        )],
         FANG => vec![ability("{B}, sacrifice X Squirrels: target creature gets +X/-X until end of turn", fang)],
         _ => return super::marvin_hooks::abilities(nm),
     })
@@ -55,7 +63,8 @@ fn siege(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
         return Ok(Some("There is no target for the damage.".into()));
     }
     let labels: Vec<String> = cands.iter().map(|&x| legal::describe_target(g, p, x)).collect();
-    let Some(k) = choices::choose(g, p, "target", &format!("{WHAT}: 2 damage to which target?"), &labels, Some("cancel"), None)?
+    let Some(k) =
+        choices::choose(g, p, "target", &format!("{WHAT}: 2 damage to which target?"), &labels, Some("cancel"), None)?
     else {
         return Ok(None);
     };
@@ -66,7 +75,14 @@ fn siege(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     let f = if gobs.len() == 1 {
         gobs[0]
     } else {
-        let Some(f) = super::cards::pick_perm(g, p, "choose", &format!("{WHAT}: sacrifice which Goblin?"), &gobs, Some("cancel"))?
+        let Some(f) = super::cards::pick_perm(
+            g,
+            p,
+            "choose",
+            &format!("{WHAT}: sacrifice which Goblin?"),
+            &gobs,
+            Some("cancel"),
+        )?
         else {
             return Ok(None);
         };
@@ -151,7 +167,14 @@ fn kiki(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if cands.is_empty() {
         return Ok(Some("You control no nonlegendary creature to copy.".into()));
     }
-    let Some(t) = super::cards::pick_perm(g, p, "target", "Kiki-Jiki: copy which nonlegendary creature?", &cands, Some("cancel"))?
+    let Some(t) = super::cards::pick_perm(
+        g,
+        p,
+        "target",
+        "Kiki-Jiki: copy which nonlegendary creature?",
+        &cands,
+        Some("cancel"),
+    )?
     else {
         return Ok(None);
     };
@@ -173,13 +196,16 @@ fn fang(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if cands.is_empty() {
         return Ok(Some("There is no creature to target.".into()));
     }
-    let Some(t) = super::cards::pick_perm(g, p, "target", "Chatterfang: +X/-X to which creature?", &cands, Some("cancel"))?
+    let Some(t) =
+        super::cards::pick_perm(g, p, "target", "Chatterfang: +X/-X to which creature?", &cands, Some("cancel"))?
     else {
         return Ok(None);
     };
     let xs = choices::amount_choices(n);
-    let labels: Vec<String> = xs.iter().map(|x| format!("X = {x} (sacrifice {x} Squirrel{})", if *x == 1 { "" } else { "s" })).collect();
-    let Some(k) = choices::choose(g, p, "choose", "Chatterfang: sacrifice how many Squirrels?", &labels, Some("cancel"), None)?
+    let labels: Vec<String> =
+        xs.iter().map(|x| format!("X = {x} (sacrifice {x} Squirrel{})", if *x == 1 { "" } else { "s" })).collect();
+    let Some(k) =
+        choices::choose(g, p, "choose", "Chatterfang: sacrifice how many Squirrels?", &labels, Some("cancel"), None)?
     else {
         return Ok(None);
     };
@@ -245,7 +271,10 @@ pub const BORROWED: &[&str] = &[
 /// is this hook option (a label from Marvin's `options`) one a borrowed person path replaces?
 pub fn replaced_label(label: &str) -> bool {
     label.starts_with("Marvin (Kiki-Jiki)")
-        || BORROWED.iter().chain(super::marvin_hooks::NAMES.iter()).any(|n| label.starts_with(&format!("Marvin copies {n}:")))
+        || BORROWED
+            .iter()
+            .chain(super::marvin_hooks::NAMES.iter())
+            .any(|n| label.starts_with(&format!("Marvin copies {n}:")))
 }
 
 /// the abilities Marvin, Murderous Mimic (m) has from the creatures p controls that are in `BORROWED`, as the person's
@@ -263,7 +292,10 @@ pub fn marvin_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
             continue;
         }
         let nm = g.db.get(x.cd.unwrap()).name.to_string();
-        if seen.contains(&x.name) || !(BORROWED.contains(&nm.as_str()) || super::marvin_hooks::NAMES.contains(&nm.as_str())) || crate::engine::values::stopped(g, &nm) {
+        if seen.contains(&x.name)
+            || !(BORROWED.contains(&nm.as_str()) || super::marvin_hooks::NAMES.contains(&nm.as_str()))
+            || crate::engine::values::stopped(g, &nm)
+        {
             continue;
         }
         if crate::impls::bulk_white::is_face_down(g, d) {
@@ -273,7 +305,10 @@ pub fn marvin_abilities(g: &Game, p: PlayerId, m: PermId) -> Vec<PermAbility> {
         let mut list: Vec<PermAbility> = match nm.as_str() {
             // "transform Kefka" names the creature that has the ability, Marvin (rule 201.5), which can't transform (701.28c)
             "Kefka, Court Mage // Kefka, Ruler of Ruin" if g.perm(d).data.truthy(crate::state::DataKey::Ruin) => vec![], // Ruler of Ruin has no activated ability
-            "Kefka, Court Mage // Kefka, Ruler of Ruin" => vec![ability("{8}: each opponent sacrifices a permanent of their choice (sorcery speed; Marvin does not transform)", move |g, p, m| super::marvin_hooks::kefka(g, p, m, d))],
+            "Kefka, Court Mage // Kefka, Ruler of Ruin" => vec![ability(
+                "{8}: each opponent sacrifices a permanent of their choice (sorcery speed; Marvin does not transform)",
+                move |g, p, m| super::marvin_hooks::kefka(g, p, m, d),
+            )],
             _ => vec![],
         };
         if list.is_empty() {

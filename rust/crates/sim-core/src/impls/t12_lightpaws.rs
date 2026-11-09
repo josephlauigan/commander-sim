@@ -44,11 +44,11 @@
 //! The deck's answers to removal (`protect`) and wipes (`wipe_response`) are called for every outside deck from
 //! ai/decks.rs; they also cast Shardmage's Rescue (bulk_white::white_protect), which the pool path never used.
 
-use crate::engine::repl;
 use crate::ai::decks::{WipeRule, pay_card, wipe_loss};
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::add_cast_lock;
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::values::{epow, etgh, indestructible, no_sac, protected_from, pval};
 use crate::engine::zones::{Enter, die, draw, enter, leave, max_by};

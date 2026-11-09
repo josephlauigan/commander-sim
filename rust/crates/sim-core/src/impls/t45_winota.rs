@@ -47,12 +47,12 @@
 //! Combo: Rionya, Fire Dancer + Combat Celebrant (a hasty Celebrant copy each combat exerts for another combat:
 //! infinite combats), `COMBOS`, chained in combos::all.
 
-use crate::engine::repl;
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{castable, casts_this_turn, on_cast};
 use crate::engine::control::{Duration, GoadFor, gain_control, goad};
 use crate::engine::life::prevents_damage;
 use crate::engine::mana::{can_pay, pay};
+use crate::engine::repl;
 use crate::engine::stack::{ability_window, counter_window, trigger_window, trigger_window_card};
 use crate::engine::values::{card_name, epow, etgh, has_type, no_sac, pval, untargetable};
 use crate::engine::zones::{Enter, Tokens, die, enter, land_ramp, make_tokens};

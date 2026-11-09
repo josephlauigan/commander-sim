@@ -10,114 +10,114 @@ use crate::hooks::Registry;
 
 pub mod alela;
 pub mod aragorn; // --- aragorn (2026-11-06): Aragorn, the Uniter's four cast triggers
+pub mod bites;
+pub mod blue_cards;
 pub mod breach_line; // --- aragorn-ai (2026-11-06): the Underworld Breach line, restored for every deck
+pub mod bulk_blue;
+pub mod bulk_white;
+pub mod card_models; // --- card models (JD's Partial cards, 10-30)
+pub mod card_models2; // --- card models, part 2 (the pool's Partial cards, 10-31)
+pub mod card_models3; // --- card models, part 3 (the pool's last Partial cards, 10-31)
+pub mod cc_brago; // --- casual combos (brago)
+pub mod cc_teysa; // --- casual combos (teysa)
+pub mod cloud;
 pub mod combos;
 pub mod common;
+pub mod doomsday;
 pub mod fixes;
 pub mod galadriel;
 pub mod garland;
 pub mod garland_cards;
+pub mod garth; // --- garth (2026-11-04): Garth One-Eye
+pub mod generic_paths; // --- generic-paths (2026-11-01): plays only a deleted hand AI offered
+pub mod green_cards;
+pub mod karn;
 pub mod karn_cards;
-pub mod mikaeus_trisk; // --- Mikaeus + Triskelion in the combo catalogue (Sephiroth's loop 0, read for any deck)
-pub mod sephfs;
-pub mod sephfs_cards;
+pub mod karn_engines;
 pub mod kefka;
+pub mod krrik;
+pub mod kuja;
 pub mod lands;
 pub mod legends;
 pub mod marchesa;
+pub mod mikaeus_trisk; // --- Mikaeus + Triskelion in the combo catalogue (Sephiroth's loop 0, read for any deck)
 pub mod mine;
+pub mod model_gaps_a2; // --- model-gaps-a2: Lotho and the other cards the audit rated below Full
+pub mod model_gaps_a4; // --- model-gaps-a4: five pool creatures' activated abilities
+pub mod newcards_b;
 pub mod partials;
 pub mod rules;
 pub mod rules2;
-pub mod t1;
-pub mod t2;
-pub mod t3;
-pub mod t4;
-pub mod t5;
-pub mod doomsday;
-pub mod topdeck;
-pub mod yshtola;
-pub mod bites;
-pub mod green_cards;
-pub mod titania;
+pub mod sephfs;
+pub mod sephfs_cards;
 pub mod sheoldred;
-pub mod krrik;
-pub mod blue_cards;
-pub mod cloud;
+pub mod smaug;
 pub mod sweepers;
-pub mod bulk_blue;
-pub mod bulk_white;
-pub mod t6_lands;
-pub mod t6_legends1;
-pub mod t0_zurgo;
-pub mod t0_stella;
+pub mod t0_anikthea;
 pub mod t0_captain;
 pub mod t0_giada;
-pub mod t0_anikthea;
-pub mod zur;
-pub mod threats;
-pub mod kuja;
-pub mod karn_engines;
-pub mod newcards_b;
-pub mod tymna_cards;
-pub mod tymna_partners;
-pub mod t6_counters;
-pub mod t6_copies;
-pub mod t6_green1;
-pub mod t6_mana;
-pub mod t6_redirects;
-pub mod t6_godo;
-pub mod t6_green2;
+pub mod t0_stella;
+pub mod t0_zurgo;
+pub mod t1;
+pub mod t12_brago_meren; // --- Tiers 1/2 (brago-meren)
+pub mod t12_isshin; // --- Tiers 1/2 (isshin)
+pub mod t12_kaalia_sythis; // --- Tiers 1/2 (kaalia-sythis)
+pub mod t12_lathril;
+pub mod t12_lightpaws; // --- Tiers 1/2 (lightpaws)
+pub mod t12_tatyova_teysa; // --- Tiers 1/2 (tatyova-teysa)
+pub mod t12_windgrace; // --- Tiers 1/2 (windgrace)
+pub mod t2;
+pub mod t3;
 pub mod t3_atraxa;
+pub mod t3_aurelia;
+pub mod t3_korvold;
+pub mod t3_lines; // --- t3 lines
+pub mod t3_marwyn;
+pub mod t4;
+pub mod t45_chulane_kinnan; // --- Tiers 4/5 (chulane-kinnan)
+pub mod t45_edgar; // --- Tiers 4/5 (edgar)
+pub mod t45_heliod_zur; // --- Tiers 4/5 (heliod-zur)
+pub mod t45_krenko; // --- Tiers 4/5 (krenko)
+pub mod t45_miirym; // --- Tiers 4/5 (miirym)
+pub mod t45_prosper;
+pub mod t45_urdragon; // --- Tiers 4/5 (urdragon)
+pub mod t45_urdragon_combos;
+pub mod t45_urza_yawgmoth; // --- Tiers 4/5 (urza-yawgmoth)
+pub mod t45_winota; // --- Tiers 4/5 (winota)
+pub mod t45_yuriko;
+pub mod t5;
+pub mod t6_blue;
+pub mod t6_combos_extra;
+pub mod t6_combos_godo;
+pub mod t6_combos_scion; // --- scion
+pub mod t6_combos_t6;
+pub mod t6_copies;
+pub mod t6_counters;
+pub mod t6_dack;
+pub mod t6_godo;
+pub mod t6_green1;
+pub mod t6_green2;
+pub mod t6_keep;
+pub mod t6_lands;
+pub mod t6_legends1;
 pub mod t6_legends1b;
 pub mod t6_legends2;
-pub mod t6_dack;
-pub mod t6_stax;
-pub mod t6_blue;
-pub mod t6_combos_godo;
-pub mod t6_combos_t6;
-pub mod t6_combos_extra;
+pub mod t6_mana;
 pub mod t6_pieces;
-pub mod t6_plans;
-pub mod t6_keep;
 pub mod t6_plan_godo;
 pub mod t6_plan_sisay;
+pub mod t6_plans;
+pub mod t6_redirects;
 pub mod t6_scion; // --- scion
-pub mod t6_combos_scion; // --- scion
+pub mod t6_stax;
 pub mod t6_thanos; // --- thanos
-pub mod smaug;
-pub mod karn;
-pub mod t3_aurelia;
-pub mod t12_lathril;
-pub mod t3_korvold;
-pub mod t3_marwyn;
-pub mod t45_yuriko;
-pub mod t45_krenko; // --- Tiers 4/5 (krenko)
-pub mod t45_prosper;
-pub mod t45_chulane_kinnan; // --- Tiers 4/5 (chulane-kinnan)
-pub mod t45_winota; // --- Tiers 4/5 (winota)
-pub mod t45_heliod_zur; // --- Tiers 4/5 (heliod-zur)
-pub mod t45_urza_yawgmoth; // --- Tiers 4/5 (urza-yawgmoth)
-pub mod t45_edgar; // --- Tiers 4/5 (edgar)
-pub mod t45_urdragon; // --- Tiers 4/5 (urdragon)
-pub mod t12_isshin; // --- Tiers 1/2 (isshin)
-pub mod t12_lightpaws; // --- Tiers 1/2 (lightpaws)
-pub mod t12_windgrace; // --- Tiers 1/2 (windgrace)
-pub mod t12_tatyova_teysa; // --- Tiers 1/2 (tatyova-teysa)
-pub mod cc_teysa; // --- casual combos (teysa)
-pub mod t12_kaalia_sythis; // --- Tiers 1/2 (kaalia-sythis)
-pub mod t12_brago_meren; // --- Tiers 1/2 (brago-meren)
-pub mod cc_brago; // --- casual combos (brago)
-pub mod t45_miirym; // --- Tiers 4/5 (miirym)
-pub mod t3_lines; // --- t3 lines
-pub mod card_models; // --- card models (JD's Partial cards, 10-30)
-pub mod card_models2; // --- card models, part 2 (the pool's Partial cards, 10-31)
-pub mod card_models3; // --- card models, part 3 (the pool's last Partial cards, 10-31)
-pub mod generic_paths; // --- generic-paths (2026-11-01): plays only a deleted hand AI offered
-pub mod garth; // --- garth (2026-11-04): Garth One-Eye
-pub mod model_gaps_a2; // --- model-gaps-a2: Lotho and the other cards the audit rated below Full
-pub mod model_gaps_a4; // --- model-gaps-a4: five pool creatures' activated abilities
-pub mod t45_urdragon_combos; // --- urdragon-combos: the Ur-Dragon deck's three infinite combos in the catalogue
+pub mod threats;
+pub mod titania;
+pub mod topdeck;
+pub mod tymna_cards;
+pub mod tymna_partners;
+pub mod yshtola;
+pub mod zur; // --- urdragon-combos: the Ur-Dragon deck's three infinite combos in the catalogue
 
 /// every module's card code, registered in Python's import order (cardimpl.load: common, t1, t2, t3, t4, t5, combos,
 /// topdeck, fixes, lands, partials, rules, rules2, mine, marchesa, zur, galadriel, yshtola, alela, legends): a later module's slot

@@ -12,8 +12,8 @@
 //! A copy is `Game::clone` (about 2 µs, where Python's deepcopy took 4 ms). Practice mode's tape (Undo replays a
 //! game's look-ahead decisions instead of searching again) comes with phase 9.
 
-pub use super::tape::{LAST_SCORES, Tape, TapeEntry, TapeSlot};
 use super::hand_key; // --- phase4-hand-off
+pub use super::tape::{LAST_SCORES, Tape, TapeEntry, TapeSlot};
 use super::tape::{Taped, taped};
 use super::{act, brain};
 use crate::flow::{Res, Stop};

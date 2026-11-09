@@ -698,7 +698,10 @@ fn paladin_pt(g: &Game, m: PermId) -> (i32, i32) {
         .perms
         .iter()
         .filter(|&&y| {
-            g.perm(y).on_bf && !g.perm(y).phased && crate::engine::values::card_name(g, y) == Some("Paladin Class") && paladin_level(g, y) >= 2
+            g.perm(y).on_bf
+                && !g.perm(y).phased
+                && crate::engine::values::card_name(g, y) == Some("Paladin Class")
+                && paladin_level(g, y) >= 2
         })
         .count() as i32;
     (n, n)
