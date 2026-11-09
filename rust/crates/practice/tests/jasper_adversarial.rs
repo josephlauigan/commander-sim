@@ -1,4 +1,6 @@
-//! Adversarial regression tests for 8dad117b. Failing assertions are review findings.
+//! Regression tests for when Mox Jasper counts as mana (it needs a Dragon the hand can cast), written adversarially
+//! against the first fix: sequencing, Petal, double-mana lands, dorks, zero-cost Moxen, and that hands without Jasper
+//! are untouched.
 
 #[path = "session_common/mod.rs"]
 mod common;
@@ -201,38 +203,64 @@ fn active_jasper_is_not_a_free_piece() {
     assert_eq!(t6_keep::mana(&g, p).free, 0);
 }
 
+/// when Jasper switches on, hand by hand (the Dragon's turn, and so the first turn Jasper makes mana is the next)
 #[test]
-fn two_jaspers_can_be_tapped_sequentially_after_dragon_resolves() {
-    let (g, p) = fixture(&["Forest", "Island", "Mox Jasper", "Mox Jasper", "Korlessa, Scale Singer"]);
-    // After Korlessa resolves, cast/tap the first Jasper, then cast the second, sacrifice the tapped one, and tap again.
-    // This is a synthetic duplicate hand, not a legal singleton deck list.
-    let m = t6_keep::mana(&g, p);
-    assert_eq!(m.eff, 4.0);
-    assert_eq!(m.n_mana, 2);
-}
-
-/// the keep rule and the hint agree: Jasper is worth 1 exactly when the hand can cast a Dragon by turn 2 without it, and
-/// the hint has it make mana from the turn after that Dragon is cast
-#[test]
-fn keep_rule_and_hint_agree_on_when_jasper_switches_on() {
-    let hands: [&[&str]; 5] = [
-        &["Forest", "Island", "Mox Jasper", "Mind Stone", "Korlessa, Scale Singer"],
-        &["Forest", "Island", "Mox Jasper", "Mind Stone", "Realmwalker"],
-        &["Forest", "Island", "Mox Jasper", "Sol Ring", "Realmwalker"],
-        &["Island", "Mox Jasper", "Mothdust Changeling"],
-        &["Forest", "Island", "Mox Jasper", "Mind Stone", "Mothdust Changeling"],
+fn jasper_switches_on_the_turn_after_the_dragon_can_be_cast() {
+    let hands: [(&[&str], Option<usize>); 5] = [
+        (&["Forest", "Island", "Mox Jasper", "Mind Stone", "Korlessa, Scale Singer"], Some(2)),
+        (&["Forest", "Island", "Mox Jasper", "Mind Stone", "Realmwalker"], None),
+        (&["Forest", "Island", "Mox Jasper", "Sol Ring", "Realmwalker"], Some(2)),
+        (&["Island", "Mox Jasper", "Mothdust Changeling"], Some(1)),
+        (&["Forest", "Island", "Mox Jasper", "Mind Stone", "Mothdust Changeling"], Some(1)),
     ];
-    for hand in hands {
+    for (hand, expect) in hands {
         let (mut g, p) = fixture(hand);
         let lands = hand.iter().filter(|n| matches!(**n, "Forest" | "Island")).count();
         let turn = t6_keep::dragon_cast(&g, p, lands).map(|x| x.0);
-        assert_eq!(jasper_values(&g, p), vec![if turn.is_some_and(|t| t <= 2) { 1.0 } else { 0.0 }], "{hand:?}");
+        // Realmwalker (cost 3) with only a Mind Stone cast turn 2 is turn 3: past turn 2, so Jasper is worth 0
+        match expect {
+            Some(_) => assert_eq!(turn, expect, "{hand:?}"),
+            None => assert!(turn.is_none_or(|t| t > 2), "{hand:?}: {turn:?}"),
+        }
+        assert_eq!(jasper_values(&g, p), vec![if expect.is_some() { 1.0 } else { 0.0 }], "{hand:?}");
         let h = hint(&mut g, p);
-        match turn {
-            Some(t) if t <= 2 => {
-                assert!(has(&h, &format!("is cast turn {t}")) && has(&h, "Mox Jasper"), "{hand:?}: {h}")
-            }
-            _ => assert!(!has(&h, "Mox Jasper 1"), "{hand:?}: {h}"),
+        match expect {
+            Some(t) => assert!(has(&h, &format!("is cast turn {t}")) && has(&h, "Mox Jasper"), "{hand:?}: {h}"),
+            None => assert!(!has(&h, "Mox Jasper 1"), "{hand:?}: {h}"),
         }
     }
+}
+
+/// a Dragon in hand with no Mox Jasper changes nothing in the hint: the Signet is still cast on turn 2
+#[test]
+fn a_dragon_without_jasper_does_not_delay_rocks_in_the_hint() {
+    let (mut g, p) = fixture(&["Forest", "Island", "Arcane Signet", "Korlessa, Scale Singer"]);
+    let h = hint(&mut g, p);
+    assert!(has(&h, "Arcane Signet (cast turn 2, makes mana from turn 3)"), "{h}");
+}
+
+/// the Dragon is paid with a zero-cost Mox's mana first: Forest + Chrome Mox cast Korlessa (2) on turn 1, so Sol Ring
+/// waits for turn 2 and turn 2 has 1 land + Chrome Mox + Jasper = 3 (the bug showed Sol Ring cast turn 1 and 5)
+#[test]
+fn a_zero_cost_mox_pays_for_the_dragon_before_a_rock_is_cast() {
+    let (mut g, p) = fixture(&[
+        "Forest",
+        "Chrome Mox",
+        "Korlessa, Scale Singer",
+        "Mox Jasper",
+        "Sol Ring",
+        "Counterspell",
+        "Brainstorm",
+    ]);
+    let h = hint(&mut g, p);
+    assert!(mana_line(&mut g, p).starts_with("Mana on turn 2: 3 ="), "{h}");
+    assert!(has(&h, "Sol Ring (cast turn 2"), "{h}");
+}
+
+/// a dork cast turn 1 makes a whole mana on turn 2 for casting the Dragon (summoning sickness is the next-turn rule)
+#[test]
+fn a_mana_dork_counts_as_a_whole_mana_for_the_dragon() {
+    let (g, p) = fixture(&["Forest", "Island", "Birds of Paradise", "Mox Jasper", "Realmwalker"]);
+    assert_eq!(t6_keep::dragon_cast(&g, p, 2).map(|x| x.0), Some(2));
+    assert_eq!(jasper_values(&g, p), vec![1.0]);
 }

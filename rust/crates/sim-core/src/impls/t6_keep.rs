@@ -113,7 +113,12 @@ pub fn dragon_cast(g: &Game, p: PlayerId, cap: usize) -> Option<(usize, CardId)>
     let mut pieces: Vec<(f64, f64)> = all
         .iter()
         .filter(|&&c| !matches!(nm(g, c), "Mox Jasper" | "Lotus Petal"))
-        .map(|&c| (g.db.get(c).cmc as f64, piece_value(g, p, c, lands, spells, starts).0))
+        .map(|&c| {
+            let v = piece_value(g, p, c, lands, spells, starts).0;
+            // a dork's summoning sickness is the "from the next turn" below, so it is a whole mana here (the table's 0.8
+            // would count it twice and never reach a whole cost)
+            (g.db.get(c).cmc as f64, if v > 0.0 && g.db.get(c).tag(Tag::Dork) { 1.0 } else { v })
+        })
         .filter(|x| x.1 > 0.0)
         .collect();
     pieces.sort_by(|a, b| a.0.total_cmp(&b.0).then(b.1.total_cmp(&a.1)));

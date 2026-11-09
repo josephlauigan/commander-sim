@@ -608,7 +608,7 @@ impl Curve {
             pv.iter().filter(|x| x.1 > 0.0 && !jasper(x.0)).map(|&(c, v)| (c, v, g.db.get(c).cmc as usize)).collect();
         // Mox Jasper is not mana until a Dragon is cast: the turn the hand can cast one (its cost leaves that turn's
         // mana, and Jasper makes mana from the next turn)
-        let dragon = t6_keep::dragon_cast(g, p, cap);
+        let dragon = if pv.iter().any(|x| jasper(x.0)) { t6_keep::dragon_cast(g, p, cap) } else { None };
         left.sort_by(|a, b| a.2.cmp(&b.2).then(b.1.total_cmp(&a.1)));
         let mut played: Vec<Played> = vec![];
         let mut mana = vec![];
@@ -616,8 +616,11 @@ impl Curve {
             let lands = t.min(cap);
             let ex = if lands >= 1 { extra } else { 0.0 };
             let mut rem = lands as f64 + ex + played.iter().filter(|x| x.from <= t).map(|x| x.v).sum::<f64>();
+            // the Dragon's cost leaves this turn's mana after the zero-cost pieces have added theirs (they are first in
+            // `left`, which is sorted by cost)
+            let mut reserve = None;
             if let Some((dt, dc)) = dragon.filter(|x| x.0 == t) {
-                rem = (rem - g.db.get(dc).cmc as f64).max(0.0);
+                reserve = Some(g.db.get(dc).cmc as f64);
                 for &(c, _) in pv.iter().filter(|x| jasper(x.0)) {
                     played.push(Played { card: c, v: 1.0, cast: dt, from: dt + 1, dragon: Some(dc) });
                 }
@@ -625,6 +628,11 @@ impl Curve {
             let mut i = 0;
             while i < left.len() {
                 let (c, v, cmc) = left[i];
+                if cmc > 0 {
+                    if let Some(cost) = reserve.take() {
+                        rem = (rem - cost).max(0.0);
+                    }
+                }
                 if cmc as f64 <= rem + 1e-9 {
                     rem -= cmc as f64;
                     let from = if cmc == 0 { t } else { t + 1 };
