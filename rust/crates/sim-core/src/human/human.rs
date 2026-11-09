@@ -581,7 +581,8 @@ pub fn apply(g: &mut Game, p: PlayerId, act: &Value) -> Res<Option<String>> {
             return Ok(Some(why));
         }
         let pl = g.player(p);
-        if !(pl.yawg && pl.yawg_gy.contains(&c)) {
+        // Muldrotha's land for the turn is used only when nothing else lets you play it (Yawgmoth's Will, Crucible)
+        if !(pl.yawg && pl.yawg_gy.contains(&c)) && !crate::cardcode::lands_from_gy(g, p) {
             crate::cardcode::muld_mark(g, p, "L")?; // Muldrotha
         }
         let pl = g.player_mut(p);

@@ -651,13 +651,37 @@ pub fn check_land_exile(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
     None
 }
 
+/// Why p can't play the land c from their graveyard now (Yawgmoth's Will; Crucible of Worlds, Ramunap Excavator, Ancient
+/// Greenwarden ...: "you may play lands from your graveyard"; Muldrotha's land a turn), or None.
 pub fn check_land_gy(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
     let pl = g.player(p);
     if !pl.gy.contains(&c) || !g.db.get(c).land {
         return Some(format!("{} isn't a land in your graveyard.", nm(g, c)));
     }
-    if !(pl.yawg && pl.yawg_gy.contains(&c)) && !crate::cardcode::muld_types(g, p, c) {
+    if !(pl.yawg && pl.yawg_gy.contains(&c))
+        && !crate::cardcode::lands_from_gy(g, p)
+        && !crate::cardcode::muld_types(g, p, c)
+    {
         return Some("You can't play lands from your graveyard right now.".into());
+    }
+    if let Some(why) = sorcery_timing(g, p) {
+        return Some(why.replace("do that", "play a land"));
+    }
+    if pl.lands_played as i32 >= land_drops(g, p) {
+        return Some("You've already played a land this turn.".into());
+    }
+    None
+}
+
+/// Why p can't play the land c from the top of their library now (Oracle of Mul Daya: "you may play lands from the top
+/// of your library"; a land drop, your main phase), or None.
+pub fn check_land_top(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
+    let pl = g.player(p);
+    if pl.library.last() != Some(&c) || !g.db.get(c).land {
+        return Some(format!("{} isn't a land on top of your library.", nm(g, c)));
+    }
+    if !crate::cardcode::lands_from_top(g, p) {
+        return Some("You can't play lands from the top of your library right now.".into());
     }
     if let Some(why) = sorcery_timing(g, p) {
         return Some(why.replace("do that", "play a land"));
