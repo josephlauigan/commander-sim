@@ -46,6 +46,10 @@ pub struct DeckT6 {
     pub away: Counter<String>,
     /// the tutors held at those decisions when the deck passed (`spah|`)
     pub away_held: Counter<String>,
+    /// --- thrasios-tutor-measure: those held tutors by kind (`spahk|`, per decision) and the games each was held in
+    /// at such a pass (`spahg|`)
+    pub away_held_kind: Counter<String>,
+    pub away_held_games: Counter<String>,
     /// sums of the `mn|...` mana stats (see `sim_core::t6stats`)
     pub mn: Counter<String>,
     /// --- doomsday-why: the `dd|...` Doomsday statistics (`sim_core::impls::doomsday::why_stat`, `tutor_stat`)
@@ -171,6 +175,10 @@ impl T6Tally {
                 }
                 if let Some(l) = k.strip_prefix("spah|") {
                     d.away_held.add(l.to_string(), v);
+                } else if let Some(l) = k.strip_prefix("spahk|") {
+                    d.away_held_kind.add(l.to_string(), v);
+                } else if let Some(l) = k.strip_prefix("spahg|") {
+                    d.away_held_games.add(l.to_string(), v);
                 } else if let Some(l) = k.strip_prefix("spa|") {
                     d.away.add(l.to_string(), v);
                 }
@@ -355,7 +363,14 @@ fn render_speed(d: &DeckT6) -> String {
     if !d.reach_r.is_empty() {
         let lbl = |s: &str| s.to_string();
         o += &format!("      while one tutor away (not ready) it chose: {}\n", top(&d.away, 8, &lbl));
-        o += &format!("      tutors held when it passed then: {}\n", top(&d.away_held, 8, &lbl));
+        o += &format!("      tutors held when it passed then (decisions): {}\n", top(&d.away_held, 8, &lbl));
+        if d.away_held_kind.total() > 0 {
+            o += &format!(
+                "        by kind (decisions): {}; games held in: {}\n",
+                top(&d.away_held_kind, 3, &lbl),
+                top(&d.away_held_games, 8, &lbl)
+            );
+        }
     }
     o
 }
@@ -686,6 +701,9 @@ mod tests {
                 g.players[1].stats.insert("sp|go", go);
             }
             g.players[1].stats.insert("spx|Cast Sol Ring", 2);
+            g.players[1].stats.insert("spah|Grim Tutor", 3);
+            g.players[1].stats.insert("spahk|sorcery to hand", 3);
+            g.players[1].stats.insert("spahg|Grim Tutor", 1);
             t.add(&g);
         }
         let d = &t.decks["b"];
@@ -695,6 +713,8 @@ mod tests {
         assert!(text.contains("went for a line 4.5"), "{text}");
         assert!(text.contains("went for it later in 1 of 3 ready games"), "{text}");
         assert!(text.contains("Cast Sol Ring 6"), "{text}");
+        assert!(text.contains("tutors held when it passed then (decisions): Grim Tutor 9"), "{text}");
+        assert!(text.contains("by kind (decisions): sorcery to hand 9; games held in: Grim Tutor 3"), "{text}");
     }
 
     #[test]
