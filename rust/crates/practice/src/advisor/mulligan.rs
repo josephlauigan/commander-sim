@@ -491,6 +491,7 @@ fn why_no_mana(g: &Game, c: CardId, lands: usize, spells: usize) -> &'static str
         "Mox Diamond" => "needs a second land to discard",
         "Chrome Mox" if spells < 2 => "needs two other spells, one to imprint",
         "Mox Opal" => "needs three artifacts for metalcraft",
+        "Mox Jasper" => "needs a Dragon you can cast first",
         "Lion's Eye Diamond" => "only fuels one spell",
         _ if d.cmc == 1 && lands < 1 => "needs a land to cast it",
         _ if d.cmc == 2 && lands < 2 => "needs two lands to cast it",

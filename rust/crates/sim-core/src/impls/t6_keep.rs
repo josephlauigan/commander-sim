@@ -10,6 +10,7 @@
 //! - a two-mana rock (Talisman, Signet): 1 with two lands, else 0;
 //! - Mox Diamond: needs a second land to discard, and then only brings the mana a turn earlier: 0.5 with two lands;
 //! - Chrome Mox: 1 when two other non-land, non-mana cards can imprint one of them (a spare), else 0;
+//! - Mox Jasper: 1 when the hand holds a Dragon creature its other mana can cast by turn 2, else 0;
 //! - Lion's Eye Diamond, rituals and spirit guides: 0 (they only fuel a spell).
 
 use crate::cards::Colors;
@@ -77,12 +78,31 @@ fn piece_value(g: &Game, p: PlayerId, c: CardId, lands: usize, spells: usize, st
         // needs a legendary creature or planeswalker: the Rograkh decks cast their {0} commander first
         "Mox Amber" => (if g.player(p).key.starts_with("rograkh") { 1.0 } else { 0.5 }, false),
         "Mox Opal" => (0.0, false), // metalcraft: three artifacts
+        // only while you control a Dragon: counts when the hand holds a Dragon its other mana can cast by turn 2
+        "Mox Jasper" => (if jasper_has_dragon(g, p, lands, spells, starts) { 1.0 } else { 0.0 }, false),
         "Sol Ring" => (if lands >= 1 || starts { 2.0 } else { 0.0 }, false),
         _ if d.cmc == 0 => (1.0, true),
         _ if d.cmc == 1 => (if lands >= 1 { if d.tag(Tag::Dork) { 0.8 } else { 1.0 } } else { 0.0 }, false),
         _ if d.cmc == 2 => (if lands >= 2 { if d.tag(Tag::Dork) { 0.8 } else { 1.0 } } else { 0.0 }, false),
         _ => (0.0, false),
     }
+}
+
+/// can this hand cast a Dragon creature (a changeling counts) by turn 2 without Mox Jasper? Its mana is at most two
+/// lands (one a turn) plus what the other mana pieces make.
+fn jasper_has_dragon(g: &Game, p: PlayerId, lands: usize, spells: usize, starts: bool) -> bool {
+    let hand = &g.player(p).hand;
+    let others: f64 = hand
+        .iter()
+        .copied()
+        .filter(|&c| is_piece(g, c) && nm(g, c) != "Mox Jasper")
+        .map(|c| piece_value(g, p, c, lands, spells, starts).0)
+        .sum();
+    let mana = lands.min(2) as f64 + others;
+    hand.iter().any(|&c| {
+        let d = g.db.get(c);
+        d.creature && crate::impls::t45_urdragon::dragon_card(g, c) && d.cmc as f64 <= mana + 1e-9
+    })
 }
 
 /// the hand's mana pieces with what each makes by turn 2 (0.0: nothing, from this hand), for explaining a hand

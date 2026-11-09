@@ -463,3 +463,31 @@ fn a_hand_no_row_fits_says_why_it_is_kept() {
     let rule = &lines(&h)[0];
     assert!(rule.contains("keep a hand,") && rule.contains("send one back") && rule.contains("so keep it"), "{rule}");
 }
+
+/// Mox Jasper makes mana only while you control a Dragon: with a Dragon the hand cannot cast (Scion of Draco, 9) it
+/// makes nothing, so turn 2 has 2 lands and Mind Stone (cost 2) is cast on turn 2, not turn 1
+#[test]
+fn mox_jasper_makes_no_mana_without_a_dragon_the_hand_can_cast() {
+    let (mut g, p) = game_with(
+        "thanos",
+        &["Plateau", "Taiga", "Mox Jasper", "Mind Stone", "Scion of Draco", "Vampiric Tutor", "Swords to Plowshares"],
+    );
+    let h = hint(&mut g, p);
+    let d = lines(&h);
+    assert!(d.iter().any(|l| l.starts_with("Mana on turn 2: 2 = 2 lands")), "{h}");
+    assert!(has(&h, "Mox Jasper (needs a Dragon you can cast first)"), "{h}");
+    assert!(has(&h, "Mind Stone (cast turn 2, makes mana from turn 3)"), "{h}");
+    assert!(!d.iter().any(|l| l.contains("Mind Stone 1 (cast turn 1)")), "{h}");
+}
+
+/// ... and counts as a mana when the hand can cast a Dragon (2 lands + Sol Ring + Mana Vault pay for Thundermaw Hellkite, cost 5)
+#[test]
+fn mox_jasper_counts_when_the_hand_can_cast_a_dragon() {
+    let (mut g, p) = game_with(
+        "thanos",
+        &["Plateau", "Taiga", "Mox Jasper", "Sol Ring", "Mana Vault", "Thundermaw Hellkite", "Vampiric Tutor"],
+    );
+    let h = hint(&mut g, p);
+    assert!(!has(&h, "Mox Jasper (needs a Dragon"), "{h}");
+    assert!(lines(&h).iter().any(|l| l.contains("Mox Jasper 1")), "{h}");
+}
