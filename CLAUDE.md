@@ -21,22 +21,63 @@ committing, pushing, opening PRs, spawning agents and running builds, tests or s
 questions, or approving one step, is not approval to start the rest. If the plan changes, ask again. Read-only
 investigation needs no approval: reading files, `git log`/`diff`/`fetch`, `grep`, `cardgen audit`. (JD, 2026-11-04.)
 
-## Models
+## Models and routing
 
-- The main agent runs on **Opus 5.5** (`claude-opus-5-5`), set in `.claude/settings.json`.
-- **Every subagent runs on Sonnet 5.5** (`claude-sonnet-5-5`), set by `CLAUDE_CODE_SUBAGENT_MODEL` in the same file.
-  Don't override it: leave the Agent tool's `model` unset (or pass `"sonnet"`).
-- **Every subagent runs at high effort** (JD, 2026-11-01): pass `effort: "high"` on every Agent call, workflow
-  agents included. No setting does this for subagents alone (`CLAUDE_CODE_EFFORT_LEVEL` would also change the main
-  session), so it goes on each call.
-- **Pass `model: "sonnet"` on every Agent call too** (JD, 2026-11-01): `CLAUDE_CODE_SUBAGENT_MODEL` loads only in
-  sessions started inside `commander-sim/`; a session started in a parent folder otherwise gives its agents the main
-  model (Opus).
-- **An agent is open no longer than its work needs** (JD, 2026-11-01: "My usage is completely getting eaten up"). No
-  agent waits on sims or long builds: an agent writes code or a queue script and stops; the coordinator runs the
-  queue as a background script with a watcher on its "all done" line, and a new short agent reads the outputs and
-  writes the results. An agent whose work is done or blocked reports and ends; resume it only for a short follow-up.
-  Never keep an agent open as a monitor.
+This follows JD's global model organization and routing rules (`~/.claude/CLAUDE.md`, `~/.claude/ROUTING.md`; JD,
+2026-11-08). The essentials are repeated here so sessions without those files (cloud, other machines) follow them
+too. **Routing decides who does the work, never that work may start:** the approval rule above always applies.
+
+**Roles**
+- **Sonnet 5.5 (main agent, coordinator)**: `claude-sonnet-5-5`, high effort, set in `.claude/settings.json` (effort in
+  `~/.claude/settings.json`). Plans, routes, writes handoffs, implements scoped work, checks every result, talks to JD.
+- **Opus 5.5 (advisor, final reviewer)**: an Agent call with `model: "opus"`, `effort: "high"` (xhigh for
+  architecture and root-cause), one short consult that ends when it answers. Send it the code, files and evidence,
+  not your conclusion.
+- **Haiku 5.5 (scout, clerk)**: Agent calls with `model: "haiku"`, `effort: "low"`: searching, grepping,
+  `cardgen audit`, file reads, legality and colour-identity lookups, summarizing sim output, one-file mechanical edits
+  with an exact spec. No card modelling, rules judgements or deck advice. Returns paths, lines, snippets and counts,
+  not conclusions. Sonnet checks every Haiku result and diff (open the cited files and lines, re-run the key search
+  or lookup) and never passes it on unchecked.
+- **GPT-6.1 Sol (Codex, herdr worker)**: long run → fail → fix loops with a checkable finish condition (tests, builds,
+  difftests, engine debugging, bisects), competing attempts on a bug Sonnet failed twice, adversarial tests against
+  Sonnet's card and engine code. Effort: medium; high for debugging and reviews; xhigh/max for competing attempts on
+  hard bugs.
+- **Every other subagent: Sonnet 5.5 at high effort**: pass `model: "sonnet"` and `effort: "high"` on every other Agent
+  call, workflow agents included. `CLAUDE_CODE_SUBAGENT_MODEL` (same file) is only the default and loads only in
+  sessions started inside `commander-sim/`, so the explicit `model` is still needed.
+
+**Decision procedure** (first match wins): (1) irreversible or high blast radius → Opus approves the plan, JD signs
+off; (2) ambiguous requirements, a design trade-off, competing options or agents disagreeing → Opus first, then
+re-route the clarified task; (3) read-only "where / what / how many" → Haiku; (4) mechanical, exact spec, one file,
+small diff → Haiku; (5) many run/fail/fix iterations with a machine-checkable finish → Sol; (6) everything else →
+Sonnet. A task that fits nothing is under-specified: write its finish condition first.
+
+**Consult Opus** for: a plan, before it goes to JD; ambiguous or conflicting requirements; the design of a tricky or
+cross-cutting change before building it; a recommendation JD will act on; surprising or conflicting evidence;
+accepting any limitation or "out of scope"; Sonnet and Sol disagreeing; a worker failing the same task twice; changes
+to rule or config files; declaring a multi-step task done; and the final review of every diff. In this repository
+also:
+- deck swap, cut and buy proposals, and package adoption (it reads the swap breakdown, not just the `delta` line);
+- surprising sim deltas, regressions against the recorded baseline, numbers that contradict `FINDINGS.md`;
+- any card left below Full, before it is put to JD;
+- modelling a card with tricky Oracle text (replacement effects, layers, stack timing) before building it.
+Not for routine edits, status updates, searches or log reading.
+
+**Review chain**: Opus is the final reviewer of every change, not only on disputes. Haiku's work → Sonnet → Opus;
+Sonnet's → Sol (adversarial tests) → Opus; Sol's → Sonnet → Opus; high-risk → Opus → JD. Then Sonnet re-runs the
+checks itself before merging (next section). No agent is the last check on its own work. Escalation: Haiku fails →
+Sonnet; Sonnet fails twice → Sol competing attempt; both fail → Opus root-cause; Opus unsure → JD.
+
+**Handoffs** state GOAL, SCOPE (files allowed to change), DONE WHEN (a command and its expected result), CONSTRAINTS
+(minimal diff, no new deps without asking, no destructive git), and end with "Write your results to
+/tmp/handoff/<name>.md and reply with only that path." Never give two workers overlapping files.
+
+- **An agent is open no longer than its work needs** (JD, 2026-11-01: "My usage is completely getting eaten up"). A
+  Sol worker's loop is its work; it ends when its finish condition is met or it is blocked. **Sims stay with the
+  coordinator** (JD, 2026-11-08): no agent, Sol included, runs deck sims or waits on them. An agent writes code or a
+  queue script and stops; the coordinator runs the queue as a background script with a watcher on its "all done"
+  line, and a new short agent reads the outputs and writes the results. An agent whose work is done or blocked
+  reports and ends; resume it only for a short follow-up. Never keep an agent open as a monitor.
 
 ## Checking subagents' work
 
@@ -62,12 +103,6 @@ systemd-run --user --scope -q -p MemoryMax=24G -p MemorySwapMax=0 <command>
 ```
 
 Exit code 137 means the cap was hit: treat it as a memory bug, not a flake.
-
-## No Python
-
-Never run Python here, not even a version check or a one-liner: use `jq`, shell tools, `cardgen`, `commander-sim` or a
-Rust test or example. A PreToolUse hook (`.claude/hooks/no-python.sh`, wired in `.claude/settings.json`) refuses any
-shell command that starts with `python`, `python3`, `pip`, `pipx` or `uv`, in every session and subagent.
 
 ## Opponent tiers
 
