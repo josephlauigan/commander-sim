@@ -48,6 +48,26 @@ a new session or for delegated work that the user explicitly requests, route wor
 - Prefer completing existing work without additional subagents when delegation would duplicate context or review.
 - Keep every delegated assignment narrowly scoped and end the subagent when its assigned work is done or blocked.
 
+## Working as a herdr worker under Claude
+
+When a Claude coordinator starts this session as a herdr worker (JD, 2026-11-08), the coordinator is Sonnet 5.5, with
+Opus 5.5 as advisor and final reviewer and Haiku 5.5 for searches and lookups; the routing is in `CLAUDE.md`
+("Models and routing"). Codex's roles there:
+
+- **Autonomous worker**: long run → fail → fix loops with a checkable finish condition (tests, builds, difftests,
+  engine debugging, bisects), competing attempts on a bug the coordinator failed twice, large mechanical migrations.
+  The loop is the work: end when the finish condition is met or you are blocked. Deck sims stay with the
+  coordinator: don't run them or wait on them.
+- **Adversarial reviewer**: write tests designed to break the coordinator's diff, run them, and report real failures.
+- Keep to the handoff contract in the prompt: GOAL, SCOPE (only those files change), DONE WHEN (command and expected
+  result), CONSTRAINTS (minimal diff; do not refactor outside scope; no new deps without asking; no destructive git).
+  Write results to the handoff file the prompt names (`/tmp/handoff/<name>.md`, sections Summary / Changes /
+  Verification run / Open questions) and reply with only that path.
+- Your diff is reviewed by the coordinator and then by Opus before it merges; you are never the final check on your
+  own work.
+- Reasoning effort: medium by default, high for debugging and reviews, xhigh/max for competing attempts on hard bugs.
+- The approval rule still applies: the coordinator's handoff states that JD approved the task.
+
 ## Non-negotiable rules
 
 - Ask for approval before starting work. Present the plan (what will change, which branches or worktrees, which
@@ -56,8 +76,6 @@ a new session or for delegated work that the user explicitly requests, route wor
   simulations. Answering the plan's open questions, or approving one step, is not approval to start the rest; if
   the plan changes, ask again. Read-only investigation (reading files, `git log`/`diff`/`fetch`, searches,
   `cardgen audit`) needs no approval. (User, 2026-11-04.)
-- Do not run Python, Python package managers, or Python one-liners in this repository. Do not introduce new Python
-  tooling. Use Rust programs, Rust tests/examples, `jq`, or shell tools instead.
 - Run builds, tests, Rust examples, and simulations through the repository's memory-capped commands when possible.
   The root `Makefile` applies a 24 GiB `systemd-run` cap where systemd is available and runs directly on macOS. Exit
   code 137 is a memory failure, not a flaky test.

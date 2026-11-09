@@ -184,7 +184,6 @@ Unmodeled. Details: [`documents/cards.md`](documents/cards.md) and
 
 [`CLAUDE.md`](CLAUDE.md) is the rule book for Claude Code sessions here. In brief:
 
-- No Python, in any form; a hook refuses it.
 - Run every sim, test and example under the memory cap
   (`systemd-run --user --scope -q -p MemoryMax=24G -p MemorySwapMax=0 <command>`); exit code 137 means it was hit.
 - The loose profile only. Each of JD's decks only against its own tiers.
