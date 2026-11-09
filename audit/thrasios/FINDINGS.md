@@ -8,6 +8,37 @@ its first sim is the baseline below. The findings of the previous list (t5, Basa
 Monolith + Rings + Ballista deck with attack taxes) are in `FINDINGS-old-list.md`, and the retired Thanos turbo list's
 (t6) in `audit/thanos/FINDINGS-old-list.md`.
 
+## 2026-11-08: why it sits one tutor away (branch thrasios-tutor-measure; main d6a86cb7; look-ahead, loose, seed 500000, t6)
+Why: the 11-08 baseline read "one tutor away 61%, ready 42%" with tutors held at passes (Walking Ballista 1,565, Vampiric
+807, Mystical 442), which looked like the deck sitting on its tutors. JD asked to look into it.
+- **Measurement bug, fixed (stats only):** Walking Ballista carries the `xtutor` tag, and the speed measure counted any
+  tagged card the planner doesn't model as a tutor, so Oracle + Ballista in hand was "one tutor away". Now a permanent
+  that searches nothing is no tutor (`combos::tutor_for_piece`; tests in `tests/tutor_measure.rs`). The re-run
+  (10,000 games) is identical in play: **34.5%** (33.6-35.5), 3,454 wins, 4,305 combo tries, as on 11-08.
+  **Corrected: one tutor away 56% of games (median round 5), ready 42% (round 6): 44% of games never get within one
+  tutor.** Raw: `audit/thrasios/2026-11-08-tutor-measure/baseline.txt`.
+- **Held tutors are mostly correct passes.** By kind (main-phase pass decisions): instant or to the top 1,817, sorcery to
+  hand 402. Games each was held in: Vampiric 331, Mystical 191, Worldly 153, Eladamri's Call 72, Beseech 66, Diabolic
+  Intent 60, Grim 50, Imperial Seal 48 (of 10,000). An instant tutor is kept for the end-of-turn window by design
+  (`ai::planner`), and a tutor to the top can't win this turn. In 300 traced games the sorcery-to-hand passes were
+  unaffordable this turn (Grim Tutor into Ad Nauseam with 6 mana) or followed by the cast later the same turn (Imperial
+  Seal after combat). Not a lever.
+- **Oracle line stops at step 2 with no counter (bug, not fixed):** of 35 Oracle-line step-2 stops in the 300 traces, 30
+  were a named counter on Consultation / Pact (Swan Song, Fierce Guardianship, Mental Misstep, Flusterstorm, An Offer
+  You Can't Refuse, Force of Negation, Dispel), 5 were not: 2 Thrasios, 3 Rograkh/Silas. In both Thrasios games
+  Thassa's Oracle resolved and the exile spell then had no {B} left (game 169: 2 mana left, Swan Song payable,
+  Consultation not; game 149: after a countered Silence, 3 mana and no black). The line checks the total cost, then
+  pays Oracle's {U}{U} alone (`t6_combos_extra::cast_hand` -> `mana::pay`, which keeps the scarcest colour but does not
+  look ahead to the {B}). About 0.7% of games (77 in 10,000 in the report); each is a wasted Oracle.
+- **Cavern of Souls names Human, not Wizard (AI gap, not fixed):** the AI's Cavern takes the deck's most common creature
+  type (`mine::territory_type`): Human 7, Wizard 3. The guide says Wizard, for an uncounterable Oracle (Force of Will,
+  Pact of Negation, red blasts) and coloured mana for it. Seen in game 58: Dack's Chalice of the Void on 2, Cavern on the
+  battlefield, 9 mana, Oracle and Consultation in hand, and Oracle "not castable"; the AI's Chalice check
+  (`cast::ai_cast_countered`) does not count Cavern either.
+- **What this leaves:** the gap is the 44% of games that never get close (game 0, a typical one: two lands that make no
+  {G}, no commander cast, 7-8 cards held, Dack wins turn 4). That is the next thing to measure.
+  Traces: scratch only (300 games, `--trace N`), not kept.
+
 ## 2026-11-08: re-measure after the mana-colour fixes (#305, #308; main 502f7ddc; look-ahead, loose, seed 500000, t6)
 Why: #305 (rituals made mana of any colour; Kinnan + Basalt made coloured mana; Carpet of Flowers and Aetherspark made
 every colour) and #308 (one source of several mana paid any colour: Lotus Petal, Signets, Karoo lands) fixed engine
