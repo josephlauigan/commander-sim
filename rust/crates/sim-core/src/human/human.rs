@@ -350,7 +350,7 @@ fn respond_loop(g: &mut Game, q: PlayerId, prompt: &str, spell: Option<CardId>, 
         }
         if do_of(&act) == "cast"
             && !g.stack.is_empty()
-            && !matches!(act.get("zone").and_then(Value::as_str), Some("cmd" | "ex" | "gy"))
+            && !matches!(act.get("zone").and_then(Value::as_str), Some("cmd" | "ex" | "gy" | "warp"))
         {
             if let Some(c) = hand_card(g, q, &act) {
                 // protection the AI plays through its own code: the person's version (`human::protect`)
@@ -581,7 +581,8 @@ pub fn apply(g: &mut Game, p: PlayerId, act: &Value) -> Res<Option<String>> {
             return Ok(Some(why));
         }
         let pl = g.player(p);
-        if !(pl.yawg && pl.yawg_gy.contains(&c)) {
+        // Muldrotha's land for the turn is used only when nothing else lets you play it (Yawgmoth's Will, Crucible)
+        if !(pl.yawg && pl.yawg_gy.contains(&c)) && !crate::cardcode::lands_from_gy(g, p) {
             crate::cardcode::muld_mark(g, p, "L")?; // Muldrotha
         }
         let pl = g.player_mut(p);
@@ -605,6 +606,30 @@ pub fn apply(g: &mut Game, p: PlayerId, act: &Value) -> Res<Option<String>> {
             return Ok(Some(format!("{} has nothing to counter right now.", card_name(g, c))));
         }
         return cast(g, p, c, "ex");
+    }
+    if d == "cast" && zone == Some("warp") {
+        // a warped card in your exile, cast for its mana cost on a later turn (`card` is the card's id)
+        let c = act.get("card").and_then(Value::as_u64).map(|i| CardId(i as u16));
+        let Some(c) = c.filter(|c| g.player(p).exile.contains(c)) else {
+            return Ok(Some("There is no such card in your exile.".into()));
+        };
+        if let Some(why) = legal::check_cast_warp(g, p, c) {
+            return Ok(Some(why));
+        }
+        return cast(g, p, c, "warp");
+    }
+    if d == "land" && zone == Some("top") {
+        // the top card of your library played as a land (Oracle of Mul Daya, Courser of Kruphix, The Reality Chip)
+        let Some(c) = g.player(p).library.last().copied() else {
+            return Ok(Some("Your library is empty.".into()));
+        };
+        if let Some(why) = legal::check_land_top(g, p, c) {
+            return Ok(Some(why));
+        }
+        g.player_mut(p).library.pop();
+        turn::play_land_card(g, p, c, "plays from the top")?;
+        engine::life::check_state(g)?;
+        return Ok(None);
     }
     if d == "land" && zone == Some("ex") {
         // an exiled land played as the land drop (Urza's {5}, Triple Triad)
@@ -926,6 +951,11 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         zone = "lib".into();
         gn = 0;
         pips = String::new();
+    }
+    // a warped card cast from your exile on a later turn: its mana cost (it leaves exile as it is cast)
+    let warp = zone == "warp";
+    if warp {
+        zone = "lib".into();
     }
     let mut ctx = Ctx::default();
     let mut tgt_extra: (u32, String) = (0, String::new()); // the extra cost of the chosen target (paid with an alternative cost too)
@@ -1290,6 +1320,9 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
     if free && let Some(q) = g.players.iter().find(|q| q.exile.contains(&c)).map(|q| q.id) {
         g.player_mut(q).exile.take(c);
         ctx.owner = Some(q); // still theirs: it goes back to their graveyard
+    }
+    if warp {
+        crate::impls::generic_paths::warp_leaves_exile(g, p, c);
     }
     if ctx.rean_target.is_some() {
         return cast_rean(g, p, c, &zone, ctx, flash_sac);

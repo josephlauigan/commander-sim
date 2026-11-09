@@ -651,12 +651,17 @@ pub fn check_land_exile(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
     None
 }
 
+/// Why p can't play the land c from their graveyard now (Yawgmoth's Will; Crucible of Worlds, Ramunap Excavator, Ancient
+/// Greenwarden ...: "you may play lands from your graveyard"; Muldrotha's land a turn), or None.
 pub fn check_land_gy(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
     let pl = g.player(p);
     if !pl.gy.contains(&c) || !g.db.get(c).land {
         return Some(format!("{} isn't a land in your graveyard.", nm(g, c)));
     }
-    if !(pl.yawg && pl.yawg_gy.contains(&c)) && !crate::cardcode::muld_types(g, p, c) {
+    if !(pl.yawg && pl.yawg_gy.contains(&c))
+        && !crate::cardcode::lands_from_gy(g, p)
+        && !crate::cardcode::muld_types(g, p, c)
+    {
         return Some("You can't play lands from your graveyard right now.".into());
     }
     if let Some(why) = sorcery_timing(g, p) {
@@ -666,6 +671,59 @@ pub fn check_land_gy(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
         return Some("You've already played a land this turn.".into());
     }
     None
+}
+
+/// Why p can't play the land c from the top of their library now (Oracle of Mul Daya: "you may play lands from the top
+/// of your library"; a land drop, your main phase), or None.
+pub fn check_land_top(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
+    let pl = g.player(p);
+    if pl.library.last() != Some(&c) || !g.db.get(c).land {
+        return Some(format!("{} isn't a land on top of your library.", nm(g, c)));
+    }
+    if !crate::cardcode::lands_from_top(g, p) {
+        return Some("You can't play lands from the top of your library right now.".into());
+    }
+    if let Some(why) = sorcery_timing(g, p) {
+        return Some(why.replace("do that", "play a land"));
+    }
+    if pl.lands_played as i32 >= land_drops(g, p) {
+        return Some("You've already played a land this turn.".into());
+    }
+    None
+}
+
+/// p may see the top card of their library: it is revealed (Oracle of Mul Daya, Courser of Kruphix) or p may look at it
+/// any time (The Reality Chip, Bolas's Citadel, Mystic Forge)
+pub fn top_visible(g: &Game, p: PlayerId) -> bool {
+    crate::cardcode::lands_from_top(g, p)
+        || g.player(p).perms.iter().any(|&m| {
+            let x = g.perm(m);
+            !x.phased
+                && x.cd.is_some_and(|c| {
+                    matches!(&*g.db.get(c).name, "Bolas's Citadel" | "Mystic Forge" | "The Reality Chip")
+                })
+        })
+}
+
+/// Why p can't cast the warped card c from their exile now (warp: on a later turn, for its mana cost), or None.
+pub fn check_cast_warp(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
+    let name = nm(g, c).to_string();
+    if !crate::impls::generic_paths::warped_in_exile(g, p).contains(&c) {
+        return Some(format!("You can't cast {name} from exile right now."));
+    }
+    if !instant_speed(g, p, c)
+        && let Some(why) = sorcery_timing(g, p)
+    {
+        return Some(why.replace("do that", &format!("cast {name}")));
+    }
+    if engine::values::silenced(g, p) {
+        return Some("You can't cast spells during this player's turn (Conqueror's Flail).".into());
+    }
+    if !cast::castable(g, p, c, "lib") {
+        return Some(format!("Something on the battlefield stops you casting {name} right now."));
+    }
+    let (gn, pips) = base_cost(g, p, c);
+    mana::cost_problem(g, p, gn, &pips).map(|why| format!("Can't cast {name} from exile. {why}"))
 }
 
 /// `legal.WHAT`: how a spell's target kind reads in a prompt

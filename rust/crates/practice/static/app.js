@@ -99,7 +99,9 @@ function renderPrompt(ev) {
     row('Land abilities', me.lands.filter((L) => L.ability).map((L) => btn(L.name, { do: 'use', land: L.i })));
     row('Tokens', Object.entries(me.tokens || {}).map(([k, n]) => btn(`${k} (${n})`, { do: 'use', token: k })));
     row('Graveyard', (me.graveyard_playable || []).map((x) => btn(`${x.name} (${x.how})`, { do: x.how === 'land' ? 'land' : 'cast', zone: 'gy', card: x.i })));
-    row('Exile (this turn)', (me.exile_playable || []).map((x) => btn(`${x.name} (${x.owner}'s exile)`, { do: x.land ? 'land' : 'cast', zone: 'ex', card: x.card })));
+    row('Exile', (me.exile_playable || []).map((x) => btn(x.zone === 'warp' ? `${x.name} (warped: cast it for its mana cost)` : `${x.name} (${x.owner}'s exile, this turn)`,
+      { do: x.land ? 'land' : 'cast', zone: x.zone || 'ex', card: x.card })));
+    row('Library top', me.library_top && me.library_top.land ? [btn(`Play ${me.library_top.name} from the top`, { do: 'land', zone: 'top' })] : []);
     box.append(list);
   } else if (req.kind === 'attack') {
     box.append(el('p', { class: 'help' }, 'Click your creatures to attack with them (click again to take one back).'));
@@ -250,7 +252,7 @@ function onTableClick(e) {
   if (pick && pending && pending.request.kind !== 'priority') {
     e.preventDefault(); e.stopPropagation(); answer(+pick.dataset.choice); return;
   }
-  const t = e.target.closest('[data-land],[data-perm],[data-hand],[data-cmd],[data-gy],[data-treasure]');
+  const t = e.target.closest('[data-land],[data-perm],[data-hand],[data-cmd],[data-gy],[data-top],[data-treasure]');
   if (!t) return;
   if (!pending || pending.request.kind !== 'priority') { toast("You don't have priority right now."); return; }
   e.preventDefault(); hidePreviewSoon();
@@ -281,6 +283,9 @@ function onTableClick(e) {
     const i = +t.dataset.gy;
     const playable = (me.graveyard_playable || []).find((x) => x.i === i);
     answer({ do: playable && playable.how === 'land' ? 'land' : 'cast', zone: 'gy', card: i });
+  } else if (t.dataset.top !== undefined) {
+    // the revealed top card: a land you may play now (otherwise the server says why not)
+    answer({ do: 'land', zone: 'top' });
   }
 }
 
