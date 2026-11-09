@@ -195,6 +195,38 @@ pub fn exile_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<O
     }])
 }
 
+// ------------------------------------------------------------------ warp: casting the exiled card on a later turn
+/// The turn flag a warped creature's end-step exile leaves on its owner: Susurian Voidborn (`kefka`), Perigee Beckoner
+/// (`sheoldred`) and Elrond's warpers (`blue_cards::warped_key`).
+fn warp_flag(name: &str) -> crate::sym::Sym {
+    match name {
+        VOIDBORN => intern("voidborn_warped"),
+        "Perigee Beckoner" => intern("beckoner_warped"),
+        _ => intern(&format!("elrond_warped_{name}")),
+    }
+}
+
+/// p's warped cards in their exile that p may now cast for their mana cost: each was exiled by its warp on an earlier
+/// turn (warp: "you may cast it from exile on a later turn"). Timing and mana are the caller's to check.
+pub fn warped_in_exile(g: &Game, p: PlayerId) -> Vec<CardId> {
+    let st = g.turn_stamp();
+    let pl = g.player(p);
+    pl.exile
+        .iter()
+        .copied()
+        .filter(|&c| g.db.get(c).has_kw("warp"))
+        .filter(|&c| pl.flag_turn.get(&warp_flag(&g.db.get(c).name)).is_some_and(|&w| w != st))
+        .collect()
+}
+
+/// a warped card leaves p's exile as p casts it (and is no longer waiting there)
+pub fn warp_leaves_exile(g: &mut Game, p: PlayerId, c: CardId) {
+    let key = warp_flag(&g.db.get(c).name);
+    let pl = g.player_mut(p);
+    pl.exile.take(c);
+    pl.flag_turn.shift_remove(&key);
+}
+
 fn voidborn_from_exile(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let (cg, cp) = cost_of(g, p, c);

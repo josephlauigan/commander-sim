@@ -692,6 +692,37 @@ pub fn check_land_top(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
     None
 }
 
+/// p may see the top card of their library: it is revealed (Oracle of Mul Daya, Courser of Kruphix) or p may look at it
+/// any time (The Reality Chip, Bolas's Citadel, Mystic Forge)
+pub fn top_visible(g: &Game, p: PlayerId) -> bool {
+    crate::cardcode::lands_from_top(g, p)
+        || g.player(p).perms.iter().any(|&m| {
+            let x = g.perm(m);
+            !x.phased && x.cd.is_some_and(|c| matches!(&*g.db.get(c).name, "Bolas's Citadel" | "Mystic Forge"))
+        })
+}
+
+/// Why p can't cast the warped card c from their exile now (warp: on a later turn, for its mana cost), or None.
+pub fn check_cast_warp(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
+    let name = nm(g, c).to_string();
+    if !crate::impls::generic_paths::warped_in_exile(g, p).contains(&c) {
+        return Some(format!("You can't cast {name} from exile right now."));
+    }
+    if !instant_speed(g, p, c)
+        && let Some(why) = sorcery_timing(g, p)
+    {
+        return Some(why.replace("do that", &format!("cast {name}")));
+    }
+    if engine::values::silenced(g, p) {
+        return Some("You can't cast spells during this player's turn (Conqueror's Flail).".into());
+    }
+    if !cast::castable(g, p, c, "lib") {
+        return Some(format!("Something on the battlefield stops you casting {name} right now."));
+    }
+    let (gn, pips) = base_cost(g, p, c);
+    mana::cost_problem(g, p, gn, &pips).map(|why| format!("Can't cast {name} from exile. {why}"))
+}
+
 /// `legal.WHAT`: how a spell's target kind reads in a prompt
 pub fn what(kind: &str) -> &'static str {
     match kind {

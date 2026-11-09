@@ -123,6 +123,7 @@ fn player(g: &Game, p: PlayerId, me: &str) -> Value {
         d["mana_sources"] = seam::mana_sources(g, p);
         d["graveyard_playable"] = seam::graveyard_playable(g, p);
         d["exile_playable"] = seam::exile_playable(g, p);
+        d["library_top"] = seam::library_top(g, p);
         // Clue, Food and Blood tokens (counts on the player): {"Clue": 2, ...}, only the kinds you have
         let tokens: Map<String, Value> = sim_core::human::tokens::KINDS
             .iter()
@@ -211,7 +212,7 @@ pub mod seam {
     /// (`card` is the card id, not a position)
     pub fn exile_playable(g: &Game, p: PlayerId) -> Value {
         use sim_core::human::legal::{check_cast_exile, check_land_exile};
-        sim_core::human::gaps_c::exile_playable(g, p)
+        let mut out: Vec<Value> = sim_core::human::gaps_c::exile_playable(g, p)
             .into_iter()
             .filter(|&(c, _)| {
                 if g.db.get(c).land { check_land_exile(g, p, c).is_none() } else { check_cast_exile(g, p, c).is_none() }
@@ -219,8 +220,31 @@ pub mod seam {
             .map(|(c, q)| {
                 json!({"card": c.0, "name": &*g.db.get(c).name, "owner": &*g.player(q).name, "land": g.db.get(c).land})
             })
-            .collect::<Vec<_>>()
-            .into()
+            .collect();
+        // a warped card waiting in your exile (Perigee Beckoner, Susurian Voidborn ...): cast for its mana cost with
+        // `{do: cast, zone: warp, card}`; listed whatever the pool holds (the cast says what is missing), like the
+        // graveyard's list, when its timing allows
+        for c in sim_core::impls::generic_paths::warped_in_exile(g, p) {
+            use sim_core::human::legal::{instant_speed, sorcery_timing};
+            if !instant_speed(g, p, c) && sorcery_timing(g, p).is_some() {
+                continue;
+            }
+            out.push(json!({"card": c.0, "name": &*g.db.get(c).name, "owner": &*g.player(p).name, "land": false,
+                "zone": "warp"}));
+        }
+        out.into()
+    }
+    /// the top card of the person's library when they may see it (Oracle of Mul Daya and Courser of Kruphix reveal
+    /// it; The Reality Chip, Bolas's Citadel and Mystic Forge let them look): `{name, land}`, `land` when it can be
+    /// played now with `{do: land, zone: top}`; null otherwise
+    pub fn library_top(g: &Game, p: PlayerId) -> Value {
+        use sim_core::human::legal::{check_land_top, top_visible};
+        match g.player(p).library.last() {
+            Some(&c) if top_visible(g, p) => {
+                json!({"name": &*g.db.get(c).name, "land": check_land_top(g, p, c).is_none()})
+            }
+            _ => Value::Null,
+        }
     }
     /// a land with a spell side or channel (`cards.HAND`)
     pub fn hand_special(_g: &Game, _c: CardId) -> bool {

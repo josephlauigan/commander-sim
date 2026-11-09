@@ -936,26 +936,6 @@ fn citadel(g: &Game, p: PlayerId) -> Vec<PermAbility> {
     out
 }
 
-/// Oracle of Mul Daya: play a land from the top of your library (its extra land drop is counted by `legal::land_drops`)
-fn mul_daya(g: &Game, p: PlayerId) -> Vec<PermAbility> {
-    let Some(top) = g.player(p).library.last().copied().filter(|&c| g.db.get(c).land) else { return vec![] };
-    vec![ability(
-        format!("play {} from the top of your library", g.db.get(top).name),
-        move |g: &mut Game, p: PlayerId, _m: PermId| {
-            if g.player(p).library.last() != Some(&top) {
-                return Ok(Some("The top card of your library has changed.".into()));
-            }
-            if let Some(why) = legal::check_land_top(g, p, top) {
-                return Ok(Some(why));
-            }
-            g.player_mut(p).library.pop();
-            crate::engine::turn::play_land_card(g, p, top, "plays from the top")?;
-            crate::engine::life::check_state(g)?;
-            Ok(None)
-        },
-    )]
-}
-
 /// Cards that have compiled (DSL) abilities AND an entry in `abilities` below that asks the person what the Oracle text
 /// lets them choose: the entry stands alone, the compiled abilities (which choose for the person) aren't listed too.
 pub fn replaces_dsl(g: &Game, m: PermId) -> bool {
@@ -991,7 +971,6 @@ pub fn abilities(g: &Game, p: PlayerId, m: PermId) -> Option<Vec<PermAbility>> {
     }
     Some(match nm.as_str() {
         "Bolas's Citadel" => citadel(g, p),
-        "Oracle of Mul Daya" => mul_daya(g, p),
         "Otherworld Atlas" => atlas(),
         "Carrion Feeder" => outlet("put a +1/+1 counter on Carrion Feeder", feeder),
         "Viscera Seer" => outlet("scry 1", |g, p, _m, _pw| choices::scry(g, p, 1, false)),

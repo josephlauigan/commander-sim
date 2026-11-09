@@ -239,6 +239,9 @@ export function renderTable(root, view, images) {
           me.commander2 ? el('small', {}, `tax ${c.tax}`) : null,
           card(images, c.name, { size: 'sm', commander: true, attrs: { 'data-cmd': String(c.i) } }))))) : null,
       el('div', { class: 'chip' }, `Library ${me.library}`),
+      // the top card when you may see it (Oracle of Mul Daya reveals it); click a land there to play it
+      me.library_top ? el('div', { class: 'cz' }, el('h3', {}, 'Library top'),
+        card(images, me.library_top.name, { size: 'sm', attrs: { 'data-top': '1' } })) : null,
       zoneList('Graveyard', me.graveyard, images, (i) => ({ 'data-gy': i })), zoneList('Exile', me.exile, images))));
   pool = new Map();
 }
