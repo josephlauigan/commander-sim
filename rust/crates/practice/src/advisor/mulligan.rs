@@ -595,6 +595,9 @@ struct Curve {
     extra: f64,
     played: Vec<Played>,
     mana: Vec<f64>,
+    /// per turn: is the Lotus Petal's one mana still there (counted in `mana` that turn)
+    petal: Vec<bool>,
+    petal_card: Option<CardId>,
 }
 
 impl Curve {
@@ -604,8 +607,16 @@ impl Curve {
         let sum: f64 = pv.iter().map(|x| x.1).sum();
         let extra = (m.eff - m.lands as f64 - sum).max(0.0);
         let jasper = |c: CardId| &*g.db.get(c).name == "Mox Jasper";
-        let mut left: Vec<(CardId, f64, usize)> =
-            pv.iter().filter(|x| x.1 > 0.0 && !jasper(x.0)).map(|&(c, v)| (c, v, g.db.get(c).cmc as usize)).collect();
+        let is_petal = |c: CardId| &*g.db.get(c).name == "Lotus Petal";
+        // Lotus Petal is one mana, once: it is there each turn until it pays for something
+        let petal_card = pv.iter().find(|x| x.1 > 0.0 && is_petal(x.0)).map(|x| x.0);
+        let mut petal_left = petal_card.is_some();
+        let mut petal = vec![];
+        let mut left: Vec<(CardId, f64, usize)> = pv
+            .iter()
+            .filter(|x| x.1 > 0.0 && !jasper(x.0) && !is_petal(x.0))
+            .map(|&(c, v)| (c, v, g.db.get(c).cmc as usize))
+            .collect();
         // Mox Jasper is not mana until a Dragon is cast: the turn the hand can cast one (its cost leaves that turn's
         // mana, and Jasper makes mana from the next turn)
         let dragon = if pv.iter().any(|x| jasper(x.0)) { t6_keep::dragon_cast(g, p, cap) } else { None };
@@ -615,7 +626,10 @@ impl Curve {
         for t in 1..=10usize {
             let lands = t.min(cap);
             let ex = if lands >= 1 { extra } else { 0.0 };
-            let mut rem = lands as f64 + ex + played.iter().filter(|x| x.from <= t).map(|x| x.v).sum::<f64>();
+            // the mana without the Petal, and what this turn spends of it (the Petal is spent once that passes the rest)
+            let start = lands as f64 + ex + played.iter().filter(|x| x.from <= t).map(|x| x.v).sum::<f64>();
+            let petal_now = petal_left as u8 as f64;
+            let (mut rem, mut added, mut spent) = (start + petal_now, 0.0, 0.0);
             // the Dragon's cost leaves this turn's mana after the zero-cost pieces have added theirs (they are first in
             // `left`, which is sorted by cost)
             let mut reserve = None;
@@ -630,14 +644,18 @@ impl Curve {
                 let (c, v, cmc) = left[i];
                 if cmc > 0 {
                     if let Some(cost) = reserve.take() {
-                        rem = (rem - cost).max(0.0);
+                        let pay = cost.min(rem);
+                        rem -= pay;
+                        spent += pay;
                     }
                 }
                 if cmc as f64 <= rem + 1e-9 {
                     rem -= cmc as f64;
+                    spent += cmc as f64;
                     let from = if cmc == 0 { t } else { t + 1 };
                     if from == t {
                         rem += v;
+                        added += v;
                     }
                     played.push(Played { card: c, v, cast: t, from, dragon: None });
                     left.remove(i);
@@ -645,9 +663,16 @@ impl Curve {
                     i += 1;
                 }
             }
-            mana.push(lands as f64 + ex + played.iter().filter(|x| x.from <= t).map(|x| x.v).sum::<f64>());
+            if let Some(cost) = reserve.take() {
+                spent += cost.min(rem);
+            }
+            mana.push(lands as f64 + ex + played.iter().filter(|x| x.from <= t).map(|x| x.v).sum::<f64>() + petal_now);
+            petal.push(petal_left);
+            if spent > start + added + 1e-9 {
+                petal_left = false;
+            }
         }
-        Curve { cap, extra, played, mana }
+        Curve { cap, extra, played, mana, petal, petal_card }
     }
 
     fn real(&self, t: usize) -> f64 {
@@ -668,6 +693,9 @@ impl Curve {
                 None => String::new(),
             };
             parts.push(format!("{} {}{when}", name_of(g, x.card), num(x.v)));
+        }
+        if let Some(c) = self.petal_card.filter(|_| self.petal.get(1) == Some(&true)) {
+            parts.push(format!("{} 1 (once)", name_of(g, c)));
         }
         if self.extra > 0.01 && self.cap >= 1 {
             parts.push(format!("{} from double-mana lands", num(self.extra)));

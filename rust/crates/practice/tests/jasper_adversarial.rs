@@ -184,7 +184,7 @@ fn petal_ring_and_jasper_are_hand_order_independent() {
         let m = t6_keep::mana(&g, p);
         assert_eq!(m.n_mana, 3);
         assert!((m.eff - 5.7).abs() < 1e-9); // the keep rule counts Jasper; the hint has it make mana from turn 3
-        assert!(mana_line(&mut g, p).starts_with("Mana on turn 2: 4.7 ="));
+        assert!(mana_line(&mut g, p).starts_with("Mana on turn 2: 5 ="));
     }
 }
 
@@ -240,20 +240,20 @@ fn a_dragon_without_jasper_does_not_delay_rocks_in_the_hint() {
 }
 
 /// the Dragon is paid with a zero-cost Mox's mana first: Forest + Chrome Mox cast Korlessa (2) on turn 1, so Sol Ring
-/// waits for turn 2 and turn 2 has 1 land + Chrome Mox + Jasper = 3 (the bug showed Sol Ring cast turn 1 and 5)
+/// waits for turn 2 and turn 2 has 2 lands + Chrome Mox + Jasper = 4 (the bug showed Sol Ring cast turn 1 and 6)
 #[test]
 fn a_zero_cost_mox_pays_for_the_dragon_before_a_rock_is_cast() {
     let (mut g, p) = fixture(&[
         "Forest",
+        "Island",
         "Chrome Mox",
         "Korlessa, Scale Singer",
         "Mox Jasper",
         "Sol Ring",
         "Counterspell",
-        "Brainstorm",
     ]);
     let h = hint(&mut g, p);
-    assert!(mana_line(&mut g, p).starts_with("Mana on turn 2: 3 ="), "{h}");
+    assert!(mana_line(&mut g, p).starts_with("Mana on turn 2: 4 ="), "{h}");
     assert!(has(&h, "Sol Ring (cast turn 2"), "{h}");
 }
 
@@ -263,4 +263,46 @@ fn a_mana_dork_counts_as_a_whole_mana_for_the_dragon() {
     let (g, p) = fixture(&["Forest", "Island", "Birds of Paradise", "Mox Jasper", "Realmwalker"]);
     assert_eq!(t6_keep::dragon_cast(&g, p, 2).map(|x| x.0), Some(2));
     assert_eq!(jasper_values(&g, p), vec![1.0]);
+}
+
+/// colours count: Forest cannot cast a blue Dragon, so Jasper stays off, and it is not a blue source either; with an
+/// Island the same hand switches it on
+#[test]
+fn the_dragon_must_be_castable_in_colour() {
+    let (g, p) = fixture(&["Forest", "Mox Jasper", "Mothdust Changeling"]);
+    assert_eq!(t6_keep::dragon_cast(&g, p, 1), None);
+    assert_eq!(jasper_values(&g, p), vec![0.0]);
+    assert!(!t6_keep::hand_sources(&g, p).has('U'), "a dead Jasper is not a blue source");
+    let (g, p) = fixture(&["Island", "Mox Jasper", "Mothdust Changeling"]);
+    assert_eq!(jasper_values(&g, p), vec![1.0]);
+    assert!(t6_keep::hand_sources(&g, p).has('U'));
+}
+
+/// Lotus Petal is one mana, once: it stays in the count while nothing has used it (a land paid for the Sol Ring) ...
+#[test]
+fn an_unspent_petal_counts_once_per_turn_it_is_still_there() {
+    let (mut g, p) =
+        fixture(&["Forest", "Island", "Lotus Petal", "Sol Ring", "Counterspell", "Brainstorm", "Swords to Plowshares"]);
+    let line = mana_line(&mut g, p);
+    assert!(
+        line.starts_with("Mana on turn 2: 5 = 2 lands + Sol Ring 2 (cast turn 1) + Lotus Petal 1 (once)"),
+        "{line}"
+    );
+}
+
+/// ... and is gone from turn 2 once it paid for a rock the land could not (Forest + Petal cast Sol Ring and Mana Vault)
+#[test]
+fn a_spent_petal_is_not_counted_again() {
+    let (mut g, p) = fixture(&[
+        "Forest",
+        "Lotus Petal",
+        "Sol Ring",
+        "Mana Vault",
+        "Counterspell",
+        "Brainstorm",
+        "Swords to Plowshares",
+    ]);
+    let line = mana_line(&mut g, p);
+    assert!(line.starts_with("Mana on turn 2: 4 ="), "{line}");
+    assert!(!line.contains("Lotus Petal"), "{line}");
 }
