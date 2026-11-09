@@ -109,10 +109,11 @@ fn mul_daya_is_not_an_activated_ability() {
     // the Oracle offers nothing under "Activate" (no extra priority stop in combat)
     let mut g = table(&["thanos", "cloud"]);
     let o = perm(&mut g, P0, "Oracle of Mul Daya");
-    perm(&mut g, P1, "Cursed Totem");
     on_top(&mut g, P0, "Forest");
+    // (before the Totem, which empties the list of every creature's abilities anyway)
     let labels: Vec<String> = abilities_of(&mut g, P0, o).unwrap().into_iter().map(|a| a.0).collect();
     assert!(!labels.iter().any(|l| l.contains("from the top")), "{labels:?}");
+    perm(&mut g, P1, "Cursed Totem");
     assert_eq!(play_top(&mut g, P0), None);
     assert!(land_names(&g, P0).contains(&"Forest".to_string()));
 }

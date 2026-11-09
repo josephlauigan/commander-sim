@@ -698,7 +698,10 @@ pub fn top_visible(g: &Game, p: PlayerId) -> bool {
     crate::cardcode::lands_from_top(g, p)
         || g.player(p).perms.iter().any(|&m| {
             let x = g.perm(m);
-            !x.phased && x.cd.is_some_and(|c| matches!(&*g.db.get(c).name, "Bolas's Citadel" | "Mystic Forge"))
+            !x.phased
+                && x.cd.is_some_and(|c| {
+                    matches!(&*g.db.get(c).name, "Bolas's Citadel" | "Mystic Forge" | "The Reality Chip")
+                })
         })
 }
 

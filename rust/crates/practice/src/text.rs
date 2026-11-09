@@ -132,6 +132,8 @@ const HELP: &str = "Commands:
   cast cmd          cast your commander from the command zone
   cast gN / land gN cast or play card N of your graveyard (Yawgmoth's Will, flashback, Underworld Breach)
   cast eN / land eN cast or play card N listed under From exile (Dauthi Voidwalker, Urza, Triple Triad), free
+                    (a warped card there, Perigee Beckoner ..., is cast for its mana cost)
+  land top          play the top card of your library as your land drop (Oracle of Mul Daya, Courser of Kruphix)
   use N             an ability of your permanent N (Equip, loyalty abilities, Jace's Archivist ...)
   use LN            an ability of your land N (Rogue's Passage, Scavenger Grounds)
   use clue | food | blood   crack a Clue, eat a Food or use a Blood token you have
@@ -177,10 +179,21 @@ fn priority_prompt(req: &Value, out: &mut dyn Write) {
     let exp: Vec<String> = arr(me, "exile_playable")
         .iter()
         .enumerate()
-        .map(|(i, x)| format!("E{}) {} ({}'s exile)", i + 1, s(x, "name"), s(x, "owner")))
+        .map(|(i, x)| {
+            if s(x, "zone") == "warp" {
+                format!("E{}) {} (warped: its mana cost)", i + 1, s(x, "name"))
+            } else {
+                format!("E{}) {} ({}'s exile, this turn)", i + 1, s(x, "name"), s(x, "owner"))
+            }
+        })
         .collect();
     if !exp.is_empty() {
-        let _ = writeln!(out, "  From exile (this turn): {}", exp.join("  "));
+        let _ = writeln!(out, "  From exile: {}", exp.join("  "));
+    }
+    let top = &me["library_top"];
+    if !top.is_null() {
+        let how = if truthy(top, "land") { " (land top to play it)" } else { "" };
+        let _ = writeln!(out, "  Top of your library: {}{how}", s(top, "name"));
     }
     let act: Vec<String> = arr(me, "lands")
         .iter()
@@ -255,9 +268,17 @@ pub fn parse(line: &str, view: &Value) -> Cmd {
     {
         // an exiled card Dauthi Voidwalker lets you play: E1, E2 ... in the order the view lists them
         return match arr(me(view), "exile_playable").get((k - 1).max(0) as usize) {
-            Some(x) => Cmd::Act(json!({"do": cmd, "zone": "ex", "card": x["card"].clone()})),
+            // a warped card is cast for its mana cost (`zone: warp`); the rest are free this turn (`zone: ex`)
+            Some(x) => {
+                let zone = if s(x, "zone") == "warp" { "warp" } else { "ex" };
+                Cmd::Act(json!({"do": cmd, "zone": zone, "card": x["card"].clone()}))
+            }
             None => Cmd::Err("No such exiled card to play.".into()),
         };
+    }
+    if cmd == "land" && w1.as_deref() == Some("top") {
+        // the top card of the library (Oracle of Mul Daya, Courser of Kruphix, The Reality Chip)
+        return Cmd::Act(json!({"do": "land", "zone": "top"}));
     }
     if matches!(cmd.as_str(), "land" | "cast")
         && let Some(t) = &w1
@@ -492,5 +513,20 @@ mod tests {
         for (typed, kind) in [("use clue", "Clue"), ("use Food", "Food"), ("use BLOOD", "Blood")] {
             assert_eq!(parse(typed, &Value::Null), Cmd::Act(json!({"do": "use", "token": kind})));
         }
+    }
+
+    #[test]
+    fn land_top_plays_the_top_of_the_library() {
+        assert_eq!(parse("land top", &Value::Null), Cmd::Act(json!({"do": "land", "zone": "top"})));
+    }
+
+    #[test]
+    fn a_warped_exile_entry_is_cast_with_zone_warp() {
+        let view = json!({"players": [{"you": true, "exile_playable": [
+            {"card": 7, "name": "Dauthi's pick", "owner": "Opp", "land": false},
+            {"card": 9, "name": "Perigee Beckoner", "owner": "Me", "land": false, "zone": "warp"},
+        ]}]});
+        assert_eq!(parse("cast e1", &view), Cmd::Act(json!({"do": "cast", "zone": "ex", "card": 7})));
+        assert_eq!(parse("cast e2", &view), Cmd::Act(json!({"do": "cast", "zone": "warp", "card": 9})));
     }
 }

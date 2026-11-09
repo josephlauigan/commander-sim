@@ -350,7 +350,7 @@ fn respond_loop(g: &mut Game, q: PlayerId, prompt: &str, spell: Option<CardId>, 
         }
         if do_of(&act) == "cast"
             && !g.stack.is_empty()
-            && !matches!(act.get("zone").and_then(Value::as_str), Some("cmd" | "ex" | "gy"))
+            && !matches!(act.get("zone").and_then(Value::as_str), Some("cmd" | "ex" | "gy" | "warp"))
         {
             if let Some(c) = hand_card(g, q, &act) {
                 // protection the AI plays through its own code: the person's version (`human::protect`)
