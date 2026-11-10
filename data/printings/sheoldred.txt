@@ -31,6 +31,7 @@
 1 Grim Tutor (s99) 79
 1 Howling Mine (brr) 83
 1 Invoke Despair (neo) 506
+1 K'rrik, Son of Yawgmoth (sld) 1204
 1 Leech Collector // Bloodletting (sos) 88
 1 Massacre Wurm (m21) 316
 1 Memory Jar (ulg) 129
@@ -64,7 +65,6 @@
 1 Vault Plunderer (otj) 114
 1 Viscera Seer (soc) 229
 1 Vito, Thorn of the Dusk Rose (j22) 487
-1 Wander Off (sos) 104
 1 Witch of the Moors (jmp) 18
 1 Yawgmoth, Thran Physician (fca) 11
 1 Yawgmoth's Will (wc99) js171

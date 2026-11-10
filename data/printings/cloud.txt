@@ -41,6 +41,7 @@
 1 Marvin, Murderous Mimic (dsk) 367
 1 Mask of Memory (fic) 350
 1 Mind Stone (ltc) 282
+1 Mithril Coat (hoc) 43
 1 Norn's Annex (nph) 17
 1 Open the Armory (sld) 2089
 1 Path of Ancestry (brc) 192
@@ -64,7 +65,6 @@
 1 Sword of Fire and Ice (2xm) 365
 1 Sword of Hearth and Home (mh2) 433
 1 Swords to Plowshares (ice) 54
-1 Teferi's Protection (mar) 51
 1 Terminal Moraine (dmr) 259
 1 Thalia, the Survivor (fra) 205
 1 Thought Vessel (msc) 222
