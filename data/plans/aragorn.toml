@@ -27,7 +27,9 @@ turn = 3
 
 [key_cards]
 "Underworld Breach" = 74
-"Lion's Eye Diamond" = 72
+# 0: never cast on its own (the preflight saw it cast in 99% of the games drawn, exposed and adding no storm): the
+# Breach line casts it from hand, for the storm count and its mana
+"Lion's Eye Diamond" = 0
 "Fiery Emancipation" = 72
 "Jeska's Will" = 66
 "Niv-Mizzet, Parun" = 64

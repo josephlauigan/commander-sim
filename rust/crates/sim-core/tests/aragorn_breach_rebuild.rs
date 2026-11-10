@@ -318,3 +318,11 @@ fn a_look_ahead_copy_of_a_waiting_turn_does_not_take_the_line() {
     g.in_search = true; // a look-ahead copy of this turn (the dry run's answer is cached for it)
     assert!(breach_line::breach_options(&mut g, P0, false).unwrap().is_empty(), "so do its copies");
 }
+
+#[test]
+fn lion_s_eye_diamond_is_held_for_the_breach_line() {
+    // the plan gives it priority 0: the AI never casts it on its own; the line casts it (see the Diamond line test)
+    let mut g = table(&["aragorn", "cloud", "sheoldred", "yshtola"]);
+    let led = hand(&mut g, P0, &["Lion's Eye Diamond"])[0];
+    assert_eq!(sim_core::ai::pool::generic_prio(&g, P0, led), 0);
+}
