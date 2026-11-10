@@ -25,7 +25,12 @@ run() {
   local name=$1; shift
   local args=(); for s in "$@"; do args+=(--swap "$s"); done
   local start=$(date +%s)
-  ( ulimit -v 14000000; $BIN --deck aragorn --pool all --seed 500000 --no-preflight "${args[@]}" > $OUT/$name.txt 2>&1 < /dev/null )
+  if systemd-run --user --scope -q true 2>/dev/null; then  # JD's machines: the CLAUDE.md memory cap
+    systemd-run --user --scope -q -p MemoryMax=24G -p MemorySwapMax=0 \
+      $BIN --deck aragorn --pool all --seed 500000 --no-preflight "${args[@]}" > $OUT/$name.txt 2>&1 < /dev/null
+  else
+    ( ulimit -v 14000000; $BIN --deck aragorn --pool all --seed 500000 --no-preflight "${args[@]}" > $OUT/$name.txt 2>&1 < /dev/null )
+  fi
   echo "$name exit=$? $(( ($(date +%s)-start)/60 ))m $(date +%H:%M)" | tee -a $OUT/status.txt
 }
 case "${1:-C+B1}" in
