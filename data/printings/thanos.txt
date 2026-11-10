@@ -27,6 +27,7 @@
 1 Force of Negation (2x2) 346
 1 Force of Will (2xm) 340
 1 Forest (sos) 271
+1 Gamble (dmr) 433
 1 Gilded Lotus (brr) 80
 1 Glorybringer (tdc) 215
 1 Goldspan Dragon (sld) 1780
@@ -55,7 +56,6 @@
 1 Plateau (ced) 280
 1 Polluted Delta (mh3) 356
 1 Ragavan, Nimble Pilferer (mh2) 315
-1 Red Elemental Blast (leb) 170
 1 Rhystic Study (pcy) 45
 1 Rings of Brighthearth (mps) 21
 1 Sacred Foundry (unf) 285
