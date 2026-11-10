@@ -172,29 +172,168 @@ The first mulligan is free (you see two 7-card hands). After that it's a London 
 
 ### What to tutor for
 
-Vampiric Tutor and Mystical Tutor put the card on top, so cast them at the end step of the player before you: you draw the card next. On your own turn they are slow, and under Necropotence (no draw step) they are slower still. Demonic Tutor, Diabolic Tutor, Profane Tutor, Idyllic Tutor and Ringsight put the card in your hand.
+Y'shtola is the commander and starts in the command zone, so no tutor finds her. What the tutors do find falls into four groups: a drain piece (Sanguine Bond, Exquisite Blood, Debt to the Deathless, Exsanguinate), the mana or colours to cast it, protection for it, and an answer to whatever stops it. Read the board first (what is out, what the table can do, everyone's life, your mana, the turn), then pick the tutor whose speed and cost fit the card you need.
 
-**Ringsight** ({1}{U}{B}, sorcery): the Ring tempts you, then you search for a card that shares a colour with a legendary creature you control. With Y'shtola out that is any white, blue or black card, so Bond, Blood, Blight-Priest, Debt, Exsanguinate, Counterspell, Force of Will and Teferi's Protection are all fair targets. It cannot find colourless cards (Sol Ring, the rocks, Palantír of Orthanc, Champion's Helm, Conjurer's Closet) or lands. Without Y'shtola, the Ring makes the creature you choose as Ring-bearer legendary, so any coloured creature you control (Orcish Bowmasters, Esper Sentinel) works; with no creature it finds nothing.
+#### The tutors and tutor-like cards
 
-| Situation | Tutor | Target |
-|---|---|---|
-| Turn 2 to 3, no commander in hand | Demonic Tutor ({1}{B}) | Y'shtola if the lands cover her colours; otherwise the rock or land that fixes them |
-| Y'shtola out, no Bond | Demonic Tutor, Diabolic Tutor, Profane Tutor, Ringsight, Idyllic Tutor; Vampiric Tutor at an end step | Sanguine Bond |
-| Bond out, need Blood | The same | Exquisite Blood, with 8 mana available to follow it with a trigger |
-| Both out, no start | Ringsight, Demonic Tutor | Cast Away Doubt (three mana) or a spell that also does a job |
-| Table attacks you | Idyllic Tutor, Zur's attack | Propaganda or Sphere of Safety (Idyllic); Propaganda, Arrest or Bound in Silence (Zur) |
-| Five or more lands, Urborg or Coffers missing | Expedition Map, Urza's Cave | Urborg or Cabal Coffers |
-| Ready to kill next turn | Mystical Tutor at their end step | Debt to the Deathless, Exsanguinate or Torment of Hailfire |
-| A combo deck is about to win | Don't tutor: hold Counterspell, Veto or Force of Will | A tutor won't arrive in time |
-| Opposition Agent is out (Zur's deck) | Don't tutor or crack Map or Cave | Answer the Agent first: it takes every card you search for |
+| Card | Cost | The card goes | Finds | Speed | The catch |
+|---|---|---|---|---|---|
+| Demonic Tutor | {1}{B} | Hand | Any card | Sorcery | Mana value 2, so no Y'shtola trigger. The cheapest way to put any card in hand |
+| Diabolic Tutor | {2}{B}{B} | Hand | Any card | Sorcery | Mana value 4: with Y'shtola out it is a tutor and a drain in one card (2 to each opponent, 2 life for you, a gain for Bond) |
+| Vampiric Tutor | {B} | Top of library | Any card | Instant | You lose 2 life. You get the card at your next draw, or at once if you cast it in response to a draw you control (see below). Mana value 1: no trigger |
+| Mystical Tutor | {U} | Top of library | An instant or sorcery | Instant | Cannot find a creature, enchantment, artifact or land, so Bond, Blood, Loran and the lands are out of reach. No life cost. Mana value 1: no trigger |
+| Idyllic Tutor | {2}{W} | Hand | An enchantment | Sorcery | Reveals the card. Mana value 3: triggers her. The 13 enchantments: Arrest, Bound in Silence, Exquisite Blood, Mystic Remora, Necropotence, Polluted Bonds, Prayer of Binding, Propaganda, Rhystic Study, Sanguine Bond, Smothering Tithe, Sphere of Safety, Teleportation Circle |
+| Ringsight | {1}{U}{B} | Hand | A card that shares a colour with a legendary creature you control | Sorcery | The Ring tempts you first. With Y'shtola out that is any white, blue or black card (Bond, Blood, Debt, Exsanguinate, Counterspell, Force of Will, Teferi's Protection, Kitten, Loran); it cannot find a colourless card (Sol Ring, the rocks, Palantír, Champion's Helm, Conjurer's Closet) or a land. Without her, the Ring-bearer you choose becomes legendary, so a coloured creature you control (Orcish Bowmasters, Esper Sentinel) works; with no creature it finds nothing. Mana value 3: triggers her |
+| Profane Tutor | Suspend 2: {1}{B} | Hand | Any card | Cast from exile in your upkeep | It has no mana cost, so it can only be suspended. It is cast for free in your second upkeep after you suspend it, before your draw, and you pick the card when it resolves, with the board of that turn. Mana value 0: no trigger. It is a cast, so it can be countered, and Drannith Magistrate stops it |
+| Zur the Enchanter | {1}{W}{U}{B} | Battlefield | An enchantment of mana value 3 or less | Whenever Zur attacks | Six targets: Arrest, Bound in Silence, Mystic Remora, Necropotence, Propaganda, Rhystic Study. Put onto the battlefield, not cast, so no trigger and no mana paid; an Aura goes around hexproof and ward. Zur must attack and survive. Bond, Blood (mana value 5) and Smothering Tithe (4) are out of reach |
+| Necropotence | {B}{B}{B} | Hand, at your next end step | The top card of the library, one card per life paid | Any time you have priority | Not a search. It skips your draw step. Mana value 3: triggers her. A top-of-library tutor feeds it: the tutored card is the first one you exile |
+| Read the Bones | {2}{B} | Hand | The top four cards (scry 2, then draw 2) | Sorcery | You lose 2 life. Mana value 3: triggers her. Use it to dig for a piece, not to find a named card |
+| Cast Away Doubt, Tezzeret's Gambit | {2}{B}, {3}{U/P} | Hand | The top two cards (draw 2) | Sorcery | Cast Away Doubt deals 2 damage to each player (you too); Tezzeret's Gambit costs 2 life if {U/P} is paid with life. Both are mana value 3 or more and trigger her |
+| Palantír of Orthanc | {3} | Scry 2 at your end step | The top two cards | Your end step | At your end step the target opponent either lets you draw or you mill X cards and they lose life equal to the total mana value. The mill can take a card you just put on top. Mana value 3: triggers her when cast |
+| Expedition Map | {1}, then {2}, {T}, sacrifice | Hand | A land | Instant | Mana value 1: no trigger. Finds Urborg, Cabal Coffers or the missing colour; play it as your land drop |
+| Urza's Cave | {3}, {T}, sacrifice | Battlefield, tapped | A land | Instant | Any land. The fetched land enters tapped, so it cannot tap this turn (Urborg's Swamp effect still applies at once) |
+| Fetch lands (Flooded Strand, Polluted Delta, Marsh Flats) | {T}, 1 life, sacrifice | Battlefield | A basic or dual with the listed types | Instant | Strand finds Plains, Island, Tundra or Hallowed Fountain; Delta finds Island, Swamp, Underground Sea or Watery Grave; Flats finds Plains, Swamp, Scrubland or Godless Shrine. No Underground River, Adarkar Wastes, Caves of Koilos, Command Tower, Coffers or Urborg. Cracking one turns on Fatal Push's revolt |
 
-**Zur the Enchanter** ({1}{W}{U}{B}, 1/4 flier) searches for an enchantment with mana value 3 or less whenever it attacks. The enchantment is put onto the battlefield, not cast, so it doesn't trigger Y'shtola; an Aura fetched this way doesn't target, so it goes around hexproof and ward. The list has six targets:
+Generous Gift finds nothing: it is an instant that destroys a permanent (its controller gets a 3/3), and its value here is a mana value 3 trigger on an opponent's turn.
 
-- **Necropotence** early with a healthy life total;
-- **Propaganda** when the table attacks you;
-- **Mystic Remora** early, for cards off the table's spells;
-- **Rhystic Study** early;
-- **Arrest** or **Bound in Silence** on the biggest threat.
+**Choosing between them**
+
+- **Speed.** Vampiric Tutor and Mystical Tutor are the only instant-speed tutors for an engine or kill piece. Cast them at the end step of the player before you and untap with the card as your draw. On your own turn the sorcery-speed ones put the card in hand now.
+- **Draw into it.** A top-of-library tutor cast in response to a draw you control gives you that card as the draw: Y'shtola's end-step draw trigger, Loran's tap, Read the Bones, Cast Away Doubt, Tezzeret's Gambit, or a Rhystic Study trigger (if the opponent does not pay {1}).
+- **Prefer the tutor that triggers her.** With Y'shtola out and the mana to spare, Diabolic Tutor, Ringsight and Idyllic Tutor do the same job as Demonic Tutor and also drain. Demonic Tutor is right when mana is tight, when you still have to cast the card you find, or when you want cheap bait for a counter.
+- **A countered tutor still drains.** Her trigger is on cast, so a countered Diabolic Tutor, Ringsight or Idyllic Tutor has already dealt its 2 and gained its 2.
+- **Palantír and Necropotence.** At your own end step, Palantír's mill can take the card you just put on top, so cast the tutor after its trigger resolves or at an opponent's end step. Under Necropotence you have no draw step: the tutored card comes only through a Necropotence activation, at your next end step.
+
+#### What to fetch for the board
+
+Life totals matter in three ways. Y'shtola draws a card at an end step when *any* player lost 4 or more life that turn, you included. Your tutors cost life (Vampiric Tutor 2, Anguished Unmaking 3, Read the Bones 2, a fetch land 1, Necropotence 1 per card). And an opponent at 4 or less dies to a cast-trigger plus one more drain. The tables below assume a four-player game with three opponents.
+
+**Y'shtola not yet cast**
+
+| Situation | Tutor | Target | Why, and what to watch for |
+|---|---|---|---|
+| Turn 1 to 3. The lands in hand cannot make {W}, {U} and {B} from three sources, no rock | Expedition Map (cast turn 1, crack it for {2}); Demonic Tutor | Command Tower, or an untapped dual in the missing pair (Tundra, Underground Sea, Scrubland); Arcane Signet if no land fits | She needs all three colours. Cast a rock from hand first if you hold one. Shock lands cost 2 life to enter untapped |
+| Turn 3, three lands, no rock in hand, nothing else to do | Demonic Tutor ({1}{B}) with {1} left | Sol Ring | The two spells use all three mana, and turn 4 is four lands plus {C}{C}: she and two more mana. A rock in hand is better cast than tutored for |
+| Turn 2 with spare mana and no play | Profane Tutor (suspend for {1}{B}) | Chosen when it resolves in your turn-4 upkeep: the rock or land that fixes colours, otherwise the answer or engine the table needs then | The search is on resolution, so decide with the turn-4 board. Do not suspend it into Drannith Magistrate or Opposition Agent |
+| Turn 3 to 4, no land drop, two or three lands, no rock | Expedition Map, then Demonic Tutor | A land that fixes colours at two lands (Command Tower); Sol Ring at three | Mana first: the engine is useless if she comes down on turn 7 |
+| Turn 4 to 5, she is castable, the hand has no noncreature spell of mana value 3 or more | Cast her first, then Diabolic Tutor, Ringsight or Idyllic Tutor with what is left | Rhystic Study or Smothering Tithe (Ringsight and Idyllic can fetch either); Propaganda if creatures are attacking | Cast her before the tutor so the tutor is her first trigger. Into open blue mana, use Mistrise Village first on her |
+| She was countered or killed, recast costs {2} more each time | Diabolic Tutor, Ringsight (without her it needs a coloured creature), Demonic Tutor | Sanguine Bond | Bond works alone, so it is the first piece whatever the recast cost. Spend the turn on the engine and recast her when the mana is spare |
+
+**Y'shtola out: building the drain**
+
+| Situation | Tutor | Target | Why, and what to watch for |
+|---|---|---|---|
+| Neither piece, 5 to 8 mana, the table is not threatening | Diabolic Tutor now; or Vampiric Tutor at an opponent's end step | Sanguine Bond | Bond drains alone: every gain is a drain. With 9 mana, Diabolic Tutor then Bond in one turn is two triggers (4 to each opponent), so she draws at the end step |
+| Bond out, no Blood; you will have 8 mana next turn | Vampiric Tutor at an opponent's end step | Exquisite Blood | You draw it and untap: Blood (5) plus a 3-mana trigger spell to start the loop. Mystical Tutor cannot find it. Do not tutor and cast Blood on the same turn unless you can still pay for the start |
+| Blood out, no Bond | Diabolic Tutor, Ringsight or Vampiric Tutor | Sanguine Bond | Bond is the second piece, so it needs a life change after it resolves: keep a second 3-mana spell (Cast Away Doubt) for the same turn |
+| Both out, no start in hand | Cast Diabolic Tutor, Ringsight or Idyllic Tutor as the start | A back-up: Exsanguinate or Teferi's Protection | The tutor's own cast trigger is the life change that starts the loop, so the spell you cast is the one that wins. Even a countered tutor drains |
+| Both out, Y'shtola gone and not castable this turn | Demonic Tutor ({1}{B}) | Exsanguinate, cast for X = 1 ({1}{B}{B}) | A drain and a gain is a life change, so 5 mana starts the loop without her |
+| Bond and Marauding Blight-Priest out, no Blood; each of two opponents at 10 or less, the Bond target at 30 or less, 8 mana | Mystical Tutor at the end step before | Exsanguinate for X = 6 | Her cast trigger and the Priest take 3 from each opponent; Exsanguinate takes 6 and the Priest 1 more (10 in all); the 18 gained goes to the Bond target (30 in all). Count your own table before you cast |
+| 9 mana, no Bond, each opponent at 12 or less | Vampiric Tutor or Mystical Tutor at the end step before | Debt to the Deathless for X = 5 (nine mana: 10 to each opponent, plus 2 from her cast trigger) | Without Bond or Blood Debt only drains what you count, so cast it only when the total kills every opponent; otherwise land a piece first |
+
+**Mana: Cabal Coffers, Urborg and Swamps**
+
+Count lands (L), then check which pieces are out. With Urborg and Coffers both out you make 2L - 3 mana: 9 at six lands, 11 at seven, 13 at eight, 15 at nine. With Coffers alone it is L + S - 3, S being the real Swamps (the eight Swamps and Underground Sea, Watery Grave, Scrubland, Godless Shrine); Coffers is not itself a Swamp without Urborg. Debt costs X + 4 and takes 2X from each opponent; Exsanguinate costs X + 2 and takes X.
+
+| Situation | Tutor | Target | Why, and what to watch for |
+|---|---|---|---|
+| Five or more lands; Urborg out, Coffers missing (or the reverse) | Expedition Map, Urza's Cave | The missing half | With both out, seven lands is 11 mana. Map's land is your land drop and can tap at once; Cave's land enters tapped, so Coffers fetched by Cave waits a turn |
+| Seven or eight lands, Urborg and Coffers out (11 to 13 mana), Bond out, Y'shtola out | Mystical Tutor at the end step before; Demonic Tutor if you can still pay for the spell | Debt to the Deathless: X = 7 at 11 mana (14 to each opponent), X = 9 at 13 mana (18 to each) | Two {W} must come from lands (Coffers makes only {B}). Without two white sources, cast Exsanguinate instead (X = 9 at 11 mana). Mistrise Village first, a counter behind it |
+| Ordinary mana only (no Coffers or Urborg), 7 to 10 mana | Mystical Tutor or Vampiric Tutor at the end step before | Debt (better from about seven mana) or Exsanguinate if you lack {W}{W} | Debt gets 2 per X at 4 extra mana; Exsanguinate gets 1 per X at 2 extra. Count what you actually kill |
+| Hand colours do not fit: {W}{W} for Debt, {B}{B}{B} for Necropotence | Urza's Cave, Expedition Map, Demonic Tutor | The missing coloured land: a white source for Debt; for Necropotence any land once Urborg is out, otherwise a Swamp or black dual | With Urborg out every land taps for {B}, so Necropotence is easy; Debt still wants two white lands |
+| Eight or more lands and few spells | Diabolic Tutor, Ringsight | Exsanguinate or Debt; the Coffers lands if they are missing | The deck is built to turn a flood into one big spell. Urborg Syphon-Mage also turns a spare land into 2 damage and 2 life |
+
+**Blink engine: Displacer Kitten, Conjurer's Closet, Teleportation Circle, Restoration Angel, Loran**
+
+| Situation | Tutor | Target | Why, and what to watch for |
+|---|---|---|---|
+| Displacer Kitten out with Loran (or Skyclave Apparition, Orcish Bowmasters) on the battlefield and an opposing artifact or enchantment worth removing | Mystical Tutor, Vampiric Tutor, Demonic Tutor | Whatever the board needs | Kitten blinks on *any* noncreature spell, so a one-mana tutor is a free blink: Loran destroys another artifact or enchantment. Blinking Skyclave Apparition gives its owner a token each time, so blink it only when the second exile is worth a token |
+| Loran out, no Kitten, a stax piece to keep removing | Ringsight, Demonic Tutor; Idyllic Tutor for the Circle | Displacer Kitten; or Teleportation Circle ({3}{W}) | The Circle blinks one creature or artifact at each of your end steps (a trigger spell as well). Conjurer's Closet ({5}) blinks one creature and Ringsight cannot find it; take it only with a spare five mana |
+| Skyclave Apparition or Orcish Bowmasters on the battlefield, one blink wanted at instant speed | Ringsight, Demonic Tutor | Restoration Angel ({3}{W}, flash) | It blinks a non-Angel creature at the end of an opponent's turn, or in response to removal on Y'shtola |
+| The table has an artifact or enchantment that decides the game (Basalt Monolith, Winter Orb, Isochron Scepter, Rule of Law) and neither Loran nor Skyclave is out | Demonic Tutor, Diabolic Tutor, Ringsight | Loran of the Third Path (any artifact or enchantment); Skyclave Apparition (any nonland, nontoken permanent of mana value 4 or less) | Both are creatures cast at sorcery speed (neither has flash). For instant speed use Generous Gift or Anguished Unmaking, which Mystical Tutor can find |
+
+**An opponent combo about to win**
+
+| Situation | Tutor | Target | Why, and what to watch for |
+|---|---|---|---|
+| A combo is one piece from winning on their next turn, and you hold a counter | None: pass with the mana up (Counterspell {U}{U}, Dovin's Veto {W}{U}, Force of Will) | Vampiric Tutor or Mystical Tutor only after they pass the danger point, at their end step | Mana spent on a tutor is mana not spent on the counter. Dovin's Veto stops noncreature spells only; no counter stops an ability (Walking Ballista, Urza's activation) |
+| The same, and your hand has no counter | Demonic Tutor on your turn with the counter mana left over | Dovin's Veto against a noncreature piece; Counterspell or Force of Will against a creature piece | The tutor must leave the counter's mana untapped: {1}{B} plus {W}{U} is 4 mana, or {1}{B} plus {U}{U}. Keep a second blue card in hand to pitch to Force of Will |
+| A combo spell is on the stack, a Rhystic Study trigger is waiting above it, one blue mana is open | Mystical Tutor in response to the trigger | Dovin's Veto or Counterspell | If the opponent does not pay {1}, you draw the counter before the combo resolves and can cast it (3 mana in all). If they pay, you have only moved a card to the top |
+| The combo piece is on the battlefield and the table cannot kill it by destroying (Heliod, Sun-Crowned; undying creatures; a piece with indestructible) | Mystical Tutor, Idyllic Tutor, Demonic Tutor | Anguished Unmaking (exile, costs 3 life), Prayer of Binding ({3}{W}, flash, exile and 2 life for you), Skyclave Apparition (mana value 4 or less) | Generous Gift destroys, which indestructible and undying pieces survive. Anguished Unmaking and Prayer are mana value 3 or more: they trigger her on an opponent's turn |
+| A creature carries the combo (Kinnan, a mana creature) before their turn | Demonic Tutor, Vampiric Tutor | Fatal Push (mana value 2 or less, or 4 with revolt), Go for the Throat, Path to Exile; Orcish Bowmasters for a 1-toughness piece | These are mana value 1 or 2 and do not trigger her, but they cost one or two mana and leave a counter up. Fatal Push cannot hit mana value 3 or more without revolt, and Go for the Throat cannot hit a Spellskite or Walking Ballista |
+| A sweeper or Cyclonic Rift is coming and Bond and Blood are on your board | Mystical Tutor, Demonic Tutor | Teferi's Protection | It phases your permanents out and keeps your life from changing; hold it for a turn you are not trying to win (Bond and the Priest fire on nothing under it) |
+
+**Wide boards and the race**
+
+| Situation | Tutor | Target | Why, and what to watch for |
+|---|---|---|---|
+| Many small creatures (tokens, Orcs, elves) across the table, little of yours | Demonic Tutor; Mystical Tutor at the end step before | Toxic Deluge ({2}{B}, pay X life) | X = 3 kills toughness 3 or less and leaves Y'shtola (2/4) alive; X = 4 kills her. It triggers her, and an X of 0 is a 3-mana trigger spell. Watch your life total |
+| A few large creatures (Dragons) and your board is Y'shtola and enchantments | Mystical Tutor at the end step before | Austere Command ({4}{W}{W}) | Choose two modes. The "mana value 4 or greater" mode destroys Y'shtola (mana value 4), so cast Teferi's Protection first or accept the recast; the "mana value 3 or less" mode destroys Esper Sentinel and the Priest. Farewell exiles instead (see Keeping the table off you) |
+| Their attackers deal lethal to you next turn and there is no tax out | Idyllic Tutor; Demonic Tutor | Propaganda or Sphere of Safety (taxes every attacker); Teferi's Protection with {2}{W} open | The tax stops a wide attack when they lack the mana; Teferi's Protection stops all of it for one turn but locks your life total |
+| Their attackers kill you in two turns; yours kill them in one | Mystical Tutor at the end step before | Exsanguinate or Debt to the Deathless | Count: each opponent loses X (2X for Debt), plus 2 from her, plus 1 per gain from the Priest, and one opponent loses the gain through Bond. Do not hold the wipe for a bigger board |
+| One big creature is the only attacker | Zur's attack; Idyllic Tutor | Arrest or Bound in Silence (by Zur: no targeting) | Arrest also stops activated abilities. Both are mana value 3 and trigger her if cast (not if Zur puts them in) |
+
+**Stax and hate pieces**
+
+| Situation | Tutor | Target | Why, and what to watch for |
+|---|---|---|---|
+| Winter Orb or Static Orb out: one land (or two permanents) untaps | One-mana tutors (Vampiric, Mystical), Expedition Map; the rocks keep untapping | The removal that your untapped sources can pay: Generous Gift or Loran (both 3 mana) | Under Winter Orb Sol Ring and the Talismans still untap. Do not spend the turn's one land on a tutor for a five-drop |
+| Rule of Law or Eidolon of Rhetoric: one spell per player per turn | Vampiric or Mystical Tutor at an opponent's end step | Loran of the Third Path first, then the kill piece | Each player gets one spell each turn, theirs included, so an instant on their turn does not use your own turn's spell. Remove the lock with Loran before using the one spell on a piece that cannot resolve |
+| Drannith Magistrate out and Y'shtola is in the command zone | Demonic Tutor, Vampiric Tutor | Fatal Push (the Magistrate has mana value 2) | Do not suspend Profane Tutor: it would sit in exile uncastable |
+| Opposition Agent out | None. Do not search at all | Answer the Agent from hand: Path to Exile, Go for the Throat | Every search, fetch lands, Expedition Map, Urza's Cave and Zur's attack included, gives the Agent's controller the card |
+| Narset, Parter of Veils out: you cannot draw more than one card each turn | Demonic Tutor, Diabolic Tutor, Ringsight, Idyllic Tutor (cards go to hand) | The piece you need | Your draw step is your one draw on your own turn, so Loran, Rhystic Study and the draw spells give nothing then; on an opponent's turn you still have one draw. Cards in hand beat cards on top |
+| Grand Abolisher on the table | Sorcery-speed tutors on your turn; instant ones at another opponent's end step | The piece you need | Abolisher stops your spells and the activated abilities of your artifacts, creatures and enchantments on its controller's turn only. Do not plan an end-step tutor in that player's turn |
+
+**Graveyards**
+
+| Situation | Tutor | Target | Why, and what to watch for |
+|---|---|---|---|
+| The table recurs from graveyards (Animate Dead, Reanimate, Unearth, Entomb, undying) | Mystical Tutor, Demonic Tutor | Farewell, graveyard mode alone, or Skyclave Apparition or Anguished Unmaking on the returned creature | Farewell exiles every graveyard, yours too; choose only the modes you need so it does not exile Y'shtola, Bond or your rocks. Cast Teferi's Protection first if you choose more |
+| You want a card from your own graveyard | None | Nothing in the list returns a card from your graveyard | Do not discard a key card to Syphon-Mage, and note that Necropotence exiles anything you discard |
+
+**Low life**
+
+| Situation | Tutor | Target | Why, and what to watch for |
+|---|---|---|---|
+| Your life is 10 or less and the table can hit you | Mystical Tutor, Demonic Tutor, Diabolic Tutor, Ringsight, Idyllic Tutor (none costs life) | Sheoldred, the Apocalypse (2 life per draw, deathtouch); Propaganda or Sphere of Safety; Debt or Exsanguinate for a large gain | Do not use Vampiric Tutor, Necropotence, a fetch land, Read the Bones or Anguished Unmaking at this life total. Teferi's Protection saves a turn, not the race |
+| Life above about 30 and no card flow | Vampiric Tutor, Demonic Tutor | Necropotence (or Zur's attack for it) | Cast it with a healthy life total: the drains refill you. Keep above the table's burn range (Yawgmoth's drain, a Dragon table) |
+| One opponent is at 4 or less, she is out | Demonic Tutor, Diabolic Tutor | Cast Away Doubt | Her trigger 2 plus its 2 damage is 4 to every opponent, in 3 mana. An opponent at 2 or less dies to any noncreature spell of mana value 3 or more. It also deals 2 to you |
+
+**Turn windows and the end step**
+
+| Situation | Tutor | Target | Why, and what to watch for |
+|---|---|---|---|
+| End of the opponent's turn right before yours, mana open | Vampiric Tutor (any card), Mystical Tutor (instant or sorcery) | The kill piece: Bond, Blood, Debt, Exsanguinate, or the missing Coffers land | You untap and draw it with a full turn of mana. The cheapest time to tutor; a tapped-out turn can still do it |
+| Your own turn, tapped low, and next turn is the kill | Vampiric Tutor, Mystical Tutor at your own end step, after Palantír's trigger resolves | Debt, Exsanguinate or Torment of Hailfire | Palantír's mill takes the top cards of your library at your end step. Cast it after the trigger, or at an opponent's end step |
+| Her draw trigger is on the stack at an end step (a player lost 4 or more life) | Vampiric Tutor or Mystical Tutor in response | The card you need next | The draw gets the tutored card. Cast it before the trigger resolves |
+| Necropotence out (no draw step) | Vampiric Tutor, then pay 1 life | The kill piece | The tutored card is the first one the next activation exiles, and it arrives at your next end step. Tutor and activate a turn early |
+| Turn 7 or later, 9 or more mana, the table is not close | Mystical Tutor at the end step before | Debt, Exsanguinate or Torment of Hailfire, whichever your mana and colours can pay | Torment is a late mana sink: opponents choose a sacrifice or a discard, so it works best against a table with few permanents and cards. Count before you commit |
+
+#### What to fetch first
+
+1. **Turns 1 to 3, Y'shtola not yet out:** the colour or rock that lets you cast her on turn 3 or 4 (Command Tower, Arcane Signet, a Talisman, Sol Ring). Rhystic Study or Smothering Tithe if the mana is fine.
+2. **A game-ending threat on the table:** the answer to it before any engine piece. Dovin's Veto or Counterspell for a spell, Anguished Unmaking for a permanent, Teferi's Protection for a wipe or a lethal attack.
+3. **Y'shtola out, neither piece:** Sanguine Bond, then Exquisite Blood.
+4. **Bond out, Blood missing:** Exquisite Blood, from an opponent's end step, with a 3-mana trigger spell for the same turn.
+5. **Both out:** do not fetch a start: cast Diabolic Tutor, Ringsight or Idyllic Tutor as the start. Without her, Exsanguinate for X = 1.
+6. **Five or more lands:** Urborg or Cabal Coffers, whichever is missing, then Debt to the Deathless (with {W}{W}) or Exsanguinate.
+7. **Creatures attacking you:** Propaganda or Sphere of Safety, Toxic Deluge or Austere Command, then Teferi's Protection to survive a turn.
+8. **Nothing above applies:** an engine (Rhystic Study, Smothering Tithe, Necropotence), in that order of safety.
+
+#### Tutor mistakes
+
+1. Looking for Y'shtola. She is in the command zone; nothing in the library finds her.
+2. Using Mystical Tutor for Bond, Blood, Loran or a land. It finds only instants and sorceries.
+3. Casting a top-of-library tutor at your own end step with Palantír out, then letting its mill take the card; or casting one under Necropotence and waiting for a draw step that does not come.
+4. Casting Vampiric Tutor, Read the Bones, Anguished Unmaking or a fetch land at a life total the table can kill, or casting Necropotence in front of Yawgmoth's drain.
+5. Casting Exquisite Blood or Sanguine Bond on the turn you tutor for it when you cannot also pay for a start. Tutor at the end step and cast it next turn with the start in hand.
+6. Using Demonic Tutor (mana value 2, no drain) when Y'shtola is out and you have the mana for Diabolic Tutor, Ringsight or Idyllic Tutor.
+7. Tutoring for Ringsight's target with no Y'shtola and no coloured creature, or for a colourless card (Sol Ring, Palantír, Closet) or a land.
+8. Expecting Zur to find Bond, Blood, Polluted Bonds or Smothering Tithe (mana value 4 or more), or expecting the search without an attack that survives.
+9. Tutoring into open counter mana for a card you cannot cast that turn or the next. A sorcery tutor is useful as bait, not as the plan.
+10. Searching under Opposition Agent: fetch lands, Map, Cave, Zur and every tutor give the Agent's controller the card. Remove the Agent first.
+11. Suspending Profane Tutor into Drannith Magistrate or Opposition Agent, or forgetting it can only be suspended, not cast from hand.
+12. Planning Debt to the Deathless without counting {W}{W}. Coffers makes only {B}, so the two white must come from lands; count them first.
 
 ### Protecting the win turn
 

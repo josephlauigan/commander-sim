@@ -239,54 +239,250 @@ bottom for each mulligan after the free one.
 
 ### What to tutor for
 
-Instant tutors that put the card on top (Vampiric Tutor, Mystical Tutor, Enlightened Tutor, Worldly Tutor) go at the
-end step of the player before you, so you draw the card next. Imperial Seal is a sorcery that does the same: cast it on
-your turn for next turn, or at instant speed with Teferi's +1, Valley Floodcaller or Borne Upon a Wind. On your own
-turn, a top-of-library tutor followed by Gitaxian Probe, Brainstorm or Borne Upon a Wind draws the card at once. Under
-Necropotence you skip the draw step, so top-of-library tutors are slow.
+Where a tutor puts the card decides how soon you can use it. **To hand:** Demonic Tutor, Grim Tutor, Diabolic Intent,
+Eladamri's Call, Merchant Scroll, Intuition, Gifts Ungiven, Beseech the Mirror, Tainted Pact, Demonic Consultation.
+**On top of the library:** Vampiric Tutor, Imperial Seal, Mystical Tutor, Enlightened Tutor, Worldly Tutor, Noxious
+Revival. A top-of-library card needs a draw before it counts: your draw step, Gitaxian Probe, Brainstorm, Preordain,
+Borne Upon a Wind, a Rhystic Study or Mystic Remora trigger, or {4} on Thrasios. Every search (the tutors that
+say "shuffle", and fetch lands) shuffles the library, and a shuffle buries a card you put on top.
 
-| Board state | Tutor | Target | Why |
+Shorthand below: **Oracle** is Thassa's Oracle, **the exile half** is Demonic Consultation or Tainted Pact, **the lock**
+is Silence, Orim's Chant, Grand Abolisher, Voice of Victory or Teferi, Time Raveler, and **any-card tutor** is Demonic
+Tutor, Vampiric Tutor, Grim Tutor, Imperial Seal, Diabolic Intent, Beseech the Mirror, Intuition or Gifts Ungiven. There
+is no Laboratory Maniac or Jace, Wielder of Mysteries in the list: Oracle is the only "library is empty" win, so a
+countered or exiled Oracle ends Lines 1 and 2 for the turn.
+
+#### The tutors
+
+| Card | Cost | Speed | Goes to | Finds | Besides mana | Catch |
+|---|---|---|---|---|---|---|
+| Demonic Tutor | {1}{B} | Sorcery | Hand | Any card | Nothing | Cast it before Oracle: with Oracle's trigger on the stack only instants work |
+| Grim Tutor | {1}{B}{B} | Sorcery | Hand | Any card | 3 life | Demonic Tutor with a mana and 3 life added; use it when {B}{B} is spare and life is high |
+| Diabolic Intent | {1}{B} | Sorcery | Hand | Any card | Sacrifice a creature | Tap Birds, Hierarch or Pilgrim for mana first. Don't sacrifice a commander you need for Fierce Guardianship |
+| Vampiric Tutor | {B} | Instant | Top | Any card | 2 life | Not revealed. Needs a draw before you can use the card |
+| Imperial Seal | {B} | Sorcery | Top | Any card | 2 life | Not revealed. Sorcery: cast it on your turn for next turn's draw, or at instant speed with Teferi's +1, Valley Floodcaller or Borne Upon a Wind |
+| Mystical Tutor | {U} | Instant | Top | Instant or sorcery | Nothing | Revealed. The exile half, Doomsday, Silence, Veil of Summer, every counter and the cantrips |
+| Enlightened Tutor | {W} | Instant | Top | Artifact or enchantment | Nothing | Revealed. Necropotence, Rhystic Study, Mystic Remora, the mana rocks, Basalt Monolith, Rings of Brighthearth, Lion's Eye Diamond, Esper Sentinel and Walking Ballista (both artifact creatures) |
+| Worldly Tutor | {G} | Instant | Top | Creature | Nothing | Revealed. Oracle, the lock creatures, Valley Floodcaller, Walking Ballista, mana creatures |
+| Eladamri's Call | {G}{W} | Instant | Hand | Creature | Nothing | Revealed. The cleanest way to Oracle: instant speed, straight to hand. Needs both {G} and {W} |
+| Merchant Scroll | {1}{U} | Sorcery | Hand | Blue instant | Nothing | Revealed. Reaches Mystical Tutor, Intuition, Gifts Ungiven, Brainstorm, Borne Upon a Wind, Force of Will, Pact of Negation, Fierce Guardianship, Force of Negation, Mental Misstep, Flusterstorm, Swan Song, Mindbreak Trap, Snapback, Chain of Vapor, Into the Flood Maw. Not Silence, Veil of Summer, the exile half or Doomsday: those take Mystical Tutor, a second step |
+| Intuition | {2}{U} | Instant | Hand (one card) | Three cards | Nothing | You choose the opponent; they pick one for your hand and the other two go to the graveyard. Name three that each do the job |
+| Gifts Ungiven | {3}{U} | Instant | Two to hand, two to graveyard | Up to four cards with different names | Nothing | The opponent you choose picks which two go to the graveyard. Name four where any two are enough. Graveyard cards stay reachable with Noxious Revival and Doomsday |
+| Beseech the Mirror | {1}{B}{B}{B} | Sorcery | Exile face down, then hand or cast free | Any card | Bargain: sacrifice an artifact, enchantment or token | Free cast only if bargained and the card's mana value is 4 or less (Oracle 2, Necropotence 3, Doomsday 3, Teferi 3, Floodcaller 3). Otherwise it goes to hand. A free spell can still be countered, and a spell cast with no mana spent is countered by Vexing Bauble or Lavinia |
+| Tainted Pact | {1}{B} | Instant | Hand (one card) | The first card you take, going down from the top | Nothing | Every card above it is exiled for good, and you can't aim it. Its job is the Oracle win; as a tutor it only works on a top you already know |
+| Demonic Consultation | {B} | Instant | Hand | A card you name | Nothing | The top six are exiled before it looks, so a named card in the top six is lost and the rest of the library follows it. Its job is the Oracle win |
+| Doomsday | {B}{B}{B} | Sorcery | Top (a five-card pile) | Any five cards from library and graveyard | Half your life, rounded up | Exiles everything else, including your graveyard. See Line 2 |
+| Necropotence | {B}{B}{B} | Enchantment | Hand, at the beginning of your next end step | The top card, whatever it is | 1 life per card | Not a tutor, a dig. Skips your draw step. Discards are exiled |
+| Ranger-Captain of Eos | {1}{W}{W} | Creature | Hand | Creature with mana value 1 or less: Birds of Paradise, Noble Hierarch, Avacyn's Pilgrim, Esper Sentinel, Mockingbird, Walking Ballista | Nothing | A creature spell, counterable. Its sacrifice ability is a lock against noncreature spells |
+| Noxious Revival | {G} or 2 life | Instant | Top | Any card in any graveyard | 2 life if you don't pay {G} | Puts back a countered Oracle (not an exiled one) or a card Intuition or Gifts sent to the graveyard. Needs a draw after |
+
+#### Cards that dig or draw
+
+| Card | Cost | What it does | Catch |
 |---|---|---|---|
-| Oracle in hand, need the exile half, your turn | Demonic Tutor ({1}{B}) or Grim Tutor ({1}{B}{B}, 3 life) | Tainted Pact into Mental Misstep decks, otherwise Demonic Consultation | Pact dodges Misstep; Consultation is a mana cheaper |
-| Oracle in hand, need the exile half, opponent's end step | Mystical Tutor ({U}) or Vampiric Tutor ({B}, 2 life) | Consultation or Pact | On top for your draw |
-| Exile half in hand, need Oracle | Eladamri's Call ({G}{W}, instant, to hand) at an end step; Worldly Tutor ({G}, to the top); Beseech the Mirror bargained (cast it free) | Thassa's Oracle | Call is the cleanest: to hand, instant |
-| Oracle in hand, no exile half, a flash enabler out (Teferi +1, Floodcaller) | Mystical Tutor at the end step, or Demonic Tutor on your turn | Doomsday (Pile B next turn) | Doomsday is the exile half in effect; Consultation or Pact are cheaper if the tutor can find them just as easily |
-| Neither half, 3+ mana, sorcery speed | Demonic Tutor | Necropotence on turns 1-2; otherwise Thassa's Oracle | Necro finds the rest for life |
-| Both halves in hand, opponents hold free counters | Mystical Tutor, Merchant Scroll, Worldly Tutor, Eladamri's Call | Silence or Orim's Chant (Mystical); Force of Will or Pact (Scroll); Grand Abolisher or Voice of Victory (Call, Worldly) | One lock wins more games than a spare combo piece |
-| A stax piece blocks your line | Mystical Tutor, Merchant Scroll; an any-card tutor for the lands | Snapback, Chain of Vapor, Into the Flood Maw; Boseiju or Otawara | See "Answering stax" |
-| Opposition Agent on the battlefield | Don't tutor or crack fetches | Answer it first (Deadly Rollick, Snapback, Chain, Flood Maw, Otawara, Teferi −3) | They take every card you search for |
+| Brainstorm | {U}, instant | Draw three, put two back on top | Put the two junk cards back, then crack a fetch or cast a tutor: the shuffle buries them. It draws a tutored top card at once |
+| Ponder | {U}, sorcery | Look at the top three, reorder, optional shuffle, draw | Don't shuffle if a tutored card is on top |
+| Preordain | {U}, sorcery | Scry 2, draw | Keep the tutored card on top, then draw it |
+| Gitaxian Probe | {U} or 2 life, sorcery | Look at a hand, draw | Free in mana. Sorcery: not with a trigger on the stack. Starts Pile C |
+| Borne Upon a Wind | {1}{U}, instant | Spells this turn have flash, draw | Flash for Doomsday and the sorcery tutors, and a draw. Starts Pile C |
+| Sylvan Library | {1}{G}, enchantment | At your draw step, draw two more, then put two cards drawn this turn back on top or pay 4 life each | A free look at three cards. Off under Necropotence (no draw step) |
+| Thrasios, Triton Hero | {G}{U}; {4} ability | Scry 1, reveal the top card: a land goes onto the battlefield tapped, anything else is drawn | Draws a tutored top card at instant speed, but a tutored land lands on the battlefield, not in hand. Never on an empty library |
+| Mystic Remora | {U}, enchantment | Draw when an opponent casts a noncreature spell, unless they pay {4} | You may decline the draw. Cumulative upkeep: pay it once or twice |
+| Rhystic Study | {2}{U}, enchantment | Draw when an opponent casts a spell, unless they pay {1} | You may decline the draw. A table that always pays {1} gives you nothing |
+| Esper Sentinel | {W}, artifact creature | Draw when an opponent casts their first noncreature spell each turn, unless they pay {X} | The draw isn't optional, so don't hold a Doomsday pile through an opponent's turn |
+| Tymna the Weaver | {1}{W}{B} | After combat, pay X life, X being the opponents dealt combat damage this turn, and draw X | Needs an attacker to connect. Draws from the top, so it also pulls a tutored card |
+| Ad Nauseam | {3}{B}{B}, instant | Reveal the top card, put it in hand, lose life equal to its mana value, repeat as you like | Never after Doomsday: it reveals only your pile |
+| Thassa's Oracle | {U}{U}, creature | Look at the top X cards (X is devotion to blue), keep one on top, the rest go to the bottom in random order | A tutored top card survives only if you choose it |
+| Mockingbird | {X}{U}, creature | Copies a creature already out | Copying Oracle gives a second trigger, and the copy has Oracle's {U}{U} cost, so it adds 2 to devotion |
+| Teferi, Time Raveler | {1}{W}{U} | -3 bounces an artifact, creature or enchantment and draws | With an empty library the draw loses you the game |
 
-**Intuition piles** ({2}{U}, instant; an opponent picks one card for your hand, the other two go to the graveyard).
-Name three cards where any one does the job:
+#### What each target needs to find it
+
+| Target | Found by |
+|---|---|
+| Thassa's Oracle, Valley Floodcaller, Grand Abolisher, Voice of Victory, Orcish Bowmasters | Any-card tutors, Worldly Tutor, Eladamri's Call |
+| Walking Ballista | Any-card tutors, Worldly Tutor, Eladamri's Call, Enlightened Tutor, Ranger-Captain of Eos |
+| Birds of Paradise, Noble Hierarch, Avacyn's Pilgrim, Esper Sentinel, Mockingbird | Any-card tutors, Worldly Tutor, Eladamri's Call, Ranger-Captain of Eos |
+| Demonic Consultation, Tainted Pact, Doomsday, Silence, Orim's Chant, Veil of Summer, Noxious Revival | Any-card tutors, Mystical Tutor |
+| Gitaxian Probe, Preordain, Ponder | Any-card tutors, Mystical Tutor (not Merchant Scroll: they are sorceries) |
+| Force of Will, Pact of Negation, Fierce Guardianship, Force of Negation, Swan Song, Flusterstorm, Mental Misstep, Mindbreak Trap, Snapback, Chain of Vapor, Into the Flood Maw, Brainstorm, Borne Upon a Wind | Any-card tutors, Mystical Tutor, Merchant Scroll |
+| Necropotence, Rhystic Study, Mystic Remora, Sylvan Library, Smothering Tithe, mana rocks, Moxen, Lotus Petal, Lion's Eye Diamond, Basalt Monolith, Rings of Brighthearth | Any-card tutors, Enlightened Tutor |
+| Teferi, Time Raveler | Any-card tutors only |
+| Cavern of Souls, Boseiju, Otawara, Ancient Tomb | Any-card tutors only (a fetch land finds only a land with a basic land type) |
+
+#### What each card does to the library
+
+| Card | What leaves the library | Where it goes | What that means |
+|---|---|---|---|
+| Demonic Consultation | The top six cards, then every card revealed until the named one appears | The named card to hand; everything else is exiled | Name a card that isn't in the library and the whole library is exiled: the Oracle win. Name a card in the library and it is lost if it was in the top six |
+| Tainted Pact | One card at a time from the top, until you take one | The card you take to hand; the rest are exiled | Decline every card and the whole library is exiled (the deck is singleton, so no name repeats). Take a card and stop, and only the cards above it are lost |
+| Doomsday | Everything except five cards you choose, from library and graveyard | Five cards on top in your order; the rest are exiled | Library is five cards, so Oracle needs devotion to blue to cover what is left after your draws |
+| Necropotence | The top card per life paid | To hand at the beginning of your next end step | Nothing is lost, but you discard down to 7 at cleanup and the discards are exiled. No draw step |
+| Ad Nauseam | The top card each time you repeat | To hand | You pay its mana value in life each time; lands are free |
+| Thassa's Oracle (trigger) | Looks at the top X | One card on top, the rest on the bottom in random order | You win if X is at least the cards left in the library |
+| Thrasios | The top card per {4} | Hand, or the battlefield tapped if it is a land | Each activation shrinks the library by one |
+| Fetch lands, tutors that shuffle | One card | Battlefield (fetch), hand or top (tutor) | Then the library is shuffled, which moves a tutored top card |
+
+**If Oracle is still in the library when the library is exiled, the win is gone.** Cast the exile half only with
+Oracle on the battlefield and its trigger on the stack (Line 1).
+
+#### Count before you tutor
+
+**Free mana (counts for one turn unless noted):** Dark Ritual ({B} into {B}{B}{B}: +2), Cabal Ritual ({1}{B} into
+{B}{B}{B}: +1, or {B}{B}{B}{B}{B}: +3 with seven cards in your graveyard), Lotus Petal (+1, once), Lion's Eye Diamond
+(+3 of one colour, discards your hand), Mox Diamond (+1 for a discarded land, stays), Chrome Mox (+1 for an exiled
+nonartifact, nonland card, stays), Elvish Spirit Guide ({G} from your hand, also on opponents' turns) and Treasures from Lotho or
+Smothering Tithe. Mana creatures need a turn out first.
+
+**Free interaction:** Force of Will (1 life and a blue card, any spell), Force of Negation (a blue card, noncreature,
+only on opponents' turns), Fierce Guardianship (noncreature, a commander out), Pact of Negation (any spell, owe
+{3}{U}{U} at your next upkeep), Mental Misstep ({U} or 2 life, mana value 1 only), Snapback (a blue card, a creature)
+and Deadly Rollick (a commander out, a creature). Each pitch cost is a blue card, so count spare blue cards (cantrips,
+Mental Misstep, Intuition, Merchant Scroll) as well as the counters. Never pitch Oracle.
+
+| Plan | Mana |
+|---|---|
+| Oracle with Demonic Consultation | 3 ({U}{U}, {B}) |
+| Oracle with Tainted Pact | 4 ({U}{U}, {1}{B}) |
+| Add a tutor first | Demonic Tutor 2, Grim Tutor 3, Mystical Tutor 1, Vampiric Tutor 1, Eladamri's Call 2 |
+| Add a lock | Silence, Orim's Chant or Veil of Summer 1; Grand Abolisher 2; Voice of Victory 2; Teferi 3 |
+| Doomsday, Pile A or B | {B}{B}{B}, then 4 ({U}, {W}, {U}{U}) and 2 life (or {U} instead of the life) |
+| Doomsday, Pile C | {B}{B}{B}, then 5 ({U}, {U}, {W}, {U}{U}) and 2 life (or {U}) |
+| Necropotence | {B}{B}{B} |
+| Basalt Monolith + Rings of Brighthearth | About 8 from other sources if both are cast this turn; 5 if one is already out |
+
+**What the Doomsday pile needs.** (1) {B}{B}{B}: Swamp-type lands, Dark Ritual, Cabal Ritual or Lion's Eye Diamond. (2)
+Oracle in hand (Piles B and C) or in the pile (Pile A). (3) A way to cast it at the end step of the player before you:
+Teferi's +1, Valley Floodcaller or Borne Upon a Wind. With none of them, cast it in your own main phase and use Pile C,
+which also needs Oracle and Gitaxian Probe or Borne Upon a Wind in hand. (4) Library after the draws no larger than
+devotion to blue: the pile leaves five, so you need five minus devotion net draws, which is three with Oracle alone and
+two with Thrasios out. (5) The lock in the pile (Silence), and a free counter or Pact of Negation for Doomsday itself,
+which Fierce Guardianship, Flusterstorm, Swan Song and Force of Negation can all hit. (6) Life: Doomsday leaves half your
+life rounded down. At 1 life it kills you; a Probe paid in life afterwards needs the life left to be 3 or more, so
+pay {U} for it below that.
+
+#### Board-state decisions
+
+Read a row as: the window, what you have, what the table has, which tutor, which card, and why. "Free counters" means the
+count from the list above.
+
+**No win line yet**
+
+| Window | Your side | Opponents | Tutor and target | Why, and what to watch |
+|---|---|---|---|---|
+| Turn 1-2, your main phase | Five mana from a land, two fast-mana cards and Dark Ritual ({B}{B}{B} ready), 30+ life, no line card | Empty boards, no counters seen | Demonic Tutor, then Necropotence | It digs for both halves at 1 life a card. Pay no more than you can hold at 7: the cards are exiled face down and reach your hand at your next end step, unseen until then, and cleanup discards are exiled. This turn is setup. It skips your draw step (Piles A and B and Sylvan Library are off) |
+| Any turn, your main phase | Two or more tutors, mana for them, none of Oracle, the exile half or Doomsday | Any | Narrow tutors take what only they reach: Eladamri's Call or Worldly Tutor for Oracle, Mystical Tutor for the exile half. An any-card tutor takes what is left | Mystical can't find a creature and Call can't find an instant. Run tutors that go to hand first. A top-of-library tutor goes last, and only at the end step before your turn or with a draw after it |
+| Opponent's end step | Teferi's +1 used on your turn or Valley Floodcaller already out, 5 mana open (tutor 2, {B}{B}{B}), 6+ life, no Oracle, no exile half. With Borne Upon a Wind as the enabler it is 7 ({1}{U} more) | Tapped low | Demonic Tutor (made instant by the enabler) for Doomsday, cast at once | Pile A holds Oracle, Silence and its own draws, so one tutor and one enabler is a kill on your turn. The tutor must go to hand: a card tutored to the top comes after this end step |
+| Your main phase, mana to spare | Brainstorm, Preordain or Ponder next to a tutor or fetch land | Any | Cantrip first, tutor or fetch second | Brainstorm puts back two cards and the shuffle buries them. Keep a tutored top card out of Ponder's shuffle |
+
+**Win line in hand**
+
+| Window | Your side | Opponents | Tutor and target | Why, and what to watch |
+|---|---|---|---|---|
+| Your turn | Oracle, 6 mana (tutor 2, Oracle 2, exile half 1, lock 1), 0 or 1 free counters | No blue open | Demonic Tutor for Demonic Consultation (3 mana with Oracle), or Tainted Pact (4) | Sorcery-speed tutor first, then Oracle, then the exile half. Pact over Consultation when an opponent can Mental Misstep: Consultation is mana value 1, Pact is 2. Grim Tutor costs a mana and 3 life more |
+| Opponent's end step before your kill turn | Oracle, 1-2 mana open | Tapped low | Mystical Tutor ({U}) or Vampiric Tutor ({B}, 2 life) for the exile half | It lands on top for your draw step, and you untap with all your mana for Oracle, the exile half and the lock. Mystical reveals the card to the table; Vampiric doesn't |
+| Opponent's end step | The exile half, {G}{W} open | Tapped low | Eladamri's Call for Oracle, or Worldly Tutor ({G}) for Oracle on top | Call puts Oracle in hand now; Worldly needs a draw. Call needs both colours: Birds, Hierarch, Command Tower, Chrome Mox or Mana Confluence can supply them |
+| Your turn | Both halves, 4+ mana, no free counter | Blue mana up, cards in hand | Intuition or Demonic Tutor for Silence now, or Mystical Tutor for it at the end step before; Eladamri's Call for Grand Abolisher or Voice of Victory (Worldly Tutor at the end step before) | A lock wins more games than a spare combo piece. Silence is one mana and covers every opponent. The creatures stop spells on your turn but can be countered: cast them a turn early |
+| Your turn | Both halves, 3-4 mana, two or more free counters (for example Force of Will with a spare blue card, Pact of Negation, Fierce Guardianship with a commander out) | Blue mana up | No tutor: go | Each tutor spends mana you need for Oracle and the exile half. Cast Oracle first, then the exile half with the trigger on the stack |
+| Your turn | Oracle and Doomsday in hand, no way to cast it at an end step, no Probe or Borne | Any | Merchant Scroll or Demonic Tutor for Borne Upon a Wind; Demonic Tutor for Gitaxian Probe (Mystical Tutor at the end step before) | Pile C needs a draw spell in hand to start. Borne also gives flash, so with it you can cast Doomsday at an end step instead (Pile B) |
+| Opponent's end step | Oracle in hand, Consultation and Pact no longer in the library, Teferi's +1 used on your turn or Valley Floodcaller out, 5 mana open (tutor 2, Doomsday {B}{B}{B}) | Tapped low | Demonic Tutor for Doomsday, then Doomsday | With either exile half still in the library, tutor for it instead: it is cheaper and costs no life. Doomsday with Oracle in hand is Pile B (Probe, Preordain, Silence) and costs half your life |
+| Your turn, before a Doomsday | Oracle in hand, devotion 2, spare mana | Any | Cast Thrasios ({G}{U}) first; Eladamri's Call for Valley Floodcaller; Demonic Tutor for Rhystic Study or Mystic Remora (Worldly or Enlightened Tutor at the end step before) | Each point of devotion is one draw fewer in the pile. Count devotion when the trigger resolves, not when you cast: a blue permanent killed in response lowers it. Mockingbird as a copy of Oracle adds {U}{U} |
+| Your turn | Basalt Monolith or Rings of Brighthearth missing, 5-8 mana from other sources | Few artifact counters | Demonic Tutor for the missing piece (Enlightened Tutor at the end step before); Eladamri's Call for Walking Ballista | Finish with Ballista or Thrasios (Line 4). Basalt and Rings are noncreature artifacts: Force of Negation and Fierce Guardianship stop them, Swan Song doesn't. Null Rod and Collector Ouphe stop the loop |
+
+**Opponents hold counterspells or interaction**
+
+| Window | Your side | Opponents | Tutor and target | Why, and what to watch |
+|---|---|---|---|---|
+| Your turn | Both halves, one free counter | One blue player, 2+ untapped, cards in hand | Intuition or Demonic Tutor for Silence or Orim's Chant (Mystical Tutor at the end step before) | Silence first, then Oracle, and keep the free counter for what is left. Orim's Chant stops only one player |
+| Your turn | Both halves, one or two free counters | Two or more blue players untapped | Intuition (Silence, Orim's Chant, Veil of Summer), or Mystical Tutor at the end step before | Silence is the only lock that stops every opponent. A Chant on one leaves the other free to counter |
+| Your turn | Both halves, mana for Veil of Summer ({G}) | A known Force of Will or unknown counters | Mystical Tutor at the end step before for Veil of Summer; Merchant Scroll now for Pact of Negation or Force of Will as backup | Veil in response to the counter: your spells can't be countered this turn, Force of Will included. It doesn't stop Mindbreak Trap, a Silence cast first, or a Stifle-type effect |
+| Your turn | Oracle in hand, Cavern of Souls in library | Red mana up (Red Elemental Blast, Pyroblast) | Any-card tutor for Cavern of Souls the turn before, then play it naming Wizard; or Mystical Tutor at the end step before for Veil of Summer | The blasts counter a blue spell. Oracle with Cavern's mana can't be countered, and Consultation and Pact are black, so the blasts miss them. Cavern pays only one {U}: bring a second blue source |
+| Your turn | Oracle, any halves | A Mindbreak Trap or a three-spell turn | Intuition or Demonic Tutor for Silence or Orim's Chant (Mystical Tutor at the end step before) | Trap is a spell, so a lock stops it. Veil of Summer doesn't, because Trap exiles |
+| Your turn | Free counters held: Mental Misstep, Force of Will, Fierce Guardianship | White mana up (their Silence or Orim's Chant) | Merchant Scroll for Mental Misstep (Mystical Tutor at the end step before) | Silence and Orim's Chant have mana value 1. Keep the counter for their lock, not for your Oracle. Cast your own lock first |
+| Your turn | Both halves | A stax piece (see Answering stax) | Merchant Scroll for Snapback, Chain of Vapor or Into the Flood Maw (Mystical Tutor at the end step before); an any-card tutor for Boseiju or Otawara | Bounce is enough on the kill turn. Archon of Emeria and Deafening Silence limit how many spells you cast: tutor the answer, not the combo |
+| Your turn | Anything | Opposition Agent | No tutor, no fetch | They take every card you search for. Answer the Agent, or go from the hand you hold |
+
+**An opponent is about to win**
+
+| Window | Your side | Opponents | Tutor and target | Why, and what to watch |
+|---|---|---|---|---|
+| Their turn, you can't win first | 3-4 mana, a spare blue card | A spell combo (Oracle with Consultation, Underworld Breach, Kinnan with Basalt Monolith) | Intuition: Force of Negation, Fierce Guardianship, Swan Song (or Flusterstorm, Mental Misstep) | Instant, to hand, in time. A top-of-library tutor arrives too late unless Brainstorm, Borne Upon a Wind or a Rhystic Study trigger draws it. Name three that all answer the spell |
+| Their turn | {G}{W} and {1}{B} open (Call 2, Bowmasters 2) | A combo built on X/1 creatures (Rograkh, Kinnan's mana creatures) | Eladamri's Call for Orcish Bowmasters | Fierce Guardianship and Force of Negation can't counter a creature. Bowmasters is a flash creature that deals 1 damage. Snapback, Deadly Rollick or Swords to Plowshares work too if you already hold one |
+| Your turn, can't win | {W} to spare for their upkeep | They plan to win next turn | Demonic Tutor or Intuition for Silence or Orim's Chant, held and cast at their upkeep | It has to be in hand: a top-of-library tutor won't arrive in time. Silence stops their spells for the turn, not abilities or spells already on the stack |
+
+**Timing, engines, mana and commanders**
+
+| Window | Your side | Opponents | Tutor and target | Why, and what to watch |
+|---|---|---|---|---|
+| Opponent's end step | Instant tutor, mana open | Tapped for their turn | Top-of-library tutor | They have used their mana, and you untap with everything. Cast it after their last spell, before your untap |
+| Your main phase | Top-of-library tutor, no way to draw | Any | Don't: use a hand tutor, or wait for the end step | A top tutor with no draw sits there while you pass the turn |
+| Their turn | Mystic Remora or Rhystic Study out | Casting spells | A top tutor, cast just before their next spell | The trigger can draw the card sooner, but a table that pays {1} or {4} gives you nothing: don't count on it |
+| After Doomsday | Mystic Remora or Rhystic Study out, pile in the library | Casting spells | No tutor: decide each trigger | Both triggers say "may": decline the draw when the pile doesn't need it, because it takes the next pile card and an early draw can strand a pile built for a draw step |
+| Any turn | Thrasios out, {4} spare | Any | Top tutor, then Thrasios's {4} | Draws the tutored card at instant speed. A tutored land goes onto the battlefield tapped instead |
+| Any turn | No commander out, Fierce Guardianship or Deadly Rollick in hand | Any | No tutor first: cast Thrasios ({G}{U}) | Either commander turns the free spells on. Thrasios is cheaper and adds to devotion; Tymna is a lifelink 2/2 |
+| Your turn, combat | Tymna out and an attacker that connects | Few blockers | Top tutor before combat | Tymna's draw after combat takes the top card. Pay X life for X opponents dealt damage |
+| Turn 2-3, short on mana | Two mana or fewer, colours fine | Any | Demonic Tutor for Sol Ring or Mana Vault (Enlightened Tutor at the end step before) | More mana before the line. Mana Vault taps for {C}{C}{C} once and costs life when it stays tapped at your draw step |
+| Turn 2-3, wrong colours | No source of {U} or {B} for Oracle ({U}{U}) or Doomsday ({B}{B}{B}) | Any | Eladamri's Call for Birds of Paradise or Noble Hierarch; Demonic Tutor for a dual land, Mox Diamond or Chrome Mox | Sol Ring, Mana Vault and the Monoliths make only {C} and fix nothing. Birds and Hierarch can't tap the turn they arrive. Mox Diamond needs a land to discard, Chrome Mox a blue or black card to exile |
+| Turn 1-3 | Oracle, a tutor and fast mana for the cheapest line | Opponents have 1-3 lands | Demonic Tutor for Demonic Consultation | Few counters can be cast at that mana; the free ones (Force of Will, Pact of Negation, Mental Misstep, Fierce Guardianship) are the risk, so hold one free counter of your own |
+| Turn 4 or later | Both halves, no lock, no free counter | 4+ lands with mana open, Rhystic Study, stax | The lock first, then the line; wait a turn if there is none | A stopped attempt costs about two turns. Spend the turn on a lock creature or Teferi, and keep a free counter up on theirs |
+
+**Life totals**
+
+| Window | Your side | Opponents | Tutor and target | Why, and what to watch |
+|---|---|---|---|---|
+| Any | 10 life or less | Any | Demonic Tutor, Worldly Tutor, Eladamri's Call, Mystical Tutor | Skip Grim Tutor (3), Vampiric Tutor and Imperial Seal (2 each) and a long Necropotence run |
+| Any | 20 life | Any | Anything | Doomsday leaves half. After Vampiric Tutor (2) and a fetch (1), 20 becomes 17, then 8 after Doomsday |
+| Any | 5 life or less | Any | No Doomsday unless Probe is paid with {U} | Doomsday leaves 2 or less, and a Probe paid in life needs 3 or more left. At 1 life it kills you |
+
+**What to fetch first**
+
+1. Both halves in hand: no tutor. Fetch a lock only if you hold no free counter.
+2. One half in hand: fetch the other. Oracle missing: Eladamri's Call, then Demonic Tutor, then Worldly Tutor on top at the end step before.
+   Exile half missing: Mystical Tutor at the end step before, or Demonic Tutor on your turn. Pact if they have Mental Misstep, otherwise Consultation.
+3. Neither half: Necropotence on turns 1-2 if you can cast it this turn. With a flash enabler and {B}{B}{B}, Doomsday
+   (Pile A), fetched with a tutor that goes to hand. Otherwise the piece your other tutors can't reach.
+4. The lock, in this order: Silence, then Grand Abolisher or Voice of Victory a turn early, then Orim's Chant for one
+   player, then Veil of Summer against red blasts and Force of Will.
+5. Protection for the pieces themselves: Force of Will, Pact of Negation, Fierce Guardianship.
+6. Mana and colours: the missing source.
+7. Engines (Rhystic Study, Mystic Remora, Necropotence) only when nothing above applies.
+
+**Tutor mistakes**
+
+1. Casting the exile half before Oracle is on the battlefield, or while Oracle is still in the library: the library is
+   exiled with Oracle in it.
+2. Using Demonic Consultation as a tutor: a card in the top six is exiled and the library follows it.
+3. Using Tainted Pact as a tutor on an unknown library: the cards above the one you take are gone.
+4. Stacking top-of-library tutors: each search shuffles, and the second shuffles the first card away. Draw it first, or
+   put the top tutor last.
+5. Cracking a fetch land after a tutor to the top. The shuffle buries the card.
+6. Casting a sorcery-speed tutor (Demonic Tutor, Grim Tutor, Diabolic Intent) with Oracle's trigger on the stack.
+7. A top tutor in your main phase with no draw, so the card sits there until next turn.
+8. Paying Necropotence for more cards than you can hold at 7. The cards arrive face down and unseen, you discard to 7 at cleanup, and the discards are exiled.
+9. Pitching Oracle or the exile half to Force of Will, Force of Negation or Snapback.
+10. Casting Demonic Consultation free off Beseech the Mirror. The free cast needs bargain and is optional (otherwise the card goes to hand), and a Consultation cast that way has no Oracle trigger to answer.
+11. Diabolic Intent sacrificing the commander that makes Fierce Guardianship free.
+12. Tutoring while an opponent controls Opposition Agent.
+13. Paying life on tutors, fetches and Probe, and then having too little for the Doomsday that follows.
+14. Using Gifts Ungiven or Intuition with piles where one choice leaves you without a line: the opponent picks the
+    worst one.
+15. Casting Pact of Negation on a turn when you may not win, with five mana ({3}{U}{U}) not certain next upkeep.
+
+**Intuition and Gifts Ungiven piles** (Intuition: name three cards where any one does the job; Gifts: four where any
+two are enough).
 
 | You hold | Pile | Why it works |
 |---|---|---|
-| Thassa's Oracle | Demonic Consultation, Tainted Pact, Mystical Tutor | Any of the three gets the exile half |
-| Consultation or Pact | Thassa's Oracle, Eladamri's Call, Worldly Tutor | Any of the three gets Oracle |
-| Both halves, need a lock | Silence, Grand Abolisher, Voice of Victory | Each stops every opponent on your turn |
+| Thassa's Oracle | Demonic Consultation, Tainted Pact, Mystical Tutor (Intuition) | Any of the three gets the exile half |
+| Demonic Consultation or Tainted Pact | Thassa's Oracle, Eladamri's Call, Worldly Tutor (Intuition) | Any of the three gets Oracle |
+| Both halves, need a lock | Silence, Grand Abolisher, Voice of Victory (Intuition) | Each stops every opponent on your turn |
+| Thassa's Oracle | Demonic Consultation, Tainted Pact, Doomsday, Mystical Tutor (Gifts Ungiven) | Any two give you an exile half or a path to one. Doomsday needs a flash enabler or Pile C. Noxious Revival can put a card the opponent sent to the graveyard back on top |
+| Their combo coming | Force of Negation, Fierce Guardianship, Swan Song (Intuition, on their turn) | Each counters a noncreature spell |
 
-**Gifts Ungiven** ({3}{U}, instant; up to four cards with different names, an opponent puts two in your graveyard and
-two in your hand). Holding Oracle: Demonic Consultation, Tainted Pact, Doomsday and Mystical Tutor (any two give you an
-exile half or a way to one; Doomsday needs a flash enabler or Pile C). Noxious Revival can put a card the opponent
-sent to the graveyard back on top.
-
-**Merchant Scroll** ({1}{U}, a blue instant to hand): Mystical Tutor (a second step to Consultation, Pact, Doomsday or
-Silence), Intuition, Gifts Ungiven, Brainstorm, Borne Upon a Wind (flash for Doomsday), Force of Will or Pact of
-Negation, Snapback, Chain of Vapor or Into the Flood Maw, Fierce Guardianship.
-
-**Beseech the Mirror** ({1}{B}{B}{B}): bargain by sacrificing an artifact, enchantment or token as you cast it, and you
-may cast the found card free if its mana value is 4 or less. Fodder: a Treasure (from Lotho or Smothering Tithe),
-Lotus Petal, a Mox, Sol Ring, an old Mystic Remora, the Orc Army token. A Mox or Sol Ring can tap for mana while you
-cast Beseech and then be sacrificed to bargain. Best targets: Thassa's Oracle (holding the exile half), Necropotence,
-or Doomsday (mana value 3). Cast free, Doomsday still works as a sorcery on your turn: use Pile C. Never Demonic
-Consultation: it would resolve with no Oracle trigger.
-
-**Diabolic Intent** ({1}{B}, sacrifice a creature): tap Birds or Noble Hierarch for mana first, then sacrifice it.
-Don't sacrifice a commander you need for Fierce Guardianship this turn.
-
-**Eladamri's Call and Worldly Tutor** find Thassa's Oracle, a lock creature (Grand Abolisher, Voice of Victory,
-Ranger-Captain of Eos), Valley Floodcaller (flash for Doomsday), or Walking Ballista for Line 4. Ranger-Captain then
-fetches a 1-drop: Birds, Hierarch, Avacyn's Pilgrim, Esper Sentinel or Mockingbird.
+**Beseech the Mirror.** Best targets are Oracle (holding the exile half), Necropotence, or Doomsday (mana value 3). Cast
+free, Doomsday still works as a sorcery on your turn: use Pile C. Fodder for the bargain: a Treasure, Lotus Petal, a
+Mox, Sol Ring, a Mystic Remora about to expire or the Orc Army token. A Mox or Sol Ring can tap for mana while you cast Beseech and
+then be sacrificed.
 
 ### Protecting the win turn
 
@@ -436,7 +632,7 @@ costs no life of its own.
 6. Cracking Lion's Eye Diamond with cards you need still in hand, or with Necropotence out (Necro exiles the discards).
 7. Counting Force of Negation or Mindbreak Trap as free on your own turn.
 8. Casting Pact of Negation without five mana ({3}{U}{U}) for your next upkeep, on a turn you might not win.
-9. Paying Necropotence for more cards than you can keep, or casting Doomsday Piles A and B under it.
+9. Paying Necropotence for more cards than you can hold at seven, or casting Doomsday Piles A and B under it.
 10. Casting Chain of Vapor mid-combo: the opponent sacrifices a land, copies it, and bounces your Oracle.
 11. Using a top-of-library tutor in your own main phase with no way to draw the card this turn.
 12. Losing your last commander at your upkeep and then counting Fierce Guardianship as free.

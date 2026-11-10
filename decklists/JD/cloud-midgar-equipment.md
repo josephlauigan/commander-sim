@@ -8,7 +8,7 @@ another carrier, to survive.
 | | |
 |---|---|
 | **Commander** | Cloud, Midgar Mercenary ({W}{W}, 2/1, white) |
-| **Bracket** | 3 (3 Game Changers: Smothering Tithe, Enlightened Tutor, Teferi's Protection) |
+| **Bracket** | 3 (2 Game Changers: Smothering Tithe, Enlightened Tutor) |
 | **Simulator** | deck key `cloud`; results in `decklists/pool/pool-results.md`, history in `decklists/CHANGELOG.md` |
 
 
@@ -20,14 +20,15 @@ another carrier, to survive.
 for an Equipment card, reveal it, put it into your hand, then shuffle. As long as Cloud is equipped, if a triggered
 ability of Cloud or an Equipment attached to it triggers, that ability triggers an additional time.*
 
-- **A tutor every time he enters.** The deck has 10 Equipment, so the search always finds one. He is cheap to cast and
+- **A tutor every time he enters.** The deck has 11 Equipment, so the search always finds one. He is cheap to cast and
   to recast from the command zone (the commander tax adds {2} for each earlier cast from there), and a recast replaces
   a lost Equipment at once.
 - **The doubling is narrow.** It applies only while Cloud himself is equipped, and only to triggers of Cloud or of an
   Equipment attached to *Cloud*. Equipment on another creature never doubles, and a static bonus (+X/+X, hexproof)
   does not trigger at all.
 - **He is the plan and the weak point.** A 2/1 for {W}{W} dies to targeted removal, blockers and wipes. Equipped with
-  a Sword he is a 4/3 with two protections, so the first Sword is also his first piece of defence.
+  a Sword he is a 4/3 with two protections, so the first Sword is also his first piece of defence, and Mithril Coat
+  (indestructible, flashed in at instant speed) is the second.
 - **When to cast him.** Turn 2 ({W}{W}), before anything else. A turn-1 Sol Ring does not delay him: it pays for the
   Sword the turn after. After a removal, recast him when you have the mana to equip him the same turn (Swiftfoot Boots
   and Sting, the Glinting Dagger give haste, so he can attack at once) and something to defend him; do not recast him
@@ -52,8 +53,9 @@ ability of Cloud or an Equipment attached to it triggers, that ability triggers 
 - **Andúril, Narsil Reforged**: whenever the equipped creature attacks, it puts a +1/+1 counter on each creature you
   control (two with the city's blessing), so Cloud's attack puts two counters on each (four with the blessing).
 
-**Swiftfoot Boots**, **Colossus Hammer** and **Fireshrieker** have no triggers: they are plain bonuses (hexproof and
-haste, +10/+10, double strike). **Sting, the Glinting Dagger** (+1/+1 and haste) has an untap trigger at the start of
+**Swiftfoot Boots**, **Colossus Hammer**, **Fireshrieker** and **Mithril Coat** have no triggers that the doubling helps: they are
+plain bonuses (hexproof and haste, +10/+10, double strike, indestructible). Mithril Coat's one trigger fires as it enters,
+before it is attached to anything, so Cloud's extra trigger never applies to it. **Sting, the Glinting Dagger** (+1/+1 and haste) has an untap trigger at the start of
 each combat; doubling it adds nothing.
 
 ### How the deck wins
@@ -131,6 +133,32 @@ graveyard when you attack with him) all carry the Swords. **Zack Fair** hands hi
 creature when he is sacrificed, which also makes that creature indestructible. Then recast Cloud: his search replaces
 what was lost. **Swiftfoot Boots** and **Sting** give a recast Cloud haste.
 
+#### Mithril Coat: the instant-speed save
+
+**Mithril Coat** ({3}, legendary Equipment, flash, indestructible; equip {3}). *When it enters, attach it to target
+legendary creature you control. Equipped creature has indestructible.* It is the deck's answer to the plan's worst
+problem, a wrath or a destroy spell aimed at Cloud.
+
+- **Who can wear it for free:** the legendary creatures in the list: Cloud, Balan, Danitha Capashen, Adelbert Steiner,
+  Thalia, the Survivor, Baird, Jocasta, Zack Fair, Cid, Ardenn, Sram and Marvin. Any other creature (Archangel of Tithes
+  and the rest) needs the {3} equip, at sorcery speed.
+- **Flash it in.** With a destroy spell, a damage wipe or a wrath on the stack, cast the Coat in response: it enters,
+  the trigger attaches it, and the indestructible creature survives. Stoneforge Mystic ({1}{W}, {T}) does the same from
+  your hand for {1}{W} at instant speed. Cid and Danitha each make the spell cost {1} less (they stack, down to {1}).
+- **One-sided wraths.** Cloud wearing the Coat survives Wrath of God, Fumigate and Austere Command (both creature modes)
+  while the rest of the creatures die. Elspeth's -3 stops being a problem for a Sword-carrying Cloud. Winds of Abandon
+  (overloaded) already leaves your creatures alone.
+- **The Coat itself is indestructible**, so Aura Shards, Reclamation Sage and Austere Command's artifact mode cannot
+  destroy it. Under Collector Ouphe it cannot be equipped (equip is an activated ability), but its enter trigger still
+  attaches it.
+- **What it does not stop:** exile (Swords to Plowshares, Path to Exile, Farewell, Oblivion Ring effects), sacrifice
+  (edicts), -X/-X (Toxic Deluge, Massacre Wurm), bounce, control change, and commander damage that kills you. Phasing
+  (Galadriel's Dismissal) covers wipes, edicts and -X/-X; hexproof and protection cover targeted exile and bounce.
+- **Cloud's doubling does nothing for it:** the Coat's only trigger happens as it enters, before it is on Cloud. It adds
+  no power, so it is a defensive second or third Equipment, not a clock.
+- **Cost of holding it:** {3} up on the opponents' turn is a Sword not cast. Hold it when the table has shown destroy
+  removal or a wrath; do not hold it against exile or edicts.
+
 #### The fair win: a wide board
 
 When Equipment is scarce or Cloud keeps dying, the deck grinds. **Elspeth, Sun's Champion** makes three 1/1 Soldiers a
@@ -183,8 +211,8 @@ get stuck in hand. So spend all your mana every turn, and slow the table down so
   {W}{W}.
 - Turn 2: Cloud. If you cannot make {W}{W}, play a two-drop that works the Equipment (Stoneforge Mystic, Sram, Auriok
   Steelshaper, Cid) or a rock.
-- Turn 3: cast the first Sword and equip it if you have the mana, with Giver of Runes, Swiftfoot Boots or Teferi's
-  Protection ready (see "Protecting Cloud"). Otherwise cast the Sword and keep Cloud home.
+- Turn 3: cast the first Sword and equip it if you have the mana, with Giver of Runes or Swiftfoot Boots
+  ready (see "Protecting Cloud"). Otherwise cast the Sword and keep Cloud home.
 - Knight of the White Orchid and Loyal Warhound fetch a Plains when an opponent controls more lands than you:
   a free ramp if the table ramps.
 
@@ -202,26 +230,28 @@ get stuck in hand. So spend all your mana every turn, and slow the table down so
   Passage for the final swing.
 - Elspeth, Sun's Champion at six mana; Austere Command or Winds of Abandon overload to clear the board when you are
   behind.
-- Keep a way to protect Cloud on the swing turn.
+- Keep a way to protect Cloud on the swing turn (Giver of Runes, Swiftfoot Boots, or {3} open for Mithril Coat).
 
 **Hold up or go?**
 
 - **Go** when opponents are tapped low, when a Sword on the battlefield can be equipped this turn, or when a swing now
   gets ahead of a table that is about to wipe.
-- **Hold up {2}{W}** (Judgment of Alexander or Teferi's Protection) when an opponent has a lethal-looking attack
-  (Isshin, Aurelia, Marwyn with Craterhoof, Kaalia) or removal for Cloud on an empty mana board. Do not tap out for a
-  second Equipment while Cloud is the only creature.
+- **Hold up {2}{W}** (Judgment of Alexander) when an opponent has a lethal-looking attack (Isshin, Aurelia, Marwyn
+  with Craterhoof, Kaalia). **Hold up {3}** (Mithril Coat) when an opponent has destroy-based removal or a wrath that
+  would kill Cloud. Do not tap out for a second Equipment while Cloud is the only creature.
 - **Equip last, with protection up.** Equip is sorcery speed (Forge Anew aside), so an opponent can answer the
-  activation. Equip with Giver of Runes untapped, Swiftfoot Boots on Cloud, or opponents tapped out.
+  activation. Equip with Giver of Runes untapped, Swiftfoot Boots on Cloud, {3} spare for Mithril Coat, or opponents tapped out.
 - **Keep the hand small.** Cheap cards that sit in hand do nothing: cast Stoneforge Mystic, Sram and the rock early
   even if it delays the Sword by a turn.
 
 **What beats the deck.**
 
 - **Board wipes** (Toxic Deluge, Damn, Blasphemous Act, Farewell): do not overcommit creatures when you already have
-  enough power; keep Stoneforge Mystic, Steelshaper's Gift and the backup carriers in hand.
+  enough power; keep Stoneforge Mystic, Steelshaper's Gift and the backup carriers in hand. Mithril Coat saves Cloud from
+  the destroy and damage wipes (Damn, Blasphemous Act) but not from Toxic Deluge or Farewell.
 - **Artifact and enchantment removal** (Aura Shards, Reclamation Sage, Collector Ouphe): spread Equipment across a few
-  carriers (Balan and Ardenn re-attach) and recur with Cid or Forge Anew.
+  carriers (Balan and Ardenn re-attach) and recur with Cid or Forge Anew. Mithril Coat is indestructible, so destroy
+  effects (Aura Shards, Reclamation Sage, Austere Command's artifact mode) cannot take it.
 - **A faster combat deck** (Isshin, Aurelia, Kaalia): you lose the race, not the board. Taxes and Judgment of Alexander
   are your answers.
 - **Cloud in the command zone:** remember the {2} tax per earlier cast; use backup carriers first.
@@ -255,41 +285,156 @@ bottom for each mulligan after the free one.
 | 5 | Plains, Plains, Mind Stone, Stoneforge Mystic, Giver of Runes, Sword of Hearth and Home, Austere Command | Keep (close) | Two lands plus Mind Stone; plays at one and two mana; Austere Command is the one dead card early |
 | 6 | Plains, Plains, Plains, Plains, Evolving Wilds, Colossus Hammer, Sword of Fire and Ice | Keep (close) | Five lands is the top of the range, but Cloud on turn 2 finds a third Equipment and the hand has a Sword and the Hammer; it wants Ardenn or Puresteel Paladin for the Hammer |
 | 7 | Plains, Plains, Colossus Hammer, Buster Sword, Fireshrieker, Austere Command, Elspeth, Sun's Champion | Ship | Two lands, no rock, no cheap play: after Cloud, nothing costs less than three |
-| 8 | Plains, Plains, Plains, Sol Ring, Archangel of Tithes, Elspeth, Sun's Champion, Teferi's Protection | Keep, bottom Elspeth | 6-card rule: Sol Ring makes Archangel a turn-3 play behind Cloud, and Protection backs her up; Elspeth is the slowest card |
+| 8 | Plains, Plains, Plains, Sol Ring, Archangel of Tithes, Elspeth, Sun's Champion, Mithril Coat | Keep, bottom Elspeth | 6-card rule: Sol Ring makes Archangel a turn-3 play behind Cloud, and Mithril Coat is the flash save for Cloud once he lands (Archangel is not legendary, so the Coat cannot attach to her on entering); Elspeth is the slowest card |
 
 ### What to tutor for
 
-Cloud's search is the deck's main tutor. **Stoneforge Mystic** finds an Equipment when it enters and puts one from your
-hand onto the battlefield for {1}{W}, {T} (do it at an opponent's end step). **Steelshaper's Gift** ({W}) finds any
-Equipment, and **Open the Armory** ({1}{W}) finds an Aura or Equipment; the list has no Auras, so it finds Equipment
-only. **Enlightened Tutor** ({W}, instant) finds an artifact or enchantment and puts it on top: cast it at the end of an
-opponent's turn.
+The deck has 11 Equipment and several ways to find them. The question each time is the same: what does the board need
+in the next two turns, and how much mana is there to cast it and attach it? Cast cost and equip cost are separate, so a
+fetch is only as good as the mana left to deploy it.
 
-| Situation | Tutor | Target |
+#### Every tutor and Equipment-finder
+
+| Card | Cost | Goes to | Finds | Speed | Catch |
+|---|---|---|---|---|---|
+| Cloud, Midgar Mercenary (enter) | {W}{W}, plus {2} per earlier cast from the command zone | Hand | Any Equipment | Your main phase (creature spell, no flash) | The Equipment still has to be cast and equipped; a dead Cloud costs {2} more each recast |
+| Stoneforge Mystic (enter) | {1}{W} | Hand | Any Equipment (a "may") | Your main phase | The body is the cost: it dies to the same wrath as Cloud |
+| Stoneforge Mystic (ability) | {1}{W}, {T} | Battlefield, from your hand | Any Equipment already in hand | Instant speed, but only once you have controlled Mystic since your turn began (it needs {T}) | The Equipment is put in, not cast (no Sram, Danitha or Cid discount) and arrives unattached; Mithril Coat attaches itself. Puresteel Paladin still draws |
+| Steelshaper's Gift | {W} | Hand | Any Equipment | Sorcery | Costs a card to find a card; the cheapest search |
+| Open the Armory | {1}{W} | Hand | Aura or Equipment; the list has no Auras, so Equipment only | Sorcery | One mana more than Gift for the same result: spend it first when mana is loose |
+| Enlightened Tutor | {W} | Top of library | Any artifact or enchantment: an Equipment, Sol Ring, Mind Stone, Norn's Annex, Smothering Tithe, Court of Ardenvale, Forge Anew | Instant: cast it at the end of an opponent's turn | The card arrives with your next draw, not now. Cast at their end step it uses mana that would be wasted; on your own turn it spends mana the deployment needs. A Game Changer |
+| Armored Skyhunter | {3}{W} | Battlefield, from the top six | An Equipment among the top six cards (it may attach at once) | When it attacks | Random: the other five go to the bottom of the library. A bonus, never a plan |
+| Cid, Freeflier Pilot | {1}{W}; {2}, {T} for the ability | Hand, from the graveyard | An Equipment in the graveyard | Any time Cid is untapped and not summoning sick | Needs a dead Equipment. Also makes Equipment spells cost {1} less |
+| Forge Anew | {2}{W} | Battlefield, from the graveyard | An Equipment in the graveyard | Sorcery (enchantment) | Needs a target. While it is out you may equip at instant speed on your turn, and the first equip each turn costs {0} |
+| Court of Ardenvale | {2}{W}{W} | Battlefield (hand if you are not the monarch), from the graveyard | Any permanent with mana value 3 or less: every Equipment, and Cloud | Each upkeep | Needs the monarchy for the battlefield; a creature that hits you steals it |
+| Kor Outfitter | {W}{W} | n/a | Finds nothing: attaches an Equipment you control to a creature when it enters | Your main phase | Saves the equip cost, not a card |
+| Puresteel Paladin | {W}{W} | n/a | Finds nothing: draws when an Equipment enters; with three artifacts every Equipment has equip {0} | Your main phase | Rocks and the Equipment itself count toward the three artifacts |
+| Auriok Steelshaper | {1}{W} | n/a | Finds nothing: equip costs {1} less (Boots and Mask {0}, Swords {1}, Mithril Coat {2}) | Static | A 2-drop that makes every fetch cheaper to deploy |
+| Sram, Senior Edificer | {1}{W} | n/a | Finds nothing: draws a card whenever you cast an Equipment spell | Static | Gift and Open the Armory are sorceries, not Equipment spells; Stoneforge's ability casts nothing |
+
+#### What to fetch by board state
+
+Mana is what you can actually spend that turn (lands plus rocks, after any other plays). "Their end step" means an
+opponent's end step, using mana you would otherwise waste.
+
+**Cloud has not landed yet**
+
+| Your board and mana | Their board | Tutor | Fetch | Why and what to watch for |
+|---|---|---|---|---|
+| Turn 2, two lands, Cloud in the command zone | Nothing known | Cloud | Sword of Fire and Ice | The Sword is cast on turn 3 and equipped on turn 4. It pays on the first hit (4 damage and a card), so it is the default when no colour stands out |
+| Turn 2 with Sol Ring from turn 1 (four mana) | Any | Cloud | The Sword the table needs (Which Sword, below) | Cloud takes {W}{W}; the other {C}{C} can cast a 2-cost Equipment already in hand (Swiftfoot Boots, Mask of Memory). Turn 3 then has five mana: cast the Sword (3) and equip it (2) and attack |
+| Turn 2 or 3, hand has a Sword and no protection | Spot removal shown (destroy, damage, exile) | Cloud | Swiftfoot Boots | Hexproof and haste for equip {1}: a recast or fresh Cloud can swing and cannot be targeted. Boots do nothing against wipes or edicts |
+| Five or more mana the turn Cloud lands ({W}{W} plus {3} spare) | Destroy or damage wrath shown (Wrath of God, Damn, Blasphemous Act) | Cloud | Mithril Coat | Cast Cloud, then hold {3}: flash the Coat in response to the wrath or to removal aimed at him. Do not cast Cloud into a known wrath with the Coat unaffordable |
+| Any | Exile removal (Swords to Plowshares, Path to Exile, Oblivion Ring effects) or white creatures | Cloud | Sword of Hearth and Home if the removal is white; otherwise Swiftfoot Boots | Protection from white stops the white exile spells from targeting him. Mithril Coat is the wrong fetch: indestructible does not stop exile |
+| Any | Edicts or -X/-X (Plaguecrafter, Grave Pact, Massacre Wurm) | Cloud | A Sword | +2/+2 survives -2/-2. Nothing fetched fixes an edict: keep a cheap creature as fodder |
+| Cloud lands with one Equipment already in hand | Any | Cloud | The piece the hand lacks | Hand has a Sword: fetch Swiftfoot Boots (protection) or a second Sword of other colours. Hand has only a protection piece: fetch a Sword |
+
+**Cloud on the battlefield, no Equipment**
+
+| Your board and mana | Their board | Tutor | Fetch | Why and what to watch for |
+|---|---|---|---|---|
+| One spare mana on your turn | Any | Steelshaper's Gift | A Sword (nothing is castable this turn) | Card in hand for the next turn. With the mana open on their turn use Enlightened Tutor at their end step instead |
+| Two mana | Any | Stoneforge Mystic (cast it) | A Sword | The body is also the tutor. From your next turn on, Mystic puts the Sword in at instant speed (best at their end step) for {1}{W}, a mana cheaper than casting it |
+| Two mana | Any, and a free-attach piece is already out (Ardenn, Puresteel Paladin with three artifacts, Forge Anew) | Steelshaper's Gift ({W}) then cast the Hammer ({1}) | Colossus Hammer | A 12/11 attached for no equip cost. Without a free attach the Hammer's equip {8} is a trap |
+| Three mana | Spot removal around | Steelshaper's Gift ({W}), then cast ({2}) | Swiftfoot Boots | Boots on Cloud next turn for {1}. A cheap piece that makes the first Sword safe |
+| Three mana | Quiet table | Steelshaper's Gift ({W}), then cast ({2}) | Mask of Memory | Equip {1}; two draw-two-discard-one triggers per hit with Cloud equipped (net two cards). Only worth it if Cloud can connect |
+| Four mana | Any | Steelshaper's Gift ({W}) | A Sword, cast at once (1 + 3) | Equip next turn. With mana to spare Open the Armory ({1}{W}) does the same job; keep Gift for a tight turn |
+| Five mana, Sword in hand | Any | None | Cast the Sword (3), equip it (2), attack | Do not tutor when the hand already has the piece. Keep {W} for Enlightened Tutor only at six mana |
+| Five mana, Mystic untapped, Mystic not summoning sick | Any | Steelshaper's Gift ({W}) | A Sword | Gift (1), Mystic's ability puts it in (2), equip (2): swing the same turn, a mana cheaper than casting it |
+| Six mana, Sword in hand | Wrath or destroy removal shown | Steelshaper's Gift after casting and equipping (3 + 2 + 1) | Mithril Coat | Next turn {3} is held for the Coat while Cloud attacks |
+| Auriok Steelshaper out | Any | Gift or Cloud | A Sword, Boots or Mask | Equip costs drop by {1}: Boots and Mask equip for {0}, so a cheap fetch comes online the turn it is cast |
+
+**Cloud equipped**
+
+| Your board and mana | Their board | Tutor | Fetch | Why and what to watch for |
+|---|---|---|---|---|
+| One Sword on Cloud, five spare mana, ahead | Few blockers | Gift or Open the Armory | Fireshrieker (cast 3, equip 2) | Double strike: the Sword triggers at first-strike and regular damage, each doubled, so four Sword triggers per attack. The first-strike hit also lands before blockers or burn can act on the second |
+| One Sword on Cloud, hand empty | Any | Gift or Cloud recast | Mask of Memory | Net two cards per hit; do not discard a permanent to it against Tergrid |
+| One Sword on Cloud, hand full of spells | Any | Gift | Buster Sword (+3/+2) | Each hit draws a card and casts a spell free with mana value up to the damage. Cloud with Buster Sword and a Sword is a 7/5, so each trigger casts a spell of mana value 7 or less, twice: Elspeth, Sun's Champion or Austere Command (both mana value 6) free |
+| One Sword on Cloud, wanting more colours | Opponents of the colours the first Sword does not cover | Gift | A second Sword | Two Swords cover four colours and each hit triggers both twice. Cast cost 3 and equip cost 2 each: only with the mana |
+| Puresteel Paladin out with three artifacts, or Forge Anew out | Any | Cloud, Gift, Enlightened Tutor | Colossus Hammer | Equip {0}: a 12/11 for {1}. Add Fireshrieker for 24 commander damage in one swing |
+| Cloud equipped, Ardenn in play or in hand | Any | Gift | Colossus Hammer or Fireshrieker | Ardenn attaches any number of Equipment at the beginning of combat, even the turn she is cast: cast Fireshrieker (3) and attach it in the same turn |
+
+**The table has a problem**
+
+| Your board and mana | Their board | Tutor | Fetch | Why and what to watch for |
+|---|---|---|---|---|
+| Cloud out, three mana spare on their turn | A destroy-based wrath or removal (Wrath of God, Damn, Blasphemous Act, Beast Within) | Gift on your turn | Mithril Coat | Flash it in response: Cloud survives and your other creatures do not. With Stoneforge Mystic untapped it costs {1}{W}; Cid and Danitha each take {1} off the spell |
+| Cloud out, you want to wrath | Wide opposing board | Gift | Mithril Coat, then Wrath of God, Fumigate or Austere Command | Cloud with the Coat is the one creature that survives your own wrath. Fumigate gains life only per creature destroyed, so Cloud is not counted |
+| Cloud out | Exile removal, or sacrifice or -X/-X effects | Cloud, Gift | Against targeted exile or bounce: a Sword with the right protection or Swiftfoot Boots; not the Coat | Indestructible does nothing against exile, sacrifice, -X/-X or bounce. Wipes, edicts and -X/-X need Galadriel's Dismissal (phasing) |
+| Cloud equipped | Artifact and enchantment hate (Aura Shards, Reclamation Sage, Austere Command) | Enlightened Tutor, Gift | Mithril Coat, or Forge Anew from the graveyard | The Coat is indestructible and survives destroy effects. Exile hate (Farewell, Oblivion Ring on an Equipment) still takes it |
+| Cloud out | Collector Ouphe (no equip activations) | Cloud, Gift | Mithril Coat | Its enter trigger attaches it with no equip. Kor Outfitter, Ardenn and Armory Automaton also attach by trigger, not by equip |
+| Cloud out, Sword equipped | Many blockers of one or two colours | Gift | The Sword whose protection colours match them | Those creatures cannot block him. Mixed blockers: a second Sword to widen the colours; no tutor finds Rogue's Passage |
+| Cloud out, two or three mana spare | Voltron or commander-damage threat (Light-Paws, Kaalia's cheated attackers) | Gift | The Sword that has protection from the threat's colour | A Cloud that blocks it takes no damage from that colour, and you take none from a blocked attacker unless it has flying (Cloud cannot block it) or trample. Sword of Hearth and Home answers white attackers |
+| Behind in a race, Cloud blocked or bare | Board bigger than yours | Enlightened Tutor at their end step | Norn's Annex (or Smothering Tithe) | Taxes slow the race that kills Cloud. A tutor that finds Equipment does not fix a race you are losing |
+| Ahead in a race, mana to spare | Few blockers, few answers | Gift | Fireshrieker, or Colossus Hammer with a free attach | Commander damage: a 4/3 Cloud with double strike hits for 8, so three swings; with the Hammer 24 in one swing. Keep protection up on the swing turn |
+
+**Cloud is gone**
+
+| Your board and mana | Their board | Tutor | Fetch | Why and what to watch for |
+|---|---|---|---|---|
+| Cloud dead, Equipment still on the battlefield, four mana for the second cast | The same removal is still out | Cloud (recast) | Swiftfoot Boots, or Mithril Coat if the removal destroys | The recast needs the protection the first cast lacked. The third cast costs six: prefer a backup carrier |
+| Balan on the battlefield with one Equipment | Any | Gift or Stoneforge | A cheap second Equipment (Swiftfoot Boots, Mask of Memory) | Two attached gives Balan double strike on top of first strike. {1}{W} pulls every Equipment onto him |
+| A flier is the carrier (Armored Skyhunter, Exalted Angel, Jocasta) | Ground blockers | Gift or Open the Armory | The Sword matching their colours | A flying carrier ignores ground blockers; the doubling is lost without Cloud |
+| Danitha, Adelbert Steiner or Thalia is the carrier | Racing opponent | Gift | A Sword | Lifelink gains back what the race costs. Cloud's doubling is off without him |
+| No creature on the board, Equipment on the battlefield | Any | Stoneforge Mystic (cast it), then Gift | The Equipment the next carrier lacks | Tutors find only Equipment: the carrier has to come from your hand or from Cloud's recast |
+| Equipment destroyed | Aura Shards, Reclamation Sage, Austere Command | Enlightened Tutor | Forge Anew, then return the Equipment | Cid returns an Equipment to hand; Court of Ardenvale returns any Equipment (all have mana value 3 or less) |
+
+**Enlightened Tutor's non-Equipment targets**
+
+| Situation | Fetch | Why |
 |---|---|---|
-| Turn 2, no Equipment yet | Cloud | A Sword that fits the table (see the table below); Sword of Fire and Ice if nothing stands out |
-| A Sword on Cloud, want more value | Cloud, Stoneforge, Gift | Mask of Memory (cast {2}, equip {1}): two cards net a hit |
-| Opponents have spot removal | Cloud, Gift | Swiftfoot Boots (hexproof and haste, equip {1}) |
-| Puresteel Paladin or Ardenn out | Cloud, Gift, Enlightened Tutor | Colossus Hammer: attached for free |
-| Hand full of spells to deploy | Cloud, Gift | Buster Sword: a hit casts a spell free |
-| Lethal setup | Cloud, Gift | Fireshrieker (double strike) if Cloud already carries the Hammer or a Sword |
-| Cloud dead or removed | Steelshaper's Gift, Stoneforge, Open the Armory | The Equipment the next carrier needs; a Sword |
-| Equipment destroyed | Enlightened Tutor | Forge Anew, then return the Equipment |
-| Opponents draw a lot | Enlightened Tutor | Smothering Tithe |
-| Need cards | Enlightened Tutor | Court of Ardenvale |
-| Stuck on mana | Enlightened Tutor | Sol Ring |
+| Opponents draw a lot | Smothering Tithe | Treasures when they do not pay {2} |
+| Hand and board are empty | Court of Ardenvale | Monarch draws a card, and the upkeep trigger returns a permanent |
+| Stuck on mana | Sol Ring | Costs {1} and pays back at once |
+| Free attach is missing and Hammer is in hand | Forge Anew | First equip each turn costs {0}, so the Hammer attaches at instant speed on your turn |
 
-**Which Sword?** Protection stops targeting, blocking by creatures of that colour, and damage from sources of that
-colour. It does not stop wipes or edicts.
+**Which Sword?** Protection stops targeting, blocking by creatures of that colour, damage from sources of that colour and
+being equipped or enchanted by them. It does not stop destroy or exile wipes, -X/-X or edicts. Damage wipes are stopped
+when their source is the Sword's colour: Sword of Fire and Ice's protection from red prevents Blasphemous Act's damage.
 
-| Sword | Protection from | Best against |
-|---|---|---|
-| Sword of Fire and Ice | red, blue | Korvold, Aurelia, Isshin, Kaalia (red burn and attackers); Brago, Tatyova (blue) |
-| Sword of Feast and Famine | black, green | Lathril, Meren, Tergrid, Marwyn, Korvold, Lord Windgrace |
-| Sword of Hearth and Home | green, white | Light-Paws, Sythis, Marwyn; white removal and white creatures (Teysa, Brago, Aurelia, Isshin, Kaalia) |
+| Sword | Protection from | On a hit (doubled with Cloud) | Fetch when | Best against |
+|---|---|---|---|---|
+| Sword of Fire and Ice | red, blue | 2 damage to any target and a card | Nothing stands out; red burn and attackers; cards wanted | Korvold, Aurelia, Isshin, Kaalia (red burn and attackers); Brago, Tatyova (blue) |
+| Sword of Feast and Famine | black, green | A discard, and your lands untap | Black or green removal and creatures; spells to cast after combat | Lathril, Meren, Tergrid, Marwyn, Korvold, Lord Windgrace |
+| Sword of Hearth and Home | green, white | Blink a creature, two basic lands onto the battlefield | White removal (Swords to Plowshares, Path to Exile) and white creatures; ramp wanted | Light-Paws, Sythis, Marwyn; Teysa, Brago, Aurelia, Isshin, Kaalia |
 
-Two Swords stack. Sword of Feast and Famine plus Sword of Hearth and Home gives black, green and white: no targeted
-removal from Teysa's white-black deck can touch Cloud.
+**Caveat:** protection from white (Sword of Hearth and Home) also stops the deck's own white cards from targeting Cloud:
+Giver of Runes, Zack Fair, Galadriel's Dismissal, Kor Outfitter's attach and Ardenn's attach. Cards that do not target him
+still work (Akroma's Will, Judgment of Alexander, Plaza of Heroes, Mithril Coat, Armored Skyhunter's attach).
+
+Two Swords stack: Fire and Ice with Feast and Famine covers red, blue, black and green; Feast and Famine with Hearth
+and Home covers black, green and white (no targeted removal from Teysa's white-black deck can touch Cloud); Fire and Ice
+with Hearth and Home covers red, blue, green and white.
+
+#### What to fetch first
+
+1. **First Equipment (Cloud lands, or the first tutor):** the Sword that fits the table; Sword of Fire and Ice if nothing
+   stands out.
+2. **Second Equipment:** a protection piece. Swiftfoot Boots against spot removal; Mithril Coat against destroy-based
+   removal and wraths; a second Sword for extra colours. Choose by what the table has shown, not what it might hold.
+3. **Third Equipment:** the clock. Fireshrieker for double strike; Colossus Hammer only with a free attach (Ardenn, Kor
+   Outfitter, Puresteel Paladin, Forge Anew); Buster Sword when the hand is full of spells.
+4. **Value pieces** (Mask of Memory, Andúril) once the clock and the protection are down.
+5. **Enlightened Tutor:** hold it for the end of an opponent's turn and for the card the board needs next: Forge Anew
+   when an Equipment has died, Norn's Annex when the race is lost, otherwise the Equipment.
+6. **Order of tutors:** Cloud first (it is free with the body), then Open the Armory when mana is loose, then Steelshaper's
+   Gift on a tight turn. Keep one of Gift or Stoneforge Mystic for after a wipe.
+
+#### Common tutor mistakes
+
+1. **Fetching the Coat against exile, edicts, -X/-X or bounce.** Indestructible does not stop them. Match the fetch to
+   the removal the table has shown.
+2. **Fetching Colossus Hammer with no free attach.** Equip {8} is a turn of mana.
+3. **Fetching a third Equipment you cannot cast and equip.** Each Sword is five mana to deploy; a tutored card in hand
+   does nothing.
+4. **Planning on Stoneforge's ability before Mystic can tap** (it must be under your control since your turn began), or tapping out so nothing is left for it at their end step.
+5. **Casting Enlightened Tutor on your own turn.** The draw is the same at their end step, and the mana is mana you would otherwise waste.
+6. **Tutoring for an Equipment when the board lacks a carrier.** Tutors find no creatures: cast the creature first.
+7. **Putting a Sword on another creature and expecting the doubling.** It works only on Cloud.
+8. **Tutoring on a turn the hand already has the piece.** Spend the mana on deploying it.
+9. **Fetching Mask of Memory or Buster Sword for a Cloud that cannot connect.** Both pay on combat damage.
+10. **Spending every tutor before a wipe.** Keep Steelshaper's Gift or Stoneforge Mystic for the turn Cloud is gone.
 
 ### Protecting Cloud
 
@@ -300,27 +445,37 @@ Cloud is the key permanent: the Equipment is only as good as its carrier. Order 
    creatures get +2/+2 and indestructible: wipes that destroy and damage do not kill him), Giver of Runes (protection
    from a colour for another creature, at instant speed).
 2. **Answer in response.**
-   - **Teferi's Protection** ({2}{W}, instant): until your next turn your life total can't change, you have protection
-     from everything, and all your permanents phase out. Cloud keeps his Equipment through removal, a wipe or a lethal
-     attack. Cast it on an opponent's turn.
-   - **Galadriel's Dismissal** ({W}, instant): phases Cloud out with his Equipment until your next turn. Kicked
-     ({2}{W} more), all of a player's creatures phase out.
+   - **Mithril Coat** ({3}, flash): cast it in response to destroy-based removal or a wrath. Its enter trigger attaches
+     it to target legendary creature you control (Cloud, or Balan, Danitha, Adelbert Steiner, Thalia, Baird, Jocasta, Zack Fair,
+     Cid, Ardenn, Sram, Marvin), and that creature has indestructible: destroy effects and lethal damage do not kill it.
+     Exile, sacrifice, -X/-X, bounce and commander damage to you still work. With Stoneforge Mystic untapped, put it
+     onto the battlefield for {1}{W} instead; Cid and Danitha each make the spell cost {1} less.
+   - **Galadriel's Dismissal** ({W}, instant): phases Cloud out with his Equipment until your next turn, which beats
+     exile, -X/-X and edicts. Kicked ({2}{W} more), all of a target player's creatures phase out (an attacking team
+     leaves combat).
    - **Plaza of Heroes** ({3}, {T}, exile it): a legendary creature gains hexproof and indestructible until end of turn.
    - **Zack Fair** ({1}, sacrifice): another creature gains indestructible, and Zack's counters and Equipment move to
      it.
    - **Akroma's Will**, second mode: lifelink, indestructible and protection from each colour for the turn.
 3. **Protect the team.** Elspeth makes three Soldiers a turn as fodder for edicts and wall for attackers. Her -3
    destroys creatures with power 4 or more, and Cloud with any Sword has power 4: use it only when Cloud is not
-   carrying one, or when he is not on the board.
+   carrying one, when he is not on the board, or when he wears Mithril Coat (indestructible survives the destroy).
 4. **Judgment of Alexander** ({2}{W}, instant): prevents all damage that would be dealt to you this turn by sources your
    opponents control, and each commander creature you control deals damage equal to its power to each creature whose
    damage was prevented. Cast it once attackers are declared: with Cloud equipped it is a fog that kills the attackers.
 
+Galadriel's Dismissal phases out Cloud with the Equipment attached to him; unattached Equipment has no cover. After a
+wrath the Equipment stays on the battlefield for the next carrier. Equipment destroyed by Aura Shards comes back with Cid,
+Forge Anew or Court of Ardenvale; Equipment exiled by Farewell is gone, and Steelshaper's Gift, Stoneforge Mystic or Open
+the Armory find more. Mithril Coat is the one Equipment that destroy effects cannot take.
+
 **Timing rules.**
 
-- Removal in response to an equip activation is the usual loss. Hold up Giver, Boots or Protection before you pay.
-- Wrath-type sweeps (Toxic Deluge, Damn, Blasphemous Act) kill a lone Cloud. Phase him out or keep him in the command
-  zone until the table has shown its hand.
+- Removal in response to an equip activation is the usual loss. Hold up Giver or Boots before you pay, or keep {3}
+  spare for Mithril Coat when the removal destroys.
+- Wrath-type sweeps (Toxic Deluge, Damn, Blasphemous Act) kill a lone Cloud. Damn and Blasphemous Act destroy or
+  damage, so Mithril Coat saves him; Toxic Deluge (-X/-X) and Farewell (exile) go round it, so phase him out with
+  Galadriel's Dismissal or keep him in the command zone until the table has shown its hand.
 - Exile (Swords to Plowshares, Path to Exile) goes round indestructible: hexproof, protection and phasing are the answers.
 - Edicts (Plaguecrafter, Fleshbag Marauder, Sheoldred's Edict, Grave Pact, Dictate of Erebos) take Cloud when he is the
   only creature. Keep tokens or another cheap creature (Marvin, Giver of Runes, Zack Fair) around.
@@ -335,7 +490,7 @@ The deck's answers, most of them at instant speed:
 | Path to Exile | {W} | Same; the controller may fetch a basic land tapped. Marit Lage (indestructible) |
 | Stroke of Midnight | {2}{W} | Any nonland permanent: a planeswalker (Windgrace, Atraxa's walkers), Grave Pact, Aura Shards, Rhystic Study. Its controller gets a 1/1 Human |
 | Judgment of Alexander | {2}{W} | A big attack: Isshin's team, Aurelia's combats, Craterhoof, Kaalia's cheat. Each creature whose damage is prevented takes damage equal to Cloud's power |
-| Teferi's Protection | {2}{W} | A wipe or lethal attack; phases out your board and your life total |
+| Mithril Coat | {3} | Destroy-based removal or a wrath aimed at Cloud (or another legendary creature): flash it in and it attaches, giving indestructible. It does nothing against exile, sacrifice, -X/-X or bounce |
 | Galadriel's Dismissal | {W} | Removal aimed at Cloud, or a wipe (kicked) |
 | Akroma's Will | {3}{W} | An attack that would kill Cloud, or a swing back of your own |
 | Giver of Runes, Zack Fair, Plaza of Heroes | {T} / {1} / {3} | Targeted removal on Cloud (Giver cannot tap the turn it enters) |
@@ -344,8 +499,8 @@ The deck's answers, most of them at instant speed:
 | Skyclave Apparition | {1}{W}{W} | Mana value 4 or less on your turn: Kaalia, Meren, Teysa, Rhystic Study, Aura Shards, Grave Pact |
 | Winds of Abandon | {1}{W} / {4}{W}{W} | One creature (sorcery speed); overloaded it exiles all your opponents' creatures and leaves yours. Each controller fetches a basic land tapped |
 | Lay Down Arms | {W} | A creature with mana value up to your Plains. Its controller gains 3 life. Light-Paws, Sythis, Marwyn at two or three Plains |
-| Wrath of God, Fumigate | {2}{W}{W} / {3}{W}{W} | A wide opposing board (Lathril, Marwyn, Tatyova's Avenger). Fumigate gains 1 life per creature. Equipment survives |
-| Austere Command | {4}{W}{W} | Choose two modes. "Creatures with mana value 4 or more" plus "enchantments" leaves Cloud (mana value 2) and the artifacts; "artifacts" kills your own Equipment |
+| Wrath of God, Fumigate | {2}{W}{W} / {3}{W}{W} | A wide opposing board (Lathril, Marwyn, Tatyova's Avenger). Fumigate gains 1 life per creature destroyed. Equipment survives, and a Cloud wearing Mithril Coat survives too |
+| Austere Command | {4}{W}{W} | Choose two modes. "Creatures with mana value 4 or more" plus "enchantments" leaves Cloud (mana value 2) and the artifacts; "artifacts" kills your own Equipment (not Mithril Coat, which is indestructible) |
 
 Passive defence:
 
@@ -359,15 +514,14 @@ Passive defence:
 
 ### Matchups (Tiers 1-3)
 
-Baseline (before Rogue's Passage and Sting): 29.6% at t1, 20.6% at t2, 22.4% at t3, 24.2% over t1-t3 (2,000 games each,
-loose profile). In earlier sims Light-Paws caused about 18% of Cloud's eliminations (commander damage) and Isshin about
-15% (combat). Sword choice below uses the table in "What to tutor for".
+The deck loses to fast combat and commander damage (Light-Paws and Isshin at Tier 1), so the plan is to slow the race
+and then win it. Sword choice below uses the table in "What to tutor for".
 
 **Tier 1**
 
 | Opponent | Their threat | Your plan | Cards that matter |
 |---|---|---|---|
-| Isshin (Mardu attackers) | Isshin doubles attack triggers: Hero of Bladehold, Adeline, Hellrider swing for ten or more on turn four. Swords to Plowshares, Path to Exile, Anguished Unmaking, Blasphemous Act, Damn | Slow the swing, then race. Kill Isshin (mana value 3). Sword of Fire and Ice (protection from red) | Archangel of Tithes, Windborn Muse, Baird, Norn's Annex, Judgment of Alexander, Skyclave Apparition, Wrath of God |
+| Isshin (Mardu attackers) | Isshin doubles attack triggers: Hero of Bladehold, Adeline, Hellrider swing for ten or more on turn four. Swords to Plowshares, Path to Exile, Anguished Unmaking, Blasphemous Act, Damn | Slow the swing, then race. Kill Isshin (mana value 3). Sword of Fire and Ice (protection from red) | Archangel of Tithes, Windborn Muse, Baird, Norn's Annex, Judgment of Alexander, Skyclave Apparition, Wrath of God, Mithril Coat (against Damn) |
 | Lathril (Golgari Elves) | Elves flood the board; Lathril taps ten Elves: you lose 10. Trophy, Putrefy, Beast Within, Reclamation Sage | Sweep before turn 5. Sword of Feast and Famine: green creatures cannot block him, and black or green removal cannot target him | Wrath of God, Fumigate, Winds of Abandon (overload), Archangel, Skyclave Apparition on Lathril (mana value 4) |
 | Light-Paws (Aura voltron) | One huge Aura'd creature, commander damage, instant protection (Blacksmith's Skill, Flickerform). The worst t1 matchup | Kill her (mana value 2) before the Aura chain: Lay Down Arms, Skyclave, Swords to Plowshares, Path to Exile. Sword of Hearth and Home: white creatures cannot block him, and white damage to him is prevented | Elspeth's -3 (when Cloud has no Sword), Judgment of Alexander, Winds of Abandon, Soldier tokens as chump blockers |
 | Tatyova (Simic landfall) | Ramp, then Avenger of Zendikar or Ancient Greenwarden; Counterspell, Negate, Deprive, Aetherize | Race: she rarely attacks. Resolve Cloud before counters. Wrath if Avenger lands | Smothering Tithe (her draws pay or feed you), Thalia, Grand Abolisher (no counters on your turn), Stroke of Midnight on Tatyova |
@@ -378,9 +532,9 @@ loose profile). In earlier sims Light-Paws caused about 18% of Cloud's eliminati
 | Opponent | Their threat | Your plan | Cards that matter |
 |---|---|---|---|
 | Brago (Azorius blink control) | Counterspell, Mana Drain, An Offer You Can't Refuse; Aven Mindcensor (Cloud searches only the top four); Farewell; Agent of Treachery | Land Cloud and the first Sword before counters. Do not overextend into Farewell; keep Stoneforge Mystic and Steelshaper's Gift in hand. Rogue's Passage past the fliers | Grand Abolisher (no spells on your turn), Thalia, Swords to Plowshares or Path to Exile on Agent of Treachery (mana value 7) |
-| Kaalia (Mardu cheat) | Kaalia attacks and puts an Angel, Demon or Dragon into play attacking (Master of Cruelties, Terror of the Peaks, Lyra) | Kill Kaalia on sight (mana value 4). Attack taxes make Kaalia pay to attack but not the cheated attackers. Judgment of Alexander when one is already attacking | Skyclave Apparition, Swords to Plowshares, Path to Exile, Lay Down Arms at four Plains, Judgment of Alexander, Teferi's Protection |
+| Kaalia (Mardu cheat) | Kaalia attacks and puts an Angel, Demon or Dragon into play attacking (Master of Cruelties, Terror of the Peaks, Lyra) | Kill Kaalia on sight (mana value 4). Attack taxes make Kaalia pay to attack but not the cheated attackers. Judgment of Alexander when one is already attacking | Skyclave Apparition, Swords to Plowshares, Path to Exile, Lay Down Arms at four Plains, Judgment of Alexander, Galadriel's Dismissal (kicked, on their attackers) |
 | Lord Windgrace (Jund lands) | Landfall board (Avenger, Field of the Dead, Baloths), Marit Lage, Constant Mists, Strip Mine. No counters | Race and attack the planeswalkers. Exile Marit Lage (indestructible, so Wrath and Elspeth miss it). Sword of Feast and Famine or Fire and Ice: Trophy, Putrefy and Beast Within cannot target him | Swords to Plowshares, Path to Exile, Winds of Abandon, Lay Down Arms (the token has mana value 0), Stroke of Midnight on a planeswalker |
-| Meren (Golgari recursion) | Meren returns a creature every end step; Massacre Wurm (-2/-2), Plaguecrafter and Fleshbag edicts, Grave Pact, Toxic Deluge | Win before the grind. Keep Cloud equipped: a 4/3 survives Massacre Wurm and a bare 2/1 does not. Keep a fodder creature. Kill Meren (mana value 4) | Skyclave Apparition, Teferi's Protection (against Deluge and Wurm), Elspeth's tokens, Sword of Feast and Famine |
+| Meren (Golgari recursion) | Meren returns a creature every end step; Massacre Wurm (-2/-2), Plaguecrafter and Fleshbag edicts, Grave Pact, Toxic Deluge | Win before the grind. Keep Cloud equipped: a 4/3 survives Massacre Wurm and a bare 2/1 does not. Keep a fodder creature. Kill Meren (mana value 4) | Skyclave Apparition, Galadriel's Dismissal (phases Cloud out of Deluge and Wurm), Elspeth's tokens, Sword of Feast and Famine |
 | Sythis (Selesnya enchantress) | Aura Shards destroys an Equipment each time a creature enters; Ghostly Prison and Archon of Sun's Grace taxes; Banishing Light, Oblivion Ring, Journey to Nowhere; Winds of Rath | Kill Aura Shards and the engines early. Free equips (Ardenn, Kor Outfitter) re-attach cheaply. Pay the tax only for a kill. Sword of Hearth and Home: white and green removal cannot target Cloud | Skyclave Apparition on Aura Shards, Stroke of Midnight, Austere Command (enchantment mode), Forge Anew, Cid, Rogue's Passage |
 
 **Tier 3**
@@ -389,9 +543,9 @@ loose profile). In earlier sims Light-Paws caused about 18% of Cloud's eliminati
 |---|---|---|---|
 | Atraxa (4-colour proliferate) | Planeswalkers (Oko, Teferi, The Wandering Emperor), poison creatures, Rhystic Study, Narset (you draw one card a turn), Farewell | Attack the planeswalkers. Oko can turn Cloud or an Equipment into an Elk: Sword of Feast and Famine or Hearth and Home blocks the target. Pay Rhystic Study's {1} on key spells | Stroke of Midnight on a planeswalker, Skyclave on Rhystic Study or Narset, Swords to Plowshares on poison creatures |
 | Aurelia (Boros combats) | Aurelia (flying, vigilance, haste, extra combat), Hero of Bladehold, Hellrider, Embercleave; Helm of the Host + Combat Celebrant late | Taxes and Judgment of Alexander at the first combat. Exile Aurelia (mana value 6) when she lands. Sword of Fire and Ice plus Sword of Hearth and Home: red and white removal cannot target Cloud | Archangel of Tithes, Windborn Muse, Baird, Winds of Abandon (overload), Swords to Plowshares, Path to Exile, Wrath of God |
-| Korvold (Jund sacrifice) | Blood Artist, Zulaport, Mayhem Devil, Goblin Bombardment, Impact Tremors, Terror of the Peaks; Toxic Deluge; Decay, Trophy, Terminate, Bolt | Race. Sword of Fire and Ice plus Sword of Feast and Famine cover red, blue, black and green: nearly all their removal. Kill Korvold (mana value 5). Lifelink for the drain | Stroke of Midnight, Skyclave on Mayhem Devil or Bombardment, Teferi's Protection, Danitha, Adelbert Steiner, Thalia |
+| Korvold (Jund sacrifice) | Blood Artist, Zulaport, Mayhem Devil, Goblin Bombardment, Impact Tremors, Terror of the Peaks; Toxic Deluge; Decay, Trophy, Terminate, Bolt | Race. Sword of Fire and Ice plus Sword of Feast and Famine cover red, blue, black and green: nearly all their removal. Kill Korvold (mana value 5). Lifelink for the drain | Stroke of Midnight, Skyclave on Mayhem Devil or Bombardment, Galadriel's Dismissal (against Deluge), Danitha, Adelbert Steiner, Thalia |
 | Marwyn (mono-green Elves) | Elves into Craterhoof Behemoth (Natural Order, Chord, Finale); Gaea's Cradle; Collector Ouphe (no equip); Beast Within | Every creature is green: a Sword with protection from green (Feast and Famine or Hearth and Home) makes Cloud unblockable by them. Hold Judgment of Alexander and taxes for Craterhoof; sweep before they go wide. Free equips beat Ouphe | Judgment of Alexander, Archangel of Tithes, Wrath of God, Fumigate, Ardenn, Kor Outfitter, Armory Automaton |
-| Tergrid (mono-black disruption) | Edicts and discard; Tergrid takes the nontoken permanents you sacrifice or discard; Liliana of the Veil; Painful Quandary; Go for the Throat, Infernal Grasp | Sword of Feast and Famine: protection from black means no creature of theirs can block him or target him. Keep fodder against edicts. Play your hand out before Liliana | Elspeth's tokens, Teferi's Protection, Sword of Feast and Famine, Wrath of God |
+| Tergrid (mono-black disruption) | Edicts and discard; Tergrid takes the nontoken permanents you sacrifice or discard; Liliana of the Veil; Painful Quandary; Go for the Throat, Infernal Grasp | Sword of Feast and Famine: protection from black means no creature of theirs can block him or target him. Keep fodder against edicts. Play your hand out before Liliana | Elspeth's tokens, Galadriel's Dismissal, Sword of Feast and Famine, Wrath of God |
 
 Against Tergrid, do not sacrifice Evolving Wilds, Terminal Moraine, Zack Fair or Mind Stone, cycle Ash Barrens, or
 discard a permanent card to Mask of Memory: she puts the card onto the battlefield under her control.
@@ -402,7 +556,7 @@ discard a permanent card to Mask of Memory: she puts the card onto the battlefie
 |---|---|
 | Cloud died or was exiled | Recast from the command zone for {W}{W} plus {2} per earlier cast (4, 6, 8 mana). His search replaces any lost Equipment. The third cast costs six: prefer a backup carrier |
 | Board wipe, Equipment survived | Cloud is in the command zone and the Equipment stays. Recast Cloud and equip, or Balan ({1}{W}) / Ardenn / Kor Outfitter move it for free |
-| Equipment destroyed or exiled (Aura Shards, Farewell) | Forge Anew returns one from the graveyard; Cid returns one to hand; Court of Ardenvale returns any Equipment (all have mana value 3 or less). Steelshaper's Gift, Stoneforge Mystic or Open the Armory find more |
+| Equipment destroyed (Aura Shards) or exiled (Farewell) | Destroyed: Forge Anew returns one from the graveyard; Cid returns one to hand; Court of Ardenvale returns any Equipment (all have mana value 3 or less). Exiled Equipment is gone. Steelshaper's Gift, Stoneforge Mystic or Open the Armory find more |
 | Cloud in the graveyard, Court in play | If you left him there, Court returns him at upkeep (to the battlefield while you are the monarch): his search triggers again with no tax |
 | Opponent stole the monarch | Kill the attacker or tax it; Archangel of Tithes and the tax creatures protect it |
 | Hand empty after a wipe | Court of Ardenvale or Mask of Memory and Sram refill; Elspeth makes bodies; Smothering Tithe gives mana |
@@ -418,8 +572,7 @@ discard a permanent card to Mask of Memory: she puts the card onto the battlefie
 |---|---|
 | Norn's Annex ({3}{W/P}{W/P}) | 2 life for each {W/P} paid with life (up to 4) |
 
-The deck has no other life costs. Teferi's Protection freezes your life total until your next turn: you cannot pay
-life and you cannot gain it. The deck gains life through:
+The deck has no other life costs. The deck gains life through:
 
 | Source | Gain |
 |---|---|
@@ -435,7 +588,7 @@ about to swing (not against Isshin, Aurelia, Kaalia, Lathril's drain or Craterho
 
 ### Common mistakes
 
-1. Equipping into open removal at sorcery speed with no Giver, Boots or Protection behind it.
+1. Equipping into open removal at sorcery speed with no Giver, Boots or {3} for Mithril Coat behind it.
 2. Putting the Equipment on another creature and expecting the doubling: it works only on Cloud.
 3. Using Elspeth's -3 while Cloud carries a Sword: a 4/3 has power 4 and dies with the rest.
 4. Casting Wrath of God or Fumigate over a board you built, when Austere Command ("mana value 4 or greater" plus
@@ -445,11 +598,12 @@ about to swing (not against Isshin, Aurelia, Kaalia, Lathril's drain or Craterho
 6. Aiming both Sword of Hearth and Home triggers at Cloud, or blinking Cloud with an Equipment you cannot re-equip.
 7. Paying {8} to equip Colossus Hammer instead of attaching it with Ardenn, Kor Outfitter, Armory Automaton or Puresteel
    Paladin.
-8. Tapping out for the second Equipment while Judgment of Alexander or Teferi's Protection would have saved the game
-   against Isshin, Aurelia, Kaalia or Craterhoof.
+8. Tapping out for the second Equipment while Judgment of Alexander would have saved the game against Isshin, Aurelia,
+   Kaalia or Craterhoof, or while Mithril Coat would have saved Cloud from a destroy effect.
 9. Activating Rogue's Passage after blockers are declared; it must come before.
 10. Feeding Tergrid (sacrificing Evolving Wilds or Terminal Moraine, discarding a permanent to Mask of Memory, cycling
     Ash Barrens).
+11. Counting on Mithril Coat against exile, edicts, -X/-X or commander damage: indestructible stops none of them.
 
 ## Mana
 
@@ -468,12 +622,12 @@ needs {W}{W}{W}.
 - **Removal and defence:** Wrath of God, Fumigate, Austere Command, Winds of Abandon, Lay Down Arms, Swords to
   Plowshares, Path to Exile, Stroke of Midnight, Skyclave Apparition, Judgment of Alexander, Archangel of Tithes,
   Archon of Absolution, Norn's Annex, Windborn Muse, Baird, Elspeth, Sun's Champion.
-- **10 Equipment** in the deck: Andúril, Buster Sword, Colossus Hammer, Fireshrieker, Mask of Memory, Sting, Swiftfoot
-  Boots, and the three Swords.
+- **11 Equipment** in the deck: Andúril, Buster Sword, Colossus Hammer, Fireshrieker, Mask of Memory, Mithril Coat,
+  Sting, Swiftfoot Boots, and the three Swords.
 
 ## Bracket and Rule 0
 
-**Bracket 3,** with three Game Changers: **Smothering Tithe**, **Enlightened Tutor** and **Teferi's Protection**. The deck has no combo that wins
+**Bracket 3,** with two Game Changers: **Smothering Tithe** and **Enlightened Tutor**. The deck has no combo that wins
 on its own. Tell the table before the game that:
 
 - the deck has Equipment tutors (Cloud, Stoneforge Mystic, Steelshaper's Gift and Open the Armory) and Enlightened
@@ -488,11 +642,11 @@ on its own. Tell the table before the game that:
 
 **Enchantments (3).** Court of Ardenvale, Forge Anew, Smothering Tithe
 
-**Artifacts (17).** Andúril, Narsil Reforged, Arcane Signet, Buster Sword, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Mask of Memory, Mind Stone, Norn's Annex, Sol Ring, Sting, the Glinting Dagger, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Thought Vessel
+**Artifacts (18).** Andúril, Narsil Reforged, Arcane Signet, Buster Sword, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Mask of Memory, Mind Stone, Mithril Coat, Norn's Annex, Sol Ring, Sting, the Glinting Dagger, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Thought Vessel
 
 **Sorceries (7).** Austere Command, Fumigate, Lay Down Arms, Open the Armory, Steelshaper's Gift, Winds of Abandon, Wrath of God
 
-**Instants (8).** Akroma's Will, Enlightened Tutor, Galadriel's Dismissal, Judgment of Alexander, Path to Exile, Stroke of Midnight, Swords to Plowshares, Teferi's Protection
+**Instants (7).** Akroma's Will, Enlightened Tutor, Galadriel's Dismissal, Judgment of Alexander, Path to Exile, Stroke of Midnight, Swords to Plowshares
 
 **Lands (33).** Ash Barrens, Evolving Wilds, Path of Ancestry, Plaza of Heroes, Rogue's Passage, Terminal Moraine, 27 Plains
 
@@ -544,6 +698,7 @@ on its own. Tell the table before the game that:
 1 Marvin, Murderous Mimic
 1 Mask of Memory
 1 Mind Stone
+1 Mithril Coat
 1 Norn's Annex
 1 Open the Armory
 1 Path of Ancestry
@@ -566,7 +721,6 @@ on its own. Tell the table before the game that:
 1 Sword of Fire and Ice
 1 Sword of Hearth and Home
 1 Swords to Plowshares
-1 Teferi's Protection
 1 Terminal Moraine
 1 Thalia, the Survivor
 1 Thought Vessel

@@ -11,8 +11,8 @@ wipes and Null Rod effects, to fast combo before turn 4, and to tables that puni
 | | |
 |---|---|
 | **Commander** | Thanos, the Mad Titan ({R}{W}{B}, 4/4 deathtouch, lifelink); five colours (his power-up costs all five) |
-| **Bracket** | 4: 16 Game Changers and two infinite combos. Played against Tier 5 (High Bracket 4) |
-| **Game Changers (16)** | Ancient Tomb, Chrome Mox, Demonic Tutor, Enlightened Tutor, Force of Will, Grim Monolith, Imperial Seal, Jeska's Will, Mana Vault, Mox Diamond, Rhystic Study, Smothering Tithe, Teferi's Protection, The One Ring, Vampiric Tutor, Worldly Tutor |
+| **Bracket** | 4: 17 Game Changers and two infinite combos. Played against Tier 5 (High Bracket 4) |
+| **Game Changers (17)** | Ancient Tomb, Chrome Mox, Demonic Tutor, Enlightened Tutor, Force of Will, Gamble, Grim Monolith, Imperial Seal, Jeska's Will, Mana Vault, Mox Diamond, Rhystic Study, Smothering Tithe, Teferi's Protection, The One Ring, Vampiric Tutor, Worldly Tutor |
 | **Simulator** | Deck key `thanos`, tier T5, played from `data/plans/thanos.toml`; findings in `audit/thanos/FINDINGS.md`, history in `decklists/CHANGELOG.md`. Thanos's power-up is card code (`t6_thanos.rs`) |
 | **Buys** | None |
 
@@ -90,8 +90,10 @@ Both are checked as you cast the spell. If Thanos dies at your upkeep, Swat cost
   - **Urza, Lord High Artificer:** {5}: shuffle, exile the top card, play it free this turn. With unlimited mana you
     see the whole library. A Ballista played free has X=0, so cast the Ballista you find with real mana: dig with Forge
     or tutor for it.
-- **Tutors:** Enlightened Tutor (an artifact to the top) finds either piece or Mystic Forge. Demonic Tutor, Vampiric
-  Tutor and Imperial Seal find anything. Karn, Scion of Urza and Urza's Saga can't (Saga finds only {0} and {1}
+- **Tutors:** Enlightened Tutor (an artifact to the top) finds either piece or Mystic Forge. Demonic Tutor, Gamble,
+  Vampiric Tutor and Imperial Seal find anything. Gamble discards a card at random after it finds, so it can discard
+  the piece you fetched, and nothing in the deck brings back a spell: for Basalt Monolith or Rings use Demonic Tutor, or
+  Gamble only with several spare cards in hand. Karn, Scion of Urza and Urza's Saga can't (Saga finds only {0} and {1}
   artifacts).
 - **Hold the pieces until both can land in one turn** with Force of Will, Pact or Swat behind them. An opponent who
   destroys Rings or the Monolith in response ends the loop.
@@ -164,7 +166,8 @@ The power-up and the other wipes clear the board, and these finish:
 
 **Turns 1-2.** Land and fast mana: Sol Ring, Mana Vault, Chrome Mox, Mox Diamond, Arcane Signet, Mind Stone,
 Birds of Paradise; Scion of Draco for {2} with three or more basic land types out, then Mox Jasper. Mox Opal needs three artifacts, so play the Baubles and rocks first.
-Thanos on turn 2 if the colours line up.
+Thanos on turn 2 if the colours line up. Gamble ({R}) is a turn-1 or turn-2 play when the hand still has spare cards
+and lands to absorb its random discard.
 
 **Turns 3-4.** An engine (The One Ring, Rhystic Study, Mystic Forge, Urza, Karn, Scion of Urza, Crucible) and a bigger rock (Gilded Lotus,
 Thran Dynamo, Coalition Relic). Keep {U}{U} or a free counter open on opponents' turns once the table starts to
@@ -177,8 +180,12 @@ Dragons or Utvara Hellkite. Tier 5 games run about eight rounds, so a turn-5 or 
 
 - **Go** when you have a combo with protection, or when an opponent will win next turn and you can't stop it.
 - **Wipe** when someone's board is about to win and you can't win this turn.
-- **Hold** Force of Will, Pact of Negation, Mana Drain, Disdainful Stroke, Red Elemental Blast or Swat for the opponent who is closest
+- **Hold** Force of Will, Pact of Negation, Mana Drain, Disdainful Stroke or Swat for the opponent who is closest
   to winning: Kinnan and Urza (artifact combos), Yawgmoth (death loops), Zur (Thassa's Oracle).
+- **Blue commanders** (Kinnan, Urza, Zur, Miirym): counter the commander spell with Mana Drain, Force of Will or Pact
+  of Negation; Disdainful Stroke does it for Urza, Zur and Miirym (mana value 4 or more) but not Kinnan (2). Once one
+  resolves, Swords to Plowshares, Chaos Warp, Meteor Golem or an even power-up removes any of them (the power-up doesn't
+  target, which matters against Miirym's ward {2}).
 
 ### Mulligans
 
@@ -194,6 +201,8 @@ one).
 - **Bottom first:** lands past the fourth, the top end (Summon: Bahamut, Utvara Hellkite, The Ur-Dragon, Meteor
   Golem), then the situational answers (Decimate, Chaos Warp).
 - **A hand of only top end goes back,** even with mana. This deck wins with engines first.
+- **Gamble counts as a tutor for the keep test only with spare cards behind it:** three or more extra lands or
+  situational cards, so the random discard rarely takes what it fetched.
 
 | # | Hand | Call | Why |
 |---|---|---|---|
@@ -206,21 +215,116 @@ one).
 
 ### What to tutor for
 
-| Situation | Tutor | Target |
-|---|---|---|
-| Basalt Monolith or Rings out, the other missing | Enlightened Tutor at the end step before your turn, or Demonic Tutor | The missing piece |
-| Both combo pieces out, no finisher | Enlightened Tutor or Demonic Tutor | Walking Ballista (to hand, then cast it with the loop's mana) or Mystic Forge |
-| Cursed Mirror out, no Astral Dragon | Worldly Tutor (a creature to the top), Demonic Tutor | Astral Dragon; Terror of the Peaks first if the table has flying blockers |
-| Nothing going, turns 2-3 | Demonic Tutor, Imperial Seal | The One Ring, Rhystic Study or Mystic Forge |
-| An opponent about to win | Vampiric Tutor at instant speed, Demonic on your turn | Force of Will, Red Elemental Blast (blue commanders) or Teferi's Protection |
-| A board you can't beat | Demonic Tutor, Vampiric Tutor | Summon: Bahamut, Elesh Norn, or Rings to copy the power-up |
-| Missing a colour or {C} | Expedition Map, Nature's Lore, Wayfarer's Bauble, Urza's Saga | Strip Mine or Ancient Tomb for {C}; a dual for the colour |
+Two rules sit under every row below.
 
-- **Imperial Seal** and **Vampiric Tutor** put the card on top: draw it next turn, or this turn with Mystic Forge
-  (artifacts) or Jeska's Will.
-- **Urza's Saga** chapter III finds an artifact with mana cost {0} or {1}: Sol Ring, Mana Vault, Mox Opal, Chrome Mox,
-  Mox Diamond, Mox Jasper, Urza's Bauble, Wayfarer's Bauble or Expedition Map. Chapter II makes Constructs that grow
-  with your artifacts.
+- **Shuffling tutors undo the top of the library.** Demonic Tutor, Gamble, the fetch lands, Expedition Map, Nature's
+  Lore, Wayfarer's Bauble, Solemn Simulacrum, Urza's Saga chapter III and Urza's {5} ability all shuffle. Do the
+  shuffling first and the put-it-on-top tutor (Vampiric Tutor, Imperial Seal, Enlightened Tutor, Worldly Tutor) last.
+- **Tutors need coloured mana.** The Monolith loop makes only {C}, so the {B}, {R}, {W} or {G} for a tutor has to come
+  from a land or a coloured rock. Spend it before the loop, or keep one coloured source untapped.
+
+**Every tutor and tutor-like card**
+
+| Card | Cost | Goes to | Finds | Speed | The catch |
+|---|---|---|---|---|---|
+| **Demonic Tutor** | {1}{B} | Hand | Any card | Sorcery | Nothing: no life, no discard. Shuffles |
+| **Gamble** | {R} | Hand | Any card | Sorcery | You then discard a card at random from your whole hand, the card you found included, then shuffle. It is lost one time in N, where N is the cards in hand after the search; from an empty hand it is always lost |
+| **Vampiric Tutor** | {B} | Top of library | Any card (not revealed) | Instant | Lose 2 life. You draw it next turn, or this turn with Mystic Forge (artifacts and colourless spells) or Jeska's Will |
+| **Imperial Seal** | {B} | Top of library | Any card | Sorcery | Lose 2 life. A sorcery, so it can't be cast at the end of an opponent's turn |
+| **Enlightened Tutor** | {W} | Top of library | An artifact or enchantment, revealed: Basalt Monolith, Rings, Cursed Mirror, Mystic Forge, Walking Ballista, Meteor Golem, Hangarback Walker, Scion of Draco, Rhystic Study, Smothering Tithe, Summon: Bahamut, Urza's Saga | Instant | No other creatures, no Karn or Wrenn and Six, no instants or sorceries |
+| **Worldly Tutor** | {G} | Top of library | A creature, revealed: Astral Dragon, Terror of the Peaks, Walking Ballista, the Dragons, Birds of Paradise, Urza | Instant | {G} comes from the Forest, Bayou, Taiga, Tropical Island, Breeding Pool, Overgrown Tomb, Stomping Ground, Temple Garden (or a fetch land that finds one), City of Brass, Mana Confluence, Command Tower, Birds of Paradise or an any-colour rock or Mox |
+| **Urza's Saga**, chapter III | None | Battlefield | An artifact with mana cost {0} or {1}: Sol Ring, Mana Vault, Mox Opal, Chrome Mox, Mox Diamond, Mox Jasper, Urza's Bauble, Wayfarer's Bauble, Expedition Map | Two turns after it enters | Mox Diamond goes to the graveyard unless you discard a land; Chrome Mox needs a nonartifact, nonland card in hand to imprint; Mox Opal needs three artifacts; Mox Jasper needs a Dragon. The Saga is sacrificed after. Shuffles |
+| **Expedition Map** | {1}, then {2} and sacrifice | Hand | Any land: Strip Mine, Ancient Tomb, Urza's Saga, a dual, a fetch land | Any time (ability) | It needs a land drop to use what it finds. Shuffles |
+| **Nature's Lore** | {1}{G} | Battlefield | A Forest card: Forest, Taiga, Stomping Ground, Bayou, Overgrown Tomb, Temple Garden, Tropical Island, Breeding Pool | Sorcery | Fixes every colour but never {C}. Shock lands cost 2 life to arrive untapped. Shuffles |
+| **Wayfarer's Bauble** | {1}, then {2} and sacrifice | Battlefield, tapped | A basic land: the only one in the list is the Forest | Any time (ability) | Fixes only {G}. With the Forest already drawn or fetched it finds nothing. Shuffles |
+| **Solemn Simulacrum** | {4} | Battlefield, tapped | A basic land: the Forest | Enter trigger | Same catch as Wayfarer's Bauble; it draws a card when it dies |
+| **Fetch lands** (8) | Free, 1 life | Battlefield | A land with either listed land type: the duals and shock lands, never Command Tower, City of Brass or Mana Confluence | Any time (ability) | Shuffles. Every fetch land can reach a red source |
+| **Urza's Bauble** | {0} | Not a search | Nothing: looks at one random card in target player's hand and draws you a card at the next upkeep | Any time (ability) | Counts as an artifact for Mox Opal; it does not find a card you name |
+| **Mystic Forge**, **Urza's {5} ability** | {4}; {5} | Not a search | Forge: the top card, any time, and a cast from the top for artifacts and colourless spells. Urza: shuffle, then play the top card free this turn | Forge: look any time | Forge turns top-of-library tutors into same-turn plays. Urza's shuffle undoes them, and a Ballista played free has X=0 |
+
+**Gamble.** It is a one-mana tutor that finds anything, with a cost no other tutor here has.
+
+- **How often it loses the card.** N is the number of cards in hand after the search, so an empty hand before the cast
+  loses the card every time, one other card half the time, three others one time in four, five others one time in six.
+  The discard also hits a counterspell or a combo piece you were holding.
+- **Fodder to leave in hand:** lands past the fourth, Decimate, Chaos Warp, and Summon: Bahamut or Meteor Golem while
+  the mana is far off. **Cards you don't want exposed to the random discard:** Force of Will and the blue card it
+  exiles, Pact of Negation, Teferi's Protection and any combo piece. If the hand is mostly those, cast Demonic Tutor
+  instead. With Crucible of Worlds out, discarded lands are free, because you can replay them from the graveyard. Rest in
+  Peace turns off Crucible and exiles the discard.
+- **Nothing brings spells back.** A Basalt Monolith, Rings of Brighthearth, Astral Dragon or Cursed Mirror lost to the
+  discard is gone for the game. For those, use Demonic Tutor.
+- **Order.** Cast it before Mox Diamond (which discards a land) or Chrome Mox (which exiles a card) use up the hand,
+  and keep a land to play afterwards. Cast it before any put-on-top tutor, since it shuffles.
+- **It needs {R}.** 19 of the 33 lands help: Badlands, Blood Crypt, City of Brass, Command Tower, Mana Confluence,
+  Plateau, Sacred Foundry, Steam Vents, Stomping Ground, Taiga and Volcanic Island make {R}, and all eight fetch lands
+  can fetch one. Birds of Paradise, Arcane Signet, Chromatic Lantern, Coalition Relic, Gilded Lotus, Cursed Mirror, Mox
+  Diamond, Mox Opal (with metalcraft), Mox Jasper (with a Dragon) and Chrome Mox (imprinting a red card) also make it.
+- **It is a sorcery.** Unlike Vampiric Tutor, Enlightened Tutor and Worldly Tutor, it can't be cast in response
+  to anything or at the end of an opponent's turn. Its one mana does leave counter mana open on your own turn.
+
+**What to tutor for, by board state**
+
+| Situation (your board, the table, mana, window) | Tutor | Target | Why, and what to watch |
+|---|---|---|---|
+| No combo piece out, turns 1-3, quiet table, a hand with lands and spare cards | Gamble if 3+ spare cards, otherwise Demonic Tutor; Imperial Seal on turn 1 | The engine you can cast next: Mystic Forge, The One Ring or Rhystic Study; or the rock or Mox that makes Thanos castable | Mana and colours first. Thanos costs less than any tutor target, so cast him first if you can |
+| No combo piece out, turn 4+, enough mana to cast one next turn | Enlightened Tutor at the end of an opponent's turn, or Demonic Tutor | Basalt Monolith first: it looks like a rock. Rings only when the finisher can follow | A piece in hand is a piece the table can't see. Don't cast Rings alone |
+| Basalt Monolith or Rings out, the other missing | Enlightened Tutor at the end of the table's turn (draw it in your draw step), or Demonic Tutor if you can cast it and finish now | The missing piece | They can destroy the first piece in response to the second. Have Force of Will, Pact of Negation or Swat for the cast |
+| Both pieces out, no finisher, Mystic Forge out | None | Cast the artifacts and colourless spells off the top until Walking Ballista shows | The Forge's {T} and 1 life exiles one card you can't cast, a second with a Rings copy ({2}). A third card you can't cast (a coloured card, a land) stops the dig: tutor for the Ballista then. The loop's mana pays, and the table sees no tutor before the Ballista |
+| Both pieces out, no finisher, no Forge | Demonic Tutor ({B} from a land; the loop pays the {1}). Gamble only with spare cards | Walking Ballista to hand, then cast it for a huge X | Enlightened Tutor puts the Ballista on top and you'd wait a turn |
+| Both pieces out, no finisher, table has counterspells | Demonic Tutor, or Vampiric Tutor the turn before | A counter for the Ballista: Pact of Negation, or Force of Will with a second blue card. Deflecting Swat if Thanos is out | The Ballista is the only spell left to counter. Pact needs {U}{U} of real blue at the next upkeep; the loop makes only {C} |
+| Cursed Mirror out, no Astral Dragon | Worldly Tutor at the end of the table's turn, or Demonic Tutor | Astral Dragon ({6}{U}{U}) | Eight mana with {U}{U}. Astral Dragon is blue, so Mystic Forge can't cast it from the top. Keep a counter for it |
+| Cursed Mirror and Astral Dragon ready, no Terror of the Peaks, flying blockers or Fogs on the table | Worldly Tutor, Demonic Tutor | Terror of the Peaks | With Terror the damage needs no attack. Terror costs {3}{R}{R}. A spell that targets it costs the table 3 life |
+| Astral Dragon in hand, no Cursed Mirror | Enlightened Tutor, Demonic Tutor | Cursed Mirror ({2}{R}) | Cast it as an artifact, not as a copy. Hold the Dragon until the Mirror is out and mana is up |
+| Thanos not cast, a colour of {R}{W}{B} missing | Expedition Map, Nature's Lore, a fetch land, Worldly Tutor | The missing colour: Plateau (R, W), Scrubland (W, B), Badlands or Blood Crypt (B, R), Temple Garden (W), Birds of Paradise (any) | Sol Ring, Mana Vault, Grim Monolith, Thran Dynamo and Ancient Tomb can't pay for him. Tutor only if you can't cast him by turn 3 |
+| Thanos removed or exiled | Demonic Tutor, Vampiric Tutor (to draw next turn) | Force of Will or Pact of Negation for the recast. Lightning Greaves after it lands | He needs no tutor: he is in the command zone. Swat and Jeska's Will need him on the battlefield. Drannith Magistrate stops the recast from the command zone: remove it first |
+| Thanos out, six mana with {C}, a wide or hostile board | None | Cast the power-up: the parity from the table in the commander section | A tutor here costs mana you need. Fill only a gap: Ancient Tomb or Sol Ring for {C} |
+| Thanos out, 11 mana with {C} (Rings {3}, power-up {6}, copy {2}), a board one power-up can't clear | Demonic Tutor, Vampiric Tutor | Rings of Brighthearth | Rings copies the power-up: odd and even both, so every other creature is destroyed, yours too |
+| No Thanos, a board you can't beat, 9 mana | Demonic Tutor | Summon: Bahamut | Chapters I and II destroy a nonland permanent each. A colourless spell, so Mystic Forge can cast it from the top |
+| One big threat on their side | Demonic Tutor, Gamble, Vampiric Tutor | Swords to Plowshares for a creature; Chaos Warp for any permanent; Meteor Golem ({7}) for a nonland permanent | Swords is {W}. Against Miirym (ward {2}) the power-up beats targeted removal |
+| An opponent will win on their next turn | Demonic Tutor or Gamble on your turn | An answer for how they win: Force of Will, Pact of Negation, Mana Drain, Force of Negation (a noncreature spell, free on their turn), Disdainful Stroke (mana value 4+), Swords to Plowshares, Teferi's Protection | Vampiric Tutor on their turn gives you the card at your next draw, too late if they win first. Find it into your hand now and leave the mana up |
+| Their combo or kill spell is on the stack now | None | Use what is in hand: a counter, Swat, Teferi's Protection | Vampiric Tutor, Enlightened Tutor and Worldly Tutor don't put a card in your hand. Don't tap for one if that leaves a counter uncastable |
+| A sweeper looks likely, your board is committed | Demonic Tutor or Gamble on your turn | Teferi's Protection with {2}{W} open | Phases your permanents out, and your life total can't change. The One Ring protects you, not your board. Hold Hangarback Walker and the Constructs from Urza's Saga as the rebuild |
+| Opposition Agent on the table | None | Remove it first: Swords, Chaos Warp, Meteor Golem, an odd power-up (mana value 3) | Every search, fetch lands and Urza's Saga chapter III included, hands them the card |
+| Rule of Law on the table | Abilities only: Expedition Map, Wayfarer's Bauble, Urza's Saga chapter III, fetch lands | Save the one spell a turn for the combo piece or the finisher | A tutor spell would use the turn's only spell |
+| Grand Arbiter Augustin IV or Drannith Magistrate on the table | Demonic Tutor (a spell costs {1} more under the Arbiter) | A card for your hand, not the top | Drannith stops casting from the top with Mystic Forge. Remove either first if you can |
+| Narset, Parter of Veils on the table | Demonic Tutor, Gamble | Your hand, not your draws | Demonic Tutor and Gamble put the card in hand without drawing. After your draw step's card, The One Ring and Rhystic Study can't give you more |
+| Low life, or a table that attacks | Demonic Tutor, Gamble, Enlightened Tutor, Worldly Tutor | Swords to Plowshares or Teferi's Protection; cast Thanos (lifelink, deathtouch) before anything else | Vampiric Tutor and Imperial Seal cost 2 life each. Fetch lands, Ancient Tomb, City of Brass and Mana Confluence add up |
+| Missing {C} for the power-up | Expedition Map, Urza's Saga chapter III | Ancient Tomb or Strip Mine into your land drop; Sol Ring from the Saga | Strip Mine makes {C} and can be replayed with Crucible of Worlds |
+| Empty or one-card hand | Demonic Tutor, Vampiric Tutor, Imperial Seal | Whatever you need | Don't cast Gamble: it discards the card it finds |
+| Hand of 5+ with spare lands and answers | Gamble | The card the hand lacks | With five other cards the tutored card is lost one time in six. The cheapest tutor when mana is tight |
+| You hold a counterspell | Instant tutors at the end of their turn with spare mana, or Demonic Tutor | The same targets as above | Don't tap {U}{U} for Mana Drain or the mana for Disdainful Stroke on a sorcery tutor. Gamble's discard can take the counter, Force of Will's blue card or Pact of Negation |
+| Mystic Forge out and a top-of-library tutor | Vampiric Tutor, Imperial Seal, Enlightened Tutor | An artifact or colourless spell: Walking Ballista, Basalt Monolith, Rings, Karn, Summon: Bahamut | Cast it from the top the same turn. Astral Dragon and Terror of the Peaks are coloured, so the Forge can't cast them. Drannith stops it |
+| Thanos out, an opponent holds several cards | Vampiric Tutor or Imperial Seal, then Jeska's Will | Any card; it will be one of the three exiled | Choose both modes: {R} for each card in their hand pays for it. The red mana is red only, and what you don't play is gone |
+| Urza's Saga on its third turn | Chapter III | Sol Ring or Mana Vault for {C}; Chrome Mox, Mox Diamond or Mox Opal for a colour; Expedition Map for a land | Keep a land in hand for Mox Diamond. Crucible of Worlds replays the Saga |
+
+**What to fetch first**
+
+1. **A win this turn?** Don't tutor. Protect it.
+2. **An opponent about to win?** Find the answer into your hand and keep the mana open.
+3. **Can't cast Thanos or the next spell?** Fix mana and colours: Nature's Lore, Expedition Map, a fetch land.
+4. **No pieces yet?** An engine: Mystic Forge first (it makes later tutors same-turn plays), The One Ring when the table
+   attacks, Rhystic Study against a table that casts a lot.
+5. **One piece out?** The other, at the end of the table's turn, and only when both can land and finish in one turn.
+6. **Both pieces out?** The finisher: the Forge, then Walking Ballista (Combo 1); Astral Dragon or Terror of the Peaks
+   (Combo 2).
+7. **The finish is covered?** A counter for it: Pact of Negation, Force of Will, Mana Drain.
+
+**Common tutor mistakes**
+
+1. Casting Gamble from an empty hand, or for a combo piece with two cards behind it.
+2. Putting a card on top, then cracking a fetch land, casting Demonic Tutor or Gamble or activating Urza: the shuffle
+   loses it.
+3. Tutoring Walking Ballista with Enlightened Tutor and no Mystic Forge, which hands the table a turn to answer the
+   loop.
+4. Paying a coloured tutor with the loop's {C}, or tapping the last land for the loop before the tutor.
+5. Tutoring into Opposition Agent.
+6. Casting a tutor under Rule of Law before the combo piece.
+7. Tutoring Force of Will with no second blue card to exile.
+8. Using Vampiric Tutor at the end of a turn they win on.
+9. Fetching Mox Diamond with Urza's Saga with no land in hand, or Chrome Mox with no card to imprint.
+10. Casting Wayfarer's Bauble or Solemn Simulacrum after the Forest has gone.
+11. Casting Vampiric Tutor and Imperial Seal back to back at low life: 4 life.
 
 ### Protecting the win turn
 
@@ -231,8 +335,8 @@ Monolith, Rings of Brighthearth and the Walking Ballista for Combo 1; Astral Dra
    Hold the second piece until you can cast it and finish in the same turn.
 2. **Cast it with a counter up.** Force of Will and Pact of Negation answer any spell; Force of Negation a noncreature
    spell; Mana Drain any spell (and its mana pays for next turn); Disdainful Stroke a spell of mana value 4 or more;
-   Red Elemental Blast a blue spell. Deflecting Swat (free with Thanos out) moves a counter or a removal spell to a new
-   target.
+   Deflecting Swat (free with Thanos out) moves a counter or a removal spell to a new target. With no counter in hand,
+   find one a turn early (see What to tutor for) rather than tutoring on the combo turn.
 3. **Protect the board, not just the spell.** Teferi's Protection phases your board out against a wipe or a lethal
    swing; The One Ring gives you protection from everything until your next turn when you cast it; Lightning Greaves
    (equip {0}) gives Thanos or Urza shroud. Elesh Norn stops opponents' enter triggers, so their flash blockers and
@@ -258,7 +362,6 @@ Monolith, Rings of Brighthearth and the Walking Ballista for Combo 1; Astral Dra
 | **Pact of Negation** | Any spell, free now; pay {3}{U}{U} at your next upkeep or lose. Use it when you win this turn, or with five mana sure next upkeep |
 | **Mana Drain** ({U}{U}) | Any spell; you get colourless mana equal to its mana value at your next main phase: a Basalt or Ur-Dragon turn |
 | **Disdainful Stroke** ({1}{U}) | A spell with mana value 4 or more: Urza, Yawgmoth, Zur, Miirym and most combo payoffs (not Kinnan, who costs 2) |
-| **Red Elemental Blast** ({R}) | Counter a blue spell, or destroy a blue permanent. Four of the five T5 commanders are blue: Kinnan, Urza, Zur, Miirym |
 | **Deflecting Swat** | Free with Thanos out: redirect removal, a counter or a targeted wipe effect |
 | **Swords to Plowshares** | Exile a creature: a commander, a combo creature or an undying creature |
 | **Chaos Warp** | Any permanent: shuffled away (they may hit a permanent off the top) |
@@ -278,7 +381,7 @@ Rest in Peace, Narset, Parter of Veils) and Urza's Narset.
 |---|---|---|---|
 | Drannith Magistrate | Casting Thanos from the command zone | Swords, Chaos Warp, Decimate, Meteor Golem, Glorybringer's exert, an even power-up (mana value 2) | Both combos (cast from hand) |
 | Opposition Agent | Every tutor and fetch land: they take what you find | Swords, Chaos Warp, Decimate, Meteor Golem, an odd power-up (mana value 3) | Combos drawn naturally; don't tutor while it's out |
-| Grand Arbiter Augustin IV | Your spells cost {1} more | Red Elemental Blast (it's blue), Swords, Chaos Warp, Meteor Golem, an even power-up (mana value 4) | Everything, a turn slower |
+| Grand Arbiter Augustin IV | Your spells cost {1} more | Disdainful Stroke when it is cast, then Swords, Chaos Warp, Meteor Golem, an even power-up (mana value 4) | Everything, a turn slower |
 | Rule of Law | One spell per player per turn | Chaos Warp, Decimate, Meteor Golem, Summon: Bahamut | Combo 1 with Basalt and Rings already out (then one spell: the Ballista); Combo 2 (Astral Dragon is one spell, the rest are triggers) |
 | Narset, Parter of Veils | More than one draw a turn (The One Ring, Rhystic Study, Sylvan Library's extra cards) | Chaos Warp, Summon: Bahamut, Meteor Golem, attacking it | Combos, which don't draw |
 | Rest in Peace | Crucible of Worlds: lands go to exile, not the graveyard, so there is nothing to replay (Strip Mine, Urza's Saga, the fetches) | Chaos Warp, Decimate, Summon: Bahamut, Meteor Golem | Both combos (no graveyard use) |
@@ -287,18 +390,18 @@ Rest in Peace, Narset, Parter of Veils) and Urza's Narset.
 
 | Opponent | Threat | Plan | Cards that matter |
 |---|---|---|---|
-| **Kinnan, Bonder Prodigy** (Simic mana combo) | Kinnan + Basalt Monolith (unlimited mana) into Walking Ballista or Thrasios; Kinnan + Freed from the Real or Pemmin's Aura | Kill Kinnan on sight; hold a counter for the combo turn | Red Elemental Blast (Kinnan is blue), Glorybringer, even power-up, Swords |
-| **Urza, Lord High Artificer** (artifact combo and stax) | Isochron Scepter + Dramatic Reversal; Basalt + Rings; Hullbreaker Horror | Shut off their artifacts and keep a counter for the combo | Disdainful Stroke or Red Elemental Blast on Urza, Meteor Golem, Summon: Bahamut, even power-up (Urza and the Construct) |
+| **Kinnan, Bonder Prodigy** (Simic mana combo) | Kinnan + Basalt Monolith (unlimited mana) into Walking Ballista or Thrasios; Kinnan + Freed from the Real or Pemmin's Aura | Kill Kinnan on sight; hold a counter for the combo turn | Mana Drain or Force of Will on the cast (Disdainful Stroke can't, he costs 2), Glorybringer, even power-up, Swords |
+| **Urza, Lord High Artificer** (artifact combo and stax) | Isochron Scepter + Dramatic Reversal; Basalt + Rings; Hullbreaker Horror | Shut off their artifacts and keep a counter for the combo | Disdainful Stroke or Mana Drain on Urza, Meteor Golem, Summon: Bahamut, even power-up (Urza and the Construct) |
 | **Yawgmoth, Thran Physician** (mono-black aristocrats) | Yawgmoth + undying creatures + a death payoff | Exile, don't destroy: Swords, Chaos Warp; Elesh Norn stops their creatures' enter triggers | Wiping into a Blood Artist drains you; Teferi's Protection against a drain |
-| **Zur the Enchanter** (Esper enchantment control, Oracle) | Heliod + Walking Ballista; Thassa's Oracle with a near-empty library; stax (Drannith Magistrate, Opposition Agent, Grand Arbiter) | Remove the stax creature first, then the enchantments | Red Elemental Blast or Disdainful Stroke on Zur, Decimate, Chaos Warp, Meteor Golem, Summon: Bahamut. Drannith stops you recasting Thanos from the command zone; Opposition Agent steals your tutors and fetches |
-| **Miirym, Sentinel Wyrm** (Temur Dragons) | Copied Dragons, Terror of the Peaks, Wrathful Red Dragon + Blasphemous Act, Cyclonic Rift | Wipe when Miirym and the Dragons are out: even for Miirym (6), odd for 5-drops like Terror of the Peaks; Rings copies both | Power-up, Red Elemental Blast (Miirym is blue), Thundermaw Hellkite (taps their fliers); keep Teferi's Protection for Blasphemous Act turns |
+| **Zur the Enchanter** (Esper enchantment control, Oracle) | Heliod + Walking Ballista; Thassa's Oracle with a near-empty library; stax (Drannith Magistrate, Opposition Agent, Grand Arbiter) | Remove the stax creature first, then the enchantments | Disdainful Stroke or Mana Drain on Zur, Decimate, Chaos Warp, Meteor Golem, Summon: Bahamut. Drannith stops you recasting Thanos from the command zone; Opposition Agent steals your tutors and fetches |
+| **Miirym, Sentinel Wyrm** (Temur Dragons) | Copied Dragons, Terror of the Peaks, Wrathful Red Dragon + Blasphemous Act, Cyclonic Rift | Wipe when Miirym and the Dragons are out: even for Miirym (6), odd for 5-drops like Terror of the Peaks; Rings copies both | Power-up, Disdainful Stroke on Miirym (mana value 6), Thundermaw Hellkite (taps their fliers); keep Teferi's Protection for Blasphemous Act turns |
 
 ### After a stopped attempt
 
 | What happened | Rebuild |
 |---|---|
 | Basalt Monolith or Rings countered or destroyed | There is one of each and no way to get it back. Switch to Combo 2 (tutor Astral Dragon or Cursed Mirror) or the fair plan |
-| Walking Ballista countered with the loop ready | The loop's mana still has a sink: Mystic Forge (cast artifacts off the top) or Urza ({5}: play the top card free). Tutor for either with Enlightened Tutor or Demonic Tutor |
+| Walking Ballista countered with the loop ready | The loop's mana still has a sink: Mystic Forge (cast artifacts off the top) or Urza ({5}: play the top card free). Tutor for either with Enlightened Tutor or Demonic Tutor (Gamble if the hand has spare cards) |
 | Astral Dragon countered | It's in the graveyard for good. Go to Combo 1 or the fair plan; keep Cursed Mirror out as a copy of your best creature |
 | Cursed Mirror removed mid-loop | The tokens already made stay: with Terror of the Peaks out they have dealt their damage; attack with the hasty ones |
 | Thanos removed | Recast him for {R}{W}{B} plus {2} per earlier cast. He's a new object, so his power-up works again; recast him the turn you can also power up ({C}{U}{G} on that turn) |
@@ -359,7 +462,7 @@ unless the game ends soon.
 
 ## Bracket and Rule 0
 
-Bracket 4 (High): 16 Game Changers and two infinite combos, Basalt Monolith + Rings of Brighthearth (unlimited
+Bracket 4 (High): 17 Game Changers and two infinite combos, Basalt Monolith + Rings of Brighthearth (unlimited
 colourless mana) and Astral Dragon + Cursed Mirror (unlimited hasty Dragon tokens). Thanos's power-up is a repeatable
 one-sided board wipe. No mass land destruction, no extra turns. Tell the table about both combos before the game.
 
@@ -375,9 +478,9 @@ one-sided board wipe. No mass land destruction, no extra turns. Tell the table a
 
 **Enchantments (3).** Rhystic Study, Smothering Tithe, Sylvan Library
 
-**Instants (13).** Chaos Warp, Deflecting Swat, Disdainful Stroke, Enlightened Tutor, Force of Negation, Force of Will, Mana Drain, Pact of Negation, Red Elemental Blast, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
+**Instants (12).** Chaos Warp, Deflecting Swat, Disdainful Stroke, Enlightened Tutor, Force of Negation, Force of Will, Mana Drain, Pact of Negation, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
 
-**Sorceries (5).** Decimate, Demonic Tutor, Imperial Seal, Jeska's Will, Nature's Lore
+**Sorceries (6).** Decimate, Demonic Tutor, Gamble, Imperial Seal, Jeska's Will, Nature's Lore
 
 **Lands (33).** Ancient Tomb, Badlands, Bayou, Blood Crypt, Bloodstained Mire, Breeding Pool, City of Brass, Command Tower, Flooded Strand, Hallowed Fountain, Mana Confluence, Marsh Flats, Misty Rainforest, Overgrown Tomb, Plateau, Polluted Delta, Sacred Foundry, Scrubland, Steam Vents, Stomping Ground, Strip Mine, Taiga, Temple Garden, Tropical Island, Tundra, Underground Sea, Urza's Saga, Verdant Catacombs, Volcanic Island, Watery Grave, Windswept Heath, Wooded Foothills, 1 Forest
 
@@ -412,6 +515,7 @@ one-sided board wipe. No mass land destruction, no extra turns. Tell the table a
 1 Flooded Strand
 1 Force of Negation
 1 Force of Will
+1 Gamble
 1 Gilded Lotus
 1 Glorybringer
 1 Goldspan Dragon
@@ -440,7 +544,6 @@ one-sided board wipe. No mass land destruction, no extra turns. Tell the table a
 1 Plateau
 1 Polluted Delta
 1 Ragavan, Nimble Pilferer
-1 Red Elemental Blast
 1 Rhystic Study
 1 Rings of Brighthearth
 1 Sacred Foundry

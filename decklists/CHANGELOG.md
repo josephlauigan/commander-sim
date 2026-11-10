@@ -33,6 +33,7 @@ Deck key `cloud`, `decklists/JD/cloud-midgar-equipment.md`.
 
 ### Changes
 
+- **2026-11-09.** Out: Teferi's Protection. In: Mithril Coat. Teferi's Protection => Mithril Coat (JD's choice, not simulated): a flash Equipment that attaches itself to a legendary creature when it enters, so Cloud survives destroy removal and the deck's own wraths; Cloud's enter trigger can fetch it. It does not stop exile or -X/-X, and Teferi's Protection also protected the life total and the whole board (audit/cloud/FINDINGS.md).
 - **2026-11-07.** Out: Page, Loose Leaf. In: Marvin, Murderous Mimic. Page, Loose Leaf => Marvin, Murderous Mimic (JD's pick; swap test neutral, +0.2 over t1-t3, audit/cloud/FINDINGS.md).
 - **2026-11-07.** Out: Disenchant. In: Rogue's Passage, Sting, the Glinting Dagger. Card-pile package C, adopted untested by JD 2026-11-07 (Rogue's Passage makes an equipped Cloud unblockable; Sting at JD's request). Disenchant was the only dedicated artifact/enchantment answer; Stroke of Midnight, Austere Command and Skyclave Apparition still cover them. The run was stopped part-way, so nothing is measured yet (`audit/cloud/FINDINGS.md`).
 - **2026-11-03.** Out: Day of Judgment, Forum Familiar. In: Steelshaper's Gift, Stoneforge Mystic. JD approved: Forum Familiar -> Stoneforge Mystic; Day of Judgment -> Steelshaper's Gift, adding Equipment access while retaining Exalted Angel. Printings: 2xm 337 and 5dn 19. Not simulated.
@@ -344,6 +345,7 @@ Deck key `sheoldred`, `decklists/JD/sheoldred-mono-black.md`.
 
 ### Changes
 
+- **2026-11-09.** Out: Wander Off. In: K'rrik, Son of Yawgmoth. Wander Off => K'rrik, Son of Yawgmoth (JD's choice, not simulated this time; K'rrik tested neutral in the list on 2026-10-19, audit/sheoldred/FINDINGS.md): lifelink, and every {B} in a cost can be paid with 2 life; Wander Off was low by win rate when cast in the 11/07 analyze run.
 - **2026-11-07.** Out: Screeching Soulbreaker. In: Reanimate. Screeching Soulbreaker => Reanimate (JD's choice, not simulated: the AI has no Entomb/Reanimate line yet; audit/sheoldred/FINDINGS.md).
 - **2026-11-07.** Out: Al Bhed Salvagers. In: Witch of the Moors. Al Bhed Salvagers => Witch of the Moors (JD's pick; swap test t3 +0.9, t4 +1.4, inside the noise, audit/sheoldred/FINDINGS.md).
 - **2026-11-07.** Out: Reanimate. In: Animate Dead. JD's choice, not simulated: Animate Dead (owned, from the retired Seph deck) costs one more mana but no life, so Sheoldred or Grave Titan comes back without a 4-6 life payment; it still reanimates from any graveyard and returns legendaries. The creature gets -1/-0 and is sacrificed if the Aura leaves. Reanimate goes to the binder. A sim would say little for now: the AI barely plays the graveyard half (Entomb and Yawgmoth's Will), see audit/sheoldred/FINDINGS.md.
@@ -888,6 +890,7 @@ Deck key `thanos`, `decklists/JD/thanos-artifacts-and-dragons.md`.
 
 ### Changes
 
+- **2026-11-09.** Out: Red Elemental Blast. In: Gamble. Red Elemental Blast => Gamble (JD's choice, not simulated): a 1-mana tutor for the combo pieces. Gamble discards a card at random after the search, so it needs spare cards in hand; the deck loses a free counter against blue commanders. 17 Game Changers (audit/thanos/FINDINGS.md).
 - **2026-11-07.** Out: Blightsteel Colossus, Duplicant, Gamble, Karn Liberated, Karn, the Great Creator, Lotus Petal, Oblivion Stone, Portal to Phyrexia, Ratchet Bomb, Ugin, the Spirit Dragon, Wastes, Wurmcoil Engine. In: Crucible of Worlds, Disdainful Stroke, Elesh Norn, Mother of Machines, Glorybringer, Hangarback Walker, Meteor Golem, Mox Jasper, Scion of Draco, Strip Mine, Summon: Bahamut, Thundermaw Hellkite, Utvara Hellkite. Card-pile package TD2 (the TD cards with cuts matched on mana value, so the curve stays 3.10 -> 3.07; TD itself raised it to 3.49 and lost -2.8), adopted untested by JD 2026-11-07. Scion of Draco (usually {2} with the duals' land types), Crucible of Worlds + Strip Mine (Urza's Saga, the fetches, Wrenn and Six) and Mox Jasper speed it up; Disdainful Stroke, Meteor Golem, Glorybringer and Summon: Bahamut add interaction; the hasty Dragons and Utvara Hellkite feed the Terror of the Peaks / Ur-Dragon damage win (half its wins). It swaps the old fair-win top end (Wurmcoil, Portal, Karn Liberated, Blightsteel, Ugin) for the new one; 16 Game Changers (Gamble left). The bulk Blood Crypt replaces the proxy copy (same card). Evidence: `audit/thanos/FINDINGS.md`.
 
 ### Simulator history

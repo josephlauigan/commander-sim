@@ -4,6 +4,18 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run (CLAUDE.md "Swap tests explain themselves"). Newest evidence first; numbers are
 look-ahead, loose profile, vs Cloud's matched tiers (T1, T2) unless noted.
 
+## 2026-11-09: Teferi's Protection => Mithril Coat (JD's choice, not simulated)
+Mithril Coat ({3}, legendary Equipment, flash, indestructible; equip {3}; model status Full, attaches to the best
+legendary creature on entering) takes Teferi's Protection's slot. Why: Cloud's enter trigger can fetch the Coat, flash lets
+it answer a destroy effect or the deck's own Wrath of God, Fumigate and Austere Command in response, and it is one more
+Equipment for Stoneforge, Steelshaper's Gift and Open the Armory. Teferi's Protection was the card sitting in hand
+(cast 6% of the games drawn in the 11/07 analyze run, +5.9 when cast).
+What it costs: indestructible does not stop exile or -X/-X (weakness 5: Cloud is removed about 0.6 times a game at t1,
+mostly exile and wipes), and Teferi's Protection also froze the life total and phased out the whole board, which the
+Coat does not. Not measured: no number yet. A paired run would be flattered by two AI gaps in the cards that stay
+(Galadriel's Dismissal is never cast, Judgment of Alexander is never cast in the main phase), so read it with that in
+mind. Check the Coat's cast and stuck-in-hand numbers in the next `--analyze`.
+
 ## 2026-11-07: Page, Loose Leaf => Marvin, Murderous Mimic (t1-t3, loose, 2,000 games per list per tier, look-ahead, paired)
 Result: **t1 29.9% -> 30.4% (+0.4), t2 22.0% -> 22.7% (+0.7), t3 23.2% -> 22.8% (-0.4), noise ±1.5-1.6 per tier:
 +0.2 over t1-t3, neutral.** **Adopted (JD's pick, 2026-11-07): Marvin is in the list.** Raw: `2026-11-07-marvin/page-to-marvin.txt`.

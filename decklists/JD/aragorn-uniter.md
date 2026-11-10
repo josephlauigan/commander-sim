@@ -237,32 +237,232 @@ bottom for each mulligan after the free one.
 
 ### What to tutor for
 
-The deck's tutors: **Mystical Tutor** ({U}, an instant or sorcery to the top of the library), **Worldly Tutor** ({G}, a
-creature to the top), **Nature's Lore** (a Forest card, onto the battlefield), **Tezzeret, Cruel Captain** (-3: an artifact
-with mana value 1 or less, to the hand: Sol Ring, Lotus Petal or Skullclamp) and **Mystic Sanctuary** (an instant or
-sorcery from the graveyard to the top, but it enters untapped only with three other Islands: Island, Volcanic Island,
-Steam Vents, Tropical Island and Tundra count). The two instant tutors go at the end step of the player before you, so
-you draw the card next turn. No tutor finds an enchantment: Underworld Breach, Fiery Emancipation, Triple Triad and Rhystic
-Study come from draws.
+The deck has two true tutors (**Mystical Tutor**, **Worldly Tutor**), a land tutor (**Nature's Lore**), an artifact
+tutor (**Tezzeret, Cruel Captain**), a graveyard-to-library land (**Mystic Sanctuary**) and a set of dig spells that draw
+or look at cards without choosing one. This section lists each of them, the rules that decide when a found card is
+usable, and then what to find for each board state.
 
-| Situation | Tutor | Target | Why |
+#### Every tutor and finder
+
+**Tutors (they name a card):**
+
+| Card | Cost | Where the card goes | What it finds | Speed | Catch |
+|---|---|---|---|---|---|
+| Mystical Tutor | {U} | Top of the library (revealed, library shuffled) | An instant or sorcery | Instant | You draw it at your next draw, not now, and the table sees it. A blue spell: with Aragorn out his scry 2 resolves first and the shuffle undoes it |
+| Worldly Tutor | {G} | Top of the library (revealed, library shuffled) | A creature | Instant | Same timing. A green spell: with Aragorn out its +4/+4 trigger is real (pump an unblocked flier). The creature is then cast at sorcery speed, except Restoration Angel (flash) |
+| Nature's Lore | {1}{G} | Battlefield, untapped | A Forest card: Taiga ({R}/{G}), Savannah ({G}/{W}), Tropical Island ({G}/{U}), Temple Garden ({G}/{W}), Forest | Sorcery | Ramp and colour fixing in one card. Temple Garden asks for 2 life or enters tapped. A green spell (+4/+4 trigger with Aragorn out) |
+| Tezzeret, Cruel Captain | {3} | Hand | An artifact with mana value 1 or less: Sol Ring, Lotus Petal, Skullclamp | Sorcery; loyalty 4, the -3 leaves 1 | Colourless, so no Aragorn trigger. Each artifact entering adds a loyalty counter. His 0 untaps an artifact or creature (Sol Ring or a mana creature) for extra mana |
+| Mystic Sanctuary | Land | Top of the library, no shuffle | An instant or sorcery in your graveyard | When it enters untapped | Enters untapped only with three other Islands: Island, Volcanic Island, Steam Vents, Tropical Island and Tundra count, and a fetch land can bring it in. It is your land drop. The card goes on top of whatever is there, so a card you tutored sits one deeper |
+
+**Digs (they look at cards or draw them, you don't name one):**
+
+| Card | Cost | What it does | Speed | Catch |
+|---|---|---|---|---|
+| Expressive Iteration | {U}{R} | Look at the top three: one to hand, one to the bottom, one exiled that you may play this turn | Sorcery | Keep mana for the exiled card or it is lost. With Aragorn out it is two triggers: scry 2 resolves first and sets up the three cards, and 3 damage |
+| Frantic Search | {2}{U} | Draw two, discard two, untap up to three lands | Instant | Pays for itself when three lands were tapped for it. You choose the discards, which fill the graveyard for Breach |
+| Fact or Fiction | {3}{U} | Reveal five; an opponent splits them into two piles; you take one pile and the other goes to your graveyard | Instant | They choose the split. The graveyard pile fuels Breach |
+| Mystic Confluence | {3}{U}{U} | Choose three: draw a card, bounce a creature, or counter unless they pay {3} (modes can repeat) | Instant | Five mana, but it is also a counter |
+| Twinned Vision | {1}{U/R} | Draw a card; draw two if it wasn't cast from your hand | Instant | Flashback {1}{U/R}{U/R} and discard a card, or escape from Underworld Breach, draws two. Blue and red |
+| Manamorphose | {1}{R/G} | Two mana of any colours, draw a card | Instant | Net zero mana. Red and green |
+| Jeska's Will | {2}{R} | Exile the top three; you may play them this turn (or add red for their hand size; both modes with a commander) | Sorcery | Cards you don't play are gone; a land only if you have a land drop left |
+| Sylvan Library | {1}{G} | Each draw step: draw two extra cards, then put two back or pay 4 life each | Each turn | Enchantment: you see three cards a turn. A tutored card is the first of the three |
+| Skullclamp | {1}, equip {1} | Draw two when the equipped creature dies | Any time you can equip | A 1/1 token with it dies at once: two cards for {1} |
+| Rhystic Study, Niv-Mizzet, Aragorn | | Rhystic Study draws on their spells unless they pay {1}. Niv-Mizzet draws whenever any player casts an instant or sorcery. Aragorn scries 2 for each blue spell you cast | Passive | Card flow that doesn't pick |
+
+**Faeburrow Elder** finds nothing; it is the mana answer (see the mana rows). The key cards no tutor can find:
+Underworld Breach, Fiery Emancipation, Triple Triad, Rhystic Study, Aura Shards, Ghostly Prison, Smothering Tithe and Sylvan
+Library (enchantments), Lightning Greaves and Arcane Signet (mana value 2), Elspeth (a planeswalker). Dig for them.
+
+#### Rules that decide timing
+
+- **A tutored card is on top, so you draw it next.** Cast Mystical Tutor or Worldly Tutor at the end step of the player
+  before you and the card is in your hand for your turn, with your mana free. Cast on your own turn, it arrives a full
+  turn later unless you draw it now.
+- **Draw it now.** After a tutor, any spell that looks at or draws the top card gets it this turn: Expressive Iteration
+  (top three), Frantic Search, Twinned Vision, Manamorphose, Mystic Confluence (draw), Jeska's Will (exile three, play them)
+  and Fact or Fiction (top five, but the opponent splits the piles). With Frantic Search the tutored card is the first
+  of the two you draw; discard the other cards.
+- **A second tutor undoes the first.** Both tutors shuffle before putting the card on top. Cast only one before you draw.
+- **Aragorn's scry 2 and a tutor.** A blue spell's trigger resolves before the spell, so scry 2 before a tutor is lost to
+  the shuffle. After a tutor, a blue spell's scry 2 looks at the tutored card: keep it on top.
+- **Tutors are revealed.** The table sees what you took and can answer it (hold a counter, kill Aragorn).
+- **Burst mana empties at the end of each step and phase.** Spend it in the phase you make it. See the next table.
+- **Opposition Agent** takes every card you search for. Kill it before you tutor or crack a fetch land.
+
+#### Burst mana and what it can pay
+
+| Source | Cost | Makes | Net | Pays for |
+|---|---|---|---|---|
+| Rite of Flame | {R} | {R}{R} | +1 | Red only |
+| Desperate Ritual | {1}{R} | {R}{R}{R} | +1 | Red only |
+| Seething Song | {2}{R} | {R}{R}{R}{R}{R} | +2 | Red only |
+| Manamorphose | {1}{R/G} | Two mana of any colours | 0, and draws a card | Any colour: fixes blue for Mystical Tutor |
+| Lotus Petal | {0} | One mana of any colour | +1 once | Any colour |
+| Jeska's Will | {2}{R} | {R} for each card in an opponent's hand | Hand size minus 3 | Red only |
+| Mana Drain | {U}{U} | {C} for the countered spell's mana value, in your next main phase | | Colourless: Comet Storm's X, generic costs |
+
+Red-only mana pays Emancipation's {R}{R}{R}, Comet Storm, Grapeshot, Breach and escapes, and every generic cost. It can't
+pay the {U} of Mystical Tutor, Brain Freeze or Swan Song, the {G} of Worldly Tutor, or Niv-Mizzet's {U}{U}{U}.
+
+#### What each spell colour does with Aragorn out
+
+Spells cast before Aragorn is on the battlefield trigger nothing, so keep cheap spells in hand until he resolves
+(mana and colour pieces excepted).
+
+| Spell colour | Trigger | Best use | Spells that give it |
 |---|---|---|---|
-| Aragorn out, Breach in hand, no storm card | Mystical Tutor (their end step) | Grapeshot (Brain Freeze if the graveyard is thin) | Grapeshot's damage grows with Veyran and Emancipation; Brain Freeze refills the graveyard |
-| Aragorn out, a big turn coming, no Jeska's Will | Mystical Tutor | Jeska's Will | Both modes and a red trigger |
-| Emancipation out or castable, need a payoff | Mystical Tutor | Lightning Bolt (cheapest) or Comet Storm (with 9+ mana) | Each red spell is 9 or more |
-| Opponent holds a combo and has mana up | Mystical Tutor | Counterspell, Mana Drain or Force of Will; Swan Song for an enchantment or instant | Put the counter on top for next turn's draw |
-| Their key permanent costs 4 or less (Rule of Law, Eidolon of Rhetoric, Blood Moon, Back to Basics, Winter Orb, Narset, Drannith Magistrate, Dauthi Voidwalker, Aluren, Intruder Alarm) | Worldly Tutor | Skyclave Apparition | Exiles any nonland permanent of mana value 4 or less |
-| Aragorn needs backup or a wipe is coming | Worldly Tutor | Restoration Angel (flash: blink Aragorn out of a removal spell) | Keep it in hand and cast it in response |
-| Krenko, Edgar Markov or another wide board | Mystical Tutor | Nibelheim Aflame or Austere Command (sorceries), Cyclonic Rift (overload at 7 mana) | Sweepers |
-| Aragorn gone, tax too high | Worldly Tutor | Talrand, Guttersnipe or Veyran | Keeps the spell plan going without him |
-| Short of mana or colours, turns 2-3 | Nature's Lore | Taiga, Tropical Island or Savannah | Untapped, fixes the missing colour |
-| Tezzeret out, Soldiers or other tokens on board | Tezzeret (-3) | Skullclamp | Each token is two cards for {1} |
-| Setting up a Breach or Jeska's turn | Tezzeret (-3) | Lotus Petal or Sol Ring | A Petal is one more spell for the storm count and one more mana |
-| Opposition Agent on the battlefield | Don't tutor or crack fetch lands | Kill Agent first (Lightning Bolt, Swords, Path) | They take every card you search for |
+| Red | 3 damage to target opponent | Reach and finishing: count red spells | Lightning Bolt, Seething Song, Desperate Ritual, Rite of Flame, Jeska's Will, Comet Storm, Grapeshot, Chaos Warp, Deflecting Swat, Nibelheim Aflame |
+| White | A 1/1 Soldier | Chump-blockers, Skullclamp fodder, Aura Shards triggers | Swords, Path, Ephemerate, Teferi's Protection, Austere Command, Restoration Angel, Skyclave Apparition, Windborn Muse |
+| Blue | Scry 2 | Digs toward the next piece; best before a draw or look-at-the-top spell | Counters, Frantic Search, Fact or Fiction, Mystic Confluence, Cyclonic Rift, Spark Double |
+| Green | Target creature +4/+4 | An unblocked flier at combat | Worldly Tutor, Heroic Intervention, Nature's Lore, Sylvan Library, Birds of Paradise, Llanowar Elves, Paradise Druid |
+| Two colours | Both triggers | The cheapest way to get two triggers from one card | Twinned Vision, Expressive Iteration, Third Path Iconoclast (blue and red); Manamorphose (red and green); Kitchen Finks, Faeburrow Elder, Aura Shards (green and white) |
+| Colourless | None | Still a spell cast for storm and for Firebrand Archer | Lotus Petal, Sol Ring, Skullclamp, Arcane Signet, Lightning Greaves, Tezzeret |
 
-**Dig, not tutor:** Expressive Iteration (look at three, take one, play one this turn), Fact or Fiction, Frantic Search,
-Twinned Vision and Mystic Confluence (draw three) find Breach, Emancipation and the engines. Against Narset (Urza,
-Zur) you can draw only one card a turn, so the dig spells do nothing extra.
+#### By board state
+
+Each row names the board, the window and the one tutor to use. "End step" means the end step of the turn before the one
+you need the card. Mana is what you will have when the card is cast.
+
+**Aragorn is not cast yet.** He needs {R}{G}{W}{U}; casting him triggers nothing.
+
+| Your board and mana | Opponents' board | Window | Tutor | Target | Why and what to watch for |
+|---|---|---|---|---|---|
+| Two lands, one of Aragorn's four colours out of reach | Nothing that stops lands | Turn 2 | Nature's Lore | Taiga for red, Tropical Island for blue, Savannah for white (Temple Garden also, for 2 life); any Forest source for green | The land is untapped, so Aragorn can land on turn 3 from four lands. A fetch land in hand does the same job and keeps the tutor |
+| No mana creature or rock, nothing else to cast, {G} open | No pressure | End step of turn 1 | Worldly Tutor | Birds of Paradise (any colour), else Paradise Druid; Llanowar Elves makes only {G} | A last resort: a premium tutor spent on mana. Prefer Nature's Lore when you hold it |
+| Four sources of all four colours ready for next turn; {U} spare | Blue mana open, counters likely | End step, turns 4-5 | Mystical Tutor | Swan Song ({U}: counters their counterspell, they get a 2/2 Bird), or Force of Will if you hold a spare blue card | Swan Song and Fierce Guardianship can't counter a creature spell, but both can counter their counter. Fierce Guardianship costs {2}{U} until a commander is on the battlefield. Counterspell or Mana Drain need {U}{U} left over |
+| Three mana, Tezzeret in hand, nothing better | Nothing | Turn 3 | Tezzeret (-3) | Lotus Petal if a colour is missing for Aragorn next turn; Sol Ring if only generic mana is short | Sol Ring makes {C}{C} and can't pay Aragorn's colours. The artifact entering adds a loyalty counter |
+| Cheap red and blue spells in hand | Any | Before Aragorn | None | Hold them | A spell cast before he resolves does nothing; after, a red spell is 3 damage |
+
+**Aragorn is on the battlefield.**
+
+| Your board and mana | Opponents' board | Window | Tutor | Target | Why and what to watch for |
+|---|---|---|---|---|---|
+| Aragorn out, one opponent in burn range, {R} spare | Low life | End step, then your turn | Mystical Tutor | Lightning Bolt: 3 from Aragorn and 3 from the Bolt for {R} | With Emancipation each is 9 |
+| Aragorn out, 8 or more mana | Several opponents low | End step, then your turn (instant) | Mystical Tutor | Comet Storm: {X}{R}{R}, {1} more for each extra target | X goes to every target; Aragorn's 3 hits one opponent. Mana Drain's {C} pays X |
+| Aragorn out, 7 or more mana next turn | An opponent holding five or more cards | End step | Mystical Tutor | Jeska's Will | With a commander you take both modes: {R} for each card in their hand and three exiled cards to play, plus 3 from Aragorn. Cast it first in the main phase; the red empties at end of phase |
+| Aragorn out, an unblocked flier (Drake, Windborn Muse, Restoration Angel, Birds of Paradise) in combat | Attackers declared or no blockers | Combat | Worldly Tutor | Any creature, as a cast: the +4/+4 is the point | Cast after blockers. Heroic Intervention or Manamorphose also give +4/+4. Shroud (Greaves) on Aragorn means pump another creature |
+| Aragorn out, empty hand, 3 to 5 mana | Any | Your turn | A dig, not a tutor | Expressive Iteration, Twinned Vision, Frantic Search, Fact or Fiction | Scry 2 resolves first, so the cards you see are better. Nothing here names a card |
+| Aragorn and Aura Shards out | A lock or combo artifact or enchantment: Blood Moon, Back to Basics, Winter Orb, Rule of Law, Isochron Scepter | End step | Worldly Tutor | Kitchen Finks ({1}{G/W}{G/W}) | It makes a Soldier (white) and pumps (green); the Soldier entering and Kitchen Finks entering each trigger Aura Shards: two destroys for one spell |
+| Aragorn out, Soldiers or other tokens on your side | Any | Your turn | Tezzeret (-3) | Skullclamp | Each token is two cards for {1} (equip {1}); a Soldier with it dies at once |
+| Aragorn out, you want a second engine body | Removal likely | End step | Worldly Tutor | Spark Double ({3}{U}) | It enters as a copy of Aragorn, non-legendary, so both stay and every spell triggers twice. Blue spell: scry 2 |
+
+**Underworld Breach.** Breach ({1}{R}) gives every nonland card in your graveyard escape for its mana cost plus exiling
+three other cards from the graveyard, and is sacrificed at the end step. For the count: one escape needs 4 cards (the
+card and three to exile); an instant or sorcery returns to the graveyard when it resolves, so each further escape
+costs three more cards net. 7 cards is two escapes, 10 is three, before Brain Freeze or discards add more.
+**Grapeshot** deals 1 damage per copy, and the storm count is every spell cast before it this turn (escaped casts,
+Breach, Lotus Petal and cantrips all count), so a count of n is n + 1 damage, tripled by Fiery Emancipation, plus
+Aragorn's 3 for each red spell. **Brain Freeze** mills three cards per copy, so a count of n mills 3(n + 1). Aim it at
+yourself to refill the graveyard if your library holds more than three times the copies; at an opponent only if their
+library is short enough to finish. Without Aragorn, the 44-damage example above is about 20.
+
+| Your board and mana | Opponents' board | Window | Tutor | Target | Why and what to watch for |
+|---|---|---|---|---|---|
+| Breach in hand, Aragorn out, 7 or more cards in the graveyard, no storm card | No graveyard hate, no one-spell limit | End step | Mystical Tutor | Grapeshot | The default payoff: each copy can pick a different target. A sorcery, so your turn only |
+| Breach and Grapeshot in hand, graveyard of 3 or fewer | Any | Your turn | A dig, not a tutor | Frantic Search (discard two), Fact or Fiction (the other pile), Twinned Vision flashback | Starting with a short graveyard wastes the line; fill it first |
+| Breach, Grapeshot and Aragorn, mana short | Any | End step | Mystical Tutor | Seething Song (+2), else Desperate Ritual or Rite of Flame (+1) | All red. A ritual in the graveyard can be escaped again but costs three cards |
+| Mid-chain, Aragorn out, the next piece is in the library | Any | Your turn, mid-chain | Mystical Tutor, then a cantrip | Grapeshot or Seething Song, drawn with Manamorphose, Twinned Vision or Frantic Search | Both are spells, so both raise the storm count. Mystical Tutor needs {U}, which rituals can't give |
+| Breach turn next, 3 or more opponents | Several players alive | End step before | Worldly Tutor | Guttersnipe: 2 to each opponent for each instant or sorcery you cast | Aragorn hits one opponent; an eight-spell chain is 16 to each. Storm copies are not casts |
+| Breach turn next, mana-hungry chain | Any | End step before | Worldly Tutor | Storm-Kiln Artist ({3}{R}) | A Treasure for each instant or sorcery cast or copied, Grapeshot's copies included. It dies to removal; one pays for a ritual |
+| Emancipation out or castable | Any | End step | Mystical Tutor | Lightning Bolt (9, plus Aragorn's 9), or Comet Storm with mana | Emancipation triples every source you control. No tutor finds Emancipation itself; cast it with a counter ready |
+| Niv-Mizzet out | Players casting instants and sorceries | End step | Mystical Tutor | Mystic Confluence | Casting any instant or sorcery draws a card and pings; Confluence's three draw modes are three more pings (Frantic Search draws two). Fact or Fiction puts cards in hand without drawing. Niv-Mizzet needs {U}{U}{U}{R}{R}{R} to cast |
+
+**An opponent is about to win.** A tutored card is on top and arrives at your next draw. That helps only if the combo
+needs another turn, or if you draw it now with an instant (Mystical Tutor, then Frantic Search, which also untaps three
+lands to pay for the counter you find). Otherwise hold the counters you already have.
+
+| Their key piece | Counter it | Remove or answer it on the battlefield | Notes |
+|---|---|---|---|
+| A creature (Kinnan, Urza, Yawgmoth, Zur) | Counterspell, Mana Drain, Force of Will | Swords or Path (instant, Mystical Tutor finds them), Lightning Bolt for 3 toughness or less, Skyclave Apparition (Worldly Tutor; mana value 4 or less, which covers all four) | Fierce Guardianship and Swan Song can't hit a creature spell. Tutor at the end step, use the card next turn |
+| An artifact (Basalt Monolith, Isochron Scepter, Winter Orb) | Fierce Guardianship (free with Aragorn out), Counterspell, Mana Drain, Force of Will | Cyclonic Rift, Chaos Warp, Skyclave Apparition, Aura Shards | Rift the Monolith before it untaps |
+| An enchantment (Aluren, Intruder Alarm, Rule of Law, Blood Moon, Back to Basics) | Swan Song ({U}), Fierce Guardianship, the rest | Cyclonic Rift, Chaos Warp, Skyclave Apparition, Aura Shards, Austere Command | Swan Song gives them a 2/2 Bird |
+| An instant or sorcery (Dramatic Reversal, Toxic Deluge, Damnation) | Swan Song, Fierce Guardianship, the rest | None: it is a spell | Supreme Verdict can't be countered: use Heroic Intervention or Teferi's Protection |
+| A damage or drain win aimed at you (Walking Ballista pings, a Craterhoof attack, a drain) | Counter the enabler if it is a spell | Teferi's Protection ({2}{W}) | Your life total can't change and you have protection from everything, but it is no answer to a library or alternate win, and your permanents (lands too) phase out: spend your mana first |
+| Their counterspell is up against your key spell | Find Force of Will (needs a spare blue card), Fierce Guardianship (noncreature, free with Aragorn out), or Swan Song | Bait with a cheaper spell first | Counters on Breach, Emancipation or Aragorn are the ones that cost the game |
+
+Walking Ballista has mana value 0 on the battlefield, so Skyclave Apparition can exile it.
+
+**A go-wide board (Krenko, Edgar Markov).**
+
+| Your board and mana | Opponents' board | Window | Tutor | Target | Why and what to watch for |
+|---|---|---|---|---|---|
+| Six mana, tapping out is safe | Many cheap creatures | End step, then your turn (sorcery) | Mystical Tutor | Austere Command: "mana value 3 or less" plus artifacts or enchantments if useful | Never choose "mana value 4 or greater" with Aragorn out (mana value 4); the 3-or-less mode kills your Soldiers, and the artifact and enchantment modes destroy your own Sol Ring, Arcane Signet, Greaves, Skullclamp and enchantments |
+| Four mana, Aragorn out | Many creatures with toughness 5 or less | End step, then your turn (sorcery) | Mystical Tutor | Nibelheim Aflame: Aragorn deals 5 to each other creature (9 after a green spell) | Aragorn survives (he is the source); your other creatures die. A red spell, so 3 more to an opponent |
+| Four or more mana, they attack with tokens | Tokens with 1 toughness | End step, then their combat (instant) | Mystical Tutor | Comet Storm with X of 1 and a target for each token | Costs X + 2 plus {1} for each extra target, so X of 1 and n targets is n + 2 mana. It also hits players |
+| Seven mana, or Seething Song | A wide board | End step, then their end step or declare attackers | Mystical Tutor | Cyclonic Rift, overloaded ({6}{U}) | One-sided: every nonland permanent they control returns to hand, and tokens vanish. The best answer to a swarm |
+
+**Removal on your commander.** Pick by what they cast. Ephemerate and Restoration Angel save him only from targeted
+removal: he returns before a wipe resolves and dies anyway.
+
+| Your board and mana | Opponents' board | Window | Tutor | Target | Why and what to watch for |
+|---|---|---|---|---|---|
+| Aragorn out, tapped out | Targeted removal (Swords, Terminate, Fatal Push, Heartless Act, Anguished Unmaking) | End step | Mystical Tutor | Fierce Guardianship (counter the spell, free) or Deflecting Swat (redirect, free, red: 3 damage) | Both are free with a commander on the battlefield. Force of Will is free with a spare blue card |
+| Aragorn out, {1}{G}, {W} or {2}{W} spare | Targeted removal | End step | Mystical Tutor | Heroic Intervention (hexproof), Ephemerate ({W}, rebound blinks him again next upkeep), or Teferi's Protection | The white spell triggers Aragorn for a Soldier. Heroic Intervention makes any targeted removal fizzle |
+| Aragorn out, 4 mana held | Targeted removal | End step | Worldly Tutor | Restoration Angel (flash) | Blink in response; a 3/4 flier stays |
+| Aragorn out | A destroy wipe (Damnation, Supreme Verdict, Damn overload, Blasphemous Act) | End step | Mystical Tutor | Heroic Intervention (indestructible) or Teferi's Protection | Supreme Verdict can't be countered. Toxic Deluge and The Meathook Massacre shrink creatures: Heroic Intervention doesn't help, Teferi's Protection phases him out, a counter stops it |
+| Aragorn dead or in the command zone, tax too high | Any | End step | Worldly Tutor | Talrand, Guttersnipe, Veyran or Young Pyromancer | Keeps the spell plan going. Recasting costs {2} more for each earlier cast; Spark Double copies whatever creature remains |
+
+**Needing mana.**
+
+| Your board and mana | Opponents' board | Window | Tutor | Target | Why and what to watch for |
+|---|---|---|---|---|---|
+| Aragorn out, 4 to 5 mana, the big turn needs 8 or more | Any | End step | Worldly Tutor | Faeburrow Elder ({1}{G}{W}) | With Aragorn it taps for {R}{G}{W}{U}, four mana, and is a 4/4. Lightning Greaves (equip {0}) gives it haste so it taps the turn it lands. Casting it triggers Aragorn twice (Soldier and +4/+4) |
+| Aragorn out, plenty of lands, short of red | Any | End step | Mystical Tutor | Seething Song for Emancipation or Comet Storm, Jeska's Will if they hold cards | Red-only mana. Don't count on it for blue spells |
+| Colours short on turn 3 or 4 | Any | Turn 2-4 | Nature's Lore, then Tezzeret | The missing colour, then Lotus Petal | A fetch land that finds the dual does the same without a tutor |
+
+**A creature for Worldly Tutor.** Choose the creature you can cast the turn you draw it.
+
+| Need | Creature | Why |
+|---|---|---|
+| Mana and colours | Birds of Paradise, Paradise Druid ({1}{G}, hexproof while untapped) | Any colour. Llanowar Elves makes only {G} |
+| A lock or combo piece of mana value 4 or less | Skyclave Apparition ({1}{W}{W}) | Exiles Kinnan, Urza, Yawgmoth, Zur, Rule of Law, Eidolon of Rhetoric, Blood Moon, Back to Basics, Winter Orb, Narset, Drannith Magistrate, Dauthi Voidwalker, Aluren, Intruder Alarm, Opposition Agent. When it leaves, the owner gets an X/X token. Not a land |
+| Protection for Aragorn | Restoration Angel ({3}{W}, flash) | Held up with four mana |
+| A backup engine | Spark Double ({3}{U}) | Second Aragorn |
+| Damage to every opponent | Guttersnipe ({2}{R}), Firebrand Archer ({1}{R}: 1 per noncreature spell) | Aragorn hits one opponent |
+| Mana and Treasures in a chain | Storm-Kiln Artist ({3}{R}) | A Treasure per instant or sorcery |
+| A doubled turn | Veyran ({1}{U}{R}) | Doubles Aragorn, Guttersnipe, Pyromancer and Archer triggers from your instants and sorceries |
+| Value in a long game | Talrand ({2}{U}{U}), Young Pyromancer ({1}{R}), Third Path Iconoclast ({U}{R}) | A body per spell; Third Path Soldiers are artifacts (Storm-Kiln Artist gets +1/+0 for each) |
+| Defence | Windborn Muse ({3}{W}, 2/3 flier, {2} per attacker), Kitchen Finks | Taxes attackers on top of Ghostly Prison |
+| The big finisher | Niv-Mizzet, Parun | Only with three blue and three red sources |
+
+**By turn window.**
+
+| Turns | Mystical Tutor | Worldly Tutor | Nature's Lore, Tezzeret |
+|---|---|---|---|
+| 1-3 | Hold it, except a counter for Aragorn against open blue mana | Mana creature only if the hand is stuck | Nature's Lore on turn 2 for the missing colour; Tezzeret only with nothing else to do |
+| 4-6 | Counters and protection, or Jeska's Will if Aragorn is out and the plan is next turn | Skyclave Apparition for a lock or combo piece; Restoration Angel; Spark Double | Fetch the last colour; Petal for Aragorn's colours |
+| 7 and later | The finishing spell: Grapeshot, Bolt, Comet Storm, Jeska's Will, Cyclonic Rift | Guttersnipe, Storm-Kiln Artist, Spark Double | Mystic Sanctuary returns a used key spell to the top |
+
+#### What to fetch first
+
+1. **Stop an immediate loss.** The counter for their combo (Swan Song, Fierce Guardianship, Force of Will,
+   Counterspell, Mana Drain), or Skyclave Apparition on the lock piece, or Teferi's Protection against a drain.
+2. **Protect Aragorn before the burn turn.** Fierce Guardianship, Deflecting Swat, Heroic Intervention or Restoration Angel.
+3. **Complete the kill.** Breach turn: Grapeshot, then a ritual if mana is short; Emancipation out: Lightning Bolt; a
+   full-handed opponent: Jeska's Will.
+4. **Fix mana.** Nature's Lore for the missing colour, then Worldly Tutor for Birds of Paradise only when the hand has
+   nothing else.
+5. **Rebuild.** Spark Double or Guttersnipe after Aragorn is gone.
+
+For the lands and rocks: fetch the colour you cannot make now. Tezzeret finds Lotus Petal for a missing colour, Sol Ring
+for generic mana, Skullclamp for tokens.
+
+#### Common tutor mistakes
+
+1. Tutoring on your own turn for a card you need this turn, with no draw spell to get it.
+2. Casting a second tutor before drawing the first: it shuffles the first card away.
+3. Counting on Aragorn's scry 2 before a tutor: the shuffle undoes it.
+4. Fetching Swan Song or Fierce Guardianship against a creature combo piece. Swan Song hits only enchantments, instants
+   and sorceries; Fierce Guardianship only noncreature spells.
+5. Looking for Underworld Breach or Fiery Emancipation with a tutor. Neither can be found; dig for them.
+6. Fetching a creature you can't cast on the turn you draw it, such as Niv-Mizzet without three blue and three red sources.
+7. Paying for Mystical Tutor, Brain Freeze or Worldly Tutor with ritual mana: it is red only.
+8. Spending Mystical Tutor early on a random cheap spell when a counter for Aragorn was the card to hold it for.
+9. Taking Sol Ring with Tezzeret when the shortage is a coloured mana.
+10. Fetching Temple Garden with Nature's Lore at low life, or a dual that duplicates a colour you already have.
+11. Tutoring or cracking a fetch land while Opposition Agent is on the battlefield.
+12. Choosing "mana value 4 or greater" with Austere Command and killing Aragorn, or tapping out for the sweeper into a
+    counter.
 
 ### Protecting Aragorn and the burn turn
 
