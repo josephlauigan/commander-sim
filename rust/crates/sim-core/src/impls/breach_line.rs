@@ -422,8 +422,8 @@ fn line_step(st: &LineState) -> Option<LineAct> {
         }
         return gs_or_none;
     }
-    if st.land + st.float < 2 {
-        // blue, but short of the generic {1}
+    if st.land + st.float < st.c(BRAIN_FREEZE) + 1 {
+        // blue, but short of the generic (its {1}; nothing with Baral out)
         if led_ready(bf_res) && bf {
             return Some(LineAct::Card(LED));
         }

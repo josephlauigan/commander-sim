@@ -5,10 +5,10 @@
 
 use sim_core::ai::act;
 use sim_core::engine::cast::{additional_cost, cast_card};
-use sim_core::state::Ctx;
 use sim_core::engine::mana::cost_of;
 use sim_core::ids::PlayerId;
 use sim_core::impls::breach_line;
+use sim_core::state::Ctx;
 use sim_core::state::{Game, Step};
 use sim_core::testkit::*;
 
@@ -111,7 +111,8 @@ fn pyretic_ritual_is_one_of_the_line_s_rituals() {
 
 #[test]
 fn strike_it_rich_adds_storm_for_its_own_treasure() {
-    let mut g = position(&["Brain Freeze", "Grapeshot", "Seething Song", "Strike It Rich", "Lotus Petal"], 12, 4, 9, 40);
+    let mut g =
+        position(&["Brain Freeze", "Grapeshot", "Seething Song", "Strike It Rich", "Lotus Petal"], 12, 4, 9, 40);
     assert!(go(&mut g));
     assert!(table_finished(&g));
     assert!(!g.player(P0).hand.contains(&card(&g, "Strike It Rich")), "Strike It Rich was cast for storm");
@@ -178,7 +179,8 @@ fn a_card_put_on_top_by_p_itself_is_still_known() {
 /// a position whose line finishes the table, with each opponent holding untapped Islands and a counterspell in its
 /// deck (a counter is likely)
 fn risky_position(extra_hand: &[&str]) -> Game {
-    let mut hand_a = vec!["Brain Freeze", "Grapeshot", "Seething Song", "Desperate Ritual", "Rite of Flame", "Lotus Petal"];
+    let mut hand_a =
+        vec!["Brain Freeze", "Grapeshot", "Seething Song", "Desperate Ritual", "Rite of Flame", "Lotus Petal"];
     hand_a.extend_from_slice(extra_hand);
     let mut g = position(&hand_a, 12, 4, 9, 40);
     for q in 1..4 {
