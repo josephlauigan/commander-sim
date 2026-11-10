@@ -4,7 +4,7 @@
 # --no-preflight (JD, 11/10: Thassa's Oracle and Lion's Eye Diamond are cast only in the Breach line, so the preflight
 # stops on them by design; explain stays on). Memory cap: ulimit -v (no systemd in the cloud container). Usage: bash audit/aragorn/2026-11-10-breach-rebuild/run.sh
 cd "$(dirname "$0")/../../.."
-OUT=audit/aragorn/2026-11-10-breach-rebuild
+OUT=${OUT:-audit/aragorn/2026-11-10-breach-rebuild}  # OUT=<dir> writes elsewhere (the cloud session: the scratchpad until a run ends)
 BIN=rust/target/release/commander-sim
 git rev-parse --short HEAD > $OUT/commit.txt
 B1=("Elspeth, Sun's Champion=>Lion's Eye Diamond"
@@ -30,6 +30,8 @@ run() {
 }
 case "${1:-C+B1}" in
   C+B1) run C "${B1[@]}" "${B2[@]}" "${B3[@]}" "${B4[@]}"; run B1 "${B1[@]}" ;;
+  C) run C "${B1[@]}" "${B2[@]}" "${B3[@]}" "${B4[@]}" ;;
+  B1) run B1 "${B1[@]}" ;;
   rest) run B2 "${B2[@]}"; run B3 "${B3[@]}"; run B4 "${B4[@]}" ;;
 esac
 echo "ALL DONE $(date +%H:%M)" | tee -a $OUT/status.txt
