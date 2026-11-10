@@ -537,3 +537,37 @@ fn deep_analysis_asks_which_player_draws() {
     assert_eq!(g.player(P1).hand.len(), theirs + 2, "the opponent draws two");
     assert_eq!(g.player(P0).hand.len(), mine - 1, "the caster draws nothing");
 }
+
+#[test]
+fn mithril_coat_attaches_to_the_legendary_creature_you_pick() {
+    // each legend in turn, so the answer is honoured whichever one the AI would have chosen
+    for (pick, other) in [("Thalia", "Danitha"), ("Danitha", "Thalia")] {
+        let mut g = table(&["cloud", "yshtola"]);
+        let danitha = perm(&mut g, P0, "Danitha Capashen, Paragon");
+        let thalia = perm(&mut g, P0, "Thalia, the Survivor");
+        hand(&mut g, P0, &["Mithril Coat"]);
+        pool(&mut g, P0, &[('C', 3)]);
+        let h = person(&mut g, move |r| r.prompt.contains("Mithril Coat").then(|| text(r, pick)).flatten());
+        cast_from_hand(&mut g, "Mithril Coat");
+        assert!(asked_has(&h, "Mithril Coat: attach to which legendary creature"), "asked: {:?}", asked(&h));
+        let questions = asked(&h).iter().filter(|l| l.contains("Mithril Coat")).count();
+        assert_eq!(questions, 1, "asked once, not per probe: {:?}", asked(&h));
+        let coat = on_table(&g, P0, "Mithril Coat").expect("the Coat entered");
+        let (want, not) = if pick == "Thalia" { (thalia, danitha) } else { (danitha, thalia) };
+        assert_eq!(g.perm(coat).attached, Some(want), "the creature the person picked ({pick}, not {other})");
+        assert_ne!(g.perm(coat).attached, Some(not));
+    }
+}
+
+#[test]
+fn mithril_coat_with_one_legendary_creature_is_not_asked() {
+    let mut g = table(&["cloud", "yshtola"]);
+    let danitha = perm(&mut g, P0, "Danitha Capashen, Paragon");
+    hand(&mut g, P0, &["Mithril Coat"]);
+    pool(&mut g, P0, &[('C', 3)]);
+    let h = person(&mut g, |_| None);
+    cast_from_hand(&mut g, "Mithril Coat");
+    assert!(!asked_has(&h, "Mithril Coat"), "a forced choice is not asked: {:?}", asked(&h));
+    let coat = on_table(&g, P0, "Mithril Coat").expect("the Coat entered");
+    assert_eq!(g.perm(coat).attached, Some(danitha));
+}
