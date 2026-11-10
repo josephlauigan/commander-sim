@@ -43,8 +43,9 @@ too. **Routing decides who does the work, never that work may start:** the appro
   Sonnet's card and engine code. Effort: medium; high for debugging and reviews; xhigh/max for competing attempts on
   hard bugs.
 - **Every other subagent: Sonnet 5.5 at high effort**: pass `model: "sonnet"` and `effort: "high"` on every other Agent
-  call, workflow agents included. `CLAUDE_CODE_SUBAGENT_MODEL` (same file) is only the default and loads only in
-  sessions started inside `commander-sim/`, so the explicit `model` is still needed.
+  call, workflow agents included. No subagent default is set: `CLAUDE_CODE_SUBAGENT_MODEL` was removed from both
+  settings files (JD, 2026-11-09) because it overrode the `model` passed on Agent calls, so Haiku requests ran as
+  Sonnet. The explicit `model` is required.
 
 **Decision procedure** (first match wins): (1) irreversible or high blast radius → Opus approves the plan, JD signs
 off; (2) ambiguous requirements, a design trade-off, competing options or agents disagreeing → Opus first, then

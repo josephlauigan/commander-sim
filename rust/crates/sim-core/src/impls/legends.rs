@@ -103,15 +103,19 @@ fn mine_named(g: &Game, p: PlayerId, name: &str) -> Vec<PermId> {
     g.player(p).perms.iter().copied().filter(|&m| name_of(g, m) == name && !g.perm(m).phased).collect()
 }
 
-/// jodah._best_legend: p's best legendary creature (an unsick one first)
-fn best_legend(g: &Game, p: PlayerId) -> Option<PermId> {
-    let cs: Vec<PermId> = g
-        .player(p)
+/// p's legendary creatures (not phased out)
+fn legends_of(g: &Game, p: PlayerId) -> Vec<PermId> {
+    g.player(p)
         .perms
         .iter()
         .copied()
         .filter(|&m| g.is_creature(m) && !g.perm(m).phased && legendary(g, m))
-        .collect();
+        .collect()
+}
+
+/// jodah._best_legend: p's best legendary creature (an unsick one first)
+fn best_legend(g: &Game, p: PlayerId) -> Option<PermId> {
+    let cs = legends_of(g, p);
     first_max(&cs, |m| (!g.perm(m).sick, pval(g, m)))
 }
 
@@ -262,11 +266,17 @@ pub fn jodah_payable(g: &Game, p: PlayerId) -> bool {
 
 const KALDRA: [&str; 3] = ["Sword of Kaldra", "Shield of Kaldra", "Helm of Kaldra"];
 
-/// Mithril Coat: attach it to a legendary creature you control as it enters: Jodah first
+/// Mithril Coat: attach it to a legendary creature you control as it enters: Jodah first. In practice mode "target
+/// legendary creature you control" is the person's pick (one legendary creature is a forced choice and is not asked)
 fn coat_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     if m == src && g.perm(src).attached.is_none() {
         let o = owner(g, src);
-        let to = the_jodah(g, o).or_else(|| best_legend(g, o));
+        let to = if crate::human::is_human(g, o) {
+            let cs = legends_of(g, o);
+            crate::human::gaps_t2::pick_target(g, o, &cs, "Mithril Coat: attach to which legendary creature?", None)?
+        } else {
+            the_jodah(g, o).or_else(|| best_legend(g, o))
+        };
         g.perm_mut(src).attached = to;
     }
     Ok(())

@@ -4,6 +4,16 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run. Newest evidence first; numbers are look-ahead, loose profile, vs Sheoldred's matched
 tiers (T3-T5) unless noted. Older tests: README.md in this folder.
 
+## 2026-11-09: Wander Off => K'rrik, Son of Yawgmoth (JD's choice, not simulated this time)
+K'rrik ({4}{B/P}{B/P}{B/P}, lifelink, {B} in any cost payable with 2 life, +1/+1 counter per black spell; model status
+Full) takes Wander Off's slot ({3}{B} instant, exile target creature). Wander Off was low by win rate when cast in the
+11/07 analyze run (-3.4, cast in 13.6% of games). K'rrik was tested once in this deck: 2026-10-19 (Ulna Alley Shopkeep =>
+K'rrik, t3 32.2% -> 31.5%, -0.7, noise ±2.4: neutral). It was cast in 62% of the games it was drawn, around round 7.6,
+and stuck 38%: weakness 2 (Sheoldred comes late) applies to a 7-mana legend too. The deck now has 30 Swamps and Cabal
+Coffers, so the life-for-mana trade matters less than the lifelink and the cheaper black spells (Massacre Wurm, Grave
+Titan, Gray Merchant, Exsanguinate). What it costs: an instant-speed exile for a creature. Measure over t3-t4 in the
+next baseline: K'rrik's cast and stuck numbers.
+
 ## 2026-11-07: Screeching Soulbreaker => Reanimate (JD's choice, not simulated)
 Reanimate ({B}, owned; it left the list for Animate Dead earlier today) comes back next to Animate Dead, so the
 graveyard start has two reanimation spells: Entomb into either is a six-drop on turn 2. It takes a creature card from

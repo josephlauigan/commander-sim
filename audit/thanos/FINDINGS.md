@@ -9,6 +9,16 @@ combos). **Tiers:** t5 (`data/my_decks.toml`; the old cEDH list played t6). **Pl
 previous list (the cEDH turbo list, t6) are in `FINDINGS-old-list.md`; the retired decks' findings are in
 `audit/retired/karn/` and `audit/retired/urdragon/`.
 
+## 2026-11-09: Red Elemental Blast => Gamble (JD's choice, not simulated)
+Gamble ({R} sorcery tutor: search for any card, put it into your hand, discard a card at random, shuffle) takes Red
+Elemental Blast's slot. Gamble left the list on 11/07 (TD2) as a proxy cut matched on mana value, not for playing badly.
+Why back: the combos go off in only about 7% of games and the deck wants tutors (Demonic, Vampiric, Enlightened and
+Worldly Tutor and Imperial Seal are the others). 17 Game Changers. 19 of the 33 lands make or fetch {R}.
+What it costs: Red Elemental Blast was a free counter against blue commanders. And Gamble is not an empty-hand tutor: the
+found card is in the hand when the discard happens, so it needs spare cards (N cards in hand loses the target 1 time in N).
+The sim's `gamble_prio` handles the discard (audit/GAME_CHANGERS.md); in the next Thanos run, check how often the AI holds
+it (an older Tier 6 run held it on turns 1-2 behind a look-ahead stop). No number yet.
+
 ## Baseline 2026-11-07 (after TD2; main 7c622f5f; look-ahead, loose, 10,000 games, seed 500000)
 **18.9%** (18.2-19.7) at t5, against 18.6% (17.0-20.4) in Baseline B (2,000 games): no change in the number. The way it
 wins changed: damage 65% of wins (was 50%), combo 34% (was 46%); plan online (first combo attempt) 6.9% of games (was
