@@ -298,3 +298,23 @@ fn strike_it_rich_makes_a_treasure() {
     assert!(g.player(P0).gy.contains(&sir), "to the graveyard, where flashback can cast it again");
     assert_eq!(g.db.get(sir).tags.str(sim_core::tag::Tag::Fb), Some("2R"));
 }
+
+// ------------------------------------------------------------------ review fixes (2026-11-10)
+
+#[test]
+fn a_lotus_petal_makes_the_oracle_s_second_blue() {
+    // one Volcanic Island, a two-card library, Thassa's Oracle and Lotus Petal in hand, no Diamond: the Petal floats
+    // {U} (not {R} or any colour), so the Oracle's {U}{U} is paid and it wins
+    let mut g = position(&["Thassa's Oracle", "Lotus Petal", "Brain Freeze"], 3, 1, 99, 40);
+    g.player_mut(P0).library.truncate(2);
+    assert!(go(&mut g), "the Oracle line is offered");
+    assert_eq!(g.winner, Some(P0));
+}
+
+#[test]
+fn a_look_ahead_copy_of_a_waiting_turn_does_not_take_the_line() {
+    let mut g = risky_position(&[]);
+    assert!(breach_line::breach_options(&mut g, P0, false).unwrap().is_empty(), "the real game waits");
+    g.in_search = true; // a look-ahead copy of this turn (the dry run's answer is cached for it)
+    assert!(breach_line::breach_options(&mut g, P0, false).unwrap().is_empty(), "so do its copies");
+}

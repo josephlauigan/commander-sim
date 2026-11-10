@@ -5,7 +5,7 @@
 //! Dry run first: the whole line played on a copy of the game with the opponents' hands removed; offered only when it
 //! finishes every opponent (burned out or milled out). Then cast for real, one spell at a time (each can be countered).
 //! Rituals carry their colour: Dark and Cabal Ritual float only {B} and the red rituals (Seething Song, Desperate
-//! Ritual, Rite of Flame) only {R} (the pool keeps them as black and red mana), so black ritual mana never pays
+//! Ritual, Pyretic Ritual, Rite of Flame) only {R} (the pool keeps them as black and red mana), so black ritual mana never pays
 //! Grapeshot's {R}, and neither pays Brain Freeze's {U}.
 
 use crate::engine::cast::{cast_card, castable, casts_this_turn};
@@ -118,9 +118,8 @@ struct LineState {
     /// the Thassa's Oracle finish was chosen (`Game::line_oracle`) and the Oracle is in hand or castable from the
     /// graveyard
     oracle_mode: bool,
-    /// Fiery Emancipation's factor on our damage, and Aragorn's red trigger on Grapeshot (0 without Aragorn)
+    /// Fiery Emancipation's factor on our damage
     fiery: i32,
-    ara_gs: i32,
     /// opponents' library sizes and life, in seat order
     lib: Vec<(PlayerId, usize)>,
     life: Vec<(PlayerId, i32)>,
@@ -224,13 +223,11 @@ fn line_state(g: &Game, p: PlayerId) -> LineState {
         cost[i] = g.db.id(n).map_or(0, |c| crate::engine::mana::cost_of(g, p, c).0);
     }
     let oracle_where = wh[LINE_CARDS.iter().position(|&n| n == ORACLE).unwrap()];
-    let gs_ara = g.db.id(GRAPESHOT).map_or(0, |c| crate::impls::aragorn::red_damage(g, p, c));
     LineState {
         cost,
         devotion: crate::impls::rules2::devotion(g, p, 'U'),
         oracle_mode: g.line_oracle && oracle_where.is_some(),
         fiery: crate::engine::combat::fiery(g, p),
-        ara_gs: gs_ara,
         land: real.iter().map(|u| u.amt).sum(),
         float: fb + fr + fa,
         float_r: fr,
@@ -257,7 +254,7 @@ fn line_state(g: &Game, p: PlayerId) -> LineState {
 /// mine._can: can the line pay {gn} plus one {col}? ({B} can come from black ritual mana, {R} from red)
 fn can(st: &LineState, gn: u32, col: &str) -> bool {
     if col.is_empty() {
-        return st.float + st.land >= gn; // no coloured pip (Gitaxian Probe pays its {U} with life when it must)
+        return st.float + st.land >= gn; // no coloured pip the line must find (Gitaxian Probe: {U} or 2 life)
     }
     let float_b = st.float - st.float_r;
     let ok = match col {
@@ -403,11 +400,9 @@ fn line_step(st: &LineState) -> Option<LineAct> {
     };
     let copies = st.storm + 1;
     let gs = st.w(GRAPESHOT).is_some() && ready(st, GRAPESHOT) && can(st, st.c(GRAPESHOT), "R");
-    // the copies kill the lowest opponent: each deals 1 (3 with Fiery Emancipation), Aragorn's trigger adds its 3
-    if gs
-        && copies as i64 * st.fiery as i64 + st.ara_gs as i64
-            >= alive.iter().map(|&q| st.life_of(q)).min().unwrap() as i64
-    {
+    // the copies kill the lowest opponent: each deals 1 (3 with Fiery Emancipation). Aragorn's 3 is not counted: his
+    // trigger goes to the opponent it kills alone, else to the biggest threat (`aragorn::burn`), not always this one
+    if gs && copies as i64 * st.fiery as i64 >= alive.iter().map(|&q| st.life_of(q)).min().unwrap() as i64 {
         return Some(LineAct::Card(GRAPESHOT));
     }
     let gs_or_none = if gs { Some(LineAct::Card(GRAPESHOT)) } else { None };
@@ -456,7 +451,7 @@ fn line_step(st: &LineState) -> Option<LineAct> {
     let reserve = if bf && !led_any { st.c(BRAIN_FREEZE) + 1 } else { 0 };
     if st.mylib > st.devotion + 4
         && let Some(&(c, _, gn, ref pip)) = st.draws.iter().find(|(_, z, gn, pip)| {
-            let blue = pip == "U";
+            let blue = pip == "U" || pip.is_empty(); // Gitaxian Probe pays {U} when the mana is there
             *z == Wh::Hand
                 && can(st, *gn, pip)
                 && st.float + st.land >= gn + pip.len() as u32 + reserve
@@ -770,7 +765,8 @@ pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
                     let fl = &mut g.player_mut(p).mana;
                     if st.labman && st.mylib == 0 {
                         fl.add(Kind::Any, 1); // any colour, for the winning draw
-                    } else if st.u == 0 {
+                    } else if st.u == 0 || (st.oracle_mode && st.mylib <= st.devotion + 2) {
+                        // blue for Brain Freeze, or the second {U} of Thassa's Oracle
                         fl.add(Kind::U, 1);
                     } else if st.r == 0 {
                         fl.add(Kind::R, 1);
@@ -867,6 +863,9 @@ pub fn breach_options(g: &mut Game, p: PlayerId, _post: bool) -> Res<Vec<Opt>> {
     }
     if !g.in_search && hold_for_protection(g, p) {
         return Ok(vec![]);
+    }
+    if g.in_search && g.player(p).breach_wait == Some(g.player(p).turns) {
+        return Ok(vec![]); // a look-ahead copy of a turn the real game waits: the copies don't take the line either
     }
     Ok(vec![Opt {
         utility: 15.0,

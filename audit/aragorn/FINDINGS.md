@@ -43,7 +43,7 @@ Eons and Timetwister were dropped: they shuffle the graveyard (Breach's fuel) aw
 - The Breach line (`impls/breach_line.rs`): Pyretic Ritual is a ritual; Strike It Rich a storm step; cantrips in hand
   are cast mid-line with spare mana (never into a small library); Thassa's Oracle is a finish (mill yourself, then the
   Oracle) tried when burning or milling the table fails; every cost is `mana::cost_of` (Baral); Grapeshot's kill check
-  counts Fiery Emancipation and Aragorn's trigger. The dry run now shuffles its own library (`search::determinize`,
+  counts Fiery Emancipation (not Aragorn's trigger: it goes to the opponent it kills alone, else the biggest threat). The dry run now shuffles its own library (`search::determinize`,
   known top cards kept) and must pass on two shuffles: before, it saw its draws in their real order. A ready line with
   no protection (`goldfish::protected`), an opponent able to answer and a counter chance of 0.35 or more waits one
   turn (not at 10 life or less); it goes the next turn whatever. These two change every Breach deck's play, the pool's
@@ -51,7 +51,10 @@ Eons and Timetwister were dropped: they shuffle the graveyard (Breach's fuel) aw
 - The plan (`data/plans/aragorn.toml`): the Breach + Lion's Eye Diamond + Brain Freeze line first; Breach and the
   Diamond wanted from turn 3; Brain Freeze once Breach is held; fast mana, Birgi, Baral and Grand Abolisher early.
   The swap-in cards are listed as `candidates` (a new plan field: the plan may name them before the list holds them).
-- Tests: `tests/aragorn_breach_rebuild.rs` (15).
+- Tests: `tests/aragorn_breach_rebuild.rs` (17) and `tests/aragorn_breach_adversarial.rs` (23, the Sonnet reviewer's).
+  Review fixes: the line's mana check used Brain Freeze's printed {1} (missed Baral lines); Baral's loot drew from an
+  empty library; in Oracle mode a Lotus Petal floated the wrong colour; Gitaxian Probe could take the blue a Brain
+  Freeze needed; look-ahead copies of a waiting turn still took the line.
 - Left as they were (already sensible): Wheel of Fortune isn't cast while a combo piece is held or into a hand of six
   or more; Gamble prefers a fuller hand (the random discard then rarely hits the card it found); Chrome Mox imprints
   the least valuable coloured card. Not modelled: a read of "an opponent is about to win" for the wait rule (only the
