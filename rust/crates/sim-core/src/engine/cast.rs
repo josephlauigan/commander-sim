@@ -76,7 +76,8 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
     enum Choice {
         Land(crate::ids::PermId),
         Sac(Fodder),
-        Discard,
+        /// discard this many cards ("discard a card", Cathartic Reunion's "discard two cards")
+        Discard(usize),
         Tap(PermId),
         Behold(crate::impls::t12_lathril::Behold),
     }
@@ -143,8 +144,17 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
         {
             choice = Some(Choice::Sac(f));
         }
-        if choice.is_none() && t.contains("discard a card") && g.player(p).hand.iter().any(|&x| x != c) {
-            choice = Some(Choice::Discard);
+        let discard_n = if t.contains("discard a card") {
+            1
+        } else if t.contains("discard two cards") {
+            2
+        } else if t.contains("discard three cards") {
+            3
+        } else {
+            0
+        };
+        if choice.is_none() && discard_n > 0 && g.player(p).hand.iter().filter(|&&x| x != c).count() >= discard_n {
+            choice = Some(Choice::Discard(discard_n));
         }
         // --- Tiers 4/5 (edgar): "tap an untapped Vampire you control" (New Blood): a summoning-sick one first, then
         // the least valuable
@@ -196,24 +206,34 @@ pub fn additional_cost(g: &mut Game, p: PlayerId, c: CardId, dry: bool) -> Res<b
             }
             Choice::Tap(m) => g.perm_mut(m).tapped = true,
             Choice::Behold(b) => crate::impls::t12_lathril::behold_pay(g, p, c, b)?,
-            Choice::Discard if crate::human::is_human(g, p) => {
-                // practice mode: the person chooses the card they discard as the additional cost
+            Choice::Discard(n) if crate::human::is_human(g, p) => {
+                // practice mode: the person chooses the cards they discard as the additional cost
                 let others: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&x| x != c).collect();
-                let prompt = format!("{}: discard a card as an additional cost", g.db.get(c).name);
-                let x = crate::human::choices::pick_cards(g, p, &others, 1, &prompt, "choose")?[0];
-                discard_cards(g, p, &[x])?;
+                let what = if n == 1 { "a card".to_string() } else { format!("{n} cards") };
+                let prompt = format!("{}: discard {what} as an additional cost", g.db.get(c).name);
+                let xs = crate::human::choices::pick_cards(g, p, &others, n, &prompt, "choose")?;
+                discard_cards(g, p, &xs)?;
             }
-            Choice::Discard => {
-                let others: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&x| x != c).collect();
-                let others = crate::ai::rules::spare_tutored(g, p, &others).unwrap_or(others); // --- phase4-rules
-                let lands: Vec<CardId> = others.iter().copied().filter(|&x| g.db.get(x).land).collect();
-                let spells: Vec<CardId> = others.iter().copied().filter(|&x| !g.db.get(x).land).collect();
-                let x = if lands.len() > 2 || spells.is_empty() {
-                    lands[0]
-                } else {
-                    min_by(&spells, |y| card_worth(g, p, y, false)).unwrap()
-                };
-                discard_cards(g, p, &[x])?;
+            Choice::Discard(n) => {
+                // one at a time, the least useful first: a spare land while three or more are held, else the cheapest
+                // spell by the deck's card worth
+                let mut xs = vec![];
+                for _ in 0..n {
+                    let others: Vec<CardId> =
+                        g.player(p).hand.iter().copied().filter(|&x| x != c && !xs.contains(&x)).collect();
+                    let others = crate::ai::rules::spare_tutored(g, p, &others).unwrap_or(others); // --- phase4-rules
+                    let lands: Vec<CardId> = others.iter().copied().filter(|&x| g.db.get(x).land).collect();
+                    let spells: Vec<CardId> = others.iter().copied().filter(|&x| !g.db.get(x).land).collect();
+                    let Some(x) = (if lands.len() > 2 || spells.is_empty() {
+                        lands.first().copied()
+                    } else {
+                        min_by(&spells, |y| card_worth(g, p, y, false))
+                    }) else {
+                        break;
+                    };
+                    xs.push(x);
+                }
+                discard_cards(g, p, &xs)?;
             }
         }
     }

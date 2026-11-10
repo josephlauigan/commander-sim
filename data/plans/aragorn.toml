@@ -7,6 +7,11 @@
 # the storm turn); casting cheap red spells after Aragorn for his 3 damage each (the generic policy casts what it can).
 deck = "aragorn"
 default = "plan"
+# The Breach rebuild's swap-test cards (2026-11-10, JD; packages B1-B4 in audit/aragorn/FINDINGS.md): the rules below
+# name them so the paired runs play them; a rule naming one does nothing while the list doesn't hold it
+candidates = ["Lion's Eye Diamond", "Birgi, God of Storytelling // Harnfel, Horn of Bounty", "Enlightened Tutor",
+    "Gamble", "Grand Abolisher", "Mana Vault", "Chrome Mox", "Grim Monolith", "Noble Hierarch", "Thassa's Oracle",
+    "Baral, Chief of Compliance", "Pyretic Ritual", "Strike It Rich"]
 engines = ["Rhystic Study", "Smothering Tithe", "Sylvan Library", "Niv-Mizzet, Parun", "Talrand, Sky Summoner",
     "Fiery Emancipation", "Guttersnipe", "Storm-Kiln Artist"]
 
@@ -22,16 +27,24 @@ turn = 3
 
 [key_cards]
 "Underworld Breach" = 74
+"Lion's Eye Diamond" = 72
 "Fiery Emancipation" = 72
 "Jeska's Will" = 66
 "Niv-Mizzet, Parun" = 64
 "Talrand, Sky Summoner" = 62
 
-# win lines, best first: the tutors want the first missing piece of the closest one
+# win lines, best first: the tutors want the first missing piece of the closest one. With Lion's Eye Diamond, Breach
+# and Brain Freeze are a near-certain win (the Diamond pays every escape, Brain Freeze at yourself refuels): the line
+# is played by impls/breach_line.rs, Thassa's Oracle its other finish
+[[line]]
+name = "Underworld Breach + Lion's Eye Diamond + Brain Freeze"
+kind = "combo"
+pieces = [["Underworld Breach"], ["Lion's Eye Diamond"], ["Brain Freeze"]]
+
 [[line]]
 name = "Underworld Breach + a storm card + a ritual"
 kind = "combo"
-pieces = [["Underworld Breach"], ["Brain Freeze", "Grapeshot"], ["Seething Song", "Desperate Ritual", "Rite of Flame", "Lotus Petal", "Manamorphose"]]
+pieces = [["Underworld Breach"], ["Brain Freeze", "Grapeshot"], ["Seething Song", "Desperate Ritual", "Pyretic Ritual", "Rite of Flame", "Lotus Petal", "Manamorphose", "Strike It Rich"]]
 
 [[line]]
 name = "Fiery Emancipation + red spells"
@@ -43,10 +56,18 @@ cards = ["Rhystic Study", "Smothering Tithe", "Sylvan Library"]
 when = ["turn<=3"]
 score = 80
 
+# the Breach line is the plan from turn 3 (it no longer waits for Aragorn and five mana): Breach and the Diamond
+# first (Enlightened Tutor and Gamble find them), then Brain Freeze (Mystical Tutor) once Breach is in hand or out
 [[wish]]
-cards = ["Underworld Breach"]
-when = ["commander-out & lands+rocks>=5"]
+cards = ["Underworld Breach", "Lion's Eye Diamond"]
+when = ["turn>=3"]
 score = 90
+plus_line = 10
+
+[[wish]]
+cards = ["Brain Freeze"]
+when = ["have:Underworld Breach"]
+score = 88
 
 [[wish]]
 cards = ["Fiery Emancipation"]
@@ -55,11 +76,19 @@ score = 86
 
 # cast priorities: mana and fixing first (Aragorn needs all four colours), then the draw engines, then Aragorn
 [[prio]]
-cards = ["Sol Ring", "Arcane Signet", "Lotus Petal", "Birds of Paradise", "Llanowar Elves", "Paradise Druid",
-    "Nature's Lore", "Faeburrow Elder"]
+cards = ["Sol Ring", "Mana Vault", "Grim Monolith", "Chrome Mox", "Arcane Signet", "Lotus Petal", "Birds of Paradise",
+    "Llanowar Elves", "Noble Hierarch", "Paradise Druid", "Nature's Lore", "Faeburrow Elder"]
 when = ["turn<=4"]
 value = 86
 else = 44
+
+# Birgi ({R} for every spell: the storm turn's mana) and Baral (instants and sorceries {1} less, a loot per counter)
+# come down early; Grand Abolisher before the Breach turn (nobody answers on our turn)
+[[prio]]
+cards = ["Birgi, God of Storytelling // Harnfel, Horn of Bounty", "Baral, Chief of Compliance", "Grand Abolisher"]
+when = ["turn<=6"]
+value = 74
+else = 62
 
 [[prio]]
 cards = ["Rhystic Study", "Smothering Tithe", "Sylvan Library"]
@@ -101,9 +130,10 @@ card = "Heroic Intervention"
 protects = ["commander", "Fiery Emancipation"]
 
 [sets]
-tutors = ["Mystical Tutor", "Worldly Tutor"]
+tutors = ["Mystical Tutor", "Worldly Tutor", "Enlightened Tutor", "Gamble"]
 engines = ["Rhystic Study", "Smothering Tithe", "Sylvan Library", "Niv-Mizzet, Parun", "Talrand, Sky Summoner"]
-pieces = ["Underworld Breach", "Brain Freeze", "Grapeshot", "Fiery Emancipation", "Jeska's Will"]
+pieces = ["Underworld Breach", "Lion's Eye Diamond", "Brain Freeze", "Grapeshot", "Thassa's Oracle", "Fiery Emancipation",
+    "Jeska's Will"]
 
 [mulligan]
 fast_mana = true
