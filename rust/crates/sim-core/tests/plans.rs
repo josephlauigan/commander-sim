@@ -59,7 +59,18 @@ fn every_plan_file_fits_its_deck() {
     assert!(!all.is_empty(), "no plan files embedded");
     let mut errs = vec![];
     for (key, l) in all.iter() {
-        let deck = deck_cards(key, l.plan.retired);
+        let mut deck = deck_cards(key, l.plan.retired);
+        // swap-test candidates (`candidates`): named by the plan before the list holds them; each must be a real card
+        let db = sim_core::testkit::db();
+        for n in &l.plan.candidates {
+            if db.id(n).is_none() {
+                errs.push(format!("{key}: candidate {n:?} isn't in data/cards.json"));
+            }
+            if deck.contains(n) {
+                errs.push(format!("{key}: candidate {n:?} is in the deck already: take it off `candidates`"));
+            }
+        }
+        deck.extend(l.plan.candidates.iter().cloned());
         for n in plan_data::named_cards(l) {
             if !deck.contains(&n) {
                 errs.push(format!("{key}: {n:?} is not in the deck"));

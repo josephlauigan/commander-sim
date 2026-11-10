@@ -5,7 +5,7 @@
 //! Dry run first: the whole line played on a copy of the game with the opponents' hands removed; offered only when it
 //! finishes every opponent (burned out or milled out). Then cast for real, one spell at a time (each can be countered).
 //! Rituals carry their colour: Dark and Cabal Ritual float only {B} and the red rituals (Seething Song, Desperate
-//! Ritual, Rite of Flame) only {R} (the pool keeps them as black and red mana), so black ritual mana never pays
+//! Ritual, Pyretic Ritual, Rite of Flame) only {R} (the pool keeps them as black and red mana), so black ritual mana never pays
 //! Grapeshot's {R}, and neither pays Brain Freeze's {U}.
 
 use crate::engine::cast::{cast_card, castable, casts_this_turn};
@@ -28,11 +28,13 @@ const GRAPESHOT: &str = "Grapeshot";
 const STORM_PIECES: [&str; 2] = [BRAIN_FREEZE, GRAPESHOT];
 /// (name, {generic} besides its one coloured pip, mana made, made with threshold (seven cards in your graveyard),
 /// the pip and the colour it makes)
-const RITUALS: [(&str, u32, u32, u32, &str); 5] = [
+/// The generic figure is the printed one; the line pays what `mana::cost_of` says now (Baral's discount).
+const RITUALS: [(&str, u32, u32, u32, &str); 6] = [
     ("Dark Ritual", 0, 3, 3, "B"),
     ("Cabal Ritual", 1, 3, 5, "B"),
     ("Seething Song", 2, 5, 5, "R"),
     ("Desperate Ritual", 1, 3, 3, "R"),
+    ("Pyretic Ritual", 1, 3, 3, "R"),
     ("Rite of Flame", 0, 2, 2, "R"),
 ];
 /// {0}: sacrifice it for one mana of any colour
@@ -45,7 +47,18 @@ const BIRGI: &str = "Birgi, God of Storytelling // Harnfel, Horn of Bounty";
 const JESKA: &str = "Jeska's Will";
 /// in hand: cast first, then the line mills you out and draws to win
 const LABMEN: [&str; 2] = ["Laboratory Maniac", "Jace, Wielder of Mysteries"];
-const N_LINE: usize = 10;
+/// {R}: a Treasure (flashback {2}{R}): a storm step that pays for itself, and a red spell for Aragorn
+const STRIKE: &str = "Strike It Rich";
+/// {U}{U}: enters, wins if your devotion to blue is at least your library's size. The finish the dry run tries when the
+/// table can't be burned or milled out: Brain Freeze mills yourself instead, then the Oracle (from hand or escaped)
+const ORACLE: &str = "Thassa's Oracle";
+/// wheels and shuffles are never the line's draw step: they refill the opponents' hands (answers) or shuffle the
+/// graveyard (the fuel) away
+const NOT_CANTRIPS: [&str; 5] = ["Wheel of Fortune", "Windfall", "Timetwister", "Echo of Eons", "Day's Undoing"];
+/// the hand-written cantrips (a resolve hook, no `draw` tag): draw spells for the line too
+const CANTRIPS: [&str; 8] =
+    ["Brainstorm", "Ponder", "Preordain", "Opt", "Consider", "Gitaxian Probe", "Sleight of Hand", "Serum Visions"];
+const N_LINE: usize = 13;
 const LINE_CARDS: [&str; N_LINE] = [
     BRAIN_FREEZE,
     GRAPESHOT,
@@ -53,10 +66,13 @@ const LINE_CARDS: [&str; N_LINE] = [
     "Cabal Ritual",
     "Seething Song",
     "Desperate Ritual",
+    "Pyretic Ritual",
     "Rite of Flame",
     PETAL,
     LED,
     JESKA,
+    STRIKE,
+    ORACLE,
 ];
 
 /// the floating ritual mana: (black, red, any colour). Rituals float {B} or {R}; a Lotus Petal sacrificed for "any colour"
@@ -95,6 +111,15 @@ struct LineState {
     setup_hand: Option<(CardId, u32, String)>,
     /// draw spells in hand or graveyard: (card, zone, generic, pip)
     draws: Vec<(CardId, Wh, u32, String)>,
+    /// what each of LINE_CARDS costs now besides its pip (`mana::cost_of`: Baral, Trinisphere ...)
+    cost: [u32; N_LINE],
+    /// devotion to blue (Thassa's Oracle wins with a library at most this, plus its own {U}{U})
+    devotion: usize,
+    /// the Thassa's Oracle finish was chosen (`Game::line_oracle`) and the Oracle is in hand or castable from the
+    /// graveyard
+    oracle_mode: bool,
+    /// Fiery Emancipation's factor on our damage
+    fiery: i32,
     /// opponents' library sizes and life, in seat order
     lib: Vec<(PlayerId, usize)>,
     life: Vec<(PlayerId, i32)>,
@@ -105,6 +130,11 @@ struct LineState {
 impl LineState {
     fn w(&self, name: &str) -> Option<Wh> {
         self.wh[LINE_CARDS.iter().position(|&n| n == name).unwrap()]
+    }
+
+    /// the generic mana a line card costs now
+    fn c(&self, name: &str) -> u32 {
+        self.cost[LINE_CARDS.iter().position(|&n| n == name).unwrap()]
     }
 
     /// st[col]: the real sources of a colour
@@ -175,17 +205,29 @@ fn line_state(g: &Game, p: PlayerId) -> LineState {
     for (z, cs) in [(Wh::Hand, &pl.hand), (Wh::Gy, &pl.gy)] {
         for &c in cs {
             let d = g.db.get(c);
-            if d.tags.int(Tag::Draw).is_some()
+            // a cantrip with a Phyrexian pip (Gitaxian Probe: {U} or 2 life) has no pip the line must find
+            let pip_ok = d.pips.chars().count() == 1 || (d.pips.is_empty() && !d.phyrexian.is_empty());
+            if (d.tags.int(Tag::Draw).is_some() || CANTRIPS.contains(&&*d.name))
                 && (d.instant || d.sorcery)
-                && d.pips.chars().count() == 1
+                && pip_ok
                 && !is_line_card(g, c)
+                && !NOT_CANTRIPS.contains(&&*d.name)
                 && (z == Wh::Hand || gy_ok)
             {
-                draws.push((c, z, d.generic, d.pips.to_string()));
+                draws.push((c, z, crate::engine::mana::cost_of(g, p, c).0, d.pips.to_string()));
             }
         }
     }
+    let mut cost = [0u32; N_LINE];
+    for (i, n) in LINE_CARDS.iter().enumerate() {
+        cost[i] = g.db.id(n).map_or(0, |c| crate::engine::mana::cost_of(g, p, c).0);
+    }
+    let oracle_where = wh[LINE_CARDS.iter().position(|&n| n == ORACLE).unwrap()];
     LineState {
+        cost,
+        devotion: crate::impls::rules2::devotion(g, p, 'U'),
+        oracle_mode: g.line_oracle && oracle_where.is_some(),
+        fiery: crate::engine::combat::fiery(g, p),
         land: real.iter().map(|u| u.amt).sum(),
         float: fb + fr + fa,
         float_r: fr,
@@ -211,6 +253,9 @@ fn line_state(g: &Game, p: PlayerId) -> LineState {
 
 /// mine._can: can the line pay {gn} plus one {col}? ({B} can come from black ritual mana, {R} from red)
 fn can(st: &LineState, gn: u32, col: &str) -> bool {
+    if col.is_empty() {
+        return st.float + st.land >= gn; // no coloured pip the line must find (Gitaxian Probe: {U} or 2 life)
+    }
     let float_b = st.float - st.float_r;
     let ok = match col {
         "B" => float_b > 0 || st.b > 0,
@@ -234,13 +279,14 @@ fn ceil3(n: i64) -> i64 {
 /// generic), escape it, and recast each ritual twice more for storm; then the opponent closest to an empty library.
 /// If nothing can pay the next Brain Freeze's {U}, this is the last one: every copy goes to the table
 fn mill_plan(p: PlayerId, st: &LineState, copies: i64) -> Vec<PlayerId> {
-    if st.labman {
-        return vec![p; copies.max(0) as usize]; // Laboratory Maniac / Jace: mill yourself out, then draw
+    if st.labman || st.oracle_mode {
+        // Laboratory Maniac / Jace: mill yourself out, then draw; Thassa's Oracle: mill yourself, then cast it
+        return vec![p; copies.max(0) as usize];
     }
     let mut lib: Vec<(PlayerId, i64)> = st.lib.iter().map(|&(q, n)| (q, n as i64)).collect();
     let need: i64 = lib.iter().filter(|&&(q, n)| n > 0 && st.life_of(q) > 0).map(|&(_, n)| ceil3(n)).sum();
     let need_u: i64 = if st.u > 0 && st.land > 0 { 0 } else { 1 };
-    let need_gen = (2 - st.land as i64 - st.float as i64 - need_u).max(0);
+    let need_gen = (st.c(BRAIN_FREEZE) as i64 + 1 - st.land as i64 - st.float as i64 - need_u).max(0);
     let petal = st.w(PETAL).is_some();
     let led = st.w(LED).is_some() || st.led_bf;
     let rit = RITUALS.iter().filter(|r| st.w(r.0).is_some()).count() as i64;
@@ -287,6 +333,8 @@ enum LineAct {
     Setup,
     Breach,
     Draw,
+    /// a cantrip from hand (storm, graveyard fuel, a look for the missing piece): spare mana only
+    Cantrip(CardId),
     Card(&'static str),
 }
 
@@ -307,6 +355,23 @@ fn line_step(st: &LineState) -> Option<LineAct> {
         return None;
     }
     let (hand, gy) = (Some(Wh::Hand), Some(Wh::Gy));
+    if st.oracle_mode && st.mylib <= st.devotion + 2 {
+        // Thassa's Oracle: the library is small enough (its own {U}{U} counts). Cast it (escape it with three fuel)
+        let ready = st.w(ORACLE) == hand || (st.w(ORACLE) == gy && st.fuel >= 3);
+        if ready && st.u >= 2 && st.land + st.float >= st.c(ORACLE) + 2 {
+            return Some(LineAct::Card(ORACLE));
+        }
+        // short of {U}{U}: a Lion's Eye Diamond (UUU; the Oracle in hand is discarded and escaped) or a Petal
+        let fuel_after = if st.w(ORACLE) == hand { 3 } else { 6 };
+        if st.led_bf || st.w(LED) == hand || (st.w(LED) == gy && st.fuel >= fuel_after) {
+            return Some(LineAct::Card(LED));
+        }
+        if st.u == 1
+            && (st.w(PETAL) == hand || (st.w(PETAL) == gy && st.fuel >= 3 + if st.w(ORACLE) == gy { 3 } else { 0 }))
+        {
+            return Some(LineAct::Card(PETAL));
+        }
+    }
     if st.labman && st.mylib == 0 {
         // library empty: draw a card to win
         if draw_ready(st).is_some() {
@@ -324,7 +389,8 @@ fn line_step(st: &LineState) -> Option<LineAct> {
     let petal_res = if st.w(PETAL).is_some() && st.u <= 1 { 3 } else { 0 }; // the next Brain Freeze will want a Petal
     let led_ready = |res: usize| st.led_bf || st.w(LED) == hand || (st.w(LED) == gy && st.fuel >= 3 + res);
     let ritual = |res: usize| {
-        for &(n, gn, made, thr, col) in &RITUALS {
+        for &(n, _, made, thr, col) in &RITUALS {
+            let gn = st.c(n);
             let got = if st.gy >= 7 { thr } else { made };
             if (st.w(n) == hand || (st.w(n) == gy && st.fuel >= 3 + res)) && got > gn + 1 && can(st, gn, col) {
                 return Some(LineAct::Card(n));
@@ -333,8 +399,10 @@ fn line_step(st: &LineState) -> Option<LineAct> {
         None
     };
     let copies = st.storm + 1;
-    let gs = st.w(GRAPESHOT).is_some() && ready(st, GRAPESHOT) && can(st, 1, "R");
-    if gs && copies >= alive.iter().map(|&q| st.life_of(q)).min().unwrap() {
+    let gs = st.w(GRAPESHOT).is_some() && ready(st, GRAPESHOT) && can(st, st.c(GRAPESHOT), "R");
+    // the copies kill the lowest opponent: each deals 1 (3 with Fiery Emancipation). Aragorn's 3 is not counted: his
+    // trigger goes to the opponent it kills alone, else to the biggest threat (`aragorn::burn`), not always this one
+    if gs && copies as i64 * st.fiery as i64 >= alive.iter().map(|&q| st.life_of(q)).min().unwrap() as i64 {
         return Some(LineAct::Card(GRAPESHOT));
     }
     let gs_or_none = if gs { Some(LineAct::Card(GRAPESHOT)) } else { None };
@@ -349,8 +417,8 @@ fn line_step(st: &LineState) -> Option<LineAct> {
         }
         return gs_or_none;
     }
-    if st.land + st.float < 2 {
-        // blue, but short of the generic {1}
+    if st.land + st.float < st.c(BRAIN_FREEZE) + 1 {
+        // blue, but short of the generic (its {1}; nothing with Baral out)
         if led_ready(bf_res) && bf {
             return Some(LineAct::Card(LED));
         }
@@ -365,12 +433,33 @@ fn line_step(st: &LineState) -> Option<LineAct> {
     if st.opp_hand as i64 - 3 >= 2
         && st.w(JESKA).is_some()
         && (st.w(JESKA) == hand || st.fuel >= 3 + bf_res + petal_res)
-        && can(st, 2, "R")
+        && can(st, st.c(JESKA), "R")
     {
         return Some(LineAct::Card(JESKA)); // Jeska's Will: a big hand is a big mana burst
     }
     if let Some(r) = ritual(bf_res + petal_res) {
         return Some(r); // spare fuel first becomes storm
+    }
+    // Strike It Rich: {R} for a Treasure, so storm (and Aragorn's 3) for nothing; from the graveyard with spare fuel
+    if (st.w(STRIKE) == hand || (st.w(STRIKE) == gy && st.fuel >= 3 + bf_res + petal_res)) && can(st, st.c(STRIKE), "R")
+    {
+        return Some(LineAct::Card(STRIKE));
+    }
+    // a cantrip from hand with the mana to spare: what the next Brain Freeze needs stays (a Diamond pays for it).
+    // Never into a small library: the Oracle and Laboratory Maniac lines count it, and drawing from an empty one loses
+    let led_any = st.led_bf || st.w(LED).is_some();
+    let reserve = if bf && !led_any { st.c(BRAIN_FREEZE) + 1 } else { 0 };
+    if st.mylib > st.devotion + 4
+        && let Some(&(c, _, gn, ref pip)) = st.draws.iter().find(|(_, z, gn, pip)| {
+            let blue = pip == "U" || pip.is_empty(); // Gitaxian Probe pays {U} when the mana is there
+            *z == Wh::Hand
+                && can(st, *gn, pip)
+                && st.float + st.land >= gn + pip.len() as u32 + reserve
+                && (!blue || reserve == 0 || st.u >= 2)
+        })
+    {
+        let _ = (gn, pip);
+        return Some(LineAct::Cantrip(c));
     }
     if st.w(LED).is_some() && led_ready(bf_res + 3) {
         return Some(LineAct::Card(LED)); // (a Diamond escape: storm and three more mana)
@@ -449,6 +538,10 @@ fn line_shortfall(st: &LineState) -> i64 {
 /// mine._dry_run: would the line finish every opponent if nobody interacts? Played for real on a copy of the game
 /// with the opponents' hands removed (so it neither cheats nor fears their counters); cached for the position. Inside
 /// a look-ahead playout (itself a copy) it reuses the real game's answer for this turn (the copy carries it).
+/// The copy's own library is shuffled (`search::determinize`: what p put on top itself stays), so the line's draws
+/// (cantrips, Manamorphose, Frantic Search) are not known in advance; a plan passes only if it finishes the table on
+/// two different shuffles. The plans, in order: with the setup casts, without them, then (Thassa's Oracle in hand or
+/// castable from the graveyard) the same two milling yourself for the Oracle.
 fn dry_run(g: &mut Game, p: PlayerId) -> Res<bool> {
     let stamp = g.turn_stamp();
     if g.in_search {
@@ -475,23 +568,38 @@ fn dry_run(g: &mut Game, p: PlayerId) -> Res<bool> {
     }
     let real = !g.in_search;
     let island = g.db.id("Island").unwrap();
-    let (mut ok, mut no_setup) = (false, false);
-    for ns in [false, true] {
-        // with Lab Man / Birgi / Jeska's Will, then the plain line
-        no_setup = ns;
-        let mut g2 = crate::ai::search::clone(g);
-        for q in g2.opps(p).collect::<Vec<_>>() {
-            let n = g2.player(q).hand.len(); // no answers in hand, but the same number of cards (Jeska's Will)
-            g2.player_mut(q).hand = vec![island; n];
-        }
-        g2.line_no_setup = ns;
-        breach_line(&mut g2, p, true)?;
-        ok = g2.winner == Some(p) || g2.opps(p).all(|q| !g2.player(q).alive || g2.player(q).library.is_empty());
-        if ok {
+    let oracle = g.db.id(ORACLE).is_some_and(|c| {
+        let pl = g.player(p);
+        pl.hand.contains(&c) || pl.gy.contains(&c)
+    });
+    let seed = format!("breach-dry {} {key:?}", g.player(p).turns);
+    let (mut ok, mut no_setup, mut orc) = (false, false, false);
+    'plans: for (ns, o) in [(false, false), (true, false), (false, true), (true, true)] {
+        if o && !oracle {
             break;
         }
+        // with Lab Man / Birgi / Jeska's Will, then the plain line; then both again with the Oracle finish
+        (no_setup, orc) = (ns, o);
+        for sample in 0..2 {
+            let mut g2 = crate::ai::search::clone(g);
+            let mut rng = crate::rng::Rng::named(&format!("{seed} {sample}"));
+            crate::ai::search::determinize(&mut g2, p, &mut rng);
+            for q in g2.opps(p).collect::<Vec<_>>() {
+                let n = g2.player(q).hand.len(); // no answers in hand, but the same number of cards (Jeska's Will)
+                g2.player_mut(q).hand = vec![island; n];
+            }
+            g2.line_no_setup = ns;
+            g2.line_oracle = o;
+            breach_line(&mut g2, p, true)?;
+            ok = g2.winner == Some(p) || g2.opps(p).all(|q| !g2.player(q).alive || g2.player(q).library.is_empty());
+            if !ok {
+                continue 'plans;
+            }
+        }
+        break;
     }
     g.line_no_setup = ok && no_setup; // the real line follows the plan that worked
+    g.line_oracle = ok && orc;
     if real {
         let code = if ok { 0 } else { line_shortfall(&line_state(g, p)) };
         let st = &mut g.player_mut(p).stats;
@@ -570,7 +678,7 @@ pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
                 if zone == Wh::Gy && !escape_fuel(g, p, None) {
                     break;
                 }
-                if !pay_line(g, p, 2, "R")? {
+                if !pay_line(g, p, st.c(JESKA), "R")? {
                     break;
                 }
                 g.jeska_mana = true; // in the line it's always the mana mode
@@ -593,6 +701,28 @@ pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
                     break; // countered
                 }
             }
+            LineAct::Cantrip(c) => {
+                let Some((_, _, gn, pip)) = st.draws.iter().find(|d| d.0 == c).cloned() else { break };
+                if !pay_line(g, p, gn, &pip)? {
+                    break;
+                }
+                cast_card(g, p, c, "hand", Ctx::default())?;
+                if g.player(p).hand.contains(&c) {
+                    break; // it couldn't be cast after all: no second try
+                }
+            }
+            LineAct::Card(ORACLE) => {
+                let zone = st.w(ORACLE).unwrap();
+                let c = g.db.id(ORACLE).unwrap();
+                if zone == Wh::Gy && !escape_fuel(g, p, None) {
+                    break;
+                }
+                if !pay_line(g, p, st.c(ORACLE), "U")? || !pay(g, p, 0, "U", false)? {
+                    break;
+                }
+                cast_card(g, p, c, zone_sym(zone), Ctx::default())?;
+                break; // it won, or it was answered: the line is over either way
+            }
             LineAct::Draw => {
                 // Laboratory Maniac / Jace: the draw that wins
                 let (c, zone, gn, pip) = draw_ready(&st).unwrap();
@@ -608,10 +738,11 @@ pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
                 let zone = st.w(act).unwrap();
                 let c = g.db.id(act).unwrap();
                 let mut ctx = Ctx { storm: Some(st.storm), ..Ctx::default() };
+                // what it costs now (Baral: an instant or sorcery {1} less); the pip is the card's own colour
                 let pay_for: Option<(u32, &str)> = match RITUALS.iter().find(|r| r.0 == act) {
-                    Some(r) => Some((r.1, r.4)),
+                    Some(r) => Some((st.c(act), r.4)),
                     None if act == PETAL => None,
-                    None => Some((1, if act == BRAIN_FREEZE { "U" } else { "R" })),
+                    None => Some((st.c(act), if act == BRAIN_FREEZE { "U" } else { "R" })),
                 };
                 if zone == Wh::Gy && !escape_fuel(g, p, None) {
                     break;
@@ -634,7 +765,8 @@ pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
                     let fl = &mut g.player_mut(p).mana;
                     if st.labman && st.mylib == 0 {
                         fl.add(Kind::Any, 1); // any colour, for the winning draw
-                    } else if st.u == 0 {
+                    } else if st.u == 0 || (st.oracle_mode && st.mylib <= st.devotion + 2) {
+                        // blue for Brain Freeze, or the second {U} of Thassa's Oracle
                         fl.add(Kind::U, 1);
                     } else if st.r == 0 {
                         fl.add(Kind::R, 1);
@@ -681,13 +813,59 @@ fn line_led(g: &mut Game, p: PlayerId, st: &LineState) -> Res<bool> {
     Ok(true)
 }
 
-/// mine.breach_options: the AI's main-phase option: go for the Breach line when the dry run finishes the table
+/// can opponent q cast an instant now (no lock such as Grand Abolisher forbids it)? Pact of Negation (an instant
+/// with mana value 0 that no lock singles out) stands in for any answer, as `combos::castable_any` does
+fn opp_can_answer(g: &Game, q: PlayerId) -> bool {
+    if g.hooks.is_empty() {
+        return true;
+    }
+    match g.db.id("Pact of Negation") {
+        Some(c) => crate::engine::hooks::allowed(g, q, c, "hand"),
+        None => true,
+    }
+}
+
+/// the chance of a counter (`brain::counter_risk`) at or above which an unprotected line waits a turn
+const WAIT_RISK: f64 = 0.35;
+
+/// Hold a ready Breach line for one turn? Only when it is unprotected (no counterspell or protection in hand, no
+/// Silence or Orim's Chant cast this turn, no Grand Abolisher: `goldfish::protected`), some opponent can still answer,
+/// the chance of a counter is high, p isn't low on life (10 or less: waiting may be fatal), and p hasn't waited for
+/// this line already. A turn of waiting draws a card toward protection and may see the table tap out; after it, the
+/// line goes protected or not. Main phases of the same turn agree (the wait is that turn).
+fn hold_for_protection(g: &mut Game, p: PlayerId) -> bool {
+    if crate::goldfish::protected(g, p) || !g.opps(p).any(|q| g.player(q).alive && opp_can_answer(g, q)) {
+        return false;
+    }
+    if g.player(p).life <= 10 || crate::ai::brain::counter_risk(g, p) < WAIT_RISK {
+        return false;
+    }
+    let turn = g.player(p).turns;
+    match g.player(p).breach_wait {
+        Some(t) if t == turn => true,      // waiting this turn (the other main phase)
+        Some(t) if t + 1 == turn => false, // waited last turn: go now
+        _ => {
+            g.player_mut(p).breach_wait = Some(turn);
+            g.player_mut(p).stat("bl_wait", 1); // diagnostics (--analyze)
+            true
+        }
+    }
+}
+
+/// mine.breach_options: the AI's main-phase option: go for the Breach line when the dry run finishes the table (in the
+/// real game, unless it waits a turn for protection: `hold_for_protection`)
 pub fn breach_options(g: &mut Game, p: PlayerId, _post: bool) -> Res<Vec<Opt>> {
     if g.active == Some(p) && !g.in_search && crate::ai::decks::breach_pieces(g, p) {
         g.player_mut(p).stats.insert("bl_held", 1); // diagnostics only (--analyze)
     }
     if g.active != Some(p) || !breach_line(g, p, false)? {
         return Ok(vec![]);
+    }
+    if !g.in_search && hold_for_protection(g, p) {
+        return Ok(vec![]);
+    }
+    if g.in_search && g.player(p).breach_wait == Some(g.player(p).turns) {
+        return Ok(vec![]); // a look-ahead copy of a turn the real game waits: the copies don't take the line either
     }
     Ok(vec![Opt {
         utility: 15.0,
@@ -697,6 +875,7 @@ pub fn breach_options(g: &mut Game, p: PlayerId, _post: bool) -> Res<Vec<Opt>> {
 }
 
 fn breach_go(g: &mut Game, p: PlayerId, _arg: i64) -> Res<bool> {
+    g.player_mut(p).breach_wait = None;
     breach_line(g, p, true)
 }
 

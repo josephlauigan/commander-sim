@@ -572,6 +572,9 @@ fn gy_payoff(g: &Game, p: PlayerId) -> bool {
     let pl = g.player(p);
     pl.hand.iter().any(|&c| g.db.get(c).tag(Tag::Rean) || g.db.get(c).tag(Tag::Yawg))
         || pl.perms.iter().any(|&m| g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Rean)))
+        // Underworld Breach on the battlefield or in hand: every milled card is escape fuel (Thought Scour at yourself)
+        || pl.hand.iter().any(|&c| g.db.get(c).tag(Tag::Breach))
+        || pl.perms.iter().any(|&m| !g.perm(m).phased && g.perm(m).cd.is_some_and(|c| g.db.get(c).tag(Tag::Breach)))
 }
 
 /// "Target player mills N cards" (Glimpse the Unthinkable): the AI mills itself when its graveyard pays off now,

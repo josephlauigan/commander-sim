@@ -726,6 +726,9 @@ pub struct Player {
     pub nomax_turn: Option<u32>,
     /// turns this player skips (Ral Zarek's -7)
     pub skip_turns: u32,
+    /// the Underworld Breach line was ready but held for protection (breach_line::breach_options): the turn it first
+    /// waited. One turn of waiting at most; cleared when the line goes
+    pub breach_wait: Option<u32>,
     /// Venser, the Sojourner's -1: creatures can't be blocked this turn
     pub unbl_all: Option<TurnStamp>,
     /// Elspeth's emblem: creatures have flying
@@ -950,6 +953,7 @@ impl Player {
             erebos_t: None,
             nomax_turn: None,
             skip_turns: 0,
+            breach_wait: None,
             unbl_all: None,
             elspeth_emblem: false,
             milestone: IndexMap::new(),
@@ -1383,6 +1387,8 @@ pub struct Game {
     pub jeska_mana: bool,
     /// the Breach line's dry run worked only without its setup casts (Laboratory Maniac, Birgi, Jeska's Will)
     pub line_no_setup: bool,
+    /// the Breach line's dry run passed only with the Thassa's Oracle finish: mill yourself, then cast the Oracle
+    pub line_oracle: bool,
     /// the Breach line's dry run for a position: (its turn, the position's numbers, does it finish the table)
     pub breach_dry: Option<(TurnStamp, Vec<u32>, bool)>,
     /// --- ai-fix: E: in a look-ahead copy, the deciding player's own-turn count when the playout began (a win scores
@@ -1577,6 +1583,7 @@ impl Game {
             in_search: false,
             jeska_mana: false,
             line_no_setup: false,
+            line_oracle: false,
             breach_dry: None,
             search_from: 0, // --- ai-fix: E
             log: None,

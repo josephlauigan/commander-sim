@@ -8,6 +8,58 @@ day; their findings are in `audit/retired/kefka/` and `audit/retired/sauron/`). 
 not from a paired test). **Model:** 100 cards, Full 94, Full-auto 6; Aragorn's four cast triggers are card code
 (`impls/aragorn.rs`, `tests/cards_aragorn.rs`).
 
+## 2026-11-10: audit, and the Breach rebuild prepared (no sims yet; the paired runs wait for JD's go-ahead)
+
+**Audit (read-only, from the 11/07 analyze run and draw arithmetic).** The deck is built to win with Aragorn's red
+trigger and a burst turn (Underworld Breach storm, Jeska's Will, Fiery Emancipation) but wins as a slow grind: combat
+is 55% (t4) / 62% (t5) of its damage, Aragorn's red damage comes online in about half the games (19-23% by turn 5),
+and his games win at the deck's average (+1.6 / +1.8). The Breach line wins about 1% of games: Breach can't be tutored,
+and Breach plus a storm card are held together in only 7%. The winners when cast are 6-drops (Niv-Mizzet, Comet Storm,
+Fiery Emancipation, Triple Triad) that sit in hand 65-72% of the time. Mana: colours are fine (RGWU from four lands on
+turn 4 in 90% of draws), the count and tempo are not (the 4th land by turn 4 in 50%, six lands enter tapped);
+Niv-Mizzet's UUURRR is there with six lands only 29% of the time. Card draw: four repeatable engines (Rhystic Study,
+Sylvan Library, Skullclamp, Niv-Mizzet); Skullclamp sits low (+6.4 / +5.4), likely an AI gap (the look-ahead chose
+"hold mana" over it 344 times in the old goldfish). Removal: the A1 sweepers work at t4; the cheap counters and
+removal sit at the bottom of the win-rate list while t5's combos are half its deaths. Every win route is damage.
+
+**JD's direction (11/10):** move away from the grind, lean into the Breach line and Aragorn's burn. Four packages, to
+be tested paired against the current list (t4, t5, look-ahead, loose, explain on): B1 Breach engine (Elspeth =>
+Lion's Eye Diamond, Triple Triad => Birgi, Niv-Mizzet => Enlightened Tutor, Restoration Angel => Gamble, Kitchen Finks
+=> Grand Abolisher); B2 speed (Stormcarved Coast, Spirebluff Canal, Sulfur Falls => Mana Vault, Chrome Mox, Grim
+Monolith; Spark Double, Fact or Fiction, Twinned Vision, Comet Storm => Brainstorm, Ponder, Preordain, Gitaxian Probe;
+Faeburrow Elder => Noble Hierarch; Talrand => Flusterstorm); B3 mana (Frontier Bivouac, Jungle Shrine, Mystic
+Monastery, Seaside Citadel => Scalding Tarn, Wooded Foothills, Arid Mesa, Bloodstained Mire; Path of Ancestry, Exotic
+Orchard, Glacial Fortress, Sunpetal Grove => Sacred Foundry, Stomping Ground, Breeding Pool, Hallowed Fountain); B4 the
+cards that needed modelling (Ephemerate => Thought Scour, Heroic Intervention => Pyretic Ritual, Mystic Confluence =>
+Wheel of Fortune, Aura Shards => Baral, Ghostly Prison => Thassa's Oracle, Swan Song => Strike It Rich, Skullclamp =>
+Cathartic Reunion). Every card in is Commander-legal and in RUGW; every card out is in the origin/main list. Echo of
+Eons and Timetwister were dropped: they shuffle the graveyard (Breach's fuel) away.
+
+**What changed in the simulator first (JD: model the cards and make the AI play them before running).**
+- New cards, all Full: Thought Scour (mills yourself with Breach out or in hand: `dsl::gy_payoff`), Baral (the discount
+  is compiled; the loot on a counter is `engine/stack.rs baral_loot`), Strike It Rich, Cathartic Reunion (the engine's
+  additional cost now pays "discard two cards"; before, it could never be cast), Enlightened Tutor and Pyretic Ritual
+  hand-checked.
+- The Breach line (`impls/breach_line.rs`): Pyretic Ritual is a ritual; Strike It Rich a storm step; cantrips in hand
+  are cast mid-line with spare mana (never into a small library); Thassa's Oracle is a finish (mill yourself, then the
+  Oracle) tried when burning or milling the table fails; every cost is `mana::cost_of` (Baral); Grapeshot's kill check
+  counts Fiery Emancipation (not Aragorn's trigger: it goes to the opponent it kills alone, else the biggest threat). The dry run now shuffles its own library (`search::determinize`,
+  known top cards kept) and must pass on two shuffles: before, it saw its draws in their real order. A ready line with
+  no protection (`goldfish::protected`), an opponent able to answer and a counter chance of 0.35 or more waits one
+  turn (not at 10 life or less); it goes the next turn whatever. These two change every Breach deck's play, the pool's
+  t5 and t6 Breach decks included (JD accepted the drift, 11/10).
+- The plan (`data/plans/aragorn.toml`): the Breach + Lion's Eye Diamond + Brain Freeze line first; Breach and the
+  Diamond wanted from turn 3; Brain Freeze once Breach is held; fast mana, Birgi, Baral and Grand Abolisher early.
+  The swap-in cards are listed as `candidates` (a new plan field: the plan may name them before the list holds them).
+- Tests: `tests/aragorn_breach_rebuild.rs` (17) and `tests/aragorn_breach_adversarial.rs` (23, the Sonnet reviewer's).
+  Review fixes: the line's mana check used Brain Freeze's printed {1} (missed Baral lines); Baral's loot drew from an
+  empty library; in Oracle mode a Lotus Petal floated the wrong colour; Gitaxian Probe could take the blue a Brain
+  Freeze needed; look-ahead copies of a waiting turn still took the line.
+- Left as they were (already sensible): Wheel of Fortune isn't cast while a combo piece is held or into a hand of six
+  or more; Gamble prefers a fuller hand (the random discard then rarely hits the card it found); Chrome Mox imprints
+  the least valuable coloured card. Not modelled: a read of "an opponent is about to win" for the wait rule (only the
+  life floor stands in for it).
+
 ## Baseline 2026-11-07 (A1 + A2 in the list; main 7c622f5f; look-ahead, loose, 10,000 games per tier, seed 500000)
 t4 **13.8%** (13.1-14.5), t5 **11.3%** (10.7-12.0): **12.6% over t4, t5**, against 9.9% before (t4 10.8%, t5 8.9%; the
 11-06 AI-fix run, 2,000 games per tier). +3.0 and +2.4, outside the noise (about ±1.6 per tier against a 2,000-game

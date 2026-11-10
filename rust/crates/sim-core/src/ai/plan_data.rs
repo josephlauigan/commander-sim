@@ -271,6 +271,10 @@ pub struct Plan {
     /// a retired pool deck (only a test seat): its cards are checked against decklists/pool/retired/<deck>.md
     #[serde(default)]
     pub retired: bool,
+    /// cards the deck is being swap-tested with (`--swap`): the plan may name them although the list doesn't hold
+    /// them yet (the plan test accepts these and only these). A rule naming one does nothing until the card is in
+    #[serde(default)]
+    pub candidates: Vec<String>,
     #[serde(default)]
     pub default: Arm,
     pub style: Option<StyleT>,

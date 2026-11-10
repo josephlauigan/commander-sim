@@ -1716,6 +1716,36 @@ pub fn counter_side_effects(g: &mut Game, q: PlayerId, p: PlayerId, ctr: CardId)
             discard_worst(g, q, 1)?;
         }
     }
+    baral_loot(g, q)
+}
+
+/// Baral, Chief of Compliance: "Whenever a spell or ability you control counters a spell, you may draw a card. If you
+/// do, discard a card." Once per Baral q controls (not phased out). The AI always loots (it keeps the better card);
+/// a person is asked.
+fn baral_loot(g: &mut Game, q: PlayerId) -> Res {
+    let n = g
+        .player(q)
+        .perms
+        .iter()
+        .filter(|&&m| g.perm(m).on_bf && !g.perm(m).phased && &*g.perm(m).name == "Baral, Chief of Compliance")
+        .count();
+    for _ in 0..n {
+        if g.over || !g.player(q).alive {
+            break;
+        }
+        if crate::human::is_human(g, q) {
+            if !crate::human::choices::yes_no(g, q, "Baral, Chief of Compliance: draw a card, then discard a card?")? {
+                continue;
+            }
+            draw(g, q, 1, false)?;
+            crate::human::choices::discard(g, q, 1, "Baral, Chief of Compliance: discard a card")?;
+        } else if g.player(q).library.len() > 1 {
+            // "you may": the AI loots, but never draws its last card (a draw from an empty library loses, and the
+            // next draw step needs one)
+            draw(g, q, 1, false)?;
+            discard_worst(g, q, 1)?;
+        }
+    }
     Ok(())
 }
 

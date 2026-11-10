@@ -67,6 +67,10 @@ impl Inputs {
         extra.insert("Witch of the Moors".to_string());
         // the six cards Garth One-Eye names (2026-11-04); Disenchant and Terror are in pool lists, the other four in none
         extra.extend(["Black Lotus", "Braingeyser", "Regrowth", "Shivan Dragon"].map(String::from));
+        // Aragorn's Breach rebuild (2026-11-10, JD): swap-test cards no deck list plays yet
+        extra.extend(
+            ["Thought Scour", "Baral, Chief of Compliance", "Strike It Rich", "Cathartic Reunion"].map(String::from),
+        );
         Wanted { main, played, extra }
     }
 

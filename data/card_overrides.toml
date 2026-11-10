@@ -10298,3 +10298,28 @@ dsl = []
 status = "Full"
 note = "whenever a player (you too) casts their second spell each turn, you lose 1 life and create a Treasure (impls/model_gaps_a2.rs, a cast hook; nothing happens when Lotho enters)"
 
+
+# --- Aragorn's Breach rebuild (2026-11-10, JD): swap-test cards checked against their Oracle text
+["Thought Scour"]
+status = "Full"
+note = "target player mills two, then you draw a card (compiled). The AI mills itself when its graveyard pays off: a reanimation card, or Underworld Breach on the battlefield or in hand (escape fuel); otherwise the opponent closest to milling out, else the most threatening"
+
+["Baral, Chief of Compliance"]
+status = "Full"
+note = "1/3; instant and sorcery spells you cast cost {1} less (compiled cost static, read by mana::cost_of, so the Breach line's costs drop too); whenever a spell or ability you control counters a spell, you may draw a card, then discard a card (engine/stack.rs baral_loot, once per Baral: the AI loots and discards its worst card unless its library holds one card or none, a person is asked). Not modelled: the loot for a counter that bypasses the counterspell resolution (Mindbreak Trap's extra exiles, Ertai's and Louisoix's abilities)"
+
+["Strike It Rich"]
+status = "Full"
+note = "create a Treasure (compiled); flashback {2}{R} (fb tag). In the Breach line it is a cheap storm step: {R} for a Treasure, and a red spell for Aragorn"
+
+["Cathartic Reunion"]
+status = "Full"
+note = "as an additional cost, discard two cards (engine/cast.rs additional_cost: the two least useful, a spare land first while three or more are held; a person picks; it can't be cast with fewer than two other cards in hand), then draw three (compiled)"
+
+["Enlightened Tutor"]
+status = "Full"
+note = "search for an artifact or enchantment card, reveal it, put it on top of your library (compiled; the AI's pick is the deck's wish for the 'ae' kind, ai/pool.rs search_kind)"
+
+["Pyretic Ritual"]
+status = "Full"
+note = "add {R}{R}{R} (compiled); one of the Breach line's red rituals"
