@@ -512,6 +512,35 @@ pub fn pay_tax_ask(g: &mut Game, p: PlayerId, n: u32, what: &str, prompt: Option
     Ok(true)
 }
 
+/// Whether the automatic tapping policy can pay, without tapping sources or spending mana.
+pub fn can_tap_to_pay(g: &Game, p: PlayerId, generic: u32, pips: &str) -> bool {
+    let mut pool = gathered(g, p);
+    let mut srcs = sources(g, p);
+    srcs.retain(|s| s.restricted.is_none());
+    for _ in 0..64 {
+        if pool.can_pay(g, p, generic, pips) {
+            return true;
+        }
+        let lacking: Vec<char> = pool.missing(generic, pips).chars().filter(|c| c.is_alphabetic()).collect();
+        let pick = lacking
+            .iter()
+            .find_map(|&c| srcs.iter().position(|s| s.colours.contains(c)).map(|i| (i, c)))
+            .or_else(|| srcs.first().map(|s| (0, s.colours.chars().next().unwrap())));
+        let Some((i, colour)) = pick else { return false };
+        let s = srcs.remove(i);
+        if s.pair {
+            let sets = s.amount / s.colours.len() as u32;
+            let spare = s.amount % s.colours.len() as u32;
+            for c in s.colours.chars() {
+                pool.add(c, sets + if c == colour { spare } else { 0 });
+            }
+        } else {
+            pool.add(colour, s.amount);
+        }
+    }
+    pool.can_pay(g, p, generic, pips)
+}
+
 /// Tap p's sources into the pool until the pool can pay `generic` + `pips` (as a person does at the table before a
 /// cast the ability itself pays for): a source that makes a colour the pool lacks first, else the first. True if the
 /// pool can pay in the end; whatever was tapped stays in the pool.

@@ -72,6 +72,7 @@ pub fn coerce_detach(g: &mut Game, a: PermId) {
             crate::glog!(g, "    {} returns to {} (Coerced to Kill left)", g.perm(host).name, g.player(orig).name);
         } else {
             g.perm_mut(host).on_bf = false;
+            g.perm_mut(host).data.remove(DataKey::PhaseInWith);
         }
     }
     g.bf_ver += 1;

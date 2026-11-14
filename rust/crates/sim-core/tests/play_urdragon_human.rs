@@ -70,6 +70,276 @@ fn seat_script(g: &mut Game, rules: Vec<Rule>) -> Arc<Mutex<Vec<String>>> {
     log
 }
 
+#[test]
+fn brass_person_selects_any_number_from_all_graveyards_within_the_roll() {
+    for (chosen, prompts) in [
+        (vec![], 1),
+        (vec!["Birds of Paradise"], 2),
+        (vec!["Shivan Dragon", "Ornithopter"], 2),
+        (vec!["Birds of Paradise", "Llanowar Elves", "Ornithopter"], 3),
+    ] {
+        let mut g = urdragon_table();
+        g.log = Some(vec![]);
+        let brass = perm(&mut g, P0, "Ancient Brass Dragon");
+        let bird = card(&g, "Birds of Paradise");
+        let elf = card(&g, "Llanowar Elves");
+        let zero = card(&g, "Ornithopter");
+        let dragon = card(&g, "Shivan Dragon");
+        let big = card(&g, "Blightsteel Colossus");
+        let rock = card(&g, "Sol Ring");
+        g.player_mut(P0).gy = vec![elf, zero, rock];
+        g.player_mut(P1).gy = vec![bird, dragon, big];
+        g.rng = (0..).map(sim_core::rng::Rng::from_u64).find(|r| r.clone().below(20) == 5).unwrap();
+        let mut expected_rng = g.rng.clone();
+        assert_eq!(expected_rng.below(20) + 1, 6);
+        let expected = chosen.clone();
+        let mut next = 0;
+        let h = Arc::new(ScriptHuman::from_fn(move |r| {
+            if r.prompt.starts_with("Ancient Brass Dragon: rolled") {
+                assert!(r.prompt.contains("rolled 6;"));
+                assert!(!r.choices.iter().any(|s| s.contains("Blightsteel") || s.contains("Sol Ring")));
+                if next > 0 {
+                    assert!(
+                        !r.choices.iter().any(|s| s.contains("Shivan Dragon")),
+                        "remaining budget excludes six mana"
+                    );
+                }
+                if let Some(name) = chosen.get(next) {
+                    next += 1;
+                    Answer::Pick(r.choices.iter().position(|s| s.starts_with(name)).unwrap())
+                } else {
+                    Answer::Decline
+                }
+            } else if r.kind == "priority" {
+                Answer::Action(json!({"do":"pass"}))
+            } else {
+                Answer::Decline
+            }
+        }));
+        g.humans.add(P0, h.clone());
+        let f = g.registry.get(card(&g, "Ancient Brass Dragon")).unwrap().combat_damage.unwrap();
+        f(&mut g, brass, P0, brass, P1, 7).unwrap();
+        assert_eq!(g.rng, expected_rng, "exactly one d20 roll");
+        assert!(g.log.as_ref().unwrap().iter().any(|s| s.contains("Ancient Brass Dragon rolls 6")));
+        for (c, q) in [(elf, P0), (zero, P0), (bird, P1), (dragon, P1)] {
+            let name = &*g.db.get(c).name;
+            let picked = expected.contains(&name);
+            assert_eq!(has_perm(&g, P0, name), picked);
+            assert_eq!(g.player(q).gy.contains(&c), !picked);
+            if picked && q != P0 {
+                let m = perms_named(&g, P0, name)[0];
+                assert_eq!(g.perm(m).orig, q);
+            }
+        }
+        assert!(g.player(P1).gy.contains(&big) && g.player(P0).gy.contains(&rock));
+        assert_eq!(h.asked().iter().filter(|r| r.prompt.starts_with("Ancient Brass Dragon: rolled")).count(), prompts);
+    }
+}
+
+#[test]
+fn brass_person_targets_are_not_replaced_by_ai_picks_after_graveyard_hate() {
+    let mut g = urdragon_table();
+    let brass = perm(&mut g, P0, "Ancient Brass Dragon");
+    let crypt = perm(&mut g, P2, "Tormod's Crypt");
+    let dragon = card(&g, "Shivan Dragon");
+    let bird = card(&g, "Birds of Paradise");
+    g.player_mut(P0).gy = vec![dragon];
+    g.player_mut(P1).gy = vec![bird];
+    g.rng = (0..).map(sim_core::rng::Rng::from_u64).find(|r| r.clone().below(20) == 5).unwrap();
+    let log = seat_script(&mut g, vec![rule("Ancient Brass Dragon: rolled", text("Shivan Dragon"))]);
+    let f = g.registry.get(card(&g, "Ancient Brass Dragon")).unwrap().combat_damage.unwrap();
+    f(&mut g, brass, P0, brass, P1, 7).unwrap();
+    assert!(asked_has(&log, "Ancient Brass Dragon: rolled 6"));
+    assert!(!g.perm(crypt).on_bf);
+    assert!(g.player(P0).exile.contains(&dragon));
+    assert!(g.player(P1).gy.contains(&bird));
+    assert!(!has_perm(&g, P0, "Shivan Dragon") && !has_perm(&g, P0, "Birds of Paradise"));
+}
+
+#[test]
+fn brass_interleaved_person_picks_offer_graveyard_hate_once_per_owner() {
+    let mut g = urdragon_table();
+    let brass = perm(&mut g, P0, "Ancient Brass Dragon");
+    let crypts: Vec<_> = (0..3).map(|_| perm(&mut g, P2, "Tormod's Crypt")).collect();
+    let dragon = card(&g, "Shivan Dragon");
+    let elf = card(&g, "Llanowar Elves");
+    let zero = card(&g, "Ornithopter");
+    g.player_mut(P1).gy = vec![dragon, elf];
+    g.player_mut(P2).gy = vec![zero];
+    g.rng = (0..).map(sim_core::rng::Rng::from_u64).find(|r| r.clone().below(20) == 6).unwrap();
+    let log = seat_script(
+        &mut g,
+        vec![
+            rule("Ancient Brass Dragon: rolled", text("Shivan Dragon")), // P1
+            rule("Ancient Brass Dragon: rolled", text("Ornithopter")),   // P2
+            rule("Ancient Brass Dragon: rolled", text("Llanowar Elves")), // P1 again
+        ],
+    );
+    let f = g.registry.get(card(&g, "Ancient Brass Dragon")).unwrap().combat_damage.unwrap();
+    f(&mut g, brass, P0, brass, P1, 7).unwrap();
+    assert!(asked_has(&log, "Ancient Brass Dragon: rolled 7"));
+    assert_eq!(
+        crypts.iter().filter(|&&m| g.perm(m).on_bf).count(),
+        1,
+        "two distinct graveyards get one response each; P1 must not consume the third Crypt"
+    );
+    assert!(g.player(P1).exile.contains(&dragon) && g.player(P1).exile.contains(&elf));
+    assert!(g.player(P2).exile.contains(&zero));
+}
+
+#[test]
+fn brass_probe_does_not_ask_roll_or_change_graveyards_and_rolls_even_without_targets() {
+    let mut g = urdragon_table();
+    let brass = perm(&mut g, P0, "Ancient Brass Dragon");
+    let bird = card(&g, "Birds of Paradise");
+    g.player_mut(P1).gy = vec![bird];
+    let h = Arc::new(ScriptHuman::from_fn(|_| panic!("no question before the trigger window")));
+    g.humans.add(P0, h.clone());
+    let f = g.registry.get(card(&g, "Ancient Brass Dragon")).unwrap().combat_damage.unwrap();
+    let before = g.clone();
+    g.trig_probe = true;
+    assert!(matches!(f(&mut g, brass, P0, brass, P1, 7), Err(sim_core::flow::Stop::Probe(_))));
+    assert_eq!(g.rng, before.rng);
+    assert_eq!(g.player(P1).gy, before.player(P1).gy);
+    assert_eq!(g.player(P0).perms, before.player(P0).perms);
+    assert!(h.asked().is_empty());
+    for q in [P0, P1, P2] {
+        g.player_mut(q).gy.clear();
+    }
+    g.humans = Default::default();
+    let mut expected_rng = g.rng.clone();
+    expected_rng.below(20);
+    f(&mut g, brass, P0, brass, P1, 7).unwrap();
+    assert_eq!(g.rng, expected_rng, "Oracle rolls even with empty graveyards");
+}
+
+#[test]
+fn silumgar_person_is_asked_once_and_can_choose_a_planeswalker() {
+    let mut g = urdragon_table();
+    perm(&mut g, P1, "Blightsteel Colossus");
+    let walker = perm(&mut g, P1, "Jace, the Mind Sculptor");
+    let log = seat_script(&mut g, vec![rule("Dragonlord Silumgar: gain control of which", text("Jace"))]);
+    let src = perm(&mut g, P0, "Dragonlord Silumgar");
+    assert_eq!(g.perm(walker).owner, P0);
+    assert_eq!(
+        log.lock().unwrap().iter().filter(|s| s.contains("Dragonlord Silumgar: gain control of which")).count(),
+        1
+    );
+    sim_core::engine::zones::leave(&mut g, src).unwrap();
+    assert_eq!(g.perm(walker).owner, P1);
+}
+
+#[test]
+fn silumgar_target_choices_respect_shroud_hexproof_protection_and_phasing() {
+    let mut g = urdragon_table();
+    let own = perm(&mut g, P0, "Llanowar Elves");
+    g.perm_mut(own).eot_kw.push("hexproof");
+    for (name, kw) in [("Birds of Paradise", "shroud"), ("Noble Hierarch", "hexproof"), ("Shivan Dragon", "pro_U")] {
+        let m = perm(&mut g, P1, name);
+        g.perm_mut(m).eot_kw.push(kw);
+    }
+    let own_shroud = perm(&mut g, P0, "Fyndhorn Elves");
+    g.perm_mut(own_shroud).eot_kw.push("shroud");
+    let phased = perm(&mut g, P1, "Grave Titan");
+    g.perm_mut(phased).phased = true;
+    let log = seat_script(
+        &mut g,
+        vec![rule("Dragonlord Silumgar: gain control of which", |r| {
+            assert!(r.choices.iter().any(|s| s.contains("Llanowar Elves")), "own hexproof is legal");
+            assert!(r.choices.iter().any(|s| s.contains("Dragonlord Silumgar")), "may target itself");
+            for name in ["Birds of Paradise", "Noble Hierarch", "Shivan Dragon", "Fyndhorn Elves", "Grave Titan"] {
+                assert!(!r.choices.iter().any(|s| s.contains(name)), "illegal target {name}");
+            }
+            Answer::Pick(r.choices.iter().position(|s| s.contains("Llanowar Elves")).unwrap())
+        })],
+    );
+    perm(&mut g, P0, "Dragonlord Silumgar");
+    assert!(asked_has(&log, "Dragonlord Silumgar: gain control of which"));
+}
+
+#[test]
+fn tiamat_person_searches_up_to_five_distinct_names_and_reveals_each() {
+    let mut g = urdragon_table();
+    g.log = Some(vec![]);
+    let gold = card(&g, "Goldspan Dragon");
+    let tiamat = card(&g, "Tiamat");
+    let copper = card(&g, "Ancient Copper Dragon");
+    g.player_mut(P0).library = vec![gold, gold, tiamat, copper];
+    let log = seat_script(
+        &mut g,
+        vec![rule("Tiamat: search", text("Goldspan")), rule("Tiamat: search", text("find nothing"))],
+    );
+    sim_core::engine::zones::enter(
+        &mut g,
+        P0,
+        tiamat,
+        sim_core::engine::zones::Enter { was_cast: true, ..Default::default() },
+    )
+    .unwrap();
+    assert_eq!(g.player(P0).hand.iter().filter(|&&c| c == gold).count(), 1);
+    assert!(!g.player(P0).hand.contains(&tiamat) && !g.player(P0).hand.contains(&copper));
+    assert!(asked_has(&log, "Tiamat: search"));
+    assert!(g.log.as_ref().unwrap().iter().any(|s| s.contains("reveals Goldspan Dragon")));
+}
+
+#[test]
+fn hellkite_charger_person_can_pay_for_an_extra_combat_with_only_six_power_attacking() {
+    let mut g = urdragon_table();
+    let src = perm(&mut g, P0, "Hellkite Charger");
+    g.perm_mut(src).tapped = true;
+    pool(&mut g, P0, &[('R', 7)]);
+    let log = seat_script(&mut g, vec![rule("Hellkite Charger: pay", |_| Answer::Yes)]);
+    let f = g.registry.get(card(&g, "Hellkite Charger")).unwrap().attack.unwrap();
+    f(&mut g, src, P0, &[src], P1).unwrap();
+    assert!(asked_has(&log, "Hellkite Charger: pay"));
+    assert_eq!(pool_total(&g, P0), 0);
+    assert_eq!(g.player(P0).extra_combats, 1);
+    assert!(!g.perm(src).tapped);
+    f(&mut g, src, P0, &[src], P1).unwrap();
+    assert_eq!(g.player(P0).extra_combats, 1, "once per combat");
+}
+
+#[test]
+fn hellkite_charger_failed_red_payment_keeps_sources_and_combat_stamp() {
+    for (mountains, floating) in [(0, 0), (1, 0), (0, 6), (1, 6)] {
+        let mut g = urdragon_table();
+        let src = perm(&mut g, P0, "Hellkite Charger");
+        g.perm_mut(src).tapped = true;
+        let red = lands(&mut g, P0, "Mountain", mountains, false);
+        let blue = lands(&mut g, P0, "Island", 7 - mountains - floating, false);
+        pool(&mut g, P0, &[('U', floating as u32)]);
+        let before = g.player(P0).pool.clone();
+        let log = seat_script(&mut g, vec![rule("Hellkite Charger: pay", |_| Answer::Yes)]);
+        let f = g.registry.get(card(&g, "Hellkite Charger")).unwrap().attack.unwrap();
+        f(&mut g, src, P0, &[src], P1).unwrap();
+        assert!(asked_has(&log, "Hellkite Charger: pay"));
+        assert_eq!(g.player(P0).extra_combats, 0);
+        assert!(g.perm(src).tapped);
+        assert!(red.iter().chain(&blue).all(|&m| !g.perm(m).tapped), "failed payment must not tap lands");
+        assert_eq!(g.player(P0).pool, before);
+        // The same combat can still pay once the missing red becomes available.
+        pool(&mut g, P0, &[('R', 2)]);
+        seat_script(&mut g, vec![rule("Hellkite Charger: pay", |_| Answer::Yes)]);
+        f(&mut g, src, P0, &[src], P1).unwrap();
+        assert_eq!(g.player(P0).extra_combats, 1, "failed payment must not consume the combat stamp");
+        assert!(!g.perm(src).tapped);
+    }
+}
+
+#[test]
+fn hellkite_charger_person_can_automatically_tap_lands_with_two_red_sources() {
+    let mut g = urdragon_table();
+    let src = perm(&mut g, P0, "Hellkite Charger");
+    let red = lands(&mut g, P0, "Mountain", 2, false);
+    let blue = lands(&mut g, P0, "Island", 5, false);
+    seat_script(&mut g, vec![rule("Hellkite Charger: pay", |_| Answer::Yes)]);
+    let f = g.registry.get(card(&g, "Hellkite Charger")).unwrap().attack.unwrap();
+    f(&mut g, src, P0, &[src], P1).unwrap();
+    assert_eq!(g.player(P0).extra_combats, 1);
+    assert!(red.iter().chain(&blue).all(|&m| g.perm(m).tapped));
+    assert_eq!(pool_total(&g, P0), 0);
+}
+
 // ------------------------------------------------------------------ Godo's search
 #[test]
 fn godo_lets_you_search_for_any_equipment() {

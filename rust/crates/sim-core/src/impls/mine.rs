@@ -388,6 +388,9 @@ fn vision(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
         // "choose one": the person picks the counter or phasing out
         if crate::human::triggers_t1::vision_phases_out(g, o)? {
             g.perm_mut(src).phased = true;
+            if !g.control_links.is_empty() {
+                crate::engine::control::end_links(g);
+            }
         } else {
             repl::put_plus(g, src, 1);
         }
@@ -399,6 +402,9 @@ fn vision(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     };
     if caster != o && (target == Some(src) || g.db.get(c).tag(Tag::Wipe)) {
         g.perm_mut(src).phased = true;
+        if !g.control_links.is_empty() {
+            crate::engine::control::end_links(g);
+        }
     } else {
         repl::put_plus(g, src, 1);
     }
@@ -4135,7 +4141,97 @@ fn latulla_hit(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, _dm
     Ok(())
 }
 
+/// Sneak Attack's effect; putting a card onto the battlefield is not casting it.
+pub fn sneak_put(g: &mut Game, p: PlayerId, c: CardId) -> Res<Option<PermId>> {
+    if !g.db.get(c).creature {
+        return Ok(None);
+    }
+    let Some(i) = g.player(p).hand.iter().position(|&x| x == c) else { return Ok(None) };
+    g.player_mut(p).hand.remove(i);
+    crate::glog!(g, "    {} puts {} onto the battlefield (Sneak Attack)", g.player(p).name, g.db.get(c).name);
+    let m = enter(g, p, c, Enter::default())?;
+    g.perm_mut(m).data.set(DataKey::SneakAttack, Val::Player(p));
+    super::partials::eot_kw(g, m, "haste");
+    Ok(Some(m))
+}
+
+fn sneak_candidates(g: &Game, p: PlayerId) -> Vec<CardId> {
+    g.player(p)
+        .hand
+        .iter()
+        .copied()
+        .filter(|&c| {
+            let d = g.db.get(c);
+            let (gn, pips) = cost_of(g, p, c);
+            d.creature && d.tgh > 0 && !can_pay(g, p, gn, &pips, false)
+        })
+        .collect()
+}
+
+fn sneak_worth(g: &Game, p: PlayerId, c: CardId) -> f64 {
+    if &*g.db.get(c).name == "Blightsteel Colossus" && g.opps(p).next().is_some() {
+        return 100.0;
+    }
+    card_worth(g, p, c, false) / 10.0 + crate::dsl::etb_value(g, c) as f64 + g.db.get(c).pow as f64 / 2.0
+}
+
+fn sneak_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if post != Some(false)
+        || g.active != Some(p)
+        || g.player(p).combat_no != 0
+        || !g.perm(src).on_bf
+        || g.perm(src).phased
+        || !can_pay(g, p, 0, "R", false)
+    {
+        return Ok(vec![]);
+    }
+    Ok(sneak_candidates(g, p)
+        .into_iter()
+        .map(|c| Opt {
+            utility: if &*g.db.get(c).name == "Blightsteel Colossus" { 8.0 } else { 2.0 + sneak_worth(g, p, c) / 10.0 },
+            label: format!("Sneak Attack: {}", g.db.get(c).name),
+            act: Some(Action::Ability { src, f: sneak_go, arg: c.0 as i64 }),
+        })
+        .collect())
+}
+
+fn sneak_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    if !g.perm(src).on_bf || g.perm(src).phased || !can_pay(g, p, 0, "R", false) {
+        return Ok(false);
+    }
+    pay(g, p, 0, "R", false)?;
+    ability_run(
+        g,
+        p,
+        Some(src),
+        None,
+        "put a creature card from your hand onto the battlefield",
+        Some(5.0),
+        None,
+        |g| {
+            let c = CardId(arg as u16);
+            let pick = if g.player(p).hand.contains(&c) && g.db.get(c).creature {
+                Some(c)
+            } else {
+                max_by(&sneak_candidates(g, p), |c| sneak_worth(g, p, c))
+            };
+            if let Some(c) = pick {
+                sneak_put(g, p, c)?;
+            }
+            Ok(())
+        },
+    )?;
+    Ok(true)
+}
+
+fn sneak_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
+    if sneak_candidates(g, p).is_empty() { 30 } else { 70 }
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    let sneak = r.card(db, "Sneak Attack")?;
+    sneak.options = Some(sneak_options);
+    sneak.prio = Some(sneak_prio);
     super::common::aura(r, db, "Latulla's Orders", &LATULLA_SPEC)?;
     r.card(db, "Triple Triad")?.upkeep = Some(triad_upkeep);
     r.card(db, "Latulla's Orders")?.combat_damage = Some(latulla_hit);

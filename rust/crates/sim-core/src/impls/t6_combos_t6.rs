@@ -1033,6 +1033,9 @@ fn gates_loop(g: &mut Game, p: PlayerId) -> Res<bool> {
     for m in victims {
         g.perm_mut(m).phased = true;
     }
+    if !g.control_links.is_empty() {
+        crate::engine::control::end_links(g);
+    }
     g.bf_ver += 1;
     Ok(true)
 }

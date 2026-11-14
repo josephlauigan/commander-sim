@@ -105,12 +105,7 @@ fn mine_named(g: &Game, p: PlayerId, name: &str) -> Vec<PermId> {
 
 /// p's legendary creatures (not phased out)
 fn legends_of(g: &Game, p: PlayerId) -> Vec<PermId> {
-    g.player(p)
-        .perms
-        .iter()
-        .copied()
-        .filter(|&m| g.is_creature(m) && !g.perm(m).phased && legendary(g, m))
-        .collect()
+    g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased && legendary(g, m)).collect()
 }
 
 /// jodah._best_legend: p's best legendary creature (an unsick one first)
@@ -840,6 +835,7 @@ pub fn garland_check(g: &mut Game) {
             crate::glog!(g, "    {} returns to {} (Garland)", g.perm(t).name, pname(g, orig));
         } else {
             g.perm_mut(t).on_bf = false; // its owner left the game: so does it
+            g.perm_mut(t).data.remove(DataKey::PhaseInWith);
         }
     }
     g.garland = !keep.is_empty();

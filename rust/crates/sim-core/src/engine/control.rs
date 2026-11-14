@@ -15,6 +15,8 @@ pub enum Duration {
     EndOfTurn,
     /// for the rest of the game (gain control without a duration, a donation): summoning sick under the new controller
     Permanent,
+    /// for as long as the gaining player controls this permanent
+    WhileControls(PermId),
 }
 
 /// how long a goad lasts
@@ -58,12 +60,15 @@ pub fn gain_control(g: &mut Game, new: PlayerId, m: PermId, dur: Duration) -> bo
                 g.player_mut(new).borrowed.push(m);
             }
         }
-        Duration::Permanent => {
+        Duration::Permanent | Duration::WhileControls(_) => {
             g.player_mut(new).borrowed.retain(|&x| x != m);
             if old != new {
                 g.perm_mut(m).sick = true;
             }
         }
+    }
+    if let Duration::WhileControls(anchor) = dur {
+        g.control_links.push(ControlLink { stolen: m, anchor, holder: new, prev: old });
     }
     if old != new {
         crate::glog!(
@@ -75,7 +80,55 @@ pub fn gain_control(g: &mut Game, new: PlayerId, m: PermId, dur: Duration) -> bo
             if dur == Duration::EndOfTurn { " until end of turn" } else { "" }
         );
     }
+    if !g.control_links.is_empty() {
+        end_links(g);
+    }
     true
+}
+
+/// End linked control effects immediately when the anchor leaves, phases out, or changes controller.
+pub fn end_links(g: &mut Game) {
+    let mut ended = vec![];
+    for link in std::mem::take(&mut g.control_links) {
+        let x = g.perm(link.stolen);
+        if !x.on_bf || x.owner != link.holder {
+            continue;
+        }
+        if !g.player(x.orig).alive {
+            let q = x.owner;
+            g.player_mut(q).perms.retain(|&m| m != link.stolen);
+            g.player_mut(q).lands.retain(|&m| m != link.stolen);
+            g.perm_mut(link.stolen).on_bf = false;
+            g.perm_mut(link.stolen).data.remove(DataKey::PhaseInWith);
+            g.bf_ver += 1;
+        } else if !g.perm(link.anchor).on_bf
+            || g.perm(link.anchor).phased
+            || g.perm(link.anchor).owner != link.holder
+            || !g.player(link.holder).alive
+        {
+            ended.push(link);
+        } else {
+            g.control_links.push(link);
+        }
+    }
+    for link in ended {
+        if g.perm(link.stolen).owner != link.holder {
+            continue;
+        }
+        if let Some(live) = g.control_links.iter_mut().find(|x| x.stolen == link.stolen && x.holder == link.holder) {
+            // The later effect still holds it. Remember where to return it when that effect ends too.
+            if live.prev == link.holder {
+                live.prev = link.prev;
+            }
+            continue;
+        }
+        let orig = g.perm(link.stolen).orig;
+        let to = if g.player(link.prev).alive { link.prev } else { orig };
+        if g.perm(link.stolen).phased && g.perm(link.stolen).data.get(DataKey::PhaseInWith).is_none() {
+            g.perm_mut(link.stolen).data.set(DataKey::PhaseInWith, Val::Player(link.holder));
+        }
+        gain_control(g, to, link.stolen, Duration::Permanent);
+    }
 }
 
 /// the end-step return of creatures borrowed until end of turn by p (control goes back to the owner)
@@ -96,6 +149,9 @@ pub fn return_borrowed(g: &mut Game, p: PlayerId) {
                 g.perm_mut(m).tapped = true; // Ray of Command
             }
         }
+    }
+    if !g.control_links.is_empty() {
+        end_links(g);
     }
 }
 

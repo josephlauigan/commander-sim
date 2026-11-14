@@ -883,20 +883,50 @@ fn celebrant(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) 
 /// pays {5}{R}{R} for another combat when the attack is big enough
 fn charger(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
     let key = intern(&format!("charger{}_{}", src.0, g.player(p).combat_no));
-    let power: i32 = atk.iter().map(|&m| epow(g, m)).ssum();
-    if atk.contains(&src) && can_pay(g, p, 5, "RR", false) && power >= 8 && fresh(g, p, key) {
-        if !trigger_window(g, p, Some(src), "pay 5RR: untap attackers, an additional combat", Some(6.0))? {
+    if crate::human::is_human(g, p) {
+        if !atk.contains(&src) || !fresh(g, p, key) || crate::human::mana::available(g, p) < 7 {
             return Ok(vec![]);
         }
-        if !can_pay(g, p, 5, "RR", false) || !once_per_turn(g, p, key) {
+        if !crate::engine::stack::may_window_ask(
+            g,
+            p,
+            Some(src),
+            "pay 5RR: untap attackers, an additional combat",
+            Some(6.0),
+            "Hellkite Charger: pay {5}{R}{R} to untap all attacking creatures and get an additional combat phase after this one?",
+        )? {
+            return Ok(vec![]);
+        }
+        if !crate::human::mana::can_tap_to_pay(g, p, 5, "RR") {
+            return Ok(vec![]);
+        }
+        if !crate::human::mana::tap_to_pay(g, p, 5, "RR")? {
+            return Ok(vec![]);
+        }
+        if crate::human::mana::pay_from_pool(g, p, 5, "RR").is_some() {
+            return Ok(vec![]);
+        }
+        // the once-per-combat stamp is spent last: `fresh` was checked above, and a failed payment keeps it
+        if !once_per_turn(g, p, key) {
+            return Ok(vec![]);
+        }
+    } else {
+        let power: i32 = atk.iter().map(|&m| epow(g, m)).ssum();
+        if !atk.contains(&src) || !can_pay(g, p, 5, "RR", false) || power < 8 || !fresh(g, p, key) {
+            return Ok(vec![]);
+        }
+        if !trigger_window(g, p, Some(src), "pay 5RR: untap attackers, an additional combat", Some(6.0))?
+            || !can_pay(g, p, 5, "RR", false)
+            || !once_per_turn(g, p, key)
+        {
             return Ok(vec![]);
         }
         pay(g, p, 5, "RR", false)?;
-        for &m in atk {
-            g.perm_mut(m).tapped = false;
-        }
-        g.player_mut(p).extra_combats += 1;
     }
+    for &m in atk {
+        g.perm_mut(m).tapped = false;
+    }
+    g.player_mut(p).extra_combats += 1;
     Ok(vec![])
 }
 

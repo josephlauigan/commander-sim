@@ -1607,6 +1607,9 @@ fn concealment(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
             }
         }
     }
+    if !g.control_links.is_empty() {
+        crate::engine::control::end_links(g);
+    }
     gy_push(g, p, c);
     crate::glog!(g, "    {} phase out", names_of(g, &picked));
     Ok(None)

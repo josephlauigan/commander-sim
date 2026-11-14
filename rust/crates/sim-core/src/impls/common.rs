@@ -3615,7 +3615,25 @@ fn register_phase6(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 }
 
 // ======================================================== registration
+fn crypt_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if p != owner(g, src) || !g.perm(src).on_bf || g.perm(src).phased {
+        return Ok(());
+    }
+    if !trigger_window(g, p, Some(src), "flip a coin: 3 damage to you if you lose", Some(1.0))? {
+        return Ok(());
+    }
+    if g.rng.random() < 0.5 {
+        crate::glog!(g, "    Mana Crypt: loses the flip");
+        lose_life(g, p, 3, Some(p), intern("other"), Some(true))?;
+        check_state(g)?;
+    } else {
+        crate::glog!(g, "    Mana Crypt: wins the flip");
+    }
+    Ok(())
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Mana Crypt")?.upkeep = Some(crypt_upkeep);
     // Auras
     for (name, spec) in AURAS {
         aura(r, db, name, spec)?;

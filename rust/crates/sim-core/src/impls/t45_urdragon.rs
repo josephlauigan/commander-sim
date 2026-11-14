@@ -30,8 +30,7 @@
 //! - Rith, Liberated Primeval: your other Dragons have ward {2} (removal::aura_ward). Its end-step Dragon comes when an
 //!   opponent's creature died during your turn. Left out: "excess damage" (the engine does not track it).
 //! - Rivaz of the Claw: {T}: two mana of any colour, only for Dragon creature spells (mana.rs); once during each of
-//!   your turns, cast a Dragon creature card from your graveyard; that creature is exiled when it dies (while Rivaz is
-//!   on the battlefield to see it).
+//!   your turns, cast a Dragon creature card from your graveyard; that creature is exiled when it dies, even after Rivaz leaves.
 //! - Roaming Throne: names a creature type as it enters and is that type too; another creature of yours of that type:
 //!   its triggered abilities that go on the stack trigger an additional time (stack::queue_triggers). Left out: card
 //!   code that runs at once rather than as a trigger.
@@ -387,10 +386,42 @@ pub fn brass_pick(g: &Game, p: PlayerId, x: u32) -> Vec<(CardId, PlayerId)> {
     best[x].1.iter().map(|&i| cands[i]).collect()
 }
 
+fn brass_choose(g: &Game, p: PlayerId, roll: u32) -> Res<Vec<(CardId, PlayerId)>> {
+    let mut left = gy_creatures(g);
+    let mut remaining = roll;
+    let mut picks = vec![];
+    loop {
+        left.retain(|&(c, _)| g.db.get(c).cmc <= remaining);
+        if left.is_empty() {
+            break;
+        }
+        let labels: Vec<String> = left
+            .iter()
+            .map(|&(c, q)| format!("{} ({}'s graveyard, mana value {})", cname(g, c), pname(g, q), g.db.get(c).cmc))
+            .collect();
+        let Some(i) = crate::human::choices::choose(
+            g,
+            p,
+            "choose",
+            &format!("Ancient Brass Dragon: rolled {roll}; return which creature? ({remaining} mana value left)"),
+            &labels,
+            Some("done"),
+            None,
+        )?
+        else {
+            break;
+        };
+        let pick = left.remove(i);
+        remaining -= g.db.get(pick.0).cmc;
+        picks.push(pick);
+    }
+    Ok(picks)
+}
+
 /// Ancient Brass Dragon: roll a d20; creature cards with total mana value X or less from graveyards onto the
 /// battlefield under your control
 fn brass_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _dmg: i32) -> Res {
-    if !connects(g, src, p, a) || gy_creatures(g).is_empty() {
+    if !connects(g, src, p, a) {
         return Ok(());
     }
     if !trigger_window(g, p, Some(src), "roll a d20: reanimate", Some(6.0))? {
@@ -398,15 +429,17 @@ fn brass_damage(g: &mut Game, src: Src, p: PlayerId, a: PermId, _d: PlayerId, _d
     }
     let x = d20(g);
     crate::glog!(g, "    Ancient Brass Dragon rolls {x}");
-    let mut picks = brass_pick(g, p, x);
+    let person = crate::human::is_human(g, p);
+    let mut picks = if person { brass_choose(g, p, x)? } else { brass_pick(g, p, x) };
     let worth: f64 = picks.iter().map(|&(c, _)| body_worth(g, p, c)).sum();
     let mut owners: Vec<PlayerId> = picks.iter().map(|x| x.1).collect();
+    owners.sort();
     owners.dedup();
     let mut hated = false;
     for q in owners {
         hated |= crate::impls::common::gy_response(g, p, worth, q)?; // Tormod's Crypt and the like
     }
-    if hated {
+    if hated && !person {
         picks = brass_pick(g, p, x);
     }
     for (c, q) in picks {
@@ -862,17 +895,13 @@ fn rivaz_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 }
 
 /// the creature cast with Rivaz dies: its card is exiled (a trigger: it resolves once the card is in the graveyard)
-fn rivaz_dies(g: &mut Game, src: Src, m: PermId, _cause: Sym) -> Res {
-    if !mark(g, m, "rivaz") || g.perm(m).token || owner(g, src) != g.perm(m).orig {
-        return Ok(());
-    }
+pub fn rivaz_exile(g: &mut Game, m: PermId) -> Res {
     let (q, Some(c)) = (g.perm(m).orig, g.perm(m).cd) else { return Ok(()) };
-    if !trigger_window(g, q, Some(src), "exile the Dragon cast from the graveyard", Some(1.0))? {
+    if !trigger_window(g, g.perm(m).owner, Some(m), "exile it (cast from the graveyard with Rivaz)", Some(1.0))? {
         return Ok(());
     }
-    let gy = &mut g.player_mut(q).gy;
-    if let Some(i) = gy.iter().rposition(|&x| x == c) {
-        gy.remove(i);
+    if let Some(i) = g.player(q).gy.iter().rposition(|&x| x == c) {
+        g.player_mut(q).gy.remove(i);
         g.player_mut(q).exile.push(c);
         crate::glog!(g, "    {} is exiled (Rivaz of the Claw)", cname(g, c));
     }
@@ -969,6 +998,21 @@ fn tiamat_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if !trigger_window(g, p, Some(src), "search for five Dragons", Some(6.0))? {
         return Ok(());
     }
+    if crate::human::is_human(g, p) {
+        let got = crate::human::choices::search(
+            g,
+            p,
+            &|g, c| dragon_card(g, c) && cname(g, c) != TIAMAT,
+            5,
+            "Tiamat: search your library for a Dragon card with a different name",
+            true,
+        )?;
+        for c in got {
+            g.player_mut(p).hand.push(c);
+            crate::engine::tutors::log_found(g, p, c, "hand", "Tiamat");
+        }
+        return Ok(());
+    }
     let mut cs: Vec<CardId> =
         g.player(p).library.iter().copied().filter(|&c| dragon_card(g, c) && cname(g, c) != TIAMAT).collect();
     cs.sort_by(|&a, &b| body_worth(g, p, b).total_cmp(&body_worth(g, p, a)));
@@ -983,6 +1027,7 @@ fn tiamat_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         if let Some(i) = lib.iter().position(|&x| x == c) {
             lib.remove(i);
             g.player_mut(p).hand.push(c);
+            crate::engine::tutors::log_found(g, p, c, "hand", "Tiamat");
         }
     }
     let names: Vec<&str> = got.iter().map(|&c| cname(g, c)).collect();
@@ -1028,8 +1073,68 @@ fn ureni_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerI
     Ok(vec![])
 }
 
+// ================================================================== Dragonlord Silumgar
+fn silumgar_targets(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
+    g.players
+        .iter()
+        .filter(|pl| pl.alive)
+        .flat_map(|pl| pl.perms.iter().copied())
+        .filter(|&m| {
+            let x = g.perm(m);
+            x.on_bf
+                && !x.phased
+                && (g.is_creature(m) || crate::engine::chars::card_types(g, m).has(crate::cards::Types::PLANESWALKER))
+                && !crate::dsl::has_kw(g, m, "shroud")
+                && (x.owner == p || !crate::engine::values::untargetable(g, m))
+                && !crate::engine::values::protected_from(g, m, colors_of(g, src))
+        })
+        .collect()
+}
+
+fn silumgar_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
+    if src != m || owner(g, src) != p || silumgar_targets(g, p, src).is_empty() {
+        return Ok(());
+    }
+    if !trigger_window(g, p, Some(src), "gain control of target creature or planeswalker", Some(6.0))?
+        || !g.perm(src).on_bf
+        || owner(g, src) != p
+    {
+        return Ok(());
+    }
+    let cs = silumgar_targets(g, p, src);
+    let pick = if crate::human::is_human(g, p) {
+        if cs.is_empty() {
+            return Ok(());
+        }
+        crate::human::cards::pick_perm(
+            g,
+            p,
+            "target",
+            "Dragonlord Silumgar: gain control of which creature or planeswalker?",
+            &cs,
+            None,
+        )?
+    } else {
+        let opps: Vec<_> = cs.into_iter().filter(|&m| owner(g, m) != p).collect();
+        crate::engine::zones::max_by(&opps, |m| crate::engine::values::pval(g, m))
+    };
+    if let Some(t) = pick {
+        let q = owner(g, t);
+        if q != p {
+            crate::ai::protect_response(g, q, t, "steal", Some(p), g.perm(src).cd)?;
+        }
+        if g.perm(src).on_bf && owner(g, src) == p && silumgar_targets(g, p, src).contains(&t) {
+            crate::engine::control::steal(g, p, t, crate::engine::control::Duration::WhileControls(src))?;
+        }
+    }
+    Ok(())
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    if db.id("Dragonlord Silumgar").is_some() {
+        r.card(db, "Dragonlord Silumgar")?.etb = Some(silumgar_etb);
+    }
     let has = |n: &str| db.id(n).is_some();
     if has(UR_DRAGON) {
         r.card(db, UR_DRAGON)?.attack = Some(ur_attack);
@@ -1091,7 +1196,6 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     if has(RIVAZ) {
         let c = r.card(db, RIVAZ)?;
         c.options = Some(rivaz_options);
-        c.dies = Some(rivaz_dies);
         c.dyn_mana_perm = Some(rivaz_mana);
     }
     if has(THRONE) {

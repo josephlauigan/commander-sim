@@ -201,6 +201,9 @@ pub fn has_keyword(g: &Game, m: PermId, kw: &str) -> bool {
     if loses_keyword(g, m, kw) {
         return false; // Colossus Hammer
     }
+    if kw == "haste" && x.data.get(DataKey::SneakAttack).is_some() {
+        return true;
+    }
     if x.eot_kw.contains(&kw) {
         return true;
     }

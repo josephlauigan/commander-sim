@@ -136,6 +136,7 @@ fn prep(g: &mut Game, name: &str, m: PermId) {
         g.perm_mut(m).loyalty = Some(20); // every loyalty ability, the ultimates too
     }
     match name {
+        "Nevinyrral's Disk" => g.perm_mut(m).tapped = false,
         "Grim Monolith" | "Basalt Monolith" => g.perm_mut(m).tapped = true, // their untap needs it tapped
         "Steel Hellkite" => {
             let st = g.turn_stamp();

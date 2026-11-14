@@ -526,6 +526,10 @@ pub fn leave(g: &mut Game, m: PermId) -> Res {
             g.player_mut(p).lands.retain(|&x| x != m); // (a creature token land is listed in both: Astral Dragon)
         }
         g.perm_mut(m).on_bf = false;
+        g.perm_mut(m).data.remove(DataKey::PhaseInWith);
+        if !g.control_links.is_empty() {
+            crate::engine::control::end_links(g);
+        }
     }
     g.bf_ver += 1;
     g.player_mut(p).left_turn = Some(g.turn_stamp()); // revolt
@@ -680,6 +684,9 @@ pub fn teferis_protection(g: &mut Game, p: PlayerId) {
     }
     for l in lands {
         g.perm_mut(l).tapped = true;
+    }
+    if !g.control_links.is_empty() {
+        crate::engine::control::end_links(g);
     }
     g.bf_ver += 1;
     crate::glog!(
@@ -878,7 +885,12 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
     if card_tag_str(g, m, Tag::Fill) == Some("stitcher") {
         mill(g, p, 3)?;
     }
-    die_rest(g, m, p, cause, creature)
+    die_rest(g, m, p, cause, creature)?;
+    // die_rest puts the card in the graveyard; the granted trigger must resolve after that move.
+    if creature && !token && g.perm(m).data.get(DataKey::T45Dragon) == Some(&Val::Str("rivaz")) {
+        crate::impls::t45_urdragon::rivaz_exile(g, m)?;
+    }
+    Ok(())
 }
 
 fn card_tag_str(g: &Game, m: PermId, t: Tag) -> Option<&str> {

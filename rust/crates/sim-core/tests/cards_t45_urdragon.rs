@@ -449,7 +449,8 @@ fn rivaz_casts_a_dragon_from_the_graveyard_once_each_turn() {
     assert!(run(&mut g, o, P0));
     let m = on(&g, P0, "Ancient Copper Dragon").expect("cast from the graveyard");
     assert!(f(&mut g, rivaz, P0, Some(false)).unwrap().is_empty(), "once each turn");
-    // it dies: exiled
+    // The granted ability belongs to the Dragon, even after Rivaz leaves.
+    sim_core::engine::zones::die(&mut g, rivaz, "destroy").unwrap();
     sim_core::engine::zones::die(&mut g, m, "destroy").unwrap();
     assert!(g.player(P0).exile.contains(&copper) && !g.player(P0).gy.contains(&copper));
 }

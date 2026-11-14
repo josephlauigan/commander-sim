@@ -1191,6 +1191,9 @@ fn run(
                 }
                 g.perm_mut(m).phased = true;
             }
+            if !g.control_links.is_empty() {
+                crate::engine::control::end_links(g);
+            }
         }
         "blink" => {
             let sel = sel_or_empty(&e.what);

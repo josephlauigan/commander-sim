@@ -1401,6 +1401,9 @@ fn protect_with(g: &mut Game, owner: PlayerId, m: PermId, i: usize, src: Option<
         for x in g.player(owner).perms.clone() {
             g.perm_mut(x).phased = true;
         }
+        if !g.control_links.is_empty() {
+            crate::engine::control::end_links(g);
+        }
     } else if how == How::Blink && g.perm(m).on_bf && g.perm(m).owner == owner {
         let (cd, orig, is_cmd) = (g.perm(m).cd, g.perm(m).orig, g.perm(m).is_cmd);
         leave(g, m)?;
@@ -1447,6 +1450,9 @@ fn protector_effect(g: &mut Game, p: PlayerId, name: &str, m: Option<PermId>) ->
                     g.player(p).perms.iter().copied().filter(|&x| g.perm(x).attached == Some(m)).collect();
                 for x in worn.into_iter().chain([m]) {
                     g.perm_mut(x).phased = true;
+                }
+                if !g.control_links.is_empty() {
+                    crate::engine::control::end_links(g);
                 }
             }
         }
@@ -1560,6 +1566,9 @@ fn wipe_with(g: &mut Game, q: PlayerId, i: usize, src: Option<PermId>) -> Res<Op
     if how == How::Phase {
         for x in g.player(q).perms.clone() {
             g.perm_mut(x).phased = true;
+        }
+        if !g.control_links.is_empty() {
+            crate::engine::control::end_links(g);
         }
         return Ok(Some("all"));
     }

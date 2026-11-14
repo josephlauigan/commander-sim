@@ -67,6 +67,10 @@ pub enum DataKey {
     MyriadTok,
     /// a token sacrificed at the beginning of the next end step (Lagomos, Hand of Hatred)
     EotSac,
+    /// Sneak Attack: activating player until the next end step, then Bool(true); grants lasting haste.
+    SneakAttack,
+    /// The controller when a linked stolen permanent phased out (`Val::Player`), until it phases in.
+    PhaseInWith,
     /// Ferocity of the Hunt was on the creature as it died: its card returns to the battlefield tapped
     Ferocity,
     /// Kaya's Ghostform was on the creature as it left: its card returns under this player (a `Val::Player`)
@@ -1172,6 +1176,15 @@ impl StackItem {
 }
 
 // ------------------------------------------------------------------ the game
+/// A control-changing effect lasting only while its holder controls an anchor permanent.
+#[derive(Clone, Copy, Debug)]
+pub struct ControlLink {
+    pub stolen: PermId,
+    pub anchor: PermId,
+    pub holder: PlayerId,
+    pub prev: PlayerId,
+}
+
 #[derive(Debug, Clone)]
 pub struct Game {
     pub db: Arc<CardDb>,
@@ -1309,6 +1322,8 @@ pub struct Game {
     pub goldfish: bool,
     /// Garland, Royal Kidnapper's steals are in play (Python's `g.garland`)
     pub garland: bool,
+    /// Control-changing effects that last while a player controls an anchor permanent.
+    pub control_links: Vec<ControlLink>,
     /// Garland's steals: (who took it, the creature, the player it came from, the round it was taken)
     pub garland_list: Vec<(PlayerId, PermId, PlayerId, u32)>,
     /// Marchesa's returns at the next end step: (the player it returns for, the card, its owner)
@@ -1541,6 +1556,7 @@ impl Game {
             stopped: false,
             goldfish: false,
             garland: false,
+            control_links: vec![],
             garland_list: vec![],
             marchesa_due: vec![],
             extra_turns: vec![],

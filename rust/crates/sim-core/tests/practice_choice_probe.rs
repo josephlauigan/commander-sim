@@ -268,6 +268,7 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
     ),
     ("aragorn: Deflecting Swat", "new targets for a spell on the stack: the probe has none"),
     ("thanos: Deflecting Swat", "new targets for a spell on the stack: the probe has none"),
+    ("urdragon: Deflecting Swat", "new targets for a spell on the stack: the probe has none"),
     ("sheoldred: Invoke Despair", "the opponent chooses what to sacrifice, not the person"),
     ("sheoldred: Rooftop Assassin", "no creature was dealt damage this turn: no legal target"),
     ("cloud: Loyal Warhound", "a basic Plains: every choice is the same card"),

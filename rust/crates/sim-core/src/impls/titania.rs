@@ -820,12 +820,30 @@ fn titan_land_score(g: &Game, p: PlayerId, c: CardId) -> f64 {
 }
 
 /// Primeval Titan's trigger: up to two land cards from the library onto the battlefield tapped (each is a landfall),
-/// then shuffle. A person is not asked (the best lands are taken); Opposition Agent takes what it can
+/// then shuffle. A person may choose zero, one or two lands; Opposition Agent takes what it can
 fn titan_search(g: &mut Game, p: PlayerId) -> Res {
     for _ in 0..2 {
         let lands: Vec<CardId> =
             crate::engine::zones::searchable(g, p).into_iter().filter(|&c| g.db.get(c).land).collect();
-        let Some(c) = max_by(&lands, |c| titan_land_score(g, p, c)) else { break };
+        if lands.is_empty() {
+            break;
+        }
+        let picked = if crate::human::is_human(g, p) {
+            let labels: Vec<String> = lands.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
+            crate::human::choices::choose(
+                g,
+                p,
+                "search",
+                "Primeval Titan: search your library for a land card (up to two)",
+                &labels,
+                Some("find nothing"),
+                None,
+            )?
+            .map(|i| lands[i])
+        } else {
+            max_by(&lands, |c| titan_land_score(g, p, c))
+        };
+        let Some(c) = picked else { break };
         let lib = &mut g.player_mut(p).library;
         if let Some(i) = lib.iter().position(|&x| x == c) {
             lib.remove(i);

@@ -868,6 +868,9 @@ fn gates_phase(g: &mut Game, p: PlayerId, l: PermId) -> Res<Option<PermId>> {
     let Some(t) = super::common::best_opp_creature(g, p, |m| pval(g, m) >= 3.0) else { return Ok(None) };
     if ability_window_card(g, p, g.perm(l).card(), "target creature phases out", None, Some(t))? && g.perm(t).on_bf {
         g.perm_mut(t).phased = true;
+        if !g.control_links.is_empty() {
+            crate::engine::control::end_links(g);
+        }
         g.bf_ver += 1;
         crate::glog!(g, "    Talon Gates of Madara: {} phases out", g.perm(t).name);
         return Ok(Some(t));
@@ -940,6 +943,9 @@ fn gates_defend(
     crate::glog!(g, "  {} puts Talon Gates of Madara onto the battlefield", g.player(d).name);
     if ability_window_card(g, d, c, "target creature phases out", None, Some(big))? && g.perm(big).on_bf {
         g.perm_mut(big).phased = true;
+        if !g.control_links.is_empty() {
+            crate::engine::control::end_links(g);
+        }
         g.bf_ver += 1;
         atk.retain(|&a| a != big);
         crate::glog!(g, "    Talon Gates of Madara: {} phases out", g.perm(big).name);
