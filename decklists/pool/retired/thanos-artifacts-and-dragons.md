@@ -1,5 +1,7 @@
 # Thanos, the Mad Titan — Five-Colour Artifacts and Dragons (High Bracket 4)
 
+**Retired 2026-11-13 (JD).** Replaced by the Cali Commander artifact-combo list (`decklists/cali_commander/thanos-artifact-combo.md`). Kept here as history only. Findings for this list: `audit/thanos/FINDINGS-artifacts-and-dragons-list.md`.
+
 Fast artifact mana puts Thanos down on turn 2 or 3. Thanos is a cheap 4/4 with deathtouch and lifelink, he makes
 Deflecting Swat free and gives Jeska's Will both modes, and his power-up is a wipe you aim at the opponents' side.
 Behind him the deck builds card advantage with The One Ring, Rhystic Study, Smothering Tithe, Mystic Forge and Urza.

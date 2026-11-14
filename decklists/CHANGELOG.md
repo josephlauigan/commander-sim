@@ -9,6 +9,8 @@ up 2026-11-02 and its key retired the same day; Karn and Ur-Dragon broken up 202
 day). On 2026-11-05 the old Tymna/Thrasios and old Thanos lists were replaced by the Tymna/Thrasios Doomsday and Thanos
 artifacts-and-Dragons rebuilds, and the `thrasios` and `thanos` keys were pointed at the new files. On 2026-11-06 Kefka
 and Sauron were merged into Aragorn, the Uniter (key `aragorn`) and their keys retired.
+On 2026-11-13 the Thanos key was pointed at a Cali Commander artifact-combo list (`decklists/cali_commander/`) and
+Aragorn was retired as a deck (its key stays in the simulator until the engine work).
 Avery's decks (Alela, Galadriel) are no longer tracked from 2026-11-06 (JD); their lists are in `decklists/pool/retired/`.
 
 ## Aragorn, the Uniter — Four-Colour Spell Burn
@@ -18,6 +20,9 @@ the binder and eleven bought cards (`documents/aragorn-merge-swaps.md`).
 
 ### Changes
 
+- **2026-11-13.** Retired (JD): the deck is broken up. 29 of its cards went to the Cali Commander Thanos list; the rest
+  are for a new Ur-Dragon list and the binder. The `aragorn` key stays in `data/my_decks.toml` and the simulator until the
+  engine work reseats the tests that seat it; the list file is unchanged. Not simulated.
 - **2026-11-06.** Out: Big Score, Blossoming Defense, Grand Abolisher, Growth Spiral, Mountain, Noble Hierarch, Three Visits. In: Austere Command, Llanowar Elves, Nibelheim Aflame, Paradise Druid, Sokenzan, Crucible of Defiance, Spark Double, Windborn Muse. Card-pile packages A1 (sweepers and Windborn Muse: t4 +4.3, t5 +2.4, both outside noise) and A2 (owned ramp for Don't Have cards: no clear effect at t4 or t5); JD 2026-11-06. A1 answers t4's go-wide decks (Krenko, Edgar Markov, Yuriko: about 52% of its t4 losses) with sweepers and an attack tax; A2 replaces three cards still to buy (Noble Hierarch, Three Visits, Growth Spiral) with cards JD owns, so eight cards are bought instead of eleven. A1 and A2 were tested separately, not together. Cards from JD's spare-card pile; record in `audit/jd-packages/2026-11-06-card-pile/`, evidence in `audit/aragorn/FINDINGS.md`.
 - **2026-11-06.** New deck (JD): Kefka and Sauron merged into Aragorn, the Uniter (RGWU): 33 cards from Kefka, 11 from Sauron, 43 from the binder, 11 bought, a Forest and a Plains. Aragorn has card code (`impls/aragorn.rs`, status Full); the plan file is provisional (`data/plans/aragorn.toml`). No list change since.
 
@@ -345,6 +350,7 @@ Deck key `sheoldred`, `decklists/JD/sheoldred-mono-black.md`.
 
 ### Changes
 
+- **2026-11-13.** Out: Diabolic Intent. In: Nevinyrral's Disk. Diabolic Intent => Nevinyrral's Disk (JD's choice, not simulated): the Cali Thanos deck takes Diabolic Intent, and Nevinyrral's Disk takes its place: a {4} colourless board wipe ({1}, tap: destroy all artifacts, creatures and enchantments) that also destroys Sheoldred and her engines.
 - **2026-11-09.** Out: Wander Off. In: K'rrik, Son of Yawgmoth. Wander Off => K'rrik, Son of Yawgmoth (JD's choice, not simulated this time; K'rrik tested neutral in the list on 2026-10-19, audit/sheoldred/FINDINGS.md): lifelink, and every {B} in a cost can be paid with 2 life; Wander Off was low by win rate when cast in the 11/07 analyze run.
 - **2026-11-07.** Out: Screeching Soulbreaker. In: Reanimate. Screeching Soulbreaker => Reanimate (JD's choice, not simulated: the AI has no Entomb/Reanimate line yet; audit/sheoldred/FINDINGS.md).
 - **2026-11-07.** Out: Al Bhed Salvagers. In: Witch of the Moors. Al Bhed Salvagers => Witch of the Moors (JD's pick; swap test t3 +0.9, t4 +1.4, inside the noise, audit/sheoldred/FINDINGS.md).
@@ -636,6 +642,7 @@ Deck key `yshtola`, `decklists/JD/yshtola-esper-drain.md`.
 
 ### Changes
 
+- **2026-11-13.** Out: Dovin's Veto. In: Disdainful Stroke. Dovin's Veto => Disdainful Stroke (JD's choice, not simulated): the Cali Thanos deck takes Dovin's Veto, and Disdainful Stroke, cut from that deck for An Offer You Can't Refuse, takes its place: {1}{U}, counters a spell with mana value 4 or more.
 - **2026-11-07.** Out: Dark Petition, Ill-Gotten Inheritance, Memory Trap. In: Counterspell, Mistrise Village, Palantír of Orthanc, Ringsight. Card-pile package Y, adopted untested by JD 2026-11-07 (Counterspell against the t5 combos; Ringsight and Palantir trigger her drain at mana value 3; Mistrise Village). Correction to the reason given when it was chosen: Memory Trap is not a counterspell but a {2}{W} enchantment that exiles a nonland permanent (removal that triggered her and that Zur could fetch); JD kept the swap. Ringsight now finds a card sharing a colour with Y'shtola (it used to look for blue, black or red; engine fix in #294). Evidence: `audit/yshtola/FINDINGS.md`.
 - **2026-11-04.** Out: Bribery, Hostage Taker. In: Loran of the Third Path, Profane Tutor. JD's physical list 11/04 (Demonic Tutor for Bribery, Profane Tutor for Hostage Taker), so the package's Deep Analysis slot goes to Loran of the Third Path, a blink target whose enter trigger destroys an artifact or enchantment; not simulated.
 - **2026-11-04.** Out: Chromatic Lantern, Deep Analysis, Prison Sentence, Static Net. In: Demonic Tutor, Expedition Map, Exquisite Blood, Torment of Hailfire, Urza's Cave. Coffers package (JD 11/04): Demonic Tutor, Exquisite Blood, Torment of Hailfire, Expedition Map, Urza's Cave for Deep Analysis, Prison Sentence, Chromatic Lantern, Static Net, an Island. Tested vs T5: +1.3 (noise ±2.4), no clear effect.
@@ -884,9 +891,25 @@ t3-t4 (Seph's seat from 2026-10-30).
   games at the table, so it mostly dies (to Tergrid, Aurelia, Edgar, Krenko) before a loop. Details: the ghave
   FINDINGS (audit/ghave/).
 
+## Thanos, the Mad Titan — Artifact Combo (Cali Commander)
+
+Deck key `thanos`, `decklists/cali_commander/thanos-artifact-combo.md` since 2026-11-13 (tier t5 for now; the engine has no
+1v1 or 30-life mode yet). Before that it was the artifacts-and-Dragons list below.
+
+### Changes
+
+- **2026-11-13.** New list (JD, not simulated): the artifacts-and-Dragons list is replaced by a Cali Commander (1v1, 30 life)
+  artifact-combo list. Out (58): Astral Dragon, Badlands, Bayou, Bloodstained Mire, Breeding Pool, Chromatic Lantern, Chrome Mox, City of Brass, Cursed Mirror, Decimate, Disdainful Stroke, Expedition Map, Flooded Strand, Forest, Gilded Lotus, Glorybringer, Goldspan Dragon, Grim Monolith, Imperial Seal, Karn, Scion of Urza, Mana Confluence, Mana Drain, Marsh Flats, Misty Rainforest, Mox Diamond, Mox Jasper, Mox Opal, Mystic Forge, Nature's Lore, Nicol Bolas, the Ravager, Pact of Negation, Plateau, Polluted Delta, Sacred Foundry, Scion of Draco, Scrubland, Smothering Tithe, Solemn Simulacrum, Steel Hellkite, Stomping Ground, Summon: Bahamut, Sylvan Library, Taiga, Terror of the Peaks, The Ur-Dragon, Thran Dynamo, Thundermaw Hellkite, Tropical Island, Tundra, Underground Sea, Urza's Bauble, Utvara Hellkite, Verdant Catacombs, Volcanic Island, Wayfarer's Bauble, Windswept Heath, Wooded Foothills, Wrenn and Six. In (58): Adarkar Wastes, Akroma's Will, An Offer You Can't Refuse, Avacyn's Pilgrim, Battlefield Forge, Blightsteel Colossus, Brain Freeze, Brushland, Caves of Koilos, Counterspell, Cyclonic Rift, Dark Ritual, Demonic Consultation, Diabolic Intent, Dovin's Veto, Ephemerate, Esper Sentinel, Exotic Orchard, Exsanguinate, Faeburrow Elder, Fellwar Stone, Fiery Emancipation, Grand Abolisher, Grim Tutor, Haunted Ridge, Heroic Intervention, Llanowar Elves, Lotus Petal, Mana Crypt, Mystic Confluence, Mystic Remora, Mystical Tutor, Nibelheim Aflame, Paradise Druid, Path of Ancestry, Plaza of Heroes, Primeval Titan, Shivan Reef, Silence, Sneak Attack, Spirebluff Canal, Staff of Domination, Stormcarved Coast, Sulfur Falls, Sunpetal Grove, Tainted Pact, Talisman of Hierarchy, Talisman of Progress, Thassa's Oracle, Thought Vessel, Tinker, Triple Triad, Underground River, Underworld Breach, Urborg, Tomb of Yawgmoth, Windborn Muse, Woodland Cemetery, Yavimaya Coast. Routes: Basalt Monolith + Rings of
+  Brighthearth, Staff of Domination + Faeburrow Elder, Tinker into Blightsteel Colossus (Sneak Attack as a second way to
+  put it in), and Thassa's Oracle with Demonic Consultation or Tainted Pact (Underworld Breach with Brain Freeze as a storm
+  line). Mana Crypt, Tinker and Primeval Titan are banned in Commander but legal in Cali, so `cardgen deck` rejects the list
+  until the engine work adds a Cali ban list; the file was written by hand. The Aragorn deck was retired and 29 of its
+  cards went to this list.
+
 ## Thanos, the Mad Titan — Five-Colour Artifacts and Dragons (High Bracket 4)
 
-Deck key `thanos`, `decklists/JD/thanos-artifacts-and-dragons.md`.
+Deck key `thanos` until 2026-11-13, `decklists/pool/retired/thanos-artifacts-and-dragons.md`. Replaced by the Cali
+Commander list above.
 
 ### Changes
 

@@ -39,7 +39,7 @@ ident = "WUBG"
 tiers = ["t6"]
 
 [thanos]
-file = "JD/thanos-artifacts-and-dragons.md"
+file = "cali_commander/thanos-artifact-combo.md"
 name = "Thanos"
 commander = "Thanos, the Mad Titan"
 ident = "WUBRG"

@@ -199,7 +199,7 @@ Creatures dying drain the table; the sacrifice outlets make them die on demand; 
   SOLDIER** (1 for each other creature that dies; the fourth in a turn transforms him, and then every creature death
   drains for the rest of the game), Massacre Wurm (2 per opposing creature that dies).
 - **Outlets:** Viscera Seer, Ashnod's Altar, Phyrexian Tower (a land: {T}, sacrifice a creature for {B}{B}), Yawgmoth,
-  Deadly Dispute, Diabolic Intent, Silence the Echo, Accursed Marauder, Sephiroth himself (sacrifice another creature on
+  Deadly Dispute, Silence the Echo, Accursed Marauder, Sephiroth himself (sacrifice another creature on
   entering or attacking to draw).
 - **Fodder:** Undercity Dire Rat (leaves a Treasure), the Zombie tokens from Grave Titan, the Army from Dreadhorde
   Invasion, a creature about to be killed anyway.
@@ -363,6 +363,8 @@ Marauder** makes each player sacrifice a nontoken creature (it can sacrifice its
 opponent sacrifice a creature whenever one of yours dies, so every sacrifice for value is also removal. With K'rrik
 out, Foolish Fate and Overkill cost {2} and 2 life, and Sephiroth's Intervention {3} and 2 life.
 
+**Nevinyrral's Disk** ({4}, enters tapped; {1}, {T}: destroy all artifacts, creatures and enchantments) is the deck's reset button for a board Massacre Wurm can't handle. It destroys Sheoldred, Mikaeus, K'rrik and every drain enchantment too, so activate it only when you are behind on board, with Animate Dead, Phyrexian Delver or the command zone ready to bring Sheoldred back, or when the engines are already dead. It is colourless, so K'rrik can't pay for any of it.
+
 #### Recursion
 
 **Phyrexian Delver** returns a creature card from your graveyard to the battlefield (you lose life equal to its mana
@@ -424,7 +426,6 @@ check that the mana for it is there this turn or the next.
 | Demonic Tutor | {1}{B} | Hand | Any card | Sorcery | Game Changer. The cheapest clean tutor, so it is the one to chain into the found card in the same turn |
 | Diabolic Tutor | {2}{B}{B} | Hand | Any card | Sorcery | Four mana: on turn 4 it competes with Sheoldred for the mana. Best from turn 6 on, with the found card castable next turn |
 | Grim Tutor | {1}{B}{B} | Hand | Any card | Sorcery | Costs 3 life and Sheoldred gives none back. Off at low life, without Sheoldred out, and against Exquisite Blood plus Sanguine Bond or Vito on the table |
-| Diabolic Intent | {1}{B}, sacrifice a creature | Hand | Any card | Sorcery | Needs a creature. The sacrifice also triggers Blood Artist, Zulaport Cutthroat, Sephiroth, Grave Pact and Mikaeus's undying. Under Tergrid a nontoken sacrifice is taken. Never sacrifice Sheoldred, Mikaeus or K'rrik for it |
 | Entomb | {B} | Graveyard | Any card | Instant | Useless without Reanimate, Animate Dead, Phyrexian Delver or Yawgmoth's Will to use the card. Dead to graveyard hate. It is the only tutor you can use on an opponent's turn |
 
 Other cards that find cards, none of them a choice: **Call of the Ring** (draws when you choose a Ring-bearer, 2 life
@@ -462,7 +463,7 @@ out, each {B} in the tutor and the target can be paid with 2 life (see "K'rrik, 
 | Sheoldred out, table with removal mana up, no way to keep going if she dies | Open blue or white mana | Any tutor | Underworld Dreams, Fate Unraveler or Phyrexian Arena | A second source of damage and draws that does not depend on her |
 | A go-wide board (Krenko, Edgar Markov, Aurelia, Marwyn, Chatterfang) | Many X/2 creatures | Any tutor, cast it next turn if the mana is short | Massacre Wurm | Kills the X/2s and each opponent loses 2 per creature that dies. Cast it before the swing, not after. 6 mana, or 3 and 6 life with K'rrik |
 | An opponent has Opposition Agent | Agent on the board | Do not tutor | Kill the Agent first (Foolish Fate, Overkill, Massacre Wurm) | It takes whatever you search for |
-| Tergrid or Liliana of the Veil out | Discard or edicts | Demonic Tutor, cast the card the same turn | The card you can cast now | So the card is not discarded or taken in hand. No Diabolic Intent, Sanitarium or Dispute |
+| Tergrid or Liliana of the Veil out | Discard or edicts | Demonic Tutor, cast the card the same turn | The card you can cast now | So the card is not discarded or taken in hand. No Sanitarium or Dispute |
 
 **Sheoldred removed, or the table is ahead**
 
@@ -513,8 +514,6 @@ out, each {B} in the tutor and the target can be paid with 2 life (see "K'rrik, 
   gives the table a turn to answer or stop you. Tutor with the mana left over.
 - **Tutoring for Exquisite Blood or Vito into untapped removal.** One answer ends the loop. Find Bond first, Blood last.
 - **Grim Tutor at low life, without Sheoldred out, or against Edgar's Exquisite Blood pieces.** The 3 life is not given back.
-- **Diabolic Intent with the wrong sacrifice.** Sheoldred, Mikaeus and K'rrik are engines. A Zombie token, Undercity
-  Dire Rat or a doomed creature is the cost. Under Tergrid, a nontoken creature is taken.
 - **Entomb with nothing to reanimate it, or into graveyard hate.** The card is simply lost.
 - **Tutoring under Tergrid or Liliana of the Veil** without casting the card the same turn, so it is discarded.
 - **Tutoring while an opponent controls Opposition Agent.**
@@ -586,7 +585,7 @@ Where numbers appear they come from older sim runs on earlier lists (`audit/sheo
 | Aurelia, the Warleader (t3, Boros extra combats) | Hasty flying attackers (Aurelia, Hero of Bladehold, Goblin Rabblemaster, Legion Warboss) with Embercleave and extra combats; Mother of Runes and Giver of Runes protect them; Blasphemous Act. Smothering Tithe makes a Treasure for them for each card you draw unless you pay {2} | Kill Mother of Runes and Giver of Runes first. Block with Sheoldred (deathtouch). Massacre Wurm kills their small creatures. Mikaeus destroys any Human that damages you (Hero of Bladehold, Adeline, Combat Celebrant). With Tithe out, draw fewer extra cards | Massacre Wurm, Grave Pact, Mikaeus, Foolish Fate, Accursed Marauder; Boots don't stop Council's Judgment |
 | Korvold, Fae-Cursed King (t3, Jund sacrifice) | Korvold draws and grows off every sacrifice; Blood Artist, Zulaport Cutthroat, Mayhem Devil, Goblin Bombardment, Impact Tremors; Chatterfang + Pitiless Plunderer; Terror of the Peaks; Toxic Deluge and cheap removal | Their deck draws a lot (Korvold, Skullclamp), so punishers hit hard: Underworld Dreams, Fate Unraveler, then Sheoldred. Kill Korvold. Your life gain out-races their pings. Massacre Wurm clears the tokens | Underworld Dreams, Fate Unraveler, Massacre Wurm, Foolish Fate, Overkill, Boots |
 | Marwyn, the Nurturer (t3, mono-green elves) | A board of mana elves, then Craterhoof Behemoth once Gaea's Cradle and the elves are out (Natural Order, Green Sun's Zenith, Chord of Calling, Finale of Devastation find it). Killing Craterhoof after it enters doesn't stop its trigger | Kill the mana elves early and sweep before the swing. They draw little, so the punishers are weaker here: lean on the creatures and Exsanguinate. Fellwar Stone may only make green mana, so count it as colorless | Massacre Wurm (elves have toughness 2 or less, and each costs 2 life), Foolish Fate, Silence the Echo, Grave Pact, Sheoldred as a blocker (Craterhoof tramples over it) |
-| Tergrid, God of Fright (t3, mono-black discard and edicts) | Tergrid takes every nontoken permanent you sacrifice or discard. Edicts (Sheoldred's Edict, Plaguecrafter, Fleshbag Marauder, Innocent Blood), Liliana of the Veil, Waste Not (their gain when you discard), Painful Quandary. Their deck has its own Sheoldred (your draws cost you 2), Whispering One, Gray Merchant, Phyrexian Obliterator. Dauthi Voidwalker and Bojuka Bog hate the graveyard | Never sacrifice or discard a nontoken permanent while Tergrid is out (Deadly Dispute, Diabolic Intent, Silence the Echo, Phyrexian Tower, Geier Reach Sanitarium, Mind Stone). Edicts take your choice of creature, so keep tokens and cheap bodies (Sheoldred's Edict can force a nontoken one). Play out your hand before Liliana. Kill their Sheoldred (Animate Dead takes it from a graveyard). Keep your hand to 7 | Zombie tokens (Grave Titan, Dreadhorde Invasion), Undercity Dire Rat, Foolish Fate, Overkill, Animate Dead, Underworld Dreams |
+| Tergrid, God of Fright (t3, mono-black discard and edicts) | Tergrid takes every nontoken permanent you sacrifice or discard. Edicts (Sheoldred's Edict, Plaguecrafter, Fleshbag Marauder, Innocent Blood), Liliana of the Veil, Waste Not (their gain when you discard), Painful Quandary. Their deck has its own Sheoldred (your draws cost you 2), Whispering One, Gray Merchant, Phyrexian Obliterator. Dauthi Voidwalker and Bojuka Bog hate the graveyard | Never sacrifice or discard a nontoken permanent while Tergrid is out (Deadly Dispute, Silence the Echo, Phyrexian Tower, Geier Reach Sanitarium, Mind Stone). Edicts take your choice of creature, so keep tokens and cheap bodies (Sheoldred's Edict can force a nontoken one). Play out your hand before Liliana. Kill their Sheoldred (Animate Dead takes it from a graveyard). Keep your hand to 7 | Zombie tokens (Grave Titan, Dreadhorde Invasion), Undercity Dire Rat, Foolish Fate, Overkill, Animate Dead, Underworld Dreams |
 | Chulane, Teller of Tales (t4, Bant value and Aluren) | Chulane draws and ramps off every creature spell. Aluren or Intruder Alarm with Shrieking Drake or Whitemane Lion loops creatures, draws the deck and wins with Thassa's Oracle, Laboratory Maniac or Craterhoof. Counterspell, Dovin's Veto, Swan Song, Fierce Guardianship; Cyclonic Rift; Drannith Magistrate (you can't cast Sheoldred from the command zone or the graveyard) | A punisher is your answer to the loop: with Sheoldred out each card they draw costs 2, so drawing the deck kills them. Cast creature spells into counterspell decks (Veto, Swan Song and Fierce can't hit creatures). Kill Chulane, the bouncers and Drannith Magistrate. You have almost no answer to their enchantments: race | Sheoldred, Underworld Dreams, Fate Unraveler, Foolish Fate, Overkill, Massacre Wurm (Magistrate and the small creatures), creature finishers (Gray Merchant, Mikaeus) |
 | Edgar Markov (t4, Mardu Vampires) | Eminence makes a 1/1 Vampire for every Vampire spell cast, from the command zone. Wide first-strike attacks (Edgar, Drana). Their own Sanguine Bond, Vito and Exquisite Blood loops. Cheap removal (Swords, Path, Bolt, Terminate, Fatal Push, Anguished Unmaking), Damn, New Blood, Teferi's Protection | Massacre Wurm costs them 2 per Vampire token. Sheoldred and Grave Pact hold the board. Do not pay life (Phyrexian Arena, The One Ring, Ad Nauseam, Grim Tutor, K'rrik's 2 life per {B}) when their Exquisite Blood or Bloodthirsty Conqueror is out beside Sanguine Bond, Vito or Marauding Blight-Priest: your life loss starts their loop. Kill Vito or Blight-Priest first | Massacre Wurm, Grave Pact, Accursed Marauder, Overkill, Foolish Fate, Mikaeus (undying against their wipes), Boots |
 | Krenko, Mob Boss (t4, mono-red goblins) | Krenko doubles the Goblins each activation; Impact Tremors, Goblin Bombardment, Purphoros, Coat of Arms; haste from Lightning Greaves and Swiftfoot Boots. Thornbite Staff + an outlet is infinite. Blood Moon turns your nonbasic lands into Mountains. The sims show Krenko ended about 12% of games | Kill Krenko before he untaps (Foolish Fate and Overkill are instants). Massacre Wurm answers the whole Goblin board. Keep Sheoldred home as a blocker. Under Blood Moon only the 30 Swamps make {B} (Cabal Coffers and Barad-dûr don't) | Massacre Wurm, Foolish Fate, Overkill, Grave Pact, Accursed Marauder, Mikaeus (undying against Bombardment) |
@@ -647,7 +646,7 @@ whole turn before the first spell (each {B} is 2) and leave yourself at least 15
    keep a second line.
 5. Paying life (Arena, Ad Nauseam, Grim Tutor, The One Ring) without Sheoldred, or against Edgar's Exquisite Blood pieces.
 6. Tutoring while an opponent controls Opposition Agent.
-7. Sacrificing or discarding a nontoken permanent while Tergrid is out (Deadly Dispute, Diabolic Intent, the Sanitarium),
+7. Sacrificing or discarding a nontoken permanent while Tergrid is out (Deadly Dispute, the Sanitarium),
    or ending the turn with 8 cards.
 8. Putting Sheoldred in the command zone when you hold Animate Dead, Phyrexian Delver or Yawgmoth's Will, which bring her back
    cheaper, and paying the tax when she is already in the graveyard.
@@ -668,8 +667,8 @@ and draw cards.
 
 Other mana: three rocks (Arcane Signet, which makes {B}; Fellwar Stone, which makes a colour an opposing land could
 produce, so it may not make {B}; Mind Stone), Dark Ritual, Ashnod's Altar, and the Treasures from Undercity Dire Rat and
-Deadly Dispute, and K'rrik, which pays each {B} with 2 life. Tutors: Demonic Tutor, Diabolic Intent, Diabolic Tutor and
-Grim Tutor, plus Entomb. Interaction: five removal spells, Massacre Wurm, Accursed Marauder, Rooftop Assassin and Grave Pact; protection: Swiftfoot Boots and
+Deadly Dispute, and K'rrik, which pays each {B} with 2 life. Tutors: Demonic Tutor, Diabolic Tutor and
+Grim Tutor, plus Entomb. Interaction: five removal spells, Nevinyrral's Disk, Massacre Wurm, Accursed Marauder, Rooftop Assassin and Grave Pact; protection: Swiftfoot Boots and
 Perigee Beckoner (and Mikaeus's undying).
 
 ## Bracket and Rule 0
@@ -694,9 +693,9 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 
 **Enchantments (8).** Animate Dead, Call of the Ring, Dreadhorde Invasion, Exquisite Blood, Grave Pact, Phyrexian Arena, Sanguine Bond, Underworld Dreams
 
-**Artifacts (10).** Arcane Signet, Ashnod's Altar, Bolas's Citadel, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Skullclamp, Swiftfoot Boots, The One Ring
+**Artifacts (11).** Arcane Signet, Ashnod's Altar, Bolas's Citadel, Fellwar Stone, Howling Mine, Memory Jar, Mind Stone, Nevinyrral's Disk, Skullclamp, Swiftfoot Boots, The One Ring
 
-**Sorceries (14).** Ambition's Cost, Cost of Brilliance, Demonic Tutor, Diabolic Intent, Diabolic Tutor, Exsanguinate, Grim Tutor, Invoke Despair, Peer into the Abyss, Reanimate, Silence the Echo, Syphon Mind, Torment of Hailfire, Yawgmoth's Will
+**Sorceries (13).** Ambition's Cost, Cost of Brilliance, Demonic Tutor, Diabolic Tutor, Exsanguinate, Grim Tutor, Invoke Despair, Peer into the Abyss, Reanimate, Silence the Echo, Syphon Mind, Torment of Hailfire, Yawgmoth's Will
 
 **Instants (7).** Ad Nauseam, Dark Ritual, Deadly Dispute, Entomb, Foolish Fate, Overkill, Sephiroth's Intervention
 
@@ -719,7 +718,6 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Dark Ritual
 1 Deadly Dispute
 1 Demonic Tutor
-1 Diabolic Intent
 1 Diabolic Tutor
 1 Dreadhorde Invasion
 1 Entomb
@@ -743,6 +741,7 @@ draw, and Sheoldred, Underworld Dreams and Fate Unraveler are what make that cos
 1 Mikaeus, the Unhallowed
 1 Mikokoro, Center of the Sea
 1 Mind Stone
+1 Nevinyrral's Disk
 1 Ob Nixilis, the Fallen
 1 Overkill
 1 Peer into the Abyss
