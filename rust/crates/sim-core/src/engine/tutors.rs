@@ -66,6 +66,7 @@ pub const REVEALS: &[&str] = &[
     "Sylvan Scrying",
     "Tezzeret, Cruel Captain",
     "Three Dreams",
+    "Tiamat",
     "Tribute Mage",
     "Trinket Mage",
     "Trophy Mage",
