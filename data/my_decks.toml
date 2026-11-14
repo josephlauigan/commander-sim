@@ -44,3 +44,10 @@ name = "Thanos"
 commander = "Thanos, the Mad Titan"
 ident = "WUBRG"
 tiers = ["t5"]
+
+[urdragon]
+file = "JD/urdragon-five-colour-dragons.md"
+name = "Ur-Dragon"
+commander = "The Ur-Dragon"
+ident = "WUBRG"
+tiers = ["t5"]

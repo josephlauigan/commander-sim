@@ -9,7 +9,7 @@ up 2026-11-02 and its key retired the same day; Karn and Ur-Dragon broken up 202
 day). On 2026-11-05 the old Tymna/Thrasios and old Thanos lists were replaced by the Tymna/Thrasios Doomsday and Thanos
 artifacts-and-Dragons rebuilds, and the `thrasios` and `thanos` keys were pointed at the new files. On 2026-11-06 Kefka
 and Sauron were merged into Aragorn, the Uniter (key `aragorn`) and their keys retired.
-On 2026-11-13 the Thanos key was pointed at a Cali Commander artifact-combo list (`decklists/cali_commander/`) and
+On 2026-11-13 a new Ur-Dragon deck (key `urdragon`) was added and the Thanos key was pointed at a Cali Commander artifact-combo list (`decklists/cali_commander/`) and
 Aragorn was retired as a deck (its key stays in the simulator until the engine work).
 Avery's decks (Alela, Galadriel) are no longer tracked from 2026-11-06 (JD); their lists are in `decklists/pool/retired/`.
 
@@ -530,6 +530,14 @@ Deck key `kraum` (removed), `decklists/JD/tymna-kraum-partners.md` (removed).
 - **2026-10-13.** The comparison build scored **15.3% over T1–T5** (T1 12.3, T2 16.5, T3 17.5, T4 14.3, T5 16.1;
   1,000 games per tier, look-ahead, loose; `audit/tymna/2026-10-13-fix/` on branch `tymna-thrasios`), against 10.1%
   for the Thrasios build.
+
+## The Ur-Dragon — Five-Colour Dragons (High Bracket 4)
+
+Deck key `urdragon`, `decklists/JD/urdragon-five-colour-dragons.md` since 2026-11-13 (tier t5). The earlier Ur-Dragon key was retired on 2026-11-05.
+
+### Changes
+
+- **2026-11-13.** New deck (JD, not simulated): an optimised high-bracket-4 Dragons list with proxies allowed, designed with Opus from the owned-cards draft. 23 Dragons (Terror of the Peaks, Goldspan Dragon, Hellkite Tyrant, Ancient Brass Dragon and Shivan Dragon among them), the Garth One-Eye, Spark Double, Twinflame and Doubling Season combo, one-mana dorks and Mana Vault, Rhystic Study, Sylvan Library, Teferi's Protection, Fierce Guardianship, four tutors, and a mana base of ten original duals, ten fetches and five shocks with three basics. 13 Game Changers.
 
 ## Veyran, Voice of Duality — Izzet Spellslinger
 

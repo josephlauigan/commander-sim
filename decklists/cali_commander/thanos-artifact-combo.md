@@ -205,7 +205,7 @@ Underworld Breach).
 ### Interaction
 
 - **Spot removal:** Swords to Plowshares and Chaos Warp (both answer a creature or artifact blocking or attacking),
-  Cyclonic Rift (overloaded at {6}: bounce all their nonland permanents, which is a reset and a clock in a 1v1 game),
+  Cyclonic Rift (overloaded at {6}{U}: bounce all their nonland permanents, which is a reset and a clock in a 1v1 game),
   Meteor Golem and Thanos's power-up (creatures).
 - **Hate pieces to expect:** Null Rod and Collector Ouphe hit the artifacts, Stony Silence, Pithing Needle and Cursed
   Totem hit abilities, Rule of Law and Eidolon of the Great Revel hit spells. Route E (a creature) and Route O (two spells and a
