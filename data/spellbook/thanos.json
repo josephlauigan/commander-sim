@@ -1,14 +1,100 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-11-06",
+  "fetched": "2026-11-14",
   "deck": "thanos",
   "commanders": [
     "Thanos, the Mad Titan"
   ],
-  "request_sha256": "9d5dcf578fb17aa312f8a977ee4973cf62069ce1f4bebbd363dd12be79c13769",
+  "request_sha256": "2c23983336753be1e81a75ba75ea95a6f607d2b25512a7c81899edf4282ce509",
   "identity": "WUBRG",
   "included": [
+    {
+      "id": "742-1295",
+      "cards": [
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 151286
+    },
+    {
+      "id": "1295-3093",
+      "cards": [
+        {
+          "name": "Tainted Pact",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "No two cards in library share a name.",
+      "mana": "{1}{U}{U}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 132847
+    },
+    {
+      "id": "1368-1414-4856",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "H",
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least six other cards in your graveyard, plus an additional four cards if Brain Freeze is in your graveyard.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 119672
+    },
     {
       "id": "4131-4235",
       "cards": [
@@ -33,34 +119,37 @@
       "mana": "{2}",
       "bracket": "R",
       "legal": true,
-      "popularity": 54256
+      "popularity": 54479
     },
     {
-      "id": "703-5291",
+      "id": "570-2645",
       "cards": [
         {
-          "name": "Astral Dragon",
+          "name": "Staff of Domination",
           "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Cursed Mirror",
+          "name": "Faeburrow Elder",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite copies of noncreature permanents you control",
-        "Infinite creature tokens with haste"
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce",
+        "Infinite colored mana"
       ],
       "requires": [],
-      "prerequisites": "Cursed Mirror cannot be copying a creature.",
-      "mana": "{6}{U}{U}",
-      "bracket": "O",
+      "prerequisites": "Faeburrow Elder does not have summoning sickness. You control a permanent of each color.",
+      "mana": "",
+      "bracket": "S",
       "legal": true,
-      "popularity": 11166
+      "popularity": 4043
     }
   ],
   "included_by_changing_commanders": [],
@@ -91,9 +180,81 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 366425,
+      "popularity": 368373,
       "missing": [
         "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "1368-3518-4856",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lion's Eye Diamond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite colored mana",
+        "Near-infinite mill"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least six other cards in hand and/or graveyard.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 97032,
+      "missing": [
+        "Lion's Eye Diamond"
+      ]
+    },
+    {
+      "id": "1368-1878-2706",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wheel of Fortune",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Jeska's Will",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting for all players"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least six additional cards in your graveyard, plus an additional six cards between your hand and/or graveyard.\nAn opponent has at least six cards in hand.",
+      "mana": "{2}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 91527,
+      "missing": [
+        "Wheel of Fortune"
       ]
     },
     {
@@ -122,7 +283,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 78489,
+      "popularity": 78839,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -151,7 +312,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 66844,
+      "popularity": 67316,
       "missing": [
         "Forsaken Monument"
       ]
@@ -182,7 +343,7 @@
       "mana": "{1}{W}",
       "bracket": "S",
       "legal": true,
-      "popularity": 53283,
+      "popularity": 53531,
       "missing": [
         "Heliod, Sun-Crowned"
       ]
@@ -211,9 +372,41 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 47016,
+      "popularity": 46999,
       "missing": [
         "Kinnan, Bonder Prodigy"
+      ]
+    },
+    {
+      "id": "1368-3698--44",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grinding Station",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite mana among colors of legendary creatures and planeswalkers you control"
+      ],
+      "requires": [
+        "Artifact Castable for {0} that survives"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 41509,
+      "missing": [
+        "Grinding Station"
       ]
     },
     {
@@ -241,7 +434,7 @@
       "mana": "{6}{R}{R}{R}",
       "bracket": "P",
       "legal": true,
-      "popularity": 38586,
+      "popularity": 38826,
       "missing": [
         "Reiterate"
       ]
@@ -270,9 +463,141 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 38005,
+      "popularity": 38104,
       "missing": [
         "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "1376-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Priest of Titania",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Priest of Titania does not have summoning sickness. There are at least five Elves on the battlefield.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 37896,
+      "missing": [
+        "Priest of Titania"
+      ]
+    },
+    {
+      "id": "2645-3151",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elvish Archdruid",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Elvish Archdruid does not have summoning sickness. You control at least five Elves.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 34343,
+      "missing": [
+        "Elvish Archdruid"
+      ]
+    },
+    {
+      "id": "2436-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Marwyn, the Nurturer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Marwyn does not have summoning sickness, and has power 5 or greater.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 32953,
+      "missing": [
+        "Marwyn, the Nurturer"
+      ]
+    },
+    {
+      "id": "1526-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Circle of Dreams Druid",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Circle of Dreams Druid does not have summoning sickness. You control at least five creatures.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 29097,
+      "missing": [
+        "Circle of Dreams Druid"
       ]
     },
     {
@@ -299,36 +624,71 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 26574,
+      "popularity": 26646,
       "missing": [
         "Forensic Gadgeteer"
       ]
     },
     {
-      "id": "3263-5089",
+      "id": "553-2856",
       "cards": [
         {
-          "name": "Karn, the Great Creator",
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Mystical Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "{12}{W}{W}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 25917,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "527-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Mycosynth Lattice",
+          "name": "Selvala, Heart of the Wilds",
           "zones": [
             "B"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
       "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
+      "prerequisites": "Selvala does not have summoning sickness. You control a creature with power 6 or greater.",
+      "mana": "{G}",
+      "bracket": "S",
       "legal": true,
-      "popularity": 22988,
+      "popularity": 24348,
       "missing": [
-        "Mycosynth Lattice"
+        "Selvala, Heart of the Wilds"
       ]
     },
     {
@@ -355,38 +715,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 18873,
+      "popularity": 19062,
       "missing": [
         "Cybermen Squadron"
-      ]
-    },
-    {
-      "id": "1110-2136",
-      "cards": [
-        {
-          "name": "Orthion, Hero of Lavabrink",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Terror of the Peaks",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite damage"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{6}{R}{R}{R}",
-      "bracket": "C",
-      "legal": true,
-      "popularity": 15841,
-      "missing": [
-        "Orthion, Hero of Lavabrink"
       ]
     },
     {
@@ -413,9 +744,133 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 15214,
+      "popularity": 15233,
       "missing": [
         "Nyxbloom Ancient"
+      ]
+    },
+    {
+      "id": "1902-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Wirewood Channeler",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Wirewood Channeler does not have summoning sickness. There are at least five Elves on the battlefield.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 15130,
+      "missing": [
+        "Wirewood Channeler"
+      ]
+    },
+    {
+      "id": "2645-5168",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Bloom Tender",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce",
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "Bloom Tender does not have summoning sickness. You control a permanent of each color.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14854,
+      "missing": [
+        "Bloom Tender"
+      ]
+    },
+    {
+      "id": "742-2836",
+      "cards": [
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Laboratory Maniac",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14749,
+      "missing": [
+        "Laboratory Maniac"
+      ]
+    },
+    {
+      "id": "1295-3189",
+      "cards": [
+        {
+          "name": "Doomsday",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.\nYou have at least three devotion to blue.",
+      "mana": "{U}{U}{B}{B}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14685,
+      "missing": [
+        "Doomsday"
       ]
     },
     {
@@ -442,7 +897,7 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 14009,
+      "popularity": 14008,
       "missing": [
         "Tidespout Tyrant"
       ]
@@ -474,36 +929,40 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 12760,
+      "popularity": 12898,
       "missing": [
         "Archangel of Thune"
       ]
     },
     {
-      "id": "628-3693",
+      "id": "953-1295",
       "cards": [
         {
-          "name": "Walking Ballista",
+          "name": "Enter the Infinite",
           "zones": [
-            "B"
+            "H"
           ]
         },
         {
-          "name": "Mikaeus, the Unhallowed",
+          "name": "Thassa's Oracle",
           "zones": [
-            "B"
+            "H",
+            "L"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Infinite card draw",
+        "Win the game"
+      ],
       "requires": [],
-      "prerequisites": "Walking Ballista on the battlefield with a +1/+1 counter on it.",
-      "mana": "",
-      "bracket": "E",
+      "prerequisites": "",
+      "mana": "{8}{U}{U}{U}{U}{U}{U}",
+      "bracket": "P",
       "legal": true,
-      "popularity": 12158,
+      "popularity": 12798,
       "missing": [
-        "Mikaeus, the Unhallowed"
+        "Enter the Infinite"
       ]
     },
     {
@@ -530,36 +989,69 @@
       "mana": "{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 12148,
+      "popularity": 12286,
       "missing": [
         "Jumbo Cactuar"
       ]
     },
     {
-      "id": "542-4009",
+      "id": "628-3693",
       "cards": [
         {
-          "name": "Tidespout Tyrant",
+          "name": "Walking Ballista",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Mox Opal",
+          "name": "Mikaeus, the Unhallowed",
           "zones": [
-            "H"
+            "B"
           ]
         }
       ],
       "results": [],
       "requires": [],
-      "prerequisites": "You control at least three artifacts.\nYou control a nontoken permanent that can be cast using one colored mana.",
+      "prerequisites": "Walking Ballista on the battlefield with a +1/+1 counter on it.",
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 12099,
+      "popularity": 12212,
       "missing": [
-        "Tidespout Tyrant"
+        "Mikaeus, the Unhallowed"
+      ]
+    },
+    {
+      "id": "578-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Metalworker",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colorless mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Metalworker does not have summoning sickness. You have at least three artifact cards in hand.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12020,
+      "missing": [
+        "Metalworker"
       ]
     },
     {
@@ -586,9 +1078,38 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 11042,
+      "popularity": 11105,
       "missing": [
         "Power Artifact"
+      ]
+    },
+    {
+      "id": "1295-4400",
+      "cards": [
+        {
+          "name": "Hermit Druid",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Hermit Druid does not have summoning sickness.\nYou have no basic lands in library.",
+      "mana": "{G}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10464,
+      "missing": [
+        "Hermit Druid"
       ]
     },
     {
@@ -615,9 +1136,39 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 10310,
+      "popularity": 10316,
       "missing": [
         "Zirda, the Dawnwaker"
+      ]
+    },
+    {
+      "id": "570-4222",
+      "cards": [
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Freed from the Real",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Freed from the Real attached to Faeburrow Elder.\nFaeburrow Elder does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 10271,
+      "missing": [
+        "Freed from the Real"
       ]
     },
     {
@@ -644,68 +1195,9 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 10113,
+      "popularity": 10123,
       "missing": [
         "Mesmeric Orb"
-      ]
-    },
-    {
-      "id": "2585-5149",
-      "cards": [
-        {
-          "name": "Power Artifact",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Grim Monolith",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "Power Artifact attached to Grim Monolith.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 10045,
-      "missing": [
-        "Power Artifact"
-      ]
-    },
-    {
-      "id": "4740-5089",
-      "cards": [
-        {
-          "name": "Karn, the Great Creator",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Aetherflux Reservoir",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite damage",
-        "Infinite lifegain triggers"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to give Aetherflux Reservoir lifelink.\nYour life total is at least 51.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 10016,
-      "missing": [
-        "Aetherflux Reservoir"
       ]
     },
     {
@@ -730,9 +1222,38 @@
       "mana": "{4}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 9865,
+      "popularity": 9950,
       "missing": [
         "Master Transmuter"
+      ]
+    },
+    {
+      "id": "1068-1295",
+      "cards": [
+        {
+          "name": "Leveler",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{U}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 9881,
+      "missing": [
+        "Leveler"
       ]
     },
     {
@@ -759,7 +1280,7 @@
       "mana": "{13}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 9734,
+      "popularity": 9841,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -790,123 +1311,99 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 9624,
+      "popularity": 9702,
       "missing": [
         "Cleric Class"
       ]
     },
     {
-      "id": "542-2585",
+      "id": "2836-3093",
       "cards": [
         {
-          "name": "Tidespout Tyrant",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Grim Monolith",
+          "name": "Tainted Pact",
           "zones": [
             "H"
           ]
+        },
+        {
+          "name": "Laboratory Maniac",
+          "zones": [
+            "B"
+          ]
         }
       ],
       "results": [
-        "Infinite colorless mana"
+        "Win the game"
       ],
       "requires": [],
-      "prerequisites": "You control a nontoken permanent that can be cast using {C}.",
-      "mana": "{2}",
+      "prerequisites": "No two cards in library share a name. You have a way to draw a card.",
+      "mana": "{1}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 8871,
+      "popularity": 9677,
       "missing": [
-        "Tidespout Tyrant"
+        "Laboratory Maniac"
       ]
     },
     {
-      "id": "2585-3430",
+      "id": "742-3096",
       "cards": [
         {
-          "name": "Grim Monolith",
+          "name": "Demonic Consultation",
           "zones": [
-            "B"
+            "H"
           ]
         },
         {
-          "name": "Nyxbloom Ancient",
+          "name": "Jace, Wielder of Mysteries",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite colorless mana"
+        "Win the game"
       ],
       "requires": [],
       "prerequisites": "",
-      "mana": "",
+      "mana": "{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 8703,
+      "popularity": 9548,
       "missing": [
-        "Nyxbloom Ancient"
+        "Jace, Wielder of Mysteries"
       ]
     },
     {
-      "id": "1110-1908",
+      "id": "570-2011",
       "cards": [
         {
-          "name": "Rionya, Fire Dancer",
+          "name": "Najeela, the Blade-Blossom",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Terror of the Peaks",
+          "name": "Faeburrow Elder",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Near-infinite damage"
+        "Infinite creature tokens with haste",
+        "Infinite combat phases",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
       ],
       "requires": [],
-      "prerequisites": "",
+      "prerequisites": "Najeela and Faeburrow Elder do not have summoning sickness.\nYou control a blue and a black permanent.\nOpponents can not block and kill creatures you control.",
       "mana": "",
-      "bracket": "R",
+      "bracket": "S",
       "legal": true,
-      "popularity": 8574,
+      "popularity": 9059,
       "missing": [
-        "Rionya, Fire Dancer"
-      ]
-    },
-    {
-      "id": "1025-4682",
-      "cards": [
-        {
-          "name": "Stasis",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Smothering Tithe",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 8405,
-      "missing": [
-        "Stasis"
+        "Najeela, the Blade-Blossom"
       ]
     },
     {
@@ -933,73 +1430,42 @@
       "mana": "{3}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 8080,
+      "popularity": 8131,
       "missing": [
         "Ad Nauseam"
       ]
     },
     {
-      "id": "2585-4235-4547",
+      "id": "2645-3291",
       "cards": [
         {
-          "name": "Rings of Brighthearth",
+          "name": "Staff of Domination",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Forsaken Monument",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Grim Monolith",
+          "name": "Karametra's Acolyte",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite colorless mana"
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
       ],
       "requires": [],
-      "prerequisites": "",
-      "mana": "{2}",
-      "bracket": "P",
+      "prerequisites": "Karametra's Acolyte does not have summoning sickness. Your devotion to green is at least five.",
+      "mana": "",
+      "bracket": "S",
       "legal": true,
-      "popularity": 7663,
+      "popularity": 7874,
       "missing": [
-        "Forsaken Monument"
-      ]
-    },
-    {
-      "id": "1110-6785",
-      "cards": [
-        {
-          "name": "Devastating Onslaught",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Terror of the Peaks",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Near-infinite damage"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{10}{R}",
-      "bracket": "C",
-      "legal": true,
-      "popularity": 7551,
-      "missing": [
-        "Devastating Onslaught"
+        "Karametra's Acolyte"
       ]
     },
     {
@@ -1026,9 +1492,69 @@
       "mana": "{12}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7521,
+      "popularity": 7609,
       "missing": [
         "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "81-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kami of Whispered Hopes",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Kami of Whispered Hopes does not have summoning sickness, and has power 5 or greater.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 7476,
+      "missing": [
+        "Kami of Whispered Hopes"
+      ]
+    },
+    {
+      "id": "147-5144",
+      "cards": [
+        {
+          "name": "Dualcaster Mage",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Ephemerate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "There are legal target(s) for Ephemerate.",
+      "mana": "{1}{R}{R}{W}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 7375,
+      "missing": [
+        "Dualcaster Mage"
       ]
     },
     {
@@ -1058,9 +1584,104 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 7135,
+      "popularity": 7198,
       "missing": [
         "Mind Over Matter"
+      ]
+    },
+    {
+      "id": "1597-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gyre Sage",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Gyre Sage does not have summoning sickness, and has at least five +1/+1 counters on it.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 7088,
+      "missing": [
+        "Gyre Sage"
+      ]
+    },
+    {
+      "id": "3093-3096",
+      "cards": [
+        {
+          "name": "Tainted Pact",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jace, Wielder of Mysteries",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "No two cards in library share a name.",
+      "mana": "{1}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 7077,
+      "missing": [
+        "Jace, Wielder of Mysteries"
+      ]
+    },
+    {
+      "id": "2645-6410",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Howlsquad Heavy",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite red mana",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Howlsquad Heavy does not have summoning sickness. You have max speed. You control at least five Goblins.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 6807,
+      "missing": [
+        "Howlsquad Heavy"
       ]
     },
     {
@@ -1087,38 +1708,108 @@
       "mana": "{3}{R}{R}",
       "bracket": "R",
       "legal": true,
-      "popularity": 6487,
+      "popularity": 6565,
       "missing": [
         "Chandra's Ignition"
       ]
     },
     {
-      "id": "1110-1744",
+      "id": "693-1368",
       "cards": [
         {
-          "name": "Terror of the Peaks",
+          "name": "Underworld Breach",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Rite of Replication",
+          "name": "Path of the Pyromancer",
           "zones": [
-            "H"
+            "G"
           ]
         }
       ],
       "results": [
-        "Near-infinite damage"
+        "Infinite rummaging",
+        "Near-infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least five cards in hand.\nYou have at least three additional cards in your graveyard.",
+      "mana": "{4}{R}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5619,
+      "missing": [
+        "Path of the Pyromancer"
+      ]
+    },
+    {
+      "id": "570-3525",
+      "cards": [
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Pemmin's Aura",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Pemmin's Aura attached to Faeburrow Elder.\nFaeburrow Elder does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5217,
+      "missing": [
+        "Pemmin's Aura"
+      ]
+    },
+    {
+      "id": "132-2645-5034",
+      "cards": [
+        {
+          "name": "Myr Welder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite colorless mana"
       ],
       "requires": [],
       "prerequisites": "",
-      "mana": "{7}{U}{U}",
-      "bracket": "C",
+      "mana": "",
+      "bracket": "E",
       "legal": true,
-      "popularity": 5448,
+      "popularity": 5139,
       "missing": [
-        "Rite of Replication"
+        "Myr Welder"
       ]
     },
     {
@@ -1145,75 +1836,38 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 4641,
+      "popularity": 4686,
       "missing": [
         "Blade of Selves"
       ]
     },
     {
-      "id": "2585-2713",
+      "id": "1295-2853",
       "cards": [
         {
-          "name": "Zirda, the Dawnwaker",
+          "name": "Thassa's Oracle",
           "zones": [
-            "B"
+            "H"
           ]
         },
         {
-          "name": "Grim Monolith",
+          "name": "Thought Lash",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite colorless mana"
+        "Win the game"
       ],
       "requires": [],
       "prerequisites": "",
-      "mana": "",
+      "mana": "{U}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 4253,
+      "popularity": 4364,
       "missing": [
-        "Zirda, the Dawnwaker"
-      ]
-    },
-    {
-      "id": "3809-4682-7890",
-      "cards": [
-        {
-          "name": "Gleaming Splendor",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Smothering Tithe",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Goldspan Dragon",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw for any number of players",
-        "Near-infinite Treasure tokens",
-        "Near-infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
-      "mana": "{2}{W}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 3962,
-      "missing": [
-        "Gleaming Splendor"
+        "Thought Lash"
       ]
     },
     {
@@ -1240,68 +1894,71 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 3949,
+      "popularity": 3986,
       "missing": [
         "Crackdown Construct"
       ]
     },
     {
-      "id": "703-1562",
+      "id": "2645-3717",
       "cards": [
         {
-          "name": "Astral Dragon",
+          "name": "Staff of Domination",
           "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Machine God's Effigy",
+          "name": "Viridian Joiner",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite blue mana",
-        "Infinite creature token copies of all noncreature permanents",
-        "Infinite creature tokens",
-        "Infinite noncreature artifact token copies of all creatures"
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
       ],
       "requires": [],
-      "prerequisites": "",
-      "mana": "{6}{U}{U}",
-      "bracket": "P",
+      "prerequisites": "Viridian Joiner does not have summoning sickness, and has power 5 or greater.",
+      "mana": "",
+      "bracket": "S",
       "legal": true,
-      "popularity": 3772,
+      "popularity": 3827,
       "missing": [
-        "Machine God's Effigy"
+        "Viridian Joiner"
       ]
     },
     {
-      "id": "2781-5291",
+      "id": "1295-3367",
       "cards": [
         {
-          "name": "Felidar Guardian",
+          "name": "Paradigm Shift",
           "zones": [
-            "B"
+            "H"
           ]
         },
         {
-          "name": "Cursed Mirror",
+          "name": "Thassa's Oracle",
           "zones": [
             "H"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Win the game"
+      ],
       "requires": [],
-      "prerequisites": "",
-      "mana": "{2}{R}",
-      "bracket": "E",
+      "prerequisites": "The number of cards in your graveyard is less than two plus your devotion to blue.",
+      "mana": "{1}{U}{U}{U}",
+      "bracket": "S",
       "legal": true,
-      "popularity": 3466,
+      "popularity": 3787,
       "missing": [
-        "Felidar Guardian"
+        "Paradigm Shift"
       ]
     },
     {
@@ -1328,9 +1985,87 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 3455,
+      "popularity": 3488,
       "missing": [
         "Mana Reflection"
+      ]
+    },
+    {
+      "id": "132-2645-4131",
+      "cards": [
+        {
+          "name": "Myr Welder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3326,
+      "missing": [
+        "Myr Welder"
+      ]
+    },
+    {
+      "id": "2645-3918-5034",
+      "cards": [
+        {
+          "name": "Trazyn the Infinite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colorless mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3326,
+      "missing": [
+        "Trazyn the Infinite"
       ]
     },
     {
@@ -1355,79 +2090,42 @@
       "mana": "{5}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 3310,
+      "popularity": 3313,
       "missing": [
         "Drafna, Founder of Lat-Nam"
       ]
     },
     {
-      "id": "1978-4131-5089",
+      "id": "1355-2645",
       "cards": [
         {
-          "name": "Voltaic Construct",
+          "name": "Staff of Domination",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Basalt Monolith",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Karn, the Great Creator",
+          "name": "Sanctum Weaver",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite colorless mana"
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
       ],
       "requires": [],
-      "prerequisites": "",
+      "prerequisites": "Sanctum Weaver does not have summoning sickness. You control at least five enchantments.",
       "mana": "",
-      "bracket": "E",
+      "bracket": "S",
       "legal": true,
-      "popularity": 2994,
+      "popularity": 3050,
       "missing": [
-        "Voltaic Construct"
-      ]
-    },
-    {
-      "id": "1766-1978-5089",
-      "cards": [
-        {
-          "name": "Voltaic Construct",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Thran Dynamo",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Karn, the Great Creator",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2799,
-      "missing": [
-        "Voltaic Construct"
+        "Sanctum Weaver"
       ]
     },
     {
@@ -1454,9 +2152,76 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 2594,
+      "popularity": 2611,
       "missing": [
         "The Enigma Jewel // Locus of Enlightenment"
+      ]
+    },
+    {
+      "id": "2645-6266",
+      "cards": [
+        {
+          "name": "Redshift, Rocketeer Chief",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce",
+        "Infinite colored mana that can only be spent to activate abilities"
+      ],
+      "requires": [],
+      "prerequisites": "Redshift, Rocketeer Chief does not have summoning sickness. Redshift, Rocketeer Chief has power 5 or greater.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2516,
+      "missing": [
+        "Redshift, Rocketeer Chief"
+      ]
+    },
+    {
+      "id": "2645-7203",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Brigid, Clachan's Heart // Brigid, Doun's Mind",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite green mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite white mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least five other creatures",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2498,
+      "missing": [
+        "Brigid, Clachan's Heart // Brigid, Doun's Mind"
       ]
     },
     {
@@ -1485,7 +2250,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2432,
+      "popularity": 2446,
       "missing": [
         "Light of Promise"
       ]
@@ -1512,9 +2277,77 @@
       "mana": "{8}{R}{R}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2359,
+      "popularity": 2373,
       "missing": [
         "Obliterate"
+      ]
+    },
+    {
+      "id": "2645-6478",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Arbor Adherent",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You control another creature with toughness 5 or greater.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2366,
+      "missing": [
+        "Arbor Adherent"
+      ]
+    },
+    {
+      "id": "570-876-4499",
+      "cards": [
+        {
+          "name": "Emiel the Blessed",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least four colors among permanents you control.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2348,
+      "missing": [
+        "Emiel the Blessed"
       ]
     },
     {
@@ -1541,63 +2374,9 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 2267,
+      "popularity": 2274,
       "missing": [
         "Cephalid Illusionist"
-      ]
-    },
-    {
-      "id": "3362-5291",
-      "cards": [
-        {
-          "name": "Bladewing the Risen",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cursed Mirror",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{2}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2233,
-      "missing": [
-        "Bladewing the Risen"
-      ]
-    },
-    {
-      "id": "1110-3356",
-      "cards": [
-        {
-          "name": "Polyraptor",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Terror of the Peaks",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{6}{G}{G}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 2135,
-      "missing": [
-        "Polyraptor"
       ]
     },
     {
@@ -1624,7 +2403,7 @@
       "mana": "{2}{W} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 2134,
+      "popularity": 2133,
       "missing": [
         "Zethi, Arcane Blademaster"
       ]
@@ -1654,76 +2433,133 @@
       "mana": "{8}{R}{R}{R}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2104,
+      "popularity": 2113,
       "missing": [
         "Worldfire"
       ]
     },
     {
-      "id": "184-3809-4682",
+      "id": "141-5144",
       "cards": [
         {
-          "name": "Faerie Mastermind",
+          "name": "Naru Meha, Master Wizard",
           "zones": [
-            "B"
+            "H"
           ]
         },
         {
-          "name": "Smothering Tithe",
+          "name": "Ephemerate",
           "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Goldspan Dragon",
-          "zones": [
-            "B"
+            "H"
           ]
         }
       ],
-      "results": [
-        "Infinite card draw for all players",
-        "Near-infinite colored mana",
-        "Near-infinite colorless mana",
-        "Near-infinite Treasure tokens"
-      ],
+      "results": [],
       "requires": [],
-      "prerequisites": "You have at least three opponents.\nOpponents are unable to pay for Smothering Tithe's trigger.",
-      "mana": "{3}{U}",
-      "bracket": "P",
+      "prerequisites": "There are legal target(s) for Ephemerate.",
+      "mana": "{2}{W}{U}{U}",
+      "bracket": "E",
       "legal": true,
-      "popularity": 1991,
+      "popularity": 2089,
       "missing": [
-        "Faerie Mastermind"
+        "Naru Meha, Master Wizard"
       ]
     },
     {
-      "id": "1110-4245",
+      "id": "553-742",
       "cards": [
         {
-          "name": "Vrondiss, Rage of Ancients",
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your deck size is at least seven.",
+      "mana": "{12}{W}{W}{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2069,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "2645-3918-4131",
+      "cards": [
+        {
+          "name": "Trazyn the Infinite",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Terror of the Peaks",
+          "name": "Staff of Domination",
           "zones": [
-            "B"
+            "G"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "G"
           ]
         }
       ],
       "results": [
-        "Infinite creature tokens"
+        "Infinite card draw",
+        "Infinite colorless mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
       ],
       "requires": [],
-      "prerequisites": "You have a way to give Vrondiss indestructible.\nYou have a way to deal damage to Vrondiss.",
+      "prerequisites": "",
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1990,
+      "popularity": 2039,
       "missing": [
-        "Vrondiss, Rage of Ancients"
+        "Trazyn the Infinite"
+      ]
+    },
+    {
+      "id": "1295-4267",
+      "cards": [
+        {
+          "name": "Divining Witch",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "another card in hand.",
+      "mana": "{1}{U}{U}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 2035,
+      "missing": [
+        "Divining Witch"
       ]
     },
     {
@@ -1751,34 +2587,137 @@
       "mana": "{4}{U/R}{U/R}{R}",
       "bracket": "P",
       "legal": true,
-      "popularity": 1966,
+      "popularity": 1968,
       "missing": [
         "Soulfire Grand Master"
       ]
     },
     {
-      "id": "1978-2364-5089",
+      "id": "2645-5614",
       "cards": [
         {
-          "name": "Voltaic Construct",
+          "name": "Staff of Domination",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Mana Vault",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Karn, the Great Creator",
+          "name": "Bighorner Rancher",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Bighorner Rancher does not have summoning sickness. You control a creature with power 5 or greater.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1875,
+      "missing": [
+        "Bighorner Rancher"
+      ]
+    },
+    {
+      "id": "850-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Overgrown Battlement",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Overgrown Battlement does not have summoning sickness. You control at least five creatures with defender.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1764,
+      "missing": [
+        "Overgrown Battlement"
+      ]
+    },
+    {
+      "id": "2645-3443",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Deathbloom Ritualist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Deathbloom Ritualist does not have summoning sickness. You have at least five creature cards in your graveyard.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1749,
+      "missing": [
+        "Deathbloom Ritualist"
+      ]
+    },
+    {
+      "id": "132-2364-2645",
+      "cards": [
+        {
+          "name": "Myr Welder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
         "Infinite colorless mana"
       ],
       "requires": [],
@@ -1786,9 +2725,108 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 1854,
+      "popularity": 1735,
       "missing": [
-        "Voltaic Construct"
+        "Myr Welder"
+      ]
+    },
+    {
+      "id": "2645-3043",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Axebane Guardian",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Axebane Guardian does not have summoning sickness. You control at least five creatures with defender.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1723,
+      "missing": [
+        "Axebane Guardian"
+      ]
+    },
+    {
+      "id": "1336-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Heronblade Elite",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Heronblade Elite does not have summoning sickness, and has power 5 or greater.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1671,
+      "missing": [
+        "Heronblade Elite"
+      ]
+    },
+    {
+      "id": "2645-7488",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Topiary Lecturer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite green mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1575,
+      "missing": [
+        "Topiary Lecturer"
       ]
     },
     {
@@ -1815,9 +2853,42 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1539,
+      "popularity": 1551,
       "missing": [
         "Crackdown Construct"
+      ]
+    },
+    {
+      "id": "427-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Kydele, Chosen of Kruphix",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "You've drawn five or more cards this turn.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1529,
+      "missing": [
+        "Kydele, Chosen of Kruphix"
       ]
     },
     {
@@ -1844,79 +2915,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1424,
+      "popularity": 1433,
       "missing": [
         "Spellbinder"
-      ]
-    },
-    {
-      "id": "1978-2585-5089",
-      "cards": [
-        {
-          "name": "Voltaic Construct",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Grim Monolith",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Karn, the Great Creator",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 1379,
-      "missing": [
-        "Voltaic Construct"
-      ]
-    },
-    {
-      "id": "4131-4893-5089",
-      "cards": [
-        {
-          "name": "Basalt Monolith",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Training Grounds",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Karn, the Great Creator",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "Basalt Monolith does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1340,
-      "missing": [
-        "Training Grounds"
       ]
     },
     {
@@ -1945,9 +2946,226 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1321,
+      "popularity": 1357,
       "missing": [
         "The Destined White Mage"
+      ]
+    },
+    {
+      "id": "553-3093",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Tainted Pact",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "NOTE: This combo fails if two of the top six cards of your library share a name.",
+      "mana": "{13}{W}{W}{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1307,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "3542-3593",
+      "cards": [
+        {
+          "name": "Sneak Attack",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Palinchron",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control up to seven lands that can tap to produce at least {2}{U}{U}{R}",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1306,
+      "missing": [
+        "Palinchron"
+      ]
+    },
+    {
+      "id": "2645-4734",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cradle Clearcutter",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Cradle Clearcutter does not have summoning sickness, and has power 5 or greater.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1299,
+      "missing": [
+        "Cradle Clearcutter"
+      ]
+    },
+    {
+      "id": "1164-1295",
+      "cards": [
+        {
+          "name": "Mirror of Fate",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1256,
+      "missing": [
+        "Mirror of Fate"
+      ]
+    },
+    {
+      "id": "1770-3542",
+      "cards": [
+        {
+          "name": "Palinchron",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana lands you control can produce",
+        "Infinite untap of lands you control"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least six mana-producing lands, two of which can produce at least {U}.",
+      "mana": "{1}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1249,
+      "missing": [
+        "Palinchron"
+      ]
+    },
+    {
+      "id": "2645-5704",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Leafkin Avenger",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Leafkin Avenger does not have summoning sickness. You control at least five creatures with power 4 or greater.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1145,
+      "missing": [
+        "Leafkin Avenger"
+      ]
+    },
+    {
+      "id": "2479-2645",
+      "cards": [
+        {
+          "name": "Magus of the Coffers",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite black mana",
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Magus of the Coffers does not have summoning sickness.\nAt least seven Swamps under your control.",
+      "mana": "{2}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1136,
+      "missing": [
+        "Magus of the Coffers"
       ]
     },
     {
@@ -1976,9 +3194,41 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1096,
+      "popularity": 1105,
       "missing": [
         "Sunbond"
+      ]
+    },
+    {
+      "id": "570-4896",
+      "cards": [
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "High Alert",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Infinite green mana",
+        "Infinite black mana",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Faeburrow Elder does not have summoning sickness.\nYou control a black and a red permanent.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1099,
+      "missing": [
+        "High Alert"
       ]
     },
     {
@@ -2003,137 +3253,240 @@
       "mana": "{6}{W} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 1086,
+      "popularity": 1090,
       "missing": [
         "Meticulous Excavation"
       ]
     },
     {
-      "id": "1978-5089-5116",
+      "id": "1295-5909",
       "cards": [
         {
-          "name": "Voltaic Construct",
+          "name": "Doomsday Excruciator",
           "zones": [
-            "B"
+            "H"
           ]
         },
         {
-          "name": "Karn, the Great Creator",
+          "name": "Thassa's Oracle",
           "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Gilded Lotus",
-          "zones": [
-            "B"
+            "H"
           ]
         }
       ],
       "results": [
-        "Infinite colored mana"
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your devotion to blue is at least 4.",
+      "mana": "{U}{U} and six {B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 997,
+      "missing": [
+        "Doomsday Excruciator"
+      ]
+    },
+    {
+      "id": "2364-2645-3918",
+      "cards": [
+        {
+          "name": "Trazyn the Infinite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Mana Vault",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colorless mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
       ],
       "requires": [],
       "prerequisites": "",
       "mana": "",
-      "bracket": "E",
+      "bracket": "S",
       "legal": true,
-      "popularity": 969,
+      "popularity": 987,
       "missing": [
-        "Voltaic Construct"
+        "Trazyn the Infinite"
       ]
     },
     {
-      "id": "579-2585",
+      "id": "782-2580-5141",
       "cards": [
         {
-          "name": "Grim Monolith",
+          "name": "Lethal Vapors",
           "zones": [
-            "B"
+            "H"
           ]
         },
         {
-          "name": "Mana Reflection",
+          "name": "Teferi's Protection",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Grand Abolisher",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite colorless mana"
+        "Skip all your future turns, causing your opponents to eventually draw from an empty library and lose the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{4}{W}{B}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 956,
+      "missing": [
+        "Lethal Vapors"
+      ]
+    },
+    {
+      "id": "2645-3784",
+      "cards": [
+        {
+          "name": "Vhal, Candlekeep Researcher",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colorless mana that can't be spent to cast spells from your hand",
+        "Infinite lifegain",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Vhal has at least five toughness.\nVhal does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 890,
+      "missing": [
+        "Vhal, Candlekeep Researcher"
+      ]
+    },
+    {
+      "id": "570-4019",
+      "cards": [
+        {
+          "name": "Vigean Graftmage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Faeburrow Elder does not have summoning sickness.\nFaeburrow Elder has at least one +1/+1 counter on it.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 871,
+      "missing": [
+        "Vigean Graftmage"
+      ]
+    },
+    {
+      "id": "2645-5343",
+      "cards": [
+        {
+          "name": "Bigger on the Inside",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite cascade with mana value equal to the next spell you cast",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Bigger on the Inside attached to Staff of Domination.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 848,
+      "missing": [
+        "Bigger on the Inside"
+      ]
+    },
+    {
+      "id": "2645-7308",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mona Lisa, Science Geek",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
       ],
       "requires": [],
       "prerequisites": "",
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 943,
+      "popularity": 830,
       "missing": [
-        "Mana Reflection"
-      ]
-    },
-    {
-      "id": "186-4131-5089",
-      "cards": [
-        {
-          "name": "Basalt Monolith",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Heartstone",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Karn, the Great Creator",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "Basalt Monolith does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 907,
-      "missing": [
-        "Heartstone"
-      ]
-    },
-    {
-      "id": "74-2585",
-      "cards": [
-        {
-          "name": "The Enigma Jewel // Locus of Enlightenment",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Grim Monolith",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{1}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 788,
-      "missing": [
-        "The Enigma Jewel // Locus of Enlightenment"
+        "Mona Lisa, Science Geek"
       ]
     },
     {
@@ -2162,36 +3515,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 769,
+      "popularity": 782,
       "missing": [
         "Spider-Man, Peter Parker"
-      ]
-    },
-    {
-      "id": "1645-3809",
-      "cards": [
-        {
-          "name": "Goldspan Dragon",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Crown of Flames",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 761,
-      "missing": [
-        "Crown of Flames"
       ]
     },
     {
@@ -2216,44 +3542,196 @@
       "mana": "{4}{W}{W}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 758,
+      "popularity": 767,
       "missing": [
         "Balancing Act"
       ]
     },
     {
-      "id": "4091-4235-5116",
+      "id": "2645-7908",
       "cards": [
         {
-          "name": "Rings of Brighthearth",
+          "name": "Staff of Domination",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Aphetto Alchemist",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Gilded Lotus",
+          "name": "The Notary Hobbits",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite colored mana"
+        "Infinite card draw",
+        "Infinite colorless mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
       ],
       "requires": [],
-      "prerequisites": "Aphetto Alchemist does not have summoning sickness.",
+      "prerequisites": "You control at least five Halflings.",
       "mana": "",
-      "bracket": "E",
+      "bracket": "S",
       "legal": true,
-      "popularity": 735,
+      "popularity": 736,
       "missing": [
-        "Aphetto Alchemist"
+        "The Notary Hobbits"
+      ]
+    },
+    {
+      "id": "3245-7439",
+      "cards": [
+        {
+          "name": "Yavimaya Bloomsage // Channel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exsanguinate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}{B}{G}{G}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 736,
+      "missing": [
+        "Yavimaya Bloomsage // Channel"
+      ]
+    },
+    {
+      "id": "2645-4747",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Alena, Kessig Trapper",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite red mana"
+      ],
+      "requires": [],
+      "prerequisites": "Alena does not have summoning sickness.\nA creature with power five or greater has entered the battlefield this turn.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 720,
+      "missing": [
+        "Alena, Kessig Trapper"
+      ]
+    },
+    {
+      "id": "742-8266",
+      "cards": [
+        {
+          "name": "Fblthp, Impossibly Lost",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You control a creature that doesn't have summoning sickness and that cannot be blocked by an opponent.",
+      "mana": "{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 713,
+      "missing": [
+        "Fblthp, Impossibly Lost"
+      ]
+    },
+    {
+      "id": "2645-4188",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Accomplished Alchemist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Accomplished Alchemist does not have summoning sickness. You have gained at least 5 life this turn.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 683,
+      "missing": [
+        "Accomplished Alchemist"
+      ]
+    },
+    {
+      "id": "742-1061",
+      "cards": [
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Timestream Navigator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "You have six or more cards in your library. You have the city's blessing",
+      "mana": "{4}{U}{U}{U}{B} the first turn, with {3}{U}{U}{U} each extra turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 666,
+      "missing": [
+        "Timestream Navigator"
       ]
     },
     {
@@ -2278,9 +3756,44 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 647,
+      "popularity": 651,
       "missing": [
         "Enduring Renewal"
+      ]
+    },
+    {
+      "id": "457-1409-1770",
+      "cards": [
+        {
+          "name": "Urza, Lord High Artificer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Deadeye Navigator",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Elesh Norn, Mother of Machines",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite tapped creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Deadeye Navigator paired with Urza.",
+      "mana": "{1}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 635,
+      "missing": [
+        "Deadeye Navigator"
       ]
     },
     {
@@ -2307,9 +3820,38 @@
       "mana": "{4}{R}{R}{R}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 620,
+      "popularity": 624,
       "missing": [
         "Apocalypse"
+      ]
+    },
+    {
+      "id": "1295-4899",
+      "cards": [
+        {
+          "name": "Phyrexian Devourer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 618,
+      "missing": [
+        "Phyrexian Devourer"
       ]
     },
     {
@@ -2336,9 +3878,74 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 543,
+      "popularity": 547,
       "missing": [
         "Legion Loyalty"
+      ]
+    },
+    {
+      "id": "570-876-7070",
+      "cards": [
+        {
+          "name": "Monk Gyatso",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lightning Greaves",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 546,
+      "missing": [
+        "Monk Gyatso"
+      ]
+    },
+    {
+      "id": "570-5200",
+      "cards": [
+        {
+          "name": "Sword of the Paruns",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite mana creatures you control can produce",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "There are at least four colors among permanents you control.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 545,
+      "missing": [
+        "Sword of the Paruns"
       ]
     },
     {
@@ -2366,9 +3973,71 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 530,
+      "popularity": 537,
       "missing": [
         "Urban Daggertooth"
+      ]
+    },
+    {
+      "id": "195-570",
+      "cards": [
+        {
+          "name": "Chain Stasis",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-blue mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Faeburrow Elder does not have summoning sickness.There are at least four colors among permanents you control, one of which must be blue.",
+      "mana": "{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 482,
+      "missing": [
+        "Chain Stasis"
+      ]
+    },
+    {
+      "id": "2645-5457",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Selvala, Eager Trailblazer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Selvala does not have summoning sickness. You control at least five creatures with different powers.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 481,
+      "missing": [
+        "Selvala, Eager Trailblazer"
       ]
     },
     {
@@ -2397,38 +4066,143 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 461,
+      "popularity": 466,
       "missing": [
         "Heroic Feast"
       ]
     },
     {
-      "id": "1110-3748",
+      "id": "1295-4059",
       "cards": [
         {
-          "name": "Hornet Nest",
+          "name": "Dance with Calamity",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{7}{U}{U}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 432,
+      "missing": [
+        "Dance with Calamity"
+      ]
+    },
+    {
+      "id": "1368-1414-3075-4856",
+      "cards": [
+        {
+          "name": "Mizzix of the Izmagnus",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Terror of the Peaks",
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Lotus Petal",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite creature tokens"
+        "Infinite self-mill",
+        "Near-infinite mill"
       ],
       "requires": [],
-      "prerequisites": "You have a way to give Hornet Nest indestructible.\nYou have a way to deal damage to Hornet Nest.",
+      "prerequisites": "You have at least one experience counter.\nYou have a storm count of at least one.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 420,
+      "missing": [
+        "Mizzix of the Izmagnus"
+      ]
+    },
+    {
+      "id": "2645-6479",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rainveil Rejuvenator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite green mana",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 409,
+      "missing": [
+        "Rainveil Rejuvenator"
+      ]
+    },
+    {
+      "id": "570-1995",
+      "cards": [
+        {
+          "name": "Faeburrow Elder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Gauntlets of Light",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite non-white mana of colors among permanents you control",
+        "Infinite mana of colors among permanents you control"
+      ],
+      "requires": [],
+      "prerequisites": "Gauntlets of Light attached to Faeburrow Elder.\nFaeburrow Elder does not have summoning sickness.\nThere are at least four colors among permanents you control.",
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 385,
+      "popularity": 403,
       "missing": [
-        "Hornet Nest"
+        "Gauntlets of Light"
       ]
     },
     {
@@ -2453,7 +4227,7 @@
       "mana": "{4}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 355,
+      "popularity": 360,
       "missing": [
         "Vedalken Mastermind"
       ]
@@ -2482,7 +4256,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 334,
+      "popularity": 333,
       "missing": [
         "Duke Ulder Ravengard"
       ]
@@ -2509,103 +4283,9 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 319,
+      "popularity": 325,
       "missing": [
         "Essence Reliquary"
-      ]
-    },
-    {
-      "id": "3363-5302",
-      "cards": [
-        {
-          "name": "The One Ring",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Keeper of the Nine Gales",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "Keeper of the Nine Gales does not have summoning sickness.\nYou control at least two other untapped Birds.",
-      "mana": "{4} each turn",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 307,
-      "missing": [
-        "Keeper of the Nine Gales"
-      ]
-    },
-    {
-      "id": "2544-4235-5116",
-      "cards": [
-        {
-          "name": "Filigree Sages",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Gilded Lotus",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Rings of Brighthearth",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana",
-        "Infinite mana artifacts you control can produce"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{2}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 307,
-      "missing": [
-        "Filigree Sages"
-      ]
-    },
-    {
-      "id": "703-4393",
-      "cards": [
-        {
-          "name": "Astral Dragon",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Dance of Many",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite copies of any nontoken creatures",
-        "Infinite creature copies of all noncreature permanents",
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{6}{U}{U}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 305,
-      "missing": [
-        "Dance of Many"
       ]
     },
     {
@@ -2630,9 +4310,69 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 292,
+      "popularity": 306,
       "missing": [
         "Umbilicus"
+      ]
+    },
+    {
+      "id": "3363-5302",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Keeper of the Nine Gales",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Keeper of the Nine Gales does not have summoning sickness.\nYou control at least two other untapped Birds.",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 306,
+      "missing": [
+        "Keeper of the Nine Gales"
+      ]
+    },
+    {
+      "id": "1129-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Harabaz Druid",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana",
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "Harabaz Druid does not have summoning sickness. You control at least five Allies.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 298,
+      "missing": [
+        "Harabaz Druid"
       ]
     },
     {
@@ -2657,9 +4397,42 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 276,
+      "popularity": 291,
       "missing": [
         "Blood Clock"
+      ]
+    },
+    {
+      "id": "2645-7704",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doc Samson, Super Psychiatrist",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 274,
+      "missing": [
+        "Doc Samson, Super Psychiatrist"
       ]
     },
     {
@@ -2686,39 +4459,36 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 249,
+      "popularity": 251,
       "missing": [
         "Wake Thrasher"
       ]
     },
     {
-      "id": "1110-2067",
+      "id": "678-2363",
       "cards": [
         {
-          "name": "Storm Herd",
+          "name": "Hangarback Walker",
           "zones": [
             "H"
           ]
         },
         {
-          "name": "Terror of the Peaks",
+          "name": "Enduring Renewal",
           "zones": [
             "B"
           ]
         }
       ],
-      "results": [
-        "Near-infinite creature tokens",
-        "Near-infinite damage"
-      ],
+      "results": [],
       "requires": [],
       "prerequisites": "",
-      "mana": "{8}{W}{W}",
+      "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 215,
+      "popularity": 209,
       "missing": [
-        "Storm Herd"
+        "Enduring Renewal"
       ]
     },
     {
@@ -2751,30 +4521,32 @@
       ]
     },
     {
-      "id": "3809-4124",
+      "id": "1295-2679",
       "cards": [
         {
-          "name": "Goldspan Dragon",
+          "name": "Sacred Guide",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Whip Silk",
+          "name": "Thassa's Oracle",
           "zones": [
             "H"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Win the game"
+      ],
       "requires": [],
-      "prerequisites": "",
-      "mana": "{G}",
-      "bracket": "E",
+      "prerequisites": "There are no white cards in library.",
+      "mana": "{1}{W}{U}{U}",
+      "bracket": "S",
       "legal": true,
-      "popularity": 190,
+      "popularity": 186,
       "missing": [
-        "Whip Silk"
+        "Sacred Guide"
       ]
     },
     {
@@ -2801,222 +4573,75 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 186,
+      "popularity": 185,
       "missing": [
         "Bellowing Aegisaur"
       ]
     },
     {
-      "id": "1621-5291",
+      "id": "2645-8190",
       "cards": [
         {
-          "name": "Wispweaver Angel",
+          "name": "Staff of Domination",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Cursed Mirror",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{2}{R}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 179,
-      "missing": [
-        "Wispweaver Angel"
-      ]
-    },
-    {
-      "id": "4222-5089-5116",
-      "cards": [
-        {
-          "name": "Karn, the Great Creator",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Freed from the Real",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Gilded Lotus",
+          "name": "Loot, the Nexus",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite colored mana"
+        "Infinite card draw",
+        "Infinite colored mana",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce"
       ],
       "requires": [],
-      "prerequisites": "Gilded Lotus does not have summoning sickness.",
-      "mana": "{2}{U}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 174,
-      "missing": [
-        "Freed from the Real"
-      ]
-    },
-    {
-      "id": "3389-3809",
-      "cards": [
-        {
-          "name": "Goldspan Dragon",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Flickering Ward",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 169,
-      "missing": [
-        "Flickering Ward"
-      ]
-    },
-    {
-      "id": "168-703",
-      "cards": [
-        {
-          "name": "Astral Dragon",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Oblivion Ring",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite copies of noncreature permanents you control",
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{6}{U}{U}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 150,
-      "missing": [
-        "Oblivion Ring"
-      ]
-    },
-    {
-      "id": "1912-4131-5089",
-      "cards": [
-        {
-          "name": "Basalt Monolith",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Biomancer's Familiar",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Karn, the Great Creator",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "Basalt Monolith does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 129,
-      "missing": [
-        "Biomancer's Familiar"
-      ]
-    },
-    {
-      "id": "703-2517",
-      "cards": [
-        {
-          "name": "Astral Dragon",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Parallax Wave",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature copies of all noncreature permanents",
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{6}{U}{U}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 127,
-      "missing": [
-        "Parallax Wave"
-      ]
-    },
-    {
-      "id": "297-3223",
-      "cards": [
-        {
-          "name": "The Ur-Dragon",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Rafiq of the Many",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Target opponent loses the game"
-      ],
-      "requires": [],
-      "prerequisites": "The Ur-Dragon is your commander, does not have summoning sickness, and cannot be blocked by an opponent.",
+      "prerequisites": "You control at least five creatures with different powers.",
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 117,
+      "popularity": 165,
       "missing": [
-        "Rafiq of the Many"
+        "Loot, the Nexus"
+      ]
+    },
+    {
+      "id": "1008-2645",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Undermountain Adventurer",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
+      ],
+      "requires": [],
+      "prerequisites": "Undermountain Adventurer does not have summoning sickness. You've completed a dungeon.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 118,
+      "missing": [
+        "Undermountain Adventurer"
       ]
     },
     {
@@ -3041,7 +4666,7 @@
       "mana": "{6} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 115,
+      "popularity": 113,
       "missing": [
         "Heidar, Rimewind Master"
       ]
@@ -3070,7 +4695,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 113,
+      "popularity": 112,
       "missing": [
         "Vraska, Swarm's Eminence"
       ]
@@ -3097,7 +4722,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 109,
+      "popularity": 111,
       "missing": [
         "Mephidross Vampire"
       ]
@@ -3124,102 +4749,9 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 95,
+      "popularity": 96,
       "missing": [
         "Tradewind Rider"
-      ]
-    },
-    {
-      "id": "3525-5089-5116",
-      "cards": [
-        {
-          "name": "Karn, the Great Creator",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Pemmin's Aura",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Gilded Lotus",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "Gilded Lotus does not have summoning sickness.",
-      "mana": "{1}{U}{U}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 93,
-      "missing": [
-        "Pemmin's Aura"
-      ]
-    },
-    {
-      "id": "703-2902",
-      "cards": [
-        {
-          "name": "Astral Dragon",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Journey to Nowhere",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{6}{U}{U}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 91,
-      "missing": [
-        "Journey to Nowhere"
-      ]
-    },
-    {
-      "id": "1110-1724",
-      "cards": [
-        {
-          "name": "Sekki, Seasons' Guide",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Terror of the Peaks",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite damage"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{5}{G}{G}{G}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 91,
-      "missing": [
-        "Sekki, Seasons' Guide"
       ]
     },
     {
@@ -3244,67 +4776,44 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 90,
+      "popularity": 92,
       "missing": [
         "Esperzoa"
       ]
     },
     {
-      "id": "2733-3809",
+      "id": "1366-1368-1414",
       "cards": [
         {
-          "name": "Goldspan Dragon",
+          "name": "Underworld Breach",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Shimmering Wings",
+          "name": "Glimpse the Unthinkable",
           "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{U}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 89,
-      "missing": [
-        "Shimmering Wings"
-      ]
-    },
-    {
-      "id": "487-1110",
-      "cards": [
-        {
-          "name": "Sporeweb Weaver",
-          "zones": [
-            "B"
+            "G"
           ]
         },
         {
-          "name": "Terror of the Peaks",
+          "name": "Lotus Petal",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite creature tokens",
-        "Infinite lifegain",
-        "Infinite lifegain triggers"
+        "Infinite self-mill"
       ],
       "requires": [],
-      "prerequisites": "You have a way to give Sporeweb Weaver indestructible.\nYou have a way to cause a creature to enter the battlefield under your control.",
-      "mana": "",
-      "bracket": "S",
+      "prerequisites": "You have at least three additional cards in your graveyard.",
+      "mana": "{U/B}",
+      "bracket": "P",
       "legal": true,
-      "popularity": 85,
+      "popularity": 92,
       "missing": [
-        "Sporeweb Weaver"
+        "Glimpse the Unthinkable"
       ]
     },
     {
@@ -3329,107 +4838,16 @@
       "mana": "{4}{U}{U}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 83,
+      "popularity": 84,
       "missing": [
         "Temporal Adept"
       ]
     },
     {
-      "id": "1110-3760",
+      "id": "2942-3693-4120",
       "cards": [
         {
-          "name": "Broodhatch Nantuko",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Terror of the Peaks",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to give Broodhatch Nantuko indestructible.\nYou have a way to deal damage to Broodhatch Nantuko.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 82,
-      "missing": [
-        "Broodhatch Nantuko"
-      ]
-    },
-    {
-      "id": "2084-5291",
-      "cards": [
-        {
-          "name": "Mirror-Mad Phantasm",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Cursed Mirror",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite self-mill"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{U}{R}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 66,
-      "missing": [
-        "Mirror-Mad Phantasm"
-      ]
-    },
-    {
-      "id": "1858-3809",
-      "cards": [
-        {
-          "name": "Goldspan Dragon",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "View from Above",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control a white permanent.",
-      "mana": "{1}{U}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 51,
-      "missing": [
-        "View from Above"
-      ]
-    },
-    {
-      "id": "985-3693-5220",
-      "cards": [
-        {
-          "name": "Mortuary",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Mystic Forge",
+          "name": "Vigor",
           "zones": [
             "B"
           ]
@@ -3437,115 +4855,91 @@
         {
           "name": "Walking Ballista",
           "zones": [
-            "H",
-            "L"
+            "B"
+          ]
+        },
+        {
+          "name": "Fiery Emancipation",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite +1/+1 counters on creatures you control"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 71,
+      "missing": [
+        "Vigor"
+      ]
+    },
+    {
+      "id": "1878-2634-3593",
+      "cards": [
+        {
+          "name": "Rootha, Mercurial Artist",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sneak Attack",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Jeska's Will",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite red mana",
+        "Exile your library with the ability to play the exiled cards until end of turn"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has at least three cards in hand.",
+      "mana": "{4}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 43,
+      "missing": [
+        "Rootha, Mercurial Artist"
+      ]
+    },
+    {
+      "id": "3363-5278",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Obelisk of Undoing",
+          "zones": [
+            "B"
           ]
         }
       ],
       "results": [],
       "requires": [],
       "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 44,
-      "missing": [
-        "Mortuary"
-      ]
-    },
-    {
-      "id": "1110-3046",
-      "cards": [
-        {
-          "name": "Overgrown Armasaur",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Terror of the Peaks",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to give Overgrown Armasaur indestructible.\nYou have a way to deal damage to Overgrown Armasaur.",
-      "mana": "",
+      "mana": "{10} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 42,
+      "popularity": 35,
       "missing": [
-        "Overgrown Armasaur"
-      ]
-    },
-    {
-      "id": "3099-4131-5089",
-      "cards": [
-        {
-          "name": "Leyline of Abundance",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Karn, the Great Creator",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Basalt Monolith",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana",
-        "Infinite green mana",
-        "Infinite +1/+1 counters on creatures you control"
-      ],
-      "requires": [],
-      "prerequisites": "Basalt Monolith does not have summoning sickness.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 38,
-      "missing": [
-        "Leyline of Abundance"
-      ]
-    },
-    {
-      "id": "1110-5199",
-      "cards": [
-        {
-          "name": "Saber Ants",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Terror of the Peaks",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to give Saber Ants indestructible.\nYou have a way to deal damage to Saber Ants.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 38,
-      "missing": [
-        "Saber Ants"
+        "Obelisk of Undoing"
       ]
     },
     {
@@ -3603,68 +4997,6 @@
       ]
     },
     {
-      "id": "3363-5278",
-      "cards": [
-        {
-          "name": "The One Ring",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Obelisk of Undoing",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{10} each turn",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 34,
-      "missing": [
-        "Obelisk of Undoing"
-      ]
-    },
-    {
-      "id": "2092-4131-5089",
-      "cards": [
-        {
-          "name": "Basalt Monolith",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Agatha of the Vile Cauldron",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Karn, the Great Creator",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "Basalt Monolith does not have summoning sickness.\nAgatha of the Vile Cauldron has power 1 or greater.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 31,
-      "missing": [
-        "Agatha of the Vile Cauldron"
-      ]
-    },
-    {
       "id": "3363-3823",
       "cards": [
         {
@@ -3692,76 +5024,6 @@
       ]
     },
     {
-      "id": "703-2144",
-      "cards": [
-        {
-          "name": "Myrkul, Lord of Bones",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Astral Dragon",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite copies of all noncreature permanents",
-        "Infinite creature tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You have a way to cause Astral Dragon to die.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 19,
-      "missing": [
-        "Myrkul, Lord of Bones"
-      ]
-    },
-    {
-      "id": "3809-4682-7132",
-      "cards": [
-        {
-          "name": "Super-Skrull",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Smothering Tithe",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Goldspan Dragon",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw for any number of opponents",
-        "Near-infinite Treasure tokens",
-        "Near-infinite card draw",
-        "Near-infinite colored mana",
-        "Near-infinite creature tokens",
-        "Near-infinitely large creature until end of turn"
-      ],
-      "requires": [],
-      "prerequisites": "An opponent cannot pay for Smothering Tithe's trigger more than once.",
-      "mana": "{5}{U}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 15,
-      "missing": [
-        "Super-Skrull"
-      ]
-    },
-    {
       "id": "306-3363",
       "cards": [
         {
@@ -3783,7 +5045,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 12,
+      "popularity": 13,
       "missing": [
         "Cache Raiders"
       ]
@@ -3837,61 +5099,319 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 8,
+      "popularity": 9,
       "missing": [
         "Salvage Scuttler"
       ]
     },
     {
-      "id": "1110-1344",
+      "id": "132-1306-2645",
       "cards": [
         {
-          "name": "Nested Ghoul",
+          "name": "Myr Welder",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Terror of the Peaks",
+          "name": "Staff of Domination",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Mana Crypt",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Myr Welder"
+      ]
+    },
+    {
+      "id": "542-1306",
+      "cards": [
+        {
+          "name": "Tidespout Tyrant",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Crypt",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a nontoken permanent that can be cast using {C}{C}.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "2645-5709",
+      "cards": [
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Rofellos, Llanowar Emissary",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite creature tokens"
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce",
+        "Infinite green mana"
       ],
       "requires": [],
-      "prerequisites": "You have a way to give Nested Ghoul indestructible.\nYou have a way to deal damage to Nested Ghoul.",
+      "prerequisites": "Rofellos does not have summoning sickness. You control at least five Forests.",
       "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 6,
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
       "missing": [
-        "Nested Ghoul"
+        "Rofellos, Llanowar Emissary"
       ]
     },
     {
-      "id": "513--62",
+      "id": "1306-2645-3918",
+      "cards": [
+        {
+          "name": "Trazyn the Infinite",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Mana Crypt",
+          "zones": [
+            "G"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colorless mana",
+        "Infinite lifegain triggers",
+        "Infinite lifegain",
+        "Infinite card draw",
+        "Infinite mana creatures you control can produce"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Trazyn the Infinite"
+      ]
+    },
+    {
+      "id": "513-1306--47",
       "cards": [
         {
           "name": "Hullbreaker Horror",
           "zones": [
             "B"
           ]
+        },
+        {
+          "name": "Mana Crypt",
+          "zones": [
+            "B"
+          ]
         }
       ],
-      "results": [],
+      "results": [
+        "Infinite colorless mana"
+      ],
       "requires": [
-        "Permanent castable for {0} that survives"
+        "Permanent Castable for {C}{C}"
       ],
       "prerequisites": "",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "1306-1368-3698",
+      "cards": [
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Grinding Station",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mana Crypt",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Grinding Station"
+      ]
+    },
+    {
+      "id": "1172-3245",
+      "cards": [
+        {
+          "name": "Channel",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Exsanguinate",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}{B}{G}{G}",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Channel"
+      ]
+    },
+    {
+      "id": "1368-4808-4856",
+      "cards": [
+        {
+          "name": "Brain Freeze",
+          "zones": [
+            "G"
+          ]
+        },
+        {
+          "name": "Black Lotus",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Underworld Breach",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill",
+        "Near-infinite colored mana",
+        "Near-infinite mill"
+      ],
+      "requires": [],
+      "prerequisites": "You've cast a spell this turn.\nYou have three or more other cards in your graveyard.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Black Lotus"
+      ]
+    },
+    {
+      "id": "791-2942-3693",
+      "cards": [
+        {
+          "name": "Walking Ballista",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Unspeakable Symbol",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Fiery Emancipation",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to give Walking Ballista lifelink.\nWalking Ballista has at least two +1/+1 counters on it, or your life total is at least 4.",
       "mana": "",
       "bracket": "E",
       "legal": true,
       "popularity": 0,
       "missing": [
-        "Hullbreaker Horror"
+        "Unspeakable Symbol"
       ]
     }
   ]
