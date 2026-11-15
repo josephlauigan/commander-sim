@@ -1767,3 +1767,42 @@ fn representative_pool_boards_and_global_holds() {
     g.player_mut(P2).life = 100;
     assert_eq!(adv_probe(&g), (false, true, true));
 }
+
+// ------------------------------------------------------------------ round 8: what the copy keeps known, and one sampled block
+/// An exiled card an opponent may play is face up, so known: the engine holds it in the hand (`Player::impulse`), and
+/// the check keeps it there. A known Teferi's Protection holds the release.
+#[test]
+fn twinflame_check_sees_an_opponents_playable_exiled_card() {
+    let mut g = adv_base(2);
+    hand(&mut g, P1, &["Teferi's Protection"]);
+    let c = card(&g, "Teferi's Protection");
+    g.player_mut(P1).impulse.push(c);
+    lands(&mut g, P1, "Plains", 3, false);
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_probe(&g), (false, false, false));
+}
+
+/// L7: an opponent's chump block is a random choice in the engine; one sampled decline must not release. Seed 1494
+/// makes the first sample decline the animated Factory's block, while the real forced all-in is blocked.
+#[test]
+fn twinflame_check_one_declined_chump_does_not_release() {
+    let mut g = adv_base(2);
+    g.settings = std::sync::Arc::new(sim_core::settings::Settings::new(
+        sim_core::settings::Profile::Loose,
+        sim_core::settings::AiMode::Adaptive,
+        1.0,
+    ));
+    g.player_mut(P1).life = 8;
+    let big = *g.player(P0).perms.iter().find(|&&m| g.perm(m).name == BIG).unwrap();
+    g.perm_mut(big).tapped = true;
+    lands(&mut g, P1, "Mishra's Factory", 1, false);
+    lands(&mut g, P1, "Plains", 2, false);
+    g.player_mut(P1).elspeth_emblem = true;
+    g.rng = sim_core::rng::Rng::from_u64(1494);
+    assert!(adv_hook(&mut g).is_empty(), "seed 1494: one declined chump released Twinflame");
+    for s in 0..300 {
+        let mut h = g.clone();
+        h.rng = sim_core::rng::Rng::from_u64(s);
+        assert!(adv_hook(&mut h).is_empty(), "seed {s}");
+    }
+}
