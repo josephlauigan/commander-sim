@@ -116,6 +116,18 @@ fn gifts_with_one_living_opponent_left_asks_nothing_about_the_target() {
     assert!(bins_line(&g).contains(&format!("; {} bins ", g.player(P2).name)));
 }
 
+#[test]
+fn gifts_with_two_living_opponents_one_untargetable_asks_nothing_about_the_target() {
+    // The One Ring on one of two living opponents: the other is the only legal target, so nothing is asked
+    let mut g = table(&["seph", "cloud", "kefka"]);
+    g.log = Some(vec![]);
+    g.player_mut(P2).ring_prot = true;
+    let asked = gifts_person(&mut g, None);
+    tutors::pile_tutor(&mut g, P0, 4, 2).unwrap();
+    assert!(target_questions(&asked).is_empty(), "forced: {:?}", asked.lock().unwrap());
+    assert!(bins_line(&g).contains(&format!("; {} bins ", g.player(P1).name)), "{}", bins_line(&g));
+}
+
 // ================================================================== Mindbreak Trap
 // "Exile any number of target spells." A person chooses which spells on the stack, any of them, their own included.
 
@@ -278,4 +290,139 @@ fn trap_the_ai_still_exiles_every_spell_that_is_not_its_own() {
     assert!(sim_core::engine::stack::cast_counter_spell(&mut g, P0, trap, top).unwrap());
     assert!(spell_state(&g, "Lightning Bolt").0 && spell_state(&g, "Brainstorm").0);
     assert!(!spell_state(&g, "Opt").0, "its own spell is not exiled");
+}
+
+// ------------------------------------------------------------------ only spells are targets
+/// an ability or a trigger on the stack, from a card of p's hand (the card is its source)
+fn item_on_stack(g: &mut Game, p: PlayerId, name: &str, kind: StackKind) {
+    let c = hand(g, p, &[name])[0];
+    let i = g.player(p).hand.iter().position(|&x| x == c).unwrap();
+    g.player_mut(p).hand.remove(i);
+    g.stack_pushes += 1;
+    g.stack.push(StackItem {
+        id: g.stack_pushes,
+        controller: p,
+        card: Some(c),
+        ctx: Ctx::default(),
+        zone: "hand",
+        imp: 6.0,
+        aff: vec![],
+        generic: true,
+        kind,
+        name: format!("{name} ability"),
+        passed: vec![],
+        countered: false,
+        countered_by: None,
+    });
+}
+
+/// the stack, bottom to top: P0's Opt, P0's ability, P2's Brainstorm, P1's trigger, P1's Lightning Bolt, already
+/// countered. Oracle: "target spells": only Brainstorm and Opt are legal
+fn trap_table_with_non_spells() -> Game {
+    let mut g = table(&["thanos", "seph", "kefka"]);
+    g.active = Some(P1);
+    hand(&mut g, P0, &["Mindbreak Trap"]);
+    pool(&mut g, P0, &[('U', 4)]);
+    on_stack(&mut g, P0, "Opt");
+    item_on_stack(&mut g, P0, "Sol Ring", StackKind::Ability);
+    on_stack(&mut g, P2, "Brainstorm");
+    item_on_stack(&mut g, P1, "Mana Crypt", StackKind::Trigger);
+    on_stack(&mut g, P1, "Lightning Bolt");
+    g.stack.last_mut().unwrap().countered = true;
+    g
+}
+
+#[test]
+fn trap_the_person_is_offered_only_spells_that_are_not_countered() {
+    let mut g = trap_table_with_non_spells();
+    let asked = trap_person(&mut g, &["Brainstorm", "Opt"]);
+    let (n0, n2) = (g.player(P0).name.to_string(), g.player(P2).name.to_string());
+    assert_eq!(cast_trap(&mut g), None);
+    let first = vec![format!("Brainstorm ({n2})"), format!("Opt ({n0})"), "cancel".to_string()];
+    let second = vec![format!("Opt ({n0})"), "done".to_string()];
+    assert_eq!(trap_questions(&asked), vec![first, second]);
+    assert_eq!(spell_state(&g, "Brainstorm").0, true);
+    assert_eq!(spell_state(&g, "Opt"), (true, true), "exiled");
+}
+
+#[test]
+fn trap_the_person_with_one_legal_spell_among_other_items_has_nothing_to_choose() {
+    // only P1's Lightning Bolt is a spell that can be targeted: the other items are an ability, a trigger and a
+    // countered spell
+    let mut g = table(&["thanos", "seph"]);
+    g.active = Some(P1);
+    hand(&mut g, P0, &["Mindbreak Trap"]);
+    pool(&mut g, P0, &[('U', 4)]);
+    item_on_stack(&mut g, P0, "Sol Ring", StackKind::Ability);
+    on_stack(&mut g, P1, "Brainstorm");
+    g.stack.last_mut().unwrap().countered = true;
+    item_on_stack(&mut g, P1, "Mana Crypt", StackKind::Trigger);
+    on_stack(&mut g, P1, "Lightning Bolt");
+    let asked = trap_person(&mut g, &[]);
+    assert_eq!(cast_trap(&mut g), None);
+    assert!(trap_questions(&asked).is_empty(), "forced: {:?}", asked.lock().unwrap());
+    assert!(spell_state(&g, "Lightning Bolt").0);
+}
+
+// ------------------------------------------------------------------ the first target is gone by resolution
+/// CR 608.2b: a spell with several targets still resolves if any of them is legal. The person's Trap aims at Lightning
+/// Bolt first, then Brainstorm; in response its controller casts their own Trap on the Bolt, so the Bolt is exiled
+/// before the first Trap resolves, and the first Trap still exiles Brainstorm
+#[test]
+fn trap_the_chosen_further_targets_are_exiled_when_the_first_target_left_in_response() {
+    let mut g = table(&["thanos", "seph", "kefka"]);
+    g.active = Some(P1);
+    hand(&mut g, P0, &["Mindbreak Trap"]);
+    pool(&mut g, P0, &[('U', 4)]);
+    hand(&mut g, P1, &["Mindbreak Trap"]);
+    pool(&mut g, P1, &[('U', 4)]);
+    on_stack(&mut g, P0, "Opt");
+    on_stack(&mut g, P2, "Brainstorm");
+    on_stack(&mut g, P1, "Lightning Bolt");
+    let _ = trap_person_only_trap(&mut g, P0, &["Lightning Bolt", "Brainstorm"]);
+    // P1 responds once: their own Trap, aimed at their Lightning Bolt only
+    let mut cast = false;
+    let mut script = vec!["Lightning Bolt"].into_iter();
+    g.humans.add(
+        P1,
+        Arc::new(ScriptHuman::from_fn(move |r: &Request| {
+            if r.prompt.starts_with("Mindbreak Trap") {
+                return match script.next() {
+                    Some(n) => Answer::Pick(r.choices.iter().position(|c| c.starts_with(n)).unwrap()),
+                    None => Answer::Decline,
+                };
+            }
+            if !cast && r.kind == "priority" {
+                cast = true;
+                return Answer::Action(json!({"do": "cast", "card": 0}));
+            }
+            Answer::Action(json!({"do": "pass"}))
+        })),
+    );
+    assert_eq!(cast_trap(&mut g), None);
+    assert!(spell_state(&g, "Lightning Bolt").0, "the first target was exiled in response");
+    assert_eq!(spell_state(&g, "Brainstorm"), (true, true), "a chosen further target is still exiled");
+    assert!(!spell_state(&g, "Opt").0, "not chosen");
+}
+
+/// seat p as a person who answers only the Trap's own questions, with these spells in order and then done
+fn trap_person_only_trap(g: &mut Game, p: PlayerId, names: &[&'static str]) -> Asked {
+    let log: Asked = Arc::new(Mutex::new(vec![]));
+    let (l2, mut left) = (log.clone(), names.to_vec().into_iter());
+    g.humans.add(
+        p,
+        Arc::new(ScriptHuman::from_fn(move |r: &Request| {
+            l2.lock().unwrap().push((r.kind.to_string(), r.prompt.clone(), r.choices.clone()));
+            if !r.prompt.starts_with("Mindbreak Trap") {
+                return Answer::Action(json!({"do": "pass"}));
+            }
+            match left.next() {
+                Some(n) => Answer::Pick(
+                    r.choices.iter().position(|c| c.starts_with(n)).unwrap_or_else(|| panic!("{n} in {:?}", r.choices)),
+                ),
+                None => Answer::Decline,
+            }
+        })),
+    );
+    log
 }
