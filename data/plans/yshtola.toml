@@ -15,6 +15,8 @@
 # Prayer of Binding target values; Necropotence / Sphinx / Tithe / One Ring helpers (generic priority); the
 # removal-target rules in brain.rs (`removal_adjust`, no sampling far below the best target); the wipe swing with
 # Teferi's Protection held up (`teferis_first`).
+# 2026-11-14: Restoration Angel, Teferi's Protection (the `yshtola_protect` cards named above) and Champion's Helm (the
+# `[equip]` section named above) left the list with the Doomsday package; their rules were removed from this file.
 deck = "yshtola"
 default = "plan"
 # card engines the tutors want once no line wants a card
@@ -115,14 +117,8 @@ cards = ["Palantír of Orthanc", "Zur the Enchanter"]
 value = 54
 
 [[prio]]
-cards = ["Ringsight", "Diabolic Tutor", "Idyllic Tutor", "Mystical Tutor", "Vampiric Tutor"]
+cards = ["Ringsight", "Diabolic Tutor", "Mystical Tutor", "Vampiric Tutor"]
 value = 52
-
-[[prio]]
-cards = ["Mystic Remora"]
-when = ["turn<=4"]
-value = 40
-else = 8
 
 [[prio]]
 cards = ["Esper Sentinel"]
@@ -135,30 +131,12 @@ else = 30
 cards = ["Exsanguinate", "Debt to the Deathless"]
 value = 0
 
-# Restoration Angel is held for flash (25): it blinks Y'shtola out of removal
-[[prio]]
-cards = ["Restoration Angel"]
-value = 25
-
-# protection held, not cast proactively
-[[hold]]
-card = "Restoration Angel"
-protects = ["commander"]
-
-[[hold]]
-card = "Teferi's Protection"
-protects = ["commander", "Sanguine Bond"]
-
+# 2026-11-14: Restoration Angel and Teferi's Protection (the two holds), Mystic Remora, Idyllic Tutor and Champion's Helm
+# left the list with the Doomsday package, so their rules are gone: the deck holds no protection for Y'shtola or the wipe
 # --- 2026-11-01
 # she is the engine: she chump-blocks only when the attack would otherwise kill
 [knobs]
 commander_chumps_to_live = true
-
-# Champion's Helm (equip {1}, card code only) goes on Y'shtola (was yshtola::helm: 2.5 + 0.3 x her value)
-[equip]
-holder = "commander"
-utility = 1.5
-extra = { "Champion's Helm" = [1, 0] }
 
 # her cast trigger (2 to each opponent, 2 life) on a noncreature spell of mana value 3 or more, added to its priority
 # while she is out (was trigger_bonus: 4 x (1.5 x 2 per opponent drain + 1 with Bond), up to 20)
@@ -173,3 +151,68 @@ creature = false
 min_mv = 3
 when = ["commander-out"]
 value = 12
+
+# ---- Doomsday / Oracle package (2026-11-14, JD: Option B, 12 swaps from the Tymna/Thrasios Doomsday deck) ----
+# In: Thassa's Oracle, Demonic Consultation, Doomsday, Silence, Grand Abolisher, Valley Floodcaller, Borne Upon a Wind,
+# Teferi Time Raveler, Gitaxian Probe, Brainstorm, Preordain, Dark Ritual. NOT in: Tainted Pact (it stops at the second
+# card with the same name, and this list has 19 basics, so it can't exile the library), Orim's Chant, Cabal Ritual,
+# Mockingbird, Lion's Eye Diamond, Ponder (Opus review 2026-11-14; Read the Bones and Fatal Push stay in the deck).
+# PROVISIONAL: nothing below has been measured. Only the generic sections are used (she is a Tier 5 key: the Tier 6 plan
+# slots ([sets], [mulligan], [[go_now]]) are never read for her), so the keep rule and the lock-before-go check of the
+# Tier 6 Doomsday deck do not carry over. The pile builder, its cast timing and the play of the pile are code
+# (impls/doomsday.rs), not data.
+
+# win lines: the tutors want the first missing piece. The first name is the combo catalogue's (it must match): this list
+# plays Consultation only, Tainted Pact is not in it. The Doomsday line lists Doomsday on the tutor wish list whenever the
+# Oracle is held, with or without a way to cast it: the wish below only ranks it higher when there is one
+[[line]]
+name = "Thassa's Oracle + Demonic Consultation / Tainted Pact"
+combo = "Thassa's Oracle + Demonic Consultation / Tainted Pact"
+
+[[line]]
+name = "Doomsday + Thassa's Oracle"
+combo = "Doomsday + Thassa's Oracle"
+
+# held: the card's own options cast it (a plain cast priority would cast it as a sorcery whenever the mana is there)
+[[prio]]
+cards = ["Doomsday"]
+value = 0
+
+# Silence: no rule that casts it. The Tier 6 Doomsday deck casts the lock before the line through
+# `t6_table::protect_before_go`, which a Tier 5 deck never reaches. A first stand-in (a priority rule on "the Oracle held with
+# Consultation or Doomsday") was tried and removed: read from the code (Opus review 2026-11-14), the line is offered at
+# utility 14 or more and Silence at priority 66 is worth about 6.6, so the AI goes first without it and the rule fires on turns
+# the line cannot go, spending the deck's only Silence. So at Tier 5 the AI does not cast Silence as a lock before Line 6
+# (Doomsday piles still cast it inside the pile code). Explicit zero, so the intent stays visible
+[[prio]]
+cards = ["Silence"]
+value = 0
+
+# tutors, first the two-card line: Consultation with the Oracle held, the Oracle with Consultation held. These rank above
+# Doomsday and above Sanguine Bond (85): the line wins the game and costs no life (the source guide: "with either exile half
+# still in the library, tutor for it instead"). `have:` is the hand or the battlefield, so an Oracle already on the battlefield
+# is excluded where it matters: the line needs it in hand
+[[wish]]
+cards = ["Demonic Consultation"]
+when = ["have:Thassa's Oracle & not out:Thassa's Oracle & not have:Demonic Consultation"]
+score = 88
+
+[[wish]]
+cards = ["Thassa's Oracle"]
+when = ["have:Demonic Consultation & not have:Thassa's Oracle"]
+score = 88
+
+# Doomsday is the exile half in effect: wanted with the Oracle held, no Consultation in hand, and a way to cast it (a flash
+# enabler out, or a Pile C starter in hand; the Tier 6 plan has the same enabler term)
+[[wish]]
+cards = ["Doomsday"]
+when = ["have:Thassa's Oracle & not out:Thassa's Oracle & not have:Demonic Consultation & (out:Valley Floodcaller | out:Teferi, Time Raveler | have:Borne Upon a Wind | have:Gitaxian Probe)"]
+score = 78
+
+# the pile's starter when Doomsday and the Oracle are held and nothing yet lets the pile start: a Pile C starter is Borne
+# Upon a Wind or Gitaxian Probe (a flash enabler out makes the end-step cast possible instead). Preordain and Brainstorm need
+# not be in hand: Doomsday puts them in the pile from the library or graveyard
+[[wish]]
+cards = ["Borne Upon a Wind", "Gitaxian Probe"]
+when = ["have:Doomsday & have:Thassa's Oracle & not out:Thassa's Oracle & not have:Demonic Consultation & not out:Valley Floodcaller & not out:Teferi, Time Raveler & not have:Borne Upon a Wind & not have:Gitaxian Probe"]
+score = 58
