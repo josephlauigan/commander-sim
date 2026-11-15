@@ -186,13 +186,26 @@ pub mod seam {
             .collect::<Vec<_>>()
             .into()
     }
+    /// the card whose permission casts graveyard card `c` for its normal cost (`GyKind::Yawg`): Yawgmoth's Will first,
+    /// then Emry, else Rivaz (the order `gy_mode` checks them in)
+    fn gy_permission(g: &Game, p: PlayerId, c: CardId) -> &'static str {
+        let pl = g.player(p);
+        if pl.yawg && pl.yawg_gy.contains(&c) {
+            "Yawgmoth's Will"
+        } else if sim_core::human::gaps_c::emry_permits(g, p, c) {
+            "Emry, Lurker of the Loch"
+        } else {
+            "Rivaz of the Claw"
+        }
+    }
     /// graveyard cards the person may play: `[{i, name, how}]`
     pub fn graveyard_playable(g: &Game, p: PlayerId) -> Value {
         let mut out = vec![];
         for (i, &c) in g.player(p).gy.iter().enumerate() {
             let how = match gy_mode(g, p, c) {
                 Some((k, _, _)) => match k {
-                    GyKind::Yawg => "yawg",
+                    // the page prints this as "Name (how)": the card that lets it be cast from the graveyard
+                    GyKind::Yawg => gy_permission(g, p, c),
                     GyKind::Flashback => "flashback",
                     GyKind::Sac3 => "sac3",
                     GyKind::Escape => "escape",
