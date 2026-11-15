@@ -157,6 +157,19 @@ fn the_plan_is_active_for_the_deck_and_names_the_garth_line() {
 }
 
 #[test]
+fn triple_triad_has_one_priority_row_from_six_mana_and_no_else() {
+    let g = tbl();
+    let l = plan_data::active(&g, P0).expect("the plan file is read for urdragon");
+    let rows: Vec<_> = l.plan.prio.iter().filter(|r| r.cards.iter().any(|c| c == "Triple Triad")).collect();
+    assert_eq!(rows.len(), 1, "one [[prio]] row names Triple Triad");
+    let r = rows[0];
+    assert_eq!(r.cards, ["Triple Triad"]);
+    assert_eq!(r.when, ["lands+mana-perms>=6"]);
+    assert_eq!(r.value, 62.0);
+    assert!(r.otherwise.is_none(), "no else: below six mana the generic rating stands");
+}
+
+#[test]
 fn a_lone_land_that_cannot_cast_the_dorks_goes_back() {
     // Tundra makes {W}{U}; Birds and Llanowar Elves need {G}
     assert!(!keeps(&[
