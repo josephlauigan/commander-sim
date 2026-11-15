@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-11-14",
+  "fetched": "2026-11-15",
   "deck": "thanos",
   "commanders": [
     "Thanos, the Mad Titan"
   ],
-  "request_sha256": "2c23983336753be1e81a75ba75ea95a6f607d2b25512a7c81899edf4282ce509",
+  "request_sha256": "5581cfb161a559d532d3694fcc67d0e8c13d320ff2fa8b8a21a9f144c2db5be8",
   "identity": "WUBRG",
   "included": [
     {
@@ -33,7 +33,7 @@
       "mana": "{U}{U}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 151286
+      "popularity": 151348
     },
     {
       "id": "1295-3093",
@@ -59,7 +59,7 @@
       "mana": "{1}{U}{U}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 132847
+      "popularity": 132888
     },
     {
       "id": "1368-1414-4856",
@@ -93,7 +93,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 119672
+      "popularity": 119734
     },
     {
       "id": "4131-4235",
@@ -119,7 +119,7 @@
       "mana": "{2}",
       "bracket": "R",
       "legal": true,
-      "popularity": 54479
+      "popularity": 54481
     },
     {
       "id": "570-2645",
@@ -149,7 +149,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 4043
+      "popularity": 4047
     }
   ],
   "included_by_changing_commanders": [],
@@ -180,7 +180,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 368373,
+      "popularity": 368508,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -217,7 +217,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 97032,
+      "popularity": 97089,
       "missing": [
         "Lion's Eye Diamond"
       ]
@@ -252,7 +252,7 @@
       "mana": "{2}{R}",
       "bracket": "P",
       "legal": true,
-      "popularity": 91527,
+      "popularity": 91571,
       "missing": [
         "Wheel of Fortune"
       ]
@@ -283,7 +283,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 78839,
+      "popularity": 78873,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -312,7 +312,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 67316,
+      "popularity": 67359,
       "missing": [
         "Forsaken Monument"
       ]
@@ -343,7 +343,7 @@
       "mana": "{1}{W}",
       "bracket": "S",
       "legal": true,
-      "popularity": 53531,
+      "popularity": 53542,
       "missing": [
         "Heliod, Sun-Crowned"
       ]
@@ -372,7 +372,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 46999,
+      "popularity": 46977,
       "missing": [
         "Kinnan, Bonder Prodigy"
       ]
@@ -404,7 +404,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 41509,
+      "popularity": 41546,
       "missing": [
         "Grinding Station"
       ]
@@ -434,7 +434,7 @@
       "mana": "{6}{R}{R}{R}",
       "bracket": "P",
       "legal": true,
-      "popularity": 38826,
+      "popularity": 38832,
       "missing": [
         "Reiterate"
       ]
@@ -463,7 +463,7 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 38104,
+      "popularity": 38117,
       "missing": [
         "Tidespout Tyrant"
       ]
@@ -496,7 +496,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 37896,
+      "popularity": 37898,
       "missing": [
         "Priest of Titania"
       ]
@@ -529,7 +529,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 34343,
+      "popularity": 34341,
       "missing": [
         "Elvish Archdruid"
       ]
@@ -562,7 +562,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 32953,
+      "popularity": 32945,
       "missing": [
         "Marwyn, the Nurturer"
       ]
@@ -595,7 +595,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 29097,
+      "popularity": 29099,
       "missing": [
         "Circle of Dreams Druid"
       ]
@@ -624,7 +624,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 26646,
+      "popularity": 26668,
       "missing": [
         "Forensic Gadgeteer"
       ]
@@ -653,7 +653,7 @@
       "mana": "{12}{W}{W}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 25917,
+      "popularity": 25927,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -686,7 +686,7 @@
       "mana": "{G}",
       "bracket": "S",
       "legal": true,
-      "popularity": 24348,
+      "popularity": 24337,
       "missing": [
         "Selvala, Heart of the Wilds"
       ]
@@ -715,7 +715,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 19062,
+      "popularity": 19083,
       "missing": [
         "Cybermen Squadron"
       ]
@@ -744,7 +744,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 15233,
+      "popularity": 15239,
       "missing": [
         "Nyxbloom Ancient"
       ]
@@ -777,7 +777,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 15130,
+      "popularity": 15127,
       "missing": [
         "Wirewood Channeler"
       ]
@@ -810,7 +810,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 14854,
+      "popularity": 14875,
       "missing": [
         "Bloom Tender"
       ]
@@ -839,7 +839,7 @@
       "mana": "{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 14749,
+      "popularity": 14756,
       "missing": [
         "Laboratory Maniac"
       ]
@@ -868,7 +868,7 @@
       "mana": "{U}{U}{B}{B}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 14685,
+      "popularity": 14682,
       "missing": [
         "Doomsday"
       ]
@@ -897,7 +897,7 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 14008,
+      "popularity": 14014,
       "missing": [
         "Tidespout Tyrant"
       ]
@@ -929,7 +929,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 12898,
+      "popularity": 12913,
       "missing": [
         "Archangel of Thune"
       ]
@@ -960,7 +960,7 @@
       "mana": "{8}{U}{U}{U}{U}{U}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 12798,
+      "popularity": 12806,
       "missing": [
         "Enter the Infinite"
       ]
@@ -989,7 +989,7 @@
       "mana": "{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 12286,
+      "popularity": 12296,
       "missing": [
         "Jumbo Cactuar"
       ]
@@ -1016,7 +1016,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 12212,
+      "popularity": 12221,
       "missing": [
         "Mikaeus, the Unhallowed"
       ]
@@ -1049,7 +1049,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 12020,
+      "popularity": 12036,
       "missing": [
         "Metalworker"
       ]
@@ -1078,7 +1078,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 11105,
+      "popularity": 11110,
       "missing": [
         "Power Artifact"
       ]
@@ -1107,7 +1107,7 @@
       "mana": "{G}{U}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 10464,
+      "popularity": 10461,
       "missing": [
         "Hermit Druid"
       ]
@@ -1136,7 +1136,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 10316,
+      "popularity": 10310,
       "missing": [
         "Zirda, the Dawnwaker"
       ]
@@ -1166,7 +1166,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 10271,
+      "popularity": 10262,
       "missing": [
         "Freed from the Real"
       ]
@@ -1222,7 +1222,7 @@
       "mana": "{4}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 9950,
+      "popularity": 9956,
       "missing": [
         "Master Transmuter"
       ]
@@ -1251,7 +1251,7 @@
       "mana": "{5}{U}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 9881,
+      "popularity": 9912,
       "missing": [
         "Leveler"
       ]
@@ -1280,7 +1280,7 @@
       "mana": "{13}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 9841,
+      "popularity": 9846,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -1340,7 +1340,7 @@
       "mana": "{1}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 9677,
+      "popularity": 9678,
       "missing": [
         "Laboratory Maniac"
       ]
@@ -1369,7 +1369,7 @@
       "mana": "{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 9548,
+      "popularity": 9541,
       "missing": [
         "Jace, Wielder of Mysteries"
       ]
@@ -1401,7 +1401,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 9059,
+      "popularity": 9066,
       "missing": [
         "Najeela, the Blade-Blossom"
       ]
@@ -1430,7 +1430,7 @@
       "mana": "{3}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 8131,
+      "popularity": 8139,
       "missing": [
         "Ad Nauseam"
       ]
@@ -1463,7 +1463,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 7874,
+      "popularity": 7869,
       "missing": [
         "Karametra's Acolyte"
       ]
@@ -1492,7 +1492,7 @@
       "mana": "{12}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7609,
+      "popularity": 7616,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -1584,7 +1584,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 7198,
+      "popularity": 7204,
       "missing": [
         "Mind Over Matter"
       ]
@@ -1617,7 +1617,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 7088,
+      "popularity": 7086,
       "missing": [
         "Gyre Sage"
       ]
@@ -1646,7 +1646,7 @@
       "mana": "{1}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 7077,
+      "popularity": 7070,
       "missing": [
         "Jace, Wielder of Mysteries"
       ]
@@ -1679,7 +1679,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 6807,
+      "popularity": 6816,
       "missing": [
         "Howlsquad Heavy"
       ]
@@ -1708,7 +1708,7 @@
       "mana": "{3}{R}{R}",
       "bracket": "R",
       "legal": true,
-      "popularity": 6565,
+      "popularity": 6571,
       "missing": [
         "Chandra's Ignition"
       ]
@@ -1738,7 +1738,7 @@
       "mana": "{4}{R}",
       "bracket": "S",
       "legal": true,
-      "popularity": 5619,
+      "popularity": 5628,
       "missing": [
         "Path of the Pyromancer"
       ]
@@ -1768,7 +1768,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5217,
+      "popularity": 5214,
       "missing": [
         "Pemmin's Aura"
       ]
@@ -1807,7 +1807,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 5139,
+      "popularity": 5138,
       "missing": [
         "Myr Welder"
       ]
@@ -1836,7 +1836,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 4686,
+      "popularity": 4684,
       "missing": [
         "Blade of Selves"
       ]
@@ -1865,7 +1865,7 @@
       "mana": "{U}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 4364,
+      "popularity": 4359,
       "missing": [
         "Thought Lash"
       ]
@@ -1894,7 +1894,7 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 3986,
+      "popularity": 3996,
       "missing": [
         "Crackdown Construct"
       ]
@@ -1927,7 +1927,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 3827,
+      "popularity": 3817,
       "missing": [
         "Viridian Joiner"
       ]
@@ -1956,7 +1956,7 @@
       "mana": "{1}{U}{U}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 3787,
+      "popularity": 3795,
       "missing": [
         "Paradigm Shift"
       ]
@@ -1985,48 +1985,9 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 3488,
+      "popularity": 3489,
       "missing": [
         "Mana Reflection"
-      ]
-    },
-    {
-      "id": "132-2645-4131",
-      "cards": [
-        {
-          "name": "Myr Welder",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Staff of Domination",
-          "zones": [
-            "E"
-          ]
-        },
-        {
-          "name": "Basalt Monolith",
-          "zones": [
-            "E"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw",
-        "Infinite lifegain",
-        "Infinite lifegain triggers",
-        "Infinite mana creatures you control can produce",
-        "Infinite colorless mana"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 3326,
-      "missing": [
-        "Myr Welder"
       ]
     },
     {
@@ -2069,6 +2030,45 @@
       ]
     },
     {
+      "id": "132-2645-4131",
+      "cards": [
+        {
+          "name": "Myr Welder",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Staff of Domination",
+          "zones": [
+            "E"
+          ]
+        },
+        {
+          "name": "Basalt Monolith",
+          "zones": [
+            "E"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite mana creatures you control can produce",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 3323,
+      "missing": [
+        "Myr Welder"
+      ]
+    },
+    {
       "id": "3363-4331",
       "cards": [
         {
@@ -2090,7 +2090,7 @@
       "mana": "{5}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 3313,
+      "popularity": 3314,
       "missing": [
         "Drafna, Founder of Lat-Nam"
       ]
@@ -2123,7 +2123,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 3050,
+      "popularity": 3045,
       "missing": [
         "Sanctum Weaver"
       ]
@@ -2219,7 +2219,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2498,
+      "popularity": 2504,
       "missing": [
         "Brigid, Clachan's Heart // Brigid, Doun's Mind"
       ]
@@ -2250,7 +2250,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2446,
+      "popularity": 2444,
       "missing": [
         "Light of Promise"
       ]
@@ -2277,7 +2277,7 @@
       "mana": "{8}{R}{R}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2373,
+      "popularity": 2378,
       "missing": [
         "Obliterate"
       ]
@@ -2310,7 +2310,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2366,
+      "popularity": 2368,
       "missing": [
         "Arbor Adherent"
       ]
@@ -2345,7 +2345,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2348,
+      "popularity": 2352,
       "missing": [
         "Emiel the Blessed"
       ]
@@ -2374,7 +2374,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 2274,
+      "popularity": 2271,
       "missing": [
         "Cephalid Illusionist"
       ]
@@ -2403,7 +2403,7 @@
       "mana": "{2}{W} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 2133,
+      "popularity": 2132,
       "missing": [
         "Zethi, Arcane Blademaster"
       ]
@@ -2433,7 +2433,7 @@
       "mana": "{8}{R}{R}{R}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2113,
+      "popularity": 2114,
       "missing": [
         "Worldfire"
       ]
@@ -2460,7 +2460,7 @@
       "mana": "{2}{W}{U}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2089,
+      "popularity": 2086,
       "missing": [
         "Naru Meha, Master Wizard"
       ]
@@ -2489,7 +2489,7 @@
       "mana": "{12}{W}{W}{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2069,
+      "popularity": 2074,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -2528,7 +2528,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 2039,
+      "popularity": 2037,
       "missing": [
         "Trazyn the Infinite"
       ]
@@ -2557,7 +2557,7 @@
       "mana": "{1}{U}{U}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 2035,
+      "popularity": 2034,
       "missing": [
         "Divining Witch"
       ]
@@ -2587,7 +2587,7 @@
       "mana": "{4}{U/R}{U/R}{R}",
       "bracket": "P",
       "legal": true,
-      "popularity": 1968,
+      "popularity": 1969,
       "missing": [
         "Soulfire Grand Master"
       ]
@@ -2620,7 +2620,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1875,
+      "popularity": 1874,
       "missing": [
         "Bighorner Rancher"
       ]
@@ -2653,7 +2653,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1764,
+      "popularity": 1765,
       "missing": [
         "Overgrown Battlement"
       ]
@@ -2686,7 +2686,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1749,
+      "popularity": 1753,
       "missing": [
         "Deathbloom Ritualist"
       ]
@@ -2725,7 +2725,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 1735,
+      "popularity": 1736,
       "missing": [
         "Myr Welder"
       ]
@@ -2758,7 +2758,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1723,
+      "popularity": 1724,
       "missing": [
         "Axebane Guardian"
       ]
@@ -2791,7 +2791,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1671,
+      "popularity": 1666,
       "missing": [
         "Heronblade Elite"
       ]
@@ -2824,7 +2824,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 1575,
+      "popularity": 1581,
       "missing": [
         "Topiary Lecturer"
       ]
@@ -2853,7 +2853,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1551,
+      "popularity": 1555,
       "missing": [
         "Crackdown Construct"
       ]
@@ -2886,7 +2886,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1529,
+      "popularity": 1527,
       "missing": [
         "Kydele, Chosen of Kruphix"
       ]
@@ -2915,7 +2915,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1433,
+      "popularity": 1429,
       "missing": [
         "Spellbinder"
       ]
@@ -2946,7 +2946,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1357,
+      "popularity": 1362,
       "missing": [
         "The Destined White Mage"
       ]
@@ -3005,7 +3005,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 1306,
+      "popularity": 1307,
       "missing": [
         "Palinchron"
       ]
@@ -3038,7 +3038,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1299,
+      "popularity": 1293,
       "missing": [
         "Cradle Clearcutter"
       ]
@@ -3097,7 +3097,7 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 1249,
+      "popularity": 1250,
       "missing": [
         "Palinchron"
       ]
@@ -3130,7 +3130,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1145,
+      "popularity": 1140,
       "missing": [
         "Leafkin Avenger"
       ]
@@ -3163,7 +3163,7 @@
       "mana": "{2}",
       "bracket": "S",
       "legal": true,
-      "popularity": 1136,
+      "popularity": 1137,
       "missing": [
         "Magus of the Coffers"
       ]
@@ -3194,7 +3194,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1105,
+      "popularity": 1107,
       "missing": [
         "Sunbond"
       ]
@@ -3226,7 +3226,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1099,
+      "popularity": 1098,
       "missing": [
         "High Alert"
       ]
@@ -3253,7 +3253,7 @@
       "mana": "{6}{W} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 1090,
+      "popularity": 1088,
       "missing": [
         "Meticulous Excavation"
       ]
@@ -3282,7 +3282,7 @@
       "mana": "{U}{U} and six {B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 997,
+      "popularity": 998,
       "missing": [
         "Doomsday Excruciator"
       ]
@@ -3321,7 +3321,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 987,
+      "popularity": 989,
       "missing": [
         "Trazyn the Infinite"
       ]
@@ -3388,7 +3388,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 890,
+      "popularity": 896,
       "missing": [
         "Vhal, Candlekeep Researcher"
       ]
@@ -3417,7 +3417,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 871,
+      "popularity": 869,
       "missing": [
         "Vigean Graftmage"
       ]
@@ -3451,7 +3451,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 848,
+      "popularity": 847,
       "missing": [
         "Bigger on the Inside"
       ]
@@ -3484,7 +3484,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 830,
+      "popularity": 831,
       "missing": [
         "Mona Lisa, Science Geek"
       ]
@@ -3515,7 +3515,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 782,
+      "popularity": 783,
       "missing": [
         "Spider-Man, Peter Parker"
       ]
@@ -3575,7 +3575,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 736,
+      "popularity": 739,
       "missing": [
         "The Notary Hobbits"
       ]
@@ -3605,9 +3605,38 @@
       "mana": "{B}{B}{G}{G}",
       "bracket": "R",
       "legal": true,
-      "popularity": 736,
+      "popularity": 738,
       "missing": [
         "Yavimaya Bloomsage // Channel"
+      ]
+    },
+    {
+      "id": "742-8266",
+      "cards": [
+        {
+          "name": "Fblthp, Impossibly Lost",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You control a creature that doesn't have summoning sickness and that cannot be blocked by an opponent.",
+      "mana": "{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 726,
+      "missing": [
+        "Fblthp, Impossibly Lost"
       ]
     },
     {
@@ -3641,35 +3670,6 @@
       "popularity": 720,
       "missing": [
         "Alena, Kessig Trapper"
-      ]
-    },
-    {
-      "id": "742-8266",
-      "cards": [
-        {
-          "name": "Fblthp, Impossibly Lost",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Demonic Consultation",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Win the game"
-      ],
-      "requires": [],
-      "prerequisites": "You control a creature that doesn't have summoning sickness and that cannot be blocked by an opponent.",
-      "mana": "{B}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 713,
-      "missing": [
-        "Fblthp, Impossibly Lost"
       ]
     },
     {
@@ -3729,7 +3729,7 @@
       "mana": "{4}{U}{U}{U}{B} the first turn, with {3}{U}{U}{U} each extra turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 666,
+      "popularity": 665,
       "missing": [
         "Timestream Navigator"
       ]
@@ -3791,7 +3791,7 @@
       "mana": "{1}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 635,
+      "popularity": 636,
       "missing": [
         "Deadeye Navigator"
       ]
@@ -3820,7 +3820,7 @@
       "mana": "{4}{R}{R}{R}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 624,
+      "popularity": 625,
       "missing": [
         "Apocalypse"
       ]
@@ -3849,7 +3849,7 @@
       "mana": "{U}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 618,
+      "popularity": 620,
       "missing": [
         "Phyrexian Devourer"
       ]
@@ -3878,7 +3878,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 547,
+      "popularity": 548,
       "missing": [
         "Legion Loyalty"
       ]
@@ -3913,7 +3913,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 546,
+      "popularity": 548,
       "missing": [
         "Monk Gyatso"
       ]
@@ -3973,7 +3973,7 @@
       "mana": "",
       "bracket": "O",
       "legal": true,
-      "popularity": 537,
+      "popularity": 536,
       "missing": [
         "Urban Daggertooth"
       ]
@@ -4002,7 +4002,7 @@
       "mana": "{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 482,
+      "popularity": 481,
       "missing": [
         "Chain Stasis"
       ]
@@ -4035,7 +4035,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 481,
+      "popularity": 480,
       "missing": [
         "Selvala, Eager Trailblazer"
       ]
@@ -4066,7 +4066,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 466,
+      "popularity": 469,
       "missing": [
         "Heroic Feast"
       ]
@@ -4137,7 +4137,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 420,
+      "popularity": 419,
       "missing": [
         "Mizzix of the Izmagnus"
       ]
@@ -4200,7 +4200,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 403,
+      "popularity": 402,
       "missing": [
         "Gauntlets of Light"
       ]
@@ -4227,7 +4227,7 @@
       "mana": "{4}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 360,
+      "popularity": 359,
       "missing": [
         "Vedalken Mastermind"
       ]
@@ -4256,7 +4256,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 333,
+      "popularity": 334,
       "missing": [
         "Duke Ulder Ravengard"
       ]
@@ -4310,7 +4310,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 306,
+      "popularity": 307,
       "missing": [
         "Umbilicus"
       ]
@@ -4430,7 +4430,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 274,
+      "popularity": 275,
       "missing": [
         "Doc Samson, Super Psychiatrist"
       ]
@@ -4459,7 +4459,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 251,
+      "popularity": 252,
       "missing": [
         "Wake Thrasher"
       ]
@@ -4515,7 +4515,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 203,
+      "popularity": 204,
       "missing": [
         "Cephalid Aristocrat"
       ]
@@ -4606,7 +4606,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 165,
+      "popularity": 168,
       "missing": [
         "Loot, the Nexus"
       ]
@@ -4749,7 +4749,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 96,
+      "popularity": 95,
       "missing": [
         "Tradewind Rider"
       ]
@@ -4991,7 +4991,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 35,
+      "popularity": 34,
       "missing": [
         "Phenomenon Investigators"
       ]

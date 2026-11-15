@@ -3,6 +3,22 @@
 What the simulator has taught us about the Y'shtola Esper drain deck: strengths, weaknesses, and what was tried and
 why it did or didn't work. Updated after every run. Newest evidence first. Matched tier: T5 (`data/my_decks.toml`).
 
+## 2026-11-15: Urborg Syphon-Mage => Mindbreak Trap (JD's choice, not simulated)
+Mindbreak Trap ({2}{U}{U} instant, model status Full: `t6_counters.rs` `mindbreak_free`; not a Game Changer) takes
+Urborg Syphon-Mage's slot. Why: it is free once any opponent has cast three spells this turn, it exiles any number of
+target spells (a whole combo chain, or a counter aimed at your spell), and exile answers spells that can't be countered
+(Hullbreaker Horror in the Kinnan and Urza lists, Dragons under Cavern of Souls in Miirym's). It is a spell of mana value
+4, so it triggers Y'shtola even when cast for free. It was aimed at the deck's largest documented loss: combos took about
+44% of the t5 games in the 11/07 analyze run (Urza 13.2%, Kinnan 12.9%, Zur 9.4%, Yawgmoth 8.4%). What it costs: Urborg
+Syphon-Mage ({2}{B}, discard a card: each other player loses 2 and you gain the total), one of the lowest win rates when
+cast in that run (31.4%, +5.1; cast in 11% of games). Limits: it stops spells only, not abilities (Kinnan's and Urza's
+activations, Walking Ballista); hard-cast it needs {U}{U} (about 58% by the 10th card with 18 blue sources), and four blue
+sources at once on your own turn alongside Oracle. An Opus consult preferred cutting Disdainful Stroke for it (Stroke hits
+only mana value 4 or more and the t5 combo pieces are cheaper); JD chose Syphon-Mage, so Stroke stays and the list now has
+four counters. Not measured: no list with Trap has run, and the Option B package below is not simulated either. Opus
+advised against adding Gifts Ungiven here (nothing in the list returns a card from the graveyard, and no pile that names
+both Doomsday and Demonic Consultation is safe).
+
 ## 2026-11-14: Doomsday / Thassa's Oracle package, Option B (12 swaps; NOT SIMULATED)
 Branch `yshtola-doomsday` (worktree `commander-sim-wt-yshtola-doomsday`), on the Cali branch tip `50196edd` after pulling
 the other session's three newer commits (Ur-Dragon cards, phasing). **Status:** JD chose Option B on 2026-11-14 (first A,

@@ -276,8 +276,10 @@ mod tests {
     /// a card whose priority is 0 for the deck on a plain board and that is no instant: Underworld Breach in Thanos (no
     /// plan rule names it, and Breach is gated on escape candidates). Kefka played this test until it was retired
     /// (2026-11-06); its note: the same shape as Bribery before the
-    /// audit gave it an arm in kefka_prio. Seed 500002: with the 10/30 list, seed 500000 reaches a board by round 7
-    /// where Kefka can escape two cards with 5 mana, and kefka_prio rightly ranks Breach 56 there
+    /// audit gave it an arm in kefka_prio. The seed matters: on some seeds the board reaches a round where the deck can
+    /// escape cards with Breach and the rule rightly ranks it above 0 (Kefka's list on seed 500000, kefka_prio 56; Thanos'
+    /// list with Gifts Ungiven instead of Triple Triad on seeds 500002, 500003, 500010, 500011, 500023 and 500024). Seed
+    /// 500000 gives 0 for the 2026-11-15 Thanos list
     #[test]
     fn a_card_the_deck_rule_ranks_zero_gets_the_warning() {
         let s = sim();
@@ -286,7 +288,7 @@ mod tests {
             .find(|c| s.engine.db.id(c).is_some_and(|i| !s.engine.db.get(i).land))
             .unwrap()
             .clone();
-        let r = rules_at(&s, "thanos", &out, "Underworld Breach", "t5", 500002);
+        let r = rules_at(&s, "thanos", &out, "Underworld Breach", "t5", 500000);
         assert_eq!(r.prio, 0, "{r:?}");
         assert!(r.warns() && !r.response, "{r:?}");
         assert_eq!(

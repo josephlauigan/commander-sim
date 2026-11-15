@@ -17,7 +17,7 @@ fn ids(g: &Game, names: &[&str]) -> Vec<sim_core::ids::CardId> {
     names.iter().map(|n| card(g, n)).collect()
 }
 
-/// a table with `thrasios` at P0 (ten untapped lands: eight Underground Sea and two Scrubland) and Sauron at P1; the
+/// a table with `thrasios` at P0 (ten untapped lands: eight Underground Sea and two Scrubland) and Y'shtola at P1; the
 /// hand, the library (top first) and the graveyard are exactly what is given
 fn setup(hand_names: &[&str], lib_top_first: &[&str], gy: &[&str]) -> Game {
     let mut g = table_with(&["thrasios", "yshtola"], 1, 40);
@@ -759,6 +759,15 @@ fn veil_of_summer_held_is_the_lock_when_there_is_no_silence() {
         &[],
     );
     lands(&mut g, P0, "Bayou", 1, false); // the {G}
+    // the Veil does not answer Mindbreak Trap, so it is no lock against a table that may hold one (`prob_holding` reads the
+    // opponent's decklist): P1's list (yshtola) has held a Mindbreak Trap since 2026-11-15, so take it out of P1's
+    // decklist and library for this test
+    let no_trap = |ids: &[sim_core::ids::CardId], g: &Game| -> Vec<sim_core::ids::CardId> {
+        ids.iter().copied().filter(|&c| &*g.db.get(c).name != "Mindbreak Trap").collect()
+    };
+    let (deck, lib) = (no_trap(&g.player(P1).deck_names, &g), no_trap(&g.player(P1).library, &g));
+    g.player_mut(P1).deck_names = deck.into();
+    g.player_mut(P1).library = lib;
     let b = doomsday::build(&g, P0, doomsday::Scn::Main, 3, &[]).expect("a pile wins");
     assert!(b.lock, "the pile carries the Veil as its lock");
     let names: Vec<String> = b.pile.iter().map(|&c| g.db.get(c).name.to_string()).collect();

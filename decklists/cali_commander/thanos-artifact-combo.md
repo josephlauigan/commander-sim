@@ -129,9 +129,8 @@ If the combo is stopped, the deck still has threats and a way to grind:
   Thassa's Oracle, and his {5} ability plays the top card free.
 - **Crucible of Worlds** ({3}): play lands from the graveyard: Strip Mine every turn, Urza's Saga again after it
   sacrifices itself.
-- **Triple Triad** ({3}{R}{R}{R}) and **Fiery Emancipation** ({3}{R}{R}{R}) are six-mana red enchantments that come
-  down on a big-mana turn, not before: Triple Triad lets you play your top card and any lower-cost exiled card free
-  each upkeep, Emancipation triples damage from your sources (Thanos, Ballista).
+- **Fiery Emancipation** ({3}{R}{R}{R}) is a six-mana red enchantment that comes down on a big-mana turn, not before:
+  it triples damage from your sources (Thanos, Ballista).
 - **Esper Sentinel** ({W}) draws you a card when the opponent casts their first noncreature spell each turn and doesn't
   pay {1}. **Mystic Confluence** ({3}{U}{U}) is a flexible counter, bounce or draw.
 
@@ -168,7 +167,7 @@ one). The player on the play skips their first draw.
 - **Blightsteel in the opening hand is a tutor that can't win by itself.** It needs {12} or a Sneak Attack, so treat it
   as a dead card unless you hold Sneak Attack or a rock-heavy hand.
 - **Tutor hands are strong here:** the deck has Demonic, Vampiric, Grim, Enlightened, Mystical, Worldly, Gamble, Tinker,
-  Diabolic Intent. Keep a hand with two mana sources and a tutor, even with one land.
+  Diabolic Intent and, at instant speed, Gifts Ungiven. Keep a hand with two mana sources and a tutor, even with one land.
 
 ### What to tutor for
 
@@ -188,6 +187,20 @@ discard what you wanted: use it with three or more spare cards, or as a one-shot
 Mystical Tutor finds Silence, a counterspell or Brain Freeze; Worldly Tutor finds Blightsteel Colossus, Primeval Titan or
 Walking Ballista; Enlightened Tutor finds any artifact or enchantment (Tinker's partner pieces, Staff, Rings,
 Underworld Breach).
+
+**Gifts Ungiven** ({3}{U}, instant) finds four cards and the opponent chooses two of them for your graveyard, so a pile
+has to work for every split. Each pile that works needs one piece already in hand, so Gifts adds redundancy at instant
+speed, not a new route; cast it at the end of the opponent's turn:
+
+- **Thassa's Oracle in hand:** Demonic Consultation, Tainted Pact, Underworld Breach and Demonic Tutor. Five of the six
+  splits leave an exile half (Consultation or Pact) in your hand. In the sixth the opponent bins both, and you hold
+  Breach and Demonic Tutor: cast Breach and escape Consultation ({B} plus exiling three other graveyard cards; Pact and
+  Gifts are already there, so one more, such as Demonic Tutor once cast), 5 to 7 mana in one turn.
+- **Underworld Breach in hand:** Thassa's Oracle and Demonic Consultation (with only these two found, both go to the
+  graveyard, and Breach escapes them next turn; you need about four other cards in the graveyard besides Gifts for the two escapes).
+- **Do not** ask for Tinker with Blightsteel Colossus, for the Oracle with Consultation and nothing in hand, or for the
+  Basalt-route pieces with only two in hand (the opponent bins the Monolith, and no tutor finds it in the graveyard): the
+  opponent gives you the two cards that don't win.
 
 ### Protecting the win turn
 
@@ -252,12 +265,14 @@ Ring until you know the matchup. Thanos's lifelink and Exsanguinate pay some of 
 
 27 lands, 3 of them colourless (Ancient Tomb, Strip Mine, Urza's Saga). Coloured sources among the lands: blue 14,
 black 12, red 12, white 11, green 10, counting Command Tower, Path of Ancestry, Exotic Orchard and Plaza of Heroes
-(Plaza makes coloured mana only for legendary spells, so Thanos). The deck also has 5 mana dorks (Birds of Paradise,
+(Plaza makes coloured mana only for legendary spells, so Thanos, and cannot pay for Gifts Ungiven; Orchard makes blue
+only if an opponent's land does). The deck also has 5 mana dorks (Birds of Paradise,
 Llanowar Elves, Paradise Druid, Avacyn's Pilgrim, Faeburrow Elder), 14 rocks and rituals (Mana Crypt, Sol Ring, Mana
 Vault, Lotus Petal, Dark Ritual, Arcane Signet, Coalition Relic, Fellwar Stone, Mind Stone, Talisman of Hierarchy,
 Talisman of Progress, Thought Vessel, The Mightstone and Weakstone, Basalt Monolith). Red and green are the thin
-colours: only Thanos, Faeburrow Elder, Chaos Warp, Deflecting Swat, Jeska's Will, Gamble, Underworld Breach and Sneak
-Attack need red, and only the green dorks, Faeburrow Elder and Primeval Titan need green, so a fetch-free mana base is
+colours: only Thanos, Faeburrow Elder, Chaos Warp, Deflecting Swat, Jeska's Will, Gamble, Underworld Breach, Sneak
+Attack, Ragavan, Nibelheim Aflame ({R}{R}) and Fiery Emancipation ({R}{R}{R}) need red, and only the green dorks,
+Faeburrow Elder, Worldly Tutor, Heroic Intervention and Primeval Titan need green, so a fetch-free mana base is
 enough. The painlands (Adarkar Wastes, Battlefield Forge, Brushland, Caves of Koilos, Shivan Reef, Underground River,
 Yavimaya Coast) and the shocklands (Blood Crypt, Hallowed Fountain, Overgrown Tomb, Steam Vents, Temple Garden, Watery
 Grave) enter untapped on any turn; Spirebluff Canal is untapped on turns 1-3; Sunpetal Grove, Sulfur Falls and
@@ -279,9 +294,9 @@ game. Check with the organiser whether proxies are allowed.
 
 **Artifacts (18).** Arcane Signet, Basalt Monolith, Coalition Relic, Crucible of Worlds, Fellwar Stone, Lightning Greaves, Lotus Petal, Mana Crypt, Mana Vault, Mind Stone, Rings of Brighthearth, Sol Ring, Staff of Domination, Talisman of Hierarchy, Talisman of Progress, The Mightstone and Weakstone, The One Ring, Thought Vessel
 
-**Enchantments (6).** Fiery Emancipation, Mystic Remora, Rhystic Study, Sneak Attack, Triple Triad, Underworld Breach
+**Enchantments (5).** Fiery Emancipation, Mystic Remora, Rhystic Study, Sneak Attack, Underworld Breach
 
-**Instants (23).** Akroma's Will, An Offer You Can't Refuse, Brain Freeze, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Deflecting Swat, Demonic Consultation, Dovin's Veto, Enlightened Tutor, Ephemerate, Force of Negation, Force of Will, Heroic Intervention, Mystic Confluence, Mystical Tutor, Silence, Swords to Plowshares, Tainted Pact, Teferi's Protection, Vampiric Tutor, Worldly Tutor
+**Instants (24).** Akroma's Will, An Offer You Can't Refuse, Brain Freeze, Chaos Warp, Counterspell, Cyclonic Rift, Dark Ritual, Deflecting Swat, Demonic Consultation, Dovin's Veto, Enlightened Tutor, Ephemerate, Force of Negation, Force of Will, Gifts Ungiven, Heroic Intervention, Mystic Confluence, Mystical Tutor, Silence, Swords to Plowshares, Tainted Pact, Teferi's Protection, Vampiric Tutor, Worldly Tutor
 
 **Sorceries (8).** Demonic Tutor, Diabolic Intent, Exsanguinate, Gamble, Grim Tutor, Jeska's Will, Nibelheim Aflame, Tinker
 
@@ -328,6 +343,7 @@ game. Check with the organiser whether proxies are allowed.
 1 Force of Negation
 1 Force of Will
 1 Gamble
+1 Gifts Ungiven
 1 Grand Abolisher
 1 Grim Tutor
 1 Hallowed Fountain
@@ -377,7 +393,6 @@ game. Check with the organiser whether proxies are allowed.
 1 The One Ring
 1 Thought Vessel
 1 Tinker
-1 Triple Triad
 1 Underground River
 1 Underworld Breach
 1 Urborg, Tomb of Yawgmoth

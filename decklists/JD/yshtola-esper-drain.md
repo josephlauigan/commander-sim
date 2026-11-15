@@ -36,14 +36,14 @@ She does three jobs in this deck:
 **Her draw needs 4 life lost by one player in one turn.** One trigger is only 2 to each opponent, so a draw needs a second source in the same turn:
 
 - **Two triggers**, such as a removal spell on an opponent's turn plus your own main-phase spell. Cheap instants with mana value 3 (Anguished Unmaking, Generous Gift, Your Fate Ends Here) on an opponent's turn are the easiest second trigger. Cast Away Doubt does it alone: its 2 damage plus her 2 is 4 to each opponent.
-- **One trigger plus a drain** from Sanguine Bond, Blight-Priest, Palantír of Orthanc or Urborg Syphon-Mage. Sheoldred, the Apocalypse adds 2 to each opponent's every draw.
+- **One trigger plus a drain** from Sanguine Bond, Blight-Priest or Palantír of Orthanc. Sheoldred, the Apocalypse adds 2 to each opponent's every draw.
 - **Your own life.** Read the Bones costs 2, Anguished Unmaking 3, and Necropotence as much as you like.
 
 **When to cast her.** Turn 3 off a turn-2 rock, otherwise turn 4, with a spell of mana value 3 or more to follow. In the plan file she is the top priority from turn 2 on. Check your colours first: she needs {W}, {U} and {B} from three different sources (Command Tower, a rock or a fetch land can be the third). Counterspell, Force of Will or a lock (Silence cast first, Teferi, Time Raveler, Grand Abolisher or Voice of Victory already out) can protect her cast; Disdainful Stroke counters a spell with mana value 4 or more, so it only answers a counter aimed at her that costs that much (Force of Will), not Counterspell, Mana Drain or Fierce Guardianship. Into open blue mana, activate Mistrise Village first ({U}, {T}: the next spell can't be countered) or accept that the first Force of Will eats her; she can be recast for {2} more per previous cast.
 
 ### How the deck wins
 
-The damage comes mostly from Y'shtola's triggers and drains (Sanguine Bond, Blight-Priest, the X spells, Syphon-Mage), and only a little from combat. Before the swap that added Lines 5 and 6, the sims showed about a quarter of her wins as the Bond + Exquisite Blood combo and the rest as damage, and her plan online in about two games in three (26.6% win rate at t5 in 2,000 games on c1da6adb, the base before the swap; 27.4% in 10,000 on 11/07). There are three finishing lines for the drain, a grind that sets them up, and two lines that skip the drain: Thassa's Oracle with Demonic Consultation (Line 5) and Doomsday (Line 6). **Lines 5 and 6 are unmeasured:** this list has not been simulated. The only package run was 200 games of an earlier 18-card version (no clear effect, noise +-8), and at Tier 5 the AI does not get the Tier 6 Doomsday deck's keep rules or its lock-before-go check (FINDINGS 2026-11-14): it does not cast Silence as a lock before Line 5 or tutor for it, so a simulator result would not show how the lines play when you pilot them.
+The damage comes mostly from Y'shtola's triggers and drains (Sanguine Bond, Blight-Priest and the X spells), and only a little from combat. Before the swap that added Lines 5 and 6, the sims showed about a quarter of her wins as the Bond + Exquisite Blood combo and the rest as damage, and her plan online in about two games in three (26.6% win rate at t5 in 2,000 games on c1da6adb, the base before the swap; 27.4% in 10,000 on 11/07). There are three finishing lines for the drain, a grind that sets them up, and two lines that skip the drain: Thassa's Oracle with Demonic Consultation (Line 5) and Doomsday (Line 6). **Lines 5 and 6 are unmeasured:** this list has not been simulated. The only package run was 200 games of an earlier 18-card version (no clear effect, noise +-8), and at Tier 5 the AI does not get the Tier 6 Doomsday deck's keep rules or its lock-before-go check (FINDINGS 2026-11-14): it does not cast Silence as a lock before Line 5 or tutor for it, so a simulator result would not show how the lines play when you pilot them.
 
 **The drain pieces:**
 
@@ -53,7 +53,6 @@ The damage comes mostly from Y'shtola's triggers and drains (Sanguine Bond, Blig
 | Marauding Blight-Priest ({2}{B}) | Whenever you gain life, each opponent loses 1 | The same events, to every opponent |
 | Exquisite Blood ({4}{B}) | Whenever an opponent loses life, you gain that much | Any drain, ping or life payment by an opponent |
 | Polluted Bonds ({3}{B}{B}) | Whenever an opponent's land enters, they lose 2 and you gain 2 | Each opponent's land drop: a drain, a gain for Bond and the Priest, and a start for Blood |
-| Urborg Syphon-Mage ({2}{B}) | {2}{B}, {T}, discard a card: each other player loses 2, you gain the total | A spare land; the gain is one event |
 | Palantír of Orthanc ({3}) | At your end step, scry 2; the opponent you target lets you draw, or you mill X and they lose life equal to the cards' total mana value | Every end step (and it triggers her when cast) |
 | Cast Away Doubt ({2}{B}) | Draw two; 2 damage to each player | With her trigger, each opponent loses 4 |
 | Sheoldred, the Apocalypse ({2}{B}{B}) | Opponents lose 2 per draw; you gain 2 per draw | Each draw step, and every extra draw (Loran, Rhystic, Tithe, cantrips) |
@@ -66,7 +65,7 @@ Ten mana for the pair ({3}{B}{B} and {4}{B}), over one turn or two. Once both ar
 2. Cast **Exquisite Blood** when you can follow it with a trigger the same turn (5 + 3 = 8 mana), or when no opponent can answer it before your next turn. It is the card the table's Cyclonic Rift, Swan Song and Force of Will target.
 3. **Start the loop.** The cast trigger of the second enchantment does not start it: Y'shtola's trigger resolves while that enchantment is still on the stack. You need one more life change *after both are on the battlefield*:
    - any spell of mana value 3 or more with Y'shtola out (Cast Away Doubt at three mana is the cheapest);
-   - Exsanguinate for X = 1 ({1}{B}{B}) or a Syphon-Mage activation (both drain an opponent and gain you life);
+   - Exsanguinate for X = 1 ({1}{B}{B}), which drains an opponent and gains you life;
    - on an opponent's turn, a mana value 3 instant (Generous Gift, Your Fate Ends Here), their land drop under Polluted Bonds, any draw under Sheoldred, or any life they pay themselves (a fetch land, a shock land, Necropotence).
 4. **The loop.** An opponent loses N, Blood gains you N, Bond makes an opponent lose N, Blood gains you N again. Each Bond trigger targets one opponent; when he dies, the next trigger targets the next one. The loop ends only when every opponent is dead.
 
@@ -81,7 +80,7 @@ The X drains gain you everything they drain, and with Bond out that gain hits on
 1. Y'shtola's cast trigger: each opponent 18, you gain 2, Bond: the target 16.
 2. Debt resolves: each opponent loses 10 (A at 6, B and C at 8). You gain 30 as one event.
 3. Bond: B loses 30 and dies. The Blight-Priest adds 1 to every opponent for each gain event.
-4. The other two are at 6 and 8: the next trigger, X drain or Syphon-Mage finishes them, or Exquisite Blood does it at once.
+4. The other two are at 6 and 8: the next trigger or X drain finishes them, or Exquisite Blood does it at once.
 
 Debt drains twice as hard per mana (2X, for X + 4 mana) and is the better card from about seven mana up. **Exsanguinate** ({X}{B}{B}) needs no white and starts cheaper (X = 1 is a three-mana trigger). Cast the X spell last in the turn, after your trigger spells have set up the kill. Count before you cast: each opponent loses X (or 2X), plus 2 from Y'shtola, plus 1 per gain event from the Priest, and the whole gain goes to one opponent through Bond.
 
@@ -134,7 +133,7 @@ Oracle ({U}{U}) plus Consultation ({B}): three mana, two cards, and the game end
 - **Voice of Victory** ({1}{W}, creature, 1/3): your opponents can't cast spells during your turn. It stops spells only, not abilities, so unlike Grand Abolisher it leaves an opponent's activated abilities (Walking Ballista, Urza's activation) free; it is still a creature spell the table can counter or kill, so cast it a turn early and keep Silence as the second lock. It does nothing on their turn. Mobilize 2 (when it attacks, two tapped and attacking 1/1 Warrior tokens, sacrificed at the next end step) is not the plan here. Mana value 2, so it does not trigger Y'shtola, and it has no {U}, so it adds no blue devotion.
 - **Teferi, Time Raveler** ({1}{W}{U}): while it is out, each opponent can cast spells only when they could cast a sorcery, which is never on your turn. It is a spell too, so it can be countered when you cast it.
 - **Mistrise Village** ({U}, {T}: the next spell you cast this turn can't be countered) can make Oracle uncounterable, but it needs {U} from another source for its cost plus {U}{U} for Oracle: three blue mana from sources other than the Village. Use it on Oracle (the card with no second copy) and let Silence cover Consultation.
-- **Counterspell and Force of Will** hold a counter behind the line. Force of Will's free cost needs another blue card in hand to exile: Silence is white, Consultation black, and Oracle is the card you are casting, so check the hand. Disdainful Stroke hits only mana value 4 or more, so it cannot answer the cheap counters aimed at Oracle or Consultation.
+- **Counterspell and Force of Will** hold a counter behind the line. Force of Will's free cost needs another blue card in hand to exile: Silence is white, Consultation black, and Oracle is the card you are casting, so check the hand. Disdainful Stroke hits only mana value 4 or more, so it cannot answer the cheap counters aimed at Oracle or Consultation. **Mindbreak Trap** ({2}{U}{U}) can exile every counter aimed at Oracle in one cast, but on your own turn it costs {2}{U}{U} on top of Oracle's {U}{U}, which is four blue sources at once; it is mostly an answer on an opponent's turn.
 - **Mana:** 3 for the line ({U}{U}{B}), 4 with Silence ({W}{U}{U}{B}). Grand Abolisher ({W}{W}) or Voice of Victory ({1}{W}) is a separate cast on the turn before.
 
 **What stops it:** Rule of Law and Eidolon of Rhetoric (Zur's list) allow one spell per player per turn, so two spells are impossible while one is out. If the trigger is countered after the library is gone, you lose at your next draw, and this deck has no out: it has no Mockingbird and no way to bounce Oracle, and Teferi, Time Raveler's -3 would draw from the empty library.
@@ -213,7 +212,7 @@ Without one of them, cast Doomsday in your own main phase and use a pile that st
 **Go now or hold?**
 
 - **Go now** when the kill is on the table (Line 1 with a start ready, an X drain that finishes the opponents), when the blue players are tapped low, or when you hold two pieces of protection (Counterspell, Disdainful Stroke, Force of Will, Mistrise Village).
-- **Hold** when a combo deck (Kinnan, Urza, Zur) has the mana for its kill next turn: keep Counterspell, Disdainful Stroke or Force of Will up, and spend the rest on instant-speed trigger spells (Generous Gift, Anguished Unmaking, Prayer of Binding) at their end step.
+- **Hold** when a combo deck (Kinnan, Urza, Zur) has the mana for its kill next turn: keep Counterspell, Disdainful Stroke, Mindbreak Trap or Force of Will up, and spend the rest on instant-speed trigger spells (Generous Gift, Anguished Unmaking, Prayer of Binding) at their end step.
 - **Hold** the second piece of Line 1 until you can start the loop the same turn (8 mana with Bond out and Y'shtola on the battlefield). Every turn a lone piece sits on the table is a turn for a Cyclonic Rift or a removal spell to find it.
 - **Oracle line (Line 5):** go when both halves are in hand, {U}{U}{B} are untapped and a lock (Silence, Teferi, or Grand Abolisher or Voice of Victory already on the battlefield) or a spare counter is ready, or when the blue players are tapped out. There is one Oracle (Doomsday can pile it from the graveyard, but that is the slower line): wait a turn rather than cast it into two open blue players with no lock or counter.
 
@@ -257,7 +256,7 @@ The first mulligan is free (you see two 7-card hands). After that it's a London 
 | 2 | Tundra, Underground Sea, Swamp, Talisman of Progress, Rhystic Study, Propaganda, Vampiric Tutor | Keep | Three lands in all three colours and a turn-2 rock. Rhystic Study and Propaganda are early engine and defence; Vampiric Tutor at an end step puts Sanguine Bond or Exquisite Blood on top for the next draw |
 | 3 | Scrubland, Hallowed Fountain, Fatal Push, Path to Exile, Disdainful Stroke, Counterspell, Anguished Unmaking | Ship | Two lands, no mana and no engine. Counterspell needs {U}{U} and there is one {U}. Every card is reactive |
 | 4 | Plains, Plains, Plains, Swamp, Arrest, Austere Command, Farewell | Ship | No blue for Y'shtola, one early play and two six-drops. The wipes win a late game, not this one |
-| 5 | Plains, Island, Swamp, Underground River, Flooded Strand, Smothering Tithe, Diabolic Tutor | Keep (close) | Five lands, but both spells are real: Tithe on turn 4 starts making Treasures, and Diabolic Tutor ({2}{B}{B}, from Swamp and Underground River) finds Sanguine Bond. A flood is not fatal, since Coffers, the X drains and Syphon-Mage soak up lands |
+| 5 | Plains, Island, Swamp, Underground River, Flooded Strand, Smothering Tithe, Diabolic Tutor | Keep (close) | Five lands, but both spells are real: Tithe on turn 4 starts making Treasures, and Diabolic Tutor ({2}{B}{B}, from Swamp and Underground River) finds Sanguine Bond. A flood is not fatal, since Coffers and the X drains soak up lands |
 | 6 | Swamp, Underground Sea, Plains, Cast Away Doubt, Read the Bones, Exsanguinate, Debt to the Deathless | Keep (close) | Three lands in three colours and two three-mana draw spells (both trigger her) that find rocks, lands and the combo pieces. The two X spells are dead for a while, but going to six cards costs more than playing the draws |
 | 7 | Swamp, Rhystic Study, Propaganda, Smothering Tithe, Arrest, Sanguine Bond, Exquisite Blood | Ship | One land and nothing that costs under three. It needs two more lands before it does anything, and two colours it does not have |
 | 8 | Command Tower, Marsh Flats, Swamp, Coalition Relic, Talisman of Hierarchy, Austere Command, Exsanguinate | Keep, bottom Austere Command | The 6-card rule: three lands and two rocks, so Y'shtola comes down from the command zone on turn 3. Austere Command is the slowest card; Exsanguinate wins late |
@@ -342,7 +341,7 @@ Count lands (L), then check which pieces are out. With Urborg and Coffers both o
 | Seven or eight lands, Urborg and Coffers out (11 to 13 mana), Bond out, Y'shtola out | Mystical Tutor at the end step before; Demonic Tutor if you can still pay for the spell | Debt to the Deathless: X = 7 at 11 mana (14 to each opponent), X = 9 at 13 mana (18 to each) | Two {W} must come from lands (Coffers makes only {B}). Without two white sources, cast Exsanguinate instead (X = 9 at 11 mana). Mistrise Village first, a counter behind it |
 | Ordinary mana only (no Coffers or Urborg), 7 to 10 mana | Mystical Tutor or Vampiric Tutor at the end step before | Debt (better from about seven mana) or Exsanguinate if you lack {W}{W} | Debt gets 2 per X at 4 extra mana; Exsanguinate gets 1 per X at 2 extra. Count what you actually kill |
 | Hand colours do not fit: {W}{W} for Debt, {B}{B}{B} for Necropotence | Urza's Cave, Demonic Tutor | The missing coloured land: a white source for Debt; for Necropotence any land once Urborg is out, otherwise a Swamp or black dual | With Urborg out every land taps for {B}, so Necropotence is easy; Debt still wants two white lands |
-| Eight or more lands and few spells | Diabolic Tutor, Ringsight | Exsanguinate or Debt; the Coffers lands if they are missing | The deck is built to turn a flood into one big spell. Urborg Syphon-Mage also turns a spare land into 2 damage and 2 life |
+| Eight or more lands and few spells | Diabolic Tutor, Ringsight | Exsanguinate or Debt; the Coffers lands if they are missing | The deck is built to turn a flood into one big spell |
 
 **Answering a stax piece: Loran and Skyclave Apparition (the deck has no blink)**
 
@@ -401,7 +400,7 @@ Count lands (L), then check which pieces are out. With Urborg and Coffers both o
 | Situation | Tutor | Target | Why, and what to watch for |
 |---|---|---|---|
 | The table recurs from graveyards (Animate Dead, Reanimate, Unearth, Entomb, undying) | Mystical Tutor, Demonic Tutor | Farewell, graveyard mode alone, or Skyclave Apparition or Anguished Unmaking on the returned creature | Farewell exiles every graveyard, yours too; choose only the modes you need so it does not exile Y'shtola, Bond or your rocks. Nothing protects your board if you choose more modes, so keep to the graveyard mode |
-| You want a card from your own graveyard | None | Nothing in the list returns a card from your graveyard | Do not discard a key card to Syphon-Mage, and note that Necropotence exiles anything you discard |
+| You want a card from your own graveyard | None | Nothing in the list returns a card from your graveyard | Necropotence exiles anything you discard, so keep a key card out of the discard |
 
 **Low life**
 
@@ -464,7 +463,7 @@ Y'shtola is the engine, but the win turn is Bond and Blood on the battlefield an
 
 - **Counterspell and Force of Will** stop the removal spell, and Disdainful Stroke does if it costs four or more; no counter stops an ability.
 - **Nothing else protects her.** Restoration Angel, Displacer Kitten, Champion's Helm and Teferi's Protection are out of the deck, so there is no blink, no hexproof and no phase-out: a removal spell or ability she meets without a counter kills her. Silence cast in an opponent's upkeep stops their removal spells (not abilities) for that turn, and Teferi, Time Raveler stops instant-speed removal on your turn. On your own turn Grand Abolisher or Voice of Victory stops their spells too, but a creature can be answered before it matters and neither does anything on their turn.
-- **Wipes** are the real danger (Damnation and The Meathook Massacre in Yawgmoth's list, Supreme Verdict, Toxic Deluge and Winds of Rath in Zur's, Blasphemous Act in Miirym's). **The deck has no wipe protection now:** Teferi's Protection was the only card that saved her and the board, and it is out. Only a counter (Counterspell, Force of Will, or Disdainful Stroke on a wipe of mana value 4 or more) or Silence in their upkeep stops a wipe being cast.
+- **Wipes** are the real danger (Damnation and The Meathook Massacre in Yawgmoth's list, Supreme Verdict, Toxic Deluge and Winds of Rath in Zur's, Blasphemous Act in Miirym's). **The deck has no wipe protection now:** Teferi's Protection was the only card that saved her and the board, and it is out. Only a counter (Counterspell, Force of Will, Mindbreak Trap, or Disdainful Stroke on a wipe of mana value 4 or more) or Silence in their upkeep stops a wipe being cast.
 
 ### Interaction on opponents' turns
 
@@ -475,6 +474,7 @@ Any noncreature spell of mana value 3 or more cast on an opponent's turn trigger
 | Force of Will | {3}{U}{U}, or 1 life and a blue card | The combo piece or the wipe that wins. A mana value 5 spell, so it triggers her even when pitched |
 | Counterspell | {U}{U} | Any spell: a combo piece, a tutor for the combo, a wipe, a creature. It cannot stop an ability (Walking Ballista, Urza's activation) |
 | Disdainful Stroke | {1}{U} | A spell with mana value 4 or more (a wipe, a large threat, a big engine). It can't stop a cheap combo piece or a removal spell on Y'shtola |
+| Mindbreak Trap | {2}{U}{U}, or {0} if an opponent has cast three or more spells this turn | The combo turn: it exiles any number of target spells, so it takes the whole chain, a counter aimed at your spell, or a spell that can't be countered (Hullbreaker Horror, Dragons under Cavern of Souls). It stops spells only, not abilities (Kinnan's or Urza's activations, Walking Ballista). Mana value 4, so it triggers her even when cast for free |
 | Path to Exile | {W} | A creature that decides the game (Kinnan, Urza, Yawgmoth, Zur, a Dragon; Miirym has ward {2}); gives the opponent a basic land |
 | Fatal Push | {B} | Mana value 2 or less (Kinnan, a mana creature, Spellskite); mana value 4 or less with revolt (a fetch land or Treasure sacrificed, Urza's Cave) |
 | Go for the Throat | {1}{B} | A nonartifact creature, such as Yawgmoth or Zur. Not Spellskite or Walking Ballista |
@@ -499,7 +499,7 @@ Before the Oracle swap the sims showed her losing about a third of t5 games to t
 | Miirym, Sentinel Wyrm (Temur Dragons) | Each Dragon is copied by Miirym (flying, ward {2}). Terror of the Peaks, Scourge of Valkas and Twinflame Tyrant turn each arrival into burn; Wrathful Red Dragon and Blasphemous Act. Wins in combat | Fort up early. Propaganda and Sphere of Safety tax every copy. Wipe the Dragons with Toxic Deluge, Austere Command (creatures with mana value 4 or more) or Farewell: Terror of the Peaks makes spells that target it cost 3 more life, and a wipe doesn't target. Counter the first big Dragon | Propaganda, Sphere of Safety and Arrest on a Dragon; Austere Command, Farewell, Toxic Deluge; Counterspell and Force of Will on Miirym or Terror (Cavern of Souls makes its Dragons uncounterable). Cyclonic Rift, Chaos Warp, Beast Within, Blasphemous Act answer her |
 | Yawgmoth, Thran Physician (mono-black aristocrats) | Yawgmoth + two undying creatures (Geralf's Messenger, Butcher Ghoul) or Gravecrawler + Phyrexian Altar loops into cards and drain via Blood Artist, Zulaport Cutthroat, Meathook Massacre. Damnation, Toxic Deluge and Meathook Massacre as wipes | The only t5 deck with no counterspells: you can tap out for Bond, Blood and the Priest. Exile pieces instead of destroying them (undying brings creatures back). Farewell's graveyard mode answers Animate Dead, Reanimate, Unearth and Entomb | Anguished Unmaking, Path and Skyclave Apparition (exile), Go for the Throat on Yawgmoth (protection from Humans only), Loran on Bitterblossom or Grave Pact, Counterspell and Force of Will on Yawgmoth; Y'shtola's lifegain offsets their drain |
 
-- **The Kinnan and Urza tables end the game before the drain:** hold up Counterspell, Disdainful Stroke or Force of Will from turn 3 on rather than tapping out for Smothering Tithe or a rock.
+- **The Kinnan and Urza tables end the game before the drain:** hold up Counterspell, Disdainful Stroke, Mindbreak Trap or Force of Will from turn 3 on rather than tapping out for Smothering Tithe or a rock.
 - **Against Zur's deck,** Rule of Law and Eidolon of Rhetoric allow one spell a turn: make it your biggest trigger spell, and remove the lock with Loran or Skyclave Apparition first. Oracle plus Consultation is two spells, so Line 5 is off while one of those locks is out.
 - **Against Miirym,** the table's creature total decides it. Do not hold the wipe for a bigger board: Miirym copies each Dragon before you can answer it. The deck has two pillowforts (Propaganda, Sphere of Safety) and one lock Aura (Arrest) against her.
 
@@ -538,7 +538,7 @@ Before the Oracle swap the sims showed her losing about a third of t5 games to t
 | Gain | Amount |
 |---|---|
 | Y'shtola trigger | 2 per spell of mana value 3 or more |
-| Debt to the Deathless, Exsanguinate, Urborg Syphon-Mage | Whatever they drain (one event) |
+| Debt to the Deathless, Exsanguinate | Whatever they drain (one event) |
 | Exquisite Blood | Whatever an opponent loses |
 | Sheoldred, the Apocalypse | 2 per card you draw |
 | Prayer of Binding | 2 |
@@ -575,11 +575,11 @@ The list is exactly 100 cards.
 | Always enter tapped | 1 | Mistrise Village |
 | Sometimes enter tapped | 3 | the shocks (Hallowed Fountain, Watery Grave, Godless Shrine), unless you pay 2 life |
 
-Black is the main colour (Necropotence's and Doomsday's {B}{B}{B}, the X drains' {B}{B}), so it has the most sources. Blue has the fewest, and it is the tight colour for Thassa's Oracle's {U}{U}: Mistrise Village enters tapped, Cabal Coffers makes only {B}, and the land tutor Expedition Map is out of the deck. Most blue spells cost a single {U}; Oracle, Counterspell, Force of Will and Consecrated Sphinx ({4}{U}{U}) are the {U}{U} exceptions, and Force of Will can be cast for free. Each fetch finds the colour the hand is short of, and cracking one turns on Fatal Push's revolt (destroy a creature with mana value 4 or less).
+Black is the main colour (Necropotence's and Doomsday's {B}{B}{B}, the X drains' {B}{B}), so it has the most sources. Blue has the fewest, and it is the tight colour for Thassa's Oracle's {U}{U}: Mistrise Village enters tapped, Cabal Coffers makes only {B}, and the land tutor Expedition Map is out of the deck. Most blue spells cost a single {U}; Oracle, Counterspell, Mindbreak Trap ({2}{U}{U}, free when an opponent has cast three spells), Force of Will and Consecrated Sphinx ({4}{U}{U}) are the {U}{U} exceptions, and Force of Will can be cast for free. Each fetch finds the colour the hand is short of, and cracking one turns on Fatal Push's revolt (destroy a creature with mana value 4 or less).
 
-**Curve.** Profane Tutor at 0 (suspended for {1}{B}), one-drops 11, two-drops 13, three-drops 21, four-drops 9 (counting Y'shtola), five 5, six 3. Average mana value about 2.8, with the X spells counted at X = 0. The swap added cheap cards, so the curve is lower than before it (about 3.1); Y'shtola still pays you for mana value 3 and up.
+**Curve.** Profane Tutor at 0 (suspended for {1}{B}), one-drops 11, two-drops 13, three-drops 20, four-drops 10 (counting Y'shtola), five 5, six 3. Average mana value about 2.9, with the X spells counted at X = 0. The swap added cheap cards, so the curve is lower than before it (about 3.1); Y'shtola still pays you for mana value 3 and up.
 
-**Card types.** 16 creatures (plus Y'shtola; Esper Sentinel is an artifact creature, counted here), 10 enchantments, 6 artifacts, 16 instants, 13 sorceries, 1 planeswalker (Teferi, Time Raveler).
+**Card types.** 15 creatures (plus Y'shtola; Esper Sentinel is an artifact creature, counted here), 10 enchantments, 6 artifacts, 17 instants, 13 sorceries, 1 planeswalker (Teferi, Time Raveler).
 
 **Finding cards.**
 - **Engines:** Necropotence, Consecrated Sphinx, Esper Sentinel, Notion Thief, and her own end-step draw (Orcish Bowmasters turns the opponents' extra draws into damage and Orcs).
@@ -589,7 +589,7 @@ Black is the main colour (Necropotence's and Doomsday's {B}{B}{B}, the X drains'
 - **Land tutors:** Urza's Cave (Urborg or Cabal Coffers, or the missing colour) and the any-card tutors; Expedition Map is out of the deck.
 
 **Interaction.**
-- **Counterspells (three):** Counterspell, Disdainful Stroke, Force of Will.
+- **Counterspells (four):** Counterspell, Disdainful Stroke, Force of Will, Mindbreak Trap.
 - **Spot removal spells (six):** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Your Fate Ends Here.
 - **Removal on permanents:** Skyclave Apparition, Loran of the Third Path (an artifact or enchantment, on entry), Prayer of Binding.
 - **Removal Auras (one):** Arrest.
@@ -616,7 +616,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commander (1).** Y'shtola, Night's Blessed
 
-**Creatures (16).** Consecrated Sphinx, Esper Sentinel, Grand Abolisher, Grand Arbiter Augustin IV, Loran of the Third Path, Marauding Blight-Priest, Notion Thief, Orcish Bowmasters, Sheoldred, the Apocalypse, Skyclave Apparition, Thassa's Oracle, Urborg Syphon-Mage, Valley Floodcaller, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal, Voice of Victory, Zur the Enchanter
+**Creatures (15).** Consecrated Sphinx, Esper Sentinel, Grand Abolisher, Grand Arbiter Augustin IV, Loran of the Third Path, Marauding Blight-Priest, Notion Thief, Orcish Bowmasters, Sheoldred, the Apocalypse, Skyclave Apparition, Thassa's Oracle, Valley Floodcaller, Venat, Heart of Hydaelyn // Hydaelyn, the Mothercrystal, Voice of Victory, Zur the Enchanter
 
 **Planeswalkers (1).** Teferi, Time Raveler
 
@@ -624,7 +624,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (6).** Arcane Signet, Coalition Relic, Palantír of Orthanc, Sol Ring, Talisman of Hierarchy, Talisman of Progress
 
-**Instants (16).** Anguished Unmaking, Borne Upon a Wind, Brainstorm, Counterspell, Dark Ritual, Demonic Consultation, Disdainful Stroke, Fatal Push, Force of Will, Generous Gift, Go for the Throat, Mystical Tutor, Path to Exile, Silence, Vampiric Tutor, Your Fate Ends Here
+**Instants (17).** Anguished Unmaking, Borne Upon a Wind, Brainstorm, Counterspell, Dark Ritual, Demonic Consultation, Disdainful Stroke, Fatal Push, Force of Will, Generous Gift, Go for the Throat, Mindbreak Trap, Mystical Tutor, Path to Exile, Silence, Vampiric Tutor, Your Fate Ends Here
 
 **Sorceries (13).** Austere Command, Cast Away Doubt, Debt to the Deathless, Demonic Tutor, Diabolic Tutor, Doomsday, Exsanguinate, Farewell, Preordain, Profane Tutor, Read the Bones, Ringsight, Toxic Deluge
 
@@ -670,6 +670,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Loran of the Third Path
 1 Marauding Blight-Priest
 1 Marsh Flats
+1 Mindbreak Trap
 1 Mistrise Village
 1 Mystical Tutor
 1 Necropotence
@@ -703,7 +704,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Tundra
 1 Underground River
 1 Underground Sea
-1 Urborg Syphon-Mage
 1 Urborg, Tomb of Yawgmoth
 1 Urza's Cave
 1 Valley Floodcaller
