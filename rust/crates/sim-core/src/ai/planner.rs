@@ -588,17 +588,19 @@ pub fn next_turn(g: &mut Game, p: PlayerId) -> Res<Option<CardId>> {
     pl.lands_played = 0;
     pl.yawg = false;
     pl.tapped_treasures = 0;
+    crate::engine::turn::phase_in_for(g, p); // what is still phased out belongs to another player's untap step
     for l in g.player(p).lands.clone() {
-        g.perm_mut(l).tapped = false;
+        if !g.perm(l).phased {
+            g.perm_mut(l).tapped = false;
+        }
     }
     for m in g.player(p).perms.clone() {
         let keep = card_tag(g, m, Tag::Nountap);
         let x = g.perm_mut(m);
-        if !keep {
+        if !keep && !x.phased {
             x.tapped = false;
         }
         x.sick = false;
-        x.phased = false;
     }
     let mut drew = None;
     if !crate::engine::values::has(g, p, Tag::Necro) && !crate::cardcode::skip_draw(g, p) {

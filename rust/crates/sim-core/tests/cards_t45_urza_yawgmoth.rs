@@ -76,6 +76,42 @@ fn untap(g: &mut Game, p: PlayerId) {
 }
 
 // ------------------------------------------------------------------ Winter Orb, Static Orb, Back to Basics, Clock
+// A phased-out Orb phases in first thing in its controller's untap step, so it limits that same untap.
+#[test]
+fn a_winter_orb_phasing_in_limits_the_untap_it_phases_in_during() {
+    let mut g = urza();
+    let o = perm(&mut g, P1, "Winter Orb");
+    g.perm_mut(o).phased = true;
+    lands(&mut g, P1, "Plains", 3, true);
+    untap(&mut g, P1);
+    assert!(!g.perm(o).phased);
+    assert_eq!(untapped_lands(&g, P1), 1, "it phased in before the untap, so one land");
+    // phased out under P1, it is ignored during P0's untap step
+    let mut g = urza();
+    let o = perm(&mut g, P1, "Winter Orb");
+    g.perm_mut(o).phased = true;
+    lands(&mut g, P0, "Plains", 3, true);
+    untap(&mut g, P0);
+    assert!(g.perm(o).phased);
+    assert_eq!(untapped_lands(&g, P0), 3);
+}
+
+// A phased-out artifact doesn't exist, so Unwinding Clock leaves it tapped.
+#[test]
+fn unwinding_clock_does_not_untap_a_phased_out_artifact() {
+    let mut g = urza();
+    perm(&mut g, P0, "Unwinding Clock");
+    let ring = perm(&mut g, P0, "Sol Ring");
+    g.perm_mut(ring).tapped = true;
+    g.perm_mut(ring).phased = true;
+    untap(&mut g, P1);
+    assert!(g.perm(ring).phased && g.perm(ring).tapped);
+    let live = perm(&mut g, P0, "Mana Vault");
+    g.perm_mut(live).tapped = true;
+    untap(&mut g, P1);
+    assert!(!g.perm(live).tapped, "an artifact that is phased in still untaps");
+}
+
 #[test]
 fn winter_orb_untaps_one_land_and_back_to_basics_keeps_nonbasics_tapped() {
     let mut g = urza();

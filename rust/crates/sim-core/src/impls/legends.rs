@@ -829,6 +829,7 @@ pub fn garland_check(g: &mut Game) {
         }
         let orig = g.perm(t).orig;
         if g.player(orig).alive {
+            crate::engine::control::note_phase_holder(g, t, g.perm(t).owner);
             g.perm_mut(t).owner = orig;
             g.player_mut(orig).perms.push(t);
             crate::glog!(g, "    {} returns to {} (Garland)", g.perm(t).name, pname(g, orig));

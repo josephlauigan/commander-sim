@@ -1373,7 +1373,7 @@ fn oko_exchange(g: &mut Game, p: PlayerId, src: PermId) -> Res {
         .copied()
         .filter(|&m| {
             let x = g.perm(m);
-            (x.token && x.ttypes.contains(&"food")) || (g.is_creature(m) && pval(g, m) < 2.0)
+            !x.phased && ((x.token && x.ttypes.contains(&"food")) || (g.is_creature(m) && pval(g, m) < 2.0))
         })
         .collect();
     let Some(t) = oko_steal_target(g, p) else { return Ok(()) };

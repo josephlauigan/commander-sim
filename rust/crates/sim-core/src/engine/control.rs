@@ -28,6 +28,15 @@ pub enum GoadFor {
     Forever,
 }
 
+/// A phased-out permanent phases in during the untap step of the player who controlled it when it phased out (CR 502.1).
+/// Call this when m changes controller while phased out and nothing has recorded that player yet: `old` is the
+/// controller it leaves. An earlier record (a Silumgar link, an earlier change of hands) is kept.
+pub fn note_phase_holder(g: &mut Game, m: PermId, old: PlayerId) {
+    if g.perm(m).phased && g.perm(m).data.get(DataKey::PhaseInWith).is_none() {
+        g.perm_mut(m).data.set(DataKey::PhaseInWith, Val::Player(old));
+    }
+}
+
 /// `gain_control`: `new` gains control of m. Returns false if m is not on the battlefield. Control that was borrowed
 /// until end of turn is forgotten when a permanent change follows (the later effect wins); a creature already under
 /// `new`'s control only gets the longer duration. Attachments the creature carries stay attached; an Aura or
@@ -38,6 +47,7 @@ pub fn gain_control(g: &mut Game, new: PlayerId, m: PermId, dur: Duration) -> bo
     }
     let old = g.perm(m).owner;
     if old != new {
+        note_phase_holder(g, m, old);
         g.player_mut(old).perms.retain(|&x| x != m);
         let land = g.player(old).lands.contains(&m); // (a creature token land: Astral Dragon's copy)
         g.player_mut(old).lands.retain(|&x| x != m);
@@ -124,9 +134,7 @@ pub fn end_links(g: &mut Game) {
         }
         let orig = g.perm(link.stolen).orig;
         let to = if g.player(link.prev).alive { link.prev } else { orig };
-        if g.perm(link.stolen).phased && g.perm(link.stolen).data.get(DataKey::PhaseInWith).is_none() {
-            g.perm_mut(link.stolen).data.set(DataKey::PhaseInWith, Val::Player(link.holder));
-        }
+        note_phase_holder(g, link.stolen, link.holder);
         gain_control(g, to, link.stolen, Duration::Permanent);
     }
 }
@@ -136,6 +144,7 @@ pub fn return_borrowed(g: &mut Game, p: PlayerId) {
     for m in std::mem::take(&mut g.player_mut(p).borrowed) {
         let orig = g.perm(m).orig;
         if g.perm(m).on_bf && g.perm(m).owner == p && g.player(orig).alive {
+            note_phase_holder(g, m, p);
             g.player_mut(p).perms.retain(|&x| x != m);
             let land = g.player(p).lands.contains(&m);
             g.player_mut(p).lands.retain(|&x| x != m);

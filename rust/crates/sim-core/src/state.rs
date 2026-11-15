@@ -69,7 +69,9 @@ pub enum DataKey {
     EotSac,
     /// Sneak Attack: activating player until the next end step, then Bool(true); grants lasting haste.
     SneakAttack,
-    /// The controller when a linked stolen permanent phased out (`Val::Player`), until it phases in.
+    /// The player a phased-out permanent phased out under (`Val::Player`): it phases in at that player's untap step
+    /// wherever it is by then (a Silumgar steal that ended, any change of control while phased out; see
+    /// `control::note_phase_holder`). Every site that phases a permanent in or takes it off the battlefield must clear it.
     PhaseInWith,
     /// Ferocity of the Hunt was on the creature as it died: its card returns to the battlefield tapped
     Ferocity,

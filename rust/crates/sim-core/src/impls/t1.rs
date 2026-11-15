@@ -1526,6 +1526,7 @@ fn roil_leaves(g: &mut Game, src: Src, _m: PermId) -> Res {
     let o = g.perm(src).owner;
     for m in stolen {
         if controls(g, o, m) {
+            crate::engine::control::note_phase_holder(g, m, o);
             g.player_mut(o).perms.retain(|&x| x != m);
             let orig = g.perm(m).orig;
             g.perm_mut(m).owner = orig;

@@ -1133,6 +1133,35 @@ pub fn end_step_pools(g: &mut Game) {
     }
 }
 
+/// The first part of the untap step (CR 502.1): the permanents p controlled when they phased out phase in. A
+/// permanent keyed to a player (`PhaseInWith`: a Silumgar steal that ended, a creature that changed hands while phased
+/// out) phases in at that player's untap step wherever it is now; if that player has left the game it phases in at its
+/// controller's. A permanent with no key phases in at its controller's. Bumps `bf_ver` when anything phased in.
+pub fn phase_in_for(g: &mut Game, p: PlayerId) {
+    let phase_in: Vec<_> = g
+        .players
+        .iter()
+        .flat_map(|q| q.perms.iter().copied())
+        .filter(|&m| {
+            let x = g.perm(m);
+            x.on_bf
+                && x.phased
+                && match x.data.get(DataKey::PhaseInWith) {
+                    Some(Val::Player(q)) => *q == p || (!g.player(*q).alive && x.owner == p),
+                    _ => x.owner == p,
+                }
+        })
+        .collect();
+    for &m in &phase_in {
+        let x = g.perm_mut(m);
+        x.phased = false;
+        x.data.remove(DataKey::PhaseInWith);
+    }
+    if !phase_in.is_empty() {
+        g.bf_ver += 1;
+    }
+}
+
 /// the start of p's turn: untap, upkeep, draw, the land drop (Python's `_step_start`)
 pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     g.active = Some(p);
@@ -1165,24 +1194,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     pl.extra_combats = 0;
     pl.combat_no = 0;
     pl.turns += 1;
-    // A linked control effect can end while its victim is phased out. It still phases in with the old holder.
-    let phase_in: Vec<_> = g
-        .players
-        .iter()
-        .flat_map(|q| q.perms.iter().copied())
-        .filter(|&m| {
-            let x = g.perm(m);
-            x.on_bf
-                && x.phased
-                && matches!(x.data.get(DataKey::PhaseInWith), Some(Val::Player(q))
-                    if *q == p || (!g.player(*q).alive && x.owner == p))
-        })
-        .collect();
-    for m in phase_in {
-        let x = g.perm_mut(m);
-        x.phased = false;
-        x.data.remove(DataKey::PhaseInWith);
-    }
+    phase_in_for(g, p); // before Winter Orb and the other untap locks look at the table
     let orbs = crate::impls::t45_urza_yawgmoth::untap_lock(g, p); // --- Tiers 4/5 (urza-yawgmoth): Winter / Static Orb
     for l in g.player(p).lands.clone() {
         if !g.perm(l).phased || g.perm(l).data.get(DataKey::PhaseInWith).is_none() {
@@ -1195,6 +1207,8 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     for m in g.player(p).perms.clone() {
         let x = g.perm(m);
         if x.phased && x.data.get(DataKey::PhaseInWith).is_some() {
+            // phased out under another player: it doesn't untap now, but p has controlled it since this turn began
+            g.perm_mut(m).sick = false;
             continue;
         }
         if x.data.int(crate::state::DataKey::Frozen) > 0 {

@@ -1219,6 +1219,7 @@ fn abduction_leaves(g: &mut Game, src: Src, _m: PermId) -> Res {
     let Some(h) = g.perm(src).attached else { return Ok(()) };
     let orig = g.perm(h).orig;
     if controls(g, so, h) && orig != so && g.player(orig).alive {
+        crate::engine::control::note_phase_holder(g, h, so);
         g.player_mut(so).perms.retain(|&x| x != h);
         g.perm_mut(h).owner = orig;
         g.player_mut(orig).perms.push(h);

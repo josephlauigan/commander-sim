@@ -1050,6 +1050,7 @@ pub fn resolve_blocks(
                             .copied()
                             .filter(|&x| {
                                 !g.is_creature(x)
+                                    && !g.perm(x).phased
                                     && g.perm(x).cd.is_some_and(|c| g.db.get(c).types.has(Types::ARTIFACT))
                             })
                             .collect();

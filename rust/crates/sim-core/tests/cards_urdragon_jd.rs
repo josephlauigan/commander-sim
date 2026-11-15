@@ -397,3 +397,154 @@ fn the_thanos_seat_plays_from_its_plan_file() {
     let s = sim_core::ai::base_style("thanos");
     assert_eq!((s.aggression, s.caution), (0.6, 0.5), "the 11/05 plan style");
 }
+
+/// P0 takes P1's creature until end of turn and it phases out under P0 (Talon Gates). At the end step it goes back
+/// to P1, and it still phases in at P0's untap step, the controller it phased out under.
+#[test]
+fn a_threatened_creature_phased_out_under_the_thief_phases_in_at_the_thiefs_untap() {
+    use sim_core::engine::{control, turn};
+    let mut g = tbl();
+    let victim = perm(&mut g, P1, "Llanowar Elves");
+    control::gain_control(&mut g, P0, victim, control::Duration::EndOfTurn);
+    assert_eq!(g.perm(victim).owner, P0);
+    g.perm_mut(victim).phased = true;
+    control::return_borrowed(&mut g, P0);
+    assert_eq!(g.perm(victim).owner, P1);
+    assert_eq!(g.perm(victim).data.get(DataKey::PhaseInWith), Some(&Val::Player(P0)));
+    turn::step_start(&mut g, P1).unwrap();
+    assert!(g.perm(victim).phased, "P1's untap step is not the one it phased out under");
+    turn::step_start(&mut g, P0).unwrap();
+    assert!(!g.perm(victim).phased);
+    assert_eq!(g.perm(victim).owner, P1);
+    assert!(g.perm(victim).data.get(DataKey::PhaseInWith).is_none());
+}
+
+/// a phased-out permanent that changes hands keeps the player it phased out under
+#[test]
+fn gaining_control_of_a_phased_out_permanent_keeps_the_old_controllers_untap() {
+    use sim_core::engine::{control, turn};
+    let mut g = tbl();
+    let m = perm(&mut g, P1, "Llanowar Elves");
+    g.perm_mut(m).phased = true;
+    control::gain_control(&mut g, P0, m, control::Duration::Permanent);
+    assert_eq!(g.perm(m).data.get(DataKey::PhaseInWith), Some(&Val::Player(P1)));
+    turn::step_start(&mut g, P0).unwrap();
+    assert!(g.perm(m).phased, "it phased out under P1");
+    turn::step_start(&mut g, P1).unwrap();
+    assert!(!g.perm(m).phased);
+    assert_eq!(g.perm(m).owner, P0);
+    // an earlier record is kept: a second change of hands does not overwrite it
+    let mut g = tbl();
+    let m = perm(&mut g, P1, "Llanowar Elves");
+    g.perm_mut(m).phased = true;
+    control::gain_control(&mut g, P0, m, control::Duration::Permanent);
+    control::gain_control(&mut g, PlayerId(2), m, control::Duration::Permanent);
+    assert_eq!(g.perm(m).data.get(DataKey::PhaseInWith), Some(&Val::Player(P1)));
+}
+
+/// the helper alone: it records the controller being left, keeps an earlier record, and ignores phased-in permanents
+#[test]
+fn note_phase_holder_records_only_the_first_controller_of_a_phased_out_permanent() {
+    use sim_core::engine::control;
+    let mut g = tbl();
+    let m = perm(&mut g, P1, "Llanowar Elves");
+    control::gain_control(&mut g, P0, m, control::Duration::Permanent);
+    g.perm_mut(m).phased = true;
+    control::note_phase_holder(&mut g, m, P0);
+    assert_eq!(g.perm(m).data.get(DataKey::PhaseInWith), Some(&Val::Player(P0)));
+    control::note_phase_holder(&mut g, m, P1);
+    assert_eq!(g.perm(m).data.get(DataKey::PhaseInWith), Some(&Val::Player(P0)), "the first record stays");
+    let plain = perm(&mut g, P1, "Llanowar Elves");
+    control::note_phase_holder(&mut g, plain, P1);
+    assert!(g.perm(plain).data.get(DataKey::PhaseInWith).is_none(), "a phased-in permanent gets no record");
+}
+
+/// P2 takes the creature from P0's effect (which ends for good), it phases out under P2, and P2's effect ends: it goes
+/// to P0 and still phases in at P2's untap step, the player it phased out under.
+#[test]
+fn a_creature_taken_from_a_control_effect_phases_in_for_the_player_it_phased_out_under() {
+    use sim_core::engine::{control, turn, zones};
+    let mut g = tbl();
+    let victim = perm(&mut g, P1, "Llanowar Elves");
+    let (a, b) = (perm(&mut g, P0, "Llanowar Elves"), perm(&mut g, PlayerId(2), "Llanowar Elves"));
+    control::gain_control(&mut g, P0, victim, control::Duration::WhileControls(a));
+    control::gain_control(&mut g, PlayerId(2), victim, control::Duration::WhileControls(b));
+    assert_eq!(g.perm(victim).owner, PlayerId(2));
+    g.perm_mut(victim).phased = true;
+    zones::leave(&mut g, b).unwrap();
+    assert_eq!(g.perm(victim).owner, P0, "it goes back to the player it was taken from");
+    assert_eq!(g.perm(victim).data.get(DataKey::PhaseInWith), Some(&Val::Player(PlayerId(2))));
+    zones::leave(&mut g, a).unwrap(); // P0's own effect was dropped when P2 took the creature: nothing changes
+    assert_eq!(g.perm(victim).data.get(DataKey::PhaseInWith), Some(&Val::Player(PlayerId(2))));
+    turn::step_start(&mut g, P0).unwrap();
+    assert!(g.perm(victim).phased);
+    turn::step_start(&mut g, PlayerId(2)).unwrap();
+    assert!(!g.perm(victim).phased);
+    assert_eq!(g.perm(victim).owner, P0);
+}
+
+/// phasing in does not interrupt control: a creature returned while phased out is not summoning sick at the untap
+/// step of the player it came back to
+#[test]
+fn a_returned_phased_creature_is_not_summoning_sick_at_its_owners_untap() {
+    use sim_core::engine::{turn, zones};
+    let mut g = tbl();
+    let victim = perm(&mut g, P1, "Llanowar Elves");
+    perm(&mut g, P0, SILUMGAR);
+    zones::teferis_protection(&mut g, P0);
+    assert!(g.perm(victim).sick, "regaining control makes it sick for the moment");
+    turn::step_start(&mut g, P1).unwrap();
+    assert!(g.perm(victim).phased);
+    assert!(!g.perm(victim).sick, "P1 has controlled it since its own turn began");
+}
+
+#[test]
+fn phase_in_bumps_the_battlefield_version_once_something_phased_in() {
+    use sim_core::engine::turn;
+    let mut g = tbl();
+    let m = perm(&mut g, P0, "Llanowar Elves");
+    g.perm_mut(m).phased = true;
+    let before = g.bf_ver;
+    turn::phase_in_for(&mut g, P0);
+    assert!(!g.perm(m).phased && g.bf_ver > before);
+    let after = g.bf_ver;
+    turn::phase_in_for(&mut g, P0);
+    assert_eq!(g.bf_ver, after, "nothing phased in");
+}
+
+/// the AI planner's copy of the next turn follows the same phase-in rule as the real untap step
+#[test]
+fn the_planners_next_turn_leaves_a_creature_phased_out_under_another_player() {
+    use sim_core::ai::planner::next_turn;
+    use sim_core::engine::zones;
+    let mut g = tbl();
+    let victim = perm(&mut g, P1, "Llanowar Elves");
+    perm(&mut g, P0, SILUMGAR);
+    zones::teferis_protection(&mut g, P0);
+    g.perm_mut(victim).tapped = true;
+    let mut copy = g.clone();
+    next_turn(&mut copy, P1).unwrap();
+    assert!(copy.perm(victim).phased && copy.perm(victim).tapped, "P1's next turn leaves it phased out");
+    let mut copy = g.clone();
+    next_turn(&mut copy, P0).unwrap();
+    assert!(!copy.perm(victim).phased, "P0's next turn phases it in");
+    assert!(copy.perm(victim).tapped, "and phasing in does not untap it");
+}
+
+/// Abduction (a card path that hands the creature back by its own code) keeps the controller it phased out under
+#[test]
+fn abduction_leaving_returns_a_phased_creature_for_the_thiefs_untap() {
+    use sim_core::engine::{turn, zones};
+    let mut g = tbl();
+    let victim = perm(&mut g, P1, "Llanowar Elves");
+    let aura = perm(&mut g, P0, "Abduction");
+    assert_eq!(g.perm(victim).owner, P0);
+    g.perm_mut(victim).phased = true;
+    zones::leave(&mut g, aura).unwrap();
+    assert_eq!(g.perm(victim).owner, P1);
+    assert_eq!(g.perm(victim).data.get(DataKey::PhaseInWith), Some(&Val::Player(P0)));
+    turn::step_start(&mut g, P1).unwrap();
+    assert!(g.perm(victim).phased);
+    turn::step_start(&mut g, P0).unwrap();
+    assert!(!g.perm(victim).phased);
+}

@@ -289,12 +289,17 @@ fn unwinding_clock(g: &mut Game, p: PlayerId) {
             continue;
         }
         for m in g.player(q).perms.clone() {
-            if g.perm(m).on_bf && g.perm(m).tapped && is_artifact(g, m) && g.perm(m).data.int(DataKey::Stun) == 0 {
+            if g.perm(m).on_bf
+                && !g.perm(m).phased
+                && g.perm(m).tapped
+                && is_artifact(g, m)
+                && g.perm(m).data.int(DataKey::Stun) == 0
+            {
                 g.perm_mut(m).tapped = false;
             }
         }
         for l in g.player(q).lands.clone() {
-            if g.perm(l).tapped && g.db.get(g.perm(l).card()).types.has(Types::ARTIFACT) {
+            if g.perm(l).tapped && !g.perm(l).phased && g.db.get(g.perm(l).card()).types.has(Types::ARTIFACT) {
                 g.perm_mut(l).tapped = false;
             }
         }
