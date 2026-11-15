@@ -27,11 +27,16 @@
 # (`common::spark_copy`). The fair Twinflame resolver itself now makes Doubling Season's copies and skips targets with
 # protection from red for every seat (Twinflame is in no other registered deck). Limits of the lethal release: a later
 # copy's entry also triggers the earlier Terror token, which the count leaves out (it only delays the release); effects
-# an opponent adds after the cast (a fog, Teferi's Protection, Angel's Grace, removal) are not read, nor the order Terror's
-# triggers resolve in when an opponent can answer them (the replay assumes the order they were put on); under a tax or a
-# cap, or against Gisela, Angel's Grace, Phyrexian Unlife or Serra's emblem, or while an opponent's Blind Obedience-style
-# effect makes the copies enter tapped, only Terror's triggers can release it; the copies' power is the printed power (an
-# opponent's static power reduction would make the estimate high); and
+# an opponent casts from the hand after the cast (a fog, Teferi's Protection, Angel's Grace, Tishana's Tidebinder,
+# removal) are not read, nor the order Terror's triggers resolve in when an opponent can answer them (the replay assumes
+# the order they were put on); under a tax or a cap, or against Gisela, Angel's Grace, Phyrexian Unlife or Serra's
+# emblem, or while an opponent's Blind Obedience-style effect makes the copies enter tapped (Blind Obedience, Thalia),
+# only Terror's triggers can release it; it also stays held, even when Terror's triggers alone would be lethal, while
+# an opponent controls a permanent that triggers on the line itself (a creature entering, a spell cast, an attack or a
+# life loss: Soul Warden, Authority of the Consuls, Sunscorch Regent, Aurelia, Exquisite Blood, Intruder Alarm, Koma,
+# Sting), and it counts no combat damage to an opponent with a block or defence effect out (Spore Frog, Mirage Mirror,
+# Yawgmoth, Brimaz, Kor Haven); other triggers written in card code are not read; the copies' power is the printed
+# power (an opponent's static power reduction would make the estimate high); and
 # the AI's defender choice does not count the hasty copies, so at four seats it may attack another opponent. Still
 # open: a Spark Double cast, or free-dropped, before Garth is on the battlefield copies something else and kills the
 # line (nothing holds it back yet).
