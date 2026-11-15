@@ -1,14 +1,18 @@
 //! The Ur-Dragon seat's Twinflame lethal release commits the turn's first combat: after the cast, the AI attacks with
 //! everything at the opponent the engine check proved, and not at whoever the defender heuristic would pick.
 //! The table: seat 0 (urdragon) with Twinflame in hand, three Mountains and an untapped Ancient Silver Dragon (8/8
-//! flier), so the cast makes one hasty copy and 16 flying damage. Seat 1 (seph) is at 16 life: the check proves it.
-//! Seat 2 (aragorn) is at 20 life: the heuristic's kill bonus reaches it too (16 is at least 80% of 20), and a huge
-//! grudge makes it the defender the heuristic prefers. The look-ahead is off (the test game's default).
+//! flier), so the cast makes one hasty copy and 16 flying damage. Seat 1 (seph) and seat 2 (aragorn) are both at 16
+//! life, so both are killable and the check proves the first in seat order, seat 1. A huge grudge makes seat 2 the
+//! defender the heuristic prefers, and the heuristic's own split (`split_attack`) keeps all the attackers on a defender
+//! they kill: without the commitment seat 2 dies and seat 1 lives. The look-ahead is off (the test game's default).
 mod play_common;
 use play_common::*;
 use sim_core::ai::act::perform;
 use sim_core::engine::{combat, turn};
+use sim_core::hooks::{Action, Opt};
+use sim_core::settings::{AiMode, Profile, Settings};
 use sim_core::state::Step;
+use std::sync::Arc;
 
 const GARTH: &str = "Garth One-Eye";
 const SPARK: &str = "Spark Double";
@@ -311,4 +315,84 @@ fn a_copy_made_after_the_cast_inherits_the_plan_and_the_real_game_keeps_its_own(
     assert_eq!(copy.release_attack, g.release_attack);
     assert_eq!(sim_core::ai::choose_attack(&mut copy, P0).unwrap(), Some((Q, "all")));
     assert_eq!(g.release_attack, Some((P0, turns(&g, P0), Q)));
+}
+
+// ------------------------------------------------------------------ fix round: the re-check, the contracts, the pins
+/// The adversarial review's table: `n` seats of `seph`, `p` the Ur-Dragon seat with Twinflame in hand, three Mountains
+/// and an untapped Ancient Silver Dragon, the Garth line in its library, everyone at 40 life except `q` (16). Loose
+/// profile, adaptive AI (no look-ahead).
+fn rel_board(n: usize, p: PlayerId, q: PlayerId) -> Game {
+    let mut keys = vec!["seph"; n];
+    keys[p.index()] = "urdragon";
+    let mut g = table(&keys);
+    g.settings = Arc::new(Settings::new(Profile::Loose, AiMode::Adaptive, 1.0));
+    g.active = Some(p);
+    for pl in &mut g.players {
+        pl.hand.clear();
+        pl.gy.clear();
+        pl.life = 40;
+    }
+    for name in [GARTH, SPARK, SEASON] {
+        let c = take(&mut g, p, name);
+        g.player_mut(p).library.push(c);
+    }
+    hand(&mut g, p, &[TWIN]);
+    lands(&mut g, p, "Mountain", 3, false);
+    perm(&mut g, p, BIG);
+    g.player_mut(q).life = 16;
+    g
+}
+
+fn rel_base() -> Game {
+    rel_board(3, P0, P1)
+}
+
+/// the release option the hook offers seat `p` in its first main phase (it holds: the test expects a confirmed release)
+fn rel_option(g: &mut Game, p: PlayerId) -> Opt {
+    let c = card(g, TWIN);
+    let hook = g.registry.get(c).unwrap().hand_options.unwrap();
+    hook(g, c, p, Some(false)).unwrap().into_iter().next().expect("a confirmed release")
+}
+
+fn rel_cast(g: &mut Game, p: PlayerId) {
+    let o = rel_option(g, p);
+    assert!(perform(g, p, o.act.as_ref().unwrap()).unwrap());
+}
+
+/// the rest of p's turn from the combat step on, with the mana pools emptied as the end of main phase 1 does
+fn rel_finish(g: &mut Game, p: PlayerId) {
+    turn::end_step_pools(g);
+    g.step = Step::Combat;
+    turn::continue_turn(g, p, Step::Combat).unwrap();
+}
+
+fn rel_arg(o: &Opt) -> i64 {
+    match o.act.as_ref().unwrap() {
+        Action::Plan { arg, .. } => *arg,
+        _ => panic!("Twinflame is a plan"),
+    }
+}
+
+/// The re-check keeps a plan the check proved on a board that has not changed since the copies entered, even where the
+/// estimate undercounts it. Elesh Norn (-2/-2 for the Dragons) and the original's double strike: before the cast the
+/// estimate counts the original at 6 and the copy at its printed 8 (14 against 14), the engine check deals 12 + 6 and
+/// kills, and after the cast the estimate counts 6 + 6 (12 against 14: it does not see double strike).
+#[test]
+fn the_recheck_keeps_a_proven_kill_the_estimate_undercounts_on_an_unchanged_board() {
+    let mut g = rel_base();
+    let original = g.player(P0).perms[0];
+    g.perm_mut(original).eot_kw.push("double strike");
+    perm(&mut g, P1, "Elesh Norn, Grand Cenobite");
+    g.player_mut(P1).life = 14;
+    rel_cast(&mut g, P0);
+    assert!(g.release_attack.is_some_and(|x| x.0 == P0 && x.1 == 1 && x.2 == P1), "the check proved 12 + 6");
+    let mut forced = g.clone();
+    forced.forced_attack = Some((P1, "all"));
+    rel_finish(&mut forced, P0);
+    assert!(!forced.player(P1).alive, "the proven attack really is lethal");
+    assert_eq!(
+        sim_core::ai::choose_attack(&mut g, P0).unwrap(),
+        Some((P1, "all")),
+        "the re-check counted only 6 + 6 and dropped a proven 12 + 6 attack on an unchanged board"
+    );
 }
