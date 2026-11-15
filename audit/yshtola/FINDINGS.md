@@ -24,6 +24,20 @@ Game Changers 14 (Teferi's Protection out, Thassa's Oracle in); trigger spells (
 the list on purpose: it stops at the second card with the same name and the list has 19 basics, so with Oracle it can't
 exile the library (checked against its card text).
 
+**Follow-up (JD, 2026-11-14): Voice of Victory in, Torment of Hailfire out** (13 swaps from the pre-package list). Voice of
+Victory ({1}{W}, "your opponents can't cast spells during your turn", Mobilize 2) is a second, cheaper lock creature next to
+Grand Abolisher. Unlike Abolisher it stops spells only, not abilities, and neither helps an end-step Doomsday on an
+opponent's turn (only Silence and Teferi, Time Raveler do). JD chose the cut from three candidates I offered (Disdainful
+Stroke, Fatal Push, Torment of Hailfire): Torment was cast in about 39% of the games it was drawn and stuck in hand the rest
+(round 9.2, stuck in hand 61%: the 2026-11-04 Coffers package run below), though it won 62% of the games it was cast in (the
+11/07 analysis below; both from pre-package lists, and a win rate when cast flatters a late card). Checks: Voice is
+commander-legal and white, and
+was not in the list; Torment was. Counts after the follow-up: 16 creatures, 9 enchantments, 6 artifacts, 16 instants, 14
+sorceries, 1 planeswalker, 37 lands; trigger spells 26; Game Changers 14 (the counts in the paragraph above are the
+12-swap list). The deck document's old Line 4 (Torment) was removed, so its Lines 5, 6 and 7 are now Lines 4, 5 and 6 (the
+Oracle + Consultation line is Line 5 and Doomsday is Line 6). Not simulated, like the rest of this section; no run of any
+list includes Voice of Victory.
+
 **Baseline (measured; run output `bv377p7og`):** **26.6%** (24.8-28.6) at t5, 2,000 games, seed 500000, loose, look-ahead,
 on the Cali base `c1da6adb` before the swap: the same as the 11/07 baselines (27.4% in 10,000 games, 26.5%). Plan online
 62.4%; wins by damage 72%, combo 26%. Eliminated by: Miirym 18.8%, Kinnan 16.4%, Urza 13.9%, Zur 12.6%, Yawgmoth 11.6%.
@@ -50,7 +64,7 @@ Ritual, Mockingbird, Lion's Eye Diamond and Ponder, with an earlier plan file (a
   removed: the line is offered at utility 14 or more and Silence at priority 66 is worth about 6.6, so the AI goes first
   without it, and the rule fires on turns the line cannot go, spending the only Silence. Doomsday piles still cast Silence
   inside the pile code. **Consequence for any future swap run:** the preflight will flag Silence (priority 0, never cast).
-- At Tier 5 Line 6 also skips the one-spell-lock check (`combos.rs casts_castable`): against Zur's Rule of Law or Eidolon of
+- At Tier 5 the Oracle line (Line 5 in the document after the follow-up renumber) also skips the one-spell-lock check (`combos.rs casts_castable`): against Zur's Rule of Law or Eidolon of
   Rhetoric the AI may cast Oracle and then be unable to cast Consultation. UNVERIFIED in play.
 - Her end-step draw ("a player lost 4 or more life") is mandatory, as are Notion Thief's and Venat's draws; the pile builder
   counts only Esper Sentinel's forced draw. A Doomsday cast in her own main phase (Pile C) loses at least 4 life from 5 life

@@ -70,7 +70,7 @@ score = 54
 
 # the X drains last (the hand AI moves them first once the table is in range of X: not expressible)
 [[wish]]
-cards = ["Exsanguinate", "Debt to the Deathless", "Torment of Hailfire"]
+cards = ["Exsanguinate", "Debt to the Deathless"]
 score = 50
 
 # Cast priorities (yshtola_named_prio), the first rule selecting a card decides
@@ -182,7 +182,7 @@ value = 0
 # `t6_table::protect_before_go`, which a Tier 5 deck never reaches. A first stand-in (a priority rule on "the Oracle held with
 # Consultation or Doomsday") was tried and removed: read from the code (Opus review 2026-11-14), the line is offered at
 # utility 14 or more and Silence at priority 66 is worth about 6.6, so the AI goes first without it and the rule fires on turns
-# the line cannot go, spending the deck's only Silence. So at Tier 5 the AI does not cast Silence as a lock before Line 6
+# the line cannot go, spending the deck's only Silence. So at Tier 5 the AI does not cast Silence as a lock before the Oracle + Consultation line
 # (Doomsday piles still cast it inside the pile code). Explicit zero, so the intent stays visible
 [[prio]]
 cards = ["Silence"]
