@@ -113,9 +113,11 @@ fn minas_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// equal to its power on it; only as a sorcery, with no maximum). At 7 or more charge counters it is a 5/5 artifact
 /// creature with flying, and other tapped legendary creatures you control have indestructible. Being a creature is a
 /// condition on the counters, not a one-time change: the card's `station=7` tag (data/card_overrides.toml) is read by
-/// `chars::is_creature`, `power` and `toughness`, whatever put the counters there or took them away. The AI stations
-/// with creatures that can't attack anyway, or when the tap finishes it, and no more once it is a creature; a person
-/// chooses each creature to tap, one activation at a time, with or without 7 counters.
+/// `chars::is_creature`, whatever put the counters there or took them away; the flying and indestructible depend on
+/// the counters alone (`seven_plus`), not on being a creature by some other effect. The printed 5/5 is the
+/// permanent's own power and toughness, set as it enters (`seriema_as_enters`), so a later base-setting effect wins.
+/// The AI stations with creatures that can't attack anyway, or when the tap finishes it, and no more once it is a
+/// creature; a person chooses each creature to tap, one activation at a time, with or without 7 counters.
 const SERIEMA: &str = "The Seriema";
 const STATION_GOAL: i64 = 7;
 const WITCH: &str = "Witch Enchanter // Witch-Blessed Meadow";
@@ -178,6 +180,17 @@ fn seriema_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     g.player_mut(p).stat("tutored", 1);
     crate::ai::rules::mark_tutored(g, p, c);
     crate::engine::tutors::log_found(g, p, c, "hand", SERIEMA);
+    Ok(())
+}
+
+/// as The Seriema enters: its printed 5/5 (the card data has 0/0, an artifact's). It is the permanent's own base
+/// power and toughness, so a later effect that sets them (Darksteel Mutation, Kenrith's Transformation, Tezzeret's
+/// emblem) overrides it; it only counts while it is a creature (at 7 or more charge counters)
+fn seriema_as_enters(g: &mut Game, _p: PlayerId, m: PermId) -> Res {
+    let x = g.perm_mut(m);
+    if x.exc.pt.is_none() {
+        (x.pow, x.tgh) = (5, 5);
+    }
     Ok(())
 }
 
@@ -397,6 +410,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     w.hand_options = Some(meadow_options);
     let c = r.card(db, SERIEMA)?;
     c.etb = Some(seriema_etb);
+    c.as_enters = Some(seriema_as_enters);
     c.options = Some(seriema_options);
     c.grant_kw = Some(seriema_grant);
     Ok(())

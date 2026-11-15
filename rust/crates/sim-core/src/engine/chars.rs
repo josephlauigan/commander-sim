@@ -87,17 +87,16 @@ pub fn chars(g: &Game, m: PermId) -> Chars {
 }
 
 // ================================================================== layer 4: type
-/// A Spacecraft (`station=N` hand tag: The Seriema) whose charge counters have reached N: it is a creature, and a 5/5,
-/// for as long as they stay there (CR 721.2b: a condition on the counters, not a one-time change).
+/// A Spacecraft (`station=N` hand tag: The Seriema) whose charge counters have reached N: it is a creature for as long
+/// as they stay there (CR 721.2b: a condition on the counters, not a one-time change). Its printed power and toughness
+/// are the permanent's own `pow`/`tgh` (set as it enters, by the card's `as_enters` hook), so a later base-setting
+/// effect (Darksteel Mutation, Kenrith's Transformation, Tezzeret's emblem) wins as it does for any creature.
 pub(crate) fn station_met(g: &Game, m: &crate::state::Perm) -> bool {
     m.cd.is_some_and(|c| {
         let d = g.db.get(c);
         d.tag(Tag::Station) && m.data.int(DataKey::Charge) >= d.tags.int_or_0(Tag::Station) as i64
     })
 }
-
-/// the printed power and toughness of a Spacecraft once it is a creature (The Seriema)
-const STATION_PT: i32 = 5;
 
 /// Is m a creature now (Python's `Perm.creature`): a token, a creature card, or animated.
 pub fn is_creature(g: &Game, m: PermId) -> bool {
@@ -309,8 +308,7 @@ pub const POWER_CAP: i32 = 1 << 20;
 pub fn power(g: &Game, m: PermId) -> i32 {
     let x = g.perm(m);
     let p = x.owner;
-    let base = if station_met(g, x) { STATION_PT } else { x.pow };
-    let mut v = base + x.plus + static_bonus(g, m);
+    let mut v = x.pow + x.plus + static_bonus(g, m);
     if card_tag(g, m, Tag::Adeline) && equipped_base(g, m).is_none() {
         // 7a (Adeline's power) is overridden by a 7b base from an Equipment (Wrecking Ball Arm)
         let n = g.player(p).perms.iter().filter(|&&o| is_creature(g, o) && !g.perm(o).phased).count() as i32;
@@ -338,8 +336,7 @@ pub fn power(g: &Game, m: PermId) -> i32 {
 /// m's toughness now (Python's `etgh`)
 pub fn toughness(g: &Game, m: PermId) -> i32 {
     let x = g.perm(m);
-    let base = if station_met(g, x) { STATION_PT } else { x.tgh };
-    let mut v = base + x.plus + static_bonus(g, m);
+    let mut v = x.tgh + x.plus + static_bonus(g, m);
     v = v.saturating_add(pt_changes(g, m).1);
     if equipped(g, m, Tag::Sword) {
         v += 2;
