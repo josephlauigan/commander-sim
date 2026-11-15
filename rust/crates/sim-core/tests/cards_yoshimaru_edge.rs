@@ -79,6 +79,9 @@ fn yoshimaru_sees_sun_titan_return_a_legendary_land() {
     let c = card(&g, "Minas Tirith");
     g.player_mut(P0).gy = vec![c];
     perm(&mut g, P0, "Sun Titan");
+    // Sun Titan's AI branch puts the land onto the battlefield without landfall; the state-based check that follows
+    // every resolution in a game (not run by this harness) sees it enter
+    sim_core::engine::life::check_state(&mut g).unwrap();
     assert!(g.player(P0).lands.iter().any(|&l| g.perm(l).card() == c));
     assert_eq!(g.perm(y).plus, 1, "a land returned by Sun Titan entered");
 }
