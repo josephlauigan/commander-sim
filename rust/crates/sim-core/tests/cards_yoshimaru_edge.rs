@@ -975,3 +975,205 @@ fn seriema_threshold_types_and_stats_agree() {
     assert!(chars::card_types(&g, s).has(Types::CREATURE), "an artifact creature has both card types");
     assert!(chars::card_types(&g, s).has(Types::ARTIFACT));
 }
+
+// Round 4: a copy of The Seriema made without entering (Shifting Woodland, Mirage Mirror) and Witch-Blessed Meadow
+// under Blood Moon. The tests are Sol's adv3 reproductions, unchanged; the module has its own `land` (with a player).
+mod round4 {
+    use super::*;
+    use sim_core::ids::CardId;
+
+    fn human(
+        g: &mut Game,
+        p: PlayerId,
+        pick: impl Fn(&Request) -> Option<usize> + Send + 'static,
+    ) -> std::sync::Arc<ScriptHuman> {
+        let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+            if r.kind == "priority" {
+                Answer::Action(json!({"do":"pass"}))
+            } else {
+                pick(r).map(Answer::Pick).unwrap_or(Answer::Decline)
+            }
+        }));
+        g.humans.add(p, h.clone());
+        h
+    }
+    fn land(g: &mut Game, p: PlayerId, n: &str) -> PermId {
+        let c = take(g, p, n);
+        turn::play_land_card(g, p, c, "plays").unwrap();
+        *g.player(p).lands.last().unwrap()
+    }
+    fn meadow(g: &mut Game) -> PermId {
+        let c = hand(g, P0, &[W])[0];
+        let o = sim_core::human::alt::hand_alts(g, P0, c)
+            .unwrap()
+            .into_iter()
+            .find(|(s, _)| s.contains("as a land"))
+            .unwrap()
+            .1;
+        assert!(run(g, &o));
+        *g.player(P0).lands.last().unwrap()
+    }
+    fn set_charge(g: &mut Game, s: PermId, n: i64) {
+        g.perm_mut(s).data.set(DataKey::Charge, Val::Int(n));
+    }
+
+    #[test]
+    fn seriema_shifting_woodland_copy_has_printed_five_five() {
+        let mut g = tbl();
+        let l = land(&mut g, P0, "Shifting Woodland");
+        let c = card(&g, "The Seriema");
+        g.player_mut(P0).gy.push(c);
+        assert!(sim_core::impls::t6_green2::woodland_become(&mut g, P0, l, c));
+        assert!(!g.is_creature(l));
+        set_charge(&mut g, l, 7);
+        assert!(g.is_creature(l));
+        assert_eq!((chars::power(&g, l), chars::toughness(&g, l)), (5, 5));
+    }
+
+    #[test]
+    fn mirage_mirror_with_seven_charge_counters_survives_copying_seriema() {
+        let mut g = tbl();
+        g.player_mut(P1).library.clear();
+        perm(&mut g, P1, "The Seriema");
+        let m = perm(&mut g, P0, "Mirage Mirror");
+        set_charge(&mut g, m, 7);
+        human(&mut g, P0, |r| r.choices.iter().position(|s| s.contains("The Seriema")));
+        pool(&mut g, P0, &[('C', 2)]);
+        let a = sim_core::human::gaps_c::abilities(&g, P0, m, "Mirage Mirror").unwrap().remove(0);
+        assert_eq!((a.act)(&mut g, P0, m).unwrap(), None);
+        assert_eq!(g.perm(m).card(), card(&g, "The Seriema"));
+        assert_eq!(g.perm(m).data.int(DataKey::Charge), 7);
+        assert!(g.perm(m).on_bf, "the copy should be a 5/5, not die as a 0/0");
+        assert_eq!((chars::power(&g, m), chars::toughness(&g, m)), (5, 5));
+    }
+
+    #[test]
+    fn woodland_copy_can_station_a_real_creature_to_seven_and_survive() {
+        let mut g = tbl();
+        let l = land(&mut g, P0, "Shifting Woodland");
+        let gy: Vec<_> = ["The Seriema", "Plains", Y, "Swords to Plowshares"].iter().map(|n| card(&g, n)).collect();
+        let c = gy[0];
+        g.player_mut(P0).gy = gy;
+        assert!(sim_core::impls::t6_green2::delirium(&g, P0));
+        assert!(sim_core::impls::t6_green2::woodland_become(&mut g, P0, l, c));
+        let t = token(&mut g, P0, 7);
+        g.perm_mut(t).sick = true;
+        let o = opts(&mut g, l).remove(0);
+        assert!(run(&mut g, &o));
+        sim_core::engine::life::check_state(&mut g).unwrap();
+        assert!(g.perm(l).on_bf, "stationed copy should survive as a 5/5");
+        assert_eq!((chars::power(&g, l), chars::toughness(&g, l)), (5, 5));
+    }
+
+    #[test]
+    fn astral_meadow_copies_keep_land_face_and_flying_under_blood_moon() {
+        let mut g = tbl();
+        perm(&mut g, P1, "Blood Moon");
+        human(&mut g, P0, |_| Some(1));
+        let l = meadow(&mut g);
+        let c = g.perm(l).card();
+        human(&mut g, P0, |r| r.choices.iter().position(|s| s.contains("Witch Enchanter")));
+        perm(&mut g, P0, "Astral Dragon");
+        let copies: Vec<_> =
+            g.player(P0).lands.iter().copied().filter(|&m| g.perm(m).token && g.perm(m).cd == Some(c)).collect();
+        assert_eq!(copies.len(), 2);
+        for m in copies {
+            assert!(g.is_creature(m));
+            assert!(chars::card_types(&g, m).has(Types::LAND));
+            assert!(chars::card_types(&g, m).has(Types::CREATURE));
+            assert_eq!(chars::colors(&g, m), Colors::NONE);
+            assert_eq!((chars::power(&g, m), chars::toughness(&g, m)), (3, 3));
+            assert!(chars::has_keyword(&g, m, "flying"));
+            assert_eq!(sim_core::engine::mana::land_colors_now(&g, P0, m), Colors::from_letters("R"));
+        }
+    }
+
+    #[test]
+    fn meadow_under_blood_moon_keeps_land_face_not_front_creature() {
+        let mut g = tbl();
+        perm(&mut g, P1, "Blood Moon");
+        human(&mut g, P0, |_| Some(1));
+        let l = meadow(&mut g);
+        assert!(!g.perm(l).tapped);
+        assert_eq!(g.player(P0).life, 40);
+        assert!(!g.is_creature(l), "Blood Moon changes land types, not the chosen MDFC face");
+    }
+
+    #[test]
+    fn meadow_under_blood_moon_is_colorless_land() {
+        let mut g = tbl();
+        perm(&mut g, P1, "Blood Moon");
+        human(&mut g, P0, |_| Some(1));
+        let l = meadow(&mut g);
+        assert_eq!((chars::card_types(&g, l), chars::colors(&g, l)), (Types::LAND, Colors::NONE));
+        assert!(g.perm(l).data.truthy(DataKey::LandFace));
+    }
+
+    #[test]
+    fn meadow_enters_under_moon_and_stays_land_after_moon_leaves() {
+        let mut g = tbl();
+        let moon = perm(&mut g, P1, "Blood Moon");
+        human(&mut g, P0, |_| Some(1));
+        let l = meadow(&mut g);
+        zones::leave(&mut g, moon).unwrap();
+        assert_eq!(sim_core::engine::mana::land_colors_now(&g, P0, l), Colors::from_letters("W"));
+        assert!(!g.is_creature(l));
+        assert_eq!(chars::colors(&g, l), Colors::NONE);
+    }
+
+    #[test]
+    fn astral_meadow_entered_before_moon_copies_still_have_land_type() {
+        let mut g = tbl();
+        human(&mut g, P0, |_| Some(1));
+        let l = meadow(&mut g);
+        let c = g.perm(l).card();
+        assert!(g.perm(l).data.truthy(DataKey::LandFace));
+        perm(&mut g, P1, "Blood Moon");
+        human(&mut g, P0, |r| r.choices.iter().position(|s| s.contains("Witch Enchanter")));
+        perm(&mut g, P0, "Astral Dragon");
+        let copies: Vec<_> =
+            g.player(P0).lands.iter().copied().filter(|&m| g.perm(m).token && g.perm(m).cd == Some(c)).collect();
+        assert_eq!(copies.len(), 2);
+        for m in copies {
+            assert!(g.is_creature(m));
+            assert_eq!((chars::power(&g, m), chars::toughness(&g, m)), (3, 3));
+            assert!(chars::card_types(&g, m).has(Types::LAND));
+            assert_eq!(chars::colors(&g, m), Colors::NONE);
+        }
+    }
+
+    // controls: green before and after both fixes
+    #[test]
+    fn woodland_seriema_copy_reverts_to_a_plain_land() {
+        let mut g = tbl();
+        let l = land(&mut g, P0, "Shifting Woodland");
+        let c = card(&g, "The Seriema");
+        g.player_mut(P0).gy.push(c);
+        assert!(sim_core::impls::t6_green2::woodland_become(&mut g, P0, l, c));
+        set_charge(&mut g, l, 7);
+        sim_core::impls::t6_green2::woodland_revert(&mut g);
+        assert_eq!(g.perm(l).cd, Some(card(&g, "Shifting Woodland")));
+        assert!(g.player(P0).lands.contains(&l));
+        assert!(!g.is_creature(l), "charge counters on a non-station card make nothing");
+    }
+
+    fn bog_game(moon: bool) -> (Game, PermId, CardId) {
+        let mut g = tbl();
+        if moon {
+            perm(&mut g, P1, "Blood Moon");
+        }
+        let titan = card(&g, "Grave Titan");
+        g.player_mut(P1).gy.push(titan);
+        let l = land(&mut g, P0, "Bojuka Bog");
+        (g, l, titan)
+    }
+
+    #[test]
+    fn blood_moon_still_stops_other_land_enters_hooks_and_marks_no_face() {
+        let (g, l, titan) = bog_game(true);
+        assert_eq!(g.player(P1).gy, [titan], "a Mountain has no enters ability");
+        assert!(!g.perm(l).data.truthy(DataKey::LandFace));
+        let (g, _, _) = bog_game(false);
+        assert!(g.player(P1).gy.is_empty(), "without Moon the AI's Bog exiles the Titan's graveyard");
+    }
+}
