@@ -761,3 +761,120 @@ fn twinflame_q3_a_locked_line_still_holds_under_the_zone_only_policy() {
     perm(&mut g, P1, "Rule of Law");
     held(&mut g, false);
 }
+
+// ------------------------------------------------------------------ round 3: what the lethal release can really count
+/// seat 0 as in row 13 plus a ready Terror of the Peaks (a 5/4 flier). Twinflame copies Terror (its enter effect makes it
+/// the best target): 8 + 5 = 13 ready fliers, the copy's 5 in the air, and the original Terror's trigger of 5 for the
+/// copy: 23 if every point reached the opponent.
+const TERROR_POW: i32 = 5;
+fn row13_terror() -> Game {
+    let mut g = row13("urdragon");
+    perm(&mut g, P0, TERROR);
+    g
+}
+
+/// a ground creature the engine's "damage to any target" would remove: toughness within the trigger's 5, `pval` of 3 or more
+fn ground_removal_target(g: &mut Game) {
+    let m = perm(g, P1, "Port Razer"); // a vanilla 4/4: 1 + 4 * 0.5 = 3.0
+    assert!(sim_core::engine::values::etgh(g, m) <= TERROR_POW, "within one trigger's damage");
+    assert!(sim_core::engine::values::pval(g, m) >= 3.0, "worth removing: {}", sim_core::engine::values::pval(g, m));
+    assert!(!g.perm(m).fly);
+}
+
+// Terror's trigger goes where `best_target_any` sends it: the opponent whose life it kills, else a creature it would
+// remove, else the most threatening opponent's face
+#[test]
+fn twinflame_c1_terror_damage_goes_to_the_creature_the_engine_removes() {
+    let mut g = row13_terror();
+    ground_removal_target(&mut g);
+    opp_life(&mut g, 23); // combat 18, the trigger would make 23, but it removes the 4/4
+    held(&mut g, false);
+}
+
+#[test]
+fn twinflame_c1_terror_damage_reaches_the_opponent_when_nothing_is_worth_removing() {
+    let mut g = row13_terror();
+    opp_life(&mut g, 23);
+    fair(&mut g, false); // no creature to remove: the face takes it (13 + 5 combat + 5 trigger)
+    let mut h = row13_terror();
+    opp_life(&mut h, 24);
+    held(&mut h, false);
+}
+
+#[test]
+fn twinflame_c1_one_trigger_that_kills_the_opponent_alone_counts_even_with_a_creature_to_remove() {
+    // an untapped flier blocks every flier, so only Terror's trigger of 5 can kill, and it does at 5 life
+    let mut g = row13_terror();
+    ground_removal_target(&mut g);
+    perm(&mut g, P1, "Shivan Dragon");
+    opp_life(&mut g, TERROR_POW);
+    fair(&mut g, false);
+}
+
+#[test]
+fn twinflame_c1_terror_damage_is_aimed_at_the_most_threatening_opponent() {
+    // three seats: the engine sends the trigger to the opponent with the highest threat, not to the one under test
+    let mut g = table(&["urdragon", "seph", "aragorn"]);
+    for q in &mut g.players {
+        q.hand.clear();
+        q.gy.clear();
+    }
+    for n in [GARTH, SPARK, SEASON] {
+        put(&mut g, P0, n, Z::Library);
+    }
+    put(&mut g, P0, TWIN, Z::Hand);
+    glory(&mut g);
+    perm(&mut g, P0, TERROR);
+    // seat 2 has no creature to remove and a huge life total: the highest threat
+    g.player_mut(PlayerId(2)).life = 999;
+    assert!(sim_core::engine::values::threat(&g, P0, PlayerId(2)) > sim_core::engine::values::threat(&g, P0, P1));
+    opp_life(&mut g, 23);
+    held(&mut g, false); // seat 1 at 23: 18 in combat, the trigger goes elsewhere
+}
+
+// ------------------------------------------------------------------ round 3: attack restrictions
+#[test]
+fn twinflame_c2_a_propaganda_the_mana_cannot_pay_holds_the_line() {
+    let mut g = row13("urdragon");
+    perm(&mut g, P1, "Propaganda"); // {2} per attacker; 3 mana, 2 for Twinflame: nothing attacks
+    assert_eq!(sim_core::engine::combat::attack_restrictions(&g, P0, P1).0, 2);
+    held(&mut g, false);
+}
+
+#[test]
+fn twinflame_c2_a_propaganda_the_mana_can_pay_still_releases() {
+    // 6 mana: 2 for Twinflame and {2} each for the flier and its copy
+    let mut g = row13("urdragon");
+    lands(&mut g, P0, "Mountain", 3, false);
+    perm(&mut g, P1, "Propaganda");
+    fair(&mut g, false);
+    let mut h = row13("urdragon");
+    lands(&mut h, P0, "Mountain", 2, false); // 5 mana: one attacker is paid for
+    perm(&mut h, P1, "Propaganda");
+    held(&mut h, false);
+}
+
+#[test]
+fn twinflame_c2_an_attack_cap_counts_only_the_attackers_it_allows() {
+    let mut g = row13("urdragon");
+    perm(&mut g, P1, "Silent Arbiter"); // one attacker per combat: 8 of the 16
+    assert_eq!(sim_core::engine::combat::attack_restrictions(&g, P0, P1).1, Some(1));
+    held(&mut g, false);
+    opp_life(&mut g, BIG_POW);
+    fair(&mut g, false); // one attacker is enough at 8 life
+}
+
+#[test]
+fn twinflame_c2_a_pacified_flier_is_not_counted() {
+    let mut g = row13("urdragon");
+    let dragon = perm(&mut g, P0, "Shivan Dragon"); // a ready 5/5 flier
+    g.skip_etb = true; // the Aura without its enters effect; the test attaches it
+    let arrest = perm(&mut g, P1, "Arrest");
+    g.skip_etb = false;
+    assert!(sim_core::impls::zur::lock_attach(&mut g, arrest, dragon).unwrap());
+    assert!(sim_core::cardcode::locked(&g, dragon, "pacify"));
+    opp_life(&mut g, 2 * BIG_POW + 5); // the flier 8 + its copy 8 + the pacified 5
+    held(&mut g, false);
+    opp_life(&mut g, 2 * BIG_POW);
+    fair(&mut g, false);
+}
