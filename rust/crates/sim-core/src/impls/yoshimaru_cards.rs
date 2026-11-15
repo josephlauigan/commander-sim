@@ -116,9 +116,10 @@ fn minas_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 // ================================================================== The Seriema
 /// **The Seriema** ({1}{W}{W}, legendary artifact, Spacecraft): when it enters, search for a legendary creature card
 /// (the compiled `search`; a person picks the card). Station (tap another creature you control: put charge counters
-/// equal to its power on it; only as a sorcery). At 7 or more charge counters it is a 5/5 artifact creature with
-/// flying, and other tapped legendary creatures you control have indestructible. The AI stations with creatures that
-/// can't attack anyway, or when the tap finishes it; a person chooses each creature to tap, one activation at a time.
+/// equal to its power on it; only as a sorcery, with no maximum). At 7 or more charge counters it is a 5/5 artifact
+/// creature with flying, and other tapped legendary creatures you control have indestructible. The AI stations with
+/// creatures that can't attack anyway, or when the tap finishes it, and no more once it is a creature; a person
+/// chooses each creature to tap, one activation at a time, with or without 7 counters.
 const SERIEMA: &str = "The Seriema";
 const STATION_GOAL: i64 = 7;
 const WITCH: &str = "Witch Enchanter // Witch-Blessed Meadow";
@@ -202,7 +203,7 @@ fn seriema_grant(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
 }
 
 fn seriema_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || g.perm(src).owner != p || !live(g, src) || seriema_creature(g, src) {
+    if post.is_none() || g.perm(src).owner != p || !live(g, src) {
         return Ok(vec![]);
     }
     let cands = station_candidates(g, p, src);
@@ -215,6 +216,9 @@ fn seriema_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> R
             label: "The Seriema: station (tap another creature)".into(),
             act: Some(Action::Ability { src, f: station_go, arg: -1 }),
         }]);
+    }
+    if seriema_creature(g, src) {
+        return Ok(vec![]); // the AI has nothing more to gain from it
     }
     // the AI: creatures that can't attack this turn first (the biggest), the rest only when the taps reach 7 at once
     let have = charge(g, src);
@@ -244,11 +248,7 @@ fn seriema_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> R
 
 fn station_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     // only as a sorcery
-    if !live(g, src)
-        || g.perm(src).owner != p
-        || seriema_creature(g, src)
-        || crate::human::legal::sorcery_timing(g, p).is_some()
-    {
+    if !live(g, src) || g.perm(src).owner != p || crate::human::legal::sorcery_timing(g, p).is_some() {
         return Ok(false);
     }
     let cands = station_candidates(g, p, src);
