@@ -258,7 +258,13 @@ def compare_l3(base, branch, a):
         if c in explained:
             continue
         # 'deck:Card' checks only that deck's own seat (a card in two decks must be cast by the deck that changed)
-        deck, _, card = c.partition(":") if ":" in c else ("", "", c)
+        # (the prefix is a deck only when it is a deck seen in the recording: card names such as 'Summon: Bahamut' have colons)
+        decks_seen = {t.split("/")[0] for rows in check_rows.values() for t in rows}
+        deck, _, card = c.partition(":")
+        if deck.strip() in decks_seen and ":" in c:
+            deck, card = deck.strip(), card.strip()
+        else:
+            deck, card = "", c
         if deck:
             if card not in check_rows:
                 problems.append(f"changed card {card!r} is not in the recording (was --cards given?)")

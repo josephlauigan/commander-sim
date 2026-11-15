@@ -516,6 +516,17 @@ import sys; sys.path.insert(0, sys.argv[1])
 import record
 a, o = record.cast_flags(b\"R2  Scarlet Witch: yshtola casts Foo\\nR3  Opp A casts Foo Bar\\n\", ['Foo'], 'yshtola', ['Foo', 'Foo Bar'])
 sys.exit(0 if (a['Foo'], o['Foo']) == (1, 1) else 1)" "$scripts/gates-lib"
+has "record l3: a game where an opponent alone casts Foo Bar records Foo as not cast" '"casts": \{"Bar": 0, "Foo": 0, "Qux": 0\}' "$L/records.jsonl"
+expect "cast flags: a lone longer-named card is not the shorter card" 0 python3 -I -c "
+import sys; sys.path.insert(0, sys.argv[1])
+import record
+a, o = record.cast_flags(b\"R3  Opp A casts Foo Bar\\n\", ['Foo'], 'yshtola', ['Foo', 'Foo Bar'])
+sys.exit(0 if (a['Foo'], o['Foo']) == (0, 0) else 1)" "$scripts/gates-lib"
+expect "compare l3: a card name with a colon is not read as deck:Card" 1 "${tc[@]}" "$L" "$tmp/rec/l3-base" --changed-cards 'Summon: Bahamut'
+has "compare l3: and is looked up under its whole name" "changed card 'Summon: Bahamut' is not in the recording"
+expect "compare l3: a space after the deck colon is accepted" 0 "${tc[@]}" "$L" "$tmp/rec/l3-base" --changed-cards 'yshtola: Foo'
+printf 'VERDICT: commit\nnothing\nReviewed head: %s\n' "${H:0:12}" >"$tmp/rv-late.md"
+expect "verdict: the head line must be line 2" 1 "${gc[@]}" verdict "$tmp/rv-late.md" "$H"
 expect "compare l3: deck:Card passes when that deck's seat casts the card" 0 "${tc[@]}" "$L" "$tmp/rec/l3-base" --changed-cards 'yshtola:Foo'
 expect "compare l3: deck:Card fails when that deck's seat never casts it" 1 "${tc[@]}" "$L" "$tmp/rec/l3-base" --changed-cards 'yshtola:Qux'
 has "compare l3: names the deck and tier" "changed card 'yshtola:Qux': never cast in the branch in yshtola/t5"
