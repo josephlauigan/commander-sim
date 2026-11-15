@@ -3,7 +3,7 @@
 # deck has no hand-written AI code, so the generic policy reads this file: `[style]`, `[commander]`, `[key_cards]`,
 # `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: ramp first, an engine (Rhystic Study, The
 # One Ring, Terror of the Peaks) on turns 3-5, then The Ur-Dragon and the Dragons, then attack; the Garth One-Eye +
-# Spark Double + Twinflame + Doubling Season loop is the second win line (see the pending card-code issues below).
+# Spark Double + Twinflame + Doubling Season loop is the second win line (see the card-code fixes below).
 # PROVISIONAL: the style numbers, priorities and the keep rule come from the pilot guide in the deck document, not from a
 # paired test (no sims yet). Deliberately NOT listed in `[[prio]]`: Twinflame, Crux of Fate, Austere Command, Decimate,
 # removal and the protection spells. A positive priority turns a held card into a plain main-phase cast, which skips the
@@ -15,11 +15,32 @@
 # sequencing, "seven mana and no Dragon" for the Terror of the Peaks / Goldspan row (it uses `lands+mana-perms>=5` and
 # has no Dragon check), a colour check for a hand of several colourless or off-colour sources beyond the rows below, the
 # 5- and 6-card keep rows and the bottom order.
-# Card-code issues, PENDING JD'S DECISION (fix in code or accept; they are not accepted limits): `ur_pick` can put Tiamat
-# into play with The Ur-Dragon's free drop, so her search never runs (only a card-code change stops that; a [[prio]]
-# value only feeds the pick as value/10); Twinflame is cast as a fair spell on any good non-legendary creature; Spark
-# Double copies the best creature, rarely Garth. Until they are fixed the Garth wish rows below can send the tutors to
-# pieces the AI then wastes.
+# Card-code fixes (the Garth branches run only for the raw key `urdragon`, so no other deck's choices change): The
+# Ur-Dragon's free drop never puts Tiamat onto the battlefield (`ur_pick`: her search is "if you cast it"); Twinflame is
+# held while the Garth line is alive (Garth, Spark Double and Doubling Season each in hand, library or on the
+# battlefield) and released when a piece is dead, the table can kill you, or this turn's copies and ready fliers are
+# lethal (`mine::twinflame`: counts Doubling Season's copies, the token cap, and Terror of the Peaks' triggers replayed
+# one at a time where the engine would aim them; combat damage counts only with no attack cap out and no tax on that
+# opponent, and an opponent whose damage is prevented, halved, floored or turned into poison counts for nothing);
+# Spark Double copies Garth when Doubling Season (in
+# hand or out) and Twinflame (in hand) are there, or a Demonic or Vampiric Tutor can fetch the missing one
+# (`common::spark_copy`). The fair Twinflame resolver itself now makes Doubling Season's copies and skips targets with
+# protection from red for every seat (Twinflame is in no other registered deck). Limits of the lethal release: it is
+# released only when the estimate finds a kill and the engine then makes one on a copy of the game that sees only the
+# visible board (Twinflame cast, then everything attacks each opponent the estimate found; `mine::twinflame_confirm`;
+# the AI's own look-ahead copies use the estimate alone); a later copy's entry also triggers the earlier Terror token,
+# which the estimate leaves out (it only delays the release); answers an opponent casts from the hand (a fog, Teferi's
+# Protection, Angel's Grace, Tishana's Tidebinder, a counter, removal) and the cards it draws during the line are not
+# known; under a tax or a cap, or against Gisela, Angel's Grace, Phyrexian Unlife or Serra's emblem, or while the copies
+# enter tapped (Blind Obedience, Thalia), only Terror's triggers can release it; it also stays held while an opponent
+# controls a permanent that triggers on the line itself (Soul Warden, Authority of the Consuls, Sunscorch Regent,
+# Aurelia, Exquisite Blood, Intruder Alarm, Koma, Sting), and counts no combat damage to an opponent with a block or
+# defence effect out (Spore Frog, Mirage Mirror, Yawgmoth, Brimaz), even where the engine would kill; the check's
+# blocks are the engine's heuristic ones (three samples, each must kill), not an opponent's block search; the check
+# follows the engine where the engine departs from the rules (Chalice, a disabled Opposition); and the AI's real attack,
+# chosen afterwards, may not be the killing one. Still
+# open: a Spark Double cast, or free-dropped, before Garth is on the battlefield copies something else and kills the
+# line (nothing holds it back yet).
 # The `plays` set (the mulligan's "something to do") leaves out Mox Jasper (dead before a Dragon) and Garth One-Eye;
 # Temur Ascendancy is in it (JD, 2026-11-14).
 # Garth line: Commander Spellbook variant 1171-1235-3908-4772 (not written on the line: the plan test checks `spellbook`
@@ -100,6 +121,12 @@ value = 78
 [[prio]]
 cards = ["Ganax, Astral Hunter", "Niv-Mizzet, the Firemind"]
 value = 66
+
+# Triple Triad ({3}{R}{R}{R}) does nothing the turn it lands and is worth casting from six mana on, as a main-phase play.
+[[prio]]
+cards = ["Triple Triad"]
+when = ["lands+mana-perms>=6"]
+value = 62
 
 # Keep the wipe answer for the engine pieces.
 [[hold]]

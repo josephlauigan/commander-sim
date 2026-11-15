@@ -5,7 +5,8 @@
 //!
 //! - The Ur-Dragon: eminence, in the command zone or on the battlefield: your other Dragon spells cost {1} less
 //!   (mana::cost_of); one or more Dragons you control attack: draw that many, then put a permanent card from your hand
-//!   onto the battlefield: the nonland one worth most, or a land when that saves under 3 mana (`ur_pick`).
+//!   onto the battlefield: the nonland one worth most, or a land when that saves under 3 mana (`ur_pick`); never Tiamat
+//!   (its search is "if you cast it").
 //! - Ancient Brass Dragon: combat damage to a player: a d20; creature cards from all graveyards with total mana value
 //!   up to the roll come back under your control (the most mana value that fits).
 //! - Ancient Copper Dragon: combat damage to a player: a d20, that many Treasures.
@@ -299,9 +300,13 @@ fn free_worth(g: &Game, c: CardId) -> f64 {
 }
 
 /// the AI's permanent card from its hand: the nonland one worth most (`body_worth`), unless it saves little
-/// (`free_worth` under a land's worth) and there is a land card to ramp with
-fn ur_pick(g: &Game, p: PlayerId, cs: &[CardId]) -> Option<CardId> {
-    let (lands, rest): (Vec<CardId>, Vec<CardId>) = cs.iter().partition(|&&c| g.db.get(c).land);
+/// (`free_worth` under a land's worth) and there is a land card to ramp with. Never Tiamat in the urdragon seat: its
+/// search is "if you cast it", so put onto the battlefield it would do nothing (it stays in hand to be cast).
+pub fn ur_pick(g: &Game, p: PlayerId, cs: &[CardId]) -> Option<CardId> {
+    let (lands, mut rest): (Vec<CardId>, Vec<CardId>) = cs.iter().partition(|&&c| g.db.get(c).land);
+    if crate::impls::t45_urdragon_combos::urdragon_seat(g, p) {
+        rest.retain(|&c| &*g.db.get(c).name != TIAMAT);
+    }
     let best = crate::engine::zones::max_by(&rest, |c| body_worth(g, p, c));
     let land = crate::impls::t12_windgrace::pick_lands(g, p, &lands, 1, false).into_iter().next();
     let land_worth = if g.player(p).lands.len() >= 6 { 1.5 } else { 3.0 };

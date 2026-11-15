@@ -625,6 +625,10 @@ fn klauth_ai_main_two_offers_and_casts_twinflame_with_no_other_mana() {
     g.step = Step::Main2;
     perm(&mut g, P0, "Mulldrifter");
     hand(&mut g, P0, &["Twinflame"]);
+    // the urdragon AI holds Twinflame while the Garth line (Garth, Spark Double, Doubling Season) is alive, and this
+    // test's library holds all three: put Doubling Season in the graveyard so the line is dead and Twinflame is fair
+    let season = take(&mut g, P0, "Doubling Season");
+    g.player_mut(P0).gy.push(season);
     let choices = sim_core::ai::brain::main_options(&mut g, P0, true).unwrap();
     let opt = choices.iter().find(|o| o.label.starts_with("Twinflame")).expect("main-two Twinflame option");
     assert!(sim_core::ai::act::perform(&mut g, P0, opt.act.as_ref().unwrap()).unwrap());

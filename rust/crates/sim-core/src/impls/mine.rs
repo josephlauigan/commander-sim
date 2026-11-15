@@ -12,9 +12,9 @@ use crate::cards::{CardDb, Types};
 use crate::engine::cast::{
     cast_card, cast_spell_copy, castable, casts_this_turn, discard_worst, is_casts, magecraft, on_cast, parse_cost,
 };
-use crate::engine::combat::blocked;
+use crate::engine::combat::{attack_restrictions, blocked, has_haste, kw};
 use crate::engine::hooks::fire_trigger;
-use crate::engine::life::{check_state, lose_life};
+use crate::engine::life::{check_state, lose_life, prevents_damage};
 use crate::engine::mana::{
     Source, Unit, can_pay, can_pay_spell, cost_of, pay, pay_spell, restr_ok, total_mana, total_mana_spell,
 };
@@ -28,17 +28,18 @@ use crate::engine::stack::{
 };
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{
-    card_name, card_tag, commander_out, epow, equipped, etgh, find, has, has_type, indestructible, pval, stopped,
-    threat, untargetable,
+    card_name, card_tag, chasm, commander_out, epow, equipped, etgh, find, has, has_type, indestructible,
+    player_hexproof, protected_from, pval, stopped, threat, untargetable,
 };
 use crate::engine::zones::{
-    Enter, Tokens, Zone, amass, die, discard_cards, discard_index, draw, enter, enter_token_copy, landfall, leave,
-    make_tokens, max_by, mill, min_by, to_zone_card,
+    Enter, TOKEN_CAP, Tokens, Zone, amass, die, discard_cards, discard_index, draw, enter, enter_token_copy, landfall,
+    leave, make_tokens, max_by, mill, min_by, to_zone_card,
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src};
 use crate::human::{cards, choices, human_of};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::impls::t45_urdragon_combos::{garth_line_alive, ready_garth, urdragon_seat};
 use crate::pysum::PySum;
 use crate::satsum::SatSum;
 use crate::state::{Ctx, DataKey, Game, StackItem, StackKind, Val};
@@ -3404,8 +3405,15 @@ fn twinflame_best(g: &Game, p: PlayerId, c: CardId, post: bool) -> Option<(f64, 
                 spells += 1;
             }
         }
-        let mut ranked: Vec<(f64, PermId)> =
-            g.player(p).perms.iter().map(|&m| (twinflame_value(g, p, m, post, Some(spells)), m)).collect();
+        // Twinflame is red: a creature with protection from red is not a legal target
+        let red = crate::cards::Colors::from_letters("R");
+        let mut ranked: Vec<(f64, PermId)> = g
+            .player(p)
+            .perms
+            .iter()
+            .filter(|&&m| !protected_from(g, m, red))
+            .map(|&m| (twinflame_value(g, p, m, post, Some(spells)), m))
+            .collect();
         ranked.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
         ranked.truncate(n);
         if ranked.len() < n || ranked[n - 1].0 < 1.5 {
@@ -3427,12 +3435,385 @@ pub(crate) fn twinflame(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>
         return Ok(vec![]);
     }
     let Some((total, tg)) = twinflame_best(g, p, c, post) else { return Ok(vec![]) };
+    // The Ur-Dragon seat holds Twinflame while the Garth line is alive: the combo option is its only play once the line
+    // is ready, and the line has nothing to hold it for once a piece is dead, the attack is lethal or p is in danger.
+    // The guard is the first expression, so no other seat reaches the rest (reads, plus a check on a copy that changes
+    // nothing in this game).
+    if urdragon_seat(g, p)
+        && (ready_garth(g, p).0
+            || (garth_line_alive(g, p) && Situation::new(g, p).danger < 1.0 && !twinflame_release(g, p, c, &tg, post)))
+    {
+        return Ok(vec![]);
+    }
     let k = tg.len() - 1;
     Ok(vec![Opt {
         utility: 1.0 + 0.6 * total,
         label: format!("Twinflame ({} target{})", tg.len(), if k > 0 { "s" } else { "" }),
         act: Some(Action::Plan { f: twinflame_go, arg: c.0 as i64 | (post as i64) << 32 }),
     }])
+}
+
+/// The lethal release: the estimate finds opponents it can kill, and the engine then kills one on a copy of the game
+/// (`twinflame_confirm`). Inside the look-ahead's own copies the estimate decides alone (no copy of a copy).
+fn twinflame_release(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], post: bool) -> bool {
+    let qs = twinflame_lethal(g, p, tg, post);
+    !qs.is_empty() && (g.in_search || twinflame_confirm(g, p, c, &qs))
+}
+
+/// the combats the check plays at each opponent: the engine's chump block is a random choice (about 99.97% likely
+/// against a lethal attack), so one sample can miss a block the real combat makes; every one of them must kill
+const CONFIRM_COMBATS: usize = 3;
+
+/// The release's check on the engine itself. Twinflame is cast on a copy of the game that knows only what p knows
+/// (`hide`), and the copy then attacks each opponent in `qs` in turn with everything, `CONFIRM_COMBATS` times on different random
+/// numbers (each must kill) (`forced_attack`, the look-ahead's
+/// all-out plan), the engine answering for the opponents. Every visible effect between the cast and the end of that
+/// combat is played as the engine plays it, wherever its code lives: a land's defence (Kor Haven), an opponent's
+/// priority in the combat steps (Opposition, Whipcorder, Ballista Squad, an animated Mishra's Factory), the cast's own
+/// triggers (Painful Quandary on the caster) and the payment (a counted Dragon tapped for mana). True only if an
+/// opponent alive now has left the game, and p has not, after the cast or after one of those attacks. The copy has its
+/// own random numbers (named; the game's generator is not advanced), a step budget, no log and no people; nothing in
+/// this game changes.
+fn twinflame_confirm(g: &mut Game, p: PlayerId, c: CardId, qs: &[PlayerId]) -> bool {
+    let opps: Vec<PlayerId> = g.opps(p).collect();
+    let x = g.rng.clone().next_u64(); // a copy's draw: the game's own generator stays where it is
+    let mut rng = crate::rng::Rng::named(&format!("twinflame:{}:{}:{x}", g.round, p.index()));
+    let mut g2 = crate::ai::search::clone(g); // no log, no audit, no people, no tape
+    g2.in_search = true; // no look-ahead, block search, survey or hold statistics inside the copy
+    g2.board_cap = None;
+    g2.work_cap = g2.work + g.settings.search.playout_work;
+    hide(&mut g2, p, &mut rng);
+    g2.rng = crate::rng::Rng::from_u64(rng.next_u64());
+    confirm_on(&mut g2, p, c, &opps, qs).unwrap_or(false) // cut short by its budget: held
+}
+
+fn confirm_on(g2: &mut Game, p: PlayerId, c: CardId, opps: &[PlayerId], qs: &[PlayerId]) -> Res<bool> {
+    let killed = |x: &Game| x.player(p).alive && opps.iter().any(|&q| !x.player(q).alive);
+    if !g2.stack.is_empty() || !g2.trig_queue.is_empty() {
+        crate::engine::stack::settle_stack(g2)?; // copied with triggers pending: settle them first (as play_on does)
+    }
+    if !twinflame_go(g2, p, c.0 as i64)? {
+        return Ok(false); // first main phase: post = false
+    }
+    if !g2.stack.is_empty() || !g2.trig_queue.is_empty() {
+        crate::engine::stack::settle_stack(g2)?;
+    }
+    if killed(&*g2) {
+        return Ok(true); // Terror's triggers (or anything the cast set off) were enough
+    }
+    if g2.over || !g2.player(p).alive {
+        return Ok(false); // Painful Quandary and the like
+    }
+    crate::engine::turn::end_step_pools(g2); // main phase 1 ends (rule 500.4)
+    g2.step = crate::state::Step::Combat;
+    // the later samples' own random numbers (the first plays on the copy's, as before)
+    let mut seeds = crate::rng::Rng::named(&format!("twinflame:combats:{}", g2.rng.clone().next_u64()));
+    'opp: for &q in qs {
+        if !g2.player(q).alive {
+            continue;
+        }
+        for k in 0..CONFIRM_COMBATS {
+            let mut g3 = g2.clone();
+            if k > 0 {
+                g3.rng = crate::rng::Rng::from_u64(seeds.next_u64());
+            }
+            g3.forced_attack = Some((q, "all"));
+            crate::engine::combat::combat(&mut g3, p)?;
+            if !killed(&g3) {
+                continue 'opp;
+            }
+        }
+        return Ok(true);
+    }
+    Ok(false)
+}
+
+/// The copy hides what p can't see: each living opponent's hand goes back into its library and every library is
+/// shuffled, except the cards p put on top of its own (`known_top`), as `search::determinize` does, but with no hand
+/// dealt: the release reads only the visible board (FINDINGS L2). Known cards stay in the hand: a commander put there,
+/// and the exiled cards the engine holds there (`values::hand_proper` leaves them out: cards it may play from exile,
+/// Prosper's, cards taken from another player, Opposition Agent's; a foretold card counts as known too)
+fn hide(g2: &mut Game, p: PlayerId, rng: &mut crate::rng::Rng) {
+    let known = crate::engine::tutors::known_top(g2, p).len();
+    let secret: Vec<Vec<CardId>> = g2.players.iter().map(|q| crate::engine::values::hand_proper(g2, q.id)).collect();
+    for (q, secret) in g2.players.iter_mut().zip(&secret) {
+        if q.id == p {
+            let n = q.library.len().saturating_sub(known);
+            rng.shuffle(&mut q.library[..n]);
+        } else if q.alive {
+            let (cmd, cmd2) = (q.cmd, q.cmd2);
+            let (back, keep): (Vec<CardId>, Vec<CardId>) =
+                q.hand.iter().copied().partition(|&x| x != cmd && Some(x) != cmd2 && secret.contains(&x));
+            q.hand = keep;
+            q.library.extend(back);
+            rng.shuffle(&mut q.library);
+        }
+    }
+}
+
+/// Can p's attack and Twinflame's copies still take life from `q`? One term for every gate the engine applies between
+/// "damage is dealt" and "the opponent is eliminated", read without writing. `lose_life`: a locked life total; protection,
+/// The One Ring, Glacial Chasm and the like through `prevents_damage`; Gisela's halving; Pariah's redirection to a
+/// creature; Serra's emblem floor; Phyrexian Unlife's poison instead of life loss at 0 or less life; Angel's Grace's
+/// floor of 1. `check_state`: Unlife, Herald of Eternal Dawn and Angel's Grace keep a player at 0 or less life in the
+/// game. Doublers (Fiery Emancipation, Lightning's stagger, Bloodletter) only make the true damage larger, so they are
+/// not read.
+fn clean(g: &Game, p: PlayerId, q: PlayerId) -> bool {
+    let pl = g.player(q);
+    let mut floor = i32::MAX; // Serra's emblem with a creature: damage can't take q below 1, which lowers `floor`
+    crate::impls::alela::serra_floor(g, q, &mut floor);
+    pl.alive
+        && !pl.life_locked
+        && !prevents_damage(g, q, Some(p))
+        && crate::impls::t3_aurelia::gisela_scale(g, q, 100) >= 100
+        && floor == i32::MAX
+        && !crate::impls::t6_stax::grace_active(g, q)
+        && !crate::impls::tymna_cards::unlife(g, q)
+        && !crate::impls::t0_giada::cant_lose(g, q)
+        && !pl.perms.iter().any(|&m| g.perm(m).on_bf && g.perm(m).name == "Pariah")
+}
+
+/// Terror of the Peaks' triggers (one per entry in `triggers`, the power of each) as `t2::best_target_any` resolves them,
+/// replayed on local life totals: the first opponent whose life is the trigger's power or less takes it; else a creature
+/// the engine would remove (an opponent's targetable creature with toughness within the power and `pval` 3 or more);
+/// else the opponent with the highest `threat`, which is the permanents' worth plus `0.05 * (life - 40)` and so follows
+/// the local life. Returns what each opponent takes. The replay stops, with what it has counted so far, at the first
+/// trigger whose outcome it can't follow: one that removes a creature, or one aimed at an opponent whose damage is
+/// reduced rather than prevented (`clean` is false while the opponent can be hit). An opponent that nothing can damage
+/// (protection, a locked life total) keeps its life and so keeps being the aim, exactly as in the engine.
+fn terror_replay(g: &Game, p: PlayerId, triggers: &[i32]) -> Vec<(PlayerId, i64)> {
+    let opps: Vec<PlayerId> = g.opps(p).collect();
+    if opps.is_empty() {
+        return vec![]; // nobody to aim at (`best_target_any` returns early too)
+    }
+    let mut life: Vec<i64> = opps.iter().map(|&o| g.player(o).life as i64).collect();
+    let mut taken = vec![0i64; opps.len()];
+    // the permanents' worth, from which the engine's `threat` differs by 0.05 * (life - 40)
+    let worth: Vec<f64> = opps
+        .iter()
+        .map(|&o| g.player(o).perms.iter().filter(|&&m| !g.perm(m).phased).map(|&m| pval(g, m)).psum())
+        .collect();
+    for &n in triggers {
+        let n64 = n as i64;
+        let i = if let Some(i) = life.iter().position(|&l| l <= n64) {
+            i
+        } else {
+            let removable = opps
+                .iter()
+                .flat_map(|&o| g.player(o).perms.iter().copied())
+                .filter(|&m| g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= n)
+                .collect::<Vec<PermId>>();
+            if max_by(&removable, |m| pval(g, m)).is_some_and(|b| pval(g, b) >= 3.0) {
+                break; // a creature goes: its worth leaves the aim, which the replay doesn't follow
+            }
+            let idx: Vec<usize> = (0..opps.len()).collect();
+            max_by(&idx, |i| worth[i] + (life[i] as f64 - 40.0) * 0.05).unwrap()
+        };
+        let o = opps[i];
+        if g.player(o).life_locked || prevents_damage(g, o, Some(p)) {
+            continue; // nothing happens to it: same life, same aim next time
+        }
+        if !clean(g, p, o) {
+            break; // halved, floored, redirected or turned into poison: not followed
+        }
+        life[i] -= n64;
+        taken[i] += n64;
+    }
+    opps.into_iter().zip(taken).collect()
+}
+
+/// m can't be blocked except by a flier or a reach creature, as `combat::can_block` reads it: the flying keyword in the
+/// ability language, the permanent's flying flag unless an Equipment took the keyword away (Colossus Hammer), or flying
+/// until end of turn
+fn flies_over(g: &Game, m: PermId) -> bool {
+    let x = g.perm(m);
+    (g.dsl_on && kw(g, m, "flying"))
+        || (x.fly && !crate::impls::cloud::loses_flying(g, m))
+        || x.eot_kw.contains(&"flying")
+}
+
+/// A visible opponent effect that fires while the line plays out and that the estimate does not follow: a compiled
+/// trigger on Twinflame's cast ("whenever an opponent casts": Sunscorch Regent's life, Arasta's reach Spider), on a copy
+/// entering ("whenever a creature [an opponent controls] enters": Soul Warden, Soul's Attendant, Auriok Champion,
+/// Authority of the Consuls, Suture Priest; none while creatures entering trigger nothing) or on the attack ("whenever a
+/// player attacks": Aurelia, the Law Above), or card code on a life loss (Exquisite Blood, Bloodthirsty Conqueror), on
+/// any creature entering that untaps blockers (an Intruder Alarm with its abilities, whoever controls it) or at the
+/// beginning of combat that taps or untaps creatures (Koma, Cosmos Serpent and Sting, the Glinting Dagger of an
+/// opponent). `dsl::fire` reads phasing but not lost abilities, so neither does this. Any of them holds the release.
+fn foreign_triggers(g: &Game, p: PlayerId, quiet: bool) -> bool {
+    use crate::dsl::model::Ability;
+    let compiled = crate::dsl::active(g)
+        && g.opps(p).any(|q| {
+            g.player(q).perms.iter().copied().chain(crate::dsl::land_sources(g, q)).any(|s| {
+                let x = g.perm(s);
+                !x.phased
+                    && x.cd.is_some_and(|cd| {
+                        g.db.get(cd).abilities.iter().any(|a| match a {
+                            Ability::Triggered { event, source, who, .. } => match event.as_str() {
+                                "etb" => !quiet && matches!(source.as_deref(), Some("opp_creature" | "any_creature")),
+                                "cast" => who.as_deref() != Some("you"),
+                                "attack" => source.as_deref() == Some("any_player"),
+                                _ => false,
+                            },
+                            _ => false,
+                        })
+                    })
+            })
+        });
+    let hooks = crate::engine::hooks::hooked;
+    compiled
+        || hooks(g, Event::LoseLife).iter().any(|(s, _)| g.perm(*s).owner != p)
+        || (!quiet && hooks(g, Event::Etb).iter().any(|(s, _)| g.perm(*s).name == "Intruder Alarm"))
+        || hooks(g, Event::EachCombat).iter().any(|(s, _)| {
+            g.perm(*s).owner != p && matches!(g.perm(*s).name, "Koma, Cosmos Serpent" | "Sting, the Glinting Dagger")
+        })
+}
+
+/// Twinflame's copies and p's ready fliers kill one opponent this turn: first main phase, and an opponent whom nothing
+/// protects (The One Ring and the like prevent all of it). Two kinds of damage reach that opponent:
+/// - combat damage, if it has no untapped flier or reach creature to block: p's ready fliers and the flying copies,
+///   unless an attack cap is out anywhere (Angelic Arbiter, Sandwurm Convergence, Crawlspace, Silent Arbiter: some turn
+///   on only with the cast) or q's attacks are taxed (Ghostly Prison, Propaganda: the mana left may be restricted, wasted
+///   by the end of the phase or spent first, and the AI keeps none back). Those states count no combat damage. A
+///   creature locked by an Arrest-style Aura can't attack;
+/// - Terror of the Peaks' enter trigger (not combat, so a blocker doesn't stop it, but it targets: a hexproof player
+///   can't be hit): each Terror p controls deals the power of every copy that enters, aimed trigger by trigger as the
+///   engine does (`terror_replay`).
+/// The opponent must be `clean`: nothing may halve, floor, redirect or prevent the damage, or keep the opponent in the
+/// game at 0 or less life; a fog this turn or a prevented attacker removes combat damage.
+/// The copies are what the resolution really makes: the printed power of each target that Twinflame can legally target
+/// (no protection from red), `repl::tokens` of them per target (Doubling Season and company), while the token cap
+/// leaves room. Blocks by ground creatures are ignored: everything that deals combat damage here flies.
+/// Returns the opponents it finds killable (none: no release).
+fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> Vec<PlayerId> {
+    if post {
+        return vec![];
+    }
+    let red = crate::cards::Colors::from_letters("R");
+    let pacify = !g.auras.is_empty();
+    // the flying power p can attack with: its ready fliers and the flying copies
+    let mut fliers: i32 = g
+        .player(p)
+        .perms
+        .iter()
+        .filter(|&&m| {
+            let x = g.perm(m);
+            g.is_creature(m)
+                && x.on_bf
+                && !x.phased
+                && !x.tapped
+                && !x.noatk
+                && (!x.sick || has_haste(g, m))
+                && epow(g, m) > 0
+                && flies_over(g, m)
+                && !kw(g, m, "infect") // infect damage is poison, not life loss
+                && x.name != "Szadek, Lord of Secrets" // its combat damage becomes counters and a mill
+                && !repl::source_prevented(g, m)
+                && !repl::dovin(g, m)
+                && !(pacify && crate::cardcode::locked(g, m, "pacify"))
+        })
+        .map(|&m| epow(g, m))
+        .ssum();
+    let n = repl::tokens(g, p, 1);
+    let mut room = TOKEN_CAP.saturating_sub(g.player(p).perms.iter().filter(|&&m| g.perm(m).token).count()) as u32;
+    // the copies' powers with how many of each enter (one trigger of each Terror per copy)
+    let mut copies: Vec<(i32, u32)> = vec![];
+    for &m in tg {
+        let Some(cd) = g.perm(m).cd.filter(|_| !protected_from(g, m, red)) else { continue };
+        let made = n.min(room);
+        room -= made;
+        let d = g.db.get(cd);
+        if made > 0 && d.pow > 0 {
+            copies.push((d.pow, made));
+            // a copy that enters tapped (Blind Obedience, Authority of the Consuls, Thalia) can't attack; its entry still
+            // triggers Terror. The target stands in for the token: the same controller and a creature
+            if d.has_kw("flying")
+                && !d.has_kw("infect")
+                && &*d.name != "Szadek, Lord of Secrets"
+                && !repl::enters_tapped(g, p, Some(m))
+            {
+                fliers = fliers.saturating_add(d.pow.saturating_mul(made.min(i32::MAX as u32) as i32));
+            }
+        }
+    }
+    if chasm(g, p) {
+        fliers = 0; // Glacial Chasm: creatures you control can't attack
+    }
+    // an attack cap anywhere (Arbiter, Sandwurm Convergence, Crawlspace, Silent Arbiter, Mirri): not modelled, see below
+    let capped = !crate::engine::hooks::hooked(g, Event::AttackCap).is_empty();
+    // Hushbringer (and `skip_etb`) stop a creature's enter triggers from running at all, Terror's included
+    let quiet = g.skip_etb || repl::hushed(g);
+    if foreign_triggers(g, p, quiet) {
+        return vec![];
+    }
+    // a Terror whose abilities are lost (`neutered`) has no trigger, as in `hooks::hooked`
+    let terrors = if quiet {
+        0
+    } else {
+        g.player(p)
+            .perms
+            .iter()
+            .filter(|&&m| {
+                g.perm(m).on_bf
+                    && !g.perm(m).phased
+                    && !g.perm(m).neutered
+                    && g.perm(m).name == "Terror of the Peaks"
+                    && !repl::source_prevented(g, m)
+            })
+            .count() as u32
+    };
+    // a fog this turn (Spore Frog and the like, Arachnogenesis, Galadhrim Ambush): all combat damage, or all of it by
+    // creatures that aren't Spiders or Elves, is prevented
+    let st = g.turn_stamp();
+    let fogged = g.fog == Some(st)
+        || g.fog_spiders == Some(st)
+        || g.players.iter().any(|o| o.flag_turn.get(&"elf_fog") == Some(&st));
+    // one trigger of every Terror per copy that enters, each of the copy's power
+    let mut triggers: Vec<i32> = vec![];
+    if terrors > 0 {
+        for &(pow, made) in &copies {
+            let k = (made as usize).saturating_mul(terrors as usize).min(1 << 20);
+            triggers.extend(std::iter::repeat_n(pow, k));
+        }
+    }
+    let taken = terror_replay(g, p, &triggers);
+    g.opps(p)
+        .filter(|&q| {
+            if !clean(g, p, q) {
+                return false;
+            }
+            let blocked_in_the_air = g.player(q).perms.iter().any(|&b| {
+                let x = g.perm(b);
+                g.is_creature(b)
+                    && x.on_bf
+                    && !x.phased
+                    && !x.tapped
+                    && (x.fly
+                        || kw(g, b, "flying")
+                        || kw(g, b, "reach")
+                        || x.cd.is_some_and(|cd| g.db.get(cd).tag(Tag::Reach)))
+            });
+            // attack restrictions are not modelled: a cap (Arbiter, Sandwurm, Crawlspace ...) can turn on with the cast and a tax
+            // is paid from mana that may be restricted, wasted by the end of the phase or spent first, so any of them means no
+            // combat damage is counted
+            let taxed = attack_restrictions(g, p, q).0 > 0
+                || crate::engine::hooks::hooked(g, Event::AttackTax).iter().any(|(s, _)| g.perm(*s).owner == q);
+            // Serra's Emissary (protection from creatures) and Heroic Sacrifice stop combat damage only
+            let shielded = crate::impls::t12_kaalia_sythis::emissary_shields(g, q)
+                || g.t0c.sac.is_some_and(|(o, _, at)| o == q && at == st);
+            // q's visible blocking and defending effects (Spore Frog, Mirage Mirror, Yawgmoth, Brimaz) act once the attackers
+            // are declared: each handler returns unless its controller is the defender. An ordinary land (Kor Haven) is
+            // never in `hooked`; the engine check plays it
+            let guarded = [Event::Blocks, Event::Defend, Event::LandDefend]
+                .iter()
+                .any(|&e| crate::engine::hooks::hooked(g, e).iter().any(|(s, _)| g.perm(*s).owner == q));
+            let combat =
+                if blocked_in_the_air || capped || taxed || fogged || shielded || guarded { 0 } else { fliers };
+            // Terror's triggers do not depend on blockers; a hexproof player can't be targeted, whatever the engine's aim
+            let hit = if player_hexproof(g, q) { 0 } else { taken.iter().find(|x| x.0 == q).map_or(0, |x| x.1) };
+            combat as i64 + hit >= g.player(q).life as i64
+        })
+        .collect()
 }
 
 fn twinflame_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
@@ -3471,7 +3852,9 @@ fn twinflame_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
             continue;
         }
         let cd = g.perm(m).cd.unwrap();
-        if let Some(cp) = enter_token_copy(g, p, cd)? {
+        // Doubling Season and company: `repl::tokens` copies of each target, while the token cap leaves room
+        for _ in 0..repl::tokens(g, p, 1).min(TOKEN_CAP as u32) {
+            let Some(cp) = enter_token_copy(g, p, cd)? else { break };
             g.perm_mut(cp).sick = false; // haste; exiled at the end step
             g.perm_mut(cp).temp = true;
         }
