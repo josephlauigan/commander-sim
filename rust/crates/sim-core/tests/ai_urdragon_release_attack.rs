@@ -300,3 +300,15 @@ fn an_unchanged_board_keeps_the_plan_and_uses_it_once() {
     assert_eq!(g.release_attack, None);
     assert_eq!(sim_core::ai::choose_attack(&mut g, P0).unwrap(), None);
 }
+
+/// a copy made after the real cast (the look-ahead's own, or an opponent's response look-ahead) inherits the plan, so
+/// it models the committed attack; using it there does not use up the real game's plan
+#[test]
+fn a_copy_made_after_the_cast_inherits_the_plan_and_the_real_game_keeps_its_own() {
+    let mut g = base(1);
+    cast_release(&mut g);
+    let mut copy = sim_core::ai::search::clone(&mut g);
+    assert_eq!(copy.release_attack, g.release_attack);
+    assert_eq!(sim_core::ai::choose_attack(&mut copy, P0).unwrap(), Some((Q, "all")));
+    assert_eq!(g.release_attack, Some((P0, turns(&g, P0), Q)));
+}
