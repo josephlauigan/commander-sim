@@ -279,20 +279,23 @@ fn station_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.perm_mut(t).tapped = true; // the cost
-    let n = epow(g, t).max(0);
-    crate::glog!(g, "  {} stations The Seriema, tapping {} ({} charge)", g.player(p).name, g.perm(t).name, n);
+    crate::glog!(g, "  {} stations The Seriema, tapping {}", g.player(p).name, g.perm(t).name);
+    let what = format!("station: charge counters equal to the power of {}", g.perm(t).name);
     crate::engine::stack::ability_run(
         g,
         p,
         Some(src),
         None,
-        &format!("station: {n} charge counters"),
+        &what,
         None,
         None,
         |g| {
             if !live(g, src) {
                 return Ok(());
             }
+            // the power as the ability resolves (a pump in response counts); if the creature has left, as it last
+            // was: a departed permanent keeps its own pump and the anthems still out
+            let n = epow(g, t).max(0);
             let k = repl::counters(g, p, repl::On::Perm(src), repl::Ctr::Other, n, repl::Path::ALL).max(0);
             let total = charge(g, src) + k as i64;
             g.perm_mut(src).data.set(DataKey::Charge, Val::Int(total));
