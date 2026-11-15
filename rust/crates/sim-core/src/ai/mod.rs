@@ -607,6 +607,9 @@ pub fn choose_attack(g: &mut Game, p: PlayerId) -> Res<Option<(PlayerId, Sym)>> 
     if let Some(plan) = g.forced_attack.take() {
         return Ok(Some(plan));
     }
+    if let Some(plan) = crate::impls::mine::release_plan(g, p) {
+        return Ok(Some(plan));
+    }
     if !search::enabled(g, p) {
         return Ok(None);
     }

@@ -1109,6 +1109,7 @@ pub fn continue_turn(g: &mut Game, p: PlayerId, step: Step) -> Res {
             Step::Main1 => step_main1(g, p)?,
             Step::Combat => {
                 combat(g, p)?;
+                g.release_attack = None; // a plan the combat did not take (no attackers, a skipped combat) ends with it
                 g.player_mut(p).pump = 0;
             }
             Step::Main2 => step_main2(g, p)?,

@@ -1430,6 +1430,10 @@ pub struct Game {
     pub trig_orders: Vec<(Sym, Vec<String>)>,
     /// a look-ahead copy playing out one attack plan: (defender, 'filtered' | 'all' | 'none')
     pub forced_attack: Option<(PlayerId, Sym)>,
+    /// the Ur-Dragon seat's Twinflame release proved an all-out attack on one opponent: (the seat, its `turns` count when
+    /// the copies entered, the opponent). The seat's first combat that turn takes it when it still holds
+    /// (`mine::release_plan`); `continue_turn` clears it after the combat. Never set inside a look-ahead copy.
+    pub release_attack: Option<(PlayerId, u32, PlayerId)>,
     /// look-ahead decisions taken in this game, and engine steps its playouts used (the per-game caps)
     pub search_n: u32,
     pub search_work: u64,
@@ -1614,6 +1618,7 @@ impl Game {
             dmg_marks: vec![],
             trig_orders: vec![],
             forced_attack: None,
+            release_attack: None,
             search_n: 0,
             search_work: 0,
             animated: vec![],

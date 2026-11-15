@@ -3843,6 +3843,8 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> Vec<Pla
 
 fn twinflame_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, post) = (CardId(arg as u16), (arg >> 32) & 1 != 0);
+    // the opponent the release's check proved (seat index + 1 in bits 40 and up): none for any other cast
+    let proven = (arg >> 40 > 0).then(|| PlayerId((arg >> 40) as u8 - 1));
     // the targets as the option chose them (Python's closure keeps them; nothing has happened since)
     let Some((_, tg)) = twinflame_best(g, p, c, post) else { return Ok(false) };
     let targets: Vec<PermId> = tg.into_iter().filter(|&m| on_bf_of(g, p, m) && !g.perm(m).phased).collect();
@@ -3872,6 +3874,7 @@ fn twinflame_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         g.player_mut(p).gy.push(c);
         return Ok(true);
     }
+    let mut made = 0u32;
     for m in targets {
         if !on_bf_of(g, p, m) {
             continue;
@@ -3882,11 +3885,42 @@ fn twinflame_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
             let Some(cp) = enter_token_copy(g, p, cd)? else { break };
             g.perm_mut(cp).sick = false; // haste; exiled at the end step
             g.perm_mut(cp).temp = true;
+            made += 1;
         }
     }
     g.player_mut(p).gy.push(c);
     check_state(g)?;
+    // The release's proof was an all-out attack at `proven`: this turn's first combat takes it (`release_plan`). Only
+    // the real game's AI seat commits, after copies entered and p is still in the game; a look-ahead copy keeps the
+    // heuristic attack (FINDINGS L9).
+    if urdragon_seat(g, p) && made > 0 && !g.in_search && !crate::human::is_human(g, p) && g.player(p).alive && !g.over
+    {
+        if let Some(q) = proven {
+            g.release_attack = Some((p, g.player(p).turns, q));
+        }
+    }
     Ok(true)
+}
+
+/// The first combat's plan after a Twinflame release: all at the opponent the check proved, if it still holds on the
+/// real board. The plan is keyed to the seat and its turn count (an extra turn in the same round is another turn) and
+/// is used once. It is checked again with the estimate on what is out now (`twinflame_lethal` with no new targets: the
+/// copies that entered count as ready fliers and Terror's triggers already happened): main phase 1 goes on after the
+/// cast, and opponents can answer before combat (life gained, copies removed, a counted Dragon tapped for mana). If
+/// it no longer holds, the combat chooses as it always did.
+pub(crate) fn release_plan(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
+    if !urdragon_seat(g, p) {
+        return None;
+    }
+    let (a, turns, q) = g.release_attack.take()?;
+    if a != p || turns != g.player(p).turns || !g.player(q).alive || !g.opps(p).any(|o| o == q) {
+        return None;
+    }
+    if !twinflame_lethal(g, p, &[], false).contains(&q) {
+        return None;
+    }
+    crate::glog!(g, "      [{} attack plan by Twinflame release: all at {}]", g.player(p).name, g.player(q).name);
+    Some((q, "all"))
 }
 
 // ------------------------------------------------------------------ Galvanic Iteration, Fiery Emancipation
