@@ -15,13 +15,17 @@
 # sequencing, "seven mana and no Dragon" for the Terror of the Peaks / Goldspan row (it uses `lands+mana-perms>=5` and
 # has no Dragon check), a colour check for a hand of several colourless or off-colour sources beyond the rows below, the
 # 5- and 6-card keep rows and the bottom order.
-# Card-code fixes (in the urdragon seat only: the raw key `urdragon`, so no other deck's play changes): The Ur-Dragon's
-# free drop never puts Tiamat onto the battlefield (`ur_pick`: her search is "if you cast it"); Twinflame is held while
-# the Garth line is alive (Garth, Spark Double and Doubling Season each in hand, library or on the battlefield) and
-# released when a piece is dead, this turn's attack is lethal or the table can kill you (`mine::twinflame`); Spark Double
-# copies Garth when Doubling Season and Twinflame are in hand or out, or a Demonic or Vampiric Tutor can fetch the missing
-# one (`common::spark_copy`). Still open: a Spark Double cast, or free-dropped, before Garth is on the battlefield copies
-# something else and kills the line (nothing holds it back yet).
+# Card-code fixes (the Garth branches run only for the raw key `urdragon`, so no other deck's choices change): The
+# Ur-Dragon's free drop never puts Tiamat onto the battlefield (`ur_pick`: her search is "if you cast it"); Twinflame is
+# held while the Garth line is alive (Garth, Spark Double and Doubling Season each in hand, library or on the
+# battlefield) and released when a piece is dead, the table can kill you, or this turn's copies and ready fliers are
+# lethal (`mine::twinflame`: counts Doubling Season's copies, the token cap, protection, hexproof, attack taxes and caps,
+# and Terror of the Peaks' trigger where the engine would aim it); Spark Double copies Garth when Doubling Season (in
+# hand or out) and Twinflame (in hand) are there, or a Demonic or Vampiric Tutor can fetch the missing one
+# (`common::spark_copy`). The fair Twinflame resolver itself now makes Doubling Season's copies and skips targets with
+# protection from red for every seat (Twinflame is in no other registered deck). Still open: a Spark Double cast, or
+# free-dropped, before Garth is on the battlefield copies something else and kills the line (nothing holds it back
+# yet).
 # The `plays` set (the mulligan's "something to do") leaves out Mox Jasper (dead before a Dragon) and Garth One-Eye;
 # Temur Ascendancy is in it (JD, 2026-11-14).
 # Garth line: Commander Spellbook variant 1171-1235-3908-4772 (not written on the line: the plan test checks `spellbook`
