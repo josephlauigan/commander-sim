@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-11-14",
+  "fetched": "2026-11-15",
   "deck": "yshtola",
   "commanders": [
     "Y'shtola, Night's Blessed"
   ],
-  "request_sha256": "cc5268172523171d529ef041c95b0cb62fd456cb44cc952a790a8a81caecc0f2",
+  "request_sha256": "d9735cb28ce3db41a06fc82a05db6719c8f88c6d119d6ea29d509fe3e3676cc4",
   "identity": "WUB",
   "included": [
     {
@@ -35,7 +35,33 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 152201
+      "popularity": 152168
+    },
+    {
+      "id": "742-1295",
+      "cards": [
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 151348
     },
     {
       "id": "110-3966",
@@ -63,7 +89,33 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 62064
+      "popularity": 62052
+    },
+    {
+      "id": "1295-3189",
+      "cards": [
+        {
+          "name": "Doomsday",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.\nYou have at least three devotion to blue.",
+      "mana": "{U}{U}{B}{B}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14682
     }
   ],
   "included_by_changing_commanders": [],
@@ -94,9 +146,38 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 368373,
+      "popularity": 368508,
       "missing": [
         "Hullbreaker Horror"
+      ]
+    },
+    {
+      "id": "1295-3093",
+      "cards": [
+        {
+          "name": "Tainted Pact",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "No two cards in library share a name.",
+      "mana": "{1}{U}{U}{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 132888,
+      "missing": [
+        "Tainted Pact"
       ]
     },
     {
@@ -125,7 +206,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 127730,
+      "popularity": 127709,
       "missing": [
         "Vito, Thorn of the Dusk Rose"
       ]
@@ -156,7 +237,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 81454,
+      "popularity": 81450,
       "missing": [
         "Bloodthirsty Conqueror"
       ]
@@ -187,7 +268,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 76921,
+      "popularity": 76925,
       "missing": [
         "Enduring Tenacity"
       ]
@@ -217,36 +298,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 57458,
+      "popularity": 57463,
       "missing": [
         "Aetherflux Reservoir"
-      ]
-    },
-    {
-      "id": "1090-2781",
-      "cards": [
-        {
-          "name": "Restoration Angel",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Felidar Guardian",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{W}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 56024,
-      "missing": [
-        "Felidar Guardian"
       ]
     },
     {
@@ -275,7 +329,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "O",
       "legal": true,
-      "popularity": 52184,
+      "popularity": 52219,
       "missing": [
         "Peer into the Abyss"
       ]
@@ -306,7 +360,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 50582,
+      "popularity": 50577,
       "missing": [
         "Bloodthirsty Conqueror"
       ]
@@ -338,7 +392,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 46897,
+      "popularity": 46916,
       "missing": [
         "Peer into the Abyss"
       ]
@@ -374,9 +428,9 @@
       "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 46470,
+      "popularity": 46482,
       "missing": [
-        "Teferi, Time Raveler"
+        "Displacer Kitten"
       ]
     },
     {
@@ -403,9 +457,45 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 38104,
+      "popularity": 38117,
       "missing": [
         "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "1792-5034-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retraction Helix",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 29640,
+      "missing": [
+        "Retraction Helix"
       ]
     },
     {
@@ -434,7 +524,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 28765,
+      "popularity": 28749,
       "missing": [
         "Starscape Cleric"
       ]
@@ -463,7 +553,7 @@
       "mana": "{12}{W}{W}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 25917,
+      "popularity": 25927,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -492,9 +582,45 @@
       "mana": "{5}{W}",
       "bracket": "S",
       "legal": true,
-      "popularity": 17855,
+      "popularity": 17852,
       "missing": [
         "Beacon of Immortality"
+      ]
+    },
+    {
+      "id": "1458-5034-5864",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Banishing Knack",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn",
+        "Infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 16572,
+      "missing": [
+        "Banishing Knack"
       ]
     },
     {
@@ -523,9 +649,38 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 14989,
+      "popularity": 14968,
       "missing": [
         "Cliffhaven Vampire"
+      ]
+    },
+    {
+      "id": "742-2836",
+      "cards": [
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Laboratory Maniac",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14756,
+      "missing": [
+        "Laboratory Maniac"
       ]
     },
     {
@@ -553,7 +708,7 @@
       "mana": "{4}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 13537,
+      "popularity": 13524,
       "missing": [
         "Revival // Revenge"
       ]
@@ -591,9 +746,40 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 13244,
+      "popularity": 13256,
       "missing": [
         "Vilis, Broker of Blood"
+      ]
+    },
+    {
+      "id": "953-1295",
+      "cards": [
+        {
+          "name": "Enter the Infinite",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H",
+            "L"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{8}{U}{U}{U}{U}{U}{U}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 12806,
+      "missing": [
+        "Enter the Infinite"
       ]
     },
     {
@@ -622,7 +808,7 @@
       "mana": "{1}{W}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 12417,
+      "popularity": 12407,
       "missing": [
         "Vizkopa Guildmage"
       ]
@@ -653,36 +839,38 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 11732,
+      "popularity": 11723,
       "missing": [
         "Defiant Bloodlord"
       ]
     },
     {
-      "id": "1090-4200",
+      "id": "1068-1295",
       "cards": [
         {
-          "name": "Restoration Angel",
+          "name": "Leveler",
           "zones": [
-            "B"
+            "H"
           ]
         },
         {
-          "name": "Icewind Stalwart",
+          "name": "Thassa's Oracle",
           "zones": [
             "H"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Win the game"
+      ],
       "requires": [],
       "prerequisites": "",
-      "mana": "{3}{W}",
-      "bracket": "E",
+      "mana": "{5}{U}{U}",
+      "bracket": "P",
       "legal": true,
-      "popularity": 9932,
+      "popularity": 9912,
       "missing": [
-        "Icewind Stalwart"
+        "Leveler"
       ]
     },
     {
@@ -709,9 +897,38 @@
       "mana": "{13}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 9841,
+      "popularity": 9846,
       "missing": [
         "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "742-3096",
+      "cards": [
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Jace, Wielder of Mysteries",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 9541,
+      "missing": [
+        "Jace, Wielder of Mysteries"
       ]
     },
     {
@@ -736,7 +953,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 8443,
+      "popularity": 8435,
       "missing": [
         "Stasis"
       ]
@@ -767,38 +984,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 8389,
+      "popularity": 8379,
       "missing": [
         "Epicure of Blood"
-      ]
-    },
-    {
-      "id": "335-5141",
-      "cards": [
-        {
-          "name": "Ad Nauseam",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Teferi's Protection",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{3}{B}{B}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 8131,
-      "missing": [
-        "Ad Nauseam"
       ]
     },
     {
@@ -826,7 +1014,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 7965,
+      "popularity": 7962,
       "missing": [
         "Wedding Ring"
       ]
@@ -855,7 +1043,7 @@
       "mana": "{12}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7609,
+      "popularity": 7616,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -884,7 +1072,7 @@
       "mana": "{5}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7491,
+      "popularity": 7486,
       "missing": [
         "Shard of the Nightbringer"
       ]
@@ -911,7 +1099,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 6063,
+      "popularity": 6068,
       "missing": [
         "Teferi's Puzzle Box"
       ]
@@ -942,7 +1130,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5954,
+      "popularity": 5956,
       "missing": [
         "Drogskol Reaver"
       ]
@@ -1004,7 +1192,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 5510,
+      "popularity": 5546,
       "missing": [
         "Niv-Mizzet, Ghost Counsel"
       ]
@@ -1035,9 +1223,65 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5302,
+      "popularity": 5321,
       "missing": [
         "South Wind Avatar"
+      ]
+    },
+    {
+      "id": "1295-2853",
+      "cards": [
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thought Lash",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 4359,
+      "missing": [
+        "Thought Lash"
+      ]
+    },
+    {
+      "id": "3903-4761",
+      "cards": [
+        {
+          "name": "Teferi, Time Raveler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Knowledge Pool",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 4145,
+      "missing": [
+        "Knowledge Pool"
       ]
     },
     {
@@ -1064,9 +1308,38 @@
       "mana": "{14}{W}{W}{B}{B}",
       "bracket": "C",
       "legal": true,
-      "popularity": 4053,
+      "popularity": 4057,
       "missing": [
         "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "1295-3367",
+      "cards": [
+        {
+          "name": "Paradigm Shift",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "The number of cards in your graveyard is less than two plus your devotion to blue.",
+      "mana": "{1}{U}{U}{U}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 3795,
+      "missing": [
+        "Paradigm Shift"
       ]
     },
     {
@@ -1099,32 +1372,88 @@
       ]
     },
     {
-      "id": "249-5141",
+      "id": "553-742",
       "cards": [
         {
-          "name": "Zethi, Arcane Blademaster",
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "Your deck size is at least seven.",
+      "mana": "{12}{W}{W}{B}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2074,
+      "missing": [
+        "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "1295-4267",
+      "cards": [
+        {
+          "name": "Divining Witch",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Teferi's Protection",
+          "name": "Thassa's Oracle",
           "zones": [
-            "E"
+            "H"
           ]
         }
       ],
       "results": [
-        "Your life total can't change during your opponents' turns"
+        "Win the game"
       ],
       "requires": [],
-      "prerequisites": "",
-      "mana": "{2}{W} each turn",
+      "prerequisites": "another card in hand.",
+      "mana": "{1}{U}{U}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 2133,
+      "popularity": 2034,
       "missing": [
-        "Zethi, Arcane Blademaster"
+        "Divining Witch"
+      ]
+    },
+    {
+      "id": "1725-4761",
+      "cards": [
+        {
+          "name": "Teferi, Time Raveler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Omen Machine",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1941,
+      "missing": [
+        "Omen Machine"
       ]
     },
     {
@@ -1152,7 +1481,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1871,
+      "popularity": 1873,
       "missing": [
         "Requiem Monolith"
       ]
@@ -1183,7 +1512,7 @@
       "mana": "{5}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 1869,
+      "popularity": 1868,
       "missing": [
         "Marina Vendrell's Grimoire"
       ]
@@ -1213,38 +1542,38 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 1793,
+      "popularity": 1797,
       "missing": [
         "Mind Over Matter"
       ]
     },
     {
-      "id": "1328-5141",
+      "id": "1164-1295",
       "cards": [
         {
-          "name": "Teferi's Protection",
+          "name": "Mirror of Fate",
           "zones": [
-            "E"
+            "B"
           ]
         },
         {
-          "name": "Spellbinder",
+          "name": "Thassa's Oracle",
           "zones": [
-            "B"
+            "H"
           ]
         }
       ],
       "results": [
-        "Your life total can't change during your opponents' turns"
+        "Win the game"
       ],
       "requires": [],
-      "prerequisites": "Spellbinder attached to a creature that can attack this turn and that cannot be blocked and killed by an opponent.",
-      "mana": "",
-      "bracket": "S",
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "R",
       "legal": true,
-      "popularity": 1433,
+      "popularity": 1256,
       "missing": [
-        "Spellbinder"
+        "Mirror of Fate"
       ]
     },
     {
@@ -1272,7 +1601,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1247,
+      "popularity": 1243,
       "missing": [
         "Enduring Angel // Angelic Enforcer"
       ]
@@ -1314,30 +1643,32 @@
       ]
     },
     {
-      "id": "205-2963",
+      "id": "1295-5909",
       "cards": [
         {
-          "name": "Azor, the Lawbringer",
+          "name": "Doomsday Excruciator",
           "zones": [
-            "B"
+            "H"
           ]
         },
         {
-          "name": "Teleportation Circle",
+          "name": "Thassa's Oracle",
           "zones": [
-            "B"
+            "H"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Win the game"
+      ],
       "requires": [],
-      "prerequisites": "",
-      "mana": "",
+      "prerequisites": "Your devotion to blue is at least 4.",
+      "mana": "{U}{U} and six {B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 1025,
+      "popularity": 998,
       "missing": [
-        "Azor, the Lawbringer"
+        "Doomsday Excruciator"
       ]
     },
     {
@@ -1364,36 +1695,9 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 985,
+      "popularity": 986,
       "missing": [
         "Near-Death Experience"
-      ]
-    },
-    {
-      "id": "205-933",
-      "cards": [
-        {
-          "name": "Azor, the Lawbringer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Conjurer's Closet",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 970,
-      "missing": [
-        "Azor, the Lawbringer"
       ]
     },
     {
@@ -1422,36 +1726,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 774,
+      "popularity": 775,
       "missing": [
         "Flumph"
-      ]
-    },
-    {
-      "id": "70-5141",
-      "cards": [
-        {
-          "name": "Balancing Act",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Teferi's Protection",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "{4}{W}{W}{W}",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 767,
-      "missing": [
-        "Balancing Act"
       ]
     },
     {
@@ -1479,6 +1756,93 @@
       "popularity": 726,
       "missing": [
         "Ashiok, Wicked Manipulator"
+      ]
+    },
+    {
+      "id": "742-8266",
+      "cards": [
+        {
+          "name": "Fblthp, Impossibly Lost",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You control a creature that doesn't have summoning sickness and that cannot be blocked by an opponent.",
+      "mana": "{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 726,
+      "missing": [
+        "Fblthp, Impossibly Lost"
+      ]
+    },
+    {
+      "id": "742-1061",
+      "cards": [
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Timestream Navigator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite turns"
+      ],
+      "requires": [],
+      "prerequisites": "You have six or more cards in your library. You have the city's blessing",
+      "mana": "{4}{U}{U}{U}{B} the first turn, with {3}{U}{U}{U} each extra turn",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 665,
+      "missing": [
+        "Timestream Navigator"
+      ]
+    },
+    {
+      "id": "1295-4899",
+      "cards": [
+        {
+          "name": "Phyrexian Devourer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thassa's Oracle",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{U}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 620,
+      "missing": [
+        "Phyrexian Devourer"
       ]
     },
     {
@@ -1534,36 +1898,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 430,
+      "popularity": 428,
       "missing": [
         "Lich"
-      ]
-    },
-    {
-      "id": "1170-6513",
-      "cards": [
-        {
-          "name": "Chancellor of the Spires",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Displacer Kitten",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "An opponent has an instant or sorcery in their graveyard.\nYou have a noncreature spell in hand with the mana to cast it.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 369,
-      "missing": [
-        "Chancellor of the Spires"
       ]
     },
     {
@@ -1590,36 +1927,38 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 349,
+      "popularity": 348,
       "missing": [
         "Nefarious Lich"
       ]
     },
     {
-      "id": "1090-4875",
+      "id": "1295-2679",
       "cards": [
         {
-          "name": "Conspiracy",
+          "name": "Sacred Guide",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Restoration Angel",
+          "name": "Thassa's Oracle",
           "zones": [
             "H"
           ]
         }
       ],
-      "results": [],
+      "results": [
+        "Win the game"
+      ],
       "requires": [],
-      "prerequisites": "Any creature type besides \"Angel\" chosen with Conspiracy.",
-      "mana": "{3}{W}",
-      "bracket": "E",
+      "prerequisites": "There are no white cards in library.",
+      "mana": "{1}{W}{U}{U}",
+      "bracket": "S",
       "legal": true,
-      "popularity": 139,
+      "popularity": 186,
       "missing": [
-        "Conspiracy"
+        "Sacred Guide"
       ]
     },
     {

@@ -36,13 +36,6 @@ fn equip_of(g: &Game, e: PermId) -> Option<(PermId, f64)> {
     })
 }
 
-/// the card-code options of permanent `src`
-fn perm_options(g: &mut Game, src: PermId, post: Option<bool>) -> Vec<Opt> {
-    let c = g.perm(src).cd.unwrap();
-    let f = g.registry.get(c).and_then(|i| i.options).expect("card options");
-    f(g, src, P, post).unwrap()
-}
-
 /// the hand options of card c in p's hand
 fn hand_options(g: &mut Game, c: CardId, post: Option<bool>) -> Vec<Opt> {
     let f = g.registry.get(c).and_then(|i| i.hand_options).expect("hand options");
@@ -165,18 +158,8 @@ fn yshtola_the_x_drain_is_offered() {
     assert!(off.iter().any(|o| o.label == "Exsanguinate (X = 8)"), "the plan's plays");
 }
 
-/// was yshtola::helm: Champion's Helm goes on Y'shtola
-#[test]
-fn yshtola_the_helm_goes_on_her() {
-    let mut g = seated("yshtola", "t5");
-    lands(&mut g, P, "Swamp", 3, false);
-    let y = commander(&mut g, P, "Y'shtola, Night's Blessed");
-    perm(&mut g, P, "Restoration Angel");
-    let helm = perm(&mut g, P, "Champion's Helm");
-    g.active = Some(P);
-    assert!(perm_options(&mut g, helm, Some(false)).is_empty());
-    assert_eq!(equip_of(&g, helm).map(|x| x.0), Some(y), "the plan's [equip]");
-}
+// The Champion's Helm test for Y'shtola was removed on 2026-11-14: the Helm left her list with the Doomsday package, and her
+// plan file no longer has an [equip] section. The plan's [equip] rule is still tested through the Cloud deck's plan.
 
 /// was trigger_bonus: with her out, a noncreature spell of mana value 3 or more is worth more (the more with Sanguine
 /// Bond out)

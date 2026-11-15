@@ -3,6 +3,117 @@
 What the simulator has taught us about the Y'shtola Esper drain deck: strengths, weaknesses, and what was tried and
 why it did or didn't work. Updated after every run. Newest evidence first. Matched tier: T5 (`data/my_decks.toml`).
 
+## 2026-11-14: Doomsday / Thassa's Oracle package, Option B (12 swaps; NOT SIMULATED)
+Branch `yshtola-doomsday` (worktree `commander-sim-wt-yshtola-doomsday`), on the Cali branch tip `50196edd` after pulling
+the other session's three newer commits (Ur-Dragon cards, phasing). **Status:** JD chose Option B on 2026-11-14 (first A,
+then "actually can we do B"). The deck document, `decks.json`, the plan file, `decklists/CHANGELOG.md` and
+`tests/fixtures/my_decks_parsed.json` describe the B list. **No simulation of the B list exists**: JD asked for no sims.
+The only package run was 200 games of an earlier 18-card version (below). Nothing here is a measured effect of B.
+
+**The swap (B).** OUT (12): Conjurer's Closet, Teleportation Circle, Displacer Kitten, Restoration Angel, Sphere of
+Safety, Idyllic Tutor, Teferi's Protection, Bound in Silence, Expedition Map, Champion's Helm, Mystic Remora, Tezzeret's
+Gambit. IN (12): Thassa's Oracle, Demonic Consultation, Doomsday, Silence, Grand Abolisher, Valley Floodcaller, Borne Upon
+a Wind, Teferi, Time Raveler, Gitaxian Probe, Brainstorm, Preordain, Dark Ritual. It is the 18-card package minus Tainted
+Pact, Orim's Chant, Cabal Ritual and Mockingbird (Opus review) and minus Lion's Eye Diamond and Ponder (Opus's optional
+second step), with Ringsight, Loran, Arrest, Propaganda, Fatal Push, Read the Bones, Path to Exile, Go for the Throat
+and Esper Sentinel (JD's protected card) kept. Checks made before proposing it: all 12 adds are commander-legal and fit
+W/U/B (Scryfall cache); all 12 cuts were in the current list; Esper Sentinel is not cut. Counts after the swap: 15
+creatures, 9 enchantments, 6 artifacts, 16 instants, 15 sorceries, 1 planeswalker, 37 lands (+ the commander = 100);
+Game Changers 14 (Teferi's Protection out, Thassa's Oracle in); trigger spells (noncreature, mana value 3 or more) 33
+-> 27; Zur's enchantment-search targets 6 -> 4 (Arrest, Necropotence, Propaganda, Rhystic Study). Tainted Pact is not in
+the list on purpose: it stops at the second card with the same name and the list has 19 basics, so with Oracle it can't
+exile the library (checked against its card text).
+
+**Follow-up (JD, 2026-11-14): Voice of Victory in, Torment of Hailfire out** (13 swaps from the pre-package list). Voice of
+Victory ({1}{W}, "your opponents can't cast spells during your turn", Mobilize 2) is a second, cheaper lock creature next to
+Grand Abolisher. Unlike Abolisher it stops spells only, not abilities, and neither helps an end-step Doomsday on an
+opponent's turn (only Silence and Teferi, Time Raveler do). JD chose the cut from three candidates I offered (Disdainful
+Stroke, Fatal Push, Torment of Hailfire): Torment was cast in about 39% of the games it was drawn and stuck in hand the rest
+(round 9.2, stuck in hand 61%: the 2026-11-04 Coffers package run below), though it won 62% of the games it was cast in (the
+11/07 analysis below; both from pre-package lists, and a win rate when cast flatters a late card). Checks: Voice is
+commander-legal and white, and
+was not in the list; Torment was. Counts after the follow-up: 16 creatures, 9 enchantments, 6 artifacts, 16 instants, 14
+sorceries, 1 planeswalker, 37 lands; trigger spells 26; Game Changers 14 (the counts in the paragraph above are the
+12-swap list). The deck document's old Line 4 (Torment) was removed, so its Lines 5, 6 and 7 are now Lines 4, 5 and 6 (the
+Oracle + Consultation line is Line 5 and Doomsday is Line 6). Not simulated, like the rest of this section; no run of any
+list includes Voice of Victory.
+
+**Follow-up (JD, 2026-11-14): Sphere of Safety in, Gitaxian Probe out** (JD's choice: a second pillowfort back against
+creature decks; Miirym's combat is her top killer in the earlier runs). Sphere of Safety ({4}{W}, an enchantment, white,
+commander-legal; creatures can't attack you unless their controller pays {X} for each, X being the number of enchantments
+you control) was in the list before the package. In the earlier analysis it was cast in about 34% of the games it was
+drawn in, and it stuck in hand in 67% of the 200-game test run, a small sample. What it costs: Gitaxian Probe was the free
+cantrip inside the Doomsday piles, so the three piles were re-derived and walked through by hand without it, using only
+Brainstorm, Preordain and Silence (Borne Upon a Wind starts Pile C). At devotion 2 the piles now need two cantrips (Piles A
+and B cost five mana with four blue, Pile C ten mana with five blue), so a single counter on a cantrip stalls them; at
+devotion 3 (Y'shtola out, or Teferi or Floodcaller as the enabler) Piles A and B need only one cantrip (Pile C still needs
+Borne Upon a Wind and Preordain). Pile C needs Borne Upon a Wind (or Preordain) in hand to start; Probe was its other starter. Counts
+after the swap: 16 creatures, 10 enchantments, 6 artifacts, 16 instants, 13 sorceries, 1 planeswalker, 37 lands; trigger
+spells 27 (Sphere is mana value 5); Game Changers 14. Not simulated, like the rest of this section.
+
+**Baseline (measured; run output `bv377p7og`):** **26.6%** (24.8-28.6) at t5, 2,000 games, seed 500000, loose, look-ahead,
+on the Cali base `c1da6adb` before the swap: the same as the 11/07 baselines (27.4% in 10,000 games, 26.5%). Plan online
+62.4%; wins by damage 72%, combo 26%. Eliminated by: Miirym 18.8%, Kinnan 16.4%, Urza 13.9%, Zur 12.6%, Yawgmoth 11.6%.
+**A later run of the B list needs a fresh baseline on `50196edd`:** the three commits since `c1da6adb` changed engine code
+(`turn.rs`, `control.rs`, `planner.rs`, `dsl/mod.rs`) and the Urza and Yawgmoth opponent code (`t45_urza_yawgmoth.rs`), so
+this number is not a valid pair for it.
+
+**The earlier 18-card version (measured, 200 games; run output `swap18-quick3.txt`; NOT the B list).** That version also
+cut Propaganda, Arrest, Loran, Ringsight, Fatal Push and Read the Bones and added Tainted Pact, Orim's Chant, Cabal
+Ritual, Mockingbird, Lion's Eye Diamond and Ponder, with an earlier plan file (a Silence stand-in at priority 95).
+- The preflight stopped its first run: Doomsday was cast in 2% of the games it was drawn, Silence, Orim's Chant and Lion's
+  Eye Diamond in 0%, Oracle 13.5%. After plan-file entries a 200-game dry run cast Doomsday 7.4%, Silence 6.5%, Orim's Chant
+  6.7%, Lion's Eye Diamond 15%, Oracle 19%. The paired result was 25.0% -> 29.5%, noise +-8.1: no clear effect. Spot removal
+  cast fell 1.36 -> 0.93 per game (outside its noise band).
+- A full 2,000-game paired run of that version was started and stopped at JD's request; it produced no result.
+
+**Engine facts that matter here (read from the code, not tested).**
+- Plan files are **embedded at build time** (`build.rs`): an edit to `data/plans/yshtola.toml` does nothing until the
+  simulator is rebuilt (the first quick run after an edit was identical to the run before it for that reason).
+- The plan slots (`[sets]`, `[mulligan]`, `[[go_now]]`) and `t6_table::protect_before_go` (casts the lock before the combo)
+  are read only for Tier 6 keys (`impls/t6_plans.rs`, `T6_KEYS`); `yshtola` is Tier 5. Doomsday's pile play and the combo
+  catalogue are not Tier 6-gated; `go_risk_covered` does apply to a Tier 5 player's Doomsday.
+- **So at Tier 5 the AI does not cast Silence as a lock before the Oracle line.** A stand-in priority rule was tried and
+  removed: the line is offered at utility 14 or more and Silence at priority 66 is worth about 6.6, so the AI goes first
+  without it, and the rule fires on turns the line cannot go, spending the only Silence. Doomsday piles still cast Silence
+  inside the pile code. **Consequence for any future swap run:** the preflight will flag Silence (priority 0, never cast).
+- At Tier 5 the Oracle line (Line 5 in the document after the follow-up renumber) also skips the one-spell-lock check (`combos.rs casts_castable`): against Zur's Rule of Law or Eidolon of
+  Rhetoric the AI may cast Oracle and then be unable to cast Consultation. UNVERIFIED in play.
+- Her end-step draw ("a player lost 4 or more life") is mandatory, as are Notion Thief's and Venat's draws; the pile builder
+  counts only Esper Sentinel's forced draw. A Doomsday cast in her own main phase (Pile C) loses at least 4 life from 5 life
+  up, so her draw takes a card off the pile at that end step. Unverified: whether the pile search uses Necropotence
+  activations, and whether the AI declines Rhystic Study and Consecrated Sphinx draws while a pile is set.
+
+**Plan file as it stands (`tests/plans.rs` passes).** The two combo lines and a held Doomsday (priority 0);
+wishes: Consultation (88, Oracle held) and the Oracle (88, Consultation held) ahead of Doomsday (78, with a flash enabler
+out or a Pile C starter in hand) and Sanguine Bond (85); a pile-starter wish (Borne Upon a Wind; it also named Gitaxian Probe until the swap below) at 58; an
+explicit Silence priority of 0. The rules for the cut cards (Restoration Angel, Teferi's Protection, Mystic Remora, Idyllic
+Tutor, Champion's Helm) were removed. Demonic Consultation has no priority rule: from the code it is not cast outside the
+combo line (no tags and no DSL in `cards.json`), unverified on the derived-values arm.
+
+**Opus reviews (2026-11-14; a reading of the files and code, not tests).** First review (18-card version): Tainted Pact
+can't win here, Ringsight was the wrong cut, the cuts removed both pillowforts, the removal Auras, Loran and all her
+protection, and the stand-in Silence rule outranked casting Y'shtola. Final review (A version): the list, counts and pile
+tables were consistent; the 19 rows of its error table were applied in the B rewrite (hand 9, a countered Oracle can still
+go into a Doomsday pile from the graveyard, which t5 lists run which counters, her end-step draw threshold, and others);
+the plan-file points above. Delta review (B version): the list, counts, Piles A, B and C and the plan file were right; it
+found smaller text errors (Disdainful Stroke's reach, hand 9's answer to Silence and its shock-land life, a stale
+Expedition Map, Pile C's "spare card" not being needed, Muddle the Mixture missing from the counter census, "free counter"
+for any counter, the baseline base) and a gap in the pile-starter wish, all fixed. Unverified: the doc advises fetching
+Silence with both halves in hand, which the plan no longer does for the AI.
+
+**Side effect on the opponents (not a decision anyone made).** `cardgen export` keeps a hand-tagged card's model only
+while one of JD's decks plays it. Displacer Kitten left Y'shtola's list, the only one of JD's lists that played it, so its
+`cards.json` entry now uses the pool model (the `vkitten` tag is gone; `source` is "pool"). Displacer Kitten is in the t5
+Urza list and the t2 Brago list. The blink itself is name-based code and is unchanged; what changes (from the code) is the
+Kitten's importance in the counter window (4.0 before) and its value on the battlefield (5.0 before, about 2.0 now). The
+effect is probably small and unmeasured, and it shifts the opponent model behind the stored baselines of every deck that
+meets Urza or Brago (yshtola, thanos, aragorn at t5; cloud at t2). Options: accept it with this note, or change the export
+rule to keep hand-tagged entries that a pool deck plays (an export-wide change: JD's call).
+
+**Not done:** `data/printings/yshtola.txt` (JD's printings: it still lists Kitten and Teferi's Protection and has no entry
+for the new cards) and `data/spellbook/yshtola.json` (needs a network fetch; it doesn't list Oracle + Consultation yet).
+
 ## Baseline 2026-11-07 (after package Y; main 7c622f5f; look-ahead, loose, 10,000 games, seed 500000)
 **27.4%** (26.5-28.3) at t5, against 26.5% (24.6-28.5) in Baseline B (2,000 games): +0.9, inside the noise. Package Y
 (Counterspell, Ringsight, Palantír, Mistrise Village) shows no measurable change. Plan online 61.0% of games; wins by damage
