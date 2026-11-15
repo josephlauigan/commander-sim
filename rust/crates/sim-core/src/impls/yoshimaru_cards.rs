@@ -317,10 +317,10 @@ fn station_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 /// front face, so the engine's land play never takes it: it is offered as a land through `hand_options`, as
 /// Shatterskull Smashing is (`t6_lands::mdfc_land_opt`), and taps for {W} through `land_cols`. As it enters as a land
 /// its `land_etb` hook marks it `DataKey::LandFace`: it is then only a land (not a white Human Warlock creature) and
-/// the creature face's compiled enters trigger does not fire. The AI plays it as a land
-/// only when short of lands (that rule's heuristics) and pays the 3 life by the shared land-payment rule; a person may
-/// play it as their land drop any time they could play a land, and answers the pay-3-life question (not asked without
-/// 3 life). With Spelunking out the land enters untapped whatever is paid, so no life is paid and it is not tapped.
+/// the creature face's compiled enters trigger does not fire. The AI plays it as a land only when short of lands (that
+/// rule's heuristics) and pays the 3 life by the shared land-payment rule; a person may play it as their land drop any
+/// time they could play a land, and answers the pay-3-life question (not asked without 3 life). With Spelunking out
+/// the land enters untapped whatever is paid, so no life is paid and it is not tapped.
 fn meadow_cols(_g: &Game, _p: PlayerId, _l: PermId) -> Colors {
     Colors::from_letters("W")
 }
@@ -333,7 +333,12 @@ fn meadow_land_etb(g: &mut Game, _p: PlayerId, l: PermId) -> Res {
 
 fn meadow_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     if !crate::human::is_human(g, p) {
-        return Ok(super::t6_lands::mdfc_land_opt(g, c, p, post).into_iter().collect());
+        // the AI's rule for when to play such a card as a land, but this card's own land play (`meadow_go`)
+        let opt = super::t6_lands::mdfc_land_opt(g, c, p, post);
+        return Ok(opt
+            .map(|o| Opt { act: Some(Action::Plan { f: meadow_go, arg: c.0 as i64 }), ..o })
+            .into_iter()
+            .collect());
     }
     let pl = g.player(p);
     let allowed = 1 + crate::cardcode::extra_lands(g, p) + pl.extra_land_now;
@@ -370,6 +375,7 @@ fn meadow_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         lose_life(g, p, 3, Some(p), "other", None)?;
     }
     crate::engine::turn::play_land_card(g, p, c, "plays")?;
+    crate::engine::life::check_state(g)?; // paying the life to 0 is lost at once
     if let Some(&l) = g.player(p).lands.last().filter(|&&l| g.perm(l).card() == c) {
         if !paid && !free {
             g.perm_mut(l).tapped = true;
