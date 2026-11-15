@@ -101660,6 +101660,65 @@
    "spell_prio": false
   },
   {
+   "name": "Relic of Sauron",
+   "types": "A",
+   "generic": 4,
+   "pips": "",
+   "tags": {
+    "rock": "2:UBR"
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "activated",
+     "cost": {
+      "mana": "3",
+      "tap": true
+     },
+     "effects": [
+      {
+       "do": "draw",
+       "n": 2,
+       "who": "you"
+      },
+      {
+       "do": "discard",
+       "n": 1,
+       "who": "you"
+      }
+     ],
+     "sorcery": false,
+     "once": false
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BRU",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Reliquary Tower",
    "types": "L",
    "generic": 0,

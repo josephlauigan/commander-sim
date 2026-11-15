@@ -10,8 +10,9 @@ retired Ur-Dragon decks are in `audit/retired/urdragon/`.
 ## What the simulator cannot do yet
 
 - **Plan file:** there is none; the generic pool policy plays the deck until `data/plans/urdragon.toml` is written.
-- **Cards modelled before:** most Dragons were modelled for the retired pool deck (`impls/t45_urdragon.rs`; Klauth and
-  Rivaz were Approximate) and the Garth combo for the retired JD deck. Not re-checked for this list.
+- **Cards modelled before:** most Dragons were modelled for the retired pool deck (`impls/t45_urdragon.rs`) and the Garth combo for the retired JD deck. Not re-checked for this list. Klauth and Rivaz
+  are Full for the AI and a person (spell-only turn-long mana; a graveyard cast once per turn). Relic of Sauron (two mana
+  in blue, black or red, and a {3} loot) and Smaug the Impenetrable are Full; a person picks each colour Relic makes.
 
 ## Open questions
 

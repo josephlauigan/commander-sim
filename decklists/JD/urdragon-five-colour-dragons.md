@@ -35,7 +35,7 @@ What it does once it attacks:
 - **Commander damage.** It is a 10/10 flier: two hits kill an opponent. With **Atarka** out, an attacking Dragon has
   double strike: one hit is twenty.
 - **Protection** from the deck: **Scion of Draco** gives every creature of a colour vigilance, hexproof, lifelink, first
-  strike or trample, and The Ur-Dragon is all five. **Lightning Greaves** and **Swiftfoot Boots** give hexproof and haste.
+  strike or trample, and The Ur-Dragon is all five. **Lightning Greaves** gives shroud and haste.
   **Fierce Guardianship** and **Deflecting Swat** are free while you control a commander. **Delighted Halfling** and
   **Cavern of Souls** (name Dragon) make the Dragons uncounterable.
 - **A second cast costs {2} more per previous cast.** It is a nine-mana commander, so a recast is ten or more. Protect
@@ -114,8 +114,11 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
 - **Mana Vault, Chrome Mox, Sol Ring, Arcane Signet** (and Ancient Tomb): the fast start. Cast on turn 1 and left
   untapped, Mana Vault gives {C}{C}{C} on turn 2: two lands and the Vault pay for a five-drop. Chrome Mox imprints a spare gold card for its colours and is never worth a
   combo piece.
+- **Relic of Sauron** ({4}): taps for two mana in any mix of blue, black and red, which pays for a seven-drop and fixes
+  the blue and black the elves don't make. Later, {3} and a tap draws two cards and discards one. Its own mana can't pay
+  for the loot.
 - **Birds of Paradise, Llanowar Elves, Elvish Mystic, Delighted Halfling:** one-mana dorks. The Halfling makes any colour
-  for a legendary spell (The Ur-Dragon, Garth, Tiamat, Miirym, Korvold, Smaug, Scourge...) and that spell can't be countered.
+  for a legendary spell (The Ur-Dragon, Garth, Tiamat, Miirym, Korvold, Smaug...) and that spell can't be countered.
 - **Nature's Lore, Three Visits, Farseek:** each fetches an untapped dual land (Nature's Lore and Three Visits any Forest
   dual, Farseek any Plains, Island, Swamp or Mountain dual), which fixes colours and adds basic types for Scion of Draco.
 - **Rivaz of the Claw** ({1}{B}{R}): taps for two mana for Dragon spells, and lets you cast one Dragon from the
@@ -123,8 +126,8 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
 - **Smothering Tithe, Rhystic Study, Sylvan Library, The One Ring:** the draw and tax engines. Rhystic and the Tithe
   make the table pay for casting into you; Sylvan Library picks the best cards; The One Ring protects you for a turn
   and draws more each turn (it costs 1 life per burden counter each upkeep).
-- **Temur Ascendancy:** gives your creatures haste and draws a card whenever you cast a creature spell with power 4 or
-  more (nearly every Dragon).
+- **Temur Ascendancy:** gives your creatures haste, and you may draw a card whenever a creature with power 4 or more
+  enters under your control (nearly every Dragon, including the ones The Ur-Dragon puts in).
 
 ### Game plan
 
@@ -132,7 +135,7 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
 the dual that fixes your colours. A turn-1 dork or Sol Ring into a turn-2 four-drop (Smaug or a Shaman), or Mana Vault into a turn-2 five-drop, is the
 strongest start.
 
-**Turns 3-4.** The cheap Dragons (Smaug, Bolas, a Shaman-reduced Dragon) and an engine (Rhystic Study, Sylvan Library,
+**Turns 3-4.** The cheap Dragons (Smaug the Magnificent, Bolas, a Shaman-reduced Dragon) and an engine (Rhystic Study, Sylvan Library,
 The One Ring). Keep mana for Counterspell or a free spell on the opponent's turn when you hold protection.
 
 **Turns 5-7.** Land Terror of the Peaks or the key Dragon, then The Ur-Dragon (or Morophon first), then attack. Win
@@ -181,7 +184,8 @@ The first mulligan is free; after that it's a London mulligan (draw 7, bottom on
   control a commander, which is any turn after The Ur-Dragon lands.
 - **Heroic Intervention** and **Teferi's Protection** answer a wipe or removal. Teferi's Protection also protects you from
   a lethal attack for a turn.
-- **Greaves and Boots** on The Ur-Dragon or a combo piece give it hexproof.
+- **Lightning Greaves** (equip {0}) gives haste and shroud: it protects The Ur-Dragon, but move it off a Garth before
+  you target the Garth with Twinflame.
 - **Cavern of Souls** (name Dragon) and **Delighted Halfling** make the key Dragon or Garth uncounterable.
 - **Counterspell** ({U}{U}) holds the stack for a creature or spell you can't let through; blue is 18 land sources, so
   keep {U}{U} up before you spend the rest of your mana.
@@ -251,7 +255,7 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 
 **Creatures (32).** Ancient Brass Dragon, Ancient Copper Dragon, Atarka, World Render, Birds of Paradise, Delighted Halfling, Dragonlord Dromoka, Dragonlord Silumgar, Dragonspeaker Shaman, Elvish Mystic, Garth One-Eye, Glorybringer, Goldspan Dragon, Hellkite Charger, Hellkite Tyrant, Klauth, Unrivaled Ancient, Korvold, Fae-Cursed King, Lathliss, Dragon Queen, Llanowar Elves, Miirym, Sentinel Wyrm, Morophon, the Boundless, Nicol Bolas, the Ravager, Old Gnawbone, Rivaz of the Claw, Scion of Draco, Scourge of Valkas, Shivan Dragon, Smaug the Impenetrable, Smaug the Magnificent, Spark Double, Terror of the Peaks, Thundermaw Hellkite, Tiamat
 
-**Artifacts (7).** Arcane Signet, Chrome Mox, Lightning Greaves, Mana Vault, Sol Ring, Swiftfoot Boots, The One Ring
+**Artifacts (7).** Arcane Signet, Chrome Mox, Lightning Greaves, Mana Vault, Relic of Sauron, Sol Ring, The One Ring
 
 **Enchantments (6).** Doubling Season, Dragon Tempest, Rhystic Study, Smothering Tithe, Sylvan Library, Temur Ascendancy
 
@@ -322,6 +326,7 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Path to Exile
 1 Plateau
 1 Polluted Delta
+1 Relic of Sauron
 1 Rhystic Study
 1 Rivaz of the Claw
 1 Sacred Foundry
@@ -338,7 +343,6 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Spark Double
 1 Steam Vents
 1 Stomping Ground
-1 Swiftfoot Boots
 1 Swords to Plowshares
 1 Sylvan Library
 1 Taiga

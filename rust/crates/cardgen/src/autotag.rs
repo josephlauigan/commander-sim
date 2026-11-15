@@ -330,7 +330,19 @@ pub fn autotag(rec: &J) -> AutoTags {
                         .to_uppercase();
                     if c.is_empty() { "C".into() } else { c }
                 };
-                let amt = if !add_s.contains(" or ") { findall(r"\{[wubrgc]\}", add_s).len() as i64 } else { 1 };
+                // "two mana in any combination of {U}, {B}, and/or {R}": the amount is the word, not the symbols listed
+                let word = search(r"^(one|two|three|four|five|six|seven) mana in any combination", add_s).map(|m| {
+                    ["one", "two", "three", "four", "five", "six", "seven"].iter().position(|w| *w == m.gs(1)).unwrap()
+                        as i64
+                        + 1
+                });
+                let amt = if let Some(n) = word {
+                    n
+                } else if !add_s.contains(" or ") {
+                    findall(r"\{[wubrgc]\}", add_s).len() as i64
+                } else {
+                    1
+                };
                 // "three mana of any one color" / "X mana of any one color": all of it one colour, chosen as the
                 // source is tapped (the engine's `Shape::One`); "in any combination of colors" is not
                 if add_s.contains("any one color") || add_s.contains("any one type") {

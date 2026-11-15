@@ -537,6 +537,7 @@ Deck key `urdragon`, `decklists/JD/urdragon-five-colour-dragons.md` since 2026-1
 
 ### Changes
 
+- **2026-11-14.** Out: Swiftfoot Boots. In: Relic of Sauron. the deck's big mana wants two coloured mana from one source for its seven-drops, and the loot turns surplus mana into card quality late; Lightning Greaves still gives haste and shroud.
 - **2026-11-14.** Out: Garruk's Uprising. In: Smaug the Impenetrable. A seven-mana (six with Eminence) hasty, indestructible flying Dragon: it survives an opponent's destroy wipe, which the rest of the Dragons do not, and turns noncombat damage into Treasures. Garruk's Uprising was the weakest of the three power-4 draw enchantments.
 - **2026-11-13.** New deck (JD, not simulated): an optimised high-bracket-4 Dragons list with proxies allowed, designed with Opus from the owned-cards draft. 23 Dragons (Terror of the Peaks, Goldspan Dragon, Hellkite Tyrant, Ancient Brass Dragon and Shivan Dragon among them), the Garth One-Eye, Spark Double, Twinflame and Doubling Season combo, one-mana dorks and Mana Vault, Rhystic Study, Sylvan Library, Teferi's Protection, Fierce Guardianship, four tutors, and a mana base of ten original duals, ten fetches and five shocks with three basics. 13 Game Changers.
 

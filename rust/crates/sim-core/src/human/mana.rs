@@ -582,6 +582,28 @@ pub fn tap(g: &mut Game, p: PlayerId, source_id: i64, colour: Option<char>) -> R
     if !cols.contains(colour) {
         return Ok(Some(format!("That source can't make {} mana.", colour_name(colour))));
     }
+    // a source of several mana, each one of several colours chosen separately (Relic of Sauron): the colour asked for
+    // is the first mana, the person picks each other one
+    let choices: Vec<String> = cols.chars().filter(|&c| c != 'C').map(|c| c.to_string()).collect();
+    if u.shape == Shape::Free && u.amt >= 2 && choices.len() > 1 && colour != 'C' && matches!(u.src, Source::Perm(_)) {
+        let mut picked = vec![colour];
+        for _ in 1..u.amt {
+            let prompt = format!("{}: choose the colour of the next mana", unit_label(g, u.src));
+            let Some(k) = super::choices::choose(g, p, "choose", &prompt, &choices, Some("cancel"), None)? else {
+                return Ok(Some("Cancelled. Nothing was tapped and no mana was added.".into()));
+            };
+            picked.push(choices[k].chars().next().unwrap());
+        }
+        let paid: String = picked.iter().collect();
+        spend_unit(g, p, u, u.amt, &paid)?;
+        for &c in &picked {
+            g.player_mut(p).pool.add(c, 1);
+        }
+        let sn = unit_label(g, u.src);
+        let mana: String = picked.iter().map(|c| format!("{{{c}}}")).collect();
+        crate::glog!(g, "  {} taps {} for {}", name, sn, mana);
+        return Ok(None);
+    }
     let paid = if colour != 'C' { colour.to_string() } else { String::new() };
     spend_unit(g, p, u, u.amt, &paid)?;
     g.player_mut(p).pool.add(colour, u.amt);
