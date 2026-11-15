@@ -300,7 +300,7 @@ fn free_worth(g: &Game, c: CardId) -> f64 {
 
 /// the AI's permanent card from its hand: the nonland one worth most (`body_worth`), unless it saves little
 /// (`free_worth` under a land's worth) and there is a land card to ramp with
-fn ur_pick(g: &Game, p: PlayerId, cs: &[CardId]) -> Option<CardId> {
+pub fn ur_pick(g: &Game, p: PlayerId, cs: &[CardId]) -> Option<CardId> {
     let (lands, rest): (Vec<CardId>, Vec<CardId>) = cs.iter().partition(|&&c| g.db.get(c).land);
     let best = crate::engine::zones::max_by(&rest, |c| body_worth(g, p, c));
     let land = crate::impls::t12_windgrace::pick_lands(g, p, &lands, 1, false).into_iter().next();
