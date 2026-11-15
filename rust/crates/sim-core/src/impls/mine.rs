@@ -3538,9 +3538,9 @@ fn flies_over(g: &Game, m: PermId) -> bool {
 /// entering ("whenever a creature [an opponent controls] enters": Soul Warden, Soul's Attendant, Auriok Champion,
 /// Authority of the Consuls, Suture Priest; none while creatures entering trigger nothing) or on the attack ("whenever a
 /// player attacks": Aurelia, the Law Above), or card code on a life loss (Exquisite Blood, Bloodthirsty Conqueror), on
-/// any creature entering that untaps blockers (Intruder Alarm, whoever controls it) or at the beginning of combat that
-/// taps or untaps creatures (Koma, Cosmos Serpent and Sting, the Glinting Dagger of an opponent). `dsl::fire` reads
-/// phasing but not lost abilities, so neither does this. Any of them holds the release.
+/// any creature entering that untaps blockers (an Intruder Alarm with its abilities, whoever controls it) or at the
+/// beginning of combat that taps or untaps creatures (Koma, Cosmos Serpent and Sting, the Glinting Dagger of an
+/// opponent). `dsl::fire` reads phasing but not lost abilities, so neither does this. Any of them holds the release.
 fn foreign_triggers(g: &Game, p: PlayerId, quiet: bool) -> bool {
     use crate::dsl::model::Ability;
     let compiled = crate::dsl::active(g)
@@ -3564,7 +3564,7 @@ fn foreign_triggers(g: &Game, p: PlayerId, quiet: bool) -> bool {
     let hooks = crate::engine::hooks::hooked;
     compiled
         || hooks(g, Event::LoseLife).iter().any(|(s, _)| g.perm(*s).owner != p)
-        || (!quiet && crate::impls::t45_chulane_kinnan::alarm_on(g))
+        || (!quiet && hooks(g, Event::Etb).iter().any(|(s, _)| g.perm(*s).name == "Intruder Alarm"))
         || hooks(g, Event::EachCombat).iter().any(|(s, _)| {
             g.perm(*s).owner != p && matches!(g.perm(*s).name, "Koma, Cosmos Serpent" | "Sting, the Glinting Dagger")
         })
