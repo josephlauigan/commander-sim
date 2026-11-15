@@ -1250,3 +1250,119 @@ fn twinflame_e1_control_a_tapped_copy_still_triggers_terror_so_the_release_stand
     g.player_mut(P1).life = 5;
     assert_eq!(adv_probe(&g), (true, true, true));
 }
+
+// ------------------------------------------------------------------ round 6: visible effects the estimate did not read
+/// `adv_probe`, after printing what the real cast leaves behind
+fn adv_result(g: &Game) -> (bool, bool, bool) {
+    let mut a = g.clone();
+    adv_kill_line(&mut a);
+    adv_cast_offered(&mut a);
+    println!(
+        "after cast: opponents {:?}; own creatures {:?}",
+        a.opps(P0).map(|q| (q, a.player(q).life, a.player(q).poison)).collect::<Vec<_>>(),
+        a.player(P0)
+            .perms
+            .iter()
+            .filter(|&&m| a.is_creature(m))
+            .map(|&m| (a.perm(m).name, a.perm(m).tapped))
+            .collect::<Vec<_>>()
+    );
+    let r = adv_probe(g);
+    println!("release={} allin_kills={} ai_kills={}", r.0, r.1, r.2);
+    r
+}
+
+// F5: an opponent's entry trigger gains life while the line plays out: the copy enters, the opponent gains, and the
+// attack that was exactly lethal is one short
+#[test]
+fn authority_gain_invalidates_original_flier_lethal() {
+    let mut g = adv_base(2);
+    perm(&mut g, P1, "Authority of the Consuls");
+    g.player_mut(P1).life = 8;
+    assert_eq!(adv_result(&g), (false, false, false));
+}
+
+#[test]
+fn soul_warden_gain_invalidates_exact_combat_lethal() {
+    let mut g = adv_base(2);
+    perm(&mut g, P1, "Soul Warden");
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_result(&g), (false, false, false));
+}
+
+// F6: Terror's triggers the engine does not run
+#[test]
+fn hushbringer_suppresses_terror_triggers() {
+    let mut g = adv_base(2);
+    let big = g.player(P0).perms[0];
+    g.perm_mut(big).tapped = true;
+    let terror = perm(&mut g, P0, TERROR);
+    g.perm_mut(terror).tapped = true;
+    perm(&mut g, P1, "Hushbringer");
+    perm(&mut g, P1, "Blind Obedience");
+    g.player_mut(P1).life = 5;
+    // Hushbringer blocks any flying copy, and silences its entry trigger.
+    assert_eq!(adv_result(&g), (false, false, false));
+}
+
+#[test]
+fn neutered_terror_has_no_entry_trigger() {
+    let mut g = adv_base(2);
+    let big = g.player(P0).perms[0];
+    g.perm_mut(big).tapped = true;
+    let terror = perm(&mut g, P0, TERROR);
+    g.perm_mut(terror).neutered = true;
+    g.perm_mut(terror).tapped = true;
+    perm(&mut g, P1, "Blind Obedience");
+    g.player_mut(P1).life = 5;
+    assert_eq!(adv_result(&g), (false, false, false));
+}
+
+// F7: damage an attacker deals that is not life loss
+#[test]
+fn szadek_combat_mills_instead_of_life_loss() {
+    let mut g = adv_base(2);
+    let big = g.player(P0).perms[0];
+    g.perm_mut(big).tapped = true;
+    perm(&mut g, P0, "Szadek, Lord of Secrets");
+    g.player_mut(P1).life = 13;
+    assert_eq!(adv_result(&g), (false, false, false));
+}
+
+// F8: robustness: no living opponent and a Terror
+#[test]
+fn no_living_opponents_does_not_panic() {
+    let mut g = adv_base(2);
+    perm(&mut g, P0, TERROR);
+    g.player_mut(P1).alive = false;
+    assert!(adv_hook(&mut g).is_empty());
+}
+
+// F9: visible effects of the opponent that act during the line and the estimate did not follow
+#[test]
+fn spore_frog_fogs_the_attack() {
+    let mut g = adv_base(2);
+    perm(&mut g, P1, "Spore Frog");
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_result(&g), (false, false, false));
+}
+
+#[test]
+fn sunscorch_cast_gain_invalidates_exact_lethal() {
+    let mut g = adv_base(2);
+    let r = perm(&mut g, P1, "Sunscorch Regent");
+    g.perm_mut(r).tapped = true;
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_result(&g), (false, false, false));
+}
+
+#[test]
+fn hammer_loses_flying_attacker_is_blockable() {
+    let mut g = adv_base(2);
+    let big = g.player(P0).perms[0];
+    let hammer = perm(&mut g, P0, "Colossus Hammer");
+    g.perm_mut(hammer).attached = Some(big);
+    perm(&mut g, P1, "Armored Warhorse"); // a ready ground blocker
+    g.player_mut(P1).life = 20;
+    assert_eq!(adv_result(&g), (false, false, false));
+}
