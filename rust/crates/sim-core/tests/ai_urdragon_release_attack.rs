@@ -8,7 +8,7 @@
 mod play_common;
 use play_common::*;
 use sim_core::ai::act::perform;
-use sim_core::engine::{combat, turn};
+use sim_core::engine::{combat, turn, zones};
 use sim_core::hooks::{Action, Opt};
 use sim_core::settings::{AiMode, Profile, Settings};
 use sim_core::state::Step;
@@ -395,4 +395,78 @@ fn the_recheck_keeps_a_proven_kill_the_estimate_undercounts_on_an_unchanged_boar
         Some((P1, "all")),
         "the re-check counted only 6 + 6 and dropped a proven 12 + 6 attack on an unchanged board"
     );
+}
+
+/// The same board with one more life for q after the cast: the estimate was already below lethal when the copies
+/// entered (margin -2: 12 counted against 14), and it is now worse (-3), so the plan is dropped.
+#[test]
+fn the_recheck_drops_the_plan_when_the_estimate_gets_worse_than_it_was_after_the_cast() {
+    let mut g = rel_base();
+    let original = g.player(P0).perms[0];
+    g.perm_mut(original).eot_kw.push("double strike");
+    perm(&mut g, P1, "Elesh Norn, Grand Cenobite");
+    g.player_mut(P1).life = 14;
+    rel_cast(&mut g, P0);
+    assert_eq!(g.release_attack.map(|x| x.3), Some(-2), "6 + 6 counted against 14 right after the copies entered");
+    g.player_mut(P1).life = 15;
+    assert_eq!(sim_core::ai::choose_attack(&mut g, P0).unwrap(), None);
+    assert_eq!(g.release_attack, None);
+}
+
+/// The release's contract is that casting now eliminates some opponent, not that the attacked one dies. The check
+/// attacks seat 1 (23 life, a Kor Haven that stops one Dragon) and seat 2 (4 life) leaves the game to Drakuseth's attack
+/// trigger; the commit is the attacked seat 1, which survives at 8. Attacking seat 2 instead would waste the attack.
+#[test]
+fn the_commit_attacks_the_opponent_the_check_attacked_even_when_another_leaves_the_game() {
+    let mut g = rel_base();
+    perm(&mut g, P0, "Drakuseth, Maw of Flames");
+    g.player_mut(P1).life = 23;
+    g.player_mut(P2).life = 4;
+    lands(&mut g, P1, "Kor Haven", 1, false);
+    lands(&mut g, P1, "Plains", 2, false);
+    let o = rel_option(&mut g, P0);
+    assert_eq!(rel_arg(&o) >> 40, 2, "the check attacked seat 1");
+    assert!(perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
+    let mut probe = g.clone();
+    assert_eq!(sim_core::ai::choose_attack(&mut probe, P0).unwrap(), Some((P1, "all")));
+    rel_finish(&mut g, P0);
+    assert!(g.player(P0).alive);
+    assert!(!g.player(P2).alive, "Drakuseth's trigger killed seat 2");
+    assert!(g.player(P1).alive && g.player(P1).life == 8, "the attacked seat survives at {}", g.player(P1).life);
+}
+
+/// A real attack proof at the token cap: the original alone kills (8 life), the option carries seat 1, and the
+/// resolution makes no copy (250 tokens already): no copy entered, so no plan.
+#[test]
+fn a_release_at_the_token_cap_makes_no_copies_and_sets_no_plan() {
+    let mut g = rel_base();
+    g.player_mut(P1).life = 8;
+    let spec = zones::Tokens { sick: false, ..zones::Tokens::new(zones::TOKEN_CAP as u32, 1) };
+    zones::make_tokens(&mut g, P0, spec).unwrap();
+    let o = rel_option(&mut g, P0);
+    assert_eq!(rel_arg(&o) >> 40, 2, "a proven attack, not a fair cast");
+    assert!(perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
+    assert_eq!(g.player(P0).perms.iter().filter(|&&m| g.perm(m).token).count(), zones::TOKEN_CAP);
+    assert!(!g.player(P0).perms.iter().any(|&m| g.perm(m).token && g.perm(m).name == BIG), "no copy entered");
+    assert_eq!(g.release_attack, None);
+}
+
+/// L4's boundary, pinned: the re-check reads only what the estimate reads. An ordinary land's defence (Kor Haven,
+/// tapped when the check ran) that becomes usable before the attack is not seen, so the plan is kept and the attack
+/// leaves the opponent alive. No engine path untaps an opponent's land in this window; the untap is the test's.
+#[test]
+fn the_recheck_does_not_see_a_land_defence_that_becomes_usable_after_the_cast() {
+    let mut g = rel_base();
+    let haven = lands(&mut g, P1, "Kor Haven", 1, true)[0];
+    lands(&mut g, P1, "Plains", 2, false);
+    rel_cast(&mut g, P0);
+    g.perm_mut(haven).tapped = false;
+    let mut probe = g.clone();
+    assert_eq!(
+        sim_core::ai::choose_attack(&mut probe, P0).unwrap(),
+        Some((P1, "all")),
+        "L4: the re-check reads only what the estimate reads"
+    );
+    rel_finish(&mut g, P0);
+    assert!(g.player(P1).alive && g.player(P1).life == 8, "Kor Haven stopped half the attack");
 }
