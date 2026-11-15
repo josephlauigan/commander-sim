@@ -348,7 +348,7 @@ fn station_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 /// time they could play a land, and answers the pay-3-life question (not asked without 3 life, or while their life
 /// can't change). With Spelunking out the land enters untapped whatever is paid, so no life is paid and it is not
 /// tapped (the controller's other legal order, tapped, is not offered: nothing rewards it); under Blood Moon it is a
-/// Mountain without the ability, so nothing is paid or asked. The land face is playable from the hand only (a play
+/// Mountain without the ability, so nothing is paid or asked; it is still the land face (colourless, not a creature: the face is not an ability, `moon_land_face`). The land face is playable from the hand only (a play
 /// permission from exile or the graveyard does not offer it: an engine limit shared with every modal land).
 fn meadow_cols(_g: &Game, _p: PlayerId, _l: PermId) -> Colors {
     Colors::from_letters("W")
@@ -358,6 +358,15 @@ fn meadow_cols(_g: &Game, _p: PlayerId, _l: PermId) -> Colors {
 fn meadow_land_etb(g: &mut Game, _p: PlayerId, l: PermId) -> Res {
     g.perm_mut(l).data.set(DataKey::LandFace, Val::Bool(true));
     Ok(())
+}
+
+/// the face a modal card entered as is a characteristic, not an ability: Blood Moon makes Witch-Blessed Meadow a Mountain but
+/// does not turn it back into Witch Enchanter. cardcode::land_etb runs no land's enters hook under Blood Moon and calls this
+/// instead (a no-op for every other land)
+pub(crate) fn moon_land_face(g: &mut Game, l: PermId) {
+    if &*g.db.get(g.perm(l).card()).name == WITCH {
+        g.perm_mut(l).data.set(DataKey::LandFace, Val::Bool(true));
+    }
 }
 
 fn meadow_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {

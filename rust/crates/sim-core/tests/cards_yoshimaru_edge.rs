@@ -1083,7 +1083,8 @@ mod round4 {
             assert!(chars::card_types(&g, m).has(Types::CREATURE));
             assert_eq!(chars::colors(&g, m), Colors::NONE);
             assert_eq!((chars::power(&g, m), chars::toughness(&g, m)), (3, 3));
-            assert!(chars::has_keyword(&g, m, "flying"));
+            // the copy exception's flying is the permanent's `fly` flag (combat reads it; `has_keyword` is for card keywords)
+            assert!(g.perm(m).fly);
             assert_eq!(sim_core::engine::mana::land_colors_now(&g, P0, m), Colors::from_letters("R"));
         }
     }
