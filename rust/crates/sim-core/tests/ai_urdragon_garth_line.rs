@@ -595,3 +595,135 @@ fn twinflame_doubling_season_under_another_players_control_is_dead() {
     glory(&mut g);
     fair(&mut g, false);
 }
+
+// ------------------------------------------------------------------ round 2: what the lethal release really counts
+/// the live tokens of seat 0 with the fair target's name
+fn big_tokens(g: &Game) -> usize {
+    g.player(P0).perms.iter().filter(|&&m| g.perm(m).on_bf && g.perm(m).token && g.perm(m).name == BIG).count()
+}
+
+/// cast the offered fair Twinflame ("Twinflame (N targets)") for seat 0
+fn cast_fair(g: &mut Game) {
+    let opts = main_options(g, P0, false).unwrap();
+    let o = opts.iter().find(|o| o.label.starts_with("Twinflame (")).expect("a fair Twinflame option");
+    assert!(sim_core::ai::act::perform(g, P0, o.act.as_ref().unwrap()).unwrap());
+}
+
+fn tokens_of_p0(g: &Game) -> usize {
+    g.player(P0).perms.iter().filter(|&&m| g.perm(m).token).count()
+}
+
+// R1: Doubling Season doubles the copies the fair resolution makes
+#[test]
+fn twinflame_r1_fair_resolution_makes_the_doubled_copies() {
+    let mut g = row17("urdragon");
+    cast_fair(&mut g);
+    assert_eq!(big_tokens(&g), 2, "Doubling Season: two hasty copies of the one target");
+}
+
+#[test]
+fn twinflame_r1_another_seat_gets_the_doubling_and_nothing_else_changes() {
+    // Twinflame is only in the urdragon deck, so another seat reaches the resolver only in a test; its result is the
+    // rules' result: doubled under Doubling Season, a single copy without it
+    let mut g = row17("aragorn");
+    cast_fair(&mut g);
+    assert_eq!(big_tokens(&g), 2);
+    let mut one = row01("aragorn");
+    cast_fair(&mut one);
+    assert_eq!(big_tokens(&one), 1);
+}
+
+#[test]
+fn twinflame_r1_the_copies_stop_at_the_token_cap() {
+    // 249 tokens already, then Doubling Season: only one of the two copies fits
+    let mut g = row01("aragorn");
+    zones::make_tokens(&mut g, P0, zones::Tokens { tgh: Some(1), ..zones::Tokens::new(249, 0) }).unwrap();
+    perm(&mut g, P0, SEASON);
+    assert_eq!(tokens_of_p0(&g), 249);
+    cast_fair(&mut g);
+    assert_eq!(tokens_of_p0(&g), zones::TOKEN_CAP);
+    assert_eq!(big_tokens(&g), 1);
+}
+
+// R2: The One Ring's protection prevents the combat damage and Terror's trigger
+#[test]
+fn twinflame_r2_a_protected_opponent_is_not_lethal() {
+    let mut g = row13("urdragon");
+    g.player_mut(P1).ring_prot = true;
+    assert!(sim_core::engine::life::prevents_damage(&g, P1, Some(P0)));
+    held(&mut g, false);
+    g.player_mut(P1).ring_prot = false;
+    fair(&mut g, false); // the same board without the protection is lethal
+}
+
+// R3: Terror's trigger targets; a hexproof player can't be hit by it, combat damage still counts
+#[test]
+fn twinflame_r3_terror_damage_is_not_counted_against_a_hexproof_player() {
+    let mut g = row01("urdragon");
+    perm(&mut g, P0, TERROR);
+    let shalai = perm(&mut g, P1, "Shalai, Voice of Plenty");
+    g.perm_mut(shalai).tapped = true; // it can't block
+    assert!(sim_core::engine::values::player_hexproof(&g, P1));
+    // the fliers 8 + 5 = 13, the copy 5 (Terror is the target) = 18 in combat; the trigger's 5 would make 23
+    opp_life(&mut g, 23);
+    held(&mut g, false);
+    opp_life(&mut g, 18);
+    fair(&mut g, false); // combat damage alone kills
+}
+
+// R4: protection from red: Twinflame can't target the creature
+fn red_protected_big(g: &mut Game) {
+    let m = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).name == BIG).unwrap();
+    g.perm_mut(m).eot_kw.push("pro_R");
+    assert!(sim_core::engine::values::protected_from(g, m, sim_core::cards::Colors::from_letters("R")));
+}
+
+#[test]
+fn twinflame_r4_a_protected_target_supplies_no_copy_to_the_lethal_estimate() {
+    let mut g = row13("urdragon");
+    red_protected_big(&mut g);
+    held(&mut g, false);
+}
+
+#[test]
+fn twinflame_r4_the_fair_option_skips_a_target_with_protection_from_red() {
+    let mut g = row01("aragorn");
+    red_protected_big(&mut g);
+    assert!(twin_opts(&mut g, false).iter().all(|l| !l.starts_with("Twinflame (")), "the only target is protected");
+}
+
+// R5: the copies the estimate counts must fit under the token cap
+#[test]
+fn twinflame_r5_no_copy_at_the_token_cap_means_no_lethal_release() {
+    let mut g = row13("urdragon");
+    zones::make_tokens(&mut g, P0, zones::Tokens { tgh: Some(1), ..zones::Tokens::new(250, 0) }).unwrap();
+    assert_eq!(tokens_of_p0(&g), 250);
+    held(&mut g, false);
+}
+
+// Q1: Terror's trigger is not combat damage: every copy's power counts, flying or not
+#[test]
+fn twinflame_q1_terror_damage_counts_a_ground_copy() {
+    let mut g = base("urdragon");
+    lands(&mut g, P0, "Mountain", 3, false);
+    perm(&mut g, P0, "Massacre Wurm");
+    perm(&mut g, P0, TERROR);
+    // Massacre Wurm is the target: its copy's 6 from Terror's trigger, then the ready Terror's 5 in combat
+    opp_life(&mut g, 12);
+    held(&mut g, false);
+    opp_life(&mut g, 11);
+    fair(&mut g, false);
+}
+
+#[test]
+fn twinflame_q1_terror_damage_ignores_a_flying_blocker() {
+    let mut g = base("urdragon");
+    lands(&mut g, P0, "Mountain", 3, false);
+    perm(&mut g, P0, "Massacre Wurm");
+    perm(&mut g, P0, TERROR);
+    perm(&mut g, P1, "Glorybringer"); // an untapped flier: Terror's 5 is blocked, the trigger's 6 is not
+    opp_life(&mut g, 6);
+    fair(&mut g, false);
+    opp_life(&mut g, 7);
+    held(&mut g, false);
+}
