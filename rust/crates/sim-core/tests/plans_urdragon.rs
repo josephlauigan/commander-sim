@@ -145,12 +145,11 @@ fn a_hand_with_nothing_to_do_or_too_little_mana_goes_back() {
 fn the_plan_is_active_for_the_deck_and_names_the_garth_line() {
     let g = tbl();
     let l = plan_data::active(&g, P0).expect("the plan file is read for urdragon");
-    assert!(
-        l.plan
-            .line
-            .iter()
-            .any(|x| x.combo.as_deref() == Some("Garth One-Eye + Twinflame + Spark Double + Doubling Season"))
-    );
+    assert!(l
+        .plan
+        .line
+        .iter()
+        .any(|x| x.combo.as_deref() == Some("Garth One-Eye + Twinflame + Spark Double + Doubling Season")));
     // Twinflame and the wipes must keep their generic rating: no priority rule may name them
     for name in ["Twinflame", "Crux of Fate", "Austere Command", "Decimate", "Lightning Bolt", "Teferi's Protection"] {
         assert!(!l.plan.prio.iter().any(|r| r.cards.iter().any(|c| c == name)), "{name} has a [[prio]] row");
