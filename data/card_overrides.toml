@@ -10312,7 +10312,7 @@ note = "whenever a player (you too) casts their second spell each turn, you lose
 # --- the Yoshimaru / Tymna deck's cards (impls/yoshimaru_cards.rs), modelled before the deck is registered
 ["Yoshimaru, Ever Faithful"]
 status = "Full"
-note = "another legendary permanent you control entering puts a +1/+1 counter on him: a nonland one through the enters event (a stack trigger, so Panharmonicon applies), a legendary land through landfall (counted once, only lands that arrived after him); Partner is the commander rule; no choice in it for a person (impls/yoshimaru_cards.rs)"
+note = "another legendary permanent you control entering puts a +1/+1 counter on him, as a stack trigger: a nonland one through the enters event, a legendary land through the engine's land-enters event (fired once per land from zones::lands_entered, however it came: played, fetched, returned by Sun Titan, a token copy; Panharmonicon, Ancient Greenwarden, Delney, Hushbringer act on it); a land that was there before him, or entered while he was phased out, is not counted; Partner is the commander rule; no choice in it for a person (impls/yoshimaru_cards.rs). Simultaneous entry with him follows the engine's sequential model"
 
 ["Kambal, Consul of Allocation"]
 status = "Full"
@@ -10320,16 +10320,16 @@ note = "compiled: whenever an opponent casts a noncreature spell, that player lo
 
 ["Minas Tirith"]
 dsl = [] # the compiled draw had no way to say only if you attacked with two or more creatures; impls/yoshimaru_cards.rs offers it
-status = "Full"
-note = "enters tapped unless you control a legendary creature (the engine's enters rule); {T}: {W}; {1}{W}, {T}: draw a card only after attacking with two or more creatures this turn (the AI after combat with spare mana, a person through the land's options hook paying from their pool; impls/yoshimaru_cards.rs)"
+status = "Partial"
+note = "{T}: {W}; {1}{W}, {T}: draw a card only after attacking with two or more different creatures this turn, extra combats included (the AI after combat with spare mana and four or more library cards, a person through the land's options hook paying from their pool; impls/yoshimaru_cards.rs). PARTIAL: enters tapped unless you control a legendary creature uses the engine's enters rule (EnterRule::Legendary, shared with Barad-dur), which reads the printed legendary tag: a phased-out legendary creature, a nonlegendary copy of one (a Ring-bearer, Helm) and a legendary token are misjudged (ticket: land_enters_tapped, a change that also moves the sheoldred deck)"
 
 ["The Seriema"]
 dsl = [] # the compiled enters search ignores "legendary" (it would take any creature); impls/yoshimaru_cards.rs searches
 tags = "leg station=7" # `station=7`: a creature (and a 5/5) while it has 7 or more charge counters, read by engine/chars.rs
 status = "Full"
-note = "enters: search for a legendary creature card, into your hand, shuffle (a person picks the card or finds nothing; the AI its search pick; impls/yoshimaru_cards.rs); Station: tap another untapped creature, sorcery speed, charge counters equal to its power (a person chooses each creature, the AI taps creatures that can't attack, or the taps that reach 7 at once); at 7+ a 5/5 flying artifact creature, and your other tapped legendary creatures are indestructible"
+note = "enters: search for a legendary creature card, into your hand, shuffle (a person picks the card or finds nothing; with Opposition Agent out its controller chooses, a person is asked, and takes it; the AI its search pick; impls/yoshimaru_cards.rs); Station: tap another untapped creature at sorcery timing (no maximum; a person chooses each creature, the AI taps creatures that can't attack, or the taps that reach 7 at once, and stops at 7), charge counters equal to its power as the ability resolves; while it has 7 or more charge counters it is a 5/5 flying artifact creature (the station=7 tag, read by engine/chars.rs, so any source of counters counts and removing them ends it) and your other tapped legendary creatures are indestructible"
 
 ["Witch Enchanter // Witch-Blessed Meadow"]
 paths_ok = "compiled: the creature face's enters trigger (destroy target artifact or enchantment an opponent controls); card code: the land face only (land_cols makes {W}, hand_options plays it as a land), which no compiled ability covers (impls/yoshimaru_cards.rs)"
 status = "Full"
-note = "creature: enters, destroy target artifact or enchantment an opponent controls (compiled; a person chooses the target); land face Witch-Blessed Meadow: pay 3 life or enters tapped, {T}: {W}, played from hand through the land hook options (impls/yoshimaru_cards.rs: the AI only when short of lands as for Shatterskull Smashing; a person any time they could play a land, and answers the pay-3-life question)"
+note = "creature: enters, destroy target artifact or enchantment an opponent controls (compiled; a person chooses the target); land face Witch-Blessed Meadow: only a land (DataKey::LandFace, set as it enters: no creature, no types, colourless, and the creature face's enters trigger does not fire), pay 3 life or enters tapped (not with Spelunking out), {T}: {W}, played from hand through the land hook options (impls/yoshimaru_cards.rs: the AI only when short of lands as for Shatterskull Smashing; a person any time they could play a land, and answers the pay-3-life question)"
