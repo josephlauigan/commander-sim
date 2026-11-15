@@ -3484,6 +3484,9 @@ fn clean(g: &Game, p: PlayerId, q: PlayerId) -> bool {
 /// (protection, a locked life total) keeps its life and so keeps being the aim, exactly as in the engine.
 fn terror_replay(g: &Game, p: PlayerId, triggers: &[i32]) -> Vec<(PlayerId, i64)> {
     let opps: Vec<PlayerId> = g.opps(p).collect();
+    if opps.is_empty() {
+        return vec![]; // nobody to aim at (`best_target_any` returns early too)
+    }
     let mut life: Vec<i64> = opps.iter().map(|&o| g.player(o).life as i64).collect();
     let mut taken = vec![0i64; opps.len()];
     // the permanents' worth, from which the engine's `threat` differs by 0.05 * (life - 40)
@@ -3585,17 +3588,24 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
     }
     // an attack cap anywhere (Arbiter, Sandwurm Convergence, Crawlspace, Silent Arbiter, Mirri): not modelled, see below
     let capped = !crate::engine::hooks::hooked(g, Event::AttackCap).is_empty();
-    let terrors = g
-        .player(p)
-        .perms
-        .iter()
-        .filter(|&&m| {
-            g.perm(m).on_bf
-                && !g.perm(m).phased
-                && g.perm(m).name == "Terror of the Peaks"
-                && !repl::source_prevented(g, m)
-        })
-        .count() as u32;
+    // Hushbringer (and `skip_etb`) stop a creature's enter triggers from running at all, Terror's included
+    let quiet = g.skip_etb || repl::hushed(g);
+    // a Terror whose abilities are lost (`neutered`) has no trigger, as in `hooks::hooked`
+    let terrors = if quiet {
+        0
+    } else {
+        g.player(p)
+            .perms
+            .iter()
+            .filter(|&&m| {
+                g.perm(m).on_bf
+                    && !g.perm(m).phased
+                    && !g.perm(m).neutered
+                    && g.perm(m).name == "Terror of the Peaks"
+                    && !repl::source_prevented(g, m)
+            })
+            .count() as u32
+    };
     // a fog this turn (Spore Frog and the like, Arachnogenesis, Galadhrim Ambush): all combat damage, or all of it by
     // creatures that aren't Spiders or Elves, is prevented
     let st = g.turn_stamp();

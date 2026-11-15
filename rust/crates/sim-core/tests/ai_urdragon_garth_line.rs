@@ -1366,3 +1366,30 @@ fn hammer_loses_flying_attacker_is_blockable() {
     g.player_mut(P1).life = 20;
     assert_eq!(adv_result(&g), (false, false, false));
 }
+
+// round 6 controls: the same states with the effect out of play release, and the estimate is exact
+#[test]
+fn twinflame_f_control_phased_hushbringer_lets_terror_trigger_so_it_releases() {
+    let mut g = adv_base(2);
+    let big = g.player(P0).perms[0];
+    g.perm_mut(big).tapped = true;
+    let terror = perm(&mut g, P0, TERROR);
+    g.perm_mut(terror).tapped = true;
+    let h = perm(&mut g, P1, "Hushbringer");
+    g.perm_mut(h).phased = true;
+    perm(&mut g, P1, "Blind Obedience");
+    g.player_mut(P1).life = 5;
+    assert_eq!(adv_probe(&g), (true, true, true));
+}
+
+#[test]
+fn twinflame_f_control_a_terror_with_its_abilities_triggers_so_it_releases() {
+    let mut g = adv_base(2);
+    let big = g.player(P0).perms[0];
+    g.perm_mut(big).tapped = true;
+    let terror = perm(&mut g, P0, TERROR);
+    g.perm_mut(terror).tapped = true;
+    perm(&mut g, P1, "Blind Obedience");
+    g.player_mut(P1).life = 5;
+    assert_eq!(adv_probe(&g), (true, true, true));
+}
