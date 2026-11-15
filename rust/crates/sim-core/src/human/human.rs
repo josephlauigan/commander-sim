@@ -446,7 +446,7 @@ fn counter_target(g: &mut Game, q: PlayerId, c: CardId) -> Res<Result<(u32, Card
     if cands.len() > 1 || (trap && cands[0].controller == q) {
         let labels: Vec<String> = cands.iter().map(|&x| label(x)).collect();
         let ids: Vec<(u32, CardId)> = cands.iter().map(|x| (x.id, x.card.unwrap())).collect();
-        let prompt = format!("{}: counter which spell?", card_name(g, c));
+        let prompt = format!("{}: {} which spell?", card_name(g, c), if trap { "exile" } else { "counter" });
         let Some(k) = choices::choose(g, q, "target", &prompt, &labels, Some("cancel"), None)? else {
             return Ok(Err("Cancelled.".into()));
         };

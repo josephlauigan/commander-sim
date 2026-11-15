@@ -200,7 +200,11 @@ fn a_person_loots_with_three_lands_draws_two_and_is_asked_what_to_discard() {
     assert_eq!(discards[0].choices.len(), 4, "{:?}", discards[0].choices);
     assert!(discards[0].choices.iter().any(|c| c.contains("Sol Ring")));
     assert!(discards[0].choices.iter().any(|c| c.contains("Brainstorm")));
-    assert_eq!((g.player(P0).hand.len(), g.player(P0).gy.len()), (3, gy0 + 1), "four in hand, one discarded");
+    assert_eq!(
+        (g.player(P0).hand.len(), g.player(P0).gy.len()),
+        (3, gy0 + 1),
+        "four after the draw, one discarded: three left"
+    );
 }
 
 /// Oracle: "Add two mana in any combination of {U}, {B} and/or {R}": the source is listed as two mana of U, B or R,

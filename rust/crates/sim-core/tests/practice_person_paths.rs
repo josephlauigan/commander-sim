@@ -426,3 +426,14 @@ fn trap_person_only_trap(g: &mut Game, p: PlayerId, names: &[&'static str]) -> A
     );
     log
 }
+
+#[test]
+fn trap_the_first_question_says_exile_not_counter() {
+    let mut g = trap_table();
+    let asked = trap_person(&mut g, &["Brainstorm"]);
+    assert_eq!(cast_trap(&mut g), None);
+    let prompts: Vec<String> =
+        asked.lock().unwrap().iter().map(|x| x.1.clone()).filter(|p| p.starts_with("Mindbreak Trap")).collect();
+    assert_eq!(prompts[0], "Mindbreak Trap: exile which spell?");
+    assert!(prompts[1].starts_with("Mindbreak Trap: exile another spell?"), "{prompts:?}");
+}
