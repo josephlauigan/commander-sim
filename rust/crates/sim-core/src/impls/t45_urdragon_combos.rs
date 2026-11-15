@@ -63,6 +63,13 @@ const SPARK: &str = "Spark Double";
 const REGROWTH: &str = "Regrowth";
 
 // ------------------------------------------------------------------ helpers
+/// p is The Ur-Dragon deck's seat: the raw key, not `ai::hand_key` (which is "" for it: the deck has no hand-written AI).
+/// The first expression of every branch that exists for this deck's Garth line and free drop, so a game with no such
+/// seat plays exactly as before.
+pub fn urdragon_seat(g: &Game, p: PlayerId) -> bool {
+    &*g.player(p).key == "urdragon"
+}
+
 /// p's turn, before combat: a line that wins by attacking with hasty tokens needs a combat still to come
 fn precombat(g: &Game, p: PlayerId) -> bool {
     g.active == Some(p) && matches!(g.step, TurnStep::Start | TurnStep::Main1)
