@@ -1599,10 +1599,18 @@ fn resolve_counter_with(
     soft_n: Option<i32>,
     chosen: Option<&[CardId]>,
 ) -> Res {
-    let Some(t) = item(g, target).cloned() else { return Ok(()) }; // gone: the counterspell does nothing
-    if t.countered {
-        return Ok(());
-    }
+    let t = match item(g, target).cloned() {
+        Some(t) if !t.countered => t,
+        _ => {
+            // the first target is gone (or already countered): the counterspell does nothing, but a Mindbreak Trap
+            // with a person's further targets still exiles those that are legal (CR 608.2b: it resolves unless all
+            // its targets are illegal)
+            if let Some(also) = chosen.filter(|_| &*g.db.get(ctr).name == "Mindbreak Trap") {
+                crate::impls::t6_counters::mindbreak_exile_chosen(g, q, also)?;
+            }
+            return Ok(());
+        }
+    };
     let (p, c) = (t.controller, t.card.unwrap());
     if crate::engine::values::veil_shield(g, p) && &*g.db.get(ctr).name != "Mindbreak Trap" {
         // Veil of Summer: the spell can't be countered, so the counterspell does nothing (Mindbreak Trap exiles)
