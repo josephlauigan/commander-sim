@@ -3460,8 +3460,13 @@ fn twinflame_release(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], post: 
     !qs.is_empty() && (g.in_search || twinflame_confirm(g, p, c, &qs))
 }
 
+/// the combats the check plays at each opponent: the engine's chump block is a random choice (about 99.97% likely
+/// against a lethal attack), so one sample can miss a block the real combat makes; every one of them must kill
+const CONFIRM_COMBATS: usize = 3;
+
 /// The release's check on the engine itself. Twinflame is cast on a copy of the game that knows only what p knows
-/// (`hide`), and the copy then attacks each opponent in `qs` in turn with everything (`forced_attack`, the look-ahead's
+/// (`hide`), and the copy then attacks each opponent in `qs` in turn with everything, `CONFIRM_COMBATS` times on different random
+/// numbers (each must kill) (`forced_attack`, the look-ahead's
 /// all-out plan), the engine answering for the opponents. Every visible effect between the cast and the end of that
 /// combat is played as the engine plays it, wherever its code lives: a land's defence (Kor Haven), an opponent's
 /// priority in the combat steps (Opposition, Whipcorder, Ballista Squad, an animated Mishra's Factory), the cast's own
@@ -3501,16 +3506,24 @@ fn confirm_on(g2: &mut Game, p: PlayerId, c: CardId, opps: &[PlayerId], qs: &[Pl
     }
     crate::engine::turn::end_step_pools(g2); // main phase 1 ends (rule 500.4)
     g2.step = crate::state::Step::Combat;
-    for &q in qs {
+    // the later samples' own random numbers (the first plays on the copy's, as before)
+    let mut seeds = crate::rng::Rng::named(&format!("twinflame:combats:{}", g2.rng.clone().next_u64()));
+    'opp: for &q in qs {
         if !g2.player(q).alive {
             continue;
         }
-        let mut g3 = g2.clone();
-        g3.forced_attack = Some((q, "all"));
-        crate::engine::combat::combat(&mut g3, p)?;
-        if killed(&g3) {
-            return Ok(true);
+        for k in 0..CONFIRM_COMBATS {
+            let mut g3 = g2.clone();
+            if k > 0 {
+                g3.rng = crate::rng::Rng::from_u64(seeds.next_u64());
+            }
+            g3.forced_attack = Some((q, "all"));
+            crate::engine::combat::combat(&mut g3, p)?;
+            if !killed(&g3) {
+                continue 'opp;
+            }
         }
+        return Ok(true);
     }
     Ok(false)
 }
