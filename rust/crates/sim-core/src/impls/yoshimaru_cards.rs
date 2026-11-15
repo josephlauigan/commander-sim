@@ -124,9 +124,9 @@ const SERIEMA: &str = "The Seriema";
 const STATION_GOAL: i64 = 7;
 const WITCH: &str = "Witch Enchanter // Witch-Blessed Meadow";
 
-/// When The Seriema enters: search for a legendary creature card, reveal it, put it into your hand, then shuffle.
-/// (The compiled `search` ignores "legendary" and would take any creature, so the card's override drops it.) A person
-/// picks the card, or finds nothing; the AI takes the one its search pick prefers.
+/// When The Seriema enters: search for a legendary creature card, reveal it, put it into your hand, then shuffle. The
+/// searcher chooses the card, unless an Opposition Agent is out: then the Agent's controller chooses it (a person is
+/// asked, the AI takes the card it values most) and takes it (`agent_take`). A person may find nothing.
 fn seriema_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if m != src || !live(g, src) || g.perm(src).owner != p {
         return Ok(());
@@ -134,30 +134,46 @@ fn seriema_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if !trigger_window(g, p, Some(src), "search for a legendary creature", None)? {
         return Ok(());
     }
-    let legend = |g: &Game, c: CardId| {
+    let agent = agent_for(g, p);
+    let chooser = agent.unwrap_or(p);
+    let mut cands: Vec<CardId> = vec![];
+    for c in searchable(g, p) {
         let d = g.db.get(c);
-        d.creature && d.tag(Tag::Leg)
-    };
-    let found = if crate::human::is_human(g, p) {
-        crate::human::choices::search(g, p, &legend, 1, "The Seriema: search for a legendary creature card", true)?
-            .first()
-            .copied()
-    } else {
-        let cands: Vec<CardId> = searchable(g, p).into_iter().filter(|&c| legend(g, c)).collect();
-        let f = Filter { kind: Some("creature".into()), ..Filter::default() };
-        let pick = crate::ai::dsl_search_pick(g, p, &f, &cands)
-            .or_else(|| max_by(&cands, |c| card_worth(g, p, c, false) * 1000.0 + g.db.get(c).cmc as f64));
-        if let Some(c) = pick {
-            let lib = &mut g.player_mut(p).library;
-            if let Some(i) = lib.iter().position(|&x| x == c) {
-                lib.remove(i);
-            }
+        if d.creature && d.tag(Tag::Leg) && !cands.iter().any(|&x| g.db.get(x).name == d.name) {
+            cands.push(c);
         }
-        shuffle_library(g, p);
-        pick
+    }
+    cands.sort_by(|&a, &b| g.db.get(a).name.cmp(&g.db.get(b).name));
+    let found = if cands.is_empty() {
+        None
+    } else if crate::human::is_human(g, chooser) {
+        let labels: Vec<String> = cands.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
+        let prompt = if agent.is_some() {
+            format!(
+                "The Seriema: search {}'s library for a legendary creature card (Opposition Agent)",
+                g.player(p).name
+            )
+        } else {
+            "The Seriema: search for a legendary creature card".to_string()
+        };
+        crate::human::choices::choose(g, chooser, "search", &prompt, &labels, Some("find nothing"), None)?
+            .map(|i| cands[i])
+    } else if agent.is_some() {
+        max_by(&cands, |c| card_worth(g, chooser, c, false) * 1000.0 + g.db.get(c).cmc as f64)
+    } else {
+        let f = Filter { kind: Some("creature".into()), ..Filter::default() };
+        crate::ai::dsl_search_pick(g, p, &f, &cands)
+            .or_else(|| max_by(&cands, |c| card_worth(g, p, c, false) * 1000.0 + g.db.get(c).cmc as f64))
     };
+    if let Some(c) = found {
+        let lib = &mut g.player_mut(p).library;
+        if let Some(i) = lib.iter().position(|&x| x == c) {
+            lib.remove(i);
+        }
+    }
+    shuffle_library(g, p);
     let Some(c) = found else { return Ok(()) };
-    if let Some(a) = agent_for(g, p) {
+    if let Some(a) = agent {
         agent_take(g, a, p, c); // Opposition Agent
         return Ok(());
     }
@@ -204,10 +220,7 @@ fn seriema_grant(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
 
 fn seriema_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     // only as a sorcery: not offered in combat, on another player's turn or in response
-    if post.is_none()
-        || g.perm(src).owner != p
-        || !live(g, src)
-        || crate::human::legal::sorcery_timing(g, p).is_some()
+    if post.is_none() || g.perm(src).owner != p || !live(g, src) || crate::human::legal::sorcery_timing(g, p).is_some()
     {
         return Ok(vec![]);
     }
@@ -281,34 +294,25 @@ fn station_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     g.perm_mut(t).tapped = true; // the cost
     crate::glog!(g, "  {} stations The Seriema, tapping {}", g.player(p).name, g.perm(t).name);
     let what = format!("station: charge counters equal to the power of {}", g.perm(t).name);
-    crate::engine::stack::ability_run(
-        g,
-        p,
-        Some(src),
-        None,
-        &what,
-        None,
-        None,
-        |g| {
-            if !live(g, src) {
-                return Ok(());
-            }
-            // the power as the ability resolves (a pump in response counts); if the creature has left, as it last
-            // was: a departed permanent keeps its own pump and the anthems still out
-            let n = epow(g, t).max(0);
-            let k = repl::counters(g, p, repl::On::Perm(src), repl::Ctr::Other, n, repl::Path::ALL).max(0);
-            let total = charge(g, src) + k as i64;
-            g.perm_mut(src).data.set(DataKey::Charge, Val::Int(total));
-            if total >= STATION_GOAL && !g.perm(src).data.truthy(DataKey::Anim) {
-                let x = g.perm_mut(src);
-                x.data.set(DataKey::Anim, Val::Bool(true)); // an artifact creature at 7+
-                x.pow = 5;
-                x.tgh = 5;
-                crate::glog!(g, "    The Seriema is a 5/5 artifact creature");
-            }
-            Ok(())
-        },
-    )?;
+    crate::engine::stack::ability_run(g, p, Some(src), None, &what, None, None, |g| {
+        if !live(g, src) {
+            return Ok(());
+        }
+        // the power as the ability resolves (a pump in response counts); if the creature has left, as it last
+        // was: a departed permanent keeps its own pump and the anthems still out
+        let n = epow(g, t).max(0);
+        let k = repl::counters(g, p, repl::On::Perm(src), repl::Ctr::Other, n, repl::Path::ALL).max(0);
+        let total = charge(g, src) + k as i64;
+        g.perm_mut(src).data.set(DataKey::Charge, Val::Int(total));
+        if total >= STATION_GOAL && !g.perm(src).data.truthy(DataKey::Anim) {
+            let x = g.perm_mut(src);
+            x.data.set(DataKey::Anim, Val::Bool(true)); // an artifact creature at 7+
+            x.pow = 5;
+            x.tgh = 5;
+            crate::glog!(g, "    The Seriema is a 5/5 artifact creature");
+        }
+        Ok(())
+    })?;
     Ok(true)
 }
 
