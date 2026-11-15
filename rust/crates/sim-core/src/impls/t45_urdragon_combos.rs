@@ -115,6 +115,25 @@ pub fn garth_line_alive(g: &Game, p: PlayerId) -> bool {
     garth && spark && season
 }
 
+/// Spark Double entering for an urdragon AI: the plain Garth to copy when the rest of the line is near, else None (the
+/// caller keeps its best-creature pick). Near: Doubling Season on the battlefield or in hand and Twinflame in hand, or a
+/// tutor in hand (Demonic or Vampiric; Worldly Tutor finds only creatures) that can fetch whichever of the two is still
+/// in the library. Stricter than `garth_line_alive`: a Spark Double spent on Garth gives up the best creature's copy.
+pub fn spark_garth_target(g: &Game, p: PlayerId) -> Option<PermId> {
+    if !urdragon_seat(g, p) {
+        return None;
+    }
+    let garth = g.player(p).perms.iter().copied().find(|&m| {
+        live(g, m) && nm(g, m) == GARTH && !g.perm(m).token && !g.perm(m).phys.is_some_and(|c| cname(g, c) == SPARK)
+    })?;
+    let season_out = bf(g, p, SEASON).is_some() || in_hand(g, p, SEASON).is_some();
+    let twin_hand = in_hand(g, p, TWINFLAME).is_some();
+    let tutor = in_hand(g, p, "Demonic Tutor").is_some() || in_hand(g, p, "Vampiric Tutor").is_some();
+    let near = (season_out && twin_hand)
+        || (tutor && ((season_out && in_lib(g, p, TWINFLAME)) || (twin_hand && in_lib(g, p, SEASON))));
+    near.then_some(garth)
+}
+
 fn present(v: &[Option<PermId>]) -> Vec<PermId> {
     v.iter().copied().flatten().collect()
 }

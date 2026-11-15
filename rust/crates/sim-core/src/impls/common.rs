@@ -2165,7 +2165,9 @@ fn reflector_lock(g: &Game, _src: Src, caster: PlayerId, c: CardId, _zone: Sym) 
 /// `enter_copy` step; the extra counter is added there, by `spark_bonus`): no 0/0 that state-based actions could kill
 /// first (a person's Spark Double died that way before its old enters hook ran), and not legendary (a copy of a legend
 /// met the legend rule at once, and Twinflame's copies of it were legendary too). The AI copies its best creature or
-/// planeswalker, a person picks (or declines: it then enters as itself, a 0/0).
+/// planeswalker, a person picks (or declines: it then enters as itself, a 0/0). The exception is the urdragon seat's
+/// Garth line: with Doubling Season and Twinflame in hand or out (or a tutor for the missing one), it copies Garth
+/// (`t45_urdragon_combos::spark_garth_target`).
 fn spark_copy(g: &mut Game, p: PlayerId, _c: CardId) -> Option<crate::state::CopyOf> {
     let cands: Vec<PermId> = g
         .player(p)
@@ -2195,6 +2197,10 @@ fn spark_copy(g: &mut Game, p: PlayerId, _c: CardId) -> Option<crate::state::Cop
         )
         .ok()
         .flatten()
+    } else if let Some(garth) =
+        crate::impls::t45_urdragon_combos::spark_garth_target(g, p).filter(|m| cands.contains(m))
+    {
+        Some(garth) // The Ur-Dragon's Garth line is near: Twinflame needs Spark Double's non-legendary Garth
     } else {
         max_by(&cands, |x| pval(g, x))
     };

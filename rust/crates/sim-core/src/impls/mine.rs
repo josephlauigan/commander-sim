@@ -13,7 +13,6 @@ use crate::engine::cast::{
     cast_card, cast_spell_copy, castable, casts_this_turn, discard_worst, is_casts, magecraft, on_cast, parse_cost,
 };
 use crate::engine::combat::{blocked, has_haste, kw};
-use crate::impls::t45_urdragon_combos::{garth_line_alive, ready_garth, urdragon_seat};
 use crate::engine::hooks::fire_trigger;
 use crate::engine::life::{check_state, lose_life};
 use crate::engine::mana::{
@@ -40,6 +39,7 @@ use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src};
 use crate::human::{cards, choices, human_of};
 use crate::ids::{CardId, PermId, PlayerId};
+use crate::impls::t45_urdragon_combos::{garth_line_alive, ready_garth, urdragon_seat};
 use crate::pysum::PySum;
 use crate::satsum::SatSum;
 use crate::state::{Ctx, DataKey, Game, StackItem, StackKind, Val};
@@ -3433,9 +3433,7 @@ pub(crate) fn twinflame(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>
     // The guard is the first expression, so no other seat reaches the rest (pure reads: no RNG, no writes).
     if urdragon_seat(g, p)
         && (ready_garth(g, p).0
-            || (garth_line_alive(g, p)
-                && !twinflame_lethal(g, p, &tg, post)
-                && Situation::new(g, p).danger < 1.0))
+            || (garth_line_alive(g, p) && !twinflame_lethal(g, p, &tg, post) && Situation::new(g, p).danger < 1.0))
     {
         return Ok(vec![]);
     }
