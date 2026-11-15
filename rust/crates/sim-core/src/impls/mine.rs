@@ -3440,7 +3440,7 @@ pub(crate) fn twinflame(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>
     // The guard is the first expression, so no other seat reaches the rest (pure reads: no RNG, no writes).
     if urdragon_seat(g, p)
         && (ready_garth(g, p).0
-            || (garth_line_alive(g, p) && !twinflame_lethal(g, p, c, &tg, post) && Situation::new(g, p).danger < 1.0))
+            || (garth_line_alive(g, p) && !twinflame_lethal(g, p, &tg, post) && Situation::new(g, p).danger < 1.0))
     {
         return Ok(vec![]);
     }
@@ -3474,9 +3474,10 @@ fn terror_hits_face(g: &Game, p: PlayerId, q: PlayerId, n: i32) -> bool {
 
 /// Twinflame's copies and p's ready fliers kill one opponent this turn: first main phase, and an opponent whom nothing
 /// protects (The One Ring and the like prevent all of it). Two kinds of damage reach that opponent:
-/// - combat damage, if it has no untapped flier or reach creature to block: p's ready fliers and the flying copies, as
-///   many of them as the attack restrictions allow. A cap (Crawlspace) keeps the strongest attackers, flying or not;
-///   a tax (Ghostly Prison, Propaganda) is paid from the mana left after Twinflame, for the attackers worth it; a
+/// - combat damage, if it has no untapped flier or reach creature to block: p's ready fliers and the flying copies,
+///   unless an attack cap is out anywhere (Angelic Arbiter, Sandwurm Convergence, Crawlspace, Silent Arbiter: some turn
+///   on only with the cast) or q's attacks are taxed (Ghostly Prison, Propaganda: the mana left may be restricted, wasted
+///   by the end of the phase or spent first, and the AI keeps none back). Those states count no combat damage. A
 ///   creature locked by an Arrest-style Aura can't attack;
 /// - Terror of the Peaks' enter trigger (not combat, so a blocker doesn't stop it, but it targets: a hexproof player
 ///   can't be hit): each Terror p controls deals the power of every copy that enters, but only where the engine would
@@ -3484,14 +3485,14 @@ fn terror_hits_face(g: &Game, p: PlayerId, q: PlayerId, n: i32) -> bool {
 /// The copies are what the resolution really makes: the printed power of each target that Twinflame can legally target
 /// (no protection from red), `repl::tokens` of them per target (Doubling Season and company), while the token cap
 /// leaves room. Blocks by ground creatures are ignored: everything that deals combat damage here flies.
-fn twinflame_lethal(g: &Game, p: PlayerId, c: CardId, tg: &[PermId], post: bool) -> bool {
+fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
     if post {
         return false;
     }
     let red = crate::cards::Colors::from_letters("R");
     let pacify = !g.auras.is_empty();
-    // the attackers: (power, flies, commander)
-    let mut atk: Vec<(i32, bool, bool)> = g
+    // the flying power p can attack with: its ready fliers and the flying copies
+    let mut fliers: i32 = g
         .player(p)
         .perms
         .iter()
@@ -3504,10 +3505,11 @@ fn twinflame_lethal(g: &Game, p: PlayerId, c: CardId, tg: &[PermId], post: bool)
                 && !x.noatk
                 && (!x.sick || has_haste(g, m))
                 && epow(g, m) > 0
+                && (x.fly || kw(g, m, "flying"))
                 && !(pacify && crate::cardcode::locked(g, m, "pacify"))
         })
-        .map(|&m| (epow(g, m), g.perm(m).fly || kw(g, m, "flying"), g.perm(m).is_cmd))
-        .collect();
+        .map(|&m| epow(g, m))
+        .ssum();
     let n = repl::tokens(g, p, 1);
     let mut room = TOKEN_CAP.saturating_sub(g.player(p).perms.iter().filter(|&&m| g.perm(m).token).count()) as u32;
     // the copies' powers with how many of each enter (one trigger of each Terror per copy)
@@ -3519,15 +3521,16 @@ fn twinflame_lethal(g: &Game, p: PlayerId, c: CardId, tg: &[PermId], post: bool)
         let d = g.db.get(cd);
         if made > 0 && d.pow > 0 {
             copies.push((d.pow, made));
-            atk.extend((0..made).map(|_| (d.pow, d.has_kw("flying"), false)));
+            if d.has_kw("flying") {
+                fliers = fliers.saturating_add(d.pow.saturating_mul(made.min(i32::MAX as u32) as i32));
+            }
         }
     }
     if chasm(g, p) {
-        atk.clear(); // Glacial Chasm: creatures you control can't attack
+        fliers = 0; // Glacial Chasm: creatures you control can't attack
     }
-    // what Twinflame leaves to pay an attack tax with
-    let cost = 2 + 3 * (tg.len() as i64 - 1);
-    let left = (total_mana_spell(g, p, c, false) as i64 - cost).max(0);
+    // an attack cap anywhere (Arbiter, Sandwurm Convergence, Crawlspace, Silent Arbiter, Mirri): not modelled, see below
+    let capped = !crate::engine::hooks::hooked(g, Event::AttackCap).is_empty();
     let terrors = g
         .player(p)
         .perms
@@ -3550,21 +3553,12 @@ fn twinflame_lethal(g: &Game, p: PlayerId, c: CardId, tg: &[PermId], post: bool)
                     || kw(g, b, "reach")
                     || x.cd.is_some_and(|cd| g.db.get(cd).tag(Tag::Reach)))
         });
-        let mut combat = 0i32;
-        if !blocked_in_the_air {
-            // `combat::attack_limits`: strongest first, the cap truncates, the tax is paid for the worthwhile attackers
-            let (tax, cap) = attack_restrictions(g, p, q);
-            let mut a = atk.clone();
-            a.sort_by(|x, y| y.0.cmp(&x.0).then(x.1.cmp(&y.1))); // ties: a ground creature takes the slot first
-            if let Some(k) = cap {
-                a.truncate(k.max(0) as usize);
-            }
-            if tax > 0 {
-                a.retain(|x| x.0 >= tax || (x.2 && x.0 >= 3));
-                a.truncate((left / tax as i64) as usize);
-            }
-            combat = a.iter().filter(|x| x.1).map(|x| x.0).ssum();
-        }
+        // attack restrictions are not modelled: a cap (Arbiter, Sandwurm, Crawlspace ...) can turn on with the cast and a tax
+        // is paid from mana that may be restricted, wasted by the end of the phase or spent first, so any of them means no
+        // combat damage is counted
+        let taxed = attack_restrictions(g, p, q).0 > 0
+            || crate::engine::hooks::hooked(g, Event::AttackTax).iter().any(|(s, _)| g.perm(*s).owner == q);
+        let combat = if blocked_in_the_air || capped || taxed { 0 } else { fliers };
         let mut hit = 0i32;
         if terrors > 0 && !player_hexproof(g, q) {
             for &(pow, made) in &copies {
