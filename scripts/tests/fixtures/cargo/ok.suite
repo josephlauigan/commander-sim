@@ -1,0 +1,16 @@
+     Running unittests src/lib.rs (target/release/deps/sim_core-0123456789abcdef)
+
+running 2 tests
+test engine::tests::alpha ... ok
+test engine::tests::beta ... ok
+
+test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/cards_x.rs (target/release/deps/cards_x-fedcba9876543210)
+
+running 3 tests
+test gamma ... ok
+test delta ... ok
+test slow_one ... ignored
+
+test result: ok. 2 passed; 0 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s

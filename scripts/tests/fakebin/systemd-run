@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# test stand-in for systemd-run --scope: drop the options up to the command (which starts with `env`)
+while [[ ${1:-env} != env ]]; do shift; done
+exec "$@"

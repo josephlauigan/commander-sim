@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# test stand-in for flock: drop the lock file argument and run the command
+shift
+exec "$@"

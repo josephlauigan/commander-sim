@@ -1,0 +1,14 @@
+EXIT 101
+     Running tests/cards_x.rs (target/release/deps/cards_x-fedcba9876543210)
+
+running 3 tests
+test gamma ... FAILED
+test delta ... ok
+test slow_one ... ignored
+
+failures:
+    gamma
+
+test result: FAILED. 1 passed; 1 failed; 1 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p sim-core --test cards_x`

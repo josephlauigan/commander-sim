@@ -1,0 +1,10 @@
+//! fixture: shaped like rust/crates/sim-core/tests/model_gaps_a4.rs
+const NO_CHOICE: &[&str] = &[
+    "Allosaurus Shepherd",
+    "Battle Cry Goblin",
+];
+
+const QUIET: &[(&str, &str)] = &[
+    ("Balan, Wandering Knight", "attaches every Equipment: nothing to choose"),
+    ("Resplendent Angel", "+2/+2 and lifelink: nothing to choose"),
+];

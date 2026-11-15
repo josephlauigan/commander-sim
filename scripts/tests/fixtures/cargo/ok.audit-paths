@@ -1,0 +1,11 @@
+Card paths (cardgen audit --paths)
+
+== Summary
+                                             all cards  cards the decks play
+cards with a path                                 2782                  1681
+double: hard                                         0                     0
+double: shadowed                                     0                     0
+double: competing                                    0                     0
+double: split                                        0                     0
+double: split (paths_ok)                           214                   142
+rule code: dsl-covers                               21                    16

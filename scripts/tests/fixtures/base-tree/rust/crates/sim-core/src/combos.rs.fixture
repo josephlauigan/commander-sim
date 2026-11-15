@@ -1,0 +1,2 @@
+//! fixture: an existing const whose name matches the new-const pattern (it is in the base, so it is not new)
+pub const QUIET: &[&str] = &["~quiet"];

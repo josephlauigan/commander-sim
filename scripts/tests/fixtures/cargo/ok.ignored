@@ -1,0 +1,4 @@
+     Running tests/cards_x.rs (target/release/deps/cards_x-fedcba9876543210)
+slow_one: test
+
+1 test, 0 benchmarks

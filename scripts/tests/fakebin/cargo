@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Test stand-in for cargo: prints canned output from $FAKE_DIR and runs nothing. Records every call in $FAKE_DIR/calls.log.
+# The canned file is <tree tag>.<what>, the tree tag being the name of the directory above rust/ (base, branch, scratch).
+# A first line `EXIT n` in a canned file sets the exit code. In a scratch tree with a behavior.txt, `cargo test` answers
+# with cargo/<behavior>.txt instead (the red/green tests).
+tag=$(basename "$(dirname "$PWD")")
+echo "$tag PWD=$PWD CARGO_TARGET_DIR=${CARGO_TARGET_DIR:-unset} ARGS=$*" >>"$FAKE_DIR/calls.log"
+emit() { # FILE
+  local rc=0 first
+  [[ -f $1 ]] || { echo "fake cargo: no canned file $1" >&2; exit 97; }
+  first=$(head -n1 "$1")
+  if [[ $first =~ ^EXIT\ ([0-9]+)$ ]]; then rc=${BASH_REMATCH[1]}; tail -n +2 "$1"; else cat "$1"; fi
+  exit "$rc"
+}
+args=" $* "
+root=""; prev=""
+for a in "$@"; do [[ $prev == --root ]] && root=$a; prev=$a; done
+case $args in
+  *" --list --ignored "*) emit "$FAKE_DIR/$tag.ignored" ;;
+  *" --list "*) emit "$FAKE_DIR/$tag.list" ;;
+  *" cardgen "*"audit --mine"*) emit "$FAKE_DIR/$tag.audit-mine" ;;
+  *" cardgen "*"audit --paths"*) emit "$FAKE_DIR/$tag.audit-paths" ;;
+  *" cardgen "*" validate"*) emit "$FAKE_DIR/$tag.validate" ;;
+  *" cardgen "*"export --offline"*)
+    [[ -z ${FAKE_DIRTY:-} ]] || { mkdir -p "$root/data"; echo changed >>"$root/data/cards.json"; echo new >"$root/data/new.json"; }
+    echo "1 cards, 1 decks -> $root/data"; exit 0 ;;
+  " test "*)
+    if [[ -f ../behavior.txt ]]; then emit "$FAKE_DIR/cargo-out/$(cat ../behavior.txt).txt"; fi
+    emit "$FAKE_DIR/$tag.suite" ;;
+  *) echo "fake cargo: unexpected call: $*" >&2; exit 98 ;;
+esac

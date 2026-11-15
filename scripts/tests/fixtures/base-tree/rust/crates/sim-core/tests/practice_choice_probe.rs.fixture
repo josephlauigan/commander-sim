@@ -1,0 +1,14 @@
+//! fixture: shaped like rust/crates/sim-core/tests/practice_choice_probe.rs
+/// gaps not yet fixed
+const TO_FIX: &[&str] = &[];
+
+/// listed by the probe but not a gap, each with why
+const FALSE_ALARMS: &[(&str, &str)] = &[
+    (
+        "yshtola: Urza's Cave",
+        "an activated ability, (with parens) and a \"quoted\" word // not a comment",
+    ),
+    ("aragorn: Deflecting Swat", "new targets for a spell on the stack"), // trailing comment ("not", "an entry")
+    /* block ("comment", "too") */
+    ("thanos: Deflecting Swat", "new targets for a spell on the stack"),
+];
