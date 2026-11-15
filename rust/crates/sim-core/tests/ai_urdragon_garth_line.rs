@@ -586,3 +586,12 @@ fn spark_s14_a_token_garth_is_not_a_candidate_the_card_is() {
     assert_eq!(enter_spark(&mut g), GARTH);
     assert_eq!(garths_on_bf(&g), 3, "card Garth, the token and Spark Double's copy");
 }
+
+#[test]
+fn twinflame_doubling_season_under_another_players_control_is_dead() {
+    let mut g = base("urdragon");
+    put(&mut g, P0, SEASON, Z::Gone);
+    perm(&mut g, P1, SEASON);
+    glory(&mut g);
+    fair(&mut g, false);
+}
