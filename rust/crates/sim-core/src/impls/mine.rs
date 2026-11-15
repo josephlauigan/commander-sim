@@ -3573,7 +3573,9 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
         let d = g.db.get(cd);
         if made > 0 && d.pow > 0 {
             copies.push((d.pow, made));
-            if d.has_kw("flying") {
+            // a copy that enters tapped (Blind Obedience, Authority of the Consuls, Thalia) can't attack; its entry still
+            // triggers Terror. The target stands in for the token: the same controller and a creature
+            if d.has_kw("flying") && !repl::enters_tapped(g, p, Some(m)) {
                 fliers = fliers.saturating_add(d.pow.saturating_mul(made.min(i32::MAX as u32) as i32));
             }
         }
