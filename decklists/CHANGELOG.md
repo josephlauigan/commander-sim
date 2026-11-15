@@ -657,6 +657,7 @@ Deck key `yshtola`, `decklists/JD/yshtola-esper-drain.md`.
 
 ### Changes
 
+- **2026-11-14.** Out: Gitaxian Probe. In: Sphere of Safety. Sphere of Safety in, Gitaxian Probe out (JD): a second pillowfort back against creature decks; the Doomsday piles are re-derived without Probe; not simulated
 - **2026-11-14.** Out: Torment of Hailfire. In: Voice of Victory. Voice of Victory in, Torment of Hailfire out (follow-up to the Doomsday/Oracle package): JD 11/14, not simulated
 - **2026-11-14.** Out: Bound in Silence, Champion's Helm, Conjurer's Closet, Displacer Kitten, Expedition Map, Idyllic Tutor, Mystic Remora, Restoration Angel, Sphere of Safety, Teferi's Protection, Teleportation Circle, Tezzeret's Gambit. In: Borne Upon a Wind, Brainstorm, Dark Ritual, Demonic Consultation, Doomsday, Gitaxian Probe, Grand Abolisher, Preordain, Silence, Teferi, Time Raveler, Thassa's Oracle, Valley Floodcaller. Doomsday/Oracle package, Option B (12 swaps): JD 11/14, not simulated
 - **2026-11-13.** Out: Dovin's Veto. In: Disdainful Stroke. Dovin's Veto => Disdainful Stroke (JD's choice, not simulated): the Cali Thanos deck takes Dovin's Veto, and Disdainful Stroke, cut from that deck for An Offer You Can't Refuse, takes its place: {1}{U}, counters a spell with mana value 4 or more.

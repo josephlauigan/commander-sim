@@ -38,6 +38,19 @@ sorceries, 1 planeswalker, 37 lands; trigger spells 26; Game Changers 14 (the co
 Oracle + Consultation line is Line 5 and Doomsday is Line 6). Not simulated, like the rest of this section; no run of any
 list includes Voice of Victory.
 
+**Follow-up (JD, 2026-11-14): Sphere of Safety in, Gitaxian Probe out** (JD's choice: a second pillowfort back against
+creature decks; Miirym's combat is her top killer in the earlier runs). Sphere of Safety ({4}{W}, an enchantment, white,
+commander-legal; creatures can't attack you unless their controller pays {X} for each, X being the number of enchantments
+you control) was in the list before the package. In the earlier analysis it was cast in about 34% of the games it was
+drawn in, and it stuck in hand in 67% of the 200-game test run, a small sample. What it costs: Gitaxian Probe was the free
+cantrip inside the Doomsday piles, so the three piles were re-derived and walked through by hand without it, using only
+Brainstorm, Preordain and Silence (Borne Upon a Wind starts Pile C). At devotion 2 the piles now need two cantrips (Piles A
+and B cost five mana with four blue, Pile C ten mana with five blue), so a single counter on a cantrip stalls them; at
+devotion 3 (Y'shtola out, or Teferi or Floodcaller as the enabler) Piles A and B need only one cantrip (Pile C still needs
+Borne Upon a Wind and Preordain). Pile C needs Borne Upon a Wind (or Preordain) in hand to start; Probe was its other starter. Counts
+after the swap: 16 creatures, 10 enchantments, 6 artifacts, 16 instants, 13 sorceries, 1 planeswalker, 37 lands; trigger
+spells 27 (Sphere is mana value 5); Game Changers 14. Not simulated, like the rest of this section.
+
 **Baseline (measured; run output `bv377p7og`):** **26.6%** (24.8-28.6) at t5, 2,000 games, seed 500000, loose, look-ahead,
 on the Cali base `c1da6adb` before the swap: the same as the 11/07 baselines (27.4% in 10,000 games, 26.5%). Plan online
 62.4%; wins by damage 72%, combo 26%. Eliminated by: Miirym 18.8%, Kinnan 16.4%, Urza 13.9%, Zur 12.6%, Yawgmoth 11.6%.
@@ -71,9 +84,9 @@ Ritual, Mockingbird, Lion's Eye Diamond and Ponder, with an earlier plan file (a
   up, so her draw takes a card off the pile at that end step. Unverified: whether the pile search uses Necropotence
   activations, and whether the AI declines Rhystic Study and Consecrated Sphinx draws while a pile is set.
 
-**Plan file as it stands (uncommitted; `tests/plans.rs` passes).** The two combo lines and a held Doomsday (priority 0);
+**Plan file as it stands (`tests/plans.rs` passes).** The two combo lines and a held Doomsday (priority 0);
 wishes: Consultation (88, Oracle held) and the Oracle (88, Consultation held) ahead of Doomsday (78, with a flash enabler
-out or a Pile C starter in hand) and Sanguine Bond (85); a pile-starter wish (Borne Upon a Wind, Gitaxian Probe) at 58; an
+out or a Pile C starter in hand) and Sanguine Bond (85); a pile-starter wish (Borne Upon a Wind; it also named Gitaxian Probe until the swap below) at 58; an
 explicit Silence priority of 0. The rules for the cut cards (Restoration Angel, Teferi's Protection, Mystic Remora, Idyllic
 Tutor, Champion's Helm) were removed. Demonic Consultation has no priority rule: from the code it is not cast outside the
 combo line (no tags and no DSL in `cards.json`), unverified on the derived-values arm.

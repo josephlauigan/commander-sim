@@ -28,8 +28,8 @@ in the Spare pile. If any other card is missing from a box, add it to "Cards to 
 | Pile | Stays in its own box | From Tymna/Thrasios box | From Y'shtola box | To find | Total |
 |---|---|---|---|---|---|
 | New Yoshimaru/Tymna | 21 + 1 basic Swamp | n/a | 4 | 59 + 15 basics | 100 |
-| New Y'shtola | 87 | 11 | n/a | 2 | 100 |
-| Spare | n/a | 67 | 9 | n/a | 76 |
+| New Y'shtola | 88 | 10 | n/a | 2 | 100 |
+| Spare | n/a | 68 | 8 | n/a | 76 |
 
 ## 1. The Tymna/Thrasios box
 
@@ -61,14 +61,13 @@ Tymna stays as a commander. Thrasios leaves and Yoshimaru takes his place in the
 
 The box also holds 1 Swamp, which stays.
 
-### To New Y'shtola (11 cards)
+### To New Y'shtola (10 cards)
 
 - Borne Upon a Wind
 - Brainstorm
 - Dark Ritual
 - Demonic Consultation
 - Doomsday
-- Gitaxian Probe
 - Preordain
 - Teferi, Time Raveler
 - Thassa's Oracle
@@ -77,11 +76,11 @@ The box also holds 1 Swamp, which stays.
 
 Silence and Grand Abolisher are the other two package cards. They do not move: see section 5.
 
-### To the Spare pile (67 cards)
+### To the Spare pile (68 cards)
 
-Thrasios, Triton Hero goes here. The 67 cards are two groups.
+Thrasios, Triton Hero goes here. The 68 cards are two groups.
 
-**Cards that neither new list plays (55):**
+**Cards that neither new list plays (56):**
 
 - Ad Nauseam
 - Ancient Tomb
@@ -104,6 +103,7 @@ Thrasios, Triton Hero goes here. The 67 cards are two groups.
 - Force of Negation
 - Gemstone Caverns
 - Gifts Ungiven
+- Gitaxian Probe
 - Grim Monolith
 - Grim Tutor
 - Into the Flood Maw
@@ -158,7 +158,7 @@ The Tymna/Thrasios box is now empty except for the 21 cards that stay and the Sw
 
 ## 2. The Y'shtola box
 
-The other 87 cards stay in the box.
+The other 88 cards stay in the box.
 
 ### To New Yoshimaru/Tymna (4 cards)
 
@@ -167,7 +167,7 @@ The other 87 cards stay in the box.
 - Teferi's Protection
 - Teleportation Circle
 
-### To the Spare pile (9 cards)
+### To the Spare pile (8 cards)
 
 - Bound in Silence
 - Champion's Helm
@@ -175,23 +175,21 @@ The other 87 cards stay in the box.
 - Expedition Map
 - Idyllic Tutor
 - Mystic Remora
-- Sphere of Safety
 - Tezzeret's Gambit
 - Torment of Hailfire
 
 Mystic Remora is in this list and also in the Tymna/Thrasios Spare list, so the Spare pile ends up with two
 copies, one from each box. That is correct.
 
-### Into the box (13 cards)
+### Into the box (12 cards)
 
-From the Tymna/Thrasios box (11):
+From the Tymna/Thrasios box (10):
 
 - Borne Upon a Wind
 - Brainstorm
 - Dark Ritual
 - Demonic Consultation
 - Doomsday
-- Gitaxian Probe
 - Preordain
 - Teferi, Time Raveler
 - Thassa's Oracle
@@ -312,8 +310,8 @@ That deck keeps its copy, so the new deck needs another one.
 - **New Yoshimaru/Tymna:** 21 from the Tymna/Thrasios box + 1 Swamp already in it + 4 from the
   Y'shtola box + 59 to find + 15 basics to find = 100, including both commanders (Yoshimaru, Ever Faithful and
   Tymna the Weaver).
-- **New Y'shtola:** 87 in the box + 11 from the Tymna/Thrasios box + 2 second copies = 100.
-- **Spare:** 67 from the Tymna/Thrasios box + 9 from the Y'shtola box = 76 cards.
+- **New Y'shtola:** 88 in the box + 10 from the Tymna/Thrasios box + 2 second copies = 100.
+- **Spare:** 68 from the Tymna/Thrasios box + 8 from the Y'shtola box = 76 cards.
 - Check each pile against the import list at the end of its deck document. Every card appears once, except basic lands
   (Yoshimaru/Tymna: 10 Plains and 6 Swamp; Y'shtola: 6 Plains, 5 Island and 8 Swamp).
 

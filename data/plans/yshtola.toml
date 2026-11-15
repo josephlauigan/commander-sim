@@ -154,7 +154,8 @@ value = 12
 
 # ---- Doomsday / Oracle package (2026-11-14, JD: Option B, 12 swaps from the Tymna/Thrasios Doomsday deck) ----
 # In: Thassa's Oracle, Demonic Consultation, Doomsday, Silence, Grand Abolisher, Valley Floodcaller, Borne Upon a Wind,
-# Teferi Time Raveler, Gitaxian Probe, Brainstorm, Preordain, Dark Ritual. NOT in: Tainted Pact (it stops at the second
+# Teferi Time Raveler, Brainstorm, Preordain, Dark Ritual (Gitaxian Probe was in this package and was swapped for Sphere of
+# Safety on 2026-11-14, JD: it is not in the list). NOT in: Tainted Pact (it stops at the second
 # card with the same name, and this list has 19 basics, so it can't exile the library), Orim's Chant, Cabal Ritual,
 # Mockingbird, Lion's Eye Diamond, Ponder (Opus review 2026-11-14; Read the Bones and Fatal Push stay in the deck).
 # PROVISIONAL: nothing below has been measured. Only the generic sections are used (she is a Tier 5 key: the Tier 6 plan
@@ -206,13 +207,13 @@ score = 88
 # enabler out, or a Pile C starter in hand; the Tier 6 plan has the same enabler term)
 [[wish]]
 cards = ["Doomsday"]
-when = ["have:Thassa's Oracle & not out:Thassa's Oracle & not have:Demonic Consultation & (out:Valley Floodcaller | out:Teferi, Time Raveler | have:Borne Upon a Wind | have:Gitaxian Probe)"]
+when = ["have:Thassa's Oracle & not out:Thassa's Oracle & not have:Demonic Consultation & (out:Valley Floodcaller | out:Teferi, Time Raveler | have:Borne Upon a Wind)"]
 score = 78
 
-# the pile's starter when Doomsday and the Oracle are held and nothing yet lets the pile start: a Pile C starter is Borne
-# Upon a Wind or Gitaxian Probe (a flash enabler out makes the end-step cast possible instead). Preordain and Brainstorm need
+# the pile's starter when Doomsday and the Oracle are held and nothing yet lets the pile start: the Pile C starter is Borne
+# Upon a Wind (a flash enabler out makes the end-step cast possible instead). Preordain and Brainstorm need
 # not be in hand: Doomsday puts them in the pile from the library or graveyard
 [[wish]]
-cards = ["Borne Upon a Wind", "Gitaxian Probe"]
-when = ["have:Doomsday & have:Thassa's Oracle & not out:Thassa's Oracle & not have:Demonic Consultation & not out:Valley Floodcaller & not out:Teferi, Time Raveler & not have:Borne Upon a Wind & not have:Gitaxian Probe"]
+cards = ["Borne Upon a Wind"]
+when = ["have:Doomsday & have:Thassa's Oracle & not out:Thassa's Oracle & not have:Demonic Consultation & not out:Valley Floodcaller & not out:Teferi, Time Raveler & not have:Borne Upon a Wind"]
 score = 58
