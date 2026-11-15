@@ -11,6 +11,8 @@ artifacts-and-Dragons rebuilds, and the `thrasios` and `thanos` keys were pointe
 and Sauron were merged into Aragorn, the Uniter (key `aragorn`) and their keys retired.
 On 2026-11-13 a new Ur-Dragon deck (key `urdragon`) was added and the Thanos key was pointed at a Cali Commander artifact-combo list (`decklists/cali_commander/`) and
 Aragorn was retired as a deck (its key stays in the simulator until the engine work).
+On 2026-11-14 a new Yoshimaru and Tymna blink deck was written (not in the simulator) and the Tymna/Thrasios Doomsday list was retired;
+the `thrasios` key keeps playing the retired list until the rewire step.
 Avery's decks (Alela, Galadriel) are no longer tracked from 2026-11-06 (JD); their lists are in `decklists/pool/retired/`.
 
 ## Aragorn, the Uniter — Four-Colour Spell Burn
@@ -724,6 +726,14 @@ Deck key `yshtola`, `decklists/JD/yshtola-esper-drain.md`.
 - **Life is still a resource.** Necropotence, Read the Bones, Night's Whisper, Anguished Unmaking, Tezzeret's Gambit, Deep Analysis's flashback, Caves of Koilos, Adarkar Wastes, Underground River, Spire of Industry and Talisman of Progress all cost life. The deck gains it back steadily: 2 per Y'shtola trigger, plus every drain.
 - **Mystic Remora's upkeep grows.** Pay it for a turn or two at most, then let it go.
 
+## Yoshimaru, Ever Faithful & Tymna the Weaver — Blink and Enter-the-Battlefield Value (W/B)
+
+Deck file `decklists/JD/yoshimaru-tymna-blink.md`; not in the simulator (no key yet).
+
+### Changes
+
+- **2026-11-14.** New deck (JD, not simulated): Yoshimaru, Ever Faithful and Tymna the Weaver as partner commanders (white-black, Bracket 4), a blink and enter-the-battlefield value deck. 8 Game Changers (Mana Vault, Demonic Tutor, Vampiric Tutor, Enlightened Tutor, Imperial Seal, Teferi's Protection, The One Ring, Orcish Bowmasters). Enter effects (Solitude, Skyclave Apparition, Palace Jailer, Ranger-Captain of Eos, Recruiter of the Guard, Sun Titan) reused by ten blink cards and three trigger doublers (Delney, Gandalf the White, Elesh Norn), a life-and-drain layer (Elas il-Kor, Haliya, Vito, Kambal, Sheoldred), and Tymna with Delney for cards. Win lines: Vito with Exquisite Blood, Heliod with Walking Ballista, Archangel of Thune with Walking Ballista and a lifelink source, and Restoration Angel with Felidar Guardian and a payoff. The simulator does not have it yet: the key and plan file come with the rewire and the Yoshimaru card model.
+
 ## Alela, Artful Provocateur — Esper Faerie Flyers
 
 Deck key `alela` (retired), `decklists/pool/retired/alela-esper-faeries.md`.
@@ -835,6 +845,7 @@ Deck key `thrasios`, `decklists/JD/tymna-thrasios-doomsday.md` (the list below t
 
 ### Changes
 
+- **2026-11-14.** Retired (JD): replaced by the Yoshimaru and Tymna blink deck, `decklists/JD/yoshimaru-tymna-blink.md` (Bracket 4, not simulated). The Doomsday and Thassa's Oracle package moved to the Y'shtola deck (`decklists/JD/yshtola-esper-drain.md`). The file stays in `decklists/JD/` and `data/my_decks.toml` is unchanged, so the `thrasios` key plays this list until the rewire step moves it to `decklists/pool/retired/` and updates the keys.
 - **2026-11-07.** Out: Savannah, Breeding Pool. In: Watery Grave, Swamp. JD adopted swap S2 (2026-11-07) for more black mana for Doomsday's {B}{B}{B}. Paired, look-ahead, loose, 5,000 games per list, t6, main 7d4d5b35: 34.7% -> 36.2% (+1.6, noise ±1.6, at the edge); the plan online by turn 4 60.4% -> 63.0% (`audit/thrasios/FINDINGS.md`). Printings from JD's list (Arcane Signet's updated too).
 - **2026-11-05.** Retired (JD): replaced by the Doomsday rebuild, `decklists/JD/tymna-thrasios-doomsday.md` (cEDH, t6; 82 cards from Thanos, 14 from this list, 4 to buy). Tymna, Thrasios, the four shock lands, Swords to Plowshares, Gifts Ungiven, Avacyn's Pilgrim, Basalt Monolith, Rings of Brighthearth, Walking Ballista, Smothering Tithe and Arcane Signet move to the new list; the rest go to the binder (`documents/doomsday-thanos-rebuild-swaps.md`). The `thrasios` key was pointed at the new file the same day (tier t5 to t6; printings, plan lines and Spellbook file replaced). Not simulated yet; Doomsday has no card code (a separate change).
 - **2026-11-03.** Out: Sphinx of New Prahv. In: Natural Order. JD approved: replace Sphinx of New Prahv with Natural Order to turn spare green creatures into Atraxa or Dromoka; retain Diabolic Tutor; not simulated.

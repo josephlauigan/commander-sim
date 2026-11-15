@@ -1,5 +1,10 @@
 # Tymna the Weaver & Thrasios, Triton Hero — Four-Colour Doomsday (W/U/B/G, cEDH)
 
+**Retired 2026-11-14 (JD).** Replaced by the Yoshimaru and Tymna blink deck, `decklists/JD/yoshimaru-tymna-blink.md` (Bracket 4). The
+Doomsday and Thassa's Oracle package moved to the Y'shtola deck, `decklists/JD/yshtola-esper-drain.md`. The file stays in `decklists/JD/`
+and `data/my_decks.toml` is unchanged, so the simulator still plays this list under the key `thrasios` until the rewire step moves it to
+`decklists/pool/retired/` and updates the keys.
+
 Thassa's Oracle wins the game three ways here: with **Demonic Consultation** or **Tainted Pact** (two cards, three or
 four mana), out of a five-card **Doomsday** pile, or after Thrasios digs through the library on unlimited mana. Fast
 mana, tutors and the free counters from the Thanos deck make each try cheap and well protected. The two commanders
