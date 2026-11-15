@@ -1177,4 +1177,35 @@ mod round4 {
         let (g, _, _) = bog_game(false);
         assert!(g.player(P1).gy.is_empty(), "without Moon the AI's Bog exiles the Titan's graveyard");
     }
+
+    // F1 (round 4b): a copy made while an animation already set the base P/T
+    const S: &str = "The Seriema";
+    fn pt(g: &Game, m: PermId) -> (i32, i32) {
+        (chars::power(g, m), chars::toughness(g, m))
+    }
+    fn mirror_copy(g: &mut Game, m: PermId, target: &'static str) {
+        human(g, P0, move |r| r.choices.iter().position(|s| s.contains(target)));
+        pool(g, P0, &[('C', 2)]);
+        let a = sim_core::human::gaps_c::abilities(g, P0, m, "Mirage Mirror").unwrap().remove(0);
+        assert_eq!((a.act)(g, P0, m).unwrap(), None);
+    }
+    fn target_seriema(g: &mut Game) -> PermId {
+        g.player_mut(P1).library.clear();
+        perm(g, P1, S)
+    }
+
+    #[test]
+    fn tezzeret_animated_mirror_keeps_zero_base_when_it_copies_seriema() {
+        let mut g = tbl();
+        target_seriema(&mut g);
+        let m = perm(&mut g, P0, "Mirage Mirror");
+        g.player_mut(P0).emblems.push(sim_core::impls::t6_godo::TEZ_EMBLEM);
+        sim_core::impls::t6_godo::tez_emblem(&mut g, P0).unwrap();
+        assert_eq!(pt(&g, m), (3, 3));
+        assert!(g.perm(m).data.truthy(DataKey::Anim));
+        mirror_copy(&mut g, m, S);
+        assert_eq!(g.perm(m).card(), card(&g, S));
+        assert_eq!(g.perm(m).plus, 3);
+        assert_eq!(pt(&g, m), (3, 3), "layer-7 zero base still overrides the layer-1 copy");
+    }
 }
