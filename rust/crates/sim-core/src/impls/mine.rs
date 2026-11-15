@@ -3515,19 +3515,22 @@ fn confirm_on(g2: &mut Game, p: PlayerId, c: CardId, opps: &[PlayerId], qs: &[Pl
     Ok(false)
 }
 
-/// The copy hides what p can't see: each living opponent's hand goes back into its library (a commander put into the
-/// hand stays: it is known) and every library is shuffled, except the cards p put on top of its own (`known_top`), as
-/// `search::determinize` does, but with no hand dealt: the release reads only the visible board (FINDINGS L2)
+/// The copy hides what p can't see: each living opponent's hand goes back into its library and every library is
+/// shuffled, except the cards p put on top of its own (`known_top`), as `search::determinize` does, but with no hand
+/// dealt: the release reads only the visible board (FINDINGS L2). Known cards stay in the hand: a commander put there,
+/// and the exiled cards the engine holds there (`values::hand_proper` leaves them out: cards it may play from exile,
+/// Prosper's, cards taken from another player, Opposition Agent's; a foretold card counts as known too)
 fn hide(g2: &mut Game, p: PlayerId, rng: &mut crate::rng::Rng) {
     let known = crate::engine::tutors::known_top(g2, p).len();
-    for q in &mut g2.players {
+    let secret: Vec<Vec<CardId>> = g2.players.iter().map(|q| crate::engine::values::hand_proper(g2, q.id)).collect();
+    for (q, secret) in g2.players.iter_mut().zip(&secret) {
         if q.id == p {
             let n = q.library.len().saturating_sub(known);
             rng.shuffle(&mut q.library[..n]);
         } else if q.alive {
             let (cmd, cmd2) = (q.cmd, q.cmd2);
-            let (keep, back): (Vec<CardId>, Vec<CardId>) =
-                q.hand.iter().copied().partition(|&x| x == cmd || Some(x) == cmd2);
+            let (back, keep): (Vec<CardId>, Vec<CardId>) =
+                q.hand.iter().copied().partition(|&x| x != cmd && Some(x) != cmd2 && secret.contains(&x));
             q.hand = keep;
             q.library.extend(back);
             rng.shuffle(&mut q.library);
