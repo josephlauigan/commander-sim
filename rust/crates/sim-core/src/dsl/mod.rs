@@ -1706,7 +1706,10 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
                 Some("any_player") if !kw.attackers.is_empty() => out.push(ctx), // Tier 3 (aurelia): "a player attacks"
                 Some("you_each") if kw.player == Some(q) => {
                     for &m in &kw.attackers {
-                        if subtype.as_deref() == Some("warrior") && !g.perm(m).warrior {
+                        // "whenever a Dragon you control attacks": each attacker of that type (a warrior token counts too)
+                        if let Some(t) = subtype.as_deref().filter(|t| !t.is_empty())
+                            && !(has_type(g, m, t) || (t == "warrior" && g.perm(m).warrior))
+                        {
                             continue;
                         }
                         out.push(DslCtx { event_perm: Some(m), ..ctx.clone() });

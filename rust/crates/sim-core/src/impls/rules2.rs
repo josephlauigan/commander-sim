@@ -1911,6 +1911,62 @@ fn finale(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     Ok("gy")
 }
 
+/// Nature's Lore and Three Visits: a Forest card (a Forest, or a dual land with the Forest type) onto the battlefield.
+/// The land follows its own enters rule (a shock land: pay life or enter tapped; a Triome or a tapped dual: tapped). A
+/// person picks the card (or none); the AI takes the one that makes the most colours. Opposition Agent takes it instead.
+fn forest_ramp(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    let is_forest = |g: &Game, x: CardId| {
+        let d = g.db.get(x);
+        d.land && (&*d.name == "Forest" || d.has_subtype("forest"))
+    };
+    let name = g.db.get(c).name.to_string();
+    let human = crate::human::is_human(g, p);
+    let found = if human {
+        let prompt = format!("{name}: search your library for a Forest card");
+        crate::human::choices::search(g, p, &is_forest, 1, &prompt, true)?.first().copied()
+    } else {
+        let cs: Vec<CardId> = searchable(g, p).into_iter().filter(|&x| is_forest(g, x)).collect();
+        let best = max_by(&cs, |x| g.db.get(x).tags.str(Tag::C).map_or(0, |s| s.len()) as f64);
+        if let Some(x) = best {
+            remove_card(&mut g.player_mut(p).library, x);
+        }
+        best
+    };
+    if !human {
+        shuffle_library(g, p); // "then shuffle", found or not (a person's search shuffles itself)
+    }
+    let Some(x) = found else { return Ok("gy") };
+    if let Some(a) = crate::engine::zones::agent_for(g, p) {
+        crate::engine::zones::agent_take(g, a, p, x); // Opposition Agent: the searcher's card is theirs to exile
+        return Ok("gy");
+    }
+    // the land's own enters rule, as `turn::play_land_card` applies it
+    let tapped = match crate::engine::turn::shock_cost(g, p, x) {
+        Some(n) => {
+            let pay = if human {
+                g.player(p).life >= n
+                    && crate::human::choices::yes_no(
+                        g,
+                        p,
+                        &format!("{}: pay {n} life so it enters untapped?", g.db.get(x).name),
+                    )?
+            } else {
+                crate::engine::turn::pays_for_land(g, p, x, n)
+            };
+            if pay {
+                crate::engine::life::lose_life(g, p, n, Some(p), "other", None)?;
+            }
+            !pay
+        }
+        None => crate::engine::turn::land_enters_tapped(g, p, x),
+    };
+    let l = g.add_land_entering(p, x, tapped);
+    crate::glog!(g, "    {} finds {}", name, g.db.get(x).name);
+    crate::cardcode::land_etb(g, p, l)?;
+    crate::engine::zones::landfall(g, p)?;
+    Ok("gy")
+}
+
 fn farseek_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
     if g.player(p).turns <= 4 { 80 } else { 40 }
 }
@@ -2066,6 +2122,13 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Farseek")?;
     c.resolve = Some(farseek);
     c.prio = Some(farseek_prio);
+    for name in ["Nature's Lore", "Three Visits"] {
+        let c = r.card(db, name)?;
+        c.resolve = Some(forest_ramp);
+        if name == "Three Visits" {
+            c.prio = Some(farseek_prio); // Nature's Lore keeps the pool's own ramp priority (its `lr` tag)
+        }
+    }
     r.card(db, "Ichormoon Gauntlet")?.cast = Some(ichor);
     Ok(())
 }

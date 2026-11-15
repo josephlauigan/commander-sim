@@ -1,44 +1,14 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-11-14",
+  "fetched": "2026-11-15",
   "deck": "urdragon",
   "commanders": [
     "The Ur-Dragon"
   ],
-  "request_sha256": "71ad97a723efcd19a5a6849d39278663dd99ccb44632bb4944f6ec979ac9e16d",
+  "request_sha256": "e467926f894e0a2711fa1cbe268545672aef351915b9cfbc51ed08ba008cf2c9",
   "identity": "WUBRG",
   "included": [
-    {
-      "id": "1800-3398",
-      "cards": [
-        {
-          "name": "Old Gnawbone",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Hellkite Charger",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite combat damage",
-        "Infinite combat phases",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "Old Gnawbone does not have summoning sickness.\nAn opponent can not block Old Gnawbone.\nAn opponent can not block Hellkite Charger.",
-      "mana": "{5}{R}{R}",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 21382
-    },
     {
       "id": "1171-1235-3908-4772",
       "cards": [
@@ -108,7 +78,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 368373,
+      "popularity": 368508,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -139,7 +109,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 78839,
+      "popularity": 78873,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -168,7 +138,7 @@
       "mana": "{2}{R}{R}{R}",
       "bracket": "S",
       "legal": true,
-      "popularity": 74617,
+      "popularity": 74614,
       "missing": [
         "Dualcaster Mage"
       ]
@@ -197,7 +167,7 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 38104,
+      "popularity": 38117,
       "missing": [
         "Tidespout Tyrant"
       ]
@@ -231,7 +201,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 31788,
+      "popularity": 31820,
       "missing": [
         "Aggravated Assault"
       ]
@@ -260,9 +230,39 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 28721,
+      "popularity": 28719,
       "missing": [
         "Ancient Gold Dragon"
+      ]
+    },
+    {
+      "id": "1089-4971",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Curiosity",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Curiosity attached to Niv-Mizzet.\nYou have a way to draw a card.\nYour library is greater than opponent life total.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 26426,
+      "missing": [
+        "Curiosity"
       ]
     },
     {
@@ -293,9 +293,72 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 24416,
+      "popularity": 24435,
       "missing": [
         "Aggravated Assault"
+      ]
+    },
+    {
+      "id": "4971-6092",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, Visionary",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage",
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 23157,
+      "missing": [
+        "Niv-Mizzet, Visionary"
+      ]
+    },
+    {
+      "id": "1800-3398",
+      "cards": [
+        {
+          "name": "Old Gnawbone",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Hellkite Charger",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite combat damage",
+        "Infinite combat phases",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Old Gnawbone does not have summoning sickness.\nAn opponent can not block Old Gnawbone.\nAn opponent can not block Hellkite Charger.",
+      "mana": "{5}{R}{R}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 21379,
+      "missing": [
+        "Hellkite Charger"
       ]
     },
     {
@@ -322,7 +385,7 @@
       "mana": "{6}{R}{R}{R}",
       "bracket": "C",
       "legal": true,
-      "popularity": 15937,
+      "popularity": 15941,
       "missing": [
         "Orthion, Hero of Lavabrink"
       ]
@@ -358,7 +421,7 @@
       "mana": "{3}{B}{B}{R}{R}",
       "bracket": "O",
       "legal": true,
-      "popularity": 14739,
+      "popularity": 14735,
       "missing": [
         "Bladewing the Risen"
       ]
@@ -387,9 +450,39 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 14008,
+      "popularity": 14014,
       "missing": [
         "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "2396-4971",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ophidian Eye",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Ophidian Eye attached to Niv-Mizzet.\nYou have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 13676,
+      "missing": [
+        "Ophidian Eye"
       ]
     },
     {
@@ -416,7 +509,7 @@
       "mana": "{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 12286,
+      "popularity": 12296,
       "missing": [
         "Jumbo Cactuar"
       ]
@@ -446,9 +539,69 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 11962,
+      "popularity": 11969,
       "missing": [
         "Mycosynth Lattice"
+      ]
+    },
+    {
+      "id": "406-4971",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tandem Lookout",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Tandem Lookout is paired with Niv-Mizzet.\nNiv-Mizzet does not have summoning sickness.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 11884,
+      "missing": [
+        "Tandem Lookout"
+      ]
+    },
+    {
+      "id": "703-5291",
+      "cards": [
+        {
+          "name": "Astral Dragon",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Cursed Mirror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite copies of noncreature permanents you control",
+        "Infinite creature tokens with haste"
+      ],
+      "requires": [],
+      "prerequisites": "Cursed Mirror cannot be copying a creature.",
+      "mana": "{6}{U}{U}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 11263,
+      "missing": [
+        "Astral Dragon"
       ]
     },
     {
@@ -473,7 +626,7 @@
       "mana": "{4}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 9950,
+      "popularity": 9956,
       "missing": [
         "Master Transmuter"
       ]
@@ -502,9 +655,38 @@
       "mana": "{13}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 9841,
+      "popularity": 9846,
       "missing": [
         "Approach of the Second Sun"
+      ]
+    },
+    {
+      "id": "1678-7839",
+      "cards": [
+        {
+          "name": "Smaug the Impenetrable",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Mayhem Devil",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite colored mana"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Treasure.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 9384,
+      "missing": [
+        "Mayhem Devil"
       ]
     },
     {
@@ -529,70 +711,9 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 9271,
+      "popularity": 9278,
       "missing": [
         "Felidar Guardian"
-      ]
-    },
-    {
-      "id": "876-7070--141",
-      "cards": [
-        {
-          "name": "Monk Gyatso",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lightning Greaves",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [
-        "Creature with Affinity"
-      ],
-      "prerequisites": "You are able to reduce the affinity creature's cost by {2} or more.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 9175,
-      "missing": [
-        "Monk Gyatso"
-      ]
-    },
-    {
-      "id": "3398-6999",
-      "cards": [
-        {
-          "name": "Hellkite Charger",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Sozin's Comet",
-          "zones": [
-            "H",
-            "E"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases",
-        "Infinite red mana",
-        "Infinite combat damage"
-      ],
-      "requires": [],
-      "prerequisites": "You control another creature that can attack this turn.\nAn opponent cannot block creatures you control",
-      "mana": "{3}{R}{R} at most",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 9113,
-      "missing": [
-        "Sozin's Comet"
       ]
     },
     {
@@ -648,36 +769,9 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 8643,
+      "popularity": 8644,
       "missing": [
         "Rionya, Fire Dancer"
-      ]
-    },
-    {
-      "id": "1025-4682",
-      "cards": [
-        {
-          "name": "Stasis",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Smothering Tithe",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 8443,
-      "missing": [
-        "Stasis"
       ]
     },
     {
@@ -704,7 +798,7 @@
       "mana": "{3}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 8131,
+      "popularity": 8139,
       "missing": [
         "Ad Nauseam"
       ]
@@ -733,7 +827,7 @@
       "mana": "{10}{R}",
       "bracket": "C",
       "legal": true,
-      "popularity": 7724,
+      "popularity": 7739,
       "missing": [
         "Devastating Onslaught"
       ]
@@ -762,40 +856,9 @@
       "mana": "{12}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7609,
+      "popularity": 7616,
       "missing": [
         "Approach of the Second Sun"
-      ]
-    },
-    {
-      "id": "3398-7016",
-      "cards": [
-        {
-          "name": "Hellkite Charger",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Firebending Student",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases",
-        "Infinite red mana",
-        "Infinite combat damage"
-      ],
-      "requires": [],
-      "prerequisites": "An opponent cannot block creatures you control",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 7484,
-      "missing": [
-        "Firebending Student"
       ]
     },
     {
@@ -825,22 +888,28 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 7198,
+      "popularity": 7204,
       "missing": [
         "Mind Over Matter"
       ]
     },
     {
-      "id": "3398-5039",
+      "id": "84-2972-3750",
       "cards": [
         {
-          "name": "The Reaver Cleaver",
+          "name": "Ganax, Astral Hunter",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Hellkite Charger",
+          "name": "Aggravated Assault",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Utvara Hellkite",
           "zones": [
             "B"
           ]
@@ -849,79 +918,48 @@
       "results": [
         "Infinite artifact tokens",
         "Infinite colored mana",
-        "Infinite combat damage",
         "Infinite combat phases",
+        "Infinite creature tokens",
+        "Infinite mana creatures you control can produce",
         "Infinite Treasure tokens"
       ],
       "requires": [],
-      "prerequisites": "The Reaver Cleaver attached to a creature with power seven or greater that can attack this turn.\nAn opponent is unable to block the creature with The Reaver Cleaver attached.",
-      "mana": "{5}{R}{R}",
-      "bracket": "O",
+      "prerequisites": "You control at least six Dragons that can attack this turn.\nAn opponent cannot block and kill creatures you control.",
+      "mana": "",
+      "bracket": "E",
       "legal": true,
-      "popularity": 7111,
+      "popularity": 5907,
       "missing": [
-        "The Reaver Cleaver"
+        "Aggravated Assault"
       ]
     },
     {
-      "id": "3398-7067",
+      "id": "4629-7839",
       "cards": [
         {
-          "name": "Hellkite Charger",
+          "name": "Smaug the Impenetrable",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Fire Nation Turret",
+          "name": "Pyrohemia",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite combat phases",
-        "Infinite damage",
-        "Infinite red mana"
+        "Near-infinite damage to all players"
       ],
       "requires": [],
-      "prerequisites": "An opponent cannot block and kill Hellkite Charger.",
-      "mana": "{9}",
-      "bracket": "E",
+      "prerequisites": "",
+      "mana": "{R}",
+      "bracket": "R",
       "legal": true,
-      "popularity": 6116,
+      "popularity": 5775,
       "missing": [
-        "Fire Nation Turret"
-      ]
-    },
-    {
-      "id": "3398-7389",
-      "cards": [
-        {
-          "name": "Hellkite Charger",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Iroh, Dragon of the West",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases",
-        "Infinite red mana"
-      ],
-      "requires": [],
-      "prerequisites": "An opponent cannot block and kill Hellkite Charger.",
-      "mana": "{9}",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 5641,
-      "missing": [
-        "Iroh, Dragon of the West"
+        "Pyrohemia"
       ]
     },
     {
@@ -948,38 +986,97 @@
       "mana": "{7}{U}{U}",
       "bracket": "C",
       "legal": true,
-      "popularity": 5485,
+      "popularity": 5488,
       "missing": [
         "Rite of Replication"
       ]
     },
     {
-      "id": "3398-6866",
+      "id": "4498-7839",
       "cards": [
         {
-          "name": "Fire Lord Zuko",
+          "name": "Smaug the Impenetrable",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Hellkite Charger",
+          "name": "Pestilence",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite combat phases"
+        "Near-infinite damage to all players"
       ],
       "requires": [],
-      "prerequisites": "An opponent cannot block and kill Hellkite Charger or Fire Lord Zuko.",
+      "prerequisites": "",
+      "mana": "{B}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 5420,
+      "missing": [
+        "Pestilence"
+      ]
+    },
+    {
+      "id": "2972-8168",
+      "cards": [
+        {
+          "name": "Ganax, Astral Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Draconic Visitor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Draw the game",
+        "Infinite creature tokens"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{R}{R}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 5413,
+      "missing": [
+        "Draconic Visitor"
+      ]
+    },
+    {
+      "id": "700-4971",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Body of Knowledge",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5341,
+      "popularity": 5183,
       "missing": [
-        "Fire Lord Zuko"
+        "Body of Knowledge"
       ]
     },
     {
@@ -1004,169 +1101,70 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5111,
+      "popularity": 5113,
       "missing": [
         "Pramikon, Sky Rampart"
       ]
     },
     {
-      "id": "3398-7017",
+      "id": "210-7839",
       "cards": [
         {
-          "name": "Hellkite Charger",
+          "name": "Smaug the Impenetrable",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Zuko, Firebending Master",
+          "name": "Chain Lightning",
           "zones": [
-            "B"
+            "H"
           ]
         }
       ],
       "results": [
-        "Infinite combat phases",
-        "Infinite red mana"
+        "Infinite Treasure tokens",
+        "Infinite colored mana",
+        "Infinite artifact tokens"
       ],
       "requires": [],
-      "prerequisites": "An opponent cannot block and kill Hellkite Charger or Zuko.\nYou have seven or more experience counters.",
-      "mana": "",
-      "bracket": "S",
+      "prerequisites": "",
+      "mana": "{R}{R}{R}",
+      "bracket": "R",
       "legal": true,
-      "popularity": 4137,
+      "popularity": 5030,
       "missing": [
-        "Zuko, Firebending Master"
+        "Chain Lightning"
       ]
     },
     {
-      "id": "3809-4682-7890",
+      "id": "4971-6574",
       "cards": [
         {
-          "name": "Gleaming Splendor",
+          "name": "Niv-Mizzet, the Firemind",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Smothering Tithe",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Goldspan Dragon",
+          "name": "Kefka, Court Mage // Kefka, Ruler of Ruin",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite card draw for any number of players",
-        "Near-infinite Treasure tokens",
-        "Near-infinite colored mana"
+        "Near-infinite damage",
+        "Infinite card draw"
       ],
       "requires": [],
-      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
-      "mana": "{2}{W}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 4109,
-      "missing": [
-        "Gleaming Splendor"
-      ]
-    },
-    {
-      "id": "876-4944",
-      "cards": [
-        {
-          "name": "Crackdown Construct",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lightning Greaves",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinitely large creature until end of turn"
-      ],
-      "requires": [],
-      "prerequisites": "You control another creature.",
+      "prerequisites": "You have a way to draw a card.",
       "mana": "",
-      "bracket": "O",
+      "bracket": "R",
       "legal": true,
-      "popularity": 3986,
+      "popularity": 4420,
       "missing": [
-        "Crackdown Construct"
-      ]
-    },
-    {
-      "id": "900-3398",
-      "cards": [
-        {
-          "name": "Hellkite Charger",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Sword of Feast and Famine",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat damage",
-        "Infinite combat phases",
-        "Infinite damage",
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "Sword of Feast and Famine attached to Hellkite Charger.\nYou control lands that can produce at least {5}{R}{R}.\nOpponents cannot block Hellkite Charger.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 3982,
-      "missing": [
-        "Sword of Feast and Famine"
-      ]
-    },
-    {
-      "id": "1059-3398",
-      "cards": [
-        {
-          "name": "Grand Warlord Radha",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Hellkite Charger",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases",
-        "Infinite green mana",
-        "Infinite red mana"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least six other creatures that can attack this turn.\nAn opponent is unable to block and kill your creatures.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 3891,
-      "missing": [
-        "Grand Warlord Radha"
+        "Kefka, Court Mage // Kefka, Ruler of Ruin"
       ]
     },
     {
@@ -1193,7 +1191,7 @@
       "mana": "{4}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 3808,
+      "popularity": 3807,
       "missing": [
         "Replication Technique"
       ]
@@ -1228,38 +1226,36 @@
       "mana": "{6}{U}{U}",
       "bracket": "O",
       "legal": true,
-      "popularity": 3745,
+      "popularity": 3743,
       "missing": [
         "Astral Dragon"
       ]
     },
     {
-      "id": "3398-4228",
+      "id": "2781-5291",
       "cards": [
         {
-          "name": "Hellkite Charger",
+          "name": "Felidar Guardian",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Bear Umbra",
+          "name": "Cursed Mirror",
           "zones": [
-            "B"
+            "H"
           ]
         }
       ],
-      "results": [
-        "Infinite combat phases"
-      ],
+      "results": [],
       "requires": [],
-      "prerequisites": "Hellkite Charger does not have summoning sickness.\nBear Umbra attached to Hellkite Charger.\nYou control lands that can tap to produce at least {5}{R}{R}.\nAn opponent is unable to block and kill Hellkite Charger.",
-      "mana": "",
-      "bracket": "S",
+      "prerequisites": "",
+      "mana": "{2}{R}",
+      "bracket": "E",
       "legal": true,
-      "popularity": 3742,
+      "popularity": 3468,
       "missing": [
-        "Bear Umbra"
+        "Felidar Guardian"
       ]
     },
     {
@@ -1284,7 +1280,7 @@
       "mana": "{5}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 3313,
+      "popularity": 3314,
       "missing": [
         "Drafna, Founder of Lat-Nam"
       ]
@@ -1313,7 +1309,7 @@
       "mana": "{7}{U}{U}",
       "bracket": "C",
       "legal": true,
-      "popularity": 3006,
+      "popularity": 3008,
       "missing": [
         "Rite of Replication"
       ]
@@ -1343,7 +1339,7 @@
       "mana": "{3}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 3004,
+      "popularity": 3005,
       "missing": [
         "Terra, Magical Adept // Esper Terra"
       ]
@@ -1370,7 +1366,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2949,
+      "popularity": 2953,
       "missing": [
         "Vrondiss, Rage of Ancients"
       ]
@@ -1397,7 +1393,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 2525,
+      "popularity": 2531,
       "missing": [
         "Vrondiss, Rage of Ancients"
       ]
@@ -1424,38 +1420,63 @@
       "mana": "{8}{R}{R}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2373,
+      "popularity": 2378,
       "missing": [
         "Obliterate"
       ]
     },
     {
-      "id": "876-2904",
+      "id": "3362-5291",
       "cards": [
         {
-          "name": "Cephalid Illusionist",
+          "name": "Bladewing the Risen",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Lightning Greaves",
+          "name": "Cursed Mirror",
           "zones": [
-            "B"
+            "H"
           ]
         }
       ],
-      "results": [
-        "Infinite self-mill"
-      ],
+      "results": [],
       "requires": [],
       "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
+      "mana": "{2}{R}",
+      "bracket": "E",
       "legal": true,
-      "popularity": 2274,
+      "popularity": 2234,
       "missing": [
-        "Cephalid Illusionist"
+        "Bladewing the Risen"
+      ]
+    },
+    {
+      "id": "141-1235",
+      "cards": [
+        {
+          "name": "Naru Meha, Master Wizard",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Twinflame",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Twinflame",
+      "mana": "{2}{U}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 2186,
+      "missing": [
+        "Naru Meha, Master Wizard"
       ]
     },
     {
@@ -1482,36 +1503,9 @@
       "mana": "{3}{R}{R}{R}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2188,
-      "missing": [
-        "Worldgorger Dragon"
-      ]
-    },
-    {
-      "id": "141-1235",
-      "cards": [
-        {
-          "name": "Naru Meha, Master Wizard",
-          "zones": [
-            "H"
-          ]
-        },
-        {
-          "name": "Twinflame",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You control at least one creature.\nYou have enough mana to cast Twinflame",
-      "mana": "{2}{U}{U}",
-      "bracket": "E",
-      "legal": true,
       "popularity": 2185,
       "missing": [
-        "Naru Meha, Master Wizard"
+        "Worldgorger Dragon"
       ]
     },
     {
@@ -1542,38 +1536,6 @@
       ]
     },
     {
-      "id": "3398-3732",
-      "cards": [
-        {
-          "name": "Hellkite Charger",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Nature's Will",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat damage",
-        "Infinite combat phases",
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "Lands you control can tap to produce at least {5}{R}{R}.\nAn opponent cannot block Hellkite Charger.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 2134,
-      "missing": [
-        "Nature's Will"
-      ]
-    },
-    {
       "id": "249-5141",
       "cards": [
         {
@@ -1597,7 +1559,7 @@
       "mana": "{2}{W} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 2133,
+      "popularity": 2132,
       "missing": [
         "Zethi, Arcane Blademaster"
       ]
@@ -1627,47 +1589,9 @@
       "mana": "{8}{R}{R}{R}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 2113,
+      "popularity": 2114,
       "missing": [
         "Worldfire"
-      ]
-    },
-    {
-      "id": "184-3809-4682",
-      "cards": [
-        {
-          "name": "Faerie Mastermind",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Smothering Tithe",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Goldspan Dragon",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw for all players",
-        "Near-infinite colored mana",
-        "Near-infinite colorless mana",
-        "Near-infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You have at least three opponents.\nOpponents are unable to pay for Smothering Tithe's trigger.",
-      "mana": "{3}{U}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 1999,
-      "missing": [
-        "Faerie Mastermind"
       ]
     },
     {
@@ -1697,7 +1621,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1997,
+      "popularity": 2002,
       "missing": [
         "Kiki-Jiki, Mirror Breaker"
       ]
@@ -1726,7 +1650,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 1997,
+      "popularity": 2002,
       "missing": [
         "Kiki-Jiki, Mirror Breaker"
       ]
@@ -1755,145 +1679,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1985,
+      "popularity": 1988,
       "missing": [
         "Vrondiss, Rage of Ancients"
-      ]
-    },
-    {
-      "id": "2097-3398-3809",
-      "cards": [
-        {
-          "name": "Jolene, the Plunder Queen",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Goldspan Dragon",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Hellkite Charger",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases"
-      ],
-      "requires": [],
-      "prerequisites": "An opponent cannot block and kill Goldspan Dragon and Hellkite Charger.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1801,
-      "missing": [
-        "Jolene, the Plunder Queen"
-      ]
-    },
-    {
-      "id": "4682-4772-7890",
-      "cards": [
-        {
-          "name": "Gleaming Splendor",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Smothering Tithe",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Doubling Season",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw for any number of players",
-        "Near-infinite Treasure tokens",
-        "Near-infinite colored mana"
-      ],
-      "requires": [],
-      "prerequisites": "At least two opponents cannot pay for Smothering Tithe's trigger.",
-      "mana": "{2}{W}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 1710,
-      "missing": [
-        "Gleaming Splendor"
-      ]
-    },
-    {
-      "id": "1170-1171--78",
-      "cards": [
-        {
-          "name": "Garth One-Eye",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Displacer Kitten",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana",
-        "Infinite card draw for any number of players",
-        "Infinite copies of a specific artifact",
-        "Infinite casts of all spells created by Garth One-Eye except Shivan Dragon"
-      ],
-      "requires": [
-        "Equipment That Gives Haste to a Creature"
-      ],
-      "prerequisites": "You have enough mana to pay for the Equipment's equip ability if the Equipment is not already attached to Garth One-Eye.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 1697,
-      "missing": [
-        "Displacer Kitten"
-      ]
-    },
-    {
-      "id": "3398-7015",
-      "cards": [
-        {
-          "name": "Hellkite Charger",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Sun Warriors",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases",
-        "Infinite red mana"
-      ],
-      "requires": [],
-      "prerequisites": "You control seven or more creatures.\nAn opponent cannot block and kill Hellkite Charger or Sun Warriors.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 1620,
-      "missing": [
-        "Sun Warriors"
       ]
     },
     {
@@ -1921,7 +1709,7 @@
       "mana": "{1}{U}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 1594,
+      "popularity": 1601,
       "missing": [
         "Jace, Cunning Castaway"
       ]
@@ -1950,7 +1738,7 @@
       "mana": "{6}{R}{R}{R}",
       "bracket": "C",
       "legal": true,
-      "popularity": 1530,
+      "popularity": 1531,
       "missing": [
         "Orthion, Hero of Lavabrink"
       ]
@@ -1979,47 +1767,38 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1433,
+      "popularity": 1429,
       "missing": [
         "Spellbinder"
       ]
     },
     {
-      "id": "184-4682-4772",
+      "id": "2415-7839",
       "cards": [
         {
-          "name": "Faerie Mastermind",
+          "name": "Smaug the Impenetrable",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Smothering Tithe",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Doubling Season",
+          "name": "Havoc Jester",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite card draw for all players",
-        "Near-infinite colored mana",
-        "Near-infinite colorless mana",
-        "Near-infinite Treasure tokens"
+        "Infinite colored mana"
       ],
       "requires": [],
-      "prerequisites": "You have at least three opponents. Opponents are unable to pay for Smothering Tithe's trigger.",
-      "mana": "{3}{U}",
-      "bracket": "P",
+      "prerequisites": "You control a Treasure.",
+      "mana": "",
+      "bracket": "R",
       "legal": true,
-      "popularity": 1287,
+      "popularity": 1364,
       "missing": [
-        "Faerie Mastermind"
+        "Havoc Jester"
       ]
     },
     {
@@ -2046,9 +1825,48 @@
       "mana": "{2}{U}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 1149,
+      "popularity": 1148,
       "missing": [
         "Mechanized Production"
+      ]
+    },
+    {
+      "id": "380-1409-2972",
+      "cards": [
+        {
+          "name": "Miirym, Sentinel Wyrm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ganax, Astral Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Deadeye Navigator",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite copies of most nontoken Dragons you control",
+        "Infinite creature tokens",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "Ganax is paired with Deadeye Navigator.",
+      "mana": "{1}{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 1135,
+      "missing": [
+        "Deadeye Navigator"
       ]
     },
     {
@@ -2100,7 +1918,7 @@
       "mana": "{6}{W} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 1090,
+      "popularity": 1088,
       "missing": [
         "Meticulous Excavation"
       ]
@@ -2129,38 +1947,9 @@
       "mana": "{10}{R}",
       "bracket": "C",
       "legal": true,
-      "popularity": 1039,
+      "popularity": 1043,
       "missing": [
         "Devastating Onslaught"
-      ]
-    },
-    {
-      "id": "767-3398",
-      "cards": [
-        {
-          "name": "Hellkite Charger",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Druids' Repository",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least six other creatures that can attack this turn.\nAn opponent is unable to block and kill your creatures.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 945,
-      "missing": [
-        "Druids' Repository"
       ]
     },
     {
@@ -2260,9 +2049,65 @@
       "mana": "{5}{G}{U}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 852,
+      "popularity": 847,
       "missing": [
         "Oko, the Ringleader"
+      ]
+    },
+    {
+      "id": "1707-7839",
+      "cards": [
+        {
+          "name": "Smaug the Impenetrable",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Last Laugh",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage to all players"
+      ],
+      "requires": [],
+      "prerequisites": "You control a Treasure.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 828,
+      "missing": [
+        "Last Laugh"
+      ]
+    },
+    {
+      "id": "7839-8041",
+      "cards": [
+        {
+          "name": "Smaug the Impenetrable",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dizzying Gaze",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 818,
+      "missing": [
+        "Dizzying Gaze"
       ]
     },
     {
@@ -2314,73 +2159,42 @@
       "mana": "{R}",
       "bracket": "E",
       "legal": true,
-      "popularity": 764,
+      "popularity": 763,
       "missing": [
         "Crown of Flames"
       ]
     },
     {
-      "id": "3398-5956",
+      "id": "1409-2972-3809",
       "cards": [
         {
-          "name": "Hellkite Charger",
+          "name": "Ganax, Astral Hunter",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Shriekwood Devourer",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases",
-        "Infinite mana lands you control can produce",
-        "Infinite untap of lands you control"
-      ],
-      "requires": [],
-      "prerequisites": "You control up to seven lands that can tap to produce at least {5}{R}{R}.\nYou control a creature with power 7 or greater that does not have summoning sickness, and that cannot be blocked and killed by an opponent.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 749,
-      "missing": [
-        "Shriekwood Devourer"
-      ]
-    },
-    {
-      "id": "451-3398",
-      "cards": [
-        {
-          "name": "Hoard Hauler",
+          "name": "Deadeye Navigator",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Hellkite Charger",
+          "name": "Goldspan Dragon",
           "zones": [
             "B"
           ]
         }
       ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite combat damage",
-        "Infinite combat phases",
-        "Infinite Treasure tokens"
-      ],
+      "results": [],
       "requires": [],
-      "prerequisites": "Hoard Hauler is a creature and does not have summoning sickness.\nAn opponent cannot block Hoard Hauler or Hellkite Charger and controls at least seven artifacts.",
-      "mana": "{5}{R}{R}",
-      "bracket": "O",
+      "prerequisites": "Deadeye Navigator is paired with Ganax.",
+      "mana": "{1}{U}",
+      "bracket": "E",
       "legal": true,
-      "popularity": 712,
+      "popularity": 754,
       "missing": [
-        "Hoard Hauler"
+        "Deadeye Navigator"
       ]
     },
     {
@@ -2416,46 +2230,84 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 682,
+      "popularity": 684,
       "missing": [
         "Displacer Kitten"
       ]
     },
     {
-      "id": "876-1171-1409",
+      "id": "1110-7839-8168",
       "cards": [
         {
-          "name": "Garth One-Eye",
+          "name": "Smaug the Impenetrable",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Deadeye Navigator",
+          "name": "Draconic Visitor",
           "zones": [
-            "B"
+            "H"
           ]
         },
         {
-          "name": "Lightning Greaves",
+          "name": "Terror of the Peaks",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite card draw",
-        "Infinite colored mana",
-        "Infinite creature tokens"
+        "Infinite creature tokens",
+        "Infinite damage"
       ],
       "requires": [],
-      "prerequisites": "Deadeye Navigator is paired with Garth One-Eye.",
-      "mana": "{1}{U}",
-      "bracket": "E",
+      "prerequisites": "",
+      "mana": "{3}{R}{R}",
+      "bracket": "O",
       "legal": true,
-      "popularity": 671,
+      "popularity": 660,
       "missing": [
-        "Deadeye Navigator"
+        "Draconic Visitor"
+      ]
+    },
+    {
+      "id": "2855-7839-8168",
+      "cards": [
+        {
+          "name": "Draconic Visitor",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Smaug the Impenetrable",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Dragon Tempest",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite Treasure tokens",
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite creature tokens with haste",
+        "Infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{R}{R}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 627,
+      "missing": [
+        "Draconic Visitor"
       ]
     },
     {
@@ -2482,7 +2334,7 @@
       "mana": "{4}{R}{R}{R}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 624,
+      "popularity": 625,
       "missing": [
         "Apocalypse"
       ]
@@ -2527,33 +2379,93 @@
       ]
     },
     {
-      "id": "3398-5398",
+      "id": "384-4971",
       "cards": [
         {
-          "name": "Tesak, Judith's Hellhound",
+          "name": "Niv-Mizzet, the Firemind",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Hellkite Charger",
+          "name": "Helm of the Ghastlord",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite combat damage",
-        "Infinite combat phases"
+        "Infinite card draw",
+        "Near-infinite damage"
       ],
       "requires": [],
-      "prerequisites": "You control at least five other creatures that can attack this turn.\nTesak does not have summoning sickness.\nAn opponent cannot block and kill creatures you control.",
+      "prerequisites": "Helm of the Ghastlord attached to Niv-Mizzet.\nYou have a way to draw a card.",
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 549,
+      "popularity": 531,
       "missing": [
-        "Tesak, Judith's Hellhound"
+        "Helm of the Ghastlord"
+      ]
+    },
+    {
+      "id": "148-4971",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Keen Sense",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Keen Sense attached to Niv-Mizzet.\nYou have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 502,
+      "missing": [
+        "Keen Sense"
+      ]
+    },
+    {
+      "id": "4067-4971",
+      "cards": [
+        {
+          "name": "Mind Over Matter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 448,
+      "missing": [
+        "Mind Over Matter"
       ]
     },
     {
@@ -2584,7 +2496,7 @@
       "mana": "{1}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 442,
+      "popularity": 446,
       "missing": [
         "Mirror-Mad Phantasm"
       ]
@@ -2611,9 +2523,39 @@
       "mana": "{1}{R}",
       "bracket": "E",
       "legal": true,
-      "popularity": 410,
+      "popularity": 409,
       "missing": [
         "Bladewing the Risen"
+      ]
+    },
+    {
+      "id": "3311-4971",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Snake Umbra",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite damage"
+      ],
+      "requires": [],
+      "prerequisites": "Snake Umbra attached to Niv-Mizzet.\nYou have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 390,
+      "missing": [
+        "Snake Umbra"
       ]
     },
     {
@@ -2640,7 +2582,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 384,
+      "popularity": 383,
       "missing": [
         "Hornet Nest"
       ]
@@ -2694,7 +2636,7 @@
       "mana": "{4}{U} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 360,
+      "popularity": 359,
       "missing": [
         "Vedalken Mastermind"
       ]
@@ -2721,9 +2663,36 @@
       "mana": "{3}{R}",
       "bracket": "E",
       "legal": true,
-      "popularity": 344,
+      "popularity": 345,
       "missing": [
         "Changeling Berserker"
+      ]
+    },
+    {
+      "id": "7839-7909",
+      "cards": [
+        {
+          "name": "Smaug the Impenetrable",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Stone-Giant of High Pass",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control an artifact.",
+      "mana": "{2}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 326,
+      "missing": [
+        "Stone-Giant of High Pass"
       ]
     },
     {
@@ -2754,38 +2723,6 @@
       ]
     },
     {
-      "id": "3398-6307",
-      "cards": [
-        {
-          "name": "Hellkite Charger",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Luxurious Locomotive",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite combat phases",
-        "Infinite Treasure tokens"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least seven other creatures with total power 1 or greater.\nAn opponent cannot block and kill Hellkite Charger or Luxurious Locomotive.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 312,
-      "missing": [
-        "Luxurious Locomotive"
-      ]
-    },
-    {
       "id": "131-3363",
       "cards": [
         {
@@ -2807,7 +2744,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 306,
+      "popularity": 307,
       "missing": [
         "Umbilicus"
       ]
@@ -2901,36 +2838,6 @@
       ]
     },
     {
-      "id": "3398-5453",
-      "cards": [
-        {
-          "name": "Preston Garvey, Minuteman",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Hellkite Charger",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases",
-        "Infinite untap of enchanted permanents you control"
-      ],
-      "requires": [],
-      "prerequisites": "Enchanted permanents you control can tap to produce at least {5}{R}.\nYou control at least one land that does not have a Settlement token attached to it, or enchanted permanents you control can tap to produce at least {5}{R}{R}.\nAn opponent cannot block and kill Preston or Hellkite Charger.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 273,
-      "missing": [
-        "Preston Garvey, Minuteman"
-      ]
-    },
-    {
       "id": "1965-3908",
       "cards": [
         {
@@ -2954,9 +2861,95 @@
       "mana": "{3}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 256,
+      "popularity": 257,
       "missing": [
         "Omarthis, Ghostfire Initiate"
+      ]
+    },
+    {
+      "id": "3778-7299",
+      "cards": [
+        {
+          "name": "Biorhythm",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Austere Command",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Draw the game",
+        "Each opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{10}{G}{G}{W}{W}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 244,
+      "missing": [
+        "Biorhythm"
+      ]
+    },
+    {
+      "id": "2178-4971",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Thornbite Staff",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "Thornbite Staff attached to Niv-Mizzet.\nNiv-Mizzet does not have summoning sickness. You have a way to give Niv-Mizzet deathtouch.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 236,
+      "missing": [
+        "Thornbite Staff"
+      ]
+    },
+    {
+      "id": "1621-3908",
+      "cards": [
+        {
+          "name": "Wispweaver Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Spark Double",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You have enough mana to cast Spark Double.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 216,
+      "missing": [
+        "Wispweaver Angel"
       ]
     },
     {
@@ -2990,59 +2983,32 @@
       ]
     },
     {
-      "id": "1621-3908",
+      "id": "471-7839",
       "cards": [
         {
-          "name": "Wispweaver Angel",
+          "name": "Smaug the Impenetrable",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Spark Double",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "You have enough mana to cast Spark Double.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 214,
-      "missing": [
-        "Wispweaver Angel"
-      ]
-    },
-    {
-      "id": "876-2796",
-      "cards": [
-        {
-          "name": "Cephalid Aristocrat",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lightning Greaves",
+          "name": "Pestilence Demon",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite self-mill"
+        "Near-infinite damage to all players"
       ],
       "requires": [],
-      "prerequisites": "You control an additional creature.",
-      "mana": "",
-      "bracket": "R",
+      "prerequisites": "Pestilence Demon is indestructible, has protection from black, or has protection from creatures.",
+      "mana": "{B}",
+      "bracket": "S",
       "legal": true,
-      "popularity": 203,
+      "popularity": 209,
       "missing": [
-        "Cephalid Aristocrat"
+        "Pestilence Demon"
       ]
     },
     {
@@ -3100,6 +3066,33 @@
       ]
     },
     {
+      "id": "1621-5291",
+      "cards": [
+        {
+          "name": "Wispweaver Angel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cursed Mirror",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{2}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 179,
+      "missing": [
+        "Wispweaver Angel"
+      ]
+    },
+    {
       "id": "3389-3809",
       "cards": [
         {
@@ -3127,16 +3120,83 @@
       ]
     },
     {
-      "id": "3398-7903",
+      "id": "5106-7839",
       "cards": [
         {
-          "name": "Thorin, Company's Leader",
+          "name": "Smaug the Impenetrable",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Hellkite Charger",
+          "name": "Crypt Rats",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite damage to all players"
+      ],
+      "requires": [],
+      "prerequisites": "Crypt Rats is indestructible, has protection from black, or has protection from creatures.",
+      "mana": "{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 146,
+      "missing": [
+        "Crypt Rats"
+      ]
+    },
+    {
+      "id": "2972-4772-5456",
+      "cards": [
+        {
+          "name": "Magda, the Hoardmaster",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ganax, Astral Hunter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite artifact tokens",
+        "Infinite colored mana",
+        "Infinite creature tokens with haste",
+        "Infinite Treasure tokens"
+      ],
+      "requires": [],
+      "prerequisites": "You control at least three Treasures.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 146,
+      "missing": [
+        "Magda, the Hoardmaster"
+      ]
+    },
+    {
+      "id": "3417-7839",
+      "cards": [
+        {
+          "name": "Smaug the Impenetrable",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Ill-Tempered Loner // Howlpack Avenger",
           "zones": [
             "B"
           ]
@@ -3144,19 +3204,17 @@
       ],
       "results": [
         "Infinite Treasure tokens",
-        "Infinite colored mana",
-        "Infinite combat damage",
-        "Infinite combat phases",
-        "Infinite artifact tokens"
+        "Infinite artifact tokens",
+        "Infinite colored mana"
       ],
       "requires": [],
-      "prerequisites": "You control at least four Dwarves that don't have summoning sickness and that cannot be blocked by an opponent.\nAn opponent cannot block and kill Hellkite Charger.",
-      "mana": "{5}{R}{R}",
-      "bracket": "E",
+      "prerequisites": "You have a way to deal noncombat damage to Smaug.",
+      "mana": "",
+      "bracket": "S",
       "legal": true,
-      "popularity": 131,
+      "popularity": 125,
       "missing": [
-        "Thorin, Company's Leader"
+        "Ill-Tempered Loner // Howlpack Avenger"
       ]
     },
     {
@@ -3184,6 +3242,35 @@
       "popularity": 125,
       "missing": [
         "Grinning Ignus"
+      ]
+    },
+    {
+      "id": "760-4971",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, the Firemind",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Swans of Bryn Argoll",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 124,
+      "missing": [
+        "Swans of Bryn Argoll"
       ]
     },
     {
@@ -3237,7 +3324,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 116,
+      "popularity": 115,
       "missing": [
         "Rafiq of the Many"
       ]
@@ -3270,33 +3357,6 @@
       ]
     },
     {
-      "id": "1363-3363",
-      "cards": [
-        {
-          "name": "The One Ring",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Tradewind Rider",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [],
-      "requires": [],
-      "prerequisites": "Tradewind Rider does not have summoning sickness.\nYou control at least two other untapped creatures.",
-      "mana": "{4} each turn",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 96,
-      "missing": [
-        "Tradewind Rider"
-      ]
-    },
-    {
       "id": "751-877",
       "cards": [
         {
@@ -3321,6 +3381,33 @@
       "popularity": 96,
       "missing": [
         "Shrieking Drake"
+      ]
+    },
+    {
+      "id": "1363-3363",
+      "cards": [
+        {
+          "name": "The One Ring",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Tradewind Rider",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "Tradewind Rider does not have summoning sickness.\nYou control at least two other untapped creatures.",
+      "mana": "{4} each turn",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 95,
+      "missing": [
+        "Tradewind Rider"
       ]
     },
     {
@@ -3401,7 +3488,7 @@
       "mana": "{5}{G}{G}{G}",
       "bracket": "P",
       "legal": true,
-      "popularity": 91,
+      "popularity": 90,
       "missing": [
         "Sekki, Seasons' Guide"
       ]
@@ -3515,50 +3602,38 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 81,
+      "popularity": 80,
       "missing": [
         "Broodhatch Nantuko"
       ]
     },
     {
-      "id": "3809-4682-4772-5140",
+      "id": "1787-7839",
       "cards": [
         {
-          "name": "Kenrith, the Returned King",
+          "name": "Smaug the Impenetrable",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Smothering Tithe",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Goldspan Dragon",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Doubling Season",
+          "name": "Thrashing Wumpus",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite card draw for any number of opponents"
+        "Near-infinite damage to all players"
       ],
       "requires": [],
-      "prerequisites": "An opponent cannot pay for Smothering Tithe's trigger.",
-      "mana": "{3}{U}",
-      "bracket": "P",
+      "prerequisites": "Thrashing Wumpus is indestructible, has protection from black, or has protection from creatures.",
+      "mana": "{B}",
+      "bracket": "S",
       "legal": true,
-      "popularity": 75,
+      "popularity": 71,
       "missing": [
-        "Kenrith, the Returned King"
+        "Thrashing Wumpus"
       ]
     },
     {
@@ -3591,6 +3666,35 @@
       ]
     },
     {
+      "id": "2084-5291",
+      "cards": [
+        {
+          "name": "Mirror-Mad Phantasm",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cursed Mirror",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite self-mill"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{3}{U}{R}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 65,
+      "missing": [
+        "Mirror-Mad Phantasm"
+      ]
+    },
+    {
       "id": "7124-7651",
       "cards": [
         {
@@ -3615,45 +3719,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 55,
-      "missing": [
-        "Bruce Banner // The Incredible Hulk"
-      ]
-    },
-    {
-      "id": "3398-3809-4076",
-      "cards": [
-        {
-          "name": "Burakos, Party Leader",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Hellkite Charger",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Goldspan Dragon",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases",
-        "Infinite lifeloss"
-      ],
-      "requires": [],
-      "prerequisites": "You have a full party.\nBurakos does not have summoning sickness.\nAn opponent is unable to block and kill Burakos and Hellkite Charger.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
       "popularity": 54,
       "missing": [
-        "Burakos, Party Leader"
+        "Bruce Banner // The Incredible Hulk"
       ]
     },
     {
@@ -3720,6 +3788,33 @@
       ]
     },
     {
+      "id": "1699-7839",
+      "cards": [
+        {
+          "name": "Smaug the Impenetrable",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Scourge of Kher Ridges",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{R}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 51,
+      "missing": [
+        "Scourge of Kher Ridges"
+      ]
+    },
+    {
       "id": "877-3859",
       "cards": [
         {
@@ -3773,46 +3868,6 @@
       "popularity": 42,
       "missing": [
         "Overgrown Armasaur"
-      ]
-    },
-    {
-      "id": "4682-4772-7132",
-      "cards": [
-        {
-          "name": "Super-Skrull",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Smothering Tithe",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Doubling Season",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw for any number of opponents",
-        "Near-infinite Treasure tokens",
-        "Near-infinite card draw",
-        "Near-infinite colored mana",
-        "Near-infinite creature tokens",
-        "Near-infinitely large creature until end of turn"
-      ],
-      "requires": [],
-      "prerequisites": "An opponent cannot pay for Smothering Tithe's trigger more than once.",
-      "mana": "{5}{U}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 42,
-      "missing": [
-        "Super-Skrull"
       ]
     },
     {
@@ -3920,7 +3975,7 @@
       "mana": "{4} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 35,
+      "popularity": 34,
       "missing": [
         "Phenomenon Investigators"
       ]
@@ -4025,45 +4080,6 @@
       ]
     },
     {
-      "id": "876-1171-7070",
-      "cards": [
-        {
-          "name": "Garth One-Eye",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Monk Gyatso",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lightning Greaves",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite colored mana",
-        "Infinite creature tokens",
-        "Infinite card draw for any number of players",
-        "Infinite copies of a specific artifact",
-        "Infinite casts of all spells permitted by Garth One-Eye"
-      ],
-      "requires": [],
-      "prerequisites": "You have not cast Black Lotus using Garth.",
-      "mana": "",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 18,
-      "missing": [
-        "Monk Gyatso"
-      ]
-    },
-    {
       "id": "1235-2084",
       "cards": [
         {
@@ -4090,46 +4106,6 @@
       "popularity": 17,
       "missing": [
         "Mirror-Mad Phantasm"
-      ]
-    },
-    {
-      "id": "3809-4682-7132",
-      "cards": [
-        {
-          "name": "Super-Skrull",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Smothering Tithe",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Goldspan Dragon",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite card draw for any number of opponents",
-        "Near-infinite Treasure tokens",
-        "Near-infinite card draw",
-        "Near-infinite colored mana",
-        "Near-infinite creature tokens",
-        "Near-infinitely large creature until end of turn"
-      ],
-      "requires": [],
-      "prerequisites": "An opponent cannot pay for Smothering Tithe's trigger more than once.",
-      "mana": "{5}{U}",
-      "bracket": "P",
-      "legal": true,
-      "popularity": 16,
-      "missing": [
-        "Super-Skrull"
       ]
     },
     {
@@ -4184,43 +4160,6 @@
       "popularity": 11,
       "missing": [
         "Shi'ar Soldier"
-      ]
-    },
-    {
-      "id": "3398-7283-7651",
-      "cards": [
-        {
-          "name": "Smaug the Magnificent",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Raphael, Ninja Destroyer",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Hellkite Charger",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite combat phases",
-        "Infinite damage",
-        "Infinite red mana"
-      ],
-      "requires": [],
-      "prerequisites": "You control at least seven Treasures.\nRaphael is indestructible.\nAn opponent cannot block and kill Smaug or Hellkite Charger.",
-      "mana": "",
-      "bracket": "E",
-      "legal": true,
-      "popularity": 11,
-      "missing": [
-        "Raphael, Ninja Destroyer"
       ]
     },
     {
@@ -4316,16 +4255,16 @@
       ]
     },
     {
-      "id": "3398-4076-4772",
+      "id": "533-4772-7839",
       "cards": [
         {
-          "name": "Burakos, Party Leader",
+          "name": "Smaug the Impenetrable",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Hellkite Charger",
+          "name": "Makeshift Munitions",
           "zones": [
             "B"
           ]
@@ -4337,21 +4276,15 @@
           ]
         }
       ],
-      "results": [
-        "Infinite artifact tokens",
-        "Infinite colored mana",
-        "Infinite combat phases",
-        "Infinite lifeloss",
-        "Infinite Treasure tokens"
-      ],
+      "results": [],
       "requires": [],
-      "prerequisites": "You have a full party.\nBurakos does not have summoning sickness.\nAn opponent is unable to block and kill Burakos and Hellkite Charger.",
-      "mana": "",
+      "prerequisites": "You control another creature or artifact.\nYour commander is on the battlefield.",
+      "mana": "{1}",
       "bracket": "E",
       "legal": true,
       "popularity": 2,
       "missing": [
-        "Burakos, Party Leader"
+        "Makeshift Munitions"
       ]
     },
     {
@@ -4438,6 +4371,80 @@
       "popularity": 1,
       "missing": [
         "Parallel Lives"
+      ]
+    },
+    {
+      "id": "4772-7839-7926",
+      "cards": [
+        {
+          "name": "Smaug the Impenetrable",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Doubling Season",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Slag Strider",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "You control another creature or artifact.\nYour commander is on the battlefield.",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Slag Strider"
+      ]
+    },
+    {
+      "id": "1110-4694-7839--112",
+      "cards": [
+        {
+          "name": "Smaug the Impenetrable",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "March of the Machines",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Terror of the Peaks",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite Treasure tokens",
+        "Infinite colored mana",
+        "Infinite creature tokens",
+        "Infinite damage",
+        "Infinite artifact tokens"
+      ],
+      "requires": [
+        "Effects that Alter a Creature's Power/Toughness (Anthem Effects)"
+      ],
+      "prerequisites": "You have a way to deal noncombat damage to Smaug.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "March of the Machines"
       ]
     }
   ]

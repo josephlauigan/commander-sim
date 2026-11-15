@@ -661,6 +661,49 @@ fn natures_lore_finds_a_forest_card_untapped() {
 }
 
 #[test]
+fn three_visits_finds_a_forest_card_untapped() {
+    let mut g = main_table("urdragon");
+    hand(&mut g, P0, &["Three Visits"]);
+    pool(&mut g, P0, &all_mana());
+    let first = Some(cast_last(&g));
+    let log = person(&mut g, first, |_| None);
+    run(&mut g);
+    assert!(asked(&log, "Three Visits: search your library for a Forest card"), "{}", dump(&log));
+    let all = dump(&log);
+    let search = all.lines().find(|l| l.starts_with("search: Three Visits")).expect("the search was offered");
+    assert!(search.contains("\"Forest\"") && search.contains("\"Bayou\""), "Forest cards, duals included: {search}");
+    assert!(!search.contains("\"Swamp\"") && !search.contains("Command Tower"), "only Forest cards: {search}");
+    assert_eq!(g.player(P0).lands.len(), 1);
+    assert!(
+        !g.perm(g.player(P0).lands[0]).tapped,
+        "the first Forest card offered (a dual with no enters rule) enters untapped"
+    );
+    assert!(in_gy(&g, P0, "Three Visits"));
+}
+
+#[test]
+fn a_shock_land_found_by_three_visits_asks_whether_to_pay_life() {
+    for pay in [true, false] {
+        let mut g = main_table("urdragon");
+        hand(&mut g, P0, &["Three Visits"]);
+        pool(&mut g, P0, &all_mana());
+        let first = Some(cast_last(&g));
+        let log = person(&mut g, first, move |r| {
+            if r.prompt.contains("search your library for a Forest card") {
+                return r.choices.iter().position(|c| c.contains("Overgrown Tomb")).map(Answer::Pick);
+            }
+            r.prompt.contains("pay 2 life").then(|| Answer::Pick(if pay { 0 } else { 1 }))
+        });
+        let life = g.player(P0).life;
+        run(&mut g);
+        assert!(asked(&log, "Overgrown Tomb: pay 2 life so it enters untapped?"), "{}", dump(&log));
+        let l = g.player(P0).lands[0];
+        assert_eq!(g.perm(l).tapped, !pay);
+        assert_eq!(g.player(P0).life, if pay { life - 2 } else { life });
+    }
+}
+
+#[test]
 fn rampant_growth_finds_a_basic_land_tapped() {
     let mut g = main_table("urdragon");
     hand(&mut g, P0, &["Rampant Growth"]);

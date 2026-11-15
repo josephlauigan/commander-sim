@@ -450,32 +450,6 @@ fn arisen() -> Vec<PermAbility> {
         .collect()
 }
 
-// ------------------------------------------------------------------ Nature's Lore
-/// A person's Nature's Lore: "search your library for a Forest card, put it onto the battlefield". The AI's ramp takes
-/// a basic land of its own pick (`zones::land_ramp`); a person finds any Forest card (a Forest, or a dual land with the
-/// Forest type). True if handled here.
-pub fn forest_search(g: &mut Game, p: PlayerId, c: crate::ids::CardId) -> Res<bool> {
-    if &*g.db.get(c).name != "Nature's Lore" {
-        return Ok(false);
-    }
-    let found = choices::search(
-        g,
-        p,
-        &|g: &Game, x| {
-            let d = g.db.get(x);
-            d.land && d.land_types.has('G')
-        },
-        1,
-        "Nature's Lore: search your library for a Forest card (it enters untapped)",
-        true,
-    )?;
-    if let Some(&l) = found.first() {
-        g.add_land_entering(p, l, false);
-        zones::landfall(g, p)?;
-    }
-    Ok(true)
-}
-
 fn sneak_person(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if let Some(why) = pay(g, p, 0, "R", "Sneak Attack") {
         return Ok(Some(why));

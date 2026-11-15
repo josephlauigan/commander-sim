@@ -431,6 +431,7 @@ const EXCEPTIONS: &[(&str, &str)] = &[
         "\"start the loop\": a table shortcut standing for the whole Basalt Monolith + Rings loop (each pass of it is a real activation Rings copies, see play_rings.rs); not an ability itself",
     ),
     ("aragorn: Niv-Mizzet, Parun #0", "a setting (where its pings go), not an ability"),
+    ("urdragon: Niv-Mizzet, the Firemind #0", "a setting (where its pings go), not an ability"),
     (
         "sheoldred: Bolas's Citadel #0",
         "playing the top card of the library (Citadel's static permission): a spell cast, not an ability",
