@@ -87,12 +87,28 @@ pub fn chars(g: &Game, m: PermId) -> Chars {
 }
 
 // ================================================================== layer 4: type
-/// Is m a creature now (Python's `Perm.creature`): a token, a creature card, or animated.
+/// A Spacecraft (`station=N` hand tag: The Seriema) whose charge counters have reached N: it is a creature for as long
+/// as they stay there (CR 721.2b: a condition on the counters, not a one-time change). Its printed power and toughness
+/// are the permanent's own `pow`/`tgh` (set as it enters, by the card's `as_enters` hook), so a later base-setting
+/// effect (Darksteel Mutation, Kenrith's Transformation, Tezzeret's emblem) wins as it does for any creature.
+pub(crate) fn station_met(g: &Game, m: &crate::state::Perm) -> bool {
+    m.cd.is_some_and(|c| {
+        let d = g.db.get(c);
+        d.tag(Tag::Station) && m.data.int(DataKey::Charge) >= d.tags.int_or_0(Tag::Station) as i64
+    })
+}
+
+/// Is m a creature now (Python's `Perm.creature`): a token, a creature card, or animated. A modal card played as its
+/// land face (Witch-Blessed Meadow) is not a creature by its printed face, but a later effect (an animation, a copy
+/// that makes it a creature) still can.
 pub fn is_creature(g: &Game, m: PermId) -> bool {
     let m = g.perm(m);
-    ((m.token && m.cd.is_none_or(|c| g.db.get(c).creature)) // a Powerstone token is an artifact, not a creature
-        || m.cd.is_some_and(|c| g.db.get(c).creature)
+    let printed = !m.data.truthy(DataKey::LandFace) // the land face replaces the printed creature type
+        && ((m.token && m.cd.is_none_or(|c| g.db.get(c).creature)) // a Powerstone token is an artifact, not a creature
+            || m.cd.is_some_and(|c| g.db.get(c).creature));
+    (printed
         || m.data.truthy(DataKey::Anim)
+        || station_met(g, m) // a Spacecraft with enough charge counters (The Seriema)
         || m.exc.add_types.has(Types::CREATURE)) // --- urdragon: Astral Dragon's tokens are creatures as they enter
         && !m.data.truthy(DataKey::NotCreature) // --- Tiers 4/5 (chulane-kinnan): Enduring Vitality's return
 }
@@ -100,7 +116,12 @@ pub fn is_creature(g: &Game, m: PermId) -> bool {
 /// m's card types, including those a copy has in addition (Copy Artifact's enchantment); a token has creature
 pub fn card_types(g: &Game, m: PermId) -> Types {
     let x = g.perm(m);
-    let base = x.cd.map_or(Types::CREATURE, |c| g.db.get(c).types);
+    let base = if x.data.truthy(DataKey::LandFace) {
+        Types::LAND // the back face is a land, whatever the front face's card data says
+    } else {
+        x.cd.map_or(Types::CREATURE, |c| g.db.get(c).types)
+    };
+    let base = if station_met(g, x) { Types::union(base, Types::CREATURE) } else { base }; // an artifact creature
     Types::union(base, x.exc.add_types)
 }
 
@@ -135,6 +156,9 @@ pub fn subtypes(g: &Game, m: PermId) -> Vec<Sym> {
         return vec![s]; // a copy that has only this creature type (Preston's Illusions)
     }
     let Some(c) = x.cd else { return x.ttypes.clone() };
+    if x.data.truthy(DataKey::LandFace) {
+        return x.ttypes.clone(); // the land face has no creature types
+    }
     let d = g.db.get(c);
     let mut s: Vec<Sym> = d.subtypes.iter().map(|t| crate::sym::intern(t)).collect();
     if d.has_kw("changeling") {
@@ -181,6 +205,9 @@ pub fn colors(g: &Game, m: PermId) -> Colors {
     let x = g.perm(m);
     if let Some(c) = x.exc.colors {
         return c;
+    }
+    if x.data.truthy(DataKey::LandFace) {
+        return Colors::NONE; // a land has no colour, whatever the front face costs
     }
     match x.cd {
         Some(c) if g.db.get(c).kws.iter().any(|k| &**k == "devoid") => Colors::NONE, // Spawn-Gang Commander

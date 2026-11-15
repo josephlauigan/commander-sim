@@ -98,11 +98,15 @@ fn abilities(g: &Game, c: CardId) -> Arc<[Ability]> {
 
 /// Phase 3 (one arena): q's lands whose compiled abilities work, as ability sources after q's other permanents
 /// (`player.perms` first, so everything that ran before keeps its order). Blood Moon: a nonbasic land that is a plain
-/// Mountain has no abilities of its own.
+/// Mountain has no abilities of its own; nor has a card played as its land face (`DataKey::LandFace`: the compiled
+/// abilities are the front face's).
 pub fn land_sources(g: &Game, q: PlayerId) -> impl Iterator<Item = PermId> + '_ {
     g.player(q).lands.iter().copied().filter(move |&l| {
         let d = g.db.get(g.perm(l).card());
-        land_live(d) && g.perm(l).on_bf && !crate::engine::mana::moon_land(g, l)
+        land_live(d)
+            && g.perm(l).on_bf
+            && !crate::engine::mana::moon_land(g, l)
+            && !g.perm(l).data.truthy(crate::state::DataKey::LandFace)
     })
 }
 

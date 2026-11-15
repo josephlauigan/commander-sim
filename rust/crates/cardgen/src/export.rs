@@ -70,6 +70,19 @@ impl Inputs {
         extra.insert("Witch of the Moors".to_string());
         // the six cards Garth One-Eye names (2026-11-04); Disenchant and Terror are in pool lists, the other four in none
         extra.extend(["Black Lotus", "Braingeyser", "Regrowth", "Shivan Dragon"].map(String::from));
+        // cards modeled before the Yoshimaru/Tymna deck is registered (it needs them in the card data first)
+        extra.extend(
+            [
+                "Yoshimaru, Ever Faithful",
+                "Kambal, Consul of Allocation",
+                "Minas Tirith",
+                "Elspeth, Knight-Errant",
+                "The Seriema",
+                "Sorin, Vengeful Bloodlord",
+                "Syr Vondam, Sunstar Exemplar",
+            ]
+            .map(String::from),
+        );
         Wanted { main, played, extra }
     }
 

@@ -157,7 +157,8 @@ fn astral_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
         ..CopyExc::default()
     };
     crate::glog!(g, "    Astral Dragon: two 3/3 Dragon copies of {}", cname(g, c));
-    let (land, aura) = (g.db.get(c).land, g.db.get(c).has_subtype("aura"));
+    let (land, aura) =
+        (g.db.get(c).land || g.perm(t).data.truthy(crate::state::DataKey::LandFace), g.db.get(c).has_subtype("aura"));
     for _ in 0..2 {
         if land {
             crate::engine::turn::enter_token_land_copy(g, p, c, exc)?;

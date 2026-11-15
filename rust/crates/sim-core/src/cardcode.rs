@@ -800,7 +800,10 @@ pub fn saga_proliferated(g: &mut Game, p: PlayerId, m: PermId) -> Res {
 /// CI.LAND_ETB: a land played as a land drop enters (Bojuka Bog ...)
 pub fn land_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
     if crate::engine::mana::moon_land(g, l) {
-        return Ok(()); // Blood Moon: a plain Mountain has no enters ability
+        // Blood Moon: a plain Mountain has no enters ability; but the face a modal card entered as is not an ability
+        // (Witch-Blessed Meadow stays its colourless land face)
+        crate::impls::yoshimaru_cards::moon_land_face(g, l);
+        return Ok(());
     }
     match imp_of(g, g.perm(l).card()).and_then(|i| i.land_etb) {
         Some(f) => f(g, p, l),

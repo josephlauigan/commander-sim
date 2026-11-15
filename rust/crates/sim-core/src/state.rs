@@ -138,6 +138,10 @@ pub enum DataKey {
     Kicks,
     Kws,
     Land,
+    /// Witch-Blessed Meadow (impls/yoshimaru_cards.rs): a modal double-faced card played as its land face. The permanent
+    /// is only a land: not a creature, no creature types, colourless, and its front face's compiled abilities do not
+    /// work (set by the card's `land_etb` hook, as it enters). Only that card sets it.
+    LandFace,
     Legendary,
     Level,
     Lord,

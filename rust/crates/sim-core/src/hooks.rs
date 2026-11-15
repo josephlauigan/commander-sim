@@ -62,6 +62,7 @@ pub enum Event {
     HandOptions,
     LandColorless,
     LandDefend,
+    LandEnters,
     LandGy,
     LandMana,
     LandOptions,
@@ -107,7 +108,7 @@ pub enum Event {
     Upkeep,
 }
 
-pub const EVENTS: [(Event, &str); 82] = [
+pub const EVENTS: [(Event, &str); 83] = [
     (Event::Attack, "attack"),
     (Event::AttackCap, "attack_cap"),
     (Event::AttackTax, "attack_tax"),
@@ -147,6 +148,7 @@ pub const EVENTS: [(Event, &str); 82] = [
     (Event::HandOptions, "hand_options"),
     (Event::LandColorless, "land_colorless"),
     (Event::LandDefend, "land_defend"),
+    (Event::LandEnters, "land_enters"),
     (Event::LandGy, "land_gy"),
     (Event::LandMana, "land_mana"),
     (Event::LandOptions, "land_options"),
@@ -193,7 +195,7 @@ pub const EVENTS: [(Event, &str); 82] = [
 ];
 
 /// Python's `engine.TRIGGER_EVENTS`
-pub const TRIGGER_EVENTS: [Event; 25] = [
+pub const TRIGGER_EVENTS: [Event; 26] = [
     Event::Attack,
     Event::Blocks,
     Event::CardsToGy,
@@ -210,6 +212,7 @@ pub const TRIGGER_EVENTS: [Event; 25] = [
     Event::Etb,
     Event::ExiledFromBf,
     Event::GainLife,
+    Event::LandEnters,
     Event::LandGy,
     Event::Landfall,
     Event::Leaves,
@@ -404,7 +407,7 @@ pub enum SlotClass {
 /// Every `CardImpl` slot's class, in field order: the one place a slot is classed. `at_once` is not a slot (it marks
 /// how other slots run). `options` / `gy_options` / `hand_options` / `land_options` build the plays the AI may pick;
 /// `prio`, `spell_imp` and `pval` are numbers it ranks by.
-pub const SLOT_CLASS: [(&str, SlotClass); 101] = [
+pub const SLOT_CLASS: [(&str, SlotClass); 102] = [
     ("etb", SlotClass::Rule),
     ("enter_copy", SlotClass::Rule),
     ("leaves", SlotClass::Rule),
@@ -491,6 +494,7 @@ pub const SLOT_CLASS: [(&str, SlotClass); 101] = [
     ("dyn_mana_land", SlotClass::Rule),
     ("dyn_mana_perm", SlotClass::Rule),
     ("land_etb", SlotClass::Rule),
+    ("land_enters", SlotClass::Rule),
     ("land_cols", SlotClass::Rule),
     ("crew", SlotClass::Rule),
     ("tokens_enter", SlotClass::Rule),
@@ -619,6 +623,9 @@ pub struct CardImpl {
     pub dyn_mana_land: Option<DynManaLandFn>,
     pub dyn_mana_perm: Option<DynManaPermFn>,
     pub land_etb: Option<LandEtbFn>,
+    /// land_enters(g, src, p, m): land m entered under p's control, however it came (played, fetched, returned, a token
+    /// copy): fired once per land by `zones::lands_entered`; a triggered event (Yoshimaru, Ever Faithful)
+    pub land_enters: Option<EtbFn>,
     pub land_cols: Option<LandColsFn>,
     /// crew(g, src, p): p's beginning of combat, its first combat each turn (vehicles crew, Opposition taps; run at
     /// once: not a triggered event in Python)
@@ -657,7 +664,7 @@ pub struct CardImpl {
 impl CardImpl {
     /// Every slot by name, and whether it is filled. Destructuring the struct makes a new field a compile error here
     /// until it is listed, and the test `every_slot_has_a_class` then needs its class in `SLOT_CLASS`.
-    pub fn slot_fill(&self) -> [(&'static str, bool); 101] {
+    pub fn slot_fill(&self) -> [(&'static str, bool); 102] {
         let CardImpl {
             etb,
             enter_copy,
@@ -745,6 +752,7 @@ impl CardImpl {
             dyn_mana_land,
             dyn_mana_perm,
             land_etb,
+            land_enters,
             land_cols,
             crew,
             tokens_enter,
@@ -849,6 +857,7 @@ impl CardImpl {
             ("dyn_mana_land", dyn_mana_land.is_some()),
             ("dyn_mana_perm", dyn_mana_perm.is_some()),
             ("land_etb", land_etb.is_some()),
+            ("land_enters", land_enters.is_some()),
             ("land_cols", land_cols.is_some()),
             ("crew", crew.is_some()),
             ("tokens_enter", tokens_enter.is_some()),
@@ -952,6 +961,7 @@ impl CardImpl {
             Event::LandGy => self.land_gy.is_some(),
             Event::HandDefend => self.hand_defend.is_some(),
             Event::LandDefend => self.land_defend.is_some(),
+            Event::LandEnters => self.land_enters.is_some(),
             Event::LandOptions => self.land_options.is_some(),
             Event::LandUpkeep => self.land_upkeep.is_some(),
             Event::GyDies => self.gy_dies.is_some(),

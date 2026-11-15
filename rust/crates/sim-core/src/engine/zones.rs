@@ -1768,17 +1768,24 @@ pub fn land_ramp(g: &mut Game, p: PlayerId, n: u32, tapped: bool) -> Res {
     Ok(())
 }
 
-/// the lands that just entered under p's control: their compiled enter triggers (a Temple's scry, a gain land's life,
-/// a surveil land's surveil) go on the stack through the ability language (Phase 3: one path; the engine's own
-/// `land_etb_fx` is gone)
+/// the lands that just entered under p's control: the land-enters event for card code (`Event::LandEnters`), and their
+/// compiled enter triggers (a Temple's scry, a gain land's life, a surveil land's surveil), which go on the stack
+/// through the ability language (Phase 3: one path; the engine's own `land_etb_fx` is gone)
 pub fn lands_entered(g: &mut Game, p: PlayerId) -> Res {
     for l in g.player(p).lands.clone() {
         if g.perm(l).data.truthy(DataKey::In) {
             continue;
         }
         g.perm_mut(l).data.set(DataKey::In, Val::Bool(true));
-        if crate::engine::mana::moon_land(g, l) {
-            continue; // Blood Moon: a plain Mountain has no enters trigger
+        // the land-enters event (Yoshimaru): once per land, whatever put it onto the battlefield; before the Blood
+        // Moon check, which takes the land's own abilities but not what other permanents see
+        if !g.hooks.is_empty() && !g.over {
+            fire_trigger(g, Event::LandEnters, Call::Etb { p, m: l })?;
+        }
+        // Blood Moon: a plain Mountain has no enters trigger; nor has a card played as its land face (the compiled
+        // trigger is the front face's: Witch Enchanter's destroy)
+        if crate::engine::mana::moon_land(g, l) || g.perm(l).data.truthy(DataKey::LandFace) {
+            continue;
         }
         let etb =
             g.db.get(g.perm(l).card())
