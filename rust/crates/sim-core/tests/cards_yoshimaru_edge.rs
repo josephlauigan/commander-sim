@@ -3,8 +3,8 @@
 
 mod play_common;
 use play_common::*;
-use sim_core::cards::Types;
-use sim_core::engine::{cast, combat, turn, zones};
+use sim_core::cards::{Colors, Types};
+use sim_core::engine::{cast, chars, combat, stack, turn, zones};
 use sim_core::hooks::Opt;
 use sim_core::state::{CopyExc, Ctx, DataKey, Step, Val};
 
@@ -791,4 +791,156 @@ fn seriema_ai_does_not_station_once_it_is_a_creature_but_a_person_may() {
     let o = opts(&mut g, s).remove(0);
     assert!(run(&mut g, &o));
     assert_eq!(charge(&g, s), 9);
+}
+
+// ---------------------------------------------------------------- round 3: the second adversarial pass
+
+#[test]
+fn departed_land_does_not_cancel_its_already_queued_trigger() {
+    let mut g = tbl();
+    let y = perm(&mut g, P0, Y);
+    g.resolving += 1;
+    let l = land(&mut g, "Minas Tirith");
+    assert_eq!(g.perm(y).plus, 0);
+    assert!(!g.trig_queue.is_empty());
+    turn::remove_land(&mut g, P0, l, Some(zones::Zone::Gy));
+    g.resolving -= 1;
+    stack::flush_triggers(&mut g).unwrap();
+    assert_eq!(g.perm(y).plus, 1, "a triggered ability does not require the entering land to remain");
+}
+
+#[test]
+fn starfield_vocalist_adds_one_land_trigger() {
+    let mut g = tbl();
+    let y = perm(&mut g, P0, Y);
+    perm(&mut g, P0, "Starfield Vocalist");
+    land(&mut g, "Minas Tirith");
+    assert_eq!(g.perm(y).plus, 2, "one replacement effect adds one trigger");
+}
+
+#[test]
+fn meadow_can_become_creature_after_entry() {
+    let mut g = tbl();
+    person(&mut g, |_| Some(1));
+    let m = play_meadow(&mut g);
+    g.perm_mut(m).data.set(DataKey::Anim, Val::Bool(true));
+    g.perm_mut(m).pow = 3;
+    g.perm_mut(m).tgh = 3;
+    assert!(g.is_creature(m), "land-face characteristics must not forbid a later animation effect");
+}
+
+#[test]
+fn meadow_land_copy_keeps_land_characteristics_with_creature_exception() {
+    let mut g = tbl();
+    person(&mut g, |_| Some(1));
+    let m = play_meadow(&mut g);
+    let c = g.perm(m).card();
+    let n = turn::enter_token_land_copy(
+        &mut g,
+        P0,
+        c,
+        CopyExc { add_types: Types::CREATURE, pt: Some((3, 3)), ..Default::default() },
+    )
+    .unwrap()
+    .unwrap();
+    assert!(g.is_creature(n), "copy exception makes the land a creature");
+    assert_eq!(chars::power(&g, n), 3);
+    assert_eq!(chars::colors(&g, n), Colors::NONE);
+}
+
+#[test]
+fn seriema_animation_via_tezzeret_emblem_does_not_unlock_seven_plus() {
+    let mut g = tbl();
+    let s = seriema(&mut g);
+    let y = perm(&mut g, P0, Y);
+    g.perm_mut(y).tapped = true;
+    g.player_mut(P0).emblems.push(sim_core::impls::t6_godo::TEZ_EMBLEM);
+    sim_core::impls::t6_godo::tez_emblem(&mut g, P0).unwrap();
+    assert!(g.is_creature(s));
+    assert_eq!(g.perm(s).plus, 3);
+    assert_eq!(charge(&g, s), 0);
+    assert_eq!(chars::power(&g, s), 3);
+    assert!(!chars::has_keyword(&g, s, "flying"));
+}
+
+#[test]
+fn seriema_animation_via_tezzeret_emblem_does_not_grant_indestructible() {
+    let mut g = tbl();
+    let s = seriema(&mut g);
+    let y = perm(&mut g, P0, Y);
+    g.perm_mut(y).tapped = true;
+    g.player_mut(P0).emblems.push(sim_core::impls::t6_godo::TEZ_EMBLEM);
+    sim_core::impls::t6_godo::tez_emblem(&mut g, P0).unwrap();
+    assert_eq!(charge(&g, s), 0);
+    assert!(!chars::has_keyword(&g, y, "indestructible"));
+}
+
+#[test]
+fn seriema_animated_below_threshold_gets_no_station_keywords() {
+    let mut g = tbl();
+    let s = seriema(&mut g);
+    let y = perm(&mut g, P0, Y);
+    g.perm_mut(y).tapped = true;
+    g.perm_mut(s).data.set(DataKey::Anim, Val::Bool(true));
+    g.perm_mut(s).pow = 4;
+    g.perm_mut(s).tgh = 4;
+    assert!(g.is_creature(s));
+    assert!(!chars::has_keyword(&g, s, "flying"), "7+ requires seven charge counters, not any animation");
+    assert!(!chars::has_keyword(&g, y, "indestructible"));
+}
+
+#[test]
+fn seriema_under_darksteel_mutation_is_zero_one() {
+    let mut g = tbl();
+    let s = seriema(&mut g);
+    g.perm_mut(s).data.set(DataKey::Charge, Val::Int(7));
+    sim_core::impls::rules::transform_away(&mut g, s, "mutate").unwrap();
+    assert!(g.is_creature(s));
+    assert!(!chars::has_keyword(&g, s, "flying"));
+    assert_eq!((chars::power(&g, s), chars::toughness(&g, s)), (0, 1), "later base-setting effect overrides 5/5");
+}
+
+#[test]
+fn seriema_under_kenrith_transformation_is_three_three() {
+    let mut g = tbl();
+    let s = seriema(&mut g);
+    g.perm_mut(s).data.set(DataKey::Charge, Val::Int(7));
+    sim_core::impls::rules::transform_away(&mut g, s, "elk").unwrap();
+    assert_eq!((chars::power(&g, s), chars::toughness(&g, s)), (3, 3));
+}
+
+#[test]
+fn seriema_animated_by_tezzeret_keeps_the_later_base_after_reaching_seven() {
+    let mut g = tbl();
+    let s = seriema(&mut g);
+    g.player_mut(P0).emblems.push(sim_core::impls::t6_godo::TEZ_EMBLEM);
+    sim_core::impls::t6_godo::tez_emblem(&mut g, P0).unwrap();
+    g.perm_mut(s).data.set(DataKey::Charge, Val::Int(7));
+    assert_eq!(
+        (chars::power(&g, s), chars::toughness(&g, s)),
+        (3, 3),
+        "the emblem's 0/0 base is later than the printed 5/5; its three counters make it 3/3"
+    );
+}
+
+#[test]
+fn meadow_under_blood_moon_enters_untapped_without_life_prompt() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Blood Moon");
+    let h = person(&mut g, |_| Some(1));
+    let m = play_meadow(&mut g);
+    assert!(sim_core::engine::mana::moon_land(&g, m));
+    assert!(!g.perm(m).tapped, "Moon removes the enters-tapped replacement");
+    assert_eq!(g.player(P0).life, 40);
+    assert!(!h.asked().iter().any(|r| r.prompt.contains("pay 3 life")));
+}
+
+#[test]
+fn meadow_life_locked_cannot_pay_three_for_untapped_entry() {
+    let mut g = tbl();
+    g.player_mut(P0).life_locked = true;
+    person(&mut g, |_| Some(0));
+    let m = play_meadow(&mut g);
+    assert_eq!(g.player(P0).life, 40);
+    assert!(g.perm(m).tapped, "life that cannot change cannot pay nonzero life");
 }
