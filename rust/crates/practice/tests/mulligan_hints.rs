@@ -248,7 +248,7 @@ fn cloud_two_lands_need_a_cheap_play_and_say_what_would_have_kept_it() {
 fn yshtola_and_sheoldred_have_no_table_and_say_so() {
     let (mut g, p) = game_with(
         "yshtola",
-        &["Swamp", "Rhystic Study", "Counterspell", "Farewell", "Exsanguinate", "Sanguine Bond", "Torment of Hailfire"],
+        &["Swamp", "Rhystic Study", "Counterspell", "Farewell", "Exsanguinate", "Sanguine Bond", "Toxic Deluge"],
     );
     let h = hint(&mut g, p);
     verdict_unchanged(&mut g, p, &h);
