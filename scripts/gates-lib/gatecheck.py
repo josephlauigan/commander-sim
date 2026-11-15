@@ -275,7 +275,7 @@ def newconsts(base_tree, branch_tree):
 
 
 def verdict(path, head):
-    """the first line is `VERDICT: commit` and a line `Reviewed head: <hash>` names the commit being gated (a prefix of
+    """the first line is `VERDICT: commit` and a line `Reviewed head: <hash>` as the second line names the commit being gated (a prefix of
     at least 8 hex digits), so a verdict written for an earlier head does not pass a later one"""
     if not os.path.exists(path):
         return out(False, "no review file", [path])
