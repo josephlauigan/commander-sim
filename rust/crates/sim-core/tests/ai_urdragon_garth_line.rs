@@ -962,6 +962,14 @@ fn adv_probe(g: &Game) -> (bool, bool, bool) {
     let mut allin = false;
     for q in a.opps(P0).collect::<Vec<_>>() {
         let mut b = a.clone();
+        // the combat step's priority and EachCombat come before the attackers are chosen (Opposition, Whipcorder)
+        sim_core::engine::stack::step_priority(&mut b, "combat", None, &[]).unwrap();
+        sim_core::engine::hooks::fire_trigger(
+            &mut b,
+            sim_core::hooks::Event::EachCombat,
+            sim_core::hooks::Call::Player { p: P0 },
+        )
+        .unwrap();
         let atk: Vec<PermId> = b
             .player(P0)
             .perms
@@ -1462,4 +1470,300 @@ fn twinflame_f_intruder_alarm_untaps_the_opponents_flier_after_the_copies_enter(
     g.player_mut(P1).life = 16;
     let (rel, _, ai) = adv_result(&g);
     assert!(!rel || ai, "Twinflame offered, but the untapped flier blocks and nobody dies");
+}
+
+// ------------------------------------------------------------------ round 7: the release is checked on the engine
+// Each state below is a visible effect the estimate does not read. The release must agree with the engine's own combat:
+// `adv_probe` is (the estimate releases, an all-in attack kills, the engine's combat kills).
+
+#[test]
+fn kor_haven_is_a_land_not_in_hooked() {
+    let mut g = adv_base(2);
+    let haven = lands(&mut g, P1, "Kor Haven", 1, false)[0];
+    lands(&mut g, P1, "Plains", 2, false);
+    assert!(!g.hooks.contains(&haven));
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_result(&g), (false, false, false));
+}
+
+#[test]
+fn opposition_taps_attackers_before_combat() {
+    let mut g = adv_base(2);
+    perm(&mut g, P1, "Opposition");
+    token(&mut g, P1, 1);
+    token(&mut g, P1, 1);
+    g.player_mut(P1).life = 16;
+    let r = adv_result(&g);
+    assert!(!r.0 || r.2, "wrong release: {r:?}");
+}
+
+#[test]
+fn whipcorder_taps_an_attacker_before_combat() {
+    let mut g = adv_base(2);
+    perm(&mut g, P1, "Whipcorder");
+    lands(&mut g, P1, "Plains", 1, false);
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_result(&g), (false, false, false));
+}
+
+#[test]
+fn ballista_squad_kills_an_attacker_after_declaration() {
+    let mut g = adv_base(2);
+    perm(&mut g, P1, "Ballista Squad");
+    lands(&mut g, P1, "Plains", 9, false);
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_result(&g), (false, false, false));
+}
+
+#[test]
+fn animated_factory_gains_flying_and_blocks() {
+    let mut g = adv_base(2);
+    lands(&mut g, P1, "Mishra's Factory", 1, false);
+    lands(&mut g, P1, "Plains", 2, false);
+    g.player_mut(P1).elspeth_emblem = true;
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_result(&g), (false, false, false));
+}
+
+#[test]
+fn painful_quandary_kills_caster_before_the_copy_enters() {
+    let mut g = adv_base(2);
+    perm(&mut g, P1, "Painful Quandary");
+    g.player_mut(P0).life = 5;
+    g.player_mut(P1).life = 16;
+    assert!(sim_core::ai::brain::Situation::new(&g, P0).danger < 1.0);
+    assert_eq!(adv_result(&g), (false, false, false));
+}
+
+#[test]
+fn mana_payment_taps_the_original_dragon() {
+    let mut g = adv_base(2);
+    for land in g.player(P0).lands.clone().into_iter().skip(1) {
+        assert!(turn::remove_land(&mut g, P0, land, Some(sim_core::engine::zones::Zone::Gy)));
+    }
+    let v = perm(&mut g, P0, "Enduring Vitality");
+    g.perm_mut(v).tapped = true;
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_result(&g), (false, false, false));
+}
+
+#[test]
+fn neutered_alarm_cannot_untap_a_blocker() {
+    let mut g = adv_base(2);
+    let alarm = perm(&mut g, P1, "Intruder Alarm");
+    g.perm_mut(alarm).neutered = true;
+    let blocker = perm(&mut g, P1, "Shivan Dragon");
+    g.perm_mut(blocker).tapped = true;
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_result(&g), (true, true, true));
+}
+
+/// Inside the AI's own look-ahead copies the estimate decides alone (no copy of a copy); the real game checks the kill
+/// on the engine.
+#[test]
+fn twinflame_check_is_skipped_inside_a_look_ahead_copy() {
+    let mut g = adv_base(2);
+    lands(&mut g, P1, "Kor Haven", 1, false);
+    lands(&mut g, P1, "Plains", 2, false);
+    g.player_mut(P1).life = 16;
+    let mut copy = g.clone();
+    copy.in_search = true;
+    assert!(!adv_hook(&mut copy).is_empty(), "a look-ahead copy decides by the estimate alone");
+    assert!(adv_hook(&mut g).is_empty(), "the real game checks the kill on the engine");
+}
+
+// controls: the check does not hold where the engine kills
+#[test]
+fn missed_defense_mana_boundaries() {
+    let mut g = adv_base(2);
+    lands(&mut g, P1, "Kor Haven", 1, true);
+    lands(&mut g, P1, "Plains", 2, false);
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_probe(&g), (true, true, true));
+    let mut g = adv_base(2);
+    lands(&mut g, P1, "Kor Haven", 1, false);
+    lands(&mut g, P1, "Plains", 1, false);
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_probe(&g), (true, true, true));
+    let mut g = adv_base(2);
+    let v = perm(&mut g, P0, "Enduring Vitality");
+    g.perm_mut(v).tapped = true;
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_probe(&g), (true, true, true));
+}
+
+#[test]
+fn missed_effects_disable_controls() {
+    for (name, life) in [("Painful Quandary", 5), ("Whipcorder", 40), ("Ballista Squad", 40), ("Opposition", 40)] {
+        for phased in [false, true] {
+            let mut g = adv_base(2);
+            let src = perm(&mut g, P1, name);
+            g.perm_mut(src).phased = phased;
+            g.perm_mut(src).neutered = !phased;
+            lands(&mut g, P1, "Plains", 9, false);
+            g.player_mut(P0).life = life;
+            g.player_mut(P1).life = 16;
+            if name == "Opposition" {
+                token(&mut g, P1, 1);
+                token(&mut g, P1, 1);
+            }
+            let r = adv_probe(&g);
+            // the engine's own named-card path ignores neutered for Opposition: the engine does not kill there, and the
+            // release follows the engine
+            let kills = name != "Opposition" || phased;
+            assert_eq!(r, (kills, kills, kills), "{name} phased={phased}");
+        }
+    }
+}
+
+// guards: the hook is a pure read of this game, with and without the engine check running
+#[test]
+fn twinflame_check_is_pure_for_the_real_game() {
+    // (a) the estimate says lethal and the engine agrees: the check runs and releases (a Terror on the board)
+    // (b) the estimate says lethal and the engine holds (Kor Haven): the check runs and holds (what it answers is pinned
+    //     by `kor_haven_is_a_land_not_in_hooked`; this test is about what it leaves behind)
+    for haven in [false, true] {
+        let mut g = adv_base(2);
+        if haven {
+            lands(&mut g, P1, "Kor Haven", 1, false);
+            lands(&mut g, P1, "Plains", 2, false);
+        } else {
+            perm(&mut g, P0, TERROR);
+        }
+        g.player_mut(P1).life = 16;
+        let players = g.players.clone();
+        let arena = format!("{:?}", g.perms);
+        let rng = format!("{:?}", g.rng);
+        let queue = format!("{:?}", g.trig_queue);
+        let hooks = g.hooks.clone();
+        g.log = Some(vec!["start".to_string()]);
+        let (work, n, sw, s0) = (g.work, g.search_n, g.search_work, sim_core::ai::search::stats());
+        let first = !adv_hook(&mut g).is_empty();
+        assert!(haven || first, "the estimate and the engine agree on a Terror: released");
+        for _ in 0..4 {
+            assert_eq!(!adv_hook(&mut g).is_empty(), first);
+        }
+        assert_eq!(g.players, players);
+        assert_eq!(format!("{:?}", g.perms), arena);
+        assert_eq!(format!("{:?}", g.rng), rng);
+        assert_eq!(format!("{:?}", g.trig_queue), queue);
+        assert_eq!(g.hooks, hooks);
+        assert_eq!(g.log.as_deref(), Some(&["start".to_string()][..]));
+        assert_eq!((g.work, g.search_n, g.search_work), (work, n, sw));
+        let s1 = sim_core::ai::search::stats();
+        assert_eq!((s1.decisions, s1.playouts), (s0.decisions, s0.playouts));
+    }
+}
+
+#[test]
+fn hook_purity_raw_guard_and_odd_state_matrix() {
+    let mut g = adv_base(2);
+    perm(&mut g, P0, TERROR);
+    g.player_mut(P1).life = 16;
+    let players = g.players.clone();
+    let arena = format!("{:?}", g.perms);
+    let rng = format!("{:?}", g.rng);
+    let queue = format!("{:?}", g.trig_queue);
+    let hooks = g.hooks.clone();
+    let first = !adv_hook(&mut g).is_empty();
+    for _ in 0..30 {
+        assert_eq!(!adv_hook(&mut g).is_empty(), first);
+    }
+    assert_eq!(g.players, players);
+    assert_eq!(format!("{:?}", g.perms), arena);
+    assert_eq!(format!("{:?}", g.rng), rng);
+    assert_eq!(format!("{:?}", g.trig_queue), queue);
+    assert_eq!(g.hooks, hooks);
+    for seats in [1, 2, 4] {
+        let mut a = adv_base(seats);
+        perm(&mut a, P0, TERROR);
+        for q in a.players.iter_mut().skip(1) {
+            q.alive = false;
+        }
+        assert!(adv_hook(&mut a).is_empty());
+        for key in ["aragorn", "seph", "urdragon-pool"] {
+            a.player_mut(P0).key = key;
+            assert!(!adv_hook(&mut a).is_empty(), "raw key {key}");
+        }
+        a.player_mut(P0).key = "urdragon";
+        a.player_mut(P0).alive = false;
+        let _ = adv_hook(&mut a);
+        a.player_mut(P0).alive = true;
+        a.player_mut(P0).perms.clear();
+        assert!(adv_hook(&mut a).is_empty());
+    }
+}
+
+/// L2: the check reads only the visible board, as the estimate does: an answer in an opponent's hand is not seen
+#[test]
+fn twinflame_check_does_not_read_an_opponents_hand() {
+    let mut g = adv_base(2);
+    hand(&mut g, P1, &["Swords to Plowshares"]);
+    lands(&mut g, P1, "Plains", 1, false);
+    g.player_mut(P1).life = 16;
+    let h = g.player(P1).hand.clone();
+    assert!(!adv_hook(&mut g).is_empty(), "L2: an answer in the hand is not seen");
+    assert_eq!(g.player(P1).hand, h);
+}
+
+#[test]
+fn twinflame_check_does_not_advance_the_games_random_numbers() {
+    let mut g = adv_base(2);
+    g.player_mut(P1).life = 16;
+    let before = format!("{:?}", g.rng);
+    assert!(!adv_hook(&mut g).is_empty());
+    assert_eq!(format!("{:?}", g.rng), before);
+}
+
+// D1 pins (triage 5): the estimate holds where the engine would kill. They flip only if JD chooses to release more.
+#[test]
+fn harmless_t5_yawgmoth_nezahal_holds() {
+    for name in ["Yawgmoth, Thran Physician", "Nezahal, Primal Tide", "Sakura-Tribe Elder", "Mirage Mirror"] {
+        let mut g = adv_base(2);
+        let src = perm(&mut g, P1, name);
+        g.perm_mut(src).tapped = true;
+        g.player_mut(P1).life = 16;
+        assert_eq!(adv_probe(&g), (false, true, true), "{name}");
+    }
+}
+
+#[test]
+fn representative_pool_boards_and_global_holds() {
+    // D1: the (false, true, true) rows are the estimate's conservative holds
+    let rows: &[(&str, &[&str], bool)] = &[
+        ("zur", &["Grand Arbiter Augustin IV", "Mystic Remora", "Arcane Signet", "Rest in Peace"], true),
+        (
+            "kinnan",
+            &[
+                "Kinnan, Bonder Prodigy",
+                "Birds of Paradise",
+                "Bloom Tender",
+                "Sol Ring",
+                "Mystic Remora",
+                "Seedborn Muse",
+            ],
+            true,
+        ),
+        ("kinnan_nezahal", &["Kinnan, Bonder Prodigy", "Birds of Paradise", "Sol Ring", "Nezahal, Primal Tide"], false),
+        ("yawgmoth", &["Yawgmoth, Thran Physician", "Blood Artist", "Bloodghast", "Sol Ring"], false),
+        ("chulane_t4", &["Chulane, Teller of Tales", "Llanowar Elves", "Sol Ring", "Mystic Remora"], true),
+        ("edgar_t4", &["Edgar Markov", "Captivating Vampire", "Sol Ring"], true),
+    ];
+    for &(key, names, rel) in rows {
+        let mut g = adv_base(2);
+        g.skip_etb = true;
+        for name in names {
+            let src = perm(&mut g, P1, name);
+            g.perm_mut(src).tapped = true;
+        }
+        g.skip_etb = false;
+        g.player_mut(P1).life = 16;
+        assert_eq!(adv_probe(&g), (rel, true, true), "{key}");
+    }
+    // Nezahal on an entirely different seat holds a kill of the open opponent as well
+    let mut g = adv_base(3);
+    perm(&mut g, P2, "Nezahal, Primal Tide");
+    g.player_mut(P1).life = 16;
+    g.player_mut(P2).life = 100;
+    assert_eq!(adv_probe(&g), (false, true, true));
 }
