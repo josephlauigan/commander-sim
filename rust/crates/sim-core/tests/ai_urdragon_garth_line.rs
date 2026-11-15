@@ -263,6 +263,12 @@ fn twinflame_row_02_ready_line_offers_no_fair_option_but_the_combo() {
     let tw = card(&g, TWIN);
     let lines = sim_core::impls::combos::ready_lines(&g, P0);
     assert!(lines.iter().any(|(_, cs)| cs.contains(&tw)), "the Garth line is ready and uses Twinflame: {lines:?}");
+    // the combo option is what makes holding the fair option safe: it must really be offered
+    let offers: Vec<String> = main_options(&mut g, P0, false).unwrap().into_iter().map(|o| o.label).collect();
+    assert!(
+        offers.iter().any(|l| l.starts_with("combo:") && l.contains("Garth One-Eye")),
+        "the Garth combo option is offered: {offers:?}"
+    );
     let mut c = row02("aragorn");
     fair(&mut c, false);
 }
@@ -400,6 +406,18 @@ fn twinflame_row_20_ready_overrides_lethal() {
     let mut g = row02("urdragon");
     opp_life(&mut g, 2 * BIG_POW);
     held(&mut g, false);
+    // twins: at that life total the attack is lethal, so the fair option is offered when the line is dead, and when
+    // it is alive but not ready (one land fewer: no RR and G); only readiness holds it back
+    let mut dead = row02("urdragon");
+    let season = dead.player(P0).perms.iter().copied().find(|&m| dead.perm(m).name == SEASON).unwrap();
+    zones::leave(&mut dead, season).unwrap();
+    put(&mut dead, P0, SEASON, Z::Gone); // Doubling Season is gone for good: the line is dead
+    opp_life(&mut dead, 2 * BIG_POW);
+    fair(&mut dead, false);
+    let mut unready = row04("urdragon");
+    opp_life(&mut unready, 2 * BIG_POW);
+    assert!(!sim_core::impls::t45_urdragon_combos::ready_garth(&unready, P0).0);
+    fair(&mut unready, false);
 }
 
 #[test]
