@@ -1404,3 +1404,62 @@ fn twinflame_f_control_szadek_beside_the_copy_that_alone_kills_still_releases() 
     g.player_mut(P1).life = 8;
     assert_eq!(adv_probe(&g), (true, true, true));
 }
+
+// round 6 detector controls: the same states with the opponent's permanent phased out release
+#[test]
+fn twinflame_f_control_phased_authority_gains_nothing_so_it_releases() {
+    let mut g = adv_base(2);
+    let a = perm(&mut g, P1, "Authority of the Consuls");
+    g.perm_mut(a).phased = true;
+    g.player_mut(P1).life = 8;
+    assert_eq!(adv_probe(&g), (true, true, true));
+}
+
+#[test]
+fn twinflame_f_control_soul_warden_of_the_casting_seat_gains_the_opponent_nothing() {
+    let mut g = adv_base(2);
+    perm(&mut g, P0, "Soul Warden");
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_probe(&g), (true, true, true));
+}
+
+#[test]
+fn twinflame_f_control_phased_soul_warden_gains_nothing_so_it_releases() {
+    let mut g = adv_base(2);
+    let w = perm(&mut g, P1, "Soul Warden");
+    g.perm_mut(w).phased = true;
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_probe(&g), (true, true, true));
+}
+
+#[test]
+fn twinflame_f_control_phased_spore_frog_fogs_nothing_so_it_releases() {
+    let mut g = adv_base(2);
+    let f = perm(&mut g, P1, "Spore Frog");
+    g.perm_mut(f).phased = true;
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_probe(&g), (true, true, true));
+}
+
+#[test]
+fn twinflame_f_control_phased_sunscorch_regent_gains_nothing_so_it_releases() {
+    let mut g = adv_base(2);
+    let r = perm(&mut g, P1, "Sunscorch Regent");
+    g.perm_mut(r).tapped = true;
+    g.perm_mut(r).phased = true;
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_probe(&g), (true, true, true));
+}
+
+// beginning-of-combat and enter effects of an opponent that can make a blocker: the all-in probe attacks into no
+// blockers, so these are wrong releases when the engine's own combat does not kill
+#[test]
+fn twinflame_f_intruder_alarm_untaps_the_opponents_flier_after_the_copies_enter() {
+    let mut g = adv_base(2);
+    perm(&mut g, P1, "Intruder Alarm");
+    let d = perm(&mut g, P1, "Shivan Dragon");
+    g.perm_mut(d).tapped = true;
+    g.player_mut(P1).life = 16;
+    let (rel, _, ai) = adv_result(&g);
+    assert!(!rel || ai, "Twinflame offered, but the untapped flier blocks and nobody dies");
+}

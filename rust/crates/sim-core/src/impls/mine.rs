@@ -3533,6 +3533,43 @@ fn flies_over(g: &Game, m: PermId) -> bool {
         || x.eot_kw.contains(&"flying")
 }
 
+/// A visible opponent effect that fires while the line plays out and that the estimate does not follow: a compiled
+/// trigger on Twinflame's cast ("whenever an opponent casts": Sunscorch Regent's life, Arasta's reach Spider), on a copy
+/// entering ("whenever a creature [an opponent controls] enters": Soul Warden, Soul's Attendant, Auriok Champion,
+/// Authority of the Consuls, Suture Priest; none while creatures entering trigger nothing) or on the attack ("whenever a
+/// player attacks": Aurelia, the Law Above), or card code on a life loss (Exquisite Blood, Bloodthirsty Conqueror), on
+/// any creature entering that untaps blockers (Intruder Alarm, whoever controls it) or at the beginning of combat that
+/// taps or untaps creatures (Koma, Cosmos Serpent and Sting, the Glinting Dagger of an opponent). `dsl::fire` reads
+/// phasing but not lost abilities, so neither does this. Any of them holds the release.
+fn foreign_triggers(g: &Game, p: PlayerId, quiet: bool) -> bool {
+    use crate::dsl::model::Ability;
+    let compiled = crate::dsl::active(g)
+        && g.opps(p).any(|q| {
+            g.player(q).perms.iter().copied().chain(crate::dsl::land_sources(g, q)).any(|s| {
+                let x = g.perm(s);
+                !x.phased
+                    && x.cd.is_some_and(|cd| {
+                        g.db.get(cd).abilities.iter().any(|a| match a {
+                            Ability::Triggered { event, source, who, .. } => match event.as_str() {
+                                "etb" => !quiet && matches!(source.as_deref(), Some("opp_creature" | "any_creature")),
+                                "cast" => who.as_deref() != Some("you"),
+                                "attack" => source.as_deref() == Some("any_player"),
+                                _ => false,
+                            },
+                            _ => false,
+                        })
+                    })
+            })
+        });
+    let hooks = crate::engine::hooks::hooked;
+    compiled
+        || hooks(g, Event::LoseLife).iter().any(|(s, _)| g.perm(*s).owner != p)
+        || (!quiet && crate::impls::t45_chulane_kinnan::alarm_on(g))
+        || hooks(g, Event::EachCombat).iter().any(|(s, _)| {
+            g.perm(*s).owner != p && matches!(g.perm(*s).name, "Koma, Cosmos Serpent" | "Sting, the Glinting Dagger")
+        })
+}
+
 /// Twinflame's copies and p's ready fliers kill one opponent this turn: first main phase, and an opponent whom nothing
 /// protects (The One Ring and the like prevent all of it). Two kinds of damage reach that opponent:
 /// - combat damage, if it has no untapped flier or reach creature to block: p's ready fliers and the flying copies,
@@ -3606,6 +3643,9 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
     let capped = !crate::engine::hooks::hooked(g, Event::AttackCap).is_empty();
     // Hushbringer (and `skip_etb`) stop a creature's enter triggers from running at all, Terror's included
     let quiet = g.skip_etb || repl::hushed(g);
+    if foreign_triggers(g, p, quiet) {
+        return false;
+    }
     // a Terror whose abilities are lost (`neutered`) has no trigger, as in `hooks::hooked`
     let terrors = if quiet {
         0
@@ -3660,7 +3700,12 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
         // Serra's Emissary (protection from creatures) and Heroic Sacrifice stop combat damage only
         let shielded = crate::impls::t12_kaalia_sythis::emissary_shields(g, q)
             || g.t0c.sac.is_some_and(|(o, _, at)| o == q && at == st);
-        let combat = if blocked_in_the_air || capped || taxed || fogged || shielded { 0 } else { fliers };
+        // q's visible blocking and defending effects (Spore Frog, Mirage Mirror, Yawgmoth, Brimaz, Kor Haven) act once the
+        // attackers are declared: each handler returns unless its controller is the defender
+        let guarded = [Event::Blocks, Event::Defend, Event::LandDefend]
+            .iter()
+            .any(|&e| crate::engine::hooks::hooked(g, e).iter().any(|(s, _)| g.perm(*s).owner == q));
+        let combat = if blocked_in_the_air || capped || taxed || fogged || shielded || guarded { 0 } else { fliers };
         // Terror's triggers do not depend on blockers; a hexproof player can't be targeted, whatever the engine's aim
         let hit = if player_hexproof(g, q) { 0 } else { taken.iter().find(|x| x.0 == q).map_or(0, |x| x.1) };
         combat as i64 + hit >= g.player(q).life as i64
