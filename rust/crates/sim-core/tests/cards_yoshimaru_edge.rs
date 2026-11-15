@@ -720,3 +720,43 @@ fn yoshimaru_counts_each_legendary_land_once_across_two_land_drops() {
     land(&mut g, "Eiganjo, Seat of the Empire");
     assert_eq!(g.perm(y).plus, 2);
 }
+
+#[test]
+fn meadow_land_face_is_colourless_and_has_no_creature_types() {
+    let mut g = tbl();
+    person(&mut g, |_| Some(1));
+    let l = play_meadow(&mut g);
+    let types = sim_core::engine::chars::card_types(&g, l);
+    assert!(types.has(Types::LAND) && !types.has(Types::CREATURE));
+    assert!(sim_core::engine::chars::subtypes(&g, l).is_empty(), "no Human, no Warlock");
+    assert_eq!(sim_core::engine::chars::colors(&g, l), sim_core::cards::Colors::NONE);
+    assert!(g.player(P0).lands.contains(&l) && !g.player(P0).perms.contains(&l));
+}
+
+#[test]
+fn meadow_played_by_the_ai_is_only_a_land_and_destroys_nothing() {
+    let mut g = tbl();
+    let ring = perm(&mut g, P1, "Sol Ring");
+    g.player_mut(P0).hand.clear();
+    let c = hand(&mut g, P0, &[W])[0];
+    let f = g.registry.get(c).unwrap().hand_options.unwrap();
+    let o = f(&mut g, c, P0, Some(false)).unwrap().remove(0);
+    assert!(run(&mut g, &o));
+    let l = *g.player(P0).lands.last().unwrap();
+    assert!(!g.is_creature(l));
+    assert!(g.perm(ring).on_bf, "the land face has no enters trigger");
+}
+
+#[test]
+fn meadow_with_spelunking_enters_untapped_and_pays_no_life_for_the_ai_either() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Spelunking");
+    g.player_mut(P0).hand.clear();
+    let c = hand(&mut g, P0, &[W])[0];
+    let f = g.registry.get(c).unwrap().hand_options.unwrap();
+    let o = f(&mut g, c, P0, Some(false)).unwrap().remove(0);
+    assert!(run(&mut g, &o));
+    let l = *g.player(P0).lands.last().unwrap();
+    assert!(!g.perm(l).tapped);
+    assert_eq!(g.player(P0).life, 40, "no life paid: Spelunking makes it untapped anyway");
+}

@@ -1782,8 +1782,10 @@ pub fn lands_entered(g: &mut Game, p: PlayerId) -> Res {
         if !g.hooks.is_empty() && !g.over {
             fire_trigger(g, Event::LandEnters, Call::Etb { p, m: l })?;
         }
-        if crate::engine::mana::moon_land(g, l) {
-            continue; // Blood Moon: a plain Mountain has no enters trigger
+        // Blood Moon: a plain Mountain has no enters trigger; nor has a card played as its land face (the compiled
+        // trigger is the front face's: Witch Enchanter's destroy)
+        if crate::engine::mana::moon_land(g, l) || g.perm(l).data.truthy(DataKey::LandFace) {
+            continue;
         }
         let etb =
             g.db.get(g.perm(l).card())

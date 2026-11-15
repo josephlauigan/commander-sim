@@ -95,12 +95,17 @@ pub fn is_creature(g: &Game, m: PermId) -> bool {
         || m.data.truthy(DataKey::Anim)
         || m.exc.add_types.has(Types::CREATURE)) // --- urdragon: Astral Dragon's tokens are creatures as they enter
         && !m.data.truthy(DataKey::NotCreature) // --- Tiers 4/5 (chulane-kinnan): Enduring Vitality's return
+        && !m.data.truthy(DataKey::LandFace) // a modal card played as its land face (Witch-Blessed Meadow)
 }
 
 /// m's card types, including those a copy has in addition (Copy Artifact's enchantment); a token has creature
 pub fn card_types(g: &Game, m: PermId) -> Types {
     let x = g.perm(m);
-    let base = x.cd.map_or(Types::CREATURE, |c| g.db.get(c).types);
+    let base = if x.data.truthy(DataKey::LandFace) {
+        Types::LAND // the back face is a land, whatever the front face's card data says
+    } else {
+        x.cd.map_or(Types::CREATURE, |c| g.db.get(c).types)
+    };
     Types::union(base, x.exc.add_types)
 }
 
@@ -135,6 +140,9 @@ pub fn subtypes(g: &Game, m: PermId) -> Vec<Sym> {
         return vec![s]; // a copy that has only this creature type (Preston's Illusions)
     }
     let Some(c) = x.cd else { return x.ttypes.clone() };
+    if x.data.truthy(DataKey::LandFace) {
+        return x.ttypes.clone(); // the land face has no creature types
+    }
     let d = g.db.get(c);
     let mut s: Vec<Sym> = d.subtypes.iter().map(|t| crate::sym::intern(t)).collect();
     if d.has_kw("changeling") {
@@ -181,6 +189,9 @@ pub fn colors(g: &Game, m: PermId) -> Colors {
     let x = g.perm(m);
     if let Some(c) = x.exc.colors {
         return c;
+    }
+    if x.data.truthy(DataKey::LandFace) {
+        return Colors::NONE; // a land has no colour, whatever the front face costs
     }
     match x.cd {
         Some(c) if g.db.get(c).kws.iter().any(|k| &**k == "devoid") => Colors::NONE, // Spawn-Gang Commander

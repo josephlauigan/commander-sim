@@ -315,12 +315,20 @@ fn station_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 /// controls (the compiled enters trigger; a person chooses the target). **Witch-Blessed Meadow** (land): "As this land
 /// enters, you may pay 3 life. If you don't, it enters tapped." and {T}: Add {W}. The card data types the card as its
 /// front face, so the engine's land play never takes it: it is offered as a land through `hand_options`, as
-/// Shatterskull Smashing is (`t6_lands::mdfc_land_opt`), and taps for {W} through `land_cols`. The AI plays it as a land
+/// Shatterskull Smashing is (`t6_lands::mdfc_land_opt`), and taps for {W} through `land_cols`. As it enters as a land
+/// its `land_etb` hook marks it `DataKey::LandFace`: it is then only a land (not a white Human Warlock creature) and
+/// the creature face's compiled enters trigger does not fire. The AI plays it as a land
 /// only when short of lands (that rule's heuristics) and pays the 3 life by the shared land-payment rule; a person may
 /// play it as their land drop any time they could play a land, and answers the pay-3-life question (not asked without
 /// 3 life). With Spelunking out the land enters untapped whatever is paid, so no life is paid and it is not tapped.
 fn meadow_cols(_g: &Game, _p: PlayerId, _l: PermId) -> Colors {
     Colors::from_letters("W")
+}
+
+/// as the land enters (before landfall and the land-enters event): it is the land face
+fn meadow_land_etb(g: &mut Game, _p: PlayerId, l: PermId) -> Res {
+    g.perm_mut(l).data.set(DataKey::LandFace, Val::Bool(true));
+    Ok(())
 }
 
 fn meadow_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
@@ -379,6 +387,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     r.card(db, "Minas Tirith")?.land_options = Some(minas_options);
     let w = r.card(db, WITCH)?;
     w.land_cols = Some(meadow_cols);
+    w.land_etb = Some(meadow_land_etb);
     w.hand_options = Some(meadow_options);
     let c = r.card(db, SERIEMA)?;
     c.etb = Some(seriema_etb);
