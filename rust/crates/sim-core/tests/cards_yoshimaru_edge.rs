@@ -1066,7 +1066,7 @@ mod round4 {
     }
 
     #[test]
-    fn astral_meadow_copies_keep_land_face_and_flying_under_blood_moon() {
+    fn astral_meadow_copies_keep_land_face_under_blood_moon() {
         let mut g = tbl();
         perm(&mut g, P1, "Blood Moon");
         human(&mut g, P0, |_| Some(1));
@@ -1083,8 +1083,8 @@ mod round4 {
             assert!(chars::card_types(&g, m).has(Types::CREATURE));
             assert_eq!(chars::colors(&g, m), Colors::NONE);
             assert_eq!((chars::power(&g, m), chars::toughness(&g, m)), (3, 3));
-            // the copy exception's flying is the permanent's `fly` flag (combat reads it; `has_keyword` is for card keywords)
-            assert!(g.perm(m).fly);
+            // flying is not checked: under Blood Moon the copy exception's flying should be lost (CR 305.7, 707.9b), but the
+            // engine keeps it (engine/turn.rs:440, combat.rs:132), an inherited Astral Dragon ticket
             assert_eq!(sim_core::engine::mana::land_colors_now(&g, P0, m), Colors::from_letters("R"));
         }
     }

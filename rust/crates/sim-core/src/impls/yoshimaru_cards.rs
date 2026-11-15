@@ -38,10 +38,10 @@ fn is_land_card(g: &Game, m: PermId) -> bool {
 /// the lands on the battlefield: played, fetched, put onto the battlefield, a token copy; a land that enters and leaves
 /// again inside one resolution before the sweep is not seen, because `add_land` records no entry). Both are stack
 /// triggers, so Panharmonicon, Ancient Greenwarden, Starfield Vocalist, Delney, Torpor Orb and Hushbringer act on them
-/// (engine limits: Delney with Ancient Greenwarden, Starfield Vocalist or Panharmonicon multiplies instead of adding, so
-/// two Vocalists and Delney give 6 triggers, not 4; Elesh Norn, Mother of Machines neither adds a trigger nor stops an
-/// opponent's: its model, the `mother` tag, acts on compiled enters triggers only, shared with every card-code enters
-/// trigger, a ticket before this deck is registered).
+/// (engine limits: Delney with Ancient Greenwarden, Starfield Vocalist or Panharmonicon multiplies instead of adding,
+/// so two Vocalists and Delney give 6 triggers, not 4; Elesh Norn, Mother of Machines neither adds a trigger nor stops
+/// an opponent's: its model, the `mother` tag, acts on compiled enters triggers only, shared with every card-code
+/// enters trigger, a ticket before this deck is registered).
 /// A creature land is counted by the land event only (a token copy of a legendary land that is also a creature fires
 /// both events).
 fn yoshimaru_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
@@ -122,8 +122,9 @@ fn minas_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// condition on the counters, not a one-time change: the card's `station=7` tag (data/card_overrides.toml) is read by
 /// `chars::is_creature`, whatever put the counters there or took them away; the flying and indestructible depend on
 /// the counters alone (`seven_plus`), not on being a creature by some other effect. The printed 5/5 is the
-/// permanent's own power and toughness, set as it enters (`seriema_as_enters`), and when an existing permanent becomes a
-/// copy of it without entering (Mirage Mirror, Shifting Woodland: `alela::set_face`), so a later base-setting effect wins.
+/// permanent's own power and toughness, set as it enters (`seriema_as_enters`), and when an existing permanent becomes
+/// a copy of it without entering (Mirage Mirror, Shifting Woodland: `alela::set_face`), so a later base-setting effect
+/// wins.
 /// The AI stations with creatures that can't attack anyway, or when the tap finishes it, and no more once it is a
 /// creature; a person chooses each creature to tap, one activation at a time, with or without 7 counters.
 const SERIEMA: &str = "The Seriema";
@@ -205,7 +206,7 @@ fn seriema_as_enters(g: &mut Game, _p: PlayerId, m: PermId) -> Res {
 
 /// The Seriema's printed power and toughness (its card data has 0/0, an artifact's): set as it enters
 /// (`seriema_as_enters`) and when an existing permanent becomes a copy of it without entering (`alela::set_face`:
-/// Mirage Mirror, Shifting Woodland). None for every other card.
+/// Mirage Mirror, Shifting Woodland; `set_face` keeps the P/T an animation already set). None for every other card.
 pub(crate) fn printed_pt(g: &Game, cd: CardId) -> Option<(i32, i32)> {
     let d = g.db.get(cd);
     (d.tag(Tag::Station) && &*d.name == SERIEMA).then_some(SERIEMA_PT)
@@ -352,8 +353,9 @@ fn station_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 /// time they could play a land, and answers the pay-3-life question (not asked without 3 life, or while their life
 /// can't change). With Spelunking out the land enters untapped whatever is paid, so no life is paid and it is not
 /// tapped (the controller's other legal order, tapped, is not offered: nothing rewards it); under Blood Moon it is a
-/// Mountain without the ability, so nothing is paid or asked; it is still the land face (colourless, not a creature: the face is not an ability, `moon_land_face`). The land face is playable from the hand only (a play
-/// permission from exile or the graveyard does not offer it: an engine limit shared with every modal land).
+/// Mountain without the ability, so nothing is paid or asked; it is still the land face (colourless, not a creature:
+/// the face is not an ability, `moon_land_face`). The land face is playable from the hand only (a play permission from
+/// exile or the graveyard does not offer it: an engine limit shared with every modal land).
 fn meadow_cols(_g: &Game, _p: PlayerId, _l: PermId) -> Colors {
     Colors::from_letters("W")
 }
@@ -364,9 +366,9 @@ fn meadow_land_etb(g: &mut Game, _p: PlayerId, l: PermId) -> Res {
     Ok(())
 }
 
-/// the face a modal card entered as is a characteristic, not an ability: Blood Moon makes Witch-Blessed Meadow a Mountain but
-/// does not turn it back into Witch Enchanter. cardcode::land_etb runs no land's enters hook under Blood Moon and calls this
-/// instead (a no-op for every other land)
+/// the face a modal card entered as is a characteristic, not an ability: Blood Moon makes Witch-Blessed Meadow a
+/// Mountain but does not turn it back into Witch Enchanter. cardcode::land_etb runs no land's enters hook under Blood
+/// Moon and calls this instead (a no-op for every other land)
 pub(crate) fn moon_land_face(g: &mut Game, l: PermId) {
     if &*g.db.get(g.perm(l).card()).name == WITCH {
         g.perm_mut(l).data.set(DataKey::LandFace, Val::Bool(true));
