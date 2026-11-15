@@ -37,7 +37,11 @@ fn is_land_card(g: &Game, m: PermId) -> bool {
 /// engine's land-enters event (`Event::LandEnters`, fired once per land by the sweep `zones::lands_entered` makes over
 /// the lands on the battlefield: played, fetched, put onto the battlefield, a token copy; a land that enters and leaves
 /// again inside one resolution before the sweep is not seen, because `add_land` records no entry). Both are stack
-/// triggers, so Panharmonicon, Ancient Greenwarden, Starfield Vocalist, Delney, Torpor Orb and Hushbringer act on them.
+/// triggers, so Panharmonicon, Ancient Greenwarden, Starfield Vocalist, Delney, Torpor Orb and Hushbringer act on them
+/// (engine limits: Delney with Ancient Greenwarden, Starfield Vocalist or Panharmonicon multiplies instead of adding, so
+/// two Vocalists and Delney give 6 triggers, not 4; Elesh Norn, Mother of Machines neither adds a trigger nor stops an
+/// opponent's: its model, the `mother` tag, acts on compiled enters triggers only, shared with every card-code enters
+/// trigger, a ticket before this deck is registered).
 /// A creature land is counted by the land event only (a token copy of a legendary land that is also a creature fires
 /// both events).
 fn yoshimaru_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
