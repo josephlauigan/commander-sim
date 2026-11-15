@@ -289,6 +289,16 @@ pub fn bilbo_bounce(g: &mut Game, q: PlayerId, id: u32, gift: bool) -> Res<bool>
     Ok(true)
 }
 
+/// Mindbreak Trap exiles the spell `id` on the stack
+fn trap_exile_item(g: &mut Game, q: PlayerId, id: u32) {
+    let i = stack_index(g, id).unwrap();
+    let c = g.stack[i].card.unwrap();
+    crate::glog!(g, "    {} exiles {} with Mindbreak Trap", pname(g, q), cname(g, c));
+    g.stack[i].countered = true;
+    g.stack[i].ctx.exile_after = true;
+    g.stack[i].countered_by = g.db.id("Mindbreak Trap");
+}
+
 /// Mindbreak Trap: exile any number of target spells; the AI exiles every spell on the stack that is not its own.
 /// Returns how many it exiled.
 pub fn mindbreak_exile(g: &mut Game, q: PlayerId) -> Res<usize> {
@@ -305,14 +315,28 @@ pub fn mindbreak_exile(g: &mut Game, q: PlayerId) -> Res<usize> {
         .map(|x| x.id)
         .collect();
     for &id in &ids {
-        let i = stack_index(g, id).unwrap();
-        let c = g.stack[i].card.unwrap();
-        crate::glog!(g, "    {} exiles {} with Mindbreak Trap", pname(g, q), cname(g, c));
-        g.stack[i].countered = true;
-        g.stack[i].ctx.exile_after = true;
-        g.stack[i].countered_by = g.db.id("Mindbreak Trap");
+        trap_exile_item(g, q, id);
     }
     Ok(ids.len())
+}
+
+/// Mindbreak Trap cast by a person: the spells they chose besides its first target (`also`: their cards), whoever
+/// controls them, in the order chosen. A chosen spell that has left the stack or been countered meanwhile is skipped.
+/// Returns how many it exiled.
+pub fn mindbreak_exile_chosen(g: &mut Game, q: PlayerId, also: &[CardId]) -> Res<usize> {
+    let mut n = 0;
+    for &c in also {
+        let id = g
+            .stack
+            .iter()
+            .find(|x| x.card == Some(c) && !x.countered && crate::engine::stack::trap_exilable(g, x))
+            .map(|x| x.id);
+        if let Some(id) = id {
+            trap_exile_item(g, q, id);
+            n += 1;
+        }
+    }
+    Ok(n)
 }
 
 // ================================================================== Tibalt's Trickery

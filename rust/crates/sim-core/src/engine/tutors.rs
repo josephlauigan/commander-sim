@@ -270,7 +270,19 @@ pub fn card_worth(g: &Game, p: PlayerId, c: CardId, in_gy: bool) -> f64 {
 /// your graveyard (Gifts Ungiven, Intuition). You pick the pile that is best against their choice.
 pub fn pile_tutor(g: &mut Game, p: PlayerId, n: usize, keep: usize) -> Res {
     let opps: Vec<PlayerId> = g.opps(p).collect();
-    let opp = max_by(&opps, |q| threat(g, p, q));
+    let mut opp = max_by(&opps, |q| threat(g, p, q));
+    if opps.len() > 1 && crate::human::is_human(g, p) {
+        // "target opponent": with several, the person picks who splits the pile. One opponent who can be targeted is
+        // forced, however many are alive
+        let legal: Vec<PlayerId> =
+            opps.iter().copied().filter(|&q| crate::human::legal::player_targetable(g, q)).collect();
+        if let [only] = legal[..] {
+            opp = Some(only);
+        } else {
+            let by = if n == 4 { "Gifts Ungiven" } else { "Intuition" };
+            opp = Some(crate::human::choices::target_opponent(g, p, by)?);
+        }
+    }
     let mut cs: Vec<CardId> = vec![];
     for &c in &g.player(p).library {
         if !cs.contains(&c) {

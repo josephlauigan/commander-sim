@@ -418,36 +418,52 @@ pub fn cast_counterspell(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<Str
     cast_counterspell_inner(g, q, c)
 }
 
-/// the spell on the stack counterspell c is cast at: the only one it can counter, or the one the person picks.
-/// Err: why there is none (or they cancelled)
-fn counter_target(g: &mut Game, q: PlayerId, c: CardId) -> Res<Result<(u32, CardId), String>> {
+/// the spell on the stack counterspell c is cast at: the only one it can counter, or the one the person picks. Err: why
+/// there is none (or they cancelled). Mindbreak Trap ("exile any number of target spells") also asks which further
+/// spells to exile, any of the others on the stack, theirs included: the third part is those spells' cards
+fn counter_target(g: &mut Game, q: PlayerId, c: CardId) -> Res<Result<(u32, CardId, Vec<CardId>), String>> {
     let many = g.stack.len() > 1;
+    let trap = card_name(g, c) == "Mindbreak Trap";
     let cands: Vec<&StackItem> = g
         .stack
         .iter()
         .rev()
-        .filter(|it| it.controller != q || many)
+        .filter(|it| it.controller != q || many || trap)
         .filter(|it| {
-            // (Mindbreak Trap exiles: a spell that can't be countered is a legal target for it)
-            let trap = card_name(g, c) == "Mindbreak Trap" && stack::trap_exilable(g, it);
-            it.card.is_some_and(|sc| stack::counter_ok(g, c, sc)) && (stack::counterable(g, it) || trap)
+            // (Mindbreak Trap exiles "target spells": a spell that can't be countered is a legal target for it, an
+            // ability, a trigger or a spell already countered is not)
+            let exile = trap && stack::trap_exilable(g, it) && !it.countered;
+            let ok = !trap || exile;
+            ok && it.card.is_some_and(|sc| stack::counter_ok(g, c, sc)) && (stack::counterable(g, it) || exile)
         })
         .collect();
     if cands.is_empty() {
         return Ok(Err(format!("{} can't counter anything on the stack.", card_name(g, c))));
     }
     let mut pick = (cands[0].id, cands[0].card.unwrap());
-    if cands.len() > 1 {
-        let labels: Vec<String> =
-            cands.iter().map(|x| format!("{} ({})", card_name(g, x.card.unwrap()), name_of(g, x.controller))).collect();
+    let label = |x: &StackItem| format!("{} ({})", card_name(g, x.card.unwrap()), name_of(g, x.controller));
+    // (a Trap aimed at your own spell is asked about even when it is the only one)
+    if cands.len() > 1 || (trap && cands[0].controller == q) {
+        let labels: Vec<String> = cands.iter().map(|&x| label(x)).collect();
         let ids: Vec<(u32, CardId)> = cands.iter().map(|x| (x.id, x.card.unwrap())).collect();
-        let prompt = format!("{}: counter which spell?", card_name(g, c));
+        let prompt = format!("{}: {} which spell?", card_name(g, c), if trap { "exile" } else { "counter" });
         let Some(k) = choices::choose(g, q, "target", &prompt, &labels, Some("cancel"), None)? else {
             return Ok(Err("Cancelled.".into()));
         };
         pick = ids[k];
     }
-    Ok(Ok(pick))
+    let mut also = vec![];
+    if trap {
+        // any number of target spells: the others, one at a time, until the person is done
+        let mut left: Vec<&StackItem> = cands.iter().copied().filter(|x| x.id != pick.0).collect();
+        while !left.is_empty() {
+            let labels: Vec<String> = left.iter().map(|&x| label(x)).collect();
+            let prompt = format!("{}: exile another spell? ({} chosen)", card_name(g, c), 1 + also.len());
+            let Some(k) = choices::choose(g, q, "target", &prompt, &labels, Some("done"), None)? else { break };
+            also.push(left.remove(k).card.unwrap());
+        }
+    }
+    Ok(Ok((pick.0, pick.1, also)))
 }
 
 /// q casts counterspell c, an exiled card they may play free this turn (Urza's {5}, Triple Triad), at a spell on the
@@ -460,7 +476,7 @@ pub fn cast_counterspell_free(g: &mut Game, q: PlayerId, c: CardId) -> Res<Optio
     let Some(owner) = super::gaps_c::exile_permits(g, q, c) else {
         return Ok(Some(format!("You can't cast {} from exile right now.", card_name(g, c))));
     };
-    let (id, _) = match counter_target(g, q, c)? {
+    let (id, _, also) = match counter_target(g, q, c)? {
         Ok(x) => x,
         Err(why) => return Ok(Some(why)),
     };
@@ -471,7 +487,7 @@ pub fn cast_counterspell_free(g: &mut Game, q: PlayerId, c: CardId) -> Res<Optio
     g.player_mut(owner).exile.take(c);
     g.player_mut(q).hand.push(c);
     g.free_counter = true; // nothing more to pay
-    let r = stack::cast_counter_spell(g, q, c, id);
+    let r = stack::cast_counter_spell_with(g, q, c, id, &also);
     g.free_counter = false;
     if !r? {
         if let Some(i) = g.player(q).hand.iter().position(|&x| x == c) {
@@ -490,7 +506,7 @@ pub fn cast_counterspell_free(g: &mut Game, q: PlayerId, c: CardId) -> Res<Optio
 }
 
 fn cast_counterspell_inner(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<String>> {
-    let (id, spell) = match counter_target(g, q, c)? {
+    let (id, spell, also) = match counter_target(g, q, c)? {
         Ok(x) => x,
         Err(why) => return Ok(Some(why)),
     };
@@ -533,7 +549,7 @@ fn cast_counterspell_inner(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<S
         }
     }
     g.free_counter = true; // already paid
-    let r = stack::cast_counter_spell(g, q, c, id);
+    let r = stack::cast_counter_spell_with(g, q, c, id, &also);
     g.free_counter = false;
     if !r? {
         return Ok(Some(format!("{} couldn't be cast.", card_name(g, c))));
