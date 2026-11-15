@@ -203,7 +203,12 @@ fn seriema_grant(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
 }
 
 fn seriema_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || g.perm(src).owner != p || !live(g, src) {
+    // only as a sorcery: not offered in combat, on another player's turn or in response
+    if post.is_none()
+        || g.perm(src).owner != p
+        || !live(g, src)
+        || crate::human::legal::sorcery_timing(g, p).is_some()
+    {
         return Ok(vec![]);
     }
     let cands = station_candidates(g, p, src);
