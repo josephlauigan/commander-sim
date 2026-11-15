@@ -52,7 +52,7 @@ use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::control::Duration;
-use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell};
 use crate::engine::removal::{apply_removal, apply_wipe};
 use crate::engine::stack::{ability_window, ability_window_card, flush_triggers, queue_triggers, trigger_window};
 use crate::engine::tutors::shuffle_library;
@@ -167,12 +167,10 @@ fn together(g: &mut Game, f: impl FnOnce(&mut Game) -> Res) -> Res {
 /// pay a hand card's cost and cast it
 fn pay_and_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
     let (cg, cp) = cost_of(g, p, c);
-    if !g.player(p).hand.contains(&c) || !castable(g, p, c, "hand") || !can_pay(g, p, cg, &cp, false) {
+    if !g.player(p).hand.contains(&c) || !castable(g, p, c, "hand") || !can_pay_spell(g, p, c, cg, &cp, false) {
         return Ok(false);
     }
-    g.pay_for = Some(c);
-    let ok = pay(g, p, cg, &cp, false)?;
-    g.pay_for = None;
+    let ok = pay_spell(g, p, c, cg, &cp, false)?;
     if !ok {
         return Ok(false);
     }
@@ -202,7 +200,7 @@ pub fn note_died(g: &mut Game, m: PermId) {
 
 /// cast::cast_card: a card cast from anywhere but a graveyard has left it (a creature regrown to hand, then cast)
 pub fn note_cast(g: &mut Game, c: CardId, zone: Sym) {
-    if zone != "gy" {
+    if !matches!(zone, "gy" | "mgy" | "escape") {
         g.t12_gy.retain(|&x| x != c);
     }
 }
@@ -489,7 +487,7 @@ fn flicker_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> 
         return Ok(vec![]);
     }
     let (cg, cp) = cost_of(g, p, c);
-    if !castable(g, p, c, "hand") || !can_pay(g, p, cg, &cp, false) {
+    if !castable(g, p, c, "hand") || !can_pay_spell(g, p, c, cg, &cp, false) {
         return Ok(vec![]);
     }
     let v: f64 = flicker_picks(g, p).iter().map(|x| x.0).sum();
@@ -773,7 +771,7 @@ fn buried_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> R
         return Ok(vec![]);
     }
     let (cg, cp) = cost_of(g, p, c);
-    if !castable(g, p, c, "hand") || !can_pay(g, p, cg, &cp, false) || !can_return(g, p) {
+    if !castable(g, p, c, "hand") || !can_pay_spell(g, p, c, cg, &cp, false) || !can_return(g, p) {
         return Ok(vec![]);
     }
     let picks = buried_picks(g, p);

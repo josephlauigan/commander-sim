@@ -140,7 +140,7 @@ fn garth_resolve(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         .map(|&i| {
             let Some(c) = g.db.id(garth::NAMES[i]) else { return garth::NAMES[i].to_string() };
             let (gn, pips) = cost_of(g, p, c);
-            let ok = mana::cost_problem(g, p, gn, &pips).is_none()
+            let ok = mana::card_cost_problem(g, p, c, gn, &pips).is_none()
                 || mana::available(g, p) >= gn + pips.chars().count() as u32;
             format!(
                 "{} {}{}",

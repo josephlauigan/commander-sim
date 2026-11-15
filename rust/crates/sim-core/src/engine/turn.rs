@@ -1140,6 +1140,10 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     for m in &mut g.perms {
         m.eot_pt = (0, 0);
         m.eot_kw.clear();
+        // Rivaz refreshes each turn, including consecutive extra turns with the same round/active stamp.
+        if matches!(m.data.get(DataKey::T45Dragon), Some(Val::Stamp(_))) {
+            m.data.remove(DataKey::T45Dragon);
+        }
     }
     for q in &mut g.players {
         if q.life_lock_eot {
@@ -1155,6 +1159,7 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
         q.gy_start = q.gy.clone(); // what was there before this turn
         q.mana.clear(); // the pools empty between turns (mana kept "until end of turn" too)
         q.pool.art = 0;
+        q.pool.spell = 0;
     }
     let pl = g.player_mut(p);
     pl.extra_combats = 0;

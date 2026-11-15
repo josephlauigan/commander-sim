@@ -13,7 +13,7 @@ use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{discard_worst, on_cast};
 use crate::engine::hooks::fire_trigger;
 use crate::engine::life::{gain, lose_life};
-use crate::engine::mana::{can_pay, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell, total_mana_spell};
 use crate::engine::pool::Kind;
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
@@ -442,7 +442,10 @@ pub(crate) fn skeleton_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 /// castable from the graveyard with a Zombie; the Phyrexian Altar loop is a combo (see combos)
 fn gravecrawler(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || !can_pay(g, p, 0, "B", false) || !g.player(p).perms.iter().any(|&m| has_type(g, m, "zombie")) {
+    if post.is_none()
+        || !can_pay_spell(g, p, c, 0, "B", false)
+        || !g.player(p).perms.iter().any(|&m| has_type(g, m, "zombie"))
+    {
         return Ok(vec![]);
     }
     let altar = g.player(p).perms.iter().any(|&m| g.perm(m).cd.is_some() && name_of(g, m) == "Phyrexian Altar");
@@ -455,11 +458,11 @@ fn gravecrawler(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
 
 fn gravecrawler_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).gy.contains(&c) || !can_pay(g, p, 0, "B", false) {
+    if !g.player(p).gy.contains(&c) || !can_pay_spell(g, p, c, 0, "B", false) {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).gy, c);
-    pay(g, p, 0, "B", false)?;
+    pay_spell(g, p, c, 0, "B", false)?;
     g.player_mut(p).spells_this_turn += 1;
     on_cast(g, p, c)?;
     if counter_window(g, p, c, 3.0, vec![])? {
@@ -721,7 +724,7 @@ fn natural_order(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
 
 /// t3._x_tutor's cast priority: with 3 + (its coloured pips) mana or more
 fn x_tutor_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
-    if total_mana(g, p, false) >= 3 + g.db.get(c).pips.len() as u32 { 60 } else { 0 }
+    if total_mana_spell(g, p, c, false) >= 3 + g.db.get(c).pips.len() as u32 { 60 } else { 0 }
 }
 
 /// Green Sun's Zenith: X = spare mana; a green creature with mana value X or less onto the battlefield
@@ -957,8 +960,8 @@ fn combat_spell_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 fn combat_spell(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
     g.player_mut(p).extra_combats += 1;
     match &*g.db.get(c).name {
-        "Savage Beating" if can_pay(g, p, 1, "R", false) => {
-            pay(g, p, 1, "R", false)?;
+        "Savage Beating" if can_pay_spell(g, p, c, 1, "R", false) => {
+            pay_spell(g, p, c, 1, "R", false)?;
             for m in creatures(g, p) {
                 eot_kw(g, m, "double strike");
             }
@@ -1512,7 +1515,7 @@ fn hymn(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
 }
 
 fn twist_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
-    if total_mana(g, p, false) >= 4 { 50 } else { 0 }
+    if total_mana_spell(g, p, _c, false) >= 4 { 50 } else { 0 }
 }
 
 /// X = spare mana, random discards

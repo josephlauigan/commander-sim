@@ -17,8 +17,7 @@ use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::discard_worst;
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::{check_state, gain, lose_life};
-use crate::engine::mana::restr_ok;
-use crate::engine::mana::{can_pay, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell, restr_ok, total_mana_spell};
 use crate::engine::pool::Restr;
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{counter_window, trigger_window};
@@ -115,10 +114,10 @@ pub fn veil_respond(g: &mut Game, q: PlayerId, top_id: u32) -> Res<bool> {
         return Ok(false);
     };
     let (gn, pips) = crate::engine::mana::cost_of(g, q, v);
-    if !castable(g, q, v, "hand") || !can_pay(g, q, gn, &pips, false) {
+    if !castable(g, q, v, "hand") || !can_pay_spell(g, q, v, gn, &pips, false) {
         return Ok(false);
     }
-    pay(g, q, gn, &pips, false)?;
+    pay_spell(g, q, v, gn, &pips, false)?;
     crate::glog!(g, "    {} responds with Veil of Summer", pname(g, q));
     crate::engine::cast::cast_card(g, q, v, "hand", Ctx::default())?;
     Ok(true)
@@ -431,7 +430,7 @@ fn fof(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
 // ================================================================== Boros Charm
 /// 4 damage to a player at 4 life or less (the indestructible mode is the protection AI's)
 fn boros_charm(g: &mut Game, c: CardId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    if !can_pay(g, p, 0, "RW", false) || !castable(g, p, c, "hand") {
+    if !can_pay_spell(g, p, c, 0, "RW", false) || !castable(g, p, c, "hand") {
         return Ok(vec![]);
     }
     let lethal = g.opps(p).find(|&q| g.player(q).life <= 4 && !shielded(g, q));
@@ -446,11 +445,11 @@ fn boros_charm(g: &mut Game, c: CardId, p: PlayerId, _post: Option<bool>) -> Res
 fn boros_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, q) = unpack(arg);
     let (c, q) = (CardId(c as u16), PlayerId(q as u8));
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 0, "RW", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 0, "RW", false) {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
-    pay(g, p, 0, "RW", false)?;
+    pay_spell(g, p, c, 0, "RW", false)?;
     on_cast(g, p, c)?;
     if counter_window(g, p, c, 6.0, vec![])? {
         lose_life(g, q, 4, Some(p), "burn", Some(true))?;
@@ -1652,7 +1651,7 @@ fn chalice(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<
     if post != Some(false) || !castable(g, p, c, "hand") {
         return Ok(vec![]);
     }
-    let k = (total_mana(g, p, false) / 2).min(3);
+    let k = (total_mana_spell(g, p, c, false) / 2).min(3);
     if k < 1 {
         return Ok(vec![]);
     }
@@ -1667,11 +1666,11 @@ fn chalice(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<
 pub(crate) fn chalice_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, k) = unpack(arg);
     let c = CardId(c as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 2 * k, "", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 2 * k, "", false) {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
-    pay(g, p, 2 * k, "", false)?;
+    pay_spell(g, p, c, 2 * k, "", false)?;
     crate::glog!(g, "  {} casts Everflowing Chalice kicked {} times", pname(g, p), k);
     let pl = g.player_mut(p);
     pl.cast_names.insert(c); // the card report counts it as cast (it read "never cast: untagged")

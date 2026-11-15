@@ -22,7 +22,7 @@
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::cast_card;
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::mana::{can_pay_spell, cost_of, pay_spell};
 use crate::engine::repl;
 use crate::engine::stack::trigger_window;
 use crate::engine::values::{card_name, epow, etgh, pval};
@@ -660,11 +660,11 @@ fn warp_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Ve
         return Ok(vec![]);
     }
     let (wg, wp) = warp_cost(cname(g, c));
-    if !can_pay(g, p, wg, wp, false) {
+    if !can_pay_spell(g, p, c, wg, wp, false) {
         return Ok(vec![]);
     }
     let (cg, cp) = cost_of(g, p, c);
-    let full = can_pay(g, p, cg, &cp, false);
+    let full = can_pay_spell(g, p, c, cg, &cp, false);
     let second = elrond_of(g, p).is_some_and(|e| resolved_now(g, e) == 1);
     if !((!full && !post) || second) {
         return Ok(vec![]);
@@ -679,10 +679,10 @@ fn warp_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Ve
 fn warp_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let (wg, wp) = warp_cost(cname(g, c));
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, wg, wp, false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, wg, wp, false) {
         return Ok(false);
     }
-    pay(g, p, wg, wp, false)?;
+    pay_spell(g, p, c, wg, wp, false)?;
     let st = g.turn_stamp();
     g.player_mut(p).flag_turn.insert(intern("elrond_warp_cast"), st);
     let r = cast_card(g, p, c, "hand", Ctx::default());

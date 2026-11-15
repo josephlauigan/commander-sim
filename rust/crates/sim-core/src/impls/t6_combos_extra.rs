@@ -19,7 +19,7 @@ use super::t6_combos_godo as gd;
 use super::t6_combos_godo::{Cost, affordable, bf, cost, in_hand, in_lib, nm, ok_ready};
 use super::t6_godo::welder_go;
 use crate::engine::cast::{cast_card, castable};
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell};
 use crate::engine::pool::Kind;
 use crate::engine::zones::die;
 use crate::flow::Res;
@@ -71,10 +71,10 @@ fn cast_hand(g: &mut Game, p: PlayerId, name: &str) -> Res<bool> {
         return Ok(false);
     }
     let (gn, pips) = cost(g, p, c);
-    if !can_pay(g, p, gn, &pips, false) {
+    if !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     cast_card(g, p, c, "hand", Ctx::default())
 }
 
@@ -303,7 +303,7 @@ fn oracle_available(g: &Game, p: PlayerId) -> bool {
 
 fn breach_ready(g: &Game, p: PlayerId, with_oracle: bool) -> Ready {
     let breach = bf(g, p, BREACH).is_some()
-        || in_hand(g, p, BREACH).is_some_and(|c| castable(g, p, c, "hand") && can_pay(g, p, 1, "R", false));
+        || in_hand(g, p, BREACH).is_some_and(|c| castable(g, p, c, "hand") && can_pay_spell(g, p, c, 1, "R", false));
     let led = bf(g, p, LED).is_some() || in_hand(g, p, LED).is_some_and(|c| castable(g, p, c, "hand"));
     if !breach || !led || !bf_available(g, p) || fuel(g, p) < 3 || oracle_available(g, p) != with_oracle {
         return no();

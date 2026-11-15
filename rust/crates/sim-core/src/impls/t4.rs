@@ -9,7 +9,7 @@ use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, discard_worst};
 use crate::engine::hooks::hooked;
 use crate::engine::life::{gain, lose_life};
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell};
 use crate::engine::pool::Kind;
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl;
@@ -856,9 +856,9 @@ fn chandra_plus(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
     let Some(c) = g.player_mut(p).library.pop() else { return Ok(()) };
     let d = g.db.get(c);
     let (gen_, pips) = (d.generic, d.pips.to_string());
-    if !d.land && can_pay(g, p, gen_, &pips, false) && !d.tag(Tag::Ctr) {
+    if !d.land && can_pay_spell(g, p, c, gen_, &pips, false) && !d.tag(Tag::Ctr) {
         g.player_mut(p).hand.push(c);
-        pay(g, p, gen_, &pips, false)?;
+        pay_spell(g, p, c, gen_, &pips, false)?;
         cast_card(g, p, c, "hand", Ctx::default())?;
     } else {
         g.player_mut(p).exile.push(c);

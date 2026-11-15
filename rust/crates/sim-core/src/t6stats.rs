@@ -370,7 +370,7 @@ pub fn mana_held(g: &mut Game, p: PlayerId) {
         }
         let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
         g.pay_for = Some(c);
-        let ok = crate::engine::mana::can_pay(g, p, cg, &cp, false);
+        let ok = crate::engine::mana::can_pay_spell(g, p, c, cg, &cp, false);
         g.pay_for = None;
         if !ok {
             continue;

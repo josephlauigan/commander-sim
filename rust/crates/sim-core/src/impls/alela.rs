@@ -25,7 +25,7 @@ use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, on_cast};
 use crate::engine::combat::{can_block, first_strike, has_haste, kw};
 use crate::engine::life::gain;
-use crate::engine::mana::{can_pay, cost_of, land_colors_now, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, land_colors_now, pay, pay_spell};
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl;
 use crate::engine::stack::{ability_run, ability_run_w, ability_window, counter_window, may_window, trigger_window};
@@ -374,7 +374,11 @@ fn plan_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 /// Fatehold Charm (Approximate): draw a card and empower Jace 2 at the end of the turn before yours, or held to return
 /// a spell (to its owner's hand) or an attacking creature; the +1/+2 team mode is not used
 fn fatehold_draw(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_some() || g.active == Some(p) || !g.player(p).hand.contains(&c) || !can_pay(g, p, 0, "WU", false) {
+    if post.is_some()
+        || g.active == Some(p)
+        || !g.player(p).hand.contains(&c)
+        || !can_pay_spell(g, p, c, 0, "WU", false)
+    {
         return Ok(vec![]);
     }
     Ok(vec![plan(1.4, "Fatehold Charm (draw, empower Jace 2)".into(), fatehold_go, c.0 as i64)])
@@ -382,10 +386,10 @@ fn fatehold_draw(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Re
 
 fn fatehold_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 0, "WU", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 0, "WU", false) {
         return Ok(false);
     }
-    pay(g, p, 0, "WU", false)?;
+    pay_spell(g, p, c, 0, "WU", false)?;
     remove_first(&mut g.player_mut(p).hand, c);
     g.player_mut(p).spells_this_turn += 1;
     on_cast(g, p, c)?;
@@ -403,7 +407,7 @@ fn fatehold_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// Spite // Malice: Spite is held to counter a noncreature spell; Malice ({3}{B}) destroys a nonblack creature (no
 /// regeneration) when the creature is worth more than holding the counter
 fn malice(g: &mut Game, c: CardId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 3, "B", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 3, "B", false) {
         return Ok(vec![]);
     }
     let tg: Vec<PermId> = legal_targets(g, p, "destroy", "c", false, Some(c))
@@ -420,10 +424,10 @@ fn malice(g: &mut Game, c: CardId, p: PlayerId, _post: Option<bool>) -> Res<Vec<
 fn malice_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, t) = unpack(arg);
     let (c, t) = (CardId(c as u16), PermId(t));
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 3, "B", false) || !on_bf(g, t) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 3, "B", false) || !on_bf(g, t) {
         return Ok(false);
     }
-    pay(g, p, 3, "B", false)?;
+    pay_spell(g, p, c, 3, "B", false)?;
     remove_first(&mut g.player_mut(p).hand, c);
     g.player_mut(p).spells_this_turn += 1;
     on_cast(g, p, c)?;
@@ -489,7 +493,11 @@ fn transmute_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// Ray of Command: before combat on your turn, take the best opposing creature until end of turn (untapped, haste)
 /// and attack with it; it is tapped when it goes back
 fn ray(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false) || g.active != Some(p) || !g.player(p).hand.contains(&c) || !can_pay(g, p, 3, "U", false) {
+    if post != Some(false)
+        || g.active != Some(p)
+        || !g.player(p).hand.contains(&c)
+        || !can_pay_spell(g, p, c, 3, "U", false)
+    {
         return Ok(vec![]);
     }
     let Some(t) = best_steal(g, p, Some(c)) else { return Ok(vec![]) };
@@ -503,10 +511,10 @@ fn ray(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>
 fn ray_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, t) = unpack(arg);
     let (c, t) = (CardId(c as u16), PermId(t));
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 3, "U", false) || !on_bf(g, t) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 3, "U", false) || !on_bf(g, t) {
         return Ok(false);
     }
-    pay(g, p, 3, "U", false)?;
+    pay_spell(g, p, c, 3, "U", false)?;
     remove_first(&mut g.player_mut(p).hand, c);
     g.player_mut(p).spells_this_turn += 1;
     on_cast(g, p, c)?;
@@ -1121,7 +1129,7 @@ fn emry_cast(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec
         .collect();
     for c in gy {
         let (gn, pips) = cost_of(g, p, c);
-        if !can_pay(g, p, gn, &pips, false) {
+        if !can_pay_spell(g, p, c, gn, &pips, false) {
             continue;
         }
         let v = crate::ai::decks::deck_prio(g, p, c);
@@ -1140,9 +1148,8 @@ pub(crate) fn emry_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<b
         return Ok(false);
     }
     let (gn, pips) = cost_of(g, p, c);
-    g.pay_for = Some(c);
     let r = (|| -> Res<Option<bool>> {
-        if !can_pay(g, p, gn, &pips, false) {
+        if !can_pay_spell(g, p, c, gn, &pips, false) {
             return Ok(Some(false));
         }
         g.perm_mut(src).tapped = true;
@@ -1150,10 +1157,9 @@ pub(crate) fn emry_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<b
         if !ability_window(g, p, Some(src), &text, None, None)? {
             return Ok(Some(true));
         }
-        pay(g, p, gn, &pips, false)?;
+        pay_spell(g, p, c, gn, &pips, false)?;
         Ok(None)
     })();
-    g.pay_for = None;
     if let Some(done) = r? {
         return Ok(done);
     }

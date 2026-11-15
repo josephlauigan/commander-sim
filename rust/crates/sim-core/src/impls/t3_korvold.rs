@@ -39,7 +39,7 @@ use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst};
 use crate::engine::combat::has_haste;
 use crate::engine::life::{check_state, gain, lose_life};
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell};
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
 use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
@@ -534,14 +534,14 @@ fn edict_value(g: &Game, p: PlayerId) -> f64 {
 }
 
 fn edict_alt_ok(g: &Game, p: PlayerId, _c: CardId, _spell: Option<CardId>) -> bool {
-    creatures_on_bf(g) >= 13 && can_pay(g, p, 0, "B", false)
+    creatures_on_bf(g) >= 13 && can_pay_spell(g, p, _c, 0, "B", false)
 }
 
 fn edict_alt_pay(g: &mut Game, p: PlayerId, c: CardId, s: Option<CardId>) -> Res<bool> {
     if !edict_alt_ok(g, p, c, s) {
         return Ok(false);
     }
-    pay(g, p, 0, "B", false)
+    pay_spell(g, p, c, 0, "B", false)
 }
 
 const EDICT_ALT: AltCost = AltCost { ok: edict_alt_ok, pay: edict_alt_pay, lost: |_, _, _, _| 0.0 };
@@ -550,7 +550,7 @@ fn edict_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Re
     if post.is_none() || g.active != Some(p) || !g.player(p).hand.contains(&c) || !castable(g, p, c, "hand") {
         return Ok(vec![]);
     }
-    if !(edict_alt_ok(g, p, c, None) || can_pay(g, p, 3, "BB", false)) {
+    if !(edict_alt_ok(g, p, c, None) || can_pay_spell(g, p, c, 3, "BB", false)) {
         return Ok(vec![]);
     }
     let v = edict_value(g, p);
@@ -569,7 +569,8 @@ fn edict_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).hand.contains(&c) {
         return Ok(false);
     }
-    let paid = if edict_alt_ok(g, p, c, None) { edict_alt_pay(g, p, c, None)? } else { pay(g, p, 3, "BB", false)? };
+    let paid =
+        if edict_alt_ok(g, p, c, None) { edict_alt_pay(g, p, c, None)? } else { pay_spell(g, p, c, 3, "BB", false)? };
     if !paid {
         return Ok(false);
     }
@@ -617,7 +618,7 @@ pub fn imps_mischief(g: &mut Game, q: PlayerId, id: u32) -> Res<bool> {
         || g.db.get(spell).land
         || g.player(q).life <= mv + 6
         || !super::t6_counters::would_redirect(g, q, id)
-        || !can_pay(g, q, 1, "B", false)
+        || !can_pay_spell(g, q, c, 1, "B", false)
     {
         return Ok(false);
     }
@@ -769,7 +770,7 @@ fn flare_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Re
         return Ok(vec![]);
     }
     let v = flare_value(g, p);
-    if v < 4.0 || !(can_pay(g, p, 2, "BB", false) || flare_fodder(g, p, v - 1.5).is_some()) {
+    if v < 4.0 || !(can_pay_spell(g, p, c, 2, "BB", false) || flare_fodder(g, p, v - 1.5).is_some()) {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -784,8 +785,8 @@ fn flare_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).hand.contains(&c) {
         return Ok(false);
     }
-    if can_pay(g, p, 2, "BB", false) {
-        if !pay(g, p, 2, "BB", false)? {
+    if can_pay_spell(g, p, c, 2, "BB", false) {
+        if !pay_spell(g, p, c, 2, "BB", false)? {
             return Ok(false);
         }
     } else {
@@ -922,11 +923,11 @@ pub fn rebirth_protect(g: &mut Game, p: PlayerId, m: PermId, kind: Sym) -> Res<b
         || pval(g, m) < 3.0
         || g.player(p).life <= 6
         || !castable(g, p, c, "hand")
-        || !can_pay(g, p, 0, "B", false)
+        || !can_pay_spell(g, p, c, 0, "B", false)
     {
         return Ok(false);
     }
-    if !pay(g, p, 0, "B", false)? {
+    if !pay_spell(g, p, c, 0, "B", false)? {
         return Ok(false);
     }
     cast_card(g, p, c, "hand", Ctx { target: Some(m), ..Ctx::default() })

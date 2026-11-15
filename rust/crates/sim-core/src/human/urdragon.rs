@@ -634,10 +634,10 @@ pub fn dualcaster_flash(g: &mut Game, p: PlayerId, c: CardId, spell: CardId, ctx
     if !(sd.instant || sd.sorcery) {
         return Ok(Some(format!("Dualcaster Mage copies an instant or sorcery spell; {} is not one.", sd.name)));
     }
-    if let Some(why) = mana::cost_problem(g, p, 1, "RR") {
+    if let Some(why) = mana::card_cost_problem(g, p, c, 1, "RR") {
         return Ok(Some(format!("Can't cast Dualcaster Mage. {why}")));
     }
-    mana::pay_from_pool(g, p, 1, "RR");
+    mana::pay_card_from_pool(g, p, c, 1, "RR");
     crate::glog!(g, "  {} flashes in Dualcaster Mage to copy {}", pname(g, p), cards_name(g, spell));
     if crate::engine::cast::cast_card(g, p, c, "hand", Default::default())?
         && !g.over

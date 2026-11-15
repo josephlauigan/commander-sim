@@ -45,7 +45,7 @@
 //! numbers: every play is made on a copy, which has its own.
 
 use super::act;
-use crate::engine::mana::{can_pay, cost_of, ritual_net};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, ritual_net};
 use crate::flow::Res;
 use crate::hooks::Action;
 use crate::ids::{CardId, PlayerId};
@@ -351,7 +351,7 @@ fn plays(g: &Game, p: PlayerId, known: &[CardId], eot: bool) -> Vec<Step> {
         }
         let (gn, pips) = cost_of(g, p, c);
         let tax = if zone == "cmd" { pl.tax_of(c) } else { 0 };
-        can_pay(g, p, gn + tax + x, &pips, d.tag(Tag::Convoke))
+        can_pay_spell(g, p, c, gn + tax + x, &pips, d.tag(Tag::Convoke))
     };
     let castable_at = |c: CardId, zone: &str, x: u32| castable_with(c, zone, x, false);
     let castable_now = |c: CardId, zone: &str| castable_at(c, zone, 0);
@@ -553,7 +553,7 @@ fn signature(g: &Game, p: PlayerId) -> u64 {
     use crate::engine::pool::Kind;
     let f = |k| pl.mana.get(k);
     let fl = [Kind::W, Kind::U, Kind::B, Kind::R, Kind::G, Kind::C, Kind::Any].map(f);
-    (fl[0], fl[1], fl[2], fl[3], fl[4], fl[5], fl[6], pl.mana.art()).hash(&mut h);
+    (fl[0], fl[1], fl[2], fl[3], fl[4], fl[5], fl[6], pl.mana.art(), pl.mana.spell()).hash(&mut h);
     known_top(g, p).iter().map(|c| c.0).collect::<Vec<_>>().hash(&mut h);
     (pl.life, pl.gy.len(), pl.library.len(), pl.treasures, pl.land_turn).hash(&mut h);
     h.finish()
@@ -894,7 +894,7 @@ pub fn reserve(
                 let mut g2 = copy(g, p);
                 matches!(act::perform(&mut g2, p, a), Ok(true))
                     && g2.player(p).hand.contains(&tutor)
-                    && can_pay(&g2, p, tg, &tp, false)
+                    && can_pay_spell(&g2, p, tutor, tg, &tp, false)
             }
         };
         if keep {

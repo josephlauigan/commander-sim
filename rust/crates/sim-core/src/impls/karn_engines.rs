@@ -12,7 +12,7 @@
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::discard_worst;
 use crate::engine::life::{gain, lose_life};
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, total_mana};
 use crate::engine::stack::{ability_run, ability_run_w, ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{epow, pval};
@@ -409,8 +409,8 @@ fn forge_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
         if let Some(u) = crate::ai::brain::card_utility(g, p, &s, top) {
             let (cg, cp) = cost_of(g, p, top);
             g.pay_for = Some(top);
-            let ok =
-                can_pay(g, p, cg, &cp, false) && (!g.cast_checks() || crate::engine::cast::castable(g, p, top, "lib"));
+            let ok = can_pay_spell(g, p, top, cg, &cp, false)
+                && (!g.cast_checks() || crate::engine::cast::castable(g, p, top, "lib"));
             g.pay_for = None;
             if ok {
                 out.push(Opt {

@@ -19,8 +19,8 @@
 //!   creature card from your graveyard to hand (at the end-of-turn window). Left out: Ugin planeswalker cards.
 //! - Hellkite Courser: enters: a commander of yours in the command zone onto the battlefield with haste; it goes back
 //!   to the command zone at the next end step (turn::end_step, `courser_return`).
-//! - Klauth, Unrivaled Ancient: attacks: X mana of any colour (X: the attackers' total power), kept all turn. Left
-//!   out: it can pay for abilities too.
+//! - Klauth, Unrivaled Ancient: attacks: X mana of any colour (X: the attackers' total power), only for spells,
+//!   kept all turn for AI and person.
 //! - Lathliss, Dragon Queen: another nontoken Dragon of yours enters: a 5/5 red Dragon flier; {1}{R}: Dragons +1/+0,
 //!   used before an open attack with the spare mana when nothing in hand can be cast.
 //! - Miirym, Sentinel Wyrm: another nontoken Dragon of yours enters: a token copy of it that isn't legendary.
@@ -30,7 +30,8 @@
 //! - Rith, Liberated Primeval: your other Dragons have ward {2} (removal::aura_ward). Its end-step Dragon comes when an
 //!   opponent's creature died during your turn. Left out: "excess damage" (the engine does not track it).
 //! - Rivaz of the Claw: {T}: two mana of any colour, only for Dragon creature spells (mana.rs); once during each of
-//!   your turns, cast a Dragon creature card from your graveyard; that creature is exiled when it dies, even after Rivaz leaves.
+//!   your turns, AI and person may cast a Dragon creature card from your graveyard. Any Dragon creature spell cast
+//!   from your graveyard while Rivaz is out gains a dies-exile trigger that persists after Rivaz leaves.
 //! - Roaming Throne: names a creature type as it enters and is that type too; another creature of yours of that type:
 //!   its triggered abilities that go on the stack trigger an additional time (stack::queue_triggers). Left out: card
 //!   code that runs at once rather than as a trigger.
@@ -46,8 +47,7 @@
 
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::cast_card;
-use crate::engine::mana::restr_ok;
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, restr_ok, total_mana};
 use crate::engine::pool::Kind;
 use crate::engine::pool::Restr;
 use crate::engine::repl;
@@ -711,9 +711,9 @@ fn klauth_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Player
     if !trigger_window(g, p, Some(src), "mana equal to the attackers' power", Some(3.0))? {
         return Ok(vec![]);
     }
-    let x: i32 = atk.iter().filter(|&&m| g.perm(m).on_bf).map(|&m| epow(g, m).max(0)).ssum();
-    g.player_mut(p).mana.add_kept(Kind::Any, x as u32); // kept until the end of the turn
-    crate::glog!(g, "    Klauth adds {x} mana");
+    let x: i32 = atk.iter().filter(|&&m| live(g, m) && owner(g, m) == p).map(|&m| epow(g, m)).ssum();
+    g.player_mut(p).mana.add_kept_restr(Kind::Any, Restr::SpellOnly, x.max(0) as u32); // kept until the end of the turn
+    crate::glog!(g, "    Klauth adds {} mana", x.max(0));
     Ok(vec![])
 }
 
@@ -761,7 +761,7 @@ fn lathliss_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
     }
     let castable = g.player(p).hand.iter().any(|&c| {
         let (gn, pips) = cost_of(g, p, c);
-        !g.db.get(c).land && can_pay(g, p, gn, &pips, false)
+        !g.db.get(c).land && can_pay_spell(g, p, c, gn, &pips, false)
     });
     let power: i32 = ds.iter().map(|&m| epow(g, m)).ssum();
     if castable || !crate::impls::lands::open_attack(g, p, power + k * ds.len() as i32, true) {
@@ -836,10 +836,49 @@ fn rith_end(g: &mut Game, src: Src, p: PlayerId) -> Res {
 // ================================================================== Rivaz of the Claw
 // its mana is for Dragon creature spells only: `CardDef::mana_restr` (engine::mana::restr_of)
 
+/// Each live Rivaz supplies an independent permission during its controller's turn.
+pub fn rivaz_permissions(g: &Game, p: PlayerId, c: CardId) -> Vec<PermId> {
+    if g.active != Some(p) || !dragon_creature_card(g, c) {
+        return vec![];
+    }
+    named(g, p, RIVAZ)
+        .into_iter()
+        .filter(|&m| !g.perm(m).neutered && g.perm(m).data.get(DataKey::T45Dragon) != Some(&Val::Stamp(g.turn_stamp())))
+        .collect()
+}
+
+pub fn rivaz_permission(g: &Game, p: PlayerId, c: CardId) -> Option<PermId> {
+    rivaz_permissions(g, p, c).into_iter().next()
+}
+
+pub fn rivaz_used(g: &Game, p: PlayerId, c: CardId) -> bool {
+    g.active == Some(p)
+        && dragon_creature_card(g, c)
+        && named(g, p, RIVAZ).iter().any(|&m| !g.perm(m).neutered)
+        && rivaz_permission(g, p, c).is_none()
+}
+
+/// The grant is a cast trigger, independent of the permission that allowed the cast.
+pub fn rivaz_cast(g: &mut Game, p: PlayerId, c: CardId, zone: Sym) -> Res<u32> {
+    if !matches!(zone, "gy" | "mgy" | "escape") || !dragon_creature_card(g, c) {
+        return Ok(0);
+    }
+    let sources: Vec<_> = named(g, p, RIVAZ).into_iter().filter(|&m| !g.perm(m).neutered).collect();
+    let mut grants = 0;
+    for src in sources {
+        for _ in 0..1 + repl::trigger_copies(g, p, "cast", Some(src)) {
+            if trigger_window(g, p, Some(src), "grant the Dragon spell a dies-exile ability", Some(1.0))? {
+                grants += 1;
+            }
+        }
+    }
+    Ok(grants)
+}
+
 /// Once during each of your turns, cast a Dragon creature spell from your graveyard (the best one you can pay for)
 fn rivaz_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let st = g.turn_stamp();
-    if post.is_none() || p != owner(g, src) || !live(g, src) || g.active != Some(p) {
+    if post.is_none() || p != owner(g, src) || (!live(g, src) || g.perm(src).neutered) || g.active != Some(p) {
         return Ok(vec![]);
     }
     if g.perm(src).data.get(DataKey::T45Dragon) == Some(&Val::Stamp(st)) {
@@ -850,9 +889,9 @@ fn rivaz_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
     for c in cs {
         let (gn, pips) = cost_of(g, p, c);
         g.pay_for = Some(c);
-        let can = can_pay(g, p, gn, &pips, false);
+        let can = can_pay_spell(g, p, c, gn, &pips, false);
         g.pay_for = None;
-        if can && crate::engine::hooks::allowed(g, p, c, "gy") {
+        if can && crate::engine::cast::castable(g, p, c, "mgy") {
             ok.push(c);
         }
     }
@@ -867,36 +906,29 @@ fn rivaz_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
 fn rivaz_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let st = g.turn_stamp();
-    if !live(g, src)
+    if (!live(g, src) || g.perm(src).neutered)
+        || owner(g, src) != p
+        || g.active != Some(p)
+        || !dragon_creature_card(g, c)
+        || !crate::engine::cast::castable(g, p, c, "mgy")
         || !g.player(p).gy.contains(&c)
         || g.perm(src).data.get(DataKey::T45Dragon) == Some(&Val::Stamp(st))
     {
         return Ok(false);
     }
     let (gn, pips) = cost_of(g, p, c);
-    g.pay_for = Some(c);
-    let paid = can_pay(g, p, gn, &pips, false) && pay(g, p, gn, &pips, false)?;
-    g.pay_for = None;
+    let paid = can_pay_spell(g, p, c, gn, &pips, false) && pay_spell(g, p, c, gn, &pips, false)?;
     if !paid {
         return Ok(false);
     }
-    g.perm_mut(src).data.set(DataKey::T45Dragon, Val::Stamp(st));
     crate::glog!(g, "  {} casts {} from the graveyard (Rivaz of the Claw)", pname(g, p), cname(g, c));
-    let before: Vec<PermId> = g.player(p).perms.clone();
-    if cast_card(g, p, c, "gy", Ctx::default())? {
-        let new: Vec<PermId> = g.player(p).perms.iter().copied().filter(|m| !before.contains(m)).collect();
-        for m in new {
-            if g.perm(m).cd == Some(c) {
-                g.perm_mut(m).data.set(DataKey::T45Dragon, Val::Str("rivaz")); // "when this creature dies, exile it"
-            }
-        }
-    }
+    cast_card(g, p, c, "mgy", Ctx { rivaz_permission: Some(src), ..Ctx::default() })?;
     Ok(true)
 }
 
 /// the creature cast with Rivaz dies: its card is exiled (a trigger: it resolves once the card is in the graveyard)
 pub fn rivaz_exile(g: &mut Game, m: PermId) -> Res {
-    let (q, Some(c)) = (g.perm(m).orig, g.perm(m).cd) else { return Ok(()) };
+    let (q, Some(c)) = (g.perm(m).orig, g.perm(m).phys.or(g.perm(m).cd)) else { return Ok(()) };
     if !trigger_window(g, g.perm(m).owner, Some(m), "exile it (cast from the graveyard with Rivaz)", Some(1.0))? {
         return Ok(());
     }

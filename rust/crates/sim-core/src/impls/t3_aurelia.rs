@@ -23,7 +23,7 @@ use crate::cards::{CardDb, Types};
 use crate::engine::cast::{cast_card, spell_targets};
 use crate::engine::combat::{can_block, first_strike, has_haste};
 use crate::engine::life::gain;
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
@@ -204,9 +204,9 @@ fn weartear_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym>
         .filter(|&m| if first_art { is_ench(g, m) } else { is_art(g, m) })
         .collect();
     if let Some(b) = max_by(&other, |m| pval(g, m)).filter(|&b| pval(g, b) >= 2.0)
-        && can_pay(g, p, 0, "W", false)
+        && can_pay_spell(g, p, c, 0, "W", false)
     {
-        pay(g, p, 0, "W", false)?;
+        pay_spell(g, p, c, 0, "W", false)?;
         crate::glog!(g, "    {} fuses Wear // Tear: {} too", pname(g, p), g.perm(b).name);
         apply_removal(g, Some(p), b, "destroy", Some(c))?;
     }

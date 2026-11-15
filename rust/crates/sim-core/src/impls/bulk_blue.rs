@@ -15,7 +15,7 @@ use super::common::{AURA, AuraSpec, WalkerAb, aura, eot, walker};
 use super::galadriel::blink_value;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, cast_spell_copy, castable, discard_worst, on_cast};
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay_spell, cost_of, pay_spell, total_mana_spell};
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl;
 use crate::engine::stack::{counter_window, trigger_window};
@@ -194,10 +194,10 @@ fn cast_paid(g: &mut Game, p: PlayerId, c: CardId, extra: u32, extra_pips: &str,
     }
     let (gn, pips) = cost_of(g, p, c);
     let pips = format!("{pips}{extra_pips}");
-    if !can_pay(g, p, gn + extra, &pips, false) {
+    if !can_pay_spell(g, p, c, gn + extra, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn + extra, &pips, false)?;
+    pay_spell(g, p, c, gn + extra, &pips, false)?;
     cast_card(g, p, c, "hand", ctx)?;
     Ok(true)
 }
@@ -259,10 +259,10 @@ pub fn spirit_token(g: &mut Game, p: PlayerId) -> Res {
 /// Phantom Interference cast as a counterspell ({1}{U}) with {3} to spare: the Spirit mode too (spree). Pays the
 /// extra cost; true if it did.
 pub fn spree_extra(g: &mut Game, q: PlayerId, ctr: CardId) -> Res<bool> {
-    if &*g.db.get(ctr).name != "Phantom Interference" || !can_pay(g, q, 3, "", false) {
+    if &*g.db.get(ctr).name != "Phantom Interference" || !can_pay_spell(g, q, ctr, 3, "", false) {
         return Ok(false);
     }
-    pay(g, q, 3, "", false)?;
+    pay_spell(g, q, ctr, 3, "", false)?;
     crate::glog!(g, "    {} also chooses the Spirit mode", pname(g, q));
     Ok(true)
 }
@@ -455,7 +455,7 @@ fn phantom_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym
 /// Elrond's trigger when another entered)
 fn phantom_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let (gn, pips) = cost_of(g, p, c);
-    if post.is_some() || !can_pay(g, p, gn + 3, &pips, false) {
+    if post.is_some() || !can_pay_spell(g, p, c, gn + 3, &pips, false) {
         return Ok(vec![]);
     }
     Ok(vec![plan(2.6, "Phantom Interference (Spirit)".into(), phantom_go, pack(c, None))])
@@ -482,8 +482,8 @@ fn whoosh_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
 fn whoosh_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let (gn, pips) = cost_of(g, p, c);
     let mut out = vec![];
-    let kick_ok = can_pay(g, p, gn + 1, &format!("{pips}U"), false);
-    if post.is_none() && g.active != Some(p) && can_pay(g, p, gn, &pips, false) {
+    let kick_ok = can_pay_spell(g, p, c, gn + 1, &format!("{pips}U"), false);
+    if post.is_none() && g.active != Some(p) && can_pay_spell(g, p, c, gn, &pips, false) {
         let mine: Vec<PermId> = g
             .player(p)
             .perms
@@ -499,7 +499,7 @@ fn whoosh_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> R
         }
     }
     if post == Some(true)
-        && can_pay(g, p, gn, &pips, false)
+        && can_pay_spell(g, p, c, gn, &pips, false)
         && let Some(m) = super::garland::own_turn_recrown(g, p, gn + pips.len() as u32)
     {
         // Garland's crown has stalled: bounce him after combat and cast him again (no kicker: the mana is for Garland)
@@ -537,7 +537,7 @@ fn whoosh_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         && g.player(p).key == super::garland::KEY
         && g.perm(t).owner == p
         && super::garland::is_my_garland(g, t);
-    let kick = !spare && can_pay(g, p, gn + 1, &format!("{pips}U"), false);
+    let kick = !spare && can_pay_spell(g, p, c, gn + 1, &format!("{pips}U"), false);
     let ctx = Ctx { target: Some(t), mode: kick.then_some("kick"), ..Ctx::default() };
     cast_paid(g, p, c, if kick { 1 } else { 0 }, if kick { "U" } else { "" }, ctx)
 }
@@ -550,7 +550,7 @@ fn acrobatics_attack(g: &mut Game, c: CardId, p: PlayerId, atk: &[PermId], d: Pl
         return Ok(());
     }
     let (gn, pips) = cost_of(g, p, c);
-    if !can_pay(g, p, gn, &pips, false) {
+    if !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(());
     }
     let power: i32 = atk.iter().filter(|&&a| on_bf(g, a)).map(|&a| epow(g, a)).ssum();
@@ -565,7 +565,7 @@ fn acrobatics_attack(g: &mut Game, c: CardId, p: PlayerId, atk: &[PermId], d: Pl
     if blockers.is_empty() || (!lethal && (power < 8 || blockers.len() < 2)) {
         return Ok(());
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     remove_card(&mut g.player_mut(p).hand, c);
     crate::glog!(g, "  {} casts Amazing Acrobatics: taps blockers", pname(g, p));
     on_cast(g, p, c)?;
@@ -598,7 +598,7 @@ fn icy_defend(
         return Ok(());
     }
     let (gn, pips) = cost_of(g, d, c);
-    if !can_pay(g, d, gn, &pips, false) {
+    if !can_pay_spell(g, d, c, gn, &pips, false) {
         return Ok(());
     }
     let open: Vec<PermId> = atk
@@ -614,7 +614,7 @@ fn icy_defend(
     if !worth {
         return Ok(());
     }
-    pay(g, d, gn, &pips, false)?;
+    pay_spell(g, d, c, gn, &pips, false)?;
     remove_card(&mut g.player_mut(d).hand, c);
     crate::glog!(g, "  {} casts Icy Reception: {} gets -5/-0", pname(g, d), g.perm(big).name);
     on_cast(g, d, c)?;
@@ -711,10 +711,10 @@ fn west_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
     if post != Some(false) || g.active != Some(p) {
         return Ok(vec![]);
     }
-    let total = total_mana(g, p, false) as i32;
+    let total = total_mana_spell(g, p, c, false) as i32;
     let x = total - 2;
     let hand = g.player(p).hand.len() as i32;
-    if x < 2 || (x < 3 && hand > 2) || !can_pay(g, p, x as u32, "UU", false) {
+    if x < 2 || (x < 3 && hand > 2) || !can_pay_spell(g, p, c, x as u32, "UU", false) {
         return Ok(vec![]);
     }
     let hero = g.player(p).hand.iter().any(|&h| g.db.get(h).has_subtype("hero") && !g.db.get(h).land);
@@ -730,7 +730,7 @@ fn west_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
 fn west_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let x = (arg >> 48) as i32;
     let (c, _) = unpack(arg & 0xFFFF_FFFF_FFFF);
-    if x < 0 || !g.player(p).hand.contains(&c) || !can_pay(g, p, x as u32, "UU", false) {
+    if x < 0 || !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, x as u32, "UU", false) {
         return Ok(false);
     }
     cast_paid(g, p, c, x as u32, "", Ctx { x, ..Ctx::default() })

@@ -18,7 +18,7 @@
 //! (`audit/phase4/hand-off-design.md`, "Deleted, part 2").
 
 use crate::cards::{CardDb, Types};
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell};
 use crate::engine::repl;
 use crate::engine::stack::{ability_window, may_window, may_window_card, trigger_window};
 use crate::engine::values::{epow, etgh, has_type, pval};
@@ -1112,7 +1112,7 @@ fn will_blocks(
     _d: PlayerId,
     assign: &mut Vec<(PermId, PermId)>,
 ) -> Res {
-    if card_name(g, c) != WILL || !g.player(p).hand.contains(&c) || !can_pay(g, p, 3, "W", false) {
+    if card_name(g, c) != WILL || !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 3, "W", false) {
         return Ok(());
     }
     let open: Vec<PermId> = atk
@@ -1126,7 +1126,7 @@ fn will_blocks(
     if !(cloud_swung || extra >= 4) {
         return Ok(());
     }
-    if !crate::engine::cast::castable(g, p, c, "hand") || !pay(g, p, 3, "W", false)? {
+    if !crate::engine::cast::castable(g, p, c, "hand") || !pay_spell(g, p, c, 3, "W", false)? {
         return Ok(());
     }
     crate::engine::cast::cast_card(g, p, c, "hand", crate::state::Ctx::default())?;
@@ -1294,7 +1294,7 @@ pub fn cast_judgment(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
         return Ok(false);
     }
     let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
-    if !can_pay(g, p, gn, &pips, false) || !pay(g, p, gn, &pips, false)? {
+    if !can_pay_spell(g, p, c, gn, &pips, false) || !pay_spell(g, p, c, gn, &pips, false)? {
         return Ok(false);
     }
     crate::engine::cast::cast_card(g, p, c, "hand", crate::state::Ctx::default())

@@ -11,7 +11,7 @@
 
 use crate::ai::brain::{open_mana, prob_holding};
 use crate::cards::Types;
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay_spell};
 use crate::engine::stack::free_counter;
 use crate::engine::values::commander_out;
 use crate::flow::Res;
@@ -175,7 +175,7 @@ pub fn go_risk_covered(g: &Game, p: PlayerId, covered: bool) -> f64 {
     }
     let mut risk = 1.0 - miss;
     let prot = protection(g, p);
-    if (!prot.is_empty() && can_pay(g, p, 0, "W", false)) || covered {
+    if prot.iter().any(|&c| can_pay_spell(g, p, c, 0, "W", false)) || covered {
         risk *= 0.2; // Silence / Chant first
     }
     let mine_free = g.player(p).hand.iter().filter(|&&c| is_free_ctr(g, p, c)).count().min(2);
@@ -243,7 +243,7 @@ pub fn grace_save(g: &mut Game, p: PlayerId) -> bool {
     let Some(c) = g.player(p).hand.iter().copied().find(|&c| &*g.db.get(c).name == "Angel's Grace") else {
         return false;
     };
-    if !can_pay(g, p, 0, "W", false) || pay(g, p, 0, "W", false).is_err() {
+    if !can_pay_spell(g, p, c, 0, "W", false) || pay_spell(g, p, c, 0, "W", false).is_err() {
         return false;
     }
     let st = g.turn_stamp();

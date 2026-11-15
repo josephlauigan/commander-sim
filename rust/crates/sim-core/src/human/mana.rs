@@ -4,7 +4,7 @@
 //! The AI seats keep the engine's automatic payment (`engine::mana::pay`). A tapped source goes through
 //! `engine::mana::spend_unit`, so pain lands, Treasures and on-tap triggers behave exactly as they do for the AI.
 
-use crate::engine::mana::{Shape, Source, Unit, mana_units, spend_unit};
+use crate::engine::mana::{Shape, Source, Unit, human_sources, spend_unit};
 use crate::engine::pool::Kind;
 use crate::engine::values::has_type;
 use crate::flow::Res;
@@ -52,6 +52,10 @@ pub struct ManaPool {
     pub ktype: Option<Sym>,
     /// colourless from Karn, Legacy Reforged: not for nonartifact spells, and it stays all turn (`empty` leaves it)
     pub art: u32,
+    /// Klauth: any colour, only for spells, kept until the turn ends.
+    pub spell: u32,
+    /// Rivaz: coloured mana only for Dragon creature spells, separate from a land's chosen type.
+    pub dragon: [u32; 5],
     pub spending: Option<Spending>,
 }
 
@@ -60,6 +64,8 @@ struct Left {
     m: [u32; 7],
     k: Option<[u32; 6]>,
     art: u32,
+    spell: u32,
+    dragon: [u32; 5],
 }
 
 fn plan_plain(mut m: [u32; 7], generic: u32, pips: &str) -> Option<[u32; 7]> {
@@ -101,12 +107,17 @@ impl ManaPool {
     }
 
     pub fn total(&self) -> u32 {
-        self.m.iter().sum::<u32>() + self.k.iter().sum::<u32>() + self.art
+        self.m.iter().sum::<u32>()
+            + self.k.iter().sum::<u32>()
+            + self.art
+            + self.spell
+            + self.dragon.iter().sum::<u32>()
     }
 
     pub fn empty(&mut self) {
         self.m = [0; 7];
         self.k = [0; 6];
+        self.dragon = [0; 5];
     }
 
     /// {B}{B}{C} style: coloured mana, then colourless, then any-colour ({3} would read as generic mana)
@@ -119,6 +130,18 @@ impl ManaPool {
         }
         if self.m[6] > 0 {
             out.push_str(&format!(" +{} any", self.m[6]));
+        }
+        if self.dragon.iter().any(|&n| n > 0) {
+            out.push_str(" +");
+            for (i, c) in "WUBRG".chars().enumerate() {
+                for _ in 0..self.dragon[i] {
+                    out.push_str(&format!("{{{c}}}"));
+                }
+            }
+            out.push_str(" for Dragon creature spells");
+        }
+        if self.spell > 0 {
+            out.push_str(&format!(" +{} any colour for spells (until end of turn)", self.spell));
         }
         if self.art > 0 {
             out.push_str(&format!(" +{} for artifact spells and abilities", self.art));
@@ -159,29 +182,66 @@ impl ManaPool {
     /// (any-colour mana last); generic from colourless first, then the most plentiful colour, then any-colour.
     /// Restricted mana (Secluded Courtyard) is spent first when it may be.
     fn plan(&self, g: &Game, owner: PlayerId, generic: u32, pips: &str) -> Option<Left> {
-        // Karn's mana first (it is gone at the end of the turn): it pays generic mana only
-        let used_art = if self.art_ok(g) { self.art.min(generic) } else { 0 };
-        let art = self.art - used_art;
-        let generic = generic - used_art;
-        if self.k_ok(g, owner) {
-            let mut k = self.k;
-            let mut rest = String::new();
-            for c in pips.chars() {
-                match idx(c) {
-                    Some(i) if k[i] > 0 => k[i] -= 1,
-                    _ => rest.push(c),
-                }
+        let mut k = self.k_ok(g, owner).then_some(self.k);
+        let mut dragon = self.dragon;
+        let dragon_ok = matches!(self.spending, Some(Spending::Card(c))
+            if g.db.get(c).creature && crate::impls::galadriel::card_is(g, owner, c, "dragon"));
+        let mut spell = self.spell;
+        let spell_ok = matches!(self.spending, Some(Spending::Card(_)));
+        let mut plain = self.m;
+        let mut covered = String::new();
+        let mut uncovered = String::new();
+        for c in pips.chars() {
+            if let Some(k) = k.as_mut()
+                && let Some(i) = idx(c)
+                && k[i] > 0
+            {
+                k[i] -= 1;
+            } else if dragon_ok
+                && let Some(i) = idx(c).filter(|&i| i < 5)
+                && dragon[i] > 0
+            {
+                dragon[i] -= 1;
+            } else if let Some(i) = idx(c)
+                && plain[i] > 0
+            {
+                plain[i] -= 1;
+                covered.push(c);
+            } else {
+                uncovered.push(c);
             }
-            let mut need = generic;
-            for i in 0..6 {
-                let t = k[i].min(need);
-                k[i] -= t;
-                need -= t;
-            }
-            let m = plan_plain(self.m, need, &rest)?;
-            return Some(Left { m, k: Some(k), art });
         }
-        plan_plain(self.m, generic, pips).map(|m| Left { m, k: None, art })
+        // Use flexible restricted mana for pips the plain colours cannot cover first, then any other pips.
+        let mut rest = String::new();
+        for c in uncovered.chars().chain(covered.chars()) {
+            if spell_ok && c != 'C' && spell > 0 {
+                spell -= 1;
+            } else {
+                rest.push(c);
+            }
+        }
+        let mut need = generic;
+        if let Some(k) = k.as_mut() {
+            for n in k {
+                let used = (*n).min(need);
+                *n -= used;
+                need -= used;
+            }
+        }
+        if dragon_ok {
+            for n in &mut dragon {
+                let used = (*n).min(need);
+                *n -= used;
+                need -= used;
+            }
+        }
+        let used_spell = if spell_ok { spell.min(need) } else { 0 };
+        spell -= used_spell;
+        need -= used_spell;
+        let used_art = if self.art_ok(g) { self.art.min(need) } else { 0 };
+        let art = self.art - used_art;
+        let m = plan_plain(self.m, need - used_art, &rest)?;
+        Some(Left { m, k, art, spell, dragon })
     }
 
     pub fn can_pay(&self, g: &Game, owner: PlayerId, generic: u32, pips: &str) -> bool {
@@ -194,6 +254,8 @@ impl ManaPool {
             Some(l) => {
                 self.m = l.m;
                 self.art = l.art;
+                self.spell = l.spell;
+                self.dragon = l.dragon;
                 if let Some(k) = l.k {
                     self.k = k;
                 }
@@ -205,15 +267,17 @@ impl ManaPool {
     /// in words, what the pool lacks for this cost (for the error message)
     pub fn missing(&self, generic: u32, pips: &str) -> String {
         let mut m = self.m;
+        let mut spell = if matches!(self.spending, Some(Spending::Card(_))) { self.spell } else { 0 };
         let mut short = vec![];
         for c in pips.chars() {
             match idx(c) {
                 Some(i) if m[i] > 0 => m[i] -= 1,
+                _ if c != 'C' && spell > 0 => spell -= 1,
                 _ if m[6] > 0 => m[6] -= 1,
                 _ => short.push(format!("{{{c}}}")),
             }
         }
-        let left: u32 = m.iter().sum();
+        let left: u32 = m.iter().sum::<u32>() + spell;
         if generic > left {
             short.insert(0, format!("{{{}}}", generic - left));
         }
@@ -233,6 +297,10 @@ fn gathered(g: &Game, p: PlayerId) -> ManaPool {
     let mut pool = pl.pool.clone();
     let f = &pl.mana;
     pool.art += f.art();
+    pool.spell += f.spell();
+    if pool.spending.is_none() {
+        pool.spending = g.pay_for.map(Spending::Card);
+    }
     for c in ['R', 'U', 'C', 'A', 'G', 'B', 'W'] {
         pool.add(c, f.get(Kind::of_letter(c)));
     }
@@ -240,7 +308,8 @@ fn gathered(g: &Game, p: PlayerId) -> ManaPool {
 }
 
 pub fn gather_floating(g: &mut Game, p: PlayerId) {
-    let pool = gathered(g, p);
+    let mut pool = gathered(g, p);
+    pool.spending = g.player(p).pool.spending;
     let pl = g.player_mut(p);
     pl.pool = pool;
     pl.mana.clear(); // all of it is in the person's pool now (a person never floats a restricted leftover)
@@ -271,6 +340,20 @@ fn problem(pool: &ManaPool, generic: u32, pips: &str) -> String {
 }
 
 /// None if p's pool can pay this now, else the reason (nothing is spent).
+pub fn card_cost_problem(g: &Game, p: PlayerId, c: CardId, generic: u32, pips: &str) -> Option<String> {
+    let mut pool = gathered(g, p);
+    pool.spending = Some(Spending::Card(c));
+    (!pool.can_pay(g, p, generic, pips)).then(|| problem(&pool, generic, pips))
+}
+
+/// Pay only the mana cost of casting c, without carrying that context into its resolution.
+pub fn pay_card_from_pool(g: &mut Game, p: PlayerId, c: CardId, generic: u32, pips: &str) -> Option<String> {
+    let prev = g.player_mut(p).pool.spending.replace(Spending::Card(c));
+    let result = pay_from_pool(g, p, generic, pips);
+    g.player_mut(p).pool.spending = prev;
+    result
+}
+
 pub fn cost_problem(g: &Game, p: PlayerId, generic: u32, pips: &str) -> Option<String> {
     let pool = gathered(g, p);
     if pool.can_pay(g, p, generic, pips) {
@@ -283,13 +366,18 @@ pub fn cost_problem(g: &Game, p: PlayerId, generic: u32, pips: &str) -> Option<S
 pub fn pay_from_pool(g: &mut Game, p: PlayerId, generic: u32, pips: &str) -> Option<String> {
     gather_floating(g, p);
     let mut pool = std::mem::take(&mut g.player_mut(p).pool);
+    let prev = pool.spending;
+    if pool.spending.is_none() {
+        pool.spending = g.pay_for.map(Spending::Card);
+    }
     let ok = pool.pay(g, p, generic, pips);
     let why = if ok { None } else { Some(problem(&pool, generic, pips)) };
+    pool.spending = prev;
     g.player_mut(p).pool = pool;
     why
 }
 
-/// a step ends: every mana pool empties
+/// A step ends: ordinary mana empties; Karn and Klauth mana stay until the turn ends.
 pub fn empty_pools(g: &mut Game) {
     for p in g.players.iter_mut() {
         p.pool.empty();
@@ -342,6 +430,11 @@ fn unit_colours(g: &Game, u: &Unit) -> String {
 }
 
 fn restricted_type(g: &Game, src: Source) -> Option<Sym> {
+    if let Source::Perm(m) = src
+        && g.perm(m).cd.is_some_and(|c| g.db.get(c).mana_restr == crate::engine::pool::Restr::DragonCreature)
+    {
+        return Some("dragon");
+    }
     let Source::Land(l) = src else { return None };
     let land = g.perm(l);
     if !RESTRICTED_LANDS.contains(&&*g.db.get(land.card()).name) {
@@ -369,7 +462,7 @@ fn source_name(g: &Game, src: Source) -> String {
 pub fn sources(g: &Game, p: PlayerId) -> Vec<SourceInfo> {
     let pl = g.player(p);
     let mut out = vec![];
-    for (i, u) in mana_units(g, p, false).iter().enumerate() {
+    for (i, u) in human_sources(g, p).iter().enumerate() {
         if is_float(u.src) {
             continue;
         }
@@ -389,7 +482,8 @@ pub fn sources(g: &Game, p: PlayerId) -> Vec<SourceInfo> {
             perm: None,
         };
         if let Some(kt) = restricted_type(g, u.src) {
-            d.colours = format!("C{}", "WUBRG".chars().filter(|&c| pl.ident.has(c)).collect::<String>());
+            let plain = if matches!(u.src, Source::Land(_)) { "C" } else { "" };
+            d.colours = format!("{plain}{}", "WUBRG".chars().filter(|&c| pl.ident.has(c)).collect::<String>());
             d.restricted = Some(kt);
         }
         match u.src {
@@ -406,20 +500,50 @@ pub fn sources(g: &Game, p: PlayerId) -> Vec<SourceInfo> {
 /// Tap (or sacrifice) source `source_id` from `sources()` for its mana, into p's pool; `colour`: which colour a
 /// multi-colour source makes (default: its first). Returns an error string, or None when it worked.
 pub fn tap(g: &mut Game, p: PlayerId, source_id: i64, colour: Option<char>) -> Res<Option<String>> {
-    let units = mana_units(g, p, false);
+    let units = human_sources(g, p);
     let Some(u) = (source_id >= 0).then(|| units.get(source_id as usize)).flatten().filter(|u| !is_float(u.src)) else {
         return Ok(Some("That source is gone or already tapped.".into()));
     };
     let u = *u;
     let name = g.player(p).name;
     if let Some(kt) = restricted_type(g, u.src)
-        && let Some(col) = colour.filter(|&c| c != 'C')
+        && let Some(col) = colour
+            .or_else(|| {
+                matches!(u.src, Source::Perm(_)).then(|| unit_colours(g, &u)).and_then(|cols| cols.chars().next())
+            })
+            .filter(|&c| c != 'C')
     {
         if !g.player(p).ident.has(col) {
             return Ok(Some(format!("That source can't make {} mana.", colour_name(col))));
         }
-        spend_unit(g, p, u, 1, "")?;
-        g.player_mut(p).pool.add_restricted(col, 1, kt);
+        let mut colours = vec![col];
+        if matches!(u.src, Source::Perm(_)) {
+            let labels: Vec<String> =
+                "WUBRG".chars().filter(|&c| g.player(p).ident.has(c)).map(|c| c.to_string()).collect();
+            for _ in 1..u.amt {
+                let Some(k) = super::choices::choose(
+                    g,
+                    p,
+                    "choose",
+                    "Rivaz of the Claw: choose the other mana colour",
+                    &labels,
+                    Some("cancel"),
+                    None,
+                )?
+                else {
+                    return Ok(Some("Cancelled. Rivaz was not tapped and no mana was added.".into()));
+                };
+                colours.push(labels[k].chars().next().unwrap());
+            }
+        }
+        spend_unit(g, p, u, u.amt, "")?;
+        for c in colours {
+            if matches!(u.src, Source::Perm(_)) {
+                g.player_mut(p).pool.dragon[idx(c).unwrap()] += 1;
+            } else {
+                g.player_mut(p).pool.add_restricted(c, 1, kt);
+            }
+        }
         let sn = unit_label(g, u.src);
         crate::glog!(
             g,
@@ -451,6 +575,9 @@ pub fn tap(g: &mut Game, p: PlayerId, source_id: i64, colour: Option<char>) -> R
         return Ok(None);
     }
     let cols = unit_colours(g, &u);
+    if matches!(u.src, Source::Perm(_)) && restricted_type(g, u.src).is_some() {
+        return Ok(Some("Rivaz can only make coloured mana for Dragon creature spells.".into()));
+    }
     let colour = colour.unwrap_or_else(|| cols.chars().next().unwrap());
     if !cols.contains(colour) {
         return Ok(Some(format!("That source can't make {} mana.", colour_name(colour))));
@@ -486,9 +613,17 @@ pub fn pay_tax(g: &mut Game, p: PlayerId, n: u32, what: &str) -> Res<bool> {
 
 /// `pay_tax` with its own question (None: no question, pay if it can)
 pub fn pay_tax_ask(g: &mut Game, p: PlayerId, n: u32, what: &str, prompt: Option<String>) -> Res<bool> {
+    let prev = g.player_mut(p).pool.spending.take();
+    let prev_pay = g.pay_for.take();
+    let result = pay_tax_inner(g, p, n, what, prompt);
+    g.player_mut(p).pool.spending = prev;
+    g.pay_for = prev_pay;
+    result
+}
+
+fn pay_tax_inner(g: &mut Game, p: PlayerId, n: u32, what: &str, prompt: Option<String>) -> Res<bool> {
     let name = g.player(p).name;
-    let can = available(g, p);
-    if can < n {
+    if !can_tap_to_pay(g, p, n, "") {
         crate::glog!(g, "    {} can't pay {{{}}} for {}", name, n, what);
         return Ok(false);
     }
@@ -497,10 +632,8 @@ pub fn pay_tax_ask(g: &mut Game, p: PlayerId, n: u32, what: &str, prompt: Option
     {
         return Ok(false);
     }
-    gather_floating(g, p);
-    while g.player(p).pool.total() < n {
-        let Some(s) = sources(g, p).first().map(|s| s.id) else { break };
-        tap(g, p, s as i64, None)?;
+    if !tap_to_pay(g, p, n, "")? {
+        return Ok(false);
     }
     let mut pool = std::mem::take(&mut g.player_mut(p).pool);
     let ok = pool.pay(g, p, n, "");

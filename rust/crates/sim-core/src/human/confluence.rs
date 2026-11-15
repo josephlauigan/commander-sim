@@ -73,7 +73,7 @@ pub fn resolve_rest(g: &mut Game, p: PlayerId, bounce: &[PermId], draws: u32) ->
 /// mana from the pool, then it goes on the stack like any spell. None, or why it can't be cast
 pub fn cast_plain(g: &mut Game, p: PlayerId, c: CardId) -> Res<Option<String>> {
     let (gn, pips) = engine::mana::cost_of(g, p, c);
-    if let Some(why) = mana::cost_problem(g, p, gn, &pips) {
+    if let Some(why) = mana::card_cost_problem(g, p, c, gn, &pips) {
         return Ok(Some(format!("Can't cast {NAME}. {why}")));
     }
     let Some(m) = modes(g, p, false)? else { return Ok(None) };
@@ -83,7 +83,7 @@ pub fn cast_plain(g: &mut Game, p: PlayerId, c: CardId) -> Res<Option<String>> {
 /// cast it with the modes chosen (no counter mode): pay from the pool, then the stack
 pub fn cast_with(g: &mut Game, p: PlayerId, c: CardId, m: (u32, Vec<PermId>, u32)) -> Res<Option<String>> {
     let (gn, pips) = engine::mana::cost_of(g, p, c);
-    if let Some(why) = mana::pay_from_pool(g, p, gn, &pips) {
+    if let Some(why) = mana::pay_card_from_pool(g, p, c, gn, &pips) {
         return Ok(Some(format!("Can't cast {NAME}. {why}")));
     }
     g.confluence = Some(m);

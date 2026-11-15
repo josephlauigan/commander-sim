@@ -51,7 +51,7 @@ use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{castable, casts_this_turn, on_cast};
 use crate::engine::control::{Duration, GoadFor, gain_control, goad};
 use crate::engine::life::prevents_damage;
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell};
 use crate::engine::repl;
 use crate::engine::stack::{ability_window, counter_window, trigger_window, trigger_window_card};
 use crate::engine::values::{card_name, epow, etgh, has_type, no_sac, pval, untargetable};
@@ -241,8 +241,8 @@ pub fn flare_last_chance(g: &mut Game, q: PlayerId) -> Res<bool> {
     if crate::engine::values::silenced(g, q) || !castable(g, q, c, "hand") {
         return Ok(false);
     }
-    let fodder = if can_pay(g, q, 2, "WW", false) { None } else { flare_fodder(g, q, FLARE, None) };
-    if fodder.is_none() && !can_pay(g, q, 2, "WW", false) {
+    let fodder = if can_pay_spell(g, q, c, 2, "WW", false) { None } else { flare_fodder(g, q, FLARE, None) };
+    if fodder.is_none() && !can_pay_spell(g, q, c, 2, "WW", false) {
         return Ok(false);
     }
     g.player_mut(q).hand.retain(|&x| x != c);
@@ -252,7 +252,7 @@ pub fn flare_last_chance(g: &mut Game, q: PlayerId) -> Res<bool> {
             die(g, f, "sac")?;
         }
         None => {
-            pay(g, q, 2, "WW", false)?;
+            pay_spell(g, q, c, 2, "WW", false)?;
         }
     }
     let pl = g.player_mut(q);

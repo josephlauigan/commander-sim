@@ -24,7 +24,7 @@ use super::combos::{Combo, QUIET, Ready, Step, StepKind, no_keys, no_src};
 use super::t6_combos_godo::{bf, in_hand, in_lib, ok_ready};
 use super::t6_scion::{PRISMARI, SCION, activate, prismari_on, scion_of};
 use crate::engine::cast::{cast_card, castable};
-use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay_spell};
 use crate::flow::Res;
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Ctx, Game};
@@ -73,10 +73,10 @@ fn cast_from_hand(g: &mut Game, p: PlayerId, name: &str, ctx: Ctx) -> Res<bool> 
         return Ok(false);
     }
     let (gn, pips) = cost_of(g, p, c);
-    if !can_pay(g, p, gn, &pips, false) {
+    if !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     cast_card(g, p, c, "hand", ctx)
 }
 
@@ -90,10 +90,10 @@ fn escape(g: &mut Game, p: PlayerId, name: &str, ctx: Ctx) -> Res<bool> {
     let (gn, pips) = cost_of(g, p, c);
     let mut others: Vec<CardId> = g.player(p).gy.iter().copied().filter(|&x| x != c).collect();
     others.sort_by_key(|&x| LINE.contains(&cname(g, x)));
-    if others.len() < 3 || !can_pay(g, p, gn, &pips, false) {
+    if others.len() < 3 || !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     for &x in others.iter().take(3) {
         let pl = g.player_mut(p);
         if let Some(i) = pl.gy.iter().position(|&y| y == x) {

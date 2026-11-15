@@ -16,7 +16,7 @@
 use super::common::{AURA, AuraSpec};
 use crate::cards::CardDb;
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell};
 use crate::engine::repl;
 use crate::engine::values::{etgh, indestructible, pval};
 use crate::engine::zones::{Enter, Zone, die, draw, enter, exile_perm, leave, to_zone_card};
@@ -660,7 +660,10 @@ const PRESUMED: &str = "Presumed Dead";
 
 fn cast_presumed(g: &mut Game, p: PlayerId, t: PermId) -> Res<bool> {
     let Some(c) = g.player(p).hand.iter().copied().find(|&c| &*g.db.get(c).name == PRESUMED) else { return Ok(false) };
-    if !crate::engine::cast::castable(g, p, c, "hand") || !can_pay(g, p, 1, "B", false) || !pay(g, p, 1, "B", false)? {
+    if !crate::engine::cast::castable(g, p, c, "hand")
+        || !can_pay_spell(g, p, c, 1, "B", false)
+        || !pay_spell(g, p, c, 1, "B", false)?
+    {
         return Ok(false);
     }
     crate::engine::cast::cast_card(g, p, c, "hand", Ctx { target: Some(t), ..Ctx::default() })?;
@@ -695,7 +698,8 @@ fn presumed_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 pub fn presumed_option(g: &Game, p: PlayerId) -> Option<Opt> {
     let c = g.player(p).hand.iter().copied().find(|&c| &*g.db.get(c).name == PRESUMED)?;
-    if g.active != Some(p) || !crate::engine::cast::castable(g, p, c, "hand") || !can_pay(g, p, 1, "B", false) {
+    if g.active != Some(p) || !crate::engine::cast::castable(g, p, c, "hand") || !can_pay_spell(g, p, c, 1, "B", false)
+    {
         return None;
     }
     if !g.opps(p).any(|q| g.player(q).perms.iter().any(|&m| live(g, m) && g.is_creature(m))) {

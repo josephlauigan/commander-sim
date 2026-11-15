@@ -201,7 +201,7 @@ pub fn decision(g: &mut Game, p: PlayerId, opts: &[Opt]) {
     let pay = |c: CardId| {
         let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
         let tax = if pl.is_commander(c) { pl.tax_of(c) } else { 0 };
-        crate::engine::mana::can_pay(g, p, gn + tax, &pips, false)
+        crate::engine::mana::can_pay_spell(g, p, c, gn + tax, &pips, false)
     };
     let offered: Vec<CardId> = opts.iter().filter_map(spell_card).collect();
     let mut payable = false;

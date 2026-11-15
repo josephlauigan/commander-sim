@@ -21,9 +21,7 @@
 
 use crate::cards::CardDb;
 use crate::engine::cast::parse_cost;
-use crate::engine::mana::can_pay;
-use crate::engine::mana::cost_of;
-use crate::engine::mana::pay;
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay};
 use crate::engine::removal::apply_removal;
 use crate::engine::repl::{self, Ctr, On, Path};
 use crate::engine::stack::{counter_window, may_window, trigger_window};
@@ -568,10 +566,10 @@ fn lifestream_foretell(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 fn lifestream_cast_foretold(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || exiled_turn(g, p, c).is_none() || !can_pay(g, p, 4, "G", false) {
+    if !g.player(p).hand.contains(&c) || exiled_turn(g, p, c).is_none() || !can_pay_spell(g, p, c, 4, "G", false) {
         return Ok(false);
     }
-    if !crate::engine::mana::pay(g, p, 4, "G", false)? {
+    if !crate::engine::mana::pay_spell(g, p, c, 4, "G", false)? {
         return Ok(false);
     }
     clear_mark(g, p, c);
@@ -639,11 +637,11 @@ const SPIDER: &str = "Spider-Man, Brooklyn Visionary";
 /// Offered when the full cost is out of reach; the creature returned is the cheapest to lose (a tapped mana creature
 /// that can be cast again, never a token).
 fn spider_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || g.active != Some(p) || !can_pay(g, p, 2, "G", false) {
+    if post.is_none() || g.active != Some(p) || !can_pay_spell(g, p, c, 2, "G", false) {
         return Ok(vec![]);
     }
     let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
-    if can_pay(g, p, gn, &pips, false) {
+    if can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(vec![]); // cast it for its mana cost
     }
     let Some((m, lose)) = web_victim(g, p) else { return Ok(vec![]) };
@@ -667,10 +665,10 @@ fn web_victim(g: &Game, p: PlayerId) -> Option<(PermId, f64)> {
 fn spider_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId((arg & 0xffff) as u16);
     let m = PermId((arg >> 16) as u32);
-    if !g.player(p).hand.contains(&c) || !live(g, m) || !g.perm(m).tapped || !can_pay(g, p, 2, "G", false) {
+    if !g.player(p).hand.contains(&c) || !live(g, m) || !g.perm(m).tapped || !can_pay_spell(g, p, c, 2, "G", false) {
         return Ok(false);
     }
-    if !crate::engine::mana::pay(g, p, 2, "G", false)? {
+    if !crate::engine::mana::pay_spell(g, p, c, 2, "G", false)? {
         return Ok(false);
     }
     crate::glog!(g, "  {} returns {} to hand (web-slinging)", pname(g, p), g.perm(m).name);
@@ -739,7 +737,7 @@ pub fn extra_ward(g: &Game, m: PermId) -> u32 {
 /// Disguise {5}{G}{G}: cast face down for {3} as a 2/2 with ward {2}. The AI does that with the mana to spare; the
 /// normal cast (a vanilla 4/4) is never worth it.
 fn radical_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || g.active != Some(p) || !can_pay(g, p, 3, "", false) || !castable(g, p, c) {
+    if post.is_none() || g.active != Some(p) || !can_pay_spell(g, p, c, 3, "", false) || !castable(g, p, c) {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -755,10 +753,10 @@ fn castable(g: &Game, p: PlayerId, c: CardId) -> bool {
 
 fn radical_down(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 3, "", false) || !castable(g, p, c) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 3, "", false) || !castable(g, p, c) {
         return Ok(false);
     }
-    if !crate::engine::mana::pay(g, p, 3, "", false)? {
+    if !crate::engine::mana::pay_spell(g, p, c, 3, "", false)? {
         return Ok(false);
     }
     let pl = g.player_mut(p);
@@ -880,7 +878,7 @@ fn hypothesis_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) 
     if post.is_none() || g.active != Some(p) || !castable(g, p, c) {
         return Ok(vec![]);
     }
-    let x = hypothesis_x(g, p);
+    let x = hypothesis_x(g, p, c);
     if x < 2 {
         return Ok(vec![]);
     }
@@ -891,18 +889,18 @@ fn hypothesis_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) 
     }])
 }
 
-fn hypothesis_x(g: &Game, p: PlayerId) -> i32 {
-    let mana = crate::engine::mana::total_mana(g, p, false) as i32;
+fn hypothesis_x(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    let mana = crate::engine::mana::total_mana_spell(g, p, c, false) as i32;
     (mana - 1).max(0)
 }
 
 fn hypothesis_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    let x = hypothesis_x(g, p);
-    if !g.player(p).hand.contains(&c) || x < 1 || !can_pay(g, p, x as u32, "G", false) {
+    let x = hypothesis_x(g, p, c);
+    if !g.player(p).hand.contains(&c) || x < 1 || !can_pay_spell(g, p, c, x as u32, "G", false) {
         return Ok(false);
     }
-    if !crate::engine::mana::pay(g, p, x as u32, "G", false)? {
+    if !crate::engine::mana::pay_spell(g, p, c, x as u32, "G", false)? {
         return Ok(false);
     }
     crate::engine::cast::cast_card(g, p, c, "hand", Ctx { x, ..Ctx::default() })?;

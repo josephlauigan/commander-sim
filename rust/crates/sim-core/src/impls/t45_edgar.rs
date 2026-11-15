@@ -50,8 +50,7 @@ use crate::cards::{CardDb, Colors};
 use crate::engine::cast::cast_card;
 use crate::engine::control::Duration;
 use crate::engine::life::{gain, lose_life};
-use crate::engine::mana::restr_ok;
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell, restr_ok};
 use crate::engine::pool::Restr;
 use crate::engine::removal::{apply_removal, apply_wipe};
 use crate::engine::repl;
@@ -432,7 +431,11 @@ fn damn_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
 
 /// the overload in hand: {2}{W}{W} when wiping every creature leaves p well ahead
 fn damn_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || g.active != Some(p) || !g.player(p).hand.contains(&c) || !can_pay(g, p, 2, "WW", false) {
+    if post.is_none()
+        || g.active != Some(p)
+        || !g.player(p).hand.contains(&c)
+        || !can_pay_spell(g, p, c, 2, "WW", false)
+    {
         return Ok(vec![]);
     }
     let (ol, ml, _) = crate::ai::decks::wipe_eval(g, p, "destroy");
@@ -449,12 +452,10 @@ fn damn_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
 
 fn damn_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 2, "WW", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 2, "WW", false) {
         return Ok(false);
     }
-    g.pay_for = Some(c);
-    let paid = pay(g, p, 2, "WW", false);
-    g.pay_for = None;
+    let paid = pay_spell(g, p, c, 2, "WW", false);
     if !paid? {
         return Ok(false);
     }
@@ -569,7 +570,7 @@ pub fn madness(g: &mut Game, q: PlayerId, cards: &[CardId]) -> Res {
         if g.over || !g.player(q).alive || cname(g, c) != BARON || !g.player(q).gy.contains(&c) {
             continue;
         }
-        if !can_pay(g, q, 2, "B", false) || !pay(g, q, 2, "B", false)? {
+        if !can_pay_spell(g, q, c, 2, "B", false) || !pay_spell(g, q, c, 2, "B", false)? {
             continue;
         }
         crate::glog!(g, "    {} casts Markov Baron for its madness cost", g.player(q).name);
@@ -831,7 +832,7 @@ fn socialite_tokens(g: &mut Game, src: Src, p: PlayerId, toks: &[PermId]) -> Res
 
 // ------------------------------------------------------------------ Voldaren Estate
 fn paying_vampire(g: &Game) -> bool {
-    g.pay_for.is_some_and(|c| vampire_card(g, c))
+    crate::engine::mana::paying(g).is_some_and(|c| vampire_card(g, c))
 }
 
 /// {C}, or (paying 1 life) any colour, spent only on a Vampire spell

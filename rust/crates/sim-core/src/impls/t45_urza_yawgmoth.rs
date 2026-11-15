@@ -53,7 +53,7 @@ use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, grants_flash};
 use crate::engine::life::{check_state, gain};
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana, total_mana_spell};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{epow, etgh, has_type, pval};
@@ -415,7 +415,7 @@ fn chip_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<
             if let Some(u) = card_utility(g, p, &s, top) {
                 let (cg, cp) = cost_of(g, p, top);
                 g.pay_for = Some(top);
-                let ok = can_pay(g, p, cg, &cp, false) && (!g.cast_checks() || castable(g, p, top, "lib"));
+                let ok = can_pay_spell(g, p, top, cg, &cp, false) && (!g.cast_checks() || castable(g, p, top, "lib"));
                 g.pay_for = None;
                 if ok {
                     let label = format!("cast {} from the top of the library (The Reality Chip)", g.db.get(top).name);
@@ -552,7 +552,7 @@ fn entomb_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> R
         return Ok(vec![]);
     }
     let (cg, cp) = cost_of(g, p, c);
-    if !can_pay(g, p, cg, &cp, false) || !castable(g, p, c, "hand") {
+    if !can_pay_spell(g, p, c, cg, &cp, false) || !castable(g, p, c, "hand") {
         return Ok(vec![]);
     }
     let Some(pick) = entomb_pick(g, p) else { return Ok(vec![]) };
@@ -563,12 +563,10 @@ fn entomb_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> R
 fn entomb_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let (cg, cp) = cost_of(g, p, c);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, cg, &cp, false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, cg, &cp, false) {
         return Ok(false);
     }
-    g.pay_for = Some(c);
-    let ok = pay(g, p, cg, &cp, false)?;
-    g.pay_for = None;
+    let ok = pay_spell(g, p, c, cg, &cp, false)?;
     if !ok {
         return Ok(false);
     }
@@ -796,7 +794,7 @@ fn meathook_x(g: &Game, p: PlayerId, mana: u32) -> (i32, f64) {
 
 fn meathook_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
     let (cg, cp) = cost_of(g, p, c);
-    let spare = total_mana(g, p, false).saturating_sub(cg + cp.len() as u32);
+    let spare = total_mana_spell(g, p, c, false).saturating_sub(cg + cp.len() as u32);
     let (x, v) = meathook_x(g, p, spare);
     if x > 0 && v >= 6.0 { 68 } else { 44 }
 }
@@ -882,7 +880,7 @@ fn horror_loop(g: &Game, p: PlayerId) -> Ready {
     let mut casts = vec![];
     if horror.is_none() {
         let Some(h) = in_hand(g, p, HORROR) else { return NOT_READY() };
-        if !castable(g, p, h, "hand") || !can_pay(g, p, g.db.get(h).generic, &g.db.get(h).pips, false) {
+        if !castable(g, p, h, "hand") || !can_pay_spell(g, p, h, g.db.get(h).generic, &g.db.get(h).pips, false) {
             return NOT_READY();
         }
         casts.push(h);

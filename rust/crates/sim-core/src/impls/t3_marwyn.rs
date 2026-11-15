@@ -28,7 +28,7 @@
 use crate::ai::brain::{Situation, card_utility, do_cast_with};
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, castable};
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana, total_mana_spell};
 use crate::engine::pool::Kind;
 use crate::engine::repl;
 use crate::engine::stack::ability_window;
@@ -231,7 +231,7 @@ fn guidance_mana(g: &Game, _p: PlayerId, _m: PermId) -> u32 {
 // ================================================================== Genesis Wave
 /// cast with X = spare mana of 5 or more (`xtutor` pays it)
 fn wave_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
-    let x = total_mana(g, p, false) as i32 - 3;
+    let x = total_mana_spell(g, p, _c, false) as i32 - 3;
     if x >= 5 && g.player(p).library.len() as i32 > x + 5 { 50 + x.min(20) } else { 0 }
 }
 
@@ -323,7 +323,7 @@ pub(crate) fn top_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool
         if let Some(u) = card_utility(g, p, &s, top) {
             let (cg, cp) = cost_of(g, p, top);
             g.pay_for = Some(top);
-            let ok = can_pay(g, p, cg, &cp, false) && (!g.cast_checks() || castable(g, p, top, "lib"));
+            let ok = can_pay_spell(g, p, top, cg, &cp, false) && (!g.cast_checks() || castable(g, p, top, "lib"));
             g.pay_for = None;
             if ok {
                 out.push(plan(
@@ -476,7 +476,8 @@ pub fn ambush_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
         return Ok(false);
     }
     let (gn, pips) = cost_of(g, d, c);
-    if !can_pay(g, d, gn, &pips, false) || !castable(g, d, c, "hand") || !pay(g, d, gn, &pips, false)? {
+    if !can_pay_spell(g, d, c, gn, &pips, false) || !castable(g, d, c, "hand") || !pay_spell(g, d, c, gn, &pips, false)?
+    {
         return Ok(false);
     }
     crate::glog!(g, "  {} answers the attack with Galadhrim Ambush ({} attackers)", pname(g, d), atk.len());
@@ -504,7 +505,7 @@ fn max_kicks(g: &mut Game, p: PlayerId, c: CardId) -> u32 {
     let mut k = 0;
     while k < 6 {
         let (gn, pips) = kicked_cost(g, p, c, k + 1);
-        if !can_pay(g, p, gn, &pips, false) {
+        if !can_pay_spell(g, p, c, gn, &pips, false) {
             break;
         }
         k += 1;
@@ -538,9 +539,7 @@ fn kick_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     let k = max_kicks(g, p, c);
     let (gn, pips) = kicked_cost(g, p, c, k);
-    g.pay_for = Some(c);
-    let ok = can_pay(g, p, gn, &pips, false) && pay(g, p, gn, &pips, false)?;
-    g.pay_for = None;
+    let ok = can_pay_spell(g, p, c, gn, &pips, false) && pay_spell(g, p, c, gn, &pips, false)?;
     if !ok {
         return Ok(false);
     }
@@ -682,7 +681,7 @@ fn mantle_ready(g: &Game, p: PlayerId) -> Ready {
     }
     if let Some(c) = in_hand(g, p, EZURI) {
         let (gn, pips) = cost_of(g, p, c);
-        if can_pay(g, p, gn, &pips, false) && castable(g, p, c, "hand") {
+        if can_pay_spell(g, p, c, gn, &pips, false) && castable(g, p, c, "hand") {
             return (true, vec![mantle, dork], vec![c]);
         }
     }

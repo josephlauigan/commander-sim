@@ -16,7 +16,7 @@ use super::mine::{etb_value, is_legendary, spell_copy_value};
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::{cast_card, copy_spell, on_cast};
 use crate::engine::life::check_state;
-use crate::engine::mana::{can_pay, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell, total_mana_spell};
 use crate::engine::stack::counter_window;
 use crate::engine::values::{epow, pval, untargetable};
 use crate::engine::zones::{die, enter_token_copy_with, max_by};
@@ -184,15 +184,15 @@ const MOCKINGBIRD: &str = "Mockingbird";
 
 /// the cheapest X that reaches the best creature: (X, the creature, its value). The mana spent is X + {U}.
 fn mockingbird_plan(g: &Game, p: PlayerId, c: CardId) -> Option<(u32, PermId, f64)> {
-    let total = total_mana(g, p, false);
-    if total < 1 || !can_pay(g, p, 0, "U", false) {
+    let total = total_mana_spell(g, p, c, false);
+    if total < 1 || !can_pay_spell(g, p, c, 0, "U", false) {
         return None;
     }
     let (t, v) = best_copy(g, p, Kind::Creature, None, Some(total))?;
     let _ = c;
     let mv = g.db.get(g.perm(t).cd?).cmc;
     let x = mv.saturating_sub(1);
-    if v < 3.0 || !can_pay(g, p, x, "U", false) {
+    if v < 3.0 || !can_pay_spell(g, p, c, x, "U", false) {
         return None;
     }
     Some((x, t, v))
@@ -216,7 +216,7 @@ fn mockingbird_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     let Some((x, t, _)) = mockingbird_plan(g, p, c) else { return Ok(false) };
-    pay(g, p, x, "U", false)?;
+    pay_spell(g, p, c, x, "U", false)?;
     // it enters as a copy of the creature chosen as it was cast (`clone_copy`)
     cast_card(g, p, c, "hand", Ctx { x: x as i32, target: Some(t), ..Ctx::default() })?;
     Ok(true)
@@ -302,7 +302,7 @@ fn photo_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Re
     if post.is_some() && g.active == Some(p) {
         return Ok(vec![]); // its own main phase: the usual cast
     }
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 2, "UU", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 2, "UU", false) {
         return Ok(vec![]);
     }
     let mine: Vec<PermId> = g.player(p).perms.clone();
@@ -324,7 +324,7 @@ fn photo_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).hand.contains(&c) || !copyable(g, p, t, Kind::Any) || g.perm(t).owner != p {
         return Ok(false);
     }
-    if !pay(g, p, 2, "UU", false)? {
+    if !pay_spell(g, p, c, 2, "UU", false)? {
         return Ok(false);
     }
     cast_card(g, p, c, "hand", Ctx { target: Some(t), ..Ctx::default() })?;
@@ -365,7 +365,7 @@ fn copier_hook(g: &mut Game, c: CardId, p: PlayerId, spell: CardId) -> Res {
     if worth < if flare { 4.0 } else { 3.0 } {
         return Ok(());
     }
-    let by_mana = if flare { can_pay(g, p, 1, "RR", false) } else { can_pay(g, p, 0, "UU", false) };
+    let by_mana = if flare { can_pay_spell(g, p, c, 1, "RR", false) } else { can_pay_spell(g, p, c, 0, "UU", false) };
     let fodder = if flare && !by_mana { flare_fodder(g, p, worth) } else { None };
     if !by_mana && fodder.is_none() {
         return Ok(());
@@ -382,9 +382,9 @@ fn copier_go(g: &mut Game, c: CardId, p: PlayerId, spell: CardId, flare: bool, s
         crate::glog!(g, "  {} sacrifices {} to cast {}", g.player(p).name, g.perm(m).name, name_of(g, c));
         die(g, m, "sac")?;
     } else if flare {
-        pay(g, p, 1, "RR", false)?;
+        pay_spell(g, p, c, 1, "RR", false)?;
     } else {
-        pay(g, p, 0, "UU", false)?;
+        pay_spell(g, p, c, 0, "UU", false)?;
     }
     let pl = g.player_mut(p);
     let Some(i) = pl.hand.iter().position(|&x| x == c) else { return Ok(()) };

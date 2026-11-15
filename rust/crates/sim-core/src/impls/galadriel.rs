@@ -24,8 +24,7 @@ use super::partials::at_once;
 use crate::ai::decks::protect_response;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::cast_card;
-use crate::engine::mana::restr_ok;
-use crate::engine::mana::{can_pay, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell, restr_ok, total_mana};
 use crate::engine::pool::Kind;
 use crate::engine::pool::Restr;
 use crate::engine::removal::apply_removal;
@@ -1494,7 +1493,11 @@ fn genesis(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
 
 /// Planar Genesis: at an opponent's end step
 fn genesis_eot(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_some() || g.active == Some(p) || !g.player(p).hand.contains(&c) || !can_pay(g, p, 0, "GU", false) {
+    if post.is_some()
+        || g.active == Some(p)
+        || !g.player(p).hand.contains(&c)
+        || !can_pay_spell(g, p, c, 0, "GU", false)
+    {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -1506,10 +1509,10 @@ fn genesis_eot(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<
 
 fn genesis_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 0, "GU", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 0, "GU", false) {
         return Ok(false);
     }
-    pay(g, p, 0, "GU", false)?;
+    pay_spell(g, p, c, 0, "GU", false)?;
     remove_first(&mut g.player_mut(p).hand, c);
     g.player_mut(p).spells_this_turn += 1;
     cast_card(g, p, c, "hand", Ctx::default())?;

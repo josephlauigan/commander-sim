@@ -52,7 +52,9 @@
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{castable, copy_spell, discard_worst, on_cast};
 use crate::engine::life::{gain, lose_life};
-use crate::engine::mana::{Source, Unit, can_pay, cost_of, land_colors_now, mana_units, pay, plan_pay};
+use crate::engine::mana::{
+    Source, Unit, can_pay, can_pay_spell, cost_of, land_colors_now, mana_units, pay, pay_spell, plan_pay,
+};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{ability_window, counter_window, trigger_window};
 use crate::engine::values::{epow, etgh, has_type, ptypes, pval, untargetable};
@@ -148,7 +150,7 @@ fn rebuy_value(g: &Game, p: PlayerId, x: PermId) -> f64 {
     }
     let (gn, pips) = cost_of(g, p, cd);
     let free = mine(g, p, ALUREN).is_some() && g.db.get(cd).cmc <= 3; // Aluren: cast without paying its mana cost
-    if !free && !can_pay(g, p, gn, &pips, false) {
+    if !free && !can_pay_spell(g, p, cd, gn, &pips, false) {
         return 0.0;
     }
     let chulane = mine(g, p, CHULANE).is_some();
@@ -527,7 +529,7 @@ fn vastlands_opts(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> R
     if post.is_none() || g.active != Some(p) || !pl.hand.contains(&c) || pl.hand.len() > 3 {
         return Ok(vec![]);
     }
-    if can_pay(g, p, 5, "", false) || !can_pay(g, p, 3, "", false) || !castable(g, p, c, "hand") {
+    if can_pay_spell(g, p, c, 5, "", false) || !can_pay_spell(g, p, c, 3, "", false) || !castable(g, p, c, "hand") {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -539,11 +541,11 @@ fn vastlands_opts(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> R
 
 fn vastlands_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 3, "", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 3, "", false) {
         return Ok(false);
     }
     crate::ai::decks::remove_from_hand(g, p, c);
-    pay(g, p, 3, "", false)?;
+    pay_spell(g, p, c, 3, "", false)?;
     let pl = g.player_mut(p);
     pl.spells_this_turn += 1;
     pl.stat("spells_cast", 1);

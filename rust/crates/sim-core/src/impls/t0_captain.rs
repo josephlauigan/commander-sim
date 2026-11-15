@@ -19,8 +19,7 @@
 
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::life::{gain, lose_life};
-use crate::engine::mana::restr_ok;
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell, restr_ok};
 use crate::engine::pool::Restr;
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
@@ -1007,7 +1006,7 @@ fn sac_defend(
         return Ok(());
     }
     let (gn, pips) = cost_of(g, d, c);
-    if !can_pay(g, d, gn, &pips, false) {
+    if !can_pay_spell(g, d, c, gn, &pips, false) {
         return Ok(());
     }
     let Some(t) = sac_pick(g, d) else { return Ok(()) };
@@ -1026,7 +1025,7 @@ fn sac_defend(
     if !(open >= life.min(8).max(life / 3) || at_risk >= 5.0) {
         return Ok(());
     }
-    pay(g, d, gn, &pips, false)?;
+    pay_spell(g, d, c, gn, &pips, false)?;
     if let Some(i) = g.player(d).hand.iter().position(|&x| x == c) {
         g.player_mut(d).hand.remove(i);
     }

@@ -175,6 +175,15 @@ pub fn land_colors_now(g: &Game, p: PlayerId, l: PermId) -> Colors {
 
 /// every mana unit p can use now (Python's `mana_units`)
 pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
+    units(g, p, convoke, false, paying(g))
+}
+
+/// Manual sources include Rivaz outside spell payment; the person's pool keeps its restriction.
+pub fn human_sources(g: &Game, p: PlayerId) -> Vec<Unit> {
+    units(g, p, false, true, paying(g))
+}
+
+fn units(g: &Game, p: PlayerId, convoke: bool, manual: bool, pay_for: Option<CardId>) -> Vec<Unit> {
     let pl = g.player(p);
     let ident = pl.ident;
     let mut u = vec![];
@@ -195,7 +204,7 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
         let t = &g.db.get(land.card()).tags;
         // Blood Moon: a plain Mountain with no abilities of its own (the board-wide check was made above)
         let plain = moon && !BASIC_NAMES.contains(&&*g.db.get(land.card()).name);
-        if !plain && !restr_ok(g, p, g.db.get(land.card()).mana_restr) {
+        if !plain && !restr_ok_for(g, p, pay_for, g.db.get(land.card()).mana_restr) {
             continue; // Mishra's Workshop: artifact spells only
         }
         if !plain && t.has(Tag::Tomb) && pl.life <= 2 {
@@ -263,7 +272,7 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
             if no_art_mana && d.types.has(crate::cards::Types::ARTIFACT) {
                 continue;
             }
-            if !restr_ok(g, p, d.mana_restr) {
+            if !restr_ok_for(g, p, pay_for, d.mana_restr) {
                 continue; // Powerstone, The Mightstone and Weakstone: not for nonartifact spells
             }
             let (a, col) = rock.split_once(':').unwrap_or((rock, "C"));
@@ -289,7 +298,10 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
                 u.push(Unit { src: Source::Perm(m), cols, amt, shape });
             }
         } else if let Some(dork) = t.str(Tag::Dork).filter(|_| !x.sick || ahaste()) {
-            if !restr_ok(g, p, d.mana_restr) {
+            if d.mana_restr == Restr::DragonCreature && x.neutered {
+                continue;
+            }
+            if !restr_ok_for(g, p, pay_for, d.mana_restr) && !(manual && d.mana_restr == Restr::DragonCreature) {
                 continue; // Giada (Angel spells), Hydro-Channeler (instants and sorceries), Rivaz (Dragon creatures)
             }
             let amt = cardcode::dyn_mana_perm(g, p, m).unwrap_or(1);
@@ -345,7 +357,7 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
     // floating mana, at most 1000 of each entry (the same doubling boards float billions); restricted mana only where
     // it may be spent
     for m in pl.mana.iter() {
-        if restr_ok(g, p, m.key.restr) {
+        if restr_ok_for(g, p, pay_for, m.key.restr) {
             let cols = m.key.kind.cols(ident);
             u.extend((0..m.amt.min(1000)).map(|_| Unit::free(Source::Pool(m.key), cols, 1)));
         }
@@ -372,9 +384,41 @@ pub fn mana_units(g: &Game, p: PlayerId, convoke: bool) -> Vec<Unit> {
 /// may pay.
 #[inline]
 pub fn restr_ok(g: &Game, p: PlayerId, r: Restr) -> bool {
-    let spell = || g.pay_for.map(|c| g.db.get(c));
+    restr_ok_for(g, p, paying(g), r)
+}
+
+thread_local! {
+    /// the spell a read-only affordability check (`can_pay_spell`, `total_mana_spell`) asks about: the colour hooks of
+    /// lands and creatures (Plaza of Heroes, Cavern of Souls, Haven of the Spirit Dragon ...) read it through
+    /// `paying`, so the check sees the same colours `pay_spell` will (which sets `Game::pay_for` itself)
+    static PAY_PEEK: std::cell::Cell<Option<CardId>> = const { std::cell::Cell::new(None) };
+}
+
+/// puts the peeked spell back when the check ends, even by a panic
+struct PeekGuard(Option<CardId>);
+
+impl Drop for PeekGuard {
+    fn drop(&mut self) {
+        PAY_PEEK.with(|c| c.set(self.0));
+    }
+}
+
+fn peek(c: CardId) -> PeekGuard {
+    PeekGuard(PAY_PEEK.with(|x| x.replace(Some(c))))
+}
+
+/// The spell being paid for, as the mana colour hooks see it: the one a read-only check is asking about, else
+/// `Game::pay_for`.
+#[inline]
+pub fn paying(g: &Game) -> Option<CardId> {
+    PAY_PEEK.with(|c| c.get()).or(g.pay_for)
+}
+
+fn restr_ok_for(g: &Game, p: PlayerId, pay_for: Option<CardId>, r: Restr) -> bool {
+    let spell = || pay_for.map(|c| g.db.get(c));
     match r {
         Restr::None => true,
+        Restr::SpellOnly => pay_for.is_some(),
         Restr::NotNonartifact => spell().is_none_or(|d| d.types.has(crate::cards::Types::ARTIFACT)),
         Restr::ArtifactSpell => spell().is_some_and(|d| d.types.has(crate::cards::Types::ARTIFACT)),
         Restr::InstantSorcery => spell().is_some_and(|d| d.instant || d.sorcery),
@@ -384,7 +428,7 @@ pub fn restr_ok(g: &Game, p: PlayerId, r: Restr) -> bool {
         }
         Restr::Subtype(t) => spell().is_some_and(|d| d.has_subtype(t) || d.has_kw("changeling")),
         Restr::CreatureType(t) => {
-            g.pay_for.is_some_and(|c| g.db.get(c).creature && crate::impls::galadriel::card_is(g, p, c, t))
+            pay_for.is_some_and(|c| g.db.get(c).creature && crate::impls::galadriel::card_is(g, p, c, t))
         }
     }
 }
@@ -528,14 +572,14 @@ pub fn plan_pay(g: &Game, u: &[Unit], generic: u32, pips: &str) -> Option<(Vec<u
     let fits = |w: &Unit, c: char| if c == 'C' { w.cols.is_empty() } else { w.cols.has(c) };
     order.sort_by_key(|&c| (0..u.len()).filter(|&i| fits(&u[i], c)).map(|i| rem[i]).sum::<u32>()); // stable
     for c in order {
-        let mut best: Option<(usize, (bool, u32))> = None;
+        let mut best: Option<(usize, (bool, bool, u32))> = None;
         for (i, w) in u.iter().enumerate() {
             // a unit of several mana pays only the colours it can make together (`Shape`): one colour for a Lotus, one
             // of each for a Karoo; the plain case (the common one) is just `fits`
             if rem[i] > 0 && fits(w, c) && (w.shape == Shape::Free || fits_shape(w, &col[i], c)) {
                 // a Lotus already paying a colour is that colour only
                 let colours = if w.shape == Shape::One && !col[i].is_empty() { 1 } else { w.cols.count() };
-                let k = (last_resort(w.src), colours);
+                let k = (!restricted_float(w.src), last_resort(w.src), colours);
                 if best.is_none_or(|b| k < b.1) {
                     best = Some((i, k));
                 }
@@ -587,6 +631,31 @@ pub fn can_pay(g: &Game, p: PlayerId, generic: u32, pips: &str, convoke: bool) -
     }
     let u = mana_units(g, p, convoke);
     plan_pay(g, &u, generic, pips).is_some()
+}
+
+/// Affordability for a spell, including sources restricted to casting it and the colours its mana hooks give for it.
+pub fn can_pay_spell(g: &Game, p: PlayerId, c: CardId, generic: u32, pips: &str, convoke: bool) -> bool {
+    if crate::human::is_human(g, p) {
+        return crate::human::mana::card_cost_problem(g, p, c, generic, pips).is_none();
+    }
+    let _peek = peek(c);
+    plan_pay(g, &units(g, p, convoke, false, Some(c)), generic, pips).is_some()
+}
+
+/// Pay a spell's cost, restoring both payment contexts even if payment is interrupted.
+pub fn pay_spell(g: &mut Game, p: PlayerId, c: CardId, generic: u32, pips: &str, convoke: bool) -> Res<bool> {
+    let prev = g.pay_for.replace(c);
+    let spending = g.player_mut(p).pool.spending.replace(crate::human::mana::Spending::Card(c));
+    let result = pay(g, p, generic, pips, convoke);
+    g.player_mut(p).pool.spending = spending;
+    g.pay_for = prev;
+    result
+}
+
+/// Mana usable for this spell, for X and other cast-affordability estimates.
+pub fn total_mana_spell(g: &Game, p: PlayerId, c: CardId, convoke: bool) -> u32 {
+    let _peek = peek(c);
+    units(g, p, convoke, false, Some(c)).iter().map(|w| w.amt).sum()
 }
 
 /// p pays the cost; false (nothing paid) if it can't
@@ -869,7 +938,7 @@ pub fn cost_of(g: &Game, p: PlayerId, c: CardId) -> (u32, String) {
     for col in d.phyrexian.chars() {
         // {B/P}: 2 life instead of its colour (paid by the caster), when the mana isn't there. The life check counts the
         // pips already paid with life (Python checked the starting life for every pip, so three pips at 12 life went to 6)
-        if pl.life - paid_life > 10 && pips.contains(col) && !can_pay(g, p, gn.max(0) as u32, &pips, false) {
+        if pl.life - paid_life > 10 && pips.contains(col) && !can_pay_spell(g, p, c, gn.max(0) as u32, &pips, false) {
             pips = pips.replacen(col, "", 1);
             paid_life += 2;
         }

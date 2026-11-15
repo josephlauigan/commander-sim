@@ -222,10 +222,11 @@ pub enum DataKey {
     T45Search,
     /// --- Tiers 4/5 (urza-yawgmoth): Nine-Lives Familiar's revival counters (Int)
     Revival,
-    /// --- Tiers 4/5 (urdragon): Dragon's Hoard's gold counters (Int); a Dragon cast from the graveyard with Rivaz of
-    /// the Claw (Bool: exiled when it dies); a commander Hellkite Courser put onto the battlefield (Bool: back to the
-    /// command zone at the next end step); Rivaz's once-each-turn graveyard cast (Stamp)
+    /// --- Tiers 4/5 (urdragon): Dragon's Hoard's gold counters (Int); a commander Hellkite Courser put onto the
+    /// battlefield (Str: back to the command zone at the next end step); Rivaz's once-each-turn graveyard cast (Stamp)
     T45Dragon,
+    /// Number of dies-exile abilities Rivaz cast triggers granted to this creature (Int).
+    RivazExile,
     /// --- Tiers 1/2 (isshin): the player Curse of Opulence enchants (`Val::Player`); Firebender Ascension's quest
     /// counters (`Val::Int`)
     T12Isshin,
@@ -1126,6 +1127,10 @@ pub struct Ctx {
     pub mastery_pick: Option<CardId>,
     /// the spell was cast from its owner's graveyard (flashback): set as it resolves (Retrieve the Esper)
     pub from_gy: bool,
+    /// Rivaz cast triggers that granted this spell a dies-exile ability.
+    pub rivaz_exile: u32,
+    /// The Rivaz permission used for this cast, consumed only on the actual cast event.
+    pub rivaz_permission: Option<PermId>,
     /// Multikicker: how many times the spell was kicked (Comet Storm)
     pub kicks: u32,
     /// the mana actually spent to cast it, after reductions and alternative costs (0 for a free cast); set by `cast_card`

@@ -8,7 +8,7 @@ use super::lands::{can_pay_without, pay_without};
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst, on_cast};
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana, total_mana_spell};
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
 use crate::engine::stack::{ability_window_card, counter_window};
@@ -684,7 +684,7 @@ fn razorgrass_cast(g: &mut Game, c: CardId, who: PlayerId, t: PermId) -> Res<boo
         return Ok(false);
     }
     let (gn, pips) = cost_of(g, who, c);
-    if !can_pay(g, who, gn, &pips, false) || !pay(g, who, gn, &pips, false)? {
+    if !can_pay_spell(g, who, c, gn, &pips, false) || !pay_spell(g, who, c, gn, &pips, false)? {
         return Ok(false);
     }
     let i = g.player(who).hand.iter().position(|&x| x == c).unwrap();
@@ -711,7 +711,7 @@ fn razorgrass_defend(
     _assign: &mut Vec<(PermId, PermId)>,
 ) -> Res {
     let (gn, pips) = cost_of(g, d, c);
-    if !can_pay(g, d, gn, &pips, false) {
+    if !can_pay_spell(g, d, c, gn, &pips, false) {
         return Ok(());
     }
     let mine: Vec<PermId> = atk.iter().copied().filter(|&a| g.perm(a).owner == p).collect();
@@ -731,7 +731,7 @@ fn razorgrass_blocks(
     assign: &mut Vec<(PermId, PermId)>,
 ) -> Res {
     let (gn, pips) = cost_of(g, p, c);
-    if !can_pay(g, p, gn, &pips, false) {
+    if !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(());
     }
     let blockers: Vec<PermId> = assign.iter().map(|x| x.1).collect();
@@ -792,11 +792,11 @@ fn smash_targets(g: &Game, p: PlayerId, dmg: i32) -> Vec<(PermId, i32, f64)> {
     best
 }
 
-fn smash_plan(g: &Game, p: PlayerId) -> Option<(i32, f64)> {
-    let spare = total_mana(g, p, false) as i32 - 2;
+fn smash_plan(g: &Game, p: PlayerId, c: CardId) -> Option<(i32, f64)> {
+    let spare = total_mana_spell(g, p, c, false) as i32 - 2;
     let mut best: Option<(i32, f64)> = None;
     for x in 1..=spare.max(0) {
-        if !can_pay(g, p, x as u32, "RR", false) {
+        if !can_pay_spell(g, p, c, x as u32, "RR", false) {
             break;
         }
         let score: f64 = smash_targets(g, p, smash_damage(x)).iter().map(|t| t.2).sum();
@@ -811,7 +811,7 @@ fn smash_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Re
     let mut o: Vec<Opt> = mdfc_land_opt(g, c, p, post).into_iter().collect();
     if post.is_some()
         && g.active == Some(p)
-        && let Some((x, score)) = smash_plan(g, p)
+        && let Some((x, score)) = smash_plan(g, p, c)
     {
         o.push(Opt {
             utility: 1.5 + 0.2 * score.min(30.0),
@@ -827,9 +827,9 @@ fn smash_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).hand.contains(&c) {
         return Ok(false);
     }
-    let Some((x, _)) = smash_plan(g, p) else { return Ok(false) };
+    let Some((x, _)) = smash_plan(g, p, c) else { return Ok(false) };
     let (gn, pips) = cost_of(g, p, c);
-    if !can_pay(g, p, gn + x as u32, &pips, false) || !pay(g, p, gn + x as u32, &pips, false)? {
+    if !can_pay_spell(g, p, c, gn + x as u32, &pips, false) || !pay_spell(g, p, c, gn + x as u32, &pips, false)? {
         return Ok(false);
     }
     cast_card(g, p, c, "hand", Ctx { x, ..Ctx::default() })?;

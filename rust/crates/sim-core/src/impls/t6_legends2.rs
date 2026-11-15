@@ -9,7 +9,7 @@ use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::discard_worst;
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::gain;
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana_spell};
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
 use crate::engine::stack::{ability_window, ability_window_card, counter_window, trigger_window};
@@ -408,10 +408,10 @@ pub fn ertai_answer(g: &mut Game, q: PlayerId, item: u32) -> Res<bool> {
     }
     let Some(c) = g.player(q).hand.iter().copied().find(|&x| &*g.db.get(x).name == ERTAI) else { return Ok(false) };
     let (gn, pips) = cost_of(g, q, c);
-    if g.humans.get(q).is_some() || !castable(g, q, c, "hand") || !can_pay(g, q, gn, &pips, false) {
+    if g.humans.get(q).is_some() || !castable(g, q, c, "hand") || !can_pay_spell(g, q, c, gn, &pips, false) {
         return Ok(false);
     }
-    if !pay(g, q, gn, &pips, false)? {
+    if !pay_spell(g, q, c, gn, &pips, false)? {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(q).hand, c);
@@ -476,7 +476,7 @@ pub fn legolas_cast(g: &mut Game, who: PlayerId, c: CardId, t: PermId) -> Res<bo
         return Ok(false);
     }
     let (gn, pips) = cost_of(g, who, c);
-    if !can_pay(g, who, gn, &pips, false) || !pay(g, who, gn, &pips, false)? {
+    if !can_pay_spell(g, who, c, gn, &pips, false) || !pay_spell(g, who, c, gn, &pips, false)? {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(who).hand, c);
@@ -569,9 +569,9 @@ fn turtle_bounce_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 const WAN_SHI_TONG: &str = "Wan Shi Tong, Librarian";
 
 /// The most X the AI can pay for Wan Shi Tong ({X}{U}{U}) with the mana it has
-fn wan_x(g: &Game, p: PlayerId) -> i32 {
-    let mut x = total_mana(g, p, false) as i32 - 2;
-    while x >= 1 && !can_pay(g, p, x as u32, "UU", false) {
+fn wan_x(g: &Game, p: PlayerId, c: CardId) -> i32 {
+    let mut x = total_mana_spell(g, p, c, false) as i32 - 2;
+    while x >= 1 && !can_pay_spell(g, p, c, x as u32, "UU", false) {
         x -= 1;
     }
     x.max(0)
@@ -589,7 +589,7 @@ fn wan_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<
     if post.is_some() || !castable(g, p, c, "hand") {
         return Ok(vec![]);
     }
-    let x = wan_x(g, p);
+    let x = wan_x(g, p, c);
     if x < 2 {
         return Ok(vec![]);
     }
@@ -598,8 +598,8 @@ fn wan_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<
 
 pub fn wan_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    let x = wan_x(g, p);
-    if !g.player(p).hand.contains(&c) || x < 1 || !pay(g, p, x as u32, "UU", false)? {
+    let x = wan_x(g, p, c);
+    if !g.player(p).hand.contains(&c) || x < 1 || !pay_spell(g, p, c, x as u32, "UU", false)? {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);

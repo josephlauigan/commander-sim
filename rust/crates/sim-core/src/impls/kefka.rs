@@ -18,7 +18,7 @@ use super::yshtola::take_card;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, copy_spell};
 use crate::engine::life::{check_state, gain, lose_life};
-use crate::engine::mana::{can_pay, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell, total_mana, total_mana_spell};
 use crate::engine::pool::Kind;
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl;
@@ -177,11 +177,11 @@ pub fn discarded(g: &mut Game, q: PlayerId, cards: &[CardId]) -> Res {
 
 /// Ichor Slick's madness: -3/-3 on the best creature it helps with; no target worth it, no cast
 fn madness_cast(g: &mut Game, q: PlayerId, c: CardId, gn: u32, pips: &str) -> Res {
-    if !can_pay(g, q, gn, pips, false) {
+    if !can_pay_spell(g, q, c, gn, pips, false) {
         return Ok(());
     }
     let Some(t) = slick_target(g, q, c) else { return Ok(()) };
-    pay(g, q, gn, pips, false)?;
+    pay_spell(g, q, c, gn, pips, false)?;
     crate::glog!(g, "    {} casts {} for its madness cost", pname(g, q), cname(g, c));
     cast_card(g, q, c, "escape", Ctx { target: Some(t), ..Ctx::default() })?;
     Ok(())
@@ -433,7 +433,7 @@ fn omens_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<V
         return Ok(vec![]);
     }
     let Some((_, x)) = converge_plan(g, p, 4, 'B') else { return Ok(vec![]) };
-    if !can_pay(g, p, 4, "B", false) {
+    if !can_pay_spell(g, p, c, 4, "B", false) {
         return Ok(vec![]);
     }
     let best = alive_opps(g, p).iter().map(|&q| g.player(q).hand.len()).max().unwrap_or(0) as u32;
@@ -447,7 +447,7 @@ fn omens_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<V
 
 fn omens_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 4, "B", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 4, "B", false) {
         return Ok(false);
     }
     let Some((plan, x)) = converge_plan(g, p, 4, 'B') else { return Ok(false) };
@@ -533,7 +533,7 @@ fn grab_the_prize(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> 
 }
 
 fn grab_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || !can_pay(g, p, 1, "R", false) || g.player(p).library.len() < 6 {
+    if post.is_none() || !can_pay_spell(g, p, c, 1, "R", false) || g.player(p).library.len() < 6 {
         return Ok(vec![]);
     }
     let hand: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&x| x != c).collect();
@@ -555,13 +555,13 @@ fn grab_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Ve
 
 fn grab_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "R", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 1, "R", false) {
         return Ok(false);
     }
     let hand: Vec<CardId> = g.player(p).hand.iter().copied().filter(|&x| x != c).collect();
     let Some(d) = discard_choice(g, p, &hand, 0) else { return Ok(false) };
     let nonland = !g.db.get(d).land;
-    pay(g, p, 1, "R", false)?;
+    pay_spell(g, p, c, 1, "R", false)?;
     discard_cards(g, p, &[d])?;
     cast_card(g, p, c, "hand", Ctx { x: nonland as i32, ..Ctx::default() })?;
     Ok(true)
@@ -575,7 +575,9 @@ fn twinned_vision(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> 
 }
 
 fn twinned_gy(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    let Some(pips) = ["UU", "UR", "RR"].into_iter().find(|x| can_pay(g, p, 1, x, false)) else { return Ok(vec![]) };
+    let Some(pips) = ["UU", "UR", "RR"].into_iter().find(|x| can_pay_spell(g, p, c, 1, x, false)) else {
+        return Ok(vec![]);
+    };
     let _ = pips;
     if g.player(p).hand.is_empty() || g.player(p).library.len() < 4 {
         return Ok(vec![]);
@@ -593,7 +595,9 @@ fn twinned_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).gy.contains(&c) {
         return Ok(false);
     }
-    let Some(pips) = ["UU", "UR", "RR"].into_iter().find(|x| can_pay(g, p, 1, x, false)) else { return Ok(false) };
+    let Some(pips) = ["UU", "UR", "RR"].into_iter().find(|x| can_pay_spell(g, p, c, 1, x, false)) else {
+        return Ok(false);
+    };
     let hand = g.player(p).hand.clone();
     let d = if crate::human::is_human(g, p) {
         // the person chooses the card the flashback discards
@@ -605,7 +609,7 @@ fn twinned_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         let Some(d) = discard_choice(g, p, &hand, 0) else { return Ok(false) };
         d
     };
-    pay(g, p, 1, pips, false)?;
+    pay_spell(g, p, c, 1, pips, false)?;
     discard_cards(g, p, &[d])?;
     cast_card(g, p, c, "gy", Ctx { x: 1, ..Ctx::default() })?;
     gy_left(g, p, 1)?;
@@ -675,9 +679,9 @@ fn unpack_cx(a: i64) -> (CardId, u32) {
 /// X for Stargaze: the spare mana, at most 5, leaving the life and the library healthy
 fn stargaze_x(g: &Game, p: PlayerId, c: CardId) -> u32 {
     let pl = g.player(p);
-    let mana = total_mana(g, p, false);
+    let mana = total_mana_spell(g, p, c, false);
     let spare = mana.saturating_sub(2);
-    if !can_pay(g, p, 0, "BB", false) {
+    if !can_pay_spell(g, p, c, 0, "BB", false) {
         return 0;
     }
     let by_life = (pl.life - 10).max(0) as u32;
@@ -688,10 +692,10 @@ fn stargaze_x(g: &Game, p: PlayerId, c: CardId) -> u32 {
 
 fn stargaze_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, x) = unpack_cx(arg);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, x, "BB", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, x, "BB", false) {
         return Ok(false);
     }
-    pay(g, p, x, "BB", false)?;
+    pay_spell(g, p, c, x, "BB", false)?;
     cast_card(g, p, c, "hand", Ctx { x: x as i32, ..Ctx::default() })?;
     Ok(true)
 }
@@ -700,10 +704,10 @@ fn stargaze_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// die this turn (the card's `noregen` and `exiledie` tags). X is the spare mana: the lethal amount for a creature
 /// worth killing, or for an opponent's life.
 fn disintegrate_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || !can_pay(g, p, 0, "R", false) {
+    if post.is_none() || !can_pay_spell(g, p, c, 0, "R", false) {
         return Ok(vec![]);
     }
-    let mana = total_mana(g, p, false);
+    let mana = total_mana_spell(g, p, c, false);
     if mana < 2 {
         return Ok(vec![]);
     }
@@ -746,7 +750,7 @@ fn disintegrate_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId((arg & 0xffff) as u16);
     let x = ((arg >> 16) & 0xffff) as u32;
     let who = arg >> 32;
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, x, "R", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, x, "R", false) {
         return Ok(false);
     }
     let mut ctx = Ctx { x: x as i32, rem_kind: Some(intern(&format!("dmg{x}"))), ..Ctx::default() };
@@ -763,7 +767,7 @@ fn disintegrate_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         }
         ctx.target = Some(m);
     }
-    pay(g, p, x, "R", false)?;
+    pay_spell(g, p, c, x, "R", false)?;
     cast_card(g, p, c, "hand", ctx)?;
     Ok(true)
 }
@@ -798,7 +802,7 @@ fn splatter(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
 }
 
 fn splatter_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || !can_pay(g, p, 1, "UURR", false) {
+    if post.is_none() || !can_pay_spell(g, p, c, 1, "UURR", false) {
         return Ok(vec![]);
     }
     let mut out = vec![];
@@ -835,10 +839,10 @@ fn splatter_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Re
 
 fn splatter_cast(g: &mut Game, p: PlayerId, arg: i64, mode: &'static str) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "UURR", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 1, "UURR", false) {
         return Ok(false);
     }
-    pay(g, p, 1, "UURR", false)?;
+    pay_spell(g, p, c, 1, "UURR", false)?;
     cast_card(g, p, c, "hand", Ctx { mode: Some(intern(mode)), ..Ctx::default() })?;
     Ok(true)
 }
@@ -860,7 +864,7 @@ fn embrace_gy(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<V
     if post != Some(false) && post != Some(true) {
         return Ok(vec![]);
     }
-    if g.player(p).life <= 8 || g.player(p).hand.is_empty() || !can_pay(g, p, 1, "BB", false) {
+    if g.player(p).life <= 8 || g.player(p).hand.is_empty() || !can_pay_spell(g, p, c, 1, "BB", false) {
         return Ok(vec![]);
     }
     if !g.player(p).perms.iter().any(|&m| g.is_creature(m) && !g.perm(m).phased) {
@@ -880,12 +884,12 @@ fn embrace_gy(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<V
 
 fn embrace_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).gy.contains(&c) || g.player(p).life <= 8 || !can_pay(g, p, 1, "BB", false) {
+    if !g.player(p).gy.contains(&c) || g.player(p).life <= 8 || !can_pay_spell(g, p, c, 1, "BB", false) {
         return Ok(false);
     }
     let hand = g.player(p).hand.clone();
     let Some(d) = discard_choice(g, p, &hand, 0) else { return Ok(false) };
-    pay(g, p, 1, "BB", false)?;
+    pay_spell(g, p, c, 1, "BB", false)?;
     lose_life(g, p, 3, Some(p), "life", None)?;
     discard_cards(g, p, &[d])?;
     cast_card(g, p, c, "escape", Ctx::default())?;
@@ -931,7 +935,7 @@ fn mayhem_gy(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Ve
         return Ok(vec![]);
     }
     // {B/R}: either colour pays
-    if !can_pay(g, p, gn, "B", false) && !can_pay(g, p, gn, "R", false) {
+    if !can_pay_spell(g, p, c, gn, "B", false) && !can_pay_spell(g, p, c, gn, "R", false) {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -947,11 +951,11 @@ pub(crate) fn mayhem_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     let (gn, _) = alt_cost(&MAYHEM, cname(g, c)).unwrap();
-    let pip = if can_pay(g, p, gn, "B", false) { "B" } else { "R" };
-    if !can_pay(g, p, gn, pip, false) {
+    let pip = if can_pay_spell(g, p, c, gn, "B", false) { "B" } else { "R" };
+    if !can_pay_spell(g, p, c, gn, pip, false) {
         return Ok(false);
     }
-    pay(g, p, gn, pip, false)?;
+    pay_spell(g, p, c, gn, pip, false)?;
     crate::glog!(g, "  {} casts {} from the graveyard (mayhem)", pname(g, p), cname(g, c));
     cast_card(g, p, c, "escape", Ctx::default())?;
     gy_left(g, p, 1)?;
@@ -975,7 +979,7 @@ fn professor_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Pla
 }
 
 fn professor_gy(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || !can_pay(g, p, 1, "B", false) {
+    if post.is_none() || !can_pay_spell(g, p, c, 1, "B", false) {
         return Ok(vec![]);
     }
     let fodder = professor_fodder(g, p);
@@ -1007,10 +1011,10 @@ fn professor_fodder(g: &Game, p: PlayerId) -> Option<CardId> {
 fn professor_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let Some(f) = professor_fodder(g, p) else { return Ok(false) };
-    if !g.player(p).gy.contains(&c) || !can_pay(g, p, 1, "B", false) {
+    if !g.player(p).gy.contains(&c) || !can_pay_spell(g, p, c, 1, "B", false) {
         return Ok(false);
     }
-    pay(g, p, 1, "B", false)?;
+    pay_spell(g, p, c, 1, "B", false)?;
     remove_card(&mut g.player_mut(p).gy, f);
     g.player_mut(p).exile.push(f);
     crate::glog!(g, "  {} exiles {} to return Postmortem Professor", pname(g, p), cname(g, f));
@@ -1243,12 +1247,12 @@ fn exile_perm_to_pile(g: &mut Game, m: PermId, o: PlayerId, c: CardId) -> Res {
 }
 
 fn voidborn_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false) || !can_pay(g, p, 0, "B", false) {
+    if post != Some(false) || !can_pay_spell(g, p, c, 0, "B", false) {
         return Ok(vec![]);
     }
     // warp pays when the full cost can't be paid this turn, or there is more to cast than mana
     let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
-    if can_pay(g, p, cg, &cp, false) {
+    if can_pay_spell(g, p, c, cg, &cp, false) {
         return Ok(vec![]);
     }
     let _ = c;
@@ -1261,10 +1265,10 @@ fn voidborn_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Re
 
 pub(crate) fn voidborn_warp(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 0, "B", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 0, "B", false) {
         return Ok(false);
     }
-    pay(g, p, 0, "B", false)?;
+    pay_spell(g, p, c, 0, "B", false)?;
     cast_card(g, p, c, "hand", Ctx::default())?;
     let found = g.player(p).perms.iter().copied().find(|&m| g.perm(m).on_bf && g.perm(m).cd == Some(c));
     if let Some(m) = found {

@@ -45,7 +45,7 @@ use super::t6_combos_godo::{affordable, bf, bf_last, cname, cost, in_hand, live,
 use crate::cards::Colors;
 use crate::engine::cast::{cast_card, castable, on_cast};
 use crate::engine::life::check_state;
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay_spell, pay_spell};
 use crate::engine::repl;
 use crate::engine::stack::counter_window;
 use crate::engine::zones::{TOKEN_CAP, Tokens, enter_token_copy_with, make_tokens};
@@ -103,10 +103,10 @@ fn cast_from_hand(g: &mut Game, p: PlayerId, name: &str) -> Res<bool> {
         return Ok(false);
     }
     let (gn, pips) = cost(g, p, c);
-    if !can_pay(g, p, gn, &pips, false) {
+    if !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     g.combo_spell = true;
     let r = cast_card(g, p, c, "hand", Ctx::default());
     g.combo_spell = false;
@@ -186,10 +186,10 @@ fn miirym_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
 fn cast_twinflame(g: &mut Game, p: PlayerId) -> Res<bool> {
     let (Some(c), Some(target)) = (in_hand(g, p, TWINFLAME), spark_garth(g, p)) else { return Ok(false) };
     let (gn, pips) = cost(g, p, c);
-    if !castable(g, p, c, "hand") || !can_pay(g, p, gn, &pips, false) {
+    if !castable(g, p, c, "hand") || !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     let hand = &mut g.player_mut(p).hand;
     if let Some(i) = hand.iter().position(|&x| x == c) {
         hand.remove(i);
@@ -248,10 +248,10 @@ fn cast_regrowth_copy(g: &mut Game, p: PlayerId) -> Res<bool> {
         return Ok(false);
     }
     let (gn, pips) = cost(g, p, rg);
-    if !can_pay(g, p, gn, &pips, false) {
+    if !can_pay_spell(g, p, rg, gn, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, rg, gn, &pips, false)?;
     crate::glog!(g, "  {} casts a copy of Regrowth", g.player(p).name);
     if g.over || !counter_window(g, p, rg, 6.0, vec![])? {
         return Ok(false);

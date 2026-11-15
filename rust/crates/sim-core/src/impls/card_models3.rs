@@ -243,8 +243,8 @@ fn cornucopia_mana(g: &Game, _p: PlayerId, m: PermId) -> u32 {
 }
 
 /// The X the AI casts it for: all its spare mana, three per X
-fn cornucopia_x(g: &Game, p: PlayerId) -> u32 {
-    crate::engine::mana::total_mana(g, p, false) / 3
+fn cornucopia_x(g: &Game, p: PlayerId, c: CardId) -> u32 {
+    crate::engine::mana::total_mana_spell(g, p, c, false) / 3
 }
 
 /// {X}{X}{X}: the AI casts it in its main phase with the largest X its mana pays (X >= 1), as a hand option: the
@@ -256,7 +256,7 @@ fn cornucopia_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) 
     if crate::engine::cast::spell_locked(g, p, c) {
         return Ok(vec![]);
     }
-    let x = cornucopia_x(g, p);
+    let x = cornucopia_x(g, p, c);
     if x == 0 {
         return Ok(vec![]);
     }
@@ -270,13 +270,11 @@ fn cornucopia_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) 
 /// Pay {X}{X}{X} and cast it; it enters with X charge counters (the counters step: Doubling Season, Vorinclex)
 pub fn cornucopia_cast(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    let x = cornucopia_x(g, p);
+    let x = cornucopia_x(g, p, c);
     if x == 0 || !g.player(p).hand.contains(&c) {
         return Ok(false);
     }
-    g.pay_for = Some(c);
-    let paid = crate::engine::mana::pay(g, p, 3 * x, "", false);
-    g.pay_for = None;
+    let paid = crate::engine::mana::pay_spell(g, p, c, 3 * x, "", false);
     if !paid? {
         return Ok(false);
     }
@@ -336,12 +334,10 @@ fn mandate_defend(
         return Ok(());
     }
     let (gn, pips) = crate::engine::mana::cost_of(g, d, c);
-    if !crate::engine::mana::can_pay(g, d, gn, &pips, false) {
+    if !crate::engine::mana::can_pay_spell(g, d, c, gn, &pips, false) {
         return Ok(());
     }
-    g.pay_for = Some(c);
-    let paid = crate::engine::mana::pay(g, d, gn, &pips, false);
-    g.pay_for = None;
+    let paid = crate::engine::mana::pay_spell(g, d, c, gn, &pips, false);
     if !paid? {
         return Ok(());
     }

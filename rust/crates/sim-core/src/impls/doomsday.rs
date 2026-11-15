@@ -49,7 +49,7 @@
 use super::combos::{Combo, Ready, Step, StepKind, no_keys, no_src};
 use crate::engine::cast::{cast_card, castable, grants_flash};
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, cost_of, pay, rituals_in_hand};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay_spell, rituals_in_hand};
 use crate::engine::tutors::card_worth;
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry};
@@ -1248,7 +1248,7 @@ pub fn hold_oracle(g: &Game, p: PlayerId) -> bool {
         return false;
     }
     let Some(&sil) = g.player(p).hand.iter().find(|&&c| kd(g, c) == K::Silence) else { return false };
-    castable(g, p, sil, "hand") && can_pay(g, p, 0, "W", false)
+    castable(g, p, sil, "hand") && can_pay_spell(g, p, sil, 0, "W", false)
 }
 
 /// the line from the current position, with the lock when opponents can stop a spell
@@ -1263,10 +1263,10 @@ fn cast_one(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
         return Ok(false);
     }
     let (gn, pips) = cost_of(g, p, c);
-    if !can_pay(g, p, gn, &pips, false) {
+    if !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     cast_card(g, p, c, "hand", Ctx::default())
 }
 
@@ -1379,7 +1379,7 @@ fn doomsday_cost(g: &Game, p: PlayerId, c: CardId, extra: Option<CardId>) -> Opt
         gn += eg;
         pips.push_str(&ep);
     }
-    if can_pay(g, p, gn, &pips, false) {
+    if can_pay_spell(g, p, c, gn, &pips, false) {
         return Some(3);
     }
     let rituals = rituals_in_hand(g, p, &[]);
@@ -1389,11 +1389,11 @@ fn doomsday_cost(g: &Game, p: PlayerId, c: CardId, extra: Option<CardId>) -> Opt
         return None;
     }
     // a Dark Ritual pays the {B}{B}{B} for a {B}
-    if has("Dark Ritual") && can_pay(g, p, gn, &rest, false) {
+    if has("Dark Ritual") && can_pay_spell(g, p, c, gn, &rest, false) {
         return Some(1);
     }
     // --- doomsday-cabal: a Cabal Ritual pays them for {1}{B} (its threshold bonus is not counted: the lower bound)
-    (has("Cabal Ritual") && can_pay(g, p, gn + 1, &rest, false)).then_some(1 + 16)
+    (has("Cabal Ritual") && can_pay_spell(g, p, c, gn + 1, &rest, false)).then_some(1 + 16)
 }
 
 /// the pile to build for a Doomsday in hand now, or None: Doomsday is not the line (Line 1 is in hand), it cannot be
@@ -1522,7 +1522,7 @@ fn plan_mode(
         }
         if let Some(e) = en {
             let (eg, ep) = cost_of(g, p, e);
-            if !can_pay(g, p, eg, &ep, false) {
+            if !can_pay_spell(g, p, e, eg, &ep, false) {
                 return Err("Lion's Eye Diamond: the enabler can't be paid");
             }
         }
@@ -1560,7 +1560,9 @@ fn plan_mode(
     // the table's check, as every Tier 6 line makes it (`t6_table::go_ok`): the cast waits when the table can stop it and
     // there is no cover. Cover is Silence or Orim's Chant in hand (`go_risk` counts it), a free counter of our own
     // (counted too), the lock the pile carries, or Veil of Summer held with {G} open
-    let veil = !led && pl.hand.iter().any(|&h| &*g.db.get(h).name == "Veil of Summer") && can_pay(g, p, 0, "G", false);
+    let veil = !led
+        && pl.hand.iter().any(|&h| &*g.db.get(h).name == "Veil of Summer")
+        && g.db.id("Veil of Summer").is_some_and(|v| can_pay_spell(g, p, v, 0, "G", false));
     if !risk_ok(gr, p, built.lock || veil) {
         return Err("the table's risk, with the pile's own cover");
     }
@@ -1697,7 +1699,7 @@ pub fn go_doomsday(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
             return Ok(true);
         }
     }
-    while !can_pay(g, p, gn, &pips, false) {
+    while !can_pay_spell(g, p, c, gn, &pips, false) {
         let Some(&r) = rituals_in_hand(g, p, &[]).first() else { return Ok(true) };
         if !crate::ai::brain::do_cast(g, p, r, None)? {
             return Ok(true);

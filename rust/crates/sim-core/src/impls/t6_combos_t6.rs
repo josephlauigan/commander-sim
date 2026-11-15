@@ -23,7 +23,7 @@
 use super::combos::{Combo, QUIET, Ready, Step, StepKind, done, no_keys, no_src};
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::check_state;
-use crate::engine::mana::{can_pay, cost_of, pay, seq_cost};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, seq_cost};
 use crate::engine::pool::Kind;
 use crate::engine::repl;
 use crate::engine::stack::{ability_window, ability_window_card, counter_window};
@@ -128,11 +128,14 @@ fn cast_named(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
 /// infinite mana): the counter window is the normal one; false if it was countered or can't be cast
 pub(crate) fn cast_abstract(g: &mut Game, p: PlayerId, c: CardId, free: bool) -> Res<bool> {
     let (gn, pips) = cost_of(g, p, c);
-    if !g.player(p).hand.contains(&c) || !castable(g, p, c, "hand") || (!free && !can_pay(g, p, gn, &pips, false)) {
+    if !g.player(p).hand.contains(&c)
+        || !castable(g, p, c, "hand")
+        || (!free && !can_pay_spell(g, p, c, gn, &pips, false))
+    {
         return Ok(false);
     }
     if !free {
-        pay(g, p, gn, &pips, false)?;
+        pay_spell(g, p, c, gn, &pips, false)?;
     }
     let hand = &mut g.player_mut(p).hand;
     if let Some(i) = hand.iter().position(|&x| x == c) {
@@ -928,11 +931,11 @@ fn x_tutor(g: &Game, p: PlayerId, piece: &str) -> Option<(CardId, u32, String)> 
 /// cast the tutor for `piece` (X paid, a normal counter window) and put the piece onto the battlefield
 fn tutor_onto_bf(g: &mut Game, p: PlayerId, piece: &str) -> Res<bool> {
     let Some((t, gn, pips)) = x_tutor(g, p, piece) else { return Ok(false) };
-    if !can_pay(g, p, gn, &pips, false) {
+    if !can_pay_spell(g, p, t, gn, &pips, false) {
         return Ok(false);
     }
     let x = gn - cost_of(g, p, t).0;
-    pay(g, p, x, "", false)?;
+    pay_spell(g, p, t, x, "", false)?;
     if !cast_abstract(g, p, t, false)? {
         return Ok(false);
     }

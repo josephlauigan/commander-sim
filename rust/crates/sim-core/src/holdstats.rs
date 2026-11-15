@@ -25,7 +25,7 @@
 //!   instant or sorcery), `ability`
 
 use crate::ai::brain;
-use crate::engine::mana::{can_pay, cost_of};
+use crate::engine::mana::{can_pay_spell, cost_of};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{Game, StackKind};
 use crate::sym::intern;
@@ -73,7 +73,7 @@ fn kind_of(g: &Game, c: CardId) -> &'static str {
 
 fn can_pay_now(g: &Game, p: PlayerId, c: CardId) -> bool {
     let (cg, cp) = cost_of(g, p, c);
-    can_pay(g, p, cg, &cp, false)
+    can_pay_spell(g, p, c, cg, &cp, false)
 }
 
 fn fast(g: &Game, c: CardId) -> bool {

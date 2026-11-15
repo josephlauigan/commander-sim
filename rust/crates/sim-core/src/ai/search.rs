@@ -937,7 +937,7 @@ pub(crate) fn playout_main_kept(
 /// p kept the mana up for the held card h: it is still in hand and p can pay for it now
 pub fn kept_up(g: &Game, p: PlayerId, h: CardId) -> bool {
     let (cg, cp) = crate::engine::mana::cost_of(g, p, h);
-    g.player(p).hand.contains(&h) && crate::engine::mana::can_pay(g, p, cg, &cp, false)
+    g.player(p).hand.contains(&h) && crate::engine::mana::can_pay_spell(g, p, h, cg, &cp, false)
 }
 
 /// search.play_on_after_phase: the chosen play is made and the phase finished: go on from the next step. `kept` is

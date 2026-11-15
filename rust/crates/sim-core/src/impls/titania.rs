@@ -20,7 +20,7 @@
 //! and End-Raze Forerunners when the attack is lethal through the blockers.
 
 use crate::cards::CardDb;
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay_spell, cost_of, pay_spell, total_mana};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{counter_window, trigger_window};
 use crate::engine::values::{card_name, epow, etgh, pval};
@@ -161,7 +161,7 @@ fn uprising_first(g: &Game, p: PlayerId) -> bool {
     !on_bf
         && in_hand(g, p, UPRISING).is_some_and(|c| {
             let (gn, pips) = cost_of(g, p, c);
-            can_pay(g, p, gn, &pips, false) && crate::engine::cast::castable(g, p, c, "hand")
+            can_pay_spell(g, p, c, gn, &pips, false) && crate::engine::cast::castable(g, p, c, "hand")
         })
 }
 
@@ -444,7 +444,7 @@ pub fn attack_fog(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Res
         return Ok(false);
     }
     let (gn, pips) = cost_of(g, d, c);
-    if !can_pay(g, d, gn, &pips, false) {
+    if !can_pay_spell(g, d, c, gn, &pips, false) {
         return Ok(false);
     }
     crate::glog!(
@@ -548,10 +548,10 @@ fn expert_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Player
 /// cast an instant from the hand for {G} in response to removal on m (`gives`: what it does to m)
 pub fn cast_protect(g: &mut Game, p: PlayerId, name: &str, m: PermId, gives: fn(&mut Game, PermId)) -> Res<bool> {
     let Some(c) = in_hand(g, p, name) else { return Ok(false) };
-    if !can_pay(g, p, 0, "G", false) || !crate::engine::cast::castable(g, p, c, "hand") {
+    if !can_pay_spell(g, p, c, 0, "G", false) || !crate::engine::cast::castable(g, p, c, "hand") {
         return Ok(false);
     }
-    if !pay(g, p, 0, "G", false)? {
+    if !pay_spell(g, p, c, 0, "G", false)? {
         return Ok(false);
     }
     let pl = g.player_mut(p);

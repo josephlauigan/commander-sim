@@ -45,7 +45,7 @@
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::{gain, lose_life};
-use crate::engine::mana::{can_pay, land_colors_now, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, land_colors_now, pay, pay_spell};
 use crate::engine::pool::Kind;
 use crate::engine::repl;
 use crate::engine::stack::trigger_window;
@@ -765,14 +765,15 @@ fn ardent_tokens(g: &mut Game, src: Src, p: PlayerId, _kinds: &[Sym], n: i32) ->
 /// Warp {R} from the hand: before combat when the full cost is out of reach, or when a cast from exile pays off later
 /// (Prosper, Passionate Archaeologist, Wild-Magic Sorcerer)
 fn ardent_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false) || g.active != Some(p) || cast_from_exile(g, p, c) || !can_pay(g, p, 0, "R", false) {
+    if post != Some(false) || g.active != Some(p) || cast_from_exile(g, p, c) || !can_pay_spell(g, p, c, 0, "R", false)
+    {
         return Ok(vec![]);
     }
     let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
     let payoff = ["Prosper, Tome-Bound", "Passionate Archaeologist", "Wild-Magic Sorcerer"]
         .iter()
         .any(|n| on_bf(g, p, n).is_some());
-    if can_pay(g, p, cg, &cp, false) && !payoff {
+    if can_pay_spell(g, p, c, cg, &cp, false) && !payoff {
         return Ok(vec![]);
     }
     Ok(vec![plan(2.5, format!("{ARDENT} (warp)"), ardent_warp, c.0 as i64)])
@@ -780,10 +781,10 @@ fn ardent_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> R
 
 fn ardent_warp(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || cast_from_exile(g, p, c) || !can_pay(g, p, 0, "R", false) {
+    if !g.player(p).hand.contains(&c) || cast_from_exile(g, p, c) || !can_pay_spell(g, p, c, 0, "R", false) {
         return Ok(false);
     }
-    if !pay(g, p, 0, "R", false)? {
+    if !pay_spell(g, p, c, 0, "R", false)? {
         return Ok(false);
     }
     cast_card(g, p, c, "hand", Ctx::default())?;

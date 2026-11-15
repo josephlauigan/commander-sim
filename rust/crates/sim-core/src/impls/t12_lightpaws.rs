@@ -47,7 +47,7 @@
 use crate::ai::decks::{WipeRule, pay_card, wipe_loss};
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::add_cast_lock;
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay};
 use crate::engine::repl;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::values::{epow, etgh, indestructible, no_sac, protected_from, pval};
@@ -464,7 +464,7 @@ pub fn protect(
     if creature
         && let Some(ch) = spell_color(g, spell)
         && let Some(c) = in_hand(g, p, BENEVOLENT)
-        && can_pay(g, p, 1, "W", false)
+        && can_pay_spell(g, p, c, 1, "W", false)
         && crate::impls::bulk_white::cast_aura_on(g, p, c, m, 1, "W", Some(ch))?
     {
         return Ok(protected_from(g, m, Colors::from_letters(&ch.to_string())));
@@ -475,7 +475,7 @@ pub fn protect(
         && etgh(g, m) + 10 > n
         && !indestructible(g, m)
         && let Some(c) = in_hand(g, p, STONESKIN)
-        && can_pay(g, p, 2, "W", false)
+        && can_pay_spell(g, p, c, 2, "W", false)
         && crate::impls::bulk_white::cast_aura_on(g, p, c, m, 2, "W", None)?
     {
         return Ok(etgh(g, m) > n);

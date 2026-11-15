@@ -47,7 +47,7 @@
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, castable, on_cast};
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay_spell};
 use crate::engine::stack::{ability_window_card, trigger_window};
 use crate::engine::tutors::{card_worth, tutor_to_top};
 use crate::engine::values::{epow, has_type, pval, threat, untargetable};
@@ -517,7 +517,7 @@ fn mastery_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> 
     if post.is_none() || st != g.turn_stamp() || mc != c || !g.player(p).hand.contains(&c) {
         return Ok(vec![]);
     }
-    if !can_pay(g, p, 1, "U", false) || !castable(g, p, c, "hand") {
+    if !can_pay_spell(g, p, c, 1, "U", false) || !castable(g, p, c, "hand") {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -529,10 +529,10 @@ fn mastery_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> 
 
 fn mastery_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "U", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 1, "U", false) {
         return Ok(false);
     }
-    pay(g, p, 1, "U", false)?;
+    pay_spell(g, p, c, 1, "U", false)?;
     g.player_mut(p).miracle = None;
     crate::glog!(g, "  {} casts Temporal Mastery for its miracle cost", pname(g, p));
     cast_card(g, p, c, "hand", Ctx::default())?;
@@ -634,7 +634,7 @@ fn agadeem_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     let Some((x, _)) = agadeem_plan(g, p) else { return Ok(false) };
     let (gn, pips) = cost_of(g, p, c);
-    if !can_pay(g, p, gn + x as u32, &pips, false) || !pay(g, p, gn + x as u32, &pips, false)? {
+    if !can_pay_spell(g, p, c, gn + x as u32, &pips, false) || !pay_spell(g, p, c, gn + x as u32, &pips, false)? {
         return Ok(false);
     }
     cast_card(g, p, c, "hand", Ctx { x, ..Ctx::default() })?;
@@ -687,7 +687,7 @@ pub fn specimen_response(g: &mut Game, q: PlayerId, id: u32) -> Res<bool> {
         return Ok(false);
     }
     let (gn, pips) = cost_of(g, q, c);
-    if !can_pay(g, q, gn, &pips, false) || !pay(g, q, gn, &pips, false)? {
+    if !can_pay_spell(g, q, c, gn, &pips, false) || !pay_spell(g, q, c, gn, &pips, false)? {
         return Ok(false);
     }
     remove_first(&mut g.player_mut(q).hand, c);

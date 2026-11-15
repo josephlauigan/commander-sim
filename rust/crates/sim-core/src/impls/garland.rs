@@ -13,7 +13,7 @@
 //!   Symposium) copy him when it is high.
 //! - Stats for `--analyze`: `gl_*` counters (steals, rounds held, crown changes, entries, damage by stolen creatures).
 
-use crate::engine::mana::{can_pay, cost_of};
+use crate::engine::mana::{can_pay_spell, cost_of};
 use crate::engine::values::{epow, pval, untargetable};
 use crate::flow::Res;
 use crate::hooks::{Action, Opt, Registry};
@@ -165,7 +165,7 @@ pub fn unsummon_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>
     if g.active == Some(p) {
         // our own turn, after combat: a stalled crown is moved on
         let (gn, pips) = cost_of(g, p, c);
-        if post != Some(true) || !can_pay(g, p, gn, &pips, false) {
+        if post != Some(true) || !can_pay_spell(g, p, c, gn, &pips, false) {
             return Ok(vec![]);
         }
         let Some(_) = own_turn_recrown(g, p, gn + pips.len() as u32) else { return Ok(vec![]) };
@@ -183,7 +183,7 @@ pub fn unsummon_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>
     let v = recrown_value(g, p);
     let (gn, pips) = cost_of(g, p, c);
     // the mana for Unsummon and then Garland (4) must be there on our turn: untapped lands now are for Unsummon only
-    if v < 2.5 || !can_pay(g, p, gn, &pips, false) || g.perm(m).token {
+    if v < 2.5 || !can_pay_spell(g, p, c, gn, &pips, false) || g.perm(m).token {
         return Ok(vec![]);
     }
     Ok(vec![Opt {

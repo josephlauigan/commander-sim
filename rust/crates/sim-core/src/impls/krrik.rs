@@ -56,7 +56,7 @@ pub fn drop_black(g: &Game, p: PlayerId, c: CardId, gn: i32, pips: &mut String) 
         let missing = printed - pips.matches('B').count() as i32;
         if !pips.contains('B')
             || g.player(p).life - 2 * (missing + 1) < LIFE_FLOOR
-            || crate::engine::mana::can_pay(g, p, gn.max(0) as u32, pips, false)
+            || crate::engine::mana::can_pay_spell(g, p, c, gn.max(0) as u32, pips, false)
         {
             return;
         }

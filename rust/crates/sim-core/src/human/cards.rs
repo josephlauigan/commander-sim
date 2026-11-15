@@ -1284,7 +1284,7 @@ fn twinflame(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
         return Ok(None);
     }
     let extra = picked.len() - 1;
-    if let Some(why) = super::mana::pay_from_pool(g, p, 1 + 2 * extra as u32, &"R".repeat(extra + 1)) {
+    if let Some(why) = super::mana::pay_card_from_pool(g, p, c, 1 + 2 * extra as u32, &"R".repeat(extra + 1)) {
         return Ok(Some(format!("Can't cast Twinflame on {} creatures. {why}", picked.len())));
     }
     let what = format!("Twinflame copying {}", names_of(g, &picked));
@@ -1316,7 +1316,7 @@ fn ephemerate(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
     else {
         return Ok(None);
     };
-    super::mana::pay_from_pool(g, p, 0, "W");
+    super::mana::pay_card_from_pool(g, p, c, 0, "W");
     let what = format!("Ephemerate on {}", g.perm(m).name);
     if !spell_cast(g, p, c, 3.0, Some(&what))? {
         gy_push(g, p, c);
@@ -1368,10 +1368,11 @@ fn insight(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
         return Ok(Some(why.replace("do that", "cast Bloodsoaked Insight (a sorcery)")));
     }
     let gn = crate::impls::mine::insight_cost(g, p);
-    let Some(ok) = ["BB", "BR", "RR"].into_iter().find(|pp| super::mana::cost_problem(g, p, gn, pp).is_none()) else {
+    let Some(ok) = ["BB", "BR", "RR"].into_iter().find(|pp| super::mana::card_cost_problem(g, p, c, gn, pp).is_none())
+    else {
         return Ok(Some(format!(
             "Can't cast Bloodsoaked Insight. It costs {{{gn}}}{{B/R}}{{B/R}} ({{1}} less for each life your opponents lost this turn). {}",
-            super::mana::cost_problem(g, p, gn, "BB").unwrap_or_default()
+            super::mana::card_cost_problem(g, p, c, gn, "BB").unwrap_or_default()
         )));
     };
     let opps: Vec<PlayerId> = g.opps(p).collect();
@@ -1381,7 +1382,7 @@ fn insight(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
     let labels: Vec<String> = opps.iter().map(|&q| pname(g, q)).collect();
     let Some(k) = pick(g, p, "target", "Bloodsoaked Insight: whose library?", &labels)? else { return Ok(None) };
     let q = opps[k];
-    super::mana::pay_from_pool(g, p, gn, ok);
+    super::mana::pay_card_from_pool(g, p, c, gn, ok);
     let what = format!("Bloodsoaked Insight on {}", pname(g, q));
     if !spell_cast(g, p, c, 2.0, Some(&what))? {
         gy_push(g, p, c);
@@ -1531,13 +1532,13 @@ pub fn convoke_pay(g: &mut Game, p: PlayerId, c: CardId, gn: u32, pips: &str) ->
         }
         tapped_ms.push(m);
     }
-    if let Some(why) = super::mana::cost_problem(g, p, gn, &pips) {
+    if let Some(why) = super::mana::card_cost_problem(g, p, c, gn, &pips) {
         return Ok(Some(format!("Can't cast {}. {why}", cname(g, c))));
     }
     for &m in &tapped_ms {
         g.perm_mut(m).tapped = true;
     }
-    super::mana::pay_from_pool(g, p, gn, &pips);
+    super::mana::pay_card_from_pool(g, p, c, gn, &pips);
     if !tapped_ms.is_empty() {
         crate::glog!(g, "  {} taps {} to convoke {}", pname(g, p), names_of(g, &tapped_ms), cname(g, c));
     }
@@ -1617,12 +1618,12 @@ fn concealment(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
 
 /// cards._rootborn
 fn rootborn(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
-    if let Some(why) = timing(g, p, c).or_else(|| super::mana::cost_problem(g, p, 2, "W")) {
+    if let Some(why) = timing(g, p, c).or_else(|| super::mana::card_cost_problem(g, p, c, 2, "W")) {
         let keep =
             (why.starts_with("You") || why.starts_with("Cast") || why.starts_with("It")) && !why.contains("costs");
         return Ok(Some(if keep { why } else { format!("Can't cast {}. {why}", cname(g, c)) }));
     }
-    super::mana::pay_from_pool(g, p, 2, "W");
+    super::mana::pay_card_from_pool(g, p, c, 2, "W");
     if !spell_cast(g, p, c, 3.0, None)? {
         gy_push(g, p, c);
         return Ok(None);
@@ -1655,10 +1656,10 @@ fn triplicate(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
 
 /// cards._morph_cast
 fn morph_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
-    if let Some(why) = timing(g, p, c).or_else(|| cost(g, p, 3, "", "cast it face down")) {
+    if let Some(why) = timing(g, p, c).or_else(|| super::mana::card_cost_problem(g, p, c, 3, "")) {
         return Ok(Some(why.replace("Can't activate", "Can't cast")));
     }
-    super::mana::pay_from_pool(g, p, 3, "");
+    super::mana::pay_card_from_pool(g, p, c, 3, "");
     if !spell_cast(g, p, c, 2.0, Some("a face-down creature (morph)"))? {
         gy_push(g, p, c);
         return Ok(None);
@@ -1903,7 +1904,7 @@ pub fn copy_in_response(g: &mut Game, p: PlayerId, c: CardId, spell: Option<Card
     }
     let Some(k) = pick(g, p, "choose", "Return the Favor (spree): which modes?", &labels)? else { return Ok(None) };
     let chosen: Vec<&str> = if k < modes.len() { vec![modes[k].0] } else { modes.iter().map(|m| m.0).collect() };
-    if let Some(why) = super::mana::cost_problem(g, p, chosen.len() as u32, "RR") {
+    if let Some(why) = super::mana::card_cost_problem(g, p, c, chosen.len() as u32, "RR") {
         return Ok(Some(format!("Can't cast Return the Favor. {why}")));
     }
     let mut new: Option<Target> = None;
@@ -1926,7 +1927,7 @@ pub fn copy_in_response(g: &mut Game, p: PlayerId, c: CardId, spell: Option<Card
         };
         new = Some(tg[j]);
     }
-    super::mana::pay_from_pool(g, p, chosen.len() as u32, "RR");
+    super::mana::pay_card_from_pool(g, p, c, chosen.len() as u32, "RR");
     let what = format!("Return the Favor ({}) at {}", chosen.join(" and "), sname);
     if !spell_cast(g, p, c, 5.0, Some(&what))? {
         gy_push(g, p, c);
@@ -2815,7 +2816,7 @@ fn ragavan_dash_person(g: &mut Game, p: PlayerId, c: CardId) -> Res<Why> {
     if let Some(why) = timing(g, p, c) {
         return Ok(Some(why));
     }
-    if let Some(why) = super::mana::cost_problem(g, p, 1, "R") {
+    if let Some(why) = super::mana::card_cost_problem(g, p, c, 1, "R") {
         return Ok(Some(format!("Can't dash {}. {why}", cname(g, c))));
     }
     crate::impls::rules2::ragavan_go(g, p, c.0 as i64)?;
@@ -2908,14 +2909,14 @@ pub fn embrace_person(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).gy.contains(&c) || g.player(p).life <= 3 || g.player(p).hand.is_empty() {
         return Ok(false);
     }
-    if !crate::engine::mana::can_pay(g, p, 1, "BB", false) {
+    if !crate::engine::mana::can_pay_spell(g, p, c, 1, "BB", false) {
         return Ok(false);
     }
     let prompt = "Demonic Embrace: discard a card to cast it from your graveyard";
     let hand = g.player(p).hand.clone();
     let labels: Vec<String> = hand.iter().map(|&x| choices::card_label(g, x)).collect();
     let Some(k) = pick(g, p, "choose", prompt, &labels)? else { return Ok(true) };
-    crate::engine::mana::pay(g, p, 1, "BB", false)?;
+    crate::engine::mana::pay_spell(g, p, c, 1, "BB", false)?;
     crate::engine::life::lose_life(g, p, 3, Some(p), "life", None)?;
     crate::engine::zones::discard_cards(g, p, &[hand[k]])?;
     crate::engine::cast::cast_card(g, p, c, "escape", crate::state::Ctx::default())?;

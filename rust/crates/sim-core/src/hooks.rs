@@ -1124,6 +1124,8 @@ pub struct Trigger {
 /// What a trigger does when it resolves.
 #[derive(Debug, Clone, PartialEq)]
 pub enum TrigAct {
+    /// A dies-exile ability granted to a spell by Rivaz.
+    RivazExile { m: PermId },
     /// a card's hook for this event (found again in the registry by its source's card)
     Hook { event: Event, call: Call },
     /// the engine's tag-driven enter effects (Python's `etb_once`)

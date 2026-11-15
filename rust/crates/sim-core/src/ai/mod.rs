@@ -35,6 +35,7 @@ pub mod tape;
 pub mod topdeck;
 pub mod values; // --- phase4-values
 
+use crate::engine::mana::{can_pay_spell, pay_spell};
 use crate::engine::repl;
 use crate::engine::values::epow;
 use crate::flow::Res;
@@ -633,7 +634,6 @@ pub fn main(g: &mut Game, p: PlayerId, post: bool) -> Res {
 /// 2026-11-01, also met counterspells and could use Mistrise Village.)
 pub fn combo_interrupted(g: &mut Game, p: PlayerId, which: &str, key: &[PermId]) -> Res<bool> {
     use crate::engine::cast::cast_card;
-    use crate::engine::mana::{can_pay, pay};
     use crate::engine::removal::legal_targets;
     use crate::tag::Tag;
     if tide_response(g, p, &format!("combo_{which}"), 10.0, None)? {
@@ -659,10 +659,10 @@ pub fn combo_interrupted(g: &mut Game, p: PlayerId, which: &str, key: &[PermId])
                 .filter(|m| key.contains(m))
                 .collect();
             let (generic, pips) = (d.generic, d.pips.to_string());
-            if tg.is_empty() || !can_pay(g, q, generic, &pips, false) {
+            if tg.is_empty() || !can_pay_spell(g, q, c, generic, &pips, false) {
                 continue;
             }
-            pay(g, q, generic, &pips, false)?;
+            pay_spell(g, q, c, generic, &pips, false)?;
             cast_card(g, q, c, "hand", Ctx { target: Some(tg[0]), ..Ctx::default() })?;
             let x = g.perm(tg[0]);
             if !x.on_bf || x.owner != p || x.phased {

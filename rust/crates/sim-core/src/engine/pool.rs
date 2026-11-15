@@ -105,6 +105,8 @@ pub enum Restr {
     /// can't be spent to cast nonartifact spells: artifact spells, abilities and other costs (Karn, Legacy Reforged;
     /// Powerstone tokens; The Mightstone and Weakstone)
     NotNonartifact,
+    /// only to cast spells (Klauth, Unrivaled Ancient)
+    SpellOnly,
     /// only to cast artifact spells (Mishra's Workshop)
     ArtifactSpell,
     /// only to cast instant and sorcery spells (Hydro-Channeler)
@@ -187,6 +189,11 @@ impl Pool {
         self.add_key(Key::ART, n);
     }
 
+    /// Klauth: any-colour mana, only for spells, kept all turn
+    pub fn spell(&self) -> u32 {
+        self.amount(Key { restr: Restr::SpellOnly, kind: Kind::Any, keep: Keep::Turn })
+    }
+
     /// how much mana of `key` there is
     pub fn amount(&self, key: Key) -> u32 {
         self.v.binary_search_by(|m| m.key.cmp(&key)).map_or(0, |i| self.v[i].amt)
@@ -240,9 +247,14 @@ impl Pool {
     }
 
     /// add `n` unrestricted mana of `kind` that stays until the turn ends ("until end of turn, you don't lose this
-    /// mana as steps and phases end": Birgi, Klauth, Savage Ventmaw, Photon, Rousing Refrain)
+    /// mana as steps and phases end": Birgi, Savage Ventmaw, Photon, Rousing Refrain)
     pub fn add_kept(&mut self, kind: Kind, n: u32) {
         self.add_key(Key { restr: Restr::None, kind, keep: Keep::Turn }, n);
+    }
+
+    /// Add restricted mana that stays until the turn ends.
+    pub fn add_kept_restr(&mut self, kind: Kind, restr: Restr, n: u32) {
+        self.add_key(Key { restr, kind, keep: Keep::Turn }, n);
     }
 
     /// a step or phase ends (rule 500.4): the mana not kept all turn empties

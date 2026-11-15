@@ -7,7 +7,9 @@ use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, casts_this_turn, on_cast};
 use crate::engine::hooks::fire_trigger;
 use crate::engine::life::{check_state, gain, lose_life};
-use crate::engine::mana::{Source, Unit, can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{
+    Source, Unit, can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana, total_mana_spell,
+};
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
 use crate::engine::stack::{abilities_answered, ability_window, counter_window, stack_window, trigger_window};
@@ -154,12 +156,12 @@ fn pname(g: &Game, p: PlayerId) -> Sym {
 /// the card's own cost, paid (Python's `pay(g, p, *cost_of(p, c))`)
 fn pay_cost(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
     let (gn, pips) = cost_of(g, p, c);
-    pay(g, p, gn, &pips, false)
+    pay_spell(g, p, c, gn, &pips, false)
 }
 
 fn can_pay_cost(g: &Game, p: PlayerId, c: CardId) -> bool {
     let (gn, pips) = cost_of(g, p, c);
-    can_pay(g, p, gn, &pips, false)
+    can_pay_spell(g, p, c, gn, &pips, false)
 }
 
 // ======================================================== Brutal Hordechief: you choose how they block
@@ -383,7 +385,7 @@ fn bestowed(g: &Game, m: PermId) -> Vec<CardId> {
 
 /// bestow {2}{W}{W}: an Aura on the best creature (the commander in Light-Paws), +X/+X for creatures and Auras
 fn bestow_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false) || !can_pay(g, p, 2, "WW", false) {
+    if post != Some(false) || !can_pay_spell(g, p, c, 2, "WW", false) {
         return Ok(vec![]);
     }
     let Some(host) = common::own_host(g, p, &common::AURA, None) else { return Ok(vec![]) };
@@ -397,11 +399,11 @@ fn bestow_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> R
 fn bestow_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, host) = unpack(arg);
     let (c, host) = (CardId(c as u16), PermId(host));
-    if !g.player(p).hand.contains(&c) || !on(g, p, host) || !can_pay(g, p, 2, "WW", false) {
+    if !g.player(p).hand.contains(&c) || !on(g, p, host) || !can_pay_spell(g, p, c, 2, "WW", false) {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
-    pay(g, p, 2, "WW", false)?;
+    pay_spell(g, p, c, 2, "WW", false)?;
     crate::glog!(g, "  {} bestows Eidolon of Countless Battles on {}", pname(g, p), g.perm(host).name);
     on_cast(g, p, c)?;
     if !counter_window(g, p, c, 4.0, vec![])? {
@@ -533,6 +535,9 @@ fn gryff_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 fn heartless(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
     let Some(t) = ctx.target.filter(|&t| g.perm(t).on_bf) else { return Ok("gy") };
     if g.perm(t).plus > 0 {
+        if !crate::engine::ward::pay_ward(g, p, t)? {
+            return Ok("gy");
+        }
         let x = g.perm_mut(t);
         x.plus = (x.plus - 3).max(0);
         crate::glog!(g, "    Heartless Act removes counters from {}", g.perm(t).name);
@@ -593,7 +598,7 @@ fn archers_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 // ======================================================== Jaxis, the Troublemaker
 /// blitz {1}{R}: haste, draw when it dies, sacrificed at end of turn
 fn jaxis_blitz(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false) || !can_pay(g, p, 1, "R", false) || !castable(g, p, c, "hand") {
+    if post != Some(false) || !can_pay_spell(g, p, c, 1, "R", false) || !castable(g, p, c, "hand") {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -605,11 +610,11 @@ fn jaxis_blitz(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<
 
 pub fn jaxis_blitz_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "R", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 1, "R", false) {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
-    pay(g, p, 1, "R", false)?;
+    pay_spell(g, p, c, 1, "R", false)?;
     crate::glog!(g, "  {} casts Jaxis for its blitz cost", pname(g, p));
     on_cast(g, p, c)?;
     if !counter_window(g, p, c, 3.0, vec![])? {
@@ -774,7 +779,7 @@ fn mardu_charm(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
 /// always made Warriors. At end of turn the AI now picks a mode: the Warriors (1.2), or the discard when the most
 /// threatening opponent holds enough cards for it to be worth more (0.3 a card: five or more).
 fn mardu_eot(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_some() || !can_pay(g, p, 0, "RWB", false) {
+    if post.is_some() || !can_pay_spell(g, p, c, 0, "RWB", false) {
         return Ok(vec![]);
     }
     let disc = mardu_discard_value(g, p);
@@ -786,11 +791,11 @@ fn mardu_eot(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Ve
 
 fn mardu_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId((arg & 0xffff) as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 0, "RWB", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 0, "RWB", false) {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
-    pay(g, p, 0, "RWB", false)?;
+    pay_spell(g, p, c, 0, "RWB", false)?;
     let mode = if arg >> 16 == 1 { Some("discard") } else { None };
     cast_card(g, p, c, "lib", Ctx { mode, ..Ctx::default() })?;
     Ok(true)
@@ -938,7 +943,7 @@ pub fn miracle_options(g: &mut Game, p: PlayerId, _post: Option<bool>) -> Res<Ve
     if st != g.turn_stamp()
         || !g.player(p).hand.contains(&c)
         || &*g.db.get(c).name != "Reforge the Soul"
-        || !can_pay(g, p, 1, "R", false)
+        || !can_pay_spell(g, p, c, 1, "R", false)
     {
         return Ok(vec![]);
     }
@@ -954,10 +959,10 @@ pub fn miracle_options(g: &mut Game, p: PlayerId, _post: Option<bool>) -> Res<Ve
 
 fn miracle_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "R", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 1, "R", false) {
         return Ok(false);
     }
-    pay(g, p, 1, "R", false)?;
+    pay_spell(g, p, c, 1, "R", false)?;
     g.player_mut(p).miracle = None;
     crate::glog!(g, "  {} casts Reforge the Soul for its miracle cost", pname(g, p));
     cast_card(g, p, c, "hand", Ctx::default())?;
@@ -1001,7 +1006,10 @@ fn coralhelm(g: &mut Game, src: Src, p: PlayerId) -> Res {
 // ======================================================== Sentinel's Eyes: escape
 /// escape {W} and two other graveyard cards
 fn eyes_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false) || !can_pay(g, p, 0, "W", false) || !g.player(p).perms.iter().any(|&m| g.is_creature(m)) {
+    if post != Some(false)
+        || !can_pay_spell(g, p, c, 0, "W", false)
+        || !g.player(p).perms.iter().any(|&m| g.is_creature(m))
+    {
         return Ok(vec![]);
     }
     if g.player(p).gy.iter().filter(|&&x| x != c).count() < 2 {
@@ -1030,10 +1038,10 @@ pub(crate) fn exile_fodder(g: &mut Game, p: PlayerId, c: CardId, n: usize) {
 
 fn eyes_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).gy.contains(&c) || !can_pay(g, p, 0, "W", false) {
+    if !g.player(p).gy.contains(&c) || !can_pay_spell(g, p, c, 0, "W", false) {
         return Ok(false);
     }
-    pay(g, p, 0, "W", false)?;
+    pay_spell(g, p, c, 0, "W", false)?;
     exile_fodder(g, p, c, 2);
     remove_card(&mut g.player_mut(p).gy, c);
     crate::glog!(g, "  {} escapes Sentinel's Eyes", pname(g, p));
@@ -1940,15 +1948,15 @@ fn probe(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> {
     // {U/P}: a person is asked how to pay as they cast it (human::human, phyrexian_ways), so nothing is paid here (it was
     // paid twice before); the Doomsday pile pays what keeps its line winning; otherwise {U} when three mana is up, else 2 life
     if !crate::human::is_human(g, p) {
-        let can_u = can_pay(g, p, 0, "U", false);
+        let can_u = can_pay_spell(g, p, _c, 0, "U", false);
         let life = match crate::impls::doomsday::pile_probe_life(g, p) {
             Some(l) => l || !can_u,
-            None => !(can_u && total_mana(g, p, false) >= 3),
+            None => !(can_u && total_mana_spell(g, p, _c, false) >= 3),
         };
         if life {
             lose_life(g, p, 2, Some(p), "other", None)?;
         } else {
-            pay(g, p, 0, "U", false)?;
+            pay_spell(g, p, _c, 0, "U", false)?;
         }
     }
     draw(g, p, 1, false)?;
@@ -2083,7 +2091,7 @@ fn golgari_charm(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
 }
 
 fn golgari_opts(g: &mut Game, c: CardId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    if !can_pay(g, p, 0, "BG", false) {
+    if !can_pay_spell(g, p, c, 0, "BG", false) {
         return Ok(vec![]);
     }
     let mut o = vec![];
@@ -2108,11 +2116,11 @@ fn golgari_ench(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 /// partials._cast_mode: Golgari Charm cast for this mode
 fn cast_mode(g: &mut Game, p: PlayerId, c: CardId, mode: Sym) -> Res<bool> {
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 0, "BG", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 0, "BG", false) {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
-    pay(g, p, 0, "BG", false)?;
+    pay_spell(g, p, c, 0, "BG", false)?;
     cast_card(g, p, c, "lib", Ctx { mode: Some(mode), ..Ctx::default() })?;
     if !g.player(p).gy.contains(&c) {
         g.player_mut(p).gy.push(c);
@@ -2125,7 +2133,7 @@ pub fn regen_wipe(g: &mut Game, p: PlayerId) -> Res<bool> {
     let Some(c) = g.player(p).hand.iter().copied().find(|&x| &*g.db.get(x).name == "Golgari Charm") else {
         return Ok(false);
     };
-    if !can_pay(g, p, 0, "BG", false) || !castable(g, p, c, "hand") {
+    if !can_pay_spell(g, p, c, 0, "BG", false) || !castable(g, p, c, "hand") {
         return Ok(false);
     }
     if creatures_of(g, p).into_iter().map(|m| pval(g, m)).psum() < 8.0 {
@@ -2232,7 +2240,7 @@ fn insight(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
 }
 
 fn insight_opt(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false) || !can_pay(g, p, 2, "G", false) {
+    if post != Some(false) || !can_pay_spell(g, p, c, 2, "G", false) {
         return Ok(vec![]);
     }
     let good: Vec<PermId> = g
@@ -2254,11 +2262,11 @@ fn insight_opt(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<
 fn insight_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, t) = unpack(arg);
     let (c, t) = (CardId(c as u16), PermId(t));
-    if !g.player(p).hand.contains(&c) || !on(g, p, t) || !can_pay(g, p, 2, "G", false) {
+    if !g.player(p).hand.contains(&c) || !on(g, p, t) || !can_pay_spell(g, p, c, 2, "G", false) {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
-    pay(g, p, 2, "G", false)?;
+    pay_spell(g, p, c, 2, "G", false)?;
     cast_card(g, p, c, "lib", Ctx { host: Some(t), ..Ctx::default() })?;
     if !g.player(p).gy.contains(&c) {
         g.player_mut(p).gy.push(c);
@@ -2733,7 +2741,7 @@ pub fn t6_refill(g: &Game, p: PlayerId, c: CardId) -> bool {
         .filter(|&&x| x != c && !g.db.get(x).land)
         .filter(|&&x| {
             let (xg, xp) = cost_of(g, p, x);
-            can_pay(g, p, xg, &xp, false)
+            can_pay_spell(g, p, x, xg, &xp, false)
         })
         .count();
     let (cg, cp) = cost_of(g, p, c);

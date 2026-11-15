@@ -22,7 +22,7 @@ use crate::ai::pool::generic_prio;
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::cast_card;
 use crate::engine::life::{check_state, gain, lose_life, prevents_damage};
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana_spell};
 use crate::engine::pool::Kind;
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
@@ -296,10 +296,10 @@ pub fn drain_kills(g: &Game, p: PlayerId, per_opp: i32, gained: i32) -> usize {
 /// yshtola.x_drain_option: the best X for a drain spell in hand, as (utility, label), or None
 pub fn x_drain_option(g: &Game, p: PlayerId, c: CardId) -> Option<(f64, String)> {
     let (gn, pips) = cost_of(g, p, c);
-    if !can_pay(g, p, gn, &pips, false) {
+    if !can_pay_spell(g, p, c, gn, &pips, false) {
         return None;
     }
-    let x = total_mana(g, p, false) as i32 - gn as i32 - pips.chars().count() as i32;
+    let x = total_mana_spell(g, p, c, false) as i32 - gn as i32 - pips.chars().count() as i32;
     if x < 1 {
         return None;
     }
@@ -311,7 +311,7 @@ pub fn x_drain_option(g: &Game, p: PlayerId, c: CardId) -> Option<(f64, String)>
     let per = k * x + if ysh { 2 } else { 0 } + pri * if ysh { 2 } else { 1 };
     let total: i32 = opps.iter().filter(|&&q| !g.player(q).life_locked).map(|&q| g.player(q).life.min(per)).sum();
     let kills = drain_kills(g, p, per, total);
-    let late = g.player(p).turns >= 8 || total_mana(g, p, false) >= 9;
+    let late = g.player(p).turns >= 8 || total_mana_spell(g, p, c, false) >= 9;
     if kills == 0 && (x < 4 || (!late && k * x * (opps.len() as i32) < 15)) {
         return None;
     }
@@ -326,11 +326,11 @@ pub fn x_drain_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     let (g2, p2) = cost_of(g, p, c);
-    let xx = total_mana(g, p, false) as i32 - g2 as i32 - p2.chars().count() as i32;
-    if xx < 1 || !can_pay(g, p, g2 + xx as u32, &p2, false) {
+    let xx = total_mana_spell(g, p, c, false) as i32 - g2 as i32 - p2.chars().count() as i32;
+    if xx < 1 || !can_pay_spell(g, p, c, g2 + xx as u32, &p2, false) {
         return Ok(false);
     }
-    pay(g, p, g2 + xx as u32, &p2, false)?;
+    pay_spell(g, p, c, g2 + xx as u32, &p2, false)?;
     cast_card(g, p, c, "hand", Ctx { x: xx, ..Ctx::default() })?;
     Ok(true)
 }

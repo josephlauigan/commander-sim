@@ -265,7 +265,7 @@ fn castable_tutors(g: &Game, p: PlayerId, except: CardId) -> Vec<(CardId, Vec<Ca
             continue;
         }
         let (gn, pips) = crate::engine::mana::cost_of(g, p, t);
-        if !crate::engine::mana::can_pay(g, p, gn, &pips, false) {
+        if !crate::engine::mana::can_pay_spell(g, p, t, gn, &pips, false) {
             continue;
         }
         if let Some((_, finds)) = super::planner::tutor_targets(g, p, t) {

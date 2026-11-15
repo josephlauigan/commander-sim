@@ -14,6 +14,7 @@ use crate::cards::CardDb;
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::lose_life;
 use crate::engine::mana::{can_pay, can_pay_with_rituals, cost_of, pay, seq_cost}; // --- ai-fix: C
+use crate::engine::mana::{can_pay_spell, pay_spell};
 use crate::engine::removal::legal_targets;
 use crate::engine::repl;
 use crate::engine::stack::{ability_run_w, ability_window, trigger_window};
@@ -410,7 +411,7 @@ pub(crate) fn mana_sink(g: &Game, p: PlayerId) -> bool {
 
 fn can_pay_cost(g: &Game, p: PlayerId, c: CardId) -> bool {
     let (gn, pips) = cost_of(g, p, c);
-    can_pay(g, p, gn, &pips, false)
+    can_pay_spell(g, p, c, gn, &pips, false)
 }
 
 /// combos.mana_need: the loop's own mana plus the pieces still to cast, in order, at what the engine will charge for them
@@ -589,7 +590,7 @@ fn attempt_run(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
     for (i, &c) in casts.iter().enumerate() {
         // the last pieces are cast normally: they can be countered. They cost what any cast costs (taxes included)
         let (gn, pips) = cost_of(g, p, c);
-        if !g.player(p).hand.contains(&c) || !castable(g, p, c, "hand") || !can_pay(g, p, gn, &pips, false) {
+        if !g.player(p).hand.contains(&c) || !castable(g, p, c, "hand") || !can_pay_spell(g, p, c, gn, &pips, false) {
             if i > 0 {
                 crate::glog!(g, "    ...{} fizzles ({} is gone)", cmb.name, name_of(g, c));
                 g.player_mut(p).stat("combo_stopped", 1);
@@ -598,7 +599,7 @@ fn attempt_run(g: &mut Game, p: PlayerId, i: i64) -> Res<bool> {
             return Ok(i > 0); // something already happened: the turn state changed
         }
         let x = cmb.x_for(name_of(g, c));
-        pay(g, p, gn + x, &pips, false)?;
+        pay_spell(g, p, c, gn + x, &pips, false)?;
         if x > 0 {
             g.last_x = x as i32;
         }
@@ -737,7 +738,7 @@ fn interrupted(g: &mut Game, p: PlayerId, keys: &[PermId]) -> Res<bool> {
                 continue;
             }
             let (gn, pips) = cost_of(g, q, c);
-            pay(g, q, gn, &pips, false)?;
+            pay_spell(g, q, c, gn, &pips, false)?;
             cast_card(g, q, c, "hand", Ctx { target: Some(tg[0]), ..Ctx::default() })?;
             g.last_counter = Some(c);
             if !g.perm(tg[0]).on_bf || g.perm(tg[0]).phased {
@@ -748,8 +749,11 @@ fn interrupted(g: &mut Game, p: PlayerId, keys: &[PermId]) -> Res<bool> {
         }
         // Tishana's Tidebinder / Siren Stormtamer style: counter the activated ability
         for c in g.player(q).hand.clone() {
-            if name_of(g, c) == "Tishana's Tidebinder" && can_pay(g, q, 2, "U", false) && castable(g, q, c, "hand") {
-                pay(g, q, 2, "U", false)?;
+            if name_of(g, c) == "Tishana's Tidebinder"
+                && can_pay_spell(g, q, c, 2, "U", false)
+                && castable(g, q, c, "hand")
+            {
+                pay_spell(g, q, c, 2, "U", false)?;
                 let hand = &mut g.player_mut(q).hand;
                 if let Some(i) = hand.iter().position(|&x| x == c) {
                     hand.remove(i);
@@ -1529,7 +1533,7 @@ fn public_piece(g: &Game, q: PlayerId, grp: &[&str]) -> bool {
             || pl.commanders().any(|c| {
                 pl.cmd_zone_of(c) && name_of(g, c) == *n && {
                     let (gn, pips) = cost_of(g, q, c);
-                    can_pay(g, q, gn + pl.tax_of(c), &pips, false)
+                    can_pay_spell(g, q, c, gn + pl.tax_of(c), &pips, false)
                 }
             })
     })

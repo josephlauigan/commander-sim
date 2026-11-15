@@ -324,7 +324,8 @@ fn klauth_adds_mana_equal_to_the_attackers_power() {
     f(&mut g, k, P0, &[gold], P1).unwrap();
     assert_eq!(g.player(P0).mana.get(Kind::Any), 0, "Klauth itself must attack");
     f(&mut g, k, P0, &[k, gold], P1).unwrap();
-    assert_eq!(g.player(P0).mana.get(Kind::Any), 4 + 4);
+    assert_eq!(g.player(P0).mana.spell(), 4 + 4);
+    assert_eq!(g.player(P0).mana.get(Kind::Any), 0, "only spell-restricted mana");
 }
 
 // ------------------------------------------------------------------ Rith, Twinflame Tyrant, Scion of Draco

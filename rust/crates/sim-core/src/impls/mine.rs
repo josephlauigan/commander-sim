@@ -15,8 +15,9 @@ use crate::engine::cast::{
 use crate::engine::combat::blocked;
 use crate::engine::hooks::fire_trigger;
 use crate::engine::life::{check_state, lose_life};
-use crate::engine::mana::restr_ok;
-use crate::engine::mana::{Source, Unit, can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{
+    Source, Unit, can_pay, can_pay_spell, cost_of, pay, pay_spell, restr_ok, total_mana, total_mana_spell,
+};
 use crate::engine::pool::Kind;
 use crate::engine::pool::Restr;
 use crate::engine::removal::{apply_removal, legal_targets};
@@ -685,7 +686,7 @@ fn insight(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<
         return Ok(vec![]);
     }
     let gn = insight_cost(g, p);
-    if gn > 2 || !can_pay(g, p, gn, "B", false) || !can_pay(g, p, gn + 1, "B", false) {
+    if gn > 2 || !can_pay_spell(g, p, c, gn, "B", false) || !can_pay_spell(g, p, c, gn + 1, "B", false) {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -697,11 +698,11 @@ fn insight(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<
 
 fn insight_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, gn) = (CardId(arg as u16), (arg >> 32) as u32);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, gn + 1, "B", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, gn + 1, "B", false) {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
-    pay(g, p, gn + 1, "B", false)?;
+    pay_spell(g, p, c, gn + 1, "B", false)?;
     g.player_mut(p).spells_this_turn += 1;
     on_cast(g, p, c)?;
     let opps: Vec<PlayerId> = g.opps(p).collect();
@@ -745,7 +746,7 @@ fn harnfel_opt(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<
     }
     let Some(h) = g.db.id(HARNFEL) else { return Ok(vec![]) };
     let (gn, pips) = cost_of(g, p, h);
-    if !can_pay(g, p, gn, &pips, false) {
+    if !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -759,11 +760,11 @@ fn harnfel_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let Some(h) = g.db.id(HARNFEL) else { return Ok(false) };
     let (gn, pips) = cost_of(g, p, h);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, gn, &pips, false) || !castable(g, p, h, "hand") {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, gn, &pips, false) || !castable(g, p, h, "hand") {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     g.player_mut(p).spells_this_turn += 1;
     crate::glog!(g, "  {} casts {HARNFEL} (the back face of Birgi)", g.player(p).name);
     on_cast(g, p, h)?;
@@ -1116,10 +1117,10 @@ fn breach_escape(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false); // Drannith Magistrate, Rule of Law ...
     }
     let (cg, cp) = cost_of(g, p, c);
-    if !can_pay(g, p, cg, &cp, false) {
+    if !can_pay_spell(g, p, c, cg, &cp, false) {
         return Ok(false);
     }
-    pay(g, p, cg, &cp, false)?;
+    pay_spell(g, p, c, cg, &cp, false)?;
     let mut others: Vec<(f64, CardId)> = g
         .player(p)
         .gy
@@ -1388,7 +1389,7 @@ fn led_wheel_plan(g: &Game, p: PlayerId, w: CardId) -> Option<char> {
         return None;
     }
     let rest = (cg + cp.chars().count() as u32).saturating_sub(3);
-    (rest == 0 || can_pay(g, p, rest, "", false)).then_some(colour)
+    (rest == 0 || can_pay_spell(g, p, w, rest, "", false)).then_some(colour)
 }
 
 /// --- t6-ai-b: Lion's Eye Diamond on the table, a wheel in hand the deck wants to cast now (`card_utility`): crack the
@@ -1976,7 +1977,7 @@ fn necro_flash(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<
         || g.player(p).key != "seph"
         || g.active == Some(p)
         || !g.player(p).hand.contains(&c)
-        || !can_pay(g, p, 2, "B", false)
+        || !can_pay_spell(g, p, c, 2, "B", false)
     {
         return Ok(vec![]);
     }
@@ -1999,11 +2000,11 @@ fn necro_flash(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<
 
 fn necro_flash_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, cd, src) = (CardId(arg as u16), CardId((arg >> 16) as u16), PlayerId((arg >> 32) as u8));
-    if !g.player(p).hand.contains(&c) || !g.player(src).gy.contains(&cd) || !can_pay(g, p, 2, "B", false) {
+    if !g.player(p).hand.contains(&c) || !g.player(src).gy.contains(&cd) || !can_pay_spell(g, p, c, 2, "B", false) {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
-    pay(g, p, 2, "B", false)?;
+    pay_spell(g, p, c, 2, "B", false)?;
     let pl = g.player_mut(p);
     pl.spells_this_turn += 1;
     pl.cast_names.insert(c);
@@ -2268,7 +2269,7 @@ fn muldrotha(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec
             continue;
         }
         let (gn, pips) = cost_of(g, p, c);
-        if !can_pay(g, p, gn, &pips, false) {
+        if !can_pay_spell(g, p, c, gn, &pips, false) {
             continue;
         }
         let v = crate::ai::decks::deck_prio(g, p, c) as f64 / 10.0 + 0.3 * card_worth(g, p, c, true) / 10.0;
@@ -2288,10 +2289,10 @@ fn muldrotha(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec
 fn muldrotha_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, t) = (CardId(arg as u16), MULD_TYPES[(arg >> 32) as usize].0);
     let (gn, pips) = cost_of(g, p, c);
-    if !g.player(p).gy.contains(&c) || !muld_types(g, p, c).contains(&t) || !can_pay(g, p, gn, &pips, false) {
+    if !g.player(p).gy.contains(&c) || !muld_types(g, p, c).contains(&t) || !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     muld_mark(g, p, t);
     crate::glog!(g, "  {} casts {} from the graveyard (Muldrotha)", g.player(p).name, g.db.get(c).name);
     cast_card(g, p, c, "mgy", Ctx::default())?;
@@ -2443,7 +2444,7 @@ fn ral(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>>
         .filter(|&&c| {
             let d = g.db.get(c);
             let (gn, pips) = cost_of(g, p, c);
-            (d.instant || d.sorcery) && can_pay(g, p, gn, &pips, false)
+            (d.instant || d.sorcery) && can_pay_spell(g, p, c, gn, &pips, false)
         })
         .map(|&c| spell_copy_value(g, p, c))
         .fold(0.0, f64::max);
@@ -2866,7 +2867,7 @@ pub(crate) fn rtf_copy(g: &mut Game, c: CardId, p: PlayerId, spell: CardId) -> R
     if g.in_rtf || !g.player(p).hand.contains(&c) || !(sd.instant || sd.sorcery) || spell == c {
         return Ok(());
     }
-    if spell_copy_value(g, p, spell) < 5.0 || !can_pay(g, p, 1, "RR", false) {
+    if spell_copy_value(g, p, spell) < 5.0 || !can_pay_spell(g, p, c, 1, "RR", false) {
         return Ok(());
     }
     g.in_rtf = true;
@@ -2877,7 +2878,7 @@ pub(crate) fn rtf_copy(g: &mut Game, c: CardId, p: PlayerId, spell: CardId) -> R
 
 fn rtf_copy_go(g: &mut Game, c: CardId, p: PlayerId, spell: CardId) -> Res {
     remove_card(&mut g.player_mut(p).hand, c);
-    pay(g, p, 1, "RR", false)?;
+    pay_spell(g, p, c, 1, "RR", false)?;
     let pl = g.player_mut(p);
     pl.spells_this_turn += 1;
     pl.cast_names.insert(c);
@@ -2898,10 +2899,10 @@ fn cast_response(g: &mut Game, owner: PlayerId, c: CardId, gn: u32, pips: &str) 
         return Ok(false);
     }
     if gn > 0 || !pips.is_empty() {
-        if !can_pay(g, owner, gn, pips, false) {
+        if !can_pay_spell(g, owner, c, gn, pips, false) {
             return Ok(false);
         }
-        pay(g, owner, gn, pips, false)?;
+        pay_spell(g, owner, c, gn, pips, false)?;
     }
     let pl = g.player_mut(owner);
     remove_card(&mut pl.hand, c);
@@ -3191,7 +3192,7 @@ fn cavern_etb(g: &mut Game, p: PlayerId, l: PermId) -> Res {
 
 /// mine.territory_colors: {C}, or any colour for a creature spell of the named type (a changeling is every type)
 fn territory_colors(g: &Game, p: PlayerId, l: PermId) -> crate::cards::Colors {
-    if !g.pay_for.is_some_and(|c| g.db.get(c).creature) {
+    if !crate::engine::mana::paying(g).is_some_and(|c| g.db.get(c).creature) {
         return crate::cards::Colors::NONE; // the type is worked out only for a creature spell
     }
     let t = match g.perm(l).data.get(DataKey::Ctype) {
@@ -3379,7 +3380,7 @@ pub(crate) fn twinflame_value(g: &Game, p: PlayerId, m: PermId, post: bool, spel
 
 /// the best number of Twinflame targets: (their total value, the targets)
 fn twinflame_best(g: &Game, p: PlayerId, c: CardId, post: bool) -> Option<(f64, Vec<PermId>)> {
-    let mana = total_mana(g, p, false) as i64;
+    let mana = total_mana_spell(g, p, c, false) as i64;
     let mut rest: Vec<i64> = g
         .player(p)
         .hand
@@ -3392,7 +3393,7 @@ fn twinflame_best(g: &Game, p: PlayerId, c: CardId, post: bool) -> Option<(f64, 
     for n in 1..6usize {
         // n targets: {1}{R} + {2}{R} per extra one
         let cost = 2 + 3 * (n as i64 - 1);
-        if !can_pay(g, p, 1 + 2 * (n as u32 - 1), &"R".repeat(n), false) {
+        if !can_pay_spell(g, p, c, 1 + 2 * (n as u32 - 1), &"R".repeat(n), false) {
             break;
         }
         let (mut left, mut spells) = (mana - cost, 0usize);
@@ -3422,7 +3423,7 @@ fn twinflame_best(g: &Game, p: PlayerId, c: CardId, post: bool) -> Option<(f64, 
 /// exiled at the next end step. The AI copies the creatures worth copying that it can pay for, in its main phases.
 pub(crate) fn twinflame(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let Some(post) = post else { return Ok(vec![]) };
-    if g.active != Some(p) || !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "R", false) {
+    if g.active != Some(p) || !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 1, "R", false) {
         return Ok(vec![]);
     }
     let Some((total, tg)) = twinflame_best(g, p, c, post) else { return Ok(vec![]) };
@@ -3444,11 +3445,11 @@ fn twinflame_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     let extra = targets.len() as u32 - 1;
     let pips = "R".repeat(extra as usize + 1);
-    if !can_pay(g, p, 1 + 2 * extra, &pips, false) {
+    if !can_pay_spell(g, p, c, 1 + 2 * extra, &pips, false) {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
-    pay(g, p, 1 + 2 * extra, &pips, false)?;
+    pay_spell(g, p, c, 1 + 2 * extra, &pips, false)?;
     let pl = g.player_mut(p);
     pl.spells_this_turn += 1;
     pl.stat("spells_cast", 1);
@@ -3916,7 +3917,7 @@ pub fn resto_cast(g: &mut Game, p: PlayerId, m: PermId, why: &str) -> Res<bool> 
         || g.perm(m).token
         || has_type(g, m, "angel")
         || !castable(g, p, c, "hand")
-        || !can_pay(g, p, d.generic, &d.pips, false)
+        || !can_pay_spell(g, p, c, d.generic, &d.pips, false)
         || !crate::ai::decks::pay_card(g, p, c, 0)?
     {
         return Ok(false);
@@ -3935,11 +3936,11 @@ pub fn resto_cast(g: &mut Game, p: PlayerId, m: PermId, why: &str) -> Res<bool> 
 /// upkeep (rebound). True if m got away (false if Ephemerate couldn't be cast or was countered)
 pub fn ephemerate_cast(g: &mut Game, p: PlayerId, m: PermId, why: &str) -> Res<bool> {
     let Some(c) = g.db.id("Ephemerate").filter(|c| g.player(p).hand.contains(c)) else { return Ok(false) };
-    if !on_bf_of(g, p, m) || g.perm(m).token || !castable(g, p, c, "hand") || !can_pay(g, p, 0, "W", false) {
+    if !on_bf_of(g, p, m) || g.perm(m).token || !castable(g, p, c, "hand") || !can_pay_spell(g, p, c, 0, "W", false) {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
-    pay(g, p, 0, "W", false)?;
+    pay_spell(g, p, c, 0, "W", false)?;
     let pl = g.player_mut(p);
     pl.spells_this_turn += 1;
     pl.stat("spells_cast", 1);
@@ -3972,7 +3973,11 @@ fn t6(g: &Game, p: PlayerId) -> bool {
 /// flicker spells, `t6_combos_t6`). It was gated to JD's decks with their hand AI on, none of which holds it, so no
 /// deck had a value play for it (t2's `value_blink` is replaced by this one).
 fn ephemerate_value(g: &mut Game, c: CardId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
-    if crate::human::is_human(g, p) || t6(g, p) || !g.player(p).hand.contains(&c) || !can_pay(g, p, 0, "W", false) {
+    if crate::human::is_human(g, p)
+        || t6(g, p)
+        || !g.player(p).hand.contains(&c)
+        || !can_pay_spell(g, p, c, 0, "W", false)
+    {
         return Ok(vec![]);
     }
     let cands: Vec<(f64, PermId)> = g
@@ -4012,7 +4017,7 @@ pub fn momentary_blink_cast(g: &mut Game, p: PlayerId, m: PermId, why: &str) -> 
         return Ok(false);
     }
     let (gn, pips, zone) = if from_hand { (1, "W", "hand") } else { (3, "U", "gy") };
-    if !on_bf_of(g, p, m) || g.perm(m).token || !castable(g, p, c, zone) || !can_pay(g, p, gn, pips, false) {
+    if !on_bf_of(g, p, m) || g.perm(m).token || !castable(g, p, c, zone) || !can_pay_spell(g, p, c, gn, pips, false) {
         return Ok(false);
     }
     if from_hand {
@@ -4020,7 +4025,7 @@ pub fn momentary_blink_cast(g: &mut Game, p: PlayerId, m: PermId, why: &str) -> 
     } else {
         remove_card(&mut g.player_mut(p).gy, c);
     }
-    pay(g, p, gn, pips, false)?;
+    pay_spell(g, p, c, gn, pips, false)?;
     let pl = g.player_mut(p);
     pl.spells_this_turn += 1;
     pl.stat("spells_cast", 1);
@@ -4055,7 +4060,7 @@ pub fn momentary_blink_cast(g: &mut Game, p: PlayerId, m: PermId, why: &str) -> 
 fn momentary_blink_value(g: &mut Game, c: CardId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
     let from_hand = g.player(p).hand.contains(&c);
     let (gn, pips) = if from_hand { (1, "W") } else { (3, "U") };
-    if crate::human::is_human(g, p) || t6(g, p) || !can_pay(g, p, gn, pips, false) {
+    if crate::human::is_human(g, p) || t6(g, p) || !can_pay_spell(g, p, c, gn, pips, false) {
         return Ok(vec![]);
     }
     let cands: Vec<(f64, PermId)> = g
@@ -4163,7 +4168,7 @@ fn sneak_candidates(g: &Game, p: PlayerId) -> Vec<CardId> {
         .filter(|&c| {
             let d = g.db.get(c);
             let (gn, pips) = cost_of(g, p, c);
-            d.creature && d.tgh > 0 && !can_pay(g, p, gn, &pips, false)
+            d.creature && d.tgh > 0 && !can_pay_spell(g, p, c, gn, &pips, false)
         })
         .collect()
 }

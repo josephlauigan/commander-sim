@@ -20,6 +20,13 @@ use crate::tag::Tag;
 /// `actor`'s spell or ability targets permanent `m`: false if a ward on it counters the spell or ability (the
 /// effect does not happen), true if there is no ward or it was paid. Targeting your own permanent never wards.
 pub fn pay_ward(g: &mut Game, actor: PlayerId, m: PermId) -> Res<bool> {
+    let prev = g.pay_for.take();
+    let result = pay_ward_inner(g, actor, m);
+    g.pay_for = prev;
+    result
+}
+
+fn pay_ward_inner(g: &mut Game, actor: PlayerId, m: PermId) -> Res<bool> {
     let owner = g.perm(m).owner;
     if actor == owner || !g.perm(m).on_bf {
         return Ok(true);

@@ -4,7 +4,6 @@
 //! default priority.
 
 use crate::ai::hand_key; // --- phase4-hand-off
-use crate::engine::mana::can_pay;
 use crate::engine::values::card_name;
 use crate::ids::{CardId, PlayerId};
 use crate::satsum::SatSum;
@@ -367,7 +366,8 @@ pub fn combat_trick(g: &mut Game, p: PlayerId, atk: &[PermId], assign: &[(PermId
         let b_dies = pa >= tb;
         let worth_a = g.perm(a).is_cmd || pval(g, a) >= 3.0;
         let worth_b = pval(g, b) >= 3.0;
-        let endure = find(g, "Dark Endurance").is_some() && can_pay(g, p, 1, "B", false);
+        let endure =
+            find(g, "Dark Endurance").is_some_and(|c| crate::engine::mana::can_pay_spell(g, p, c, 1, "B", false));
         let save = a_dies && worth_a;
         let trade = !b_dies && worth_b && pa + 2 >= tb && (!a_dies || worth_a);
         if !(save || trade) {

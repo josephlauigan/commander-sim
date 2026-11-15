@@ -3,7 +3,7 @@
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{bolt_something, cast_card, on_cast};
 use crate::engine::life::{check_state, gain, lose_life};
-use crate::engine::mana::{can_pay, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell, total_mana};
 use crate::engine::pool::Kind;
 use crate::engine::repl;
 use crate::engine::stack::{ability_window, counter_window, trigger_window};
@@ -1104,7 +1104,9 @@ fn ward_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
     leave(g, src)?;
     crate::engine::zones::to_zone_card(g, src, crate::engine::zones::Zone::Hand);
     let c = g.perm(src).cd.unwrap();
-    pay(g, p, 0, "W", false)?;
+    if !pay_spell(g, p, c, 0, "W", false)? {
+        return Ok(true);
+    }
     if g.player(p).hand.contains(&c) {
         cast_card(g, p, c, "hand", crate::state::Ctx::default())?;
     }
@@ -1707,7 +1709,7 @@ pub fn put_land(g: &mut Game, p: PlayerId) -> Res {
 /// escape from the graveyard ({G}{G}{U}{U}, exile five other cards) as a 6/6 that repeats its enter effect on attack
 /// (escaped Uro is not countered here)
 fn uro_escape(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || !can_pay(g, p, 0, "GGUU", false) || g.player(p).gy.len() < 6 {
+    if post.is_none() || !can_pay_spell(g, p, c, 0, "GGUU", false) || g.player(p).gy.len() < 6 {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -1719,11 +1721,11 @@ fn uro_escape(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<V
 
 fn uro_escape_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).gy.contains(&c) || !can_pay(g, p, 0, "GGUU", false) || g.player(p).gy.len() < 6 {
+    if !g.player(p).gy.contains(&c) || !can_pay_spell(g, p, c, 0, "GGUU", false) || g.player(p).gy.len() < 6 {
         return Ok(false);
     }
     remove_first(&mut g.player_mut(p).gy, c);
-    pay(g, p, 0, "GGUU", false)?;
+    pay_spell(g, p, c, 0, "GGUU", false)?;
     let mut others = g.player(p).gy.clone();
     sort_by_key(&mut others, |x| card_worth(g, p, x, true));
     for &x in others.iter().take(5) {
