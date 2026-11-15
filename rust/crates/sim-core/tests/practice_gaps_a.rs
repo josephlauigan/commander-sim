@@ -660,25 +660,42 @@ fn natures_lore_finds_a_forest_card_untapped() {
     assert!(in_gy(&g, P0, "Nature's Lore"));
 }
 
-#[test]
-fn three_visits_finds_a_forest_card_untapped() {
+/// seat 0 casts `spell` and answers its Forest search with the choice that is exactly `land`
+fn forest_search(spell: &str, land: &'static str) -> (Game, Log) {
     let mut g = main_table("urdragon");
-    hand(&mut g, P0, &["Three Visits"]);
+    hand(&mut g, P0, &[spell]);
     pool(&mut g, P0, &all_mana());
     let first = Some(cast_last(&g));
-    let log = person(&mut g, first, |_| None);
+    let log = person(&mut g, first, move |r| {
+        if r.prompt.contains("search your library for a Forest card") {
+            return r.choices.iter().position(|c| c == land).map(Answer::Pick);
+        }
+        None
+    });
     run(&mut g);
-    assert!(asked(&log, "Three Visits: search your library for a Forest card"), "{}", dump(&log));
-    let all = dump(&log);
-    let search = all.lines().find(|l| l.starts_with("search: Three Visits")).expect("the search was offered");
-    assert!(search.contains("\"Forest\"") && search.contains("\"Bayou\""), "Forest cards, duals included: {search}");
-    assert!(!search.contains("\"Swamp\"") && !search.contains("Command Tower"), "only Forest cards: {search}");
-    assert_eq!(g.player(P0).lands.len(), 1);
-    assert!(
-        !g.perm(g.player(P0).lands[0]).tapped,
-        "the first Forest card offered (a dual with no enters rule) enters untapped"
-    );
-    assert!(in_gy(&g, P0, "Three Visits"));
+    (g, log)
+}
+
+#[test]
+fn three_visits_finds_a_forest_card_untapped() {
+    // the search is offered alphabetically, so the default first pick would be a dual (Bayou), not a basic Forest:
+    // pick the basic Forest, then the dual, explicitly
+    for land in ["Forest", "Bayou"] {
+        let (g, log) = forest_search("Three Visits", land);
+        assert!(asked(&log, "Three Visits: search your library for a Forest card"), "{}", dump(&log));
+        let all = dump(&log);
+        let search = all.lines().find(|l| l.starts_with("search: Three Visits")).expect("the search was offered");
+        assert!(
+            search.contains("\"Forest\"") && search.contains("\"Bayou\""),
+            "Forest cards, duals included: {search}"
+        );
+        assert!(!search.contains("\"Swamp\"") && !search.contains("Command Tower"), "only Forest cards: {search}");
+        assert_eq!(g.player(P0).lands.len(), 1, "{land}");
+        let l = g.player(P0).lands[0];
+        assert_eq!(&*g.perm(l).name, land);
+        assert!(!g.perm(l).tapped, "{land}: a basic Forest and an original dual have no enters rule: untapped");
+        assert!(in_gy(&g, P0, "Three Visits"));
+    }
 }
 
 #[test]
@@ -701,6 +718,94 @@ fn a_shock_land_found_by_three_visits_asks_whether_to_pay_life() {
         assert_eq!(g.perm(l).tapped, !pay);
         assert_eq!(g.player(P0).life, if pay { life - 2 } else { life });
     }
+}
+
+#[test]
+fn a_shock_land_found_by_natures_lore_asks_whether_to_pay_life() {
+    // Nature's Lore and Three Visits share one resolver: the question and both answers work for each
+    for pay in [true, false] {
+        let mut g = main_table("urdragon");
+        hand(&mut g, P0, &["Nature's Lore"]);
+        pool(&mut g, P0, &all_mana());
+        let first = Some(cast_last(&g));
+        let log = person(&mut g, first, move |r| {
+            if r.prompt.contains("search your library for a Forest card") {
+                return r.choices.iter().position(|c| c.contains("Overgrown Tomb")).map(Answer::Pick);
+            }
+            r.prompt.contains("pay 2 life").then(|| Answer::Pick(if pay { 0 } else { 1 }))
+        });
+        let life = g.player(P0).life;
+        run(&mut g);
+        assert!(asked(&log, "Overgrown Tomb: pay 2 life so it enters untapped?"), "{}", dump(&log));
+        let l = g.player(P0).lands[0];
+        assert_eq!(g.perm(l).tapped, !pay);
+        assert_eq!(g.player(P0).life, if pay { life - 2 } else { life });
+    }
+}
+
+#[test]
+fn a_shock_land_is_not_paid_for_with_life_the_person_does_not_have() {
+    let mut g = main_table("urdragon");
+    hand(&mut g, P0, &["Three Visits"]);
+    pool(&mut g, P0, &all_mana());
+    g.player_mut(P0).life = 1;
+    let first = Some(cast_last(&g));
+    let log = person(&mut g, first, |r| {
+        if r.prompt.contains("search your library for a Forest card") {
+            return r.choices.iter().position(|c| c.contains("Overgrown Tomb")).map(Answer::Pick);
+        }
+        None
+    });
+    run(&mut g);
+    assert!(!asked(&log, "pay 2 life"), "not asked: {}", dump(&log));
+    let l = g.player(P0).lands[0];
+    assert!(g.perm(l).tapped, "enters tapped");
+    assert_eq!(g.player(P0).life, 1);
+}
+
+#[test]
+fn opposition_agent_takes_the_forest_a_person_finds() {
+    // Opposition Agent: "You control your opponents while they're searching their libraries. While searching their
+    // libraries, they exile each card they find. You may play those cards ..." (held in the Agent player's hand here)
+    for spell in ["Three Visits", "Nature's Lore"] {
+        let mut g = main_table("urdragon");
+        perm(&mut g, P1, "Opposition Agent");
+        hand(&mut g, P0, &[spell]);
+        pool(&mut g, P0, &all_mana());
+        let first = Some(cast_last(&g));
+        let log = person(&mut g, first, |r| {
+            if r.prompt.contains("search your library for a Forest card") {
+                return r.choices.iter().position(|c| c == "Forest").map(Answer::Pick);
+            }
+            None
+        });
+        let lib = g.player(P0).library.len();
+        let theirs = g.player(P1).hand.len();
+        run(&mut g);
+        assert!(asked(&log, "search your library for a Forest card"), "{spell}: {}", dump(&log));
+        assert_eq!(g.player(P0).lands.len(), 0, "{spell}: the searcher gets no land");
+        assert_eq!(g.player(P0).library.len(), lib - 1, "{spell}: the card left the library");
+        let hand_names: Vec<String> = g.player(P1).hand.iter().map(|&c| g.db.get(c).name.to_string()).collect();
+        assert_eq!(g.player(P1).hand.len(), theirs + 1, "{spell}: the Agent's controller took it: {hand_names:?}");
+        assert_eq!(hand_names.last().map(String::as_str), Some("Forest"), "{spell}: the Forest the person found");
+        assert!(in_gy(&g, P0, spell));
+    }
+}
+
+#[test]
+fn opposition_agent_takes_the_forest_the_ai_finds() {
+    // the AI at seat 0 casts Nature's Lore with two Forests to pay: the card it finds goes to the Agent's controller
+    let mut g = main_table("urdragon");
+    perm(&mut g, P1, "Opposition Agent");
+    lands(&mut g, P0, "Forest", 2, false);
+    let lore = hand(&mut g, P0, &["Nature's Lore"])[0];
+    let theirs = g.player(P1).hand.len();
+    assert!(sim_core::engine::cast::cast_card(&mut g, P0, lore, "hand", Default::default()).unwrap());
+    assert_eq!(g.player(P0).lands.len(), 2, "no land came from the search");
+    assert_eq!(g.player(P1).hand.len(), theirs + 1);
+    let got = *g.player(P1).hand.last().unwrap();
+    let d = g.db.get(got);
+    assert!(d.land && (&*d.name == "Forest" || d.has_subtype("forest")), "a Forest card: {}", d.name);
 }
 
 #[test]
