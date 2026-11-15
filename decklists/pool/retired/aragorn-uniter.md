@@ -1,5 +1,10 @@
 # Aragorn, the Uniter — Four-Colour Spell Burn
 
+**Retired 2026-11-13 (JD).** The deck is broken up: 29 of its cards went to the Cali Commander Thanos list
+(`decklists/cali_commander/thanos-artifact-combo.md`), the rest to the new Ur-Dragon list and the binder. This guide moved here
+from `decklists/JD/` on 2026-11-14. The `aragorn` key stays in the simulator (`data/my_decks.toml`, tiers t4-t5) until the
+engine work removes it; the list is kept here for that. Findings: `audit/aragorn/FINDINGS.md`.
+
 A four-colour spell deck. Aragorn makes every spell you cast do something: a red spell is 3 damage to an opponent, a
 white spell is a 1/1 Soldier, a blue spell is scry 2, a green spell is +4/+4. So the deck is full of cheap spells:
 rituals, cantrips, burn, free counters. It wins three ways: an **Underworld Breach storm** (Brain Freeze, Grapeshot), a

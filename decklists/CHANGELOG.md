@@ -12,16 +12,20 @@ and Sauron were merged into Aragorn, the Uniter (key `aragorn`) and their keys r
 On 2026-11-13 a new Ur-Dragon deck (key `urdragon`) was added and the Thanos key was pointed at a Cali Commander artifact-combo list (`decklists/cali_commander/`) and
 Aragorn was retired as a deck (its key stays in the simulator until the engine work).
 On 2026-11-14 a new Yoshimaru and Tymna blink deck was written (not in the simulator) and the Tymna/Thrasios Doomsday list was retired;
-the `thrasios` key keeps playing the retired list until the rewire step.
+on 2026-11-14 its guide and the Aragorn guide moved to `decklists/pool/retired/`, and the `thrasios` key keeps playing the retired list until the rewire step
+(the `aragorn` key stays until the engine work). The root files `big_after_veyran.txt`, `binder-cards.txt` and `bulk-cards.txt` were deleted the same day: no code reads them.
 Avery's decks (Alela, Galadriel) are no longer tracked from 2026-11-06 (JD); their lists are in `decklists/pool/retired/`.
 
 ## Aragorn, the Uniter — Four-Colour Spell Burn
 
-Deck key `aragorn`, `decklists/JD/aragorn-uniter.md`. Tiers t4-t5. Built 2026-11-06 from the Kefka and Sauron decks,
+Deck key `aragorn`, `decklists/pool/retired/aragorn-uniter.md`. Tiers t4-t5. Built 2026-11-06 from the Kefka and Sauron decks,
 the binder and eleven bought cards (`documents/aragorn-merge-swaps.md`).
 
 ### Changes
 
+- **2026-11-14.** Guide moved (JD): `decklists/JD/aragorn-uniter.md` is now `decklists/pool/retired/aragorn-uniter.md`, with a
+  "Retired" banner. `data/my_decks.toml` and the simulator's deck table point at the new path; the `aragorn` key stays in the
+  simulator until the engine work removes it.
 - **2026-11-13.** Retired (JD): the deck is broken up. 29 of its cards went to the Cali Commander Thanos list; the rest
   are for a new Ur-Dragon list and the binder. The `aragorn` key stays in `data/my_decks.toml` and the simulator until the
   engine work reseats the tests that seat it; the list file is unchanged. Not simulated.
@@ -844,10 +848,11 @@ Deck key `omnath` (removed), `decklists/JD/omnath-landfall.md` (removed).
 
 ## Tymna the Weaver & Thrasios, Triton Hero — Four-Colour Partners (W/U/B/G)
 
-Deck key `thrasios`, `decklists/JD/tymna-thrasios-doomsday.md` (the list below the 2026-11-05 entry was `decklists/JD/tymna-thrasios-partners.md`, moved to `decklists/pool/retired/`). Tier t6 (cEDH) since 2026-11-05; t5 before.
+Deck key `thrasios`, `decklists/pool/retired/tymna-thrasios-doomsday.md` (the list below the 2026-11-05 entry was `decklists/JD/tymna-thrasios-partners.md`, moved to `decklists/pool/retired/`). Tier t6 (cEDH) since 2026-11-05; t5 before.
 
 ### Changes
 
+- **2026-11-14.** Guide moved (JD): `decklists/JD/tymna-thrasios-doomsday.md` is now `decklists/pool/retired/tymna-thrasios-doomsday.md` (its "Retired" banner updated). `data/my_decks.toml` and the simulator's deck table point at the new path; the `thrasios` key keeps playing this list until the rewire step or the engine work.
 - **2026-11-14.** Retired (JD): replaced by the Yoshimaru and Tymna blink deck, `decklists/JD/yoshimaru-tymna-blink.md` (Bracket 4, not simulated). The Doomsday and Thassa's Oracle package moved to the Y'shtola deck (`decklists/JD/yshtola-esper-drain.md`). The file stays in `decklists/JD/` and `data/my_decks.toml` is unchanged, so the `thrasios` key plays this list until the rewire step moves it to `decklists/pool/retired/` and updates the keys.
 - **2026-11-07.** Out: Savannah, Breeding Pool. In: Watery Grave, Swamp. JD adopted swap S2 (2026-11-07) for more black mana for Doomsday's {B}{B}{B}. Paired, look-ahead, loose, 5,000 games per list, t6, main 7d4d5b35: 34.7% -> 36.2% (+1.6, noise ±1.6, at the edge); the plan online by turn 4 60.4% -> 63.0% (`audit/thrasios/FINDINGS.md`). Printings from JD's list (Arcane Signet's updated too).
 - **2026-11-05.** Retired (JD): replaced by the Doomsday rebuild, `decklists/JD/tymna-thrasios-doomsday.md` (cEDH, t6; 82 cards from Thanos, 14 from this list, 4 to buy). Tymna, Thrasios, the four shock lands, Swords to Plowshares, Gifts Ungiven, Avacyn's Pilgrim, Basalt Monolith, Rings of Brighthearth, Walking Ballista, Smothering Tithe and Arcane Signet move to the new list; the rest go to the binder (`documents/doomsday-thanos-rebuild-swaps.md`). The `thrasios` key was pointed at the new file the same day (tier t5 to t6; printings, plan lines and Spellbook file replaced). Not simulated yet; Doomsday has no card code (a separate change).

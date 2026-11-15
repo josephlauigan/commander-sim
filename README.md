@@ -119,7 +119,7 @@ status and plan, and links JD's plan document.
 ## Your decks
 
 The baseline is the list in each deck's `.md` file (the `## Import list` block): JD's in `decklists/JD/`
-(retired lists: `decklists/pool/retired/`). `data/my_decks.toml` maps each deck key to its file, display name, commander, colour identity and
+(retired lists: `decklists/pool/retired/`; the `aragorn` and `thrasios` keys still read their guides from there). `data/my_decks.toml` maps each deck key to its file, display name, commander, colour identity and
 opponent tiers; to add a deck, add a table there. `SIM_DECKS` points at another folder of lists.
 
 To change a list, edit the file or give `cardgen deck` the whole new list, as copied from a deck site or typed one
@@ -165,7 +165,7 @@ built: [`documents/practice-mode.md`](documents/practice-mode.md).
 | --- | --- |
 | `rust/` | The Rust workspace: `crates/sim-core` (engine, rules, AI, card code), `crates/sim-cli` (`commander-sim`), `crates/practice` (`commander-practice` and its page), `crates/cardgen` (`cardgen`). See [`rust/README.md`](rust/README.md) |
 | `data/` | `cards.json` and `decks.json` (written by `cardgen export`), their hand-edited sources (`carddb.txt`, `card_overrides.toml`, `audit.toml`, `my_decks.toml`), the Scryfall cache, `printings/`, and `realism/` (the scorecard targets and the pod-game log) |
-| `decklists/` | `JD/` (the decks under test), `pool/` (the opponent tiers; `pool/retired/` for retired lists), and the changelogs |
+| `decklists/` | `JD/` and `cali_commander/` (the decks under test; each key's file is named in `data/my_decks.toml`), `pool/` (the opponent tiers; `pool/retired/` for retired lists), and the changelogs |
 | `documents/` | How the project works: [realism](documents/realism.md), [how it works](documents/how-it-works.md), [testing decks](documents/testing-decks.md), [cards](documents/cards.md), [practice mode](documents/practice-mode.md); `archive/` holds the port-era documents |
 | `audit/` | Evidence: results of runs, each deck's `FINDINGS.md`, the realism baselines (`audit/realism/`) |
 | `ios-shell/` | The iPad app: Swift around the Rust practice server |

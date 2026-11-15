@@ -1,7 +1,7 @@
 # Brief: make a deck document a detailed pilot guide (2026-11-07)
 
 JD wants each of his deck documents to be a detailed pilot guide like the Tymna/Thrasios one
-(`decklists/JD/tymna-thrasios-doomsday.md`, the model to follow). You get ONE deck. This brief replaces the
+(`decklists/pool/retired/tymna-thrasios-doomsday.md`, the model to follow). You get ONE deck. This brief replaces the
 Rust-port parts of `rust/agents/RULES.md` (no worktree, no difftest): read only its "Keeping context small" part.
 
 ## Your file and limits
@@ -45,7 +45,7 @@ Then `## Mana` (counts that match the list) and `## Bracket and Rule 0` (keep th
 ## Decks and tiers
 | Deck key | File | Tiers | Opponents to cover |
 |---|---|---|---|
-| aragorn | aragorn-uniter.md | t4, t5 | t4: chulane, edgar-markov, krenko, prosper, yuriko; t5: kinnan, miirym, urza, yawgmoth, zur |
+| aragorn | pool/retired/aragorn-uniter.md | t4, t5 | t4: chulane, edgar-markov, krenko, prosper, yuriko; t5: kinnan, miirym, urza, yawgmoth, zur |
 | sheoldred | sheoldred-mono-black.md | t3, t4 | t3: atraxa, aurelia, korvold, marwyn, tergrid; t4: as above |
 | yshtola | yshtola-esper-drain.md | t5 | t5: as above |
 | cloud | cloud-midgar-equipment.md | t1, t2, t3 | t1: isshin, lathril, light-paws, tatyova, teysa; t2: brago, kaalia, lord-windgrace, meren, sythis; t3: as above |

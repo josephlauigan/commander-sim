@@ -1,5 +1,5 @@
 //! Doomsday ({B}{B}{B} sorcery): the card, the AI's pile builder and the play of the pile (JD's Tymna/Thrasios list,
-//! `decklists/JD/tymna-thrasios-doomsday.md`, "Line 2: Doomsday").
+//! `decklists/pool/retired/tymna-thrasios-doomsday.md`, "Line 2: Doomsday").
 //!
 //! * **The card.** "Search your library and graveyard for five cards and exile the rest. Put the chosen cards on top of
 //!   your library in any order. You lose half your life, rounded up." `resolve` takes the five (fewer if there are

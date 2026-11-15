@@ -1,4 +1,4 @@
-//! Doomsday and the pile (JD's Tymna/Thrasios list, `decklists/JD/tymna-thrasios-doomsday.md`, "Line 2"): the card's
+//! Doomsday and the pile (JD's Tymna/Thrasios list, `decklists/pool/retired/tymna-thrasios-doomsday.md`, "Line 2"): the card's
 //! rules, the AI's Piles A, B, C and the Thrasios (devotion 3) variant played out to a Thassa's Oracle win, Silence, a
 //! countered cantrip, Noxious Revival, the end-step cast with each flash enabler, the cases where the AI declines, a
 //! person's pick and order, and the person's Ponder, Brainstorm and Gitaxian Probe.

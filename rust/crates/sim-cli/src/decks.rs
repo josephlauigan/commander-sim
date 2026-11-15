@@ -10,11 +10,11 @@ use std::path::{Path, PathBuf};
 
 /// your decks: key -> (owner folder in decklists/, file), as deck_files.FILES
 pub const FILES: [(&str, &str, &str); 7] = [
-    ("aragorn", "JD", "aragorn-uniter.md"),
+    ("aragorn", "pool/retired", "aragorn-uniter.md"),
     ("yshtola", "JD", "yshtola-esper-drain.md"),
     ("sheoldred", "JD", "sheoldred-mono-black.md"),
     ("cloud", "JD", "cloud-midgar-equipment.md"),
-    ("thrasios", "JD", "tymna-thrasios-doomsday.md"),
+    ("thrasios", "pool/retired", "tymna-thrasios-doomsday.md"),
     ("thanos", "cali_commander", "thanos-artifact-combo.md"),
     ("urdragon", "JD", "urdragon-five-colour-dragons.md"),
 ];
