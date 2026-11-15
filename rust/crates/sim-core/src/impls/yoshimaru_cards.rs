@@ -46,9 +46,10 @@ fn yoshimaru_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
 }
 
 /// the land event: a legendary land that entered after Yoshimaru did (a higher permanent number, so a land that was
-/// already there when he came in, or while he was phased out, is not counted)
+/// already there when he came in, or while he was phased out, is not counted). The land need not still be there when
+/// the trigger resolves: the counter does not depend on it (it left in response, or while the trigger waited)
 fn yoshimaru_land(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
-    if m.0 <= src.0 || !live(g, src) || g.perm(src).owner != p || !g.perm(m).on_bf || !legendary(g, m) {
+    if m.0 <= src.0 || !live(g, src) || g.perm(src).owner != p || !legendary(g, m) {
         return Ok(());
     }
     counter(g, src, p)
