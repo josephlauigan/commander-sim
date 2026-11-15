@@ -3523,6 +3523,16 @@ fn terror_replay(g: &Game, p: PlayerId, triggers: &[i32]) -> Vec<(PlayerId, i64)
     opps.into_iter().zip(taken).collect()
 }
 
+/// m can't be blocked except by a flier or a reach creature, as `combat::can_block` reads it: the flying keyword in the
+/// ability language, the permanent's flying flag unless an Equipment took the keyword away (Colossus Hammer), or flying
+/// until end of turn
+fn flies_over(g: &Game, m: PermId) -> bool {
+    let x = g.perm(m);
+    (g.dsl_on && kw(g, m, "flying"))
+        || (x.fly && !crate::impls::cloud::loses_flying(g, m))
+        || x.eot_kw.contains(&"flying")
+}
+
 /// Twinflame's copies and p's ready fliers kill one opponent this turn: first main phase, and an opponent whom nothing
 /// protects (The One Ring and the like prevent all of it). Two kinds of damage reach that opponent:
 /// - combat damage, if it has no untapped flier or reach creature to block: p's ready fliers and the flying copies,
@@ -3558,7 +3568,9 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
                 && !x.noatk
                 && (!x.sick || has_haste(g, m))
                 && epow(g, m) > 0
-                && (x.fly || kw(g, m, "flying"))
+                && flies_over(g, m)
+                && !kw(g, m, "infect") // infect damage is poison, not life loss
+                && x.name != "Szadek, Lord of Secrets" // its combat damage becomes counters and a mill
                 && !repl::source_prevented(g, m)
                 && !repl::dovin(g, m)
                 && !(pacify && crate::cardcode::locked(g, m, "pacify"))
@@ -3578,7 +3590,11 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
             copies.push((d.pow, made));
             // a copy that enters tapped (Blind Obedience, Authority of the Consuls, Thalia) can't attack; its entry still
             // triggers Terror. The target stands in for the token: the same controller and a creature
-            if d.has_kw("flying") && !repl::enters_tapped(g, p, Some(m)) {
+            if d.has_kw("flying")
+                && !d.has_kw("infect")
+                && &*d.name != "Szadek, Lord of Secrets"
+                && !repl::enters_tapped(g, p, Some(m))
+            {
                 fliers = fliers.saturating_add(d.pow.saturating_mul(made.min(i32::MAX as u32) as i32));
             }
         }

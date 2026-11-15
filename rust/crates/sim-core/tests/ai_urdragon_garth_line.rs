@@ -1393,3 +1393,14 @@ fn twinflame_f_control_a_terror_with_its_abilities_triggers_so_it_releases() {
     g.player_mut(P1).life = 5;
     assert_eq!(adv_probe(&g), (true, true, true));
 }
+
+#[test]
+fn twinflame_f_control_szadek_beside_the_copy_that_alone_kills_still_releases() {
+    // Szadek deals no life damage, but the Dragon copy's 8 is lethal on its own
+    let mut g = adv_base(2);
+    let big = g.player(P0).perms[0];
+    g.perm_mut(big).tapped = true;
+    perm(&mut g, P0, "Szadek, Lord of Secrets");
+    g.player_mut(P1).life = 8;
+    assert_eq!(adv_probe(&g), (true, true, true));
+}
