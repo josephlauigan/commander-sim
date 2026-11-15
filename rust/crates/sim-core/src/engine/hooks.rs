@@ -183,9 +183,16 @@ pub fn fire_trigger(g: &mut Game, e: Event, call: Call) -> Res {
         if let (Event::LandEnters, Call::Etb { m, .. }) = (e, &call)
             && !imp.runs_at_once(e)
         {
-            // a land entering: Ancient Greenwarden's additional trigger, and Panharmonicon's if it is also a creature
-            reps +=
-                total_trigger_copies(g, owner, "landfall", Some(*m)) + total_trigger_copies(g, owner, "etb", Some(*m));
+            // a land entering: Ancient Greenwarden's additional trigger, and Panharmonicon's if it is also a creature.
+            // One source adds one trigger per entering permanent, whichever of the two kinds it answers to (Starfield
+            // Vocalist answers to both): the larger of its two counts, summed over the sources
+            reps += hooked(g, Event::TriggerCopies)
+                .iter()
+                .map(|(s, i)| {
+                    let f = i.trigger_copies.unwrap();
+                    f(g, *s, owner, "landfall", Some(*m)).max(f(g, *s, owner, "etb", Some(*m)))
+                })
+                .sum::<i32>();
         }
         for _ in 0..reps.max(1) {
             // an event outside TRIGGER_EVENTS ('crew', 'monarch') runs at once, as Python's CI.fire does
