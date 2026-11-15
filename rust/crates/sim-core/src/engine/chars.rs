@@ -98,16 +98,19 @@ pub(crate) fn station_met(g: &Game, m: &crate::state::Perm) -> bool {
     })
 }
 
-/// Is m a creature now (Python's `Perm.creature`): a token, a creature card, or animated.
+/// Is m a creature now (Python's `Perm.creature`): a token, a creature card, or animated. A modal card played as its
+/// land face (Witch-Blessed Meadow) is not a creature by its printed face, but a later effect (an animation, a copy
+/// that makes it a creature) still can.
 pub fn is_creature(g: &Game, m: PermId) -> bool {
     let m = g.perm(m);
-    ((m.token && m.cd.is_none_or(|c| g.db.get(c).creature)) // a Powerstone token is an artifact, not a creature
-        || m.cd.is_some_and(|c| g.db.get(c).creature)
+    let printed = !m.data.truthy(DataKey::LandFace) // the land face replaces the printed creature type
+        && ((m.token && m.cd.is_none_or(|c| g.db.get(c).creature)) // a Powerstone token is an artifact, not a creature
+            || m.cd.is_some_and(|c| g.db.get(c).creature));
+    (printed
         || m.data.truthy(DataKey::Anim)
         || station_met(g, m) // a Spacecraft with enough charge counters (The Seriema)
         || m.exc.add_types.has(Types::CREATURE)) // --- urdragon: Astral Dragon's tokens are creatures as they enter
         && !m.data.truthy(DataKey::NotCreature) // --- Tiers 4/5 (chulane-kinnan): Enduring Vitality's return
-        && !m.data.truthy(DataKey::LandFace) // a modal card played as its land face (Witch-Blessed Meadow)
 }
 
 /// m's card types, including those a copy has in addition (Copy Artifact's enchantment); a token has creature
