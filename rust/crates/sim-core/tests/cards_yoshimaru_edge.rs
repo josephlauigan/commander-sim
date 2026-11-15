@@ -763,3 +763,32 @@ fn meadow_with_spelunking_enters_untapped_and_pays_no_life_for_the_ai_either() {
     assert!(!g.perm(l).tapped);
     assert_eq!(g.player(P0).life, 40, "no life paid: Spelunking makes it untapped anyway");
 }
+
+#[test]
+fn seriema_is_a_5_5_flier_at_seven_counters_and_a_plain_artifact_below() {
+    let mut g = tbl();
+    let s = seriema(&mut g);
+    station(&mut g, s, 6);
+    assert!(!g.is_creature(s) && !sim_core::engine::chars::has_keyword(&g, s, "flying"));
+    station(&mut g, s, 1);
+    assert_eq!(charge(&g, s), 7);
+    assert!(g.is_creature(s));
+    assert!(sim_core::engine::chars::has_keyword(&g, s, "flying"));
+    assert_eq!((sim_core::engine::values::epow(&g, s), sim_core::engine::values::etgh(&g, s)), (5, 5));
+    g.perm_mut(s).data.set(DataKey::Charge, Val::Int(3));
+    assert!(!g.is_creature(s) && !sim_core::engine::chars::has_keyword(&g, s, "flying"));
+}
+
+#[test]
+fn seriema_ai_does_not_station_once_it_is_a_creature_but_a_person_may() {
+    let mut g = tbl();
+    let s = seriema(&mut g);
+    station(&mut g, s, 7);
+    let t = token(&mut g, P0, 2);
+    g.perm_mut(t).sick = true;
+    assert!(opts(&mut g, s).is_empty(), "the AI has nothing to gain");
+    person(&mut g, |r| r.choices.iter().position(|s| s.contains("power 2")));
+    let o = opts(&mut g, s).remove(0);
+    assert!(run(&mut g, &o));
+    assert_eq!(charge(&g, s), 9);
+}

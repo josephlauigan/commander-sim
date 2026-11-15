@@ -241,6 +241,7 @@ pub enum Tag {
     Sphinx,
     Spider,
     Stampede,
+    Station,
     Storm,
     Stormburn,
     Stormmill,
@@ -313,7 +314,7 @@ pub enum TagKind {
     Str,
 }
 
-pub const TAG_COUNT: usize = 297;
+pub const TAG_COUNT: usize = 298;
 
 /// (tag, its name in the Python code and the export, the kind of value it takes), in `Tag` order.
 pub const TAGS: [(Tag, &str, TagKind); TAG_COUNT] = [
@@ -551,6 +552,7 @@ pub const TAGS: [(Tag, &str, TagKind); TAG_COUNT] = [
     (Tag::Sphinx, "sphinx", TagKind::Flag),
     (Tag::Spider, "spider", TagKind::Flag),
     (Tag::Stampede, "stampede", TagKind::Flag),
+    (Tag::Station, "station", TagKind::Int),
     (Tag::Storm, "storm", TagKind::Flag),
     (Tag::Stormburn, "stormburn", TagKind::Flag),
     (Tag::Stormmill, "stormmill", TagKind::Flag),

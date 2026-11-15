@@ -10325,6 +10325,7 @@ note = "enters tapped unless you control a legendary creature (the engine's ente
 
 ["The Seriema"]
 dsl = [] # the compiled enters search ignores "legendary" (it would take any creature); impls/yoshimaru_cards.rs searches
+tags = "leg station=7" # `station=7`: a creature (and a 5/5) while it has 7 or more charge counters, read by engine/chars.rs
 status = "Full"
 note = "enters: search for a legendary creature card, into your hand, shuffle (a person picks the card or finds nothing; the AI its search pick; impls/yoshimaru_cards.rs); Station: tap another untapped creature, sorcery speed, charge counters equal to its power (a person chooses each creature, the AI taps creatures that can't attack, or the taps that reach 7 at once); at 7+ a 5/5 flying artifact creature, and your other tapped legendary creatures are indestructible"
 

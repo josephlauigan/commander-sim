@@ -111,8 +111,10 @@ fn minas_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// **The Seriema** ({1}{W}{W}, legendary artifact, Spacecraft): when it enters, search for a legendary creature card
 /// (the compiled `search`; a person picks the card). Station (tap another creature you control: put charge counters
 /// equal to its power on it; only as a sorcery, with no maximum). At 7 or more charge counters it is a 5/5 artifact
-/// creature with flying, and other tapped legendary creatures you control have indestructible. The AI stations with
-/// creatures that can't attack anyway, or when the tap finishes it, and no more once it is a creature; a person
+/// creature with flying, and other tapped legendary creatures you control have indestructible. Being a creature is a
+/// condition on the counters, not a one-time change: the card's `station=7` tag (data/card_overrides.toml) is read by
+/// `chars::is_creature`, `power` and `toughness`, whatever put the counters there or took them away. The AI stations
+/// with creatures that can't attack anyway, or when the tap finishes it, and no more once it is a creature; a person
 /// chooses each creature to tap, one activation at a time, with or without 7 counters.
 const SERIEMA: &str = "The Seriema";
 const STATION_GOAL: i64 = 7;
@@ -183,10 +185,6 @@ fn charge(g: &Game, m: PermId) -> i64 {
     g.perm(m).data.int(DataKey::Charge)
 }
 
-fn seriema_creature(g: &Game, m: PermId) -> bool {
-    charge(g, m) >= STATION_GOAL
-}
-
 /// the creatures p could tap to station `src`: untapped, another creature p controls
 fn station_candidates(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
     g.player(p)
@@ -199,7 +197,7 @@ fn station_candidates(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
 
 /// flying at 7+, and indestructible for the other tapped legendary creatures its controller has
 fn seriema_grant(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
-    if !seriema_creature(g, src) {
+    if !g.is_creature(src) {
         return false;
     }
     if m == src {
@@ -229,7 +227,7 @@ fn seriema_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> R
             act: Some(Action::Ability { src, f: station_go, arg: -1 }),
         }]);
     }
-    if seriema_creature(g, src) {
+    if g.is_creature(src) {
         return Ok(vec![]); // the AI has nothing more to gain from it
     }
     // the AI: creatures that can't attack this turn first (the biggest), the rest only when the taps reach 7 at once
@@ -298,12 +296,8 @@ fn station_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
         let k = repl::counters(g, p, repl::On::Perm(src), repl::Ctr::Other, n, repl::Path::ALL).max(0);
         let total = charge(g, src) + k as i64;
         g.perm_mut(src).data.set(DataKey::Charge, Val::Int(total));
-        if total >= STATION_GOAL && !g.perm(src).data.truthy(DataKey::Anim) {
-            let x = g.perm_mut(src);
-            x.data.set(DataKey::Anim, Val::Bool(true)); // an artifact creature at 7+
-            x.pow = 5;
-            x.tgh = 5;
-            crate::glog!(g, "    The Seriema is a 5/5 artifact creature");
+        if g.is_creature(src) {
+            crate::glog!(g, "    The Seriema is a 5/5 artifact creature"); // by its `station=7` tag (chars.rs)
         }
         Ok(())
     })?;
@@ -375,13 +369,13 @@ fn meadow_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         lose_life(g, p, 3, Some(p), "other", None)?;
     }
     crate::engine::turn::play_land_card(g, p, c, "plays")?;
-    crate::engine::life::check_state(g)?; // paying the life to 0 is lost at once
     if let Some(&l) = g.player(p).lands.last().filter(|&&l| g.perm(l).card() == c) {
         if !paid && !free {
             g.perm_mut(l).tapped = true;
         }
         super::t6_lands::traitors_check(g, p, l)?;
     }
+    crate::engine::life::check_state(g)?; // paying the life to 0 is lost at once
     Ok(true)
 }
 

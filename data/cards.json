@@ -130518,7 +130518,8 @@
    "generic": 1,
    "pips": "WW",
    "tags": {
-    "leg": true
+    "leg": true,
+    "station": "7"
    },
    "pow": 0,
    "tgh": 0,
