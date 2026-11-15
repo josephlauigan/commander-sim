@@ -12,7 +12,7 @@ use crate::cards::{CardDb, Types};
 use crate::engine::cast::{
     cast_card, cast_spell_copy, castable, casts_this_turn, discard_worst, is_casts, magecraft, on_cast, parse_cost,
 };
-use crate::engine::combat::{blocked, has_haste, kw};
+use crate::engine::combat::{attack_restrictions, blocked, has_haste, kw};
 use crate::engine::hooks::fire_trigger;
 use crate::engine::life::{check_state, lose_life, prevents_damage};
 use crate::engine::mana::{
@@ -28,8 +28,8 @@ use crate::engine::stack::{
 };
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{
-    card_name, card_tag, commander_out, epow, equipped, etgh, find, has, has_type, indestructible, player_hexproof,
-    protected_from, pval, stopped, threat, untargetable,
+    card_name, card_tag, chasm, commander_out, epow, equipped, etgh, find, has, has_type, indestructible,
+    player_hexproof, protected_from, pval, stopped, threat, untargetable,
 };
 use crate::engine::zones::{
     Enter, TOKEN_CAP, Tokens, Zone, amass, die, discard_cards, discard_index, draw, enter, enter_token_copy, landfall,
@@ -3440,7 +3440,7 @@ pub(crate) fn twinflame(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>
     // The guard is the first expression, so no other seat reaches the rest (pure reads: no RNG, no writes).
     if urdragon_seat(g, p)
         && (ready_garth(g, p).0
-            || (garth_line_alive(g, p) && !twinflame_lethal(g, p, &tg, post) && Situation::new(g, p).danger < 1.0))
+            || (garth_line_alive(g, p) && !twinflame_lethal(g, p, c, &tg, post) && Situation::new(g, p).danger < 1.0))
     {
         return Ok(vec![]);
     }
@@ -3452,20 +3452,46 @@ pub(crate) fn twinflame(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>
     }])
 }
 
+/// Would Terror of the Peaks' trigger of power `n` (resolved by `t2::best_target_any`) hit the opponent `q`'s face? The
+/// engine's order: the first opponent whose life is `n` or less takes it (a kill, which the caller counts itself); else
+/// the best creature it would remove (an opponent's targetable creature with toughness `n` or less and `pval` 3 or
+/// more); else the opponent with the highest `threat`. The same pure helpers, no writes.
+fn terror_hits_face(g: &Game, p: PlayerId, q: PlayerId, n: i32) -> bool {
+    let opps: Vec<PlayerId> = g.opps(p).collect();
+    if opps.iter().any(|&o| g.player(o).life <= n) {
+        return false;
+    }
+    let tg: Vec<PermId> = opps
+        .iter()
+        .flat_map(|&o| g.player(o).perms.iter().copied())
+        .filter(|&m| g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= n)
+        .collect();
+    if max_by(&tg, |m| pval(g, m)).is_some_and(|b| pval(g, b) >= 3.0) {
+        return false;
+    }
+    max_by(&opps, |o| threat(g, p, o)) == Some(q)
+}
+
 /// Twinflame's copies and p's ready fliers kill one opponent this turn: first main phase, and an opponent whom nothing
 /// protects (The One Ring and the like prevent all of it). Two kinds of damage reach that opponent:
-/// - combat damage, if it has no untapped flier or reach creature to block: p's ready fliers and the flying copies;
+/// - combat damage, if it has no untapped flier or reach creature to block: p's ready fliers and the flying copies, as
+///   many of them as the attack restrictions allow. A cap (Crawlspace) keeps the strongest attackers, flying or not;
+///   a tax (Ghostly Prison, Propaganda) is paid from the mana left after Twinflame, for the attackers worth it; a
+///   creature locked by an Arrest-style Aura can't attack;
 /// - Terror of the Peaks' enter trigger (not combat, so a blocker doesn't stop it, but it targets: a hexproof player
-///   can't be hit): each Terror p controls deals the power of every copy that enters.
+///   can't be hit): each Terror p controls deals the power of every copy that enters, but only where the engine would
+///   aim it (`terror_hits_face`), or as a kill when one trigger alone is enough.
 /// The copies are what the resolution really makes: the printed power of each target that Twinflame can legally target
 /// (no protection from red), `repl::tokens` of them per target (Doubling Season and company), while the token cap
 /// leaves room. Blocks by ground creatures are ignored: everything that deals combat damage here flies.
-fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
+fn twinflame_lethal(g: &Game, p: PlayerId, c: CardId, tg: &[PermId], post: bool) -> bool {
     if post {
         return false;
     }
     let red = crate::cards::Colors::from_letters("R");
-    let ready: i32 = g
+    let pacify = !g.auras.is_empty();
+    // the attackers: (power, flies, commander)
+    let mut atk: Vec<(i32, bool, bool)> = g
         .player(p)
         .perms
         .iter()
@@ -3477,35 +3503,42 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
                 && !x.tapped
                 && !x.noatk
                 && (!x.sick || has_haste(g, m))
-                && (x.fly || kw(g, m, "flying"))
+                && epow(g, m) > 0
+                && !(pacify && crate::cardcode::locked(g, m, "pacify"))
         })
-        .map(|&m| epow(g, m))
-        .ssum();
+        .map(|&m| (epow(g, m), g.perm(m).fly || kw(g, m, "flying"), g.perm(m).is_cmd))
+        .collect();
     let n = repl::tokens(g, p, 1);
     let mut room = TOKEN_CAP.saturating_sub(g.player(p).perms.iter().filter(|&&m| g.perm(m).token).count()) as u32;
-    let (mut flying, mut all) = (0i32, 0i32);
+    // the copies' powers with how many of each enter (one trigger of each Terror per copy)
+    let mut copies: Vec<(i32, u32)> = vec![];
     for &m in tg {
         let Some(cd) = g.perm(m).cd.filter(|_| !protected_from(g, m, red)) else { continue };
         let made = n.min(room);
         room -= made;
         let d = g.db.get(cd);
-        let power = d.pow.saturating_mul(made.min(i32::MAX as u32) as i32);
-        all = all.saturating_add(power);
-        if d.has_kw("flying") {
-            flying = flying.saturating_add(power);
+        if made > 0 && d.pow > 0 {
+            copies.push((d.pow, made));
+            atk.extend((0..made).map(|_| (d.pow, d.has_kw("flying"), false)));
         }
     }
+    if chasm(g, p) {
+        atk.clear(); // Glacial Chasm: creatures you control can't attack
+    }
+    // what Twinflame leaves to pay an attack tax with
+    let cost = 2 + 3 * (tg.len() as i64 - 1);
+    let left = (total_mana_spell(g, p, c, false) as i64 - cost).max(0);
     let terrors = g
         .player(p)
         .perms
         .iter()
         .filter(|&&m| g.perm(m).on_bf && !g.perm(m).phased && g.perm(m).name == "Terror of the Peaks")
-        .count() as i32;
-    let trigger = all.saturating_mul(terrors);
+        .count() as u32;
     g.opps(p).any(|q| {
         if !g.player(q).alive || prevents_damage(g, q, Some(p)) {
             return false;
         }
+        let life = g.player(q).life;
         let blocked_in_the_air = g.player(q).perms.iter().any(|&b| {
             let x = g.perm(b);
             g.is_creature(b)
@@ -3517,9 +3550,34 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
                     || kw(g, b, "reach")
                     || x.cd.is_some_and(|cd| g.db.get(cd).tag(Tag::Reach)))
         });
-        let combat = if blocked_in_the_air { 0 } else { ready.saturating_add(flying) };
-        let hit = if player_hexproof(g, q) { 0 } else { trigger };
-        combat.saturating_add(hit) >= g.player(q).life
+        let mut combat = 0i32;
+        if !blocked_in_the_air {
+            // `combat::attack_limits`: strongest first, the cap truncates, the tax is paid for the worthwhile attackers
+            let (tax, cap) = attack_restrictions(g, p, q);
+            let mut a = atk.clone();
+            a.sort_by(|x, y| y.0.cmp(&x.0).then(x.1.cmp(&y.1))); // ties: a ground creature takes the slot first
+            if let Some(k) = cap {
+                a.truncate(k.max(0) as usize);
+            }
+            if tax > 0 {
+                a.retain(|x| x.0 >= tax || (x.2 && x.0 >= 3));
+                a.truncate((left / tax as i64) as usize);
+            }
+            combat = a.iter().filter(|x| x.1).map(|x| x.0).ssum();
+        }
+        let mut hit = 0i32;
+        if terrors > 0 && !player_hexproof(g, q) {
+            for &(pow, made) in &copies {
+                if pow >= life {
+                    return true; // one trigger kills q by itself
+                }
+                if terror_hits_face(g, p, q, pow) {
+                    let total = (pow as i64).saturating_mul(made as i64 * terrors as i64);
+                    hit = hit.saturating_add(total.min(i32::MAX as i64) as i32);
+                }
+            }
+        }
+        combat.saturating_add(hit) >= life
     })
 }
 
