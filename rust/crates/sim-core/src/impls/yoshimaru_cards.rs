@@ -34,10 +34,12 @@ fn is_land_card(g: &Game, m: PermId) -> bool {
 // ================================================================== Yoshimaru, Ever Faithful
 /// **Yoshimaru, Ever Faithful** ({W} 1/1, Partner): "Whenever another legendary permanent you control enters, put a
 /// +1/+1 counter on Yoshimaru." A permanent that is not a land comes through the enters event; a land through the
-/// engine's land-enters event (`Event::LandEnters`, fired once per land by `zones::lands_entered`, however the land
-/// came: played, fetched, put onto the battlefield, a token copy). Both are stack triggers, so Panharmonicon, Ancient
-/// Greenwarden, Delney, Torpor Orb and Hushbringer act on them. A creature land is counted by the land event only
-/// (a token copy of a legendary land that is also a creature fires both events).
+/// engine's land-enters event (`Event::LandEnters`, fired once per land by the sweep `zones::lands_entered` makes over
+/// the lands on the battlefield: played, fetched, put onto the battlefield, a token copy; a land that enters and leaves
+/// again inside one resolution before the sweep is not seen, because `add_land` records no entry). Both are stack
+/// triggers, so Panharmonicon, Ancient Greenwarden, Starfield Vocalist, Delney, Torpor Orb and Hushbringer act on them.
+/// A creature land is counted by the land event only (a token copy of a legendary land that is also a creature fires
+/// both events).
 fn yoshimaru_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if m == src || !live(g, src) || g.perm(src).owner != p || is_land_card(g, m) || !legendary(g, m) {
         return Ok(());
@@ -333,8 +335,11 @@ fn station_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 /// its `land_etb` hook marks it `DataKey::LandFace`: it is then only a land (not a white Human Warlock creature) and
 /// the creature face's compiled enters trigger does not fire. The AI plays it as a land only when short of lands (that
 /// rule's heuristics) and pays the 3 life by the shared land-payment rule; a person may play it as their land drop any
-/// time they could play a land, and answers the pay-3-life question (not asked without 3 life). With Spelunking out
-/// the land enters untapped whatever is paid, so no life is paid and it is not tapped.
+/// time they could play a land, and answers the pay-3-life question (not asked without 3 life, or while their life
+/// can't change). With Spelunking out the land enters untapped whatever is paid, so no life is paid and it is not
+/// tapped (the controller's other legal order, tapped, is not offered: nothing rewards it); under Blood Moon it is a
+/// Mountain without the ability, so nothing is paid or asked. The land face is playable from the hand only (a play
+/// permission from exile or the graveyard does not offer it: an engine limit shared with every modal land).
 fn meadow_cols(_g: &Game, _p: PlayerId, _l: PermId) -> Colors {
     Colors::from_letters("W")
 }
