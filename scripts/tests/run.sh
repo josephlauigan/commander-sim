@@ -59,6 +59,14 @@ sub "$tmp/b2/$tests/practice_choice_probe.rs" '    /* block' '    ("sheoldred: N
 expect "allowlists: a new FALSE_ALARMS entry fails" 1 "${gc[@]}" allowlists "$tmp/base" "$tmp/b2"
 has "allowlists: names the new entry" "NEW entry: sheoldred: New Thing"
 
+rm -rf "$tmp/b2r"; mkbranch "$tmp/base" "$tmp/b2r"
+sub "$tmp/b2r/$tests/practice_choice_probe.rs" 'const TO_FIX: &[&str] = &[];' 'const PENDING: &[&str] = &["Some Card"];'
+expect "allowlists: renaming an EMPTY frozen list is not a way round" 1 "${gc[@]}" allowlists "$tmp/base" "$tmp/b2r"
+has "allowlists: says the const is not found" "TO_FIX: the const the base freezes is not found"
+rm -rf "$tmp/b2s"; mkbranch "$tmp/base" "$tmp/b2s"
+sub "$tmp/b2s/$tests/practice_choice_probe.rs" 'const TO_FIX: &[&str] = &[];' 'static TO_FIX: &[&str] = &["Some Card"];'
+expect "allowlists: const turned into static on an empty list fails" 1 "${gc[@]}" allowlists "$tmp/base" "$tmp/b2s"
+
 rm -rf "$tmp/b3"; mkbranch "$tmp/base" "$tmp/b3"
 sub "$tmp/b3/$tests/practice_choice_probe.rs" 'new targets for a spell on the stack"),
 ];' 'new targets, reworded"),
@@ -339,6 +347,7 @@ echo "R1  $deck draws a card"
 echo "$decides"
 if (( k % 2 == 0 )) && [[ $variant != nocast ]]; then echo "R2  $deck $cast"; echo "R2  Opp A casts Foo Bar"; fi
 [[ $variant == oppq ]] && echo "R2  Opp A casts Qux"
+if (( k % 2 == 1 )); then echo "R2  Opp A casts Foo Bar"; fi
 [[ $variant == envdump ]] && echo "R2  env AI_SEARCH=${AI_SEARCH:-unset} ROOT=$COMMANDER_SIM_ROOT"
 echo "R$last  $deck $act"
 echo "Winner: $winner ($wintype)"
@@ -420,7 +429,7 @@ has "compare: counts DIAG for the deck-tier" "^yshtola/t5 +0 +3 +0"
 
 expect "compare: PLAY fails" 1 "${tc[@]}" "$B" "$tmp/rec/play"
 has "compare: PLAY names the record" "PLAY +yshtola/t5 seed 1"
-has "compare: PLAY gives the first differing line number" "first difference at base line 5, branch line 5"
+has "compare: PLAY gives the first differing line number" "first difference at base line 6, branch line 6"
 has "compare: PLAY gives both lines" "base:   R3  yshtola attacks"
 has "compare: PLAY gives the branch line" "branch: R3  yshtola passes"
 
@@ -430,6 +439,18 @@ has "compare: RESULT shows the branch result" "branch \('Opp A', 'Damage', 3\)"
 
 expect "compare: ERROR fails" 1 "${tc[@]}" "$B" "$tmp/rec/panic"
 has "compare: ERROR carries the panic line" "branch exit 1: panic: boom"
+# a base crash that the branch fixes is a RESULT difference (allowable), not an ERROR
+python3 -I -c "
+import json,sys
+src,dst=sys.argv[1],sys.argv[2]
+rows=[json.loads(l) for l in open(src+'/records.jsonl')]
+for r in rows:
+    if r['deck']=='yshtola' and r['k']==1: r['exit']=1
+import shutil; shutil.copytree(src,dst,dirs_exist_ok=True)
+open(dst+'/records.jsonl','w').write(''.join(json.dumps(r)+'\n' for r in rows))" "$B" "$tmp/rec/basecrash"
+expect "compare: a crash fixed by the branch is not an ERROR" 1 "${tc[@]}" "$tmp/rec/basecrash" "$B"
+has "compare: it is a RESULT with the reason" "branch exits 0 \(a fixed crash\)"
+expect "compare: and an allowed deck lets it through" 0 "${tc[@]}" "$tmp/rec/basecrash" "$B" --allow yshtola
 expect "compare: --allow never lets an ERROR through" 1 "${tc[@]}" "$B" "$tmp/rec/panic" --allow yshtola
 mkdir -p "$tmp/rec/empty1" "$tmp/rec/empty2"; : >"$tmp/rec/empty1/records.jsonl"; : >"$tmp/rec/empty2/records.jsonl"
 printf '{"mode": "l2"}\n' >"$tmp/rec/empty1/meta.json"; cp "$tmp/rec/empty1/meta.json" "$tmp/rec/empty2/meta.json"
@@ -495,6 +516,10 @@ import sys; sys.path.insert(0, sys.argv[1])
 import record
 a, o = record.cast_flags(b\"R2  Scarlet Witch: yshtola casts Foo\\nR3  Opp A casts Foo Bar\\n\", ['Foo'], 'yshtola', ['Foo', 'Foo Bar'])
 sys.exit(0 if (a['Foo'], o['Foo']) == (1, 1) else 1)" "$scripts/gates-lib"
+expect "compare l3: deck:Card passes when that deck's seat casts the card" 0 "${tc[@]}" "$L" "$tmp/rec/l3-base" --changed-cards 'yshtola:Foo'
+expect "compare l3: deck:Card fails when that deck's seat never casts it" 1 "${tc[@]}" "$L" "$tmp/rec/l3-base" --changed-cards 'yshtola:Qux'
+has "compare l3: names the deck and tier" "changed card 'yshtola:Qux': never cast in the branch in yshtola/t5"
+expect "compare l3: deck:Card for a deck with no records fails" 1 "${tc[@]}" "$L" "$tmp/rec/l3-base" --changed-cards 'nodeck:Foo'
 expect "compare l3: a changed card never cast fails" 1 "${tc[@]}" "$L" "$tmp/rec/l3-nocast" --changed-cards Foo
 has "compare l3: says never cast" "changed card 'Foo' was never cast by a deck's own seat in the branch"
 expect "compare l3: unless explained" 0 "${tc[@]}" "$L" "$tmp/rec/l3-nocast" --changed-cards Foo --explained Foo

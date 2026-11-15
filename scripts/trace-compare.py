@@ -103,6 +103,8 @@ def classify(key, b, r, base_dir, branch_dir, rewrites, expect):
         return "MISSING", []
     if b is None:
         return "NEW", []
+    if b["exit"] != 0 and r["exit"] == 0:
+        return "RESULT", [f"base exited {b['exit']}: {b.get('stderr1', '')}", "branch exits 0 (a fixed crash)"]
     if b["exit"] != 0 or r["exit"] != 0:
         return "ERROR", [f"base exit {b['exit']}: {b.get('stderr1', '')}", f"branch exit {r['exit']}: {r.get('stderr1', '')}"]
     blines = None
@@ -254,6 +256,19 @@ def compare_l3(base, branch, a):
     check_rows = own_rows if own_rows else cast_rows
     for c in changed:
         if c in explained:
+            continue
+        # 'deck:Card' checks only that deck's own seat (a card in two decks must be cast by the deck that changed)
+        deck, _, card = c.partition(":") if ":" in c else ("", "", c)
+        if deck:
+            if card not in check_rows:
+                problems.append(f"changed card {card!r} is not in the recording (was --cards given?)")
+                continue
+            rows = {t: v for t, v in check_rows[card].items() if t.startswith(deck + "/")}
+            if not rows:
+                problems.append(f"changed card {c!r}: no records for deck {deck!r}")
+            for t, v in sorted(rows.items()):
+                if v[1] == 0:
+                    problems.append(f"changed card {c!r}: never cast in the branch in {t}" + (f" (the base cast it in {v[0]} games)" if v[0] else ""))
             continue
         if c not in check_rows:
             problems.append(f"changed card {c!r} is not in the recording (was --cards given?)")

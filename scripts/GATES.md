@@ -76,7 +76,7 @@ exited non-zero), MISSING (base only; a failure unless declared with `--expect-m
 only). `--rewrite` applies a regex to every base log line before hashing. Exit non-zero if a record of a deck not in `--allow` is
 not SAME. For l3 recordings the comparer reports panics, timeouts and no-winner games per deck-tier against the base on the same
 seeds, lists each seed that newly times out, and prints cast counts per card; it fails on any branch panic, a timeout or no-winner
-count above the base's, and a `--changed-cards` card that is never cast in the branch by a deck's own seat (or no longer cast where the base cast it); casts are matched by exact card name (`Twinflame` does not match `Twinflame Tyrant`), a recording made before own-seat counts existed is refused against a newer one, and an `ERROR` record is never allowed by `--allow`
+count above the base's, and a `--changed-cards` card (`Card`, or `deck:Card` to look at that deck's seat only: use it for a card that is in more than one deck) that is never cast in the branch by a deck's own seat (or no longer cast where the base cast it); casts are matched by exact card name (`Twinflame` does not match `Twinflame Tyrant`), a recording made before own-seat counts existed is refused against a newer one, and an `ERROR` record is never allowed by `--allow`
 unless named in `--explained`. It prints no win rates.
 
 ## Tests

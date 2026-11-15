@@ -229,7 +229,7 @@ def allowlists(base_tree, branch_tree):
         fname, cname = ident
         b_entries, n_entries = base[ident], branch[ident]
         if n_entries is None:
-            if b_entries:  # a rename, or `const` turned into `static`, would switch the freeze off
+            if b_entries is not None:  # a rename, or `const` turned into `static`, would switch the freeze off
                 problems.append(f"{fname} {cname}: the const the base freezes is not found in the branch (renamed or removed?)")
             continue
         total += len(n_entries)
@@ -283,7 +283,8 @@ def verdict(path, head):
         text = f.read()
     first = text.split("\n", 1)[0].rstrip("\r").rstrip()
     problems = [] if first == "VERDICT: commit" else ["need exactly `VERDICT: commit`"]
-    m = re.search(r"^Reviewed head: ([0-9a-f]{8,40})\s*$", text, re.M)
+    lines = text.split("\n")
+    m = re.match(r"^Reviewed head: ([0-9a-f]{8,40})\s*$", lines[1]) if len(lines) > 1 else None
     if not m:
         problems.append("need a line `Reviewed head: <hash>` naming the reviewed commit")
     elif not head.startswith(m.group(1)):
