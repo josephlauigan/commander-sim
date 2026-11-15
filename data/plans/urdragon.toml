@@ -19,13 +19,19 @@
 # Ur-Dragon's free drop never puts Tiamat onto the battlefield (`ur_pick`: her search is "if you cast it"); Twinflame is
 # held while the Garth line is alive (Garth, Spark Double and Doubling Season each in hand, library or on the
 # battlefield) and released when a piece is dead, the table can kill you, or this turn's copies and ready fliers are
-# lethal (`mine::twinflame`: counts Doubling Season's copies, the token cap, protection, hexproof, attack taxes and caps,
-# and Terror of the Peaks' trigger where the engine would aim it); Spark Double copies Garth when Doubling Season (in
+# lethal (`mine::twinflame`: counts Doubling Season's copies, the token cap, and Terror of the Peaks' triggers replayed
+# one at a time where the engine would aim them; combat damage counts only with no attack cap out and no tax on that
+# opponent, and an opponent whose damage is prevented, halved, floored or turned into poison counts for nothing);
+# Spark Double copies Garth when Doubling Season (in
 # hand or out) and Twinflame (in hand) are there, or a Demonic or Vampiric Tutor can fetch the missing one
 # (`common::spark_copy`). The fair Twinflame resolver itself now makes Doubling Season's copies and skips targets with
-# protection from red for every seat (Twinflame is in no other registered deck). Still open: a Spark Double cast, or
-# free-dropped, before Garth is on the battlefield copies something else and kills the line (nothing holds it back
-# yet).
+# protection from red for every seat (Twinflame is in no other registered deck). Limits of the lethal release: a later
+# copy's entry also triggers the earlier Terror token, which the count leaves out (it only delays the release); effects
+# an opponent adds after the cast (a fog, Teferi's Protection, Angel's Grace, removal) are not read; under a tax or a
+# cap, or against Gisela, Angel's Grace, Phyrexian Unlife or Serra's emblem, only Terror's triggers can release it; and
+# the AI's defender choice does not count the hasty copies, so at four seats it may attack another opponent. Still
+# open: a Spark Double cast, or free-dropped, before Garth is on the battlefield copies something else and kills the
+# line (nothing holds it back yet).
 # The `plays` set (the mulligan's "something to do") leaves out Mox Jasper (dead before a Dragon) and Garth One-Eye;
 # Temur Ascendancy is in it (JD, 2026-11-14).
 # Garth line: Commander Spellbook variant 1171-1235-3908-4772 (not written on the line: the plan test checks `spellbook`
