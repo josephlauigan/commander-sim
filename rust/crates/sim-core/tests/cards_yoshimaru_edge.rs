@@ -944,3 +944,34 @@ fn meadow_life_locked_cannot_pay_three_for_untapped_entry() {
     assert_eq!(g.player(P0).life, 40);
     assert!(g.perm(m).tapped, "life that cannot change cannot pay nonzero life");
 }
+
+#[test]
+fn astral_dragon_copies_meadow_face_as_land_creatures() {
+    let mut g = tbl();
+    person(&mut g, |_| Some(1));
+    let m = play_meadow(&mut g);
+    let c = g.perm(m).card();
+    person(&mut g, |r| r.choices.iter().position(|s| s.contains("Witch Enchanter")));
+    perm(&mut g, P0, "Astral Dragon");
+    let copies: Vec<_> =
+        g.player(P0).perms.iter().copied().filter(|&x| g.perm(x).token && g.perm(x).cd == Some(c)).collect();
+    assert_eq!(copies.len(), 2);
+    for n in copies {
+        assert!(g.is_creature(n));
+        assert_eq!(chars::power(&g, n), 3);
+        assert!(chars::card_types(&g, n).has(Types::LAND), "copies of land face remain lands");
+        assert_eq!(chars::colors(&g, n), Colors::NONE);
+        assert!(g.player(P0).lands.contains(&n));
+    }
+}
+
+#[test]
+fn seriema_threshold_types_and_stats_agree() {
+    let mut g = tbl();
+    let s = seriema(&mut g);
+    g.perm_mut(s).data.set(DataKey::Charge, Val::Int(7));
+    assert!(g.is_creature(s));
+    assert_eq!((chars::power(&g, s), chars::toughness(&g, s)), (5, 5));
+    assert!(chars::card_types(&g, s).has(Types::CREATURE), "an artifact creature has both card types");
+    assert!(chars::card_types(&g, s).has(Types::ARTIFACT));
+}
