@@ -113,7 +113,7 @@ fn the_cast_sets_the_plan_keyed_to_seat_turn_and_opponent() {
     assert_eq!(g.release_attack, None);
     cast_release(&mut g);
     assert_eq!(copies(&g), 1);
-    assert_eq!(g.release_attack, Some((P0, turns(&g, P0), Q)));
+    assert_eq!(g.release_attack, Some((P0, turns(&g, P0), Q, 0)));
 }
 
 /// a combat that asks for no plan: the plan ends with the combat (`continue_turn` clears it) and nobody is attacked
@@ -184,7 +184,7 @@ fn a_seat_of_another_deck_does_not_take_a_plan() {
         g.perm_mut(m).tapped = true; // no blocker in the air for seat 1's fliers
     }
     g.player_mut(P0).life = 16;
-    g.release_attack = Some((P1, turns(&g, P1), P0));
+    g.release_attack = Some((P1, turns(&g, P1), P0, 0));
     assert_eq!(sim_core::ai::choose_attack(&mut g, P1).unwrap(), None, "seph took a plan");
 }
 
@@ -314,7 +314,7 @@ fn a_copy_made_after_the_cast_inherits_the_plan_and_the_real_game_keeps_its_own(
     let mut copy = sim_core::ai::search::clone(&mut g);
     assert_eq!(copy.release_attack, g.release_attack);
     assert_eq!(sim_core::ai::choose_attack(&mut copy, P0).unwrap(), Some((Q, "all")));
-    assert_eq!(g.release_attack, Some((P0, turns(&g, P0), Q)));
+    assert_eq!(g.release_attack, Some((P0, turns(&g, P0), Q, 0)));
 }
 
 // ------------------------------------------------------------------ fix round: the re-check, the contracts, the pins

@@ -3711,6 +3711,17 @@ fn foreign_triggers(g: &Game, p: PlayerId, quiet: bool) -> bool {
 /// leaves room. Blocks by ground creatures are ignored: everything that deals combat damage here flies.
 /// Returns the opponents it finds killable (none: no release).
 fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> Vec<PlayerId> {
+    twinflame_reach(g, p, tg, post)
+        .into_iter()
+        .filter(|&(q, dmg)| dmg >= g.player(q).life as i64)
+        .map(|x| x.0)
+        .collect()
+}
+
+/// The estimate behind `twinflame_lethal`: the damage it counts to each opponent it can count on (a `clean` one), in
+/// seat order; empty in the cases where it counts nothing (`post`, a foreign trigger). `twinflame_lethal` keeps those
+/// whose damage reaches their life; the committed attack's re-check also reads the margin (damage minus life).
+fn twinflame_reach(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> Vec<(PlayerId, i64)> {
     if post {
         return vec![];
     }
@@ -3803,9 +3814,9 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> Vec<Pla
     }
     let taken = terror_replay(g, p, &triggers);
     g.opps(p)
-        .filter(|&q| {
+        .filter_map(|q| {
             if !clean(g, p, q) {
-                return false;
+                return None;
             }
             let blocked_in_the_air = g.player(q).perms.iter().any(|&b| {
                 let x = g.perm(b);
@@ -3836,7 +3847,7 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> Vec<Pla
                 if blocked_in_the_air || capped || taxed || fogged || shielded || guarded { 0 } else { fliers };
             // Terror's triggers do not depend on blockers; a hexproof player can't be targeted, whatever the engine's aim
             let hit = if player_hexproof(g, q) { 0 } else { taken.iter().find(|x| x.0 == q).map_or(0, |x| x.1) };
-            combat as i64 + hit >= g.player(q).life as i64
+            Some((q, combat as i64 + hit))
         })
         .collect()
 }
@@ -3896,7 +3907,13 @@ fn twinflame_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if urdragon_seat(g, p) && made > 0 && !g.in_search && !crate::human::is_human(g, p) && g.player(p).alive && !g.over
     {
         if let Some(q) = proven {
-            g.release_attack = Some((p, g.player(p).turns, q));
+            // the estimate's margin on what is out now (Terror's triggers already dealt, the copies counted as ready
+            // fliers); `i64::MAX` when it does not count q: the re-check then asks for lethal
+            let margin = twinflame_reach(g, p, &[], false)
+                .into_iter()
+                .find(|x| x.0 == q)
+                .map_or(i64::MAX, |(_, dmg)| dmg - g.player(q).life as i64);
+            g.release_attack = Some((p, g.player(p).turns, q, margin));
         }
     }
     Ok(true)
@@ -3904,19 +3921,25 @@ fn twinflame_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 /// The first combat's plan after a Twinflame release: all at the opponent the check proved, if it still holds on the
 /// real board. The plan is keyed to the seat and its turn count (an extra turn in the same round is another turn) and
-/// is used once. It is checked again with the estimate on what is out now (`twinflame_lethal` with no new targets: the
+/// is used once. It is checked again with the estimate on what is out now (`twinflame_reach` with no new targets: the
 /// copies that entered count as ready fliers and Terror's triggers already happened): main phase 1 goes on after the
-/// cast, and opponents can answer before combat (life gained, copies removed, a counted Dragon tapped for mana). If
-/// it no longer holds, the combat chooses as it always did.
+/// cast, and opponents can answer before combat (life gained, copies removed, a counted Dragon tapped for mana). The
+/// estimate may undercount the proven attack (double strike, a damage doubler), so the plan is kept when the estimate
+/// still finds q killable, or is no worse than it was when the copies entered (`m1 >= m0`, the margin stored with the
+/// plan); it only ever drops a plan. If it is dropped, the combat chooses as it always did.
 pub(crate) fn release_plan(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
     if !urdragon_seat(g, p) {
         return None;
     }
-    let (a, turns, q) = g.release_attack.take()?;
+    let (a, turns, q, m0) = g.release_attack.take()?;
     if a != p || turns != g.player(p).turns || !g.player(q).alive || !g.opps(p).any(|o| o == q) {
         return None;
     }
-    if !twinflame_lethal(g, p, &[], false).contains(&q) {
+    let m1 = twinflame_reach(g, p, &[], false)
+        .into_iter()
+        .find(|x| x.0 == q)
+        .map(|(_, dmg)| dmg - g.player(q).life as i64)?;
+    if m1 < 0 && m1 < m0 {
         return None;
     }
     crate::glog!(g, "      [{} attack plan by Twinflame release: all at {}]", g.player(p).name, g.player(q).name);

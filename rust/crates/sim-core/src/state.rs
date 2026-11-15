@@ -1431,9 +1431,12 @@ pub struct Game {
     /// a look-ahead copy playing out one attack plan: (defender, 'filtered' | 'all' | 'none')
     pub forced_attack: Option<(PlayerId, Sym)>,
     /// the Ur-Dragon seat's Twinflame release proved an all-out attack on one opponent: (the seat, its `turns` count when
-    /// the copies entered, the opponent). The seat's first combat that turn takes it when it still holds
-    /// (`mine::release_plan`); `continue_turn` clears it after the combat. Never set inside a look-ahead copy.
-    pub release_attack: Option<(PlayerId, u32, PlayerId)>,
+    /// the copies entered, the opponent, the lethal estimate's margin on that opponent right after the copies entered:
+    /// damage counted minus life, `i64::MAX` when it did not count it). The seat's first combat that turn takes it when
+    /// it still holds (`mine::release_plan`); `continue_turn` clears it after the combat; a look-ahead copy that resumes
+    /// after combat keeps it, unused, and the seat-and-turn key drops it at the next combat that asks. Never set inside
+    /// a look-ahead copy.
+    pub release_attack: Option<(PlayerId, u32, PlayerId, i64)>,
     /// look-ahead decisions taken in this game, and engine steps its playouts used (the per-game caps)
     pub search_n: u32,
     pub search_work: u64,
