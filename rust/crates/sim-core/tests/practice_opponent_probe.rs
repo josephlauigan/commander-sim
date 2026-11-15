@@ -83,7 +83,7 @@ fn relevant(t: &str) -> bool {
 }
 
 // ------------------------------------------------------------------------------------------------ the table
-const P0_KEY: &str = "aragorn";
+const P0_KEY: &str = "urdragon";
 
 fn build(key1: &str) -> (Game, Arc<ScriptHuman>) {
     let mut g: Game = table(&[P0_KEY, key1]);
@@ -114,6 +114,9 @@ fn build(key1: &str) -> (Game, Arc<ScriptHuman>) {
         let c = take(&mut g, P0, n);
         g.player_mut(P0).gy.push(c);
     }
+    // Etali can cast a removal spell from the person's library; keep that scenario independent of the seat's shuffle.
+    let removal = take(&mut g, P0, "Swords to Plowshares");
+    g.player_mut(P0).library.push(removal);
     pool(&mut g, P0, &[('W', 3), ('U', 3), ('B', 3), ('R', 3), ('G', 3), ('C', 3)]);
     // the opponent: two creatures, lands of every colour, something in the graveyard
     for n in ["Armored Warhorse", "Glory Seeker"] {

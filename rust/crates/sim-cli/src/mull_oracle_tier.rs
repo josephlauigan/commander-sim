@@ -664,16 +664,16 @@ mod tests {
     #[test]
     fn only_the_decks_own_tiers_are_played() {
         let sim = sim();
-        // cloud is t1-t3, aragorn t4-t5, thrasios t6
-        let p = check_args(&sim, &args("--mulligan-oracle cloud,aragorn --vs-tier")).unwrap();
+        // cloud is t1-t3, sheoldred t3-t4, thrasios t6
+        let p = check_args(&sim, &args("--mulligan-oracle cloud,sheoldred --vs-tier")).unwrap();
         assert_eq!(p[0].1, ["t1", "t2", "t3"]);
-        assert_eq!(p[1].1, ["t4", "t5"]);
+        assert_eq!(p[1].1, ["t3", "t4"]);
         assert_eq!(check_args(&sim, &args("--mulligan-oracle cloud --vs-tier --pool t2")).unwrap()[0].1, ["t2"]);
         // a tier outside the deck's own is refused, as `--deck X --pool tN` is
         let e = check_args(&sim, &args("--mulligan-oracle cloud --vs-tier --pool t5")).unwrap_err();
         assert!(e.contains("only simulated against") && e.contains("t1, t2, t3"), "{e}");
         assert!(
-            check_args(&sim, &args("--mulligan-oracle aragorn,cloud --vs-tier --pool t4")).is_err(),
+            check_args(&sim, &args("--mulligan-oracle sheoldred,cloud --vs-tier --pool t4")).is_err(),
             "cloud has no t4"
         );
         // no --any-tier, no conservative profile, your decks only
@@ -697,7 +697,7 @@ mod tests {
     fn the_arms_are_paired() {
         let sim = sim();
         let e = &sim.engine;
-        for key in ["aragorn", "thrasios"] {
+        for key in ["cloud", "thrasios"] {
             let tier = &deck_tiers(&sim, key)[0];
             let ctx = TierCtx::new(&sim, key, tier, "loose", 2, false).unwrap();
             for seed in 500000..500006u64 {
@@ -748,8 +748,8 @@ mod tests {
     #[test]
     fn a_small_run_is_deterministic_and_the_csv_has_its_columns() {
         let sim = sim();
-        let tiers = vec!["t4".to_string(), "t5".to_string()];
-        let rs = run_deck(&sim, "aragorn", &tiers, "loose", 2, 2, 500000).unwrap();
+        let tiers = vec!["t1".to_string(), "t2".to_string()];
+        let rs = run_deck(&sim, "cloud", &tiers, "loose", 2, 2, 500000).unwrap();
         assert!(rs.len() >= 4 && rs.iter().all(|r| r.tries <= 1 && tiers.contains(&r.tier)));
         assert_eq!(rs.iter().filter(|r| r.tries == 0).count(), 4, "two hands x two tiers");
         for r in &rs {
@@ -761,17 +761,17 @@ mod tests {
             assert_eq!(r.cards.len(), 7);
             assert!((r.diff - (r.mull_wr - r.keep_wr)).abs() < 1e-9);
         }
-        let again = run_deck(&sim, "aragorn", &tiers, "loose", 2, 2, 500000).unwrap();
+        let again = run_deck(&sim, "cloud", &tiers, "loose", 2, 2, 500000).unwrap();
         assert_eq!(rs, again, "the same seed gives the same report");
-        let text = render(&sim, "aragorn", &tiers, &rs, 2, 2, "adaptive", 500000, 0.0);
+        let text = render(&sim, "cloud", &tiers, &rs, 2, 2, "adaptive", 500000, 0.0);
         assert!(
-            text.contains("mulligan oracle vs t4") && text.contains("vs t5") && text.contains("over t4, t5"),
+            text.contains("mulligan oracle vs t1") && text.contains("vs t2") && text.contains("over t1, t2"),
             "{text}"
         );
         assert!(text.contains("Worst disagreements, the rule KEEPS") && text.contains("Win rate by hand"));
-        assert!(text.contains("SUMMARY aragorn over t4, t5"));
+        assert!(text.contains("SUMMARY cloud over t1, t2"));
         // the CSV
-        let csv = csv_header() + &csv_rows("aragorn", &rs);
+        let csv = csv_header() + &csv_rows("cloud", &rs);
         let mut lines = csv.lines();
         let head: Vec<&str> = lines.next().unwrap().split(',').collect();
         assert_eq!(head, CSV_COLUMNS);
@@ -789,7 +789,7 @@ mod tests {
             }
             cells.push(cur);
             assert_eq!(cells.len(), CSV_COLUMNS.len(), "{line}");
-            assert_eq!((cells[0].as_str(), cells[1].as_str()), ("aragorn", r.tier.as_str()));
+            assert_eq!((cells[0].as_str(), cells[1].as_str()), ("cloud", r.tier.as_str()));
             assert_eq!((cells[2].parse::<u64>().unwrap(), cells[3].parse::<i64>().unwrap()), (r.seed, r.tries));
             assert_eq!(cells[4], if r.rule_keeps { "keep" } else { "mulligan" });
             assert_eq!(cells[10].split(" | ").count(), 7);
@@ -803,18 +803,18 @@ mod tests {
     fn a_plain_pool_run_is_unchanged() {
         let sim = sim();
         let ctx = crate::poolmode::Ctx { sim: &sim, verbose: false };
-        let opp = sim.pool_keys("t4");
+        let opp = sim.pool_keys("t2");
         let run = || {
-            let t = ctx.run("aragorn", None, &opp, "loose", 6, 500000);
+            let t = ctx.run("cloud", None, &opp, "loose", 6, 500000);
             let mut by: Vec<(u64, bool)> = t.by_seed.iter().map(|(k, v)| (*k, *v)).collect();
             by.sort();
             (t.n, t.win, t.win_turns, t.loss_turns, by)
         };
         let before = run();
-        let gf = crate::goldfish::run_deck(&sim, "aragorn", "loose", 4, 500000).unwrap();
-        let _ = run_deck(&sim, "aragorn", &["t4".to_string()], "loose", 2, 2, 500000).unwrap();
+        let gf = crate::goldfish::run_deck(&sim, "cloud", "loose", 4, 500000).unwrap();
+        let _ = run_deck(&sim, "cloud", &["t2".to_string()], "loose", 2, 2, 500000).unwrap();
         assert_eq!(before, run());
-        assert_eq!(gf, crate::goldfish::run_deck(&sim, "aragorn", "loose", 4, 500000).unwrap());
+        assert_eq!(gf, crate::goldfish::run_deck(&sim, "cloud", "loose", 4, 500000).unwrap());
     }
 
     #[test]

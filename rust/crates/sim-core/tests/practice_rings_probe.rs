@@ -32,7 +32,7 @@ const P1: PlayerId = PlayerId(1);
 /// the decks with Rings of Brighthearth (karn, thrasios) or Peter Parker's Camera (sauron) first, then the rest: a card
 /// added to any of them later is covered too
 const DECKS: &[&str] =
-    &["karn", "thrasios", "alela", "cloud", "galadriel", "aragorn", "sheoldred", "thanos", "urdragon", "yshtola"];
+    &["karn", "thrasios", "alela", "cloud", "galadriel", "sheoldred", "thanos", "urdragon", "yshtola"];
 
 /// where the ability is used from
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -430,7 +430,6 @@ const EXCEPTIONS: &[(&str, &str)] = &[
         "thanos: Basalt Monolith #0",
         "\"start the loop\": a table shortcut standing for the whole Basalt Monolith + Rings loop (each pass of it is a real activation Rings copies, see play_rings.rs); not an ability itself",
     ),
-    ("aragorn: Niv-Mizzet, Parun #0", "a setting (where its pings go), not an ability"),
     ("urdragon: Niv-Mizzet, the Firemind #0", "a setting (where its pings go), not an ability"),
     (
         "sheoldred: Bolas's Citadel #0",

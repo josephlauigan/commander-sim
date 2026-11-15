@@ -422,7 +422,7 @@ mod tests {
     #[test]
     fn the_oracle_deals_the_hands_the_game_deals() {
         let sim = sim();
-        for key in ["aragorn".to_string(), t6_key(&sim)] {
+        for key in ["cloud".to_string(), t6_key(&sim)] {
             let ctx = ctx_for(&sim, &key, "loose", 2).unwrap();
             let e = &sim.engine;
             for seed in 500000..500012u64 {
@@ -462,7 +462,7 @@ mod tests {
     #[test]
     fn the_keep_arm_starts_with_the_hand_and_reshuffles_the_rest() {
         let sim = sim();
-        let key = "aragorn";
+        let key = "cloud";
         let ctx = ctx_for(&sim, key, "loose", 2).unwrap();
         let e = &sim.engine;
         let th = &opening_tries(&e.db, &e.registry, &ctx.settings, 500003, &ctx.seats)[0];
@@ -495,7 +495,7 @@ mod tests {
     #[test]
     fn the_mode_runs_on_a_jd_deck_and_a_tier_6_deck() {
         let sim = sim();
-        for key in ["aragorn".to_string(), t6_key(&sim)] {
+        for key in ["cloud".to_string(), t6_key(&sim)] {
             let rs = run_deck(&sim, &key, "loose", 4, 2, 500000).unwrap();
             assert!(rs.len() >= 4 && rs.iter().all(|r| r.tries <= 1));
             assert_eq!(rs.iter().filter(|r| r.tries == 0).count(), 4);
@@ -522,7 +522,7 @@ mod tests {
     #[test]
     fn a_plain_goldfish_run_is_unchanged() {
         let sim = sim();
-        let key = "aragorn";
+        let key = "cloud";
         let before = crate::goldfish::run_deck(&sim, key, "loose", 8, 500000).unwrap();
         let _ = run_deck(&sim, key, "loose", 3, 2, 500000).unwrap();
         let after = crate::goldfish::run_deck(&sim, key, "loose", 8, 500000).unwrap();

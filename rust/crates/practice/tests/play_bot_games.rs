@@ -147,14 +147,6 @@ fn play(deck: &str, tier: &str, seed: u64) {
 }
 
 #[test]
-fn aragorn_t4() {
-    play("aragorn", "t4", 2);
-}
-#[test]
-fn aragorn_t5() {
-    play("aragorn", "t5", 2);
-}
-#[test]
 fn sheoldred_t3() {
     play("sheoldred", "t3", 1);
 }

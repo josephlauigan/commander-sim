@@ -268,7 +268,7 @@ mod tests {
 
     fn args(extra: &[&str]) -> Args {
         let mut v: Vec<String> =
-            ["--deck", "aragorn", "--pool", "t4", "--swap", "A=>B"].iter().map(|s| s.to_string()).collect();
+            ["--deck", "cloud", "--pool", "t2", "--swap", "A=>B"].iter().map(|s| s.to_string()).collect();
         v.extend(extra.iter().map(|s| s.to_string()));
         crate::args::parse(&v).unwrap()
     }
