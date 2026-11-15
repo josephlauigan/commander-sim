@@ -1,0 +1,7 @@
+//! fixture: shaped like rust/crates/sim-core/tests/spellbook.rs
+const KNOWN_GAPS: &[(&str, &str)] = &[
+    ("aragorn", "1368-1414-4856"), // Underworld Breach + Lotus Petal + Brain Freeze
+    ("thanos", "1368-1414-4856"),  // the same combo
+    ("krenko", "38-659-2645"),     // Skirk Prospector
+    ("krenko", "38-659-2816"),     // Skirk Prospector
+];

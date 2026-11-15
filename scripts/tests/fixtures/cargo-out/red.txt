@@ -1,0 +1,15 @@
+EXIT 101
+     Running tests/cards_x.rs (target/release/deps/cards_x-fedcba9876543210)
+
+running 1 test
+test the::fix_test ... FAILED
+
+failures:
+
+---- the::fix_test stdout ----
+thread 'the::fix_test' panicked at tests/cards_x.rs:12:5:
+assertion `left == right` failed
+
+test result: FAILED. 0 passed; 1 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+error: test failed, to rerun pass `-p sim-core --test cards_x`

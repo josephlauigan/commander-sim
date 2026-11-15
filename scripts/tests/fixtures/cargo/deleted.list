@@ -1,0 +1,16 @@
+   Compiling sim-core v0.1.0 (/x/rust/crates/sim-core)
+    Finished `release` profile [optimized + debuginfo] target(s) in 1.00s
+     Running unittests src/lib.rs (target/release/deps/sim_core-0123456789abcdef)
+engine::tests::alpha: test
+engine::tests::beta: test
+
+2 tests, 0 benchmarks
+     Running tests/cards_x.rs (target/release/deps/cards_x-fedcba9876543210)
+gamma: test
+epsilon: test
+slow_one: test
+
+3 tests, 0 benchmarks
+   Doc-tests sim_core
+
+0 tests, 0 benchmarks

@@ -1,0 +1,6 @@
+     Running tests/cards_x.rs (target/release/deps/cards_x-fedcba9876543210)
+
+running 1 test
+test the::fix_test ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
