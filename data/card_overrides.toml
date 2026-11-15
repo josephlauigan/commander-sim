@@ -10327,3 +10327,7 @@ note = "enters tapped unless you control a legendary creature (the engine's ente
 dsl = [] # the compiled enters search ignores "legendary" (it would take any creature); impls/yoshimaru_cards.rs searches
 status = "Full"
 note = "enters: search for a legendary creature card, into your hand, shuffle (a person picks the card or finds nothing; the AI its search pick; impls/yoshimaru_cards.rs); Station: tap another untapped creature, sorcery speed, charge counters equal to its power (a person chooses each creature, the AI taps creatures that can't attack, or the taps that reach 7 at once); at 7+ a 5/5 flying artifact creature, and your other tapped legendary creatures are indestructible"
+
+["Witch Enchanter // Witch-Blessed Meadow"]
+status = "Full"
+note = "creature: enters, destroy target artifact or enchantment an opponent controls (compiled; a person chooses the target); land face Witch-Blessed Meadow: pay 3 life or enters tapped, {T}: {W}, played from hand through the land hook options (impls/yoshimaru_cards.rs: the AI only when short of lands as for Shatterskull Smashing; a person any time they could play a land, and answers the pay-3-life question)"

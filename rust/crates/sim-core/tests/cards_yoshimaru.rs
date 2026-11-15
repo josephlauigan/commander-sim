@@ -513,3 +513,150 @@ fn a_person_can_cancel_stationing_and_nothing_is_tapped() {
     assert!(!g.perm(a).tapped);
     assert_eq!(charges(&g, s), 0);
 }
+
+// ------------------------------------------------------------------ Witch Enchanter // Witch-Blessed Meadow
+const WITCH: &str = "Witch Enchanter // Witch-Blessed Meadow";
+
+fn on_bf(g: &Game, p: PlayerId, name: &str) -> bool {
+    g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && &*g.perm(m).name == name)
+}
+
+#[test]
+fn witch_enchanter_destroys_an_artifact_or_enchantment_an_opponent_controls() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Sol Ring");
+    perm(&mut g, P0, "Mind Stone");
+    perm(&mut g, P1, "Mother of Runes");
+    perm(&mut g, P0, WITCH);
+    assert!(!on_bf(&g, P1, "Sol Ring"), "the opponent's artifact is destroyed");
+    assert!(on_bf(&g, P0, "Mind Stone"), "not your own");
+    assert!(on_bf(&g, P1, "Mother of Runes"), "not a creature");
+}
+
+#[test]
+fn witch_enchanter_destroys_an_enchantment_too() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Rhystic Study");
+    perm(&mut g, P0, WITCH);
+    assert!(!on_bf(&g, P1, "Rhystic Study"));
+}
+
+#[test]
+fn witch_enchanter_with_nothing_to_destroy_does_nothing() {
+    let mut g = tbl();
+    let mine = perm(&mut g, P0, "Mind Stone");
+    perm(&mut g, P1, "Mother of Runes");
+    perm(&mut g, P0, WITCH);
+    assert!(g.perm(mine).on_bf);
+}
+
+#[test]
+fn a_person_chooses_what_witch_enchanter_destroys() {
+    let mut g = tbl();
+    perm(&mut g, P1, "Sol Ring");
+    perm(&mut g, P1, "Rhystic Study");
+    let h = person(&mut g, |r| choice_with(r, "Rhystic"));
+    perm(&mut g, P0, WITCH);
+    assert!(
+        !on_bf(&g, P1, "Rhystic Study"),
+        "asked: {:?}",
+        h.asked().iter().map(|r| (&r.prompt, &r.choices)).collect::<Vec<_>>()
+    );
+    assert!(on_bf(&g, P1, "Sol Ring"));
+}
+
+fn meadow_hand(g: &mut Game) -> CardId {
+    hand(g, P0, &[WITCH])[0]
+}
+
+fn hand_options(g: &mut Game, c: CardId, post: Option<bool>) -> Vec<sim_core::hooks::Opt> {
+    let f = g.registry.get(c).unwrap().hand_options.unwrap();
+    f(g, c, P0, post).unwrap()
+}
+
+#[test]
+fn the_ai_plays_the_meadow_as_a_land_when_short_of_lands() {
+    let mut g = tbl();
+    main1(&mut g);
+    g.player_mut(P0).hand.clear();
+    let c = meadow_hand(&mut g);
+    let o = hand_options(&mut g, c, Some(false));
+    assert_eq!(o.len(), 1);
+    assert!(sim_core::ai::act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap());
+    assert!(!g.player(P0).hand.contains(&c));
+    let l = *g.player(P0).lands.last().unwrap();
+    assert_eq!(g.perm(l).card(), c);
+    assert!(hand_options(&mut g, c, Some(false)).is_empty(), "the land drop is used and the card is gone");
+}
+
+#[test]
+fn the_meadow_taps_for_white() {
+    let mut g = tbl();
+    main1(&mut g);
+    g.player_mut(P0).hand.clear();
+    let c = meadow_hand(&mut g);
+    let o = hand_options(&mut g, c, Some(false));
+    sim_core::ai::act::perform(&mut g, P0, o[0].act.as_ref().unwrap()).unwrap();
+    let l = *g.player(P0).lands.last().unwrap();
+    g.perm_mut(l).tapped = false;
+    assert!(sim_core::engine::mana::can_pay(&mut g, P0, 0, "W", false));
+    assert!(!sim_core::engine::mana::can_pay(&mut g, P0, 0, "B", false));
+}
+
+#[test]
+fn a_person_pays_3_life_for_an_untapped_meadow() {
+    let mut g = tbl();
+    main1(&mut g);
+    person(&mut g, |r| if r.prompt.contains("pay 3 life") { Some(0) } else { None });
+    let c = meadow_hand(&mut g);
+    let life = g.player(P0).life;
+    let ways = sim_core::human::alt::hand_alts(&mut g, P0, c).unwrap();
+    let (_, o) = ways.into_iter().find(|(l, _)| l.contains("as a land")).expect("a person can play it as a land");
+    assert!(sim_core::human::alt::run(&mut g, P0, c, &o).unwrap().is_none());
+    let l = *g.player(P0).lands.last().unwrap();
+    assert_eq!(g.perm(l).card(), c);
+    assert!(!g.perm(l).tapped);
+    assert_eq!(g.player(P0).life, life - 3);
+}
+
+#[test]
+fn a_person_who_does_not_pay_gets_a_tapped_meadow_and_keeps_their_life() {
+    let mut g = tbl();
+    main1(&mut g);
+    person(&mut g, |r| if r.prompt.contains("pay 3 life") { Some(1) } else { None });
+    let c = meadow_hand(&mut g);
+    let life = g.player(P0).life;
+    let ways = sim_core::human::alt::hand_alts(&mut g, P0, c).unwrap();
+    let (_, o) = ways.into_iter().find(|(l, _)| l.contains("as a land")).unwrap();
+    assert!(sim_core::human::alt::run(&mut g, P0, c, &o).unwrap().is_none());
+    let l = *g.player(P0).lands.last().unwrap();
+    assert!(g.perm(l).tapped);
+    assert_eq!(g.player(P0).life, life);
+}
+
+#[test]
+fn a_person_can_play_the_meadow_with_other_lands_in_hand_and_four_lands_out() {
+    // the AI's heuristics (fewer than 4 lands, no other land in hand) do not bind a person
+    let mut g = tbl();
+    main1(&mut g);
+    person(&mut g, |_| Some(1));
+    lands(&mut g, P0, "Plains", 5, false);
+    hand(&mut g, P0, &["Plains"]);
+    let c = meadow_hand(&mut g);
+    assert!(hand_options(&mut g, c, Some(false)).len() == 1);
+}
+
+#[test]
+fn the_meadow_is_not_offered_after_the_land_drop_or_off_turn() {
+    let mut g = tbl();
+    main1(&mut g);
+    person(&mut g, |_| Some(1));
+    let c = meadow_hand(&mut g);
+    assert_eq!(hand_options(&mut g, c, Some(false)).len(), 1);
+    assert!(hand_options(&mut g, c, None).is_empty(), "not at instant speed");
+    g.player_mut(P0).lands_played = 1;
+    assert!(hand_options(&mut g, c, Some(false)).is_empty(), "the land drop is spent");
+    g.player_mut(P0).lands_played = 0;
+    g.active = Some(P1);
+    assert!(hand_options(&mut g, c, Some(false)).is_empty(), "not on an opponent's turn");
+}

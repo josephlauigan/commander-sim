@@ -1,9 +1,10 @@
 //! Cards of the Yoshimaru / Tymna blink deck, modelled before that deck is registered: Yoshimaru, Ever Faithful, Minas
-//! Tirith and The Seriema (its enters search is card code). (Kambal, Consul of Allocation is compiled from its Oracle text and needs no code.) Each card's text is
+//! Tirith, The Seriema (its enters search is card code) and Witch Enchanter // Witch-Blessed Meadow. (Kambal, Consul of Allocation is compiled from its Oracle text and needs no code.) Each card's text is
 //! in the doc comment above its code.
 
-use crate::cards::CardDb;
+use crate::cards::{CardDb, Colors};
 use crate::dsl::model::Filter;
+use crate::engine::life::lose_life;
 use crate::engine::repl;
 use crate::engine::stack::{ability_window_card, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
@@ -118,6 +119,7 @@ fn minas_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// can't attack anyway, or when the tap finishes it; a person chooses each creature to tap, one activation at a time.
 const SERIEMA: &str = "The Seriema";
 const STATION_GOAL: i64 = 7;
+const WITCH: &str = "Witch Enchanter // Witch-Blessed Meadow";
 
 /// When The Seriema enters: search for a legendary creature card, reveal it, put it into your hand, then shuffle.
 /// (The compiled `search` ignores "legendary" and would take any creature, so the card's override drops it.) A person
@@ -300,6 +302,61 @@ fn station_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     Ok(true)
 }
 
+// ================================================================== Witch Enchanter // Witch-Blessed Meadow
+/// **Witch Enchanter** ({3}{W} 2/2 Human Warlock): when it enters, destroy target artifact or enchantment an opponent
+/// controls (the compiled enters trigger; a person chooses the target). **Witch-Blessed Meadow** (land): "As this land
+/// enters, you may pay 3 life. If you don't, it enters tapped." and {T}: Add {W}. The card data types the card as its
+/// front face, so the engine's land play never takes it: it is offered as a land through `hand_options`, as
+/// Shatterskull Smashing is (`t6_lands::mdfc_land_opt`), and taps for {W} through `land_cols`. The AI plays it as a land
+/// only when short of lands (that rule's heuristics); a person may play it as their land drop any time they could play
+/// a land, and answers the pay-3-life question.
+fn meadow_cols(_g: &Game, _p: PlayerId, _l: PermId) -> Colors {
+    Colors::from_letters("W")
+}
+
+fn meadow_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    if !crate::human::is_human(g, p) {
+        return Ok(super::t6_lands::mdfc_land_opt(g, c, p, post).into_iter().collect());
+    }
+    let pl = g.player(p);
+    let allowed = 1 + crate::cardcode::extra_lands(g, p) + pl.extra_land_now;
+    if post.is_none() || g.active != Some(p) || pl.lands_played >= allowed || !pl.hand.contains(&c) {
+        return Ok(vec![]);
+    }
+    Ok(vec![Opt {
+        utility: 2.5,
+        label: "play Witch Enchanter as a land (Witch-Blessed Meadow)".into(),
+        act: Some(Action::Plan { f: meadow_go, arg: c.0 as i64 }),
+    }])
+}
+
+fn meadow_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
+    if !crate::human::is_human(g, p) {
+        return super::t6_lands::mdfc_land_go(g, p, arg);
+    }
+    let c = CardId(arg as u16);
+    let allowed = 1 + crate::cardcode::extra_lands(g, p) + g.player(p).extra_land_now;
+    let Some(i) = g.player(p).hand.iter().position(|&x| x == c) else { return Ok(false) };
+    if g.player(p).lands_played >= allowed || crate::human::legal::sorcery_timing(g, p).is_some() {
+        return Ok(false);
+    }
+    g.player_mut(p).hand.remove(i);
+    // "As this land enters, you may pay 3 life": only with the life to pay
+    let paid = g.player(p).life >= 3
+        && crate::human::choices::yes_no(g, p, "Witch-Blessed Meadow: pay 3 life so it enters untapped?")?;
+    if paid {
+        lose_life(g, p, 3, Some(p), "other", None)?;
+    }
+    crate::engine::turn::play_land_card(g, p, c, "plays")?;
+    if let Some(&l) = g.player(p).lands.last().filter(|&&l| g.perm(l).card() == c) {
+        if !paid {
+            g.perm_mut(l).tapped = true;
+        }
+        super::t6_lands::traitors_check(g, p, l)?;
+    }
+    Ok(true)
+}
+
 // ================================================================== registration
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Yoshimaru, Ever Faithful")?;
@@ -307,6 +364,9 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.landfall = Some(yoshimaru_landfall);
     super::partials::at_once(c, crate::hooks::Event::Landfall, true);
     r.card(db, "Minas Tirith")?.land_options = Some(minas_options);
+    let w = r.card(db, WITCH)?;
+    w.land_cols = Some(meadow_cols);
+    w.hand_options = Some(meadow_options);
     let c = r.card(db, SERIEMA)?;
     c.etb = Some(seriema_etb);
     c.options = Some(seriema_options);
