@@ -195,9 +195,15 @@ fn station_candidates(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
         .collect()
 }
 
+/// the "7+" level of the station card: it depends only on the charge counters (CR 721.2b), not on whether some other
+/// effect (Tezzeret's emblem) made it a creature
+fn seven_plus(g: &Game, src: PermId) -> bool {
+    crate::engine::chars::station_met(g, g.perm(src))
+}
+
 /// flying at 7+, and indestructible for the other tapped legendary creatures its controller has
 fn seriema_grant(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
-    if !g.is_creature(src) {
+    if !seven_plus(g, src) {
         return false;
     }
     if m == src {
@@ -227,7 +233,7 @@ fn seriema_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> R
             act: Some(Action::Ability { src, f: station_go, arg: -1 }),
         }]);
     }
-    if g.is_creature(src) {
+    if seven_plus(g, src) {
         return Ok(vec![]); // the AI has nothing more to gain from it
     }
     // the AI: creatures that can't attack this turn first (the biggest), the rest only when the taps reach 7 at once
@@ -296,7 +302,7 @@ fn station_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
         let k = repl::counters(g, p, repl::On::Perm(src), repl::Ctr::Other, n, repl::Path::ALL).max(0);
         let total = charge(g, src) + k as i64;
         g.perm_mut(src).data.set(DataKey::Charge, Val::Int(total));
-        if g.is_creature(src) {
+        if seven_plus(g, src) {
             crate::glog!(g, "    The Seriema is a 5/5 artifact creature"); // by its `station=7` tag (chars.rs)
         }
         Ok(())

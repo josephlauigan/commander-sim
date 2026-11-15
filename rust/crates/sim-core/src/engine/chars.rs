@@ -89,7 +89,7 @@ pub fn chars(g: &Game, m: PermId) -> Chars {
 // ================================================================== layer 4: type
 /// A Spacecraft (`station=N` hand tag: The Seriema) whose charge counters have reached N: it is a creature, and a 5/5,
 /// for as long as they stay there (CR 721.2b: a condition on the counters, not a one-time change).
-fn station_met(g: &Game, m: &crate::state::Perm) -> bool {
+pub(crate) fn station_met(g: &Game, m: &crate::state::Perm) -> bool {
     m.cd.is_some_and(|c| {
         let d = g.db.get(c);
         d.tag(Tag::Station) && m.data.int(DataKey::Charge) >= d.tags.int_or_0(Tag::Station) as i64
