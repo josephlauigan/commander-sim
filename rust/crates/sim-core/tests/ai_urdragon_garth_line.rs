@@ -1199,3 +1199,54 @@ fn twinflame_d4_limit_later_copies_trigger_earlier_terror_tokens_is_a_hold() {
     assert!(allin, "the engine kills here");
     assert!(!rel, "today's estimate holds (limit: the first token's trigger for the second copy is not counted)");
 }
+
+// F4: copies that enter tapped cannot attack, so their power is not combat damage. Blind Obedience makes every
+// opponent's creatures enter tapped; Authority of the Consuls does the same through a compiled static.
+#[test]
+fn twinflame_e1_blind_obedience_on_the_opponent_makes_the_copies_tapped_so_it_holds() {
+    let mut g = adv_base(2);
+    perm(&mut g, P1, "Blind Obedience");
+    g.player_mut(P1).life = 16;
+    assert!(!adv_wrong(&g), "Twinflame offered, but the copy enters tapped and only the 8-power flier attacks");
+    assert!(adv_hook(&mut g).is_empty(), "the estimate must not count the tapped copy's power");
+}
+
+#[test]
+fn twinflame_e1_authority_of_the_consuls_on_the_opponent_makes_the_copies_tapped_so_it_holds() {
+    let mut g = adv_base(2);
+    perm(&mut g, P1, "Authority of the Consuls");
+    g.player_mut(P1).life = 16;
+    assert!(!adv_wrong(&g), "Twinflame offered, but the copy enters tapped and only the 8-power flier attacks");
+    assert!(adv_hook(&mut g).is_empty(), "the estimate must not count the tapped copy's power");
+}
+
+#[test]
+fn twinflame_e1_control_blind_obedience_under_the_casting_seat_releases_at_16() {
+    let mut g = adv_base(2);
+    perm(&mut g, P0, "Blind Obedience");
+    g.player_mut(P1).life = 16;
+    assert!(!adv_hook(&mut g).is_empty());
+    assert!(!adv_wrong(&g));
+}
+
+#[test]
+fn twinflame_e1_control_authority_of_the_consuls_under_the_casting_seat_releases_at_16() {
+    let mut g = adv_base(2);
+    perm(&mut g, P0, "Authority of the Consuls");
+    g.player_mut(P1).life = 16;
+    assert!(!adv_hook(&mut g).is_empty());
+    assert!(!adv_wrong(&g));
+}
+
+#[test]
+fn twinflame_e1_control_a_tapped_copy_still_triggers_terror_so_the_release_stands() {
+    // the copy of the tapped Terror enters tapped and its entry triggers the original Terror for 5, enough at 5 life
+    let mut g = adv_base(2);
+    let silver = perms_named(&g, P0, BIG)[0];
+    g.perm_mut(silver).tapped = true;
+    let t = perm(&mut g, P0, TERROR);
+    g.perm_mut(t).tapped = true;
+    perm(&mut g, P1, "Blind Obedience");
+    g.player_mut(P1).life = 5;
+    assert_eq!(adv_probe(&g), (true, true, true));
+}
