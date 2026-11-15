@@ -252,7 +252,10 @@ fn ready_minas(g: &mut Game) -> PermId {
 
 fn attacked_with(g: &mut Game, n: u32) {
     let st = g.turn_stamp();
-    g.player_mut(P0).atk_count = (Some(st), n);
+    let attackers: Vec<PermId> = (0..n).map(|_| token(g, P0, 2)).collect();
+    let pl = g.player_mut(P0);
+    pl.attacking = Some(st);
+    pl.attackers = attackers;
 }
 
 fn draw_options(g: &mut Game, l: PermId, post: Option<bool>) -> Vec<sim_core::hooks::Opt> {
@@ -283,7 +286,8 @@ fn minas_tirith_does_not_draw_without_two_attackers() {
     attacked_with(&mut g, 1);
     assert!(draw_options(&mut g, l, Some(true)).is_empty(), "one attacker is not two");
     // two attacked, but on an earlier turn
-    g.player_mut(P0).atk_count = (None, 2);
+    attacked_with(&mut g, 2);
+    g.player_mut(P0).attacking = None;
     assert!(draw_options(&mut g, l, Some(true)).is_empty());
 }
 

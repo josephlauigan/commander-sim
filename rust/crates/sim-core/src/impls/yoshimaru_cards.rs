@@ -71,12 +71,13 @@ fn yoshimaru_landfall(g: &mut Game, src: Src, p: PlayerId) -> Res {
 // ================================================================== Minas Tirith
 /// **Minas Tirith** (legendary land): enters tapped unless you control a legendary creature (the engine's enters rule,
 /// from the card data). {T}: Add {W} (the `c=W` tag). {1}{W}, {T}: Draw a card. Activate only if you attacked with two
-/// or more creatures this turn. The draw has no choice in it: the AI uses it with spare mana after combat (and not
-/// with fewer than four cards left in its library), a person through the land's hook options (`human::alt`), paying
-/// from their pool.
+/// or more creatures this turn (two different creatures over the turn's combats, extra combats included: the player's
+/// `attackers` list, not the size of the biggest single attack). The draw has no choice in it: the AI uses it with
+/// spare mana after combat (and not with fewer than four cards left in its library), a person through the land's hook
+/// options (`human::alt`), paying from their pool.
 fn attacked_with_two(g: &Game, p: PlayerId) -> bool {
     let pl = g.player(p);
-    pl.atk_count.0 == Some(g.turn_stamp()) && pl.atk_count.1 >= 2
+    pl.attacking == Some(g.turn_stamp()) && pl.attackers.len() >= 2
 }
 
 fn minas_options(g: &mut Game, l: PermId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
