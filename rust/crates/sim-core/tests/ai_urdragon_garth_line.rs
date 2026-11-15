@@ -47,7 +47,11 @@ fn ur_pick_never_returns_tiamat_over_500_seeded_states() {
         for _ in 0..rng.below(9) {
             lands(&mut g, P0, "Plains", 1, false);
         }
-        let cs = offered(&g, &hand_cards);
+        // the sampled cards are the seat's real hand, and no longer in its library
+        g.player_mut(P0).hand = hand_cards.clone();
+        g.player_mut(P0).library.retain(|c| !hand_cards.contains(c));
+        assert!(g.player(P0).hand.contains(&tiamat));
+        let cs = offered(&g, &g.player(P0).hand.clone());
         let without: Vec<CardId> = cs.iter().copied().filter(|&c| c != tiamat).collect();
         let pick = ur_pick(&g, P0, &cs);
         assert_ne!(pick, Some(tiamat), "state {i}: hand {:?} offered Tiamat", names(&g, &cs));
@@ -725,5 +729,35 @@ fn twinflame_q1_terror_damage_ignores_a_flying_blocker() {
     opp_life(&mut g, 6);
     fair(&mut g, false);
     opp_life(&mut g, 7);
+    held(&mut g, false);
+}
+
+// Q2 (coverage): a token-only Garth leaves the line dead by the alive table, yet `ready_garth` accepts it. Readiness
+// wins by design: the combo option is the only Twinflame play, so the fair option is not offered.
+#[test]
+fn twinflame_q2_a_token_only_garth_is_dead_and_ready_and_readiness_wins() {
+    use sim_core::impls::t45_urdragon_combos::{garth_line_alive, ready_garth};
+    let mut g = row02("urdragon");
+    let original = g
+        .player(P0)
+        .perms
+        .iter()
+        .copied()
+        .find(|&m| g.perm(m).name == GARTH && g.perm(m).phys.is_none() && !g.perm(m).token)
+        .unwrap();
+    let cd = card(&g, GARTH);
+    zones::enter_token_copy(&mut g, P0, cd).unwrap();
+    zones::leave(&mut g, original).unwrap();
+    assert!(!garth_line_alive(&g, P0));
+    assert!(ready_garth(&g, P0).0);
+    held(&mut g, false);
+}
+
+// Q3 (coverage): the hold is zone-only. A permanent that locks the line (an opponent's Rule of Law) does not release
+// it; that is the current policy, not a claim that it is right.
+#[test]
+fn twinflame_q3_a_locked_line_still_holds_under_the_zone_only_policy() {
+    let mut g = row01("urdragon");
+    perm(&mut g, P1, "Rule of Law");
     held(&mut g, false);
 }
