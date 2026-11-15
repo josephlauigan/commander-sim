@@ -1,6 +1,6 @@
 # Deck plan (Phase 4, audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic
 # policy (ai/plans.rs `config`). JD's Tymna the Weaver + Thrasios, Triton Hero deck (key `thrasios`, tier t6 since 2026-11-05: the
-# Doomsday rebuild, decklists/JD/tymna-thrasios-doomsday.md; the Doomsday line was added 2026-11-05, see the Doomsday section below). Written in Phase 4 PR 7 from its hand AI, played when AI_HAND is off: `tymna_partners::
+# Doomsday rebuild, decklists/pool/retired/tymna-thrasios-doomsday.md; the Doomsday line was added 2026-11-05, see the Doomsday section below). Written in Phase 4 PR 7 from its hand AI, played when AI_HAND is off: `tymna_partners::
 # partner_prio` / `combo_prio` (the prio rules), `combo_piece` / `tymna_cards::tutor_pick` (the line),
 # `protection_held` (no hold now: Blossoming Defense left 2026-11-02). The line is the catalogue's "Power Artifact /
 # Rings of Brighthearth + Monolith" as this deck plays it: the outlet is Walking Ballista or Thrasios on the

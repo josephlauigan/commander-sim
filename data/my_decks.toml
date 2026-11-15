@@ -2,7 +2,7 @@
 # plays and the colour identity of the seat, and `tiers`: the opponent tiers it is simulated against (matched power; see CLAUDE.md "Opponent tiers"). Extracted once from the old Python code; this file is now the source.
 
 [aragorn]
-file = "JD/aragorn-uniter.md"
+file = "pool/retired/aragorn-uniter.md"
 name = "Aragorn"
 commander = "Aragorn, the Uniter"
 ident = "WURG"
@@ -31,7 +31,7 @@ tiers = ["t1", "t2", "t3"]
 
 # Two commanders with plain Partner: `commander` is the first, `commander2` the second; ident is the union.
 [thrasios]
-file = "JD/tymna-thrasios-doomsday.md"
+file = "pool/retired/tymna-thrasios-doomsday.md"
 name = "Tymna/Thrasios"
 commander = "Tymna the Weaver"
 commander2 = "Thrasios, Triton Hero"

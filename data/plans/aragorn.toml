@@ -1,7 +1,7 @@
 # Deck plan (audit/phase4/plans-design.md). Read by rust/crates/sim-core/src/ai/plan_data.rs and the generic policy
 # (ai/plans.rs `config`). JD's Aragorn, the Uniter deck (four-colour spell burn, key `aragorn`, tiers t4-t5), built
 # 2026-11-06 from the Kefka and Sauron decks. PROVISIONAL: written from the deck document's game plan
-# (decklists/JD/aragorn-uniter.md, "Game plan" and "How it wins"), not from a paired test. The Breach line and its
+# (decklists/pool/retired/aragorn-uniter.md, "Game plan" and "How it wins"), not from a paired test. The Breach line and its
 # rituals are Kefka's old plan (data/plans/kefka.toml, retired the same day).
 # Left out (the schema can't express it): the Breach turn's own gate (two escape candidates and five mana, held for
 # the storm turn); casting cheap red spells after Aragorn for his 3 damage each (the generic policy casts what it can).
