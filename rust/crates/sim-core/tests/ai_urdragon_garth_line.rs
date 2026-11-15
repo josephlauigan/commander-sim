@@ -9,6 +9,7 @@ use sim_core::ids::CardId;
 use sim_core::impls::t45_urdragon::ur_pick;
 use sim_core::rng::Rng;
 use sim_core::state::Step;
+use std::sync::Arc;
 
 // ------------------------------------------------------------------ the free drop: never Tiamat
 fn permanent_cards(g: &Game) -> Vec<CardId> {
@@ -422,4 +423,166 @@ fn twinflame_row_23_a_stolen_garth_is_dead() {
     perm(&mut g, P1, GARTH);
     glory(&mut g);
     fair(&mut g, false);
+}
+
+// ------------------------------------------------------------------ Spark Double copies Garth when the line is near
+const TERROR: &str = "Terror of the Peaks";
+
+/// Spark Double enters for `key` with a plain Garth and Terror of the Peaks (the higher-`pval` alternative) on the
+/// battlefield; Doubling Season and Twinflame in the given zones, `hand` extra cards in hand. Returns the game and
+/// the name of the creature Spark Double became.
+fn spark_case(key: &str, season: Z, twin: Z, hand_extra: &[&str]) -> (Game, String) {
+    let mut g = table(&[key, "seph"]);
+    for q in &mut g.players {
+        q.hand.clear();
+        q.gy.clear();
+    }
+    put(&mut g, P0, GARTH, Z::Bf);
+    put(&mut g, P0, TERROR, Z::Bf);
+    put(&mut g, P0, SEASON, season);
+    put(&mut g, P0, TWIN, twin);
+    for n in hand_extra {
+        put(&mut g, P0, n, Z::Hand);
+    }
+    let name = enter_spark(&mut g);
+    (g, name)
+}
+
+fn enter_spark(g: &mut Game) -> String {
+    perm(g, P0, SPARK);
+    spark_name(g)
+}
+
+fn spark_name(g: &Game) -> String {
+    let c = card(g, SPARK);
+    let m = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).phys == Some(c)).expect("Spark Double entered");
+    g.perm(m).name.to_string()
+}
+
+fn garths_on_bf(g: &Game) -> usize {
+    g.player(P0).perms.iter().filter(|&&m| g.perm(m).on_bf && &*g.perm(m).name == GARTH).count()
+}
+
+#[test]
+fn spark_s01_season_out_twinflame_in_hand_copies_garth() {
+    let (g, name) = spark_case("urdragon", Z::Bf, Z::Hand, &[]);
+    assert_eq!(name, GARTH);
+    assert_eq!(garths_on_bf(&g), 2, "the legend rule removed nothing: both Garths stay");
+    let copy = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).phys == Some(card(&g, SPARK))).unwrap();
+    assert!(!sim_core::cardcode::is_legendary(&g, copy), "Spark Double's copy of a legend isn't legendary");
+}
+
+#[test]
+fn spark_s02_season_and_twinflame_in_hand_copies_garth() {
+    assert_eq!(spark_case("urdragon", Z::Hand, Z::Hand, &[]).1, GARTH);
+}
+
+#[test]
+fn spark_s03_season_out_twinflame_in_library_with_demonic_tutor_copies_garth() {
+    assert_eq!(spark_case("urdragon", Z::Bf, Z::Library, &["Demonic Tutor"]).1, GARTH);
+}
+
+#[test]
+fn spark_s04_season_in_library_twinflame_in_hand_with_vampiric_tutor_copies_garth() {
+    assert_eq!(spark_case("urdragon", Z::Library, Z::Hand, &["Vampiric Tutor"]).1, GARTH);
+}
+
+#[test]
+fn spark_s05_twinflame_in_library_without_a_tutor_copies_the_best_creature() {
+    assert_eq!(spark_case("urdragon", Z::Bf, Z::Library, &[]).1, TERROR);
+    // Worldly Tutor finds only creatures
+    assert_eq!(spark_case("urdragon", Z::Bf, Z::Library, &["Worldly Tutor"]).1, TERROR);
+}
+
+#[test]
+fn spark_s06_both_pieces_in_the_library_with_a_tutor_copies_the_best_creature() {
+    assert_eq!(spark_case("urdragon", Z::Library, Z::Library, &["Demonic Tutor"]).1, TERROR);
+}
+
+#[test]
+fn spark_s07_season_in_the_graveyard_copies_the_best_creature() {
+    assert_eq!(spark_case("urdragon", Z::Gy, Z::Hand, &[]).1, TERROR);
+}
+
+#[test]
+fn spark_s08_twinflame_in_the_graveyard_copies_the_best_creature() {
+    assert_eq!(spark_case("urdragon", Z::Bf, Z::Gy, &[]).1, TERROR);
+}
+
+#[test]
+fn spark_s09_garth_in_hand_is_not_a_candidate() {
+    let mut g = table(&["urdragon", "seph"]);
+    g.player_mut(P0).hand.clear();
+    put(&mut g, P0, GARTH, Z::Hand);
+    put(&mut g, P0, TERROR, Z::Bf);
+    put(&mut g, P0, SEASON, Z::Bf);
+    put(&mut g, P0, TWIN, Z::Hand);
+    assert_eq!(enter_spark(&mut g), TERROR);
+}
+
+#[test]
+fn spark_s10_garth_phased_out_is_not_a_candidate() {
+    let mut g = table(&["urdragon", "seph"]);
+    g.player_mut(P0).hand.clear();
+    let garth = perm(&mut g, P0, GARTH);
+    put(&mut g, P0, TERROR, Z::Bf);
+    put(&mut g, P0, SEASON, Z::Bf);
+    put(&mut g, P0, TWIN, Z::Hand);
+    g.perm_mut(garth).phased = true;
+    assert_eq!(enter_spark(&mut g), TERROR);
+}
+
+#[test]
+fn spark_s11_other_seats_keep_the_best_creature() {
+    for key in ["aragorn", "atraxa-infect"] {
+        assert_eq!(spark_case(key, Z::Bf, Z::Hand, &[]).1, TERROR, "{key}");
+    }
+}
+
+#[test]
+fn spark_s12_a_person_in_the_urdragon_seat_is_asked() {
+    let mut g = table(&["urdragon", "seph"]);
+    g.player_mut(P0).hand.clear();
+    put(&mut g, P0, GARTH, Z::Bf);
+    put(&mut g, P0, TERROR, Z::Bf);
+    put(&mut g, P0, SEASON, Z::Bf);
+    put(&mut g, P0, TWIN, Z::Hand);
+    let h = Arc::new(ScriptHuman::from_fn(|r| {
+        match r.choices.iter().position(|c| c.contains("Terror")).filter(|_| r.prompt.contains("Spark Double: enter")) {
+            Some(i) => Answer::Pick(i),
+            None => Answer::Decline, // Terror's own enter trigger and the rest
+        }
+    }));
+    g.humans.add(P0, h.clone());
+    let name = enter_spark(&mut g);
+    assert!(h.asked().iter().any(|r| r.prompt.contains("Spark Double: enter as a copy")), "the person is asked");
+    assert_eq!(name, TERROR, "the person's pick stands");
+}
+
+#[test]
+fn spark_s13_the_free_drop_copies_garth_too() {
+    let mut g = table(&["urdragon", "seph"]);
+    g.player_mut(P0).hand.clear();
+    put(&mut g, P0, GARTH, Z::Bf);
+    put(&mut g, P0, TERROR, Z::Bf);
+    put(&mut g, P0, SEASON, Z::Bf);
+    put(&mut g, P0, TWIN, Z::Hand);
+    let c = take(&mut g, P0, SPARK);
+    zones::enter(&mut g, P0, c, zones::Enter::default()).unwrap();
+    assert_eq!(spark_name(&g), GARTH);
+}
+
+#[test]
+fn spark_s14_a_token_garth_is_not_a_candidate_the_card_is() {
+    let mut g = table(&["urdragon", "seph"]);
+    g.player_mut(P0).hand.clear();
+    let garth = perm(&mut g, P0, GARTH);
+    put(&mut g, P0, TERROR, Z::Bf);
+    put(&mut g, P0, SEASON, Z::Bf);
+    put(&mut g, P0, TWIN, Z::Hand);
+    let cd = g.perm(garth).cd.unwrap();
+    let tok = zones::enter_token_copy(&mut g, P0, cd).unwrap().unwrap();
+    assert!(g.perm(tok).token);
+    assert_eq!(enter_spark(&mut g), GARTH);
+    assert_eq!(garths_on_bf(&g), 3, "card Garth, the token and Spark Double's copy");
 }
