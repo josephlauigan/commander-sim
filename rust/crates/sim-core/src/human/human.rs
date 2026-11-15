@@ -430,9 +430,11 @@ fn counter_target(g: &mut Game, q: PlayerId, c: CardId) -> Res<Result<(u32, Card
         .rev()
         .filter(|it| it.controller != q || many || trap)
         .filter(|it| {
-            // (Mindbreak Trap exiles: a spell that can't be countered is a legal target for it)
-            let exile = trap && stack::trap_exilable(g, it);
-            it.card.is_some_and(|sc| stack::counter_ok(g, c, sc)) && (stack::counterable(g, it) || exile)
+            // (Mindbreak Trap exiles "target spells": a spell that can't be countered is a legal target for it, an
+            // ability, a trigger or a spell already countered is not)
+            let exile = trap && stack::trap_exilable(g, it) && !it.countered;
+            let ok = !trap || exile;
+            ok && it.card.is_some_and(|sc| stack::counter_ok(g, c, sc)) && (stack::counterable(g, it) || exile)
         })
         .collect();
     if cands.is_empty() {
