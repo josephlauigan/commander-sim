@@ -12,7 +12,8 @@ use crate::cards::{CardDb, Types};
 use crate::engine::cast::{
     cast_card, cast_spell_copy, castable, casts_this_turn, discard_worst, is_casts, magecraft, on_cast, parse_cost,
 };
-use crate::engine::combat::blocked;
+use crate::engine::combat::{blocked, has_haste, kw};
+use crate::impls::t45_urdragon_combos::{garth_line_alive, ready_garth, urdragon_seat};
 use crate::engine::hooks::fire_trigger;
 use crate::engine::life::{check_state, lose_life};
 use crate::engine::mana::{
@@ -3427,12 +3428,77 @@ pub(crate) fn twinflame(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>
         return Ok(vec![]);
     }
     let Some((total, tg)) = twinflame_best(g, p, c, post) else { return Ok(vec![]) };
+    // The Ur-Dragon seat holds Twinflame while the Garth line is alive: the combo option is its only play once the line
+    // is ready, and the line has nothing to hold it for once a piece is dead, the attack is lethal or p is in danger.
+    // The guard is the first expression, so no other seat reaches the rest (pure reads: no RNG, no writes).
+    if urdragon_seat(g, p)
+        && (ready_garth(g, p).0
+            || (garth_line_alive(g, p)
+                && !twinflame_lethal(g, p, &tg, post)
+                && Situation::new(g, p).danger < 1.0))
+    {
+        return Ok(vec![]);
+    }
     let k = tg.len() - 1;
     Ok(vec![Opt {
         utility: 1.0 + 0.6 * total,
         label: format!("Twinflame ({} target{})", tg.len(), if k > 0 { "s" } else { "" }),
         act: Some(Action::Plan { f: twinflame_go, arg: c.0 as i64 | (post as i64) << 32 }),
     }])
+}
+
+/// Twinflame's copies and p's ready fliers kill one opponent this turn: first main phase, an opponent with no untapped
+/// flier or reach creature to block, and the damage of p's ready fliers, the flying copies (printed power, once per
+/// token Doubling Season and company make) and one more round of each copy's power per Terror of the Peaks (its enter
+/// trigger) reaching that opponent's life. Blocks by ground creatures are ignored: everything that counts flies.
+fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
+    if post {
+        return false;
+    }
+    let ready: i32 = g
+        .player(p)
+        .perms
+        .iter()
+        .filter(|&&m| {
+            let x = g.perm(m);
+            g.is_creature(m)
+                && x.on_bf
+                && !x.phased
+                && !x.tapped
+                && !x.noatk
+                && (!x.sick || has_haste(g, m))
+                && (x.fly || kw(g, m, "flying"))
+        })
+        .map(|&m| epow(g, m))
+        .ssum();
+    let n = repl::tokens(g, p, 1) as i32;
+    let copies: i32 = tg
+        .iter()
+        .filter_map(|&m| g.perm(m).cd)
+        .filter(|&cd| g.db.get(cd).has_kw("flying"))
+        .map(|cd| g.db.get(cd).pow.saturating_mul(n))
+        .ssum();
+    let terrors = g
+        .player(p)
+        .perms
+        .iter()
+        .filter(|&&m| g.perm(m).on_bf && !g.perm(m).phased && g.perm(m).name == "Terror of the Peaks")
+        .count() as i32;
+    let dmg = ready.saturating_add(copies.saturating_mul(1 + terrors));
+    g.opps(p).any(|q| {
+        dmg >= g.player(q).life
+            && !g.player(q).perms.iter().any(|&b| {
+                let x = g.perm(b);
+                g.is_creature(b)
+                    && x.on_bf
+                    && !x.phased
+                    && !x.tapped
+                    && (x.fly
+                        || kw(g, b, "flying")
+                        || kw(g, b, "reach")
+                        || x.cd.is_some_and(|cd| g.db.get(cd).tag(Tag::Reach)))
+            })
+    })
 }
 
 fn twinflame_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {

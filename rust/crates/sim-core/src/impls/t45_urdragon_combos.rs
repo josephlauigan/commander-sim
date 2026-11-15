@@ -41,7 +41,7 @@
 //! paying for the first Twinflame (the mana must be open), the Regrowth copy's cast triggers.
 
 use super::combos::{Combo, Ready, Step, StepKind, done, no_keys, no_src};
-use super::t6_combos_godo::{affordable, bf, bf_last, cname, cost, in_hand, live, nm, no, ok_ready};
+use super::t6_combos_godo::{affordable, bf, bf_last, cname, cost, in_hand, in_lib, live, nm, no, ok_ready};
 use crate::cards::Colors;
 use crate::engine::cast::{cast_card, castable, on_cast};
 use crate::engine::life::check_state;
@@ -98,6 +98,23 @@ fn plain_garth(g: &Game, p: PlayerId) -> Option<PermId> {
         .find(|&m| live(g, m) && nm(g, m) == GARTH && !g.perm(m).phys.is_some_and(|c| cname(g, c) == SPARK))
 }
 
+/// the Garth line can still be played, as a pure read of p's zones (`twinflame` in impls/mine.rs holds Twinflame for it).
+/// Garth, Spark Double and Doubling Season must each be somewhere p can still use them: in hand or library, or on p's
+/// battlefield (phased out counts: it comes back) as Garth (a non-token one that is not Spark Double's copy), as
+/// Spark Double's Garth, and as Doubling Season. A piece in the graveyard or exile, under another player's control,
+/// on the battlefield as something else (Spark Double that copied another creature), or nowhere is dead.
+pub fn garth_line_alive(g: &Game, p: PlayerId) -> bool {
+    let held = |name: &str| in_hand(g, p, name).is_some() || in_lib(g, p, name);
+    let spark_card = |m: PermId| g.perm(m).phys.is_some_and(|c| cname(g, c) == SPARK);
+    let on = |name: &str, f: &dyn Fn(PermId) -> bool| {
+        g.player(p).perms.iter().any(|&m| g.perm(m).on_bf && nm(g, m) == name && f(m))
+    };
+    let garth = held(GARTH) || on(GARTH, &|m| !g.perm(m).token && !spark_card(m));
+    let spark = held(SPARK) || on(GARTH, &|m| spark_card(m));
+    let season = held(SEASON) || on(SEASON, &|_| true);
+    garth && spark && season
+}
+
 fn present(v: &[Option<PermId>]) -> Vec<PermId> {
     v.iter().copied().flatten().collect()
 }
@@ -143,7 +160,7 @@ fn ready_miirym(g: &Game, p: PlayerId) -> Ready {
 
 /// Twinflame ({1}{R}) and the Regrowth copy ({1}{G}) from open mana, plus the second Twinflame's strive ({2}{R}): the
 /// loop gains mana only once Twinflame copies two or more Garths (see the module comment)
-fn ready_garth(g: &Game, p: PlayerId) -> Ready {
+pub fn ready_garth(g: &Game, p: PlayerId) -> Ready {
     if !precombat(g, p) || bf(g, p, SEASON).is_none() || plain_garth(g, p).is_none() || spark_garth(g, p).is_none() {
         return no();
     }
