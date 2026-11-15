@@ -1477,6 +1477,12 @@ fn pay_counter_inner(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardI
 /// q casts counterspell ctr at stack item `target`. It goes on the stack (players may respond, the target's caster
 /// can counter it back), and on resolution counters the target if it's still there. True if it was cast.
 pub fn cast_counter_spell(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -> Res<bool> {
+    cast_counter_spell_with(g, q, ctr, target, &[])
+}
+
+/// `cast_counter_spell` with a person's further targets: the other spells they chose for Mindbreak Trap ("exile any
+/// number of target spells"), beside `target`. The AI has none: its Trap exiles every spell that is not its own.
+pub fn cast_counter_spell_with(g: &mut Game, q: PlayerId, ctr: CardId, target: u32, also: &[CardId]) -> Res<bool> {
     if !g.player(q).hand.contains(&ctr) && counter_on_top(g, q) == Some(ctr) {
         // cast from the top of the library (Mystic Forge): it is a hand card while it is cast, and goes back on top if it
         // is not cast after all
@@ -1488,7 +1494,7 @@ pub fn cast_counter_spell(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -
             g.player(q).name,
             g.db.get(ctr).name
         );
-        let r = cast_counter_spell_from_hand(g, q, ctr, target);
+        let r = cast_counter_spell_from_hand(g, q, ctr, target, also);
         if !matches!(r, Ok(true))
             && let Some(i) = g.player(q).hand.iter().position(|&x| x == ctr)
         {
@@ -1497,10 +1503,10 @@ pub fn cast_counter_spell(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -
         }
         return r;
     }
-    cast_counter_spell_from_hand(g, q, ctr, target)
+    cast_counter_spell_from_hand(g, q, ctr, target, also)
 }
 
-fn cast_counter_spell_from_hand(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -> Res<bool> {
+fn cast_counter_spell_from_hand(g: &mut Game, q: PlayerId, ctr: CardId, target: u32, also: &[CardId]) -> Res<bool> {
     let Some(t) = item(g, target).cloned() else { return Ok(false) };
     if !g.player(q).hand.contains(&ctr) {
         return Ok(false);
@@ -1528,7 +1534,7 @@ fn cast_counter_spell_from_hand(g: &mut Game, q: PlayerId, ctr: CardId, target: 
         g,
         q,
         Some(ctr),
-        Ctx { counter: Some(target), ..Ctx::default() },
+        Ctx { counter: Some(target), cards: also.to_vec(), ..Ctx::default() },
         "hand",
         t.imp.max(6.0),
         StackKind::Spell,
@@ -1539,7 +1545,11 @@ fn cast_counter_spell_from_hand(g: &mut Game, q: PlayerId, ctr: CardId, target: 
         if spree {
             crate::impls::bulk_blue::spirit_token(g, q)?;
         }
-        resolve_counter(g, q, ctr, out.ctx.counter.unwrap_or(target))?;
+        let target = out.ctx.counter.unwrap_or(target);
+        // a person's Mindbreak Trap exiles the spells they chose; the AI's exiles every other spell that is not its own
+        let chosen =
+            (crate::human::is_human(g, q) && &*g.db.get(ctr).name == "Mindbreak Trap").then_some(&out.ctx.cards[..]);
+        resolve_counter_x(g, q, ctr, target, chosen)?;
         if g.db.get(ctr).creature {
             // Mystic Snake / Venser: the counter is a creature
             g.skip_etb = &*g.db.get(ctr).name == "Venser, Shaper Savant";
@@ -1565,15 +1575,30 @@ pub fn resolve_counter(g: &mut Game, q: PlayerId, ctr: CardId, target: u32) -> R
         && let Some((n, bounce, draws)) = g.confluence.take()
     {
         if n > 0 {
-            resolve_counter_with(g, q, ctr, target, Some(3 * n as i32))?;
+            resolve_counter_with(g, q, ctr, target, Some(3 * n as i32), None)?;
         }
         return crate::human::confluence::resolve_rest(g, q, &bounce, draws);
     }
-    resolve_counter_with(g, q, ctr, target, None)
+    resolve_counter_with(g, q, ctr, target, None, None)
+}
+
+/// `resolve_counter` for a counterspell with a person's chosen further targets (Mindbreak Trap; None: the AI's rule)
+fn resolve_counter_x(g: &mut Game, q: PlayerId, ctr: CardId, target: u32, chosen: Option<&[CardId]>) -> Res {
+    if chosen.is_none() {
+        return resolve_counter(g, q, ctr, target);
+    }
+    resolve_counter_with(g, q, ctr, target, None, chosen)
 }
 
 /// `resolve_counter`, with a soft counter's amount given (None: the card's own)
-fn resolve_counter_with(g: &mut Game, q: PlayerId, ctr: CardId, target: u32, soft_n: Option<i32>) -> Res {
+fn resolve_counter_with(
+    g: &mut Game,
+    q: PlayerId,
+    ctr: CardId,
+    target: u32,
+    soft_n: Option<i32>,
+    chosen: Option<&[CardId]>,
+) -> Res {
     let Some(t) = item(g, target).cloned() else { return Ok(()) }; // gone: the counterspell does nothing
     if t.countered {
         return Ok(());
@@ -1630,7 +1655,11 @@ fn resolve_counter_with(g: &mut Game, q: PlayerId, ctr: CardId, target: u32, sof
         }
     }
     if &*g.db.get(ctr).name == "Mindbreak Trap" {
-        crate::impls::t6_counters::mindbreak_exile(g, q)?; // "exile any number of target spells": all the others
+        // "exile any number of target spells": a person's chosen ones, or (the AI) all the others
+        match chosen {
+            Some(also) => crate::impls::t6_counters::mindbreak_exile_chosen(g, q, also)?,
+            None => crate::impls::t6_counters::mindbreak_exile(g, q)?,
+        };
     }
     if &*g.db.get(ctr).name == "Tibalt's Trickery" {
         crate::impls::t6_counters::tibalt_after(g, q, p, c)?; // its controller mills, then casts a card free
