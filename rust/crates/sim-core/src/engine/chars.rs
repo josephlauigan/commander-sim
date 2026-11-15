@@ -121,6 +121,7 @@ pub fn card_types(g: &Game, m: PermId) -> Types {
     } else {
         x.cd.map_or(Types::CREATURE, |c| g.db.get(c).types)
     };
+    let base = if station_met(g, x) { Types::union(base, Types::CREATURE) } else { base }; // an artifact creature
     Types::union(base, x.exc.add_types)
 }
 
