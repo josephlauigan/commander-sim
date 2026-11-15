@@ -18,7 +18,7 @@ Put creatures with enter effects on the battlefield, then use them again. Solitu
 
 Both have Partner and share the command zone. Each costs {2} more for every time it has been cast from there before.
 
-- **Yoshimaru is a one-mana body that grows.** He counts every legendary permanent we play: 26 in the 98 (4 lands, 13 creatures, 4 artifacts, 4 planeswalkers and 1 enchantment, listed under Decklist by type), and every blink of one of them is another enter. He has no evasion and no protection of his own, so he is a bonus, not the plan (see Yoshimaru's counters below).
+- **Yoshimaru is a one-mana body that grows.** He counts every legendary permanent we play: 27 in the 98 (4 lands, 14 creatures, 4 artifacts, 4 planeswalkers and 1 enchantment, listed under Decklist by type), and every blink of one of them is another enter. He has no evasion and no protection of his own, so he is a bonus, not the plan (see Yoshimaru's counters below).
 - **Tymna is the card engine, but only if she connects.** X is the number of opponents hit by combat damage from any of our creatures that turn, so a flier, a token or a creature that cannot be blocked draws her cards. With Delney she draws twice (see Doubling triggers). Her lifelink is a life gain on every hit, which feeds Vito, Heliod and Archangel of Thune.
 
 **The order rule.** Yoshimaru must be on the battlefield first. His trigger is for *another* legendary permanent that enters while he is there, so Tymna entering after him is his first counter. If Tymna is out first, Yoshimaru's own entry gets nothing, and neither does anything that came down before him. With four mana and neither commander out, cast Yoshimaru, then Tymna.
@@ -37,7 +37,7 @@ Both have Partner and share the command zone. Each costs {2} more for every time
 
 **The engine has three parts.**
 
-1. **Enter effects reused by blink.** Seventeen cards do something worth repeating when they enter:
+1. **Enter effects reused by blink.** Sixteen cards do something worth repeating when they enter:
 
 | Card | Mana value | When it enters |
 |---|---|---|
@@ -51,7 +51,6 @@ Both have Partner and share the command zone. Each costs {2} more for every time
 | The Seriema | 3 | Search for a legendary creature card, put it into our hand |
 | Sun Titan | 6 | On entering or attacking, return a permanent card with mana value 3 or less from our graveyard to the battlefield |
 | Orcish Bowmasters | 2 | Flash. 1 damage to any target, then amass Orcs 1; again for each extra card an opponent draws |
-| Wall of Omens | 2 | Draw a card |
 | Inspiring Overseer | 3 | Flying. Gain 1 life and draw a card |
 | Charming Prince | 2 | Choose one: scry 2, gain 3 life, or blink another creature we own until the next end step |
 | Flickerwisp | 3 | Flying. Exile another target permanent; it returns at the beginning of the next end step |
@@ -75,24 +74,26 @@ Both have Partner and share the command zone. Each costs {2} more for every time
 | The Meathook Massacre | {X}{B}{B} | When one of our creatures dies, each opponent loses 1; when an opponent's dies, we gain 1 |
 | Sorin, Vengeful Bloodlord | {2}{W}{B} | During our turn, our creatures and planeswalkers have lifelink. +2: 1 damage to target player or planeswalker |
 
-3. **Tymna with Delney, and the cards that come with the board.** Delney, Streetwise Lookout makes Tymna's trigger fire twice (see Doubling triggers). Welcoming Vampire, Mentor of the Meek, Wall of Omens, Inspiring Overseer, Haliya, Palace Jailer's monarchy and The One Ring add cards around her. Welcoming Vampire draws once each turn when creatures with power 2 or less enter; Mentor of the Meek draws (for {1}) for each such creature; both reward a blink of a small creature.
+3. **Tymna with Delney, and the cards that come with the board.** Delney, Streetwise Lookout makes Tymna's trigger fire twice (see Doubling triggers). Welcoming Vampire, Mentor of the Meek, Inspiring Overseer, Haliya, Palace Jailer's monarchy and The One Ring add cards around her. Welcoming Vampire draws once each turn when creatures with power 2 or less enter; Mentor of the Meek draws (for {1}) for each such creature; both reward a blink of a small creature.
 
 **Eleven blink pieces:** Ephemerate, Restoration Angel, Flickerwisp, Felidar Guardian, Charming Prince, Eerie Interlude, Teleportation Circle, Conjurer's Closet, Ennis, The Eternal Wanderer, and The Mind Stone (ten without it, since it needs six mana and a tap to harness). **Three doublers:** Delney, Gandalf the White and Elesh Norn, Mother of Machines.
 
 **Conjurer's Closet** ({5}, a colourless artifact, not legendary): *At the beginning of your end step, you may exile target creature you control, then return that card to the battlefield under your control.* It blinks only creatures (not artifacts or other permanents), only at the beginning of our own end step, one target, and it is a "may". It costs 5 and does nothing until a creature is on the battlefield, so it is a late-game engine and a reason the deck wants good creatures (Solitude, Skyclave Apparition, Palace Jailer, Sun Titan, Ranger-Captain of Eos, Recruiter of the Guard) to repeat. Cast in one of our main phases it already blinks at that turn's end step; Gandalf's flash for artifact spells lets us cast it during combat, or at an opponent's end step so that it is ready for our next turn. It is an artifact entering, not a legend, so it gives Yoshimaru no counter. It does set off cards that look for an artifact or any permanent entering (Haliya gains 1 life, and Gandalf and Elesh Norn each add a trigger, see Doubling triggers). Its own end-step trigger is not caused by anything entering and is not a creature's trigger, so no doubler adds a trigger to it; the blinked creature's enter effect is doubled as usual. It stacks with Teleportation Circle and a harnessed The Mind Stone (see The end-step engine below).
 
-**The One Ring** gives protection from everything for a turn when cast, then a card engine that costs life every upkeep (see Mana, life costs). **The Eternal Wanderer** is both a blink piece and a sweeper: its -4 has us choose one creature for each player, and every player sacrifices the rest, so we keep our best creature and leave each opponent their weakest. Its starting loyalty is not in the data, so nothing here depends on it.
+**The One Ring** gives protection from everything for a turn when cast, then a card engine that costs life every upkeep (see Mana, life costs). **Lotho, Corrupt Shirriff** ({W}{B}, a legendary 2/1): *Whenever a player casts their second spell each turn, you lose 1 life and create a Treasure token.* He is a legendary creature, so he gives Yoshimaru a counter when he enters after him, and every blink of Lotho is a legendary permanent entering again. He has no enter effect of his own, so he does nothing for blink value: he is a two-drop that grows Yoshimaru and makes mana. The trigger is for any player's second spell each turn, opponents included, so at a four-player table it fires often, and the life loss is always ours and cannot be declined. With Delney out it fires twice (Lotho has power 2 and the trigger is a triggered ability): 2 life and 2 Treasures for each second spell. A Treasure is one mana of any colour (ramp and fixing, including for a second spell of our own) and an artifact token entering under our control, so Haliya's "Whenever Haliya or another creature or artifact you control enters, you gain 1 life" fires for it, and Gandalf (an artifact entering) and Elesh Norn (a permanent entering) each add one more Haliya trigger: 1 life per Treasure, 2 with one of them, 3 with both. That gain is a life gain like any other for Vito, Heliod and Archangel of Thune. Elas il-Kor triggers only on creatures, so a Treasure does nothing for her, and a Treasure is not legendary, so it gives Yoshimaru nothing. Gandalf and Elesh Norn do not double Lotho himself, since his trigger is caused by a spell being cast and not by anything entering. **The cost is real:** this deck already pays life (Tymna, fetch and shock lands, the tutors, The One Ring), and Lotho adds a loss that the whole table sets off, so keep an eye on life with him out. With Haliya out each Treasure also gains 1 life; without her the loss comes out of the same life total as everything else.
+
+**The Eternal Wanderer** is both a blink piece and a sweeper: its -4 has us choose one creature for each player, and every player sacrifices the rest, so we keep our best creature and leave each opponent their weakest. Its starting loyalty is not in the data, so nothing here depends on it.
 
 #### Yoshimaru's counters
 
 Be honest about this part: he is a bonus. All numbers are estimates and the deck has not been simulated.
 
-- **Inputs.** The library is 98 cards (the commanders are in the command zone) with 26 legendary permanents. By turn 6 on the play we have seen 12 cards (7 + 5 draws; 13 on the draw). Tymna's draws and the tutors are ignored.
-- **Legends seen.** The chance of seeing at least 2, 3, 4 and 5 of the 26 in 12 cards is 88.4%, 67.0%, 39.7% and 17.7% (hypergeometric, exact), a mean of 3.18.
-- **Legends played.** Not every legend seen is cast by turn 6 (cost, colours, a land drop used on something else). Assuming 75% are played gives 2.39 counters on average, and the chance of at least 2, 3 and 4 played becomes 73.5%, 44.1% and 19.5%. Playing 50% gives 1.59 and 100% gives 3.18.
+- **Inputs.** The library is 98 cards (the commanders are in the command zone) with 27 legendary permanents. By turn 6 on the play we have seen 12 cards (7 + 5 draws; 13 on the draw). Tymna's draws and the tutors are ignored.
+- **Legends seen.** The chance of seeing at least 2, 3, 4 and 5 of the 27 in 12 cards is 89.9%, 70.0%, 43.1% and 20.2% (hypergeometric, exact), a mean of 3.31.
+- **Legends played.** Not every legend seen is cast by turn 6 (cost, colours, a land drop used on something else). Assuming 75% are played gives 2.48 counters on average, and the chance of at least 2, 3 and 4 played becomes 75.6%, 46.9% and 21.6%. Playing 50% gives 1.65 and 100% gives 3.31.
 - **Tymna** gives one counter only when Yoshimaru is already out. Assuming that is true in 90% of games: +0.9.
 - **Blinks.** The 11 blink pieces give a mean of 1.35 in 12 cards. Assuming half are cast with a legend on the battlefield by turn 6, and each makes 1.5 legendary re-entries on average (Ephemerate rebounds, Eerie Interlude takes several, Teleportation Circle repeats): +1.01.
-- **Total:** about 2.39 + 0.9 + 1.01 = 4.3 counters, a range of about 3.1 to 5.6 counters (low: half of the legends seen are played and blinks add 0.6; high: all are played and blinks add 1.5). Yoshimaru is a 1/1 base, so about a 5/5 by turn 6.
+- **Total:** about 2.48 + 0.9 + 1.01 = 4.4 counters, a range of about 3.2 to 5.7 counters (low: half of the legends seen are played and blinks add 0.6; high: all are played and blinks add 1.5). Yoshimaru is a 1/1 base, so about a 5/5 by turn 6.
 - **Doublers.** The chance of at least one of Delney, Gandalf and Elesh Norn in 12 cards is 32.7%; each adds one counter per legend entering after it lands (Delney only while Yoshimaru's power is 2 or less).
 - **Reading.** A big ground body with no evasion that the table will remove if it can. Commander damage (21) from a 5/5 needs five hits and is not a plan. The deck does not win by his size.
 
@@ -122,7 +123,7 @@ Yoshimaru is a 1/1, so 0 counters is power 1 and 1 counter is power 2. At 2 coun
 - Elspeth's +3/+3 on her, which lasts until end of turn and so covers the postcombat main phase.
 - Removal on Delney, or Delney blinked out or phased out when the trigger would happen.
 
-Gandalf and Elesh Norn do not double Tymna: her trigger is not caused by anything entering. Sorin's lifelink changes nothing for her (she already has it and her power is unchanged).
+Gandalf and Elesh Norn do not double Tymna or Lotho: their triggers are caused by a phase beginning (Tymna) and by a spell being cast (Lotho), not by anything entering. Sorin's lifelink changes nothing for her (she already has it and her power is unchanged).
 
 **Delney and Archangel of Thune mostly cancel each other.** Each life gain puts a counter on every creature, so a power-2 creature goes past the limit on the first gain and a power-1 creature on the second. With Thune out, one Elas, Haliya or Overseer gain before combat turns the doubling off for the whole team that turn. Treat Thune as a finisher (Line C) or a Line D payoff, not as something to cast on a turn where Tymna needs Delney. With Heliod aim the counter at Heliod himself (he is an enchantment we control) or at a large creature, not at Tymna or the small creatures.
 
@@ -133,12 +134,12 @@ Gandalf and Elesh Norn do not double Tymna: her trigger is not caused by anythin
 | Tymna | 2 | Two postcombat draws (above) |
 | Yoshimaru | 1 | Counters, while power 2 or less (above) |
 | Recruiter of the Guard | 1 | Two searches (the second finds a different card) |
-| Wall of Omens | 0 | Two cards |
 | Inspiring Overseer | 2 | Gain 2, draw 2 |
 | Felidar Guardian | 1 | Two blinks (two targets) |
 | Charming Prince | 2 | Two modes, chosen one trigger at a time (scry 2 and gain 3, for instance) |
 | Ennis | 1 | Two blinks on entering; two counters at the end step (so he is at power 3 after one doubled end step) |
 | Loran of the Third Path | 2 | Two destroys on entering |
+| Lotho, Corrupt Shirriff | 2 | 2 life lost and 2 Treasures for each second spell any player casts in a turn |
 | Witch Enchanter // Witch-Blessed Meadow | 2 | Two destroys when cast as a creature (the second needs a second target) |
 | Skyclave Apparition | 2 | Two exiles on entering (its leave trigger: see the open points below) |
 | Palace Jailer | 2 | Two exiles (the monarchy trigger fires twice with no extra effect) |
@@ -155,7 +156,7 @@ Not counted: Welcoming Vampire's draw says "This ability triggers only once each
 
 **Elas with Delney, Elesh Norn and Vito.** Elas has power 2 and Vito power 1. Each other creature entering gives Elas 1 + 1 (Elesh Norn) + 1 (Delney) = 3 gains of 1 life. Each gain triggers Vito twice (1 + 1 for Delney; Elesh Norn does not apply, since a life gain is not an entering), so 3 gains lose an opponent 6 life per creature that enters. If the creature is legendary or an artifact, Gandalf adds a fourth Elas trigger: 8 life. Four cards, so this is something to build toward and not a requirement.
 
-**Gandalf also doubles:** Elas for a legendary or artifact creature entering or dying, Syr Vondam for a legendary or artifact creature dying or being exiled, Haliya for a legendary creature or artifact entering, and The Seriema's own search (two legendary creatures). Gandalf's flash for legendary and artifact spells lets Heliod, Walking Ballista, Mox Amber, Tymna, Conjurer's Closet and the rocks come down at an opponent's end step. **Conjurer's Closet** entering is an artifact entering: Haliya's trigger fires for it (1 life), and Gandalf (an artifact entering) and Elesh Norn (a permanent entering) each add one trigger to it. It is not a legendary permanent, so it does not trigger Yoshimaru, and Delney does nothing for it (it is not a creature).
+**Gandalf also doubles:** Elas for a legendary or artifact creature entering or dying, Syr Vondam for a legendary or artifact creature dying or being exiled, Haliya for a legendary creature or artifact entering (a Lotho Treasure is an artifact entering), and The Seriema's own search (two legendary creatures). Gandalf's flash for legendary and artifact spells lets Heliod, Walking Ballista, Mox Amber, Tymna, Conjurer's Closet and the rocks come down at an opponent's end step. **Conjurer's Closet** entering is an artifact entering: Haliya's trigger fires for it (1 life), and Gandalf (an artifact entering) and Elesh Norn (a permanent entering) each add one trigger to it. It is not a legendary permanent, so it does not trigger Yoshimaru, and Delney does nothing for it (it is not a creature).
 
 ### How the deck wins
 
@@ -236,7 +237,7 @@ Expect most games to be won here. Keep the engine running: one enter effect per 
 
 **The end-step engine.** Three permanents blink at the beginning of our own end step: Teleportation Circle (up to one target artifact or creature we control), The Mind Stone once harnessed (up to one other target nonland permanent we control) and Conjurer's Closet (one target creature we control, a "may"). They trigger at the same time, each is a separate trigger, and we choose the order they go on the stack (a rules point, not card text). They stack by blinking two or three different permanents in one end step. Aim each trigger at a different target: a creature that an earlier trigger has already returned is a new object, and a later trigger aimed at the old one does nothing (a rules point, not card text). The Closet takes only creatures; the Circle and the harnessed Mind Stone also reach artifacts, and The Mind Stone reaches planeswalkers and enchantments too (it cannot target itself).
 
-**What to blink at the end step:** Recruiter of the Guard or Ranger-Captain of Eos (a search every turn), Sun Titan (a permanent card with mana value 3 or less from the graveyard), Palace Jailer (a new exile and the monarchy back), Solitude (an exile), Wall of Omens or Inspiring Overseer (a card), and a creature that makes life or counters with the life layer out. The cases below are the exceptions. A creature whose own effect returns things "at the beginning of the next end step" behaves differently when it is blinked at our end step: that end step's beginning has already passed, so the return waits for the next turn's end step (a rules point, not card text). Flickerwisp blinked this way keeps the opposing permanent it exiled gone through that opponent's whole turn, which is a strong use; Ennis or Charming Prince blinking our own creature keeps it away during their turn, safe from a sorcery-speed sweeper but not available as a blocker.
+**What to blink at the end step:** Recruiter of the Guard or Ranger-Captain of Eos (a search every turn), Sun Titan (a permanent card with mana value 3 or less from the graveyard), Palace Jailer (a new exile and the monarchy back), Solitude (an exile), Inspiring Overseer (a card), and a creature that makes life or counters with the life layer out. The cases below are the exceptions. A creature whose own effect returns things "at the beginning of the next end step" behaves differently when it is blinked at our end step: that end step's beginning has already passed, so the return waits for the next turn's end step (a rules point, not card text). Flickerwisp blinked this way keeps the opposing permanent it exiled gone through that opponent's whole turn, which is a strong use; Ennis or Charming Prince blinking our own creature keeps it away during their turn, safe from a sorcery-speed sweeper but not available as a blocker.
 
 **What not to blink:**
 
@@ -251,7 +252,7 @@ Expect most games to be won here. Keep the engine running: one enter effect per 
 
 ### Game plan
 
-**Turn 1.** A white land that enters untapped, then Yoshimaru; Mox Amber right after him if drawn (counter and a free {W}). **Turn 2.** A two-drop that does something when it enters (Wall of Omens, Charming Prince, Ennis; Orcish Bowmasters at an opponent's end step), or Elas, Syr Vondam, a rock, or Demonic Tutor. **Turn 3.** Tymna, or Delney first if both are in hand and a blinker is ready. **Turns 4 to 6.** An enter-effect creature a turn, with a blink to repeat the best one. Hold flash plays (Restoration Angel, Solitude, Bowmasters, The Wandering Emperor, Gandalf) for an opponent's end step. **Late.** The 8 to 13 mana lines, and Sun Titan, Eternal Wanderer, Conjurer's Closet and the harnessed Mind Stone as the late plays.
+**Turn 1.** A white land that enters untapped, then Yoshimaru; Mox Amber right after him if drawn (counter and a free {W}). **Turn 2.** A two-drop that does something when it enters (Charming Prince, Ennis; Orcish Bowmasters at an opponent's end step), or Elas, Syr Vondam, Lotho ({W}{B}, a legendary two-drop that is a counter for Yoshimaru if he is already out), a rock, or Demonic Tutor. **Turn 3.** Tymna, or Delney first if both are in hand and a blinker is ready. **Turns 4 to 6.** An enter-effect creature a turn, with a blink to repeat the best one. Hold flash plays (Restoration Angel, Solitude, Bowmasters, The Wandering Emperor, Gandalf) for an opponent's end step. **Late.** The 8 to 13 mana lines, and Sun Titan, Eternal Wanderer, Conjurer's Closet and the harnessed Mind Stone as the late plays.
 
 **Go now or hold?**
 
@@ -298,14 +299,14 @@ The first mulligan is free (see two 7-card hands). After that it is a London mul
 | 6 or 5 cards | 2 to 4 lands, a white source, and a play before turn 4 |
 | 4 cards | Keep |
 
-- **Count colours.** Most of the list is white (65 white pips against 20 black); 16 cards need {W}{W}. Tymna needs {W}{B}, and Kaya's Wrath, The Meathook Massacre and Sheoldred need two black.
+- **Count colours.** Most of the list is white (65 white pips against 21 black); 16 cards need {W}{W}. Tymna needs {W}{B}, and Kaya's Wrath, The Meathook Massacre and Sheoldred need two black.
 - **Payoffs are late cards.** Gandalf, Elesh Norn, Archangel of Thune, Sun Titan, The Eternal Wanderer and Conjurer's Closet cost 5 or 6; a hand of those and lands has no play before turn 5.
 - **Bottom first:** the six-drops, then reactive cards, then lands past the fourth.
 
 | # | Hand | Call | Why |
 |---|---|---|---|
 | 1 | Plains; Scrubland; Swamp; Sol Ring; Mother of Runes; Recruiter of the Guard; Demonic Tutor | Keep | Plains and Yoshimaru on turn 1. Turn 2: Scrubland, Sol Ring from the Plains, then Sol Ring's {C}{C} and Scrubland's {W} cast Recruiter. Turn 3: Swamp, Tymna ({W} Plains, {B} Swamp, {1} Sol Ring) and Mother of Runes ({W} Scrubland). Demonic Tutor finds the rest |
-| 2 | Arid Mesa; Godless Shrine; Plains; Elas il-Kor, Sadistic Pilgrim; Wall of Omens; Charming Prince; Ephemerate | Keep | Yoshimaru turn 1, Elas on turn 2 ({W} Plains, {B} Godless Shrine for 2 life), Tymna on turn 3 with Arid Mesa fetching Scrubland. Tymna entering after Yoshimaru is his counter and Elas gains 1 life. Wall, Charming Prince and Ephemerate follow |
+| 2 | Arid Mesa; Godless Shrine; Plains; Elas il-Kor, Sadistic Pilgrim; Lotho, Corrupt Shirriff; Charming Prince; Ephemerate | Keep | Yoshimaru turn 1, Elas on turn 2 ({W} Plains, {B} Godless Shrine for 2 life), Tymna on turn 3 with Arid Mesa fetching Scrubland. Tymna entering after Yoshimaru is his counter and Elas gains 1 life. Lotho (a legend, so a counter), Charming Prince and Ephemerate follow as the fourth land and more mana arrive; Lotho costs us 1 life each time a player casts a second spell in a turn |
 | 3 | Plains; Swamp; Isolated Chapel; Sol Ring; Vampiric Tutor; Enlightened Tutor; Mother of Runes | Keep | Three lands in both colours (Isolated Chapel enters untapped once Plains or Swamp is out), a rock, a one-drop and two instant tutors for a combo piece. Mother of Runes protects Tymna |
 | 4 | Plains; Plains; Scrubland; Swamp; Marsh Flats; Ranger-Captain of Eos; The Seriema | Keep (close) | Five lands, but both spells are real: Ranger-Captain on turn 3 ({W}{W} from the Plains) finds Mother of Runes or Walking Ballista, and The Seriema is a legendary artifact (a counter) that finds Vito or Delney |
 | 5 | Plains; Command Tower; Caves of Koilos; Orzhov Signet; Gandalf the White; Exquisite Blood; Ephemerate | Keep (close) | The commanders are the early plays: Yoshimaru turn 1, Orzhov Signet turn 2, Tymna turn 3. Gandalf and Blood are late, but a fourth land or a tutor makes them castable; Ephemerate needs a target |
@@ -326,9 +327,9 @@ Yoshimaru and Tymna start in the command zone, so no tutor finds them. The tutor
 | Vampiric Tutor | {B} | Top of library | Any card | Instant | We lose 2 life. Cast it at the end step before our turn to draw the card with all our mana |
 | Enlightened Tutor | {W} | Top of library | An artifact or enchantment card: Sol Ring, Mana Vault, Mox Amber, Arcane Signet, Orzhov Signet, Talisman of Hierarchy, The Mind Stone, Conjurer's Closet, The Meathook Massacre, Teleportation Circle, The One Ring, Walking Ballista, Exquisite Blood, Heliod, The Seriema (15 cards) | Instant | Cannot find a creature that is not an artifact or enchantment, an instant, a sorcery or a land |
 | Imperial Seal | {B} | Top of library | Any card | Sorcery | We lose 2 life |
-| The Seriema | {1}{W}{W} | Hand | A legendary creature card: Ennis, Gandalf, Elesh Norn, Delney, Haliya, Loran, Elas, Vito, Kambal, Adeline, Sheoldred, Syr Vondam, Heliod (13 cards) | Sorcery speed (a legendary artifact, so also a counter for Yoshimaru) | Gandalf or Elesh Norn doubles it to two cards; Delney does not (it is not a creature) |
+| The Seriema | {1}{W}{W} | Hand | A legendary creature card: Ennis, Gandalf, Elesh Norn, Delney, Haliya, Loran, Elas, Vito, Kambal, Adeline, Sheoldred, Syr Vondam, Heliod, Lotho (14 cards) | Sorcery speed (a legendary artifact, so also a counter for Yoshimaru) | Gandalf or Elesh Norn doubles it to two cards; Delney does not (it is not a creature) |
 | Ranger-Captain of Eos | {1}{W}{W} | Hand | A creature card with mana value 1 or less: Walking Ballista, Mother of Runes, Giver of Runes (3 cards) | On entering (blink reuses it) | A "may" search. Also the combo stop |
-| Recruiter of the Guard | {2}{W} | Hand | A creature card with toughness 2 or less: Mother of Runes, Giver of Runes, Selfless Spirit, Flickerwisp, Charming Prince, Ennis, Delney, Mentor of the Meek, Inspiring Overseer, Solitude, Skyclave Apparition, Orcish Bowmasters, Walking Ballista (toughness 0), Elas il-Kor, Syr Vondam, Grand Abolisher, Palace Jailer, Loran, Witch Enchanter (19 cards; the library holds only its creature face, a rules point) | On entering (blink reuses it) | A "may" search. It cannot find Vito (toughness 3), Kambal, Restoration Angel or Felidar Guardian. Delney or Elesh Norn doubles it |
+| Recruiter of the Guard | {2}{W} | Hand | A creature card with toughness 2 or less: Mother of Runes, Giver of Runes, Selfless Spirit, Flickerwisp, Charming Prince, Ennis, Delney, Mentor of the Meek, Inspiring Overseer, Solitude, Skyclave Apparition, Orcish Bowmasters, Walking Ballista (toughness 0), Elas il-Kor, Syr Vondam, Grand Abolisher, Palace Jailer, Loran, Lotho, Witch Enchanter (20 cards; the library holds only its creature face, a rules point) | On entering (blink reuses it) | A "may" search. It cannot find Vito (toughness 3), Kambal, Restoration Angel or Felidar Guardian. Delney or Elesh Norn doubles it |
 
 #### What to fetch for the board
 
@@ -355,6 +356,7 @@ The deck has not been simulated. These points are marked so that nobody relies o
 - **UNVERIFIED: Delney and Skyclave Apparition's leave trigger.** Skyclave has power 2, so Delney should double its enter trigger (two exiles), which follows from the text. Whether its "leaves the battlefield" trigger also doubles, and what the second trigger does with two exiled cards, is not checked. Do not rely on it: do not blink or sacrifice Skyclave under Delney unless the exiled card was cheap.
 - **UNVERIFIED: a doubler doubling the trigger for its own entry.** Delney, Gandalf and Elesh Norn enter the battlefield and are on it when the entering is checked, so they should double Yoshimaru's trigger for their own arrival (as the same kind of effect does for a permanent entering beside it). This is a rules reading, not checked against a ruling. The doubling table assumes it only where the text says so (a doubler already on the battlefield).
 - **UNVERIFIED: the end-step triggers of Conjurer's Closet, Teleportation Circle and The Mind Stone.** The texts are read in full from the data (above). Two points are rules readings and not card text: that we choose the order of our own simultaneous triggers, and that a trigger aimed at a creature already returned by an earlier trigger has an illegal target (the creature is a new object). Do not rely on them without a check.
+- **UNVERIFIED: Lotho and the Treasure interactions.** The texts are read from the card data: Lotho's trigger fires for any player's second spell each turn and is mandatory ("you lose 1 life and create a Treasure token"); Delney should double it (power 2, a triggered ability); a Treasure token is an artifact entering under our control, so Haliya's trigger fires for it and Gandalf and Elesh Norn each add a trigger. These are readings of the text, not checked against rulings or a simulation.
 - **Texts cut off in the data:** Syr Vondam (the clause that begins "When Syr Vondam dies or is put into exile while its power is 4 or greater, destroy up to one target no" is cut; not used), Sorin (the -X ability is cut after "Return target creature card with mana value X from your graveyard to the battlefield"; not used beyond that), and The Seriema (the station ability is cut; only its enter trigger is used). The Eternal Wanderer's starting loyalty is not in the data.
 - **Estimates:** the Yoshimaru totals, the 75% and 90% assumptions and the half of blink cards cast are judgement calls with no simulation behind them.
 
@@ -374,7 +376,7 @@ The list is exactly 100 cards.
 | Sometimes enter tapped | 5 | Minas Tirith (tapped without a legendary creature), Isolated Chapel (tapped without a Plains or Swamp), Vault of Champions (tapped only with fewer than two opponents), Godless Shrine (2 life or tapped), Witch Enchanter (3 life or tapped) |
 | Fetch lands | 2 | Marsh Flats and Arid Mesa, 1 life each |
 
-**Pips.** The 68 nonland cards in the 98 have 65 white pips (49 cards with a white pip) and 20 black pips (17 cards with a black pip). 16 cards cost {W}{W}: Council's Judgment, Kaya's Wrath, Flickerwisp, The Eternal Wanderer, Gandalf the White, Solitude, Skyclave Apparition, Ranger-Captain of Eos, Sun Titan, Archangel of Thune, Adeline, The Wandering Emperor, Elspeth, The Seriema, Grand Abolisher and Palace Jailer. 3 cards cost {B}{B}: Kaya's Wrath ({W}{W}{B}{B}), The Meathook Massacre and Sheoldred. The deck is white with black for Tymna, Vito, Sheoldred, the tutors, Exquisite Blood and some removal.
+**Pips.** The 68 nonland cards in the 98 have 65 white pips (49 cards with a white pip) and 21 black pips (18 cards with a black pip). 16 cards cost {W}{W}: Council's Judgment, Kaya's Wrath, Flickerwisp, The Eternal Wanderer, Gandalf the White, Solitude, Skyclave Apparition, Ranger-Captain of Eos, Sun Titan, Archangel of Thune, Adeline, The Wandering Emperor, Elspeth, The Seriema, Grand Abolisher and Palace Jailer. 3 cards cost {B}{B}: Kaya's Wrath ({W}{W}{B}{B}), The Meathook Massacre and Sheoldred. The deck is white with black for Tymna, Vito, Sheoldred, the tutors, Exquisite Blood and some removal.
 
 **Land count and early mana** (hypergeometric, exact, from the 98-card library):
 
@@ -384,13 +386,13 @@ The list is exactly 100 cards.
 - **Tymna turn 3 (on the play, 9 cards):** the chance that two different lands among the 9 cards make white and black is 73.3%, and 78.7% on the draw (10 cards). This counts Plaza of Heroes for Tymna (she is a legendary spell). It is necessary but not sufficient: the third land is also needed (at least three lands in the 9 cards with a white and a black: 53.0%; 61.3% on the draw), and a Signet, a Talisman or Mox Amber can supply it.
 - **White double pips:** at least 2 white lands by turn 3 (9 cards): 64.6%; by turn 4 (10 cards): 70.8%; by turn 6 (12 cards): 80.7%. White rocks add to this. **Black double pips:** at least 2 black lands by turn 4: 54.9%; by turn 6: 65.9%. Urborg turns every land into a black source, and only 3 cards need {B}{B}.
 
-**Life costs.** Caves of Koilos and Talisman of Hierarchy 1 per coloured tap; Marsh Flats and Arid Mesa 1; Godless Shrine 2 (or tapped); Witch Enchanter's land side 3 (or tapped); Mana Vault 1 damage in the draw step while tapped; Vampiric Tutor and Imperial Seal 2; Anguished Unmaking 3; Toxic Deluge X; Tymna X per trigger (and per doubled trigger); The One Ring 1 per burden counter each upkeep. Offsets: Tymna's lifelink, Elas, Haliya, Inspiring Overseer, Charming Prince, Kaya's Wrath, Solitude's lifelink and Sorin. Keep an eye on life at a 40-life table.
+**Life costs.** Caves of Koilos and Talisman of Hierarchy 1 per coloured tap; Marsh Flats and Arid Mesa 1; Godless Shrine 2 (or tapped); Witch Enchanter's land side 3 (or tapped); Mana Vault 1 damage in the draw step while tapped; Vampiric Tutor and Imperial Seal 2; Anguished Unmaking 3; Toxic Deluge X; Tymna X per trigger (and per doubled trigger); Lotho 1 per trigger, on any player's second spell each turn (2 per spell under Delney); The One Ring 1 per burden counter each upkeep. Offsets: Tymna's lifelink, Elas, Haliya (also for each Treasure), Inspiring Overseer, Charming Prince, Kaya's Wrath, Solitude's lifelink and Sorin. Keep an eye on life at a 40-life table. Lotho's Treasures are one-shot mana of any colour: they fix white and black and can pay for a second spell, but they come from a trigger the whole table can set off, so they are not counted among the colour sources above.
 
 **Curve** (68 nonland cards in the 98; Walking Ballista counts 0, The Meathook Massacre 2, Deadly Rollick 4 and Flawless Maneuver 3 at their printed costs, Solitude 5; Witch Enchanter is counted as a land). Average mana value 2.81 (191 over 68). 27 of 68 cost 0 to 2.
 
 - **0 (2):** Mox Amber, Walking Ballista
 - **1 (11):** Sol Ring, Mana Vault, Vampiric Tutor, Enlightened Tutor, Imperial Seal, Swords to Plowshares, Path to Exile, Mother of Runes, Giver of Runes, Ephemerate, Silence
-- **2 (14):** Arcane Signet, Orzhov Signet, Talisman of Hierarchy, The Mind Stone, Demonic Tutor, The Meathook Massacre, Selfless Spirit, Charming Prince, Ennis, Wall of Omens, Orcish Bowmasters, Elas il-Kor, Syr Vondam, Grand Abolisher
+- **2 (14):** Arcane Signet, Orzhov Signet, Talisman of Hierarchy, The Mind Stone, Demonic Tutor, The Meathook Massacre, Selfless Spirit, Charming Prince, Ennis, Lotho, Orcish Bowmasters, Elas il-Kor, Syr Vondam, Grand Abolisher
 - **3 (22):** Vindicate, Anguished Unmaking, Council's Judgment, Toxic Deluge, Teferi's Protection, Flawless Maneuver, Flickerwisp, Eerie Interlude, Delney, Welcoming Vampire, Mentor of the Meek, Inspiring Overseer, Haliya, Skyclave Apparition, Ranger-Captain of Eos, Recruiter of the Guard, Vito, Kambal, Adeline, Heliod, The Seriema, Loran
 - **4 (11):** Deadly Rollick, Kaya's Wrath, Restoration Angel, Felidar Guardian, Teleportation Circle, The One Ring, Sheoldred, The Wandering Emperor, Elspeth, Sorin, Palace Jailer
 - **5 (6):** Gandalf the White, Elesh Norn, Solitude, Archangel of Thune, Exquisite Blood, Conjurer's Closet
@@ -400,7 +402,7 @@ The list is exactly 100 cards.
 
 **Finding cards.**
 - **Tutors:** Demonic Tutor, Vampiric Tutor, Enlightened Tutor, Imperial Seal (4 any-card or type tutors), plus The Seriema, Ranger-Captain of Eos and Recruiter of the Guard.
-- **Draw:** Tymna, Welcoming Vampire, Mentor of the Meek, Wall of Omens, Inspiring Overseer, Haliya, The One Ring, Palace Jailer's monarchy, Loran (symmetrical), Minas Tirith, and Sheoldred turning draws into life.
+- **Draw:** Tymna, Welcoming Vampire, Mentor of the Meek, Inspiring Overseer, Haliya, The One Ring, Palace Jailer's monarchy, Loran (symmetrical), Minas Tirith, and Sheoldred turning draws into life.
 
 **Interaction.**
 - **Spot removal spells (6):** Swords to Plowshares, Path to Exile, Deadly Rollick, Vindicate, Anguished Unmaking, Council's Judgment.
@@ -430,7 +432,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Commanders (2).** Yoshimaru, Ever Faithful; Tymna the Weaver
 
-**Creatures (34).** Adeline, Resplendent Cathar; Archangel of Thune; Charming Prince; Delney, Streetwise Lookout; Elas il-Kor, Sadistic Pilgrim; Elesh Norn, Mother of Machines; Ennis, Debate Moderator; Felidar Guardian; Flickerwisp; Gandalf the White; Giver of Runes; Grand Abolisher; Haliya, Guided by Light; Heliod, Sun-Crowned; Inspiring Overseer; Kambal, Consul of Allocation; Loran of the Third Path; Mentor of the Meek; Mother of Runes; Orcish Bowmasters; Palace Jailer; Ranger-Captain of Eos; Recruiter of the Guard; Restoration Angel; Selfless Spirit; Sheoldred, the Apocalypse; Skyclave Apparition; Solitude; Sun Titan; Syr Vondam, Sunstar Exemplar; Vito, Thorn of the Dusk Rose; Walking Ballista; Wall of Omens; Welcoming Vampire
+**Creatures (34).** Adeline, Resplendent Cathar; Archangel of Thune; Charming Prince; Delney, Streetwise Lookout; Elas il-Kor, Sadistic Pilgrim; Elesh Norn, Mother of Machines; Ennis, Debate Moderator; Felidar Guardian; Flickerwisp; Gandalf the White; Giver of Runes; Grand Abolisher; Haliya, Guided by Light; Heliod, Sun-Crowned; Inspiring Overseer; Kambal, Consul of Allocation; Loran of the Third Path; Lotho, Corrupt Shirriff; Mentor of the Meek; Mother of Runes; Orcish Bowmasters; Palace Jailer; Ranger-Captain of Eos; Recruiter of the Guard; Restoration Angel; Selfless Spirit; Sheoldred, the Apocalypse; Skyclave Apparition; Solitude; Sun Titan; Syr Vondam, Sunstar Exemplar; Vito, Thorn of the Dusk Rose; Walking Ballista; Welcoming Vampire
 
 **Planeswalkers (4).** Elspeth, Knight-Errant; Sorin, Vengeful Bloodlord; The Eternal Wanderer; The Wandering Emperor
 
@@ -484,6 +486,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Kambal, Consul of Allocation
 1 Kaya's Wrath
 1 Loran of the Third Path
+1 Lotho, Corrupt Shirriff
 1 Mana Vault
 1 Marsh Flats
 1 Mentor of the Meek
@@ -527,7 +530,6 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Vindicate
 1 Vito, Thorn of the Dusk Rose
 1 Walking Ballista
-1 Wall of Omens
 1 Welcoming Vampire
 1 Witch Enchanter
 1 Yoshimaru, Ever Faithful

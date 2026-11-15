@@ -27,13 +27,13 @@ in the Spare pile. If any other card is missing from a box, add it to "Cards to 
 
 | Pile | Stays in its own box | From Tymna/Thrasios box | From Y'shtola box | To find | Total |
 |---|---|---|---|---|---|
-| New Yoshimaru/Tymna | 20 + 1 basic Swamp | n/a | 4 | 60 + 15 basics | 100 |
+| New Yoshimaru/Tymna | 21 + 1 basic Swamp | n/a | 4 | 59 + 15 basics | 100 |
 | New Y'shtola | 87 | 11 | n/a | 2 | 100 |
-| Spare | n/a | 68 | 9 | n/a | 77 |
+| Spare | n/a | 67 | 9 | n/a | 76 |
 
 ## 1. The Tymna/Thrasios box
 
-### Stays in the box: New Yoshimaru/Tymna (20 cards)
+### Stays in the box: New Yoshimaru/Tymna (21 cards)
 
 Tymna stays as a commander. Thrasios leaves and Yoshimaru takes his place in the command zone.
 
@@ -46,6 +46,7 @@ Tymna stays as a commander. Thrasios leaves and Yoshimaru takes his place in the
 - Godless Shrine
 - Grand Abolisher
 - Imperial Seal
+- Lotho, Corrupt Shirriff
 - Mana Vault
 - Marsh Flats
 - Orcish Bowmasters
@@ -76,11 +77,11 @@ The box also holds 1 Swamp, which stays.
 
 Silence and Grand Abolisher are the other two package cards. They do not move: see section 5.
 
-### To the Spare pile (68 cards)
+### To the Spare pile (67 cards)
 
-Thrasios, Triton Hero goes here. The 68 cards are two groups.
+Thrasios, Triton Hero goes here. The 67 cards are two groups.
 
-**Cards that neither new list plays (56):**
+**Cards that neither new list plays (55):**
 
 - Ad Nauseam
 - Ancient Tomb
@@ -108,7 +109,6 @@ Thrasios, Triton Hero goes here. The 68 cards are two groups.
 - Into the Flood Maw
 - Intuition
 - Lion's Eye Diamond
-- Lotho, Corrupt Shirriff
 - Lotus Petal
 - Mana Confluence
 - Mental Misstep
@@ -154,7 +154,7 @@ Thrasios, Triton Hero goes here. The 68 cards are two groups.
 - Underground Sea
 - Watery Grave
 
-The Tymna/Thrasios box is now empty except for the 20 cards that stay and the Swamp.
+The Tymna/Thrasios box is now empty except for the 21 cards that stay and the Swamp.
 
 ## 2. The Y'shtola box
 
@@ -205,12 +205,12 @@ Second copies to find (2):
 
 ### Last step: put the decks together
 
-Put the New Yoshimaru/Tymna pile into the Tymna/Thrasios box, together with the 20 cards that stayed and the Swamp:
+Put the New Yoshimaru/Tymna pile into the Tymna/Thrasios box, together with the 21 cards that stayed and the Swamp:
 it is now the Yoshimaru/Tymna deck. The Y'shtola box now holds her 100 cards.
 
 ## 3. Cards to find
 
-New Yoshimaru/Tymna needs 60 cards that are in neither the Tymna/Thrasios box nor the Y'shtola cuts, and
+New Yoshimaru/Tymna needs 59 cards that are in neither the Tymna/Thrasios box nor the Y'shtola cuts, and
 15 basic lands (10 Plains and 6 Swamp in the list, less the Swamp that is already in the box). New
 Y'shtola needs 2 second copies. Tick each card you already have; the rest are yours to buy or borrow.
 
@@ -252,7 +252,7 @@ That deck keeps its copy, so the new deck needs another one.
 | The One Ring | The Ur-Dragon, Sheoldred, Thanos (Cali) | [ ] |
 | Vito, Thorn of the Dusk Rose | Sheoldred | [ ] |
 
-### Cards that no deck list holds (44)
+### Cards that no deck list holds (43)
 
 | Card | Have it? |
 |---|---|
@@ -296,7 +296,6 @@ That deck keeps its copy, so the new deck needs another one.
 | The Wandering Emperor | [ ] |
 | Vault of Champions | [ ] |
 | Vindicate | [ ] |
-| Wall of Omens | [ ] |
 | Welcoming Vampire | [ ] |
 | Witch Enchanter | [ ] |
 | Yoshimaru, Ever Faithful (commander) | [ ] |
@@ -310,11 +309,11 @@ That deck keeps its copy, so the new deck needs another one.
 
 ## 4. Check the counts
 
-- **New Yoshimaru/Tymna:** 20 from the Tymna/Thrasios box + 1 Swamp already in it + 4 from the
-  Y'shtola box + 60 to find + 15 basics to find = 100, including both commanders (Yoshimaru, Ever Faithful and
+- **New Yoshimaru/Tymna:** 21 from the Tymna/Thrasios box + 1 Swamp already in it + 4 from the
+  Y'shtola box + 59 to find + 15 basics to find = 100, including both commanders (Yoshimaru, Ever Faithful and
   Tymna the Weaver).
 - **New Y'shtola:** 87 in the box + 11 from the Tymna/Thrasios box + 2 second copies = 100.
-- **Spare:** 68 from the Tymna/Thrasios box + 9 from the Y'shtola box = 77 cards.
+- **Spare:** 67 from the Tymna/Thrasios box + 9 from the Y'shtola box = 76 cards.
 - Check each pile against the import list at the end of its deck document. Every card appears once, except basic lands
   (Yoshimaru/Tymna: 10 Plains and 6 Swamp; Y'shtola: 6 Plains, 5 Island and 8 Swamp).
 
