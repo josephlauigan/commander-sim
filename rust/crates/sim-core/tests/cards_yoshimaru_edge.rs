@@ -681,3 +681,42 @@ fn meadow_land_drop_does_not_destroy_an_opponents_artifact() {
     );
     assert!(g.perm(l).on_bf);
 }
+
+#[test]
+fn yoshimaru_land_trigger_is_doubled_by_delney() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Delney, Streetwise Lookout");
+    let y = perm(&mut g, P0, Y);
+    assert_eq!(g.perm(y).plus, 0);
+    land(&mut g, "Minas Tirith");
+    assert_eq!(g.perm(y).plus, 2, "a trigger of a creature with power 2 or less triggers an additional time");
+}
+
+#[test]
+fn yoshimaru_hushbringer_and_panharmonicon_do_not_touch_a_plain_legendary_land() {
+    let mut g = tbl();
+    let y = perm(&mut g, P0, Y);
+    perm(&mut g, P0, "Panharmonicon");
+    perm(&mut g, P1, "Hushbringer");
+    land(&mut g, "Minas Tirith");
+    assert_eq!(g.perm(y).plus, 1, "a land that is not a creature: one trigger, not silenced, not doubled");
+}
+
+#[test]
+fn yoshimaru_counts_a_legendary_land_under_blood_moon() {
+    let mut g = tbl();
+    let y = perm(&mut g, P0, Y);
+    perm(&mut g, P1, "Blood Moon");
+    land(&mut g, "Minas Tirith");
+    assert_eq!(g.perm(y).plus, 1, "Blood Moon takes the land's abilities, not its legendary supertype");
+}
+
+#[test]
+fn yoshimaru_counts_each_legendary_land_once_across_two_land_drops() {
+    let mut g = tbl();
+    let y = perm(&mut g, P0, Y);
+    land(&mut g, "Minas Tirith");
+    land(&mut g, "Plains");
+    land(&mut g, "Eiganjo, Seat of the Empire");
+    assert_eq!(g.perm(y).plus, 2);
+}

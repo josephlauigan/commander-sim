@@ -33,12 +33,22 @@ fn is_land_card(g: &Game, m: PermId) -> bool {
 
 // ================================================================== Yoshimaru, Ever Faithful
 /// **Yoshimaru, Ever Faithful** ({W} 1/1, Partner): "Whenever another legendary permanent you control enters, put a
-/// +1/+1 counter on Yoshimaru." A permanent that is not a land comes through the enters event (a stack trigger, so
-/// Panharmonicon and Torpor Orb act on it); a land has no single enters event, so it is seen through landfall: every
-/// land of Yoshimaru's controller that arrived since he last looked (a higher permanent number than the one he has
-/// counted up to, which starts at his own) is checked, once, whatever else landfall does.
+/// +1/+1 counter on Yoshimaru." A permanent that is not a land comes through the enters event; a land through the
+/// engine's land-enters event (`Event::LandEnters`, fired once per land by `zones::lands_entered`, however the land
+/// came: played, fetched, put onto the battlefield, a token copy). Both are stack triggers, so Panharmonicon, Ancient
+/// Greenwarden, Delney, Torpor Orb and Hushbringer act on them. A creature land is counted by the land event only
+/// (a token copy of a legendary land that is also a creature fires both events).
 fn yoshimaru_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
     if m == src || !live(g, src) || g.perm(src).owner != p || is_land_card(g, m) || !legendary(g, m) {
+        return Ok(());
+    }
+    counter(g, src, p)
+}
+
+/// the land event: a legendary land that entered after Yoshimaru did (a higher permanent number, so a land that was
+/// already there when he came in, or while he was phased out, is not counted)
+fn yoshimaru_land(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
+    if m.0 <= src.0 || !live(g, src) || g.perm(src).owner != p || !g.perm(m).on_bf || !legendary(g, m) {
         return Ok(());
     }
     counter(g, src, p)
@@ -48,22 +58,6 @@ fn yoshimaru_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
 fn counter(g: &mut Game, src: PermId, p: PlayerId) -> Res {
     if trigger_window(g, p, Some(src), "a +1/+1 counter on Yoshimaru", None)? && live(g, src) {
         repl::put_plus(g, src, 1);
-    }
-    Ok(())
-}
-
-fn yoshimaru_landfall(g: &mut Game, src: Src, p: PlayerId) -> Res {
-    if !live(g, src) || g.perm(src).owner != p {
-        return Ok(());
-    }
-    let seen = g.perm(src).data.int(DataKey::Entered).max(src.0 as i64);
-    let fresh: Vec<PermId> = g.player(p).lands.iter().copied().filter(|l| l.0 as i64 > seen).collect();
-    let Some(top) = fresh.iter().map(|l| l.0 as i64).max() else { return Ok(()) };
-    g.perm_mut(src).data.set(DataKey::Entered, Val::Int(top));
-    for l in fresh {
-        if g.perm(l).on_bf && legendary(g, l) && live(g, src) {
-            counter(g, src, p)?;
-        }
     }
     Ok(())
 }
@@ -381,8 +375,7 @@ fn meadow_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Yoshimaru, Ever Faithful")?;
     c.etb = Some(yoshimaru_etb);
-    c.landfall = Some(yoshimaru_landfall);
-    super::partials::at_once(c, crate::hooks::Event::Landfall, true);
+    c.land_enters = Some(yoshimaru_land);
     r.card(db, "Minas Tirith")?.land_options = Some(minas_options);
     let w = r.card(db, WITCH)?;
     w.land_cols = Some(meadow_cols);

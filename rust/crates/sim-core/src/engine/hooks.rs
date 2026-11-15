@@ -161,6 +161,13 @@ pub fn fire_sba(g: &mut Game) -> Res {
 /// `CI.fire` for an event in `TRIGGER_EVENTS`, with its copies: a dies trigger once more per Teysa Karlov, an enters
 /// trigger that goes on the stack once more per Panharmonicon.
 pub fn fire_trigger(g: &mut Game, e: Event, call: Call) -> Res {
+    // Hushbringer: a creature entering (a land that is also a creature) sets off nothing
+    if let (Event::LandEnters, Call::Etb { m, .. }) = (e, &call)
+        && g.is_creature(*m)
+        && crate::engine::repl::hushed(g)
+    {
+        return Ok(());
+    }
     let mut entries = vec![];
     for (src, imp) in hooked(g, e) {
         let owner = g.perm(src).owner;
@@ -172,6 +179,13 @@ pub fn fire_trigger(g: &mut Game, e: Event, call: Call) -> Res {
             && !imp.runs_at_once(e)
         {
             reps += total_trigger_copies(g, owner, "etb", Some(*m));
+        }
+        if let (Event::LandEnters, Call::Etb { m, .. }) = (e, &call)
+            && !imp.runs_at_once(e)
+        {
+            // a land entering: Ancient Greenwarden's additional trigger, and Panharmonicon's if it is also a creature
+            reps +=
+                total_trigger_copies(g, owner, "landfall", Some(*m)) + total_trigger_copies(g, owner, "etb", Some(*m));
         }
         for _ in 0..reps.max(1) {
             // an event outside TRIGGER_EVENTS ('crew', 'monarch') runs at once, as Python's CI.fire does
@@ -212,6 +226,7 @@ pub fn run_hook(g: &mut Game, src: PermId, e: Event, call: &Call) -> Res {
         (Event::Main2, Call::Player { p }) => imp.main2.map_or(Ok(()), |f| f(g, src, *p)),
         (Event::Draw, Call::Player { p }) => imp.draw.map_or(Ok(()), |f| f(g, src, *p)),
         (Event::Landfall, Call::Player { p }) => imp.landfall.map_or(Ok(()), |f| f(g, src, *p)),
+        (Event::LandEnters, Call::Etb { p, m }) => imp.land_enters.map_or(Ok(()), |f| f(g, src, *p, *m)),
         (Event::Crew, Call::Player { p }) => imp.crew.map_or(Ok(()), |f| f(g, src, *p)),
         (Event::Monarch, Call::Player { p }) => imp.monarch.map_or(Ok(()), |f| f(g, src, *p)),
         (Event::Cast, Call::Cast { caster, c }) => imp.cast.map_or(Ok(()), |f| f(g, src, *caster, *c)),
