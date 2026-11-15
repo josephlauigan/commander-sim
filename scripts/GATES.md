@@ -15,7 +15,7 @@ checkout is refused (`gates-lib/common.sh`). `trace-record.sh` does not take the
 Writes one `PASS`/`FAIL` line per gate, with an evidence path, to `/tmp/handoff/gates/<pr>.md` and ends with
 `RESULT: PASS | FAIL | INCOMPLETE`. Exit 0 only if every gate run in the call passed. `--base-tree` is a checkout of `--base`
 (the coordinator keeps one); the base's test lists are cached per commit in the gates dir. `--only` re-runs some gates and keeps
-the other lines. Commit before running: the export gate needs a clean tree and restores it afterwards.
+the other lines. Commit before running: every gate except `review` refuses a tree with uncommitted changes (the gates judge the working tree and record the head), and the export gate restores the tree afterwards. A line kept from an earlier run counts only when it was judged on the same head and base; after a new commit the other gates show as not run (INCOMPLETE) until they are run again.
 
 | gate | passes when |
 |---|---|
@@ -30,13 +30,13 @@ the other lines. Commit before running: the export gate needs a clean tree and r
 | export | `cardgen export --offline` leaves `git status --porcelain` clean (otherwise FAIL and the tree is restored) |
 | allowlists | the frozen allow-lists (below) hold no new entry and no changed reason |
 | newconsts | no new `const`/`static` named like `FIX\|ALARM\|EXCEPT\|GAP\|SKIP\|EXEMPT\|ALLOW\|QUIET\|NO_` in `rust/crates` |
-| review | the first line of `--review FILE` is exactly `VERDICT: commit` |
+| review | the first line of `--review FILE` is exactly `VERDICT: commit` and a line `Reviewed head: <hash>` (8 or more hex digits) is a prefix of the head, so a verdict for an earlier commit does not pass a later one |
 
 Frozen allow-lists (`gates-lib/gatecheck.py`, table `FROZEN`): `TO_FIX` and `FALSE_ALARMS` in the four `practice_*_probe.rs`
 files (choice, trigger, ability, opponent), `EXCEPTIONS` in `practice_rings_probe.rs`, `KNOWN_GAPS` in `spellbook.rs`,
 `NO_CHOICE` and `QUIET` in `model_gaps_a4.rs`, all under `rust/crates/sim-core/tests/`. The key of an entry is its first string
 literal (`KNOWN_GAPS`: the first two, since a deck key repeats); the branch's keys must be a subset of the base's, a changed
-reason fails. A new entry is a caveat to report, never a fix. A "new" const in `newconsts` is a `(file, name)` the base lacks, so
+reason fails; a frozen const the base has and the branch cannot find (renamed, or `const` changed to `static`) fails too. A new entry is a caveat to report, never a fix. A "new" const in `newconsts` is a `(file, name)` the base lacks, so
 moving one to another file also trips it.
 
 `--dry-run` prints the cargo commands instead of running them and writes `<pr>.dry-run.md`. Test seam: `GATES_LIST_DIR=DIR`
@@ -76,7 +76,7 @@ exited non-zero), MISSING (base only; a failure unless declared with `--expect-m
 only). `--rewrite` applies a regex to every base log line before hashing. Exit non-zero if a record of a deck not in `--allow` is
 not SAME. For l3 recordings the comparer reports panics, timeouts and no-winner games per deck-tier against the base on the same
 seeds, lists each seed that newly times out, and prints cast counts per card; it fails on any branch panic, a timeout or no-winner
-count above the base's, and a `--changed-cards` card that is never cast in the branch (or no longer cast where the base cast it)
+count above the base's, and a `--changed-cards` card that is never cast in the branch by a deck's own seat (or no longer cast where the base cast it); casts are matched by exact card name (`Twinflame` does not match `Twinflame Tyrant`), a recording made before own-seat counts existed is refused against a newer one, and an `ERROR` record is never allowed by `--allow`
 unless named in `--explained`. It prints no win rates.
 
 ## Tests

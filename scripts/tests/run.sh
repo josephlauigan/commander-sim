@@ -143,10 +143,16 @@ has "suite: names the failed test" "test gamma ... FAILED"
 printf 'error: could not compile\n' >"$tmp/nobuild.log"
 expect "suite: a log with no result line fails" 1 "${gc[@]}" suite "$tmp/nobuild.log"
 
-expect "verdict: VERDICT: commit passes" 0 "${gc[@]}" verdict "$fx/reviews/commit.md"
-expect "verdict: fix-first fails" 1 "${gc[@]}" verdict "$fx/reviews/fixfirst.md"
-expect "verdict: the verdict must be on the first line" 1 "${gc[@]}" verdict "$fx/reviews/late.md"
-expect "verdict: a missing file fails" 1 "${gc[@]}" verdict "$tmp/none.md"
+H=0123456789abcdef0123456789abcdef01234567
+mkrev() { printf '%s\nReviewed head: %s\n\nNothing to fix.\n' "$1" "$2" >"$3"; }
+mkrev "VERDICT: commit" "${H:0:12}" "$tmp/rv-ok.md"; mkrev "VERDICT: fix-first" "${H:0:12}" "$tmp/rv-fix.md"
+mkrev "VERDICT: commit" "ffffffffffff" "$tmp/rv-other.md"
+expect "verdict: VERDICT: commit for this head passes" 0 "${gc[@]}" verdict "$tmp/rv-ok.md" "$H"
+expect "verdict: fix-first fails" 1 "${gc[@]}" verdict "$tmp/rv-fix.md" "$H"
+expect "verdict: the verdict must be on the first line" 1 "${gc[@]}" verdict "$fx/reviews/late.md" "$H"
+expect "verdict: a review of another head fails" 1 "${gc[@]}" verdict "$tmp/rv-other.md" "$H"
+expect "verdict: a review that names no head fails" 1 "${gc[@]}" verdict "$fx/reviews/commit.md" "$H"
+expect "verdict: a missing file fails" 1 "${gc[@]}" verdict "$tmp/none.md" "$H"
 
 expect "audit-mine: all Full passes" 0 "${gc[@]}" audit-mine "$l/ok.audit-mine"
 expect "audit-mine: a card below Full fails" 1 "${gc[@]}" audit-mine "$l/bad.audit-mine"
@@ -169,7 +175,9 @@ rm -rf "$tmp/branch"; mkbranch "$tmp/base" "$tmp/branch"
 git -C "$tmp/branch" commit -q --allow-empty -m "work"
 base=$(git -C "$tmp/base" rev-parse HEAD)
 gd=$tmp/gates
-sg=("$scripts/stage-gate.sh" "$tmp/branch" --base "$base" --pr t1 --base-tree "$tmp/base" --gates-dir "$gd" --review "$fx/reviews/commit.md")
+mkrev "VERDICT: commit" "$(git -C "$tmp/branch" rev-parse HEAD)" "$tmp/rev-commit.md"
+mkrev "VERDICT: fix-first" "$(git -C "$tmp/branch" rev-parse HEAD)" "$tmp/rev-fix.md"
+sg=("$scripts/stage-gate.sh" "$tmp/branch" --base "$base" --pr t1 --base-tree "$tmp/base" --gates-dir "$gd" --review "$tmp/rev-commit.md")
 
 expect "stage-gate: every gate passes, exit 0" 0 "${sg[@]}"
 for g in suite ignored names diffcheck fmt audit-mine audit-paths validate export allowlists newconsts review; do
@@ -200,8 +208,8 @@ FAKE_DIRTY=1 "${sg[@]}" --only export >"$tmp/out" 2>&1; rc=$?
 if [[ $rc == 1 ]] && grep -q "^FAIL export: the export changed 2 paths (tree restored)" "$tmp/out"; then ok; else bad "stage-gate: a changed export fails (exit $rc)" "$tmp/out"; fi
 expect "stage-gate: the tree is restored after a failed export" 0 test -z "$(git -C "$tmp/branch" status --porcelain)"
 touch "$tmp/branch/untracked.txt"; reset_fake; rm -rf "$gd"
-expect "stage-gate: a dirty tree fails the export gate" 1 "${sg[@]}" --only export
-has "stage-gate: says commit first" "not clean before the export"
+expect "stage-gate: a dirty tree is refused for the gates that read the working tree" 2 "${sg[@]}" --only export
+expect "stage-gate: the review gate does not need a clean tree" 0 "${sg[@]}" --only review
 rm -f "$tmp/branch/untracked.txt"
 
 # declared deletions
@@ -209,7 +217,7 @@ reset_fake; rm -rf "$gd"; cp "$fx/cargo/deleted.list" "$FAKE_DIR/branch.list"
 expect "stage-gate: a declared deletion passes" 0 "${sg[@]}" --only names --declared-deletions "$fx/declared/delta.txt"
 # review
 rm -rf "$gd"
-expect "stage-gate: fix-first review fails" 1 "$scripts/stage-gate.sh" "$tmp/branch" --base "$base" --pr t1 --gates-dir "$gd" --only review --review "$fx/reviews/fixfirst.md"
+expect "stage-gate: fix-first review fails" 1 "$scripts/stage-gate.sh" "$tmp/branch" --base "$base" --pr t1 --gates-dir "$gd" --only review --review "$tmp/rev-fix.md"
 rm -rf "$gd"
 expect "stage-gate: no review file fails" 1 "$scripts/stage-gate.sh" "$tmp/branch" --base "$base" --pr t1 --gates-dir "$gd" --only review
 # whitespace and fmt on a touched .rs file
@@ -232,6 +240,14 @@ has "stage-gate: the result turns FAIL" "^RESULT: FAIL \(1 failing\)" "$gd/t1.md
 rm -rf "$gd"; reset_fake
 "${sg[@]}" --only diffcheck >/dev/null 2>&1
 has "stage-gate: a partial gate file is INCOMPLETE" "^RESULT: INCOMPLETE" "$gd/t1.md"
+# lines judged on an earlier head are not carried over to a later one
+rm -rf "$gd"; reset_fake
+"${sg[@]}" >/dev/null 2>&1
+git -C "$tmp/branch" commit -q --allow-empty -m "later work"
+mkrev "VERDICT: commit" "$(git -C "$tmp/branch" rev-parse HEAD)" "$tmp/rev-commit.md"
+"${sg[@]}" --only review >/dev/null 2>&1
+has "stage-gate: after a new commit only the rerun gate has a line" "^RESULT: INCOMPLETE \(not run: suite" "$gd/t1.md"
+hasnt "stage-gate: the suite line of the old head is not kept" "^PASS suite" "$gd/t1.md"
 # the test list for a stale base tree is refused
 rm -rf "$tmp/stale"; mkbase "$tmp/stale"; git -C "$tmp/stale" commit -q --allow-empty -m "other"
 expect "stage-gate: a base tree not at --base is refused" 2 "$scripts/stage-gate.sh" "$tmp/branch" --base "$base" --pr t1 --gates-dir "$gd" --base-tree "$tmp/stale" --only newconsts
@@ -321,7 +337,8 @@ echo "Play-by-play of pool game $k (seed $((500000 + k))): $deck vs $pool, loose
 echo "Seat order: $deck, Opp A, Opp B, Opp C"
 echo "R1  $deck draws a card"
 echo "$decides"
-if (( k % 2 == 0 )) && [[ $variant != nocast ]]; then echo "R2  $deck $cast"; fi
+if (( k % 2 == 0 )) && [[ $variant != nocast ]]; then echo "R2  $deck $cast"; echo "R2  Opp A casts Foo Bar"; fi
+[[ $variant == oppq ]] && echo "R2  Opp A casts Qux"
 [[ $variant == envdump ]] && echo "R2  env AI_SEARCH=${AI_SEARCH:-unset} ROOT=$COMMANDER_SIM_ROOT"
 echo "R$last  $deck $act"
 echo "Winner: $winner ($wintype)"
@@ -338,6 +355,8 @@ tiers = ["t5"]
 mktree() {
   rm -rf "$1"; mkdir -p "$1/data" "$1/rust/target/release"
   printf '%s' "${3:-$decks_toml}" >"$1/data/my_decks.toml"
+  printf '{"version": 1, "cards": [{"name": "Foo"}, {"name": "Foo Bar"}, {"name": "Bar"}, {"name": "Qux"}]}\n' >"$1/data/cards.json"
+  printf '{"version": 1, "mine": [{"key": "aragorn", "name": "aragorn"}, {"key": "yshtola", "name": "yshtola"}], "pool": []}\n' >"$1/data/decks.json"
   printf '%s\n' "$2" >"$1/variant.txt"
   mkbin "$1/rust/target/release/commander-sim"
   printf 'rust/target/\n' >"$1/.gitignore"; git -C "$1" init -q; commit "$1" "tree $2"
@@ -411,6 +430,10 @@ has "compare: RESULT shows the branch result" "branch \('Opp A', 'Damage', 3\)"
 
 expect "compare: ERROR fails" 1 "${tc[@]}" "$B" "$tmp/rec/panic"
 has "compare: ERROR carries the panic line" "branch exit 1: panic: boom"
+expect "compare: --allow never lets an ERROR through" 1 "${tc[@]}" "$B" "$tmp/rec/panic" --allow yshtola
+mkdir -p "$tmp/rec/empty1" "$tmp/rec/empty2"; : >"$tmp/rec/empty1/records.jsonl"; : >"$tmp/rec/empty2/records.jsonl"
+printf '{"mode": "l2"}\n' >"$tmp/rec/empty1/meta.json"; cp "$tmp/rec/empty1/meta.json" "$tmp/rec/empty2/meta.json"
+expect "compare: two empty recordings fail" 1 "${tc[@]}" "$tmp/rec/empty1" "$tmp/rec/empty2"
 
 expect "compare: an undeclared MISSING fails" 1 "${tc[@]}" "$B" "$tmp/rec/missing"
 has "compare: MISSING in the table" "^aragorn/t4 +0 +0 +0 +0 +0 +3"
@@ -425,24 +448,29 @@ has "compare: NEW in the table" "^newdeck/t3 +0 +0 +0 +0 +0 +0 +3"
 expect "compare: NEW in an allowed deck passes" 0 "${tc[@]}" "$B" "$tmp/rec/new" --allow newdeck
 
 expect "compare: a wording change is PLAY without a rewrite" 1 "${tc[@]}" "$B" "$tmp/rec/reword"
-expect "compare: a declared rewrite of the base logs makes it SAME" 0 "${tc[@]}" "$B" "$tmp/rec/reword" --rewrite 'casts Foo -> plays Foo'
-has "compare: names the rewrite" "rewrites applied to the base logs: casts Foo -> plays Foo"
+expect "compare: a declared rewrite of the base logs makes it SAME" 0 "${tc[@]}" "$B" "$tmp/rec/reword" --rewrite 'casts Foo$ -> plays Foo'
+has "compare: names the rewrite" "rewrites applied to the base logs: casts Foo\\\$ -> plays Foo"
 expect "compare: a rewrite that does not apply changes nothing" 1 "${tc[@]}" "$B" "$tmp/rec/reword" --rewrite 'nothing here -> x'
-expect "compare: an arrow without spaces splits too" 0 "${tc[@]}" "$B" "$tmp/rec/reword" --rewrite 'casts->plays'
+expect "compare: an arrow without spaces splits too" 0 "${tc[@]}" "$B" "$tmp/rec/reword" --rewrite 'casts Foo$->plays Foo'
 
 # l3
-for v in base panic timeout nowinner nocast; do
-  mktree "$tmp/q-$v" "$v"; tr_rec --mode l3 --tree "$tmp/q-$v" --out "$tmp/rec/l3-$v" --seeds 4 --cards 'Foo;Bar' -P 4 >/dev/null 2>&1
+for v in base panic timeout nowinner nocast oppq; do
+  mktree "$tmp/q-$v" "$v"; tr_rec --mode l3 --tree "$tmp/q-$v" --out "$tmp/rec/l3-$v" --seeds 4 --cards 'Foo;Bar;Qux' -P 4 >/dev/null 2>&1
 done
 mktree "$tmp/q-missing" base '[yshtola]
 tiers = ["t5"]
-'; tr_rec --mode l3 --tree "$tmp/q-missing" --out "$tmp/rec/l3-missing" --seeds 4 --cards 'Foo;Bar' >/dev/null 2>&1
+'; tr_rec --mode l3 --tree "$tmp/q-missing" --out "$tmp/rec/l3-missing" --seeds 4 --cards 'Foo;Bar;Qux' >/dev/null 2>&1
 L=$tmp/rec/l3-base
 expect "record l3: 4 seeds x 3 deck-tiers = 12 records" 0 test "$(wc -l <"$L/records.jsonl")" -eq 12
 hasnt "record l3: keeps no winner names" '"winner":' "$L/records.jsonl"
 hasnt "record l3: keeps no within-tier pods" '"deck": "within"' "$L/records.jsonl"
 expect "record l3: keeps no logs" 0 test "$(find "$L/logs" -type f | wc -l)" -eq 0
-has "record l3: per-card cast flags" '"casts": \{"Bar": 0, "Foo": 1\}' "$L/records.jsonl"
+has "record l3: per-card cast flags, any seat, exact name (Foo Bar is not Foo)" '"casts": \{"Bar": 0, "Foo": 1, "Qux": 0\}' "$L/records.jsonl"
+has "record l3: own-seat cast flags" '"own_casts": \{"Bar": 0, "Foo": 1, "Qux": 0\}' "$L/records.jsonl"
+mktree "$tmp/q-nocards" base; rm "$tmp/q-nocards/data/cards.json"; commit "$tmp/q-nocards" "no cards"
+expect "record l3: unreadable card data is an error, not an empty name list" 2 tr_rec --mode l3 --tree "$tmp/q-nocards" --out "$tmp/rec/l3-nocards" --seeds 1 --cards 'Foo'
+expect "compare l3: a card cast only by an opponent is not a cast of the deck" 1 "${tc[@]}" "$L" "$tmp/rec/l3-oppq" --changed-cards Qux
+has "compare l3: says own seat" "changed card 'Qux' was never cast by a deck's own seat in the branch"
 expect "compare l3: the same build passes" 0 "${tc[@]}" "$L" "$tmp/rec/l3-base" --changed-cards Foo
 has "compare l3: prints the cast counts" "Foo: total 6/6"
 hasnt "compare l3: prints no win rate" "win rate|win share|wins"
@@ -453,8 +481,22 @@ has "compare l3: lists the seed that newly times out" "seeds that newly time out
 has "compare l3: and the count above the base" "timeouts up in yshtola/t5: base 0, branch 1 of 4"
 expect "compare l3: a new no-winner game fails" 1 "${tc[@]}" "$L" "$tmp/rec/l3-nowinner"
 has "compare l3: names it" "no-winner games up in yshtola/t5: base 0, branch 1 of 4"
+rm -rf "$tmp/rec/l3-old"; cp -R "$L" "$tmp/rec/l3-old"
+python3 -I -c "
+import json,sys
+p=sys.argv[1]
+rows=[json.loads(l) for l in open(p)]
+for r in rows: r.pop('own_casts',None)
+open(p,'w').write(''.join(json.dumps(r)+'\n' for r in rows))" "$tmp/rec/l3-old/records.jsonl"
+expect "compare l3: a recording without own-seat counts is refused against one with them" 1 "${tc[@]}" "$tmp/rec/l3-old" "$L"
+has "compare l3: says why" "only one recording has own-seat cast counts"
+expect "cast flags: a seat named after the card's prefix still counts as that seat" 0 python3 -I -c "
+import sys; sys.path.insert(0, sys.argv[1])
+import record
+a, o = record.cast_flags(b\"R2  Scarlet Witch: yshtola casts Foo\\nR3  Opp A casts Foo Bar\\n\", ['Foo'], 'yshtola', ['Foo', 'Foo Bar'])
+sys.exit(0 if (a['Foo'], o['Foo']) == (1, 1) else 1)" "$scripts/gates-lib"
 expect "compare l3: a changed card never cast fails" 1 "${tc[@]}" "$L" "$tmp/rec/l3-nocast" --changed-cards Foo
-has "compare l3: says never cast" "changed card 'Foo' was never cast in the branch"
+has "compare l3: says never cast" "changed card 'Foo' was never cast by a deck's own seat in the branch"
 expect "compare l3: unless explained" 0 "${tc[@]}" "$L" "$tmp/rec/l3-nocast" --changed-cards Foo --explained Foo
 expect "compare l3: without --changed-cards the casts are only reported" 0 "${tc[@]}" "$L" "$tmp/rec/l3-nocast"
 expect "compare l3: a card not in the recording is a problem" 1 "${tc[@]}" "$L" "$tmp/rec/l3-base" --changed-cards Baz

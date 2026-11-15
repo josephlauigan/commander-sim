@@ -67,9 +67,14 @@ gate_file=$gates_dir/$pr.md
 [[ $DRY == 1 ]] && gate_file=$gates_dir/$pr.dry-run.md
 declare -A line_of=()      # gate -> its PASS/FAIL line, from earlier runs and this one
 declare -A ran_now=()
-if [[ -f $gate_file ]]; then
+# gates judge the working tree but the file records the head: a tree with uncommitted changes would make the head look green
+if [[ $DRY != 1 && $only != review ]] && [[ -n $(git -C "$wt" status --porcelain -uall) ]]; then
+  die "the tree $wt is not clean: commit first (the gates judge the working tree and record the head)"
+fi
+# lines kept from an earlier run count only when they were judged on this head and this base; others are not run
+if [[ -f $gate_file ]] && grep -q "^base $base (.*), head $head," "$gate_file"; then
   while IFS= read -r ln; do
-    if [[ $ln =~ ^(PASS|FAIL|SKIP)\ ([a-z-]+): ]]; then line_of[${BASH_REMATCH[2]}]=$ln; fi
+    if [[ $ln =~ ^(PASS|FAIL|SKIP)\ ([a-z-]+): ]] && [[ $ln == *" head=${head:0:12}"* ]]; then line_of[${BASH_REMATCH[2]}]=$ln; fi
   done <"$gate_file"
 fi
 
@@ -243,7 +248,7 @@ gate_newconsts() {
 
 gate_review() {
   if [[ -z $review ]]; then record review FAIL "no --review file given"; return; fi
-  verdict_of review "$(log_of review)" "$(log_of review)" "${check[@]}" verdict "$review"
+  verdict_of review "$(log_of review)" "$(log_of review)" "${check[@]}" verdict "$review" "$head"
 }
 
 for g in "${run_list[@]}"; do "gate_$g"; done

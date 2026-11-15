@@ -38,18 +38,12 @@ CAST_LINE = re.compile(rb"^R\d+\s+(.+?) casts (.*)$")
 def load_names(tree):
     """card names (for the exact-name rule) and deck key -> seat display name, read from the tree's data"""
     names, seat = [], {}
-    try:
-        cj = json.load(open(os.path.join(tree, "data", "cards.json")))
-        it = cj.values() if isinstance(cj, dict) else cj
-        names = [c["name"] for c in it if isinstance(c, dict) and c.get("name")]
-    except Exception:
-        pass
-    try:
-        dj = json.load(open(os.path.join(tree, "data", "decks.json")))
-        for v in dj.get("mine", []):
-            seat[v["key"]] = v.get("name", "")
-    except Exception:
-        pass
+    cj = json.load(open(os.path.join(tree, "data", "cards.json")))
+    it = cj["cards"] if isinstance(cj, dict) else cj
+    names = [c["name"] for c in it if isinstance(c, dict) and c.get("name")]
+    dj = json.load(open(os.path.join(tree, "data", "decks.json")))
+    for v in dj.get("mine", []):
+        seat[v["key"]] = v.get("name", "")
     return names, seat
 
 
@@ -64,6 +58,8 @@ def cast_flags(out, cards, own, names):
         if not m:
             continue
         actor, rest = m.group(1).strip(), m.group(2)
+        if b": " in actor:  # "Scarlet Witch: Y'shtola casts X": the seat is after the card's prefix
+            actor = actor.rsplit(b": ", 1)[1].strip()
         for c in cards:
             cb = c.encode()
             if not rest.startswith(cb):
@@ -187,7 +183,14 @@ def main():
     meta["seeds"] = seeds
     meta["deck_tiers"] = [f"{d}/{t}" for d, t in jobs]
 
-    card_names, seat_names = load_names(a.tree)
+    try:
+        card_names, seat_names = load_names(a.tree)
+    except (OSError, ValueError, KeyError) as e:
+        print(f"record.py: cannot read data/cards.json or data/decks.json in {a.tree}: {e}", file=sys.stderr)
+        return 2
+    if a.mode == "l3" and a.cards and not card_names:
+        print("record.py: --cards given but data/cards.json holds no card names", file=sys.stderr)
+        return 2
 
     def one(job):
         deck, tier, k = job

@@ -15,8 +15,9 @@ check_tree() {
   local t=$1 real
   [[ -n $t && -d $t ]] || die "not a directory: ${t:-<empty>}"
   real=$(abspath "$t")
-  [[ $real != "$MAIN_CHECKOUT" && $real != "$MAIN_CHECKOUT"/rust* ]] || die "refusing to touch the main checkout: $t"
+  [[ $real != "$MAIN_CHECKOUT" && $real != "$MAIN_CHECKOUT"/* ]] || die "refusing to touch the main checkout: $t"
   git -C "$real" rev-parse --git-dir >/dev/null 2>&1 || die "not a git work tree: $t"
+  [[ $(git -C "$real" rev-parse --show-toplevel 2>/dev/null) != "$MAIN_CHECKOUT" ]] || die "refusing to touch the main checkout: $t"
   echo "$real"
 }
 

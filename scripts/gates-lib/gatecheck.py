@@ -229,7 +229,9 @@ def allowlists(base_tree, branch_tree):
         fname, cname = ident
         b_entries, n_entries = base[ident], branch[ident]
         if n_entries is None:
-            continue  # removed or absent in the branch: nothing can be added
+            if b_entries:  # a rename, or `const` turned into `static`, would switch the freeze off
+                problems.append(f"{fname} {cname}: the const the base freezes is not found in the branch (renamed or removed?)")
+            continue
         total += len(n_entries)
         keys_base = Counter(k for k, _ in (b_entries or []))
         reasons_base = defaultdict(list)
@@ -272,13 +274,21 @@ def newconsts(base_tree, branch_tree):
 # ---------------------------------------------------------------- review verdict and audits
 
 
-def verdict(path):
+def verdict(path, head):
+    """the first line is `VERDICT: commit` and a line `Reviewed head: <hash>` names the commit being gated (a prefix of
+    at least 8 hex digits), so a verdict written for an earlier head does not pass a later one"""
     if not os.path.exists(path):
         return out(False, "no review file", [path])
     with open(path, encoding="utf-8", errors="replace") as f:
-        first = f.readline().rstrip("\r\n").rstrip()
-    ok = first == "VERDICT: commit"
-    return out(ok, f"first line: {first!r}", [] if ok else ["need exactly `VERDICT: commit`"])
+        text = f.read()
+    first = text.split("\n", 1)[0].rstrip("\r").rstrip()
+    problems = [] if first == "VERDICT: commit" else ["need exactly `VERDICT: commit`"]
+    m = re.search(r"^Reviewed head: ([0-9a-f]{8,40})\s*$", text, re.M)
+    if not m:
+        problems.append("need a line `Reviewed head: <hash>` naming the reviewed commit")
+    elif not head.startswith(m.group(1)):
+        problems.append(f"the review is for {m.group(1)}, the head is {head[:12]}")
+    return out(not problems, f"first line: {first!r}", problems)
 
 
 def audit_mine(path):
@@ -303,7 +313,7 @@ COMMANDS = {
     "names": (names, (2, 3)),
     "allowlists": (allowlists, 2),
     "newconsts": (newconsts, 2),
-    "verdict": (verdict, 1),
+    "verdict": (verdict, 2),
     "audit-mine": (audit_mine, 1),
     "audit-paths": (audit_paths, 1),
 }

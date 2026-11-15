@@ -143,7 +143,7 @@ def compare_l2(base, branch, a):
             continue
         if cls == "MISSING" and expected_missing(key, expect):
             declared.append(key)
-        elif key[0] in allow:
+        elif key[0] in allow and cls != "ERROR":
             allowed.append((key, cls, detail))
         else:
             failing.append((key, cls, detail))
@@ -173,6 +173,9 @@ def compare_l2(base, branch, a):
     if failing:
         show("FAILING records:", failing)
     ok = not failing
+    if not keys:
+        print("\nno records in either recording")
+        ok = False
     print(f"\nRESULT: {'PASS' if ok else 'FAIL'} ({len(failing)} failing, {len(allowed)} allowed non-SAME, "
           f"{total['SAME']} of {sum(total.values())} SAME)")
     return 0 if ok else 1
@@ -188,6 +191,11 @@ def compare_l3(base, branch, a):
     declared = [k for k in keys_b - keys_r if expected_missing(k, expect)]
     for k in unexpected:
         problems.append(f"MISSING {tag(k)} seed {k[2]}")
+    if not (keys_b & keys_r):
+        problems.append("no seed is in both recordings")
+    has_own = lambda recs: any("own_casts" in r for r in recs[0].values())
+    if has_own(base) != has_own(branch):
+        problems.append("only one recording has own-seat cast counts (made before they were recorded): re-record the older one")
     print(f"base   {a.base}: commit {base[1].get('commit', '?')[:12]}")
     print(f"branch {a.branch}: commit {branch[1].get('commit', '?')[:12]}")
     print(f"same seeds: {len(keys_b & keys_r)}; only in the base {len(keys_b - keys_r)} "
@@ -242,16 +250,18 @@ def compare_l3(base, branch, a):
             tr = sum(v[1] for v in cast_rows[c].values())
             per = ", ".join(f"{t} {v[0]}/{v[1]}" for t, v in sorted(cast_rows[c].items()) if v[0] or v[1])
             print(f"  {c}: total {tb}/{tr}" + (f"  [{per}]" if per else ""))
+    # the deck's own seat is what shows the card was played; recordings without own-seat counts fall back to any seat
+    check_rows = own_rows if own_rows else cast_rows
     for c in changed:
         if c in explained:
             continue
-        if c not in cast_rows:
+        if c not in check_rows:
             problems.append(f"changed card {c!r} is not in the recording (was --cards given?)")
             continue
-        tr = sum(v[1] for v in cast_rows[c].values())
+        tr = sum(v[1] for v in check_rows[c].values())
         if tr == 0:
-            problems.append(f"changed card {c!r} was never cast in the branch")
-        for t, v in sorted(cast_rows[c].items()):
+            problems.append(f"changed card {c!r} was never cast by a deck's own seat in the branch" if own_rows else f"changed card {c!r} was never cast in the branch")
+        for t, v in sorted(check_rows[c].items()):
             if v[0] and not v[1]:
                 problems.append(f"changed card {c!r}: cast in {v[0]} base games of {t}, none in the branch")
     if problems:
