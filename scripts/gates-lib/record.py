@@ -3,7 +3,7 @@
 coordinator, inside the cargo lock and the memory cap (trace-record.sh does not take them itself).
 
 One game per process: `env -i PATH HOME COMMANDER_SIM_ROOT=<tree> <copied binary> --deck D --pool T --seed 500000
---trace k` for a deck-tier, `--pool T --seed 500000 --trace k` (no --deck) for a within-tier pod. Output:
+--trace k` for a deck-tier, `--calibrate within --pool T --seed 500000 --trace k` (no --deck) for a within-tier pod. Output:
   <out>/records.jsonl   one JSON line per (deck|within, tier, k), sorted
   <out>/logs/*.log      the raw stdout of every l2 game (l3 keeps no logs)
   <out>/meta.json       mode, commit, binary sha256, seeds, timing
@@ -142,7 +142,7 @@ def main():
 
     def one(job):
         deck, tier, k = job
-        cmd = [a.bin] + (["--deck", deck] if deck != "within" else []) + ["--pool", tier, "--seed", str(SEED0), "--trace", str(k)]
+        cmd = [a.bin] + (["--deck", deck] if deck != "within" else ["--calibrate", "within"]) + ["--pool", tier, "--seed", str(SEED0), "--trace", str(k)]
         rc, out, err = play(cmd, env, a.tree, a.timeout)
         rec = {"commit": a.commit, "binary_sha256": binary_sha, "deck": deck, "tier": tier, "k": k, "seed": SEED0 + k, "exit": rc}
         info = parse_game(out)
