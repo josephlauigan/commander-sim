@@ -56,7 +56,12 @@ pub fn fingerprint(g: &Game) -> Vec<String> {
         out.push(format!("P{} hand={:?}", p.index(), sorted_names(g, pl.hand.iter().copied())));
         out.push(format!("P{} gy={:?}", p.index(), sorted_names(g, pl.gy.iter().copied())));
         out.push(format!("P{} exile={:?}", p.index(), sorted_names(g, pl.exile.iter().copied())));
-        out.push(format!("P{} library={}:{:?}", p.index(), pl.library.len(), sorted_names(g, pl.library.iter().copied())));
+        out.push(format!(
+            "P{} library={}:{:?}",
+            p.index(),
+            pl.library.len(),
+            sorted_names(g, pl.library.iter().copied())
+        ));
         let mut perms: Vec<String> = pl
             .lands
             .iter()
@@ -125,10 +130,14 @@ pub struct Scenario<'a> {
     pub build: &'a dyn Fn() -> Game,
     /// the engine entry where the seat decides, with the AI at the seat
     pub ai: &'a dyn Fn(&mut Game),
+    /// what a person does first that the AI does inside its decision (tapping lands for mana, say): run before the
+    /// public lines are collected, since the AI makes no such separate action
+    pub person_prep: &'a dyn Fn(&mut Game),
     /// the same entry with a person at the seat (often the same as `ai`)
     pub person: &'a dyn Fn(&mut Game),
-    /// read the AI's picks off the games (before the act, after the AI's act) and make the person's answers
-    pub adapter: &'a dyn Fn(&Game, &Game) -> Box<dyn FnMut(&Request) -> Answer + Send>,
+    /// read the AI's picks off the games (before the act, after the AI's act) and the AI's public lines, and make the
+    /// person's answers
+    pub adapter: &'a dyn Fn(&Game, &Game, &[String]) -> Box<dyn FnMut(&Request) -> Answer + Send>,
 }
 
 /// what a run left behind
@@ -155,9 +164,10 @@ pub fn person_matches_ai(s: &Scenario) -> Parity {
     let ai = Outcome { fingerprint: fingerprint(&g_ai), lines: lines_ai.lines() };
 
     let mut g_p = (s.build)();
-    let lines_p = watch(&mut g_p);
-    let h = Arc::new(ScriptHuman::from_fn((s.adapter)(&before, &g_ai)));
+    let h = Arc::new(ScriptHuman::from_fn((s.adapter)(&before, &g_ai, &ai.lines)));
     g_p.humans.add(s.seat, h.clone());
+    (s.person_prep)(&mut g_p);
+    let lines_p = watch(&mut g_p);
     (s.person)(&mut g_p);
     let person = Outcome { fingerprint: fingerprint(&g_p), lines: lines_p.lines() };
 
@@ -191,4 +201,12 @@ pub fn gained(before: &Game, after: &Game, p: PlayerId) -> Vec<String> {
     }
     out.sort();
     out
+}
+
+/// the index of the choice that is the card called `name` (a label is the name, then the cost: "Sol Ring {1}"; a
+/// stack label "Name (Controller)"), or None
+pub fn choice_of(r: &Request, name: &str) -> Option<usize> {
+    r.choices
+        .iter()
+        .position(|c| c == name || c.starts_with(&format!("{name} {{")) || c.starts_with(&format!("{name} (")))
 }
