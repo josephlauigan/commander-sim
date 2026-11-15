@@ -860,12 +860,13 @@ fn twinflame_c2_a_propaganda_the_mana_cannot_pay_holds_the_line() {
 }
 
 #[test]
-fn twinflame_c2_a_propaganda_the_mana_can_pay_still_releases() {
-    // 6 mana: 2 for Twinflame and {2} each for the flier and its copy
+fn twinflame_c2_a_propaganda_holds_even_when_the_mana_could_pay() {
+    // 6 mana: 2 for Twinflame and {2} each for the flier and its copy would pay. The estimate no longer models taxes (the
+    // AI keeps no mana back for one, and the leftover mana may be restricted or wasted), so a taxed opponent is held.
     let mut g = row13("urdragon");
     lands(&mut g, P0, "Mountain", 3, false);
     perm(&mut g, P1, "Propaganda");
-    fair(&mut g, false);
+    held(&mut g, false);
     let mut h = row13("urdragon");
     lands(&mut h, P0, "Mountain", 2, false); // 5 mana: one attacker is paid for
     perm(&mut h, P1, "Propaganda");
@@ -873,13 +874,14 @@ fn twinflame_c2_a_propaganda_the_mana_can_pay_still_releases() {
 }
 
 #[test]
-fn twinflame_c2_an_attack_cap_counts_only_the_attackers_it_allows() {
+fn twinflame_c2_an_attack_cap_holds_the_line_even_for_one_attacker() {
+    // an attack cap in play: the estimate counts no combat damage at all (a cap can also turn on only after the cast)
     let mut g = row13("urdragon");
-    perm(&mut g, P1, "Silent Arbiter"); // one attacker per combat: 8 of the 16
+    perm(&mut g, P1, "Silent Arbiter"); // one attacker per combat
     assert_eq!(sim_core::engine::combat::attack_restrictions(&g, P0, P1).1, Some(1));
     held(&mut g, false);
     opp_life(&mut g, BIG_POW);
-    fair(&mut g, false); // one attacker is enough at 8 life
+    held(&mut g, false); // one attacker would be enough at 8 life: held on purpose
 }
 
 #[test]
@@ -895,4 +897,305 @@ fn twinflame_c2_a_pacified_flier_is_not_counted() {
     held(&mut g, false);
     opp_life(&mut g, 2 * BIG_POW);
     fair(&mut g, false);
+}
+
+// ------------------------------------------------------------------ round 4: the release holds unless nothing unmodelled is live
+use sim_core::ai::act::perform;
+use sim_core::engine::{combat, turn, values};
+use sim_core::hooks::Opt;
+
+/// seat 0 = urdragon with the line alive, Twinflame in hand, three Mountains, an untapped Ancient Silver Dragon; the
+/// other seats are `seph`, `aragorn`, `cloud`
+fn adv_base(seats: usize) -> Game {
+    let keys = ["urdragon", "seph", "aragorn", "cloud"];
+    let mut g = table(&keys[..seats]);
+    for p in &mut g.players {
+        p.hand.clear();
+        p.gy.clear();
+    }
+    for name in [GARTH, SPARK, SEASON] {
+        let c = take(&mut g, P0, name);
+        g.player_mut(P0).library.push(c);
+    }
+    hand(&mut g, P0, &[TWIN]);
+    lands(&mut g, P0, "Mountain", 3, false);
+    perm(&mut g, P0, BIG);
+    g
+}
+
+/// what Twinflame's hand hook offers right now (empty = held)
+fn adv_hook(g: &mut Game) -> Vec<Opt> {
+    let c = card(g, TWIN);
+    let f = g.registry.get(c).unwrap().hand_options.unwrap();
+    f(g, c, P0, Some(false)).unwrap()
+}
+
+fn adv_cast_offered(g: &mut Game) {
+    let opts = main_options(g, P0, false).unwrap();
+    let o = opts.iter().find(|o| o.label.starts_with("Twinflame (")).expect("fair option");
+    assert!(perform(g, P0, o.act.as_ref().unwrap()).unwrap());
+}
+
+/// only to bypass the hold in the probe: exile Garth
+fn adv_kill_line(g: &mut Game) {
+    let c = card(g, GARTH);
+    g.player_mut(P0).library.retain(|&x| x != c);
+    g.player_mut(P0).exile.push(c);
+}
+
+fn adv_dead(g: &Game, q: PlayerId) -> bool {
+    !g.player(q).alive || g.player(q).life <= 0
+}
+
+/// (the estimate releases, an all-in attack after the real cast kills somebody, the engine's own combat kills somebody).
+/// If the all-in attack cannot kill, nothing can: a release without it is a wrong release.
+fn adv_probe(g: &Game) -> (bool, bool, bool) {
+    let mut e = g.clone();
+    let rel = !adv_hook(&mut e).is_empty();
+    let mut a = g.clone();
+    adv_kill_line(&mut a);
+    adv_cast_offered(&mut a);
+    if a.players.iter().any(|o| o.id != P0 && adv_dead(&a, o.id)) {
+        return (rel, true, true);
+    }
+    turn::end_step_pools(&mut a); // floating mana empties before combat
+    let mut allin = false;
+    for q in a.opps(P0).collect::<Vec<_>>() {
+        let mut b = a.clone();
+        let atk: Vec<PermId> = b
+            .player(P0)
+            .perms
+            .clone()
+            .into_iter()
+            .filter(|&m| {
+                let x = b.perm(m);
+                b.is_creature(m)
+                    && !x.tapped
+                    && !x.phased
+                    && (!x.sick || combat::has_haste(&b, m))
+                    && (!x.noatk || values::epow(&b, m) >= 3)
+                    && values::epow(&b, m) > 0
+                    && !sim_core::cardcode::locked(&b, m, "pacify")
+            })
+            .collect();
+        let atk = if values::chasm(&b, P0) { vec![] } else { atk };
+        let paid = combat::attack_limits(&mut b, P0, q, atk).unwrap();
+        if paid.is_empty() {
+            continue;
+        }
+        combat::resolve_combat(&mut b, P0, &paid, q, &[]).unwrap();
+        if b.players.iter().any(|o| o.id != P0 && adv_dead(&b, o.id)) {
+            allin = true;
+        }
+    }
+    let mut c = a.clone();
+    combat::combat(&mut c, P0).unwrap();
+    (rel, allin, c.players.iter().any(|o| o.id != P0 && adv_dead(&c, o.id)))
+}
+
+/// Twinflame is offered although no opponent can die even if everything attacks the best way
+fn adv_wrong(g: &Game) -> bool {
+    let (rel, allin, _) = adv_probe(g);
+    rel && !allin
+}
+
+fn adv_terror_token(g: &mut Game) {
+    let c = card(g, TERROR);
+    zones::enter_token_copy(g, P0, c).unwrap().unwrap();
+}
+
+// sanity: the probe state itself, one point either side of lethal
+#[test]
+fn twinflame_d0_sanity_16_releases_and_kills_17_holds() {
+    let mut g = adv_base(2);
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_probe(&g), (true, true, true));
+    g.player_mut(P1).life = 17;
+    assert!(!adv_probe(&g).0);
+}
+
+// F1: attack restrictions. The estimate counts no combat damage to an opponent whose attacks are taxed, and none while
+// any attack cap is out.
+#[test]
+fn twinflame_d1_angelic_arbiter_turns_on_with_the_cast_so_it_holds() {
+    let mut g = adv_base(2);
+    let a = perm(&mut g, P1, "Angelic Arbiter");
+    g.perm_mut(a).tapped = true;
+    g.perm_mut(a).sick = false;
+    g.player_mut(P1).life = 16;
+    assert!(!adv_wrong(&g), "Twinflame offered, but the cast itself bans the attack");
+}
+
+#[test]
+fn twinflame_d1_sandwurm_convergence_bars_the_fliers_so_it_holds() {
+    let mut g = adv_base(2);
+    perm(&mut g, P1, "Sandwurm Convergence");
+    g.player_mut(P1).life = 16;
+    assert!(!adv_wrong(&g), "Twinflame offered, but no flier can attack");
+}
+
+#[test]
+fn twinflame_d1_spell_only_mana_does_not_pay_an_attack_tax() {
+    let mut g = adv_base(2);
+    perm(&mut g, P0, "Hydro-Channeler");
+    let c = card(&g, "Hydro-Channeler");
+    for _ in 0..2 {
+        let m = zones::enter_token_copy(&mut g, P0, c).unwrap().unwrap();
+        g.perm_mut(m).sick = false;
+    }
+    perm(&mut g, P1, "Propaganda");
+    g.player_mut(P1).life = 16;
+    assert!(!adv_wrong(&g), "Twinflame offered, but the restricted mana cannot pay the tax");
+}
+
+#[test]
+fn twinflame_d1_mana_that_empties_before_combat_does_not_pay_an_attack_tax() {
+    // Mountain + Sol Ring: Twinflame pays R and the generic from Sol Ring, whose second mana empties at the end of main 1
+    let mut g = table(&["urdragon", "seph"]);
+    for p in &mut g.players {
+        p.hand.clear();
+        p.gy.clear();
+    }
+    for name in [GARTH, SPARK, SEASON] {
+        let c = take(&mut g, P0, name);
+        g.player_mut(P0).library.push(c);
+    }
+    hand(&mut g, P0, &[TWIN]);
+    lands(&mut g, P0, "Mountain", 1, false);
+    perm(&mut g, P0, BIG);
+    perm(&mut g, P0, "Sol Ring");
+    perm(&mut g, P1, "Baird, Steward of Argive"); // {1} per attacker
+    g.player_mut(P1).life = 8;
+    assert!(!adv_wrong(&g), "Twinflame offered, but no mana is left for the tax at combat");
+}
+
+#[test]
+fn twinflame_d1_a_pumped_noatk_creature_takes_the_only_cap_slot() {
+    let mut g = adv_base(2);
+    let dork = perm(&mut g, P0, "Paradise Druid");
+    g.perm_mut(dork).plus = 8;
+    perm(&mut g, P1, "Silent Arbiter");
+    g.player_mut(P1).life = 8;
+    assert!(!adv_wrong(&g), "Twinflame offered, but the cap slot goes to the ground creature");
+}
+
+// F1 controls: a tax on another seat only leaves the untaxed seat's combat counted; and a table with nothing in the way
+#[test]
+fn twinflame_d1_control_a_tax_on_another_seat_still_releases_for_the_untaxed_one() {
+    let mut g = adv_base(3);
+    perm(&mut g, P2, "Propaganda");
+    g.player_mut(P1).life = 16;
+    assert_eq!(adv_probe(&g), (true, true, true));
+}
+
+// F2: a target the estimate may count must take damage like any other: every reducing gate the engine applies in
+// `lose_life` and the combat damage step
+#[test]
+fn twinflame_d2_gisela_halves_damage_to_its_controller_so_it_holds() {
+    let mut g = adv_base(2);
+    let m = perm(&mut g, P1, "Gisela, Blade of Goldnight");
+    g.perm_mut(m).tapped = true;
+    g.player_mut(P1).life = 16;
+    assert!(!adv_wrong(&g), "Twinflame offered, but Gisela halves the damage");
+}
+
+#[test]
+fn twinflame_d2_angels_grace_already_in_force_holds() {
+    let mut g = adv_base(2);
+    g.player_mut(P1).life = 16;
+    let (k, st) = (sim_core::sym::intern("stax_grace"), g.turn_stamp());
+    g.player_mut(P1).flag_turn.insert(k, st);
+    assert!(!adv_wrong(&g), "Twinflame offered, but damage cannot take the opponent below 1");
+}
+
+#[test]
+fn twinflame_d2_a_fog_this_turn_holds() {
+    let mut g = adv_base(2);
+    g.fog = Some(g.turn_stamp());
+    g.player_mut(P1).life = 16;
+    assert!(!adv_wrong(&g), "Twinflame offered, but combat damage is prevented");
+}
+
+#[test]
+fn twinflame_d2_a_prevented_attacker_is_not_counted() {
+    let mut g = adv_base(2);
+    let silver = perms_named(&g, P0, BIG)[0];
+    let m = perm(&mut g, P1, "Old Fat Spider Can't See Me");
+    g.perm_mut(m).data.set(sim_core::state::DataKey::Prevent, sim_core::state::Val::Perm(silver));
+    g.player_mut(P1).life = 16;
+    assert!(!adv_wrong(&g), "Twinflame offered, but the 8-power flier's damage is prevented");
+}
+
+#[test]
+fn twinflame_d2_phyrexian_unlife_means_zero_life_is_not_a_kill() {
+    // `adv_wrong` would count life <= 0 as dead, so this asserts on the hook itself
+    let mut g = adv_base(2);
+    perm(&mut g, P1, "Phyrexian Unlife");
+    g.player_mut(P1).life = 16;
+    assert!(adv_hook(&mut g).is_empty(), "Twinflame offered, but an opponent at 0 life does not lose");
+}
+
+#[test]
+fn twinflame_d2_control_without_unlife_it_releases_at_16() {
+    let mut g = adv_base(2);
+    g.player_mut(P1).life = 16;
+    assert!(!adv_hook(&mut g).is_empty());
+}
+
+// F3: Terror of the Peaks' triggers are replayed one at a time with the engine's aim (`t2::best_target_any`)
+#[test]
+fn twinflame_d3_the_first_opponent_in_reach_is_protected_so_the_trigger_kills_nobody() {
+    // no combat (Glacial Chasm). One trigger of 5: the engine aims at the first opponent with 5 or less life, the
+    // protected one at 1, not at the one at 5
+    let mut g = adv_base(3);
+    perm(&mut g, P0, TERROR);
+    lands(&mut g, P0, "Glacial Chasm", 1, false);
+    g.player_mut(P1).life = 1;
+    g.player_mut(P1).ring_prot = true;
+    g.player_mut(PlayerId(2)).life = 5;
+    assert!(!adv_wrong(&g), "Twinflame offered, but the trigger is aimed at the protected opponent");
+}
+
+#[test]
+fn twinflame_d3_the_aim_changes_after_the_first_trigger() {
+    // two Terrors, two triggers of 5; 28/27: the first drops the leader below the other, so the second goes to the other
+    let mut g = adv_base(3);
+    perm(&mut g, P0, TERROR);
+    adv_terror_token(&mut g);
+    g.player_mut(P1).life = 28;
+    g.player_mut(PlayerId(2)).life = 27;
+    assert!(!adv_wrong(&g), "Twinflame offered, but the second trigger changes aim");
+}
+
+#[test]
+fn twinflame_d3_control_flip_23_22_kills() {
+    let mut g = adv_base(3);
+    perm(&mut g, P0, TERROR);
+    adv_terror_token(&mut g);
+    g.player_mut(P1).life = 23;
+    g.player_mut(PlayerId(2)).life = 22;
+    assert_eq!(adv_probe(&g), (true, true, true));
+}
+
+#[test]
+fn twinflame_d3_control_flip_28_29_holds() {
+    let mut g = adv_base(3);
+    perm(&mut g, P0, TERROR);
+    adv_terror_token(&mut g);
+    g.player_mut(P1).life = 28;
+    g.player_mut(PlayerId(2)).life = 29;
+    assert!(!adv_probe(&g).0);
+}
+
+// Recorded limit (not a defect to fix here): when Twinflame copies a Terror under Doubling Season, the second token's
+// entry also triggers the first token, which the estimate leaves out. The error only delays the release.
+#[test]
+fn twinflame_d4_limit_later_copies_trigger_earlier_terror_tokens_is_a_hold() {
+    let mut g = adv_base(2);
+    perm(&mut g, P0, TERROR);
+    perm(&mut g, P0, SEASON);
+    g.player_mut(P1).life = 38;
+    let (rel, allin, _) = adv_probe(&g);
+    assert!(allin, "the engine kills here");
+    assert!(!rel, "today's estimate holds (limit: the first token's trigger for the second copy is not counted)");
 }
