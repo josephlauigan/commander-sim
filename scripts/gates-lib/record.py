@@ -32,6 +32,53 @@ def sha(data):
     return hashlib.sha256(data).hexdigest()
 
 
+CAST_LINE = re.compile(rb"^R\d+\s+(.+?) casts (.*)$")
+
+
+def load_names(tree):
+    """card names (for the exact-name rule) and deck key -> seat display name, read from the tree's data"""
+    names, seat = [], {}
+    try:
+        cj = json.load(open(os.path.join(tree, "data", "cards.json")))
+        it = cj.values() if isinstance(cj, dict) else cj
+        names = [c["name"] for c in it if isinstance(c, dict) and c.get("name")]
+    except Exception:
+        pass
+    try:
+        dj = json.load(open(os.path.join(tree, "data", "decks.json")))
+        for v in dj.get("mine", []):
+            seat[v["key"]] = v.get("name", "")
+    except Exception:
+        pass
+    return names, seat
+
+
+def cast_flags(out, cards, own, names):
+    """per card: 1 if some seat cast exactly that card (not a longer card name that starts with it), and 1 if the deck's own
+    seat did (`own` is the seat's display name, '' when unknown)"""
+    anyc = {c: 0 for c in cards}
+    ownc = {c: 0 for c in cards}
+    longer = {c: [n.encode() for n in names if n != c and n.startswith(c) and not n[len(c) : len(c) + 1].isalnum()] for c in cards}
+    for ln in out.splitlines():
+        m = CAST_LINE.match(ln)
+        if not m:
+            continue
+        actor, rest = m.group(1).strip(), m.group(2)
+        for c in cards:
+            cb = c.encode()
+            if not rest.startswith(cb):
+                continue
+            tail = rest[len(cb) : len(cb) + 1]
+            if tail.isalnum() or tail == b"'":
+                continue
+            if any(rest.startswith(l) for l in longer[c]):
+                continue
+            anyc[c] = 1
+            if own and actor == own.encode():
+                ownc[c] = 1
+    return anyc, ownc
+
+
 def parse_game(out):
     """seat order, winner, wintype, last round, line count, sha_full and sha_play of one game's stdout (bytes)"""
     lines = out.splitlines(keepends=True)
@@ -140,6 +187,8 @@ def main():
     meta["seeds"] = seeds
     meta["deck_tiers"] = [f"{d}/{t}" for d, t in jobs]
 
+    card_names, seat_names = load_names(a.tree)
+
     def one(job):
         deck, tier, k = job
         cmd = [a.bin] + (["--deck", deck] if deck != "within" else ["--calibrate", "within"]) + ["--pool", tier, "--seed", str(SEED0), "--trace", str(k)]
@@ -158,7 +207,9 @@ def main():
             rec["timeout"] = (info["wintype"] or "").lower() == "timeout"
             rec["winner_present"] = bool(info["winner"]) and info["winner"].lower() != "none"
             rec["last_round"] = info["last_round"]
-            rec["casts"] = {c: int(f"casts {c}".encode() in out) for c in cards}
+            anyc, ownc = cast_flags(out, cards, seat_names.get(deck, "") if deck != "within" else "", card_names)
+            rec["casts"] = anyc
+            rec["own_casts"] = ownc
         return rec
 
     todo = [(d, t, k) for d, t in jobs for k in range(seeds)]

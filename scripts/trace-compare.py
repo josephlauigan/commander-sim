@@ -199,6 +199,7 @@ def compare_l3(base, branch, a):
     isbad = lambda r: r["exit"] != 0 or bool(r.get("panic"))
     print(f"\n{'deck/tier':<26}{'seeds':>6}{'panic b/r':>11}{'timeout b/r':>13}{'no-winner b/r':>15}")
     cast_rows = collections.defaultdict(lambda: collections.defaultdict(lambda: [0, 0]))
+    own_rows = collections.defaultdict(lambda: collections.defaultdict(lambda: [0, 0]))
     newly = []
     for t in sorted(by):
         pairs = by[t]
@@ -221,10 +222,21 @@ def compare_l3(base, branch, a):
                 cast_rows[c][t][0] += v
             for c, v in r.get("casts", {}).items():
                 cast_rows[c][t][1] += v
+            for c, v in b.get("own_casts", {}).items():
+                own_rows[c][t][0] += v
+            for c, v in r.get("own_casts", {}).items():
+                own_rows[c][t][1] += v
     if newly:
         print("\nseeds that newly time out: " + ", ".join(newly))
+    if own_rows:
+        print("\ngames where the deck's OWN seat casts the card (base / branch; the exact card name):")
+        for c in sorted(own_rows):
+            tb = sum(v[0] for v in own_rows[c].values())
+            tr = sum(v[1] for v in own_rows[c].values())
+            per = ", ".join(f"{t} {v[0]}/{v[1]}" for t, v in sorted(own_rows[c].items()) if v[0] or v[1])
+            print(f"  {c}: total {tb}/{tr}" + (f"  [{per}]" if per else ""))
     if cast_rows:
-        print("\ngames with a `casts <card>` line (base / branch):")
+        print("\ngames with a `casts <card>` line, any seat, exact card name (base / branch):")
         for c in sorted(cast_rows):
             tb = sum(v[0] for v in cast_rows[c].values())
             tr = sum(v[1] for v in cast_rows[c].values())
