@@ -102,26 +102,26 @@ fn a_card_without_scryfall_data_is_an_error_offline() {
 fn updating_a_deck_rewrites_its_file_and_the_guard_fixture() {
     let p = scratch("update");
     let inp = Inputs::load(&p).unwrap();
-    let aragorn = inp.my.iter().find(|d| d.key == "aragorn").unwrap().clone();
-    let path = cardgen::decks::deck_path(&p, &aragorn);
+    let cloud = inp.my.iter().find(|d| d.key == "cloud").unwrap().clone();
+    let path = cardgen::decks::deck_path(&p, &cloud);
     let mut list = cardgen::decks::load(&path).unwrap();
     let out = list.iter().position(|c| c == "Arcane Signet").unwrap();
-    list[out] = "Mind Stone".to_string();
+    list[out] = "Prismatic Lens".to_string();
     let text = list.join("\n");
     // dry run: reports, writes nothing
     let before = std::fs::read_to_string(&path).unwrap();
-    let o = run(&p, "aragorn", &text, &Options { dry: true, log: None, offline: true }).unwrap();
+    let o = run(&p, "cloud", &text, &Options { dry: true, log: None, offline: true }).unwrap();
     assert!(o.ok);
     assert!(o.text.contains("1 out, 1 in"), "{}", o.text);
-    assert!(o.text.contains("out: Arcane Signet") && o.text.contains("in:  Mind Stone"), "{}", o.text);
+    assert!(o.text.contains("out: Arcane Signet") && o.text.contains("in:  Prismatic Lens"), "{}", o.text);
     assert_eq!(std::fs::read_to_string(&path).unwrap(), before);
     // for real, with a log line
-    let o = run(&p, "aragorn", &text, &Options { dry: false, log: Some("Test.".into()), offline: true }).unwrap();
+    let o = run(&p, "cloud", &text, &Options { dry: false, log: Some("Test.".into()), offline: true }).unwrap();
     assert!(o.ok, "{}", o.text);
     let after = std::fs::read_to_string(&path).unwrap();
-    assert!(after.contains("1 Mind Stone\n") && !after.contains("1 Arcane Signet\n"));
+    assert!(after.contains("1 Prismatic Lens\n") && !after.contains("1 Arcane Signet\n"));
     // the log line goes to the changelog, under the deck's title, not into the deck file
-    assert!(!after.contains("Out: Arcane Signet. In: Mind Stone. Test."));
+    assert!(!after.contains("Out: Arcane Signet. In: Prismatic Lens. Test."));
     let log = std::fs::read_to_string(p.decklists().join("CHANGELOG.md")).unwrap();
     let title = before.lines().find_map(|l| l.strip_prefix("# ")).unwrap();
     let section =
@@ -129,18 +129,22 @@ fn updating_a_deck_rewrites_its_file_and_the_guard_fixture() {
     let changes = section.split("### Changes\n\n").nth(1).expect("a Changes list");
     assert!(
         changes.starts_with("- **")
-            && changes.lines().next().unwrap().ends_with("Out: Arcane Signet. In: Mind Stone. Test."),
+            && changes.lines().next().unwrap().ends_with("Out: Arcane Signet. In: Prismatic Lens. Test."),
         "{section}"
     );
     let new_list = cardgen::decks::load(&path).unwrap();
     assert_eq!(new_list.len(), 100);
     let fixture = std::fs::read_to_string(p.root.join("tests/fixtures/my_decks_parsed.json")).unwrap();
-    assert!(fixture.contains("\"Mind Stone\""));
+    assert!(fixture.contains("\"Prismatic Lens\""));
     // a bad list stops before any file is touched
-    let o = run(&p, "aragorn", &format!("{text}\n1 Mind Stone"), &Options { dry: false, log: None, offline: true })
+    let o = run(&p, "cloud", &format!("{text}\n1 Prismatic Lens"), &Options { dry: false, log: None, offline: true })
         .unwrap();
     assert!(!o.ok);
-    assert!(o.text.contains("101 cards, expected 100") && o.text.contains("not singleton: Mind Stone"), "{}", o.text);
+    assert!(
+        o.text.contains("101 cards, expected 100") && o.text.contains("not singleton: Prismatic Lens"),
+        "{}",
+        o.text
+    );
     assert_eq!(std::fs::read_to_string(&path).unwrap(), after);
 }
 

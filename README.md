@@ -32,37 +32,36 @@ decks). They run from anywhere inside the repository and find `data/` and `deckl
 ## Main commands
 
 ```
-commander-sim --deck aragorn --pool all                                 # the deck against each of its own tiers
-commander-sim --deck aragorn --pool t4 --games 1500                     # one of its tiers
-commander-sim --deck aragorn --pool t4 --swap "Spell Pierce=>Negate"    # paired A/B: the list and the variant
-commander-sim --deck aragorn --pool t4 --swap "A=>B" --ai adaptive      # the same, a quick read (seconds)
-commander-sim --deck aragorn --pool t5 --analyze                        # how it wins and loses there
-commander-sim --deck aragorn --pool t4 --trace 7                        # play-by-play of game 7
-commander-sim --all-decks --pool all                                    # every deck against its own tiers
-commander-sim --goldfish thanos,t5 --games 2000                         # each deck alone against three inert seats
-commander-sim --deck aragorn --cards                                    # every card: tags, abilities, Game Changers
-commander-sim --realism --pool t6 --games 2200                          # the sim against real-game targets
-commander-sim --realism --pool t6 --ai adaptive --knobs my-knobs.toml   # the same with the AI's values from a file
-commander-sim --fit --pool t6 --ai adaptive --games 2000                # search the knobs for the closest fit
-commander-sim --calibrate within|ordering|all --games 240               # pool balance checks
-commander-sim pools                                                     # list the pool decks
-commander-sim swaptest <pool deck> <tier> 800 "Out>In; Out>In"          # pool-deck list changes, without editing
-commander-sim searchtest <deck> <tier> 240                              # a deck with and without the look-ahead
+commander-sim --deck cloud --pool all                                           # the deck against each of its own tiers
+commander-sim --deck cloud --pool t2 --games 1500                               # one of its tiers
+commander-sim --deck cloud --pool t2 --swap "Arcane Signet=>Prismatic Lens"     # paired A/B: the list and the variant
+commander-sim --deck cloud --pool t2 --swap "A=>B" --ai adaptive                # the same, a quick read (seconds)
+commander-sim --deck cloud --pool t3 --analyze                                  # how it wins and loses there
+commander-sim --deck cloud --pool t2 --trace 7                                  # play-by-play of game 7
+commander-sim --all-decks --pool all                                            # every deck against its own tiers
+commander-sim --goldfish thanos,t5 --games 2000                                 # each deck alone against three inert seats
+commander-sim --deck cloud --cards                                              # every card: tags, abilities, Game Changers
+commander-sim --realism --pool t6 --games 2200                                  # the sim against real-game targets
+commander-sim --realism --pool t6 --ai adaptive --knobs my-knobs.toml           # the same with the AI's values from a file
+commander-sim --fit --pool t6 --ai adaptive --games 2000                        # search the knobs for the closest fit
+commander-sim --calibrate within|ordering|all --games 240                       # pool balance checks
+commander-sim pools                                                             # list the pool decks
+commander-sim swaptest <pool deck> <tier> 800 "Out>In; Out>In"                  # pool-deck list changes, without editing
+commander-sim searchtest <deck> <tier> 240                                      # a deck with and without the look-ahead
 
-commander-practice                                                      # practice mode at http://127.0.0.1:8765
-commander-practice --text --deck aragorn --tier t4                      # the same game in the terminal
+commander-practice                                                              # practice mode at http://127.0.0.1:8765
+commander-practice --text --deck cloud --tier t2                                # the same game in the terminal
 
-cardgen deck aragorn new-list.txt --dry-run                              # check a new list, show what would change
-cardgen deck aragorn new-list.txt --log "Why."                           # write it, and log it in the changelog
-cardgen export                                                          # rebuild data/cards.json and data/decks.json
-cardgen audit --mine                                                    # JD's cards that aren't fully modeled
-cardgen validate                                                        # check the pool decklists
+cardgen deck cloud new-list.txt --dry-run                                       # check a new list, show what would change
+cardgen deck cloud new-list.txt --log "Why."                                    # write it, and log it in the changelog
+cardgen export                                                                  # rebuild data/cards.json and data/decks.json
+cardgen audit --mine                                                            # JD's cards that aren't fully modeled
+cardgen validate                                                                # check the pool decklists
 ```
 
 `commander-sim --help` lists every option (`rust/crates/sim-cli/src/args.rs`). The ones that matter most:
 
-- `--deck`: `aragorn`, `yshtola`, `sheoldred`, `cloud`, `thrasios` or
-  `thanos`.
+- `--deck`: `yshtola`, `sheoldred`, `cloud`, `thrasios`, `thanos` or `urdragon`.
 - `--pool`: `t0` to `t6`, or `all` (the deck's own tiers). Each deck plays only its own tiers (`data/my_decks.toml`);
   `--any-tier` lifts that, only when JD asks.
 - `--swap "Card Out=>Card In"`: repeat for several. Every swap run first does a preflight (`--no-preflight`,
@@ -100,7 +99,6 @@ the same opponents and draws.
 | JD's decks | Tiers |
 | --- | --- |
 | yshtola, thanos | t5 |
-| aragorn | t4-t5 |
 | sheoldred | t3-t4 |
 | cloud | t1-t3 |
 | thrasios (cEDH) | t6 |
@@ -119,18 +117,18 @@ status and plan, and links JD's plan document.
 ## Your decks
 
 The baseline is the list in each deck's `.md` file (the `## Import list` block): JD's in `decklists/JD/`
-(retired lists: `decklists/pool/retired/`; the `aragorn` and `thrasios` keys still read their guides from there). `data/my_decks.toml` maps each deck key to its file, display name, commander, colour identity and
+(retired lists: `decklists/pool/retired/`; the `thrasios` key still reads its guide from there). `data/my_decks.toml` maps each deck key to its file, display name, commander, colour identity and
 opponent tiers; to add a deck, add a table there. `SIM_DECKS` points at another folder of lists.
 
 To change a list, edit the file or give `cardgen deck` the whole new list, as copied from a deck site or typed one
 card per line:
 
 ```
-cardgen deck aragorn new-list.txt --dry-run    # check it and show what would change
-cardgen deck aragorn new-list.txt              # write it
-cardgen deck aragorn -                         # or paste the list, then Ctrl-D
-cardgen deck aragorn new-list.txt --log "Why." # also log it (decklists/CHANGELOG.md; pool decks: decklists/pool/CHANGELOG.md)
-cardgen export                                # then rebuild the card data
+cardgen deck cloud new-list.txt --dry-run      # check it and show what would change
+cardgen deck cloud new-list.txt                # write it
+cardgen deck cloud -                           # or paste the list, then Ctrl-D
+cardgen deck cloud new-list.txt --log "Why."   # also log it (decklists/CHANGELOG.md; pool decks: decklists/pool/CHANGELOG.md)
+cardgen export                                 # then rebuild the card data
 ```
 
 It checks the list first (100 cards, singleton, colour identity, bans, every name found on Scryfall) and changes
@@ -151,7 +149,7 @@ isn't legal, and why. After the game, a review shows where your choices and the 
 ```
 commander-practice                                  # opens http://127.0.0.1:8765
 commander-practice --port 9000 --no-browser         # another port; open it yourself
-commander-practice --text --deck aragorn --tier t4  # the terminal client
+commander-practice --text --deck cloud --tier t2    # the terminal client
 commander-practice --lan                            # a friend on your network can take a seat
 ```
 

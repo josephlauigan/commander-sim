@@ -266,7 +266,6 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
         "yshtola: Urza's Cave",
         "an activated ability, not used as it enters (its activation is driven by practice_trigger_probe's Activate pass, which asks the search)",
     ),
-    ("aragorn: Deflecting Swat", "new targets for a spell on the stack: the probe has none"),
     ("thanos: Deflecting Swat", "new targets for a spell on the stack: the probe has none"),
     (
         "urdragon: Maelstrom of the Spirit Dragon",
@@ -278,10 +277,6 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
     (
         "cloud: Mithril Coat",
         "the probe's table has no legendary creature you control: no legal target (with two, the person picks: practice_gaps_c mithril_coat_attaches_to_the_legendary_creature_you_pick)",
-    ),
-    (
-        "aragorn: Twinned Vision",
-        "cast from the hand it only draws a card, nothing to choose; the flashback's discard is the person's (practice_gaps_a: twinned_vision_flashback_discards_the_card_the_person_names)",
     ),
 ];
 

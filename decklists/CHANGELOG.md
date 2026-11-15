@@ -23,6 +23,7 @@ the binder and eleven bought cards (`documents/aragorn-merge-swaps.md`).
 
 ### Changes
 
+- **2026-11-15.** Key retired: out of the simulator and practice; card code kept as a testkit seat.
 - **2026-11-14.** Guide moved (JD): `decklists/JD/aragorn-uniter.md` is now `decklists/pool/retired/aragorn-uniter.md`, with a
   "Retired" banner. `data/my_decks.toml` and the simulator's deck table point at the new path; the `aragorn` key stays in the
   simulator until the engine work removes it.

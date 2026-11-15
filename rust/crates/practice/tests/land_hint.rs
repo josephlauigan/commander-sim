@@ -15,7 +15,7 @@ use sim_core::state::{Game, Step};
 /// seat 0 is `deck` at its main phase on round 3, with these lands on the battlefield and exactly this hand
 fn game_with(deck: &str, lands: &[&str], hand: &[&str]) -> (Game, PlayerId) {
     let e = engine();
-    let others = ["aragorn", "sheoldred", "cloud", "thanos", "yshtola"];
+    let others = ["sheoldred", "cloud", "thanos", "yshtola"];
     let mut seats: Vec<String> = vec![deck.to_string()];
     seats.extend(others.iter().filter(|k| **k != deck).take(3).map(|s| s.to_string()));
     let (mut g, _) =
@@ -69,9 +69,12 @@ fn snapshot(g: &Game, p: PlayerId) -> (Vec<String>, usize, i32, u32) {
 
 #[test]
 fn the_hint_plays_the_ais_land_first_and_says_why() {
-    // Aragorn with an Island out: Yavimaya Coast (green, untapped) against Path of Ancestry (three new colours, tapped)
-    let (mut g, p) =
-        game_with("aragorn", &["Island"], &["Yavimaya Coast", "Path of Ancestry", "Counterspell", "Lightning Bolt"]);
+    // Thanos with an Urborg out: Yavimaya Coast (green and blue, untapped) against Path of Ancestry (four new colours, tapped)
+    let (mut g, p) = game_with(
+        "thanos",
+        &["Urborg, Tomb of Yawgmoth"],
+        &["Yavimaya Coast", "Path of Ancestry", "Counterspell", "Swords to Plowshares"],
+    );
     let before = snapshot(&g, p);
     let h = hint(&mut g, p);
     assert_eq!(snapshot(&g, p), before, "asking changes nothing: {h}");
@@ -109,7 +112,8 @@ fn a_new_colour_beats_a_basic_of_a_colour_you_have() {
 
 #[test]
 fn no_land_once_the_land_drop_is_used() {
-    let (mut g, p) = game_with("aragorn", &["Island"], &["Yavimaya Coast", "Counterspell", "Lightning Bolt"]);
+    let (mut g, p) =
+        game_with("thanos", &["Urborg, Tomb of Yawgmoth"], &["Yavimaya Coast", "Counterspell", "Swords to Plowshares"]);
     g.player_mut(p).lands_played = 1;
     let h = hint(&mut g, p);
     assert!(!h["text"].as_str().unwrap().starts_with("Play "), "{h}");

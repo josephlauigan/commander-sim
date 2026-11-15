@@ -22,23 +22,23 @@ fn settings_are_checked() {
     let e = engine();
     let mut o = opts("adaptive");
     o.deck = "nobody".into();
-    assert!(Session::new(o).err().unwrap().starts_with("unknown deck \"nobody\": one of aragorn"));
+    assert!(Session::new(o).err().unwrap().starts_with("unknown deck \"nobody\": one of yshtola"));
     let mut o = opts("adaptive");
     o.tier = "t9".into();
     assert!(Session::new(o).err().unwrap().starts_with("unknown tier \"t9\""));
     let mut o = opts("adaptive");
-    o.partner = Some("aragorn".into());
+    o.partner = Some("cloud".into());
     assert_eq!(Session::new(o).err().unwrap(), "the two players need different decks");
     let mut o = opts("adaptive");
     o.seat = Some(5);
     assert_eq!(Session::new(o).err().unwrap(), "seat is 1 to 4");
     let mut o = opts("adaptive");
-    o.seats = Some(vec!["aragorn".into(), "x".into(), "y".into(), "z".into()]);
+    o.seats = Some(vec!["cloud".into(), "x".into(), "y".into(), "z".into()]);
     assert!(Session::new(o).err().unwrap().starts_with("seats: your deck and 3 of"));
     let mut o = opts("adaptive");
     o.seat = Some(2);
     let s = Session::new(o).unwrap();
-    assert_eq!(s.seats[1], "aragorn");
+    assert_eq!(s.seats[1], "cloud");
     assert_eq!(s.seats.len(), 4);
     drop(e);
 }
@@ -56,7 +56,7 @@ fn a_game_runs_to_its_end_and_the_same_seed_seats_the_same_table() {
     assert!(evs[0]["text"].as_str().unwrap().starts_with("Seat order: "));
     let first_req = evs.iter().find(|e| e["kind"] == "request").unwrap();
     assert_eq!(first_req["request"]["kind"], "mulligan");
-    assert_eq!(first_req["seat"], "aragorn");
+    assert_eq!(first_req["seat"], "cloud");
     assert_eq!(first_req["request"]["data"]["names"].as_array().unwrap().len(), 7);
     let o = over(&evs);
     assert!(o["view"]["players"].as_array().unwrap().len() == 4);
@@ -80,18 +80,18 @@ fn undo_replays_to_the_same_game() {
     let want = final_state(&evs);
     let n_answers = s.answers_len();
     assert!(n_answers >= 1);
-    assert_eq!(s.undo(0, "aragorn"), Some("Nothing to undo yet.".into()));
+    assert_eq!(s.undo(0, "cloud"), Some("Nothing to undo yet.".into()));
     // Undo every answer (the mulligan is the first; the person also answers priority since their turns are played):
     // back at the mulligan, then keep again
     let all = n_answers as i64;
-    assert_eq!(s.undo(all, "aragorn"), None);
+    assert_eq!(s.undo(all, "cloud"), None);
     let (c2, evs2) = drive(&s, c, LIMIT, &|_, _| None);
     assert_eq!(evs2[0]["kind"], "reset");
     assert_eq!(evs2[0]["undone"], all);
-    assert_eq!(evs2[0]["by"], "aragorn");
+    assert_eq!(evs2[0]["by"], "cloud");
     assert_eq!(final_state(&evs2), want);
     // a different answer: mulligan once (then keep): a different game
-    assert_eq!(s.undo(all, "aragorn"), None);
+    assert_eq!(s.undo(all, "cloud"), None);
     let (_, evs3) = drive(&s, c2, LIMIT, &|_, i| if i == 1 { Some(json!(1)) } else { None });
     let hand =
         |e: &Value| e["view"]["players"].as_array().unwrap().iter().find(|p| p["you"] == true).unwrap()["hand"].clone();
@@ -140,7 +140,7 @@ fn the_look_ahead_tape_replays_a_game_without_searching_again() {
     let n = s.tape.lock().unwrap().entries.len();
     assert!(n > 0, "the look-ahead made decisions");
     let t0 = std::time::Instant::now();
-    assert_eq!(s.undo(1, "aragorn"), None);
+    assert_eq!(s.undo(1, "cloud"), None);
     // the tape is cut at the mulligan (the AI's decisions came after it): the second run searches again and
     // records the same entries
     let (_, evs2) = drive(&s, c, Duration::from_secs(600), &|_, _| None);
@@ -182,12 +182,12 @@ fn closing_stops_every_thread() {
 #[test]
 fn hint_and_review_say_why_not() {
     let s = Session::new(opts("adaptive")).unwrap();
-    assert_eq!(s.hint("aragorn").unwrap_err(), "There is no decision waiting for you.");
-    assert_eq!(s.review("aragorn").unwrap_err(), "The review opens when the game ends.");
+    assert_eq!(s.hint("cloud").unwrap_err(), "There is no decision waiting for you.");
+    assert_eq!(s.review("cloud").unwrap_err(), "The review opens when the game ends.");
     s.start();
     let (_, evs) = drive(&s, 0, LIMIT, &|_, _| None);
     let _ = evs;
-    let r = s.review("aragorn").unwrap();
+    let r = s.review("cloud").unwrap();
     assert_eq!(r["summary"]["answers"].as_u64().unwrap() as usize, s.answers_len());
     assert!(r["decisions"].is_array());
     assert_eq!(s.review("nobody").unwrap_err(), "You have no seat in this game.");
@@ -197,10 +197,10 @@ fn hint_and_review_say_why_not() {
 #[test]
 fn auto_pass_changes_apply_from_the_next_answer() {
     let s = Session::new(opts("adaptive")).unwrap();
-    assert_eq!(s.autopass_at("aragorn", None), "respond");
-    assert_eq!(s.set_autopass("aragorn", "bogus").unwrap(), "auto-pass: one of respond, stack, all");
+    assert_eq!(s.autopass_at("cloud", None), "respond");
+    assert_eq!(s.set_autopass("cloud", "bogus").unwrap(), "auto-pass: one of respond, stack, all");
     assert_eq!(s.set_autopass("nobody", "all").unwrap(), "You have no seat in this game.");
-    assert_eq!(s.set_autopass("aragorn", "all"), None);
-    assert_eq!(s.autopass_at("aragorn", Some(0)), "respond");
-    assert_eq!(s.autopass_at("aragorn", Some(1)), "all");
+    assert_eq!(s.set_autopass("cloud", "all"), None);
+    assert_eq!(s.autopass_at("cloud", Some(0)), "respond");
+    assert_eq!(s.autopass_at("cloud", Some(1)), "all");
 }

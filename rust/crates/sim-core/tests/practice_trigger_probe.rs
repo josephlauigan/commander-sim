@@ -878,10 +878,6 @@ const TO_FIX: &[&str] = &[];
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
     (
-        "aragorn: Tezzeret, Cruel Captain (Activate(2))",
-        "the -7 only gives the emblem; the emblem's target (the artifact that gets three +1/+1 counters) is chosen, and asked of a person, at the beginning of combat (t6_godo::tez_emblem, tests/model_gaps_karn.rs)",
-    ),
-    (
         "thrasios: Necropotence (Discard (state only))",
         "no choice: the discarded card is exiled; the line only matched \"discard a\"",
     ),

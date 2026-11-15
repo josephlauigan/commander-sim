@@ -1,5 +1,7 @@
 # Aragorn, the Uniter (key `aragorn`): findings
 
+**Retired 2026-11-13; key out of the simulator 2026-11-15.** The list is in `decklists/pool/retired/aragorn-uniter.md` and this file is history only.
+
 The deck's living list of strengths and weaknesses and what was tested.
 
 **List:** `decklists/JD/aragorn-uniter.md`, built 2026-11-06 from the Kefka and Sauron decks (both retired the same

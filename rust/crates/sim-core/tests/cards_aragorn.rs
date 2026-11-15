@@ -143,15 +143,6 @@ fn an_opponents_spell_or_aragorn_off_the_battlefield_triggers_nothing() {
     assert_eq!(g.player(P0).life, l0);
 }
 
-#[test]
-fn the_plan_casts_aura_shards() {
-    // the 11/06 analysis: Aura Shards was never cast (no rule ranked it); the plan file now does
-    let (mut g, _) = setup();
-    g.player_mut(P0).turns = 4;
-    let c = hand(&mut g, P0, &["Aura Shards"])[0];
-    assert!(sim_core::ai::decks::deck_prio(&g, P0, c) > 0);
-}
-
 // ------------------------------------------------------------------ the AI's value of the triggers
 use sim_core::impls::aragorn as ara;
 

@@ -145,6 +145,14 @@ fn retired_decks() -> Vec<RawDeck> {
             "UBR",
             include_str!("../../../../decklists/pool/retired/sauron-grixis-amass.md"),
         ),
+        // Retired 2026-11-15: card-code tests still seat this deck with its real list.
+        listed(
+            "aragorn",
+            "Aragorn",
+            "Aragorn, the Uniter",
+            "WURG",
+            include_str!("../../../../decklists/pool/retired/aragorn-uniter.md"),
+        ),
         // --- ghave: JD's Seph/Atraxa deck, retired 2026-10-30 (Ghave took its seat): the tests of its card code
         // (the loops in impls::mine, the reanimation spells, Sephiroth's cards) still seat it with its real list
         listed(

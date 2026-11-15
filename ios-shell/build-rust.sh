@@ -34,9 +34,9 @@ D="$ROOT/data"
 cp "$D/cards.json" "$D/decks.json" "$D/my_decks.toml" "$D/scryfall_cache.json" AppData/data/
 cp -R "$D/printings" AppData/data/printings
 if [ -d "$D/images" ]; then cp -R "$D/images" AppData/data/images; fi
-# decklists without the retired decks (the Briefcase app left them out too), except the two retired guides whose keys
-# (`aragorn`, `thrasios`) are still in data/my_decks.toml and are read from there
-rsync -a --include 'retired/' --include 'retired/aragorn-uniter.md' --include 'retired/tymna-thrasios-doomsday.md' \
+# decklists without the retired decks (the Briefcase app left them out too), except the retired guide whose key
+# (`thrasios`) is still in data/my_decks.toml and is read from there
+rsync -a --include 'retired/' --include 'retired/tymna-thrasios-doomsday.md' \
   --exclude 'retired/*' --exclude '*.tmp' "$ROOT/decklists/" AppData/decklists/
 cp -R "$ROOT/rust/crates/practice/static/." AppData/static/
 COMMIT="$(git -C "$ROOT" rev-parse --short HEAD 2>/dev/null || echo unknown)"

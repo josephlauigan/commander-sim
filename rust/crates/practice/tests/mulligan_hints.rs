@@ -15,7 +15,7 @@ use sim_core::state::Game;
 /// a game whose seat 0 is `deck`, with exactly this hand (taken from the library; the rest stays shuffled)
 fn game_with(deck: &str, hand: &[&str]) -> (Game, PlayerId) {
     let e = engine();
-    let others = ["aragorn", "sheoldred", "cloud", "thanos", "yshtola"];
+    let others = ["sheoldred", "cloud", "thanos", "yshtola"];
     let mut seats: Vec<String> = vec![deck.to_string()];
     seats.extend(others.iter().filter(|k| **k != deck).take(3).map(|s| s.to_string()));
     let (mut g, _) =
@@ -112,10 +112,9 @@ fn three_lands_and_sol_ring_make_four_mana_on_turn_2_not_five() {
     // the speed line never has more lands than the turn number: Tymna (cost 3) needs turn 2 here (2 lands + Sol Ring)
     assert!(d.iter().any(|l| l.contains("Tymna the Weaver (cost 3) turn 2")), "{h}");
     // no rocks: a four-drop commander needs four turns, one land a turn
-    let (mut g, p) =
-        game_with("aragorn", &["Plains", "Island", "Forest", "Tundra", "Taiga", "Savannah", "Counterspell"]);
+    let (mut g, p) = game_with("sheoldred", &["Swamp", "Swamp", "Swamp", "Swamp", "Swamp", "Swamp", "Demonic Tutor"]);
     let h = hint(&mut g, p);
-    assert!(lines(&h).iter().any(|l| l.contains("Aragorn, the Uniter (cost 4) turn 4")), "{h}");
+    assert!(lines(&h).iter().any(|l| l.contains("Sheoldred, the Apocalypse (cost 4) turn 4")), "{h}");
     assert!(lines(&h).iter().any(|l| l.starts_with("Mana on turn 2: 2 = 2 lands.")), "{h}");
 }
 
@@ -146,23 +145,23 @@ fn thrasios_colours_say_what_doomsday_and_ad_nauseam_need() {
 }
 
 #[test]
-fn aragorn_one_lander_without_fast_mana_goes_back_by_its_row() {
+fn urdragon_one_lander_without_fast_mana_goes_back_by_its_row() {
     let (mut g, p) = game_with(
-        "aragorn",
-        &["Plains", "Counterspell", "Mana Drain", "Cyclonic Rift", "Rhystic Study", "Brain Freeze", "Grapeshot"],
+        "urdragon",
+        &["Forest", "Lightning Bolt", "Chaos Warp", "Cyclonic Rift", "Rhystic Study", "Twinflame", "Doubling Season"],
     );
     let h = hint(&mut g, p);
     verdict_unchanged(&mut g, p, &h);
     assert_eq!(h["choice"], "mulligan", "{h}");
     let rule = &lines(&h)[0];
     assert!(
-        rule.contains("row 3 of 4")
+        rule.contains("row 3 of 8")
             && rule.contains("Lands: exactly 1")
-            && rule.contains("Fast mana")
-            && rule.contains("fewer than 2"),
+            && rule.contains("\"fastmana\" set: none")
+            && rule.contains("\"dorks\" set: at most 1"),
         "{rule}"
     );
-    assert!(rule.contains("Plains"), "{rule}");
+    assert!(rule.contains("Forest"), "{rule}");
     assert!(!has(&h, "2 to 5 lands"), "{h}");
     assert!(has(&h, "Line:"), "{h}");
 }
@@ -269,8 +268,8 @@ fn yshtola_and_sheoldred_have_no_table_and_say_so() {
 #[test]
 fn the_verdict_is_keeps_hand_over_many_hands() {
     let e = engine();
-    for deck in ["thrasios", "aragorn", "thanos", "cloud", "yshtola", "sheoldred"] {
-        let others = ["aragorn", "sheoldred", "cloud", "thanos", "yshtola"];
+    for deck in ["thrasios", "thanos", "cloud", "yshtola", "sheoldred"] {
+        let others = ["sheoldred", "cloud", "thanos", "yshtola"];
         let mut seats: Vec<String> = vec![deck.to_string()];
         seats.extend(others.iter().filter(|k| **k != deck).take(3).map(|s| s.to_string()));
         for seed in 0..12u64 {
@@ -339,8 +338,8 @@ fn the_thrasios_hint_carries_the_oracles_numbers_and_they_do_not_move() {
 #[test]
 fn other_decks_get_no_oracle_line() {
     let (mut g, p) = game_with(
-        "aragorn",
-        &["Plains", "Island", "Forest", "Sol Ring", "Mystical Tutor", "Rhystic Study", "Counterspell"],
+        "cloud",
+        &["Plains", "Plains", "Plains", "Sol Ring", "Open the Armory", "Stoneforge Mystic", "Swords to Plowshares"],
     );
     let h = hint(&mut g, p);
     assert!(!has(&h, "goldfish"), "{h}");
@@ -394,8 +393,16 @@ fn print_example_hints() {
             ],
         ),
         (
-            "aragorn",
-            &["Plains", "Counterspell", "Mana Drain", "Cyclonic Rift", "Rhystic Study", "Brain Freeze", "Grapeshot"],
+            "cloud",
+            &[
+                "Plains",
+                "Wrath of God",
+                "Fumigate",
+                "Austere Command",
+                "Sword of Fire and Ice",
+                "Open the Armory",
+                "Stoneforge Mystic",
+            ],
         ),
         (
             "cloud",
@@ -425,17 +432,17 @@ fn print_example_hints() {
 /// means for the hand, not "the default decides"
 #[test]
 fn a_hand_no_row_fits_says_why_it_is_kept() {
-    // Aragorn's rows are all reasons to mulligan: passing them all keeps the hand
+    // The Ur-Dragon's rows are all reasons to mulligan: passing them all keeps the hand
     let (mut g, p) = game_with(
-        "aragorn",
+        "urdragon",
         &[
             "Steam Vents",
-            "Glacial Fortress",
-            "Yavimaya Coast",
-            "Counterspell",
-            "Mana Drain",
+            "Tundra",
+            "Tropical Island",
+            "Lightning Bolt",
+            "Cyclonic Rift",
             "Rhystic Study",
-            "Grapeshot",
+            "Doubling Season",
         ],
     );
     let h = hint(&mut g, p);
@@ -471,7 +478,15 @@ fn mox_jasper_makes_no_mana_without_a_dragon_the_hand_can_cast() {
     // the Miirym pool deck holds Mox Jasper (no deck of JD's plays it now); Utvara Hellkite is a Dragon the hand can't cast
     let (mut g, p) = game_with(
         "miirym-temur-dragons",
-        &["Steam Vents", "Stomping Ground", "Mox Jasper", "Arcane Signet", "Utvara Hellkite", "Worldly Tutor", "Dragon Tempest"],
+        &[
+            "Steam Vents",
+            "Stomping Ground",
+            "Mox Jasper",
+            "Arcane Signet",
+            "Utvara Hellkite",
+            "Worldly Tutor",
+            "Dragon Tempest",
+        ],
     );
     let h = hint(&mut g, p);
     let d = lines(&h);
