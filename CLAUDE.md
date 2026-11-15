@@ -109,9 +109,10 @@ Exit code 137 means the cap was hit: treat it as a memory bug, not a flake.
 
 Each of JD's decks is simulated only against the opponent tiers listed for it in `data/my_decks.toml` (`tiers = [...]`,
 also exported to `data/decks.json`): yshtola t5 (band 1); thanos t5 (new artifacts and Dragons list 11/05; no longer Scion's t6 seat);
-aragorn t4-t5 (new 11/06: Kefka and Sauron merged into it, both keys retired); sheoldred t3-t4 (band 2; ghave retired
-11/02); cloud t1-t3 (band 4; veyran retired 11/01); thrasios t6 (cEDH; new Doomsday list 11/05); karn and urdragon
-retired 11/05; Avery's alela and galadriel no longer tracked 11/06.
+sheoldred t3-t4 (band 2; ghave retired 11/02); cloud t1-t3 (band 4; veyran retired 11/01); thrasios t6 (cEDH; new
+Doomsday list 11/05); urdragon t5 (new Dragons list 11/13; the old Ur-Dragon list retired 11/05); aragorn retired 11/15
+(Kefka and Sauron had been merged into it, both keys retired 11/06; its list stays only as a test seat, its card code
+stays in the engine); karn retired 11/05; Avery's alela and galadriel no longer tracked 11/06.
 `--pool all`, `--all-decks`, `--analyze`,
 swap runs and `searchtest` use only those tiers; `--deck X --pool tN` outside them is refused. Report averages over
 the deck's own tiers (label them, e.g. "over t1-t3"). Use `--any-tier` only when JD asks for it. `--calibrate` is unchanged.
