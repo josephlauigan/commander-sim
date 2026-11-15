@@ -4,6 +4,23 @@ What the simulator has taught us about this deck: strengths, weaknesses, and wha
 work. Updated after every run (CLAUDE.md "Swap tests explain themselves"). Newest evidence first; numbers are
 look-ahead, loose profile, vs Cloud's matched tiers (T1, T2) unless noted.
 
+## 2026-11-14: Lay Down Arms => Champion's Helm (JD's choice, not simulated)
+Champion's Helm ({3}, Equipment, equip {1}; +2/+2, hexproof while the equipped creature is legendary; model status Full)
+takes Lay Down Arms' slot. Why: a twelfth Equipment for Cloud's search, Stoneforge, Steelshaper's Gift, Sram and
+Puresteel Paladin, and hexproof for Cloud and the legendary backup carriers. What it costs: a third {W} exile
+answer for Light-Paws (weakness 2) and the other mana value 2 or 3 threats (Lay Down Arms was a sorcery that exiled a
+creature with mana value up to the Plains you control; 27 Plains); Swords to Plowshares, Path to Exile, Skyclave
+Apparition and Stroke of Midnight remain. Not measured, and it is not a clear gain on paper: the Helm
+has no trigger for Cloud's doubling, costs one more mana than Swiftfoot Boots (no haste, but +2/+2) and is a downgrade
+from a Sword. It was in the list 10/13-11/02 and never measured alone. An Opus consult advised keeping Lay Down Arms and
+cutting Armory Automaton (same cost, no doubling) instead, and Wrath of God only after a paired run: defence
+(Package D's taxes and wipes, then D2) is the deck's proven lever, and no run has split the taxes from the wipes. Zack Fair was kept at JD's request. The plan file (data/plans/cloud.toml) lists the Helm again in its equipment
+set, a prio row (62 with Cloud out, else 52) and `[equip] extra` ([1, 2]): the 11/02 Ghave breakup had taken all three
+out, and without the equip entry the AI never equips the Helm (its equip is card code only). Not restored: the Helm in
+`engines` (the tutors' order is unchanged), and Mithril Coat and Sting are still missing from the equipment set. To check in the next analyze run: the Helm's
+cast and stuck-in-hand numbers, and how often Light-Paws eliminates Cloud at t1 (9.8% of games by commander damage in
+the 11/07 analyze run).
+
 ## 2026-11-09: Teferi's Protection => Mithril Coat (JD's choice, not simulated)
 Mithril Coat ({3}, legendary Equipment, flash, indestructible; equip {3}; model status Full, attaches to the best
 legendary creature on entering) takes Teferi's Protection's slot. Why: Cloud's enter trigger can fetch the Coat, flash lets
