@@ -14,7 +14,7 @@ use crate::engine::cast::{
 };
 use crate::engine::combat::{blocked, has_haste, kw};
 use crate::engine::hooks::fire_trigger;
-use crate::engine::life::{check_state, lose_life};
+use crate::engine::life::{check_state, lose_life, prevents_damage};
 use crate::engine::mana::{
     Source, Unit, can_pay, can_pay_spell, cost_of, pay, pay_spell, restr_ok, total_mana, total_mana_spell,
 };
@@ -28,12 +28,12 @@ use crate::engine::stack::{
 };
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{
-    card_name, card_tag, commander_out, epow, equipped, etgh, find, has, has_type, indestructible, pval, stopped,
-    threat, untargetable,
+    card_name, card_tag, commander_out, epow, equipped, etgh, find, has, has_type, indestructible, player_hexproof,
+    protected_from, pval, stopped, threat, untargetable,
 };
 use crate::engine::zones::{
-    Enter, Tokens, Zone, amass, die, discard_cards, discard_index, draw, enter, enter_token_copy, landfall, leave,
-    make_tokens, max_by, mill, min_by, to_zone_card,
+    Enter, TOKEN_CAP, Tokens, Zone, amass, die, discard_cards, discard_index, draw, enter, enter_token_copy, landfall,
+    leave, make_tokens, max_by, mill, min_by, to_zone_card,
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src};
@@ -3405,8 +3405,15 @@ fn twinflame_best(g: &Game, p: PlayerId, c: CardId, post: bool) -> Option<(f64, 
                 spells += 1;
             }
         }
-        let mut ranked: Vec<(f64, PermId)> =
-            g.player(p).perms.iter().map(|&m| (twinflame_value(g, p, m, post, Some(spells)), m)).collect();
+        // Twinflame is red: a creature with protection from red is not a legal target
+        let red = crate::cards::Colors::from_letters("R");
+        let mut ranked: Vec<(f64, PermId)> = g
+            .player(p)
+            .perms
+            .iter()
+            .filter(|&&m| !protected_from(g, m, red))
+            .map(|&m| (twinflame_value(g, p, m, post, Some(spells)), m))
+            .collect();
         ranked.sort_by(|a, b| b.0.partial_cmp(&a.0).unwrap_or(std::cmp::Ordering::Equal));
         ranked.truncate(n);
         if ranked.len() < n || ranked[n - 1].0 < 1.5 {
@@ -3445,14 +3452,19 @@ pub(crate) fn twinflame(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>
     }])
 }
 
-/// Twinflame's copies and p's ready fliers kill one opponent this turn: first main phase, an opponent with no untapped
-/// flier or reach creature to block, and the damage of p's ready fliers, the flying copies (printed power, once per
-/// token Doubling Season and company make) and one more round of each copy's power per Terror of the Peaks (its enter
-/// trigger) reaching that opponent's life. Blocks by ground creatures are ignored: everything that counts flies.
+/// Twinflame's copies and p's ready fliers kill one opponent this turn: first main phase, and an opponent whom nothing
+/// protects (The One Ring and the like prevent all of it). Two kinds of damage reach that opponent:
+/// - combat damage, if it has no untapped flier or reach creature to block: p's ready fliers and the flying copies;
+/// - Terror of the Peaks' enter trigger (not combat, so a blocker doesn't stop it, but it targets: a hexproof player
+///   can't be hit): each Terror p controls deals the power of every copy that enters.
+/// The copies are what the resolution really makes: the printed power of each target that Twinflame can legally target
+/// (no protection from red), `repl::tokens` of them per target (Doubling Season and company), while the token cap
+/// leaves room. Blocks by ground creatures are ignored: everything that deals combat damage here flies.
 fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
     if post {
         return false;
     }
+    let red = crate::cards::Colors::from_letters("R");
     let ready: i32 = g
         .player(p)
         .perms
@@ -3469,33 +3481,45 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
         })
         .map(|&m| epow(g, m))
         .ssum();
-    let n = repl::tokens(g, p, 1) as i32;
-    let copies: i32 = tg
-        .iter()
-        .filter_map(|&m| g.perm(m).cd)
-        .filter(|&cd| g.db.get(cd).has_kw("flying"))
-        .map(|cd| g.db.get(cd).pow.saturating_mul(n))
-        .ssum();
+    let n = repl::tokens(g, p, 1);
+    let mut room = TOKEN_CAP.saturating_sub(g.player(p).perms.iter().filter(|&&m| g.perm(m).token).count()) as u32;
+    let (mut flying, mut all) = (0i32, 0i32);
+    for &m in tg {
+        let Some(cd) = g.perm(m).cd.filter(|_| !protected_from(g, m, red)) else { continue };
+        let made = n.min(room);
+        room -= made;
+        let d = g.db.get(cd);
+        let power = d.pow.saturating_mul(made.min(i32::MAX as u32) as i32);
+        all = all.saturating_add(power);
+        if d.has_kw("flying") {
+            flying = flying.saturating_add(power);
+        }
+    }
     let terrors = g
         .player(p)
         .perms
         .iter()
         .filter(|&&m| g.perm(m).on_bf && !g.perm(m).phased && g.perm(m).name == "Terror of the Peaks")
         .count() as i32;
-    let dmg = ready.saturating_add(copies.saturating_mul(1 + terrors));
+    let trigger = all.saturating_mul(terrors);
     g.opps(p).any(|q| {
-        dmg >= g.player(q).life
-            && !g.player(q).perms.iter().any(|&b| {
-                let x = g.perm(b);
-                g.is_creature(b)
-                    && x.on_bf
-                    && !x.phased
-                    && !x.tapped
-                    && (x.fly
-                        || kw(g, b, "flying")
-                        || kw(g, b, "reach")
-                        || x.cd.is_some_and(|cd| g.db.get(cd).tag(Tag::Reach)))
-            })
+        if !g.player(q).alive || prevents_damage(g, q, Some(p)) {
+            return false;
+        }
+        let blocked_in_the_air = g.player(q).perms.iter().any(|&b| {
+            let x = g.perm(b);
+            g.is_creature(b)
+                && x.on_bf
+                && !x.phased
+                && !x.tapped
+                && (x.fly
+                    || kw(g, b, "flying")
+                    || kw(g, b, "reach")
+                    || x.cd.is_some_and(|cd| g.db.get(cd).tag(Tag::Reach)))
+        });
+        let combat = if blocked_in_the_air { 0 } else { ready.saturating_add(flying) };
+        let hit = if player_hexproof(g, q) { 0 } else { trigger };
+        combat.saturating_add(hit) >= g.player(q).life
     })
 }
 
@@ -3535,7 +3559,9 @@ fn twinflame_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
             continue;
         }
         let cd = g.perm(m).cd.unwrap();
-        if let Some(cp) = enter_token_copy(g, p, cd)? {
+        // Doubling Season and company: `repl::tokens` copies of each target, while the token cap leaves room
+        for _ in 0..repl::tokens(g, p, 1).min(TOKEN_CAP as u32) {
+            let Some(cp) = enter_token_copy(g, p, cd)? else { break };
             g.perm_mut(cp).sick = false; // haste; exiled at the end step
             g.perm_mut(cp).temp = true;
         }
