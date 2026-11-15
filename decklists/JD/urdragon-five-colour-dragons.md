@@ -106,7 +106,7 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
 | 4 | Smaug the Magnificent, Nicol Bolas the Ravager | Early hasty flier with a Treasure every upkeep; discard and a flip into a planeswalker |
 | 5 | Terror of the Peaks, Goldspan Dragon, Glorybringer, Thundermaw Hellkite, Korvold, Scourge of Valkas | The core: damage, haste, removal, Treasures |
 | 6 | Lathliss, Miirym, Dragonlord Dromoka, Dragonlord Silumgar, Ancient Copper Dragon, Hellkite Charger, Hellkite Tyrant, Shivan Dragon | Engines and finishers |
-| 7 | Tiamat, Old Gnawbone, Klauth, Atarka, Ancient Brass Dragon, Morophon | The seven-drops The Ur-Dragon drops in free; Morophon is a Dragon (changeling) and makes the commander cost {4} |
+| 7 | Tiamat, Old Gnawbone, Klauth, Atarka, Ancient Brass Dragon, Smaug the Impenetrable, Morophon | The seven-drops The Ur-Dragon drops in free; Morophon is a Dragon (changeling) and makes the commander cost {4}; Smaug the Impenetrable is hasty and indestructible, so it survives a destroy wipe, and turns noncombat damage dealt to it into Treasures |
 | Varies | Scion of Draco | Costs {12} minus {2} per basic land type among your lands: about {2} with five types, {1} less than that with Eminence |
 
 ### The ramp and engines
@@ -123,8 +123,8 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
 - **Smothering Tithe, Rhystic Study, Sylvan Library, The One Ring:** the draw and tax engines. Rhystic and the Tithe
   make the table pay for casting into you; Sylvan Library picks the best cards; The One Ring protects you for a turn
   and draws more each turn (it costs 1 life per burden counter each upkeep).
-- **Garruk's Uprising and Temur Ascendancy:** draw whenever a creature with power 4 or more enters (nearly every Dragon),
-  and give haste or trample.
+- **Temur Ascendancy:** gives your creatures haste and draws a card whenever you cast a creature spell with power 4 or
+  more (nearly every Dragon).
 
 ### Game plan
 
@@ -249,11 +249,11 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 
 **Commander (1).** The Ur-Dragon
 
-**Creatures (31).** Ancient Brass Dragon, Ancient Copper Dragon, Atarka, World Render, Birds of Paradise, Delighted Halfling, Dragonlord Dromoka, Dragonlord Silumgar, Dragonspeaker Shaman, Elvish Mystic, Garth One-Eye, Glorybringer, Goldspan Dragon, Hellkite Charger, Hellkite Tyrant, Klauth, Unrivaled Ancient, Korvold, Fae-Cursed King, Lathliss, Dragon Queen, Llanowar Elves, Miirym, Sentinel Wyrm, Morophon, the Boundless, Nicol Bolas, the Ravager, Old Gnawbone, Rivaz of the Claw, Scion of Draco, Scourge of Valkas, Shivan Dragon, Smaug the Magnificent, Spark Double, Terror of the Peaks, Thundermaw Hellkite, Tiamat
+**Creatures (32).** Ancient Brass Dragon, Ancient Copper Dragon, Atarka, World Render, Birds of Paradise, Delighted Halfling, Dragonlord Dromoka, Dragonlord Silumgar, Dragonspeaker Shaman, Elvish Mystic, Garth One-Eye, Glorybringer, Goldspan Dragon, Hellkite Charger, Hellkite Tyrant, Klauth, Unrivaled Ancient, Korvold, Fae-Cursed King, Lathliss, Dragon Queen, Llanowar Elves, Miirym, Sentinel Wyrm, Morophon, the Boundless, Nicol Bolas, the Ravager, Old Gnawbone, Rivaz of the Claw, Scion of Draco, Scourge of Valkas, Shivan Dragon, Smaug the Impenetrable, Smaug the Magnificent, Spark Double, Terror of the Peaks, Thundermaw Hellkite, Tiamat
 
 **Artifacts (7).** Arcane Signet, Chrome Mox, Lightning Greaves, Mana Vault, Sol Ring, Swiftfoot Boots, The One Ring
 
-**Enchantments (7).** Doubling Season, Dragon Tempest, Garruk's Uprising, Rhystic Study, Smothering Tithe, Sylvan Library, Temur Ascendancy
+**Enchantments (6).** Doubling Season, Dragon Tempest, Rhystic Study, Smothering Tithe, Sylvan Library, Temur Ascendancy
 
 **Instants (14).** Anguished Unmaking, Assassin's Trophy, Chaos Warp, Counterspell, Cyclonic Rift, Deflecting Swat, Enlightened Tutor, Fierce Guardianship, Heroic Intervention, Path to Exile, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
 
@@ -298,7 +298,6 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Farseek
 1 Fierce Guardianship
 1 Flooded Strand
-1 Garruk's Uprising
 1 Garth One-Eye
 1 Glorybringer
 1 Goldspan Dragon
@@ -332,6 +331,7 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Scourge of Valkas
 1 Scrubland
 1 Shivan Dragon
+1 Smaug the Impenetrable
 1 Smaug the Magnificent
 1 Smothering Tithe
 1 Sol Ring
