@@ -149,3 +149,82 @@ fn a_person_loots_with_three_mana_in_the_pool_and_not_after_tapping_it_for_mana(
     g.player_mut(P0).pool.add('R', 3);
     assert!(!activate(&mut g, P0, relic, 0).unwrap());
 }
+
+/// the loot ability as a person plays it: they tap three lands for {R}{R}{R}, then use the Relic: `{3}, {T}: Draw two
+/// cards, then discard a card.` The person is asked what to discard, from the hand as it is after the draw (the two
+/// new cards included)
+#[test]
+fn a_person_loots_with_three_lands_draws_two_and_is_asked_what_to_discard() {
+    use sim_core::control::{Answer, Request};
+    use sim_core::human::script::ScriptHuman;
+    use std::sync::{Arc, Mutex};
+    let mut g = tbl();
+    let relic = perm(&mut g, P0, "Relic of Sauron");
+    let lands = lands(&mut g, P0, "Mountain", 3, false);
+    hand(&mut g, P0, &["Sol Ring", "Brainstorm"]);
+    // tap the three Mountains for mana (not the Relic)
+    // (the source ids shift as sources are used: look each one up again)
+    while let Some(s) = sim_core::human::mana::sources(&g, P0).into_iter().find(|s| s.name == "Mountain") {
+        assert_eq!(sim_core::human::mana::tap(&mut g, P0, s.id as i64, None).unwrap(), None);
+    }
+    assert!(lands.iter().all(|&l| g.perm(l).tapped) && !g.perm(relic).tapped);
+    assert_eq!(g.player(P0).pool.total(), 3);
+    let at = g.player(P0).perms.iter().position(|&m| m == relic).unwrap();
+    let asked: Arc<Mutex<Vec<Request>>> = Arc::new(Mutex::new(vec![]));
+    let (a2, mut used) = (asked.clone(), false);
+    g.humans.add(
+        P0,
+        Arc::new(ScriptHuman::from_fn(move |r| {
+            a2.lock().unwrap().push(r.clone());
+            if &*r.kind == "priority" {
+                let first = !std::mem::replace(&mut used, true);
+                return Answer::Action(if first {
+                    serde_json::json!({"do": "use", "perm": at})
+                } else {
+                    serde_json::json!({"do": "pass"})
+                });
+            }
+            Answer::Pick(0)
+        })),
+    );
+    let lib0 = g.player(P0).library.len();
+    let gy0 = g.player(P0).gy.len();
+    let _ = sim_core::human::human::human_main(&mut g, P0, false);
+    assert!(g.perm(relic).tapped, "{{T}} paid");
+    assert_eq!(g.player(P0).pool.total(), 0, "the {{3}} was paid from the three mana");
+    assert_eq!(g.player(P0).library.len(), lib0 - 2, "two cards drawn");
+    let asked = asked.lock().unwrap();
+    let discards: Vec<&Request> = asked.iter().filter(|r| r.prompt.contains("Discard a card")).collect();
+    assert_eq!(discards.len(), 1, "asked once what to discard: {asked:?}");
+    // the hand after the draw: the two it held and the two drawn: four cards to choose from
+    assert_eq!(discards[0].choices.len(), 4, "{:?}", discards[0].choices);
+    assert!(discards[0].choices.iter().any(|c| c.contains("Sol Ring")));
+    assert!(discards[0].choices.iter().any(|c| c.contains("Brainstorm")));
+    assert_eq!((g.player(P0).hand.len(), g.player(P0).gy.len()), (3, gy0 + 1), "four in hand, one discarded");
+}
+
+/// Oracle: "Add two mana in any combination of {U}, {B} and/or {R}": the source is listed as two mana of U, B or R,
+/// and the second mana's colour is offered as exactly those three, nothing else
+#[test]
+fn a_person_is_offered_exactly_blue_black_and_red_for_each_mana() {
+    use sim_core::control::{Answer, Request};
+    use sim_core::human::script::ScriptHuman;
+    use std::sync::{Arc, Mutex};
+    let mut g = tbl();
+    perm(&mut g, P0, "Relic of Sauron");
+    let src = sim_core::human::mana::sources(&g, P0).into_iter().find(|x| x.name == "Relic of Sauron").unwrap();
+    assert_eq!((src.amount, src.colours.as_str()), (2, "UBR"), "two mana, each blue, black or red");
+    let asked: Arc<Mutex<Vec<Request>>> = Arc::new(Mutex::new(vec![]));
+    let a2 = asked.clone();
+    g.humans.add(
+        P0,
+        Arc::new(ScriptHuman::from_fn(move |r| {
+            a2.lock().unwrap().push(r.clone());
+            Answer::Pick(0)
+        })),
+    );
+    sim_core::human::mana::tap(&mut g, P0, src.id as i64, Some('R')).unwrap();
+    let asked = asked.lock().unwrap();
+    assert_eq!(asked.len(), 1, "the first mana's colour came with the tap; one question for the second: {asked:?}");
+    assert_eq!(asked[0].choices, vec!["U", "B", "R", "cancel"]);
+}
