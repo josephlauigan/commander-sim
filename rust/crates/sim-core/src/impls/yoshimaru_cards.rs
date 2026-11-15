@@ -375,10 +375,13 @@ fn meadow_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     g.player_mut(p).hand.remove(i);
-    // "As this land enters, you may pay 3 life": only with the life to pay, and not with Spelunking out (the land
-    // enters untapped whatever is paid, and the controller may order the two replacements that way)
-    let free = super::t12_windgrace::lands_enter_untapped(g, p);
+    // "As this land enters, you may pay 3 life": only with the life to pay (not while the player's life can't change),
+    // and not with Spelunking out (the land enters untapped whatever is paid, and the controller may order the two
+    // replacements that way) or under Blood Moon (a Mountain has no such ability of its own: nothing is paid or asked)
+    let free = super::t12_windgrace::lands_enter_untapped(g, p) || crate::engine::mana::moon_card(g, c);
+    let can_pay = !g.player(p).life_locked;
     let paid = !free
+        && can_pay
         && if human {
             g.player(p).life >= 3
                 && crate::human::choices::yes_no(g, p, "Witch-Blessed Meadow: pay 3 life so it enters untapped?")?
