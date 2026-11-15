@@ -19,7 +19,7 @@ in the Spare pile. If any other card is missing from a box, add it to "Cards to 
 
 1. Make three piles: **New Yoshimaru/Tymna**, **New Y'shtola** and **Spare**. Spare means cards that neither new deck
    needs from these two boxes; it is a place to put them, not a record of what you own.
-2. Do the Tymna/Thrasios box first, then the Y'shtola box. The Y'shtola box gives three cards to the new
+2. Do the Tymna/Thrasios box first, then the Y'shtola box. The Y'shtola box gives 4 cards to the new
    Yoshimaru/Tymna deck.
 3. Get a second copy of **Silence** and **Grand Abolisher** for Y'shtola (your decision, 2026-11-14): the Tymna/Thrasios
    box has one copy of each and both new decks play them. The Tymna/Thrasios copies stay in the Yoshimaru/Tymna deck.
@@ -27,9 +27,9 @@ in the Spare pile. If any other card is missing from a box, add it to "Cards to 
 
 | Pile | Stays in its own box | From Tymna/Thrasios box | From Y'shtola box | To find | Total |
 |---|---|---|---|---|---|
-| New Yoshimaru/Tymna | 20 + 1 basic Swamp | n/a | 3 | 61 + 15 basics | 100 |
+| New Yoshimaru/Tymna | 20 + 1 basic Swamp | n/a | 4 | 60 + 15 basics | 100 |
 | New Y'shtola | 87 | 11 | n/a | 2 | 100 |
-| Spare | n/a | 68 | 10 | n/a | 78 |
+| Spare | n/a | 68 | 9 | n/a | 77 |
 
 ## 1. The Tymna/Thrasios box
 
@@ -160,17 +160,17 @@ The Tymna/Thrasios box is now empty except for the 20 cards that stay and the Sw
 
 The other 87 cards stay in the box.
 
-### To New Yoshimaru/Tymna (3 cards)
+### To New Yoshimaru/Tymna (4 cards)
 
+- Conjurer's Closet
 - Restoration Angel
 - Teferi's Protection
 - Teleportation Circle
 
-### To the Spare pile (10 cards)
+### To the Spare pile (9 cards)
 
 - Bound in Silence
 - Champion's Helm
-- Conjurer's Closet
 - Displacer Kitten
 - Expedition Map
 - Idyllic Tutor
@@ -210,7 +210,7 @@ it is now the Yoshimaru/Tymna deck. The Y'shtola box now holds her 100 cards.
 
 ## 3. Cards to find
 
-New Yoshimaru/Tymna needs 61 cards that are in neither the Tymna/Thrasios box nor the Y'shtola cuts, and
+New Yoshimaru/Tymna needs 60 cards that are in neither the Tymna/Thrasios box nor the Y'shtola cuts, and
 15 basic lands (10 Plains and 6 Swamp in the list, less the Swamp that is already in the box). New
 Y'shtola needs 2 second copies. Tick each card you already have; the rest are yours to buy or borrow.
 
@@ -252,7 +252,7 @@ That deck keeps its copy, so the new deck needs another one.
 | The One Ring | The Ur-Dragon, Sheoldred, Thanos (Cali) | [ ] |
 | Vito, Thorn of the Dusk Rose | Sheoldred | [ ] |
 
-### Cards that no deck list holds (45)
+### Cards that no deck list holds (44)
 
 | Card | Have it? |
 |---|---|
@@ -294,7 +294,6 @@ That deck keeps its copy, so the new deck needs another one.
 | The Mind Stone | [ ] |
 | The Seriema | [ ] |
 | The Wandering Emperor | [ ] |
-| Thraben Inspector | [ ] |
 | Vault of Champions | [ ] |
 | Vindicate | [ ] |
 | Wall of Omens | [ ] |
@@ -311,11 +310,11 @@ That deck keeps its copy, so the new deck needs another one.
 
 ## 4. Check the counts
 
-- **New Yoshimaru/Tymna:** 20 from the Tymna/Thrasios box + 1 Swamp already in it + 3 from the
-  Y'shtola box + 61 to find + 15 basics to find = 100, including both commanders (Yoshimaru, Ever Faithful and
+- **New Yoshimaru/Tymna:** 20 from the Tymna/Thrasios box + 1 Swamp already in it + 4 from the
+  Y'shtola box + 60 to find + 15 basics to find = 100, including both commanders (Yoshimaru, Ever Faithful and
   Tymna the Weaver).
 - **New Y'shtola:** 87 in the box + 11 from the Tymna/Thrasios box + 2 second copies = 100.
-- **Spare:** 68 from the Tymna/Thrasios box + 10 from the Y'shtola box = 78 cards.
+- **Spare:** 68 from the Tymna/Thrasios box + 9 from the Y'shtola box = 77 cards.
 - Check each pile against the import list at the end of its deck document. Every card appears once, except basic lands
   (Yoshimaru/Tymna: 10 Plains and 6 Swamp; Y'shtola: 6 Plains, 5 Island and 8 Swamp).
 
