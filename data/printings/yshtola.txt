@@ -36,6 +36,7 @@
 1 Loran of the Third Path (fca) 24
 1 Marauding Blight-Priest (znr) 112
 1 Marsh Flats (mh2) 476
+1 Mindbreak Trap (mar) 11
 1 Mistrise Village (tdm) 397
 1 Mystic Remora (dmr) 420
 1 Mystical Tutor (dmr) 421
@@ -73,7 +74,6 @@
 1 Tundra (ced) 285
 1 Underground River (wc98) bs362
 1 Underground Sea (cei) 286
-1 Urborg Syphon-Mage (dmr) 106
 1 Urborg, Tomb of Yawgmoth (ltc) 375
 1 Urza's Cave (mh3) 234
 1 Vampiric Tutor (soa) 100

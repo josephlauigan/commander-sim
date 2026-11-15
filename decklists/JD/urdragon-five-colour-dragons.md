@@ -6,7 +6,7 @@ seven-drop into play. Terror of the Peaks, Scourge of Valkas and Dragon Tempest 
 damage, and Miirym and Lathliss double the Dragons. Beside those sits one four-card combo, **Garth One-Eye + Spark
 Double + Twinflame + Doubling Season**, which makes mana and hasty tokens without limit. Around them sit the top-end
 Dragons (Utvara Hellkite, Steel Hellkite, Summon: Bahamut, Niv-Mizzet) and a spells package (Lightning Bolt, Decimate,
-Fact or Fiction, Austere Command, Young Pyromancer, Talrand). The deck is weak to board wipes and mass bounce after it
+Fact or Fiction, Austere Command, Young Pyromancer) and Triple Triad. The deck is weak to board wipes and mass bounce after it
 has committed its Dragons, to decks that win before turn 5, and to Blood Moon effects (two basic lands). Nothing in this document has been simulated yet.
 
 | | |
@@ -14,7 +14,7 @@ has committed its Dragons, to decks that win before turn 5, and to Blood Moon ef
 | **Commander** | The Ur-Dragon ({4}{W}{U}{B}{R}{G}, 10/10 flier); all five colours. Eminence: other Dragon spells you cast cost {1} less while it is in the command zone or on the battlefield |
 | **Bracket** | 4: 10 Game Changers and one four-card combo. Played against Tier 5 (High Bracket 4) |
 | **Game Changers (10)** | Ancient Tomb, Cyclonic Rift, Demonic Tutor, Fierce Guardianship, Mana Vault, Rhystic Study, Teferi's Protection, The One Ring, Vampiric Tutor, Worldly Tutor |
-| **Simulator** | Deck key `urdragon`, tier T5; findings in `audit/urdragon/FINDINGS.md`, history in `decklists/CHANGELOG.md`. No plan file and no sims yet |
+| **Simulator** | Deck key `urdragon`, tier T5; findings in `audit/urdragon/FINDINGS.md`, history in `decklists/CHANGELOG.md`; plan file `data/plans/urdragon.toml`. No sims yet |
 | **Buys** | None: every card not owned is proxied |
 
 ## Strategy
@@ -103,7 +103,7 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
 - **Dragonlord Silumgar** steals the best creature or planeswalker. **Tiamat** (cast it) fetches five Dragons to hand
   and refuels the Ur-Dragon trigger.
 - **Crux of Fate** is a one-sided wrath: destroy all non-Dragon creatures. It also kills your own dorks, Rivaz,
-  Garth, Young Pyromancer, Talrand and Spark Double (unless it copies a Dragon), so use it before the combo is set up or when the board is mostly Dragons. **Austere Command** ({4}{W}{W}) picks two modes: only
+  Garth, Young Pyromancer and Spark Double (unless it copies a Dragon), so use it before the combo is set up or when the board is mostly Dragons. **Austere Command** ({4}{W}{W}) picks two modes: only
   "creatures with mana value 3 or less" leaves every Dragon alone (it still kills your dorks, Rivaz and Young
   Pyromancer); the artifact mode also kills your rocks, The One Ring, Steel Hellkite and Scion of Draco, and the
   enchantment mode kills Doubling Season, Rhystic Study and Summon: Bahamut.
@@ -137,10 +137,15 @@ The loop was worked by hand from the Oracle text and also appears as a combo-cat
 - **Rhystic Study, The One Ring, Fact or Fiction:** the draw engines. Rhystic makes the table pay for casting into you;
   The One Ring protects you for a turn and draws more each turn (it costs 1 life per burden counter each upkeep); Fact
   or Fiction is a four-mana instant for a pile of cards.
-- **Lightning Bolt, Decimate, Austere Command, Young Pyromancer, Talrand, Sky Summoner:** the spells package. Bolt is
+- **Lightning Bolt, Decimate, Austere Command, Young Pyromancer:** the spells package. Bolt is
   cheap removal or reach; Decimate destroys an artifact, a creature, an enchantment and a land at once (all four need
-  a legal target); Young Pyromancer and Talrand turn each instant or sorcery into a 1/1 Elemental or a 2/2 flying Drake, but the
+  a legal target); Young Pyromancer turns each instant or sorcery into a 1/1 Elemental, but the
   deck holds only seventeen of them (ten instants and seven sorceries).
+- **Triple Triad** ({3}{R}{R}{R}, enchantment): at the beginning of your upkeep each player exiles the top card of their
+  library, and this turn you may play your own exiled card and every other exiled card with a lower mana value without
+  paying their mana costs. About a third of the 99 are lands (a land flip gives no free spell, but you may play it as your
+  land drop) and 29 are Dragons, mostly costing 5 to 7, so a flip is a free Dragon about three times in ten, and the
+  higher the card you flip, the more of the opponents' exiled cards qualify. It needs three red sources.
 - **Temur Ascendancy:** gives your creatures haste, and you may draw a card whenever a creature with power 4 or more
   enters under your control (nearly every Dragon, including the ones The Ur-Dragon puts in).
 
@@ -255,8 +260,8 @@ Cavern of Souls and Ancient Tomb. A fetch finds any dual or basic that shares a 
 (Springs, Orchard and the other nonbasics without a land type cannot be fetched): land sources by colour are white 15,
 blue 15, black 18, red 20 and green 17, counting the fetches, the three any-colour lands and the basics, with
 Maelstrom adding one more of each for Dragon spells and Orchard adding what the table's lands make. Red is the heaviest
-colour (RR on most Dragons, RRR on Scourge of Valkas), then green and black; white and blue are the thinnest, for
-Niv-Mizzet ({U}{U}), Talrand, Fact or Fiction and Austere Command ({W}{W}). Add the mana creatures and rocks: Arcane Signet, Birds, Mox Jasper (with a
+colour (RR on most Dragons, RRR on Scourge of Valkas and Triple Triad), then green and black; white and blue are the thinnest, for
+Niv-Mizzet ({U}{U}), Fact or Fiction and Austere Command ({W}{W}). Add the mana creatures and rocks: Arcane Signet, Birds, Mox Jasper (with a
 Dragon out) and Delighted Halfling make any colour, and Treasures from Goldspan, Ganax, Smaug, Ancient Copper Dragon and
 Old Gnawbone fix the rest. The fetches also count as sacrifices for Korvold. The two basics are the answer to Blood
 Moon (fetch them first).
@@ -271,11 +276,11 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 
 **Commander (1).** The Ur-Dragon
 
-**Creatures (38).** Ancient Copper Dragon, Birds of Paradise, Delighted Halfling, Dragonlord Dromoka, Dragonlord Ojutai, Dragonlord Silumgar, Elvish Mystic, Ganax, Astral Hunter, Garth One-Eye, Glorybringer, Goldspan Dragon, Hellkite Tyrant, Klauth, Unrivaled Ancient, Korvold, Fae-Cursed King, Kura, the Boundless Sky, Lathliss, Dragon Queen, Llanowar Elves, Miirym, Sentinel Wyrm, Morophon, the Boundless, Nicol Bolas, the Ravager, Niv-Mizzet, the Firemind, Old Gnawbone, Rivaz of the Claw, Scion of Draco, Scion of the Ur-Dragon, Scourge of Valkas, Shivan Dragon, Smaug the Impenetrable, Smaug the Magnificent, Spark Double, Steel Hellkite, Summon: Bahamut, Talrand, Sky Summoner, Terror of the Peaks, Thundermaw Hellkite, Tiamat, Utvara Hellkite, Young Pyromancer
+**Creatures (37).** Ancient Copper Dragon, Birds of Paradise, Delighted Halfling, Dragonlord Dromoka, Dragonlord Ojutai, Dragonlord Silumgar, Elvish Mystic, Ganax, Astral Hunter, Garth One-Eye, Glorybringer, Goldspan Dragon, Hellkite Tyrant, Klauth, Unrivaled Ancient, Korvold, Fae-Cursed King, Kura, the Boundless Sky, Lathliss, Dragon Queen, Llanowar Elves, Miirym, Sentinel Wyrm, Morophon, the Boundless, Nicol Bolas, the Ravager, Niv-Mizzet, the Firemind, Old Gnawbone, Rivaz of the Claw, Scion of Draco, Scion of the Ur-Dragon, Scourge of Valkas, Shivan Dragon, Smaug the Impenetrable, Smaug the Magnificent, Spark Double, Steel Hellkite, Summon: Bahamut, Terror of the Peaks, Thundermaw Hellkite, Tiamat, Utvara Hellkite, Young Pyromancer
 
 **Artifacts (7).** Arcane Signet, Cursed Mirror, Mana Vault, Mox Jasper, Relic of Sauron, Sol Ring, The One Ring
 
-**Enchantments (4).** Doubling Season, Dragon Tempest, Rhystic Study, Temur Ascendancy
+**Enchantments (5).** Doubling Season, Dragon Tempest, Rhystic Study, Temur Ascendancy, Triple Triad
 
 **Instants (10).** Chaos Warp, Cyclonic Rift, Fact or Fiction, Fierce Guardianship, Lightning Bolt, Path to Exile, Swords to Plowshares, Teferi's Protection, Vampiric Tutor, Worldly Tutor
 
@@ -364,7 +369,6 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Summon: Bahamut
 1 Swords to Plowshares
 1 Taiga
-1 Talrand, Sky Summoner
 1 Teferi's Protection
 1 Temur Ascendancy
 1 Terror of the Peaks
@@ -373,6 +377,7 @@ or Jeweled Lotus). Tell the table about the combo before the game.
 1 Three Visits
 1 Thundermaw Hellkite
 1 Tiamat
+1 Triple Triad
 1 Tropical Island
 1 Tundra
 1 Twinflame

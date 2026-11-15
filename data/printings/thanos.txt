@@ -28,6 +28,7 @@
 1 Force of Will (2xm) 340
 1 Forest (sos) 271
 1 Gamble (dmr) 433
+1 Gifts Ungiven (2x2) 347
 1 Gilded Lotus (brr) 80
 1 Glorybringer (tdc) 215
 1 Goldspan Dragon (sld) 1780
