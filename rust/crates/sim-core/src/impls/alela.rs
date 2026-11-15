@@ -1602,7 +1602,8 @@ fn scrap_self(g: &mut Game, _src: Src, m: PermId, _cause: Sym) -> Res {
 }
 
 // ------------------------------------------------------------------ Mirage Mirror
-/// the permanent's face becomes card `cd` (name, body, keywords, hooks), as a copy; no enter effects
+/// the permanent's face becomes card `cd` (name, body, keywords, hooks), as a copy; no enter effects; a station card gets
+/// its printed P/T (`yoshimaru_cards::printed_pt`)
 pub(crate) fn set_face(g: &mut Game, m: PermId, cd: CardId) {
     // --- scion: also Scion of the Ur-Dragon's "becomes a copy" (impls/t6_scion.rs)
     let (name, pow, tgh, fly, dt, vig, ll, war, noatk, dsl) = {
@@ -1621,6 +1622,9 @@ pub(crate) fn set_face(g: &mut Game, m: PermId, cd: CardId) {
             d.has_dsl(),
         )
     };
+    // a station card's printed P/T is not in its card data (The Seriema's 5/5); becoming a copy is not entering, so its
+    // as_enters hook does not run
+    let (pow, tgh) = crate::impls::yoshimaru_cards::printed_pt(g, cd).unwrap_or((pow, tgh));
     if let Some(i) = g.hooks.iter().position(|&x| x == m) {
         g.hooks.remove(i);
     }

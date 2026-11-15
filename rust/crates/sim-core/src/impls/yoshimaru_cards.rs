@@ -118,10 +118,12 @@ fn minas_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// condition on the counters, not a one-time change: the card's `station=7` tag (data/card_overrides.toml) is read by
 /// `chars::is_creature`, whatever put the counters there or took them away; the flying and indestructible depend on
 /// the counters alone (`seven_plus`), not on being a creature by some other effect. The printed 5/5 is the
-/// permanent's own power and toughness, set as it enters (`seriema_as_enters`), so a later base-setting effect wins.
+/// permanent's own power and toughness, set as it enters (`seriema_as_enters`), and when an existing permanent becomes a
+/// copy of it without entering (Mirage Mirror, Shifting Woodland: `alela::set_face`), so a later base-setting effect wins.
 /// The AI stations with creatures that can't attack anyway, or when the tap finishes it, and no more once it is a
 /// creature; a person chooses each creature to tap, one activation at a time, with or without 7 counters.
 const SERIEMA: &str = "The Seriema";
+const SERIEMA_PT: (i32, i32) = (5, 5);
 const STATION_GOAL: i64 = 7;
 const WITCH: &str = "Witch Enchanter // Witch-Blessed Meadow";
 
@@ -192,9 +194,17 @@ fn seriema_etb(g: &mut Game, src: Src, p: PlayerId, m: PermId) -> Res {
 fn seriema_as_enters(g: &mut Game, _p: PlayerId, m: PermId) -> Res {
     let x = g.perm_mut(m);
     if x.exc.pt.is_none() {
-        (x.pow, x.tgh) = (5, 5);
+        (x.pow, x.tgh) = SERIEMA_PT;
     }
     Ok(())
+}
+
+/// The Seriema's printed power and toughness (its card data has 0/0, an artifact's): set as it enters
+/// (`seriema_as_enters`) and when an existing permanent becomes a copy of it without entering (`alela::set_face`:
+/// Mirage Mirror, Shifting Woodland). None for every other card.
+pub(crate) fn printed_pt(g: &Game, cd: CardId) -> Option<(i32, i32)> {
+    let d = g.db.get(cd);
+    (d.tag(Tag::Station) && &*d.name == SERIEMA).then_some(SERIEMA_PT)
 }
 
 fn charge(g: &Game, m: PermId) -> i64 {
