@@ -15,8 +15,7 @@
 
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::on_cast;
-use crate::engine::mana::{Source, Unit, cost_of, land_colors_now, total_mana};
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{Source, Unit, can_pay, can_pay_spell, cost_of, land_colors_now, pay, total_mana_spell};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::turn::land_enters_tapped;
 use crate::engine::tutors::{card_worth, shuffle_library};
@@ -238,7 +237,7 @@ fn endurance_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 /// is wanted; the Elemental is sacrificed as it enters.
 fn endurance_evoke(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let (gn, pips) = cost_of(g, p, c);
-    if post.is_some() && can_pay(g, p, gn, &pips, false) {
+    if post.is_some() && can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(vec![]);
     }
     if !g.player(p).hand.contains(&c) || endurance_target(g, p).is_none() || evoke_pitch(g, p, c).is_none() {
@@ -636,7 +635,13 @@ fn ikoria_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
 
 /// cast with enough mana for a two-drop: X = spare mana
 fn ikoria_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
-    if total_mana(g, p, false) >= 4 && ikoria_pick(g, p, total_mana(g, p, false) as i32 - 2).is_some() { 60 } else { 0 }
+    if total_mana_spell(g, p, _c, false) >= 4
+        && ikoria_pick(g, p, total_mana_spell(g, p, _c, false) as i32 - 2).is_some()
+    {
+        60
+    } else {
+        0
+    }
 }
 
 // ================================================================== registration

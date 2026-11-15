@@ -104,7 +104,7 @@ fn test_the_started_app_serves_the_page_and_the_catalog() {
     let o = c.get("/api/options").json();
     assert_eq!((o["app"].clone(), o["lan"].clone()), (json!(true), json!(false)));
     let cat = o.clone(); // the options carry the catalog
-    assert_eq!(cat["decks"].as_array().unwrap().len(), 6); // JD's six (Aragorn: Tiers 4-5, Thrasios: Tier 6, Thanos: Tier 5)
+    assert_eq!(cat["decks"].as_array().unwrap().len(), 7); // JD's seven (Aragorn: Tiers 4-5, Thrasios: Tier 6, Thanos and Ur-Dragon: Tier 5)
     assert!(cat["decks"][0]["name"].as_str().is_some_and(|n| !n.is_empty()));
     assert!(stop_app());
     assert!(!stop_app());

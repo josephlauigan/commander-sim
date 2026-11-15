@@ -61,6 +61,9 @@ impl Inputs {
         // cards whose card code is kept after the deck that played them was retired (the titania deck, 2026-10-19):
         // double-faced, so the cache names them "A // B" and only a deck list would have asked for the front face
         extra.extend(["Studious First-Year", "Infestation Expert"].map(String::from));
+        // double-faced, kept after the Thanos artifacts-and-Dragons list was retired (2026-11-13): the cache names it
+        // "Nicol Bolas, the Ravager // Nicol Bolas, the Arisen", and Aragorn-era card code asks for the front face
+        extra.extend(["Nicol Bolas, the Ravager"].map(String::from));
         // cards modeled before any deck plays them (swap tests name them): Priest of Gix (2026-10-19)
         extra.insert("Priest of Gix".to_string());
         // Witch of the Moors (2026-11-07: JD pulled it; tested in Sheoldred with --swap)

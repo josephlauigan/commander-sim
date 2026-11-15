@@ -18,7 +18,7 @@
 
 use crate::cards::{CardDb, Colors};
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, total_mana};
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl;
 use crate::engine::stack::{ability_window, ability_window_card, trigger_window};
@@ -866,7 +866,7 @@ fn kaya_minus_val(g: &Game, p: PlayerId, _src: PermId) -> Option<f64> {
         .filter(|&&c| TOKEN_SPELLS.contains(&&*g.db.get(c).name))
         .filter(|&&c| {
             let (cg, cp) = cost_of(g, p, c);
-            can_pay(g, p, cg, &cp, false)
+            can_pay_spell(g, p, c, cg, &cp, false)
         })
         .count();
     let v = 1.3 * attackers as f64 + 1.0 * spells as f64;
@@ -1027,7 +1027,7 @@ fn eliminate_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -
         return Ok(vec![]);
     }
     let (cg, cp) = cost_of(g, p, c);
-    if !crate::engine::cast::castable(g, p, c, "hand") || !can_pay(g, p, cg, &cp, false) {
+    if !crate::engine::cast::castable(g, p, c, "hand") || !can_pay_spell(g, p, c, cg, &cp, false) {
         return Ok(vec![]);
     }
     let (x, gain) = eliminate_plan(g, p, c);
@@ -1044,7 +1044,7 @@ fn eliminate_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -
 fn eliminate_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, x) = (CardId((arg & 0xffff) as u16), (arg >> 16) as usize);
     let (cg, cp) = cost_of(g, p, c);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, cg, &cp, false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, cg, &cp, false) {
         return Ok(false);
     }
     let (best, _) = eliminate_plan(g, p, c);

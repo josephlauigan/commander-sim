@@ -80,6 +80,7 @@ pub fn apnap(g: &Game, mut ts: Vec<Trigger>) -> Vec<Trigger> {
 fn call(g: &mut Game, t: &Trigger) -> Res {
     let prev = std::mem::replace(&mut g.last_cast_etb, t.cast_etb);
     let r = match &t.act {
+        TrigAct::RivazExile { m } => crate::impls::t45_urdragon::rivaz_exile(g, *m),
         TrigAct::Hook { event, call } => run_hook(g, t.src.expect("a hook trigger has a source"), *event, call),
         TrigAct::EtbOnce { p, m } => crate::engine::zones::etb_once(g, *p, *m),
         TrigAct::Dsl { p, src, card, idx, ctx } => crate::dsl::run_trigger(g, *p, *src, *card, *idx, ctx),
@@ -777,7 +778,9 @@ pub fn ability_run_w(
 
 /// pay equip {n} for equipment e onto m; it attaches if the ability resolves and both are still there
 pub fn equip_to(g: &mut Game, p: PlayerId, e: PermId, m: PermId, n: u32) -> Res<bool> {
-    pay(g, p, n, "", false)?;
+    if !pay(g, p, n, "", false)? {
+        return Ok(false);
+    }
     crate::impls::cloud::note_equip(g, p); // Forge Anew: the first equip of the turn is spent
     if crate::impls::t6_copies::image_targeted(g, m)? && !g.perm(m).on_bf {
         return Ok(true); // --- card-models-2: a Phantasmal Image targeted by the equip
@@ -1077,7 +1080,7 @@ pub fn ai_respond(g: &mut Game, q: PlayerId) -> Res {
     if let Some(pk) = pk {
         // Force of Will pitched (no mana for it): two cards for one
         let (cg, cp) = counter_cost(g, pk, Some(c), Some(q));
-        if g.db.get(pk).tag(Tag::Free) && !can_pay(g, q, cg, &cp, false) {
+        if g.db.get(pk).tag(Tag::Free) && !crate::engine::mana::can_pay_spell(g, q, pk, cg, &cp, false) {
             thr += 1.5;
         } else if altcost::use_alt(g, q, pk, Some(c), cg, &cp) {
             thr += 1.5 * altcost::lost(g, q, pk, Some(c)); // cards given up for the alternative cost
@@ -1255,7 +1258,10 @@ pub fn pick_counter_only(g: &Game, q: PlayerId, c: CardId, only: Option<&str>) -
             && !t.has(Tag::Ctr)
         {
             let (cg, cp) = counter_cost(g, ctr, Some(c), Some(q));
-            if can_pay(g, q, cg, &cp, false) && castable(g, q, ctr, zone) && cheaper(best, ctr) {
+            if crate::engine::mana::can_pay_spell(g, q, ctr, cg, &cp, false)
+                && castable(g, q, ctr, zone)
+                && cheaper(best, ctr)
+            {
                 best = Some(ctr);
             }
             continue;
@@ -1285,7 +1291,10 @@ pub fn pick_counter_only(g: &Game, q: PlayerId, c: CardId, only: Option<&str>) -
         }
         let (cg, cp) = counter_cost(g, ctr, Some(c), Some(q));
         if t.has(Tag::Free) {
-            if ((!blue_in_hand(g, q, ctr).is_empty() && taxed_ok) || can_pay(g, q, cg, &cp, false)) && best.is_none() {
+            if ((!blue_in_hand(g, q, ctr).is_empty() && taxed_ok)
+                || crate::engine::mana::can_pay_spell(g, q, ctr, cg, &cp, false))
+                && best.is_none()
+            {
                 best = Some(ctr);
                 loose = true;
             }
@@ -1303,7 +1312,7 @@ pub fn pick_counter_only(g: &Game, q: PlayerId, c: CardId, only: Option<&str>) -
             }
             continue;
         }
-        if can_pay(g, q, cg, &cp, false) && (cheaper(best, ctr) || loose) {
+        if crate::engine::mana::can_pay_spell(g, q, ctr, cg, &cp, false) && (cheaper(best, ctr) || loose) {
             best = Some(ctr);
             loose = false;
         }
@@ -1400,6 +1409,13 @@ pub fn pay_counter_alt(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<Car
 
 /// pay counterspell ctr's cost (or its alternative cost) against spell; true if paid
 pub fn pay_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>) -> Res<bool> {
+    let prev = g.pay_for.replace(ctr);
+    let result = pay_counter_inner(g, q, ctr, spell);
+    g.pay_for = prev;
+    result
+}
+
+fn pay_counter_inner(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>) -> Res<bool> {
     if g.free_counter {
         return Ok(true); // practice mode: paid from the person's pool
     }
@@ -1443,7 +1459,7 @@ pub fn pay_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>
         return Ok(true);
     }
     let (cg, cp) = counter_cost(g, ctr, spell, Some(q));
-    if t.has(Tag::Free) && !can_pay(g, q, cg, &cp, false) {
+    if t.has(Tag::Free) && !crate::engine::mana::can_pay_spell(g, q, ctr, cg, &cp, false) {
         let blues = blue_in_hand(g, q, ctr);
         if blues.is_empty() || !altcost::pay_tax(g, q, ctr)? {
             return Ok(false);
@@ -1455,7 +1471,7 @@ pub fn pay_counter(g: &mut Game, q: PlayerId, ctr: CardId, spell: Option<CardId>
     if altcost::use_alt(g, q, ctr, spell, cg, &cp) {
         return altcost::pay_alt(g, q, ctr, spell); // Daze, Flare of Denial, Disrupting Shoal, Mindbreak Trap
     }
-    pay(g, q, cg, &cp, false)
+    crate::engine::mana::pay_spell(g, q, ctr, cg, &cp, false)
 }
 
 /// q casts counterspell ctr at stack item `target`. It goes on the stack (players may respond, the target's caster

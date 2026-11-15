@@ -3,7 +3,7 @@
 
 use super::brain;
 use crate::engine::cast::cast_card;
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell};
 use crate::engine::zones::draw;
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Sacrificed};
@@ -34,7 +34,7 @@ fn face(g: &mut Game, p: PlayerId, c: CardId, q: crate::ids::PlayerId, kick: u32
     let d = g.db.get(c);
     let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
     let gn = gn + kick;
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, gn, &pips, false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
     let mut ctx = Ctx { face: Some(q), ..Ctx::default() };
@@ -42,17 +42,17 @@ fn face(g: &mut Game, p: PlayerId, c: CardId, q: crate::ids::PlayerId, kick: u32
         let r = d.tags.str(Tag::Rem).unwrap_or("dmg0");
         ctx.rem_kind = Some(intern(&format!("dmg{}", r[3..].parse::<i32>().unwrap_or(0) + 2)));
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     cast_card(g, p, c, "hand", ctx)?;
     Ok(true)
 }
 
 /// Crackle with Power for X
 fn crackle(g: &mut Game, p: PlayerId, c: CardId, x: u32) -> Res<bool> {
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 3 * x, "RR", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 3 * x, "RR", false) {
         return Ok(false);
     }
-    pay(g, p, 3 * x, "RR", false)?;
+    pay_spell(g, p, c, 3 * x, "RR", false)?;
     cast_card(g, p, c, "hand", Ctx { x: x as i32, ..Ctx::default() })?;
     Ok(true)
 }

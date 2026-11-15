@@ -172,7 +172,7 @@ fn thanos_one_lander_with_too_little_fast_mana_goes_back() {
     let (mut g, p) = game_with(
         "thanos",
         &[
-            "Forest",
+            "Command Tower",
             "Sol Ring",
             "Mind Stone",
             "Vampiric Tutor",
@@ -468,14 +468,15 @@ fn a_hand_no_row_fits_says_why_it_is_kept() {
 /// makes nothing, so turn 2 has 2 lands and Mind Stone (cost 2) is cast on turn 2, not turn 1
 #[test]
 fn mox_jasper_makes_no_mana_without_a_dragon_the_hand_can_cast() {
+    // the Miirym pool deck holds Mox Jasper (no deck of JD's plays it now); Utvara Hellkite is a Dragon the hand can't cast
     let (mut g, p) = game_with(
-        "thanos",
-        &["Plateau", "Taiga", "Mox Jasper", "Mind Stone", "Scion of Draco", "Vampiric Tutor", "Swords to Plowshares"],
+        "miirym-temur-dragons",
+        &["Steam Vents", "Stomping Ground", "Mox Jasper", "Arcane Signet", "Utvara Hellkite", "Worldly Tutor", "Dragon Tempest"],
     );
     let h = hint(&mut g, p);
     let d = lines(&h);
     assert!(d.iter().any(|l| l.starts_with("Mana on turn 2: 2 = 2 lands")), "{h}");
     assert!(has(&h, "Mox Jasper (needs a Dragon you can cast first)"), "{h}");
-    assert!(has(&h, "Mind Stone (cast turn 2, makes mana from turn 3)"), "{h}");
-    assert!(!d.iter().any(|l| l.contains("Mind Stone 1 (cast turn 1)")), "{h}");
+    assert!(has(&h, "Arcane Signet (cast turn 2, makes mana from turn 3)"), "{h}");
+    assert!(!d.iter().any(|l| l.contains("Arcane Signet 1 (cast turn 1)")), "{h}");
 }

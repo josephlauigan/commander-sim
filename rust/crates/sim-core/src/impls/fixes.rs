@@ -6,7 +6,9 @@ use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::hooks::{fire_trigger, hooked};
 use crate::engine::life::{gain, lose_life};
-use crate::engine::mana::{Source, Unit, can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{
+    Source, Unit, can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana, total_mana_spell,
+};
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
 use crate::engine::stack::{ability_window, counter_window, trigger_window};
@@ -73,7 +75,7 @@ fn aetherize(
         return Ok(());
     }
     let (gn, pips) = cost_of(g, d, c);
-    if !can_pay(g, d, gn, &pips, false) {
+    if !can_pay_spell(g, d, c, gn, &pips, false) {
         return Ok(());
     }
     let power: i32 =
@@ -82,7 +84,7 @@ fn aetherize(
     if (power as f64) < (8.0f64).max(g.player(d).life as f64 / 3.0) && toks < 4 {
         return Ok(());
     }
-    pay(g, d, gn, &pips, false)?;
+    pay_spell(g, d, c, gn, &pips, false)?;
     remove_card(&mut g.player_mut(d).hand, c);
     crate::glog!(g, "  {} casts Aetherize", pname(g, d));
     on_cast(g, d, c)?;
@@ -497,7 +499,7 @@ const IC_COMBO_ART: [&str; 6] = [
 fn reshape_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
     let spare =
         g.player(p).perms.iter().any(|&m| of_type(g, m, Types::ARTIFACT) && (g.perm(m).token || pval(g, m) < 3.0));
-    if total_mana(g, p, false) >= 4 && spare { 55 } else { 0 }
+    if total_mana_spell(g, p, _c, false) >= 4 && spare { 55 } else { 0 }
 }
 
 /// Full: sacrifices the least valuable artifact; X = spare mana; the best artifact with MV X or less onto the

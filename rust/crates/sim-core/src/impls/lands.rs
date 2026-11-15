@@ -183,6 +183,7 @@ pub fn revert_animated(g: &mut Game) -> Res {
         if g.perm(m).on_bf && g.perm(m).owner == p {
             g.player_mut(p).perms.retain(|&x| x != m);
             g.perm_mut(m).on_bf = false;
+            g.perm_mut(m).data.remove(DataKey::PhaseInWith);
             g.perm_mut(l).tapped = g.perm(m).tapped;
             let plus = g.perm(m).plus;
             if plus != 0 && land_name(g, l) == "Raging Ravine" {

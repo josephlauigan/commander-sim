@@ -9,7 +9,7 @@
 use super::common::proliferate;
 use crate::cards::{CardDb, Colors};
 use crate::engine::life::gain;
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell};
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl;
 use crate::engine::stack::trigger_window;
@@ -647,10 +647,14 @@ fn flyers_to_tap(g: &Game, p: PlayerId) -> Vec<PermId> {
 /// **Sephara's alternative cost**: pay {W} and tap four untapped creatures you control with flying rather than pay
 /// its mana cost (only when the ordinary cost is out of reach and the creatures can spare the turn)
 fn sephara_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post == Some(true) || !g.player(p).hand.contains(&c) || g.active != Some(p) || !can_pay(g, p, 0, "W", false) {
+    if post == Some(true)
+        || !g.player(p).hand.contains(&c)
+        || g.active != Some(p)
+        || !can_pay_spell(g, p, c, 0, "W", false)
+    {
         return Ok(vec![]);
     }
-    if flyers_to_tap(g, p).len() < 4 || can_pay(g, p, 4, "WWW", false) {
+    if flyers_to_tap(g, p).len() < 4 || can_pay_spell(g, p, c, 4, "WWW", false) {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -663,10 +667,10 @@ fn sephara_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
 fn sephara_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let fl = flyers_to_tap(g, p);
-    if !g.player(p).hand.contains(&c) || fl.len() < 4 || !can_pay(g, p, 0, "W", false) {
+    if !g.player(p).hand.contains(&c) || fl.len() < 4 || !can_pay_spell(g, p, c, 0, "W", false) {
         return Ok(false);
     }
-    if !pay(g, p, 0, "W", false)? {
+    if !pay_spell(g, p, c, 0, "W", false)? {
         return Ok(false);
     }
     for &m in fl.iter().take(4) {

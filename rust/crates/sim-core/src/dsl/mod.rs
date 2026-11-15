@@ -1191,6 +1191,9 @@ fn run(
                 }
                 g.perm_mut(m).phased = true;
             }
+            if !g.control_links.is_empty() {
+                crate::engine::control::end_links(g);
+            }
         }
         "blink" => {
             let sel = sel_or_empty(&e.what);
@@ -1703,7 +1706,10 @@ fn trigger_matches(g: &mut Game, q: PlayerId, src: PermId, a: &Ability, kw: &Fir
                 Some("any_player") if !kw.attackers.is_empty() => out.push(ctx), // Tier 3 (aurelia): "a player attacks"
                 Some("you_each") if kw.player == Some(q) => {
                     for &m in &kw.attackers {
-                        if subtype.as_deref() == Some("warrior") && !g.perm(m).warrior {
+                        // "whenever a Dragon you control attacks": each attacker of that type (a warrior token counts too)
+                        if let Some(t) = subtype.as_deref().filter(|t| !t.is_empty())
+                            && !(has_type(g, m, t) || (t == "warrior" && g.perm(m).warrior))
+                        {
                             continue;
                         }
                         out.push(DslCtx { event_perm: Some(m), ..ctx.clone() });
@@ -2186,9 +2192,17 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
     // Phase 3: a land whose ability costs {T} can't also tap for the mana that pays it
     let land = g.player(p).lands.contains(&src);
     let land_tap = land && cost.tap == Some(true);
+    // and a mana rock or creature whose ability costs {T} (Relic of Sauron's loot) can't tap for the mana that pays it:
+    // count it as tapped while the cost is checked and paid (it is untapped here, checked above)
+    let self_tap = !land && cost.tap == Some(true);
     let can = |g: &mut Game, n: u32| {
         if land_tap {
             crate::impls::lands::can_pay_without(g, p, src, n, &pips)
+        } else if self_tap {
+            g.perm_mut(src).tapped = true;
+            let ok = can_pay(g, p, n, &pips, false);
+            g.perm_mut(src).tapped = false;
+            ok
         } else {
             can_pay(g, p, n, &pips, false)
         }
@@ -2219,6 +2233,11 @@ fn pay_ability_cost(g: &mut Game, p: PlayerId, src: PermId, cost: &model::Cost, 
     }
     if land_tap {
         crate::impls::lands::pay_without(g, p, src, gn, &pips)?;
+    } else if self_tap {
+        g.perm_mut(src).tapped = true;
+        let paid = pay(g, p, gn, &pips, false);
+        g.perm_mut(src).tapped = false; // the {T} cost below taps it, with its tap triggers
+        paid?;
     } else {
         pay(g, p, gn, &pips, false)?;
     }

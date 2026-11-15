@@ -14,7 +14,7 @@ use super::partials::eot_kw;
 use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{castable, casts_this_turn};
-use crate::engine::mana::{Source, Unit, can_pay, pay};
+use crate::engine::mana::{Source, Unit, can_pay, can_pay_spell, pay, pay_spell};
 use crate::engine::pool::Kind;
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
@@ -800,7 +800,7 @@ fn charm_modes(g: &Game, p: PlayerId) -> Vec<(f64, i64, Option<PermId>)> {
 
 fn charm_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
-    if !can_pay(g, p, cg, &cp, false) || !crate::engine::cast::castable(g, p, c, "hand") {
+    if !can_pay_spell(g, p, c, cg, &cp, false) || !crate::engine::cast::castable(g, p, c, "hand") {
         return Ok(vec![]);
     }
     let label = |m: i64| match m {
@@ -916,7 +916,7 @@ fn witherbloom_modes(g: &Game, p: PlayerId) -> Vec<(f64, i64, Option<PermId>)> {
 
 fn witherbloom_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let (cg, cp) = crate::engine::mana::cost_of(g, p, c);
-    if !can_pay(g, p, cg, &cp, false) || !crate::engine::cast::castable(g, p, c, "hand") {
+    if !can_pay_spell(g, p, c, cg, &cp, false) || !crate::engine::cast::castable(g, p, c, "hand") {
         return Ok(vec![]);
     }
     let label = |m: i64| match m {
@@ -1573,15 +1573,15 @@ fn blessing_protect(
         return Ok(false);
     }
     // {1}{W/P}
-    let by_mana = can_pay(g, owner_p, 1, "W", false);
-    if !by_mana && !(g.player(owner_p).life > 6 && can_pay(g, owner_p, 1, "", false)) {
+    let by_mana = can_pay_spell(g, owner_p, c, 1, "W", false);
+    if !by_mana && !(g.player(owner_p).life > 6 && can_pay_spell(g, owner_p, c, 1, "", false)) {
         return Ok(false);
     }
     crate::ai::decks::remove_from_hand(g, owner_p, c);
     if by_mana {
-        pay(g, owner_p, 1, "W", false)?;
+        pay_spell(g, owner_p, c, 1, "W", false)?;
     } else {
-        pay(g, owner_p, 1, "", false)?;
+        pay_spell(g, owner_p, c, 1, "", false)?;
         crate::engine::life::lose_life(g, owner_p, 2, Some(owner_p), "life", None)?;
     }
     let pl = g.player_mut(owner_p);
@@ -1665,10 +1665,10 @@ fn archfiend_save(g: &mut Game, src: PermId, p: PlayerId) -> Res<bool> {
     let Some(c) = g.player(p).hand.iter().copied().find(|&x| &*g.db.get(x).name == RESTO) else {
         return Ok(false);
     };
-    if !can_pay(g, p, 3, "W", false) {
+    if !can_pay_spell(g, p, c, 3, "W", false) {
         return Ok(false);
     }
-    pay(g, p, 3, "W", false)?;
+    pay_spell(g, p, c, 3, "W", false)?;
     crate::glog!(g, "  {} casts {} in response to the oil counter trigger", g.player(p).name, RESTO);
     g.resto_target = Some(src);
     let r = crate::engine::cast::cast_card(g, p, c, "hand", crate::state::Ctx::default());
@@ -1902,7 +1902,7 @@ fn skrelv_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 /// creature, a token that attacks, anything pval 0.9 or more, which an elf is) at any time it has the mana, and otherwise holds it.
 fn gut_shot_options(g: &mut Game, c: CardId, p: PlayerId, _post: Option<bool>) -> Res<Vec<Opt>> {
     let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
-    if !can_pay(g, p, gn, &pips, false) {
+    if !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(vec![]);
     }
     let tg: Vec<PermId> = crate::engine::removal::legal_targets(g, p, "dmg1", "c", false, Some(c))
@@ -1953,7 +1953,7 @@ fn twilight_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) ->
     if post.is_none() || g.active != Some(p) {
         return Ok(vec![]);
     }
-    let x_max = crate::engine::mana::total_mana(g, p, false) as i32 - 2;
+    let x_max = crate::engine::mana::total_mana_spell(g, p, c, false) as i32 - 2;
     if x_max < 3 {
         return Ok(vec![]);
     }
@@ -1964,7 +1964,7 @@ fn twilight_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) ->
         let x = x_max.min(4);
         (x, 0.6 + 0.2 * x as f64)
     };
-    if !can_pay(g, p, x as u32, "WW", false) {
+    if !can_pay_spell(g, p, c, x as u32, "WW", false) {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -1976,10 +1976,10 @@ fn twilight_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) ->
 
 fn twilight_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, x) = (CardId((arg / 64) as u16), (arg % 64) as u32);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, x, "WW", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, x, "WW", false) {
         return Ok(false);
     }
-    pay(g, p, x, "WW", false)?;
+    pay_spell(g, p, c, x, "WW", false)?;
     crate::engine::cast::cast_card(g, p, c, "hand", crate::state::Ctx { x: x as i32, ..Default::default() })?;
     Ok(true)
 }
@@ -2086,7 +2086,7 @@ fn endurance_protect(g: &mut Game, owner_p: PlayerId, m: PermId, kind: Sym, acto
     };
     if !(g.perm(m).is_cmd || pval(g, m) >= 4.0)
         || !castable(g, owner_p, c, "hand")
-        || !can_pay(g, owner_p, 1, "B", false)
+        || !can_pay_spell(g, owner_p, c, 1, "B", false)
     {
         return Ok(false);
     }
@@ -2097,7 +2097,7 @@ fn endurance_protect(g: &mut Game, owner_p: PlayerId, m: PermId, kind: Sym, acto
 pub fn cast_endurance(g: &mut Game, owner_p: PlayerId, c: CardId, m: PermId) -> Res<bool> {
     const ENDURANCE: &str = "Dark Endurance";
     crate::ai::decks::remove_from_hand(g, owner_p, c);
-    pay(g, owner_p, 1, "B", false)?;
+    pay_spell(g, owner_p, c, 1, "B", false)?;
     let pl = g.player_mut(owner_p);
     pl.spells_this_turn += 1;
     pl.stat("spells_cast", 1);
@@ -2127,7 +2127,7 @@ fn endurance_wipe(g: &mut Game, q: PlayerId) -> Res {
     });
     if let Some(m) = cmd
         && castable(g, q, c, "hand")
-        && can_pay(g, q, 1, "B", false)
+        && can_pay_spell(g, q, c, 1, "B", false)
     {
         cast_endurance(g, q, c, m)?;
     }

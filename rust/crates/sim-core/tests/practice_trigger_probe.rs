@@ -366,6 +366,12 @@ fn signature(g: &Game, ignore_life: bool) -> Vec<i64> {
 fn precondition(g: &mut Game, name: &str, sc: Sc, e0: PermId, e1: PermId) -> Option<bool> {
     if !matches!(sc, Sc::Activate(_)) {
         match (name, sc) {
+            ("Hellkite Charger", Sc::Combat) => {
+                lands(g, P0, "Mountain", 7, false);
+            }
+            ("Smaug the Magnificent", Sc::Combat) => {
+                sim_core::engine::zones::add_treasure(g, P0, 2).unwrap();
+            }
             // counters on The Ozolith (a creature with counters left earlier)
             ("The Ozolith", Sc::Combat) => g.player_mut(P0).ozolith_counters = 2,
             // an opponent was dealt combat damage this turn
@@ -872,16 +878,8 @@ const TO_FIX: &[&str] = &[];
 /// listed by the probe but not a gap, each with why
 const FALSE_ALARMS: &[(&str, &str)] = &[
     (
-        "thanos: Wayfarer's Bauble (Activate(0))",
-        "one basic land type left in the list (Forest; Wastes left on 2026-11-07, TD2), so the search has a single option and nothing to ask; it asked while Wastes was a second choice",
-    ),
-    (
         "aragorn: Tezzeret, Cruel Captain (Activate(2))",
         "the -7 only gives the emblem; the emblem's target (the artifact that gets three +1/+1 counters) is chosen, and asked of a person, at the beginning of combat (t6_godo::tez_emblem, tests/model_gaps_karn.rs)",
-    ),
-    (
-        "thanos: Karn, Scion of Urza (Activate(0))",
-        "+1 \"an opponent chooses one of them\": the opponent is an AI seat, which rightly chooses; the person is told both revealed cards and the log names which goes where. The person's choices are -1 (which silver-counter card; asked, see practice_trigger_fixes) and nothing in -2",
     ),
     (
         "thrasios: Necropotence (Discard (state only))",
@@ -892,8 +890,12 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
         "no choice: the discarded card is exiled; the line only matched \"discard a\"",
     ),
     (
-        "thanos: Goldspan Dragon (Combat)",
-        "no choice: it makes a Treasure; the word \"target\" is in the condition (becomes the target of a spell)",
+        "urdragon: Goldspan Dragon (Combat)",
+        "attacking or becoming the target of a spell creates a Treasure with no choice; \"target\" is a trigger condition. Choosing mana when spending the Treasure is a separate ability",
+    ),
+    (
+        "urdragon: Korvold, Fae-Cursed King (SacOwn (state only))",
+        "sacrificing a permanent gives Korvold a +1/+1 counter and draws a card, both mandatory with no target or choice. The separate enters/attacks sacrifice asks the person which other permanent to sacrifice",
     ),
 ];
 

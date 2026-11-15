@@ -17,8 +17,7 @@ use super::partials::{at_once, eot_kw, first_max, first_min, on, pack, remove_ca
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, copy_spell, on_cast};
 use crate::engine::life::{check_state, gain, lose_life};
-use crate::engine::mana::restr_ok;
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, restr_ok, total_mana, total_mana_spell};
 use crate::engine::pool::Restr;
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl;
@@ -105,12 +104,7 @@ fn mine_named(g: &Game, p: PlayerId, name: &str) -> Vec<PermId> {
 
 /// p's legendary creatures (not phased out)
 fn legends_of(g: &Game, p: PlayerId) -> Vec<PermId> {
-    g.player(p)
-        .perms
-        .iter()
-        .copied()
-        .filter(|&m| g.is_creature(m) && !g.perm(m).phased && legendary(g, m))
-        .collect()
+    g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased && legendary(g, m)).collect()
 }
 
 /// jodah._best_legend: p's best legendary creature (an unsick one first)
@@ -261,7 +255,7 @@ pub fn jodah_payable(g: &Game, p: PlayerId) -> bool {
         return false;
     }
     let (gn, pips) = cost_of(g, p, pl.cmd);
-    can_pay(g, p, gn, &pips, false)
+    can_pay_spell(g, p, pl.cmd, gn, &pips, false)
 }
 
 const KALDRA: [&str; 3] = ["Sword of Kaldra", "Shield of Kaldra", "Helm of Kaldra"];
@@ -835,11 +829,13 @@ pub fn garland_check(g: &mut Game) {
         }
         let orig = g.perm(t).orig;
         if g.player(orig).alive {
+            crate::engine::control::note_phase_holder(g, t, g.perm(t).owner);
             g.perm_mut(t).owner = orig;
             g.player_mut(orig).perms.push(t);
             crate::glog!(g, "    {} returns to {} (Garland)", g.perm(t).name, pname(g, orig));
         } else {
             g.perm_mut(t).on_bf = false; // its owner left the game: so does it
+            g.perm_mut(t).data.remove(DataKey::PhaseInWith);
         }
     }
     g.garland = !keep.is_empty();
@@ -1347,7 +1343,7 @@ fn dromoka(g: &Game, src: Src, caster: PlayerId, _c: CardId, _zone: Sym) -> bool
 
 /// Genesis Hydra: by the spare mana it would be cast with
 fn hydra_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
-    let x = total_mana(g, p, false) as i32 - 2;
+    let x = total_mana_spell(g, p, _c, false) as i32 - 2;
     if x >= 3 { 40 + (5 * x).min(30) } else { 0 }
 }
 
@@ -1668,7 +1664,7 @@ fn purge(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Op
     }
     let tg: Vec<PermId> = legal_targets(g, p, "destroy", "c", false, Some(c))
         .into_iter()
-        .filter(|&m| g.perm(m).cd.is_some_and(|cd| can_pay(g, p, g.db.get(cd).cmc, "BR", false)))
+        .filter(|&m| g.perm(m).cd.is_some_and(|cd| can_pay_spell(g, p, c, g.db.get(cd).cmc, "BR", false)))
         .collect();
     let Some(t) = max_by(&tg, |m| pval(g, m) + 0.2 * epow(g, m) as f64) else { return Ok(vec![]) };
     if pval(g, t) < 3.0 {
@@ -1683,10 +1679,10 @@ fn purge_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, t) = unpack(arg);
     let (c, t) = (CardId(c as u16), PermId(t));
     let x = g.perm(t).cd.map_or(0, |cd| g.db.get(cd).cmc);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, x, "BR", false) || !g.perm(t).on_bf {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, x, "BR", false) || !g.perm(t).on_bf {
         return Ok(false);
     }
-    pay(g, p, x, "BR", false)?;
+    pay_spell(g, p, c, x, "BR", false)?;
     remove_card(&mut g.player_mut(p).hand, c);
     let pl = g.player_mut(p);
     pl.spells_this_turn += 1;
@@ -1960,7 +1956,7 @@ pub fn territory_type(g: &Game, p: PlayerId) -> Sym {
 /// mine.territory_colors: Unclaimed Territory: {C}, or any colour for a creature spell of the named type (a
 /// changeling is every type)
 fn territory_colors(g: &Game, p: PlayerId, l: PermId) -> Colors {
-    if !g.pay_for.is_some_and(|c| g.db.get(c).creature) {
+    if !crate::engine::mana::paying(g).is_some_and(|c| g.db.get(c).creature) {
         return Colors::NONE; // the type is worked out only for a creature spell
     }
     let t = match g.perm(l).data.get(DataKey::Ctype) {

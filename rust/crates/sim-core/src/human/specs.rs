@@ -395,7 +395,7 @@ pub fn choose_pre(g: &Game, p: PlayerId, c: CardId, ctx: &mut Ctx) -> Res<Pre> {
             }
             Ask::Overload => {
                 // overload {4}{W}{W} (instead of {1}{W}): offered when the pool can pay it; it has no target
-                let can = mana::cost_problem(g, p, 4, "WW").is_none();
+                let can = mana::card_cost_problem(g, p, c, 4, "WW").is_none();
                 let mut over = false;
                 if can {
                     let labels = vec![
@@ -427,7 +427,7 @@ pub fn choose_pre(g: &Game, p: PlayerId, c: CardId, ctx: &mut Ctx) -> Res<Pre> {
             }
             Ask::Dismissal => {
                 // kicker {2}{W}: each creature target player controls phases out instead of one target creature
-                let can = mana::cost_problem(g, p, 2, "WW").is_none();
+                let can = mana::card_cost_problem(g, p, c, 2, "WW").is_none();
                 let mut kicked = false;
                 if can {
                     let labels = vec![
@@ -499,15 +499,15 @@ pub fn choose_post(g: &mut Game, p: PlayerId, c: CardId, ctx: &mut Ctx) -> Res {
                 } else {
                     0
                 };
-                mana::pay_from_pool(g, p, x, "");
+                mana::pay_card_from_pool(g, p, c, x, "");
                 ctx.x = x as i32;
             }
             Ask::Kick(pips) => {
-                let ok = mana::cost_problem(g, p, 0, pips).is_none();
+                let ok = mana::card_cost_problem(g, p, c, 0, pips).is_none();
                 let pr = format!("{name}: pay the kicker {{{pips}}}?");
                 let labels = vec![format!("kick it ({{{pips}}})"), "no kicker".to_string()];
                 if ok && choices::choose(g, p, "choose", &pr, &labels, None, None)? == Some(0) {
-                    mana::pay_from_pool(g, p, 0, pips);
+                    mana::pay_card_from_pool(g, p, c, 0, pips);
                     ctx.kicks = 1;
                 }
             }
@@ -529,7 +529,7 @@ pub fn choose_post(g: &mut Game, p: PlayerId, c: CardId, ctx: &mut Ctx) -> Res {
                 let xl: Vec<String> = (0..=rest).map(|x| format!("X = {x}")).collect();
                 let pr = format!("{name}: choose X (damage to each target)");
                 let x = choices::choose(g, p, "choose", &pr, &xl, None, None)?.unwrap_or(0) as u32;
-                mana::pay_from_pool(g, p, x + k as u32, "");
+                mana::pay_card_from_pool(g, p, c, x + k as u32, "");
                 ctx.x = x as i32;
                 ctx.kicks = k as u32;
                 let mut left = tg;
@@ -547,12 +547,12 @@ pub fn choose_post(g: &mut Game, p: PlayerId, c: CardId, ctx: &mut Ctx) -> Res {
             }
             Ask::Overload if ctx.mode.is_some_and(|m| m == "overload") => {
                 // {4}{W}{W} in all, {1}{W} of it paid with the spell; if the pool can't pay the rest, it is not overloaded
-                if mana::pay_from_pool(g, p, 3, "W").is_some() {
+                if mana::pay_card_from_pool(g, p, c, 3, "W").is_some() {
                     ctx.mode = None;
                 }
             }
             Ask::Dismissal if ctx.mode.is_some_and(|m| m == "kicked") => {
-                if mana::pay_from_pool(g, p, 2, "W").is_some() {
+                if mana::pay_card_from_pool(g, p, c, 2, "W").is_some() {
                     ctx.mode = None;
                     ctx.face = None;
                 } else {

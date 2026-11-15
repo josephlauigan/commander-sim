@@ -23,7 +23,7 @@
 use crate::ai::brain::{Situation, card_utility, do_cast_with};
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::castable;
-use crate::engine::mana::{can_pay, cost_of};
+use crate::engine::mana::{can_pay_spell, cost_of};
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
 use crate::engine::stack::trigger_window;
@@ -255,7 +255,7 @@ fn korlessa_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
     let Some(u) = card_utility(g, p, &s, top) else { return Ok(vec![]) };
     let (cg, cp) = cost_of(g, p, top);
     g.pay_for = Some(top);
-    let ok = can_pay(g, p, cg, &cp, false) && (!g.cast_checks() || castable(g, p, top, "lib"));
+    let ok = can_pay_spell(g, p, top, cg, &cp, false) && (!g.cast_checks() || castable(g, p, top, "lib"));
     g.pay_for = None;
     if !ok {
         return Ok(vec![]);

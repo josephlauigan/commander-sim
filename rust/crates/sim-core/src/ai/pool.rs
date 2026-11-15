@@ -7,7 +7,7 @@ use super::{Style, decks, plans};
 use crate::cards::Types;
 use crate::engine::cast::{castable, discard_worst, on_cast, sac_fodder};
 use crate::engine::combat::can_block;
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana_spell};
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl;
 use crate::engine::values::{commander_out, epow, etgh, find, has_type, pval, stopped, untargetable};
@@ -221,7 +221,7 @@ fn generic_prio_base(g: &Game, p: PlayerId, c: CardId) -> i32 {
         return 0;
     }
     if t.has(Tag::Tokx) {
-        return if total_mana(g, p, false) >= 5 { 50 } else { 0 };
+        return if total_mana_spell(g, p, c, false) >= 5 { 50 } else { 0 };
     }
     if t.has(Tag::Tithe) {
         return crate::cardcode::tithe_prio(g, p, c); // Smothering Tithe: from the Treasures it will make
@@ -421,7 +421,7 @@ pub fn derived_prio(g: &Game, p: PlayerId, c: CardId) -> i32 {
         return 0;
     }
     // a card's own preconditions and timing (code, not table rows)
-    if (t.has(Tag::Tokx) && total_mana(g, p, false) < 5)
+    if (t.has(Tag::Tokx) && total_mana_spell(g, p, c, false) < 5)
         || (t.has(Tag::Stampede) && creatures_of(g, p) < 6)
         || (t.has(Tag::Loam) && pl.gy.iter().filter(|&&x| g.db.get(x).land).count() < 2)
         || (t.has(Tag::Rishkar)
@@ -612,7 +612,7 @@ const EQUIP_COST: [(&str, u32); 3] = [("Lightning Greaves", 0), ("Swiftfoot Boot
 
 fn can_pay_any(g: &Game, p: PlayerId, c: CardId) -> bool {
     let (cg, cp) = cost_of(g, p, c);
-    can_pay(g, p, cg, &cp, false) && castable(g, p, c, "hand")
+    can_pay_spell(g, p, c, cg, &cp, false) && castable(g, p, c, "hand")
 }
 
 /// pool_ai.special_options: generic activated plays for outside decks: equip Boots / Greaves / Cloak, Skullclamp,
@@ -742,7 +742,7 @@ pub fn spell_options(g: &Game, p: PlayerId, s: &Situation, post: Option<bool>) -
         let payable = || {
             castable(g, p, c, "hand") && {
                 let (cg, cp) = cost_of(g, p, c);
-                can_pay(g, p, cg, &cp, false)
+                can_pay_spell(g, p, c, cg, &cp, false)
             }
         };
         if fill == Some("grisly")
@@ -799,7 +799,7 @@ pub fn spell_options(g: &Game, p: PlayerId, s: &Situation, post: Option<bool>) -
         }
         if t.has(Tag::Krasis) && castable(g, p, c, "hand") {
             // Hydroid Krasis: X = spare mana
-            let x = total_mana(g, p, false) as i32 - 2;
+            let x = total_mana_spell(g, p, c, false) as i32 - 2;
             if x >= 4 {
                 o.push(Opt {
                     utility: 1.0 + 0.6 * x as f64,
@@ -812,7 +812,7 @@ pub fn spell_options(g: &Game, p: PlayerId, s: &Situation, post: Option<bool>) -
             // Primal Might: pump and fight
             let mine: Vec<PermId> =
                 pl.perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased).collect();
-            let x = total_mana(g, p, false) as i32 - 1;
+            let x = total_mana_spell(g, p, c, false) as i32 - 1;
             if let Some(me) = max_by(&mine, |m| epow(g, m) as f64)
                 && x >= 1
             {
@@ -874,10 +874,10 @@ fn card_arg(arg: i64) -> CardId {
 fn plain_cast(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = card_arg(arg);
     let (gn, pips) = cost_of(g, p, c);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, gn, &pips, false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     crate::engine::cast::cast_card(g, p, c, "hand", Ctx::default())?;
     Ok(true)
 }
@@ -898,14 +898,14 @@ fn dispute(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if tre {
         g.player_mut(p).sac_treasure();
     }
-    if !can_pay(g, p, gn, &pips, false) {
+    if !can_pay_spell(g, p, c, gn, &pips, false) {
         if tre {
             g.player_mut(p).treasures += 1;
             g.player_mut(p).tapped_treasures = saved;
         }
         return Ok(false);
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     match fod.unwrap() {
         Fodder::Treasure => {
             if !g.hooks.is_empty() {
@@ -929,10 +929,10 @@ fn reanimate(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let src = PlayerId(((arg >> 32) & 0xff) as u8);
     let v = (arg >> 40) as f64 / 100.0;
     let (gn, pips) = cost_of(g, p, c);
-    if !g.player(p).hand.contains(&c) || !g.player(src).gy.contains(&cd) || !can_pay(g, p, gn, &pips, false) {
+    if !g.player(p).hand.contains(&c) || !g.player(src).gy.contains(&cd) || !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     if !g.hooks.is_empty() && crate::cardcode::gy_response(g, p, v, src)? {
         decks::remove_from_hand(g, p, c);
         g.player_mut(p).gy.push(c);
@@ -958,14 +958,14 @@ fn reanimate(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// Hydroid Krasis for X = all spare mana: draw and gain X/2, a creature with X counters
 fn krasis(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = card_arg(arg);
-    let mut x = total_mana(g, p, false) as i32 - 2;
-    while x >= 1 && !can_pay(g, p, x as u32, "GU", false) {
+    let mut x = total_mana_spell(g, p, c, false) as i32 - 2;
+    while x >= 1 && !can_pay_spell(g, p, c, x as u32, "GU", false) {
         x -= 1;
     }
     if !g.player(p).hand.contains(&c) || x < 1 {
         return Ok(false);
     }
-    pay(g, p, x as u32, "GU", false)?;
+    pay_spell(g, p, c, x as u32, "GU", false)?;
     decks::remove_from_hand(g, p, c);
     let pl = g.player_mut(p);
     pl.cast_names.insert(c);
@@ -983,12 +983,12 @@ fn primal_might(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = card_arg(arg);
     let me = PermId(((arg >> 16) & 0xff_ffff) as u32);
     let foe = PermId((arg >> 40) as u32);
-    let x = total_mana(g, p, false) as i32 - 1;
-    if !g.player(p).hand.contains(&c) || x < 0 || !can_pay(g, p, x as u32, "G", false) {
+    let x = total_mana_spell(g, p, c, false) as i32 - 1;
+    if !g.player(p).hand.contains(&c) || x < 0 || !can_pay_spell(g, p, c, x as u32, "G", false) {
         return Ok(false);
     }
     decks::remove_from_hand(g, p, c);
-    pay(g, p, x as u32, "G", false)?;
+    pay_spell(g, p, c, x as u32, "G", false)?;
     g.player_mut(p).gy.push(c);
     on_cast(g, p, c)?;
     let pt = &mut g.perm_mut(me).eot_pt;
@@ -1003,11 +1003,11 @@ fn primal_might(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 fn wildspeaker_cast(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
     let (gn, pips) = cost_of(g, p, c);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, gn, &pips, false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
     decks::remove_from_hand(g, p, c);
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     g.player_mut(p).gy.push(c);
     on_cast(g, p, c)?;
     Ok(true)
@@ -1260,7 +1260,7 @@ fn use_protector(g: &mut Game, p: PlayerId, i: usize, src: Option<PermId>, m: Op
             let free = (free_cmd && commander_out(g, p)) || notw;
             let (cg, cp) = cost.unwrap();
             // --- Tiers 4/5 (winota): Flare of Fortitude's alternative cost, a nontoken white creature
-            let fodder = if !free && !can_pay(g, p, cg, cp, false) {
+            let fodder = if !free && !can_pay_spell(g, p, c, cg, cp, false) {
                 match crate::impls::t45_winota::flare_fodder(g, p, name, None) {
                     Some(f) => Some(f),
                     None => return Ok(false),
@@ -1272,7 +1272,7 @@ fn use_protector(g: &mut Game, p: PlayerId, i: usize, src: Option<PermId>, m: Op
             if let Some(f) = fodder {
                 die(g, f, "sac")?;
             } else if !free {
-                pay(g, p, cg, cp, false)?;
+                pay_spell(g, p, c, cg, cp, false)?;
             }
             let pl = g.player_mut(p);
             pl.spells_this_turn += 1;
@@ -1401,6 +1401,9 @@ fn protect_with(g: &mut Game, owner: PlayerId, m: PermId, i: usize, src: Option<
         for x in g.player(owner).perms.clone() {
             g.perm_mut(x).phased = true;
         }
+        if !g.control_links.is_empty() {
+            crate::engine::control::end_links(g);
+        }
     } else if how == How::Blink && g.perm(m).on_bf && g.perm(m).owner == owner {
         let (cd, orig, is_cmd) = (g.perm(m).cd, g.perm(m).orig, g.perm(m).is_cmd);
         leave(g, m)?;
@@ -1447,6 +1450,9 @@ fn protector_effect(g: &mut Game, p: PlayerId, name: &str, m: Option<PermId>) ->
                     g.player(p).perms.iter().copied().filter(|&x| g.perm(x).attached == Some(m)).collect();
                 for x in worn.into_iter().chain([m]) {
                     g.perm_mut(x).phased = true;
+                }
+                if !g.control_links.is_empty() {
+                    crate::engine::control::end_links(g);
                 }
             }
         }
@@ -1560,6 +1566,9 @@ fn wipe_with(g: &mut Game, q: PlayerId, i: usize, src: Option<PermId>) -> Res<Op
     if how == How::Phase {
         for x in g.player(q).perms.clone() {
             g.perm_mut(x).phased = true;
+        }
+        if !g.control_links.is_empty() {
+            crate::engine::control::end_links(g);
         }
         return Ok(Some("all"));
     }

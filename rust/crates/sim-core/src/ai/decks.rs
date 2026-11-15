@@ -6,7 +6,7 @@ use crate::ai::hand_key; // --- phase4-hand-off
 use crate::cards::Types;
 use crate::engine::cast::on_cast;
 use crate::engine::combat::blocked;
-use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell};
 use crate::engine::removal::legal_targets;
 use crate::engine::stack::counter_window;
 use crate::engine::tutors::card_worth;
@@ -123,7 +123,7 @@ pub fn breach_candidates(g: &Game, p: PlayerId, need_mana: bool) -> Vec<(f64, Ca
         }
         if need_mana {
             let (cg, cp) = cost_of(g, p, c);
-            if !can_pay(g, p, cg, &cp, false) {
+            if !can_pay_spell(g, p, c, cg, &cp, false) {
                 continue;
             }
         }
@@ -757,11 +757,11 @@ pub fn pay_card(g: &mut Game, p: PlayerId, c: CardId, kicked: u32) -> Res<bool> 
     let d = g.db.get(c);
     let pips = format!("{}{}", d.pips, if kicked > 0 { "W" } else { "" });
     let gn = d.generic + kicked;
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, gn, &pips, false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
     remove_from_hand(g, p, c);
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     let pl = g.player_mut(p);
     pl.gy.push(c);
     pl.spells_this_turn += 1;

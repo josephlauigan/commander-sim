@@ -20,7 +20,7 @@ use super::combos::{Combo, Ready, Step, StepKind, done, no_keys, no_src};
 use super::t6_godo::{godo_fetch, godo_wants};
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::life::check_state;
-use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay_spell};
 use crate::engine::stack::{camera_ready, counter_window};
 use crate::engine::zones::{Enter, enter, enter_token_copy};
 use crate::flow::Res;
@@ -302,10 +302,10 @@ pub(crate) fn godo_keys(g: &Game, p: PlayerId) -> Vec<PermId> {
 /// and ends in the graveyard.
 pub(crate) fn cast_copy_spell(g: &mut Game, p: PlayerId, c: CardId, target: PermId, resolve: bool) -> Res<bool> {
     let (gn, pips) = cost(g, p, c);
-    if !g.player(p).hand.contains(&c) || !castable(g, p, c, "hand") || !can_pay(g, p, gn, &pips, false) {
+    if !g.player(p).hand.contains(&c) || !castable(g, p, c, "hand") || !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     let hand = &mut g.player_mut(p).hand;
     if let Some(i) = hand.iter().position(|&x| x == c) {
         hand.remove(i);
@@ -352,10 +352,10 @@ pub(crate) fn cast_copier_on_godo(g: &mut Game, p: PlayerId) -> Res<bool> {
 pub(crate) fn cast_mirror(g: &mut Game, p: PlayerId) -> Res<bool> {
     let Some(c) = mirror_card(g, p) else { return Ok(false) };
     let (gn, pips) = cost(g, p, c);
-    if !castable(g, p, c, "hand") || !can_pay(g, p, gn, &pips, false) {
+    if !castable(g, p, c, "hand") || !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     let hand = &mut g.player_mut(p).hand;
     if let Some(i) = hand.iter().position(|&x| x == c) {
         hand.remove(i);
@@ -420,10 +420,10 @@ pub(crate) fn cast_original_copy_spell(g: &mut Game, p: PlayerId) -> Res<bool> {
 pub(crate) fn cast_dualcaster(g: &mut Game, p: PlayerId) -> Res<bool> {
     let Some(c) = in_hand(g, p, DUALCASTER) else { return Ok(false) };
     let (gn, pips) = cost(g, p, c);
-    if !castable(g, p, c, "hand") || !can_pay(g, p, gn, &pips, false) {
+    if !castable(g, p, c, "hand") || !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     crate::glog!(g, "  {} flashes in Dualcaster Mage over its own copy spell", g.player(p).name);
     let ok = crate::engine::cast::cast_card(g, p, c, "hand", crate::state::Ctx::default())?;
     Ok(ok && bf(g, p, DUALCASTER).is_some())

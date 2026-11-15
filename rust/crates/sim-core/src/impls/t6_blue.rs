@@ -19,7 +19,7 @@
 
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable};
-use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell};
 use crate::engine::stack::trigger_window;
 use crate::engine::tutors::{card_worth, shuffle_library, tutor};
 use crate::engine::values::{colors_of, has_type, pval, untargetable};
@@ -177,7 +177,7 @@ pub fn rain_enables(g: &mut Game, p: PlayerId, rain: CardId) -> Option<CardId> {
     let mut best: Option<(CardId, i32)> = None;
     for c in hand {
         let (gn, pips) = cost_of(g, p, c);
-        if can_pay(g, p, gn, &pips, false) || !castable(g, p, c, "hand") {
+        if can_pay_spell(g, p, c, gn, &pips, false) || !castable(g, p, c, "hand") {
             continue;
         }
         let pr = crate::ai::pool::generic_prio(g, p, c);
@@ -185,7 +185,7 @@ pub fn rain_enables(g: &mut Game, p: PlayerId, rain: CardId) -> Option<CardId> {
             continue;
         }
         set_turn_flag(g, p, RAIN_FLAG);
-        let ok = can_pay(g, p, gn, &format!("{pips}B"), false);
+        let ok = can_pay_spell(g, p, c, gn, &format!("{pips}B"), false);
         g.player_mut(p).flag_turn.swap_remove(RAIN_FLAG);
         if ok {
             best = Some((c, pr));
@@ -198,7 +198,7 @@ pub fn rain_enables(g: &mut Game, p: PlayerId, rain: CardId) -> Option<CardId> {
 /// worth casting it can't pay for otherwise (`rain_enables`); then that card is cast as usual, the lands' {B} paid
 /// last (`mana::Source::SacLand`)
 fn rain_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || g.active != Some(p) || !castable(g, p, c, "hand") || !can_pay(g, p, 0, "B", false) {
+    if post.is_none() || g.active != Some(p) || !castable(g, p, c, "hand") || !can_pay_spell(g, p, c, 0, "B", false) {
         return Ok(vec![]);
     }
     let Some(t) = rain_enables(g, p, c) else { return Ok(vec![]) };
@@ -488,7 +488,7 @@ fn silas_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
             continue;
         }
         let (gn, pips) = cost_of(g, p, c);
-        if !can_pay(g, p, gn, &pips, false) {
+        if !can_pay_spell(g, p, c, gn, &pips, false) {
             continue;
         }
         let v = silas_value(g, p, c);
@@ -507,13 +507,11 @@ fn silas_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res
 fn silas_cast(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let (gn, pips) = cost_of(g, p, c);
-    if !silas_chosen(g, p, c) || !can_pay(g, p, gn, &pips, false) {
+    if !silas_chosen(g, p, c) || !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
     g.player_mut(p).flag_turn.shift_remove(silas_key(c));
-    g.pay_for = Some(c);
-    let r = pay(g, p, gn, &pips, false);
-    g.pay_for = None;
+    let r = pay_spell(g, p, c, gn, &pips, false);
     r?;
     crate::glog!(g, "  {} casts {} from the graveyard (Silas Renn)", g.player(p).name, g.db.get(c).name);
     cast_card(g, p, c, "mgy", Ctx::default())?;

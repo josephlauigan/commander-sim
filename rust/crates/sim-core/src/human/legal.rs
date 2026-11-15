@@ -202,7 +202,7 @@ pub fn phyrexian_ways(g: &Game, p: PlayerId, c: CardId, gn: u32, pips: &str) -> 
         if 2 * k as i32 > g.player(p).life.max(0) && k > 0 {
             continue;
         }
-        if mana::cost_problem(g, p, gn, &left).is_none() {
+        if mana::card_cost_problem(g, p, c, gn, &left).is_none() {
             out.push((2 * k as i32, left));
         }
     }
@@ -279,7 +279,7 @@ pub fn check_cast(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Option<St
     if !phy.is_empty() && !phyrexian_ways(g, p, c, gn, &pips).is_empty() {
         return None; // mana, life, or a mix
     }
-    if let Some(why) = mana::cost_problem(g, p, gn, &pips) {
+    if let Some(why) = mana::card_cost_problem(g, p, c, gn, &pips) {
         if zone == "hand" && spell_alt_label(g, p, c).is_some() {
             return None; // its alternative cost (asked as it is cast)
         }
@@ -387,16 +387,14 @@ pub fn spell_targets(g: &Game, p: PlayerId, c: CardId) -> Option<Vec<Target>> {
     Some(out)
 }
 
-/// More mana this target needs: ward (on an opponent's permanent), Bloodchief's Thirst's kicker.
-pub fn target_extra_cost(g: &Game, p: PlayerId, c: CardId, x: Target) -> (u32, String) {
+/// Additional spell costs for this target (Bloodchief's Thirst's kicker); ward is paid separately.
+pub fn target_extra_cost(g: &Game, _p: PlayerId, c: CardId, x: Target) -> (u32, String) {
     let (mut gn, mut pips) = (0, String::new());
     if let Target::Perm(m) = x {
         let xm = g.perm(m);
         if let Some(cd) = xm.cd {
             let md = g.db.get(cd);
-            if xm.owner != p && md.ward > 0 {
-                gn += md.ward;
-            }
+            // Ward is paid separately at its trigger, never as part of the spell cost.
             if nm(g, c) == "Bloodchief's Thirst" && md.cmc > 2 {
                 gn += 2;
                 pips.push('B'); // kicked: {2}{B} more, any mana value
@@ -500,7 +498,7 @@ pub fn check_counter(g: &Game, p: PlayerId, ctr: CardId, spell: CardId) -> Optio
         return Some(format!("Something on the battlefield stops you casting {} right now.", nm(g, ctr)));
     }
     let (gn, pips) = engine::stack::counter_cost(g, ctr, Some(spell), Some(p));
-    let problem = mana::cost_problem(g, p, gn, &pips);
+    let problem = mana::card_cost_problem(g, p, ctr, gn, &pips);
     match problem {
         None => None,
         // every alternative the person's payment offers (Force of Will's pitch, Pact, Mindbreak Trap's {0} ...)
@@ -513,6 +511,7 @@ pub fn check_counter(g: &Game, p: PlayerId, ctr: CardId, spell: CardId) -> Optio
 /// How p may cast a card from their graveyard.
 #[derive(Debug, Clone, PartialEq)]
 pub enum GyKind {
+    /// Normal-cost graveyard permission (Yawgmoth's Will, Emry or Rivaz).
     Yawg,
     Flashback,
     Sac3,
@@ -533,6 +532,10 @@ pub fn gy_mode(g: &Game, p: PlayerId, c: CardId) -> Option<(GyKind, u32, String)
     }
     if (pl.yawg && pl.yawg_gy.contains(&c)) || super::gaps_c::emry_permits(g, p, c) {
         // Yawgmoth's Will, or a person's Emry this turn: the normal cost
+        let (gn, pips) = engine::mana::cost_of(g, p, c);
+        return Some((GyKind::Yawg, gn, pips));
+    }
+    if rivaz_source(g, p, c).is_some() {
         let (gn, pips) = engine::mana::cost_of(g, p, c);
         return Some((GyKind::Yawg, gn, pips));
     }
@@ -576,9 +579,21 @@ pub fn gy_mode(g: &Game, p: PlayerId, c: CardId) -> Option<(GyKind, u32, String)
     None
 }
 
+/// The Rivaz supplying a normal-cost cast, unless Will or Emry already provides permission.
+pub fn rivaz_source(g: &Game, p: PlayerId, c: CardId) -> Option<PermId> {
+    let pl = g.player(p);
+    if (pl.yawg && pl.yawg_gy.contains(&c)) || super::gaps_c::emry_permits(g, p, c) {
+        return None;
+    }
+    crate::impls::t45_urdragon::rivaz_permission(g, p, c)
+}
+
 pub fn check_cast_gy(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
     let name = nm(g, c).to_string();
     let Some((kind, gn, pips)) = gy_mode(g, p, c) else {
+        if crate::impls::t45_urdragon::rivaz_used(g, p, c) {
+            return Some("Each Rivaz of the Claw has already been used this turn.".into());
+        }
         return Some(format!("You can't cast {name} from your graveyard right now."));
     };
     if !instant_speed(g, p, c)
@@ -608,7 +623,7 @@ pub fn check_cast_gy(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
     {
         return Some(format!("{name} has no creature card to return."));
     }
-    mana::cost_problem(g, p, gn, &pips).map(|why| format!("Can't cast {name} from your graveyard. {why}"))
+    mana::card_cost_problem(g, p, c, gn, &pips).map(|why| format!("Can't cast {name} from your graveyard. {why}"))
 }
 
 /// Why p can't cast the exiled card c now (a Dauthi Voidwalker permission of the turn: no mana cost; the timing of the
@@ -723,7 +738,7 @@ pub fn check_cast_warp(g: &Game, p: PlayerId, c: CardId) -> Option<String> {
         return Some(format!("Something on the battlefield stops you casting {name} right now."));
     }
     let (gn, pips) = base_cost(g, p, c);
-    mana::cost_problem(g, p, gn, &pips).map(|why| format!("Can't cast {name} from exile. {why}"))
+    mana::card_cost_problem(g, p, c, gn, &pips).map(|why| format!("Can't cast {name} from exile. {why}"))
 }
 
 /// `legal.WHAT`: how a spell's target kind reads in a prompt

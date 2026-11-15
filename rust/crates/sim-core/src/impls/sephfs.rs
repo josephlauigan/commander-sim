@@ -292,7 +292,7 @@ fn rabid_option(g: &mut Game, p: PlayerId) -> Option<crate::hooks::Opt> {
     let d = g.db.get(c);
     let follow = follow_up_cost(g, p)?;
     let mine = all_creatures(g).iter().filter(|&&(q, m)| q == p && !is_seph(g, m)).count();
-    if mine < 2 || !crate::engine::mana::can_pay(g, p, d.generic + follow, &d.pips, false) {
+    if mine < 2 || !crate::engine::mana::can_pay_spell(g, p, c, d.generic + follow, &d.pips, false) {
         return None;
     }
     Some(Opt {

@@ -10,7 +10,7 @@
 //! raise the counter threshold by 1.5 per card (`stack::ai_respond`), removal and wipes lower their utility by 1.5.
 
 use crate::engine::cast::castable;
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay_spell, pay_spell};
 use crate::flow::Res;
 use crate::hooks::AltCost;
 use crate::ids::{CardId, PlayerId};
@@ -36,7 +36,7 @@ pub fn tax(g: &Game, p: PlayerId, c: CardId) -> u32 {
 /// can p pay the tax of casting c for free (always true when nothing taxes it)
 pub fn tax_payable(g: &Game, p: PlayerId, c: CardId) -> bool {
     let t = tax(g, p, c);
-    t == 0 || can_pay(g, p, t, "", false)
+    t == 0 || can_pay_spell(g, p, c, t, "", false)
 }
 
 /// pay the tax of a free cast; false (nothing paid) if p can't
@@ -45,7 +45,7 @@ pub fn pay_tax(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
     if t == 0 {
         return Ok(true);
     }
-    pay(g, p, t, "", false)
+    pay_spell(g, p, c, t, "", false)
 }
 
 /// can p cast `c` from hand for its alternative cost now (the cost itself, the card's locks, and the tax)? `spell` is
@@ -66,7 +66,7 @@ pub fn lost(g: &Game, p: PlayerId, c: CardId, spell: Option<CardId>) -> f64 {
 /// should the AI pay `c`'s alternative cost, given that its mana cost is `(generic, pips)`? Yes when it can and the mana
 /// cost can't be paid, or the alternative costs nothing of value.
 pub fn use_alt(g: &Game, p: PlayerId, c: CardId, spell: Option<CardId>, generic: u32, pips: &str) -> bool {
-    available(g, p, c, spell) && (!can_pay(g, p, generic, pips, false) || lost(g, p, c, spell) <= 0.0)
+    available(g, p, c, spell) && (!can_pay_spell(g, p, c, generic, pips, false) || lost(g, p, c, spell) <= 0.0)
 }
 
 /// pay `c`'s alternative cost and its tax. False, nothing paid, if it can't be paid.

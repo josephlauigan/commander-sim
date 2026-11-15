@@ -20,7 +20,7 @@ fn every_deck_finishes_games_at_every_tier() {
             played += 1;
         }
     }
-    assert_eq!(played, 42); // six decks of yours x seven tiers (karn and urdragon retired 2026-11-05; alela, galadriel, kefka and sauron 2026-11-06; aragorn new)
+    assert_eq!(played, 49); // seven decks of yours x seven tiers (karn and urdragon retired 2026-11-05; alela, galadriel, kefka and sauron 2026-11-06; aragorn new; the Ur-Dragon key is back 2026-11-13)
 }
 
 #[test]

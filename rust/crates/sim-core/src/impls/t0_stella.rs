@@ -15,7 +15,7 @@
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, casts_this_turn, copy_spell, is_casts, spell_targets};
 use crate::engine::life::check_state;
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana, total_mana_spell};
 use crate::engine::pool::Kind;
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl;
@@ -628,10 +628,10 @@ fn swine_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Re
         return Ok(vec![]);
     }
     let (gn, pips) = cost_of(g, p, c);
-    let spare = total_mana(g, p, false) as i32 - gn as i32 - pips.chars().count() as i32;
+    let spare = total_mana_spell(g, p, c, false) as i32 - gn as i32 - pips.chars().count() as i32;
     let tg = swine_targets(g, p, c);
     let x = (tg.len() as i32).min(spare);
-    if x < 1 || !can_pay(g, p, gn + x as u32, &pips, false) {
+    if x < 1 || !can_pay_spell(g, p, c, gn + x as u32, &pips, false) {
         return Ok(vec![]);
     }
     let val: f64 = tg.iter().take(x as usize).map(|&m| pval(g, m) - 1.5).sum();
@@ -647,12 +647,12 @@ fn swine_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     let (gn, pips) = cost_of(g, p, c);
-    let spare = total_mana(g, p, false) as i32 - gn as i32 - pips.chars().count() as i32;
+    let spare = total_mana_spell(g, p, c, false) as i32 - gn as i32 - pips.chars().count() as i32;
     let x = (swine_targets(g, p, c).len() as i32).min(spare);
-    if x < 1 || !can_pay(g, p, gn + x as u32, &pips, false) {
+    if x < 1 || !can_pay_spell(g, p, c, gn + x as u32, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn + x as u32, &pips, false)?;
+    pay_spell(g, p, c, gn + x as u32, &pips, false)?;
     cast_card(g, p, c, "hand", Ctx { x, ..Ctx::default() })?;
     Ok(true)
 }
@@ -683,9 +683,9 @@ fn experiment_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) 
     if post.is_none() || g.active != Some(p) || post == Some(true) || !g.player(p).hand.contains(&c) {
         return Ok(vec![]);
     }
-    let x = (total_mana(g, p, false) as i32 - 2).min(7);
+    let x = (total_mana_spell(g, p, c, false) as i32 - 2).min(7);
     let (gn, pips) = cost_of(g, p, c);
-    if x < 3 || !can_pay(g, p, gn + x as u32, &pips, false) {
+    if x < 3 || !can_pay_spell(g, p, c, gn + x as u32, &pips, false) {
         return Ok(vec![]);
     }
     Ok(vec![plan(1.5 + 0.5 * x as f64, format!("{EXPERIMENT} (X = {x})"), experiment_go, c.0 as i64)])
@@ -694,11 +694,11 @@ fn experiment_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) 
 fn experiment_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let (gn, pips) = cost_of(g, p, c);
-    let x = (total_mana(g, p, false) as i32 - gn as i32 - pips.chars().count() as i32).min(7);
-    if !g.player(p).hand.contains(&c) || x < 1 || !can_pay(g, p, gn + x as u32, &pips, false) {
+    let x = (total_mana_spell(g, p, c, false) as i32 - gn as i32 - pips.chars().count() as i32).min(7);
+    if !g.player(p).hand.contains(&c) || x < 1 || !can_pay_spell(g, p, c, gn + x as u32, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn + x as u32, &pips, false)?;
+    pay_spell(g, p, c, gn + x as u32, &pips, false)?;
     cast_card(g, p, c, "hand", Ctx { x, ..Ctx::default() })?;
     Ok(true)
 }
@@ -776,8 +776,8 @@ fn promise_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> 
         return Ok(vec![]);
     }
     let (gn, pips) = cost_of(g, p, c);
-    let spare = total_mana(g, p, false) as i32 - gn as i32 - pips.chars().count() as i32;
-    if spare < 1 || !can_pay(g, p, gn + 1, &pips, false) {
+    let spare = total_mana_spell(g, p, c, false) as i32 - gn as i32 - pips.chars().count() as i32;
+    if spare < 1 || !can_pay_spell(g, p, c, gn + 1, &pips, false) {
         return Ok(vec![]);
     }
     // the smallest X that reaches the best cards it can afford
@@ -796,13 +796,13 @@ fn promise_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(false);
     }
     let (gn, pips) = cost_of(g, p, c);
-    let spare = total_mana(g, p, false) as i32 - gn as i32 - pips.chars().count() as i32;
+    let spare = total_mana_spell(g, p, c, false) as i32 - gn as i32 - pips.chars().count() as i32;
     let top = promise_picks(g, p, spare.max(0) as u32);
     let x = top.iter().map(|&t| g.db.get(t).cmc).max().unwrap_or(0).max(1) as i32;
-    if top.is_empty() || spare < x || !can_pay(g, p, gn + x as u32, &pips, false) {
+    if top.is_empty() || spare < x || !can_pay_spell(g, p, c, gn + x as u32, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn + x as u32, &pips, false)?;
+    pay_spell(g, p, c, gn + x as u32, &pips, false)?;
     cast_card(g, p, c, "hand", Ctx { x, ..Ctx::default() })?;
     Ok(true)
 }
@@ -832,8 +832,8 @@ fn revelation_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) 
         return Ok(vec![]);
     }
     let (gn, pips) = cost_of(g, p, c);
-    let x = total_mana(g, p, false) as i32 - gn as i32 - pips.chars().count() as i32;
-    if x < 3 || !can_pay(g, p, gn + x as u32, &pips, false) {
+    let x = total_mana_spell(g, p, c, false) as i32 - gn as i32 - pips.chars().count() as i32;
+    if x < 3 || !can_pay_spell(g, p, c, gn + x as u32, &pips, false) {
         return Ok(vec![]);
     }
     let hand = g.player(p).hand.len() as i32;
@@ -846,11 +846,11 @@ fn revelation_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) 
 fn revelation_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let (gn, pips) = cost_of(g, p, c);
-    let x = total_mana(g, p, false) as i32 - gn as i32 - pips.chars().count() as i32;
-    if !g.player(p).hand.contains(&c) || x < 1 || !can_pay(g, p, gn + x as u32, &pips, false) {
+    let x = total_mana_spell(g, p, c, false) as i32 - gn as i32 - pips.chars().count() as i32;
+    if !g.player(p).hand.contains(&c) || x < 1 || !can_pay_spell(g, p, c, gn + x as u32, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn + x as u32, &pips, false)?;
+    pay_spell(g, p, c, gn + x as u32, &pips, false)?;
     cast_card(g, p, c, "hand", Ctx { x, ..Ctx::default() })?;
     Ok(true)
 }
@@ -961,12 +961,12 @@ fn mastery_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> 
     let k = pool.len() as f64;
     let best = pool.iter().filter_map(|&x| free_worth(g, p, x)).fold(0.0, f64::max);
     let one = 1.0 + 0.4 * best + 0.5 * pay;
-    if pool.len() >= 4 && can_pay(g, p, 5, "RRR", false) {
+    if pool.len() >= 4 && can_pay_spell(g, p, c, 5, "RRR", false) {
         // every copy is worth at least the one copy of the best of them
         let u = (3.0 + 0.5 * k + 1.5 * pay).max(one + 0.5 * (k - 1.0));
         o.push(plan(u, format!("{MASTERY} overload ({k} spells)"), mastery_go, c.0 as i64 | 1 << 32));
     }
-    if best >= 4.0 && can_pay(g, p, 3, "R", false) {
+    if best >= 4.0 && can_pay_spell(g, p, c, 3, "R", false) {
         o.push(plan(one, format!("{MASTERY} (one spell)"), mastery_go, c.0 as i64));
     }
     Ok(o)
@@ -976,10 +976,10 @@ fn mastery_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId((arg & 0xffff) as u16);
     let overload = arg >> 32 != 0;
     let (gn, pips) = if overload { (5, "RRR") } else { (3, "R") };
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, gn, pips, false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, gn, pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn, pips, false)?;
+    pay_spell(g, p, c, gn, pips, false)?;
     cast_card(g, p, c, "hand", Ctx { overload, ..Ctx::default() })?;
     Ok(true)
 }
@@ -1458,7 +1458,7 @@ fn radical_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> 
     if post.is_none() && g.active == Some(p) {
         return Ok(vec![]);
     }
-    if !g.player(p).gy.contains(&c) || !can_pay(g, p, 1, "U", false) || discard_choice(g, p).is_none() {
+    if !g.player(p).gy.contains(&c) || !can_pay_spell(g, p, c, 1, "U", false) || discard_choice(g, p).is_none() {
         return Ok(vec![]);
     }
     Ok(vec![plan(1.7, "Radical Idea (jump-start)".into(), radical_go, c.0 as i64)])
@@ -1475,10 +1475,10 @@ fn discard_choice(g: &Game, p: PlayerId) -> Option<CardId> {
 fn radical_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let Some(d) = discard_choice(g, p) else { return Ok(false) };
-    if !g.player(p).gy.contains(&c) || !can_pay(g, p, 1, "U", false) {
+    if !g.player(p).gy.contains(&c) || !can_pay_spell(g, p, c, 1, "U", false) {
         return Ok(false);
     }
-    pay(g, p, 1, "U", false)?;
+    pay_spell(g, p, c, 1, "U", false)?;
     discard_cards(g, p, &[d])?;
     cast_card(g, p, c, "gy", Ctx::default())?; // from the graveyard: exiled after it resolves
     Ok(true)

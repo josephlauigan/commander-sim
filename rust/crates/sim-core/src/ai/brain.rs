@@ -19,7 +19,9 @@ use crate::engine::altcost;
 use crate::engine::cast::{additional_cost, cast_card, castable, on_cast, pact_affordable, parse_cost};
 use crate::engine::combat::double_strike;
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, cost_of, mana_units, pay, phyrexian_life, seq_cost, total_mana};
+use crate::engine::mana::{
+    can_pay, can_pay_spell, cost_of, mana_units, pay_spell, phyrexian_life, seq_cost, total_mana, total_mana_spell,
+};
 use crate::engine::removal::legal_targets;
 use crate::engine::stack::free_counter;
 use crate::engine::values::{
@@ -213,7 +215,7 @@ fn instant_removal(g: &Game, c: CardId) -> bool {
 /// p can pay what casting c costs now (`cost_of`: taxes such as Thorn of Amethyst included), not only its printed cost
 fn can_pay_now(g: &Game, p: PlayerId, c: CardId) -> bool {
     let (cg, cp) = cost_of(g, p, c);
-    can_pay(g, p, cg, &cp, false)
+    can_pay_spell(g, p, c, cg, &cp, false)
 }
 
 /// --- engine-followups: an opponent of p with half or more of a catalogued combo's pieces on the table (public
@@ -591,13 +593,11 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
     } else {
         cost_of(g, p, c)
     };
-    g.pay_for = Some(c);
     // --- t6-xtutor: the planner pays X = its target's mana value (set only around its cast), not all the spare mana;
     // the X is paid with the cost
     let plan_x = g.player(p).plan_x.filter(|_| d.tag(Tag::Xtutor)).unwrap_or(0);
-    let ok = can_pay(g, p, cg + plan_x, &cp, cv);
-    let paid = if ok { pay(g, p, cg + plan_x, &cp, cv) } else { Ok(false) };
-    g.pay_for = None;
+    let ok = can_pay_for(g, p, c, cg + plan_x, &cp, cv);
+    let paid = if ok { pay_spell(g, p, c, cg + plan_x, &cp, cv) } else { Ok(false) };
     if !ok || !paid? {
         return Ok(false);
     }
@@ -607,8 +607,8 @@ pub fn do_cast_with(g: &mut Game, p: PlayerId, c: CardId, zone: Option<Sym>, ctx
         let x = match g.player(p).plan_x.filter(|_| d.tag(Tag::Xtutor)) {
             Some(x) => x, // --- t6-xtutor: paid with the cost
             None => {
-                let x = total_mana(g, p, cv);
-                pay(g, p, x, "", cv)?;
+                let x = total_mana_spell(g, p, c, cv);
+                pay_spell(g, p, c, x, "", cv)?;
                 x
             }
         };
@@ -725,7 +725,7 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
         // an alternative cost (Snapback, Pyrokinesis: cards exiled from hand) when the mana can't be paid
         let free = free_removal(g, p, c);
         let alt = !free && zone == "hand" && altcost::use_alt(g, p, c, None, rg + extra, &rp);
-        if !free && !alt && !can_pay(g, p, rg + extra, &rp, t.has(Tag::Convoke)) {
+        if !free && !alt && !can_pay_spell(g, p, c, rg + extra, &rp, t.has(Tag::Convoke)) {
             continue;
         }
         if t.has(Tag::Needart3)
@@ -787,7 +787,7 @@ pub fn removal_options(g: &Game, p: PlayerId, s: &Situation) -> Vec<Opt> {
         });
         if let Some(k) = t.int(Tag::Kick)
             && rk.starts_with("dmg")
-            && can_pay(g, p, rg + k as u32, &rp, false)
+            && can_pay_spell(g, p, c, rg + k as u32, &rp, false)
         {
             let kd = format!("dmg{}", rk[3..].parse::<i32>().unwrap_or(0) + 2); // Burst Lightning kicked: 4 damage
             let tg4 = legal_targets(g, p, &kd, tgt, mv4, Some(c));
@@ -853,7 +853,7 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
         let x = g.db.get(c);
         let (xg, xp, _) = rem_cost(g, d, c);
         let alt = altcost::use_alt(g, d, c, None, xg, &xp);
-        if !alt && !can_pay(g, d, xg, &xp, x.tag(Tag::Convoke)) {
+        if !alt && !can_pay_spell(g, d, c, xg, &xp, x.tag(Tag::Convoke)) {
             continue;
         }
         if x.tag(Tag::Needsac) || x.tag(Tag::Pactpay) {
@@ -897,17 +897,14 @@ pub fn attack_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -
 
 /// can_pay with spell c being paid for (Karn's mana is not for nonartifact spells: `Game::pay_for`)
 fn can_pay_for(g: &mut Game, p: PlayerId, c: CardId, gn: u32, pips: &str, cv: bool) -> bool {
-    g.pay_for = Some(c);
-    let ok = can_pay(g, p, gn, pips, cv);
-    g.pay_for = None;
+    let prev = g.pay_for.replace(c);
+    let ok = can_pay_spell(g, p, c, gn, pips, cv);
+    g.pay_for = prev;
     ok
 }
 
 fn pay_for(g: &mut Game, p: PlayerId, c: CardId, gn: u32, pips: &str, cv: bool) -> Res<bool> {
-    g.pay_for = Some(c);
-    let r = pay(g, p, gn, pips, cv);
-    g.pay_for = None;
-    r
+    pay_spell(g, p, c, gn, pips, cv)
 }
 
 /// brain.cast_removal: p casts removal spell c at one of tg (sampled by value), kicked for `kick` more
@@ -990,7 +987,7 @@ pub fn wipe_options(g: &Game, p: PlayerId, s: &Situation, eot: bool) -> Vec<Opt>
         }
         let (cg, cp) = decks::wipe_cost(g, p, c);
         let alt = zone == "hand" && altcost::use_alt(g, p, c, None, cg, &cp); // Sunscour: two white cards instead of {5}{W}{W}
-        if (!alt && !can_pay(g, p, cg, &cp, false)) || (g.cast_checks() && !castable(g, p, c, zone)) {
+        if (!alt && !can_pay_spell(g, p, c, cg, &cp, false)) || (g.cast_checks() && !castable(g, p, c, zone)) {
             continue;
         }
         let (ol, ml, victim) = decks::wipe_eval(g, p, kind);
@@ -1071,7 +1068,7 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
             continue;
         }
         let (cg, cp) = cost_of(g, p, c);
-        if !can_pay(g, p, cg, &cp, false) {
+        if !can_pay_spell(g, p, c, cg, &cp, false) {
             continue;
         }
         if let Some((name, score)) = decks::flute_pick(g, p)
@@ -1093,7 +1090,7 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
             continue;
         }
         let (cg, cp) = parse_cost(fb);
-        if !can_pay(g, p, cg, &cp, false) {
+        if !can_pay_spell(g, p, c, cg, &cp, false) {
             continue;
         }
         let mut u = card_utility(g, p, s, c);
@@ -1113,7 +1110,7 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
         if !g.db.get(c).tag(Tag::Crackle) || !(sorcery_ok || has(g, p, Tag::Gandalf)) {
             continue;
         }
-        let x = (total_mana(g, p, false) as i32 - 2).div_euclid(3);
+        let x = (total_mana_spell(g, p, c, false) as i32 - 2).div_euclid(3);
         if x < 1 {
             continue;
         }
@@ -1141,7 +1138,7 @@ pub fn extra_options(g: &mut Game, p: PlayerId, s: &Situation, post: bool, sorce
             Some(k)
                 if {
                     let (cg, cp) = cost_of(g, p, c);
-                    can_pay(g, p, cg + k as u32, &cp, false)
+                    can_pay_spell(g, p, c, cg + k as u32, &cp, false)
                 } =>
             {
                 k as u32
@@ -1298,7 +1295,7 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
         let Some(mut u) = card_utility(g, p, &s, c) else { continue };
         let (cg, cp) = cost_of(g, p, c);
         g.pay_for = Some(c);
-        let ok = can_pay(g, p, cg, &cp, d.tag(Tag::Convoke));
+        let ok = can_pay_spell(g, p, c, cg, &cp, d.tag(Tag::Convoke));
         g.pay_for = None;
         if !ok {
             continue;
@@ -1352,7 +1349,7 @@ pub fn main_options(g: &mut Game, p: PlayerId, post: bool) -> Res<Vec<Opt>> {
             }
             let Some(u) = card_utility(g, p, &s, c) else { continue };
             let (cg, cp) = cost_of(g, p, c);
-            if !can_pay(g, p, cg, &cp, false) {
+            if !can_pay_spell(g, p, c, cg, &cp, false) {
                 continue;
             }
             opts.push(Opt {
@@ -1454,7 +1451,7 @@ fn stop_diag(g: &mut Game, p: PlayerId, opts: &[Opt], post: bool) {
         }
         let (cg, cp) = cost_of(g, p, c);
         g.pay_for = Some(c);
-        let ok = can_pay(g, p, cg, &cp, d.tag(Tag::Convoke));
+        let ok = can_pay_spell(g, p, c, cg, &cp, d.tag(Tag::Convoke));
         g.pay_for = None;
         if !ok {
             continue;
@@ -1797,7 +1794,7 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
             }
             let cv = t.has(Tag::Convoke);
             let (cg, cp) = cost_of(g, p, c);
-            if !can_pay(g, p, cg, &cp, cv) || (g.cast_checks() && !castable(g, p, c, "hand")) {
+            if !can_pay_spell(g, p, c, cg, &cp, cv) || (g.cast_checks() && !castable(g, p, c, "hand")) {
                 continue;
             }
             const EOT: [Tag; 8] =
@@ -1808,7 +1805,7 @@ pub fn end_of_turn_window(g: &mut Game, p: PlayerId) -> Res {
                     continue; // the deck's AI said no (Ad Nauseam at low life)
                 }
                 if t.has(Tag::Tokx) {
-                    u = Some(3.0 + total_mana(g, p, cv) as f64 / 2.0);
+                    u = Some(3.0 + total_mana_spell(g, p, c, cv) as f64 / 2.0);
                 }
                 opts.push(Opt {
                     utility: u.unwrap(),
@@ -1885,13 +1882,13 @@ fn confluence_draw(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let d = g.db.get(c);
     let n = d.tags.int_or_0(Tag::Eotdraw);
     let (gn, pips) = cost_of(g, p, c);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, gn, &pips, false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
     let pl = g.player_mut(p);
     let i = pl.hand.iter().position(|&x| x == c).unwrap();
     pl.hand.remove(i);
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     let pl = g.player_mut(p);
     pl.gy.push(c);
     pl.spells_this_turn += 1;
@@ -1923,7 +1920,7 @@ fn gandalf_wipe_response(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId])
             continue; // instants already have their own paths
         }
         let (cg, cp) = decks::wipe_cost(g, d, c);
-        if !can_pay(g, d, cg, &cp, false) {
+        if !can_pay_spell(g, d, c, cg, &cp, false) {
             continue;
         }
         let (ol, ml, victim) = decks::wipe_eval(g, d, kind);

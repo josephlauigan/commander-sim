@@ -17,7 +17,7 @@
 use super::partials::eot_kw;
 use crate::cards::CardDb;
 use crate::engine::cast::{castable, is_casts};
-use crate::engine::mana::{can_pay, cost_of};
+use crate::engine::mana::{can_pay_spell, cost_of};
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl;
 use crate::engine::stack::{may_window, trigger_window};
@@ -66,7 +66,7 @@ pub fn gained_life(g: &Game, p: PlayerId) -> bool {
 
 fn affordable(g: &Game, p: PlayerId, c: CardId) -> bool {
     let (cg, cp) = cost_of(g, p, c);
-    can_pay(g, p, cg, &cp, false) && castable(g, p, c, "hand")
+    can_pay_spell(g, p, c, cg, &cp, false) && castable(g, p, c, "hand")
 }
 
 fn zero_prio(_g: &Game, _p: PlayerId, _c: CardId) -> i32 {

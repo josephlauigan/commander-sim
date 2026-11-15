@@ -14,7 +14,7 @@ use super::t5::is_artifact;
 use crate::cards::CardDb;
 use crate::engine::cast::{casts_this_turn, lock_this_turn};
 use crate::engine::life::{gain, lose_life};
-use crate::engine::mana::{can_pay, pay, total_mana};
+use crate::engine::mana::{can_pay, pay, total_mana, total_mana_spell};
 use crate::engine::stack::trigger_window;
 use crate::engine::zones::max_by;
 use crate::flow::Res;
@@ -271,13 +271,14 @@ pub fn chalice_counters(g: &Game, m: PermId) -> i32 {
 /// the Moxen, Lotus Petal) only when every X from 1 up would hurt p more than the table; `None` when it can pay for
 /// none of them (the card is then not cast).
 pub fn chalice_x(g: &Game, p: PlayerId) -> Option<i32> {
+    let c = g.db.id("Chalice of the Void")?;
     let count = |q: PlayerId, x: i32| {
         let pl = g.player(q);
         pl.hand.iter().chain(pl.library.iter()).filter(|&&c| !g.db.get(c).land && g.db.get(c).cmc as i32 == x).count()
             as i32
     };
     let score = |x: i32| g.opps(p).map(|q| count(q, x)).ssum() - count(p, x);
-    let afford = (total_mana(g, p, false) as i32 / 2).min(CHALICE_MAX_X);
+    let afford = (total_mana_spell(g, p, c, false) as i32 / 2).min(CHALICE_MAX_X);
     let best = (1..=afford).max_by_key(|&x| (score(x), -x))?;
     Some(if score(0) > score(best).max(0) { 0 } else { best })
 }

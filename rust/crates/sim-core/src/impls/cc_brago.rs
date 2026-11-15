@@ -17,7 +17,7 @@
 //! when it is cast), and each opponent's one try at instant-speed removal on a piece.
 
 use crate::engine::cast::{cast_card, castable};
-use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::mana::{can_pay_spell, cost_of, pay_spell};
 use crate::flow::Res;
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::impls::combos::{Combo, Ready, Step, StepKind, no_src};
@@ -90,12 +90,10 @@ fn finish_keys(f: &Finish) -> Vec<PermId> {
 /// the spell that starts the line: paid for and cast as any spell (it can be countered); true if it resolved
 fn cast_start(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
     let (gn, pips) = cost_of(g, p, c);
-    if !g.player(p).hand.contains(&c) || !castable(g, p, c, "hand") || !can_pay(g, p, gn, &pips, false) {
+    if !g.player(p).hand.contains(&c) || !castable(g, p, c, "hand") || !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
-    g.pay_for = Some(c);
-    let ok = pay(g, p, gn, &pips, false)?;
-    g.pay_for = None;
+    let ok = pay_spell(g, p, c, gn, &pips, false)?;
     if !ok {
         return Ok(false);
     }

@@ -30,7 +30,7 @@ She does three jobs in this deck:
 | Instants (5) | Anguished Unmaking, Force of Will, Generous Gift, Teferi's Protection, Your Fate Ends Here |
 | Sorceries (12) | Austere Command, Cast Away Doubt, Debt to the Deathless, Diabolic Tutor, Exsanguinate (X of 1 or more), Farewell, Idyllic Tutor, Read the Bones, Ringsight, Tezzeret's Gambit, Torment of Hailfire (X of 1 or more), Toxic Deluge |
 
-**Spells that don't trigger her:** every creature, and every spell of mana value 2 or less: Counterspell, Dovin's Veto, Demonic Tutor, Fatal Push, Go for the Throat, Path to Exile, Mystical Tutor, Vampiric Tutor, Mystic Remora, the rocks (Sol Ring, Arcane Signet, both Talismans), Expedition Map, and Profane Tutor (mana value 0, even cast from suspend). Zur's search puts an enchantment onto the battlefield without casting it, so it doesn't trigger her either.
+**Spells that don't trigger her:** every creature, and every spell of mana value 2 or less: Counterspell, Disdainful Stroke, Demonic Tutor, Fatal Push, Go for the Throat, Path to Exile, Mystical Tutor, Vampiric Tutor, Mystic Remora, the rocks (Sol Ring, Arcane Signet, both Talismans), Expedition Map, and Profane Tutor (mana value 0, even cast from suspend). Zur's search puts an enchantment onto the battlefield without casting it, so it doesn't trigger her either.
 
 **Her draw needs 4 life lost by one player in one turn.** One trigger is only 2 to each opponent, so a draw needs a second source in the same turn:
 
@@ -38,7 +38,7 @@ She does three jobs in this deck:
 - **One trigger plus a drain** from Sanguine Bond, Blight-Priest, Palantír of Orthanc or Urborg Syphon-Mage. Sheoldred, the Apocalypse adds 2 to each opponent's every draw.
 - **Your own life.** Read the Bones costs 2, Anguished Unmaking 3, and Necropotence as much as you like.
 
-**When to cast her.** Turn 3 off a turn-2 rock, otherwise turn 4, with a spell of mana value 3 or more to follow. In the plan file she is the top priority from turn 2 on. Check your colours first: she needs {W}, {U} and {B} from three different sources (Command Tower, a rock or a fetch land can be the third). She is a creature, so Dovin's Veto can't protect her cast. Into open blue mana, activate Mistrise Village first ({U}, {T}: the next spell can't be countered) or accept that the first Force of Will eats her; she can be recast for {2} more per previous cast.
+**When to cast her.** Turn 3 off a turn-2 rock, otherwise turn 4, with a spell of mana value 3 or more to follow. In the plan file she is the top priority from turn 2 on. Check your colours first: she needs {W}, {U} and {B} from three different sources (Command Tower, a rock or a fetch land can be the third). Only Counterspell or Force of Will can protect her cast: she is a creature and costs less than four. Into open blue mana, activate Mistrise Village first ({U}, {T}: the next spell can't be countered) or accept that the first Force of Will eats her; she can be recast for {2} more per previous cast.
 
 ### How the deck wins
 
@@ -120,8 +120,8 @@ The fair game. When the combo and the X turn are not ready, keep the engine runn
 
 **Go now or hold?**
 
-- **Go now** when the kill is on the table (Line 1 with a start ready, an X drain that finishes the opponents), when the blue players are tapped low, or when you hold two pieces of protection (Counterspell, Dovin's Veto, Force of Will, Mistrise Village).
-- **Hold** when a combo deck (Kinnan, Urza, Zur) has the mana for its kill next turn: keep Counterspell, Dovin's Veto or Force of Will up, and spend the rest on instant-speed trigger spells (Generous Gift, Anguished Unmaking, Prayer of Binding) at their end step.
+- **Go now** when the kill is on the table (Line 1 with a start ready, an X drain that finishes the opponents), when the blue players are tapped low, or when you hold two pieces of protection (Counterspell, Disdainful Stroke, Force of Will, Mistrise Village).
+- **Hold** when a combo deck (Kinnan, Urza, Zur) has the mana for its kill next turn: keep Counterspell, Disdainful Stroke or Force of Will up, and spend the rest on instant-speed trigger spells (Generous Gift, Anguished Unmaking, Prayer of Binding) at their end step.
 - **Hold** the second piece of Line 1 until you can start the loop the same turn (8 mana with Bond out and Y'shtola on the battlefield). Every turn a lone piece sits on the table is a turn for a Cyclonic Rift or a removal spell to find it.
 - Mystic Remora's cumulative upkeep grows by {1} each turn. Pay it once or twice, then let it go.
 
@@ -163,7 +163,7 @@ The first mulligan is free (you see two 7-card hands). After that it's a London 
 |---|---|---|---|
 | 1 | Command Tower, Godless Shrine, Plains, Sol Ring, Exquisite Blood, Sanguine Bond, Demonic Tutor | Keep | Y'shtola from the command zone on turn 3: Plains for {W}, Godless Shrine for {B}, Command Tower for {U} and Sol Ring for the rest. Both combo pieces are already in hand, and Demonic Tutor finds protection or a rock |
 | 2 | Tundra, Underground Sea, Swamp, Talisman of Progress, Rhystic Study, Propaganda, Vampiric Tutor | Keep | Three lands in all three colours and a turn-2 rock. Rhystic Study and Propaganda are early engine and defence; Vampiric Tutor at an end step puts Sanguine Bond or Exquisite Blood on top for the next draw |
-| 3 | Scrubland, Hallowed Fountain, Fatal Push, Path to Exile, Dovin's Veto, Counterspell, Teferi's Protection | Ship | Two lands, no mana and no engine. Counterspell needs {U}{U} and there is one {U}. Every card is reactive |
+| 3 | Scrubland, Hallowed Fountain, Fatal Push, Path to Exile, Disdainful Stroke, Counterspell, Teferi's Protection | Ship | Two lands, no mana and no engine. Counterspell needs {U}{U} and there is one {U}. Every card is reactive |
 | 4 | Plains, Plains, Plains, Swamp, Arrest, Austere Command, Farewell | Ship | No blue for Y'shtola, one early play and two six-drops. The wipes win a late game, not this one |
 | 5 | Plains, Island, Swamp, Underground River, Flooded Strand, Smothering Tithe, Diabolic Tutor | Keep (close) | Five lands, but both spells are real: Tithe on turn 4 starts making Treasures, and Diabolic Tutor ({2}{B}{B}, from Swamp and Underground River) finds Sanguine Bond. A flood is not fatal, since Coffers, the X drains and Syphon-Mage soak up lands |
 | 6 | Swamp, Underground Sea, Plains, Cast Away Doubt, Read the Bones, Exsanguinate, Torment of Hailfire | Keep (close) | Three lands in three colours and two three-mana draw spells (both trigger her) that find rocks, lands and the combo pieces. The two X spells are dead for a while, but going to six cards costs more than playing the draws |
@@ -256,9 +256,9 @@ Count lands (L), then check which pieces are out. With Urborg and Coffers both o
 
 | Situation | Tutor | Target | Why, and what to watch for |
 |---|---|---|---|
-| A combo is one piece from winning on their next turn, and you hold a counter | None: pass with the mana up (Counterspell {U}{U}, Dovin's Veto {W}{U}, Force of Will) | Vampiric Tutor or Mystical Tutor only after they pass the danger point, at their end step | Mana spent on a tutor is mana not spent on the counter. Dovin's Veto stops noncreature spells only; no counter stops an ability (Walking Ballista, Urza's activation) |
-| The same, and your hand has no counter | Demonic Tutor on your turn with the counter mana left over | Dovin's Veto against a noncreature piece; Counterspell or Force of Will against a creature piece | The tutor must leave the counter's mana untapped: {1}{B} plus {W}{U} is 4 mana, or {1}{B} plus {U}{U}. Keep a second blue card in hand to pitch to Force of Will |
-| A combo spell is on the stack, a Rhystic Study trigger is waiting above it, one blue mana is open | Mystical Tutor in response to the trigger | Dovin's Veto or Counterspell | If the opponent does not pay {1}, you draw the counter before the combo resolves and can cast it (3 mana in all). If they pay, you have only moved a card to the top |
+| A combo is one piece from winning on their next turn, and you hold a counter | None: pass with the mana up (Counterspell {U}{U}, Disdainful Stroke {1}{U}, Force of Will) | Vampiric Tutor or Mystical Tutor only after they pass the danger point, at their end step | Mana spent on a tutor is mana not spent on the counter. Disdainful Stroke stops only a spell with mana value 4 or more; no counter stops an ability (Walking Ballista, Urza's activation) |
+| The same, and your hand has no counter | Demonic Tutor on your turn with the counter mana left over | Disdainful Stroke against a piece with mana value 4 or more; Counterspell or Force of Will against a cheaper piece | The tutor must leave the counter's mana untapped: {1}{B} plus {1}{U} is 4 mana, or {1}{B} plus {U}{U}. Keep a second blue card in hand to pitch to Force of Will |
+| A combo spell is on the stack, a Rhystic Study trigger is waiting above it, one blue mana is open | Mystical Tutor in response to the trigger | Disdainful Stroke or Counterspell | If the opponent does not pay {1}, you draw the counter before the combo resolves and can cast it (3 mana in all). If they pay, you have only moved a card to the top |
 | The combo piece is on the battlefield and the table cannot kill it by destroying (Heliod, Sun-Crowned; undying creatures; a piece with indestructible) | Mystical Tutor, Idyllic Tutor, Demonic Tutor | Anguished Unmaking (exile, costs 3 life), Prayer of Binding ({3}{W}, flash, exile and 2 life for you), Skyclave Apparition (mana value 4 or less) | Generous Gift destroys, which indestructible and undying pieces survive. Anguished Unmaking and Prayer are mana value 3 or more: they trigger her on an opponent's turn |
 | A creature carries the combo (Kinnan, a mana creature) before their turn | Demonic Tutor, Vampiric Tutor | Fatal Push (mana value 2 or less, or 4 with revolt), Go for the Throat, Path to Exile; Orcish Bowmasters for a 1-toughness piece | These are mana value 1 or 2 and do not trigger her, but they cost one or two mana and leave a counter up. Fatal Push cannot hit mana value 3 or more without revolt, and Go for the Throat cannot hit a Spellskite or Walking Ballista |
 | A sweeper or Cyclonic Rift is coming and Bond and Blood are on your board | Mystical Tutor, Demonic Tutor | Teferi's Protection | It phases your permanents out and keeps your life from changing; hold it for a turn you are not trying to win (Bond and the Priest fire on nothing under it) |
@@ -312,7 +312,7 @@ Count lands (L), then check which pieces are out. With Urborg and Coffers both o
 #### What to fetch first
 
 1. **Turns 1 to 3, Y'shtola not yet out:** the colour or rock that lets you cast her on turn 3 or 4 (Command Tower, Arcane Signet, a Talisman, Sol Ring). Rhystic Study or Smothering Tithe if the mana is fine.
-2. **A game-ending threat on the table:** the answer to it before any engine piece. Dovin's Veto or Counterspell for a spell, Anguished Unmaking for a permanent, Teferi's Protection for a wipe or a lethal attack.
+2. **A game-ending threat on the table:** the answer to it before any engine piece. Disdainful Stroke (mana value 4 or more) or Counterspell for a spell, Anguished Unmaking for a permanent, Teferi's Protection for a wipe or a lethal attack.
 3. **Y'shtola out, neither piece:** Sanguine Bond, then Exquisite Blood.
 4. **Bond out, Blood missing:** Exquisite Blood, from an opponent's end step, with a 3-mana trigger spell for the same turn.
 5. **Both out:** do not fetch a start: cast Diabolic Tutor, Ringsight or Idyllic Tutor as the start. Without her, Exsanguinate for X = 1.
@@ -340,14 +340,14 @@ Count lands (L), then check which pieces are out. With Urborg and Coffers both o
 Y'shtola is the engine, but the win turn is Bond and Blood on the battlefield and Debt or Exsanguinate resolving. Order of protection:
 
 1. **Mistrise Village first** ({U}, {T}: the next spell you cast this turn can't be countered). It beats Force of Will, Counterspell, Mana Drain and Swan Song on the spell that matters. It is one tap, so it costs the Village's mana too.
-2. **A counter behind it:** Dovin's Veto (noncreature, can't be countered itself), Counterspell ({U}{U}), Force of Will (pay 1 life and exile a blue card). Bait with a cheaper spell first if the opponent has one counter and you have two threats.
+2. **A counter behind it:** Disdainful Stroke ({1}{U}, a spell with mana value 4 or more), Counterspell ({U}{U}), Force of Will (pay 1 life and exile a blue card). Bait with a cheaper spell first if the opponent has one counter and you have two threats.
 3. **Cast the kill when the counters are tapped.** Mana Drain and Counterspell need {U}{U}, so the best window is the turn after the blue players tapped out on their own turn.
 4. **Her trigger resolves even if the spell is countered.** A countered Debt still drains 2 from each opponent and gains 2 for Bond.
 5. **Against Cyclonic Rift** (Kinnan, Urza, Zur and Miirym all run it; overload at seven mana bounces your whole board): don't rely on a long board. Cast the second piece of Line 1 when the loop can start at once.
 
 **Protecting Y'shtola herself:**
 
-- **Dovin's Veto and Force of Will** stop the removal spell (Veto only a noncreature spell, not an ability).
+- **Counterspell and Force of Will** stop the removal spell, and Disdainful Stroke does if it costs four or more; no counter stops an ability.
 - **Restoration Angel** (flash, {3}{W}) blinks her out of removal.
 - **Displacer Kitten:** cast any noncreature spell in response to removal, and the Kitten blinks her; the removal fizzles (a mana value 3 spell also triggers her).
 - **Champion's Helm** ({3}, equip {1}): +2/+2 and hexproof on a legendary creature. It makes her 4/6 and untargetable. It doesn't stop a wipe.
@@ -362,7 +362,7 @@ Any noncreature spell of mana value 3 or more cast on an opponent's turn trigger
 |---|---|---|
 | Force of Will | {3}{U}{U}, or 1 life and a blue card | The combo piece or the wipe that wins. A mana value 5 spell, so it triggers her even when pitched |
 | Counterspell | {U}{U} | Any spell: a combo piece, a tutor for the combo, a wipe, a creature. It cannot stop an ability (Walking Ballista, Urza's activation) |
-| Dovin's Veto | {W}{U} | Any noncreature spell (Basalt Monolith, a Freed from the Real, a removal spell on Y'shtola, Cyclonic Rift). Can't be countered, so a Mana Drain or Counterspell cannot stop it |
+| Disdainful Stroke | {1}{U} | A spell with mana value 4 or more (a wipe, a large threat, a big engine). It can't stop a cheap combo piece or a removal spell on Y'shtola |
 | Path to Exile | {W} | A creature that decides the game (Kinnan, Urza, Yawgmoth, Zur, a Dragon; Miirym has ward {2}); gives the opponent a basic land |
 | Fatal Push | {B} | Mana value 2 or less (Kinnan, a mana creature, Spellskite); mana value 4 or less with revolt (a fetch land or Treasure sacrificed, Expedition Map, Urza's Cave) |
 | Go for the Throat | {1}{B} | A nonartifact creature, such as Yawgmoth or Zur. Not Spellskite or Walking Ballista |
@@ -382,7 +382,7 @@ The sims show her losing about a third of t5 games to the Kinnan and Urza combos
 
 | Opponent | Their threat | Your plan | Cards that matter |
 |---|---|---|---|
-| Kinnan, Bonder Prodigy (Simic mana combo) | Kinnan + Basalt Monolith (unbounded mana), Freed from the Real or Pemmin's Aura on a mana creature; the mana goes into Walking Ballista or Thrasios. Turn 3 to 5 | You cannot race it. Kill the mana creatures early and hold a counter for the Monolith, an Aura or Kinnan. Their free counters (Force of Will, Force of Negation, Fierce Guardianship, Pact of Negation) can answer your key spell: bait with a lesser one first | Orcish Bowmasters on Bloom Tender or a mana elf; Fatal Push, Go for the Throat or Path on Kinnan (mana value 2); Dovin's Veto, Counterspell, Force of Will on Monolith or an Aura; Loran or Skyclave Apparition on the Monolith. Spellskite redirects targeted removal; Cyclonic Rift and Swan Song hit Bond and Blood |
+| Kinnan, Bonder Prodigy (Simic mana combo) | Kinnan + Basalt Monolith (unbounded mana), Freed from the Real or Pemmin's Aura on a mana creature; the mana goes into Walking Ballista or Thrasios. Turn 3 to 5 | You cannot race it. Kill the mana creatures early and hold a counter for the Monolith, an Aura or Kinnan. Their free counters (Force of Will, Force of Negation, Fierce Guardianship, Pact of Negation) can answer your key spell: bait with a lesser one first | Orcish Bowmasters on Bloom Tender or a mana elf; Fatal Push, Go for the Throat or Path on Kinnan (mana value 2); Counterspell, Force of Will on Monolith or an Aura; Loran or Skyclave Apparition on the Monolith. Spellskite redirects targeted removal; Cyclonic Rift and Swan Song hit Bond and Blood |
 | Urza, Lord High Artificer (mono-blue artifacts, stax) | Isochron Scepter + Dramatic Reversal, Basalt Monolith + Rings of Brighthearth or Forensic Gadgeteer, Hullbreaker Horror; Winter Orb, Static Orb and Back to Basics hold your mana while its artifacts untap. The fastest deck in the pool, turns 4 to 6 | Rocks and cheap plays: under Winter Orb you untap one land, and under Static Orb only two permanents. Get the Orb or the Monolith off the table before the combo. Keep a counter for the combo piece; Hullbreaker Horror can't be countered, so kill it or the pieces that feed it | Loran of the Third Path (destroy an artifact on entry and again on every blink), Skyclave Apparition (Monolith, Orb, Rings, Scepter all have mana value 4 or less), Generous Gift, Austere Command or Farewell in artifacts mode (they ignore Padeem's hexproof but hit your own rocks), Counterspell and Force of Will on Scepter. Padeem gives its artifacts hexproof, which stops every targeted answer here: kill Padeem (Go for the Throat, Path) or use a wipe. Narset stops her extra draws |
 | Zur the Enchanter (Esper control) | Enchantment locks (Rule of Law, Eidolon of Rhetoric: one spell per turn; Drannith Magistrate; Opposition Agent; Narset; Grand Abolisher), a counter wall (Force of Will, Mana Drain, Fierce Guardianship, Counterspell, Dovin's Veto, Swan Song) and Heliod, Sun-Crowned + Walking Ballista as the kill. Phyrexian Unlife with Solemnity | Treat each spell as a trigger and a counter bait. Kill Zur early (Arrest or Bound in Silence stops the attack and the search). Remove the locks with Loran, Skyclave, Anguished Unmaking | Skyclave Apparition, Prayer of Binding or Anguished Unmaking on Heliod (indestructible: Generous Gift won't kill it); Fatal Push on a Walking Ballista (mana value 0 on the battlefield; it pings in response); Loran on the Rule of Law; Drannith Magistrate stops the commander and suspended Profane Tutor from being cast; Grand Abolisher shuts off your instants on their turn; Opposition Agent takes your tutors |
 | Miirym, Sentinel Wyrm (Temur Dragons) | Each Dragon is copied by Miirym (flying, ward {2}). Terror of the Peaks, Scourge of Valkas and Twinflame Tyrant turn each arrival into burn; Wrathful Red Dragon and Blasphemous Act. Wins in combat | Fort up early. Propaganda and Sphere of Safety tax every copy. Wipe the Dragons with Toxic Deluge, Austere Command (creatures with mana value 4 or more) or Farewell: Terror of the Peaks makes spells that target it cost 3 more life, and a wipe doesn't target. Counter the first big Dragon | Propaganda, Sphere of Safety, Arrest and Bound in Silence on a Dragon; Austere Command, Farewell, Toxic Deluge; Counterspell and Force of Will on Miirym or Terror (Cavern of Souls makes its Dragons uncounterable). Cyclonic Rift, Chaos Warp, Beast Within, Blasphemous Act answer her |
@@ -438,7 +438,7 @@ The sims show her losing about a third of t5 games to the Kinnan and Urza combos
 
 1. Casting the second piece of Bond + Exquisite Blood and expecting Y'shtola's cast trigger to start the loop. It resolves while the piece is on the stack. You need a second life change after both are out.
 2. Casting Exquisite Blood or Sanguine Bond into open blue mana without Mistrise Village or a counter behind it, when waiting a turn is cheap.
-3. Casting a spell of mana value 1 or 2 and expecting a trigger (Counterspell, Dovin's Veto, Orcish Bowmasters, Go for the Throat, the tutors at 1 or 2). Spend the turn's mana on a three-plus spell when you can.
+3. Casting a spell of mana value 1 or 2 and expecting a trigger (Counterspell, Disdainful Stroke, Orcish Bowmasters, Go for the Throat, the tutors at 1 or 2). Spend the turn's mana on a three-plus spell when you can.
 4. Casting Teferi's Protection to win a turn. Your life can't change under it, so Bond, the Priest and the X drains' gain do nothing.
 5. Choosing the wrong Farewell modes: creatures with Y'shtola out, enchantments with Bond and Blood out, artifacts with the rocks out.
 6. Blinking Skyclave Apparition for value without noticing it hands the owner an X/X token each time.
@@ -477,7 +477,7 @@ Black is the main colour (Necropotence's {B}{B}{B}, the X drains' {B}{B}), so it
 - **Land tutors:** Expedition Map and Urza's Cave (Urborg or Cabal Coffers, or the missing colour).
 
 **Interaction.**
-- **Counterspells (three):** Counterspell, Dovin's Veto, Force of Will.
+- **Counterspells (three):** Counterspell, Disdainful Stroke, Force of Will.
 - **Spot removal spells (six):** Path to Exile, Fatal Push, Go for the Throat, Generous Gift, Anguished Unmaking, Your Fate Ends Here.
 - **Removal on permanents:** Skyclave Apparition, Loran of the Third Path (an artifact or enchantment, again on every blink), Prayer of Binding.
 - **Removal Auras (two):** Arrest, Bound in Silence.
@@ -508,7 +508,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 
 **Artifacts (9).** Arcane Signet, Champion's Helm, Coalition Relic, Conjurer's Closet, Expedition Map, Palantír of Orthanc, Sol Ring, Talisman of Hierarchy, Talisman of Progress
 
-**Instants (12).** Anguished Unmaking, Counterspell, Dovin's Veto, Fatal Push, Force of Will, Generous Gift, Go for the Throat, Mystical Tutor, Path to Exile, Teferi's Protection, Vampiric Tutor, Your Fate Ends Here
+**Instants (12).** Anguished Unmaking, Counterspell, Disdainful Stroke, Fatal Push, Force of Will, Generous Gift, Go for the Throat, Mystical Tutor, Path to Exile, Teferi's Protection, Vampiric Tutor, Your Fate Ends Here
 
 **Sorceries (14).** Austere Command, Cast Away Doubt, Debt to the Deathless, Demonic Tutor, Diabolic Tutor, Exsanguinate, Farewell, Idyllic Tutor, Profane Tutor, Read the Bones, Ringsight, Tezzeret's Gambit, Torment of Hailfire, Toxic Deluge
 
@@ -535,8 +535,8 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Debt to the Deathless
 1 Demonic Tutor
 1 Diabolic Tutor
+1 Disdainful Stroke
 1 Displacer Kitten
-1 Dovin's Veto
 1 Esper Sentinel
 1 Expedition Map
 1 Exquisite Blood

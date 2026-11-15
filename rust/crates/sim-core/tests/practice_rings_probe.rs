@@ -136,6 +136,7 @@ fn prep(g: &mut Game, name: &str, m: PermId) {
         g.perm_mut(m).loyalty = Some(20); // every loyalty ability, the ultimates too
     }
     match name {
+        "Nevinyrral's Disk" => g.perm_mut(m).tapped = false,
         "Grim Monolith" | "Basalt Monolith" => g.perm_mut(m).tapped = true, // their untap needs it tapped
         "Steel Hellkite" => {
             let st = g.turn_stamp();
@@ -430,6 +431,7 @@ const EXCEPTIONS: &[(&str, &str)] = &[
         "\"start the loop\": a table shortcut standing for the whole Basalt Monolith + Rings loop (each pass of it is a real activation Rings copies, see play_rings.rs); not an ability itself",
     ),
     ("aragorn: Niv-Mizzet, Parun #0", "a setting (where its pings go), not an ability"),
+    ("urdragon: Niv-Mizzet, the Firemind #0", "a setting (where its pings go), not an ability"),
     (
         "sheoldred: Bolas's Citadel #0",
         "playing the top card of the library (Citadel's static permission): a spell cast, not an ability",

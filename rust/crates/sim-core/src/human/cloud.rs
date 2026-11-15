@@ -418,6 +418,9 @@ fn phase_out(g: &mut Game, m: PermId) {
             g.perm_mut(x).phased = true;
         }
     }
+    if !g.control_links.is_empty() {
+        crate::engine::control::end_links(g);
+    }
 }
 
 /// Galadriel's Dismissal: target creature phases out; kicked, each creature target player controls phases out instead

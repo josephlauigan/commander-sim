@@ -112,7 +112,7 @@ pub fn turn_end(g2: &Game, p: PlayerId) {
         let Some(a) = b.as_mut() else { return };
         a.held_now = a.hold.is_some_and(|h| {
             let (cg, cp) = crate::engine::mana::cost_of(g2, p, h);
-            g2.player(p).hand.contains(&h) && crate::engine::mana::can_pay(g2, p, cg, &cp, false)
+            g2.player(p).hand.contains(&h) && crate::engine::mana::can_pay_spell(g2, p, h, cg, &cp, false)
         });
     });
 }

@@ -1,19 +1,17 @@
-# JD's Thanos, the Mad Titan artifacts-and-Dragons deck (decklists/JD/thanos-artifacts-and-dragons.md, tier t5, key
-# `thanos`; rewritten 2026-11-05 for the list that replaced the cEDH turbo list). `thanos` is not a Tier 6 key (JD, 2026-11-05: the
-# `thrasios` key took the Tier 6 rules), so the generic pool policy reads this file: `[style]`, `[commander]`,
-# `[key_cards]`, `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: ramp and Thanos first, the engines (The One Ring, Rhystic Study, Mystic
-# Forge, Urza, Karn, Crucible), then one of two infinite combos or the clear-the-way-and-finish plan (TD2, 2026-11-07). Thanos's power-up (a parity
-# wipe, Rings of Brighthearth copying it to hit both parities) is card code (impls/t6_thanos.rs), not this plan; the
-# Astral Dragon loop is the catalogue combo in impls/t45_urdragon_combos.rs; Basalt Monolith + Rings is the catalogue
-# line "Power Artifact / Rings of Brighthearth + Monolith" widened here with the sinks this list holds.
+# JD's Thanos, the Mad Titan Cali Commander artifact-combo deck (decklists/cali_commander/thanos-artifact-combo.md, key
+# `thanos`; rewritten 2026-11-13 for the Cali list that replaced the artifacts-and-Dragons list). `thanos` is not a Tier
+# 6 key (the `thrasios` key took the Tier 6 rules), so the generic pool policy reads this file: `[style]`, `[commander]`,
+# `[key_cards]`, `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: fast mana and Thanos first,
+# the engines (The One Ring, Rhystic Study, Mystic Remora, Urza, Crucible), then Basalt Monolith + Rings of Brighthearth
+# into Walking Ballista. Thanos's power-up is card code (impls/t6_thanos.rs), not this plan.
 # PROVISIONAL: the style numbers, priorities and keep rule come from the pilot guide in the deck document, not from a
-# paired test (no sims yet).
-# Left out (the schema can't express it): the choice of odd or even for the power-up, wiping versus winning this turn,
-# holding Pact of Negation until five mana is certain next upkeep, and the Yawgmoth rule (no wipe into a death payoff).
+# paired test (no sims yet). Left out until the engine models them: Tinker into Blightsteel Colossus, Sneak Attack,
+# Staff of Domination + Faeburrow Elder, and Thassa's Oracle with Demonic Consultation or Tainted Pact (the plan has no
+# lines for them), and the 1v1, 30-life Cali rules themselves. The schema can't express the choice of odd or even for
+# the power-up.
 deck = "thanos"
 default = "plan"
-engines = ["The One Ring", "Rhystic Study", "Smothering Tithe", "Mystic Forge", "Sylvan Library",
-    "Karn, Scion of Urza", "Urza, Lord High Artificer", "Crucible of Worlds"]
+engines = ["The One Ring", "Rhystic Study", "Mystic Remora", "Urza, Lord High Artificer", "Crucible of Worlds"]
 
 # Thanos plans to be down on turn 2-3 and then play value, not a goldfish combo: pool defaults for temperature, a little
 # above the pool's attack, less caution than the pool's 0.5 only while ahead on mana.
@@ -30,37 +28,15 @@ turn = 2
 
 [key_cards]
 "Walking Ballista" = 70
-"Mystic Forge" = 72
 "Urza, Lord High Artificer" = 74
-"Terror of the Peaks" = 70
 "Elesh Norn, Mother of Machines" = 66
-"Summon: Bahamut" = 66
-"The Ur-Dragon" = 64
 
-# Win lines, best first: the tutors hunt the first missing piece of the closest one. Basalt Monolith + Rings is two cards
-# and then any mana sink: Walking Ballista from hand (a huge X), Mystic Forge on the battlefield (cast the Ballista off
-# the top) or Urza (the whole library). Astral Dragon + Cursed Mirror is the second two-card combo, with Terror of the
-# Peaks on the battlefield to turn the tokens into damage (hasty fliers win without it).
+# Win line: Basalt Monolith + Rings is two cards and then any mana sink: Walking Ballista from hand (a huge X), Staff of
+# Domination on the battlefield (draw to the Ballista) or Urza (the whole library).
 [[line]]
 name = "Basalt Monolith + Rings of Brighthearth + a mana sink"
 kind = "combo"
-pieces = [["Basalt Monolith"], ["Rings of Brighthearth"], ["Walking Ballista", "Mystic Forge", "Urza, Lord High Artificer"]]
-
-[[line]]
-name = "Astral Dragon + Cursed Mirror"
-combo = "Astral Dragon + Cursed Mirror"
-
-[[line]]
-name = "Astral Dragon + Cursed Mirror + Terror of the Peaks"
-kind = "combo"
-pieces = [["Astral Dragon"], ["Cursed Mirror"], ["Terror of the Peaks"]]
-
-# The fair wins (TD2, 2026-11-07): clear the way (the power-up is card code; Summon: Bahamut destroys two permanents,
-# Meteor Golem one) and then a big Dragon threat
-[[line]]
-name = "Clear the way, then a big threat"
-kind = "value"
-pieces = [["Summon: Bahamut", "Meteor Golem"], ["The Ur-Dragon", "Utvara Hellkite", "Glorybringer", "Thundermaw Hellkite"]]
+pieces = [["Basalt Monolith"], ["Rings of Brighthearth"], ["Walking Ballista", "Staff of Domination", "Urza, Lord High Artificer"]]
 
 # What the tutors fetch (the guide's "What to tutor for"): the combo's missing piece first, an engine on turns 2-3 when
 # nothing is going, the wipe or the Rings when the board can't be beaten.
@@ -70,42 +46,37 @@ when = ["lands+rocks>=3"]
 score = 90
 
 [[wish]]
-cards = ["Mystic Forge", "Walking Ballista"]
+cards = ["Staff of Domination", "Walking Ballista"]
 when = ["out:Basalt Monolith & out:Rings of Brighthearth"]
 score = 95
 
 [[wish]]
-cards = ["The One Ring", "Rhystic Study", "Mystic Forge"]
+cards = ["The One Ring", "Rhystic Study"]
 when = ["turn<=3"]
 score = 80
 
 [[wish]]
-cards = ["Astral Dragon", "Terror of the Peaks"]
-when = ["out:Cursed Mirror"]
-score = 92
-
-[[wish]]
-cards = ["Summon: Bahamut", "Elesh Norn, Mother of Machines", "Meteor Golem"]
+cards = ["Elesh Norn, Mother of Machines", "Meteor Golem"]
 when = ["opp-power>=15"]
 score = 76
 
 # Acceleration and fixing are the first plays; Thanos and the engines next; the big top end last.
 [[prio]]
-cards = ["Sol Ring", "Mana Vault", "Grim Monolith", "Chrome Mox", "Mox Diamond", "Mox Opal", "Mox Jasper",
-    "Arcane Signet", "Mind Stone", "Birds of Paradise", "Urza's Bauble", "Wayfarer's Bauble", "Scion of Draco"]
+cards = ["Sol Ring", "Mana Crypt", "Mana Vault", "Lotus Petal", "Arcane Signet", "Mind Stone", "Birds of Paradise",
+    "Llanowar Elves", "Paradise Druid", "Avacyn's Pilgrim", "Talisman of Hierarchy", "Talisman of Progress",
+    "Thought Vessel", "Fellwar Stone"]
 when = ["turn<=4"]
 value = 86
 else = 46
 
 [[prio]]
-cards = ["Rhystic Study", "The One Ring", "Smothering Tithe", "Mystic Forge", "Sylvan Library"]
+cards = ["Rhystic Study", "The One Ring", "Mystic Remora"]
 when = ["turn<=6"]
 value = 78
 else = 62
 
 [[prio]]
-cards = ["Urza, Lord High Artificer", "Karn, Scion of Urza", "Crucible of Worlds", "Gilded Lotus", "Thran Dynamo",
-    "Coalition Relic"]
+cards = ["Urza, Lord High Artificer", "Crucible of Worlds", "Coalition Relic"]
 value = 74
 
 # The combo pieces: Basalt Monolith first, Rings once it is held (or out); the Ballista is the kill, not a body
@@ -130,39 +101,28 @@ when = ["lands>=6"]
 value = 56
 else = 40
 
-# Astral Dragon is the combo's last piece: cast at once with the Mirror out; the Mirror goes out ahead of the Dragon
 [[prio]]
-cards = ["Astral Dragon"]
-when = ["out:Cursed Mirror"]
-value = 92
-
-[[prio]]
-cards = ["Cursed Mirror"]
-when = ["have:Astral Dragon"]
-value = 80
-
-[[prio]]
-cards = ["Terror of the Peaks", "Goldspan Dragon", "Steel Hellkite", "Glorybringer", "Thundermaw Hellkite",
-    "Elesh Norn, Mother of Machines", "Hangarback Walker"]
+cards = ["Elesh Norn, Mother of Machines", "Hangarback Walker", "Primeval Titan", "Windborn Muse"]
 value = 68
 
-# The nine-drop and the top end: after the board is built
+# The top end: after the board is built
 [[prio]]
-cards = ["The Ur-Dragon", "Summon: Bahamut", "Utvara Hellkite", "Meteor Golem"]
+cards = ["Meteor Golem"]
 when = ["lands+rocks>=7"]
 value = 66
 else = 20
 
 [[hold]]
 card = "Teferi's Protection"
-protects = ["commander", "The One Ring", "Terror of the Peaks"]
+protects = ["commander", "The One Ring"]
 
 # The guide's keep rule: 2-5 lands (a lone land only with three fast pieces), mana by turn 2-3, and something to do.
 [sets]
-tutors = ["Demonic Tutor", "Vampiric Tutor", "Enlightened Tutor", "Worldly Tutor", "Imperial Seal"]
-engines = ["The One Ring", "Rhystic Study", "Mystic Forge", "Urza, Lord High Artificer", "Karn, Scion of Urza",
-    "Crucible of Worlds", "Smothering Tithe"]
-pieces = ["Basalt Monolith", "Rings of Brighthearth", "Walking Ballista", "Astral Dragon", "Cursed Mirror"]
+tutors = ["Demonic Tutor", "Vampiric Tutor", "Enlightened Tutor", "Mystical Tutor", "Worldly Tutor", "Grim Tutor",
+    "Tinker"]
+engines = ["The One Ring", "Rhystic Study", "Mystic Remora", "Urza, Lord High Artificer", "Crucible of Worlds"]
+pieces = ["Basalt Monolith", "Rings of Brighthearth", "Walking Ballista", "Staff of Domination", "Thassa's Oracle",
+    "Blightsteel Colossus"]
 
 [mulligan]
 fast_mana = true

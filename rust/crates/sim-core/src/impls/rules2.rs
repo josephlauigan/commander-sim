@@ -12,7 +12,9 @@ use super::t3::{ability, card_is, plan};
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, on_cast};
 use crate::engine::life::{gain, lose_life};
-use crate::engine::mana::{Source, Unit, can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{
+    Source, Unit, can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana, total_mana_spell,
+};
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
 use crate::engine::stack::{ability_window, counter_window, trigger_window};
@@ -251,12 +253,12 @@ pub fn hullbreaker_counter(g: &mut Game, q: PlayerId, c: CardId) -> Res<bool> {
         .filter(|&x| {
             let d = g.db.get(x);
             let (gn, pips) = cost_of(g, q, x);
-            d.instant && !d.tag(Tag::Ctr) && can_pay(g, q, gn, &pips, false) && castable(g, q, x, "hand")
+            d.instant && !d.tag(Tag::Ctr) && can_pay_spell(g, q, x, gn, &pips, false) && castable(g, q, x, "hand")
         })
         .collect();
     let Some(x) = first_min(&inst, |x| (g.db.get(x).cmc, card_worth(g, q, x, false))) else { return Ok(false) };
     let (gn, pips) = cost_of(g, q, x);
-    pay(g, q, gn, &pips, false)?;
+    pay_spell(g, q, x, gn, &pips, false)?;
     remove_card(&mut g.player_mut(q).hand, x);
     g.player_mut(q).gy.push(x);
     on_cast(g, q, x)?;
@@ -365,7 +367,10 @@ pub fn seer(g: &mut Game, p: PlayerId, _src: PermId, _m: PermId) -> Res {
 
 /// escape {3}{B}{B}, exile four other cards: returns with two +1/+1 counters
 fn woe_escape(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false) || !can_pay(g, p, 3, "BB", false) || g.player(p).gy.iter().filter(|&&x| x != c).count() < 4 {
+    if post != Some(false)
+        || !can_pay_spell(g, p, c, 3, "BB", false)
+        || g.player(p).gy.iter().filter(|&&x| x != c).count() < 4
+    {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -377,10 +382,10 @@ fn woe_escape(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<V
 
 fn woe_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).gy.contains(&c) || !can_pay(g, p, 3, "BB", false) {
+    if !g.player(p).gy.contains(&c) || !can_pay_spell(g, p, c, 3, "BB", false) {
         return Ok(false);
     }
-    pay(g, p, 3, "BB", false)?;
+    pay_spell(g, p, c, 3, "BB", false)?;
     exile_fodder(g, p, c, 4);
     remove_card(&mut g.player_mut(p).gy, c);
     crate::glog!(g, "  {} escapes Woe Strider", pname(g, p));
@@ -575,7 +580,7 @@ fn cleave_flash(g: &mut Game, c: CardId, p: PlayerId, atk: &[PermId], _d: Player
         return Ok(());
     }
     let (gn, pips) = cost_of(g, p, c);
-    if !can_pay(g, p, gn, &pips, false) {
+    if !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(());
     }
     if atk.len() < 2 && atk.iter().map(|&m| epow(g, m)).ssum() < 5 {
@@ -583,7 +588,7 @@ fn cleave_flash(g: &mut Game, c: CardId, p: PlayerId, atk: &[PermId], _d: Player
     }
     remove_card(&mut g.player_mut(p).hand, c);
     let (gn, pips) = cost_of(g, p, c);
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     crate::glog!(g, "  {} flashes in Embercleave", pname(g, p));
     on_cast(g, p, c)?;
     if !counter_window(g, p, c, 5.0, vec![])? {
@@ -614,7 +619,7 @@ fn emperor_flash(
         return Ok(());
     }
     let (gn, pips) = cost_of(g, d, c);
-    if !can_pay(g, d, gn, &pips, false) {
+    if !can_pay_spell(g, d, c, gn, &pips, false) {
         return Ok(());
     }
     let tapped: Vec<PermId> = atk.iter().copied().filter(|&a| on(g, p, a) && g.perm(a).tapped).collect();
@@ -622,7 +627,7 @@ fn emperor_flash(
     if pval(g, t) < 4.0 {
         return Ok(());
     }
-    pay(g, d, gn, &pips, false)?;
+    pay_spell(g, d, c, gn, &pips, false)?;
     remove_card(&mut g.player_mut(d).hand, c);
     crate::glog!(g, "  {} flashes in The Wandering Emperor", pname(g, d));
     on_cast(g, d, c)?;
@@ -647,7 +652,7 @@ fn emperor_flash(
 /// evoke by exiling a white card from hand (free, instant speed): exile the best opposing creature
 fn solitude_evoke(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let (gn, pips) = cost_of(g, p, c);
-    if can_pay(g, p, gn, &pips, false) && post.is_some() {
+    if can_pay_spell(g, p, c, gn, &pips, false) && post.is_some() {
         return Ok(vec![]);
     }
     let whites = g.player(p).hand.iter().any(|&x| x != c && g.db.get(x).pips.contains('W'));
@@ -681,7 +686,7 @@ fn solitude_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 
 // ================================================================== dash: Ragavan
 fn ragavan_dash(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false) || !can_pay(g, p, 1, "R", false) || !castable(g, p, c, "hand") {
+    if post != Some(false) || !can_pay_spell(g, p, c, 1, "R", false) || !castable(g, p, c, "hand") {
         return Ok(vec![]);
     }
     if !super::lands::open_attack(g, p, 2, false) {
@@ -692,11 +697,11 @@ fn ragavan_dash(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
 
 pub(crate) fn ragavan_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "R", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 1, "R", false) {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
-    pay(g, p, 1, "R", false)?;
+    pay_spell(g, p, c, 1, "R", false)?;
     crate::glog!(g, "  {} dashes Ragavan", pname(g, p));
     on_cast(g, p, c)?;
     if !counter_window(g, p, c, 3.0, vec![])? {
@@ -773,7 +778,7 @@ fn winds_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
         .filter(|&m| g.is_creature(m))
         .map(|m| pval(g, m))
         .psum();
-    if total_mana(g, p, false) >= 6 && opp_value >= 12.0 {
+    if total_mana_spell(g, p, _c, false) >= 6 && opp_value >= 12.0 {
         62
     } else if best_opp_creature(g, p, |_, _| true).is_some() {
         40
@@ -785,9 +790,9 @@ fn winds_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
 /// exiles an opposing creature (its controller searches a basic), or overloaded for {4}{W}{W} every opposing creature.
 /// (Python's `p.winds_overload` is never set: the overload is paid whenever four more mana are there.)
 fn winds(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
-    let overload = total_mana(g, p, false) >= 4;
-    if overload && can_pay(g, p, 4, "", false) {
-        pay(g, p, 4, "", false)?;
+    let overload = total_mana_spell(g, p, c, false) >= 4;
+    if overload && can_pay_spell(g, p, c, 4, "", false) {
+        pay_spell(g, p, c, 4, "", false)?;
         for q in g.opps(p).collect::<Vec<_>>() {
             let mut n = 0;
             for m in g.player(q).perms.clone() {
@@ -909,8 +914,8 @@ fn harmonize(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Ve
         return Ok(vec![]);
     }
     let red = g.player(p).perms.iter().filter(|&&m| g.is_creature(m) && !g.perm(m).tapped).map(|&m| epow(g, m)).max();
-    let x = total_mana(g, p, false) as i32 + red.unwrap_or(0) - 4;
-    if x < 3 || !can_pay(g, p, 0, "GGGG", false) {
+    let x = total_mana_spell(g, p, c, false) as i32 + red.unwrap_or(0) - 4;
+    if x < 3 || !can_pay_spell(g, p, c, 0, "GGGG", false) {
         return Ok(vec![]);
     }
     Ok(vec![plan(1.0 + x as f64 / 2.0, "harmonize Nature's Rhythm".into(), harmonize_go, c.0 as i64)])
@@ -928,13 +933,13 @@ fn harmonize_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if let Some(m) = tapper {
         g.perm_mut(m).tapped = true;
     }
-    let xx = total_mana(g, p, false) as i32 - 4 + r;
+    let xx = total_mana_spell(g, p, c, false) as i32 - 4 + r;
     let gn = (xx - r).max(0) as u32;
-    if !can_pay(g, p, gn, "GGGG", false) {
+    if !can_pay_spell(g, p, c, gn, "GGGG", false) {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).gy, c);
-    pay(g, p, gn, "GGGG", false)?;
+    pay_spell(g, p, c, gn, "GGGG", false)?;
     g.player_mut(p).exile.push(c);
     crate::glog!(g, "  {} harmonizes Nature's Rhythm (X={})", pname(g, p), xx);
     on_cast(g, p, c)?;
@@ -1008,7 +1013,7 @@ const IC_COMBO_ART: [&str; 6] = [
 ];
 
 fn whir_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
-    if total_mana(g, p, false) >= 5 { 55 } else { 0 }
+    if total_mana_spell(g, p, _c, false) >= 5 { 55 } else { 0 }
 }
 
 /// --- t6-ai: the untapped artifacts Whir of Invention's improvise taps: every untapped artifact that is not a mana rock
@@ -1879,7 +1884,7 @@ fn valakut_land(g: &mut Game, src: Src, p: PlayerId) -> Res {
 }
 
 fn finale_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
-    if total_mana(g, p, false) >= 5 { 60 } else { 0 }
+    if total_mana_spell(g, p, _c, false) >= 5 { 60 } else { 0 }
 }
 
 /// X = spare mana: a creature with mana value X or less from library or graveyard onto the battlefield; X >= 10:
@@ -1903,6 +1908,62 @@ fn finale(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
             }
         }
     }
+    Ok("gy")
+}
+
+/// Nature's Lore and Three Visits: a Forest card (a Forest, or a dual land with the Forest type) onto the battlefield.
+/// The land follows its own enters rule (a shock land: pay life or enter tapped; a Triome or a tapped dual: tapped). A
+/// person picks the card (or none); the AI takes the one that makes the most colours. Opposition Agent takes it instead.
+fn forest_ramp(g: &mut Game, p: PlayerId, c: CardId, _ctx: &Ctx) -> Res<Sym> {
+    let is_forest = |g: &Game, x: CardId| {
+        let d = g.db.get(x);
+        d.land && (&*d.name == "Forest" || d.has_subtype("forest"))
+    };
+    let name = g.db.get(c).name.to_string();
+    let human = crate::human::is_human(g, p);
+    let found = if human {
+        let prompt = format!("{name}: search your library for a Forest card");
+        crate::human::choices::search(g, p, &is_forest, 1, &prompt, true)?.first().copied()
+    } else {
+        let cs: Vec<CardId> = searchable(g, p).into_iter().filter(|&x| is_forest(g, x)).collect();
+        let best = max_by(&cs, |x| g.db.get(x).tags.str(Tag::C).map_or(0, |s| s.len()) as f64);
+        if let Some(x) = best {
+            remove_card(&mut g.player_mut(p).library, x);
+        }
+        best
+    };
+    if !human {
+        shuffle_library(g, p); // "then shuffle", found or not (a person's search shuffles itself)
+    }
+    let Some(x) = found else { return Ok("gy") };
+    if let Some(a) = crate::engine::zones::agent_for(g, p) {
+        crate::engine::zones::agent_take(g, a, p, x); // Opposition Agent: the searcher's card is theirs to exile
+        return Ok("gy");
+    }
+    // the land's own enters rule, as `turn::play_land_card` applies it
+    let tapped = match crate::engine::turn::shock_cost(g, p, x) {
+        Some(n) => {
+            let pay = if human {
+                g.player(p).life >= n
+                    && crate::human::choices::yes_no(
+                        g,
+                        p,
+                        &format!("{}: pay {n} life so it enters untapped?", g.db.get(x).name),
+                    )?
+            } else {
+                crate::engine::turn::pays_for_land(g, p, x, n)
+            };
+            if pay {
+                crate::engine::life::lose_life(g, p, n, Some(p), "other", None)?;
+            }
+            !pay
+        }
+        None => crate::engine::turn::land_enters_tapped(g, p, x),
+    };
+    let l = g.add_land_entering(p, x, tapped);
+    crate::glog!(g, "    {} finds {}", name, g.db.get(x).name);
+    crate::cardcode::land_etb(g, p, l)?;
+    crate::engine::zones::landfall(g, p)?;
     Ok("gy")
 }
 
@@ -2061,6 +2122,13 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, "Farseek")?;
     c.resolve = Some(farseek);
     c.prio = Some(farseek_prio);
+    for name in ["Nature's Lore", "Three Visits"] {
+        let c = r.card(db, name)?;
+        c.resolve = Some(forest_ramp);
+        if name == "Three Visits" {
+            c.prio = Some(farseek_prio); // Nature's Lore keeps the pool's own ramp priority (its `lr` tag)
+        }
+    }
     r.card(db, "Ichormoon Gauntlet")?.cast = Some(ichor);
     Ok(())
 }

@@ -1,0 +1,162 @@
+# JD's The Ur-Dragon five-colour Dragons deck (decklists/JD/urdragon-five-colour-dragons.md, key `urdragon`, tier t5;
+# rewritten 2026-11-14 for the list with Utvara Hellkite, Steel Hellkite, Summon: Bahamut and the spells package). The
+# deck has no hand-written AI code, so the generic policy reads this file: `[style]`, `[commander]`, `[key_cards]`,
+# `[[line]]`, `[[wish]]`, `[[prio]]`, `[[hold]]` and `[mulligan]`. The plan: ramp first, an engine (Rhystic Study, The
+# One Ring, Terror of the Peaks) on turns 3-5, then The Ur-Dragon and the Dragons, then attack; the Garth One-Eye +
+# Spark Double + Twinflame + Doubling Season loop is the second win line (see the pending card-code issues below).
+# PROVISIONAL: the style numbers, priorities and the keep rule come from the pilot guide in the deck document, not from a
+# paired test (no sims yet). Deliberately NOT listed in `[[prio]]`: Twinflame, Crux of Fate, Austere Command, Decimate,
+# removal and the protection spells. A positive priority turns a held card into a plain main-phase cast, which skips the
+# wipe logic (your own losses count 1.2x) and spends Twinflame outside the combo.
+# Left out, because the schema can't express them: "an opponent has shown a wipe" (hold the Dragons, and tutor for
+# Teferi's Protection), hold up mana or go (Tier 6 only), Dromoka before the combo, Twinflame into open blue mana,
+# Cavern of Souls naming Dragon, the tutor target for "the table's best creature" (`opp-power` is the whole table's total
+# power), leaving a seven-drop in hand for The Ur-Dragon's free drop (the AI may hard-cast it), Morophon / Rivaz cost
+# sequencing, "seven mana and no Dragon" for the Terror of the Peaks / Goldspan row (it uses `lands+mana-perms>=5` and
+# has no Dragon check), a colour check for a hand of several colourless or off-colour sources beyond the rows below, the
+# 5- and 6-card keep rows and the bottom order.
+# Card-code issues, PENDING JD'S DECISION (fix in code or accept; they are not accepted limits): `ur_pick` can put Tiamat
+# into play with The Ur-Dragon's free drop, so her search never runs (only a card-code change stops that; a [[prio]]
+# value only feeds the pick as value/10); Twinflame is cast as a fair spell on any good non-legendary creature; Spark
+# Double copies the best creature, rarely Garth. Until they are fixed the Garth wish rows below can send the tutors to
+# pieces the AI then wastes.
+# The `plays` set (the mulligan's "something to do") leaves out Mox Jasper (dead before a Dragon) and Garth One-Eye;
+# Temur Ascendancy is in it (JD, 2026-11-14).
+# Garth line: Commander Spellbook variant 1171-1235-3908-4772 (not written on the line: the plan test checks `spellbook`
+# against `pieces`, and a catalogue combo has none).
+deck = "urdragon"
+default = "plan"
+engines = ["Rhystic Study", "The One Ring", "Niv-Mizzet, the Firemind"]
+engines_ahead = ["Rhystic Study", "The One Ring"]
+
+# The deck wins in combat with hasty fliers: the pool's attack (0.6) a little higher, caution as the pool's.
+[style]
+temp = 1.0
+aggression = 0.7
+caution = 0.5
+
+# The Ur-Dragon is nine mana (Eminence makes the OTHER Dragon spells cost {1} less while it is in the command zone or on
+# the battlefield). Its card code already rates it 85; the cost gates the cast, so only the priority is set.
+[commander]
+prio = 88
+
+[key_cards]
+"Terror of the Peaks" = 80
+"Dragonlord Dromoka" = 72
+
+# The second win line: all four pieces, any order (the catalogue combo `ready`s itself).
+[[line]]
+name = "Garth One-Eye + Spark Double + Twinflame + Doubling Season"
+kind = "combo"
+combo = "Garth One-Eye + Twinflame + Spark Double + Doubling Season"
+
+# What the tutors fetch (the guide's "What to tutor for"): the Garth pieces first once Garth and Spark Double are down or
+# in hand, an engine on turns 1-3, the key Dragon at five or more mana, and a seven-drop once The Ur-Dragon is out to put
+# in free. A wish row always comes before the lines, so these rows are what a tutor reads first.
+[[wish]]
+cards = ["Doubling Season", "Twinflame"]
+when = ["have:Garth One-Eye & have:Spark Double"]
+score = 84
+
+[[wish]]
+cards = ["Garth One-Eye"]
+when = ["out:Doubling Season"]
+score = 82
+
+[[wish]]
+cards = ["Rhystic Study", "The One Ring"]
+when = ["turn<=3"]
+score = 80
+
+[[wish]]
+cards = ["Terror of the Peaks", "Goldspan Dragon"]
+when = ["lands+mana-perms>=5"]
+score = 78
+
+[[wish]]
+cards = ["Klauth, Unrivaled Ancient", "Utvara Hellkite"]
+when = ["commander-out"]
+score = 76
+
+# The damage engines (each Dragon entering or attacking is a burst), the draw engines, and the Treasure and ping Dragons.
+# Ramp keeps its generic rating (Sol Ring and Mana Vault 88, the dorks and rocks 85 through turn 5, Three Visits farseek_prio):
+# a flat row here would only lower late ramp. Terror and Dromoka are key_cards (a key card skips every rule below). The One
+# Ring keeps its generic rating (it reads the life total) once life is low; Rhystic Study's 78 replaces its tithe rating.
+[[prio]]
+cards = ["Scourge of Valkas", "Dragon Tempest"]
+value = 78
+
+[[prio]]
+cards = ["Rhystic Study"]
+when = ["turn<=6"]
+value = 78
+else = 62
+
+[[prio]]
+cards = ["The One Ring"]
+when = ["turn<=6 & life>10"]
+value = 78
+
+[[prio]]
+cards = ["Ganax, Astral Hunter", "Niv-Mizzet, the Firemind"]
+value = 66
+
+# Keep the wipe answer for the engine pieces.
+[[hold]]
+card = "Teferi's Protection"
+protects = ["commander", "Terror of the Peaks", "The One Ring"]
+
+# The guide's keep rule: 2-5 lands (one land only with Sol Ring, Mana Vault or two dorks), three mana by turn 3, an action
+# card, and not a hand of only seven-drops. `tries` is always 0 for this deck (the settle rule is Tier 6 only), so every
+# redraw reads the same 7-card rows.
+[sets]
+fastmana = ["Sol Ring", "Mana Vault"]
+visits = ["Three Visits"]
+tomb = ["Ancient Tomb"]
+dorks = ["Birds of Paradise", "Llanowar Elves", "Elvish Mystic", "Delighted Halfling"]
+bigs = ["Klauth, Unrivaled Ancient", "Old Gnawbone", "Tiamat", "Morophon, the Boundless", "Smaug the Impenetrable",
+    "Utvara Hellkite", "Summon: Bahamut"]
+plays = ["Sol Ring", "Mana Vault", "Arcane Signet", "Cursed Mirror", "Birds of Paradise", "Llanowar Elves", "Elvish Mystic",
+    "Delighted Halfling", "Relic of Sauron", "Nature's Lore", "Rivaz of the Claw", "Scion of Draco", "Temur Ascendancy", "Three Visits", "Demonic Tutor", "Vampiric Tutor", "Worldly Tutor", "Rhystic Study",
+    "The One Ring", "Terror of the Peaks", "Goldspan Dragon", "Glorybringer", "Thundermaw Hellkite",
+    "Korvold, Fae-Cursed King", "Scourge of Valkas", "Smaug the Magnificent", "Nicol Bolas, the Ravager",
+    "Ganax, Astral Hunter", "Kura, the Boundless Sky", "Dragonlord Ojutai", "Scion of the Ur-Dragon", "Dragon Tempest",
+    "Lathliss, Dragon Queen", "Miirym, Sentinel Wyrm", "Dragonlord Dromoka", "Dragonlord Silumgar",
+    "Ancient Copper Dragon", "Hellkite Tyrant", "Niv-Mizzet, the Firemind", "Steel Hellkite"]
+
+[mulligan]
+[[mulligan.rule]]
+when = ["hand-lands>=6"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands=0"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands=1 & hand:fastmana=0 & hand:dorks<=1"]
+keep = false
+
+# a lone Ancient Tomb makes no coloured mana (the guide's hand 2), and a lone land with dorks that its colours can't cast
+[[mulligan.rule]]
+when = ["hand-lands=1 & hand:tomb>=1"]
+keep = false
+
+[[mulligan.rule]]
+when = ["hand-lands<=1 & hand-gaps:dorks>=1"]
+keep = false
+
+# a hand of only seven-drops goes back, even with mana (the `plays` row below would also send it back)
+[[mulligan.rule]]
+when = ["hand:bigs>=1 & nonland - hand:bigs<=0"]
+keep = false
+
+# three mana by turn 3 (a one-lander got through the rule above with its Sol Ring, Mana Vault or two dorks)
+[[mulligan.rule]]
+when = ["hand-lands>=2 & hand-lands+makers+hand:visits+hand:tomb<3"]
+keep = false
+
+# nothing to do: no ramp spell, tutor, engine or Dragon that comes down by turn 5
+[[mulligan.rule]]
+when = ["hand:plays=0"]
+keep = false

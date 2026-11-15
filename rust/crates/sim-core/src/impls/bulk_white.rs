@@ -19,7 +19,7 @@ use super::common::{AURA, AuraSpec, aura};
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable};
 use crate::engine::life::gain;
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana_spell};
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl;
 use crate::engine::stack::{ability_window, counter_window, may_window, trigger_window};
@@ -185,10 +185,10 @@ pub fn exit_blocked(g: &Game, b: PermId, a: PermId) -> bool {
 /// cast c face down for {3}: a 2/2 with no abilities (and ward {2} for a disguise card); `arg` is the card
 pub(crate) fn cast_down(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 3, "", false) || !castable(g, p, c, "hand") {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 3, "", false) || !castable(g, p, c, "hand") {
         return Ok(false);
     }
-    if !pay(g, p, 3, "", false)? {
+    if !pay_spell(g, p, c, 3, "", false)? {
         return Ok(false);
     }
     let pl = g.player_mut(p);
@@ -386,19 +386,19 @@ pub fn face_up_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec
 /// Casting a morph or disguise card face down for {3}: Exalted Angel when it can't be cast for {4}{W}{W}; a disguise
 /// creature when turning it up has a good target (a normal cast is cheaper otherwise).
 fn down_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_none() || g.active != Some(p) || !can_pay(g, p, 3, "", false) || !castable(g, p, c, "hand") {
+    if post.is_none() || g.active != Some(p) || !can_pay_spell(g, p, c, 3, "", false) || !castable(g, p, c, "hand") {
         return Ok(vec![]);
     }
     let name = name_of(g, c).to_string();
     let (cg, cp) = cost_of(g, p, c);
-    let normal = can_pay(g, p, cg, &cp, false);
+    let normal = can_pay_spell(g, p, c, cg, &cp, false);
     let (gn, pips) = up_cost(&name).unwrap();
     let u = if name == EXALTED {
         if normal {
             return Ok(vec![]); // cast it for its mana cost
         }
         // next turn it is turned up for {2}{W}{W}
-        3.6 + if total_mana(g, p, false) >= 3 + gn + pips.len() as u32 { 1.0 } else { 0.0 }
+        3.6 + if total_mana_spell(g, p, c, false) >= 3 + gn + pips.len() as u32 { 1.0 } else { 0.0 }
     } else {
         let v = match name.as_str() {
             FAMILIAR => familiar_target(g, p, None).map_or(0.0, |x| x.0),
@@ -623,7 +623,7 @@ fn rean_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
         return Ok(vec![]);
     }
     let (cg, cp) = cost_of(g, p, c);
-    if !can_pay(g, p, cg, &cp, false) {
+    if !can_pay_spell(g, p, c, cg, &cp, false) {
         return Ok(vec![]);
     }
     let Some((v, t)) = best_gy(g, p, name_of(g, c) == RECOMMISSION) else { return Ok(vec![]) };
@@ -707,7 +707,7 @@ pub(crate) fn cast_aura_on(
     pips: &str,
     color: Option<char>,
 ) -> Res<bool> {
-    if !castable(g, p, c, "hand") || !can_pay(g, p, gn, pips, false) || !pay(g, p, gn, pips, false)? {
+    if !castable(g, p, c, "hand") || !can_pay_spell(g, p, c, gn, pips, false) || !pay_spell(g, p, c, gn, pips, false)? {
         return Ok(false);
     }
     if let Some(ch) = color {
@@ -813,7 +813,7 @@ pub fn cast_holy(g: &mut Game, p: PlayerId, c: CardId) -> Res<bool> {
     if foretold_turn(g, p, c).is_some() && !from_exile {
         return Ok(false); // foretold this turn: not yet
     }
-    if !castable(g, p, c, "hand") || !can_pay(g, p, 2, "W", false) || !pay(g, p, 2, "W", false)? {
+    if !castable(g, p, c, "hand") || !can_pay_spell(g, p, c, 2, "W", false) || !pay_spell(g, p, c, 2, "W", false)? {
         return Ok(false);
     }
     g.player_mut(p).impulse_long.retain(|x| x.0 != c);
@@ -848,7 +848,11 @@ pub fn damage_shield(g: &Game, p: PlayerId) -> bool {
 
 /// foretell {2} (your turn, after combat, mana to spare), cast later from exile for {2}{W}
 fn holy_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(true) || g.active != Some(p) || foretold_turn(g, p, c).is_some() || !can_pay(g, p, 2, "", false) {
+    if post != Some(true)
+        || g.active != Some(p)
+        || foretold_turn(g, p, c).is_some()
+        || !can_pay_spell(g, p, c, 2, "", false)
+    {
         return Ok(vec![]);
     }
     if g.player(p).hand.iter().filter(|&&x| name_of(g, x) == HOLY).count() > 1 {
@@ -997,7 +1001,7 @@ fn fate_resolve(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx) -> Res<Sym> {
 /// destroying (the full-cost cast goes through the generic removal options)
 fn fate_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let _ = post;
-    if !can_pay(g, p, 2, "W", false) || !castable(g, p, c, "hand") {
+    if !can_pay_spell(g, p, c, 2, "W", false) || !castable(g, p, c, "hand") {
         return Ok(vec![]);
     }
     let tg: Vec<PermId> = legal_targets(g, p, "destroy", "nl", false, Some(c))
@@ -1020,7 +1024,7 @@ fn fate_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).hand.contains(&c) || !live(g, t) || !g.perm(t).tapped || !g.is_creature(t) || untargetable(g, t) {
         return Ok(false);
     }
-    if !can_pay(g, p, 2, "W", false) || !pay(g, p, 2, "W", false)? {
+    if !can_pay_spell(g, p, c, 2, "W", false) || !pay_spell(g, p, c, 2, "W", false)? {
         return Ok(false);
     }
     cast_card(g, p, c, "hand", Ctx { target: Some(t), ..Ctx::default() })
@@ -1090,7 +1094,7 @@ fn repel_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
 
 fn repel_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let (cg, cp) = cost_of(g, p, c);
-    if !can_pay(g, p, cg, &cp, false) || !castable(g, p, c, "hand") {
+    if !can_pay_spell(g, p, c, cg, &cp, false) || !castable(g, p, c, "hand") {
         return Ok(vec![]);
     }
     let blockers = repel_targets(g, p);

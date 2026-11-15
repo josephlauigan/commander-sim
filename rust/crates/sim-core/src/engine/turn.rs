@@ -17,7 +17,7 @@ use crate::flow::{Res, Stop};
 use crate::hooks::{Call, Event};
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::satsum::SatSum;
-use crate::state::{Game, Step};
+use crate::state::{DataKey, Game, Step, Val};
 use crate::sym::Sym;
 use crate::tag::Tag;
 
@@ -489,6 +489,7 @@ pub fn remove_land(g: &mut Game, p: PlayerId, l: PermId, to: Option<crate::engin
         g.player_mut(p).perms.retain(|&x| x != l); // (an Astral Dragon land is a creature too: listed in both)
     }
     g.perm_mut(l).on_bf = false;
+    g.perm_mut(l).data.remove(DataKey::PhaseInWith);
     match to {
         Some(z) if !token => {
             crate::engine::zones::to_zone_card(g, l, z);
@@ -912,6 +913,16 @@ pub fn yawg_cleanup(g: &mut Game, p: PlayerId) {
 
 /// p's end step. Python's `ais.end_step`.
 pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
+    // Capture delayed triggers at the beginning: an activation during this step waits for the next end step.
+    let sneak_sacs: Vec<_> = g
+        .players
+        .iter()
+        .flat_map(|pl| pl.perms.iter().copied())
+        .filter_map(|m| match g.perm(m).data.get(crate::state::DataKey::SneakAttack) {
+            Some(crate::state::Val::Player(q)) => Some((*q, m)),
+            _ => None,
+        })
+        .collect();
     cardcode::necro_deliver(g, p)?;
     cardcode::delayed_end_step(g, p)?; // Marchesa, The Eternal Wanderer, Eerie Interlude, Memory Jar
     if g.doomed_turn == Some(p) {
@@ -943,6 +954,18 @@ pub fn end_step(g: &mut Game, p: PlayerId) -> Res {
     for m in g.player(p).perms.clone() {
         if g.perm(m).on_bf && g.perm(m).data.truthy(crate::state::DataKey::EotSac) {
             die(g, m, "sac")?; // Lagomos's Elemental: sacrificed at the beginning of the end step
+        }
+    }
+    for (q, m) in sneak_sacs {
+        g.perm_mut(m).data.set(crate::state::DataKey::SneakAttack, crate::state::Val::Bool(true));
+        // Only the player instructed to sacrifice can do so. The delayed trigger is used up either way.
+        if !g.perm(m).on_bf || g.perm(m).phased || g.perm(m).owner != q {
+            continue;
+        }
+        let name = format!("Sneak Attack: sacrifice {}", g.perm(m).name);
+        if trigger_window(g, q, None, &name, Some(1.0))? && g.perm(m).on_bf && !g.perm(m).phased && g.perm(m).owner == q
+        {
+            die(g, m, "sac")?;
         }
     }
     crate::impls::t45_urdragon::courser_return(g)?; // --- Tiers 4/5 (urdragon): Hellkite Courser's commander goes back
@@ -1110,6 +1133,35 @@ pub fn end_step_pools(g: &mut Game) {
     }
 }
 
+/// The first part of the untap step (CR 502.1): the permanents p controlled when they phased out phase in. A
+/// permanent keyed to a player (`PhaseInWith`: a Silumgar steal that ended, a creature that changed hands while phased
+/// out) phases in at that player's untap step wherever it is now; if that player has left the game it phases in at its
+/// controller's. A permanent with no key phases in at its controller's. Bumps `bf_ver` when anything phased in.
+pub fn phase_in_for(g: &mut Game, p: PlayerId) {
+    let phase_in: Vec<_> = g
+        .players
+        .iter()
+        .flat_map(|q| q.perms.iter().copied())
+        .filter(|&m| {
+            let x = g.perm(m);
+            x.on_bf
+                && x.phased
+                && match x.data.get(DataKey::PhaseInWith) {
+                    Some(Val::Player(q)) => *q == p || (!g.player(*q).alive && x.owner == p),
+                    _ => x.owner == p,
+                }
+        })
+        .collect();
+    for &m in &phase_in {
+        let x = g.perm_mut(m);
+        x.phased = false;
+        x.data.remove(DataKey::PhaseInWith);
+    }
+    if !phase_in.is_empty() {
+        g.bf_ver += 1;
+    }
+}
+
 /// the start of p's turn: untap, upkeep, draw, the land drop (Python's `_step_start`)
 pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     g.active = Some(p);
@@ -1117,6 +1169,10 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
     for m in &mut g.perms {
         m.eot_pt = (0, 0);
         m.eot_kw.clear();
+        // Rivaz refreshes each turn, including consecutive extra turns with the same round/active stamp.
+        if matches!(m.data.get(DataKey::T45Dragon), Some(Val::Stamp(_))) {
+            m.data.remove(DataKey::T45Dragon);
+        }
     }
     for q in &mut g.players {
         if q.life_lock_eot {
@@ -1132,20 +1188,29 @@ pub fn step_start(g: &mut Game, p: PlayerId) -> Res {
         q.gy_start = q.gy.clone(); // what was there before this turn
         q.mana.clear(); // the pools empty between turns (mana kept "until end of turn" too)
         q.pool.art = 0;
+        q.pool.spell = 0;
     }
     let pl = g.player_mut(p);
     pl.extra_combats = 0;
     pl.combat_no = 0;
     pl.turns += 1;
+    phase_in_for(g, p); // before Winter Orb and the other untap locks look at the table
     let orbs = crate::impls::t45_urza_yawgmoth::untap_lock(g, p); // --- Tiers 4/5 (urza-yawgmoth): Winter / Static Orb
     for l in g.player(p).lands.clone() {
-        g.perm_mut(l).tapped = false;
+        if !g.perm(l).phased || g.perm(l).data.get(DataKey::PhaseInWith).is_none() {
+            g.perm_mut(l).tapped = false;
+        }
     }
     g.player_mut(p).tapped_treasures = 0; // tapped Treasures untap
     let crack = cardcode::crackdown_on(g); // Crackdown: big nonwhite creatures stay tapped
     let alarm = crate::impls::t45_chulane_kinnan::alarm_on(g); // --- Tiers 4/5 (chulane-kinnan): Intruder Alarm
     for m in g.player(p).perms.clone() {
         let x = g.perm(m);
+        if x.phased && x.data.get(DataKey::PhaseInWith).is_some() {
+            // phased out under another player: it doesn't untap now, but p has controlled it since this turn began
+            g.perm_mut(m).sick = false;
+            continue;
+        }
         if x.data.int(crate::state::DataKey::Frozen) > 0 {
             // Frost Titan, Tamiyo
             let f = x.data.int(crate::state::DataKey::Frozen);

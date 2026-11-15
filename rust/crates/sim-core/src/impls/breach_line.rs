@@ -10,7 +10,7 @@
 
 use crate::engine::cast::{cast_card, castable, casts_this_turn};
 use crate::engine::life::check_state;
-use crate::engine::mana::{Source, mana_units, pay, total_mana};
+use crate::engine::mana::{Source, mana_units, pay_spell, total_mana};
 use crate::engine::pool::Kind;
 use crate::engine::repl;
 use crate::engine::tutors::card_worth;
@@ -383,13 +383,13 @@ fn line_step(st: &LineState) -> Option<LineAct> {
 
 /// mine._pay_line: pay for a spell of the line: the pip from a real source ({B} may use ritual mana), generic from
 /// ritual mana first
-fn pay_line(g: &mut Game, p: PlayerId, gn: u32, col: &str) -> Res<bool> {
+fn pay_line(g: &mut Game, p: PlayerId, c: CardId, gn: u32, col: &str) -> Res<bool> {
     let (fb, fr, fa) = ritual_float(g, p);
     if col == "B" && fb + fa > 0 {
         g.player_mut(p).mana.take_kind(if fb > 0 { Kind::B } else { Kind::Any }, 1); // black ritual mana
     } else if col == "R" && fr > 0 {
         g.player_mut(p).mana.take_kind(Kind::R, 1); // red ritual mana
-    } else if !pay(g, p, 0, col, false)? {
+    } else if !pay_spell(g, p, c, 0, col, false)? {
         return Ok(false);
     }
     // generic from ritual mana, black first (red also pays Grapeshot, Breach and the red rituals)
@@ -399,7 +399,7 @@ fn pay_line(g: &mut Game, p: PlayerId, gn: u32, col: &str) -> Res<bool> {
         g.player_mut(p).mana.take_kind(kind, t);
         k += t;
     }
-    Ok(gn - k == 0 || pay(g, p, gn - k, "", false)?)
+    Ok(gn - k == 0 || pay_spell(g, p, c, gn - k, "", false)?)
 }
 
 /// escape: exile three other graveyard cards (the least useful, line cards and `skip` kept); false if there aren't
@@ -551,7 +551,7 @@ pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
         match act {
             LineAct::Breach => {
                 let c = *g.player(p).hand.iter().find(|&&x| g.db.get(x).tag(Tag::Breach)).unwrap();
-                if !pay_line(g, p, 1, "R")? {
+                if !pay_line(g, p, c, 1, "R")? {
                     break;
                 }
                 if !cast_card(g, p, c, "hand", Ctx::default())? || !has(g, p, Tag::Breach) {
@@ -570,7 +570,7 @@ pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
                 if zone == Wh::Gy && !escape_fuel(g, p, None) {
                     break;
                 }
-                if !pay_line(g, p, 2, "R")? {
+                if !pay_line(g, p, c, 2, "R")? {
                     break;
                 }
                 g.jeska_mana = true; // in the line it's always the mana mode
@@ -580,7 +580,7 @@ pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
             }
             LineAct::Setup => {
                 let (c, gn, pips) = st.setup_hand.clone().unwrap();
-                if !pay_line(g, p, gn, &pips)? {
+                if !pay_line(g, p, c, gn, &pips)? {
                     break;
                 }
                 cast_card(g, p, c, "hand", Ctx::default())?;
@@ -599,7 +599,7 @@ pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
                 if zone == Wh::Gy && !escape_fuel(g, p, Some(c)) {
                     break;
                 }
-                if !pay_line(g, p, gn, &pip)? {
+                if !pay_line(g, p, c, gn, &pip)? {
                     break;
                 }
                 cast_card(g, p, c, zone_sym(zone), Ctx::default())?;
@@ -617,7 +617,7 @@ pub fn breach_line(g: &mut Game, p: PlayerId, execute: bool) -> Res<bool> {
                     break;
                 }
                 if let Some((gn, col)) = pay_for
-                    && !pay_line(g, p, gn, col)?
+                    && !pay_line(g, p, c, gn, col)?
                 {
                     break;
                 }

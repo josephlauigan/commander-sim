@@ -6,7 +6,7 @@ use crate::engine::values::chasm;
 use crate::flow::Res;
 use crate::hooks::{Call, Event};
 use crate::ids::PlayerId;
-use crate::state::Game;
+use crate::state::{DataKey, Game};
 use crate::sym::{Sym, intern};
 
 /// lose_life kinds that are damage (prevented by protection); 'drain' and 'other' are life loss. 'triggers' is mostly
@@ -367,8 +367,12 @@ pub fn eliminate(g: &mut Game, p: PlayerId) {
         g.player(p).life,
         killer.map_or("?", |k| g.player(k).name)
     );
+    if !g.control_links.is_empty() {
+        crate::engine::control::end_links(g);
+    }
     for m in std::mem::take(&mut g.player_mut(p).perms) {
         g.perm_mut(m).on_bf = false;
+        g.perm_mut(m).data.remove(DataKey::PhaseInWith);
     }
     g.bf_ver += 1;
     if g.garland {

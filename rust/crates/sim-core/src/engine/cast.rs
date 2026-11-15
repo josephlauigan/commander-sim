@@ -6,7 +6,7 @@ use crate::cardcode;
 use crate::cards::Types;
 use crate::engine::hooks::{self, fire_trigger};
 use crate::engine::life::{check_state, gain, lose_life};
-use crate::engine::mana::{can_pay, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, pay_spell, total_mana};
 use crate::engine::pool::Kind;
 use crate::engine::removal::{apply_removal, apply_wipe, legal_targets};
 use crate::engine::repl;
@@ -353,8 +353,8 @@ fn ai_cast_countered(g: &Game, p: PlayerId, c: CardId) -> bool {
     let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
     let mut spent = gn + pips.chars().count() as u32;
     let mut colored = !pips.is_empty()
-        || (gn > 0 && "WUBRG".chars().any(|ch| crate::engine::mana::can_pay(g, p, 0, &ch.to_string(), false)));
-    if crate::engine::altcost::slot(g, c).is_some() && !crate::engine::mana::can_pay(g, p, gn, &pips, false) {
+        || (gn > 0 && "WUBRG".chars().any(|ch| crate::engine::mana::can_pay_spell(g, p, c, 0, &ch.to_string(), false)));
+    if crate::engine::altcost::slot(g, c).is_some() && !crate::engine::mana::can_pay_spell(g, p, c, gn, &pips, false) {
         (spent, colored) = (0, false);
     }
     hooks::would_be_cast_countered(g, p, c, spent, colored)
@@ -846,6 +846,16 @@ fn gy_of(ctx: &Ctx, p: PlayerId) -> PlayerId {
 /// p casts card c (already paid for) from zone ('hand', 'gy', 'cmd', 'escape', 'mgy', 'lib'). It goes on the stack;
 /// true if it resolved. Python's `cast_card`.
 pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> Res<bool> {
+    // Payment has finished. Responses, triggers and resolution pay their own costs.
+    let spending = g.player_mut(p).pool.spending.take();
+    let paying = g.pay_for.take();
+    let result = cast_card_inner(g, p, c, zone, ctx);
+    g.player_mut(p).pool.spending = spending;
+    g.pay_for = paying;
+    result
+}
+
+fn cast_card_inner(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> Res<bool> {
     g.tick()?;
     crate::impls::t12_brago_meren::note_cast(g, c, zone); // --- Tiers 1/2 (brago-meren): Twilight Diviner's record
     if g.locks_used && (spell_locked(g, p, c) || split_second_up(g)) {
@@ -888,6 +898,11 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
         }
         _ => {} // 'lib': Bolas's Citadel, already off the top of the library
     }
+    // Casting is the commit point: failed payments and cancelled choices never get here.
+    if let Some(src) = ctx.rivaz_permission {
+        let st = g.turn_stamp();
+        g.perm_mut(src).data.set(DataKey::T45Dragon, Val::Stamp(st));
+    }
     if (g.player(p).agent_ids.contains(&c) || g.player(p).stolen.contains_key(&c)) && !g.player(p).hand.contains(&c) {
         // (`stolen` alone: Ragavan's card, cast with ordinary mana)
         // the card taken from an opponent is cast: other copies cost as usual
@@ -913,6 +928,11 @@ pub fn cast_card(g: &mut Game, p: PlayerId, c: CardId, zone: Sym, ctx: Ctx) -> R
     let prev = g.cur_cast.replace((c, ctx.clone(), zone)); // cast triggers see its targets and X
     let mut fin: Option<StackItem> = None; // the item as it left the stack (stolen, re-aimed)
     let r = (|| -> Res<Option<(bool, Option<CardId>, Ctx)>> {
+        let grants = crate::impls::t45_urdragon::rivaz_cast(g, p, c, zone)?;
+        if let Some((_, current, _)) = g.cur_cast.as_mut() {
+            current.rivaz_exile += grants;
+        }
+        ctx.rivaz_exile += grants;
         on_cast(g, p, c)?;
         crate::impls::card_models3::spell_targeted(g, &ctx)?; // --- card-models-3: becomes the target of a spell
         if g.over || !g.player(p).alive {
@@ -1030,7 +1050,7 @@ pub fn flashback_grant(g: &mut Game, p: PlayerId) -> Res {
             let d = g.db.get(x);
             (d.instant || d.sorcery)
                 && ![Tag::Ctr, Tag::Fbgrant, Tag::Rem, Tag::Wipe].iter().any(|&k| d.tag(k))
-                && can_pay(g, p, d.generic, &d.pips, false)
+                && can_pay_spell(g, p, x, d.generic, &d.pips, false)
         })
         .collect();
     let Some(x) = max_by(&cs, |c| {
@@ -1041,7 +1061,7 @@ pub fn flashback_grant(g: &mut Game, p: PlayerId) -> Res {
     };
     let d = g.db.get(x);
     let (gn, pips) = (d.generic, d.pips.to_string());
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, x, gn, &pips, false)?;
     cast_card(g, p, x, "gy", Ctx::default())?;
     Ok(())
 }
@@ -1162,7 +1182,8 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         }
         g.entering_spent = ctx.mana_spent; // Chalice of the Void: X is half the mana paid
         let prev = std::mem::replace(&mut g.cast_target, ctx.target); // an Aura's target, chosen as cast
-        let r = enter(g, p, c, Enter { was_cast: true, orig: ctx.owner, ..Enter::default() });
+        let r =
+            enter(g, p, c, Enter { was_cast: true, orig: ctx.owner, rivaz_exile: ctx.rivaz_exile, ..Enter::default() });
         g.cast_target = prev;
         let m = r?;
         if g.player(p).is_commander(c) {
@@ -1205,11 +1226,7 @@ fn resolve_inner(g: &mut Game, p: PlayerId, c: CardId, ctx: &Ctx, zone: Sym) -> 
         add_treasure(g, p, n)?;
     }
     if let Some(n) = t.int(Tag::Lr) {
-        if crate::human::is_human(g, p) && crate::human::gaps_a::forest_search(g, p, c)? {
-            // a person's Nature's Lore found its Forest card
-        } else {
-            land_ramp(g, p, n.max(0) as u32, t.has(Tag::Lrt))?;
-        }
+        land_ramp(g, p, n.max(0) as u32, t.has(Tag::Lrt))?;
         if t.has(Tag::Lh) {
             land_to_hand(g, p)?;
         }

@@ -19,7 +19,7 @@
 
 use crate::cards::CardDb;
 use crate::engine::cast::{cast_card, castable};
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay_spell, cost_of, pay_spell, total_mana, total_mana_spell};
 use crate::engine::removal::legal_targets;
 use crate::engine::stack::ability_window;
 use crate::engine::values::card_name;
@@ -71,7 +71,7 @@ fn card_of(g: &Game, i: usize) -> Option<CardId> {
 /// the mana p needs for card c as cost_of reads it, plus `x` more generic
 fn affordable(g: &Game, p: PlayerId, c: CardId, x: u32) -> bool {
     let (gn, pips) = cost_of(g, p, c);
-    can_pay(g, p, gn + x, &pips, false)
+    can_pay_spell(g, p, c, gn + x, &pips, false)
 }
 
 // ================================================================== the ability
@@ -143,12 +143,10 @@ pub fn cast_copy_at(
         return Ok(false);
     }
     let (gn, pips) = cost_of(g, p, c);
-    if !can_pay(g, p, gn + x, &pips, false) {
+    if !can_pay_spell(g, p, c, gn + x, &pips, false) {
         return Ok(false);
     }
-    g.pay_for = Some(c);
-    let paid = pay(g, p, gn + x, &pips, false);
-    g.pay_for = None;
+    let paid = pay_spell(g, p, c, gn + x, &pips, false);
     if !paid? {
         return Ok(false);
     }
@@ -179,7 +177,10 @@ fn best_target(g: &Game, p: PlayerId, c: CardId) -> Option<(PermId, f64)> {
 fn braingeyser_x(g: &Game, p: PlayerId, c: CardId) -> u32 {
     let (gn, pips) = cost_of(g, p, c);
     let room = (g.player(p).library.len() as u32).saturating_sub(8).min(MAX_X);
-    (0..=room.min(total_mana(g, p, false))).rev().find(|&x| can_pay(g, p, gn + x, &pips, false)).unwrap_or(0)
+    (0..=room.min(total_mana_spell(g, p, c, false)))
+        .rev()
+        .find(|&x| can_pay_spell(g, p, c, gn + x, &pips, false))
+        .unwrap_or(0)
 }
 
 /// would Black Lotus's three mana make a spell castable that is not castable now (a card in hand or the commander)

@@ -9,7 +9,7 @@ use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{castable, on_cast};
 use crate::engine::hooks::fire_trigger;
 use crate::engine::life::{gain, lose_life, prevents_damage};
-use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell};
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
 use crate::engine::stack::{ability_window, trigger_window};
@@ -1094,7 +1094,7 @@ pub fn evoke_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<O
             continue;
         }
         let (fg, fp) = cost_of(g, p, c);
-        if can_pay(g, p, fg, &fp, false) || !can_pay(g, p, gen_, pips, false) {
+        if can_pay_spell(g, p, c, fg, &fp, false) || !can_pay_spell(g, p, c, gen_, pips, false) {
             continue;
         }
         let u = if name == "Shriekmaw" {
@@ -1119,11 +1119,11 @@ pub fn evoke_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<O
 fn evoke_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let (gen_, pips) = evoke_cost(&g.db.get(c).name).unwrap();
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, gen_, pips, false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, gen_, pips, false) {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
-    pay(g, p, gen_, pips, false)?;
+    pay_spell(g, p, c, gen_, pips, false)?;
     g.player_mut(p).spells_this_turn += 1;
     on_cast(g, p, c)?;
     crate::glog!(g, "  {} evokes {}", pname(g, p), g.db.get(c).name);
@@ -1444,7 +1444,7 @@ fn value_blink(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<
         || g.active == Some(p)
         || !g.player(p).hand.contains(&c)
         || STYLE_KEYS.contains(&g.player(p).key)
-        || !can_pay(g, p, gen_, pips, false)
+        || !can_pay_spell(g, p, c, gen_, pips, false)
     {
         return Ok(vec![]);
     }
@@ -1475,11 +1475,11 @@ fn value_blink_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let t = (t != NONE_ID).then_some(PermId(t));
     let name = g.db.get(c).name.to_string();
     let (gen_, pips) = value_blink_cost(&name);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, gen_, pips, false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, gen_, pips, false) {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
-    pay(g, p, gen_, pips, false)?;
+    pay_spell(g, p, c, gen_, pips, false)?;
     let pl = g.player_mut(p);
     pl.spells_this_turn += 1;
     pl.cast_names.insert(c);

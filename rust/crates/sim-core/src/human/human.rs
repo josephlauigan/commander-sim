@@ -272,7 +272,7 @@ fn can_act_abilities(g: &mut Game, q: PlayerId) -> Res<bool> {
 /// does q hold anything to do at instant speed right now (an instant or flash card they can afford, an ability
 /// counter)?
 pub fn can_respond(g: &Game, q: PlayerId) -> bool {
-    let have = engine::mana::total_mana(g, q, false) + g.player(q).pool.total();
+    let have = engine::mana::total_mana(g, q, false) + g.player(q).mana.spell() + g.player(q).pool.total();
     if engine::stack::counter_on_top(g, q).is_some_and(|c| g.db.get(c).cmc <= have) {
         return true; // a counterspell on top of the library under a Mystic Forge
     }
@@ -498,7 +498,7 @@ fn cast_counterspell_inner(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<S
         return Ok(Some(why));
     }
     let (gn, pips) = stack::counter_cost(g, c, Some(spell), Some(q));
-    let can_mana = mana::cost_problem(g, q, gn, &pips).is_none();
+    let can_mana = mana::card_cost_problem(g, q, c, gn, &pips).is_none();
     let alt = stack::counter_alt_label(g, q, c, Some(spell));
     // with both open, the person chooses (Force of Will: pay {3}{U}{U} or pitch a blue card). Pact of Negation's {0} is
     // its mana cost and the upkeep payment part of its effect: no choice
@@ -516,7 +516,7 @@ fn cast_counterspell_inner(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<S
         (Some(_), false) => true,
         (None, true) => false,
         (None, false) => {
-            let why = mana::cost_problem(g, q, gn, &pips).unwrap_or_default();
+            let why = mana::card_cost_problem(g, q, c, gn, &pips).unwrap_or_default();
             return Ok(Some(format!("Can't cast {}. {why}", card_name(g, c))));
         }
     };
@@ -525,7 +525,12 @@ fn cast_counterspell_inner(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<S
             return Ok(Some(format!("Can't pay {}'s alternative cost.", card_name(g, c))));
         }
     } else {
-        mana::pay_from_pool(g, q, gn, &pips); // pay from your pool
+        let prev = g.player_mut(q).pool.spending.replace(Spending::Card(c));
+        let why = mana::pay_card_from_pool(g, q, c, gn, &pips);
+        g.player_mut(q).pool.spending = prev;
+        if let Some(why) = why {
+            return Ok(Some(why));
+        }
     }
     g.free_counter = true; // already paid
     let r = stack::cast_counter_spell(g, q, c, id);
@@ -967,6 +972,32 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         gn = mg;
         pips = mp;
         match kind {
+            legal::GyKind::Yawg => {
+                if let Some(src) = legal::rivaz_source(g, p, c) {
+                    let available = crate::impls::t45_urdragon::rivaz_permissions(g, p, c);
+                    let src = if available.len() > 1 {
+                        let labels: Vec<String> = available
+                            .iter()
+                            .enumerate()
+                            .map(|(i, _)| format!("Rivaz of the Claw ({} of {})", i + 1, available.len()))
+                            .collect();
+                        let k = pick!(choices::choose(
+                            g,
+                            p,
+                            "choose",
+                            "Cast using which Rivaz of the Claw?",
+                            &labels,
+                            Some("cancel"),
+                            None
+                        )?);
+                        available[k]
+                    } else {
+                        src
+                    };
+                    ctx.rivaz_permission = Some(src);
+                    zone = "mgy".into();
+                }
+            }
             legal::GyKind::Escape => zone = "escape".into(), // Underworld Breach: back to the graveyard afterwards
             legal::GyKind::Retrace => zone = "mgy".into(),   // --- urdragon: back to the graveyard as it resolves
             legal::GyKind::Muldrotha => {
@@ -1016,7 +1047,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
             1
         };
         if k == 1 {
-            if let Some(why) = mana::pay_from_pool(g, p, og, &op) {
+            if let Some(why) = mana::pay_card_from_pool(g, p, c, og, &op) {
                 return Ok(Some(format!("Can't overload {cname}. {why}")));
             }
             crate::glog!(g, "  {me} casts {cname} overloaded");
@@ -1066,7 +1097,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         gn += eg;
         pips.push_str(&ep);
         tgt_extra = (eg, ep.clone());
-        if let Some(why) = mana::cost_problem(g, p, gn, &pips)
+        if let Some(why) = mana::card_cost_problem(g, p, c, gn, &pips)
             && !(zone == "hand" && !cit && !free && legal::spell_alt_label(g, p, c).is_some())
         {
             return Ok(Some(format!("Can't cast {cname} on that target. {why}")));
@@ -1151,7 +1182,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         && !free
         && let Some(label) = legal::spell_alt_label(g, p, c)
     {
-        let use_alt = if mana::cost_problem(g, p, gn, &pips).is_none() {
+        let use_alt = if mana::card_cost_problem(g, p, c, gn, &pips).is_none() {
             let labels = vec![format!("pay {}", mana::cost_text(gn, &pips)), label];
             pick!(choices::choose(g, p, "choose", &format!("{cname}: how do you pay?"), &labels, Some("cancel"), None)?)
                 == 1
@@ -1159,7 +1190,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
             true
         };
         if use_alt {
-            if let Some(why) = mana::cost_problem(g, p, tgt_extra.0, &tgt_extra.1) {
+            if let Some(why) = mana::card_cost_problem(g, p, c, tgt_extra.0, &tgt_extra.1) {
                 return Ok(Some(format!("Can't cast {cname} on that target. {why}")));
             }
             if !pay_spell_alt(g, p, c)? {
@@ -1174,7 +1205,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         // {B/P}: its colour, or 2 life (your choice)
         let ways = legal::phyrexian_ways(g, p, c, gn, &pips);
         if ways.is_empty() {
-            let why = mana::cost_problem(g, p, gn, &pips).unwrap_or_default();
+            let why = mana::card_cost_problem(g, p, c, gn, &pips).unwrap_or_default();
             return Ok(Some(format!(
                 "Can't cast {cname}. {why} Its Phyrexian mana can be paid with 2 life each instead."
             )));
@@ -1200,14 +1231,14 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
     if d.has_dsl() {
         // the additional cost (Natural Order's sacrifice, Seize the Spoils' discard) is paid before the mana (601.2h:
         // in any order), so the person can still back out of it with nothing paid
-        if let Some(why) = mana::cost_problem(g, p, gn, &pips) {
+        if let Some(why) = mana::card_cost_problem(g, p, c, gn, &pips) {
             return Ok(Some(format!("Can't cast {cname}. {why}{}", legal::cost_changers(g, p, c))));
         }
         if !cast::additional_cost(g, p, c, false)? {
             return Ok(None); // cancelled
         }
     }
-    if let Some(why) = mana::pay_from_pool(g, p, gn, &pips) {
+    if let Some(why) = mana::pay_card_from_pool(g, p, c, gn, &pips) {
         return Ok(Some(format!("Can't cast {cname}. {why}{}", legal::cost_changers(g, p, c))));
     }
     if life > 0 {
@@ -1229,7 +1260,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         let labels: Vec<String> = (0..=top).map(|x| format!("X = {x}")).collect();
         let prompt = format!("{cname}: choose X (it costs {{X}}{{X}}{{X}} more; 5X damage to each of up to X targets)");
         let k = choices::choose(g, p, "choose", &prompt, &labels, None, None)?.unwrap_or(0) as u32;
-        mana::pay_from_pool(g, p, 3 * k, "");
+        mana::pay_card_from_pool(g, p, c, 3 * k, "");
         ctx.x = k as i32;
     }
     specs::choose_post(g, p, c, &mut ctx)?;
@@ -1252,7 +1283,7 @@ fn cast_inner(g: &mut Game, p: PlayerId, c: CardId, zone: &str) -> Res<Option<St
         } else {
             0
         };
-        mana::pay_from_pool(g, p, per * x, "");
+        mana::pay_card_from_pool(g, p, c, per * x, "");
         ctx.x = x as i32;
         if d.tags.has(Tag::Xtutor) {
             g.last_x = (per * x) as i32; // Walking Ballista reads the X mana paid (`karn_engines::enters_with`)

@@ -76,7 +76,7 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
             if LOCK_KINDS.contains(&kind) && !g.auras.is_empty() && cardcode::lock_factor(g, m) < 1.0 {
                 continue;
             }
-            if let (Some(s), Some(d)) = (st, cd) {
+            if let (Some(s), Some(d), Some(spell)) = (st, cd, spell) {
                 if &*s.name == "Fatal Push" && d.cmc > 2 && !cardcode::revolt(g, p) {
                     continue;
                 }
@@ -86,7 +86,10 @@ pub fn legal_targets(g: &Game, p: PlayerId, kind: &str, tgt: &str, mv4: bool, sp
                 if &*s.name == "Depressurize" && crate::engine::values::epow(g, m) > 3 {
                     continue; // -3/-0 must leave it at 0 power or less
                 }
-                if &*s.name == "Bloodchief's Thirst" && d.cmc > 2 && !can_pay(g, p, 2, "BB", false) {
+                if &*s.name == "Bloodchief's Thirst"
+                    && d.cmc > 2
+                    && !crate::engine::mana::can_pay_spell(g, p, spell, 2, "BB", false)
+                {
                     continue;
                 }
             }

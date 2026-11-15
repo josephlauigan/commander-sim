@@ -814,13 +814,14 @@ mod tier_tests {
     fn the_repository_decks_have_their_tiers() {
         let root = crate::decks::root().unwrap();
         let f = sim_core::export::load_decks(&crate::decks::data_dir(&root).join("decks.json")).unwrap();
-        let want: [(&str, &[&str]); 6] = [
+        let want: [(&str, &[&str]); 7] = [
             ("yshtola", &["t5"]), // JD 10/18 bands: 1 t5, 2 t3-t4, 3 t3, 4 t1-t3
             ("sheoldred", &["t3", "t4"]),
             ("aragorn", &["t4", "t5"]),
             ("cloud", &["t1", "t2", "t3"]),
             ("thrasios", &["t6"]),
             ("thanos", &["t5"]),
+            ("urdragon", &["t5"]),
         ];
         assert_eq!(f.mine.len(), want.len());
         for (k, t) in want {

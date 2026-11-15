@@ -7,7 +7,7 @@ use super::partials::{at_once, remove_card};
 use crate::cards::{CardDb, Types};
 use crate::engine::cast::cast_card;
 use crate::engine::life::check_state;
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay_spell};
 use crate::engine::pool::Kind;
 use crate::engine::removal::legal_targets;
 use crate::engine::repl;
@@ -219,7 +219,11 @@ fn relic_release(g: &mut Game, src: Src, p: PlayerId) -> Res {
 
 // ================================================================== Notion Thief: flash at end of turn
 fn thief_flash(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post.is_some() || g.active == Some(p) || !g.player(p).hand.contains(&c) || !can_pay(g, p, 2, "UB", false) {
+    if post.is_some()
+        || g.active == Some(p)
+        || !g.player(p).hand.contains(&c)
+        || !can_pay_spell(g, p, c, 2, "UB", false)
+    {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -232,10 +236,10 @@ fn thief_flash(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<
 /// marchesa.IC_cast_perm(g, p, c, 2, 'UB')
 fn thief_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 2, "UB", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 2, "UB", false) {
         return Ok(false);
     }
-    pay(g, p, 2, "UB", false)?;
+    pay_spell(g, p, c, 2, "UB", false)?;
     cast_card(g, p, c, "hand", Ctx::default())?;
     Ok(true)
 }

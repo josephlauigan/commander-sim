@@ -14,7 +14,7 @@
 
 use crate::cards::CardDb;
 use crate::engine::cast::cast_card;
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell, total_mana_spell};
 use crate::engine::values::has;
 use crate::engine::zones::{discard_cards, draw};
 use crate::flow::Res;
@@ -114,11 +114,12 @@ fn archivist_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> 
 /// is p's graveyard worth replaying now? The option's utility: a storm card (Brain Freeze, Grapeshot) with the mana
 /// to cast it after the Will, or three cheap castable spells that fit in the mana left; never into an empty yard
 pub fn will_value(g: &Game, p: PlayerId) -> Option<f64> {
+    let w = g.db.id("Yawgmoth's Will")?;
     let pl = g.player(p);
-    if pl.yawg || g.active != Some(p) || !can_pay(g, p, 2, "B", false) {
+    if pl.yawg || g.active != Some(p) || !can_pay_spell(g, p, w, 2, "B", false) {
         return None;
     }
-    let left = total_mana(g, p, false).saturating_sub(3);
+    let left = total_mana_spell(g, p, w, false).saturating_sub(3);
     let cost = |c: CardId| {
         let (cg, cp) = cost_of(g, p, c);
         cg + cp.chars().count() as u32
@@ -164,7 +165,7 @@ fn will_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     if !g.player(p).hand.contains(&w) || will_value(g, p).is_none() {
         return Ok(false);
     }
-    pay(g, p, 2, "B", false)?;
+    pay_spell(g, p, w, 2, "B", false)?;
     cast_card(g, p, w, "hand", Ctx::default())?;
     Ok(true)
 }
@@ -185,7 +186,7 @@ pub fn exile_options(g: &mut Game, p: PlayerId, post: Option<bool>) -> Res<Vec<O
         return Ok(vec![]);
     };
     let (cg, cp) = cost_of(g, p, c);
-    if !can_pay(g, p, cg, &cp, false) {
+    if !can_pay_spell(g, p, c, cg, &cp, false) {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -230,10 +231,10 @@ pub fn warp_leaves_exile(g: &mut Game, p: PlayerId, c: CardId) {
 fn voidborn_from_exile(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
     let (cg, cp) = cost_of(g, p, c);
-    if !g.player(p).exile.contains(&c) || !can_pay(g, p, cg, &cp, false) {
+    if !g.player(p).exile.contains(&c) || !can_pay_spell(g, p, c, cg, &cp, false) {
         return Ok(false);
     }
-    pay(g, p, cg, &cp, false)?;
+    pay_spell(g, p, c, cg, &cp, false)?;
     g.player_mut(p).exile.take(c);
     g.player_mut(p).flag_turn.shift_remove(&intern("voidborn_warped"));
     cast_card(g, p, c, "lib", Ctx::default())?;

@@ -67,11 +67,13 @@ pub fn coerce_detach(g: &mut Game, a: PermId) {
     if cur != orig {
         g.player_mut(cur).perms.retain(|&m| m != host);
         if g.player(orig).alive {
+            crate::engine::control::note_phase_holder(g, host, cur);
             g.perm_mut(host).owner = orig;
             g.player_mut(orig).perms.push(host);
             crate::glog!(g, "    {} returns to {} (Coerced to Kill left)", g.perm(host).name, g.player(orig).name);
         } else {
             g.perm_mut(host).on_bf = false;
+            g.perm_mut(host).data.remove(DataKey::PhaseInWith);
         }
     }
     g.bf_ver += 1;

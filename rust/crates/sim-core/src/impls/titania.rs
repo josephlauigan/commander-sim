@@ -20,7 +20,7 @@
 //! and End-Raze Forerunners when the attack is lethal through the blockers.
 
 use crate::cards::CardDb;
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay_spell, cost_of, pay_spell, total_mana};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{counter_window, trigger_window};
 use crate::engine::values::{card_name, epow, etgh, pval};
@@ -161,7 +161,7 @@ fn uprising_first(g: &Game, p: PlayerId) -> bool {
     !on_bf
         && in_hand(g, p, UPRISING).is_some_and(|c| {
             let (gn, pips) = cost_of(g, p, c);
-            can_pay(g, p, gn, &pips, false) && crate::engine::cast::castable(g, p, c, "hand")
+            can_pay_spell(g, p, c, gn, &pips, false) && crate::engine::cast::castable(g, p, c, "hand")
         })
 }
 
@@ -444,7 +444,7 @@ pub fn attack_fog(g: &mut Game, d: PlayerId, p: PlayerId, atk: &[PermId]) -> Res
         return Ok(false);
     }
     let (gn, pips) = cost_of(g, d, c);
-    if !can_pay(g, d, gn, &pips, false) {
+    if !can_pay_spell(g, d, c, gn, &pips, false) {
         return Ok(false);
     }
     crate::glog!(
@@ -548,10 +548,10 @@ fn expert_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: Player
 /// cast an instant from the hand for {G} in response to removal on m (`gives`: what it does to m)
 pub fn cast_protect(g: &mut Game, p: PlayerId, name: &str, m: PermId, gives: fn(&mut Game, PermId)) -> Res<bool> {
     let Some(c) = in_hand(g, p, name) else { return Ok(false) };
-    if !can_pay(g, p, 0, "G", false) || !crate::engine::cast::castable(g, p, c, "hand") {
+    if !can_pay_spell(g, p, c, 0, "G", false) || !crate::engine::cast::castable(g, p, c, "hand") {
         return Ok(false);
     }
-    if !pay(g, p, 0, "G", false)? {
+    if !pay_spell(g, p, c, 0, "G", false)? {
         return Ok(false);
     }
     let pl = g.player_mut(p);
@@ -820,12 +820,30 @@ fn titan_land_score(g: &Game, p: PlayerId, c: CardId) -> f64 {
 }
 
 /// Primeval Titan's trigger: up to two land cards from the library onto the battlefield tapped (each is a landfall),
-/// then shuffle. A person is not asked (the best lands are taken); Opposition Agent takes what it can
+/// then shuffle. A person may choose zero, one or two lands; Opposition Agent takes what it can
 fn titan_search(g: &mut Game, p: PlayerId) -> Res {
     for _ in 0..2 {
         let lands: Vec<CardId> =
             crate::engine::zones::searchable(g, p).into_iter().filter(|&c| g.db.get(c).land).collect();
-        let Some(c) = max_by(&lands, |c| titan_land_score(g, p, c)) else { break };
+        if lands.is_empty() {
+            break;
+        }
+        let picked = if crate::human::is_human(g, p) {
+            let labels: Vec<String> = lands.iter().map(|&c| crate::human::choices::card_label(g, c)).collect();
+            crate::human::choices::choose(
+                g,
+                p,
+                "search",
+                "Primeval Titan: search your library for a land card (up to two)",
+                &labels,
+                Some("find nothing"),
+                None,
+            )?
+            .map(|i| lands[i])
+        } else {
+            max_by(&lands, |c| titan_land_score(g, p, c))
+        };
+        let Some(c) = picked else { break };
         let lib = &mut g.player_mut(p).library;
         if let Some(i) = lib.iter().position(|&x| x == c) {
             lib.remove(i);

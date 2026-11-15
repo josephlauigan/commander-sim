@@ -20,7 +20,7 @@ another carrier, to survive.
 for an Equipment card, reveal it, put it into your hand, then shuffle. As long as Cloud is equipped, if a triggered
 ability of Cloud or an Equipment attached to it triggers, that ability triggers an additional time.*
 
-- **A tutor every time he enters.** The deck has 11 Equipment, so the search always finds one. He is cheap to cast and
+- **A tutor every time he enters.** The deck has 12 Equipment, so the search always finds one. He is cheap to cast and
   to recast from the command zone (the commander tax adds {2} for each earlier cast from there), and a recast replaces
   a lost Equipment at once.
 - **The doubling is narrow.** It applies only while Cloud himself is equipped, and only to triggers of Cloud or of an
@@ -53,8 +53,8 @@ ability of Cloud or an Equipment attached to it triggers, that ability triggers 
 - **Andúril, Narsil Reforged**: whenever the equipped creature attacks, it puts a +1/+1 counter on each creature you
   control (two with the city's blessing), so Cloud's attack puts two counters on each (four with the blessing).
 
-**Swiftfoot Boots**, **Colossus Hammer**, **Fireshrieker** and **Mithril Coat** have no triggers that the doubling helps: they are
-plain bonuses (hexproof and haste, +10/+10, double strike, indestructible). Mithril Coat's one trigger fires as it enters,
+**Swiftfoot Boots**, **Champion's Helm**, **Colossus Hammer**, **Fireshrieker** and **Mithril Coat** have no triggers that the doubling helps: they are
+plain bonuses (hexproof and haste, +2/+2 and hexproof while the equipped creature is legendary, +10/+10, double strike, indestructible). Mithril Coat's one trigger fires as it enters,
 before it is attached to anything, so Cloud's extra trigger never applies to it. **Sting, the Glinting Dagger** (+1/+1 and haste) has an untap trigger at the start of
 each combat; doubling it adds nothing.
 
@@ -289,7 +289,7 @@ bottom for each mulligan after the free one.
 
 ### What to tutor for
 
-The deck has 11 Equipment and several ways to find them. The question each time is the same: what does the board need
+The deck has 12 Equipment and several ways to find them. The question each time is the same: what does the board need
 in the next two turns, and how much mana is there to cast it and attach it? Cast cost and equip cost are separate, so a
 fetch is only as good as the mana left to deploy it.
 
@@ -440,7 +440,8 @@ with Hearth and Home covers red, blue, green and white.
 
 Cloud is the key permanent: the Equipment is only as good as its carrier. Order of defence:
 
-1. **Prevent.** Swiftfoot Boots (hexproof), the Sword's protection colours, Grand Abolisher (opponents cannot cast
+1. **Prevent.** Swiftfoot Boots (hexproof and haste), Champion's Helm (equip {1}: +2/+2 and hexproof while the carrier
+   is legendary, which Cloud and most backup carriers are; it gives no haste), the Sword's protection colours, Grand Abolisher (opponents cannot cast
    spells or activate abilities of artifacts, creatures or enchantments during your turn), Bastion Protector (commander
    creatures get +2/+2 and indestructible: wipes that destroy and damage do not kill him), Giver of Runes (protection
    from a colour for another creature, at instant speed).
@@ -498,7 +499,6 @@ The deck's answers, most of them at instant speed:
 | Enlightened Tutor | {W} | End of an opponent's turn: the Sword or Equipment you need next |
 | Skyclave Apparition | {1}{W}{W} | Mana value 4 or less on your turn: Kaalia, Meren, Teysa, Rhystic Study, Aura Shards, Grave Pact |
 | Winds of Abandon | {1}{W} / {4}{W}{W} | One creature (sorcery speed); overloaded it exiles all your opponents' creatures and leaves yours. Each controller fetches a basic land tapped |
-| Lay Down Arms | {W} | A creature with mana value up to your Plains. Its controller gains 3 life. Light-Paws, Sythis, Marwyn at two or three Plains |
 | Wrath of God, Fumigate | {2}{W}{W} / {3}{W}{W} | A wide opposing board (Lathril, Marwyn, Tatyova's Avenger). Fumigate gains 1 life per creature destroyed. Equipment survives, and a Cloud wearing Mithril Coat survives too |
 | Austere Command | {4}{W}{W} | Choose two modes. "Creatures with mana value 4 or more" plus "enchantments" leaves Cloud (mana value 2) and the artifacts; "artifacts" kills your own Equipment (not Mithril Coat, which is indestructible) |
 
@@ -523,7 +523,7 @@ and then win it. Sword choice below uses the table in "What to tutor for".
 |---|---|---|---|
 | Isshin (Mardu attackers) | Isshin doubles attack triggers: Hero of Bladehold, Adeline, Hellrider swing for ten or more on turn four. Swords to Plowshares, Path to Exile, Anguished Unmaking, Blasphemous Act, Damn | Slow the swing, then race. Kill Isshin (mana value 3). Sword of Fire and Ice (protection from red) | Archangel of Tithes, Windborn Muse, Baird, Norn's Annex, Judgment of Alexander, Skyclave Apparition, Wrath of God, Mithril Coat (against Damn) |
 | Lathril (Golgari Elves) | Elves flood the board; Lathril taps ten Elves: you lose 10. Trophy, Putrefy, Beast Within, Reclamation Sage | Sweep before turn 5. Sword of Feast and Famine: green creatures cannot block him, and black or green removal cannot target him | Wrath of God, Fumigate, Winds of Abandon (overload), Archangel, Skyclave Apparition on Lathril (mana value 4) |
-| Light-Paws (Aura voltron) | One huge Aura'd creature, commander damage, instant protection (Blacksmith's Skill, Flickerform). The worst t1 matchup | Kill her (mana value 2) before the Aura chain: Lay Down Arms, Skyclave, Swords to Plowshares, Path to Exile. Sword of Hearth and Home: white creatures cannot block him, and white damage to him is prevented | Elspeth's -3 (when Cloud has no Sword), Judgment of Alexander, Winds of Abandon, Soldier tokens as chump blockers |
+| Light-Paws (Aura voltron) | One huge Aura'd creature, commander damage, instant protection (Blacksmith's Skill, Flickerform). The worst t1 matchup | Kill her (mana value 2) before the Aura chain: Skyclave, Swords to Plowshares, Path to Exile, Stroke of Midnight. Sword of Hearth and Home: white creatures cannot block him, and white damage to him is prevented | Elspeth's -3 (when Cloud has no Sword), Judgment of Alexander, Winds of Abandon, Soldier tokens as chump blockers |
 | Tatyova (Simic landfall) | Ramp, then Avenger of Zendikar or Ancient Greenwarden; Counterspell, Negate, Deprive, Aetherize | Race: she rarely attacks. Resolve Cloud before counters. Wrath if Avenger lands | Smothering Tithe (her draws pay or feed you), Thalia, Grand Abolisher (no counters on your turn), Stroke of Midnight on Tatyova |
 | Teysa (Orzhov aristocrats) | Blood Artist, Zulaport, Cruel Celebrant drain; Teysa doubles them; Grave Pact and Dictate of Erebos edicts; Plunderer + Skeleton + altar | Do not wipe: their creatures dying drains you. Exile the drain creatures and Teysa; keep a fodder creature for edicts. Sword of Feast and Famine plus Sword of Hearth and Home: no targeted removal can hit Cloud | Skyclave on Teysa or Grave Pact, Stroke of Midnight on Dictate of Erebos, Austere Command (enchantment mode), Elspeth's tokens |
 
@@ -532,8 +532,8 @@ and then win it. Sword choice below uses the table in "What to tutor for".
 | Opponent | Their threat | Your plan | Cards that matter |
 |---|---|---|---|
 | Brago (Azorius blink control) | Counterspell, Mana Drain, An Offer You Can't Refuse; Aven Mindcensor (Cloud searches only the top four); Farewell; Agent of Treachery | Land Cloud and the first Sword before counters. Do not overextend into Farewell; keep Stoneforge Mystic and Steelshaper's Gift in hand. Rogue's Passage past the fliers | Grand Abolisher (no spells on your turn), Thalia, Swords to Plowshares or Path to Exile on Agent of Treachery (mana value 7) |
-| Kaalia (Mardu cheat) | Kaalia attacks and puts an Angel, Demon or Dragon into play attacking (Master of Cruelties, Terror of the Peaks, Lyra) | Kill Kaalia on sight (mana value 4). Attack taxes make Kaalia pay to attack but not the cheated attackers. Judgment of Alexander when one is already attacking | Skyclave Apparition, Swords to Plowshares, Path to Exile, Lay Down Arms at four Plains, Judgment of Alexander, Galadriel's Dismissal (kicked, on their attackers) |
-| Lord Windgrace (Jund lands) | Landfall board (Avenger, Field of the Dead, Baloths), Marit Lage, Constant Mists, Strip Mine. No counters | Race and attack the planeswalkers. Exile Marit Lage (indestructible, so Wrath and Elspeth miss it). Sword of Feast and Famine or Fire and Ice: Trophy, Putrefy and Beast Within cannot target him | Swords to Plowshares, Path to Exile, Winds of Abandon, Lay Down Arms (the token has mana value 0), Stroke of Midnight on a planeswalker |
+| Kaalia (Mardu cheat) | Kaalia attacks and puts an Angel, Demon or Dragon into play attacking (Master of Cruelties, Terror of the Peaks, Lyra) | Kill Kaalia on sight (mana value 4). Attack taxes make Kaalia pay to attack but not the cheated attackers. Judgment of Alexander when one is already attacking | Skyclave Apparition, Swords to Plowshares, Path to Exile, Judgment of Alexander, Galadriel's Dismissal (kicked, on their attackers) |
+| Lord Windgrace (Jund lands) | Landfall board (Avenger, Field of the Dead, Baloths), Marit Lage, Constant Mists, Strip Mine. No counters | Race and attack the planeswalkers. Exile Marit Lage (indestructible, so Wrath and Elspeth miss it). Sword of Feast and Famine or Fire and Ice: Trophy, Putrefy and Beast Within cannot target him | Swords to Plowshares, Path to Exile, Winds of Abandon, Stroke of Midnight on a planeswalker |
 | Meren (Golgari recursion) | Meren returns a creature every end step; Massacre Wurm (-2/-2), Plaguecrafter and Fleshbag edicts, Grave Pact, Toxic Deluge | Win before the grind. Keep Cloud equipped: a 4/3 survives Massacre Wurm and a bare 2/1 does not. Keep a fodder creature. Kill Meren (mana value 4) | Skyclave Apparition, Galadriel's Dismissal (phases Cloud out of Deluge and Wurm), Elspeth's tokens, Sword of Feast and Famine |
 | Sythis (Selesnya enchantress) | Aura Shards destroys an Equipment each time a creature enters; Ghostly Prison and Archon of Sun's Grace taxes; Banishing Light, Oblivion Ring, Journey to Nowhere; Winds of Rath | Kill Aura Shards and the engines early. Free equips (Ardenn, Kor Outfitter) re-attach cheaply. Pay the tax only for a kill. Sword of Hearth and Home: white and green removal cannot target Cloud | Skyclave Apparition on Aura Shards, Stroke of Midnight, Austere Command (enchantment mode), Forge Anew, Cid, Rogue's Passage |
 
@@ -588,7 +588,7 @@ about to swing (not against Isshin, Aurelia, Kaalia, Lathril's drain or Craterho
 
 ### Common mistakes
 
-1. Equipping into open removal at sorcery speed with no Giver, Boots or {3} for Mithril Coat behind it.
+1. Equipping into open removal at sorcery speed with no Giver, Boots, Helm or {3} for Mithril Coat behind it.
 2. Putting the Equipment on another creature and expecting the doubling: it works only on Cloud.
 3. Using Elspeth's -3 while Cloud carries a Sword: a 4/3 has power 4 and dies with the rest.
 4. Casting Wrath of God or Fumigate over a board you built, when Austere Command ("mana value 4 or greater" plus
@@ -619,11 +619,11 @@ needs {W}{W}{W}.
   Treasures when opponents draw and don't pay {2}.
 - **Card draw:** Mask of Memory, Court of Ardenvale, Puresteel Paladin, Sram, Buster Sword, Sword of Fire and Ice and
   Mind Stone.
-- **Removal and defence:** Wrath of God, Fumigate, Austere Command, Winds of Abandon, Lay Down Arms, Swords to
+- **Removal and defence:** Wrath of God, Fumigate, Austere Command, Winds of Abandon, Swords to
   Plowshares, Path to Exile, Stroke of Midnight, Skyclave Apparition, Judgment of Alexander, Archangel of Tithes,
   Archon of Absolution, Norn's Annex, Windborn Muse, Baird, Elspeth, Sun's Champion.
-- **11 Equipment** in the deck: Andúril, Buster Sword, Colossus Hammer, Fireshrieker, Mask of Memory, Mithril Coat,
-  Sting, Swiftfoot Boots, and the three Swords.
+- **12 Equipment** in the deck: Andúril, Buster Sword, Champion's Helm, Colossus Hammer, Fireshrieker, Mask of Memory,
+  Mithril Coat, Sting, Swiftfoot Boots, and the three Swords.
 
 ## Bracket and Rule 0
 
@@ -642,9 +642,9 @@ on its own. Tell the table before the game that:
 
 **Enchantments (3).** Court of Ardenvale, Forge Anew, Smothering Tithe
 
-**Artifacts (18).** Andúril, Narsil Reforged, Arcane Signet, Buster Sword, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Mask of Memory, Mind Stone, Mithril Coat, Norn's Annex, Sol Ring, Sting, the Glinting Dagger, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Thought Vessel
+**Artifacts (19).** Andúril, Narsil Reforged, Arcane Signet, Buster Sword, Champion's Helm, Coalition Relic, Colossus Hammer, Fellwar Stone, Fireshrieker, Mask of Memory, Mind Stone, Mithril Coat, Norn's Annex, Sol Ring, Sting, the Glinting Dagger, Swiftfoot Boots, Sword of Feast and Famine, Sword of Fire and Ice, Sword of Hearth and Home, Thought Vessel
 
-**Sorceries (7).** Austere Command, Fumigate, Lay Down Arms, Open the Armory, Steelshaper's Gift, Winds of Abandon, Wrath of God
+**Sorceries (6).** Austere Command, Fumigate, Open the Armory, Steelshaper's Gift, Winds of Abandon, Wrath of God
 
 **Instants (7).** Akroma's Will, Enlightened Tutor, Galadriel's Dismissal, Judgment of Alexander, Path to Exile, Stroke of Midnight, Swords to Plowshares
 
@@ -671,6 +671,7 @@ on its own. Tell the table before the game that:
 1 Balan, Wandering Knight
 1 Bastion Protector
 1 Buster Sword
+1 Champion's Helm
 1 Cid, Freeflier Pilot
 1 Cloud, Midgar Mercenary
 1 Coalition Relic
@@ -693,7 +694,6 @@ on its own. Tell the table before the game that:
 1 Judgment of Alexander
 1 Knight of the White Orchid
 1 Kor Outfitter
-1 Lay Down Arms
 1 Loyal Warhound
 1 Marvin, Murderous Mimic
 1 Mask of Memory

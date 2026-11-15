@@ -20,7 +20,7 @@ use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::cast_card;
 use crate::engine::control::{Duration, GoadFor, gain_control, goad};
 use crate::engine::life::gain;
-use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::shuffle_library;
@@ -76,12 +76,12 @@ fn stalker_leaves(g: &mut Game, src: Src, _m: PermId) -> Res {
 const WARP_RECAST_SUPPORTED: bool = false;
 
 fn stalker_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if !WARP_RECAST_SUPPORTED || post != Some(false) || !can_pay(g, p, 1, "W", false) {
+    if !WARP_RECAST_SUPPORTED || post != Some(false) || !can_pay_spell(g, p, c, 1, "W", false) {
         return Ok(vec![]);
     }
     // warp pays when the full cost can't be paid this turn
     let (cg, cp) = cost_of(g, p, c);
-    if can_pay(g, p, cg, &cp, false) {
+    if can_pay_spell(g, p, c, cg, &cp, false) {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -93,10 +93,10 @@ fn stalker_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res
 
 fn stalker_warp(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 1, "W", false) {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 1, "W", false) {
         return Ok(false);
     }
-    pay(g, p, 1, "W", false)?;
+    pay_spell(g, p, c, 1, "W", false)?;
     cast_card(g, p, c, "hand", Ctx::default())?;
     let found = g.player(p).perms.iter().copied().find(|&m| g.perm(m).on_bf && g.perm(m).cd == Some(c));
     if let Some(m) = found {

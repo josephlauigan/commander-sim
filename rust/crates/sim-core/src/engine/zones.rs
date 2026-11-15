@@ -526,6 +526,10 @@ pub fn leave(g: &mut Game, m: PermId) -> Res {
             g.player_mut(p).lands.retain(|&x| x != m); // (a creature token land is listed in both: Astral Dragon)
         }
         g.perm_mut(m).on_bf = false;
+        g.perm_mut(m).data.remove(DataKey::PhaseInWith);
+        if !g.control_links.is_empty() {
+            crate::engine::control::end_links(g);
+        }
     }
     g.bf_ver += 1;
     g.player_mut(p).left_turn = Some(g.turn_stamp()); // revolt
@@ -681,6 +685,9 @@ pub fn teferis_protection(g: &mut Game, p: PlayerId) {
     for l in lands {
         g.perm_mut(l).tapped = true;
     }
+    if !g.control_links.is_empty() {
+        crate::engine::control::end_links(g);
+    }
     g.bf_ver += 1;
     crate::glog!(
         g,
@@ -697,12 +704,12 @@ pub fn cast_teferis_protection(g: &mut Game, q: PlayerId, imp: f64) -> Res<bool>
     if g.player(q).life_locked
         || silenced(g, q)
         || !crate::engine::cast::castable(g, q, c, "hand")
-        || !crate::engine::mana::can_pay(g, q, gn, &pips, false)
+        || !crate::engine::mana::can_pay_spell(g, q, c, gn, &pips, false)
     {
         return Ok(false);
     }
     g.player_mut(q).hand.retain(|&x| x != c);
-    crate::engine::mana::pay(g, q, gn, &pips, false)?;
+    crate::engine::mana::pay_spell(g, q, c, gn, &pips, false)?;
     let pl = g.player_mut(q);
     pl.spells_this_turn += 1;
     pl.stat("spells_cast", 1);
@@ -878,7 +885,28 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
     if card_tag_str(g, m, Tag::Fill) == Some("stitcher") {
         mill(g, p, 3)?;
     }
-    die_rest(g, m, p, cause, creature)
+    die_rest(g, m, p, cause, creature)?;
+    // die_rest puts the card in the graveyard; the granted trigger must resolve after that move.
+    if creature
+        && !token
+        && let Some(Val::Int(n)) = g.perm(m).data.get(DataKey::RivazExile).cloned()
+    {
+        for _ in 0..n * (1 + repl::trigger_copies(g, p, "dies", Some(m))) as i64 {
+            queue_triggers(
+                g,
+                vec![Trigger {
+                    controller: p,
+                    src: Some(m),
+                    act: TrigAct::RivazExile { m },
+                    name: None,
+                    known: false,
+                    imp: None,
+                    cast_etb: false,
+                }],
+            )?;
+        }
+    }
+    Ok(())
 }
 
 fn card_tag_str(g: &Game, m: PermId, t: Tag) -> Option<&str> {
@@ -1058,6 +1086,7 @@ pub struct Enter {
     pub orig: Option<PlayerId>,
     pub sick: bool,
     pub was_cast: bool,
+    pub rivaz_exile: u32,
     pub undying: bool,
     pub plus: i32,
     /// the copy exceptions of a token copy ("except it's a 0/1 white Illusion"); a clone's come from its `enter_copy`
@@ -1069,7 +1098,16 @@ pub struct Enter {
 
 impl Default for Enter {
     fn default() -> Enter {
-        Enter { orig: None, sick: true, was_cast: false, undying: false, plus: 0, exc: None, token: false }
+        Enter {
+            orig: None,
+            sick: true,
+            was_cast: false,
+            rivaz_exile: 0,
+            undying: false,
+            plus: 0,
+            exc: None,
+            token: false,
+        }
     }
 }
 
@@ -1154,6 +1192,9 @@ pub fn enter(g: &mut Game, p: PlayerId, cd: CardId, how: Enter) -> Res<PermId> {
     x.sick = how.sick && !haste;
     x.phys = phys;
     x.born = born;
+    if how.rivaz_exile > 0 {
+        x.data.set(DataKey::RivazExile, Val::Int(how.rivaz_exile as i64));
+    }
     if loyalty.is_some() {
         x.loyalty = Some(v_loy); // Doubling Season: twice the loyalty; Vorinclex
     }

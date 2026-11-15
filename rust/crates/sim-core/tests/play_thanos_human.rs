@@ -52,6 +52,227 @@ fn lib_to(g: &mut Game, p: PlayerId, top: &[&str]) {
     }
 }
 
+#[test]
+fn primeval_titan_person_can_find_zero_one_or_two_lands_on_enter_and_attack() {
+    for attack in [false, true] {
+        for count in 0..=2 {
+            let mut g = table(&["thanos", "urza-mono-blue-artifacts"]);
+            let titan = perm(&mut g, P0, "Primeval Titan");
+            let forest = card(&g, "Forest");
+            let tower = card(&g, "Command Tower");
+            let spell = card(&g, "Sol Ring");
+            // Repeated basics remain legal for the second pick; the shared multi-card search helper
+            // deliberately restricts searches to distinct names, so Titan uses the single-choice helper.
+            g.player_mut(P0).library = vec![forest, forest, tower, spell];
+            let before = g.player(P0).lands.len();
+            let mut picked = 0;
+            let h = person(&mut g, move |r| {
+                if r.kind == "search" {
+                    assert!(r.prompt.starts_with("Primeval Titan:"));
+                    assert!(!r.choices.iter().any(|c| c.contains("Sol Ring")));
+                    if picked < count {
+                        picked += 1;
+                        Answer::Pick(r.choices.iter().position(|c| c.starts_with("Forest")).unwrap())
+                    } else {
+                        Answer::Decline
+                    }
+                } else if is_priority(r) {
+                    pass_a()
+                } else {
+                    Answer::Decline
+                }
+            });
+            let imp = g.registry.get(card(&g, "Primeval Titan")).unwrap();
+            let (etb, atk) = (imp.etb.unwrap(), imp.attack.unwrap());
+            if attack {
+                atk(&mut g, titan, P0, &[titan], P1).unwrap();
+            } else {
+                etb(&mut g, titan, P0, titan).unwrap();
+            }
+            assert_eq!(g.player(P0).lands.len(), before + count);
+            assert_eq!(g.player(P0).library.iter().filter(|&&c| c == forest).count(), 2 - count);
+            assert!(g.player(P0).library.contains(&tower) && g.player(P0).library.contains(&spell));
+            for &l in &g.player(P0).lands[before..] {
+                assert_eq!(g.perm(l).card(), forest);
+                assert!(g.perm(l).tapped);
+            }
+            assert_eq!(h.asked().iter().filter(|r| r.kind == "search").count(), if count == 2 { 2 } else { count + 1 });
+        }
+    }
+}
+
+#[test]
+fn primeval_titan_probe_does_not_ask_search_shuffle_or_put_lands() {
+    let mut g = table(&["thanos", "urza-mono-blue-artifacts"]);
+    let titan = perm(&mut g, P0, "Primeval Titan");
+    let forest = card(&g, "Forest");
+    g.player_mut(P0).library = vec![forest, forest];
+    let before = g.clone();
+    let h = person(&mut g, |_| panic!("no question before the trigger window"));
+    let imp = g.registry.get(card(&g, "Primeval Titan")).unwrap();
+    let (etb, atk) = (imp.etb.unwrap(), imp.attack.unwrap());
+    g.trig_probe = true;
+    assert!(matches!(etb(&mut g, titan, P0, titan), Err(sim_core::flow::Stop::Probe(_))));
+    g.trig_probe = true;
+    assert!(matches!(atk(&mut g, titan, P0, &[titan], P1), Err(sim_core::flow::Stop::Probe(_))));
+    assert!(h.asked().is_empty());
+    assert_eq!(g.rng, before.rng);
+    assert_eq!(g.player(P0).library, before.player(P0).library);
+    assert_eq!(g.player(P0).lands, before.player(P0).lands);
+}
+
+#[test]
+fn sneak_attack_person_may_put_any_creature_or_none_even_on_an_opponents_turn() {
+    for put in [false, true] {
+        let mut g = tbl();
+        let src = perm(&mut g, P0, "Sneak Attack");
+        hand(&mut g, P0, &["Llanowar Elves"]);
+        pool(&mut g, P0, &[('R', 1)]);
+        g.active = Some(P1);
+        g.step = sim_core::state::Step::End;
+        let h = person(&mut g, move |r| {
+            if r.prompt.ends_with(": which ability?") {
+                Answer::Pick(0)
+            } else if r.prompt.starts_with("Sneak Attack: put which") {
+                Answer::Pick(if put { 0 } else { r.choices.len() - 1 })
+            } else if is_priority(r) {
+                pass_a()
+            } else {
+                Answer::Decline
+            }
+        });
+        let abilities = sim_core::human::cards::abilities(&g, P0, src).unwrap();
+        assert!(abilities.iter().any(|a| a.label.contains("{R}")));
+        let i = index_of_sneak(&g, src);
+        sim_core::human::human::apply(&mut g, P0, &json!({"do":"use", "perm":i})).unwrap();
+        assert!(prompt_has(&h, "Sneak Attack: put which"));
+        assert_eq!(pool_total(&g, P0), 0, "paid even when choosing none");
+        let elves = perms_named(&g, P0, "Llanowar Elves");
+        assert_eq!(elves.len(), usize::from(put));
+        if let Some(&m) = elves.first() {
+            assert!(sim_core::engine::combat::has_haste(&g, m));
+            sim_core::engine::turn::end_step(&mut g, P1).unwrap();
+            assert!(!g.perm(m).on_bf);
+        }
+    }
+}
+
+fn index_of_sneak(g: &Game, src: PermId) -> usize {
+    g.player(P0).perms.iter().position(|&m| m == src).unwrap()
+}
+
+#[test]
+fn sneak_attack_with_an_empty_hand_is_a_legal_activation() {
+    let mut g = tbl();
+    let src = perm(&mut g, P0, "Sneak Attack");
+    g.player_mut(P0).hand.clear();
+    pool(&mut g, P0, &[('R', 1)]);
+    person(&mut g, |r| {
+        if is_priority(r) {
+            pass_a()
+        } else if r.prompt.ends_with(": which ability?") {
+            Answer::Pick(0)
+        } else {
+            Answer::Decline
+        }
+    });
+    let i = index_of_sneak(&g, src);
+    sim_core::human::human::apply(&mut g, P0, &json!({"do":"use", "perm":i})).unwrap();
+    assert_eq!(pool_total(&g, P0), 0);
+    assert!(g.player(P0).hand.is_empty());
+}
+
+#[test]
+fn rings_copies_sneak_attack_and_each_resolution_chooses_a_creature() {
+    let mut g = tbl();
+    let src = perm(&mut g, P0, "Sneak Attack");
+    perm(&mut g, P0, "Rings of Brighthearth");
+    hand(&mut g, P0, &["Llanowar Elves", "Birds of Paradise"]);
+    pool(&mut g, P0, &[('R', 1), ('C', 2)]);
+    let h = person(&mut g, |r| {
+        if is_priority(r) {
+            pass_a()
+        } else if r.prompt.starts_with("Rings of Brighthearth: pay") {
+            Answer::Yes
+        } else if r.prompt.starts_with("Sneak Attack:") {
+            Answer::Pick(0)
+        } else {
+            Answer::Decline
+        }
+    });
+    let i = index_of_sneak(&g, src);
+    assert_eq!(sim_core::human::human::apply(&mut g, P0, &json!({"do":"use", "perm":i})).unwrap(), None);
+    assert!(has_perm(&g, P0, "Llanowar Elves") && has_perm(&g, P0, "Birds of Paradise"));
+    assert_eq!(h.asked().iter().filter(|r| r.prompt.starts_with("Sneak Attack: put which")).count(), 2);
+    assert_eq!(pool_total(&g, P0), 0);
+}
+
+#[test]
+fn sneak_attack_destroyed_in_response_still_puts_in_the_creature() {
+    let mut g = tbl();
+    let src = perm(&mut g, P0, "Sneak Attack");
+    hand(&mut g, P0, &["Disenchant", "Llanowar Elves"]);
+    pool(&mut g, P0, &[('R', 1), ('W', 2)]);
+    let mut responded = false;
+    let h = person(&mut g, move |r| {
+        if is_priority(r) {
+            if !responded && r.prompt.contains("Sneak Attack") {
+                responded = true;
+                cast_a(0)
+            } else {
+                pass_a()
+            }
+        } else if r.prompt.ends_with(": which ability?") || r.prompt.starts_with("Sneak Attack: put which") {
+            Answer::Pick(0)
+        } else if r.choices.iter().any(|s| s.contains("Sneak Attack")) {
+            Answer::Pick(r.choices.iter().position(|s| s.contains("Sneak Attack")).unwrap())
+        } else {
+            Answer::Decline
+        }
+    });
+    h.set_autopass("all");
+    let i = index_of_sneak(&g, src);
+    let why = sim_core::human::human::apply(&mut g, P0, &json!({"do":"use", "perm":i})).unwrap();
+    assert_eq!(why, None);
+    assert!(!g.perm(src).on_bf, "Disenchant resolved during the activation: {:?}", h.asked());
+    let elves = perms_named(&g, P0, "Llanowar Elves");
+    assert_eq!(elves.len(), 1);
+    sim_core::engine::turn::end_step(&mut g, P0).unwrap();
+    assert!(!g.perm(elves[0]).on_bf, "the delayed effect survives its source");
+}
+
+#[test]
+fn sneaking_during_an_end_step_trigger_waits_for_the_next_end_step() {
+    let mut g = tbl();
+    let src = perm(&mut g, P0, "Sneak Attack");
+    perm(&mut g, P0, "Teleportation Circle");
+    perm(&mut g, P0, "Sol Ring");
+    hand(&mut g, P0, &["Llanowar Elves"]);
+    pool(&mut g, P0, &[('R', 1)]);
+    let i = index_of_sneak(&g, src);
+    let mut used = false;
+    let h = person(&mut g, move |r| {
+        if is_priority(r) {
+            if !used && r.prompt.contains("Teleportation Circle") {
+                used = true;
+                Answer::Action(json!({"do":"use", "perm":i}))
+            } else {
+                pass_a()
+            }
+        } else if r.prompt.ends_with(": which ability?") || r.prompt.starts_with("Sneak Attack: put which") {
+            Answer::Pick(0)
+        } else {
+            Answer::Decline
+        }
+    });
+    h.set_autopass("all");
+    sim_core::engine::turn::end_step(&mut g, P0).unwrap();
+    let elves = perms_named(&g, P0, "Llanowar Elves");
+    assert_eq!(elves.len(), 1, "the creature put in after this step began survives");
+    sim_core::engine::turn::end_step(&mut g, P1).unwrap();
+    assert!(!g.perm(elves[0]).on_bf);
+}
+
 // ------------------------------------------------------------------ Thassa's Oracle + Consultation / Pact
 #[test]
 fn oracle_then_consultation_in_response_to_its_trigger_wins() {

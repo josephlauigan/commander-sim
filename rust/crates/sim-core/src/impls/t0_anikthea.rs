@@ -1240,9 +1240,9 @@ fn rhetoric_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> 
                     act: Some(Action::Ability { src, f: rhetoric_go, arg: c.0 as i64 }),
                 });
             }
-        } else if d.cmc > 0 && !crate::engine::mana::can_pay(g, p, d.generic, &d.pips, false) {
+        } else if d.cmc > 0 && !crate::engine::mana::can_pay_spell(g, p, c, d.generic, &d.pips, false) {
             // not payable with its own colours: pay the whole mana value as generic
-            if crate::engine::mana::can_pay(g, p, d.cmc, "", false) && !d.tag(crate::tag::Tag::Ctr) {
+            if crate::engine::mana::can_pay_spell(g, p, c, d.cmc, "", false) && !d.tag(crate::tag::Tag::Ctr) {
                 out.push(Opt {
                     utility: 1.0 + 0.5 * d.cmc as f64,
                     label: format!("Cunning Rhetoric: cast {} with any colour", d.name),
@@ -1269,7 +1269,7 @@ fn rhetoric_go(g: &mut Game, _src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
         crate::engine::turn::play_land_card(g, p, c, "plays")?;
         return Ok(true);
     }
-    if !crate::engine::mana::pay(g, p, d.cmc, "", false)? {
+    if !crate::engine::mana::pay_spell(g, p, c, d.cmc, "", false)? {
         return Ok(false);
     }
     g.player_mut(p).impulse_long.retain(|x| x.0 != c);

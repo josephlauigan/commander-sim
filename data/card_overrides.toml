@@ -1664,6 +1664,17 @@ note = "ninjutsu 2UB"
 status = "Full"
 note = "modes by net value: artifacts, creatures, enchantments, and graveyards (theirs against yours, since your reanimation targets are there)"
 
+["Nature's Lore"]
+status = "Full"
+note = "a Forest card (a Forest or a dual with the Forest type) onto the battlefield; the land follows its own enters rule (a shock land: pay 2 life or enter tapped; a Triome enters tapped); a person picks it, the AI takes the one that makes the most colours; Opposition Agent takes it"
+
+["Three Visits"]
+types = "S"
+tags = ""
+dsl = []
+status = "Full"
+note = "a Forest card (a Forest or a dual with the Forest type) onto the battlefield; the land follows its own enters rule (a shock land: pay 2 life or enter tapped; a Triome enters tapped); a person picks it, the AI takes the one that makes the most colours; Opposition Agent takes it"
+
 ["Farseek"]
 types = "S"
 tags = ""

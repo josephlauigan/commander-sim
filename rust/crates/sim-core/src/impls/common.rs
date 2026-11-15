@@ -13,7 +13,7 @@ use crate::cards::{CardDb, CardDef, Colors, Types};
 use crate::engine::cast::{cast_card, castable, on_cast};
 use crate::engine::hooks::{fire_trigger, hooked};
 use crate::engine::life::{check_state, gain, lose_life};
-use crate::engine::mana::{can_pay, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell, total_mana, total_mana_spell};
 use crate::engine::pool::Kind;
 use crate::engine::removal::{apply_removal, legal_targets};
 use crate::engine::repl::{self, Ctr, On, Path};
@@ -1827,7 +1827,7 @@ pub fn adventure_options(g: &mut Game, p: PlayerId, _post: Option<bool>) -> Res<
         if g.player(p).adv_done.contains(&c) {
             continue;
         }
-        if !can_pay(g, p, generic, pips, false) || !castable(g, p, c, "hand") {
+        if !can_pay_spell(g, p, c, generic, pips, false) || !castable(g, p, c, "hand") {
             continue;
         }
         let tg = legal_targets(g, p, kind, tgt, false, None);
@@ -1849,10 +1849,10 @@ fn adventure_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let Some(&(_, (generic, pips), kind, _)) = ADVENTURE.iter().find(|x| *x.0 == *g.db.get(c).name) else {
         return Ok(false);
     };
-    if !g.player(p).hand.contains(&c) || !g.perm(t).on_bf || !can_pay(g, p, generic, pips, false) {
+    if !g.player(p).hand.contains(&c) || !g.perm(t).on_bf || !can_pay_spell(g, p, c, generic, pips, false) {
         return Ok(false);
     }
-    pay(g, p, generic, pips, false)?;
+    pay_spell(g, p, c, generic, pips, false)?;
     let pl = g.player_mut(p);
     pl.spells_this_turn += 1;
     pl.stat("spells_cast", 1);
@@ -3238,7 +3238,7 @@ fn ballista_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 /// common._ballista_prio: cast for value with four or more mana; a deck with the Scepter / Power Artifact combo keeps
 /// it as the kill
 fn ballista_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
-    let mana = total_mana(g, p, false);
+    let mana = total_mana_spell(g, p, _c, false);
     if mana < 4 {
         return 0;
     }
@@ -3615,7 +3615,25 @@ fn register_phase6(r: &mut Registry, db: &CardDb) -> Result<(), String> {
 }
 
 // ======================================================== registration
+fn crypt_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
+    if p != owner(g, src) || !g.perm(src).on_bf || g.perm(src).phased {
+        return Ok(());
+    }
+    if !trigger_window(g, p, Some(src), "flip a coin: 3 damage to you if you lose", Some(1.0))? {
+        return Ok(());
+    }
+    if g.rng.random() < 0.5 {
+        crate::glog!(g, "    Mana Crypt: loses the flip");
+        lose_life(g, p, 3, Some(p), intern("other"), Some(true))?;
+        check_state(g)?;
+    } else {
+        crate::glog!(g, "    Mana Crypt: wins the flip");
+    }
+    Ok(())
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
+    r.card(db, "Mana Crypt")?.upkeep = Some(crypt_upkeep);
     // Auras
     for (name, spec) in AURAS {
         aura(r, db, name, spec)?;

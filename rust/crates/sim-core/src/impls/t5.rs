@@ -7,7 +7,7 @@ use super::t2::{blink, blink_value};
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::cast::{cast_card, castable, discard_worst};
 use crate::engine::life::lose_life;
-use crate::engine::mana::{Source, Unit, can_pay, pay, total_mana};
+use crate::engine::mana::{Source, Unit, can_pay, pay, total_mana_spell};
 use crate::engine::pool::Kind;
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
@@ -327,7 +327,7 @@ fn whir(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
 
 #[allow(dead_code)]
 fn whir_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
-    if total_mana(g, p, false) >= 5 { 55 } else { 0 }
+    if total_mana_spell(g, p, _c, false) >= 5 { 55 } else { 0 }
 }
 
 /// each player discards their hand and draws as many as the largest hand
@@ -450,7 +450,7 @@ fn rhythm(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
 }
 
 fn rhythm_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
-    if total_mana(g, p, false) >= 5 { 55 } else { 0 }
+    if total_mana_spell(g, p, _c, false) >= 5 { 55 } else { 0 }
 }
 
 // ======================================================== Winota, Joiner of Forces

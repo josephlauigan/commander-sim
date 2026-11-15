@@ -30,7 +30,7 @@
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::on_cast;
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell};
 use crate::engine::pool::Kind;
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
@@ -134,7 +134,7 @@ fn footsteps_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -
     if post != Some(false) || g.active != Some(p) || !pl.hand.contains(&c) || pl.adv_done.contains(&c) {
         return Ok(vec![]);
     }
-    if !can_pay(g, p, 2, "G", false) || can_pay(g, p, 6, "G", false) {
+    if !can_pay_spell(g, p, c, 2, "G", false) || can_pay_spell(g, p, c, 6, "G", false) {
         return Ok(vec![]);
     }
     let basic = pl.library.iter().any(|&x| g.db.get(x).basic && g.db.get(x).land);
@@ -153,7 +153,7 @@ fn footsteps_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -
 /// adventure (here: back to the hand, castable as the Giant); countered, it goes to the graveyard.
 fn footsteps_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let c = CardId(arg as u16);
-    if !g.player(p).hand.contains(&c) || !can_pay(g, p, 2, "G", false) || !pay(g, p, 2, "G", false)? {
+    if !g.player(p).hand.contains(&c) || !can_pay_spell(g, p, c, 2, "G", false) || !pay_spell(g, p, c, 2, "G", false)? {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);
@@ -476,7 +476,11 @@ fn drivnod_go(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool> {
 // ================================================================== Indebted Spirit
 /// bestow {2}{W} before combat on p's best creature (the commander first), when it is worth more than a 1/1 body
 fn indebted_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
-    if post != Some(false) || g.active != Some(p) || !g.player(p).hand.contains(&c) || !can_pay(g, p, 2, "W", false) {
+    if post != Some(false)
+        || g.active != Some(p)
+        || !g.player(p).hand.contains(&c)
+        || !can_pay_spell(g, p, c, 2, "W", false)
+    {
         return Ok(vec![]);
     }
     let Some(host) = crate::impls::common::own_host(g, p, &crate::impls::common::AURA, None) else { return Ok(vec![]) };
@@ -492,10 +496,11 @@ fn indebted_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) ->
 
 fn indebted_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (c, host) = (CardId((arg & 0xffff) as u16), PermId((arg >> 16) as u32));
-    if !g.player(p).hand.contains(&c) || !live(g, host) || owner(g, host) != p || !can_pay(g, p, 2, "W", false) {
+    if !g.player(p).hand.contains(&c) || !live(g, host) || owner(g, host) != p || !can_pay_spell(g, p, c, 2, "W", false)
+    {
         return Ok(false);
     }
-    if !pay(g, p, 2, "W", false)? {
+    if !pay_spell(g, p, c, 2, "W", false)? {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(p).hand, c);

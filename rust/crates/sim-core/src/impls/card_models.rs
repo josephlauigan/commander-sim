@@ -2,7 +2,7 @@
 //! Each function says which Oracle sentence it plays; `tests/cards_jd_models.rs` checks them.
 
 use crate::cards::CardDb;
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell};
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::tutors::card_worth;
 use crate::engine::values::{etgh, indestructible, pval, threat, untargetable};
@@ -19,12 +19,12 @@ const BALEFUL: &str = "Baleful Mastery";
 
 /// "You may pay {1}{B} rather than pay this spell's mana cost."
 fn baleful_ok(g: &Game, p: PlayerId, _c: CardId, _spell: Option<CardId>) -> bool {
-    can_pay(g, p, 1, "B", false)
+    can_pay_spell(g, p, _c, 1, "B", false)
 }
 
 /// pays {1}{B} and remembers it for the resolution ("if the {1}{B} cost was paid, an opponent draws a card")
 fn baleful_pay(g: &mut Game, p: PlayerId, _c: CardId, _spell: Option<CardId>) -> Res<bool> {
-    if !pay(g, p, 1, "B", false)? {
+    if !pay_spell(g, p, _c, 1, "B", false)? {
         return Ok(false);
     }
     let st = g.turn_stamp();

@@ -24,7 +24,7 @@
 use crate::cards::CardDb;
 use crate::engine::cast::{cast_card, copy_spell};
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, cost_of, pay, total_mana};
+use crate::engine::mana::{can_pay_spell, cost_of, pay_spell, total_mana_spell};
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
 use crate::engine::stack::trigger_window;
@@ -251,17 +251,17 @@ fn torment_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym>
     Ok("gy")
 }
 
-fn late(g: &Game, p: PlayerId) -> bool {
-    g.player(p).turns >= 8 || total_mana(g, p, false) >= 9
+fn late(g: &Game, p: PlayerId, c: CardId) -> bool {
+    g.player(p).turns >= 8 || total_mana_spell(g, p, c, false) >= 9
 }
 
 /// the AI's X for Torment of Hailfire: all the mana it has
 fn torment_x(g: &Game, p: PlayerId, c: CardId) -> Option<i32> {
     let (gn, pips) = cost_of(g, p, c);
-    if !can_pay(g, p, gn, &pips, false) {
+    if !can_pay_spell(g, p, c, gn, &pips, false) {
         return None;
     }
-    let x = total_mana(g, p, false) as i32 - gn as i32 - pips.chars().count() as i32;
+    let x = total_mana_spell(g, p, c, false) as i32 - gn as i32 - pips.chars().count() as i32;
     (x >= 1).then_some(x)
 }
 
@@ -287,7 +287,7 @@ fn torment_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> 
         loss += l;
         worth += w;
     }
-    if kills == 0 && (x < 4 || !late(g, p)) {
+    if kills == 0 && (x < 4 || !late(g, p, c)) {
         return Ok(vec![]);
     }
     let u = 1.5 + 0.1 * loss as f64 + 0.3 * worth + 7.0 * kills as f64;
@@ -305,10 +305,10 @@ fn torment_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     }
     let Some(x) = torment_x(g, p, c) else { return Ok(false) };
     let (gn, pips) = cost_of(g, p, c);
-    if !can_pay(g, p, gn + x as u32, &pips, false) {
+    if !can_pay_spell(g, p, c, gn + x as u32, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn + x as u32, &pips, false)?;
+    pay_spell(g, p, c, gn + x as u32, &pips, false)?;
     cast_card(g, p, c, "hand", Ctx { x, ..Ctx::default() })?;
     Ok(true)
 }
@@ -436,10 +436,10 @@ fn comet_resolve(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
 /// the AI's (X, kicks) for Comet Storm with all its mana: the split that scores best (kills first), ties to more X
 fn comet_plan(g: &Game, p: PlayerId, c: CardId) -> Option<(i32, u32, f64, i32)> {
     let (gn, pips) = cost_of(g, p, c);
-    if !can_pay(g, p, gn, &pips, false) {
+    if !can_pay_spell(g, p, c, gn, &pips, false) {
         return None;
     }
-    let spare = total_mana(g, p, false) as i32 - gn as i32 - pips.chars().count() as i32;
+    let spare = total_mana_spell(g, p, c, false) as i32 - gn as i32 - pips.chars().count() as i32;
     let mut best: Option<(i32, u32, f64, i32)> = None;
     for k in 0..spare.max(0) {
         let x = spare - k;
@@ -464,7 +464,7 @@ fn comet_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Re
     let Some((x, k, score, kills)) = comet_plan(g, p, c) else { return Ok(vec![]) };
     let opps = g.opps(p).filter(|&q| g.player(q).alive).count();
     let all = comet_targets(g, p, x, 1 + k as usize).iter().filter(|t| matches!(t.0, Tgt::Face(_))).count() >= opps;
-    if kills == 0 && (eot || x < 4 || !all || !late(g, p)) {
+    if kills == 0 && (eot || x < 4 || !all || !late(g, p, c)) {
         return Ok(vec![]);
     }
     Ok(vec![Opt {
@@ -482,10 +482,10 @@ fn comet_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let Some((x, k, _, _)) = comet_plan(g, p, c) else { return Ok(false) };
     let (gn, pips) = cost_of(g, p, c);
     let tot = gn + (x as u32) + k;
-    if !can_pay(g, p, tot, &pips, false) {
+    if !can_pay_spell(g, p, c, tot, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, tot, &pips, false)?;
+    pay_spell(g, p, c, tot, &pips, false)?;
     cast_card(g, p, c, "hand", Ctx { x, kicks: k, ..Ctx::default() })?;
     Ok(true)
 }
@@ -510,7 +510,7 @@ fn dualcaster_copy(g: &mut Game, c: CardId, p: PlayerId, spell: CardId) -> Res {
     if g.in_rtf || !g.player(p).hand.contains(&c) || !(sd.instant || sd.sorcery) || spell == c {
         return Ok(());
     }
-    if copy_worth(g, p, spell) < 5.0 || !can_pay(g, p, 1, "RR", false) {
+    if copy_worth(g, p, spell) < 5.0 || !can_pay_spell(g, p, c, 1, "RR", false) {
         return Ok(());
     }
     g.in_rtf = true;
@@ -521,7 +521,7 @@ fn dualcaster_copy(g: &mut Game, c: CardId, p: PlayerId, spell: CardId) -> Res {
 
 fn dualcaster_copy_go(g: &mut Game, c: CardId, p: PlayerId, spell: CardId) -> Res {
     let ctx = g.cur_cast.as_ref().filter(|x| x.0 == spell).map(|x| x.1.clone());
-    pay(g, p, 1, "RR", false)?;
+    pay_spell(g, p, c, 1, "RR", false)?;
     crate::glog!(g, "  {} flashes in Dualcaster Mage: copy {}", g.player(p).name, g.db.get(spell).name);
     if !cast_card(g, p, c, "hand", Ctx::default())? {
         return Ok(()); // countered

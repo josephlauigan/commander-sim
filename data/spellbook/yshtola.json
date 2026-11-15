@@ -1,14 +1,71 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-10-30",
+  "fetched": "2026-11-14",
   "deck": "yshtola",
   "commanders": [
     "Y'shtola, Night's Blessed"
   ],
-  "request_sha256": "998b18795ba444aad6bc704599e751fe8e2aaf9758881042afd1d0c778a99e67",
+  "request_sha256": "cc5268172523171d529ef041c95b0cb62fd456cb44cc952a790a8a81caecc0f2",
   "identity": "WUB",
-  "included": [],
+  "included": [
+    {
+      "id": "690-3966",
+      "cards": [
+        {
+          "name": "Sanguine Bond",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 152201
+    },
+    {
+      "id": "110-3966",
+      "cards": [
+        {
+          "name": "Marauding Blight-Priest",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 62064
+    }
+  ],
   "included_by_changing_commanders": [],
   "almost_included": [
     {
@@ -37,16 +94,16 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 364272,
+      "popularity": 368373,
       "missing": [
         "Hullbreaker Horror"
       ]
     },
     {
-      "id": "690-3966",
+      "id": "314-3966",
       "cards": [
         {
-          "name": "Sanguine Bond",
+          "name": "Vito, Thorn of the Dusk Rose",
           "zones": [
             "B"
           ]
@@ -68,9 +125,9 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 151187,
+      "popularity": 127730,
       "missing": [
-        "Exquisite Blood"
+        "Vito, Thorn of the Dusk Rose"
       ]
     },
     {
@@ -99,22 +156,22 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 80326,
+      "popularity": 81454,
       "missing": [
         "Bloodthirsty Conqueror"
       ]
     },
     {
-      "id": "110-3966",
+      "id": "3966-5755",
       "cards": [
         {
-          "name": "Marauding Blight-Priest",
+          "name": "Exquisite Blood",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Exquisite Blood",
+          "name": "Enduring Tenacity",
           "zones": [
             "B"
           ]
@@ -130,9 +187,39 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 61508,
+      "popularity": 76921,
       "missing": [
-        "Exquisite Blood"
+        "Enduring Tenacity"
+      ]
+    },
+    {
+      "id": "3966-4740",
+      "cards": [
+        {
+          "name": "Aetherflux Reservoir",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite damage",
+        "Infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have at least 51 life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 57458,
+      "missing": [
+        "Aetherflux Reservoir"
       ]
     },
     {
@@ -157,9 +244,40 @@
       "mana": "{3}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 55147,
+      "popularity": 56024,
       "missing": [
         "Felidar Guardian"
+      ]
+    },
+    {
+      "id": "1561-2498",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Peer into the Abyss",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite card draw for target opponent",
+        "Near-infinite lifeloss for target opponent",
+        "Target opponent loses the game"
+      ],
+      "requires": [],
+      "prerequisites": "An opponent has a library size that is at least half their life total.",
+      "mana": "{4}{B}{B}{B}",
+      "bracket": "O",
+      "legal": true,
+      "popularity": 52184,
+      "missing": [
+        "Peer into the Abyss"
       ]
     },
     {
@@ -188,7 +306,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 49816,
+      "popularity": 50582,
       "missing": [
         "Bloodthirsty Conqueror"
       ]
@@ -220,9 +338,45 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 46618,
+      "popularity": 46897,
       "missing": [
         "Peer into the Abyss"
+      ]
+    },
+    {
+      "id": "1170-4761-5034",
+      "cards": [
+        {
+          "name": "Teferi, Time Raveler",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Displacer Kitten",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sol Ring",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite colorless mana"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{1}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 46470,
+      "missing": [
+        "Teferi, Time Raveler"
       ]
     },
     {
@@ -249,9 +403,40 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 37844,
+      "popularity": 38104,
       "missing": [
         "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "3966-5867",
+      "cards": [
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Starscape Cleric",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 28765,
+      "missing": [
+        "Starscape Cleric"
       ]
     },
     {
@@ -278,7 +463,7 @@
       "mana": "{12}{W}{W}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 25629,
+      "popularity": 25917,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -307,9 +492,40 @@
       "mana": "{5}{W}",
       "bracket": "S",
       "legal": true,
-      "popularity": 17737,
+      "popularity": 17855,
       "missing": [
         "Beacon of Immortality"
+      ]
+    },
+    {
+      "id": "3966-4789",
+      "cards": [
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Cliffhaven Vampire",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 14989,
+      "missing": [
+        "Cliffhaven Vampire"
       ]
     },
     {
@@ -337,9 +553,109 @@
       "mana": "{4}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 13500,
+      "popularity": 13537,
       "missing": [
         "Revival // Revenge"
+      ]
+    },
+    {
+      "id": "2498-3591-4691",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Vilis, Broker of Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers",
+        "Near-infinite looting"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 13244,
+      "missing": [
+        "Vilis, Broker of Blood"
+      ]
+    },
+    {
+      "id": "92-3966",
+      "cards": [
+        {
+          "name": "Vizkopa Guildmage",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "{1}{W}{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 12417,
+      "missing": [
+        "Vizkopa Guildmage"
+      ]
+    },
+    {
+      "id": "2939-3966",
+      "cards": [
+        {
+          "name": "Defiant Bloodlord",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 11732,
+      "missing": [
+        "Defiant Bloodlord"
       ]
     },
     {
@@ -364,9 +680,38 @@
       "mana": "{3}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 9616,
+      "popularity": 9932,
       "missing": [
         "Icewind Stalwart"
+      ]
+    },
+    {
+      "id": "553-4105",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Demonic Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{13}{W}{W}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 9841,
+      "missing": [
+        "Approach of the Second Sun"
       ]
     },
     {
@@ -391,9 +736,40 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 8374,
+      "popularity": 8443,
       "missing": [
         "Stasis"
+      ]
+    },
+    {
+      "id": "3966-4912",
+      "cards": [
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Epicure of Blood",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain triggers",
+        "Infinite lifeloss",
+        "Infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 8389,
+      "missing": [
+        "Epicure of Blood"
       ]
     },
     {
@@ -420,7 +796,7 @@
       "mana": "{3}{B}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 8025,
+      "popularity": 8131,
       "missing": [
         "Ad Nauseam"
       ]
@@ -450,9 +826,38 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 7838,
+      "popularity": 7965,
       "missing": [
         "Wedding Ring"
+      ]
+    },
+    {
+      "id": "553-1827",
+      "cards": [
+        {
+          "name": "Approach of the Second Sun",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Vampiric Tutor",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "{12}{W}{W}{B}",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 7609,
+      "missing": [
+        "Approach of the Second Sun"
       ]
     },
     {
@@ -479,7 +884,7 @@
       "mana": "{5}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7502,
+      "popularity": 7491,
       "missing": [
         "Shard of the Nightbringer"
       ]
@@ -506,9 +911,133 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 6020,
+      "popularity": 6063,
       "missing": [
         "Teferi's Puzzle Box"
+      ]
+    },
+    {
+      "id": "444-2498",
+      "cards": [
+        {
+          "name": "Drogskol Reaver",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5954,
+      "missing": [
+        "Drogskol Reaver"
+      ]
+    },
+    {
+      "id": "679-2498",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Lich's Mastery",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5677,
+      "missing": [
+        "Lich's Mastery"
+      ]
+    },
+    {
+      "id": "2498-8192",
+      "cards": [
+        {
+          "name": "Niv-Mizzet, Ghost Counsel",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain triggers",
+        "Near-infinite lifegain"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 5510,
+      "missing": [
+        "Niv-Mizzet, Ghost Counsel"
+      ]
+    },
+    {
+      "id": "3966-7286",
+      "cards": [
+        {
+          "name": "Exquisite Blood",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "South Wind Avatar",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite lifegain",
+        "Infinite lifegain triggers",
+        "Infinite lifeloss"
+      ],
+      "requires": [],
+      "prerequisites": "You have a way to gain life.",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 5302,
+      "missing": [
+        "South Wind Avatar"
       ]
     },
     {
@@ -535,38 +1064,9 @@
       "mana": "{14}{W}{W}{B}{B}",
       "bracket": "C",
       "legal": true,
-      "popularity": 3997,
+      "popularity": 4053,
       "missing": [
         "Approach of the Second Sun"
-      ]
-    },
-    {
-      "id": "876-4944",
-      "cards": [
-        {
-          "name": "Crackdown Construct",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lightning Greaves",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinitely large creature until end of turn"
-      ],
-      "requires": [],
-      "prerequisites": "You control another creature.",
-      "mana": "",
-      "bracket": "O",
-      "legal": true,
-      "popularity": 3918,
-      "missing": [
-        "Crackdown Construct"
       ]
     },
     {
@@ -593,38 +1093,9 @@
       "mana": "{6}{W} each turn",
       "bracket": "P",
       "legal": true,
-      "popularity": 2629,
+      "popularity": 2673,
       "missing": [
         "Approach of the Second Sun"
-      ]
-    },
-    {
-      "id": "876-2904",
-      "cards": [
-        {
-          "name": "Cephalid Illusionist",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Lightning Greaves",
-          "zones": [
-            "B"
-          ]
-        }
-      ],
-      "results": [
-        "Infinite self-mill"
-      ],
-      "requires": [],
-      "prerequisites": "",
-      "mana": "",
-      "bracket": "R",
-      "legal": true,
-      "popularity": 2271,
-      "missing": [
-        "Cephalid Illusionist"
       ]
     },
     {
@@ -651,7 +1122,7 @@
       "mana": "{2}{W} each turn",
       "bracket": "S",
       "legal": true,
-      "popularity": 2139,
+      "popularity": 2133,
       "missing": [
         "Zethi, Arcane Blademaster"
       ]
@@ -681,9 +1152,70 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1821,
+      "popularity": 1871,
       "missing": [
         "Requiem Monolith"
+      ]
+    },
+    {
+      "id": "2498-6033",
+      "cards": [
+        {
+          "name": "Marina Vendrell's Grimoire",
+          "zones": [
+            "H"
+          ]
+        },
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "{5}{U}",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1869,
+      "missing": [
+        "Marina Vendrell's Grimoire"
+      ]
+    },
+    {
+      "id": "1668-4067",
+      "cards": [
+        {
+          "name": "Mind Over Matter",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Loran of the Third Path",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite looting",
+        "Near-infinite card draw for target opponent"
+      ],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "R",
+      "legal": true,
+      "popularity": 1793,
+      "missing": [
+        "Mind Over Matter"
       ]
     },
     {
@@ -710,7 +1242,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1414,
+      "popularity": 1433,
       "missing": [
         "Spellbinder"
       ]
@@ -740,9 +1272,72 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1239,
+      "popularity": 1247,
       "missing": [
         "Enduring Angel // Angelic Enforcer"
+      ]
+    },
+    {
+      "id": "2498-3591-6282",
+      "cards": [
+        {
+          "name": "Ketramose, the New Dawn",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Necropotence",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.\nYou have at least one more card in hand than your maximum hand size.",
+      "mana": "",
+      "bracket": "P",
+      "legal": true,
+      "popularity": 1047,
+      "missing": [
+        "Ketramose, the New Dawn"
+      ]
+    },
+    {
+      "id": "205-2963",
+      "cards": [
+        {
+          "name": "Azor, the Lawbringer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Teleportation Circle",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 1025,
+      "missing": [
+        "Azor, the Lawbringer"
       ]
     },
     {
@@ -769,9 +1364,36 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 978,
+      "popularity": 985,
       "missing": [
         "Near-Death Experience"
+      ]
+    },
+    {
+      "id": "205-933",
+      "cards": [
+        {
+          "name": "Azor, the Lawbringer",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Conjurer's Closet",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 970,
+      "missing": [
+        "Azor, the Lawbringer"
       ]
     },
     {
@@ -800,7 +1422,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 773,
+      "popularity": 774,
       "missing": [
         "Flumph"
       ]
@@ -827,7 +1449,7 @@
       "mana": "{4}{W}{W}{W}",
       "bracket": "R",
       "legal": true,
-      "popularity": 751,
+      "popularity": 767,
       "missing": [
         "Balancing Act"
       ]
@@ -883,73 +1505,94 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 545,
+      "popularity": 558,
       "missing": [
         "Wedding Ring"
       ]
     },
     {
-      "id": "876-2796",
+      "id": "202-2498",
       "cards": [
         {
-          "name": "Cephalid Aristocrat",
+          "name": "Sheoldred, the Apocalypse",
           "zones": [
             "B"
           ]
         },
         {
-          "name": "Lightning Greaves",
+          "name": "Lich",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite self-mill"
+        "Infinite card draw"
       ],
       "requires": [],
-      "prerequisites": "You control an additional creature.",
+      "prerequisites": "You have a way to draw a card.",
       "mana": "",
-      "bracket": "R",
+      "bracket": "S",
       "legal": true,
-      "popularity": 202,
+      "popularity": 430,
       "missing": [
-        "Cephalid Aristocrat"
+        "Lich"
       ]
     },
     {
-      "id": "372-1090-4142",
+      "id": "1170-6513",
       "cards": [
         {
-          "name": "Abdel Adrian, Gorion's Ward",
+          "name": "Chancellor of the Spires",
           "zones": [
-            "H"
+            "B"
           ]
         },
         {
-          "name": "Restoration Angel",
+          "name": "Displacer Kitten",
           "zones": [
-            "E"
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [],
+      "prerequisites": "An opponent has an instant or sorcery in their graveyard.\nYou have a noncreature spell in hand with the mana to cast it.",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 369,
+      "missing": [
+        "Chancellor of the Spires"
+      ]
+    },
+    {
+      "id": "2498-4126",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
           ]
         },
         {
-          "name": "Hostage Taker",
+          "name": "Nefarious Lich",
           "zones": [
             "B"
           ]
         }
       ],
       "results": [
-        "Infinite creature tokens"
+        "Infinite card draw"
       ],
       "requires": [],
-      "prerequisites": "Restoration Angel exiled by Hostage Taker",
-      "mana": "{4}{W} plus enough mana to pay for command tax, if applicable",
-      "bracket": "E",
+      "prerequisites": "You have a way to draw a card.",
+      "mana": "",
+      "bracket": "S",
       "legal": true,
-      "popularity": 163,
+      "popularity": 349,
       "missing": [
-        "Abdel Adrian, Gorion's Ward"
+        "Nefarious Lich"
       ]
     },
     {
@@ -974,7 +1617,7 @@
       "mana": "{3}{W}",
       "bracket": "E",
       "legal": true,
-      "popularity": 140,
+      "popularity": 139,
       "missing": [
         "Conspiracy"
       ]
@@ -1010,7 +1653,7 @@
       "mana": "{2}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 77,
+      "popularity": 78,
       "missing": [
         "Wrong Turn"
       ]
@@ -1082,9 +1725,71 @@
       "mana": "{2}{U}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 21,
+      "popularity": 20,
       "missing": [
         "Fateful Handoff"
+      ]
+    },
+    {
+      "id": "2498-7844",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Yawgmoth's Bargain",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 2.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Yawgmoth's Bargain"
+      ]
+    },
+    {
+      "id": "2498-4322",
+      "cards": [
+        {
+          "name": "Sheoldred, the Apocalypse",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Griselbrand",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite card draw",
+        "Near-infinite lifegain",
+        "Near-infinite lifegain triggers"
+      ],
+      "requires": [],
+      "prerequisites": "Your life total is at least 8.",
+      "mana": "",
+      "bracket": "B",
+      "legal": false,
+      "popularity": 0,
+      "missing": [
+        "Griselbrand"
       ]
     }
   ]

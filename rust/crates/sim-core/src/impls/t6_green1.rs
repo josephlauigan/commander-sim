@@ -9,7 +9,7 @@
 use super::partials::{pack, unpack};
 use crate::cards::CardDb;
 use crate::engine::hooks as eh;
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell};
 use crate::engine::pool::Kind;
 use crate::engine::stack::{ability_window, trigger_window};
 use crate::engine::turn::remove_land;
@@ -451,7 +451,7 @@ fn vibrance_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Re
     }
     // the full cast ({3}{R}{R}) is the engine's own; evoke is for when that is out of reach
     let (fg, fp) = crate::engine::mana::cost_of(g, p, c);
-    if can_pay(g, p, fg, &fp, false) {
+    if can_pay_spell(g, p, c, fg, &fp, false) {
         return Ok(o);
     }
     let plan = |u: f64, l: &str, mode: i64| Opt {
@@ -459,7 +459,7 @@ fn vibrance_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Re
         label: l.into(),
         act: Some(Action::Plan { f: vibrance_evoke, arg: mode }),
     };
-    if can_pay(g, p, 0, "RR", false) {
+    if can_pay_spell(g, p, c, 0, "RR", false) {
         let kill = g
             .opps(p)
             .flat_map(|q| g.player(q).perms.clone())
@@ -471,7 +471,7 @@ fn vibrance_hand(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> Re
             o.push(plan(if lethal { 6.0 } else { kill - 0.5 }, "evoke Vibrance ({R}{R}: 3 damage)", 1));
         }
     }
-    if can_pay(g, p, 0, "GG", false) && vibrance_land_wanted(g, p) {
+    if can_pay_spell(g, p, c, 0, "GG", false) && vibrance_land_wanted(g, p) {
         o.push(plan(2.6, "evoke Vibrance ({G}{G}: land, 2 life)", 2));
     }
     Ok(o)
@@ -481,11 +481,11 @@ fn vibrance_evoke(g: &mut Game, p: PlayerId, mode: i64) -> Res<bool> {
     let Some(c) = g.db.id("Vibrance") else { return Ok(false) };
     let pips = if mode == 2 { "GG" } else { "RR" };
     let Some(i) = g.player(p).hand.iter().position(|&x| x == c) else { return Ok(false) };
-    if !can_pay(g, p, 0, pips, false) {
+    if !can_pay_spell(g, p, c, 0, pips, false) {
         return Ok(false);
     }
     g.player_mut(p).hand.remove(i);
-    pay(g, p, 0, pips, false)?;
+    pay_spell(g, p, c, 0, pips, false)?;
     g.player_mut(p).spells_this_turn += 1;
     crate::engine::cast::on_cast(g, p, c)?;
     crate::glog!(g, "  {} evokes Vibrance ({})", g.player(p).name, pips);

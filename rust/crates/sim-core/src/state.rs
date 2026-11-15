@@ -67,6 +67,12 @@ pub enum DataKey {
     MyriadTok,
     /// a token sacrificed at the beginning of the next end step (Lagomos, Hand of Hatred)
     EotSac,
+    /// Sneak Attack: activating player until the next end step, then Bool(true); grants lasting haste.
+    SneakAttack,
+    /// The player a phased-out permanent phased out under (`Val::Player`): it phases in at that player's untap step
+    /// wherever it is by then (a Silumgar steal that ended, any change of control while phased out; see
+    /// `control::note_phase_holder`). Every site that phases a permanent in or takes it off the battlefield must clear it.
+    PhaseInWith,
     /// Ferocity of the Hunt was on the creature as it died: its card returns to the battlefield tapped
     Ferocity,
     /// Kaya's Ghostform was on the creature as it left: its card returns under this player (a `Val::Player`)
@@ -218,10 +224,11 @@ pub enum DataKey {
     T45Search,
     /// --- Tiers 4/5 (urza-yawgmoth): Nine-Lives Familiar's revival counters (Int)
     Revival,
-    /// --- Tiers 4/5 (urdragon): Dragon's Hoard's gold counters (Int); a Dragon cast from the graveyard with Rivaz of
-    /// the Claw (Bool: exiled when it dies); a commander Hellkite Courser put onto the battlefield (Bool: back to the
-    /// command zone at the next end step); Rivaz's once-each-turn graveyard cast (Stamp)
+    /// --- Tiers 4/5 (urdragon): Dragon's Hoard's gold counters (Int); a commander Hellkite Courser put onto the
+    /// battlefield (Str: back to the command zone at the next end step); Rivaz's once-each-turn graveyard cast (Stamp)
     T45Dragon,
+    /// Number of dies-exile abilities Rivaz cast triggers granted to this creature (Int).
+    RivazExile,
     /// --- Tiers 1/2 (isshin): the player Curse of Opulence enchants (`Val::Player`); Firebender Ascension's quest
     /// counters (`Val::Int`)
     T12Isshin,
@@ -1122,6 +1129,10 @@ pub struct Ctx {
     pub mastery_pick: Option<CardId>,
     /// the spell was cast from its owner's graveyard (flashback): set as it resolves (Retrieve the Esper)
     pub from_gy: bool,
+    /// Rivaz cast triggers that granted this spell a dies-exile ability.
+    pub rivaz_exile: u32,
+    /// The Rivaz permission used for this cast, consumed only on the actual cast event.
+    pub rivaz_permission: Option<PermId>,
     /// Multikicker: how many times the spell was kicked (Comet Storm)
     pub kicks: u32,
     /// the mana actually spent to cast it, after reductions and alternative costs (0 for a free cast); set by `cast_card`
@@ -1172,6 +1183,15 @@ impl StackItem {
 }
 
 // ------------------------------------------------------------------ the game
+/// A control-changing effect lasting only while its holder controls an anchor permanent.
+#[derive(Clone, Copy, Debug)]
+pub struct ControlLink {
+    pub stolen: PermId,
+    pub anchor: PermId,
+    pub holder: PlayerId,
+    pub prev: PlayerId,
+}
+
 #[derive(Debug, Clone)]
 pub struct Game {
     pub db: Arc<CardDb>,
@@ -1309,6 +1329,8 @@ pub struct Game {
     pub goldfish: bool,
     /// Garland, Royal Kidnapper's steals are in play (Python's `g.garland`)
     pub garland: bool,
+    /// Control-changing effects that last while a player controls an anchor permanent.
+    pub control_links: Vec<ControlLink>,
     /// Garland's steals: (who took it, the creature, the player it came from, the round it was taken)
     pub garland_list: Vec<(PlayerId, PermId, PlayerId, u32)>,
     /// Marchesa's returns at the next end step: (the player it returns for, the card, its owner)
@@ -1541,6 +1563,7 @@ impl Game {
             stopped: false,
             goldfish: false,
             garland: false,
+            control_links: vec![],
             garland_list: vec![],
             marchesa_due: vec![],
             extra_turns: vec![],

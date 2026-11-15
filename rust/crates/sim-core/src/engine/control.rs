@@ -15,6 +15,8 @@ pub enum Duration {
     EndOfTurn,
     /// for the rest of the game (gain control without a duration, a donation): summoning sick under the new controller
     Permanent,
+    /// for as long as the gaining player controls this permanent
+    WhileControls(PermId),
 }
 
 /// how long a goad lasts
@@ -24,6 +26,15 @@ pub enum GoadFor {
     NextTurn,
     /// for the rest of the game (Dack Fayden's creatures)
     Forever,
+}
+
+/// A phased-out permanent phases in during the untap step of the player who controlled it when it phased out (CR 502.1).
+/// Call this when m changes controller while phased out and nothing has recorded that player yet: `old` is the
+/// controller it leaves. An earlier record (a Silumgar link, an earlier change of hands) is kept.
+pub fn note_phase_holder(g: &mut Game, m: PermId, old: PlayerId) {
+    if g.perm(m).phased && g.perm(m).data.get(DataKey::PhaseInWith).is_none() {
+        g.perm_mut(m).data.set(DataKey::PhaseInWith, Val::Player(old));
+    }
 }
 
 /// `gain_control`: `new` gains control of m. Returns false if m is not on the battlefield. Control that was borrowed
@@ -36,6 +47,7 @@ pub fn gain_control(g: &mut Game, new: PlayerId, m: PermId, dur: Duration) -> bo
     }
     let old = g.perm(m).owner;
     if old != new {
+        note_phase_holder(g, m, old);
         g.player_mut(old).perms.retain(|&x| x != m);
         let land = g.player(old).lands.contains(&m); // (a creature token land: Astral Dragon's copy)
         g.player_mut(old).lands.retain(|&x| x != m);
@@ -58,12 +70,15 @@ pub fn gain_control(g: &mut Game, new: PlayerId, m: PermId, dur: Duration) -> bo
                 g.player_mut(new).borrowed.push(m);
             }
         }
-        Duration::Permanent => {
+        Duration::Permanent | Duration::WhileControls(_) => {
             g.player_mut(new).borrowed.retain(|&x| x != m);
             if old != new {
                 g.perm_mut(m).sick = true;
             }
         }
+    }
+    if let Duration::WhileControls(anchor) = dur {
+        g.control_links.push(ControlLink { stolen: m, anchor, holder: new, prev: old });
     }
     if old != new {
         crate::glog!(
@@ -75,7 +90,53 @@ pub fn gain_control(g: &mut Game, new: PlayerId, m: PermId, dur: Duration) -> bo
             if dur == Duration::EndOfTurn { " until end of turn" } else { "" }
         );
     }
+    if !g.control_links.is_empty() {
+        end_links(g);
+    }
     true
+}
+
+/// End linked control effects immediately when the anchor leaves, phases out, or changes controller.
+pub fn end_links(g: &mut Game) {
+    let mut ended = vec![];
+    for link in std::mem::take(&mut g.control_links) {
+        let x = g.perm(link.stolen);
+        if !x.on_bf || x.owner != link.holder {
+            continue;
+        }
+        if !g.player(x.orig).alive {
+            let q = x.owner;
+            g.player_mut(q).perms.retain(|&m| m != link.stolen);
+            g.player_mut(q).lands.retain(|&m| m != link.stolen);
+            g.perm_mut(link.stolen).on_bf = false;
+            g.perm_mut(link.stolen).data.remove(DataKey::PhaseInWith);
+            g.bf_ver += 1;
+        } else if !g.perm(link.anchor).on_bf
+            || g.perm(link.anchor).phased
+            || g.perm(link.anchor).owner != link.holder
+            || !g.player(link.holder).alive
+        {
+            ended.push(link);
+        } else {
+            g.control_links.push(link);
+        }
+    }
+    for link in ended {
+        if g.perm(link.stolen).owner != link.holder {
+            continue;
+        }
+        if let Some(live) = g.control_links.iter_mut().find(|x| x.stolen == link.stolen && x.holder == link.holder) {
+            // The later effect still holds it. Remember where to return it when that effect ends too.
+            if live.prev == link.holder {
+                live.prev = link.prev;
+            }
+            continue;
+        }
+        let orig = g.perm(link.stolen).orig;
+        let to = if g.player(link.prev).alive { link.prev } else { orig };
+        note_phase_holder(g, link.stolen, link.holder);
+        gain_control(g, to, link.stolen, Duration::Permanent);
+    }
 }
 
 /// the end-step return of creatures borrowed until end of turn by p (control goes back to the owner)
@@ -83,6 +144,7 @@ pub fn return_borrowed(g: &mut Game, p: PlayerId) {
     for m in std::mem::take(&mut g.player_mut(p).borrowed) {
         let orig = g.perm(m).orig;
         if g.perm(m).on_bf && g.perm(m).owner == p && g.player(orig).alive {
+            note_phase_holder(g, m, p);
             g.player_mut(p).perms.retain(|&x| x != m);
             let land = g.player(p).lands.contains(&m);
             g.player_mut(p).lands.retain(|&x| x != m);
@@ -96,6 +158,9 @@ pub fn return_borrowed(g: &mut Game, p: PlayerId) {
                 g.perm_mut(m).tapped = true; // Ray of Command
             }
         }
+    }
+    if !g.control_links.is_empty() {
+        end_links(g);
     }
 }
 

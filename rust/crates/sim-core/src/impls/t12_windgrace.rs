@@ -45,7 +45,7 @@ use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, castable, on_cast};
 use crate::engine::hooks::hooked;
 use crate::engine::life::{gain, lose_life};
-use crate::engine::mana::{can_pay, land_colors_now, pay, total_mana};
+use crate::engine::mana::{can_pay, can_pay_spell, land_colors_now, pay, pay_spell, total_mana, total_mana_spell};
 use crate::engine::repl;
 use crate::engine::stack::{ability_window, ability_window_card, counter_window, trigger_window};
 use crate::engine::tutors::{card_worth, shuffle_library};
@@ -535,7 +535,7 @@ fn six_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<V
             continue;
         }
         let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
-        if !can_pay(g, p, gn, &pips, false) {
+        if !can_pay_spell(g, p, c, gn, &pips, false) {
             continue;
         }
         let v = crate::ai::decks::deck_prio(g, p, c) as f64 / 10.0 + 0.3 * card_worth(g, p, c, true) / 10.0 - 0.3;
@@ -556,10 +556,10 @@ fn retrace_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
     let ls = hand_lands(g, p);
     let Some(land) = min_by(&ls, |x| land_want(g, p, x, &[])) else { return Ok(false) };
-    if !g.player(p).gy.contains(&c) || !can_pay(g, p, gn, &pips, false) {
+    if !g.player(p).gy.contains(&c) || !can_pay_spell(g, p, c, gn, &pips, false) {
         return Ok(false);
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     discard_cards(g, p, &[land])?;
     crate::glog!(
         g,
@@ -602,7 +602,7 @@ pub(crate) fn emblem_retrace_options(g: &mut Game, p: PlayerId, post: Option<boo
             continue;
         }
         let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
-        if !can_pay(g, p, gn, &pips, false) || !castable(g, p, c, "gy") {
+        if !can_pay_spell(g, p, c, gn, &pips, false) || !castable(g, p, c, "gy") {
             continue;
         }
         let u = if t.has(Tag::Rem) {
@@ -636,7 +636,9 @@ fn emblem_retrace_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
     let (gn, pips) = crate::engine::mana::cost_of(g, p, c);
     let ls = hand_lands(g, p);
     let Some(land) = min_by(&ls, |x| land_want(g, p, x, &[])) else { return Ok(false) };
-    if !g.player(p).emblems.contains(&WRENN_EMBLEM) || !g.player(p).gy.contains(&c) || !can_pay(g, p, gn, &pips, false)
+    if !g.player(p).emblems.contains(&WRENN_EMBLEM)
+        || !g.player(p).gy.contains(&c)
+        || !can_pay_spell(g, p, c, gn, &pips, false)
     {
         return Ok(false);
     }
@@ -647,7 +649,7 @@ fn emblem_retrace_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         let Some(t) = max_by(&tg, |m| crate::ai::values::pval_for(g, p, m)) else { return Ok(false) };
         ctx.target = Some(t);
     }
-    pay(g, p, gn, &pips, false)?;
+    pay_spell(g, p, c, gn, &pips, false)?;
     discard_cards(g, p, &[land])?;
     crate::glog!(
         g,
@@ -821,7 +823,7 @@ fn mists_defend(
         return Ok(());
     }
     let (gn, pips) = crate::engine::mana::cost_of(g, d, c);
-    if !can_pay(g, d, gn, &pips, false) {
+    if !can_pay_spell(g, d, c, gn, &pips, false) {
         return Ok(());
     }
     let power: i32 = atk
@@ -833,7 +835,7 @@ fn mists_defend(
     if power < life && (power as f64) < (7.0f64).max(life as f64 * 0.4) {
         return Ok(());
     }
-    pay(g, d, gn, &pips, false)?;
+    pay_spell(g, d, c, gn, &pips, false)?;
     remove_card(&mut g.player_mut(d).hand, c);
     crate::glog!(g, "  {} casts Constant Mists", pname(g, d));
     // buyback: sacrifice a land as it is cast (seven or more, or four with lands to replay from the graveyard)
@@ -931,7 +933,7 @@ fn shift_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<Sym> 
 
 // ================================================================== Worldsoul's Rage
 fn rage_prio(g: &Game, p: PlayerId, _c: CardId) -> i32 {
-    let x = total_mana(g, p, false) as i32 - 2;
+    let x = total_mana_spell(g, p, _c, false) as i32 - 2;
     let lands = (hand_lands(g, p).len() + gy_lands(g, p).len()) as i32;
     let lethal = g.opps(p).any(|q| g.player(q).life <= x);
     if x >= 1 && (lethal || (x >= 3 && lands >= 2) || x >= 6) { 55 } else { 0 }

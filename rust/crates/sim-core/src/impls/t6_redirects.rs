@@ -10,7 +10,7 @@
 use crate::cards::CardDb;
 use crate::engine::cast::on_cast;
 use crate::engine::life::lose_life;
-use crate::engine::mana::{can_pay, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, pay, pay_spell};
 use crate::engine::removal::apply_removal;
 use crate::engine::values::{epow, etgh};
 use crate::engine::values::{pval, untargetable};
@@ -70,9 +70,10 @@ fn redirect_targets(g: &Game, actor: PlayerId, kind: &str, not: PermId) -> Vec<P
 /// Redirect Lightning's additional cost: how p pays "5 life or {2}". True = the life. The AI pays the mana when it
 /// has it ({R} plus {2}), else 5 life when that leaves it above 10; None if neither can be paid.
 pub fn redirect_lightning_life(g: &Game, p: PlayerId) -> Option<bool> {
-    if can_pay(g, p, 2, "R", false) {
+    let c = g.db.id("Redirect Lightning")?;
+    if can_pay_spell(g, p, c, 2, "R", false) {
         Some(false)
-    } else if can_pay(g, p, 0, "R", false) && g.player(p).life > 10 {
+    } else if can_pay_spell(g, p, c, 0, "R", false) && g.player(p).life > 10 {
         Some(true)
     } else {
         None
@@ -108,25 +109,25 @@ pub fn redirect_removal(
             "Redirect Lightning" => {
                 let Some(life) = redirect_lightning_life(g, owner) else { continue };
                 if life {
-                    pay(g, owner, 0, "R", false)?;
+                    pay_spell(g, owner, c, 0, "R", false)?;
                     lose_life(g, owner, 5, Some(owner), "other", None)?;
                 } else {
-                    pay(g, owner, 2, "R", false)?;
+                    pay_spell(g, owner, c, 2, "R", false)?;
                 }
             }
             "Untimely Malfunction" => {
-                if !can_pay(g, owner, 1, "R", false) {
+                if !can_pay_spell(g, owner, c, 1, "R", false) {
                     continue;
                 }
-                pay(g, owner, 1, "R", false)?;
+                pay_spell(g, owner, c, 1, "R", false)?;
             }
             _ => {
                 // Ricochet Trap: change the target of a spell; {R} if an opponent cast a blue spell this turn
                 let (gn, pips) = if blue_spell_this_turn(g, owner) { (0, "R") } else { (3, "R") };
-                if !can_pay(g, owner, gn, pips, false) {
+                if !can_pay_spell(g, owner, c, gn, pips, false) {
                     continue;
                 }
-                pay(g, owner, gn, pips, false)?;
+                pay_spell(g, owner, c, gn, pips, false)?;
             }
         }
         cast_from_hand(g, owner, c)?;
@@ -160,10 +161,10 @@ fn redirect_held(g: &Game, q: PlayerId) -> Option<CardId> {
 fn cast_redirect(g: &mut Game, q: PlayerId, c: CardId, id: u32) -> Res<bool> {
     let Some(life) = redirect_lightning_life(g, q) else { return Ok(false) };
     if life {
-        pay(g, q, 0, "R", false)?;
+        pay_spell(g, q, c, 0, "R", false)?;
         lose_life(g, q, 5, Some(q), "other", None)?;
     } else {
-        pay(g, q, 2, "R", false)?;
+        pay_spell(g, q, c, 2, "R", false)?;
     }
     remove_card(&mut g.player_mut(q).hand, c);
     let pl = g.player_mut(q);
@@ -472,14 +473,23 @@ fn confluence_resolve(g: &mut Game, p: PlayerId, _c: CardId, _ctx: &Ctx) -> Res<
         .map(|m| (m, (etgh(g, m).max(1) + 2) / 3, pval(g, m)))
         .collect();
     cs.sort_by(|a, b| (b.2 / b.1 as f64).partial_cmp(&(a.2 / a.1 as f64)).unwrap());
+    let mut chosen = vec![];
     for (m, k, v) in cs {
         if k <= left && v >= 0.5 {
             left -= k;
-            for _ in 0..k {
-                super::common::eot(g, m, 3, -3);
-            }
-            crate::glog!(g, "    {} gets +{}/-{} (Eldrazi Confluence)", g.perm(m).name, 3 * k, 3 * k);
+            chosen.push((m, k));
         }
+    }
+    for &(m, _) in &chosen {
+        if !crate::engine::ward::pay_ward(g, p, m)? {
+            return Ok("gy");
+        }
+    }
+    for (m, k) in chosen {
+        for _ in 0..k {
+            super::common::eot(g, m, 3, -3);
+        }
+        crate::glog!(g, "    {} gets +{}/-{} (Eldrazi Confluence)", g.perm(m).name, 3 * k, 3 * k);
     }
     // the rest: blink our best enters-effect permanents, else Scions
     let mut own: Vec<(PermId, i32)> = g

@@ -93,6 +93,10 @@ pub fn abilities(g: &Game, _p: PlayerId, m: PermId, nm: &str) -> Option<Vec<Perm
             "{2}: search for a Dragon permanent card, put it into your graveyard; Scion becomes a copy of it until end of turn",
             scion_search,
         )],
+        "Sneak Attack" => vec![ability(
+            "{R}: put a creature card from your hand onto the battlefield (it gains haste; sacrifice it at the beginning of the next end step)",
+            sneak_person,
+        )],
         "Dragon's Hoard" => vec![ability("{T}, remove a gold counter: draw a card", hoard_draw)],
         "Faerie Mastermind" => vec![ability("{3}{U}: each player draws a card", mastermind_draw)],
         "Ranger-Captain of Eos" => {
@@ -136,7 +140,7 @@ fn garth_resolve(g: &mut Game, p: PlayerId, m: PermId) -> Res {
         .map(|&i| {
             let Some(c) = g.db.id(garth::NAMES[i]) else { return garth::NAMES[i].to_string() };
             let (gn, pips) = cost_of(g, p, c);
-            let ok = mana::cost_problem(g, p, gn, &pips).is_none()
+            let ok = mana::card_cost_problem(g, p, c, gn, &pips).is_none()
                 || mana::available(g, p) >= gn + pips.chars().count() as u32;
             format!(
                 "{} {}{}",
@@ -402,6 +406,9 @@ pub fn resolve_spell(g: &mut Game, _p: PlayerId, c: crate::ids::CardId, ctx: &cr
                 for x in worn.into_iter().chain([t]) {
                     g.perm_mut(x).phased = true;
                 }
+                if !g.control_links.is_empty() {
+                    crate::engine::control::end_links(g);
+                }
                 crate::glog!(g, "    {}: {} gets a +1/+1 counter and phases out", g.db.get(c).name, g.perm(t).name);
             }
             Ok(true)
@@ -443,28 +450,35 @@ fn arisen() -> Vec<PermAbility> {
         .collect()
 }
 
-// ------------------------------------------------------------------ Nature's Lore
-/// A person's Nature's Lore: "search your library for a Forest card, put it onto the battlefield". The AI's ramp takes
-/// a basic land of its own pick (`zones::land_ramp`); a person finds any Forest card (a Forest, or a dual land with the
-/// Forest type). True if handled here.
-pub fn forest_search(g: &mut Game, p: PlayerId, c: crate::ids::CardId) -> Res<bool> {
-    if &*g.db.get(c).name != "Nature's Lore" {
-        return Ok(false);
+fn sneak_person(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
+    if let Some(why) = pay(g, p, 0, "R", "Sneak Attack") {
+        return Ok(Some(why));
     }
-    let found = choices::search(
+    crate::glog!(g, "  {} activates Sneak Attack", pname(g, p));
+    stack::ability_run(
         g,
         p,
-        &|g: &Game, x| {
-            let d = g.db.get(x);
-            d.land && d.land_types.has('G')
+        Some(m),
+        None,
+        "put a creature card from your hand onto the battlefield",
+        None,
+        None,
+        |g| {
+            let cs: Vec<_> = g.player(p).hand.iter().copied().filter(|&c| g.db.get(c).creature).collect();
+            let labels: Vec<_> = cs.iter().map(|&c| g.db.get(c).name.to_string()).collect();
+            if let Some(i) = choices::choose(
+                g,
+                p,
+                "choose",
+                "Sneak Attack: put which creature card from your hand onto the battlefield?",
+                &labels,
+                Some("none"),
+                None,
+            )? {
+                mine::sneak_put(g, p, cs[i])?;
+            }
+            Ok(())
         },
-        1,
-        "Nature's Lore: search your library for a Forest card (it enters untapped)",
-        true,
     )?;
-    if let Some(&l) = found.first() {
-        g.add_land_entering(p, l, false);
-        zones::landfall(g, p)?;
-    }
-    Ok(true)
+    Ok(None)
 }

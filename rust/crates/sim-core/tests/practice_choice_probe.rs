@@ -268,6 +268,10 @@ const FALSE_ALARMS: &[(&str, &str)] = &[
     ),
     ("aragorn: Deflecting Swat", "new targets for a spell on the stack: the probe has none"),
     ("thanos: Deflecting Swat", "new targets for a spell on the stack: the probe has none"),
+    (
+        "urdragon: Maelstrom of the Spirit Dragon",
+        "an activated ability, not used as it enters (its person path, human/model_gaps.rs, asks which Dragon to find: practice_trigger_probe's Activate pass)",
+    ),
     ("sheoldred: Invoke Despair", "the opponent chooses what to sacrifice, not the person"),
     ("sheoldred: Rooftop Assassin", "no creature was dealt damage this turn: no legal target"),
     ("cloud: Loyal Warhound", "a basic Plains: every choice is the same card"),

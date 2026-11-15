@@ -14,7 +14,7 @@
 
 use crate::cards::{CardDb, Colors};
 use crate::engine::cast::{cast_card, castable, casts_this_turn, on_cast, spell_targets};
-use crate::engine::mana::{can_pay, cost_of, pay};
+use crate::engine::mana::{can_pay, can_pay_spell, cost_of, pay, pay_spell};
 use crate::engine::removal::apply_removal;
 use crate::engine::stack::counter_window;
 use crate::engine::tutors::card_worth;
@@ -375,7 +375,7 @@ fn dizzy_defend(
         return Ok(());
     }
     let (gn, pips) = cost_of(g, d, c);
-    if !can_pay(g, d, gn, &pips, false) {
+    if !can_pay_spell(g, d, c, gn, &pips, false) {
         return Ok(());
     }
     let open: Vec<PermId> = atk
@@ -391,7 +391,7 @@ fn dizzy_defend(
     if !worth {
         return Ok(());
     }
-    pay(g, d, gn, &pips, false)?;
+    pay_spell(g, d, c, gn, &pips, false)?;
     remove_card(&mut g.player_mut(d).hand, c);
     crate::glog!(g, "  {} casts Dizzy Spell: {} gets -3/-0", pname(g, d), g.perm(big).name);
     on_cast(g, d, c)?;
@@ -492,8 +492,8 @@ pub(crate) fn pay_response(g: &mut Game, q: PlayerId, card: CardId, spell: CardI
         return Ok(false);
     }
     let (gn, pips) = cost_of(g, q, card);
-    if can_pay(g, q, gn, &pips, false) {
-        pay(g, q, gn, &pips, false)?;
+    if can_pay_spell(g, q, card, gn, &pips, false) {
+        pay_spell(g, q, card, gn, &pips, false)?;
     } else if !(alt_ok && crate::engine::altcost::pay_alt(g, q, card, Some(spell))?) {
         return Ok(false);
     }
@@ -543,7 +543,8 @@ pub fn stack_response(g: &mut Game, q: PlayerId, id: u32) -> Res<bool> {
         && would_redirect(g, q, id)
     {
         let (gn, pips) = cost_of(g, q, mis);
-        let affordable = can_pay(g, q, gn, &pips, false) || crate::engine::altcost::available(g, q, mis, Some(spell));
+        let affordable =
+            can_pay_spell(g, q, mis, gn, &pips, false) || crate::engine::altcost::available(g, q, mis, Some(spell));
         if affordable && pay_response(g, q, mis, spell, true)? {
             return misdirect(g, q, id);
         }
@@ -559,7 +560,7 @@ pub fn stack_response(g: &mut Game, q: PlayerId, id: u32) -> Res<bool> {
     }
     if let Some(com) = com {
         let (gn, pips) = cost_of(g, q, com);
-        let mana = can_pay(g, q, gn, &pips, false);
+        let mana = can_pay_spell(g, q, com, gn, &pips, false);
         if (mana || it.imp >= 6.0 || value >= 4.0 || aimed_at_us) && pay_response(g, q, com, spell, true)? {
             return commandeer(g, q, id);
         }
@@ -632,10 +633,10 @@ pub fn louisoix_answer(g: &mut Game, q: PlayerId, item: u32) -> Res<bool> {
         return Ok(false);
     }
     let (gn, pips) = cost_of(g, q, c);
-    let with_mana = can_pay(g, q, gn + 2, &pips, false);
+    let with_mana = can_pay_spell(g, q, c, gn + 2, &pips, false);
     let sac = if with_mana {
         None
-    } else if can_pay(g, q, gn, &pips, false) {
+    } else if can_pay_spell(g, q, c, gn, &pips, false) {
         let legends: Vec<PermId> = g
             .player(q)
             .perms
@@ -656,10 +657,10 @@ pub fn louisoix_answer(g: &mut Game, q: PlayerId, item: u32) -> Res<bool> {
     if let Some(m) = sac {
         crate::glog!(g, "    {} sacrifices {} to Louisoix's Sacrifice", pname(g, q), g.perm(m).name);
         die(g, m, "sac")?;
-        if !pay(g, q, gn, &pips, false)? {
+        if !pay_spell(g, q, c, gn, &pips, false)? {
             return Ok(false);
         }
-    } else if !pay(g, q, gn + 2, &pips, false)? {
+    } else if !pay_spell(g, q, c, gn + 2, &pips, false)? {
         return Ok(false);
     }
     remove_card(&mut g.player_mut(q).hand, c);

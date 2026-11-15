@@ -59,10 +59,10 @@ pub fn not_of_this_world(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<Str
     // {7} less against a spell (not an ability) aimed at a creature of yours with power 7 or more
     let is_spell = g.stack.iter().any(|x| x.id == id && x.kind == crate::state::StackKind::Spell);
     let cost = if is_spell && g.is_creature(t) && engine::values::epow(g, t) >= 7 { 0 } else { 7 };
-    if let Some(why) = mana::cost_problem(g, q, cost, "") {
+    if let Some(why) = mana::card_cost_problem(g, q, c, cost, "") {
         return Ok(Some(format!("Can't cast {NOTW}. {why}")));
     }
-    mana::pay_from_pool(g, q, cost, "");
+    mana::pay_card_from_pool(g, q, c, cost, "");
     g.free_counter = true; // paid
     let r = stack::cast_counter_spell(g, q, c, id);
     g.free_counter = false;
@@ -93,7 +93,7 @@ pub fn deflecting_swat(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<Strin
     }
     let free = engine::values::commander_out(g, q);
     let (gn, pips) = if free { (engine::altcost::tax(g, q, c), "") } else { (2, "R") };
-    if let Some(why) = mana::cost_problem(g, q, gn, pips) {
+    if let Some(why) = mana::card_cost_problem(g, q, c, gn, pips) {
         return Ok(Some(format!("Can't cast {SWAT}. {why}")));
     }
     let labels: Vec<String> = news.iter().map(|&m| legal::describe_target(g, q, Target::Perm(m))).collect();
@@ -102,7 +102,7 @@ pub fn deflecting_swat(g: &mut Game, q: PlayerId, c: CardId) -> Res<Option<Strin
         return Ok(Some("Cancelled.".into()));
     };
     let new = news[j];
-    mana::pay_from_pool(g, q, gn, pips);
+    mana::pay_card_from_pool(g, q, c, gn, pips);
     let pl = g.player_mut(q);
     let i = pl.hand.iter().position(|&x| x == c).unwrap();
     pl.hand.remove(i);

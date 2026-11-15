@@ -143,13 +143,13 @@ fn maelstrom_searches_for_the_dragon_the_person_names() {
     assert!(ls.iter().any(|a| a.label.contains("search your library for a Dragon card")));
     let h = run(&mut g, Use::Land(l), "{4}, {T}, sacrifice it", |r| {
         if r.prompt.contains("search for a Dragon card") {
-            r.choices.iter().position(|c| c.starts_with("Dragonlord Ojutai"))
+            r.choices.iter().position(|c| c.starts_with("Dragonlord Dromoka"))
         } else {
             None
         }
     });
     assert!(asked(&h, "Maelstrom of the Spirit Dragon: search for a Dragon card"), "{:?}", prompts(&h));
-    assert!(in_hand(&g, P0, "Dragonlord Ojutai"), "the Dragon the person named is in hand");
+    assert!(in_hand(&g, P0, "Dragonlord Dromoka"), "the Dragon the person named is in hand");
     assert!(!g.player(P0).lands.contains(&l), "the land was sacrificed");
     assert!(in_gy(&g, P0, "Maelstrom of the Spirit Dragon"));
     assert_eq!(pool_total(&g, P0), 0, "{{4}} was paid");
