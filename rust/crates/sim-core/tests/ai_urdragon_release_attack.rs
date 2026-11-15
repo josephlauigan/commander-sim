@@ -112,32 +112,39 @@ fn the_cast_sets_the_plan_keyed_to_seat_turn_and_opponent() {
     assert_eq!(g.release_attack, Some((P0, turns(&g, P0), Q)));
 }
 
-/// no attackers, Glacial Chasm, a kicked Orim's Chant: the combat never asks for a plan, and the plan ends with the
-/// combat (`continue_turn` clears it)
+/// a combat that asks for no plan: the plan ends with the combat (`continue_turn` clears it) and nobody is attacked
+fn no_attack_ends_the_plan(case: &str, stop: impl FnOnce(&mut Game)) {
+    let mut g = base(1);
+    cast_release(&mut g);
+    assert!(g.release_attack.is_some(), "{case}: the cast set the plan");
+    stop(&mut g);
+    turn::continue_turn(&mut g, P0, Step::Combat).unwrap();
+    assert_eq!(g.release_attack, None, "{case}: the plan outlived the combat");
+    assert!(!dead(&g, Q) && !dead(&g, OTHER), "{case}: nobody was attacked");
+}
+
 #[test]
-fn a_combat_that_takes_no_plan_clears_it() {
-    for case in ["tapped", "chasm", "chant"] {
-        let mut g = base(1);
-        cast_release(&mut g);
-        assert!(g.release_attack.is_some(), "{case}: the cast set the plan");
-        match case {
-            "tapped" => {
-                for m in g.player(P0).perms.clone() {
-                    g.perm_mut(m).tapped = true;
-                }
-            }
-            "chasm" => {
-                lands(&mut g, P0, "Glacial Chasm", 1, false);
-            }
-            _ => {
-                let st = g.turn_stamp();
-                g.player_mut(P1).flag_turn.insert("stax_no_attack", st);
-            }
+fn a_combat_with_no_attackers_clears_the_plan() {
+    no_attack_ends_the_plan("tapped", |g| {
+        for m in g.player(P0).perms.clone() {
+            g.perm_mut(m).tapped = true;
         }
-        turn::continue_turn(&mut g, P0, Step::Combat).unwrap();
-        assert_eq!(g.release_attack, None, "{case}: the plan outlived the combat");
-        assert!(!dead(&g, Q) && !dead(&g, OTHER), "{case}: nobody was attacked");
-    }
+    });
+}
+
+#[test]
+fn glacial_chasm_clears_the_plan() {
+    no_attack_ends_the_plan("chasm", |g| {
+        lands(g, P0, "Glacial Chasm", 1, false);
+    });
+}
+
+#[test]
+fn a_kicked_orims_chant_clears_the_plan() {
+    no_attack_ends_the_plan("chant", |g| {
+        let st = g.turn_stamp();
+        g.player_mut(P1).flag_turn.insert("stax_no_attack", st);
+    });
 }
 
 /// an extra turn in the same round has the same round and seat but a new turn count: the old plan is not used
