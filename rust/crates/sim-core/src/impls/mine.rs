@@ -3472,6 +3472,28 @@ fn terror_hits_face(g: &Game, p: PlayerId, q: PlayerId, n: i32) -> bool {
     max_by(&opps, |o| threat(g, p, o)) == Some(q)
 }
 
+/// Can p's attack and Twinflame's copies still take life from `q`? One term for every gate the engine applies between
+/// "damage is dealt" and "the opponent is eliminated", read without writing. `lose_life`: a locked life total; protection,
+/// The One Ring, Glacial Chasm and the like through `prevents_damage`; Gisela's halving; Pariah's redirection to a
+/// creature; Serra's emblem floor; Phyrexian Unlife's poison instead of life loss at 0 or less life; Angel's Grace's
+/// floor of 1. `check_state`: Unlife, Herald of Eternal Dawn and Angel's Grace keep a player at 0 or less life in the
+/// game. Doublers (Fiery Emancipation, Lightning's stagger, Bloodletter) only make the true damage larger, so they are
+/// not read.
+fn clean(g: &Game, p: PlayerId, q: PlayerId) -> bool {
+    let pl = g.player(q);
+    let mut floor = i32::MAX; // Serra's emblem with a creature: damage can't take q below 1, which lowers `floor`
+    crate::impls::alela::serra_floor(g, q, &mut floor);
+    pl.alive
+        && !pl.life_locked
+        && !prevents_damage(g, q, Some(p))
+        && crate::impls::t3_aurelia::gisela_scale(g, q, 100) >= 100
+        && floor == i32::MAX
+        && !crate::impls::t6_stax::grace_active(g, q)
+        && !crate::impls::tymna_cards::unlife(g, q)
+        && !crate::impls::t0_giada::cant_lose(g, q)
+        && !pl.perms.iter().any(|&m| g.perm(m).on_bf && g.perm(m).name == "Pariah")
+}
+
 /// Twinflame's copies and p's ready fliers kill one opponent this turn: first main phase, and an opponent whom nothing
 /// protects (The One Ring and the like prevent all of it). Two kinds of damage reach that opponent:
 /// - combat damage, if it has no untapped flier or reach creature to block: p's ready fliers and the flying copies,
@@ -3506,6 +3528,8 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
                 && (!x.sick || has_haste(g, m))
                 && epow(g, m) > 0
                 && (x.fly || kw(g, m, "flying"))
+                && !repl::source_prevented(g, m)
+                && !repl::dovin(g, m)
                 && !(pacify && crate::cardcode::locked(g, m, "pacify"))
         })
         .map(|&m| epow(g, m))
@@ -3535,10 +3559,21 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
         .player(p)
         .perms
         .iter()
-        .filter(|&&m| g.perm(m).on_bf && !g.perm(m).phased && g.perm(m).name == "Terror of the Peaks")
+        .filter(|&&m| {
+            g.perm(m).on_bf
+                && !g.perm(m).phased
+                && g.perm(m).name == "Terror of the Peaks"
+                && !repl::source_prevented(g, m)
+        })
         .count() as u32;
+    // a fog this turn (Spore Frog and the like, Arachnogenesis, Galadhrim Ambush): all combat damage, or all of it by
+    // creatures that aren't Spiders or Elves, is prevented
+    let st = g.turn_stamp();
+    let fogged = g.fog == Some(st)
+        || g.fog_spiders == Some(st)
+        || g.players.iter().any(|o| o.flag_turn.get(&"elf_fog") == Some(&st));
     g.opps(p).any(|q| {
-        if !g.player(q).alive || prevents_damage(g, q, Some(p)) {
+        if !clean(g, p, q) {
             return false;
         }
         let life = g.player(q).life;
@@ -3558,7 +3593,10 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
         // combat damage is counted
         let taxed = attack_restrictions(g, p, q).0 > 0
             || crate::engine::hooks::hooked(g, Event::AttackTax).iter().any(|(s, _)| g.perm(*s).owner == q);
-        let combat = if blocked_in_the_air || capped || taxed { 0 } else { fliers };
+        // Serra's Emissary (protection from creatures) and Heroic Sacrifice stop combat damage only
+        let shielded = crate::impls::t12_kaalia_sythis::emissary_shields(g, q)
+            || g.t0c.sac.is_some_and(|(o, _, at)| o == q && at == st);
+        let combat = if blocked_in_the_air || capped || taxed || fogged || shielded { 0 } else { fliers };
         let mut hit = 0i32;
         if terrors > 0 && !player_hexproof(g, q) {
             for &(pow, made) in &copies {
