@@ -3452,26 +3452,6 @@ pub(crate) fn twinflame(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>
     }])
 }
 
-/// Would Terror of the Peaks' trigger of power `n` (resolved by `t2::best_target_any`) hit the opponent `q`'s face? The
-/// engine's order: the first opponent whose life is `n` or less takes it (a kill, which the caller counts itself); else
-/// the best creature it would remove (an opponent's targetable creature with toughness `n` or less and `pval` 3 or
-/// more); else the opponent with the highest `threat`. The same pure helpers, no writes.
-fn terror_hits_face(g: &Game, p: PlayerId, q: PlayerId, n: i32) -> bool {
-    let opps: Vec<PlayerId> = g.opps(p).collect();
-    if opps.iter().any(|&o| g.player(o).life <= n) {
-        return false;
-    }
-    let tg: Vec<PermId> = opps
-        .iter()
-        .flat_map(|&o| g.player(o).perms.iter().copied())
-        .filter(|&m| g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= n)
-        .collect();
-    if max_by(&tg, |m| pval(g, m)).is_some_and(|b| pval(g, b) >= 3.0) {
-        return false;
-    }
-    max_by(&opps, |o| threat(g, p, o)) == Some(q)
-}
-
 /// Can p's attack and Twinflame's copies still take life from `q`? One term for every gate the engine applies between
 /// "damage is dealt" and "the opponent is eliminated", read without writing. `lose_life`: a locked life total; protection,
 /// The One Ring, Glacial Chasm and the like through `prevents_damage`; Gisela's halving; Pariah's redirection to a
@@ -3494,6 +3474,52 @@ fn clean(g: &Game, p: PlayerId, q: PlayerId) -> bool {
         && !pl.perms.iter().any(|&m| g.perm(m).on_bf && g.perm(m).name == "Pariah")
 }
 
+/// Terror of the Peaks' triggers (one per entry in `triggers`, the power of each) as `t2::best_target_any` resolves them,
+/// replayed on local life totals: the first opponent whose life is the trigger's power or less takes it; else a creature
+/// the engine would remove (an opponent's targetable creature with toughness within the power and `pval` 3 or more);
+/// else the opponent with the highest `threat`, which is the permanents' worth plus `0.05 * (life - 40)` and so follows
+/// the local life. Returns what each opponent takes. The replay stops, with what it has counted so far, at the first
+/// trigger whose outcome it can't follow: one that removes a creature, or one aimed at an opponent whose damage is
+/// reduced rather than prevented (`clean` is false while the opponent can be hit). An opponent that nothing can damage
+/// (protection, a locked life total) keeps its life and so keeps being the aim, exactly as in the engine.
+fn terror_replay(g: &Game, p: PlayerId, triggers: &[i32]) -> Vec<(PlayerId, i64)> {
+    let opps: Vec<PlayerId> = g.opps(p).collect();
+    let mut life: Vec<i64> = opps.iter().map(|&o| g.player(o).life as i64).collect();
+    let mut taken = vec![0i64; opps.len()];
+    // the permanents' worth, from which the engine's `threat` differs by 0.05 * (life - 40)
+    let worth: Vec<f64> = opps
+        .iter()
+        .map(|&o| g.player(o).perms.iter().filter(|&&m| !g.perm(m).phased).map(|&m| pval(g, m)).psum())
+        .collect();
+    for &n in triggers {
+        let n64 = n as i64;
+        let i = if let Some(i) = life.iter().position(|&l| l <= n64) {
+            i
+        } else {
+            let removable = opps
+                .iter()
+                .flat_map(|&o| g.player(o).perms.iter().copied())
+                .filter(|&m| g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= n)
+                .collect::<Vec<PermId>>();
+            if max_by(&removable, |m| pval(g, m)).is_some_and(|b| pval(g, b) >= 3.0) {
+                break; // a creature goes: its worth leaves the aim, which the replay doesn't follow
+            }
+            let idx: Vec<usize> = (0..opps.len()).collect();
+            max_by(&idx, |i| worth[i] + (life[i] as f64 - 40.0) * 0.05).unwrap()
+        };
+        let o = opps[i];
+        if g.player(o).life_locked || prevents_damage(g, o, Some(p)) {
+            continue; // nothing happens to it: same life, same aim next time
+        }
+        if !clean(g, p, o) {
+            break; // halved, floored, redirected or turned into poison: not followed
+        }
+        life[i] -= n64;
+        taken[i] += n64;
+    }
+    opps.into_iter().zip(taken).collect()
+}
+
 /// Twinflame's copies and p's ready fliers kill one opponent this turn: first main phase, and an opponent whom nothing
 /// protects (The One Ring and the like prevent all of it). Two kinds of damage reach that opponent:
 /// - combat damage, if it has no untapped flier or reach creature to block: p's ready fliers and the flying copies,
@@ -3502,8 +3528,10 @@ fn clean(g: &Game, p: PlayerId, q: PlayerId) -> bool {
 ///   by the end of the phase or spent first, and the AI keeps none back). Those states count no combat damage. A
 ///   creature locked by an Arrest-style Aura can't attack;
 /// - Terror of the Peaks' enter trigger (not combat, so a blocker doesn't stop it, but it targets: a hexproof player
-///   can't be hit): each Terror p controls deals the power of every copy that enters, but only where the engine would
-///   aim it (`terror_hits_face`), or as a kill when one trigger alone is enough.
+///   can't be hit): each Terror p controls deals the power of every copy that enters, aimed trigger by trigger as the
+///   engine does (`terror_replay`).
+/// The opponent must be `clean`: nothing may halve, floor, redirect or prevent the damage, or keep the opponent in the
+/// game at 0 or less life; a fog this turn or a prevented attacker removes combat damage.
 /// The copies are what the resolution really makes: the printed power of each target that Twinflame can legally target
 /// (no protection from red), `repl::tokens` of them per target (Doubling Season and company), while the token cap
 /// leaves room. Blocks by ground creatures are ignored: everything that deals combat damage here flies.
@@ -3572,11 +3600,19 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
     let fogged = g.fog == Some(st)
         || g.fog_spiders == Some(st)
         || g.players.iter().any(|o| o.flag_turn.get(&"elf_fog") == Some(&st));
+    // one trigger of every Terror per copy that enters, each of the copy's power
+    let mut triggers: Vec<i32> = vec![];
+    if terrors > 0 {
+        for &(pow, made) in &copies {
+            let k = (made as usize).saturating_mul(terrors as usize).min(1 << 20);
+            triggers.extend(std::iter::repeat_n(pow, k));
+        }
+    }
+    let taken = terror_replay(g, p, &triggers);
     g.opps(p).any(|q| {
         if !clean(g, p, q) {
             return false;
         }
-        let life = g.player(q).life;
         let blocked_in_the_air = g.player(q).perms.iter().any(|&b| {
             let x = g.perm(b);
             g.is_creature(b)
@@ -3597,19 +3633,9 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> bool {
         let shielded = crate::impls::t12_kaalia_sythis::emissary_shields(g, q)
             || g.t0c.sac.is_some_and(|(o, _, at)| o == q && at == st);
         let combat = if blocked_in_the_air || capped || taxed || fogged || shielded { 0 } else { fliers };
-        let mut hit = 0i32;
-        if terrors > 0 && !player_hexproof(g, q) {
-            for &(pow, made) in &copies {
-                if pow >= life {
-                    return true; // one trigger kills q by itself
-                }
-                if terror_hits_face(g, p, q, pow) {
-                    let total = (pow as i64).saturating_mul(made as i64 * terrors as i64);
-                    hit = hit.saturating_add(total.min(i32::MAX as i64) as i32);
-                }
-            }
-        }
-        combat.saturating_add(hit) >= life
+        // Terror's triggers do not depend on blockers; a hexproof player can't be targeted, whatever the engine's aim
+        let hit = if player_hexproof(g, q) { 0 } else { taken.iter().find(|x| x.0 == q).map_or(0, |x| x.1) };
+        combat as i64 + hit >= g.player(q).life as i64
     })
 }
 
