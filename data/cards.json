@@ -38121,6 +38121,96 @@
    "spell_prio": false
   },
   {
+   "name": "Elspeth, Knight-Errant",
+   "types": "P",
+   "generic": 2,
+   "pips": "WW",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "loyalty",
+     "loyalty": 1,
+     "effects": [
+      {
+       "do": "token",
+       "n": 1,
+       "pow": 1,
+       "tgh": 1,
+       "keywords": [],
+       "attacking": false,
+       "warrior": false,
+       "types": [
+        "soldier"
+       ],
+       "color": "W"
+      }
+     ]
+    },
+    {
+     "type": "loyalty",
+     "loyalty": 1,
+     "effects": [
+      {
+       "do": "pump",
+       "pow": 3,
+       "tgh": 3,
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "creature"
+        },
+        "upto": false
+       }
+      },
+      {
+       "do": "grant",
+       "keyword": "flying",
+       "what": {
+        "sel": "target",
+        "filter": {
+         "type": "creature"
+        },
+        "upto": false
+       }
+      }
+     ]
+    }
+   ],
+   "start_loyalty": "4",
+   "kws": [],
+   "subtypes": [
+    "elspeth"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "you get an emblem with \"artifacts, creatures, enchantments, and lands you control have indestructible.\""
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Elspeth, Sun's Champion",
    "types": "P",
    "generic": 4,
@@ -67756,6 +67846,69 @@
    "spell_prio": false
   },
   {
+   "name": "Kambal, Consul of Allocation",
+   "types": "C",
+   "generic": 1,
+   "pips": "WB",
+   "tags": {
+    "leg": true,
+    "human": true,
+    "pow": "2",
+    "tgh": "3"
+   },
+   "pow": 2,
+   "tgh": 3,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "triggered",
+     "effects": [
+      {
+       "do": "lose_life",
+       "n": 2,
+       "who": "event_player"
+      },
+      {
+       "do": "gain_life",
+       "n": 2,
+       "who": "you",
+       "per_opponent": false
+      }
+     ],
+     "event": "cast",
+     "who": "opponent",
+     "spell": "noncreature"
+    }
+   ],
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [
+    "advisor",
+    "human"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Kappa Cannoneer",
    "types": "AC",
    "generic": 5,
@@ -80725,6 +80878,47 @@
    "phyrexian": "",
    "xcount": 0,
    "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Minas Tirith",
+   "types": "L",
+   "generic": 0,
+   "pips": "",
+   "tags": {
+    "leg": true,
+    "c": "W",
+    "ck": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [],
+   "subtypes": [],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "pool",
+   "unparsed": [],
+   "derived": {
+    "cmc": 0,
+    "land": true,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": false
+   },
+   "phyrexian": "",
+   "xcount": 0,
+   "enters_rule": [
+    "legendary"
+   ],
    "land_types": [],
    "basic": false,
    "python_hooks": [],
@@ -117033,6 +117227,62 @@
    "spell_prio": false
   },
   {
+   "name": "Sorin, Vengeful Bloodlord",
+   "types": "P",
+   "generic": 2,
+   "pips": "WB",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": [
+    {
+     "type": "loyalty",
+     "loyalty": 2,
+     "effects": [
+      {
+       "do": "damage",
+       "n": 1,
+       "to": {
+        "sel": "any_target"
+       }
+      }
+     ]
+    }
+   ],
+   "start_loyalty": "4",
+   "kws": [],
+   "subtypes": [
+    "sorin"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BW",
+   "game_changer": false,
+   "source": "scryfall+dsl",
+   "unparsed": [
+    "During your turn, creatures and planeswalkers you control have lifelink.",
+    "−X: Return target creature card with mana value X from your graveyard to the battlefield. That creature is a Vampire in addition to its other types."
+   ],
+   "derived": {
+    "cmc": 4,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Soul Enervation",
    "types": "E",
    "generic": 3,
@@ -125242,6 +125492,54 @@
    "spell_prio": false
   },
   {
+   "name": "Syr Vondam, Sunstar Exemplar",
+   "types": "C",
+   "generic": 0,
+   "pips": "WB",
+   "tags": {
+    "leg": true,
+    "human": true,
+    "pow": "2",
+    "vig": true
+   },
+   "pow": 2,
+   "tgh": 2,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "menace",
+    "vigilance"
+   ],
+   "subtypes": [
+    "human",
+    "knight"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "BW",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [
+    "When ~ dies or is put into exile while its power is 4 or greater, destroy up to one target nonland permanent."
+   ],
+   "derived": {
+    "cmc": 2,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
    "name": "Sythis, Harvest's Hand",
    "types": "CE",
    "generic": 0,
@@ -130197,6 +130495,47 @@
    "identity": "R",
    "game_changer": false,
    "source": "scryfall+dsl",
+   "unparsed": [],
+   "derived": {
+    "cmc": 3,
+    "land": false,
+    "creature": false,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "The Seriema",
+   "types": "A",
+   "generic": 1,
+   "pips": "WW",
+   "tags": {
+    "leg": true
+   },
+   "pow": 0,
+   "tgh": 0,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "station"
+   ],
+   "subtypes": [
+    "spacecraft"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "pool",
    "unparsed": [],
    "derived": {
     "cmc": 3,
@@ -147711,6 +148050,48 @@
    ],
    "derived": {
     "cmc": 5,
+    "land": false,
+    "creature": true,
+    "instant": false,
+    "sorcery": false,
+    "perm": true
+   },
+   "phyrexian": "",
+   "xcount": 0,
+   "enters_rule": null,
+   "land_types": [],
+   "basic": false,
+   "python_hooks": [],
+   "spell_prio": false
+  },
+  {
+   "name": "Yoshimaru, Ever Faithful",
+   "types": "C",
+   "generic": 0,
+   "pips": "W",
+   "tags": {
+    "leg": true,
+    "pow": "1"
+   },
+   "pow": 1,
+   "tgh": 1,
+   "bomb": 0,
+   "dsl": null,
+   "start_loyalty": null,
+   "kws": [
+    "partner"
+   ],
+   "subtypes": [
+    "dog"
+   ],
+   "protfrom": "",
+   "ward": 0,
+   "identity": "W",
+   "game_changer": false,
+   "source": "scryfall",
+   "unparsed": [],
+   "derived": {
+    "cmc": 1,
     "land": false,
     "creature": true,
     "instant": false,

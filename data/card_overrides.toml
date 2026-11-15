@@ -10309,3 +10309,21 @@ dsl = []
 status = "Full"
 note = "whenever a player (you too) casts their second spell each turn, you lose 1 life and create a Treasure (impls/model_gaps_a2.rs, a cast hook; nothing happens when Lotho enters)"
 
+# --- the Yoshimaru / Tymna deck's cards (impls/yoshimaru_cards.rs), modelled before the deck is registered
+["Yoshimaru, Ever Faithful"]
+status = "Full"
+note = "another legendary permanent you control entering puts a +1/+1 counter on him: a nonland one through the enters event (a stack trigger, so Panharmonicon applies), a legendary land through landfall (counted once, only lands that arrived after him); Partner is the commander rule; no choice in it for a person (impls/yoshimaru_cards.rs)"
+
+["Kambal, Consul of Allocation"]
+status = "Full"
+note = "compiled: whenever an opponent casts a noncreature spell, that player loses 2 life and you gain 2; no choice in it for a person"
+
+["Minas Tirith"]
+dsl = [] # the compiled draw had no way to say only if you attacked with two or more creatures; impls/yoshimaru_cards.rs offers it
+status = "Full"
+note = "enters tapped unless you control a legendary creature (the engine's enters rule); {T}: {W}; {1}{W}, {T}: draw a card only after attacking with two or more creatures this turn (the AI after combat with spare mana, a person through the land's options hook paying from their pool; impls/yoshimaru_cards.rs)"
+
+["The Seriema"]
+dsl = [] # the compiled enters search ignores "legendary" (it would take any creature); impls/yoshimaru_cards.rs searches
+status = "Full"
+note = "enters: search for a legendary creature card, into your hand, shuffle (a person picks the card or finds nothing; the AI its search pick; impls/yoshimaru_cards.rs); Station: tap another untapped creature, sorcery speed, charge counters equal to its power (a person chooses each creature, the AI taps creatures that can't attack, or the taps that reach 7 at once); at 7+ a 5/5 flying artifact creature, and your other tapped legendary creatures are indestructible"
