@@ -35,9 +35,10 @@
 # enter tapped (Blind Obedience, Thalia), only Terror's triggers can release it; it also stays held while an opponent
 # controls a permanent that triggers on the line itself (Soul Warden, Authority of the Consuls, Sunscorch Regent,
 # Aurelia, Exquisite Blood, Intruder Alarm, Koma, Sting), and counts no combat damage to an opponent with a block or
-# defence effect out (Spore Frog, Mirage Mirror, Yawgmoth, Brimaz), even where the engine would kill; a chump block in
-# the check is one random sample; the check follows the engine where the engine departs from the rules (Chalice, a
-# disabled Opposition); and the AI's real attack, chosen afterwards, may not be the killing one. Still
+# defence effect out (Spore Frog, Mirage Mirror, Yawgmoth, Brimaz), even where the engine would kill; the check's
+# blocks are the engine's heuristic ones (three samples, each must kill), not an opponent's block search; the check
+# follows the engine where the engine departs from the rules (Chalice, a disabled Opposition); and the AI's real attack,
+# chosen afterwards, may not be the killing one. Still
 # open: a Spark Double cast, or free-dropped, before Garth is on the battlefield copies something else and kills the
 # line (nothing holds it back yet).
 # The `plays` set (the mulligan's "something to do") leaves out Mox Jasper (dead before a Dragon) and Garth One-Eye;
