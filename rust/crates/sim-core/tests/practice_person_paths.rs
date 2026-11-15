@@ -115,3 +115,167 @@ fn gifts_with_one_living_opponent_left_asks_nothing_about_the_target() {
     assert!(target_questions(&asked).is_empty(), "forced: {:?}", asked.lock().unwrap());
     assert!(bins_line(&g).contains(&format!("; {} bins ", g.player(P2).name)));
 }
+
+// ================================================================== Mindbreak Trap
+// "Exile any number of target spells." A person chooses which spells on the stack, any of them, their own included.
+
+use sim_core::ids::CardId;
+use sim_core::state::{Ctx, StackItem, StackKind};
+
+/// a spell of p's on the stack (cast: out of the hand)
+fn on_stack(g: &mut Game, p: PlayerId, name: &str) -> CardId {
+    let c = hand(g, p, &[name])[0];
+    let i = g.player(p).hand.iter().position(|&x| x == c).unwrap();
+    g.player_mut(p).hand.remove(i);
+    g.stack_pushes += 1;
+    g.stack.push(StackItem {
+        id: g.stack_pushes,
+        controller: p,
+        card: Some(c),
+        ctx: Ctx::default(),
+        zone: "hand",
+        imp: 6.0,
+        aff: vec![],
+        generic: true,
+        kind: StackKind::Spell,
+        name: name.to_string(),
+        passed: vec![],
+        countered: false,
+        countered_by: None,
+    });
+    c
+}
+
+/// seat 0 holds Mindbreak Trap and four blue mana; the stack, bottom to top: P0's Opt, P2's Brainstorm, P1's Lightning
+/// Bolt
+fn trap_table() -> Game {
+    let mut g = table(&["thanos", "seph", "kefka"]);
+    g.active = Some(P1);
+    hand(&mut g, P0, &["Mindbreak Trap"]);
+    pool(&mut g, P0, &[('U', 4)]);
+    on_stack(&mut g, P0, "Opt");
+    on_stack(&mut g, P2, "Brainstorm");
+    on_stack(&mut g, P1, "Lightning Bolt");
+    g
+}
+
+/// seat 0 as a person who answers the Trap's questions with these spells, in order, then says they are done
+fn trap_person(g: &mut Game, names: &[&'static str]) -> Asked {
+    let log: Asked = Arc::new(Mutex::new(vec![]));
+    let (l2, mut left) = (log.clone(), names.to_vec().into_iter());
+    g.humans.add(
+        P0,
+        Arc::new(ScriptHuman::from_fn(move |r: &Request| {
+            l2.lock().unwrap().push((r.kind.to_string(), r.prompt.clone(), r.choices.clone()));
+            match left.next() {
+                Some(n) => Answer::Pick(
+                    r.choices.iter().position(|c| c.starts_with(n)).unwrap_or_else(|| panic!("{n} in {:?}", r.choices)),
+                ),
+                None => Answer::Decline,
+            }
+        })),
+    );
+    log
+}
+
+fn trap_questions(a: &Asked) -> Vec<Vec<String>> {
+    a.lock().unwrap().iter().filter(|x| x.1.starts_with("Mindbreak Trap")).map(|x| x.2.clone()).collect()
+}
+
+/// (countered, exiled by the Trap's own rule) of the spell of this name on the stack
+fn spell_state(g: &Game, name: &str) -> (bool, bool) {
+    let it = g.stack.iter().find(|x| x.name == name).unwrap_or_else(|| panic!("{name} is on the stack"));
+    (it.countered, it.ctx.exile_after)
+}
+
+fn cast_trap(g: &mut Game) -> Option<String> {
+    let trap = card(g, "Mindbreak Trap");
+    sim_core::human::human::cast_counterspell(g, P0, trap).unwrap()
+}
+
+#[test]
+fn trap_the_person_is_offered_every_spell_on_the_stack_and_then_the_rest() {
+    let mut g = trap_table();
+    let asked = trap_person(&mut g, &["Brainstorm", "Opt"]);
+    let (n0, n1, n2) = (g.player(P0).name.to_string(), g.player(P1).name.to_string(), g.player(P2).name.to_string());
+    assert_eq!(cast_trap(&mut g), None);
+    // Oracle: any number of target spells: all three are legal targets (their own too), the top one first. After
+    // each pick, the spells not yet chosen, and a way to stop
+    let first = vec![
+        format!("Lightning Bolt ({n1})"),
+        format!("Brainstorm ({n2})"),
+        format!("Opt ({n0})"),
+        "cancel".to_string(),
+    ];
+    let second = vec![format!("Lightning Bolt ({n1})"), format!("Opt ({n0})"), "done".to_string()];
+    let third = vec![format!("Lightning Bolt ({n1})"), "done".to_string()];
+    assert_eq!(trap_questions(&asked), vec![first, second, third]);
+}
+
+#[test]
+fn trap_the_person_exiles_only_the_spells_they_chose() {
+    let mut g = trap_table();
+    let _ = trap_person(&mut g, &["Brainstorm"]); // then done
+    assert_eq!(cast_trap(&mut g), None);
+    assert!(spell_state(&g, "Brainstorm").0, "the chosen spell");
+    assert!(!spell_state(&g, "Lightning Bolt").0, "an opposing spell they left alone");
+    assert!(!spell_state(&g, "Opt").0, "their own spell");
+}
+
+#[test]
+fn trap_the_person_can_exile_their_own_spell_and_one_other() {
+    let mut g = trap_table();
+    let _ = trap_person(&mut g, &["Opt", "Lightning Bolt"]);
+    assert_eq!(cast_trap(&mut g), None);
+    assert_eq!(spell_state(&g, "Opt"), (true, false), "their own spell is the first target");
+    assert_eq!(spell_state(&g, "Lightning Bolt"), (true, true), "exiled");
+    assert!(!spell_state(&g, "Brainstorm").0, "not chosen");
+}
+
+#[test]
+fn trap_the_person_can_exile_everything_including_their_own() {
+    let mut g = trap_table();
+    let asked = trap_person(&mut g, &["Lightning Bolt", "Opt", "Brainstorm"]);
+    assert_eq!(cast_trap(&mut g), None);
+    for s in ["Lightning Bolt", "Brainstorm", "Opt"] {
+        assert!(spell_state(&g, s).0, "{s}");
+    }
+    assert_eq!(trap_questions(&asked).len(), 3, "nothing left to choose after the third: no fourth question");
+}
+
+#[test]
+fn trap_cancelling_the_first_question_casts_nothing() {
+    let mut g = trap_table();
+    let _ = trap_person(&mut g, &[]);
+    assert_eq!(cast_trap(&mut g).as_deref(), Some("Cancelled."));
+    assert!(g.stack.iter().all(|x| !x.countered), "nothing exiled");
+    assert!(g.player(P0).hand.iter().any(|&c| &*g.db.get(c).name == "Mindbreak Trap"), "still in hand");
+    assert_eq!(pool_total(&g, P0), 4, "nothing paid");
+}
+
+#[test]
+fn trap_with_one_opposing_spell_has_nothing_to_choose() {
+    let mut g = table(&["thanos", "seph"]);
+    g.active = Some(P1);
+    hand(&mut g, P0, &["Mindbreak Trap"]);
+    pool(&mut g, P0, &[('U', 4)]);
+    on_stack(&mut g, P1, "Lightning Bolt");
+    let asked = trap_person(&mut g, &[]);
+    assert_eq!(cast_trap(&mut g), None);
+    assert!(trap_questions(&asked).is_empty(), "forced: {:?}", asked.lock().unwrap());
+    assert!(spell_state(&g, "Lightning Bolt").0);
+}
+
+#[test]
+fn trap_the_ai_still_exiles_every_spell_that_is_not_its_own() {
+    // the AI at seat 0 (no person): the top spell is the target, and every other opposing spell goes with it
+    let mut g = trap_table();
+    let trap = card(&g, "Mindbreak Trap");
+    let top = g.stack.last().unwrap().id;
+    // free mode (an opponent cast three spells this turn): the AI has no lands to pay with
+    let (st, cs) = (g.turn_stamp(), ["Lightning Bolt", "Brainstorm", "Opt"].map(|n| card(&g, n)).to_vec());
+    g.player_mut(P1).turn_casts = Some((st, cs));
+    assert!(sim_core::engine::stack::cast_counter_spell(&mut g, P0, trap, top).unwrap());
+    assert!(spell_state(&g, "Lightning Bolt").0 && spell_state(&g, "Brainstorm").0);
+    assert!(!spell_state(&g, "Opt").0, "its own spell is not exiled");
+}
