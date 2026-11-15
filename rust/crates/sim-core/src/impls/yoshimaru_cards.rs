@@ -318,8 +318,9 @@ fn station_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
 /// enters, you may pay 3 life. If you don't, it enters tapped." and {T}: Add {W}. The card data types the card as its
 /// front face, so the engine's land play never takes it: it is offered as a land through `hand_options`, as
 /// Shatterskull Smashing is (`t6_lands::mdfc_land_opt`), and taps for {W} through `land_cols`. The AI plays it as a land
-/// only when short of lands (that rule's heuristics); a person may play it as their land drop any time they could play
-/// a land, and answers the pay-3-life question.
+/// only when short of lands (that rule's heuristics) and pays the 3 life by the shared land-payment rule; a person may
+/// play it as their land drop any time they could play a land, and answers the pay-3-life question (not asked without
+/// 3 life). With Spelunking out the land enters untapped whatever is paid, so no life is paid and it is not tapped.
 fn meadow_cols(_g: &Game, _p: PlayerId, _l: PermId) -> Colors {
     Colors::from_letters("W")
 }
@@ -341,25 +342,30 @@ fn meadow_options(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>) -> R
 }
 
 fn meadow_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    if !crate::human::is_human(g, p) {
-        return super::t6_lands::mdfc_land_go(g, p, arg);
-    }
     let c = CardId(arg as u16);
+    let human = crate::human::is_human(g, p);
     let allowed = 1 + crate::cardcode::extra_lands(g, p) + g.player(p).extra_land_now;
     let Some(i) = g.player(p).hand.iter().position(|&x| x == c) else { return Ok(false) };
-    if g.player(p).lands_played >= allowed || crate::human::legal::sorcery_timing(g, p).is_some() {
+    if g.player(p).lands_played >= allowed || (human && crate::human::legal::sorcery_timing(g, p).is_some()) {
         return Ok(false);
     }
     g.player_mut(p).hand.remove(i);
-    // "As this land enters, you may pay 3 life": only with the life to pay
-    let paid = g.player(p).life >= 3
-        && crate::human::choices::yes_no(g, p, "Witch-Blessed Meadow: pay 3 life so it enters untapped?")?;
+    // "As this land enters, you may pay 3 life": only with the life to pay, and not with Spelunking out (the land
+    // enters untapped whatever is paid, and the controller may order the two replacements that way)
+    let free = super::t12_windgrace::lands_enter_untapped(g, p);
+    let paid = !free
+        && if human {
+            g.player(p).life >= 3
+                && crate::human::choices::yes_no(g, p, "Witch-Blessed Meadow: pay 3 life so it enters untapped?")?
+        } else {
+            crate::engine::turn::pays_for_land(g, p, c, 3)
+        };
     if paid {
         lose_life(g, p, 3, Some(p), "other", None)?;
     }
     crate::engine::turn::play_land_card(g, p, c, "plays")?;
     if let Some(&l) = g.player(p).lands.last().filter(|&&l| g.perm(l).card() == c) {
-        if !paid {
+        if !paid && !free {
             g.perm_mut(l).tapped = true;
         }
         super::t6_lands::traitors_check(g, p, l)?;
