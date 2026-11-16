@@ -95,15 +95,26 @@ pub fn best_target_any(g: &mut Game, p: PlayerId, n: i32) -> Res {
 /// `best_target_any` for the damage of the permanent `src` (Terror of the Peaks, the Dragons): if it has lifelink, its
 /// controller gains what it dealt
 pub fn best_target_any_by(g: &mut Game, p: PlayerId, n: i32, src: Option<PermId>) -> Res {
+    let by = choices::by(g, src);
+    let dealt = best_target_any_dealt(g, p, n, src)?;
+    if let Some((s, ll)) = by {
+        crate::engine::life::lifelink(g, s, ll, dealt)?;
+    }
+    Ok(())
+}
+
+/// `best_target_any_by` without the gain: the damage the AI dealt, for a source whose several damages are one event
+/// (Drakuseth). A person's damage is gained as it is dealt, and counts as 0 here.
+fn best_target_any_dealt(g: &mut Game, p: PlayerId, n: i32, src: Option<PermId>) -> Res<i32> {
     let opps: Vec<PlayerId> = g.opps(p).collect();
     if opps.is_empty() {
-        return Ok(());
+        return Ok(0);
     }
-    let by = choices::by(g, src);
     if human_of(g, p).is_some() {
-        return choices::deal_damage_batched_by(g, p, n, "Damage", "triggers", by);
+        choices::deal_damage_batched_by(g, p, n, "Damage", "triggers", choices::by(g, src))?;
+        return Ok(0);
     }
-    let dealt = if let Some(&q) = opps.iter().find(|&&q| g.player(q).life <= n) {
+    Ok(if let Some(&q) = opps.iter().find(|&&q| g.player(q).life <= n) {
         crate::engine::life::lose_life_dealt(g, q, n, Some(p), "triggers", None)?
     } else {
         let tg: Vec<PermId> = opps
@@ -119,11 +130,7 @@ pub fn best_target_any_by(g: &mut Game, p: PlayerId, n: i32, src: Option<PermId>
                 crate::engine::life::lose_life_dealt(g, q, n, Some(p), "triggers", None)?
             }
         }
-    };
-    if let Some((s, ll)) = by {
-        crate::engine::life::lifelink(g, s, ll, dealt)?;
-    }
-    Ok(())
+    })
 }
 
 /// t2.blink: exile m and return it under its owner's control (ETBs again, untapped, summoning sick); the permanent
@@ -544,9 +551,15 @@ fn tempest(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 /// 4 + 3 + 3 damage split by the any-target heuristic
 fn drakuseth(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
     if atk.contains(&src) && trigger_window(g, p, Some(src), "4, 3 and 3 damage to any targets", Some(6.0))? {
-        best_target_any_by(g, p, 4, Some(src))?;
-        best_target_any_by(g, p, 3, Some(src))?;
-        best_target_any_by(g, p, 3, Some(src))?;
+        // one source dealing all three damages at once is one damage event, one life gain (CR 702.15e)
+        let by = choices::by(g, Some(src));
+        let mut dealt = 0i32;
+        for n in [4, 3, 3] {
+            dealt = dealt.saturating_add(best_target_any_dealt(g, p, n, Some(src))?);
+        }
+        if let Some((s, ll)) = by {
+            crate::engine::life::lifelink(g, s, ll, dealt)?;
+        }
     }
     Ok(vec![])
 }
