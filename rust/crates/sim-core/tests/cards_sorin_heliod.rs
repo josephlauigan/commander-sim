@@ -523,7 +523,7 @@ fn heliod_rechecks_protection_when_the_counter_trigger_resolves() {
 }
 
 #[test]
-fn the_ai_grant_does_nothing_if_the_target_gained_protection_before_it_resolved() {
+fn the_ai_grant_is_refused_at_activation_if_the_target_gained_protection_after_it_was_chosen() {
     let mut g = tbl();
     let hel = perm(&mut g, P0, HELIOD);
     let t = body(&mut g, P0, 4, 4);
@@ -531,9 +531,13 @@ fn the_ai_grant_does_nothing_if_the_target_gained_protection_before_it_resolved(
     let o = options(&mut g, hel, P0);
     let found = o.iter().find(|x| x.label.contains("lifelink"));
     assert!(found.is_some(), "the grant is offered: {:?}", labels(&o));
-    prot_white(&mut g, t); // in response
-    let _ = sim_core::ai::act::perform(&mut g, P0, found.unwrap().act.as_ref().unwrap()).unwrap(); // not done, or done to nothing
-    assert!(!has_kw(&g, t, "lifelink"), "the target is no longer legal: nothing happens");
+    prot_white(&mut g, t); // before the ability is activated: the activation check refuses it
+    assert!(
+        !sim_core::ai::act::perform(&mut g, P0, found.unwrap().act.as_ref().unwrap()).unwrap(),
+        "the target is no longer legal: the ability is not activated"
+    );
+    assert!(!has_kw(&g, t, "lifelink"));
+    assert!(g.player(P0).perms.iter().filter(|&&m| g.perm(m).tapped).count() == 0, "no land was tapped");
 }
 
 #[test]
@@ -711,4 +715,42 @@ fn heliod_person_grant_excludes_protection_shroud_and_enemy_hexproof() {
 fn sorin_has_no_duplicate_compiled_loyalty_implementation() {
     let g = tbl();
     assert!(g.db.get(card(&g, SORIN)).abilities.is_empty());
+}
+
+#[test]
+fn the_ai_grant_does_nothing_if_the_target_gained_protection_in_response_on_the_stack() {
+    let mut g = tbl();
+    let hel = perm(&mut g, P0, HELIOD);
+    let t = token(&mut g, P0, 4); // power 4: the AI grants it lifelink
+    let giver = perm(&mut g, P0, "Giver of Runes");
+    let giver_i = g.player(P0).perms.iter().position(|&x| x == giver).unwrap();
+    lands(&mut g, P0, "Plains", 2, false);
+    let o = options(&mut g, hel, P0);
+    let found = o.iter().find(|x| x.label.contains("lifelink"));
+    assert!(found.is_some(), "the grant is offered: {:?}", labels(&o));
+    let act = found.unwrap().act.clone().unwrap();
+    let mut used = false;
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            if !used {
+                used = true; // in response to the AI's grant: Giver of Runes gives the target protection from white
+                return Answer::Action(json!({"do": "use", "perm": giver_i}));
+            }
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        let word = if r.prompt.contains("which ability") {
+            "protection"
+        } else if r.prompt.contains("protection from what") {
+            "white"
+        } else {
+            "Token"
+        };
+        r.choices.iter().position(|c| c.contains(word)).map_or(Answer::Decline, Answer::Pick)
+    }));
+    h.set_autopass("all");
+    g.humans.add(P0, h); // the person answers in the window of the AI's ability
+    g.player_mut(P0).pool.add('W', 2); // a person pays from the pool
+    assert!(sim_core::ai::act::perform(&mut g, P0, &act).unwrap(), "activated");
+    assert!(sim_core::engine::values::protected_from(&g, t, sim_core::cards::Colors::from_letters("W")), "responded");
+    assert!(!has_kw(&g, t, "lifelink"), "protection from white as it resolves: the target is no longer legal");
 }
