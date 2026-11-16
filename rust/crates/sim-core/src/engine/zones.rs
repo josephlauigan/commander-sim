@@ -1063,10 +1063,11 @@ pub fn exile_perm(g: &mut Game, m: PermId) -> Res {
     let r = leave(g, m);
     g.exiling = prev;
     r?;
-    if let Some(Val::Player(q)) = g.perm(m).data.get(DataKey::Ghostform).cloned()
-        && crate::impls::sephfs_cards::ghostform_return(g, m, q)?
-    {
-        return exiled_from_bf(g, m, None); // it came back, but it was exiled first
+    if let Some(Val::Player(q)) = g.perm(m).data.get(DataKey::Ghostform).cloned() {
+        let mark = g.enter_no; // what entered after this was not on the battlefield when m left
+        if crate::impls::sephfs_cards::ghostform_return(g, m, q)? {
+            return exiled_from_bf_upto(g, m, Some(mark)); // it came back, but it was exiled first
+        }
     }
     to_zone_card(g, m, Zone::Exile);
     exiled_from_bf(g, m, None)
@@ -1079,10 +1080,15 @@ pub fn exile_perm(g: &mut Game, m: PermId) -> Res {
 /// `back` and what entered with it never saw m leave, so they hear nothing. The permanent's own trigger
 /// (`self_exiled`) is queued here, as `die_triggers` queues `self_dies`, since `leave` took it out of `g.hooks`.
 pub fn exiled_from_bf(g: &mut Game, m: PermId, back: Option<PermId>) -> Res {
+    exiled_from_bf_upto(g, m, back.map(|n| g.perm(n).born.saturating_sub(1)))
+}
+
+/// `exiled_from_bf`, with the bound given as the entry number (`Game::enter_no`) of the last object that was on the
+/// battlefield when m left: only listeners born by then hear it (None: all of them)
+fn exiled_from_bf_upto(g: &mut Game, m: PermId, last_born: Option<u32>) -> Res {
     if !g.hooks.is_empty() {
-        let born = back.map(|n| g.perm(n).born);
         hooks::fire_trigger_where(g, Event::ExiledFromBf, Call::Leaves { m }, &|g, s| {
-            born.is_none_or(|b| g.perm(s).born < b)
+            last_born.is_none_or(|b| g.perm(s).born <= b)
         })?;
     }
     if g.cur_batch.is_some() && g.is_creature(m) {
