@@ -29,7 +29,7 @@
 use crate::cards::{CardDb, Colors, Types};
 use crate::engine::chars::card_types;
 use crate::engine::life::gain;
-use crate::engine::removal::apply_removal;
+use crate::engine::removal::{apply_removal, apply_removal_rest};
 use crate::engine::repl;
 use crate::engine::stack::{queue_triggers, trigger_window};
 use crate::engine::values::{colors_of, epow, equipped, indestructible, protected_from, pval, untargetable};
@@ -40,7 +40,7 @@ use crate::human::cards::pick_perm;
 use crate::ids::{PermId, PlayerId};
 use crate::impls::common::{WalkerAb, walker};
 use crate::state::{DataKey, Game, Val};
-use crate::sym::Sym;
+use crate::sym::{Sym, intern};
 use crate::tag::Tag;
 
 pub const VONDAM: &str = "Syr Vondam, Sunstar Exemplar";
@@ -211,7 +211,17 @@ fn destroy(g: &mut Game, m: PermId) -> Res {
         ai_target(g, o, m)
     };
     if let Some(t) = t {
-        apply_removal(g, Some(o), t, "destroy", None)?;
+        if g.perm(t).owner == o {
+            // your own permanent (offered by `targets`, so a legal target): hexproof does not stop you, which
+            // `apply_removal`'s targeting gate cannot tell. Skipped are only what an opponent's ability meets (ward,
+            // "becomes the target of an opponent's") and the owner's protection response
+            crate::impls::t6_copies::image_targeted(g, t)?; // a Phantasmal Image is sacrificed whoever targets it
+            if g.perm(t).on_bf {
+                apply_removal_rest(g, Some(o), t, intern("destroy"), None)?;
+            }
+        } else {
+            apply_removal(g, Some(o), t, "destroy", None)?;
+        }
     }
     Ok(())
 }
