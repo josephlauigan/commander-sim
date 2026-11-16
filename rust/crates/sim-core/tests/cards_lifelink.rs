@@ -7,6 +7,7 @@ mod play_common;
 use play_common::*;
 use sim_core::ai::act::perform;
 use sim_core::engine::zones;
+use sim_core::human::{Target, choices};
 use sim_core::hooks::Opt;
 use sim_core::human::human::{AbilityKind, abilities_of};
 use sim_core::state::Ctx;
@@ -643,4 +644,43 @@ fn the_guard_lists_name_real_cards_and_overlap_nowhere() {
         assert!(db.id(n).is_some(), "{n} is not in cards.json");
     }
     assert!(READS_LIFELINK.iter().all(|n| !IGNORES_LIFELINK.contains(n)));
+}
+
+// ------------------------------------------------------------------ fix round: what lifelink follows
+/// P0's `s` deals `n` damage to `t` as a permanent's ability (the person's damage function, with last known lifelink)
+fn deal(g: &mut Game, s: PermId, t: Target, n: i32) -> i32 {
+    let by = choices::by(g, Some(s));
+    choices::apply_damage_by(g, P0, t, n, "test permanent", "burn", by).unwrap()
+}
+
+#[test]
+fn bloodletter_doubles_life_loss_but_not_damage_or_lifelink() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Bloodletter of Aclazotz");
+    let s = body(&mut g, P0, 2, 2);
+    g.perm_mut(s).lifelink = true;
+    deal(&mut g, s, Target::Player(P1), 1);
+    assert_eq!(g.player(P1).life, 38, "one damage causes two life lost");
+    assert_eq!(g.player(P0).life, 41, "only one damage was dealt");
+}
+
+#[test]
+fn a_life_total_lock_does_not_prevent_damage_or_lifelink() {
+    let mut g = tbl();
+    let s = body(&mut g, P0, 2, 2);
+    g.perm_mut(s).lifelink = true;
+    g.player_mut(P1).life_locked = true; // a life-total lock, no protection
+    deal(&mut g, s, Target::Player(P1), 3);
+    assert_eq!(g.player(P1).life, 40, "the locked life total does not change");
+    assert_eq!(g.player(P0).life, 43, "the damage was dealt");
+}
+
+#[test]
+fn life_lock_combat_regression_still_gains_life() {
+    let mut g = tbl();
+    let s = body(&mut g, P0, 3, 3);
+    g.perm_mut(s).lifelink = true;
+    g.player_mut(P1).life_locked = true;
+    fight(&mut g, &[s], &[]);
+    assert_eq!((g.player(P1).life, g.player(P0).life), (40, 43));
 }
