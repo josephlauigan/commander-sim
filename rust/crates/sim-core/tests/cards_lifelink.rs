@@ -842,3 +842,15 @@ fn unblocked_double_strike_on_a_planeswalker_is_two_gains() {
     assert_eq!(g.player(P0).life, 44);
     assert_eq!(counters(&g, P0), 2, "two gain events");
 }
+
+#[test]
+fn nonpositive_damage_does_not_gain_life_or_loyalty() {
+    let mut g = tbl();
+    let s = body(&mut g, P0, 2, 2);
+    g.perm_mut(s).lifelink = true;
+    let w = perm(&mut g, P1, "Jace, the Mind Sculptor");
+    let l = g.perm(w).loyalty;
+    deal(&mut g, s, Target::Perm(w), 0);
+    deal(&mut g, s, Target::Perm(w), -1);
+    assert_eq!((g.perm(w).loyalty, g.player(P0).life), (l, 40), "0 damage is no damage (CR 120.8)");
+}
