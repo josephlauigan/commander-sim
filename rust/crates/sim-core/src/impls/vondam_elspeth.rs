@@ -48,18 +48,18 @@ pub const EMBLEM: &str = "elspeth_ke";
 
 // ------------------------------------------------------------------ last known information
 /// `zones::leave`, before the permanent is taken off the battlefield (or off an Equipment): Syr Vondam's power as he
-/// leaves, and the wipe (`Game::cur_batch`, 0 outside one) he leaves in. Kept on the permanent that left.
+/// leaves, and the wipe (`Game::cur_batch`, 0 outside one) he leaves in. Kept on the permanent that left, under `DataKey::LastKnown`.
 pub fn leaving(g: &mut Game, m: PermId) {
     if g.perm(m).name != VONDAM {
         return;
     }
     let (pow, batch) = (epow(g, m), g.cur_batch.unwrap_or(0));
-    g.perm_mut(m).data.set(DataKey::Counters, Val::List(vec![Val::Int(pow as i64), Val::Int(batch as i64)]));
+    g.perm_mut(m).data.set(DataKey::LastKnown, Val::List(vec![Val::Int(pow as i64), Val::Int(batch as i64)]));
 }
 
 /// (the power, the wipe) recorded as the permanent left, if it did
 fn last_known(g: &Game, m: PermId) -> Option<(i32, u32)> {
-    match g.perm(m).data.get(DataKey::Counters) {
+    match g.perm(m).data.get(DataKey::LastKnown) {
         Some(Val::List(v)) if v.len() == 2 => Some((v[0].int() as i32, v[1].int() as u32)),
         _ => None,
     }
