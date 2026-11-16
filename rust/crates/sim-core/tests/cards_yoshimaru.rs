@@ -372,6 +372,36 @@ fn magus_of_the_moon_removes_the_person_draw_ability() {
 }
 
 #[test]
+fn a_person_may_draw_from_an_empty_library_and_lose() {
+    // the whole main-phase loop: the draw is attempted, and the player loses before priority comes back
+    let mut g = tbl();
+    let l = ready_person_minas(&mut g);
+    g.player_mut(P0).library.clear();
+    let mut activated = false;
+    g.humans.add(
+        P0,
+        std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+            if r.kind == "priority" {
+                if activated {
+                    Answer::Action(json!({"do": "pass"}))
+                } else {
+                    activated = true;
+                    Answer::Action(json!({"do": "use", "land": 0}))
+                }
+            } else if r.prompt.contains("which ability?") {
+                Answer::Pick(0)
+            } else {
+                Answer::Decline
+            }
+        })),
+    );
+    sim_core::human::human::human_main(&mut g, P0, false).unwrap();
+    assert!(g.player(P0).decked, "the draw was attempted");
+    assert!(!g.player(P0).alive, "and a player who drew from an empty library has lost");
+    assert!(g.perm(l).tapped);
+}
+
+#[test]
 fn a_card_made_legendary_by_an_effect_is_legendary() {
     // DataKey::Legendary on a card-backed permanent (Anikthea's tokens, a Kaldra-style effect), not only on a token
     let mut g = tbl();
