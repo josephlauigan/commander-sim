@@ -27,6 +27,8 @@ use crate::state::{DataKey, Game, Val};
 use crate::sym::Sym;
 
 pub const VONDAM: &str = "Syr Vondam, Sunstar Exemplar";
+/// the emblem Elspeth, Knight-Errant's -8 gives (`Player::emblems`)
+pub const EMBLEM: &str = "elspeth_ke";
 
 // ------------------------------------------------------------------ last known information
 /// `zones::leave`, before the permanent is taken off the battlefield (or off an Equipment): Syr Vondam's power as he
