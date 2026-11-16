@@ -5,7 +5,7 @@ use crate::engine::repl;
 use crate::engine::values::chasm;
 use crate::flow::Res;
 use crate::hooks::{Call, Event};
-use crate::ids::PlayerId;
+use crate::ids::{PermId, PlayerId};
 use crate::state::{DataKey, Game};
 use crate::sym::{Sym, intern};
 
@@ -21,9 +21,24 @@ pub const LIFE_CAP: i32 = 1 << 30;
 
 /// p loses n life (or is dealt n damage) from src. Python's `lose_life`.
 pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind: Sym, damage: Option<bool>) -> Res {
+    lose_life_dealt(g, p, n, src, kind, damage).map(|_| ())
+}
+
+/// `lose_life`, returning the damage that was dealt to p (what a source with lifelink gains, CR 702.15b): the amount
+/// after Fiery Emancipation, Stagger, Gisela and Bloodletter changed it, and after prevention (0 when it was
+/// prevented, when p is dead or locked, or when the loss was not damage). A floor on life (Angel's Grace, Serra's
+/// emblem), Pariah and Phyrexian Unlife change where the damage goes, not how much was dealt, so the full amount counts.
+pub fn lose_life_dealt(
+    g: &mut Game,
+    p: PlayerId,
+    n: i32,
+    src: Option<PlayerId>,
+    kind: Sym,
+    damage: Option<bool>,
+) -> Res<i32> {
     let pl = g.player(p);
     if n <= 0 || !pl.alive || pl.life_locked {
-        return Ok(());
+        return Ok(0);
     }
     let damage = damage.unwrap_or(DAMAGE_KINDS.contains(&kind));
     let mut n = n;
@@ -41,19 +56,21 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
     if damage && prevents_damage(g, p, src) {
         g.player_mut(p).stat("dmg_prevented", n as i64);
         crate::glog!(g, "    {} damage to {} is prevented", n, g.player(p).name);
-        return Ok(());
+        return Ok(0);
     }
+    let dealt = if damage { n } else { 0 };
     if damage && kind != "combat" && crate::impls::t12_lightpaws::pariah_take(g, p, n) {
-        return crate::impls::t12_lightpaws::pariah_finish(g); // --- Tiers 1/2 (lightpaws): Pariah
+        crate::impls::t12_lightpaws::pariah_finish(g)?; // --- Tiers 1/2 (lightpaws): Pariah
+        return Ok(dealt);
     }
     if damage && crate::impls::alela::serra_floor(g, p, &mut n) {
-        return Ok(()); // Serra the Benevolent's emblem left nothing to deal
+        return Ok(dealt); // Serra the Benevolent's emblem left nothing to lose
     }
     if damage && kind != "combat" {
         g.player_mut(p).nc_dmg_this = true;
     }
     if damage && crate::impls::tymna_cards::unlife_infect(g, p, n) {
-        return Ok(()); // Phyrexian Unlife at 0 or less life: the damage is dealt as poison counters
+        return Ok(dealt); // Phyrexian Unlife at 0 or less life: the damage is dealt as poison counters
     }
     // --- card-models-3: Angel's Grace: damage that would reduce p's life total to less than 1 reduces it to 1
     let n = if damage && n > 0 && crate::impls::t6_stax::grace_active(g, p) {
@@ -90,6 +107,22 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
         && let Some(s) = src.filter(|&s| s != p)
     {
         crate::impls::t45_miirym::champion_hit(g, s, n)?;
+    }
+    Ok(dealt)
+}
+
+/// does the permanent `src` have lifelink now (printed, granted until end of turn or by a static such as Sorin's)?
+pub fn has_lifelink(g: &Game, src: PermId) -> bool {
+    g.perm(src).lifelink || crate::engine::chars::has_keyword(g, src, "lifelink")
+}
+
+/// lifelink (CR 702.15b): the controller of a source that had lifelink (`ll`, read when the damage was dealt, or when
+/// the ability was activated if the source can leave first: CR 702.15c) gains the damage it dealt. Each source and
+/// each damage event is its own life gain.
+pub fn lifelink(g: &mut Game, src: PermId, ll: bool, dealt: i32) -> Res {
+    if ll && dealt > 0 {
+        let c = g.perm(src).owner;
+        gain(g, c, dealt)?;
     }
     Ok(())
 }
