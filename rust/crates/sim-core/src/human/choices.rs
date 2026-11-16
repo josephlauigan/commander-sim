@@ -508,7 +508,8 @@ pub fn deal_damage_batched_by(g: &mut Game, p: PlayerId, n: i32, source: &str, k
 }
 
 /// who deals the damage when it is dealt by a permanent: the permanent, and whether it had lifelink when the ability
-/// was activated or triggered (CR 702.15c: last known information, for a source that can leave first)
+/// was activated or triggered (last known information, used only if the permanent has left by the time the damage is dealt:
+/// CR 702.15c; a permanent still on the battlefield is read again then)
 pub type By = Option<(PermId, bool)>;
 
 /// `m` as the source of damage now: its lifelink is read now

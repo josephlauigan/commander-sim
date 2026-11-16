@@ -3223,8 +3223,11 @@ fn ballista_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     if g.perm(src).plus <= 0 {
         return Ok(false);
     }
-    let ll = crate::engine::life::has_lifelink(g, src); // read before the counter is paid: it can die with it
+    let ll = crate::engine::life::has_lifelink(g, src); // last known information, if it dies with its last counter
     g.perm_mut(src).plus -= 1;
+    if etgh(g, src) <= 0 {
+        die(g, src, "sba")?; // 0/0: it dies before anyone has priority; the ping still resolves
+    }
     let imp = if lethal.is_some() { 8.0 } else { 3.0 };
     if !ability_window(g, p, Some(src), "1 damage", Some(imp), None)? {
         return Ok(true);
@@ -3238,9 +3241,6 @@ fn ballista_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
         dealt = crate::engine::life::removal_damage(g, p, Some(src), t, 1, None)?;
     }
     crate::engine::life::lifelink(g, src, ll, dealt)?;
-    if etgh(g, src) <= 0 {
-        die(g, src, "sba")?;
-    }
     Ok(true)
 }
 

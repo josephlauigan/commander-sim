@@ -183,10 +183,11 @@ pub fn has_lifelink(g: &Game, src: PermId) -> bool {
     g.perm(src).lifelink || crate::engine::chars::has_keyword(g, src, "lifelink")
 }
 
-/// lifelink (CR 702.15b): the controller of a source that had lifelink (`ll`, read when the damage was dealt, or when
-/// the ability was activated if the source can leave first: CR 702.15c) gains the damage it dealt. Each source and
-/// each damage event is its own life gain.
+/// lifelink (CR 702.15b): the controller of a source with lifelink gains the damage it dealt. Lifelink is read now, as the
+/// damage is dealt (CR 113.7a), when the source is still on the battlefield; `ll` is its last known information (read when
+/// the ability was activated, CR 702.15c) for a source that has left. Each source and each damage event is its own life gain.
 pub fn lifelink(g: &mut Game, src: PermId, ll: bool, dealt: i32) -> Res {
+    let ll = if g.perm(src).on_bf && !g.perm(src).phased { has_lifelink(g, src) } else { ll };
     // a source whose damage is all prevented (Old Fat Spider's chapter II) dealt none
     if ll && dealt > 0 && !(!g.unpreventable() && crate::impls::mine::damage_prevented(g, src)) {
         let c = g.perm(src).owner;
