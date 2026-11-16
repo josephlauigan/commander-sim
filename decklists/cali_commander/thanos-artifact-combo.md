@@ -54,6 +54,11 @@ attack, or when the opponent has built a board and you have no combo yet.
   first and untaps the Monolith: tap it again for three with the original still on the stack. The original then untaps
   it once more. That is {6} for {5}: one extra colourless mana per loop, as much as you like. The first loop needs five
   mana: the Monolith's own three and two more from elsewhere.
+- **Sculpting Steel as a second Rings.** With the Monolith and one Rings out, Steel ({3}) enters as a copy of Rings.
+  Each activation now triggers two Rings, so you may pay {2} for each copy: {7} spent, three taps for {9}, two extra
+  mana per loop instead of one. You may pay for only one copy, so the first loop still starts at five mana. Steel
+  does not find a missing piece: it needs one of the two already on the battlefield. With Rings in play and the
+  Monolith stuck in the library, Steel is only a mana rock, so tutor for the Monolith instead.
 - **Finishers (all colourless):** **Walking Ballista** ({X}{X}) from hand with a huge X, then remove counters at the
   opponent (30 life needs X=30). If Ballista is still in the library, **Staff of Domination's** {5},{T}: draw a card,
   untapped for {1} each time, draws to it. **Urza, Lord High Artificer** ({5}: shuffle, then play the top card free)
@@ -88,8 +93,13 @@ attack, or when the opponent has built a board and you have no combo yet.
   Attack.
 - **Sneak Attack** ({3}{R}, then {R}): put a creature card from your hand onto the battlefield with haste. Blightsteel
   from hand, attack, and it is sacrificed at the end step and shuffles back. It needs {3}{R} up front and {R} each
-  activation, so it is a backup when Blightsteel is drawn, and it also puts Elesh Norn, Meteor Golem (destroy a
-  permanent) or Primeval Titan in free.
+  activation, so it is a backup when Blightsteel is drawn, and it also puts Meteor Golem (destroy a permanent) or
+  Primeval Titan in free.
+- **Sculpting Steel is a second Blightsteel.** Blightsteel Colossus is an artifact creature, so once it is on the
+  battlefield, Steel ({3}) enters as a copy of it: another 11/11 indestructible infect trampler, summoning sick, with
+  Lightning Greaves ({0} to move) as the way to give it haste. Use it when the first Blightsteel was blocked, fogged or
+  bounced and the opponent is still alive, or to attack with two so that one blocker or one removal spell is not
+  enough. It is insurance, not a way to win on the turn you Tinker: the first Blightsteel is already lethal alone.
 
 #### Route O: Thassa's Oracle with Demonic Consultation or Tainted Pact
 
@@ -111,8 +121,6 @@ attack, or when the opponent has built a board and you have no combo yet.
 If the combo is stopped, the deck still has threats and a way to grind:
 
 - **Thanos's power-up** clears the opponent's creatures and leaves a 6/6 deathtouch lifelinker.
-- **Elesh Norn, Mother of Machines** ({4}{W}): your enter-the-battlefield triggers happen twice (Urza, Meteor Golem,
-  Primeval Titan, Mightstone) and the opponent's don't happen at all.
 - **Primeval Titan** ({4}{G}{G}): fetches Urza's Saga and Strip Mine, or any two lands, and attacks.
 - **Windborn Muse** ({3}{W}): a 2/3 flier that taxes every attacker {2}, a good blocker against an aggressive deck.
 - **Meteor Golem** ({7}): destroy any nonland permanent. **Hangarback Walker** ({X}{X}) is a mana sink that leaves
@@ -129,6 +137,18 @@ If the combo is stopped, the deck still has threats and a way to grind:
   Thassa's Oracle, and his {5} ability plays the top card free.
 - **Crucible of Worlds** ({3}): play lands from the graveyard: Strip Mine every turn, Urza's Saga again after it
   sacrifices itself.
+- **Sculpting Steel** ({3}): enters as a copy of any artifact on the battlefield, yours or the opponent's, or stays a
+  plain artifact if you decline. It is a mid-game card that makes the best artifact you already have a second time, not
+  a route and not a tutor, and it does nothing on an empty board. What to copy, best first:
+  1. **Rings of Brighthearth** in Route A (two Rings, two extra mana per loop; see Route A).
+  2. **Blightsteel Colossus** after Tinker or Sneak Attack, as a second attacker (see Route E).
+  3. **A colourless rock** (Sol Ring, Mana Vault, Basalt Monolith, Mind Stone) when you need mana for a big turn or
+     for {C} for Thanos's power-up. A second Monolith taps for {C}{C}{C} again but costs {3} to untap like the first.
+  4. **An opponent's rock** (Sol Ring, Mana Vault, a Signet) when you have none of your own.
+  It is also a spare artifact to sacrifice to Tinker and an extra {U} under Urza. **Do not copy** The One Ring or The
+  Mightstone and Weakstone (legendary: the copy and the original cannot both stay), Walking Ballista or Hangarback
+  Walker (they enter with no counters and die), Mana Crypt (the extra coin flip costs about 1.5 life a turn more, so
+  only when you win that turn), or an opponent's Null Rod.
 - **Fiery Emancipation** ({3}{R}{R}{R}) is a six-mana red enchantment that comes down on a big-mana turn, not before:
   it triples damage from your sources (Thanos, Ballista).
 - **Esper Sentinel** ({W}) draws you a card when the opponent casts their first noncreature spell each turn and doesn't
@@ -290,9 +310,9 @@ game. Check with the organiser whether proxies are allowed.
 
 **Commander (1).** Thanos, the Mad Titan
 
-**Creatures (17).** Avacyn's Pilgrim, Birds of Paradise, Blightsteel Colossus, Elesh Norn, Mother of Machines, Esper Sentinel, Faeburrow Elder, Grand Abolisher, Hangarback Walker, Llanowar Elves, Meteor Golem, Paradise Druid, Primeval Titan, Ragavan, Nimble Pilferer, Thassa's Oracle, Urza, Lord High Artificer, Walking Ballista, Windborn Muse
+**Creatures (16).** Avacyn's Pilgrim, Birds of Paradise, Blightsteel Colossus, Esper Sentinel, Faeburrow Elder, Grand Abolisher, Hangarback Walker, Llanowar Elves, Meteor Golem, Paradise Druid, Primeval Titan, Ragavan, Nimble Pilferer, Thassa's Oracle, Urza, Lord High Artificer, Walking Ballista, Windborn Muse
 
-**Artifacts (18).** Arcane Signet, Basalt Monolith, Coalition Relic, Crucible of Worlds, Fellwar Stone, Lightning Greaves, Lotus Petal, Mana Crypt, Mana Vault, Mind Stone, Rings of Brighthearth, Sol Ring, Staff of Domination, Talisman of Hierarchy, Talisman of Progress, The Mightstone and Weakstone, The One Ring, Thought Vessel
+**Artifacts (19).** Arcane Signet, Basalt Monolith, Coalition Relic, Crucible of Worlds, Fellwar Stone, Lightning Greaves, Lotus Petal, Mana Crypt, Mana Vault, Mind Stone, Rings of Brighthearth, Sculpting Steel, Sol Ring, Staff of Domination, Talisman of Hierarchy, Talisman of Progress, The Mightstone and Weakstone, The One Ring, Thought Vessel
 
 **Enchantments (5).** Fiery Emancipation, Mystic Remora, Rhystic Study, Sneak Attack, Underworld Breach
 
@@ -331,7 +351,6 @@ game. Check with the organiser whether proxies are allowed.
 1 Demonic Tutor
 1 Diabolic Intent
 1 Dovin's Veto
-1 Elesh Norn, Mother of Machines
 1 Enlightened Tutor
 1 Ephemerate
 1 Esper Sentinel
@@ -370,6 +389,7 @@ game. Check with the organiser whether proxies are allowed.
 1 Ragavan, Nimble Pilferer
 1 Rhystic Study
 1 Rings of Brighthearth
+1 Sculpting Steel
 1 Shivan Reef
 1 Silence
 1 Sneak Attack

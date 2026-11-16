@@ -20,7 +20,6 @@
 1 Deflecting Swat (cmm) 698
 1 Demonic Tutor (sld) 1856
 1 Disdainful Stroke (soa) 147
-1 Elesh Norn, Mother of Machines (one) 416
 1 Enlightened Tutor (dmr) 412
 1 Expedition Map (lcc) 112
 1 Flooded Strand (mh3) 353

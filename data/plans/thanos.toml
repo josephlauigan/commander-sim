@@ -29,7 +29,6 @@ turn = 2
 [key_cards]
 "Walking Ballista" = 70
 "Urza, Lord High Artificer" = 74
-"Elesh Norn, Mother of Machines" = 66
 
 # Win line: Basalt Monolith + Rings is two cards and then any mana sink: Walking Ballista from hand (a huge X), Staff of
 # Domination on the battlefield (draw to the Ballista) or Urza (the whole library).
@@ -56,7 +55,7 @@ when = ["turn<=3"]
 score = 80
 
 [[wish]]
-cards = ["Elesh Norn, Mother of Machines", "Meteor Golem"]
+cards = ["Meteor Golem"]
 when = ["opp-power>=15"]
 score = 76
 
@@ -102,7 +101,7 @@ value = 56
 else = 40
 
 [[prio]]
-cards = ["Elesh Norn, Mother of Machines", "Hangarback Walker", "Primeval Titan", "Windborn Muse"]
+cards = ["Hangarback Walker", "Primeval Titan", "Windborn Muse"]
 value = 68
 
 # The top end: after the board is built
