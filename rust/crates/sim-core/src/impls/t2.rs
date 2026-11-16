@@ -512,7 +512,7 @@ fn valkas(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         && trigger_window(g, o, Some(src), "damage to any target per Dragon", Some(5.0))?
     {
         let n = count_type(g, o, "dragon", false);
-        best_target_any_by(g, o, n, Some(src))?;
+        best_target_any_by(g, o, n, Some(m))?; // "it deals X damage": the Dragon that entered is the source
     }
     Ok(())
 }
@@ -536,7 +536,7 @@ fn tempest(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     if drag {
         let n = count_type(g, o, "dragon", false);
-        best_target_any_by(g, o, n, Some(src))?;
+        best_target_any_by(g, o, n, Some(m))?; // "it deals X damage": the Dragon that entered is the source
     }
     Ok(())
 }
