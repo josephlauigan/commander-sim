@@ -493,3 +493,51 @@ fn the_release_arg_keeps_post_clear_and_the_cast_reads_it_masked() {
     );
     assert_eq!(g.release_attack.map(|x| (x.0, x.2)), Some((P0, P1)));
 }
+
+/// Kaervek the Merciless (an opponent's) answers a spell with damage equal to its mana value to the best creature of the
+/// caster's that it can kill (pval 4 or more, toughness within 2). Twinflame has two targets here, the double-striking
+/// Dragon and a 6/2 Mulldrifter, and the check proves the attack with the Mulldrifter's 6 flying power and its copy's
+/// printed 2 counted (8 + 6 + 8 + 2 = 24 against 24 life; the engine adds the double strike). Kaervek's trigger kills the
+/// Mulldrifter after the cast starts and before the copies enter: one target of the proven cast left the battlefield,
+/// no copy of it enters, and the estimate right after the cast is 16 against 24 (margin -8).
+fn rel_kaervek_board(kaervek: bool) -> Game {
+    let mut g = rel_base();
+    lands(&mut g, P0, "Mountain", 2, false);
+    let original = g.player(P0).perms[0];
+    g.perm_mut(original).eot_kw.push("double strike");
+    let mull = perm(&mut g, P0, "Mulldrifter");
+    g.perm_mut(mull).pow += 4;
+    if kaervek {
+        perm(&mut g, P1, "Kaervek the Merciless");
+    }
+    g.player_mut(P1).life = 24;
+    g
+}
+
+/// a target that leaves the battlefield during the cast: the margin is no reference for the re-check, so the plan asks
+/// for lethal on the real board and is dropped where the estimate is below it
+#[test]
+fn a_target_removed_during_the_cast_drops_the_plan_when_the_estimate_is_below_lethal() {
+    let mut g = rel_kaervek_board(true);
+    let o = rel_option(&mut g, P0);
+    assert_eq!(o.label, "Twinflame (2 targets)");
+    assert_eq!(rel_arg(&o) >> 40, 2, "the check proved an attack on seat 1");
+    assert!(perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap());
+    assert!(!has_perm(&g, P0, "Mulldrifter"), "Kaervek's trigger killed the Mulldrifter");
+    assert_eq!(g.player(P0).perms.iter().filter(|&&m| g.perm(m).token).count(), 1, "only the Dragon's copy entered");
+    assert_eq!(g.release_attack.map(|x| x.3), Some(i64::MAX), "a target left: no margin to compare with");
+    assert_eq!(sim_core::ai::choose_attack(&mut g, P0).unwrap(), None, "the estimate is 16 against 24");
+    assert_eq!(g.release_attack, None);
+}
+
+/// the same board and cast with nothing removed: both copies enter, the estimate after the cast is lethal (margin 0) and
+/// the plan is kept
+#[test]
+fn the_same_cast_with_every_target_in_place_keeps_the_plan() {
+    let mut g = rel_kaervek_board(false);
+    rel_cast(&mut g, P0);
+    assert!(has_perm(&g, P0, "Mulldrifter"));
+    assert_eq!(g.player(P0).perms.iter().filter(|&&m| g.perm(m).token).count(), 2);
+    assert_eq!(g.release_attack.map(|x| x.3), Some(0));
+    assert_eq!(sim_core::ai::choose_attack(&mut g, P0).unwrap(), Some((P1, "all")));
+}
