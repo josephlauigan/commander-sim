@@ -15,8 +15,11 @@ Neither Mox triggers Y'shtola (mana value 0), as neither Talisman did. Both are 
 artifact hate and to Farewell's artifacts mode. Not measured: the 10/19 test of a rock for a rock (The Mind Stone for
 Talisman of Progress) found no clear effect, because her losses are fast combos (Urza, Zur, Winota) that end T5 games
 around round 9.4 and the deck often skips its rocks for better plays; the Moxen are faster than those, but that is a
-guess. Mox Diamond (`rock=1:A`) and Chrome Mox (`chromemox`) are modelled in the engine (`carddb.txt`), so `--swap`
-against t5 can measure it. `data/plans/yshtola.toml` names both in the early-rocks priority group. `data/printings/yshtola.txt`
+guess. Mox Diamond (`rock=1:A moxd`) and Chrome Mox (`chromemox`) are modelled in the engine (`carddb.txt`), so `--swap`
+against t5 can measure it. The plan file's early-rocks priority group (`data/plans/yshtola.toml`) now lists only Sol Ring,
+Arcane Signet and Coalition Relic: a card named in a plan group gets that group's priority before the pool AI's Mox checks
+(Mox Diamond needs a land to discard, Chrome Mox a spare coloured card; `ai/pool.rs`), so naming the Moxen there would have
+let the AI cast them with nothing to pay. `data/printings/yshtola.txt`
 loses the Talisman lines and has no printings yet for the Moxen (JD's to supply).
 
 ## 2026-11-15: Urborg Syphon-Mage => Mindbreak Trap (JD's choice, not simulated)

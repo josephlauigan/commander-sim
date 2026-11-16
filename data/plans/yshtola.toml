@@ -81,7 +81,7 @@ value = 90
 else = 60
 
 [[prio]]
-cards = ["Sol Ring", "Arcane Signet", "Coalition Relic", "Mox Diamond", "Chrome Mox"]
+cards = ["Sol Ring", "Arcane Signet", "Coalition Relic"]
 when = ["turn<=5"]
 value = 82
 else = 30
