@@ -1,4 +1,7 @@
-//! Syr Vondam, Sunstar Exemplar (Yoshimaru/Tymna deck): {W}{B}, 2/2, vigilance, menace.
+//! The Yoshimaru list's Syr Vondam, Sunstar Exemplar and Elspeth, Knight-Errant.
+//!
+//! # Syr Vondam, Sunstar Exemplar
+//! {W}{B}, 2/2, vigilance, menace.
 //!
 //! - "Whenever another creature you control dies or is put into exile, put a +1/+1 counter on Syr Vondam and you gain
 //!   1 life": the `dies` and `exiled_from_bf` hooks. Both look back in time (CR 603.10a): the creature counts as it last
@@ -10,19 +13,32 @@
 //!   (`leaving`, called by `zones::leave` before anything about him changes: an Equipment still attached counts), and is
 //!   not checked again as the ability resolves. The target is chosen as it resolves (the AI: the best opposing
 //!   permanent that dies to it, or none; a person: any nonland permanent they may target, or none).
+//!
+//! # Elspeth, Knight-Errant
+//! {2}{W}{W}, loyalty 4. A card-code walker (`dsl = []`): the AI's list is `ELSPETH_AB` here, a person's is in
+//! `human/walkers.rs` (both call the effects below).
+//! - +1: a 1/1 white Soldier creature token.
+//! - +1: target creature gets +3/+3 and gains flying until end of turn. The AI aims it at its own creature that can
+//!   attack now (the hardest hitter), else its best creature; a person picks any creature Elspeth may target (hexproof,
+//!   shroud and protection from white respected), before the loyalty is paid. `pump_legal` is checked again as the
+//!   ability resolves, and a person pays any ward then (`ward::pay_ward`).
+//! - -8: the emblem `elspeth_ke` (`Player::emblems`): `chars::has_keyword` gives indestructible to the artifacts,
+//!   creatures, enchantments and lands its owner controls (not planeswalkers; sacrifice, toughness 0 and -X/-X still
+//!   kill).
 
-use crate::cards::{CardDb, Types};
+use crate::cards::{CardDb, Colors, Types};
 use crate::engine::chars::card_types;
 use crate::engine::life::gain;
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
 use crate::engine::stack::{queue_triggers, trigger_window};
 use crate::engine::values::{colors_of, epow, indestructible, protected_from, pval, untargetable};
-use crate::engine::zones::max_by;
+use crate::engine::zones::{Tokens, make_tokens, max_by};
 use crate::flow::Res;
 use crate::hooks::{Call, Event, Registry, Src, TrigAct, Trigger};
 use crate::human::cards::pick_perm;
 use crate::ids::{PermId, PlayerId};
+use crate::impls::common::{WalkerAb, walker};
 use crate::state::{DataKey, Game, Val};
 use crate::sym::Sym;
 
@@ -171,11 +187,107 @@ fn self_exiled(g: &mut Game, _src: Src, m: PermId) -> Res {
     destroy(g, m)
 }
 
+// ------------------------------------------------------------------ Elspeth, Knight-Errant
+pub const ELSPETH: &str = "Elspeth, Knight-Errant";
+
+/// +1: a 1/1 white Soldier creature token
+fn soldier_val(_g: &Game, _p: PlayerId, _src: PermId) -> Option<f64> {
+    Some(3.0)
+}
+
+pub fn soldier(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    let spec = Tokens { color: Some(Colors::from_letters("W")), types: vec!["soldier"], ..Tokens::new(1, 1) };
+    make_tokens(g, p, spec).map(|_| ())
+}
+
+/// can Elspeth (src, p's) give `t` +3/+3 and flying: a creature on the battlefield, not phased out, no shroud, no
+/// protection from Elspeth's colours, and not an opponent's creature with hexproof. Checked as the ability is chosen and
+/// again as it resolves.
+pub fn pump_legal(g: &Game, p: PlayerId, src: PermId, t: PermId) -> bool {
+    let x = g.perm(t);
+    x.on_bf
+        && !x.phased
+        && g.is_creature(t)
+        && !crate::dsl::has_kw(g, t, "shroud")
+        && (x.owner == p || !untargetable(g, t))
+        && !protected_from(g, t, colors_of(g, src))
+}
+
+/// +1: the creature the AI pumps: one of its own that can attack now (the one that hits hardest), else its best creature
+fn pump_target(g: &Game, p: PlayerId, src: PermId) -> Option<PermId> {
+    let mine: Vec<PermId> = g.player(p).perms.iter().copied().filter(|&m| pump_legal(g, p, src, m)).collect();
+    let ready: Vec<PermId> = mine
+        .iter()
+        .copied()
+        .filter(|&m| {
+            let x = g.perm(m);
+            !x.tapped && !x.noatk && (!x.sick || crate::dsl::has_kw(g, m, "haste"))
+        })
+        .collect();
+    let pool = if ready.is_empty() { &mine } else { &ready };
+    max_by(pool, |m| epow(g, m) as f64 + 0.1 * pval(g, m))
+}
+
+fn pump_val(g: &Game, p: PlayerId, src: PermId) -> Option<f64> {
+    let t = pump_target(g, p, src)?;
+    let x = g.perm(t);
+    let attacks = !x.tapped && !x.noatk && (!x.sick || crate::dsl::has_kw(g, t, "haste"));
+    Some(if attacks { 4.0 } else { 1.5 })
+}
+
+fn pump_eff(g: &mut Game, p: PlayerId, src: PermId) -> Res {
+    if let Some(t) = pump_target(g, p, src) {
+        pump(g, t);
+    }
+    Ok(())
+}
+
+/// the creature gets +3/+3 and gains flying until end of turn
+pub fn pump(g: &mut Game, t: PermId) {
+    let x = g.perm_mut(t);
+    x.eot_pt = (x.eot_pt.0 + 3, x.eot_pt.1 + 3);
+    crate::impls::partials::eot_kw(g, t, "flying");
+}
+
+/// -8: you get an emblem with "Artifacts, creatures, enchantments, and lands you control have indestructible"
+fn emblem_val(_g: &Game, _p: PlayerId, _src: PermId) -> Option<f64> {
+    Some(9.0)
+}
+
+pub fn emblem(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
+    let e = &mut g.player_mut(p).emblems;
+    if !e.contains(&EMBLEM) {
+        e.push(EMBLEM);
+    }
+    crate::glog!(
+        g,
+        "    {} gets an emblem: their artifacts, creatures, enchantments and lands have indestructible",
+        g.player(p).name
+    );
+    Ok(())
+}
+
+static ELSPETH_AB: [WalkerAb; 3] = [
+    WalkerAb { delta: 1, label: "create a 1/1 white Soldier creature token", val: soldier_val, eff: soldier },
+    WalkerAb {
+        delta: 1,
+        label: "target creature gets +3/+3 and gains flying until end of turn",
+        val: pump_val,
+        eff: pump_eff,
+    },
+    WalkerAb {
+        delta: -8,
+        label: "you get an emblem: artifacts, creatures, enchantments and lands you control have indestructible",
+        val: emblem_val,
+        eff: emblem,
+    },
+];
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, VONDAM)?;
     c.dies = Some(another_dies);
     c.exiled_from_bf = Some(another_exiled);
     c.self_dies = Some(self_dies);
     c.self_exiled = Some(self_exiled);
-    Ok(())
+    walker(r, db, ELSPETH, &ELSPETH_AB)
 }

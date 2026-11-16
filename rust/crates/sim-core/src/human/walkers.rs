@@ -15,6 +15,8 @@
 //! - **Wrenn and Six**: +1 the land card to take back (or none), -1 the target of the damage, -7 the emblem.
 //! - **Venser, the Sojourner**: +2 the permanent you own to exile until the next end step, -1 (the AI's creatures-can't-be-
 //!   blocked flag, which a person never got), -8 the emblem.
+//! - **Elspeth, Knight-Errant**: +1 the Soldier, +1 the creature that gets +3/+3 and flying (asked once, before the
+//!   loyalty is paid; legal again, and any ward paid, as the ability resolves), -8 the emblem.
 //!
 //! Never reached for an AI seat: `cards::abilities` is only asked for a person's permanent.
 
@@ -82,6 +84,15 @@ pub fn abilities(nm: &str) -> Option<Vec<PermAbility>> {
             (2, "exile target permanent you own; it returns at the beginning of the next end step", venser_plus2),
             (-1, "creatures can't be blocked this turn", venser_minus1),
             (-8, "emblem: whenever you cast a spell, exile target permanent", venser_minus8),
+        ]),
+        "Elspeth, Knight-Errant" => walker(&[
+            (1, "Create a 1/1 white Soldier creature token.", elspeth_soldier),
+            (1, "Target creature gets +3/+3 and gains flying until end of turn.", elspeth_pump),
+            (
+                -8,
+                "You get an emblem with \"Artifacts, creatures, enchantments, and lands you control have indestructible.\"",
+                elspeth_emblem,
+            ),
         ]),
         "Sorin, Vengeful Bloodlord" => {
             let mut v = walker(&[(2, "1 damage to target player or planeswalker", sorin_plus)]);
@@ -568,4 +579,34 @@ fn sorin_minus_x(g: &mut Game, p: PlayerId, m: PermId) -> Res<super::abilities::
         go(move |g| crate::impls::sorin::return_as_vampire(g, p, pick_c).map(|_| ()))
     };
     walker_run(g, p, m, -x, "return a creature card from your graveyard to the battlefield as a Vampire", &eff)
+}
+
+// ------------------------------------------------------------------ Elspeth, Knight-Errant
+use crate::impls::vondam_elspeth as elspeth;
+
+fn elspeth_soldier(_g: &mut Game, p: PlayerId, m: PermId) -> Res<Ready> {
+    go(move |g| elspeth::soldier(g, p, m))
+}
+
+/// +1: the person picks the creature (any player's that Elspeth may target) before the loyalty is paid
+fn elspeth_pump(g: &mut Game, p: PlayerId, m: PermId) -> Res<Ready> {
+    let cands = permanents(g, p, |g, x| elspeth::pump_legal(g, p, m, x));
+    if cands.is_empty() {
+        return Ok(Ready::Why("There is no creature to target.".into()));
+    }
+    let Some(t) = pick_one(g, p, "Elspeth, Knight-Errant +1: which creature gets +3/+3 and flying?", &cands, false)?
+    else {
+        return Ok(Ready::Cancel);
+    };
+    go(move |g| {
+        // still a legal target as it resolves, and a ward on it is paid or the ability is countered
+        if elspeth::pump_legal(g, p, m, t) && crate::engine::ward::pay_ward(g, p, t)? {
+            elspeth::pump(g, t);
+        }
+        Ok(())
+    })
+}
+
+fn elspeth_emblem(_g: &mut Game, p: PlayerId, m: PermId) -> Res<Ready> {
+    go(move |g| elspeth::emblem(g, p, m))
 }
