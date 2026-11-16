@@ -626,3 +626,89 @@ fn a_person_is_not_offered_a_planeswalker_protected_from_white_for_sorins_plus_t
     assert!(!ask.unwrap().choices.iter().any(|c| c.contains("Jace")), "{:?}", ask.unwrap().choices);
     assert_eq!(g.perm(w).loyalty, loyalty);
 }
+
+/// coverage (green before and after the fix of the person's path): the AI's Ballista, too, dies at 0/0 before the ping resolves
+#[test]
+fn heliod_cannot_save_an_ai_ballista_that_paid_its_last_counter() {
+    let mut g = tbl();
+    let hel = perm(&mut g, P0, HELIOD);
+    let b = ballista(&mut g, 1);
+    g.perm_mut(b).lifelink = true;
+    g.player_mut(P1).life = 1; // a lethal ping: the AI uses its last counter
+    ai_uses(&mut g, b, "ping");
+    assert_eq!(g.player(P0).life, 41, "the ping resolved, with last known information");
+    assert!(!g.perm(b).on_bf, "the 0/0 died before the ping and Heliod's trigger resolved");
+    assert_eq!(g.perm(hel).plus, 1, "Heliod is the only legal counter target");
+}
+
+#[test]
+fn sorin_minus_x_copy_retargets_and_pays_loyalty_once() {
+    let mut g = tbl();
+    let s = perm(&mut g, P0, SORIN);
+    perm(&mut g, P0, "Rings of Brighthearth");
+    for name in ["Mother of Runes", "Serra Ascendant"] {
+        let c = card(&g, name);
+        g.player_mut(P0).gy.push(c);
+    }
+    g.player_mut(P0).pool.add('C', 2);
+    let mut targets = 0;
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        if r.prompt.starts_with("Rings of Brighthearth: pay") {
+            return Answer::Pick(0);
+        }
+        if r.prompt.contains("Sorin") && r.prompt.contains("creature card") {
+            targets += 1;
+            let word = if targets == 1 { "Mother of Runes" } else { "Serra Ascendant" };
+            return r.choices.iter().position(|c| c.contains(word)).map_or(Answer::Decline, Answer::Pick);
+        }
+        Answer::Decline
+    }));
+    g.humans.add(P0, h.clone());
+    assert_eq!(use_ability(&mut g, s, "-X"), None);
+    assert!(h.asked().iter().any(|r| r.prompt.starts_with("Rings of Brighthearth: pay")));
+    assert_eq!(g.perm(s).loyalty, Some(3), "loyalty is paid once");
+    assert_eq!(perms_named(&g, P0, "Mother of Runes").len(), 1);
+    assert_eq!(perms_named(&g, P0, "Serra Ascendant").len(), 1, "the copy chose another card of the same mana value");
+}
+
+#[test]
+fn sorin_stops_granting_when_phased_neutered_or_removed() {
+    let mut g = tbl();
+    let s = perm(&mut g, P0, SORIN);
+    let b = body(&mut g, P0, 2, 2);
+    assert!(life::has_lifelink(&g, b));
+    g.perm_mut(s).phased = true;
+    assert!(!life::has_lifelink(&g, b));
+    g.perm_mut(s).phased = false;
+    g.perm_mut(s).neutered = true;
+    assert!(!life::has_lifelink(&g, b));
+    g.perm_mut(s).neutered = false;
+    zones::leave(&mut g, s).unwrap();
+    assert!(!life::has_lifelink(&g, b));
+}
+
+#[test]
+fn heliod_person_grant_excludes_protection_shroud_and_enemy_hexproof() {
+    let mut g = tbl();
+    let hel = perm(&mut g, P0, HELIOD);
+    let protected = body(&mut g, P0, 2, 2);
+    give(&mut g, protected, "pro_W");
+    let shrouded = body(&mut g, P0, 2, 2);
+    give(&mut g, shrouded, "shroud");
+    let enemy = body(&mut g, P1, 2, 2);
+    give(&mut g, enemy, "hexproof");
+    person_picking(&mut g, "unused");
+    g.player_mut(P0).pool.add('W', 2);
+    let why = use_ability(&mut g, hel, "lifelink");
+    assert!(why.is_some_and(|w| w.contains("no other creature")), "no legal target");
+    assert_eq!(g.player(P0).pool.total(), 2, "nothing was paid");
+}
+
+#[test]
+fn sorin_has_no_duplicate_compiled_loyalty_implementation() {
+    let g = tbl();
+    assert!(g.db.get(card(&g, SORIN)).abilities.is_empty());
+}

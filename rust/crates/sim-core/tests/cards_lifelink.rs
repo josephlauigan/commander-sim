@@ -854,3 +854,156 @@ fn nonpositive_damage_does_not_gain_life_or_loyalty() {
     deal(&mut g, s, Target::Perm(w), -1);
     assert_eq!((g.perm(w).loyalty, g.player(P0).life), (l, 40), "0 damage is no damage (CR 120.8)");
 }
+
+// ------------------------------------------------------------------ coverage rows (green before and after the fix round)
+#[test]
+fn a_lifelink_blocker_killed_in_first_strike_does_not_hit_back() {
+    let mut g = tbl();
+    let a = body(&mut g, P0, 3, 5);
+    let b = body(&mut g, P1, 2, 2);
+    give(&mut g, a, "double strike");
+    g.perm_mut(b).lifelink = true;
+    duel(&mut g, a, Some(b));
+    assert_eq!(g.player(P1).life, 40, "it died in the first step and dealt nothing");
+}
+
+#[test]
+fn no_lifelink_permanent_damage_gains_zero() {
+    let mut g = tbl();
+    let s = body(&mut g, P0, 2, 2);
+    let t = body(&mut g, P1, 1, 6);
+    deal(&mut g, s, Target::Perm(t), 3);
+    deal(&mut g, s, Target::Player(P1), 2);
+    assert_eq!((g.player(P0).life, g.player(P1).life), (40, 38));
+}
+
+#[test]
+fn unblocked_double_strike_causes_two_gains() {
+    let mut g = tbl();
+    perm(&mut g, P0, HELIOD);
+    let a = body(&mut g, P0, 2, 5);
+    g.perm_mut(a).lifelink = true;
+    give(&mut g, a, "double strike");
+    duel(&mut g, a, None);
+    assert_eq!(g.player(P0).life, 44);
+    assert_eq!(counters(&g, P0), 2, "two damage steps, two gain events");
+}
+
+#[test]
+fn wither_lifelink_gains_damage_dealt_as_counters() {
+    let mut g = tbl();
+    let a = body(&mut g, P0, 2, 5);
+    let b = body(&mut g, P1, 1, 5);
+    g.perm_mut(a).lifelink = true;
+    give(&mut g, a, "wither");
+    duel(&mut g, a, Some(b));
+    assert_eq!(g.perm(b).plus, -2);
+    assert_eq!(g.player(P0).life, 42);
+}
+
+#[test]
+fn grace_floor_preserves_full_damage_for_lifelink() {
+    let mut g = tbl();
+    let s = body(&mut g, P0, 2, 2);
+    g.perm_mut(s).lifelink = true;
+    g.player_mut(P1).life = 1;
+    let stamp = g.turn_stamp();
+    g.player_mut(P1).flag_turn.insert("stax_grace", stamp);
+    assert_eq!(deal(&mut g, s, Target::Player(P1), 3), 3);
+    assert_eq!((g.player(P1).life, g.player(P0).life), (1, 43));
+}
+
+#[test]
+fn serra_floor_preserves_full_damage_for_lifelink() {
+    let mut g = tbl();
+    let s = body(&mut g, P0, 2, 2);
+    g.perm_mut(s).lifelink = true;
+    body(&mut g, P1, 2, 2);
+    g.player_mut(P1).life = 1;
+    g.player_mut(P1).emblems.push("serra");
+    assert_eq!(deal(&mut g, s, Target::Player(P1), 3), 3);
+    assert_eq!((g.player(P1).life, g.player(P0).life), (1, 43));
+}
+
+#[test]
+fn unlife_poison_still_gains_the_damage() {
+    let mut g = tbl();
+    let s = body(&mut g, P0, 2, 2);
+    g.perm_mut(s).lifelink = true;
+    perm(&mut g, P1, "Phyrexian Unlife");
+    g.player_mut(P1).life = 0;
+    assert_eq!(deal(&mut g, s, Target::Player(P1), 3), 3);
+    assert_eq!((g.player(P1).life, g.player(P1).poison, g.player(P0).life), (0, 3, 43));
+}
+
+#[test]
+fn pariah_redirected_noncombat_damage_still_gains_life() {
+    let mut g = tbl();
+    let s = body(&mut g, P0, 3, 3);
+    g.perm_mut(s).lifelink = true;
+    let t = body(&mut g, P1, 1, 10);
+    let a = perm(&mut g, P1, "Pariah");
+    g.perm_mut(a).attached = Some(t);
+    assert!(g.auras.contains(&a));
+    deal(&mut g, s, Target::Player(P1), 3);
+    assert_eq!((g.player(P1).life, g.player(P0).life), (40, 43));
+}
+
+#[test]
+fn two_lifelink_sources_have_separate_gain_events() {
+    let mut g = tbl();
+    perm(&mut g, P0, HELIOD);
+    let a = body(&mut g, P0, 2, 4);
+    let b = body(&mut g, P0, 2, 4);
+    g.perm_mut(a).lifelink = true;
+    g.perm_mut(b).lifelink = true;
+    fight(&mut g, &[a, b], &[]);
+    assert_eq!(g.player(P0).life, 44);
+    assert_eq!(counters(&g, P0), 2, "one gain event for each source");
+}
+
+#[test]
+fn converted_sites_without_lifelink_gain_no_extra_life() {
+    for source in [
+        "Walking Ballista",
+        "Triskelion",
+        "Orcish Bowmasters",
+        "Terror of the Peaks",
+        "Siege-Gang Commander",
+        "Firemane Avenger",
+    ] {
+        let mut g = tbl();
+        let s = if source == "Walking Ballista" { ballista(&mut g, 2) } else { perm(&mut g, P0, source) };
+        let before = g.player(P1).life + g.player(P2).life;
+        match source {
+            "Walking Ballista" | "Triskelion" => {
+                g.player_mut(P1).life = 1;
+                ai_uses(&mut g, s, "ping");
+                assert_eq!(g.player(P1).life, 0, "{source} actually pinged");
+            }
+            "Orcish Bowmasters" => zones::draw(&mut g, P1, 1, false).unwrap(),
+            "Terror of the Peaks" => {
+                body(&mut g, P0, 3, 3);
+            }
+            "Siege-Gang Commander" => {
+                use sim_core::impls::model_gaps_a4::{Tgt, ping};
+                ping(&mut g, P0, s, Tgt::Player(P1), 2).unwrap();
+            }
+            "Firemane Avenger" => {
+                let a = body(&mut g, P0, 1, 1);
+                let b = body(&mut g, P0, 1, 1);
+                sim_core::engine::combat::attack_triggers(&mut g, P0, &[s, a, b], P1).unwrap();
+            }
+            _ => unreachable!(),
+        }
+        if !matches!(source, "Walking Ballista" | "Triskelion") {
+            let dealt = match source {
+                "Orcish Bowmasters" => 1,
+                "Siege-Gang Commander" => 2,
+                _ => 3,
+            };
+            assert_eq!(g.player(P1).life + g.player(P2).life, before - dealt, "{source} actually dealt damage");
+        }
+        assert_eq!(g.player(P0).life, if source == "Firemane Avenger" { 43 } else { 40 }, "{source}: no lifelink gain");
+    }
+}
