@@ -585,3 +585,44 @@ fn the_ai_keeps_a_held_answers_mana_instead_of_granting_lifelink() {
     lands(&mut g, P0, "Plains", 1, false); // a fourth land: both are affordable
     assert!(grants(&options(&mut g, hel, P0)), "with mana to spare the grant is offered");
 }
+
+// ------------------------------------------------------------------ fix round: Sorin
+#[test]
+fn sorin_plus_two_does_not_hit_a_planeswalker_protected_from_white() {
+    let mut g = tbl();
+    let s = perm(&mut g, P0, SORIN);
+    let w = perm(&mut g, P1, "Jace, the Mind Sculptor");
+    g.perm_mut(w).loyalty = Some(1);
+    prot_white(&mut g, w);
+    ai_uses(&mut g, s, "+2");
+    assert!(g.perm(w).on_bf, "protection makes Jace an illegal target of Sorin");
+    assert_eq!(g.perm(w).loyalty, Some(1));
+}
+
+#[test]
+fn sorin_ai_can_return_a_nine_mana_creature_with_nine_loyalty() {
+    let mut g = tbl();
+    let s = perm(&mut g, P0, SORIN);
+    g.perm_mut(s).loyalty = Some(9);
+    let c = card(&g, "Void Winnower");
+    assert_eq!(g.db.get(c).cmc, 9);
+    g.player_mut(P0).gy.push(c);
+    let o = options(&mut g, s, P0);
+    assert!(o.iter().any(|x| x.label.ends_with("-9")), "{:?}", labels(&o));
+}
+
+#[test]
+fn a_person_is_not_offered_a_planeswalker_protected_from_white_for_sorins_plus_two() {
+    let mut g = tbl();
+    let h = person_picking(&mut g, "Jace");
+    let s = perm(&mut g, P0, SORIN);
+    let w = perm(&mut g, P1, "Jace, the Mind Sculptor");
+    prot_white(&mut g, w);
+    let loyalty = g.perm(w).loyalty;
+    assert_eq!(use_ability(&mut g, s, "+2"), None);
+    let asked = h.asked();
+    let ask = asked.iter().find(|r| r.prompt.contains("Sorin"));
+    assert!(ask.is_some(), "the target is asked: {asked:?}");
+    assert!(!ask.unwrap().choices.iter().any(|c| c.contains("Jace")), "{:?}", ask.unwrap().choices);
+    assert_eq!(g.perm(w).loyalty, loyalty);
+}
