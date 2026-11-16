@@ -571,11 +571,11 @@ fn balefire(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, dmg: i
         let label = format!("{dmg} damage to each creature {} controls", pname(g, d));
         if trigger_window(g, o, Some(src), &label, Some(6.0))? {
             let ll = crate::engine::life::has_lifelink(g, src);
-            let mut dealt = 0;
+            let mut dealt = 0i32;
             for m in g.player(d).perms.clone() {
                 if g.is_creature(m) {
                     if ll {
-                        dealt += crate::engine::life::creature_damage(g, o, Some(src), m, dmg);
+                        dealt = dealt.saturating_add(crate::engine::life::creature_damage(g, o, Some(src), m, dmg));
                     }
                     if etgh(g, m) <= dmg {
                         die(g, m, "destroy")?;
