@@ -5,8 +5,8 @@ mod play_common;
 use play_common::*;
 use sim_core::dsl::has_kw;
 use sim_core::engine::values::subtypes;
-use sim_core::human::human::{AbilityKind, abilities_of};
 use sim_core::hooks::Opt;
+use sim_core::human::human::{AbilityKind, abilities_of};
 use sim_core::state::Step;
 
 const SORIN: &str = "Sorin, Vengeful Bloodlord";

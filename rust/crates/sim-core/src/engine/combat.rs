@@ -49,11 +49,7 @@ pub fn poison_share(g: &Game, d: PlayerId, atk: &[PermId]) -> f64 {
 /// power times its strikes; `ds`: with double strike, a first strike that is lethal leaves nothing for the second step.
 /// `scale` turns an amount into what is dealt (Fiery Emancipation, Stagger, Gisela).
 fn lethal_total(total: i32, ds: bool, t: i32, scale: impl Fn(i32) -> i32) -> i32 {
-    if ds && total > 0 && total % 2 == 0 && scale(total / 2) >= t {
-        scale(total / 2)
-    } else {
-        scale(total)
-    }
+    if ds && total > 0 && total % 2 == 0 && scale(total / 2) >= t { scale(total / 2) } else { scale(total) }
 }
 
 pub fn double_strike(g: &Game, m: PermId) -> bool {
@@ -937,27 +933,48 @@ pub fn resolve_blocks(
                     if la || lb {
                         let hits_a = !(fb && !fa && a_dies) && !zil;
                         let hits_b = !(fa && !fb && b_dies);
-                        let to_b = if hits_a && !repl::no_damage(g, b) && !t0(g, b) && !protected_from(g, b, colors_of(g, a))
+                        let to_b = if hits_a
+                            && !repl::no_damage(g, b)
+                            && !t0(g, b)
+                            && !protected_from(g, b, colors_of(g, a))
                             && !cardcode::prot_vs(g, b, a)
                         {
                             let one = |g: &Game, x: i32| {
-                                gs(g, d, x.saturating_mul(fiery(g, p)).saturating_mul(crate::engine::life::stagger_mult(g, d)))
+                                gs(
+                                    g,
+                                    d,
+                                    x.saturating_mul(fiery(g, p))
+                                        .saturating_mul(crate::engine::life::stagger_mult(g, d)),
+                                )
                             };
                             // trample: the blocker takes what the player does not
                             lethal_total(ap.saturating_sub(excess), double_strike(g, a) && !tr, bt, |x| one(g, x))
                         } else {
                             0
                         };
-                        let to_a = if hits_b && !repl::no_damage(g, a) && !t0(g, a) && !protected_from(g, a, colors_of(g, b))
+                        let to_a = if hits_b
+                            && !repl::no_damage(g, a)
+                            && !t0(g, a)
+                            && !protected_from(g, a, colors_of(g, b))
                             && !cardcode::prot_vs(g, a, b)
                             && !repl::source_prevented(g, b)
                         {
                             let at = etgh(g, a);
                             let pw = epow(g, b).saturating_mul(crate::impls::kuja::flare_star(g, Some(b)));
                             let one = |g: &Game, x: i32| {
-                                gs(g, p, x.saturating_mul(fiery(g, d)).saturating_mul(crate::engine::life::stagger_mult(g, p)))
+                                gs(
+                                    g,
+                                    p,
+                                    x.saturating_mul(fiery(g, d))
+                                        .saturating_mul(crate::engine::life::stagger_mult(g, p)),
+                                )
                             };
-                            lethal_total(pw.saturating_mul(if double_strike(g, b) { 2 } else { 1 }), double_strike(g, b), at, |x| one(g, x))
+                            lethal_total(
+                                pw.saturating_mul(if double_strike(g, b) { 2 } else { 1 }),
+                                double_strike(g, b),
+                                at,
+                                |x| one(g, x),
+                            )
                         } else {
                             0
                         };

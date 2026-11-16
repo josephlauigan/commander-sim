@@ -158,7 +158,11 @@ fn triskelion_with_a_grant_drains_through_sanguine_bond() {
     g.player_mut(P1).life = 3;
     ai_uses(&mut g, t, "ping");
     assert_eq!(g.player(P0).life, 41, "the ping's lifelink");
-    assert_eq!(g.player(P1).life + g.player(P2).life, 3 + 40 - 2, "1 damage, then Sanguine Bond: an opponent loses 1 more");
+    assert_eq!(
+        g.player(P1).life + g.player(P2).life,
+        3 + 40 - 2,
+        "1 damage, then Sanguine Bond: an opponent loses 1 more"
+    );
 }
 
 // ------------------------------------------------------------------ Orcish Bowmasters
@@ -476,10 +480,7 @@ fn a_lifelink_attacker_on_a_battle_gains() {
     g.active = Some(P0);
     token(&mut g, P1, 2);
     let c = hand(&mut g, P0, &["Invasion of Ikoria // Zilortha, Apex of Ikoria"])[0];
-    assert!(
-        sim_core::engine::cast::cast_card(&mut g, P0, c, "hand", Ctx { x: 3, ..Ctx::default() }).unwrap(),
-        "cast"
-    );
+    assert!(sim_core::engine::cast::cast_card(&mut g, P0, c, "hand", Ctx { x: 3, ..Ctx::default() }).unwrap(), "cast");
     let w = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).on_bf && cm3::defense(&g, m) > 0).unwrap();
     let d = cm3::protector(&g, w).unwrap();
     let a = body(&mut g, P0, 4, 4);
@@ -562,8 +563,7 @@ const IGNORES_LIFELINK: &[&str] = &[
 ];
 
 /// pairs found when the guard was written, awaiting a decision (convert the site, or accept it)
-const KNOWN_OPEN: &[(&str, &str)] =
-    &[("sheoldred", "Fate Unraveler"), ("zurgo-mardu-surge", "Myr Battlesphere")];
+const KNOWN_OPEN: &[(&str, &str)] = &[("sheoldred", "Fate Unraveler"), ("zurgo-mardu-surge", "Myr Battlesphere")];
 
 fn reaches(reach: Reach, card: &str) -> bool {
     let db = sim_core::testkit::db();
@@ -613,7 +613,8 @@ fn every_known_open_pair_is_still_open() {
 #[test]
 fn the_guard_lists_name_real_cards_and_overlap_nowhere() {
     let db = sim_core::testkit::db();
-    for n in GRANTERS.iter().map(|g| g.0).chain(READS_LIFELINK.iter().copied()).chain(IGNORES_LIFELINK.iter().copied()) {
+    for n in GRANTERS.iter().map(|g| g.0).chain(READS_LIFELINK.iter().copied()).chain(IGNORES_LIFELINK.iter().copied())
+    {
         assert!(db.id(n).is_some(), "{n} is not in cards.json");
     }
     assert!(READS_LIFELINK.iter().all(|n| !IGNORES_LIFELINK.contains(n)));

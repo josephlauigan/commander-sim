@@ -499,7 +499,8 @@ fn sorin_plus(g: &mut Game, p: PlayerId, m: PermId) -> Res<Ready> {
         return Ok(Ready::Why("There is no player or planeswalker to target.".into()));
     }
     let labels: Vec<String> = tg.iter().map(|&x| legal::describe_target(g, p, x)).collect();
-    let Some(k) = pick(g, p, "target", "Sorin, Vengeful Bloodlord +2: 1 damage to which player or planeswalker?", &labels)?
+    let Some(k) =
+        pick(g, p, "target", "Sorin, Vengeful Bloodlord +2: 1 damage to which player or planeswalker?", &labels)?
     else {
         return Ok(Ready::Cancel);
     };

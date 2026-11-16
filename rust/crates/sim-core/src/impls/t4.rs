@@ -1409,8 +1409,7 @@ fn heliod_targets(g: &Game, p: PlayerId) -> Vec<PermId> {
             x.on_bf
                 && !x.phased
                 && !crate::dsl::has_kw(g, m, "shroud")
-                && (g.is_creature(m)
-                    || crate::engine::chars::card_types(g, m).has(crate::cards::Types::ENCHANTMENT))
+                && (g.is_creature(m) || crate::engine::chars::card_types(g, m).has(crate::cards::Types::ENCHANTMENT))
         })
         .collect()
 }
@@ -1420,10 +1419,7 @@ fn heliod_targets(g: &Game, p: PlayerId) -> Vec<PermId> {
 fn heliod_aim(g: &Game, src: PermId, cs: &[PermId]) -> PermId {
     let creatures: Vec<PermId> = cs.iter().copied().filter(|&m| m != src && g.is_creature(m)).collect();
     let pinger = creatures.iter().copied().find(|&m| matches!(card_name(g, m), "Walking Ballista" | "Triskelion"));
-    pinger
-        .or_else(|| max_by(&creatures, |m| pval(g, m)))
-        .or(cs.contains(&src).then_some(src))
-        .unwrap_or(cs[0])
+    pinger.or_else(|| max_by(&creatures, |m| pval(g, m))).or(cs.contains(&src).then_some(src)).unwrap_or(cs[0])
 }
 
 /// whenever you gain life: a +1/+1 counter on target creature or enchantment you control. A person picks it (the trigger

@@ -38,10 +38,8 @@ fn grant(g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
 /// who the AI's +2 hits: a player at 1 life, an opposing planeswalker at 1 loyalty, else the most threatening opponent
 fn plus_target(g: &Game, p: PlayerId, src: PermId) -> Option<Target> {
     let cols = colors_of(g, src);
-    let players: Vec<PlayerId> = g
-        .opps(p)
-        .filter(|&q| legal::player_targetable(g, q) && !player_hexproof_from(g, q, cols))
-        .collect();
+    let players: Vec<PlayerId> =
+        g.opps(p).filter(|&q| legal::player_targetable(g, q) && !player_hexproof_from(g, q, cols)).collect();
     if let Some(&q) = players.iter().find(|&&q| g.player(q).life <= 1) {
         return Some(Target::Player(q));
     }
