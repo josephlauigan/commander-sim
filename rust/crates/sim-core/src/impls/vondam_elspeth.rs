@@ -19,8 +19,9 @@
 //! `human/walkers.rs` (both call the effects below).
 //! - +1: a 1/1 white Soldier creature token.
 //! - +1: target creature gets +3/+3 and gains flying until end of turn. The AI aims it at its own creature that can
-//!   attack now (the hardest hitter), else its best creature; a person picks any creature Elspeth may target (hexproof,
-//!   shroud and protection from white respected), before the loyalty is paid. `pump_legal` is checked again as the
+//!   attack now (the hardest hitter), else its best creature (`pump_go`: chosen on activation, kept through any response,
+//!   so it never switches to another creature); a person picks any creature Elspeth may target (hexproof, shroud and
+//!   protection from white respected), before the loyalty is paid. `pump_legal` is checked again as the
 //!   ability resolves, and a person pays any ward then (`ward::pay_ward`).
 //! - -8: the emblem `elspeth_ke` (`Player::emblems`): `chars::has_keyword` gives indestructible to the artifacts,
 //!   creatures, enchantments and lands its owner controls (not planeswalkers; sacrifice, toughness 0 and -X/-X still
@@ -35,10 +36,10 @@ use crate::engine::stack::{queue_triggers, trigger_window};
 use crate::engine::values::{colors_of, epow, equipped, indestructible, protected_from, pval, untargetable};
 use crate::engine::zones::{Tokens, make_tokens, max_by};
 use crate::flow::Res;
-use crate::hooks::{Call, Event, Registry, Src, TrigAct, Trigger};
+use crate::hooks::{Action, Call, Event, Opt, Registry, Src, TrigAct, Trigger};
 use crate::human::cards::pick_perm;
 use crate::ids::{PermId, PlayerId};
-use crate::impls::common::{WalkerAb, walker};
+use crate::impls::common::{WalkerAb, walker, walker_options, walker_pay_run};
 use crate::state::{DataKey, Game, Val};
 use crate::sym::{Sym, intern};
 use crate::tag::Tag;
@@ -323,11 +324,37 @@ static ELSPETH_AB: [WalkerAb; 3] = [
     },
 ];
 
+/// the AI's +1 pump, index 1 of `ELSPETH_AB`: the target is chosen now, on activation (CR 602.2b), before the loyalty is
+/// paid and the ability can be responded to. As it resolves the same creature is pumped if it is still a legal target
+/// (CR 608.2b); it never switches to another one.
+fn pump_go(g: &mut Game, src: PermId, p: PlayerId, i: i64) -> Res<bool> {
+    let Some(t) = pump_target(g, p, src) else { return Ok(false) };
+    walker_pay_run(g, src, p, i as usize, Some(t), &mut |g| {
+        if pump_legal(g, p, src, t) {
+            pump(g, t);
+        }
+        Ok(())
+    })
+}
+
+/// the framework's options, with the pump's action swapped for `pump_go` (the same `arg`, so it is still ability 1)
+fn options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let mut out = walker_options(g, src, p, post)?;
+    for o in &mut out {
+        if let Some(Action::Ability { f, arg: 1, .. }) = &mut o.act {
+            *f = pump_go;
+        }
+    }
+    Ok(out)
+}
+
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     let c = r.card(db, VONDAM)?;
     c.dies = Some(another_dies);
     c.exiled_from_bf = Some(another_exiled);
     c.self_dies = Some(self_dies);
     c.self_exiled = Some(self_exiled);
-    walker(r, db, ELSPETH, &ELSPETH_AB)
+    walker(r, db, ELSPETH, &ELSPETH_AB)?;
+    r.card(db, ELSPETH)?.options = Some(options);
+    Ok(())
 }
