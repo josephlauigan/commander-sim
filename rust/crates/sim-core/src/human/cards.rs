@@ -224,6 +224,9 @@ pub fn damage(g: &mut Game, p: PlayerId, x: Target, n: i32, source: &str, kind: 
 
 /// `damage` by a permanent: returns the damage dealt, and a source with lifelink (`by`) gains that much
 pub fn damage_by(g: &mut Game, p: PlayerId, x: Target, n: i32, source: &str, kind: &str, by: choices::By) -> Res<i32> {
+    if n <= 0 {
+        return Ok(0); // 0 damage is no damage (CR 120.8)
+    }
     use crate::engine::{life, zones};
     let src = by.map(|b| b.0);
     let m = match x {

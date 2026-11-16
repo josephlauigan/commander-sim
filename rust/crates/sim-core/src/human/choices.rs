@@ -579,6 +579,9 @@ pub fn apply_damage(g: &mut Game, p: PlayerId, t: Target, n: i32, source: &str, 
 
 /// `apply_damage` by a permanent: returns the damage dealt, and a source with lifelink (`by`) gains that much
 pub fn apply_damage_by(g: &mut Game, p: PlayerId, t: Target, n: i32, source: &str, kind: &str, by: By) -> Res<i32> {
+    if n <= 0 {
+        return Ok(0); // 0 damage is no damage (CR 120.8): no loyalty change, no lifelink
+    }
     let src = by.map(|b| b.0);
     let m = match t {
         Target::Player(q) => {
