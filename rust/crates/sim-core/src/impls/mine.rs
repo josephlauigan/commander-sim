@@ -32,8 +32,8 @@ use crate::engine::values::{
     player_hexproof, protected_from, pval, stopped, threat, untargetable,
 };
 use crate::engine::zones::{
-    Enter, TOKEN_CAP, Tokens, Zone, amass, die, discard_cards, discard_index, draw, enter, enter_token_copy, landfall,
-    leave, make_tokens, max_by, mill, min_by, to_zone_card,
+    Enter, TOKEN_CAP, Tokens, Zone, amass, die, discard_cards, discard_index, draw, enter, enter_token_copy,
+    exiled_from_bf, landfall, leave, make_tokens, max_by, mill, min_by, to_zone_card,
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Src};
@@ -1721,7 +1721,7 @@ fn kitten(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
         leave(g, m)?;
         let n = enter(g, p, cd, Enter { orig: Some(p), ..Enter::default() })?;
         g.perm_mut(n).is_cmd = was_cmd;
-        return Ok(());
+        return exiled_from_bf(g, m, Some(n));
     }
     let Some(m) = first_max(&cs, |m| etb_value(g, p, m)) else { return Ok(()) };
     if etb_value(g, p, m) < 2.0 {
@@ -1732,9 +1732,7 @@ fn kitten(g: &mut Game, src: Src, caster: PlayerId, c: CardId) -> Res {
     leave(g, m)?;
     let n = enter(g, p, cd, Enter { orig: Some(p), ..Enter::default() })?;
     g.perm_mut(n).is_cmd = was_cmd;
-    if !g.hooks.is_empty() && g.is_creature(m) {
-        fire_trigger(g, Event::ExiledFromBf, Call::Leaves { m })?; // (Soulherder)
-    }
+    exiled_from_bf(g, m, Some(n))?; // (Soulherder)
     Ok(())
 }
 
@@ -4357,9 +4355,7 @@ pub fn t2_blink(g: &mut Game, _p: PlayerId, m: PermId) -> Res<Option<PermId>> {
         leave(g, m)?;
         let n = enter(g, owner, cd, Enter { orig: Some(owner), ..Enter::default() })?;
         g.perm_mut(n).is_cmd = cmd;
-        if !g.hooks.is_empty() {
-            fire_trigger(g, Event::ExiledFromBf, Call::Leaves { m })?;
-        }
+        exiled_from_bf(g, m, Some(n))?;
         crate::glog!(g, "    {} is blinked", g.db.get(cd).name);
         Ok(Some(n))
     })();

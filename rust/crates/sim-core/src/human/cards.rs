@@ -81,7 +81,7 @@ pub fn blink(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     if g.perm(m).token {
         crate::engine::zones::leave(g, m)?;
         crate::glog!(g, "    {} (a token) is exiled for good", g.perm(m).name);
-        return Ok(());
+        return crate::engine::zones::exiled_from_bf(g, m, None);
     }
     crate::impls::t2::blink(g, p, m)?;
     Ok(())

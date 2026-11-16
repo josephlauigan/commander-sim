@@ -345,6 +345,7 @@ fn flicker_exile(g: &mut Game, m: PermId) -> Res {
             g.player_mut(o).exile.push(cd);
             back.push((o, cd));
         }
+        crate::engine::zones::exiled_from_bf(g, a, None)?;
     }
     let x = g.perm(m);
     let (o, cd, tok) = (x.orig, x.phys.or(x.cd), x.token);
@@ -354,7 +355,7 @@ fn flicker_exile(g: &mut Game, m: PermId) -> Res {
         g.player_mut(o).exile.push(cd); // not to the command zone: it returns at the end step
         g.t12lp.flicker.push((o, cd, back));
     }
-    Ok(())
+    crate::engine::zones::exiled_from_bf(g, m, None)
 }
 
 /// cardcode::delayed_end_step: Flickerform's creatures return, then the Auras exiled with each, attached to it

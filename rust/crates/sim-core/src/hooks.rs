@@ -98,6 +98,7 @@ pub enum Event {
     Sba,
     SearchLimit,
     SelfDies,
+    SelfExiled,
     SkipDraw,
     StealDraw,
     TokenCreated,
@@ -108,7 +109,7 @@ pub enum Event {
     Upkeep,
 }
 
-pub const EVENTS: [(Event, &str); 83] = [
+pub const EVENTS: [(Event, &str); 84] = [
     (Event::Attack, "attack"),
     (Event::AttackCap, "attack_cap"),
     (Event::AttackTax, "attack_tax"),
@@ -184,6 +185,7 @@ pub const EVENTS: [(Event, &str); 83] = [
     (Event::Sba, "sba"),
     (Event::SearchLimit, "search_limit"),
     (Event::SelfDies, "self_dies"),
+    (Event::SelfExiled, "self_exiled"),
     (Event::SkipDraw, "skip_draw"),
     (Event::StealDraw, "steal_draw"),
     (Event::TokenCreated, "token_created"),
@@ -195,7 +197,7 @@ pub const EVENTS: [(Event, &str); 83] = [
 ];
 
 /// Python's `engine.TRIGGER_EVENTS`
-pub const TRIGGER_EVENTS: [Event; 26] = [
+pub const TRIGGER_EVENTS: [Event; 27] = [
     Event::Attack,
     Event::Blocks,
     Event::CardsToGy,
@@ -220,6 +222,7 @@ pub const TRIGGER_EVENTS: [Event; 26] = [
     Event::Proliferated,
     Event::Sacrifice,
     Event::SelfDies,
+    Event::SelfExiled,
     Event::TokenCreated,
     Event::Upkeep,
 ];
@@ -407,12 +410,13 @@ pub enum SlotClass {
 /// Every `CardImpl` slot's class, in field order: the one place a slot is classed. `at_once` is not a slot (it marks
 /// how other slots run). `options` / `gy_options` / `hand_options` / `land_options` build the plays the AI may pick;
 /// `prio`, `spell_imp` and `pval` are numbers it ranks by.
-pub const SLOT_CLASS: [(&str, SlotClass); 102] = [
+pub const SLOT_CLASS: [(&str, SlotClass); 103] = [
     ("etb", SlotClass::Rule),
     ("enter_copy", SlotClass::Rule),
     ("leaves", SlotClass::Rule),
     ("dies", SlotClass::Rule),
     ("self_dies", SlotClass::Rule),
+    ("self_exiled", SlotClass::Rule),
     ("upkeep", SlotClass::Rule),
     ("end_step", SlotClass::Rule),
     ("main1", SlotClass::Rule),
@@ -526,6 +530,9 @@ pub struct CardImpl {
     pub leaves: Option<LeavesFn>,
     pub dies: Option<DiesFn>,
     pub self_dies: Option<DiesFn>,
+    /// self_exiled(g, src, m): src (m) was put into exile from the battlefield: "when this dies or is put into exile"
+    /// (Syr Vondam). Like `self_dies`, it runs for the permanent that left, which can't hear itself through `hooked`.
+    pub self_exiled: Option<LeavesFn>,
     pub upkeep: Option<PlayerFn>,
     pub end_step: Option<PlayerFn>,
     pub main1: Option<PlayerFn>,
@@ -664,13 +671,14 @@ pub struct CardImpl {
 impl CardImpl {
     /// Every slot by name, and whether it is filled. Destructuring the struct makes a new field a compile error here
     /// until it is listed, and the test `every_slot_has_a_class` then needs its class in `SLOT_CLASS`.
-    pub fn slot_fill(&self) -> [(&'static str, bool); 102] {
+    pub fn slot_fill(&self) -> [(&'static str, bool); 103] {
         let CardImpl {
             etb,
             enter_copy,
             leaves,
             dies,
             self_dies,
+            self_exiled,
             upkeep,
             end_step,
             main1,
@@ -776,6 +784,7 @@ impl CardImpl {
             ("leaves", leaves.is_some()),
             ("dies", dies.is_some()),
             ("self_dies", self_dies.is_some()),
+            ("self_exiled", self_exiled.is_some()),
             ("upkeep", upkeep.is_some()),
             ("end_step", end_step.is_some()),
             ("main1", main1.is_some()),
@@ -909,6 +918,7 @@ impl CardImpl {
             Event::Leaves => self.leaves.is_some(),
             Event::Dies => self.dies.is_some(),
             Event::SelfDies => self.self_dies.is_some(),
+            Event::SelfExiled => self.self_exiled.is_some(),
             Event::Upkeep => self.upkeep.is_some(),
             Event::EndStep => self.end_step.is_some(),
             Event::Main1 => self.main1.is_some(),

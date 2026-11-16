@@ -21,8 +21,8 @@ use crate::engine::stack::{ability_window, ability_window_card, counter_window, 
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{epow, etgh, has_type, once_per_turn, protected_from, pval, stopped, untargetable};
 use crate::engine::zones::{
-    Enter, Tokens, Zone, add_treasure, die, draw, edict, enter, exile_perm, leave, make_tokens, max_by, mill, min_by,
-    sac_worth, searchable, to_zone_card,
+    Enter, Tokens, Zone, add_treasure, die, draw, edict, enter, exile_perm, exiled_from_bf, leave, make_tokens, max_by,
+    mill, min_by, sac_worth, searchable, to_zone_card,
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Sacrificed, Src};
@@ -2357,9 +2357,7 @@ fn blink(g: &mut Game, _p: PlayerId, m: PermId) -> Res<Option<PermId>> {
     leave(g, m)?;
     let n = enter(g, orig, cd, Enter { orig: Some(orig), ..Enter::default() })?;
     g.perm_mut(n).is_cmd = cmd;
-    if !g.hooks.is_empty() {
-        fire_trigger(g, Event::ExiledFromBf, Call::Leaves { m })?;
-    }
+    exiled_from_bf(g, m, Some(n))?;
     crate::glog!(g, "    {} is blinked", g.db.get(cd).name);
     Ok(Some(n))
 }

@@ -1343,6 +1343,7 @@ pub fn interlude(g: &mut Game, p: PlayerId, ms: &[PermId]) -> Res {
             g.player_mut(p).exile.push(cd);
             back.push(cd);
         }
+        crate::engine::zones::exiled_from_bf(g, m, None)?; // (a token is exiled too, and does not come back)
     }
     eerie_return(g, p, &back);
     let names: Vec<&str> = back.iter().map(|&c| &*g.db.get(c).name).collect();
@@ -1420,6 +1421,7 @@ fn flicker(g: &mut Game, p: PlayerId, _c: CardId, ctx: &Ctx) -> Res<Sym> {
     leave(g, t)?;
     let n = enter(g, owner, cd, Enter::default())?;
     g.perm_mut(n).is_cmd = cd == g.player(owner).cmd;
+    crate::engine::zones::exiled_from_bf(g, t, Some(n))?;
     crate::glog!(g, "    Flicker: {} leaves and returns", g.db.get(cd).name);
     Ok("gy")
 }

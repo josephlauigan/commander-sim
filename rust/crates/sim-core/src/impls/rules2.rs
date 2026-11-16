@@ -1547,6 +1547,7 @@ fn prince(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         let cd = g.perm(t).cd.unwrap();
         g.player_mut(o).oath_return.push(cd);
         crate::glog!(g, "    Charming Prince exiles {} until the end step", g.perm(t).name);
+        crate::engine::zones::exiled_from_bf(g, t, None)?;
     } else {
         gain(g, o, 3)?;
     }

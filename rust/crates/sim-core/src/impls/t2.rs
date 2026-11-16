@@ -17,7 +17,8 @@ use crate::engine::turn::{crack_fetch, remove_land};
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{epow, etgh, has_type, pval, threat, untargetable};
 use crate::engine::zones::{
-    Enter, Tokens, die, discard_cards, draw, enter, land_ramp, landfall, leave, make_tokens, max_by, min_by, searchable,
+    Enter, Tokens, die, discard_cards, draw, enter, exiled_from_bf, land_ramp, landfall, leave, make_tokens, max_by,
+    min_by, searchable,
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Assign, Call, Event, Opt, Registry, Src};
@@ -155,9 +156,7 @@ fn blink_inner(g: &mut Game, _p: PlayerId, m: PermId) -> Res<PermId> {
     leave(g, m)?;
     let n = enter(g, orig, cd, Enter { orig: Some(orig), ..Enter::default() })?;
     g.perm_mut(n).is_cmd = cmd;
-    if !g.hooks.is_empty() {
-        fire_trigger(g, Event::ExiledFromBf, Call::Leaves { m })?;
-    }
+    exiled_from_bf(g, m, Some(n))?;
     crate::glog!(g, "    {} is blinked", g.db.get(cd).name);
     Ok(n)
 }

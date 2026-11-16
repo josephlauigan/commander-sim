@@ -791,7 +791,7 @@ pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
             to_zone_card(g, m, Zone::Exile);
             crate::impls::t12_kaalia_sythis::exiled_instead(g, m); // --- Tiers 1/2 (kaalia-sythis): Valgavoth
         }
-        return Ok(());
+        return exiled_from_bf(g, m, None); // exiled, not dead: Soulherder, Syr Vondam
     }
     if creature {
         g.player_mut(p).creature_died = Some(g.turn_stamp()); // Essenceknit Scholar
@@ -1060,9 +1060,42 @@ pub fn exile_perm(g: &mut Game, m: PermId) -> Res {
     if let Some(Val::Player(q)) = g.perm(m).data.get(DataKey::Ghostform).cloned()
         && crate::impls::sephfs_cards::ghostform_return(g, m, q)?
     {
-        return Ok(());
+        return exiled_from_bf(g, m, None); // it came back, but it was exiled first
     }
     to_zone_card(g, m, Zone::Exile);
+    exiled_from_bf(g, m, None)
+}
+
+/// m was put into exile from the battlefield (any way: an exile, a blink, a token that is gone for good, Rest in Peace's
+/// "exiled instead of dying"): "whenever a creature is exiled" (Soulherder), "dies or is put into exile" (Syr Vondam).
+/// Call it once, after `leave`, and after the exiled card is back for a blink (`back`: what it came back as), so the
+/// triggers wait for its enters triggers as before. Leaves-the-battlefield abilities look back in time (CR 603.10a):
+/// `back` and what entered with it never saw m leave, so they hear nothing. The permanent's own trigger
+/// (`self_exiled`) is queued here, as `die_triggers` queues `self_dies`, since `leave` took it out of `g.hooks`.
+pub fn exiled_from_bf(g: &mut Game, m: PermId, back: Option<PermId>) -> Res {
+    if !g.hooks.is_empty() {
+        let born = back.map(|n| g.perm(n).born);
+        hooks::fire_trigger_where(g, Event::ExiledFromBf, Call::Leaves { m }, &|g, s| {
+            born.is_none_or(|b| g.perm(s).born < b)
+        })?;
+    }
+    let imp = g.perm(m).cd.and_then(|c| g.registry.get(c).copied()).filter(|i| i.self_exiled.is_some());
+    if let Some(imp) = imp {
+        if imp.runs_at_once(Event::SelfExiled) {
+            (imp.self_exiled.unwrap())(g, m, m)?;
+        } else {
+            let t = Trigger {
+                controller: g.perm(m).owner,
+                src: Some(m),
+                act: TrigAct::Hook { event: Event::SelfExiled, call: Call::Leaves { m } },
+                name: None,
+                known: false,
+                imp: None,
+                cast_etb: false,
+            };
+            queue_triggers(g, vec![t])?;
+        }
+    }
     Ok(())
 }
 
