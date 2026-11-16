@@ -156,6 +156,15 @@ enum Sc {
     UseAbility,
 }
 
+/// a condition of the form "when <the card itself> dies / is put into exile / leaves the battlefield ...": it names the
+/// card (or "this creature") as the one that leaves, so it fires only when that card does. Not "whenever", and not a
+/// condition about another, enchanted, equipped or any creature.
+fn self_leaves(cond: &str) -> bool {
+    cond.starts_with("when ")
+        && [" dies", " is put into exile", "leaves the battlefield"].iter().any(|w| cond.contains(w))
+        && ["another", "enchanted", "equipped", "a creature", "one or more"].iter().all(|w| !cond.contains(w))
+}
+
 /// the moments to drive for these trigger conditions, and the lines no moment fits
 fn scenarios(lines: &[TLine]) -> (BTreeSet<Sc>, Vec<String>) {
     let mut acc = BTreeSet::new();
@@ -198,7 +207,14 @@ fn scenarios(lines: &[TLine]) -> (BTreeSet<Sc>, Vec<String>) {
                 out.insert(Sc::OppTurn);
             }
         }
-        if has("dies") || has("graveyard from the battlefield") || has("leaves the battlefield") || has("is destroyed")
+        if self_leaves(lc) {
+            // "when <the card itself> dies / is put into exile": only its own death can fire it (the other moments
+            // kill other creatures, which this line does not hear)
+            out.insert(Sc::DieSelf);
+        } else if has("dies")
+            || has("graveyard from the battlefield")
+            || has("leaves the battlefield")
+            || has("is destroyed")
         {
             out.extend([Sc::DieSelf, Sc::DieOwn, Sc::DieOpp]);
         }
@@ -371,6 +387,14 @@ fn precondition(g: &mut Game, name: &str, sc: Sc, e0: PermId, e1: PermId) -> Opt
             }
             ("Smaug the Magnificent", Sc::Combat) => {
                 sim_core::engine::zones::add_treasure(g, P0, 2).unwrap();
+            }
+            // power 4 or more as he dies, so the destroy is driven and the person is asked ("up to one target")
+            ("Syr Vondam, Sunstar Exemplar", Sc::DieSelf) => {
+                for m in g.player(P0).perms.clone() {
+                    if g.perm(m).name == name {
+                        g.perm_mut(m).plus = 2;
+                    }
+                }
             }
             // counters on The Ozolith (a creature with counters left earlier)
             ("The Ozolith", Sc::Combat) => g.player_mut(P0).ozolith_counters = 2,
