@@ -185,7 +185,9 @@ fn a_person_is_offered_sorins_abilities_and_asked_the_plus_two_target() {
     let loyalty = g.perm(w).loyalty.unwrap();
     assert_eq!(use_ability(&mut g, s, "+2"), None);
     let asked = h.asked();
-    let ask = asked.iter().find(|r| r.prompt.contains("Sorin")).expect("the target is asked");
+    let ask = asked.iter().find(|r| r.prompt.contains("Sorin"));
+    assert!(ask.is_some(), "the target is asked: {asked:?}");
+    let ask = ask.unwrap();
     assert!(ask.choices.iter().any(|c| c.contains("Jace")), "a planeswalker is a legal target: {:?}", ask.choices);
     assert!(ask.choices.iter().any(|c| c.contains("player")), "a player is: {:?}", ask.choices);
     assert!(!ask.choices.iter().any(|c| c.contains("Mother of Runes")), "a creature is not: {:?}", ask.choices);
@@ -205,7 +207,9 @@ fn a_person_is_asked_which_creature_sorin_minus_x_returns() {
     creature_card(&mut g, "Serra Angel");
     assert_eq!(use_ability(&mut g, s, "-X"), None);
     let asked = h.asked();
-    let ask = asked.iter().find(|r| r.prompt.contains("Sorin")).expect("the creature card is asked");
+    let ask = asked.iter().find(|r| r.prompt.contains("Sorin"));
+    assert!(ask.is_some(), "the creature card is asked: {asked:?}");
+    let ask = ask.unwrap();
     assert!(ask.choices.iter().any(|c| c.contains("Ornithopter")), "{:?}", ask.choices);
     assert!(ask.choices.iter().any(|c| c.contains("Mother of Runes")), "{:?}", ask.choices);
     assert!(!ask.choices.iter().any(|c| c.contains("Serra Angel")), "mana value 5 is more than 4 loyalty");
@@ -219,7 +223,132 @@ fn a_person_is_told_why_sorin_minus_x_cannot_be_used_with_no_creature_card() {
     let mut g = tbl();
     person_picking(&mut g, "nothing");
     let s = perm(&mut g, P0, SORIN);
-    let why = use_ability(&mut g, s, "-X").expect("a reason");
+    let why = use_ability(&mut g, s, "-X");
+    assert!(why.is_some(), "a reason is given");
+    let why = why.unwrap();
     assert!(why.contains("graveyard"), "{why}");
     assert_eq!(g.perm(s).loyalty, Some(4), "nothing was paid");
+}
+
+// ------------------------------------------------------------------ Heliod, Sun-Crowned
+const HELIOD: &str = "Heliod, Sun-Crowned";
+
+fn counters(g: &Game, m: PermId) -> i32 {
+    g.perm(m).plus
+}
+
+#[test]
+fn heliods_counter_can_go_on_heliod_or_an_enchantment() {
+    let mut g = tbl();
+    let h = perm(&mut g, P0, HELIOD);
+    assert!(!g.is_creature(h), "devotion 1: not a creature");
+    sim_core::engine::life::gain(&mut g, P0, 1).unwrap();
+    assert_eq!(counters(&g, h), 1, "with no creature, a creature or enchantment: Heliod, an enchantment");
+    let tg = perm(&mut g, P0, "Mother of Runes");
+    sim_core::engine::life::gain(&mut g, P0, 1).unwrap();
+    assert_eq!(counters(&g, tg), 1, "a creature first");
+    assert_eq!(counters(&g, h), 1);
+}
+
+#[test]
+fn heliods_counter_goes_on_a_ballista_before_other_creatures() {
+    let mut g = tbl();
+    perm(&mut g, P0, HELIOD);
+    perm(&mut g, P0, "Grave Titan");
+    let c = take(&mut g, P0, "Walking Ballista");
+    g.last_x = 2;
+    let b = sim_core::engine::zones::enter(
+        &mut g,
+        P0,
+        c,
+        sim_core::engine::zones::Enter { was_cast: true, sick: false, ..Default::default() },
+    )
+    .unwrap();
+    let before = counters(&g, b);
+    sim_core::engine::life::gain(&mut g, P0, 1).unwrap();
+    assert_eq!(counters(&g, b), before + 1, "one more ping");
+}
+
+#[test]
+fn a_person_is_asked_heliods_counter_target() {
+    let mut g = tbl();
+    let h = person_picking(&mut g, "Rule of Law");
+    perm(&mut g, P0, HELIOD);
+    let law = perm(&mut g, P0, "Rule of Law");
+    let mine = perm(&mut g, P0, "Mother of Runes");
+    let theirs = perm(&mut g, P1, "Mother of Runes");
+    sim_core::engine::life::gain(&mut g, P0, 1).unwrap();
+    let asked = h.asked();
+    let ask = asked.iter().find(|r| r.prompt.contains("Heliod"));
+    assert!(ask.is_some(), "the target is asked: {asked:?}");
+    let ask = ask.unwrap();
+    assert!(ask.choices.iter().any(|c| c.contains("Rule of Law")), "an enchantment: {:?}", ask.choices);
+    assert!(ask.choices.iter().any(|c| c.contains("Mother of Runes")), "a creature: {:?}", ask.choices);
+    assert!(ask.choices.iter().any(|c| c.contains("Heliod")), "Heliod himself: {:?}", ask.choices);
+    assert_eq!(ask.choices.len(), 3, "only your own creatures and enchantments: {:?}", ask.choices);
+    assert_eq!(counters(&g, law), 1);
+    assert_eq!(counters(&g, mine), 0);
+    assert_eq!(counters(&g, theirs), 0);
+}
+
+#[test]
+fn a_person_is_offered_a_heliods_lifelink_grant() {
+    let mut g = tbl();
+    let h = person_picking(&mut g, "Mother of Runes");
+    let hel = perm(&mut g, P0, HELIOD);
+    let other = perm(&mut g, P0, "Mother of Runes");
+    let list: Vec<String> = abilities_of(&mut g, P0, hel).unwrap().into_iter().map(|a| a.0).collect();
+    assert!(list.iter().any(|l| l.contains("{1}{W}") && l.contains("lifelink")), "{list:?}");
+    let why = use_ability(&mut g, hel, "lifelink");
+    assert!(why.is_some(), "no mana in the pool: a reason is given");
+    let why = why.unwrap();
+    assert!(why.contains("mana") || why.contains("pay") || why.contains("{1}"), "{why}");
+    g.player_mut(P0).pool.add('W', 2);
+    assert_eq!(use_ability(&mut g, hel, "lifelink"), None);
+    assert_eq!(g.player(P0).pool.total(), 0, "{{1}}{{W}} came out of the pool");
+    let asked = h.asked();
+    let ask = asked.iter().find(|r| r.prompt.contains("Heliod"));
+    assert!(ask.is_some(), "the target is asked: {asked:?}");
+    let ask = ask.unwrap();
+    assert!(!ask.choices.iter().any(|c| c.contains("Heliod")), "another creature: {:?}", ask.choices);
+    assert!(has_kw(&g, other, "lifelink"), "until end of turn");
+}
+
+#[test]
+fn the_ai_grants_lifelink_with_spare_mana_before_combat() {
+    let mut g = tbl();
+    let hel = perm(&mut g, P0, HELIOD);
+    let big = token(&mut g, P0, 4);
+    lands(&mut g, P0, "Plains", 2, false);
+    let o = options(&mut g, hel, P0);
+    assert!(o.iter().any(|x| x.label.contains("lifelink")), "{:?}", labels(&o));
+    ai_uses(&mut g, hel, &o.iter().find(|x| x.label.contains("lifelink")).unwrap().label.clone());
+    assert!(has_kw(&g, big, "lifelink"));
+    assert!(options(&mut g, hel, P0).iter().all(|x| !x.label.contains("lifelink")), "once a turn");
+}
+
+#[test]
+fn the_ai_does_not_grant_lifelink_without_a_reason() {
+    // an attacker of power 3 or more, spare mana, no lifelink yet
+    let mut g = tbl();
+    let hel = perm(&mut g, P0, HELIOD);
+    token(&mut g, P0, 2);
+    lands(&mut g, P0, "Plains", 2, false);
+    assert!(options(&mut g, hel, P0).iter().all(|x| !x.label.contains("lifelink")), "power 2: not worth {{1}}{{W}}");
+    let mut g = tbl();
+    let hel = perm(&mut g, P0, HELIOD);
+    token(&mut g, P0, 4);
+    assert!(options(&mut g, hel, P0).iter().all(|x| !x.label.contains("lifelink")), "no mana");
+    let mut g = tbl();
+    let hel = perm(&mut g, P0, HELIOD);
+    let big = token(&mut g, P0, 4);
+    g.perm_mut(big).lifelink = true;
+    lands(&mut g, P0, "Plains", 2, false);
+    assert!(options(&mut g, hel, P0).iter().all(|x| !x.label.contains("lifelink")), "it has lifelink already");
+    let mut g = tbl();
+    let hel = perm(&mut g, P0, HELIOD);
+    let big = token(&mut g, P0, 4);
+    g.perm_mut(big).sick = true;
+    lands(&mut g, P0, "Plains", 2, false);
+    assert!(options(&mut g, hel, P0).iter().all(|x| !x.label.contains("lifelink")), "it can't attack");
 }
