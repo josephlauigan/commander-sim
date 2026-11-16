@@ -331,6 +331,46 @@ fn barad_dur_enters_untapped_with_a_token_ring_bearer() {
     assert!(!turn::land_enters_tapped(&g, P0, c));
 }
 
+/// a person with Minas Tirith untapped, two attackers this turn and {W}{C} in the pool; "which ability?" takes the first
+fn ready_person_minas(g: &mut Game) -> PermId {
+    person(g, |r| r.prompt.contains("which ability?").then_some(0));
+    let l = play_land(g, "Minas Tirith");
+    g.perm_mut(l).tapped = false;
+    attacked_with(g, 2);
+    pool(g, P0, &[('W', 1), ('C', 1)]);
+    l
+}
+
+fn no_draw_label(g: &Game, l: PermId) -> bool {
+    !sim_core::human::abilities::land_abilities(g, P0, l).iter().any(|a| a.label.contains("draw a card"))
+}
+
+#[test]
+fn blood_moon_removes_the_person_draw_ability() {
+    let mut g = tbl();
+    let l = ready_person_minas(&mut g);
+    perm(&mut g, P1, "Blood Moon");
+    assert!(sim_core::engine::mana::moon_land(&g, l));
+    assert!(no_draw_label(&g, l), "a Mountain has no draw ability");
+    let before = (g.player(P0).hand.len(), g.player(P0).pool.total());
+    let _ = sim_core::human::human::use_land(&mut g, P0, l).unwrap();
+    assert_eq!((g.player(P0).hand.len(), g.player(P0).pool.total()), before, "nothing drawn, nothing paid");
+    assert!(!g.perm(l).tapped);
+}
+
+#[test]
+fn magus_of_the_moon_removes_the_person_draw_ability() {
+    let mut g = tbl();
+    let l = ready_person_minas(&mut g);
+    perm(&mut g, P1, "Magus of the Moon");
+    assert!(sim_core::engine::mana::moon_land(&g, l));
+    assert!(no_draw_label(&g, l), "a Mountain has no draw ability");
+    let hand = g.player(P0).hand.len();
+    let _ = sim_core::human::human::use_land(&mut g, P0, l).unwrap();
+    assert_eq!(g.player(P0).hand.len(), hand);
+    assert!(!g.perm(l).tapped);
+}
+
 #[test]
 fn a_card_made_legendary_by_an_effect_is_legendary() {
     // DataKey::Legendary on a card-backed permanent (Anikthea's tokens, a Kaldra-style effect), not only on a token
