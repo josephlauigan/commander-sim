@@ -1397,23 +1397,117 @@ fn heliod_ind(_g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
     kw == "indestructible" && m == src
 }
 
-/// whenever you gain life: a +1/+1 counter on your best creature (a Walking Ballista first: one more ping)
+/// the creatures and enchantments p controls that Heliod's counter can go on ("target creature or enchantment you
+/// control": Heliod himself is an enchantment, a creature or not): on the battlefield, not phased out, no shroud
+fn heliod_targets(g: &Game, p: PlayerId) -> Vec<PermId> {
+    g.player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            let x = g.perm(m);
+            x.on_bf
+                && !x.phased
+                && !crate::dsl::has_kw(g, m, "shroud")
+                && (g.is_creature(m)
+                    || crate::engine::chars::card_types(g, m).has(crate::cards::Types::ENCHANTMENT))
+        })
+        .collect()
+}
+
+/// where the AI puts the counter: a Walking Ballista or Triskelion first (one more ping), then its best creature, then
+/// Heliod himself, then any other enchantment
+fn heliod_aim(g: &Game, src: PermId, cs: &[PermId]) -> PermId {
+    let creatures: Vec<PermId> = cs.iter().copied().filter(|&m| m != src && g.is_creature(m)).collect();
+    let pinger = creatures.iter().copied().find(|&m| matches!(card_name(g, m), "Walking Ballista" | "Triskelion"));
+    pinger
+        .or_else(|| max_by(&creatures, |m| pval(g, m)))
+        .or(cs.contains(&src).then_some(src))
+        .unwrap_or(cs[0])
+}
+
+/// whenever you gain life: a +1/+1 counter on target creature or enchantment you control. A person picks it (the trigger
+/// is mandatory); the target is chosen as the trigger goes on the stack, and the counter is lost if it is gone by the time
+/// the trigger resolves.
 fn heliod_gain(g: &mut Game, src: Src, p: PlayerId, _n: i32) -> Res {
     if p != owner(g, src) {
         return Ok(());
     }
-    let cre = |g: &Game| -> Vec<PermId> {
-        g.player(p).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased && m != src).collect()
-    };
-    if cre(g).is_empty() || !trigger_window(g, p, Some(src), "a +1/+1 counter on a creature", None)? {
+    let cs = heliod_targets(g, p);
+    if cs.is_empty() {
         return Ok(());
     }
-    let cs = cre(g);
-    let t = cs.iter().copied().find(|&m| card_name(g, m) == "Walking Ballista").or_else(|| max_by(&cs, |m| pval(g, m)));
-    if let Some(t) = t {
-        repl::put_plus(g, t, 1);
+    let t = if human_of(g, p).is_some() {
+        let prompt = "Heliod, Sun-Crowned: put a +1/+1 counter on which creature or enchantment you control?";
+        crate::human::cards::pick_perm(g, p, "target", prompt, &cs, None)?.unwrap_or(cs[0])
+    } else {
+        heliod_aim(g, src, &cs)
+    };
+    if !trigger_window(g, p, Some(src), "a +1/+1 counter on a creature or enchantment", None)? || !g.perm(t).on_bf {
+        return Ok(());
     }
+    repl::put_plus(g, t, 1);
     Ok(())
+}
+
+/// {1}{W}: another target creature gains lifelink until end of turn. The AI uses it in its first main phase on the
+/// untapped creature that can attack with the most power (3 or more) and has no lifelink yet, with the mana left after its
+/// plays, once a turn, and never while its plan holds mana up (Heliod's own counter on each life gained is worth a little
+/// more than the life itself).
+fn heliod_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
+    let x = g.perm(src);
+    if post != Some(false) || owner(g, src) != p || g.active != Some(p) || !x.on_bf || x.phased {
+        return Ok(vec![]);
+    }
+    if g.player(p).flag_turn.get(intern("heliod_grant")) == Some(&g.turn_stamp()) || !can_pay(g, p, 1, "W", false) {
+        return Ok(vec![]);
+    }
+    if crate::impls::t6_plans::hold_up(g, p).is_some_and(|u| u > 0.0) {
+        return Ok(vec![]);
+    }
+    let cands: Vec<PermId> = g
+        .player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            let y = g.perm(m);
+            m != src
+                && g.is_creature(m)
+                && !y.phased
+                && !y.tapped
+                && !y.noatk
+                && (!y.sick || crate::engine::combat::has_haste(g, m))
+                && epow(g, m) >= 3
+                && !crate::engine::life::has_lifelink(g, m)
+                && !crate::dsl::has_kw(g, m, "shroud")
+        })
+        .collect();
+    let Some(t) = max_by(&cands, |m| epow(g, m) as f64) else { return Ok(vec![]) };
+    let u = 0.5 + 0.15 * epow(g, t) as f64;
+    Ok(vec![Opt {
+        utility: u,
+        label: format!("Heliod: {} gains lifelink", g.perm(t).name),
+        act: Some(Action::Ability { src, f: heliod_grant, arg: t.0 as i64 }),
+    }])
+}
+
+fn heliod_grant(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
+    let t = PermId(arg as u32);
+    if !g.perm(src).on_bf
+        || owner(g, src) != p
+        || !g.perm(t).on_bf
+        || !can_pay(g, p, 1, "W", false)
+        || !once_per_turn(g, p, intern("heliod_grant"))
+    {
+        return Ok(false);
+    }
+    pay(g, p, 1, "W", false)?;
+    if ability_window(g, p, Some(src), "lifelink", None, None)? && g.perm(t).on_bf {
+        crate::impls::partials::eot_kw(g, t, intern("lifelink"));
+        crate::glog!(g, "    {} gains lifelink until end of turn (Heliod)", g.perm(t).name);
+    }
+    Ok(true)
 }
 
 // ======================================================== registration
@@ -1513,6 +1607,7 @@ pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {
     c.sba = Some(heliod_sba);
     c.grant_kw = Some(heliod_ind);
     c.gain_life = Some(heliod_gain);
+    c.options = Some(heliod_options);
     *c = c.at_once(Event::Etb);
     Ok(())
 }

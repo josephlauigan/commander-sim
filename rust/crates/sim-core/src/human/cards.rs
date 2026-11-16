@@ -708,6 +708,58 @@ fn mind_stone(_g: &Game) -> Vec<PermAbility> {
     })]
 }
 
+/// {1}{W}: another target creature gains lifelink until end of turn (any controller's: hexproof, shroud and protection
+/// from white are respected)
+fn heliod(_g: &Game) -> Vec<PermAbility> {
+    vec![ability(
+        "{1}{W}: another target creature gains lifelink until end of turn",
+        |g: &mut Game, p: PlayerId, m: PermId| {
+            if let Some(why) = cost(g, p, 1, "W", "Heliod, Sun-Crowned") {
+                return Ok(Some(why));
+            }
+            let cols = crate::engine::values::colors_of(g, m);
+            let cands: Vec<PermId> = g
+                .players
+                .iter()
+                .filter(|q| q.alive)
+                .flat_map(|q| q.perms.iter().copied())
+                .filter(|&x| {
+                    x != m
+                        && g.perm(x).on_bf
+                        && g.is_creature(x)
+                        && !g.perm(x).phased
+                        && !crate::dsl::has_kw(g, x, "shroud")
+                        && (g.perm(x).owner == p || !crate::engine::values::untargetable(g, x))
+                        && !crate::engine::values::protected_from(g, x, cols)
+                })
+                .collect();
+            if cands.is_empty() {
+                return Ok(Some("There is no other creature to target.".into()));
+            }
+            let Some(t) = pick_perm(
+                g,
+                p,
+                "target",
+                "Heliod, Sun-Crowned: which other creature gains lifelink until end of turn?",
+                &cands,
+                Some("cancel"),
+            )?
+            else {
+                return Ok(None);
+            };
+            super::mana::pay_from_pool(g, p, 1, "W");
+            crate::glog!(g, "  {} activates Heliod, Sun-Crowned: {} gains lifelink", pname(g, p), g.perm(t).name);
+            crate::engine::stack::ability_run(g, p, Some(m), None, "lifelink", None, Some(t), |g| {
+                if g.perm(t).on_bf {
+                    crate::impls::partials::eot_kw(g, t, "lifelink");
+                }
+                Ok(())
+            })?;
+            Ok(None)
+        },
+    )]
+}
+
 fn triskelion(_g: &Game) -> Vec<PermAbility> {
     vec![ability("remove a +1/+1 counter: 1 damage to any target", |g: &mut Game, p: PlayerId, m: PermId| {
         if g.perm(m).plus <= 0 {
@@ -1028,6 +1080,7 @@ pub fn abilities(g: &Game, p: PlayerId, m: PermId) -> Option<Vec<PermAbility>> {
         }
         "Mind Stone" => mind_stone(g),
         "Triskelion" => triskelion(g),
+        "Heliod, Sun-Crowned" => heliod(g),
         "Yawgmoth, Thran Physician" => super::combos::yawgmoth(),
         "Aetherflux Reservoir" => aetherflux(g),
         "Sakura-Tribe Elder" => ste(g),
