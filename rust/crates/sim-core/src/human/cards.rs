@@ -744,8 +744,9 @@ fn heliod(_g: &Game) -> Vec<PermAbility> {
             super::mana::pay_from_pool(g, p, 1, "W");
             crate::glog!(g, "  {} activates Heliod, Sun-Crowned: {} gains lifelink", pname(g, p), g.perm(t).name);
             crate::engine::stack::ability_run(g, p, Some(m), None, "lifelink", None, Some(t), |g| {
-                if crate::impls::t4::heliod_grant_legal(g, p, m, t) {
-                    crate::impls::partials::eot_kw(g, t, "lifelink"); // still a legal target as it resolves
+                // still a legal target as it resolves, and a ward on it is paid or the ability is countered
+                if crate::impls::t4::heliod_grant_legal(g, p, m, t) && crate::engine::ward::pay_ward(g, p, t)? {
+                    crate::impls::partials::eot_kw(g, t, "lifelink");
                 }
                 Ok(())
             })?;
