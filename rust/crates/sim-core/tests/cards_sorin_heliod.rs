@@ -451,3 +451,137 @@ fn heliod_cannot_save_a_ballista_that_paid_its_last_counter() {
     assert!(!g.perm(b).on_bf, "the 0/0 dies before the ping and Heliod's trigger resolve");
     assert_eq!(g.perm(hel).plus, 1, "Heliod is the only legal counter target");
 }
+
+fn prot_white(g: &mut Game, m: PermId) {
+    give(g, m, "pro_W");
+    assert!(sim_core::engine::values::protected_from(g, m, sim_core::cards::Colors::from_letters("W")));
+}
+
+#[test]
+fn heliod_counter_cannot_target_a_creature_with_protection_from_white() {
+    let mut g = tbl();
+    person_picking(&mut g, "Mother of Runes");
+    let h = perm(&mut g, P0, HELIOD);
+    let m = perm(&mut g, P0, "Mother of Runes");
+    prot_white(&mut g, m);
+    life::gain(&mut g, P0, 1).unwrap();
+    assert_eq!(g.perm(m).plus, 0, "a creature with protection from white is no legal target");
+    assert_eq!(g.perm(h).plus, 1, "Heliod himself is");
+}
+
+#[test]
+fn heliod_asks_for_a_target_once_per_trigger_not_during_probe() {
+    let mut g = tbl();
+    let h = person_picking(&mut g, "Heliod");
+    perm(&mut g, P0, HELIOD);
+    life::gain(&mut g, P0, 1).unwrap();
+    let asks = h.asked().into_iter().filter(|r| r.kind == "target" && r.prompt.contains("Heliod")).count();
+    assert_eq!(asks, 1, "one trigger, one target selection");
+}
+
+#[test]
+fn heliod_ai_does_not_target_a_protected_creature() {
+    let mut g = tbl();
+    let h = perm(&mut g, P0, HELIOD);
+    let t = body(&mut g, P0, 4, 4);
+    prot_white(&mut g, t);
+    lands(&mut g, P0, "Plains", 2, false);
+    let opts = options(&mut g, h, P0);
+    assert!(opts.iter().all(|o| !o.label.contains("lifelink")), "{:?}", labels(&opts));
+}
+
+#[test]
+fn heliod_rechecks_protection_when_the_counter_trigger_resolves() {
+    let mut g = tbl();
+    perm(&mut g, P0, HELIOD);
+    let m = perm(&mut g, P0, "Mother of Runes");
+    let giver = perm(&mut g, P0, "Giver of Runes");
+    let giver_i = g.player(P0).perms.iter().position(|&x| x == giver).unwrap();
+    let mut protected = false;
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            if !protected {
+                protected = true;
+                return Answer::Action(json!({"do": "use", "perm": giver_i}));
+            }
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        let word = if r.prompt.contains("which ability") {
+            "protection"
+        } else if r.prompt.contains("protection from what") {
+            "white"
+        } else {
+            "Mother of Runes"
+        };
+        r.choices.iter().position(|c| c.contains(word)).map_or(Answer::Decline, Answer::Pick)
+    }));
+    h.set_autopass("all");
+    g.humans.add(P0, h);
+    life::gain(&mut g, P0, 1).unwrap();
+    assert!(sim_core::engine::values::protected_from(&g, m, sim_core::cards::Colors::from_letters("W")));
+    assert_eq!(g.perm(m).plus, 0, "the only target became illegal");
+}
+
+#[test]
+fn the_ai_grant_does_nothing_if_the_target_gained_protection_before_it_resolved() {
+    let mut g = tbl();
+    let hel = perm(&mut g, P0, HELIOD);
+    let t = body(&mut g, P0, 4, 4);
+    lands(&mut g, P0, "Plains", 2, false);
+    let o = options(&mut g, hel, P0);
+    let found = o.iter().find(|x| x.label.contains("lifelink"));
+    assert!(found.is_some(), "the grant is offered: {:?}", labels(&o));
+    prot_white(&mut g, t); // in response
+    assert!(sim_core::ai::act::perform(&mut g, P0, found.unwrap().act.as_ref().unwrap()).unwrap());
+    assert!(!has_kw(&g, t, "lifelink"), "the target is no longer legal: nothing happens");
+}
+
+#[test]
+fn a_persons_grant_rechecks_its_target_on_resolution() {
+    let mut g = tbl();
+    let hel = perm(&mut g, P0, HELIOD);
+    let m = perm(&mut g, P0, "Mother of Runes");
+    let giver = perm(&mut g, P0, "Giver of Runes");
+    let giver_i = g.player(P0).perms.iter().position(|&x| x == giver).unwrap();
+    g.player_mut(P0).pool.add('W', 2);
+    let mut protected = false;
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            if !protected {
+                protected = true;
+                return Answer::Action(json!({"do": "use", "perm": giver_i}));
+            }
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        let word = if r.prompt.contains("which ability") {
+            "protection"
+        } else if r.prompt.contains("protection from what") {
+            "white"
+        } else {
+            "Mother of Runes"
+        };
+        r.choices.iter().position(|c| c.contains(word)).map_or(Answer::Decline, Answer::Pick)
+    }));
+    h.set_autopass("all");
+    g.humans.add(P0, h);
+    assert_eq!(use_ability(&mut g, hel, "lifelink"), None);
+    assert!(sim_core::engine::values::protected_from(&g, m, sim_core::cards::Colors::from_letters("W")));
+    assert!(!has_kw(&g, m, "lifelink"), "protection from white in response: the grant has no legal target");
+}
+
+#[test]
+fn the_ai_keeps_a_held_answers_mana_instead_of_granting_lifelink() {
+    let mut g = table(&["zur-esper-enchantment-control", "seph", "sauron"]);
+    g.active = Some(P0);
+    g.step = Step::Main1;
+    g.player_mut(P0).turns = 6;
+    let hel = perm(&mut g, P0, HELIOD);
+    token(&mut g, P0, 4);
+    hand(&mut g, P0, &["Counterspell"]);
+    lands(&mut g, P0, "Island", 2, false);
+    lands(&mut g, P0, "Plains", 1, false);
+    let o = options(&mut g, hel, P0);
+    assert!(!grants(&o), "{{1}}{{W}} on top of the held Counterspell ({{U}}{{U}}) would tap it out: {:?}", labels(&o));
+    lands(&mut g, P0, "Plains", 1, false); // a fourth land: both are affordable
+    assert!(grants(&options(&mut g, hel, P0)), "with mana to spare the grant is offered");
+}
