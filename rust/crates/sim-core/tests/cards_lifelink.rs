@@ -1038,3 +1038,19 @@ fn dragon_tempest_gains_when_the_entering_dragon_has_lifelink() {
     assert_eq!(g.player(P1).life + g.player(P2).life, theirs - 2, "it deals X damage, X = 2 Dragons");
     assert_eq!(g.player(P0).life, 42, "the enchantment has no lifelink; the Dragon that entered does");
 }
+
+// ------------------------------------------------------------------ fix round 2: one damage event, saturation
+#[test]
+fn drakuseths_attack_trigger_is_one_damage_event_for_lifelink() {
+    let mut g = tbl();
+    perm(&mut g, P0, HELIOD);
+    let d = perm(&mut g, P0, "Drakuseth, Maw of Flames");
+    g.perm_mut(d).lifelink = true;
+    let theirs = g.player(P1).life + g.player(P2).life;
+    let cd = g.perm(d).cd.unwrap();
+    let attack = g.registry.get(cd).and_then(|i| i.attack).expect("Drakuseth has an attack hook");
+    attack(&mut g, d, P0, &[d], P1).unwrap();
+    assert_eq!(g.player(P1).life + g.player(P2).life, theirs - 10, "4, 3 and 3 damage to players");
+    assert_eq!(g.player(P0).life, 50, "all of it is gained");
+    assert_eq!(counters(&g, P0), 1, "one source, one damage event: one life gain (Heliod counts the events)");
+}
