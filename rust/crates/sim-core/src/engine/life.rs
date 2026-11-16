@@ -121,7 +121,8 @@ pub fn lose_life_dealt(
 
 /// the damage `n` from p's permanent `src` (if any) to the creature `m` as it is dealt: Fiery Emancipation, Stagger and
 /// Gisela change the amount, and damage that is prevented (a prevention effect on `m`, protection, a source whose damage
-/// is prevented) is 0. Lifelink gains this, however much toughness `m` has.
+/// is prevented) is 0. Lifelink gains this, however much toughness `m` has. Only Old Fat Spider's prevention of all of a
+/// creature's damage applies (not the combat-only fogs: this is not combat damage).
 pub fn creature_damage(g: &Game, actor: PlayerId, src: Option<PermId>, m: PermId, n: i32) -> i32 {
     if n <= 0 {
         return 0;
@@ -137,7 +138,7 @@ pub fn creature_damage(g: &Game, actor: PlayerId, src: Option<PermId>, m: PermId
         return 0;
     }
     if let Some(s) = src
-        && (repl::source_prevented(g, s)
+        && ((!g.unpreventable() && crate::impls::mine::damage_prevented(g, s))
             || crate::engine::values::protected_from(g, m, crate::engine::values::colors_of(g, s))
             || crate::cardcode::prot_vs(g, m, s))
     {
@@ -158,6 +159,15 @@ pub fn removal_damage(
     spell: Option<CardId>,
 ) -> Res<i32> {
     let dealt = creature_damage(g, actor, src, m, n);
+    if g.perm(m).on_bf && crate::engine::values::indestructible(g, m) {
+        // `apply_removal` stops at "indestructible" before it pays ward: an untargetable creature is no target, and an
+        // opponent's ability pays the ward here (a ward it can't pay counters the ability)
+        let owner = g.perm(m).owner;
+        if crate::engine::values::untargetable(g, m) || (actor != owner && !crate::engine::ward::pay_ward(g, actor, m)?)
+        {
+            return Ok(0);
+        }
+    }
     let prev = g.last_removed.take();
     crate::engine::removal::apply_removal(g, Some(actor), m, &format!("dmg{n}"), spell)?;
     let hit = g.last_removed.is_some();
@@ -177,7 +187,8 @@ pub fn has_lifelink(g: &Game, src: PermId) -> bool {
 /// the ability was activated if the source can leave first: CR 702.15c) gains the damage it dealt. Each source and
 /// each damage event is its own life gain.
 pub fn lifelink(g: &mut Game, src: PermId, ll: bool, dealt: i32) -> Res {
-    if ll && dealt > 0 {
+    // a source whose damage is all prevented (Old Fat Spider's chapter II) dealt none
+    if ll && dealt > 0 && !(!g.unpreventable() && crate::impls::mine::damage_prevented(g, src)) {
         let c = g.perm(src).owner;
         gain(g, c, dealt)?;
     }
