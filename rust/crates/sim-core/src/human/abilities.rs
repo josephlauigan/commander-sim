@@ -458,7 +458,7 @@ pub fn land_abilities(g: &Game, p: PlayerId, l: PermId) -> Vec<LandAbility> {
     if d.tag(Tag::Desert) && &*d.name == "Scavenger Grounds" {
         out.push(ability("{2}, {T}, sacrifice a Desert: exile all graveyards", grounds));
     }
-    if &*d.name == "Minas Tirith" {
+    if &*d.name == "Minas Tirith" && !engine::mana::moon_land(g, l) {
         out.push(ability(
             "{1}{W}, {T}: draw a card (only if you attacked with two or more creatures this turn)",
             minas,
