@@ -1,12 +1,12 @@
 {
   "source": "Commander Spellbook (https://commanderspellbook.com), find-my-combos API (https://backend.commanderspellbook.com/find-my-combos)",
   "credit": "Combo data by Commander Spellbook, https://commanderspellbook.com. Commander Spellbook is unofficial Fan Content permitted under the Wizards of the Coast Fan Content Policy.",
-  "fetched": "2026-11-15",
+  "fetched": "2026-11-16",
   "deck": "yshtola",
   "commanders": [
     "Y'shtola, Night's Blessed"
   ],
-  "request_sha256": "df8da1f3353f9ebfd3800328a23886eb3c1524ba529c3405930407ec4b89fa66",
+  "request_sha256": "5e4c77ff2634b3a0ecaa63a5b3afb34fabd53010a19dec42385cb84fd4a29cba",
   "identity": "WUB",
   "included": [
     {
@@ -35,7 +35,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 152168
+      "popularity": 152266
     },
     {
       "id": "742-1295",
@@ -61,7 +61,7 @@
       "mana": "{U}{U}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 151348
+      "popularity": 151449
     },
     {
       "id": "110-3966",
@@ -89,7 +89,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 62052
+      "popularity": 62108
     },
     {
       "id": "1295-3189",
@@ -115,7 +115,7 @@
       "mana": "{U}{U}{B}{B}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 14682
+      "popularity": 14689
     }
   ],
   "included_by_changing_commanders": [],
@@ -146,7 +146,7 @@
       "mana": "",
       "bracket": "E",
       "legal": true,
-      "popularity": 368508,
+      "popularity": 368929,
       "missing": [
         "Hullbreaker Horror"
       ]
@@ -175,7 +175,7 @@
       "mana": "{1}{U}{U}{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 132888,
+      "popularity": 132953,
       "missing": [
         "Tainted Pact"
       ]
@@ -206,7 +206,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 127709,
+      "popularity": 127795,
       "missing": [
         "Vito, Thorn of the Dusk Rose"
       ]
@@ -237,7 +237,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 81450,
+      "popularity": 81531,
       "missing": [
         "Bloodthirsty Conqueror"
       ]
@@ -268,7 +268,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 76925,
+      "popularity": 76985,
       "missing": [
         "Enduring Tenacity"
       ]
@@ -298,7 +298,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 57463,
+      "popularity": 57492,
       "missing": [
         "Aetherflux Reservoir"
       ]
@@ -329,7 +329,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "O",
       "legal": true,
-      "popularity": 52219,
+      "popularity": 52271,
       "missing": [
         "Peer into the Abyss"
       ]
@@ -360,7 +360,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 50577,
+      "popularity": 50631,
       "missing": [
         "Bloodthirsty Conqueror"
       ]
@@ -392,7 +392,7 @@
       "mana": "{4}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 46916,
+      "popularity": 46962,
       "missing": [
         "Peer into the Abyss"
       ]
@@ -428,7 +428,7 @@
       "mana": "{1}",
       "bracket": "E",
       "legal": true,
-      "popularity": 46482,
+      "popularity": 46505,
       "missing": [
         "Displacer Kitten"
       ]
@@ -457,9 +457,40 @@
       "mana": "{1}",
       "bracket": "S",
       "legal": true,
-      "popularity": 38117,
+      "popularity": 38138,
       "missing": [
         "Tidespout Tyrant"
+      ]
+    },
+    {
+      "id": "1792-5864--63",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Retraction Helix",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn"
+      ],
+      "requires": [
+        "Noncreature permanent castable for {0}"
+      ],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 30074,
+      "missing": [
+        "Retraction Helix"
       ]
     },
     {
@@ -493,7 +524,7 @@
       "mana": "{1}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 29640,
+      "popularity": 29645,
       "missing": [
         "Retraction Helix"
       ]
@@ -524,7 +555,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 28749,
+      "popularity": 28774,
       "missing": [
         "Starscape Cleric"
       ]
@@ -553,7 +584,7 @@
       "mana": "{12}{W}{W}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 25927,
+      "popularity": 25952,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -582,9 +613,40 @@
       "mana": "{5}{W}",
       "bracket": "S",
       "legal": true,
-      "popularity": 17852,
+      "popularity": 17854,
       "missing": [
         "Beacon of Immortality"
+      ]
+    },
+    {
+      "id": "1458-5864--63",
+      "cards": [
+        {
+          "name": "Valley Floodcaller",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Banishing Knack",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Infinite power and toughness for certain creatures until end of turn"
+      ],
+      "requires": [
+        "Noncreature permanent castable for {0}"
+      ],
+      "prerequisites": "You control a Bird, Rat, Otter and/or Frog that does not have summoning sickness.",
+      "mana": "{U}",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 16835,
+      "missing": [
+        "Banishing Knack"
       ]
     },
     {
@@ -618,7 +680,7 @@
       "mana": "{1}{U}",
       "bracket": "E",
       "legal": true,
-      "popularity": 16572,
+      "popularity": 16570,
       "missing": [
         "Banishing Knack"
       ]
@@ -649,7 +711,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 14968,
+      "popularity": 14977,
       "missing": [
         "Cliffhaven Vampire"
       ]
@@ -678,7 +740,7 @@
       "mana": "{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 14756,
+      "popularity": 14767,
       "missing": [
         "Laboratory Maniac"
       ]
@@ -708,7 +770,7 @@
       "mana": "{4}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 13524,
+      "popularity": 13530,
       "missing": [
         "Revival // Revenge"
       ]
@@ -746,7 +808,7 @@
       "mana": "",
       "bracket": "P",
       "legal": true,
-      "popularity": 13256,
+      "popularity": 13265,
       "missing": [
         "Vilis, Broker of Blood"
       ]
@@ -777,7 +839,7 @@
       "mana": "{8}{U}{U}{U}{U}{U}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 12806,
+      "popularity": 12820,
       "missing": [
         "Enter the Infinite"
       ]
@@ -808,7 +870,7 @@
       "mana": "{1}{W}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 12407,
+      "popularity": 12406,
       "missing": [
         "Vizkopa Guildmage"
       ]
@@ -839,7 +901,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 11723,
+      "popularity": 11725,
       "missing": [
         "Defiant Bloodlord"
       ]
@@ -868,7 +930,7 @@
       "mana": "{5}{U}{U}",
       "bracket": "P",
       "legal": true,
-      "popularity": 9912,
+      "popularity": 9940,
       "missing": [
         "Leveler"
       ]
@@ -897,7 +959,7 @@
       "mana": "{13}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 9846,
+      "popularity": 9857,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -926,7 +988,7 @@
       "mana": "{B}",
       "bracket": "R",
       "legal": true,
-      "popularity": 9541,
+      "popularity": 9547,
       "missing": [
         "Jace, Wielder of Mysteries"
       ]
@@ -953,7 +1015,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 8435,
+      "popularity": 8444,
       "missing": [
         "Stasis"
       ]
@@ -984,7 +1046,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 8379,
+      "popularity": 8372,
       "missing": [
         "Epicure of Blood"
       ]
@@ -1014,7 +1076,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 7962,
+      "popularity": 7971,
       "missing": [
         "Wedding Ring"
       ]
@@ -1043,7 +1105,7 @@
       "mana": "{12}{W}{W}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7616,
+      "popularity": 7623,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -1072,7 +1134,7 @@
       "mana": "{5}{B}{B}{B}",
       "bracket": "P",
       "legal": true,
-      "popularity": 7486,
+      "popularity": 7488,
       "missing": [
         "Shard of the Nightbringer"
       ]
@@ -1099,7 +1161,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 6068,
+      "popularity": 6074,
       "missing": [
         "Teferi's Puzzle Box"
       ]
@@ -1130,7 +1192,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5956,
+      "popularity": 5959,
       "missing": [
         "Drogskol Reaver"
       ]
@@ -1161,7 +1223,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5677,
+      "popularity": 5680,
       "missing": [
         "Lich's Mastery"
       ]
@@ -1192,7 +1254,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 5546,
+      "popularity": 5600,
       "missing": [
         "Niv-Mizzet, Ghost Counsel"
       ]
@@ -1223,7 +1285,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 5321,
+      "popularity": 5338,
       "missing": [
         "South Wind Avatar"
       ]
@@ -1252,7 +1314,7 @@
       "mana": "{U}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 4359,
+      "popularity": 4369,
       "missing": [
         "Thought Lash"
       ]
@@ -1279,7 +1341,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 4145,
+      "popularity": 4154,
       "missing": [
         "Knowledge Pool"
       ]
@@ -1308,7 +1370,7 @@
       "mana": "{14}{W}{W}{B}{B}",
       "bracket": "C",
       "legal": true,
-      "popularity": 4057,
+      "popularity": 4064,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -1337,7 +1399,7 @@
       "mana": "{1}{U}{U}{U}",
       "bracket": "S",
       "legal": true,
-      "popularity": 3795,
+      "popularity": 3796,
       "missing": [
         "Paradigm Shift"
       ]
@@ -1366,7 +1428,7 @@
       "mana": "{6}{W} each turn",
       "bracket": "P",
       "legal": true,
-      "popularity": 2673,
+      "popularity": 2672,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -1395,7 +1457,7 @@
       "mana": "{12}{W}{W}{B}",
       "bracket": "E",
       "legal": true,
-      "popularity": 2074,
+      "popularity": 2076,
       "missing": [
         "Approach of the Second Sun"
       ]
@@ -1424,7 +1486,7 @@
       "mana": "{1}{U}{U}{B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 2034,
+      "popularity": 2035,
       "missing": [
         "Divining Witch"
       ]
@@ -1451,7 +1513,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 1941,
+      "popularity": 1947,
       "missing": [
         "Omen Machine"
       ]
@@ -1512,7 +1574,7 @@
       "mana": "{5}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 1868,
+      "popularity": 1870,
       "missing": [
         "Marina Vendrell's Grimoire"
       ]
@@ -1542,7 +1604,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 1797,
+      "popularity": 1801,
       "missing": [
         "Mind Over Matter"
       ]
@@ -1601,7 +1663,7 @@
       "mana": "",
       "bracket": "S",
       "legal": true,
-      "popularity": 1243,
+      "popularity": 1240,
       "missing": [
         "Enduring Angel // Angelic Enforcer"
       ]
@@ -1666,7 +1728,7 @@
       "mana": "{U}{U} and six {B}",
       "bracket": "S",
       "legal": true,
-      "popularity": 998,
+      "popularity": 1000,
       "missing": [
         "Doomsday Excruciator"
       ]
@@ -1695,7 +1757,7 @@
       "mana": "",
       "bracket": "R",
       "legal": true,
-      "popularity": 986,
+      "popularity": 987,
       "missing": [
         "Near-Death Experience"
       ]
@@ -1732,6 +1794,35 @@
       ]
     },
     {
+      "id": "742-8266",
+      "cards": [
+        {
+          "name": "Fblthp, Impossibly Lost",
+          "zones": [
+            "B"
+          ]
+        },
+        {
+          "name": "Demonic Consultation",
+          "zones": [
+            "H"
+          ]
+        }
+      ],
+      "results": [
+        "Win the game"
+      ],
+      "requires": [],
+      "prerequisites": "You control a creature that doesn't have summoning sickness and that cannot be blocked by an opponent.",
+      "mana": "{B}",
+      "bracket": "S",
+      "legal": true,
+      "popularity": 734,
+      "missing": [
+        "Fblthp, Impossibly Lost"
+      ]
+    },
+    {
       "id": "2057-3591",
       "cards": [
         {
@@ -1759,35 +1850,6 @@
       ]
     },
     {
-      "id": "742-8266",
-      "cards": [
-        {
-          "name": "Fblthp, Impossibly Lost",
-          "zones": [
-            "B"
-          ]
-        },
-        {
-          "name": "Demonic Consultation",
-          "zones": [
-            "H"
-          ]
-        }
-      ],
-      "results": [
-        "Win the game"
-      ],
-      "requires": [],
-      "prerequisites": "You control a creature that doesn't have summoning sickness and that cannot be blocked by an opponent.",
-      "mana": "{B}",
-      "bracket": "S",
-      "legal": true,
-      "popularity": 726,
-      "missing": [
-        "Fblthp, Impossibly Lost"
-      ]
-    },
-    {
       "id": "742-1061",
       "cards": [
         {
@@ -1811,7 +1873,7 @@
       "mana": "{4}{U}{U}{U}{B} the first turn, with {3}{U}{U}{U} each extra turn",
       "bracket": "R",
       "legal": true,
-      "popularity": 665,
+      "popularity": 668,
       "missing": [
         "Timestream Navigator"
       ]
@@ -1840,7 +1902,7 @@
       "mana": "{U}{U}",
       "bracket": "R",
       "legal": true,
-      "popularity": 620,
+      "popularity": 619,
       "missing": [
         "Phyrexian Devourer"
       ]
@@ -2129,6 +2191,29 @@
       "popularity": 0,
       "missing": [
         "Griselbrand"
+      ]
+    },
+    {
+      "id": "513--62",
+      "cards": [
+        {
+          "name": "Hullbreaker Horror",
+          "zones": [
+            "B"
+          ]
+        }
+      ],
+      "results": [],
+      "requires": [
+        "Permanent castable for {0} that survives"
+      ],
+      "prerequisites": "",
+      "mana": "",
+      "bracket": "E",
+      "legal": true,
+      "popularity": 0,
+      "missing": [
+        "Hullbreaker Horror"
       ]
     }
   ]
