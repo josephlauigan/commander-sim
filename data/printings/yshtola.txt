@@ -64,8 +64,6 @@
 1 Sol Ring (sld) 2093
 1 Sphere of Safety (sld) 588
 8 Swamp (trk) 321
-1 Talisman of Hierarchy (h1r) 36
-1 Talisman of Progress (msc) 221
 1 Teferi's Protection (sta) 74
 1 Teleportation Circle (afr) 39
 1 Tezzeret's Gambit (plst) NPH-47

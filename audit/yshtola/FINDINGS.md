@@ -3,6 +3,22 @@
 What the simulator has taught us about the Y'shtola Esper drain deck: strengths, weaknesses, and what was tried and
 why it did or didn't work. Updated after every run. Newest evidence first. Matched tier: T5 (`data/my_decks.toml`).
 
+## 2026-11-15: Talisman of Progress and Talisman of Hierarchy => Mox Diamond and Chrome Mox (JD's choice, not simulated)
+Mox Diamond and Chrome Mox ({0} artifacts, both Game Changers: the list goes from 14 to 16, still Bracket 4) take the
+two Talismans' slots. Why: both are one turn faster than a two-mana rock and cost no life (the Talismans cost 1 life per
+coloured tap); a Mox on turn 1 puts Smothering Tithe, Rhystic Study or Y'shtola a turn earlier, and the average mana value
+of the nonland cards falls from about 2.9 to 2.8. What it costs: Mox Diamond needs a land card to discard (the list has
+37 lands, so a spare one is usually there; with none in hand it goes to the graveyard), and Chrome Mox exiles a nonland,
+nonartifact card from hand and makes only that card's colours, so it is a card down and its fixing depends on the
+imprint (Mox Diamond makes any colour). Each Talisman made two of the deck's three colours without a card cost.
+Neither Mox triggers Y'shtola (mana value 0), as neither Talisman did. Both are artifacts, so they die to the same
+artifact hate and to Farewell's artifacts mode. Not measured: the 10/19 test of a rock for a rock (The Mind Stone for
+Talisman of Progress) found no clear effect, because her losses are fast combos (Urza, Zur, Winota) that end T5 games
+around round 9.4 and the deck often skips its rocks for better plays; the Moxen are faster than those, but that is a
+guess. Mox Diamond (`rock=1:A`) and Chrome Mox (`chromemox`) are modelled in the engine (`carddb.txt`), so `--swap`
+against t5 can measure it. `data/plans/yshtola.toml` names both in the early-rocks priority group. `data/printings/yshtola.txt`
+loses the Talisman lines and has no printings yet for the Moxen (JD's to supply).
+
 ## 2026-11-15: Urborg Syphon-Mage => Mindbreak Trap (JD's choice, not simulated)
 Mindbreak Trap ({2}{U}{U} instant, model status Full: `t6_counters.rs` `mindbreak_free`; not a Game Changer) takes
 Urborg Syphon-Mage's slot. Why: it is free once any opponent has cast three spells this turn, it exiles any number of
