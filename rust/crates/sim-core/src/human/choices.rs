@@ -473,14 +473,19 @@ pub fn batch_end(g: &mut Game, opened: bool) {
 /// one?" and, if yes, the target once; later ones go to that target while it is still a legal target (else the person
 /// is asked again). With no batch it is `deal_damage`.
 pub fn deal_damage_batched(g: &mut Game, p: PlayerId, n: i32, source: &str, kind: &str) -> Res {
+    deal_damage_batched_by(g, p, n, source, kind, None)
+}
+
+/// `deal_damage_batched` for a permanent's trigger: a source with lifelink gains what it dealt
+pub fn deal_damage_batched_by(g: &mut Game, p: PlayerId, n: i32, source: &str, kind: &str, by: By) -> Res {
     if n <= 0 {
         return Ok(());
     }
-    let Some(mut b) = g.damage_batch.clone() else { return deal_damage(g, p, n, source, kind) };
+    let Some(mut b) = g.damage_batch.clone() else { return deal_damage_by(g, p, n, source, kind, by) };
     let tg = damage_targets(g, p, Default::default());
     if let Some(t) = b.same {
         if tg.contains(&t) {
-            return apply_damage(g, p, t, n, source, kind);
+            return apply_damage_by(g, p, t, n, source, kind, by).map(|_| ());
         }
         b = DamageBatch::default(); // the target is gone: ask again for the rest
     }
@@ -495,11 +500,11 @@ pub fn deal_damage_batched(g: &mut Game, p: PlayerId, n: i32, source: &str, kind
             let k = choose_one(g, p, "target", &format!("{source}: which target for all of them?"), &tl)?;
             b.same = Some(tg[k]);
             g.damage_batch = Some(b);
-            return apply_damage(g, p, tg[k], n, source, kind);
+            return apply_damage_by(g, p, tg[k], n, source, kind, by).map(|_| ());
         }
     }
     g.damage_batch = Some(b);
-    deal_damage(g, p, n, source, kind)
+    deal_damage_by(g, p, n, source, kind, by)
 }
 
 /// who deals the damage when it is dealt by a permanent: the permanent, and whether it had lifelink when the ability

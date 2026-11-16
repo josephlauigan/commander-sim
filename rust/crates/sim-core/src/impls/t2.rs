@@ -89,29 +89,41 @@ const NONE_ID: u32 = u32::MAX;
 /// t2.best_target_any: 'deals n damage to any target': kill the best creature it kills, else the most threatening
 /// opponent's face.
 pub fn best_target_any(g: &mut Game, p: PlayerId, n: i32) -> Res {
+    best_target_any_by(g, p, n, None)
+}
+
+/// `best_target_any` for the damage of the permanent `src` (Terror of the Peaks, the Dragons): if it has lifelink, its
+/// controller gains what it dealt
+pub fn best_target_any_by(g: &mut Game, p: PlayerId, n: i32, src: Option<PermId>) -> Res {
     let opps: Vec<PlayerId> = g.opps(p).collect();
     if opps.is_empty() {
         return Ok(());
     }
+    let by = choices::by(g, src);
     if human_of(g, p).is_some() {
-        return choices::deal_damage_batched(g, p, n, "Damage", "triggers");
+        return choices::deal_damage_batched_by(g, p, n, "Damage", "triggers", by);
     }
-    if let Some(&q) = opps.iter().find(|&&q| g.player(q).life <= n) {
-        return lose_life(g, q, n, Some(p), "triggers", None);
-    }
-    let tg: Vec<PermId> = opps
-        .iter()
-        .flat_map(|&q| g.player(q).perms.iter().copied())
-        .filter(|&m| g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= n)
-        .collect();
-    let best = max_by(&tg, |m| pval(g, m));
-    match best {
-        Some(b) if pval(g, b) >= 3.0 => apply_removal(g, Some(p), b, &format!("dmg{n}"), None),
-        _ => {
-            let q = max_by(&opps, |q| threat(g, p, q)).unwrap();
-            lose_life(g, q, n, Some(p), "triggers", None)
+    let dealt = if let Some(&q) = opps.iter().find(|&&q| g.player(q).life <= n) {
+        crate::engine::life::lose_life_dealt(g, q, n, Some(p), "triggers", None)?
+    } else {
+        let tg: Vec<PermId> = opps
+            .iter()
+            .flat_map(|&q| g.player(q).perms.iter().copied())
+            .filter(|&m| g.is_creature(m) && !untargetable(g, m) && etgh(g, m) <= n)
+            .collect();
+        let best = max_by(&tg, |m| pval(g, m));
+        match best {
+            Some(b) if pval(g, b) >= 3.0 => crate::engine::life::removal_damage(g, p, src, b, n, None)?,
+            _ => {
+                let q = max_by(&opps, |q| threat(g, p, q)).unwrap();
+                crate::engine::life::lose_life_dealt(g, q, n, Some(p), "triggers", None)?
+            }
         }
+    };
+    if let Some((s, ll)) = by {
+        crate::engine::life::lifelink(g, s, ll, dealt)?;
     }
+    Ok(())
 }
 
 /// t2.blink: exile m and return it under its owner's control (ETBs again, untapped, summoning sick); the permanent
@@ -476,7 +488,7 @@ fn terror(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         && trigger_window(g, o, Some(src), &format!("{} damage to any target", epow(g, m)), Some(5.0))?
     {
         let n = epow(g, m);
-        best_target_any(g, o, n)?;
+        best_target_any_by(g, o, n, Some(src))?;
     }
     Ok(())
 }
@@ -500,7 +512,7 @@ fn valkas(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         && trigger_window(g, o, Some(src), "damage to any target per Dragon", Some(5.0))?
     {
         let n = count_type(g, o, "dragon", false);
-        best_target_any(g, o, n)?;
+        best_target_any_by(g, o, n, Some(src))?;
     }
     Ok(())
 }
@@ -524,7 +536,7 @@ fn tempest(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     }
     if drag {
         let n = count_type(g, o, "dragon", false);
-        best_target_any(g, o, n)?;
+        best_target_any_by(g, o, n, Some(src))?;
     }
     Ok(())
 }
@@ -532,9 +544,9 @@ fn tempest(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
 /// 4 + 3 + 3 damage split by the any-target heuristic
 fn drakuseth(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], _d: PlayerId) -> Res<Vec<PermId>> {
     if atk.contains(&src) && trigger_window(g, p, Some(src), "4, 3 and 3 damage to any targets", Some(6.0))? {
-        best_target_any(g, p, 4)?;
-        best_target_any(g, p, 3)?;
-        best_target_any(g, p, 3)?;
+        best_target_any_by(g, p, 4, Some(src))?;
+        best_target_any_by(g, p, 3, Some(src))?;
+        best_target_any_by(g, p, 3, Some(src))?;
     }
     Ok(vec![])
 }
@@ -545,11 +557,19 @@ fn balefire(g: &mut Game, src: Src, _p: PlayerId, a: PermId, d: PlayerId, dmg: i
         let o = owner(g, src);
         let label = format!("{dmg} damage to each creature {} controls", pname(g, d));
         if trigger_window(g, o, Some(src), &label, Some(6.0))? {
+            let ll = crate::engine::life::has_lifelink(g, src);
+            let mut dealt = 0;
             for m in g.player(d).perms.clone() {
-                if g.is_creature(m) && etgh(g, m) <= dmg {
-                    die(g, m, "destroy")?;
+                if g.is_creature(m) {
+                    if ll {
+                        dealt += crate::engine::life::creature_damage(g, o, Some(src), m, dmg);
+                    }
+                    if etgh(g, m) <= dmg {
+                        die(g, m, "destroy")?;
+                    }
                 }
             }
+            crate::engine::life::lifelink(g, src, ll, dealt)?;
         }
     }
     Ok(())
