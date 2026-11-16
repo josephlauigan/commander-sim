@@ -3439,25 +3439,50 @@ pub(crate) fn twinflame(g: &mut Game, c: CardId, p: PlayerId, post: Option<bool>
     // is ready, and the line has nothing to hold it for once a piece is dead, the attack is lethal or p is in danger.
     // The guard is the first expression, so no other seat reaches the rest (reads, plus a check on a copy that changes
     // nothing in this game).
-    if urdragon_seat(g, p)
-        && (ready_garth(g, p).0
-            || (garth_line_alive(g, p) && Situation::new(g, p).danger < 1.0 && !twinflame_release(g, p, c, &tg, post)))
-    {
-        return Ok(vec![]);
+    // A release that the engine proved by an attack carries that opponent in the option's `arg` (bits 40 and up, seat
+    // index + 1; bit 32 is `post`), so the cast, if it is chosen, knows whom the proof attacked.
+    let mut target = 0i64;
+    if urdragon_seat(g, p) {
+        if ready_garth(g, p).0 {
+            return Ok(vec![]);
+        }
+        if garth_line_alive(g, p) && Situation::new(g, p).danger < 1.0 {
+            match twinflame_release(g, p, c, &tg, post) {
+                None => return Ok(vec![]),
+                Some(Kill::Attack(q)) => target = (q.index() as i64 + 1) << 40,
+                Some(Kill::Cast) => {}
+            }
+        }
     }
     let k = tg.len() - 1;
     Ok(vec![Opt {
         utility: 1.0 + 0.6 * total,
         label: format!("Twinflame ({} target{})", tg.len(), if k > 0 { "s" } else { "" }),
-        act: Some(Action::Plan { f: twinflame_go, arg: c.0 as i64 | (post as i64) << 32 }),
+        act: Some(Action::Plan { f: twinflame_go, arg: c.0 as i64 | (post as i64) << 32 | target }),
     }])
 }
 
+/// How the check's copy killed an opponent: by the cast alone (Terror's triggers; the attack that follows was never
+/// proven, so nothing is carried), or by an all-out attack at the opponent `Attack` names (the one attacked, which is
+/// not always the one who died).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub(crate) enum Kill {
+    Cast,
+    Attack(PlayerId),
+}
+
 /// The lethal release: the estimate finds opponents it can kill, and the engine then kills one on a copy of the game
-/// (`twinflame_confirm`). Inside the look-ahead's own copies the estimate decides alone (no copy of a copy).
-fn twinflame_release(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], post: bool) -> bool {
+/// (`twinflame_confirm`). Inside the look-ahead's own copies the estimate decides alone (no copy of a copy), so the
+/// release carries no opponent there (`Kill::Cast`: nothing is committed).
+fn twinflame_release(g: &mut Game, p: PlayerId, c: CardId, tg: &[PermId], post: bool) -> Option<Kill> {
     let qs = twinflame_lethal(g, p, tg, post);
-    !qs.is_empty() && (g.in_search || twinflame_confirm(g, p, c, &qs))
+    if qs.is_empty() {
+        None
+    } else if g.in_search {
+        Some(Kill::Cast)
+    } else {
+        twinflame_confirm(g, p, c, &qs)
+    }
 }
 
 /// the combats the check plays at each opponent: the engine's chump block is a random choice (about 99.97% likely
@@ -3473,8 +3498,8 @@ const CONFIRM_COMBATS: usize = 3;
 /// triggers (Painful Quandary on the caster) and the payment (a counted Dragon tapped for mana). True only if an
 /// opponent alive now has left the game, and p has not, after the cast or after one of those attacks. The copy has its
 /// own random numbers (named; the game's generator is not advanced), a step budget, no log and no people; nothing in
-/// this game changes.
-fn twinflame_confirm(g: &mut Game, p: PlayerId, c: CardId, qs: &[PlayerId]) -> bool {
+/// this game changes. Returns how it killed (`Kill`), or None when it held.
+fn twinflame_confirm(g: &mut Game, p: PlayerId, c: CardId, qs: &[PlayerId]) -> Option<Kill> {
     let opps: Vec<PlayerId> = g.opps(p).collect();
     let x = g.rng.clone().next_u64(); // a copy's draw: the game's own generator stays where it is
     let mut rng = crate::rng::Rng::named(&format!("twinflame:{}:{}:{x}", g.round, p.index()));
@@ -3484,25 +3509,25 @@ fn twinflame_confirm(g: &mut Game, p: PlayerId, c: CardId, qs: &[PlayerId]) -> b
     g2.work_cap = g2.work + g.settings.search.playout_work;
     hide(&mut g2, p, &mut rng);
     g2.rng = crate::rng::Rng::from_u64(rng.next_u64());
-    confirm_on(&mut g2, p, c, &opps, qs).unwrap_or(false) // cut short by its budget: held
+    confirm_on(&mut g2, p, c, &opps, qs).unwrap_or(None) // cut short by its budget: held
 }
 
-fn confirm_on(g2: &mut Game, p: PlayerId, c: CardId, opps: &[PlayerId], qs: &[PlayerId]) -> Res<bool> {
+fn confirm_on(g2: &mut Game, p: PlayerId, c: CardId, opps: &[PlayerId], qs: &[PlayerId]) -> Res<Option<Kill>> {
     let killed = |x: &Game| x.player(p).alive && opps.iter().any(|&q| !x.player(q).alive);
     if !g2.stack.is_empty() || !g2.trig_queue.is_empty() {
         crate::engine::stack::settle_stack(g2)?; // copied with triggers pending: settle them first (as play_on does)
     }
     if !twinflame_go(g2, p, c.0 as i64)? {
-        return Ok(false); // first main phase: post = false
+        return Ok(None); // first main phase: post = false
     }
     if !g2.stack.is_empty() || !g2.trig_queue.is_empty() {
         crate::engine::stack::settle_stack(g2)?;
     }
     if killed(&*g2) {
-        return Ok(true); // Terror's triggers (or anything the cast set off) were enough
+        return Ok(Some(Kill::Cast)); // Terror's triggers (or anything the cast set off) were enough
     }
     if g2.over || !g2.player(p).alive {
-        return Ok(false); // Painful Quandary and the like
+        return Ok(None); // Painful Quandary and the like
     }
     crate::engine::turn::end_step_pools(g2); // main phase 1 ends (rule 500.4)
     g2.step = crate::state::Step::Combat;
@@ -3523,9 +3548,9 @@ fn confirm_on(g2: &mut Game, p: PlayerId, c: CardId, opps: &[PlayerId], qs: &[Pl
                 continue 'opp;
             }
         }
-        return Ok(true);
+        return Ok(Some(Kill::Attack(q)));
     }
-    Ok(false)
+    Ok(None)
 }
 
 /// The copy hides what p can't see: each living opponent's hand goes back into its library and every library is
@@ -3686,6 +3711,17 @@ fn foreign_triggers(g: &Game, p: PlayerId, quiet: bool) -> bool {
 /// leaves room. Blocks by ground creatures are ignored: everything that deals combat damage here flies.
 /// Returns the opponents it finds killable (none: no release).
 fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> Vec<PlayerId> {
+    twinflame_reach(g, p, tg, post)
+        .into_iter()
+        .filter(|&(q, dmg)| dmg >= g.player(q).life as i64)
+        .map(|x| x.0)
+        .collect()
+}
+
+/// The estimate behind `twinflame_lethal`: the damage it counts to each opponent it can count on (a `clean` one), in
+/// seat order; empty in the cases where it counts nothing (`post`, a foreign trigger). `twinflame_lethal` keeps those
+/// whose damage reaches their life; the committed attack's re-check also reads the margin (damage minus life).
+fn twinflame_reach(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> Vec<(PlayerId, i64)> {
     if post {
         return vec![];
     }
@@ -3778,9 +3814,9 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> Vec<Pla
     }
     let taken = terror_replay(g, p, &triggers);
     g.opps(p)
-        .filter(|&q| {
+        .filter_map(|q| {
             if !clean(g, p, q) {
-                return false;
+                return None;
             }
             let blocked_in_the_air = g.player(q).perms.iter().any(|&b| {
                 let x = g.perm(b);
@@ -3811,13 +3847,15 @@ fn twinflame_lethal(g: &Game, p: PlayerId, tg: &[PermId], post: bool) -> Vec<Pla
                 if blocked_in_the_air || capped || taxed || fogged || shielded || guarded { 0 } else { fliers };
             // Terror's triggers do not depend on blockers; a hexproof player can't be targeted, whatever the engine's aim
             let hit = if player_hexproof(g, q) { 0 } else { taken.iter().find(|x| x.0 == q).map_or(0, |x| x.1) };
-            combat as i64 + hit >= g.player(q).life as i64
+            Some((q, combat as i64 + hit))
         })
         .collect()
 }
 
 fn twinflame_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
-    let (c, post) = (CardId(arg as u16), (arg >> 32) != 0);
+    let (c, post) = (CardId(arg as u16), (arg >> 32) & 1 != 0);
+    // the opponent the release's check proved (seat index + 1 in bits 40 and up): none for any other cast
+    let proven = (arg >> 40 > 0).then(|| PlayerId((arg >> 40) as u8 - 1));
     // the targets as the option chose them (Python's closure keeps them; nothing has happened since)
     let Some((_, tg)) = twinflame_best(g, p, c, post) else { return Ok(false) };
     let targets: Vec<PermId> = tg.into_iter().filter(|&m| on_bf_of(g, p, m) && !g.perm(m).phased).collect();
@@ -3847,7 +3885,16 @@ fn twinflame_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         g.player_mut(p).gy.push(c);
         return Ok(true);
     }
+    let mut made = 0u32;
+    // a target that left the battlefield (or phased out) during the cast: the margin is no reference (this includes a
+    // loss the check's copy also had, such as Kaervek's trigger: a conservative drop); the token cap and room limit are
+    // not flagged, the check met the same ones
+    let mut changed = false;
     for m in targets {
+        // phased out: the loop still copies it; flagged conservatively
+        if !on_bf_of(g, p, m) || g.perm(m).phased {
+            changed = true;
+        }
         if !on_bf_of(g, p, m) {
             continue;
         }
@@ -3857,11 +3904,61 @@ fn twinflame_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
             let Some(cp) = enter_token_copy(g, p, cd)? else { break };
             g.perm_mut(cp).sick = false; // haste; exiled at the end step
             g.perm_mut(cp).temp = true;
+            made += 1;
         }
     }
     g.player_mut(p).gy.push(c);
     check_state(g)?;
+    // The release's proof was an all-out attack at `proven`: this turn's first combat takes it (`release_plan`). Only
+    // the real game's AI seat commits, after copies entered and p is still in the game; a look-ahead copy keeps the
+    // heuristic attack (FINDINGS L9).
+    if urdragon_seat(g, p) && made > 0 && !g.in_search && !crate::human::is_human(g, p) && g.player(p).alive && !g.over
+    {
+        if let Some(q) = proven {
+            // the estimate's margin on what is out now (Terror's triggers already dealt, the copies counted as ready
+            // fliers); `i64::MAX` when it does not count q, or when a target left during the cast: the re-check then
+            // asks for lethal
+            let margin = twinflame_reach(g, p, &[], false)
+                .into_iter()
+                .find(|x| x.0 == q && !changed)
+                .map_or(i64::MAX, |(_, dmg)| dmg - g.player(q).life as i64);
+            g.release_attack = Some((p, g.player(p).turns, q, margin));
+        }
+    }
     Ok(true)
+}
+
+/// The first combat's plan after a Twinflame release: all at the opponent the check proved, if it still holds on the
+/// real board. The plan is keyed to the seat and its turn count (an extra turn in the same round is another turn) and
+/// is used once. It is checked again with the estimate on what is out now (`twinflame_reach` with no new targets: the
+/// copies that entered count as ready fliers and Terror's triggers already happened): main phase 1 goes on after the
+/// cast, and opponents can answer before combat (life gained, copies removed, a counted Dragon tapped for mana). The
+/// estimate may undercount the proven attack (double strike, a damage doubler), so the plan is kept when the estimate
+/// still finds q killable, or is no worse than it was when the copies entered (`m1 >= m0`, the margin stored with the
+/// plan); it only ever drops a plan. The margin starts once the copies have entered: a target that left the battlefield
+/// during the cast is caught (the margin is then `i64::MAX`, so the plan needs lethal now); life gained in response, or
+/// fewer copies per target (Doubling Season removed in response), is not, when the estimate is already below lethal
+/// after the cast. AI opponents answer a spell only with counters and the stack responses, and their cast triggers
+/// (Kaervek the Merciless's, which the check plays as well; the flag still drops the plan there when the estimate is
+/// below lethal) are played in the check, so the uncaught cases concern a person's seat in practice mode. If it is
+/// dropped, the combat chooses as it always did.
+pub(crate) fn release_plan(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
+    if !urdragon_seat(g, p) {
+        return None;
+    }
+    let (a, turns, q, m0) = g.release_attack.take()?;
+    if a != p || turns != g.player(p).turns || !g.player(q).alive || !g.opps(p).any(|o| o == q) {
+        return None;
+    }
+    let m1 = twinflame_reach(g, p, &[], false)
+        .into_iter()
+        .find(|x| x.0 == q)
+        .map(|(_, dmg)| dmg - g.player(q).life as i64)?;
+    if m1 < 0 && m1 < m0 {
+        return None;
+    }
+    crate::glog!(g, "      [{} attack plan by Twinflame release: all at {}]", g.player(p).name, g.player(q).name);
+    Some((q, "all"))
 }
 
 // ------------------------------------------------------------------ Galvanic Iteration, Fiery Emancipation
