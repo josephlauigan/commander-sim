@@ -3933,12 +3933,12 @@ fn twinflame_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// cast, and opponents can answer before combat (life gained, copies removed, a counted Dragon tapped for mana). The
 /// estimate may undercount the proven attack (double strike, a damage doubler), so the plan is kept when the estimate
 /// still finds q killable, or is no worse than it was when the copies entered (`m1 >= m0`, the margin stored with the
-/// plan; it only ever drops a plan. The margin starts once the copies have entered: a target removed in response to
-/// the cast is caught (the margin is then `i64::MAX`, so the plan needs lethal now), life gained in response is not,
-/// when the estimate is already below lethal after the cast. AI opponents answer a spell only with counters and the
-/// stack responses (and cast triggers such as Kaervek the Merciless's, which the margin does catch), so the uncaught
-/// case concerns a person's seat in practice mode. If it is dropped, the combat chooses as it
-/// always did.
+/// plan); it only ever drops a plan. The margin starts once the copies have entered: a target removed in response to
+/// the cast is caught (the margin is then `i64::MAX`, so the plan needs lethal now); life gained in response, or
+/// fewer copies per target (Doubling Season removed in response), is not, when the estimate is already below lethal
+/// after the cast. AI opponents answer a spell only with counters and the stack responses (and cast triggers such as
+/// Kaervek the Merciless's, which the margin does catch), so the uncaught cases concern a person's seat in practice
+/// mode. If it is dropped, the combat chooses as it always did.
 pub(crate) fn release_plan(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
     if !urdragon_seat(g, p) {
         return None;
