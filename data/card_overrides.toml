@@ -2230,7 +2230,7 @@ types = "E"
 tags = "leg"
 dsl = []
 status = "Full"
-note = "indestructible; a creature only with devotion to white 5+ (5/5); life gain puts a +1/+1 counter on a creature or enchantment you control (a person picks it; the AI prefers a Walking Ballista or Triskelion, then its best creature, then Heliod himself); {1}{W}: another target creature gains lifelink: a person is offered it, the AI uses it before combat on its biggest attacker (power 3 or more, once a turn, spare mana, never while its plan holds mana up) and in the Walking Ballista combo"
+note = "indestructible; a creature only with devotion to white 5+ (5/5); life gain puts a +1/+1 counter on a creature or enchantment you control (a person picks it; the AI prefers a Walking Ballista or Triskelion, then its best creature, then Heliod himself; a creature with protection from white is no target); {1}{W}: another target creature gains lifelink: a person is offered it, the AI uses it before combat on its biggest attacker (power 3 or more, once a turn, spare mana, never while a held answer or its plan needs the mana) and in the Walking Ballista combo; both check their target again as they resolve"
 
 ["Hellkite Charger"]
 tags = "pow=5 fly haste bomb=5"
