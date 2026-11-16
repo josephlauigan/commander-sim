@@ -7,9 +7,9 @@ mod play_common;
 use play_common::*;
 use sim_core::ai::act::perform;
 use sim_core::engine::zones;
-use sim_core::human::{Target, choices};
 use sim_core::hooks::Opt;
 use sim_core::human::human::{AbilityKind, abilities_of};
+use sim_core::human::{Target, choices};
 use sim_core::state::Ctx;
 
 fn tbl() -> Game {
@@ -373,7 +373,8 @@ fn prevented_damage_gains_nothing() {
 // ------------------------------------------------------------------ combat damage (resolve_blocks with chosen blocks)
 /// a vanilla creature token with power `p` and toughness `t`, not summoning sick
 fn body(g: &mut Game, who: PlayerId, p: i32, t: i32) -> PermId {
-    let m = token(g, who, p);
+    let m = token(g, who, p.max(1));
+    g.perm_mut(m).pow = p;
     g.perm_mut(m).tgh = t;
     m
 }
@@ -720,4 +721,124 @@ fn source_damage_prevention_gains_nothing_for_a_ballista_ping_to_a_player() {
     assert_eq!(use_ability(&mut g, b, "remove a +1/+1 counter"), None);
     assert_eq!(g.perm(b).plus, 1, "the activation was exercised");
     assert_eq!(g.player(P0).life, 40, "all the damage the Ballista would deal is prevented: nothing to gain");
+}
+
+// ------------------------------------------------------------------ fix round: combat gain events
+const HELIOD: &str = "Heliod, Sun-Crowned";
+
+/// P0's `a` attacks P1, blocked by `b` or not
+fn duel(g: &mut Game, a: PermId, b: Option<PermId>) {
+    fight(g, &[a], &b.map(|b| (a, b)).into_iter().collect::<Vec<_>>());
+}
+
+/// the +1/+1 counters on all of p's permanents (Heliod puts one on a creature for each gain event)
+fn counters(g: &Game, p: PlayerId) -> i32 {
+    g.player(p).perms.iter().map(|&m| g.perm(m).plus).sum()
+}
+
+#[test]
+fn fog_prevents_blocked_lifelink_damage() {
+    let mut g = tbl();
+    let a = body(&mut g, P0, 3, 4);
+    let b = body(&mut g, P1, 2, 4);
+    g.perm_mut(a).lifelink = true;
+    g.perm_mut(b).lifelink = true;
+    g.fog = Some(g.turn_stamp());
+    duel(&mut g, a, Some(b));
+    assert_eq!((g.player(P0).life, g.player(P1).life), (40, 40), "a fog prevents all combat damage: no gain");
+}
+
+#[test]
+fn trample_is_one_gain_event_for_one_source_in_one_step() {
+    let mut g = tbl();
+    perm(&mut g, P0, HELIOD);
+    let a = body(&mut g, P0, 5, 5);
+    let b = body(&mut g, P1, 2, 2);
+    g.perm_mut(a).lifelink = true;
+    give(&mut g, a, "trample");
+    duel(&mut g, a, Some(b));
+    assert_eq!(g.player(P0).life, 45);
+    assert_eq!(counters(&g, P0), 1, "one 5-life gain, not a 2-life gain and a 3-life gain");
+}
+
+#[test]
+fn blocked_double_strike_has_two_gain_events() {
+    let mut g = tbl();
+    perm(&mut g, P0, HELIOD);
+    let a = body(&mut g, P0, 2, 5);
+    let b = body(&mut g, P1, 0, 10);
+    g.perm_mut(a).lifelink = true;
+    give(&mut g, a, "double strike");
+    duel(&mut g, a, Some(b));
+    assert_eq!(counters(&g, P0), 2, "two damage steps cause two gains");
+}
+
+#[test]
+fn indestructible_blocker_survives_first_strike_and_is_hit_again() {
+    let mut g = tbl();
+    let a = body(&mut g, P0, 3, 5);
+    let b = body(&mut g, P1, 0, 2);
+    g.perm_mut(a).lifelink = true;
+    give(&mut g, a, "double strike");
+    give(&mut g, b, "indestructible");
+    duel(&mut g, a, Some(b));
+    assert!(g.perm(b).on_bf);
+    assert_eq!(g.player(P0).life, 46, "3 in each step to an indestructible blocker");
+}
+
+#[test]
+fn pariah_redirected_combat_damage_still_gains_life() {
+    let mut g = tbl();
+    let s = body(&mut g, P0, 3, 3);
+    g.perm_mut(s).lifelink = true;
+    let t = body(&mut g, P1, 1, 10);
+    let a = perm(&mut g, P1, "Pariah");
+    g.perm_mut(a).attached = Some(t);
+    assert!(g.auras.contains(&a));
+    duel(&mut g, s, None);
+    assert_eq!(g.player(P1).life, 40, "redirected");
+    assert_eq!(g.player(P0).life, 43, "the damage was dealt, to the enchanted creature");
+}
+
+#[test]
+fn a_double_striking_deathtouch_lifelinker_gains_only_its_first_hit() {
+    let mut g = tbl();
+    let a = body(&mut g, P0, 1, 1);
+    let b = body(&mut g, P1, 0, 5);
+    g.perm_mut(a).lifelink = true;
+    g.perm_mut(a).dt = true;
+    give(&mut g, a, "double strike");
+    duel(&mut g, a, Some(b));
+    assert!(!g.perm(b).on_bf, "deathtouch: 1 damage kills the 0/5 in the first step");
+    assert_eq!(g.player(P0).life, 41, "the blocker is gone for the second step");
+}
+
+#[test]
+fn a_double_striking_lifelink_blocker_gains_twice() {
+    let mut g = tbl();
+    perm(&mut g, P1, HELIOD);
+    let a = body(&mut g, P0, 1, 10);
+    let b = body(&mut g, P1, 2, 5);
+    g.perm_mut(b).lifelink = true;
+    give(&mut g, b, "double strike");
+    duel(&mut g, a, Some(b));
+    assert_eq!(g.player(P1).life, 44, "2 damage in each of two steps");
+    assert_eq!(counters(&g, P1), 2, "two gain events");
+}
+
+#[test]
+fn unblocked_double_strike_on_a_planeswalker_is_two_gains() {
+    let mut g = tbl();
+    person(&mut g, None);
+    perm(&mut g, P0, HELIOD);
+    let a = body(&mut g, P0, 2, 5);
+    g.perm_mut(a).lifelink = true;
+    give(&mut g, a, "double strike");
+    let w = perm(&mut g, P1, "Jace, the Mind Sculptor");
+    g.perm_mut(w).loyalty = Some(10);
+    g.human_walker_atk = vec![(a, w)];
+    duel(&mut g, a, None);
+    assert_eq!(g.perm(w).loyalty, Some(6), "2 damage in each of two steps");
+    assert_eq!(g.player(P0).life, 44);
+    assert_eq!(counters(&g, P0), 2, "two gain events");
 }
