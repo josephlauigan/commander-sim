@@ -1459,6 +1459,7 @@ fn dsphere(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
     for x in same {
         if g.perm(x).token {
             leave(g, x)?;
+            crate::engine::zones::exiled_from_bf(g, x, None)?;
         } else {
             let (cd, q) = (g.perm(x).cd.unwrap(), g.perm(x).owner);
             let n0 = g.player(q).exile.len();
@@ -1521,6 +1522,7 @@ fn displacer_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let name = format!("blink {}", g.perm(t).name);
     if ability_window(g, p, Some(src), &name, None, Some(t))? && g.perm(t).on_bf {
         leave(g, t)?;
+        crate::engine::zones::exiled_from_bf(g, t, None)?;
         crate::glog!(g, "  {} blinks {} with Eldrazi Displacer (a token: gone)", pname(g, p), g.perm(t).name);
     }
     Ok(true)
@@ -1743,6 +1745,7 @@ fn rionya_exile(g: &mut Game, src: Src, p: PlayerId) -> Res {
     {
         for m in copies(g) {
             leave(g, m)?;
+            crate::engine::zones::exiled_from_bf(g, m, None)?;
         }
     }
     Ok(())

@@ -1591,6 +1591,7 @@ fn resto_etb(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         stat(g, o, &format!("flicker Restoration Angel -> {}", g.perm(t).name));
         if g.perm(t).token {
             leave(g, t)?;
+            exiled_from_bf(g, t, None)?;
             crate::glog!(g, "    {} (a token) is exiled for good", g.perm(t).name);
         } else {
             blink(g, o, t)?;
