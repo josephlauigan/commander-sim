@@ -1288,3 +1288,79 @@ fn ai_pump_cannot_switch_targets_after_response() {
     assert_eq!(g.perm(giver).eot_pt, (0, 0), "the invalidated target fizzles: it does not switch to the Giver");
     assert_eq!(g.perm(angel).eot_pt, (0, 0), "the Angel is protected from white: no longer a legal target");
 }
+
+// ------------------------------------------------------------------ the last three exile sites (card code and the person's abilities)
+/// the three remaining creature exile sites outside `engine/turn.rs`, each witnessed by an existing Soulherder's counter:
+/// the victim left the battlefield, then Soulherder has exactly one counter. The Nyx Weaver row also wants its card in the
+/// exile zone: the person's cost used to take it off the battlefield and nowhere else.
+#[test]
+fn the_warp_nyx_weaver_and_person_displacer_exile_sites_fire_the_exile_event() {
+    use sim_core::human::human::{AbilityKind, abilities_of};
+    /// the victim, and whether its card must also be in its owner's exile zone (None: no claim)
+    type Case = (&'static str, fn(&mut Game) -> (PermId, Option<bool>));
+    let cases: Vec<Case> = vec![
+        // Weftstalker Ardent's warp: exiled at the beginning of the next end step (t45_prosper.rs). `Warp` is the flag
+        // `ardent_warp` sets on the permanent it casts.
+        ("Weftstalker Ardent's warp", |g| {
+            let t = perm(g, P0, "Weftstalker Ardent");
+            g.perm_mut(t).data.set(DataKey::Warp, Val::Bool(true));
+            run_hook(g, t, Event::EndStep, &Call::Player { p: P0 }).unwrap();
+            (t, None)
+        }),
+        // Nyx Weaver's "{1}{B}{G}, exile it: return target card from your graveyard": the person's real listed ability
+        // (human/marvin_hooks.rs); the exile is the cost
+        ("Nyx Weaver's exile cost (the person)", |g| {
+            let t = perm(g, P0, "Nyx Weaver");
+            let c = take(g, P0, "Sol Ring");
+            g.player_mut(P0).gy.push(c);
+            pool(g, P0, &[('B', 1), ('G', 1), ('C', 1)]);
+            g.humans.add(
+                P0,
+                std::sync::Arc::new(ScriptHuman::from_fn(|r| {
+                    if r.kind == "priority" { Answer::Action(json!({"do": "pass"})) } else { Answer::Pick(0) }
+                })),
+            );
+            let (_, ab) = abilities_of(g, P0, t).unwrap().into_iter().find(|(s, _)| s.contains("exile it")).unwrap();
+            let AbilityKind::Extra(f) = ab else { panic!("not an extra ability") };
+            assert_eq!(f(g, P0, t).unwrap(), None);
+            assert!(g.player(P0).hand.contains(&c), "the Sol Ring came back to hand");
+            (t, Some(g.player(P0).exile.contains(&card(g, "Nyx Weaver"))))
+        }),
+        // Eldrazi Displacer's "{2}{C}: exile another target creature, then return it tapped" on a token: it does not
+        // return (human/marvin_hooks.rs)
+        ("Eldrazi Displacer on a token (the person)", |g| {
+            let d = perm(g, P0, "Eldrazi Displacer");
+            let t = token(g, P1, 5);
+            let name = g.perm(t).name.to_string();
+            pool(g, P0, &[('C', 3)]);
+            g.humans.add(
+                P0,
+                std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+                    if r.kind == "priority" {
+                        return Answer::Action(json!({"do": "pass"}));
+                    }
+                    r.choices.iter().position(|c| c.contains(&name)).map_or(Answer::Decline, Answer::Pick)
+                })),
+            );
+            let (_, ab) =
+                abilities_of(g, P0, d).unwrap().into_iter().find(|(s, _)| s.contains("exile another target")).unwrap();
+            let AbilityKind::Extra(f) = ab else { panic!("not an extra ability") };
+            assert_eq!(f(g, P0, d).unwrap(), None);
+            (t, None)
+        }),
+    ];
+    let mut wrong = vec![];
+    for (name, run) in cases {
+        let mut g = tbl();
+        let herd = perm(&mut g, P0, "Soulherder");
+        let (victim, in_exile) = run(&mut g);
+        assert!(!g.perm(victim).on_bf, "{name}: the site must exile its victim");
+        if in_exile == Some(false) {
+            wrong.push(format!("{name}: the card is not in the exile zone (it vanished)"));
+        }
+        if grown(&g, herd) != 1 {
+            wrong.push(format!("{name}: Soulherder has {} counters, wanted 1", grown(&g, herd)));
+        }
+    }
+    assert!(wrong.is_empty(), "sites that did not fire the exile event: {wrong:#?}");
+}
