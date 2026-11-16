@@ -48,12 +48,36 @@ pub const EMBLEM: &str = "elspeth_ke";
 
 // ------------------------------------------------------------------ last known information
 /// `zones::leave`, before the permanent is taken off the battlefield (or off an Equipment): Syr Vondam's power as he
-/// leaves, and the wipe (`Game::cur_batch`, 0 outside one) he leaves in. Kept on the permanent that left, under `DataKey::LastKnown`.
+/// leaves, and the wipe (`Game::cur_batch`, 0 outside one) he leaves in. Kept on the permanent that left, under
+/// `DataKey::LastKnown`. Inside a wipe the power is the one from before anything left (CR 603.10a: the wipe's permanents
+/// leave at the same time): the first leave of the batch records it for every Syr Vondam on the battlefield, so an anthem
+/// the wipe took first no longer counts as gone.
 pub fn leaving(g: &mut Game, m: PermId) {
-    if g.perm(m).name != VONDAM {
+    let Some(b) = g.cur_batch else {
+        if g.perm(m).name == VONDAM {
+            let pow = epow(g, m);
+            record(g, m, pow, 0);
+        }
         return;
+    };
+    let mut vs: Vec<PermId> = g
+        .players
+        .iter()
+        .flat_map(|q| q.perms.iter().copied())
+        .filter(|&v| g.perm(v).name == VONDAM && g.perm(v).on_bf && !g.perm(v).phased)
+        .collect();
+    if g.perm(m).name == VONDAM && !vs.contains(&m) {
+        vs.push(m); // he leaves phased out
     }
-    let (pow, batch) = (epow(g, m), g.cur_batch.unwrap_or(0));
+    for v in vs {
+        if last_known(g, v).is_none_or(|(_, vb)| vb != b) {
+            let pow = epow(g, v);
+            record(g, v, pow, b);
+        }
+    }
+}
+
+fn record(g: &mut Game, m: PermId, pow: i32, batch: u32) {
     g.perm_mut(m).data.set(DataKey::LastKnown, Val::List(vec![Val::Int(pow as i64), Val::Int(batch as i64)]));
 }
 
