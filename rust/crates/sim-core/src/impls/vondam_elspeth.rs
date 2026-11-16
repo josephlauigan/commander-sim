@@ -276,6 +276,7 @@ fn pump_val(g: &Game, p: PlayerId, src: PermId) -> Option<f64> {
     Some(if attacks { 4.0 } else { 1.5 })
 }
 
+/// kept as the table's `eff`; the AI never reaches it (`options` swaps in `pump_go`, which commits the target on activation)
 fn pump_eff(g: &mut Game, p: PlayerId, src: PermId) -> Res {
     if let Some(t) = pump_target(g, p, src) {
         pump(g, t);
