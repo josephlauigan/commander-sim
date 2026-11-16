@@ -320,7 +320,11 @@ fn vondam_does_not_trigger_for_himself_dying_or_blinked() {
     let (mut g, v) = vondam_table();
     let life = g.player(P0).life;
     let back = sim_core::impls::t2::blink(&mut g, P0, v).unwrap().unwrap();
-    assert_eq!((g.perm(back).plus, g.player(P0).life), (0, life), "the new Syr Vondam saw nothing: not another creature");
+    assert_eq!(
+        (g.perm(back).plus, g.player(P0).life),
+        (0, life),
+        "the new Syr Vondam saw nothing: not another creature"
+    );
 }
 
 #[test]
@@ -617,7 +621,12 @@ fn the_ai_uses_elspeths_minus_eight_at_eight_loyalty() {
     let mut o = options(&mut g, e, P0);
     o.sort_by(|a, b| b.utility.total_cmp(&a.utility));
     assert!(!o.is_empty(), "Elspeth offers her abilities to the AI");
-    assert_eq!(arg_of(&o[0]), 2, "the ultimate is the best play: {:?}", o.iter().map(|x| (&x.label, x.utility)).collect::<Vec<_>>());
+    assert_eq!(
+        arg_of(&o[0]),
+        2,
+        "the ultimate is the best play: {:?}",
+        o.iter().map(|x| (&x.label, x.utility)).collect::<Vec<_>>()
+    );
     ai_uses(&mut g, e, 2);
     assert!(g.player(P0).emblems.contains(&"elspeth_ke"), "you get the emblem");
     assert!(!g.perm(e).on_bf, "Elspeth is at 0 loyalty: she is put into the graveyard");
@@ -757,4 +766,79 @@ fn a_person_gets_the_emblem_from_elspeths_minus_eight() {
     let e = perm(&mut g, P0, ELSPETH);
     let why = use_ability(&mut g, e, "emblem");
     assert!(why.is_some_and(|w| w.contains("loyalty")), "she has 4 loyalty");
+}
+
+// ------------------------------------------------------------------ the other exile sites
+/// the single-line exile sites that fired nothing: each exiles (or blinks) a creature from the battlefield, witnessed by
+/// Soulherder's counter. A table like `every_blink_path_fires_the_exile_event`; the test lists every site that came out
+/// wrong. How each case reaches its site is said in its row.
+#[test]
+fn every_other_exile_site_fires_the_exile_event() {
+    type Case = (&'static str, fn(&mut Game, PermId) -> i32);
+    let cases: Vec<Case> = vec![
+        // the AI answers removal aimed at its creature with Ephemerate from its hand (ai/pool.rs protect_with)
+        ("the AI's Ephemerate in response to removal", |g, _| {
+            let titan = perm(g, P0, "Grave Titan");
+            hand(g, P0, &["Ephemerate"]);
+            lands(g, P0, "Plains", 1, false);
+            let saved =
+                sim_core::ai::pool::protect(g, P0, titan, sim_core::sym::intern("destroy"), Some(P1), None).unwrap();
+            assert!(saved && !g.perm(titan).on_bf, "Ephemerate blinked the Titan: {saved}");
+            1
+        }),
+        // Ennis, Debate Moderator enters: exile another creature of yours until the next end step (bulk_white.rs)
+        ("Ennis, Debate Moderator", |g, _| {
+            let wall = perm(g, P0, "Wall of Omens");
+            perm(g, P0, "Ennis, Debate Moderator");
+            assert!(!g.perm(wall).on_bf, "Ennis exiled the Wall");
+            1
+        }),
+        // unearth: exile it at the beginning of the end step (alela.rs)
+        ("Reconstructed Thopter's unearth exile", |g, _| {
+            let m = perm(g, P0, "Reconstructed Thopter");
+            g.perm_mut(m).data.set(DataKey::Unearth, Val::Bool(true));
+            run_hook(g, m, Event::EndStep, &Call::Player { p: P0 }).unwrap();
+            assert!(!g.perm(m).on_bf);
+            1
+        }),
+        // unearth: exile it at the beginning of the end step (partials.rs)
+        ("Archfiend of Sorrows' unearth exile", |g, _| {
+            let m = perm(g, P0, "Archfiend of Sorrows");
+            g.perm_mut(m).data.set(DataKey::Unearth, Val::Bool(true));
+            run_hook(g, m, Event::EndStep, &Call::Player { p: P0 }).unwrap();
+            assert!(!g.perm(m).on_bf);
+            1
+        }),
+        // {4}{U}{B}{R}: exile Nicol Bolas, then return him transformed (card_models.rs)
+        ("Nicol Bolas, the Ravager transforms", |g, _| {
+            let m = perm(g, P0, "Nicol Bolas, the Ravager");
+            lands(g, P0, "Island", 3, false);
+            lands(g, P0, "Swamp", 2, false);
+            lands(g, P0, "Mountain", 2, false);
+            assert!(sim_core::impls::card_models::bolas_flip(g, m, P0, 0).unwrap());
+            assert!(!g.perm(m).on_bf);
+            1
+        }),
+    ];
+    let mut wrong = vec![];
+    for (name, run) in cases {
+        let mut g = tbl();
+        let herd = perm(&mut g, P0, "Soulherder");
+        let want = run(&mut g, herd);
+        let got = grown(&g, herd);
+        if got != want {
+            wrong.push(format!("{name}: Soulherder has {got} counters, wanted {want}"));
+        }
+    }
+    assert!(wrong.is_empty(), "sites that did not fire the exile event once per creature: {wrong:#?}");
+}
+
+/// Sakashima's Protege "enters as a copy": it is never on the battlefield as itself, so nothing is exiled from it
+#[test]
+fn a_protege_entering_as_a_copy_exiles_nothing() {
+    let mut g = tbl();
+    let herd = perm(&mut g, P0, "Soulherder");
+    let _shiny = perm(&mut g, P0, "Grave Titan");
+    perm(&mut g, P0, "Sakashima's Protege");
+    assert_eq!(grown(&g, herd), 0, "a replacement effect, not a leave of the battlefield");
 }
