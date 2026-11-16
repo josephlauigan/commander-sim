@@ -1248,3 +1248,43 @@ fn a_phantasmal_image_that_vondam_targets_is_still_sacrificed() {
     assert!(!g.perm(img).on_bf, "the Image became the target of Vondam's ability and was sacrificed");
     assert!(g.player(P0).gy.contains(&card(&g, "Phantasmal Image")));
 }
+
+// ------------------------------------------------------------------ the AI's pump commits its target on activation
+/// the AI activates Elspeth's +1 aimed at its Serra Angel (the only creature that can attack); in response the person's
+/// Giver of Runes gives the Angel protection from white. Elspeth is white, so the Angel is no longer a legal target and
+/// the ability does nothing (CR 608.2b): the target was chosen on activation (CR 602.2b), so it does not switch to the
+/// Giver as the ability resolves. The loyalty was paid once.
+#[test]
+fn ai_pump_cannot_switch_targets_after_response() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, ELSPETH);
+    let angel = perm(&mut g, P0, "Serra Angel");
+    let giver = perm(&mut g, P0, "Giver of Runes");
+    g.perm_mut(angel).sick = false;
+    let giver_i = g.player(P0).perms.iter().position(|&m| m == giver).unwrap();
+    let mut responded = false;
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            if !responded {
+                responded = true;
+                return Answer::Action(json!({"do": "use", "perm": giver_i}));
+            }
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        let word = if r.prompt.contains("which ability") {
+            "protection"
+        } else if r.prompt.contains("protection from what") {
+            "white"
+        } else {
+            "Serra Angel"
+        };
+        r.choices.iter().position(|s| s.contains(word)).map_or(Answer::Decline, Answer::Pick)
+    }));
+    h.set_autopass("all");
+    g.humans.add(P0, h);
+    ai_uses(&mut g, e, 1);
+    assert!(values::protected_from(&g, angel, sim_core::cards::Colors::from_letters("W")), "the response resolved");
+    assert_eq!(g.perm(e).loyalty, Some(5), "the loyalty is paid once");
+    assert_eq!(g.perm(giver).eot_pt, (0, 0), "the invalidated target fizzles: it does not switch to the Giver");
+    assert_eq!(g.perm(angel).eot_pt, (0, 0), "the Angel is protected from white: no longer a legal target");
+}
