@@ -206,3 +206,32 @@ fn a_creature_that_dies_normally_is_not_exiled_for_soulherder() {
     assert!(g.player(P1).gy.contains(&card(&g, "Serra Angel")));
     assert_eq!(grown(&g, herd), 0, "it died: not exiled");
 }
+
+#[test]
+fn a_blinked_soulherder_does_not_hear_its_own_exile() {
+    let mut g = tbl();
+    let herd = perm(&mut g, P0, "Soulherder");
+    let back = sim_core::impls::t2::blink(&mut g, P0, herd).unwrap().unwrap();
+    assert!(!g.perm(herd).on_bf && g.perm(back).on_bf);
+    assert_eq!(grown(&g, back), 0, "the new Soulherder was not on the battlefield when the old one was exiled");
+}
+
+#[test]
+fn the_exile_trigger_waits_behind_the_enters_trigger_of_the_returned_creature() {
+    use sim_core::hooks::TrigAct;
+    let mut g = tbl();
+    perm(&mut g, P0, "Soulherder");
+    let wall = perm(&mut g, P0, "Wall of Omens");
+    g.resolving += 1; // hold the triggers: they are queued, not resolved
+    sim_core::impls::t2::blink(&mut g, P0, wall).unwrap();
+    g.resolving -= 1;
+    let order: Vec<&str> = g
+        .trig_queue
+        .iter()
+        .map(|t| match &t.act {
+            TrigAct::Hook { event: Event::ExiledFromBf, .. } => "exiled",
+            _ => "enters",
+        })
+        .collect();
+    assert_eq!(order, ["enters", "exiled"], "the creature's enters trigger is queued first, as it always was");
+}
