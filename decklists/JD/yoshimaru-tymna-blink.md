@@ -535,7 +535,7 @@ Re-check the official list at https://commanderbrackets.com/faq before an event.
 1 Vito, Thorn of the Dusk Rose
 1 Walking Ballista
 1 Welcoming Vampire
-1 Witch Enchanter
+1 Witch Enchanter // Witch-Blessed Meadow
 1 Yoshimaru, Ever Faithful
 10 Plains
 6 Swamp

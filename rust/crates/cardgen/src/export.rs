@@ -80,6 +80,8 @@ impl Inputs {
                 "The Seriema",
                 "Sorin, Vengeful Bloodlord",
                 "Syr Vondam, Sunstar Exemplar",
+                "Gandalf the White",
+                "Sunpearl Kirin",
             ]
             .map(String::from),
         );
