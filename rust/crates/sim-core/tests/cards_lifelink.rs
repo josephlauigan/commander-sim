@@ -684,3 +684,40 @@ fn life_lock_combat_regression_still_gains_life() {
     fight(&mut g, &[s], &[]);
     assert_eq!((g.player(P1).life, g.player(P0).life), (40, 43));
 }
+
+#[test]
+fn indestructible_does_not_make_an_unpayable_ward_deal_damage() {
+    let mut g = tbl();
+    let s = body(&mut g, P0, 2, 2);
+    g.perm_mut(s).lifelink = true;
+    let t = perm(&mut g, P1, "Sauron, the Dark Lord");
+    give(&mut g, t, "indestructible");
+    assert!(sim_core::engine::values::ward_legends(&g, P0).is_empty(), "the ward (sacrifice a legend) can't be paid");
+    assert_eq!(deal(&mut g, s, Target::Perm(t), 10), 0, "ward counters the ability");
+    assert_eq!(g.player(P0).life, 40);
+}
+
+#[test]
+fn noncombat_lifelink_damage_to_a_creature_on_an_arachnogenesis_turn_gains() {
+    let mut g = tbl();
+    let s = body(&mut g, P0, 2, 2);
+    g.perm_mut(s).lifelink = true;
+    let t = body(&mut g, P1, 1, 4);
+    g.fog_spiders = Some(g.turn_stamp()); // prevents COMBAT damage by non-Spiders this turn
+    assert_eq!(deal(&mut g, s, Target::Perm(t), 1), 1);
+    assert_eq!(g.player(P0).life, 41, "a ping is not combat damage: the fog does not stop it");
+}
+
+#[test]
+fn source_damage_prevention_gains_nothing_for_a_ballista_ping_to_a_player() {
+    let mut g = tbl();
+    person(&mut g, None);
+    let b = ballista(&mut g, 2);
+    g.perm_mut(b).lifelink = true;
+    let spider = perm(&mut g, P1, "Old Fat Spider Can't See Me");
+    g.perm_mut(spider).data.set(sim_core::state::DataKey::Prevent, sim_core::state::Val::Perm(b));
+    assert!(sim_core::engine::repl::source_prevented(&g, b));
+    assert_eq!(use_ability(&mut g, b, "remove a +1/+1 counter"), None);
+    assert_eq!(g.perm(b).plus, 1, "the activation was exercised");
+    assert_eq!(g.player(P0).life, 40, "all the damage the Ballista would deal is prevented: nothing to gain");
+}
