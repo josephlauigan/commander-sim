@@ -306,6 +306,32 @@ fn barad_dur_enters_untapped_with_a_nonlegendary_ring_bearer() {
 }
 
 #[test]
+fn minas_tirith_counts_a_token_ring_bearer_as_legendary() {
+    // the Army from Sauron's tempt is a token: it has no card, but the Ring-bearer is legendary all the same
+    let mut g = tbl();
+    let c = minas(&mut g);
+    let t = token(&mut g, P0, 2);
+    g.player_mut(P0).ring_bearer = Some(t); // chosen, but the Ring has not tempted P0 yet (level 0)
+    assert!(turn::land_enters_tapped(&g, P0, c), "no Ring, no legend");
+    g.player_mut(P0).ring_level = 1;
+    assert!(sim_core::impls::legends::legendary(&g, t), "the Ring-bearer is legendary, token or not");
+    assert!(!turn::land_enters_tapped(&g, P0, c), "and Minas Tirith sees it");
+    let other = token(&mut g, P0, 1);
+    assert!(!sim_core::impls::legends::legendary(&g, other), "another token is not");
+}
+
+#[test]
+fn barad_dur_enters_untapped_with_a_token_ring_bearer() {
+    let mut g = table(&["sheoldred", "seph"]);
+    g.active = Some(P0);
+    let c = card(&g, "Barad-dûr");
+    let t = token(&mut g, P0, 2);
+    assert!(turn::land_enters_tapped(&g, P0, c));
+    ring_bearer_is(&mut g, t);
+    assert!(!turn::land_enters_tapped(&g, P0, c));
+}
+
+#[test]
 fn a_card_made_legendary_by_an_effect_is_legendary() {
     // DataKey::Legendary on a card-backed permanent (Anikthea's tokens, a Kaldra-style effect), not only on a token
     let mut g = tbl();
