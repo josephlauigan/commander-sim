@@ -5,7 +5,7 @@
 mod play_common;
 use play_common::*;
 use sim_core::engine::hooks::{fire_trigger, run_hook};
-use sim_core::engine::{cast, removal, zones};
+use sim_core::engine::{cast, removal, values, zones};
 use sim_core::hooks::{Call, Event};
 use sim_core::state::{Ctx, DataKey, Step, Val};
 
@@ -1028,4 +1028,38 @@ fn interlude_inside_a_wipe_does_not_make_vondam_leave_with_the_wipe() {
     sim_core::engine::stack::flush_triggers(&mut g).unwrap();
     assert!(!g.perm(victim).on_bf);
     assert_eq!(g.player(P0).life, life, "he was gone before the wipe resolved");
+}
+
+// ------------------------------------------------------------------ last known power in a simultaneous wipe
+/// Syr Vondam and the anthem that made him a 4/4 die in the same wipe: he was power 4 just before (CR 603.10a), whichever
+/// of them the wipe takes first
+#[test]
+fn simultaneous_anthem_death_preserves_vondam_power() {
+    let mut g = tbl();
+    let anthem = perm(&mut g, P0, "Elesh Norn, Grand Cenobite");
+    let v = perm(&mut g, P0, VONDAM);
+    assert_eq!(values::epow(&g, v), 4);
+    let prize = perm(&mut g, P1, "Smothering Tithe");
+    removal::apply_wipe(&mut g, P0, "destroy", None, &Ctx::default()).unwrap();
+    assert!(!g.perm(anthem).on_bf && !g.perm(v).on_bf);
+    assert!(!g.perm(prize).on_bf, "Vondam was power four immediately before the simultaneous wipe");
+}
+
+/// control: a Syr Vondam that survives a wipe (the anthem does not) and dies alone later was power 3 as he left, not
+/// the 4 he was before that wipe
+#[test]
+fn a_vondam_that_survived_a_wipe_and_dies_alone_uses_his_power_at_that_moment() {
+    let mut g = tbl();
+    let anthem = perm(&mut g, P0, "Elesh Norn, Grand Cenobite");
+    let v = perm(&mut g, P0, VONDAM);
+    assert_eq!(values::epow(&g, v), 4);
+    let prize = perm(&mut g, P1, "Smothering Tithe");
+    g.perm_mut(v).eot_kw.push("indestructible"); // he survives the wipe
+    removal::apply_wipe(&mut g, P0, "destroy", None, &Ctx::default()).unwrap();
+    assert!(!g.perm(anthem).on_bf && g.perm(v).on_bf, "the anthem died, he did not");
+    assert_eq!(values::epow(&g, v), 3, "2/2 and the counter the anthem's death gave him");
+    g.perm_mut(v).eot_kw.clear();
+    zones::die(&mut g, v, "destroy").unwrap();
+    assert!(!g.perm(v).on_bf);
+    assert!(g.perm(prize).on_bf, "he was power 3 as he died alone: no destroy");
 }
