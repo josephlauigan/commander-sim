@@ -655,6 +655,7 @@ fn ballista_ping(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
 /// one activation of Walking Ballista's ping: the counter is the cost (it shrinks, and dies at 0/0, whatever happens to
 /// the ping), 1 damage for the ability and for each Rings of Brighthearth copy
 fn ping_once(g: &mut Game, p: PlayerId, m: PermId, t: Target) -> Res {
+    let by = choices::by(g, Some(m)); // lifelink as the ability is activated: the Ballista may die with its last counter
     g.perm_mut(m).plus -= 1;
     g.bf_ver += 1;
     crate::glog!(g, "  {} removes a counter from Walking Ballista", g.player(p).name);
@@ -665,7 +666,7 @@ fn ping_once(g: &mut Game, p: PlayerId, m: PermId, t: Target) -> Res {
             Target::Perm(x) => live(g, x),
         };
         if alive {
-            choices::apply_damage(g, p, t, 1, "Walking Ballista", "burn")?;
+            choices::apply_damage_by(g, p, t, 1, "Walking Ballista", "burn", by)?;
         }
         Ok(())
     };

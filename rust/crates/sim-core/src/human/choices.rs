@@ -502,9 +502,23 @@ pub fn deal_damage_batched(g: &mut Game, p: PlayerId, n: i32, source: &str, kind
     deal_damage(g, p, n, source, kind)
 }
 
+/// who deals the damage when it is dealt by a permanent: the permanent, and whether it had lifelink when the ability
+/// was activated or triggered (CR 702.15c: last known information, for a source that can leave first)
+pub type By = Option<(PermId, bool)>;
+
+/// `m` as the source of damage now: its lifelink is read now
+pub fn by(g: &Game, m: Option<PermId>) -> By {
+    m.map(|m| (m, engine::life::has_lifelink(g, m)))
+}
+
 /// p's `source` deals n damage to a target p picks: a creature dies if n reaches its toughness, a planeswalker
 /// loses that much loyalty, a player loses that much life.
 pub fn deal_damage(g: &mut Game, p: PlayerId, n: i32, source: &str, kind: &str) -> Res {
+    deal_damage_by(g, p, n, source, kind, None)
+}
+
+/// `deal_damage` for a permanent's damage: a source with lifelink gains what it dealt
+pub fn deal_damage_by(g: &mut Game, p: PlayerId, n: i32, source: &str, kind: &str, by: By) -> Res {
     if n <= 0 {
         return Ok(());
     }
@@ -514,21 +528,23 @@ pub fn deal_damage(g: &mut Game, p: PlayerId, n: i32, source: &str, kind: &str) 
     }
     let labels: Vec<String> = tg.iter().map(|&x| legal::describe_target(g, p, x)).collect();
     let k = choose_one(g, p, "target", &format!("{source}: deal {n} damage to which target?"), &labels)?;
-    apply_damage(g, p, tg[k], n, source, kind)
+    apply_damage_by(g, p, tg[k], n, source, kind, by).map(|_| ())
 }
 
 /// `deal_damage` for a trigger of permanent `src`: Niv-Mizzet's pings go where the person's standing choice says (set from the
-/// prompt itself, or from its ability), until the turn ends; the prompt offers each opponent as "all of its pings"
+/// prompt itself, or from its ability), until the turn ends; the prompt offers each opponent as "all of its pings".
+/// `src` is the source of the damage: if it has lifelink, its controller gains what it dealt.
 pub fn deal_damage_from(g: &mut Game, p: PlayerId, n: i32, source: &str, kind: &str, src: Option<PermId>) -> Res {
+    let by = by(g, src);
     let Some(s) = src.filter(|&s| g.perm(s).cd.is_some_and(|c| g.db.get(c).name.starts_with("Niv-Mizzet"))) else {
-        return deal_damage(g, p, n, source, kind);
+        return deal_damage_by(g, p, n, source, kind, by);
     };
     if n <= 0 {
         return Ok(());
     }
     if let Some(q) = super::combos::standing_ping(g, s) {
         crate::glog!(g, "  {source}: {n} damage to {} (your standing choice)", g.player(q).name);
-        return apply_damage(g, p, Target::Player(q), n, source, kind);
+        return apply_damage_by(g, p, Target::Player(q), n, source, kind, by).map(|_| ());
     }
     let tg = damage_targets(g, p, Default::default());
     if tg.is_empty() {
@@ -544,26 +560,49 @@ pub fn deal_damage_from(g: &mut Game, p: PlayerId, n: i32, source: &str, kind: &
     if k >= tg.len() {
         let q = opps[k - tg.len()];
         super::combos::set_standing_ping(g, s, Some(q));
-        return apply_damage(g, p, Target::Player(q), n, source, kind);
+        return apply_damage_by(g, p, Target::Player(q), n, source, kind, by).map(|_| ());
     }
-    apply_damage(g, p, tg[k], n, source, kind)
+    apply_damage_by(g, p, tg[k], n, source, kind, by).map(|_| ())
 }
 
 /// `n` damage from p's `source` to one target (a creature dies if n reaches its toughness, a planeswalker loses that
 /// much loyalty, a player loses that much life).
 pub fn apply_damage(g: &mut Game, p: PlayerId, t: Target, n: i32, source: &str, kind: &str) -> Res {
+    apply_damage_by(g, p, t, n, source, kind, None).map(|_| ())
+}
+
+/// `apply_damage` by a permanent: returns the damage dealt, and a source with lifelink (`by`) gains that much
+pub fn apply_damage_by(
+    g: &mut Game,
+    p: PlayerId,
+    t: Target,
+    n: i32,
+    source: &str,
+    kind: &str,
+    by: By,
+) -> Res<i32> {
+    let src = by.map(|b| b.0);
     let m = match t {
-        Target::Player(q) => return engine::life::lose_life(g, q, n, Some(p), intern(kind), None),
+        Target::Player(q) => {
+            let dealt = engine::life::lose_life_dealt(g, q, n, Some(p), intern(kind), None)?;
+            if let Some((s, ll)) = by {
+                engine::life::lifelink(g, s, ll, dealt)?;
+            }
+            return Ok(dealt);
+        }
         Target::Perm(m) => m,
     };
     let name = g.perm(m).name;
+    let creature = g.is_creature(m);
+    let mut dealt = 0;
     if g.is_creature(m) && repl::no_damage(g, m) {
         crate::glog!(g, "    the damage to {} is prevented", name);
     } else if g.is_creature(m) && etgh(g, m) <= n + super::combos::marked(g, m) {
-        engine::removal::apply_removal(g, Some(p), m, &format!("dmg{n}"), None)?;
+        dealt = engine::life::removal_damage(g, p, src, m, n, None)?;
     } else if g.is_creature(m) {
         super::combos::mark(g, m, n); // a person's damage stays marked on the creature
         crate::glog!(g, "    {} deals {} damage to {} (it survives)", source, n, name);
+        dealt = engine::life::creature_damage(g, p, src, m, n);
     }
     let x = g.perm(m);
     let pw = x.cd.is_some_and(|c| g.db.get(c).types.has(Types::PLANESWALKER));
@@ -575,8 +614,15 @@ pub fn apply_damage(g: &mut Game, p: PlayerId, t: Target, n: i32, source: &str, 
             zones::leave(g, m)?;
             zones::to_zone_card(g, m, Zone::Gy);
         }
+        if !creature {
+            dealt = n; // a planeswalker that is not a creature: the damage is the loyalty it lost
+        }
     }
-    engine::life::check_state(g)
+    if let Some((s, ll)) = by {
+        engine::life::lifelink(g, s, ll, dealt)?;
+    }
+    engine::life::check_state(g)?;
+    Ok(dealt)
 }
 
 /// "N damage divided as you choose among any number of targets" (Inferno Titan): one question per point, so a

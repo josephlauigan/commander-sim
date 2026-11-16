@@ -219,30 +219,44 @@ fn remove_one(v: &mut Vec<CardId>, x: CardId) {
 /// cards._damage: n damage from source to x, a player or permanent chosen already (the same rules as
 /// choices.deal_damage)
 pub fn damage(g: &mut Game, p: PlayerId, x: Target, n: i32, source: &str, kind: &str) -> Res {
-    use crate::engine::{life, removal, zones};
+    damage_by(g, p, x, n, source, kind, None).map(|_| ())
+}
+
+/// `damage` by a permanent: returns the damage dealt, and a source with lifelink (`by`) gains that much
+pub fn damage_by(g: &mut Game, p: PlayerId, x: Target, n: i32, source: &str, kind: &str, by: choices::By) -> Res<i32> {
+    use crate::engine::{life, zones};
+    let src = by.map(|b| b.0);
     let m = match x {
         Target::Player(q) => {
+            let mut dealt = 0;
             if g.player(q).alive {
-                life::lose_life(g, q, n, Some(p), crate::sym::intern(kind), None)?;
+                dealt = life::lose_life_dealt(g, q, n, Some(p), crate::sym::intern(kind), None)?;
             }
-            return life::check_state(g);
+            if let Some((s, ll)) = by {
+                life::lifelink(g, s, ll, dealt)?;
+            }
+            life::check_state(g)?;
+            return Ok(dealt);
         }
         Target::Perm(m) => m,
     };
     if !g.perm(m).on_bf {
-        return Ok(());
+        return Ok(0);
     }
     let name = g.perm(m).name;
+    let creature = g.is_creature(m);
+    let mut dealt = 0;
     // a person's damage stays marked on the creature (Triskelion pinging itself): the lethal check counts it
     let person = crate::human::is_human(g, p);
     let prior = if person { super::combos::marked(g, m) } else { 0 };
-    if g.is_creature(m) && crate::engine::values::etgh(g, m) <= n + prior {
-        removal::apply_removal(g, Some(p), m, &format!("dmg{n}"), None)?;
-    } else if g.is_creature(m) {
+    if creature && crate::engine::values::etgh(g, m) <= n + prior {
+        dealt = life::removal_damage(g, p, src, m, n, None)?;
+    } else if creature {
         if person {
             super::combos::mark(g, m, n);
         }
         crate::glog!(g, "    {} deals {} damage to {} (it survives)", source, n, name);
+        dealt = life::creature_damage(g, p, src, m, n);
     }
     let x = g.perm(m);
     let pw = x.cd.is_some_and(|c| g.db.get(c).types.has(crate::cards::Types::PLANESWALKER));
@@ -253,8 +267,15 @@ pub fn damage(g: &mut Game, p: PlayerId, x: Target, n: i32, source: &str, kind: 
             zones::leave(g, m)?;
             zones::to_zone_card(g, m, zones::Zone::Gy);
         }
+        if !creature {
+            dealt = n;
+        }
     }
-    life::check_state(g)
+    if let Some((s, ll)) = by {
+        life::lifelink(g, s, ll, dealt)?;
+    }
+    life::check_state(g)?;
+    Ok(dealt)
 }
 
 /// cards.prismari_charm: choose one: surveil 2, then draw a card; 1 damage to each of one or two targets; return
@@ -687,6 +708,7 @@ fn triskelion(_g: &Game) -> Vec<PermAbility> {
         let Some(k) = pick(g, p, "target", "Triskelion: 1 damage to which target?", &labels)? else {
             return Ok(None);
         };
+        let by = choices::by(g, Some(m)); // lifelink as the ability is activated
         g.perm_mut(m).plus -= 1;
         crate::glog!(g, "  {} removes a counter from Triskelion", pname(g, p));
         let tp = if let Target::Perm(t) = tg[k] { Some(t) } else { None };
@@ -696,7 +718,7 @@ fn triskelion(_g: &Game) -> Vec<PermAbility> {
             } else {
                 tg[k]
             };
-            damage(g, p, t, 1, "Triskelion", "triggers")
+            damage_by(g, p, t, 1, "Triskelion", "triggers", by).map(|_| ())
         })?;
         if g.player(p).perms.contains(&m) {
             super::combos::die_if_lethal(g, m)?; // no counters left, or its own pings marked on it

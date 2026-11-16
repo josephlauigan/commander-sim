@@ -5,7 +5,7 @@ use crate::engine::repl;
 use crate::engine::values::chasm;
 use crate::flow::Res;
 use crate::hooks::{Call, Event};
-use crate::ids::{PermId, PlayerId};
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{DataKey, Game};
 use crate::sym::{Sym, intern};
 
@@ -109,6 +109,55 @@ pub fn lose_life_dealt(
         crate::impls::t45_miirym::champion_hit(g, s, n)?;
     }
     Ok(dealt)
+}
+
+/// the damage `n` from p's permanent `src` (if any) to the creature `m` as it is dealt: Fiery Emancipation, Stagger and
+/// Gisela change the amount, and damage that is prevented (a prevention effect on `m`, protection, a source whose damage
+/// is prevented) is 0. Lifelink gains this, however much toughness `m` has.
+pub fn creature_damage(g: &Game, actor: PlayerId, src: Option<PermId>, m: PermId, n: i32) -> i32 {
+    if n <= 0 {
+        return 0;
+    }
+    let owner = g.perm(m).owner;
+    let mut n = n;
+    if actor != owner {
+        n = n.saturating_mul(crate::engine::combat::fiery(g, actor));
+    }
+    n = n.saturating_mul(stagger_mult(g, owner));
+    n = crate::impls::t3_aurelia::gisela_scale(g, owner, n);
+    if repl::no_damage(g, m) || repl::tajic_prevents(g, m) {
+        return 0;
+    }
+    if let Some(s) = src
+        && (repl::source_prevented(g, s)
+            || crate::engine::values::protected_from(g, m, crate::engine::values::colors_of(g, s))
+            || crate::cardcode::prot_vs(g, m, s))
+    {
+        return 0;
+    }
+    n
+}
+
+/// `apply_removal(.., "dmgN")`, returning the damage it dealt to `m` (0 when ward, a protection response or a
+/// prevention effect stopped it): what a source with lifelink gains. An indestructible creature survives the damage but
+/// takes it.
+pub fn removal_damage(
+    g: &mut Game,
+    actor: PlayerId,
+    src: Option<PermId>,
+    m: PermId,
+    n: i32,
+    spell: Option<CardId>,
+) -> Res<i32> {
+    let dealt = creature_damage(g, actor, src, m, n);
+    let prev = g.last_removed.take();
+    crate::engine::removal::apply_removal(g, Some(actor), m, &format!("dmg{n}"), spell)?;
+    let hit = g.last_removed.is_some();
+    if !hit {
+        g.last_removed = prev;
+    }
+    let indestructible = g.perm(m).on_bf && crate::engine::values::indestructible(g, m);
+    Ok(if hit || indestructible { dealt } else { 0 })
 }
 
 /// does the permanent `src` have lifelink now (printed, granted until end of turn or by a static such as Sorin's)?
