@@ -483,6 +483,7 @@ fn minas(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
     crate::glog!(g, "  {} activates Minas Tirith", g.player(p).name);
     let cd = g.perm(l).card();
     stack::ability_run(g, p, None, Some(cd), "draw a card", None, None, |g| zones::draw(g, p, 1, false))?;
+    engine::life::check_state(g)?;
     Ok(None)
 }
 
