@@ -402,6 +402,29 @@ fn a_person_may_draw_from_an_empty_library_and_lose() {
 }
 
 #[test]
+fn cacophonys_temporary_legendary_supertype_expires() {
+    // Cacophony Unleashed becomes a legendary 6/6 creature until end of turn: the supertype goes with the rest
+    let mut g = tbl();
+    let c = perm(&mut g, P0, "Cacophony Unleashed");
+    assert!(g.is_creature(c));
+    assert!(sim_core::impls::legends::legendary(&g, c));
+    turn::end_step(&mut g, P0).unwrap();
+    assert!(!g.is_creature(c), "the animation ended");
+    assert!(!sim_core::impls::legends::legendary(&g, c), "so did the legendary supertype of the same effect");
+}
+
+#[test]
+fn sisay_loses_cacophonys_colour_after_the_effect_ends() {
+    let mut g = tbl();
+    let s = perm(&mut g, P0, "Sisay, Weatherlight Captain");
+    let c = perm(&mut g, P0, "Cacophony Unleashed");
+    assert!(sim_core::impls::legends::legendary(&g, c));
+    assert_eq!(epow(&g, s), 3);
+    turn::end_step(&mut g, P0).unwrap();
+    assert_eq!(epow(&g, s), 2, "Cacophony is no longer a legendary permanent");
+}
+
+#[test]
 fn a_card_made_legendary_by_an_effect_is_legendary() {
     // DataKey::Legendary on a card-backed permanent (Anikthea's tokens, a Kaldra-style effect), not only on a token
     let mut g = tbl();
