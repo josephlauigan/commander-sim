@@ -327,28 +327,40 @@ fn the_ai_grants_lifelink_with_spare_mana_before_combat() {
     assert!(options(&mut g, hel, P0).iter().all(|x| !x.label.contains("lifelink")), "once a turn");
 }
 
+/// Heliod and a creature of power `pow` on P0's table, with `plains` untapped Plains: the AI's options of Heliod
+fn heliod_options_with(pow: i32, plains: usize, f: impl Fn(&mut Game, PermId)) -> Vec<Opt> {
+    let mut g = tbl();
+    let hel = perm(&mut g, P0, HELIOD);
+    let big = token(&mut g, P0, pow);
+    f(&mut g, big);
+    lands(&mut g, P0, "Plains", plains, false);
+    options(&mut g, hel, P0)
+}
+
+fn grants(o: &[Opt]) -> bool {
+    o.iter().any(|x| x.label.contains("lifelink"))
+}
+
 #[test]
-fn the_ai_does_not_grant_lifelink_without_a_reason() {
-    // an attacker of power 3 or more, spare mana, no lifelink yet
-    let mut g = tbl();
-    let hel = perm(&mut g, P0, HELIOD);
-    token(&mut g, P0, 2);
-    lands(&mut g, P0, "Plains", 2, false);
-    assert!(options(&mut g, hel, P0).iter().all(|x| !x.label.contains("lifelink")), "power 2: not worth {{1}}{{W}}");
-    let mut g = tbl();
-    let hel = perm(&mut g, P0, HELIOD);
-    token(&mut g, P0, 4);
-    assert!(options(&mut g, hel, P0).iter().all(|x| !x.label.contains("lifelink")), "no mana");
-    let mut g = tbl();
-    let hel = perm(&mut g, P0, HELIOD);
-    let big = token(&mut g, P0, 4);
-    g.perm_mut(big).lifelink = true;
-    lands(&mut g, P0, "Plains", 2, false);
-    assert!(options(&mut g, hel, P0).iter().all(|x| !x.label.contains("lifelink")), "it has lifelink already");
-    let mut g = tbl();
-    let hel = perm(&mut g, P0, HELIOD);
-    let big = token(&mut g, P0, 4);
-    g.perm_mut(big).sick = true;
-    lands(&mut g, P0, "Plains", 2, false);
-    assert!(options(&mut g, hel, P0).iter().all(|x| !x.label.contains("lifelink")), "it can't attack");
+fn the_ai_does_not_grant_lifelink_to_a_creature_of_power_two() {
+    let o = heliod_options_with(2, 2, |_, _| {});
+    assert!(!grants(&o), "not worth {{1}}{{W}}: {:?}", labels(&o));
+}
+
+#[test]
+fn the_ai_does_not_grant_lifelink_without_the_mana() {
+    let o = heliod_options_with(4, 0, |_, _| {});
+    assert!(!grants(&o), "no mana: {:?}", labels(&o));
+}
+
+#[test]
+fn the_ai_does_not_grant_lifelink_to_a_creature_that_has_it() {
+    let o = heliod_options_with(4, 2, |g, m| g.perm_mut(m).lifelink = true);
+    assert!(!grants(&o), "it has lifelink already: {:?}", labels(&o));
+}
+
+#[test]
+fn the_ai_does_not_grant_lifelink_to_a_creature_that_cannot_attack() {
+    let o = heliod_options_with(4, 2, |g, m| g.perm_mut(m).sick = true);
+    assert!(!grants(&o), "summoning sick: {:?}", labels(&o));
 }
