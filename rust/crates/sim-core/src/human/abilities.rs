@@ -458,7 +458,33 @@ pub fn land_abilities(g: &Game, p: PlayerId, l: PermId) -> Vec<LandAbility> {
     if d.tag(Tag::Desert) && &*d.name == "Scavenger Grounds" {
         out.push(ability("{2}, {T}, sacrifice a Desert: exile all graveyards", grounds));
     }
+    if &*d.name == "Minas Tirith" && !engine::mana::moon_land(g, l) {
+        out.push(ability(
+            "{1}{W}, {T}: draw a card (only if you attacked with two or more creatures this turn)",
+            minas,
+        ));
+    }
     out
+}
+
+/// Minas Tirith: {1}{W}, {T}: draw a card. Activate only if you attacked with two or more creatures this turn. Always
+/// listed (before any attack too), with the reason when it can't be used now; the AI's use is `impls::yoshimaru_cards`
+fn minas(g: &mut Game, p: PlayerId, l: PermId) -> Res<Why> {
+    if let Some(why) = land_tap_ok(g, l) {
+        return Ok(Some(why));
+    }
+    if !crate::impls::yoshimaru_cards::attacked_with_two(g, p) {
+        return Ok(Some("Minas Tirith: activate only if you attacked with two or more creatures this turn.".into()));
+    }
+    if let Some(why) = pay(g, p, 1, "W", "Minas Tirith") {
+        return Ok(Some(why));
+    }
+    g.perm_mut(l).tapped = true;
+    crate::glog!(g, "  {} activates Minas Tirith", g.player(p).name);
+    let cd = g.perm(l).card();
+    stack::ability_run(g, p, None, Some(cd), "draw a card", None, None, |g| zones::draw(g, p, 1, false))?;
+    engine::life::check_state(g)?;
+    Ok(None)
 }
 
 /// Urza, Lord High Artificer: {5}: shuffle your library, then exile the top card; you may play it free this turn

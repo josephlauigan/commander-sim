@@ -156,6 +156,14 @@ fn yoshimaru_panharmonicon_and_hushbringer_nonland() {
     assert_eq!(g.perm(y).plus, 4);
 }
 
+/// a person uses Minas Tirith's draw (a land ability since the person path moved out of the options hook): Some(why)
+/// when it can't be done now
+fn minas_draw(g: &mut Game, l: PermId) -> Option<String> {
+    let ab = sim_core::human::abilities::land_abilities(g, P0, l);
+    let a = ab.iter().find(|a| a.label.contains("draw a card")).expect("the draw is a land ability");
+    (a.act)(g, P0, l).unwrap()
+}
+
 fn minas_ready(g: &mut Game) -> PermId {
     let l = land(g, "Minas Tirith");
     g.perm_mut(l).tapped = false;
@@ -176,8 +184,9 @@ fn minas_person_can_draw_with_one_card_left() {
     let l = minas_ready(&mut g);
     let c = card(&g, "Plains");
     g.player_mut(P0).library = vec![c];
-    let o = sim_core::human::alt::land_alts(&mut g, P0, l).unwrap();
-    assert!(o.iter().any(|(s, _)| s.contains("draw")), "legal draw with one card left was hidden");
+    let hand = g.player(P0).hand.len();
+    assert_eq!(minas_draw(&mut g, l), None, "legal draw with one card left was refused");
+    assert_eq!(g.player(P0).hand.len(), hand + 1);
 }
 
 #[test]
@@ -191,8 +200,9 @@ fn minas_two_distinct_attackers_in_extra_combats_count() {
     let b = token(&mut g, P0, 2);
     combat::attack_triggers(&mut g, P0, &[a], P1).unwrap();
     combat::attack_triggers(&mut g, P0, &[b], P1).unwrap();
-    let o = sim_core::human::alt::land_alts(&mut g, P0, l).unwrap();
-    assert!(o.iter().any(|(s, _)| s.contains("draw")), "attacked with two different creatures this turn");
+    let hand = g.player(P0).hand.len();
+    assert_eq!(minas_draw(&mut g, l), None, "attacked with two different creatures this turn");
+    assert_eq!(g.player(P0).hand.len(), hand + 1);
 }
 
 #[test]
@@ -208,9 +218,9 @@ fn minas_draw_after_attackers_leave_and_in_combat() {
     zones::leave(&mut g, a).unwrap();
     zones::leave(&mut g, b).unwrap();
     g.step = Step::Combat;
-    let o = sim_core::human::alt::land_alts(&mut g, P0, l).unwrap();
-    assert_eq!(o.len(), 1);
-    assert!(run(&mut g, &o[0].1));
+    let hand = g.player(P0).hand.len();
+    assert_eq!(minas_draw(&mut g, l), None);
+    assert_eq!(g.player(P0).hand.len(), hand + 1);
     assert_eq!(g.player(P0).pool.total(), 0);
 }
 

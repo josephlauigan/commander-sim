@@ -99,7 +99,9 @@ fn untapped_by_rule(g: &Game, p: PlayerId, cd: CardId, rule: EnterRule) -> bool 
                 Ok(Some(_))
             )
         }
-        EnterRule::Legendary => pl.perms.iter().any(|&m| g.is_creature(m) && card_tag(g, m, Tag::Leg)),
+        EnterRule::Legendary => {
+            pl.perms.iter().any(|&m| !g.perm(m).phased && g.is_creature(m) && crate::impls::legends::legendary(g, m))
+        }
         EnterRule::Pay(n) => pays_for_land(g, p, cd, n),
         EnterRule::Planeswalker => pl
             .perms

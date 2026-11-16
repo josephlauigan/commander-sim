@@ -62,12 +62,11 @@ fn stat(g: &mut Game, p: PlayerId, name: &str, n: i64) {
     g.player_mut(p).stat(intern(name), n);
 }
 
-/// jodah.legendary: a legendary permanent: printed, a legendary token (Kaldra, Voja), or the Ring-bearer
+/// jodah.legendary: a legendary permanent: printed, made legendary by an effect (`DataKey::Legendary`: a token such as
+/// Kaldra or Voja, or a card an effect has made legendary), or the Ring-bearer (a token too: with no card, only the
+/// Ring makes it legendary in `mine::is_legendary`)
 pub fn legendary(g: &Game, m: PermId) -> bool {
-    if g.perm(m).cd.is_none() {
-        return g.perm(m).data.truthy(DataKey::Legendary);
-    }
-    super::mine::is_legendary(g, m)
+    g.perm(m).data.truthy(DataKey::Legendary) || super::mine::is_legendary(g, m)
 }
 
 /// jodah.legend_card: a legendary nonland card

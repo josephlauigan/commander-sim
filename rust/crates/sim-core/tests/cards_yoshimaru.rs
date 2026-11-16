@@ -9,6 +9,7 @@ use sim_core::engine::{cast, turn, zones};
 use sim_core::ids::CardId;
 use sim_core::state::Ctx;
 use sim_core::state::Step;
+use sim_core::state::{DataKey, Val};
 
 fn tbl() -> Game {
     let mut g = table(&["heliod-mono-white-stax", "seph", "sauron"]);
@@ -243,6 +244,199 @@ fn minas_tirith_enters_untapped_with_a_legendary_creature() {
     assert!(g.db.get(g.perm(l).card()).types.has(Types::LAND));
 }
 
+/// the Ring tempts P0 once and `m` is their Ring-bearer (legendary while it is)
+fn ring_bearer_is(g: &mut Game, m: PermId) {
+    g.player_mut(P0).ring_level = 1;
+    g.player_mut(P0).ring_bearer = Some(m);
+}
+
+#[test]
+fn minas_tirith_counts_the_ring_bearer_as_legendary() {
+    let mut g = tbl();
+    let c = minas(&mut g);
+    let m = perm(&mut g, P0, "Mother of Runes");
+    assert!(turn::land_enters_tapped(&g, P0, c), "not yet the Ring-bearer");
+    ring_bearer_is(&mut g, m);
+    assert!(!turn::land_enters_tapped(&g, P0, c), "the Ring-bearer is legendary");
+    let l = play_land(&mut g, "Minas Tirith");
+    assert!(!g.perm(l).tapped);
+}
+
+#[test]
+fn minas_tirith_ignores_a_phased_out_legendary_creature() {
+    let mut g = tbl();
+    let c = minas(&mut g);
+    let t = perm(&mut g, P0, "Tymna the Weaver");
+    assert!(!turn::land_enters_tapped(&g, P0, c));
+    g.perm_mut(t).phased = true;
+    assert!(turn::land_enters_tapped(&g, P0, c), "a phased-out creature is treated as though it isn't there");
+    let l = play_land(&mut g, "Minas Tirith");
+    assert!(g.perm(l).tapped);
+}
+
+#[test]
+fn minas_tirith_counts_a_legendary_token() {
+    let mut g = tbl();
+    let c = minas(&mut g);
+    let t = token(&mut g, P0, 2);
+    assert!(turn::land_enters_tapped(&g, P0, c), "a plain token is not legendary");
+    g.perm_mut(t).data.set(DataKey::Legendary, Val::Bool(true));
+    assert!(!turn::land_enters_tapped(&g, P0, c), "a legendary token is");
+}
+
+#[test]
+fn minas_tirith_ignores_a_nonlegendary_copy_of_a_legend() {
+    let mut g = tbl();
+    let c = minas(&mut g);
+    let t = perm(&mut g, P0, "Tymna the Weaver");
+    g.perm_mut(t).exc.not_legendary = true; // Spark Double and the Ur-Dragon copies: "it isn't legendary"
+    assert!(turn::land_enters_tapped(&g, P0, c));
+}
+
+#[test]
+fn barad_dur_enters_untapped_with_a_nonlegendary_ring_bearer() {
+    // the sheoldred list's Barad-dur has the same rule: no printed legend out, but the Ring-bearer is legendary
+    let mut g = table(&["sheoldred", "seph"]);
+    g.active = Some(P0);
+    let c = card(&g, "Barad-dûr");
+    let m = perm(&mut g, P0, "Mother of Runes");
+    assert!(turn::land_enters_tapped(&g, P0, c));
+    ring_bearer_is(&mut g, m);
+    assert!(!turn::land_enters_tapped(&g, P0, c));
+}
+
+#[test]
+fn minas_tirith_counts_a_token_ring_bearer_as_legendary() {
+    // the Army from Sauron's tempt is a token: it has no card, but the Ring-bearer is legendary all the same
+    let mut g = tbl();
+    let c = minas(&mut g);
+    let t = token(&mut g, P0, 2);
+    g.player_mut(P0).ring_bearer = Some(t); // chosen, but the Ring has not tempted P0 yet (level 0)
+    assert!(turn::land_enters_tapped(&g, P0, c), "no Ring, no legend");
+    g.player_mut(P0).ring_level = 1;
+    assert!(sim_core::impls::legends::legendary(&g, t), "the Ring-bearer is legendary, token or not");
+    assert!(!turn::land_enters_tapped(&g, P0, c), "and Minas Tirith sees it");
+    let other = token(&mut g, P0, 1);
+    assert!(!sim_core::impls::legends::legendary(&g, other), "another token is not");
+}
+
+#[test]
+fn barad_dur_enters_untapped_with_a_token_ring_bearer() {
+    let mut g = table(&["sheoldred", "seph"]);
+    g.active = Some(P0);
+    let c = card(&g, "Barad-dûr");
+    let t = token(&mut g, P0, 2);
+    assert!(turn::land_enters_tapped(&g, P0, c));
+    ring_bearer_is(&mut g, t);
+    assert!(!turn::land_enters_tapped(&g, P0, c));
+}
+
+/// a person with Minas Tirith untapped, two attackers this turn and {W}{C} in the pool; "which ability?" takes the first
+fn ready_person_minas(g: &mut Game) -> PermId {
+    person(g, |r| r.prompt.contains("which ability?").then_some(0));
+    let l = play_land(g, "Minas Tirith");
+    g.perm_mut(l).tapped = false;
+    attacked_with(g, 2);
+    pool(g, P0, &[('W', 1), ('C', 1)]);
+    l
+}
+
+fn no_draw_label(g: &Game, l: PermId) -> bool {
+    !sim_core::human::abilities::land_abilities(g, P0, l).iter().any(|a| a.label.contains("draw a card"))
+}
+
+#[test]
+fn blood_moon_removes_the_person_draw_ability() {
+    let mut g = tbl();
+    let l = ready_person_minas(&mut g);
+    perm(&mut g, P1, "Blood Moon");
+    assert!(sim_core::engine::mana::moon_land(&g, l));
+    assert!(no_draw_label(&g, l), "a Mountain has no draw ability");
+    let before = (g.player(P0).hand.len(), g.player(P0).pool.total());
+    let _ = sim_core::human::human::use_land(&mut g, P0, l).unwrap();
+    assert_eq!((g.player(P0).hand.len(), g.player(P0).pool.total()), before, "nothing drawn, nothing paid");
+    assert!(!g.perm(l).tapped);
+}
+
+#[test]
+fn magus_of_the_moon_removes_the_person_draw_ability() {
+    let mut g = tbl();
+    let l = ready_person_minas(&mut g);
+    perm(&mut g, P1, "Magus of the Moon");
+    assert!(sim_core::engine::mana::moon_land(&g, l));
+    assert!(no_draw_label(&g, l), "a Mountain has no draw ability");
+    let hand = g.player(P0).hand.len();
+    let _ = sim_core::human::human::use_land(&mut g, P0, l).unwrap();
+    assert_eq!(g.player(P0).hand.len(), hand);
+    assert!(!g.perm(l).tapped);
+}
+
+#[test]
+fn a_person_may_draw_from_an_empty_library_and_lose() {
+    // the whole main-phase loop: the draw is attempted, and the player loses before priority comes back
+    let mut g = tbl();
+    let l = ready_person_minas(&mut g);
+    g.player_mut(P0).library.clear();
+    let mut activated = false;
+    g.humans.add(
+        P0,
+        std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+            if r.kind == "priority" {
+                if activated {
+                    Answer::Action(json!({"do": "pass"}))
+                } else {
+                    activated = true;
+                    Answer::Action(json!({"do": "use", "land": 0}))
+                }
+            } else if r.prompt.contains("which ability?") {
+                Answer::Pick(0)
+            } else {
+                Answer::Decline
+            }
+        })),
+    );
+    sim_core::human::human::human_main(&mut g, P0, false).unwrap();
+    assert!(g.player(P0).decked, "the draw was attempted");
+    assert!(!g.player(P0).alive, "and a player who drew from an empty library has lost");
+    assert!(g.perm(l).tapped);
+}
+
+#[test]
+fn cacophonys_temporary_legendary_supertype_expires() {
+    // Cacophony Unleashed becomes a legendary 6/6 creature until end of turn: the supertype goes with the rest
+    let mut g = tbl();
+    let c = perm(&mut g, P0, "Cacophony Unleashed");
+    assert!(g.is_creature(c));
+    assert!(sim_core::impls::legends::legendary(&g, c));
+    turn::end_step(&mut g, P0).unwrap();
+    assert!(!g.is_creature(c), "the animation ended");
+    assert!(!sim_core::impls::legends::legendary(&g, c), "so did the legendary supertype of the same effect");
+}
+
+#[test]
+fn sisay_loses_cacophonys_colour_after_the_effect_ends() {
+    let mut g = tbl();
+    let s = perm(&mut g, P0, "Sisay, Weatherlight Captain");
+    let c = perm(&mut g, P0, "Cacophony Unleashed");
+    assert!(sim_core::impls::legends::legendary(&g, c));
+    assert_eq!(epow(&g, s), 3);
+    turn::end_step(&mut g, P0).unwrap();
+    assert_eq!(epow(&g, s), 2, "Cacophony is no longer a legendary permanent");
+}
+
+#[test]
+fn a_card_made_legendary_by_an_effect_is_legendary() {
+    // DataKey::Legendary on a card-backed permanent (Anikthea's tokens, a Kaldra-style effect), not only on a token
+    let mut g = tbl();
+    let c = minas(&mut g);
+    let m = perm(&mut g, P0, "Mother of Runes");
+    assert!(!sim_core::impls::legends::legendary(&g, m));
+    assert!(turn::land_enters_tapped(&g, P0, c));
+    g.perm_mut(m).data.set(DataKey::Legendary, Val::Bool(true));
+    assert!(sim_core::impls::legends::legendary(&g, m));
+    assert!(!turn::land_enters_tapped(&g, P0, c), "and Minas Tirith sees it");
+}
+
 fn ready_minas(g: &mut Game) -> PermId {
     let l = play_land(g, "Minas Tirith");
     g.perm_mut(l).tapped = false;
@@ -302,6 +496,26 @@ fn minas_tirith_needs_the_mana() {
     assert!(draw_options(&mut g, l, Some(true)).is_empty(), "no white mana but its own");
 }
 
+/// everything a person is offered on the land: the ability probe's table (`abilities_of`, `land_abilities`, `land_alts`)
+fn offered_labels(g: &mut Game, l: PermId) -> Vec<String> {
+    let mut v: Vec<String> = sim_core::human::human::abilities_of(g, P0, l).unwrap().into_iter().map(|a| a.0).collect();
+    v.extend(sim_core::human::abilities::land_abilities(g, P0, l).into_iter().map(|a| a.label));
+    v.extend(sim_core::human::alt::land_alts(g, P0, l).unwrap().into_iter().map(|a| a.0));
+    v
+}
+
+fn draw_labels(g: &mut Game, l: PermId) -> Vec<String> {
+    offered_labels(g, l).into_iter().filter(|x| x.contains("draw a card")).collect()
+}
+
+/// the person's Minas Tirith draw: Some(why) when it can't be done now
+fn use_draw(g: &mut Game, l: PermId) -> Option<String> {
+    let ab = sim_core::human::abilities::land_abilities(g, P0, l);
+    let a = ab.iter().find(|a| a.label.contains("draw a card"));
+    assert!(a.is_some(), "the draw is a land ability: {:?}", ab.iter().map(|a| &a.label).collect::<Vec<_>>());
+    (a.unwrap().act)(g, P0, l).unwrap()
+}
+
 #[test]
 fn a_person_uses_minas_tirith_from_their_pool() {
     let mut g = tbl();
@@ -310,18 +524,56 @@ fn a_person_uses_minas_tirith_from_their_pool() {
     g.perm_mut(l).tapped = false;
     attacked_with(&mut g, 2);
     g.player_mut(P0).pool.add('W', 2);
-    let ways = sim_core::human::alt::land_alts(&mut g, P0, l).unwrap();
-    assert!(
-        ways.iter().any(|(label, _)| label.contains("Minas Tirith: draw")),
-        "{:?}",
-        ways.iter().map(|w| &w.0).collect::<Vec<_>>()
-    );
-    let (_, o) = ways.into_iter().find(|(label, _)| label.contains("draw")).unwrap();
+    let labels = draw_labels(&mut g, l);
+    assert_eq!(labels.len(), 1, "{labels:?}");
     let hand = g.player(P0).hand.len();
-    let cd = g.perm(l).card();
-    assert!(sim_core::human::alt::run(&mut g, P0, cd, &o).unwrap().is_none());
+    assert_eq!(use_draw(&mut g, l), None);
     assert_eq!(g.player(P0).hand.len(), hand + 1);
     assert_eq!(g.player(P0).pool.total(), 0, "the {{1}}{{W}} came out of the pool");
+    assert!(g.perm(l).tapped, "it taps as a cost");
+}
+
+#[test]
+fn a_person_is_offered_minas_tirith_draw_and_told_why_before_attacking() {
+    let mut g = tbl();
+    person(&mut g, |_| None);
+    let l = play_land(&mut g, "Minas Tirith");
+    g.perm_mut(l).tapped = false;
+    g.player_mut(P0).pool.add('W', 2);
+    // the ability probe's own check: with nobody attacked, the land still lists something
+    assert!(!sim_core::human::abilities::land_abilities(&g, P0, l).is_empty());
+    assert_eq!(draw_labels(&mut g, l).len(), 1);
+    let hand = g.player(P0).hand.len();
+    let why = use_draw(&mut g, l).expect("nobody has attacked");
+    assert!(why.contains("attacked with two or more creatures"), "{why}");
+    attacked_with(&mut g, 1);
+    assert!(use_draw(&mut g, l).expect("one attacker").contains("two or more"));
+    attacked_with(&mut g, 2);
+    let _ = std::mem::take(&mut g.player_mut(P0).pool);
+    let why = use_draw(&mut g, l).expect("no mana");
+    assert!(why.contains("Can't activate Minas Tirith"), "{why}");
+    g.player_mut(P0).pool.add('W', 2);
+    g.perm_mut(l).tapped = true;
+    assert!(use_draw(&mut g, l).expect("tapped").contains("tapped"));
+    assert_eq!(g.player(P0).hand.len(), hand, "none of them drew");
+    assert_eq!(g.player(P0).pool.total(), 2, "or paid");
+}
+
+#[test]
+fn a_person_sees_minas_tirith_draw_once() {
+    let mut g = tbl();
+    person(&mut g, |_| None);
+    let l = play_land(&mut g, "Minas Tirith");
+    g.perm_mut(l).tapped = false;
+    g.player_mut(P0).pool.add('W', 2);
+    assert_eq!(draw_labels(&mut g, l).len(), 1, "before attacking");
+    attacked_with(&mut g, 2);
+    assert_eq!(
+        draw_labels(&mut g, l).len(),
+        1,
+        "after two attackers: not listed twice: {:?}",
+        offered_labels(&mut g, l)
+    );
 }
 
 // ------------------------------------------------------------------ The Seriema
