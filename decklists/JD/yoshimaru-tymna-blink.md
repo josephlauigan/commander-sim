@@ -230,7 +230,7 @@ Expect most games to be won here. Keep the engine running: one enter effect per 
 | Charming Prince | Another creature we own | Returns at the beginning of the next end step |
 | Ennis | Another creature we control | Returns at the beginning of the next end step |
 | Flickerwisp | Any other permanent | Mandatory. Ours is a delayed enter effect. An opposing permanent is gone until the end step, and an opposing token is gone for good (a rules point). Elesh Norn stops its owner's enter trigger when it returns |
-| Felidar Guardian | Any other permanent we control | Works on planeswalkers (a blinked planeswalker is a new object with its starting loyalty and can use an ability again, a rules point), rocks and artifacts |
+| Felidar Guardian | Any other permanent we control | Works on planeswalkers (a blinked planeswalker is a new object with its starting loyalty and can use an ability again, a rules point), rocks |
 | Eerie Interlude ({2}{W}, instant) | Any number of our creatures | They return at the beginning of the next end step: cast it before the end step you want them back at. It is a mass enter effect and the sweeper answer |
 | Teleportation Circle ({3}{W}) | An artifact or creature | At each of our end steps. Solitude, Recruiter, a legend for Yoshimaru |
 | Conjurer's Closet ({5}, artifact) | One target creature we control (creatures only) | At the beginning of each of our end steps, a "may". A late engine: it needs a creature on the battlefield. Stacks with Teleportation Circle and The Mind Stone |
@@ -347,7 +347,7 @@ Yoshimaru and Tymna start in the command zone, so no tutor finds them. The tutor
 | An artifact or enchantment stax piece | Recruiter of the Guard | Loran of the Third Path or Witch Enchanter | Both are creatures cast at sorcery speed; for instant speed use Anguished Unmaking. Enlightened Tutor cannot find them |
 | A sweeper is coming | Demonic Tutor, Vampiric Tutor | Eerie Interlude, Teferi's Protection or Flawless Maneuver | Match the answer to the sweeper (see Protecting the commanders) |
 | Mana or fixing | Enlightened Tutor | Sol Ring, Mana Vault or a rock that fits the hand | The Mind Stone also fixes white |
-| Late, 7 or more mana | Demonic Tutor; Imperial Seal at the end step before | Gandalf, Elesh Norn, Sheoldred or the missing line piece | Count mana: Line D from scratch costs 13 |
+| Late, 7 or more mana | Demonic Tutor; Vampiric Tutor at the end step before | Gandalf, Elesh Norn, Sheoldred or the missing line piece | Count mana: Line D from scratch costs 13 |
 
 **Tutor mistakes:** asking for a commander; using Enlightened Tutor for a creature that is not an artifact or enchantment (Vito, Delney); casting a top-of-library tutor on our own turn when we cannot spend the mana on the card (cast it at the end step before); and casting Vampiric Tutor, Imperial Seal or Anguished Unmaking at a life total the table can punish.
 
