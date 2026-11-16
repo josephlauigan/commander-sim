@@ -305,6 +305,19 @@ fn barad_dur_enters_untapped_with_a_nonlegendary_ring_bearer() {
     assert!(!turn::land_enters_tapped(&g, P0, c));
 }
 
+#[test]
+fn a_card_made_legendary_by_an_effect_is_legendary() {
+    // DataKey::Legendary on a card-backed permanent (Anikthea's tokens, a Kaldra-style effect), not only on a token
+    let mut g = tbl();
+    let c = minas(&mut g);
+    let m = perm(&mut g, P0, "Mother of Runes");
+    assert!(!sim_core::impls::legends::legendary(&g, m));
+    assert!(turn::land_enters_tapped(&g, P0, c));
+    g.perm_mut(m).data.set(DataKey::Legendary, Val::Bool(true));
+    assert!(sim_core::impls::legends::legendary(&g, m));
+    assert!(!turn::land_enters_tapped(&g, P0, c), "and Minas Tirith sees it");
+}
+
 fn ready_minas(g: &mut Game) -> PermId {
     let l = play_land(g, "Minas Tirith");
     g.perm_mut(l).tapped = false;
