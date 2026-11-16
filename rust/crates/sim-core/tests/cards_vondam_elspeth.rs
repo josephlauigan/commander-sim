@@ -1006,7 +1006,11 @@ fn interlude_holds_its_own_triggers_until_everything_has_left() {
         sim_core::impls::galadriel::interlude(&mut g, P0, &ms).unwrap();
         assert!(g.trig_queue.is_empty(), "the triggers were resolved");
         assert_eq!(g.player(P0).life, life + 1, "Vondam-first={vondam_first}: ally exiled at the same time");
-        assert_eq!(g.perm(v).plus, 0, "Vondam-first={vondam_first}: he left with the ally, so the counter has nowhere to go");
+        assert_eq!(
+            g.perm(v).plus,
+            0,
+            "Vondam-first={vondam_first}: he left with the ally, so the counter has nowhere to go"
+        );
     }
 }
 
@@ -1062,4 +1066,153 @@ fn a_vondam_that_survived_a_wipe_and_dies_alone_uses_his_power_at_that_moment() 
     zones::die(&mut g, v, "destroy").unwrap();
     assert!(!g.perm(v).on_bf);
     assert!(g.perm(prize).on_bf, "he was power 3 as he died alone: no destroy");
+}
+
+// ------------------------------------------------------------------ own shroud, own hexproof
+/// a person at P0 whose questions are all declined; true once any choice of a question contains `word`
+fn offered(g: &mut Game, word: &'static str) -> std::sync::Arc<std::sync::Mutex<bool>> {
+    let seen = std::sync::Arc::new(std::sync::Mutex::new(false));
+    let log = seen.clone();
+    g.humans.add(
+        P0,
+        std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+            if r.kind == "priority" {
+                return Answer::Action(json!({"do": "pass"}));
+            }
+            *log.lock().unwrap() |= r.choices.iter().any(|s| s.contains(word));
+            Answer::Decline
+        })),
+    );
+    seen
+}
+
+/// Syr Vondam (power 4) of P0 dies; the person is asked for his target. Was `word` among the choices?
+fn offered_as_vondams_target(setup: fn(&mut Game), word: &'static str) -> bool {
+    let (mut g, v) = vondam_table();
+    g.perm_mut(v).plus = 2;
+    setup(&mut g);
+    let seen = offered(&mut g, word);
+    zones::die(&mut g, v, "destroy").unwrap();
+    let r = *seen.lock().unwrap();
+    r
+}
+
+/// a creature of P0's that nothing may target: shroud stops its own controller too (CR 702.18a)
+#[test]
+fn owned_shroud_is_not_offered_as_a_vondam_destroy_target() {
+    let shrouded = offered_as_vondams_target(
+        |g| {
+            let t = perm(g, P0, "Serra Angel");
+            g.perm_mut(t).eot_kw.push("shroud");
+        },
+        "Serra Angel",
+    );
+    assert!(!shrouded, "shroud forbids targeting even your own permanent");
+}
+
+#[test]
+fn own_lightning_greaves_and_whispersilk_cloak_stop_vondams_destroy_too() {
+    type Setup = fn(&mut Game);
+    let rows: [(&str, Setup); 2] = [
+        ("Lightning Greaves", |g| {
+            let t = perm(g, P0, "Serra Angel");
+            let e = perm(g, P0, "Lightning Greaves");
+            g.perm_mut(e).attached = Some(t);
+        }),
+        ("Whispersilk Cloak", |g| {
+            let t = perm(g, P0, "Serra Angel");
+            let e = perm(g, P0, "Whispersilk Cloak");
+            g.perm_mut(e).attached = Some(t);
+        }),
+    ];
+    let offered: Vec<&str> = rows
+        .into_iter()
+        .filter(|&(_, setup)| offered_as_vondams_target(setup, "Serra Angel"))
+        .map(|(e, _)| e)
+        .collect();
+    assert!(offered.is_empty(), "shroud, so not even yours may target it, but it was offered with: {offered:?}");
+}
+
+/// controls: your own hexproof permanent is a legal target (hexproof stops only opponents); an opponent's is not
+#[test]
+fn hexproof_is_offered_for_your_own_permanent_and_not_for_an_opponents() {
+    assert!(
+        offered_as_vondams_target(
+            |g| {
+                perm(g, P0, "Sylvan Caryatid");
+            },
+            "Sylvan Caryatid",
+        ),
+        "your own hexproof permanent may be targeted by your ability"
+    );
+    assert!(
+        !offered_as_vondams_target(
+            |g| {
+                perm(g, P1, "Sylvan Caryatid");
+            },
+            "Sylvan Caryatid",
+        ),
+        "an opponent's hexproof permanent may not"
+    );
+}
+
+/// Elspeth's pump has the same rule: shroud from a keyword, Lightning Greaves or Whispersilk Cloak stops its controller
+/// too; hexproof (the keyword, Swiftfoot Boots) stops only opponents
+#[test]
+fn elspeths_pump_respects_own_shroud_from_every_source() {
+    use sim_core::impls::vondam_elspeth::pump_legal;
+    type Row = (&'static str, fn(&mut Game) -> PermId, bool);
+    let rows: [Row; 6] = [
+        (
+            "shroud keyword",
+            |g| {
+                let t = perm(g, P0, "Serra Angel");
+                g.perm_mut(t).eot_kw.push("shroud");
+                t
+            },
+            false,
+        ),
+        (
+            "Lightning Greaves",
+            |g| {
+                let t = perm(g, P0, "Serra Angel");
+                let e = perm(g, P0, "Lightning Greaves");
+                g.perm_mut(e).attached = Some(t);
+                t
+            },
+            false,
+        ),
+        (
+            "Whispersilk Cloak",
+            |g| {
+                let t = perm(g, P0, "Serra Angel");
+                let e = perm(g, P0, "Whispersilk Cloak");
+                g.perm_mut(e).attached = Some(t);
+                t
+            },
+            false,
+        ),
+        ("own hexproof keyword", |g| perm(g, P0, "Sylvan Caryatid"), true),
+        (
+            "own Swiftfoot Boots",
+            |g| {
+                let t = perm(g, P0, "Serra Angel");
+                let e = perm(g, P0, "Swiftfoot Boots");
+                g.perm_mut(e).attached = Some(t);
+                t
+            },
+            true,
+        ),
+        ("an opponent's hexproof keyword", |g| perm(g, P1, "Sylvan Caryatid"), false),
+    ];
+    let mut wrong = vec![];
+    for (name, setup, legal) in rows {
+        let mut g = tbl();
+        let e = perm(&mut g, P0, ELSPETH);
+        let t = setup(&mut g);
+        if pump_legal(&g, P0, e, t) != legal {
+            wrong.push(format!("{name}: pump_legal should be {legal}"));
+        }
+    }
+    assert!(wrong.is_empty(), "{wrong:#?}");
 }
