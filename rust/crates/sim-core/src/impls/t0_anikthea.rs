@@ -1028,6 +1028,8 @@ fn cacophony_end(g: &mut Game, src: Src, _p: PlayerId) -> Res {
     if g.perm(src).data.truthy(DataKey::Anim) {
         g.perm_mut(src).data.set(DataKey::Anim, Val::Bool(false));
     }
+    // "legendary" was granted by the same until-end-of-turn effect
+    g.perm_mut(src).data.set(DataKey::Legendary, Val::Bool(false));
     Ok(())
 }
 
