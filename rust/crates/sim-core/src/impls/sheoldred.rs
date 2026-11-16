@@ -1616,7 +1616,9 @@ fn seizan_upkeep(g: &mut Game, src: Src, p: PlayerId) -> Res {
 fn dreams_draw(g: &mut Game, src: Src, p: PlayerId) -> Res {
     let o = owner(g, src);
     if p != o && on_bf(g, src) && g.player(p).alive {
-        lose_life(g, p, 1, Some(o), "triggers", Some(true))?;
+        let ll = crate::engine::life::has_lifelink(g, src); // Fate Unraveler is a creature: Vito can give it lifelink
+        let dealt = crate::engine::life::lose_life_dealt(g, p, 1, Some(o), "triggers", Some(true))?;
+        crate::engine::life::lifelink(g, src, ll, dealt)?;
     }
     Ok(())
 }

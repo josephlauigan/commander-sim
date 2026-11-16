@@ -563,6 +563,8 @@ const READS_LIFELINK: &[&str] = &[
     "Dragon Tempest",
     "Drakuseth, Maw of Flames",
     "Balefire Dragon",
+    "Fate Unraveler",
+    "Myr Battlesphere",
     "Sorin, Vengeful Bloodlord",
     "Aurelia, the Law Above",
     "Firemane Avenger",
@@ -572,8 +574,6 @@ const READS_LIFELINK: &[&str] = &[
 /// ... and do not (yet): their damage sites are card code that does not read lifelink. A deck that pairs one with a
 /// granter that reaches it fails the test below, unless the pair is in `KNOWN_OPEN`
 const IGNORES_LIFELINK: &[&str] = &[
-    "Fate Unraveler",
-    "Myr Battlesphere",
     "Mayhem Devil",
     "Midnight Reaper",
     "Syr Konrad, the Grim",
@@ -587,8 +587,8 @@ const IGNORES_LIFELINK: &[&str] = &[
     "Jagged-Scar Archers",
 ];
 
-/// pairs found when the guard was written, awaiting a decision (convert the site, or accept it)
-const KNOWN_OPEN: &[(&str, &str)] = &[("sheoldred", "Fate Unraveler"), ("zurgo-mardu-surge", "Myr Battlesphere")];
+/// pairs awaiting a decision (convert the site, or accept it): none; the two found when the guard was written are converted
+const KNOWN_OPEN: &[(&str, &str)] = &[];
 
 fn reaches(reach: Reach, card: &str) -> bool {
     let db = sim_core::testkit::db();
