@@ -694,6 +694,33 @@ fn run(key: &str, name: &str, put: &str, land: bool, saga: bool, equip: bool, sc
     Outcome { n_abil, fired, sig, asked, autos, error }
 }
 
+/// Syr Vondam's own line ("When Syr Vondam dies or is put into exile while its power is 4 or greater") drives only his
+/// own death; a line about another creature, an enchanted one or any creature still drives all three moments
+#[test]
+fn a_condition_naming_the_card_itself_drives_only_its_own_death() {
+    let text = oracle(&json("scryfall_cache.json"), "Syr Vondam, Sunstar Exemplar").unwrap();
+    let (sc, none) = scenarios(&trigger_lines(&text));
+    assert!(sc.contains(&Sc::DieSelf), "his own death is driven: {sc:?}");
+    assert!(!sc.contains(&Sc::DieOwn) && !sc.contains(&Sc::DieOpp), "no other creature's death fires it: {sc:?}");
+    assert!(none.is_empty(), "no line without a moment: {none:?}");
+    for others in [
+        "Whenever another creature you control dies, you may draw a card.",
+        "When another creature you control dies, you may draw a card.",
+        "When enchanted creature dies, you may return it to the battlefield.",
+        "When equipped creature dies, you may draw a card.",
+        "When a creature dies, you may draw a card.",
+    ] {
+        let (sc, _) = scenarios(&trigger_lines(others));
+        assert!(sc.contains(&Sc::DieOwn), "{others}: {sc:?}");
+    }
+    let (sc, _) = scenarios(&trigger_lines("When this creature dies, you may draw a card."));
+    assert_eq!(sc, BTreeSet::from([Sc::DieSelf]), "\"when this creature dies\" is its own death only");
+    let (sc, _) = scenarios(&trigger_lines("When this creature is put into exile, you may draw a card."));
+    assert_eq!(sc, BTreeSet::from([Sc::DieSelf]));
+    let (sc, _) = scenarios(&trigger_lines("When this creature leaves the battlefield, you may draw a card."));
+    assert_eq!(sc, BTreeSet::from([Sc::DieSelf]));
+}
+
 #[test]
 fn every_trigger_choice_of_the_owned_decks_is_asked_of_a_person() {
     let cache = json("scryfall_cache.json");
