@@ -501,3 +501,120 @@ fn a_lifelink_attacker_into_glacial_chasm_gains_nothing() {
     assert_eq!(g.player(P1).life, 40, "prevented");
     assert_eq!(g.player(P0).life, 40, "nothing dealt, nothing gained");
 }
+
+// ------------------------------------------------------------------ the guard (decks.json: yours and the pools)
+/// which permanents a card that grants lifelink reaches. Cards that give it only to tokens (Teysa Karlov, Archon of Sun's
+/// Grace, Dreadhorde Invasion) are left out: no deck list names a token
+#[derive(Clone, Copy)]
+enum Reach {
+    Any,
+    Black,
+    Angels,
+}
+
+const GRANTERS: &[(&str, Reach)] = &[
+    ("Sorin, Vengeful Bloodlord", Reach::Any),
+    ("Heliod, Sun-Crowned", Reach::Any),
+    ("Vito, Thorn of the Dusk Rose", Reach::Any),
+    ("Akroma's Will", Reach::Any),
+    ("Vault of the Archangel", Reach::Any),
+    ("Felidar Umbra", Reach::Any),
+    ("Sheltered by Ghosts", Reach::Any),
+    ("On Serra's Wings", Reach::Any),
+    ("Lyra Dawnbringer", Reach::Angels),
+    ("Scion of Draco", Reach::Black),
+];
+
+/// creatures and planeswalkers that deal damage other than combat damage, and read lifelink at the site (a compiled
+/// permanent's damage reads it too: `dsl::run`'s "damage")
+const READS_LIFELINK: &[&str] = &[
+    "Walking Ballista",
+    "Triskelion",
+    "Orcish Bowmasters",
+    "Siege-Gang Commander",
+    "Terror of the Peaks",
+    "Scourge of Valkas",
+    "Dragon Tempest",
+    "Drakuseth, Maw of Flames",
+    "Balefire Dragon",
+    "Sorin, Vengeful Bloodlord",
+    "Aurelia, the Law Above",
+    "Firemane Avenger",
+    "Niv-Mizzet, the Firemind",
+];
+
+/// ... and do not (yet): their damage sites are card code that does not read lifelink. A deck that pairs one with a
+/// granter that reaches it fails the test below, unless the pair is in `KNOWN_OPEN`
+const IGNORES_LIFELINK: &[&str] = &[
+    "Fate Unraveler",
+    "Myr Battlesphere",
+    "Mayhem Devil",
+    "Midnight Reaper",
+    "Syr Konrad, the Grim",
+    "Vindictive Vampire",
+    "Kaervek the Merciless",
+    "Smaug the Magnificent",
+    "Glorybringer",
+    "Thundermaw Hellkite",
+    "Goblin Chainwhirler",
+    "Goblin Sharpshooter",
+    "Jagged-Scar Archers",
+];
+
+/// pairs found when the guard was written, awaiting a decision (convert the site, or accept it)
+const KNOWN_OPEN: &[(&str, &str)] =
+    &[("sheoldred", "Fate Unraveler"), ("zurgo-mardu-surge", "Myr Battlesphere")];
+
+fn reaches(reach: Reach, card: &str) -> bool {
+    let db = sim_core::testkit::db();
+    let d = db.get(db.id(card).unwrap_or_else(|| panic!("{card} is not in cards.json")));
+    match reach {
+        Reach::Any => true,
+        Reach::Black => d.pips.contains('B'),
+        Reach::Angels => d.subtypes.iter().any(|t| &**t == "angel"),
+    }
+}
+
+fn pairs() -> Vec<(String, &'static str, &'static str)> {
+    let mut out = vec![];
+    for d in sim_core::testkit::decks().iter().filter(|d| d.tier.as_deref() != Some("retired")) {
+        for &(granter, reach) in GRANTERS {
+            if !d.cards.iter().any(|c| c == granter) {
+                continue;
+            }
+            for &o in IGNORES_LIFELINK {
+                if d.cards.iter().any(|c| c == o) && reaches(reach, o) {
+                    out.push((d.key.clone(), granter, o));
+                }
+            }
+        }
+    }
+    out
+}
+
+#[test]
+fn no_deck_pairs_a_lifelink_granter_with_a_damage_site_that_ignores_lifelink() {
+    let bad: Vec<String> = pairs()
+        .into_iter()
+        .filter(|(k, _, o)| !KNOWN_OPEN.contains(&(k.as_str(), *o)))
+        .map(|(k, g, o)| format!("{k}: {g} can give {o} lifelink, but its damage site does not read it"))
+        .collect();
+    assert!(bad.is_empty(), "convert the site (`life::lifelink`) or list the pair in KNOWN_OPEN: {bad:#?}");
+}
+
+#[test]
+fn every_known_open_pair_is_still_open() {
+    let now = pairs();
+    for &(k, o) in KNOWN_OPEN {
+        assert!(now.iter().any(|(dk, _, dc)| dk == k && *dc == o), "{k} / {o} is no longer a pair: remove it");
+    }
+}
+
+#[test]
+fn the_guard_lists_name_real_cards_and_overlap_nowhere() {
+    let db = sim_core::testkit::db();
+    for n in GRANTERS.iter().map(|g| g.0).chain(READS_LIFELINK.iter().copied()).chain(IGNORES_LIFELINK.iter().copied()) {
+        assert!(db.id(n).is_some(), "{n} is not in cards.json");
+    }
+    assert!(READS_LIFELINK.iter().all(|n| !IGNORES_LIFELINK.contains(n)));
+}
