@@ -319,6 +319,31 @@ fn balefire_dragon_with_lifelink_gains_for_each_creature_it_damages() {
     assert_eq!(g.player(P0).life, 40 + 5 + 5 + 5, "5 to the player, 5 to each of two creatures");
 }
 
+// ------------------------------------------------------------------ the sites the guard first listed as open
+#[test]
+fn fate_unraveler_with_lifelink_gains_the_damage_it_deals_when_an_opponent_draws() {
+    let mut g = tbl();
+    let f = perm(&mut g, P0, "Fate Unraveler");
+    zones::draw(&mut g, P1, 1, false).unwrap();
+    assert_eq!(g.player(P0).life, 40, "no lifelink, no gain");
+    g.perm_mut(f).lifelink = true;
+    let theirs = g.player(P1).life;
+    zones::draw(&mut g, P1, 1, false).unwrap();
+    assert_eq!(g.player(P1).life, theirs - 1, "1 damage to the player who drew");
+    assert_eq!(g.player(P0).life, 41, "lifelink");
+}
+
+#[test]
+fn myr_battlesphere_with_lifelink_gains_the_damage_it_deals_when_it_attacks() {
+    let mut g = tbl();
+    let b = perm(&mut g, P0, "Myr Battlesphere");
+    g.perm_mut(b).lifelink = true;
+    let theirs = g.player(P1).life;
+    sim_core::engine::combat::attack_triggers(&mut g, P0, &[b], P1).unwrap();
+    assert_eq!(g.player(P1).life, theirs - 4, "it taps its four Myr: 4 damage");
+    assert_eq!(g.player(P0).life, 44, "lifelink");
+}
+
 // ------------------------------------------------------------------ coverage rows (green before and after)
 #[test]
 fn a_spell_gains_nothing_with_a_lifelinker_out() {
