@@ -27,6 +27,21 @@ the combo, and the Oracle line, Tinker and Sneak Attack have no card code or pla
 would understate it. Check the blue count when a run exists: 12 land sources make {U}, 14 counting Exotic Orchard (blue
 only if an opponent's land makes it) and Plaza of Heroes (which cannot pay for Gifts).
 
+## 2026-11-15: Elesh Norn => Sculpting Steel (JD's choice, not simulated)
+Sculpting Steel ({3} artifact, colourless, Commander-legal) takes Elesh Norn, Mother of Machines' slot. Why JD chose it:
+a flexible artifact that copies the best artifact already on the battlefield. In this list: a second Rings of Brighthearth
+(two Rings let one Basalt Monolith untap be copied twice: {7} spent for three taps of {C}{C}{C}, two extra mana per loop
+instead of one), a second Blightsteel Colossus (an artifact creature) after Tinker or Sneak Attack as insurance against a
+blocker or removal, or a second colourless rock for Thanos's power-up. What it costs: it needs an artifact already out, so
+it finds no combo piece, and it is a plain artifact on an empty board. Elesh Norn doubled the enter triggers of Urza,
+Meteor Golem, Primeval Titan and The Mightstone and Weakstone, and stopped the opponent's enter triggers (a defence
+against an opposing Thassa's Oracle), so those go too. An Opus consult (Dockside Extortionist, not Steel, was the question
+then) ranked Mana Drain, Chrome Mox and Imperial Seal first and advised cutting Fiery Emancipation, the weakest card,
+rather than Elesh Norn; Fiery Emancipation is still the next cut. The engine models Sculpting Steel (Full: it enters as a copy of the best artifact on the
+battlefield, `card_overrides.toml`), but `thanos` has no plan line for it and Tinker, Sneak Attack and the Rings loop are
+not modelled, so a sim number would not reflect the Rings and Blightsteel lines. Not measured. Commander
+Spellbook lists no combo with Sculpting Steel for this list.
+
 ## What the simulator cannot do yet
 
 - **No Cali mode:** the engine plays 4-player pods at 40 life. Cali is 1v1 at 30 life, and the player on the play skips
