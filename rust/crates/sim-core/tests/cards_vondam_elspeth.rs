@@ -1216,3 +1216,35 @@ fn elspeths_pump_respects_own_shroud_from_every_source() {
     }
     assert!(wrong.is_empty(), "{wrong:#?}");
 }
+
+/// hexproof stops only opponents (CR 702.11b): Syr Vondam's controller may destroy their own Sylvan Caryatid
+#[test]
+fn own_hexproof_is_a_legal_vondam_destroy_target() {
+    let (mut g, v) = vondam_table();
+    g.perm_mut(v).plus = 2;
+    let target = perm(&mut g, P0, "Sylvan Caryatid");
+    person_picking(&mut g, "Sylvan Caryatid");
+    zones::die(&mut g, v, "destroy").unwrap();
+    assert!(!g.perm(target).on_bf, "hexproof allows your own ability to destroy it");
+}
+
+/// control: your own Phantasmal Image that Vondam targets is still sacrificed ("when it becomes the target of a spell or
+/// ability"), even when destroy could not kill it
+#[test]
+fn a_phantasmal_image_that_vondam_targets_is_still_sacrificed() {
+    let (mut g, v) = vondam_table();
+    g.perm_mut(v).plus = 2;
+    perm(&mut g, P1, "Serra Angel");
+    let img = perm(&mut g, P0, "Phantasmal Image");
+    assert!(sim_core::impls::t6_copies::is_image(&g, img));
+    g.perm_mut(img).eot_kw.push("indestructible"); // a destroy would not take it
+    g.humans.add(
+        P0,
+        std::sync::Arc::new(ScriptHuman::from_fn(|r| {
+            if r.kind == "priority" { Answer::Action(json!({"do": "pass"})) } else { Answer::Pick(0) }
+        })),
+    );
+    zones::die(&mut g, v, "destroy").unwrap();
+    assert!(!g.perm(img).on_bf, "the Image became the target of Vondam's ability and was sacrificed");
+    assert!(g.player(P0).gy.contains(&card(&g, "Phantasmal Image")));
+}
