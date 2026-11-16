@@ -235,3 +235,234 @@ fn the_exile_trigger_waits_behind_the_enters_trigger_of_the_returned_creature() 
         .collect();
     assert_eq!(order, ["enters", "exiled"], "the creature's enters trigger is queued first, as it always was");
 }
+
+// ------------------------------------------------------------------ Syr Vondam, Sunstar Exemplar
+const VONDAM: &str = "Syr Vondam, Sunstar Exemplar";
+
+fn vondam_table() -> (Game, PermId) {
+    let mut g = tbl();
+    let v = perm(&mut g, P0, VONDAM);
+    (g, v)
+}
+
+/// a person at P0 who answers a question by the first choice that contains `word` (decline otherwise) and passes
+/// priority; the questions asked (not priority) are collected
+fn person_picking(g: &mut Game, word: &'static str) -> std::sync::Arc<std::sync::Mutex<Vec<String>>> {
+    let asked = std::sync::Arc::new(std::sync::Mutex::new(vec![]));
+    let log = asked.clone();
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        log.lock().unwrap().push(format!("{}: {:?}", r.prompt, r.choices));
+        match r.choices.iter().position(|c| c.contains(word)) {
+            Some(i) => Answer::Pick(i),
+            None => Answer::Decline,
+        }
+    }));
+    g.humans.add(P0, h);
+    asked
+}
+
+#[test]
+fn syr_vondam_grows_and_gains_when_another_creature_of_yours_dies_or_is_exiled() {
+    let (mut g, v) = vondam_table();
+    let life = g.player(P0).life;
+    // dies: a token
+    let t = token(&mut g, P0, 1);
+    zones::die(&mut g, t, "destroy").unwrap();
+    assert_eq!((g.perm(v).plus, g.player(P0).life), (1, life + 1), "a token of yours died");
+    // exiled: Swords on your own creature
+    let own = perm(&mut g, P0, "Serra Angel");
+    let swords = take(&mut g, P0, "Swords to Plowshares");
+    let before = g.player(P0).life;
+    cast::resolve(&mut g, P0, swords, &Ctx { target: Some(own), ..Ctx::default() }, "hand").unwrap();
+    assert_eq!(g.perm(v).plus, 2, "an exiled creature of yours");
+    assert_eq!(g.player(P0).life, before + 4 + 1, "Swords gives its controller 4 (its power), Vondam 1");
+    // blinked: put into exile too
+    let wall = perm(&mut g, P0, "Wall of Omens");
+    sim_core::impls::t2::blink(&mut g, P0, wall).unwrap();
+    assert_eq!(g.perm(v).plus, 3, "a blink exiles it first");
+    // one trigger per creature: two die one after the other
+    let (a, b) = (token(&mut g, P0, 1), token(&mut g, P0, 1));
+    let before = g.player(P0).life;
+    zones::die(&mut g, a, "destroy").unwrap();
+    zones::die(&mut g, b, "destroy").unwrap();
+    assert_eq!((g.perm(v).plus, g.player(P0).life), (5, before + 2));
+}
+
+#[test]
+fn an_opponents_creature_exiled_gives_vondam_nothing() {
+    let (mut g, v) = vondam_table();
+    let life = g.player(P0).life;
+    let theirs = perm(&mut g, P1, "Serra Angel");
+    zones::exile_perm(&mut g, theirs).unwrap();
+    let dead = token(&mut g, P1, 2);
+    zones::die(&mut g, dead, "destroy").unwrap();
+    let rock = perm(&mut g, P0, "Sol Ring"); // not a creature
+    zones::die(&mut g, rock, "destroy").unwrap();
+    assert_eq!((g.perm(v).plus, g.player(P0).life), (0, life), "nothing: not a creature of yours");
+}
+
+#[test]
+fn a_creature_that_dies_stolen_counts_for_whoever_controlled_it() {
+    let (mut g, v) = vondam_table();
+    let life = g.player(P0).life;
+    let stolen = perm(&mut g, P1, "Serra Angel");
+    sim_core::engine::control::gain_control(&mut g, P0, stolen, sim_core::engine::control::Duration::Permanent);
+    assert_eq!(g.perm(stolen).owner, P0);
+    zones::die(&mut g, stolen, "destroy").unwrap();
+    assert_eq!((g.perm(v).plus, g.player(P0).life), (1, life + 1), "it was a creature you controlled as it died");
+}
+
+#[test]
+fn vondam_does_not_trigger_for_himself_dying_or_blinked() {
+    let (mut g, v) = vondam_table();
+    let life = g.player(P0).life;
+    let back = sim_core::impls::t2::blink(&mut g, P0, v).unwrap().unwrap();
+    assert_eq!((g.perm(back).plus, g.player(P0).life), (0, life), "the new Syr Vondam saw nothing: not another creature");
+}
+
+#[test]
+fn syr_vondam_at_power_four_destroys_when_it_dies_or_is_exiled() {
+    for how in ["dies", "exiled", "rest in peace", "blinked"] {
+        let (mut g, v) = vondam_table();
+        g.perm_mut(v).plus = 2; // a 4/4
+        let prize = perm(&mut g, P1, "Serra Angel");
+        let land = lands(&mut g, P1, "Plains", 1, false)[0];
+        let mut want = prize;
+        match how {
+            "dies" => zones::die(&mut g, v, "destroy").unwrap(),
+            "exiled" => zones::exile_perm(&mut g, v).unwrap(),
+            "rest in peace" => {
+                want = perm(&mut g, P1, "Rest in Peace"); // worth more to the AI than the Angel
+                zones::die(&mut g, v, "destroy").unwrap();
+            }
+            _ => {
+                sim_core::impls::t2::blink(&mut g, P0, v).unwrap();
+            }
+        }
+        assert!(!g.perm(want).on_bf, "{how}: the best opposing nonland permanent is destroyed");
+        assert!(g.perm(land).on_bf, "{how}: a land is not a legal target");
+    }
+}
+
+#[test]
+fn syr_vondam_at_power_three_does_nothing_and_the_power_is_the_last_known_one() {
+    let (mut g, v) = vondam_table();
+    g.perm_mut(v).plus = 1; // 3/3
+    let prize = perm(&mut g, P1, "Serra Angel");
+    zones::die(&mut g, v, "destroy").unwrap();
+    assert!(g.perm(prize).on_bf, "power 3: no trigger");
+    // an Equipment gives power as he leaves; it falls off with him, but his last known power counts
+    let (mut g, v) = vondam_table();
+    let sword = perm(&mut g, P0, "Sword of Fire and Ice");
+    g.perm_mut(sword).attached = Some(v);
+    assert_eq!(sim_core::engine::values::epow(&g, v), 4, "2/2 with +2/+2");
+    let prize = perm(&mut g, P1, "Serra Angel");
+    zones::die(&mut g, v, "destroy").unwrap();
+    assert!(!g.perm(prize).on_bf, "power 4 as he left (the Equipment was still on him)");
+}
+
+#[test]
+fn syr_vondams_destroy_takes_no_target_when_there_is_none_worth_it() {
+    let (mut g, v) = vondam_table();
+    g.perm_mut(v).plus = 2;
+    let own = perm(&mut g, P0, "Serra Angel");
+    let l = lands(&mut g, P1, "Plains", 1, false)[0];
+    zones::die(&mut g, v, "destroy").unwrap();
+    assert!(g.perm(own).on_bf && g.perm(l).on_bf, "up to one: it never destroys your own permanent or a land");
+}
+
+#[test]
+fn syr_vondam_gains_for_creatures_in_the_same_wipe() {
+    // a destroy wipe (Kaya's Wrath, Toxic Deluge: they die) and an exile wipe (Farewell): both look back in time
+    for (kind, with_destroy) in [("destroy", false), ("destroy", true), ("exile", false), ("exile", true)] {
+        let mut g = tbl();
+        let first = token(&mut g, P0, 1);
+        let v = perm(&mut g, P0, VONDAM);
+        let (second, third) = (token(&mut g, P0, 1), token(&mut g, P0, 1));
+        g.perm_mut(v).plus = if with_destroy { 2 } else { 0 };
+        let prize = perm(&mut g, P1, "Smothering Tithe");
+        let life = g.player(P0).life;
+        let theirs = token(&mut g, P1, 3);
+        removal::apply_wipe(&mut g, P0, kind, None, &Ctx::default()).unwrap();
+        for m in [first, v, second, third, theirs] {
+            assert!(!g.perm(m).on_bf, "{kind}: the wipe took every creature");
+        }
+        assert_eq!(g.player(P0).life, life + 3, "{kind}: one trigger for each of the three others, whoever left first");
+        assert_eq!(g.perm(v).plus, if with_destroy { 2 } else { 0 }, "he was gone: the counters have nowhere to go");
+        assert_eq!(g.perm(prize).on_bf, !with_destroy, "{kind}: at power 4 or more his destroy takes the Tithe");
+    }
+}
+
+#[test]
+fn a_syr_vondam_that_lost_his_abilities_triggers_nothing() {
+    let mut g = tbl();
+    let v = perm(&mut g, P0, VONDAM);
+    g.perm_mut(v).plus = 2;
+    g.perm_mut(v).neutered = true;
+    let other = token(&mut g, P0, 1);
+    let prize = perm(&mut g, P1, "Smothering Tithe");
+    let life = g.player(P0).life;
+    removal::apply_wipe(&mut g, P0, "destroy", None, &Ctx::default()).unwrap();
+    assert!(!g.perm(v).on_bf && !g.perm(other).on_bf);
+    assert_eq!(g.player(P0).life, life, "no life for the creature that left with him");
+    assert!(g.perm(prize).on_bf, "and no destroy of his own");
+}
+
+#[test]
+fn vondams_wipe_bookkeeping_is_cleared_with_the_wipe() {
+    let mut g = tbl();
+    let v = perm(&mut g, P0, VONDAM);
+    removal::apply_wipe(&mut g, P0, "destroy", None, &Ctx::default()).unwrap();
+    assert!(!g.perm(v).on_bf);
+    let life = g.player(P0).life;
+    let later = token(&mut g, P0, 1);
+    removal::apply_wipe(&mut g, P0, "destroy", None, &Ctx::default()).unwrap();
+    assert!(!g.perm(later).on_bf);
+    assert_eq!(g.player(P0).life, life, "a dead Syr Vondam hears nothing from a later wipe");
+    let alone = token(&mut g, P0, 1);
+    zones::die(&mut g, alone, "destroy").unwrap();
+    assert_eq!(g.player(P0).life, life, "nor from a creature dying alone");
+}
+
+#[test]
+fn vondams_trigger_waits_behind_the_enters_trigger_of_a_blinked_creature() {
+    use sim_core::hooks::TrigAct;
+    let (mut g, v) = vondam_table();
+    let wall = perm(&mut g, P0, "Wall of Omens");
+    g.resolving += 1;
+    sim_core::impls::t2::blink(&mut g, P0, wall).unwrap();
+    g.resolving -= 1;
+    let order: Vec<&str> = g
+        .trig_queue
+        .iter()
+        .map(|t| match &t.act {
+            TrigAct::Hook { event: Event::ExiledFromBf, .. } if t.src == Some(v) => "vondam",
+            _ => "enters",
+        })
+        .collect();
+    assert_eq!(order, ["enters", "vondam"]);
+}
+
+#[test]
+fn a_person_is_asked_syr_vondams_destroy_target() {
+    let (mut g, v) = vondam_table();
+    g.perm_mut(v).plus = 2;
+    let prize = perm(&mut g, P1, "Serra Angel");
+    let lesser = perm(&mut g, P2, "Sol Ring");
+    let asked = person_picking(&mut g, "Sol Ring"); // the person picks the lesser one
+    zones::die(&mut g, v, "destroy").unwrap();
+    assert!(g.perm(prize).on_bf && !g.perm(lesser).on_bf, "the person's choice, not the AI's");
+    let q = asked.lock().unwrap().clone();
+    assert_eq!(q.len(), 1, "asked once: {q:?}");
+    assert!(q[0].contains("Serra Angel") && q[0].contains("no target"), "{q:?}");
+    // declining takes no target
+    let (mut g, v) = vondam_table();
+    g.perm_mut(v).plus = 2;
+    let prize = perm(&mut g, P1, "Serra Angel");
+    person_picking(&mut g, "nothing matches");
+    zones::die(&mut g, v, "destroy").unwrap();
+    assert!(g.perm(prize).on_bf, "up to one: a person may choose none");
+}
