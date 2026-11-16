@@ -377,6 +377,26 @@ fn minas_tirith_needs_the_mana() {
     assert!(draw_options(&mut g, l, Some(true)).is_empty(), "no white mana but its own");
 }
 
+/// everything a person is offered on the land: the ability probe's table (`abilities_of`, `land_abilities`, `land_alts`)
+fn offered_labels(g: &mut Game, l: PermId) -> Vec<String> {
+    let mut v: Vec<String> = sim_core::human::human::abilities_of(g, P0, l).unwrap().into_iter().map(|a| a.0).collect();
+    v.extend(sim_core::human::abilities::land_abilities(g, P0, l).into_iter().map(|a| a.label));
+    v.extend(sim_core::human::alt::land_alts(g, P0, l).unwrap().into_iter().map(|a| a.0));
+    v
+}
+
+fn draw_labels(g: &mut Game, l: PermId) -> Vec<String> {
+    offered_labels(g, l).into_iter().filter(|x| x.contains("draw a card")).collect()
+}
+
+/// the person's Minas Tirith draw: Some(why) when it can't be done now
+fn use_draw(g: &mut Game, l: PermId) -> Option<String> {
+    let ab = sim_core::human::abilities::land_abilities(g, P0, l);
+    let a = ab.iter().find(|a| a.label.contains("draw a card"));
+    assert!(a.is_some(), "the draw is a land ability: {:?}", ab.iter().map(|a| &a.label).collect::<Vec<_>>());
+    (a.unwrap().act)(g, P0, l).unwrap()
+}
+
 #[test]
 fn a_person_uses_minas_tirith_from_their_pool() {
     let mut g = tbl();
@@ -385,18 +405,56 @@ fn a_person_uses_minas_tirith_from_their_pool() {
     g.perm_mut(l).tapped = false;
     attacked_with(&mut g, 2);
     g.player_mut(P0).pool.add('W', 2);
-    let ways = sim_core::human::alt::land_alts(&mut g, P0, l).unwrap();
-    assert!(
-        ways.iter().any(|(label, _)| label.contains("Minas Tirith: draw")),
-        "{:?}",
-        ways.iter().map(|w| &w.0).collect::<Vec<_>>()
-    );
-    let (_, o) = ways.into_iter().find(|(label, _)| label.contains("draw")).unwrap();
+    let labels = draw_labels(&mut g, l);
+    assert_eq!(labels.len(), 1, "{labels:?}");
     let hand = g.player(P0).hand.len();
-    let cd = g.perm(l).card();
-    assert!(sim_core::human::alt::run(&mut g, P0, cd, &o).unwrap().is_none());
+    assert_eq!(use_draw(&mut g, l), None);
     assert_eq!(g.player(P0).hand.len(), hand + 1);
     assert_eq!(g.player(P0).pool.total(), 0, "the {{1}}{{W}} came out of the pool");
+    assert!(g.perm(l).tapped, "it taps as a cost");
+}
+
+#[test]
+fn a_person_is_offered_minas_tirith_draw_and_told_why_before_attacking() {
+    let mut g = tbl();
+    person(&mut g, |_| None);
+    let l = play_land(&mut g, "Minas Tirith");
+    g.perm_mut(l).tapped = false;
+    g.player_mut(P0).pool.add('W', 2);
+    // the ability probe's own check: with nobody attacked, the land still lists something
+    assert!(!sim_core::human::abilities::land_abilities(&g, P0, l).is_empty());
+    assert_eq!(draw_labels(&mut g, l).len(), 1);
+    let hand = g.player(P0).hand.len();
+    let why = use_draw(&mut g, l).expect("nobody has attacked");
+    assert!(why.contains("attacked with two or more creatures"), "{why}");
+    attacked_with(&mut g, 1);
+    assert!(use_draw(&mut g, l).expect("one attacker").contains("two or more"));
+    attacked_with(&mut g, 2);
+    let _ = std::mem::take(&mut g.player_mut(P0).pool);
+    let why = use_draw(&mut g, l).expect("no mana");
+    assert!(why.contains("Can't activate Minas Tirith"), "{why}");
+    g.player_mut(P0).pool.add('W', 2);
+    g.perm_mut(l).tapped = true;
+    assert!(use_draw(&mut g, l).expect("tapped").contains("tapped"));
+    assert_eq!(g.player(P0).hand.len(), hand, "none of them drew");
+    assert_eq!(g.player(P0).pool.total(), 2, "or paid");
+}
+
+#[test]
+fn a_person_sees_minas_tirith_draw_once() {
+    let mut g = tbl();
+    person(&mut g, |_| None);
+    let l = play_land(&mut g, "Minas Tirith");
+    g.perm_mut(l).tapped = false;
+    g.player_mut(P0).pool.add('W', 2);
+    assert_eq!(draw_labels(&mut g, l).len(), 1, "before attacking");
+    attacked_with(&mut g, 2);
+    assert_eq!(
+        draw_labels(&mut g, l).len(),
+        1,
+        "after two attackers: not listed twice: {:?}",
+        offered_labels(&mut g, l)
+    );
 }
 
 // ------------------------------------------------------------------ The Seriema
