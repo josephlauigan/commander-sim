@@ -6,7 +6,7 @@
 mod play_common;
 use play_common::*;
 use sim_core::ai::act::perform;
-use sim_core::engine::zones;
+use sim_core::engine::{life, zones};
 use sim_core::hooks::Opt;
 use sim_core::human::human::{AbilityKind, abilities_of};
 use sim_core::human::{Target, choices};
@@ -303,7 +303,8 @@ fn scourge_of_valkas_with_lifelink_gains_the_damage_of_its_trigger() {
     let c = take(&mut g, P0, "Scourge of Valkas");
     zones::enter(&mut g, P0, c, zones::Enter { sick: false, ..Default::default() }).unwrap();
     assert_eq!(g.player(P1).life + g.player(P2).life, theirs - 4, "each Scourge deals 2 (two Dragons)");
-    assert_eq!(g.player(P0).life, 42, "only the first Scourge has lifelink");
+    // "it deals X damage": the Dragon that entered is the source of both triggers' damage, and it has no lifelink
+    assert_eq!(g.player(P0).life, 40, "the first Scourge's lifelink is not the entering Dragon's");
 }
 
 #[test]
@@ -1006,4 +1007,34 @@ fn converted_sites_without_lifelink_gain_no_extra_life() {
         }
         assert_eq!(g.player(P0).life, if source == "Firemane Avenger" { 43 } else { 40 }, "{source}: no lifelink gain");
     }
+}
+
+// ------------------------------------------------------------------ fix round 2: the entering Dragon is the source
+#[test]
+fn scourge_of_valkas_gains_when_the_entering_dragon_has_lifelink() {
+    let mut g = tbl();
+    let s = perm(&mut g, P0, "Scourge of Valkas");
+    let d = perm(&mut g, P0, "Shivan Dragon");
+    g.perm_mut(d).lifelink = true;
+    assert!(!life::has_lifelink(&g, s));
+    let theirs = g.player(P1).life + g.player(P2).life;
+    let cd = g.perm(s).cd.unwrap();
+    let etb = g.registry.get(cd).and_then(|i| i.etb).expect("Scourge has an enter hook");
+    etb(&mut g, s, P0, d).unwrap(); // the Dragon `d` entered: it deals X damage, X = the Dragons P0 controls
+    assert_eq!(g.player(P1).life + g.player(P2).life, theirs - 2, "two Dragons: 2 damage");
+    assert_eq!(g.player(P0).life, 42, "the entering Dragon dealt it and has lifelink; the Scourge has none");
+}
+
+#[test]
+fn dragon_tempest_gains_when_the_entering_dragon_has_lifelink() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Shivan Dragon");
+    perm(&mut g, P0, "Sorin, Vengeful Bloodlord"); // your creatures have lifelink on your turn
+    perm(&mut g, P0, "Dragon Tempest");
+    let theirs = g.player(P1).life + g.player(P2).life;
+    let c = take(&mut g, P0, "Shivan Dragon");
+    let d = zones::enter(&mut g, P0, c, zones::Enter { sick: false, ..Default::default() }).unwrap();
+    assert!(life::has_lifelink(&g, d));
+    assert_eq!(g.player(P1).life + g.player(P2).life, theirs - 2, "it deals X damage, X = 2 Dragons");
+    assert_eq!(g.player(P0).life, 42, "the enchantment has no lifelink; the Dragon that entered does");
 }
