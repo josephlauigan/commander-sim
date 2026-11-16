@@ -1410,6 +1410,7 @@ fn protect_with(g: &mut Game, owner: PlayerId, m: PermId, i: usize, src: Option<
         if let Some(cd) = cd {
             let n = enter(g, owner, cd, Enter { orig: Some(orig), ..Enter::default() })?;
             g.perm_mut(n).is_cmd = is_cmd;
+            crate::engine::zones::exiled_from_bf(g, m, Some(n))?; // exiled and returned: Soulherder, Syr Vondam
         }
     } else {
         protector_effect(g, owner, name, Some(m))?;

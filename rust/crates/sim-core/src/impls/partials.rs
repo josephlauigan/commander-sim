@@ -1421,6 +1421,7 @@ fn archfiend_exile(g: &mut Game, src: Src, _p: PlayerId) -> Res {
         let pl = g.player_mut(o);
         remove_card(&mut pl.gy, cd);
         pl.exile.push(cd);
+        crate::engine::zones::exiled_from_bf(g, src, None)?;
     }
     Ok(())
 }

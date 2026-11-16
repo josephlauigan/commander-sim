@@ -1213,6 +1213,7 @@ fn thopter_exile(g: &mut Game, src: Src, p: PlayerId) -> Res {
         leave(g, src)?;
         let cd = g.perm(src).cd.unwrap();
         g.player_mut(p).exile.push(cd);
+        crate::engine::zones::exiled_from_bf(g, src, None)?;
     }
     Ok(())
 }
