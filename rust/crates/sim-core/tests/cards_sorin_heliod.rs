@@ -717,6 +717,45 @@ fn sorin_has_no_duplicate_compiled_loyalty_implementation() {
     assert!(g.db.get(card(&g, SORIN)).abilities.is_empty());
 }
 
+// ------------------------------------------------------------------ fix round 2: a person's grant pays ward
+/// a person at P0 who passes priority, answers yes to the ward question and picks `word` for any other question
+fn person_paying_ward(g: &mut Game, word: &'static str) -> std::sync::Arc<ScriptHuman> {
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        if r.prompt.contains("ward") {
+            return Answer::Yes;
+        }
+        r.choices.iter().position(|c| c.contains(word)).map_or(Answer::Decline, Answer::Pick)
+    }));
+    g.humans.add(P0, h.clone());
+    h
+}
+
+#[test]
+fn a_persons_grant_on_a_warded_creature_pays_the_ward() {
+    let mut g = tbl();
+    let hel = perm(&mut g, P0, HELIOD);
+    let titan = perm(&mut g, P1, "Frost Titan"); // ward {2}
+    person_paying_ward(&mut g, "Frost Titan");
+    g.player_mut(P0).pool.add('W', 4);
+    assert_eq!(use_ability(&mut g, hel, "lifelink"), None);
+    assert_eq!(g.player(P0).pool.total(), 0, "{{1}}{{W}} and the ward {{2}} came out of the pool");
+    assert!(has_kw(&g, titan, "lifelink"), "the ward was paid");
+}
+
+#[test]
+fn a_persons_grant_on_a_warded_creature_is_countered_when_the_ward_is_not_paid() {
+    let mut g = tbl();
+    let hel = perm(&mut g, P0, HELIOD);
+    let titan = perm(&mut g, P1, "Frost Titan"); // ward {2}
+    person_paying_ward(&mut g, "Frost Titan");
+    g.player_mut(P0).pool.add('W', 2); // only the ability's own cost
+    assert_eq!(use_ability(&mut g, hel, "lifelink"), None);
+    assert!(!has_kw(&g, titan, "lifelink"), "no mana for the ward: the ability is countered");
+}
+
 #[test]
 fn the_ai_grant_does_nothing_if_the_target_gained_protection_in_response_on_the_stack() {
     let mut g = tbl();
