@@ -176,8 +176,7 @@ fn targets(g: &Game, o: PlayerId, src: PermId) -> Vec<PermId> {
     let mut out = vec![];
     for q in g.players.iter().filter(|q| q.alive) {
         for &t in &q.perms {
-            if may_target(g, o, t) && !card_types(g, t).has(Types::LAND) && !protected_from(g, t, cols)
-            {
+            if may_target(g, o, t) && !card_types(g, t).has(Types::LAND) && !protected_from(g, t, cols) {
                 out.push(t);
             }
         }
