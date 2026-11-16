@@ -518,6 +518,9 @@ pub fn detach(g: &mut Game, m: PermId) {
 pub fn leave(g: &mut Game, m: PermId) -> Res {
     let p = g.perm(m).owner;
     let on = g.perm(m).on_bf;
+    if on {
+        crate::impls::vondam_elspeth::leaving(g, m); // Syr Vondam: his power as he leaves, and the wipe he leaves in
+    }
     if g.is_creature(m) && g.perm(m).plus > 0 && on && has(g, p, Tag::Ozolith) {
         let n = g.perm(m).plus;
         g.player_mut(p).ozolith_counters += n; // The Ozolith keeps the counters
@@ -845,6 +848,9 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
             fire_trigger(g, Event::Sacrifice, Call::Sacrifice { p, what: Sacrificed::Perm(m) })?;
         }
     }
+    if creature && g.cur_batch.is_some() {
+        crate::impls::vondam_elspeth::left_with(g, m, Some(cause))?; // Syr Vondam, if he left earlier in this wipe
+    }
     if selfdies {
         let n = 1 + repl::trigger_copies(g, p, "dies", Some(m));
         let imp = g.registry.get(g.perm(m).cd.unwrap()).copied().unwrap();
@@ -1078,6 +1084,9 @@ pub fn exiled_from_bf(g: &mut Game, m: PermId, back: Option<PermId>) -> Res {
         hooks::fire_trigger_where(g, Event::ExiledFromBf, Call::Leaves { m }, &|g, s| {
             born.is_none_or(|b| g.perm(s).born < b)
         })?;
+    }
+    if g.cur_batch.is_some() && g.is_creature(m) {
+        crate::impls::vondam_elspeth::left_with(g, m, None)?; // Syr Vondam, if he left earlier in this wipe
     }
     let imp = g.perm(m).cd.and_then(|c| g.registry.get(c).copied()).filter(|i| i.self_exiled.is_some());
     if let Some(imp) = imp {
