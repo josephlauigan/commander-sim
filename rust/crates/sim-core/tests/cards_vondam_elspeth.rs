@@ -901,3 +901,76 @@ fn the_exiled_original_still_triggers_under_ghostform() {
     assert!(!g.perm(prize).on_bf, "his own exile trigger destroys the best opposing permanent");
     assert_eq!(grown(&g, herd), 1, "the Soulherder that was there hears a creature exiled");
 }
+
+// ------------------------------------------------------------------ the exile sites that fired nothing (token exiles)
+/// the creature exile sites that did not fire the exile event, each witnessed by an existing Soulherder's counter: the
+/// victim left the battlefield, then Soulherder has exactly one counter. A table; the test lists every row that is wrong.
+#[test]
+fn the_token_and_oath_exile_sites_fire_the_exile_event() {
+    type Case = (&'static str, fn(&mut Game) -> PermId);
+    let cases: Vec<Case> = vec![
+        // Restoration Angel's enters trigger on a token of yours: exiled for good (t2.rs)
+        ("Restoration Angel on a token", |g| {
+            let t = token(g, P0, 3);
+            g.resto_target = Some(t);
+            perm(g, P0, "Restoration Angel");
+            g.resto_target = None;
+            t
+        }),
+        // Detention Sphere exiles every token with the target's name (rules2.rs)
+        ("Detention Sphere on a token", |g| {
+            let t = token(g, P1, 5);
+            perm(g, P0, "Detention Sphere");
+            t
+        }),
+        // Eldrazi Displacer's AI option on an opposing token (rules2.rs)
+        ("Eldrazi Displacer on a token", |g| {
+            let t = token(g, P1, 5);
+            let d = perm(g, P0, "Eldrazi Displacer");
+            lands(g, P0, "Wastes", 3, false);
+            let f = g.registry.get(g.perm(d).cd.unwrap()).unwrap().options.unwrap();
+            let act =
+                f(g, d, P0, Some(false)).unwrap().into_iter().find(|o| o.label.contains("token")).unwrap().act.unwrap();
+            assert!(sim_core::ai::act::perform(g, P0, &act).unwrap());
+            t
+        }),
+        // Rionya's token copies are exiled at the end step (rules2.rs)
+        ("Rionya's token copies", |g| {
+            let r = perm(g, P0, "Rionya, Fire Dancer");
+            let t = token(g, P0, 3);
+            g.perm_mut(t).data.set(DataKey::Rionya, Val::Bool(true));
+            run_hook(g, r, Event::EndStep, &Call::Player { p: P0 }).unwrap();
+            t
+        }),
+        // Oath of Teferi exiles a permanent of yours until the end step (partials.rs)
+        ("Oath of Teferi", |g| {
+            let wall = perm(g, P0, "Wall of Omens");
+            perm(g, P0, "Oath of Teferi");
+            wall
+        }),
+    ];
+    let mut wrong = vec![];
+    for (name, run) in cases {
+        let mut g = tbl();
+        let herd = perm(&mut g, P0, "Soulherder");
+        let victim = run(&mut g);
+        assert!(!g.perm(victim).on_bf, "{name}: the site must exile its victim");
+        if grown(&g, herd) != 1 {
+            wrong.push(format!("{name}: Soulherder has {} counters, wanted 1", grown(&g, herd)));
+        }
+    }
+    assert!(wrong.is_empty(), "sites that did not fire the exile event: {wrong:#?}");
+}
+
+/// Restoration Angel exiling your Soldier token is a creature of yours put into exile: Syr Vondam hears it
+#[test]
+fn restoration_angel_exiling_your_token_gives_syr_vondam_a_counter() {
+    let (mut g, v) = vondam_table();
+    let soldier = token(&mut g, P0, 1);
+    let life = g.player(P0).life;
+    g.resto_target = Some(soldier);
+    perm(&mut g, P0, "Restoration Angel");
+    g.resto_target = None;
+    assert!(!g.perm(soldier).on_bf, "Restoration Angel exiled the token");
+    assert_eq!((g.perm(v).plus, g.player(P0).life), (1, life + 1), "a counter and 1 life");
+}
