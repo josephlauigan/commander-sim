@@ -1054,3 +1054,16 @@ fn drakuseths_attack_trigger_is_one_damage_event_for_lifelink() {
     assert_eq!(g.player(P0).life, 50, "all of it is gained");
     assert_eq!(counters(&g, P0), 1, "one source, one damage event: one life gain (Heliod counts the events)");
 }
+
+#[test]
+fn a_double_striking_wither_lifelink_blocker_gains_both_hits_when_the_first_is_not_lethal() {
+    let mut g = tbl();
+    let a = body(&mut g, P0, 3, 4);
+    let b = body(&mut g, P1, 2, 5);
+    g.perm_mut(b).lifelink = true;
+    give(&mut g, b, "double strike");
+    give(&mut g, b, "wither");
+    duel(&mut g, a, Some(b));
+    // 2 wither damage in the first step takes the attacker to 1/2, not to 0 toughness: it takes the second hit too
+    assert_eq!(g.player(P1).life, 44, "2 damage in each of two steps, 4 in all");
+}
