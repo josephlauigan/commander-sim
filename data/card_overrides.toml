@@ -370,7 +370,7 @@ note = ""
 
 ["Barad-dûr"]
 status = "Full"
-note = "enters tapped without a legendary creature; {T}: {B}; {X}{X}{B}, {T}: amass Orcs X after a creature died"
+note = "enters tapped unless you control a legendary creature (the current characteristics: the Ring-bearer and a legendary token count; a phased-out creature and a nonlegendary copy of a legend do not); {T}: {B}; {X}{X}{B}, {T}: amass Orcs X after a creature died"
 
 ["Basalt Monolith"]
 status = "Full"
@@ -10320,8 +10320,8 @@ note = "compiled: whenever an opponent casts a noncreature spell, that player lo
 
 ["Minas Tirith"]
 dsl = [] # the compiled draw had no way to say only if you attacked with two or more creatures; impls/yoshimaru_cards.rs offers it
-status = "Partial"
-note = "{T}: {W}; {1}{W}, {T}: draw a card only after attacking with two or more different creatures this turn, extra combats included (the AI after combat with spare mana and four or more library cards, a person through the land's options hook paying from their pool; impls/yoshimaru_cards.rs). PARTIAL: enters tapped unless you control a legendary creature uses the engine's enters rule (EnterRule::Legendary, shared with Barad-dur), which reads the printed legendary tag: a phased-out legendary creature, a nonlegendary copy of one (a Ring-bearer, Helm) and a legendary token are misjudged (ticket: land_enters_tapped, a change that also moves the sheoldred deck)"
+status = "Full"
+note = "enters tapped unless you control a legendary creature (the engine's enters rule reads the current characteristics: the Ring-bearer, a legendary token and a card made legendary count; a phased-out creature and a nonlegendary copy of a legend do not); {T}: {W}; {1}{W}, {T}: draw a card only after attacking with two or more different creatures this turn, extra combats included (the AI after combat with spare mana and four or more library cards; a person has it always listed among the land's abilities, with the reason when it can't be used yet, paying from their pool; impls/yoshimaru_cards.rs, human/abilities.rs)"
 
 ["The Seriema"]
 dsl = [] # the compiled enters search ignores "legendary" (it would take any creature); impls/yoshimaru_cards.rs searches
