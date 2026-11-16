@@ -664,3 +664,12 @@ fn the_meadow_is_not_offered_after_the_land_drop_or_off_turn() {
     g.active = Some(P1);
     assert!(hand_options(&mut g, c, Some(false)).is_empty(), "not on an opponent's turn");
 }
+
+#[test]
+fn the_database_has_gandalf_the_white_and_sunpearl_kirin() {
+    let g = tbl();
+    for name in ["Gandalf the White", "Sunpearl Kirin"] {
+        let id = card(&g, name);
+        assert_eq!(&*g.db.get(id).name, name);
+    }
+}
