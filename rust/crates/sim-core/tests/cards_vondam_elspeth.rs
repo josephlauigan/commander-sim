@@ -466,3 +466,73 @@ fn a_person_is_asked_syr_vondams_destroy_target() {
     zones::die(&mut g, v, "destroy").unwrap();
     assert!(g.perm(prize).on_bf, "up to one: a person may choose none");
 }
+
+// ------------------------------------------------------------------ Elspeth, Knight-Errant: the -8 emblem
+const EMBLEM: &str = "elspeth_ke";
+
+fn indestructible(g: &Game, m: PermId) -> bool {
+    sim_core::dsl::has_kw(g, m, "indestructible")
+}
+
+#[test]
+fn elspeths_emblem_makes_artifacts_creatures_enchantments_and_lands_indestructible() {
+    let mut g = tbl();
+    g.player_mut(P0).emblems.push(EMBLEM);
+    let creature = perm(&mut g, P0, "Serra Angel");
+    let soldier = token(&mut g, P0, 2);
+    let artifact = perm(&mut g, P0, "Sol Ring");
+    let enchantment = perm(&mut g, P0, "Smothering Tithe");
+    let land = lands(&mut g, P0, "Plains", 1, false)[0];
+    let walker = perm(&mut g, P0, "Jace, the Mind Sculptor");
+    let theirs = [perm(&mut g, P1, "Serra Angel"), perm(&mut g, P1, "Sol Ring")];
+    for m in [creature, soldier, artifact, enchantment, land] {
+        assert!(indestructible(&g, m), "{}: yours, and an artifact, creature, enchantment or land", g.perm(m).name);
+        zones::die(&mut g, m, "destroy").unwrap();
+        assert!(g.perm(m).on_bf, "{} was not destroyed", g.perm(m).name);
+    }
+    assert!(!indestructible(&g, walker), "a planeswalker is not on the list");
+    zones::die(&mut g, walker, "destroy").unwrap();
+    assert!(!g.perm(walker).on_bf, "so it is destroyed");
+    for m in theirs {
+        assert!(!indestructible(&g, m), "an opponent's {} is not protected", g.perm(m).name);
+    }
+    // land destruction asks the same question
+    sim_core::impls::fixes::destroy_land(&mut g, P0, land).unwrap();
+    assert!(g.perm(land).on_bf, "Strip Mine and Wasteland do nothing to it");
+}
+
+#[test]
+fn elspeths_emblem_stops_a_destroy_wipe_but_not_a_sacrifice_or_toughness_zero() {
+    let mut g = tbl();
+    g.player_mut(P0).emblems.push(EMBLEM);
+    let (a, b, c) = (perm(&mut g, P0, "Serra Angel"), perm(&mut g, P0, "Grave Titan"), token(&mut g, P0, 2));
+    let theirs = perm(&mut g, P1, "Serra Angel");
+    removal::apply_wipe(&mut g, P1, "destroy", None, &Ctx::default()).unwrap();
+    assert!(g.perm(a).on_bf && g.perm(b).on_bf && g.perm(c).on_bf, "Kaya's Wrath and Wrath of God: yours live");
+    assert!(!g.perm(theirs).on_bf, "an opponent's creature dies");
+    zones::die(&mut g, a, "sac").unwrap();
+    assert!(!g.perm(a).on_bf, "a sacrifice is not destruction");
+    g.perm_mut(b).eot_pt = (-9, -9);
+    sim_core::engine::life::check_state(&mut g).unwrap();
+    assert!(!g.perm(b).on_bf, "toughness 0 or less: a state-based action, which indestructible does not stop");
+}
+
+#[test]
+fn elspeths_emblem_follows_the_controller() {
+    let mut g = tbl();
+    g.player_mut(P0).emblems.push(EMBLEM);
+    let m = perm(&mut g, P0, "Serra Angel");
+    assert!(indestructible(&g, m));
+    sim_core::engine::control::gain_control(&mut g, P1, m, sim_core::engine::control::Duration::Permanent);
+    assert!(!indestructible(&g, m), "under an opponent's control it is not yours");
+}
+
+#[test]
+fn elspeth_sun_champions_emblem_unchanged() {
+    let mut g = tbl();
+    g.player_mut(P0).elspeth_emblem = true;
+    let m = perm(&mut g, P0, "Serra Angel");
+    assert!(sim_core::dsl::has_kw(&g, m, "flying"));
+    assert_eq!(sim_core::engine::values::epow(&g, m), 4 + 2, "+2/+2 and flying");
+    assert!(!indestructible(&g, m), "it says nothing about indestructible");
+}
