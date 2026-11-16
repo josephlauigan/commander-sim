@@ -399,7 +399,7 @@ fn land_tapped(g: &Game, l: PermId, what: &str) -> Why {
 // ------------------------------------------------------------------ planeswalkers
 /// cards._loyalty: why a loyalty ability of m costing `cost` can't be activated now (sorcery speed, once per turn,
 /// enough loyalty)
-fn loyalty(g: &Game, p: PlayerId, m: PermId, cost: i32) -> Why {
+pub(super) fn loyalty(g: &Game, p: PlayerId, m: PermId, cost: i32) -> Why {
     if let Some(why) = legal::sorcery_timing(g, p) {
         return Some(why.replace("do that", "activate a loyalty ability"));
     }
@@ -437,49 +437,7 @@ pub(super) fn walker(list: &[(i32, &'static str, WalkEff)]) -> Vec<PermAbility> 
     list.iter()
         .map(|&(cost, text, eff)| {
             ability(format!("{cost:+}: {text}"), move |g: &mut Game, p: PlayerId, m: PermId| {
-                if let Some(why) = loyalty(g, p, m, cost) {
-                    return Ok(Some(why));
-                }
-                let ready = match eff(g, p, m)? {
-                    Ready::Why(why) => return Ok(Some(why)),
-                    Ready::Cancel => return Ok(None),
-                    r => r,
-                };
-                crate::glog!(g, "  {} activates {} {:+}: {}", pname(g, p), pm_name(g, m), cost, text);
-                crate::impls::mine::pw_use(g, m, cost)?; // a walker at 0 loyalty is gone; the effect still happens
-                let name = format!("{cost:+}");
-                let on_table = g.player(p).perms.contains(&m);
-                let (src, cd) = match (on_table, g.perm(m).cd) {
-                    (false, Some(cd)) => (None, Some(cd)),
-                    _ => (Some(m), None),
-                };
-                let go_fn = match ready {
-                    Ready::Go(f) => Some(f),
-                    _ => None,
-                };
-                // a Rings of Brighthearth / Peter Parker's Camera copy: no loyalty is paid; it chooses its targets anew
-                // (the effect's own question again; cancelling it keeps the original's targets)
-                crate::engine::stack::ability_run_w(g, p, src, cd, &name, None, None, 0.0, |g, is_copy| {
-                    let mut again = None;
-                    if is_copy {
-                        super::walkers::tell_info(
-                            g,
-                            p,
-                            &format!(
-                                "The copy of {} {name}: choose new targets, or cancel to keep the original's.",
-                                pm_name(g, m)
-                            ),
-                        );
-                        if let Ready::Go(f2) = eff(g, p, m)? {
-                            again = Some(f2);
-                        }
-                    }
-                    if let Some(f) = again.as_ref().or(go_fn.as_ref()) {
-                        f(g)?;
-                    }
-                    crate::engine::life::check_state(g)
-                })?;
-                Ok(None)
+                walker_run(g, p, m, cost, text, &eff)
             })
         })
         .map(|mut a| {
@@ -489,6 +447,58 @@ pub(super) fn walker(list: &[(i32, &'static str, WalkEff)]) -> Vec<PermAbility> 
             a
         })
         .collect()
+}
+
+/// one activation of a loyalty ability of m costing `cost` (the cost of a "-X" is known by now: the effect's own choice
+/// was made before it): the timing and loyalty checks, the effect's question, the loyalty paid, the ability on the stack
+pub(super) fn walker_run(
+    g: &mut Game,
+    p: PlayerId,
+    m: PermId,
+    cost: i32,
+    text: &str,
+    eff: &dyn Fn(&mut Game, PlayerId, PermId) -> Res<Ready>,
+) -> Res<Why> {
+    if let Some(why) = loyalty(g, p, m, cost) {
+        return Ok(Some(why));
+    }
+    let ready = match eff(g, p, m)? {
+        Ready::Why(why) => return Ok(Some(why)),
+        Ready::Cancel => return Ok(None),
+        r => r,
+    };
+    crate::glog!(g, "  {} activates {} {:+}: {}", pname(g, p), pm_name(g, m), cost, text);
+    crate::impls::mine::pw_use(g, m, cost)?; // a walker at 0 loyalty is gone; the effect still happens
+    let name = format!("{cost:+}");
+    let on_table = g.player(p).perms.contains(&m);
+    let (src, cd) = match (on_table, g.perm(m).cd) {
+        (false, Some(cd)) => (None, Some(cd)),
+        _ => (Some(m), None),
+    };
+    let go_fn = match ready {
+        Ready::Go(f) => Some(f),
+        _ => None,
+    };
+    // a Rings of Brighthearth / Peter Parker's Camera copy: no loyalty is paid; it chooses its targets anew
+    // (the effect's own question again; cancelling it keeps the original's targets)
+    crate::engine::stack::ability_run_w(g, p, src, cd, &name, None, None, 0.0, |g, is_copy| {
+        let mut again = None;
+        if is_copy {
+            super::walkers::tell_info(
+                g,
+                p,
+                &format!("The copy of {} {name}: choose new targets, or cancel to keep the original's.", pm_name(g, m)),
+            );
+            if let Ready::Go(f2) = eff(g, p, m)? {
+                again = Some(f2);
+            }
+        }
+        if let Some(f) = again.as_ref().or(go_fn.as_ref()) {
+            f(g)?;
+        }
+        crate::engine::life::check_state(g)
+    })?;
+    Ok(None)
 }
 
 /// cards._any_player: any living player (you included), None if cancelled

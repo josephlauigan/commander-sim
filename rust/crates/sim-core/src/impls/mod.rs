@@ -116,6 +116,7 @@ pub mod titania;
 pub mod topdeck;
 pub mod tymna_cards;
 pub mod tymna_partners;
+pub mod sorin; // --- Sorin, Vengeful Bloodlord: lifelink on your turn, +2 and -X (Yoshimaru/Tymna deck)
 pub mod yoshimaru_cards; // --- yoshimaru (2026-11-15): cards of the Yoshimaru/Tymna deck, modelled before it is registered
 pub mod yshtola;
 pub mod zur; // --- urdragon-combos: the Ur-Dragon deck's three infinite combos in the catalogue
@@ -224,5 +225,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     model_gaps_a2::register(&mut r, db)?; // --- model-gaps-a2
     model_gaps_a4::register(&mut r, db)?; // --- model-gaps-a4
     yoshimaru_cards::register(&mut r, db)?; // --- yoshimaru
+    sorin::register(&mut r, db)?; // --- yoshimaru: Sorin, Vengeful Bloodlord
     Ok(r)
 }
