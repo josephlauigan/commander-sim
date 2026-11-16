@@ -856,3 +856,48 @@ fn syr_vondams_last_known_information_has_its_own_key() {
     );
     assert!(g.perm(v).data.get(DataKey::Counters).is_none(), "the counters key is not Syr Vondam's");
 }
+
+// ------------------------------------------------------------------ Kaya's Ghostform: the returned object hears nothing
+/// Kaya's Ghostform returns an exiled creature at once, as a new object. The new object was not on the battlefield when
+/// the old one was exiled (CR 603.10a, 400.7), so it sees nothing of that exile: no counter, no life
+#[test]
+fn ghostform_returned_vondam_does_not_see_his_own_exile() {
+    let mut g = tbl();
+    let v = perm(&mut g, P0, VONDAM);
+    let aura = perm(&mut g, P0, "Kaya's Ghostform");
+    assert_eq!(g.perm(aura).attached, Some(v));
+    let life = g.player(P0).life;
+    zones::exile_perm(&mut g, v).unwrap();
+    let back = perms_named(&g, P0, VONDAM);
+    assert_eq!(back.len(), 1);
+    assert_ne!(back[0], v);
+    assert_eq!((g.perm(back[0]).plus, g.player(P0).life), (0, life), "new Vondam did not exist at exile time");
+}
+
+#[test]
+fn ghostform_returned_soulherder_does_not_see_his_own_exile() {
+    let mut g = tbl();
+    let herd = perm(&mut g, P0, "Soulherder");
+    let aura = perm(&mut g, P0, "Kaya's Ghostform");
+    assert_eq!(g.perm(aura).attached, Some(herd));
+    zones::exile_perm(&mut g, herd).unwrap();
+    let back = perms_named(&g, P0, "Soulherder");
+    assert_eq!(back.len(), 1);
+    assert_eq!(grown(&g, back[0]), 0, "new Soulherder did not exist at exile time");
+}
+
+/// control: the object that was exiled (a power-4 Syr Vondam under Ghostform) still queues his own exile trigger, and
+/// a Soulherder that was already there still hears the exile
+#[test]
+fn the_exiled_original_still_triggers_under_ghostform() {
+    let mut g = tbl();
+    let v = perm(&mut g, P0, VONDAM);
+    g.perm_mut(v).plus = 2; // a 4/4
+    let aura = perm(&mut g, P0, "Kaya's Ghostform");
+    assert_eq!(g.perm(aura).attached, Some(v));
+    let herd = perm(&mut g, P0, "Soulherder");
+    let prize = perm(&mut g, P1, "Serra Angel");
+    zones::exile_perm(&mut g, v).unwrap();
+    assert!(!g.perm(prize).on_bf, "his own exile trigger destroys the best opposing permanent");
+    assert_eq!(grown(&g, herd), 1, "the Soulherder that was there hears a creature exiled");
+}
