@@ -1067,3 +1067,19 @@ fn a_double_striking_wither_lifelink_blocker_gains_both_hits_when_the_first_is_n
     // 2 wither damage in the first step takes the attacker to 1/2, not to 0 toughness: it takes the second hit too
     assert_eq!(g.player(P1).life, 44, "2 damage in each of two steps, 4 in all");
 }
+
+#[test]
+fn balefire_dragon_sums_saturated_damage_without_overflowing() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Fiery Emancipation"); // tripled damage saturates at i32::MAX for each creature
+    let b = perm(&mut g, P0, "Balefire Dragon");
+    g.perm_mut(b).lifelink = true;
+    body(&mut g, P1, 1, 1);
+    body(&mut g, P1, 1, 1);
+    let cd = g.perm(b).cd.unwrap();
+    let hit = g.registry.get(cd).and_then(|i| i.combat_damage).expect("Balefire has a combat damage hook");
+    let r = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| hit(&mut g, b, P0, b, P1, 1_000_000_000)));
+    assert!(r.is_ok_and(|x| x.is_ok()), "two saturated damages added up must not overflow (overflow-checks is on)");
+    assert_eq!(g.player(P1).perms.len(), 0, "both creatures died");
+    assert!(g.player(P0).life > 40, "and the damage dealt was gained");
+}
