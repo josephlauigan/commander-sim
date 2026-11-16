@@ -7,13 +7,13 @@
 //!   opposing planeswalker with 1 loyalty, else the opponent that threatens it most. Sorin is a planeswalker you control,
 //!   so on your turn the damage gains you 1.
 //! - "-X: Return target creature card with mana value X from your graveyard to the battlefield. That creature is a
-//!   Vampire in addition to its other types": one AI ability per X (0 to 8, since the walker framework wants a fixed
-//!   loyalty cost); the creature enters as a Vampire (a copy exception, applied before its enter triggers). A person
+//!   Vampire in addition to its other types": one AI ability per X (0 to 16, since the walker framework wants a fixed
+//!   loyalty cost, and no commander-legal creature card costs more); the creature enters as a Vampire (a copy exception, applied before its enter triggers). A person
 //!   chooses the card, and so X (`human::walkers`).
 
 use crate::cards::{CardDb, Types};
 use crate::engine::chars::card_types;
-use crate::engine::values::{colors_of, player_hexproof_from, threat, untargetable};
+use crate::engine::values::{colors_of, player_hexproof_from, protected_from, threat, untargetable};
 use crate::engine::zones::{Enter, enter, max_by};
 use crate::flow::Res;
 use crate::hooks::{Registry, Src};
@@ -51,6 +51,7 @@ fn plus_target(g: &Game, p: PlayerId, src: PermId) -> Option<Target> {
                 && x.loyalty == Some(1)
                 && card_types(g, w).has(Types::PLANESWALKER)
                 && !untargetable(g, w)
+                && !protected_from(g, w, cols)
             {
                 return Some(Target::Perm(w));
             }
@@ -136,7 +137,7 @@ macro_rules! minus {
     };
 }
 
-static SORIN_AB: [WalkerAb; 10] = [
+static SORIN_AB: [WalkerAb; 18] = [
     WalkerAb { delta: 2, label: "1 damage to a player or planeswalker", val: plus_val, eff: plus_eff },
     minus!(0),
     minus!(1),
@@ -147,6 +148,14 @@ static SORIN_AB: [WalkerAb; 10] = [
     minus!(6),
     minus!(7),
     minus!(8),
+    minus!(9),
+    minus!(10),
+    minus!(11),
+    minus!(12),
+    minus!(13),
+    minus!(14),
+    minus!(15),
+    minus!(16),
 ];
 
 pub fn register(r: &mut Registry, db: &CardDb) -> Result<(), String> {

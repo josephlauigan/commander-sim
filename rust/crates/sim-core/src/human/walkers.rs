@@ -23,7 +23,7 @@ use super::cards::{Ready, go, loyalty, pick, pick_perm, pname, walker, walker_ru
 use super::{Target, choices, legal};
 use crate::cards::Types;
 use crate::engine::chars::card_types;
-use crate::engine::values::{colors_of, untargetable};
+use crate::engine::values::{colors_of, protected_from, untargetable};
 use crate::flow::Res;
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{DataKey, Game, Val};
@@ -488,7 +488,7 @@ const SORIN: &str = "Sorin, Vengeful Bloodlord";
 
 /// +2: 1 damage to a player (you included) or a planeswalker the person picks
 fn sorin_plus(g: &mut Game, p: PlayerId, m: PermId) -> Res<Ready> {
-    let tg: Vec<Target> = choices::damage_targets(g, p, Default::default())
+    let tg: Vec<Target> = choices::damage_targets(g, p, colors_of(g, m))
         .into_iter()
         .filter(|t| match t {
             Target::Player(_) => true,
@@ -507,9 +507,9 @@ fn sorin_plus(g: &mut Game, p: PlayerId, m: PermId) -> Res<Ready> {
     let t = tg[k];
     go(move |g| {
         if let Target::Perm(x) = t
-            && !on_table(g, x)
+            && (!on_table(g, x) || protected_from(g, x, colors_of(g, m)))
         {
-            return Ok(()); // gone before the ability resolved
+            return Ok(()); // gone, or protected from Sorin's colours, as the ability resolves
         }
         let by = choices::by(g, Some(m));
         choices::apply_damage_by(g, p, t, 1, SORIN, "burn", by).map(|_| ())
