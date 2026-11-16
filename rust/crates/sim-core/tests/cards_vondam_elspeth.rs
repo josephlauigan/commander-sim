@@ -842,3 +842,17 @@ fn a_protege_entering_as_a_copy_exiles_nothing() {
     perm(&mut g, P0, "Sakashima's Protege");
     assert_eq!(grown(&g, herd), 0, "a replacement effect, not a leave of the battlefield");
 }
+
+/// the power and the wipe Syr Vondam left in are kept under their own key, not under the page counters of a Mazemind Tome
+#[test]
+fn syr_vondams_last_known_information_has_its_own_key() {
+    let (mut g, v) = vondam_table();
+    g.perm_mut(v).plus = 2; // a 4/4
+    zones::die(&mut g, v, "destroy").unwrap();
+    assert_eq!(
+        g.perm(v).data.get(DataKey::LastKnown),
+        Some(&Val::List(vec![Val::Int(4), Val::Int(0)])),
+        "last known power 4, in no wipe"
+    );
+    assert!(g.perm(v).data.get(DataKey::Counters).is_none(), "the counters key is not Syr Vondam's");
+}
