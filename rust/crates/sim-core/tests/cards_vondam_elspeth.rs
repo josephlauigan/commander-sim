@@ -1364,3 +1364,116 @@ fn the_warp_nyx_weaver_and_person_displacer_exile_sites_fire_the_exile_event() {
     }
     assert!(wrong.is_empty(), "sites that did not fire the exile event: {wrong:#?}");
 }
+
+// ------------------------------------------------------------------ The Eternal Wanderer's -4 is one simultaneous sacrifice
+/// your commander onto the battlefield (The Eternal Wanderer's -4 keeps it for its caster)
+fn commander_in_play(g: &mut Game, p: PlayerId) -> PermId {
+    let c = g.player(p).cmd;
+    let m = zones::enter(g, p, c, zones::Enter { sick: false, ..Default::default() }).unwrap();
+    g.perm_mut(m).is_cmd = true;
+    g.player_mut(p).cmd_in_zone = false;
+    m
+}
+
+/// the AI uses The Eternal Wanderer's -4 for P0, through the ability the engine offers
+fn wanderer_minus_four(g: &mut Game, w: PermId) {
+    let o = options(g, w, P0);
+    let found = o.iter().find(|o| o.label == "The Eternal Wanderer -4");
+    assert!(found.is_some(), "the -4 is not offered: {:?}", o.iter().map(|x| &x.label).collect::<Vec<_>>());
+    assert!(sim_core::ai::act::perform(g, P0, found.unwrap().act.as_ref().unwrap()).unwrap());
+}
+
+/// P0: the commander (kept), Syr Vondam (`plus` counters) and `allies` other creatures, Vondam at place `at` among them;
+/// P1: Smothering Tithe, Sol Ring and four big creatures (three of them sacrificed). Returns the table.
+fn wanderer_table(at: usize, allies: usize, plus: i32) -> (Game, PermId, PermId, Vec<PermId>, PermId) {
+    let mut g = tbl();
+    let w = perm(&mut g, P0, "The Eternal Wanderer");
+    commander_in_play(&mut g, P0);
+    let mut mine = vec![];
+    let mut v = None;
+    for i in 0..=allies {
+        if i == at {
+            let x = perm(&mut g, P0, VONDAM);
+            g.perm_mut(x).plus = plus;
+            v = Some(x);
+        }
+        if i < allies {
+            mine.push(token(&mut g, P0, 1));
+        }
+    }
+    let tithe = perm(&mut g, P1, "Smothering Tithe");
+    perm(&mut g, P1, "Sol Ring");
+    for _ in 0..4 {
+        token(&mut g, P1, 20); // worth the -4 to the AI
+    }
+    (g, w, v.unwrap(), mine, tithe)
+}
+
+#[test]
+fn the_eternal_wanderers_minus_four_sacrifices_syr_vondam_and_his_allies_at_once() {
+    for at in 0..=3 {
+        let (mut g, w, v, mine, tithe) = wanderer_table(at, 3, 0);
+        let life = g.player(P0).life;
+        wanderer_minus_four(&mut g, w);
+        for &m in &mine {
+            assert!(!g.perm(m).on_bf, "vondam at {at}: the -4 sacrificed every creature but the commander");
+        }
+        assert!(!g.perm(v).on_bf, "vondam at {at}: he was sacrificed too");
+        assert!(g.player(P0).gy.iter().any(|&c| &*g.db.get(c).name == VONDAM), "vondam at {at}: in the graveyard");
+        assert_eq!(
+            g.player(P0).life,
+            life + 3,
+            "vondam at {at}: one trigger for each of the three sacrificed with him"
+        );
+        assert_eq!(g.perm(v).plus, 0, "vondam at {at}: he was gone, the counters have nowhere to go");
+        assert!(g.perm(tithe).on_bf, "vondam at {at}: he was a 2/2 when he left, so nothing is destroyed");
+    }
+}
+
+#[test]
+fn the_eternal_wanderers_minus_four_destroys_once_for_a_vondam_at_power_four() {
+    for at in 0..=2 {
+        let (mut g, w, v, _, _) = wanderer_table(at, 2, 2);
+        let life = g.player(P0).life;
+        wanderer_minus_four(&mut g, w);
+        assert!(!g.perm(v).on_bf, "vondam at {at}: sacrificed");
+        // the Tithe, the Sol Ring and the creature they keep (the table has no land): one of the three is destroyed
+        let left = g.player(P1).perms.len();
+        assert_eq!(left, 2, "vondam at {at}: his own death at power 4 destroys one nonland permanent of theirs, once");
+        assert_eq!(g.player(P0).life, life + 2, "vondam at {at}: one for each of the two sacrificed with him");
+    }
+}
+
+#[test]
+fn the_eternal_wanderers_minus_four_creatures_of_the_opponents_give_vondam_nothing() {
+    let (mut g, w, v, _, tithe) = wanderer_table(0, 0, 0);
+    let life = g.player(P0).life;
+    assert_eq!(g.player(P1).perms.iter().filter(|&&m| g.is_creature(m)).count(), 4);
+    wanderer_minus_four(&mut g, w);
+    assert_eq!(g.player(P1).perms.iter().filter(|&&m| g.is_creature(m)).count(), 1, "they kept one");
+    assert!(!g.perm(v).on_bf, "Vondam was sacrificed");
+    assert_eq!(g.player(P0).life, life, "three creatures of theirs were sacrificed with him: no triggers");
+    assert!(g.perm(tithe).on_bf, "and a 2/2 destroys nothing");
+}
+
+#[test]
+fn a_persons_eternal_wanderer_minus_four_sacrifices_syr_vondam_and_his_allies_at_once() {
+    for at in 0..=3 {
+        let (mut g, w, v, mine, tithe) = wanderer_table(at, 3, 0);
+        let asked = person_picking(&mut g, "Brago"); // keeps the commander
+        let life = g.player(P0).life;
+        assert_eq!(use_ability(&mut g, w, "keeps one creature"), None);
+        assert!(!asked.lock().unwrap().is_empty(), "the person is asked which creature to keep");
+        for &m in &mine {
+            assert!(!g.perm(m).on_bf, "vondam at {at}: sacrificed");
+        }
+        assert!(!g.perm(v).on_bf, "vondam at {at}: he was sacrificed too");
+        assert_eq!(
+            g.player(P0).life,
+            life + 3,
+            "vondam at {at}: one trigger for each of the three sacrificed with him"
+        );
+        assert_eq!(g.perm(v).plus, 0, "vondam at {at}: the counters have nowhere to go");
+        assert!(g.perm(tithe).on_bf, "vondam at {at}: he was a 2/2 when he left, so nothing is destroyed");
+    }
+}
