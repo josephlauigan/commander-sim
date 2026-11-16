@@ -45,11 +45,28 @@ pub fn poison_share(g: &Game, d: PlayerId, atk: &[PermId]) -> f64 {
     if n == 0 { 0.0 } else { n as f64 / (10 - g.player(d).poison as i32).max(1) as f64 }
 }
 
-/// the damage a creature deals to a blocker or attacker that has toughness `t`, in one or two damage steps: `total` is its
-/// power times its strikes; `ds`: with double strike, a first strike that is lethal leaves nothing for the second step.
-/// `scale` turns an amount into what is dealt (Fiery Emancipation, Stagger, Gisela).
-fn lethal_total(total: i32, ds: bool, t: i32, scale: impl Fn(i32) -> i32) -> i32 {
-    if ds && total > 0 && total % 2 == 0 && scale(total / 2) >= t { scale(total / 2) } else { scale(total) }
+/// the damage a creature deals to another creature in its damage steps, [first step, second step]: `total` is its power
+/// times its strikes. With double strike (`ds`, an even `total`) it strikes twice with half each, unless the first hit
+/// removes its foe (`kills_first(first)`: lethal damage to a creature that is not indestructible, deathtouch, or counters
+/// that take its toughness to 0), which leaves nothing for the second step. `scale` turns an amount into what is dealt
+/// (Fiery Emancipation, Stagger, Gisela).
+fn strikes(total: i32, ds: bool, kills_first: impl Fn(i32) -> bool, scale: impl Fn(i32) -> i32) -> [i32; 2] {
+    if ds && total > 0 && total % 2 == 0 {
+        let first = scale(total / 2);
+        [first, if kills_first(first) { 0 } else { first }]
+    } else {
+        [scale(total), 0]
+    }
+}
+
+/// adds `dmg` to the lifelink gains of one attacker: one, or one for each of its two damage steps
+fn carry(c: &mut [i32; 2], dmg: i32, twice: bool) {
+    if twice {
+        c[0] = c[0].saturating_add(dmg / 2);
+        c[1] = c[1].saturating_add(dmg / 2);
+    } else {
+        c[0] = c[0].saturating_add(dmg);
+    }
 }
 
 pub fn double_strike(g: &Game, m: PermId) -> bool {
@@ -832,6 +849,12 @@ pub fn resolve_blocks(
             if !g.perm(a).on_bf || !g.player(d).alive {
                 continue;
             }
+            // lifelink gains of this attacker, one per damage step: what its damage to a blocker, a planeswalker, a battle or
+            // a creature it is redirected to adds up to, gained with its damage to the player in the same step
+            // (CR 119.9, 702.15e: one source, one event), or on its own after it; `la0` is its lifelink as the step began
+            let (la0, twice_ok) = (crate::engine::life::has_lifelink(g, a), double_strike(g, a));
+            let twice_ok = twice_ok && blocker_of(&assign, a).is_none();
+            let mut ll_carry = [0i32; 2];
             let mut ap = epow(g, a).saturating_mul(if double_strike(g, a) { 2 } else { 1 });
             if repl::source_prevented(g, a) || repl::dovin(g, a) {
                 ap = 0; // Old Fat Spider's chapter II, Dovin's lock
@@ -926,13 +949,16 @@ pub fn resolve_blocks(
                             repl::put_plus(g, to, -k);
                         }
                     }
-                    // lifelink (CR 702.15b): each creature's controller gains the damage it dealt to the other creature
-                    // (trample: what went to the blocker; the rest is the player's, below). A first striker that kills its
-                    // foe takes no damage back; protection and prevention stop the damage, and then there is no gain
+                    // lifelink (CR 702.15b): each creature's controller gains the damage it dealt to the other creature, one
+                    // gain event per damage step (CR 702.15e). Trample: what went to the blocker is gained with the
+                    // player's part in one event (`ll_carry`). A first striker that kills its foe takes no damage back; a
+                    // fog, protection and prevention stop the damage, and then there is no gain
                     let (la, lb) = (crate::engine::life::has_lifelink(g, a), crate::engine::life::has_lifelink(g, b));
                     if la || lb {
-                        let hits_a = !(fb && !fa && a_dies) && !zil;
-                        let hits_b = !(fa && !fb && b_dies);
+                        let fogged = g.fog == Some(g.turn_stamp()) && !g.unpreventable();
+                        let hits_a = !(fb && !fa && a_dies) && !zil && !fogged;
+                        let hits_b = !(fa && !fb && b_dies) && !fogged;
+                        let counters = |g: &Game, src: PermId| kw(g, src, "wither") || kw(g, src, "infect");
                         let to_b = if hits_a
                             && !repl::no_damage(g, b)
                             && !t0(g, b)
@@ -947,10 +973,17 @@ pub fn resolve_blocks(
                                         .saturating_mul(crate::engine::life::stagger_mult(g, d)),
                                 )
                             };
+                            let (cnt, dt, ind) =
+                                (counters(g, a), g.perm(a).dt, crate::engine::values::indestructible(g, b));
                             // trample: the blocker takes what the player does not
-                            lethal_total(ap.saturating_sub(excess), double_strike(g, a) && !tr, bt, |x| one(g, x))
+                            strikes(
+                                ap.saturating_sub(excess),
+                                double_strike(g, a) && !tr,
+                                |x| (cnt && x >= bt) || (!ind && (x >= bt || dt)),
+                                |x| one(g, x),
+                            )
                         } else {
-                            0
+                            [0; 2]
                         };
                         let to_a = if hits_b
                             && !repl::no_damage(g, a)
@@ -969,17 +1002,21 @@ pub fn resolve_blocks(
                                         .saturating_mul(crate::engine::life::stagger_mult(g, p)),
                                 )
                             };
-                            lethal_total(
+                            let (cnt, dt, ind) =
+                                (counters(g, b), g.perm(b).dt, crate::engine::values::indestructible(g, a));
+                            strikes(
                                 pw.saturating_mul(if double_strike(g, b) { 2 } else { 1 }),
                                 double_strike(g, b),
-                                at,
+                                |x| (cnt && x >= at) || (!ind && (x >= at || dt)),
                                 |x| one(g, x),
                             )
                         } else {
-                            0
+                            [0; 2]
                         };
-                        crate::engine::life::lifelink(g, a, la, to_b)?;
-                        crate::engine::life::lifelink(g, b, lb, to_a)?;
+                        ll_carry = to_b;
+                        for x in to_a {
+                            crate::engine::life::lifelink(g, b, lb, x)?;
+                        }
                     }
                     crate::impls::t0_captain::pair_mark(g, a, b); // Hawkeye
                     if b_dies {
@@ -1017,7 +1054,7 @@ pub fn resolve_blocks(
                 g.perm_mut(w).loyalty = Some(l);
                 *tot = tot.saturating_add(dmg);
                 crate::glog!(g, "    {} deals {} to {} (loyalty {})", g.perm(a).name, dmg, g.perm(w).name, l);
-                crate::engine::life::lifelink(g, a, crate::engine::life::has_lifelink(g, a), dmg)?; // damage to a planeswalker
+                carry(&mut ll_carry, dmg, twice_ok && dmg % 2 == 0); // damage to a planeswalker
                 if l <= 0 {
                     leave(g, w)?;
                     to_zone_card(g, w, Zone::Gy);
@@ -1033,16 +1070,18 @@ pub fn resolve_blocks(
                 && crate::impls::card_models3::defense(g, w) > 0
             {
                 crate::impls::card_models3::battle_damage(g, p, a, w, dmg)?; // --- card-models-3: a battle
-                crate::engine::life::lifelink(g, a, crate::engine::life::has_lifelink(g, a), dmg)?; // damage to a battle
+                carry(&mut ll_carry, dmg, twice_ok && dmg % 2 == 0); // damage to a battle
                 dmg = 0;
             }
             if dmg > 0 && crate::human::is_human(g, p) && to_walker.iter().any(|x| x.0 == a) {
                 dmg = 0; // the person's attacker went after a planeswalker that is gone: no damage to the player
             }
             if dmg > 0 && crate::impls::t0_captain::sac_player(g, d, dmg) {
+                carry(&mut ll_carry, dmg, twice_ok && dmg % 2 == 0); // the damage is dealt, to the chosen creature
                 dmg = 0; // Heroic Sacrifice
             }
             if dmg > 0 && crate::impls::t12_lightpaws::pariah_take(g, d, dmg) {
+                carry(&mut ll_carry, dmg, twice_ok && dmg % 2 == 0); // the damage is dealt, to the enchanted creature
                 dmg = 0; // --- Tiers 1/2 (lightpaws): Pariah: dealt to the enchanted creature instead
             }
             // --- Tiers 1/2 (kaalia-sythis): Serra's Emissary (protection from creatures)
@@ -1079,7 +1118,7 @@ pub fn resolve_blocks(
             // player" trigger happens twice (Swords, Cloud's doubling on top: four)
             let hits = if double_strike(g, a) && blocker_of(&assign, a).is_none() && dmg % 2 == 0 { 2 } else { 1 };
             let full = dmg;
-            for _ in 0..hits {
+            for step in 0..hits {
                 let dmg = full / hits;
                 if dmg > 0 && g.perm(a).on_bf && g.player(d).alive {
                     let dealt = if infect {
@@ -1129,7 +1168,9 @@ pub fn resolve_blocks(
                             g.bf_ver += 1;
                         }
                     }
-                    // lifelink: the damage dealt (after Fiery Emancipation, Stagger and the like), once
+                    // lifelink: the damage dealt (after Fiery Emancipation, Stagger and the like), once, with what this
+                    // attacker dealt to a blocker in the same step
+                    let dealt = dealt.saturating_add(std::mem::take(&mut ll_carry[step as usize]));
                     crate::engine::life::lifelink(g, a, crate::engine::life::has_lifelink(g, a), dealt)?;
                     // Cecil, Dark Knight: Darkness (after lifelink: a flip here gives the other face's lifelink later)
                     crate::impls::newcards_b::cecil_deals(g, a, dmg)?;
@@ -1156,6 +1197,9 @@ pub fn resolve_blocks(
                         }
                     }
                 }
+            }
+            for x in ll_carry {
+                crate::engine::life::lifelink(g, a, la0, x)?; // damage that had no hit on the player to go with
             }
         }
         crate::impls::cloud::judgment_strike(g, d, &judged)?; // --- cloud-gaps: Judgment of Alexander
