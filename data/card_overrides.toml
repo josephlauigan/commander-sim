@@ -2229,8 +2229,8 @@ note = ""
 types = "E"
 tags = "leg"
 dsl = []
-status = "Approximate"
-note = "indestructible; a creature only with devotion to white 5+ (5/5); life gain puts a +1/+1 counter on your best creature; the {1}{W} lifelink grant is used for the Walking Ballista combo only"
+status = "Full"
+note = "indestructible; a creature only with devotion to white 5+ (5/5); life gain puts a +1/+1 counter on a creature or enchantment you control (a person picks it; the AI prefers a Walking Ballista or Triskelion, then its best creature, then Heliod himself; a creature with protection from white is no target); {1}{W}: another target creature gains lifelink: a person is offered it, the AI uses it before combat on its biggest attacker (power 3 or more, once a turn, spare mana, never while a held answer or its plan needs the mana) and in the Walking Ballista combo; both check their target again as they resolve"
 
 ["Hellkite Charger"]
 tags = "pow=5 fly haste bomb=5"
@@ -9651,6 +9651,11 @@ dsl = [] # the anthem is hand-written (creature_pt) so the Coffin face has none
 
 ["Sorin, Imperious Bloodlord"]
 dsl = [] # the walker framework runs its three abilities (the compiled +1 would run twice)
+
+["Sorin, Vengeful Bloodlord"]
+dsl = [] # the lifelink static, the +2 (a player or planeswalker, not any target) and the -X are hand-written in impls/sorin.rs
+status = "Full"
+note = "during your turn your creatures and planeswalkers have lifelink; +2: 1 damage to a player or planeswalker (the AI aims at a player at 1 life, a planeswalker at 1 loyalty, else the most threatening opponent); -X: a creature card of mana value X from your graveyard enters as a Vampire (a person chooses the card; the AI uses X = 0 to 16)"
 
 ["Forerunner of the Legion"]
 dsl = [] # the compiled enter search found any card; the Vampire search and the +1/+1 trigger are hand-written

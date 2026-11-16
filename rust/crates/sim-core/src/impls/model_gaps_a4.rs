@@ -133,7 +133,8 @@ pub fn ping(g: &mut Game, p: PlayerId, src: PermId, t: Tgt, n: i32) -> Res {
         return Ok(());
     }
     let name = g.perm(src).name.to_string();
-    crate::human::choices::apply_damage(g, p, t.target(), n, &name, "burn")
+    let by = crate::human::choices::by(g, Some(src));
+    crate::human::choices::apply_damage_by(g, p, t.target(), n, &name, "burn", by).map(|_| ())
 }
 
 /// the best ping the AI has now: (target, utility, lethal)

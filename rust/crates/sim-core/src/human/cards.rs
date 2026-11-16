@@ -219,30 +219,47 @@ fn remove_one(v: &mut Vec<CardId>, x: CardId) {
 /// cards._damage: n damage from source to x, a player or permanent chosen already (the same rules as
 /// choices.deal_damage)
 pub fn damage(g: &mut Game, p: PlayerId, x: Target, n: i32, source: &str, kind: &str) -> Res {
-    use crate::engine::{life, removal, zones};
+    damage_by(g, p, x, n, source, kind, None).map(|_| ())
+}
+
+/// `damage` by a permanent: returns the damage dealt, and a source with lifelink (`by`) gains that much
+pub fn damage_by(g: &mut Game, p: PlayerId, x: Target, n: i32, source: &str, kind: &str, by: choices::By) -> Res<i32> {
+    if n <= 0 {
+        return Ok(0); // 0 damage is no damage (CR 120.8)
+    }
+    use crate::engine::{life, zones};
+    let src = by.map(|b| b.0);
     let m = match x {
         Target::Player(q) => {
+            let mut dealt = 0;
             if g.player(q).alive {
-                life::lose_life(g, q, n, Some(p), crate::sym::intern(kind), None)?;
+                dealt = life::lose_life_dealt(g, q, n, Some(p), crate::sym::intern(kind), None)?;
             }
-            return life::check_state(g);
+            if let Some((s, ll)) = by {
+                life::lifelink(g, s, ll, dealt)?;
+            }
+            life::check_state(g)?;
+            return Ok(dealt);
         }
         Target::Perm(m) => m,
     };
     if !g.perm(m).on_bf {
-        return Ok(());
+        return Ok(0);
     }
     let name = g.perm(m).name;
+    let creature = g.is_creature(m);
+    let mut dealt = 0;
     // a person's damage stays marked on the creature (Triskelion pinging itself): the lethal check counts it
     let person = crate::human::is_human(g, p);
     let prior = if person { super::combos::marked(g, m) } else { 0 };
-    if g.is_creature(m) && crate::engine::values::etgh(g, m) <= n + prior {
-        removal::apply_removal(g, Some(p), m, &format!("dmg{n}"), None)?;
-    } else if g.is_creature(m) {
+    if creature && crate::engine::values::etgh(g, m) <= n + prior {
+        dealt = life::removal_damage(g, p, src, m, n, None)?;
+    } else if creature {
         if person {
             super::combos::mark(g, m, n);
         }
         crate::glog!(g, "    {} deals {} damage to {} (it survives)", source, n, name);
+        dealt = life::creature_damage(g, p, src, m, n);
     }
     let x = g.perm(m);
     let pw = x.cd.is_some_and(|c| g.db.get(c).types.has(crate::cards::Types::PLANESWALKER));
@@ -253,8 +270,15 @@ pub fn damage(g: &mut Game, p: PlayerId, x: Target, n: i32, source: &str, kind: 
             zones::leave(g, m)?;
             zones::to_zone_card(g, m, zones::Zone::Gy);
         }
+        if !creature {
+            dealt = n;
+        }
     }
-    life::check_state(g)
+    if let Some((s, ll)) = by {
+        life::lifelink(g, s, ll, dealt)?;
+    }
+    life::check_state(g)?;
+    Ok(dealt)
 }
 
 /// cards.prismari_charm: choose one: surveil 2, then draw a card; 1 damage to each of one or two targets; return
@@ -378,7 +402,7 @@ fn land_tapped(g: &Game, l: PermId, what: &str) -> Why {
 // ------------------------------------------------------------------ planeswalkers
 /// cards._loyalty: why a loyalty ability of m costing `cost` can't be activated now (sorcery speed, once per turn,
 /// enough loyalty)
-fn loyalty(g: &Game, p: PlayerId, m: PermId, cost: i32) -> Why {
+pub(super) fn loyalty(g: &Game, p: PlayerId, m: PermId, cost: i32) -> Why {
     if let Some(why) = legal::sorcery_timing(g, p) {
         return Some(why.replace("do that", "activate a loyalty ability"));
     }
@@ -416,49 +440,7 @@ pub(super) fn walker(list: &[(i32, &'static str, WalkEff)]) -> Vec<PermAbility> 
     list.iter()
         .map(|&(cost, text, eff)| {
             ability(format!("{cost:+}: {text}"), move |g: &mut Game, p: PlayerId, m: PermId| {
-                if let Some(why) = loyalty(g, p, m, cost) {
-                    return Ok(Some(why));
-                }
-                let ready = match eff(g, p, m)? {
-                    Ready::Why(why) => return Ok(Some(why)),
-                    Ready::Cancel => return Ok(None),
-                    r => r,
-                };
-                crate::glog!(g, "  {} activates {} {:+}: {}", pname(g, p), pm_name(g, m), cost, text);
-                crate::impls::mine::pw_use(g, m, cost)?; // a walker at 0 loyalty is gone; the effect still happens
-                let name = format!("{cost:+}");
-                let on_table = g.player(p).perms.contains(&m);
-                let (src, cd) = match (on_table, g.perm(m).cd) {
-                    (false, Some(cd)) => (None, Some(cd)),
-                    _ => (Some(m), None),
-                };
-                let go_fn = match ready {
-                    Ready::Go(f) => Some(f),
-                    _ => None,
-                };
-                // a Rings of Brighthearth / Peter Parker's Camera copy: no loyalty is paid; it chooses its targets anew
-                // (the effect's own question again; cancelling it keeps the original's targets)
-                crate::engine::stack::ability_run_w(g, p, src, cd, &name, None, None, 0.0, |g, is_copy| {
-                    let mut again = None;
-                    if is_copy {
-                        super::walkers::tell_info(
-                            g,
-                            p,
-                            &format!(
-                                "The copy of {} {name}: choose new targets, or cancel to keep the original's.",
-                                pm_name(g, m)
-                            ),
-                        );
-                        if let Ready::Go(f2) = eff(g, p, m)? {
-                            again = Some(f2);
-                        }
-                    }
-                    if let Some(f) = again.as_ref().or(go_fn.as_ref()) {
-                        f(g)?;
-                    }
-                    crate::engine::life::check_state(g)
-                })?;
-                Ok(None)
+                walker_run(g, p, m, cost, text, &eff)
             })
         })
         .map(|mut a| {
@@ -468,6 +450,58 @@ pub(super) fn walker(list: &[(i32, &'static str, WalkEff)]) -> Vec<PermAbility> 
             a
         })
         .collect()
+}
+
+/// one activation of a loyalty ability of m costing `cost` (the cost of a "-X" is known by now: the effect's own choice
+/// was made before it): the timing and loyalty checks, the effect's question, the loyalty paid, the ability on the stack
+pub(super) fn walker_run(
+    g: &mut Game,
+    p: PlayerId,
+    m: PermId,
+    cost: i32,
+    text: &str,
+    eff: &dyn Fn(&mut Game, PlayerId, PermId) -> Res<Ready>,
+) -> Res<Why> {
+    if let Some(why) = loyalty(g, p, m, cost) {
+        return Ok(Some(why));
+    }
+    let ready = match eff(g, p, m)? {
+        Ready::Why(why) => return Ok(Some(why)),
+        Ready::Cancel => return Ok(None),
+        r => r,
+    };
+    crate::glog!(g, "  {} activates {} {:+}: {}", pname(g, p), pm_name(g, m), cost, text);
+    crate::impls::mine::pw_use(g, m, cost)?; // a walker at 0 loyalty is gone; the effect still happens
+    let name = format!("{cost:+}");
+    let on_table = g.player(p).perms.contains(&m);
+    let (src, cd) = match (on_table, g.perm(m).cd) {
+        (false, Some(cd)) => (None, Some(cd)),
+        _ => (Some(m), None),
+    };
+    let go_fn = match ready {
+        Ready::Go(f) => Some(f),
+        _ => None,
+    };
+    // a Rings of Brighthearth / Peter Parker's Camera copy: no loyalty is paid; it chooses its targets anew
+    // (the effect's own question again; cancelling it keeps the original's targets)
+    crate::engine::stack::ability_run_w(g, p, src, cd, &name, None, None, 0.0, |g, is_copy| {
+        let mut again = None;
+        if is_copy {
+            super::walkers::tell_info(
+                g,
+                p,
+                &format!("The copy of {} {name}: choose new targets, or cancel to keep the original's.", pm_name(g, m)),
+            );
+            if let Ready::Go(f2) = eff(g, p, m)? {
+                again = Some(f2);
+            }
+        }
+        if let Some(f) = again.as_ref().or(go_fn.as_ref()) {
+            f(g)?;
+        }
+        crate::engine::life::check_state(g)
+    })?;
+    Ok(None)
 }
 
 /// cards._any_player: any living player (you included), None if cancelled
@@ -677,6 +711,50 @@ fn mind_stone(_g: &Game) -> Vec<PermAbility> {
     })]
 }
 
+/// {1}{W}: another target creature gains lifelink until end of turn (any controller's: hexproof, shroud and protection
+/// from white are respected)
+fn heliod(_g: &Game) -> Vec<PermAbility> {
+    vec![ability(
+        "{1}{W}: another target creature gains lifelink until end of turn",
+        |g: &mut Game, p: PlayerId, m: PermId| {
+            if let Some(why) = cost(g, p, 1, "W", "Heliod, Sun-Crowned") {
+                return Ok(Some(why));
+            }
+            let cands: Vec<PermId> = g
+                .players
+                .iter()
+                .filter(|q| q.alive)
+                .flat_map(|q| q.perms.iter().copied())
+                .filter(|&x| crate::impls::t4::heliod_grant_legal(g, p, m, x))
+                .collect();
+            if cands.is_empty() {
+                return Ok(Some("There is no other creature to target.".into()));
+            }
+            let Some(t) = pick_perm(
+                g,
+                p,
+                "target",
+                "Heliod, Sun-Crowned: which other creature gains lifelink until end of turn?",
+                &cands,
+                Some("cancel"),
+            )?
+            else {
+                return Ok(None);
+            };
+            super::mana::pay_from_pool(g, p, 1, "W");
+            crate::glog!(g, "  {} activates Heliod, Sun-Crowned: {} gains lifelink", pname(g, p), g.perm(t).name);
+            crate::engine::stack::ability_run(g, p, Some(m), None, "lifelink", None, Some(t), |g| {
+                // still a legal target as it resolves, and a ward on it is paid or the ability is countered
+                if crate::impls::t4::heliod_grant_legal(g, p, m, t) && crate::engine::ward::pay_ward(g, p, t)? {
+                    crate::impls::partials::eot_kw(g, t, "lifelink");
+                }
+                Ok(())
+            })?;
+            Ok(None)
+        },
+    )]
+}
+
 fn triskelion(_g: &Game) -> Vec<PermAbility> {
     vec![ability("remove a +1/+1 counter: 1 damage to any target", |g: &mut Game, p: PlayerId, m: PermId| {
         if g.perm(m).plus <= 0 {
@@ -687,6 +765,7 @@ fn triskelion(_g: &Game) -> Vec<PermAbility> {
         let Some(k) = pick(g, p, "target", "Triskelion: 1 damage to which target?", &labels)? else {
             return Ok(None);
         };
+        let by = choices::by(g, Some(m)); // lifelink as the ability is activated
         g.perm_mut(m).plus -= 1;
         crate::glog!(g, "  {} removes a counter from Triskelion", pname(g, p));
         let tp = if let Target::Perm(t) = tg[k] { Some(t) } else { None };
@@ -696,7 +775,7 @@ fn triskelion(_g: &Game) -> Vec<PermAbility> {
             } else {
                 tg[k]
             };
-            damage(g, p, t, 1, "Triskelion", "triggers")
+            damage_by(g, p, t, 1, "Triskelion", "triggers", by).map(|_| ())
         })?;
         if g.player(p).perms.contains(&m) {
             super::combos::die_if_lethal(g, m)?; // no counters left, or its own pings marked on it
@@ -996,6 +1075,7 @@ pub fn abilities(g: &Game, p: PlayerId, m: PermId) -> Option<Vec<PermAbility>> {
         }
         "Mind Stone" => mind_stone(g),
         "Triskelion" => triskelion(g),
+        "Heliod, Sun-Crowned" => heliod(g),
         "Yawgmoth, Thran Physician" => super::combos::yawgmoth(),
         "Aetherflux Reservoir" => aetherflux(g),
         "Sakura-Tribe Elder" => ste(g),

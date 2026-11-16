@@ -1889,16 +1889,19 @@ fn trisk_ping_go(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> 
     if g.perm(src).plus <= 0 || !on_bf_of(g, p, src) {
         return Ok(false);
     }
+    let ll = crate::engine::life::has_lifelink(g, src); // read before the counter is paid
     g.perm_mut(src).plus -= 1;
     let imp = if lethal.is_some() { 8.0 } else { 3.0 };
     if !ability_window(g, p, Some(src), "1 damage", Some(imp), None)? {
         return Ok(true);
     }
+    let mut dealt = 0;
     if let Some(q) = lethal.filter(|&q| g.player(q).alive) {
-        lose_life(g, q, 1, Some(p), "triggers", None)?;
+        dealt = crate::engine::life::lose_life_dealt(g, q, 1, Some(p), "triggers", None)?;
     } else if let Some(m) = tg.filter(|&m| g.perm(m).on_bf) {
-        apply_removal(g, Some(p), m, "dmg1", None)?;
+        dealt = crate::engine::life::removal_damage(g, p, Some(src), m, 1, None)?;
     }
+    crate::engine::life::lifelink(g, src, ll, dealt)?;
     if etgh(g, src) <= 0 {
         die(g, src, "sba")?;
     }

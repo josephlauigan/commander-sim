@@ -5,7 +5,7 @@ use crate::engine::repl;
 use crate::engine::values::chasm;
 use crate::flow::Res;
 use crate::hooks::{Call, Event};
-use crate::ids::PlayerId;
+use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{DataKey, Game};
 use crate::sym::{Sym, intern};
 
@@ -21,9 +21,27 @@ pub const LIFE_CAP: i32 = 1 << 30;
 
 /// p loses n life (or is dealt n damage) from src. Python's `lose_life`.
 pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind: Sym, damage: Option<bool>) -> Res {
+    lose_life_dealt(g, p, n, src, kind, damage).map(|_| ())
+}
+
+/// `lose_life`, returning the damage that was dealt to p (what a source with lifelink gains, CR 702.15b): the amount
+/// after Fiery Emancipation, Stagger and Gisela changed it, and after prevention (0 when it was prevented, when p is
+/// dead, or when the loss was not damage). A locked life total (Flare of Fortitude) does not stop damage, only the loss of
+/// life, so it counts; Teferi's Protection also gives protection, which is prevention. Bloodletter of Aclazotz replaces the
+/// life loss, not the damage (CR 120.4c). A floor on life (Angel's Grace, Serra's emblem), Pariah and Phyrexian Unlife
+/// change where the damage goes, not how much was dealt, so the full amount counts.
+pub fn lose_life_dealt(
+    g: &mut Game,
+    p: PlayerId,
+    n: i32,
+    src: Option<PlayerId>,
+    kind: Sym,
+    damage: Option<bool>,
+) -> Res<i32> {
     let pl = g.player(p);
-    if n <= 0 || !pl.alive || pl.life_locked {
-        return Ok(());
+    let locked = pl.life_locked;
+    if n <= 0 || !pl.alive {
+        return Ok(0);
     }
     let damage = damage.unwrap_or(DAMAGE_KINDS.contains(&kind));
     let mut n = n;
@@ -37,23 +55,30 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
     if damage && kind != "combat" {
         n = crate::impls::t3_aurelia::gisela_scale(g, p, n); // Gisela, Blade of Goldnight (combat.rs scales combat damage)
     }
+    let dealt_n = n; // the damage dealt: Bloodletter's doubling below is of the life lost
+    if locked {
+        // the life total can't change: nothing is lost, but damage that is not prevented was dealt
+        return Ok(if damage && !prevents_damage(g, p, src) { dealt_n } else { 0 });
+    }
     n = crate::impls::t45_edgar::bloodletter(g, p, n); // --- Tiers 4/5 (edgar): Bloodletter of Aclazotz
     if damage && prevents_damage(g, p, src) {
         g.player_mut(p).stat("dmg_prevented", n as i64);
         crate::glog!(g, "    {} damage to {} is prevented", n, g.player(p).name);
-        return Ok(());
+        return Ok(0);
     }
+    let dealt = if damage { dealt_n } else { 0 };
     if damage && kind != "combat" && crate::impls::t12_lightpaws::pariah_take(g, p, n) {
-        return crate::impls::t12_lightpaws::pariah_finish(g); // --- Tiers 1/2 (lightpaws): Pariah
+        crate::impls::t12_lightpaws::pariah_finish(g)?; // --- Tiers 1/2 (lightpaws): Pariah
+        return Ok(dealt);
     }
     if damage && crate::impls::alela::serra_floor(g, p, &mut n) {
-        return Ok(()); // Serra the Benevolent's emblem left nothing to deal
+        return Ok(dealt); // Serra the Benevolent's emblem left nothing to lose
     }
     if damage && kind != "combat" {
         g.player_mut(p).nc_dmg_this = true;
     }
     if damage && crate::impls::tymna_cards::unlife_infect(g, p, n) {
-        return Ok(()); // Phyrexian Unlife at 0 or less life: the damage is dealt as poison counters
+        return Ok(dealt); // Phyrexian Unlife at 0 or less life: the damage is dealt as poison counters
     }
     // --- card-models-3: Angel's Grace: damage that would reduce p's life total to less than 1 reduces it to 1
     let n = if damage && n > 0 && crate::impls::t6_stax::grace_active(g, p) {
@@ -90,6 +115,83 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
         && let Some(s) = src.filter(|&s| s != p)
     {
         crate::impls::t45_miirym::champion_hit(g, s, n)?;
+    }
+    Ok(dealt)
+}
+
+/// the damage `n` from p's permanent `src` (if any) to the creature `m` as it is dealt: Fiery Emancipation, Stagger and
+/// Gisela change the amount, and damage that is prevented (a prevention effect on `m`, protection, a source whose damage
+/// is prevented) is 0. Lifelink gains this, however much toughness `m` has. Only Old Fat Spider's prevention of all of a
+/// creature's damage applies (not the combat-only fogs: this is not combat damage).
+pub fn creature_damage(g: &Game, actor: PlayerId, src: Option<PermId>, m: PermId, n: i32) -> i32 {
+    if n <= 0 {
+        return 0;
+    }
+    let owner = g.perm(m).owner;
+    let mut n = n;
+    if actor != owner {
+        n = n.saturating_mul(crate::engine::combat::fiery(g, actor));
+    }
+    n = n.saturating_mul(stagger_mult(g, owner));
+    n = crate::impls::t3_aurelia::gisela_scale(g, owner, n);
+    if repl::no_damage(g, m) || repl::tajic_prevents(g, m) {
+        return 0;
+    }
+    if let Some(s) = src
+        && ((!g.unpreventable() && crate::impls::mine::damage_prevented(g, s))
+            || crate::engine::values::protected_from(g, m, crate::engine::values::colors_of(g, s))
+            || crate::cardcode::prot_vs(g, m, s))
+    {
+        return 0;
+    }
+    n
+}
+
+/// `apply_removal(.., "dmgN")`, returning the damage it dealt to `m` (0 when ward, a protection response or a
+/// prevention effect stopped it): what a source with lifelink gains. An indestructible creature survives the damage but
+/// takes it.
+pub fn removal_damage(
+    g: &mut Game,
+    actor: PlayerId,
+    src: Option<PermId>,
+    m: PermId,
+    n: i32,
+    spell: Option<CardId>,
+) -> Res<i32> {
+    let dealt = creature_damage(g, actor, src, m, n);
+    if g.perm(m).on_bf && crate::engine::values::indestructible(g, m) {
+        // `apply_removal` stops at "indestructible" before it pays ward: an untargetable creature is no target, and an
+        // opponent's ability pays the ward here (a ward it can't pay counters the ability)
+        let owner = g.perm(m).owner;
+        if crate::engine::values::untargetable(g, m) || (actor != owner && !crate::engine::ward::pay_ward(g, actor, m)?)
+        {
+            return Ok(0);
+        }
+    }
+    let prev = g.last_removed.take();
+    crate::engine::removal::apply_removal(g, Some(actor), m, &format!("dmg{n}"), spell)?;
+    let hit = g.last_removed.is_some();
+    if !hit {
+        g.last_removed = prev;
+    }
+    let indestructible = g.perm(m).on_bf && crate::engine::values::indestructible(g, m);
+    Ok(if hit || indestructible { dealt } else { 0 })
+}
+
+/// does the permanent `src` have lifelink now (printed, granted until end of turn or by a static such as Sorin's)?
+pub fn has_lifelink(g: &Game, src: PermId) -> bool {
+    g.perm(src).lifelink || crate::engine::chars::has_keyword(g, src, "lifelink")
+}
+
+/// lifelink (CR 702.15b): the controller of a source with lifelink gains the damage it dealt. Lifelink is read now, as the
+/// damage is dealt (CR 113.7a), when the source is still on the battlefield; `ll` is its last known information (read when
+/// the ability was activated, CR 702.15c) for a source that has left. Each source and each damage event is its own life gain.
+pub fn lifelink(g: &mut Game, src: PermId, ll: bool, dealt: i32) -> Res {
+    let ll = if g.perm(src).on_bf && !g.perm(src).phased { has_lifelink(g, src) } else { ll };
+    // a source whose damage is all prevented (Old Fat Spider's chapter II) dealt none
+    if ll && dealt > 0 && !(!g.unpreventable() && crate::impls::mine::damage_prevented(g, src)) {
+        let c = g.perm(src).owner;
+        gain(g, c, dealt)?;
     }
     Ok(())
 }

@@ -52,6 +52,7 @@ pub mod sephfs;
 pub mod sephfs_cards;
 pub mod sheoldred;
 pub mod smaug;
+pub mod sorin; // --- Sorin, Vengeful Bloodlord: lifelink on your turn, +2 and -X (Yoshimaru/Tymna deck)
 pub mod sweepers;
 pub mod t0_anikthea;
 pub mod t0_captain;
@@ -224,5 +225,6 @@ pub fn registry(db: &CardDb) -> Result<Registry, String> {
     model_gaps_a2::register(&mut r, db)?; // --- model-gaps-a2
     model_gaps_a4::register(&mut r, db)?; // --- model-gaps-a4
     yoshimaru_cards::register(&mut r, db)?; // --- yoshimaru
+    sorin::register(&mut r, db)?; // --- yoshimaru: Sorin, Vengeful Bloodlord
     Ok(r)
 }

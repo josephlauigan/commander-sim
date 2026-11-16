@@ -134,13 +134,15 @@ pub fn draw(g: &mut Game, p: PlayerId, n: u32, step: bool) -> Res {
             }
             if extra && has(g, q, Tag::Bowmasters) {
                 let human = crate::human::is_human(g, q);
-                for _ in find(g, q, Tag::Bowmasters) {
+                for bm in find(g, q, Tag::Bowmasters) {
                     amass(g, q, 1)?;
                     if human {
                         // practice mode: each Bowmasters, your target
-                        crate::human::choices::deal_damage(g, q, 1, "Orcish Bowmasters", "triggers")?;
+                        crate::human::choices::deal_damage_from(g, q, 1, "Orcish Bowmasters", "triggers", Some(bm))?;
                     } else {
-                        lose_life(g, p, 1, Some(q), "triggers", None)?;
+                        let ll = crate::engine::life::has_lifelink(g, bm);
+                        let dealt = crate::engine::life::lose_life_dealt(g, p, 1, Some(q), "triggers", None)?;
+                        crate::engine::life::lifelink(g, bm, ll, dealt)?;
                     }
                 }
             }
@@ -1550,8 +1552,10 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
     }
     if t.has(Tag::Bowmasters) && !opps.is_empty() {
         if crate::human::is_human(g, p) {
-            crate::human::choices::deal_damage(g, p, 1, "Orcish Bowmasters", "triggers")?;
+            crate::human::choices::deal_damage_from(g, p, 1, "Orcish Bowmasters", "triggers", Some(m))?;
         } else {
+            let ll = crate::engine::life::has_lifelink(g, m);
+            let mut dealt = 0;
             let x1: Vec<PermId> = opps
                 .iter()
                 .flat_map(|&q| g.player(q).perms.iter().copied())
@@ -1559,11 +1563,13 @@ pub fn etb_once(g: &mut Game, p: PlayerId, m: PermId) -> Res {
                 .collect();
             if let Some(b) = max_by(&x1, |x| pval(g, x)) {
                 if crate::engine::ward::pay_ward(g, p, b)? {
+                    dealt = crate::engine::life::creature_damage(g, p, Some(m), b, 1);
                     die(g, b, "destroy")?;
                 }
             } else if let Some(q) = max_by(&opps, |o| threat(g, p, o)) {
-                lose_life(g, q, 1, Some(p), "triggers", None)?;
+                dealt = crate::engine::life::lose_life_dealt(g, q, 1, Some(p), "triggers", None)?;
             }
+            crate::engine::life::lifelink(g, m, ll, dealt)?;
         }
         amass(g, p, 1)?;
     }

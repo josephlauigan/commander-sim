@@ -673,13 +673,23 @@ fn run(
                 Some(To::Sel(s)) => (**s).clone(),
                 _ => Sel::default(),
             };
+            // a permanent's damage (not a spell's): a source with lifelink gains what it deals (CR 702.15b), read now
+            let by = crate::human::choices::by(g, src.filter(|_| spell.is_none()));
+            let mut dealt = 0; // what the effect dealt, to gain when the source has lifelink
             match to.sel.as_deref() {
                 Some("any_target") if crate::human::is_human(g, p) => {
                     let what = match spell.or(src.and_then(|m| g.perm(m).cd)) {
                         Some(c) => g.db.get(c).name.to_string(),
                         None => "Damage".to_string(),
                     };
-                    crate::human::choices::deal_damage_from(g, p, dmg, &what, "triggers", src)?;
+                    crate::human::choices::deal_damage_from(
+                        g,
+                        p,
+                        dmg,
+                        &what,
+                        "triggers",
+                        src.filter(|_| spell.is_none()),
+                    )?;
                 }
                 Some("any_target") => {
                     let cols = src_colors(g, src, spell);
@@ -697,12 +707,12 @@ fn run(
                     let best = max_by(&tg, |m| pval(g, m));
                     let lethal: Vec<PlayerId> = opps.iter().copied().filter(|&q| g.player(q).life <= eff).collect();
                     if let Some(&q) = lethal.first() {
-                        lose_life(g, q, dmg, Some(p), kind, None)?;
+                        dealt = crate::engine::life::lose_life_dealt(g, q, dmg, Some(p), kind, None)?;
                     } else if let Some(b) = best.filter(|&b| pval(g, b) >= 3.0) {
                         snapshot(g, b, ctx);
-                        apply_removal(g, Some(p), b, &format!("dmg{dmg}"), spell)?;
+                        dealt = crate::engine::life::removal_damage(g, p, by.map(|x| x.0), b, dmg, spell)?;
                     } else if let Some(q) = min_by(&opps, |q| g.player(q).life as f64) {
-                        lose_life(g, q, dmg, Some(p), kind, None)?;
+                        dealt = crate::engine::life::lose_life_dealt(g, q, dmg, Some(p), kind, None)?;
                     }
                 }
                 Some("player") if per_player_n(e).is_some() => {
@@ -710,14 +720,28 @@ fn run(
                     for q in players_from(g, p, Some(to.who.as_deref().unwrap_or("each_player")), ctx, cols) {
                         let k = per_player_n(e).map_or(0, |f| f(g, q)) * e.mult.unwrap_or(1);
                         if k > 0 {
-                            lose_life(g, q, k, Some(p), kind, None)?;
+                            dealt = dealt.saturating_add(crate::engine::life::lose_life_dealt(
+                                g,
+                                q,
+                                k,
+                                Some(p),
+                                kind,
+                                None,
+                            )?);
                         }
                     }
                 }
                 Some("player") => {
                     for q in players_from(g, p, Some(to.who.as_deref().unwrap_or("each_opponent")), ctx, cols) {
                         if q != p {
-                            lose_life(g, q, dmg, Some(p), kind, None)?;
+                            dealt = dealt.saturating_add(crate::engine::life::lose_life_dealt(
+                                g,
+                                q,
+                                dmg,
+                                Some(p),
+                                kind,
+                                None,
+                            )?);
                         }
                     }
                 }
@@ -729,13 +753,25 @@ fn run(
                         let amt = if g.perm(m).owner != p { eff } else { dmg };
                         if etgh(g, m) <= amt {
                             if to.sel.as_deref() == Some("target") {
-                                apply_removal(g, Some(p), m, &format!("dmg{dmg}"), spell)?;
+                                let d = crate::engine::life::removal_damage(g, p, by.map(|x| x.0), m, dmg, spell)?;
+                                dealt = dealt.saturating_add(d);
                             } else {
+                                if by.is_some_and(|x| x.1) {
+                                    let d = crate::engine::life::creature_damage(g, p, by.map(|x| x.0), m, amt);
+                                    dealt = dealt.saturating_add(d);
+                                }
                                 zones::die(g, m, "destroy")?;
                             }
+                        } else if by.is_some_and(|x| x.1) && g.is_creature(m) {
+                            // damage that does not kill is dealt all the same (the AI does not record it on the creature)
+                            let d = crate::engine::life::creature_damage(g, p, by.map(|x| x.0), m, amt);
+                            dealt = dealt.saturating_add(d);
                         }
                     }
                 }
+            }
+            if let Some((s, ll)) = by {
+                crate::engine::life::lifelink(g, s, ll, dealt)?;
             }
         }
         "destroy" | "exile" | "bounce" | "tuck" => {

@@ -19,11 +19,11 @@
 //! Never reached for an AI seat: `cards::abilities` is only asked for a person's permanent.
 
 use super::abilities::PermAbility;
-use super::cards::{Ready, go, pick, pick_perm, pname, walker};
+use super::cards::{Ready, go, loyalty, pick, pick_perm, pname, walker, walker_run};
 use super::{Target, choices, legal};
 use crate::cards::Types;
 use crate::engine::chars::card_types;
-use crate::engine::values::{colors_of, untargetable};
+use crate::engine::values::{colors_of, protected_from, untargetable};
 use crate::flow::Res;
 use crate::ids::{CardId, PermId, PlayerId};
 use crate::state::{DataKey, Game, Val};
@@ -83,6 +83,14 @@ pub fn abilities(nm: &str) -> Option<Vec<PermAbility>> {
             (-1, "creatures can't be blocked this turn", venser_minus1),
             (-8, "emblem: whenever you cast a spell, exile target permanent", venser_minus8),
         ]),
+        "Sorin, Vengeful Bloodlord" => {
+            let mut v = walker(&[(2, "1 damage to target player or planeswalker", sorin_plus)]);
+            v.push(super::abilities::ability(
+                "-X: return target creature card with mana value X from your graveyard to the battlefield; it is a Vampire in addition to its other types",
+                sorin_minus_x,
+            ));
+            v
+        }
         _ => return None,
     })
 }
@@ -473,4 +481,91 @@ fn venser_minus1(_g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
 
 fn venser_minus8(_g: &mut Game, p: PlayerId, m: PermId) -> Res<Ready> {
     go(move |g| crate::impls::alela::venser_emblem(g, p, m))
+}
+
+// ------------------------------------------------------------------ Sorin, Vengeful Bloodlord
+const SORIN: &str = "Sorin, Vengeful Bloodlord";
+
+/// +2: 1 damage to a player (you included) or a planeswalker the person picks
+fn sorin_plus(g: &mut Game, p: PlayerId, m: PermId) -> Res<Ready> {
+    let tg: Vec<Target> = choices::damage_targets(g, p, colors_of(g, m))
+        .into_iter()
+        .filter(|t| match t {
+            Target::Player(_) => true,
+            Target::Perm(x) => card_types(g, *x).has(Types::PLANESWALKER),
+        })
+        .collect();
+    if tg.is_empty() {
+        return Ok(Ready::Why("There is no player or planeswalker to target.".into()));
+    }
+    let labels: Vec<String> = tg.iter().map(|&x| legal::describe_target(g, p, x)).collect();
+    let Some(k) =
+        pick(g, p, "target", "Sorin, Vengeful Bloodlord +2: 1 damage to which player or planeswalker?", &labels)?
+    else {
+        return Ok(Ready::Cancel);
+    };
+    let t = tg[k];
+    go(move |g| {
+        if let Target::Perm(x) = t
+            && (!on_table(g, x) || protected_from(g, x, colors_of(g, m)))
+        {
+            return Ok(()); // gone, or protected from Sorin's colours, as the ability resolves
+        }
+        let by = choices::by(g, Some(m));
+        choices::apply_damage_by(g, p, t, 1, SORIN, "burn", by).map(|_| ())
+    })
+}
+
+/// -X: the person picks the creature card (its mana value is X, up to Sorin's loyalty) before the loyalty is paid
+fn sorin_minus_x(g: &mut Game, p: PlayerId, m: PermId) -> Res<super::abilities::Why> {
+    if let Some(why) = loyalty(g, p, m, 0) {
+        return Ok(Some(why)); // sorcery timing, once a turn
+    }
+    let l = g.perm(m).loyalty.unwrap_or(0);
+    let cands = crate::impls::sorin::candidates(g, p, None, l);
+    if cands.is_empty() {
+        return Ok(Some(format!("You have no creature card with mana value {l} or less in your graveyard.")));
+    }
+    let labels: Vec<String> =
+        cands.iter().map(|&c| format!("{} (X={})", choices::card_label(g, c), g.db.get(c).cmc)).collect();
+    let Some(k) = choices::choose(
+        g,
+        p,
+        "target",
+        "Sorin, Vengeful Bloodlord -X: return which creature card to the battlefield?",
+        &labels,
+        Some("cancel"),
+        None,
+    )?
+    else {
+        return Ok(None);
+    };
+    let (c, x) = (cands[k], g.db.get(cands[k]).cmc as i32);
+    // the first call is the chosen card; a copy of the ability (Rings of Brighthearth) chooses anew among the same mana value
+    let first = std::cell::Cell::new(true);
+    let eff = move |g: &mut Game, p: PlayerId, _m: PermId| -> Res<Ready> {
+        let pick_c = if first.replace(false) {
+            c
+        } else {
+            let cs = crate::impls::sorin::candidates(g, p, Some(x), x);
+            if cs.is_empty() {
+                return Ok(Ready::Now);
+            }
+            let labels: Vec<String> = cs.iter().map(|&c| choices::card_label(g, c)).collect();
+            match choices::choose(
+                g,
+                p,
+                "target",
+                "Sorin, Vengeful Bloodlord -X: return which creature card to the battlefield?",
+                &labels,
+                Some("cancel"),
+                None,
+            )? {
+                Some(k) => cs[k],
+                None => return Ok(Ready::Now),
+            }
+        };
+        go(move |g| crate::impls::sorin::return_as_vampire(g, p, pick_c).map(|_| ()))
+    };
+    walker_run(g, p, m, -x, "return a creature card from your graveyard to the battlefield as a Vampire", &eff)
 }

@@ -703,7 +703,9 @@ fn battlesphere_attack(g: &mut Game, src: Src, p: PlayerId, atk: &[PermId], d: P
         g.perm_mut(src).eot_pt.0 += x;
         let q = defender_of(g, src, d);
         if g.player(q).alive {
-            lose_life(g, q, x, Some(p), "triggers", Some(true))?;
+            let ll = crate::engine::life::has_lifelink(g, src);
+            let dealt = crate::engine::life::lose_life_dealt(g, q, x, Some(p), "triggers", Some(true))?;
+            crate::engine::life::lifelink(g, src, ll, dealt)?;
         }
     }
     Ok(vec![])
