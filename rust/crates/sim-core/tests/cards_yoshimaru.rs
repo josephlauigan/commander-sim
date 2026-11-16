@@ -9,6 +9,7 @@ use sim_core::engine::{cast, turn, zones};
 use sim_core::ids::CardId;
 use sim_core::state::Ctx;
 use sim_core::state::Step;
+use sim_core::state::{DataKey, Val};
 
 fn tbl() -> Game {
     let mut g = table(&["heliod-mono-white-stax", "seph", "sauron"]);
@@ -241,6 +242,67 @@ fn minas_tirith_enters_untapped_with_a_legendary_creature() {
     let l = play_land(&mut g, "Minas Tirith");
     assert!(!g.perm(l).tapped);
     assert!(g.db.get(g.perm(l).card()).types.has(Types::LAND));
+}
+
+/// the Ring tempts P0 once and `m` is their Ring-bearer (legendary while it is)
+fn ring_bearer_is(g: &mut Game, m: PermId) {
+    g.player_mut(P0).ring_level = 1;
+    g.player_mut(P0).ring_bearer = Some(m);
+}
+
+#[test]
+fn minas_tirith_counts_the_ring_bearer_as_legendary() {
+    let mut g = tbl();
+    let c = minas(&mut g);
+    let m = perm(&mut g, P0, "Mother of Runes");
+    assert!(turn::land_enters_tapped(&g, P0, c), "not yet the Ring-bearer");
+    ring_bearer_is(&mut g, m);
+    assert!(!turn::land_enters_tapped(&g, P0, c), "the Ring-bearer is legendary");
+    let l = play_land(&mut g, "Minas Tirith");
+    assert!(!g.perm(l).tapped);
+}
+
+#[test]
+fn minas_tirith_ignores_a_phased_out_legendary_creature() {
+    let mut g = tbl();
+    let c = minas(&mut g);
+    let t = perm(&mut g, P0, "Tymna the Weaver");
+    assert!(!turn::land_enters_tapped(&g, P0, c));
+    g.perm_mut(t).phased = true;
+    assert!(turn::land_enters_tapped(&g, P0, c), "a phased-out creature is treated as though it isn't there");
+    let l = play_land(&mut g, "Minas Tirith");
+    assert!(g.perm(l).tapped);
+}
+
+#[test]
+fn minas_tirith_counts_a_legendary_token() {
+    let mut g = tbl();
+    let c = minas(&mut g);
+    let t = token(&mut g, P0, 2);
+    assert!(turn::land_enters_tapped(&g, P0, c), "a plain token is not legendary");
+    g.perm_mut(t).data.set(DataKey::Legendary, Val::Bool(true));
+    assert!(!turn::land_enters_tapped(&g, P0, c), "a legendary token is");
+}
+
+#[test]
+fn minas_tirith_ignores_a_nonlegendary_copy_of_a_legend() {
+    let mut g = tbl();
+    let c = minas(&mut g);
+    let t = perm(&mut g, P0, "Tymna the Weaver");
+    g.perm_mut(t).exc.not_legendary = true; // Spark Double and the Ur-Dragon copies: "it isn't legendary"
+    assert!(turn::land_enters_tapped(&g, P0, c));
+}
+
+#[test]
+fn barad_dur_enters_untapped_with_a_nonlegendary_ring_bearer() {
+    // the sheoldred list's Barad-dur has the same rule: no printed legend out, but the Ring-bearer is legendary
+    let mut g = table(&["sheoldred", "seph"]);
+    g.active = Some(P0);
+    let c = card(&g, "Barad-dûr");
+    let m = perm(&mut g, P0, "Mother of Runes");
+    assert!(turn::land_enters_tapped(&g, P0, c));
+    ring_bearer_is(&mut g, m);
+    assert!(!turn::land_enters_tapped(&g, P0, c));
 }
 
 fn ready_minas(g: &mut Game) -> PermId {
