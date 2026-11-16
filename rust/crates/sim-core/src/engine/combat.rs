@@ -45,6 +45,17 @@ pub fn poison_share(g: &Game, d: PlayerId, atk: &[PermId]) -> f64 {
     if n == 0 { 0.0 } else { n as f64 / (10 - g.player(d).poison as i32).max(1) as f64 }
 }
 
+/// the damage a creature deals to a blocker or attacker that has toughness `t`, in one or two damage steps: `total` is its
+/// power times its strikes; `ds`: with double strike, a first strike that is lethal leaves nothing for the second step.
+/// `scale` turns an amount into what is dealt (Fiery Emancipation, Stagger, Gisela).
+fn lethal_total(total: i32, ds: bool, t: i32, scale: impl Fn(i32) -> i32) -> i32 {
+    if ds && total > 0 && total % 2 == 0 && scale(total / 2) >= t {
+        scale(total / 2)
+    } else {
+        scale(total)
+    }
+}
+
 pub fn double_strike(g: &Game, m: PermId) -> bool {
     kw(g, m, "double strike")
 }
@@ -884,13 +895,14 @@ pub fn resolve_blocks(
                     } else if fb && !fa && a_dies {
                         b_dies = false;
                     }
-                    let dmg = if tr { (ap_raw.saturating_sub(bt)).max(0).saturating_mul(fs) } else { 0 };
+                    let excess = if tr { (ap_raw.saturating_sub(bt)).max(0).saturating_mul(fs) } else { 0 };
                     // --- card-models-3: Zilortha, Apex of Ikoria: a non-Human may assign its damage as though unblocked
-                    let dmg = if crate::impls::card_models3::zilortha_unblocked(g, p, a, b, b_dies) {
+                    let zil = crate::impls::card_models3::zilortha_unblocked(g, p, a, b, b_dies);
+                    let dmg = if zil {
                         b_dies = false;
                         ap
                     } else {
-                        dmg
+                        excess
                     };
                     if ap > 0 && cardcode::kaldra_exile(g, a, b)? {
                         b_dies = false; // Sword of Kaldra: exiles what it damages
@@ -917,6 +929,40 @@ pub fn resolve_blocks(
                         if hits && k > 0 && kw(g, src, "wither") && !kw(g, src, "infect") && !repl::no_damage(g, to) {
                             repl::put_plus(g, to, -k);
                         }
+                    }
+                    // lifelink (CR 702.15b): each creature's controller gains the damage it dealt to the other creature
+                    // (trample: what went to the blocker; the rest is the player's, below). A first striker that kills its
+                    // foe takes no damage back; protection and prevention stop the damage, and then there is no gain
+                    let (la, lb) = (crate::engine::life::has_lifelink(g, a), crate::engine::life::has_lifelink(g, b));
+                    if la || lb {
+                        let hits_a = !(fb && !fa && a_dies) && !zil;
+                        let hits_b = !(fa && !fb && b_dies);
+                        let to_b = if hits_a && !repl::no_damage(g, b) && !t0(g, b) && !protected_from(g, b, colors_of(g, a))
+                            && !cardcode::prot_vs(g, b, a)
+                        {
+                            let one = |g: &Game, x: i32| {
+                                gs(g, d, x.saturating_mul(fiery(g, p)).saturating_mul(crate::engine::life::stagger_mult(g, d)))
+                            };
+                            // trample: the blocker takes what the player does not
+                            lethal_total(ap.saturating_sub(excess), double_strike(g, a) && !tr, bt, |x| one(g, x))
+                        } else {
+                            0
+                        };
+                        let to_a = if hits_b && !repl::no_damage(g, a) && !t0(g, a) && !protected_from(g, a, colors_of(g, b))
+                            && !cardcode::prot_vs(g, a, b)
+                            && !repl::source_prevented(g, b)
+                        {
+                            let at = etgh(g, a);
+                            let pw = epow(g, b).saturating_mul(crate::impls::kuja::flare_star(g, Some(b)));
+                            let one = |g: &Game, x: i32| {
+                                gs(g, p, x.saturating_mul(fiery(g, d)).saturating_mul(crate::engine::life::stagger_mult(g, p)))
+                            };
+                            lethal_total(pw.saturating_mul(if double_strike(g, b) { 2 } else { 1 }), double_strike(g, b), at, |x| one(g, x))
+                        } else {
+                            0
+                        };
+                        crate::engine::life::lifelink(g, a, la, to_b)?;
+                        crate::engine::life::lifelink(g, b, lb, to_a)?;
                     }
                     crate::impls::t0_captain::pair_mark(g, a, b); // Hawkeye
                     if b_dies {
@@ -954,6 +1000,7 @@ pub fn resolve_blocks(
                 g.perm_mut(w).loyalty = Some(l);
                 *tot = tot.saturating_add(dmg);
                 crate::glog!(g, "    {} deals {} to {} (loyalty {})", g.perm(a).name, dmg, g.perm(w).name, l);
+                crate::engine::life::lifelink(g, a, crate::engine::life::has_lifelink(g, a), dmg)?; // damage to a planeswalker
                 if l <= 0 {
                     leave(g, w)?;
                     to_zone_card(g, w, Zone::Gy);
@@ -969,6 +1016,7 @@ pub fn resolve_blocks(
                 && crate::impls::card_models3::defense(g, w) > 0
             {
                 crate::impls::card_models3::battle_damage(g, p, a, w, dmg)?; // --- card-models-3: a battle
+                crate::engine::life::lifelink(g, a, crate::engine::life::has_lifelink(g, a), dmg)?; // damage to a battle
                 dmg = 0;
             }
             if dmg > 0 && crate::human::is_human(g, p) && to_walker.iter().any(|x| x.0 == a) {
@@ -1017,11 +1065,12 @@ pub fn resolve_blocks(
             for _ in 0..hits {
                 let dmg = full / hits;
                 if dmg > 0 && g.perm(a).on_bf && g.player(d).alive {
-                    if infect {
+                    let dealt = if infect {
                         crate::impls::karn_cards::infect_hit(g, a, d, dmg)?;
+                        dmg // poison counters instead of life loss: the damage is still dealt
                     } else {
-                        lose_life(g, d, dmg, Some(p), "combat", None)?;
-                    }
+                        crate::engine::life::lose_life_dealt(g, d, dmg, Some(p), "combat", None)?
+                    };
                     conn.push(a);
                     *tot = tot.saturating_add(dmg);
                     crate::impls::tymna_cards::toxic_hit(g, a, d); // toxic: compiled, Mite tokens, granted by Skrelv
@@ -1063,9 +1112,8 @@ pub fn resolve_blocks(
                             g.bf_ver += 1;
                         }
                     }
-                    if g.perm(a).lifelink || kw(g, a, "lifelink") {
-                        gain(g, p, dmg)?;
-                    }
+                    // lifelink: the damage dealt (after Fiery Emancipation, Stagger and the like), once
+                    crate::engine::life::lifelink(g, a, crate::engine::life::has_lifelink(g, a), dealt)?;
                     // Cecil, Dark Knight: Darkness (after lifelink: a flip here gives the other face's lifelink later)
                     crate::impls::newcards_b::cecil_deals(g, a, dmg)?;
                     if g.perm(a).is_cmd {
