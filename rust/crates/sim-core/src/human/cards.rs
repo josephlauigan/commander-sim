@@ -1813,20 +1813,14 @@ fn wanderer_minus4(g: &mut Game, p: PlayerId, _m: PermId) -> Res<Ready> {
         keep = Some(mine[k]);
     }
     go(move |g| {
+        let mut doomed = vec![];
         for q in g.players.iter().filter(|q| q.alive).map(|q| q.id).collect::<Vec<_>>() {
             let k2 = if q == p { keep } else { crate::impls::zur::keep_one(g, q, p) };
-            let doomed: Vec<PermId> = g
-                .player(q)
-                .perms
-                .iter()
-                .copied()
-                .filter(|&x| g.is_creature(x) && !g.perm(x).phased && Some(x) != k2)
-                .collect();
-            for x in doomed {
-                crate::engine::zones::die(g, x, "sac")?;
-            }
+            doomed.extend(
+                g.player(q).perms.iter().copied().filter(|&x| g.is_creature(x) && !g.perm(x).phased && Some(x) != k2),
+            );
         }
-        Ok(())
+        crate::impls::zur::sacrifice_together(g, &doomed)
     })
 }
 
