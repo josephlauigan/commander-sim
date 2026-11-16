@@ -470,3 +470,26 @@ fn the_recheck_does_not_see_a_land_defence_that_becomes_usable_after_the_cast() 
     rel_finish(&mut g, P0);
     assert!(g.player(P1).alive && g.player(P1).life == 8, "Kor Haven stopped half the attack");
 }
+
+/// The option's arg carries the proven opponent in bits 40 and up and `post` alone in bit 32, and `twinflame_go` reads
+/// `post` with a mask. The only target is a vanilla 7/6 flier (Ancient Brass Dragon): worth 1.5 or more only through the
+/// first-main-phase haste term, so a decode that read the opponent bits as `post` would find no target and not cast.
+#[test]
+fn the_release_arg_keeps_post_clear_and_the_cast_reads_it_masked() {
+    let mut g = rel_base();
+    let silver = g.player(P0).perms[0];
+    zones::die(&mut g, silver, "exile").unwrap();
+    perm(&mut g, P0, "Ancient Brass Dragon");
+    g.player_mut(P1).life = 14;
+    let o = rel_option(&mut g, P0);
+    let arg = rel_arg(&o);
+    assert_eq!((arg >> 32) & 1, 0, "post is clear in a first-main-phase release");
+    assert_eq!(arg >> 40, 2, "seat 1 (index + 1) in the bits above");
+    assert_eq!(arg as u16, card(&g, TWIN).0, "the card in the low bits");
+    assert!(perform(&mut g, P0, o.act.as_ref().unwrap()).unwrap(), "the cast found its target");
+    assert_eq!(
+        g.player(P0).perms.iter().filter(|&&m| g.perm(m).token && g.perm(m).name == "Ancient Brass Dragon").count(),
+        1
+    );
+    assert_eq!(g.release_attack.map(|x| (x.0, x.2)), Some((P0, P1)));
+}
