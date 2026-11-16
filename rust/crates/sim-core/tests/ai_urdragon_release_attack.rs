@@ -496,10 +496,11 @@ fn the_release_arg_keeps_post_clear_and_the_cast_reads_it_masked() {
 
 /// Kaervek the Merciless (an opponent's) answers a spell with damage equal to its mana value to the best creature of the
 /// caster's that it can kill (pval 4 or more, toughness within 2). Twinflame has two targets here, the double-striking
-/// Dragon and a 6/2 Mulldrifter, and the check proves the attack with the Mulldrifter's 6 flying power and its copy's
-/// printed 2 counted (8 + 6 + 8 + 2 = 24 against 24 life; the engine adds the double strike). Kaervek's trigger kills the
-/// Mulldrifter after the cast starts and before the copies enter: one target of the proven cast left the battlefield,
-/// no copy of it enters, and the estimate right after the cast is 16 against 24 (margin -8).
+/// Dragon and a 6/2 Mulldrifter. The estimate before the cast counts the Mulldrifter's 6 flying power and its copy's
+/// printed 2 (8 + 6 + 8 + 2 = 24 against 24 life). The check's copy plays Kaervek's trigger too: it also loses the
+/// Mulldrifter, one copy enters, and the attack that is left proves the kill with the engine's double strike (16 + 8 =
+/// 24). The real cast loses the Mulldrifter the same way, so the estimate right after the cast is 16 against 24
+/// (margin -8): the old rule would keep the plan, and the attack would kill.
 fn rel_kaervek_board(kaervek: bool) -> Game {
     let mut g = rel_base();
     lands(&mut g, P0, "Mountain", 2, false);
@@ -515,7 +516,8 @@ fn rel_kaervek_board(kaervek: bool) -> Game {
 }
 
 /// a target that leaves the battlefield during the cast: the margin is no reference for the re-check, so the plan asks
-/// for lethal on the real board and is dropped where the estimate is below it
+/// for lethal on the real board and is dropped where the estimate is below it. The check lost the same target, so this
+/// pins a conservative drop (the attack would have killed), not a catch
 #[test]
 fn a_target_removed_during_the_cast_drops_the_plan_when_the_estimate_is_below_lethal() {
     let mut g = rel_kaervek_board(true);

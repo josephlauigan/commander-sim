@@ -3886,10 +3886,12 @@ fn twinflame_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
         return Ok(true);
     }
     let mut made = 0u32;
-    // a target that left the battlefield (or phased out) since the check proved the cast: the cast is not the one that
-    // was proved (the token cap and room limit are not: the check met the same ones)
+    // a target that left the battlefield (or phased out) during the cast: the margin is no reference (this includes a
+    // loss the check's copy also had, such as Kaervek's trigger: a conservative drop); the token cap and room limit are
+    // not flagged, the check met the same ones
     let mut changed = false;
     for m in targets {
+        // phased out: the loop still copies it; flagged conservatively
         if !on_bf_of(g, p, m) || g.perm(m).phased {
             changed = true;
         }
@@ -3933,12 +3935,13 @@ fn twinflame_go(g: &mut Game, p: PlayerId, arg: i64) -> Res<bool> {
 /// cast, and opponents can answer before combat (life gained, copies removed, a counted Dragon tapped for mana). The
 /// estimate may undercount the proven attack (double strike, a damage doubler), so the plan is kept when the estimate
 /// still finds q killable, or is no worse than it was when the copies entered (`m1 >= m0`, the margin stored with the
-/// plan); it only ever drops a plan. The margin starts once the copies have entered: a target removed in response to
-/// the cast is caught (the margin is then `i64::MAX`, so the plan needs lethal now); life gained in response, or
+/// plan); it only ever drops a plan. The margin starts once the copies have entered: a target that left the battlefield
+/// during the cast is caught (the margin is then `i64::MAX`, so the plan needs lethal now); life gained in response, or
 /// fewer copies per target (Doubling Season removed in response), is not, when the estimate is already below lethal
-/// after the cast. AI opponents answer a spell only with counters and the stack responses (and cast triggers such as
-/// Kaervek the Merciless's, which the margin does catch), so the uncaught cases concern a person's seat in practice
-/// mode. If it is dropped, the combat chooses as it always did.
+/// after the cast. AI opponents answer a spell only with counters and the stack responses, and their cast triggers
+/// (Kaervek the Merciless's, which the check plays as well; the flag still drops the plan there when the estimate is
+/// below lethal) are played in the check, so the uncaught cases concern a person's seat in practice mode. If it is
+/// dropped, the combat chooses as it always did.
 pub(crate) fn release_plan(g: &mut Game, p: PlayerId) -> Option<(PlayerId, Sym)> {
     if !urdragon_seat(g, p) {
         return None;
