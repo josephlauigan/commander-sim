@@ -97,8 +97,8 @@ attack, or when the opponent has built a board and you have no combo yet.
   Primeval Titan in free.
 - **Sculpting Steel is a second Blightsteel.** Blightsteel Colossus is an artifact creature, so once it is on the
   battlefield, Steel ({3}) enters as a copy of it: another 11/11 indestructible infect trampler, summoning sick, with
-  Lightning Greaves ({0} to move) as the way to give it haste. Use it when the first Blightsteel was blocked, fogged or
-  bounced and the opponent is still alive, or to attack with two so that one blocker or one removal spell is not
+  Lightning Greaves ({0} to move) as the way to give it haste. Use it when the first Blightsteel was blocked or fogged
+  and the opponent is still alive, or to attack with two so that one blocker or one removal spell is not
   enough. It is insurance, not a way to win on the turn you Tinker: the first Blightsteel is already lethal alone.
 
 #### Route O: Thassa's Oracle with Demonic Consultation or Tainted Pact
