@@ -1332,6 +1332,30 @@ pub fn eot_returns(g: &mut Game) -> Res {
 /// galadriel.interlude: exile your creatures ms; they return at the beginning of the next end step (tokens are gone
 /// for good)
 pub fn interlude(g: &mut Game, p: PlayerId, ms: &[PermId]) -> Res {
+    // the creatures are exiled at the same time: one batch of its own (never the wipe's it may be cast in response to),
+    // and the triggers wait until all have left (Syr Vondam sees the others leave with him)
+    g.batch += 1;
+    let prev_batch = g.cur_batch.replace(g.batch);
+    g.resolving += 1;
+    let back = interlude_exile(g, p, ms);
+    g.resolving -= 1;
+    g.cur_batch = prev_batch;
+    let back = back?;
+    eerie_return(g, p, &back);
+    let names: Vec<&str> = back.iter().map(|&c| &*g.db.get(c).name).collect();
+    crate::glog!(
+        g,
+        "    Eerie Interlude exiles {} until the end step",
+        if names.is_empty() { "nothing".to_string() } else { names.join(", ") }
+    );
+    if g.resolving == 0 && !g.trig_queue.is_empty() && !g.over {
+        crate::engine::stack::flush_triggers(g)?;
+    }
+    Ok(())
+}
+
+/// the cards of the creatures of p's in ms that Eerie Interlude exiled (tokens are gone for good)
+fn interlude_exile(g: &mut Game, p: PlayerId, ms: &[PermId]) -> Res<Vec<CardId>> {
     let mut back = vec![];
     for &m in ms {
         if !controls(g, p, m) {
@@ -1345,14 +1369,7 @@ pub fn interlude(g: &mut Game, p: PlayerId, ms: &[PermId]) -> Res {
         }
         crate::engine::zones::exiled_from_bf(g, m, None)?; // (a token is exiled too, and does not come back)
     }
-    eerie_return(g, p, &back);
-    let names: Vec<&str> = back.iter().map(|&c| &*g.db.get(c).name).collect();
-    crate::glog!(
-        g,
-        "    Eerie Interlude exiles {} until the end step",
-        if names.is_empty() { "nothing".to_string() } else { names.join(", ") }
-    );
-    Ok(())
+    Ok(back)
 }
 
 /// Eerie Interlude: exiles any of your creatures; they return at the beginning of the next end step (the AI saves its
