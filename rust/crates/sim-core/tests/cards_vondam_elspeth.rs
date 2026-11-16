@@ -536,3 +536,225 @@ fn elspeth_sun_champions_emblem_unchanged() {
     assert_eq!(sim_core::engine::values::epow(&g, m), 4 + 2, "+2/+2 and flying");
     assert!(!indestructible(&g, m), "it says nothing about indestructible");
 }
+
+// ------------------------------------------------------------------ Elspeth, Knight-Errant: the walker
+const ELSPETH: &str = "Elspeth, Knight-Errant";
+use sim_core::hooks::{Action, Opt};
+use sim_core::human::human::{AbilityKind, abilities_of};
+
+/// the options of the card code of `src` (none when its card has no `options` hook)
+fn options(g: &mut Game, src: PermId, p: PlayerId) -> Vec<Opt> {
+    let cd = g.perm(src).cd.unwrap();
+    match g.registry.get(cd).and_then(|i| i.options) {
+        Some(f) => f(g, src, p, Some(false)).unwrap(),
+        None => vec![],
+    }
+}
+
+fn arg_of(o: &Opt) -> i64 {
+    match &o.act {
+        Some(Action::Ability { arg, .. }) => *arg,
+        other => panic!("not a walker ability: {other:?}"),
+    }
+}
+
+/// the AI uses the loyalty ability number `i` of the list (0: the Soldier, 1: the pump, 2: the emblem)
+fn ai_uses(g: &mut Game, src: PermId, i: i64) {
+    let o = options(g, src, P0);
+    let found = o.iter().find(|o| arg_of(o) == i);
+    assert!(found.is_some(), "ability {i} is not offered: {:?}", o.iter().map(|x| &x.label).collect::<Vec<_>>());
+    assert!(sim_core::ai::act::perform(g, P0, found.unwrap().act.as_ref().unwrap()).unwrap());
+}
+
+fn white_soldiers(g: &Game, p: PlayerId) -> Vec<PermId> {
+    g.player(p)
+        .perms
+        .iter()
+        .copied()
+        .filter(|&m| {
+            let x = g.perm(m);
+            x.token && x.ttypes.iter().any(|t| &**t == "soldier") && x.pow == 1 && x.tgh == 1
+        })
+        .collect()
+}
+
+#[test]
+fn the_ai_uses_elspeths_plus_one_soldier() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, ELSPETH);
+    assert_eq!(g.perm(e).loyalty, Some(4));
+    ai_uses(&mut g, e, 0);
+    assert_eq!(white_soldiers(&g, P0).len(), 1, "a 1/1 white Soldier creature token");
+    assert_eq!(g.perm(e).loyalty, Some(5));
+}
+
+#[test]
+fn elspeths_plus_one_pump_targets_an_attacker() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, ELSPETH);
+    let sick = perm(&mut g, P0, "Grave Titan");
+    g.perm_mut(sick).sick = true;
+    let ready = token(&mut g, P0, 2);
+    ai_uses(&mut g, e, 1);
+    assert!(sim_core::dsl::has_kw(&g, ready, "flying"), "the creature that can attack gets flying");
+    assert_eq!(sim_core::engine::values::epow(&g, ready), 2 + 3);
+    assert_eq!(sim_core::engine::values::epow(&g, sick), 6, "the summoning-sick Titan is left alone");
+    assert_eq!(g.perm(e).loyalty, Some(5));
+    // with no creature there is nothing to pump: only the Soldier and (loyalty 8) the emblem are offered
+    let mut g = tbl();
+    let e = perm(&mut g, P0, ELSPETH);
+    let args: Vec<i64> = options(&mut g, e, P0).iter().map(arg_of).collect();
+    assert_eq!(args, [0], "no creature, no pump");
+}
+
+#[test]
+fn the_ai_uses_elspeths_minus_eight_at_eight_loyalty() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, ELSPETH);
+    g.perm_mut(e).loyalty = Some(7);
+    assert!(!options(&mut g, e, P0).iter().any(|o| arg_of(o) == 2), "not at 7 loyalty");
+    g.perm_mut(e).loyalty = Some(8);
+    let mut o = options(&mut g, e, P0);
+    o.sort_by(|a, b| b.utility.total_cmp(&a.utility));
+    assert!(!o.is_empty(), "Elspeth offers her abilities to the AI");
+    assert_eq!(arg_of(&o[0]), 2, "the ultimate is the best play: {:?}", o.iter().map(|x| (&x.label, x.utility)).collect::<Vec<_>>());
+    ai_uses(&mut g, e, 2);
+    assert!(g.player(P0).emblems.contains(&"elspeth_ke"), "you get the emblem");
+    assert!(!g.perm(e).on_bf, "Elspeth is at 0 loyalty: she is put into the graveyard");
+    let m = perm(&mut g, P0, "Serra Angel");
+    assert!(sim_core::dsl::has_kw(&g, m, "indestructible"));
+}
+
+/// the person uses the ability of `m` whose label contains `word`; the reason it could not, if any
+fn use_ability(g: &mut Game, m: PermId, word: &str) -> Option<String> {
+    let list = abilities_of(g, P0, m).unwrap();
+    let all: Vec<String> = list.iter().map(|x| x.0.clone()).collect();
+    let found = list.into_iter().find(|(l, _)| l.contains(word));
+    assert!(found.is_some(), "{} lists no ability with {word:?}: {all:?}", g.perm(m).name);
+    let AbilityKind::Extra(act) = found.unwrap().1 else { panic!("not an extra ability") };
+    act(g, P0, m).unwrap()
+}
+
+#[test]
+fn a_person_is_offered_elspeths_three_abilities_and_asked_the_pump_target_once() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, ELSPETH);
+    let mine = perm(&mut g, P0, "Serra Angel");
+    token(&mut g, P0, 2);
+    let labels: Vec<String> = abilities_of(&mut g, P0, e).unwrap().into_iter().map(|x| x.0).collect();
+    assert_eq!(labels.len(), 3, "{labels:?}");
+    assert!(labels[0].contains("Soldier") && labels[1].contains("+3/+3") && labels[2].contains("emblem"), "{labels:?}");
+    assert!(labels[0].starts_with("+1") && labels[1].starts_with("+1") && labels[2].starts_with("-8"), "{labels:?}");
+    let asked = person_picking(&mut g, "Serra Angel");
+    assert_eq!(use_ability(&mut g, e, "+3/+3"), None);
+    let q = asked.lock().unwrap().clone();
+    assert_eq!(q.iter().filter(|x| x.contains("Elspeth")).count(), 1, "the target is asked once: {q:?}");
+    assert_eq!(sim_core::engine::values::epow(&g, mine), 4 + 3);
+    assert!(sim_core::dsl::has_kw(&g, mine, "flying"));
+    assert_eq!(g.perm(e).loyalty, Some(5));
+}
+
+#[test]
+fn a_person_makes_a_soldier_with_elspeths_plus_one_and_is_asked_nothing() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, ELSPETH);
+    let asked = person_picking(&mut g, "nothing matches");
+    assert_eq!(use_ability(&mut g, e, "Soldier"), None);
+    assert!(asked.lock().unwrap().is_empty(), "no question for the Soldier");
+    assert_eq!(white_soldiers(&g, P0).len(), 1);
+    assert_eq!(g.perm(e).loyalty, Some(5));
+}
+
+#[test]
+fn a_person_cannot_aim_elspeths_pump_at_hexproof_or_protected_creatures() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, ELSPETH);
+    let hexproof = perm(&mut g, P1, "Sylvan Caryatid");
+    let protected = perm(&mut g, P1, "Malakir Bloodwitch"); // protection from white
+    let fine = perm(&mut g, P1, "Serra Angel");
+    let asked = person_picking(&mut g, "Serra Angel");
+    assert_eq!(use_ability(&mut g, e, "+3/+3"), None);
+    let q = asked.lock().unwrap().clone();
+    assert_eq!(q.len(), 1, "{q:?}");
+    assert!(q[0].contains("Serra Angel") && !q[0].contains("Caryatid") && !q[0].contains("Bloodwitch"), "{q:?}");
+    assert_eq!(sim_core::engine::values::epow(&g, fine), 4 + 3, "an opponent's creature can be the target");
+    let _ = (hexproof, protected);
+}
+
+/// a person at P0 who passes priority, answers yes to the ward question and picks `word` for any other question
+fn person_paying_ward(g: &mut Game, word: &'static str) {
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        if r.prompt.contains("ward") {
+            return Answer::Yes;
+        }
+        r.choices.iter().position(|c| c.contains(word)).map_or(Answer::Decline, Answer::Pick)
+    }));
+    g.humans.add(P0, h);
+}
+
+#[test]
+fn a_persons_pump_pays_the_ward_of_an_opponents_creature_or_is_countered() {
+    for pay in [false, true] {
+        let mut g = tbl();
+        let e = perm(&mut g, P0, ELSPETH);
+        let warded = perm(&mut g, P1, "Frost Titan"); // ward {2}, a 6/6
+        if pay {
+            g.player_mut(P0).pool.add('W', 2);
+        }
+        person_paying_ward(&mut g, "Frost Titan");
+        assert_eq!(use_ability(&mut g, e, "+3/+3"), None);
+        let grown = sim_core::engine::values::epow(&g, warded) == 6 + 3;
+        assert_eq!(grown, pay, "ward {{2}}: {}", if pay { "paid" } else { "not paid: the ability is countered" });
+        assert_eq!(g.perm(e).loyalty, Some(5), "the loyalty is paid either way");
+    }
+}
+
+#[test]
+fn a_persons_pump_rechecks_its_target_on_resolution() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, ELSPETH);
+    let m = perm(&mut g, P0, "Mother of Runes");
+    let giver = perm(&mut g, P0, "Giver of Runes");
+    let giver_i = g.player(P0).perms.iter().position(|&x| x == giver).unwrap();
+    let mut protected = false;
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            if !protected {
+                protected = true;
+                return Answer::Action(json!({"do": "use", "perm": giver_i}));
+            }
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        let word = if r.prompt.contains("which ability") {
+            "protection"
+        } else if r.prompt.contains("protection from what") {
+            "white"
+        } else {
+            "Mother of Runes"
+        };
+        r.choices.iter().position(|c| c.contains(word)).map_or(Answer::Decline, Answer::Pick)
+    }));
+    h.set_autopass("all");
+    g.humans.add(P0, h);
+    assert_eq!(use_ability(&mut g, e, "+3/+3"), None);
+    assert!(sim_core::engine::values::protected_from(&g, m, sim_core::cards::Colors::from_letters("W")));
+    assert_eq!(sim_core::engine::values::epow(&g, m), 1, "protection from white in response: no longer a legal target");
+}
+
+#[test]
+fn a_person_gets_the_emblem_from_elspeths_minus_eight() {
+    let mut g = tbl();
+    let e = perm(&mut g, P0, ELSPETH);
+    g.perm_mut(e).loyalty = Some(8);
+    assert_eq!(use_ability(&mut g, e, "emblem"), None);
+    assert!(g.player(P0).emblems.contains(&"elspeth_ke"));
+    assert!(!g.perm(e).on_bf);
+    // not with less loyalty
+    let mut g = tbl();
+    let e = perm(&mut g, P0, ELSPETH);
+    let why = use_ability(&mut g, e, "emblem");
+    assert!(why.is_some_and(|w| w.contains("loyalty")), "she has 4 loyalty");
+}
