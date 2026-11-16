@@ -32,7 +32,7 @@ use crate::engine::life::gain;
 use crate::engine::removal::apply_removal;
 use crate::engine::repl;
 use crate::engine::stack::{queue_triggers, trigger_window};
-use crate::engine::values::{colors_of, epow, indestructible, protected_from, pval, untargetable};
+use crate::engine::values::{colors_of, epow, equipped, indestructible, protected_from, pval, untargetable};
 use crate::engine::zones::{Tokens, make_tokens, max_by};
 use crate::flow::Res;
 use crate::hooks::{Call, Event, Registry, Src, TrigAct, Trigger};
@@ -41,6 +41,7 @@ use crate::ids::{PermId, PlayerId};
 use crate::impls::common::{WalkerAb, walker};
 use crate::state::{DataKey, Game, Val};
 use crate::sym::Sym;
+use crate::tag::Tag;
 
 pub const VONDAM: &str = "Syr Vondam, Sunstar Exemplar";
 /// the emblem Elspeth, Knight-Errant's -8 gives (`Player::emblems`)
@@ -152,18 +153,30 @@ pub fn left_with(g: &mut Game, m: PermId, dying: Option<Sym>) -> Res {
 }
 
 // ------------------------------------------------------------------ Syr Vondam himself
+/// shroud: the keyword, Whispersilk Cloak or Lightning Greaves. Nobody may target it, its controller included
+fn shrouded(g: &Game, t: PermId) -> bool {
+    crate::dsl::has_kw(g, t, "shroud")
+        || equipped(g, t, Tag::Cloak)
+        || g.player(g.perm(t).owner).perms.iter().any(|&e| {
+            let y = g.perm(e);
+            y.attached == Some(t) && !y.neutered && y.name == "Lightning Greaves"
+        })
+}
+
+/// may a spell or ability of o's target t: on the battlefield and not phased out; shroud stops everyone, hexproof (the
+/// keyword, a Helm, Swiftfoot Boots, ...) only the opponents of its controller
+fn may_target(g: &Game, o: PlayerId, t: PermId) -> bool {
+    let x = g.perm(t);
+    x.on_bf && !x.phased && if x.owner == o { !shrouded(g, t) } else { !untargetable(g, t) }
+}
+
 /// what the destroy can hit: a nonland permanent on the battlefield that `o` may target with Syr Vondam's colours
 fn targets(g: &Game, o: PlayerId, src: PermId) -> Vec<PermId> {
     let cols = colors_of(g, src);
     let mut out = vec![];
     for q in g.players.iter().filter(|q| q.alive) {
         for &t in &q.perms {
-            let x = g.perm(t);
-            if x.on_bf
-                && !x.phased
-                && !card_types(g, t).has(Types::LAND)
-                && (q.id == o || !untargetable(g, t))
-                && !protected_from(g, t, cols)
+            if may_target(g, o, t) && !card_types(g, t).has(Types::LAND) && !protected_from(g, t, cols)
             {
                 out.push(t);
             }
@@ -228,13 +241,7 @@ pub fn soldier(g: &mut Game, p: PlayerId, _src: PermId) -> Res {
 /// protection from Elspeth's colours, and not an opponent's creature with hexproof. Checked as the ability is chosen and
 /// again as it resolves.
 pub fn pump_legal(g: &Game, p: PlayerId, src: PermId, t: PermId) -> bool {
-    let x = g.perm(t);
-    x.on_bf
-        && !x.phased
-        && g.is_creature(t)
-        && !crate::dsl::has_kw(g, t, "shroud")
-        && (x.owner == p || !untargetable(g, t))
-        && !protected_from(g, t, colors_of(g, src))
+    g.is_creature(t) && may_target(g, p, t) && !protected_from(g, t, colors_of(g, src))
 }
 
 /// +1: the creature the AI pumps: one of its own that can attack now (the one that hits hardest), else its best creature
