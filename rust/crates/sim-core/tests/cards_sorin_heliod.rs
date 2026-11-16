@@ -1,0 +1,225 @@
+//! Sorin, Vengeful Bloodlord and Heliod, Sun-Crowned: the card code (AI paths) and the person's paths. Each
+//! expectation follows the card's Oracle text (data/scryfall_cache.json).
+
+mod play_common;
+use play_common::*;
+use sim_core::dsl::has_kw;
+use sim_core::engine::values::subtypes;
+use sim_core::human::human::{AbilityKind, abilities_of};
+use sim_core::hooks::Opt;
+use sim_core::state::Step;
+
+const SORIN: &str = "Sorin, Vengeful Bloodlord";
+
+fn tbl() -> Game {
+    let mut g = table(&["heliod-mono-white-stax", "seph", "sauron"]);
+    g.active = Some(P0);
+    g.step = Step::Main1;
+    g
+}
+
+/// the options of the card code of `src` (none when its card has no `options` hook)
+fn options(g: &mut Game, src: PermId, p: PlayerId) -> Vec<Opt> {
+    let cd = g.perm(src).cd.unwrap();
+    match g.registry.get(cd).and_then(|i| i.options) {
+        Some(f) => f(g, src, p, Some(false)).unwrap(),
+        None => vec![],
+    }
+}
+
+fn labels(o: &[Opt]) -> Vec<String> {
+    o.iter().map(|x| x.label.clone()).collect()
+}
+
+/// the AI uses the option of `src` whose label ends with `end`
+fn ai_uses(g: &mut Game, src: PermId, end: &str) {
+    let o = options(g, src, P0);
+    let found = o.iter().find(|o| o.label.ends_with(end));
+    assert!(found.is_some(), "no option ending {end:?} in {:?}", labels(&o));
+    assert!(sim_core::ai::act::perform(g, P0, found.unwrap().act.as_ref().unwrap()).unwrap());
+}
+
+fn creature_card(g: &mut Game, name: &str) -> sim_core::ids::CardId {
+    let c = card(g, name);
+    g.player_mut(P0).gy.push(c);
+    c
+}
+
+/// a person at P0 who answers a question by the first choice that contains `word` (decline otherwise) and passes priority
+fn person_picking(g: &mut Game, word: &'static str) -> std::sync::Arc<ScriptHuman> {
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        match r.choices.iter().position(|c| c.contains(word)) {
+            Some(i) => Answer::Pick(i),
+            None => Answer::Decline,
+        }
+    }));
+    g.humans.add(P0, h.clone());
+    h
+}
+
+/// the person uses the ability of `m` whose label contains `word`; the reason it could not, if any
+fn use_ability(g: &mut Game, m: PermId, word: &str) -> Option<String> {
+    let list = abilities_of(g, P0, m).unwrap();
+    let all: Vec<String> = list.iter().map(|x| x.0.clone()).collect();
+    let found = list.into_iter().find(|(l, _)| l.contains(word));
+    assert!(found.is_some(), "{} lists no ability with {word:?}: {all:?}", g.perm(m).name);
+    let AbilityKind::Extra(act) = found.unwrap().1 else { panic!("not an extra ability") };
+    act(g, P0, m).unwrap()
+}
+
+// ------------------------------------------------------------------ Sorin: the static
+#[test]
+fn sorin_gives_creatures_and_planeswalkers_lifelink_on_your_turn_only() {
+    let mut g = tbl();
+    let s = perm(&mut g, P0, SORIN);
+    let mine = token(&mut g, P0, 2);
+    let theirs = token(&mut g, P1, 2);
+    assert!(has_kw(&g, mine, "lifelink"), "your creature, on your turn");
+    assert!(has_kw(&g, s, "lifelink"), "Sorin is a planeswalker you control");
+    assert!(!has_kw(&g, theirs, "lifelink"), "not an opponent's creature");
+    g.active = Some(P1);
+    assert!(!has_kw(&g, mine, "lifelink"), "not on an opponent's turn");
+    assert!(!has_kw(&g, s, "lifelink"));
+}
+
+// ------------------------------------------------------------------ Sorin: +2
+#[test]
+fn sorin_plus_two_hits_a_player_or_planeswalker_and_gains_one() {
+    let mut g = tbl();
+    let s = perm(&mut g, P0, SORIN);
+    let prize = perm(&mut g, P1, "Mother of Runes"); // a valuable creature with 1 toughness: not a legal target
+    let (theirs, mine) = (g.player(P1).life + g.player(P2).life, g.player(P0).life);
+    ai_uses(&mut g, s, "+2");
+    assert!(g.perm(prize).on_bf, "a creature is no target of Sorin's +2");
+    assert_eq!(g.player(P1).life + g.player(P2).life, theirs - 1, "1 damage to an opponent");
+    assert_eq!(g.player(P0).life, mine + 1, "Sorin is a planeswalker you control: lifelink");
+    assert_eq!(g.perm(s).loyalty, Some(6));
+}
+
+#[test]
+fn sorin_plus_two_finishes_a_planeswalker_with_one_loyalty() {
+    let mut g = tbl();
+    let s = perm(&mut g, P0, SORIN);
+    let w = perm(&mut g, P1, "Jace, the Mind Sculptor");
+    g.perm_mut(w).loyalty = Some(1);
+    ai_uses(&mut g, s, "+2");
+    assert!(!g.perm(w).on_bf, "1 damage kills a planeswalker with 1 loyalty");
+}
+
+// ------------------------------------------------------------------ Sorin: -X
+#[test]
+fn sorin_minus_x_returns_a_creature_card_of_mana_value_x_as_a_vampire() {
+    let mut g = tbl();
+    let s = perm(&mut g, P0, SORIN);
+    creature_card(&mut g, "Mother of Runes");
+    let big = creature_card(&mut g, "Serra Angel");
+    ai_uses(&mut g, s, "-1");
+    let mom = perms_named(&g, P0, "Mother of Runes");
+    assert_eq!(mom.len(), 1, "the 1-mana creature came back");
+    assert!(subtypes(&g, mom[0]).iter().any(|t| &**t == "vampire"), "a Vampire in addition");
+    assert!(subtypes(&g, mom[0]).iter().any(|t| &**t == "human"), "and still a Human");
+    assert_eq!(g.perm(s).loyalty, Some(3), "loyalty X = 1 lower");
+    assert!(g.player(P0).gy.contains(&big), "Serra Angel has mana value 5");
+}
+
+#[test]
+fn sorin_minus_zero_returns_a_creature_card_with_mana_value_zero() {
+    let mut g = tbl();
+    let s = perm(&mut g, P0, SORIN);
+    creature_card(&mut g, "Ornithopter");
+    ai_uses(&mut g, s, "+0");
+    assert_eq!(perms_named(&g, P0, "Ornithopter").len(), 1);
+    assert_eq!(g.perm(s).loyalty, Some(4), "X = 0 costs nothing");
+}
+
+#[test]
+fn the_ai_does_not_return_a_creature_whose_mana_value_is_more_than_sorins_loyalty() {
+    let mut g = tbl();
+    let s = perm(&mut g, P0, SORIN);
+    creature_card(&mut g, "Serra Angel");
+    let o = options(&mut g, s, P0);
+    assert!(o.iter().all(|x| !x.label.contains("-5")), "{:?}", labels(&o));
+    assert!(o.iter().any(|x| x.label.ends_with("+2")), "{:?}: the +2 is there", labels(&o));
+}
+
+// ------------------------------------------------------------------ Sorin: coverage (green before and after)
+#[test]
+fn a_spell_gains_nothing_with_sorin_out() {
+    let mut g = tbl();
+    perm(&mut g, P0, SORIN);
+    let axe = take(&mut g, P0, "Lava Axe");
+    let (theirs, mine) = (g.player(P1).life + g.player(P2).life, g.player(P0).life);
+    sim_core::dsl::resolve_spell(&mut g, P0, axe, &sim_core::state::Ctx::default()).unwrap();
+    assert_eq!(g.player(P1).life + g.player(P2).life, theirs - 5, "Lava Axe: 5 damage");
+    assert_eq!(g.player(P0).life, mine, "a spell has no lifelink, Sorin or not");
+}
+
+#[test]
+fn sorin_gives_no_lifelink_on_an_opponents_turn() {
+    let mut g = tbl();
+    perm(&mut g, P0, SORIN);
+    g.active = Some(P1);
+    let blocker = token(&mut g, P0, 3);
+    let attacker = token(&mut g, P1, 3);
+    let mut tot = 0;
+    sim_core::engine::combat::resolve_blocks(&mut g, P1, vec![attacker], P0, vec![(attacker, blocker)], &mut tot)
+        .unwrap();
+    assert_eq!(g.player(P0).life, 40, "no lifelink on the opponent's turn: nothing gained");
+}
+
+// ------------------------------------------------------------------ Sorin: the person's paths
+#[test]
+fn a_person_is_offered_sorins_abilities_and_asked_the_plus_two_target() {
+    let mut g = tbl();
+    let h = person_picking(&mut g, "Jace");
+    let s = perm(&mut g, P0, SORIN);
+    let w = perm(&mut g, P1, "Jace, the Mind Sculptor");
+    let bear = perm(&mut g, P1, "Mother of Runes");
+    let list: Vec<String> = abilities_of(&mut g, P0, s).unwrap().into_iter().map(|a| a.0).collect();
+    assert!(list.iter().any(|l| l.starts_with("+2")), "{list:?}");
+    assert!(list.iter().any(|l| l.starts_with("-X")), "{list:?}");
+    let mine = g.player(P0).life;
+    let loyalty = g.perm(w).loyalty.unwrap();
+    assert_eq!(use_ability(&mut g, s, "+2"), None);
+    let asked = h.asked();
+    let ask = asked.iter().find(|r| r.prompt.contains("Sorin")).expect("the target is asked");
+    assert!(ask.choices.iter().any(|c| c.contains("Jace")), "a planeswalker is a legal target: {:?}", ask.choices);
+    assert!(ask.choices.iter().any(|c| c.contains("player")), "a player is: {:?}", ask.choices);
+    assert!(!ask.choices.iter().any(|c| c.contains("Mother of Runes")), "a creature is not: {:?}", ask.choices);
+    assert_eq!(g.perm(w).loyalty, Some(loyalty - 1));
+    assert!(g.perm(bear).on_bf);
+    assert_eq!(g.perm(s).loyalty, Some(6));
+    assert_eq!(g.player(P0).life, mine + 1, "lifelink");
+}
+
+#[test]
+fn a_person_is_asked_which_creature_sorin_minus_x_returns() {
+    let mut g = tbl();
+    let h = person_picking(&mut g, "Mother of Runes");
+    let s = perm(&mut g, P0, SORIN);
+    creature_card(&mut g, "Ornithopter");
+    creature_card(&mut g, "Mother of Runes");
+    creature_card(&mut g, "Serra Angel");
+    assert_eq!(use_ability(&mut g, s, "-X"), None);
+    let asked = h.asked();
+    let ask = asked.iter().find(|r| r.prompt.contains("Sorin")).expect("the creature card is asked");
+    assert!(ask.choices.iter().any(|c| c.contains("Ornithopter")), "{:?}", ask.choices);
+    assert!(ask.choices.iter().any(|c| c.contains("Mother of Runes")), "{:?}", ask.choices);
+    assert!(!ask.choices.iter().any(|c| c.contains("Serra Angel")), "mana value 5 is more than 4 loyalty");
+    assert_eq!(perms_named(&g, P0, "Mother of Runes").len(), 1);
+    assert!(subtypes(&g, perms_named(&g, P0, "Mother of Runes")[0]).iter().any(|t| &**t == "vampire"));
+    assert_eq!(g.perm(s).loyalty, Some(3), "X is the card's mana value: 1");
+}
+
+#[test]
+fn a_person_is_told_why_sorin_minus_x_cannot_be_used_with_no_creature_card() {
+    let mut g = tbl();
+    person_picking(&mut g, "nothing");
+    let s = perm(&mut g, P0, SORIN);
+    let why = use_ability(&mut g, s, "-X").expect("a reason");
+    assert!(why.contains("graveyard"), "{why}");
+    assert_eq!(g.perm(s).loyalty, Some(4), "nothing was paid");
+}
