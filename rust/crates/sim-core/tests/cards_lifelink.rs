@@ -348,8 +348,156 @@ fn body(g: &mut Game, who: PlayerId, p: i32, t: i32) -> PermId {
     m
 }
 
+/// `m` has keyword `kw` until end of turn
+fn give(g: &mut Game, m: PermId, kw: &str) {
+    g.perm_mut(m).eot_kw.push(sim_core::sym::intern(kw));
+}
+
 /// P0 attacks P1 with `atk`; `blocks` are (attacker, blocker)
 fn fight(g: &mut Game, atk: &[PermId], blocks: &[(PermId, PermId)]) {
     let mut tot = 0;
     sim_core::engine::combat::resolve_blocks(g, P0, atk.to_vec(), P1, blocks.to_vec(), &mut tot).unwrap();
+}
+
+#[test]
+fn an_unblocked_lifelink_attacker_gains_once() {
+    let mut g = tbl();
+    let a = body(&mut g, P0, 3, 3);
+    g.perm_mut(a).lifelink = true;
+    fight(&mut g, &[a], &[]);
+    assert_eq!(g.player(P1).life, 37);
+    assert_eq!(g.player(P0).life, 43, "once, not twice");
+}
+
+#[test]
+fn lifelink_gains_the_damage_dealt_when_fiery_emancipation_triples_it() {
+    let mut g = tbl();
+    perm(&mut g, P0, "Fiery Emancipation");
+    let a = body(&mut g, P0, 3, 3);
+    g.perm_mut(a).lifelink = true;
+    fight(&mut g, &[a], &[]);
+    assert_eq!(g.player(P1).life, 31, "3 damage, tripled");
+    assert_eq!(g.player(P0).life, 49, "a source that dealt 9 damage gains 9");
+}
+
+#[test]
+fn blocked_lifelink_attacker_gains_damage_dealt_to_the_blocker() {
+    let mut g = tbl();
+    let a = body(&mut g, P0, 3, 3);
+    g.perm_mut(a).lifelink = true;
+    let b = body(&mut g, P1, 4, 4);
+    fight(&mut g, &[a], &[(a, b)]);
+    assert!(!g.perm(a).on_bf, "4 damage kills a 3/3");
+    assert!(g.perm(b).on_bf);
+    assert_eq!(g.player(P0).life, 43, "3 damage to the blocker, though it only had 4 toughness to spare");
+    assert_eq!(g.player(P1).life, 40, "blocked: nothing to the player");
+}
+
+#[test]
+fn a_lifelink_attacker_gains_all_its_damage_from_a_blocker_it_overkills() {
+    let mut g = tbl();
+    let a = body(&mut g, P0, 5, 5);
+    g.perm_mut(a).lifelink = true;
+    let b = body(&mut g, P1, 1, 1);
+    fight(&mut g, &[a], &[(a, b)]);
+    assert!(!g.perm(b).on_bf);
+    assert_eq!(g.player(P0).life, 45, "all 5, not the 1 toughness");
+}
+
+#[test]
+fn a_trampling_lifelink_attacker_gains_for_the_blocker_and_the_player() {
+    let mut g = tbl();
+    let a = body(&mut g, P0, 5, 5);
+    g.perm_mut(a).lifelink = true;
+    give(&mut g, a, "trample");
+    let b = body(&mut g, P1, 2, 2);
+    fight(&mut g, &[a], &[(a, b)]);
+    assert_eq!(g.player(P1).life, 37, "3 tramples over");
+    assert_eq!(g.player(P0).life, 45, "2 to the blocker and 3 to the player: all 5");
+}
+
+#[test]
+fn a_lifelink_blocker_gains() {
+    let mut g = tbl();
+    let a = body(&mut g, P0, 3, 3);
+    let b = body(&mut g, P1, 2, 2);
+    g.perm_mut(b).lifelink = true;
+    fight(&mut g, &[a], &[(a, b)]);
+    assert!(!g.perm(b).on_bf);
+    assert_eq!(g.player(P1).life, 42, "the blocker dealt 2 damage to the attacker");
+    assert_eq!(g.player(P0).life, 40);
+}
+
+#[test]
+fn a_first_striker_that_kills_its_blocker_leaves_the_blocker_nothing_to_gain() {
+    let mut g = tbl();
+    let a = body(&mut g, P0, 3, 3);
+    give(&mut g, a, "first strike");
+    let b = body(&mut g, P1, 2, 2);
+    g.perm_mut(b).lifelink = true;
+    fight(&mut g, &[a], &[(a, b)]);
+    assert!(!g.perm(b).on_bf && g.perm(a).on_bf, "first strike: the blocker died before it struck");
+    assert_eq!(g.player(P1).life, 40, "it dealt no damage, so it gained nothing");
+}
+
+#[test]
+fn a_lifelink_attacker_on_a_planeswalker_gains() {
+    let mut g = tbl();
+    person(&mut g, None);
+    let w = perm(&mut g, P1, "Jace, the Mind Sculptor");
+    let a = body(&mut g, P0, 3, 3);
+    g.perm_mut(a).lifelink = true;
+    let l = g.perm(w).loyalty.unwrap();
+    g.human_walker_atk = vec![(a, w)];
+    fight(&mut g, &[a], &[]);
+    assert_eq!(g.perm(w).loyalty, Some(l - 3), "the damage went to the planeswalker");
+    assert_eq!(g.player(P0).life, 43);
+    assert_eq!(g.player(P1).life, 40);
+}
+
+#[test]
+fn a_lifelink_attacker_gains_all_its_damage_on_a_planeswalker_it_overkills() {
+    let mut g = tbl();
+    person(&mut g, None);
+    let w = perm(&mut g, P1, "Jace, the Mind Sculptor");
+    g.perm_mut(w).loyalty = Some(1);
+    let a = body(&mut g, P0, 4, 4);
+    g.perm_mut(a).lifelink = true;
+    g.human_walker_atk = vec![(a, w)];
+    fight(&mut g, &[a], &[]);
+    assert!(!g.perm(w).on_bf);
+    assert_eq!(g.player(P0).life, 44, "4 damage dealt to a planeswalker with 1 loyalty");
+}
+
+#[test]
+fn a_lifelink_attacker_on_a_battle_gains() {
+    use sim_core::impls::card_models3 as cm3;
+    let mut g = table(&["kinnan-bonder-mana-combo", "rograkh-thrasios-creature-combo", "sisay-legends-toolbox"]);
+    g.active = Some(P0);
+    token(&mut g, P1, 2);
+    let c = hand(&mut g, P0, &["Invasion of Ikoria // Zilortha, Apex of Ikoria"])[0];
+    assert!(
+        sim_core::engine::cast::cast_card(&mut g, P0, c, "hand", Ctx { x: 3, ..Ctx::default() }).unwrap(),
+        "cast"
+    );
+    let w = g.player(P0).perms.iter().copied().find(|&m| g.perm(m).on_bf && cm3::defense(&g, m) > 0).unwrap();
+    let d = cm3::protector(&g, w).unwrap();
+    let a = body(&mut g, P0, 4, 4);
+    g.perm_mut(a).lifelink = true;
+    let (life, defense) = (g.player(P0).life, cm3::defense(&g, w));
+    let mut tot = 0;
+    sim_core::engine::combat::resolve_blocks(&mut g, P0, vec![a], d, vec![], &mut tot).unwrap();
+    assert_eq!(cm3::defense(&g, w), (defense - 4).max(0), "the battle lost 4 defense");
+    assert_eq!(g.player(P0).life, life + 4);
+}
+
+#[test]
+fn a_lifelink_attacker_into_glacial_chasm_gains_nothing() {
+    let mut g = tbl();
+    lands(&mut g, P1, "Glacial Chasm", 1, false);
+    let a = body(&mut g, P0, 3, 3);
+    g.perm_mut(a).lifelink = true;
+    fight(&mut g, &[a], &[]);
+    assert_eq!(g.player(P1).life, 40, "prevented");
+    assert_eq!(g.player(P0).life, 40, "nothing dealt, nothing gained");
 }
