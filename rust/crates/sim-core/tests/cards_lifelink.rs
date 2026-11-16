@@ -264,6 +264,57 @@ fn compiled_damage_that_kills_a_creature_gains_the_damage_dealt_for_a_person() {
     assert_eq!(g.player(P0).life, 46, "the 3 damage dealt, not the 1 toughness");
 }
 
+// ------------------------------------------------------------------ the Dragons (Akroma's Will's lifelink reaches them)
+#[test]
+fn terror_of_the_peaks_with_lifelink_gains_the_damage_of_its_trigger() {
+    let mut g = tbl();
+    let t = perm(&mut g, P0, "Terror of the Peaks");
+    token(&mut g, P0, 1);
+    assert_eq!(g.player(P0).life, 40, "no lifelink, no gain");
+    g.perm_mut(t).lifelink = true;
+    let theirs = g.player(P1).life + g.player(P2).life;
+    token(&mut g, P0, 3);
+    assert_eq!(g.player(P1).life + g.player(P2).life, theirs - 3, "3 damage to an opponent");
+    assert_eq!(g.player(P0).life, 43);
+}
+
+#[test]
+fn terror_of_the_peaks_with_lifelink_gains_for_a_person() {
+    let mut g = tbl();
+    person(&mut g, None);
+    let t = perm(&mut g, P0, "Terror of the Peaks");
+    g.perm_mut(t).lifelink = true;
+    token(&mut g, P0, 3);
+    assert_eq!(g.player(P1).life, 37);
+    assert_eq!(g.player(P0).life, 43);
+}
+
+#[test]
+fn scourge_of_valkas_with_lifelink_gains_the_damage_of_its_trigger() {
+    let mut g = tbl();
+    let s = perm(&mut g, P0, "Scourge of Valkas");
+    g.perm_mut(s).lifelink = true;
+    let theirs = g.player(P1).life + g.player(P2).life;
+    let c = take(&mut g, P0, "Scourge of Valkas");
+    zones::enter(&mut g, P0, c, zones::Enter { sick: false, ..Default::default() }).unwrap();
+    assert_eq!(g.player(P1).life + g.player(P2).life, theirs - 4, "each Scourge deals 2 (two Dragons)");
+    assert_eq!(g.player(P0).life, 42, "only the first Scourge has lifelink");
+}
+
+#[test]
+fn balefire_dragon_with_lifelink_gains_for_each_creature_it_damages() {
+    let mut g = tbl();
+    let b = perm(&mut g, P0, "Balefire Dragon");
+    g.perm_mut(b).lifelink = true;
+    g.perm_mut(b).pow = 5;
+    g.perm_mut(b).tgh = 5;
+    body(&mut g, P1, 1, 1);
+    body(&mut g, P1, 1, 1);
+    fight(&mut g, &[b], &[]);
+    assert_eq!(g.player(P1).perms.len(), 0, "both creatures died");
+    assert_eq!(g.player(P0).life, 40 + 5 + 5 + 5, "5 to the player, 5 to each of two creatures");
+}
+
 // ------------------------------------------------------------------ coverage rows (green before and after)
 #[test]
 fn a_spell_gains_nothing_with_a_lifelinker_out() {
@@ -287,4 +338,18 @@ fn prevented_damage_gains_nothing() {
     ai_uses(&mut g, b, "ping");
     assert_eq!(g.player(P1).life, 2, "Glacial Chasm prevents all damage to its controller");
     assert_eq!(g.player(P0).life, 40, "nothing was dealt: nothing gained");
+}
+
+// ------------------------------------------------------------------ combat damage (resolve_blocks with chosen blocks)
+/// a vanilla creature token with power `p` and toughness `t`, not summoning sick
+fn body(g: &mut Game, who: PlayerId, p: i32, t: i32) -> PermId {
+    let m = token(g, who, p);
+    g.perm_mut(m).tgh = t;
+    m
+}
+
+/// P0 attacks P1 with `atk`; `blocks` are (attacker, blocker)
+fn fight(g: &mut Game, atk: &[PermId], blocks: &[(PermId, PermId)]) {
+    let mut tot = 0;
+    sim_core::engine::combat::resolve_blocks(g, P0, atk.to_vec(), P1, blocks.to_vec(), &mut tot).unwrap();
 }
