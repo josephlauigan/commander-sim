@@ -38131,56 +38131,7 @@
    "pow": 0,
    "tgh": 0,
    "bomb": 0,
-   "dsl": [
-    {
-     "type": "loyalty",
-     "loyalty": 1,
-     "effects": [
-      {
-       "do": "token",
-       "n": 1,
-       "pow": 1,
-       "tgh": 1,
-       "keywords": [],
-       "attacking": false,
-       "warrior": false,
-       "types": [
-        "soldier"
-       ],
-       "color": "W"
-      }
-     ]
-    },
-    {
-     "type": "loyalty",
-     "loyalty": 1,
-     "effects": [
-      {
-       "do": "pump",
-       "pow": 3,
-       "tgh": 3,
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      },
-      {
-       "do": "grant",
-       "keyword": "flying",
-       "what": {
-        "sel": "target",
-        "filter": {
-         "type": "creature"
-        },
-        "upto": false
-       }
-      }
-     ]
-    }
-   ],
+   "dsl": null,
    "start_loyalty": "4",
    "kws": [],
    "subtypes": [
@@ -38190,10 +38141,8 @@
    "ward": 0,
    "identity": "W",
    "game_changer": false,
-   "source": "scryfall+dsl",
-   "unparsed": [
-    "you get an emblem with \"artifacts, creatures, enchantments, and lands you control have indestructible.\""
-   ],
+   "source": "pool",
+   "unparsed": [],
    "derived": {
     "cmc": 4,
     "land": false,
@@ -125598,9 +125547,7 @@
    "identity": "BW",
    "game_changer": false,
    "source": "scryfall",
-   "unparsed": [
-    "When ~ dies or is put into exile while its power is 4 or greater, destroy up to one target nonland permanent."
-   ],
+   "unparsed": [],
    "derived": {
     "cmc": 2,
     "land": false,
