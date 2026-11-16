@@ -974,3 +974,58 @@ fn restoration_angel_exiling_your_token_gives_syr_vondam_a_counter() {
     assert!(!g.perm(soldier).on_bf, "Restoration Angel exiled the token");
     assert_eq!((g.perm(v).plus, g.player(P0).life), (1, life + 1), "a counter and 1 life");
 }
+
+// ------------------------------------------------------------------ Eerie Interlude exiles its creatures together
+/// Eerie Interlude exiles your creatures at the same time, so a Syr Vondam it exiles sees the others leave with him (CR
+/// 603.10a), in whichever order they are exiled
+#[test]
+fn interlude_is_simultaneous_for_vondam_in_either_order() {
+    for vondam_first in [true, false] {
+        let (mut g, v) = vondam_table();
+        let ally = token(&mut g, P0, 1);
+        let life = g.player(P0).life;
+        let ms = if vondam_first { vec![v, ally] } else { vec![ally, v] };
+        g.resolving += 1; // Eerie Interlude is resolving
+        sim_core::impls::galadriel::interlude(&mut g, P0, &ms).unwrap();
+        g.resolving -= 1;
+        sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+        assert_eq!(g.player(P0).life, life + 1, "Vondam-first={vondam_first}: ally exiled at the same time");
+        assert_eq!(g.perm(v).plus, 0, "Vondam-first={vondam_first}: the counter has nowhere to go");
+    }
+}
+
+/// the same with nothing holding the triggers while the spell resolves: Interlude holds them itself, so the counter is
+/// not put on a Syr Vondam that is leaving too
+#[test]
+fn interlude_holds_its_own_triggers_until_everything_has_left() {
+    for vondam_first in [true, false] {
+        let (mut g, v) = vondam_table();
+        let ally = token(&mut g, P0, 1);
+        let life = g.player(P0).life;
+        let ms = if vondam_first { vec![v, ally] } else { vec![ally, v] };
+        sim_core::impls::galadriel::interlude(&mut g, P0, &ms).unwrap();
+        assert!(g.trig_queue.is_empty(), "the triggers were resolved");
+        assert_eq!(g.player(P0).life, life + 1, "Vondam-first={vondam_first}: ally exiled at the same time");
+        assert_eq!(g.perm(v).plus, 0, "Vondam-first={vondam_first}: he left with the ally, so the counter has nowhere to go");
+    }
+}
+
+/// Interlude cast in response to a wipe (the AI does): a Syr Vondam it exiles left before the wipe resolved, so a token
+/// that dies later in that wipe gives him nothing
+#[test]
+fn interlude_inside_a_wipe_does_not_make_vondam_leave_with_the_wipe() {
+    let (mut g, v) = vondam_table();
+    let victim = token(&mut g, P0, 1);
+    let life = g.player(P0).life;
+    g.batch += 1; // a wipe is resolving (as `removal::apply_wipe` sets it)
+    g.cur_batch = Some(g.batch);
+    g.resolving += 1;
+    sim_core::impls::galadriel::interlude(&mut g, P0, &[v]).unwrap();
+    assert!(!g.perm(v).on_bf, "Interlude exiled Vondam");
+    zones::die(&mut g, victim, "destroy").unwrap(); // dies later in the wipe
+    g.cur_batch = None;
+    g.resolving -= 1;
+    sim_core::engine::stack::flush_triggers(&mut g).unwrap();
+    assert!(!g.perm(victim).on_bf);
+    assert_eq!(g.player(P0).life, life, "he was gone before the wipe resolved");
+}
