@@ -25,9 +25,11 @@ pub fn lose_life(g: &mut Game, p: PlayerId, n: i32, src: Option<PlayerId>, kind:
 }
 
 /// `lose_life`, returning the damage that was dealt to p (what a source with lifelink gains, CR 702.15b): the amount
-/// after Fiery Emancipation, Stagger, Gisela and Bloodletter changed it, and after prevention (0 when it was
-/// prevented, when p is dead or locked, or when the loss was not damage). A floor on life (Angel's Grace, Serra's
-/// emblem), Pariah and Phyrexian Unlife change where the damage goes, not how much was dealt, so the full amount counts.
+/// after Fiery Emancipation, Stagger and Gisela changed it, and after prevention (0 when it was prevented, when p is
+/// dead, or when the loss was not damage). A locked life total (Flare of Fortitude) does not stop damage, only the loss of
+/// life, so it counts; Teferi's Protection also gives protection, which is prevention. Bloodletter of Aclazotz replaces the
+/// life loss, not the damage (CR 120.4c). A floor on life (Angel's Grace, Serra's emblem), Pariah and Phyrexian Unlife
+/// change where the damage goes, not how much was dealt, so the full amount counts.
 pub fn lose_life_dealt(
     g: &mut Game,
     p: PlayerId,
@@ -37,7 +39,8 @@ pub fn lose_life_dealt(
     damage: Option<bool>,
 ) -> Res<i32> {
     let pl = g.player(p);
-    if n <= 0 || !pl.alive || pl.life_locked {
+    let locked = pl.life_locked;
+    if n <= 0 || !pl.alive {
         return Ok(0);
     }
     let damage = damage.unwrap_or(DAMAGE_KINDS.contains(&kind));
@@ -52,13 +55,18 @@ pub fn lose_life_dealt(
     if damage && kind != "combat" {
         n = crate::impls::t3_aurelia::gisela_scale(g, p, n); // Gisela, Blade of Goldnight (combat.rs scales combat damage)
     }
+    let dealt_n = n; // the damage dealt: Bloodletter's doubling below is of the life lost
+    if locked {
+        // the life total can't change: nothing is lost, but damage that is not prevented was dealt
+        return Ok(if damage && !prevents_damage(g, p, src) { dealt_n } else { 0 });
+    }
     n = crate::impls::t45_edgar::bloodletter(g, p, n); // --- Tiers 4/5 (edgar): Bloodletter of Aclazotz
     if damage && prevents_damage(g, p, src) {
         g.player_mut(p).stat("dmg_prevented", n as i64);
         crate::glog!(g, "    {} damage to {} is prevented", n, g.player(p).name);
         return Ok(0);
     }
-    let dealt = if damage { n } else { 0 };
+    let dealt = if damage { dealt_n } else { 0 };
     if damage && kind != "combat" && crate::impls::t12_lightpaws::pariah_take(g, p, n) {
         crate::impls::t12_lightpaws::pariah_finish(g)?; // --- Tiers 1/2 (lightpaws): Pariah
         return Ok(dealt);
