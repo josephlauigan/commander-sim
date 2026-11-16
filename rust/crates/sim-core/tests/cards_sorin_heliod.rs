@@ -5,6 +5,7 @@ mod play_common;
 use play_common::*;
 use sim_core::dsl::has_kw;
 use sim_core::engine::values::subtypes;
+use sim_core::engine::{life, zones};
 use sim_core::hooks::Opt;
 use sim_core::human::human::{AbilityKind, abilities_of};
 use sim_core::state::Step;
@@ -363,4 +364,90 @@ fn the_ai_does_not_grant_lifelink_to_a_creature_that_has_it() {
 fn the_ai_does_not_grant_lifelink_to_a_creature_that_cannot_attack() {
     let o = heliod_options_with(4, 2, |g, m| g.perm_mut(m).sick = true);
     assert!(!grants(&o), "summoning sick: {:?}", labels(&o));
+}
+
+// ------------------------------------------------------------------ fix round
+/// `m` has keyword `kw` until end of turn
+fn give(g: &mut Game, m: PermId, kw: &str) {
+    g.perm_mut(m).eot_kw.push(sim_core::sym::intern(kw));
+}
+
+/// a vanilla creature of power `power` and toughness `toughness`, not summoning sick
+fn body(g: &mut Game, p: PlayerId, power: i32, toughness: i32) -> PermId {
+    let m = token(g, p, power.max(1));
+    g.perm_mut(m).pow = power;
+    g.perm_mut(m).tgh = toughness;
+    m
+}
+
+/// a Walking Ballista with `n` +1/+1 counters, not summoning sick
+fn ballista(g: &mut Game, n: i32) -> PermId {
+    let c = take(g, P0, "Walking Ballista");
+    g.last_x = 2 * n;
+    let b = zones::enter(g, P0, c, zones::Enter { was_cast: true, sick: false, ..Default::default() }).unwrap();
+    assert_eq!(g.perm(b).plus, n);
+    b
+}
+
+#[test]
+fn ballista_reads_lifelink_at_resolution_if_it_is_still_on_the_battlefield() {
+    let mut g = tbl();
+    let hel = perm(&mut g, P0, HELIOD);
+    let b = ballista(&mut g, 2);
+    let hel_i = g.player(P0).perms.iter().position(|&x| x == hel).unwrap();
+    g.player_mut(P0).pool.add('W', 2);
+    let mut granted = false;
+    let h = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            if !granted {
+                granted = true;
+                return Answer::Action(json!({"do": "use", "perm": hel_i}));
+            }
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        if r.prompt.contains("remove how many") {
+            return Answer::Pick(0);
+        }
+        let word = if r.prompt.contains("which ability") {
+            "lifelink"
+        } else if r.prompt.contains("Heliod") {
+            "Walking Ballista"
+        } else {
+            "(player,"
+        };
+        r.choices
+            .iter()
+            .position(|c| c.contains(word) && (word != "(player," || !c.contains("(you)")))
+            .map_or(Answer::Decline, Answer::Pick)
+    }));
+    h.set_autopass("all");
+    g.humans.add(P0, h);
+    assert_eq!(use_ability(&mut g, b, "remove a +1/+1 counter"), None);
+    assert!(g.perm(b).on_bf);
+    assert!(life::has_lifelink(&g, b), "the grant resolved before the ping");
+    assert_eq!(g.player(P0).life, 41, "lifelink is read when the ping deals its damage");
+}
+
+#[test]
+fn heliod_cannot_save_a_ballista_that_paid_its_last_counter() {
+    let mut g = tbl();
+    let hel = perm(&mut g, P0, HELIOD);
+    let b = ballista(&mut g, 1);
+    g.perm_mut(b).lifelink = true;
+    // aim the ping at an opponent; aim Heliod's gain trigger at the Ballista if it is wrongly still there
+    let p = std::sync::Arc::new(ScriptHuman::from_fn(move |r| {
+        if r.kind == "priority" {
+            return Answer::Action(json!({"do": "pass"}));
+        }
+        let word = if r.prompt.contains("Heliod") { "Walking Ballista" } else { "(player," };
+        r.choices
+            .iter()
+            .position(|c| c.contains(word) && (word != "(player," || !c.contains("(you)")))
+            .map_or(Answer::Decline, Answer::Pick)
+    }));
+    g.humans.add(P0, p);
+    assert_eq!(use_ability(&mut g, b, "remove a +1/+1 counter"), None);
+    assert_eq!(g.player(P0).life, 41, "the ping still resolves, with last known information");
+    assert!(!g.perm(b).on_bf, "the 0/0 dies before the ping and Heliod's trigger resolve");
+    assert_eq!(g.perm(hel).plus, 1, "Heliod is the only legal counter target");
 }
