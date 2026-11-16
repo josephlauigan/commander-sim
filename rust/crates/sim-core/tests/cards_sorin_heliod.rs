@@ -532,7 +532,7 @@ fn the_ai_grant_does_nothing_if_the_target_gained_protection_before_it_resolved(
     let found = o.iter().find(|x| x.label.contains("lifelink"));
     assert!(found.is_some(), "the grant is offered: {:?}", labels(&o));
     prot_white(&mut g, t); // in response
-    assert!(sim_core::ai::act::perform(&mut g, P0, found.unwrap().act.as_ref().unwrap()).unwrap());
+    let _ = sim_core::ai::act::perform(&mut g, P0, found.unwrap().act.as_ref().unwrap()).unwrap(); // not done, or done to nothing
     assert!(!has_kw(&g, t, "lifelink"), "the target is no longer legal: nothing happens");
 }
 

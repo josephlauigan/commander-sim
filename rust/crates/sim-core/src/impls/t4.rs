@@ -1398,8 +1398,10 @@ fn heliod_ind(_g: &Game, src: Src, m: PermId, kw: Sym) -> bool {
 }
 
 /// the creatures and enchantments p controls that Heliod's counter can go on ("target creature or enchantment you
-/// control": Heliod himself is an enchantment, a creature or not): on the battlefield, not phased out, no shroud
-fn heliod_targets(g: &Game, p: PlayerId) -> Vec<PermId> {
+/// control": Heliod himself is an enchantment, a creature or not): on the battlefield, not phased out, no shroud, and not
+/// protected from Heliod (protection from white: a permanent can't be targeted by a source with that quality)
+fn heliod_targets(g: &Game, p: PlayerId, src: PermId) -> Vec<PermId> {
+    let cols = crate::engine::values::colors_of(g, src);
     g.player(p)
         .perms
         .iter()
@@ -1409,6 +1411,7 @@ fn heliod_targets(g: &Game, p: PlayerId) -> Vec<PermId> {
             x.on_bf
                 && !x.phased
                 && !crate::dsl::has_kw(g, m, "shroud")
+                && !crate::engine::values::protected_from(g, m, cols)
                 && (g.is_creature(m) || crate::engine::chars::card_types(g, m).has(crate::cards::Types::ENCHANTMENT))
         })
         .collect()
@@ -1429,9 +1432,13 @@ fn heliod_gain(g: &mut Game, src: Src, p: PlayerId, _n: i32) -> Res {
     if p != owner(g, src) {
         return Ok(());
     }
-    let cs = heliod_targets(g, p);
+    let cs = heliod_targets(g, p, src);
     if cs.is_empty() {
         return Ok(());
+    }
+    if g.trig_probe {
+        // only whether the trigger goes on the stack: its target is chosen (and a person asked) once, as it does
+        return trigger_window(g, p, Some(src), "a +1/+1 counter on a creature or enchantment", None).map(|_| ());
     }
     let t = if human_of(g, p).is_some() {
         let prompt = "Heliod, Sun-Crowned: put a +1/+1 counter on which creature or enchantment you control?";
@@ -1439,17 +1446,34 @@ fn heliod_gain(g: &mut Game, src: Src, p: PlayerId, _n: i32) -> Res {
     } else {
         heliod_aim(g, src, &cs)
     };
-    if !trigger_window(g, p, Some(src), "a +1/+1 counter on a creature or enchantment", None)? || !g.perm(t).on_bf {
-        return Ok(());
+    if !trigger_window(g, p, Some(src), "a +1/+1 counter on a creature or enchantment", None)?
+        || !heliod_targets(g, p, src).contains(&t)
+    {
+        return Ok(()); // countered, or the target is gone or no longer legal (protection gained in response)
     }
     repl::put_plus(g, t, 1);
     Ok(())
 }
 
+/// can Heliod `src` (p's) give `t` lifelink: another creature on the battlefield, not phased out, no shroud, no protection
+/// from Heliod's colours, and not an opponent's creature with hexproof. Checked when the ability is chosen and again when
+/// it resolves.
+pub fn heliod_grant_legal(g: &Game, p: PlayerId, src: PermId, t: PermId) -> bool {
+    let x = g.perm(t);
+    t != src
+        && x.on_bf
+        && !x.phased
+        && g.is_creature(t)
+        && !crate::dsl::has_kw(g, t, "shroud")
+        && (x.owner == p || !untargetable(g, t))
+        && !crate::engine::values::protected_from(g, t, crate::engine::values::colors_of(g, src))
+}
+
 /// {1}{W}: another target creature gains lifelink until end of turn. The AI uses it in its first main phase on the
 /// untapped creature that can attack with the most power (3 or more) and has no lifelink yet, with the mana left after its
-/// plays, once a turn, and never while its plan holds mana up (Heliod's own counter on each life gained is worth a little
-/// more than the life itself).
+/// plays, once a turn, and never while its plan or a held answer needs the mana: a Tier 6 plan's hold-up, or the card the AI
+/// holds mana up for (`brain::hold_value`), whose cost must still be payable beside {1}{W} (Heliod's own counter on each
+/// life gained is worth a little more than the life itself).
 fn heliod_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Res<Vec<Opt>> {
     let x = g.perm(src);
     if post != Some(false) || owner(g, src) != p || g.active != Some(p) || !x.on_bf || x.phased {
@@ -1461,6 +1485,14 @@ fn heliod_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Re
     if crate::impls::t6_plans::hold_up(g, p).is_some_and(|u| u > 0.0) {
         return Ok(vec![]);
     }
+    if let (Some(h), v) = crate::ai::brain::hold_value(g, p, &crate::ai::brain::Situation::new(g, p))
+        && v > 0.0
+    {
+        let (gn, pips) = crate::engine::mana::seq_cost(g, p, &[h]);
+        if !can_pay(g, p, gn + 1, &format!("{pips}W"), false) {
+            return Ok(vec![]); // the held answer's mana stays up
+        }
+    }
     let cands: Vec<PermId> = g
         .player(p)
         .perms
@@ -1468,15 +1500,12 @@ fn heliod_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -> Re
         .copied()
         .filter(|&m| {
             let y = g.perm(m);
-            m != src
-                && g.is_creature(m)
-                && !y.phased
+            heliod_grant_legal(g, p, src, m)
                 && !y.tapped
                 && !y.noatk
                 && (!y.sick || crate::engine::combat::has_haste(g, m))
                 && epow(g, m) >= 3
                 && !crate::engine::life::has_lifelink(g, m)
-                && !crate::dsl::has_kw(g, m, "shroud")
         })
         .collect();
     let Some(t) = max_by(&cands, |m| epow(g, m) as f64) else { return Ok(vec![]) };
@@ -1492,14 +1521,14 @@ fn heliod_grant(g: &mut Game, src: PermId, p: PlayerId, arg: i64) -> Res<bool> {
     let t = PermId(arg as u32);
     if !g.perm(src).on_bf
         || owner(g, src) != p
-        || !g.perm(t).on_bf
+        || !heliod_grant_legal(g, p, src, t)
         || !can_pay(g, p, 1, "W", false)
         || !once_per_turn(g, p, intern("heliod_grant"))
     {
         return Ok(false);
     }
     pay(g, p, 1, "W", false)?;
-    if ability_window(g, p, Some(src), "lifelink", None, None)? && g.perm(t).on_bf {
+    if ability_window(g, p, Some(src), "lifelink", None, None)? && heliod_grant_legal(g, p, src, t) {
         crate::impls::partials::eot_kw(g, t, intern("lifelink"));
         crate::glog!(g, "    {} gains lifelink until end of turn (Heliod)", g.perm(t).name);
     }
