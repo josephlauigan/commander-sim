@@ -869,7 +869,7 @@ pub fn resolve_blocks(
                     if tr { ap } else { 0 } // its blocker is gone: still blocked (trample: all to the player)
                 }
                 Some(b) => {
-                    let bt = etgh(g, b);
+                    let (bt, at) = (etgh(g, b), etgh(g, a)); // before wither's -1/-1 counters go on either creature
                     let t0 = crate::impls::t0_giada::combat_proof;
                     let gs = crate::impls::t3_aurelia::gisela_scale; // Gisela, Blade of Goldnight
                     let mut a_dies = (gs(
@@ -992,7 +992,6 @@ pub fn resolve_blocks(
                             && !cardcode::prot_vs(g, a, b)
                             && !repl::source_prevented(g, b)
                         {
-                            let at = etgh(g, a);
                             let pw = epow(g, b).saturating_mul(crate::impls::kuja::flare_star(g, Some(b)));
                             let one = |g: &Game, x: i32| {
                                 gs(
