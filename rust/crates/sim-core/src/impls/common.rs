@@ -21,8 +21,8 @@ use crate::engine::stack::{ability_window, ability_window_card, counter_window, 
 use crate::engine::tutors::{card_worth, shuffle_library};
 use crate::engine::values::{epow, etgh, has_type, once_per_turn, protected_from, pval, stopped, untargetable};
 use crate::engine::zones::{
-    Enter, Tokens, Zone, add_treasure, die, draw, edict, enter, exile_perm, leave, make_tokens, max_by, mill, min_by,
-    sac_worth, searchable, to_zone_card,
+    Enter, Tokens, Zone, add_treasure, die, draw, edict, enter, exile_perm, exiled_from_bf, leave, make_tokens, max_by,
+    mill, min_by, sac_worth, searchable, to_zone_card,
 };
 use crate::flow::Res;
 use crate::hooks::{Action, Call, Event, Opt, Registry, Sacrificed, Src};
@@ -1731,6 +1731,22 @@ pub fn walker_options(g: &mut Game, src: Src, p: PlayerId, post: Option<bool>) -
 
 fn walker_go(g: &mut Game, src: PermId, p: PlayerId, i: i64) -> Res<bool> {
     let ab = walker_abilities(g, src)[i as usize];
+    walker_pay_run(g, src, p, i as usize, None, &mut |g| (ab.eff)(g, p, src))
+}
+
+/// The body of `walker_go`: pay loyalty ability `i` of `src` (p's walker), run it through the ability window with
+/// `target` (None for an ability that aims at nothing, or chooses as it resolves), then `eff` as it resolves. False if the
+/// ability cannot be used now. A walker whose ability must commit its target on activation (`options` swaps `walker_go`
+/// for its own `Action::Ability` function) calls this with the target it chose.
+pub(crate) fn walker_pay_run(
+    g: &mut Game,
+    src: PermId,
+    p: PlayerId,
+    i: usize,
+    target: Option<PermId>,
+    eff: &mut dyn FnMut(&mut Game) -> Res,
+) -> Res<bool> {
+    let ab = walker_abilities(g, src)[i];
     let delta = ab.delta + loyalty_extra(g, p);
     if !on(g, src, p) || uses(g, p, src) >= allowed(g, p) || g.perm(src).loyalty.unwrap_or(0) + delta < 0 {
         return Ok(false);
@@ -1752,9 +1768,7 @@ fn walker_go(g: &mut Game, src: PermId, p: PlayerId, i: i64) -> Res<bool> {
     }
     let imp = if delta <= -5 { Some(8.0) } else { None };
     // the person's Rings of Brighthearth may copy it (a copy runs the effect again, choosing anew)
-    crate::engine::stack::ability_run(g, p, Some(src), None, &format!("{delta:+}"), imp, None, |g| {
-        (ab.eff)(g, p, src)
-    })?;
+    crate::engine::stack::ability_run(g, p, Some(src), None, &format!("{delta:+}"), imp, target, eff)?;
     if on(g, src, p) && g.perm(src).loyalty.unwrap_or(0) <= 0 {
         leave(g, src)?;
         to_zone_card(g, src, Zone::Gy);
@@ -2357,9 +2371,7 @@ fn blink(g: &mut Game, _p: PlayerId, m: PermId) -> Res<Option<PermId>> {
     leave(g, m)?;
     let n = enter(g, orig, cd, Enter { orig: Some(orig), ..Enter::default() })?;
     g.perm_mut(n).is_cmd = cmd;
-    if !g.hooks.is_empty() {
-        fire_trigger(g, Event::ExiledFromBf, Call::Leaves { m })?;
-    }
+    exiled_from_bf(g, m, Some(n))?;
     crate::glog!(g, "    {} is blinked", g.db.get(cd).name);
     Ok(Some(n))
 }

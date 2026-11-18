@@ -537,7 +537,7 @@ fn the_ai_grant_is_refused_at_activation_if_the_target_gained_protection_after_i
         "the target is no longer legal: the ability is not activated"
     );
     assert!(!has_kw(&g, t, "lifelink"));
-    assert!(g.player(P0).perms.iter().filter(|&&m| g.perm(m).tapped).count() == 0, "no land was tapped");
+    assert!(g.player(P0).lands.iter().filter(|&&m| g.perm(m).tapped).count() == 0, "no land was tapped");
 }
 
 #[test]

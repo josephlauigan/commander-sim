@@ -1421,6 +1421,7 @@ fn archfiend_exile(g: &mut Game, src: Src, _p: PlayerId) -> Res {
         let pl = g.player_mut(o);
         remove_card(&mut pl.gy, cd);
         pl.exile.push(cd);
+        crate::engine::zones::exiled_from_bf(g, src, None)?;
     }
     Ok(())
 }
@@ -2559,6 +2560,7 @@ fn oath(g: &mut Game, src: Src, _p: PlayerId, m: PermId) -> Res {
         etb_val(g, x) + if walker { 3.0 } else { 0.0 }
     }) {
         leave(g, t)?;
+        crate::engine::zones::exiled_from_bf(g, t, None)?;
         let cd = g.perm(t).cd.unwrap();
         g.player_mut(o).oath_return.push(cd);
         crate::glog!(g, "    Oath of Teferi exiles {} until the end step", g.perm(t).name);

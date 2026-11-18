@@ -406,21 +406,31 @@ fn ult_value(g: &Game, p: PlayerId) -> f64 {
 
 /// zur.wanderer_ult: each player keeps one creature and sacrifices the rest
 pub fn wanderer_ult(g: &mut Game, p: PlayerId) -> Res {
+    let mut doomed = vec![];
     for q in g.players.iter().map(|q| q.id).collect::<Vec<_>>() {
         if !g.player(q).alive {
             continue;
         }
         let k = keep_one(g, q, p);
-        let rest: Vec<PermId> = g
-            .player(q)
-            .perms
-            .iter()
-            .copied()
-            .filter(|&m| g.is_creature(m) && !g.perm(m).phased && Some(m) != k)
-            .collect();
-        for m in rest {
-            die(g, m, "sac")?;
-        }
+        doomed.extend(
+            g.player(q).perms.iter().copied().filter(|&m| g.is_creature(m) && !g.perm(m).phased && Some(m) != k),
+        );
+    }
+    sacrifice_together(g, &doomed)
+}
+
+/// the creatures are sacrificed at the same time (CR 701.21a): one batch of its own, and the triggers wait until all
+/// have left, so a Syr Vondam among them sees the others leave with him in either order
+pub fn sacrifice_together(g: &mut Game, doomed: &[PermId]) -> Res {
+    g.batch += 1;
+    let prev_batch = g.cur_batch.replace(g.batch);
+    g.resolving += 1;
+    let done = doomed.iter().try_for_each(|&m| die(g, m, "sac"));
+    g.resolving -= 1;
+    g.cur_batch = prev_batch;
+    done?;
+    if g.resolving == 0 && !g.trig_queue.is_empty() && !g.over {
+        crate::engine::stack::flush_triggers(g)?;
     }
     Ok(())
 }

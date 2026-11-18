@@ -1282,7 +1282,8 @@ fn run(
                     && !x.token
                 {
                     zones::leave(g, m)?;
-                    zones::enter(g, p, cd, Enter::default())?;
+                    let n = zones::enter(g, p, cd, Enter::default())?;
+                    zones::exiled_from_bf(g, m, Some(n))?;
                     crate::glog!(g, "    {} is blinked", g.db.get(cd).name);
                 }
             }

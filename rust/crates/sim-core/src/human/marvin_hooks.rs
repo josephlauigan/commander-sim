@@ -912,6 +912,7 @@ fn displacer(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     aimed(g, p, m, false, "blink", t, cands, |g, t| {
         if g.perm(t).token {
             zones::leave(g, t)?;
+            zones::exiled_from_bf(g, t, None)?;
             crate::glog!(g, "    {} (a token) is exiled for good", g.perm(t).name);
         } else if let Some(n) = crate::impls::t2::blink(g, p, t)? {
             g.perm_mut(n).tapped = true;
@@ -1534,7 +1535,7 @@ fn nyx_weaver(g: &mut Game, p: PlayerId, m: PermId) -> Res<Why> {
     if let Some(w) = pay(g, p, 1, "BG", W) {
         return say(w);
     }
-    zones::leave(g, m)?; // exiled as the cost
+    zones::exile_perm(g, m)?; // exiled as the cost: into exile, and the exile event fires
     plain(g, p, m, true, "return a card", move |g| {
         if let Some(i) = g.player(p).gy.iter().position(|&x| x == c) {
             g.player_mut(p).gy.remove(i);

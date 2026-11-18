@@ -243,6 +243,13 @@ pub fn has_keyword(g: &Game, m: PermId, kw: &str) -> bool {
     if kw == "flying" && is_creature(g, m) && g.player(x.owner).elspeth_emblem {
         return true; // Elspeth's emblem
     }
+    if kw == "indestructible" && g.player(x.owner).emblems.contains(&crate::impls::vondam_elspeth::EMBLEM) {
+        // Elspeth, Knight-Errant's emblem: "Artifacts, creatures, enchantments, and lands you control have indestructible"
+        let t = card_types(g, m);
+        if is_creature(g, m) || t.has(Types::ARTIFACT) || t.has(Types::ENCHANTMENT) || t.has(Types::LAND) {
+            return true;
+        }
+    }
     match x.cd {
         None => {
             if let Some(Val::List(v)) = x.data.get(DataKey::Kws)

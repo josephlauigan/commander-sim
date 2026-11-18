@@ -807,6 +807,7 @@ fn ardent_end(g: &mut Game, src: Src, _p: PlayerId) -> Res {
     crate::glog!(g, "    {ARDENT} (warp) is exiled");
     crate::engine::zones::leave(g, src)?;
     exile_playable(g, o, c, u32::MAX);
+    crate::engine::zones::exiled_from_bf(g, src, None)?;
     Ok(())
 }
 

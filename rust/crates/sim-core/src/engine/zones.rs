@@ -518,6 +518,9 @@ pub fn detach(g: &mut Game, m: PermId) {
 pub fn leave(g: &mut Game, m: PermId) -> Res {
     let p = g.perm(m).owner;
     let on = g.perm(m).on_bf;
+    if on {
+        crate::impls::vondam_elspeth::leaving(g, m); // Syr Vondam: his power as he leaves, and the wipe he leaves in
+    }
     if g.is_creature(m) && g.perm(m).plus > 0 && on && has(g, p, Tag::Ozolith) {
         let n = g.perm(m).plus;
         g.player_mut(p).ozolith_counters += n; // The Ozolith keeps the counters
@@ -791,7 +794,7 @@ pub fn die(g: &mut Game, m: PermId, cause: Sym) -> Res {
             to_zone_card(g, m, Zone::Exile);
             crate::impls::t12_kaalia_sythis::exiled_instead(g, m); // --- Tiers 1/2 (kaalia-sythis): Valgavoth
         }
-        return Ok(());
+        return exiled_from_bf(g, m, None); // exiled, not dead: Soulherder, Syr Vondam
     }
     if creature {
         g.player_mut(p).creature_died = Some(g.turn_stamp()); // Essenceknit Scholar
@@ -844,6 +847,9 @@ fn die_triggers(g: &mut Game, m: PermId, p: PlayerId, cause: Sym, selfdies: bool
         if cause == "sac" {
             fire_trigger(g, Event::Sacrifice, Call::Sacrifice { p, what: Sacrificed::Perm(m) })?;
         }
+    }
+    if creature && g.cur_batch.is_some() {
+        crate::impls::vondam_elspeth::left_with(g, m, Some(cause))?; // Syr Vondam, if he left earlier in this wipe
     }
     if selfdies {
         let n = 1 + repl::trigger_copies(g, p, "dies", Some(m));
@@ -1057,12 +1063,54 @@ pub fn exile_perm(g: &mut Game, m: PermId) -> Res {
     let r = leave(g, m);
     g.exiling = prev;
     r?;
-    if let Some(Val::Player(q)) = g.perm(m).data.get(DataKey::Ghostform).cloned()
-        && crate::impls::sephfs_cards::ghostform_return(g, m, q)?
-    {
-        return Ok(());
+    if let Some(Val::Player(q)) = g.perm(m).data.get(DataKey::Ghostform).cloned() {
+        let mark = g.enter_no; // what entered after this was not on the battlefield when m left
+        if crate::impls::sephfs_cards::ghostform_return(g, m, q)? {
+            return exiled_from_bf_upto(g, m, Some(mark)); // it came back, but it was exiled first
+        }
     }
     to_zone_card(g, m, Zone::Exile);
+    exiled_from_bf(g, m, None)
+}
+
+/// m was put into exile from the battlefield (any way: an exile, a blink, a token that is gone for good, Rest in Peace's
+/// "exiled instead of dying"): "whenever a creature is exiled" (Soulherder), "dies or is put into exile" (Syr Vondam).
+/// Call it once, after `leave`, and after the exiled card is back for a blink (`back`: what it came back as), so the
+/// triggers wait for its enters triggers as before. Leaves-the-battlefield abilities look back in time (CR 603.10a):
+/// `back` and what entered with it never saw m leave, so they hear nothing. The permanent's own trigger
+/// (`self_exiled`) is queued here, as `die_triggers` queues `self_dies`, since `leave` took it out of `g.hooks`.
+pub fn exiled_from_bf(g: &mut Game, m: PermId, back: Option<PermId>) -> Res {
+    exiled_from_bf_upto(g, m, back.map(|n| g.perm(n).born.saturating_sub(1)))
+}
+
+/// `exiled_from_bf`, with the bound given as the entry number (`Game::enter_no`) of the last object that was on the
+/// battlefield when m left: only listeners born by then hear it (None: all of them)
+fn exiled_from_bf_upto(g: &mut Game, m: PermId, last_born: Option<u32>) -> Res {
+    if !g.hooks.is_empty() {
+        hooks::fire_trigger_where(g, Event::ExiledFromBf, Call::Leaves { m }, &|g, s| {
+            last_born.is_none_or(|b| g.perm(s).born <= b)
+        })?;
+    }
+    if g.cur_batch.is_some() && g.is_creature(m) {
+        crate::impls::vondam_elspeth::left_with(g, m, None)?; // Syr Vondam, if he left earlier in this wipe
+    }
+    let imp = g.perm(m).cd.and_then(|c| g.registry.get(c).copied()).filter(|i| i.self_exiled.is_some());
+    if let Some(imp) = imp {
+        if imp.runs_at_once(Event::SelfExiled) {
+            (imp.self_exiled.unwrap())(g, m, m)?;
+        } else {
+            let t = Trigger {
+                controller: g.perm(m).owner,
+                src: Some(m),
+                act: TrigAct::Hook { event: Event::SelfExiled, call: Call::Leaves { m } },
+                name: None,
+                known: false,
+                imp: None,
+                cast_etb: false,
+            };
+            queue_triggers(g, vec![t])?;
+        }
+    }
     Ok(())
 }
 

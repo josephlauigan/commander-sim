@@ -240,6 +240,7 @@ pub fn bolas_flip(g: &mut Game, src: PermId, p: PlayerId, _arg: i64) -> Res<bool
             let m = crate::engine::zones::enter(g, p, back, Enter::default())?;
             // a transformed card is its front face in every other zone: if the Arisen leaves, the creature card goes there
             g.perm_mut(m).phys = front;
+            crate::engine::zones::exiled_from_bf(g, src, Some(m))?; // the front face was exiled (Soulherder, Syr Vondam)
             crate::glog!(g, "    Nicol Bolas, the Arisen enters with 7 loyalty");
             Ok(())
         },

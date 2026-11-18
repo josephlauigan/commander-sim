@@ -161,6 +161,12 @@ pub fn fire_sba(g: &mut Game) -> Res {
 /// `CI.fire` for an event in `TRIGGER_EVENTS`, with its copies: a dies trigger once more per Teysa Karlov, an enters
 /// trigger that goes on the stack once more per Panharmonicon.
 pub fn fire_trigger(g: &mut Game, e: Event, call: Call) -> Res {
+    fire_trigger_where(g, e, call, &|_, _| true)
+}
+
+/// `fire_trigger`, for the hooked permanents `keep` accepts (a blink fires after the creature is back, and what entered
+/// with it never saw it leave: `zones::exiled_from_bf`)
+pub fn fire_trigger_where(g: &mut Game, e: Event, call: Call, keep: &dyn Fn(&Game, PermId) -> bool) -> Res {
     // Hushbringer: a creature entering (a land that is also a creature) sets off nothing
     if let (Event::LandEnters, Call::Etb { m, .. }) = (e, &call)
         && g.is_creature(*m)
@@ -170,6 +176,9 @@ pub fn fire_trigger(g: &mut Game, e: Event, call: Call) -> Res {
     }
     let mut entries = vec![];
     for (src, imp) in hooked(g, e) {
+        if !keep(g, src) {
+            continue;
+        }
         let owner = g.perm(src).owner;
         let mut reps = 1;
         if let (Event::Dies, Call::Dies { m, .. }) = (e, &call) {
@@ -227,6 +236,7 @@ pub fn run_hook(g: &mut Game, src: PermId, e: Event, call: &Call) -> Res {
         (Event::ExiledFromBf, Call::Leaves { m }) => imp.exiled_from_bf.map_or(Ok(()), |f| f(g, src, *m)),
         (Event::Dies, Call::Dies { m, cause }) => imp.dies.map_or(Ok(()), |f| f(g, src, *m, cause)),
         (Event::SelfDies, Call::Dies { m, cause }) => imp.self_dies.map_or(Ok(()), |f| f(g, src, *m, cause)),
+        (Event::SelfExiled, Call::Leaves { m }) => imp.self_exiled.map_or(Ok(()), |f| f(g, src, *m)),
         (Event::Upkeep, Call::Player { p }) => imp.upkeep.map_or(Ok(()), |f| f(g, src, *p)),
         (Event::EndStep, Call::Player { p }) => imp.end_step.map_or(Ok(()), |f| f(g, src, *p)),
         (Event::Main1, Call::Player { p }) => imp.main1.map_or(Ok(()), |f| f(g, src, *p)),

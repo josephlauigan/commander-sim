@@ -148,6 +148,9 @@ pub enum DataKey {
     /// the walker framework's loyalty activations this round (Python's third item of `loyalty_used`; Oath of Teferi)
     LoyaltyN,
     Lore,
+    /// last known information of a permanent that has left the battlefield: Syr Vondam's power as he left and the wipe
+    /// he left in, `[Int power, Int batch]` (`impls/vondam_elspeth.rs`; only that card sets it)
+    LastKnown,
     /// a Spellgorger Weird token made by Ral and the Implicit Maze (+1/+1 counter per noncreature spell)
     WeirdToken,
     Lure,

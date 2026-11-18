@@ -432,15 +432,12 @@ fn exiled_this_turn(g: &Game) -> bool {
 fn exile_until_end_step(g: &mut Game, m: PermId) -> Res {
     let (cd, orig, tok) = (g.perm(m).cd, g.perm(m).orig, g.perm(m).token);
     leave(g, m)?;
-    if tok {
-        return Ok(());
-    }
-    if let Some(cd) = cd {
+    if !tok && let Some(cd) = cd {
         g.player_mut(orig).exile.push(cd);
         g.eot_returns.push((orig, cd));
         note_exile(g, m);
     }
-    Ok(())
+    crate::engine::zones::exiled_from_bf(g, m, None) // (a token is exiled too, and does not come back)
 }
 
 /// the creature p would exile with Ennis (or send home with Stormfront Riders): the best by `reenter_value`, if

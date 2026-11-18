@@ -9657,6 +9657,15 @@ dsl = [] # the lifelink static, the +2 (a player or planeswalker, not any target
 status = "Full"
 note = "during your turn your creatures and planeswalkers have lifelink; +2: 1 damage to a player or planeswalker (the AI aims at a player at 1 life, a planeswalker at 1 loyalty, else the most threatening opponent); -X: a creature card of mana value X from your graveyard enters as a Vampire (a person chooses the card; the AI uses X = 0 to 16)"
 
+["Syr Vondam, Sunstar Exemplar"]
+status = "Full"
+note = "vigilance, menace; whenever another creature you control dies or is put into exile (a token, a blink, Rest in Peace's exile, a creature stolen from an opponent counts for whoever controlled it as it left; the creatures that leave in the same wipe as he does too), a +1/+1 counter on him and 1 life; when he dies or is put into exile with last known power 4 or more, destroy up to one target nonland permanent (the AI picks the best opposing permanent that dies to it, or none; a person picks any legal target or none); hand-written in impls/vondam_elspeth.rs"
+
+["Elspeth, Knight-Errant"]
+dsl = [] # the walker is hand-written in impls/vondam_elspeth.rs (the AI) and human/walkers.rs (a person)
+status = "Full"
+note = "+1: a 1/1 white Soldier token; +1: target creature gets +3/+3 and flying until end of turn (the AI pumps its best creature that can attack; a person picks any creature that is a legal target once, before the loyalty is paid, and a ward is paid as it resolves, or the ability is countered); -8: you get an emblem: your artifacts, creatures, enchantments and lands have indestructible (not planeswalkers; a sacrifice, toughness 0 and -X/-X still kill)"
+
 ["Forerunner of the Legion"]
 dsl = [] # the compiled enter search found any card; the Vampire search and the +1/+1 trigger are hand-written
 
